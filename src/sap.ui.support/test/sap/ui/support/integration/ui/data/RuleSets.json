@@ -1,0 +1,1155 @@
+{
+	"temporary": {
+		"lib": {
+			"name": "temporary"
+		},
+		"ruleset": {
+			"_oSettings": {
+				"name": "temporary"
+			},
+			"_mRules": {}
+		}
+	},
+	"sap.ui.core": {
+		"lib": {
+			"name": "sap.ui.core",
+			"niceName": "UI5 Core Library"
+		},
+		"ruleset": {
+			"_oSettings": {
+				"name": "sap.ui.core",
+				"niceName": "UI5 Core Library"
+			},
+			"_mRules": {
+				"eventBusSilentPublish": {
+					"id": "eventBusSilentPublish",
+					"audiences": [
+						"Internal"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "1.32",
+					"title": "EventBus publish",
+					"description": "Checks the EventBus publications for missing listeners",
+					"resolution": "Calls to EventBus#publish should be removed or adapted such that associated listeners are found",
+					"resolutionurls": [],
+					"check": "function(oIssueManager, oCoreFacade) {\n\n\t\t\tvar aLogEntries = jQuery.sap.log.getLog();\n\t\t\tvar aMessages = [];\n\t\t\taLogEntries.forEach(function(oLogEntry) {\n\t\t\t\tif (oLogEntry.component === \"sap.ui.core.EventBus\") {\n\t\t\t\t\tif (oLogEntry.details && oLogEntry.details.indexOf(\"sap.\") !== 0) {\n\t\t\t\t\t\tif (aMessages.indexOf(oLogEntry.message) === -1) {\n\t\t\t\t\t\t\taMessages.push(oLogEntry.message);\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\n\t\t\t\t}\n\t\t\t});\n\t\t\taMessages.forEach(function(sMessage) {\n\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\tseverity: Severity.Low,\n\t\t\t\t\tdetails: \"EventBus publish without listeners \" + sMessage,\n\t\t\t\t\tcontext: {\n\t\t\t\t\t\tid: \"WEBPAGE\"\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"errorLogs": {
+					"id": "errorLogs",
+					"audiences": [
+						"Control",
+						"Internal"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "1.32",
+					"title": "Error logs",
+					"description": "Checks for the amount of error logs in the console",
+					"resolution": "Error logs should be fixed",
+					"resolutionurls": [],
+					"check": "function(oIssueManager, oCoreFacade) {\n\t\t\tvar count = 0,\n\t\t\t\tmessage = \"\";\n\n\t\t\tvar log = jQuery.sap.log.getLogEntries();\n\t\t\tlog.forEach(function(logEntry) {\n\t\t\t\tif (logEntry.level === jQuery.sap.log.Level.ERROR) {\n\t\t\t\t\tcount++;\n\t\t\t\t\tif (count <= 20) {\n\t\t\t\t\t\tmessage += \"- \" + logEntry.message + \"\\n\";\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\n\t\t\toIssueManager.addIssue({\n\t\t\t\tseverity: Severity.Low,\n\t\t\t\tdetails: \"Total error logs: \" + count + \"\\n\" + message,\n\t\t\t\tcontext: {\n\t\t\t\t\tid: \"WEBPAGE\"\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"cssCheckCustomStyles": {
+					"id": "cssCheckCustomStyles",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Consistency"
+					],
+					"enabled": true,
+					"minversion": "1.38",
+					"title": "CSS modifications - List of custom styles",
+					"description": "Checks and report for custom CSS files/styles that overwrite standard UI5 control's CSS values ",
+					"resolution": "Avoid CSS manipulations with custom CSS values as this could lead to rendering issues ",
+					"resolutionurls": [
+						{
+							"text": "CSS Styling Issues",
+							"href": "https://openui5.hana.ondemand.com/#docs/guide/9d87f925dfbb4e99b9e2963693aa00ef.html"
+						},
+						{
+							"text": "General Guidelines",
+							"href": "https://openui5.hana.ondemand.com/#docs/guide/5e08ff90b7434990bcb459513d8c52c4.html"
+						}
+					],
+					"check": "function (issueManager, oCoreFacade, oScope) {\n\t\t\tvar cssFilesMessage = \"Following stylesheet file(s) contain 'custom' CSS that could affects (overwrites) UI5 controls' own styles: \\n\",\n\t\t\t\texternalStyleSheets = CoreHelper.getExternalStyleSheets(),\n\t\t\t\tfoundIssues = 0;\n\n\t\t\texternalStyleSheets.forEach(function (styleSheet) {\n\t\t\t\tvar affectsUI5Controls = false;\n\n\t\t\t\tArray.from(styleSheet.rules).forEach(function (rule) {\n\t\t\t\t\tvar selector = rule.selectorText,\n\t\t\t\t\t\tmatchedNodes = document.querySelectorAll(selector);\n\n\t\t\t\t\tmatchedNodes.forEach(function (node) {\n\t\t\t\t\t\tvar hasUI5Parent = CoreHelper.nodeHasUI5ParentControl(node, oScope);\n\t\t\t\t\t\tif (hasUI5Parent) {\n\t\t\t\t\t\t\taffectsUI5Controls = true;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\n\t\t\t\tif (affectsUI5Controls) {\n\t\t\t\t\tcssFilesMessage += \"- \" + CoreHelper.getStyleSheetName(styleSheet) + \"\\n\";\n\t\t\t\t\tfoundIssues++;\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tif (foundIssues > 0) {\n\t\t\t\tissueManager.addIssue({\n\t\t\t\t\tseverity: sap.ui.support.Severity.Medium,\n\t\t\t\t\tdetails: cssFilesMessage,\n\t\t\t\t\tcontext: {\n\t\t\t\t\t\tid: \"WEBPAGE\"\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t}\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"cssCheckCustomStylesThatAffectControls": {
+					"id": "cssCheckCustomStylesThatAffectControls",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Consistency"
+					],
+					"enabled": true,
+					"minversion": "1.38",
+					"title": "CSS modifications - List of affected controls",
+					"description": "Checks and report all overwritten standard control's CSS values ",
+					"resolution": "Avoid CSS manipulations with custom CSS values as this could lead to rendering issues ",
+					"resolutionurls": [
+						{
+							"text": "CSS Styling Issues",
+							"href": "https://openui5.hana.ondemand.com/#docs/guide/9d87f925dfbb4e99b9e2963693aa00ef.html"
+						},
+						{
+							"text": "General Guidelines",
+							"href": "https://openui5.hana.ondemand.com/#docs/guide/5e08ff90b7434990bcb459513d8c52c4.html"
+						}
+					],
+					"check": "function (issueManager, oCoreFacade, oScope) {\n\t\t\tvar controlCustomCssHashMap = {},\n\t\t\t\texternalStyleSheets = CoreHelper.getExternalStyleSheets();\n\n\t\t\texternalStyleSheets.forEach(function (styleSheet) {\n\n\t\t\t\tArray.from(styleSheet.rules).forEach(function (rule) {\n\t\t\t\t\tvar selector = rule.selectorText,\n\t\t\t\t\t\tmatchedNodes = document.querySelectorAll(selector);\n\n\t\t\t\t\tmatchedNodes.forEach(function (node) {\n\t\t\t\t\t\tvar hasUI5Parent = CoreHelper.nodeHasUI5ParentControl(node, oScope);\n\t\t\t\t\t\tif (hasUI5Parent) {\n\t\t\t\t\t\t\tvar ui5Control = jQuery(node).control()[0];\n\n\t\t\t\t\t\t\tif (!controlCustomCssHashMap.hasOwnProperty(ui5Control.getId())) {\n\t\t\t\t\t\t\t\tcontrolCustomCssHashMap[ui5Control.getId()] =  \"\";\n\t\t\t\t\t\t\t}\n\n\t\t\t\t\t\t\tvar cssSource = CoreHelper.getStyleSource(styleSheet);\n\t\t\t\t\t\t\tcontrolCustomCssHashMap[ui5Control.getId()] += \"'\" + selector + \"'\" + \" from \" + cssSource + \",\\n\";\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t});\n\n\t\t\tObject.keys(controlCustomCssHashMap).forEach(function(id) {\n\t\t\t\tissueManager.addIssue({\n\t\t\t\t\tseverity: sap.ui.support.Severity.Low,\n\t\t\t\t\tdetails: \"The following selector(s) \" + controlCustomCssHashMap[id] + \" affects standard style setting for control\",\n\t\t\t\t\tcontext: {\n\t\t\t\t\t\tid: id\n\t\t\t\t\t}\n\t\t\t\t});\n\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"preloadAsyncCheck": {
+					"id": "preloadAsyncCheck",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "1.32",
+					"title": "Preload Configuration",
+					"description": "Checks whether the preload configuration was set correctly to async",
+					"resolution": "Add \"data-sap-ui-preload=\"async\"\" to script tag that includes \"sap-ui-core.js\"",
+					"resolutionurls": [
+						{
+							"text": "Performance: Speed Up Your App",
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/408b40efed3c416681e1bd8cdd8910d4.html"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade) {\n\t\t\t// Check for FLP scenario\n\t\t\tvar oUshellLib = sap.ui.getCore().getLoadedLibraries()[\"sap.ushell\"];\n\n\t\t\tif (sap.ui.getCore().getConfiguration().getPreload() !== \"async\" && !oUshellLib) {\n\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\tdetails: \"Preloading libraries asynchronously improves the application performance massively.\",\n\t\t\t\t\tcontext: {\n\t\t\t\t\t\tid: \"WEBPAGE\"\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t}\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"cacheBusterToken": {
+					"id": "cacheBusterToken",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "Application Resource Caching",
+					"description": "Checks whether the application uses cache buster tokens in its requests for static resources from SAPUI5 repositories",
+					"resolution": "Change the application\nNote: Not using cache buster tokens has a negative impact on performance.\nFor more information, see the SAPUI5 developer guide.",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Cache Buster for SAPUI5 Application Resources",
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/4cfe7eff3001447a9d4b0abeaba95166.html"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar sUI5ICFNode = \"/sap/bc/ui5_ui5/\";\n\t\t\tvar aAppNames = [];\n\t\t\tvar sAppName;\n\t\t\tvar aRequests = jQuery.sap.measure.getRequestTimings();\n\t\t\tfor (var i = 0; i < aRequests.length; i++) {\n\t\t\t\tvar sUrl = aRequests[i].name;\n\t\t\t\t//We limit the check to requests under ICF node \"/sap/bc/ui5_ui5/\", only these are relevant here\n\t\t\t\tif (sUrl.indexOf(sUI5ICFNode) > 0) {\n\t\t\t\t\tif (!sUrl.match(/\\/~[A-Z0-9]*~/g)) {\n\t\t\t\t\t\tif (sUrl.indexOf(\"/sap-ui-cachebuster/sap-ui-core.js\") < 0 && sUrl.indexOf(\"sap-ui-cachebuster-info.json\") < 0) {\n\t\t\t\t\t\t\tvar aSegments = sUrl.split(sUI5ICFNode);\n\t\t\t\t\t\t\taSegments = aSegments[1].split(\"/\");\n\t\t\t\t\t\t\tsAppName = aSegments[0] === \"sap\" ? aSegments[1] : \"/\" + aSegments[0] + \"/\" + aSegments[1];\n\t\t\t\t\t\t\tif (aAppNames.indexOf(sAppName) < 0) {\n\t\t\t\t\t\t\t\taAppNames.push(sAppName);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t\tfor (var i = 0; i < aAppNames.length; i++) {\n\t\t\t\tsAppName = aAppNames[i];\n\t\t\t\tvar sICFPath = sUI5ICFNode + (sAppName.charAt(0) === \"/\" ? sAppName.substr(1) : \"sap/\" + sAppName);\n\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\tdetails: \"Application '\" + sAppName + \"' has no cache buster tokens in some or all of its requests.\\n \" +\n\t\t\t\t\t\t\"For more information about the URLs affected under application '\" + sAppName + \"' please check the network trace for URLs starting with '\" + sICFPath + \"'\",\n\t\t\t\t\tcontext: {\n\t\t\t\t\t\tid: \"WEBPAGE\"\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t}\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"libraryUsage": {
+					"id": "libraryUsage",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "1.34",
+					"title": "Library Usage",
+					"description": "Checks whether there are unused loaded libraries",
+					"resolution": "Adapt your application descriptor and your application coding to improve the performance",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Descriptor Dependencies to Libraries and Components",
+							"href": "https://openui5.hana.ondemand.com/#/topic/8521ad1955f340f9a6207d615c88d7fd"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\n\t\t\t//1. Ignore libraries with instantiated elements\n\t\t\tvar mLibraries = sap.ui.getCore().getLoadedLibraries();\n\t\t\toScope.getElements().forEach(function(oElement) {\n\t\t\t\tvar sElementLib = oElement.getMetadata().getLibraryName();\n\t\t\t\tif (mLibraries[sElementLib]) {\n\t\t\t\t\tdelete mLibraries[sElementLib];\n\t\t\t\t}\n\t\t\t});\n\n\t\t\t// 2. Ignore libraries with declared modules\n\t\t\t// Alternative: More exact, but request-dependent solution would be loading and evaluating the resources.json file for each library\n\t\t\tvar aDeclaredModules = jQuery.sap.getAllDeclaredModules();\n\t\t\tObject.keys(mLibraries).forEach(function(sLibrary) {\n\t\t\t\tvar sLibraryWithDot = sLibrary + \".\";\n\t\t\t\tfor (var i = 0; i < aDeclaredModules.length; i++) {\n\t\t\t\t\t// Ignore library types and library enum files\n\t\t\t\t\tvar sDeclaredModule = aDeclaredModules[i];\n\t\t\t\t\tif (sDeclaredModule.indexOf(sLibraryWithDot) === 0 &&\n\t\t\t\t\t\tmLibraries[sLibrary].types.indexOf(sDeclaredModule) === -1 &&\n\t\t\t\t\t\tsDeclaredModule.lastIndexOf(\".library\") !== sDeclaredModule.length - \".library\".length &&\n\t\t\t\t\t\tsDeclaredModule.lastIndexOf(\".library-preload\") !== sDeclaredModule.length - \".library-preload\".length &&\n\t\t\t\t\t\tsDeclaredModule.lastIndexOf(\".flexibility\") !== sDeclaredModule.length - \".flexibility\".length &&\n\t\t\t\t\t\tsDeclaredModule.lastIndexOf(\".support\") !== sDeclaredModule.length - \".support\".length) {\n\t\t\t\t\t\tdelete mLibraries[sLibrary];\n\t\t\t\t\t\tbreak;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\n\t\t\t// 3. Remove unused library dependent unused libraries\n\t\t\tvar aUnusedLibrary = Object.keys(mLibraries);\n\t\t\tObject.keys(mLibraries).forEach(function(sLibrary) {\n\t\t\t\tmLibraries[sLibrary].dependencies.forEach(function(oDependency) {\n\t\t\t\t\tvar iIndex = aUnusedLibrary.indexOf(oDependency);\n\t\t\t\t\tif (iIndex > -1) {\n\t\t\t\t\t\taUnusedLibrary.splice(iIndex, 1);\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\taUnusedLibrary.forEach(function(sUnusedLibrary) {\n\t\t\t\t// There are apps which use modules with default lib (empty string)\n\t\t\t\tif (sUnusedLibrary){\n\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\tdetails: \"The library '\" + sUnusedLibrary + \"' has been loaded, but not used so far in the analyzed scope of the application. There are two options to solve this issue: \\n\" +\n\t\t\t\t\t\t\t\"1. If the library is needed at later state in your application, you can make use of lazy library loading (see resolution section).\" +\n\t\t\t\t\t\t\t\" Please be aware that if this lazy flag isn't used correctly this might lead to a performance decrease. \\n\" +\n\t\t\t\t\t\t\t\"2. If the library has been loaded by accident and is never used in the application, you should remove the library from the bootstrap or application descriptor.\",\n\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\tid: \"WEBPAGE\"\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"lazyComponents": {
+					"id": "lazyComponents",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Lazy loading of components",
+					"description": "Checks whether lazy loading of components is used",
+					"resolution": "Adapt your application descriptor and your application coding to improve the performance",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Descriptor Dependencies to Libraries and Components",
+							"href": "https://openui5.hana.ondemand.com/#/topic/8521ad1955f340f9a6207d615c88d7fd"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar mComponents = oCoreFacade.getComponents();\n\t\t\tvar mComponentReuseUsage = {};\n\t\t\tvar bComponentLazyKnown = false;\n\n\t\t\tObject.keys(mComponents).forEach(function(sComponentId) {\n\t\t\t\tvar oManifest = mComponents[sComponentId].getManifest();\n\t\t\t\tif (oManifest && oManifest['sap.ui5'] && oManifest['sap.ui5'].dependencies) {\n\t\t\t\t\tvar mComps = oManifest['sap.ui5'].dependencies.components;\n\t\t\t\t\tif (mComps && Object.keys(mComps).length > 0) {\n\t\t\t\t\t\tmComponentReuseUsage[sComponentId] = true;\n\t\t\t\t\t\tObject.keys(mComps).forEach(function(sComp) {\n\t\t\t\t\t\t\tif (mComps[sComp].lazy !== undefined) {\n\t\t\t\t\t\t\t\tbComponentLazyKnown = true;\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tif (Object.keys(mComponentReuseUsage).length > 0 && !bComponentLazyKnown) {\n\t\t\t\tObject.keys(mComponentReuseUsage).forEach(function(sComponent) {\n\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\tdetails: \"No lazy Component loading detected. Define lazy components in your application descriptor, if this feature can be used in the application.\",\n\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\tid: sComponent\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t}\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"reuseComponents": {
+					"id": "reuseComponents",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Components reusage via componentUsages",
+					"description": "Components are more performant and flexible, if defined via componentUsages",
+					"resolution": "Adapt your application descriptor and your application coding to improve the performance",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Using and Nesting Components",
+							"href": "https://openui5.hana.ondemand.com/#/topic/346599f0890d4dfaaa11c6b4ffa96312"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar mComponents = oCoreFacade.getComponents();\n\t\t\tvar mComponentUsage = {};\n\t\t\tvar bComponentUsagesUsed = false;\n\n\t\t\tObject.keys(mComponents).forEach(function(sComponentId) {\n\t\t\t\tvar oManifest = mComponents[sComponentId].getManifest();\n\t\t\t\tvar oManifestSapUi5 = oManifest['sap.ui5'];\n\n\t\t\t\t// Check usage of old way of defining Components\n\t\t\t\tif (oManifestSapUi5 && oManifestSapUi5.dependencies &&\n\t\t\t\t\toManifestSapUi5.dependencies['components'] &&\n\t\t\t\t\tObject.keys(oManifestSapUi5.dependencies['components']).length > 0) {\n\t\t\t\t\tmComponentUsage[sComponentId] = true;\n\t\t\t\t}\n\n\t\t\t\t// Check usage of new way of defining Components\n\t\t\t\tif (oManifestSapUi5 && oManifestSapUi5.componentUsages !== undefined) {\n\t\t\t\t\tbComponentUsagesUsed = true;\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tif (Object.keys(mComponentUsage).length > 0 && !bComponentUsagesUsed) {\n\t\t\t\tObject.keys(mComponentUsage).forEach(function(sComponentId) {\n\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\tdetails: \"There are defined reuse components in the application descriptor. Please check the documentation,\" +\n\t\t\t\t\t\t\t\" whether you can define your components via componentUsage.\",\n\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\tid: sComponentId\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t}\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"modelPreloading": {
+					"id": "modelPreloading",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "1.38",
+					"title": "Model preloading",
+					"description": "Preloaded models, which load their data from external locations, can load data earlier",
+					"resolution": "Adapt your application descriptor and your application coding to improve the performance",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Manifest Model Preload",
+							"href": "https://openui5.hana.ondemand.com/#/topic/26ba6a5c1e5c417f8b21cce1411dba2c"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar mComponents = oCoreFacade.getComponents();\n\t\t\tvar mComponentsWithRelevantModels = {};\n\t\t\tvar bModelPreloadKnown = false;\n\n\t\t\tObject.keys(mComponents).forEach(function(sComponentId) {\n\t\t\t\tvar oManifest = mComponents[sComponentId].getManifest();\n\t\t\t\tvar mModels = oManifest['sap.ui5'].models || {};\n\t\t\t\tvar mDataSources = oManifest['sap.app'].dataSources;\n\t\t\t\tObject.keys(mModels).forEach(function(sModel) {\n\t\t\t\t\tvar mModel = mModels[sModel];\n\t\t\t\t\tvar mDataSource;\n\t\t\t\t\tif (mModel.dataSource) {\n\t\t\t\t\t\tmDataSource = mDataSources[mModel.dataSource];\n\t\t\t\t\t}\n\t\t\t\t\tif (mModel.type === \"sap.ui.model.odata.v2.ODataModel\"\n\t\t\t\t\t\t|| mModel.type === \"sap.ui.model.odata.v4.ODataModel\"\n\t\t\t\t\t\t|| mDataSource && mDataSource.type === \"OData\") {\n\t\t\t\t\t\tmComponentsWithRelevantModels[sComponentId] = true;\n\t\t\t\t\t\tif (mModel.preload !== undefined) {\n\t\t\t\t\t\t\tbModelPreloadKnown = true;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t\tif (!bModelPreloadKnown) {\n\t\t\t\tObject.keys(mComponentsWithRelevantModels).forEach(function(sComponentId) {\n\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\tdetails: \"The used OData models don't make use of the preloading feature.\",\n\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\tid: sComponentId\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t}\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"asynchronousXMLViews": {
+					"id": "asynchronousXMLViews",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "1.34",
+					"title": "Asynchronous XML views",
+					"description": "Asynchronous XML views leads to smoother view transitions, doesn't block the UI and allows for more efficient SAPUI5 flexibility services",
+					"resolution": "Adapt your application descriptor and your application coding to improve the performance and efficiency",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Routing Configuration",
+							"href": "https://openui5.hana.ondemand.com/#/topic/902313063d6f45aeaa3388cc4c13c34e"
+						},
+						{
+							"text": "Documentation: Instantiating Views",
+							"href": "https://openui5.hana.ondemand.com/#/topic/68d0e58857a647d49470d9f92dd859bd"
+						},
+						{
+							"text": "Documentation: UI Adaptation at Runtime: Enable Your App",
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/f1430c0337534d469da3a56307ff76af.html"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar mComponents = oCoreFacade.getComponents();\n\t\t\tvar mComponentsRoutingSync = {};\n\n\t\t\t// 1. Collect XML views in analyzed scope\n\t\t\tvar aSyncXMLViews = oScope.getElements().filter(function(oControl) {\n\t\t\t\treturn oControl.getMetadata().getName() === \"sap.ui.core.mvc.XMLView\";\n\t\t\t}).filter(function(oXMLView) {\n\t\t\t\treturn oXMLView.oAsyncState === undefined;\n\t\t\t});\n\n\t\t\tObject.keys(mComponents).forEach(function(sComponentId) {\n\t\t\t\t// 2. Check router instances and collect connected views (also other view types than XML)\n\t\t\t\tvar oRouter = mComponents[sComponentId].getRouter && mComponents[sComponentId].getRouter();\n\t\t\t\tif (oRouter && oRouter._oConfig) {\n\t\t\t\t\tif (oRouter._oConfig._async !== true) {\n\t\t\t\t\t\tmComponentsRoutingSync[sComponentId] = [];\n\t\t\t\t\t\tif (mComponents[sComponentId].getTargets() &&\n\t\t\t\t\t\t\tmComponents[sComponentId].getTargets()._oViews &&\n\t\t\t\t\t\t\tmComponents[sComponentId].getTargets()._oViews._oViews) {\n\t\t\t\t\t\t\tvar oTargetViews = mComponents[sComponentId].getTargets()._oViews._oViews;\n\t\t\t\t\t\t\tObject.keys(oTargetViews).forEach(function(sViewId) {\n\t\t\t\t\t\t\t\tvar sViewName = oTargetViews[sViewId].getViewName().split(\"\\.\").pop();\n\t\t\t\t\t\t\t\tmComponentsRoutingSync[sComponentId].push(sViewName);\n\t\t\t\t\t\t\t\taSyncXMLViews = aSyncXMLViews.filter(function(oXMLView) {\n\t\t\t\t\t\t\t\t\treturn oTargetViews[sViewId] !== oXMLView;\n\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tObject.keys(mComponentsRoutingSync).forEach(function(sComponentId) {\n\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\tdetails: \"Routing between views (\" + mComponentsRoutingSync[sComponentId].join(', ') + \") is used, but configured to be synchronous.\" +\n\t\t\t\t\t\t\" Please take a look at the resolution 'Routing Configuration'.\",\n\t\t\t\t\tcontext: {\n\t\t\t\t\t\tid: sComponentId\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\n\t\t\taSyncXMLViews.forEach(function(oSyncView) {\n\t\t\t\tvar sSyncViewId = oSyncView.getId();\n\t\t\t\tvar sViewName = oSyncView.getViewName().split(\"\\.\").pop();\n\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\tdetails: \"The XML view '\" + sViewName + \" is loaded synchronous. Please take a look at the resolution 'Instantiating Views'.\",\n\t\t\t\t\tcontext: {\n\t\t\t\t\t\tid: sSyncViewId\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"bindingPathSyntaxValidation": {
+					"id": "bindingPathSyntaxValidation",
+					"audiences": [
+						"Control",
+						"Application"
+					],
+					"categories": [
+						"Bindings"
+					],
+					"enabled": true,
+					"minversion": "1.32",
+					"title": "Model: Unresolved binding path",
+					"description": "The binding path used in the model could not be resolved",
+					"resolution": "Check the binding path for typos",
+					"resolutionurls": [
+						{
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.model.Context.html",
+							"text": "API Reference: Context"
+						},
+						{
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/e5310932a71f42daa41f3a6143efca9c.html",
+							"text": "Documentation: Data Binding"
+						},
+						{
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/97830de2d7314e93b5c1ee3878a17be9.html",
+							"text": "Data Binding Tutorial - Step 12: Aggregation Binding Using Templates"
+						},
+						{
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/6c7c5c266b534e7ea9a28f861dc515f5.html",
+							"text": "Data Binding Tutorial - Step 13: Element Binding"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar mElements = oScope.getElements();\n\t\t\tObject.keys(mElements).forEach(function(sElement) {\n\n\t\t\t\tvar oElement = mElements[sElement],\n\t\t\t\t\tmBindingInfos = oElement.mBindingInfos;\n\n\t\t\t\tObject.keys(mBindingInfos).forEach(function(sBindingInfo) {\n\n\t\t\t\t\tvar oBinding = mBindingInfos[sBindingInfo].binding;\n\t\t\t\t\tif (oBinding && !(oBinding instanceof CompositeBinding) && oBinding.getModel && oBinding.getModel()) {\n\t\t\t\t\t\tvar oModel = oBinding.getModel();\n\n\t\t\t\t\t\t//find elements with unresolved PropertyBindings\n\t\t\t\t\t\tif ((oBinding.getValue && oBinding.getValue() === undefined)\n\t\t\t\t\t\t\t|| (oBinding instanceof ListBinding && oBinding.getLength() === 0)) {\n\t\t\t\t\t\t\tvar sJsonModelBestMatch = false;\n\n\t\t\t\t\t\t\tif (oModel instanceof JSONModel) {\n\t\t\t\t\t\t\t\tvar oJsonModelResult = oModel.getObject(oBinding.getPath());\n\t\t\t\t\t\t\t\tif (!oJsonModelResult) {\n\t\t\t\t\t\t\t\t\tvar oData = oModel.getData();\n\t\t\t\t\t\t\t\t\tsJsonModelBestMatch = _fnFindBestMatch(Object.keys(oData), oBinding.getPath());\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t} else if (oModel.oMetadata && oModel.oMetadata instanceof ODataMetadata) {\n\t\t\t\t\t\t\t\t//try to look it up\n\t\t\t\t\t\t\t\tvar result = oModel.oMetadata._getEntityTypeByPath(oBinding.getPath());\n\t\t\t\t\t\t\t\tif (!result) {\n\t\t\t\t\t\t\t\t\tvar aValues = [];\n\t\t\t\t\t\t\t\t\toModel.oMetadata.getServiceMetadata().dataServices.schema.forEach(function(mShema) {\n\n\t\t\t\t\t\t\t\t\t\tif (mShema.entityContainer) {\n\t\t\t\t\t\t\t\t\t\t\tmShema.entityContainer.forEach(function(mContainer) {\n\t\t\t\t\t\t\t\t\t\t\t\tif (mContainer.entitySet) {\n\t\t\t\t\t\t\t\t\t\t\t\t\tmContainer.entitySet.forEach(function(mEntitySet) {\n\t\t\t\t\t\t\t\t\t\t\t\t\t\tif (mEntitySet.name) {\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\taValues.push(mEntitySet.name);\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t\t\t\t}\n\n\t\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t\t\tsJsonModelBestMatch = _fnFindBestMatch(aValues, oBinding.getPath());\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\n\t\t\t\t\t\t\tif (sJsonModelBestMatch) {\n\t\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\t\t\tdetails: \"Element \" + oElement.getId() + \" with binding path '\" + oBinding.getPath() + \"' has unresolved bindings.\" +\n\t\t\t\t\t\t\t\t\t\" You could try '\" + sJsonModelBestMatch + \"' instead\",\n\t\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\t\tid: oElement.getId()\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t}\n\n\t\t\t\t\t\t} else if (oBinding.getValue && oBinding.getValue() === oBinding.getPath()) {\n\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\tseverity: Severity.Low,\n\t\t\t\t\t\t\t\tdetails: \"Element \" + oElement.getId() + \" with binding path '\" + oBinding.getPath() + \"' has the same value as the path. Potential Error.\",\n\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\tid: oElement.getId()\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"xmlViewWrongNamespace": {
+					"id": "xmlViewWrongNamespace",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "-",
+					"title": "XML View is not configured with namespace 'sap.ui.core.mvc'",
+					"description": "For consistency and proper resource loading, the root node of an XML view must be configured with the namespace 'mvc'",
+					"resolution": "Define the XML view as '<core:View ...>' and configure the XML namepspace as 'xmlns:mvc=\"sap.ui.core.mvc\"'",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Namespaces in XML Views",
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/2421a2c9fa574b2e937461b5313671f0.html"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === \"sap.ui.core.mvc.XMLView\"; });\n\t\t\taXMLViews.forEach(function (oXMLView) {\n\t\t\t\tif (oXMLView._xContent.namespaceURI !== \"sap.ui.core.mvc\") {\n\t\t\t\t\tvar sViewName = oXMLView.getViewName().split(\"\\.\").pop();\n\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\tdetails: \"The view '\" + sViewName + \"' (\" + oXMLView.getId() + \") is configured with namespace '\" + oXMLView._xContent.namespaceURI + \"' instead of 'sap.ui.core.mvc'\",\n\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\tid: oXMLView.getId()\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"xmlViewDefaultNamespace": {
+					"id": "xmlViewDefaultNamespace",
+					"audiences": [
+						"Control",
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "-",
+					"title": "Default namespace missing in XML view",
+					"description": "If the default namespace is missing, the code is less readable and parsing performance may be slow",
+					"resolution": "Set the namespace of the control library that holds most of the controls you use as default namespace (e.g. xmlns=\"sap.m\")",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Namespaces in XML Views",
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/2421a2c9fa574b2e937461b5313671f0.html"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === \"sap.ui.core.mvc.XMLView\"; });\n\n\t\t\taXMLViews.forEach(function (oXMLView) {\n\t\t\t\tif (!oXMLView._xContent.attributes.getNamedItem(\"xmlns\")) {\n\t\t\t\t\tvar sViewName = oXMLView.getViewName().split(\"\\.\").pop();\n\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.Low,\n\t\t\t\t\t\tdetails: \"The view '\" + sViewName + \"' (\" + oXMLView.getId() + \") does not contain a default namespace\",\n\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\tid: oXMLView.getId()\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"xmlViewLowerCaseControl": {
+					"id": "xmlViewLowerCaseControl",
+					"audiences": [
+						"Control",
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "-",
+					"title": "Control tag in XML view starts with lower case",
+					"description": "Control tags with lower case cannot be loaded in Linux-based systems",
+					"resolution": "Start the Control tag with upper case",
+					"resolutionurls": [],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\n\t\t\t//get all aggregations of each element\n\t\t\tvar aAggregationsOfElements = oScope.getElements().map(\n\t\t\t\t\tfunction (oElement) {\n\t\t\t\t\t\treturn Object.keys(oElement.getMetadata().getAllAggregations());\n\t\t\t\t\t}\n\t\t\t);\n\t\t\t//flatten array of arrays and filter duplicates\n\t\t\tvar aAggregations = aAggregationsOfElements.reduce(\n\t\t\t\tfunction(a, b) {\n\t\t\t\t\treturn a.concat(b);\n\t\t\t\t}).filter(\n\t\t\t\t\tfunction (x, i, a) {\n\t\t\t\t\t\treturn a.indexOf(x) === i;\n\t\t\t\t\t});\n\n\t\t\tvar aXMLViews = oScope.getElements().filter(function (oControl) {\n\t\t\t\treturn oControl.getMetadata().getName() === \"sap.ui.core.mvc.XMLView\";\n\t\t\t});\n\n\t\t\taXMLViews.forEach(function (oXMLView) {\n\t\t\t\tvar aLocalName = [];\n\t\t\t\tvar _getTags = function (oXcontent) {\n\t\t\t\t\taLocalName.push(oXcontent.localName);\n\t\t\t\t\tfor (var i = 0; i < oXcontent.children.length; i++) {\n\t\t\t\t\t\t_getTags(oXcontent.children[i]);\n\t\t\t\t\t}\n\t\t\t\t};\n\n\t\t\t\t_getTags(oXMLView._xContent);\n\t\t\t\taLocalName = jQuery.uniqueSort(aLocalName);\n\n\t\t\t\taLocalName.forEach(function (sTag) \t{\n\t\t\t\t\tvar sFirstLetter = sTag.charAt(0);\n\t\t\t\t\t// check for lowercase, aggregations are excluded\n\t\t\t\t\tif ((sFirstLetter.toLowerCase() === sFirstLetter) && !aAggregations.includes(sTag)) {\n\t\t\t\t\t\tvar sViewName = oXMLView.getViewName().split(\"\\.\").pop();\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\tdetails: \"View '\" + sViewName + \"' (\" + oXMLView.getId() + \") contains a Control tag that starts with lower case '\" + sTag + \"'\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: oXMLView.getId()\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"xmlViewUnusedNamespaces": {
+					"id": "xmlViewUnusedNamespaces",
+					"audiences": [
+						"Control",
+						"Application"
+					],
+					"categories": [
+						"Performance"
+					],
+					"enabled": true,
+					"minversion": "-",
+					"title": "Unused namespaces in XML view",
+					"description": "Namespaces that are declared but not used have a negative impact on performance (and may confuse readers of the code)",
+					"resolution": "Remove the unused namespaces from the view definition",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Namespaces in XML Views",
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/2421a2c9fa574b2e937461b5313671f0.html"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\tvar aXMLViews = oScope.getElements().filter(function (oControl) { return oControl.getMetadata().getName() === \"sap.ui.core.mvc.XMLView\"; });\n\n\t\t\taXMLViews.forEach(function (oXMLView) {\n\t\t\t\tfor (var i = 0; i < oXMLView._xContent.attributes.length; i++) {\n\t\t\t\t\tvar sName = oXMLView._xContent.attributes.item(i).name;\n\t\t\t\t\tvar sLocalName = oXMLView._xContent.attributes.item(i).localName;\n\t\t\t\t\tvar sFullName = oXMLView._xContent.attributes.item(i).value;\n\n\t\t\t\t\t// check all explicit namespaces except for the injected support namespace\n\t\t\t\t\t// and the mvc, because the use of mvc is checked in other rule\n\t\t\t\t\tif (sName.match(\"xmlns:\")\n\t\t\t\t\t\t&& sLocalName !== \"xmlns:support\"\n\t\t\t\t\t\t&& sLocalName !== \"mvc\") {\n\t\t\t\t\t\tfor (var j = 0; j < jQuery(oXMLView._xContent).children().length; j++) {\n\t\t\t\t\t\t\tvar oContent = jQuery(oXMLView._xContent).children()[j];\n\t\t\t\t\t\t\t// get the xml code of the children as a string\n\t\t\t\t\t\t\t// The outerHTML doesn't work with IE, so we used\n\t\t\t\t\t\t\t// the XMLSerializer instead\n\t\t\t\t\t\t\tvar sContent = new XMLSerializer().serializeToString(oContent);\n\n\t\t\t\t\t\t\t// check if there is a reference of this namespace inside the view\n\t\t\t\t\t\t\tif (!sContent.match(\"<\" + sLocalName + \":\")) {\n\t\t\t\t\t\t\t\tvar sViewName = oXMLView.getViewName().split(\"\\.\").pop();\n\t\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\t\t\tdetails: \"View '\" + sViewName + \"' (\" + oXMLView.getId() + \") contains an unused XML namespace '\" + sLocalName + \"' referencing library '\" + sFullName + \"'\",\n\t\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\t\tid: oXMLView.getId()\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"deprecatedProperty": {
+					"id": "deprecatedProperty",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "1.38",
+					"title": "Control is using deprecated property",
+					"description": "Using deprecated properties should be avoided, because they are not maintained anymore",
+					"resolution": "Refer to the API of the element which property should be used instead.",
+					"resolutionurls": [
+						{
+							"text": "API Reference",
+							"href": "https://sapui5.hana.ondemand.com/#/api/deprecated"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(sap.ui.core.Element)\n\t\t\t\t.forEach(function(oElement) {\n\n\t\t\t\t\tvar oMetadata = oElement.getMetadata(),\n\t\t\t\t\t\tmProperties = oMetadata.getAllProperties();\n\n\t\t\t\t\tfor (var sProperty in mProperties) {\n\t\t\t\t\t\t// if property is deprecated and it is set to a different from the default value\n\t\t\t\t\t\t// Checks only the deprecated properties with defaultValue property is not null\n\t\t\t\t\t\tif (mProperties[sProperty].deprecated\n\t\t\t\t\t\t\t&& mProperties[sProperty].defaultValue != oElement.getProperty(sProperty)\n\t\t\t\t\t\t\t&& mProperties[sProperty].defaultValue !== null) {\n\n\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\t\tdetails: \"Deprecated property '\" + sProperty + \"' is used for element '\" + oElement.getId() + \"'.\",\n\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\tid: oElement.getId()\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"deprecatedAggregation": {
+					"id": "deprecatedAggregation",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "1.38",
+					"title": "Control is using deprecated aggregation",
+					"description": "Using deprecated aggregation should be avoided, because they are not maintained anymore",
+					"resolution": "Refer to the API of the element which aggregation should be used instead.",
+					"resolutionurls": [
+						{
+							"text": "API Reference",
+							"href": "https://sapui5.hana.ondemand.com/#/api/deprecated"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(sap.ui.core.Element)\n\t\t\t\t.forEach(function(oElement) {\n\n\t\t\t\t\tvar oMetadata = oElement.getMetadata(),\n\t\t\t\t\t\tmAggregations = oMetadata.getAllAggregations();\n\n\t\t\t\t\tfor (var sAggregation in mAggregations) {\n\t\t\t\t\t\t// if aggregation is deprecated and contains elements\n\t\t\t\t\t\tif (mAggregations[sAggregation].deprecated\n\t\t\t\t\t\t\t&& !jQuery.isEmptyObject(oElement.getAggregation(sAggregation))) {\n\n\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\t\tdetails: \"Deprecated aggregation '\" + sAggregation + \"' is used for element '\" + oElement.getId() + \"'.\",\n\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\tid: oElement.getId()\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"deprecatedAssociation": {
+					"id": "deprecatedAssociation",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "1.38",
+					"title": "Control is using deprecated association",
+					"description": "Using deprecated association should be avoided, because they are not maintained anymore",
+					"resolution": "Refer to the API of the element which association should be used instead.",
+					"resolutionurls": [
+						{
+							"text": "API Reference",
+							"href": "https://sapui5.hana.ondemand.com/#/api/deprecated"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(sap.ui.core.Element)\n\t\t\t\t.forEach(function(oElement) {\n\n\t\t\t\t\tvar oMetadata = oElement.getMetadata(),\n\t\t\t\t\t\tmAssociations = oMetadata.getAllAssociations();\n\n\t\t\t\t\tfor (var sAssociation in mAssociations) {\n\t\t\t\t\t\t// if association is deprecated and set by developer\n\t\t\t\t\t\tif (mAssociations[sAssociation].deprecated\n\t\t\t\t\t\t\t&& !jQuery.isEmptyObject(oElement.getAssociation(sAssociation))) {\n\n\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\t\tdetails: \"Deprecated association '\" + sAssociation + \"' is used for element '\" + oElement.getId() + \"'.\",\n\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\tid: oElement.getId()\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"deprecatedEvent": {
+					"id": "deprecatedEvent",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "1.38",
+					"title": "Control is using deprecated event",
+					"description": "Using deprecated event should be avoided, because they are not maintained anymore",
+					"resolution": "Refer to the API of the element which event should be used instead.",
+					"resolutionurls": [
+						{
+							"text": "API Reference",
+							"href": "https://sapui5.hana.ondemand.com/#/api/deprecated"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(sap.ui.core.Element)\n\t\t\t\t.forEach(function(oElement) {\n\n\t\t\t\t\tvar oMetadata = oElement.getMetadata(),\n\t\t\t\t\t\tmEvents = oMetadata.getAllEvents();\n\n\t\t\t\t\tfor (var sEvent in mEvents) {\n\t\t\t\t\t\t// if event is deprecated and developer added event handler\n\t\t\t\t\t\tif (mEvents[sEvent].deprecated\n\t\t\t\t\t\t\t&& oElement.mEventRegistry[sEvent] && oElement.mEventRegistry[sEvent].length > 0) {\n\n\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\t\tdetails: \"Deprecated event '\" + sEvent + \"' is used for element '\" + oElement.getId() + \"'.\",\n\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\tid: oElement.getId()\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.ui.core"
+				},
+				"controllerSyncCodeCheck": {
+					"id": "controllerSyncCodeCheck",
+					"audiences": [
+						"Internal"
+					],
+					"categories": [
+						"Consistency"
+					],
+					"enabled": true,
+					"minversion": "1.32",
+					"title": "Synchronous calls in controller code",
+					"description": "Synchronous calls are deprecated within the Google Chrome browser and block the UI.",
+					"resolution": "Use asynchronous XHR calls instead",
+					"resolutionurls": [
+						{
+							"text": "Documentation: Loading a Module",
+							"href": "https://sapui5.hana.ondemand.com/#docs/guide/d12024e38385472a89c1ad204e1edb48.html"
+						}
+					],
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\n\t\t\t// get the controllers and the associated viewId\n\t\t\tvar aElements = oScope.getElementsByClassName(sap.ui.core.mvc.View);\n\t\t\tvar aControllersWithViewId = [];\n\t\t\taElements.forEach(function(oElement) {\n\t\t\t\tif (oElement.getController) {\n\t\t\t\t\tvar oController = oElement.getController();\n\t\t\t\t\tif (oController) {\n\t\t\t\t\t\taControllersWithViewId.push({\n\t\t\t\t\t\t\tcontroller: oController,\n\t\t\t\t\t\t\tviewId: oElement.getId()\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\n\t\t\t// checks the given module's functions code for invalidContent\n\t\t\t// returns an array which contains the functions with invalid content\n\t\t\tvar fnGatherInvalidControllerFunctions = function(oController, viewId, aInvalidContent, fnProcessInvalidFunction) {\n\t\t\t\tvar _aInvalidControllerFunctions = [];\n\t\t\t\tObject.keys(oController).forEach(function(sProtoKey) {\n\t\t\t\t\tvar sFnContent = oController[sProtoKey].toString().replace(/(\\r\\n|\\n|\\r)/gm,\"\");\n\n\t\t\t\t\taInvalidContent.forEach(function(sInvalidContent) {\n\t\t\t\t\t\tif (sFnContent.indexOf(sInvalidContent) > 0) {\n\t\t\t\t\t\t\tfnProcessInvalidFunction(oController.getMetadata().getName(), sProtoKey, sInvalidContent, viewId);\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\n\n\t\t\t\t});\n\t\t\t\treturn _aInvalidControllerFunctions;\n\t\t\t};\n\n\t\t\tvar mViewIdToControllerFunctions = {};\n\n\t\t\t// check the code for each controller and their prototype\n\t\t\t// and stores it grouped by view id in <code>mViewIdToControllerFunctions</code>\n\t\t\taControllersWithViewId.forEach(function(oControllerWithViewId) {\n\n\t\t\t\tvar fnMapUsingViewIds = function(sControllerName, sFnName, sInvalidContent, sViewId) {\n\t\t\t\t\tmViewIdToControllerFunctions[sViewId] = mViewIdToControllerFunctions[sViewId] || [];\n\t\t\t\t\tmViewIdToControllerFunctions[sViewId].push({\n\t\t\t\t\t\tcontrollerName: sControllerName,\n\t\t\t\t\t\tfunctionName: sFnName,\n\t\t\t\t\t\tinvalidContent: sInvalidContent\n\t\t\t\t\t});\n\t\t\t\t};\n\n\t\t\t\t// check each controller and their prototypes\n\t\t\t\tvar oController = oControllerWithViewId.controller;\n\t\t\t\twhile (oController) {\n\t\t\t\t\tfnGatherInvalidControllerFunctions(oController, oControllerWithViewId.viewId, aObsoleteFunctionNames, fnMapUsingViewIds);\n\t\t\t\t\tvar oControllerPrototype = Object.getPrototypeOf(oController);\n\t\t\t\t\t// sanity check to avoid potential endless loops and limit recursion only up to the Controller itself\n\t\t\t\t\tif (oController === oControllerPrototype || oControllerPrototype === sap.ui.core.mvc.Controller.prototype) {\n\t\t\t\t\t\tbreak;\n\t\t\t\t\t}\n\t\t\t\t\toController = oControllerPrototype;\n\t\t\t\t}\n\t\t\t});\n\n\n\t\t\t// add issues for each invalid controller function\n\t\t\tObject.keys(mViewIdToControllerFunctions).forEach(function(sViewId) {\n\t\t\t\tvar aControllerFunctions = mViewIdToControllerFunctions[sViewId];\n\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\tdetails: aControllerFunctions.map(function(oController) {\n\t\t\t\t\t\treturn \"\\nSynchronous call \" + oController.invalidContent + \" found in \" + oController.controllerName + \"#\" + oController.functionName;\n\t\t\t\t\t}),\n\t\t\t\t\tcontext: {\n\t\t\t\t\t\tid: sViewId\n\t\t\t\t\t}\n\t\t\t\t});\n\n\t\t\t});\n\n\t\t}",
+					"libName": "sap.ui.core"
+				}
+			}
+		}
+	},
+	"sap.m": {
+		"lib": {
+			"name": "sap.m",
+			"niceName": "UI5 Main Library"
+		},
+		"ruleset": {
+			"_oSettings": {
+				"name": "sap.m",
+				"niceName": "UI5 Main Library"
+			},
+			"_mRules": {
+				"breadcrumbsInOverflowToolbar": {
+					"id": "breadcrumbsInOverflowToolbar",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.34",
+					"title": "Breadcrumbs in OverflowToolbar",
+					"description": "The Breadcrumbs should not be placed inside an OverflowToolbar",
+					"resolution": "Place breadcrumbs in another container.",
+					"resolutionurls": [
+						{
+							"text": "SAP Fiori Design Guidelines: Breadcrumbs",
+							"href": "https://experience.sap.com/fiori-design-web/breadcrumb/#guidelines"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.m.Breadcrumbs\")\n\t\t\t\t.forEach(function(oElement) {\n\n\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\tif (oElement.getParent() instanceof sap.m.OverflowToolbar) {\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\tdetails: \"Breadcrumbs '\" + sElementName + \"' (\" + sElementId + \") is placed inside an OverflowToolbar.\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.m"
+				},
+				"onlyIconButtonNeedsTooltip": {
+					"id": "onlyIconButtonNeedsTooltip",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "Button: Consists of only an icon, needs a tooltip",
+					"description": "A button without text needs a tooltip, so that the user knows what the button does",
+					"resolution": "Add a value to the tooltip property of the button",
+					"resolutionurls": [
+						{
+							"text": "SAP Fiori Design Guidelines: Button",
+							"href": "https://experience.sap.com/fiori-design-web/button/#guidelines"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.m.Button\")\n\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\tif (oElement.getProperty(\"icon\")\n\t\t\t\t\t\t&& !oElement.getProperty(\"text\")\n\t\t\t\t\t\t&& !oElement.getAggregation(\"tooltip\")) {\n\n\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\tdetails: \"Button '\" + sElementName + \"' (\" + sElementId + \") consists of only an icon but has no tooltip\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.m"
+				},
+				"checkBoxDisabledAndEditable": {
+					"id": "checkBoxDisabledAndEditable",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "-",
+					"title": "CheckBox: the control is editable, while the control is disabled",
+					"description": "Disabled control can`t be edited",
+					"resolution": "Either set enabled to true ot set editable to false",
+					"resolutionurls": [
+						{
+							"text": "API Reference: sap.m.CheckBox",
+							"href": "https://sapui5.hana.ondemand.com/#/api/sap.m.CheckBox"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\t\toScope.getElementsByClassName(\"sap.m.CheckBox\")\n\t\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\t\tvar sElementId,\n\t\t\t\t\t\t\tsElementName;\n\n\t\t\t\t\t\tif (oElement.getEditable() && !oElement.getEnabled()) {\n\t\t\t\t\t\t\t\tsElementId = oElement.getId();\n\t\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\t\tseverity: Severity.Low,\n\t\t\t\t\t\t\t\t\tdetails: \"CheckBox '\" + sElementName + \"' (\" + sElementId + \") is editable, but disabled\",\n\t\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t}",
+					"libName": "sap.m"
+				},
+				"densityAwareImage": {
+					"id": "densityAwareImage",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "Image: Density awareness enabled",
+					"description": "One or more requests will be sent trying to get the density perfect version of the image. These extra requests will impact performance, if the corresponding density versions of the image do not exist on the server",
+					"resolution": "Either ensure the corresponding density versions of the image exist on the backend server or disable density awareness",
+					"resolutionurls": [
+						{
+							"text": "API Refrence for sap.m.Image",
+							"href": "https://sapui5.hana.ondemand.com/#/api/sap.m.Image"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.m.Image\")\n\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\tif (oElement.getDensityAware()) {\n\n\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.Low,\n\t\t\t\t\t\t\tdetails: \"Image '\" + sElementName + \"' (\" + sElementId + \") is density aware\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.m"
+				},
+				"inputNeedsLabel": {
+					"id": "inputNeedsLabel",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "Input field: Missing label",
+					"description": "An input field needs a label",
+					"resolution": "Define a sap.m.Label for the input field in the xml view and set the labelFor property to this input field Id.",
+					"resolutionurls": [
+						{
+							"text": "SAP Fiori Design Guidelines: Input field",
+							"href": "https://experience.sap.com/fiori-design-web/input-field/#guidelines"
+						}
+					],
+					"check": "function (issueManager, oCoreFacade, oScope) {\n\n\t\t\tvar aInputIds = oScope.getElementsByClassName(\"sap.m.Input\")\n\t\t\t\t.map(function(oInput) {\n\t\t\t\t\treturn oInput.getId();\n\t\t\t\t});\n\n\t\t\toScope.getElementsByClassName(\"sap.m.Label\")\n\t\t\t\t.forEach(function (oLabel){\n\t\t\t\t\tvar sLabelFor = oLabel.getLabelFor();\n\t\t\t\t\tif (aInputIds.indexOf(sLabelFor) > -1) {\n\t\t\t\t\t\tvar iIndex = aInputIds.indexOf(sLabelFor);\n\t\t\t\t\t\taInputIds.splice(iIndex, 1);\n\t\t\t\t\t}\n\t\t\t\t});\n\n\t\t\tif (aInputIds.length > 0) {\n\t\t\t\taInputIds.forEach(function(sInputId) {\n\t\t\t\t\tissueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\tdetails: \"Input field\" + \" (\" + sInputId + \") is missing a label.\",\n\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\tid: sInputId\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t}\n\t\t}",
+					"libName": "sap.m"
+				},
+				"linkWithPressHandlerNoHref": {
+					"id": "linkWithPressHandlerNoHref",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "Link: If a press handler is attached, the href property should not be set",
+					"description": "If a JavaScript action should be triggered using the press event, the href property should not be set",
+					"resolution": "Remove the href property of the link",
+					"resolutionurls": [
+						{
+							"text": "API Reference: sap.m.Link",
+							"href": "https://sapui5.hana.ondemand.com/#/api/sap.m.Link"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.m.Link\")\n\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\tif (oElement.getProperty(\"href\")\n\t\t\t\t\t\t&& oElement.mEventRegistry.hasOwnProperty(\"press\")) {\n\n\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\tdetails: \"Link '\" + sElementName + \"' (\" + sElementId + \") has both press handler attached and href property set\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.m"
+				},
+				"panelWithheaderTextOrWithHeaderToolbarWithTitle": {
+					"id": "panelWithheaderTextOrWithHeaderToolbarWithTitle",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "Panel: Header text is missing",
+					"description": "According to the SAP Fiori Guidelines, a panel needs a header text or a header toolbar.",
+					"resolution": "Add a title directly to the panel or use a headerToolbar with title element",
+					"resolutionurls": [
+						{
+							"text": "SAP Fiori Design Guidelines: Panel",
+							"href": "https://experience.sap.com/fiori-design-web/panel/#components",
+							"text2": "Explored Sample",
+							"href2": "https://openui5beta.hana.ondemand.com/#/sample/sap.m.sample.Panel/preview"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\t\toScope.getElementsByClassName(\"sap.m.Panel\")\n\t\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\t\tif (!jQuery.isEmptyObject(oElement.getAggregation(\"Title text\"))\n\t\t\t\t\t\t\t|| !jQuery.isEmptyObject(oElement.getAggregation(\"Toolbar\"))) {\n\n\t\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\t\tdetails: \"Panel '\" + sElementName + \"' (\" + sElementId + \") does not have a title or a toolbar aggregation\",\n\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t}",
+					"libName": "sap.m"
+				},
+				"selectItemsSizeLimit": {
+					"id": "selectItemsSizeLimit",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "Select: Items have size limit of 100",
+					"description": "The 'items' model imposes a default size limit of 100",
+					"resolution": "Use the sap.ui.model.Model.prototype.setSizeLimit to adjust the size limit of the 'items' model if you expect more than 100 items",
+					"resolutionurls": [
+						{
+							"text": "API Reference for sap.ui.model.Model",
+							"href": "https://sapui5.hana.ondemand.com/#/api/sap.ui.model.Model"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.m.Select\")\n\t\t\t\t.forEach(function(oElement) {\n\n\t\t\t\t\tvar oBinding = oElement.getBinding(\"items\"),\n\t\t\t\t\t\toModel = oBinding && oBinding.oModel;\n\n\t\t\t\t\tif (oModel && (oModel.iSizeLimit === DEFAULT_MODEL_SIZE_LIMIT)) {\n\n\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.Low,\n\t\t\t\t\t\t\tdetails: \"Select '\" + sElementName + \"' (\" + sElementId + \") model has a default limit of 100 items\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.m"
+				},
+				"noContainInactiveItemsInSelectDialog": {
+					"id": "noContainInactiveItemsInSelectDialog",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "SelectDialog: Select Dialog should not contain inactive items",
+					"description": "All items in a Select Dialog should be interactable/selectable",
+					"resolution": "Make all items interactable/selectable or remove the inactive ones",
+					"resolutionurls": [
+						{
+							"text": "SAP Fiori Design Guidelines: SelectDialog",
+							"href": "https://experience.sap.com/fiori-design-web/select-dialog/#behavior-and-interaction"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\t\toScope.getElementsByClassName(\"sap.m.SelectDialog\")\n\t\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\t\tvar aListItems = oElement.getItems(),\n\t\t\t\t\t\t\tsListOfInactiveItems = \"\";\n\n\t\t\t\t\t\taListItems.forEach(function(oListItem){\n\t\t\t\t\t\t\tif (oListItem.getType() === sap.m.ListType.Inactive) {\n\t\t\t\t\t\t\t\tvar sListItemId = oListItem.getId(),\n\t\t\t\t\t\t\t\t\tsListItemName = oListItem.getMetadata().getElementName();\n\n\t\t\t\t\t\t\t\tsListOfInactiveItems += sListItemName + \" (\" + sListItemId + \"); \";\n\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\n\t\t\t\t\t\tif (sListOfInactiveItems) {\n\t\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\t\tdetails: \"SelectDialog '\" + sElementName + \"' (\" + sElementId + \") contains one or more items of type 'Inactive' : \" + sListOfInactiveItems,\n\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t}",
+					"libName": "sap.m"
+				},
+				"tokenizerParentRule": {
+					"id": "tokenizerParentRule",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Usage"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "Tokenizer: Tokenizer parent control",
+					"description": "The tokenizer can only be used as part of MultiComboBox, MultiInput or ValueHelpDialog.",
+					"resolution": "Do not use the Tokenizer control standalone.",
+					"check": "function(oIssueManager, oCoreFacade, oScope) {\n\t\t\t\tvar oTokenizers = oScope.getElementsByClassName(\"sap.m.Tokenizer\"),\n\t\t\t\t\tbParent,\n\t\t\t\t\tsParentControlName,\n\t\t\t\t\toParent;\n\t\t\t\toTokenizers.forEach(function (oTokenizer) {\n\t\t\t\t\toParent = oTokenizer.getParent();\n\t\t\t\t\tsParentControlName = oParent && oParent.getMetadata().getName();\n\t\t\t\t\tbParent = oParent && sParentControlName === \"sap.m.MultiInput\" ||\n\t\t\t\t\t\t\t\tsParentControlName === \"sap.m.MultiComboBox\" ||\n\t\t\t\t\t\t\t\t// Value Help Dialog uses the tokenizer in a vertical layout\n\t\t\t\t\t\t\t\t(sParentControlName === \"sap.ui.layout.VerticalLayout\" &&\n\t\t\t\t\t\t\t\toParent.hasStyleClass(\"compVHTokenizerHLayout\"));\n\n\t\t\t\t\tif (!bParent) {\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\tdetails: \"Tokenizer with id: \" + oTokenizer.getId() + \" is not inside a MultiComboBox, MultiInput or ValueHelpDialog\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: oTokenizer.getId()\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t}",
+					"libName": "sap.m"
+				}
+			}
+		}
+	},
+	"sap.ui.layout": {
+		"lib": {
+			"name": "sap.ui.layout",
+			"niceName": "UI5 Layout Library"
+		},
+		"ruleset": {
+			"_oSettings": {
+				"name": "sap.ui.layout",
+				"niceName": "UI5 Layout Library"
+			},
+			"_mRules": {
+				"formResponsiveLayout": {
+					"id": "formResponsiveLayout",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: Use of ResponsiveLayout",
+					"description": "ResponsiveLayout should not be used any longer because of UX requirements",
+					"resolution": "Use the ResponsiveGridLayout instead",
+					"resolutionurls": [
+						{
+							"text": "API Reference: Form",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+						},
+						{
+							"text": "API Reference: SimpleForm",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+						},
+						{
+							"text": "API Reference: ResponsiveGridLayout",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.ResponsiveGridLayout.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.Form\")\n\t\t\t\t.forEach(function (oForm) {\n\t\t\t\t\tvar oLayout = oForm.getLayout();\n\t\t\t\t\tif (oLayout && oLayout.isA(\"sap.ui.layout.form.ResponsiveLayout\")) {\n\t\t\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\t\t\tvar sId;\n\t\t\t\t\t\tvar sName = \"Form\";\n\n\t\t\t\t\t\tif (isSimpleForm(oParent)) {\n\t\t\t\t\t\t\tsId = oParent.getId();\n\t\t\t\t\t\t\tsName = \"SimpleForm\";\n\t\t\t\t\t\t} else if (isSmartForm(oParent)) {\n\t\t\t\t\t\t\t// for SmartForm don't check on Form level\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\tsId = oForm.getId();\n\t\t\t\t\t\t}\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\tdetails: sName + \" \" + sId + \" uses ResponsiveLayout.\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formTitleAndToolbar": {
+					"id": "formTitleAndToolbar",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Functionality"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: Title and Toolbar at same time",
+					"description": "A Form or FormContainer can only have a Title or a Toolbar assigned, not both",
+					"resolution": "Use either Title or a Toolbar",
+					"resolutionurls": [
+						{
+							"text": "API Reference: Form",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+						},
+						{
+							"text": "API Reference: SimpleForm",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+						},
+						{
+							"text": "API Reference: FormContainer",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.FormContainer.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.Form\")\n\t\t\t.forEach(function(oForm) {\n\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\tif (isSimpleForm(oParent)){\n\t\t\t\t\t// check on SimpleForm\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\tcheckTitleAndToolbar(oForm, \"Form\", oIssueManager);\n\t\t\t});\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.FormContainer\")\n\t\t\t.forEach(function(oFormContainer) {\n\t\t\t\tcheckTitleAndToolbar(oFormContainer, \"FormContainer\", oIssueManager);\n\t\t\t});\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.SimpleForm\")\n\t\t\t.forEach(function(oSimpleForm) {\n\t\t\t\tcheckTitleAndToolbar(oSimpleForm, \"SimpleForm\", oIssueManager);\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formTitleOrAriaLabel": {
+					"id": "formTitleOrAriaLabel",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Accessibility"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: Container must have a Title",
+					"description": "A FormContainer must have some Title information.\n This can be a Title on the FormContainer or some Title assigned via AriaLabelledBy.\n If no Title is assigned to the FormContainer there must be at least a Title set on the Form or assigned via AriaLabelledBy on the Form.",
+					"resolution": "Set a Title on Form or FormContainer or assign it via AriaLabelledBy",
+					"resolutionurls": [
+						{
+							"text": "API Reference: Form",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+						},
+						{
+							"text": "API Reference: SimpleForm",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+						},
+						{
+							"text": "API Reference: FormContainer",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.FormContainer.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.FormContainer\")\n\t\t\t.forEach(function(oFormContainer) {\n\t\t\t\tvar oForm = oFormContainer.getParent();\n\t\t\t\tif (!oForm) {\n\t\t\t\t\treturn;\n\t\t\t\t}\n\n\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\tvar sId;\n\t\t\t\tvar sName = \"Form\";\n\n\t\t\t\tif (isSimpleForm(oParent)) {\n\t\t\t\t\tsId = oParent.getId();\n\t\t\t\t\tsName = \"SimpleForm\";\n\t\t\t\t} else if (isSmartForm(oParent)) {\n\t\t\t\t\t// for SmartForm handle there\n\t\t\t\t\treturn;\n\t\t\t\t} else {\n\t\t\t\t\tsId = oForm.getId();\n\t\t\t\t}\n\n\t\t\t\tif (!oFormContainer.getTitle() && oFormContainer.getAriaLabelledBy().length == 0 &&\n\t\t\t\t\t\t!oForm.getTitle() && oForm.getAriaLabelledBy().length == 0) {\n\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\tdetails: \"In \" + sName + \" \" + sId + \", FormContainer\" + oFormContainer.getId() + \" has no Title assigned.\",\n\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\tid: oFormContainer.getId()\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formAllowedContent": {
+					"id": "formAllowedContent",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: Content not allowed",
+					"description": "It is not allowed to use any layout as content of a Form or nest Forms This leads to issues with screen reader support, keyboard support and field alignment.\nIt is also not supported to use other unsupported controls as content of the Form as it is not sure this controls will meet the alingment and intartaction requirements of the Form.",
+					"resolution": "Use only labels and controls implementing interface sap.ui.core.IFormContent as content of a Form",
+					"resolutionurls": [
+						{
+							"text": "API Reference: Form",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+						},
+						{
+							"text": "API Reference: SimpleForm",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+						},
+						{
+							"text": "API Reference: FormElement",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.FormElement.html"
+						},
+						{
+							"text": "API Reference: IFormContent",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.core.IFormContent.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.Form\")\n\t\t\t.forEach(function(oForm) {\n\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\tif (isSimpleForm(oParent) || isSmartForm(oParent)) {\n\t\t\t\t\t// for SimpleForm and SmartForm don't check on Form level\n\t\t\t\t\treturn;\n\t\t\t\t} else {\n\t\t\t\t\tvar aFormContainers = oForm.getFormContainers();\n\t\t\t\t\tfor (var i = 0; i < aFormContainers.length; i++) {\n\t\t\t\t\t\tvar oFormContainer = aFormContainers[i];\n\t\t\t\t\t\tvar aFormElements = oFormContainer.getFormElements();\n\t\t\t\t\t\tfor (var j = 0; j < aFormElements.length; j++) {\n\t\t\t\t\t\t\tvar oFormElement = aFormElements[j];\n\t\t\t\t\t\t\tvar aFields = oFormElement.getFields();\n\t\t\t\t\t\t\tfor (var k = 0; k < aFields.length; k++) {\n\t\t\t\t\t\t\t\tvar oField = aFields[k];\n\t\t\t\t\t\t\t\tcheckAllowedContent(oField, \"Form\", oIssueManager);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.SimpleForm\")\n\t\t\t.forEach(function(oSimpleForm) {\n\t\t\t\tvar aContent = oSimpleForm.getContent();\n\t\t\t\tfor (var i = 0; i < aContent.length; i++) {\n\t\t\t\t\tvar oField = aContent[i];\n\t\t\t\t\tif (!(oField.isA([\"sap.ui.core.Title\", \"sap.ui.core.Toolbar\", \"sap.ui.core.Label\"]))) {\n\t\t\t\t\t\tcheckAllowedContent(oField, \"SimpleForm\", oIssueManager);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t\toScope.getElementsByClassName(\"sap.ui.comp.smartform.SmartForm\")\n\t\t\t.forEach(function(oSmartForm) {\n\t\t\t\tvar aGroups = oSmartForm.getGroups();\n\t\t\t\tfor (var i = 0; i < aGroups.length; i++) {\n\t\t\t\t\tvar oGroup = aGroups[i];\n\t\t\t\t\tvar aGroupElements = oGroup.getGroupElements();\n\t\t\t\t\tfor (var j = 0; j < aGroupElements.length; j++) {\n\t\t\t\t\t\tvar oGroupElement = aGroupElements[j];\n\t\t\t\t\t\tvar aElements = oGroupElement.getElements();\n\t\t\t\t\t\tfor (var k = 0; k < aElements.length; k++) {\n\t\t\t\t\t\t\tvar oElement = aElements[k];\n\t\t\t\t\t\t\tcheckAllowedContent(oElement, \"SmartForm\", oIssueManager);\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formTitleInToolbarAria": {
+					"id": "formTitleInToolbarAria",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Accessibility"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: Title in Toolbar needs to be set to AriaLabelledBy",
+					"description": "If a Toolbar is used in a Form or FormContainer and the Toolbar has a Title inside it must be set to AriaLabelledBy to enable screen reader support",
+					"resolution": "Set the Title used inside the Toolbar to AriaLabelledBy of the Form or FormContainer.",
+					"resolutionurls": [
+						{
+							"text": "API Reference: Form",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+						},
+						{
+							"text": "API Reference: SimpleForm",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+						},
+						{
+							"text": "API Reference: FormContainer",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.FormContainer.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.Form\")\n\t\t\t.forEach(function(oForm) {\n\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\tif (isSimpleForm(oParent)){\n\t\t\t\t\t// check on SimpleForm\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\tcheckTitleInToolbarAria(oForm, \"Form\", oIssueManager);\n\t\t\t});\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.FormContainer\")\n\t\t\t.forEach(function(oFormContainer) {\n\t\t\t\tvar oParent = oFormContainer.getParent().getParent();\n\t\t\t\tif (isSimpleForm(oParent)){\n\t\t\t\t\t// can not happen in SimpleForm\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\tcheckTitleInToolbarAria(oFormContainer, \"FormContainer\", oIssueManager);\n\t\t\t});\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.SimpleForm\")\n\t\t\t.forEach(function(oSimpleForm) {\n\t\t\t\tcheckTitleInToolbarAria(oSimpleForm, \"SimpleForm\", oIssueManager);\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formPropertiesOfOtherLayout": {
+					"id": "formPropertiesOfOtherLayout",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Consistency"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "SimpleForm: Properties not valid for layout",
+					"description": "Some properties of SimpleForm are only valid for a special layout. If they are used with a different layout they have no effect.",
+					"resolution": "Use only properties that are valid for the layout used",
+					"resolutionurls": [
+						{
+							"text": "API Reference: SimpleForm",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.SimpleForm\")\n\t\t\t.forEach(function(oSimpleForm) {\n\t\t\t\tvar sId = oSimpleForm.getId();\n\t\t\t\tvar sLayout = oSimpleForm.getLayout();\n\t\t\t\tvar aFields = [];\n\t\t\t\tvar checkProperty = function(sProperty) {\n\t\t\t\t\tif (!oSimpleForm.isPropertyInitial(sProperty)) {\n\t\t\t\t\t\taFields.push(sProperty);\n\t\t\t\t\t}\n\t\t\t\t};\n\n\t\t\t\tif (sLayout != sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout &&\n\t\t\t\t\t\tsLayout != sap.ui.layout.form.SimpleFormLayout.ColumnLayout) {\n\t\t\t\t\tcheckProperty(\"labelSpanL\");\n\t\t\t\t\tcheckProperty(\"emptySpanL\");\n\t\t\t\t\tcheckProperty(\"columnsXL\");\n\t\t\t\t\tcheckProperty(\"columnsL\");\n\t\t\t\t\tcheckProperty(\"columnsM\");\n\t\t\t\t}\n\n\t\t\t\tif (sLayout != sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout) {\n\t\t\t\t\tcheckProperty(\"labelSpanXL\");\n\t\t\t\t\tcheckProperty(\"labelSpanM\");\n\t\t\t\t\tcheckProperty(\"labelSpanS\");\n\t\t\t\t\tcheckProperty(\"adjustLabelSpan\");\n\t\t\t\t\tcheckProperty(\"emptySpanXL\");\n\t\t\t\t\tcheckProperty(\"emptySpanM\");\n\t\t\t\t\tcheckProperty(\"emptySpanS\");\n\t\t\t\t\tcheckProperty(\"singleContainerFullSize\");\n\t\t\t\t\tcheckProperty(\"breakpointXL\");\n\t\t\t\t\tcheckProperty(\"breakpointL\");\n\t\t\t\t\tcheckProperty(\"breakpointM\");\n\t\t\t\t}\n\n\t\t\t\tif (sLayout != sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout) {\n\t\t\t\t\tcheckProperty(\"minWidth\");\n\t\t\t\t\tcheckProperty(\"labelMinWidth\");\n\t\t\t\t}\n\n\t\t\t\tif (sLayout == sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout) {\n\t\t\t\t\tcheckProperty(\"maxContainerCols\");\n\t\t\t\t}\n\n\t\t\t\tfor (var i = 0; i < aFields.length; i++) {\n\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\tseverity: Severity.Low,\n\t\t\t\t\t\tdetails: \"SimpleForm \" + sId + \" with Layout \" + sLayout + \" doesn't support use of property \" + aFields[i] + \".\",\n\t\t\t\t\t\tcontext: {id: sId}\n\t\t\t\t\t});\n\t\t\t\t}\n\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formEditableContent": {
+					"id": "formEditableContent",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: Editable content must match editable property",
+					"description": "The editable property of the Form is used to align the Labels and add screen reader information. If editable controls are used in Form, the property must be set, otherwise it should not be set.",
+					"resolution": "Set the editable property according to the content of the Form.",
+					"resolutionurls": [
+						{
+							"text": "API Reference: Form",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+						},
+						{
+							"text": "API Reference: SimpleForm",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+						},
+						{
+							"text": "API Reference: FormElement",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.FormElement.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.Form\")\n\t\t\t.forEach(function(oForm) {\n\t\t\t\tvar bEditable = oForm.getEditable();\n\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\tvar oMetadata = oParent ? oParent.getMetadata() : undefined;\n\t\t\t\tvar sId;\n\t\t\t\tvar sName = \"Form\";\n\n\t\t\t\tif (isSimpleForm(oParent)) {\n\t\t\t\t\tsId = oParent.getId();\n\t\t\t\t\tsName = \"SimpleForm\";\n\t\t\t\t} else if (isSmartForm(oParent)) {\n\t\t\t\t\t// for SmartForm SmartControls handle edit mode\n\t\t\t\t\treturn;\n\t\t\t\t} else {\n\t\t\t\t\tsId = oForm.getId();\n\t\t\t\t}\n\n\t\t\t\tvar bError = false;\n\t\t\t\tvar bEditableField = false;\n\t\t\t\tvar aFormContainers = oForm.getFormContainers();\n\t\t\t\tfor (var i = 0; i < aFormContainers.length; i++) {\n\t\t\t\t\tvar oFormContainer = aFormContainers[i];\n\t\t\t\t\tvar aFormElements = oFormContainer.getFormElements();\n\t\t\t\t\tfor (var j = 0; j < aFormElements.length; j++) {\n\t\t\t\t\t\tvar oFormElement = aFormElements[j];\n\t\t\t\t\t\tvar aFields = oFormElement.getFields();\n\t\t\t\t\t\tfor (var k = 0; k < aFields.length; k++) {\n\t\t\t\t\t\t\tvar oField = aFields[k];\n\t\t\t\t\t\t\toMetadata = oField.getMetadata();\n\n\t\t\t\t\t\t\tif (bEditable) {\n\t\t\t\t\t\t\t\t// check if no non editable fields are used (can only check for known fields)\n\t\t\t\t\t\t\t\tif (/*oField.isA(\"sap.m.Text\") ||\n\t\t\t\t\t\t\t\t\t\toField.isA(\"sap.m.Link\") ||*/\n\t\t\t\t\t\t\t\t\t\toField.isA(\"sap.ui.core.Icon\") ||\n\t\t\t\t\t\t\t\t\t\t/*oField.isA(\"sap.m.Image\") ||\n\t\t\t\t\t\t\t\t\t\toField.isA(\"sap.m.ObjectNumber\") ||\n\t\t\t\t\t\t\t\t\t\toField.isA(\"sap.m.ObjectStatus\") ||*/\n\t\t\t\t\t\t\t\t\t\t(oMetadata.hasProperty(\"displayOnly\") && oField.getDisplayOnly())){\n\t\t\t\t\t\t\t\t\tbError = true;\n\t\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t// check if editable fields are used (can only check for known fields)\n\t\t\t\t\t\t\tif (oField.isA(\"sap.m.InputBase\") ||\n\t\t\t\t\t\t\t\t\toField.isA(\"sap.m.Select\") ||\n\t\t\t\t\t\t\t\t\toField.isA(\"sap.m.CheckBox\") ||\n\t\t\t\t\t\t\t\t\toField.isA(\"sap.m.RadioButton\") ||\n\t\t\t\t\t\t\t\t\toField.isA(\"sap.m.RadioButtonGroup\") ||\n\t\t\t\t\t\t\t\t\t(oField.isA(\"sap.m.Button\") && oFormElement.getLabel()) || //allow buttons only without label\n\t\t\t\t\t\t\t\t\toField.isA(\"sap.m.Slider\") ||\n\t\t\t\t\t\t\t\t\t(oMetadata.hasProperty(\"displayOnly\") && !oField.getDisplayOnly())) {\n\t\t\t\t\t\t\t\tbEditableField = true;\n\t\t\t\t\t\t\t\tif (!bEditable) {\n\t\t\t\t\t\t\t\t\t// in display mode no editable fields are allowed\n\t\t\t\t\t\t\t\t\tbError = true;\n\t\t\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t\tif (bError) {\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tif (!bError && bEditable && !bEditableField) {\n\t\t\t\t\t\t// if editable, at least one editable field must exist\n\t\t\t\t\t\tbError = true;\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (bError) {\n\t\t\t\t\tif (bEditable) {\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\tdetails: sName + \" \" + sId + \" is set to editable but has only non-editable content.\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t} else {\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\tdetails: sName + \" \" + sId + \" is set to non-editable but has editable content.\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formWrongLayoutData": {
+					"id": "formWrongLayoutData",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Consistency"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: LayoutData assigned to Form content not valid for layout",
+					"description": "Layout data on Form content can be used to influence the appearance of Form. Depending on the layout used, different LayoutData can be used.",
+					"resolution": "Use only valid LayoutData that are suitable for the layout used",
+					"resolutionurls": [
+						{
+							"text": "API Reference: ResponsiveGridLayout",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.ResponsiveGridLayout.html"
+						},
+						{
+							"text": "API Reference: ResponsiveLayout",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.ResponsiveLayout.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.Form\")\n\t\t\t.forEach(function(oForm) {\n\t\t\t\tvar oLayout = oForm.getLayout();\n\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\tvar sId;\n\t\t\t\tvar sName = \"Form\";\n\n\t\t\t\tif (isSimpleForm(oParent)) {\n\t\t\t\t\tsId = oParent.getId();\n\t\t\t\t\tsName = \"SimpleForm\";\n\t\t\t\t} else if (isSmartForm(oParent)) {\n\t\t\t\t\tsId = oParent.getId();\n\t\t\t\t\tsName = \"SmartForm\";\n\t\t\t\t} else {\n\t\t\t\t\tsId = oForm.getId();\n\t\t\t\t}\n\n\t\t\t\tvar aFormContainers = oForm.getFormContainers();\n\t\t\t\tfor (var i = 0; i < aFormContainers.length; i++) {\n\t\t\t\t\tvar oFormContainer = aFormContainers[i];\n\t\t\t\t\tvar aFormElements = oFormContainer.getFormElements();\n\n\t\t\t\t\tcheckLayoutDataOfElement(oFormContainer, sName, sId, oLayout, oIssueManager);\n\n\t\t\t\t\tfor (var j = 0; j < aFormElements.length; j++) {\n\t\t\t\t\t\tvar oFormElement = aFormElements[j];\n\t\t\t\t\t\tvar aFields = oFormElement.getFields();\n\n\t\t\t\t\t\tcheckLayoutDataOfElement(oFormElement, sName, sId, oLayout, oIssueManager);\n\n\t\t\t\t\t\tfor (var k = 0; k < aFields.length; k++) {\n\t\t\t\t\t\t\tvar oField = aFields[k];\n\t\t\t\t\t\t\tcheckLayoutDataOfElement(oField, sName, sId, oLayout, oIssueManager);\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formMissingLabel": {
+					"id": "formMissingLabel",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Accessibility"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: Label for Form content missing",
+					"description": "For accessibility reasons, each field must have a label. \n If Label is assigned to FormElement, it will be automatically assigned to the corresponding fields. \n But if no Label is assigned to FormElement, the application must use the ariaLabelledBy property of the field to assign a label.",
+					"resolution": "Assign a label to the field",
+					"resolutionurls": [
+						{
+							"text": "API Reference: Form",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+						},
+						{
+							"text": "API Reference: SimpleForm",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+						},
+						{
+							"text": "API Reference: FormElement",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.FormElement.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.Form\")\n\t\t\t.forEach(function(oForm) {\n\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\tvar oMetadata = oParent ? oParent.getMetadata() : undefined;\n\t\t\t\tvar sId;\n\t\t\t\tvar sName = \"Form\";\n\n\t\t\t\tif (isSimpleForm(oParent)) {\n\t\t\t\t\tsId = oParent.getId();\n\t\t\t\t\tsName = \"SimpleForm\";\n\t\t\t\t} else if (isSmartForm(oParent)) {\n\t\t\t\t\treturn; // as in SmartForm Labels are created for SmartFields there must no explicit Label set\n\t\t\t\t} else {\n\t\t\t\t\tsId = oForm.getId();\n\t\t\t\t}\n\n\t\t\t\tvar aFormContainers = oForm.getFormContainers();\n\t\t\t\tfor (var i = 0; i < aFormContainers.length; i++) {\n\t\t\t\t\tvar oFormContainer = aFormContainers[i];\n\t\t\t\t\tif (oFormContainer.getVisible() && oFormContainer.getExpanded()) {\n\t\t\t\t\t\tvar aFormElements = oFormContainer.getFormElements();\n\t\t\t\t\t\tfor (var j = 0; j < aFormElements.length; j++) {\n\t\t\t\t\t\t\tvar oFormElement = aFormElements[j];\n\t\t\t\t\t\t\tvar oLabel = oFormElement.getLabel();\n\t\t\t\t\t\t\tif (!oLabel && oFormElement.getVisible()) {\n\t\t\t\t\t\t\t\tvar aFields = oFormElement.getFields();\n\t\t\t\t\t\t\t\tfor (var k = 0; k < aFields.length; k++) {\n\t\t\t\t\t\t\t\t\tvar oField = aFields[k];\n\t\t\t\t\t\t\t\t\tvar sFieldId = oField.getId();\n\t\t\t\t\t\t\t\t\toMetadata = oField.getMetadata();\n\t\t\t\t\t\t\t\t\tif (oMetadata.getAssociation(\"ariaLabelledBy\") &&\n\t\t\t\t\t\t\t\t\t\t\t(!oField.getAriaLabelledBy() || oField.getAriaLabelledBy().length == 0) &&\n\t\t\t\t\t\t\t\t\t\t\t!oField.isA(\"sap.m.Button\") &&\n\t\t\t\t\t\t\t\t\t\t\t!(oField.isA(\"sap.m.CheckBox\") && oField.getText()) &&\n\t\t\t\t\t\t\t\t\t\t\t!(oField.isA(\"sap.m.RadioButton\") && oField.getText())) {\n\t\t\t\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\t\t\t\t\tdetails: \"In \" + sName + \" \" + sId + \", no label has been assigned to field \" + oMetadata.getName() + \" \" + sFieldId + \".\",\n\t\t\t\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\t\t\t\tid: sFieldId\n\t\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				},
+				"formLabelAsField": {
+					"id": "formLabelAsField",
+					"audiences": [
+						"Application"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.48",
+					"title": "Form: Label is used as field",
+					"description": "FormElements can have Labels and Fields. \n Depending on the layout used and device and screen sizes, the way labels and fields are shown might differ. \n If labels are used as fields, this will lead to misaligned fields and labels in the Form and might have an effect on the screen reader support.",
+					"resolution": "Use Labels only in the Label aggregation",
+					"resolutionurls": [
+						{
+							"text": "API Reference: Form",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+						},
+						{
+							"text": "API Reference: FormElement",
+							"href": "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.FormElement.html"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.layout.form.Form\")\n\t\t\t.forEach(function(oForm) {\n\t\t\t\tvar oParent = oForm.getParent();\n\t\t\t\tvar oMetadata = oParent ? oParent.getMetadata() : undefined;\n\t\t\t\tvar sId;\n\t\t\t\tvar sName = \"Form\";\n\n\t\t\t\tif (isSimpleForm(oParent)) {\n\t\t\t\t\t// could not happen in SimleForm\n\t\t\t\t\treturn;\n\t\t\t\t} else if (isSmartForm(oParent)) {\n\t\t\t\t\tsId = oParent.getId();\n\t\t\t\t\tsName = \"SmartForm\";\n\t\t\t\t} else {\n\t\t\t\t\tsId = oForm.getId();\n\t\t\t\t}\n\n\t\t\t\tvar aFormContainers = oForm.getFormContainers();\n\t\t\t\tfor (var i = 0; i < aFormContainers.length; i++) {\n\t\t\t\t\tvar oFormContainer = aFormContainers[i];\n\t\t\t\t\tvar aFormElements = oFormContainer.getFormElements();\n\t\t\t\t\tfor (var j = 0; j < aFormElements.length; j++) {\n\t\t\t\t\t\tvar oFormElement = aFormElements[j];\n\t\t\t\t\t\tvar aFields = oFormElement.getFields();\n\t\t\t\t\t\tfor (var k = 0; k < aFields.length; k++) {\n\t\t\t\t\t\t\tvar oField = aFields[k];\n\t\t\t\t\t\t\tvar sFieldId = oField.getId();\n\t\t\t\t\t\t\toMetadata = oField.getMetadata();\n\t\t\t\t\t\t\tif (oMetadata.isInstanceOf(\"sap.ui.core.Label\")){\n\t\t\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\t\t\tdetails: sName + \" \" + sId + \": \" + oMetadata.getName() + \" \" + sFieldId + \" is used as field.\",\n\t\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\t\tid: sFieldId\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t}",
+					"libName": "sap.ui.layout"
+				}
+			}
+		}
+	},
+	"sap.uxap": {
+		"lib": {
+			"name": "sap.uxap",
+			"niceName": "ObjectPage library"
+		},
+		"ruleset": {
+			"_oSettings": {
+				"name": "sap.uxap",
+				"niceName": "ObjectPage library"
+			},
+			"_mRules": {
+				"objectPageComponentContainerHeight": {
+					"id": "objectPageComponentContainerHeight",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.26",
+					"title": "ObjectPageLayout: Height of componentContainer",
+					"description": "The componentContainer of ObjectPageLayout should always have a '100%' height explicitly set",
+					"resolution": "Set a '100%' height to the ComponentContainer of ObjectPageLayout",
+					"resolutionurls": [
+						{
+							"text": "SAP Fiori Design Guidelines: Object Page",
+							"href": "https://experience.sap.com/fiori-design-web/object-page/#guidelines"
+						}
+					],
+					"check": "function (issueManager, oCoreFacade, oScope) {\n\n\t\t\t\tvar aComponentContainers = oScope.getElementsByClassName(\"sap.ui.core.ComponentContainer\"),\n\t\t\t\t\taPages = oScope.getElementsByClassName(\"sap.uxap.ObjectPageLayout\"),\n\t\t\t\t\taPageOwnerComponentIds = [],\n\n\t\t\t\t\tgetOwnerComponent = function (oControl) {\n\n\t\t\t\t\t\tvar parent = oControl.getParent();\n\t\t\t\t\t\twhile (parent) {\n\t\t\t\t\t\t\tif (parent instanceof sap.ui.core.Component) {\n\t\t\t\t\t\t\t\treturn parent;\n\t\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\t\tparent = parent.getParent();\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t},\n\t\t\t\t\tisPageContainer = function (oComponentContainer) {\n\t\t\t\t\t\treturn (aPageOwnerComponentIds.indexOf(oComponentContainer.getComponent()) > -1);\n\t\t\t\t\t},\n\t\t\t\t\tgetPageOwnerComponentId = function (oPage) {\n\t\t\t\t\t\tvar oComponent = getOwnerComponent(oPage);\n\t\t\t\t\t\treturn oComponent && oComponent.getId();\n\t\t\t\t\t};\n\n\n\t\t\t\taPageOwnerComponentIds = aPages.map(getPageOwnerComponentId);\n\n\t\t\t\taComponentContainers\n\t\t\t\t\t.forEach(function (oComponentContainer) {\n\n\t\t\t\t\t\tif (isPageContainer(oComponentContainer) && (oComponentContainer.getHeight() !== \"100%\")) {\n\t\t\t\t\t\t\tvar sElementId = oComponentContainer.getId(),\n\t\t\t\t\t\t\t\tsElementName = oComponentContainer.getMetadata().getElementName();\n\n\t\t\t\t\t\t\tissueManager.addIssue({\n\t\t\t\t\t\t\t\tseverity: Severity.Medium,\n\t\t\t\t\t\t\t\tdetails: \"ComponentContainer '\" + sElementName + \"' (\" + sElementId + \") does not have '100%' height.\",\n\t\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t}",
+					"libName": "sap.uxap"
+				}
+			}
+		}
+	},
+	"sap.ui.unified": {
+		"lib": {
+			"name": "sap.ui.unified",
+			"niceName": "UI5 Main Library"
+		},
+		"ruleset": {
+			"_oSettings": {
+				"name": "sap.ui.unified",
+				"niceName": "UI5 Main Library"
+			},
+			"_mRules": {
+				"nonMultipartFileUploadRequiresXHR": {
+					"id": "nonMultipartFileUploadRequiresXHR",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "FileUploader: To disable multipart upload you should enable XHR",
+					"description": "The FileUploader 'useMultipart' property is disabled, but the required 'sendXHR' property is not enabled",
+					"resolution": "Either enable the 'sendXHR' property of the FileUploader or set the 'useMultipart' property to true",
+					"resolutionurls": [
+						{
+							"text": "API Reference: FileUploader",
+							"href": "https://sapui5.hana.ondemand.com/#/api/sap.ui.unified.FileUploader"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.unified.FileUploader\")\n\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\tif (!oElement.getUseMultipart()\n\t\t\t\t\t\t&& !oElement.getSendXHR()) {\n\n\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\tdetails: \"FileUploader '\" + sElementName + \"' (\" + sElementId + \") multipart upload cannot be disabled\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.ui.unified"
+				},
+				"fileUploaderParametersRequireXHRDisabled": {
+					"id": "fileUploaderParametersRequireXHRDisabled",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "FileUploader: XHR enabled but non-XHR parameter aggregation specified",
+					"description": "The FileUploader XHR is enabled but parameters are specified into the non-XHR (i.e. form-based) upload 'parameters' aggregation",
+					"resolution": "Either disable the 'sendXHR' property of the FileUploader, or use the 'headerParameters' aggregation to specify parameters for XHR upload",
+					"resolutionurls": [
+						{
+							"text": "API Reference: FileUploader",
+							"href": "https://sapui5.hana.ondemand.com/#/api/sap.ui.unified.FileUploader"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.unified.FileUploader\")\n\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\tif (oElement.getParameters()\n\t\t\t\t\t\t&& oElement.getSendXHR()) {\n\n\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\tdetails: \"FileUploader '\" + sElementName + \"' (\" + sElementId + \") has enabled XHR but specified non-XHR parameter aggregation\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.ui.unified"
+				},
+				"fileUploaderHeaderParametersRequireXHREnabled": {
+					"id": "fileUploaderHeaderParametersRequireXHREnabled",
+					"audiences": [
+						"Control"
+					],
+					"categories": [
+						"Usability"
+					],
+					"enabled": true,
+					"minversion": "1.28",
+					"title": "FileUploader: XHR disabled but XHR parameter aggregation specified",
+					"description": "The FileUploader has specified headerParameters, but the required XHR is disabled",
+					"resolution": "Either enable the 'sendXHR' property of the FileUploader, or use the 'parameters' aggregation to specify parameters for form-based upload",
+					"resolutionurls": [
+						{
+							"text": "API Reference: FileUploader",
+							"href": "https://sapui5.hana.ondemand.com/#/api/sap.ui.unified.FileUploader"
+						}
+					],
+					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.unified.FileUploader\")\n\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\tif (oElement.getHeaderParameters()\n\t\t\t\t\t\t&& !oElement.getSendXHR()) {\n\n\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\tdetails: \"FileUploader '\" + sElementName + \"' (\" + sElementId + \") headerParameters require XHR\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",
+					"libName": "sap.ui.unified"
+				}
+			}
+		}
+	}
+}
