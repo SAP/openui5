@@ -116,7 +116,7 @@
 										<custom:LightTable rows="{ path : '/properties'}"
 											 columnCount="2"
 											 columnTitles="Name,Description"
-											 class="sapUiSmallMarginTop">
+											 class="sapUiSmallMarginTop sapUiDocumentation2ColumnsEqualTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
 												<layout:VerticalLayout>
@@ -170,7 +170,7 @@
 												<custom:LightTable rows="{ path : '/constructor/throws', templateShareable: 'false'}"
 														columnTitles="Throws,Desktop"
 														columnCount="2"
-														class="sapUiDocumentationReturnsTable">
+														class="sapUiDocumentation2ColumnsEqualTable">
 													<custom:Row>
 														<m:Link text="{type}"
 																href="#/api/{type}"
@@ -485,7 +485,7 @@
 													<template:if test="{= ${method>returnValue} !== undefined}">
 														<custom:LightTable columnCount="2"
 																	columnTitles="Returns,Description"
-																	class="sapUiDocumentationReturnsTable">
+																	class="sapUiDocumentation2ColumnsEqualTable">
 															<custom:Row>
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
@@ -503,7 +503,7 @@
 														<custom:LightTable
 																columnTitles="Throws,Description"
 																columnCount="2"
-																class="sapUiDocumentationReturnsTable">
+																class="sapUiDocumentation2ColumnsEqualTable">
 															<template:repeat list="{method>throws}" var="throws">
 																<custom:Row>
 																	<m:Link text="{throws>type}"
