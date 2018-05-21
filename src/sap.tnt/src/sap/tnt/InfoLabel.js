@@ -29,7 +29,7 @@ sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./Inf
 		 * The control is designed to be vertically aligned with UI5 Input and Button control families.
 		 * When using <code>InfoLabel</code> in non-editable <code>Forms</code>, <code>Tables</code>, etc., set <code>displayOnly=true</code> for best visual results.
 		 *
-		 * <h3>Limitations</h3>
+		 * <h3>Usage Guidelines</h3>
 		 * <ul>
 		 * <li>If the text is longer than the width of the control, it doesn’t wrap. Instead, it’s represented as ellipsis. </li>
 		 * <li>When truncated, the full text in the control is not visible. Therefore, it’s recommended to make more space for longer items to be fully displayed.</li>
