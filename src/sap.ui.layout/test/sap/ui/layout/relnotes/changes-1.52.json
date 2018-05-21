@@ -75,5 +75,72 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "463c44bc312310cae7255663a1a84713cd762d3e",
+        "type": "FIX",
+        "text": " Form: Toolbar wrong aligned",
+        "references": []
+      },
+      {
+        "id": "d4884f766dfec221545bf65c7dd8ec2565ec8f30",
+        "type": "FIX",
+        "text": " Form: icons inside of content controls not shown",
+        "references": []
+      }
+    ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "2271c3eda969d4e1fea457127cd82e92202c1798",
+        "type": "FIX",
+        "text": " SimpleForm: resize handler active after changing layout",
+        "references": []
+      },
+      {
+        "id": "a5fd5f7b699dc49ecdf3d2a2e91b32c490a73152",
+        "type": "FIX",
+        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": []
+      }
+    ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "615bc794d6b7ce88b2d91a6c331a11eb87edc8be",
+        "type": "FIX",
+        "text": " Form: using ResponsiveLayout text too much padding",
+        "references": []
+      }
+    ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "5e8261b616cb1cd09ff7fcefb921fde81ce081dd",
+        "type": "FIX",
+        "text": " sap.ui.layout: MoveSimpleForm and AddSimpleFormGroup ChangeHandler",
+        "references": []
+      }
+    ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "5963abe34414d314e641b0337a597dbf10308c20",
+        "type": "FIX",
+        "text": " SimpleForm: Error if layout is set after content",
+        "references": []
+      }
+    ]
   }
 }

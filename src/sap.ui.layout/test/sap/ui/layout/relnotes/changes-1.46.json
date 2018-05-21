@@ -87,5 +87,154 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "39355cf8532b27c2d6aec88693babf1eabffa269",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.Form: error with too many fields",
+        "references": []
+      },
+      {
+        "id": "e5a9bea0897a88c6131bd53d78f32942f2947ba0",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm: renders twice",
+        "references": []
+      },
+      {
+        "id": "ab053e3ef506b8b1453c7fe9bc4a6781a7ac3b5a",
+        "type": "FIX",
+        "text": " sap.ui.layout: fixed changeHandler for HideSimpleForm",
+        "references": []
+      }
+    ]
+  },
+  "1.46.4": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "6131ea3366a651d5c95baf139d4898d32e41bcf6",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm: Docu fix",
+        "references": []
+      },
+      {
+        "id": "3dc8d1f6d5bbb0198751e558db6f3c45aa41bd1e",
+        "type": "FIX",
+        "text": ": RTA - simpleform fix editable titles (dt-part)",
+        "references": []
+      },
+      {
+        "id": "b5ffdef042ef77afd5dda641e4f18232137c54ad",
+        "type": "FIX",
+        "text": ": RTA - take into account invisible elements in simpleform group",
+        "references": []
+      }
+    ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "3b6ddacee8ded6098fb1343a19ace3b33de621f9",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Calcuation after resizing is wrong",
+        "references": []
+      }
+    ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "f065c5fc239db6f0ea7c6182c20e7ad908e20d16",
+        "type": "FIX",
+        "text": " sap.ui.dt: corrections on SimpleForm change handlers",
+        "references": []
+      },
+      {
+        "id": "42d18fa210a04cefb6f49dd53792b16a5d7b775b",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCell: Prevents longer elements from breaking the layout",
+        "references": []
+      },
+      {
+        "id": "3481f35aa0fd67e8b31d08a1a7edffe173be7d16",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex When minFlexSize is not set, the flexible part doesn\u0027t have scrolling any more",
+        "references": []
+      },
+      {
+        "id": "ea918c43090dade663dca08e8f67e8035cde785f",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: HCB and HCW styles fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "71a0a2492b07135c8d1af7da15ad43d02ca6babb",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: PaneContainer\u0027s content is now properly resized and rendered.",
+        "references": []
+      }
+    ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "65882bb3a1d481be80af99312f10632dac1989a7",
+        "type": "FIX",
+        "text": " sap.ui.BlockLayout: Endless switching between breakpoints is now fixed.",
+        "references": []
+      },
+      {
+        "id": "690498a1886207b9fef80080815be36b6f1a79c2",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": []
+      },
+      {
+        "id": "4fea2cdea00ddf6a75e5b1416a2ec16cc194da66",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": []
+      },
+      {
+        "id": "5edc4c51c6dcb75050ad114e69027ee67551a507",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "991433ff0998d1738127d2e97e17f3d32b9b49a7",
+        "type": "FIX",
+        "text": " SimpleForm removing Label creates empty container",
+        "references": []
+      },
+      {
+        "id": "03ef8c913f9bead85bc78760f6c1dd0d4eafea5e",
+        "type": "FIX",
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
+        "references": []
+      },
+      {
+        "id": "39c160eea0fc6be3e7117c989b9575c57783aa92",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Inserting PaneConainers in a selected index is now working",
+        "references": []
+      }
+    ]
   }
 }

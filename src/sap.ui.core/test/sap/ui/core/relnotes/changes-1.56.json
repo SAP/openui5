@@ -784,5 +784,46 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "75010072961d92b126a4e730b4a84efb8c10cee0",
+        "type": "FEATURE",
+        "text": " ExtensionPoint: Add new fully async load() API",
+        "references": []
+      },
+      {
+        "id": "d07c7d2cb1a358161f88eadec89354539f2b6dd1",
+        "type": "FIX",
+        "text": " Controller: extension",
+        "references": []
+      },
+      {
+        "id": "745e219fcde9406855f5c1d4279a1fe245e6aecb",
+        "type": "FIX",
+        "text": " ControllerExtension throws error",
+        "references": []
+      },
+      {
+        "id": "fcc72f01c91d3f8a46f12ba86a8f394cf808adcb",
+        "type": "FIX",
+        "text": " View.create: Create view with owner component",
+        "references": []
+      },
+      {
+        "id": "20b7c44beacb95f4d209861b8bffdf0ee690c2d8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Requestor: OData-Version Header is optional for DELETE responses",
+        "references": []
+      },
+      {
+        "id": "2d1ec96e12a4342034fca69c05769e14b4f35c64",
+        "type": "FIX",
+        "text": " ui5loader: fix sync module loading on file protocol",
+        "references": []
+      }
+    ]
   }
 }

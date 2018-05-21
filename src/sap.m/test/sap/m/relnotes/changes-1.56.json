@@ -1138,5 +1138,58 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "5026b0bda71137bd534f096e56af8fc6f482058e",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selecting items is now working in IE",
+        "references": []
+      },
+      {
+        "id": "d63bcbb3b0afb34e3a62a5d2f428997b2421facf",
+        "type": "FIX",
+        "text": " sap.m.FormattedTextAnchorGenerator: Anchor tag conversion improved",
+        "references": []
+      },
+      {
+        "id": "ba3ebcdadf05eab7cde280e84e56e0459683b7d7",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header aligment when icon is used",
+        "references": []
+      },
+      {
+        "id": "a1f04e03037e1e607dd6e75866ae19f50bcf2f16",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix title of the row when there is no image",
+        "references": []
+      },
+      {
+        "id": "86cabba6c632df24a1d5d2da3a581935f7a7adf5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: load not density aware image by default",
+        "references": []
+      },
+      {
+        "id": "aca08ca8018ce848ad13f7fa885dc65536bb479b",
+        "type": "FIX",
+        "text": " sap.m.Slider: Tickmarks/Labels responsiveness fix",
+        "references": []
+      },
+      {
+        "id": "c55358d0ccb1081905e14ba5ae999e4860b1e6d5",
+        "type": "FIX",
+        "text": " sap.m.Text: Normalisation and visualisation of line endings and whitespace characters is now fixed",
+        "references": []
+      },
+      {
+        "id": "d00be0830c005b134ceaa16a20029a2f8a881474",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: reposition tiles when resize happens",
+        "references": []
+      }
+    ]
   }
 }

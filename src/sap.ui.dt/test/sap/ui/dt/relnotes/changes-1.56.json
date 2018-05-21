@@ -99,5 +99,40 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "bcc3628f5997f37350c4722d34e2ff3bc7523498",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextmenu overlaps rta-toolbar",
+        "references": []
+      },
+      {
+        "id": "d2603c50bc0fae06b162dd0037d43df34cfb5e66",
+        "type": "FIX",
+        "text": " sap.ui.dt - selection with contextMenu",
+        "references": []
+      },
+      {
+        "id": "fce992220639d297fc7837f4b39d28e4a37119fb",
+        "type": "FIX",
+        "text": " sap.ui.dt - wrong height calculation of exp. contextMenu",
+        "references": []
+      },
+      {
+        "id": "fa5f370dccf8c4643fc4a6742c0cacb12d661047",
+        "type": "FIX",
+        "text": "sap.ui.dt - Metadata propagation error",
+        "references": []
+      },
+      {
+        "id": "1e13d6c77bd20c7a6b6784748473fcc85f3dbd58",
+        "type": "FIX",
+        "text": "sap.ui.dt - Metadata propagation with multiple propagate functions",
+        "references": []
+      }
+    ]
   }
 }

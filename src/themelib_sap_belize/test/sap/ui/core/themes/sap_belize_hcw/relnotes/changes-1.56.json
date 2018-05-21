@@ -141,5 +141,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "83ba9375c5e6bcb62c946bf925f90e2f52dc0525",
+        "type": "FIX",
+        "text": " m.App: Applied transparent bg in belize_plus",
+        "references": []
+      },
+      {
+        "id": "9708cf2c03acada182d87ad5c00d4ca9abf74820",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": []
+      }
+    ]
   }
 }

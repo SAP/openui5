@@ -147,5 +147,200 @@
         "references": []
       }
     ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "da986a51d44a2bcea2de0a9f271fa009cf86e0e7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarUtils: getFirstDateOfWeek when end/begin of year.",
+        "references": []
+      },
+      {
+        "id": "16882c5f6366e2a4a85fab0d7978eb4d256f4501",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Enable scrolling on iOS devices",
+        "references": []
+      },
+      {
+        "id": "14af6992aeb9e585a513887c8375905e5f4abcd8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Remove scrollbar from IE when it is not needed",
+        "references": []
+      },
+      {
+        "id": "9af2193f818cfd528a529213f57eaeefda5ff128",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: qunit tests fixed on combi devices",
+        "references": []
+      }
+    ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "f759ceaaa872c4b8c9adc7f15aa5091b826d3f4d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": []
+      },
+      {
+        "id": "8c4a82e88dc75e4386027b0766687ff202c8cc89",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select month and year corrected",
+        "references": []
+      },
+      {
+        "id": "c199e3ab265b31925bc8e4ad6c5e4476d897a335",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": []
+      },
+      {
+        "id": "fbe09698b2822206d1d068b25f676bed8c8613ec",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: remove scrollbar in context menu",
+        "references": []
+      },
+      {
+        "id": "698fa0a8dc4256ee8875a1dc8c66c2b6cf032779",
+        "type": "FIX",
+        "text": " unified.ShellOverlay: Avoid ACC announcement of full content",
+        "references": []
+      }
+    ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "af851d8f0c83399d54bb9b9c027063f74d43b0af",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: hide content overlay properly",
+        "references": []
+      }
+    ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "383394649ccd0363a2efeba49736dd1bf17f73a7",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "502ccce5c7be63414fc198a364bf3b2e001fb61e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Fix day names in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "e0ef4b72a95fcd5450fd0d9cc92b5a0df1351723",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
+      },
+      {
+        "id": "5f5d25980c8fd489e8f4ca9c1940169422486591",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: align currency labels properly",
+        "references": []
+      }
+    ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "7fb160fe302461280e5cc88ac4cedbe522437d15",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
+      },
+      {
+        "id": "1ea8d869851c0fb6c52d485cb8eef16993ccc117",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
+        "references": []
+      },
+      {
+        "id": "13374df21728b1f18e1525e4668ad6b2a0e8e7b1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: focus clearly visible in IE for HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "a143b8b26f0f63952d46cc8c021af951323ec77f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": []
+      },
+      {
+        "id": "2e2ac2a2fe68fe7e10306b4dd743b07ae92443a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
+        "references": []
+      }
+    ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "0e2f39213120fc43854d5b81c31fb98f6c659f9c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now in IE the week numbers are visible",
+        "references": []
+      }
+    ]
+  },
+  "1.52.10": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "df114377a25e3a3a040e72f57641660ae48ed91c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "415f4a0617c6c04162b4c59eda26fbe4cda4268b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": []
+      },
+      {
+        "id": "cf3232a87a09e18402580c7b6aeeb70f07fbf198",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: resize handler is removed on exit.",
+        "references": []
+      },
+      {
+        "id": "71a213c6044317e57290672396bd51b095d9cbc5",
+        "type": "FIX",
+        "text": " unified.FileUploader: accessing length of undefined fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "c652c91c0cb1b4a67b9d6bcec51616e3b3f3144d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: tests no longer fail on IE",
+        "references": []
+      }
+    ]
   }
 }

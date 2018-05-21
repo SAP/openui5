@@ -83,5 +83,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b23e0ef47c51df0d1a735f89d545f31711481896",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Pin button visibility corrected",
+        "references": []
+      }
+    ]
   }
 }

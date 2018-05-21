@@ -1,46 +1,78 @@
 {
-	"1.38.0": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "048613f2ea00bd1f1314f121e9147e4e022994c5",
-				"type": "FEATURE",
-				"text": "New Theme Library: sap_belize",
-				"references": []
-			},
-			{
-				"id": "5c12096d50367e6fcb7e629a8d20889c5a2a608e",
-				"type": "FEATURE",
-				"text": "New Theme: sap_belize_plus",
-				"references": []
-			}
-		]
-	},
-	"1.38.1": {
-		"date": "May 2016",
-		"notes": [
-			{
-				"id": "4f6537be439d7f74c2c03aad740c6ddb2a7fd4b2",
-				"type": "FIX",
-				"text": "Explored app: Samples tab <code> tag visualization corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670249493"
-					}
-				]
-			}
-		]
-	},
-	"1.38.2": {
-		"date": "May 2016",
-		"notes": [
-			{
-				"id": "3aebba67ff602aca48df89a0755ef60bc876dd52",
-				"type": "FEATURE",
-				"text": "Demokit Controls Section - commons and ux3 deprecation - openui5",
-				"references": []
-			}
-		]
-	}
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "048613f2ea00bd1f1314f121e9147e4e022994c5",
+        "type": "FEATURE",
+        "text": "New Theme Library: sap_belize",
+        "references": []
+      },
+      {
+        "id": "5c12096d50367e6fcb7e629a8d20889c5a2a608e",
+        "type": "FEATURE",
+        "text": "New Theme: sap_belize_plus",
+        "references": []
+      }
+    ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "4f6537be439d7f74c2c03aad740c6ddb2a7fd4b2",
+        "type": "FIX",
+        "text": "Explored app: Samples tab <code> tag visualization corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670249493"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "3aebba67ff602aca48df89a0755ef60bc876dd52",
+        "type": "FEATURE",
+        "text": "Demokit Controls Section - commons and ux3 deprecation - openui5",
+        "references": []
+      }
+    ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "aeb28668f6623c6f69d39982a5fde1a7e30e6d1b",
+        "type": "FIX",
+        "text": "Explored App: Tutorial description is \"undefined\"",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1005"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.19": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "ebd220c9b45affe652117aa25cb5cd7eda0e3c1c",
+        "type": "FIX",
+        "text": "SDK: accept hash for LICENSE.txt",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1320"
+          }
+        ]
+      }
+    ]
+  }
 }

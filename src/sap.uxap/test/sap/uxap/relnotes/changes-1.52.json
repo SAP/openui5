@@ -1,6 +1,5 @@
 {
   "1.52.0": {
-    "data": "November 2017",
     "notes": [
       {
         "id": "6c930aa98f401c8fc8c6c774010601cafe5d3600",
@@ -64,6 +63,94 @@
         "id": "b1f483f9235fb6564e800053dad6caf7551580c8",
         "type": "FIX",
         "text": "Flexibility: ObjectPageLayoutSection not movable to header",
+        "references": []
+      }
+    ]
+  },
+  "1.52.3": {
+    "notes": [
+      {
+        "id": "218eacad301eb621dd50cb9886aaebcb0cd08edd",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Expand header button behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770560595"
+          }
+        ]
+      },
+      {
+        "id": "28b8d09fe477a3726fa233229a194dfd4c3ab644",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Find closest scrolled section fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780468527"
+          }
+        ]
+      },
+      {
+        "id": "fd3b398e6798e026ec03fc33a4d8473b777cf7a1",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Closest section check fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780435324"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.6": {
+    "notes": [
+      {
+        "id": "86070cd8be4e850ae9c0d250a4b44912bcb3d9b5",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Ensured setting selectedSection is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780508217"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.8": {
+    "notes": [
+      {
+        "id": "84de8bd5d13e4835c163b5aaa097ddacd189bbcb",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Fixed JS error in removeAggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780191583"
+          }
+        ]
+      },
+      {
+        "id": "5d4ea86c9edbd463b0a703df14282e13c9af0935",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Flickering issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880028962"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.10": {
+    "notes": [
+      {
+        "id": "ab7cdb841187b9242c424294e14a2e5e06e75a65",
+        "type": "FIX",
+        "text": " uxap.ObjectPage: _headerContent aggregation cloning fixed",
         "references": []
       }
     ]

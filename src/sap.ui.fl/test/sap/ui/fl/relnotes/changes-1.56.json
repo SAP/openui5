@@ -75,5 +75,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "fba9e19b79a45970b943fe7a6a99374add97b85d",
+        "type": "FIX",
+        "text": " set VariantModel to UI5-internal",
+        "references": []
+      }
+    ]
   }
 }

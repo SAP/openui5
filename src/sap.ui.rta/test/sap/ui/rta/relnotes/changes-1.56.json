@@ -153,5 +153,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "327f31e13cf6038d05b7cccbb2d0b194a418bb7a",
+        "type": "FIX",
+        "text": " sap.ui.rta Reload page for app descriptor changes",
+        "references": []
+      },
+      {
+        "id": "c7cced529cbd4ba22b0037d7590747df6dc2ce11",
+        "type": "FIX",
+        "text": "sap.ui.rta - Add elements dialog model contains circular references",
+        "references": []
+      }
+    ]
   }
 }

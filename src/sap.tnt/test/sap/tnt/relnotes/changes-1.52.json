@@ -26,5 +26,37 @@
         ]
       }
     ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "958fc79106a83d1273498a7c3540d12071e6ae8c",
+        "type": "FIX",
+        "text": "sap.m.NavigationList: Tab navigation is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780437515"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "9b912a5664d0933ebfd0b0fa6765b1f84b6db0aa",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: aria-expanded for the items works correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880204175"
+          }
+        ]
+      }
+    ]
   }
 }

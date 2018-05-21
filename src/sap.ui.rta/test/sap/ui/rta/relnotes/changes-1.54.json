@@ -249,5 +249,86 @@
         "references": []
       }
     ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "4f872471bec2c90923497f45374f54a184d9f21a",
+        "type": "FIX",
+        "text": " sap.ui.rta: Adjust overlay container in PopupManager._applyPopupPatch to new dt implementation",
+        "references": []
+      },
+      {
+        "id": "59cd232b3f318561cb1d381e32fbcc4e5825878f",
+        "type": "FIX",
+        "text": " sap.ui.rta: Support the layer switch for app variants from",
+        "references": []
+      },
+      {
+        "id": "38b13c4b083560ea54d9f6841f700efcd747cb8c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Aggregation binding Overlay movable when not editable",
+        "references": []
+      },
+      {
+        "id": "4733088bc521802541e9e4ee1d383395da39dba9",
+        "type": "FIX",
+        "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
+        "references": []
+      },
+      {
+        "id": "0e864484cf4a9edaaa857b68120fd51d7446d674",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "720f460d91a89db6e848a65b53063a2abff19581",
+        "type": "FIX",
+        "text": " sap.ui.rta: RuntimeAurthoring test fix for IE11",
+        "references": []
+      }
+    ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "c6c8c95b564e9e9ecfb807e5f5e031323bda6a4b",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      },
+      {
+        "id": "fe12e435472c023ef5f11672fc6c173ed271fbaa",
+        "type": "FIX",
+        "text": " sap.ui.rta: Delete the app variant from the layered repository if",
+        "references": []
+      },
+      {
+        "id": "a7bd11cbc9ada7c8ff5e86c7705f16d1789defaf",
+        "type": "FIX",
+        "text": " sap.ui.rta: Getting rid of the feature toggle parameter.",
+        "references": []
+      },
+      {
+        "id": "2b3ecc4b2fa97faca73fd7428eb426eabb3914cb",
+        "type": "FIX",
+        "text": " sap.ui.rta: check geometry of overlay instead of original element",
+        "references": []
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "9a0c672a70f15e98c47e86c85fc65159a8fa4233",
+        "type": "FIX",
+        "text": "sap.ui.rta: Incorrect positioning of rename field on EDGE",
+        "references": []
+      }
+    ]
   }
 }

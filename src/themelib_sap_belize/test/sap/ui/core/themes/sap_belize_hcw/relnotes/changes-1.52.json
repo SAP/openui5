@@ -159,5 +159,142 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "bcdf069024b3a349a6fe1a9de5a00a5e2c44cfb3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
+        "references": []
+      }
+    ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "bb7444f6ee090f51027e7d56ae03fbc597b5b646",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "043be754b7dd77fcd97a81434e1ae80cb326c082",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "985af8bc3467e84c4691afbbdeffdb31d09cadbe",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
+      }
+    ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "61fca7cdef5ef47488003b97aac082fc01d3ff2b",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Contrast ratio on focus is now correct",
+        "references": []
+      }
+    ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "7ee98473da416ba687395addf61237861014462a",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "c0df344767c21d7361a3df8acc8b3fb7ca3b81f5",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      },
+      {
+        "id": "56a9873149db90b609689c575894233da12ccb6b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct font color when select appointments",
+        "references": []
+      },
+      {
+        "id": "5f5d25980c8fd489e8f4ca9c1940169422486591",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: align currency labels properly",
+        "references": []
+      }
+    ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "a6137757cd60a1194b30183b31913b861eee639f",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Fix tile border",
+        "references": []
+      },
+      {
+        "id": "2227c7803a66def36c5f0bc411f4646fcbc4bc79",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments have correct legend colors now",
+        "references": []
+      }
+    ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "8cead6161fc959eaba64fe26f318dc3d37ff1333",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct focus outline color on its down state in Belize",
+        "references": []
+      },
+      {
+        "id": "6e38f9c97112f0d7049bf46131fd5094eaab0e1e",
+        "type": "FIX",
+        "text": " sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
+        "references": []
+      },
+      {
+        "id": "152a8ce5d94e5166edcfadec0e9ae15745c8bb82",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: focus outline clearly visible in IE",
+        "references": []
+      },
+      {
+        "id": "7fb160fe302461280e5cc88ac4cedbe522437d15",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
+      },
+      {
+        "id": "de43570d16130563ded422368c32433d0a677720",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Focus outline fixed for HCB and HCW",
+        "references": []
+      }
+    ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "d16698c00a969d3cc95fa37d23d271e0fa70dbc1",
+        "type": "FIX",
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
+      }
+    ]
   }
 }

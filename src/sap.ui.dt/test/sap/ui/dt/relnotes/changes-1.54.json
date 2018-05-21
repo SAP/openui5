@@ -160,5 +160,54 @@
         "references": []
       }
     ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880133369"
+          }
+        ]
+      },
+      {
+        "id": "0a613d12b1d8f1e0950e41d9b705ad88046afc4e",
+        "type": "FIX",
+        "text": "sap.ui.dt - Root elements in DT can become invalid on app close",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880118197"
+          }
+        ]
+      },
+      {
+        "id": "38b13c4b083560ea54d9f6841f700efcd747cb8c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Aggregation binding Overlay movable when not editable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880133595"
+          }
+        ]
+      },
+      {
+        "id": "4733088bc521802541e9e4ee1d383395da39dba9",
+        "type": "FIX",
+        "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880133701"
+          }
+        ]
+      }
+    ]
   }
 }

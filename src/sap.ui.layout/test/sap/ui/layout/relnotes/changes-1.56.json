@@ -63,5 +63,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "8071b95ab0e92b5c7f750e24d2fc4ba14f22be62",
+        "type": "FIX",
+        "text": "sap.ui.layout - SimpleForm rename undo issue",
+        "references": []
+      }
+    ]
   }
 }
