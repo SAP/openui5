@@ -24,45 +24,46 @@ describe("sap.m.Text", function() {
 	// fixed width in em
 	it("should vizualize text with fixed width in em", function () {
 		var txt3 = element(by.id('text3'));
-		expect(takeScreenshot(txt3)).toLookAs("3_fixed_width_in_em");
+		browser.executeScript('document.getElementById("text3").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt3)).toLookAs("3_fixed_width_in_em");
+		});
 	});
 
 	// fixed width in %
 	it("should vizualize text with fixed width in %", function () {
 		var txt3a = element(by.id('text3a'));
-		//next line is to move the view in the window
-		txt3a.click();
-		expect(takeScreenshot(txt3a)).toLookAs("3a_fixed_width_in_percentage");
+		browser.executeScript('document.getElementById("text3a").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt3a)).toLookAs("3a_fixed_width_in_percentage");
+		});
 	});
 
 	// fixed width in px
 	it("should vizualize text with fixed width in px", function () {
 		var txt3b = element(by.id('text3b'));
-		//next line is to move the view in the window
-		txt3b.click();
-		expect(takeScreenshot(txt3b)).toLookAs("3b_fixed_width_in_px");
+		browser.executeScript('document.getElementById("text3b").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt3b)).toLookAs("3b_fixed_width_in_px");
+		});
 	});
 
 	// styled
 	it("should vizualize styled text", function () {
 		var txt4 = element(by.id('text4'));
-		//next line is to move the view in the window
-		txt4.click();
-		expect(takeScreenshot(txt4)).toLookAs("4_styled");
+		browser.executeScript('document.getElementById("text4").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt4)).toLookAs("4_styled");
+		});
 	});
 
 	// align right
 	it("should vizualize right aligned text", function () {
 		var txt5 = element(by.id('text5'));
-		//next line is to move the view in the window
-		txt5.click();
-		expect(takeScreenshot(txt5)).toLookAs("5_align_right");
+		browser.executeScript('document.getElementById("text5").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt5)).toLookAs("5_align_right");
+		});
 	});
 
 	// align left
 	it("should vizualize left aligned text", function () {
 		var txt5a = element(by.id('text5a'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text5a").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt5a)).toLookAs("5a_align_left");
 		});
@@ -71,7 +72,6 @@ describe("sap.m.Text", function() {
 	// align end
 	it("should vizualize end aligned text", function () {
 		var txt5b = element(by.id('text5b'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text5b").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt5b)).toLookAs("5b_align_end");
 		});
@@ -80,7 +80,6 @@ describe("sap.m.Text", function() {
 	// align begin
 	it("should vizualize begin aligned text", function () {
 		var txt5c = element(by.id('text5c'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text5c").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt5c)).toLookAs("5c_align_begin");
 		});
@@ -89,7 +88,6 @@ describe("sap.m.Text", function() {
 	// align center
 	it("should vizualize center aligned text", function () {
 		var txt5d = element(by.id('text5d'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text5d").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt5d)).toLookAs("5d_align_center");
 		});
@@ -98,7 +96,6 @@ describe("sap.m.Text", function() {
 	// RTL (Right-to-left)
 	it("should vizualize text with RTL direction", function () {
 		var txt6 = element(by.id('text6'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text6").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt6)).toLookAs("6_RTL");
 		});
@@ -108,7 +105,6 @@ describe("sap.m.Text", function() {
 	// LTR (Left-to-right)
 	it("should vizualize text with LTR direction", function () {
 		var txt6a = element(by.id('text6a'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text6a").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt6a)).toLookAs("6a_LTR");
 		});
@@ -118,7 +114,6 @@ describe("sap.m.Text", function() {
 	// Direction Inherit
 	it("should vizualize text with direction inherit", function () {
 		var txt6b = element(by.id('text6b'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text6b").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt6b)).toLookAs("6b_Direction_Inherit");
 		});
@@ -127,7 +122,6 @@ describe("sap.m.Text", function() {
 	// line breaks
 	it("should vizualize text with line breaks", function () {
 		var txt7 = element(by.id('text7'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text7").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt7)).toLookAs("7_line_breaks");
 		});
@@ -137,7 +131,6 @@ describe("sap.m.Text", function() {
 	// max lines 3
 	it("should vizualize text in 3 lines", function () {
 		var txt9 = element(by.id('text9'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text9").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt9)).toLookAs("9_max_lines");
 		});
@@ -146,18 +139,32 @@ describe("sap.m.Text", function() {
 	// RTL + max lines 2
 	it("should vizualize text in RTL and in 2 lines", function () {
 		var txt10 = element(by.id('text10'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text10").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt10)).toLookAs("10_RTL_max_lines");
+		});
+	});
+
+	// Text with different line breaks
+	it("should vizualize text with different line breaks", function () {
+		var txt11 = element(by.id('text11'));
+		browser.executeScript('document.getElementById("text11").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt11)).toLookAs("11_different_line_breaks");
 		});
 	});
 
 	// Text with rendered white spaces
 	it("should vizualize text with preserved white spaces and tabs", function () {
 		var txt12 = element(by.id('text12'));
-		//next line is to move the view in the window
 		browser.executeScript('document.getElementById("text12").scrollIntoView()').then(function() {
 			expect(takeScreenshot(txt12)).toLookAs("12_preserve_white_spaces_and_tabs");
+		});
+	});
+
+	// Text with escaped characters
+	it("should vizualize text with escaped characters", function () {
+		var txt13 = element(by.id('text13'));
+		browser.executeScript('document.getElementById("text13").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt13)).toLookAs("13_escaped_characters");
 		});
 	});
 });
