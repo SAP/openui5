@@ -39,8 +39,32 @@
 	}), new sap.m.ObjectStatus({
 		title: "Created by",
 		text : "John Doe Ñagçyfox",
-		state: "Warning",
-	}) ];
+		state: "Warning"
+	}),
+	new sap.m.ObjectStatus({
+		title: "Some title",
+		text : "Contract #D1234567890 Ñagçyfox",
+		state: "Success",
+		icon: "sap-icon://alert",
+		active : true,
+		press : function() {
+			oStatuses2[0].setText("Ñagçyfox #D1234567890 Contract");
+		}
+	}), new sap.m.ObjectStatus({
+		text : "John Doe Ñagçyfox",
+		press : function() {
+			oStatuses2[0].setText("Ñagçyfox Contract #D1234567890");
+		}
+	}), new sap.m.ObjectStatus({
+		text : "John Doe Ñagçyfox",
+		icon: "sap-icon://alert",
+		state: "Warning"
+	}), new sap.m.ObjectStatus({
+		title: "Created by",
+		icon: "sap-icon://alert",
+		text : "John Doe Ñagçyfox",
+		state: "Error"
+	})];
 
 	var oStatuses2 = [ new sap.m.ObjectStatus({
 		title: "Some title",
@@ -61,8 +85,33 @@
 	}), new sap.m.ObjectStatus({
 		title: "Created by",
 		text : "John Doe Ñagçyfox",
-		state: "Error",
-	}) ];
+		state: "Error"
+	}),
+	new sap.m.ObjectStatus({
+		title: "Some title",
+		text : "Contract #D1234567890 Ñagçyfox",
+		state: "Success",
+		icon: "sap-icon://alert",
+		active : true,
+		press : function() {
+			oStatuses2[0].setText("Ñagçyfox #D1234567890 Contract");
+		}
+	}), new sap.m.ObjectStatus({
+		text : "John Doe Ñagçyfox",
+		active : true,
+		icon: "sap-icon://alert",
+		press : function() {
+			oStatuses2[0].setText("Ñagçyfox Contract #D1234567890");
+		}
+	}), new sap.m.ObjectStatus({
+		text : "John Doe Ñagçyfox",
+		state: "Warning"
+	}), new sap.m.ObjectStatus({
+		title: "Created by",
+		icon: "sap-icon://alert",
+		text : "John Doe Ñagçyfox",
+		state: "Error"
+	})];
 
 	var oOh = new sap.m.ObjectHeader("oh", {
 		title : "Static ObjectHeader with statuses",
@@ -95,7 +144,29 @@
 		showMarkers: true,
 		markFavorite: true
 	});
+	var oOli2 = new sap.m.ObjectListItem({
+		type: "Navigation",
+		title: "ObjectListItem with statuses: navigation",
+		number: "Ñ99999",
+		numberUnit: "Euro",
+		firstStatus: new sap.m.ObjectStatus({text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip", active:true}),
+		secondStatus: new sap.m.ObjectStatus({text: "Negative Ñagçyfox", state: "Error", tooltip: "Status tip", icon: "sap-icon://alert", active:true}),
+		showMarkers: true,
+		markFavorite: true
+	});
+	var oOli3 = new sap.m.ObjectListItem({
+		type: "Detail",
+		title: "ObjectListItem with statuses: detail",
+		number: "Ñ99994449",
+		numberUnit: "Euro",
+		firstStatus: new sap.m.ObjectStatus({text: "Positive Ñagçyfox", state: "Warning", tooltip: "Status tip", active:true}),
+		secondStatus: new sap.m.ObjectStatus({text: "Negative Ñagçyfox", state: "Warning", tooltip: "Status tip", icon: "sap-icon://alert", active:true}),
+		showMarkers: true,
+		markFavorite: true
+	});
 	oList.addItem(oOli);
+	oList.addItem(oOli2);
+	oList.addItem(oOli3);
 
 // ObjectStatus inside ObjectPage
 	var oOP = new sap.uxap.ObjectPageLayout({
@@ -127,9 +198,35 @@
 				}
 			}), new sap.m.ObjectStatus({
 				text : "John Doe Ñagçyfox",
-				state: "Warning",
+				state: "Warning"
 			}), new sap.m.ObjectStatus({
 				title: "Created by",
+				text : "John Doe Ñagçyfox"
+			}),
+			new sap.m.ObjectStatus({
+				title: "Some title",
+				text : "Contract #D1234567890 Ñagçyfox",
+				icon: "sap-icon://alert",
+				state: "Success",
+				active : true,
+				press : function() {
+					new sap.m.MessageToast.show("you click me");
+				}
+			}), new sap.m.ObjectStatus({
+				text : "John Doe Ñagçyfox",
+				state: "Error",
+				icon: "sap-icon://alert",
+				active : true,
+				press : function() {
+					new sap.m.MessageToast.show("you click me");
+				}
+			}), new sap.m.ObjectStatus({
+				text : "John Doe Ñagçyfox",
+				icon: "sap-icon://alert",
+				state: "Warning"
+			}), new sap.m.ObjectStatus({
+				title: "Created by",
+				icon: "sap-icon://alert",
 				text : "John Doe Ñagçyfox"
 			})],
 		sections: [
@@ -161,6 +258,36 @@
 								state: "Error"
 							})
 						]
+					}),
+					new sap.uxap.ObjectPageSubSection({
+						blocks: [
+							new sap.m.ObjectStatus({
+								title: "Some title",
+								text : "Contract #D1234567890 Ñagçyfox",
+								state: "Success",
+								icon: "sap-icon://alert",
+								active : true,
+								press : function() {
+									new sap.m.MessageToast.show("you click me");
+								}
+							}), new sap.m.ObjectStatus({
+								text : "John Doe Ñagçyfox",
+								state: "Warning",
+								icon: "sap-icon://alert",
+								active : true,
+								press : function() {
+									new sap.m.MessageToast.show("you click me");
+								}
+							}), new sap.m.ObjectStatus({
+								text : "John Doe Ñagçyfox",
+								icon: "sap-icon://alert"
+							}), new sap.m.ObjectStatus({
+								title: "Created by",
+								icon: "sap-icon://alert",
+								text : "John Doe Ñagçyfox",
+								state: "Error"
+							})
+						]
 					})
 				]
 			})
@@ -171,7 +298,7 @@
 	var data = aNotificationTypesSettings = [{
 		NotificationTypeId: "type1"
 		}, {
-		NotificationTypeId: "type2",
+		NotificationTypeId: "type2"
 	}];
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setProperty("/rows", data);
@@ -227,42 +354,42 @@
 		oTableRowTemplate = new sap.m.ColumnListItem({
 			cells : [
 				new sap.m.ObjectStatus({
-						title: "Some title",
-						text : "Contract #D1234567890 Ñagçyfox",
-						active : true,
-						icon: "sap-icon://alert",
-						state: "Error",
-						press : function() {
-							new sap.m.MessageToast.show("you click me");
-						}
-					}), new sap.m.ObjectStatus({
-						text : "John Doe Ñagçyfox",
-						state: "Success",
-						active : true,
-						press : function() {
-							new sap.m.MessageToast.show("you click me");
-						}
-					}), new sap.m.ObjectStatus({
-						text : "John Doe Ñagçyfox",
-						state: "Warning",
-						icon: "sap-icon://pharmacy",
-					}), new sap.m.ObjectStatus({
-						title: "Created by",
-						text : "John Doe Ñagçyfox",
-						state: "Warning"
-					}), new sap.m.ObjectStatus({
-						title : "Some title",
-						state: "Success",
-						icon: "sap-icon://pharmacy"
-					}), new sap.m.ObjectStatus({
-						active : true,
-						state: "Error",
-						icon: "sap-icon://alert"
-					}), new sap.m.ObjectStatus({
-						state: "Error",
-						icon: "sap-icon://alert",
-						tooltip: "Alert"
-					})
+					title: "Some title",
+					text : "Contract #D1234567890 Ñagçyfox",
+					active : true,
+					icon: "sap-icon://alert",
+					state: "Error",
+					press : function() {
+						new sap.m.MessageToast.show("you click me");
+					}
+				}), new sap.m.ObjectStatus({
+					text : "John Doe Ñagçyfox",
+					state: "Success",
+					active : true,
+					press : function() {
+						new sap.m.MessageToast.show("you click me");
+					}
+				}), new sap.m.ObjectStatus({
+					text : "John Doe Ñagçyfox",
+					state: "Warning",
+					icon: "sap-icon://pharmacy"
+				}), new sap.m.ObjectStatus({
+					title: "Created by",
+					text : "John Doe Ñagçyfox",
+					state: "Warning"
+				}), new sap.m.ObjectStatus({
+					title : "Some title",
+					state: "Success",
+					icon: "sap-icon://pharmacy"
+				}), new sap.m.ObjectStatus({
+					active : true,
+					state: "Error",
+					icon: "sap-icon://alert"
+				}), new sap.m.ObjectStatus({
+					state: "Error",
+					icon: "sap-icon://alert",
+					tooltip: "Alert"
+				})
 			]
 		});
 
@@ -275,7 +402,7 @@
 	oVBox.addItem(oNotificationTypeTable);
 
 
-	var oPage = new sap.m.Page({
+	var oPage = new sap.m.Page("testPage", {
 		showHeader : false,
 		enableScrolling : true
 	});
