@@ -150,7 +150,7 @@ sap.ui.define([
 		designtime: "sap/m/designtime/DateTimePicker.designtime"
 	}});
 
-	var PopupContent = Control.extend("DateTimePickerPopup", {
+	var PopupContent = Control.extend("sap.m.internal.DateTimePickerPopup", {
 
 		metadata: {
 			aggregations: {
