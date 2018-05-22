@@ -1129,18 +1129,25 @@ sap.ui.define([
 				oElementOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
 			}
 		};
+
+		var fnOverlayRenderedCallback = function(oEvent){
+			var oNewOverlay = oEvent.getSource();
+			// the control can be set to visible, but still have no size when we do the check
+			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
+			if (!oNewOverlay.getGeometry() || !oNewOverlay.getGeometry().visible) {
+				oNewOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
+			} else {
+				fnStartEdit.call(this, oNewOverlay);
+			}
+			oNewOverlay.detachEvent('afterRendering', fnOverlayRenderedCallback, this);
+		};
 		var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, sNewControlID);
 
 		this._oDesignTime.attachEvent("elementOverlayCreated", function(oEvent){
 			var oNewOverlay = oEvent.getParameter("elementOverlay");
 			if (oNewOverlay.getElement().getId() === sNewContainerID) {
-				// the control can be set to visible, but still the control has no size when we do the check.
-				// that's why we also attach go 'geometryChanged' and check if the overlay has a size
-				if (!oNewOverlay.getGeometry() || !oNewOverlay.getGeometry().visible) {
-					oNewOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
-				} else {
-					fnStartEdit.call(this, oNewOverlay);
-				}
+				// the overlay needs to be rendered before we can trigger the rename on it
+				oNewOverlay.attachEvent('afterRendering', fnOverlayRenderedCallback, this);
 			}
 		}.bind(this));
 	};

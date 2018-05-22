@@ -96,6 +96,10 @@
 			</smartForm:GroupElement>
 		</smartForm:Group>
 	</smartForm:SmartForm>
+	<sap.ui.layout:VerticalLayout width="100%">
+		<smartForm:SmartForm id="MainForm1" title="Personal Data" editable="true" entityType="Header">
+		</smartForm:SmartForm>
+	</sap.ui.layout:VerticalLayout>
 	<form:SimpleForm title="SimpleForm with titles" id="SimpleForm"
 								 maxContainerCols="3"
 								 editable="true"
