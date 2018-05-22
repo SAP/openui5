@@ -824,23 +824,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header should collapse (snap).
+	 * Determines if the header should collapse (snap) on scroll.
 	 * @returns {boolean}
 	 * @private
 	 */
-	DynamicPage.prototype._shouldSnap = function () {
+	DynamicPage.prototype._shouldSnapOnScroll = function () {
 		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() >= this._getSnappingHeight()
 			&& this.getHeaderExpanded() && !this._bPinned;
 	};
 
 	/**
-	 * Determines if the header should expand.
+	 * Determines if the header should expand on scroll.
 	 * @returns {boolean}
 	 * @private
 	 */
-	DynamicPage.prototype._shouldExpand = function () {
+	DynamicPage.prototype._shouldExpandOnScroll = function () {
+		var bIsScrollable = this._needsVerticalScrollBar();
+
 		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() < this._getSnappingHeight()
-			&& !this.getHeaderExpanded() && !this._bPinned;
+			&& !this.getHeaderExpanded() && !this._bPinned && bIsScrollable;
 	};
 
 	/**
@@ -1537,10 +1539,10 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._shouldSnap()) {
+		if (this._shouldSnapOnScroll()) {
 			this._snapHeader(true, true /* bUserInteraction */);
 
-		} else if (this._shouldExpand()) {
+		} else if (this._shouldExpandOnScroll()) {
 
 			this._expandHeader(false, true /* bUserInteraction */);
 			this._toggleHeaderVisibility(true);
@@ -1622,7 +1624,6 @@ sap.ui.define([
 			return this;
 		}
 
-		this._bSuppressToggleHeaderOnce = true;
 		// Header scrolling is not allowed or there is no enough content scroll bar to appear
 		if (this._preserveHeaderStateOnScroll() || !this._canSnapHeaderOnScroll() || !this.getHeader()) {
 			if (!this.getHeaderExpanded()) {
@@ -1652,10 +1653,6 @@ sap.ui.define([
 				this._setScrollPosition(this._getSnappingHeight());
 			}
 		}
-
-		jQuery.sap.delayedCall(0, this, function() {
-			this._bSuppressToggleHeaderOnce = false;
-		}.bind(this));
 	};
 
 	/**
