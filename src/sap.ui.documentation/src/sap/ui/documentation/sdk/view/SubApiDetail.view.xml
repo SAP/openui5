@@ -303,7 +303,7 @@
 																		href="#/api/{data>/name}/events/{event>name}"
 																		deprecated="{= ${event>deprecated} !== undefined }"
 																		press="scrollToEvent"/>
-															<custom:JSDocText text="{event>description}"/>
+															<custom:JSDocText text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
 												</custom:LightTable>
@@ -329,7 +329,7 @@
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<custom:JSDocText text="{event>description}"/>
+												<custom:JSDocText text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
 												<m:ObjectStatus text="Visibility: {event>visibility}" state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
