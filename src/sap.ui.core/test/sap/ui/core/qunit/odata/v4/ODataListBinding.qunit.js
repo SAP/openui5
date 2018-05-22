@@ -253,6 +253,7 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("aFilters"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("oHeaderContext"));
+		assert.ok(oBinding.hasOwnProperty("bHasAnalyticalInfo"));
 		assert.ok(oBinding.hasOwnProperty("sOperationMode"));
 		assert.ok(oBinding.hasOwnProperty("mQueryOptions"));
 		assert.ok(oBinding.hasOwnProperty("oReadGroupLock"));
@@ -2312,6 +2313,23 @@ sap.ui.require([
 		// code under test
 		oBinding.destroy();
 
+		assert.throws(function () {
+			// code under test
+			oBinding.destroy();
+		});
+
+		assert.strictEqual(oBinding.aContexts, undefined);
+
+//		assert.strictEqual(oBinding.oAggregation, undefined);
+//		assert.strictEqual(oBinding.mAggregatedQueryOptions, undefined);
+//		assert.strictEqual(oBinding.aApplicationFilters, undefined);
+//		assert.strictEqual(oBinding.aChildCanUseCachePromises, undefined);
+//		assert.strictEqual(oBinding.aFilters, undefined);
+//		assert.strictEqual(oBinding.oModel, undefined);
+//		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
+//		assert.strictEqual(oBinding.aPreviousData, undefined);
+//		assert.strictEqual(oBinding.aSorters, undefined);
+
 		oBinding = this.oModel.bindList("relative");
 		oBinding.setContext(oContext);
 		oBinding.aContexts = [oBindingContext];
@@ -2328,6 +2346,9 @@ sap.ui.require([
 		assert.strictEqual(oBinding.oCachePromise, undefined);
 		assert.strictEqual(oBinding.oContext, undefined,
 			"context removed as in ODPropertyBinding#destroy");
+//		assert.strictEqual(oBinding.oDiff, undefined);
+		assert.strictEqual(oBinding.oHeaderContext, undefined);
+//		assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
 
 		oBinding = this.oModel.bindList("/absolute", oContext);
 		oBinding.aContexts = [oBindingContext];
@@ -4431,7 +4452,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateAnalyticalInfo: inResult and visible", function (assert) {
+	QUnit.test("updateAnalyticalInfo: inResult and visible; destroy twice", function (assert) {
 		var aAggregation = [{
 				grouped : false,
 				inResult : true,
@@ -4475,6 +4496,16 @@ sap.ui.require([
 
 		assert.strictEqual(JSON.stringify(aAggregation), sAggregation, "unchanged");
 		assert.deepEqual(oBinding.oAggregation, oTransformedAggregation);
+
+		this.mock(oBinding.oModel).expects("bindingDestroyed")
+			.withExactArgs(sinon.match.same(oBinding));
+		this.mock(ListBinding.prototype).expects("destroy").on(oBinding).withExactArgs();
+
+		// code under test
+		oBinding.destroy();
+
+		// code under test
+		oBinding.destroy();
 	});
 
 	//*********************************************************************************************

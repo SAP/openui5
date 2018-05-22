@@ -93,6 +93,7 @@ sap.ui.define([
 				this.aChildCanUseCachePromises = [];
 				this.oDiff = undefined;
 				this.aFilters = [];
+				this.bHasAnalyticalInfo = false;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
 				// a lock to ensure that submitBatch waits for an expected read
@@ -545,6 +546,9 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.destroy = function () {
+		if (this.bHasAnalyticalInfo && this.aContexts === undefined) {
+			return;
+		}
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
@@ -557,6 +561,8 @@ sap.ui.define([
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
 		this.oContext = undefined;
+		this.aContexts = undefined;
+		this.oHeaderContext = undefined;
 		ListBinding.prototype.destroy.apply(this);
 	};
 
@@ -1813,6 +1819,7 @@ sap.ui.define([
 		});
 		this.oAggregation = oAggregation; // Note: needed by #doCreateCache!
 		this.changeParameters({$apply : _Helper.buildApply(oAggregation)});
+		this.bHasAnalyticalInfo = true;
 		if (bHasMinMax) {
 			return {
 				measureRangePromise : Promise.resolve(this.oCachePromise.then(function (oCache) {
