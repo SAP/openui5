@@ -1509,7 +1509,7 @@ function(
 			} else {
 				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
 					text: sTitle,
-					level: "H1"
+					level: "H2"
 				}).addStyleClass("sapMDialogTitle");
 
 				this._createHeader();
