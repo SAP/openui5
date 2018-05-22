@@ -2628,7 +2628,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: call submitBatch() synchronously after changeParameters (BCP 1770236987)
-	[false/*, true*/].forEach(function (bAutoExpandSelect) {
+	[false, true].forEach(function (bAutoExpandSelect) {
 		var sTitle = "submitBatch after changeParameters, autoExpandSelect = " + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
@@ -2661,8 +2661,6 @@ sap.ui.require([
 					}, {"value" : [mFrederic, mJonathan]})
 					.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
-				// TODO test with autoExpandSelect
-				// here the request creation is delayed and submitBatch doesn't grab it
 				oModel.submitBatch("group");
 
 				return that.waitForChanges(assert).then(function () {

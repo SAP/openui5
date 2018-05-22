@@ -224,7 +224,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a group lock and keeps it in this.oRefreshGroupLock.
+	 * Creates a group lock and keeps it in this.oReadGroupLock.
 	 * ODataListBinding#getContexts or ODataContextBinding#fetchValue are expected to use and remove
 	 * it. To ensure that the queue does not remain locked forever the lock is unlocked and taken
 	 * out again if it still resides there in the chosen prerendering.
@@ -242,8 +242,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.createRefreshGroupLock = function (sGroupId, bLocked, iCount) {
-		var that = this;
+	ODataParentBinding.prototype.createReadGroupLock = function (sGroupId, bLocked, iCount) {
+		var oGroupLock,
+			that = this;
 
 		function addUnlockTask() {
 			sap.ui.getCore().addPrerenderingTask(function () {
@@ -251,21 +252,18 @@ sap.ui.define([
 				if (iCount > 0) {
 					// Use a promise to get out of the prerendering loop
 					Promise.resolve().then(addUnlockTask);
-				} else {
-					unlock();
+				} else if (that.oReadGroupLock === oGroupLock) {
+					// It is still the same, unused lock
+					oGroupLock.unlock(true);
+					that.oReadGroupLock = undefined;
 				}
 			});
 		}
 
-		function unlock() {
-			if (that.oRefreshGroupLock) { // The lock is still unused
-				that.oRefreshGroupLock.unlock(true);
-				that.oRefreshGroupLock = undefined;
-			}
+		if (this.oReadGroupLock) {
+			this.oReadGroupLock.unlock(true);
 		}
-
-		unlock();
-		this.oRefreshGroupLock = this.oModel.lockGroup(sGroupId, bLocked);
+		this.oReadGroupLock = oGroupLock = this.oModel.lockGroup(sGroupId, bLocked);
 		if (bLocked) {
 			iCount = 2 + (iCount || 0);
 			addUnlockTask();
@@ -715,7 +713,7 @@ sap.ui.define([
 
 		this.bSuspended = false;
 		// wait one additional prerendering because resume itself only starts in a prerendering task
-		that.createRefreshGroupLock(that.getGroupId(), true, 1);
+		this.createReadGroupLock(this.getGroupId(), true, 1);
 		// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
 		// => must only resume in prerendering task
 		sap.ui.getCore().addPrerenderingTask(function () {
@@ -778,6 +776,10 @@ sap.ui.define([
 		}
 
 		this.bSuspended = true;
+		if (this.oReadGroupLock) {
+			this.oReadGroupLock.unlock(true);
+			this.oReadGroupLock = undefined;
+		}
 	};
 
 	/**

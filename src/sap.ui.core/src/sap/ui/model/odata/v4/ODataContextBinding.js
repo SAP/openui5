@@ -112,6 +112,8 @@ sap.ui.define([
 				// auto-$expand/$select: promises to wait until child bindings have provided
 				// their path and query options
 				this.aChildCanUseCachePromises = [];
+				// a lock to ensure that submitBatch waits for an expected read
+				this.oReadGroupLock = undefined;
 				this.oReturnValueContext = null;
 				this.sUpdateGroupId = undefined;
 
@@ -131,6 +133,9 @@ sap.ui.define([
 				this.oElementContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
+				if (!this.oOperation && (!this.bRelative || oContext && !oContext.fetchValue)) {
+					this.createReadGroupLock(this.getGroupId(), true);
+				}
 				this.setContext(oContext);
 				oModel.bindingCreated(this);
 			},
@@ -616,8 +621,8 @@ sap.ui.define([
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
 					// Unless there is a refresh, a lock is not required here, only set the group ID
-					oGroupLock = that.oModel.lockGroup(that.getGroupId(), that.oRefreshGroupLock);
-					that.oRefreshGroupLock = undefined;
+					oGroupLock = that.oModel.lockGroup(that.getGroupId(), that.oReadGroupLock);
+					that.oReadGroupLock = undefined;
 					return oCache.fetchValue(oGroupLock, sRelativePath, function () {
 						bDataRequested = true;
 						that.fireDataRequested();
@@ -697,7 +702,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.createRefreshGroupLock(sGroupId, this.isRefreshable());
+		this.createReadGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
 			if (!that.oElementContext) { // refresh after delete
 				that.oElementContext = Context.create(that.oModel, that,
@@ -719,8 +724,8 @@ sap.ui.define([
 				});
 			} else {
 				// ignore returned promise, error handling takes place in _execute
-				that._execute(that.oRefreshGroupLock);
-				that.oRefreshGroupLock = undefined;
+				that._execute(that.oReadGroupLock);
+				that.oReadGroupLock = undefined;
 			}
 		});
 	};

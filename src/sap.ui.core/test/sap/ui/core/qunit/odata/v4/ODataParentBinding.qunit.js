@@ -2031,15 +2031,18 @@ sap.ui.require([
 	QUnit.test("suspend: absolute binding", function (assert) {
 		var oBinding = new ODataParentBinding({
 				sPath : "/Employees",
+				oReadGroupLock : new _GroupLock(),
 				toString : function () { return "~"; }
 			});
 
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
+		this.mock(oBinding.oReadGroupLock).expects("unlock").withExactArgs(true);
 
 		// code under test
 		oBinding.suspend();
 
 		assert.strictEqual(oBinding.bSuspended, true);
+		assert.strictEqual(oBinding.oReadGroupLock, undefined);
 
 		assert.throws(function () {
 			// code under test
@@ -2135,7 +2138,7 @@ sap.ui.require([
 			oBindingMock.expects("_fireChange").never();
 			oBindingMock.expects("resumeInternal").never();
 			oBindingMock.expects("getGroupId").withExactArgs().returns("groupId");
-			oBindingMock.expects("createRefreshGroupLock").withExactArgs("groupId", true, 1);
+			oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true, 1);
 			this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func)
 				.callsFake(function (fnCallback) {
@@ -2187,7 +2190,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, undefined].forEach(function (bLocked) {
-		QUnit.test("createRefreshGroupLock: bLocked=" + bLocked, function (assert) {
+		QUnit.test("createReadGroupLock: bLocked=" + bLocked, function (assert) {
 			var oBinding = new ODataParentBinding({
 					oModel : {
 						lockGroup : function () {}
@@ -2201,23 +2204,23 @@ sap.ui.require([
 			this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
 
 			// code under test
-			oBinding.createRefreshGroupLock("groupId", bLocked);
+			oBinding.createReadGroupLock("groupId", bLocked);
 
-			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock1);
+			assert.strictEqual(oBinding.oReadGroupLock, oGroupLock1);
 
 			this.mock(oGroupLock1).expects("unlock").withExactArgs(true);
 			oModelMock.expects("lockGroup").withExactArgs("groupId", bLocked).returns(oGroupLock2);
 
 			// code under test
-			oBinding.createRefreshGroupLock("groupId", bLocked);
+			oBinding.createReadGroupLock("groupId", bLocked);
 
-			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock2);
+			assert.strictEqual(oBinding.oReadGroupLock, oGroupLock2);
 		});
 	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bLockIsUsedAndRemoved) {
-		var sTitle = "createRefreshGroupLock: bLocked=true, bLockIsUsedAndRemoved="
+		var sTitle = "createReadGroupLock: bLocked=true, bLockIsUsedAndRemoved="
 				+ bLockIsUsedAndRemoved;
 
 		QUnit.test(sTitle, function (assert) {
@@ -2251,13 +2254,13 @@ sap.ui.require([
 			oExpectation = oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
 
 			// code under test
-			oBinding.createRefreshGroupLock("groupId", true, iCount);
+			oBinding.createReadGroupLock("groupId", true, iCount);
 
-			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
+			assert.strictEqual(oBinding.oReadGroupLock, oGroupLock);
 
 			if (bLockIsUsedAndRemoved) {
 				// simulate functions that use and remove that lock (like getContexts or fetchValue)
-				oBinding.oRefreshGroupLock = undefined;
+				oBinding.oReadGroupLock = undefined;
 				this.mock(oGroupLock).expects("unlock").never();
 			} else {
 				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
@@ -2266,8 +2269,43 @@ sap.ui.require([
 			// code under test
 			oExpectation.callArg(0);
 
-			assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
+			assert.strictEqual(oBinding.oReadGroupLock, undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createReadGroupLock: lock re-created", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					lockGroup : function () {}
+				}
+			}),
+			oCoreMock = this.mock(sap.ui.getCore()),
+			oExpectation,
+			oGroupLock1 = new _GroupLock(),
+			oGroupLock2 = {},
+			oPromiseMock = this.mock(Promise),
+			oThenable1 = {then : function () {}};
+
+		this.mock(oBinding.oModel).expects("lockGroup").withExactArgs("groupId", true)
+			.returns(oGroupLock1);
+
+		// first prerendering task
+		oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func).callsArg(0);
+		// second prerendering task
+		oPromiseMock.expects("resolve").withExactArgs().returns(oThenable1);
+		this.mock(oThenable1).expects("then").withExactArgs(sinon.match.func).callsArg(0);
+		oExpectation = oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
+
+		// code under test
+		oBinding.createReadGroupLock("groupId", true);
+
+		oBinding.oReadGroupLock = oGroupLock2;
+
+		// code under test - the lock must not be removed because it is a different one now
+		oExpectation.callArg(0);
+
+		assert.strictEqual(oBinding.oReadGroupLock, oGroupLock2);
 	});
 
 	//TODO Fix issue with ODataModel.integration.qunit
