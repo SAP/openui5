@@ -81,7 +81,7 @@ sap.ui.define([
 		/**
 		 * The name of the model
 		 *
-		 * @return {string} the name of the model
+		 * @returns {string} the name of the model
 		 */
 		getModelName: function() {
 			return this.modelName;
@@ -133,7 +133,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sValuePath the path to the property value, e.g 'Payed'
 		 * @param {string} sType the optional name of the UI5 model type, e.g. 'sap.ui.model.type.string'
-		 * @return {string} the representation of a simple binding syntax
+		 * @returns {string} the representation of a simple binding syntax
 		 */
 		convertToSimpleBinding: function(sValuePath, sType) {
 			var sPath = "{";
@@ -202,10 +202,32 @@ sap.ui.define([
 		 * Removes the keys from the model/meta model path
 		 *
 		 * @param {string} sPath the path, e.g. /PurchaseOrders('300000020')
-		 * @return {string} sKeyLess the key free path /PurchaseOrders
+		 * @returns {string} sKeyLess the key free path /PurchaseOrders
 		 */
 		removeKeys: function(sPath) {
 			return sPath;
+		},
+		/**
+		 *
+		 * Returns a sibling adapter of the same class type to the corresponding sibling path.
+		 *
+		 *@param {string} sSiblingPath The sibling path as an absolute path, for example /PurchaseOrders('300000020')/to_Supplier/Name
+		 *@returns {object} oSiblingAdapter The corresponding sibling adapter
+		 */
+		sibling : function(sSiblingPath) {
+			if (!sSiblingPath) {
+				return null;
+			}
+
+			var mSiblingMetadataContext = {
+				model : this.oModel,
+				path : sSiblingPath
+			};
+
+			var oClass = this.getMetadata().getClass();
+			var oSibling = new oClass(mSiblingMetadataContext);
+			oSibling.sContextPath = this.sContextPath;
+			return oSibling;
 		}
 	});
 
