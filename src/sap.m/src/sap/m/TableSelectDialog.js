@@ -339,7 +339,7 @@ sap.ui.define([
 		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
 			contentMiddle: [
 				new sap.m.Title(this.getId()  + "-dialog-title", {
-					level: "H1"
+					level: "H2"
 				})
 			],
 			contentRight: [
