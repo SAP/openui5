@@ -419,10 +419,10 @@
 								</custom:ObjectPageSubSection>
 
 								<template:repeat list="{data>/methods}" var="method">
-									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '') }_method">
+									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '').replace('#', '.') }_method">
 										<custom:blocks>
 
-											<ObjectPageLazyLoader stashed="true" id="{= ${method>name}.replace('$', '') }__method">
+											<ObjectPageLazyLoader stashed="true" id="{= ${method>name}.replace('$', '').replace('#', '.') }__method">
 
 												<layout:VerticalLayout width="100%">
 
