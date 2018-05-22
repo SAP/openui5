@@ -335,7 +335,8 @@ sap.ui.define([
 			/**
 			 * Extension section of the Table.
 			 * If not set, no extension area will be rendered.
-			 * Note: In case a <code>sap.m.Toolbar</code> is used as header the CSS class sapMTBHeader-CTX should be applied on this toolbar via <code>addStyleClass</code>.
+			 * Note: In case a <code>sap.m.Toolbar</code> is used as header the CSS class sapMTBHeader-CTX should be applied on this toolbar via
+			 * <code>addStyleClass</code>.
 			 */
 			extension : {type : "sap.ui.core.Control", multiple : true, singularName : "extension"},
 
@@ -3251,8 +3252,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * In contrast to the function <code>getFixedColumnCount</code> which returns the value of the property <code>fixedColumnCount</code>, this function
-	 * returns the actual fixed column count computed based on the table width.
+	 * In contrast to the function <code>getFixedColumnCount</code> which returns the value of the property <code>fixedColumnCount</code>, this
+	 * function returns the actual fixed column count computed based on the table width.
 	 *
 	 * <b>Note:</b> The computed column count is only available after the table is fully rendered.
 	 *
@@ -3711,7 +3712,8 @@ sap.ui.define([
 	 * Creates a new {@link sap.ui.core.util.Export} object and fills row/column information from the table if not provided. For the cell content,
 	 * the column's "sortProperty" will be used (experimental!)
 	 *
-	 * <p><b>Please note: This method uses synchronous requests. Support and functioning ends with the support for synchronous requests in browsers.</b></p>
+	 * <p><b>Please note: This method uses synchronous requests. Support and functioning ends with the support for synchronous requests in
+	 * browsers.</b></p>
 	 *
 	 * @param {object} [mSettings] settings for the new Export, see {@link sap.ui.core.util.Export} <code>constructor</code>
 	 * @returns {sap.ui.core.util.Export} Export object
