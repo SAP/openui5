@@ -36,10 +36,12 @@ sap.ui.require([
 		}, oTemplate);
 	}
 
-	asODataBinding(ODataBinding.prototype);
-
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataBinding", {
+		before : function () {
+			asODataBinding(ODataBinding.prototype);
+		},
+
 		beforeEach : function () {
 			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();

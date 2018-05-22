@@ -435,6 +435,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata._ODataMetaModelUtils", {
+		before : function () {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
+
 		beforeEach : function () {
 			this.iOldLogLevel = jQuery.sap.log.getLevel(sLoggingModule);
 			// do not rely on ERROR vs. DEBUG due to minified sources
