@@ -299,7 +299,8 @@ sap.ui.define([
 			var sMessage,
 				sSalesOrderLineItem,
 				oTable = this.byId("SalesOrderLineItems"),
-				oSOLineItemContext = oTable.getSelectedItem().getBindingContext();
+				oSOLineItemContext = oTable.getSelectedItem().getBindingContext(),
+				that = this;
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {
@@ -309,6 +310,9 @@ sap.ui.define([
 				oSOLineItemContext.delete(oSOLineItemContext.getModel().getGroupId())
 					.then(function () {
 						MessageBox.success("Deleted Sales Order " + sSalesOrderLineItem);
+						// item removed, remove context of dependent bindings and hide details
+						that._setSalesOrderLineItemBindingContext();
+						that.refreshSingle();
 					}, function (oError) {
 						MessageBox.error("Could not delete Sales Order " + sSalesOrderLineItem
 							+ ": " + oError.message);
@@ -464,18 +468,7 @@ sap.ui.define([
 				// wait until created handler (if any) is processed
 				return that.oSalesOrderLineItemCreated;
 			}).then(function () {
-				var oObjectPage = that.byId("ObjectPage"),
-					oSelectedSalesOrderContext =
-						oObjectPage.getObjectBinding().getContext();
-
-				if (oSelectedSalesOrderContext.hasPendingChanges()) {
-					MessageToast.show("Cannot refresh due to unsaved changes"
-							+ ", reset changes before refresh");
-				} else {
-					// Trigger refresh for the corresponding entry in the SalesOrderList to get
-					// the new ETag also there. This refreshes also all dependent bindings.
-					oSelectedSalesOrderContext.refresh();
-				}
+				that.refreshSingle();
 			});
 		},
 
@@ -597,6 +590,22 @@ sap.ui.define([
 					"Refresh");
 			} else {
 				oRefreshable.refresh();
+			}
+		},
+
+		/**
+		 * Refreshes the given context if there are no pending changes.
+		 */
+		refreshSingle : function () {
+			var oContext = this.byId("ObjectPage").getObjectBinding().getContext();
+
+			if (oContext.hasPendingChanges()) {
+				MessageToast.show("Cannot refresh due to unsaved changes, reset changes before"
+					+ " refresh");
+			} else {
+				// Trigger refresh for the corresponding entry in the SalesOrderList to get
+				// the new ETag also there. This refreshes also all dependent bindings.
+				oContext.refresh();
 			}
 		},
 

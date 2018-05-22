@@ -1599,9 +1599,6 @@ sap.ui.require([
 						oCachePromise : SyncPromise.resolve(
 							bRelative ? undefined : { /* cache */}),
 						oContext : oFixture.oContext,
-						oModel : {
-							getDependentBindings : function () {}
-						},
 						sPath : oFixture.sPath,
 						bRelative : bRelative
 					}),
@@ -1619,8 +1616,8 @@ sap.ui.require([
 						getContext : fnGetContext
 					};
 
-				this.mock(oBinding.oModel).expects("getDependentBindings")
-					.withExactArgs(sinon.match.same(oBinding))
+				this.mock(oBinding).expects("getDependentBindings")
+					.withExactArgs()
 					.returns([oDependent0, oDependent1]);
 				this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 				this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -1646,9 +1643,6 @@ sap.ui.require([
 		var oBinding = new ODataParentBinding({
 				oCachePromise : SyncPromise.resolve(undefined),
 				oContext : {/*simulate standard context*/},
-				oModel : {
-					getDependentBindings : function () {}
-				},
 				sPath : "TEAM_2_MANAGER",
 				bRelative : true
 			}),
@@ -1666,8 +1660,8 @@ sap.ui.require([
 				getContext : fnGetContext
 			};
 
-		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
+		this.mock(oBinding).expects("getDependentBindings")
+			.withExactArgs()
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -1713,11 +1707,7 @@ sap.ui.require([
 				oContext : {
 					fetchCanonicalPath : function () {}
 				},
-				oModel : {
-					getDependentBindings : function () {}
-				},
 				sPath : "TEAM_2_MANAGER",
-				refreshInternal : function () {},
 				bRelative : true
 			}),
 			fnGetContext = function () {
@@ -1737,8 +1727,8 @@ sap.ui.require([
 
 		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve(oPathPromise));
-		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
+		this.mock(oBinding).expects("getDependentBindings")
+			.withExactArgs()
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("checkUpdate").withExactArgs();
 		this.mock(oDependent1).expects("checkUpdate").withExactArgs();
@@ -1760,7 +1750,6 @@ sap.ui.require([
 					reportError : function () {}
 				},
 				sPath : "TEAM_2_EMPLOYEES",
-				refreshInternal : function () {},
 				bRelative : true,
 				toString : function () {
 					return "foo";

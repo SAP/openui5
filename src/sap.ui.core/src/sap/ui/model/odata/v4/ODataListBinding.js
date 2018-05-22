@@ -937,7 +937,7 @@ sap.ui.define([
 		return this;
 	};
 
-	 /**
+	/**
 	 * Returns already created binding contexts for all entities in this list binding for the range
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
 	 * If at least one of the entities in the given range has not yet been loaded, fires a
@@ -1165,6 +1165,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#getDependentBindings
+	 */
+	ODataListBinding.prototype.getDependentBindings = function () {
+		var that = this;
+
+		return this.oModel.getDependentBindings(this).filter(function (oDependentBinding) {
+			return !(oDependentBinding.oContext.getPath() in that.mPreviousContextsByPath);
+		});
+	};
+
+	/**
 	 * Computes the "diff" needed for extended change detection.
 	 *
 	 * @param {object[]} aResult
@@ -1388,7 +1400,7 @@ sap.ui.define([
 				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+			that.getDependentBindings().forEach(function (oDependentBinding) {
 				// Call refreshInternal with bCheckUpdate = false because property bindings should
 				// not check for updates yet, otherwise they will cause a "Failed to drill down..."
 				// when the row is no longer part of the collection. They get another update request
@@ -1557,9 +1569,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.resumeInternal = function () {
+		var aBindings = this.getDependentBindings();
+
 		this.reset();
 		this.fetchCache(this.oContext);
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+		aBindings.forEach(function (oDependentBinding) {
 			// do not call checkUpdate in dependent property bindings because the cache of this
 			// binding is reset and the binding has not yet fired a change event
 			oDependentBinding.resumeInternal(false);

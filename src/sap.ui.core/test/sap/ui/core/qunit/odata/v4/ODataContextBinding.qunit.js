@@ -1019,7 +1019,7 @@ sap.ui.require([
 		oBindingMock.expects("_fireChange").never();
 		oBindingMock.expects("fetchCache").never();
 		oBindingMock.expects("createReadGroupLock").never();
-		this.mock(this.oModel).expects("getDependentBindings").never();
+		oBindingMock.expects("getDependentBindings").never();
 
 		// code under test (as called by ODataBinding#refresh)
 		oBinding.refreshInternal(undefined, true);
@@ -1061,7 +1061,6 @@ sap.ui.require([
 				oPromise,
 				oBinding = this.bindContext(sPath, oBaseContext),
 				oBindingMock = this.mock(oBinding),
-				oModelMock = this.mock(this.oModel),
 				that = this;
 
 			function expectChangeAndRefreshDependent() {
@@ -1074,8 +1073,9 @@ sap.ui.require([
 
 				oBindingMock.expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Change});
-				oModelMock.expects("getDependentBindings")
-					.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
+				oBindingMock.expects("getDependentBindings")
+					.withExactArgs()
+					.returns([oChild0, oChild1]);
 				that.mock(oChild0).expects("refreshInternal").withExactArgs("groupId", true);
 				that.mock(oChild1).expects("refreshInternal").withExactArgs("groupId", true);
 			}
@@ -1144,8 +1144,9 @@ sap.ui.require([
 
 					oBindingMock.expects("_fireChange")
 						.withExactArgs({reason : ChangeReason.Change});
-					oModelMock.expects("getDependentBindings")
-						.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
+					oBindingMock.expects("getDependentBindings")
+						.withExactArgs()
+						.returns([oChild0, oChild1]);
 					that.mock(oChild0).expects("refreshInternal").withExactArgs("groupId", true);
 					that.mock(oChild1).expects("refreshInternal").withExactArgs("groupId", true);
 				}
@@ -1252,8 +1253,7 @@ sap.ui.require([
 				sinon.match.same(oOperationMetadata), sinon.match.func)
 			.returns(Promise.resolve(oResponseEntity));
 		oBindingMock.expects("_fireChange").twice().withExactArgs({reason : ChangeReason.Change});
-		oModelMock.expects("getDependentBindings").twice()
-			.withExactArgs(sinon.match.same(oBinding)).returns([]);
+		oBindingMock.expects("getDependentBindings").twice().withExactArgs().returns([]);
 		oBindingMock.expects("hasReturnValueContext").twice()
 			.withExactArgs(sinon.match.same(oOperationMetadata))
 			.returns(true);
@@ -1290,8 +1290,9 @@ sap.ui.require([
 					.returns(Promise.reject(oError));
 				oBindingMock.expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Change});
-				oModelMock.expects("getDependentBindings")
-					.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
+				oBindingMock.expects("getDependentBindings")
+					.withExactArgs()
+					.returns([oChild0, oChild1]);
 				that.mock(oChild0).expects("refreshInternal").withExactArgs("groupId", true);
 				that.mock(oChild1).expects("refreshInternal").withExactArgs("groupId", true);
 				that.mock(oReturnValueContextSecondExecute).expects("destroy").withExactArgs();
@@ -1325,8 +1326,7 @@ sap.ui.require([
 				"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 			.returns(SyncPromise.reject(oError));
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
-		oModelMock.expects("getDependentBindings").withExactArgs(sinon.match.same(oBinding))
-			.returns([]);
+		oBindingMock.expects("getDependentBindings").withExactArgs().returns([]);
 		oModelMock.expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match.same(oError));
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
@@ -1356,7 +1356,7 @@ sap.ui.require([
 				"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 			.returns(SyncPromise.resolve({/*oResult*/}));
 		// Note: if control's handler fails, we don't care about state of dependent bindings
-		oModelMock.expects("getDependentBindings").never();
+		oBindingMock.expects("getDependentBindings").never();
 		oModelMock.expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match.same(oError));
 
@@ -1873,8 +1873,9 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false)
 			.returns(oGroupLock);
-		this.mock(this.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
+		this.mock(oBinding).expects("getDependentBindings")
+			.withExactArgs()
+			.returns([oChild0, oChild1]);
 		this.mock(oChild0).expects("refreshInternal")
 			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate));
 		this.mock(oChild1).expects("refreshInternal")
@@ -1939,7 +1940,7 @@ sap.ui.require([
 				.callsFake(function () {
 					oBinding.oReadGroupLock = oGroupLock;
 				});
-			this.mock(this.oModel).expects("getDependentBindings").never();
+			this.mock(oBinding).expects("getDependentBindings").never();
 			this.mock(oBinding).expects("_execute").exactly(bAction === false ? 1 : 0)
 				.withExactArgs(sinon.match.same(oGroupLock));
 
@@ -1962,8 +1963,9 @@ sap.ui.require([
 			},
 			bCheckUpdate = {/*true or false*/};
 
-		this.mock(this.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
+		this.mock(oBinding).expects("getDependentBindings")
+			.withExactArgs()
+			.returns([oChild0, oChild1]);
 		this.mock(oChild0).expects("refreshInternal")
 			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate));
 		this.mock(oChild1).expects("refreshInternal")
@@ -2050,8 +2052,8 @@ sap.ui.require([
 				assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 				assert.strictEqual(oBinding.mCacheByContext, undefined);
 			});
-		this.mock(this.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
+		this.mock(oBinding).expects("getDependentBindings")
+			.withExactArgs()
 			.returns([oDependent0, oDependent1]);
 		oResumeInternalExpectation0 = this.mock(oDependent0).expects("resumeInternal")
 			.withExactArgs(sinon.match.same(bCheckUpdate));
@@ -2081,7 +2083,7 @@ sap.ui.require([
 			oBinding.oOperation.bAction = bAction;
 
 			oBindingMock.expects("fetchCache").never();
-			this.mock(this.oModel).expects("getDependentBindings").never();
+			this.mock(oBinding).expects("getDependentBindings").never();
 			oBindingMock.expects("_fireChange").never();
 			oBindingMock.expects("execute").exactly(bAction === false ? 1 : 0).withExactArgs();
 

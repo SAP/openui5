@@ -212,7 +212,7 @@ sap.ui.define([
 		 */
 		function fireChangeAndRefreshDependentBindings() {
 			that._fireChange({reason : ChangeReason.Change});
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+			that.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.refreshInternal(oGroupLock.getGroupId(), true);
 			});
 		}
@@ -671,9 +671,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.getResolvedPath = function () {
-		var aSegments,
-			sPath = "",
+		var sPath = "",
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			aSegments,
 			that = this;
 
 		if (sResolvedPath && sResolvedPath.includes("/-1")) {
@@ -763,7 +763,7 @@ sap.ui.define([
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
 				}
-				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				that.getDependentBindings().forEach(function (oDependentBinding) {
 					oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
 				});
 			} else {
@@ -788,7 +788,7 @@ sap.ui.define([
 			this.bAggregatedQueryOptionsInitial = true;
 			this.mCacheByContext = undefined;
 			this.fetchCache(this.oContext);
-			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			this.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.resumeInternal(bCheckUpdate);
 			});
 			this._fireChange({reason : ChangeReason.Change});

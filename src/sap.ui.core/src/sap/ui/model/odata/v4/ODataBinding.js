@@ -273,6 +273,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns all bindings which have this binding as parent binding.
+	 *
+	 * @returns {sap.ui.model.odata.v4.ODataBinding[]}
+	 *   A list of dependent bindings, never <code>null</code>
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.getDependentBindings = function () {
+		return this.oModel.getDependentBindings(this);
+	};
+
+	/**
 	 * Returns the group ID of the binding that is used for read requests.
 	 *
 	 * @returns {string}
@@ -412,7 +424,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.hasPendingChangesInDependents = function () {
-		return this.oModel.getDependentBindings(this).some(function (oDependent) {
+		return this.getDependentBindings().some(function (oDependent) {
 			var oCache, bHasPendingChanges;
 
 			if (oDependent.oCachePromise.isFulfilled()) {
@@ -599,7 +611,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetChangesInDependents = function () {
-		this.oModel.getDependentBindings(this).forEach(function (oDependent) {
+		this.getDependentBindings().forEach(function (oDependent) {
 			var oCache;
 
 			if (oDependent.oCachePromise.isFulfilled()) {
