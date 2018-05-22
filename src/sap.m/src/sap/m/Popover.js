@@ -2236,7 +2236,7 @@ sap.ui.define([
 			} else {
 				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
 					text: this.getTitle(),
-					level: "H1"
+					level: "H2"
 				});
 
 				this._createInternalHeader();

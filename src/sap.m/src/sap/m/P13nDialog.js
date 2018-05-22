@@ -270,7 +270,7 @@ sap.ui.define([
                 }),
                 contentMiddle: new sap.m.Title({
                     text: this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"),
-                    level: "H1"
+                    level: "H2"
                 })
             }));
             this.addButton(this._createOKButton());
