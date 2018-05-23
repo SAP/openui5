@@ -251,7 +251,7 @@ sap.ui.define([
 	CalendarDateInterval.prototype._handleCalendarPickerDateSelect = function(oEvent) {
 		var oCalendar = this._getCalendarPicker(),
 			oSelectedDate = oCalendar.getSelectedDates()[0].getStartDate(),
-			oNewCalStartDate = new CalendarDate(oSelectedDate.getUTCFullYear(), oSelectedDate.getMonth(), oSelectedDate.getDate());
+			oNewCalStartDate = new CalendarDate.fromLocalJSDate(oSelectedDate);
 
 		this._setStartDate(oNewCalStartDate);
 		this._setFocusedDate(oNewCalStartDate);
