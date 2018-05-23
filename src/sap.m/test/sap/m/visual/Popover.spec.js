@@ -1,9 +1,20 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe("sap.m.Popover", function () {
 	"use strict";
 
+	var bPhone = null;
+	var _resolvePopover = function () {
+		return bPhone ? "__dialog1" : "__popover1";
+	};
+
 	it("Should load test page", function () {
+		browser.executeScript(function () {
+			return sap.ui.Device.system.phone;
+		}).then(function (response) {
+			bPhone = response;
+		});
+
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
@@ -76,7 +87,7 @@ describe("sap.m.Popover", function () {
 
 	it("Should open an overflowing popover which should be displayed with a visible scrollbar", function () {
 		element(by.id("overflowing-popover-arrow")).click();
-		expect(takeScreenshot(element(by.id("__popover1")))).toLookAs("overflowing-popover");
+		expect(takeScreenshot(element(by.id(_resolvePopover())))).toLookAs("overflowing-popover");
 	});
 
 });
