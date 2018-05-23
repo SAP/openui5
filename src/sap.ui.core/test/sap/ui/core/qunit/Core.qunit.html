@@ -85,11 +85,11 @@
 
 		QUnit.test("loadLibrary", function(assert) {
 			assert.equal(typeof sap.ui.getCore().loadLibrary, "function", "Core has method loadLibrary");
-			assert.ok(!jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has not been loaded yet");
+			assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") === 0, "testlib lib has not been loaded yet");
 			assert.ok(!jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace doesn't exists");
 			assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 0, "style sheet doesn't exist");
 			sap.ui.getCore().loadLibrary("sap.ui.testlib", "./testdata/uilib");
-			assert.ok(jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has been loaded");
+			assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") !== 0, "testlib lib has been loaded");
 			assert.ok(jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace exists");
 			assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 1, "style sheets have been added");
 		});
