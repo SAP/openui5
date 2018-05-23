@@ -1677,19 +1677,35 @@
 		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when expand button was pressed");
 	});
 
-	QUnit.test("DynamicPage On Collapse Button Press 2", function (assert) {
+	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
+
+		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
 		// Arrange
 		oUtil.renderObject(this.oDynamicPage);
 
-		// Act
+		// Arrange state:
+		this.oDynamicPage.$().height("400px"); // ensure not enough scrollHeight to snap with scrolling
+		this.oDynamicPage.$().width("300px");
+		this.oDynamicPage._setScrollPosition(10); // scrollTop > 0
+
+		// Assert state arranged as expected:
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), true, "header is expanded");
+		assert.ok(!this.oDynamicPage._canSnapHeaderOnScroll(), "not enough scrollHeight to snap with scroll");
+		assert.ok(this.oDynamicPage._needsVerticalScrollBar(), "enough scrollHeight to scroll");
+
+		// Act: toggle title to snap the header
 		this.oDynamicPage._titleExpandCollapseWhenAllowed();
 
+		// Assert context changed as expected:
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
+		assert.ok(!this.oDynamicPage._needsVerticalScrollBar(), "not enough scrollHeight to scroll");//because header was hidden during snap
+		assert.equal(this.oDynamicPage._getScrollPosition(), 0); // because no more scrolled-out content
+
+		// explicitly call the onscroll listener (to save a timeout in the test):
+		this.oDynamicPage._toggleHeaderOnScroll({target: {scrollTop: 0}});
+
 		// Assert
-		assert.strictEqual(this.oDynamicPage._bSuppressToggleHeaderOnce, true, "suppress flag is enabled");
-
-		this.clock.tick(1);
-
-		assert.strictEqual(this.oDynamicPage._bSuppressToggleHeaderOnce, false, "suppress flag is disabled");
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is still snapped");
 	});
 
 	QUnit.test("DynamicPage On Collapse Button MouseOver", function (assert) {
@@ -2094,12 +2110,12 @@
 		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), true, "The header can snap");
 	});
 
-	QUnit.test("DynamicPage _shouldExpand() returns false initially", function (assert) {
-		assert.equal(this.oDynamicPage._shouldExpand(), false, "DynamicPage should not expand initially");
+	QUnit.test("DynamicPage _shouldExpandOnScroll() returns false initially", function (assert) {
+		assert.equal(this.oDynamicPage._shouldExpandOnScroll(), false, "DynamicPage should not expand initially");
 	});
 
-	QUnit.test("DynamicPage _shouldSnap() returns false initially", function (assert) {
-		assert.equal(this.oDynamicPage._shouldSnap(), false, "DynamicPage should not snap initially");
+	QUnit.test("DynamicPage _shouldSnapOnScroll() returns false initially", function (assert) {
+		assert.equal(this.oDynamicPage._shouldSnapOnScroll(), false, "DynamicPage should not snap initially");
 	});
 
 	QUnit.test("DynamicPage _getTitleHeight() returns the correct Title height", function (assert) {
@@ -2699,7 +2715,7 @@
 			sRole = "region",
 			sAriaExpandedValue = "true",
 			sAriaLabelValue = oFactory.getResourceBundle().getText("EXPANDED_HEADER");
-		this.stub(this.oDynamicPage, "_shouldSnap", function () {
+		this.stub(this.oDynamicPage, "_shouldSnapOnScroll", function () {
 			return true;
 		});
 		this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll", function () {
