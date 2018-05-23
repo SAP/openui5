@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- Initialization -->
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+    <script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+    <![endif]-->
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<!-- Test functions -->
+	<script>
+		QUnit.config.autostart = false;
+		sap.ui.require(["sap/ui/model/json/JSONModel", "sap/ui/core/message/Message"], function(JSONModel, Message) {
+
+			QUnit.start();
+			QUnit.module("sap/ui/model/message/MessageListBinding", {
+				afterEach: function() {
+					sap.ui.getCore().getMessageManager().removeAllMessages();
+				},
+				beforeEach: function() {
+					sap.ui.getCore().getMessageManager().removeAllMessages();
+				}
+			});
+
+			var oModel = new JSONModel();
+			var createMessage = function(sText, sTarget, sType) {
+				return new Message({
+					target: sTarget || '/form/firstname',
+					message: sText || "test message",
+					processor: oModel,
+					type: sType || "Error"
+				});
+			};
+
+
+			QUnit.test("test MessageListBinding", function(assert) {
+				var oMessageManager = sap.ui.getCore().getMessageManager();
+				var oModel = oMessageManager.getMessageModel();
+				oMessageManager.addMessages(createMessage("mine", "rel1"));
+				oMessageManager.addMessages(createMessage("two", "rel2"));
+				oMessageManager.addMessages(createMessage("three", "rel3"));
+				oMessageManager.addMessages(createMessage("for", "rel4"));
+				oMessageManager.addMessages(createMessage("fiv", "rel5"));
+				var oMessageListBinding = oModel.bindList("/");
+				var aContexts = oMessageListBinding.getContexts(1, 3);
+				assert.ok(aContexts);
+				assert.equal(aContexts.length, 3);
+
+			});
+
+
+			QUnit.test("test MessageListBinding extended change detection", function(assert) {
+
+				var oMessageManager = sap.ui.getCore().getMessageManager();
+				oMessageManager.addMessages(createMessage("mine", "rel1"));
+				oMessageManager.addMessages(createMessage("two", "rel2"));
+				oMessageManager.addMessages(createMessage("three", "rel3"));
+				oMessageManager.addMessages(createMessage("for", "rel4"));
+				oMessageManager.addMessages(createMessage("for2", "rel4"));
+				oMessageManager.addMessages(createMessage("for3", "rel4"));
+				oMessageManager.addMessages(createMessage("for13", "rel4"));
+				oMessageManager.addMessages(createMessage("for23", "rel4"));
+
+				var oModel = oMessageManager.getMessageModel();
+				var listBinding = oModel.bindList("/");
+				listBinding.enableExtendedChangeDetection();
+
+
+				var contexts = listBinding.getContexts(0, 5);
+				assert.notOk(contexts.diff, "Delta information is initially not available");
+				var currentContexts = listBinding.getCurrentContexts();
+
+				assert.equal(contexts.length, 5, "contexts should contain 5 items");
+				assert.equal(currentContexts.length, 8, "Current contexts should contain 8 items");
+				currentContexts.forEach(function(context, i) {
+					assert.equal(context.getPath(), "/" + i, "ListBinding context");
+				});
+
+				oModel.getData()[3].setMessage("message12");
+				oModel.getData()[5].setMessage("messa121");
+				oModel.getData()[1].setDate(new Date());
+				oMessageManager.addMessages(createMessage("for323", "rel4"));
+
+				listBinding.checkUpdate();
+
+				currentContexts = listBinding.getCurrentContexts();
+				assert.equal(currentContexts.length, 9, "Current contexts should contain 9 items");
+				currentContexts.forEach(function(context, i) {
+					assert.equal(context.getPath(), "/" + i, "ListBinding context");
+				});
+
+				contexts = listBinding.getContexts(0, 5);
+				assert.equal(contexts.diff.length, 14, "Delta information is available");
+
+			});
+
+		});
+	</script>
+
+</head>
+
+<body>
+	<h1 id="qunit-header">QUnit tests: MessageListBinding</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="target1"></div>
+	<div id="target2"></div>
+</body>
+
+</html>
