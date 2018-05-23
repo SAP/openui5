@@ -268,6 +268,22 @@
 
 		};
 
+		var _getListItem = function(oRow) {
+			return sap.ui.getCore().byId(oRow.getId() + "-CLI");
+		};
+
+		var _getRowHeader = function(oRow) {
+			var oListItem = _getListItem(oRow);
+
+			return oListItem ? oListItem.getHeader() : null;
+		};
+
+		var _getRowTimeline = function(oRow) {
+			var oListItem = _getListItem(oRow);
+
+			return oListItem ? oListItem.getTimeline() : null;
+		};
+
 		var _switchToView = function(sViewName, oPC) {
 			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				mIntervalStringsMap = {},
@@ -663,26 +679,26 @@
 
 		QUnit.test("PlanningCalendarRow", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
-			assert.ok(oRow.getColumnListItem(), "ColumnListItem exist");
-			assert.equal(oRow.getColumnListItem().getCells().length, 2, "row has 2 columns")
+			assert.ok(_getListItem(oRow), "ColumnListItem exist");
+			assert.equal(_getListItem(oRow).getCells().length, 2, "row has 2 columns")
 
-			var oRowHeader = oRow.getColumnListItem().getCells()[0];
+			var oRowHeader = _getRowHeader(oRow);
 			assert.ok(oRowHeader, "row header exist");
 			assert.equal(oRowHeader.getTitle(), oRow.getTitle(), "row header Title");
 			assert.equal(oRowHeader.getIcon(), oRow.getIcon(), "row header icon");
 			assert.equal(oRowHeader.getDescription(), oRow.getText(), "row header Text");
 
-			assert.ok(oRow.getColumnListItem().getCells()[1], "CalendarRow exist");
-			assert.ok(oRow.getColumnListItem().getCells()[1] instanceof sap.ui.unified.CalendarRow, "CalendarRow control");
+			assert.ok(_getRowTimeline(oRow), "CalendarRow exist");
+			assert.ok(_getRowTimeline(oRow) instanceof sap.ui.unified.CalendarRow, "CalendarRow control");
 
-			var oCalendarRow = oRow.getCalendarRow();
-			assert.ok(!oCalendarRow.getNonWorkingDays(), "Row1: CalendarRow - nonWorkingDays");
-			assert.ok(!oCalendarRow.getNonWorkingHours(), "Row1: CalendarRow - nonWorkingHours");
+			var oTimeline = _getRowTimeline(oRow);
+			assert.ok(!oTimeline.getNonWorkingDays(), "Row1: CalendarRow - nonWorkingDays");
+			assert.ok(!oTimeline.getNonWorkingHours(), "Row1: CalendarRow - nonWorkingHours");
 
 			oRow = sap.ui.getCore().byId("PC1-Row2");
-			oCalendarRow = oRow.getCalendarRow();
-			assert.ok(jQuery.sap.equal(oCalendarRow.getNonWorkingDays(), [2, 3]), "Row2: CalendarRow - nonWorkingDays");
-			assert.ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
+			oTimeline = _getRowTimeline(oRow);
+			assert.ok(jQuery.sap.equal(oTimeline.getNonWorkingDays(), [2, 3]), "Row2: CalendarRow - nonWorkingDays");
+			assert.ok(jQuery.sap.equal(oTimeline.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
 		});
 
 		QUnit.test("PlanningCalendarRow's customData is used", function () {
@@ -693,9 +709,11 @@
 			var oPCRow = new sap.m.PlanningCalendarRow({
 				customData: oCustomData
 			});
+			var oPC = new sap.m.PlanningCalendar();
+			oPC.addRow(oPCRow);
 
 			// Assert
-			assert.deepEqual(oPCRow._oColumnListItem.getCustomData(), oPCRow.getCustomData(),
+			assert.deepEqual(_getListItem(oPCRow).getCustomData(), oPCRow.getCustomData(),
 				"getCustomData of PlanningCalendarRow is used by internal ColumnListItem");
 
 		});
@@ -1108,16 +1126,16 @@
 			assert.ok(oPC1.getShowEmptyIntervalHeaders(), "ShowEmptyIntervalHeaders is enabled by default");
 			var aRows = oPC1.getRows();
 			for(var i = 0; i < aRows.length; i++) {
-				assert.ok(aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders set");
-				assert.ok(aRows[i].getCalendarRow().getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders set");
+				assert.ok(_getRowTimeline(aRows[i]).getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders set");
+				assert.ok(_getRowTimeline(aRows[i]).getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders set");
 			}
 
 			oPC1.setShowIntervalHeaders(false);
 			oPC1.setShowEmptyIntervalHeaders(false);
 			sap.ui.getCore().applyChanges();
 			for(var i = 0; i < aRows.length; i++) {
-				assert.ok(!aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders not set");
-				assert.ok(!aRows[i].getCalendarRow().getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders not set");
+				assert.ok(!_getRowTimeline(aRows[i]).getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders not set");
+				assert.ok(!_getRowTimeline(aRows[i]).getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders not set");
 			}
 
 			oPC1.setShowIntervalHeaders(true);
@@ -1130,7 +1148,7 @@
 			assert.equal(oPC1.getGroupAppointmentsMode(), GroupAppointmentsMode.Collapsed, "GroupAppointmentsMode is set to 'Collapsed' by default");
 			var aRows = oPC1.getRows();
 			for(var i = 0; i < aRows.length; i++) {
-				assert.ok(aRows[i].getCalendarRow().getGroupAppointmentsMode(), "CalendarRow " + i + ": GroupAppointmentsMode is set to 'Collapsed'");
+				assert.ok(_getRowTimeline(aRows[i]).getGroupAppointmentsMode(), "CalendarRow " + i + ": GroupAppointmentsMode is set to 'Collapsed'");
 			}
 
 			// Act
@@ -1139,7 +1157,7 @@
 			// Assert
 			assert.equal(oPC1.getGroupAppointmentsMode(), GroupAppointmentsMode.Expanded, "GroupAppointmentsMode is set to 'Expanded'");
 			for(var i = 0; i < aRows.length; i++) {
-				assert.equal(aRows[i].getCalendarRow().getGroupAppointmentsMode(), GroupAppointmentsMode.Expanded, "CalendarRow " + i + ": GroupAppointmentsMode is set to 'Expanded'");
+				assert.equal(_getRowTimeline(aRows[i]).getGroupAppointmentsMode(), GroupAppointmentsMode.Expanded, "CalendarRow " + i + ": GroupAppointmentsMode is set to 'Expanded'");
 			}
 
 			// Cleanup
@@ -1151,13 +1169,13 @@
 			assert.ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
 			var aRows = oPC1.getRows();
 			for(var i = 0; i < aRows.length; i++) {
-				assert.ok(!aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight not set");
+				assert.ok(!_getRowTimeline(aRows[i]).getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight not set");
 			}
 
 			oPC1.setAppointmentsReducedHeight(true);
 			sap.ui.getCore().applyChanges();
 			for(var i = 0; i < aRows.length; i++) {
-				assert.ok(aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight set");
+				assert.ok(_getRowTimeline(aRows[i]).getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight set");
 			}
 
 			oPC1.setAppointmentsReducedHeight(false);
@@ -1168,13 +1186,13 @@
 			assert.equal(oPC1.getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "AppointmentVisualization default set");
 			var aRows = oPC1.getRows();
 			for(var i = 0; i < aRows.length; i++) {
-				assert.equal(aRows[i].getCalendarRow().getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "Row " + i + ": AppointmentVisualization default set");
+				assert.equal(_getRowTimeline(aRows[i]).getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "Row " + i + ": AppointmentVisualization default set");
 			}
 
 			oPC1.setAppointmentsVisualization(sap.ui.unified.CalendarAppointmentVisualization.Filled);
 			sap.ui.getCore().applyChanges();
 			for(var i = 0; i < aRows.length; i++) {
-				assert.equal(aRows[i].getCalendarRow().getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Filled, "Row " + i + ": AppointmentVisualization Filled set");
+				assert.equal(_getRowTimeline(aRows[i]).getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Filled, "Row " + i + ": AppointmentVisualization Filled set");
 			}
 
 			oPC1.setAppointmentsVisualization(sap.ui.unified.CalendarAppointmentVisualization.Standard);
@@ -1284,9 +1302,9 @@
 			assert.equal(oTable.getItems()[2].getId(), "NewRow-CLI", "new row added to table");
 			assert.ok(jQuery("#NewRow-Head").get(0), "new row Header rendered");
 			assert.ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
-			assert.equal(oRow.getCalendarRow().getStartDate().getTime(), oPC1.getStartDate().getTime(), "Start date of CalendarRow");
-			assert.equal(oRow.getCalendarRow().getIntervalType(), CalendarIntervalType.Month, "IntervalType of CalendarRow");
-			assert.equal(oRow.getCalendarRow().getIntervals(), iIntervals, "Intervals of CalendarRow");
+			assert.equal(_getRowTimeline(oRow).getStartDate().getTime(), oPC1.getStartDate().getTime(), "Start date of CalendarRow");
+			assert.equal(_getRowTimeline(oRow).getIntervalType(), CalendarIntervalType.Month, "IntervalType of CalendarRow");
+			assert.equal(_getRowTimeline(oRow).getIntervals(), iIntervals, "Intervals of CalendarRow");
 
 			oPC1.removeRow(oRow);
 			sap.ui.getCore().applyChanges();
@@ -1294,18 +1312,15 @@
 			assert.ok(!jQuery("#NewRow-Head").get(0), "new row Header not rendered");
 			assert.ok(!jQuery("#NewRow-CalRow").get(0), "new row CalendarRow not rendered");
 
-			oRow.getCalendarRow().setStartDate(new Date());
-			oRow.getCalendarRow().setIntervalType(CalendarIntervalType.Day);
-			oRow.getCalendarRow().setIntervals(3);
 			oPC1.insertRow(oRow, 1);
 			sap.ui.getCore().applyChanges();
 			assert.equal(oTable.getItems().length, 3, "Table rows");
 			assert.equal(oTable.getItems()[1].getId(), "NewRow-CLI", "new row added to table");
 			assert.ok(jQuery("#NewRow-Head").get(0), "new row Header rendered");
 			assert.ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
-			assert.equal(oRow.getCalendarRow().getStartDate().getTime(), oPC1.getStartDate().getTime(), "Start date of CalendarRow");
-			assert.equal(oRow.getCalendarRow().getIntervalType(), CalendarIntervalType.Month, "IntervalType of CalendarRow");
-			assert.equal(oRow.getCalendarRow().getIntervals(), iIntervals, "Intervals of CalendarRow");
+			assert.equal(_getRowTimeline(oRow).getStartDate().getTime(), oPC1.getStartDate().getTime(), "Start date of CalendarRow");
+			assert.equal(_getRowTimeline(oRow).getIntervalType(), CalendarIntervalType.Month, "IntervalType of CalendarRow");
+			assert.equal(_getRowTimeline(oRow).getIntervals(), iIntervals, "Intervals of CalendarRow");
 
 			var aRemoved = oPC1.removeAllRows();
 			sap.ui.getCore().applyChanges();
@@ -1468,7 +1483,7 @@
 
 		QUnit.test("Row header", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
-			var oRowHeader = oRow.getColumnListItem().getCells()[0];
+			var oRowHeader = _getRowHeader(oRow);
 
 			oRow.setTitle("Test");
 			oRow.setText("Test");
@@ -1481,18 +1496,18 @@
 
 		QUnit.test("Row nonWorkingIntervals", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
-			var oCalendarRow = oRow.getCalendarRow();
+			var oTimeline = _getRowTimeline(oRow);
 
 			oRow.setNonWorkingDays([2, 3]);
 			oRow.setNonWorkingHours([11, 12]);
 			sap.ui.getCore().applyChanges();
-			assert.ok(jQuery.sap.equal(oCalendarRow.getNonWorkingDays(), [2, 3]), "CalendarRow - nonWorkingDays");
-			assert.ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "CalendarRow - nonWorkingHours");
+			assert.ok(jQuery.sap.equal(oTimeline.getNonWorkingDays(), [2, 3]), "CalendarRow - nonWorkingDays");
+			assert.ok(jQuery.sap.equal(oTimeline.getNonWorkingHours(), [11, 12]), "CalendarRow - nonWorkingHours");
 		});
 
 		QUnit.test("Row selected", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
-			var oColumnListItem = oRow.getColumnListItem();
+			var oColumnListItem = _getListItem(oRow);
 			assert.ok(!oRow.getSelected(), "Row not selected as default");
 			assert.ok(!oColumnListItem.getSelected(), "ColumnListItem not selected as default");
 
@@ -1504,8 +1519,8 @@
 
 		QUnit.test("Row appointments", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
-			var oCalendarRow = oRow.getCalendarRow();
-			assert.ok(jQuery.sap.equal(oRow.getAppointments(), oCalendarRow.getAppointments()), "CalendarRow appointments");
+			var oTimeline = _getRowTimeline(oRow);
+			assert.ok(jQuery.sap.equal(oRow.getAppointments(), oTimeline.getAppointments()), "CalendarRow appointments");
 			assert.equal(oRow.getAppointments().length, 4, "number of appointments");
 
 			var oAppointment = new CalendarAppointment("NewAppointment", {
@@ -1545,7 +1560,7 @@
 			}
 
 			oRow = sap.ui.getCore().byId("PC1-Row2");
-			oCalendarRow = oRow.getCalendarRow();
+			oTimeline = _getRowTimeline(oRow);
 			assert.ok(sap.ui.getCore().byId("PC1-R2A1"), "Appointment exist before destroy");
 			oRow.destroyAppointments();
 			sap.ui.getCore().applyChanges();
@@ -1557,8 +1572,8 @@
 
 		QUnit.test("Row intervalHeaders", function(assert) {
 			var oRow = sap.ui.getCore().byId("PC1-Row1");
-			var oCalendarRow = oRow.getCalendarRow();
-			assert.ok(jQuery.sap.equal(oRow.getIntervalHeaders(), oCalendarRow.getIntervalHeaders()), "CalendarRow IntervalHeaders");
+			var oTimeline = _getRowTimeline(oRow);
+			assert.ok(jQuery.sap.equal(oRow.getIntervalHeaders(), oTimeline.getIntervalHeaders()), "CalendarRow IntervalHeaders");
 			assert.equal(oRow.getIntervalHeaders().length, 1, "number of IntervalHeaders");
 
 			var oIntervalHeader = new CalendarAppointment("NewIntervalHeader", {
@@ -1597,7 +1612,6 @@
 			}
 
 			oRow = sap.ui.getCore().byId("PC1-Row2");
-			oCalendarRow = oRow.getCalendarRow();
 			assert.ok(sap.ui.getCore().byId("PC1-R2H1"), "IntervalHeader exist before destroy");
 			oRow.destroyIntervalHeaders();
 			sap.ui.getCore().applyChanges();
@@ -1629,10 +1643,10 @@
 			sap.ui.getCore().applyChanges();
 
 			var aRows = oPC.getRows();
-			var oCalendarRow = aRows[0].getCalendarRow();
+			var oTimeline = _getRowTimeline(aRows[0]);
 
 			// assert
-			assert.equal(oCalendarRow.getRenderer().getLegendItems(oCalendarRow).length, 1,  "Legend items should be returned");
+			assert.equal(oTimeline.getRenderer().getLegendItems(oTimeline).length, 1,  "Legend items should be returned");
 
 			// cleanup
 			oPC.destroy();
@@ -1833,7 +1847,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//assert
-			assert.ok(oRow.getCalendarRow()._fnCustomSortedAppointments, "the custom sorter function is set");
+			assert.ok(_getRowTimeline(oRow)._fnCustomSortedAppointments, "the custom sorter function is set");
 
 			//cleanup
 			oPC.destroy();
@@ -1854,7 +1868,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//assert
-			assert.ok(oRow.getCalendarRow()._fnCustomSortedAppointments, "the custom sorter function is set");
+			assert.ok(_getRowTimeline(oRow)._fnCustomSortedAppointments, "the custom sorter function is set");
 
 			//cleanup
 			oPC.destroy();
@@ -1917,44 +1931,7 @@
 			afterEach: function() {
 				//Cleanup
 				this.oPC.destroy();
-			},
-
-			/* Checks that aggregation "_nonWorkingDates" is empty for both PlanningCalendarRows & its CalendarRows*/
-			_assertEmptyNonWorkingDates: function() {
-				this.oPC.getAggregation("rows").forEach(function (oRow) {
-					assert.ok(!oRow.getAggregation("_nonWorkingDates") ||
-							oRow.getAggregation("_nonWorkingDates").length === 0,
-							"PlanningCalendarRow should have no items in its aggregation nonWorkingDates");
-				});
-
-				this.oPC.getAggregation("rows").forEach(function (oPCRow) {
-					assert.ok(!oPCRow.getCalendarRow().getAggregation("_nonWorkingDates") ||
-							oPCRow.getCalendarRow().getAggregation("_nonWorkingDates").length === 0,
-							"CalendarRow should have no items in its aggregation nonWorkingDates");
-				});
-			},
-			_assertSingleNonWorkingDateIsAvailable: function(oDate, expectedLength, index) {
-				var oRowNoWork, oCRowNoWork;
-				this.oPC.getAggregation("rows").forEach(function(oPCRow) {
-					assert.equal(oPCRow.getAggregation("_nonWorkingDates").length, expectedLength, "PlanningCalendarRow should have 1 item in its aggregation nonWorkingDates");
-					oRowNoWork = oPCRow.getAggregation("_nonWorkingDates")[index];
-					assert.equal(oRowNoWork.getStartDate().toString(), oDate.getStartDate().toString(), "date ok");
-					assert.equal(oRowNoWork.getEndDate(), null, "PlanningCalendarRow should have no endDate");
-				});
-
-				this.oPC.getAggregation("rows").forEach(function(oPCRow) {
-					assert.equal(oPCRow.getCalendarRow().getAggregation("_nonWorkingDates").length, expectedLength, "CalendarRow should have 1 item in its aggregation nonWorkingDates");
-					oCRowNoWork = oPCRow.getCalendarRow().getAggregation("_nonWorkingDates")[index];
-					assert.equal(oCRowNoWork.getStartDate().toString(), oDate.getStartDate().toString(), "date ok");
-					assert.equal(oCRowNoWork.getEndDate(), null, "CalendarRow should have no endDate");
-				});
 			}
-		});
-		QUnit.test("Add non working special date", function(assert) {
-			//Act
-			this.oPC.addSpecialDate(this.oSpecialDate);
-			//Assert
-			this._assertSingleNonWorkingDateIsAvailable(this.oSpecialDate, 1, 0);
 		});
 
 		QUnit.test("Insert non working special date", function(assert) {
@@ -1965,7 +1942,6 @@
 			this.oPC.insertSpecialDate(this.oSecondSpecialDate, 0);
 			//Assert
 			assert.equal(this.oPC.indexOfAggregation("specialDates", this.oSecondSpecialDate), 0, "Insert special dates at index 0 position it at the 0th index");
-			this._assertSingleNonWorkingDateIsAvailable(this.oSecondSpecialDate, 2, 0);
 
 		});
 
@@ -1976,7 +1952,7 @@
 			//Act
 			this.oPC.removeSpecialDate(this.oSpecialDate);
 			//Assert
-			this._assertEmptyNonWorkingDates();
+			assert.equal(this.oPC.indexOfAggregation("specialDates", this.oSecondSpecialDate), -1, "Special date is removed");
 		});
 
 		QUnit.test("Remove all non working special date", function(assert) {
@@ -1984,7 +1960,7 @@
 			//Act
 			this.oPC.removeAllSpecialDates();
 			//Assert
-			this._assertEmptyNonWorkingDates();
+			assert.equal(this.oPC.indexOfAggregation("specialDates", this.oSecondSpecialDate), -1, "Special date is removed");
 		});
 
 		QUnit.module("Special Dates per PlanningCalendarRow", {
@@ -2487,7 +2463,7 @@
 		QUnit.test("'_onRowDeselectAppointment' behaves correctly when deselecting not existing appointments", function (assert) {
 			//prepare
 			var oSetPropertySpy;
-			this.sut.getRows()[0].getCalendarRow().aSelectedAppointments.push("dummy appointment");
+			_getRowTimeline(this.sut.getRows()[0]).aSelectedAppointments.push("dummy appointment");
 			oSetPropertySpy = this.spy(sap.ui.base.ManagedObject.prototype, "setProperty");
 
 			//act
@@ -3468,8 +3444,8 @@
 			var oTestDate = new Date(5, 5, 5);
 			this._createCalendar();
 			this._oPC._setRowsStartDate(oTestDate);
-			assert.equal(this._oPC.getRows()[0].getCalendarRow().getStartDate().getTime(), oTestDate.getTime(), 'row 1 start date');
-			assert.equal(this._oPC.getRows()[1].getCalendarRow().getStartDate().getTime(), oTestDate.getTime(), 'row 2 start date');
+			assert.equal(_getRowTimeline(this._oPC.getRows()[0]).getStartDate().getTime(), oTestDate.getTime(), 'row 1 start date');
+			assert.equal(_getRowTimeline(this._oPC.getRows()[1]).getStartDate().getTime(), oTestDate.getTime(), 'row 2 start date');
 		});
 
 		QUnit.test("'_handleTodayPress()' event handler adjust the startDate to the 1st day of month", function (assert) {
@@ -3588,14 +3564,16 @@
 		QUnit.test("'CalendarRow.Renderer' calls its 'renderSingleDayInterval()'", function (assert) {
 			//arrange
 			/* CalendarRowInPCRenderer renderer is not exposed to the public, so obtain it via its parent */
-			var oCalendarRowRenderer = new sap.m.PlanningCalendarRow()._oColumnListItem.getCells()[1].getRenderer(),
-				oCalendarRowRendererSpy = this.spy(oCalendarRowRenderer, "renderSingleDayInterval");
+			var oRow = new sap.m.PlanningCalendarRow(),
+				oPC = new sap.m.PlanningCalendar({ rows: [oRow] }),
+				oTimelineRenderer = _getRowTimeline(oRow).getRenderer(),
+				oTimelineRendererSpy = this.spy(oTimelineRenderer, "renderSingleDayInterval");
 
 			this._createCalendar();
 			//assert
-			assert.strictEqual(oCalendarRowRendererSpy.callCount, 2, "'renderSingleDayInterval()' is called as expected"); //Two rows
+			assert.strictEqual(oTimelineRendererSpy.callCount, 2, "'renderSingleDayInterval()' is called as expected"); //Two rows
 			//clean
-			oCalendarRowRendererSpy.restore();
+			oTimelineRendererSpy.restore();
 		});
 
 		QUnit.test("Appointment select is fired", function (assert) {
@@ -4339,7 +4317,7 @@
 
 		QUnit.test("_calcNewHoursAppPos: Calculate new position of the appointment in 'Hours' view", function(assert) {
 			//arrange
-			var oPCRow = new sap.m.PlanningCalendarRow(),
+			var oPCRow = new sap.m.PlanningCalendar(),
 				oRowStartDate = new Date(2017, 10, 13),
 				oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
 				oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
@@ -4372,7 +4350,7 @@
 
 		QUnit.test("_calcNewDaysAppPos: Calculate new position of the appointment in 'Days' view", function(assert) {
 			//arrange
-			var oPCRow = new sap.m.PlanningCalendarRow(),
+			var oPCRow = new sap.m.PlanningCalendar(),
 				oRowStartDate = new Date(2017, 10, 13),
 				oAppStartDate = new Date(2017, 10, 15, 1, 0, 0),
 				oAppEndDate = new Date(2017, 10, 15, 2, 0, 0),
@@ -4405,7 +4383,7 @@
 
 		QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view", function(assert) {
 			//arrange
-			var oPCRow = new sap.m.PlanningCalendarRow(),
+			var oPCRow = new sap.m.PlanningCalendar(),
 				oRowStartDate = new Date(2017, 10, 13),
 				oAppStartDate = new Date(2017, 11, 13, 1, 0, 0),
 				oAppEndDate = new Date(2017, 11, 13, 2, 0, 0),
@@ -4438,7 +4416,7 @@
 
 		QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view when row start day is different than the appointment's day", function (assert) {
 			//arrange
-			var oPCRow = new sap.m.PlanningCalendarRow(),
+			var oPCRow = new sap.m.PlanningCalendar(),
 					oRowStartDate = new Date(2017, 10, 13),
 					oAppStartDate = new Date(2017, 11, 14, 1, 0, 0),
 					oAppEndDate = new Date(2017, 11, 14, 2, 0, 0),
@@ -4468,7 +4446,7 @@
 			oPCRow1.setEnableAppointmentsDragAndDrop(true);
 
 			var oDragConfig = oPCRow1.getDragDropConfig();
-			var oDropConfig = oPCRow1.getCalendarRow().getDragDropConfig();
+			var oDropConfig = _getRowTimeline(oPCRow1).getDragDropConfig();
 
 			//assert
 			assert.equal(oDragConfig.length, 1, "One DragInfo found");
@@ -4482,18 +4460,18 @@
 
 			//assert
 			assert.equal(oPCRow1.getDragDropConfig().length, 1, "One config found");
-			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+			assert.equal(_getRowTimeline(oPCRow1).getDragDropConfig().length, 1, "One config found");
 			assert.equal(oPCRow2.getDragDropConfig().length, 0, "Zero configs found");
-			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(_getRowTimeline(oPCRow2).getDragDropConfig().length, 0, "Zero configs found");
 
 			//act
 			oPCRow1.setEnableAppointmentsDragAndDrop(false);
 
 			//assert
 			assert.equal(oPCRow1.getDragDropConfig().length, 0, "Zero configs found");
-			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(_getRowTimeline(oPCRow1).getDragDropConfig().length, 0, "Zero configs found");
 			assert.equal(oPCRow2.getDragDropConfig().length, 0, "Zero configs found");
-			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(_getRowTimeline(oPCRow2).getDragDropConfig().length, 0, "Zero configs found");
 
 
 			//act
@@ -4502,9 +4480,9 @@
 
 			//assert
 			assert.equal(oPCRow1.getDragDropConfig().length, 1, "One config found");
-			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+			assert.equal(_getRowTimeline(oPCRow1).getDragDropConfig().length, 1, "One config found");
 			assert.equal(oPCRow2.getDragDropConfig().length, 1, "One config found");
-			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+			assert.equal(_getRowTimeline(oPCRow2).getDragDropConfig().length, 1, "One config found");
 
 			//act
 			oPCRow1.setEnableAppointmentsDragAndDrop(false);
@@ -4512,9 +4490,9 @@
 
 			//assert
 			assert.equal(oPCRow1.getDragDropConfig().length, 0, "Zero configs found");
-			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(_getRowTimeline(oPCRow1).getDragDropConfig().length, 0, "Zero configs found");
 			assert.equal(oPCRow2.getDragDropConfig().length, 1, "One config found");
-			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+			assert.equal(_getRowTimeline(oPCRow2).getDragDropConfig().length, 1, "One config found");
 
 			//clean
 			oPC.destroy();
@@ -4533,7 +4511,7 @@
 
 		QUnit.module("Resize Appointments", {
 			beforeEach: function () {
-				this.oPCRow = new sap.m.PlanningCalendarRow();
+				this.oPCRow = new sap.m.PlanningCalendar();
 			},
 
 			afterEach: function () {
@@ -4678,7 +4656,7 @@
 			//act
 			oPCRow1.setEnableAppointmentsCreate(true);
 
-			var oDragConfig = oPCRow1.getCalendarRow().getDragDropConfig();
+			var oDragConfig = _getRowTimeline(oPCRow1).getDragDropConfig();
 
 			//assert
 			assert.equal(oDragConfig.length, 1, "One DragInfo found");
@@ -4689,7 +4667,7 @@
 			oPCRow1.setEnableAppointmentsCreate(false);
 
 			//assert
-			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(_getRowTimeline(oPCRow1).getDragDropConfig().length, 0, "Zero configs found");
 
 			//clean
 			oPC.destroy();
@@ -4697,7 +4675,7 @@
 
 		QUnit.module("Create Appointments: _calcCreateNewAppHours", {
 			beforeEach: function () {
-				this.oPCRow = new sap.m.PlanningCalendarRow();
+				this.oPCRow = new sap.m.PlanningCalendar();
 				this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
 				this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
 					// arrange
@@ -4743,7 +4721,7 @@
 
 		QUnit.module("Create Appointments: _calcCreateNewAppDays", {
 			beforeEach: function () {
-				this.oPCRow = new sap.m.PlanningCalendarRow();
+				this.oPCRow = new sap.m.PlanningCalendar();
 				this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
 				this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
 					// arrange
@@ -4789,7 +4767,7 @@
 
 		QUnit.module("Create Appointments: _calcCreateNewAppMonths", {
 			beforeEach: function () {
-				this.oPCRow = new sap.m.PlanningCalendarRow();
+				this.oPCRow = new sap.m.PlanningCalendar();
 				this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
 				this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
 					// arrange
