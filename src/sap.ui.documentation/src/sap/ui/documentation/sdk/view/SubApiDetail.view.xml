@@ -62,6 +62,7 @@
 												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 											</m:MessageStrip>
 										</template:if>
+
 										<custom:JSDocText text="{/description}"/>
 
 										<template:if test="{data>/hasAnnotations}">
@@ -89,7 +90,7 @@
 
 										<template:if test="{data>/hasChildren}">
 											<custom:LightTable
-												 rows="{ path : '/nodes'}"
+												 rows="{path : '/nodes'}"
 												 columnTitles="Namespaces &amp; Classes,Description"
 												 columnCount="2"
 												 class="sapUiSmallMarginTop">
@@ -113,7 +114,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/properties'}"
+										<custom:LightTable rows="{path : '/properties'}"
 											 columnCount="2"
 											 columnTitles="Name,Description"
 											 class="sapUiSmallMarginTop sapUiDocumentation2ColumnsEqualTable">
@@ -142,14 +143,14 @@
 											<custom:JSDocText text="{/constructor/description}"/>
 
 											<layout:VerticalLayout visible="{= ${/constructor/examples} !== undefined}"
-																   content="{ path : '/constructor/examples', templateShareable: 'false'}">
+																   content="{path : '/constructor/examples', templateShareable: 'false'}">
 												<custom:JSDocText text="{data}"/>
 											</layout:VerticalLayout>
 
 											<custom:JSDocText text="{/constructor/codeExample}"/>
 
 											<template:if test="{= !!${data>/constructor/parameters} }">
-												<custom:LightTable rows="{ path: '/constructor/parameters'}"
+												<custom:LightTable rows="{path: '/constructor/parameters'}"
 														columnTitles="Param,Type,Default Value,Description"
 														columnCount="4"
 														class="sapUiDocumentationParamsTable">
@@ -167,7 +168,7 @@
 											</template:if>
 
 											<template:if test="{= ${data>/constructor/throws} !== undefined}">
-												<custom:LightTable rows="{ path : '/constructor/throws', templateShareable: 'false'}"
+												<custom:LightTable rows="{path : '/constructor/throws', templateShareable: 'false'}"
 														columnTitles="Throws,Desktop"
 														columnCount="2"
 														class="sapUiDocumentation2ColumnsEqualTable">
@@ -193,7 +194,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/properties'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/properties'}"
 											columnTitles="Name,Type,Default Value,Description"
 											columnCount="4"
 											class="sapUiSmallMarginTop">
@@ -240,7 +241,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/aggregations'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/aggregations'}"
 											columnTitles="Name,Cardinality,Type,Description"
 											columnCount="4"
 											class="sapUiSmallMarginTop">
@@ -266,7 +267,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/associations'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/associations'}"
 											columnCount="4"
 											columnTitles="Name,Cardinality,Type,Description"
 											class="sapUiSmallMarginTop">
@@ -482,7 +483,7 @@
 																			</template:if>
 																		</template:repeat>
 																	</layout:VerticalLayout>
-																	<m:Text text="{{parameter>defaultValue}" wrapping="false"/>
+																	<m:Text text="{parameter>defaultValue}" wrapping="false"/>
 																	<custom:JSDocText text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 																</custom:Row>
 															</template:repeat>
@@ -540,7 +541,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/specialSettings'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/specialSettings'}"
 											columnCount="3"
 											columnTitles="Name,Type,Description"
 											class="sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">
