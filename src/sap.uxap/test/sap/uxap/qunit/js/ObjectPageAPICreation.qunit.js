@@ -514,6 +514,60 @@
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.test("scroll to selected section on rerender", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSecondSection = this.oObjectPage.getSections()[1],
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		assert.expect(2);
+
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setSelectedSection(oSecondSection);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// assert state before second rendering
+			assert.ok(oObjectPage._$opWrapper.get(0).scrollTop > 0, "selected section is bellow scrollTop");
+
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				// assert state after second rendering
+				assert.ok(oObjectPage._$opWrapper.get(0).scrollTop > 0, "selected section is bellow scrollTop");
+				done();
+			});
+
+			// act: rerender
+			oObjectPage.rerender();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("scrollEnablement obtains container ref onAfterRendering", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		// ensure page can be scrolled
+		jQuery("#qunit-fixture").height("200"); // container small enough
+		oObjectPage.setUseIconTabBar(false); // content can be scrolled across sections
+
+		assert.expect(3);
+
+		var oDelegate = {
+			onAfterRendering: function () {
+				assert.ok(oObjectPage._oScroller._$Container, "scroller has container referefnce");
+				assert.strictEqual(oObjectPage._oScroller._$Container.get(0), oObjectPage._$opWrapper.get(0), "scroller has correct container reference");
+
+				oObjectPage._oScroller.scrollTo(0, 10);
+				assert.strictEqual(oObjectPage._$opWrapper.get(0).scrollTop, 10, "scroller can correctly scroll after we have externally provided the container reference");
+
+				oObjectPage.removeEventDelegate(oDelegate);
+				done();
+			}
+		};
+		oObjectPage.addEventDelegate(oDelegate);
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("Content resize", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 3;
