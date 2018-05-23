@@ -151,11 +151,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 	var oXMLViewUnusedNamespaces = {
 		id: "xmlViewUnusedNamespaces",
 		audiences: [Audiences.Control, Audiences.Application],
-		categories: [Categories.Performance],
+		categories: [Categories.Usability],
 		enabled: true,
 		minversion: "-",
 		title: "Unused namespaces in XML view",
-		description: "Namespaces that are declared but not used have a negative impact on performance (and may confuse readers of the code)",
+		description: "Namespaces that are declared but not used may confuse readers of the code",
 		resolution: "Remove the unused namespaces from the view definition",
 		resolutionurls: [{
 			text: "Documentation: Namespaces in XML Views",
@@ -175,9 +175,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 					if (sName.match("xmlns:")
 						&& sLocalName !== "xmlns:support"
 						&& sLocalName !== "mvc") {
-						for (var j = 0; j < jQuery(oXMLView._xContent).children().length; j++) {
-							var oContent = jQuery(oXMLView._xContent).children()[j];
-							// get the xml code of the children as a string
+							var oContent = jQuery(oXMLView._xContent)[0];
+							// get the xml code of the view as a string
 							// The outerHTML doesn't work with IE, so we used
 							// the XMLSerializer instead
 							var sContent = new XMLSerializer().serializeToString(oContent);
@@ -186,7 +185,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 							if (!sContent.match("<" + sLocalName + ":")) {
 								var sViewName = oXMLView.getViewName().split("\.").pop();
 								oIssueManager.addIssue({
-									severity: Severity.High,
+									severity: Severity.Medium,
 									details: "View '" + sViewName + "' (" + oXMLView.getId() + ") contains an unused XML namespace '" + sLocalName + "' referencing library '" + sFullName + "'",
 									context: {
 										id: oXMLView.getId()
@@ -194,7 +193,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 								});
 							}
 						}
-					}
 				}
 			});
 		}
@@ -377,3 +375,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		oDeprecatedEventRule
 	];
 }, true);
+
