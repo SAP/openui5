@@ -417,14 +417,8 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.oAggregation, null, "initial value");
 
-		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns({
-				$$aggregation : oAggregation,
-				$$groupId : "foo",
-				$$operationMode : OperationMode.Server,
-				$$updateGroupId : "update foo"
-			});
+		oBindingMock.expects("checkBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
 			.returns({$filter : "bar"});
 		oHelperMock.expects("clone").withExactArgs(sinon.match.same(oAggregation))
@@ -462,7 +456,8 @@ sap.ui.require([
 
 		assert.throws(function () {
 			//code under test
-			oBinding.applyParameters(); //c'tor called without mParameters but vSorters is set
+			//c'tor called without mParameters but vSorters is set
+			oBinding.applyParameters({});
 		}, new Error("Unsupported operation mode: undefined"));
 		assert.strictEqual(oBinding.sOperationMode, sOperationMode, "sOperationMode not changed");
 	});
@@ -503,6 +498,7 @@ sap.ui.require([
 			oBindingMock = this.mock(oBinding),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {
+				$$operationMode : OperationMode.Server,
 				$filter : "bar"
 			},
 			mQueryOptions = {
@@ -510,9 +506,8 @@ sap.ui.require([
 			};
 
 		oBinding.mCacheByContext = {}; //mCacheByContext must be reset before fetchCache
-		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns({$$operationMode : OperationMode.Server});
+		oBindingMock.expects("checkBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		this.mock(oBinding).expects("fetchCache")
@@ -1979,48 +1974,45 @@ sap.ui.require([
 	QUnit.test("$$groupId, $$updateGroupId, $$operationMode", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oModelMock = this.mock(this.oModel),
-			mParameters = {},
 			oPrototypeMock;
 
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		// code under test
-		oBinding.applyParameters(mParameters);
+		oBinding.applyParameters({
+			$$groupId : "foo",
+			$$operationMode : "Server",
+			$$updateGroupId : "bar"
+		});
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.sOperationMode, "Server");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns({$$groupId : "foo"});
 		// code under test
-		oBinding.applyParameters(mParameters);
+		oBinding.applyParameters({
+			$$groupId : "foo"
+		});
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.sOperationMode, undefined);
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns({});
 		// code under test
-		oBinding.applyParameters(mParameters);
+		oBinding.applyParameters({});
 		assert.strictEqual(oBinding.getGroupId(), "baz");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		// buildBindingParameters also called for relative binding
-		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
+		// checkBindingParameters also called for relative binding
 		oPrototypeMock = this.mock(ODataListBinding.prototype);
-		oPrototypeMock.expects("applyParameters").withExactArgs(mParameters); // called by c'tor
-		oBinding = this.bindList("EMPLOYEE_2_EQUIPMENTS");
+		oPrototypeMock.expects("applyParameters").withExactArgs({}); // called by c'tor
+		oBinding = this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS");
 		oPrototypeMock.restore();
 		// code under test
-		oBinding.applyParameters(mParameters);
+		oBinding.applyParameters({
+			$$groupId : "foo",
+			$$operationMode : "Server",
+			$$updateGroupId : "bar"
+		});
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.sOperationMode, "Server");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
