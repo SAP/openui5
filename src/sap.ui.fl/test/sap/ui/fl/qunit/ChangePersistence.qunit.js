@@ -2032,6 +2032,35 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		assert.strictEqual(aChanges[0], newChange);
 	});
 
+	QUnit.test("Shall not add the same change twice", function (assert) {
+		// possible scenario: change gets saved, then without reload undo and redo gets called. both would add a dirty change
+		var oChangeContent, aChanges;
+
+		oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		var fnAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
+
+		var oNewChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+		var oSecondChange = this.oChangePersistence.addChange(oNewChange, this._oComponentInstance);
+
+		assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
+		assert.ok(fnAddDirtyChangeSpy.callCount, 2, "addDirtyChange was called twice");
+		aChanges = this.oChangePersistence._aDirtyChanges;
+		assert.ok(aChanges);
+		assert.strictEqual(aChanges.length, 1);
+		assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
+		assert.strictEqual(aChanges[0], oNewChange);
+		assert.deepEqual(oNewChange, oSecondChange);
+	});
+
 	QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet", function (assert) {
 		var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
 			return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
