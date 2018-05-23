@@ -902,7 +902,14 @@ sap.ui.define([
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator)
 			.then( function(oResponse) {
 				if (oComponent) {
-					Utils.setTechnicalURLParameterValues(oComponent, FlexController.variantTechnicalParameterName, []);
+					var oModel = oComponent.getModel("$FlexVariants");
+					if (oModel) {
+						oModel.updateHasherEntry({
+							parameters: [],
+							updateURL: true,
+							component: oComponent
+						});
+					}
 				}
 				return oResponse;
 		});
