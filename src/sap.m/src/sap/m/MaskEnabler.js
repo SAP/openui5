@@ -131,6 +131,11 @@ sap.ui.define([
 		 * @param {object} oEvent The jQuery event
 		 */
 		this.oninput = function (oEvent) {
+			if (this._isChromeOnAndroid()) {
+				this._onInputForAndroidHandler(oEvent);
+				return;
+			}
+
 			InputBase.prototype.oninput.apply(this, arguments);
 			this._applyMask();
 			this._positionCaret(false);
@@ -586,7 +591,8 @@ sap.ui.define([
 			if (iPos < 0) {
 				iPos = 0;
 			}
-			return jQuery(this.getFocusDomRef()).cursorPos(iPos);
+			jQuery(this.getFocusDomRef()).cursorPos(iPos);
+			return this;
 		};
 
 		/**
@@ -771,21 +777,24 @@ sap.ui.define([
 		/**
 		 * Handles <code>onKeyPress</code> event.
 		 * @param {jQuery.Event} oEvent The jQuery event object
+		 * @param {Object} oKey Summary object with information about the pressed keys. See #this._parseKeyBoardEvent
 		 * @private
 		 */
-		this._keyPressHandler = function (oEvent) {
+		this._keyPressHandler = function (oEvent, oKey) {
+			var oSelection,
+				iPosition,
+				sCharReplacement;
+
 			if (!this.getEditable()) {
 				return;
 			}
-
-			var oSelection = this._getTextSelection(),
-				iPosition,
-				sCharReplacement,
-				oKey = this._parseKeyBoardEvent(oEvent);
+			oKey = oKey || this._parseKeyBoardEvent(oEvent);
 
 			if (oKey.bCtrlKey || oKey.bAltKey || oKey.bMetaKey || oKey.bBeforeSpace) {
 				return;
 			}
+
+			oSelection = this._getTextSelection();
 
 			if (!oKey.bEnter && !oKey.bShiftLeftOrRightArrow && !oKey.bHome && !oKey.bEnd &&
 				!(oKey.bShift && oKey.bDelete) &&
@@ -900,42 +909,18 @@ sap.ui.define([
 
 			} else if (oKey.bEnter) {
 				this._inputCompletedHandler(oEvent);
-
 			} else if ((oKey.bCtrlKey && oKey.bInsert) ||
 				(oKey.bShift && oKey.bInsert)) {
 				InputBase.prototype.onkeydown.apply(this, arguments);
 			} else if ((!oKey.bShift && oKey.bDelete) || oKey.bBackspace) {
 				this._revertKey(oKey);
 				oEvent.preventDefault();
-			} else if (Device.browser.chrome && Device.os.android) {
-				/*
-				 Needs a special handling for Chrome on Android, where keyrpess event is not firing.
-				 If the digit "9" is pressed, when the caret is at the beginning (0),
-				 when "SAP-" is the prefix, the order of events and its handling is the following:
-
-				 Event	     Desktop/iPhone		                    Android:
-				 -----------------------------------------------------------------------------------------------
-				 keydown		 9 arrives, nothing is                 	9 arrives,
-				 happening							    caret is moved to the
-				 first free pos for user input(4)
-
-				 keypress	 9 arrived;								<does not trigger>
-				 caret is moved to the
-				 first free
-				 for user input position(4);
-				 9 is being applied at the
-				 position 4,
-				 which ends with the final
-				 result "SAP-9"
-
-
-				 oninput      <does not trigger>						the dom is "SAP9",
-				 since the caret has moved to 4,
-				 the call to this._applyMask() applies
-				 the "9" at position 4, which ends with
-				 the same final result "SAP-9"
-				 */
-				this._setCursorPosition(Math.max(this._iUserInputStartPosition, this._getTextSelection().iFrom));
+			} else if (this._isChromeOnAndroid()) {
+				// needed for further processing at "oninput"
+				this._oKeyDownStateAndroid = {
+					sValue: this._oTempValue.toString(),
+					iCursorPosition: this._getCursorPosition()
+				};
 			}
 		};
 
@@ -1326,8 +1311,123 @@ sap.ui.define([
 			return iNewCaretPos;
 		};
 
-	};
+		/**
+		 * Handler for "input" event on Android devices.
+		 * Needs a special handling for Chrome on Android, where keypress event is not firing.
+		 *
+		 * Example:
+		 * Mask "SAP-<digit><digit>" ("SAP-__"),
+		 * If the digit "9" is pressed, when the caret is at the beginning (0),
+		 * the order of events and its handling is the following:
+		 *
+		 * Event		Desktop/iPhone 							Android:
+		 * -----------------------------------------------------------------------------------------------
+		 * keydown		9 arrives, nothing is 					keycode is not reliable - 229, null, undefined;
+		 * 				happening								We can store the current dom value, because it is
+		 * 														still "SAP-__" and postpone actual handling for oninput
+		 *
+		 * keypress		9 arrived;								<does not trigger>
+		 * 				caret is moved to the
+		 * 				first free
+		 * 				for user input position(5);
+		 * 				9 is being applied at the
+		 * 				position 4,
+		 * 				which ends with the final
+		 * 				result "SAP-9_"
+		 *
+		 *
+		 * oninput 		<does not trigger>					 	the dom is "SAP-9_",
+		 * 														caret moved to index 5 (browser behavior).
+		 * 														We should correct dom value and position
+		 * 														the caret like oninput had never changed them (i.e.
+		 * 														DOM -> "SAP-__", caret position ->0) and call
+		 * 														keypress handler or revertKey (if delete or backspace
+		 * 														was pressed).
+		 *
+		 * @private
+		 */
+		this._onInputForAndroidHandler =  function(oEvent) {
+			var oKeyInfo;
 
+			if (!this._oKeyDownStateAndroid) { // there was no previous event "keydown" (can be due to paste/cut event)
+				return;
+			}
+
+			oKeyInfo = this._buildKeyboardEventInfo(this._oKeyDownStateAndroid.sValue, this._getInputValue());
+
+			/* Fix 2 side effects:
+			 * - Cursor is at wrong position (browser behavior) - > restore it
+			 * - dom value contains the newly entered string (browser behavior) - > restore it.
+			 *
+			 * The order is important, since  if we first fix the cursor position and then update the dom value,
+			 * the cursor position would change once again, because update dom value moves it to the end of the string.
+			 */
+			// Should be called from within the input handler(not in a delayed call), otherwise a flickering between
+			// the old and new value will be observed
+			this.updateDomValue(this._oKeyDownStateAndroid.sValue);
+
+			jQuery.sap.delayedCall(0, this, function(oInputEvent, oKeyDownState, oKey) {
+				// delayed call is needed, as for some Android devices(e.g. S5) if _setCursorPosition (jQuery.cursorPos)
+				// is called from within the input handler, this won't really change the cursor position,
+				// even though _getCursorPosition() returns the one that had been previously set.
+				this._setCursorPosition(oKeyDownState.iCursorPosition);
+				if (oKey.bBackspace) {
+					this._revertKey(oKey);
+				} else {
+					this._keyPressHandler(oInputEvent, oKey);
+				}
+			}, [oEvent, this._oKeyDownStateAndroid, oKeyInfo]);
+
+			delete this._oKeyDownStateAndroid;
+			oEvent.preventDefault();
+		};
+
+		/**
+		 * Compares two strings to build an info object (the same like if #parseKeyboardEvent is called), that is suitable
+		 * for passing it to <code>keypress</code> event handler.
+		 * For example:
+		 *  <ul>
+		 *  	<li> "SAP-__", "SAP-9_" -> the "pressed" key is "9".</li>
+		 *  	<li> "SAP-10", "SAP-1_" -> the "pressed" key is "backspace".</li>
+		 *	</ul>
+		 * @param {string} sOldValue the old value
+		 * @param {string} sNewValue the new value
+		 * @returns {Object} an info object about which key "is pressed" (see #parseKeyboardEvent)
+		 * @private
+		 */
+		this._buildKeyboardEventInfo = function(sOldValue, sNewValue) {
+			var sNewChar = "", i;
+
+			if (!sOldValue && !sNewValue) {
+				return {};
+			}
+
+			if (sOldValue && sNewValue && sNewValue.length < sOldValue.length) { //backspace
+				// We choose "bBackspace" property instead of "bDelete", because only "Backspace"
+				// is available on Android keyboards (i.e. no "delete")
+				return { bBackspace: true };
+			}
+
+			for (i = 0; i < sNewValue.length; i++) {
+				if (sOldValue[i] !== sNewValue[i]) {
+					sNewChar = sNewValue[i];
+					break;
+				}
+			}
+			return { sChar: sNewChar };
+		};
+
+
+		/**
+		 * Checks if the current environment is Android PS with browser Chrome
+ 		 * @returns {boolean} true if it is both Chrome and Android, otherwise - false.
+		 * @private
+		 */
+		this._isChromeOnAndroid = function() {
+			return Device.browser.chrome && Device.os.android;
+		};
+
+	};
 
 	return MaskEnabler;
 }, /* bExport= */ true);
