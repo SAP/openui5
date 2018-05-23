@@ -8,17 +8,19 @@ sap.ui.define([
 	'sap/base/util/extend',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/core/mvc/ControllerExtension'
+	'sap/ui/core/mvc/ControllerMetadata',
+	'sap/ui/core/mvc/ControllerExtension',
+	'sap/ui/core/mvc/OverrideExecution'
 	], function(
 		jQuery,
 		extend,
 		EventProvider,
 		ManagedObject,
-		ControllerExtension
+		ControllerMetadata,
+		ControllerExtension,
+		OverrideExecution
 	) {
 	"use strict";
-
-
 
 		var mRegistry = {};
 		var mExtensionProvider = {};
@@ -39,7 +41,18 @@ sap.ui.define([
 		 * @extends sap.ui.base.EventProvider
 		 */
 		var Controller = EventProvider.extend("sap.ui.core.mvc.Controller", /** @lends sap.ui.core.mvc.Controller.prototype */ {
-
+			metadata: {
+				stereotype: "controller",
+				methods: {
+					"byId": 				{"public": true, "final": true},
+					"getView" : 			{"public": true, "final": true},
+					"getInterface" : 		{"public": false, "final": true},
+					"onInit": 				{"public": false, "final": false, "overrideExecution": OverrideExecution.After},
+					"onExit":				{"public": false, "final": false, "overrideExecution": OverrideExecution.Before},
+					"onBeforeRendering":	{"public": false, "final": false, "overrideExecution": OverrideExecution.Before},
+					"onAfterRendering":		{"public": false, "final": false, "overrideExecution": OverrideExecution.After}
+				}
+			},
 			constructor : function(sName) {
 				var oToExtend = null;
 				if (typeof (sName) == "string") {
@@ -59,17 +72,41 @@ sap.ui.define([
 				}
 
 				this["_sapui_Extensions"] = {};
-				this["_sapui_Interface"] = this.getInterface();
 				Controller.extendByMember(this, false);
+				this._sapui_isExtended = false;
 			},
-			metadata: {
-				publicMethods: [
-					"byId",
-					"getView"
-				]
-			}
+			/**
+			 * Wether a controller is extended or not
+			 * @private
+			 * @returns {boolean} Whether controller is extended or not
+			 */
+			_isExtended: function() {
+				return this._sapui_isExtended;
+			},
+			/**
+			 * Returns the public interface for this controller
+			 *
+			 * @returns {object} The public interface for this extension
+			 * @private
+			 */
+			getInterface: function() {
+				var mMethods = {};
+				var oMetadata = this.getMetadata();
+				var aPublicMethods = oMetadata.getAllPublicMethods();
 
-		});
+				aPublicMethods.forEach(function(sMethod) {
+					var fnFunction = this[sMethod];
+					if (typeof fnFunction === 'function') {
+						mMethods[sMethod] = function() {
+							var tmp = fnFunction.apply(this, arguments);
+							return (tmp instanceof Controller) ? tmp.getInterface() : tmp;
+						}.bind(this);
+					}
+				}.bind(this));
+				this.getInterface = jQuery.sap.getter(mMethods);
+				return mMethods;
+			}
+		}, ControllerMetadata);
 
 		/**
 		 * Apply extension to controller
@@ -82,8 +119,11 @@ sap.ui.define([
 		function applyExtension(oController, oExtension, sLocalNamespace) {
 			//create the controller extension object
 			var sNamespace = oExtension.getMetadata().getName();
+			var oControllerMetadata = oController.getMetadata();
 			var oExtensions = oController["_sapui_Extensions"];
-			var oInterface = oController["_sapui_Interface"];
+			var oInterface = oController.getInterface();
+			var mLifecycleConfig = ControllerExtension.getMetadata().getLifecycleConfiguration();
+
 			var oExtensionInfo = {
 				namespace: sNamespace,
 				extension: oExtension,
@@ -98,6 +138,7 @@ sap.ui.define([
 					oOverrides = oExtension.getMetadata().getOverrides(),
 					oStaticOverrides = oExtension.getMetadata().getStaticOverrides();
 
+				//handle 'inline' overrides first
 				for (sOverrideMember in oStaticOverrides) {
 					oOrigExtensionMetadata = oExtension.getMetadata();
 					if (!oOrigExtensionMetadata.isMethodFinal(sOverrideMember)) {
@@ -105,31 +146,41 @@ sap.ui.define([
 					}  else {
 						jQuery.sap.log.error("Method '" + sOverrideMember + "' of extension '" + sNamespace + "' is flagged final and cannot be overridden by calling 'override'");
 					}
-
 				}
+				//handle 'normal' overrides
 				for (sOverrideMember in oOverrides) {
-					if (sOverrideMember !== 'extension' && sOverrideMember in oExtension.base) {
-						jQuery.sap.log.debug("Overriding  member '" + sOverrideMember + "' of original controller.");
-						var vMember = oOverrides[sOverrideMember];
-						var fnOriginal = oController[sOverrideMember];
-						if (typeof fnOriginal == "object" && typeof vMember == "object") {
-							oOrigExtensionInfo = oExtensions[sOverrideMember];
-							oOrigExtensionMetadata = oOrigExtensionInfo.extension.getMetadata();
-
-							for (sExtensionOverride in vMember) {
-								if (!oOrigExtensionMetadata.isMethodFinal(sExtensionOverride)) {
-									ControllerExtension.overrideMethod(sExtensionOverride, fnOriginal, vMember, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
-								}  else {
-									jQuery.sap.log.error("Method '" + sExtensionOverride + "' of extension '" + oOrigExtensionInfo.namespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
+					if (sOverrideMember !== 'extension') {
+						//handle overrides on controller and member extensions
+						if (sOverrideMember in oExtension.base) {
+							jQuery.sap.log.debug("Overriding  member '" + sOverrideMember + "' of original controller.");
+							var vMember = oOverrides[sOverrideMember];
+							var fnOriginal = oController[sOverrideMember];
+							//check for member extension
+							if (typeof fnOriginal == "object" && typeof vMember == "object") {
+								oOrigExtensionInfo = oExtensions[sOverrideMember];
+								oOrigExtensionMetadata = oOrigExtensionInfo.extension.getMetadata();
+								for (sExtensionOverride in vMember) {
+									if (!oOrigExtensionMetadata.isMethodFinal(sExtensionOverride)) {
+										ControllerExtension.overrideMethod(sExtensionOverride, fnOriginal, vMember, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
+									}  else {
+										jQuery.sap.log.error("Method '" + sExtensionOverride + "' of extension '" + oOrigExtensionInfo.namespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
+									}
 								}
+							} else if (!oControllerMetadata.isMethodFinal(sOverrideMember)) {
+								ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension, oControllerMetadata.getOverrideExecution(sOverrideMember));
+							} else {
+								jQuery.sap.log.error("Method '" + sOverrideMember + "' of controller '" + oController.getMetadata().getName() + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
 							}
+						} else if (sOverrideMember in mLifecycleConfig) {
+							//apply lifecycle hooks even if they don't exist on controller
+							ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension, oControllerMetadata.getOverrideExecution(sOverrideMember));
 						} else {
-							//override method runs in the context of the extension
-							ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension);
+							jQuery.sap.log.error("Method '" + sExtensionOverride + "' of extension '" + oOrigExtensionInfo.namespace + " does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden");
 						}
 					}
+					//handle non member extension overrides
 					if (oOverrides.extension) {
-					//allow to override methods of other controller extensions
+						//allow to override methods of other controller extensions
 						for (var sExtensionNamespace in oOverrides.extension) {
 							oOrigExtensionMetadata = oExtensions[sExtensionNamespace].extension.getMetadata();
 							var oOrigExtensionInterface = jQuery.sap.getObject(sExtensionNamespace, null, oController.extension);
@@ -147,16 +198,6 @@ sap.ui.define([
 							}
 						}
 					}
-					oExtensionInfo.reloadNeeded = true;
-				}
-			}
-
-			//extend controller lifecycle functions
-			var oExtensionMetadata = oExtension.getMetadata();
-			var mControllerLifecycleMethods = oExtensionMetadata.getLifecycleConfiguration();
-			for (var sMember in mControllerLifecycleMethods) {
-				if (sMember in oExtension) {
-					ControllerExtension.overrideMethod(sMember, oController, oExtension, oExtension, mControllerLifecycleMethods[sMember]);
 					oExtensionInfo.reloadNeeded = true;
 				}
 			}
@@ -194,7 +235,7 @@ sap.ui.define([
 				var mLifecycleConfig = ControllerExtension.getMetadata().getLifecycleConfiguration();
 				for (var sMemberName in CustomControllerDef) {
 					if (sMemberName in mLifecycleConfig) {
-						ControllerExtension.overrideMethod(sMemberName, oController, CustomControllerDef, oController);
+						ControllerExtension.overrideMethod(sMemberName, oController, CustomControllerDef, oController, mLifecycleConfig[sMemberName].overrideExecution);
 					} else {
 						//default extension behavior
 						ControllerExtension.overrideMethod(sMemberName, oController, CustomControllerDef);
@@ -538,12 +579,17 @@ sap.ui.define([
 						})
 						.then(function(oController) {
 							return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
+						}).then(function(oController) {
+							oController._sapui_isExtended = true;
+							return oController;
 						});
 				} else {
 					ControllerClass = loadControllerClass(sName, bAsync);
 					oController = instantiateController(ControllerClass, sName);
 					oController = Controller.extendByCustomizing(oController, sName, bAsync);
 					oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
+					//if controller is created via the factory all extensions are already mixed in
+					oController._sapui_isExtended = true;
 				}
 				return oController;
 			} else {
@@ -561,10 +607,15 @@ sap.ui.define([
 		 */
 		Controller.prototype.getPublicMethods = function() {
 			var mPublicFunctions = {},
-				oInterface = this.getInterface();
+				oControllerMetadata = this.getMetadata(),
+				oControllerMethods = oControllerMetadata.getAllMethods(),
+				oLifeCycleConfig = oControllerMetadata.getLifecycleConfiguration();
 
-			Object.keys(oInterface).forEach(function(sMethod) {
-				mPublicFunctions[sMethod] = {'public':true, 'final':false, reloadNeeded: false};
+			Object.keys(oControllerMethods).forEach(function(sMethod) {
+				if (oControllerMetadata.isMethodPublic(sMethod)) {
+					mPublicFunctions[sMethod] = oControllerMethods[sMethod];
+					mPublicFunctions[sMethod].reloadNeeded = !!(sMethod in oLifeCycleConfig);
+				}
 			});
 
 			//extensions member should not be exposed
@@ -578,7 +629,7 @@ sap.ui.define([
 				Object.keys(oExtensionInterface).forEach(function(sMethod) {
 					//extension member should not be exposed
 					delete mPublicFunctions[oExtensionInfo.location];
-					var oMethodMetadata = jQuery.extend(mAllMethods[sMethod], {reloadNeeded: oExtensionInfo.reloadNeeded});
+					var oMethodMetadata = jQuery.extend({}, mAllMethods[sMethod], {reloadNeeded: oExtensionInfo.reloadNeeded});
 					mPublicFunctions[oExtensionInfo.location + "." + sMethod] = oMethodMetadata;
 				});
 			});
