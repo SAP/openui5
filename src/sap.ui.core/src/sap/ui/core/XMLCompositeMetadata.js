@@ -98,6 +98,22 @@ sap.ui.define([
 		}
 	};
 
+	XMLCompositeMetadata.prototype.usesTemplating = function () {
+		if (this._fragment) {
+			if (this._bUsesTemplating === undefined) {
+				this._bUsesTemplating = false;
+				for (var i = 0; i < this._fragment.attributes.length; i++) {
+					if (this._fragment.attributes[i].value == "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1") {
+							this._bUsesTemplating = true;
+							return this._bUsesTemplating;
+					}
+				}
+			}
+			return this._bUsesTemplating;
+		}
+		return false;
+	};
+
 	XMLCompositeMetadata.prototype._applyAggregationSettings = function () {
 		// TBD: Is this till needed?
 		var mAggregations = this.getAllAggregations();
