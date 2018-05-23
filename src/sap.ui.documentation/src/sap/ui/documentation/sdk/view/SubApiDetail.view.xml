@@ -470,9 +470,16 @@
 																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
 																	<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																		<template:repeat list="{parameter>types}" var="type">
-																			<m:Link text="{type>value}"
-																					href="#/api/{= ${path: 'type>value'}.replace('[]', '') }"
-																					enabled="{= !!${type>linkEnabled} }"/>
+																			<template:if test="{= !!${type>linkEnabled} }">
+																				<template:then>
+																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
+																							href="#/api/{type>href}"
+																							enabled="true"/>
+																				</template:then>
+																				<template:else>
+																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" enabled="false"/>
+																				</template:else>
+																			</template:if>
 																		</template:repeat>
 																	</layout:VerticalLayout>
 																	<m:Text text="{{parameter>defaultValue}" wrapping="false"/>
