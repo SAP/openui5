@@ -3,8 +3,32 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Variant", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/transport/TransportSelection", "sap/ui/fl/variants/VariantController", "sap/ui/core/BusyIndicator", "sap/m/MessageBox"
-], function(Change, Variant, Utils, LRepConnector, Cache, ContextManager, Settings, TransportSelection, VariantController, BusyIndicator, MessageBox) {
+	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Cache",
+	"sap/ui/fl/context/ContextManager",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/variants/VariantController",
+	"sap/ui/core/BusyIndicator",
+	"sap/m/MessageBox",
+	"sap/ui/model/json/JSONModel"
+], function(
+	Change,
+	Variant,
+	Utils,
+	LRepConnector,
+	Cache,
+	ContextManager,
+	Settings,
+	TransportSelection,
+	VariantController,
+	BusyIndicator,
+	MessageBox,
+	JSONModel
+) {
 	"use strict";
 
 	/**
@@ -195,7 +219,7 @@ sap.ui.define([
 							return oChange.layer === "VENDOR";
 						})) {
 							this._oMessagebundle = oWrappedChangeFileContent.messagebundle;
-							var oModel = new sap.ui.model.json.JSONModel(this._oMessagebundle);
+							var oModel = new JSONModel(this._oMessagebundle);
 							oComponent.setModel(oModel, "i18nFlexVendor");
 					}
 				}
@@ -220,10 +244,15 @@ sap.ui.define([
 				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
 			}
 
+			var oComponentData = oComponent
+				? oComponent.getComponentData()
+				: (mPropertyBag && mPropertyBag.componentData || {});
+
 			if ( oWrappedChangeFileContent.changes.variantSection
 				&& Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0
 				&& Object.keys(this._oVariantController._getChangeFileContent()).length === 0 ) {
-				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
+
+				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponentData && oComponentData.technicalParameters);
 			}
 
 			if (Object.keys(this._oVariantController._getChangeFileContent()).length > 0) {
@@ -625,7 +654,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
 
-		mPropertyBag.oComponent = oComponent;
+		mPropertyBag.oComponent = !jQuery.isEmptyObject(oComponent) && oComponent;
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {

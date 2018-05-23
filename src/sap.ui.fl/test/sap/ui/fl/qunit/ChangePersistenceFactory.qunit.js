@@ -538,6 +538,43 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		assert.ok(oGetChangesForComponentStub.calledOnce, "changes were requested once");
 	});
 
+	QUnit.test("_onLoadComponent requests mapped changes for a component with technical parameters present in passed config", function (assert) {
+
+		var oConfig = {
+			name: "theComponentName",
+			componentData : {
+				technicalParameters : {
+					"sap-ui-fl-control-variant-id" : ["variantID"]
+				}
+			}
+		};
+
+		var oExpectedConfig = {
+			appName: oConfig.name,
+			componentData : oConfig.componentData,
+			siteId: undefined
+		};
+
+		var oManifest = {
+			"sap.app": {
+				"type": "application"
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		var oMappedChangesPromise = Promise.resolve({});
+
+		var oChangePersistence = new ChangePersistence(oConfig);
+		var oGetChangesForComponentStub = this.stub(oChangePersistence, "getChangesForComponent").returns(oMappedChangesPromise);
+		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+
+		ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
+
+		assert.ok(oGetChangesForComponentStub.calledWith(oExpectedConfig), "then  changes were requested with technical parameters");
+	});
+
 	QUnit.test("_getChangesForComponentAfterInstantiation does nothing if the component is not of the type 'application'", function (assert) {
 
 		var oConfig = {

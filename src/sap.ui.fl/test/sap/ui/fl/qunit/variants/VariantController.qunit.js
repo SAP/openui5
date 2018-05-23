@@ -614,12 +614,12 @@ sap.ui.require([
 			}
 		};
 
-		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns({
+		var oTechnicalParameters = {
 			"sap-ui-fl-control-variant-id": ["variant0"]
-		});
+		};
 		var oVariantController = new VariantController("MyComponent", "1.2.3", {});
 		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
-		oVariantController._setChangeFileContent(oFakeVariantResponse);
+		oVariantController._setChangeFileContent(oFakeVariantResponse, oTechnicalParameters);
 		var oData = oVariantController._fillVariantModel();
 		assert.equal(fnApplyChangesOnVariantSpy.callCount, 2, "_applyChangesOnVariant called twice for 2 variants");
 		assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");
@@ -954,7 +954,8 @@ sap.ui.require([
 				appVersion: "1.2.3",
 				getId : function() {return "RTADemoAppMD";},
 				getManifestObject : function() {return oManifest;},
-				getModel: function() {}
+				getModel: function() {},
+				getComponentData: function() {}
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
@@ -1064,15 +1065,8 @@ sap.ui.require([
 	QUnit.module("Given a VariantController with variants", {
 		beforeEach : function(assert) {
 
-			this.oComponent = {
-				name: "MyComponent",
-				getComponentData: function(){
-					return {
-						technicalParameters: {
-							"sap-ui-fl-control-variant-id" : ["variant0"]
-						}
-					};
-				}
+			this.oTechnicalParameters = {
+				"sap-ui-fl-control-variant-id" : ["variant0"]
 			};
 
 			this.oChangeContent0 = {"fileName":"change0", "variantReference": "variant0"};
@@ -1153,7 +1147,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with a Component containing a valid URL parameter for the variant", function(assert){
-		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oTechnicalParameters);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		assert.deepEqual(aInitialChanges, this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges,
@@ -1161,18 +1155,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with a Component containing two valid URL parameters for the same variant id", function(assert){
-		this.oComponent = {
-			name: "MyComponent",
-			getComponentData: function(){
-				return {
-					technicalParameters: {
-						"sap-ui-fl-control-variant-id" : ["variant0", "variantdefault"]
-					}
-				};
-			}
+		var oTechnicalParameters = {
+			"sap-ui-fl-control-variant-id": ["variant0", "variantdefault"]
 		};
 
-		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		assert.deepEqual(aInitialChanges, this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges,
@@ -1180,15 +1167,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with a Component containing an invalid URL parameter for the variant", function(assert){
-		this.oComponent.getComponentData = function(){
-			return {
-				technicalParameters: {
-					"sap-ui-fl-control-variant-id" : ["trash"]
-				}
-			};
+		var	oTechnicalParameters = {
+			"sap-ui-fl-control-variant-id": ["trash"]
 		};
 
-		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		assert.deepEqual(aInitialChanges, this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[2].controlChanges,
@@ -1196,15 +1179,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with a Component containing no URL parameter for the variant", function(assert){
-		this.oComponent.getComponentData = function(){
-			return {
-				technicalParameters: {
-					"another-unrelated-parameter" : "value"
-				}
-			};
+		var oTechnicalParameters = {
+			"another-unrelated-parameter": "value"
 		};
 
-		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		assert.deepEqual(aInitialChanges, this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[2].controlChanges,
@@ -1239,15 +1218,11 @@ sap.ui.require([
 			"variantManagementChanges" : {}
 		};
 
-		this.oComponent.getComponentData = function(){
-			return {
-				technicalParameters: {
-					"sap-ui-fl-control-variant-id" : ["variant0", "variant02", "variantManagementId2"]
-				}
-			};
+		var oTechnicalParameters = {
+			"sap-ui-fl-control-variant-id": ["variant0", "variant02", "variantManagementId2"]
 		};
 
-		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		var aExpectedChanges = this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges.concat(
@@ -1284,14 +1259,11 @@ sap.ui.require([
 			"variantManagementChanges" : {}
 		};
 
-		this.oComponent.getComponentData = function(){
-			return {
-				technicalParameters: {
-					"sap-ui-fl-control-variant-id" : ["variant0", "trash"]
-				}
-			};
+		var oTechnicalParameters = {
+			"sap-ui-fl-control-variant-id": ["variant0", "trash"]
 		};
-		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
+
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		var aExpectedChanges = this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges.concat(
@@ -1348,7 +1320,7 @@ sap.ui.require([
 			}
 		};
 
-		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oTechnicalParameters);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		var aExpectedChanges = this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges.concat(
