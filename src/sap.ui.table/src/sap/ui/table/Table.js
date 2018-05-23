@@ -1252,6 +1252,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._updateTableContent();
 
+		// If only the rows are rendered, the css flag is not removed while the positioning of the actions is reset. Therefore, the flag must be
+		// manually removed so that the actions are later correctly positioned.
+		this.getDomRef().classList.remove("sapUiTableRActFlexible");
+
 		if (this._bFirstRendering && this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
 			this._bFirstRendering = false;
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
