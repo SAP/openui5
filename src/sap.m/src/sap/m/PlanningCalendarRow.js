@@ -461,22 +461,23 @@ sap.ui.define(['jquery.sap.global',
 
 		var sIntervalType = oRow.getIntervalType();
 		if (sIntervalType === CalendarIntervalType.Day || sIntervalType === CalendarIntervalType.Week || sIntervalType === CalendarIntervalType.OneMonth) {
-			var aPlanningCalendarNonWorkingDates = oRow._oPlanningCalendarRow.getSpecialDates(),
+			var aPCRowSpecialDates = oRow._oPlanningCalendarRow.getSpecialDates(),
 				aNonWorkingDates = oRow.getAggregation("_nonWorkingDates"),
 				oRowStartDate = oRow.getStartDate(),
+				aPCRowNonWorkingDates,
 				oCurrentDate,
 				oNonWorkingStartDate,
 				oNonWorkingEndDate;
 
-			if (aPlanningCalendarNonWorkingDates) {
-				aPlanningCalendarNonWorkingDates.filter(function (oRow) {
+			if (aPCRowSpecialDates) {
+				aPCRowNonWorkingDates = aPCRowSpecialDates.filter(function (oRow) {
 					return oRow.getType() === sap.ui.unified.CalendarDayType.NonWorking;
 				});
 			}
-			if (aNonWorkingDates && aPlanningCalendarNonWorkingDates) {
-				aNonWorkingDates = aNonWorkingDates.concat(aPlanningCalendarNonWorkingDates);
-			} else if (aPlanningCalendarNonWorkingDates) {
-				aNonWorkingDates = aPlanningCalendarNonWorkingDates;
+			if (aNonWorkingDates && aPCRowNonWorkingDates) {
+				aNonWorkingDates = aNonWorkingDates.concat(aPCRowNonWorkingDates);
+			} else if (aPCRowNonWorkingDates) {
+				aNonWorkingDates = aPCRowNonWorkingDates;
 			}
 
 			if (aNonWorkingDates && aNonWorkingDates.length) {
