@@ -7,12 +7,14 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Util',
+	'sap/ui/base/Object',
 	'./library'
 ],
 function(
 	ManagedObject,
 	OverlayRegistry,
-	Util
+	Util,
+	BaseObject
 ) {
 	"use strict";
 
@@ -181,17 +183,28 @@ function(
 		var aSelection = Util.castArray(vSelection);
 
 		// remove the overlay(s) from the current selection
-		aSelection.forEach(function(oSelection){
-			var oOverlay = null;
-			oOverlay = OverlayRegistry.getOverlay(oSelection);
-			// check if already selected
-			if (oOverlay && (this._aSelection.indexOf(oOverlay) !== -1)) {
-				this._aSelection = this._aSelection.filter(function (oItem) {
-					return oOverlay !== oItem;
-				});
-				oOverlay.setSelected(false, true);
-				bSelectionChanged = true;
-			}
+		aSelection.forEach(function(oRemovedItem){
+			this._aSelection = this._aSelection.filter(function(oSelectedOverlay){
+				var bRemoved = false;
+				// Existing Overlay or Element
+				var oOverlay = OverlayRegistry.getOverlay(oRemovedItem);
+				if (!oOverlay){
+					// Destroyed Overlay
+					var oOverlay = BaseObject.isA(oRemovedItem, 'sap.ui.dt.ElementOverlay') ? oRemovedItem : undefined;
+					if (!oOverlay){
+						// Destroyed Element
+						bRemoved = oRemovedItem === oSelectedOverlay.getElement().getId();
+					}
+				}
+				if (!bRemoved){
+					bRemoved = oOverlay === oSelectedOverlay;
+				}
+				if (bRemoved){
+					oSelectedOverlay.setSelected(false, true);
+					bSelectionChanged = true;
+				}
+				return !bRemoved;
+			});
 		}, this);
 		// fire event if selection changed
 		if (bSelectionChanged){
