@@ -17,6 +17,7 @@
 		<script type='text/javascript' src='../../../../resources/sap/ui/thirdparty/sinon-qunit.js'></script>
 		<script type='text/javascript' src='../../../../resources/sap/ui/qunit/qunit-junit.js'></script>
 		<script type='text/javascript' src='../../../../resources/sap/ui/qunit/qunit-coverage.js'></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script type='text/javascript'>
 			// =========================================================================================================
@@ -243,30 +244,106 @@
 			});
 
 			QUnit.test('Closing the BusyDialog event', function (assert) {
+				// Arrange
 				var isClosedByUser;
 				var fnEventSpy = sinon.spy(function (oEvent) {
 					isClosedByUser = oEvent.getParameter('cancelPressed');
 				});
 
-				//create close button so we can press it an emulate user action
-				this.busyDialog.setShowCancelButton(true);
-
+				// Act
 				this.busyDialog.attachClose(fnEventSpy);
 				this.busyDialog.close();
+				this.clock.tick(500);
 
+				// Assert
 				assert.strictEqual(fnEventSpy.callCount, 1, 'should fire on calling the close() method.');
 				assert.strictEqual(isClosedByUser, false, 'should pass cancelPressed: false on closing by calling the close() method.');
+			});
 
+			QUnit.test('Closing the BusyDialog by the Cancel Button', function (assert) {
+				// Arrange
+				var isClosedByUser;
+				var fnEventSpy = sinon.spy(function (oEvent) {
+					isClosedByUser = oEvent.getParameter('cancelPressed');
+				});
+
+				this.busyDialog.attachClose(fnEventSpy);
+				this.busyDialog.setShowCancelButton(true);
+
+				// Act
 				this.busyDialog._getCancelButton().firePress();
-				assert.strictEqual(fnEventSpy.callCount, 2, 'should fire close event after pressing the CancelButton.');
+				this.clock.tick(500);
+
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 1, 'should fire close event after pressing the CancelButton.');
 				assert.strictEqual(isClosedByUser, true, 'should pass cancelPressed: true on closing by pressing the CancelButton.');
+			});
 
-				//trigger esc press with jQuery
-				var esc = jQuery.Event("keydown", {keyCode: 27});
-				jQuery("body").trigger(esc);
+			QUnit.test('Closing the BusyDialog with ESC key', function (assert) {
+				// Arrange
+				var isClosedByUser;
+				var fnEventSpy = sinon.spy(function (oEvent) {
+					isClosedByUser = oEvent.getParameter('cancelPressed');
+				});
 
-				assert.strictEqual(fnEventSpy.callCount, 2, 'сhould fire close event once on esc press.');
+				this.busyDialog.attachClose(fnEventSpy);
+
+				// Act
+				sap.ui.test.qunit.triggerKeydown(this.busyDialog.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				this.clock.tick(500);
+
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 1, 'should fire close event once on esc press.');
 				assert.strictEqual(isClosedByUser, true, 'should pass cancelPressed: true on closing by pressing the ESC key.');
+			});
+
+			QUnit.test('Multiple Open/Close calls', function (assert) {
+				// Arrange
+				var fnEventSpy = sinon.spy();
+				this.busyDialog.attachClose(fnEventSpy);
+
+				// Act
+				this.busyDialog.close();
+				this.busyDialog.open();
+				this.busyDialog.close();
+				this.busyDialog.open();
+				this.busyDialog.close();
+				this.clock.tick(500);
+
+				// Assert
+				assert.ok(fnEventSpy.calledOnce, 'should fire close only once');
+				assert.ok(!this.busyDialog._oDialog.isOpen(), 'should be closed');
+			});
+
+			QUnit.test('Close Event number of calls', function (assert) {
+				// Arrange
+				var fnEventSpy = sinon.spy();
+				this.busyDialog.attachClose(fnEventSpy);
+
+				// Act
+				this.busyDialog.close();
+				this.busyDialog.close();
+				this.busyDialog.close();
+				this.clock.tick(500);
+
+				// Assert
+				assert.ok(fnEventSpy.calledOnce, 'should fire close event only when the busy dialog is opened.');
+			});
+
+			QUnit.test('Close Event firing sequence', function (assert) {
+				// Arrange
+				var bIsClosed = false;
+				var fnEventSpy = sinon.spy(function (oEvent) {
+					bIsClosed = oEvent.getSource()._oDialog.isOpen() === false;
+				});
+				this.busyDialog.attachClose(fnEventSpy);
+
+				// Act
+				this.busyDialog.close();
+				this.clock.tick(500);
+
+				// Assert
+				assert.ok(bIsClosed, 'should fire close event after the dialog is closed.');
 			});
 
 			// =========================================================================================================
