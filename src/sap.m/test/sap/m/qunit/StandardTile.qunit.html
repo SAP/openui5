@@ -19,6 +19,8 @@
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
 
@@ -177,6 +179,23 @@
 			tileBasic.firePress();
 			jQuery.sap.log.info("Pressed tile id=" + pressedTileId);
 			assert.equal(pressedTileId, tileBasicId, "tileBasic was pressed");
+		});
+
+		QUnit.test("ontap will set the focus to the StandardTile domRef in IE", function (assert) {
+			// Arrange
+			var oStandardTile = new sap.m.StandardTile(),
+				bSpyDestroyHandler = this.spy(oStandardTile, "focus"),
+				oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true });
+
+			// Act
+			oStandardTile.ontap();
+
+			// Assert
+			assert.equal(bSpyDestroyHandler.callCount, 1, "StandardTile is focused");
+
+			// Cleanup
+			oStandardTile.destroy();
+			oBrowserStub.restore();
 		});
 
 		QUnit.test("ShouldDestroyTheImageIfTileGetsDestroyed", function(assert) {
