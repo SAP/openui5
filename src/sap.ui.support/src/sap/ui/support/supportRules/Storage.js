@@ -179,6 +179,26 @@ function (RuleSerializer, constants) {
 		},
 
 		/**
+		 * Sets the visible column setting selection.
+		 * @method
+		 * @name sap.ui.support.Storage.setVisibleColumns
+		 * @param {string[]} aVisibleColumns visible columns ids
+		 */
+		setVisibleColumns: function(aVisibleColumns)  {
+			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY, JSON.stringify(aVisibleColumns));
+		},
+
+		/**
+		 * Gets the visible column setting selection.
+		 * @method
+		 * @name sap.ui.support.Storage.getVisibleColumns
+		 * @returns {string[]} ids of visible columns.
+		 */
+		getVisibleColumns: function()  {
+			return JSON.parse(localStorage.getItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY));
+		},
+
+		/**
 		 * Removes all data from LocalStorage persistence layer.
 		 * @private
 		 * @method
@@ -189,6 +209,7 @@ function (RuleSerializer, constants) {
 			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY);
 			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY);
 			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY);
+			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_VISIBLE_COLUMN_KEY);
 		},
 
 		/**
