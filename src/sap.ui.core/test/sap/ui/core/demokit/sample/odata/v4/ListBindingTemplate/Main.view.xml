@@ -1,0 +1,133 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.ListBindingTemplate.Main"
+	template:require="sap.ui.core.sample.odata.v4.ListBindingTemplate.Helper sap.ui.model.odata.v4.AnnotationHelper"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:demo="sap.ui.core.sample.common"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name=".getValueListType"
+			value="sap.ui.model.odata.v4.AnnotationHelper.getValueListType">
+	<template:alias name=".stringify"
+			value="sap.ui.core.sample.odata.v4.ListBindingTemplate.Helper.stringify">
+	<template:alias name=".value" value="sap.ui.model.odata.v4.AnnotationHelper.value">
+	<template:alias name=".label" value="sap.ui.model.odata.v4.AnnotationHelper.label">
+	<VBox>
+ 		<Panel expandable="true" headerText="(Technical Tests)">
+			<VBox>
+				<Title level="H1" text="isMultiple"/>
+				<template:repeat list="{meta>/}" var="topLevel">
+					<template:if test="{:= ${topLevel>$kind} === 'EntitySet' }">
+						<Label design="Bold" text="{topLevel>$Type}"/>
+						<template:with path="topLevel>./@com.sap.vocabularies.UI.v1.Facets"
+							var="facets">
+							<core:Fragment
+								fragmentName="sap.ui.core.sample.odata.v4.ListBindingTemplate.Facets"
+								type="XML"/>
+						</template:with>
+					</template:if>
+				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<template:with path="meta>/$EntityContainer/" var="objectWithKind">
+					<core:Fragment
+						fragmentName="sap.ui.core.sample.odata.v4.ListBindingTemplate.FormattedText"
+						type="XML"/>
+				</template:with>
+				<Text text="- - - - - - - - - -"/>
+				<template:with path="meta>/TEAMS" var="objectWithKind">
+					<core:Fragment
+						fragmentName="sap.ui.core.sample.odata.v4.ListBindingTemplate.FormattedText"
+						type="XML"/>
+				</template:with>
+				<Text text="- - - - - - - - - -"/>
+				<template:repeat
+					list="{path: 'meta>/', filters: {path: '@sapui.name', operator: 'EndsWith', value1: 'List'}}"
+					var="entitySet">
+					<Text text="{entitySet>@sapui.name}: {entitySet>$Type}"/>
+				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<Table id="entitySets"
+					items="{path: 'metaModel>/', filters: {path: '$kind', operator: 'EQ', value1: 'EntitySet'}}">
+					<headerToolbar>
+						<Toolbar>
+							<Title text="Entity Sets" titleStyle="H2"/>
+							<ToggleButton text="Sort" press="onSort"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column>
+							<Label text="Name" />
+						</Column>
+						<Column>
+							<Label text="Type" />
+						</Column>
+					</columns>
+					<ColumnListItem>
+						<Text text="{metaModel>@sapui.name}"/>
+						<Text text="{metaModel>$Type}"/>
+					</ColumnListItem>
+				</Table>
+				<template:repeat
+					list="{path: 'meta>/', filters: {path: '$kind', operator: 'EQ', value1: 'EntitySet'}}"
+					var="entitySet">
+					<Text text="{entitySet>@sapui.name}: {entitySet>$Type}"/>
+				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<template:repeat list="{path: 'meta>/TEAMS', filters: {path: '$kind', operator: 'EQ', value1: 'Property'}, sorter: {path: '@sapui.name'}}" var="property">
+					<Label design="Bold" text="{property>@sapui.name}: {property>$Type}"/>
+					<template:repeat
+						list="{path: 'property>@', filters: {path: '@sapui.name', operator: 'StartsWith', value1: '@com.sap.vocabularies.Common.v1.'}}"
+						var="annotation">
+						<Text text="{annotation>@sapui.name} = {path:'annotation>', formatter: '.stringify'}"/>
+					</template:repeat>
+					<Text text="ValueListType: {property>@@.getValueListType}"/>
+				</template:repeat>
+				<!-- TODO repeat over $* properties! -->
+			</VBox>
+		</Panel>
+		<template:with path="data>#/" var="entityType">
+			<template:with path="entityType>@com.sap.vocabularies.UI.v1.LineItem" var="lineItem">
+				<!-- Note: this limits the data shown to 5 rows! -->
+				<Table headerText="Equipments"
+					items="{path:'', length: 5, parameters : {$$updateGroupId : 'update'}}">
+					<columns>
+						<template:repeat list="{lineItem>}" var="field">
+							<Column>
+								<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance/$EnumMember}
+									=== 'com.sap.vocabularies.UI.v1.ImportanceType/High' ? 'Bold' : 'Standard'}"
+									text="{field>@@.label}"/>
+							</Column>
+						</template:repeat>
+					</columns>
+					<ColumnListItem>
+						<template:repeat list="{lineItem>}" var="field">
+							<template:with path="field>Value/$Path" var="target">
+								<template:if test="{= ${target>@@.getValueListType} !== 'None' }">
+									<template:then>
+										<demo:ValueHelp value="{field>Value/@@.value}"/>
+									</template:then>
+									<template:elseif test="{target>@com.sap.vocabularies.Common.v1.Text}">
+										<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
+										<template:if test="{= ${target>@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember}
+											=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
+											<!-- Text: "A descriptive text for values of the annotated property.
+												Value MUST be a dynamic expression when used as metadata annotation." -->
+											<Text text="{field>Value/@@.value} {target>@com.sap.vocabularies.Common.v1.Text/@@.value}" />
+										</template:if>
+									</template:elseif>
+									<template:else>
+										<Text text="{field>Value/@@.value}" />
+									</template:else>
+								</template:if>
+							</template:with>
+						</template:repeat>
+					</ColumnListItem>
+				</Table>
+			</template:with>
+		</template:with>
+	</VBox>
+	</template:alias>
+	</template:alias>
+	</template:alias>
+	</template:alias>
+</mvc:View>
