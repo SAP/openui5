@@ -320,8 +320,6 @@ function(
 		// Apply Overlay position first, then extra logic based on this new position
 		Overlay.prototype._setPosition.apply(this, arguments);
 
-		this._sortChildren(this.getChildrenDomRef());
-
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
 			// TODO: write Unit test for the case when getAssociatedDomRef() returns undefined (domRef func returns undefined)
 			var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
@@ -332,12 +330,39 @@ function(
 				this._setSize($ScrollContainerOverlayDomRef, DOMUtil.getGeometry(oScrollContainerDomRef));
 				Overlay.prototype._setPosition.call(this, $ScrollContainerOverlayDomRef, DOMUtil.getGeometry(oScrollContainerDomRef), this.$());
 				this._handleOverflowScroll(DOMUtil.getGeometry(oScrollContainerDomRef), $ScrollContainerOverlayDomRef, this);
-				this._sortChildren($ScrollContainerOverlayDomRef.get(0));
 			} else {
 				this._deleteDummyContainer($ScrollContainerOverlayDomRef);
 				$ScrollContainerOverlayDomRef.css("display", "none");
 			}
 		}, this);
+	};
+
+	ElementOverlay.prototype._applySizes = function () {
+		// We need to know when all our children have correct positions
+		var aPromises = this.getChildren()
+			.filter(function (oChild) {
+				return oChild.isRendered();
+			})
+			.map(function(oChild) {
+				return new Promise(function (fnResolve) {
+					oChild.attachEventOnce('geometryChanged', fnResolve);
+				});
+			});
+
+		Overlay.prototype._applySizes.apply(this, arguments);
+
+		Promise.all(aPromises).then(function () {
+			this._sortChildren(this.getChildrenDomRef());
+
+			this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
+				var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
+				var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
+
+				if ($ScrollContainerDomRef.length) {
+					this._sortChildren($ScrollContainerOverlayDomRef.get(0));
+				}
+			}, this);
+		}.bind(this));
 	};
 
 	/**
