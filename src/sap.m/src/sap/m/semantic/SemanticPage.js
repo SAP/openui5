@@ -281,7 +281,7 @@ function(
 		this._currentMode = SemanticConfiguration._PageMode.display;
 		this._getPage().setCustomHeader(this._getInternalHeader());
 		this._getPage().setFooter(new OverflowToolbar(this.getId() + "-footer"));
-		this._getPage().setLandmarkInfo(new PageAccessibleLandmarkInfo());
+		this.setLandmarkInfo(new PageAccessibleLandmarkInfo());
 		this._getPage().setShowHeader(false);
 	};
 

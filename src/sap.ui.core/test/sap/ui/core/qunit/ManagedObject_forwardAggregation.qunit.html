@@ -168,6 +168,54 @@
 					}
 				});
 
+				Element.extend("CompositeElementForModelTest", {
+					metadata: {
+						aggregations: {
+							outerAggregation: {type: "sap.ui.core.Element", multiple: true, forwarding: {idSuffix: "-innerElement", aggregation: "innerAggregation"}},
+							_innerElement: {type: "sap.ui.core.Element", multiple: false, visibility: "hidden"}
+						}
+					},
+
+					init: function() {
+						var oInnerElement = new SimpleElement(this.getId() + "-innerElement");
+						var oModel = new sap.ui.model.json.JSONModel();
+						oModel.inner = true;
+						oModel.setData({text: "INNER DATA!"});
+						oInnerElement.setModel(oModel, "modelNameSetInComposite");
+						this.setAggregation("_innerElement", oInnerElement);
+					}
+				});
+
+				Element.extend("SimpleContainer", {
+					metadata: {
+						aggregations: {
+							content: {type: "sap.ui.core.Element", multiple: true}
+						}
+					}
+				});
+
+				CompositeWithoutForwarding.extend("CompositeElementForModelTestAddingForwarding", {
+					metadata: {
+						aggregations: {
+							_innerElement: {type: "sap.ui.core.Element", multiple: false, visibility: "hidden"}
+						}
+					},
+					init: function() {
+						var oInnerElement = new SimpleElement(this.getId() + "-innerElement");
+						var oModel = new sap.ui.model.json.JSONModel();
+						oModel.inner = true;
+						oModel.setData({text: "INNER DATA!"});
+						oInnerElement.setModel(oModel, "modelNameSetInComposite");
+						this.setAggregation("_innerElement", oInnerElement);
+					}
+				});
+				CompositeElementForModelTestAddingForwarding.getMetadata().forwardAggregation(
+					"outerAggregation",
+					{
+						idSuffix: "-innerElement",
+						aggregation: "innerAggregation"
+					}
+				);
 
 
 
@@ -219,7 +267,43 @@
 
 				QUnit.test("check mAggregations", function(assert) {
 					assert.equal(this.composite.mAggregations["outerAggregation"], undefined, "outer element should not have the item in mAggregations");
+					assert.equal(this.composite.mForwardedAggregations["outerAggregation"][0], this.item, "outer element should have the item in mForwardedAggregations");
 					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
+				});
+
+				QUnit.test("mForwardedAggregations consistency", function(assert) {
+					assert.equal(this.composite.mForwardedAggregations["outerAggregation"][0], this.item, "outer element should have the item in mForwardedAggregations");
+					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
+					assert.strictEqual(this.composite.mForwardedAggregations["outerAggregation"], this.innerElement.mAggregations["innerAggregation"], "outer element mForwardedAggregations[name] should equal inner element mAggregations[name]");
+
+					this.composite.removeAggregation("outerAggregation"); // remove
+					this.composite.addOuterAggregation(this.item);
+
+					assert.equal(this.composite.mForwardedAggregations["outerAggregation"][0], this.item, "outer element should have the item in mForwardedAggregations");
+					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
+					assert.strictEqual(this.composite.mForwardedAggregations["outerAggregation"], this.innerElement.mAggregations["innerAggregation"], "outer element mForwardedAggregations[name] should equal inner element mAggregations[name]");
+
+					this.composite.removeAllAggregation("outerAggregation"); // removeAll
+					this.composite.addOuterAggregation(this.item);
+
+					assert.equal(this.composite.mForwardedAggregations["outerAggregation"][0], this.item, "outer element should have the item in mForwardedAggregations");
+					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
+					assert.strictEqual(this.composite.mForwardedAggregations["outerAggregation"], this.innerElement.mAggregations["innerAggregation"], "outer element mForwardedAggregations[name] should equal inner element mAggregations[name]");
+
+					this.composite.destroyAggregation("outerAggregation"); // delete
+					this.item = new SimpleElement("item");
+					this.composite.addOuterAggregation(this.item);
+
+					assert.equal(this.composite.mForwardedAggregations["outerAggregation"][0], this.item, "outer element should have the item in mForwardedAggregations");
+					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
+					assert.strictEqual(this.composite.mForwardedAggregations["outerAggregation"], this.innerElement.mAggregations["innerAggregation"], "outer element mForwardedAggregations[name] should equal inner element mAggregations[name]");
+
+					this.composite.removeAllAggregation("outerAggregation");
+					this.composite.insertOuterAggregation(this.item, 0);  // insert
+
+					assert.equal(this.composite.mForwardedAggregations["outerAggregation"][0], this.item, "outer element should have the item in mForwardedAggregations");
+					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
+					assert.strictEqual(this.composite.mForwardedAggregations["outerAggregation"], this.innerElement.mAggregations["innerAggregation"], "outer element mForwardedAggregations[name] should equal inner element mAggregations[name]");
 				});
 
 				QUnit.test("add item and check its position (checks addAggregation and indexOfAggregation)", function(assert) {
@@ -368,7 +452,22 @@
 
 				QUnit.test("check mAggregations", function(assert) {
 					assert.equal(this.composite.mAggregations["outerSingleAggregation"], undefined, "outer element should not have the item in mAggregations");
+					assert.equal(this.composite.mForwardedAggregations["outerSingleAggregation"], this.item, "outer element should  have the item in mForwardedAggregations");
 					assert.equal(this.innerElement.mAggregations["innerSingleAggregation"], this.item, "inner element should have the item in mAggregations");
+				});
+
+				QUnit.test("mForwardedAggregations consistency", function(assert) {
+					assert.equal(this.composite.mForwardedAggregations["outerSingleAggregation"], this.item, "outer element should have the item in mForwardedAggregations");
+					assert.equal(this.innerElement.mAggregations["innerSingleAggregation"], this.item, "inner element should have the item in mAggregations");
+					assert.strictEqual(this.composite.mForwardedAggregations["outerSingleAggregation"], this.innerElement.mAggregations["innerSingleAggregation"], "outer element mForwardedAggregations[name] should equal inner element mAggregations[name]");
+
+					this.composite.destroyAggregation("outerSingleAggregation"); // delete
+					this.item = new SimpleElement("item");
+					this.composite.setOuterSingleAggregation(this.item);
+
+					assert.equal(this.composite.mForwardedAggregations["outerSingleAggregation"], this.item, "outer element should have the item in mForwardedAggregations");
+					assert.equal(this.innerElement.mAggregations["innerSingleAggregation"], this.item, "inner element should have the item in mAggregations");
+					assert.strictEqual(this.composite.mForwardedAggregations["outerSingleAggregation"], this.innerElement.mAggregations["innerSingleAggregation"], "outer element mForwardedAggregations[name] should equal inner element mAggregations[name]");
 				});
 
 				QUnit.test("set new item (checks setAggregation)", function(assert) {
@@ -533,7 +632,7 @@
 
 				QUnit.test("check mAggregations", function(assert) {
 					assert.equal(this.ultraComposite.mAggregations["ultraOuterAggregation"], undefined, "ultra outer element should not have the item in mAggregations");
-					assert.equal(this.composite.mAggregations["outerAggregation"], undefined, "outer element should not have the item in mAggregations");
+					assert.deepEqual(this.composite.mAggregations["outerAggregation"], [], "outer element should not have the item in mAggregations");
 					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
 				});
 
@@ -682,8 +781,8 @@
 
 				QUnit.test("check mAggregations", function(assert) {
 					assert.equal(this.uberComposite.mAggregations["uberOuterAggregation"], undefined, "uber outer element should not have the item in mAggregations");
-					assert.equal(this.ultraComposite.mAggregations["ultraOuterAggregation"], undefined, "ultra outer element should not have the item in mAggregations");
-					assert.equal(this.composite.mAggregations["outerAggregation"], undefined, "outer element should not have the item in mAggregations");
+					assert.deepEqual(this.ultraComposite.mAggregations["ultraOuterAggregation"], [], "ultra outer element should not have the item in mAggregations");
+					assert.deepEqual(this.composite.mAggregations["outerAggregation"], [], "outer element should not have the item in mAggregations");
 					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
 				});
 
@@ -1391,6 +1490,166 @@
 
 					this.composite2.destroy();
 					this.item2 = null;
+				});
+
+
+
+
+
+				QUnit.module("Model Availability", {
+					beforeEach: function() {
+						this.model = new JSONModel();
+						this.model.setData({text: "textFromModel"});
+						this.model.outer = true;
+						this.item = new SimpleElement("item");
+						this.composite = new CompositeElementForModelTest();
+						this.container = new SimpleContainer();
+					},
+					afterEach: function() {
+						this.item.destroy();
+						this.composite.destroy();
+						this.model.destroy();
+						this.container.destroy();
+					}
+				});
+
+				QUnit.test("Test binding after forwarding", function(assert) {
+					this.item.setModel(this.model, "uniqueModelName");
+					this.item.bindProperty("text", "uniqueModelName>/text");
+					assert.equal(this.item.getText(), "textFromModel", "Initial check: bound text should be on item");
+					assert.ok(this.item.getModel("uniqueModelName").outer, "Model of item should be the outer model");
+
+					this.composite.addOuterAggregation(this.item);
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on item after forwarding");
+					assert.ok(this.item.getModel("uniqueModelName").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model...");
+					assert.equal(this.item.getModel("modelNameSetInComposite"), undefined, "...but this model should not be propagated to the forwarded element, even after forwarding");
+				});
+
+				QUnit.test("Test binding after forwarding when forwarding is added in subclass", function(assert) {
+					this.composite.destroy();
+					this.composite = new CompositeElementForModelTestAddingForwarding();
+
+					this.item.setModel(this.model, "uniqueModelName");
+					this.item.bindProperty("text", "uniqueModelName>/text");
+					assert.equal(this.item.getText(), "textFromModel", "Initial check: bound text should be on item");
+					assert.ok(this.item.getModel("uniqueModelName").outer, "Model of item should be the outer model");
+
+					this.composite.addOuterAggregation(this.item);
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on item after forwarding");
+					assert.ok(this.item.getModel("uniqueModelName").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model...");
+					assert.equal(this.item.getModel("modelNameSetInComposite"), undefined, "...but this model should not be propagated to the forwarded element, even after forwarding");
+				});
+
+				QUnit.test("Model name used has been overridden in Composite", function(assert) {
+					this.item.setModel(this.model, "modelNameSetInComposite");
+					this.item.bindProperty("text", "modelNameSetInComposite>/text");
+					assert.equal(this.item.getText(), "textFromModel", "Initial check: bound text should be on item");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should be the outer model");
+
+					this.composite.addOuterAggregation(this.item);
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on item after forwarding");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model");
+				});
+
+				QUnit.test("Model name used has been overridden in Composite when forwarding is added in subclass", function(assert) {
+					this.composite.destroy();
+					this.composite = new CompositeElementForModelTestAddingForwarding();
+
+					this.item.setModel(this.model, "modelNameSetInComposite");
+					this.item.bindProperty("text", "modelNameSetInComposite>/text");
+					assert.equal(this.item.getText(), "textFromModel", "Initial check: bound text should be on item");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should be the outer model");
+
+					this.composite.addOuterAggregation(this.item);
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on item after forwarding");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model");
+				});
+
+				QUnit.test("Model name used is later overridden in Composite", function(assert) {
+					this.item.setModel(this.model, "modelNameSetInComposite");
+					this.item.bindProperty("text", "modelNameSetInComposite>/text");
+					assert.equal(this.item.getText(), "textFromModel", "Initial check: bound text should be on item");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should be the outer model");
+
+					this.composite.addOuterAggregation(this.item);
+
+					// now set the inner model AFTER adding the item
+					var oModel = new sap.ui.model.json.JSONModel();
+					oModel.inner = true;
+					oModel.setData({text: "INNER DATA!"});
+					this.composite.getAggregation("_innerElement").setModel(oModel, "modelNameSetInComposite");
+
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on item after forwarding");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model");
+				});
+
+				QUnit.test("Test binding after forwarding - with model from parent container", function(assert) {
+					this.container.setModel(this.model, "uniqueModelName");
+					this.container.addContent(this.composite);
+					this.item.bindProperty("text", "uniqueModelName>/text");
+
+					this.composite.addOuterAggregation(this.item);
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on item after forwarding");
+					assert.ok(this.item.getModel("uniqueModelName").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model...");
+					assert.equal(this.item.getModel("modelNameSetInComposite"), undefined, "...but this model should not be propagated to the forwarded element, even after forwarding");
+				});
+
+				QUnit.test("Test binding after forwarding - with model from parent container, which is set later after forwarding", function(assert) {
+					this.container.addContent(this.composite);
+					this.item.bindProperty("text", "uniqueModelName>/text");
+
+					this.composite.addOuterAggregation(this.item);
+					this.container.setModel(this.model, "uniqueModelName");
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on forwarded item after model has been set outside");
+					assert.ok(this.item.getModel("uniqueModelName").outer, "Model of forwarded item should be the outer model after model has been set outside");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model...");
+					assert.equal(this.item.getModel("modelNameSetInComposite"), undefined, "...but this model should not be propagated to the forwarded element, even after forwarding");
+				});
+
+				QUnit.test("Model name used has been overridden in Composite - with model from parent container", function(assert) {
+					this.container.setModel(this.model, "modelNameSetInComposite");
+					this.container.addContent(this.composite);
+					this.item.bindProperty("text", "modelNameSetInComposite>/text");
+
+					this.composite.addOuterAggregation(this.item);
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on item after forwarding");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model");
+				});
+
+				QUnit.test("Model name used has been overridden in Composite - with model from parent container, which is set later after forwarding", function(assert) {
+					this.container.addContent(this.composite);
+					this.item.bindProperty("text", "modelNameSetInComposite>/text");
+
+					this.composite.addOuterAggregation(this.item);
+					this.container.setModel(this.model, "modelNameSetInComposite");
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on forwarded item after model has been set outside");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model");
+				});
+
+				QUnit.test("Model name used is later overridden in Composite - with model from parent container", function(assert) {
+					this.container.setModel(this.model, "modelNameSetInComposite");
+					this.container.addContent(this.composite);
+					this.item.bindProperty("text", "modelNameSetInComposite>/text");
+
+					this.composite.addOuterAggregation(this.item);
+
+					// now set the inner model AFTER adding the item
+					var oModel = new sap.ui.model.json.JSONModel();
+					oModel.inner = true;
+					oModel.setData({text: "INNER DATA!"});
+					this.composite.getAggregation("_innerElement").setModel(oModel, "modelNameSetInComposite");
+
+					assert.equal(this.item.getText(), "textFromModel", "Bound text should be on item after forwarding");
+					assert.ok(this.item.getModel("modelNameSetInComposite").outer, "Model of item should still be the outer model after forwarding");
+					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model");
 				});
 
 				QUnit.start();
