@@ -30,9 +30,13 @@
 					</statuses>
 				</ObjectHeader>
 			</sap.ui.layout:VerticalLayout>
-			<sap.ui.layout:VerticalLayout width="100%">
+			<sap.ui.layout:VerticalLayout id="layout1" width="100%">
 				<Button id="smartFormPopoverButton" text="Open Popover" press=".openSmartFormPopover" />
 				<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
+				<Button id="createDeleteButton" text="Create/Delete SmartForm" press=".createOrDeleteContent" />
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
 				<smartForm:SmartForm id="MainForm" title="Information" editable="true" entityType="Header" ignoredFields="TransactionCode">
 					<smartForm:Group id="GeneralLedgerDocument" label="General Ledger Document">
 						<smartForm:GroupElement id="GeneralLedgerDocument.Name" >
@@ -379,7 +383,7 @@
 			</sap.ui.layout:VerticalLayout>
 
 			<sap.ui.layout:VerticalLayout width="100%"  class="sapUiLargeMarginTop">
-				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">  
+				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">
 					<smartForm:Group id="SmartFormGroup01" label="SmartForm Group 01">
 						<smartForm:GroupElement id="SmartFormGroup01.CompanyCodeName" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{CompanyCodeName}"/>
@@ -409,7 +413,7 @@
 			</sap.ui.layout:VerticalLayout>
 
 			<sap.ui.layout:VerticalLayout width="100%">
-				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">  
+				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
 					<smartForm:Group id="SmartForm02Group01" label="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentType" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentType}"/>
