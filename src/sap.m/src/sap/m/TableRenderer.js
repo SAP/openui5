@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer', './ColumnHeader', 'sap/m/library'],
-	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer, ColumnHeader, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer', 'sap/m/library'],
+	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer, library) {
 	"use strict";
 
 
@@ -39,6 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			cellTag = (type == "Head") ? "th" : "td",
 			groupTag = "t" + type.toLowerCase(),
 			aColumns = oTable.getColumns(),
+			bActiveHeaders = type == "Head" && oTable.bActiveHeaders,
 			isHeaderHidden = (type == "Head") && aColumns.every(function(oColumn) {
 				return	!oColumn.getHeader() ||
 						!oColumn.getHeader().getVisible() ||
@@ -126,11 +127,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			rm.write("<" + cellTag);
 			cls && rm.addClass(jQuery.sap.encodeHTML(cls));
 
-			if (type === "Head") {
+			if (type == "Head") {
 				rm.writeElementData(oColumn);
 				rm.addClass("sapMTableTH");
 				// adding ColumnHeader specific class in order to overwrite the padding of the cell
-				if (control instanceof ColumnHeader) {
+				if (bActiveHeaders || (control && control.isA("sap.m.ColumnHeader"))) {
 					rm.addClass(clsPrefix + "CellCH");
 				}
 			}
@@ -147,13 +148,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			rm.writeClasses();
 			rm.writeStyles();
 			rm.write(">");
+
 			if (control) {
+				if (bActiveHeaders) {
+					rm.write("<div tabindex='0' role='button' aria-haspopup='true' class='sapMColumnHeader sapMColumnHeaderActive'>");
+					control.addStyleClass("sapMColumnHeaderContent");
+				}
+
 				oColumn.applyAlignTo(control);
 				rm.renderControl(control);
+
+				if (bActiveHeaders) {
+					rm.write("</div>");
+				}
 			}
+
 			if (type == "Head" && !hasFooter) {
 				hasFooter = !!oColumn.getFooter();
 			}
+
 			rm.write("</" + cellTag + ">");
 			oColumn.setIndex(index++);
 		});

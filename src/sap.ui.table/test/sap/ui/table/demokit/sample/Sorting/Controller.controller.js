@@ -26,7 +26,7 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
 				success: function (oData) {
 					var aTemp1 = [];
@@ -135,7 +135,7 @@ sap.ui.define([
 		},
 
 		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Sorting", "/info.json"), oEvent.getSource());
+			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/Sorting") + "/info.json", oEvent.getSource());
 		}
 
 	});

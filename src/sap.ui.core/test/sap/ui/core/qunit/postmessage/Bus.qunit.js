@@ -194,100 +194,6 @@ function(
 				undefined
 			);
 		});
-		QUnit.test("data parameter", function (assert) {
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: undefined
-				}),
-				undefined
-			);
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: true
-				}),
-				undefined
-			);
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: 0
-				}),
-				undefined
-			);
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: 0.01
-				}),
-				undefined
-			);
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: {
-						a: "b",
-						c: {
-							d: "e",
-							f: "g"
-						}
-					}
-				}),
-				undefined
-			);
-			assert.throws(function () {
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: function () {}
-				});
-			}.bind(this));
-			assert.throws(function () {
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: {
-						foo: "bar",
-						fn: function () {}
-					}
-				});
-			}.bind(this));
-			assert.throws(function () {
-				// Create cyclic object to provoke JSON.stringify() to fail
-				var mObj1 = {};
-				var mObj2 = {};
-				mObj1.mObj2 = mObj2;
-				mObj2.mObj1 = mObj1;
-
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: mObj1
-				});
-			}.bind(this));
-		});
 	});
 
 	QUnit.module("Sending message", {
@@ -399,10 +305,11 @@ function(
 	}, function () {
 		QUnit.test("when a message is received with an object payload", function (assert) {
 			var fnDone = assert.async();
-			var mData = new this.oIframeWindow.Object();
-			mData.foo = 'bar';
+			var mData = {
+				foo: 'bar'
+			};
 			this.oPostMessageBus.subscribe('fakeChannel', 'fakeEvent', function (oEvent) {
-				assert.deepEqual(oEvent.data, {foo: 'bar'});
+				assert.deepEqual(oEvent.data, mData);
 				fnDone();
 			});
 			this.oPostMessageBusInFrame.publish({
@@ -703,7 +610,7 @@ function(
 				origin: window.location.origin,
 				channelId: 'fakeChannel',
 				eventId: PostMessageBus.event.CONNECT,
-				data: new this.oIframeWindow.Object()
+				data: {}
 			});
 		});
 	});

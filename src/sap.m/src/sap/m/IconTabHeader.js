@@ -270,11 +270,10 @@ function(
 	};
 
 	/**
-	 * Handles overrflow button "press" event
+	 * Handles overflow button "press" event
 	 * @private
 	 */
 	IconTabHeader.prototype._overflowButtonPress = function (event) {
-
 		if (!this._oPopover) {
 			this._oPopover = new ResponsivePopover({
 					showArrow: false,
@@ -289,6 +288,22 @@ function(
 				this._oPopover._oControl.addButton(this._createPopoverCloseButton());
 			}
 			this.addDependent(this._oPopover);
+
+			//This overrides the popover _adaptPositionParams function for placing the popover
+			//over the right bottom corner of the button. This change is required by the visual spec.
+			this._oPopover._oControl._adaptPositionParams =  function () {
+				var bIsCompact = jQuery("body").hasClass("sapUiSizeCompact");
+
+				this._arrowOffset = 0;
+
+				if (bIsCompact) {
+					this._offsets = ["0 0", "0 0", "0 2", "0 0"];
+				} else {
+					this._offsets = ["0 0", "0 0", "0 3", "0 0"];
+				}
+				this._myPositions = ["end bottom", "begin top", "end top", "end top"];
+				this._atPositions = ["end top", "end top", "end bottom", "begin top"];
+			};
 		}
 
 		var oSelectList = this._getSelectList();

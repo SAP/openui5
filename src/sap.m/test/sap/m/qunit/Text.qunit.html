@@ -13,7 +13,34 @@
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script id="view1" type="sapui5/xmlview">
+		<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" controllerName="myController">
+			<Text id="xmltext1" text="Should visualize tab&#009;and new line&#xA;and escaped \n and \t" renderWhitespace="true" width="100%"></Text>
+			<Text id="xmltext2" text="{/text}" renderWhitespace="true" width="100%"></Text>
+		</mvc:View>
+	</script>
+
 	<script>
+		sap.ui.controller("myController", {
+			doSomething: function() {
+				//something
+			}
+		});
+
+		var oData2 = {text: "Should visualize tab\tand new line\nand escaped \\n and \\t from binding"};
+		var myView = sap.ui.xmlview({viewContent:jQuery('#view1').html(), type:sap.ui.core.mvc.ViewType.XML});
+		var oModel2 = new sap.ui.model.json.JSONModel();
+
+		oModel2.setData(oData2);
+		myView.setModel(oModel2);
+
+		myView.placeAt('content64');
+	</script>
+	<script>
+		function countLines(oControl) {
+ 			return Math.round(oControl.$().height() / oControl.getLineHeight());
+		}
 
 		// add text instances
 		// ==================
@@ -150,10 +177,59 @@
 			assert.equal(oDom.innerHTML,"Hello World!", "Text entered again");
 		});
 
+		QUnit.test("New line characters in XML view", function(assert) {
+			myText64a = sap.ui.getCore().byId("__xmlview0--xmltext1");
+			assert.equal(countLines(myText64a), 2, "Text from XML view should be in 2 lines");
+
+			myText64b = sap.ui.getCore().byId("__xmlview0--xmltext2");
+			assert.equal(countLines(myText64b), 2, "Text from XML view with binding should be in 2 lines");
+		});
+
+		QUnit.test("New line characters with binding", function(assert) {
+			var oModel = new sap.ui.model.json.JSONModel();
+			var oData = {text: "Should visualize tab\tand new line\nand escaped \\n and \\t from binding"};
+			oModel.setData(oData);
+
+			var t65 = new sap.m.Text("Text65", {text: "{/text}", renderWhitespace: true}).setModel(oModel);
+			sap.ui.setRoot("content65", t65);
+			oCore.applyChanges();
+			assert.equal(countLines(t65), 2, "Text should be in 2 lines");
+		});
+
+		QUnit.test("New line characters", function(assert) {
+			//test normalization \r\n \r \n\r
+			var txt66 = "test\r\ntest\rtest\n\rtest";
+			var t66 = new sap.m.Text("Text66", {text: txt66});
+			sap.ui.setRoot("content66", t66);
+			oCore.applyChanges();
+			assert.equal(countLines(t66), 4, "Text should be in 4 lines");
+
+			//test \n
+			var txt67 = "C:\Temp\next.exe";
+			var t67 = new sap.m.Text("Text67", {text: txt67});
+			sap.ui.setRoot("content67", t67);
+			oCore.applyChanges();
+			assert.equal(countLines(t67), 2, "Text should be in 2 lines");
+
+			//test \\n
+			var txt68 = "C:\\Temp\\next.exe";
+			var t68 = new sap.m.Text("Text68", {text: txt68});
+			sap.ui.setRoot("content68", t68);
+			oCore.applyChanges();
+			assert.equal(countLines(t68), 1, "Text should be in 1 line");
+
+			//test \n\n\n
+			var txt69 = "test\n\n\ntest";
+			var t69 = new sap.m.Text("Text69", {text: txt69});
+			sap.ui.setRoot("content69", t69);
+			oCore.applyChanges();
+			assert.equal(countLines(t69), 4, "Text should be in 4 lines");
+		});
+
 		QUnit.test("wrapping & no-wrapping", function(assert) {
-			assert.strictEqual(t1.$().css("white-space"), "pre-line", "Text has correct white-spece style for wrapping");
+			assert.strictEqual(t1.$().css("white-space"), "pre-line", "Text has correct white-space style for wrapping");
 			assert.strictEqual(t4.$().hasClass("sapMTextNoWrap"), true, "Text has correct class for non-wrapping");
-			assert.strictEqual(t4.$().css("white-space"), "nowrap", "Text has correct white-spece style for non-wrapping");
+			assert.strictEqual(t4.$().css("white-space"), "nowrap", "Text has correct white-space style for non-wrapping");
 			assert.strictEqual(t4.$().css("word-wrap"), "normal", "Text has correct word-wrap style for non-wrapping");
 		});
 
@@ -240,9 +316,13 @@
 
 		QUnit.test("wrapping and break word with initially empty text", function(assert) {
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
+
 			t6.setText("LongTextWithNoSpaces");
+			sap.ui.getCore().applyChanges();
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), true, "Text has a class for break word");
+
 			t6.setText("LongTextWith Spaces");
+			sap.ui.getCore().applyChanges();
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
@@ -297,5 +377,11 @@
 	<div id="content4"></div>
 	<div id="content5"></div>
 	<div id="content6"></div>
+	<div id="content64"></div>
+	<div id="content65"></div>
+	<div id="content66"></div>
+	<div id="content67"></div>
+	<div id="content68"></div>
+	<div id="content69"></div>
 </body>
 </html>

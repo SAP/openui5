@@ -51,7 +51,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			this.enableInplaceControlSelection();// see below...
 			this.oCore.attachUIUpdated(this.renderDelayed, this);
 			this.sSelectedNodeId = "";
-			this.sResourcePath = bRunsEmbedded ? jQuery.sap.getModulePath("", "/") : (window.top.testfwk.sResourceRoot || "../");
+			this.sResourcePath = bRunsEmbedded ? sap.ui.require.toUrl("") + "/" : (window.top.testfwk.sResourceRoot || "../");
 			this.sTestResourcePath = this.sResourcePath + "../test-resources/";
 			this.sSpaceUrl = this.sResourcePath + "sap/ui/debug/images/space.gif";
 			this.sMinusUrl = this.sResourcePath + "sap/ui/debug/images/minus.gif";

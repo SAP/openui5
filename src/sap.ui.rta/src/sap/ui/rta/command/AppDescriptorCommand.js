@@ -53,6 +53,11 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand',
 	});
 
 	/**
+	 * For app descriptor commands to take effect usually the app needs to be restarted as server-side processing is involved.
+	 */
+	AppDescriptorCommand.prototype.needsReload = true;
+
+	/**
 	 * Prepare the app descriptor change, setting the layer.
 	 * @param  {object} mFlexSettings Map of flex Settings
 	 * @param  {string} mFlexSettings.layer Layer where the change is applied

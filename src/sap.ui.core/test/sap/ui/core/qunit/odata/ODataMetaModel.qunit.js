@@ -719,10 +719,11 @@ sap.ui.require([
 			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+			// avoid caching of metadata across tests
+			this.stub(ODataModel, "_getSharedData").returns({});
 		},
 		afterEach : function () {
 			jQuery.sap.log.setLevel(this.iOldLogLevel, sComponent);
-			ODataModel.mServiceData = {}; // clear cache
 		}
 	});
 

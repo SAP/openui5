@@ -5,5 +5,6 @@ module.exports = [
 	"ResponsiveGridLayoutVisual.spec.js",
 	"ResponsiveLayoutVisual.spec.js",
 	"GridLayoutVisual.spec.js",
-	"ColumnLayoutVisual.spec.js"
+	"ColumnLayoutVisual.spec.js",
+	"HorizontalLayout.spec.js"
 ];

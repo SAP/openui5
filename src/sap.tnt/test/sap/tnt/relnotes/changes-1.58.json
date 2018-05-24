@@ -1,0 +1,13 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "f8170bcdfac5faa4ab7fdc269fe0f0b618674998",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Border is now correct",
+        "references": []
+      }
+    ]
+  }
+}

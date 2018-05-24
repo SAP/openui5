@@ -478,6 +478,15 @@ sap.ui.define([
 		 */
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {},
 
+		/**
+		 * See {@link sap.ui.base.ManagedObject#applySettings} method
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl - control representation
+		 * @param {object} mSettings Further settings or properties for the control
+		 * @returns {Element} XML node of the control being created
+		 * @public
+		 */
+		applySettings: function(vControl, mSettings) {},
 
 		/**
 		 * See {@link sap.ui.base.ManagedObject#getId} method

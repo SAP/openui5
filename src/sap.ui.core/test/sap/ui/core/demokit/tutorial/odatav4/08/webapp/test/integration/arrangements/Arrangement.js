@@ -5,7 +5,7 @@ sap.ui.define([
 
 	function getFrameUrl(sHash) {
 		sHash = sHash || "";
-		var sUrl = jQuery.sap.getResourcePath("sap/ui/core/tutorial/odatav4/index.html");
+		var sUrl = sap.ui.require.toUrl("sap/ui/core/tutorial/odatav4/index.html");
 
 		return sUrl + "#" + sHash;
 	}

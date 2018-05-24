@@ -26,10 +26,13 @@ sap.ui.require([
 
 	var fnStubTechnicalParameterValues = function (aUrlTechnicalParameters) {
 		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+		sandbox.spy(this.oModel, "updateHasherEntry");
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant1").returns(true);
 		sandbox.stub(Utils, "getUshellContainer").returns(true);
-		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns({
+		sandbox.stub(Utils, "getParsedURLHash").returns({
+			params: {
 			'sap-ui-fl-control-variant-id' : aUrlTechnicalParameters
+			}
 		});
 		sandbox.stub(Utils, "setTechnicalURLParameterValues");
 	};
@@ -75,14 +78,18 @@ sap.ui.require([
 				}
 			};
 
-			this.oModel = new VariantModel(this.oData, {}, this.oComponent);
-
-			this.oModel.oVariantController = {
-				getVariant: function () {},
-				sVariantTechnicalParameterName: "sap-ui-fl-control-variant-id"
+			var oMockFlexController = {
+				_oChangePersistence: {
+					_oVariantController: {
+						getVariant: function () {},
+						sVariantTechnicalParameterName: "sap-ui-fl-control-variant-id"
+					}
+				}
 			};
 
-			this.oDummyControl = new sap.ui.core.Element("dummyControl");
+			this.oModel = new VariantModel(this.oData, oMockFlexController, this.oComponent);
+
+			this.oDummyControl = new VariantManagement("dummyControl");
 			this.oComponent = new sap.ui.core.Component("RTADemoAppMD");
 			this.oComponent.setModel(this.oModel, "$FlexVariants");
 			var fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl");
@@ -104,8 +111,13 @@ sap.ui.require([
 
 		ControlPersonalizationAPI.clearVariantParameterInURL(this.oDummyControl);
 
-		assert.ok(Utils.getTechnicalParametersForComponent.calledWithExactly(this.oModel.oComponent), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
+		assert.ok(Utils.getParsedURLHash.calledOnce, "then hash parameter values are requested");
 		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
+		assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {
+			parameters: [aUrlTechnicalParameters[0]],
+			updateURL: true,
+			component: this.oComponent
+		}, "then VariantModel.updateHasherEntry called with the desired arguments");
 	});
 
 	QUnit.test("when calling 'clearVariantParameterInURL' without a parameter", function(assert) {
@@ -114,8 +126,9 @@ sap.ui.require([
 
 		ControlPersonalizationAPI.clearVariantParameterInURL();
 
-		assert.equal(Utils.getTechnicalParametersForComponent.callCount, 0, "then 'sap-ui-fl-control-variant-id' parameter values are not requested");
+		assert.equal(Utils.getParsedURLHash.callCount, 0, "then 'sap-ui-fl-control-variant-id' parameter values are not requested");
 		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(undefined, 'sap-ui-fl-control-variant-id', []), "then all 'sap-ui-fl-control-variant-id' parameter values are cleared");
+		assert.strictEqual(this.oModel.updateHasherEntry.callCount, 0, "then VariantModel.updateHasherEntry not called");
 	});
 
 	QUnit.test("when calling 'activateVariant' with a control id", function(assert) {

@@ -388,6 +388,15 @@ function(
 				$icon.attr("alt", " ");
 			}
 		}
+		// Added for calculating List Count.
+        var oItem = oEvent.srcControl ,
+            oItemDomRef = oItem.getDomRef(),
+            mPosition = this.getParent().getAccessbilityPosition(oItem);
+
+        if ( oItem instanceof sap.m.FeedListItem ) {
+            oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
+            oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
+        }
 	};
 
 	/**

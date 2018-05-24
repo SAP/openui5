@@ -142,6 +142,55 @@ sap.ui.define([
 			});
 		}
 
+		QUnit.test("Should use default iFrame scale", function (assert) {
+			var done = assert.async();
+			var oOpa5 = new Opa5();
+
+			oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
+				assert.ok(jQuery("#OpaFrame").hasClass("default-scale-both"), "Applied default size and scale");
+			});
+
+			oOpa5.iTeardownMyAppFrame();
+			oOpa5.emptyQueue().done(done);
+		});
+
+		QUnit.test("Should apply user's iFrame width and height", function (assert) {
+			var done = assert.async();
+			var oOpa5 = new Opa5();
+
+			oOpa5.iStartMyAppInAFrame({source: "../testdata/emptySite.html", width: 700, height: 400}).done(function() {
+				assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
+				assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
+				assert.strictEqual(jQuery("#OpaFrame").css("height"), "400px", "Should have desired frame height");
+			});
+
+			oOpa5.iTeardownMyAppFrame();
+
+			oOpa5.iStartMyAppInAFrame({source: "../testdata/emptySite.html", width: 700}).done(function() {
+				assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame default-scale-y", "Should scale only frame height");
+				assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
+				assert.strictEqual(jQuery("#OpaFrame").css("height"), jQuery("body").css("height"), "Should have default frame height");
+			});
+
+			oOpa5.iTeardownMyAppFrame();
+			oOpa5.emptyQueue().done(done);
+		});
+
+		QUnit.test("Should apply iFrame width and height from OPA config", function (assert) {
+			var done = assert.async();
+			var oOpa5 = new Opa5();
+			Opa5.extendConfig({frameWidth: 700, frameHeight: 400});
+
+			oOpa5.iStartMyAppInAFrame({source: "../testdata/emptySite.html", height: 500}).done(function() {
+				assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
+				assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
+				assert.strictEqual(jQuery("#OpaFrame").css("height"), "500px", "Should have desired frame height");
+			});
+
+			oOpa5.iTeardownMyAppFrame();
+			oOpa5.emptyQueue().done(done);
+		});
+
 		QUnit.test("Should always load opaPlugin of the same OPA version running the test and not from the version running in the app (it might not have OPA available)", function(assert) {
 			var done = assert.async();
 			// System under Test

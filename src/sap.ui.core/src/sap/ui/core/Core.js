@@ -947,7 +947,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._ensureThemeRoot(sLibName, sThemeName);
 
 		// use the library location as theme location
-		return jQuery.sap.getModulePath(sLibName + ".themes." + sThemeName, "/");
+		return sap.ui.require.toUrl((sLibName + "/themes/" + sThemeName).replace(/\./g, "/")) + "/";
 	};
 
 
@@ -1519,7 +1519,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	}
 
 	function loadJSONAsync(lib) {
-		var sURL = jQuery.sap.getModulePath(lib + ".library-preload", ".json");
+		var sURL = sap.ui.require.toUrl(lib.replace(/\./g, "/") + "/library-preload.json");
 
 		return Promise.resolve(jQuery.ajax({
 			dataType : "json",
@@ -1621,7 +1621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	}
 
 	function loadJSONSync(lib) {
-		var sURL = jQuery.sap.getModulePath(lib + ".library-preload", ".json");
+		var sURL = sap.ui.require.toUrl(lib.replace(/\./g, "/") + "/library-preload.json");
 		var dependencies;
 
 		jQuery.ajax({

@@ -130,10 +130,17 @@ sap.ui.define([
 
 		function iStartMyAppInAFrame () {
 			var that = this;
+			var oOptions = {};
+			var aOptions = ["source", "timeout", "autoWait", "width", "height"];
 			// allow separate arguments for backwards compatibility
-			var oOptions = arguments.length === 1 && $.isPlainObject(arguments[0])
-				? arguments[0]
-				: {source: arguments[0], timeout: arguments[1], autoWait: arguments[2]};
+			if (arguments.length === 1 && $.isPlainObject(arguments[0])) {
+				oOptions = arguments[0];
+			} else {
+				var aValues = arguments;
+				aOptions.forEach(function (sOption, index) {
+					oOptions[sOption] = aValues[index];
+				});
+			}
 
 			// merge appParams over sSource search params
 			if (oOptions.source && typeof oOptions.source !== "string") {
@@ -146,7 +153,11 @@ sap.ui.define([
 			// kick starting the frame
 			var oCreateFrameOptions = createWaitForObjectWithoutDefaults();
 			oCreateFrameOptions.success = function() {
-				addFrame(uri.toString());
+				addFrame({
+					source: uri.toString(),
+					width: oOptions.width || Opa.config.frameWidth,
+					height: oOptions.height || Opa.config.frameHeight
+				});
 			};
 			this.waitFor(oCreateFrameOptions);
 
@@ -325,8 +336,12 @@ sap.ui.define([
 		 * @param {boolean} [autoWait=false] Since 1.53, activates autoWait while the application is starting up.
 		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
 		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
+		 * @param {string|number} width Since 1.57, sets a fixed width for the iFrame.
+		 * @param {string|number} height Since 1.57, sets a fixed height for the iFrame.
+		 * Setting width and/or height is useful when testing responsive applications on screens of varying sizes.
+		 * By default, the iFrame dimensions are 60% of the outer window dimensions.
 		 * @param {object} [oOptions] Since 1.53, you can provide a startup configuration object as an only parameter.
-		 * oOptions is expected to have the keys: source, timeout and autoWait.
+		 * oOptions is expected to have keys among: source, timeout, autoWait, width, height.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
@@ -344,8 +359,12 @@ sap.ui.define([
 		 * @param {boolean} [autoWait=false] Since 1.53, activates autoWait while the application is starting up.
 		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
 		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
+		 * @param {string|number} width Since 1.57, sets a fixed width for the iFrame.
+		 * @param {string|number} height Since 1.57, sets a fixed height for the iFrame.
+		 * Setting width and/or height is useful when testing responsive applications on screens of varying sizes.
+		 * By default, the iFrame dimensions are 60% of the outer window dimensions.
 		 * @param {object} [oOptions] Since 1.53, you can provide a startup configuration object as an only parameter.
-		 * oOptions is expected to have the keys: source, timeout and autoWait.
+		 * oOptions is expected to have keys among: source, timeout, autoWait, width, height.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
@@ -1101,17 +1120,15 @@ sap.ui.define([
 		 */
 		Opa5.resetConfig();
 
-		function addFrame (sSource) {
+		function addFrame (oOptions) {
 			// include styles
 			var sIFrameStyleLocation = $.sap.getModulePath("sap.ui.test.OpaCss",".css");
 			$.sap.includeStyleSheet(sIFrameStyleLocation);
-
-			return iFrameLauncher.launch({
+			var oFrameLaunchOptions = $.extend({}, oOptions, {
 				frameId: sFrameId,
-				source: sSource,
 				opaLogLevel: Opa.config.logLevel
 			});
-
+			return iFrameLauncher.launch(oFrameLaunchOptions);
 		}
 
 		function createWaitForObjectWithoutDefaults () {

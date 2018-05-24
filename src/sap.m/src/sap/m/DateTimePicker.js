@@ -77,7 +77,11 @@ sap.ui.define([
 	 * <li>Use the <code>value</code> property if the date is provided as a string from
 	 * the backend or inside the app (for example, as ABAP type DATS field)</li>
 	 * <li>Use the <code>dateValue</code> property if the date is already provided as a
-	 * JavaScript Date object or you want to work with a JavaScript Date object</li></ul>
+	 * JavaScript Date object or you want to work with a JavaScript Date object.
+	 * Use <code>dateValue</code> as a helper property to easily obtain the day, month, year,
+	 * hours, minutes and seconds of the chosen date and time. Although possible to bind it,
+	 * the recommendation is not to do it.
+	 * When binding is needed, use <code>value</code> property instead</li></ul>
 	 *
 	 * <h3>Formatting</h3>
 	 *
@@ -146,7 +150,7 @@ sap.ui.define([
 		designtime: "sap/m/designtime/DateTimePicker.designtime"
 	}});
 
-	var PopupContent = Control.extend("DateTimePickerPopup", {
+	var PopupContent = Control.extend("sap.m.internal.DateTimePickerPopup", {
 
 		metadata: {
 			aggregations: {

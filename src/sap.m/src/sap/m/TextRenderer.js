@@ -116,7 +116,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
 	 */
 	TextRenderer.renderText = function(oRm, oText) {
-		var sText = oText.getText(true).replace(/\\t/g,"\t");
+		var sText = oText.getText(true);
 		oRm.writeEscaped(sText);
 	};
 

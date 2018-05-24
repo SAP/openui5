@@ -46,6 +46,22 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 			this._selectWeekInterval(4);
 		},
 
+		handleWeekNumberSelect: function(oEvent) {
+			var oDateRange = oEvent.getParameter("weekDays"),
+				oCalendar = oEvent.oSource,
+				aSelectedDates = oCalendar.getSelectedDates();
+
+				//when intervalSelection: true, only one range can be selected at a time, so
+				//destroy the old selected dates and select the new ones except one case -
+				//when again clicked on a same week number - then remove the selections
+				oCalendar.removeAllSelectedDates();
+				if (!(aSelectedDates.length &&
+						aSelectedDates[0].getStartDate().getTime() === oDateRange.getStartDate().getTime() &&
+						aSelectedDates[0].getEndDate().getTime() === oDateRange.getEndDate().getTime())){
+					oCalendar.addSelectedDate(oDateRange);
+				}
+		},
+
 		_selectWeekInterval: function(iDays) {
 			var oCurrent = new Date();     // get current date
 			var iWeekstart = oCurrent.getDate() - oCurrent.getDay() + 1;

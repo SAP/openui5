@@ -290,7 +290,7 @@ sap.ui.define([
 		 * @private
 		 */
 		MenuButton.prototype._initButton = function() {
-			var oBtn = new Button({
+			var oBtn = new Button(this.getId() + "-internalBtn", {
 				width: "100%"
 			});
 			oBtn.attachPress(this._handleButtonPress, this);
@@ -303,7 +303,7 @@ sap.ui.define([
 		 * @private
 		 */
 		MenuButton.prototype._initSplitButton = function() {
-			var oBtn = new SplitButton({
+			var oBtn = new SplitButton(this.getId() + "-internalSplitBtn", {
 				width: "100%"
 			});
 			oBtn.attachPress(this._handleActionPress, this);
@@ -503,6 +503,7 @@ sap.ui.define([
 				case 'activeIcon':
 				case 'iconDensityAware':
 				case 'textDirection':
+				case 'enabled':
 					this._getButtonControl().setProperty(sPropertyName, vValue);
 					break;
 			}

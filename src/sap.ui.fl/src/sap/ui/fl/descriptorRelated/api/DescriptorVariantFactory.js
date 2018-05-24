@@ -50,6 +50,7 @@ sap.ui.define([
 				this._referenceVersion = mParameters.referenceVersion;
 			}
 			this._mode = 'NEW';
+			this._skipIam = mParameters.skipIam;
 
 		} else if (mFileContent) {
 			this._mMap = mFileContent;
@@ -178,6 +179,10 @@ sap.ui.define([
 		} else if ( this._oSettings.isAtoEnabled() && FlexUtils.isCustomerDependentLayer(mMap.layer) ) {
 			sRoute += '?changelist=ATO_NOTIFICATION';
 		}
+		if (this._skipIam) {
+			sRoute += ( sRoute.indexOf('?') < 0 ) ? '?' : '&';
+				sRoute += 'skipIam=' + this._skipIam;
+		}
 
 		var oLREPConnector = LrepConnector.createConnector();
 
@@ -291,7 +296,8 @@ sap.ui.define([
 	 * @param {string} mParameters.id the id for the app variant/CDM app config id
 	 * @param {string} [mParameters.layer='CUSTOMER'] the proposed layer for the app variant/CDM app config (might be overwritten by the backend)
 	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
-	 *
+	 * @param {boolean} [mParameters.skipIam=true] indicator whether the default IAM item creation and registration is skipped
+
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
 	 * @private
@@ -317,6 +323,10 @@ sap.ui.define([
 		if (mParameters.isAppVariantRoot){
 			Utils.checkParameterAndType(mParameters, "isAppVariantRoot", "boolean");
 		}
+		if (mParameters.skipIam){
+			Utils.checkParameterAndType(mParameters, "skipIam", "boolean");
+		}
+
 		return Settings.getInstance().then(function(oSettings) {
 			return Promise.resolve( new DescriptorVariant(mParameters,null,false,oSettings) );
 		});

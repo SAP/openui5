@@ -6,23 +6,23 @@
  * @version @version@
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/FlexItemData',
-		'sap/m/HBox',
-		'sap/m/MessageBox',
-		'sap/ui/core/mvc/View', // sap.ui.view()
-		'sap/ui/core/mvc/ViewType',
-		'sap/ui/core/sample/common/Component',
-		'sap/ui/model/BindingMode',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/odata/AnnotationHelper',
-		'sap/ui/model/odata/v2/ODataModel',
-		'sap/ui/model/odata/v4/ODataModel',
-		'sap/ui/test/TestUtils',
-		'jquery.sap.script'
-	], function(jQuery, FlexItemData, HBox, MessageBox, View, ViewType, BaseComponent, BindingMode,
-		JSONModel, AnnotationHelper, ODataModelV2, ODataModelV4, TestUtils /*, jQuerySapScript*/) {
-	"use strict";
+	'jquery.sap.global',
+	'sap/m/FlexItemData',
+	'sap/m/HBox',
+	'sap/m/MessageBox',
+	'sap/ui/core/mvc/View', // sap.ui.view()
+	'sap/ui/core/mvc/ViewType',
+	'sap/ui/core/sample/common/Component',
+	'sap/ui/model/BindingMode',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/odata/AnnotationHelper',
+	'sap/ui/model/odata/v2/ODataModel',
+	'sap/ui/model/odata/v4/ODataModel',
+	'sap/ui/test/TestUtils',
+	'jquery.sap.script'
+], function(jQuery, FlexItemData, HBox, MessageBox, View, ViewType, BaseComponent, BindingMode,
+	JSONModel, AnnotationHelper, ODataModelV2, ODataModelV4, TestUtils /*, jQuerySapScript*/) {
+"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 		metadata : "json",
@@ -65,8 +65,7 @@ sap.ui.define([
 			}
 
 			oModelV2 = new ODataModelV2({
-				annotationURI : jQuery.sap.getModulePath(
-					"sap.ui.core.sample.ViewTemplate.types.data", "/") + "annotationsV2.xml",
+				annotationURI : sap.ui.require.toUrl("sap/ui/core/sample/ViewTemplate/types/data/annotationsV2.xml"),
 				defaultBindingMode : BindingMode.TwoWay,
 				serviceUrl : sUriV2,
 				useBatch : bRealOData

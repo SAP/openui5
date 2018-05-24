@@ -3,11 +3,17 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
-	"sap/ui/support/supportRules/ui/models/SharedModel"
-], function (constants, storage, SharedModel) {
+	"sap/ui/support/supportRules/ui/models/SharedModel",
+	"sap/ui/core/util/File"
+], function (jQuery, constants, storage, SharedModel, File) {
 	"use strict";
+
+	var fnNumericSortAscending = function fnNumericSortAscending(a, b) {
+		return a - b;
+	};
 
 	var SelectionUtils = {
 		model: SharedModel,
@@ -39,7 +45,7 @@ sap.ui.define([
 		 *
 		 * @param {Object} oRow from which the rules will be taken
 		 * @param {int} iRowIndex the index of the library row
-		 * @returns {Object} a range to be used for selection
+		 * @returns {Object | null} a range to be used for selection
 		 */
 		getChildIndicesRange: function (oRow, iRowIndex) {
 			var oRowModel = oRow.getModel(),
@@ -51,13 +57,13 @@ sap.ui.define([
 				sKey;
 
 			for (sKey in mRules) {
-				if (Number.isInteger(Number.parseInt(sKey, 10))) {
+				if (jQuery.isNumeric(parseInt(sKey, 10))) {
 					iTo++;
 				}
 			}
 
 			if (iFrom > iTo) {
-				return;
+				return null;
 			}
 
 			return {
@@ -69,7 +75,7 @@ sap.ui.define([
 		/**
 		 * Selects/Deselects all rules and libraries in the model and stores the selection.
 		 *
-		 * @param {boolean} bSelectAll
+		 * @param {boolean} bSelectAll Wether to select or deselect all rows
 		 */
 		selectAllRows: function (bSelectAll) {
 			var oModel = this.model,
@@ -78,13 +84,13 @@ sap.ui.define([
 
 			// Set selected flag for each library node in the TreeTable
 			for (var i in oTreeViewModel) {
-				if (Number.isInteger(Number.parseInt(i, 10))) {
+				if (jQuery.isNumeric(parseInt(i, 10))) {
 					oModel.setProperty("/treeViewModel/" + i + "/selected", bSelectAll);
 					oLibrary = oModel.getProperty("/treeViewModel/" + i);
 
 					// Set selected flag for each rule node in the TreeTable
 					for (var k in oLibrary) {
-						if (Number.isInteger(Number.parseInt(k, 10))) {
+						if (jQuery.isNumeric(parseInt(k, 10))) {
 							oModel.setProperty("/treeViewModel/" + i + "/" + k + "/selected", bSelectAll);
 						}
 					}
@@ -94,6 +100,7 @@ sap.ui.define([
 			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
 				this.persistSelection();
 			}
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		/**
@@ -125,7 +132,7 @@ sap.ui.define([
 			// Select / Deselect the library row
 			if (bSelected) {
 				for (var i in oLibrary) {
-					if (Number.isInteger(Number.parseInt(i, 10)) && !oLibrary[i].selected) {
+					if (jQuery.isNumeric(parseInt(i, 10)) && !oLibrary[i].selected) {
 						return;
 					}
 				}
@@ -142,21 +149,25 @@ sap.ui.define([
 			this.treeTable.expand(0);
 
 			var bAllSelected = true;
+			var persistedSelectedRules = storage.getSelectedRules() || [];
 
 			for (var ruleIndex in treeTableTempLibrary) {
 
-				var iRuleIndex = Number.parseInt(ruleIndex, 10);
+				var iRuleIndex = parseInt(ruleIndex, 10);
 
-				if (!Number.isInteger(iRuleIndex)) {
+				if (!jQuery.isNumeric(iRuleIndex)) {
 					continue;
 				}
 
-				iRuleIndex++;
+				iRuleIndex += 1;
 
 				var rule = treeTableTempLibrary[ruleIndex];
 
 				var bMatchingSelectionInfo = false;
-				var persistedSelectedRules = storage.getSelectedRules();
+
+				if (persistedSelectedRules.length === 0) {
+					bAllSelected = false;
+				}
 
 				for (var i = 0; i < persistedSelectedRules.length; i++) {
 					var selection = persistedSelectedRules[i];
@@ -172,18 +183,24 @@ sap.ui.define([
 					bAllSelected = false;
 					this.treeTable.removeSelectionInterval(iRuleIndex, iRuleIndex);
 				}
+
+				// make sure the model is in sync with the treetable selection as well
+				this.model.setProperty("/treeViewModel/0/" + (iRuleIndex - 1) + "/selected", bMatchingSelectionInfo);
 			}
 
+			// if all temp rules are selected, update model and treetable selection
 			if (bAllSelected) {
-				this.model.setProperty("/treeViewModel/0/selected", true);
 				this.treeTable.addSelectionInterval(0, 0);
+			} else {
+				this.treeTable.removeSelectionInterval(0, 0);
 			}
+			this.model.setProperty("/treeViewModel/0/selected", bAllSelected);
 		},
 
 		/**
 		 * Finds the index of the row, which matches a specific path.
 		 *
-		 * @param {Object} oRowContext the rowContext to check
+		 * @param {String} sPath model path
 		 * @returns {int} the index of the row, which matches the path
 		 */
 		getRowContextIndexByPath: function (sPath) {
@@ -204,7 +221,6 @@ sap.ui.define([
 		 * Apply "selected" flags to the libraries and rules of the new tree table view model by using the old one.
 		 *
 		 * @param {Object} oNewTreeModel The new tree table view model which needs to be updated with the "selected" flags
-		 * @returns {Object} The new model with "selected" flags
 		 */
 		_syncSelections: function (oNewTreeModel) {
 			// Build an index based on the old TreeViewModel
@@ -215,11 +231,11 @@ sap.ui.define([
 
 			// Update the "selected" flag of the new model based on the old one.
 			for (var i in oNewTreeModel) {
-				if (Number.isInteger(Number.parseInt(i, 10))) {
+				if (jQuery.isNumeric(parseInt(i, 10))) {
 					for (var k in oNewTreeModel[i]) {
 						var oRule = mIndex[oNewTreeModel[i][k].id];
 
-						if (Number.isInteger(Number.parseInt(k, 10)) && oRule && oRule.selected) {
+						if (jQuery.isNumeric(parseInt(k, 10)) && oRule && oRule.selected) {
 							oNewTreeModel[i][k].selected = oRule.selected;
 
 							if (aLibrariesToUpdate.indexOf(oNewTreeModel[i][k].libName) < 0) {
@@ -266,7 +282,7 @@ sap.ui.define([
 				bLibrarySelected = true;
 
 				for (var i in oLibrary) {
-					if (Number.isInteger(Number.parseInt(i, 10))) {
+					if (jQuery.isNumeric(parseInt(i, 10))) {
 						if (!oLibrary[i].selected) {
 							bLibrarySelected = false;
 							break;
@@ -318,6 +334,77 @@ sap.ui.define([
 			} else if (bInitialLoading) {
 				this.treeTable.selectAll();
 			}
+		},
+
+		/**
+		 * Workaround for temp rule issue method
+		 */
+		initializeModelSelection: function () {
+			var oTreeViewModel = this.model.getProperty("/treeViewModel");
+			var aRuleSelections = storage.getSelectedRules();
+			var oTreeTable = this.treeTable;
+
+			oTreeTable.expandToLevel(1);
+
+			var i = -1;
+			Object
+				.keys(oTreeViewModel)
+
+				.map(function (sNum) {
+					return parseInt(sNum, 10);
+				})
+				.sort(fnNumericSortAscending)
+
+				.forEach(function (sLibKey, iLibIndex) {
+					i += 1;
+
+					var iTableLibIndex = i;
+					var bAllSelected = true;
+
+					Object
+						.keys(oTreeViewModel[sLibKey])
+						// we first need to get the numeric keys in the library, i.e. rules
+						.filter(function (sRuleKeyToFilter) {
+							return jQuery.isNumeric(parseInt(sRuleKeyToFilter, 10));
+						})
+
+						.map(function (sNum) {
+							return parseInt(sNum, 10);
+						})
+						.sort(fnNumericSortAscending)
+
+						.forEach(function (sRuleKey, iRuleIndex) {
+							i += 1;
+
+							var oRule = oTreeViewModel[sLibKey][sRuleKey];
+
+							aRuleSelections.forEach(function (oRuleSelection) {
+								if (oRule.id === oRuleSelection.ruleId && oRule.libName === oRuleSelection.libName) {
+									oRule.selected = true;
+								}
+							});
+
+							if (oRule.selected === true) {
+								oTreeTable.addSelectionInterval(i, i);
+							} else {
+								oTreeTable.removeSelectionInterval(i, i);
+								bAllSelected = false;
+							}
+						});
+
+					// if no rules in library number won't be incremented
+					if (i === iTableLibIndex) {
+						bAllSelected = false;
+					}
+
+					oTreeViewModel[sLibKey].selected = bAllSelected;
+					if (bAllSelected) {
+						oTreeTable.addSelectionInterval(iTableLibIndex, iTableLibIndex);
+					} else {
+						oTreeTable.removeSelectionInterval(iTableLibIndex, iTableLibIndex);
+					}
+			 });
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		/**
@@ -439,7 +526,7 @@ sap.ui.define([
 				}
 
 				for (sKey in mRules) {
-					if (Number.isInteger(Number.parseInt(sKey, 10))) {
+					if (jQuery.isNumeric(parseInt(sKey, 10))) {
 						oRowModel.setProperty(sPath + "/" + sKey + "/selected", bSelected);
 					}
 				}
@@ -458,6 +545,8 @@ sap.ui.define([
 			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
 				this.persistSelection();
 			}
+
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		toggleOpenStateHandler: function (oEvent) {
@@ -481,7 +570,7 @@ sap.ui.define([
 			}
 
 			for (sKey in mRules) {
-				if (Number.isInteger(Number.parseInt(sKey, 10))) {
+				if (jQuery.isNumeric(parseInt(sKey, 10))) {
 					bSelected = oRowModel.getProperty(sPath + "/" + sKey + "/selected");
 
 					if (bSelected) {
@@ -496,20 +585,21 @@ sap.ui.define([
 		},
 
 		/**
-		 * Traverses the model and creates a rule descriptor for every selected rule.
-		 * After that saves it to the local storage.
+		 * Traverses the model and creates a rule descriptor for every selected rule
+		 *
+		 * @returns {Array} Rule selections array
 		 */
-		persistSelection: function () {
+		getSelectedRulesPlain: function () {
 			var oModel = this.model,
 				aSelectedRules = [],
 				oRule;
 
 			for (var i in oModel.getProperty("/treeViewModel/")) {
-				if (Number.isInteger(Number.parseInt(i, 10))) {
+				if (jQuery.isNumeric(parseInt(i, 10))) {
 					for (var k in oModel.getProperty("/treeViewModel/" + i)) {
 						oRule = oModel.getProperty("/treeViewModel/" + i + "/" + k);
 
-						if (Number.isInteger(Number.parseInt(k, 10)) && oRule && oRule.selected) {
+						if (jQuery.isNumeric(parseInt(k, 10)) && oRule && oRule.selected) {
 							aSelectedRules.push({
 								ruleId: oRule.id,
 								libName: oRule.libName
@@ -519,106 +609,57 @@ sap.ui.define([
 				}
 			}
 
+			return aSelectedRules;
+		},
+
+		/**
+		 * Saves rule selections to the local storage
+		 */
+		persistSelection: function () {
+			var aSelectedRules = this.getSelectedRulesPlain();
+
 			storage.setSelectedRules(aSelectedRules);
 		},
 
-		/***************************************************************************
-		 * TREETABLE MANAGER CODE
-		 **************************************************************************/
+		exportSelectedRules: function (title, description) {
+			var aSelectedRules = this.getSelectedRulesPlain();
+			var oRulesToExport = {
+				title: title,
+				description: description,
+				selections: aSelectedRules
+			};
 
-		/**
-		 * Synchronises the selection of rules between the model and the TreeTable. If the model is updated calling
-		 * syncModelAndTreeTable() will update the TreeTable accordingly
-		 * @param {object} oTreeViewModel The object from the TreeTable model
-		 * @param {sap.ui.table.TreeTable} oTreeTable The TreeTable displaying the support assistant rules
-		 */
-		syncModelAndTreeTable: function (oTreeViewModel, oTreeTable) {
-			for (var sLibraryIndex in oTreeViewModel) {
-				if (!window.isNaN(window.parseInt(sLibraryIndex))) {
-					var oLibrary = oTreeViewModel[sLibraryIndex];
+			var oExportObject = JSON.stringify(oRulesToExport);
 
-					this.selectLibraryInTreeView(oLibrary, sLibraryIndex, oTreeTable, oTreeViewModel);
-				}
-			}
+			File.save(oExportObject, constants.RULE_SELECTION_EXPORT_FILE_NAME, 'json', 'text/plain');
 		},
 
-		/**
-		 * Selects/Deselects all the rules libraries in the TreeTable
-		 * @param {object} oLibrary The library object that holds the rules
-		 * @param {string} sLibraryIndex The library index in the TreeTable model
-		 * @param {sap.ui.table.TreeTable} oTreeTable The TreeTable displaying the support assistant rules
-		 * @param {object} oTreeViewModel The object from the TreeTable model
-		 */
-		selectLibraryInTreeView: function (oLibrary, sLibraryIndex, oTreeTable, oTreeViewModel) {
-			var iRulesCount = Object.keys(oLibrary).length - 4; //excluding "name", "type", "rules" and "selected"
-			var iLibraryRowIndex = this.getLibraryRowIndex(oLibrary.name, oTreeViewModel);
+		isValidSelectionImport: function (oImport) {
+			var bIsFileValid = true;
 
-			if (iLibraryRowIndex === -1) {
-				return;
+			if (!oImport.hasOwnProperty("title")) {
+				bIsFileValid = false;
 			}
 
-			if (oLibrary.selected) {
-				oTreeTable.addSelectionInterval(iLibraryRowIndex, iLibraryRowIndex + iRulesCount);
+			if (!oImport.hasOwnProperty("description")) {
+				bIsFileValid = false;
+			}
+
+			if (!oImport.hasOwnProperty("selections")) {
+				bIsFileValid = false;
+			} else if (!Array.isArray(oImport.selections)) {
+				bIsFileValid = false;
 			} else {
-				oTreeTable.removeSelectionInterval(iLibraryRowIndex, iLibraryRowIndex);
-				this.selectRulesInTreeView(oLibrary, sLibraryIndex, oTreeTable);
-			}
-		},
-
-		/**
-		 * Selects/Deselects each rule of the the passed library according to the settings in the library object
-		 * @param {object} oLibrary The library object that holds the rules
-		 * @param {string} sLibraryIndex The library index in the TreeTable model
-		 * @param {sap.ui.table.TreeTable} oTreeTable The TreeTable displaying the support assistant rules
-		 */
-		selectRulesInTreeView: function (oLibrary, sLibraryIndex, oTreeTable) {
-			for (var sRuleIndex in oLibrary) {
-				var iRuleIndexAsInt = window.parseInt(sRuleIndex);
-
-				if (window.isNaN(iRuleIndexAsInt)) {
-					continue;
-				}
-
-				var oRule = oLibrary[sRuleIndex];
-				var iRuleRowIndex = window.parseInt(sLibraryIndex) + 1 + iRuleIndexAsInt;
-
-				if (oRule.selected) {
-					oTreeTable.addSelectionInterval(iRuleRowIndex, iRuleRowIndex);
-				} else {
-					oTreeTable.removeSelectionInterval(iRuleRowIndex, iRuleRowIndex);
-				}
-			}
-		},
-
-		/**
-		 * Gets the library rox index in the TreeTable
-		 * @param {string} sLibraryName The library name
-		 * @param {object} oTreeViewModel The object from the TreeTable model
-		 * @returns {number} The row number in the TreeTable or -1 if the library is not founds
-		 */
-		getLibraryRowIndex: function (sLibraryName, oTreeViewModel) {
-			var iIndex = 0;
-			var bFound = false;
-
-			for (var sLibraryIndex in oTreeViewModel) {
-				if (!window.isNaN(window.parseInt(sLibraryIndex))) {
-					var oLibrary = oTreeViewModel[sLibraryIndex];
-
-					if (oLibrary.name === sLibraryName) {
-						bFound = true;
+				for (var i = 0; i < oImport.selections.length; i++) {
+					var oRuleSelection = oImport.selections[i];
+					if (!oRuleSelection.hasOwnProperty("ruleId") || !oRuleSelection.hasOwnProperty("libName")) {
+						bIsFileValid = false;
 						break;
-					} else {
-						iIndex += Object.keys(oLibrary).length - 4 + 1; //excluding "name", "type", "rules" and "selected" but including library
 					}
 				}
 			}
 
-			if (bFound) {
-				return iIndex;
-			} else {
-				return -1;
-			}
-
+			return bIsFileValid;
 		}
 	};
 

@@ -1058,6 +1058,29 @@
 			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
 		});
 
+		QUnit.module("Misc");
+
+		QUnit.test("When the TileContainer is editable, the Tile also is", function (assert) {
+			// Sut
+			var editableSut = new sap.m.Tile(),
+				notEditableSut = new sap.m.Tile(),
+				editableCnt = new sap.m.TileContainer({
+					editable: true,
+					tiles: editableSut
+				}),
+				notEditableCnt = new sap.m.TileContainer({
+					tiles: notEditableSut
+				});
+
+			// Assert
+			assert.equal(editableSut.isEditable(), true, 'The tile is editable');
+			assert.equal(notEditableSut.isEditable(), false, 'The tile not editable');
+
+			// Destroy
+			editableCnt.destroy();
+			notEditableCnt.destroy();
+		});
+
 	</script>
 </head>
 

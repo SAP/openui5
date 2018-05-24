@@ -116,10 +116,13 @@
 										<custom:LightTable rows="{ path : '/properties'}"
 											 columnCount="2"
 											 columnTitles="Name,Description"
-											 class="sapUiSmallMarginTop">
+											 class="sapUiSmallMarginTop sapUiDocumentation2ColumnsEqualTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
-												<custom:JSDocText text="{description}"/>
+												<layout:VerticalLayout>
+													<custom:JSDocText text="{description}"/>
+													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -167,7 +170,7 @@
 												<custom:LightTable rows="{ path : '/constructor/throws', templateShareable: 'false'}"
 														columnTitles="Throws,Desktop"
 														columnCount="2"
-														class="sapUiDocumentationReturnsTable">
+														class="sapUiDocumentation2ColumnsEqualTable">
 													<custom:Row>
 														<m:Link text="{type}"
 																href="#/api/{type}"
@@ -300,7 +303,7 @@
 																		href="#/api/{data>/name}/events/{event>name}"
 																		deprecated="{= ${event>deprecated} !== undefined }"
 																		press="scrollToEvent"/>
-															<custom:JSDocText text="{event>description}"/>
+															<custom:JSDocText text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
 												</custom:LightTable>
@@ -326,7 +329,7 @@
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<custom:JSDocText text="{event>description}"/>
+												<custom:JSDocText text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
 												<m:ObjectStatus text="Visibility: {event>visibility}" state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
@@ -415,10 +418,10 @@
 								</custom:ObjectPageSubSection>
 
 								<template:repeat list="{data>/methods}" var="method">
-									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '') }_method">
+									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '').replace('#', '.') }_method">
 										<custom:blocks>
 
-											<ObjectPageLazyLoader stashed="true" id="{= ${method>name}.replace('$', '') }__method">
+											<ObjectPageLazyLoader stashed="true" id="{= ${method>name}.replace('$', '').replace('#', '.') }__method">
 
 												<layout:VerticalLayout width="100%">
 
@@ -467,9 +470,16 @@
 																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
 																	<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																		<template:repeat list="{parameter>types}" var="type">
-																			<m:Link text="{type>value}"
-																					href="#/api/{= ${path: 'type>value'}.replace('[]', '') }"
-																					enabled="{= !!${type>linkEnabled} }"/>
+																			<template:if test="{= !!${type>linkEnabled} }">
+																				<template:then>
+																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
+																							href="#/api/{type>href}"
+																							enabled="true"/>
+																				</template:then>
+																				<template:else>
+																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" enabled="false"/>
+																				</template:else>
+																			</template:if>
 																		</template:repeat>
 																	</layout:VerticalLayout>
 																	<m:Text text="{{parameter>defaultValue}" wrapping="false"/>
@@ -482,7 +492,7 @@
 													<template:if test="{= ${method>returnValue} !== undefined}">
 														<custom:LightTable columnCount="2"
 																	columnTitles="Returns,Description"
-																	class="sapUiDocumentationReturnsTable">
+																	class="sapUiDocumentation2ColumnsEqualTable">
 															<custom:Row>
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
@@ -500,7 +510,7 @@
 														<custom:LightTable
 																columnTitles="Throws,Description"
 																columnCount="2"
-																class="sapUiDocumentationReturnsTable">
+																class="sapUiDocumentation2ColumnsEqualTable">
 															<template:repeat list="{method>throws}" var="throws">
 																<custom:Row>
 																	<m:Link text="{throws>type}"

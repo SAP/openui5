@@ -34,7 +34,7 @@
 
 			// create and add a page with texts
 			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-			var loremLineBreaks = "Lorem ipsum dolor sit amet,\r consetetur sadipscing elitr,\n sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\r\n sed diam voluptua.";
+			var loremLineBreaks = "Lorem ipsum dolor sit amet\rNew line\nNew line\n\rNew line\r\nNew line";
 			var form = new sap.ui.layout.form.SimpleForm({
 				maxContainerCols : 2,
 				editable: false,
@@ -153,9 +153,10 @@
 						renderWhitespace:true,
 						wrapping:true
 					}),
+					new sap.m.Text("text13", {
+						text: "Text [13. Escaping characters examples] C:\\newFolder C:\\NewFolder C:\\TestFolder C:\\testFolder"
+					}),
 					form
-
-
 				]
 			});
 			app.addPage(initialPage);

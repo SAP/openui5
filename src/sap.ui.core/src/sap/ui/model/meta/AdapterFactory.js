@@ -6,14 +6,12 @@ sap.ui.define([], function() {
 	/**
 	 * Abstract Adapter Factory The adapter factory is used to determine depending on a binding path an adapter that uses internal knowledge on the
 	 * structure of the model. There are currently three kinds of adapters:
-	 *
-	 * @see {sap.ui.model.meta.FieldAdapter} The field adapters are used for bindings that evaluate to a property of a certain object/entity. Such
-	 *      paths are e.g. /Products/Name
-	 * @see {sap.ui.model.meta.ObjectAdapter} The object adapters are used for bindings that evaluate to a certain object/entity. Such paths are e.g.
-	 *      /Products{key}
-	 * @see {sap.ui.model.meta.ListAdapter} The list adapters are used for bindings that evaluate to a certain list/collection. Such paths are e.g.
-	 *      /Products
-	 * @experimental
+	 *<ul>
+	 * <li>the property adapter is used for bindings that result corresponds to a property of a certain object/entity, like /Products/Name
+	 * <li>the object adapters is used for bindings that result corresponds to a certain object/entity, like /Products{key}
+	 * <li>the list adapters is used for bindings that corresponds to a certain list/collection, like /Products
+	 *</ul>
+	 * @experimental Since version 1.58
 	 * @abstract
 	 */
 

@@ -32,9 +32,10 @@
 					</statuses>
 				</ObjectHeader>
 			</sap.ui.layout:VerticalLayout>
-			<sap.ui.layout:VerticalLayout width="100%">
+			<sap.ui.layout:VerticalLayout id="layout1" width="100%">
 				<Button id="smartFormPopoverButton" text="Open Popover" press=".openSmartFormPopover" />
 				<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
+				<Button id="createDeleteButton" text="Create/Delete SmartForm" press=".createOrDeleteContent" />
 				<core:Fragment fragmentName="sap.ui.rta.test.fragment.QUnitTestArea" type="XML"></core:Fragment>
 			</sap.ui.layout:VerticalLayout>
 
@@ -94,11 +95,6 @@
 							<TextArea value="{CreationDate}"></TextArea>
 						</smartForm:GroupElement>
 					</smartForm:Group>
-				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
-
-			<sap.ui.layout:VerticalLayout width="100%">
-				<smartForm:SmartForm id="MainForm1" title="Personal Data" editable="true" entityType="Header">
 				</smartForm:SmartForm>
 			</sap.ui.layout:VerticalLayout>
 

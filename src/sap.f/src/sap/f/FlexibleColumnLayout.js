@@ -12,6 +12,7 @@ sap.ui.define([
     "sap/m/library",
     "sap/m/Button",
     "sap/m/NavContainer",
+    "sap/ui/core/Configuration",
     "./FlexibleColumnLayoutRenderer",
     "jquery.sap.events"
 ], function(
@@ -23,6 +24,7 @@ sap.ui.define([
 	mobileLibrary,
 	Button,
 	NavContainer,
+	Configuration,
 	FlexibleColumnLayoutRenderer
 ) {
 	"use strict";
@@ -897,6 +899,16 @@ sap.ui.define([
 			} else {
 				sNewWidth = iNewWidth + "px";
 			}
+
+			// Animations on - suspend ResizeHandler while animation is running
+			if (sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none) {
+				var oColumnDomRef = this._$columns[sColumn].get(0);
+				ResizeHandler.suspend(oColumnDomRef);
+				this._$columns[sColumn].one("webkitTransitionEnd msTransitionEnd transitionend", function () {
+					ResizeHandler.resume(oColumnDomRef);
+				});
+			}
+
 			this._$columns[sColumn].width(sNewWidth);
 
 			// For tablet and desktop - notify child controls to render with reduced container size, if they need to

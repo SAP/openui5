@@ -25,6 +25,7 @@
 							<Text text="  Execution Scope"></Text>
 							<Text text="  Temporary Rules"></Text>
 							<Text text="  Selected Rules"></Text>
+							<Text text="  Filtered Columns in Rules"></Text>
 							<Button text="Delete Persisted Data" press="deletePersistedData"></Button>
 
 							<l:HorizontalLayout class="customSettingsInfo">

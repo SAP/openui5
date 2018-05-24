@@ -10,7 +10,7 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.UploadCollectionFolderHierarchy.Page", {
 		onInit: function() {
 			// set mock data
-			this.oModel = new JSONModel(jQuery.sap.getModulePath("sap.m.sample.UploadCollectionFolderHierarchy", "/UploadCollectionData.json"));
+			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/UploadCollectionFolderHierarchy") + "/UploadCollectionData.json");
 			this.getView().setModel(this.oModel);
 
 			this.oUploadCollection = this.byId("UploadCollection");

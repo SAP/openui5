@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.core.mvc.TemplateView.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/library',
-    './View',
-    "./TemplateViewRenderer"
+	'jquery.sap.global',
+	'sap/ui/core/library',
+	'./View',
+	"./TemplateViewRenderer"
 ],
-	function(jQuery, library, View, TemplateViewRenderer) {
-	"use strict";
+function(jQuery, library, View, TemplateViewRenderer) {
+"use strict";
 
 
 	// shortcut for enum(s)
@@ -94,7 +94,7 @@ sap.ui.define([
 		 * @static
 		 */
 		TemplateView._getViewUrl = function(sTemplateName) {
-			return jQuery.sap.getModulePath(sTemplateName, ".view.tmpl");
+			return sap.ui.require.toUrl(sTemplateName.replace(/\./g, "/")) + ".view.tmpl";
 		};
 
 		/**

@@ -11,7 +11,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 				"Discount Code" : 		{id:"DiscountCodeMessage", 		 type:"Success"}
 		},
 		onInit: function (oEvent) {
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.core.sample.FieldGroup", "/SampleData.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/core/sample/FieldGroup/SampleData.json");
 			this.getView().setModel(oModel);
 			this.getView().bindElement("/");
 		},

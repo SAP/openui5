@@ -126,16 +126,20 @@ sap.ui.define([
 					oNewElementNode.setAttribute("id", sId);
 				}
 				if (mSettings) {
-					var oValue;
-					Object.keys(mSettings).forEach(function(sKey) {
-						oValue = mSettings[sKey];
-						oNewElementNode.setAttribute(sKey, oValue);
-					});
+					this.applySettings(oNewElementNode, mSettings);
 				}
 				return oNewElementNode;
 			} else {
 				throw new Error("Can't create a control with duplicated id " + sId);
 			}
+		},
+
+		applySettings: function(oControl, mSettings) {
+			var oValue;
+			Object.keys(mSettings).forEach(function(sKey) {
+				oValue = mSettings[sKey];
+				oControl.setAttribute(sKey, oValue);
+			});
 		},
 
 		/**

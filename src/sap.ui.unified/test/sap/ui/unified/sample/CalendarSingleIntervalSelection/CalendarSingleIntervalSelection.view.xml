@@ -10,7 +10,8 @@
 			<u:Calendar
 					id="calendar"
 					select="handleCalendarSelect"
-					intervalSelection="true" />
+					intervalSelection="true"
+					weekNumberSelect="handleWeekNumberSelect"/>
 			<l:HorizontalLayout>
 				<Label
 						text="Selected From (yyyy-mm-dd):"

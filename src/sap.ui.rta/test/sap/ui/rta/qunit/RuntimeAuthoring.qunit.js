@@ -626,6 +626,25 @@ function(
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.test("when _handleElementModified is called if a create container command was executed on an empty form", function(assert){
+		var done = assert.async();
+
+		// An existing empty Form is used for the test
+		var oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm1");
+		var oFormOverlay = OverlayRegistry.getOverlay(oForm.getId());
+
+		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit", function (oNewContainerOverlay) {
+			sap.ui.getCore().applyChanges();
+			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
+			assert.ok(true, "then the new container starts the edit for rename");
+			this.oCommandStack.undo();
+			done();
+		}.bind(this));
+
+		this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.module("Given that RuntimeAuthoring is available together with a CommandStack with changes...", {
 		beforeEach : function(assert) {
 			FakeLrepLocalStorage.deleteChanges();

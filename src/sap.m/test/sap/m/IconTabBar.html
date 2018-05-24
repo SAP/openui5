@@ -22,6 +22,13 @@
 			.iconTabBarContainer {
 				background-color: #a9c6de;
 			}
+			sapUiSizeCozy .cozyLabel,
+			.cozyLabel {
+				padding-top: 1rem;
+			}
+			.sapUiSizeCompact .cozyLabel {
+				padding-top: 0.5rem;
+			}
 		</style>
 		<script>
 
@@ -73,7 +80,7 @@
 			label4a.addStyleClass("label");
 
 			var label5 = new sap.m.Label({
-				text: "IconTabBar with tabs which have no icons, only labels. Tabs are expandable. Semanctic colors are used."
+				text: "IconTabBar with tabs which have no icons, only labels. Tabs are expandable. Semantic colors are used."
 			});
 			label5.addStyleClass("label");
 
@@ -122,10 +129,10 @@
 			var tabItems = [];
 			for (var i = 1; i <= 30; i++) {
 				tabItems.push(new sap.m.IconTabFilter({
-					text : 'Tab ' + i,
-					id: 'testId_' + i,
+					text : "Tab " + i,
+					id: "testId_" + i,
 					content: new sap.m.Text({
-						text: 'Content ' + i
+						text: "Content " + i
 					})
 				}));
 			}
@@ -150,7 +157,7 @@
 						iconColor: sap.ui.core.IconColor.Neutral
 					}),
 					new sap.m.IconTabSeparator(),
-					new sap.m.IconTabFilter("backgroundDesignIconTabBar_fileter3", {
+					new sap.m.IconTabFilter("backgroundDesignIconTabBar_filter3", {
 						icon: "sap-icon://task",
 						iconColor: sap.ui.core.IconColor.Critical,
 						count: "3",
@@ -301,10 +308,65 @@
 			panelBackgroundDesign.addContent(appearanceFormBackgroundDesign);
 			panelBackgroundDesign.addContent(iconTabBarBackgroundDesign);
 
-			// create and add a page with icon tab bar
+			// Radio button group for tabDensityMode property
+			var rbgTabDensityMode  = new sap.m.RadioButtonGroup("RBGTabDensityMode", {
+				columns: 3,
+				select: function (oEvent) {
+					var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
+
+					for (i = 0; i < $(".sapMITB").length; i++) {
+						sap.ui.getCore().byId($(".sapMITB")[i].id).setTabDensityMode(sSelectedValue);
+					}
+				}
+			});
+
+			var rb7 = new sap.m.RadioButton("RB7-Cozy", { text: "Cozy" });
+			var rb8 = new sap.m.RadioButton("RB8-Compact", { text: "Compact" });
+			var rb9 = new sap.m.RadioButton("RB9-Inherit", { text: "Inherit" });
+			rbgTabDensityMode.addButton(rb7);
+			rbgTabDensityMode.addButton(rb8);
+			rbgTabDensityMode.addButton(rb9);
+
+			var oLabelTabDensityMode  = new sap.m.Label({
+				text: "Change TabDensityMode for all IconTabBar-s:",
+				labelFor: rbgTabDensityMode,
+				vAlign: sap.ui.core.VerticalAlign.Middle
+			});
+
+			// Checkbox for Compact Content Density for the page
+			var cbCompactContentDensity  = new sap.m.CheckBox("densityModeBox", {
+				selected: "true",
+				select: function (oEvent) {
+					var bSelectedValue = oEvent.getSource().getSelected();
+					jQuery("#body").toggleClass("sapUiSizeCompact", !bSelectedValue).toggleClass("sapUiSizeCozy", bSelectedValue);
+					sap.ui.getCore().notifyContentDensityChanged();
+				}
+			});
+
+			var oLabelCompactContentDensity  = new sap.m.Label({
+				text: "Cozy Content Density for the page:",
+				labelFor: rbgTabDensityMode
+			}).addStyleClass("cozyLabel");
+
+
+
 
 			var page1 = new sap.m.Page("page1", {
 				content: [
+					new sap.ui.layout.VerticalLayout({
+						width: "100%",
+						content: [
+							oLabelTabDensityMode,
+							rbgTabDensityMode,
+							new sap.ui.layout.HorizontalLayout({
+								content: [
+									oLabelCompactContentDensity,
+									cbCompactContentDensity
+								]
+							})
+						]
+					}),
+
 					label1,
 					new sap.m.IconTabBar("itb1", {
 						expandable: false,
@@ -412,47 +474,7 @@
 								})
 							}
 						})
-					})],
-				footer: [new sap.m.Bar({
-					contentMiddle: [
-						new sap.m.Button({
-							text: "Samples 1",
-							press: function(){
-								app.to("page1");
-							}
-						}),
-						new sap.m.Button("sample2", {
-							text: "Samples 2",
-							press: function(){
-								app.to("page2");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 3",
-							press: function(){
-								app.to("page3");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 4",
-							press: function(){
-								app.to("page4");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 5",
-							press: function(){
-								app.to("page5");
-							}
-						})
-					]
-				})]
-			});
-			var page2 = new sap.m.Page("page2",{
-				showNavButton: true,
-				navButtonText: "Page 1",
-				navButtonPress: function(){ app.back(); },
-				content: [
+					}),
 					label2,
 					new sap.m.IconTabBar("itb2", {
 						selectedKey: "key13",
@@ -486,7 +508,7 @@
 								key: "key3",
 								content: [
 									new sap.m.Link({
-										text:'message box',
+										text:"message box",
 										press: function () {
 											jQuery.sap.require("sap.m.MessageBox");
 											sap.m.MessageBox.alert("Link was clicked!");
@@ -500,7 +522,7 @@
 								count: "537733",
 								content: [
 									new sap.m.Link({
-										text:'hallo',
+										text:"hallo",
 										target: "_blank",
 										href: "http://www.sap.com/"
 									})
@@ -879,52 +901,10 @@
 							})
 						]
 					}),
-				],
-				footer: [new sap.m.Bar({
-					contentMiddle: [
-						new sap.m.Button({
-							text: "Samples 1",
-							press: function(){
-								app.to("page1");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 2",
-							press: function(){
-								app.to("page2");
-							}
-						}),
-						new sap.m.Button("sample3", {
-							text: "Samples 3",
-							press: function(){
-								app.to("page3");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 4",
-							press: function(){
-								app.to("page4");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 5",
-							press: function(){
-								app.to("page5");
-							}
-						})
-					]
-				}),
-					]
-			});
-			var page3 = new sap.m.Page("page3", {
-				showNavButton: true,
-				navButtonText: "Page 3",
-				navButtonPress: function(){ app.back(); },
-				content:[
 					label5,
 					new sap.m.IconTabBar("itb5", {
 						upperCase: true,
-						backgroundDesign: 'Transparent',
+						backgroundDesign: "Transparent",
 						items: [
 							new sap.m.IconTabFilter("itf5", {
 								iconColor: sap.ui.core.IconColor.Negative,
@@ -1050,46 +1030,6 @@
 							}),
 						]
 					}),
-				],
-				footer: [new sap.m.Bar({
-					contentMiddle: [
-						new sap.m.Button({
-							text: "Samples 1",
-							press: function(){
-								app.to("page1");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 2",
-							press: function(){
-								app.to("page2");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 3",
-							press: function(){
-								app.to("page3");
-							}
-						}),
-						new sap.m.Button("sample4", {
-							text: "Samples 4",
-							press: function(){
-								app.to("page4");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 5",
-							press: function(){
-								app.to("page5");
-							}
-						})
-					]
-				})]
-			});
-			var page4 = new sap.m.Page("page4",{
-				showNavButton: true,
-				navButtonPress: function(){ app.back(); },
-				content:[
 					label10,
 					new sap.m.IconTabBar("itb10", {
 					}),
@@ -1291,85 +1231,12 @@
 								]
 							}).addStyleClass("sapUiResponsiveContentPadding")
 						]
-					}).addStyleClass("ITBContainer")
-
-
-				],
-				footer: [new sap.m.Bar({
-					contentMiddle: [
-						new sap.m.Button( {
-							text: "Samples1",
-							press: function(){
-								app.to("page1");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples2",
-							press: function(){
-								app.to("page2");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples3",
-							press: function(){
-								app.to("page3");
-							}
-						}),
-						new sap.m.Button("sample5",{
-							text: "Samples 5",
-							press: function(){
-								app.to("page5");
-							}
-						})
-					]
-				})]
-			});
-
-			var page5 = new sap.m.Page("page5",{
-				showNavButton: true,
-				navButtonPress: function(){ app.back(); },
-				content:[
+					}).addStyleClass("ITBContainer"),
 					iconTabBarOverflowSelectList,
 					panelBackgroundDesign
-
-				],
-				footer: [new sap.m.Bar({
-					contentMiddle: [
-						new sap.m.Button( {
-							text: "Samples 1",
-							press: function(){
-								app.to("page1");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 2",
-							press: function(){
-								app.to("page2");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 3",
-							press: function(){
-								app.to("page3");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 4",
-							press: function(){
-								app.to("page4");
-							}
-						}),
-						new sap.m.Button({
-							text: "Samples 5",
-							press: function(){
-								app.to("page5");
-							}
-						})
-					]
-				})]
+				]
 			});
-			app.addPage(page1).addPage(page2).addPage(page3).addPage(page4).addPage(page5);
-
+			app.addPage(page1);
 		</script>
 	</head>
 	<body id="body" class="sapUiBody" role="application">

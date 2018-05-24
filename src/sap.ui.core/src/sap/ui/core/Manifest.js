@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			// resolve the base URL of the component depending of given base
 			// URL or the module path of the component
 			var sComponentName = this.getComponentName(),
-			    sBaseUrl = mOptions && mOptions.baseUrl || sComponentName && jQuery.sap.getModulePath(sComponentName, "/");
+				sBaseUrl = mOptions && mOptions.baseUrl || sComponentName && sap.ui.require.toUrl(sComponentName.replace(/\./g, "/")) + "/";
 			if (sBaseUrl) {
 				this._oBaseUri = new URI(sBaseUrl).absoluteTo(new URI(document.baseURI).search(""));
 			}

@@ -16,7 +16,7 @@ sap.ui.define(["sap/ui/dt/AggregationDesignTimeMetadata"],
 				return mData;
 			},
 
-			createPropagateMetadataObject : function(sInstanceOf, sTestValue, vActions) {
+			createPropagateMetadataObject : function(sInstanceOf, sTestValue, vActions, sCustomProperty) {
 				return {
 					propagateMetadata : function (oElement, oRelevantContainer) {
 						if (oElement.getMetadata().getName() === sInstanceOf){
@@ -30,6 +30,9 @@ sap.ui.define(["sap/ui/dt/AggregationDesignTimeMetadata"],
 							};
 							if (vActions !== undefined) {
 								mData.actions = vActions;
+							}
+							if (sCustomProperty){
+								mData.aggregations.content[sCustomProperty] = sCustomProperty;
 							}
 							return mData;
 						}

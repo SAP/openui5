@@ -1,0 +1,73 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "122558c2eab78703f321a308ccc7e859bf5962be",
+        "type": "FEATURE",
+        "text": " ExtensionPoint: Add new fully async load() API",
+        "references": []
+      },
+      {
+        "id": "982432236665d6777abbff723a94f6f2b5124bfc",
+        "type": "FIX",
+        "text": " View.create: Create view with owner component",
+        "references": []
+      },
+      {
+        "id": "b451ba7171c982f46f455149dce189688cea0eb4",
+        "type": "FIX",
+        "text": " ui5loader: fix sync module loading on file protocol",
+        "references": []
+      },
+      {
+        "id": "c5334995b42f6808cad0a09cbbda9d179153be00",
+        "type": "FEATURE",
+        "text": " Adapter: Base Framework for adapter",
+        "references": []
+      },
+      {
+        "id": "696747cbac99374520c293581667bc22da8854a6",
+        "type": "FEATURE",
+        "text": " Modifier: applySettings",
+        "references": []
+      },
+      {
+        "id": "6f868d3fa0fa1f4f28a509ba24935d5e69c79329",
+        "type": "FEATURE",
+        "text": " Opa: configure frame size",
+        "references": []
+      },
+      {
+        "id": "ccd7cb6f0e5e8897f5112e3423adc1c26b81710d",
+        "type": "FEATURE",
+        "text": " v2.ODataModel: Reuse XSRF token for services on same server",
+        "references": []
+      },
+      {
+        "id": "4c42535cbca6dd5262c64df4a9e4fb2733b018a4",
+        "type": "FIX",
+        "text": " CompositeBinding: Use validation of nested bindings",
+        "references": []
+      },
+      {
+        "id": "2d5a55c25648c5f1cc082cd03ecee17f1d0bbd9c",
+        "type": "FIX",
+        "text": " Controller: extension",
+        "references": []
+      },
+      {
+        "id": "5b2f10e6a78aa42825b88e7ae286fddf9fbf2376",
+        "type": "FIX",
+        "text": " ControllerExtension throws error",
+        "references": []
+      },
+      {
+        "id": "1cfa4c649d6fc559b9bf4679092db071dc62997d",
+        "type": "FIX",
+        "text": " sap.m.Input: Input width is now correct",
+        "references": []
+      }
+    ]
+  }
+}

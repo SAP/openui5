@@ -159,7 +159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 		this._oManifest = new Manifest(oManifestJson, {
 			componentName: this.getComponentName(),
-			baseUrl: jQuery.sap.getModulePath(this.getComponentName(), "/"),
+			baseUrl: sap.ui.require.toUrl(this.getComponentName().replace(/\./g, "/")) + "/",
 			process: this._oStaticInfo.__metadataVersion === 2
 		});
 	};

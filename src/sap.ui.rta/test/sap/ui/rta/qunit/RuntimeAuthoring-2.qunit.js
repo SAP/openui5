@@ -9,6 +9,7 @@ sap.ui.require([
 	// internal
 	'sap/ui/dt/plugin/ContextMenu',
 	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/DesignTime',
 	'sap/ui/fl/registry/Settings',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
@@ -25,13 +26,14 @@ sap.ui.require([
 	'sap/ui/base/Event',
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
-	'sap/ui/thirdparty/sinon'
+	'sap/ui/thirdparty/sinon-4'
 ], function(
 	Button,
 	MessageBox,
 	MessageToast,
 	ContextMenuPlugin,
 	OverlayRegistry,
+	DesignTime,
 	Settings,
 	Change,
 	Utils,
@@ -243,25 +245,22 @@ sap.ui.require([
 
 	QUnit.module("Given that RTA is started in FLP", {
 		beforeEach : function(assert) {
-			window.bUShellNavigationTriggered = false;
-
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
 				showToolbars : false
 			});
 
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
+			var fnFLPToExternalStub = sandbox.spy();
+			this.fnFLPToExternalStub = fnFLPToExternalStub;
 
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
-
 			sap.ushell = jQuery.extend(sap.ushell, {
 				Container : {
 					getService : function(sServiceName) {
 						return {
-							toExternal : function() {
-								window.bUShellNavigationTriggered = true;
-							},
+							toExternal : fnFLPToExternalStub,
 							getHash : function() {
 								return "Action-somestring";
 							},
@@ -283,7 +282,6 @@ sap.ui.require([
 			this.oRta.destroy();
 			sap.ushell = this.originalUShell;
 			sandbox.restore();
-			delete window.bUShellNavigationTriggered;
 		}
 	}, function() {
 		QUnit.test("when there are personalized changes and when _handlePersonalizationChangesOnStart() method is called", function(assert) {
@@ -295,12 +293,7 @@ sap.ui.require([
 
 			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
 
-			this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
-				"show",
-				function(sMessage, mOptions){
-					mOptions.onClose.call(this);
-				}
-			);
+			whenUserConfirmsMessage.call(this);
 
 			return this.oRta._handlePersonalizationChangesOnStart().then(function(){
 				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
@@ -309,7 +302,7 @@ sap.ui.require([
 				assert.equal(this.fnEnableRestartSpy.calledWith("CUSTOMER"),
 					true,
 					"then enableRestart() is called with the correct parameter");
-				assert.strictEqual(window.bUShellNavigationTriggered,
+				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
 					true,
 					"then the reload inside FLP is triggered");
 			}.bind(this));
@@ -327,21 +320,34 @@ sap.ui.require([
 			return this.oRta._handlePersonalizationChangesOnStart().then(function(){
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
-					"then enableRestart() is not called");
-				assert.strictEqual(window.bUShellNavigationTriggered,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
 					false,
 					"then the reload inside FLP is not triggered");
 			}.bind(this));
 		});
 
+		QUnit.test("when RTA is started and _handlePersonalizationChangesOnStart returns true", function(assert) {
+			assert.expect(3);
+			sandbox.stub(this.oRta, "_handlePersonalizationChangesOnStart").returns(Promise.resolve(true));
+			var oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
+			return this.oRta.start()
+			.catch(function(oError) {
+				assert.ok(true, "then the start promise rejects");
+				assert.equal(oFireFailedStub.callCount, 0, "and fireFailed was not called");
+				assert.equal(oError, "Reload triggered", "and the Error is 'Reload triggered'");
+			});
+		});
+
 		QUnit.test("when RTA toolbar gets closed (exit without appClosed)", function(assert) {
 			var done = assert.async();
 
-			sandbox.stub(this.oRta, "_handlePersonalizationChangesOnExit", function(){
-				//The test will timeout if the Personalization handling is not called
-				assert.ok("then the check for personalized changes was executed");
+			sandbox.stub(this.oRta, "_handleReloadOnExit").callsFake(function(){
+				//The test will timeout if the reload handling is not called
+				assert.ok("then the check for reload was executed");
 				done();
-			});
+				return Promise.resolve(this.oRta._RESTART.NOT_NEEDED);
+			}.bind(this));
 
 			var stubFlexController = {
 				isPersonalized : function(){
@@ -350,7 +356,7 @@ sap.ui.require([
 			};
 
 			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-			sandbox.stub(this.oRta, "_checkChangesExist", function() {
+			sandbox.stub(this.oRta, "_checkChangesExist").callsFake(function(){
 				return Promise.resolve(true);
 			});
 			this.oRta.setShowToolbars(true);
@@ -359,17 +365,102 @@ sap.ui.require([
 				this.oRta.getToolbar().getControl('exit').firePress();
 			}.bind(this));
 		});
+
+		QUnit.test("when RTA gets started without root control", function(assert) {
+			assert.expect(2);
+			this.oRta.setRootControl(undefined);
+			return this.oRta.start()
+			.catch(function(oError) {
+				assert.ok(true, "the start function rejects the promise");
+				assert.equal(oError, "Could not start Runtime Adaptation: Root control not found", "with the correct Error");
+			});
+		});
+
+		QUnit.test("when RTA gets started and DesignTime fails to start", function(assert) {
+			assert.expect(3);
+			sandbox.stub(DesignTime.prototype, "addRootElement").callsFake(function() {
+				setTimeout(function() {
+					this.fireSyncFailed({error: "DesignTime failed"});
+				}.bind(this), 0);
+			});
+			var oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
+			return this.oRta.start()
+			.catch(function(oError) {
+				assert.ok(true, "the start function rejects the promise");
+				assert.equal(oError, "DesignTime failed", "with the correct Error");
+				assert.equal(oFireFailedStub.callCount, 1, "and fireFailed was called");
+			});
+		});
 	});
+
+	function appDescriptorChanges(oRta, bExist){
+		//we don't want to start RTA for these tests, so just setting the otherwise not set property,
+		//that sinon cannot stub until it was set.
+		oRta._oSerializer = {
+			needsReload : function(){
+				return Promise.resolve(bExist);
+			}
+		};
+	}
+	function whenAppDescriptorChangesExist(oRta){
+		appDescriptorChanges(oRta, true);
+	}
+	function whenNoAppDescriptorChangesExist(oRta){
+		appDescriptorChanges(oRta, false);
+	}
+	function personalizationChanges(oRta, bExist){
+		var stubFlexController = {
+			isPersonalized : function(){
+				return Promise.resolve(bExist);
+			}
+		};
+		sandbox.stub(oRta, "_getFlexController").returns(stubFlexController);
+	}
+	function whenPersonalizationChangesExist(oRta){
+		personalizationChanges(oRta, true);
+	}
+	function whenNoPersonalizationChangesExist(oRta){
+		personalizationChanges(oRta, false);
+	}
+
+	function isReloadedWithMaxLayerParameter(fnFLPToExternalStub){
+		if (!fnFLPToExternalStub.lastCall){
+			return false;
+		}
+		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
+		return !!mFLPArgs.params["sap-ui-fl-max-layer"];
+	}
+	function whenUserConfirmsMessage(){
+		var sMessageBoxConfirmText = this.oRta._getTextResources().getText("MSG_PERSONALIZATION_CONFIRM_BUTTON_TEXT");
+
+		this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,"confirm")
+		.callsFake(
+			function(sMessage, mOptions){
+				mOptions.onClose.call(this, sMessageBoxConfirmText);
+			}
+		);
+
+		this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox, "show")
+		.callsFake(
+			function(sMessage, mOptions){
+				mOptions.onClose.call(this);
+			}
+		);
+		this.fnStubMessageBox = sandbox.stub(RtaUtils,"_showMessageBox").resolves();
+	}
 
 	QUnit.module("Given that RTA is started in FLP with sap-ui-fl-max-layer = CUSTOMER already in the URL", {
 		beforeEach : function(assert) {
-			window.bUShellNavigationTriggered = false;
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
 				showToolbars : false
 			});
+			whenNoAppDescriptorChangesExist(this.oRta);
 
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
+			this.fnReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
+			var fnFLPToExternalStub = sandbox.spy();
+			this.fnFLPToExternalStub = fnFLPToExternalStub;
 
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
@@ -377,9 +468,7 @@ sap.ui.require([
 				Container : {
 					getService : function(sServiceName) {
 						return {
-							toExternal : function() {
-								window.bUShellNavigationTriggered = true;
-							},
+							toExternal : fnFLPToExternalStub,
 							getHash : function() {
 								return "Action-somestring";
 							},
@@ -407,103 +496,87 @@ sap.ui.require([
 		}
 	}, function() {
 		QUnit.test("when _handlePersonalizationChangesOnStart() method is called", function(assert) {
-			var stubFlexController = {
-				isPersonalized : function(){
-					return Promise.resolve(true);
-				}
-			};
+			whenPersonalizationChangesExist(this.oRta);
 
-			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-
-			this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
-				"show",
-				function(sMessage, mOptions){
-					mOptions.onClose.call(this);
-				}
-			);
+			whenUserConfirmsMessage.call(this);
 
 			return this.oRta._handlePersonalizationChangesOnStart().then(function(){
 				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
 					false,
-					"then enableRestart() is not called");
-				assert.strictEqual(window.bUShellNavigationTriggered,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
 					false,
 					"then the reload inside FLP is not triggered");
 			}.bind(this));
 		});
 
 		QUnit.test("when personalized changes exist and user exits reloading the personalization...", function(assert) {
-			var stubFlexController = {
-				isPersonalized : function(){
-					return Promise.resolve(true);
-				}
-			};
+			whenPersonalizationChangesExist(this.oRta);
 
-			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
+			whenUserConfirmsMessage.call(this);
 
-			var sMessageBoxConfirmText = this.oRta._getTextResources().getText("MSG_PERSONALIZATION_CONFIRM_BUTTON_TEXT");
-
-			this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
-				"confirm",
-				function(sMessage, mOptions){
-					mOptions.onClose.call(this, sMessageBoxConfirmText);
-				}
-			);
-
-			return this.oRta._handlePersonalizationChangesOnExit().then(function(){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
-					"then enableRestart() is not called");
-				assert.strictEqual(window.bUShellNavigationTriggered,
-					true,
-					"then the reload inside FLP is triggered");
+					"then RTA restart will not be enabled");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.VIA_HASH,
+					"then the page is reloaded");
 			}.bind(this));
 		});
 
-		QUnit.test("when personalized changes exist and user exits without personalization...", function(assert) {
-			var stubFlexController = {
-				isPersonalized : function(){
-					return Promise.resolve(true);
-				}
-			};
+		QUnit.test("when app descriptor and personalized changes exist and user exits reloading the personalization...", function(assert) {
+			whenAppDescriptorChangesExist(this.oRta);
+			whenPersonalizationChangesExist(this.oRta);
 
-			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
+			whenUserConfirmsMessage.call(this);
 
-			var sMessageBoxCancelText = this.oRta._getTextResources().getText("MSG_PERSONALIZATION_CANCEL_BUTTON_TEXT");
-
-			this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
-				"confirm",
-				function(sMessage, mOptions){
-					mOptions.onClose.call(this, sMessageBoxCancelText);
-				}
-			);
-
-			return this.oRta._handlePersonalizationChangesOnExit().then(function(){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
-					"then enableRestart() is not called");
-				assert.strictEqual(window.bUShellNavigationTriggered,
-					false,
-					"then the reload inside FLP is not triggered");
+					"then RTA restart will not be enabled");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+						"then the reload page is triggered to update the flp cache");
 			}.bind(this));
 		});
 
-		QUnit.test("when there are no personalized changes and _handlePersonalizationChangesOnExit() is called", function(assert) {
-			var stubFlexController = {
-				isPersonalized : function(){
-					return Promise.resolve(false);
-				}
-			};
+		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {
+			whenNoPersonalizationChangesExist(this.oRta);
 
-			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-
-			return this.oRta._handlePersonalizationChangesOnExit().then(function(){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
-					"then enableRestart() is not called");
-				assert.strictEqual(window.bUShellNavigationTriggered,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.NOT_NEEDED,
+					"then the reload page is not necessary");
+			}.bind(this));
+		});
+
+		QUnit.test("when app descriptor and no personalized changes exist and user exits reloading the personalization...", function(assert) {
+			whenAppDescriptorChangesExist(this.oRta);
+			whenNoPersonalizationChangesExist(this.oRta);
+
+			whenUserConfirmsMessage.call(this);
+
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+					0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+						"then the reload page is triggered to update the flp cache");
+			}.bind(this));
+		});
+
+		QUnit.test("when reloadable changes exist and user exits RTA...", function(assert) {
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.RELOAD_PAGE);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+
+			return this.oRta.stop().then(function(){
+				assert.strictEqual(this.fnReloadPageStub.callCount,
+					1,
+					"then page reload is triggered");
+				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
 					false,
-					"then the reload inside FLP is not triggered");
+					"then max layer parameter is removed");
 			}.bind(this));
 		});
 	});
@@ -514,12 +587,15 @@ sap.ui.require([
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
 				showToolbars : false
 			});
+			whenNoAppDescriptorChangesExist(this.oRta);
 
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.fnReloadWithPersonalizationChangesSpy =
-				sandbox.spy(this.oRta, "_reloadWithPersonalizationChanges");
+				sandbox.spy(this.oRta, "_removeMaxLayerParameter");
 			this.fnReloadWithoutPersonalizationChangesSpy =
 				sandbox.spy(this.oRta, "_reloadWithoutPersonalizationChanges");
+			this.fnReloadPageStub =
+				sandbox.stub(this.oRta, "_reloadPage");
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();
@@ -528,19 +604,19 @@ sap.ui.require([
 	}, function() {
 		QUnit.test("when the _handlePersonalizationChangesOnStart() method is called", function(assert) {
 			return this.oRta._handlePersonalizationChangesOnStart().then(function(){
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then enableRestart() is not called");
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
 				assert.strictEqual(this.fnReloadWithPersonalizationChangesSpy.callCount,
 					0,
-					"then reloadWithoutPersonalizationChanges() is not called");
+					"then removeMaxLayerParameter() is not called");
 			}.bind(this));
 		});
 
-		QUnit.test("when the _handlePersonalizationChangesOnExit() method is called", function(assert) {
-			return this.oRta._handlePersonalizationChangesOnExit().then(function(){
-				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then enableRestart() is not called");
+		QUnit.test("when the _handleReloadOnExit() method is called", function(assert) {
+			return this.oRta._handleReloadOnExit().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
 				assert.strictEqual(this.fnReloadWithoutPersonalizationChangesSpy.callCount,
 					0,
-					"then reloadWithPersonalizationChanges() is not called");
+					"then reloadWithoutPersonalizationChanges() is not called");
 			}.bind(this));
 		});
 	});

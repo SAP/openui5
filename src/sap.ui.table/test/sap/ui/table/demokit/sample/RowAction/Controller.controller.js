@@ -84,7 +84,7 @@ sap.ui.define([
 		initSampleDataModel : function() {
 			var oModel = new JSONModel();
 
-			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
 				success: function (oData) {
 					for (var i = 0; i < oData.ProductCollection.length; i++) {

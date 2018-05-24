@@ -12,6 +12,7 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Application.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MessageListBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MockServer.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MockServerFeature.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MockServerAPF.qunit.html");

@@ -56,11 +56,11 @@ sap.ui.define([
 		 * @private
 		 */
 		_mockFont: function (sName) {
-			var sGroupsUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/" + sName + "/groups.json");
-			var sTagsUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/" + sName + "/tags.json");
+			var sGroupsUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sName + "/groups.json";
+			var sTagsUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sName + "/tags.json";
 
-			var sGroupsMockUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/localService/mockdata/" + sName + "/groups.json");
-			var sTagsMockUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/localService/mockdata/" + sName + "/tags.json");
+			var sGroupsMockUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/localService/mockdata/" + sName + "/groups.json";
+			var sTagsMockUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/localService/mockdata/" + sName + "/tags.json";
 
 			// we need to load the models before configuring the fakeserver
 			// faking the real call and load the real models (we just want to use a timer for opa tests)

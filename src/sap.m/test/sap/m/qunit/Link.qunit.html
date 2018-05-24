@@ -17,6 +17,8 @@
 		<script>
 
 		var sText = "Hello World";
+		var bLinkPressExpectCtrlKey = false;
+		var bLinkPressExpectMetaKey = false;
 
 		var oLink1 = new sap.m.Link("l1", {
 			text : sText,
@@ -26,6 +28,8 @@
 			press:function(oEvent) {
 				oEvent.preventDefault();
 				assert.ok(true, "This should be executed when the link is triggered");
+				assert.strictEqual(oEvent.getParameter("ctrlKey"), bLinkPressExpectCtrlKey, "CtrlKey-Parameter correct for press event");
+				assert.strictEqual(oEvent.getParameter("metaKey"), bLinkPressExpectMetaKey, "MetaKey-Parameter correct for press event");
 			}
 		}).placeAt("uiArea1");
 
@@ -55,27 +59,36 @@
 		});
 
 		QUnit.test("Press event", function(assert) {
-			assert.expect(1); // verifies the event handler was executed
+			assert.expect(12); // verifies the event handler was executed
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
+			bLinkPressExpectCtrlKey = true;
+			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId(), {ctrlKey: true});
+			bLinkPressExpectCtrlKey = false;
+			bLinkPressExpectMetaKey = true;
+			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId(), {metaKey: true});
+			bLinkPressExpectCtrlKey = true;
+			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId(), {metaKey: true, ctrlKey: true});
+			bLinkPressExpectMetaKey = false;
+			bLinkPressExpectCtrlKey = false;
 		});
 
 		QUnit.test("Enter event should fire press event on keydown", function (assert) {
-			assert.expect(1); // verifies the event handler was executed
+			assert.expect(3); // verifies the event handler was executed
 			qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 		});
 
 		QUnit.test("Enter event should not fire press on keyup", function (assert) {
-			assert.expect(0); // verifies the event handler was executed
+			assert.expect(0); // verifies the event handler was NOT executed
 			qutils.triggerKeyup(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 		});
 
 		QUnit.test("Space event should fire press event on keyup", function (assert) {
-			assert.expect(1); // verifies the event handler was executed
+			assert.expect(3); // verifies the event handler was executed
 			qutils.triggerKeyup(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 		});
 
 		QUnit.test("Space event should not fire press on keydown", function (assert) {
-			assert.expect(0); // verifies the event handler was executed
+			assert.expect(0); // verifies the event handler was NOT executed
 			qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 		});
 

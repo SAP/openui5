@@ -548,7 +548,7 @@ sap.ui.define([
 				_xContent = runViewxmlPreprocessor(_xContent, false);
 				// if the _xContent is a SyncPromise we have to extract the _xContent
 				// and make sure we throw any occurring errors further
-				if (_xContent && typeof _xContent.then === 'function') {
+				if (_xContent && typeof _xContent.getResult === 'function') {
 					if (_xContent.isRejected()) {
 						// sync promises store the error within the result if they are rejected
 						throw _xContent.getResult();

@@ -210,6 +210,10 @@
 			this.setDateValue(fValue);
 		};
 
+		CustomTooltip.prototype.getLabel = function (fValue) {
+			return this.aDays[fValue % 7] + " " + parseFloat(fValue) + " March";
+		};
+
 		CustomTooltip.prototype.ontap = function (oEvent) {
 			var bButtonPressed = $(oEvent.target).hasClass("sapCustomTooltipButton"),
 				bUp = $(oEvent.target).hasClass("sapCustomTooltipButtonUp"),

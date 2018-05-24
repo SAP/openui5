@@ -49,7 +49,10 @@ sap.ui.define([
 				if (oControl.setVisible) {
 					oControl.setVisible(!bStashed);
 				}
-				oControl.setStashed(bStashed);
+				// check if the control is stashed and bStashed is false
+				if (oControl.getStashed() === true && bStashed === false) {
+					oControl.setStashed(bStashed);
+				}
 			} else {
 				throw new Error("Provided control instance has no setStashed method");
 			}
@@ -57,7 +60,8 @@ sap.ui.define([
 
 		getStashed: function (oControl) {
 			if (oControl.getStashed) {
-				return oControl.getStashed();
+				//check if it's a stashed control. If not, return the !visible property
+				return typeof oControl.getStashed() !== "boolean" ? !this.getVisible(oControl) : oControl.getStashed();
 			} else {
 				throw new Error("Provided control instance has no getStashed method");
 			}
@@ -122,6 +126,10 @@ sap.ui.define([
 			var ClassObject = jQuery.sap.getObject(sClassName);
 			var sId = this.getControlIdBySelector(oSelector, oAppComponent);
 			return new ClassObject(sId, mSettings);
+		},
+
+		applySettings: function(oControl, mSettings) {
+			oControl.applySettings(mSettings);
 		},
 
 		/**

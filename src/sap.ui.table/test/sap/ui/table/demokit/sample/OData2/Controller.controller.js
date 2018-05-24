@@ -21,8 +21,8 @@ sap.ui.define([
 
 			MockServer.config({autoRespondAfter: 2000});
 
-			this.oMockServer.simulate(jQuery.sap.getModulePath("sap.ui.table.sample.OData2") + "/metadata.xml", {
-				sMockdataBaseUrl : jQuery.sap.getModulePath("sap.ui.table.sample.OData"),
+			this.oMockServer.simulate(sap.ui.require.toUrl("sap/ui/table/sample/") + "OData2" + "/metadata.xml", {
+				sMockdataBaseUrl : sap.ui.require.toUrl("sap/ui/table/sample/") + "OData",
 				bGenerateMissingMockData : true
 			});
 

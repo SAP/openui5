@@ -7,7 +7,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 	function(jQuery, BaseObject/* , jQuerySap */) {
 	"use strict";
 
-
 	/**
 	 * Provides library information.
 	 * @class Provides library information.
@@ -50,11 +49,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 		if (!aParts) {
 			// UI library
 			sLibraryType = ".library";
-			sUrl = jQuery.sap.getModulePath(sLibraryName, '/');
+			sUrl = sap.ui.require.toUrl(sLibraryName.replace(/\./g, "/")) + "/";
 		} else {
 			// theme library
 			sLibraryType = ".theme";
-			sUrl = jQuery.sap.getModulePath("sap.ui.core", '/themes/' + aParts[1] + "/");
+			sUrl = sap.ui.require.toUrl("sap/ui/core/themes/" + aParts[1] + "/");
 		}
 
 		jQuery.ajax({

@@ -9,6 +9,73 @@
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m">
 		</script>
+		 <style>
+			.slider-margin {
+				margin-top: 60px;
+			}
+
+			.sapCustomSliderTooltip {
+				border: 1px solid #457BA9;
+				padding: 0 0.5rem;
+				border-radius: 5px;
+				min-width: 160px;
+				height: 2.5rem;
+			}
+
+			.sapCustomTooltipValue {
+				display: inline-flex;
+				align-items: center;
+				height: 100%;
+				width: calc(100% - 32px);
+			}
+
+			.sapCustomTooltipButtons {
+				display: inline-flex;
+				flex-direction: column;
+				position: relative;
+				top: -6px;
+			}
+
+			.sapCustomTooltipButtonUp::before {
+				font-family: "SAP-icons";
+				speak: none;
+				color: white;
+				content: "\e1f0";
+			}
+
+			.sapCustomTooltipButtonDown,
+			.sapCustomTooltipButtonUp {
+				background-color: #457BA9;
+				opacity: 0.6;
+				height: 1rem;
+				width: 2rem;
+				text-align: center;
+				border-radius: 0.5rem;
+				margin-top: 2px;
+				cursor: point1er;
+			}
+
+			.sapCustomTooltipButtonDown:hover,
+			.sapCustomTooltipButtonUp:hover {
+				opacity: 1;
+			}
+
+			.sapCustomTooltipButtonDown::before {
+				font-family: "SAP-icons";
+				speak: none;
+				color: white;
+				content: "\e1ef";
+			}
+
+			.sapCustomTooltipWitouthButtons.sapCustomSliderTooltip {
+				text-align: center;
+			}
+
+			.sapCustomTooltipWitouthButtons .sapCustomTooltipValue {
+				justify-content: center;
+				width: 100%;
+			}
+		</style>
 		<script>
 		var oApp = new sap.m.App("myApp", { initialPage: "page1" }),
 
@@ -178,12 +245,182 @@
 			oSlider13 = new sap.m.Slider({
 				enableTickmarks: true,
 				scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
+			}),
+
+			oCustomScale = sap.ui.core.Element.extend("sap.xx.custom.CustomScale",{
+                metadata: {
+                    interfaces: [
+                        "sap.m.IScale"
+                    ],
+                library: "sap.xx.custom",
+                }
+            });
+
+            oCustomScale.prototype.getTickmarksBetweenLabels = function () {
+			    return 2;
+            };
+            oCustomScale.prototype.calcNumberOfTickmarks = function() {
+                return 31;
+            };
+            oCustomScale.prototype.getLabel = function (fValue) {
+                return fValue + " May";
+			};
+
+            jQuery.sap.require("sap.ui.core.IconPool");
+			sap.ui.core.IconPool.insertFontFaceStyle();
+
+			var oSlider14 = new sap.m.Slider({
+                    min: 1,
+                    max: 31,
+                    value: 1,
+                    step: 1,
+                    enableTickmarks: true,
+                    scale: new sap.xx.custom.CustomScale(),
+                    progress : true,
+                    visible: true,
+                    enabled: true,
+                    liveChange: function(oControlEvent) {
+                        jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+                    },
+                    change : function(oControlEvent) {
+                        jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+                    }
+                });
+
+			jQuery.sap.require("sap.m.SliderTooltipBase");
+
+			var oCustomTooltip = sap.m.SliderTooltipBase.extend("sap.xx.custom.CustomTooltip", {
+				library: "sap.xx.custom",
+				metadata: {
+					properties: {
+						showButtons: { type: "boolean", defaultValue: true },
+						dateValue: { type: "float", defaultValue: 0 }
+					}
+				},
+				renderer: function (oRm, oControl) {
+					// its a recommendation to you the base renderer as it has some special responsive behavior
+					sap.m.SliderTooltipBaseRenderer.render.apply({
+					renderTooltipContent: function (oRm, oControl) {
+
+						// you can write any DOM here - render controls or anything you want
+						// (inline elements are not recommended as you need to style them on your own)
+						oRm.write("<div");
+						oRm.writeAttribute("id", oControl.getId() + "-inner");
+						oRm.addClass("sapCustomSliderTooltip");
+
+						if (!oControl.getShowButtons()) {
+							oRm.addClass("sapCustomTooltipWitouthButtons");
+						}
+						oRm.writeClasses();
+						oRm.write(">");
+
+						// keep the value of each tooltip as a property
+						var fValue = oControl.getValue();
+
+						// you can write some value from a property here
+						oRm.write("<div");
+						oRm.writeAttribute("id", oControl.getId() + "-value");
+						oRm.addClass("sapCustomTooltipValue");
+						oRm.writeClasses();
+						oRm.write(">");
+
+						// display the value
+						oRm.write(oControl.aDays[fValue % 7] + " " + fValue + " May");
+						oRm.write("</div>")
+
+						if (oControl.getShowButtons()) {
+							oRm.write("<div");
+							oRm.addClass("sapCustomTooltipButtons");
+							oRm.writeClasses();
+							oRm.write(">");
+
+							oRm.write("<span class='sapCustomTooltipButton sapCustomTooltipButtonUp'></span>");
+							oRm.write("<span class='sapCustomTooltipButton sapCustomTooltipButtonDown'></span>");
+
+							oRm.write("</div>");
+
+						}
+						oRm.write("</div>");
+					}
+				}, arguments);
+			}
 			});
+
+			oCustomTooltip.prototype.init = function () {
+				this.aDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+			};
+
+			oCustomTooltip.prototype.sliderValueChanged = function (fValue) {
+				this.setDateValue(fValue);
+			};
+
+			oCustomTooltip.prototype.getLabel = function (fValue) {
+				return this.aDays[fValue % 7] + " " + fValue + " May";
+			}
+
+			oCustomTooltip.prototype.ontap = function (oEvent) {
+			var bButtonPressed = $(oEvent.target).hasClass("sapCustomTooltipButton"),
+			bUp = $(oEvent.target).hasClass("sapCustomTooltipButtonUp"),
+			bDown = $(oEvent.target).hasClass("sapCustomTooltipButtonDown");
+
+			if (bButtonPressed) {
+				var iValue = parseInt(this.getDomRef("value").innerHTML.split(" ")[1]),
+				iFinalValue;
+
+				if (bUp) {
+					this.getParent().updateTooltipsPositionAndState(this, iValue + 1);
+					iFinalValue = iValue + 1;
+				} else if (bDown) {
+					this.getParent().updateTooltipsPositionAndState(this, iValue - 1);
+					iFinalValue = iValue - 1;
+				}
+			}
+				this.getParent().setValue(iFinalValue);
+			};
+
+			var oSlider15 = new sap.m.Slider({
+					min: 1,
+					max: 31,
+					value: 1,
+					step: 1,
+					showAdvancedTooltip: true,
+					customTooltips: [new sap.xx.custom.CustomTooltip()],
+					enableTickmarks: true,
+					progress : true,
+					visible: true,
+					enabled: true,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}).addStyleClass("slider-margin"),
+
+			oSlider16 = new sap.m.Slider({
+					min: 1,
+					max: 31,
+					value: 2,
+					step: 1,
+					scale: new sap.xx.custom.CustomScale(),
+					showAdvancedTooltip: true,
+					customTooltips: [new sap.xx.custom.CustomTooltip()],
+					enableTickmarks: true,
+					progress : true,
+					visible: true,
+					enabled: true,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}).addStyleClass("slider-margin")
 
 			oPage1 = new sap.m.Page("page1", {
 				title: "Mobile Slider Control",
 				content: [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
-					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13]
+					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13, oSlider14, oSlider15, oSlider16]
 			});
 
 			oApp.addPage(oPage1);

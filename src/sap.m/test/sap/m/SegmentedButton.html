@@ -427,6 +427,50 @@
 		});
 		vBox.addItem(oSegmentedIconAndText);
 
+		var oSegmentedLastNotVisible = new sap.m.SegmentedButton('SegmentedLastNotVisible', {
+			buttons: [
+				new sap.m.Button({
+					text: "one: last one not visible",
+					enabled: true
+				}),
+				new sap.m.Button({
+					text: "two: last one not visible",
+					enabled: true
+				}),
+				new sap.m.Button({
+					text: "three: last one not visible",
+					enabled: true,
+					visible: false
+				})
+			],
+			select: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			}
+		});
+		vBox.addItem(oSegmentedLastNotVisible);
+
+		var oSegmentedLastNotVisibleDis = new sap.m.SegmentedButton('SegmentedLastNotVisibleDis', {
+			buttons: [
+				new sap.m.Button({
+					text: "one: last one not visible",
+					enabled: true
+				}),
+				new sap.m.Button({
+					text: "two: last one not visible",
+					enabled: false
+				}),
+				new sap.m.Button({
+					text: "three: last one not visible",
+					enabled: true,
+					visible: false
+				})
+			],
+			select: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			}
+		});
+		vBox.addItem(oSegmentedLastNotVisibleDis);
+
 		/****************************************
 		 * Images and state End                 *
 		 ****************************************/

@@ -37,7 +37,7 @@ sap.ui.define([
 
 		initSampleProductsModel: function() {
 			var oData = jQuery.sap.sjax({
-				url: jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"),
+				url: sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json",
 				dataType: "json"
 			}).data;
 
@@ -186,7 +186,7 @@ sap.ui.define([
 		},
 
 		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.DnD", "/info.json"), oEvent.getSource());
+			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/DnD") + "/info.json", oEvent.getSource());
 		}
 	});
 

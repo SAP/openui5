@@ -330,6 +330,56 @@
 			assert.ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers after destroy");
 		});
 
+		QUnit.module("Suspend/Resume resize listeners");
+
+		QUnit.test("Suspend", function (assert) {
+
+			var oResizeAreaDom = jQuery("#resizeArea").get(0),
+				oResizeAreaContainerDom = jQuery("#resizeAreaContainer").get(0),
+				iResizeAreaContainerWidth = oResizeAreaContainerDom.offsetWidth,
+				sResizeListenerId = _register(oResizeAreaDom),
+				done = assert.async();
+
+			assert.expect(1);
+
+			sap.ui.core.ResizeHandler.suspend(document.body);
+
+			// resize while suspended
+			oResizeAreaContainerDom.style.width = ++iResizeAreaContainerWidth + "px";
+
+			window.setTimeout(function () {
+				assert.strictEqual(lastResizeTarget, null, "Listener should not be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				sap.ui.core.ResizeHandler.resume(document.body);
+				done();
+			}, 300);
+		});
+
+		QUnit.test("Resume", function (assert) {
+
+			var oResizeAreaDom = jQuery("#resizeArea").get(0),
+				oResizeAreaContainerDom = jQuery("#resizeAreaContainer").get(0),
+				iResizeAreaContainerWidth = oResizeAreaContainerDom.offsetWidth,
+				sResizeListenerId = _register(oResizeAreaDom),
+				done = assert.async();
+
+			assert.expect(3);
+
+			sap.ui.core.ResizeHandler.suspend(document.body);
+
+			// resize while suspended
+			oResizeAreaContainerDom.style.width = ++iResizeAreaContainerWidth + "px";
+
+			sap.ui.core.ResizeHandler.resume(document.body);
+
+			window.setTimeout(function () {
+				assert.strictEqual(lastResizeTarget, oResizeAreaDom, "Listener should be called after DOM Resize");
+				assert.strictEqual(lastSize.width, oResizeAreaContainerDom.offsetWidth, "New size given");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				done();
+			}, 300);
+		});
+
 	</script>
 
 </head>
