@@ -8,14 +8,14 @@ sap.ui.define([
 	'sap/m/ComboBox',
 	'sap/m/Input',
 	'sap/m/PlacementType',
-	'sap/m/Popover',
+	'sap/m/ResponsivePopover',
 	'sap/m/Table',
 	'sap/m/Text',
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/model/odata/v4/ValueListType"
-], function(Button, Column, ColumnListItem, ComboBox, Input,  PlacementType, Popover, Table, Text,
-		Control, Item, ValueListType) {
+], function(Button, Column, ColumnListItem, ComboBox, Input, PlacementType, ResponsivePopover,
+		Table, Text, Control, Item, ValueListType) {
 	"use strict";
 
 	var ValueHelp;
@@ -181,8 +181,7 @@ sap.ui.define([
 						tooltip : "Close"
 					}),
 					oColumnListItem = new ColumnListItem(),
-					oPopover = new Popover({
-						contentMinWidth : "20em",
+					oPopover = new ResponsivePopover({
 						endButton : oButton,
 						modal : true,
 						placement : PlacementType.Auto
