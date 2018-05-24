@@ -784,6 +784,68 @@
 		});
 	});
 
+	QUnit.test("Paging - CountMode.InlineRepeat", function(assert) {
+		var done = assert.async();
+		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.InlineRepeat);
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				displayRootNode: true
+			});
+
+			function handler1 (oEvent) {
+				oBinding.detachChange(handler1);
+
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts(1, 4);
+				var oContext;
+
+				assert.equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				assert.equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+
+				oContext = aContexts[0];
+				assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[0] is correct (Andrew)");
+
+				oContext = aContexts[3];
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[3] is correct (Steven)");
+
+				oContext = aContexts[0];
+				assert.equal(oBinding.getChildCount(oContext), undefined, "Child count of /Employees(2) is still unknown");
+
+				oBinding.attachChange(handler2);
+				aContexts = oBinding.getNodeContexts(oContext, 2, 3);
+			}
+
+			function handler2 () {
+				oBinding.detachChange(handler2);
+
+				var aRootContexts = oBinding.getRootContexts(1, 4);
+				var oAndrew = aRootContexts[0];
+
+				assert.equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
+
+				var aContexts = oBinding.getNodeContexts(oAndrew, 2, 3);
+				var oContext;
+
+				assert.equal(aContexts.length, 3, "TreeBinding rootContexts length");
+
+				oContext = aContexts[0];
+				assert.equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding child context[0] is correct (Margaret)");
+
+				oContext = aContexts[2];
+				assert.equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding child context[2] is correct (Laura)");
+
+				done();
+			}
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(1, 4);
+		});
+	});
+
 	QUnit.test("Sorting: Initial Sorter", function(assert) {
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
