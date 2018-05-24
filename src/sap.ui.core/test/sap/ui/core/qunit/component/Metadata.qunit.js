@@ -865,10 +865,10 @@ sap.ui.define([
 	function runManifestLoadingTests(sDescription, fnCreateConfig) {
 		QUnit.module("Component Metadata async loading of manifests: " + sDescription, {
 			beforeEach: function() {
-				jQuery.sap.registerResourcePath("sap/ui/test", "./testdata");
+				sap.ui.loader.config({paths:{"sap/ui/test": "./testdata"}});
 			},
 			afterEach: function() {
-				jQuery.sap.registerResourcePath("sap/ui/test");
+				sap.ui.loader.config({paths:{"sap/ui/test": null}});
 			}
 		});
 
@@ -947,10 +947,10 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata async loading of manifests: manifest object", {
 		beforeEach: function() {
-			jQuery.sap.registerResourcePath("sap/ui/test", "./testdata");
+			sap.ui.loader.config({paths:{"sap/ui/test":"./testdata"}});
 		},
 		afterEach: function() {
-			jQuery.sap.registerResourcePath("sap/ui/test");
+			sap.ui.loader.config({paths:{"sap/ui/test": null}});
 		}
 	});
 

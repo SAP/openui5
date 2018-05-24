@@ -23,7 +23,7 @@ function(
 	QUnit.start();
 	var sandbox = sinon.sandbox.create();
 
-	jQuery.sap.registerModulePath("sap.ui.test", "../../component/testdata");
+	sap.ui.loader.config({paths:{"sap/ui/test":"../../component/testdata"}});
 
 	var XML_VIEW =	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
 	'<form:SimpleForm id="testComponent---myView--myForm">' +

@@ -493,7 +493,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 						continue;
 					}
 					sResourceRootPath = this.resolveUri(oResourceRootURI).toString();
-					jQuery.sap.registerModulePath(sResourceRoot, sResourceRootPath);
+					var mPaths = {};
+					mPaths[sResourceRoot.replace(/\./g, "/")] = sResourceRootPath;
+					sap.ui.loader.config({paths:mPaths});
 				}
 			}
 

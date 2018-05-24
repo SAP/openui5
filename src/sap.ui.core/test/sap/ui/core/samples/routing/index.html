@@ -12,7 +12,7 @@
 
 	<script>
 		// set application namespace. Views and controller are loaded relative to this page
-		jQuery.sap.registerModulePath("sap.ui.core.samples.routing", "./");
+		sap.ui.loader.config({paths: {"sap/ui/core/samples/routing": "./"}});
 		jQuery.sap.require("sap.ui.core.routing.Router");
 
 

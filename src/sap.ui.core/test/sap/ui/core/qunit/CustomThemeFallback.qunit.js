@@ -26,14 +26,14 @@ sap.ui.define([
 
 	QUnit.module("Custom Theme Fallback", {
 		beforeEach: function() {
-			jQuery.sap.registerResourcePath("sap/ui/customthemefallback/testlib", "./testdata/uilib-custom-theme-fallback/");
-			jQuery.sap.registerResourcePath("sap/ui/failingcssimport/testlib", "./testdata/uilib-failing-css-import/");
+			sap.ui.loader.config({paths:{"sap/ui/customthemefallback/testlib":"./testdata/uilib-custom-theme-fallback/"}});
+			sap.ui.loader.config({paths:{"sap/ui/failingcssimport/testlib":"./testdata/uilib-failing-css-import/"}});
 
 			this.oIncludeStyleSheetSpy = sinon.spy(jQuery.sap, "includeStyleSheet");
 		},
 		afterEach: function() {
-			jQuery.sap.registerResourcePath("sap/ui/customthemefallback/testlib", null);
-			jQuery.sap.registerResourcePath("sap/ui/failingcssimport/testlib", null);
+			sap.ui.loader.config({paths:{"sap/ui/customthemefallback/testlib":null}});
+			sap.ui.loader.config({paths:{"sap/ui/failingcssimport/testlib":null}});
 
 			this.oIncludeStyleSheetSpy.restore();
 		}

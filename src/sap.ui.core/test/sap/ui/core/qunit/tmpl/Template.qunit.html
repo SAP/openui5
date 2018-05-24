@@ -120,7 +120,7 @@
 				var myView = sap.ui.htmlview({viewContent:html});
 				myView.placeAt("templateWithBinding");
 
-				jQuery.sap.registerModulePath('test', './');
+				sap.ui.loader.config({paths: {'test': './'}});
 
 				setTimeout(function(){
 					sap.ui.template({

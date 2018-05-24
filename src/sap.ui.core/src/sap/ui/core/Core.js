@@ -928,7 +928,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// check whether for this combination (theme+lib) a URL is registered or for this theme a default location is registered
 			if (path) {
 				path = path + sLibName.replace(/\./g, "/") + "/themes/" + sThemeName + "/";
-				jQuery.sap.registerModulePath(sLibName + ".themes." + sThemeName, path);
+				registerModulePath(sLibName + ".themes." + sThemeName, path);
 			}
 		}
 	};
@@ -947,7 +947,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._ensureThemeRoot(sLibName, sThemeName);
 
 		// use the library location as theme location
-		return sap.ui.require.toUrl((sLibName + "/themes/" + sThemeName).replace(/\./g, "/")) + "/";
+		return getModulePath(sLibName + ".themes." + sThemeName, "/");
 	};
 
 
@@ -1519,7 +1519,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	}
 
 	function loadJSONAsync(lib) {
-		var sURL = sap.ui.require.toUrl(lib.replace(/\./g, "/") + "/library-preload.json");
+		var sURL = getModulePath(lib, "/library-preload.json");
 
 		return Promise.resolve(jQuery.ajax({
 			dataType : "json",
@@ -1621,7 +1621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	}
 
 	function loadJSONSync(lib) {
-		var sURL = sap.ui.require.toUrl(lib.replace(/\./g, "/") + "/library-preload.json");
+		var sURL = getModulePath(lib, "/library-preload.json");
 		var dependencies;
 
 		jQuery.ajax({
@@ -1647,6 +1647,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			});
 		}
 		return dependencies;
+	}
+
+	/**
+	 * Retrieves the module path.
+	 * @param {string} sModuleName module name.
+	 * @param {string} sSuffix is used untouched (dots are not replaced with slashes).
+	 * @returns {string} module path.
+	 */
+	function getModulePath(sModuleName, sSuffix){
+		return sap.ui.require.toUrl(sModuleName.replace(/\./g, "/") + sSuffix);
+	}
+
+	/**
+	 * Registers the given module path.
+	 * @param {string} sModuleName module name.
+	 * @param {string} sPath module path.
+	 */
+	function registerModulePath(sModuleName, sPath) {
+		var mPaths = {};
+		mPaths[sModuleName.replace(/\./g, "/")] = sPath;
+		sap.ui.loader.config({
+			paths: mPaths
+		});
 	}
 
 	/**
@@ -1701,7 +1724,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if ( typeof vUrl === 'object' ) {
 			if ( vUrl.async ) {
 				if ( vUrl.url && mLibraryPreloadBundles[sLibrary] == null ) { // only if lib has not been loaded yet
-					jQuery.sap.registerModulePath(sLibrary, vUrl.url);
+					registerModulePath(sLibrary, vUrl.url);
 				}
 				return this.loadLibraries([sLibrary]);
 			}
@@ -1715,7 +1738,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// if a sUrl is given, redirect access to it
 			if ( vUrl ) {
-				jQuery.sap.registerModulePath(sLibrary, vUrl);
+				registerModulePath(sLibrary, vUrl);
 			}
 
 			if ( this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async' ) {

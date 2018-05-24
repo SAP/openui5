@@ -2,8 +2,7 @@
  * ${copyright}
  */
 
-jQuery.sap.registerResourcePath("sap/ui/core/qunit",
-	"/" + window.location.pathname.split("/")[1] + "/test-resources/sap/ui/core/qunit");
+sap.ui.loader.config({paths: {"sap/ui/core/qunit": "/" + window.location.pathname.split("/")[1] + "/test-resources/sap/ui/core/qunit"}});
 
 sap.ui.require([
 	"sap/ui/core/qunit/odata/v4/_AnnotationHelperExpression.qunit",

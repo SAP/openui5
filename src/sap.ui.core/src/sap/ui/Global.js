@@ -331,7 +331,9 @@ sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global', 'jquery.sap.dom'],
 	 */
 	sap.ui.localResources = function(sNamespace) {
 		jQuery.sap.assert(sNamespace, "sNamespace must not be empty");
-		jQuery.sap.registerModulePath(sNamespace, "./" + sNamespace.replace(/\./g, "/"));
+		var mPaths = {};
+		mPaths[sNamespace.replace(/\./g, "/")] = "./" + sNamespace.replace(/\./g, "/");
+		sap.ui.loader.config({paths:mPaths});
 	};
 
 	return sap.ui;

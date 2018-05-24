@@ -38,15 +38,19 @@ sap.ui.define([
 		jQuery.sap.unloadResources('sap/test/manifestcomp/Component-preload', true, true, true);
 		jQuery.sap.unloadResources('sap/test/manifestcomp/Component-preload.js', false, true, true);
 		// undo module path registration (official API)
-		jQuery.sap.registerResourcePath("sap/test");
-		jQuery.sap.registerResourcePath("sap/test/lib2");
-		jQuery.sap.registerResourcePath("sap/test/lib3");
-		jQuery.sap.registerResourcePath("sap/test/lib4");
-		jQuery.sap.registerResourcePath("sap/test/lib5");
-		jQuery.sap.registerResourcePath("sap/test/mycomp");
-		jQuery.sap.registerResourcePath("sap/test/mysubcomp");
-		jQuery.sap.registerResourcePath("sap/test/my2ndsubcomp");
-		jQuery.sap.registerResourcePath("sap/test/manifestcomp");
+		sap.ui.loader.config({
+			paths: {
+				"sap/test": null,
+				"sap/test/lib2": null,
+				"sap/test/lib3": null,
+				"sap/test/lib4": null,
+				"sap/test/lib5": null,
+				"sap/test/mycomp": null,
+				"sap/test/mysubcomp": null,
+				"sap/test/my2ndsubcomp": null,
+				"sap/test/manifestcomp": null
+			}
+		});
 		// remove script tags for Component-preload.js modules (not an API)
 		jQuery("SCRIPT[data-sap-ui-module^='sap/test/']").remove();
 	}
@@ -63,7 +67,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		jQuery.sap.registerModulePath("sap.test", "./testdata/async");
+		sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
 			async: true,
@@ -88,7 +92,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		jQuery.sap.registerModulePath("sap.test", "./testdata/async");
+		sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
 			async: true,
@@ -121,9 +125,9 @@ sap.ui.define([
 		var done = assert.async();
 
 		// register URls for those entities that are not listed in the hints below
-		jQuery.sap.registerModulePath("sap.test.lib3", "./testdata/async/lib3");
-		jQuery.sap.registerModulePath("sap.test.lib4", "./testdata/async/lib4");
-		jQuery.sap.registerModulePath("sap.test.mycomp", "./testdata/async/mycomp");
+		sap.ui.loader.config({paths:{"sap/test/lib3":"./testdata/async/lib3"}});
+		sap.ui.loader.config({paths:{"sap/test/lib4":"./testdata/async/lib4"}});
+		sap.ui.loader.config({paths:{"sap/test/mycomp":"./testdata/async/mycomp"}});
 
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
@@ -160,9 +164,9 @@ sap.ui.define([
 		var done = assert.async();
 
 		// register URls for those entities that are not listed in the hints below
-		jQuery.sap.registerModulePath("sap.test.lib3", "./testdata/async/lib3");
-		jQuery.sap.registerModulePath("sap.test.lib4", "./testdata/async/lib4");
-		jQuery.sap.registerModulePath("sap.test.mycomp", "./testdata/async/mycomp");
+		sap.ui.loader.config({paths:{"sap/test/lib3":"./testdata/async/lib3"}});
+		sap.ui.loader.config({paths:{"sap/test/lib4":"./testdata/async/lib4"}});
+		sap.ui.loader.config({paths:{"sap/test/mycomp":"./testdata/async/mycomp"}});
 
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
@@ -217,7 +221,7 @@ sap.ui.define([
 
 	QUnit.test("Manifest from component instance", function(assert) {
 
-		jQuery.sap.registerModulePath("samples.components", "../../../../../../test-resources/sap/ui/core/samples/components/");
+		sap.ui.loader.config({paths:{"samples/components":"../../../../../../test-resources/sap/ui/core/samples/components/"}});
 
 		//setup fake server and data
 		var oManifest = {
@@ -277,7 +281,7 @@ sap.ui.define([
 			}, 1000);
 		});
 
-		jQuery.sap.registerModulePath("sap.test", "./testdata/async");
+		sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
 		sap.ui.component({
 			name: "sap.test.mycomp",
 			async: true,
@@ -295,7 +299,7 @@ sap.ui.define([
 
 	QUnit.test("sap.ui.component: 'asyncHints.preloadOnly' should be ignored", function(assert) {
 
-		jQuery.sap.registerModulePath("sap.test", "./testdata/async");
+		sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
 
 		return sap.ui.component({
 			name: "sap.test.mycomp",
@@ -440,7 +444,7 @@ sap.ui.define([
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 
 			// Register test module path
-			jQuery.sap.registerModulePath("sap.test", "./testdata/async");
+			sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
 
 			// Create spies
 			this.oLoadLibrariesSpy = sinon.spy(sap.ui.getCore(), "loadLibraries");
@@ -544,7 +548,7 @@ sap.ui.define([
 	QUnit.module("Misc", {
 		beforeEach: function() {
 			// Register test module path
-			jQuery.sap.registerModulePath("sap.test", "./testdata/async");
+			sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
 		},
 		afterEach: function() {
 			unloadResources();
