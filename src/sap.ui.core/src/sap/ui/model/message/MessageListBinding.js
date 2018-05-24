@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 					bChangeDetected = true;
 				} else {
 					jQuery.each(this.aLastContextData, function(iIndex, oLastData) {
-						if (that.getContextData(that.getContextData(aContexts[iIndex])) !== oLastData) {
+						if (that.getContextData(aContexts[iIndex]) !== oLastData) {
 							bChangeDetected = true;
 							return false;
 						}
