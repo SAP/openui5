@@ -33,6 +33,10 @@
 			}
 		});
 
+		// check for server side code coverage (SSCC)
+		// The instrumented code doesn't fit to the assumptions made by this test -> skip
+		var bInstrumentedCode = window["sap-ui-qunit-coverage"] === "server";
+		
 		// check for the existence of a wellknown debug source as indicator for optimized sources
 		var bDebugModules = false;
 		jQuery.ajax({
@@ -72,6 +76,7 @@
 		var partial = 'skip';
 		var off = 'skip';
 		if ( bDebugModules
+			 && !bInstrumentedCode
 			 && window.performance
 			 && typeof window.performance.getEntriesByType === 'function'
 			 && window.performance.getEntriesByType('resource').length > 0 ) {
