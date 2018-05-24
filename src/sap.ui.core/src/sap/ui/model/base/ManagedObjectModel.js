@@ -12,9 +12,9 @@ sap.ui.define([
 		ID_DELIMITER = "--";
 
 	/**
-	 * Managed Object model that allows to bind to properties and aggregations of objects.
+	 * The ManagedObjectModel class allows you to bind to properties and aggregations of managed objects.
 	 *
-	 * @class Managed Object model that allows to bind to properties and aggregations of objects.
+	 * @class The ManagedObjectModel class can be used for data binding of properties and aggregations for managed objects.
 	 *
 	 * Provides model access to a given {@link sap.ui.base.ManagedObject}. Such access allows to bind to properties and aggregations of
 	 * this object.
@@ -23,7 +23,8 @@ sap.ui.define([
 	 * @param {object} oData an object for custom data
 	 * @alias sap.ui.model.base.ManagedObjectModel
 	 * @extends sap.ui.model.json.JSONModel
-	 * @private
+	 * @public
+	 * @experimental since 1.58
 	 */
 	var ManagedObjectModel = JSONModel.extend("sap.ui.model.base.ManagedObjectModel", /** @lends sap.ui.mdc.model.base.ManagedObjectModel.prototype */
 	{
@@ -44,14 +45,51 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * The purpose of the getProperty is to retrieve properties or aggregations from the root managed object.
+	 *
+	 * Depending on the requesting path the result could be one of the following:
+	 * <ul>
+	 * <li> The value of a property, for example,  <code>oTextModel.getProperty("/text")</code>
+	 * <li> A managed object as a result from a non-multiple aggregation, for example, <code>oColumn.getProperty("/label")</code>
+	 * <li> A list of managed objects for multiple aggregations, for example, <code>oTable.getProperty("/columns")</code>.
+	 * </ul>
+	 *
+	 * In addition a deep dive into the aggregations is also possible.
+	 *
+	 * To retrieve special settings or custom data from the managed object model, there is a special syntax for the selector parts:
+	 * <ul>
+	 * <li> A part starting with <code>@</code> can be used to access special settings like for example, the <code>id</code>
+	 * <li> A path starting with <code>/@custom</code> is used to access the user-defined custom data.
+	 * <li> A part containing <code>#</code> can be used to access controls by their <code>id</code>. This is currently used for the managed object model of the view.
+	 * </ul>
+	 * @param {string} sPath The path or name of a property of the root managed object
+	 * @param {object} [oContext=null] The context with which the path can be resolved
+	 * @returns {any} The value of the property, an array, or a managed object
+	 * @public
+	 * @name ManagedObjectModel.prototype.getProperty
+	 */
+
+	/**
+	 * Convenience functionality to distinguish the goal of the access to the managed object.
+	 *
+	 * For example, it is more intuitive to say <code>oTableModel.getAggregation("/columns")</code>
+	 * than <code>oTableModel.getProperty("/columns")</code> as the columns are an aggregation and not a property.
+	 *
+	 * @see ManagedObjectModel.prototype#getProperty
+	 * @param {string} sPath The path or name of a property of the root managed object
+	 * @param {object} [oContext=null] The context with which the path can be resolved
+	 * @returns {any} The value of the property, an array, or a managed object
+	 * @private
+	 */
 	ManagedObjectModel.prototype.getAggregation = JSONModel.prototype.getProperty;
 
 	/**
-	 * Sets the JSON encoded custom data to the model.
+	 * Inserts the user-defined custom data into the model.
 	 *
-	 * @param {object} oData the data to set on the model
-	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
-	 * @private
+	 * @param {object} oData The data as JSON object to be set on the model
+	 * @param {boolean} [bMerge=false] If set to <code>true</code>, the data is merged instead of replaced
+	 * @public
 	 */
 	ManagedObjectModel.prototype.setData = function(oData, bMerge) {
 		var _oData = {};
@@ -63,7 +101,7 @@ sap.ui.define([
 	/**
 	 * Serializes the current custom JSON data of the model into a string.
 	 *
-	 * @return {string} sJSON the JSON data serialized as string
+	 * @return {string} sJSON The JSON data serialized as string
 	 * @private
 	 */
 	ManagedObjectModel.prototype.getJSON = function() {
@@ -71,11 +109,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a property of a control for a given path and context
+	 * Modifies the property of a child control for a given path and context.
 	 *
-	 * @param {string} sPath the path of the
-	 * @returns {boolean} true if the property was set, else false
+	 * Example:
+	 * <code>oTableModel.setProperty("/columns/0/visible", false)</code> hides the first column of the table
+	 *
+	 * @param {string} sPath The path to the property of the corresponding managed object, for example, <code>/text</code> for the text property of the root object
+	 * @returns {boolean} <code>true</code> if the property was set, <code>false</code> otherwise
 	 * @private
+	 * @experimental This is only restricted to properties not to aggregations. This means it is not possible to add an aggregation within the managed object model.
 	 */
 	ManagedObjectModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 		var sResolvedPath = this.resolve(sPath, oContext),
@@ -110,6 +152,8 @@ sap.ui.define([
 						this.checkUpdate(false, bAsyncUpdate);
 						return true;
 					}
+				} else {
+					jQuery.sap.log.warning("The setProperty method only supports properties, the path " + sResolvedPath + " does not point to a property", null, "sap.ui.model.base.ManagedObjectModel");
 				}
 			} else if (oObject[sProperty] !== oValue) {
 				// get get an update of a property that was bound on a target
@@ -184,6 +228,7 @@ sap.ui.define([
 	/**
 	 * Returns the object for a given path and/or context, if exists.
 	 *
+	 * @type sap.ui.base.ManagedObject
 	 * @param {string} sPath the path
 	 * @param {string} [oContext] the context
 	 * @returns The object for a given path and/or context, if exists, <code>null</code> otherwise.
@@ -201,6 +246,13 @@ sap.ui.define([
 		return null;
 	};
 
+	/**
+	 * Returns the managed object that is the basis for this model.
+	 *
+	 * @type sap.ui.base.ManagedObject
+	 * @returns The managed object that is basis for the model
+	 * @private
+	 */
 	ManagedObjectModel.prototype.getRootObject = function() {
 		return this._oObject;
 	};
