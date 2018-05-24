@@ -99,15 +99,25 @@ sap.ui.define([
 	};
 
 	XMLCompositeMetadata.prototype.usesTemplating = function () {
+		var that = this;
+		var fnTemplatingInFragment = function(oFragment) {
+			var aTemplateNodes = oFragment.getElementsByTagNameNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1", "*");
+			if (aTemplateNodes.length > 0) {
+				return true;
+			}
+			var oEmbeddedFragment, aEmbeddedFragments = oFragment.getElementsByTagNameNS("sap.ui.core", "Fragment");
+			for (var i = 0; i < aEmbeddedFragments.length; i++) {
+				oEmbeddedFragment = that._loadFragment(aEmbeddedFragments[i].getAttribute("fragmentName"), "fragment");
+				if (fnTemplatingInFragment(oEmbeddedFragment)) {
+					return true;
+				}
+			}
+			return false;
+		};
+
 		if (this._fragment) {
 			if (this._bUsesTemplating === undefined) {
-				this._bUsesTemplating = false;
-				for (var i = 0; i < this._fragment.attributes.length; i++) {
-					if (this._fragment.attributes[i].value == "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1") {
-							this._bUsesTemplating = true;
-							return this._bUsesTemplating;
-					}
-				}
+				this._bUsesTemplating = fnTemplatingInFragment(this._fragment);
 			}
 			return this._bUsesTemplating;
 		}
