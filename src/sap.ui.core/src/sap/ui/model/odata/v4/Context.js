@@ -191,7 +191,7 @@ sap.ui.define([
 
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
-		oGroupLock = this.oModel.lockGroup(sGroupId, true);
+		oGroupLock = this.oModel.lockGroup(sGroupId, true, this);
 		return this._delete(oGroupLock).catch(function (oError) {
 			oGroupLock.unlock(true);
 			that.oModel.reportError("Failed to delete " + that, sClassName, oError);
@@ -492,7 +492,8 @@ sap.ui.define([
 			throw new Error("Refresh is only supported for contexts of a list binding");
 		}
 		this.oModel.checkGroupId(sGroupId);
-		this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId, true), bAllowRemoval);
+		this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId, true, this),
+			bAllowRemoval);
 	};
 
 	/**

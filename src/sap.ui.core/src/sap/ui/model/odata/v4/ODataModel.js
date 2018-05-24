@@ -1178,19 +1178,21 @@ sap.ui.define([
 	 * @param {boolean|sap.ui.model.odata.v4.lib._GroupLock} [vLock]
 	 *   If vLock is a group lock, it is modified and returned. Otherwise a lock is created which
 	 *   locks if vLock is truthy.
+	 * @param {object} [oOwner]
+	 *   The lock's owner for debugging
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
 	 *   The group lock
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.lockGroup = function (sGroupId, vLock) {
+	ODataModel.prototype.lockGroup = function (sGroupId, vLock, oOwner) {
 		var oGroupLock;
 
 		if (vLock instanceof _GroupLock) {
 			vLock.setGroupId(sGroupId);
 			return vLock;
 		}
-		oGroupLock = new _GroupLock(sGroupId, vLock);
+		oGroupLock = new _GroupLock(sGroupId, vLock, oOwner);
 		if (oGroupLock.isLocked()) {
 			this.aLockedGroupLocks.push(oGroupLock);
 		}

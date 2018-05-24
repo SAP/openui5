@@ -405,7 +405,7 @@ sap.ui.define([
 			});
 		}
 
-		oGroupLock = this.oModel.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
+		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
 		oCreatePromise = this.createInCache(oGroupLock, vCreatePath, "", oInitialData,
 			function () {
 				// cancel callback
@@ -422,7 +422,7 @@ sap.ui.define([
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";
 				}
-				return that.refreshSingle(oContext, that.oModel.lockGroup(sGroupId));
+				return that.refreshSingle(oContext, that.lockGroup(sGroupId));
 			}
 		}, function (oError) {
 			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
@@ -1030,7 +1030,7 @@ sap.ui.define([
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					// getContexts needs no lock, only the group ID (or re-use the refresh lock)
-					oGroupLock = that.oModel.lockGroup(that.getGroupId(), oGroupLock);
+					oGroupLock = that.lockGroup(that.getGroupId(), oGroupLock);
 					return oCache.read(iStartInModel, iLength, iMaximumPrefetchSize, oGroupLock,
 						function () {
 							bDataRequested = true;

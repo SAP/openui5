@@ -175,7 +175,10 @@ sap.ui.require([
 			if (this.oModel) {
 				if (this.oModel.aLockedGroupLocks) {
 					iLocks = this.oModel.aLockedGroupLocks.filter(function (oGroupLock) {
-						return oGroupLock.isLocked();
+						if (oGroupLock.isLocked()) {
+							assert.ok(false, "GroupLock remained: " + oGroupLock);
+							return true;
+						}
 					}).length;
 					assert.strictEqual(iLocks, 0, "No remaining locks");
 				}
