@@ -471,8 +471,10 @@ function(
 					this._oTaskManager.complete(iTaskId);
 					return oElementOverlay;
 				}.bind(this),
-				function () {
-					jQuery.sap.log.error('sap.ui.dt: root element with id = "' + vRootElement.getId() + '" initialization is failed');
+				function (oError) {
+					var sErrorText = 'sap.ui.dt: root element with id = "' + vRootElement.getId() + '" initialization is failed';
+					sErrorText = oError ? sErrorText + ' due to: ' + oError.message : sErrorText;
+					jQuery.sap.log.error(sErrorText);
 					this._oTaskManager.cancel(iTaskId);
 				}.bind(this)
 			);
