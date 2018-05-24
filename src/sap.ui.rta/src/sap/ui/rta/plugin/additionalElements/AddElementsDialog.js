@@ -4,8 +4,8 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/commons/Label',
-	'sap/ui/commons/LabelDesign',
+	'sap/m/Label',
+	'sap/m/LabelDesign',
 	'sap/m/Dialog',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/SearchField',
