@@ -604,7 +604,7 @@ sap.ui.define([
 		var sAppliedChanges = mAppliedChangesCustomData.customDataValue;
 		var oAppliedChangeCustomData = mAppliedChangesCustomData.customData;
 
-		if (!this._isChangeCurrentlyApplied(oControl, oChange, mAppliedChangesCustomData)) {
+		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier, mAppliedChangesCustomData)) {
 			var bRevertible = this.isChangeHandlerRevertible(oChange, oControl, oChangeHandler);
 
 			return new Utils.FakePromise()
@@ -975,13 +975,26 @@ sap.ui.define([
 		});
 	};
 
-	FlexController.prototype._isChangeCurrentlyApplied = function(oControl, oChange, mCustomData) {
+	FlexController.prototype._isChangeCurrentlyApplied = function(oControl, oChange, oModifier, mCustomData) {
 		if (!mCustomData) {
 			mCustomData = this._getAppliedCustomData(oChange, oControl, JsControlTreeModifier);
 		}
 		var aAppliedChanges = mCustomData.customDataEntries;
 		var sChangeId = oChange.getId();
 		return aAppliedChanges.indexOf(sChangeId) > -1;
+	};
+
+	FlexController.prototype._checkIfDependencyIsStillValid = function(oAppComponent, oModifier, sChangeId) {
+		var oChange = Utils.getChangeFromChangesMap(this._oChangePersistence._mChanges.mChanges, sChangeId);
+		if (!oChange.APPLIED) {
+			return true;
+		}
+
+		var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
+		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier)) {
+			return true;
+		}
+		return false;
 	};
 
 	/**
@@ -1010,14 +1023,11 @@ sap.ui.define([
 
 			// if a change was already processed and is not applied anymore,
 			// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
-			if (oChange.APPLIED) {
-				var bCurrentlyNotApplied = !this._isChangeCurrentlyApplied(oControl, oChange);
-				if (bCurrentlyNotApplied) {
-					mChangesMap = this._oChangePersistence._copyDependenciesFromInitialChangesMap(oChange);
-					mDependencies = mChangesMap.mDependencies;
-					mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
-					delete oChange.APPLIED;
-				}
+			if (oChange.APPLIED && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier));
+				mDependencies = mChangesMap.mDependencies;
+				mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
+				delete oChange.APPLIED;
 			}
 
 			if (!mDependencies[oChange.getId()]) {
@@ -1207,11 +1217,9 @@ sap.ui.define([
 		this._updateControlsDependencies(mDependencies);
 		Object.keys(mDependencies).forEach(function(sDependencyKey) {
 			var oDependency = mDependencies[sDependencyKey];
-			if (
-				oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0  &&
+			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0  &&
 				!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) &&
-				!oDependency[FlexController.PROCESSING]
-			) {
+				!oDependency[FlexController.PROCESSING]) {
 				oDependency[FlexController.PROCESSING] = true;
 				aPromises.push(
 					function() {
