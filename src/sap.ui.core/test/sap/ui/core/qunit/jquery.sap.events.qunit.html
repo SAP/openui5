@@ -115,13 +115,15 @@
 		aBasicBrowserEvents.push("tap", "swipe", "swipeleft", "swiperight", "scrollstart", "scrollstop");
 	}
 
-	if (!(sap.ui.Device.support.pointer && sap.ui.Device.support.touch)) {
+	var bEmulationNeeded = !(sap.ui.Device.os.windows_phone && sap.ui.Device.os.version < 10);
+
+	if (bEmulationNeeded) {
 		aBasicBrowserEvents.push("saptouchstart", "saptouchmove", "saptouchend");
 	}
 
 	var aMobileBrowserEvents = ["touchstart", "touchend", "touchmove", "touchcancel"];
 
-	if (sap.ui.Device.support.touch && !(sap.ui.Device.os.windows_phone && sap.ui.Device.os.version < 10)) {
+	if (sap.ui.Device.support.touch && bEmulationNeeded) {
 		aMobileBrowserEvents.push("sapmousedown", "sapmousemove", "sapmouseup");
 	}
 

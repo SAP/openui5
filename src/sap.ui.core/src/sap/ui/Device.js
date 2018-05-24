@@ -806,11 +806,6 @@ if (typeof window.sap.ui !== "object") {
 
 	device.support.pointer = !!window.PointerEvent;
 
-	// HOTFIX for Chrome 55+ since it newly introduced PointerEvents and touchevents aren't fired correctly.
-	if (device.browser.name == BROWSER.CHROME && device.browser.version >= 55) {
-		device.support.pointer = false;
-	}
-
 	device.support.matchmedia = !!window.matchMedia;
 	var m = device.support.matchmedia ? window.matchMedia("all and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
 	device.support.matchmedialistener = !!(m && m.addListener);
