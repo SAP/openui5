@@ -40,7 +40,8 @@ sap.ui.define([
 
 			var oPage = sap.ui.view(this.createId("idMain1"), {
 				viewName : "sap.ui.rta.test.additionalElements.ComplexTest",
-				type : sap.ui.core.mvc.ViewType.XML
+				type : sap.ui.core.mvc.ViewType.XML,
+				async: true
 			});
 
 			oPage.setModel(oModel, "view");
