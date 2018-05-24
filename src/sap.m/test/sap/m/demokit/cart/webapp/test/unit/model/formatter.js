@@ -144,11 +144,12 @@ sap.ui.define([
 	QUnit.module("pictureUrl");
 
 	QUnit.test("Should return the url to a product picture relative to the app's root directory", function (assert) {
+
 		// Act
-		var sResult  = formatter.pictureUrl("img/foo.jpg");
+		var sResult  = formatter.pictureUrl("sap/ui/demokit/explored/img/foo.jpg");
 
 		//Assert
-		assert.strictEqual(sResult, "../../img/foo.jpg", "The formatter returned the correct URL");
+		assert.strictEqual(sResult, "./../../../../ui/demokit/explored/img/foo.jpg", "The formatter returned the correct URL");
 	});
 
 	QUnit.module("footerTextForCart");
