@@ -926,6 +926,27 @@
 		assert.ok(this.oDynamicPage.$("vertSB")[0], "DynamicPage ScrollBar has rendered successfully");
 	});
 
+	QUnit.test("BCP: 1870261908 Header title cursor CSS reset is applied", function (assert) {
+		// Arrange
+		var $MainHeading = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainHeading"),
+			$MainContent = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainContent"),
+			$MainActions = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainActions");
+
+		/**
+		 * Asserts if proper CSS reset for cursor is applied to provided DOM element
+		 * @param {object} assert object
+		 * @param {object} oDomElement DOM element to be tested
+		 */
+		function assertCSSReset(assert, oDomElement) {
+			assert.strictEqual(window.getComputedStyle(oDomElement).cursor, "default",
+				"Proper CSS reset is applied to element");
+		}
+
+		// Assert
+		assertCSSReset(assert, $MainHeading[0]);
+		assertCSSReset(assert, $MainContent[0]);
+		assertCSSReset(assert, $MainActions[0]);
+	});
 
 	QUnit.module("DynamicPage - Rendering - No Title", {
 		beforeEach: function () {

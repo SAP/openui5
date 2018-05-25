@@ -144,6 +144,13 @@ html[data-sap-ui-browser^="ie"] {
 	}
 }
 
+.sapFDynamicPageTitleMainHeading,
+.sapFDynamicPageTitleMainContent,
+.sapFDynamicPageTitleMainActions {
+	// BCP: 1870261908 - CSS cursor reset is needed here to prevent showing pointer for not clickable control types
+	cursor: default;
+}
+
 .sapFDynamicPage {
 	.sapFDynamicPageFooter {
 		position: relative;
