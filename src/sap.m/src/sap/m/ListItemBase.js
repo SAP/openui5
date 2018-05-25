@@ -819,7 +819,7 @@ function(
 
 		// do not handle already handled events
 		if (this._eventHandledByControl) {
-			return;
+			return oEvent.setMarked();
 		}
 
 		// do not handle in case of text selection
