@@ -167,7 +167,7 @@ sap.ui.define([
 					} else {
 						updateDependents();
 					}
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					that.oModel.reportError("Failed to update " + that, sClassName, oError);
 				});
 			} else {
@@ -224,30 +224,49 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a group lock and keeps it in this.oRefreshGroupLock.
+	 * Creates a group lock and keeps it in this.oReadGroupLock.
 	 * ODataListBinding#getContexts or ODataContextBinding#fetchValue are expected to use and remove
 	 * it. To ensure that the queue does not remain locked forever the lock is unlocked and taken
-	 * out again if it still resides there on the next rendering.
+	 * out again if it still resides there in the chosen prerendering.
+	 *
+	 * If not specified otherwise, the function removes the lock in the 2nd prerendering, because
+	 * there are controls that render first before they request data from the model (for example the
+	 * sap.ui.table.Table with VisibleRowCountMode=Auto).
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID
 	 * @param {boolean} [bLocked]
 	 *   Whether the group lock is locked
+	 * @param {number} [iCount=0]
+	 *   The number of additional prerenderings to wait before removing a stale lock again
+	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.createRefreshGroupLock = function (sGroupId, bLocked) {
-		var that = this;
+	ODataParentBinding.prototype.createReadGroupLock = function (sGroupId, bLocked, iCount) {
+		var oGroupLock,
+			that = this;
 
-		if (!this.oRefreshGroupLock) {
-			this.oRefreshGroupLock = this.oModel.lockGroup(sGroupId, bLocked);
-			if (bLocked) {
-				sap.ui.getCore().addPrerenderingTask(function () {
-					if (that.oRefreshGroupLock) { // The lock is still unused
-						that.oRefreshGroupLock.unlock(true);
-						that.oRefreshGroupLock = undefined;
-					}
-				});
-			}
+		function addUnlockTask() {
+			sap.ui.getCore().addPrerenderingTask(function () {
+				iCount -= 1;
+				if (iCount > 0) {
+					// Use a promise to get out of the prerendering loop
+					Promise.resolve().then(addUnlockTask);
+				} else if (that.oReadGroupLock === oGroupLock) {
+					// It is still the same, unused lock
+					oGroupLock.unlock(true);
+					that.oReadGroupLock = undefined;
+				}
+			});
+		}
+
+		if (this.oReadGroupLock) {
+			this.oReadGroupLock.unlock(true);
+		}
+		this.oReadGroupLock = oGroupLock = this.oModel.lockGroup(sGroupId, bLocked);
+		if (bLocked) {
+			iCount = 2 + (iCount || 0);
+			addUnlockTask();
 		}
 	};
 
@@ -339,9 +358,8 @@ sap.ui.define([
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
 	 * @throws {Error}
-	 *   If this binding is a deferred operation binding, if the group ID has
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.Auto} or if the cache promise for this binding is
-	 *   not yet fulfilled
+	 *   If the group ID has {@link sap.ui.model.odata.v4.SubmitMode.Auto} or if the cache promise
+	 *   for this binding is not yet fulfilled
 	 *
 	 * @private
 	 */
@@ -349,10 +367,6 @@ sap.ui.define([
 			fnCallback) {
 		var oCache = this.oCachePromise.getResult(),
 			sGroupId;
-
-		if (this.oOperation) {
-			throw new Error("Cannot delete a deferred operation");
-		}
 
 		if (!this.oCachePromise.isFulfilled()) {
 			throw new Error("DELETE request not allowed");
@@ -496,7 +510,7 @@ sap.ui.define([
 						that.mAggregatedQueryOptions));
 				}
 				return oCache;
-			})["catch"](function (oError) {
+			}).catch(function (oError) {
 				that.oModel.reportError("Failed to update cache for binding " + that, sClassName,
 					oError);
 			});
@@ -698,6 +712,8 @@ sap.ui.define([
 		}
 
 		this.bSuspended = false;
+		// wait one additional prerendering because resume itself only starts in a prerendering task
+		this.createReadGroupLock(this.getGroupId(), true, 1);
 		// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
 		// => must only resume in prerendering task
 		sap.ui.getCore().addPrerenderingTask(function () {
@@ -718,7 +734,7 @@ sap.ui.define([
 	ODataParentBinding.prototype.selectKeyProperties = function (mQueryOptions, sMetaPath) {
 		var oType = this.oModel.getMetaModel().getObject(sMetaPath + "/");
 
-		if (oType.$Key) {
+		if (oType && oType.$Key) {
 			this.addToSelect(mQueryOptions, oType.$Key.map(function (vKey) {
 				if (typeof vKey === "object") {
 					return vKey[Object.keys(vKey)[0]];
@@ -760,6 +776,10 @@ sap.ui.define([
 		}
 
 		this.bSuspended = true;
+		if (this.oReadGroupLock) {
+			this.oReadGroupLock.unlock(true);
+			this.oReadGroupLock = undefined;
+		}
 	};
 
 	/**

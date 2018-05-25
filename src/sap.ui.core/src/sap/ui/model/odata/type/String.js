@@ -8,30 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	"use strict";
 
 	var rDigitsOnly = /^\d+$/,
-		rLeadingZeros = /^0*(?=\d)/,
-		sZeros = "00000000000000000000000000000000000000000000000000000000000000000000000000000000";
-
-	/**
-	 * Adds leading zeros to the given value.
-	 *
-	 * @param {string} sValue
-	 *   the string which needs to be filled up with leading zeros
-	 * @param {number} iLength
-	 *   the expected length of the resulting string; resulting string might be longer if given
-	 *   value is already longer
-	 * @returns {string}
-	 *   given value with leading zeros
-	 */
-	function fillLeadingZeros(sValue, iLength) {
-		if (sValue.length >= iLength) {
-			return sValue;
-		}
-		// ensure that constant for zeros is long enough
-		while (sZeros.length < iLength) {
-			sZeros = sZeros + sZeros;
-		}
-		return sZeros.slice(0, iLength - sValue.length) + sValue;
-	}
+		rLeadingZeros = /^0*(?=\d)/;
 
 	/**
 	 * Checks whether isDigitSequence constraint is set to true and the given value is a digit
@@ -198,7 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 		if (isDigitSequence(sResult, this.oConstraints)) {
 			sResult = sResult.replace(rLeadingZeros, "");
 			if (this.oConstraints.maxLength) {
-				sResult = fillLeadingZeros(sResult, this.oConstraints.maxLength);
+				sResult = sResult.padStart(this.oConstraints.maxLength, "0");
 			}
 		}
 		return sResult;

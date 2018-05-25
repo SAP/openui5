@@ -1082,6 +1082,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		oAggregation : {},
+		sApply : ""
+	}, {
 		oAggregation : {
 			group : {
 				BillToParty : {}
@@ -1102,6 +1105,15 @@ sap.ui.require([
 			groupLevels : ["TransactionCurrency"]
 		},
 		sApply : "groupby((TransactionCurrency))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {}
+			},
+			// group is optional
+			groupLevels : ["TransactionCurrency"]
+		},
+		sApply : "groupby((TransactionCurrency),aggregate(Amount))"
 	}, {
 		oAggregation : {
 			aggregate : { // Note: intentionally not sorted
@@ -1176,7 +1188,7 @@ sap.ui.require([
 				Amount1Avg : {
 					min : true,
 					name : "Amount1",
-					"with" : "avg"
+					"with" : "average"
 				}
 			},
 			group : {
@@ -1184,7 +1196,29 @@ sap.ui.require([
 			}
 		},
 		sApply : "groupby((BillToParty)"
-			+ ",aggregate(Amount1 with avg as Amount1Avg,Amount2))"
+			+ ",aggregate(Amount1 with average as Amount1Avg,Amount2))"
+			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
+			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5min__Amount1Avg" : {measure : "Amount1Avg", method : "min"},
+			"UI5min__Amount2" : {measure : "Amount2", method : "min"},
+			"UI5max__Amount2" : {measure : "Amount2", method : "max"}
+		}
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount1Avg : {
+					min : true,
+					name : "Amount1",
+					"with" : "average"
+				},
+				Amount2 : {
+					max : true,
+					min : true
+				}
+			}
+		},
+		sApply : "aggregate(Amount1 with average as Amount1Avg,Amount2)"
 			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
 			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
 		mExpectedAlias2MeasureAndMethod : {
