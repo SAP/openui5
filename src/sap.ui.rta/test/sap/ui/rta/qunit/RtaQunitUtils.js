@@ -1,11 +1,11 @@
 /* globals QUnit */
 sap.ui.define([
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/fl/FakeLrepLocalStorage",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"sap/ui/fl/FakeLrepSessionStorage",
 	"sap/ui/core/ComponentContainer"
 ], function(
-	FakeLrepConnectorLocalStorage,
-	FakeLrepLocalStorage,
+	FakeLrepConnectorSessionStorage,
+	FakeLrepSessionStorage,
 	ComponentContainer
 ) {
 	"use strict";
@@ -32,7 +32,7 @@ sap.ui.define([
 	};
 
 	RtaQunitUtils.renderTestAppAt = function(sDomId){
-		FakeLrepConnectorLocalStorage.enableFakeConnector();
+		FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 		var oComp = sap.ui.getCore().createComponent({
 			name : "sap.ui.rta.qunitrta",
@@ -61,13 +61,13 @@ sap.ui.define([
 		var fnAssert = function() {
 			iChangeCounter++;
 			if (iChangeCounter === iNumberOfChanges) {
-				FakeLrepLocalStorage.detachModifyCallback(fnAssert);
+				FakeLrepSessionStorage.detachModifyCallback(fnAssert);
 				assert.equal(iChangeCounter, iNumberOfChanges, "then the rta changes are written to LREP");
 			}
 			done[iChangeCounter - 1]();
 		};
 
-		FakeLrepLocalStorage.attachModifyCallback(fnAssert);
+		FakeLrepSessionStorage.attachModifyCallback(fnAssert);
 	};
 
 	// At the end of the test, the returning fnDetachEvent function must be called for clean up
@@ -94,10 +94,10 @@ sap.ui.define([
 			done[iChangeCounter - 1]();
 		};
 		var fnDetachEvent = function(){
-			FakeLrepLocalStorage.detachModifyCallback(fnAssert);
+			FakeLrepSessionStorage.detachModifyCallback(fnAssert);
 		};
 
-		FakeLrepLocalStorage.attachModifyCallback(fnAssert);
+		FakeLrepSessionStorage.attachModifyCallback(fnAssert);
 
 		return fnDetachEvent;
 	};

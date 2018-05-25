@@ -1,12 +1,12 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/rta/test/SmartLinkUtil",
 	"sap/ui/rta/util/UrlParser",
 	"sap/ui/core/CustomData"
 ], function(
 	UIComponent,
-	FakeLrepConnectorLocalStorage,
+	FakeLrepConnectorSessionStorage,
 	SmartLinkUtil,
 	UrlParser,
 	CustomData
@@ -73,7 +73,7 @@ sap.ui.define([
 		 */
 		_createFakeLrep: function () {
 			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				FakeLrepConnectorLocalStorage.enableFakeConnector();
+				FakeLrepConnectorSessionStorage.enableFakeConnector();
 			}
 		}
 

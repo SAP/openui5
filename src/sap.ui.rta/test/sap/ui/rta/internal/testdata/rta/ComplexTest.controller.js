@@ -174,7 +174,8 @@
 			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
 			jQuery.sap.require("sap.m.MessageToast");
 			var aFileNames = [];
-			sap.ui.fl.FakeLrepLocalStorage.getChanges().forEach(function(oChange) {
+			var FakeLrepLocalStorage = sap.ui.requireSync('sap/ui/fl/FakeLrepLocalStorage');
+			FakeLrepLocalStorage.getChanges().forEach(function(oChange) {
 				if (
 					oChange.fileType !== "ctrl_variant_change" &&
 					oChange.fileType !== "ctrl_variant" &&

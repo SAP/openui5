@@ -9,5 +9,5 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return FakeLrepStorage(window.localStorage);
+	return FakeLrepStorage(window.sessionStorage);
 }, /* bExport= */ true);

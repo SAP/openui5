@@ -5,7 +5,6 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/ui/core/UIComponent",
 	"sap/m/Page",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/service/index",
 	"sap/ui/thirdparty/sinon-4",
@@ -14,7 +13,6 @@ sap.ui.require([
 function (
 	UIComponent,
 	Page,
-	FakeLrepConnectorLocalStorage,
 	RuntimeAuthoring,
 	mServicesDictionary,
 	sinon,
@@ -26,7 +24,6 @@ function (
 
 	QUnit.module("startService()", {
 		before: function () {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -54,7 +51,6 @@ function (
 		},
 		after: function () {
 			this.oComponent.destroy();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	}, function () {
 		QUnit.test("service initialisation must always wait until RTA is started", function (assert) {
@@ -86,7 +82,6 @@ function (
 
 	QUnit.module("startService() - RTA is pre-started", {
 		before: function () {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -116,7 +111,6 @@ function (
 		},
 		after: function () {
 			this.oComponent.destroy();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	}, function () {
 		QUnit.test("starting a service", function (assert) {
@@ -499,7 +493,6 @@ function (
 
 	QUnit.module("stopService()", {
 		before: function () {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -529,7 +522,6 @@ function (
 		},
 		after: function () {
 			this.oComponent.destroy();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	}, function () {
 		QUnit.test("stopping running service", function (assert) {
@@ -562,7 +554,6 @@ function (
 
 	QUnit.module("getService()", {
 		before: function () {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -592,7 +583,6 @@ function (
 		},
 		after: function () {
 			this.oComponent.destroy();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	}, function () {
 		QUnit.test("check alias to startService()", function (assert) {

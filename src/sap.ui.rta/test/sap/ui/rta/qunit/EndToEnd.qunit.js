@@ -6,8 +6,8 @@ sap.ui.require([
 	// internal
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/fl/FakeLrepConnector',
-	'sap/ui/fl/FakeLrepConnectorLocalStorage',
-	'sap/ui/fl/FakeLrepLocalStorage',
+	'sap/ui/fl/FakeLrepConnectorSessionStorage',
+	'sap/ui/fl/FakeLrepSessionStorage',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -16,8 +16,8 @@ sap.ui.require([
 ], function(
 	RuntimeAuthoring,
 	FakeLrepConnector,
-	FakeLrepConnectorLocalStorage,
-	FakeLrepLocalStorage,
+	FakeLrepConnectorSessionStorage,
+	FakeLrepSessionStorage,
 	OverlayRegistry,
 	RtaQunitUtils,
 	ChangePersistenceFactory,
@@ -34,14 +34,14 @@ sap.ui.require([
 		return this.oRta.getCommandStack()._oLastCommand;
 	};
 
-	FakeLrepConnectorLocalStorage.enableFakeConnector();
+	FakeLrepConnectorSessionStorage.enableFakeConnector();
 	QUnit.module("Given RTA is started...", {
 		beforeEach : function(assert) {
 			this._oCompCont = RtaQunitUtils.renderTestAppAt("test-view");
 
 			var that = this;
-			FakeLrepLocalStorage.deleteChanges();
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+			FakeLrepSessionStorage.deleteChanges();
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 			this.oField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
 			this.oGeneralGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
@@ -68,7 +68,7 @@ sap.ui.require([
 		afterEach : function(assert) {
 			this.oRta.destroy();
 			this._oCompCont.destroy();
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
 		}
 	});

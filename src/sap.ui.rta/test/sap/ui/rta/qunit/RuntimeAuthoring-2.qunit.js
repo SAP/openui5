@@ -13,7 +13,7 @@ sap.ui.require([
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
-	'sap/ui/fl/FakeLrepLocalStorage',
+	'sap/ui/fl/FakeLrepSessionStorage',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
@@ -33,7 +33,7 @@ sap.ui.require([
 	Change,
 	Utils,
 	RtaUtils,
-	FakeLrepLocalStorage,
+	FakeLrepSessionStorage,
 	RuntimeAuthoring,
 	Stack,
 	CommandFactory,
@@ -76,7 +76,7 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is created and started with non-default plugin sets only...", {
 		beforeEach : function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			var oCommandFactory = new CommandFactory();
 
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
@@ -100,7 +100,7 @@ sap.ui.require([
 		},
 		afterEach : function(assert) {
 			this.oContextMenuPlugin.destroy();
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			this.oRemovePlugin.destroy();
 			this.oRta.destroy();
 			sandbox.restore();
@@ -123,7 +123,7 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is started with one different (non-default) plugin (using setPlugins method)...", {
 		beforeEach : function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
 
@@ -152,7 +152,7 @@ sap.ui.require([
 		},
 		afterEach : function(assert) {
 			this.oContextMenuPlugin.destroy();
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			this.oRta.destroy();
 		}
 	}, function() {

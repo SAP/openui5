@@ -6,8 +6,8 @@ sap.ui.require([
 	// internal
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
-	'sap/ui/fl/FakeLrepConnectorLocalStorage',
-	'sap/ui/fl/FakeLrepLocalStorage',
+	'sap/ui/fl/FakeLrepConnectorSessionStorage',
+	'sap/ui/fl/FakeLrepSessionStorage',
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/command/CommandFactory',
@@ -20,8 +20,8 @@ sap.ui.require([
 ], function(
 	RuntimeAuthoring,
 	Stack,
-	FakeLrepConnectorLocalStorage,
-	FakeLrepLocalStorage,
+	FakeLrepConnectorSessionStorage,
+	FakeLrepSessionStorage,
 	Utils,
 	OverlayRegistry,
 	CommandFactory,
@@ -35,12 +35,12 @@ sap.ui.require([
 	var sandbox = sinon.sandbox.create();
 	var oCompCont = RtaQunitUtils.renderTestAppAt("test-view");
 
-	FakeLrepConnectorLocalStorage.enableFakeConnector();
+	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 	QUnit.module("Given RTA is started...", {
 		beforeEach : function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+			FakeLrepSessionStorage.deleteChanges();
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 
 			this.oField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
@@ -68,7 +68,7 @@ sap.ui.require([
 		afterEach : function(assert) {
 			this.oRta.destroy();
 			this.oCommandStack.destroy();
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
 		}
 	});
@@ -156,8 +156,8 @@ sap.ui.require([
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
-			FakeLrepLocalStorage.deleteChanges();
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+			FakeLrepSessionStorage.deleteChanges();
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 
 			this.fnUndoSpy = sandbox.spy(RuntimeAuthoring.prototype, "_onUndo");
 			this.fnRedoSpy = sandbox.spy(RuntimeAuthoring.prototype, "_onRedo");
@@ -188,7 +188,7 @@ sap.ui.require([
 			sandbox.restore();
 			this.oRta.destroy();
 			Device.os.macintosh = this.bMacintoshOriginal;
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 		}
 	});
 
