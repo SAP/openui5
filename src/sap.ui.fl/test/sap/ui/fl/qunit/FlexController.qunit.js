@@ -1085,7 +1085,7 @@ function (
 		}
 	});
 
-	QUnit.test("_applyChangesOnControl does not call anything of there is no change for the control", function (assert) {
+	QUnit.test("_applyChangesOnControl does not call anything if there is no change for the control", function (assert) {
 		var oSomeOtherChange = {};
 
 		var mChanges = {
@@ -1102,6 +1102,44 @@ function (
 
 		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl);
 		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 0, "no change was processed");
+	});
+
+	QUnit.test("updates the dependencies if the change was already applied", function(assert) {
+		var oChange0 = {
+			getId: function () {
+				return "";
+			},
+			APPLIED: true
+		};
+		var oChange1 = {
+			getId: function () {
+				return "";
+			},
+			APPLIED: true
+		};
+		var mChanges = {
+			"someId": [oChange0, oChange1]
+		};
+		var fnGetChangesMap = function () {
+			return {
+				"mChanges": mChanges,
+				"mDependencies": {},
+				"mDependentChangesOnMe": {}
+			};
+		};
+		var oAppComponent = {};
+		var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
+
+		return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl)
+
+		.then(function() {
+			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "all four changes for the control were applied");
+			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was applied first");
+			assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0].APPLIED, "the APPLIED flag got deleted");
+			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was applied second");
+			assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0].APPLIED, "the APPLIED flag got deleted");
+			assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 2, "and update dependencies was called twice");
+		}.bind(this));
 	});
 
 	QUnit.test("_applyChangesOnControl processes only those changes that belong to the control", function (assert) {
@@ -1270,31 +1308,36 @@ function (
 		oControlGroup1.destroy();
 	});
 
-	var fnDependencyTest3Setup = function() {
+	function fnDependencyTest3Setup() {
 		var oChange1 = {
 			getId: function () {
 				return "fileNameChange1";
-			}
+			},
+			getSelector: function() {}
 		};
 		var oChange2 = {
 			getId: function () {
 				return "fileNameChange2";
-			}
+			},
+			getSelector: function() {}
 		};
 		var oChange3 = {
 			getId: function () {
 				return "fileNameChange3";
-			}
+			},
+			getSelector: function() {}
 		};
 		var oChange4 = {
 			getId: function () {
 				return "fileNameChange4";
-			}
+			},
+			getSelector: function() {}
 		};
 		var oChange5 = {
 			getId: function () {
 				return "fileNameChange5";
-			}
+			},
+			getSelector: function() {}
 		};
 
 		var mChanges = {
@@ -1329,7 +1372,7 @@ function (
 			"mDependencies": mDependencies,
 			"mDependentChangesOnMe": mDependentChangesOnMe
 		};
-	};
+	}
 
 	QUnit.test("_applyChangesOnControl dependency test 3", function (assert) {
 		var oControlForm1 = new Control("mainform");
@@ -1341,22 +1384,55 @@ function (
 			return oDependencySetup;
 		};
 
+		this.oFlexController._oChangePersistence._mChangesInitial = jQuery.extend(true, {}, oDependencySetup);
+		this.oFlexController._oChangePersistence._mChanges = oDependencySetup;
+		sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(false);
+
 		var oAppComponent = {};
 
 		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField2);
 		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
 		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
 
+		// as checkTargetAndApplyChanges function is stubbed we set the APPLIED flag manually
+		Object.keys(oDependencySetup.mChanges).forEach(function(sKey) {
+			oDependencySetup.mChanges[sKey].forEach(function(oChange) {
+				oChange.APPLIED = true;
+			});
+		});
+
 		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 5, "all five changes for the control were processed");
-		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oDependencySetup.mChanges.ReversalReasonName[0], "the third change was processed first");
-		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oDependencySetup.mChanges.mainform[0], "the first change was processed second");
-		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oDependencySetup.mChanges.mainform[1], "the second change was processed third");
-		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(3).args[0], oDependencySetup.mChanges.mainform[2], "the fourth change was processed fourth");
-		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(4).args[0], oDependencySetup.mChanges.CompanyCode[0], "the fifth change was processed fifth");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0].getId(), "fileNameChange3", "the third change was processed first");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0].getId(), "fileNameChange1", "the first change was processed second");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0].getId(), "fileNameChange2", "the second change was processed third");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(3).args[0].getId(), "fileNameChange4", "the fourth change was processed fourth");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(4).args[0].getId(), "fileNameChange5", "the fifth change was processed fifth");
 
 		oControlForm1.destroy();
 		oControlField1.destroy();
 		oControlField2.destroy();
+
+		oControlForm1 = new Control("mainform");
+		oControlField1 = new Control("ReversalReasonName");
+		oControlField2 = new Control("CompanyCode");
+
+		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField2);
+		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
+		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 10, "all five changes for the control were processed again");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(5).args[0].getId(), "fileNameChange3", "the third change was processed first again");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(6).args[0].getId(), "fileNameChange1", "the first change was processed second again");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(7).args[0].getId(), "fileNameChange2", "the second change was processed third again");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(8).args[0].getId(), "fileNameChange4", "the fourth change was processed fourth again");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(9).args[0].getId(), "fileNameChange5", "the fifth change was processed fifth again");
+
+		// cleanup
+		oControlForm1.destroy();
+		oControlField1.destroy();
+		oControlField2.destroy();
+		this.oFlexController._oChangePersistence._mChangesInitial = {mChanges: {}, mDependencies: {}, mDependentChangesOnMe: {}};
+		this.oFlexController._oChangePersistence._mChanges = {mChanges: {}, mDependencies: {}, mDependentChangesOnMe: {}};
 	});
 
 	QUnit.test("_applyChangesOnControl dependency test 3 - mixed changehandler (sync, async, sync, async, sync)", function (assert) {
