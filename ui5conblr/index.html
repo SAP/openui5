@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>UI5con@SAP - Bangalore 2018</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<script
+		src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		crossorigin="anonymous"></script>
+</head>
+<body>
+<script>
+	function open(id) {
+		var oAgendaElement = document.getElementById(id);
+		var oButton = document.getElementById("hideButton");
+		if (oAgendaElement.className.indexOf("collapsed") > 0) {
+			oAgendaElement.className = oAgendaElement.className.replace("collapsed", "expanded");
+			oButton.className = oButton.className.replace("more", "less");
+		} else {
+			oAgendaElement.className = oAgendaElement.className.replace("expanded", "collapsed");
+			oButton.className = oButton.className.replace("less", "more");
+		}
+		return;
+	}
+</script>
+ <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<button onclick="scrollToTop()" id="navTopButton" class="b-floatButton" title="Go to top"></button>
+<div class="b-page">
+	<div class="b-header">
+		<div class="b-bar"></div>
+		<div class="b-section">
+			<div class="b-list mod_mainmenu">
+				<div class="b-list__item">
+					<div class="b-font size_18 color_yellow"><a href="#section-info" class="active" style="text-decoration: none">Details</a></div>
+				</div>
+			<!--	<div class="b-list__item">
+					<div class="b-font size_18 color_yellow"><a href="#section-lineup">LINE-UP</a></div>
+				</div> -->
+				<div class="b-list__item">
+					<div class="b-font size_18 color_yellow"><a target="_blank" href="https://openui5.org/ui5con/" style="text-decoration: none">UI5con Germany	</a></div>
+				</div>
+				
+			</div>
+		</div>
+		<div class="b-header__logo" ></div>
+		<div class="b-ui align_center">
+			<div class="b-font size_32 " ><a target="_blank" href="https://ui5conblrcallforpapers.cfapps.eu10.hana.ondemand.com/" style="text-decoration: none;"><b><u class="submit_paper">SUBMIT PAPER</u></b></a></div>
+			<p class="b-font size_28 " style="color: white">Open until the 31st of May</p> 
+			<div class="b-font size_28 color_yellow weight_light">
+				<a href="https://ui5con2018.eventbrite.de/" target="_blank"><b></b></a>
+			</div>
+		</div>
+
+		<div id="section-info" class="b-header__footer">
+			<div class="b-section">
+				<div class="b-section-h">
+					<div class="b-list mod_general">
+						<div class="b-list__item">
+							<svg class="b-list__icon" x="0px" y="0px" viewBox="0 0 80 80" xml:space="preserve">
+								<path class="st0" d="M42.9,2.2c3.6,0.3,7.1,1.3,10.3,3c3.1,1.6,6,3.8,8.4,6.4c2.4,2.6,4.3,5.7,5.6,9c1.3,3.4,2,7.1,2,10.7c-0.1,1.9-0.5,3.7-1.2,5.4c-0.9,2.4-2,4.8-3.3,7.1c-1.4,2.5-2.9,5.2-4.6,7.9c-1.7,2.7-3.5,5.5-5.3,8.2c-4.3,6.3-9.1,13-14.5,20.1c-5.6-7-10.5-13.7-14.8-20c-1.8-2.6-3.6-5.3-5.4-8.1s-3.4-5.5-4.7-8.1c-1.2-2.3-2.4-4.7-3.4-7.2c-0.8-1.7-1.2-3.5-1.3-5.4c0-3.9,0.7-7.8,2.3-11.5c3-7,8.5-12.6,15.5-15.5C32.1,2.8,35.9,2,39.9,2h1.6C42,2,42.5,2.1,42.9,2.2z M40.2,71.9c3-4.1,6-8.3,8.9-12.6s5.5-8.2,7.7-11.9s4-7,5.4-9.8s2.1-5,2.1-6.4c0-3.1-0.6-6.1-1.7-8.9C61.5,19.6,60,17,58,14.8c-1.9-2.2-4.3-4-6.9-5.4c-2.7-1.4-5.6-2.3-8.7-2.6h-2.7c-3.2,0-6.4,0.6-9.4,1.9c-2.8,1.3-5.4,3.1-7.6,5.3s-4,4.9-5.3,7.8c-1.3,3-1.9,6.2-1.9,9.4c0,1.5,0.8,3.8,2.3,6.9c1.8,3.5,3.7,6.9,5.9,10.2c2.4,3.8,5,7.7,7.9,11.9C34.5,64.4,37.3,68.3,40.2,71.9zM39.9,16.6c8.1,0,14.6,6.6,14.6,14.7c0,3.9-1.5,7.6-4.3,10.3c-5.7,5.7-15,5.7-20.7,0s-5.7-15,0-20.7C32.2,18.1,36,16.5,39.9,16.6zM39.9,41c2.6,0.1,5.1-1,6.9-2.9c3.8-3.8,3.8-10,0-13.8s-10-3.8-13.8,0s-3.8,10,0.1,13.8C34.9,40,37.3,41,39.9,41L39.9,41z"/>
+							</svg>
+							<div class="b-font size_18 weight_bold color_yellow">BANGALORE</div>
+							<div class="b-font size_13 weight_light color_yellow">SAP LABS</div>
+						</div>
+						<div class="b-list__item">
+							<svg class="b-list__icon" x="0px" y="0px" viewBox="0 0 80 80" xml:space="preserve">
+								<path d="M70.1,6.7c2.6-0.1,4.7,1.9,4.8,4.4c0,0.1,0,0.3,0,0.4v62.7c0.1,2.6-1.9,4.7-4.5,4.8c-0.1,0-0.2,0-0.4,0H12.2c-1.3,0-2.5-0.5-3.4-1.4s-1.5-2.2-1.4-3.5V11.5c0-1.3,0.5-2.6,1.4-3.5s2.1-1.4,3.4-1.4h9.6V1.8h4.8v4.8h28.9V1.8h4.8v4.8L70.1,6.7zM70.1,21.1H12.2v53H70L70.1,21.1L70.1,21.1z M21.9,40.4c-2.6-0.1-4.6-2.3-4.4-4.8c0.1-2.6,2.3-4.6,4.8-4.4c2.6,0.1,4.6,2.3,4.4,4.8c0,1.2-0.5,2.3-1.4,3.1C24.4,40,23.1,40.4,21.9,40.4z M21.9,59.7c-2.6-0.1-4.6-2.3-4.4-4.8c0.1-2.6,2.3-4.6,4.8-4.4c2.6,0.1,4.6,2.3,4.4,4.8c0,1.2-0.5,2.3-1.4,3.1C24.4,59.2,23.1,59.7,21.9,59.7z M21.9,16.3h4.8v-4.8h-4.8C21.9,11.5,21.9,16.3,21.9,16.3z M41.1,40.4c-2.6-0.1-4.6-2.3-4.4-4.8c0.1-2.6,2.3-4.6,4.8-4.4s4.6,2.3,4.4,4.8c0,1.2-0.5,2.3-1.4,3.1C43.7,40,42.4,40.4,41.1,40.4z M41.1,59.7c-2.6-0.1-4.6-2.3-4.4-4.8c0.1-2.6,2.3-4.6,4.8-4.4s4.6,2.3,4.4,4.8c0,1.2-0.5,2.3-1.4,3.1C43.7,59.2,42.4,59.7,41.1,59.7z M55.6,16.3h4.8v-4.8h-4.8V16.3z M60.4,40.4c-2.6-0.1-4.6-2.3-4.4-4.8c0.1-2.6,2.3-4.6,4.8-4.4c2.6,0.1,4.6,2.3,4.4,4.8c0,1.2-0.5,2.3-1.4,3.1C63,40,61.7,40.4,60.4,40.4z M60.4,59.7c-2.6-0.1-4.6-2.3-4.4-4.8c0.1-2.6,2.3-4.6,4.8-4.4c2.6,0.1,4.6,2.3,4.4,4.8c0,1.2-0.5,2.3-1.4,3.1C63,59.2,61.7,59.7,60.4,59.7z"/>
+							</svg>
+							<div class="b-font size_18 weight_bold color_yellow">20TH</div>
+							<div class="b-font size_13 weight_light color_yellow">JULY	 2018</div>
+						</div>
+						<div class="b-list__item">
+							<svg class="b-list__icon" x="0px" y="0px" viewBox="0 0 80 80" xml:space="preserve">
+								<path d="M41.4,1.9c5.1,0,10.1,1,14.8,3c9.2,3.9,16.4,11.2,20.3,20.3c4,9.5,4,20.2,0,29.6C72.6,64,65.3,71.3,56.2,75.1c-4.7,2-9.7,3-14.8,3c-10.1,0-19.9-4-27-11.2c-3.4-3.5-6.2-7.6-8.1-12.1c-4-9.5-4-20.2,0-29.6c1.9-4.5,4.7-8.6,8.1-12.1C21.5,5.9,31.3,1.8,41.4,1.9z M41.4,73.4c4.5,0,8.9-0.9,13-2.6c8-3.4,14.4-9.7,17.8-17.7c3.5-8.3,3.5-17.7,0-26c-3.4-8-9.8-14.4-17.8-17.8c-8.3-3.5-17.7-3.5-26,0c-8,3.4-14.3,9.8-17.7,17.8c-3.5,8.3-3.5,17.7,0,26c3.4,8,9.8,14.3,17.7,17.7C32.5,72.5,36.9,73.4,41.4,73.4z M62.8,40c0.6,0,1.2,0.3,1.6,0.7c0.9,0.9,1,2.4,0.1,3.3l-0.1,0.1c-0.4,0.4-1,0.7-1.6,0.7H36.6V23.4c-0.2-1.1,0.6-2.2,1.8-2.4c0.2,0,0.4,0,0.6,0c0.6,0,1.2,0.3,1.6,0.7c0.5,0.4,0.8,1.1,0.7,1.7V40H62.8z"/>
+							</svg>
+							<div class="b-font size_18 weight_bold color_yellow">9AM &mdash; 7PM</div>
+							<div class="b-font size_13 weight_light color_yellow">+ EVENING SPECIAL</div>
+						</div>
+						<div class="b-list__item">
+							<svg class="b-list__icon" x="0px" y="0px" viewBox="0 0 80 80" xml:space="preserve">
+								<path d="M31.4,45.5c2.6,0,5.3,0.5,7.7,1.5c4.7,2,8.4,5.8,10.4,10.4c1,2.4,1.5,5.1,1.5,7.7V80H1.8V65.2c0-2.6,0.5-5.3,1.5-7.7c1-2.3,2.4-4.5,4.3-6.3s4-3.2,6.3-4.3c2.4-1,5-1.5,7.6-1.5H31.4L31.4,45.5z M46.2,65.2c0-8.1-6.5-14.8-14.7-14.8h-0.1h-9.8c-1.9,0-4,0.4-5.7,1.1c-1.7,0.8-3.3,1.8-4.7,3.1C9.8,56,8.7,57.6,8,59.3c-0.8,1.8-1.2,3.7-1.1,5.8v9.8h39.4L46.2,65.2z M41.2,30.7c0,8.1-6.5,14.8-14.7,14.8h-0.1c-8.2,0-14.8-6.7-14.8-14.8c0-4,1.5-7.7,4.4-10.4c5.8-5.8,15.1-5.8,21,0C39.7,23,41.3,26.8,41.2,30.7z M26.4,40.6c2.6,0.1,5.2-1,7-2.9c3.8-3.8,3.8-10.1,0-14s-10.1-3.8-14,0s-3.8,10.1,0,14C21.2,39.5,23.8,40.6,26.4,40.6z M70.8,13.5c0.1,3.2-1.2,6.4-3.5,8.7c-4.7,5-12.5,5.2-17.4,0.5s-5.2-12.5-0.5-17.4c0.1-0.2,0.3-0.3,0.4-0.4C54.6,0,62.4,0,67.2,4.7l0,0C69.6,7.1,70.8,10.2,70.8,13.5z M60.9,25.8c2.6,0,5.3,0.5,7.7,1.5c4.7,2,8.4,5.8,10.4,10.4c1,2.4,1.5,5.1,1.5,7.7v9.8H56.1v-5h19.5v-5c0-8.1-6.5-14.8-14.7-14.8c-0.1,0-0.1,0-0.2,0h-4.9c-3.6-0.1-7.2,1.3-9.8,3.8v-6c2.9-1.8,6.4-2.8,9.8-2.7h5V25.8z M58.4,20.8c4.1,0,7.4-3.3,7.3-7.4c-0.1-4.1-3.3-7.4-7.4-7.3c-4.1,0-7.4,3.3-7.3,7.4c0,1.9,0.8,3.8,2.1,5.2C54.6,20.1,56.5,21,58.4,20.8L58.4,20.8z"/>
+							</svg>
+							<div class="b-font size_18 weight_bold color_yellow">400</div>
+							<div class="b-font size_13 weight_light color_yellow">SEATS</div>
+						</div>
+						<div class="b-list__item">
+							<svg class="b-list__icon" x="0px" y="0px" viewBox="0 0 80 80" xml:space="preserve">
+								<path class="st0" d="M60.1,47.4c-0.5,0.3-0.7,0.8-0.4,1.3l11,29.7c0.2,0.4,0.1,0.9-0.1,1.2c-0.3,0.3-0.6,0.4-1,0.4c-0.2,0-0.4,0-0.6-0.1L42.2,61c-0.2-0.1-0.4-0.2-0.6-0.1c-0.3,0-0.5,0-0.7,0.1L13.8,80c-0.2,0.1-0.4,0.2-0.6,0.1c-0.4,0-0.8-0.2-1-0.4c-0.3-0.3-0.4-0.8-0.1-1.2l11-29.6c0.2-0.5,0-1.1-0.4-1.3l-20-14.2c-0.5-0.2-0.7-0.8-0.4-1.3C2.5,31.4,3,31,3.5,31.1h25.2c0.5,0,1-0.3,1.2-0.7L40.3,2.5c0.1-0.4,0.6-0.7,1.1-0.7c0.5,0,0.9,0.3,1,0.7l10.3,27.9c0.2,0.5,0.7,0.8,1.2,0.7h25.4c0.5,0,0.9,0.3,1,0.8c0.2,0.5,0,1-0.4,1.3L60.1,47.4z M55.1,50.5c-0.5-1.2-0.5-2.7-0.1-3.9c0.4-1.2,1.2-2.4,2.3-3.1l10.6-7.3H54c-2.7,0.2-5-1.4-5.9-4l-6.7-18.5l-6.9,18.5c-0.8,2.5-3.2,4.1-5.9,4H15.1l10.4,7.3c1.1,0.7,1.9,1.9,2.3,3.1c0.4,1.2,0.3,2.7-0.1,3.9l-6.9,18.7L37.9,57c1-0.7,2.3-1.1,3.5-1c1.2,0,2.4,0.3,3.4,0.9L62,69.2L55.1,50.5z"/>
+							</svg>
+							<div class="b-font size_18 weight_bold color_yellow">UNLIMITED</div>
+							<div class="b-font size_13 weight_light color_yellow">POSSIBILITIES</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="b-section mod_info">
+		<div class="b-section-h">
+			<div class="b-list mod_info">
+					<div class="b-list__item">
+							<svg class="b-list__icon" x="0px" y="0px" viewBox="0 0 80 80" xml:space="preserve">
+									<path d="M74.4,7c1.4-0.1,2.9,0.5,3.8,1.5c0.9,1.1,1.4,2.5,1.3,3.9v52.9c0,1.3-0.5,2.6-1.4,3.5c-0.9,0.9-2.2,1.3-3.4,1.3H51.2c-2.3,0-4.5,0.6-6.4,1.8c-1.5,0.8-2.9,1.8-4.2,2.9c-0.5-0.5-1.1-0.9-1.7-1.3c-0.9-0.6-2-1.1-3-1.6c-1.1-0.5-2.3-1-3.5-1.3c-1.1-0.3-2.3-0.5-3.5-0.5H6.6c-3.3,0-4.8-1.6-4.8-4.8V11.8c0-1.2,0.4-2.4,1.1-3.3c0.8-1,2.3-1.6,3.7-1.5h1.7c0.9,0.4,1.5,1,2,2c0.5,0.9,0.9,2,1.2,3H6.6v48.6h24.6c0.9,0,1.8,0.2,2.8,0.6c0.8,0.4,1.5,0.8,2.2,1.4c0.5,0.5,1,1,1.4,1.6c0.3,0.4,0.6,0.8,1,1.2V16.8c-0.1-1.2-0.6-2.4-1.4-3.3c-0.7-1-1.8-1.5-3.1-1.6c0-0.6-0.2-1.1-0.4-1.6c-0.3-0.6-0.7-1.1-1.1-1.5s-0.8-0.8-1.3-1.1c-0.2-0.2-0.5-0.3-0.7-0.4c2.3-0.1,4.5,0.4,6.6,1.3c1.2,0.5,2.4,1.4,3.1,2.6c0.7-1,1.6-2,2.8-2.6c1.6-1,3.7-1.5,5.8-1.4H74.4zM16.4,11.6c0-1.1-0.5-2.3-1.3-3c-0.7-0.7-1.5-1.2-2.5-1.6H25c1.3,0.1,2.7,0.7,3.7,1.6c1.1,0.7,2,2,2.2,3.3v29.2l-7.3-9.6l-7.2,9.6V11.6z M74.7,11.9H47.6c-1.8,0-3,0.6-3.6,1.8c-0.5,1-0.8,2.1-1,3.1l-0.1,48.5c0.3-0.4,0.6-0.8,0.9-1.2c0.3-0.6,0.7-1.1,1.2-1.6c0.5-0.5,1-1,1.6-1.4c0.7-0.4,1.4-0.6,2.3-0.6h25.7L74.7,11.9z"/>
+								</svg>
+							<div class="b-font size_42 weight_light b-ui margin_30">learn.</div>
+							<div class="b-font size_18">At UI5con rookies, experienced and expert developers are gathering to learn more about the framework and its features from each other.</div>
+						</div>
+						<div class="b-list__item">
+							<svg class="b-list__icon" x="0px" y="0px" viewBox="0 0 80 80" xml:space="preserve">
+									<path d="M40.8,2C46,2,51.1,3,56,5.1C65.2,9,72.6,16.4,76.5,25.7c2.1,4.7,3.1,9.9,3.1,15.1c0,5.1-1,10.2-3.1,14.9C72.5,65,65.2,72.3,56,76.3c-4.7,2.1-9.9,3.1-15.1,3.1c-5.1,0-10.2-1-14.9-3.1C16.7,72.3,9.4,65,5.4,55.8C3.3,51,2.3,46,2.3,40.9s1-10.3,3.1-15.1C9.3,16.5,16.7,9.1,25.9,5.2C30.7,3,35.7,2,40.8,2z M40.8,73.6c4.4,0,8.8-0.8,12.8-2.6c3.9-1.6,7.5-4.1,10.6-7.1c3-3,5.4-6.5,7.1-10.4c1.7-4,2.7-8.4,2.7-12.8s-0.8-8.8-2.7-13c-3.4-7.9-9.8-14.3-17.7-17.7c-4.1-1.7-8.4-2.7-12.8-2.6c-4.4,0-8.7,0.8-12.8,2.7c-3.9,1.6-7.4,4.1-10.4,7.1c-3,3.1-5.3,6.7-7.1,10.6C8.8,32,7.9,36.3,7.9,40.8s0.8,8.7,2.7,12.8c3.4,7.8,9.7,14.1,17.5,17.5C32.1,72.8,36.4,73.6,40.8,73.6z M63.6,23.7c0.7,0,1,0.4,1,1.1c0,0.4-0.1,0.7-0.3,1L45.1,45.7c-0.3,0.3-0.4,0.4-0.5,0.4L19.1,57.4c-0.2,0.1-0.4,0.2-0.6,0.1c-0.7-0.2-1.1-0.7-1.1-1.4c0-0.3,0.1-0.5,0.3-0.7l19.6-19.9l0.4-0.4l14.6-6.6l7.6-3.4c1.6-0.7,2.7-1.2,3.3-1.5c0.1,0,0.2,0,0.2,0.1C63.4,23.7,63.5,23.7,63.6,23.7L63.6,23.7z M46.6,21.3H35.3l5.6-8.3L46.6,21.3z M40.8,43.3c0.7,0,1.4-0.2,2.1-0.7c0.6-0.4,0.9-1.1,0.9-1.9c0-1.6-1.3-2.9-2.9-2.9c-0.7,0-1.4,0.3-1.9,0.9c-0.5,0.6-0.7,1.3-0.7,2.1c-0.1,1.3,1,2.6,2.4,2.7C40.7,43.3,40.7,43.3,40.8,43.3L40.8,43.3z"/>
+								</svg>
+							<div class="b-font size_42 weight_light b-ui margin_30">explore.</div>
+							<div class="b-font size_18">UI5con is a free of charge event for UI5 enthusiasts to meet in person and find out what’s happening in the UI5 world.</div>
+						</div>
+						<div class="b-list__item">
+							<svg class="b-list__icon" x="0px" y="0px" viewBox="0 0 80 80" style="enable-background:new 0 0 80 80;" xml:space="preserve">
+									<path d="M35.9,44.1c0.8,0.5,1.1,1.6,0.6,2.4c-0.1,0.2-0.3,0.4-0.6,0.6c-0.4,0.5-1,0.8-1.6,0.8s-1.1-0.3-1.3-0.8l-6.4-6.4L20.2,47l-7.5-7.3c-2.7-2.5-4.2-6-4.2-9.7c0-3.6,1.6-7,4.2-9.5l2.4-2.6L3.6,6.8l3.8-3.1L18.3,15l2-2.3c2.4-2.6,5.8-4.1,9.3-4c3.7,0,7.2,1.4,9.8,4.1l7.3,8L40.5,27l1.9,1.7l4.2,4.4c0.5,0.4,0.8,1,0.8,1.7c0,0.6-0.3,1.2-0.8,1.5c-0.5,0.7-1.6,0.9-2.3,0.3c-0.1-0.1-0.2-0.2-0.3-0.3l-6.7-6.4l-8,8.2l1.8,1.6L35.9,44.1z M39.5,20.4l-4-4.2c-1.6-1.6-3.8-2.5-6-2.4c-2.1,0-4,0.9-5.4,2.4l-7.7,8c-1.6,1.6-2.6,3.6-2.8,5.9c0.1,2.3,1.1,4.5,2.8,6l3.8,3.6L39.5,20.4z M71.9,68.7l4.9,4.7l-3.1,3.3l-7.7-7l-3.3,3.1C60.3,75.4,57,77,53.4,77c-3.5,0-6.8-1.6-9-4.2l-8.2-7.7l26.4-26.4l8.2,7.9c5.1,4.7,5.5,12.6,0.8,17.8c-0.3,0.3-0.5,0.6-0.8,0.8l-1.3,1.1L71.9,68.7z M67.2,61.3c1.6-1.4,2.5-3.4,2.4-5.5c0.1-2.1-0.7-4-2.3-5.4L62.8,46l-19,18.9L48,69v0.2h0.2c1.3,1.6,3.2,2.6,5.2,2.6c2.1-0.1,4.1-1,5.5-2.6L67.2,61.3z"/>
+								</svg>
+							<div class="b-font size_42 weight_light b-ui margin_30">connect.</div>
+							<div class="b-font size_18">UI5con is meant to connect all the geeks out there &mdash; have a common platform to get to know each other, discuss innovations and find solutions.</div>
+						</div>
+				<div class="row" style="background-color: #1b191ce6;">
+						<div class="col-md-8 col-sm-12 col-12">
+								<div class="b-list__item1 "  style="padding-top: 30px;">
+									<div class="b-font size_24 mod_intro">The 1st ever Tech Meet-up on<b> UI5</b> happens <b>@Bangalore</b> in the beautiful campus of SAP Labs India! 
+										</br></br>We are looking forward to you submitting <a href="https://ui5conblrcallforpapers.cfapps.eu10.hana.ondemand.com/" style=" color:#4a9cdc" target="_blank"><u>sessions</u></a> that you would like to present in the UI5con. Submissions are open until the <b>31st of May</b>, end of day! 
+										</br></br>Please have a look at <a href="https://openui5.org/ui5con/material.html" style=" color:#4a9cdc" target="_blank"><u>Germany sessions</u></a> as a reference to get an idea what to present. We would love to learn from your experiences of using UI5 while coding and effectively applying it to achieve important business needs!				
+										</br></br>The event is free of cost and <i>opens for registration only on last week of June</i>, accepted speakers have guaranteed free access!	
+									</div>
+								</div>
+						</div>
+						<div class="col-md-4 col-sm-12 col-12" style="padding:2.5rem 3rem 4rem 0" >
+								<div class="twitter-part"> 
+										<a class="twitter-timeline"
+											href="https://twitter.com/hashtag/ui5con"
+											data-width="400"
+											data-height="100%"
+											data-chrome="noheader nofooter noborders"
+											data-widget-id="877424600283586560">#ui5con Tweets</a>
+											<script>!function(d,s,id){
+												var js,
+													fjs=d.getElementsByTagName(s)[0],
+													p=/^http:/.test(d.location)?'http':'https';
+												if(!d.getElementById(id))
+												{js=d.createElement(s);
+													js.id=id;
+													js.src=p+"://platform.twitter.com/widgets.js";
+													fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+								</div>
+							</div>
+				</div>
+				
+						
+		</div>
+	</div>
+<!--	<div class="b-section mod_lineup" id="section-lineup">
+		<div class="b-section-h">
+			<div class="b-font size_36 color_white b-ui align_center margin_40">PRELIMINARY LINE-UP</div>
+			<script type="text/template" id="lineup-item-template">
+				<div class="b-list__item">
+					<div class="b-topic">
+						<div class="b-topic__title b-font size_15 color_white b-ui margin_20">{{title}}
+						</div>
+						<div class="b-font size_13 color_gray">{{speaker}}</div>
+						<div class="b-topic__format b-font size_13 color_gray">{{type}}</div>
+					</div>
+				</div>
+			</script>
+			<div id="lineupElement" class="b-list mod_lineup collapsed">
+			</div>
+			<div id="hideElement" >
+				<a href="javascript:toggleShowMore('lineupElement')">
+					<div id="hideButton" class="more">
+						<svg id="moreButton" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><defs><style>.cls-1,.cls-2{fill:#ff5743;}.cls-2{font-size:20px;font-family:BentonSans-Medium, BentonSans;}</style></defs><title>More_Button</title><path class="cls-1" d="M40,3A37,37,0,1,1,3,40,37,37,0,0,1,40,3m0-3A40,40,0,1,0,80,40,40,40,0,0,0,40,0Z"/><text class="cls-2" transform="translate(9.5 46.8)">MORE</text></svg>
+						<svg id="lessButton" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><defs><style>.cls-1,.cls-2{fill:#ff5743;}.cls-2{font-size:20px;font-family:BentonSans-Medium, BentonSans;}.cls-3{letter-spacing:-0.01em;}.cls-4{letter-spacing:-0.01em;}</style></defs><title>Less_Button</title><path class="cls-1" d="M40,3A37,37,0,1,1,3,40,37,37,0,0,1,40,3m0-3A40,40,0,1,0,80,40,40,40,0,0,0,40,0Z"/><text class="cls-2" transform="translate(13.5 46.8)">L<tspan class="cls-3" x="11.56" y="0">E</tspan><tspan class="cls-4" x="23.69" y="0">S</tspan><tspan x="36.97" y="0">S</tspan></text></svg>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div> -->
+</div>
+
+	<div class="b-section mod_footer">
+		<div class="b-section-h">
+			<div class="b-ui align_center">
+				<div class="b-ui margin_10">&copy; SAP SE, made available under Apache License 2.0</div>
+				<a class="b-footerlink" href="http://openui5.org/impressum.html">Legal Disclosure/Impressum</a>
+				<a class="b-footerlink" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
+				<a class="b-footerlink" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>
+				<a class="b-footerlink" href="http://openui5.org/ga_disclaimer.html">Google Analytics Disclaimer</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="core.js"></script>
+<script src="startPage.js"></script>
+</body>
+</html>
