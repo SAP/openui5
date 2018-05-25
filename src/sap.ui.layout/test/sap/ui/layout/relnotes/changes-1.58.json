@@ -1,0 +1,19 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "a790137214ad7538ac8434ad937ba342b21c63c7",
+        "type": "FIX",
+        "text": " sap.ui.layout.HorizontalLayout: fix wrapping inside Splitter",
+        "references": []
+      },
+      {
+        "id": "1d8c2be426c377552d2946c52f2ad04147c929f4",
+        "type": "FIX",
+        "text": "sap.ui.layout - SimpleForm rename undo issue",
+        "references": []
+      }
+    ]
+  }
+}

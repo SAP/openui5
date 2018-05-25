@@ -614,7 +614,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			}
 
 			// use default font path or the one passed in by argument
-			var sFontPath = sPath || jQuery.sap.getModulePath("sap.ui.core.themes.base", "/fonts/");
+			var sFontPath = sPath || sap.ui.require.toUrl("sap/ui/core/themes/base/fonts/");
 
 			// load the font asynchronously via CSS
 			var sFontFaceCSS = "@font-face {" +

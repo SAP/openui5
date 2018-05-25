@@ -71,6 +71,9 @@ sap.ui.define([
 				 * and <code>valueFormat</code> pair properties are supplied instead,
 				 * the <code>dateValue</code> will be instantiated according to the parsed
 				 * <code>value</code>.
+				 * Use <code>dateValue</code> as a helper property to easily obtain the day, month, year, hours, minutes
+				 * and seconds of the chosen date and time. Although possible to bind it, the recommendation is not to do it.
+				 * When binding is needed, use <code>value</code> property instead.
 				 */
 				dateValue: {type: "object", group: "Data", defaultValue: null},
 

@@ -22,6 +22,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageHeaderSnapped: function () {
+				return new DynamicPage({
+					headerExpanded: false,
+					title: this.getDynamicPageTitle(),
+					header: this.getDynamicPageHeader(),
+					content: this.getContent(100)
+				});
+			},
 			getDynamicPageWithBigContent: function () {
 				return new DynamicPage({
 					showFooter: true,
@@ -309,6 +317,29 @@
 		assert.ok(!oStateChangeListener.called, "stateChange event was not fired");
 	});
 
+	QUnit.module("DynamicPage - API - header initially snapped", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageHeaderSnapped();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage headerExpanded=false pin button visibility", function (assert) {
+		var $oPinButton = this.oDynamicPage.getHeader()._getPinButton().$();
+
+		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should not be visible initially");
+
+		this.oDynamicPage.setHeaderExpanded(true);
+		assert.notOk($oPinButton.hasClass("sapUiHidden"), "Pin header button should be visible again");
+
+		this.oDynamicPage.setHeaderExpanded(false);
+		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should be hidden again");
+	});
+
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
 	QUnit.module("DynamicPage Title - API ", {
 		beforeEach: function () {
@@ -377,6 +408,7 @@
 		var oAction = oFactory.getAction(),
 			oAction1 = oFactory.getAction(),
 			oAction2 = oFactory.getAction(),
+			oAction3 = oFactory.getAction(),
 			iExpectedActionsNumber = 0,
 			iActualActionsNumber = this.oDynamicPageTitle.getActions().length,
 			vResult = null;
@@ -395,34 +427,42 @@
 		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "The action returns the correct parent.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
-		// Act: insert action at the end
+		// Act: insert an existing action at the end
 		iExpectedActionsNumber++;
 		vResult = this.oDynamicPageTitle.insertAction(oAction, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
 		// Assert
+		assert.ok(iActualActionsNumber !== iExpectedActionsNumber, "The action is not inserted.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: insert action at the end
+		vResult = this.oDynamicPageTitle.insertAction(oAction1, 1);
+		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
+
+		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation");
+		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction1.getId(), "The action is correctly positioned in the aggregation");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: insert action at the beginning
 		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertAction(oAction, 0);
+		vResult = this.oDynamicPageTitle.insertAction(oAction2, 0);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
 		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction2.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: insert action in the middle
 		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertAction(oAction, 1);
+		vResult = this.oDynamicPageTitle.insertAction(oAction3, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
 		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction3.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: remove Action
@@ -466,6 +506,7 @@
 		var oAction = oFactory.getAction(),
 			oAction1 = oFactory.getAction(),
 			oAction2 = oFactory.getAction(),
+			oAction3 = oFactory.getAction(),
 			iExpectedActionsNumber = 0,
 			iExpectedIndex = 0,
 			iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length,
@@ -485,34 +526,42 @@
 		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "The action returns the correct parent");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
-		// Act: insert action at the end
+		// Act: insert an existing action at the end
 		iExpectedActionsNumber++;
 		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
 
 		// Assert
+		assert.ok(iActualActionsNumber !== iExpectedActionsNumber, "The action is not inserted.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: insert action at the end
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction1, 1);
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction1.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: insert action at the beginning
 		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 0);
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction2, 0);
 		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
 
 		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[0].getId(), oAction2.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: insert action in the middle
 		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 1);
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction3, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
 
 		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction3.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: remove Action
@@ -1628,19 +1677,35 @@
 		assert.ok(oStateChangeListenerSpy.calledOnce, "stateChange event was fired once when expand button was pressed");
 	});
 
-	QUnit.test("DynamicPage On Collapse Button Press 2", function (assert) {
+	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
+
+		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
 		// Arrange
 		oUtil.renderObject(this.oDynamicPage);
 
-		// Act
+		// Arrange state:
+		this.oDynamicPage.$().height("400px"); // ensure not enough scrollHeight to snap with scrolling
+		this.oDynamicPage.$().width("300px");
+		this.oDynamicPage._setScrollPosition(10); // scrollTop > 0
+
+		// Assert state arranged as expected:
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), true, "header is expanded");
+		assert.ok(!this.oDynamicPage._canSnapHeaderOnScroll(), "not enough scrollHeight to snap with scroll");
+		assert.ok(this.oDynamicPage._needsVerticalScrollBar(), "enough scrollHeight to scroll");
+
+		// Act: toggle title to snap the header
 		this.oDynamicPage._titleExpandCollapseWhenAllowed();
 
+		// Assert context changed as expected:
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
+		assert.ok(!this.oDynamicPage._needsVerticalScrollBar(), "not enough scrollHeight to scroll");//because header was hidden during snap
+		assert.equal(this.oDynamicPage._getScrollPosition(), 0); // because no more scrolled-out content
+
+		// explicitly call the onscroll listener (to save a timeout in the test):
+		this.oDynamicPage._toggleHeaderOnScroll({target: {scrollTop: 0}});
+
 		// Assert
-		assert.strictEqual(this.oDynamicPage._bSuppressToggleHeaderOnce, true, "suppress flag is enabled");
-
-		this.clock.tick(1);
-
-		assert.strictEqual(this.oDynamicPage._bSuppressToggleHeaderOnce, false, "suppress flag is disabled");
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is still snapped");
 	});
 
 	QUnit.test("DynamicPage On Collapse Button MouseOver", function (assert) {
@@ -2045,12 +2110,12 @@
 		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), true, "The header can snap");
 	});
 
-	QUnit.test("DynamicPage _shouldExpand() returns false initially", function (assert) {
-		assert.equal(this.oDynamicPage._shouldExpand(), false, "DynamicPage should not expand initially");
+	QUnit.test("DynamicPage _shouldExpandOnScroll() returns false initially", function (assert) {
+		assert.equal(this.oDynamicPage._shouldExpandOnScroll(), false, "DynamicPage should not expand initially");
 	});
 
-	QUnit.test("DynamicPage _shouldSnap() returns false initially", function (assert) {
-		assert.equal(this.oDynamicPage._shouldSnap(), false, "DynamicPage should not snap initially");
+	QUnit.test("DynamicPage _shouldSnapOnScroll() returns false initially", function (assert) {
+		assert.equal(this.oDynamicPage._shouldSnapOnScroll(), false, "DynamicPage should not snap initially");
 	});
 
 	QUnit.test("DynamicPage _getTitleHeight() returns the correct Title height", function (assert) {
@@ -2650,7 +2715,7 @@
 			sRole = "region",
 			sAriaExpandedValue = "true",
 			sAriaLabelValue = oFactory.getResourceBundle().getText("EXPANDED_HEADER");
-		this.stub(this.oDynamicPage, "_shouldSnap", function () {
+		this.stub(this.oDynamicPage, "_shouldSnapOnScroll", function () {
 			return true;
 		});
 		this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll", function () {

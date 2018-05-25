@@ -654,6 +654,10 @@ sap.ui.define([
 		this._oFavIcon.setVisible(this.getMarkFavorite());
 		this._oFlagIcon.setVisible(this.getMarkFlagged());
 		this._attachDetachActionButtonsHandler(false);
+		if (this._iResizeId) {
+			ResizeHandler.deregister(this._iResizeId);
+			this._iResizeId = null;
+		}
 		this._bFirstRendering = false;
 	};
 
@@ -828,6 +832,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageHeader.prototype._adaptLayoutForDomElement = function ($headerDomRef, oEvent) {
+
+		var $domElement = $headerDomRef ? $headerDomRef : this.getDomRef();
+		if (isDomElementHidden($domElement)) {
+			return;
+		}
 
 		var $identifierLine = this._findById($headerDomRef, "identifierLine"),
 			iIdentifierContWidth = $identifierLine.width(),
@@ -1065,6 +1074,7 @@ sap.ui.define([
 		this._clearImageNotFoundHandler();
 		if (this._iResizeId) {
 			ResizeHandler.deregister(this._iResizeId);
+			this._iResizeId = null;
 		}
 
 		// BCP: 1870085555 - Ensure all action sheet buttons are destroyed
@@ -1187,6 +1197,11 @@ sap.ui.define([
 	ObjectPageHeader.prototype._toggleFocusableState = function (bFocusable) {
 
 	};
+
+	// util
+	function isDomElementHidden($domElem) {
+		return $domElem && !$domElem.offsetWidth && !$domElem.offsetHeight;
+	}
 
 	return ObjectPageHeader;
 });

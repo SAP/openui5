@@ -545,7 +545,7 @@ sap.ui.define([
 		TextRenderer.renderText(oRm, oControl);
 	};
 
-	var CustomText = Text.extend("CustomText", {
+	var CustomText = Text.extend("sap.m.internal.ObjectMarkerCustomText", {
 		metadata: {
 			properties: {
 				icon: {type : "sap.ui.core.URI", group : "Data", defaultValue : null}
@@ -588,7 +588,7 @@ sap.ui.define([
 		LinkRenderer.renderText(oRm, oControl);
 	};
 
-	var CustomLink = Link.extend("CustomLink", {
+	var CustomLink = Link.extend("sap.m.internal.ObjectMarkerCustomLink", {
 		metadata: {
 			properties: {
 				icon: {type : "sap.ui.core.URI", group : "Data", defaultValue : null}

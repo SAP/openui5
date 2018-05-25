@@ -80,6 +80,13 @@ sap.ui.define(["sap/ui/core/library"],
 					sIconAriaLabel = "",
 					oImage;
 
+				for (var k = aButtons.length - 1; k > 0; k--) {
+					if (aButtons[k].getVisible()) {
+						aButtons[k].addStyleClass("sapMSegBtnLastVisibleButton");
+						break;
+					}
+				}
+
 				if (oButtonIcon) {
 					oImage = oButton._getImage((oButton.getId() + "-img"), oButtonIcon);
 					if (oImage instanceof sap.m.Image) {

@@ -13,7 +13,7 @@ sap.ui.define([
 			var sPath;
 
 			// set mock data
-			sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollectionVersioning", "/uploadCollection.json");
+			sPath = sap.ui.require.toUrl("sap/m/sample/UploadCollectionVersioning") + "/uploadCollection.json";
 			this.getView().setModel(new JSONModel(sPath));
 
 			// Sets the text to the label

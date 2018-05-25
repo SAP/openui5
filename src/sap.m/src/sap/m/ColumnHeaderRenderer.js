@@ -20,8 +20,7 @@ sap.ui.define([], function() {
 			// add control in tab chain only if it is interactive
 			oRm.writeAttribute("tabindex", 0);
 			oRm.writeAttribute("role", "button");
-			oRm.addClass("sapMColumnHeaderFocusable");
-			oRm.writeAttributeEscaped("aria-labelledby", sControlId + "-info");
+			oRm.writeAttribute("aria-labelledby", sControlId + "-info");
 			oRm.addClass("sapMColumnHeaderActive");
 		}
 		oRm.addClass("sapMColumnHeader");

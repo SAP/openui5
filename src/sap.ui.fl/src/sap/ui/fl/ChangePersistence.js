@@ -3,8 +3,32 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Variant", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/transport/TransportSelection", "sap/ui/fl/variants/VariantController", "sap/ui/core/BusyIndicator", "sap/m/MessageBox"
-], function(Change, Variant, Utils, LRepConnector, Cache, ContextManager, Settings, TransportSelection, VariantController, BusyIndicator, MessageBox) {
+	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Cache",
+	"sap/ui/fl/context/ContextManager",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/variants/VariantController",
+	"sap/ui/core/BusyIndicator",
+	"sap/m/MessageBox",
+	"sap/ui/model/json/JSONModel"
+], function(
+	Change,
+	Variant,
+	Utils,
+	LRepConnector,
+	Cache,
+	ContextManager,
+	Settings,
+	TransportSelection,
+	VariantController,
+	BusyIndicator,
+	MessageBox,
+	JSONModel
+) {
 	"use strict";
 
 	/**
@@ -44,6 +68,7 @@ sap.ui.define([
 			mDependentChangesOnMe: {}
 		};
 
+		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
 		this._mChangesInitial = {};
 
 		this._mVariantsChanges = {};
@@ -195,7 +220,7 @@ sap.ui.define([
 							return oChange.layer === "VENDOR";
 						})) {
 							this._oMessagebundle = oWrappedChangeFileContent.messagebundle;
-							var oModel = new sap.ui.model.json.JSONModel(this._oMessagebundle);
+							var oModel = new JSONModel(this._oMessagebundle);
 							oComponent.setModel(oModel, "i18nFlexVendor");
 					}
 				}
@@ -220,10 +245,15 @@ sap.ui.define([
 				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
 			}
 
+			var oComponentData = oComponent
+				? oComponent.getComponentData()
+				: (mPropertyBag && mPropertyBag.componentData || {});
+
 			if ( oWrappedChangeFileContent.changes.variantSection
 				&& Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0
 				&& Object.keys(this._oVariantController._getChangeFileContent()).length === 0 ) {
-				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
+
+				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponentData && oComponentData.technicalParameters);
 			}
 
 			if (Object.keys(this._oVariantController._getChangeFileContent()).length > 0) {
@@ -581,7 +611,10 @@ sap.ui.define([
 		if (!this._mChanges.mChanges[sSelectorId]) {
 			this._mChanges.mChanges[sSelectorId] = [];
 		}
-		this._mChanges.mChanges[sSelectorId].push(oChange);
+		// don't add the same change twice
+		if (this._mChanges.mChanges[sSelectorId].indexOf(oChange) === -1) {
+			this._mChanges.mChanges[sSelectorId].push(oChange);
+		}
 	};
 
 	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange) {
@@ -625,7 +658,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
 
-		mPropertyBag.oComponent = oComponent;
+		mPropertyBag.oComponent = !jQuery.isEmptyObject(oComponent) && oComponent;
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
@@ -637,12 +670,27 @@ sap.ui.define([
 			};
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
 
-			if (Utils.isDebugEnabled()) {
-				this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
-			}
+			this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
 
 			return this.getChangesMapForComponent.bind(this);
 		}
+	};
+
+	ChangePersistence.prototype._copyDependenciesFromInitialChangesMap = function(oChange) {
+		var mInitialDependencies = jQuery.extend(true, {}, this._mChangesInitial.mDependencies);
+		var oInitialDependency = mInitialDependencies[oChange.getId()];
+
+		if (oInitialDependency) {
+			this._mChanges.mDependencies[oChange.getId()] = oInitialDependency;
+
+			oInitialDependency.dependencies.forEach(function(oChangeId) {
+				if (!this._mChanges.mDependentChangesOnMe[oChangeId]) {
+					this._mChanges.mDependentChangesOnMe[oChangeId] = [];
+				}
+				this._mChanges.mDependentChangesOnMe[oChangeId].push(oChange.getId());
+			}.bind(this));
+		}
+		return this._mChanges;
 	};
 
 	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oComponent, oChange, iIndex, aChangesCopy) {
@@ -767,7 +815,11 @@ sap.ui.define([
 		} else {
 			oNewChange = new Change(vChange);
 		}
-		this._aDirtyChanges.push(oNewChange);
+
+		// don't add the same change twice
+		if (this._aDirtyChanges.indexOf(oNewChange) === -1) {
+			this._aDirtyChanges.push(oNewChange);
+		}
 		return oNewChange;
 	};
 

@@ -522,6 +522,10 @@ sap.ui.define([
 		this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
 		this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
+		if (this._checkAlwaysShowContentHeader()) {
+			this._bHeaderExpanded = true; // enforce to expanded header whenever the <code>alwaysShowContentHeader</code> takes effect (it takes effect depending on screen size and header type)
+		}
+
 		this._bHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea();
 
 		this._createHeaderContent();
@@ -1023,6 +1027,17 @@ sap.ui.define([
 		return this;
 	};
 
+	ObjectPageLayout.prototype.setShowEditHeaderButton = function (bValue) {
+		var bOldValue = this.getShowEditHeaderButton(),
+			oHeaderContent = this.getAggregation("_headerContent");
+
+		if (bOldValue !== bValue) {
+			this.setProperty("showEditHeaderButton", bValue, true);
+			oHeaderContent && oHeaderContent.invalidate();
+		}
+		return this;
+	};
+
 	ObjectPageLayout.prototype._initializeScroller = function () {
 		if (this._oScroller) {
 			return;
@@ -1064,9 +1079,10 @@ sap.ui.define([
 		}
 
 		if (sId === null) {
-			// unset the currently selectedSection and allow the page to invalidate
-			// so upon rerendering the first visible section  will be set as selected
-			return this.setAssociation("selectedSection", null);
+			this.setAssociation("selectedSection", null, true);
+			this._expandHeader();
+			this._requestAdjustLayoutAndUxRules(true); // obtains the firstVisible section and scrolls to it if needed
+			return this;
 		}
 
 		this.scrollToSection(sId);

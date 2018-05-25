@@ -37,14 +37,23 @@ sap.ui.define([
 
 		oModifier.setStashed(oControl, false);
 
+		if (mPropertyBag.modifier.targets === "jsControlTree") {
+			// replace stashed control with original control
+			oControl = mPropertyBag.modifier.bySelector(
+				mPropertyBag.modifier.getSelector(oControl, mPropertyBag.appComponent),  // returns a selector
+				mPropertyBag.appComponent
+			);
+		}
+
+		//old way including move, new way will have separate move change
+		//only applicable for XML modifier
 		if (mContent.parentAggregationName){
-			//old way including move, new way will have separate move change
 			var sTargetAggregation = mContent.parentAggregationName;
 			var oTargetParent = oModifier.getParent(oControl);
 			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oControl);
 			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oControl, mContent.index, mPropertyBag.view);
 		}
-		return true;
+		return oControl;
 	};
 
 	/**

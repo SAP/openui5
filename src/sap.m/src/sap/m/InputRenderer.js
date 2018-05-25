@@ -55,6 +55,10 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 */
 	InputRenderer.writeInnerAttributes = function(oRm, oControl) {
 		oRm.writeAttribute("type", oControl.getType().toLowerCase());
+		//if Input is of type "Number" step attribute should be "any" allowing input of floating point numbers
+		if (oControl.getType() == InputType.Number) {
+			oRm.writeAttribute("step", "any");
+		}
 		if (oControl.getType() == InputType.Number && sap.ui.getCore().getConfiguration().getRTL()) {
 			oRm.writeAttribute("dir", "ltr");
 			oRm.addStyle("text-align", "right");

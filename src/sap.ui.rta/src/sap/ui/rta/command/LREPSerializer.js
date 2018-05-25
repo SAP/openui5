@@ -73,7 +73,7 @@ sap.ui.define([
 		(function (oEvent) {
 			var oParams = oEvent.getParameters();
 			this._lastPromise = this._lastPromise.catch(function() {
-				// _lastPromise chain must not be interupted
+				// _lastPromise chain must not be interrupted
 			}).then(function() {
 				var aCommands = this.getCommandStack().getSubCommands(oParams.command);
 				var oFlexController;
@@ -86,7 +86,7 @@ sap.ui.define([
 						}
 						var oChange = oCommand.getPreparedChange();
 						var oAppComponent = oCommand.getAppComponent();
-						if (oAppComponent && oCommand.getElement()) {
+						if (oAppComponent) {
 							if (oCommand instanceof FlexCommand){
 								oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 								var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
@@ -107,7 +107,7 @@ sap.ui.define([
 						}
 						if (oCommand instanceof FlexCommand){
 							var oAppComponent = oCommand.getAppComponent();
-							if (oAppComponent && oCommand.getElement()) {
+							if (oAppComponent) {
 								var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 								var oPreparedChange = oCommand.getPreparedChange();
 								if (oPreparedChange.getState() === Change.states.DELETED) {
@@ -127,6 +127,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks if the app needs to restart for the current active changes to be effective
+	 *
+	 * @returns {Promise} return boolean answer
+	 * @public
+	 */
+	LREPSerializer.prototype.needsReload = function() {
+		this._lastPromise = this._lastPromise.catch(function() {
+			// _lastPromise chain must not be interrupted
+		}).then(function() {
+			var aCommands = this.getCommandStack().getAllExecutedCommands();
+			return aCommands.some(function(oCommand){
+				return !!oCommand.needsReload;
+			});
+		}.bind(this));
+		return this._lastPromise;
+	};
+	/**
 	 * Serializes and saves all changes to LREP
 	 *
 	 * @returns {Promise} return empty promise
@@ -134,7 +151,7 @@ sap.ui.define([
 	 */
 	LREPSerializer.prototype.saveCommands = function() {
 		this._lastPromise = this._lastPromise.catch(function() {
-			// _lastPromise chain must not be interupted
+			// _lastPromise chain must not be interrupted
 		}).then(function() {
 			var oRootControl = sap.ui.getCore().byId(this.getRootControl());
 			if (!oRootControl) {

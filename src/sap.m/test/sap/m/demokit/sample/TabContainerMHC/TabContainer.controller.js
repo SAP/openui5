@@ -67,7 +67,7 @@ sap.ui.define([
 			this.oPageAddItem = this.oView.byId("addItemPage");
 
 
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			this.oView.setModel(oModel);
 
 			this.oPageTable.attachSelectionChange(jQuery.proxy(fnTableSelectionChange, this));

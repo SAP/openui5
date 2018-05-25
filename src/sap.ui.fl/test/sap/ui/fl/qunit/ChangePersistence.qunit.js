@@ -178,6 +178,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
 			assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called for the first time");
 			assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement called once for one variant management reference, as file content is not set");
+			assert.notOk(fnSetChangeFileContentSpy.getCall(0).args[1], "then technical parameters were not passed, since not available");
 		}).then(function () {
 			this.oChangePersistence.getChangesForComponent().then(function () {
 				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
@@ -185,6 +186,62 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement not called again as file content is set\"");
 			});
 		}.bind(this));
+	});
+
+	QUnit.test("when getChangesForComponent is called with a variantSection and component data", function (assert) {
+		var oMockedWrappedContent = {
+			"changes" : {
+				"changes": [],
+				"variantSection" : {
+					"variantManagementId" : {}
+				}
+			}
+		};
+
+		var fnSetChangeFileContentStub = this.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		var mPropertyBag = {
+			componentData : {
+				technicalParameters : {
+					"sap-ui-fl-control-variant-id" : ["variantID"]
+				}
+			}
+		};
+
+		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function () {
+			assert.strictEqual(fnSetChangeFileContentStub.getCall(0).args[1], mPropertyBag.componentData.technicalParameters, "then technical parameters were passed if present");
+		});
+	});
+
+	QUnit.test("when getChangesForComponent is called with a variantSection and a component containing technical parameters", function (assert) {
+		var oMockedWrappedContent = {
+			"changes" : {
+				"changes": [],
+				"variantSection" : {
+					"variantManagementId" : {}
+				}
+			}
+		};
+
+		var fnSetChangeFileContentStub = this.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		var mPropertyBag = {
+			oComponent : {
+				getComponentData : function() {
+					return {
+						technicalParameters: {
+							"sap-ui-fl-control-variant-id": ["variantID"]
+						}
+					};
+				}
+			}
+		};
+
+		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function () {
+			assert.deepEqual(fnSetChangeFileContentStub.getCall(0).args[1], mPropertyBag.oComponent.getComponentData().technicalParameters, "then technical parameters were passed if present");
+		});
 	});
 
 	QUnit.test("when getChangesForComponent is called with 'ctrl_variant' and 'ctrl_variant_change' fileTypes", function (assert) {
@@ -1710,6 +1767,77 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			"the change was written for the original selector ID");
 	});
 
+	QUnit.test("_copyDependenciesFromInitialChangesMap", function(assert) {
+		var oChange0 = {
+			getId: function() {
+				return "fileNameChange0";
+			}
+		};
+		var oChange1 = {
+			getId: function() {
+				return "fileNameChange1";
+			}
+		};
+		var oChange2 = {
+			getId: function() {
+				return "fileNameChange2";
+			}
+		};
+		var mChanges = {
+			"field3-2": [oChange1, oChange2],
+			"group1": [oChange0]
+		};
+		var mInitialDependenciesMap = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
+				"fileNameChange2": {
+					"changeObject": oChange2,
+					"dependencies": ["fileNameChange1", "fileNameChange0"],
+					"controlsDependencies": ["group2", "group1"]
+				}
+			},
+			mDependentChangesOnMe: {
+				"fileNameChange0": ["fileNameChange2"],
+				"fileNameChange1": ["fileNameChange2"]
+			}
+		};
+		var mCurrentDependenciesMap = {
+			mChanges: mChanges,
+			mDependencies: {},
+			mDependentChangesOnMe: {}
+		};
+		var mExpectedDependenciesMapAfterFirstChange = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				}
+			},
+			mDependentChangesOnMe: {}
+		};
+
+		this.oChangePersistence._mChangesInitial = mInitialDependenciesMap;
+		this.oChangePersistence._mChanges = mCurrentDependenciesMap;
+
+		var mUpdatedDependenciesMap = this.oChangePersistence._copyDependenciesFromInitialChangesMap(oChange0);
+		assert.deepEqual(mUpdatedDependenciesMap, mCurrentDependenciesMap, "no dependencies got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence._copyDependenciesFromInitialChangesMap(oChange1);
+		assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence._copyDependenciesFromInitialChangesMap(oChange2);
+		assert.deepEqual(mUpdatedDependenciesMap, mInitialDependenciesMap, "all dependencies from change2 got copied");
+
+		assert.deepEqual(mUpdatedDependenciesMap, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
+	});
+
 	QUnit.test("deleteChanges shall remove the given change from the map", function(assert) {
 
 		var that = this;
@@ -1973,6 +2101,35 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		assert.strictEqual(aChanges.length, 1);
 		assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
 		assert.strictEqual(aChanges[0], newChange);
+	});
+
+	QUnit.test("Shall not add the same change twice", function (assert) {
+		// possible scenario: change gets saved, then without reload undo and redo gets called. both would add a dirty change
+		var oChangeContent, aChanges;
+
+		oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		var fnAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
+
+		var oNewChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+		var oSecondChange = this.oChangePersistence.addChange(oNewChange, this._oComponentInstance);
+
+		assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
+		assert.ok(fnAddDirtyChangeSpy.callCount, 2, "addDirtyChange was called twice");
+		aChanges = this.oChangePersistence._aDirtyChanges;
+		assert.ok(aChanges);
+		assert.strictEqual(aChanges.length, 1);
+		assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
+		assert.strictEqual(aChanges[0], oNewChange);
+		assert.deepEqual(oNewChange, oSecondChange);
 	});
 
 	QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet", function (assert) {

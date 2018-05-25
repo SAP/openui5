@@ -90,20 +90,11 @@
 	oPanel2.addContent(oTable);
 	oPanel2.placeAt("target2");
 
-	function removeSharedServicedata(sURI){
-		var aParts = sURI.split('?');
-		var sServiceURI = aParts[0].replace(/\/$/, "");
-
-		if(sap.ui.model.odata.v2.ODataModel.mServiceData && sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI]){
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI];
-		}
-	}
-
 	/**
 	 * Removes all shared Metadata
 	 */
-	function cleanServiceDataCache() {
-		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+	function cleanSharedData() {
+		sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 	}
 
 
@@ -116,7 +107,7 @@
 		bRemoveMetadata = bRemoveMetadata !== false;
 
 		if (bRemoveMetadata) {
-			cleanServiceDataCache();
+			cleanSharedData();
 		}
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, mParameters);
 		return oModel;
@@ -545,7 +536,7 @@
 
 	QUnit.test("test select with nav props and expand with create binding context and data already loaded: isreloadneeded = false", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI);
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -580,7 +571,7 @@
 
 	QUnit.test("test select with nav props and expand with context binding and data already loaded: isreloadneeded = false", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI);
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -617,7 +608,7 @@
 
 	QUnit.test("test isreloadneeded - only product loaded", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -651,7 +642,7 @@
 
 	QUnit.test("test isreloadneeded - only productname selected", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -685,7 +676,7 @@
 
 	QUnit.test("test isreloadneeded - category expanded", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -719,7 +710,7 @@
 
 	QUnit.test("test isreloadneeded - productname selected, category expanded", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -753,7 +744,7 @@
 
 	QUnit.test("test isreloadneeded - productname and categoryname selected, category expanded", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -787,7 +778,7 @@
 
 	QUnit.test("test isreloadneeded - category expanded, but null", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -818,7 +809,7 @@
 
 	QUnit.test("test isreloadneeded - supplier expanded", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -858,7 +849,7 @@
 
 	QUnit.test("test isreloadneeded - supplier/products expanded", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -898,7 +889,7 @@
 
 	QUnit.test("test isreloadneeded - invalidate", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -934,7 +925,7 @@
 
 	QUnit.test("test isreloadneeded - invalidateEntry", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -970,7 +961,7 @@
 
 	QUnit.test("test isreloadneeded - invalidateEntityType", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -1007,7 +998,7 @@
 
 	QUnit.test("test invalidate", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -1060,7 +1051,7 @@
 
 	QUnit.test("test invalidateEntry", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -1090,7 +1081,7 @@
 
 	QUnit.test("test invalidateEntityType", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
@@ -1152,7 +1143,7 @@
 
 	QUnit.test("test getObject", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 
 		sap.ui.getCore().setModel(oModel);
@@ -1173,7 +1164,7 @@
 
 	QUnit.test("test getObject with property/meta path", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		oModel.getMetaModel();
 
@@ -1226,7 +1217,7 @@
 
 	QUnit.test("test getObject with not all data available", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 
 		sap.ui.getCore().setModel(oModel);
@@ -1256,7 +1247,7 @@
 
 	QUnit.test("test getObject with expand and 1..n nav prop", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		sap.ui.getCore().setModel(oModel);
 
@@ -1291,7 +1282,7 @@
 
 	QUnit.test("test getObject with multiple nested expands", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: true});
 		sap.ui.getCore().setModel(oModel);
 
@@ -1361,7 +1352,7 @@
 
 	QUnit.test("test getObject with complex cases with select and expand", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json: true});
 		sap.ui.getCore().setModel(oModel);
 
@@ -1686,7 +1677,7 @@
 	QUnit.test("test bindElement 5 - change parentContext", function(assert){
 		assert.expect(3);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
@@ -1715,7 +1706,7 @@
 	QUnit.test("test bindElement 6 - change parentContext with propagation", function(assert){
 		assert.expect(3);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
@@ -1744,7 +1735,7 @@
 	QUnit.test("test bindElement 7 - checkUpdate", function(assert){
 		assert.expect(2);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oModel.read("/Categories(2)");
@@ -1775,7 +1766,7 @@
 	QUnit.test("test getBindingContext", function(assert){
 		assert.expect(4);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oODataModel = initModel(sURI, {json:false});
 		var oJSONModel = new sap.ui.model.json.JSONModel();
 		sap.ui.getCore().setModel(oODataModel);
@@ -1799,7 +1790,7 @@
 	QUnit.test("test data events for bindElement", function(assert){
 		assert.expect(3);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
@@ -1822,7 +1813,7 @@
 	QUnit.test("test data events for bindElement 204", function(assert){
 		assert.expect(3);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
@@ -1845,7 +1836,7 @@
 	QUnit.test("test refresh(true) - dependent Listbindings should reload data", function(assert){
 		assert.expect(3);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oPanel2.bindElement("/Categories(7)");
@@ -1877,7 +1868,7 @@
 	QUnit.test("test refresh(true) - dependent Objectbindings should reload data", function(assert){
 		assert.expect(3);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oPanel.bindElement("/Products(2)");
@@ -1914,7 +1905,7 @@
 	QUnit.test("test bindElement with batchGroupId", function(assert){
 		assert.expect(2);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setUseBatch(true);
 		oModel.setDeferredBatchGroups(["test"]);
@@ -1963,7 +1954,7 @@
 	QUnit.test("test model bindAggregation on Listbox events", function(assert){
 		assert.expect(2);
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
@@ -2775,7 +2766,7 @@
 
 	QUnit.test("Custom Header test", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {headers: {"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"}});
 
@@ -2811,7 +2802,7 @@
 
 	QUnit.test("header content-type test for GET JSON", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI);
 
@@ -2830,7 +2821,7 @@
 
 	QUnit.test("header content-type test for POST JSON", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {tokenHandling: false});
 
@@ -2850,7 +2841,7 @@
 
 	QUnit.test("header content-type test for GET xml", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {json :false});
 
@@ -2869,7 +2860,7 @@
 
 	QUnit.test("header content-type test for POST xml", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {json :false, tokenHandling: false});
 
@@ -2888,7 +2879,7 @@
 
 	QUnit.test("custom header content-type for media entities", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {json: true, tokenHandling: false});
 
@@ -3396,7 +3387,7 @@
 	QUnit.test("async test request events - aborted requests single", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3433,7 +3424,7 @@
 
 		QUnit.test("async test request events - aborted same requests single", function(assert){
 			var done = assert.async();
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: false
@@ -3471,7 +3462,7 @@
 	QUnit.test("async test request events - aborted requests single after sent", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3519,7 +3510,7 @@
 	QUnit.test("async test request events - aborted same requests single after sent", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3567,7 +3558,7 @@
 
 	QUnit.test("async test request events - aborted requests batch", function(assert){
 		var done = assert.async();
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true
@@ -3608,7 +3599,7 @@
 
 		QUnit.test("async test request events - aborted same requests batch", function(assert){
 			var done = assert.async();
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true
@@ -3649,7 +3640,7 @@
 	QUnit.test("async test request events - aborted requests batch after sent", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3697,7 +3688,7 @@
 	QUnit.test("async test request events - aborted same requests batch after sent", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3745,7 +3736,7 @@
 	QUnit.test("async test request events - aborted deferred requests batch", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3792,7 +3783,7 @@
 	QUnit.test("async test request events - aborted deferred requests batch after sent", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3848,7 +3839,7 @@
 
 	QUnit.test("async test request events - auto refresh element binding", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3892,7 +3883,7 @@
 
 	QUnit.test("async test request events - don't auto refresh element binding when deleting", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3937,7 +3928,7 @@
 	QUnit.test("async test request events - auto refresh list binding", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3985,7 +3976,7 @@
 	QUnit.test("async test request events - auto refresh list binding for nav property create", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: false,
@@ -4033,7 +4024,7 @@
 	QUnit.test("async test request events - auto refresh list binding for nav property update", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: false,
@@ -4082,7 +4073,7 @@
 	QUnit.test("async test request events - auto refresh list binding also when deleting", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -4129,7 +4120,7 @@
 	QUnit.test("Event order (single request): bindElement - batch fails", function(assert){
 		var done = assert.async();
 		assert.expect(3);
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI);
 		oModel.setUseBatch(true);
 		oLabel = new sap.ui.commons.Label();
@@ -4148,7 +4139,7 @@
 	QUnit.test("Event order (batch request): bindElement - batch fails --> refresh", function(assert){
 		var done = assert.async();
 		assert.expect(5);
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI);
 		oModel.setUseBatch(true);
 		oLabel = new sap.ui.commons.Label();
@@ -4175,7 +4166,7 @@
 	QUnit.test("Event order: bindElement", function(assert){
 		var done = assert.async();
 		assert.expect(4);
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel2");
 		oLabel.setModel(oModel);
@@ -4194,7 +4185,7 @@
 	QUnit.test("Event order: bindElement (setModel after binding)", function(assert){
 		var done = assert.async();
 		assert.expect(4);
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel3");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
@@ -4212,7 +4203,7 @@
 	QUnit.test("Event order: bindElement (already bound)", function(assert){
 		var done = assert.async();
 		assert.expect(6);
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel1 = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel4");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
@@ -4240,7 +4231,7 @@
 	QUnit.test("ContextBinding: Unresolved bindings must fire change with null context", function(assert){
 		var done = assert.async();
 		assert.expect(2);
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI);
 		var handler = function(oEvent) {
 			assert.ok(true, "Change event fired for unresolved binding")
@@ -4254,7 +4245,7 @@
 
 	QUnit.test("read with zero Response", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI);
 		var fnSuccess = function(oData) {
 			assert.ok(true, "zero data loaded");
@@ -4265,7 +4256,7 @@
 	});
 
 	QUnit.test("test ODataModel destroy cancel async metadata", function(assert){
-		cleanServiceDataCache();
+		cleanSharedData();
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
 		var spy = this.spy(OData, "request");
@@ -4285,7 +4276,7 @@
 	});
 
 	QUnit.test("test ODataModel destroy", function(assert){
-		cleanServiceDataCache();
+		cleanSharedData();
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
 		var oModel = initModel(sURI, {json: true, loadMetadataAsync: true, useBatch: false }, true);
@@ -4303,7 +4294,7 @@
 
 	QUnit.test("test metadata url parameters: no parameters", function(assert) {
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI);
 		oModel.attachMetadataLoaded(function() {
@@ -4344,7 +4335,7 @@
 	});
 	QUnit.test("test metadata url parameters: no parameters", function(assert) {
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
@@ -4355,7 +4346,7 @@
 	});
 	QUnit.test("test metadata url parameters: service url parameters", function(assert) {
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
@@ -4366,7 +4357,7 @@
 	});
 	QUnit.test("test metadata url parameters: metadataUrlParameters", function(assert) {
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
@@ -4388,7 +4379,7 @@
 
 	QUnit.test("test service url parameters: serviceUrlParams", function(assert) {
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
@@ -4408,7 +4399,7 @@
 
 	QUnit.test("test service url parameters: serviceUrlParams", function(assert) {
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
@@ -4588,7 +4579,7 @@
 	});
 	QUnit.test("test metadata loading: sap-value-list",function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
@@ -4614,7 +4605,7 @@
 
 	QUnit.test("test metadata loading: sap-value-list - double entityTypes",function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var iEntitySetCount, iEntityTypeCount, iAnnotationCount;
 
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
@@ -4659,7 +4650,7 @@
 
 	QUnit.test("test metadata loading (relative metadataUrl): sap-value-list",function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			assert.ok(oModel.getServiceMetadata(), "metadata loaded");
@@ -4677,7 +4668,7 @@
 
 	QUnit.test("async test media entity update check metadata", function(assert){
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {
 			json: true,
@@ -4715,7 +4706,7 @@
 		},
 		afterEach: function() {
 			this.oModel.destroy();
-			cleanServiceDataCache();
+			cleanSharedData();
 			delete this.oModel;
 			deleteCsrfToken();
 		}
@@ -4852,18 +4843,16 @@
 		});
 		updateCsrfToken();
 
-
-		window.odataFakeServiceData.forbidHeadRequest = false; // !
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.create("/Categories(1)", {}, {
 			success: function() {
-				assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests sent");
+				assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "One CSRF requests sent");
 				assert.equal(window.odataFakeServiceData.csrfRequests[0], "GET", "CSRF-Token requested using GET method");
 
 				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
-						assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "Two CSRF requests replied to");
+						assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "One CSRF requests replied to");
 						assert.ok(refreshSpy.calledOnce, "No additional token request");
 						done();
 					}
@@ -4871,6 +4860,75 @@
 			}.bind(this)
 		});
 	});
+
+	QUnit.test("Token request for different services on the same server", function(assert) {
+		var done = assert.async(),
+			sURI1 = "http://server/service1/",
+			sURI2 =  "http://server/service2/";
+
+		setBaseUrl(sURI1);
+		this.oModel.destroy();
+		this.oModel = initModel(sURI1, {
+			json: true
+		});
+
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
+
+				setBaseUrl(sURI2);
+				this.oModel.destroy();
+				this.oModel = initModel(sURI2, {
+					json: true
+				}, false);
+				refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+				
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						assert.ok(!refreshSpy.called, "No additional token request");
+						resetBaseUrl();
+						done();
+					}
+				});
+			}.bind(this)
+		});
+	}); 
+
+	QUnit.test("Token request for different services on different servers", function(assert) {
+		var done = assert.async(),
+			sURI1 = "http://server1/service/",
+			sURI2 =  "http://server2/service/";
+
+		setBaseUrl(sURI1);
+		this.oModel.destroy();
+		this.oModel = initModel(sURI1, {
+			json: true
+		});
+
+		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
+
+				setBaseUrl(sURI2);
+				this.oModel.destroy();
+				this.oModel = initModel(sURI2, {
+					json: true
+				}, false);
+				refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
+				
+				this.oModel.create("/Categories(1)", {}, {
+					success: function() {
+						assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
+						resetBaseUrl();
+						done();
+					}
+				});
+			}.bind(this)
+		});
+	}); 
+
 
 	QUnit.module("Soft State Header Support");
 
@@ -5494,7 +5552,7 @@
 	QUnit.test("SAML redirect - without batch", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -5517,7 +5575,7 @@
 	QUnit.test("SAML redirect - with batch", function(assert){
 		var done = assert.async();
 
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -5541,7 +5599,7 @@
 
 	QUnit.test("test getProperty with includeExpandEntries __ref", function(assert){
 		var done = assert.async();
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false, useBatch: true});
 		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
 			var oDeepEntry = oModel.getProperty("/Products(7)");
@@ -5561,7 +5619,7 @@
 
 	QUnit.test("test getProperty with includeExpandEntries __list", function(assert){
 		var done = assert.async();
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false, useBatch: true});
 		oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){
 			var oDeepEntry = oModel.getProperty("/Categories(7)");
@@ -5583,7 +5641,7 @@
 
 	QUnit.test("test getProperty with includeExpandEntries and cyclic dependencies", function(assert){
 		var done = assert.async();
-		removeSharedServicedata(sURI);
+		cleanSharedData();
 		var oModel = initModel(sURI, {json:false, useBatch: true});
 		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
 			oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){

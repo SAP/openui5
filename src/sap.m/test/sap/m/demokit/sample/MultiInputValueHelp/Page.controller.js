@@ -12,7 +12,7 @@ sap.ui.define([
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			// the default limit of the model is set to 100. We want to show all the entries.
 			oModel.setSizeLimit(1000000);
 			this.getView().setModel(oModel);

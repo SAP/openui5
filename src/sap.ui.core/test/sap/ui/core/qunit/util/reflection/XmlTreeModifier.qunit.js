@@ -287,6 +287,16 @@ function(
 		assert.strictEqual(XmlTreeModifier.getProperty(oInvisibleLabel, "design"), "Bold", "property from xml");
 	});
 
+	QUnit.test("applySettings", function (assert) {
+		var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
+		var aChildNodes = XmlTreeModifier._children(oVBox);
+
+		var oVisibleLabel = aChildNodes[1];
+		XmlTreeModifier.applySettings(oVisibleLabel, {text: "Test", design: "Bold" });
+		assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "design"), "Bold", "the design value is changed from applySettings");
+		assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "text"), "Test", "the text value is changed from applySettings");
+	});
+
 	QUnit.test("isPropertyInitial", function (assert) {
 		var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 		var aChildNodes = XmlTreeModifier._children(oVBox);

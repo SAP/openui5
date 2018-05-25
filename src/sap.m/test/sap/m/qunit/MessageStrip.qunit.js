@@ -393,4 +393,11 @@
 			"link aria-labelledby should point to the MessageStrip id");
 	});
 
+	QUnit.test("When we have a close button it should indicate that it closes a message strip", function (assert) {
+		var oCore = sap.ui.getCore();
+		assert.strictEqual(jQuery(CLASS_CLOSE_BUTTON).attr('title'),
+			oCore.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_CLOSE_BUTTON"),
+			"the title of the close button should indicate what it closes");
+	});
+
 })();

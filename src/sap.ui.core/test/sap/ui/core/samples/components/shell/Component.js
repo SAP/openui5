@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Component', 'sap/ui/core/Compon
 			rootUri: sServiceUrl+"/"
 		});
 
-		var path = jQuery.sap.getModulePath("samples.components.shell") + "/../../epmdata/";
+		var path = sap.ui.require.toUrl("samples/epmdata/");
 
 		oMockServer.simulate(path+"metadata.xml", path);
 		oMockServer.start();

@@ -141,7 +141,16 @@ function(
 					/**
 					 * Key of the selected item.
 					 *
-					 * <b>Note:</b> If duplicate keys exist, the first item matching the key is used.
+					 * <b>Notes:</b>
+					 * <ul>
+					 * <li> If duplicate keys exist, the first item matching the key is used.</li>
+					 * <li> If invalid or none <code>selectedKey</code> is used, the first item is
+					 * being selected.</li>
+					 * <li> Invalid or missing <code>selectedKey</code> leads to severe functional
+					 * issues in <code>sap.m.Table</code>, when the <code>sap.m.Select</code> is used inside a
+					 * <code>sap.m.Table</code> column.</li>
+					 * </ul>
+					 *
 					 * @since 1.11
 					 */
 					selectedKey: {

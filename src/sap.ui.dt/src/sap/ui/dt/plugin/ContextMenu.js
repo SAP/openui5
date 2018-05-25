@@ -335,9 +335,9 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._onClick = function (oEvent) {
 
-		if (!Device.os.ios && !oEvent.ctrlKey) {
+		if (!Device.os.ios) {
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-			if (oOverlay && oOverlay.isSelectable()) {
+			if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected()) {
 
 				if (this.isMenuOpeningLocked() && !this._bTouched) {
 					this.unlockMenuOpening();

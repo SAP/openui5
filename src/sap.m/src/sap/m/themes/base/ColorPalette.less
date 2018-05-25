@@ -2,22 +2,22 @@
 /* CSS for control sap.m/ColorPalette  */
 /* Base theme                          */
 /* ====================================*/
-@SWATCHES_PER_ROW: 5;
+@_sap_m_ColorPalette_SwatchesPerRow: 5;
 
-@SWATCH_CONTAINER_PADDING_LEFT_RIGHT_COZY: 0.6875rem;
-@SWATCH_CONTAINER_PADDING_TOP_BOTTOM_COZY: 0.3125rem;
-@SWATCH_WIDTH_HIT_AREA_COZY: 2.375rem;
-@SWATCH_WIDTH_COZY: 1.75rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCozy: 0.6875rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingTopBottomCozy: 0.3125rem;
+@_sap_m_ColorPalette_SwatchWidthHitAreaCozy: 2.375rem;
+@_sap_m_ColorPalette_SwatchWidthCozy: 1.75rem;
 
-@SWATCH_CONTAINER_PADDING_LEFT_RIGHT_COMPACT: 0.8125rem;
-@SWATCH_CONTAINER_PADDING_TOP_BOTTOM_COMPACT: 0.1875rem;
-@SWATCH_WIDTH_HIT_AREA_COMPACT: 1.625rem;
-@SWATCH_WIDTH_COMPACT: 1.25rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCompact: 0.8125rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingTopBottomCompact: 0.1875rem;
+@_sap_m_ColorPalette_SwatchWidthHitAreaCompact: 1.625rem;
+@_sap_m_ColorPalette_SwatchWidthCompact: 1.25rem;
 
-@SWATCH_CONTAINER_PADDING_LEFT_RIGHT_PHONE: 0.625rem;
-@SWATCH_CONTAINER_PADDING_TOP_BOTTOM_PHONE: 0.375rem;
-@SWATCH_MAX_WIDTH_PHONE: 4.5rem;
-@SWATCH_MARGIN_PHONE: 0.375rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingLeftRightPhone: 0.625rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingTopBottomPhone: 0.375rem;
+@_sap_m_ColorPalette_SwatchMaxWidthPhone: 4.5rem;
+@_sap_m_ColorPalette_SwatchMarginPhone: 0.375rem;
 
 .sapMColorPalette {
 	height: 100%;
@@ -163,18 +163,18 @@ html:not(.sap-phone) {
 
 	// Dimension and paddings of the Palette
 	.sapMColorPalette {
-		max-width: @SWATCHES_PER_ROW * @SWATCH_WIDTH_HIT_AREA_COZY + 2 * @SWATCH_CONTAINER_PADDING_LEFT_RIGHT_COZY;
-		min-width: @SWATCHES_PER_ROW * @SWATCH_WIDTH_HIT_AREA_COZY + 2 * @SWATCH_CONTAINER_PADDING_LEFT_RIGHT_COZY;
+		max-width: @_sap_m_ColorPalette_SwatchesPerRow * @_sap_m_ColorPalette_SwatchWidthHitAreaCozy + 2 * @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCozy;
+		min-width: @_sap_m_ColorPalette_SwatchesPerRow * @_sap_m_ColorPalette_SwatchWidthHitAreaCozy + 2 * @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCozy;
 		.sapMColorPaletteContent {
-			padding: @SWATCH_CONTAINER_PADDING_TOP_BOTTOM_COZY @SWATCH_CONTAINER_PADDING_LEFT_RIGHT_COZY;
+			padding: @_sap_m_ColorPalette_SwatchContainerPaddingTopBottomCozy @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCozy;
 		}
 	}
 	&.sapUiSizeCompact .sapMColorPalette,
 	& .sapUiSizeCompact .sapMColorPalette {
-		max-width: @SWATCHES_PER_ROW * @SWATCH_WIDTH_HIT_AREA_COMPACT + 2 * @SWATCH_CONTAINER_PADDING_LEFT_RIGHT_COMPACT;
-		min-width: @SWATCHES_PER_ROW * @SWATCH_WIDTH_HIT_AREA_COMPACT + 2 * @SWATCH_CONTAINER_PADDING_LEFT_RIGHT_COMPACT;
+		max-width: @_sap_m_ColorPalette_SwatchesPerRow * @_sap_m_ColorPalette_SwatchWidthHitAreaCompact + 2 * @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCompact;
+		min-width: @_sap_m_ColorPalette_SwatchesPerRow * @_sap_m_ColorPalette_SwatchWidthHitAreaCompact + 2 * @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCompact;
 		.sapMColorPaletteContent {
-			padding: @SWATCH_CONTAINER_PADDING_TOP_BOTTOM_COMPACT @SWATCH_CONTAINER_PADDING_LEFT_RIGHT_COMPACT;
+			padding: @_sap_m_ColorPalette_SwatchContainerPaddingTopBottomCompact @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCompact;
 		}
 	}
 	.sapMColorPalette {
@@ -186,15 +186,15 @@ html:not(.sap-phone) {
 			position: relative;
 			border: 1px solid @sapUiContentForegroundBorderColor;
 			border-radius: 0.125rem;
-			width: @SWATCH_WIDTH_COZY;
-			height: @SWATCH_WIDTH_COZY;
+			width: @_sap_m_ColorPalette_SwatchWidthCozy;
+			height: @_sap_m_ColorPalette_SwatchWidthCozy;
 			display: inline-block;
-			margin: (@SWATCH_WIDTH_HIT_AREA_COZY - @SWATCH_WIDTH_COZY)/2;
+			margin: (@_sap_m_ColorPalette_SwatchWidthHitAreaCozy - @_sap_m_ColorPalette_SwatchWidthCozy)/2;
 
 			&:hover { /* now the hit area (margin) gets occupied by the content*/
 				margin: 0;
-				width: @SWATCH_WIDTH_HIT_AREA_COZY;
-				height: @SWATCH_WIDTH_HIT_AREA_COZY;
+				width: @_sap_m_ColorPalette_SwatchWidthHitAreaCozy;
+				height: @_sap_m_ColorPalette_SwatchWidthHitAreaCozy;
 				> div {
 					border: 1px solid @sapUiGroupContentBackground;
 				}
@@ -231,14 +231,14 @@ html:not(.sap-phone) {
 	&.sapUiSizeCompact .sapMColorPalette,
 	& .sapUiSizeCompact .sapMColorPalette {
 		.sapMColorPaletteSquare {
-			width: @SWATCH_WIDTH_COMPACT;
-			height: @SWATCH_WIDTH_COMPACT;
+			width: @_sap_m_ColorPalette_SwatchWidthCompact;
+			height: @_sap_m_ColorPalette_SwatchWidthCompact;
 			display: inline-block;
-			margin: (@SWATCH_WIDTH_HIT_AREA_COMPACT - @SWATCH_WIDTH_COMPACT)/2;
+			margin: (@_sap_m_ColorPalette_SwatchWidthHitAreaCompact - @_sap_m_ColorPalette_SwatchWidthCompact)/2;
 			&:hover {
 				margin: 0;
-				width: @SWATCH_WIDTH_HIT_AREA_COMPACT;
-				height: @SWATCH_WIDTH_HIT_AREA_COMPACT;
+				width: @_sap_m_ColorPalette_SwatchWidthHitAreaCompact;
+				height: @_sap_m_ColorPalette_SwatchWidthHitAreaCompact;
 			}
 		}
 	}
@@ -271,7 +271,7 @@ html:not(.sap-phone)[data-sap-ui-browser^="ie"], html:not(.sap-phone)[data-sap-u
 	.sapMColorPaletteContent {
 		display: flex;
 		flex-wrap: wrap;
-		padding: @SWATCH_CONTAINER_PADDING_TOP_BOTTOM_PHONE @SWATCH_CONTAINER_PADDING_LEFT_RIGHT_PHONE;
+		padding: @_sap_m_ColorPalette_SwatchContainerPaddingTopBottomPhone @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightPhone;
 	}
 	.sapMColorPaletteContainer .sapMDialogScroll {
 		height: 100%;
@@ -282,18 +282,18 @@ html:not(.sap-phone)[data-sap-ui-browser^="ie"], html:not(.sap-phone)[data-sap-u
 	}
 	.sapMColorPaletteSquare {
 		width: 20%;
-		max-width: @SWATCH_MAX_WIDTH_PHONE + 2 * @SWATCH_MARGIN_PHONE; //+2*0.375 because the real square div is absolutely positioned and margins are simulated with top/bottom/left/right
-		max-height: @SWATCH_MAX_WIDTH_PHONE;
+		max-width: @_sap_m_ColorPalette_SwatchMaxWidthPhone + 2 * @_sap_m_ColorPalette_SwatchMarginPhone; //+2*0.375 because the real square div is absolutely positioned and margins are simulated with top/bottom/left/right
+		max-height: @_sap_m_ColorPalette_SwatchMaxWidthPhone;
 		position: relative;
 		padding-bottom: 20%;
 		& > div {
 			border: 1px solid @sapUiContentForegroundBorderColor;
 			border-radius: 0.125rem;
 			position: absolute;
-			top: @SWATCH_MARGIN_PHONE;
-			bottom: @SWATCH_MARGIN_PHONE;
-			left: @SWATCH_MARGIN_PHONE;
-			right: @SWATCH_MARGIN_PHONE;
+			top: @_sap_m_ColorPalette_SwatchMarginPhone;
+			bottom: @_sap_m_ColorPalette_SwatchMarginPhone;
+			left: @_sap_m_ColorPalette_SwatchMarginPhone;
+			right: @_sap_m_ColorPalette_SwatchMarginPhone;
 		}
 		&:active > div {
 			box-shadow: inset 0 0 0 1px @sapUiGroupContentBackground;
@@ -308,10 +308,10 @@ html:not(.sap-phone)[data-sap-ui-browser^="ie"], html:not(.sap-phone)[data-sap-u
 @media (orientation: landscape) {
 	.sap-phone {
 		.sapMColorPaletteSquare {
-			width: @SWATCH_MAX_WIDTH_PHONE + 2 * @SWATCH_MARGIN_PHONE;
-			max-width: @SWATCH_MAX_WIDTH_PHONE + 2 * @SWATCH_MARGIN_PHONE;
-			height: @SWATCH_MAX_WIDTH_PHONE + 2 * @SWATCH_MARGIN_PHONE; //default for widths up to 4.5 rem;
-			max-height: @SWATCH_MAX_WIDTH_PHONE + 2 * @SWATCH_MARGIN_PHONE;
+			width: @_sap_m_ColorPalette_SwatchMaxWidthPhone + 2 * @_sap_m_ColorPalette_SwatchMarginPhone;
+			max-width: @_sap_m_ColorPalette_SwatchMaxWidthPhone + 2 * @_sap_m_ColorPalette_SwatchMarginPhone;
+			height: @_sap_m_ColorPalette_SwatchMaxWidthPhone + 2 * @_sap_m_ColorPalette_SwatchMarginPhone; //default for widths up to 4.5 rem;
+			max-height: @_sap_m_ColorPalette_SwatchMaxWidthPhone + 2 * @_sap_m_ColorPalette_SwatchMarginPhone;
 			padding-bottom: 0;
 		}
 	}

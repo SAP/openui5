@@ -27,6 +27,7 @@ sap.ui.define([
 			this.model.setProperty("/constants", constants);
 			this.updateShowButton();
 			this._setContextSettings();
+			this._zoomUI();
 
 			this.bAdditionalViewLoaded = false;
 			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
@@ -35,6 +36,21 @@ sap.ui.define([
 					this.loadAdditionalUI();
 				}
 			}, this);
+		},
+
+		_zoomUI: function () {
+			var sZoomUI = window.localStorage.getItem("support-assistant-zoom-ui");
+			var sFontSize = "100%";
+
+			switch (sZoomUI) {
+				case "S":
+					sFontSize = "90%";
+					break;
+				default:
+					// noop
+			}
+
+			document.querySelector("html").style.fontSize = sFontSize;
 		},
 
 		loadAdditionalUI: function () {

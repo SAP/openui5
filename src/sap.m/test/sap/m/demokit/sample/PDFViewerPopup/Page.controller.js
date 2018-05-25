@@ -13,12 +13,12 @@ sap.ui.define([
 			this.getView().addDependent(this._pdfViewer);
 
 			var oSample1Model = new JSONModel({
-				Source: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample1.pdf"),
-				Preview: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample1.jpg")
+				Source: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup") + "/sample1.pdf",
+				Preview: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup") + "/sample1.jpg"
 			});
 			var oSample2Model = new JSONModel({
-				Source: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample2.pdf"),
-				Preview: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample2.jpg")
+				Source: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup") + "/sample2.pdf",
+				Preview: sap.ui.require.toUrl("sap/m/sample/PDFViewerPopup") + "/sample2.jpg"
 			});
 
 			this.byId('image1').setModel(oSample1Model);

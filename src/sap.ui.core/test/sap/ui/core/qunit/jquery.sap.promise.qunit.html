@@ -994,8 +994,7 @@
 			});
 		});
 
-/*
-		// This test is currently broken due to a Chrome 66 Bug:
+		// This test was broken in Chrome 66 and has been fixed with Chrome 66.0.3359.181
 		// https://bugs.chromium.org/p/chromium/issues/detail?id=830565
 		QUnit.test(sTestPrefix + "Error in then: resolve/reject not yet called", function(assert){
 			var done = assert.async();
@@ -1014,7 +1013,6 @@
 				done();
 			});
 		});
-*/
 
 		QUnit.module(sTestPrefix + "snyc");
 

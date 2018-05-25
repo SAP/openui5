@@ -5,18 +5,7 @@
 .sapMColumnHeader {
 	display: flex;
 	flex: 1 1 auto;
-	font-size: @sapMFontMediumSize;
-	font-weight: normal;
 	padding: .875rem .5rem 1rem;
-
-	&.sapMColumnHeaderActive:hover {
-		background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
-	}
-
-	&.sapMColumnHeaderActive:active {
-		color: @sapUiListActiveTextColor;
-		background-color: @sapUiListActiveBackground;
-	}
 }
 
 .sapMColumnHeaderText {
@@ -24,11 +13,32 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	font-weight: normal;
+	font-size: @sapMFontMediumSize;
 }
 
-.sapMColumnHeaderFocusable:focus {
+.sapMColumnHeaderActive:hover {
+	background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
+}
+
+.sapMColumnHeaderActive:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
+	outline-offset: -2px;
+}
+
+.sapMColumnHeaderActive:active {
+	color: @sapUiListActiveTextColor;
+	background-color: @sapUiListActiveBackground;
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.sapMColumnHeaderActive:active > .sapMColumnHeaderContent {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMColumnHeaderActive > .sapMColumnHeaderContent {
+	cursor: default;
+	width: 100%;
 }
 
 .sapMColumnHeaderIcons {
@@ -42,6 +52,10 @@
 /* padding for sap.m.ColumnHeader */
 .sapMListTblHighlightCol + .sapMListTblCell.sapMListTblCellCH {
 	padding-left: .5rem;
+}
+
+.sapMListTblCellCH.sapMListTblCell:nth-last-child(2) {
+	padding-right: .5rem;
 }
 
 .sapMListTblCell.sapMListTblCellCH {
@@ -63,4 +77,8 @@
 
 .sapUiSizeCompact .sapMListTblHighlightCol + .sapMListTblCell.sapMListTblCellCH {
 	padding-left: .5rem;
+}
+
+.sapUiSizeCompact .sapMListTblCellCH.sapMListTblCell:nth-last-child(2) {
+	padding-right: .5rem;
 }

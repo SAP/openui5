@@ -35,12 +35,6 @@
 
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
-        <component>
-            <name>CA-UI5-TBL</name>
-            <modules>
-                <module>sap/ui/layout/Grid</module>
-            </modules>
-        </component>
     </ownership>
 
   </appData>

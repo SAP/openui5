@@ -72,14 +72,12 @@ sap.ui.define([
 						if (vReason === this.NOT_FOUND) {
 							this._oContainerPage.setBusy(false);
 							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
-						} else {
-							// Handle named errors
-							if (vReason.name) {
-								Log.error(vReason.name, function () {
-									// Return error object for Support Info
-									return vReason;
-								});
-							}
+						} else if (typeof vReason === "string") {
+							Log.error(vReason);
+						} else if (vReason.name) {
+							Log.error(vReason.name, vReason.message);
+						} else if (vReason.message) {
+							Log.error(vReason.message);
 						}
 					}.bind(this));
 			},
@@ -175,7 +173,8 @@ sap.ui.define([
 					oLibItem = aLibsData[i];
 					if (oLibItem.name === this._sTopicid) {
 						// Check if we are allowed to display the requested symbol
-						if (this._aAllowedMembers.indexOf(oLibItem.visibility) >= 0) {
+						// BCP: 1870269087 item may not have visibility info at all. In this case we show the item
+						if (oLibItem.visibility === undefined || this._aAllowedMembers.indexOf(oLibItem.visibility) >= 0) {
 							return oLibItem;
 						} else {
 							// We found the requested symbol but we are not allowed to show it.

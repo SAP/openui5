@@ -99,7 +99,7 @@
 			"exclamation"
 		]
 	},
-	"system-HANA": {
+	"system-hana": {
 		"tags": [
 			"hana",
 			"system",
@@ -146,7 +146,7 @@
 			"x"
 		]
 	},
-	"verify-API": {
+	"verify-api": {
 		"tags": [
 			"wrench",
 			"question mark",
@@ -483,6 +483,453 @@
 			"event",
 			"time",
 			"boundary"
+		]
+	},
+	"block": {
+		"tags": [
+			"cube",
+			"square",
+			"modular",
+			"system",
+			"collection",
+			"box",
+			"object"
+		]
+	},
+	"constrain-block": {
+		"tags": [
+			"block",
+			"cube",
+			"braces",
+			"brackets",
+			"analysis",
+			"model"
+		]
+	},
+	"actor": {
+		"tags": [
+			"person",
+			"individual",
+			"user",
+			"human"
+		]
+	},
+	"instance-specification": {
+		"tags": [
+			"block",
+			"brick",
+			"model",
+			"system",
+			"part",
+			"module"
+		]
+	},
+	"value-type": {
+		"tags": [
+			"slider",
+			"define",
+			"system",
+			"panel",
+			"variant",
+			"control"
+		]
+	},
+	"interface-block": {
+		"tags": [
+			"hexagon",
+			"code",
+			"design",
+			"port"
+		]
+	},
+	"unit": {
+		"tags": [
+			"measure",
+			"ruler",
+			"quantity",
+			"magnitude",
+			"education"
+		]
+	},
+	"signal": {
+		"tags": [
+			"tower",
+			"information",
+			"network",
+			"radio",
+			"wave"
+		]
+	},
+	"quantity-kind": {
+		"tags": [
+			"measure",
+			"quantity",
+			"magnitude",
+			"unit",
+			"beaker",
+			"jug",
+			"capacity"
+		]
+	},
+	"item-flow": {
+		"tags": [
+			"flow",
+			"association",
+			"connector"
+		]
+	},
+	"dependency": {
+		"tags": [
+			"link",
+			"interrupted",
+			"dependent"
+		]
+	},
+	"generalization": {
+		"tags": [
+			"link",
+			"general"
+		]
+	},
+	"aggregation": {
+		"tags": [
+			"link",
+			"aggregate",
+			"collect"
+		]
+	},
+	"composition": {
+		"tags": [
+			"link",
+			"compose"
+		]
+	},
+	"association": {
+		"tags": [
+			"link",
+			"associate"
+		]
+	},
+	"port": {
+		"tags": [
+			"external",
+			"entity",
+			"point",
+			"block",
+			"modular"
+		]
+	},
+	"proxy-port": {
+		"tags": [
+			"external",
+			"entity",
+			"point",
+			"block",
+			"modular",
+			"proxy",
+			"system",
+			"boundary"
+		]
+	},
+	"full-port": {
+		"tags": [
+			"external",
+			"entity",
+			"point",
+			"block",
+			"modular",
+			"full",
+			"system",
+			"boundary"
+		]
+	},
+	"operations": {
+		"tags": [
+			"setting",
+			"arrow",
+			"circle",
+			"development"
+		]
+	},
+	"constrains": {
+		"tags": [
+			"brackets"
+		]
+	},
+	"receptions": {
+		"tags": [
+			"arrow",
+			"hexagon",
+			"receive",
+			"input",
+			"inside"
+		]
+	},
+	"references": {
+		"tags": [
+			"connection",
+			"block",
+			"relation",
+			"connect",
+			"influence"
+		]
+	},
+	"parts": {
+		"tags": [
+			"puzzle",
+			"piece",
+			"game",
+			"module",
+			"match"
+		]
+	},
+	"flow": {
+		"tags": [
+			"arrow",
+			"direction",
+			"cross"
+		]
+	},
+	"values": {
+		"tags": [
+			"object",
+			"code"
+		]
+	},
+	"bill-of-material": {
+		"tags": [
+			"list",
+			"material",
+			"manufacture",
+			"list",
+			"bom"
+		]
+	},
+	"document-info-recording": {
+		"tags": [
+			"document",
+			"link"
+		]
+	},
+	"use-case-diagram": {
+		"tags": [
+			"diagram",
+			"oval"
+		]
+	},
+	"bdd-diagram": {
+		"tags": [
+			"diagram",
+			"box"
+		]
+	},
+	"requirement-diagram": {
+		"tags": [
+			"diagram",
+			"need",
+			"note",
+			"notepad"
+		]
+	},
+	"package-diagram": {
+		"tags": [
+			"diagram",
+			"folder"
+		]
+	},
+	"internal-block-diagram": {
+		"tags": [
+			"diagram",
+			"box"
+		]
+	},
+	"requirement-containment-relationship": {
+		"tags": [
+			"diagram",
+			"box"
+		]
+	},
+	"use-case": {
+		"tags": [
+			"oval"
+		]
+	},
+	"use-case-extension-point": {
+		"tags": [
+			"oval",
+			"dots"
+		]
+	},
+	"communication-path": {
+		"tags": [
+			"line",
+			"diagonal"
+		]
+	},
+	"note-connection": {
+		"tags": [
+			"line",
+			"diagonal",
+			"dotted"
+		]
+	},
+	"subject": {
+		"tags": [
+			"window"
+		]
+	},
+	"auto-layout": {
+		"tags": [
+			"compose",
+			"arrange"
+		]
+	},
+	"required-interface": {
+		"tags": [
+			"receive",
+			"import",
+			"input"
+		]
+	},
+	"provided-interface": {
+		"tags": [
+			"deliver",
+			"export",
+			"output"
+		]
+	},
+	"sub-content": {
+		"tags": [
+			"folder",
+			"container"
+		]
+	},
+	"connector": {
+		"tags": [
+			"connect",
+			"connection",
+			"number"
+		]
+	},
+	"local-process-call": {
+		"tags": [
+			"window",
+			"arrow"
+		]
+	},
+	"aggregator": {
+		"tags": [
+			"tree",
+			"gather",
+			"collect"
+		]
+	},
+	"splitter": {
+		"tags": [
+			"tree"
+		]
+	},
+	"converter": {
+		"tags": [
+			"tree",
+			"extractor",
+			"arrow",
+			"document",
+			"file"
+		]
+	},
+	"content-modifier": {
+		"tags": [
+			"letter",
+			"mail",
+			"pen",
+			"email",
+			"e-mail",
+			"electronic mail",
+			"envelope"
+		]
+	},
+	"message-start-event": {
+		"tags": [
+			"mail",
+			"circle",
+			"email",
+			"e-mail",
+			"electronic mail",
+			"envelope",
+			"mail",
+			"correspondence",
+			"receiving",
+			"sending",
+			"standard"
+		]
+	},
+	"message-end-event": {
+		"tags": [
+			"mail",
+			"circle",
+			"email",
+			"e-mail",
+			"electronic mail",
+			"envelope",
+			"mail",
+			"correspondence",
+			"receiving",
+			"sending",
+			"standard"
+		]
+	},
+	"escalation-end-event": {
+		"tags": [
+			"arrow",
+			"circle",
+			"responsibility",
+			"standard"
+		]
+	},
+	"start-timer-event": {
+		"tags": [
+			"clock",
+			"circle",
+			"standard",
+			"timer",
+			"span",
+			"timeout",
+			"time"
+		]
+	},
+	"error-start-event": {
+		"tags": [
+			"circle",
+			"lightning",
+			"flash"
+		]
+	},
+	"error-end-event": {
+		"tags": [
+			"circle",
+			"lightning",
+			"flash"
+		]
+	},
+	"content-enricher": {
+		"tags": [
+			"square",
+			"arrow",
+			"box"
+		]
+	},
+	"realization": {
+		"tags": [
+			"sysml",
+			"arrow"
+		]
+	},
+	"interface": {
+		"tags": [
+			"sysml",
+			"i",
+			"hexagon"
 		]
 	}
 }

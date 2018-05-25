@@ -1,0 +1,123 @@
+{
+	"start_url": "index.html",
+	"_version": "1.9.0",
+	"sap.app": {
+		"id": "cp.opa.test.app",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"tags": {
+			"keywords": ["ColorPalette", "integration", "test", "example", "OPA"]
+		},
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-CTR-BAL",
+		"dataSources": {
+			"oDataV2": {
+				"uri": "/sap/opu/odata/snce/PO_S_SRV;v=2/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "model/localService/metadata.xml",
+					"maxAge": 360
+				}
+			},
+			"oDataV4": {
+				"uri": "/sap/opu/odata/snce/PO_S_SRV;v=4/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0",
+					"localUri": "model/localService/metadata.xml",
+					"maxAge": 360
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://task"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": ["sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcw"]
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.30",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"json": {
+				"preload": true,
+				"uri": "model/colorpalette.json",
+				"type": "sap.ui.model.json.JSONModel",
+				"settings": {}
+			},
+			"device": {
+				"preload": true,
+				"type": "sap.ui.model.json.JSONModel",
+				"settings": {
+					"defaultBindingMode": "OneWay"
+				}
+			},
+			"i18n": {
+				"preload": true,
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "cp.opa.test.app.i18n.i18n"
+				}
+			}
+		},
+		"rootView": {
+			"async": true,
+			"id": "main",
+			"type": "XML",
+			"viewName": "cp.opa.test.app.views.App"
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"routerClass": "sap.m.routing.Router",
+				"homeRoute": "main",
+				"viewType": "XML",
+				"viewPath": "cp.opa.test.app.views",
+				"controlId": "rootApp",
+				"controlAggregation": "pages",
+				"bypassed": {
+					"target": "notFound"
+				}
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": "home"
+				}
+			],
+			"targets": {
+				"home": {
+				  "viewName": "Home",
+				  "viewId": "myHomeView",
+				  "viewLevel": 1
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFoundPage",
+					"viewLevel": 1
+				}
+			}
+		}
+	}
+}

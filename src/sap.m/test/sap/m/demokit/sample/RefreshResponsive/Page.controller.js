@@ -35,7 +35,7 @@ sap.ui.define([
 
 			// load product data
 			this._productCount = 0;
-			jQuery.getJSON(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), function (oData) {
+			jQuery.getJSON(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", function (oData) {
 				this._productData = oData;
 				this._pushNewProduct();
 			}.bind(this));

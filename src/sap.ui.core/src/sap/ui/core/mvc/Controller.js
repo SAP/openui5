@@ -132,10 +132,14 @@ sap.ui.define([
 					//allow to override methods of other controller extensions
 						for (var sExtensionNamespace in oOverrides.extension) {
 							oOrigExtensionMetadata = oExtensions[sExtensionNamespace].extension.getMetadata();
-							var oOrigExtension = jQuery.sap.getObject(sExtensionNamespace, null, oController.extension);
+							var oOrigExtensionInterface = jQuery.sap.getObject(sExtensionNamespace, null, oController.extension);
+							var oOrigExtension = oExtensions[sExtensionNamespace].extension;
 							var oExtensionOverrides = oOverrides.extension[sExtensionNamespace];
 							for (sExtensionOverride in oExtensionOverrides) {
 								if (!oOrigExtensionMetadata.isMethodFinal(sExtensionOverride)) {
+									//override interface
+									ControllerExtension.overrideMethod(sExtensionOverride, oOrigExtensionInterface, oExtensionOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
+									//override Extension so 'this' is working for overrides
 									ControllerExtension.overrideMethod(sExtensionOverride, oOrigExtension, oExtensionOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
 								} else {
 									jQuery.sap.log.error("Method '" + sExtensionOverride + "' of extension '" + sExtensionNamespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
@@ -151,8 +155,10 @@ sap.ui.define([
 			var oExtensionMetadata = oExtension.getMetadata();
 			var mControllerLifecycleMethods = oExtensionMetadata.getLifecycleConfiguration();
 			for (var sMember in mControllerLifecycleMethods) {
-				ControllerExtension.overrideMethod(sMember, oController, oExtension, oExtension, mControllerLifecycleMethods[sMember]);
-				oExtensionInfo.reloadNeeded = true;
+				if (sMember in oExtension) {
+					ControllerExtension.overrideMethod(sMember, oController, oExtension, oExtension, mControllerLifecycleMethods[sMember]);
+					oExtensionInfo.reloadNeeded = true;
+				}
 			}
 
 			var oExtensionInterface = oExtension.getInterface();

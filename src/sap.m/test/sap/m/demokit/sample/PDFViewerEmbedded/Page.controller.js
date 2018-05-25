@@ -8,8 +8,8 @@ sap.ui.define([
 	var PageController = Controller.extend("sap.m.sample.PDFViewerEmbedded.Page", {
 
 		onInit : function () {
-			this._sValidPath = jQuery.sap.getModulePath("sap.m.sample.PDFViewerEmbedded", "/sample.pdf");
-			this._sInvalidPath = jQuery.sap.getModulePath("sap.m.sample.PDFViewerEmbedded", "/sample_nonexisting.pdf");
+			this._sValidPath = sap.ui.require.toUrl("sap/m/sample/PDFViewerEmbedded") + "/sample.pdf";
+			this._sInvalidPath = sap.ui.require.toUrl("sap/m/sample/PDFViewerEmbedded") + "/sample_nonexisting.pdf";
 			this._oModel = new JSONModel({
 				Source: this._sValidPath,
 				Title: "My Custom Title",

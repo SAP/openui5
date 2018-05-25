@@ -11016,6 +11016,120 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.module("Input Text Selecting without data binding", {
+			beforeEach: function () {
+				this.comboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: 'a',
+							text: 'a'
+						}),
+						new sap.ui.core.Item({
+							key: 'aa',
+							text: 'aa'
+						}),
+						new sap.ui.core.Item({
+							key: 'aaa',
+							text: 'aaa'
+						}),
+						new sap.ui.core.Item({
+							key: 'b',
+							text: 'b'
+						}),
+						new sap.ui.core.Item({
+							key: 'c',
+							text: 'c'
+						})
+					],
+					selectionChange: function() {
+						this.invalidate();
+					}
+				}).placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.comboBox.destroy();
+				this.comboBox = null;
+			}
+		});
+
+		QUnit.test('Selection when typing and focus in', function (assert) {
+			this.comboBox._$input.focus().val("a").trigger("input");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			this.comboBox._$input.focus().val("aa").trigger("input");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			var selectedText = this.comboBox._$input.getSelectedText();
+			assert.equal(selectedText, "", "There is no selected text while typing");
+
+			this.comboBox._$input.blur();
+			this.clock.tick(500);
+			this.comboBox._$input.focus();
+			this.comboBox.onfocusin({});
+
+			this.clock.tick(500);
+
+			selectedText = this.comboBox._$input.getSelectedText();
+			assert.equal(selectedText, "aa", "The text inside the combo box is selected on focus in");
+		});
+
+		QUnit.module("Selection when typing non ASCII characters", {
+			beforeEach: function () {
+				var oSpecialCharsModel = new sap.ui.model.json.JSONModel({
+					"special": [
+						{"text" : "product", "key" : "productId"},
+						{"text" : "näme", "key" : "name"},
+						{"text" : "näme1", "key" : "name1"},
+						{"text" : "näme11", "key" : "name11"}
+					]
+				});
+
+				this.comboBox = new sap.m.ComboBox({
+					items: {
+						path: "/special",
+						template: new sap.ui.core.ListItem({
+							key: "{key}",
+							text: "{text}"
+						})
+					}
+				}).placeAt("content");
+
+				this.comboBox.setModel(oSpecialCharsModel);
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.comboBox.destroy();
+				this.comboBox = null;
+			}
+		});
+
+		QUnit.test('Input text selection "without" re-rendering on selection change', function (assert) {
+
+			this.comboBox._$input.focus().val("n").trigger("input");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			var selectedText = this.comboBox._$input.getSelectedText();
+			assert.equal(selectedText, "äme", "Selected text is correct");
+		});
+
+		QUnit.test('Input text selection "with" re-rendering on selection change', function (assert) {
+			this.comboBox.attachEvent('selectionChange', function () {
+				this.comboBox.rerender();
+			}.bind(this));
+
+			this.comboBox._$input.focus().val("n").trigger("input");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			var selectedText = this.comboBox._$input.getSelectedText();
+			assert.equal(selectedText, "äme", "Selected text is correct");
+		});
 
 		</script>
 	</head>

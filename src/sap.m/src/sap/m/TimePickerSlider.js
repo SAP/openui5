@@ -442,6 +442,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			var iKC = oEvent.which || oEvent.keyCode,
 				oKCs = jQuery.sap.KeyCodes;
 
+			if (iKC >= oKCs.NUMPAD_0 && iKC <= oKCs.NUMPAD_9){
+				iKC = this._convertNumPadToNumKeyCode(iKC);
+			}
+
 			//we only recieve uppercase codes here, which is nice
 			if ((iKC >= oKCs.A && iKC <= oKCs.Z)
 				|| (iKC >= oKCs.DIGIT_0 && iKC <= oKCs.DIGIT_9)) {
@@ -1130,6 +1134,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			});
 
 			this.setAggregation("_arrowDown", oArrowDown);
+		};
+
+		TimePickerSlider.prototype._convertNumPadToNumKeyCode = function (iKeyCode) {
+			var oKCs = jQuery.sap.KeyCodes;
+
+			// Translate keypad code to number row code
+			// The difference between NUM pad numbers and numbers in keycode is 48
+			if (iKeyCode >= oKCs.NUMPAD_0 && iKeyCode <= oKCs.NUMPAD_9){
+				iKeyCode -= 48;
+			}
+
+			return iKeyCode;
 		};
 
 		/**

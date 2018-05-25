@@ -383,7 +383,7 @@
 	list.addItem(markersAndStatuses);
 
 	var app = new sap.m.App();
-	var page = new sap.m.Page({title: "Object List Item Test"});
+	var page = new sap.m.Page("testPage", {title: "Object List Item Test"});
 	app.setInitialPage(page.getId());
 	page.setEnableScrolling(true);
 	app.addPage(page);

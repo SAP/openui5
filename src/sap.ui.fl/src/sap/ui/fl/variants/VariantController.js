@@ -61,7 +61,7 @@ sap.ui.define([
 		return this._sAppVersion;
 	};
 
-	VariantController.prototype._setChangeFileContent = function (oChangeFileContent, oComponent) {
+	VariantController.prototype._setChangeFileContent = function (oChangeFileContent, mTechnicalParameters) {
 		var oCacheEntry = Cache.getEntry(this.getComponentName(), this.getAppVersion());
 		if (Object.keys(this._mVariantManagement).length === 0) {
 			this._mVariantManagement = {};
@@ -72,7 +72,6 @@ sap.ui.define([
 				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
 				var aVariants = oVariantManagementReference.variants.concat();
 				var sVariantFromUrl;
-				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
 
 				var iIndex = -1;
 				aVariants.forEach(function (oVariant, index) {

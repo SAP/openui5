@@ -92,7 +92,7 @@ sap.ui.define([
 						oChange.resetUndoOperations();
 					}
 					// check if change belongs to a composite command
-					var sCompositeId = oChange.getDefinition().compositeCommand;
+					var sCompositeId = oChange.getDefinition().support.compositeCommand;
 					if (sCompositeId) {
 						if (!mComposite[sCompositeId]) {
 							mComposite[sCompositeId] = new CompositeCommand();

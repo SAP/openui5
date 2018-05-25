@@ -1,0 +1,31 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "561771d27be0a2217015697316ae18a8ab5cd142",
+        "type": "FIX",
+        "text": " m.App: Applied transparent bg in belize_plus",
+        "references": []
+      },
+      {
+        "id": "215eeb642b45961cf47956b503622c511f8f3f54",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": []
+      },
+      {
+        "id": "11c596df09e94695f28bb5e7d98e17be55370f4e",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      },
+      {
+        "id": "f8170bcdfac5faa4ab7fdc269fe0f0b618674998",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Border is now correct",
+        "references": []
+      }
+    ]
+  }
+}

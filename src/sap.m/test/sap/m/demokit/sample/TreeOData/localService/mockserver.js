@@ -20,7 +20,7 @@ sap.ui.define([
 				autoRespondAfter: 1000
 			});
 
-			sLocalServicePath = jQuery.sap.getModulePath("sap.m.sample.TreeOData.localService");
+			sLocalServicePath = sap.ui.require.toUrl("sap/m/sample/TreeOData/") + "localService";
 
 			// simulate
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {

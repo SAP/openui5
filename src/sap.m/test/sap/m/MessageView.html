@@ -390,7 +390,10 @@
 
 		var oMessagePopoverButton = new sap.m.Button("mPopoverButton", {
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
-			text: "Standard MessagePopover",
+			text: "MessagePopover",
+			layoutData: [new sap.m.OverflowToolbarLayoutData({
+				closeOverflowOnInteraction: false,
+			})],
 			type: sap.m.ButtonType.Emphasized,
 			press: function () {
 				oMessagePopover.toggle(this);
@@ -399,7 +402,10 @@
 
 		var oMessageViewPopoverButton = new sap.m.Button("mViewButton", {
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
-			text: "MessageView in standard Popover",
+			text: "MV in Popover",
+			layoutData: [new sap.m.OverflowToolbarLayoutData({
+				closeOverflowOnInteraction: false,
+			})],
 			type: sap.m.ButtonType.Emphasized,
 			press: function () {
 				oPopover.openBy(this);
@@ -408,7 +414,10 @@
 
 		var oMessageViewPopoverButton2 = new sap.m.Button("mViewButton2", {
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
-			text: "MessageView with one item",
+			text: "MV - one item",
+			layoutData: [new sap.m.OverflowToolbarLayoutData({
+				closeOverflowOnInteraction: false,
+			})],
 			type: sap.m.ButtonType.Emphasized,
 			press: function () {
 				oPopoverWithOneItem.openBy(this);
@@ -417,7 +426,10 @@
 
 		var oMessageViewPopoverButton3 = new sap.m.Button("mViewButton3", {
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
-			text: "MessageView - one type",
+			text: "MV - one type",
+			layoutData: [new sap.m.OverflowToolbarLayoutData({
+				closeOverflowOnInteraction: false,
+			})],
 			type: sap.m.ButtonType.Emphasized,
 			press: function () {
 				oPopoverWithOneItemType.openBy(this);
@@ -426,8 +438,11 @@
 
 		var oMessageViewPopoverButton4 = new sap.m.Button("mViewButton6", {
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
-			text: "MessageView w custom button",
+			text: "Custom button MV",
 			type: sap.m.ButtonType.Emphasized,
+			layoutData: [new sap.m.OverflowToolbarLayoutData({
+				closeOverflowOnInteraction: false,
+			})],
 			press: function () {
 				oPopoverWithHeader.openBy(this);
 			}
@@ -437,6 +452,9 @@
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
 			text: "Collapsed MP",
 			type: sap.m.ButtonType.Emphasized,
+			layoutData: [new sap.m.OverflowToolbarLayoutData({
+				closeOverflowOnInteraction: false,
+			})],
 			press: function () {
 				oCollapsedPopover.openBy(this);
 			}
@@ -449,10 +467,21 @@
 
 
 		var page2 = new sap.m.Page("page2", {
+			headerContent: new sap.m.Toolbar({
+				content: [
+					new sap.m.ToolbarSpacer(),
+					new sap.m.CheckBox("compactMode", {
+						selected: false,
+						text: "Compact mode",
+						select: function () {
+							jQuery("body").toggleClass("sapUiSizeCompact");
+						}
+					})]
+			}),
 			content: [
 				oMessageViewPage
 			],
-			footer: new sap.m.Toolbar({
+			footer: new sap.m.OverflowToolbar({
 				content: [
 					new sap.m.ToolbarSpacer(),
 					oMessagePopoverButton,
@@ -461,13 +490,6 @@
 					oMessageViewPopoverButton3,
 					oMessageViewPopoverButton4,
 					oMessageViewPopoverButton5,
-					new sap.m.CheckBox("compactMode", {
-						selected: false,
-						text: "Compact mode",
-						select: function () {
-							jQuery("body").toggleClass("sapUiSizeCompact");
-						}
-					}),
 					new sap.m.ToolbarSpacer()
 				]
 			})

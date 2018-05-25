@@ -8,11 +8,11 @@ sap.ui.define([
 	return {
 
 		init: function () {
-			var sManifestUrl = jQuery.sap.getModulePath(_sAppModulePath + "manifest", ".json"),
-				sJsonFilesUrl = jQuery.sap.getModulePath(_sJsonFilesModulePath),
+			var sManifestUrl = sap.ui.require.toUrl(_sAppModulePath + "manifest.json"),
+				sJsonFilesUrl = sap.ui.require.toUrl(_sJsonFilesModulePath),
 				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
 				oMainDataSource = oManifest["sap.app"].dataSources.employeeRemote,
-				sMetadataUrl = jQuery.sap.getModulePath(_sAppModulePath + oMainDataSource.settings.localUri.replace(".xml", ""), ".xml");
+				sMetadataUrl = sap.ui.require.toUrl(_sAppModulePath + oMainDataSource.settings.localUri);
 
 			// create
 			var oMockServer = new MockServer({

@@ -67,16 +67,22 @@ sap.ui.define([
 
 			/**
 			 * The color of the Icon. If color is not defined here, the Icon inherits the color from its DOM parent.
+			 *
+			 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
 			 */
 			color : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
 			 * This color is shown when icon is hovered. This property has no visual effect when run on mobile device.
+			 *
+			 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
 			 */
 			hoverColor : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
 			 * This color is shown when icon is pressed/activated by the user.
+			 *
+			 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
 			 */
 			activeColor : {type : "string", group : "Appearance", defaultValue : null},
 
@@ -92,16 +98,22 @@ sap.ui.define([
 
 			/**
 			 * Background color of the Icon in normal state.
+			 *
+			 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
 			 */
 			backgroundColor : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
 			 * Background color for Icon in hover state. This property has no visual effect when run on mobile device.
+			 *
+			 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
 			 */
 			hoverBackgroundColor : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
 			 * Background color for Icon in active state.
+			 *
+			 * The property can be set with {@link sap.ui.core.CSSColor CSS Color} or {@link sap.ui.core.IconColor Semantic Icon Color}.
 			 */
 			activeBackgroundColor : {type : "string", group : "Appearance", defaultValue : null},
 

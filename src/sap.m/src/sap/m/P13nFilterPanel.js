@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nFilterPanel.
 sap.ui.define([
-	'./P13nConditionPanel', './P13nPanel', './library', 'sap/m/Panel'
-], function(P13nConditionPanel, P13nPanel, library, Panel) {
+	'./P13nConditionPanel', './P13nPanel', './library', 'sap/m/Panel', './P13nFilterItem'
+], function(P13nConditionPanel, P13nPanel, library, Panel, P13nFilterItem) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
@@ -107,7 +107,34 @@ sap.ui.define([
 				/**
 				 * Event raised if a filter item has been updated.
 				 */
-				updateFilterItem: {}
+				updateFilterItem: {},
+
+				/**
+				 * Event raised if a filter item has been added, updated or removed.
+				 * @experimental Since version 1.56
+				 */
+				changeFilterItems: {
+					parameters: {
+						/**
+						 * new added FilterItem
+						 */
+						addItem: {
+							type: "object"
+						},
+						/**
+						 * updated FilterItem
+						 */
+						updateItem: {
+							type: "object"
+						},
+						/**
+						 * removed FilterItem
+						 */
+						removeItem: {
+							type: "object"
+						}
+					}
+				}
 			}
 		},
 		renderer: function(oRm, oControl) {
@@ -523,6 +550,7 @@ sap.ui.define([
 					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_),
 					maxLength: fGetValueOfProperty("maxLength", oContext, oItem_),
 					type: fGetValueOfProperty("type", oContext, oItem_),
+					oType: fGetValueOfProperty("oType", oContext, oItem_),
 					formatSettings: fGetValueOfProperty("formatSettings", oContext, oItem_),
 					precision: fGetValueOfProperty("precision", oContext, oItem_),
 					scale: fGetValueOfProperty("scale", oContext, oItem_),
@@ -613,15 +641,15 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.updateFilterItems = function(sReason) {
-        this.updateAggregation("filterItems");
+		this.updateAggregation("filterItems");
 
-        if (sReason === "change" && !this._bIgnoreBindCalls) {
-            this._bUpdateRequired = true;
-            this.invalidate();
-        }
-    };
+		if (sReason === "change" && !this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+			this.invalidate();
+		}
+	};
 
-    P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
+	P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
 		oFilterItem = this.removeAggregation("filterItems", oFilterItem, true);
 
 		if (!this._bIgnoreBindCalls) {
@@ -673,72 +701,85 @@ sap.ui.define([
 				return iConditionIndex < 0;
 			}, this);
 
-	// that.getFilterItems().forEach(function(oItem, i) {
-	// window.console.log(i+ " Items: " + oItem.getValue1());
-	// }, this);
-	//
-	// var oData = that.getModel().getData();
-	// oData.persistentData.filter.filterItems.forEach(function(oItem, i) {
-	// window.console.log(i+ " model: " + oItem.value1);
-	// });
+			switch (sOperation) {
+				case "update":
+					oFilterItem = that.getFilterItems()[iIndex];
+					if (oFilterItem) {
+						oFilterItem.setExclude(oNewData.exclude);
+						oFilterItem.setColumnKey(oNewData.keyField);
+						oFilterItem.setOperation(oNewData.operation);
+						oFilterItem.setValue1(oNewData.value1);
+						oFilterItem.setValue2(oNewData.value2);
+					}
+					that.fireUpdateFilterItem({
+						key: sKey,
+						index: iIndex,
+						filterItemData: oFilterItem
+					});
+					that.fireChangeFilterItems({
+						updateItem: {
+							key: sKey,
+							index: iIndex,
+							columnKey: oNewData.keyField,
+							operation: oNewData.operation,
+							exclude: oNewData.exclude,
+							value1: oNewData.value1,
+							value2: oNewData.value2
+						}
+					});
+					break;
+				case "add":
+					if (iConditionIndex >= 0) {
+						iIndex++;
+					}
 
-			if (sOperation === "update") {
-				oFilterItem = that.getFilterItems()[iIndex];
-				if (oFilterItem) {
-					oFilterItem.setExclude(oNewData.exclude);
-					oFilterItem.setColumnKey(oNewData.keyField);
-					oFilterItem.setOperation(oNewData.operation);
+					oFilterItem = new P13nFilterItem({
+						columnKey: oNewData.keyField,
+						exclude: oNewData.exclude,
+						operation: oNewData.operation
+					});
 					oFilterItem.setValue1(oNewData.value1);
 					oFilterItem.setValue2(oNewData.value2);
-				}
-				that.fireUpdateFilterItem({
-					key: sKey,
-					index: iIndex,
-					filterItemData: oFilterItem
-				});
-				that._notifyChange();
-			}
-			if (sOperation === "add") {
-				if (iConditionIndex >= 0) {
-					iIndex++;
-				}
 
-				oFilterItem = new sap.m.P13nFilterItem({
-					key: sKey,
-					columnKey: oNewData.keyField,
-					exclude: oNewData.exclude,
-					operation: oNewData.operation
-				});
-				oFilterItem.setValue1(oNewData.value1);
-				oFilterItem.setValue2(oNewData.value2);
-				that._bIgnoreBindCalls = true;
-				that.fireAddFilterItem({
-					key: sKey,
-					index: iIndex,
-					filterItemData: oFilterItem
-				});
-				that._bIgnoreBindCalls = false;
-				that._notifyChange();
-			}
-			if (sOperation === "remove") {
-				that._bIgnoreBindCalls = true;
-				that.fireRemoveFilterItem({
-					key: sKey,
-					index: iIndex
-				});
-				that._bIgnoreBindCalls = false;
-				that._notifyChange();
-			}
+					that._bIgnoreBindCalls = true;
+					that.fireAddFilterItem({
+						key: sKey,
+						index: iIndex,
+						filterItemData: oFilterItem
+					});
 
-	// that.getFilterItems().forEach(function(oItem, i) {
-	// window.console.log(i+ " Items: " + oItem.getValue1());
-	// }, this);
-	//
-	// var oData = that.getModel().getData();
-	// oData.persistentData.filter.filterItems.forEach(function(oItem, i) {
-	// window.console.log(i+ " model: " + oItem.value1);
-	// });
+					that.fireChangeFilterItems({
+						addItem: {
+							key: sKey,
+							index: iIndex,
+							columnKey: oNewData.keyField,
+							operation: oNewData.operation,
+							exclude: oNewData.exclude,
+							value1: oNewData.value1,
+							value2: oNewData.value2
+						}
+					});
 
+					that._bIgnoreBindCalls = false;
+					break;
+				case "remove":
+					that._bIgnoreBindCalls = true;
+					that.fireRemoveFilterItem({
+						key: sKey,
+						index: iIndex
+					});
+					that.fireChangeFilterItems({
+						removeItem: {
+							key: sKey,
+							index: iIndex
+						}
+					});
+					that._bIgnoreBindCalls = false;
+					break;
+				default:
+					throw "Operation'" + sOperation + "' is not supported yet";
+			}
+			that._notifyChange();
 		};
 	};
 

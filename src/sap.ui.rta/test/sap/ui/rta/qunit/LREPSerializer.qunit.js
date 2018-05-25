@@ -150,12 +150,14 @@ sap.ui.require([
 			});
 		},
 		afterEach : function(assert) {
-			this.oCommandStack.destroy();
-			this.oSerializer.destroy();
-			this.oPanel.destroy();
-			this.oInputDesignTimeMetadata.destroy();
-			FakeLrepLocalStorage.deleteChanges();
-			sandbox.restore();
+			return this.oSerializer.saveCommands().then(function(){
+				this.oCommandStack.destroy();
+				this.oSerializer.destroy();
+				this.oPanel.destroy();
+				this.oInputDesignTimeMetadata.destroy();
+				FakeLrepLocalStorage.deleteChanges();
+				sandbox.restore();
+			}.bind(this));
 		}
 	});
 
@@ -180,8 +182,8 @@ sap.ui.require([
 			return this.oCommandStack.pushAndExecute(oSettingsCommand2);
 		}.bind(this))
 		.then(function(){
-			// destroy element for 2nd command
-			oInput3.destroy();
+			// simulate command having no app component
+			sandbox.stub(oSettingsCommand2, "getAppComponent");
 			assert.equal(oAddPreparedChangeSpy.callCount, 2, "until now 2 changes got added");
 			assert.equal(oDeleteChangeSpy.callCount, 0, "until now no changes got deleted");
 			return this.oCommandStack.undo();
@@ -527,6 +529,88 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test(	"when needs restart is asked for normal commands", function(assert) {
+		// Create commands
+		this.oAnyFlexCommand = CommandFactory.getCommandFor(this.oInput1, "Remove", {
+			removedElement : this.oInput1
+		}, this.oInputDesignTimeMetadata);
+
+		return this.oCommandStack.pushAndExecute(this.oAnyFlexCommand)
+		.then(function(){
+			//trigger function
+			return this.oSerializer.needsReload();
+		}.bind(this))
+		.then(function(bNeedsRestart){
+			assert.notOk(bNeedsRestart, "then restart is not necessary");
+		});
+	});
+
+	QUnit.test(	"when needs restart is asked for app descriptor commands and a normal commands", function(assert) {
+		// Create commands
+		this.oAnyFlexCommand = CommandFactory.getCommandFor(this.oInput1, "Remove", {
+			removedElement : this.oInput1
+		}, this.oInputDesignTimeMetadata);
+		this.oAnyAppDescriptorCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
+			reference : "someName",
+			parameters: {
+					libraries : {
+					"sap.ui.rta" : {
+						lazy:false,
+						minVersion:"1.48"
+					}
+				}
+			},
+			appComponent : oMockedAppComponent
+			}, {}, {"layer" : "CUSTOMER"}
+		);
+
+		return this.oCommandStack.pushAndExecute(this.oAnyFlexCommand)
+		.then(function(){
+			return this.oCommandStack.pushAndExecute(this.oAnyAppDescriptorCommand);
+		}.bind(this))
+		.then(function(){
+			//trigger function
+			return this.oSerializer.needsReload();
+		}.bind(this))
+		.then(function(bNeedsRestart){
+			assert.ok(bNeedsRestart, "then restart is necessary");
+		});
+	});
+
+	QUnit.test(	"when needs restart is asked for undone app descriptor commands and a normal commands", function(assert) {
+		// Create commands
+		this.oAnyFlexCommand = CommandFactory.getCommandFor(this.oInput1, "Remove", {
+			removedElement : this.oInput1
+		}, this.oInputDesignTimeMetadata);
+		this.oAnyAppDescriptorCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
+			reference : "someName",
+			parameters: {
+					libraries : {
+					"sap.ui.rta" : {
+						lazy:false,
+						minVersion:"1.48"
+					}
+				}
+			},
+			appComponent : oMockedAppComponent
+			}, {}, {"layer" : "CUSTOMER"}
+		);
+
+		return this.oCommandStack.pushAndExecute(this.oAnyFlexCommand)
+		.then(function(){
+			return this.oCommandStack.pushAndExecute(this.oAnyAppDescriptorCommand);
+		}.bind(this))
+		.then(function(){
+			return this.oCommandStack.undo();
+		}.bind(this))
+		.then(function(){
+			//trigger function
+			return this.oSerializer.needsReload();
+		}.bind(this))
+		.then(function(bNeedsRestart){
+			assert.notOk(bNeedsRestart, "then restart is not necessary");
+		});
+	});
 	QUnit.test("Execute 1 'Remove' command and 1 'ControlVariantSwitch' command and save commands", function(assert) {
 		// And then only one change should be saved in LREP
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");

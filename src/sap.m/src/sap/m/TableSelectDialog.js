@@ -73,9 +73,10 @@ sap.ui.define([
 	 * </ul>
 	 * <h4>When not to use:</h4>
 	 * <ul>
-	 * <li>You need to select one item from a predefined set of options that contains only one value. Use a {@link sap.m.Select switch} control instead.</li>
-	 * <li>You need to select items within a query-based range. Use a {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog value help} control instead.</li>
-	 * <li>You need to only filter a set of items. Use a {@link sap.ui.comp.filterbar.FilterBar filter bar} control instead.</li>
+	 * <li>You need to select only one item from a predefined list of single-value options. Use the {@link sap.m.Select Select} control instead.</li>
+	 * <li>You need to display complex content without having the user navigate away from the current page or you want to prompt the user for an action. Use the {@link sap.m.Dialog Dialog} control instead.</li>
+	 * <li>You need to select items within a query-based range. Use the {@link https://experience.sap.com/fiori-design-web/value-help-dialog/ Value Help Dialog} control instead.</li>
+	 * <li>You need to filter a set of items without any selection. Use the {@link https://experience.sap.com/fiori-design-web/filter-bar/ Filter Bar} control instead.</li>
 	 * </ul>
 	 * <h4>Note:</h4>
 	 * The property <code>growing</code> determines the progressive loading. If it's set to true (the default value), the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, will work only for the currently loaded items.

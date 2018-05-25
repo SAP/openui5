@@ -806,9 +806,9 @@ sap.ui.define([
 		});
 
 		var xmlWithBindings = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
 			'  <m:Button id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		View.create({
@@ -834,6 +834,47 @@ sap.ui.define([
 				assert.strictEqual(oViewWithBindings2.byId("create--btn"), oViewWithBindings2.byId("btn"), "Button is adressable by fully qualified ID");
 
 				done();
+			});
+		});
+	});
+
+	QUnit.test("Owner component propagation", function (assert) {
+		var done = assert.async();
+		sap.ui.require([
+			"sap/ui/core/Component"
+		], function(Component) {
+			var sDefinition = [
+				"<mvc:View xmlns=\"sap.ui.core\" xmlns:mvc=\"sap.ui.core.mvc\">",
+				"  <HTML />",
+				"</mvc:View>"
+			].join("");
+
+			sap.ui.define("test/viewFactory/Component", [
+				"sap/ui/core/Component"
+			], function(Component) {
+				return Component.extend("test.viewFactory.component", {
+					metadata: {
+						manifest: {
+							"sap.app" : {
+								"id" : "test.viewFactory"
+							},
+							"sap.ui5" : {}
+						}
+					}
+				});
+			});
+
+			var TestViewFactoryComponent = sap.ui.require("test/viewFactory/Component");
+			var oComponent = new TestViewFactoryComponent();
+
+			oComponent.runAsOwner(function() {
+				View.create({
+					type: ViewType.XML,
+					definition: sDefinition
+				}).then(function(oView) {
+					assert.strictEqual(Component.getOwnerComponentFor(oView), oComponent, "View should be created with component as owner");
+					done();
+				});
 			});
 		});
 	});

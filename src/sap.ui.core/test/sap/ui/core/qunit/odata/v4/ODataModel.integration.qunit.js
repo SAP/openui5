@@ -130,7 +130,7 @@ sap.ui.require([
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
-			TestUtils.useFakeServer(this._oSandbox, "/sap/ui/core/qunit", {
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", {
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"

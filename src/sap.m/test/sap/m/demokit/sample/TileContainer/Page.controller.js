@@ -9,7 +9,7 @@ sap.ui.define([
 
 		onInit : function (evt) {
 			// set mock model
-			var sPath = jQuery.sap.getModulePath("sap.m.sample.TileContainer", "/data.json");
+			var sPath = sap.ui.require.toUrl("sap/m/sample/TileContainer") + "/data.json";
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},

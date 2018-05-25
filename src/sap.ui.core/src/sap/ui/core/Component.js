@@ -1699,7 +1699,7 @@ sap.ui.define([
 				// Only create models:
 				//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
 				//   - in case the model class is already loaded (otherwise log a warning)
-				if (jQuery.sap.isDeclared(mModelConfig.type, true)) {
+				if (sap.ui.loader._.getModuleState(mModelConfig.type.replace(/\./g, "/") + ".js")) {
 					mModelConfigs.afterManifest[sModelName] = mModelConfig;
 				} else {
 					jQuery.sap.log.warning("Can not preload model \"" + sModelName + "\" as required class has not been loaded: \"" + mModelConfig.type + "\"",
@@ -1710,6 +1710,15 @@ sap.ui.define([
 		}
 
 		return mModelConfigs;
+	}
+
+	/**
+	 * Retrieves the component manifest url.
+	 * @param {string} sComponentName component name
+	 * @returns {string} component manifest url
+	 */
+	function getManifestUrl(sComponentName){
+		return sap.ui.require.toUrl(sComponentName.replace(/\./g, "/") + "/manifest.json");
 	}
 
 	function loadManifests(oRootMetadata, oRootManifest) {
@@ -1733,7 +1742,7 @@ sap.ui.define([
 				// a potential request a bit earlier. Right now the whole component loading would be delayed by the async request.
 
 				var sName = oMetadata.getComponentName();
-				var sDefaultManifestUrl = jQuery.sap.getModulePath(sName, "/manifest.json");
+				var sDefaultManifestUrl = getManifestUrl(sName);
 
 				var pLoadManifest;
 				if (oManifest) {
@@ -2142,7 +2151,7 @@ sap.ui.define([
 	 *     Instead of specifying just the names of components, an object might be given that contains a
 	 *     mandatory <code>name</code> property and, optionally, a <code>url</code> that will be used for a <code>registerModulePath</code>.
 	 * @param {boolean} [mOptions.asyncHints.preloadOnly=false] Whether only the preloads should be done, but not the loading of the Component controller class itself.
-	 * @returna {Promise<function>} A Promise that resolves with the loaded component class or <code>undefined</code> in case
+	 * @returns {Promise<function>} A Promise that resolves with the loaded component class or <code>undefined</code> in case
 	 *      <code>mOptions.asyncHints.preloadOnly</code> is set to <code>true</code>
 	 *
 	 * @since 1.56.0
@@ -2337,7 +2346,7 @@ sap.ui.define([
 		// the Components' modules namespace
 		if (bManifestFirst && !oManifest) {
 			oManifest = Manifest.load({
-				manifestUrl: jQuery.sap.getModulePath(sName, "/manifest.json"),
+				manifestUrl: getManifestUrl(sName),
 				componentName: sName,
 				async: oConfig.async,
 				failOnError: false
@@ -2433,7 +2442,7 @@ sap.ui.define([
 				sPreloadName;
 
 			// only load the Component-preload file if the Component module is not yet available
-			if ( bComponentPreload && sComponentName != null && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
+			if ( bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js") ) {
 
 				if ( bAsync ) {
 					sPreloadName = jQuery.sap.getResourceName(sController, http2 ? '-h2-preload.js' : '-preload.js'); // URN
@@ -2758,7 +2767,7 @@ sap.ui.define([
 				}).then(function(oClass) {
 					var oMetadata = oClass.getMetadata();
 					var sName = oMetadata.getComponentName();
-					var sDefaultManifestUrl = jQuery.sap.getModulePath(sName, "/manifest.json");
+					var sDefaultManifestUrl = getManifestUrl(sName);
 					var pLoaded;
 
 					// Check if we loaded the manifest.json from the default location

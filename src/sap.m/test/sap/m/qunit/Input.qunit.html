@@ -405,6 +405,40 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Suggestion output", function (assert) {
+
+		var sValue = "";
+		var sSuggestion = "<img  src=''></img>";
+		var oInput = new sap.m.Input("hello", {
+			type: 'Text',
+			showSuggestion: true,
+			submit: function (oEvent) {
+				sValue = oEvent.getParameter("value");
+			}
+		});
+		oInput.placeAt("content");
+
+		// Enter on Suggestions
+		if (sap.ui.Device.system.desktop) {
+			oInput.setShowSuggestion(true);
+			oInput.attachSuggest(function () {
+				oInput.addSuggestionItem(new sap.ui.core.ListItem({text: sSuggestion}));
+			});
+			sap.ui.getCore().applyChanges();
+
+			oInput.onfocusin();
+			oInput._$input.focus().val(" ").trigger("input");
+			this.clock.tick(300);
+
+			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+			sap.ui.getCore().applyChanges();
+			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
+			assert.equal(sValue, sSuggestion, ": Correct parameter 'value' in enter event");
+		}
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Value Help Only CSS Classes and event", function(assert) {
 		var spy = this.spy(),
 			oInputVHO = new sap.m.Input( {
@@ -536,6 +570,11 @@
 		});
 		oInput.onsapselect(evt);
 		assert.strictEqual(spy.callCount, 1, "The value help was requested by pressing Enter or Space");
+	});
+
+	QUnit.test("Check step attribute", function(assert) {
+		assert.strictEqual(document.getElementById("i1-inner").getAttribute("step"), null, "Input of type \"Text\" have no step attribute set");
+		assert.strictEqual(document.getElementById("i2-inner").getAttribute("step"), "any", "Input of type \"Number\" have step attribute set to \"any\"");
 	});
 
 	QUnit.module("Destroy");
@@ -3201,6 +3240,40 @@
 
 		// clean
 		this.input.insertAggregation.restore();
+	});
+
+	QUnit.module("Input in a Dialog", {
+		beforeEach: function () {
+			this.dialog = new sap.m.Dialog({
+				content: [
+					new sap.m.Input({
+						showSuggestion: true,
+						suggestions: [
+							new sap.m.SuggestionItem()
+						]
+					})
+				]
+			});
+		},
+		afterEach: function () {
+			this.dialog.destroy();
+			this.dialog = null;
+		}
+	});
+
+	QUnit.test('Dialog scrollbar', function (assert) {
+		var input = this.dialog.getContent()[0];
+		this.dialog.open();
+
+		var scrollDiv = this.dialog.$().find(".sapMDialogScroll")[0];
+		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
+
+		input._$input.focus().val("abc").trigger("input");
+
+		this.dialog.focus();
+		this.clock.tick(300);
+
+		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
 	});
 
 </script>

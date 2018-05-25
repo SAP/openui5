@@ -155,8 +155,6 @@ sap.ui.define([
 		},
 
 		exit: function () {
-			this.getPopover(true).oPopup.detachOpened(this._popupOpened, this);
-			this.getPopover(false).oPopup.detachOpened(this._popupOpened, this);
 			this.getPopover(true).oPopup.detachClosed(this._popupClosed, this);
 			this.getPopover(false).oPopup.detachClosed(this._popupClosed, this);
 			this.getPopover(true).detachBrowserEvent("contextmenu", this._onContextMenu, this);
@@ -481,16 +479,20 @@ sap.ui.define([
 
 			this.getPopover().setPlacement("Bottom");
 
-			var oPos = {};
+			var oPos = {},
+				iRtaToolbarHeight = jQuery(".sapUiRtaToolbar").height(),
+				iViewportTop = iRtaToolbarHeight ? iRtaToolbarHeight : oViewport.top,
+				iViewportHeight = iRtaToolbarHeight ? oViewport.height - iRtaToolbarHeight : oViewport.height;
 
 			oPos.left = oOverlay.left + oOverlay.width / 2;
 
-			if ((oOverlay.height < 60 || oOverlay.isOverlappedAtTop) && oViewport.height - oOverlay.top - oOverlay.height >= oPopover.height) {
+			if ((oOverlay.height < 60 || oOverlay.isOverlappedAtTop) && iViewportHeight - oOverlay.top - oOverlay.height >= oPopover.height) {
 				oPos.top = oOverlay.bottom;
-			} else if (oOverlay.top >= oViewport.top) {
+			} else if (oOverlay.top >= iViewportTop) {
 				oPos.top = oOverlay.top + 5;
 			} else {
-				oPos.top = oViewport.top + 5;
+				// position on top of the viewport but below the RTAToolbar
+				oPos.top = iViewportTop + 5;
 			}
 			return oPos;
 		},
@@ -620,7 +622,7 @@ sap.ui.define([
 			this._iFirstVisibleButtonIndex = null;
 
 			if (bExpanded) {
-				oPopover.height *= this.getButtons().length - 1;
+				oPopover.height *= this.getButtons().length;
 				oPopover.width = parseInt(jQuery("#" + this.getPopover().getId()).css("width"), 10) || 80;
 			} else {
 				oPopover.width = iBaseFontsize * fButtonWidth * this._iButtonsVisible;

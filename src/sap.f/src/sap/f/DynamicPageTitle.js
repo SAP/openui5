@@ -460,8 +460,10 @@ sap.ui.define([
 					vResult;
 
 				if (sMethod === "addAction" || sMethod === "insertAction") {
-					oToolbar[sToolbarMethod].apply(oToolbar, arguments);
-					this._preProcessAction(oControl, "actions");
+					if (!this._actionExists(oControl, "actions")) {
+						oToolbar[sToolbarMethod].apply(oToolbar, arguments);
+						this._preProcessAction(oControl, "actions");
+					}
 					vResult = this;
 				} else if (sMethod === "removeAction") {
 					this._postProcessAction(oControl);
@@ -501,8 +503,10 @@ sap.ui.define([
 					vResult;
 
 				if (sMethod === "addNavigationAction" || sMethod === "insertNavigationAction") {
-					oToolbar[sToolbarMethod].apply(oToolbar, arguments);
-					this._preProcessAction(oControl, "navigationActions");
+					if (!this._actionExists(oControl, "navigationActions")) {
+						oToolbar[sToolbarMethod].apply(oToolbar, arguments);
+						this._preProcessAction(oControl, "navigationActions");
+					}
 					vResult = this;
 				} else if (sMethod === "removeNavigationAction") {
 					this._postProcessAction(oControl);
@@ -525,6 +529,17 @@ sap.ui.define([
 		});
 
 	/* ========== PRIVATE METHODS  ========== */
+
+	/**
+	 * Checks if an action already exists in <code>DynamicPageTitle</code> actions/navigationActions.
+	 * @param {sap.ui.core.Control} oAction
+	 * @param {String} sAggregationName
+	 * @returns {Boolean}
+	 * @private
+	 */
+	DynamicPageTitle.prototype._actionExists = function (oAction, sAggregationName) {
+		return this.getMetadata().getAggregation(sAggregationName).get(this).indexOf(oAction) > -1;
+	};
 
 	/**
 	 * Caches the DOM elements in a jQuery wrapper for later reuse.
