@@ -27,10 +27,6 @@ sap.ui.define(['sap/ui/core/XMLComposite'], function (XMLComposite) {
 					}
 				}
 			}
-		},
-
-		handlePress: function (oEvent) { // one of the buttons was pressed
-			this.fireEvent("press", { itemText: oEvent.getSource().getText() });
 		}
 	});
 	return oTable;
