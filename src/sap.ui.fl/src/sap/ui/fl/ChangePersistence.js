@@ -610,7 +610,10 @@ sap.ui.define([
 		if (!this._mChanges.mChanges[sSelectorId]) {
 			this._mChanges.mChanges[sSelectorId] = [];
 		}
-		this._mChanges.mChanges[sSelectorId].push(oChange);
+		// don't add the same change twice
+		if (this._mChanges.mChanges[sSelectorId].indexOf(oChange) === -1) {
+			this._mChanges.mChanges[sSelectorId].push(oChange);
+		}
 	};
 
 	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange) {
@@ -796,7 +799,11 @@ sap.ui.define([
 		} else {
 			oNewChange = new Change(vChange);
 		}
-		this._aDirtyChanges.push(oNewChange);
+
+		// don't add the same change twice
+		if (this._aDirtyChanges.indexOf(oNewChange) === -1) {
+			this._aDirtyChanges.push(oNewChange);
+		}
 		return oNewChange;
 	};
 
