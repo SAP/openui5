@@ -379,6 +379,51 @@
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.test("content size correctly calculated", function (assert) {
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
+			oFirstSection = oObjectPageLayout.getSections()[0],
+			oLastSection = oObjectPageLayout.getSections()[1],
+			iFirstSectionSpacerHeight,
+			iLastSectionSpacerHeight,
+			oBigHeightControl = new sap.ui.core.HTML({ content: "<div style='height: 500px'></div>"}),
+			oSmallHeightControl = new sap.ui.core.HTML({ content: "<div style='height: 100px'></div>"}),
+			done = assert.async();
+
+		oObjectPageLayout.setUseIconTabBar(true);
+		oFirstSection.getSubSections()[0].addBlock(oBigHeightControl);
+		oLastSection.getSubSections()[0].addBlock(oSmallHeightControl);
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			iFirstSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
+
+			// show the bigger section
+			oObjectPageLayout.setSelectedSection(oLastSection.getId());
+
+			setTimeout(function() {
+
+				// assert context
+				iLastSectionSpacerHeight = oObjectPageLayout._$spacer.get(0).offsetHeight;
+				assert.notEqual(iLastSectionSpacerHeight, iFirstSectionSpacerHeight, "spacer for smaller section is different");
+
+				//Act: return to initial section
+				oObjectPageLayout.setSelectedSection(oFirstSection.getId());
+
+				setTimeout(function() {
+
+					// Check: spacer is correctly restored
+					assert.ok(oObjectPageLayout._$spacer.get(0).offsetHeight === iFirstSectionSpacerHeight, "spacer height is correct");
+					oObjectPageLayout.destroy();
+					done();
+				}, 10);
+			}, 10);
+		});
+
+		// arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.module("ObjectPage On Title Press when Header height bigger than page height", {
 		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithDynamicBigHeaderContent();
