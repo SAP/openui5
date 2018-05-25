@@ -44,6 +44,7 @@ sap.ui.define([
 			mDependentChangesOnMe: {}
 		};
 
+		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
 		this._mChangesInitial = {};
 
 		this._mVariantsChanges = {};
@@ -590,12 +591,40 @@ sap.ui.define([
 			};
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
 
-			if (Utils.isDebugEnabled()) {
-				this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
-			}
+			this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
 
 			return this.getChangesMapForComponent.bind(this);
 		}
+	};
+
+	/**
+	 * This function copies the initial dependencies (before any changes got applied and dependencies got deleted) for the given change to the mChanges map
+	 * Also checks if the dependency is still valid in a callback
+	 * This function is used in the case that controls got destroyed and recreated
+	 *
+	 * @param {sap.ui.fl.Change} oChange The change whose dependencies should be copied
+	 * @param {function} fnDependencyValidation this function is called to check if the dependency is still valid
+	 * @returns {object} Returns the mChanges object with the updated dependencies
+	 */
+	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation) {
+		var mInitialDependencies = jQuery.extend(true, {}, this._mChangesInitial.mDependencies);
+		var oInitialDependency = mInitialDependencies[oChange.getId()];
+
+		if (oInitialDependency) {
+			var aNewValidDependencies = [];
+			oInitialDependency.dependencies.forEach(function(sChangeId) {
+				if (fnDependencyValidation(sChangeId)) {
+					if (!this._mChanges.mDependentChangesOnMe[sChangeId]) {
+						this._mChanges.mDependentChangesOnMe[sChangeId] = [];
+					}
+					this._mChanges.mDependentChangesOnMe[sChangeId].push(oChange.getId());
+					aNewValidDependencies.push(sChangeId);
+				}
+			}.bind(this));
+			oInitialDependency.dependencies = aNewValidDependencies;
+			this._mChanges.mDependencies[oChange.getId()] = oInitialDependency;
+		}
+		return this._mChanges;
 	};
 
 	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oComponent, oChange, iIndex, aChangesCopy) {
