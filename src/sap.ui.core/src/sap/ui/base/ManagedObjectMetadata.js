@@ -411,7 +411,10 @@ function(
 						&& !bConnectTargetInfo
 						&& !(Array.isArray(vTargetAggregation) && vTargetAggregation.length === 0)) {
 					// there should not be any content in the target at the time when the target has been found for the first time
-					throw new Error("There is already content in aggregation " + this.targetAggregationInfo.name + " of " + oTarget + " to which forwarding is being set up now.");
+					// TODO: re-enable when issue is understood; this happens when there is a forwarded binding of items in SelectDialog,
+					// the items are destroyed and then retrieved again. Either the binding forwarding causes content to be there,
+					// or the destroying which removed the mForwardedAgregation entry triggers later re-initialization when it shouldn't.
+					// throw new Error("There is already content in aggregation " + this.targetAggregationInfo.name + " of " + oTarget + " to which forwarding is being set up now.");
 				} else {
 					var vInitial = oTarget.mAggregations[this.targetAggregationInfo.name] || (this.targetAggregationInfo.multiple ? [] : null); // initialize aggregation for the target
 					oInstance.mForwardedAggregations[this.aggregation.name] = oTarget.mAggregations[this.targetAggregationInfo.name] = vInitial;
