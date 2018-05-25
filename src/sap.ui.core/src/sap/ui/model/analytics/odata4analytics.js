@@ -1754,8 +1754,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 */
 		getSuperOrdinateDimension : function() {
 			if (!this._sSuperOrdinateDimension) {
-				var sSuperOrdPropName = this._oQueryResult.getEntityType().getSuperOrdinatePropertyOfProperty(this.getName()).name;
-				this._sSuperOrdinateDimension = this._oQueryResult.findDimensionByName(sSuperOrdPropName);
+				var oSuperOrdProperty = this._oQueryResult.getEntityType().getSuperOrdinatePropertyOfProperty(this.getName());
+				if (oSuperOrdProperty) {
+					this._sSuperOrdinateDimension = this._oQueryResult.findDimensionByName(oSuperOrdProperty.name);
+				}
 			}
 			return this._sSuperOrdinateDimension;
 		},

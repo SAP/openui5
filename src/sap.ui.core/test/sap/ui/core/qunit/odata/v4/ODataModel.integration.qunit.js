@@ -477,7 +477,9 @@ sap.ui.require([
 					setTimeout(that.checkFinish.bind(that), 0);
 				}
 
-				return Promise.resolve({body : oResponse});
+				return oResponse instanceof Error
+					? Promise.reject(oResponse)
+					: Promise.resolve({body : oResponse});
 			}
 
 			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
@@ -503,7 +505,7 @@ sap.ui.require([
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			return View.create({
-				type: "XML",
+				type : "XML",
 				controller : oController
 					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
 				definition :
@@ -868,7 +870,7 @@ sap.ui.require([
 			$filter : \'TEAM_ID eq 42\',\
 			$orderby : \'Name desc\'\
 		},\
-		filters : {path: \'AGE\', operator: \'GT\', value1: 21},\
+		filters : {path : \'AGE\', operator : \'GT\', value1 : 21},\
 		sorter : {path : \'AGE\'}\
 	}">\
 	<ColumnListItem>\
@@ -965,7 +967,7 @@ sap.ui.require([
 <Table id="table"\
 		items="{\
 			path : \'/EMPLOYEES\',\
-			filters: {path: \'AGE\', operator: \'GT\', value1: \'42\'},\
+			filters : {path : \'AGE\', operator : \'GT\', value1 : \'42\'},\
 			sorter : {path : \'AGE\'},\
 			parameters : {foo : \'bar\'}\
 		}">\
@@ -2098,7 +2100,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: bound action
+	// Scenario: bound action (success and failure)
 	QUnit.test("Bound action", function (assert) {
 		var sView = '\
 <VBox binding="{/EMPLOYEES(\'1\')}">\
@@ -2108,6 +2110,8 @@ sap.ui.require([
 		<Text id="teamId" text="{TEAM_ID}" />\
 	</VBox>\
 </VBox>',
+			sUrl = "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+				+ ".AcChangeTeamOfEmployee",
 			that = this;
 
 		this.expectRequest("EMPLOYEES('1')", {
@@ -2116,12 +2120,12 @@ sap.ui.require([
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("teamId", null);
+
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					method : "POST",
 					headers : {"If-Match" : "eTag"},
-					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
-						+ ".AcChangeTeamOfEmployee",
+					url : sUrl,
 					payload : {
 						"TeamID" : "42"
 					}
@@ -2130,8 +2134,37 @@ sap.ui.require([
 				})
 				.expectChange("teamId", "42");
 
-			that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute();
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oError = new Error("Missing team ID");
+
+			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
+				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
+			that.oLogMock.expects("error").withExactArgs(
+				"Failed to read path /" + sUrl + "(...)/TEAM_ID", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "eTag"},
+					url : sUrl,
+					payload : {
+						"TeamID" : ""
+					}
+				}, oError) // simulates failure
+				.expectChange("teamId", null); // reset to initial state
+
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "").execute()
+					.then(function () {
+						assert.ok(false, "Unexpected success");
+					}, function (oError0) {
+						assert.strictEqual(oError0, oError);
+					}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -2296,7 +2329,7 @@ sap.ui.require([
 <Table id="table"\
 		items="{\
 			path : \'/EMPLOYEES\',\
-			filters: {path: \'AGE\', operator: \'LT\', value1: \'77\'},\
+			filters : {path : \'AGE\', operator : \'LT\', value1 : \'77\'},\
 			parameters : {$orderby : \'Name\', $select : \'AGE\'}\
 		}">\
 	<ColumnListItem>\
@@ -2520,11 +2553,11 @@ sap.ui.require([
 		var that = this,
 			sView = '\
 <Table id="table" items="{\
-		factory: \'.employeesListFactory\',\
+		factory : \'.employeesListFactory\',\
 		parameters : {\
 			$select : \'AGE,ID\'\
 		},\
-		path: \'/EMPLOYEES\'\
+		path : \'/EMPLOYEES\'\
 	}">\
 </Table>',
 			oController = {
@@ -2595,7 +2628,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: call submitBatch() synchronously after changeParameters (BCP 1770236987)
-	[false/*, true*/].forEach(function (bAutoExpandSelect) {
+	[false, true].forEach(function (bAutoExpandSelect) {
 		var sTitle = "submitBatch after changeParameters, autoExpandSelect = " + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
@@ -2628,8 +2661,6 @@ sap.ui.require([
 					}, {"value" : [mFrederic, mJonathan]})
 					.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
-				// TODO test with autoExpandSelect
-				// here the request creation is delayed and submitBatch doesn't grab it
 				oModel.submitBatch("group");
 
 				return that.waitForChanges(assert).then(function () {
@@ -2653,6 +2684,40 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: call submitBatch() synchronously after resume w/ auto-$expand/$select
+	QUnit.test("submitBatch after resume w/ auto-$expand/$select", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table"\
+		items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}, suspended : true}">\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectChange("text", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "GET",
+					url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=100"
+				}, {
+					"value" : [
+						{"ID" : "2", "Name" : "Frederic Fall"},
+						{"ID" : "3", "Name" : "Jonathan Smith"}
+					]
+				})
+				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+
+			that.oView.byId("table").getBinding("items").resume();
+			oModel.submitBatch("group");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Change a property in a dependent binding below a list binding with an own cache and
 	// change the list binding's row (-> the dependent binding's context)
 	QUnit.test("Pending change in hidden cache", function (assert) {
@@ -2668,13 +2733,13 @@ sap.ui.require([
 		<Text id="employeeId" text="{ID}" />\
 	</ColumnListItem>\
 </Table>\
-<VBox id="objectPage" binding="{path: \'\', parameters : {$$updateGroupId : \'update\'}}">\
+<VBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
 	<Text id="employeeName" text="{Name}"/>\
 </VBox>',
 			that = this;
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100",
-				{value: [{"Team_Id" : "1"}, {"Team_Id" : "2"}]})
+				{value : [{"Team_Id" : "1"}, {"Team_Id" : "2"}]})
 			.expectChange("teamId", ["1", "2"])
 			.expectChange("employeeId", false)
 			.expectChange("employeeName");
@@ -2781,17 +2846,17 @@ sap.ui.require([
 				filters : [
 					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
 					new Filter({
-						condition: new Filter({
-							and: true,
-							filters: [
+						condition : new Filter({
+							and : true,
+							filters : [
 								new Filter("schedule/DeliveryDate", FilterOperator.LT,
 									"2017-01-01T05:50Z"),
 								new Filter("soitem/GrossAmount", FilterOperator.LT, "2000")
 							]
 						}),
-						operator: FilterOperator.All,
-						path: "soitem/SOITEM_2_SCHDL",
-						variable: "schedule"
+						operator : FilterOperator.All,
+						path : "soitem/SOITEM_2_SCHDL",
+						variable : "schedule"
 					})
 				]
 			}),
@@ -2883,7 +2948,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: stream property with @odata.mediaReadLink
 	QUnit.test("stream property with @odata.mediaReadLink", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect: true}),
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
 	<Text id="url" text="{ProductPicture/Picture}"/>\
@@ -3170,9 +3235,9 @@ sap.ui.require([
 	parameters : {$$groupId : \'group2\'}}"\
 />';
 
-		this.expectRequest({url: "EMPLOYEES('2')/Name", method: "GET"},
+		this.expectRequest({url : "EMPLOYEES('2')/Name", method : "GET"},
 				{value : "Frederic Fall"})
-			.expectRequest({url: "EMPLOYEES('3')/Name", method: "GET"},
+			.expectRequest({url : "EMPLOYEES('3')/Name", method : "GET"},
 				{value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
@@ -4200,6 +4265,46 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="POST" sap:action-for="..."> in V2 Adapter (w/o
+	// reading binding parameter first!)
+	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.skip("V2 Adapter: bound action on context w/o read", function (assert) {
+		var oModel = this.createModelForV2SalesOrderService(),
+			oParentContext = oModel.bindContext("/SalesOrderLineItemSet(\'0815\',\'10\')/ToHeader")
+				.getBoundContext(),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			//TODO In the V2 adapter case a function import is used instead of a bound action. So we
+			// need the key predicates which sometimes cannot be parsed from the URL. Trigger this
+			// request and wait for the result before calling the function import.
+			//TODO What about the ETag which might be got from this fresh request? Really use it?
+			that.expectRequest("SalesOrderLineItemSet(\'0815\',\'10\')/ToHeader", {
+					"d" : {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "0815"
+					}
+				})
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrder_Confirm?SalesOrderID='0815'"
+				}, {
+					"d" : {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "08/15"
+					}
+				});
+
+			return oModel.bindContext("GWSAMPLE_BASIC.SalesOrder_Confirm(...)", oParentContext)
+				.execute(); // code under test
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="PUT" sap:action-for="..."> in V2 Adapter
 	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
@@ -5045,7 +5150,7 @@ sap.ui.require([
 		var oModel = createSalesOrdersModel(),
 			sView = '\
 <FlexBox id="form">\
-	<t:Table rows="{path: \'SO_2_SOITEM\', parameters : {$$updateGroupId:\'update\'}}">\
+	<t:Table rows="{path : \'SO_2_SOITEM\', parameters : {$$updateGroupId : \'update\'}}">\
 		<t:Column>\
 			<t:template>\
 				<Text id="position" text="{ItemPosition}" />\
@@ -5280,6 +5385,70 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with VisibleRowCountMode="Auto" and submit group 'API'
+	// In the first step resume and immediately call submitBatch.
+	// In the second step synchronously refresh with another group ID, change the filter and call
+	// submitBatch. Check that the filter request is sent with this batch nevertheless.
+	// Two issues have to be solved: the lock for the filter must win over the one for refresh and
+	// the lock must not be removed again before the table becomes active.
+	QUnit.skip("ODLB: resume/refresh/filter w/ submitBatch on a table.Table", function (assert) {
+		var oListBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" visibleRowCountMode="Auto"\
+		rows="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}, suspended : true}">\
+	<t:Column>\
+		<t:label>\
+			<Label text="Name"/>\
+		</t:label>\
+		<t:template>\
+			<Text id="name" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectChange("name", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=105", {
+					value : [{
+						"Category" : "1",
+						"ID" : "2",
+						"Name" : "Foo"
+					}]
+				})
+				.expectChange("name", ["Foo"]);
+
+			// table.Table must render to call getContexts on its row aggregation's list binding
+			that.oView.placeAt("qunit-fixture");
+			oListBinding.resume();
+			that.oModel.submitBatch("api");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+
+			that.expectRequest("Equipments?$select=Category,ID,Name"
+				+ "&$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=105", {
+					value : [{
+						"Category" : "1",
+						"ID" : "2",
+						"Name" : "Bar"
+					}]
+				})
+				.expectChange("name", ["Bar"]);
+
+			oListBinding.refresh("foo");
+			oListBinding.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
+			that.oModel.submitBatch("api");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	QUnit.test("Analytics by V4: $$aggregation", function (assert) {
 		var sView = '\
@@ -5416,6 +5585,61 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
+	QUnit.test("Analytics by V4: $$aggregation, aggregate but no group", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					GrossAmount : {\
+						min : true,\
+						max : true\
+					}\
+				}\
+			}\
+		}}" threshold="0" visibleRowCount="1">\
+	<t:Column>\
+		<t:template>\
+			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
+				+ "/concat(aggregate(GrossAmount%20with%20min%20as%20UI5min__GrossAmount,"
+				+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount),identity)"
+				+ "&$skip=0&$top=2", {
+				"@odata.count" : "2",
+				"value" : [
+					{
+						"UI5min__AGE": 42,
+						"UI5max__AGE": 77
+					},
+					{"GrossAmount" : 1}
+				]
+			})
+			.expectChange("grossAmount", 1);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table"),
+				oListBinding = oTable.getBinding("rows");
+
+			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
+					"@odata.count" : "1",
+					"value" : [{"GrossAmount" : 2}]
+				})
+				.expectChange("grossAmount", 2);
+
+			oListBinding.setAggregation({
+				aggregate : {GrossAmount : {}}
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
 		var oModel = createTeaBusiModel(),
@@ -5461,7 +5685,7 @@ sap.ui.require([
 	// Scenario: Application tries to create client-side instance annotations via ODLB#create.
 	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
 		var sView = '\
-<Table id="table" items="{path: \'/Equipments\', parameters: {$$updateGroupId: \'never\'}}">\
+<Table id="table" items="{path : \'/Equipments\', parameters : {$$updateGroupId : \'never\'}}">\
 	<items>\
 		<ColumnListItem>\
 			<Text id="name" text="{Name}"/>\
@@ -5768,6 +5992,7 @@ sap.ui.require([
 		QUnit.test("bound operation: execute resolves with V4 context, " + i, function (assert) {
 			var oActiveArtistContext,
 				oModel = createSpecialCasesModel({autoExpandSelect : true}),
+				oOperation,
 				sView = '\
 <FlexBox id="objectPage" binding="{}">\
 	<Text id="id" text="{ArtistID}" />\
@@ -5779,6 +6004,7 @@ sap.ui.require([
 			this.expectChange("id")
 				.expectChange("isActive")
 				.expectChange("name");
+
 			return this.createView(assert, sView, oModel).then(function () {
 				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?"
 					+ "$select=ArtistID,IsActiveEntity,Name", {
@@ -5797,8 +6023,8 @@ sap.ui.require([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				var oOperation = that.oModel.bindContext("special.cases." + oFixture.operation
-						+ "(...)", oActiveArtistContext);
+				oOperation = that.oModel.bindContext("special.cases." + oFixture.operation
+					+ "(...)", oActiveArtistContext);
 
 				that.expectRequest({
 					method : oFixture.method,
@@ -5818,43 +6044,44 @@ sap.ui.require([
 					that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
 
 					return that.waitForChanges(assert);
-				}).then(function () {
-					that.expectRequest({
-							method : "PATCH",
-							url : "Artists(ArtistID='42',IsActiveEntity=false)",
-							headers : {},
-							payload : {
-								"Name" : "foo"
-							}
-						}, {"Name" : "foo"})
-						.expectChange("name", "foo");
-
-					// code under test: editing values is possible on the returned entity
-					that.oView.byId("name").getBinding("text").setValue("foo");
-
-					return that.waitForChanges(assert);
-				}).then(function () {
-					that.expectChange("id", null)
-						.expectChange("isActive", null)
-						.expectChange("name", null);
-
-					// code under test: destroy return value context
-					oOperation.setContext(undefined);
-
-					return that.waitForChanges(assert);
 				});
+			}).then(function () {
+				that.expectRequest({
+						method : "PATCH",
+						url : "Artists(ArtistID='42',IsActiveEntity=false)",
+						headers : {},
+						payload : {
+							"Name" : "foo"
+						}
+					}, {"Name" : "foo"})
+					.expectChange("name", "foo");
+
+				// code under test: editing values is possible on the returned entity
+				that.oView.byId("name").getBinding("text").setValue("foo");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectChange("id", null)
+					.expectChange("isActive", null)
+					.expectChange("name", null);
+
+				// code under test: destroy return value context
+				oOperation.setContext(undefined);
+
+				return that.waitForChanges(assert);
 			});
 		});
 	});
 
-//*********************************************************************************************
-// Scenario: Object page bound to active entity with a navigation property $expand'ed via
-// auto-$expand/$select. The "Edit" bound action on the active entity has the binding parameter
-// $$inheritExpandSelect set so that it triggers the POST request with the same $expand and $select
-// parameters used for loading the active entity. This way, all fields in the object page can be
-// populated from the bound action response.
+	//*********************************************************************************************
+	// Scenario: Object page bound to active entity with a navigation property $expand'ed via
+	// auto-$expand/$select. The "Edit" bound action on the active entity has the binding parameter
+	// $$inheritExpandSelect set so that it triggers the POST request with the same $expand and
+	// $select parameters used for loading the active entity. This way, all fields in the object
+	// page can be populated from the bound action response.
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
 		var oActiveArtistContext,
+			oInactiveArtistContext,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage" binding="{}">\
@@ -5869,6 +6096,7 @@ sap.ui.require([
 			.expectChange("isActive")
 			.expectChange("name")
 			.expectChange("inProcessByUser");
+
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?custom=foo"
 				+ "&$select=ArtistID,IsActiveEntity,Name"
@@ -5911,15 +6139,126 @@ sap.ui.require([
 
 			// code under test
 			return oOperation.execute();
-		}).then(function (oInactiveArtistContext) {
+		}).then(function (oInactiveArtistContext0) {
 			that.expectChange("isActive", "No")
 				.expectChange("inProcessByUser", "JOHNDOE");
 
+			oInactiveArtistContext = oInactiveArtistContext0;
 			that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
+					oInactiveArtistContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+				method : "POST",
+				url : "Artists(ArtistID='42',IsActiveEntity=false)/special.cases.ActivationAction"
+				+ "?$select=ArtistID,IsActiveEntity,Name"
+				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
+				payload : {}
+			}, {
+				"ArtistID" : "42",
+				"IsActiveEntity" : true,
+				"Name" : "Hour Frustrated",
+				"DraftAdministrativeData" : {
+					"DraftID" : "1",
+					"InProcessByUser" : ""
+				}
+			});
+
+			return oOperation.execute();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete return value context obtained from bound action execute.
+	QUnit.test("bound operation: delete return value context", function (assert) {
+		var oActiveArtistContext,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="objectPage" binding="{}">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="isActive" text="{IsActiveEntity}" />\
+	<Text id="name" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity,Name", {
+					"ArtistID" : "42",
+					"IsActiveEntity" : true,
+					"Name" : "Hour Frustrated"
+				})
+				.expectChange("id", "42")
+				.expectChange("isActive", "Yes")
+				.expectChange("name", "Hour Frustrated");
+
+			oActiveArtistContext = oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+				.getBoundContext();
+			that.oView.byId("objectPage").setBindingContext(oActiveArtistContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+				method : "POST",
+				url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+				payload : {}
+			}, {
+				"ArtistID" : "42",
+				"IsActiveEntity" : false,
+				"Name" : "Hour Frustrated"
+			});
+
+			return that.oModel.bindContext("special.cases.EditAction(...)", oActiveArtistContext)
+				.execute();
+		}).then(function (oInactiveArtistContext) {
+			that.expectChange("isActive", "No");
+
+			that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)"
+				})
+				.expectChange("id", null)
+				.expectChange("isActive", null)
+				.expectChange("name", null);
+
+			// code under test
+			that.oView.byId("objectPage").getBindingContext().delete();
 
 			return that.waitForChanges(assert);
 		});
 	});
 
-//TODO test delete
+	//*********************************************************************************************
+	// Scenario: Execute bound action with context for which no data has been read yet.
+	QUnit.test("bound operation: execute bound action on context w/o read", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oParentContext = oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+				.getBoundContext(),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest({
+				method: "POST",
+				url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+				payload: {}
+			}, {"ArtistID": "42", "IsActiveEntity": false});
+
+			return oModel.bindContext("special.cases.EditAction(...)", oParentContext)
+				.execute(); // code under test
+		}).then(function (oInactiveArtistContext) {
+			assert.strictEqual(oInactiveArtistContext.getProperty("IsActiveEntity"), false);
+		});
+	});
 });
+//TODO test delete

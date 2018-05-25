@@ -95,13 +95,17 @@ sap.ui.define([
 				this.aFilters = [];
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
-				this.oRefreshGroupLock = undefined;
+				// a lock to ensure that submitBatch waits for an expected read
+				this.oReadGroupLock = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
 				this.applyParameters(jQuery.extend(true, {}, mParameters));
 				this.oHeaderContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
+				if (!this.bRelative || oContext && !oContext.fetchValue) {
+					this.createReadGroupLock(this.getGroupId(), true);
+				}
 				this.setContext(oContext);
 				oModel.bindingCreated(this);
 			}
@@ -841,14 +845,15 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the request
+	 * @param {boolean} [bCached=false]
+	 *   Whether to return cached values only and not trigger a request
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *   A promise on the outcome of the cache's <code>fetchValue</code> call; it is rejected in
+	 *   case cached values are asked for, but not found
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, oListener, oGroupLock) {
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener, bCached) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
@@ -857,18 +862,12 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					if (oGroupLock) {
-						oGroupLock.unlock();
-					}
 					return oCache.fetchValue(_GroupLock.$cached, sRelativePath, undefined,
 						oListener);
 				}
 			}
 			if (that.oContext) {
-				return that.oContext.fetchValue(sPath, oListener, oGroupLock);
-			}
-			if (oGroupLock) {
-				oGroupLock.unlock();
+				return that.oContext.fetchValue(sPath, oListener, bCached);
 			}
 		});
 	};
@@ -919,7 +918,7 @@ sap.ui.define([
 			throw new Error("Cannot filter due to pending changes");
 		}
 
-		this.createRefreshGroupLock(this.getGroupId(), true);
+		this.createReadGroupLock(this.getGroupId(), true);
 		if (sFilterType === FilterType.Control) {
 			this.aFilters = aFilters;
 		} else {
@@ -1025,8 +1024,8 @@ sap.ui.define([
 		}
 		iStartInModel = this.aContexts[-1] ? iStart - 1 : iStart;
 
-		oGroupLock = this.oRefreshGroupLock;
-		this.oRefreshGroupLock = undefined;
+		oGroupLock = this.oReadGroupLock;
+		this.oReadGroupLock = undefined;
 		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
@@ -1094,7 +1093,7 @@ sap.ui.define([
 					that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
 				}
 				throw oError;
-			})["catch"](function (oError) {
+			}).catch(function (oError) {
 				if (oGroupLock) {
 					oGroupLock.unlock(true);
 				}
@@ -1376,7 +1375,7 @@ sap.ui.define([
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		var that = this;
 
-		this.createRefreshGroupLock(sGroupId, this.isRefreshable());
+		this.createReadGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				that.mCacheByContext = undefined;
@@ -1482,7 +1481,7 @@ sap.ui.define([
 				}, function (oError) {
 					fireDataReceived({error : oError});
 					throw oError;
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					oGroupLock.unlock(true);
 					that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
 						oError);
@@ -1586,9 +1585,10 @@ sap.ui.define([
 	 * @param {object} [oAggregation.group]
 	 *   A map from groupable property names to empty objects
 	 * @param {string[]} [oAggregation.groupLevels]
-	 *   A list of groupable property names (which may, but don't need to be repeated in
-	 *   <code>oAggregation.group</code>) used to determine group levels; only a single group level
-	 *   is supported
+	 *   A list of groupable property names used to determine group levels. They may, but don't need
+	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
+	 *   filtering or with the system query option <code>$count</code>; only a single group level
+	 *   is supported.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, if the binding's root binding
@@ -1601,7 +1601,7 @@ sap.ui.define([
 	 *     aggregate : {
 	 *       AverageNetAmountInTransactionCurrency : {
 	 *         name : "NetAmountInTransactionCurrency", // original name
-	 *         with : "avg" // aggregation method
+	 *         with : "average" // aggregation method
 	 *       },
 	 *       NetAmountInDisplayCurrency : {subtotals : true}
 	 *     },
@@ -1716,7 +1716,7 @@ sap.ui.define([
 
 		this.aSorters = _Helper.toArray(vSorters);
 		this.mCacheByContext = undefined;
-		this.createRefreshGroupLock(this.getGroupId(), true);
+		this.createReadGroupLock(this.getGroupId(), true);
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
 		return this;
@@ -1753,6 +1753,12 @@ sap.ui.define([
 	 *   Measures only: Whether the minimum value (ignoring currencies or units of measure) for this
 	 *   measure is needed (since 1.55.0);
 	 *   <b>filtering and sorting is not supported in this case</b>
+	 * @param {string} [aAggregation[].with]
+	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
+	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
+	 * @param {string} [aAggregation[].as]
+	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
+	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
 	 * @returns {object}
 	 *   The return object contains a property <code>measureRangePromise</code> if and only if at
 	 *   least one measure has requested a minimum or maximum value; its value is a
@@ -1783,7 +1789,12 @@ sap.ui.define([
 				if ("grouped" in oColumn) {
 					throw new Error("Both dimension and measure: " + oColumn.name);
 				}
-				oAggregation.aggregate[oColumn.name] = oDetails;
+				if (oColumn.as) {
+					oDetails.name = oColumn.name;
+					oAggregation.aggregate[oColumn.as] = oDetails;
+				} else {
+					oAggregation.aggregate[oColumn.name] = oDetails;
+				}
 				if (oColumn.min) {
 					oDetails.min = true;
 					bHasMinMax = true;
@@ -1791,6 +1802,9 @@ sap.ui.define([
 				if (oColumn.max) {
 					oDetails.max = true;
 					bHasMinMax = true;
+				}
+				if (oColumn.with) {
+					oDetails.with = oColumn.with;
 				}
 			} else if (!("grouped" in oColumn) || oColumn.inResult || oColumn.visible) {
 				// dimension or unit/text property

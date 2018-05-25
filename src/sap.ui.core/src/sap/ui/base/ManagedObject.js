@@ -2442,7 +2442,7 @@ sap.ui.define([
 			if (oPropagatedProperties !== this.oPropagatedProperties) {
 				this.oPropagatedProperties = oPropagatedProperties;
 				if (!this._bIsBeingDestroyed) {
-					setTimeout(function() {
+					Promise.resolve().then(function() {
 						// if object is being destroyed or parent is set again (move) no propagation is needed
 						if (!this.oParent) {
 							this.updateBindings(true, null);
@@ -2450,7 +2450,7 @@ sap.ui.define([
 							this.propagateProperties(true);
 							this.fireModelContextChange();
 						}
-					}.bind(this), 0);
+					}.bind(this));
 				}
 			}
 

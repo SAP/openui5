@@ -49,6 +49,7 @@ sap.ui.define([
 			oSimpleForm.setAttribute("binding", sBinding);
 		}
 		oSimpleForm.setAttribute("layout", "ResponsiveGridLayout");
+		oSimpleForm.setAttribute("class", "sapUiSmallMarginBottom");
 		oSimpleForm.appendChild(oTitleAggregation);
 		oTitleAggregation.appendChild(oTitle);
 		oTitle.setAttribute("text", oForm.getAttribute("title"));

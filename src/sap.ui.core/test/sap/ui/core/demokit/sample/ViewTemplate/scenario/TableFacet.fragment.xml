@@ -1,14 +1,13 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 
-	<scenario:Form title="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
-		<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
-			<Table items="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
-				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
-			</Table>
-		</template:with>
-	</scenario:Form>
+	<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+		<Table class="sapUiSmallMarginBottom"
+			headerText="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+			items="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
+			<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
+		</Table>
+	</template:with>
 </core:FragmentDefinition>

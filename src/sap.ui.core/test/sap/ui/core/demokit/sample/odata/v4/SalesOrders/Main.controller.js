@@ -260,7 +260,7 @@ sap.ui.define([
 		onDeleteBusinessPartner: function () {
 			var oContext = this.byId("BusinessPartner").getBindingContext();
 
-			oContext["delete"](oContext.getModel().getGroupId()).then(function () {
+			oContext.delete(oContext.getModel().getGroupId()).then(function () {
 				MessageBox.success("Deleted Business Partner");
 			}, function (oError) {
 				MessageBox.error("Could not delete Business Partner: " + oError.message);
@@ -278,7 +278,7 @@ sap.ui.define([
 					return;
 				}
 				// Use "$auto" or "$direct" just like selected when creating the model
-				oSalesOrderContext["delete"](oSalesOrderContext.getModel().getGroupId())
+				oSalesOrderContext.delete(oSalesOrderContext.getModel().getGroupId())
 					.then(function () {
 						MessageBox.success("Deleted Sales Order " + sOrderID);
 					}, function (oError) {
@@ -305,7 +305,7 @@ sap.ui.define([
 					return;
 				}
 				// Use "$auto" or "$direct" just like selected when creating the model
-				oSOLineItemContext["delete"](oSOLineItemContext.getModel().getGroupId())
+				oSOLineItemContext.delete(oSOLineItemContext.getModel().getGroupId())
 					.then(function () {
 						MessageBox.success("Deleted Sales Order " + sSalesOrderLineItem);
 					}, function (oError) {
@@ -328,7 +328,7 @@ sap.ui.define([
 
 			// Special case: Delete entities deeply nested in the cache
 			oTable.getSelectedContexts().forEach(function (oContext) {
-				aPromises.push(oContext["delete"](sGroupId));
+				aPromises.push(oContext.delete(sGroupId));
 			});
 			Promise.all(aPromises).then(function () {
 				oTable.removeSelections();

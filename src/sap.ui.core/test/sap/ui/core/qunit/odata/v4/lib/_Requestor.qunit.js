@@ -372,7 +372,7 @@ sap.ui.require([
 			.withArgs("/Employees")
 			.returns(createMock(assert, {}, "OK"));
 		oRequestorMock.expects("doCheckVersionHeader")
-			.withExactArgs(sinon.match.func, "Employees")
+			.withExactArgs(sinon.match.func, "Employees", false)
 			.throws(oError);
 		oRequestorMock.expects("doConvertResponse").never();
 
@@ -664,7 +664,7 @@ sap.ui.require([
 					method : "GET"
 				}).returns(createMock(assert, oResponsePayload, "OK"));
 			oRequestorMock.expects("doCheckVersionHeader")
-				.withExactArgs(sinon.match.func, "Employees");
+				.withExactArgs(sinon.match.func, "Employees", false);
 			oRequestorMock.expects("doConvertResponse")
 				.withExactArgs(oResponsePayload, sMetaPath)
 				.returns(oConvertedResponse);
@@ -677,6 +677,23 @@ sap.ui.require([
 					assert.strictEqual(result, oConvertedResponse);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sendRequest: optional OData-Version header for empty response", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(jQuery).expects("ajax")
+			.withExactArgs(sServiceUrl + "SalesOrderList('0500000676')", sinon.match.object)
+			.returns(createMock(assert, undefined, "No Content", {}));
+		this.mock(oRequestor).expects("doCheckVersionHeader")
+			.withExactArgs(sinon.match.func, "SalesOrderList('0500000676')", true);
+
+		// code under test
+		return oRequestor.request("DELETE", "SalesOrderList('0500000676')")
+			.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+			});
 	});
 
 	//*********************************************************************************************
@@ -1900,10 +1917,14 @@ sap.ui.require([
 	QUnit.test("request: $cached as groupId", function (assert) {
 		var oRequestor = _Requestor.create("/");
 
-		assert.throws(function(){
+		assert.throws(function () {
 			//code under test
 			oRequestor.request("GET", "/FOO", new _GroupLock("$cached"));
-		},  new Error("Unexpected request: GET /FOO"));
+		},  function (oError) {
+			assert.strictEqual(oError.message, "Unexpected request: GET /FOO");
+			assert.strictEqual(oError.$cached, true);
+			return oError instanceof Error;
+		});
 	});
 
 	//*********************************************************************************************
