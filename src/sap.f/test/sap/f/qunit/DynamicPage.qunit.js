@@ -2276,6 +2276,65 @@
 			"DynamicPage Header is not bigger than allowed");
 	});
 
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on desktop", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
+				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+			},
+			iSmallHeaderHeight = 700,
+			iLargeHeaderHeight = 1100,
+			iPageHeight = 1000;
+
+		// act (1) -  Header`s height is smaller than the Page`s height.
+		fnStubConfig(iSmallHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"DynamicPage Header is not bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (2) - Header`s height is bigger than the Page`s height.
+		fnStubConfig(iLargeHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
+			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
+	});
+
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on mobile", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
+				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+			},
+			iSmallHeaderHeight = 100,
+			iLargeHeaderHeight = 400,
+			iPageHeight = 1000;
+
+		// act (1) -  Header`s height is smaller than the Page`s height.
+		oUtil.toMobileMode();
+		fnStubConfig(iSmallHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"DynamicPage Header is not bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (2) - Header`s height is bigger than 1/3 (0.3) of the Page`s height.
+		fnStubConfig(iLargeHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
+			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
+
+		oUtil.toDesktopMode();
+	});
+
 	QUnit.test("DynamicPage _getEntireHeaderHeight() return correct values", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			oTitle = oDynamicPage.getTitle(),
