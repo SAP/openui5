@@ -123,16 +123,22 @@ sap.ui.define([
 			this._$editableField.children().remove();
 			this._$editableField.css('visibility', 'hidden');
 
-			// TODO : for all browsers
 			this._$editableField.css({
 				"-moz-user-modify": "read-write",
 				"-webkit-user-modify": "read-write",
 				"-ms-user-modify": "read-write",
 				"user-modify": "read-write",
 				"text-overflow": "clip",
-				"white-space": "nowrap",
-				"line-height": "normal" //to avoid incorrectly sized field in Edge
+				"white-space": "nowrap"
 			});
+
+			//only for renaming variants in edge browser [SPECIAL CASE]
+			if (sap.ui.Device.browser.name == "ed" &&
+				  oElement.getMetadata().getName() == "sap.ui.fl.variants.VariantManagement"){
+				this._$editableField.css({
+					"line-height": "normal"
+				});
+			}
 
 			Overlay.getMutationObserver().ignoreOnce({
 				target: this._$oEditableControlDomRef.get(0)
