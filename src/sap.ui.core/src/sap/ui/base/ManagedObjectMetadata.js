@@ -766,6 +766,7 @@ function(
 
 		// as oClassInfo is volatile, we need to store the info
 		this._oDesignTime = oClassInfo.metadata["designtime"] || oClassInfo.metadata["designTime"];
+		this._sProvider = oClassInfo.metadata["provider"];
 
 		if ( oClassInfo.metadata.__version > 1.0 ) {
 			this.generateAccessors();
@@ -792,6 +793,7 @@ function(
 			this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
 			this._sDefaultProperty = this._sDefaultProperty || oParent._sDefaultProperty;
 			this._mAllSpecialSettings = jQuery.extend({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
+			this._sProvider = this._sProvider || oParent._sProvider;
 		} else {
 			this._mAllEvents = this._mEvents;
 			this._mAllProperties = this._mProperties;
