@@ -1710,6 +1710,103 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			"the change was written for the original selector ID");
 	});
 
+	QUnit.test("copyDependenciesFromInitialChangesMap", function(assert) {
+		var oChange0 = {
+			getId: function() {
+				return "fileNameChange0";
+			}
+		};
+		var oChange1 = {
+			getId: function() {
+				return "fileNameChange1";
+			}
+		};
+		var oChange2 = {
+			getId: function() {
+				return "fileNameChange2";
+			}
+		};
+		var mChanges = {
+			"field3-2": [oChange1, oChange2],
+			"group1": [oChange0]
+		};
+		var mInitialDependenciesMap = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
+				"fileNameChange2": {
+					"changeObject": oChange2,
+					"dependencies": ["fileNameChange1", "fileNameChange0"],
+					"controlsDependencies": ["group2", "group1"]
+				}
+			},
+			mDependentChangesOnMe: {
+				"fileNameChange0": ["fileNameChange2"],
+				"fileNameChange1": ["fileNameChange2"]
+			}
+		};
+		var mCurrentDependenciesMap = {
+			mChanges: mChanges,
+			mDependencies: {},
+			mDependentChangesOnMe: {}
+		};
+		var mExpectedDependenciesMapAfterFirstChange = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				}
+			},
+			mDependentChangesOnMe: {}
+		};
+
+		var mExpectedDependenciesMapAfterSecondChange = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
+				"fileNameChange2": {
+					"changeObject": oChange2,
+					"dependencies": [],
+					"controlsDependencies": ["group2", "group1"]
+				}
+			},
+			mDependentChangesOnMe: {}
+		};
+
+		this.oChangePersistence._mChangesInitial = mInitialDependenciesMap;
+		this.oChangePersistence._mChanges = mCurrentDependenciesMap;
+		function fnCallbackTrue() {
+			return true;
+		}
+		function fnCallbackFalse() {
+			return false;
+		}
+
+		var mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, fnCallbackTrue);
+		assert.deepEqual(mUpdatedDependenciesMap, mCurrentDependenciesMap, "no dependencies got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, fnCallbackTrue);
+		assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackFalse);
+		assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterSecondChange, "no dependencies from change2 got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackTrue);
+		assert.deepEqual(mUpdatedDependenciesMap, mInitialDependenciesMap, "all dependencies from change2 got copied");
+
+		assert.deepEqual(mUpdatedDependenciesMap, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
+	});
+
 	QUnit.test("deleteChanges shall remove the given change from the map", function(assert) {
 
 		var that = this;
