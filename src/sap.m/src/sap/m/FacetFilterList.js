@@ -187,21 +187,10 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 
 	FacetFilterList.prototype._applySearch = function() {
 		var searchVal = this._getSearchValue();
-		if (searchVal != null && searchVal != "" ) {
+		if (searchVal != null) {
 			this._search(searchVal, true);
 			this._updateSelectAllCheckBox();
 		}
-	};
-
-	/*
-	 * Reseting user searches.
-	 *
-	 * @private
-	 */
-	FacetFilterList.prototype._resetSearch = function() {
-		this._searchValue = "";
-		this._search("", true);
-		this._updateSelectAllCheckBox();
 	};
 
 	/**
@@ -417,7 +406,7 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 		this.setRememberSelections(false);
 
 		// Remember the search value so that it can be seeded into the search field
-		this._searchValue = null;
+		this._searchValue = "";
 
 		// Select items set from a variant when the growing list is updated
 		this.attachUpdateFinished(function(oEvent) {
@@ -489,7 +478,7 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 
 		if (this.isBound("items")) {
 
-			this._searchValue = null; // Clear the search value since items are being reinitialized
+			this._searchValue = ""; // Clear the search value since items are being reinitialized
 			this._allowRemoveSelections = false;
 			sap.m.ListBase.prototype._resetItemsBinding.apply(this, arguments);
 			this._allowRemoveSelections = true;
@@ -571,19 +560,16 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 			this._searchValue = sSearchVal;
 			var oBinding = this.getBinding("items");
 			var oBindingInfo = this.getBindingInfo("items");
-
 			if (oBindingInfo && oBindingInfo.binding) {
 				bindingInfoaFilters = oBindingInfo.binding.aFilters;
 				if (bindingInfoaFilters.length > 0) {
 					numberOfsPath = bindingInfoaFilters[0].aFilters.length;
 					if (this._firstTime) {
-						this._saveBindInfo = bindingInfoaFilters[0];
-
+						this._saveBindInfo = bindingInfoaFilters[0].aFilters[0];
 						this._firstTime = false;
 					}
 				}
 			}
-
 			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
 				// possible
 				if (sSearchVal || numberOfsPath > 0) {
@@ -596,11 +582,10 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 							sEncodedString = sEncodedString.toLowerCase();
 							oUserFilter = new Filter("tolower(" + path + ")", sap.ui.model.FilterOperator.Contains, sEncodedString);
 						}
-
 						if (numberOfsPath > 1) {
 							var oFinalFilter = new Filter([oUserFilter, this._saveBindInfo], true);
 						} else {
-							if (numberOfsPath === 1 && oUserFilter.sPath != this._saveBindInfo.aFilters[0].sPath) {
+							if (this._saveBindInfo > "" && oUserFilter.sPath != this._saveBindInfo.sPath) {
 								var oFinalFilter = new Filter([oUserFilter, this._saveBindInfo], true);
 							} else {
 								if (sSearchVal == "") {
