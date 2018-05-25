@@ -8,7 +8,6 @@ sap.ui.require([
 	/*global QUnit */
 	"use strict";
 
-	QUnit.config.testTimeout = 180000;
 	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Type Determination and Delete");
 
 	//*****************************************************************************

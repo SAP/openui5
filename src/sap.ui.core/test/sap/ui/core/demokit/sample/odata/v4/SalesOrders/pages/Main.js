@@ -11,8 +11,7 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
-],
-function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
+], function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
 		Properties) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,

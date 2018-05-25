@@ -163,7 +163,7 @@ function (Helper, Opa5, TestUtils, Properties) {
 										return false;
 									}
 									return true;
-								})
+								});
 
 								Opa5.assert.strictEqual(oIssues.length, 0,
 									"No support assistant prio high issues");
