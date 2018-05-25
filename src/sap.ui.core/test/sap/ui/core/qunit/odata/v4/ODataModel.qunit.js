@@ -97,6 +97,10 @@ sap.ui.require([
 			this.oLogMock.expects("error").never();
 			this.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag").atLeast(0)
 				.returns("ab-CD");
+		},
+
+		afterEach : function () {
+			return TestUtils.awaitRendering();
 		}
 	});
 

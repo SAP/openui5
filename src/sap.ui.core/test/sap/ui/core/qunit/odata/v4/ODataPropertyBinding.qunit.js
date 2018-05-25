@@ -52,6 +52,10 @@ sap.ui.require([
 			this.mock(this.oModel.oRequestor).expects("request").never();
 		},
 
+		afterEach : function () {
+			return TestUtils.awaitRendering();
+		},
+
 		/**
 		 * Creates a Sinon mock for a cache object with read and refresh method.
 		 * @returns {object}

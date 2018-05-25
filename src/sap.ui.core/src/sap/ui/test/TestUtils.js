@@ -117,6 +117,29 @@ sap.ui.define([
 	 */
 	TestUtils = /** @lends sap.ui.test.TestUtils */ {
 		/**
+		 * If the UI5 core is dirty, the function returns a promise that waits until the rendering
+		 * is finished.
+		 *
+		 * @returns {Promise|undefined}
+		 *   An optional promise that is resolved when the UI5 core is no longer dirty
+		 */
+		awaitRendering : function () {
+			if (sap.ui.getCore().getUIDirty()) {
+				return new Promise(function (resolve) {
+					function check() {
+						if (sap.ui.getCore().getUIDirty()) {
+							setTimeout(check, 1);
+						} else {
+							resolve();
+						}
+					}
+
+					check();
+				});
+			}
+		},
+
+		/**
 		 * Companion to <code>QUnit.deepEqual</code> which only tests for the existence of expected
 		 * properties, not the absence of others.
 		 *

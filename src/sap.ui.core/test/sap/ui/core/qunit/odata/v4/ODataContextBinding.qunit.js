@@ -45,6 +45,10 @@ sap.ui.require([
 			// avoid that the cache requests actual metadata for faked responses
 			this.mock(this.oModel.oRequestor).expects("fetchTypeForPath").atLeast(0)
 				.returns(SyncPromise.resolve({}));
+		},
+
+		afterEach : function () {
+			return TestUtils.awaitRendering();
 		}
 	});
 
@@ -681,9 +685,9 @@ sap.ui.require([
 			var oBinding = this.oModel.bindContext("/absolute"),
 				oBindingMock = this.mock(oBinding),
 				oError = {},
-				oRefreshGroupLock = {};
+				oReadGroupLock = {};
 
-			oBinding.oRefreshGroupLock = oRefreshGroupLock;
+			oBinding.oReadGroupLock = oReadGroupLock;
 			this.mock(this.oModel).expects("lockGroup").never();
 			this.mock(this.oModel).expects("reportError").never();
 			oBindingMock.expects("fireDataRequested").never();
@@ -697,7 +701,7 @@ sap.ui.require([
 			return oBinding.fetchValue("/absolute/bar", null, true).then(function (vValue) {
 				assert.ok(bSuccess);
 				assert.strictEqual(vValue, "value");
-				assert.strictEqual(oBinding.oRefreshGroupLock, oRefreshGroupLock);
+				assert.strictEqual(oBinding.oReadGroupLock, oReadGroupLock);
 			}, function (oError0) {
 				assert.ok(!bSuccess);
 				assert.strictEqual(oError0, oError);

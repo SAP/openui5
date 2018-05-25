@@ -21,10 +21,11 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/odata/v4/ODataParentBinding"
+	"sap/ui/model/odata/v4/ODataParentBinding",
+	"sap/ui/test/TestUtils"
 ], function (jQuery, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
 		FilterType, ListBinding, Model, Sorter, OperationMode, Context, _AggregationCache, _Cache,
-		_GroupLock, _Helper, ODataListBinding, ODataModel, asODataParentBinding) {
+		_GroupLock, _Helper, ODataListBinding, ODataModel, asODataParentBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
@@ -184,6 +185,10 @@ sap.ui.require([
 				.returns(SyncPromise.resolve({}));
 			// in case "request" is restored, this catches accidental requests
 			this.mock(_Helper).expects("createError").never();
+		},
+
+		afterEach : function (assert) {
+			return TestUtils.awaitRendering();
 		},
 
 		/**
@@ -579,7 +584,9 @@ sap.ui.require([
 		var oBinding,
 			oGroupLock = new _GroupLock();
 
-		this.mock(this.oModel).expects("lockGroup").twice().returns(oGroupLock);
+		// avoid that an oReadGroupLock with its clean-up task is created
+		this.mock(ODataListBinding.prototype).expects("createReadGroupLock");
+		this.mock(this.oModel).expects("lockGroup").returns(oGroupLock);
 		this.getCacheMock().expects("read")
 			.withExactArgs(0, 10, 0, sinon.match.same(oGroupLock), sinon.match.func)
 			.callsArg(4)
@@ -2576,7 +2583,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bUsePredicates) {
 		QUnit.test("createContexts, bUsePredicates = " + bUsePredicates, function (assert) {
-			var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/),
+			var oBinding = this.oModel.bindList("/EMPLOYEES", {/*oContext*/}),
 				aContexts = [null, {}, {}, {}],
 				oContextMock = this.mock(Context),
 				i,
@@ -2620,7 +2627,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("createContexts, paging: less data than requested", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/), i;
+		var oBinding = this.oModel.bindList("/EMPLOYEES", {/*oContext*/}), i;
 
 		function result(iLength, iCount) {
 			return createData(iLength, 0, true, iCount);
@@ -2682,7 +2689,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("createContexts, reuse previous contexts", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/),
+		var oBinding,
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES/1", 1),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES/2", 2),
 			oContext3 = {},
@@ -2693,6 +2700,10 @@ sap.ui.require([
 				"/EMPLOYEES/2" : oContext2
 			};
 
+		// avoid that an oRefreshGroupLock with its clean-up task is created
+		this.mock(ODataListBinding.prototype).expects("createReadGroupLock");
+
+		oBinding = this.oModel.bindList("/EMPLOYEES", {/*oContext*/});
 		oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
 		this.mock(oContext1).expects("checkUpdate").withExactArgs();
 		this.mock(oContext2).expects("checkUpdate").withExactArgs();
@@ -2715,16 +2726,25 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("createContexts w/ keyPredicates, reuse previous contexts", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/),
-			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", 1),
-			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')", 2),
-			oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES('3')", 2),
+		var oBinding,
+			oContext1,
+			oContext2,
+			oContext3,
 			oContextMock = this.mock(Context),
-			mPreviousContextsByPath = {
-				"/EMPLOYEES('0')" : {destroy : function () {}},
-				"/EMPLOYEES('1')" : oContext1,
-				"/EMPLOYEES('2')" : oContext2
-			};
+			mPreviousContextsByPath;
+
+		// avoid that an oRefreshGroupLock with its clean-up task is created
+		this.mock(ODataListBinding.prototype).expects("createReadGroupLock");
+
+		oBinding = this.oModel.bindList("/EMPLOYEES", {/*oContext*/});
+		oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", 1);
+		oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')", 2);
+		oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES('3')", 2);
+		mPreviousContextsByPath = {
+			"/EMPLOYEES('0')" : {destroy : function () {}},
+			"/EMPLOYEES('1')" : oContext1,
+			"/EMPLOYEES('2')" : oContext2
+		};
 
 		oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
 		this.mock(oContext1).expects("destroy").never();
@@ -2759,12 +2779,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("createContexts, no prerendering task if no previous contexts", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES", {});
-
+		// avoid that an oRefreshGroupLock with its clean-up task is created
+		this.mock(ODataListBinding.prototype).expects("createReadGroupLock");
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
 
 		// code under test
-		oBinding.createContexts(1, 1, 0);
+		this.oModel.bindList("/EMPLOYEES", {}).createContexts(1, 1, 0);
 	});
 
 	//*********************************************************************************************
