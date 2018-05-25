@@ -8,24 +8,21 @@
 
 	<!-- Bootstrapping UI5 -->
 	<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.f"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-preload="async"
-			data-sap-ui-resourceroots='{"mycompany.myapp.MyWorklistApp": "../"}'
-			data-sap-ui-frameOptions='allow'> 	// NON-SECURE setting for testing environment
+			data-sap-ui-resourceroots='{"mycompany.myapp.MyWorklistApp": "."}'
+			data-sap-ui-frameOptions="trusted">
 	</script>
 
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
-				"mycompany/myapp/MyWorklistApp/localService/mockserver",
 				"sap/m/Shell",
 				"sap/ui/core/ComponentContainer"
-			], function (server, Shell, ComponentContainer) {
-				// set up test service for local testing
-				server.init();
+			], function (Shell, ComponentContainer) {
 				// initialize the UI component
 				new Shell({
 					app: new ComponentContainer({
