@@ -111,6 +111,13 @@
 					content: this.getContent(20)
 				});
 			},
+			getDynamicPageToggleHeaderFalse: function () {
+				return new DynamicPage({
+					toggleHeaderOnTitleClick: false,
+					title: this.getDynamicPageTitle(),
+					content: this.getContent(100)
+				});
+			},
 			getDynamicPageTitle: function () {
 				return new DynamicPageTitle({
 					heading:  this.getTitle()
@@ -2744,6 +2751,25 @@
 
 		oDynamicPage.addEventDelegate(oDelegate);
 		oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
+	});
+
+	QUnit.module("DynamicPage - toggleHeaderOnTitleClick", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageToggleHeaderFalse();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage toggleHeaderOnTitleClick initial behavior", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			$oDynamicPageTitle = oDynamicPage.getTitle().$();
+
+		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), false, "Initially toggleHeaderOnTitleClick = false");
+		assert.equal($oDynamicPageTitle.attr("tabindex"), undefined, "Initially the header title is not focusable");
 	});
 
 	/* --------------------------- DynamicPage ARIA ---------------------------------- */

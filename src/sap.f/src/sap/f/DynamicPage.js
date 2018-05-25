@@ -285,8 +285,14 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
+		var oDynamicPageTitle = this.getTitle();
+
 		if (!this._preserveHeaderStateOnScroll()) {
 			this._attachPinPressHandler();
+		}
+
+		if (exists(oDynamicPageTitle)) {
+			oDynamicPageTitle._toggleFocusableState(this.getToggleHeaderOnTitleClick());
 		}
 
 		this._attachTitlePressHandler();
