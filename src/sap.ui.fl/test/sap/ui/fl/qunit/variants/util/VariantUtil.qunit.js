@@ -34,7 +34,17 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when calling 'initializeHashRegister' with a context", function (assert) {
+		QUnit.test("when calling 'getCurrentHashParamsFromRegister' with oHashRegister.currentIndex not set to null", function (assert) {
+			this._oHashRegister = {
+				currentIndex: 0,
+				hashParams : [
+					["expectedParameter1", "expectedParameter2"],
+					["unExpectedParameter"]
+				]
+			};
+			assert.deepEqual(VariantUtil.getCurrentHashParamsFromRegister.call(this), ["expectedParameter1", "expectedParameter2"], "then expected parameters are returned");
+		});
+		QUnit.test("when calling 'initializeHashRegister' with oHashRegister.currentIndex set to null", function (assert) {
 			this.sVariantTechnicalParameterName = "myParamName";
 			sandbox.stub(VariantUtil, "_setCustomNavigationForParameter");
 			VariantUtil.initializeHashRegister.call(this);
