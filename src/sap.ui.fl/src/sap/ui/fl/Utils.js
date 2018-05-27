@@ -867,7 +867,7 @@ sap.ui.define([
 		setTechnicalURLParameterValues: function (oComponent, sParameterName, aValues) {
 				var oParsedHash = Utils.getParsedURLHash(sParameterName);
 
-				if (oParsedHash) {
+				if (oParsedHash.params) {
 					hasher.changed.active = false; //disable changed signal
 
 					var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
