@@ -1438,7 +1438,7 @@
 				values: [{text: "Val1", key: "val1"}, {text: "Val2", key: "val3"}]
 			}));
 
-			assert.strictEqual(oFFL._searchValue, null, "Search value is cleared after items binding is reset");
+			assert.strictEqual(oFFL._searchValue, "", "Search value is cleared after items binding is reset");
 
 			assert.equal(oFFL.getSelectedItems().length, 2, "Selected items should not have been removed");
 
@@ -1483,56 +1483,14 @@
 			destroyFF(oFF);
 		});
 
-		QUnit.test("FacetFilterList._search is not called for null or empty values", function(assert){
-			//arrange
-			var oFF = new sap.m.FacetFilter(),
-				oFFL = new sap.m.FacetFilterList(),
-				oSearchSpy = this.spy(oFFL, "_search");
-			oFF.addList(oFFL);
-
-			//act
-			oFFL._applySearch();
-
-			//assert
-			assert.strictEqual(oSearchSpy.callCount, 0, "value is null and _search is not called");
-
-			//act
-			oFFL._setSearchValue("");
-			oFFL._applySearch();
-
-			//assert
-			assert.strictEqual(oSearchSpy.callCount, 0, "value is an empty string and _search is not called");
-
-			//destroy
-			oSearchSpy.reset();
-			oFF.destroy();
-		});
-
-		QUnit.test("FacetFilterList._resetSearch", function(assert){
-			//arrange
-			var oFF = new sap.m.FacetFilter(),
-				oFFL = new sap.m.FacetFilterList(),
-				oResetButton = oFF.getAggregation("resetButton"),
-				oResetSearchSpy = this.spy(oFFL, "_resetSearch");
-
-			//act
-			oFF.addList(oFFL);
-			oResetButton.firePress();
-
-			//assert
-			assert.strictEqual(oResetSearchSpy.callCount, 1, "_resetSearch is called when press on the reset button");
-
-			//destroy
-			oResetSearchSpy.reset();
-			oFF.destroy();
-		});
-
 		QUnit.test("FacetFilterItem.init", function(assert) {
 			var oItem = new sap.m.FacetFilterItem();
 
 			assert.ok(oItem.hasStyleClass("sapMFFLI"), "sapMFFLI style class set");
 			oItem.destroy();
 		});
+
+
 
 		QUnit.module("Public API");
 
@@ -4593,72 +4551,6 @@
 
 			// Cleanup
 			destroyFF(oFF);
-		});
-
-		QUnit.test("FacetFilterList combines both filters - it's own and the one provided by the app", function(assert){
-			//arrange
-			var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}],
-					oFF = new sap.m.FacetFilter(),
-					oFFL = new sap.m.FacetFilterList({
-						items: {
-							path: "/values",
-							template: new sap.m.FacetFilterItem( {
-								text: "{text}",
-								key: "{key}"
-							})
-						}
-					}),
-					oFilterSpy,
-					oCombinedFilter;
-
-			oFFL.setModel(new sap.ui.model.json.JSONModel({
-				values: aItemsData
-			}));
-
-			oFFL.attachEventOnce("listOpen", function(oEvent) {
-				var oFFL = oEvent.getSource(),
-						aFilters = [];
-
-				aFilters.push(new sap.ui.model.Filter({
-					path: 'CategoryID',
-					operator: 'EQ',
-					value1: 2
-				}));
-				aFilters.push(new sap.ui.model.Filter({
-					path: 'CategoryID',
-					operator: 'EQ',
-					value1: 3
-				}));
-				oCombinedFilter = new sap.ui.model.Filter(aFilters, false);
-				oFFL.getBinding('items').filter(oCombinedFilter);
-			});
-
-			oFFL.bindAggregation("items", {
-				path: "/values",
-				template: new sap.m.FacetFilterItem({
-					text: "{text}",
-					key: "{key}"
-				})
-			});
-
-			oFilterSpy = this.spy(oFFL.getBinding("items"), "filter");
-
-			oFF.addList(oFFL);
-			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			//act
-			oFFL.fireListOpen();
-
-			oFFL._search("Val1");
-
-			//assert
-			assert.strictEqual(oFilterSpy.callCount, 2, "filter method of the ffl's items is called");
-			assert.strictEqual(oFilterSpy.getCall(1).args[0].aFilters[0].sPath, "text", "There is one element in the first filter with path 'text'");
-			assert.strictEqual(oFilterSpy.getCall(1).args[0].aFilters[1], oCombinedFilter, "The second element is the same as the combined filter");
-
-			//destroy
-			oFF.destroy();
 		});
 
 		// Helper functions
