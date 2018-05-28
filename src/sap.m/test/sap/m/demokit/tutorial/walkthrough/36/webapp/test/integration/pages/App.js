@@ -1,18 +1,20 @@
 sap.ui.require([
-	"sap/ui/test/Opa5"
-], function (Opa5) {
+	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press"
+], function (Opa5, Press) {
 	"use strict";
+
+	var sViewName = "sap.ui.demo.walkthrough.view.HelloPanel";
 
 	Opa5.createPageObjects({
 		onTheAppPage: {
 			actions: {
 				iPressTheSayHelloWithDialogButton: function () {
 					return this.waitFor({
-						controlType: "sap.m.Button",
-						success: function (aButtons) {
-							aButtons[0].$().trigger("tap");
-						},
-						errorMessage: "Did not find the helloDialogButton button on the app page"
+						id: "helloDialogButton",
+						viewName: sViewName,
+						actions: new Press(),
+						errorMessage: "Did not find the 'Say Hello With Dialog' button on the HelloPanel view"
 					});
 				}
 			},
