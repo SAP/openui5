@@ -2504,8 +2504,8 @@ sap.ui.define([
 		this.oParent = oParent;
 		this.sParentAggregationName = sAggregationName;
 
-		//get properties to propagate
-		var oPropagatedProperties = oParent._getPropertiesToPropagate();
+		//get properties to propagate - get them from the original API parent in case this control was moved by aggregation forwarding
+		var oPropagatedProperties = this.aAPIParentInfos ? this.aAPIParentInfos[0].parent._getPropertiesToPropagate() : oParent._getPropertiesToPropagate();
 
 		if (oPropagatedProperties !== this.oPropagatedProperties) {
 			this.oPropagatedProperties = oPropagatedProperties;
@@ -4414,6 +4414,12 @@ sap.ui.define([
 
 	ManagedObject._oEmptyPropagatedProperties = {oModels:{}, oBindingContexts:{}, aPropagationListeners:[]};
 
+	var fnObjectAssign = Object.assign || jQuery.extend; // Object.assign is ~30% faster across modern browsers in 2018, but not supported in IE
+
+	function _hasAsRealChild(oParent, oChild) {
+		return !oChild.aAPIParentInfos || oChild.aAPIParentInfos[0].parent === oParent;
+	}
+
 	/**
 	 * Propagate Properties (models and bindingContext) to aggregated objects.
 	 * @param {string|undefined|true|false} sName when <code>true</code>, all bindings are updated,
@@ -4427,19 +4433,24 @@ sap.ui.define([
 			bUpdateAll = vName === true, // update all bindings when no model name parameter has been specified
 			bUpdateListener = vName === false, //update only propagation listeners
 			sName = bUpdateAll ? undefined : vName,
-			sAggregationName, oAggregation, i;
+			sAggregationName, oAggregation, i,
+			mAllAggregations = fnObjectAssign({}, this.mAggregations, this.mForwardedAggregations);
 
-		for (sAggregationName in this.mAggregations) {
+		for (sAggregationName in mAllAggregations) {
 			if (this.mSkipPropagation[sAggregationName]) {
 				continue;
 			}
-			oAggregation = this.mAggregations[sAggregationName];
+			oAggregation = mAllAggregations[sAggregationName];
 			if (oAggregation instanceof ManagedObject) {
-				this._propagateProperties(vName, oAggregation, oProperties, bUpdateAll, sName, bUpdateListener);
+				if (_hasAsRealChild(this, oAggregation)) { // do not propagate to children forwarded from somewhere else
+					this._propagateProperties(vName, oAggregation, oProperties, bUpdateAll, sName, bUpdateListener);
+				}
 			} else if (oAggregation instanceof Array) {
 				for (i = 0; i < oAggregation.length; i++) {
 					if (oAggregation[i] instanceof ManagedObject) {
-						this._propagateProperties(vName, oAggregation[i], oProperties, bUpdateAll, sName, bUpdateListener);
+						if (_hasAsRealChild(this, oAggregation[i])) { // do not propagate to children forwarded from somewhere else
+							this._propagateProperties(vName, oAggregation[i], oProperties, bUpdateAll, sName, bUpdateListener);
+						}
 					}
 				}
 			}
@@ -4752,6 +4763,15 @@ sap.ui.define([
 		//Clone the meta data contexts interpretation
 		if (this._cloneMetadataContexts) {
 			this._cloneMetadataContexts(oClone);
+		}
+
+		if (this.mForwardedAggregations) { // forwarded elements have been cloned; set up the connection from their API parent now
+			for (sName in this.mForwardedAggregations) {
+				var oForwarder = oClone.getMetadata().getAggregationForwarder(sName);
+				if (oForwarder) {
+					oForwarder.getTarget(oClone, true);
+				}
+			}
 		}
 
 		return oClone;

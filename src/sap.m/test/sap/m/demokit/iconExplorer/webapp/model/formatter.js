@@ -100,14 +100,14 @@ sap.ui.define([
 		},
 
 		/**
-         * Returns the relative URL to a product picture
-		 * @public
-         * @param {string} sUrl image URL
-         * @return {string} relative image URL
-         */
-        pictureUrl: function (sUrl) {
-            return jQuery.sap.getResourcePath("sap/ui/demo/iconexplorer/" + sUrl);
-        }
+			* Returns the relative URL to a product picture
+		 	* @public
+			* @param {string} sUrl image URL
+			* @return {string} relative image URL
+			*/
+			pictureUrl: function(sUrl) {
+				return sap.ui.require.toUrl("sap/ui/demo/iconexplorer/") + sUrl;
+			}
 
 	};
 

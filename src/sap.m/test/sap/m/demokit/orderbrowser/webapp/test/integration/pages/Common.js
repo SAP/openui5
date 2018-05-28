@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	function getFrameUrl (sHash, sUrlParameters) {
-		var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/orderbrowser/app", ".html");
+		var sUrl = sap.ui.require.toUrl("sap/ui/demo/orderbrowser/app/mockServer.html");
 		sHash = sHash || "";
 		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
 

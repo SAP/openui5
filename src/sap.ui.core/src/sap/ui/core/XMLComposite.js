@@ -421,10 +421,11 @@ sap.ui.define([
 
 				Control.apply(this,arguments);
 				delete this._bIsCreating;
-				if (this.getMetadata().usesTemplating()) {
+				if (this.getMetadata().usesTemplating() && !this._bIsInitialized) {
 					//for the case the template is written against the ManagedObjectModel a templating before
 					//creating was not possible so we have to retemplate against the ManagedObject Model
 					this.requestFragmentRetemplating();
+					delete this._bIsInitialized;
 				}
 			},
 			renderer: function (oRm, oControl) {
@@ -769,14 +770,16 @@ sap.ui.define([
 				sAggregationName = oMetadata.getCompositeAggregationName(),
 				bInitialized = false;
 			if (mSettings && sAggregationName) {
+				//this branch is taken if the _content of the compostie is there at creation time
 				var oNode = mSettings[sAggregationName];
 				if (oNode instanceof ManagedObject) {
-					//this happens if we cone the composite and the children are already present
+					//this happens either if we clone an existing composite and the children are already present
 					//note that we adapted the event handling in the clone method that is enhanced in the composite
 					this._destroyCompositeAggregation();
 					this._setCompositeAggregation(oNode);
 					bInitialized = true;
 				} else {
+					//or if a preprocessing like in the mdc:Table has happened
 					if (oNode && oNode.localName === "FragmentDefinition") {
 						this._destroyCompositeAggregation();
 						this._setCompositeAggregation(sap.ui.xmlfragment({
@@ -790,6 +793,7 @@ sap.ui.define([
 				delete mSettings[sAggregationName];
 			}
 			if (!bInitialized) {
+				//at this end the composite is not preprocessed or cloned
 				this._destroyCompositeAggregation();
 				if (!this.getMetadata().usesTemplating()) {
 					//in case there is no templating it is possible to insert the fragment as content
@@ -799,8 +803,10 @@ sap.ui.define([
 						fragmentContent: this.getMetadata()._fragment,
 						oController: this
 					}));
+					bInitialized = true;
 				}
 			}
+			this._bIsInitialized = bInitialized;
 		};
 
 		/**
