@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.base.DataType
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
+	function(jQuery, ObjectPath) {
 	"use strict";
 
 
@@ -630,7 +630,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	DataType.registerInterfaceTypes = function(aTypes) {
 		for (var i = 0; i < aTypes.length; i++) {
-			jQuery.sap.setObject(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
+			ObjectPath.set(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
 		}
 	};
 

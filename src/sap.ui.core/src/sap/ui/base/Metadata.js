@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.base.Metadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.script'],
-	function(jQuery, Device /* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device', 'jquery.sap.script'],
+	function(jQuery, ObjectPath, Device /* , jQuerySap */) {
 	"use strict";
 
 
@@ -453,7 +453,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.script'],
 		oClassInfo.constructor = fnClass;
 
 		// make the class visible as JS Object
-		jQuery.sap.setObject(sClassName, fnClass);
+		ObjectPath.set(sClassName, fnClass);
 
 		// add metadata
 		var oMetadata = new FNMetaImpl(sClassName, oClassInfo);

@@ -3,8 +3,8 @@
  */
 
 // Provides (optional) base class for all renderers
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
+	function(jQuery, ObjectPath) {
 	"use strict";
 
 	/**
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			// expose the renderer globally
-			jQuery.sap.setObject(sName, oChildRenderer);
+			ObjectPath.set(sName, oChildRenderer);
 
 			return oChildRenderer;
 		};
