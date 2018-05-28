@@ -564,8 +564,14 @@ function (
 	});
 
 	QUnit.test("resetChanges shall call ChangePersistance.resetChanges() and reset control variant URL parameters", function(assert) {
+		var fnUpdateHasherStub = sandbox.stub();
 		var oComp = {
-			name: "testComp"
+			name: "testComp",
+			getModel: function() {
+				return {
+					updateHasherEntry: fnUpdateHasherStub
+				};
+			}
 		};
 		var sLayer = "testLayer";
 		var sGenerator = "test.Generator";
@@ -577,7 +583,11 @@ function (
 		});
 		return this.oFlexController.resetChanges(sLayer, sGenerator, oComp)
 			.then( function(){
-				assert.ok(Utils.setTechnicalURLParameterValues.calledWith(oComp, FlexController.variantTechnicalParameterName, []), "then Utils.setTechnicalURLParameterValues with the correct parameters");
+				assert.deepEqual(fnUpdateHasherStub.getCall(0).args[0], {
+					parameters: [],
+					updateURL: true,
+					component: oComp
+				}, "then Utils.setTechnicalURLParameterValues with the correct parameters");
 			});
 	});
 
