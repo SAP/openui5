@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 					// decode only if necessary
 					if (sParams.charAt(0) !== "{" && sParams.charAt(sParams.length - 1) !== "}") {
 						try {
-							sParams = decodeURI(sParams);
+							sParams = decodeURIComponent(sParams);
 						} catch (ex) {
 							jQuery.sap.log.warning("Could not decode theme parameters URI from " + sUrl);
 						}
