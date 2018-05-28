@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery,
 	 */
 	IconRenderer.render = function(oRm, oControl) {
 		// write the HTML into the render manager
-		var vIconInfo = IconPool.getIconInfo(oControl.getSrc(), "mixed"),
+		var vIconInfo = IconPool.getIconInfo(oControl.getSrc(), undefined, "mixed"),
 			sWidth = oControl.getWidth(),
 			sHeight = oControl.getHeight(),
 			sColor = oControl.getColor(),
