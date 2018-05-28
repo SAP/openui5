@@ -515,9 +515,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 */
 	function _deletePanel( oPanel ) {
 
-		oPanel.setContent("");
-		oPanel.setLayout("");
-		oPanel.setContainer("");
+		oPanel.setContent(null);
+		oPanel.setLayout(null);
+		oPanel.setContainer(null);
 		oPanel.destroy();
 
 	}
