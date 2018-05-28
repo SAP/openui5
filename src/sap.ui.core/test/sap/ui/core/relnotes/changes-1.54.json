@@ -1296,5 +1296,34 @@
         "references": []
       }
     ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "9f2b794b24f6228893fa0f2a19100ff09dd970c2",
+        "type": "FIX",
+        "text": " Core: enable support for \"-\" and \".\" for initial modules",
+        "references": []
+      },
+      {
+        "id": "717fffca4abde99a15de80f71cab487d8e5e747f",
+        "type": "FIX",
+        "text": " JSONModel: Async loadData - Error handling",
+        "references": []
+      },
+      {
+        "id": "99200fedfb57ec97e267c26da47f77037f9a5bab",
+        "type": "FIX",
+        "text": " qunit-junit reporter: Add null-check for qunit DOM node",
+        "references": []
+      },
+      {
+        "id": "82d13080f9a5d48212120ef48aac91ffac76aa21",
+        "type": "FIX",
+        "text": " ui5loader: fix sync module loading on file protocol",
+        "references": []
+      }
+    ]
   }
 }

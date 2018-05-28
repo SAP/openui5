@@ -161,7 +161,7 @@
       {
         "id": "81bd553a3db7bbda079ece0f54905c22d2ad00a8",
         "type": "FEATURE",
-        "text": "sap.m.MessagePopover - Added new aggregation 'headerButton'",
+        "text": "sap.m.MessagePopover - Added new aggregation \u0027headerButton\u0027",
         "references": []
       },
       {
@@ -369,7 +369,7 @@
       {
         "id": "28ffcb4d84f8f5a3c721c0a09d573faff421864a",
         "type": "FIX",
-        "text": "NavContainer didn't get properly invalidated",
+        "text": "NavContainer didn\u0027t get properly invalidated",
         "references": [
           {
             "type": "BCP",
@@ -731,7 +731,7 @@
       {
         "id": "da672d3693a56bb3c42b91fd54cc81d2966a4937",
         "type": "FIX",
-        "text": "sap.m.DatePicker: issues with date > 99991231",
+        "text": "sap.m.DatePicker: issues with date \u003e 99991231",
         "references": [
           {
             "type": "BCP",
@@ -858,7 +858,7 @@
       {
         "id": "546e529a1b632baf330015a2bbbdab1a25f4c2bf",
         "type": "FIX",
-        "text": "sap.m.FlexBox: removeItem doesn't erroneously remove its parent if the item is a FlexBox itself",
+        "text": "sap.m.FlexBox: removeItem doesn\u0027t erroneously remove its parent if the item is a FlexBox itself",
         "references": [
           {
             "type": "BCP",
@@ -1163,7 +1163,7 @@
       {
         "id": "8db5fbfaf2e6f4e25258b2b57291099279149433",
         "type": "FIX",
-        "text": "sap.m.MessageBox: A control provided as 'Message' is now handled correctly",
+        "text": "sap.m.MessageBox: A control provided as \u0027Message\u0027 is now handled correctly",
         "references": [
           {
             "type": "BCP",
@@ -1269,7 +1269,7 @@
       {
         "id": "f2f03f4de517568bfefb59ab354a0685f0f700fc",
         "type": "FIX",
-        "text": "sap.m.NavContainer was closing the popover it's in during invalidation",
+        "text": "sap.m.NavContainer was closing the popover it\u0027s in during invalidation",
         "references": [
           {
             "type": "BCP",
@@ -1280,7 +1280,7 @@
       {
         "id": "5be2ad90db10a5097e74863d2a175f1a13aace18",
         "type": "FIX",
-        "text": "sap.m.NavContainer: the data of 'to' navigation on initial page should be given back to the 'back' navigation",
+        "text": "sap.m.NavContainer: the data of \u0027to\u0027 navigation on initial page should be given back to the \u0027back\u0027 navigation",
         "references": [
           {
             "type": "BCP",
@@ -1445,7 +1445,7 @@
       {
         "id": "dfeae7318d02dc6cfb9c3d639f3951649358e843",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: don't select row if in 1 row mode",
+        "text": "sap.m.PlanningCalendar: don\u0027t select row if in 1 row mode",
         "references": []
       },
       {
@@ -1651,7 +1651,7 @@
       {
         "id": "74397bd172f0bbf23e7ea025af5a699606514186",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: cursor pointer over icon is set to 'pointer' instead of 'default'.",
+        "text": "sap.m.SegmentedButton: cursor pointer over icon is set to \u0027pointer\u0027 instead of \u0027default\u0027.",
         "references": []
       },
       {
@@ -1695,7 +1695,7 @@
       {
         "id": "eeff9e833074149c73201211d1d8842304c5c2df",
         "type": "FIX",
-        "text": "sap.m.TileContainer: Arrows' click behaviour in firefox is now handled properly",
+        "text": "sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
         "references": [
           {
             "type": "GitHub",
@@ -2031,7 +2031,7 @@
       {
         "id": "977980b115731cc7377ceec37d146b21a7ec106b",
         "type": "FIX",
-        "text": "sap.m.ViewSettingsDialog: Group's \"None\" button now returns undefined",
+        "text": "sap.m.ViewSettingsDialog: Group\u0027s \"None\" button now returns undefined",
         "references": [
           {
             "type": "BCP",
@@ -2042,7 +2042,7 @@
       {
         "id": "d8a6533fa245cff02c6d4dc8f0849ae16c9d5a92",
         "type": "FIX",
-        "text": "sap.m.ViewSettingsPopover: Popover's width is now properly adjusted",
+        "text": "sap.m.ViewSettingsPopover: Popover\u0027s width is now properly adjusted",
         "references": []
       },
       {
@@ -2225,7 +2225,7 @@
       {
         "id": "f6274b525ad2a625a9a92015912212f0f8f954a2",
         "type": "FIX",
-        "text": "m.FacetFilter: Checkbox 'All' is initially not checked when the list has no items",
+        "text": "m.FacetFilter: Checkbox \u0027All\u0027 is initially not checked when the list has no items",
         "references": [
           {
             "type": "BCP",
@@ -2236,7 +2236,7 @@
       {
         "id": "50e2efa8167bd09bdc499b4ae8de16c40f0ebbc9",
         "type": "FIX",
-        "text": "sap.m.ActionSheet: Dialog's \"Cancel\" button is now positioned correctly on IE",
+        "text": "sap.m.ActionSheet: Dialog\u0027s \"Cancel\" button is now positioned correctly on IE",
         "references": [
           {
             "type": "BCP",
@@ -2358,7 +2358,7 @@
       {
         "id": "8503a96b9f3c3a090cfaac5e8bb1ddf1f7962cea",
         "type": "FIX",
-        "text": "sap.m.MessagePopover: MessagePopoverItems' binding is properly updated",
+        "text": "sap.m.MessagePopover: MessagePopoverItems\u0027 binding is properly updated",
         "references": [
           {
             "type": "BCP",
@@ -2545,7 +2545,7 @@
       {
         "id": "d91b219d39a3f37604cdcf927de309c40de1903a",
         "type": "FIX",
-        "text": "sap.m.routing: viewLevel should be taken from ancestor if current target doesn't have",
+        "text": "sap.m.routing: viewLevel should be taken from ancestor if current target doesn\u0027t have",
         "references": [
           {
             "type": "BCP",
@@ -2600,7 +2600,7 @@
       {
         "id": "6b855c84d7ad8b9bc275a554b8af5e2344e38ede",
         "type": "FIX",
-        "text": "sap.m.Breadcrumbs: wasn't read out properly",
+        "text": "sap.m.Breadcrumbs: wasn\u0027t read out properly",
         "references": [
           {
             "type": "BCP",
@@ -2611,7 +2611,7 @@
       {
         "id": "e3d29776fd3d50e0fd5f794ca10d9c916dc32443",
         "type": "FIX",
-        "text": "sap.m.DatePicker: don't open for 0001.01.01 in IE",
+        "text": "sap.m.DatePicker: don\u0027t open for 0001.01.01 in IE",
         "references": [
           {
             "type": "BCP",
@@ -2693,7 +2693,7 @@
       {
         "id": "996dfd95212d9fec12531bbe0d513265ff0b6ace",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: didn't communicate that it has changed",
+        "text": "sap.m.SegmentedButton: didn\u0027t communicate that it has changed",
         "references": [
           {
             "type": "BCP",
@@ -2853,7 +2853,7 @@
       {
         "id": "e286bb325671f3702ce1c0a22b68bc03004ee4b6",
         "type": "FIX",
-        "text": "sap.m.IconTabHeader: Error is no longer thrown when IconTabHeader doesn't have a parent",
+        "text": "sap.m.IconTabHeader: Error is no longer thrown when IconTabHeader doesn\u0027t have a parent",
         "references": [
           {
             "type": "BCP",
@@ -3159,7 +3159,7 @@
       {
         "id": "e9d5fb4a11eeb6e4a17bf38bc3b558e03754776a",
         "type": "FIX",
-        "text": "sap.m.DynamicPage: the check if the scrollbar is needed didn't work in IE",
+        "text": "sap.m.DynamicPage: the check if the scrollbar is needed didn\u0027t work in IE",
         "references": [
           {
             "type": "BCP",
@@ -3176,7 +3176,7 @@
       {
         "id": "be2c51b7c7b51f17a83ab87307ec4578efff5c97",
         "type": "FIX",
-        "text": "sap.m.IconTabBar: Disabled tabs now have aria-disabled=true attribute",
+        "text": "sap.m.IconTabBar: Disabled tabs now have aria-disabled\u003dtrue attribute",
         "references": [
           {
             "type": "BCP",
@@ -3320,7 +3320,7 @@
       {
         "id": "cf14514d04beba3a3c1d37269f194fe5e40f1e2c",
         "type": "FIX",
-        "text": "m.ViewSettingsCustomItem: Propagates models correctly to it's aggregation customControl",
+        "text": "m.ViewSettingsCustomItem: Propagates models correctly to it\u0027s aggregation customControl",
         "references": [
           {
             "type": "GitHub",
@@ -3505,7 +3505,7 @@
       {
         "id": "2868c64a76946925b010a3a379d52c4bcc0fbe04",
         "type": "FIX",
-        "text": "sap.m.AssociativeOverflowToolbar: 'removeContent' threw an exception incorrectly",
+        "text": "sap.m.AssociativeOverflowToolbar: \u0027removeContent\u0027 threw an exception incorrectly",
         "references": [
           {
             "type": "GitHub",
@@ -3618,7 +3618,7 @@
       {
         "id": "df1ccd19443f5bd208d1ccccf2d6e4826aa3f4f5",
         "type": "FIX",
-        "text": "sap.m.IconTabBar: Disabled filters doesn't have \"pointer\" cursor any more",
+        "text": "sap.m.IconTabBar: Disabled filters doesn\u0027t have \"pointer\" cursor any more",
         "references": [
           {
             "type": "BCP",
@@ -3716,7 +3716,7 @@
       {
         "id": "572003bbe843f6434033e4a928783f2babdd3c1a",
         "type": "FIX",
-        "text": "sap.m.NavContainer: didn't access _mFocusObject safely",
+        "text": "sap.m.NavContainer: didn\u0027t access _mFocusObject safely",
         "references": [
           {
             "type": "GitHub",
@@ -3753,7 +3753,7 @@
       {
         "id": "504155c5bd19adf90b311da4099a12275d2daf28",
         "type": "FIX",
-        "text": "sap.m.OverflowToolbar: destroying aggregated control didn't remove it from the associations",
+        "text": "sap.m.OverflowToolbar: destroying aggregated control didn\u0027t remove it from the associations",
         "references": [
           {
             "type": "BCP",
@@ -3808,7 +3808,7 @@
       {
         "id": "856387c0746fcbf5b04952d774b58185b32011dc",
         "type": "FIX",
-        "text": "sap.m.QuickViewPage: Destroying control doesn't lead to memory leak any more",
+        "text": "sap.m.QuickViewPage: Destroying control doesn\u0027t lead to memory leak any more",
         "references": []
       },
       {
@@ -3847,7 +3847,7 @@
       {
         "id": "5aecb013cbbc1bd2ea7b2ccf451dba26a137a42f",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: didn't fire event in select mode",
+        "text": "sap.m.SegmentedButton: didn\u0027t fire event in select mode",
         "references": [
           {
             "type": "BCP",
@@ -4147,7 +4147,7 @@
       {
         "id": "1bbd641d2e410093c8caf53cbc8097c7a4810074",
         "type": "FIX",
-        "text": "sap.m.Popover - Popover has incorrect positioning on iPad when it's on the bottom of the page",
+        "text": "sap.m.Popover - Popover has incorrect positioning on iPad when it\u0027s on the bottom of the page",
         "references": []
       },
       {
@@ -4179,7 +4179,7 @@
       {
         "id": "44f345f490839c92223b95bdc537c3d5d83d8e85",
         "type": "FIX",
-        "text": "sap.m.FacetFilter: when the last selected item is deselected list does not remain active; 'All' logic in the filter name is partially restored.",
+        "text": "sap.m.FacetFilter: when the last selected item is deselected list does not remain active; \u0027All\u0027 logic in the filter name is partially restored.",
         "references": [
           {
             "type": "BCP",
@@ -4288,7 +4288,7 @@
       {
         "id": "aa9f7f6fc05bfd57f6dd70f789922b71e09a02d9",
         "type": "FIX",
-        "text": "sap.m.Input: Role=textbox is no longer set",
+        "text": "sap.m.Input: Role\u003dtextbox is no longer set",
         "references": [
           {
             "type": "BCP",
@@ -4690,7 +4690,7 @@
       {
         "id": "59b681f7b9736f0e4a6525b6e98f2ceff6dfe8d4",
         "type": "FIX",
-        "text": "sap.m.InputBase: Pressing backspace on disabled input doesn't navigate to previous page any more",
+        "text": "sap.m.InputBase: Pressing backspace on disabled input doesn\u0027t navigate to previous page any more",
         "references": [
           {
             "type": "BCP",
@@ -4856,7 +4856,7 @@
       {
         "id": "0b6427b4389d895ee3f32f9e58cc7ec4aa0c76f8",
         "type": "FIX",
-        "text": "sap.m.OverflowToolbar's popover would cause the other popup to close",
+        "text": "sap.m.OverflowToolbar\u0027s popover would cause the other popup to close",
         "references": [
           {
             "type": "BCP",
@@ -4911,7 +4911,7 @@
       {
         "id": "3d2d4f4afbb0fa8f84dd8faf3fb477cf05b97ea0",
         "type": "FIX",
-        "text": "sap.m.RadioButtonGroup: Setters no longer modify RadioButtons' states",
+        "text": "sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
         "references": [
           {
             "type": "BCP",
@@ -5230,7 +5230,7 @@
       {
         "id": "a46fdcb7a371e7c35cfa1f3e2baf388a0b500494",
         "type": "FIX",
-        "text": "sap.m.MessagePopover: Popover's height is now adjusted properly on container resize",
+        "text": "sap.m.MessagePopover: Popover\u0027s height is now adjusted properly on container resize",
         "references": [
           {
             "type": "BCP",
@@ -5349,7 +5349,7 @@
       {
         "id": "66bb572ceab87af7804200c2f4a0098eee938905",
         "type": "FIX",
-        "text": "sap.m.MaskInput - RTL behavior on Chrome ver >=58 when the cursor is at the beginning of the string",
+        "text": "sap.m.MaskInput - RTL behavior on Chrome ver \u003e\u003d58 when the cursor is at the beginning of the string",
         "references": [
           {
             "type": "BCP",
@@ -5877,7 +5877,7 @@
       {
         "id": "d088120cd2c45cfc347c32532f36cffcd9e69fa7",
         "type": "FIX",
-        "text": "sap.m.Button: fire press event on keydown for 'enter' and keyup for 'space'",
+        "text": "sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
         "references": [
           {
             "type": "BCP",
@@ -5945,7 +5945,7 @@
       {
         "id": "627b96d8ec967142bb746599a561c1a6be554bb9",
         "type": "FIX",
-        "text": "sap.m.MultiInput: When MultiInput.enabled=false, tokens can't be removed any more",
+        "text": "sap.m.MultiInput: When MultiInput.enabled\u003dfalse, tokens can\u0027t be removed any more",
         "references": [
           {
             "type": "BCP",
@@ -5978,6 +5978,17 @@
             "reference": "002075129500000455622018"
           }
         ]
+      }
+    ]
+  },
+  "1.38.36": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "7e93d3635189bf569cff1025b809ab0cf3fb8362",
+        "type": "FIX",
+        "text": " sap.m.ListBase: swipe actions are only for touch devices",
+        "references": []
       }
     ]
   }

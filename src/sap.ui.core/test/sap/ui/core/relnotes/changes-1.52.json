@@ -1350,5 +1350,34 @@
         "references": []
       }
     ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "214fe6c93fee973edca0f9562d6daa2313cc2ed1",
+        "type": "FIX",
+        "text": " Fix synchronous document.activeElement access in iframes",
+        "references": []
+      },
+      {
+        "id": "149821e16aef9ad4f46bea3162f362bb399c527a",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
+      },
+      {
+        "id": "f0acaab5f2fb65d20d0ee96bf09eb8b81c728882",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Implicit casting for filter values",
+        "references": []
+      },
+      {
+        "id": "5ed4f1e69a12b9c1ebbdd4a8aacce7067016b3af",
+        "type": "FIX",
+        "text": " v2.ODataModel: normalizeKey",
+        "references": []
+      }
+    ]
   }
 }

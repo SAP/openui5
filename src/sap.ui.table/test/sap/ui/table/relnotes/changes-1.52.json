@@ -318,5 +318,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b923901a78fbfbeaf4d59c4353e124cf05f18ee6",
+        "type": "FIX",
+        "text": " GridTable: applyFocusInfo handling corrected",
+        "references": []
+      },
+      {
+        "id": "f5a82817f31dfbd7189c948c024f024ddb525e22",
+        "type": "FIX",
+        "text": " Table: Correctly update the visibility of the NoData overlay",
+        "references": []
+      },
+      {
+        "id": "149821e16aef9ad4f46bea3162f362bb399c527a",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
+      }
+    ]
   }
 }

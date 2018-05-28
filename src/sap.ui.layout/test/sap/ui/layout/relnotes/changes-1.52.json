@@ -131,5 +131,27 @@
         "references": []
       }
     ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "5963abe34414d314e641b0337a597dbf10308c20",
+        "type": "FIX",
+        "text": " SimpleForm: Error if layout is set after content",
+        "references": []
+      }
+    ]
+  },
+  "1.52.13": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "6321559428d30ad09324bba276ec01480ecdf9f5",
+        "type": "FIX",
+        "text": "sap.ui.layout - Update of labels after undo of rename on SimpleForm",
+        "references": []
+      }
+    ]
   }
 }
