@@ -245,18 +245,35 @@ function(
 		});
 
 		QUnit.test("when calling pushAndExecute with an failing command as the only command", function(assert) {
-			var done = assert.async();
+			assert.expect(4);
 			var fnStackModifiedSpy = sinon.spy();
 			this.stack.attachModified(fnStackModifiedSpy);
-			this.stack.pushAndExecute(this.failingCommand)
+			return this.stack.pushAndExecute(this.failingCommand)
 
 			.catch(function(oError) {
 				assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
-				assert.strictEqual(oError, ERROR_INTENTIONALLY, " an error is rejected and catched");
+				assert.strictEqual(oError, ERROR_INTENTIONALLY, "an error is rejected and catched");
+				assert.strictEqual(oError.command, this.failingCommand, "and the command is part of the error");
 				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
-				setTimeout(function() {
-					done();
-				}, 0);
+			}.bind(this));
+		});
+
+		QUnit.test("when calling pushAndExecute with an failing command as the only command and no error is passed", function(assert) {
+			assert.expect(5);
+			var fnStackModifiedSpy = sinon.spy();
+			this.stack.attachModified(fnStackModifiedSpy);
+			this.failingCommand.execute = function(oElement) {
+				return Promise.reject();
+			};
+			var oStandardError = new Error("Executing of the change failed.");
+			return this.stack.pushAndExecute(this.failingCommand)
+
+			.catch(function(oError) {
+				assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
+				assert.equal(oError.message, oStandardError.message, "an error is rejected and catched");
+				assert.strictEqual(oError.command, this.failingCommand, "and the command is part of the error");
+				assert.equal(oError.index, 0, "and the index is part of the error");
+				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
 			}.bind(this));
 		});
 

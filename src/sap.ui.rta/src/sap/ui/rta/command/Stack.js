@@ -188,13 +188,14 @@ sap.ui.define([
 				}.bind(this))
 
 				.catch(function(oError) {
-					this.pop(); // remove failing command
+					oError = oError || new Error("Executing of the change failed.");
+					oError.index = this._toBeExecuted;
+					oError.command = this.pop(); // remove failing command
 					return Promise.reject(oError);
 				}.bind(this));
 			}
 		}.bind(this));
 		return this._oLastCommand;
-
 	};
 
 	Stack.prototype._unExecute = function() {

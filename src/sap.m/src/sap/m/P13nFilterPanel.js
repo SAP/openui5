@@ -110,27 +110,27 @@ sap.ui.define([
 				updateFilterItem: {},
 
 				/**
-				 * Event raised if a filter item has been added, updated or removed.
+				 * Event raised if a filter item has been changed. reason can be added, updated or removed.
 				 * @experimental Since version 1.56
 				 */
-				changeFilterItems: {
+				filterItemChanged: {
 					parameters: {
 						/**
-						 * new added FilterItem
+						 * reason for the changeFilterItem event. Value can be added, updated or removed.
 						 */
-						addItem: {
-							type: "object"
-						},
+						reason: { type :"string" },
 						/**
-						 * updated FilterItem
+						 * key of the changed filterItem
 						 */
-						updateItem: {
-							type: "object"
-						},
+						key: { type : "string" },
 						/**
-						 * removed FilterItem
+						 * index of the changed filterItem
 						 */
-						removeItem: {
+						index: { type : "int" },
+						/**
+						 * JSON object of the changed filterItem instance (in case of reason=="removed" the itemData parameter does not exist)
+						 */
+						itemData: {
 							type: "object"
 						}
 					}
@@ -550,7 +550,7 @@ sap.ui.define([
 					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_),
 					maxLength: fGetValueOfProperty("maxLength", oContext, oItem_),
 					type: fGetValueOfProperty("type", oContext, oItem_),
-					oType: fGetValueOfProperty("oType", oContext, oItem_),
+					typeInstance: fGetValueOfProperty("typeInstance", oContext, oItem_),
 					formatSettings: fGetValueOfProperty("formatSettings", oContext, oItem_),
 					precision: fGetValueOfProperty("precision", oContext, oItem_),
 					scale: fGetValueOfProperty("scale", oContext, oItem_),
@@ -716,10 +716,11 @@ sap.ui.define([
 						index: iIndex,
 						filterItemData: oFilterItem
 					});
-					that.fireChangeFilterItems({
-						updateItem: {
-							key: sKey,
-							index: iIndex,
+					that.fireFilterItemChanged({
+						reason: "updated",
+						key: sKey,
+						index: iIndex,
+						itemData: {
 							columnKey: oNewData.keyField,
 							operation: oNewData.operation,
 							exclude: oNewData.exclude,
@@ -748,10 +749,11 @@ sap.ui.define([
 						filterItemData: oFilterItem
 					});
 
-					that.fireChangeFilterItems({
-						addItem: {
-							key: sKey,
-							index: iIndex,
+					that.fireFilterItemChanged({
+						reason: "added",
+						key: sKey,
+						index: iIndex,
+						itemData: {
 							columnKey: oNewData.keyField,
 							operation: oNewData.operation,
 							exclude: oNewData.exclude,
@@ -768,11 +770,10 @@ sap.ui.define([
 						key: sKey,
 						index: iIndex
 					});
-					that.fireChangeFilterItems({
-						removeItem: {
-							key: sKey,
-							index: iIndex
-						}
+					that.fireFilterItemChanged({
+						reason: "removed",
+						key: sKey,
+						index: iIndex
 					});
 					that._bIgnoreBindCalls = false;
 					break;

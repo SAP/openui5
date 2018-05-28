@@ -75,7 +75,11 @@ sap.ui.define([
 		 * @return {string} relative image URL
 		 */
 		pictureUrl: function (sUrl) {
-			return jQuery.sap.getResourcePath("sap/ui/demo/cart/" + sUrl);
+			if (sUrl){
+				return  sap.ui.require.toUrl(sUrl);
+			} else {
+				return undefined;
+			}
 		},
 
 		/**

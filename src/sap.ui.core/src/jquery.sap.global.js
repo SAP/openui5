@@ -29,7 +29,7 @@ sap.ui.define([
 	"sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/activeElementFix", "sap/ui/dom/includeScript",
 	"sap/ui/dom/includeStylesheet", "sap/ui/initjQuerySupport", "sap/ui/initSupportHooks", "sap/ui/initjQueryBrowser",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/Interaction", "sap/ui/performance/ResourceTimings",
-	"sap/ui/bootstrap/StoredConfig", "sap/ui/SyncPoint", "sap/ui/XHRProxy",
+	"sap/ui/bootstrap/StoredConfig", "sap/ui/SyncPoint", "sap/ui/XHRProxy", "sap/base/util/LoaderExtensions",
 
 	// former sap-ui-core.js dependencies
 	"sap/ui/Device", "sap/ui/thirdparty/URI",
@@ -43,7 +43,7 @@ sap.ui.define([
      Configuration, appendHead, computedStylePolyfill, activeElementFix, includeScript,
      includeStylesheet, initjQuerySupport, initSupportHooks, initjQueryBrowser,
      FrameOptions, Measurement, Interaction, ResourceTimings,
-     StoredConfig, SyncPoint, XHRProxy,
+     StoredConfig, SyncPoint, XHRProxy, LoaderExtensions,
 
 
      Device, URI,
@@ -1526,21 +1526,9 @@ sap.ui.define([
 		 * @see jQuery.sap.isDeclared
 		 * @public
 		 * @static
+		 * @deprecated since 1.58
 		 */
-		jQuery.sap.getAllDeclaredModules = function() {
-			var aModuleNames = [],
-				mModules = _ui5loader.getAllModules(true),
-				oModule;
-
-			for (var sModuleName in mModules) {
-				oModule = mModules[sModuleName];
-				// filter out preloaded modules
-				if (oModule.ui5 && oModule.state !== -1 /* PRELOADED */) {
-					aModuleNames.push(oModule.ui5);
-				}
-			}
-			return aModuleNames;
-		};
+		jQuery.sap.getAllDeclaredModules = LoaderExtensions.getAllRequiredModules;
 
 
 		// take resource roots from configuration

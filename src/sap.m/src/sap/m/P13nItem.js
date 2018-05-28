@@ -66,7 +66,7 @@ sap.ui.define([
 				/**
 				 * data type instance of the column. Can be used instead of the type, precision, scale and formatSettings properties
 				 */
-				oType: {
+				typeInstance: {
 					type: "object",
 					group: "Misc",
 					defaultValue: null,

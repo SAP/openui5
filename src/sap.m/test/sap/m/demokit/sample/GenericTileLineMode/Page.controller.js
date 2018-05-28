@@ -1,13 +1,14 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
-	'sap/m/MessageToast'
-], function (jQuery, Controller, MessageToast) {
+	'sap/m/MessageToast',
+	"sap/ui/model/json/JSONModel"
+], function (jQuery, Controller, MessageToast, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.GenericTileLineMode.Page", {
 		onInit: function () {
-			var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getResourcePath("sap/m/sample/GenericTileLineMode/tiles.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/GenericTileLineMode/tiles.json"));
 			this.getView().setModel(oModel);
 		},
 
