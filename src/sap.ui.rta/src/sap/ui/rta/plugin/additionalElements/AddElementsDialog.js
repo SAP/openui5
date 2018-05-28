@@ -149,7 +149,7 @@ sap.ui.define([
 
 		// Fields of the List
 		var oFieldName = new Label({
-			design: LabelDesign.Bold,
+			design: LabelDesign.Standard,
 			tooltip: "{tooltip}",
 			text: {
 				parts: [{path: "label"}, {path: "referencedComplexPropertyName"}, {path: "duplicateComplexName"}],
