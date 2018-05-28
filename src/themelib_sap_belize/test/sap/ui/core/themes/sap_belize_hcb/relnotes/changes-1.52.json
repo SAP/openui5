@@ -296,5 +296,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.13": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "c5454e3527379e5674753760386dfb5f51512ad8",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": []
+      }
+    ]
   }
 }

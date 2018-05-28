@@ -330,5 +330,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "f6e4ebd514beb1bc569f3168a584fa82eb0f83d0",
+        "type": "FIX",
+        "text": "sap.ui.rta - Retrieve control name with inter-library inheritance",
+        "references": []
+      }
+    ]
   }
 }

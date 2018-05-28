@@ -3027,5 +3027,52 @@
         "references": []
       }
     ]
+  },
+  "1.52.13": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "3fc9c2fdaa203fdbd0185c6f68e30ba95fbbd525",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Now the control handles filters correctly",
+        "references": []
+      },
+      {
+        "id": "34b5850fb0cf39062a0b79e64b78fcfa324d4206",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: The title control is visible if it\u0027s changed back and forth to active",
+        "references": []
+      },
+      {
+        "id": "8a8c2ec1ddfd52f6e64888e5af904981457bf6cb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header aligment when icon is used",
+        "references": []
+      },
+      {
+        "id": "a4afc22af16435ce828b61dec73df0649832b58c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix title of the row when there is no image",
+        "references": []
+      },
+      {
+        "id": "e62b7c3e96ea3bfc33b381d8e876109eb0248c97",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: load not density aware image by default",
+        "references": []
+      },
+      {
+        "id": "06ce1bc5eef92ba55535dc786da7ee13d64de212",
+        "type": "FIX",
+        "text": " sap.m.Slider: Tickmarks/Labels responsiveness fix",
+        "references": []
+      },
+      {
+        "id": "1567d169acec18b394b530cec95a9b59d9f74a6e",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: reposition tiles when resize happens",
+        "references": []
+      }
+    ]
   }
 }

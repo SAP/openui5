@@ -263,5 +263,22 @@
         "references": []
       }
     ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "1163f1bc496d3a6aaf89a44e30e3c854f1352bb3",
+        "type": "FIX",
+        "text": " Table: Avoid invalidation if NoData text string wasn\u0027t changed",
+        "references": []
+      },
+      {
+        "id": "dad9a615c079c75610ddc436c483c5067a030d6d",
+        "type": "FIX",
+        "text": " Table: Correct positioning of the action column",
+        "references": []
+      }
+    ]
   }
 }

@@ -256,5 +256,28 @@
         "references": []
       }
     ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "8e8135798cb25a67a992aa58d592b9b431fb4307",
+        "type": "FIX",
+        "text": " m.App: Applied transparent bg in belize_plus",
+        "references": []
+      },
+      {
+        "id": "8a77696cb79271dfaf3165d8dc551365921f9966",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": []
+      },
+      {
+        "id": "b0d94e33f3b7da317f201a31a97211188d9217fa",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      }
+    ]
   }
 }

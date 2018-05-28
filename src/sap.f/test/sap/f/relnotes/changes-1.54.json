@@ -137,5 +137,22 @@
         ]
       }
     ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "3576cc6ae2052cdfc3e0ac61441bf7ec73b82308",
+        "type": "FIX",
+        "text": " f.DynamicPage: Header expanding in non-scrollable area changed",
+        "references": []
+      },
+      {
+        "id": "c2ef54a898d6f3d32204bdc430b33daefeca5352",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: toggleHeaderOnTitleClick initial state fixed",
+        "references": []
+      }
+    ]
   }
 }

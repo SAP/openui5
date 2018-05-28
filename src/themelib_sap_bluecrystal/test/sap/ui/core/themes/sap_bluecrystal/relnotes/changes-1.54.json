@@ -50,5 +50,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b0d94e33f3b7da317f201a31a97211188d9217fa",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      }
+    ]
   }
 }

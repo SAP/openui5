@@ -823,6 +823,18 @@
         "type": "FIX",
         "text": " ui5loader: fix sync module loading on file protocol",
         "references": []
+      },
+      {
+        "id": "064ee81a165270163a9ab0e4205e0685e3e32da8",
+        "type": "FIX",
+        "text": " Core: enable support for \"-\" and \".\" for initial modules",
+        "references": []
+      },
+      {
+        "id": "ac6bb43428731e2ec2c40760e80af6afe8fad77a",
+        "type": "FIX",
+        "text": " ui5loader: don\u0027t modify global define/require props by default",
+        "references": []
       }
     ]
   }
