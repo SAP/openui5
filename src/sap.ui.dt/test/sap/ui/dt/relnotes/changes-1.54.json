@@ -84,7 +84,7 @@
       {
         "id": "e9f576ebdf6e28af067c89313a2703139b95013e",
         "type": "FIX",
-        "text": "sap.ui.dt: Fix for Drag&Drop cursor in EDGE Browser",
+        "text": "sap.ui.dt: Fix for Drag\u0026Drop cursor in EDGE Browser",
         "references": []
       },
       {
@@ -207,6 +207,17 @@
             "reference": "1880133701"
           }
         ]
+      }
+    ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "f6e4ebd514beb1bc569f3168a584fa82eb0f83d0",
+        "type": "FIX",
+        "text": "sap.ui.rta - Retrieve control name with inter-library inheritance",
+        "references": []
       }
     ]
   }

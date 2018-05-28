@@ -2486,5 +2486,124 @@
         "references": []
       }
     ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "f30fd377703e658cb98b1919ce05b8c0e6447e84",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Close event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "1550ccd11e777b8fd746686afe0415e35166ccd0",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selecting items is now working in IE",
+        "references": []
+      },
+      {
+        "id": "20f16f751b47e8908a6916c6302b7ab0a952d060",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Updating with special characters is now correct",
+        "references": []
+      },
+      {
+        "id": "412334c4f7f4f31644def60684ada026aadead12",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Now the control handles filters correctly",
+        "references": []
+      },
+      {
+        "id": "44851fda75d01dd56e5d5f70dbbd146f0e352d30",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: Calls to the backend are now optimized",
+        "references": []
+      },
+      {
+        "id": "60dd84406b6c67767ea69a311ca68689f716d820",
+        "type": "FIX",
+        "text": " sap.m.FormattedTextAnchorGenerator: Anchor tag conversion improved",
+        "references": []
+      },
+      {
+        "id": "dcc1bf465447c2048ded1847c4ec35e545d947dd",
+        "type": "FIX",
+        "text": " sap.m.Input: step attribute set to any",
+        "references": []
+      },
+      {
+        "id": "1b758e79eac62d1a9c90010cf60e2cfd81372680",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: on Android, caret positioning is improved.",
+        "references": []
+      },
+      {
+        "id": "8cd1c23f5ffcc1799bfad397ca38bfa5100f7128",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: The title control is visible if it\u0027s changed back and forth to active",
+        "references": []
+      },
+      {
+        "id": "31c2cfd00bcf4728823a62c6a5e879b8eb5ff50f",
+        "type": "FIX",
+        "text": " sap.m.ObjectListeItem: render properly hidden marker",
+        "references": []
+      },
+      {
+        "id": "e542a6e5483da96cfa09f7d0fc008eedbf75d448",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "c952610cd4acd9025893940b4e934b269e03de02",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "130f8f35e429a51b0360ba3c1b0695810464ab89",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header aligment when icon is used",
+        "references": []
+      },
+      {
+        "id": "46810d0fc0294200c8ff188212e7ac5146613c29",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix title of the row when there is no image",
+        "references": []
+      },
+      {
+        "id": "52e8c6f2b7f4373b3be7eb05d27edf8c2cefd34c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: load not density aware image by default",
+        "references": []
+      },
+      {
+        "id": "b0d94e33f3b7da317f201a31a97211188d9217fa",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      },
+      {
+        "id": "d606238717fb20a215f482e7b45c275a011c7a9a",
+        "type": "FIX",
+        "text": " sap.m.Slider: Tickmarks/Labels responsiveness fix",
+        "references": []
+      },
+      {
+        "id": "991460da79c2bbcf257e4884ccfa5e56bf53bdb5",
+        "type": "FIX",
+        "text": " sap.m.Text: Normalisation and visualisation of line endings and whitespace characters is now fixed",
+        "references": []
+      },
+      {
+        "id": "3276b5652a0ccbb47ebf5122fa549b881a5cbd2f",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: reposition tiles when resize happens",
+        "references": []
+      }
+    ]
   }
 }

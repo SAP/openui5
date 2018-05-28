@@ -142,5 +142,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.13": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "6321559428d30ad09324bba276ec01480ecdf9f5",
+        "type": "FIX",
+        "text": "sap.ui.layout - Update of labels after undo of rename on SimpleForm",
+        "references": []
+      }
+    ]
   }
 }
