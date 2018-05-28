@@ -428,6 +428,17 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				pressConfirmSalesOrderButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "confirmSalesOrder",
+						success : function (oCancelSalesOrderChangesButton) {
+							Opa5.assert.ok(true, "Confirm Selected Sales Order button pressed");
+						},
+						viewName : sViewName
+					});
+				},
 				pressCreateSalesOrderItemButton : function () {
 					return this.waitFor({
 						actions : new Press(),

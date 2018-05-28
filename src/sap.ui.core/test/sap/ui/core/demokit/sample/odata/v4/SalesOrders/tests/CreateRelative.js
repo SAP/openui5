@@ -112,6 +112,14 @@ sap.ui.define([
 				When.onTheSalesOrderLineItemDeletionConfirmation.confirm();
 				When.onTheSuccessInfo.confirm();
 				Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
+
+				// Confirmation of new created sales order, non-transient but still having -1 path
+				// Note: The sales order must have at least one line item
+				When.onTheMainPage.pressCreateSalesOrderItemButton();
+				When.onTheMainPage.pressSaveSalesOrderButton();
+				When.onTheSuccessInfo.confirm();
+				When.onTheMainPage.selectSalesOrder(0);
+				When.onTheMainPage.pressConfirmSalesOrderButton();
 			}
 
 			// test refresh single
@@ -133,7 +141,7 @@ sap.ui.define([
 			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
 			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SalesOrderLineItems");
 
-			// delete the all created SalesOrders again
+			// delete all created SalesOrders again
 			When.onAnyPage.cleanUp("SalesOrders");
 			Then.onAnyPage.checkLog(bRealOData ? [{
 				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -150,6 +158,15 @@ sap.ui.define([
 				level : jQuery.sap.log.Level.ERROR,
 				message : "Failed to update path /SalesOrderList/-1/Note"
 				//TODO: enable checkLog to deal with RegExp
+//TODO: take out again as soon as CPOUI5UISERVICESV3-1292 is solved
+			}, {
+				component : "sap.ui.model.odata.v4.lib._Cache",
+				level : jQuery.sap.log.Level.ERROR,
+				message : "Failed to drill-down into SO_2_SCHDL("
+			}, {
+				component : "sap.ui.model.odata.v4.lib._Cache",
+				level : jQuery.sap.log.Level.ERROR,
+				message : "Failed to drill-down into SO_2_SCHDL("
 			}] : undefined);
 			Then.onAnyPage.analyzeSupportAssistant();
 			Then.iTeardownMyUIComponent();

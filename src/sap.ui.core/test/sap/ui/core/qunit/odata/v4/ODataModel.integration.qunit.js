@@ -2169,6 +2169,48 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Call bound action on a context of a relative ListBinding
+	QUnit.test("Read entity for a relative ListBinding, call bound action", function (assert) {
+		var oModel = createTeaBusiModel(),
+			that = this,
+			sView = '\
+<FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
+	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<ColumnListItem>\
+			<Text id="id" text="{ID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($select=ID)", {
+				"TEAM_2_EMPLOYEES" : [{"ID" : "2"}]
+			})
+			.expectChange("id", ["2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oEmployeeContext = that.oView.byId("table").getItems()[0].getBindingContext(),
+				oAction = that.oModel.bindContext(
+					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)",
+					oEmployeeContext);
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('42')/TEAM_2_EMPLOYEES('2')/"
+						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+					payload : {"TeamID" : "TEAM_02"}
+				});
+			oAction.setParameter("TeamID", "TEAM_02");
+
+			return Promise.all([
+				// code under test
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: overloaded bound action
 	// Note: there are 3 binding types for __FAKE__AcOverload, but only Worker has Is_Manager
 	QUnit.test("Bound action w/ overloading", function (assert) {
@@ -6258,6 +6300,239 @@ sap.ui.require([
 				.execute(); // code under test
 		}).then(function (oInactiveArtistContext) {
 			assert.strictEqual(oInactiveArtistContext.getProperty("IsActiveEntity"), false);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create entity for an absolute ListBinding, save the new entity and call a bound
+	// action for the new non-transient entity (still having -1 in the path)
+	QUnit.test("Create absolute, save and call action", function (assert) {
+		var oCreatedContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			that = this,
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<ColumnListItem>\
+		<Text id="Team_Id" text="{Team_Id}" />\
+	</ColumnListItem>\
+</Table>';
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				"value" : [{"Team_Id" : "42"}]
+			})
+			.expectChange("Team_Id", ["42"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {"Team_Id" : "new"}
+					}, {"Team_Id" : "newer"})
+				.expectChange("Team_Id", ["newer", "42"])
+				.expectRequest("TEAMS('newer')?$select=Team_Id", {"Team_Id" : "newer"});
+
+			oCreatedContext =  that.oView.byId("table").getBinding("items").create({
+				"Team_Id" : "new"
+			});
+
+			return Promise.all([oCreatedContext.created(), that.waitForChanges(assert)]);
+		}).then(function () {
+			var oAction = oModel.bindContext("com.sap.gateway.default.iwbep.tea_busi.v0001."
+					+ "AcChangeManagerOfTeam(...)", oCreatedContext);
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('newer')/com.sap.gateway.default.iwbep.tea_busi.v0001."
+						+ "AcChangeManagerOfTeam",
+					payload : {"ManagerID" : "01"}
+			});
+			oAction.setParameter("ManagerID", "01");
+
+
+			return Promise.all([
+				// code under test
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create entity for a relative ListBinding, save the new entity and call action
+	// import for the new non-transient entity (still having -1 in the path)
+	QUnit.test("Create relative, save and call action", function (assert) {
+		var oCreatedContext,
+			oModel = createTeaBusiModel(),
+			oTeam2EmployeesBinding,
+			that = this,
+			sView = '\
+<FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
+	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<ColumnListItem>\
+			<Text id="id" text="{ID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($select=ID)", {
+				"TEAM_2_EMPLOYEES" : [
+					{"ID" : "2"}
+				]
+			})
+			.expectChange("id", ["2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// create new relative entity
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('42')/TEAM_2_EMPLOYEES",
+					payload : {
+						"ID" : null
+					}
+				}, {"ID" : "7"})
+				.expectChange("id", ["7", "2"]);
+			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
+			oCreatedContext = oTeam2EmployeesBinding.create({"ID" : null});
+
+			return Promise.all([oCreatedContext.created(), that.waitForChanges(assert)]);
+		}).then(function () {
+			var oAction = that.oModel.bindContext(
+					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)",
+					oCreatedContext);
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('42')/TEAM_2_EMPLOYEES('7')/"
+						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+					payload : {"TeamID" : "TEAM_02"}
+				});
+			oAction.setParameter("TeamID", "TEAM_02");
+
+			return Promise.all([
+				// code under test
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity on an absolute ListBinding, save the new entity and call bound
+	// action for the new non-transient entity (still having -1 in the path)
+	// Afterwards create a new entity on a containment relative to the just saved absolute entity,
+	// save the containment and call a bound function on the new non-transient contained entity
+	// (also having still -1 in its path)
+	QUnit.test("Create absolute and contained entity, save and call bound action/function",
+			function (assert) {
+		var oCreatedItemContext,
+			oCreatedSOContext,
+			oItemBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			that = this,
+			sView = '\
+<Table id="SalesOrders" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Text id="SalesOrderID" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>\
+<Table id="LineItems" items="{SO_2_SOITEM}">\
+	<ColumnListItem>\
+		<Text id="ItemSalesOrderID" text="{SalesOrderID}" />\
+		<Text id="ItemPosition" text="{ItemPosition}" />\
+	</ColumnListItem>\
+</Table>';
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				"value" : [{"SalesOrderID" : "42"}]
+			})
+			.expectChange("SalesOrderID", ["42"])
+			.expectChange("ItemPosition", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {
+						"SalesOrderID" : "newID"
+					}
+				}, {
+					"SalesOrderID" : "43"
+				})
+				.expectChange("SalesOrderID", ["43", "42"])
+				.expectRequest("SalesOrderList('43')?$select=SalesOrderID",
+					{"SalesOrderID" : "43"});
+
+			oCreatedSOContext = that.oView.byId("SalesOrders").getBinding("items").create({
+				"SalesOrderID" : "newID"
+			});
+
+			return Promise.all([oCreatedSOContext.created(), that.waitForChanges(assert)]);
+		}).then(function () {
+			// set context for line items after sales order is created
+			that.expectRequest("SalesOrderList('43')/SO_2_SOITEM?$select=ItemPosition,"
+				+ "SalesOrderID&$skip=0&$top=100", {"value" : []});
+			oItemBinding = that.oView.byId("LineItems").getBinding("items");
+			oItemBinding.setContext(oCreatedSOContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// create a sales order line item
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('43')/SO_2_SOITEM",
+					payload : {
+						"SalesOrderID" : "43",
+						"ItemPosition" : "newPos"
+					}
+				}, {
+					"SalesOrderID" : "43",
+					"ItemPosition" : "10"
+				})
+				.expectChange("ItemPosition", "10", 0);
+
+			oCreatedItemContext =  oItemBinding.create({
+				"SalesOrderID" : "43",
+				"ItemPosition" : "newPos"
+			});
+
+			return Promise.all([oCreatedItemContext.created(), that.waitForChanges(assert)]);
+		}).then(function () {
+			// confirm created sales order (call action on -1 context)
+			var oAction = oModel.bindContext("com.sap.gateway.default.zui5_epm_sample"
+					+ ".v0002.SalesOrder_Confirm(...)", oCreatedSOContext);
+
+			that.expectRequest({
+				method : "POST",
+				url : "SalesOrderList('43')/com.sap.gateway.default.zui5_epm_sample"
+					+ ".v0002.SalesOrder_Confirm",
+				payload : {}
+			});
+
+			return Promise.all([
+				// code under test
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// check availability (call function on -1 containment)
+			var oFunction = oModel.bindContext("com.sap.gateway.default.zui5_epm_"
+					+ "sample.v0002.SalesOrderLineItem_CheckAvailability(...)",
+					oCreatedItemContext);
+
+			that.expectRequest({
+				method : "GET",
+				url : "SalesOrderList('43')/SO_2_SOITEM(SalesOrderID='43'"
+					+ ",ItemPosition='10')/com.sap.gateway.default.zui5_epm_"
+					+ "sample.v0002.SalesOrderLineItem_CheckAvailability()"
+				},
+				{value : "5.0"});
+
+			return Promise.all([
+				// code under test
+				oFunction.execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });
