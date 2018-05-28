@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Fixed actions dragging in RTA",
         "references": []
+      },
+      {
+        "id": "e03de25921627bc700badc6914e833a413484729",
+        "type": "FIX",
+        "text": " f.DynamicPage: Header expanding in non-scrollable area changed",
+        "references": []
+      },
+      {
+        "id": "193b15e9e7d1d365f516a58420fb5fa97710001a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: toggleHeaderOnTitleClick initial state fixed",
+        "references": []
       }
     ]
   }

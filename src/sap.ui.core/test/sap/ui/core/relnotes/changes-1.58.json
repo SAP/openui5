@@ -67,6 +67,66 @@
         "type": "FIX",
         "text": " sap.m.Input: Input width is now correct",
         "references": []
+      },
+      {
+        "id": "a36181b51fa475d9597275bfa385be4b72328ffe",
+        "type": "FIX",
+        "text": " Aggregation Forwarding: no exception when there is already content",
+        "references": []
+      },
+      {
+        "id": "33c0a9324f6b90075910e767ef5f7289ea41165c",
+        "type": "FIX",
+        "text": " Core: enable support for \"-\" and \".\" for initial modules",
+        "references": []
+      },
+      {
+        "id": "d70eee2985e72454981a8788cd989e6756b0e220",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Add missing support for count mode \"InlineRepeat\"",
+        "references": []
+      },
+      {
+        "id": "e9cc6031c2aed2e01ed1e644d5400db4639dba9d",
+        "type": "FIX",
+        "text": " Rebooting UI5 from another location (follow-up)",
+        "references": []
+      },
+      {
+        "id": "9a8831b0ad8bc811aa02ac640f297f7cdaf6795c",
+        "type": "FIX",
+        "text": " XMLComposite: Cloning and Creating",
+        "references": []
+      },
+      {
+        "id": "78a958ca5271687efaceae95d6a569e7aebbfccf",
+        "type": "FIX",
+        "text": " XMLComposite: Urgent fix duplicated retemplating",
+        "references": []
+      },
+      {
+        "id": "9cd5bddb9a2a9461ab28fbcfcc854500227f655c",
+        "type": "FIX",
+        "text": " qunit-junit reporter: Add null-check for qunit DOM node",
+        "references": []
+      },
+      {
+        "id": "13aeef9ad7168ec1fdf94b562415bf932b67d4c0",
+        "type": "FIX",
+        "text": " sap.ui.diagnostics: Binding path is not shown as \"invalid\"",
+        "references": []
+      },
+      {
+        "id": "84efb2d8582fa1c36ec724552ffd9cd5cd140ae6",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Requestor: OData-Version Header is optional for DELETE responses",
+        "references": []
+      },
+      {
+        "id": "54fd1e9cdbceee177aab4b7f4859aa7606035514",
+        "type": "FIX",
+        "text": " ui5loader: don\u0027t modify global define/require props by default",
+        "references": []
       }
     ]
   }

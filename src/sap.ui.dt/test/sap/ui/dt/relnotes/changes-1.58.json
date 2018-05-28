@@ -31,6 +31,18 @@
         "type": "FIX",
         "text": "sap.ui.dt - Metadata propagation with multiple propagate functions",
         "references": []
+      },
+      {
+        "id": "6b9d17db720ddb1cd91f8122b08c77d991166674",
+        "type": "FIX",
+        "text": " Write explanation for failure in overlay creation",
+        "references": []
+      },
+      {
+        "id": "95806c7cda3dd1f2de869089628e6ea75715dea3",
+        "type": "FIX",
+        "text": "sap.ui.dt - SelectionManager selection mode discrepancy with DT",
+        "references": []
       }
     ]
   }

@@ -163,6 +163,90 @@
         "type": "FIX",
         "text": " sap.m.Text: Normalisation and visualisation of line endings and whitespace characters is now fixed",
         "references": []
+      },
+      {
+        "id": "b74dfb7a857aa64348954cd8ce835480a2fa84a2",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Updating with special characters is now correct",
+        "references": []
+      },
+      {
+        "id": "2c882434ae5158daa57390478e07e9a5e695dc9d",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: now doesn\u0027t create global DateTimePickerPopup",
+        "references": []
+      },
+      {
+        "id": "01d4f367ebe9d39fdee14323c8a637e4fe30c4ec",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Remove additional tab stop in Light mode",
+        "references": []
+      },
+      {
+        "id": "ae0049eff7bfb99af891953f059cc1bec59b0447",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: Calls to the backend are now optimized",
+        "references": []
+      },
+      {
+        "id": "3734c37277a2dae1f63f31cdf664334decf8adf3",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Overflow arrows in header is now fixed",
+        "references": []
+      },
+      {
+        "id": "0bd19fd61fd87ac6d7ef106a1d1bd32be419196b",
+        "type": "FIX",
+        "text": " sap.m.Input: step attribute set to any",
+        "references": []
+      },
+      {
+        "id": "975844ca461e393330f21a7f271e0f40e31c09f4",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: on Android, caret positioning is improved.",
+        "references": []
+      },
+      {
+        "id": "b0812f0ce31f1daff5ffe906cac4605c93f950d2",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Test page adjusted",
+        "references": []
+      },
+      {
+        "id": "ba18987a57b8369ab68b2658eb37112ccfffbcab",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: now doesn\u0027t create global CustomText and CustomLink controls",
+        "references": []
+      },
+      {
+        "id": "783409bea13efdc4042077ccca5f14b5a9b5fbe6",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: text / icon alignment is correct now",
+        "references": []
+      },
+      {
+        "id": "d1954a53a27471be7be26e77d106e4810b93cba7",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "79330aebe8ba2f639645d0c3719e54ab288f8149",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "c93cdca6491c582f338802dd196c801d2e38c5f2",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: \"Hide\" animation is now smooth",
+        "references": []
+      },
+      {
+        "id": "5503e079bb0092b66287f152fa89fdaa8c443721",
+        "type": "FIX",
+        "text": " sap.m.StandardTile: focus outline is visible on click in IE",
+        "references": []
       }
     ]
   }

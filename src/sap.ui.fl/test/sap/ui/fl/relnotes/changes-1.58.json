@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " set VariantModel to UI5-internal",
         "references": []
+      },
+      {
+        "id": "05492f286d2d15a0a521b4fbf38c6207c0f0fba7",
+        "type": "FIX",
+        "text": " fl.VariantManagement: set focus on \u0027Cancel\u0027 after variant deletion",
+        "references": []
       }
     ]
   }
