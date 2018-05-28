@@ -50,6 +50,15 @@
 				]
 			},
 			{
+				"id" : "sap.ui.core.mvc.ControllerExtension",
+				"name" : "Control Extensions",
+				"category" : "Display",
+				"since" : "1.56",
+				"samples" : [
+					"sap.ui.core.sample.ControllerExtension"
+				]
+			},
+			{
 				"id" : "sap.ui.core.HTML",
 				"name" : "HTML",
 				"category" : "Display",
@@ -726,6 +735,11 @@
 				"id": "sap.ui.core.sample.OpaAutoWaitParams",
 				"name": "OPA5 autoWait parameters",
 				"description": "This sample demonstrates how to take advantage of OPA5 autoWait parameters"
+			},
+			{
+				"id": "sap.ui.core.sample.ControllerExtension",
+				"name": "Controller Extension",
+				"description": "This sample demonstrates the controller extension features. They can be used by app developers to extract reusable controller code that is mixed into the controller. They can be used by other developers to extend the existing controller without modifying it. The extension scenario is simulated in this example."
 			}
 		]
 	}
