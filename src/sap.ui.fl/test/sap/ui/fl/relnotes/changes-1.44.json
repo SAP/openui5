@@ -95,5 +95,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.32": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "82db22733fd0940dc17cd2209235603ca96b4730",
+        "type": "FIX",
+        "text": " sap.ui.fl: Stores flex setting from Persistence class",
+        "references": []
+      }
+    ]
   }
 }

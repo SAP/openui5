@@ -307,5 +307,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.32": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "bb41820db2ccc7c534bfa669c2ec9dab5627d6b4",
+        "type": "FIX",
+        "text": " sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
+        "references": []
+      }
+    ]
   }
 }
