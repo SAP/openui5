@@ -231,6 +231,25 @@
 				assert.strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27 Placeholder Date Tooltip", "Description");
 				oInput.destroy();
 			});
+
+			module("Misc");
+
+			QUnit.test("Date with seconds set to the last second of the maxDate is displayed", function(assert) {
+				var oDateRangeSelector = new sap.m.DateRangeSelection({
+					displayFormat: "yyyy-MM-dd",
+					minDate: new Date(2017, 0, 1, 0, 0, 0, 0),
+					maxDate: new Date(2017, 11, 31, 23, 59, 59, 100),
+					dateValue: new Date(2017, 0, 1, 0, 0, 0, 0),
+					secondDateValue: new Date(2017, 11, 31, 23, 59, 59, 100)
+				});
+				oDateRangeSelector.placeAt('qunit-fixture');
+				sap.ui.getCore().applyChanges();
+
+				strictEqual(oDateRangeSelector.getValue(), "2017-01-01 - 2017-12-31", "Date range is set correctly");
+
+				oDateRangeSelector.destroy();
+			});
+
 		</script>
 	</head>
 
@@ -240,6 +259,7 @@
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
 		<br>
 		<div id="uiArea1"></div>
 		<br>
