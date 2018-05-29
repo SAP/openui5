@@ -582,6 +582,11 @@ sap.ui.define([
 				sSelectorId = oComponent.createId(sSelectorId);
 			}
 
+			// make sure that _mChangesEntries is updated in case this has not taken place in getChangesForComponent
+			if (!this._mChangesEntries[oChange.getDefinition().fileName]) {
+				this._mChangesEntries[oChange.getDefinition().fileName] = oChange;
+			}
+
 			this._addMapEntry(sSelectorId, oChange);
 
 			// if the localId flag is missing and the selector has a component prefix that is not matching the
