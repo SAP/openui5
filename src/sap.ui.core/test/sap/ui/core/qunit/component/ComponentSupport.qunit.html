@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Component Support - sap.ui.core</title>
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{
+					"local": "./",
+					"sap.ui.test": "./testdata/"
+				}'>
+		</script>
+		<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<!--[if IE]>
+			<script src="../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+			QUnit.config.autostart = false;
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require(["local/ComponentSupport.qunit"], function() {
+					QUnit.start();
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="content"></div>
+	</body>
+</html>
