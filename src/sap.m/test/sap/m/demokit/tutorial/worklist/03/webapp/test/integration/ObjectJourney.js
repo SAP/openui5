@@ -7,7 +7,7 @@ sap.ui.define([
 
 	QUnit.module("Object");
 
-	opaTest("Should see the busy indicator on object view after metadata is loaded", function(Given, When, Then) {
+	opaTest("Should see the busy indicator on object view after metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp();
 
@@ -22,7 +22,11 @@ sap.ui.define([
 		Then.onTheObjectPage.iShouldSeeTheObjectViewsBusyIndicator().
 			and.theObjectViewsBusyIndicatorDelayIsRestored().
 			and.iShouldSeeTheRememberedObject().
-			and.iTeardownMyAppFrame();
+			and.theObjectViewShouldContainOnlyFormattedUnitNumbers();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
+
 	});
 
 });
