@@ -14,8 +14,8 @@
  */
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/XMLCompositeMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel'],
-	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel) {
+	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel', 'sap/ui/model/base/XMLNodeUtils'],
+	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel, Utils) {
 		"use strict";
 
 		// private functions
@@ -262,10 +262,15 @@ sap.ui.define([
 					var oAggregationFragment = aAggregationFragments[sAggregationName].cloneNode(true);
 					// resolve templating in composite aggregation fragment
 					oContextVisitor.visitChildNodes(oAggregationFragment);
+					var aAggregationNodes = Utils.getChildren(oAggregationFragment);
+					var id = oParent.getAttribute("id");
 
 					// add the templated content
-					for (var j = oAggregationFragment.childElementCount; j > 0; j--) {
-						oAggregationRoot.appendChild(oAggregationFragment.children[0]);
+					for (var j = 0; j < aAggregationNodes.length; j++) {
+						if (aAggregationNodes[j].getAttribute("id")) {
+							aAggregationNodes[j].setAttribute("id", Fragment.createId(id, aAggregationNodes[j].getAttribute("id")));//adapt Aggregation ids
+						}
+						oAggregationRoot.appendChild(aAggregationNodes[j]);
 					}
 				});
 			}
@@ -387,6 +392,7 @@ sap.ui.define([
 		 */
 		var XMLComposite = Control.extend("sap.ui.core.XMLComposite", {
 			metadata: {
+				interfaces: ["sap.ui.core.IDScope"],
 				properties: {
 
 					/**
@@ -423,7 +429,7 @@ sap.ui.define([
 				delete this._bIsCreating;
 				if (this.getMetadata().usesTemplating() && !this._bIsInitialized) {
 					//for the case the template is written against the ManagedObjectModel a templating before
-					//creating was not possible so we have to retemplate against the ManagedObject Model
+					//creating was not possible so we have to retemplate against the Managed Object model
 					this.requestFragmentRetemplating();
 					delete this._bIsInitialized;
 				}
@@ -797,7 +803,7 @@ sap.ui.define([
 				this._destroyCompositeAggregation();
 				if (!this.getMetadata().usesTemplating()) {
 					//in case there is no templating it is possible to insert the fragment as content
-					//Note: The applySettings comes later hence in this case there is no ManagedObject Model
+					//Note: The applySettings comes later hence in this case there is no Managed Object model
 					this._setCompositeAggregation(sap.ui.xmlfragment({
 						sId: this.getId(),
 						fragmentContent: this.getMetadata()._fragment,
@@ -890,6 +896,11 @@ sap.ui.define([
 				throw new Error("Fragment " + sFragment + " not found");
 			}
 
+
+			//guarantee that element has an id
+			if (!oElement.getAttribute("id")) {
+				oElement.setAttribute("id", oMetadata.uid());
+			}
 			addMetadataContexts(mContexts, oVisitor, oElement.getAttribute("metadataContexts"), sDefaultMetadataContexts, oImpl.prototype.defaultMetaModel);
 			addAttributesContext(mContexts, oImpl.prototype.alias, oElement, oImpl, oVisitor);
 			var oContextVisitor = oVisitor["with"](mContexts, true);

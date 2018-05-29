@@ -16,8 +16,8 @@ function setBlanketFilters(sFilters) {
 sinon.config.useFakeTimers = true;
 
 sap.ui.require([
-	"jquery.sap.global"
-], function (jQuery) {
+	"jquery.sap.global", "sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite"
+], function (jQuery, XMLPreprocessor, XMLComposite) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -40,6 +40,8 @@ sap.ui.require([
 	jQuery.sap.require("composites.TranslatableText");
 	jQuery.sap.require("composites.TranslatableTextLib");
 	jQuery.sap.require("composites.TranslatableTextBundle");
+	jQuery.sap.require("composites.Table");
+	jQuery.sap.require("composites.Column");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Simple Text XMLComposite Control", {
@@ -1032,4 +1034,38 @@ sap.ui.require([
 		});
 	});
 	//*********************************************************************************************
+	QUnit.test("inner Aggregations", function (assert) {
+		var done = assert.async();
+		XMLPreprocessor.plugIn(function(oNode,oVisitor) { XMLComposite.initialTemplating(oNode, oVisitor, "composites.Table");}, "composites", "Table");
+		var oConfig = {};
+
+		var oView = sap.ui.xmlview({
+			viewContent: jQuery('#view').html(),
+			id: "comp",
+			async: false,
+			preprocessors: { xml: oConfig }
+		});
+
+		oView.loaded().then(function() {
+			var oTable = oView.byId("table");
+			assert.ok(oTable, "The table is there");
+			var aColumns = oTable.getColumns();
+			assert.equal(aColumns.length,4,"The table has 4 columns");
+
+			var oColumn = oTable.byId("OWN");
+			assert.notOk(oColumn,"The user-defined column can not be be accessed bye the composite");
+			oColumn = oTable.byId("template2");
+			assert.ok(oColumn,"The templated column can be accessed");
+			assert.equal(oColumn.getId(), "comp--table--template2","The corresponding Id is correct");
+
+			//Use the Managed Object model
+			var oTableModel = oTable._getManagedObjectModel();
+			var oColumn2 = oTableModel.getProperty("/#template2");
+			assert.ok(oColumn2,"The templated column can be accessed");
+			assert.equal(oColumn2.getId(), "comp--table--template2","The corresponding Id is correct");
+			assert.equal(oColumn, oColumn,"The column from byId and from the managed object model are equal");
+			oView.destroy();
+			done();
+		});
+	});
 });
