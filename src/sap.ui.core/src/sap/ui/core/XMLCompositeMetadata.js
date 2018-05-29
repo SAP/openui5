@@ -200,12 +200,13 @@ sap.ui.define([
 	};
 
 	XMLCompositeMetadata.prototype._loadFragment = function (sFragmentName, sExtension) {
-		if (!mFragmentCache[sFragmentName]) {
-			mFragmentCache[sFragmentName] = XMLTemplateProcessor.loadTemplate(sFragmentName, sExtension);
-			this.requireFor(mFragmentCache[sFragmentName]);
+		var sFragmentKey = sExtension + "$" + sFragmentName;
+		if (!mFragmentCache[sFragmentKey]) {
+			mFragmentCache[sFragmentKey] = XMLTemplateProcessor.loadTemplate(sFragmentName, sExtension);
+			this.requireFor(mFragmentCache[sFragmentKey]);
 		}
 
-		return mFragmentCache[sFragmentName];
+		return mFragmentCache[sFragmentKey];
 	};
 
 	XMLCompositeMetadata.prototype.hasAggregation = function(sName) {
