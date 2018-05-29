@@ -235,6 +235,27 @@
 				});
 			});
 
+			module("API");
+
+			test("default maxDate has maximum possible hour of the day", function (assert) {
+				//Prepare
+				var oDP = new sap.m.DatePicker({
+					dateValue: new Date(10000, 11, 31, 23, 59, 59)
+				});
+				oDP.placeAt("qunit-fixture");
+
+				//Assert
+				ok(oDP.getValue() === "", "Given date which exceeds the default maxDate is not set");
+
+				//Act
+				oDP.setDateValue(new Date(9999, 11, 31, 23, 59, 59));
+				//Assert
+				ok(oDP.getValue() !== "", "Given date which is equal to the default maxDate is set correctly");
+
+				//Cleanup
+				oDP.destroy();
+			});
+
 			module("interaction");
 
 			test("change date by typing", function() {
@@ -477,14 +498,14 @@
 			test("min/max", function() {
 				var oMinDate = new Date(1,0,1);
 				oMinDate.setFullYear("0001");
-				var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
+				var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
 				ok(!oDP3.getMinDate(), "DP3: no min date set");
 				ok(!oDP3.getMaxDate(), "DP3: no max date set");
 				ok(jQuery.sap.equal(oDP3._oMinDate, oMinDate), "DP3: default min date");
 				ok(jQuery.sap.equal(oDP3._oMaxDate, oMaxDate), "DP3: default max date");
 
 				var oNewMinDate = new Date(2014,0,1);
-				var oNewMaxDate = new Date(2014,11,31);
+				var oNewMaxDate = new Date(2014,11, 31, 23, 59, 59, 999);
 				oDP3.setMinDate(oNewMinDate);
 				oDP3.setMaxDate(oNewMaxDate);
 				sap.ui.getCore().applyChanges();
