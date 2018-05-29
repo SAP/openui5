@@ -385,6 +385,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates or modifies a lock for a group at the model with this as owner.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID. If not given here, it can be set later on the created lock.
+	 * @param {boolean|sap.ui.model.odata.v4.lib._GroupLock} [vLock]
+	 *   If vLock is a group lock, it is modified and returned. Otherwise a lock is created which
+	 *   locks if vLock is truthy.
+	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
+	 *   The group lock
+	 *
+	 * @private
+	 * @see {sap.ui.model.odata.v4.ODataModel#lockGroup}
+	 */
+	ODataBinding.prototype.lockGroup = function (sGroupId, vLock) {
+		return this.oModel.lockGroup(sGroupId, vLock, this);
+	};
+
+	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
 	 *

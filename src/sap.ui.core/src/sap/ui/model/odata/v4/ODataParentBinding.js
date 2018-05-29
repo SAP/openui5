@@ -254,6 +254,7 @@ sap.ui.define([
 					Promise.resolve().then(addUnlockTask);
 				} else if (that.oReadGroupLock === oGroupLock) {
 					// It is still the same, unused lock
+					jQuery.sap.log.debug("Timeout: unlocked " + oGroupLock, null, sClassName);
 					oGroupLock.unlock(true);
 					that.oReadGroupLock = undefined;
 				}
@@ -263,7 +264,7 @@ sap.ui.define([
 		if (this.oReadGroupLock) {
 			this.oReadGroupLock.unlock(true);
 		}
-		this.oReadGroupLock = oGroupLock = this.oModel.lockGroup(sGroupId, bLocked);
+		this.oReadGroupLock = oGroupLock = this.lockGroup(sGroupId, bLocked);
 		if (bLocked) {
 			iCount = 2 + (iCount || 0);
 			addUnlockTask();

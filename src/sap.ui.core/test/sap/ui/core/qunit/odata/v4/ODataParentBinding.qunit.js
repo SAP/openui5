@@ -2196,11 +2196,12 @@ sap.ui.require([
 						lockGroup : function () {}
 					}
 				}),
+				oBindingMock = this.mock(oBinding),
 				oGroupLock1 = new _GroupLock(),
-				oGroupLock2 = new _GroupLock(),
-				oModelMock = this.mock(oBinding.oModel);
+				oGroupLock2 = new _GroupLock();
 
-			oModelMock.expects("lockGroup").withExactArgs("groupId", bLocked).returns(oGroupLock1);
+			oBindingMock.expects("lockGroup").withExactArgs("groupId", bLocked)
+				.returns(oGroupLock1);
 			this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
 
 			// code under test
@@ -2209,7 +2210,8 @@ sap.ui.require([
 			assert.strictEqual(oBinding.oReadGroupLock, oGroupLock1);
 
 			this.mock(oGroupLock1).expects("unlock").withExactArgs(true);
-			oModelMock.expects("lockGroup").withExactArgs("groupId", bLocked).returns(oGroupLock2);
+			oBindingMock.expects("lockGroup").withExactArgs("groupId", bLocked)
+				.returns(oGroupLock2);
 
 			// code under test
 			oBinding.createReadGroupLock("groupId", bLocked);
@@ -2227,17 +2229,18 @@ sap.ui.require([
 			var oBinding = new ODataParentBinding({
 					oModel : {
 						lockGroup : function () {}
-					}
+					},
+					sPath : "/SalesOrderList('42')"
 				}),
 				oCoreMock = this.mock(sap.ui.getCore()),
 				iCount = bLockIsUsedAndRemoved ? 1 : undefined,
 				oExpectation,
-				oGroupLock = new _GroupLock(),
+				oGroupLock = new _GroupLock("groupId", true, oBinding),
 				oPromiseMock = this.mock(Promise),
 				oThenable1 = {then : function () {}},
 				oThenable2 = {then : function () {}};
 
-			this.mock(oBinding.oModel).expects("lockGroup").withExactArgs("groupId", true)
+			this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
 				.returns(oGroupLock);
 			// first prerendering task
 			oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func).callsArg(0);
@@ -2263,6 +2266,11 @@ sap.ui.require([
 				oBinding.oReadGroupLock = undefined;
 				this.mock(oGroupLock).expects("unlock").never();
 			} else {
+				this.oLogMock.expects("debug")
+					.withExactArgs("Timeout: unlocked sap.ui.model.odata.v4.lib._GroupLock("
+						+ "locked,group=groupId,"
+						+ "owner=sap.ui.model.odata.v4.ODataParentBinding: /SalesOrderList('42'))",
+						null, sClassName);
 				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 			}
 
@@ -2287,7 +2295,7 @@ sap.ui.require([
 			oPromiseMock = this.mock(Promise),
 			oThenable1 = {then : function () {}};
 
-		this.mock(oBinding.oModel).expects("lockGroup").withExactArgs("groupId", true)
+		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
 			.returns(oGroupLock1);
 
 		// first prerendering task

@@ -585,7 +585,7 @@ sap.ui.define([
 			}
 		}
 
-		return this._execute(this.oModel.lockGroup(sGroupId, true));
+		return this._execute(this.lockGroup(sGroupId, true));
 	};
 
 	/**
@@ -630,8 +630,7 @@ sap.ui.define([
 					} else {
 						// Unless there is an expected read, a lock is not required here,
 						// only set the group ID
-						oGroupLock
-							= that.oModel.lockGroup(that.getGroupId(), that.oReadGroupLock);
+						oGroupLock = that.lockGroup(that.getGroupId(), that.oReadGroupLock);
 						that.oReadGroupLock = undefined;
 					}
 					return oCache.fetchValue(oGroupLock, sRelativePath, function () {

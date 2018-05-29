@@ -1648,4 +1648,19 @@ sap.ui.require([
 			oBinding.checkSuspended();
 		}, new Error("Must not call method when the binding's root binding is suspended: /Foo"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("lockGroup", function (assert) {
+		var oBinding = new ODataBinding({
+				oModel : {
+					lockGroup : function () {}
+				}
+			}),
+			vLock = {};
+
+		this.mock(oBinding.oModel).expects("lockGroup")
+			.withExactArgs("group", sinon.match.same(vLock), sinon.match.same(oBinding));
+
+		oBinding.lockGroup("group", vLock);
+	});
 });

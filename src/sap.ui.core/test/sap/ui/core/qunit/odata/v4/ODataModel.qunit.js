@@ -1520,13 +1520,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("lockGroup: blocking", function (assert) {
 		var oGroupLock,
-			oModel = createModel("");
+			oModel = createModel(""),
+			oOwner = {};
 
-		oGroupLock = oModel.lockGroup("foo", true);
+		oGroupLock = oModel.lockGroup("foo", true, oOwner);
 
 		assert.ok(oGroupLock instanceof _GroupLock);
 		assert.strictEqual(oGroupLock.getGroupId(), "foo");
 		assert.ok(oGroupLock.isLocked());
+		assert.strictEqual(oGroupLock.oOwner, oOwner);
 	});
 
 	//*********************************************************************************************

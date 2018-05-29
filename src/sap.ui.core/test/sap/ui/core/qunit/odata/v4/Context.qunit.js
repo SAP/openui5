@@ -667,7 +667,7 @@ sap.ui.require([
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
-			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true)
+			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
 				.returns(oGroupLock);
 			this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
 				.returns(bFailure ? Promise.reject(oError) : Promise.resolve());
@@ -860,7 +860,8 @@ sap.ui.require([
 			oPromise = Promise.resolve();
 
 		this.mock(oModel).expects("checkGroupId");
-		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true).returns(oGroupLock);
+		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
+			.returns(oGroupLock);
 		this.mock(oBinding).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
 				sinon.match.same(bAllowRemoval))
