@@ -157,6 +157,9 @@ sap.ui.require([
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
 			this.mChanges = {};
+			// {map<string, true>}
+			// If an ID is in this.mIgnoredChanges, change events with null are ignored
+			this.mIgnoredChanges = {};
 			// {map<string, string[][]>}
 			// this.mListChanges["id"][i] is a list of expected changes for the property "text" of
 			// the control with ID "id" in row i
@@ -274,6 +277,10 @@ sap.ui.require([
 				}
 				delete this.mListChanges[sControlId];
 			}
+			if (sap.ui.getCore().getUIDirty()) {
+				setTimeout(this.checkFinish.bind(this), 1);
+				return;
+			}
 			if (this.resolve) {
 				this.resolve();
 			}
@@ -340,7 +347,9 @@ sap.ui.require([
 				sVisibleId = vRow === undefined ? sControlId : sControlId + "[" + vRow + "]";
 
 			if (!aExpectedValues || !aExpectedValues.length) {
-				assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
+				if (!(sControlId in this.mIgnoredChanges && sValue === null)) {
+					assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
+				}
 			} else {
 				sExpectedValue = aExpectedValues.shift();
 				// Note: avoid bad performance of assert.strictEqual(), e.g. DOM manipulation
@@ -628,6 +637,20 @@ sap.ui.require([
 			vRequest.payload = vRequest.payload || undefined;
 			vRequest.response = oResponse;
 			this.aRequests.push(vRequest);
+			return this;
+		},
+
+		/**
+		 * Allows that the property "text" of the control with the given ID is set to undefined or
+		 * null. This may happen when the property is part of a list, this list is reset and the
+		 * request to deliver the new value is slowed down due to a group lock. (Then the row
+		 * context might be destroyed in a prerendering task.)
+		 *
+		 * @param {string} sControlId The control ID
+		 * @returns {object} The test instance for chaining
+		 */
+		ignoreNullChanges : function (sControlId) {
+			this.mIgnoredChanges[sControlId] = true;
 			return this;
 		},
 
@@ -5418,9 +5441,10 @@ sap.ui.require([
 				})
 				// The field is reset first, because the filter request is delayed until the next
 				// prerendering task
-				.expectChange("name", null)
+				.ignoreNullChanges("name")
 				.expectChange("name", ["Foo"]);
 
+			// This binding has no control -> no request, but timeout of group lock expected
 			oListBinding.filter(new Filter("Name", "GT", "M"));
 			that.oView.byId("table").getBinding("items").filter(null);
 			that.oModel.submitBatch("api");
