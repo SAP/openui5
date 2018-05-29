@@ -122,6 +122,24 @@
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
 												<layout:VerticalLayout>
 													<custom:JSDocText text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
 													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 												</layout:VerticalLayout>
 											</custom:Row>
@@ -251,7 +269,27 @@
 												<m:Link text="{type}"
 														href="#/api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<custom:JSDocText text="{description}"/>
+												<layout:VerticalLayout width="100%">
+													<custom:JSDocText text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -277,7 +315,27 @@
 												<m:Link text="{type}"
 														href="#/api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<custom:JSDocText text="{description}"/>
+												<layout:VerticalLayout width="100%">
+													<custom:JSDocText text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -396,6 +454,7 @@
 															<custom:ParamText text="{method>name}"
 																		href="#/api/{data>/name}/methods/{method>name}"
 																		deprecated="{= ${method>deprecated} !== undefined }"
+																        experimental="{= ${method>experimental} !== undefined }"
 																		press="scrollToMethod"/>
 															<custom:JSDocText text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
