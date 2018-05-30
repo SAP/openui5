@@ -170,20 +170,10 @@ sap.ui.define([
 		 */
 		this.onkeydown = MaskEnabler.onkeydown = function (oEvent) {
 			if (this._isMaskEnabled()) {
-				var oKey = this._parseKeyBoardEvent(oEvent),
-					mBrowser = Device.browser,
-					bIE9AndBackspaceDeleteScenario;
+				var oKey = this._parseKeyBoardEvent(oEvent);
 
-				/* When user types character, the flow of triggered events is keydown -> keypress -> input. The MaskInput
-				 handles user input in keydown (for special keys like Delete and Backspace) or in keypress - for any other user
-				 input and suppresses the input events. This is not true for IE9, where the input event is fired, because of
-				 the underlying InputBase takes control and fires it (see {@link sap.m.InputBase#onkeydown})
-				 */
-				bIE9AndBackspaceDeleteScenario = (oKey.bBackspace || oKey.bDelete) && mBrowser.msie && mBrowser.version < 10;
+				InputBase.prototype.onkeydown.apply(this, arguments);
 
-				if (!bIE9AndBackspaceDeleteScenario) {
-					InputBase.prototype.onkeydown.apply(this, arguments);
-				}
 				this._keyDownHandler(oEvent, oKey);
 			} else {
 				var oKey = this._parseKeyBoardEvent(oEvent);

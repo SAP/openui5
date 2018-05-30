@@ -76,15 +76,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}
 	});
 
-	// IE9 workaround for responsive layout of legend items
-	CalendarLegend.prototype.onAfterRendering = function() {
-		if (Device.browser.msie) {
-			if (Device.browser.version < 10) {
-				jQuery(".sapUiUnifiedLegendItem").css("width", this.getColumnWidth() + 4 + "px").css("display", "inline-block");
-			}
-		}
-	};
-
 	CalendarLegend.prototype.setStandardItems = function (aValues) {
 		var i;
 

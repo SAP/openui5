@@ -1000,17 +1000,7 @@ sap.ui.define([
 
 					that._addDelegateFlag = true;
 
-
-					// The facet button will not be removed when the remove icon is pressed if we don't delay hiding the icon in ie 9.
-					//
-					// CSS 0120061532 0004101226 2013 "sap.m.FacetFilterList - getActive inconsistent result"
-					//
-					// TODO: Remove when ie 9 is no longer supported
-					if (Device.browser.internet_explorer && Device.browser.version < 10) {
-						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose);
-					} else {
-						that._handlePopoverAfterClose();
-					}
+					that._handlePopoverAfterClose();
 				},
 				horizontalScrolling: false
 			});
@@ -1018,12 +1008,6 @@ sap.ui.define([
 			// Suppress invalidate so that FacetFilter is not rerendered when the popover is opened (causing it to immediately close)
 			this.setAggregation("popover", oPopover, true);
 			oPopover.setContentWidth("30%");
-
-		//IE9
-			if (Device.browser.internet_explorer && Device.browser.version < 10) {
-
-				oPopover.setContentWidth("30%");
-			}
 
 
 			// Set the minimum width of the popover to insure that it is not too small to display it's content properly.
@@ -1202,24 +1186,18 @@ sap.ui.define([
 
 				oList._preserveOriginalActiveState();
 
-				// TODO: Remove when ie 9 is no longer supported
-				if (Device.browser.internet_explorer && Device.browser.version < 10) {
-					// Opening popover is delayed so it is called after the previous popover is closed
-					jQuery.sap.delayedCall(100, this, fnOpenPopover);
+				var oPopover = that._getPopover();
+				if (oPopover.isOpen()) {
+					// create a deferred that will be triggered after the popover is closed
+					jQuery.sap.delayedCall(100, this, function() {
+						if (oPopover.isOpen()) {
+							return;
+						}
+						that._oOpenPopoverDeferred = jQuery.Deferred();
+						that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
+					});
 				} else {
-					var oPopover = that._getPopover();
-					if (oPopover.isOpen()) {
-						// create a deferred that will be triggered after the popover is closed
-						jQuery.sap.delayedCall(100, this, function() {
-							if (oPopover.isOpen()) {
-								return;
-							}
-							that._oOpenPopoverDeferred = jQuery.Deferred();
-							that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
-						});
-					} else {
-						jQuery.sap.delayedCall(100, this, fnOpenPopover);
-					}
+					jQuery.sap.delayedCall(100, this, fnOpenPopover);
 				}
 			}
 		});

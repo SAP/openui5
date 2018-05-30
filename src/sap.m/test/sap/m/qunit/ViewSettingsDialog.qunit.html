@@ -699,62 +699,18 @@
 				oVSD.destroy();
 			});
 
-			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
-				//do not run this tests on IE9 because of a timeout issue which need to be fixed
-			} else {
-				QUnit.test("Cancel on cancel button press event", function (assert){
-					var core = sap.ui.getCore(),
-							done = assert.async(),
-							that = this,
-							fnChecks = function () {
-								// check if dialog is still in the previous state
-								assert.ok(true, "Event cancel was fired");
-								assert.strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '" + that.oSelectedSortItem.getId() + "'");
-								assert.strictEqual(core.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
-								assert.strictEqual(this.getSortDescending(), true, "sort descending should now be true");
-								assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '" + that.oSelectedGroupItem.getId() + "'");
-								assert.strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
-								assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
-								assert.ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-								this.detachCancel(fnChecks);
-								done();
-							};
 
-					this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
-					this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
-					this.oVSD.setSortDescending(true);
-					this.oVSD.setGroupDescending(true);
-					this.oVSD.setSelectedFilterKeys(this.oFilterState);
-
-					// open dialog to store previous state
-					this.oVSD.open();
-					this.oVSD.attachCancel(fnChecks);
-
-					// set everything to unselected / false and fire cancel request
-					this.oVSD.setSelectedSortItem();
-					this.oVSD.setSortDescending(false);
-					this.oVSD.setSelectedGroupItem();
-					this.oVSD.setGroupDescending(false);
-					this.oVSD.setSelectedFilterKeys([]);
-					//press cancel
-					this.oVSD._dialog.getEndButton().firePress();
-				});
-			}
-
-			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
-				//do not run this tests on IE9 because of a timeout issue which need to be fixed
-			} else {
-				QUnit.test("Cancel on key ESCAPE event", function (assert){
-					var core = sap.ui.getCore(),
-						that = this,
+			QUnit.test("Cancel on cancel button press event", function (assert){
+				var core = sap.ui.getCore(),
 						done = assert.async(),
+						that = this,
 						fnChecks = function () {
 							// check if dialog is still in the previous state
 							assert.ok(true, "Event cancel was fired");
-							assert.strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '"+ that.oSelectedSortItem.getId() +"'");
+							assert.strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '" + that.oSelectedSortItem.getId() + "'");
 							assert.strictEqual(core.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
 							assert.strictEqual(this.getSortDescending(), true, "sort descending should now be true");
-							assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '"+ that.oSelectedGroupItem.getId() +"'");
+							assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '" + that.oSelectedGroupItem.getId() + "'");
 							assert.strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
 							assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
 							assert.ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
@@ -762,25 +718,64 @@
 							done();
 						};
 
-					this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
-					this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
-					this.oVSD.setSortDescending(true);
-					this.oVSD.setGroupDescending(true);
-					this.oVSD.setSelectedFilterKeys(this.oFilterState);
+				this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
+				this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
+				this.oVSD.setSortDescending(true);
+				this.oVSD.setGroupDescending(true);
+				this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
-					// open dialog to store previous state
-					this.oVSD.open();
-					this.oVSD.attachCancel(fnChecks);
+				// open dialog to store previous state
+				this.oVSD.open();
+				this.oVSD.attachCancel(fnChecks);
 
-					// set everything to unselected / false and fire ESC key
-					this.oVSD.setSelectedSortItem();
-					this.oVSD.setSortDescending(false);
-					this.oVSD.setSelectedGroupItem();
-					this.oVSD.setGroupDescending(false);
-					this.oVSD.setSelectedFilterKeys([]);
-					sap.ui.test.qunit.triggerKeydown(this.oVSD._getDialog().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-				});
-			}
+				// set everything to unselected / false and fire cancel request
+				this.oVSD.setSelectedSortItem();
+				this.oVSD.setSortDescending(false);
+				this.oVSD.setSelectedGroupItem();
+				this.oVSD.setGroupDescending(false);
+				this.oVSD.setSelectedFilterKeys([]);
+				//press cancel
+				this.oVSD._dialog.getEndButton().firePress();
+			});
+
+
+			QUnit.test("Cancel on key ESCAPE event", function (assert){
+				var core = sap.ui.getCore(),
+					that = this,
+					done = assert.async(),
+					fnChecks = function () {
+						// check if dialog is still in the previous state
+						assert.ok(true, "Event cancel was fired");
+						assert.strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '"+ that.oSelectedSortItem.getId() +"'");
+						assert.strictEqual(core.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+						assert.strictEqual(this.getSortDescending(), true, "sort descending should now be true");
+						assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '"+ that.oSelectedGroupItem.getId() +"'");
+						assert.strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+						assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
+						assert.ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+						this.detachCancel(fnChecks);
+						done();
+					};
+
+				this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
+				this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
+				this.oVSD.setSortDescending(true);
+				this.oVSD.setGroupDescending(true);
+				this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+				// open dialog to store previous state
+				this.oVSD.open();
+				this.oVSD.attachCancel(fnChecks);
+
+				// set everything to unselected / false and fire ESC key
+				this.oVSD.setSelectedSortItem();
+				this.oVSD.setSortDescending(false);
+				this.oVSD.setSelectedGroupItem();
+				this.oVSD.setGroupDescending(false);
+				this.oVSD.setSelectedFilterKeys([]);
+				sap.ui.test.qunit.triggerKeydown(this.oVSD._getDialog().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+			});
+
 
 			QUnit.test("Back on key [SHIFT]+[ENTER] event", function (assert) {
 				this.oVSD.open();
@@ -796,42 +791,39 @@
 				assert.equal(this.oVSD._navContainer.getCurrentPage(), this.oVSD._getPage1(), "NavContainer should be on the first page");
 			});
 
-			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
-				//do not run this tests on IE9 because of a timeout issue which need to be fixed
-			} else {
-				QUnit.test("Confirm event", function (assert){
-					var done = assert.async(),
-						that = this;
 
-					this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
-					this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
-					this.oVSD.setSortDescending(true);
-					this.oVSD.setGroupDescending(true);
-					this.oVSD.setSelectedFilterKeys(this.oFilterState);
+			QUnit.test("Confirm event", function (assert){
+				var done = assert.async(),
+					that = this;
 
-					// open dialog to store previous state
-					this.oVSD.open();
-					this.oVSD.attachConfirm(function(oEvent) {
-						var oParams = oEvent.getParameters();
-						assert.ok(oParams, "Event applySettings was fired and has event parameters");
-						assert.ok(oParams.sortItem, "Event has a sort item");
-						assert.ok(oParams.groupItem, "Event has a group item");
-						assert.ok(oParams.sortDescending, "Event has sort order true");
-						assert.strictEqual(oParams.sortItem.getId(), that.oSelectedSortItem.getId(), "The selected sort item should be '"+ that.oSelectedSortItem.getId() +"'");
-						assert.strictEqual(oParams.sortDescending, true, "Sort descending should be true");
-						assert.strictEqual(oParams.groupItem.getId(), that.oSelectedGroupItem.getId(), "The selected group item should be '"+ that.oSelectedGroupItem.getId() +"'");
-						assert.strictEqual(oParams.groupDescending, true, "group descending should be true");
-						assert.strictEqual(oParams.selectedPresetFilterItem, undefined, "The selected preset filter item should be 'undefined'");
-						assert.ok(compareFilterKeys(that.oFilterState, oParams.filterKeys), "The event filter keys should have the same structure as the passed one");
-						assert.ok(oParams.filterString.length > 0, "The filter string is not empty");
-						assert.strictEqual(oParams.filterItems.length, 8, "There are 8 selected filters");
-						done();
-					});
+				this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
+				this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
+				this.oVSD.setSortDescending(true);
+				this.oVSD.setGroupDescending(true);
+				this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
-					//Act
-					this.oVSD._dialog.getBeginButton().firePress();
+				// open dialog to store previous state
+				this.oVSD.open();
+				this.oVSD.attachConfirm(function(oEvent) {
+					var oParams = oEvent.getParameters();
+					assert.ok(oParams, "Event applySettings was fired and has event parameters");
+					assert.ok(oParams.sortItem, "Event has a sort item");
+					assert.ok(oParams.groupItem, "Event has a group item");
+					assert.ok(oParams.sortDescending, "Event has sort order true");
+					assert.strictEqual(oParams.sortItem.getId(), that.oSelectedSortItem.getId(), "The selected sort item should be '"+ that.oSelectedSortItem.getId() +"'");
+					assert.strictEqual(oParams.sortDescending, true, "Sort descending should be true");
+					assert.strictEqual(oParams.groupItem.getId(), that.oSelectedGroupItem.getId(), "The selected group item should be '"+ that.oSelectedGroupItem.getId() +"'");
+					assert.strictEqual(oParams.groupDescending, true, "group descending should be true");
+					assert.strictEqual(oParams.selectedPresetFilterItem, undefined, "The selected preset filter item should be 'undefined'");
+					assert.ok(compareFilterKeys(that.oFilterState, oParams.filterKeys), "The event filter keys should have the same structure as the passed one");
+					assert.ok(oParams.filterString.length > 0, "The filter string is not empty");
+					assert.strictEqual(oParams.filterItems.length, 8, "There are 8 selected filters");
+					done();
 				});
-			}
+
+				//Act
+				this.oVSD._dialog.getBeginButton().firePress();
+			});
 
 			QUnit.test("Reset event", function (assert) {
 				this.oVSD.setSelectedFilterKeys(this.oFilterState);
