@@ -6031,7 +6031,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check if Caching is supported. All urls must at least provide a 'sap-cache-toke' query parameter
+	 * Check if Caching is supported. All urls must at least provide a 'sap-context-token' query parameter
 	 * or a valid cache buster token segment.
 	 *
 	 * @private
