@@ -1229,13 +1229,14 @@ sap.ui.require([
 				}, {"Name" : "Business Suite"})
 				.expectChange("name", "Business Suite");
 
-			// code under test
-			that.oView.byId("form").getObjectBinding()
-				.setParameter("TeamID", "TEAM_01")
-				.setParameter("Budget", "1234.1234")
-				.execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getObjectBinding()
+					.setParameter("TeamID", "TEAM_01")
+					.setParameter("Budget", "1234.1234")
+					.execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -1428,10 +1429,11 @@ sap.ui.require([
 				.expectChange("count", "1")
 				.expectChange("id", ["0500000001"]);
 
-			// code under test
-			that.oView.byId("table").getItems()[0].getBindingContext().delete();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				that.oView.byId("table").getItems()[0].getBindingContext().delete(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -2102,6 +2104,8 @@ sap.ui.require([
 				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
 				return that.waitForChanges(assert);
 			}).then(function () {
+				var oPromise;
+
 				that.expectChange("id", "2", 0)
 					.expectChange("text", "Frederic Fall", 0);
 
@@ -2109,12 +2113,15 @@ sap.ui.require([
 				if (bUseReset) {
 					oTeam2EmployeesBinding.resetChanges();
 				} else {
-					oNewContext.delete("$direct");
+					oPromise = oNewContext.delete("$direct");
 				}
 
 				assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no pending changes");
 				assert.notOk(oTeamBinding.hasPendingChanges(), "parent has no pending changes");
-				return that.waitForChanges(assert);
+				return Promise.all([
+					oPromise,
+					that.waitForChanges(assert)
+				]);
 			}).then(function () {
 				return oNewContext.created().then(function () {
 					assert.notOk("unexpected success");
@@ -2334,11 +2341,13 @@ sap.ui.require([
 				})
 				.expectChange("isManager", "Yes");
 
-			that.oView.byId("action").getObjectBinding()
-				.setParameter("Message", "The quick brown fox jumps over the lazy dog")
-				.execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				that.oView.byId("action").getObjectBinding()
+					.setParameter("Message", "The quick brown fox jumps over the lazy dog")
+					.execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -2361,10 +2370,13 @@ sap.ui.require([
 				})
 				.expectChange("name", "Jonathan Smith");
 
-			that.oView.byId("function").getObjectBinding()
-				.setParameter("EmployeeID", "1")
-				.execute();
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				that.oView.byId("function").getObjectBinding()
+					.setParameter("EmployeeID", "1")
+					.execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -2739,7 +2751,8 @@ sap.ui.require([
 		}).expectChange("text", "Team #1");
 
 		return this.createView(assert, sView).then(function () {
-			var oContext = that.oView.byId("form").getBindingContext();
+			var oContext = that.oView.byId("form").getBindingContext(),
+				oPromise;
 
 			that.expectRequest({
 				method : "DELETE",
@@ -2748,12 +2761,15 @@ sap.ui.require([
 
 			// Note: "the resulting group ID must be '$auto' or '$direct'"
 			// --> no way to call submitBatch()!
-			oContext.delete(/*sGroupId*/);
+			oPromise = oContext.delete(/*sGroupId*/);
 			assert.throws(function () {
 				oContext.getModel().submitBatch("$direct");
 			});
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -3622,8 +3638,11 @@ sap.ui.require([
 				})
 				.expectChange("status", "42");
 
-			that.oView.byId("function").getObjectBinding().execute();
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				that.oView.byId("function").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -3631,7 +3650,8 @@ sap.ui.require([
 	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
 	//   Show interaction of setParameter(), execute() and refresh().
 	QUnit.test("Function binding: setParameter, execute and refresh", function (assert) {
-		var sView = '\
+		var oFunctionBinding,
+			sView = '\
 <FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
 	<Text id="name" text="{Name}" />\
 </FlexBox>',
@@ -3639,45 +3659,39 @@ sap.ui.require([
 
 		this.expectChange("name", null);
 		return this.createView(assert, sView).then(function () {
-			var oFunctionBinding = that.oView.byId("function").getObjectBinding();
+			oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
-					"Name" : "Jonathan Smith"
-				})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name": "Jonathan Smith"})
 				.expectChange("name", "Jonathan Smith");
-			oFunctionBinding.setParameter("EmployeeID", "1").execute();
+			return Promise.all([
+				oFunctionBinding.setParameter("EmployeeID", "1").execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {"Name": "Frederic Fall"})
+				.expectChange("name", "Frederic Fall");
+			oFunctionBinding.refresh();
 
-			return that.waitForChanges(assert).then(function () {
-				that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
-						"Name" : "Frederic Fall"
-					})
-					.expectChange("name", "Frederic Fall");
-				oFunctionBinding.refresh();
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oFunctionBinding.setParameter("EmployeeID", "2");
 
-				return that.waitForChanges(assert).then(function () {
-					oFunctionBinding.setParameter("EmployeeID", "2");
+			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-					oFunctionBinding.refresh(); // MUST NOT trigger a request!
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {"Name": "Peter Burke"})
+				.expectChange("name", "Peter Burke");
+			return Promise.all([
+				oFunctionBinding.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {"Name" : "Jonathan Smith"})
+				.expectChange("name", "Jonathan Smith");
+			oFunctionBinding.refresh();
 
-					that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
-							"Name" : "Peter Burke"
-						})
-						.expectChange("name", "Peter Burke");
-					oFunctionBinding.execute();
-
-					return that.waitForChanges(assert).then(function () {
-						that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
-								"Name" : "Jonathan Smith"
-							})
-							.expectChange("name", "Jonathan Smith");
-						oFunctionBinding.refresh();
-
-						return that.waitForChanges(assert);
-					});
-				});
-			});
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -3685,7 +3699,8 @@ sap.ui.require([
 	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
 	//   Show interaction of setParameter(), execute() and changeParameters().
 	QUnit.test("Function binding: setParameter, execute and changeParameters", function (assert) {
-		var sView = '\
+		var oFunctionBinding,
+			sView = '\
 <FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
 	<Text id="name" text="{Name}" />\
 </FlexBox>',
@@ -3693,46 +3708,48 @@ sap.ui.require([
 
 		this.expectChange("name", null);
 		return this.createView(assert, sView).then(function () {
-			var oFunctionBinding = that.oView.byId("function").getObjectBinding();
+			oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
-			oFunctionBinding.changeParameters({$select : "Name"}); // MUST NOT trigger a request!
+			oFunctionBinding.changeParameters({$select: "Name"}); // MUST NOT trigger a request!
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
+					"Name": "Jonathan Smith"
+				})
+				.expectChange("name", "Jonathan Smith");
+			return Promise.all([
+				oFunctionBinding.setParameter("EmployeeID", "1").execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
+					"Name": "Frederic Fall"
+				})
+				.expectChange("name", "Frederic Fall");
+			oFunctionBinding.changeParameters({$select: "ID,Name"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oFunctionBinding.setParameter("EmployeeID", "2");
+
+			// MUST NOT trigger a request!
+			oFunctionBinding.changeParameters({$select: "Name"});
+
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=Name", {
+					"Name": "Peter Burke"
+				})
+				.expectChange("name", "Peter Burke");
+			return Promise.all([
+				oFunctionBinding.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=ID,Name", {
 					"Name" : "Jonathan Smith"
 				})
 				.expectChange("name", "Jonathan Smith");
-			oFunctionBinding.setParameter("EmployeeID", "1").execute();
+			oFunctionBinding.changeParameters({$select : "ID,Name"});
 
-			return that.waitForChanges(assert).then(function () {
-				that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
-						"Name" : "Frederic Fall"
-					})
-					.expectChange("name", "Frederic Fall");
-				oFunctionBinding.changeParameters({$select : "ID,Name"});
-
-				return that.waitForChanges(assert).then(function () {
-					oFunctionBinding.setParameter("EmployeeID", "2");
-
-					// MUST NOT trigger a request!
-					oFunctionBinding.changeParameters({$select : "Name"});
-
-					that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=Name", {
-							"Name" : "Peter Burke"
-						})
-						.expectChange("name", "Peter Burke");
-					oFunctionBinding.execute();
-
-					return that.waitForChanges(assert).then(function () {
-						that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=ID,Name", {
-								"Name" : "Jonathan Smith"
-							})
-							.expectChange("name", "Jonathan Smith");
-						oFunctionBinding.changeParameters({$select : "ID,Name"});
-
-						return that.waitForChanges(assert);
-					});
-				});
-			});
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -4073,14 +4090,15 @@ sap.ui.require([
 				}
 			});
 
-			oContextBinding
-				.setParameter("fromdate", "2017-08-10T00:00:00Z")
-				.setParameter("todate", "2017-08-10T23:59:59Z")
-				.setParameter("cityfrom", "new york")
-				.setParameter("cityto", "SAN FRANCISCO")
-				.execute();
-
-			return that.waitForChanges(assert).then(function () {
+			return Promise.all([
+				oContextBinding
+					.setParameter("fromdate", "2017-08-10T00:00:00Z")
+					.setParameter("todate", "2017-08-10T23:59:59Z")
+					.setParameter("cityfrom", "new york")
+					.setParameter("cityto", "SAN FRANCISCO")
+					.execute(),
+				that.waitForChanges(assert)
+			]).then(function () {
 				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
 					aContexts = oListBinding.getContexts(0, Infinity);
 
@@ -4128,8 +4146,10 @@ sap.ui.require([
 				})
 				.expectChange("value", "2017-08-10T00:00:00Z");
 
-			that.oView.byId("function").getObjectBinding().execute();
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("function").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 	//TODO support also "version 2.0 JSON representation of a property"?
@@ -4156,9 +4176,10 @@ sap.ui.require([
 				}
 			});
 
-			oContextBinding.execute();
-
-			return that.waitForChanges(assert).then(function () {
+			return Promise.all([
+				oContextBinding.execute(),
+				that.waitForChanges(assert)
+			]).then(function () {
 				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
 					aContexts = oListBinding.getContexts(0, Infinity);
 
@@ -4209,9 +4230,10 @@ sap.ui.require([
 				}
 			});
 
-			oContextBinding.setParameter("carrid", "AA").execute();
-
-			return that.waitForChanges(assert).then(function () {
+			return Promise.all([
+				oContextBinding.setParameter("carrid", "AA").execute(),
+				that.waitForChanges(assert)
+			]).then(function () {
 				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
 					aContexts = oListBinding.getContexts(0, Infinity);
 
@@ -4284,8 +4306,10 @@ sap.ui.require([
 				})
 				.expectChange("distance", "2,572.0000");
 
-			that.oView.byId("function").getObjectBinding().execute();
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("function").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -4917,7 +4941,8 @@ sap.ui.require([
 	//   Show interaction of execute() and suspend()/resume(); setParameter() has been tested
 	//   for refresh() already, see test "Function binding: setParameter, execute and refresh".
 	QUnit.test("Function binding: execute and suspend/resume", function (assert) {
-		var sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
+		var oEmployeeBinding,
+			sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
 				+ ".FuGetEmployeeSalaryForecast",
 			sView = '\
 <FlexBox id="employee" binding="{/EMPLOYEES(\'2\')}">\
@@ -4936,46 +4961,47 @@ sap.ui.require([
 			.expectChange("salary", "100")
 			.expectChange("forecastSalary", null);
 		return this.createView(assert, sView).then(function () {
-			var oEmployeeBinding = that.oView.byId("employee").getObjectBinding();
-
 			that.expectRequest("EMPLOYEES('2')", {
 					"SALARY": {
 						"YEARLY_BONUS_AMOUNT": 100
 					}
 				});
 
+			oEmployeeBinding = that.oView.byId("employee").getObjectBinding();
 			oEmployeeBinding.suspend();
 			oEmployeeBinding.resume(); // MUST NOT trigger a request for the bound function!
 
-			return that.waitForChanges(assert).then(function () {
-				var oFunctionBinding = that.oView.byId("function").getObjectBinding();
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
+					"SALARY": {
+						"YEARLY_BONUS_AMOUNT": 142
+					}
+				})
+				.expectChange("forecastSalary", "142");
 
-				that.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-						"SALARY": {
-							"YEARLY_BONUS_AMOUNT": 142
-						}
-					})
-					.expectChange("forecastSalary", "142");
-				oFunctionBinding.execute();
+			return Promise.all([
+				that.oView.byId("function").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES('2')", {
+					"SALARY": {
+						"YEARLY_BONUS_AMOUNT": 110
+					}
+				})
+				.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
+					"SALARY": {
+						"YEARLY_BONUS_AMOUNT": 150
+					}
+				})
+				.expectChange("salary", "110")
+				.expectChange("forecastSalary", "150");
 
-				return that.waitForChanges(assert).then(function () {
-					that.expectRequest("EMPLOYEES('2')", {
-							"SALARY": {
-								"YEARLY_BONUS_AMOUNT": 110
-							}
-						})
-						.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-							"SALARY": {
-								"YEARLY_BONUS_AMOUNT": 150
-							}
-						})
-						.expectChange("salary", "110")
-						.expectChange("forecastSalary", "150");
+			oEmployeeBinding.suspend();
+			oEmployeeBinding.resume();
 
-					oEmployeeBinding.suspend();
-					oEmployeeBinding.resume();
-				});
-			});
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -5104,11 +5130,13 @@ sap.ui.require([
 					"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
 				]);
 
-			that.oView.byId("function").getObjectBinding()
-				.setParameter("SalesOrderID", "0500000001")
-				.execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				that.oView.byId("function").getObjectBinding()
+					.setParameter("SalesOrderID", "0500000001")
+					.execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -5265,9 +5293,11 @@ sap.ui.require([
 				.expectChange("companyName", null)
 				.expectChange("phoneNumber", null);
 
-			oContext.delete();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				oContext.delete(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -5365,9 +5395,11 @@ sap.ui.require([
 				"SalesOrderID" : "0500000000"
 			});
 
-			that.oView.byId("form").getElementBinding().execute("update");
-			that.oModel.submitBatch("update");
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("form").getElementBinding().execute("update"),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -6364,10 +6396,11 @@ sap.ui.require([
 				.expectChange("isActive", null)
 				.expectChange("name", null);
 
-			// code under test
-			that.oView.byId("objectPage").getBindingContext().delete();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				that.oView.byId("objectPage").getBindingContext().delete(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
