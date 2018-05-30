@@ -183,11 +183,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 				listenForEvents: ["press"],
 				noInvalidationProps: ["enabled", "pressed"]
 			},
-			"sap.m.Select": {
-				canOverflow: true,
-				listenForEvents: ["change"],
-				noInvalidationProps: ["enabled", "selectedKey"]
-			},
 			"sap.m.ComboBox": {
 				canOverflow: true,
 				listenForEvents: [],
