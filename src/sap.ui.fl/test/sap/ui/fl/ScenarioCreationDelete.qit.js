@@ -149,7 +149,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 					containsChangeId = true;
 				}
 			});
-			assert.strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
+			assert.strictEqual(containsChangeId, true, 'Change successfully received from backend');
 
 			return deletionPersistnce.saveAll();
 		}
@@ -209,7 +209,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				}
 			});
 			assert.strictEqual(actualLayer, expectedLayer, 'Layer has been set according to specified Layer');
-			assert.strictEqual(containsChangeId, true, 'Change successfully recieved from backend');
+			assert.strictEqual(containsChangeId, true, 'Change successfully received from backend');
 			return deletionPersistnce.saveAll();
 		}
 
