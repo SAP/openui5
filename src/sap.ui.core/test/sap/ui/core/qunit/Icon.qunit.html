@@ -247,6 +247,23 @@
 				oIcon.destroy();
 			});
 
+			QUnit.test("src with icon name only should use default icon collection", function(assert) {
+				var oIcon = new sap.ui.core.Icon({
+					src: "delete"
+				});
+
+				oIcon.placeAt("uiAreaA");
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(
+					oIcon.$().attr("data-sap-ui-icon-content"),
+					sap.ui.core.IconPool.getIconInfo("sap-icon://delete").content,
+					"Content attribute should be set correctly"
+				);
+
+				oIcon.destroy();
+			});
+
 			QUnit.module("ARIA Support", {
 				beforeEach: function () {
 					this.sIconName = "add";
