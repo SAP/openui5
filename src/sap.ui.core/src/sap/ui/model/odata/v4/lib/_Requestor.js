@@ -405,6 +405,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts an OData response payload if needed. For OData V4 payloads no conversion is done.
+	 * May be overwritten for other OData service versions. The resulting payload has to
+	 * be an OData V4 payload.
+	 *
+	 * @param {object} oResponsePayload
+	 *   The OData response payload
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
+	 * @returns {object}
+	 *   The OData V4 response payload
+	 */
+	Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
+		return oResponsePayload;
+	};
+
+
+	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
 	 * May be overwritten for other OData service versions.
@@ -444,24 +463,6 @@ sap.ui.define([
 			}
 			fnResultHandler(sKey, vValue);
 		});
-	};
-
-	/**
-	 * Converts an OData response payload if needed. For OData V4 payloads no conversion is done.
-	 * May be overwritten for other OData service versions. The resulting payload has to
-	 * be an OData V4 payload.
-	 *
-	 * @param {object} oResponsePayload
-	 *   The OData response payload
-	 * @param {string} [sMetaPath]
-	 *   The meta path corresponding to the resource path; needed in case V2 response does not
-	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
-	 *   Request"
-	 * @returns {object}
-	 *   The OData V4 response payload
-	 */
-	Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
-		return oResponsePayload;
 	};
 
 	/**
@@ -669,6 +670,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * Searches the request identified by the given group and body, removes it from that group and
+	 * triggers a new request with the new group ID, based on the found request.
+	 * The result of the new request is delegated to the found request.
+	 *
+	 * @param {string} sCurrentGroupId
+	 *   The ID of the group in which to search the request
+	 * @param {object} oBody
+	 *   The body of the request to be searched
+	 * @param {string} sNewGroupId
+	 *   The ID of the group for the new request
+	 * @throws {Error}
+	 *   If the request could not be found
+	 */
+	Requestor.prototype.relocate = function (sCurrentGroupId, oBody, sNewGroupId) {
+		var aRequests = this.mBatchQueue[sCurrentGroupId],
+			that = this,
+			bFound = aRequests && aRequests[0].some(function (oChange, i) {
+				if (oChange.body === oBody) {
+					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
+							oChange.headers, oBody, oChange.$submit, oChange.$cancel)
+						.then(oChange.$resolve, oChange.$reject);
+					aRequests[0].splice(i, 1);
+					deleteEmptyGroup(that, sCurrentGroupId);
+					return true;
+				}
+			});
+
+		if (!bFound) {
+			throw new Error("Request not found in group '" + sCurrentGroupId + "'");
+		}
+	};
+
+	/**
 	 * Removes the pending PATCH request for the given promise from its group. Only requests for
 	 * which the <code>$cancel</code> callback is defined are removed.
 	 *
@@ -826,39 +860,6 @@ sap.ui.define([
 			that.reportUnboundMessages(oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
 		});
-	};
-
-	/**
-	 * Searches the request identified by the given group and body, removes it from that group and
-	 * triggers a new request with the new group ID, based on the found request.
-	 * The result of the new request is delegated to the found request.
-	 *
-	 * @param {string} sCurrentGroupId
-	 *   The ID of the group in which to search the request
-	 * @param {object} oBody
-	 *   The body of the request to be searched
-	 * @param {string} sNewGroupId
-	 *   The ID of the group for the new request
-	 * @throws {Error}
-	 *   If the request could not be found
-	 */
-	Requestor.prototype.relocate = function (sCurrentGroupId, oBody, sNewGroupId) {
-		var aRequests = this.mBatchQueue[sCurrentGroupId],
-			that = this,
-			bFound = aRequests && aRequests[0].some(function (oChange, i) {
-				if (oChange.body === oBody) {
-					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
-							oChange.headers, oBody, oChange.$submit, oChange.$cancel)
-						.then(oChange.$resolve, oChange.$reject);
-					aRequests[0].splice(i, 1);
-					deleteEmptyGroup(that, sCurrentGroupId);
-					return true;
-				}
-			});
-
-		if (!bFound) {
-			throw new Error("Request not found in group '" + sCurrentGroupId + "'");
-		}
 	};
 
 	/**
