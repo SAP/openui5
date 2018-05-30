@@ -4509,6 +4509,24 @@
 			destroyFF(oFF);
 		});
 
+		QUnit.test("FacetFilter in Light mode has tabindex=0 only on a InfoBar inside it", function (assert) {
+			// Arrange
+			var oFF = new sap.m.FacetFilter({
+				type: "Light"
+			});
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.ok(!oFF.$().attr("tabindex"), "FF doesn't have tabindex");
+			assert.equal(oFF.$().children().attr("tabindex"), 0, "toolbar inside FF has tabindex 0");
+			assert.ok(!oFF.oItemNavigation, "ItemNavigation wasn't initialize for the FF Light mode");
+
+			// Cleanup
+			destroyFF(oFF);
+		});
+
+
 		// Helper functions
 
 		function getButtonCtrl(oFF, iIndex) {
