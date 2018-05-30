@@ -35,6 +35,11 @@
 	user-select: none;
 }
 
+.sapMLIB:not(.sapMLIBFocusable):focus,
+.sapMListTblSubRow:focus {
+	outline: none;
+}
+
 /* IE ignores outline-offset. Use an overlay: */
 .sapMLIBLegacyOutline:focus {
   outline: none;
