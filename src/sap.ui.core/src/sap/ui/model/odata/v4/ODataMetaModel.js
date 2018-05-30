@@ -484,8 +484,8 @@ sap.ui.define([
 			// parameter is set to <code>true</code> or if the value has changed.
 			// If the binding parameter <code>$$valueAsPromise</code> is <code>true</code> and the
 			// value cannot be fetched synchronously then <code>getValue</code> returns a
-			// <code>SyncPromise</code> resolving with the value. After the value is resolved a
-			// second change event is fired and <code>getValue</code> returns the value itself.
+			// <code>Promise</code> resolving with the value. After the value is resolved a second
+			// change event is fired and <code>getValue</code> returns the value itself.
 			//
 			// @param {boolean} [bForceUpdate=false]
 			//   If <code>true</code>, the change event is always fired.
@@ -510,11 +510,11 @@ sap.ui.define([
 				oPromise = this.oModel.fetchObject(this.sPath, this.oContext, this.mParameters)
 					.then(setValue);
 				if (this.mParameters && this.mParameters.$$valueAsPromise && oPromise.isPending()) {
-					setValue(oPromise);
+					setValue(oPromise.unwrap());
 				}
 			},
 
-			// May return a <code>SyncPromise</code> instead of the value if
+			// May return a <code>Promise</code> instead of the value if the binding parameter
 			// <code>$$valueAsPromise</code> is <code>true</code>
 			// @override
 			// @see sap.ui.model.PropertyBinding#getValue
@@ -604,8 +604,9 @@ sap.ui.define([
 	});
 
 	/**
-	 * Indicates that the property bindings of this model may return their value as a
-	 * <code>SyncPromise</code> if the value cannot be fetched synchronously.
+	 * Indicates that the property bindings of this model support the binding parameter
+	 * <code>$$valueAsPromise</code> which allows to return the value as a <code>Promise</code> if
+	 * the value cannot be fetched synchronously.
 	 *
 	 * @private
 	 */
@@ -725,7 +726,7 @@ sap.ui.define([
 	 *   Optional binding parameters that are passed to {@link #getObject} to compute the binding's
 	 *   value; if they are given, <code>oContext</code> cannot be omitted
 	 * @param {boolean} [mParameters.$$valueAsPromise]
-	 *   Whether {@link sap.ui.model.PropertyBinding#getValue} may return a <code>SyncPromise</code>
+	 *   Whether {@link sap.ui.model.PropertyBinding#getValue} may return a <code>Promise</code>
 	 *   resolving with the value (since 1.57.0)
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
@@ -851,6 +852,9 @@ sap.ui.define([
 	 *   The context to be used as a starting point in case of a relative path
 	 * @param {object} [mParameters]
 	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
+	 * @param {boolean} [mParameters.$$valueAsPromise]
+	 *   Whether a computed annotation may return a <code>Promise</code> resolving with its value
+	 *   (since 1.57.0)
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {sap.ui.base.SyncPromise}
@@ -914,6 +918,7 @@ sap.ui.define([
 
 				try {
 					vResult = fnAnnotation(vResult, {
+						$$valueAsPromise : mParameters && mParameters.$$valueAsPromise,
 						context : new BaseContext(that, sPath),
 						schemaChildName : sSchemaChildName
 					});
@@ -1937,6 +1942,8 @@ sap.ui.define([
 	 * additional details and returns the result of this {@link #requestObject} call. The additional
 	 * details are given as an object with the following properties:
 	 * <ul>
+	 * <li><code>{boolean} $$valueAsPromise</code> Whether the computed annotation may return a
+	 *   <code>Promise</code> resolving with its value (since 1.57.0)
 	 * <li><code>{@link sap.ui.model.Context} context</code> Points to the current object
 	 * <li><code>{string} schemaChildName</code> The qualified name of the schema child where the
 	 *   computed annotation has been found
