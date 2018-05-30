@@ -2238,6 +2238,7 @@ sap.ui.require([
 			return Promise.all([
 				// code under test
 				oAction.execute(),
+				that.waitForChanges(assert)
 			]);
 		});
 	});
