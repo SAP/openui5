@@ -1,7 +1,8 @@
 sap.ui.define([
 		"sap/ui/demo/masterdetail/controller/BaseController",
-		"sap/ui/model/json/JSONModel"
-	], function (BaseController, JSONModel) {
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/Device"
+	], function (BaseController, JSONModel, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.masterdetail.controller.App", {
@@ -9,12 +10,18 @@ sap.ui.define([
 			onInit : function () {
 				var oViewModel,
 					fnSetAppNotBusy,
-					oListSelector = this.getOwnerComponent().oListSelector,
 					iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 
 				oViewModel = new JSONModel({
 					busy : true,
-					delay : 0
+					delay : 0,
+					layout : "OneColumn",
+					previousLayout : "",
+					actionButtonsInfo : {
+						midColumn : {
+							fullScreen : false
+						}
+					}
 				});
 				this.setModel(oViewModel, "appView");
 
@@ -28,12 +35,6 @@ sap.ui.define([
 						then(fnSetAppNotBusy);
 				this.getOwnerComponent().getModel().attachMetadataFailed(fnSetAppNotBusy);
 
-
-				// Makes sure that master view is hidden in split app
-				// after a new list entry has been selected.
-				oListSelector.attachListSelectionChange(function () {
-					this.byId("idAppControl").hideMaster();
-				}, this);
 
 				// apply content density mode to root view
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());

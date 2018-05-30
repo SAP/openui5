@@ -12,15 +12,16 @@ sap.ui.define([
 		Given.iStartTheApp();
 
 		//Actions
-		When.onTheMasterPage.iWaitUntilTheListIsLoaded()
-			.and.iWaitUntilTheFirstItemIsSelected();
+		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
 		When.onTheBrowserPage.iChangeTheHashToSomethingInvalid();
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
 			and.theNotFoundPageShouldSayResourceNotFound();
-		Then.onTheMasterPage.theListShouldHaveNoSelection().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.theListShouldHaveNoSelection();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the not found page if the hash is something that matches no route", function (Given, When, Then) {
@@ -32,8 +33,10 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
-			and.theNotFoundPageShouldSayResourceNotFound().
-			and.iTeardownMyAppFrame();
+			and.theNotFoundPageShouldSayResourceNotFound();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the not found master and detail page if an invalid object id has been called", function (Given, When, Then) {
@@ -45,8 +48,10 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheObjectNotFoundPage().
-			and.theNotFoundPageShouldSayObjectNotFound().
-			and.iTeardownMyAppFrame();
+			and.theNotFoundPageShouldSayObjectNotFound();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the not found text for no search results", function (Given, When, Then) {
@@ -57,8 +62,10 @@ sap.ui.define([
 		When.onTheMasterPage.iSearchForSomethingWithNoResults();
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
 });
