@@ -129,7 +129,7 @@ function createSelect(oPullDown, iSelectedItem){
 			setTimeout(function(){
 				pullToRefreshStd.hide();
 				addItems(standardList, 10);
-			}, 2000);
+			}, 1000);
 		}
 	});
 
@@ -188,7 +188,7 @@ function createSelect(oPullDown, iSelectedItem){
 			setTimeout(function(){
 				addItems(simpleList, 10);
 				pullToHide.setDescription("");
-			}, 2000);
+			}, 1000);
 	}});
 	var simpleList =  new sap.m.List("simpleList", {inset : false});
 	addItems(simpleList, 5);
@@ -251,7 +251,7 @@ function createSelect(oPullDown, iSelectedItem){
 					pullToBusy.setDescription("");
 					oTimeout = null;
 					busyDialog.close();
-				}, 5000);
+				}, 1000);
 			}, 100);
 		}});
 		var busyList =  new sap.m.List("busyList", {inset : false});
