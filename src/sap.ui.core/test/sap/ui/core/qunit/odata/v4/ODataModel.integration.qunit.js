@@ -2231,6 +2231,69 @@ sap.ui.require([
 			return Promise.all([
 				// code under test
 				oAction.execute(),
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute a bound action for an entity in a list binding and afterwards call refresh
+	// with bAllowRemoval=true for the context the entity is pointing to. If the entity is gone from
+	// the list binding no error should happen because of the just deleted context.
+	QUnit.test("Bound action with context refresh which removes the context", function (assert) {
+		var oAction,
+			oContext,
+			oExecutionPromise,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table"\
+		items="{\
+			path : \'/EMPLOYEES\',\
+			filters : {path : \'TEAM_ID\', operator : \'EQ\', value1 : \'77\'}\
+		}">\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+		<Text id="teamId" text="{TEAM_ID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$filter=TEAM_ID%20eq%20'77'&$select=ID,Name,TEAM_ID"
+				+ "&$skip=0&$top=100",
+			{
+				"value" : [
+					{"ID" : "0", "Name" : "Frederic Fall", "TEAM_ID" : "77"},
+					{"ID" : "1", "Name" : "Jonathan Smith","TEAM_ID" : "77"},
+					{"ID" : "2", "Name" : "Peter Burke", "TEAM_ID" : "77"}
+				]
+			})
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
+			.expectChange("teamId", ["77", "77", "77"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES('0')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+						+ ".AcChangeTeamOfEmployee",
+					payload : {
+						"TeamID" : "42"
+					}
+				}, {
+					"TEAM_ID" : "42"
+				})
+				.expectRequest("EMPLOYEES?$filter=(TEAM_ID%20eq%20'77')%20and%20ID%20eq%20'0'"
+					+ "&$select=ID,Name,TEAM_ID", {"value" : []})
+				.expectChange("text", ["Jonathan Smith", "Peter Burke"]);
+
+			oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			oAction = oModel.bindContext("com.sap.gateway.default.iwbep.tea_busi.v0001"
+				+ ".AcChangeTeamOfEmployee(...)", oContext);
+
+			// code under test
+			oExecutionPromise = oAction.setParameter("TeamID", "42").execute();
+			oContext.refresh(undefined, true);
+
+			return Promise.all([
+				oExecutionPromise,
 				that.waitForChanges(assert)
 			]);
 		});
