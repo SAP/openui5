@@ -623,7 +623,29 @@ sap.ui.require([
 			}
 		});
 	});
+	sap.ui.define("my/aggregations/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
+		return UIComponent.extend("my.aggregations.Component", {
+			metadata: {
+				rootView: "composites.TestComponent"
+			},
+			constructor: function(sId, mSettings) {
+				this.oController = mSettings ? mSettings.controller : null;
+				UIComponent.prototype.constructor.apply(this,arguments);
+			},
+			createContent: function () {
+				XMLPreprocessor.plugIn(function(oNode,oVisitor) { XMLComposite.initialTemplating(oNode, oVisitor, "composites.Table");}, "composites", "Table");
+				var oConfig = {}, oController = this.oController;
 
+				return sap.ui.xmlview({
+					viewContent: jQuery('#view').html(),
+					id: "comp",
+					async: false,
+					controller: oController,
+					preprocessors: { xml: oConfig }
+				});
+			}
+		});
+	});
 	QUnit.test("property", function (assert) {
 		var fnInitialTemplatingSpy = sinon.spy(sap.ui.core.XMLComposite, "initialTemplating");
 
@@ -1036,15 +1058,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("inner Aggregations", function (assert) {
 		var done = assert.async();
-		XMLPreprocessor.plugIn(function(oNode,oVisitor) { XMLComposite.initialTemplating(oNode, oVisitor, "composites.Table");}, "composites", "Table");
-		var oConfig = {};
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: new my.aggregations.Component("aggregations")
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
 
-		var oView = sap.ui.xmlview({
-			viewContent: jQuery('#view').html(),
-			id: "comp",
-			async: false,
-			preprocessors: { xml: oConfig }
-		});
+		var oView = oComponentContainer.getComponentInstance().getRootControl();
 
 		oView.loaded().then(function() {
 			var oTable = oView.byId("table");
@@ -1064,8 +1083,51 @@ sap.ui.require([
 			assert.ok(oColumn2,"The templated column can be accessed");
 			assert.equal(oColumn2.getId(), "comp--table--template2","The corresponding Id is correct");
 			assert.equal(oColumn, oColumn,"The column from byId and from the managed object model are equal");
-			oView.destroy();
+			oComponentContainer.destroy();
 			done();
+		});
+		//*********************************************************************************************
+		QUnit.test("event forwarding", function (assert) {
+			var done = assert.async(), oAction;
+			var oController = {
+					handler: function(oEvent) {
+						oAction = oEvent.getSource();
+						oAction.setText("controller");
+					}
+			};
+
+			var fnControllerSpy = sinon.spy(oController, "handler");
+			var fnCompositeSpy = sinon.spy(composites.Table.prototype, "handler");
+			
+			var oComponentContainer = new sap.ui.core.ComponentContainer({
+				component: new my.aggregations.Component("events", {controller: oController})
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oView.loaded().then(function() {
+				var oTable = oView.byId("table");
+				assert.ok(oTable, "The table is there");
+				var aActions = oTable.getActions();
+				assert.equal(aActions.length,2,"The table has 2 actions");
+
+				//press the outer action
+				var oOuterAction = oTable.byId("button--outer");
+				oOuterAction.firePress();
+				assert.ok(oAction, "The action from outside fires the event");
+				assert.equal(oAction.getId(), "comp--outer", "It is the correct action");
+				assert.equal(oAction.getText(),"controller","The action from the view controller is called");
+				assert.ok(fnControllerSpy.calledOnce,"The controller handles the event");
+				assert.equal(fnCompositeSpy.callCount, 0, "The composite method is not called");
+
+				var oInnerAction = oTable.byId("button--table--inner");
+				oInnerAction.firePress();
+				oAction = oTable.byId("inner");
+				assert.equal(oAction.getText(),"composite","The action from the control is called");
+				assert.ok(fnCompositeSpy.calledOnce,"The composite handles the event");
+				assert.equal(fnControllerSpy.callCount, 1, "The controller method is not called any more");
+				oComponentContainer.destroy();
+				done();
+			});
 		});
 	});
 });

@@ -172,6 +172,11 @@ sap.ui.define([
 			}
 		}
 
+		function addViewContext(mContexts, oVisitor) {
+			var oViewModel = new JSONModel(oVisitor.getViewInfo());
+			mContexts["$view"] = oViewModel.getContext("/");
+		}
+
 		function addSingleContext(mContexts, oVisitor, oCtx, oMetadataContexts, sDefaultMetaModel) {
 			oCtx.model = oCtx.model || sDefaultMetaModel;
 
@@ -903,6 +908,7 @@ sap.ui.define([
 			}
 			addMetadataContexts(mContexts, oVisitor, oElement.getAttribute("metadataContexts"), sDefaultMetadataContexts, oImpl.prototype.defaultMetaModel);
 			addAttributesContext(mContexts, oImpl.prototype.alias, oElement, oImpl, oVisitor);
+			addViewContext(mContexts,oVisitor);
 			var oContextVisitor = oVisitor["with"](mContexts, true);
 			templateAggregations(oElement, oMetadata, oContextVisitor);
 			// resolve templating

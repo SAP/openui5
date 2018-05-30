@@ -1,24 +1,30 @@
 <core:FragmentDefinition
-    xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
-    xmlns="sap.m"
-    xmlns:mdc="sap.ui.mdc"
-    xmlns:core="sap.ui.core">
-    <Table items="{this>itemPath}">
-        <columns>
-            <template:repeat list="{this>columns}" var="column">
-                <Column>
-                    <Label text="{column>label}" />
-                </Column>
-            </template:repeat>
-        </columns>
-        <items>
-            <ColumnListItem>
-                <cells>
-                    <template:repeat list="{this>columns}" var="column">
-                        <Text text="{column>path}" />
-                    </template:repeat>
-                </cells>
-            </ColumnListItem>
-        </items>
-    </Table>
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	xmlns="sap.m" xmlns:mdc="sap.ui.mdc" xmlns:core="sap.ui.core">
+	<Table items="{this>itemPath}">
+		<headerToolbar>
+			<Toolbar>
+				<template:repeat list="{this>actions}" var="action">
+					<Button text="{action>text}" press="sap.ui.getCore().byId('{$view>id}').byId('{action>id}').fireCall()"
+						id="button--{action>id}" />
+				</template:repeat>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<template:repeat list="{this>columns}" var="column">
+				<Column>
+					<Label text="{column>label}" />
+				</Column>
+			</template:repeat>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<template:repeat list="{this>columns}" var="column">
+						<Text text="{column>path}" />
+					</template:repeat>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
 </core:FragmentDefinition>
