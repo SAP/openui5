@@ -28,6 +28,48 @@ sap.ui.require([
 	//---------------------------------------------------------------------------------------------
 
 	/**
+	 * Creates a new (JSON) model with the given data which is able to return a property binding's
+	 * value as a promise.
+	 *
+	 * @param {object} oData
+	 *   The model's data, JSON style
+	 * @returns {sap.ui.model.json.JSONModel}
+	 *   An "async" JSON model
+	 */
+	function asyncModel(oData) {
+		var oModel = new JSONModel(oData);
+
+		oModel.$$valueAsPromise = true;
+		oModel.bindProperty = function () {
+			var oBinding = JSONModel.prototype.bindProperty.apply(this, arguments);
+
+			oBinding.checkUpdate = function (){
+				var vValue = this._getValue();
+
+				if (this.mParameters.$$valueAsPromise) {
+					if (0 <= vValue && vValue < 10) { // eslint-disable-line yoda
+						vValue = new Promise(function (resolve) {
+							setTimeout(resolve.bind(null, vValue), vValue);
+						});
+					} else if (vValue instanceof Error) {
+						vValue = Promise.reject(vValue);
+					} else if (vValue !== "sync") {
+						vValue = Promise.resolve(vValue);
+					}
+				} else {
+					vValue = NaN; // not yet available
+				}
+				this.oValue = vValue;
+				this._fireChange({reason : "change"});
+			};
+
+			return oBinding;
+		};
+
+		return oModel;
+	}
+
+	/**
 	 * Creates an <mvc:View> tag with namespace definitions.
 	 * @param {string} [sPrefix="template"]
 	 *   the prefix for the template namespace
@@ -244,7 +286,10 @@ sap.ui.require([
 			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			this.oLogMock.expects("debug").atLeast(0); // do not flood the console ;-)
+			// do not flood the console ;-)
+			this.oDebugExpectation = this.oLogMock.expects("debug").atLeast(0);
+//TODO				.withExactArgs(sinon.match.string, sinon.match.any, sComponent);
+//TODO			this.oDebugExpectation.callThrough();
 
 			this.oXMLTemplateProcessorMock = this.mock(XMLTemplateProcessor);
 			this.oXMLTemplateProcessorMock.expects("loadTemplate").never();
@@ -369,8 +414,8 @@ sap.ui.require([
 		 *   whether debug output is accepted and expected (sets the log level accordingly)
 		 * @param {object[]} aExpectedMessages
 		 *   a array of expected debug messages with the message in <code>m</code> and optional
-		 *   details in <code>d</code>. <code>m</code> may also contain a Sinon matcher,
-		 *   <code>d</code> a number which is interpreted as index into <code>aViewContent</code>.
+		 *   details in <code>d</code>. <code>d</code> may also contain a number which is
+		 *   interpreted as index into <code>aViewContent</code>.
 		 * @param {string[]} aViewContent
 		 *   the original view content
 		 * @param {object} [mSettings={}]
@@ -386,23 +431,36 @@ sap.ui.require([
 		 */
 		checkTracing : function (assert, bDebug, aExpectedMessages, aViewContent, mSettings,
 				vExpected, bAsync) {
-			var that = this;
+			var aMessagesInActualOrder = [],
+				aMessagesInExpectedOrder = [],
+				that = this;
 
-			this.oLogMock.expects("debug").never();
+			this.oDebugExpectation.never();
 			if (!bDebug) {
 				jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING, sComponent);
 			} else {
-				aExpectedMessages.forEach(function (oExpectedMessage) {
+				aExpectedMessages.forEach(function (oExpectedMessage, i) {
 					var vExpectedDetail = oExpectedMessage.d;
 					if (typeof vExpectedDetail === "number") {
-						vExpectedDetail = _matchArg(aViewContent[vExpectedDetail]);
+						vExpectedDetail = aViewContent[vExpectedDetail];
 					}
 					that.oLogMock.expects("debug")
-						.withExactArgs(_matchArg(oExpectedMessage.m), vExpectedDetail, sComponent);
+						.withExactArgs(_matchArg(oExpectedMessage.m), _matchArg(vExpectedDetail),
+							sComponent)
+						.callsFake(function (sMessage, vDetail, sComponent) {
+							var s = sMessage + " - " + vDetail;
+
+							aMessagesInActualOrder.push(s);
+							aMessagesInExpectedOrder[i] = s;
+						});
 				});
 			}
 
-			return this.check(assert, aViewContent, mSettings, vExpected, bAsync);
+			return this.check(assert, aViewContent, mSettings, vExpected, bAsync)
+				.then(function () {
+					assert.strictEqual(aMessagesInActualOrder.join("\n"),
+						aMessagesInExpectedOrder.join("\n"), "order of log messages");
+				});
 		},
 
 		/**
@@ -678,7 +736,6 @@ sap.ui.require([
 
 					this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
 						.never();
-					this.oXMLTemplateProcessorMock.expects("loadTemplate").never();
 					if (!bWarn) {
 						jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 					}
@@ -771,7 +828,6 @@ sap.ui.require([
 			QUnit.test(aViewContent[1] + ", warn = " + bWarn, function (assert) {
 				this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
 					.never();
-				this.oXMLTemplateProcessorMock.expects("loadTemplate").never();
 				if (!bWarn) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 				}
@@ -1455,23 +1511,19 @@ sap.ui.require([
 	[false, true].forEach(function (bDebug) {
 		QUnit.test("binding resolution, exception in formatter, debug = " + bDebug,
 			function (assert) {
-				var oError = new Error("deliberate failure"),
-					rMessage = new RegExp("\\[ 0\\] Error in formatter of attribute text "
-						+ oError);
-
 				window.foo = {
 						Helper : {
 							fail : function (oRawValue) {
-								throw oError;
+								throw new Error("deliberate failure");
 							}
 						}
 					};
 
 				this.checkTracing(assert, bDebug, [
 					{m : "[ 0] Start processing qux"},
-					{m : sinon.match(rMessage),
+					{m : "[ 0] Error in formatter of attribute text Error: deliberate failure",
 						d : 1},
-					{m : sinon.match(rMessage),
+					{m : "[ 0] Error in formatter of attribute text Error: deliberate failure",
 						d : 2},
 					{m : "[ 0] Finished processing qux"}
 				], [
@@ -1992,11 +2044,10 @@ sap.ui.require([
 				var sModuleName = "sap.ui.core.sample.ViewTemplate.scenario.Helper",
 					sInElement = '<In xmlns="sap.ui.core" xmlns:template='
 						+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
-						+ ' template:require="' + sModuleName + '"/>',
-					sFragmentXml = xml(assert, [sInElement]);
+						+ ' template:require="' + sModuleName + '"/>';
 
 				this.mock(jQuery.sap).expects("require").on(jQuery.sap).withExactArgs(sModuleName);
-				this.expectLoad(bAsync, "myFragment", sFragmentXml);
+				this.expectLoad(bAsync, "myFragment", xml(assert, [sInElement]));
 				this.expectLoad(bAsync, "yetAnotherFragment",
 					xml(assert, ['<In xmlns="sap.ui.core"/>']));
 				return this.checkTracing(assert, bDebug, [
@@ -2036,13 +2087,12 @@ sap.ui.require([
 						'<Fragment fragmentName="innerFragment" type="XML"/>',
 						'<In id="last"/>',
 						'</FragmentDefinition>'
-					],
-					sFragmentXml = xml(assert, aFragmentContent);
+					];
 
 				// Note: jQuery.sap.require() supports "varargs" style
 				oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames);
 
-				this.expectLoad(bAsync, "myFragment", sFragmentXml);
+				this.expectLoad(bAsync, "myFragment", xml(assert, aFragmentContent));
 				this.expectLoad(bAsync, "innerFragment",
 					xml(assert, ['<In xmlns="sap.ui.core" id="inner"/>']));
 				this.expectLoad(bAsync, "yetAnotherFragment",
@@ -2073,9 +2123,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("dynamic fragment names", function (assert) {
-		this.oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("dynamicFragmentName", "fragment")
-			.returns(xml(assert, ['<In xmlns="sap.ui.core"/>']));
+		this.expectLoad(false, "dynamicFragmentName", xml(assert, ['<In xmlns="sap.ui.core"/>']));
 		this.check(assert, [
 				mvcView(),
 				'<Fragment fragmentName="{= \'dynamicFragmentName\' }" type="XML"/>',
@@ -2086,14 +2134,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fragment in repeat", function (assert) {
-		var oXMLTemplateProcessorMock = this.oXMLTemplateProcessorMock;
+	QUnit.test("async dynamic fragment names", function (assert) {
+		this.expectLoad(true, "world", xml(assert, ['<In xmlns="sap.ui.core"/>']));
 
+		return this.checkTracing(assert, true, [
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 1] fragmentName = world", d : 1},
+				{m : "[ 1] Finished", d : "</Fragment>"},
+				{m : "[ 0] Finished processing qux"}
+			], [
+				mvcView(),
+				'<Fragment fragmentName="{async>/hello}" type="XML"/>',
+				'</mvc:View>'
+			], {
+				models : {
+					async : asyncModel({
+						hello : "world"
+					})
+				}
+			}, [
+				'<In />'
+			], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fragment in repeat", function (assert) {
 		// BEWARE: use fresh XML document for each call because liftChildNodes() makes it empty!
 		// load template is called only once, because it is cached
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("myFragment", "fragment")
-			.returns(xml(assert, ['<In xmlns="sap.ui.core" src="{src}" />']));
+		this.expectLoad(false, "myFragment",
+			xml(assert, ['<In xmlns="sap.ui.core" src="{src}" />']));
 
 		this.check(assert, [
 			mvcView(),
@@ -2120,7 +2189,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fragment with type != XML", function (assert) {
-		this.oXMLTemplateProcessorMock.expects("loadTemplate").never();
 		this.check(assert, [
 				mvcView(),
 				'<Fragment fragmentName="nonXMLFragment" type="JS"/>',
@@ -2132,12 +2200,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("error on fragment with simple cyclic reference", function (assert) {
-		this.oXMLTemplateProcessorMock.expects("loadTemplate")
-			.once() // no need to load the fragment in vain!
-			.withExactArgs("cycle", "fragment")
-			.returns(xml(assert,
-				['<Fragment xmlns="sap.ui.core" fragmentName="cycle" type="XML"/>']));
-
+		this.expectLoad(false, "cycle",
+			xml(assert, ['<Fragment xmlns="sap.ui.core" fragmentName="cycle" type="XML"/>']));
 		this.checkError(assert, [
 				mvcView(),
 				'<Fragment fragmentName="cycle" type="XML"/>',
@@ -2156,18 +2220,14 @@ sap.ui.require([
 				'</template:with>',
 				'</template:with>',
 				'</FragmentDefinition>'
-			],
-			oXMLTemplateProcessorMock = this.oXMLTemplateProcessorMock;
+			];
 
 		warn(this.oLogMock, "[ 6] Set unchanged path: /foo", aFragmentContent[1]);
 		warn(this.oLogMock, "[ 7] Set unchanged path: /bar", aFragmentContent[2]);
 
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("A", "fragment")
-			.returns(xml(assert, aFragmentContent));
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("B", "fragment")
-			.returns(xml(assert, ['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']));
+		this.expectLoad(false, "A", xml(assert, aFragmentContent));
+		this.expectLoad(false, "B",
+			xml(assert, ['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']));
 
 		this.checkError(assert, [
 				mvcView(),
@@ -2229,10 +2289,11 @@ sap.ui.require([
 				warn(this.oLogMock, "Warning(s) during processing of qux", null);
 			}
 			warn(this.oLogMock, '[ 0] Binding not ready', aViewContent[19]);
-			this.oXMLTemplateProcessorMock.expects("loadTemplate")
-				.returns(xml(assert, ['<FragmentDefinition xmlns="sap.ui.core">',
-					'<In src="fragment"/>',
-					'</FragmentDefinition>']));
+			this.expectLoad(false, "myFragment", xml(assert, [
+				'<FragmentDefinition xmlns="sap.ui.core">',
+				'<In src="fragment"/>',
+				'</FragmentDefinition>'
+			]));
 			// debug output for dynamic names must still appear!
 			delete sap.ui.core.CustomizingConfiguration;
 
@@ -2291,8 +2352,6 @@ sap.ui.require([
 		{className : "sap.ui.core.mvc.View", type : "XML"}
 	].forEach(function (oViewExtension) {
 		QUnit.test("<ExtensionPoint>: no (supported) configuration", function (assert) {
-			this.oXMLTemplateProcessorMock.expects("loadTemplate").never();
-
 			if (oViewExtension === sap.ui.core.CustomizingConfiguration) {
 				delete sap.ui.core.CustomizingConfiguration;
 			} else {
@@ -2328,8 +2387,7 @@ sap.ui.require([
 							+ ' template:require="foo.Helper bar.Helper">',
 						'<ExtensionPoint name="outerReplacement"/>',
 						'</template:if>'
-					],
-					oXMLTemplateProcessorMock = this.oXMLTemplateProcessorMock;
+					];
 
 				// <ExtensionPoint name="outerExtensionPoint">
 				oCustomizingConfigurationMock.expects("getViewExtension")
@@ -2339,9 +2397,7 @@ sap.ui.require([
 						fragmentName : "acme.OuterReplacement",
 						type : "XML"
 					});
-				oXMLTemplateProcessorMock.expects("loadTemplate")
-					.withExactArgs("acme.OuterReplacement", "fragment")
-					.returns(xml(assert, aOuterReplacement));
+				this.expectLoad(false, "acme.OuterReplacement", xml(assert, aOuterReplacement));
 				// Note: mock result of loadTemplate() is not analyzed by check() method, of course
 				warn(this.oLogMock, '[ 2] Constant test condition', aOuterReplacement[0]);
 				this.mock(jQuery.sap).expects("require").on(jQuery.sap)
@@ -2353,11 +2409,9 @@ sap.ui.require([
 					.withExactArgs("acme.OuterReplacement", "outerReplacement", "this._sOwnerId");
 
 				// <Fragment fragmentName="myFragment" type="XML"/>
-				oXMLTemplateProcessorMock.expects("loadTemplate")
-					.withExactArgs("myFragment", "fragment")
-					.returns(xml(assert, [
-						'<ExtensionPoint name="innerExtensionPoint" xmlns="sap.ui.core"/>'
-					]));
+				this.expectLoad(false, "myFragment", xml(assert, [
+					'<ExtensionPoint name="innerExtensionPoint" xmlns="sap.ui.core"/>'
+				]));
 
 				// <ExtensionPoint name="innerExtensionPoint"/>
 				// --> fragment name is used here!
@@ -2368,11 +2422,9 @@ sap.ui.require([
 						fragmentName : "acme.InnerReplacement",
 						type : "XML"
 					});
-				oXMLTemplateProcessorMock.expects("loadTemplate")
-					.withExactArgs("acme.InnerReplacement", "fragment")
-					.returns(xml(assert, [
-						'<ExtensionPoint name="innerReplacement" xmlns="sap.ui.core"/>'
-					]));
+				this.expectLoad(false, "acme.InnerReplacement", xml(assert, [
+					'<ExtensionPoint name="innerReplacement" xmlns="sap.ui.core"/>'
+				]));
 
 				// <ExtensionPoint name="innerReplacement">
 				// --> nothing configured, just check that it is processed
@@ -2612,8 +2664,7 @@ sap.ui.require([
 			oResolvedEndSpy = oEndSpy.withArgs(
 				"sap.ui.core.util.XMLPreprocessor/getResolvedBinding");
 
-		this.oXMLTemplateProcessorMock.expects("loadTemplate")
-			.returns(xml(assert, ['<In xmlns="sap.ui.core"/>']));
+		this.expectLoad(false, "myFragment", xml(assert, ['<In xmlns="sap.ui.core"/>']));
 
 		process(xml(assert, aContent));
 		assert.strictEqual(oCountSpy.callCount, 1, "process");
@@ -2941,9 +2992,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("plugIn, insertFragment", function (assert) {
-		this.oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("fragmentName", "fragment")
-			.returns(xml(assert, ['<In xmlns="sap.ui.core"/>']));
+		this.expectLoad(false, "fragmentName", xml(assert, ['<In xmlns="sap.ui.core"/>']));
 
 		try {
 			XMLPreprocessor.plugIn(function (oElement, oInterface) {
@@ -3173,6 +3222,130 @@ sap.ui.require([
 			aViewContent[10].replace(">", "&gt;"),
 			aViewContent[11]
 		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async binding resolution", function (assert) {
+		var aViewContent = [
+				mvcView(),
+				'<In id="{async>/foo}" text="{async>/missing}" tooltip="{async>/bar}">',
+				'<Text text="{async>/hello}"/>',
+				'</In>',
+				'<Text text="{async>/fail}"/>',
+				"<Text text=\"{formatter: 'foo.Helper.star', path: 'async>/hello'}\"/>",
+				"<Text text=\"{formatter: 'foo.Helper.star', path: 'async>/sync'}\"/>",
+				"<Text text=\"{formatter: 'foo.Helper.join', parts: [{path: 'async>/hello'}, "
+					+ "{formatter: 'foo.Helper.path', path: 'async>/sync'}, "
+					+ "{formatter: 'foo.Helper.path', path: 'sync>/flag'}]}\"/>",
+				// Note: this requires "textFragments" to be preserved
+				'<Text text="{= \'hello, \''
+					+ ' + ${formatter: \'foo.Helper.star\', path: \'async>/hello\'} }"/>',
+				'</mvc:View>'
+			];
+
+		window.foo = {
+			Helper : {
+				// this: on top-level, the control; in a part, the binding
+				join : function () {
+					return Array.prototype.join.apply(arguments);
+				},
+				path : function (vValue) {
+					return this.getPath() + "=" + vValue;
+				},
+				star : function (vValue) {
+					return "*" + vValue + "*" + this.getMetadata().getName();
+				}
+			}
+		};
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			// Note: we have to wait for this value before we continue ("stop & go")
+			{m : "[ 0] id = 5", d : 1},
+			// Note: removal of attributes is reason to iterate over a shallow copy
+			{m : "[ 0] Removed attribute text",
+				d : '<In id="5" text="{async>/missing}" tooltip="{async>/bar}">'},
+			// Note: this needs to come last, though bar is loaded faster than foo
+			{m : "[ 0] tooltip = 0", d : '<In id="5" tooltip="{async>/bar}">'},
+			// Note: this must come after all of the parent's attributes have been resolved (DFS)
+			{m : "[ 0] text = world", d : 2},
+			{m : "[ 0] Error in formatter of attribute text Error: Epic fail", d : 4},
+			{m : "[ 0] text = *world*sap.ui.core.util._with", d : 5},
+			{m : "[ 0] text = *sync*sap.ui.core.util._with", d : 6},
+			{m : "[ 0] text = world,/sync=sync,/flag=true", d : 7},
+			{m : "[ 0] text = hello, *world*sap.ui.model.json.JSONPropertyBinding", d : 8},
+			{m : "[ 0] Finished processing qux"}
+		], aViewContent, {
+			models : {
+				async : asyncModel({
+					bar : 0,
+					fail : new Error("Epic fail"),
+					// Note: careful with setTimeout's delay, about 4ms seems to be "minimum"
+					foo : 5,
+					hello : "world",
+					sync : "sync"
+				}),
+				sync : new JSONModel({flag : true})
+			}
+		}, [
+			'<In id="5" tooltip="0">',
+			'<Text text="world"/>',
+			'</In>',
+			// Note: XML serializer outputs &gt; encoding...
+			'<Text text=\"{async&gt;/fail}\"/>',
+			'<Text text="*world*sap.ui.core.util._with"/>',
+			'<Text text="*sync*sap.ui.core.util._with"/>',
+			'<Text text="world,/sync=sync,/flag=true"/>',
+			'<Text text="hello, *world*sap.ui.model.json.JSONPropertyBinding"/>'
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("model which forbids $$valueAsPromise", function (assert) {
+		var oModel = new JSONModel({
+				foo : "bar"
+			});
+
+		oModel.bindProperty = function (sPath, oContext, mParameters) {
+			if (mParameters && "$$valueAsPromise" in mParameters) {
+				throw new Error("Illegal parameter '$$valueAsPromise'");
+			}
+			return JSONModel.prototype.bindProperty.apply(this, arguments);
+		};
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 0] text = bar", d : 1},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView(),
+			'<Text text="{/foo}"/>',
+			'</mvc:View>'
+		], {
+			models : oModel
+		}, [
+			'<Text text="bar"/>'
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("<template:if> still works synchronously", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] test == false --> false", d : 1},
+			{m : "[ 1] Finished", d : 3},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView(),
+			// Note: expression binding uses a formatter which is wrapped, but SyncPromise#unwrap
+			// must be used!
+			'<template:if test="{= %{/sync} !== \'sync\' }">',
+			'<Out id="false"/>',
+			'</template:if>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({sync : "sync"})
+		}, undefined, true);
 	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!

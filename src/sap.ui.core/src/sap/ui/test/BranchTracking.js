@@ -430,7 +430,7 @@
 	//**********************************************************************************************
 	// Code for tracking "Uncaught (in promise)" for sap.ui.base.SyncPromise inside QUnit tests
 	//**********************************************************************************************
-	var bDebug,
+	var bInfo,
 		sClassName = "sap.ui.base.SyncPromise",
 		fnModule,
 		iNo = 0,
@@ -466,8 +466,8 @@
 			mUncaughtById = {};
 			if (fnReporter) {
 				fnReporter(sMessage);
-			} else if (bDebug) {
-				jQuery.sap.log.debug("Clearing " + iLength + " uncaught promises", sMessage,
+			} else if (bInfo) {
+				jQuery.sap.log.info("Clearing " + iLength + " uncaught promises", sMessage,
 					sClassName);
 			}
 		}
@@ -484,8 +484,8 @@
 	function listener(oPromise, bCaught) {
 		if (bCaught) {
 			delete mUncaughtById[oPromise.$id];
-			if (bDebug) {
-				jQuery.sap.log.debug("Promise " + oPromise.$id + " caught",
+			if (bInfo) {
+				jQuery.sap.log.info("Promise " + oPromise.$id + " caught",
 					Object.keys(mUncaughtById), sClassName);
 			}
 			return;
@@ -494,8 +494,8 @@
 		oPromise.$id = iNo++;
 		oPromise.$error = new Error();
 		mUncaughtById[oPromise.$id] = oPromise;
-		if (bDebug) {
-			jQuery.sap.log.debug("Promise " + oPromise.$id + " rejected with "
+		if (bInfo) {
+			jQuery.sap.log.info("Promise " + oPromise.$id + " rejected with "
 				+ oPromise.getResult(), Object.keys(mUncaughtById), sClassName);
 		}
 	}
@@ -550,7 +550,7 @@
 		fnModule = QUnit.module.bind(QUnit);
 		QUnit.module = module;
 		sap.ui.require(["sap/ui/base/SyncPromise", "jquery.sap.global"], function (SyncPromise) {
-			bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sClassName);
+			bInfo = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.INFO, sClassName);
 			SyncPromise.listener = listener;
 		});
 
