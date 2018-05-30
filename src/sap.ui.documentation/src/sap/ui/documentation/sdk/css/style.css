@@ -160,60 +160,66 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /* header navigation on phone */
-.sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
+.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
 	height: 3rem;
 }
 
-.sap-phone .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
-.sap-phone .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltArrow {
+.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
 	background: #2f3c48;
 }
 
-.sap-phone.sapUiTheme-sap_belize_hcb .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
-.sap-phone.sapUiTheme-sap_belize_hcb .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltArrow {
+.sapUiTheme-sap_belize_hcb .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_belize_hcb .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
 	background: #000;
 }
 
-.sap-phone.sapUiTheme-sap_belize_hcw .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
-.sap-phone.sapUiTheme-sap_belize_hcw .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltArrow {
+.sapUiTheme-sap_belize_hcw .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_belize_hcw .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
 	background: #fff;
 }
 
-.sap-phone .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
+.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect {
 	border-color: #2f3c48;
+	height: 100%;
 }
 
-.sap-phone.sapUiTheme-sap_belize_hcb  .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
-.sap-phone.sapUiTheme-sap_belize_hcw  .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
+.sapUiTheme-sap_belize_hcb  .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_belize_hcw  .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect {
 	border: none;
 }
 
-.sap-phone .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltLabel,
-.sap-phone .sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltArrow {
+.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
 	line-height: 2.7rem;
+	background: #2f3c48;
 }
 
-.sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltLabel {
+.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	border-bottom: 0.1rem solid;
 	width: auto;
 }
 
-.sap-phone.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltLabel,
-.sap-phone.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltLabel {
+.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	border-bottom: 3px solid;
 }
 
-.sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltLabel {
+.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	color: #91c8f6;
 	font-size: 1rem;
 }
 
-.sap-phone.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltLabel {
+.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	color: #fff;
 }
 
-.sap-phone.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect .sapMSltLabel {
+.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
 	color: #000;
+}
+
+.sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
+	color: #cae4fb;
 }
 
 /********************************************* Documentation page styles *********************************************/
