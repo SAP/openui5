@@ -551,10 +551,11 @@ sap.ui.define([
 
 		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
 
-			var fnFactory = sap.ui.component;
+			var fnFactoryOld = sap.ui.component;
+			var fnFactory = Component.create;
 			var oComponentContainer;
 
-			sap.ui.component = function(mConfig) {
+			sap.ui.component = Component.create = function(mConfig) {
 				assert.strictEqual(mConfig.manifest, true, "sap.ui.component is called with boolean true");
 			};
 			oComponentContainer = new ComponentContainer({
@@ -564,7 +565,7 @@ sap.ui.define([
 			oComponentContainer._createComponent();
 			oComponentContainer.destroy();
 
-			sap.ui.component = function(mConfig) {
+			sap.ui.component = Component.create = function(mConfig) {
 				assert.strictEqual(mConfig.manifest, false, "sap.ui.component is called with boolean false");
 			};
 			oComponentContainer = new ComponentContainer({
@@ -574,7 +575,8 @@ sap.ui.define([
 			oComponentContainer._createComponent();
 			oComponentContainer.destroy();
 
-			sap.ui.component = fnFactory;
+			sap.ui.component = fnFactoryOld;
+			Component.create = fnFactory;
 
 			done();
 
@@ -590,10 +592,11 @@ sap.ui.define([
 
 		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
 
-			var fnFactory = sap.ui.component;
+			var fnFactoryOld = sap.ui.component;
+			var fnFactory = Component.create;
 			var oComponentContainer;
 
-			sap.ui.component = function(mConfig) {
+			sap.ui.component = Component.create = function(mConfig) {
 				assert.strictEqual(mConfig.manifest, "true", "sap.ui.component is called with string true");
 			};
 			oComponentContainer = new ComponentContainer();
@@ -602,7 +605,7 @@ sap.ui.define([
 			oComponentContainer._createComponent();
 			oComponentContainer.destroy();
 
-			sap.ui.component = function(mConfig) {
+			sap.ui.component = Component.create = function(mConfig) {
 				assert.strictEqual(mConfig.manifest, "false", "sap.ui.component is called with string false");
 			};
 			oComponentContainer = new ComponentContainer();
@@ -611,7 +614,8 @@ sap.ui.define([
 			oComponentContainer._createComponent();
 			oComponentContainer.destroy();
 
-			sap.ui.component = fnFactory;
+			sap.ui.component = fnFactoryOld;
+			Component.create = fnFactory;
 
 			done();
 

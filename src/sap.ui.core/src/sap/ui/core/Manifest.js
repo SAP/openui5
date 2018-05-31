@@ -460,7 +460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 					for (var sName in mComponents) {
 						if (!mComponents[sName].lazy) {
 							jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
-							sap.ui.component.load({
+							sap.ui.requireSync("sap/ui/core/Component").load({
 								name: sName
 							});
 						}
