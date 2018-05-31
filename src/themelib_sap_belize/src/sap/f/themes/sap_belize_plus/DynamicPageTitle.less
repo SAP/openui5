@@ -4,7 +4,16 @@
 /* ======================================= */
 
 .sapUshellShell {
-	.sapFDynamicPageTitle {
+	.sapFDynamicPageTitle,
+	.sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent {
 		background: fade(@sapUiObjectHeaderBackground, 60%);
 	}
+}
+
+.sapFDynamicPageTitle.sapFDynamicPageTitleSolid {
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapFDynamicPage .sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent {
+	background: fade(@sapUiObjectHeaderBackground, 60%);
 }

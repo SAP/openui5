@@ -4,7 +4,8 @@
 
 // Provides control sap.uxap.ObjectPageLayout.
 sap.ui.define([
-    "jquery.sap.global",
+	"jquery.sap.global",
+	"sap/ui/base/ManagedObjectObserver",
     "sap/ui/core/ResizeHandler",
     "sap/ui/core/Control",
     "sap/ui/Device",
@@ -22,7 +23,8 @@ sap.ui.define([
     "./ObjectPageLayoutRenderer",
     "jquery.sap.keycodes"
 ], function(
-    jQuery,
+	jQuery,
+	ManagedObjectObserver,
 	ResizeHandler,
 	Control,
 	Device,
@@ -137,6 +139,16 @@ sap.ui.define([
 				 * Determines whether the Anchor bar items are displayed in upper case.
 				 */
 				upperCaseAnchorBar: {type: "boolean", defaultValue: true},
+
+				/**
+				 * Determines the background color of the <code>AnchorBar</code>.
+				 *
+				 * <b>Note:</b> The default value of <code>backgroundDesignAnchorBar</code> property is null.
+				 * If the property is not set, the color of the background is <code>@sapUiObjectHeaderBackground</code>,
+				 * which depends on the specific theme.
+				 * @since 1.58
+				*/
+				backgroundDesignAnchorBar : {type: "sap.m.BackgroundDesign", group: "Appearance"},
 
 				/**
 				 * Determines the height of the ObjectPage.
@@ -568,6 +580,38 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets the value of the <code>backgroundDesignAnchorBar</code> property.
+	 *
+	 * @param {sap.m.BackgroundDesign} sBackgroundDesignAnchorBar - new value of the <code>backgroundDesignAnchorBar</code>
+	 * @return {sap.uxap.ObjectPageLayout} <code>this</code> to allow method chaining
+	 * @public
+	 * @since 1.58
+	 */
+	ObjectPageLayout.prototype.setBackgroundDesignAnchorBar = function (sBackgroundDesignAnchorBar) {
+		var sCurrentBackgroundDesignAnchorBar = this.getBackgroundDesignAnchorBar(),
+			sCssClassPrefix = "sapUxAPObjectPageNavigation";
+
+		if (sCurrentBackgroundDesignAnchorBar === sBackgroundDesignAnchorBar) {
+			return this;
+		}
+
+		this.setProperty("backgroundDesignAnchorBar", sBackgroundDesignAnchorBar, true);
+		this._oABHelper._getAnchorBar().setBackgroundDesign(sBackgroundDesignAnchorBar);
+
+		if (exists(this._$anchorBar)) {
+			this._$anchorBar.removeClass(sCssClassPrefix + sCurrentBackgroundDesignAnchorBar);
+			this._$anchorBar.addClass(sCssClassPrefix + sBackgroundDesignAnchorBar);
+		}
+
+		if (exists(this._$stickyAnchorBar)) {
+			this._$stickyAnchorBar.removeClass(sCssClassPrefix + sCurrentBackgroundDesignAnchorBar);
+			this._$stickyAnchorBar.addClass(sCssClassPrefix + sBackgroundDesignAnchorBar);
+		}
+
+		return this;
+	};
+
 	ObjectPageLayout.prototype.setToggleHeaderOnTitleClick = function (bToggleHeaderOnTitleClick) {
 		var oDynamicPageTitle = this.getHeaderTitle(),
 			vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
@@ -965,6 +1009,11 @@ sap.ui.define([
 
 		if (this._iAfterRenderingDomReadyTimeout) {
 			clearTimeout(this._iAfterRenderingDomReadyTimeout);
+		}
+
+		if (this._oObserver) {
+			this._oObserver.disconnect();
+			this._oObserver = null;
 		}
 
 		// setting these to null is necessary because
@@ -2796,6 +2845,13 @@ sap.ui.define([
 			});
 		}
 		this.setAggregation("headerTitle", oHeaderTitle, bSuppressInvalidate);
+		this._oObserver && this._oObserver.disconnect();
+		this._oObserver = new ManagedObjectObserver(this._onModifyHeaderTitle.bind(this));
+
+		this._oObserver.observe(oHeaderTitle, {
+			aggregations: ["headerTitle"],
+			properties: ["backgroundDesign"]
+		});
 
 		// Once the title is resolved, set the correct header
 		if (oHeaderTitle) {
@@ -2803,6 +2859,18 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * Handles change of HeaderTitle's <code>backgroundDesign</code> property.
+	 * Sets the same <code>backgroundDesign</code> to HeaderContent.
+	 *
+	 * @private
+	 */
+	ObjectPageLayout.prototype._onModifyHeaderTitle = function (params) {
+		var oHeaderContent = this.getAggregation("_headerContent");
+
+		oHeaderContent && params.current && oHeaderContent.setBackgroundDesign(params.current);
 	};
 
 	/**
@@ -2827,6 +2895,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._createHeaderContent = function () {
 		var oHeaderTitle = this.getHeaderTitle(),
+			sHeaderTitleBackgroundDesign = oHeaderTitle && oHeaderTitle.supportsBackgroundDesign() && oHeaderTitle.getBackgroundDesign(),
 			oHeaderContent = this.getAggregation("_headerContent"),
 			oNewHeaderContent;
 
@@ -2836,6 +2905,8 @@ sap.ui.define([
 		// If the header content is not set or is set, but is an instance of another class, create a new header content and use it
 		if (!(oHeaderContent instanceof fnHeaderContentClass)) {
 			var oNewHeaderContent = fnHeaderContentClass.createInstance(this.getAggregation("headerContent"), this.getShowHeaderContent(), this._getHeaderDesign(), this.getHeaderContentPinnable());
+
+			sHeaderTitleBackgroundDesign && oNewHeaderContent.setBackgroundDesign(sHeaderTitleBackgroundDesign);
 			this.setAggregation("_headerContent", oNewHeaderContent, true);
 		}
 	};

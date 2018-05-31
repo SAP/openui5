@@ -104,6 +104,14 @@ sap.ui.define([
 			return false;
 		};
 
+		/**
+		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
+		 * @returns {boolean}
+		 */
+		ObjectPageDynamicHeaderTitle.prototype.supportsBackgroundDesign = function () {
+			return true;
+		};
+
 		ObjectPageDynamicHeaderTitle.KNOWN_HEADING_CONTROL_CLASS_NAMES = ["sap.m.Title", "sap.m.Text", "sap.m.FormattedText", "sap.m.Label"];
 
 		/**

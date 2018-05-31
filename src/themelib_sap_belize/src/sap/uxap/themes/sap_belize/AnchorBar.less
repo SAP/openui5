@@ -10,6 +10,14 @@ Common compact/cozy
 .sapUxAPAnchorBar.sapMTB {
 	border: none;
 	background: @sapUiObjectHeaderBackground;
+
+	&.sapUxAPAnchorBarTransparent {
+		background: transparent;
+	}
+
+	&.sapUxAPAnchorBarTranslucent {
+		background: lighten(@sapUiObjectHeaderBackground, 10);
+	}
 }
 
 /* L fullscreen paddings */

@@ -41,7 +41,8 @@
 		"formFactors": "-",
 			"samples": [
 			  "sap.uxap.sample.ObjectPageWithDynamicHeader",
-			  "sap.uxap.sample.ObjectPageHeaderActionButtons"
+			  "sap.uxap.sample.ObjectPageHeaderActionButtons",
+			  "sap.uxap.sample.ObjectPageHeaderBackgroundDesign"
 			]
 	  },
 	  {
@@ -117,6 +118,11 @@
 		"id": "sap.uxap.sample.ObjectPageHeaderActionButtons",
 		"name": "Object Page with ObjectPageHeaderActionButtons",
 		"description": "This example demonstrates ObjectPage with ObjectPageHeaderActionButtons in the header."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign",
+		"name": "Object Page with Translucent backgroundDesign",
+		"description": "This example demonstrates ObjectPage with backgroundDesign property set to Translucent."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageDynamicHeader",
