@@ -84,8 +84,8 @@ sap.ui.define(['sap/ui/Device'],
 		 */
 		ColorPaletteRenderer.renderSquare = function (oRm, oColorPalette, sColor, iIndex) {
 			var sNamedColor = oColorPalette._ColorsHelper.getNamedColor(sColor),
-				sColorNameAria = oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [iIndex + 1,
-					sNamedColor || oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_CUSTOM")]);
+				sCustomOrPredefinedColor = (sNamedColor === undefined) ? oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_CUSTOM") : oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_" + sNamedColor.toUpperCase()),
+				sColorNameAria = oLibraryResourceBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [iIndex + 1, sCustomOrPredefinedColor]);
 
 			oRm.write("<div");
 			oRm.addClass("sapMColorPaletteSquare");
