@@ -61,7 +61,12 @@ sap.ui.define([
 	 * When the <code>DynamicPage</code> has a scroll bar, the control usually scrolls to the snapping point - the point,
 	 * where the {@link sap.f.DynamicPageHeader DynamicPageHeader} is scrolled out completely.
 	 * However, when there is a scroll bar, but not enough content to reach the snapping point,
-	 * the snapping is not possible using scrolling.</li></ul>
+	 * the snapping is not possible using scrolling.</li>
+	 * <li>When using {@link sap.ui.layout.form.Form},
+	 * {@link sap.m.Panel}, {@link sap.m.Table} and {@link sap.m.List} controls in the content of
+	 * <code>DynamicPage</code>, you need to adjust their left text offset if you want to achieve vertical alignment
+	 * between the <code>sap.f.DynamicPageHeader</code>`s  content and <code>DynamicPage</code>`s content.
+	 * For more information, see the documentation for the <code>content</code> aggregation.</li></ul>
 	 *
 	 * <h3>Responsive Behavior</h3>
 	 *
@@ -143,6 +148,24 @@ sap.ui.define([
 
 				/**
 				 * <code>DynamicPage</code> content.
+				 *
+				 * <b>Note:</b> The SAP Fiori Design guidelines require that the
+				 * <code>DynamicPageHeader</code>'s content and the <code>DynamicPage</code>'s content
+				 * are aligned vertically. When using {@link sap.ui.layout.form.Form},
+				 * {@link sap.m.Panel}, {@link sap.m.Table} and {@link sap.m.List} in the content area of
+				 * <code>DynamicPage</code>, you need to adjust their left text offset to achieve the
+				 * vertical alignment. To do this, apply the <code>sapFDynamicPageAlignContent</code>
+				 * CSS class to them and set their <code>width</code> property to <code>auto</code>
+				 * (if not set by default).
+				 *
+				 * Example:
+				 *
+				 * <pre><Panel class=“sapFDynamicPageAlignContent” width=“auto”></Panel></pre>
+				 *
+				 * Please keep in mind that the alignment is not possible when the controls are placed in
+				 * a {@link sap.ui.layout.Grid} or in other layout controls that use
+				 * <code>overflow:hidden</code> CSS property.
+				 *
 				 */
 				content: {type: "sap.ui.core.Control", multiple: false},
 
