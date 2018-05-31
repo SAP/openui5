@@ -861,12 +861,6 @@ sap.ui.define([
 			async: true
 		};
 	});
-	runManifestLoadingTests("manifestUrl", function(path) {
-		return {
-			manifestUrl: path,
-			async: true
-		};
-	});
 
 	function runManifestLoadingTests(sDescription, fnCreateConfig) {
 		QUnit.module("Component Metadata async loading of manifests: " + sDescription, {

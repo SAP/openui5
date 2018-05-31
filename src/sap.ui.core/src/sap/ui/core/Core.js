@@ -1860,6 +1860,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		// use the factory function
+		if ( vComponent.async &&
+			(vComponent.manifest !== undefined ||
+				(vComponent.manifestFirst === undefined && vComponent.manifestUrl === undefined)) ) {
+			if ( vComponent.manifest === undefined ) {
+				vComponent.manifest = false;
+			}
+			return Component.create(vComponent);
+		}
+
+		// use deprecated factory for sync use case or when legacy options are used
 		return sap.ui.component(vComponent);
 
 	};
