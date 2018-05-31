@@ -72,6 +72,7 @@ sap.ui.define([
 				"sap.uxap.ObjectPageSection": "sap/uxap/flexibility/ObjectPageSection",
 				"sap.uxap.ObjectPageSubSection": "sap/uxap/flexibility/ObjectPageSubSection",
 				"sap.uxap.ObjectPageDynamicHeaderTitle": "sap/uxap/flexibility/ObjectPageDynamicHeaderTitle",
+				"sap.uxap.ObjectPageHeaderActionButton": "sap/uxap/flexibility/ObjectPageHeaderActionButton",
 				"sap.ui.core._StashedControl": {
 					"unstashControl": {
 						"changeHandler": "default",
