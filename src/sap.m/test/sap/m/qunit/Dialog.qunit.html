@@ -1317,6 +1317,72 @@
 				assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
 			});
 
+			QUnit.module("Setting Dialogs button origin",{
+				beforeEach: function() {
+					this.oCloseButton = new sap.m.Button("closeButton", {
+						text: "Close Dialog",
+						press: function (event) {
+							this.oDialog.close();
+						}.bind(this)
+					});
+					this.oDialog = new sap.m.Dialog({
+						title: 'Available Products',
+						endButton: this.oCloseButton,
+						beforeClose: function(oEvent) {
+							this.oBeforeCloseOrigin = oEvent.getParameter('origin');
+						}.bind(this),
+						afterClose: function(oEvent) {
+							this.oAfterCloseOrigin = oEvent.getParameter('origin');
+						}.bind(this),
+					});
+				},
+				afterEach: function() {
+					this.oDialog.destroy();
+					this.oCloseButton.destroy();
+					this.oBeforeCloseOrigin.destroy();
+					this.oAfterCloseOrigin.destroy();
+				}
+			});
+
+			QUnit.test("On using space to trigger close of dialog the origin should be set", function(assert) {
+				// act
+				this.oDialog.open();
+				this.clock.tick(500);
+				qutils.triggerKeyup(this.oCloseButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+				this.clock.tick(500);
+
+
+				// assert
+				assert.strictEqual(this.oBeforeCloseOrigin, this.oCloseButton, "Before close origin should be the oCloseButton");
+				assert.strictEqual(this.oAfterCloseOrigin, this.oCloseButton, "After close origin should be the oCloseButton");
+			});
+
+			QUnit.test("On using enter to trigger close of dialog the origin should be set", function(assert) {
+				// act
+				this.oDialog.open();
+				this.clock.tick(500);
+				qutils.triggerKeydown(this.oCloseButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+				this.clock.tick(500);
+
+
+				// assert
+				assert.strictEqual(this.oBeforeCloseOrigin, this.oCloseButton, "Before close origin should be the oCloseButton");
+				assert.strictEqual(this.oAfterCloseOrigin, this.oCloseButton, "After close origin should be the oCloseButton");
+			});
+
+			QUnit.test("On using click/tap to trigger close of dialog the origin should be set", function(assert) {
+				// act
+				this.oDialog.open();
+				this.clock.tick(500);
+				this.oCloseButton.$().trigger('tap');
+				this.clock.tick(500);
+
+
+				// assert
+				assert.strictEqual(this.oBeforeCloseOrigin, this.oCloseButton, "Before close origin should be the oCloseButton");
+				assert.strictEqual(this.oAfterCloseOrigin, this.oCloseButton, "After close origin should be the oCloseButton");
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
