@@ -10656,6 +10656,26 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("ariaLabelledBy attribute of the combobox must be set to the according label id", function(assert) {
+			var oLabel = new sap.m.Label({
+				id: "country",
+				text: "Country",
+				labelFor: "apa"
+			});
+			var oComboBox = new sap.m.ComboBox({
+				id: "apa"
+			});
+
+			oLabel.placeAt("content");
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
+			assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "Combobox aria-labelledby attribute is set to label id");
+
+			oLabel.destroy();
+			oComboBox.destroy();
+		});
+
 		QUnit.module("Integration");
 
 		QUnit.test("Keep selected value on parent re-render", function (assert) {
