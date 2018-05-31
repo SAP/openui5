@@ -40,9 +40,10 @@ sap.ui.define([
 		}],
 		check: function(oIssueManager, oCoreFacade) {
 			// Check for FLP scenario
-			var oUshellLib = sap.ui.getCore().getLoadedLibraries()["sap.ushell"];
+			var oUshellLib = sap.ui.getCore().getLoadedLibraries()["sap.ushell"],
+				bIsDebug = sap.ui.getCore().getConfiguration().getDebug();
 
-			if (sap.ui.getCore().getConfiguration().getPreload() !== "async" && !oUshellLib) {
+			if (!bIsDebug && sap.ui.getCore().getConfiguration().getPreload() !== "async" && !oUshellLib) {
 				oIssueManager.addIssue({
 					severity: Severity.High,
 					details: "Preloading libraries asynchronously improves the application performance massively.",
