@@ -15,7 +15,7 @@
 		class="sapUiDemokit">
 		<content>
 			<tnt:ToolHeader id="headerToolbar">
-				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${appView>/bPhoneSize} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
+				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${device>/system/phone} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
@@ -30,8 +30,9 @@
 					press="navigateToSection" />
 				<core:ExtensionPoint name="customStartLinks" />
 				<Select id="selectHeader"
-						class="sapUiDocumentationSelect menuSelect"
-						visible="{=${appView>/bPhoneSize}}"
+						stashed="true"
+						class="sapUiDocumentationSelect"
+						visible="{=!${appView>/bSearchMode}}"
 						change="navigateToSection"
 						autoAdjustWidth="true">
 					<items>
@@ -47,32 +48,33 @@
 					</layoutData>
 				</Select>
 				<IconTabHeader id="tabHeader"
+						stashed="true"
 						selectedKey="home"
 						showOverflowSelectList="true"
 						backgroundDesign="Transparent"
 						mode="Inline"
 						select="navigateToSection"
-						visible="{=!${appView>/bPhoneSize}}">
+						visible="{=!${appView>/bPhoneSize} || !${appView>/bSearchMode}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
 					</layoutData>
 					<items>
-						<IconTabFilter id="welcomeTabMobile" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
+						<IconTabFilter id="welcomeTab" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
 						</IconTabFilter>
-						<IconTabFilter id="topicMasterTabbMobile" text="Documentation" key="topic" visible="{= !${appView>/bHideTopicSection}}">
+						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic" visible="{= !${appView>/bHideTopicSection}}">
 						</IconTabFilter>
-						<IconTabFilter id="apiMasterTabbMobile" text="API Reference" key="api" visible="{= !${appView>/bHideApiSection}}">
+						<IconTabFilter id="apiMasterTab" text="API Reference" key="api" visible="{= !${appView>/bHideApiSection}}">
 						</IconTabFilter>
-						<IconTabFilter id="controlsMasterTabbMobile" text="Samples" key="controls">
+						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
 						</IconTabFilter>
-						<IconTabFilter id="demoAppsTabbMobile" text="Demo Apps" key="demoapps">
+						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
 						</IconTabFilter>
-						<IconTabFilter id="toolsTabbMobile" text="Tools" key="tools">
+						<IconTabFilter id="toolsTab" text="Tools" key="tools">
 						</IconTabFilter>
 					</items>
 				</IconTabHeader>
 
-				<ToolbarSpacer>
+				<ToolbarSpacer visible="{= ${device>/system/phone} || !${appView>/bPhoneSize}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="{= ${device>/system/tablet} ? '' : '1rem'}" />
 					</layoutData>
@@ -124,7 +126,7 @@
 				<core:ExtensionPoint name="customLinks" />
 			</tnt:ToolHeader>
 
-			<Bar visible="{= ${appView>/bPhoneSize} &amp;&amp; ${appView>/bHasMaster}}" class="sapContrast sapContrastPlus">
+			<Bar visible="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} }" class="sapContrast sapContrastPlus">
 				<contentLeft>
 					<ToggleButton icon="sap-icon://menu2" type="Transparent" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
 						<layoutData>
@@ -138,7 +140,7 @@
 			<ScrollContainer
 					id="contentId"
 					width="100%"
-					height="{= ${appView>/bPhoneSize} ? 'calc(100% - 5rem)' : 'calc(100% - 3rem)'}"
+					height="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} ? 'calc(100% - 5rem)' : 'calc(100% - 3rem)'}"
 					horizontal="false"
 					vertical="false">
 				<SplitApp id="splitApp"
