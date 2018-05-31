@@ -89,7 +89,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 		oRm.writeAccessibilityState(oCheckBox, {
 			role: "checkbox",
 			selected: null,
-			checked: oCheckBox.getSelected(),
+			checked: oCheckBox._getAriaChecked(),
 			describedby: sTooltip ? sId + "-Descr" : undefined
 		});
 
@@ -119,6 +119,11 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 		if (oCheckBox.getSelected()) {
 			oRm.addClass("sapMCbMarkChecked");
 		}
+
+		if (oCheckBox.getPartiallySelected()) {
+			oRm.addClass("sapMCbMarkPartiallyChecked");
+		}
+
 		oRm.writeClasses();
 
 		oRm.write(">");		// DIV element
