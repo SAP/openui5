@@ -23,101 +23,106 @@
 		blanket.options("sap-ui-cover-only", /sap\/m\/FeedContent.*/);
 	}
 
-	QUnit.module("Rendering test - sap.m.FeedContent", {
-		beforeEach : function() {
-			this.oFeedContent = new sap.m.FeedContent("feed-cnt", {
-				size : sap.m.Size.M,
-				contentText : "@@notify Great outcome of the Presentation today. The new functionality and the new design was well received.",
-				subheader : "about 1 minute ago in Computer Market",
-				valueColor : sap.m.ValueColor.Neutral,
-				truncateValueTo : 4,
-				value : "-888"
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function () {
-			this.oFeedContent.destroy();
-			this.oFeedContent = null;
-		}
-	});
+	sap.ui.require([
+		"jquery.sap.global",
+		"sap/m/Size",
+		"sap/m/FeedContent",
+		"sap/m/ValueColor",
+		"sap/ui/core/TooltipBase"
+	], function (jQuery, Size, FeedContent, ValueColor, TooltipBase) {
+		"use strict";
 
-	QUnit.test("Feed Content rendered.", function(assert) {
-		assert.ok(jQuery.sap.domById("feed-cnt"),"FeedContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("feed-cnt-content-text"),"Content text was rendered successfully");
-		assert.ok(jQuery.sap.domById("feed-cnt-subheader"),"Subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("feed-cnt-value"),"Value was rendered successfully");
-	});
+		QUnit.module("Rendering test - sap.m.FeedContent", {
+			beforeEach : function() {
+				this.oFeedContent = new FeedContent("feed-cnt", {
+					size : Size.M,
+					contentText : "@@notify Great outcome of the Presentation today. The new functionality and the new design was well received.",
+					subheader : "about 1 minute ago in Computer Market",
+					valueColor : ValueColor.Neutral,
+					truncateValueTo : 4,
+					value : "-888"
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.oFeedContent.destroy();
+				this.oFeedContent = null;
+			}
+		});
 
-	QUnit.module("Functional tests - sap.m.FeedContent", {
-		beforeEach : function() {
-			this.oFeedContent = new sap.m.FeedContent({
-				size : sap.m.Size.M,
-				valueColor : sap.m.ValueColor.Neutral,
-				truncateValueTo : 4,
-				value : "-888"
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function () {
-			this.oFeedContent.destroy();
-			this.oFeedContent = null;
-		}
-	});
+		QUnit.test("Feed Content rendered.", function(assert) {
+			assert.ok(jQuery.sap.domById("feed-cnt"),"FeedContent was rendered successfully");
+			assert.ok(jQuery.sap.domById("feed-cnt-content-text"),"Content text was rendered successfully");
+			assert.ok(jQuery.sap.domById("feed-cnt-subheader"),"Subheader was rendered successfully");
+			assert.ok(jQuery.sap.domById("feed-cnt-value"),"Value was rendered successfully");
+		});
 
-	QUnit.test("Alternative text tests", function(assert) {
-		//Act
-		var sAltText = this.oFeedContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "-888", "Alternative text is correct");
+		QUnit.module("Functional tests - sap.m.FeedContent", {
+			beforeEach : function() {
+				this.oFeedContent = new FeedContent({
+					size : Size.M,
+					valueColor : ValueColor.Neutral,
+					truncateValueTo : 4,
+					value : "-888"
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.oFeedContent.destroy();
+				this.oFeedContent = null;
+			}
+		});
 
-		//Arrange
-		this.oFeedContent.setSubheader("Subheader");
-		//Act
-		sAltText = this.oFeedContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "Subheader\n-888", "Alternative text is correct with subheader");
+		QUnit.test("Alternative text tests", function(assert) {
+			//Act
+			var sAltText = this.oFeedContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "-888", "Alternative text is correct");
 
-		//Arrange
-		this.oFeedContent.setContentText("Content");
-		//Act
-		sAltText = this.oFeedContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "Content\nSubheader\n-888", "Alternative text is correct with content text");
-	});
+			//Arrange
+			this.oFeedContent.setSubheader("Subheader");
+			//Act
+			sAltText = this.oFeedContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "Subheader\n-888", "Alternative text is correct with subheader");
 
-	QUnit.test("Tooltip tests", function(assert) {
-		//Arrange
-		this.oFeedContent.setTooltip(null);
-		//Act
-		var sTooltip = this.oFeedContent.getTooltip_AsString();
-		//Assert
-		assert.deepEqual(sTooltip, "", "No tooltip is correct");
+			//Arrange
+			this.oFeedContent.setContentText("Content");
+			//Act
+			sAltText = this.oFeedContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "Content\nSubheader\n-888", "Alternative text is correct with content text");
+		});
 
-		//Arrange
-		this.oFeedContent.setTooltip("Tooltip");
-		//Act
-		var sTooltip = this.oFeedContent.getTooltip_AsString();
-		//Assert
-		assert.deepEqual(sTooltip, "Tooltip", "Tooltip is correct");
+		QUnit.test("Tooltip tests", function(assert) {
+			//Arrange
+			this.oFeedContent.setTooltip(null);
+			//Act
+			var sTooltip = this.oFeedContent.getTooltip_AsString();
+			//Assert
+			assert.deepEqual(sTooltip, "", "No tooltip is correct");
 
-		//Arrange
-		var oTooltip = new sap.ui.core.TooltipBase({text: "Tooltip"});
-		this.oFeedContent.setTooltip(oTooltip);
-		//Act
-		var sTooltip = this.oFeedContent.getTooltip_AsString();
-		//Assert
-		assert.deepEqual(sTooltip.getText(), "Tooltip", "Tooltip is an object with a text property containing the correct string"); //TODO
-	});
+			//Arrange
+			this.oFeedContent.setTooltip("Tooltip");
+			//Act
+			var sTooltip = this.oFeedContent.getTooltip_AsString();
+			//Assert
+			assert.deepEqual(sTooltip, "Tooltip", "Tooltip is correct");
 
-	/* Module wrapper to define a scope for helper functions. This can be replaced with nested approach of QUnit in the future
-	 * This approach is not working in the current TestSuite configuration.
-	 * See 'Hooks stack on nested modules' sample at https://api.qunitjs.com/QUnit.module/ */
-	(function() {
+			//Arrange
+			var oTooltip = new TooltipBase({text: "Tooltip"});
+			this.oFeedContent.setTooltip(oTooltip);
+			//Act
+			var sTooltip = this.oFeedContent.getTooltip_AsString();
+			//Assert
+			assert.deepEqual(sTooltip.getText(), "Tooltip", "Tooltip is an object with a text property containing the correct string"); //TODO
+		});
+
 		QUnit.module("Events test", {
 			beforeEach : function() {
-				this.oFeedContent = new sap.m.FeedContent({
-					size : sap.m.Size.M,
-					valueColor : sap.m.ValueColor.Neutral,
+				this.oFeedContent = new FeedContent({
+					size : Size.M,
+					valueColor : ValueColor.Neutral,
 					truncateValueTo : 4,
 					value : "-888"
 				}).placeAt("qunit-fixture");
@@ -174,13 +179,13 @@
 
 		/* --- Helpers --- */
 
-		fnHoverHandler = function() {
+		function fnHoverHandler() {
 		}
 
-		fnPressHandler = function() {
+		function fnPressHandler() {
 		}
 
-		hasAttribute = function(sAttribute, oCurrentObject) {
+		function hasAttribute(sAttribute, oCurrentObject) {
 			var sAttributeValue = oCurrentObject.$().attr(sAttribute);
 			if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
 				return true;
@@ -188,7 +193,7 @@
 				return false;
 			}
 		}
-	}());
+	});
 
 </script>
 </head>

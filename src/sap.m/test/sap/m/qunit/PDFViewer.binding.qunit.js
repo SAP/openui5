@@ -1,6 +1,6 @@
 /*global QUnit*/
 
-sap.ui.define([
+sap.ui.define("sap.m.qunit.PDFViewerBinding", [
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
