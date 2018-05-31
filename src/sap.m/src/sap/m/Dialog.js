@@ -1323,6 +1323,13 @@ function(
 				this._oButtonDelegate = {
 					ontap: function(){
 						that._oCloseTrigger = this;
+					},
+					//BCP: 1870320154
+					onkeyup: function(){
+						that._oCloseTrigger = this;
+					},
+					onkeydown: function(){
+						that._oCloseTrigger = this;
 					}
 				};
 			}
