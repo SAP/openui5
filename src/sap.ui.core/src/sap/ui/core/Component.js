@@ -534,8 +534,7 @@ sap.ui.define([
 	 * @since 1.25.1
 	 */
 	Component.getOwnerComponentFor = function(oObject) {
-		var sOwnerId = Component.getOwnerIdFor(oObject);
-		return sOwnerId && sap.ui.component(sOwnerId);
+		return Component.get(Component.getOwnerIdFor(oObject));
 	};
 
 	/**
@@ -1009,7 +1008,12 @@ sap.ui.define([
 		}
 		// create the nested component in the context of this component
 		return this.runAsOwner(function() {
-			return sap.ui.component(mConfig);
+			if ( mConfig.async === true ) {
+				return Component.create(mConfig);
+			} else {
+				// use deprecated factory for sync use case only
+				return sap.ui.component(mConfig);
+			}
 		});
 	};
 
@@ -1899,20 +1903,21 @@ sap.ui.define([
 	 *     mandatory <code>name</code> property and optionally, an <code>url</code> that will be used for a <code>registerModulePath</code>.
 	 * @param {Promise|Promise[]} [mOptions.asyncHints.waitFor] <code>Promise</code> or array of <code>Promise</code>s for which the Component instantiation should wait
 	 * @returns {Promise<sap.ui.core.Component>} A Promise that resolves with the newly created component instance
-	 *
+	 * @throws {TypeError} When <code>mOptions</code> is null or not an object.
 	 * @since 1.56.0
 	 * @static
 	 * @public
 	 */
 	Component.create = function(mOptions) {
-		if (typeof mOptions === "string") {
-			throw new Error("Component.create() cannot be called with a string.");
+		if (mOptions == null || typeof mOptions !== "object") {
+			throw new TypeError("Component.create() must be called with a configuration object.");
 		}
 
 		var mParameters = extend(true, {}, mOptions);
 		mParameters.async = true;
 
 		// if no manifest option is given, the default is true
+		// Note: this intentionally prevents the use of the legacy options manifestUrl and manifestFirst
 		if (mParameters.manifest === undefined) {
 			mParameters.manifest = true;
 		}
@@ -1975,7 +1980,9 @@ sap.ui.define([
 	 * @deprecated Since 1.56.0, use one of the following alternatives instead:
 	 * <ul>
 	 * <li>to load a component class, use {@link sap.ui.core.Component.load Component.load}</li>
-	 * <li>to create a new component instance, use {@link sap.ui.core.Component.create Component.create}</li>
+	 * <li>to create a new component instance, use {@link sap.ui.core.Component.create Component.create};
+	 *     note that this new factory does not support synchronous loading (<code>async:false</code>) nor does
+	 *     it support the deprecated options <code>manifestFirst</code> or <code>manifestUrl<code>.</li>
 	 * <li>to retrieve an existing component instance by its ID, use {@link sap.ui.core.Component.get Component.get}</li>
 	 * </ul>
 	 * @public
@@ -1986,10 +1993,20 @@ sap.ui.define([
 	 *   not experimental and can be used without restrictions.
 	 */
 	sap.ui.component = function(vConfig) {
-		if (vConfig && vConfig.async) {
-			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.component'. Use 'Component.create' instead");
-		} else if (typeof vConfig === 'string') {
+		// a parameter must be given!
+		if (!vConfig) {
+			throw new Error("sap.ui.component cannot be called without parameter!");
+		}
+
+		if (typeof vConfig === 'string') {
 			jQuery.sap.log.warning("Do not use deprecated function 'sap.ui.component' for Component instance lookup. Use 'Component.get' instead");
+			// when only a string is given then this function behaves like a
+			// getter and returns an existing component instance
+			return sap.ui.getCore().getComponent(vConfig);
+		}
+
+		if (vConfig.async) {
+			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.component'. Use 'Component.create' instead");
 		} else {
 			jQuery.sap.log.warning("Do not use synchronous component creation! Use the new asynchronous factory 'Component.create' instead");
 		}
@@ -1997,21 +2014,9 @@ sap.ui.define([
 	};
 
 	/*
-	 * The old sap.ui.component implementation
+	 * Part of the old sap.ui.component implementation than can be re-used by the new factory
 	 */
 	function componentFactory(vConfig) {
-		// a parameter must be given!
-		if (!vConfig) {
-			throw new Error("sap.ui.component cannot be called without parameter!");
-		}
-
-		// when only a string is given then this function behaves like a
-		// getter and returns an existing component instance
-		if (typeof vConfig === 'string') {
-			// lookup and return the component
-			return sap.ui.getCore().getComponent(vConfig);
-
-		}
 
 		function createInstance(oClass) {
 
