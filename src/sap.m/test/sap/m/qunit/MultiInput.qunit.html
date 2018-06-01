@@ -950,6 +950,43 @@
 		assert.equal(this.multiInput1.$().find('.sapMMultiInputIndicator').length, 0, "N More indicator is not displayed");
 	});
 
+	QUnit.test("token update event on paste of a single string", function(assert) {
+
+		//arrange
+		var sPastedString = "text",
+				counter = 0;
+
+		this.multiInput1.addValidator(function (args) {
+			return new sap.m.Token({text: args.text, key: args.text});
+		});
+
+		this.multiInput1.attachTokenUpdate(function (args) {
+			counter++;
+		});
+
+		if (window.clipboardData) {
+			window.clipboardData.setData("Text", sPastedString);
+		} else {
+			sap.ui.test.qunit.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+				originalEvent: {
+					clipboardData: {
+						getData: function () {
+							return sPastedString;
+						}
+					}
+				}
+			});
+		}
+
+
+		this.clock.tick(10);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(counter, 0, "tokenUpdate event should not be fired");
+		assert.equal(this.multiInput1.getTokens().length, 0, "no token should be created");
+	});
+
 	QUnit.test("token update event", function(assert) {
 
 		if (!sap.ui.Device.browser.internet_explorer) {
