@@ -14,13 +14,20 @@ sap.ui.define([
 			aggregations: {
 				columns: {
 					type: "composites.Column",
-					multiple: true,
-					singularName: "column"
+					multiple: true
+				},
+				actions: {
+					type: "sap.ui.core.Control",
+					multiple: true
 				}
 			}
 		},
 		fragment: "composites.Table",
-		aggregationFragments: ["columns"]
+		aggregationFragments: ["actions", "columns"],
+		handler: function(oEvent) {
+			var oAction = oEvent.getSource();
+			oAction.setText("composite");
+		}
 	});
 
 	return Table;
