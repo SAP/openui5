@@ -251,7 +251,8 @@ sap.ui.define([
 		};
 		if (sAppVersion &&
 			oChangeSpecificData.developerMode &&
-			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AdaptationProject
+			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AdaptationProject &&
+			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AppVariant
 		) {
 			oValidAppVersions.to = sAppVersion;
 		}
