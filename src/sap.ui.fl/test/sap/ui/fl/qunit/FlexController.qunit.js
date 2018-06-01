@@ -1048,6 +1048,21 @@ function (
 		assert.equal(oValidAppVersions.to, undefined, "the TO app version is not defined");
 	});
 
+	QUnit.test("creates a change containing valid applicationVersions in developerMode and AppVariant scenario", function (assert) {
+		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
+		var oDummyChangeHandler = {
+			completeChangeContent: function () {}
+		};
+		this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+
+		var oChange = this.oFlexController.createChange({ developerMode : true, scenario : sap.ui.fl.Scenario.AppVariant }, new Control());
+		var oValidAppVersions = oChange.getDefinition().validAppVersions;
+
+		assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+		assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+		assert.equal(oValidAppVersions.to, undefined, "the TO app version is not defined");
+	});
+
 	QUnit.test("when processViewByModifier is called with changes", function (assert) {
 		var oGetChangesForViewStub = sandbox.stub(this.oFlexController._oChangePersistence, "getChangesForView").returns(Promise.resolve());
 		var oResolveGetChangesForViewSpy = sandbox.spy(this.oFlexController, "_resolveGetChangesForView");
