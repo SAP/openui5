@@ -1558,7 +1558,7 @@ function(
 		if (oOrigin && oOrigin === this.getSwipeContent()) {
 			this._bRerenderSwipeContent = true;
 			this._isSwipeActive && this._renderSwipeContent();
-			return this;
+			return;
 		}
 
 		return Control.prototype.invalidate.apply(this, arguments);
