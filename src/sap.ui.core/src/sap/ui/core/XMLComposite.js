@@ -911,11 +911,11 @@ sap.ui.define([
 			addViewContext(mContexts,oVisitor);
 			var oContextVisitor = oVisitor["with"](mContexts, true);
 			templateAggregations(oElement, oMetadata, oContextVisitor);
-			// resolve templating
-			oContextVisitor.visitChildNodes(oFragment);
 			var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", oMetadata.getCompositeAggregationName());
 			oNode.appendChild(oFragment);
 			oElement.appendChild(oNode);
+			//resolve Templating
+			oContextVisitor.visitChildNodes(oElement);
 		};
 
 		return XMLComposite;
