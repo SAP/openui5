@@ -239,7 +239,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 				checkForMetadata();
 			}
 
-			if (this._oModel.getServiceMetadata().dataServices == undefined) {
+			if (this._oModel.getServiceMetadata()
+					&& this._oModel.getServiceMetadata().dataServices == undefined) {
 				throw "Model could not be loaded";
 			}
 
