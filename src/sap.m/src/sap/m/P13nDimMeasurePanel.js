@@ -160,7 +160,7 @@ sap.ui.define([
 				}, {
 					key: "category2",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_CATEGORY2')
-				},{
+				}, {
 					key: "series",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_SERIES')
 				}
@@ -172,8 +172,7 @@ sap.ui.define([
 				}, {
 					key: "axis2",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS2')
-				},
-				{
+				}, {
 					key: "axis3",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS3')
 				}, {
@@ -461,49 +460,6 @@ sap.ui.define([
 		}
 		this.destroyAggregation("availableChartTypes");
 		return this;
-	};
-
-	P13nDimMeasurePanel.prototype.onBeforeNavigationFrom = function() {
-		// Check if chart type fits selected dimensions and measures
-		var sChartType = this.getChartTypeKey();
-		var aDimensionItems = [];
-		var aMeasureItems = [];
-
-		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
-			var oMItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-			if (!oMItem) {
-				return;
-			}
-			if (oMItem.aggregationRole === "Dimension") {
-				aDimensionItems.push(oDimMeasureItem);
-			} else if (oMItem.aggregationRole === "Measure") {
-				aMeasureItems.push(oDimMeasureItem);
-			}
-		}, this);
-
-		aDimensionItems = aDimensionItems.filter(function(oItem) {
-			return oItem.getVisible();
-		}).map(function(oItem) {
-			return {
-				name: oItem.getColumnKey()
-			};
-		});
-		aMeasureItems = aMeasureItems.filter(function(oItem) {
-			return oItem.getVisible();
-		}).map(function(oItem) {
-			return {
-				name: oItem.getColumnKey()
-			};
-		});
-
-		sap.ui.getCore().loadLibrary("sap.chart");
-		var oResult;
-		try {
-			oResult = sap.chart.api.getChartTypeLayout(sChartType, aDimensionItems, aMeasureItems);
-		} catch (oException) {
-			return false;
-		}
-		return oResult.errors.length === 0;
 	};
 
 	P13nDimMeasurePanel.prototype._notifyChange = function() {
