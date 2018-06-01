@@ -50,11 +50,7 @@ sap.ui.define([
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
 					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>"
-				}),
-				oHeaderModel = new JSONModel({
-					bShowSubHeader: Device.system.phone
-				}),
-				sTabNavigationId;
+				});
 
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
@@ -73,28 +69,12 @@ sap.ui.define([
 
 				this.setModel(oViewModel, "appView");
 
-				// set the global header visibility data
-				this.setModel(oHeaderModel, "headerView");
-
 				this.oHeader = this._oView.byId("headerToolbar");
 
-				sTabNavigationId = (Device.system.phone) ? "selectHeader" : "tabHeader";
-				this._oView.byId(sTabNavigationId).setStashed(false);
-				this.oTabNavigation = this._oView.byId(sTabNavigationId);
-
-				// the unstashed control is added as **last child** => correct its position in parent container
-				this.oHeader.removeContent(this.oTabNavigation);
-				this.oHeader.insertContent(this.oTabNavigation, 2);
-				if (Device.system.phone) {
-					// items in Select control can't be hidden via visible property
-					if (window['sap-ui-documentation-hideTopicSection']) {
-						this.byId("topicMasterTab").destroy();
-					}
-					if (window['sap-ui-documentation-hideApiSection']) {
-						this.byId("apiMasterTab").destroy();
-					}
-				}
 				this.oRouter = this.getRouter();
+
+				this._selectHeader = this._oView.byId("selectHeader");
+				this._tabHeader = this._oView.byId("tabHeader");
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
@@ -182,22 +162,22 @@ sap.ui.define([
 					sTabId = this.oRouter.getRoute(sRouteName)._oConfig.target[0] + "Tab",
 					oTabToSelect = this._oView.byId(sTabId),
 					sKey = oTabToSelect ? oTabToSelect.getKey() : "home",
-					bPhone = Device.system.phone,
 					oViewModel = this.getModel("appView"),
-					oHeaderModel = this.getModel("headerView"),
+					bPhoneSize = oViewModel.getProperty("/bPhoneSize"),
+					bPhone = Device.system.phone,
 					bHasMaster = this.getOwnerComponent().getConfigUtil().hasMasterView(sRouteName),
 					oMasterView,
 					sMasterViewId;
 
-				this.oTabNavigation.setSelectedKey(sKey);
+				this._setHeaderSelectedKey(sKey);
 
-				// the *default* subHeader-visibility value is platform-dependent
-				// but can be later overwritten for specific views (in their respective controller),
-				// this is why we have to reset to the default before entering any specific view)
-				oHeaderModel.setProperty("/bShowSubHeader", bPhone); // reset to default subHeader visibility
 				oViewModel.setProperty("/bHasMaster", bHasMaster);
 
 				this._toggleTabHeaderClass();
+
+				if (bPhoneSize) {
+					this._selectHeader.setVisible(true);
+				}
 
 				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for navigation)
 					oMasterView = this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName);
@@ -254,7 +234,8 @@ sap.ui.define([
 					this.getRouter().navTo(sKey, {}, true);
 				} else {
 					this.getRouter().navTo("", {}, true);
-					this.oTabNavigation.setSelectedKey("home");
+
+					this._setHeaderSelectedKey("home");
 				}
 			},
 
@@ -701,8 +682,8 @@ sap.ui.define([
 
 				this.getModel("appView").setProperty("/bPhoneSize", bPhoneSize);
 
-				this._toggleTabHeaderClass();
-				this._updateVersionSwitchVisibility();
+				this._tabHeader.setVisible(!bPhoneSize);
+				this._selectHeader.setVisible(bPhoneSize);
 			},
 
 			_onOrientationChange: function() {
@@ -713,8 +694,8 @@ sap.ui.define([
 
 			onToggleSearchMode : function(oEvent) {
 				var bSearchMode = oEvent.getParameter("isOpen"),
-				oViewModel = this.getModel("appView");
-
+				oViewModel = this.getModel("appView"),
+				bPhoneSize = oViewModel.getProperty("/bPhoneSize");
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
 
 				this._toggleTabHeaderClass();
@@ -723,6 +704,12 @@ sap.ui.define([
 					jQuery.sap.delayedCall(0, this, function () {
 						this._oView.byId("searchControl").getAggregation("_searchField").getFocusDomRef().focus();
 					});
+
+					if (bPhoneSize) {
+						this._selectHeader.setVisible(false);
+					}
+				} else if (bPhoneSize) {
+					this._selectHeader.setVisible(true);
 				}
 			},
 
@@ -839,15 +826,19 @@ sap.ui.define([
 			},
 
 			_toggleTabHeaderClass: function() {
-				var th = this.byId("tabHeader");
-				if (th.getMetadata().getName() === "sap.ui.core._StashedControl") {
-					return;
-				}
+				var bPhoneSize = this.getModel("appView").getProperty("/bPhoneSize");
+
 				if (this._isToggleButtonVisible()) {
-					th.addStyleClass("tabHeaderNoLeftMargin");
-				} else {
-					th.removeStyleClass("tabHeaderNoLeftMargin");
+						this._tabHeader.setVisible(!bPhoneSize);
+						this._selectHeader.setVisible(bPhoneSize);
+				} else if (bPhoneSize) {
+						this._selectHeader.setVisible(false);
 				}
+			},
+
+			_setHeaderSelectedKey: function(sKey) {
+				this._selectHeader.setSelectedKey(sKey);
+				this._tabHeader.setSelectedKey(sKey);
 			}
 
 		});

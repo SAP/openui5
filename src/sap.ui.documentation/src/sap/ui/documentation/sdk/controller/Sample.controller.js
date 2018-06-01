@@ -51,7 +51,7 @@ sap.ui.define([
 
 			_onSampleMatched: function (event) {
 
-				this.getModel("headerView").setProperty("/bShowSubHeader", false);
+				this.getModel("appView").setProperty("/bHasMaster", false);
 
 				var oPage = this.byId("page");
 
