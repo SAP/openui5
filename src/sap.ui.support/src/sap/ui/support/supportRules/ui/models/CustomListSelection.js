@@ -67,6 +67,10 @@ sap.ui.define([
 
 		updateSelectionFromModel: function () {
 			return this.updateSelectionFromModel();
+		},
+
+		syncParentNoteWithChildrenNotes: function (oTreeTableData) {
+			return this.syncParentNoteWithChildrenNotes(oTreeTableData);
 		}
 	};
 

@@ -23,15 +23,14 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/Storage",
-	"sap/m/Dialog",
-	"sap/ui/unified/FileUploader",
-	"sap/ui/support/supportRules/ui/models/CustomJSONListSelection",
-	"sap/ui/support/supportRules/ui/models/SelectionUtils"
+	"sap/ui/support/supportRules/ui/models/SelectionUtils",
+	"sap/ui/support/supportRules/ui/controllers/PresetsController",
+	"sap/ui/support/supportRules/ui/models/PresetsUtils",
+	"sap/ui/support/supportRules/ui/models/CustomJSONListSelection"
 ], function (jQuery, BaseController, JSONModel, Panel, List, ListItemBase, StandardListItem, InputListItem, Button, Toolbar, ToolbarSpacer,
              Label, MessageToast, CommunicationBus, channelNames, SharedModel, RuleSerializer, constants, Ruleset, storage,
-             Dialog, FileUploader, CustomJSONListSelection, SelectionUtils) {
+						 SelectionUtils, PresetsController, PresetsUtils, CustomJSONListSelection) {
 	"use strict";
-
 
 	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Analysis", {
 
@@ -65,6 +64,16 @@ sap.ui.define([
 				var aColumnsIds = storage.getVisibleColumns() || [];
 				this.setColumnVisibility(aColumnsIds, true);
 			}
+
+			this.byId("presetVariant").addEventDelegate({
+				onclick: this.onPresetVariantClick.bind(this)
+			});
+
+			this.treeTable.attachEvent("rowSelectionChange", function (oEvent) {
+				if (oEvent.getParameter("userInteraction")) {
+					PresetsUtils.syncCurrentSelectionPreset(SelectionUtils.getSelectedRules());
+				}
+			});
 		},
 
 		loadAdditionalUI: function () {
@@ -286,6 +295,8 @@ sap.ui.define([
 
 				this.model.setProperty('/treeModel', oTreeViewModelRules);
 				this.model.setProperty("/selectedRulesCount", SelectionUtils.getSelectedRules().length);
+
+				PresetsUtils.initializeSelectionPresets(SelectionUtils.getSelectedRules());
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.POST_MESSAGE, function (data) {
@@ -541,102 +552,6 @@ sap.ui.define([
 			this.model.setProperty("/newRule", jQuery.extend(true, {}, emptyRule));
 			this.model.setProperty("/tempLink", { href: "", text: "" });
 			this.goToCreateRule();
-		},
-
-		exportSelectedRules: function () {
-			var input = new sap.m.Input();
-			var textArea = new sap.m.TextArea({
-				width: "100%"
-			});
-
-			var dialog = new Dialog({
-				title: "Export Rulesets",
-				content: [
-					new sap.m.VBox({
-						items: [
-							new sap.m.Label({text: "Title", labelFor: input }),
-							input,
-							new sap.m.Label({ text: "Description", labelFor: textArea }),
-							textArea
-						]
-					})
-				],
-				beginButton: new sap.m.Button({
-					text: "Cancel",
-					press: function (oEvent) {
-						dialog.close();
-					}
-				}),
-				endButton: new sap.m.Button({
-					text: "Export",
-					press: function (oEvent) {
-						dialog.close();
-						// SelectionUtils.exportSelectedRules(input.getValue(), textArea.getValue());
-					}
-				})
-
-			});
-
-			dialog.open();
-		},
-
-		importSelectedRules: function () {
-			var that = this;
-
-			var fileup = new FileUploader({ //fileType should be discussed
-				uploadComplete: function(oEvent) {
-					/* global FileReader */
-					var reader = new FileReader();
-
-					reader.onloadend = importSettings;
-
-					function importSettings(file) {
-						var fileAsString = file.target.result;
-						var oOptionsToImport =  JSON.parse(fileAsString);
-
-						if (SelectionUtils.isValidSelectionImport(oOptionsToImport)) {
-							var bOriginalPersistingSettingsValue = that.model.getProperty("/persistingSettings");
-
-							that.model.setProperty("/persistingSettings", true);
-
-
-							// resets persisted selections
-							storage.setSelectedRules(oOptionsToImport.selections);
-
-
-							that.model.setProperty("/persistingSettings", bOriginalPersistingSettingsValue);
-						}
-
-						if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
-							SelectionUtils.persistSelection();
-						}
-					}
-
-					reader.readAsText(oEvent.oSource.oFileUpload.files[0], "UTF-8");
-				}
-			});
-
-			var dialog = new Dialog({
-				title: "Upload rule settings",
-				content: [
-					fileup,
-					new sap.m.Button({
-						text: "Upload File",
-						press: function(oEvent) {
-							fileup.upload();
-							dialog.close();
-						}
-					})
-				],
-				endButton: new sap.m.Button({
-					text: "Close",
-					press: function (oEvent) {
-						dialog.close();
-					}
-				})
-			});
-
-			dialog.open();
 		},
 
 		goToRuleProperties: function () {
@@ -1001,6 +916,17 @@ sap.ui.define([
 			}
 			oColumn.setVisible(bNewVisibilityState);
 			this.persistVisibleColumns();
+		},
+
+		/**
+		 * Handles the selection presets variant selector click.
+		 * Opens selection presets popover.
+		 */
+		onPresetVariantClick: function () {
+			if (!this._PresetsController) {
+				this._PresetsController = new PresetsController(this.model, this.getView());
+			}
+			this._PresetsController.openPresetVariant();
 		}
 	});
 });
