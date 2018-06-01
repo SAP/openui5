@@ -214,5 +214,14 @@
 			"owner": "cahein",
 			"license": "MIT",
 			"type": "JS Library"
-		}
+		},
+		{
+			"name": "Brackets UI5",
+			"description": "An extension for Brackets providing support (code hints, quick docs and more) for OpenUI5/SAPUI5 libraries.",
+			"githubLink": "https://github.com/wozjac/brackets-ui5",
+			"documentationLink": "https://github.com/wozjac/brackets-ui5#readme",
+			"owner": "wozjac",
+			"license": "MIT",
+			"type": "Brackets extension"
+  		}
 	]
