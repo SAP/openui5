@@ -1,0 +1,12 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.TermsOfUse"
+          id="termsOfUse"
+          height="100%"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m">
+    <Page showHeader="false"
+          showSubHeader="false">
+        <Text id="termsOfUseText"
+              renderWhitespace="true"
+              class="sapUiTinyMarginBegin"/>
+    </Page>
+</mvc:View>
