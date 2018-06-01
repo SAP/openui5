@@ -756,6 +756,9 @@ sap.ui.require([
 			oMetaModel;
 
 		// code under test
+		assert.strictEqual(ODataMetaModel.prototype.$$valueAsPromise, true);
+
+		// code under test
 		oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
 
 		assert.ok(oMetaModel instanceof MetaModel);
@@ -2542,13 +2545,43 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaPropertyBinding#checkUpdate", function (assert) {
+	[undefined, {}, {$$valueAsPromise : false}].forEach(function (mParameters, i) {
+		QUnit.test("ODataMetaPropertyBinding#checkUpdate: " + i, function (assert) {
+			var oBinding,
+				oContext = {},
+				sPath = "foo",
+				oValue = {},
+				oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+
+			oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+
+			this.oMetaModelMock.expects("fetchObject")
+				.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
+				.returns(oPromise);
+			this.mock(oBinding).expects("_fireChange")
+				.withExactArgs({reason : ChangeReason.Change});
+
+			// code under test
+			oBinding.checkUpdate();
+
+			assert.strictEqual(oBinding.getValue(), undefined);
+			oPromise.then(function () {
+				assert.strictEqual(oBinding.getValue(), oValue);
+			});
+
+			return oPromise;
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: $$valueAsPromise=true, sync",
+			function (assert) {
 		var oBinding,
 			oContext = {},
-			mParameters = {},
+			mParameters = {$$valueAsPromise : true},
 			sPath = "foo",
 			oValue = {},
-			oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+			oPromise = SyncPromise.resolve(oValue);
 
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
 
@@ -2560,10 +2593,7 @@ sap.ui.require([
 		// code under test
 		oBinding.checkUpdate();
 
-		assert.strictEqual(oBinding.getValue(), undefined);
-		oPromise.then(function () {
-			assert.strictEqual(oBinding.getValue(), oValue);
-		});
+		assert.strictEqual(oBinding.getValue(), oValue, "Value sync");
 
 		return oPromise;
 	});
@@ -2613,6 +2643,43 @@ sap.ui.require([
 		oBinding.checkUpdate(true, "Foo");
 
 		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: $$valueAsPromise = true", function (assert) {
+		var oBinding,
+			oContext = {},
+			mParameters = {
+				$$valueAsPromise : true
+			},
+			sPath = "foo",
+			oValue = {},
+			oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+		oBinding.vValue = oValue;
+
+		this.oMetaModelMock.expects("fetchObject")
+			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
+			.returns(oPromise);
+		this.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : "Foo"})
+			.twice()
+			.onFirstCall().callsFake(function () {
+				assert.ok(oBinding.getValue().isPending(), "Value is still a pending SyncPromise");
+			})
+			.onSecondCall().callsFake(function () {
+				assert.strictEqual(oBinding.getValue(), oValue, "Value resolved");
+			});
+
+		// code under test
+		oBinding.checkUpdate(false, "Foo");
+
+		assert.ok(oBinding.getValue().isPending(), "Value is a pending SyncPromise");
+		return oBinding.getValue().then(function (oResult) {
+			assert.strictEqual(oResult, oValue);
+			assert.strictEqual(oBinding.getValue(), oValue);
+		});
 	});
 
 	//*********************************************************************************************

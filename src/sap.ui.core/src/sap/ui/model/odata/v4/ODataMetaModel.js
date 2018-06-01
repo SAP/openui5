@@ -482,6 +482,10 @@ sap.ui.define([
 
 			// Updates the binding's value and sends a change event if the <code>bForceUpdate</code>
 			// parameter is set to <code>true</code> or if the value has changed.
+			// If the binding parameter <code>$$valueAsPromise</code> is <code>true</code> and the
+			// value cannot be fetched synchronously then <code>getValue</code> returns a
+			// <code>SyncPromise</code> resolving with the value. After the value is resolved a
+			// second change event is fired and <code>getValue</code> returns the value itself.
 			//
 			// @param {boolean} [bForceUpdate=false]
 			//   If <code>true</code>, the change event is always fired.
@@ -490,19 +494,28 @@ sap.ui.define([
 			// @override
 			// @see sap.ui.model.Binding#checkUpdate
 			checkUpdate : function (bForceUpdate, sChangeReason) {
-				var that = this;
+				var oPromise,
+					that = this;
 
-				this.oModel.fetchObject(this.sPath, this.oContext, this.mParameters)
-					.then(function (vValue) {
-						if (bForceUpdate || vValue !== that.vValue) {
-							that.vValue = vValue;
-							that._fireChange({
-								reason : sChangeReason || ChangeReason.Change
-							});
-						}
-					});
+				function setValue(vValue) {
+					if (bForceUpdate || vValue !== that.vValue) {
+						that.vValue = vValue;
+						that._fireChange({
+							reason : sChangeReason || ChangeReason.Change
+						});
+					}
+					return vValue;
+				}
+
+				oPromise = this.oModel.fetchObject(this.sPath, this.oContext, this.mParameters)
+					.then(setValue);
+				if (this.mParameters && this.mParameters.$$valueAsPromise && oPromise.isPending()) {
+					setValue(oPromise);
+				}
 			},
 
+			// May return a <code>SyncPromise</code> instead of the value if
+			// <code>$$valueAsPromise</code> is <code>true</code>
 			// @override
 			// @see sap.ui.model.PropertyBinding#getValue
 			getValue : function () {
@@ -589,6 +602,14 @@ sap.ui.define([
 			this.sUrl = sUrl;
 		}
 	});
+
+	/**
+	 * Indicates that the property bindings of this model may return their value as a
+	 * <code>SyncPromise</code> if the value cannot be fetched synchronously.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.$$valueAsPromise = true;
 
 	/**
 	 * Merges <code>$Annotations</code> from the given $metadata and additional annotation files
@@ -703,6 +724,9 @@ sap.ui.define([
 	 * @param {object} [mParameters]
 	 *   Optional binding parameters that are passed to {@link #getObject} to compute the binding's
 	 *   value; if they are given, <code>oContext</code> cannot be omitted
+	 * @param {boolean} [mParameters.$$valueAsPromise]
+	 *   Whether {@link sap.ui.model.PropertyBinding#getValue} may return a <code>SyncPromise</code>
+	 *   resolving with the value (since 1.57.0)
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {sap.ui.model.PropertyBinding}
