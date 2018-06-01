@@ -185,7 +185,7 @@ sap.ui
 			 * the seed is fixed, so the generated random sequence is always the same
 			 * each property type has a own seed. Valid types are:
 			 * String, DateTime, Int, Decimal, Boolean, Byte, Double, Single, SByte, Time, Guid, Binary, DateTimeOffset
-			 * @public
+			 * @private
 			 * @param {string} specific property type of random mock value to be generated
 			 * @return (number) pseudo-random number
 			 */
