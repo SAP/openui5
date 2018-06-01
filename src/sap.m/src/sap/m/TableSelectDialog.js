@@ -78,6 +78,9 @@ sap.ui.define([
 	 * <li>You need to select items within a query-based range. Use the {@link https://experience.sap.com/fiori-design-web/value-help-dialog/ Value Help Dialog} control instead.</li>
 	 * <li>You need to filter a set of items without any selection. Use the {@link https://experience.sap.com/fiori-design-web/filter-bar/ Filter Bar} control instead.</li>
 	 * </ul>
+	 * <h4>Limitations:</h4>
+	 * Since version 1.58, the columns headers and the info toolbar are sticky (remain fixed on top when scrolling). This feature is not supported in all browsers.
+	 * For more information on browser support limitations, you can refer to the {@link sap.m.Table sap.m.Table} <code>sticky</code> property.
 	 * <h4>Note:</h4>
 	 * The property <code>growing</code> determines the progressive loading. If it's set to true (the default value), the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, will work only for the currently loaded items.
 	 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
@@ -271,6 +274,7 @@ sap.ui.define([
 			growingScrollToLoad: that.getGrowing(),
 			mode: ListMode.SingleSelectMaster,
 			modeAnimationOn: false,
+			sticky: [library.Sticky.InfoToolbar, library.Sticky.ColumnHeaders],
 			infoToolbar: new Toolbar({
 				visible: false,
 				active: false,
