@@ -359,7 +359,7 @@ sap.ui.require([
 			this.server = sinon.fakeServer.create();
 
 			// fake the cachebuster request
-			this.server.respondWith(/http:\/\/anyserver.company.corp:4711\/anyapp\/sap-ui-cachebuster-info.json/, function (xhr, id) {
+			this.server.respondWith(/https?:\/\/anyserver.company.corp:4711\/anyapp\/sap-ui-cachebuster-info.json/, function (xhr, id) {
 			    xhr.respond(200, { "Content-Type": "application/json" },
 			    	'{"my/view/MyView.view.js": "' + sTimestamp + '", ' +
 			    	'"my/view/MyView.controller.js": "' + sTimestamp + '", ' +
@@ -370,7 +370,7 @@ sap.ui.require([
 
 			// initialize the cachebuster
 			AppCacheBuster.init();
-			AppCacheBuster.register("http://anyserver.company.corp:4711/anyapp/");
+			AppCacheBuster.register(location.protocol + "//anyserver.company.corp:4711/anyapp/");
 
 		},
 		afterEach : function() {
@@ -388,20 +388,20 @@ sap.ui.require([
 		assert.expect(8);
 
 		// check normal URLs
-		assert.ok(AppCacheBuster.convertURL("http://anyserver.company.corp:4711/anyapp/my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		assert.ok(AppCacheBuster.convertURL("http://anyserver.company.corp:4711/anyapp/my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(AppCacheBuster.convertURL(location.protocol + "//anyserver.company.corp:4711/anyapp/my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(AppCacheBuster.convertURL(location.protocol + "//anyserver.company.corp:4711/anyapp/my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 		// check ab-normal URLs
-		assert.ok(AppCacheBuster.convertURL("http://anyserver.company.corp:4711/anyapp/my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		assert.ok(AppCacheBuster.convertURL("http://anyserver.company.corp:4711/anyapp/my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(AppCacheBuster.convertURL(location.protocol + "//anyserver.company.corp:4711/anyapp/my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(AppCacheBuster.convertURL(location.protocol + "//anyserver.company.corp:4711/anyapp/my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 		// check relative URLs
-		assert.ok(AppCacheBuster.convertURL("http://anyserver.company.corp:4711/anyapp/./my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		assert.ok(AppCacheBuster.convertURL("http://anyserver.company.corp:4711/anyapp/./my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(AppCacheBuster.convertURL(location.protocol + "//anyserver.company.corp:4711/anyapp/./my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(AppCacheBuster.convertURL(location.protocol + "//anyserver.company.corp:4711/anyapp/./my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 		// check relative ab-normal URLs
-		assert.ok(AppCacheBuster.convertURL("http://anyserver.company.corp:4711/anyapp/./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
-		assert.ok(AppCacheBuster.convertURL("http://anyserver.company.corp:4711/anyapp/./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		assert.ok(AppCacheBuster.convertURL(location.protocol + "//anyserver.company.corp:4711/anyapp/./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		assert.ok(AppCacheBuster.convertURL(location.protocol + "//anyserver.company.corp:4711/anyapp/./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
 
 	});
 
@@ -409,22 +409,22 @@ sap.ui.require([
 		assert.expect(2);
 
 		// fake the script
-		this.server.respondWith(/http:\/\/anyserver.company.corp:4711\/anyapp\/~1234567890~\/js\/script.js/, function (xhr, id) {
+		this.server.respondWith(/https?:\/\/anyserver.company.corp:4711\/anyapp\/~1234567890~\/js\/script.js/, function (xhr, id) {
 		    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 		});
-		this.server.respondWith(/http:\/\/anyserver.company.corp:4711\/anyapp\/js\/script1.js/, function (xhr, id) {
+		this.server.respondWith(/https?:\/\/anyserver.company.corp:4711\/anyapp\/js\/script1.js/, function (xhr, id) {
 		    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 		});
 
 		// check normal URLs
 		var oResult = jQuery.sap.sjax({
-			url: "http://anyserver.company.corp:4711/anyapp/js/script.js"
+			url: location.protocol + "//anyserver.company.corp:4711/anyapp/js/script.js"
 		});
 		assert.ok(oResult.success, "URL is correctly prefixed!");
 
 		// check normal URLs
 		var oResult = jQuery.sap.sjax({
-			url: "http://anyserver.company.corp:4711/anyapp/js/script1.js"
+			url: location.protocol + "//anyserver.company.corp:4711/anyapp/js/script1.js"
 		});
 		assert.ok(oResult.success, "URL is correctly ignored!");
 
@@ -434,7 +434,7 @@ sap.ui.require([
 		assert.expect(1);
 
 		// check script prefixing
-		jQuery.sap.includeScript("http://anyserver.company.corp:4711/anyapp/js/script.js", "myjs");
+		jQuery.sap.includeScript(location.protocol + "//anyserver.company.corp:4711/anyapp/js/script.js", "myjs");
 		var sSource = jQuery.sap.byId("myjs").attr("src");
 		if (Device.browser.phantomJS) {
 			sSource = fnCorrectProperty(jQuery.sap.byId("myjs")[0], "src");
@@ -447,7 +447,7 @@ sap.ui.require([
 		assert.expect(1);
 
 		// check script prefixing
-		jQuery.sap.includeStyleSheet("http://anyserver.company.corp:4711/anyapp/css/style.css", "mycss");
+		jQuery.sap.includeStyleSheet(location.protocol + "//anyserver.company.corp:4711/anyapp/css/style.css", "mycss");
 		var sSource = jQuery.sap.byId("mycss").attr("href");
 		if (Device.browser.phantomJS) {
 			sSource = fnCorrectProperty(jQuery.sap.byId("mycss")[0], "href");
@@ -461,7 +461,7 @@ sap.ui.require([
 
 		// check script prefixing
 		var oControl = new UriControl({
-			src: "http://anyserver.company.corp:4711/anyapp/img/image.png"
+			src: location.protocol + "//anyserver.company.corp:4711/anyapp/img/image.png"
 		});
 		var sSource = oControl.getSrc();
 		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
@@ -473,7 +473,7 @@ sap.ui.require([
 		assert.expect(2);
 
 		// register the module path to resolve the module name properly
-		jQuery.sap.registerModulePath("remoteanyapp", "http://anyserver.company.corp:4711/anyapp/");
+		jQuery.sap.registerModulePath("remoteanyapp", location.protocol + "//anyserver.company.corp:4711/anyapp/");
 
 		// check normal URLs
 		var done = assert.async();
@@ -506,11 +506,11 @@ sap.ui.require([
 		assert.expect(2);
 
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "http://anyserver.company.corp:4711/anyapp/js/script.js");
+		oReq.open("GET", location.protocol + "//anyserver.company.corp:4711/anyapp/js/script.js");
 		assert.ok(oReq.url.indexOf("/~" + sTimestamp + "~/") != -1, "URL \"" + oReq.url + "\" is correctly prefixed!");
 
 		oReq = new XMLHttpRequest();
-		oReq.open("GET", "http://anyserver.company.corp:4711/anyapp/js/script1.js");
+		oReq.open("GET", location.protocol + "//anyserver.company.corp:4711/anyapp/js/script1.js");
 		assert.ok(oReq.url.indexOf("/~" + sTimestamp + "~/") == -1, "URL \"" + oReq.url + "\" should not be prefixed!");
 	});
 
