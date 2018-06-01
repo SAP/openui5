@@ -33,6 +33,7 @@
 	loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/baseuri.js");
 	loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/es6-promise.js");
 	loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/es6-string-methods.js");
+	loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/es6-object-assign.js");
 	loadAndExecSync('../../../../../../resources/ui5loader.js');
 	loadAndExecSync('../../../../../../resources/ui5loader-autoconfig.js');
 

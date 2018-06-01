@@ -432,6 +432,11 @@ License: ISC License
 <year> = 2015
 <copyright holders> = Isaac Z. Schlueter and Contributors
 
+Component: Object assign Method
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
 Component: punycode.js 1.2.3
 Licensor: Acid Media
 Website: http://github.com/bestiejs/punycode.js/
