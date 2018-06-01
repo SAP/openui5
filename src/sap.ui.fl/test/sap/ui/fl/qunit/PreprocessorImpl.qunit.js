@@ -5,6 +5,7 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/ui/fl/PreprocessorImpl",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Cache",
@@ -16,6 +17,7 @@ sap.ui.require([
 function(
 	PreprocessorImpl,
 	Component,
+	ComponentContainer,
 	ManagedObject,
 	FlexControllerFactory,
 	Cache,
@@ -212,6 +214,7 @@ function(
 				name: "sap.ui.fl.PreprocessorImpl.testResources"
 			});
 			sandbox.stub(sap.ui, "component").returns(oComp);
+			sandbox.stub(Component, "get").returns(oComp);
 
 			var view1 = sap.ui.view({
 				viewName: "sap.ui.fl.PreprocessorImpl.testResources.view1",
@@ -239,7 +242,7 @@ function(
 				done2();
 			};
 
-			var oCompCont = new sap.ui.core.ComponentContainer({
+			var oCompCont = new ComponentContainer({
 				component: oComp
 			});
 			oCompCont.placeAt("qunit-fixture");
