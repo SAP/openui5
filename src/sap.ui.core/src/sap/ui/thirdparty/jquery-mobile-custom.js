@@ -2025,9 +2025,36 @@ if ( eventCaptureSupported ) {
 					return;
 				}
 
-				var origTarget = event.target,
-					origEvent = event.originalEvent,
-					timer;
+				var mouseDownTarget = event.target,
+					timer,
+					// SAP Modification: Workaround for an Edge browser issue which occurs with EdgeHTML 14 and higher.
+					// The root cause are inconsistent event targets of fired events, when a button is tapped.
+
+					/**
+					 * Detects whether edge browser special tap handling is necessary.
+					 *
+					 * Inconsistent event targets for the sap.m.Button control:
+					 * EdgeHTML v.| 14 | 15 | 16 | 17 |
+					 * ----------------------------------
+					 * mousedown  |   S|   S|   B|   S|
+					 * mouseup    |   B|   B|   B|   B|
+					 * click      |   S| S/B|   S| S/B|
+					 * ----------------------------------
+					 * S = SPAN, B = BUTTON
+					 *
+					 * @param {object} event either mouseup or click event.
+					 * @returns {boolean} Returns true, when a button was pressed in edge browser with inconsistent event targets.
+					 */
+					buttonTappedInEdgeBrowser = function( event ) {
+						var eventTarget = event.target;
+						var browser = sap.ui.Device.browser;
+
+						return browser.edge && browser.version >= 14 &&
+							(eventTarget.tagName.toLowerCase() === "button" &&
+								eventTarget.contains(mouseDownTarget) ||
+								mouseDownTarget.tagName.toLowerCase() === "button" &&
+								mouseDownTarget.contains(eventTarget));
+					};
 
 				function clearTapTimer() {
 					clearTimeout( timer );
@@ -2038,7 +2065,20 @@ if ( eventCaptureSupported ) {
 
 					$this.unbind( "vclick", clickHandler )
 						.unbind( "vmouseup", clearTapTimer );
-					$document.unbind( "vmousecancel", clearTapHandlers );
+					$document.unbind( "vmousecancel", clearTapHandlers )
+					// SAP MODIFICATION: deregister the function of clearing handlers from 'mouseup' event
+					// on document
+						.unbind( "vmouseup", checkAndClearTapHandlers );
+				}
+
+				// SAP MODIFICATION: terminate the firing of 'tap' event if 'mouseup' event occurs
+				// out of the 'mousedown' target
+				function checkAndClearTapHandlers( mouseUpEvent ) {
+					// if the mouseup event occurs out of the origin target of the mousedown event,
+					// unbind all of the listeners
+					if (mouseUpEvent.target !== mouseDownTarget && !$.contains(mouseDownTarget, mouseUpEvent.target) && !buttonTappedInEdgeBrowser( mouseUpEvent )) {
+						clearTapHandlers();
+					}
 				}
 
 				function clickHandler( event ) {
@@ -2046,17 +2086,20 @@ if ( eventCaptureSupported ) {
 
 					// ONLY trigger a 'tap' event if the start target is
 					// the same as the stop target.
-					if ( origTarget === event.target ) {
+					if ( mouseDownTarget === event.target || buttonTappedInEdgeBrowser( event )) {
 						triggerCustomEvent( thisObject, "tap", event );
 					}
 				}
 
 				$this.bind( "vmouseup", clearTapTimer )
 					.bind( "vclick", clickHandler );
-				$document.bind( "vmousecancel", clearTapHandlers );
+				$document.bind( "vmousecancel", clearTapHandlers )
+				// SAP MODIFICATION: register the function of clearing handlers to 'mouseup' event
+				// on document
+					.bind( "vmouseup", checkAndClearTapHandlers );
 
 				timer = setTimeout( function() {
-					triggerCustomEvent( thisObject, "taphold", $.Event( "taphold", { target: origTarget } ) );
+					triggerCustomEvent( thisObject, "taphold", $.Event( "taphold", { target: mouseDownTarget } ) );
 				}, $.event.special.tap.tapholdThreshold );
 			});
 		}
