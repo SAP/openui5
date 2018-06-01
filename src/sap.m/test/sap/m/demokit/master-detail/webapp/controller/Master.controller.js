@@ -7,10 +7,8 @@ sap.ui.define([
 		"sap/ui/model/FilterOperator",
 		"sap/m/GroupHeaderListItem",
 		"sap/ui/Device",
-		"sap/ui/demo/masterdetail/model/formatter",
-		"sap/ui/demo/masterdetail/model/grouper",
-		"sap/ui/demo/masterdetail/model/GroupSortState"
-	], function (BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, formatter, grouper, GroupSortState) {
+		"sap/ui/demo/masterdetail/model/formatter"
+	], function (BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, formatter) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.masterdetail.controller.Master", {
@@ -67,7 +65,6 @@ sap.ui.define([
 					// Restore original busy indicator delay for the list
 					oViewModel.setProperty("/delay", iOriginalBusyDelay);
 				});
-
 				this.getView().addEventDelegate({
 					onBeforeFirstShow: function () {
 						this.getOwnerComponent().oListSelector.setBoundMasterList(oList);
@@ -84,16 +81,13 @@ sap.ui.define([
 
 			/**
 			 * After list data is available, this handler method updates the
-			 * master list counter and hides the pull to refresh control, if
-			 * necessary.
+			 * master list counter
 			 * @param {sap.ui.base.Event} oEvent the update finished event
 			 * @public
 			 */
 			onUpdateFinished : function (oEvent) {
 				// update the master list object counter after new data is loaded
 				this._updateListItemCount(oEvent.getParameter("total"));
-				// hide pull to refresh if necessary
-				this.byId("pullToRefresh").hide();
 			},
 
 			/**
@@ -146,14 +140,15 @@ sap.ui.define([
 					// forward compact/cozy style into Dialog
 					this._oViewSettingsDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 				}
-				var sIcon = oEvent.getSource().getProperty("icon"),
-					sDialogTab = "";
-				if (sIcon.match("sort")) {
-					sDialogTab = "sort";
-				} else if (sIcon.match("group")) {
-					sDialogTab = "group";
-				} else {
-					sDialogTab = "filter";
+
+				var sDialogTab = "filter";
+				if (oEvent.getSource() instanceof sap.m.Button) {
+					var sButtonId = oEvent.getSource().sId;
+					if (sButtonId.match("sort")) {
+						sDialogTab = "sort";
+					} else if (sButtonId.match("group")) {
+						sDialogTab = "group";
+					}
 				}
 				this._oViewSettingsDialog.open(sDialogTab);
 			},
@@ -284,29 +279,7 @@ sap.ui.define([
 				});
 			},
 
-			/**
-			 * If the master route was hit (empty hash) we have to set
-			 * the hash to to the first item in the list as soon as the
-			 * listLoading is done and the first item in the list is known
-			 * @private
-			 */
 			_onMasterMatched :  function() {
-				this.getOwnerComponent().oListSelector.oWhenListLoadingIsDone.then(
-					function (mParams) {
-						if (mParams.list.getMode() === "None") {
-							return;
-						}
-						var sObjectId = mParams.firstListitem.getBindingContext().getProperty("ObjectID");
-						this.getRouter().navTo("object", {objectId : sObjectId}, true);
-					}.bind(this),
-					function (mParams) {
-						if (mParams.error) {
-							return;
-						}
-						this.getRouter().getTargets().display("detailNoObjectsAvailable");
-					}.bind(this)
-				);
-
 				//Set the layout property of the FCL control to 'OneColumn'
 				this.getModel("appView").setProperty("/layout", "OneColumn");
 			},

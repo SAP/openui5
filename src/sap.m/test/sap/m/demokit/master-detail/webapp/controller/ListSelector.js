@@ -25,27 +25,15 @@ sap.ui.define([
 					this._oWhenListHasBeenSet
 						.then(function (oList) {
 							oList.getBinding("items").attachEventOnce("dataReceived",
-								function (oData) {
-									if (!oData.getParameter("data")) {
-										fnReject({
-											list : oList,
-											error : true
-										});
-									}
-									var oFirstListItem = this.getFirstListItem();
-									if (oFirstListItem) {
-										// Have to make sure that first list Item is selected
-										// and a select event is triggered. Like that, the corresponding
-										// detail page is loaded automatically
+								function () {
+									if (this._oList.getItems().length) {
 										fnResolve({
-											list : oList,
-											firstListitem : oFirstListItem
+											list: oList
 										});
 									} else {
 										// No items in the list
 										fnReject({
-											list : oList,
-											error : false
+											list : oList
 										});
 									}
 								}.bind(this)
@@ -63,22 +51,6 @@ sap.ui.define([
 			setBoundMasterList : function (oList) {
 				this._oList = oList;
 				this._fnResolveListHasBeenSet(oList);
-			},
-
-			/**
-			 * Finds the first list item
-			 * @return {sap.m.ListItem|null} The first item that is not a group header
-			 * @public
-			 */
-			getFirstListItem : function () {
-				var aItems = this._oList.getItems();
-
-				for (var i = 0; i < aItems.length; i++) {
-					if (!(aItems[i] instanceof GroupHeaderListItem)) {
-						return aItems[i];
-					}
-				}
-				return null;
 			},
 
 			/**
@@ -118,43 +90,6 @@ sap.ui.define([
 				);
 			},
 
-
-			/* =========================================================== */
-			/* Convenience Functions for List Selection Change Event       */
-			/* =========================================================== */
-
-			/**
-			 * Attaches a listener and listener function to the ListSelector's bound master list. By using
-			 * a promise, the listener is added, even if the list is not available when 'attachListSelectionChange'
-			 * is called.
-			 * @param {function} fnFunction the function to be executed when the list fires a selection change event
-			 * @param {function} oListener the listener object
-			 * @return {sap.ui.demo.masterdetail.model.ListSelector} the list selector object for method chaining
-			 * @public
-			 */
-			attachListSelectionChange : function (fnFunction, oListener) {
-				this._oWhenListHasBeenSet.then(function () {
-					this._oList.attachSelectionChange(fnFunction, oListener);
-				}.bind(this));
-				return this;
-			},
-
-			/**
-			 * Detaches a listener and listener function from the ListSelector's bound master list. By using
-			 * a promise, the listener is removed, even if the list is not available when 'detachListSelectionChange'
-			 * is called.
-			 * @param {function} fnFunction the function to be executed when the list fires a selection change event
-			 * @param {function} oListener the listener object
-			 * @return {sap.ui.demo.masterdetail.model.ListSelector} the list selector object for method chaining
-			 * @public
-			 */
-			detachListSelectionChange : function (fnFunction, oListener) {
-				this._oWhenListHasBeenSet.then(function () {
-					this._oList.detachSelectionChange(fnFunction, oListener);
-				}.bind(this));
-				return this;
-			},
-
 			/**
 			 * Removes all selections from master list.
 			 * Does not trigger 'selectionChange' event on master list, though.
@@ -166,7 +101,6 @@ sap.ui.define([
 					this._oList.removeSelections(true);
 				}.bind(this));
 			}
-
 		});
 
 	}

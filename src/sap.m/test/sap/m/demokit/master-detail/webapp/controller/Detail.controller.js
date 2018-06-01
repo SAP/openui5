@@ -84,6 +84,7 @@ sap.ui.define([
 			 */
 			_onObjectMatched : function (oEvent) {
 				var sObjectId =  oEvent.getParameter("arguments").objectId;
+				this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
 				this.getModel().metadataLoaded().then( function() {
 					var sObjectPath = this.getModel().createKey("Objects", {
 						ObjectID :  sObjectId
@@ -132,7 +133,6 @@ sap.ui.define([
 					this.getOwnerComponent().oListSelector.clearMasterListSelection();
 					return;
 				}
-
 				var sPath = oElementBinding.getPath(),
 					oResourceBundle = this.getResourceBundle(),
 					oObject = oView.getModel().getObject(sPath),
@@ -175,7 +175,9 @@ sap.ui.define([
 			 * Set the full screen mode to false and navigate to master page
 			 */
 			onCloseDetailPress: function () {
-				this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreenMode", false);
+				this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", false);
+				// No item should be selected on master after detail page is closed
+				this.getOwnerComponent().oListSelector.clearMasterListSelection();
 				this.getRouter().navTo("master");
 			},
 
@@ -183,8 +185,8 @@ sap.ui.define([
 			 * Toggle between full and non full screen mode.
 			 */
 			toggleFullScreen: function () {
-				var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreenMode");
-				this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreenMode", !bFullScreen);
+				var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreen");
+				this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreen", !bFullScreen);
 				if (!bFullScreen) {
 					// store current layout and go full screen
 					this.getModel("appView").setProperty("/previousLayout", this.getModel("appView").getProperty("/layout"));
