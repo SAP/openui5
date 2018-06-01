@@ -2137,50 +2137,6 @@
 		oModel.destroy();
 	});
 
-	// BCP 1870318651
-	QUnit.test("test correct item selection with forceSelection=false and data binding", function (assert) {
-
-		// system under test
-		var oModel = new sap.ui.model.json.JSONModel();
-
-		oModel.setData(mTestModelData);
-		sap.ui.getCore().setModel(oModel);
-
-		var oItemTemplate = new sap.ui.core.Item({
-			key: "{key}",
-			text: "{text}"
-		});
-
-		var oSelect = new sap.m.Select({
-			forceSelection: false,
-			items: {
-				path: "/items",
-				template: oItemTemplate
-			}
-		});
-
-		// arrange
-		oSelect.placeAt("content");
-		oSelect.setSelectedKey("AR");
-		sap.ui.getCore().applyChanges();
-		oModel.getProperty("/items").splice(0, 1);
-		oModel.refresh();
-
-		// assert
-		assert.strictEqual(oSelect.getSelectedKey(), "AR", "The selected key should remain the same if deleting another item");
-
-		// act
-		oModel.getProperty("/items").splice(0, 1);
-		oModel.refresh();
-
-		// assert
-		assert.strictEqual(oSelect.getSelectedKey(), "", "The selected key should be empty if deleting the selected item");
-
-		// cleanup
-		oSelect.destroy();
-		oModel.destroy();
-	});
-
 	// BCP 1570472488
 	QUnit.test("it should not fire the change event after the selection has changed (via keyboard) and the scrollbar is pressed", function (assert) {
 

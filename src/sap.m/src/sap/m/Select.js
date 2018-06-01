@@ -567,20 +567,7 @@ function(
 		};
 
 		Select.prototype.updateItems = function(sReason) {
-			var oSelectedKey = this.getSelectedKey(),
-				bPreserveItem;
-
 			SelectList.prototype.updateItems.apply(this, arguments);
-
-			if (oSelectedKey && !this.getForceSelection()) {
-				bPreserveItem = this.getItems().some(function (element) {
-					return element.getKey() === oSelectedKey;
-				});
-
-				if (!bPreserveItem) {
-					this.setSelectedItem(null);
-				}
-			}
 
 			// note: after the items are recreated, the selected item association
 			// points to the new item
