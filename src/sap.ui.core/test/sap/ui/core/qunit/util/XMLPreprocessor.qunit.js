@@ -3329,7 +3329,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("<template:if> still works synchronously", function (assert) {
+	QUnit.test("async <template:if>", function (assert) {
 		return this.checkTracing(assert, true, [
 			{m : "[ 0] Start processing qux"},
 			{m : "[ 1] test == false --> false", d : 1},
@@ -3337,14 +3337,12 @@ sap.ui.require([
 			{m : "[ 0] Finished processing qux"}
 		], [
 			mvcView(),
-			// Note: expression binding uses a formatter which is wrapped, but SyncPromise#unwrap
-			// must be used!
-			'<template:if test="{= %{/sync} !== \'sync\' }">',
+			'<template:if test="{= %{/hello} !== \'world\' }">',
 			'<Out id="false"/>',
 			'</template:if>',
 			'</mvc:View>'
 		], {
-			models : asyncModel({sync : "sync"})
+			models : asyncModel({hello : "world"})
 		}, undefined, true);
 	});
 });

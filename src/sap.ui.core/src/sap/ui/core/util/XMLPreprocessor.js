@@ -23,6 +23,7 @@ sap.ui.define([
 		sPerformanceInsertFragment = sXMLPreprocessor + "/insertFragment",
 		sPerformanceProcess = sXMLPreprocessor + ".process",
 		oSyncPromiseResolved = SyncPromise.resolve(),
+		oSyncPromiseResolvedTrue = SyncPromise.resolve(true),
 		fnToString = Object.prototype.toString,
 		oUNBOUND = {}, // @see getAny
 		mVisitors = {}, // maps "<namespace URI> <local name>" to visitor function
@@ -330,7 +331,7 @@ sap.ui.define([
 	 *   map of currently known aliases
 	 * @param {boolean} bAsync
 	 *   whether async processing is allowed and a <code>Promise</code> may be returned
-	 * @returns {any}
+	 * @returns {any|Promise}
 	 *   the property value or a <code>Promise</code> resolving with the property value (in case
 	 *   async processing is allowed and supported by the respective model) or <code>oUNBOUND</code>
 	 *   in case the binding is not ready (because it refers to a model which is not available)
@@ -371,7 +372,7 @@ sap.ui.define([
 					var that = this;
 					return SyncPromise.all(arguments).then(function (aArguments) {
 						return fnFormatter.apply(that, aArguments);
-					}).unwrap(); //TODO remove unwrap() as soon as getResolvedBinding becomes async
+					});
 				};
 				oInfo.formatter.textFragments = fnFormatter.textFragments;
 			}
@@ -399,19 +400,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns <code>true</code> if the given XML DOM element has the template namespace and the
-	 * given local name.
-	 *
-	 * @param {Element} oElement the XML DOM element
-	 * @param {string} sLocalName the local name
-	 * @returns {boolean} if the element has the given name
-	 */
-	function isTemplateElement(oElement, sLocalName) {
-		return oElement.namespaceURI === sNAMESPACE
-			&& oElement.localName === sLocalName;
-	}
-
-	/**
 	 * Load required modules for the given element synchronously, according to its
 	 * "template:require" attribute which may contain a space separated list.
 	 *
@@ -427,32 +415,48 @@ sap.ui.define([
 
 	/**
 	 * Visits the given elements one-by-one, calls the given callback for each of them and stops
-	 * and waits for each thenable returned by the callback before going on to the next element.
+	 * and waits for each sync promise returned by the callback before going on to the next element.
+	 * If a sync promise resolves with a truthy value, iteration stops and the corresponding element
+	 * becomes the result of the returned sync promise.
 	 *
 	 * @param {any[]} aElements
 	 *   Whatever elements we want to visit
 	 * @param {function} fnCallback
 	 *   A function to be called with a single element and its index and the array (like
-	 *   {@link Array#forEach} does it), returning a thenable.
+	 *   {@link Array#find} does it), returning a {sap.ui.base.SyncPromise}.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A sync promise which resolves with <code>undefined</code> as soon as the last callback's
-	 *   thenable has resolved, or is rejected with a corresponding error if any callback returns
-	 *   a rejected thenable or throws an error
+	 *   A sync promise which resolves with the first element where the callback's sync promise
+	 *   resolved with a truthy value, or resolves with <code>undefined</code> as soon as the last
+	 *   callback's sync promise has resolved, or is rejected with a corresponding error if any
+	 *   callback returns a rejected sync promise or throws an error
 	 * @throws {Error}
 	 *   If the first callback throws
 	 */
 	function stopAndGo(aElements, fnCallback) {
 		var i = -1;
 
-		function next() {
+		/*
+		 * Visits the next element, taking the result of the previous callback into account.
+		 *
+		 * @param {boolean} bFound
+		 *   Whether an element was approved by the corresponding callback
+		 * @returns {sap.ui.base.SyncPromise|any}
+		 *   First call returns a <code>sap.ui.base.SyncPromise</code> which resolves with a later
+		 *   call's result.
+		 */
+		function next(bFound) {
+			if (bFound) {
+				return aElements[i];
+			}
 			i += 1;
 			if (i < aElements.length) {
 				return fnCallback(aElements[i], i, aElements).then(next);
 			}
-			return oSyncPromiseResolved;
 		}
 
-		return next();
+		return aElements.length
+			? next()
+			: oSyncPromiseResolved;
 	}
 
 	/**
@@ -938,18 +942,34 @@ sap.ui.define([
 			 *   if there is an unexpected child element
 			 */
 			function getIfChildren(oIfElement) {
-				var oNodeList = oIfElement.childNodes,
-					oChild,
-					aChildren = [],
+				var oChild,
+					aChildren = Array.prototype.filter.call(oIfElement.childNodes, isElementNode),
 					i, n,
 					bFoundElse = false;
 
-				for (i = 0, n = oNodeList.length; i < n; i += 1) {
-					oChild = oNodeList.item(i);
-					if (oChild.nodeType === 1 /*ELEMENT_NODE*/) {
-						aChildren.push(oChild);
-					}
+				/*
+				 * Tells whether the given XML DOM node is an element node.
+				 *
+				 * @param {Node} oNode - an XML DOM node
+				 * @returns {boolean} whether the given node is an element node
+				 */
+				function isElementNode(oNode) {
+					return oNode.nodeType === 1;
 				}
+
+				/*
+				 * Tells whether the given XML DOM element has the template namespace and the given
+				 * local name.
+				 *
+				 * @param {Element} oElement - an XML DOM element
+				 * @param {string} sLocalName - a local name
+				 * @returns {boolean} whether the given element has the given name
+				 */
+				function isTemplateElement(oElement, sLocalName) {
+					return oElement.namespaceURI === sNAMESPACE
+						&& oElement.localName === sLocalName;
+				}
+
 				if (!aChildren.length || !isTemplateElement(aChildren[0], "then")) {
 					return null;
 				}
@@ -1013,7 +1033,7 @@ sap.ui.define([
 			 * @param {function} [fnCallIfConstant]
 			 *   optional function to be called in case the return value is obviously a constant,
 			 *   not influenced by any binding
-			 * @returns {any}
+			 * @returns {any|Promise}
 			 *   the resulting value or a <code>Promise</code> resolving with the property value (in
 			 *   case async processing is allowed and supported by the respective model) or
 			 *   <code>oUNBOUND</code> in case the binding is not ready (because it refers to a
@@ -1148,19 +1168,17 @@ sap.ui.define([
 			 *   the (<if> or <elseif>) XML DOM element
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the "with" control
-			 * @returns {boolean}
-			 *   the test result
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with the test result
 			 */
 			function performTest(oElement, oWithControl) {
 				// constant test conditions are suspicious, but useful during development
 				var fnCallIfConstant = warn.bind(null, oElement, 'Constant test condition'),
-					bResult,
-					sTest = oElement.getAttribute("test"),
 					vTest;
 
 				try {
-					vTest = getResolvedBinding(sTest, oElement, oWithControl, true,
-						fnCallIfConstant);
+					vTest = getResolvedBinding(oElement.getAttribute("test"), oElement,
+						oWithControl, true, fnCallIfConstant);
 					if (vTest === oUNBOUND) {
 						vTest = false;
 					}
@@ -1168,18 +1186,21 @@ sap.ui.define([
 					warn(oElement, 'Error in formatter:', ex);
 					vTest = undefined; // "test == undefined --> false" in debug log
 				}
-				bResult = !!vTest && vTest !== "false";
-				if (bDebug) {
-					if (typeof vTest === "string") {
-						vTest = JSON.stringify(vTest);
-					} else if (vTest === undefined) {
-						vTest = "undefined";
-					} else if (Array.isArray(vTest)) {
-						vTest = "[object Array]";
+				return SyncPromise.resolve(vTest).then(function (vTest) {
+					var bResult = !!vTest && vTest !== "false";
+
+					if (bDebug) {
+						if (typeof vTest === "string") {
+							vTest = JSON.stringify(vTest);
+						} else if (vTest === undefined) {
+							vTest = "undefined";
+						} else if (Array.isArray(vTest)) {
+							vTest = "[object Array]";
+						}
+						debug(oElement, "test ==", vTest, "-->", bResult);
 					}
-					debug(oElement, "test ==", vTest, "-->", bResult);
-				}
-				return bResult;
+					return bResult;
+				});
 			}
 
 			/**
@@ -1354,35 +1375,25 @@ sap.ui.define([
 			 *   corresponding error if visiting child nodes fails.
 			 */
 			function templateIf(oIfElement, oWithControl) {
-				var aChildren = getIfChildren(oIfElement),
-					// the selected element; iterates over aChildren; it is chosen if
-					// oTestElement evaluates to true or if the <else> has been reached
-					oSelectedElement,
-					// the element to run the test on (may be <if> or <elseif>)
-					oTestElement;
-
 				iNestingLevel++;
-				if (aChildren) {
-					oTestElement = oIfElement; // initially the <if>
-					oSelectedElement = aChildren.shift(); // initially the <then>
-					do {
-						if (performTest(oTestElement, oWithControl)) {
-							break;
-						}
-						oTestElement = oSelectedElement = aChildren.shift();
-						// repeat as long as we're on an <elseif>
-					} while (oTestElement && oTestElement.localName === "elseif");
-				} else if (performTest(oIfElement, oWithControl)) {
-					// no <if>-specific children and <if> test is true -> select the <if>
-					oSelectedElement = oIfElement;
-				}
-				return (oSelectedElement
-					? liftChildNodes(oSelectedElement, oWithControl, oIfElement)
-					: oSyncPromiseResolved
-				).then(function () {
-					oIfElement.parentNode.removeChild(oIfElement);
-					debugFinished(oIfElement);
-					iNestingLevel--;
+				return stopAndGo(getIfChildren(oIfElement) || [oIfElement], function (oCandidate) {
+					if (oCandidate.localName === "else") {
+						return oSyncPromiseResolvedTrue;
+					}
+					if (oCandidate.localName === "then") {
+						oCandidate = oIfElement;
+					}
+					return performTest(oCandidate, oWithControl);
+				}).then(function (oSelectedElement) {
+					// the selected element: <if>, <then>, <elseif>, <else>, or none at all
+					return (oSelectedElement
+						? liftChildNodes(oSelectedElement, oWithControl, oIfElement)
+						: oSyncPromiseResolved
+					).then(function () {
+						oIfElement.parentNode.removeChild(oIfElement);
+						debugFinished(oIfElement);
+						iNestingLevel--;
+					});
 				});
 			}
 
