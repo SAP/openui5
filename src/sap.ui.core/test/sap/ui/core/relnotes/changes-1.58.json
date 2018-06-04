@@ -127,6 +127,48 @@
         "type": "FIX",
         "text": " ui5loader: don\u0027t modify global define/require props by default",
         "references": []
+      },
+      {
+        "id": "43bdd3c4ae02d772d7f8437476275df5155b4c93",
+        "type": "FEATURE",
+        "text": " Component: declarative API for initial components",
+        "references": []
+      },
+      {
+        "id": "1edcdbfc137f12a3a5f0452ca6feb259344587d1",
+        "type": "FEATURE",
+        "text": " Core: add Object.assign polyfill",
+        "references": []
+      },
+      {
+        "id": "47bcee4ed462a9a701ba0b42ebd7544be6db5892",
+        "type": "FEATURE",
+        "text": " ManagedObjectModel: Change privacy of the class to public",
+        "references": []
+      },
+      {
+        "id": "51b25aba71930e97f522778677015a993a4188be",
+        "type": "FEATURE",
+        "text": " core.CSSSize: Type validator now accepts viewport units",
+        "references": []
+      },
+      {
+        "id": "00b6bd10fa9f68d82ef3d56e426a946bf38294c1",
+        "type": "FEATURE",
+        "text": " sap.m.App: Exposed new mobileWebAppCapable property for iOS devices",
+        "references": []
+      },
+      {
+        "id": "68bfec9524fa0c383b89205d76c602fec5461b3a",
+        "type": "FIX",
+        "text": " XMLCompositeMetadata: Take extension in account when caching",
+        "references": []
+      },
+      {
+        "id": "a03128928c7a4a3c69066e0637abafeaf7b73134",
+        "type": "FIX",
+        "text": " core.Popup: modal popup should blur the previous DOM after open",
+        "references": []
       }
     ]
   }

@@ -13,6 +13,30 @@
         "type": "FIX",
         "text": " fl.VariantManagement: set focus on \u0027Cancel\u0027 after variant deletion",
         "references": []
+      },
+      {
+        "id": "1f9630cc34c5871f5ee30cd630ed8ae379508c90",
+        "type": "FIX",
+        "text": " Delete update of _mChangesEntries",
+        "references": []
+      },
+      {
+        "id": "f3666d0b4b2ecd82701439e470524c4e6b1fb36b",
+        "type": "FIX",
+        "text": " Variant URL parameters should be added depending on the VM control(s) on the current view",
+        "references": []
+      },
+      {
+        "id": "b10e31713834e6b9c99c88bb6b2f3f2a67c9148d",
+        "type": "FIX",
+        "text": " sap.ui.fl App variant version validity",
+        "references": []
+      },
+      {
+        "id": "314f252dca1e375eafd1a745ba707e97c4b1f790",
+        "type": "FIX",
+        "text": " update mChangesEntries in case this has not taken place",
+        "references": []
       }
     ]
   }

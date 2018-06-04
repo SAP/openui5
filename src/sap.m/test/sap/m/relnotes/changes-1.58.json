@@ -247,6 +247,66 @@
         "type": "FIX",
         "text": " sap.m.StandardTile: focus outline is visible on click in IE",
         "references": []
+      },
+      {
+        "id": "ebb866241656476ede63993dc07c50916f6a2cc8",
+        "type": "FEATURE",
+        "text": " CheckBox: partiallySelected property added",
+        "references": []
+      },
+      {
+        "id": "00b6bd10fa9f68d82ef3d56e426a946bf38294c1",
+        "type": "FEATURE",
+        "text": " sap.m.App: Exposed new mobileWebAppCapable property for iOS devices",
+        "references": []
+      },
+      {
+        "id": "c9f00579ca2856aab77da8d9f09ad11ff1ae13aa",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: Tooltips of predefined colors are internationalized",
+        "references": []
+      },
+      {
+        "id": "fd2af9511092bc1cf12820068d62ae8208469efa",
+        "type": "FEATURE",
+        "text": " sap.m.TableSelectDialog: Make headers and info toolbar sticky",
+        "references": []
+      },
+      {
+        "id": "c7650a3bed1d30d566ed58940ca0873cc3fa3f2d",
+        "type": "FIX",
+        "text": " MessagePage: failing visual test corrected",
+        "references": []
+      },
+      {
+        "id": "2565fa91a9d0b82a1e3ea58ea54e62f35ac55f1f",
+        "type": "FIX",
+        "text": " P13DimeasurePanel: Align items with chart API",
+        "references": []
+      },
+      {
+        "id": "eac1710aa5b0d05e22e0e60c21f1e82e3ea8cc8a",
+        "type": "FIX",
+        "text": " Toolbar: sample page changed",
+        "references": []
+      },
+      {
+        "id": "78ed8e7a0dd7eac905a98381dc6311c2e16b3645",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Origin is now set on Space and Enter",
+        "references": []
+      },
+      {
+        "id": "54e00b88d48b9f9a5d62d81c414f1ff88ef13ff3",
+        "type": "FIX",
+        "text": " sap.m.Select: Item selection on data binding update corrected",
+        "references": []
+      },
+      {
+        "id": "26b2897726f363d7fcc625d75dcc664eec5fcc9c",
+        "type": "FIX",
+        "text": " sap.m.Select: Revert Item selection on data binding update corrected\"",
+        "references": []
       }
     ]
   }

@@ -43,6 +43,12 @@
         "type": "FIX",
         "text": "sap.ui.dt - SelectionManager selection mode discrepancy with DT",
         "references": []
+      },
+      {
+        "id": "f8ba865568e51cf165243d260c217bb369d1b5bf",
+        "type": "FIX",
+        "text": "sap.ui.dt - Removed overlays are still part of the selection",
+        "references": []
       }
     ]
   }

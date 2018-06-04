@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: toggleHeaderOnTitleClick initial state fixed",
         "references": []
+      },
+      {
+        "id": "ebdf01ba15a732373460b5e2f13c1b10a8266e97",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Pointer cursor on passive controls in title fix",
+        "references": []
       }
     ]
   }
