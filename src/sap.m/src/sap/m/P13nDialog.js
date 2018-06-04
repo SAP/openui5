@@ -191,7 +191,7 @@ sap.ui.define([
 				}),
 				contentMiddle: new Title(this.getId() + "-phoneTitle", {
 					text: this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"),
-					level: "H1"
+					level: "H2"
 				})
 			}));
 			this.addButton(this._createOKButton());
