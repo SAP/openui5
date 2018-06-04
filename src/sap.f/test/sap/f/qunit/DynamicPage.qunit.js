@@ -714,6 +714,13 @@
 		}
 	});
 
+	QUnit.test("DynamicPage Header default aggregation", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader(),
+			sHeaderDefaultAggregation = oHeader.getMetadata().getDefaultAggregationName();
+
+		assert.strictEqual(sHeaderDefaultAggregation, "content", "The default aggregation is 'content'");
+	});
+
 	QUnit.test("DynamicPage Header pinnable and not pinnable", function (assert) {
 		var oHeader = this.oDynamicPage.getHeader(),
 			oPinButton = oHeader.getAggregation("_pinButton");

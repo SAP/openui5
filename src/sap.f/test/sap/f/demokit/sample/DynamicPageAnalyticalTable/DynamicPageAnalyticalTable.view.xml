@@ -45,7 +45,6 @@
 			<!-- DynamicPage Header -->
 			<f:header>
 				<f:DynamicPageHeader pinnable="true">
-					<f:content>
 						<FlexBox
 								alignItems="Start"
 								justifyContent="SpaceBetween">
@@ -71,7 +70,6 @@
 								</Panel>
 							</items>
 						</FlexBox>
-					</f:content>
 				</f:DynamicPageHeader>
 			</f:header>
 
