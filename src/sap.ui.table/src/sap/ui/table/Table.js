@@ -2166,15 +2166,13 @@ sap.ui.define([
 			// If the binding length changes, some parts of the UI need to be updated.
 			if (bUpdateUI !== false) {
 				var oScrollExtension = this._getScrollExtension();
-				var bClientBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding")
-									 || TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding");
 
 				this._updateFixedBottomRows();
 				oScrollExtension.updateVerticalScrollbarVisibility();
 				oScrollExtension.updateVerticalScrollHeight();
 
-				if (!oBinding || bClientBinding) {
-					// A client binding does not fire dataReceived events. Therefore we need to update the no data area here.
+				if (!oBinding || !TableUtils.hasPendingRequests(this)) {
+					// A client binding -or- an $expand filled list binding does not fire dataReceived events. Therefore we need to update the no data area here.
 					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the cached binding
 					// length changes. In this case the no data area needs to be updated.
 					this._updateNoData();
