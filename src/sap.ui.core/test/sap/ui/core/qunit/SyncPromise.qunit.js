@@ -339,6 +339,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	/*eslint-disable no-sparse-arrays */
 	QUnit.test("SyncPromise.all: sparse array", function (assert) {
 		// Note: aValues[1] is not part of the array's keys and thus not visited by Array#forEach,
 		// but aValues.length === 3
@@ -346,8 +347,10 @@ sap.ui.require([
 
 		assertFulfilled(assert, SyncPromise.all(aValues), ["4",, "2"]);
 	});
+	/*eslint-enable */
 
 	//*********************************************************************************************
+	/*eslint-disable no-sparse-arrays */
 	QUnit.test("SyncPromise.all: take advantage of runs of the same thenable", function (assert) {
 		var oPromise = Promise.resolve(42),
 			aValues = [oPromise, oPromise, 23, oPromise, oPromise,, oPromise, Promise.resolve("42"),
@@ -360,6 +363,7 @@ sap.ui.require([
 			assert.deepEqual(aAnswers, [42, 42, 23, 42, 42,, 42, "42", 42]);
 		});
 	});
+	/*eslint-enable */
 
 	//*********************************************************************************************
 	QUnit.test("SyncPromise.all: missing array", function (assert) {
@@ -856,6 +860,20 @@ sap.ui.require([
 				resolve(SyncPromise.reject(4));
 			}).catch(function () {})
 		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("unwrap", function (assert) {
+		var oError = new Error(),
+			oPromise = Promise.resolve(42);
+
+		assert.strictEqual(SyncPromise.resolve(42).unwrap(), 42);
+		assert.strictEqual(SyncPromise.resolve(oPromise).unwrap(), oPromise);
+		assert.throws(function () {
+			SyncPromise.reject(oError).unwrap();
+		}, function (oError0) {
+			return oError0 === oError;
+		});
 	});
 });
 //TODO Promise.race

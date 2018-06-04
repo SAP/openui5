@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+	template:require="sap.ui.core.sample.odata.v4.ListBindingTemplate.Helper"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<template:alias name=".format"
+			value="sap.ui.core.sample.odata.v4.ListBindingTemplate.Helper.format">
+		<template:if test="{= ${objectWithKind>$kind} === 'EntityContainer' }">
+			<template:then>
+				<Text text="{objectWithKind>@sapui.name}/$kind: ~EntityContainer~"/>
+			</template:then>
+			<template:else>
+				<Text text="{objectWithKind>@sapui.name}/$kind: {path : 'objectWithKind>$kind', formatter : '.format'}"/>
+			</template:else>
+		</template:if>
+	</template:alias>
+</core:FragmentDefinition>

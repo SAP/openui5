@@ -7,11 +7,12 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/base/BindingParser',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/SyncPromise',
 	'sap/ui/core/XMLTemplateProcessor',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/CompositeBinding',
 	'sap/ui/model/Context'
-], function (jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, BindingMode,
+], function (jQuery, BindingParser, ManagedObject, SyncPromise, XMLTemplateProcessor, BindingMode,
 		CompositeBinding, Context) {
 	"use strict";
 
@@ -23,12 +24,13 @@ sap.ui.define([
 		sPerformanceInsertFragment = sXMLPreprocessor + "/insertFragment",
 		sPerformanceGetResolvedBinding = sXMLPreprocessor + "/getResolvedBinding",
 		sPerformanceProcess = sXMLPreprocessor + ".process",
+		oSyncPromiseResolved = SyncPromise.resolve(),
 		fnToString = Object.prototype.toString,
 		mVisitors = {}, // maps "<namespace URI> <local name>" to visitor function
 		/**
-		 * <template:with> control holding the models and the bindings. Also used as substitute
-		 * for any control during template processing in order to resolve property bindings.
-		 * Supports nesting of template instructions.
+		 * <template:with> control holding the models and the bindings. Also used as substitute for
+		 * any control during template processing in order to resolve property bindings. Supports
+		 * nesting of template instructions.
 		 */
 		With = ManagedObject.extend("sap.ui.core.util._with", {
 			metadata : {
@@ -41,8 +43,8 @@ sap.ui.define([
 			}
 		}),
 		/**
-		 * <template:repeat> control extending the "with" control by an aggregation which is
-		 * used to get the list binding.
+		 * <template:repeat> control extending the "with" control by an aggregation which is used to
+		 * get the list binding.
 		 */
 		Repeat = With.extend("sap.ui.core.util._repeat", {
 			metadata : {
@@ -52,14 +54,14 @@ sap.ui.define([
 			},
 
 			updateList : function () {
-				// Override sap.ui.base.ManagedObject#updateAggregation for "list" and do
-				// nothing to avoid that any child objects are created
+				// Override sap.ui.base.ManagedObject#updateAggregation for "list" and do nothing to
+				// avoid that any child objects are created
 			}
 		});
 
 	/**
-	 * Creates the context interface for a call to the given control's formatter of the
-	 * binding part with given index.
+	 * Creates the context interface for a call to the given control's formatter of the binding part
+	 * with given index.
 	 *
 	 * @param {sap.ui.core.util._with} oWithControl
 	 *   the "with" control
@@ -119,29 +121,27 @@ sap.ui.define([
 		}
 
 		/**
-		 * Context interface provided by XML template processing as an additional first
-		 * argument to any formatter function which opts in to this mechanism. Candidates for
-		 * such formatter functions are all those used in binding expressions which are
-		 * evaluated during XML template processing, including those used inside template
-		 * instructions like <code>&lt;template:if></code>. The formatter function needs to be
-		 * marked with a property <code>requiresIContext = true</code> to express that it
-		 * requires this extended signature (compared to ordinary formatter functions). The
-		 * usual arguments are provided after the first one (currently: the raw value from the
-		 * model).
+		 * Context interface provided by XML template processing as an additional first argument to
+		 * any formatter function which opts in to this mechanism. Candidates for such formatter
+		 * functions are all those used in binding expressions which are evaluated during XML
+		 * template processing, including those used inside template instructions like
+		 * <code>&lt;template:if></code>. The formatter function needs to be marked with a property
+		 * <code>requiresIContext = true</code> to express that it requires this extended signature
+		 * (compared to ordinary formatter functions). The usual arguments are provided after the
+		 * first one (currently: the raw value from the model).
 		 *
-		 * This interface provides callback functions to access the model and path  which are
-		 * needed to process OData V4 annotations. It initially offers a subset of methods
-		 * from {@link sap.ui.model.Context} so that formatters might also be called with a
-		 * context object for convenience, e.g. outside of XML template processing (see below
-		 * for an exception to this rule).
+		 * This interface provides callback functions to access the model and path  which are needed
+		 * to process OData V4 annotations. It initially offers a subset of methods from
+		 * {@link sap.ui.model.Context} so that formatters might also be called with a context
+		 * object for convenience, e.g. outside of XML template processing (see below for an
+		 * exception to this rule).
 		 *
-		 * <b>Example:</b> Suppose you have a formatter function called "foo" like below
-		 * and it is used within an XML template like
+		 * <b>Example:</b> Suppose you have a formatter function called "foo" like below and it is
+		 * used within an XML template like
 		 * <code>&lt;template:if test="{path: '...', formatter: 'foo'}"></code>.
-		 * In this case <code>foo</code> is called with arguments
-		 * <code>oInterface, vRawValue</code> such that
-		 * <code>oInterface.getModel().getObject(oInterface.getPath()) === vRawValue</code>
-		 * holds.
+		 * In this case <code>foo</code> is called with arguments <code>oInterface, vRawValue</code>
+		 * such that
+		 * <code>oInterface.getModel().getObject(oInterface.getPath()) === vRawValue</code> holds.
 		 * <pre>
 		 * window.foo = function (oInterface, vRawValue) {
 		 *     //TODO ...
@@ -149,37 +149,35 @@ sap.ui.define([
 		 * window.foo.requiresIContext = true;
 		 * </pre>
 		 *
-		 * <b>Composite Binding Examples:</b> Suppose you have the same formatter function and
-		 * it is used in a composite binding like <code>&lt;Text text="{path: 'Label',
-		 * formatter: 'foo'}: {path: 'Value', formatter: 'foo'}"/></code>.
-		 * In this case <code>oInterface.getPath()</code> refers to ".../Label" in the 1st call
-		 * and ".../Value" in the 2nd call. This means each formatter call knows which part of
-		 * the composite binding it belongs to and behaves just as if it was an ordinary
-		 * binding.
+		 * <b>Composite Binding Examples:</b> Suppose you have the same formatter function and it is
+		 * used in a composite binding like <code>&lt;Text text="{path: 'Label', formatter: 'foo'}:
+		 * {path: 'Value', formatter: 'foo'}"/></code>.
+		 * In this case <code>oInterface.getPath()</code> refers to ".../Label" in the 1st call and
+		 * ".../Value" in the 2nd call. This means each formatter call knows which part of the
+		 * composite binding it belongs to and behaves just as if it was an ordinary binding.
 		 *
-		 * Suppose your formatter is not used within a part of the composite binding, but at
-		 * the root of the composite binding in order to aggregate all parts like <code>
-		 * &lt;Text text="{parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'}"/>
-		 * </code>. In this case <code>oInterface.getPath(0)</code> refers to ".../Label" and
-		 * <code>oInterface.getPath(1)</code> refers to ".../Value". This means, the root
-		 * formatter can access the ith part of the composite binding at will (since 1.31.0);
-		 * see also {@link #.getInterface getInterface}.
+		 * Suppose your formatter is not used within a part of the composite binding, but at the
+		 * root of the composite binding in order to aggregate all parts like <code>
+		 * &lt;Text text="{parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'}"/></code>.
+		 * In this case <code>oInterface.getPath(0)</code> refers to ".../Label" and
+		 * <code>oInterface.getPath(1)</code> refers to ".../Value". This means, the root formatter
+		 * can access the ith part of the composite binding at will (since 1.31.0); see also
+		 * {@link #.getInterface getInterface}.
 		 * The function <code>foo</code> is called with arguments such that <code>
 		 * oInterface.getModel(i).getObject(oInterface.getPath(i)) === arguments[i + 1]</code>
 		 * holds.
 		 * This use is not supported within an expression binding, that is, <code>&lt;Text
 		 * text="{= ${parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'} }"/></code>
-		 * does not work as expected because the property <code>requiresIContext = true</code>
-		 * is ignored.
+		 * does not work as expected because the property <code>requiresIContext = true</code> is
+		 * ignored.
 		 *
-		 * To distinguish those two use cases, just check whether
-		 * <code>oInterface.getModel() === undefined</code>, in which case the formatter is
-		 * called on root level of a composite binding. To find out the number of parts, probe
-		 * for the smallest non-negative integer where
-		 * <code>oInterface.getModel(i) === undefined</code>.
+		 * To distinguish those two use cases, just check whether <code>oInterface.getModel() ===
+		 * undefined</code>, in which case the formatter is called on root level of a composite
+		 * binding. To find out the number of parts, probe for the smallest non-negative integer
+		 * where <code>oInterface.getModel(i) === undefined</code>.
 		 * This additional functionality is, of course, not available from
-		 * {@link sap.ui.model.Context}, i.e. such formatters MUST be called with an instance
-		 * of this context interface.
+		 * {@link sap.ui.model.Context}, i.e. such formatters MUST be called with an instance of
+		 * this context interface.
 		 *
 		 * @interface
 		 * @name sap.ui.core.util.XMLPreprocessor.IContext
@@ -188,9 +186,9 @@ sap.ui.define([
 		 */
 		return /** @lends sap.ui.core.util.XMLPreprocessor.IContext */ {
 			/**
-			 * Returns a context interface for the indicated part in case of the root formatter
-			 * of a composite binding. The new interface provides access to the original
-			 * settings, but only to the model and path of the indicated part:
+			 * Returns a context interface for the indicated part in case of the root formatter of a
+			 * composite binding. The new interface provides access to the original settings, but
+			 * only to the model and path of the indicated part:
 			 * <pre>
 			 * this.getInterface(i).getSetting(sName) === this.getSetting(sName);
 			 * this.getInterface(i).getModel() === this.getModel(i);
@@ -202,8 +200,8 @@ sap.ui.define([
 			 * this.getInterface(i, "foo/bar").getPath() === this.getPath(i) + "/foo/bar";
 			 * this.getInterface(i, "/absolute/path").getPath() === "/absolute/path";
 			 * </pre>
-			 * A formatter which is not at the root level of a composite binding can also
-			 * provide a path, but must not provide an index:
+			 * A formatter which is not at the root level of a composite binding can also provide a
+			 * path, but must not provide an index:
 			 * <pre>
 			 * this.getInterface("foo/bar").getPath() === this.getPath() + "/foo/bar";
 			 * this.getInterface("/absolute/path").getPath() === "/absolute/path";
@@ -216,11 +214,12 @@ sap.ui.define([
 			 *   a path, interpreted relative to <code>this.getPath(iPart)</code>
 			 * @returns {sap.ui.core.util.XMLPreprocessor.IContext}
 			 *   the context interface related to the indicated part
-			 * @throws {Error} in case an index is given but the current interface does not
-			 *   belong to the root formatter of a composite binding, or in case the given
-			 *   index is invalid (e.g. missing or out of range), or in case a path is missing
-			 *   because no index is given, or in case a path is given but the model cannot not
-			 *   create a binding context synchronously
+			 * @throws {Error}
+			 *   In case an index is given but the current interface does not belong to the root
+			 *   formatter of a composite binding, or in case the given index is invalid (e.g.
+			 *   missing or out of range), or in case a path is missing because no index is given,
+			 *   or in case a path is given but the model cannot not create a binding context
+			 *   synchronously
 			 * @public
 			 * @since 1.31.0
 			 */
@@ -286,8 +285,7 @@ sap.ui.define([
 			 * Returns the absolute path related to the current formatter call.
 			 *
 			 * @param {number} [iPart]
-			 *   index of part in case of the root formatter of a composite binding
-			 *   (since 1.31.0)
+			 *   index of part in case of the root formatter of a composite binding (since 1.31.0)
 			 * @returns {string}
 			 *   the absolute path related to the current formatter call, or (since 1.31.0)
 			 *   <code>undefined</code> in case of a root formatter if no <code>iPart</code> is
@@ -300,8 +298,8 @@ sap.ui.define([
 			},
 
 			/**
-			 * Returns the value of the setting with the given name which was provided to the
-			 * XML template processing.
+			 * Returns the value of the setting with the given name which was provided to the XML
+			 * template processing.
 			 *
 			 * @param {string} sName
 			 *   the name of the setting
@@ -332,8 +330,8 @@ sap.ui.define([
 	 * @param {object} oScope
 	 *   map of currently known aliases
 	 * @returns {any}
-	 *   the property value or <code>oUNBOUND</code> in case the binding is not ready (because
-	 *   it refers to a model which is not available)
+	 *   the property value or <code>oUNBOUND</code> in case the binding is not ready (because it
+	 *   refers to a model which is not available)
 	 * @throws {Error}
 	 */
 	function getAny(oWithControl, oBindingInfo, mSettings, oScope) {
@@ -352,7 +350,7 @@ sap.ui.define([
 			oInfo.mode = BindingMode.OneTime;
 			if (fnFormatter && fnFormatter.requiresIContext === true) {
 				oInfo.formatter
-				= fnFormatter.bind(null, createContextInterface(oWithControl, mSettings, i));
+					= fnFormatter.bind(null, createContextInterface(oWithControl, mSettings, i));
 			}
 			oInfo.parameters = oInfo.parameters || {};
 			oInfo.parameters.scope = oScope;
@@ -401,6 +399,36 @@ sap.ui.define([
 	}
 
 	/**
+	 * Visits the given elements one-by-one, calls the given callback for each of them and stops
+	 * and waits for each thenable returned by the callback before going on to the next element.
+	 *
+	 * @param {any[]} aElements
+	 *   Whatever elements we want to visit
+	 * @param {function} fnCallback
+	 *   A function to be called with a single element and its index and the array (like
+	 *   {@link Array#forEach} does it), returning a thenable.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A sync promise which resolves with <code>undefined</code> as soon as the last callback's
+	 *   thenable has resolved, or is rejected with a corresponding error if any callback returns
+	 *   a rejected thenable or throws an error
+	 * @throws {Error}
+	 *   If the first callback throws
+	 */
+	function stopAndGo(aElements, fnCallback) {
+		var i = -1;
+
+		function next() {
+			i += 1;
+			if (i < aElements.length) {
+				return fnCallback(aElements[i], i, aElements).then(next);
+			}
+			return oSyncPromiseResolved;
+		}
+
+		return next();
+	}
+
+	/**
 	 * Serializes the element with its attributes.
 	 * <p>
 	 * BEWARE: makes no attempt at encoding, DO NOT use in a security critical manner!
@@ -423,9 +451,9 @@ sap.ui.define([
 
 	/**
 	 * Wrapper for the "visitNode" function which is sometimes returned by
-	 * {@link sap.ui.core.util.XMLPreprocessor.plugIn}. Delegates to the appropriate
-	 * "visitNode" function from the callback interface (which is not yet available at plug-in
-	 * time) and makes sure no extra arguments are passed.
+	 * {@link sap.ui.core.util.XMLPreprocessor.plugIn}. Delegates to the appropriate "visitNode"
+	 * function from the callback interface (which is not yet available at plug-in time) and makes
+	 * sure no extra arguments are passed.
 	 *
 	 * @param {Element} oElement
 	 *   The XML DOM Element
@@ -452,21 +480,21 @@ sap.ui.define([
 		 *
 		 * @param {function} [fnVisitor]
 		 *   Visitor function, will be called with the matching XML DOM element and a
-		 *   {@link sap.ui.core.util.XMLPreprocessor.ICallback callback interface} which uses
-		 *   a map of currently known variables; must return <code>undefined</code>.
+		 *   {@link sap.ui.core.util.XMLPreprocessor.ICallback callback interface} which uses a map
+		 *   of currently known variables; must return <code>undefined</code>.
 		 *   Must be either a function or <code>null</code>, nothing else.
 		 * @param {string} sNamespace
 		 *   The expected namespace URI; must not contain spaces;
-		 *   "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" and "sap.ui.core"
-		 *   are reserved
+		 *   "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" and "sap.ui.core" are
+		 *   reserved
 		 * @param {string} [sLocalName]
 		 *   The expected local name; if it is missing, the local name is ignored for a match.
 		 * @returns {function}
-		 *   The visitor function which previously matched elements with the given namespace
-		 *   and local name, or a function which calls "visitNode" but never <code>null</code>
-		 *   so that you can safely delegate to it.
-		 *   In general, you cannot restore the previous state by calling <code>plugIn</code>
-		 *   again with this function.
+		 *   The visitor function which previously matched elements with the given namespace and
+		 *   local name, or a function which calls "visitNode" but never <code>null</code> so that
+		 *   you can safely delegate to it.
+		 *   In general, you cannot restore the previous state by calling <code>plugIn</code> again
+		 *   with this function.
 		 * @throws {Error}
 		 *   If visitor or namespace is invalid
 		 *
@@ -506,25 +534,30 @@ sap.ui.define([
 		 * @param {object} oViewInfo
 		 *   info object of the calling instance
 		 * @param {string} oViewInfo.caller
-		 *   identifies the caller of this preprocessor; used as a prefix for log or
-		 *   exception messages
+		 *   identifies the caller of this preprocessor; used as a prefix for log or exception
+		 *   messages
 		 * @param {string} oViewInfo.componentId
 		 *   ID of the owning component (since 1.31; needed for extension point support)
 		 * @param {string} oViewInfo.name
 		 *   the view name (since 1.31; needed for extension point support)
+		 * @param {boolean} [oViewInfo.sync=false]
+		 *   whether the view is synchronous (since 1.57; needed for asynchronous XML templating)
 		 * @param {object} [mSettings={}]
 		 *   map/JSON-object with initial property values, etc.
 		 * @param {object} mSettings.bindingContexts
 		 *   binding contexts relevant for template pre-processing
 		 * @param {object} mSettings.models
 		 *   models relevant for template pre-processing
+		 * @param {boolean} mSettings.X-async
+		 *   eXperimental async switch, to be removed soon
 		 * @returns {Element}
 		 *   <code>oRootElement</code>
 		 *
 		 * @private
 		 */
 		process : function (oRootElement, oViewInfo, mSettings) {
-			var sCaller = oViewInfo.caller,
+			var bAsync,
+				sCaller = oViewInfo.caller,
 				bDebug
 					= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sXMLPreprocessor),
 				bCallerLoggedForWarnings = bDebug, // debug output already contains caller
@@ -538,9 +571,9 @@ sap.ui.define([
 					= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sXMLPreprocessor);
 
 			/**
-			 * Returns a callback interface for visitor functions which provides access to
-			 * private {@link sap.ui.core.util.XMLPreprocessor} functionality using the given
-			 * "with" control.
+			 * Returns a callback interface for visitor functions which provides access to private
+			 * {@link sap.ui.core.util.XMLPreprocessor} functionality using the given "with"
+			 * control.
 			 *
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   The "with" control
@@ -549,10 +582,10 @@ sap.ui.define([
 			 */
 			function createCallbackInterface(oWithControl) {
 				/**
-				 * Callback interface for visitor functions which provides access to
-				 * private {@link sap.ui.core.util.XMLPreprocessor} functionality using a map
-				 * of currently known variables. Initially, these are the variables known to the
-				 * XML pre-processor when it reaches the visitor's matching element (see
+				 * Callback interface for visitor functions which provides access to private
+				 * {@link sap.ui.core.util.XMLPreprocessor} functionality using a map of currently
+				 * known variables. Initially, these are the variables known to the XML
+				 * pre-processor when it reaches the visitor's matching element (see
 				 * {@link sap.ui.core.util.XMLPreprocessor.plugIn}). They can be overridden or
 				 * replaced via {@link sap.ui.core.util.XMLPreprocessor.ICallback.with}.
 				 *
@@ -567,15 +600,15 @@ sap.ui.define([
 					 * path. Uses the map of currently known variables.
 					 *
 					 * @param {string} [sPath=""]
-					 *   A simple binding path which may include a model name ("a variable"),
-					 *   for example "var>some/relative/path", but not a binding ("{...}")
+					 *   A simple binding path which may include a model name ("a variable"), for
+					 *   example "var>some/relative/path", but not a binding ("{...}")
 					 * @returns {sap.ui.model.Context}
-					 *   The corresponding context which holds the model and the resolved,
-					 *   absolute path
+					 *   The corresponding context which holds the model and the resolved, absolute
+					 *   path
 					 * @throws {Error}
-					 *   If a binding is given, if the path refers to an unknown model, or if
-					 *   the path cannot be resolved (typically because a relative path was
-					 *   given for a model without a binding context)
+					 *   If a binding is given, if the path refers to an unknown model, or if the
+					 *   path cannot be resolved (typically because a relative path was given for a
+					 *   model without a binding context)
 					 */
 					getContext : function (sPath) {
 						var oBindingInfo,
@@ -589,8 +622,7 @@ sap.ui.define([
 						oBindingInfo = BindingParser.simpleParser("{" + sPath + "}");
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
-							throw new Error("Unknown model '" + oBindingInfo.model + "': "
-								+ sPath);
+							throw new Error("Unknown model '" + oBindingInfo.model + "': " + sPath);
 						}
 						sResolvedPath = oModel.resolve(oBindingInfo.path,
 							oWithControl.getBindingContext(oBindingInfo.model));
@@ -601,8 +633,8 @@ sap.ui.define([
 					},
 
 					/**
-					 * Interprets the given XML DOM attribute value as a binding and returns
-					 * the resulting value. Takes care of unescaping and thus also of constant
+					 * Interprets the given XML DOM attribute value as a binding and returns the
+					 * resulting value. Takes care of unescaping and thus also of constant
 					 * expressions; warnings are logged for (formatter) functions which are not
 					 * found. Uses the map of currently known variables.
 					 *
@@ -623,8 +655,7 @@ sap.ui.define([
 					 * @since 1.39.0
 					 */
 					getResult : function (sValue, oElement) {
-						var vResult
-							= getResolvedBinding(sValue, oElement, oWithControl, true);
+						var vResult = getResolvedBinding(sValue, oElement, oWithControl, true);
 
 						if (vResult === oUNBOUND) {
 							throw new Error("Binding not ready: " + sValue);
@@ -651,8 +682,8 @@ sap.ui.define([
 					 * Returns the view info object for XML template processing.
 					 *
 					 * @returns {object}
-					 *   info object of the XML preprocessor's calling instance; might contain
-					 *   the string properties "caller", "componentId", "name" and maybe others
+					 *   info object of the XML preprocessor's calling instance; might contain the
+					 *   string properties "caller", "componentId", "name" and maybe others
 					 *
 					 * @function
 					 * @public
@@ -663,10 +694,10 @@ sap.ui.define([
 					},
 
 					/**
-					 * Inserts the fragment with the given name in place of the given element.
-					 * Loads the fragment, takes care of caching (for the current pre-processor
-					 * run) and visits the fragment's content once it has been imported into the
-					 * element's owner document and put into place.
+					 * Inserts the fragment with the given name in place of the given element. Loads
+					 * the fragment, takes care of caching (for the current pre-processor run) and
+					 * visits the fragment's content once it has been imported into the element's
+					 * owner document and put into place.
 					 *
 					 * @param {string} sFragmentName
 					 *   The fragment's resolved name
@@ -704,9 +735,9 @@ sap.ui.define([
 					},
 
 					/**
-					 * Visits all attributes of the given element. If an attribute value
-					 * represents a binding expression that can be resolved, it is replaced with
-					 * the resulting value.
+					 * Visits all attributes of the given element. If an attribute value represents
+					 * a binding expression that can be resolved, it is replaced with the resulting
+					 * value.
 					 *
 					 * @param {Element} oElement
 					 *   The XML DOM element
@@ -738,9 +769,8 @@ sap.ui.define([
 					/**
 					 * Visits the given node and either processes a template instruction, calls
 					 * a visitor, or simply calls both {@link
-					 * sap.ui.core.util.XMLPreprocessor.ICallback.visitAttributes
-					 * visitAttributes} and {@link
-					 * sap.ui.core.util.XMLPreprocessor.ICallback.visitChildNodes
+					 * sap.ui.core.util.XMLPreprocessor.ICallback.visitAttributes visitAttributes}
+					 * and {@link sap.ui.core.util.XMLPreprocessor.ICallback.visitChildNodes
 					 * visitChildNodes}.
 					 *
 					 * @param {Node} oNode
@@ -755,20 +785,19 @@ sap.ui.define([
 					},
 
 					/**
-					 * Returns a callback interface instance for the given map of variables
-					 * which override currently known variables of the same name in
-					 * <code>this</code> parent interface or replace them altogether. Each
-					 * variable name becomes a named model with a corresponding object binding
-					 * and can be used inside the XML template in the usual way, that is, with a
-					 * binding expression like <code>"{var>some/relative/path}"</code> (see
-					 * example).
+					 * Returns a callback interface instance for the given map of variables which
+					 * override currently known variables of the same name in <code>this</code>
+					 * parent interface or replace them altogether. Each variable name becomes a
+					 * named model with a corresponding object binding and can be used inside the
+					 * XML template in the usual way, that is, with a binding expression like
+					 * <code>"{var>some/relative/path}"</code> (see example).
 					 *
-					 * <b>Example:</b> Suppose the XML pre-processor knows a variable named
-					 * "old" and a visitor defines a new variable relative to it as follows.
-					 * Then {@link sap.ui.core.util.XMLPreprocessor.ICallback.getResult
-					 * getResult} for a binding which refers to the new variable using a
-					 * relative path ("{new>relative}") has the same result as for a binding to
-					 * the old variable with a compound path ("{old>prefix/relative}").
+					 * <b>Example:</b> Suppose the XML pre-processor knows a variable named "old"
+					 * and a visitor defines a new variable relative to it as follows.
+					 * Then {@link sap.ui.core.util.XMLPreprocessor.ICallback.getResult getResult}
+					 * for a binding which refers to the new variable using a relative path
+					 * ("{new>relative}") has the same result as for a binding to the old variable
+					 * with a compound path ("{old>prefix/relative}").
 					 *
 					 * <pre>
 					 * oInterface.with({"new" : oInterface.getContext("old>prefix")})
@@ -776,15 +805,15 @@ sap.ui.define([
 					 *     === oInterface.getResult("{old>prefix/relative}"); // true
 					 * </pre>
 					 *
-					 * BEWARE: Previous callback interface instances derived from the same
-					 * parent (<code>this</code>) become invalid (that is, they forget about
-					 * inherited variables) once a new instance is derived.
+					 * BEWARE: Previous callback interface instances derived from the same parent
+					 * (<code>this</code>) become invalid (that is, they forget about inherited
+					 * variables) once a new instance is derived.
 					 *
 					 * @param {object} [mVariables={}]
 					 *   Map from variable name (string) to value ({@link sap.ui.model.Context})
 					 * @param {boolean} [bReplace=false]
-					 *   Whether only the given variables are known in the new callback
-					 *   interface instance, no inherited ones
+					 *   Whether only the given variables are known in the new callback interface
+					 *   instance, no inherited ones
 					 * @returns {sap.ui.core.util.XMLPreprocessor.ICallback}
 					 *   A callback interface instance
 					 *
@@ -821,8 +850,8 @@ sap.ui.define([
 			}
 
 			/*
-			 * Outputs a debug message with the current nesting level; takes care not to
-			 * construct the message or serialize XML in vain.
+			 * Outputs a debug message with the current nesting level; takes care not to construct
+			 * the message or serialize XML in vain.
 			 *
 			 * @param {Element} [oElement]
 			 *   any XML DOM element which is serialized to the details
@@ -832,35 +861,35 @@ sap.ui.define([
 			 */
 			function debug(oElement) {
 				if (bDebug) {
-					jQuery.sap.log.debug(getNestingLevel()
-						+ Array.prototype.slice.call(arguments, 1).join(" "),
+					jQuery.sap.log.debug(
+						getNestingLevel() + Array.prototype.slice.call(arguments, 1).join(" "),
 						oElement && serializeSingleElement(oElement), sXMLPreprocessor);
 				}
 			}
 
 			/**
-			 * Outputs a debug message "Finished" with the given nesting level; takes care not
-			 * to serialize XML in vain.
+			 * Outputs a debug message "Finished" with the given nesting level; takes care not to
+			 * serialize XML in vain.
 			 *
 			 * @param {Element} oElement
 			 *   any XML DOM element which is serialized to the details
 			 */
 			function debugFinished(oElement) {
 				if (bDebug) {
-					jQuery.sap.log.debug(getNestingLevel()
-						+ "Finished", "</" + oElement.nodeName + ">", sXMLPreprocessor);
+					jQuery.sap.log.debug(getNestingLevel() + "Finished",
+						"</" + oElement.nodeName + ">", sXMLPreprocessor);
 				}
 			}
 
 			/**
-			 * Throws an error with the given message, prefixing it with the caller
-			 * identification (separated by a colon) and appending the serialization of the
-			 * given XML DOM element. Additionally logs the message and serialization as error
-			 * with caller identification as details.
+			 * Throws an error with the given message, prefixing it with the caller identification
+			 * (separated by a colon) and appending the serialization of the given XML DOM element.
+			 * Additionally logs the message and serialization as error with caller identification
+			 * as details.
 			 *
 			 * @param {string} sMessage
-			 *   an error message which must end with a space (and take into account that
-			 *   the serialized XML is appended)
+			 *   an error message which must end with a space (and take into account that the
+			 *   serialized XML is appended)
 			 * @param {Element} oElement
 			 *   the XML DOM element
 			 */
@@ -900,8 +929,7 @@ sap.ui.define([
 				for (i = 1, n = aChildren.length; i < n; i += 1) {
 					oChild = aChildren[i];
 					if (bFoundElse) {
-						error("Expected </" + oIfElement.prefix + ":if>, but instead saw ",
-							oChild);
+						error("Expected </" + oIfElement.prefix + ":if>, but instead saw ", oChild);
 					}
 					if (isTemplateElement(oChild, "else")) {
 						bFoundElse = true;
@@ -914,8 +942,7 @@ sap.ui.define([
 			}
 
 			/**
-			 * Returns the current nesting level as a string in square brackets with proper
-			 * spacing.
+			 * Returns the current nesting level as a string in square brackets with proper spacing.
 			 *
 			 * @returns {string}
 			 *   "[<level>] "
@@ -925,9 +952,9 @@ sap.ui.define([
 			}
 
 			/**
-			 * Returns a JavaScript object which is identified by a dot-separated sequence of
-			 * names. If the given compound name starts with a dot, it is interpreted relative
-			 * to <code>oScope</code>.
+			 * Returns a JavaScript object which is identified by a dot-separated sequence of names.
+			 * If the given compound name starts with a dot, it is interpreted relative to
+			 * <code>oScope</code>.
 			 *
 			 * @param {string} sName
 			 *   a dot-separated sequence of names that identify the required object
@@ -942,8 +969,8 @@ sap.ui.define([
 			}
 
 			/**
-			 * Interprets the given value as a binding and returns the resulting value; takes
-			 * care of unescaping and thus also of constant expressions.
+			 * Interprets the given value as a binding and returns the resulting value; takes care
+			 * of unescaping and thus also of constant expressions.
 			 *
 			 * @param {string} sValue
 			 *   an XML DOM attribute value
@@ -952,20 +979,20 @@ sap.ui.define([
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the "with" control
 			 * @param {boolean} bMandatory
-			 *   whether a binding is actually required (e.g. by a <code>template:if</code>)
-			 *   and not optional (e.g. for {@link resolveAttributeBinding}); if so, the
-			 *   binding parser unescapes the given value (which is a prerequisite for
-			 *   constant expressions) and warnings are logged for functions not found
+			 *   whether a binding is actually required (e.g. by a <code>template:if</code>) and not
+			 *   optional (e.g. for {@link resolveAttributeBinding}); if so, the binding parser
+			 *   unescapes the given value (which is a prerequisite for constant expressions) and
+			 *   warnings are logged for functions not found
 			 * @param {function} [fnCallIfConstant]
-			 *   optional function to be called in case the return value is obviously a
-			 *   constant, not influenced by any binding
+			 *   optional function to be called in case the return value is obviously a constant,
+			 *   not influenced by any binding
 			 * @returns {any}
 			 *   the resulting value or <code>oUNBOUND</code> in case the binding is not ready
 			 *   (because it refers to a model which is not available)
 			 * @throws {Error}
 			 */
 			function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
-				fnCallIfConstant) {
+					fnCallIfConstant) {
 				var vBindingInfo;
 
 				jQuery.sap.measure.average(sPerformanceGetResolvedBinding, "",
@@ -996,10 +1023,11 @@ sap.ui.define([
 			}
 
 			/**
-			 * Inserts the fragment with the given name in place of the given element. Loads
-			 * the fragment, takes care of caching (for the current pre-processor run) and
-			 * visits the fragment's content once it has been imported into the element's
-			 * owner document and put into place.
+			 * Inserts the fragment with the given name in place of the given element. Loads the
+			 * fragment, takes care of caching (for the current pre-processor run) and visits the
+			 * fragment's content once it has been imported into the element's owner document and
+			 * put into place. Loading of fragments is asynchronous if the template view is
+			 * asynchronous.
 			 *
 			 * @param {string} sFragmentName
 			 *   the fragment's resolved name
@@ -1007,17 +1035,24 @@ sap.ui.define([
 			 *   the XML DOM element, e.g. <sap.ui.core:Fragment> or <core:ExtensionPoint>
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the parent's "with" control
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as the fragment
+			 *   has been inserted, or is rejected with a corresponding error if loading or visiting
+			 *   fails.
 			 * @throws {Error}
 			 *   If a cycle is detected (same <code>sFragmentName</code> and
 			 *   <code>oWithControl</code>)
 			 */
 			function insertFragment(sFragmentName, oElement, oWithControl) {
-				var oFragmentElement,
+				var oFragmentPromise,
+					fnLoad = bAsync
+						? XMLTemplateProcessor.loadTemplatePromise
+						: XMLTemplateProcessor.loadTemplate,
 					sPreviousName = sCurrentName;
 
-				// Note: It is perfectly valid to include the very same fragment again, as
-				// long as the context is changed. So we check for cycles at the current
-				// "with" control. A context change will create a new one.
+				// Note: It is perfectly valid to include the very same fragment again, as long as
+				// the context is changed. So we check for cycles at the current "with" control.
+				// A context change will create a new one.
 				oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
 				if (oWithControl.$mFragmentContexts[sFragmentName]) {
 					error("Cyclic reference to fragment '" + sFragmentName + "' ", oElement);
@@ -1028,50 +1063,53 @@ sap.ui.define([
 				oWithControl.$mFragmentContexts[sFragmentName] = true;
 				sCurrentName = sFragmentName;
 
-				jQuery.sap.measure.average(sPerformanceInsertFragment, "",
-					aPerformanceCategories);
-				// take fragment from cache and import it
-				oFragmentElement = mFragmentCache[sFragmentName];
-				if (!oFragmentElement) {
-					oFragmentElement
-						= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
-					mFragmentCache[sFragmentName] = oFragmentElement;
+				jQuery.sap.measure.average(sPerformanceInsertFragment, "", aPerformanceCategories);
+				// take fragment promise from cache, then import fragment
+				oFragmentPromise = mFragmentCache[sFragmentName];
+				if (!oFragmentPromise) {
+					mFragmentCache[sFragmentName] = oFragmentPromise
+						= SyncPromise.resolve(fnLoad(sFragmentName, "fragment"));
 				}
-				oFragmentElement = oElement.ownerDocument.importNode(oFragmentElement, true);
-				jQuery.sap.measure.end(sPerformanceInsertFragment);
+				return oFragmentPromise.then(function (oFragmentElement) {
+					oFragmentElement = oElement.ownerDocument.importNode(oFragmentElement, true);
+					jQuery.sap.measure.end(sPerformanceInsertFragment);
 
-				requireFor(oFragmentElement);
-				if (oFragmentElement.namespaceURI === "sap.ui.core"
+					requireFor(oFragmentElement);
+					if (oFragmentElement.namespaceURI === "sap.ui.core"
 						&& oFragmentElement.localName === "FragmentDefinition") {
-					liftChildNodes(oFragmentElement, oWithControl, oElement);
-				} else {
+						return liftChildNodes(oFragmentElement, oWithControl, oElement);
+					}
 					oElement.parentNode.insertBefore(oFragmentElement, oElement);
-					visitNode(oFragmentElement, oWithControl);
-				}
-				oElement.parentNode.removeChild(oElement);
-
-				sCurrentName = sPreviousName;
-				oWithControl.$mFragmentContexts[sFragmentName] = false;
-				debugFinished(oElement);
-				iNestingLevel--;
+					return visitNode(oFragmentElement, oWithControl);
+				}).then(function () {
+					oElement.parentNode.removeChild(oElement);
+					sCurrentName = sPreviousName;
+					oWithControl.$mFragmentContexts[sFragmentName] = false;
+					debugFinished(oElement);
+					iNestingLevel--;
+				});
 			}
 
 			/**
-			 * Visits the child nodes of the given parent element. Lifts them up by inserting
-			 * them before the target element.
+			 * Visits the child nodes of the given parent element. Lifts them up by inserting them
+			 * before the target element.
 			 *
 			 * @param {Element} oParent the XML DOM DOM element
 			 * @param {sap.ui.core.util._with} oWithControl the "with" control
 			 * @param {Element} [oTarget=oParent] the target DOM element
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as visiting and
+			 *   lifting is done, or is rejected with a corresponding error if visiting fails.
 			 */
 			function liftChildNodes(oParent, oWithControl, oTarget) {
-				var oChild;
+				return visitChildNodes(oParent, oWithControl).then(function () {
+					var oChild;
 
-				oTarget = oTarget || oParent;
-				visitChildNodes(oParent, oWithControl);
-				while ((oChild = oParent.firstChild)) {
-					oTarget.parentNode.insertBefore(oChild, oTarget);
-				}
+					oTarget = oTarget || oParent;
+					while ((oChild = oParent.firstChild)) {
+						oTarget.parentNode.insertBefore(oChild, oTarget);
+					}
+				});
 			}
 
 			/**
@@ -1086,8 +1124,7 @@ sap.ui.define([
 			 */
 			function performTest(oElement, oWithControl) {
 				// constant test conditions are suspicious, but useful during development
-				var fnCallIfConstant
-						= warn.bind(null, oElement, 'Constant test condition'),
+				var fnCallIfConstant = warn.bind(null, oElement, 'Constant test condition'),
 					bResult,
 					sTest = oElement.getAttribute("test"),
 					vTest;
@@ -1167,6 +1204,13 @@ sap.ui.define([
 			 *   the <template:alias> XML DOM element
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the "with" control
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as the
+			 *   <template:alias> instruction has been fully processed, or is rejected with a
+			 *   corresponding error if visiting of child nodes fails.
+			 * @throws {Error}
+			 *   If the "name" attribute is not a proper relative name or if the "value" attribute
+			 *   does not reference an object which is currently in scope
 			 */
 			function templateAlias(oElement, oWithControl) {
 				var sName = oElement.getAttribute("name"),
@@ -1187,15 +1231,15 @@ sap.ui.define([
 				oOldValue = oScope[sName];
 				oScope[sName] = oNewValue;
 
-				liftChildNodes(oElement, oWithControl);
-				oElement.parentNode.removeChild(oElement);
-
-				oScope[sName] = oOldValue; // no try/finally needed
+				return liftChildNodes(oElement, oWithControl).then(function () {
+					oElement.parentNode.removeChild(oElement);
+					oScope[sName] = oOldValue; // no try/finally needed
+				});
 			}
 
 			/**
-			 * Replaces a <sap.ui.core:ExtensionPoint> element with the content of an XML
-			 * fragment configured as a replacement (via component metadata, "customizing" and
+			 * Replaces a <sap.ui.core:ExtensionPoint> element with the content of an XML fragment
+			 * configured as a replacement (via component metadata, "customizing" and
 			 * "sap.ui.viewExtensions"), or leaves it untouched in case no such replacement is
 			 * currently configured.
 			 *
@@ -1224,8 +1268,8 @@ sap.ui.define([
 
 				var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
 				if (vName !== oUNBOUND && CustomizingConfiguration) {
-					oViewExtension = CustomizingConfiguration.getViewExtension(
-						sCurrentName, vName, oViewInfo.componentId);
+					oViewExtension = CustomizingConfiguration.getViewExtension(sCurrentName, vName,
+						oViewInfo.componentId);
 					if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
 							&& oViewExtension.type === "XML") {
 						insertFragment(oViewExtension.fragmentName, oElement, oWithControl);
@@ -1242,22 +1286,26 @@ sap.ui.define([
 			 *   the <sap.ui.core:Fragment> XML DOM element
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the parent's "with" control
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as the fragment
+			 *   has been inserted, or is rejected with a corresponding error if loading or visiting
+			 *   fails.
 			 */
 			function templateFragment(oElement, oWithControl) {
 				var sFragmentName = oElement.getAttribute("fragmentName"),
 					vFragmentName;
 
 				try {
-					vFragmentName
-						= getResolvedBinding(sFragmentName, oElement, oWithControl, true);
+					vFragmentName = getResolvedBinding(sFragmentName, oElement, oWithControl, true);
 				} catch (ex) {
 					warn(oElement, 'Error in formatter:', ex);
-					return;
+					return oSyncPromiseResolved;
 				}
 
 				if (vFragmentName !== oUNBOUND) {
-					insertFragment(vFragmentName, oElement, oWithControl);
+					return insertFragment(vFragmentName, oElement, oWithControl);
 				}
+				return oSyncPromiseResolved;
 			}
 
 			/**
@@ -1267,6 +1315,10 @@ sap.ui.define([
 			 *   the <template:if> XML DOM element
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the "with" control
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as the
+			 *   <template:if> instruction has been fully processed, or is rejected with a
+			 *   corresponding error if visiting child nodes fails.
 			 */
 			function templateIf(oIfElement, oWithControl) {
 				var aChildren = getIfChildren(oIfElement),
@@ -1291,12 +1343,14 @@ sap.ui.define([
 					// no <if>-specific children and <if> test is true -> select the <if>
 					oSelectedElement = oIfElement;
 				}
-				if (oSelectedElement) {
-					liftChildNodes(oSelectedElement, oWithControl, oIfElement);
-				}
-				oIfElement.parentNode.removeChild(oIfElement);
-				debugFinished(oIfElement);
-				iNestingLevel--;
+				return (oSelectedElement
+					? liftChildNodes(oSelectedElement, oWithControl, oIfElement)
+					: oSyncPromiseResolved
+				).then(function () {
+					oIfElement.parentNode.removeChild(oIfElement);
+					debugFinished(oIfElement);
+					iNestingLevel--;
+				});
 			}
 
 			/**
@@ -1306,11 +1360,16 @@ sap.ui.define([
 			 *   the <template:repeat> XML DOM element
 			 * @param {sap.ui.core.template._with} oWithControl
 			 *   the parent's "with" control
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as the loop is
+			 *   done, or is rejected with a corresponding error if visiting child nodes fails.
+			 * @throws {Error}
+			 *   If the "name" attribute has an empty value, if the "list" attribute cannot be
+			 *   parsed as a binding, or if that binding uses a model which is missing.
 			 */
 			function templateRepeat(oElement, oWithControl) {
 				var sList = oElement.getAttribute("list") || "",
-					oBindingInfo
-						= BindingParser.complexParser(sList, oScope, false, true, true),
+					oBindingInfo = BindingParser.complexParser(sList, oScope, false, true, true),
 					aContexts,
 					oListBinding,
 					sModelName,
@@ -1324,8 +1383,8 @@ sap.ui.define([
 					error("Missing binding for ", oElement);
 				}
 				if (oBindingInfo.functionsNotFound) {
-					warn(oElement, 'Function name(s)',
-						oBindingInfo.functionsNotFound.join(", "), 'not found');
+					warn(oElement, 'Function name(s)', oBindingInfo.functionsNotFound.join(", "),
+						'not found');
 				}
 
 				// set up a scope for the loop variable, so to say
@@ -1341,8 +1400,7 @@ sap.ui.define([
 				if (!oListBinding) {
 					error("Missing model '" + sModelName + "' in ", oElement);
 				}
-				aContexts
-					= oListBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
+				aContexts = oListBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 
 				// set up the model for the loop variable
 				sVar = sVar || sModelName; // default loop variable is to keep the same model
@@ -1351,20 +1409,22 @@ sap.ui.define([
 				// the actual loop
 				iNestingLevel++;
 				debug(oElement, "Starting");
-				aContexts.forEach(function (oContext, i) {
-					var oSourceNode = (i === aContexts.length - 1) ?
-						oElement : oElement.cloneNode(true);
-					// Note: because sVar and sModelName refer to the same model instance, it
-					// is OK to use sModelName's context for sVar as well (the name is not part
-					// of the context!)
+				return stopAndGo(aContexts, function (oContext, i) {
+					var oSourceNode = (i === aContexts.length - 1)
+							? oElement
+							: oElement.cloneNode(true);
+
+					// Note: because sVar and sModelName refer to the same model instance, it is OK
+					// to use sModelName's context for sVar as well (the name is not part of the
+					// context!)
 					oNewWithControl.setBindingContext(oContext, sVar);
 					debug(oElement, sVar, "=", oContext.getPath());
-					liftChildNodes(oSourceNode, oNewWithControl, oElement);
+					return liftChildNodes(oSourceNode, oNewWithControl, oElement);
+				}).then(function () {
+					debugFinished(oElement);
+					iNestingLevel--;
+					oElement.parentNode.removeChild(oElement);
 				});
-				debugFinished(oElement);
-				iNestingLevel--;
-
-				oElement.parentNode.removeChild(oElement);
 			}
 
 			/**
@@ -1374,6 +1434,15 @@ sap.ui.define([
 			 *   the <template:with> XML DOM element
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the parent's "with" control
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as the
+			 *   <template:with> instruction has been fully processed, or is rejected with a
+			 *   corresponding error if visiting of child nodes fails.
+			 * @throws {Error}
+			 *   If the "var" attribute is present with an empty value, or if the "path" attribute
+			 *   refers to a missing model, or if the "helper" attribute does not refer to a
+			 *   function which is currently in scope, or if that helper function returns a result
+			 *   which is not a non-empty string.
 			 */
 			function templateWith(oElement, oWithControl) {
 				var oBindingInfo,
@@ -1418,8 +1487,7 @@ sap.ui.define([
 						sResolvedPath = vHelperResult.getPath();
 					} else if (vHelperResult !== undefined) {
 						if (typeof vHelperResult !== "string" || vHelperResult === "") {
-							error("Illegal helper result '" + vHelperResult + "' in ",
-								oElement);
+							error("Illegal helper result '" + vHelperResult + "' in ", oElement);
 						}
 						sResolvedPath = vHelperResult;
 					}
@@ -1429,7 +1497,8 @@ sap.ui.define([
 						path : sResolvedPath
 					});
 				} else {
-					oNewWithControl.bindObject(sPath);
+					sResolvedPath = sPath;
+					oNewWithControl.bindObject(sResolvedPath);
 				}
 
 				iNestingLevel++;
@@ -1443,16 +1512,16 @@ sap.ui.define([
 					oNewWithControl = oWithControl;
 				}
 
-				liftChildNodes(oElement, oNewWithControl);
-				oElement.parentNode.removeChild(oElement);
-				debugFinished(oElement);
-				iNestingLevel--;
+				return liftChildNodes(oElement, oNewWithControl).then(function () {
+					oElement.parentNode.removeChild(oElement);
+					debugFinished(oElement);
+					iNestingLevel--;
+				});
 			}
 
 			/**
-			 * Visits the given attribute of the given element. If the attribute value
-			 * represents a binding expression that can be resolved, it is replaced with the
-			 * resulting value.
+			 * Visits the given attribute of the given element. If the attribute value represents a
+			 * binding expression that can be resolved, it is replaced with the resulting value.
 			 *
 			 * @param {Element} oElement the XML DOM element
 			 * @param {Attr} oAttribute one of the element's attribute nodes
@@ -1490,21 +1559,17 @@ sap.ui.define([
 			 *
 			 * @param {Node} oNode the XML DOM node
 			 * @param {sap.ui.core.util._with} oWithControl the "with" control
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as visiting is
+			 *   done, or is rejected with a corresponding error if visiting fails.
 			 */
 			function visitChildNodes(oNode, oWithControl) {
-				var i,
-					oNodeList = oNode.childNodes,
-					n = oNodeList.length,
-					aChildren = new Array(n);
-
-				// cache live collection so that removing a template node does not hurt
-				for (i = 0; i < n; i += 1) {
-					aChildren[i] = oNodeList.item(i);
-				}
-				oNodeList = null; // do not keep node list (a)live during further processing
-				for (i = 0; i < n; i += 1) {
-					visitNode(aChildren[i], oWithControl);
-				}
+				return stopAndGo(
+					// cache live collection so that removing a template node does not hurt
+					Array.prototype.slice.apply(oNode.childNodes),
+					function (oChild) {
+						return visitNode(oChild, oWithControl);
+					});
 			}
 
 			/**
@@ -1512,6 +1577,12 @@ sap.ui.define([
 			 *
 			 * @param {Node} oNode the XML DOM node
 			 * @param {sap.ui.core.template._with} oWithControl the "with" control
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as visiting is
+			 *   done, or is rejected with a corresponding error if visiting fails.
+			 * @throws {Error}
+			 *   If an unexpected tag in the template namespace is encountered, or if a plugged-in
+			 *   visitor returns a value.
 			 */
 			function visitNode(oNode, oWithControl) {
 				var fnVisitor,
@@ -1519,7 +1590,7 @@ sap.ui.define([
 
 				// process only ELEMENT_NODEs
 				if (oNode.nodeType !== 1 /* Node.ELEMENT_NODE */) {
-					return;
+					return oSyncPromiseResolved;
 				}
 				if (fnSupportInfo) {
 					fnSupportInfo({context:oNode, env:{caller:"visitNode", before: {name: oNode.tagName}}});
@@ -1527,20 +1598,16 @@ sap.ui.define([
 				if (oNode.namespaceURI === sNAMESPACE) {
 					switch (oNode.localName) {
 					case "alias":
-						templateAlias(oNode, oWithControl);
-						return;
+						return templateAlias(oNode, oWithControl);
 
 					case "if":
-						templateIf(oNode, oWithControl);
-						return;
+						return templateIf(oNode, oWithControl);
 
 					case "repeat":
-						templateRepeat(oNode, oWithControl);
-						return;
+						return templateRepeat(oNode, oWithControl);
 
 					case "with":
-						templateWith(oNode, oWithControl);
-						return;
+						return templateWith(oNode, oWithControl);
 
 					default:
 						error("Unexpected tag ", oNode);
@@ -1549,14 +1616,13 @@ sap.ui.define([
 					switch (oNode.localName) {
 					case "ExtensionPoint":
 						if (templateExtensionPoint(oNode, oWithControl)) {
-							return;
+							return oSyncPromiseResolved;
 						}
 						break;
 
 					case "Fragment":
 						if (oNode.getAttribute("type") === "XML") {
-							templateFragment(oNode, oWithControl);
-							return;
+							return templateFragment(oNode, oWithControl);
 						}
 						break;
 
@@ -1569,23 +1635,23 @@ sap.ui.define([
 					if (fnVisitor) {
 						iNestingLevel++;
 						debug(oNode, "Calling visitor");
-						vVisitorResult
-							= fnVisitor(oNode, createCallbackInterface(oWithControl));
+						vVisitorResult = fnVisitor(oNode, createCallbackInterface(oWithControl));
 						if (vVisitorResult !== undefined) {
 							// prepare for later enhancements using return value
 							error("Unexpected return value from visitor for ", oNode);
 						}
 						debugFinished(oNode);
 						iNestingLevel--;
-						return;
+						return oSyncPromiseResolved;
 					}
 				}
 
 				visitAttributes(oNode, oWithControl);
-				visitChildNodes(oNode, oWithControl);
-				if (fnSupportInfo) {
-					fnSupportInfo({context:oNode, env:{caller:"visitNode", after: {name: oNode.tagName}}});
-				}
+				return visitChildNodes(oNode, oWithControl).then(function () {
+					if (fnSupportInfo) {
+						fnSupportInfo({context:oNode, env:{caller:"visitNode", after: {name: oNode.tagName}}});
+					}
+				});
 			}
 
 			/*
@@ -1602,17 +1668,18 @@ sap.ui.define([
 				if (bWarning) {
 					if (!bCallerLoggedForWarnings) {
 						bCallerLoggedForWarnings = true;
-						jQuery.sap.log.warning("Warning(s) during processing of " + sCaller,
-							null, sXMLPreprocessor);
+						jQuery.sap.log.warning("Warning(s) during processing of " + sCaller, null,
+							sXMLPreprocessor);
 					}
-					jQuery.sap.log.warning(getNestingLevel()
-						+ Array.prototype.slice.call(arguments, 1).join(" "),
+					jQuery.sap.log.warning(
+						getNestingLevel() + Array.prototype.slice.call(arguments, 1).join(" "),
 						oElement && serializeSingleElement(oElement), sXMLPreprocessor);
 				}
 			}
 
 			jQuery.sap.measure.average(sPerformanceProcess, "", aPerformanceCategories);
 			mSettings = mSettings || {};
+			bAsync = !oViewInfo.sync && mSettings["X-async"];
 
 			if (bDebug) {
 				debug(undefined, "Start processing", sCaller);
@@ -1625,7 +1692,7 @@ sap.ui.define([
 				}
 			}
 			if (fnSupportInfo) {
-				 fnSupportInfo({
+				fnSupportInfo({
 						context: oRootElement,
 						env: {
 							caller:"view",
@@ -1636,14 +1703,14 @@ sap.ui.define([
 					});
 			}
 			requireFor(oRootElement);
-			visitNode(oRootElement, new With({
+			return visitNode(oRootElement, new With({
 				models : mSettings.models,
 				bindingContexts : mSettings.bindingContexts
-			}));
-			debug(undefined, "Finished processing", sCaller);
-
-			jQuery.sap.measure.end(sPerformanceProcess);
-			return oRootElement;
+			})).then(function () {
+				debug(undefined, "Finished processing", sCaller);
+				jQuery.sap.measure.end(sPerformanceProcess);
+				return oRootElement;
+			}).unwrap();
 		}
 	};
 }, /* bExport= */ true);
