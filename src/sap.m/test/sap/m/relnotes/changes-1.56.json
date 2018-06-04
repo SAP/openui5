@@ -1191,5 +1191,82 @@
         "references": []
       }
     ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ab20949146828a7fd30511151a9ae6466fcc9b14",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Close event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "0d1c952f8a08be888195c02f787633c0dba670d4",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Updating with special characters is now correct",
+        "references": []
+      },
+      {
+        "id": "3da4e5596be013b7653390cae9c94adf6e94d309",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Now the control handles filters correctly",
+        "references": []
+      },
+      {
+        "id": "d9e05ddfd852eda0d74dec1b8aac9126a7aa4649",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Remove additional tab stop in Light mode",
+        "references": []
+      },
+      {
+        "id": "89e00ed68b7d8cad49b6162de5397f55d78b2d08",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: Calls to the backend are now optimized",
+        "references": []
+      },
+      {
+        "id": "1c6ce9d73fb755266c5a6a6f8c3936b20ad86763",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Overflow arrows in header is now fixed",
+        "references": []
+      },
+      {
+        "id": "ac3df6849275ac9c0b46c0b5f64d868b7076cb91",
+        "type": "FIX",
+        "text": " sap.m.Input: step attribute set to any",
+        "references": []
+      },
+      {
+        "id": "ff739d69935abf91b993ddbd5617b3bcc4b37f77",
+        "type": "FIX",
+        "text": " sap.m.ObjectListeItem: render properly hidden marker",
+        "references": []
+      },
+      {
+        "id": "1aa47de9ef7671d0436399bf9adc9b64104c44d8",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: text / icon alignment is correct now",
+        "references": []
+      },
+      {
+        "id": "d9c90ca6b6f38a62ffa3513601b497ac366a8275",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "b2d353dc1faefa61733aa1cb35008d6cb5c7c294",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "0d4c2b4c59d03f6cb1f69f361a780c90d98d73ec",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      }
+    ]
   }
 }

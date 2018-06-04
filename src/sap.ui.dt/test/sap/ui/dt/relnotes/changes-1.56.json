@@ -134,5 +134,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "42acf8a12347d15ea425f7dce52d763879b5f3b9",
+        "type": "FIX",
+        "text": "sap.ui.dt - Removed overlays are still part of the selection",
+        "references": []
+      },
+      {
+        "id": "560f62e13d1a9deddb10262e51a7d7e874ef6ef9",
+        "type": "FIX",
+        "text": "sap.ui.dt - SelectionManager selection mode discrepancy with DT",
+        "references": []
+      }
+    ]
   }
 }

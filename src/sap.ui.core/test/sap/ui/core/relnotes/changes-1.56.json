@@ -837,5 +837,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "1d0daea9b88d1c947e75c1dc6830c4dc43ae17d1",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Add missing support for count mode \"InlineRepeat\"",
+        "references": []
+      },
+      {
+        "id": "288a38aaff9b92ec8fac9137e6631f3a4eca5aaa",
+        "type": "FIX",
+        "text": " qunit-junit reporter: Add null-check for qunit DOM node",
+        "references": []
+      }
+    ]
   }
 }

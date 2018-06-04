@@ -86,5 +86,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "e2a5b60e7b73b8d901863dfec8a37e9d2ddde285",
+        "type": "FIX",
+        "text": " Variant URL parameters should be added depending on the VM control(s) on the current view",
+        "references": []
+      },
+      {
+        "id": "cc7d06dd01b82a68d51c7808119c6b6af1fb1579",
+        "type": "FIX",
+        "text": " sap.ui.fl App variant version validity",
+        "references": []
+      }
+    ]
   }
 }

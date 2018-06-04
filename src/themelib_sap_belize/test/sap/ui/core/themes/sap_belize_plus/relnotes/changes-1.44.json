@@ -667,5 +667,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.32": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "83230b9468b22adf285f01360289ddf99b6eccd5",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Extract base styles and fix padding",
+        "references": []
+      },
+      {
+        "id": "53177967f9daf7157a6effdfe4b4270715b722bf",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": []
+      }
+    ]
   }
 }

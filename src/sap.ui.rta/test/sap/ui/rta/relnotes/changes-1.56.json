@@ -170,5 +170,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ed17a4315845ce830561760793c3e01abc612d97",
+        "type": "FIX",
+        "text": " sap.ui.rta - additionalElementsDialog replaced deprecated label",
+        "references": []
+      },
+      {
+        "id": "92aeef0d55af4488dce439e6bfa7f3034e672490",
+        "type": "FIX",
+        "text": "sap.ui.rta - Automatic rename on groups created in empty forms",
+        "references": []
+      }
+    ]
   }
 }
