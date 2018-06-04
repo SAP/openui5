@@ -21,18 +21,7 @@
 	<script src="../../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
 	<script src="../../../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
 	<script src="../../../../../../resources/ui5loader.js"></script>
-	<script>
-		var fnOnError = window.onerror;
-		if (!/aDependencies/.test(sap.ui.define.toString()) ) {
-			// only if we run with minified sources, it makes a difference to load debug sources
-			window["sap-ui-optimized"] = true;
-			window.onerror = function (sMessage) {
-				// ignore expected error
-				return sMessage.indexOf("This is not a real error. Aborting UI5 bootstrap") >= 0
-					|| fnOnError.apply(this, arguments);
-			};
-		}
-	</script>
+	<script src="1Ring_handleAbort.js"></script>
 	<script src="../../../../../../resources/ui5loader-autoconfig.js"
 		id="sap-ui-bootstrap"
 		data-sap-ui-compatversion="edge">
@@ -48,12 +37,8 @@
 		></script>
 	<script src="../../../../../../resources/sap/ui/test/BranchTracking.js"
 		data-threshold="100"></script>
-	<script>
-		// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included!
-		sap.ui.requireSync("sap/ui/core/Core");
-		// needed for bootstrap properties like data-sap-ui-libs
-		sap.ui.getCore().boot && sap.ui.getCore().boot();
-	</script>
+	<!-- Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included! -->
+	<script src="1Ring_bootCore.js"></script>
 
 	<script src="ODataV4.qunit.js"></script>
 	<script src="../BindingParser.qunit.js"></script>
