@@ -83,7 +83,7 @@
 				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.masterdetail.view",
-				"controlId": "idAppControl",
+				"controlId": "app",
 				"controlAggregation": "beginColumnPages",
 				"bypassed": {
 					"target": [
