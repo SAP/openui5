@@ -135,6 +135,20 @@ sap.ui.define([
 					});
 				},
 
+				iRememberTheSelectedItem : function () {
+					return this.waitFor({
+						id : "list",
+						viewName : sViewName,
+						matchers : function (oList) {
+							return oList.getSelectedItem();
+						},
+						success : function (oListItem) {
+							this.iRememberTheListItem(oListItem);
+						},
+						errorMessage : "The list does not have a selected item so nothing can be remembered"
+					});
+				},
+
 				iChooseASorter: function (sSelect, sSort) {
 					return this.waitFor({
 							id : sSelect,
@@ -159,20 +173,6 @@ sap.ui.define([
 							});
 						},
 						errorMessage : "Did not find the " + sSelect + " select"
-					});
-				},
-
-				iRememberTheSelectedItem : function () {
-					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : function (oList) {
-							return oList.getSelectedItem();
-						},
-						success : function (oListItem) {
-							this.iRememberTheListItem(oListItem);
-						},
-						errorMessage : "The list does not have a selected item so nothing can be remembered"
 					});
 				},
 
@@ -555,18 +555,6 @@ sap.ui.define([
 					});
 				},
 
-				theFirstItemShouldBeSelected : function () {
-					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : new AggregationFilled({name : "items"}),
-						success : function (oList) {
-							Opa5.assert.strictEqual(oList.getItems()[0], oList.getSelectedItem(), "The first object is selected");
-						},
-						errorMessage : "The first object is not selected."
-					});
-				},
-
 				theListShouldHaveNoSelection : function () {
 					return this.waitFor({
 						id : "list",
@@ -598,7 +586,7 @@ sap.ui.define([
 				theListShouldBeSortedAscendingOnField : function (sField) {
 					function fnCheckSort (oList){
 						var oLastValue = null,
-							fnIsOrdered = function (oElement) {
+							fnSortByField = function (oElement) {
 								if (!oElement.getBindingContext()) {
 									return false;
 								}
@@ -617,7 +605,7 @@ sap.ui.define([
 								return true;
 							};
 
-						return oList.getItems().every(fnIsOrdered);
+						return oList.getItems().every(fnSortByField);
 					}
 
 					return this.waitFor({
@@ -630,12 +618,9 @@ sap.ui.define([
 						errorMessage : "Master list has not been sorted correctly for field '" + sField + "'."
 					});
 				}
-
-
 			}
 
 		}
-
 	});
 
 });
