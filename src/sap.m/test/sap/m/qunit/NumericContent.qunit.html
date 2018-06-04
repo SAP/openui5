@@ -24,225 +24,233 @@
 	if (window.blanket) {
 		blanket.options("sap-ui-cover-only", /sap\/m\/NumericContent.*/);
 	}
-	jQuery.sap.initMobile();
 
-	QUnit.module("Rendering test - sap.m.NumericContent", {
-		beforeEach : function() {
-			this.oNumericContent = new sap.m.NumericContent("numeric-cnt", {
-				size : sap.m.Size.L,
-				state : sap.m.LoadState.Loaded,
-				scale : "M",
-				indicator : sap.m.DeviationIndicator.Up,
-				truncateValueTo : 4,
-				nullifyValue : true,
-				formatterValue : false,
-				valueColor : sap.m.ValueColor.Good,
-				icon : "sap-icon://customer-financial-fact-sheet"
-			});
-			this.oNumericContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.oNumericContent.destroy();
-			this.oNumericContent = null;
-		}
-	});
-	QUnit.test("Numeric Content rendered.", function(assert) {
-		this.oNumericContent.setValue("12");
-		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("numeric-cnt"), "NumericContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-indicator"), "Indicator was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
-		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
-	});
+	sap.ui.require([
+		"jquery.sap.global",
+		"sap/m/NumericContent",
+		"sap/m/Size",
+		"sap/m/LoadState",
+		"sap/m/DeviationIndicator",
+		"sap/m/ValueColor",
+		"sap/ui/core/TooltipBase"
+	], function (jQuery, NumericContent, Size, LoadState, DeviationIndicator, ValueColor, TooltipBase) {
+		"use strict";
 
-	QUnit.test("The Icon's cursor is pointer if press event is attached", function (assert) {
-		// Arrange
-		var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
-		// Act
-		this.oNumericContent.attachPress(function () {});
-		// Assert
-		assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
-		assert.ok(this.oNumericContent._oIcon.hasStyleClass("sapMPointer"), "sapMPointer class was added");
-	});
+		jQuery.sap.initMobile();
 
-	QUnit.test("The Icon's cursor is default if press event is detached", function (assert) {
-		// Arrange
-		var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
-		function onPress () {};
-		// Act
-		this.oNumericContent.attachPress(onPress);
-		this.oNumericContent.detachPress(onPress);
-		// Assert
-		assert.equal(oSpy.callCount, 2, "setPointerOnIcon was called.");
-		assert.ok(!this.oNumericContent._oIcon.hasStyleClass("sapMPointer"), "sapMPointer class not present");
-	});
-
-	QUnit.test("setIcon calls _setPointerOnIcon", function (assert) {
-		// Arrange
-		var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
-		// Act
-		this.oNumericContent.setIcon();
-		// Assert
-		assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
-	});
-
-	QUnit.module("Functional tests - sap.m.NumericContent", {
-		beforeEach : function() {
-			this.oNumericContent = new sap.m.NumericContent("numeric-cnt", {
-				size : sap.m.Size.L,
-				state : sap.m.LoadState.Loaded,
-				scale : "M",
-				indicator : sap.m.DeviationIndicator.Up,
-				truncateValueTo : 4,
-				nullifyValue : true,
-				formatterValue : false,
-				valueColor : sap.m.ValueColor.Good,
-				icon : "sap-icon://customer-financial-fact-sheet"
-			});
-			this.oNumericContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.oNumericContent.destroy();
-			this.oNumericContent = null;
-		}
-	});
-
-	QUnit.test( "Test formatter value processing", function(assert) {
-		this.oNumericContent.setFormatterValue(false);
-		this.oNumericContent.setValue("68Mio.");
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68Mi", "Value was rendered successfully with formatter switched off");
-		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "M", "Scale was rendered successfully with formatter switched off");
-		this.oNumericContent.setFormatterValue(true);
-		this.oNumericContent.setValue("68 Mio");
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68", "Value was rendered successfully with formatter switched on");
-		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "Mio", "Scale was rendered successfully with formatter switched on");
-		this.oNumericContent.setValue(undefined);
-		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value cleaned successfully with formatter switched on");
-		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "", "Scale cleaned successfully with formatter switched on");
-	});
-
-	QUnit.test("Test processing of formatter value with RTL and LTR mark", function(assert) {
-		this.oNumericContent.setFormatterValue(true);
-		var sFormattedValue = String.fromCharCode(8206) + String.fromCharCode(8207) + "58,7 Mio";
-		this.oNumericContent.setValue(sFormattedValue);
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "58,7", "Value was rendered successfully with formatter switched on");
-		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "Mio", "Scale was rendered successfully with formatter switched on");
-	});
-
-	QUnit.test("Test nullify parameter", function(assert) {
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value was nullified successfully");
-		this.oNumericContent.setNullifyValue(false);
-		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "", "Value was not nullified");
-	});
-
-	QUnit.test("Test tooltip text", function(assert) {
-		//Arrange
-		this.oNumericContent.setTooltip("Test, test");
-		//Act
-		var sTooltip = this.oNumericContent.getTooltip();
-		//Assert
-		assert.deepEqual(sTooltip, "Test, test", "Tooltip is a string and it's correct");
-
-		//Act
-		sTooltip = this.oNumericContent.getTooltip_AsString();
-		//Assert
-		assert.deepEqual(sTooltip, "Test, test", "Tooltip is correct");
-
-		//Arrange
-		var oTooltip = new sap.ui.core.TooltipBase({text: "Test, test"});
-		this.oNumericContent.setTooltip(oTooltip);
-		//Act
-		sTooltip = this.oNumericContent.getTooltip();
-		//Assert
-		assert.notDeepEqual(sTooltip, "Test, test", "Tooltip is not a string");
-	});
-
-	QUnit.test("Test alternative text", function(assert) {
-		//Act
-		var sAltText = this.oNumericContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "0\nAscending\nGood", "Alternative text is correct");
-
-		//Arrange
-		this.oNumericContent.setIconDescription("Icon description");
-		//Act
-		sAltText = this.oNumericContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "Icon description\n0\nAscending\nGood", "Alternative text is correct with icon description");
-
-		//Arrange
-		this.oNumericContent.setNullifyValue(false);
-		//Act
-		sAltText = this.oNumericContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "Icon description\n\nAscending\nGood", "Alternative text is correct with nullify value set to false");
-
-		//Arrange
-		this.oNumericContent.setNullifyValue(true);
-		//Act
-		this.oNumericContent.setValue("10");
-		this.oNumericContent.setScale("$");
-		sAltText = this.oNumericContent.getAltText();
-		//Assert
-		assert.equal(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
-	});
-
-	QUnit.module("Property withoutMargin", {
-		beforeEach : function() {
-			this.oNumericContent = new sap.m.NumericContent({
-				scale : "Mrd",
-				indicator : sap.m.DeviationIndicator.Up,
-				value : "699"
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.oNumericContent.destroy();
-			this.oNumericContent = null;
-		}
-	});
-
-	QUnit.test("Check default value", function(assert) {
-		assert.ok(this.oNumericContent.getWithMargin(), "Default value shall be 'false'.");
-	});
-
-	QUnit.test("CSS Class needs to be added if withoutMargin is set to true", function(assert) {
-		assert.ok(!this.oNumericContent.$().hasClass("WithoutMargin"));
-		this.oNumericContent.setWithMargin(false);
-		sap.ui.getCore().applyChanges();
-		assert.ok(this.oNumericContent.$().hasClass("WithoutMargin"), "'withoutMargin' CSS class expected.");
-		assert.ok(jQuery(this.oNumericContent.$().children()[0]).hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the inner div container.");
-		assert.ok(this.oNumericContent.$("value").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the parent value container.");
-		assert.ok(this.oNumericContent.$("value-scr").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the value container.");
-		assert.ok(this.oNumericContent.$().find(".sapMNCIndScale").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the indicator and scale container.");
-	});
-
-	/* Module wrapper to define a scope for helper functions. This can be replaced with nested approach of QUnit in the future
-	 * This approach is not working in the current TestSuite configuration.
-	 * See 'Hooks stack on nested modules' sample at https://api.qunitjs.com/QUnit.module/ */
-	(function() {
-		QUnit.module("Events test", {
+		QUnit.module("Rendering test - sap.m.NumericContent", {
 			beforeEach : function() {
-				this.oNumericContent = new sap.m.NumericContent({
-					size : sap.m.Size.L,
-					state : sap.m.LoadState.Loaded,
+				this.oNumericContent = new NumericContent("numeric-cnt", {
+					size : Size.L,
+					state : LoadState.Loaded,
 					scale : "M",
-					indicator : sap.m.DeviationIndicator.Up,
+					indicator : DeviationIndicator.Up,
 					truncateValueTo : 4,
 					nullifyValue : true,
 					formatterValue : false,
-					valueColor : sap.m.ValueColor.Good,
+					valueColor : ValueColor.Good,
+					icon : "sap-icon://customer-financial-fact-sheet"
+				});
+				this.oNumericContent.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function() {
+				this.oNumericContent.destroy();
+				this.oNumericContent = null;
+			}
+		});
+		QUnit.test("Numeric Content rendered.", function(assert) {
+			this.oNumericContent.setValue("12");
+			sap.ui.getCore().applyChanges();
+			assert.ok(jQuery.sap.domById("numeric-cnt"), "NumericContent was rendered successfully");
+			assert.ok(jQuery.sap.domById("numeric-cnt-indicator"), "Indicator was rendered successfully");
+			assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
+			assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
+			assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+		});
+
+		QUnit.test("The Icon's cursor is pointer if press event is attached", function (assert) {
+			// Arrange
+			var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
+			// Act
+			this.oNumericContent.attachPress(function () {});
+			// Assert
+			assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
+			assert.ok(this.oNumericContent._oIcon.hasStyleClass("sapMPointer"), "sapMPointer class was added");
+		});
+
+		QUnit.test("The Icon's cursor is default if press event is detached", function (assert) {
+			// Arrange
+			var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
+			function onPress () {};
+			// Act
+			this.oNumericContent.attachPress(onPress);
+			this.oNumericContent.detachPress(onPress);
+			// Assert
+			assert.equal(oSpy.callCount, 2, "setPointerOnIcon was called.");
+			assert.ok(!this.oNumericContent._oIcon.hasStyleClass("sapMPointer"), "sapMPointer class not present");
+		});
+
+		QUnit.test("setIcon calls _setPointerOnIcon", function (assert) {
+			// Arrange
+			var oSpy = sinon.spy(this.oNumericContent, "_setPointerOnIcon");
+			// Act
+			this.oNumericContent.setIcon();
+			// Assert
+			assert.equal(oSpy.callCount, 1, "setPointerOnIcon was called.");
+		});
+
+		QUnit.module("Functional tests - sap.m.NumericContent", {
+			beforeEach : function() {
+				this.oNumericContent = new NumericContent("numeric-cnt", {
+					size : Size.L,
+					state : LoadState.Loaded,
+					scale : "M",
+					indicator : DeviationIndicator.Up,
+					truncateValueTo : 4,
+					nullifyValue : true,
+					formatterValue : false,
+					valueColor : ValueColor.Good,
+					icon : "sap-icon://customer-financial-fact-sheet"
+				});
+				this.oNumericContent.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function() {
+				this.oNumericContent.destroy();
+				this.oNumericContent = null;
+			}
+		});
+
+		QUnit.test( "Test formatter value processing", function(assert) {
+			this.oNumericContent.setFormatterValue(false);
+			this.oNumericContent.setValue("68Mio.");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68Mi", "Value was rendered successfully with formatter switched off");
+			assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "M", "Scale was rendered successfully with formatter switched off");
+			this.oNumericContent.setFormatterValue(true);
+			this.oNumericContent.setValue("68 Mio");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68", "Value was rendered successfully with formatter switched on");
+			assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "Mio", "Scale was rendered successfully with formatter switched on");
+			this.oNumericContent.setValue(undefined);
+			sap.ui.getCore().applyChanges();
+			assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value cleaned successfully with formatter switched on");
+			assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "", "Scale cleaned successfully with formatter switched on");
+		});
+
+		QUnit.test("Test processing of formatter value with RTL and LTR mark", function(assert) {
+			this.oNumericContent.setFormatterValue(true);
+			var sFormattedValue = String.fromCharCode(8206) + String.fromCharCode(8207) + "58,7 Mio";
+			this.oNumericContent.setValue(sFormattedValue);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "58,7", "Value was rendered successfully with formatter switched on");
+			assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "Mio", "Scale was rendered successfully with formatter switched on");
+		});
+
+		QUnit.test("Test nullify parameter", function(assert) {
+			assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value was nullified successfully");
+			this.oNumericContent.setNullifyValue(false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "", "Value was not nullified");
+		});
+
+		QUnit.test("Test tooltip text", function(assert) {
+			//Arrange
+			this.oNumericContent.setTooltip("Test, test");
+			//Act
+			var sTooltip = this.oNumericContent.getTooltip();
+			//Assert
+			assert.deepEqual(sTooltip, "Test, test", "Tooltip is a string and it's correct");
+
+			//Act
+			sTooltip = this.oNumericContent.getTooltip_AsString();
+			//Assert
+			assert.deepEqual(sTooltip, "Test, test", "Tooltip is correct");
+
+			//Arrange
+			var oTooltip = new TooltipBase({text: "Test, test"});
+			this.oNumericContent.setTooltip(oTooltip);
+			//Act
+			sTooltip = this.oNumericContent.getTooltip();
+			//Assert
+			assert.notDeepEqual(sTooltip, "Test, test", "Tooltip is not a string");
+		});
+
+		QUnit.test("Test alternative text", function(assert) {
+			//Act
+			var sAltText = this.oNumericContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "0\nAscending\nGood", "Alternative text is correct");
+
+			//Arrange
+			this.oNumericContent.setIconDescription("Icon description");
+			//Act
+			sAltText = this.oNumericContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "Icon description\n0\nAscending\nGood", "Alternative text is correct with icon description");
+
+			//Arrange
+			this.oNumericContent.setNullifyValue(false);
+			//Act
+			sAltText = this.oNumericContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "Icon description\n\nAscending\nGood", "Alternative text is correct with nullify value set to false");
+
+			//Arrange
+			this.oNumericContent.setNullifyValue(true);
+			//Act
+			this.oNumericContent.setValue("10");
+			this.oNumericContent.setScale("$");
+			sAltText = this.oNumericContent.getAltText();
+			//Assert
+			assert.equal(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
+		});
+
+		QUnit.module("Property withoutMargin", {
+			beforeEach : function() {
+				this.oNumericContent = new NumericContent({
+					scale : "Mrd",
+					indicator : DeviationIndicator.Up,
+					value : "699"
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function() {
+				this.oNumericContent.destroy();
+				this.oNumericContent = null;
+			}
+		});
+
+		QUnit.test("Check default value", function(assert) {
+			assert.ok(this.oNumericContent.getWithMargin(), "Default value shall be 'false'.");
+		});
+
+		QUnit.test("CSS Class needs to be added if withoutMargin is set to true", function(assert) {
+			assert.ok(!this.oNumericContent.$().hasClass("WithoutMargin"));
+			this.oNumericContent.setWithMargin(false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(this.oNumericContent.$().hasClass("WithoutMargin"), "'withoutMargin' CSS class expected.");
+			assert.ok(jQuery(this.oNumericContent.$().children()[0]).hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the inner div container.");
+			assert.ok(this.oNumericContent.$("value").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the parent value container.");
+			assert.ok(this.oNumericContent.$("value-scr").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the value container.");
+			assert.ok(this.oNumericContent.$().find(".sapMNCIndScale").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the indicator and scale container.");
+		});
+
+		QUnit.module("Events test", {
+			beforeEach : function() {
+				this.oNumericContent = new NumericContent({
+					size : Size.L,
+					state : LoadState.Loaded,
+					scale : "M",
+					indicator : DeviationIndicator.Up,
+					truncateValueTo : 4,
+					nullifyValue : true,
+					formatterValue : false,
+					valueColor : ValueColor.Good,
 					icon : "sap-icon://customer-financial-fact-sheet"
 				}).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -298,13 +306,13 @@
 
 		/* --- Helpers --- */
 
-		fnHoverHandler = function() {
+		function fnHoverHandler() {
 		}
 
-		fnPressHandler = function() {
+		function fnPressHandler() {
 		}
 
-		hasAttribute = function(sAttribute, oCurrentObject) {
+		function hasAttribute(sAttribute, oCurrentObject) {
 			var sAttributeValue = oCurrentObject.$().attr(sAttribute);
 			if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
 				return true;
@@ -312,7 +320,8 @@
 				return false;
 			}
 		}
-	}());
+	});
+
 </script>
 </head>
 

@@ -1,17 +1,116 @@
-/*global QUnit,sinon,createItemTemplate,oData*/
+/*global QUnit,sinon*/
 
-(function () {
+sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
+	"jquery.sap.global",
+	"sap/m/UploadCollection",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/base/Event",
+	"sap/ui/Device",
+	"sap/m/UploadCollectionItem",
+	"sap/m/ObjectMarker"
+], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker) {
 	"use strict";
+
+	var oData = {
+		"items": [
+			{
+				"contributor": "Susan Baker",
+				"tooltip": "Susan Baker",
+				"documentId": "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				"fileName": "Screenshot.jpg",
+				"fileSize": 20,
+				"mimeType": "image/jpg",
+				"thumbnailUrl": "",
+				"uploadedDate": "Date: 2014-07-30",
+				"ariaLabelForPicture": "textForIconOfItemSusanBaker",
+				"markers": [
+					{
+						"type": "Locked",
+						"visibility": "IconAndText"
+					}
+				]
+			}, {
+				"contributor": "John Smith",
+				"documentId": "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
+				"fileName": "Notes.txt",
+				"fileSize": 10,
+				"mimeType": "text/plain",
+				"thumbnailUrl": "",
+				"uploadedDate": "2014-08-01",
+				"url": "/pathToTheFile/Notes.txt",
+				"markers": [
+					{
+						"type": "Locked",
+						"visibility": "IconAndText"
+					}
+				]
+			}, {
+				"contributor": "J Edgar Hoover",
+				"documentId": "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
+				"enableEdit": false,
+				"enableDelete": false,
+				"fileName": "Document.txt",
+				"fileSize": 15,
+				"mimeType": "text/plain",
+				"thumbnailUrl": "",
+				"uploadedDate": "2014-09-01",
+				"url": "/pathToTheFile/Document.txt"
+			}, {
+				"contributor": "Kate Brown",
+				"documentId": "b68a7065-cc2a-2140-922d-e7528cd32172",
+				"enableEdit": false,
+				"enableDelete": false,
+				"visibleEdit": "{visibleEdit}",
+				"visibleDelete": "{visibleDelete}",
+				"fileName": "Picture of a woman.png",
+				"fileSize": 70,
+				"mimeType": "image/png",
+				"thumbnailUrl": "../images/Woman_04.png",
+				"uploadedDate": "2014-07-25",
+				"url": "/pathToTheFile/Woman_04.png",
+				"ariaLabelForPicture": "textForImageOfItemKateBrown"
+			}
+		]
+	};
+
+	function createItemTemplate() {
+		return new UploadCollectionItem({
+			contributor: "{contributor}",
+			tooltip: "{tooltip}",
+			documentId: "{documentId}",
+			enableEdit: "{enableEdit}",
+			enableDelete: "{enableDelete}",
+			fileName: "{fileName}",
+			fileSize: "{fileSize}",
+			mimeType: "{mimeType}",
+			thumbnailUrl: "{thumbnailUrl}",
+			uploadedDate: "{uploadedDate}",
+			url: "{url}",
+			ariaLabelForPicture: "{ariaLabelForPicture}",
+			markers: {
+				path: "markers",
+				template: createMarkerTemplate(),
+				templateShareable: false
+			}
+		});
+	}
+
+	function createMarkerTemplate() {
+		return new ObjectMarker({
+			type: "{type}",
+			visibility: "{visibility}"
+		});
+	}
 
 	QUnit.module("openFileDialog method", {
 		beforeEach: function () {
-			this.oUploadCollection = new sap.m.UploadCollection({
+			this.oUploadCollection = new UploadCollection({
 				items: {
 					path: "/items",
 					template: createItemTemplate(),
 					templateShareable: false
 				}
-			}).setModel(new sap.ui.model.json.JSONModel(oData));
+			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			sinon.stub(jQuery.prototype, "trigger");
@@ -33,7 +132,7 @@
 		var oReturnValue = this.oUploadCollection.openFileDialog(oItem);
 
 		// Assert
-		assert.ok(oReturnValue instanceof sap.m.UploadCollection, "Function returns an instance of UploadCollection");
+		assert.ok(oReturnValue instanceof UploadCollection, "Function returns an instance of UploadCollection");
 		assert.equal(jQuery.sap.log.warning.callCount, 1, "Warning log was generated correctly");
 		assert.ok(jQuery.sap.log.warning.calledWith("Version Upload cannot be used in multiple upload mode"), "Warning log was generated with the correct message");
 
@@ -51,7 +150,7 @@
 		var aInputField = this.oUploadCollection._oFileUploader.$().find("input[type=file]");
 
 		// Assert
-		assert.ok(oReturnValue instanceof sap.m.UploadCollection, "Function returns an instance of UploadCollection");
+		assert.ok(oReturnValue instanceof UploadCollection, "Function returns an instance of UploadCollection");
 		assert.notEqual(aInputField, 0, "There is an input element with type=file in the FileUploader");
 		aInputField.one('click', function (oEvent) {
 			assert.ok(true, "Click event was triggered.");
@@ -69,7 +168,7 @@
 		var aInputField = this.oUploadCollection._oFileUploader.$().find("input[type=file]");
 
 		// Assert
-		assert.ok(oReturnValue instanceof sap.m.UploadCollection, "Function returns an instance of UploadCollection");
+		assert.ok(oReturnValue instanceof UploadCollection, "Function returns an instance of UploadCollection");
 		assert.notEqual(aInputField, 0, "There is an input element with type=file in the FileUploader");
 		aInputField.one('click', function (oEvent) {
 			assert.ok(true, "Click event was triggered.");
@@ -93,13 +192,13 @@
 
 	QUnit.module("openFileDialog Integration", {
 		beforeEach: function () {
-			this.oUploadCollection = new sap.m.UploadCollection({
+			this.oUploadCollection = new UploadCollection({
 				items: {
 					path: "/items",
 					template: createItemTemplate(),
 					templateShareable: false
 				}
-			}).setModel(new sap.ui.model.json.JSONModel(oData));
+			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			this.aFile = [{
@@ -174,7 +273,7 @@
 			fileName: this.aFile[0].name,
 			requestHeaders: aRequestHeaders
 		});
-		this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
+		this.oUploadCollection._onUploadComplete(new Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 
 		// Assert
 		assert.equal(this.oUploadCollection._oItemToUpdate, null, "_oItemToUpdate was set to null");
@@ -206,7 +305,7 @@
 			fileName: this.aFile[0].name,
 			requestHeaders: aRequestHeaders
 		});
-		this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
+		this.oUploadCollection._onUploadComplete(new Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 
 		// Assert
 		assert.equal(this.oUploadCollection._oItemToUpdate, null, "_oItemToUpdate was set to null");
@@ -214,7 +313,7 @@
 
 	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the third case of uploadComplete", function (assert) {
 		// at present it is very hard to simulate IE9 in QUnits
-		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+		if (Device.browser.msie && Device.browser.version <= 9) {
 			assert.expect(0);
 			return;
 		}
@@ -244,7 +343,7 @@
 			fileName: this.aFile[0].name,
 			requestHeaders: aRequestHeaders
 		});
-		this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
+		this.oUploadCollection._onUploadComplete(new Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 
 		// Assert
 		assert.equal(this.oUploadCollection._oItemToUpdate, null, "_oItemToUpdate was set to null");
@@ -252,7 +351,7 @@
 
 	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the fourth case of uploadComplete", function (assert) {
 		// at present it is very hard to simulate IE9 in QUnits
-		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+		if (Device.browser.msie && Device.browser.version <= 9) {
 			assert.expect(0);
 			return;
 		}
@@ -282,9 +381,9 @@
 			fileName: this.aFile[0].name,
 			requestHeaders: aRequestHeaders
 		});
-		this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
+		this.oUploadCollection._onUploadComplete(new Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 
 		// Assert
 		assert.equal(this.oUploadCollection._oItemToUpdate, null, "_oItemToUpdate was set to null");
 	});
-}());
+});
