@@ -142,7 +142,11 @@
 							if (sControlName === "sap.m.PlanningCalendar" && (sPropertyName === "viewKey" || sPropertyName === "builtInViews")) { // control fails when key is set where nothing is registered
 								return true;
 							}
-						}
+
+							if (sControlName === "sap.m.OnePersonGrid" && sPropertyName === "startDate") {
+								return true;
+							}
+						};
 
 
 						// checks whether the control with the given name should for some reason not be tested
