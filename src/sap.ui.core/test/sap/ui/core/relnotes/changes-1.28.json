@@ -2694,5 +2694,16 @@
         "references": []
       }
     ]
+  },
+  "1.28.52": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "4db4a3457dd4273579599e952c3b4a7114bc8a7a",
+        "type": "FIX",
+        "text": " jquery.sap.events.js: adapt the event emulation condition regarding windows phone",
+        "references": []
+      }
+    ]
   }
 }

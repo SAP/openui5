@@ -2187,5 +2187,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.32": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "06df3c97de262e49771f534fbcda914948c8c12d",
+        "type": "FIX",
+        "text": " Fix synchronous document.activeElement access in iframes",
+        "references": []
+      },
+      {
+        "id": "bdecafb143344c1537331d53aa591834fd23ecdf",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Implicit casting for filter values",
+        "references": []
+      }
+    ]
   }
 }

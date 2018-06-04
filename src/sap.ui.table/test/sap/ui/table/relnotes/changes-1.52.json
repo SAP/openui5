@@ -341,5 +341,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.14": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ce9772b10f238d95871bc2f0539cd0e6e78249a5",
+        "type": "FIX",
+        "text": " GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": []
+      },
+      {
+        "id": "a94dc7611a7df7c24ce875b00b5bd8438139dede",
+        "type": "FIX",
+        "text": " Table: Correct positioning of the action column",
+        "references": []
+      }
+    ]
   }
 }
