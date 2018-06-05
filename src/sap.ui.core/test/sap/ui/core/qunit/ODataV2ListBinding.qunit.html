@@ -27,7 +27,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	var timeout = 3000;
 	var oModel;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
-		sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
+		sURI = "/proxy/http/" + sURI.replace("http://","");
 
 	var oLogChecker = {
 		init: function(){
@@ -2118,9 +2118,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var sUrl = oBinding.getDownloadUrl("csv");
-		assert.equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
+		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
 		sUrl = oBinding.getDownloadUrl("xlsx");
-		assert.equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
+		assert.equal(sUrl, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
 	});
 	QUnit.test("Suspend/Resume", function(assert) {
 		var done = assert.async();

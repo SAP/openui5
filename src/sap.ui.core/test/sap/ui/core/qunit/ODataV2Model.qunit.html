@@ -70,7 +70,7 @@
 	// time to wait for server responses
 	var timeout = 3000;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
-	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
+	sURI = "/proxy/http/" + sURI.replace("http://","");
 
 	var oLabel = new sap.ui.commons.Label("myLabel");
 	var oPanel = new sap.ui.commons.Panel();
@@ -169,6 +169,8 @@
 		oModel.update("Products(1)", {});
 		oModel.create("Products(1)", {});
 	});
+
+	QUnit.module("v2.OdataModel");
 
 	QUnit.test("test metadata and 'complex' namespace - 'some.name.space'", function(assert){
 		var done = assert.async();
@@ -4338,7 +4340,7 @@
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI);
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
 			OData.request.restore();
 			done();
 		});
@@ -4348,7 +4350,7 @@
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI+'?test=x');
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
 			OData.request.restore();
 			done();
 		});
@@ -4358,7 +4360,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
 			OData.request.restore();
 			done();
 		});
@@ -4368,7 +4370,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
 			done();
 		});
@@ -4379,7 +4381,7 @@
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata","no metadata url parameters");
 			OData.request.restore();
 			done();
 		});
@@ -4390,7 +4392,7 @@
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x","parameters of service url attached");
 			OData.request.restore();
 			done();
 		});
@@ -4401,7 +4403,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","metadataUrlParams attached");
 			OData.request.restore();
 			done();
 		});
@@ -4411,7 +4413,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
 			done();
 		});
@@ -4423,7 +4425,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?test=x&sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
 			spy = sinon.spy(OData, "request");
 			oModel.read("/Categories", {success: function(oData, oResponse) {
@@ -4443,7 +4445,7 @@
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
-			assert.equal(spy.args[0][0].requestUri,"../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
+			assert.equal(spy.args[0][0].requestUri,"/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-language=en&test2=xx","parameters of service url and metadataUrlParams attached");
 			OData.request.restore();
 			spy = sinon.spy(OData, "request");
 			oModel.read("/Categories", {success: function(oData, oResponse) {
@@ -6305,13 +6307,13 @@
 		this.oModel.metadataLoaded()
 			.then(function(oMetadata) {
 				assert.ok(this.oModel.oMetadata.sCacheKey, "caching enabled");
-				assert.equal(this.oModel.oMetadata.sCacheKey, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token", "cacheKey set");
+				assert.equal(this.oModel.oMetadata.sCacheKey, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token", "cacheKey set");
 				done();
 			}.bind(this));
 		this.oModel.annotationsLoaded()
 			.then(function(oAnnotations) {
 				assert.ok(this.oModel.oAnnotations.sCacheKey, "caching not enabled");
-				assert.equal(this.oModel.oAnnotations.sCacheKey, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token#annotations", "cacheKey set");
+				assert.equal(this.oModel.oAnnotations.sCacheKey, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token#annotations", "cacheKey set");
 			}.bind(this));
 	});
 
@@ -6341,13 +6343,13 @@
 		this.oModel.metadataLoaded()
 			.then(function(oMetadata) {
 				assert.ok(this.oModel.oMetadata.sCacheKey, "caching enabled");
-				assert.equal(this.oModel.oMetadata.sCacheKey, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token", "cacheKey set");
+				assert.equal(this.oModel.oMetadata.sCacheKey, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token", "cacheKey set");
 				done();
 			}.bind(this));
 		this.oModel.annotationsLoaded()
 			.then(function(oAnnotations) {
 				assert.ok(this.oModel.oAnnotations.sCacheKey, "caching enabled");
-				assert.equal(this.oModel.oAnnotations.sCacheKey, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token#annotations_/test/~201801171629~/someAnnotation.xml#annotations", "cacheKey set");
+				assert.equal(this.oModel.oAnnotations.sCacheKey, "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token#annotations_/test/~201801171629~/someAnnotation.xml#annotations", "cacheKey set");
 			}.bind(this));
 	});
 

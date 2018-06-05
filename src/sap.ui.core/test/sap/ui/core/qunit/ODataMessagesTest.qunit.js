@@ -269,8 +269,8 @@ function runODataMessagesTests() {
 
 				// Important: In this case the message order has been changed since errors come before warnings
 				var mAddesMessages = {
-					"Error|SY/530|/Error2(400)/|Warning": false,
-					"Error|/IWBEP/CX_MGW_BUSI_EXCEPTION|/Error2(400)/|Business Error with details in TEA application": false,
+					"Error|SY/530|/Error2(400)|Warning": false,
+					"Error|/IWBEP/CX_MGW_BUSI_EXCEPTION|/Error2(400)|Business Error with details in TEA application": false,
 					"Error||/Error2(400)/Property|Multiple error/warning messages": false,
 					"Error||/Error2(400)/Message|Inner error": false,
 					"Error||/Error2(400)/Type|Inner error 2": false,
@@ -585,7 +585,7 @@ function runODataMessagesTests() {
 			oParser.parse(oResponse, oRequest);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products(1)/", "target is read from the provided key");
+			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
 
 
 			//request uri:          fakeservice://testdata/odata/northwind/Products
@@ -601,10 +601,10 @@ function runODataMessagesTests() {
 			oParser.parse(oResponse, oRequest2);
 
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].target, "/Products(1)/", "target is read from the provided key");
+			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
 			assert.equal(aNewMessages[0].code, "888", "target is read from the provided key");
 			assert.equal(aOldMessages.length, 1);
-			assert.equal(aOldMessages[0].target, "/Products(1)/", "target is read from the provided key");
+			assert.equal(aOldMessages[0].target, "/Products(1)", "target is read from the provided key");
 			assert.equal(aOldMessages[0].code, "999", "target is read from the provided key");
 
 			//request uri:          fakeservice://testdata/odata/northwind/Products
