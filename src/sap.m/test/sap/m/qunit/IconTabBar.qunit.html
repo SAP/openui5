@@ -1844,7 +1844,16 @@
 				oIconTabBar.destroy();
 			});
 
-			QUnit.module("keyboard");
+			QUnit.module("keyboard", {
+				beforeEach: function() {
+					this.oIconTabBar = createIconTabBar();
+					this.oIconTabBar.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function() {
+					this.oIconTabBar.destroy();
+				}
+			});
 
 			 function createIconTabBar() {
 				return new sap.m.IconTabBar({
@@ -1862,16 +1871,8 @@
 			}
 
 			QUnit.test("Arrow Right", function(assert) {
-
-				//Arrange
-				var oIconTabBar = createIconTabBar();
-
-				// System under Test
-				oIconTabBar.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
-				var $tab1 = oIconTabBar.getItems()[0].$();
-				var $tab2 = oIconTabBar.getItems()[1].$();
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 				$tab1.focus(); // set focus on first filter
 
@@ -1880,22 +1881,11 @@
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on second filter
 				assert.ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus stay on second (last) filter"); // should not loop
-
-				// Clean up
-				oIconTabBar.destroy();
 			});
 
 			QUnit.test("Arrow Left", function(assert) {
-
-				//Arrange
-				var oIconTabBar = createIconTabBar();
-
-				// System under Test
-				oIconTabBar.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
-				var $tab1 = oIconTabBar.getItems()[0].$();
-				var $tab2 = oIconTabBar.getItems()[1].$();
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 				$tab2.focus(); // set focus on second filter
 
@@ -1904,22 +1894,11 @@
 
 				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on first filter
 				assert.ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus stayed on first filter"); // should not loop
-
-				// Clean up
-				oIconTabBar.destroy();
 			});
 
 			QUnit.test("Arrow Down", function(assert) {
-
-				//Arrange
-				var oIconTabBar = createIconTabBar();
-
-				// System under Test
-				oIconTabBar.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
-				var $tab1 = oIconTabBar.getItems()[0].$();
-				var $tab2 = oIconTabBar.getItems()[1].$();
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 				$tab1.focus(); // set focus on first filter
 
@@ -1928,22 +1907,11 @@
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on second filter
 				assert.ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus stay on second filter"); // should not loop
-
-				// Clean up
-				oIconTabBar.destroy();
 			});
 
 			QUnit.test("Arrow Up", function(assert) {
-
-				//Arrange
-				var oIconTabBar = createIconTabBar();
-
-				// System under Test
-				oIconTabBar.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
-				var $tab1 = oIconTabBar.getItems()[0].$();
-				var $tab2 = oIconTabBar.getItems()[1].$();
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 				$tab2.focus(); // set focus on second filter
 
@@ -1952,65 +1920,53 @@
 
 				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on first filter
 				assert.ok($tab1.is(":focus"), "ARROW_UP is pressed, focus stay on first filter"); // should not loop
-
-				// Clean up
-				oIconTabBar.destroy();
 			});
 
 			QUnit.test("END", function(assert) {
-
-				//Arrange
-				var oIconTabBar = createIconTabBar();
-
-				// System under Test
-				oIconTabBar.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
-				var $tab1 = oIconTabBar.getItems()[0].$();
-				var $tab2 = oIconTabBar.getItems()[1].$();
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 				$tab1.focus(); // set focus on first filter
 
 				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.END); // trigger End on first filter
 				assert.ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
-
-				// Clean up
-				oIconTabBar.destroy();
 			});
 
 			QUnit.test("HOME", function(assert) {
-
-				//Arrange
-				var oIconTabBar = createIconTabBar();
-
-				// System under Test
-				oIconTabBar.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
-				var $tab1 = oIconTabBar.getItems()[0].$();
-				var $tab2 = oIconTabBar.getItems()[1].$();
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 				$tab2.focus(); // set focus on second filter
 
 				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.HOME); // trigger Home on second filter
 				assert.ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
+			});
 
-				// Clean up
-				oIconTabBar.destroy();
+			QUnit.test("PAGEDOWN", function(assert) {
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
+
+				$tab1.focus(); // set focus on first filter
+
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.PAGE_DOWN); // trigger PAGEDOWN on first filter
+				assert.ok($tab2.is(":focus"), "PAGEDOWN is pressed, focus moved on last filter");
+				});
+
+				QUnit.test("PAGEUP", function(assert) {
+
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
+
+				$tab2.focus(); // set focus on second filter
+
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.PAGE_UP); // trigger PAGEUP on second filter
+				assert.ok($tab1.is(":focus"), "PAGEUP is pressed, focus moved on first filter");
 			});
 
 			QUnit.test("SPACE", function(assert) {
-
-				//Arrange
-				var oIconTabBar = createIconTabBar();
-
-				// System under Test
-				oIconTabBar.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-
 				var oSelectSpy = sinon.spy(sap.m.IconTabBar.prototype, "fireSelect");
-				var $tab1 = oIconTabBar.getItems()[0].$();
-				var $tab2 = oIconTabBar.getItems()[1].$();
+				var $tab1 = this.oIconTabBar.getItems()[0].$();
+				var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 				$tab2.focus(); // set focus on second filter
 
@@ -2019,7 +1975,6 @@
 
 				// Clean up
 				sap.m.IconTabBar.prototype.fireSelect.restore();
-				oIconTabBar.destroy();
 			});
 
 			QUnit.module("tab selection");
