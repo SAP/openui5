@@ -543,7 +543,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 *
 			 * @param {string|string[]} vName the name of a single target or the name of multiple targets
 			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the corresponding name or undefined. If an array way passed as name this will return an array with all found targets. Non existing targets will not be returned but will log an error.
-			 */
+			 * @public
+			 * */
 			getTarget :  function(vName) {
 				return this._oTargets.getTarget(vName);
 			},
