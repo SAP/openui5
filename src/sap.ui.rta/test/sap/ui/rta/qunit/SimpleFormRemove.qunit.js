@@ -88,7 +88,7 @@ function(
 
 			oRemove.attachElementModified(function(oEvent) {
 				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand, "then an Remove event is recieved with a remove command");
+				assert.ok(oCommand, "then an Remove event is received with a remove command");
 				oCommand.execute()
 
 				.then(function() {
