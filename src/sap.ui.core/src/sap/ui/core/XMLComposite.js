@@ -881,12 +881,14 @@ sap.ui.define([
 			addAttributesContext(mContexts, oImpl.prototype.alias, oElement, oImpl, oVisitor);
 			addViewContext(mContexts,oVisitor);
 			var oContextVisitor = oVisitor["with"](mContexts, true);
+			//visit the children of the element in case this uses templating
+			oContextVisitor.visitChildNodes(oElement);
 			templateAggregations(oElement, oMetadata, oContextVisitor);
+			// resolve templating
+			oContextVisitor.visitChildNodes(oFragment);
 			var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", oMetadata.getCompositeAggregationName());
 			oNode.appendChild(oFragment);
 			oElement.appendChild(oNode);
-			//resolve Templating
-			oContextVisitor.visitChildNodes(oElement);
 		};
 
 		return XMLComposite;
