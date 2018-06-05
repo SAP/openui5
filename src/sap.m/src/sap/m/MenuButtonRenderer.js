@@ -40,10 +40,8 @@ sap.ui.define([],
 			oRm.writeClasses();
 
 			// set user defined width
-			if (sWidth != "" || sWidth.toLowerCase() === "auto") {
+			if (sWidth != "") {
 				oRm.addStyle("width", sWidth);
-			} else if (oMenuButton._isSplitButton() && oMenuButton._iInitialWidth) { //else if we have initial width apply it
-				oRm.addStyle("width", oMenuButton._iInitialWidth + "px");
 			}
 			oRm.writeStyles();
 
