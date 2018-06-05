@@ -4828,7 +4828,7 @@ sap.ui.define([
 
 		// create the request URL
 		if (sPath) {
-			return this.oModel._createRequestUrl(sPath, null, aParam);
+			return this.oModel._createRequestUrl(sPath, null, aParam).replace(/ /g, "%20");
 		}
 
 	};
