@@ -69,7 +69,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			filterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "filterItem", bindable : "bindable"},
 
 			/**
-			 * The list of preset filter items that allows the selection of more complex or custom filters. These entries are displayed at the top of the filter tab.
+			 * The list of preset filter items with key and value that allows the selection of more complex or custom filters.
+			 * These entries are displayed at the top of the filter tab.
 			 * @since 1.16
 			 */
 			presetFilterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "presetFilterItem", bindable : "bindable"},
