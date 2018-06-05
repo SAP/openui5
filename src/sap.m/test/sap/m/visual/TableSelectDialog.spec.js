@@ -24,14 +24,14 @@ describe('sap.m.TableSelectDialog', function() {
 	it('should open table select dialog in multiselect mode with large data', function() {
 		element(by.id('tsdWithLargeDataAndMultiSelectButton')).click();
 		var tableSelectDialog = element(by.id('TableSelectDialog5-dialog'));
-		expect(takeScreenshot(tableSelectDialog)).toLookAs('2-tableSelectDialog-multiselect-largeData');
+		expect(takeScreenshot(tableSelectDialog)).toLookAs('2-TSD-multiselect-largeData');
 		element(by.id('TableSelectDialog5-cancel')).click();
 	});
 
 	it('should open table select dialog in multiselect mode with very large data', function() {
 		element(by.id('tsdWithVeryLargeDataButton')).click();
 		var tableSelectDialog = element(by.id('TableSelectDialog6-dialog'));
-		expect(takeScreenshot(tableSelectDialog)).toLookAs('3-tableSelectD-multiselect-veryLargeData');
+		expect(takeScreenshot(tableSelectDialog)).toLookAs('3-TSD-multiselect-veryLargeData');
 		element(by.id('TableSelectDialog6-cancel')).click();
 	});
 
