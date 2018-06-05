@@ -214,6 +214,34 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.test("when a command with an already persisted change gets executed and saved", function(assert) {
+		var oInput = new Input("input");
+		// Create command
+		var oSettingsCommand1 = CommandFactory.getCommandFor(oInput, "Settings", {
+			changeType: "hideControl"
+		}, this.oInputDesignTimeMetadata);
+
+		var oAddPreparedChangeSpy = sandbox.spy(oFlexController, "addPreparedChange");
+
+		// simulate the change as persisted change in stack
+		this.oCommandStack.push(oSettingsCommand1);
+		this.oCommandStack._aPersistedChanges = [oSettingsCommand1.getPreparedChange().getId()];
+
+		return this.oCommandStack.execute(oSettingsCommand1)
+		.then(function(){
+			assert.equal(oAddPreparedChangeSpy.callCount, 0, "no change got added");
+
+			return this.oSerializer.saveCommands();
+		}.bind(this))
+		.then(function() {
+			assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
+			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+		}.bind(this))
+		.catch(function(oError) {
+			return Promise.reject(oError);
+		});
+	});
+
 	QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory", function(assert) {
 		// then two changes are expected to be written in LREP
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
