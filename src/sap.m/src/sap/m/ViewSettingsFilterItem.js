@@ -43,7 +43,8 @@ sap.ui.define(['jquery.sap.global', './ViewSettingsItem', './library'],
 		aggregations : {
 
 			/**
-			 * Items that are logically grouped under this filter item. They are used to display filter details in the ViewSettingsDialog.
+			 * Items with key and value that are logically grouped under this filter item.
+			 * They are used to display filter details in the ViewSettingsDialog.
 			 */
 			items : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "item", bindable: "bindable"}
 		},

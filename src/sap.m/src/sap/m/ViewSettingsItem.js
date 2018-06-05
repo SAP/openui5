@@ -18,6 +18,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	 * @class
 	 * ViewSettingsItem is used for modelling filter behaviour in the ViewSettingsDialog.
 	 * It is derived from a core Item, but does not support the base class properties "textDirection" and "enabled", setting these properties will not have any effects.
+	 * Apps should use the core Item's property <code>key/</code> and provide a unique value for it. Not providing a key
+	 * may lead to unexpected behavior of the sap.m.ViewSettingsDialog.
 	 * @extends sap.ui.core.Item
 	 *
 	 * @author SAP SE
