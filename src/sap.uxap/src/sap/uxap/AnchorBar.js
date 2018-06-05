@@ -126,9 +126,9 @@ sap.ui.define([
 				nonTouchScrolling: true
 			});
 
-			this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
-			this._iTolerance = this._iREMSize * 1;  // 1 rem
-			this._iOffset = this._iREMSize * 3;  // 3 rem
+			this._iREMSize = 0;
+			this._iTolerance = 0;
+			this._iOffset = 0;
 
 			//listen to resize
 			this._sResizeListenerId = undefined; //defined in onAfterRendering
@@ -237,6 +237,12 @@ sap.ui.define([
 	 * create phone equivalents for each of the provided content controls
 	 */
 	AnchorBar.prototype.onBeforeRendering = function () {
+		if (this._bHasButtonsBar) {
+			this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
+			this._iTolerance = this._iREMSize * 1;  // 1 rem
+			this._iOffset = this._iREMSize * 3;  // 3 rem
+		}
+
 		if (Toolbar.prototype.onBeforeRendering) {
 			Toolbar.prototype.onBeforeRendering.call(this);
 		}
