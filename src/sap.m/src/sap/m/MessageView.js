@@ -321,7 +321,8 @@ sap.ui.define([
 	};
 
 	MessageView.prototype.onBeforeRendering = function () {
-		var oGroupedItems, aItems = this.getItems();
+		var oGroupedItems,
+			aItems = this.getItems();
 
 		this._clearLists();
 		this._detailsPage.setShowHeader(this.getShowDetailsPageHeader());
@@ -710,12 +711,15 @@ sap.ui.define([
 		if (listItemType !== ListType.Navigation) {
 			oListItem.addEventDelegate({
 				onAfterRendering: function () {
-					var oItemDomRef = this.getDomRef().querySelector(".sapMSLITitleDiv > div");
+					var oItemDomRef = oListItem.getDomRef().querySelector(".sapMSLITitleDiv > div");
 					if (oItemDomRef.offsetWidth < oItemDomRef.scrollWidth) {
-						this.setType(ListType.Navigation);
+						oListItem.setType(ListType.Navigation);
+						if (this.getItems().length === 1) {
+							this._fnHandleForwardNavigation(oListItem, "show");
+						}
 					}
 				}
-			}, oListItem);
+			}, this);
 		}
 
 		oListItem._oMessageItem = oMessageItem;
