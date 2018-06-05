@@ -749,19 +749,21 @@ sap.ui.require([
 					stack : oFixture.stack
 				},
 				sLogMessage = "Failed to read path /Product('1')/Unknown",
-				oMessageManager = sap.ui.getCore().getMessageManager(),
 				oModel = createModel();
 
 			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName)
 				.twice();
-			this.mock(oMessageManager).expects("addMessages")
+			this.mock(oModel).expects("fireMessageChange")
 				.once()// add each error only once to the MessageManager
-				.withExactArgs(sinon.match(function (oMessage) {
-					return oMessage instanceof Message
-						&& oMessage.message === oError.message
-						&& oMessage.processor === oModel
-						&& oMessage.technical === true
-						&& oMessage.type === "Error";
+				.withExactArgs(sinon.match(function (mArguments) {
+					var aMessages = mArguments.newMessages;
+
+					return aMessages[0] instanceof Message
+						&& aMessages[0].getMessage() === oError.message
+						&& aMessages[0].getMessageProcessor() === oModel
+						&& aMessages[0].getPersistent() === true
+						&& aMessages[0].getTechnical() === true
+						&& aMessages[0].getType() === "Error";
 				}));
 
 			// code under test
@@ -772,25 +774,27 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("reportError on canceled error", function (assert) {
-		var oError = {canceled : true, message : "Canceled", stack: "Canceled\n    at foo.bar"};
+		var oError = {canceled : true, message : "Canceled", stack: "Canceled\n    at foo.bar"},
+			oModel = createModel();
 
 		this.oLogMock.expects("debug")
 			.withExactArgs("Failure", "Canceled\n    at foo.bar", "class");
-		this.mock(sap.ui.getCore().getMessageManager()).expects("addMessages").never();
+		this.mock(oModel).expects("fireMessageChange").never();
 
 		// code under test
-		createModel().reportError("Failure", "class", oError);
+		oModel.reportError("Failure", "class", oError);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("reportError on canceled error, no debug log", function (assert) {
-		var oError = {canceled : "noDebugLog"};
+		var oError = {canceled : "noDebugLog"},
+			oModel = createModel();
 
 		this.oLogMock.expects("debug").never();
-		this.mock(sap.ui.getCore().getMessageManager()).expects("addMessages").never();
+		this.mock(oModel).expects("fireMessageChange").never();
 
 		// code under test
-		createModel().reportError("Failure", "class", oError);
+		oModel.reportError("Failure", "class", oError);
 	});
 
 	//*********************************************************************************************

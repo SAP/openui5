@@ -1246,8 +1246,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reports a technical error by adding a message to the MessageManager and logging the error to
-	 * the console. Takes care that the error is only added once to the MessageManager.
+	 * Reports a technical error by firing a <code>messageChange</code> event with a new message and
+	 * logging the error to the console. Takes care that the error is only reported once via the
+	 * <code>messageChange</code> event.
 	 *
 	 * @param {string} sLogMessage
 	 *   The message to write to the console log
@@ -1285,12 +1286,15 @@ sap.ui.define([
 			return;
 		}
 		oError.$reported = true;
-		sap.ui.getCore().getMessageManager().addMessages(new Message({
-			message : oError.message,
-			processor : this,
-			technical : true,
-			type : "Error"
-		}));
+		this.fireMessageChange({
+			newMessages : [new Message({
+				message : oError.message,
+				processor : this,
+				persistent : true,
+				technical : true,
+				type : "Error"
+			})]
+		});
 	};
 
 	/**
