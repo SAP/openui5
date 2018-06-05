@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>BlockLayout ACC Test - sap.ui.layout</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.ui.layout, sap.m"
+	        src="../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			var sTextLorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.";
+
+			var fnCreateForm = function () {
+				return new sap.ui.layout.form.SimpleForm({
+					editable: true,
+					backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
+					layout: sap.ui.layout.form.SimpleFormLayout.GridLayout,
+					content: [
+						new sap.ui.core.Title({ // this starts a new group
+							text: "Editable Form"
+						}),
+						new sap.m.Label({
+							text: 'Label1'
+						}),
+						new sap.m.Input({
+							type: sap.m.InputType.Text,
+							placeholder: 'Enter Name ...'
+						}),
+						new sap.m.Label({
+							text: 'Label2'
+						}),
+						new sap.m.CheckBox({
+							selected: true
+						}),
+						new sap.m.Label({
+							text: 'Label3'
+						}),
+						new sap.m.Select({
+							name: "select-name0",
+							items: [
+								oItem20 = new sap.ui.core.Item({
+									key: "0",
+									text: "item 0"
+								}),
+
+								oItem21 = new sap.ui.core.Item({
+									key: "1",
+									text: "item 1"
+								}),
+
+								oItem22 = new sap.ui.core.Item({
+									key: "2",
+									text: "item 2 is a little long"
+								}),
+
+								oItem23 = new sap.ui.core.Item({
+									key: "3",
+									text: "item 3"
+								})
+							]
+						}),
+						new sap.m.Label({
+							text: 'Label4'
+						}),
+						new sap.m.Link({
+							text: 'SAP Germany',
+							target: 'http://www.sap.com'
+						}),
+						new sap.m.Label({
+							text: 'Label5'
+						}),
+						new sap.m.TextArea({
+							placeholder: "Please add your comment",
+							rows: 6,
+							maxLength: 255,
+							width: "100%"
+						}),
+						new sap.m.Label({
+							text: 'Short sap.m.Text'
+						}),
+						new sap.m.Text({
+							text: '69190 Walldorf'
+						}),
+						new sap.m.Label({
+							text: 'Long sap.m.Text'
+						}),
+						new sap.m.Text({
+							text: '69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt' +
+							' eu felis. In hac habitasse platea dictumst. 69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit.' +
+							' Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst.'
+						})
+					]
+				});
+			};
+
+			var fnCreateCell = function (width, title, content, alignment) {
+				content = content || new sap.m.Text({
+					text: sTextLorem
+				});
+				width = width || 0;
+				return new sap.ui.layout.BlockLayoutCell({
+					content: content,
+					width: width,
+					title: title,
+					titleAlignment: alignment,
+				});
+			};
+
+			var fnCreateBlockLayout = function (sBackground, sText) {
+				var oCell1 = fnCreateCell(1),
+						oCell2 = fnCreateCell(1, "An Icon", new sap.ui.core.Icon({src: "arrow-right"})),
+						oCell3 = fnCreateCell(1, "Tomato Heading", [
+							new sap.m.Text({text: sText.substr(0, 20)})
+						], "Center"),
+						oCell4 = fnCreateCell(3, null, fnCreateForm());
+
+				return new sap.ui.layout.BlockLayout({
+					id: "layout-" + sBackground.toLowerCase(),
+					background: sBackground,
+					content: [
+						new sap.ui.layout.BlockLayoutRow({
+							content: [
+								fnCreateCell(1, "Green is good for u"),
+								oCell4
+							],
+							accentCells: [oCell4]
+						}),
+						new sap.ui.layout.BlockLayoutRow({
+							content: [
+								oCell1,
+								oCell2,
+								fnCreateCell(2, "Custom", null, "Right")
+							],
+							accentCells: [oCell1, oCell2]
+						}),
+						new sap.ui.layout.BlockLayoutRow({
+							content: [
+								fnCreateCell(1, null, new sap.m.Text({text: sText + sText})),
+								oCell3,
+								fnCreateCell(1),
+								fnCreateCell(1, "<Escaped?>")
+							],
+							accentCells: [oCell3]
+						}),
+						new sap.ui.layout.BlockLayoutRow({
+							scrollable: true,
+							content: [
+								fnCreateCell(null, null, new sap.m.Text({text: sText + sText})),
+								fnCreateCell(null, "Scrolling Row Heading"),
+								fnCreateCell(),
+								fnCreateCell(),
+								fnCreateCell(),
+								fnCreateCell()
+							]
+						}),
+						new sap.ui.layout.BlockLayoutRow({
+							content: fnCreateCell(1)
+						}),
+						new sap.ui.layout.BlockLayoutRow({
+							content: fnCreateCell(1)
+						}),
+						new sap.ui.layout.BlockLayoutRow({
+							content: fnCreateCell(1)
+						}),
+						new sap.ui.layout.BlockLayoutRow({
+							content: fnCreateCell(1)
+						})
+					]
+				});
+			};
+
+			var fnCreatePage = function (sBackground, oBlockLayout) {
+				return new sap.m.Page("area-" + sBackground.toLowerCase(), {
+					title: sBackground + " BlockLayout",
+					showNavButton: jQuery.device.is.phone,
+					navButtonText: "Back",
+					navButtonPress: function () {
+						sap.ui.getCore().byId("block-layout-demo").backDetail();
+					},
+					content: [oBlockLayout]
+				});
+			};
+
+			var fnCreateListItem = function (sBackground) {
+				return new sap.m.StandardListItem({
+					id: "navigate-to-" + sBackground.toLowerCase(),
+					title: sBackground + " BlockLayout",
+					type: "Active",
+					press: function () {
+						sap.ui.getCore().byId("block-layout-demo").toDetail("area-" + sBackground.toLowerCase());
+					}
+				})
+			};
+
+			var aLayoutTypes = ["Default", "Light", "Accent", "Dashboard"];
+
+			var aMasterPageItems = [],
+					aDetailPages = [];
+
+			aLayoutTypes.forEach(function (sLayoutType) {
+				aMasterPageItems.push(fnCreateListItem(sLayoutType));
+				aDetailPages.push(fnCreatePage(sLayoutType, fnCreateBlockLayout(sLayoutType, sTextLorem)));
+			});
+
+			new sap.m.SplitApp({
+				id: "block-layout-demo",
+				masterPages: [new sap.m.Page({
+					title: "Navigation",
+					content: [new sap.m.List({items: aMasterPageItems})]
+				})],
+				detailPages: aDetailPages
+			}).placeAt("content");
+		});
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+
+<div id="content"></div>
+
+</body>
+</html>
