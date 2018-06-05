@@ -63,6 +63,7 @@ sap.ui.define([
 	 */
 	Stack.initializeWithChanges = function(oControl, aFileNames) {
 		var oStack = new Stack();
+		oStack._aPersistedChanges = aFileNames;
 		var mComposite = {};
 		if (aFileNames && aFileNames.length > 0) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
