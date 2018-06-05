@@ -316,6 +316,20 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("when pushing a failing command and a working command to the stack and calling execute, ", function(assert) {
+			this.stack.push(this.failingCommand);
+			this.stack.push(this.command);
+			return this.stack.execute()
+
+			.catch(function(oError) {
+				var aCommands = this.stack.getCommands();
+				assert.equal(aCommands.length, 1, "the CommandStack contains one command afterwards");
+				assert.equal(aCommands[0].getId(), this.command.getId(), "the remaining command is the one which has been pushed last");
+				assert.equal(this.stack._getCommandToBeExecuted().getId(), this.command.getId(), "the variable '_toBeExecuted' points to the remaining command");
+				assert.equal(oError.command.getId(), this.failingCommand.getId(), "the error object contains the failing command");
+			}.bind(this));
+		});
+
 		QUnit.test("when undoing and redo an empty stack, then no exception should come", function(assert) {
 			assert.expect(0);
 			this.stack.undo();
