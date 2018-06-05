@@ -712,6 +712,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Reports unbound OData messages.
+	 *
+	 * @param {string} [sMessages]
+	 *   The messages in the serialized form as contained in the sap-message response header
+	 */
+	Requestor.prototype.reportUnboundMessages = function (sMessages) {
+		this.oModelInterface.fnReportUnboundMessages(JSON.parse(sMessages || null));
+	};
+
+	/**
 	 * Sends an HTTP request using the given method to the given relative URL, using the given
 	 * request-specific headers in addition to the mandatory OData V4 headers and the default
 	 * headers given to the factory. Takes care of CSRF token handling. Non-GET requests are bundled
@@ -813,6 +823,7 @@ sap.ui.define([
 			jQuery.extend({}, mHeaders, this.mFinalHeaders),
 			JSON.stringify(_Requestor.cleanPayload(oPayload))
 		).then(function (oResponse) {
+			that.reportUnboundMessages(oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
 		});
 	};
@@ -862,6 +873,9 @@ sap.ui.define([
 		return this.sendRequest("POST", "$batch" + this.sQueryParams,
 			jQuery.extend(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
 		).then(function (oResponse) {
+			if (oResponse.messages !== null) {
+				throw new Error("Unexpected 'sap-message' response header for batch request");
+			}
 			return _Batch.deserializeBatchResponse(oResponse.contentType, oResponse.body);
 		});
 	};
@@ -910,7 +924,9 @@ sap.ui.define([
 					}
 					that.mHeaders["X-CSRF-Token"]
 						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+
 					fnResolve({
+						messages : jqXHR.getResponseHeader("sap-message"),
 						body : oResponse,
 						contentType : jqXHR.getResponseHeader("Content-Type")
 					});
@@ -1012,11 +1028,13 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
+						that.reportUnboundMessages(vResponse.headers["sap-message"]);
 						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}
 				} else {
+					that.reportUnboundMessages(vResponse.headers["sap-message"]);
 					vRequest.$resolve();
 				}
 			});
@@ -1186,6 +1204,9 @@ sap.ui.define([
 		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
+		 * @param {function (object[])} oModelInterface.fnReportUnboundMessages
+		 *   A function to report unbound OData messages contained in the <code>sap-message</code>
+		 *   response header
 		 * @param {object} [mHeaders={}]
 		 *   Map of default headers; may be overridden with request-specific headers; certain
 		 *   OData V4 headers are predefined, but may be overridden by the default or

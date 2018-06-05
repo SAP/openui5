@@ -3,6 +3,7 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/core/MessageType",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
@@ -14,6 +15,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
@@ -22,11 +24,12 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Message, Binding, BindingMode, BaseContext, Model, TypeString,
-		ODataUtils, OperationMode, Context, _MetadataRequestor, _GroupLock, _Parser, _Requestor,
-		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
-		SubmitMode, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/thirdparty/URI"
+], function (jQuery, MessageType, Message, Binding, BindingMode, BaseContext, Model, TypeString,
+		ODataUtils, OperationMode, Context, _MetadataRequestor, _GroupLock, _Helper, _Parser,
+		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
+		ODataPropertyBinding, SubmitMode, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -390,6 +393,7 @@ sap.ui.require([
 		var oExpectedBind0,
 			oExpectedBind1,
 			oExpectedBind2,
+			oExpectedBind3,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			fnFetchEntityContainer = function () {},
 			fnFetchMetadata = function () {},
@@ -408,6 +412,8 @@ sap.ui.require([
 			.returns(fnFetchMetadata);
 		oExpectedBind2 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
 			.returns(ODataModel.prototype.getGroupProperty);
+		oExpectedBind3 = this.mock(ODataModel.prototype.reportUnboundMessages).expects("bind")
+			.returns(ODataModel.prototype.reportUnboundMessages);
 
 		// code under test
 		oModel = createModel("?sap-client=123");
@@ -417,6 +423,7 @@ sap.ui.require([
 		assert.strictEqual(oExpectedBind0.firstCall.args[0], oModel.oMetaModel);
 		assert.strictEqual(oExpectedBind1.firstCall.args[0], oModel.oMetaModel);
 		assert.strictEqual(oExpectedBind2.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind3.firstCall.args[0], oModel);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto")
@@ -572,7 +579,7 @@ sap.ui.require([
 			.withExactArgs("groupId")
 			.returns(Promise.reject(oExpectedError));
 		this.mock(oModel).expects("reportError")
-			.withExactArgs("$batch failed", sClassName, oExpectedError.message);
+			.withExactArgs("$batch failed", sClassName, oExpectedError);
 
 		// code under test
 		return oModel._submitBatch("groupId").then(function () {
@@ -1594,6 +1601,68 @@ sap.ui.require([
 			}),
 			oBazPromise
 		]);
+	});
+
+	//*********************************************************************************************
+	[
+		{severity : undefined, type : MessageType.None},
+		{severity : "error", type : MessageType.Error},
+		{severity : "info", type : MessageType.Information},
+		{severity : "success", type : MessageType.Success},
+		{severity : "warning", type : MessageType.Warning}
+	].forEach(function (oFixture, i) {
+		QUnit.test("reportUnboundMessages, " + i, function (assert) {
+			var aMessages = [{
+					code : 42,
+					message : "foo0",
+					"@Common.LongtextUrl" : "foo/bar0",
+					severity : oFixture.severity
+				}, {
+					code : 78,
+					message : "foo2",
+					"@Common.LongtextUrl" : "",
+					severity : oFixture.severity
+				}, {
+					code : 79,
+					message : "foo3",
+					severity : oFixture.severity
+				}],
+				oModel = createModel();
+
+			this.mock(_Helper).expects("makeAbsolute")
+				.withExactArgs(aMessages[0]["@Common.LongtextUrl"], oModel.sServiceUrl)
+				.returns("URL");
+			this.mock(oModel).expects("fireMessageChange")
+				.withExactArgs(sinon.match(function (mArguments) {
+					var aMessages0 = mArguments.newMessages;
+
+					return aMessages0.length === aMessages.length
+						&& aMessages0.every(function (oMessage, j) {
+							var sExpectedUrl = j === 0 ? "URL" : undefined;
+
+							return oMessage instanceof Message
+								&& oMessage.getCode() === aMessages[j].code
+								&& oMessage.getDescriptionUrl() === sExpectedUrl
+								&& oMessage.getMessage() === aMessages[j].message
+								&& oMessage.getMessageProcessor() === oModel
+								&& oMessage.getPersistent() === true
+								&& oMessage.getTechnical() === false
+								&& oMessage.getType() === oFixture.type;
+						});
+				}));
+
+			// code under test
+			oModel.reportUnboundMessages(aMessages);
+
+			// code under test
+			oModel.reportUnboundMessages([]);
+
+			// code under test
+			oModel.reportUnboundMessages(null);
+
+			// code under test
+			oModel.reportUnboundMessages();
+		});
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

@@ -15,6 +15,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/MessageType",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI",
 	"./lib/_GroupLock",
+	"./lib/_Helper",
 	"./lib/_MetadataRequestor",
 	"./lib/_Requestor",
 	"./lib/_Parser",
@@ -30,15 +32,21 @@ sap.ui.define([
 	"./ODataMetaModel",
 	"./ODataPropertyBinding",
 	"./SubmitMode"
-], function (jQuery, SyncPromise, Message, BindingMode, BaseContext, Model, OperationMode, URI,
-		_GroupLock, _MetadataRequestor, _Requestor, _Parser, ODataContextBinding, ODataListBinding,
-		ODataMetaModel, ODataPropertyBinding, SubmitMode) {
+], function (jQuery, SyncPromise, MessageType, Message, BindingMode, BaseContext, Model,
+		OperationMode, URI, _GroupLock, _Helper, _MetadataRequestor, _Requestor, _Parser,
+		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding, SubmitMode) {
 
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		rApplicationGroupID = /^\w+$/,
 		rGroupID = /^(\$auto|\$direct|\w+)$/,
+		mMessageSeverity2Type = {
+			"error" : MessageType.Error,
+			"info" : MessageType.Information,
+			"success" : MessageType.Success,
+			"warning" : MessageType.Warning
+		},
 		mSupportedEvents = {
 			messageChange : true
 		},
@@ -249,7 +257,8 @@ sap.ui.define([
 									sap.ui.getCore().addPrerenderingTask(
 										that._submitBatch.bind(that, sGroupId));
 								}
-							}
+							},
+							fnReportUnboundMessages : this.reportUnboundMessages.bind(this)
 						}, mHeaders, this.mUriParameters, sODataVersion);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);
@@ -301,7 +310,7 @@ sap.ui.define([
 				return oGroupLock.isLocked();
 			});
 			return that.oRequestor.submitBatch(sGroupId).catch(function (oError) {
-				that.reportError("$batch failed", sClassName, oError.message);
+				that.reportError("$batch failed", sClassName, oError);
 				throw oError;
 			});
 		}));
@@ -1282,6 +1291,38 @@ sap.ui.define([
 			technical : true,
 			type : "Error"
 		}));
+	};
+
+	/**
+	 * Reports the given unbound OData messages by firing a <code>messageChange</code> event with
+	 * the new messages.
+	 *
+	 * @param {object[]} [aMessages]
+	 *   The array of messages as contained in the <code>sap-message</code> response header
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.reportUnboundMessages = function (aMessages) {
+		var that = this;
+
+		if (aMessages && aMessages.length) {
+			this.fireMessageChange({
+				newMessages : aMessages.map(function (oMessage) {
+					return new Message({
+						code : oMessage.code,
+						descriptionUrl : oMessage["@Common.LongtextUrl"]
+							? _Helper.makeAbsolute(oMessage["@Common.LongtextUrl"],
+								that.sServiceUrl)
+							: undefined,
+						message : oMessage.message,
+						persistent : true,
+						processor : that,
+						technical : false,
+						type : mMessageSeverity2Type[oMessage.severity] || MessageType.None
+					});
+				})
+			});
+		}
 	};
 
 	/**

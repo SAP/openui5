@@ -445,7 +445,13 @@ sap.ui.require([
 						: checkRequest(oRequest.method, oRequest.url, oRequest.headers,
 								oRequest.body
 							).then(function (oResponse) {
+								var mHeaders = {};
+
+								if (oResponse.messages) {
+									mHeaders["sap-message"] = oResponse.messages;
+								}
 								return {
+									headers : mHeaders,
 									status : 200,
 									responseText : JSON.stringify(oResponse.body)
 								};
@@ -472,14 +478,17 @@ sap.ui.require([
 						payload : typeof vPayload === "string" ? JSON.parse(vPayload) : vPayload
 					},
 					oExpectedRequest = that.aRequests.shift(),
-					oResponse;
+					oResponseBody,
+					mResponseHeaders;
 
 				delete mHeaders["Accept"];
 				delete mHeaders["Accept-Language"];
 				delete mHeaders["Content-Type"];
 				if (oExpectedRequest) {
-					oResponse = oExpectedRequest.response;
+					oResponseBody = oExpectedRequest.response;
+					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.response;
+					delete oExpectedRequest.responseHeaders;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				} else {
 					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
@@ -489,9 +498,12 @@ sap.ui.require([
 					setTimeout(that.checkFinish.bind(that), 0);
 				}
 
-				return oResponse instanceof Error
-					? Promise.reject(oResponse)
-					: Promise.resolve({body : oResponse});
+				return oResponseBody instanceof Error
+					? Promise.reject(oResponseBody)
+					: Promise.resolve({
+						body : oResponseBody,
+						messages : mResponseHeaders["sap-message"]
+					});
 			}
 
 			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
@@ -623,9 +635,11 @@ sap.ui.require([
 		 * @param {string|object} vRequest The request with the properties "method", "url" and
 		 *   "headers". A string is interpreted as URL with method "GET".
 		 * @param {object} [oResponse] The response message to be returned from the requestor.
+		 * @param {object} [mResponseHeaders] The response headers to be returned from the
+		 *   requestor.
 		 * @returns {object} The test instance for chaining
 		 */
-		expectRequest : function (vRequest, oResponse) {
+		expectRequest : function (vRequest, oResponse, mResponseHeaders) {
 			if (typeof vRequest === "string") {
 				vRequest = {
 					method : "GET",
@@ -635,6 +649,7 @@ sap.ui.require([
 			// ensure that these properties are defined (required for deepEqual)
 			vRequest.headers = vRequest.headers || {};
 			vRequest.payload = vRequest.payload || undefined;
+			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = oResponse;
 			this.aRequests.push(vRequest);
 			return this;
@@ -6734,6 +6749,44 @@ sap.ui.require([
 				oFunction.execute(),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	["$direct", "$auto"].forEach(function (sGroupId){
+		QUnit.test("Unbound messages in response: " + sGroupId, function (assert) {
+			var oModel = createTeaBusiModel({"groupId" : sGroupId}),
+				sView = '\
+<FlexBox binding="{/TEAMS(\'42\')}">\
+	<Text id="id" text="{Team_Id}" />\
+</FlexBox>';
+
+			this.expectRequest("TEAMS('42')", {"Team_Id" : "42"}, {
+					"sap-message" : JSON.stringify([
+						{"code" : "42", "message" : "text0", "severity" : "warning"},
+						{"code" : "77", "message" : "text1", "severity" : "info"}
+					])
+				})
+				.expectChange("id", "42");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				var aMessages = sap.ui.getCore().getMessageManager().getMessageModel()
+						.getObject("/");
+
+				assert.strictEqual(aMessages.length, 2, "two messages in message model");
+				assert.strictEqual(aMessages[0].getCode(), "42");
+				assert.strictEqual(aMessages[0].getMessage(), "text0");
+				assert.strictEqual(aMessages[0].getMessageProcessor(), oModel);
+				assert.strictEqual(aMessages[0].getPersistent(), true);
+				assert.strictEqual(aMessages[0].getTechnical(), false);
+				assert.strictEqual(aMessages[0].getType(), "Warning");
+				assert.strictEqual(aMessages[1].getCode(), "77");
+				assert.strictEqual(aMessages[1].getMessage(), "text1");
+				assert.strictEqual(aMessages[1].getMessageProcessor(), oModel);
+				assert.strictEqual(aMessages[1].getPersistent(), true);
+				assert.strictEqual(aMessages[1].getTechnical(), false);
+				assert.strictEqual(aMessages[1].getType(), "Information");
+			});
 		});
 	});
 });
