@@ -292,12 +292,6 @@ sap.ui.define([
 						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE")
 					});
 					break;
-				case P13nPanelType.dimeasure:
-					aValidationResult.push({
-						messageType: MessageType.Error,
-						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_CHARTTYPE")
-					});
-					break;
 				default:
 					jQuery.sap.log.error("Panel type '" + sPanelType + "' is not supported jet.");
 			}
