@@ -1721,8 +1721,10 @@ sap.ui.require([
 				})
 				.expectChange("note", "from server", 0);
 
-			that.oModel.submitBatch("update");
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -1770,7 +1772,11 @@ sap.ui.require([
 
 			that.oView.byId("amount").getBinding("text").setValue("1234.56");
 			that.oView.byId("note").getBinding("text").setValue("Changed Note");
-			that.oModel.submitBatch("update");
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -2067,8 +2073,11 @@ sap.ui.require([
 						{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
 			}, new Error("setContext on relative binding is forbidden if a transient entity exists"
 				+ ": sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
-			that.oModel.submitBatch("update");
-			return that.waitForChanges(assert);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			// code under test
 			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
@@ -2809,24 +2818,27 @@ sap.ui.require([
 					}, {"value" : [mFrederic, mJonathan]})
 					.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
-				oModel.submitBatch("group");
+				return Promise.all([
+					oModel.submitBatch("group"),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				var oListBinding = that.oView.byId("table").getBinding("items");
 
-				return that.waitForChanges(assert).then(function () {
-					var oListBinding = that.oView.byId("table").getBinding("items");
+				that.expectRequest({
+					method : "GET",
+					url : sUrlPrefix + "$orderby=Name%20desc&$skip=0&$top=100"
+				}, {"value" : [mJonathan, mFrederic]})
+					.expectChange("text", ["Jonathan Smith", "Frederic Fall"]);
 
-					that.expectRequest({
-						method : "GET",
-						url : sUrlPrefix + "$orderby=Name%20desc&$skip=0&$top=100"
-					}, {"value" : [mJonathan, mFrederic]})
-						.expectChange("text", ["Jonathan Smith", "Frederic Fall"]);
-
-					oListBinding.changeParameters({
-						"$orderby" : "Name desc"
-					});
-					oModel.submitBatch("group");
-
-					return that.waitForChanges(assert);
+				oListBinding.changeParameters({
+					"$orderby" : "Name desc"
 				});
+
+				return Promise.all([
+					oModel.submitBatch("group"),
+					that.waitForChanges(assert)
+				]);
 			});
 		});
 	});
@@ -2859,9 +2871,11 @@ sap.ui.require([
 				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
 			that.oView.byId("table").getBinding("items").resume();
-			oModel.submitBatch("group");
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oModel.submitBatch("group"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -2869,7 +2883,8 @@ sap.ui.require([
 	// Scenario: Change a property in a dependent binding below a list binding with an own cache and
 	// change the list binding's row (-> the dependent binding's context)
 	QUnit.test("Pending change in hidden cache", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oListBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="teamSet" items="{/TEAMS}">\
 	<ColumnListItem>\
@@ -2893,6 +2908,8 @@ sap.ui.require([
 			.expectChange("employeeName");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("teamSet").getBinding("items");
+
 			that.expectRequest(
 					"TEAMS('1')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100",
 					{value : [{ID : "01"}, {ID : "02"}]})
@@ -2915,37 +2932,54 @@ sap.ui.require([
 				that.oView.byId("employeeSet").getItems()[0].getBindingContext());
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oListBinding = that.oView.byId("teamSet").getBinding("items");
-
 			that.expectChange("employeeName", "foo");
 
 			// Modify the employee name in the object page
 			that.oView.byId("employeeName").getBinding("text").setValue("foo");
 			assert.ok(oListBinding.hasPendingChanges());
 
-			return that.waitForChanges(assert).then(function () {
-				that.expectRequest(
-						"TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100",
-						{value : [{ID : "03"}, {ID : "04"}]})
-					.expectChange("employeeId", ["03", "04"])
-					.expectChange("employeeName", null);
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest(
+					"TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100",
+					{value : [{ID : "03"}, {ID : "04"}]})
+				.expectChange("employeeId", ["03", "04"])
+				.expectChange("employeeName", null);
 
-				// "select" the second row in the team table
-				that.oView.byId("employeeSet").setBindingContext(
-					that.oView.byId("teamSet").getItems()[1].getBindingContext());
-				assert.ok(oListBinding.hasPendingChanges());
-				return that.waitForChanges(assert);
-			});
+			// "select" the second row in the team table
+			that.oView.byId("employeeSet").setBindingContext(
+				that.oView.byId("teamSet").getItems()[1].getBindingContext());
+			assert.ok(oListBinding.hasPendingChanges());
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
 					headers : {"If-Match" : "eTag"},
 					method : "PATCH",
 					payload : {"Name" : "foo"},
 					url : "EMPLOYEES('01')"
-				})
-				.expectChange("employeeName", "foo");
+				});
 
-			that.oModel.submitBatch("update");
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// no requests because cache is reused
+			that.expectChange("employeeId", ["01", "02"]);
+
+			// code under test
+			that.oView.byId("employeeSet").setBindingContext(
+				that.oView.byId("teamSet").getItems()[0].getBindingContext());
+
+			assert.notOk(oListBinding.hasPendingChanges(), "no pending changes after submitBatch");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("employeeName", "foo");
+			that.oView.byId("objectPage").setBindingContext(
+				that.oView.byId("employeeSet").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -4317,13 +4351,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="POST"> in V2 Adapter
 	QUnit.test("V2 Adapter: ActionImport", function (assert) {
-		var oModel = this.createModelForV2FlightService(),
+		var oContextBinding,
+			oModel = this.createModelForV2FlightService(),
 			that = this;
 
 		// code under test
 		return this.createView(assert, '', oModel).then(function () {
-			var oContextBinding = oModel.bindContext("/__FAKE__ActionImport(...)"),
-				oPromise;
+			oContextBinding = oModel.bindContext("/__FAKE__ActionImport(...)");
 
 			that.expectRequest({
 					method : "POST",
@@ -4343,25 +4377,25 @@ sap.ui.require([
 					}
 				});
 
-			oPromise = oContextBinding
-				.setParameter("carrid", "AA")
-				.setParameter("guid", "0050568D-393C-1ED4-9D97-E65F0F3FCC23")
-				.setParameter("fldate", "2017-08-10T00:00:00Z")
-				.setParameter("flightTime", 42)
-				.execute();
+			return Promise.all([
+				oContextBinding
+					.setParameter("carrid", "AA")
+					.setParameter("guid", "0050568D-393C-1ED4-9D97-E65F0F3FCC23")
+					.setParameter("fldate", "2017-08-10T00:00:00Z")
+					.setParameter("flightTime", 42)
+					.execute(),
+				that.waitForChanges(assert)]);
+		}).then(function () {
+			var oContext = oContextBinding.getBoundContext();
 
-			return Promise.all([oPromise, that.waitForChanges(assert)]).then(function () {
-				var oContext = oContextBinding.getBoundContext();
+			assert.strictEqual(oContext.getProperty("carrid"), "AA");
+			assert.strictEqual(oContext.getProperty("connid"), "0017");
+			assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00Z");
+			assert.strictEqual(oContext.getProperty("SEATSMAX"), 320);
 
-				assert.strictEqual(oContext.getProperty("carrid"), "AA");
-				assert.strictEqual(oContext.getProperty("connid"), "0017");
-				assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00Z");
-				assert.strictEqual(oContext.getProperty("SEATSMAX"), 320);
-
-				// Note: this is async due to type retrieval
-				return oContext.requestProperty("PRICE", true).then(function (sValue) {
-					assert.strictEqual(sValue, "2,222.00");
-				});
+			// Note: this is async due to type retrieval
+			return oContext.requestProperty("PRICE", true).then(function (sValue) {
+				assert.strictEqual(sValue, "2,222.00");
 			});
 		});
 	});
@@ -4393,8 +4427,7 @@ sap.ui.require([
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContextBinding = that.oView.byId("action").getObjectBinding(),
-				oPromise;
+			var oContextBinding = that.oView.byId("action").getObjectBinding();
 
 			that.expectRequest({
 					method : "POST",
@@ -4410,9 +4443,10 @@ sap.ui.require([
 				})
 				.expectChange("id1", "08/15");
 
-			oPromise = oContextBinding.execute();
-
-			return Promise.all([oPromise, that.waitForChanges(assert)]).then(function () {
+			return Promise.all([
+				oContextBinding.execute(),
+				that.waitForChanges(assert)
+			]).then(function () {
 				assert.strictEqual(
 					oContextBinding.getBoundContext().getProperty("CreatedAt"),
 					"2017-08-10T00:00:00.0000000Z");
@@ -4455,8 +4489,12 @@ sap.ui.require([
 					}
 				});
 
-			return oModel.bindContext("GWSAMPLE_BASIC.SalesOrder_Confirm(...)", oParentContext)
-				.execute(); // code under test
+			return Promise.all([
+				// code under test
+				oModel.bindContext("GWSAMPLE_BASIC.SalesOrder_Confirm(...)", oParentContext)
+					.execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -4491,8 +4529,7 @@ sap.ui.require([
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContextBinding = that.oView.byId("action").getObjectBinding(),
-				oPromise;
+			var oContextBinding = that.oView.byId("action").getObjectBinding();
 
 			that.expectRequest({
 					method : "PUT",
@@ -4510,9 +4547,10 @@ sap.ui.require([
 				})
 				.expectChange("newPhone", "+49 (0)2102 69555");
 
-			oPromise = oContextBinding.setParameter("telephone", "+49 (0)2102 69555").execute();
-
-			return Promise.all([oPromise, that.waitForChanges(assert)]);
+			return Promise.all([
+				oContextBinding.setParameter("telephone", "+49 (0)2102 69555").execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -5374,8 +5412,11 @@ sap.ui.require([
 			});
 
 			oListBinding.create();
-			that.oModel.submitBatch("update");
-			return that.waitForChanges(assert);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -5433,8 +5474,11 @@ sap.ui.require([
 				.expectChange("company", "SAP SE");
 
 			that.oModel.refresh("update");
-			that.oModel.submitBatch("update");
-			return that.waitForChanges(assert);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -5474,8 +5518,11 @@ sap.ui.require([
 				.expectChange("note", ["Note updated"]);
 
 			that.oModel.refresh("update");
-			that.oModel.submitBatch("update");
-			return that.waitForChanges(assert);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -5509,9 +5556,10 @@ sap.ui.require([
 				})
 				.expectChange("name", ["Foo"]);
 
-			that.oModel.submitBatch("api");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oModel.submitBatch("api"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest("Equipments?"
 				+ "$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=100", {
@@ -5523,9 +5571,10 @@ sap.ui.require([
 
 			that.oView.byId("table").getBinding("items")
 				.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
-			that.oModel.submitBatch("api");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oModel.submitBatch("api"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			var oListBinding = that.oModel.bindList("/Equipments", undefined, undefined, undefined,
 					{$$groupId : 'api'});
@@ -5543,9 +5592,11 @@ sap.ui.require([
 			// This binding has no control -> no request, but timeout of group lock expected
 			oListBinding.filter(new Filter("Name", "GT", "M"));
 			that.oView.byId("table").getBinding("items").filter(null);
-			that.oModel.submitBatch("api");
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oModel.submitBatch("api"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -5590,9 +5641,10 @@ sap.ui.require([
 			// table.Table must render to call getContexts on its row aggregation's list binding
 			that.oView.placeAt("qunit-fixture");
 			oListBinding.resume();
-			that.oModel.submitBatch("api");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oModel.submitBatch("api"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 
 			that.expectRequest("Equipments?$select=Category,ID,Name"
@@ -5607,9 +5659,11 @@ sap.ui.require([
 
 			oListBinding.refresh("foo");
 			oListBinding.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
-			that.oModel.submitBatch("api");
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oModel.submitBatch("api"),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -6203,13 +6257,18 @@ sap.ui.require([
 				});
 
 				// code under test
-				return oOperation.execute().then(function (oInactiveArtistContext) {
-					that.expectChange("isActive", "No");
+				return Promise.all([
+					oOperation.execute(),
+					that.waitForChanges(assert)
+				]);
+			}).then(function (aPromiseResults) {
+				var oInactiveArtistContext = aPromiseResults[0];
 
-					that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
+				that.expectChange("isActive", "No");
 
-					return that.waitForChanges(assert);
-				});
+				that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
+
+				return that.waitForChanges(assert);
 			}).then(function () {
 				that.expectRequest({
 						method : "PATCH",
@@ -6302,9 +6361,14 @@ sap.ui.require([
 				}
 			});
 
-			// code under test
-			return oOperation.execute();
-		}).then(function (oInactiveArtistContext0) {
+			return Promise.all([
+				// code under test
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aPromiseResults) {
+			var oInactiveArtistContext0 = aPromiseResults[0];
+
 			that.expectChange("isActive", "No")
 				.expectChange("inProcessByUser", "JOHNDOE");
 
@@ -6332,7 +6396,10 @@ sap.ui.require([
 				}
 			});
 
-			return oOperation.execute();
+			return Promise.all([
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -6380,9 +6447,14 @@ sap.ui.require([
 				"Name" : "Hour Frustrated"
 			});
 
-			return that.oModel.bindContext("special.cases.EditAction(...)", oActiveArtistContext)
-				.execute();
-		}).then(function (oInactiveArtistContext) {
+			return Promise.all([
+				that.oModel.bindContext("special.cases.EditAction(...)", oActiveArtistContext)
+					.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aPromiseResults) {
+			var oInactiveArtistContext = aPromiseResults[0];
+
 			that.expectChange("isActive", "No");
 
 			that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
@@ -6420,9 +6492,14 @@ sap.ui.require([
 				payload: {}
 			}, {"ArtistID": "42", "IsActiveEntity": false});
 
-			return oModel.bindContext("special.cases.EditAction(...)", oParentContext)
-				.execute(); // code under test
-		}).then(function (oInactiveArtistContext) {
+			return Promise.all([
+				// code under test
+				oModel.bindContext("special.cases.EditAction(...)", oParentContext).execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aPromiseResults) {
+			var oInactiveArtistContext = aPromiseResults[0];
+
 			assert.strictEqual(oInactiveArtistContext.getProperty("IsActiveEntity"), false);
 		});
 	});
