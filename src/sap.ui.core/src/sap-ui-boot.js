@@ -56,7 +56,8 @@
 	loadScripts([
 		"sap/ui/thirdparty/baseuri.js",
 		"sap/ui/thirdparty/es6-promise.js",
-		"sap/ui/thirdparty/es6-string-methods.js"
+		"sap/ui/thirdparty/es6-string-methods.js",
+		"sap/ui/thirdparty/es6-object-assign.js"
 	], function() {
 		// cascade 2: the loader
 		loadScripts([

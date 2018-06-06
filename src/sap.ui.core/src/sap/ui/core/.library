@@ -20,7 +20,7 @@
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
         <!--
-        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/baseuri.js" />
+        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-object-assign.js" />
         -->
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
@@ -34,6 +34,7 @@
         <raw-module name="sap/ui/thirdparty/datajs.js" />
         <raw-module name="sap/ui/thirdparty/es6-promise.js" />
         <raw-module name="sap/ui/thirdparty/es6-string-methods.js" />
+        <raw-module name="sap/ui/thirdparty/es6-object-assign.js" />
         <raw-module name="sap/ui/thirdparty/flexie.js" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
@@ -83,6 +84,7 @@
         <raw-module name="sap/ui/thirdparty/jszip.js" />
         <raw-module name="sap/ui/thirdparty/klay.js" />
         <raw-module name="sap/ui/thirdparty/less.js" />
+        <raw-module name="sap/ui/thirdparty/es6-object-assign.js" />
         <raw-module name="sap/ui/thirdparty/mobify-carousel.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
@@ -108,7 +110,7 @@
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
-        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-string-methods.js" />
+        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-string-methods.js,sap/ui/thirdparty/es6-object-assign.js" />
         <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
@@ -314,6 +316,9 @@
         </lib>
         <lib name="array-polyfills" displayName="Array.prototype Polyfills" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/">
         	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/array-polyfills-LICENSE.txt" />
+        </lib>
+        <lib name="object-assign-polyfill" displayName="Object.assign Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill">
+        	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/Object-assign-polyfill-LICENSE.txt" />
         </lib>
         <lib name="unorm" displayName="unorm.js" homepage="https://github.com/walling/unorm">
         	<license url="http://raw.githubusercontent.com/walling/unorm/v1.3.3/LICENSE.md" type="MIT License" file="../thirdparty/licenses/unorm-MIT-LICENSE.txt" />

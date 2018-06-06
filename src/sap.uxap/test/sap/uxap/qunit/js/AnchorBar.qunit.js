@@ -321,6 +321,38 @@
 		assert.strictEqual(oSectionButton.getText(), "Title(2)", "section title binding updates anchor bar button");
 	});
 
+	QUnit.module("Private members", {
+		beforeEach: function () {
+			this.anchorBar = new sap.uxap.AnchorBar();
+		},
+		afterEach: function () {
+			this.anchorBar.destroy();
+		}
+	});
+
+	QUnit.test("Assignment of _iREMSize, _iTolerance and _iOffset in onBeforeRendering method", function (assert) {
+		var iFontSize = 16,
+			fnCss = this.stub(jQuery, "css", function () {
+				return iFontSize;
+			});
+
+		// assert
+		assert.equal(this.anchorBar._iREMSize, 0, "Initial value of _iREMSize is 0");
+		assert.equal(this.anchorBar._iTolerance, 0, "Initial value of _iTolerance is 0");
+		assert.equal(this.anchorBar._iOffset, 0, "Initial value of _iOffset is 0");
+
+		// act
+		this.anchorBar.onBeforeRendering();
+
+		// assert
+		assert.equal(this.anchorBar._iREMSize, iFontSize, "After onBeforeRendering call the value of _iREMSize is changed to 16");
+		assert.equal(this.anchorBar._iTolerance, iFontSize, "After onBeforeRendering call the value of _iTolerance is changed to 16");
+		assert.equal(this.anchorBar._iOffset, iFontSize * 3, "After onBeforeRendering call the value of _iOffset is changed to 58");
+
+		// cleanup
+		fnCss.restore();
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {

@@ -1,0 +1,20 @@
+<mvc:View
+	controllerName="sap.m.sample.CheckBoxTriState.CheckBoxTriState"
+	xmlns:c="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout>
+		<Text text="Which languages(s) do you speak?"/>
+		<CheckBox
+			text="select / deselect all"
+			selected="{= ${/child1} || ${/child2} || ${/child3} }"
+			partiallySelected="{= !(${/child1} &amp;&amp; ${/child2} &amp;&amp; ${/child3})}"
+			select="onParentClicked"
+		/>
+		<c:HTML content="&lt;hr&gt;"/>
+		<CheckBox text="English" selected="{/child1}"/>
+		<CheckBox text="German" selected="{/child2}" />
+		<CheckBox text="French" selected="{/child3}"/>
+	</l:VerticalLayout>
+</mvc:View>

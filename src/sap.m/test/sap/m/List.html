@@ -581,19 +581,27 @@
 	});
 
 	var selectionList = new sap.m.Page("selectionList", {
-		customHeader : new sap.m.Bar({
-			contentLeft: [ oButtonSelectionBack = new sap.m.Button('myButtonSelectionBack', {text:"Back", type:sap.m.ButtonType.Back, press:function() {app.back();}}) ],
-			contentMiddle: [ new sap.m.Label("myBarLabel", {text: "Selection List"}) ],
-			contentRight: [ new sap.m.Button('myButtonSetSelectionItem1', {text:"#1", press: setSelectionItem1}),
-							new sap.m.Button('myButtonSetSelectionItem2', {text:"#2", press: setSelectionItem2}),
-							new sap.m.Button('myButtonSetSelectionItem3', {text:"#3", press: setSelectionItem3}),
-							new sap.m.Button('myButtonSetSelectionItem4', {text:"#4", press: setSelectionItem4}),
-							new sap.m.Button('myButtonSetSelectionItem5', {text:"#5", press: setSelectionItem5}),
-							new sap.m.Button('myButtonGetSelection', {text:"Get Selection", press: getSelection2}),
-											oButtonRemoveSelection = new sap.m.Button('myButtonRemoveSelection', {text:"Remove Selection", press: removeSelection}) ]
+		customHeader : new sap.m.OverflowToolbar({
+			content: [
+				oButtonSelectionBack = new sap.m.Button('myButtonSelectionBack', {text:"Back", type:sap.m.ButtonType.Back, press:function() {app.back();},
+					layoutData: new sap.m.OverflowToolbarLayoutData({group:1})}),
+				new sap.m.ToolbarSpacer(),
+				new sap.m.Label("myBarLabel", {text: "Selection List", layoutData: new sap.m.OverflowToolbarLayoutData({group:2})}),
+				new sap.m.ToolbarSpacer(),
+				new sap.m.Button('myButtonSetSelectionItem1', {text:"#1", press: setSelectionItem1, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonSetSelectionItem2', {text:"#2", press: setSelectionItem2, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonSetSelectionItem3', {text:"#3", press: setSelectionItem3, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonSetSelectionItem4', {text:"#4", press: setSelectionItem4, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonSetSelectionItem5', {text:"#5", press: setSelectionItem5, layoutData: new sap.m.OverflowToolbarLayoutData({group:3})}),
+				new sap.m.Button('myButtonGetSelection', {text:"Get Selection", press: getSelection2,
+					layoutData: new sap.m.OverflowToolbarLayoutData({group:3, priority: sap.m.OverflowToolbarPriority.AlwaysOverflow})}),
+				oButtonRemoveSelection = new sap.m.Button('myButtonRemoveSelection', {text:"Remove Selection", press: removeSelection,
+					layoutData: new sap.m.OverflowToolbarLayoutData({group:3, priority: sap.m.OverflowToolbarPriority.AlwaysOverflow})})
+			]
 		}),
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -627,7 +635,8 @@
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListSelection) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});

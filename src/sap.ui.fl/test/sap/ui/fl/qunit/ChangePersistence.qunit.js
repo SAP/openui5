@@ -1767,7 +1767,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			"the change was written for the original selector ID");
 	});
 
-	QUnit.test("_copyDependenciesFromInitialChangesMap", function(assert) {
+	QUnit.test("copyDependenciesFromInitialChangesMap", function(assert) {
 		var oChange0 = {
 			getId: function() {
 				return "fileNameChange0";
@@ -1823,16 +1823,42 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			mDependentChangesOnMe: {}
 		};
 
+		var mExpectedDependenciesMapAfterSecondChange = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
+				"fileNameChange2": {
+					"changeObject": oChange2,
+					"dependencies": [],
+					"controlsDependencies": ["group2", "group1"]
+				}
+			},
+			mDependentChangesOnMe: {}
+		};
+
 		this.oChangePersistence._mChangesInitial = mInitialDependenciesMap;
 		this.oChangePersistence._mChanges = mCurrentDependenciesMap;
+		function fnCallbackTrue() {
+			return true;
+		}
+		function fnCallbackFalse() {
+			return false;
+		}
 
-		var mUpdatedDependenciesMap = this.oChangePersistence._copyDependenciesFromInitialChangesMap(oChange0);
+		var mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, fnCallbackTrue);
 		assert.deepEqual(mUpdatedDependenciesMap, mCurrentDependenciesMap, "no dependencies got copied");
 
-		mUpdatedDependenciesMap = this.oChangePersistence._copyDependenciesFromInitialChangesMap(oChange1);
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, fnCallbackTrue);
 		assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
 
-		mUpdatedDependenciesMap = this.oChangePersistence._copyDependenciesFromInitialChangesMap(oChange2);
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackFalse);
+		assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterSecondChange, "no dependencies from change2 got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackTrue);
 		assert.deepEqual(mUpdatedDependenciesMap, mInitialDependenciesMap, "all dependencies from change2 got copied");
 
 		assert.deepEqual(mUpdatedDependenciesMap, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");

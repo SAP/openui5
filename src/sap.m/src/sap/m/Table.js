@@ -800,22 +800,22 @@ sap.ui.define([
 		if (this._iStickyValue & 4 /* ColumnHeaders */) {
 			var oTblHeaderDomRef = this.getDomRef("tblHeader").firstChild;
 			var oTblHeaderRect = oTblHeaderDomRef.getBoundingClientRect();
-			iTHRectBottom = oTblHeaderRect.bottom;
-			iTHRectHeight = oTblHeaderRect.height;
+			iTHRectBottom = parseInt(oTblHeaderRect.bottom, 10);
+			iTHRectHeight = parseInt(oTblHeaderRect.height, 10);
 		}
 
 		if (this._iStickyValue & 2 /* InfoToolbar */) {
 			var oInfoToolbarDomRef = this.getInfoToolbar().getDomRef();
 			var oInfoToolbarRect = oInfoToolbarDomRef.getBoundingClientRect();
-			iInfoToolbarRectBottom = oInfoToolbarRect.bottom;
-			iInfoToolbarRectHeight = oInfoToolbarRect.height;
+			iInfoToolbarRectBottom = parseInt(oInfoToolbarRect.bottom, 10);
+			iInfoToolbarRectHeight = parseInt(oInfoToolbarRect.height, 10);
 		}
 
 		if (this._iStickyValue & 1 /* HeaderToolbar */) {
 			var oHeaderToolbarDomRef = this.getDomRef().querySelector(".sapMListHdr");
 			var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
-			iHeaderToolbarRectBottom = oHeaderToolbarRect.bottom;
-			iHeaderToolbarRectHeight = oHeaderToolbarRect.height;
+			iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom, 10);
+			iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
 		}
 
 		var iItemTop = oItemDomRef.getBoundingClientRect().top;

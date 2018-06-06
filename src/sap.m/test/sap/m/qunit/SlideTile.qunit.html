@@ -24,37 +24,50 @@
 		blanket.options("sap-ui-cover-only", /sap\/m\/SlideTile.*/);
 	}
 
-	QUnit.module("Property scope values", {
-		beforeEach: function() {
-			this.oSlideTile = new sap.m.SlideTile();
-		},
-		afterEach: function() {
-			this.oSlideTile.destroy();
-			this.oSlideTile = null;
-		}
-	});
+	sap.ui.require([
+		"jquery.sap.global",
+		"sap/m/SlideTile",
+		"sap/m/GenericTile",
+		"sap/m/GenericTileScope",
+		"sap/ui/model/json/JSONModel",
+		"sap/m/TileContent",
+		"sap/m/NewsContent",
+		"sap/ui/Device",
+		"sap/m/NumericContent"
+	], function (jQuery, SlideTile, GenericTile, GenericTileScope, JSONModel, TileContent, NewsContent, Device, NumericContent) {
+		"use strict";
 
-	QUnit.test("Default value of scope", function(assert) {
-		assert.strictEqual(this.oSlideTile.getProperty("scope"), sap.m.GenericTileScope.Display);
-	});
+		QUnit.module("Property scope values", {
+			beforeEach: function() {
+				this.oSlideTile = new SlideTile();
+			},
+			afterEach: function() {
+				this.oSlideTile.destroy();
+				this.oSlideTile = null;
+			}
+		});
 
-	QUnit.test("Change value of scope", function(assert) {
-		//Arrange
-		var result = this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		//Assert
-		assert.strictEqual(result, this.oSlideTile, "'this' is returned");
-		assert.strictEqual(this.oSlideTile.getProperty("scope"), sap.m.GenericTileScope.Actions);
-	});
+		QUnit.test("Default value of scope", function(assert) {
+			assert.strictEqual(this.oSlideTile.getProperty("scope"), GenericTileScope.Display);
+		});
 
-	QUnit.test("Change value of scope twice", function(assert) {
-		//Arrange
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Display);
-		//Assert
-		assert.strictEqual(this.oSlideTile.getProperty("scope"), sap.m.GenericTileScope.Display);
-	});
+		QUnit.test("Change value of scope", function(assert) {
+			//Arrange
+			var result = this.oSlideTile.setScope(GenericTileScope.Actions);
+			//Assert
+			assert.strictEqual(result, this.oSlideTile, "'this' is returned");
+			assert.strictEqual(this.oSlideTile.getProperty("scope"), GenericTileScope.Actions);
+		});
 
-	function fnCreateSlideTile() {
+		QUnit.test("Change value of scope twice", function(assert) {
+			//Arrange
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			this.oSlideTile.setScope(GenericTileScope.Display);
+			//Assert
+			assert.strictEqual(this.oSlideTile.getProperty("scope"), GenericTileScope.Display);
+		});
+
+		function fnCreateSlideTile() {
 			//Model
 			var oSlideTileData = {
 				tiles : [{
@@ -94,13 +107,13 @@
 			};
 
 			//Template
-			var oTileContent = new sap.m.TileContent({
+			var oTileContent = new TileContent({
 				footer : "{footer}",
-				content : new sap.m.NumericContent({
+				content : new NumericContent({
 					value : "{value}"
 				})
 			});
-			var oGenericTile = new sap.m.GenericTile({
+			var oGenericTile = new GenericTile({
 				frameType : "{frameType}",
 				header : "{header}",
 				size : "{size}",
@@ -110,7 +123,7 @@
 					templateShareable: true
 				}
 			});
-			this.oSlideTile = new sap.m.SlideTile("st", {
+			this.oSlideTile = new SlideTile("st", {
 				displayTime : 500,
 				transitionTime : 0,
 				tiles : {
@@ -120,767 +133,768 @@
 				}
 			});
 
-			var oSlideTileModel = new sap.ui.model.json.JSONModel(oSlideTileData);
+			var oSlideTileModel = new JSONModel(oSlideTileData);
 			this.oSlideTile.setModel(oSlideTileModel);
-	};
-
-	var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-	QUnit.module("Rendering - sap.m.SlideTile", {
-		beforeEach : function() {
-			fnCreateSlideTile.call(this);
-			this.oSlideTile.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function () {
-			this.oSlideTile.destroy();
-			this.oSlideTile = null;
-		}
-	});
-
-	QUnit.test("Test tiles displaying", function(assert) {
-		var done = assert.async();
-		assert.equal(jQuery.sap.byId("st-wrapper-0").css("left"), "0px", "The first tile is shown");
-
-		setTimeout(function() {
-			assert.equal(jQuery.sap.byId("st-wrapper-1").css("left"), "0px", "The second tile is shown");
-			done();
-		}, 500);
-	});
-
-	QUnit.test("Test ARIA label for single content in Display scope", function(assert) {
-		//Arrange
-		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
-		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
-		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
-	});
-
-	QUnit.test("Test ARIA label for single content in Actions scope", function(assert) {
-		//Arrange
-		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" +
-			"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
-		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
-	});
-
-	QUnit.test("Test ARIA label for multiple contents in Display scope, Tile is sliding", function(assert) {
-		//Arrange
-		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
-
-		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
-	});
-
-	QUnit.test("Test ARIA label for multiple contents in Display scope, sliding is stopped", function(assert) {
-		//Arrange
-		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_SCROLL_BACK") + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
-		this.oSlideTile._toggleAnimation();
-
-		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
-	});
-
-	QUnit.test("Test ARIA label for multiple content in Actions scope", function(assert) {
-		//Arrange
-		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" +
-			"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
-			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
-
-		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
-	});
-
-	QUnit.test("Test sliding active per default", function(assert) {
-		//Assert
-		assert.ok(!this.oSlideTile._bAnimationPause, "Animation is active");
-	});
-
-	QUnit.test("Test toggle sliding", function(assert) {
-		//Arrange
-		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation"),
-			oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
-		//Act
-		this.oSlideTile.onkeyup(oEvent);
-		//Assert
-		assert.ok(spy.calledOnce, "Function _toggleAnimation called once");
-	});
-
-	QUnit.test("In Action Scope toggle sliding is not allowed", function(assert) {
-		//Arrange
-		this.oSlideTile.setScope("Actions");
-		sap.ui.getCore().applyChanges();
-		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation"),
-			oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
-		oEvent.target = {
-			id : "-otto"
 		};
-		//Act
-		this.oSlideTile.onkeyup(oEvent);
-		//Assert
-		assert.ok(spy.notCalled, "Function _toggleAnimation not called");
-	});
 
-	QUnit.test("Test sliding continues on focusout", function(assert) {
-		//Arrange
-		this.oSlideTile._bAnimationPause = true;
-		//Act
-		this.oSlideTile.$().blur();
-		//Assert
-		assert.ok(!this.oSlideTile._bAnimationPause, "Animation continues on focusout");
-	});
+		var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-	QUnit.test("Focus stays on SlideTile", function(assert) {
-		//Assert
-		assert.ok(this.oSlideTile.$().attr("tabindex"), "Focus stays on SlideTile");
-		assert.notOk(this.oSlideTile.getTiles()[0].$().attr("tabindex"), "Focus is removed from first GenericTile");
-		assert.notOk(this.oSlideTile.getTiles()[1].$().attr("tabindex"), "Focus is removed from second GenericTile");
-	});
+		QUnit.module("Rendering - sap.m.SlideTile", {
+			beforeEach : function() {
+				fnCreateSlideTile.call(this);
+				this.oSlideTile.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.oSlideTile.destroy();
+				this.oSlideTile = null;
+			}
+		});
 
-	QUnit.test("SlideTile in Actions scope", function(assert) {
-		//Arrange
-		var spyScrollToTile = sinon.spy(this.oSlideTile, "_scrollToTile");
-		var spyStartAnimation = sinon.spy(this.oSlideTile, "_startAnimation");
-		var spyInvalidate = sinon.spy(this.oSlideTile, "invalidate");
-		//Act
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
-		//Assert
-		assert.ok(spyScrollToTile.calledOnce, "Function _scrollToTile is called");
-		assert.ok(spyStartAnimation.notCalled, "Function _startAnimation is not called");
-		assert.ok(spyInvalidate.calledOnce, "Invalidate function is called");
-		assert.notOk(jQuery.sap.domById("st-pause-play-icon"), "The pause/play button is hidden");
-		assert.notOk(jQuery.sap.domById("st-tilesIndicator"), "The indicator is hidden");
-	});
+		QUnit.test("Test tiles displaying", function(assert) {
+			var done = assert.async();
+			assert.equal(jQuery.sap.byId("st-wrapper-0").css("left"), "0px", "The first tile is shown");
 
-	QUnit.test("GenericTile view in SlideTile Actions scope", function(assert) {
-		//Arrange
-		var spy = [],
-			oTiles = this.oSlideTile.getTiles();
-		for (var i = 0; i < oTiles.length; i++) {
-			spy[i] = sinon.spy(oTiles[i], "showActionsView");
-		}
-		//Act
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
-		//Assert
-		for (var i = 0; i < oTiles.length; i++) {
-			assert.ok(spy[i].calledWith(true), "The " + i + " Tile shows Actions view");
-		}
-	});
+			setTimeout(function() {
+				assert.equal(jQuery.sap.byId("st-wrapper-1").css("left"), "0px", "The second tile is shown");
+				done();
+			}, 500);
+		});
 
-	QUnit.module("Events - sap.m.SlideTile", {
-		beforeEach : function() {
-			this.fnPressHandler = function() {
-			};
-			this.fnSecondPressHandler = function() {
-			};
-			fnCreateSlideTile.call(this);
-			this.oSlideTile.placeAt("qunit-fixture");
+		QUnit.test("Test ARIA label for single content in Display scope", function(assert) {
+			//Arrange
+			var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+			this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
+			this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
 			sap.ui.getCore().applyChanges();
-			sinon.spy(this, "fnPressHandler");
-			sinon.spy(this, "fnSecondPressHandler");
-		},
-		afterEach : function () {
-			this.fnPressHandler.restore();
-			this.fnSecondPressHandler.restore();
-			this.oSlideTile.destroy();
-			this.oSlideTile = null;
-		}
-	});
 
-	//Keyboard and mouse tests only valid on desktop
-	if (sap.ui.Device.system.desktop) {
-		QUnit.test("SlideTile key down handler test", function(assert) {
-			//Arrange
-			var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown"),
-				oEvent = jQuery.Event("keydown");
-			oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
-			//Act
-			this.oSlideTile.$().trigger(oEvent);
 			//Assert
-			assert.ok(spy.calledOnce, "Key down handler is triggered");
+			assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 		});
 
-		QUnit.test("SlideTile key up handler and press delegation on GenericTile test", function(assert) {
+		QUnit.test("Test ARIA label for single content in Actions scope", function(assert) {
 			//Arrange
-			var oEvent = jQuery.Event("keyup");
-			this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
-			this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
-			oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
-			//Act
-			this.oSlideTile.$().trigger(oEvent);
+			var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" +
+				"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
+			this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
+			sap.ui.getCore().applyChanges();
+
 			//Assert
-			assert.ok(this.fnPressHandler.calledOnce, "Press delegation on first GenericTile works");
-			assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
+			assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 		});
 
-		QUnit.test("SlideTile keyboard button B test", function(assert) {
+		QUnit.test("Test ARIA label for multiple contents in Display scope, Tile is sliding", function(assert) {
 			//Arrange
-			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
-			oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.B;
-			this.oSlideTile._bAnimationPause = true;
-			//Act
-			this.oSlideTile.$().trigger(oEvent);
+			var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+
 			//Assert
-			assert.ok(spy.calledOnce, "Backwards scrolling by using key B works");
+			assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 		});
 
-		QUnit.test("SlideTile keyboard button B test - no scrolling if the Tile is sliding", function(assert) {
+		QUnit.test("Test ARIA label for multiple contents in Display scope, sliding is stopped", function(assert) {
 			//Arrange
-			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+			var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_SCROLL_BACK") + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+			this.oSlideTile._toggleAnimation();
+
+			//Assert
+			assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		});
+
+		QUnit.test("Test ARIA label for multiple content in Actions scope", function(assert) {
+			//Arrange
+			var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" +
+				"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+				this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		});
+
+		QUnit.test("Test sliding active per default", function(assert) {
+			//Assert
+			assert.ok(!this.oSlideTile._bAnimationPause, "Animation is active");
+		});
+
+		QUnit.test("Test toggle sliding", function(assert) {
+			//Arrange
+			var spy = sinon.spy(this.oSlideTile, "_toggleAnimation"),
 				oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.B;
-			this.oSlideTile._bAnimationPause = false;
+			oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
 			//Act
-			this.oSlideTile.$().trigger(oEvent);
+			this.oSlideTile.onkeyup(oEvent);
 			//Assert
-			assert.ok(spy.notCalled, "No backward scrolling by using key B if the Tile is sliding");
+			assert.ok(spy.calledOnce, "Function _toggleAnimation called once");
 		});
 
-		QUnit.test("In Action Scope keyboard button B is ignored", function(assert) {
+		QUnit.test("In Action Scope toggle sliding is not allowed", function(assert) {
 			//Arrange
 			this.oSlideTile.setScope("Actions");
 			sap.ui.getCore().applyChanges();
-			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
-			oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.B;
-			this.oSlideTile._bAnimationPause = true;
-			//Act
-			this.oSlideTile.$().trigger(oEvent);
-			//Assert
-			assert.ok(spy.notCalled, "Backwards scrolling by using key B is not executed in Actions Scope");
-		});
-
-		QUnit.test("SlideTile keyboard button F test", function(assert) {
-			//Arrange
-			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
-			oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.F;
-			this.oSlideTile._bAnimationPause = true;
-			//Act
-			this.oSlideTile.$().trigger(oEvent);
-			//Assert
-			assert.ok(spy.calledOnce, "Forwards scrolling by using key F works");
-		});
-
-		QUnit.test("SlideTile keyboard button F test - no scrolling if the Tile is sliding", function(assert) {
-			//Arrange
-			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+			var spy = sinon.spy(this.oSlideTile, "_toggleAnimation"),
 				oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.F;
-			this.oSlideTile._bAnimationPause = false;
+			oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
+			oEvent.target = {
+				id : "-otto"
+			};
 			//Act
-			this.oSlideTile.$().trigger(oEvent);
+			this.oSlideTile.onkeyup(oEvent);
 			//Assert
-			assert.ok(spy.notCalled, "No forward scrolling by using key F if the Tile is sliding");
+			assert.ok(spy.notCalled, "Function _toggleAnimation not called");
 		});
 
-		QUnit.test("In Action Scope keyboard button F is ignored", function(assert) {
+		QUnit.test("Test sliding continues on focusout", function(assert) {
 			//Arrange
-			this.oSlideTile.setScope("Actions");
-			sap.ui.getCore().applyChanges();
-			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
-			oEvent = jQuery.Event("keyup");
-			oEvent.which = jQuery.sap.KeyCodes.F;
 			this.oSlideTile._bAnimationPause = true;
 			//Act
-			this.oSlideTile.$().trigger(oEvent);
+			this.oSlideTile.$().blur();
 			//Assert
-			assert.ok(spy.notCalled, "Forwards scrolling by using key F is not executed in Actions Scope");
+			assert.ok(!this.oSlideTile._bAnimationPause, "Animation continues on focusout");
 		});
 
-		QUnit.test("SlideTile mouse down handler test", function(assert) {
+		QUnit.test("Focus stays on SlideTile", function(assert) {
+			//Assert
+			assert.ok(this.oSlideTile.$().attr("tabindex"), "Focus stays on SlideTile");
+			assert.notOk(this.oSlideTile.getTiles()[0].$().attr("tabindex"), "Focus is removed from first GenericTile");
+			assert.notOk(this.oSlideTile.getTiles()[1].$().attr("tabindex"), "Focus is removed from second GenericTile");
+		});
+
+		QUnit.test("SlideTile in Actions scope", function(assert) {
 			//Arrange
+			var spyScrollToTile = sinon.spy(this.oSlideTile, "_scrollToTile");
+			var spyStartAnimation = sinon.spy(this.oSlideTile, "_startAnimation");
+			var spyInvalidate = sinon.spy(this.oSlideTile, "invalidate");
+			//Act
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			sap.ui.getCore().applyChanges();
+			//Assert
+			assert.ok(spyScrollToTile.calledOnce, "Function _scrollToTile is called");
+			assert.ok(spyStartAnimation.notCalled, "Function _startAnimation is not called");
+			assert.ok(spyInvalidate.calledOnce, "Invalidate function is called");
+			assert.notOk(jQuery.sap.domById("st-pause-play-icon"), "The pause/play button is hidden");
+			assert.notOk(jQuery.sap.domById("st-tilesIndicator"), "The indicator is hidden");
+		});
+
+		QUnit.test("GenericTile view in SlideTile Actions scope", function(assert) {
+			//Arrange
+			var spy = [],
+				oTiles = this.oSlideTile.getTiles();
+			for (var i = 0; i < oTiles.length; i++) {
+				spy[i] = sinon.spy(oTiles[i], "showActionsView");
+			}
+			//Act
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			sap.ui.getCore().applyChanges();
+			//Assert
+			for (var i = 0; i < oTiles.length; i++) {
+				assert.ok(spy[i].calledWith(true), "The " + i + " Tile shows Actions view");
+			}
+		});
+
+		QUnit.module("Events - sap.m.SlideTile", {
+			beforeEach : function() {
+				this.fnPressHandler = function() {
+				};
+				this.fnSecondPressHandler = function() {
+				};
+				fnCreateSlideTile.call(this);
+				this.oSlideTile.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				sinon.spy(this, "fnPressHandler");
+				sinon.spy(this, "fnSecondPressHandler");
+			},
+			afterEach : function () {
+				this.fnPressHandler.restore();
+				this.fnSecondPressHandler.restore();
+				this.oSlideTile.destroy();
+				this.oSlideTile = null;
+			}
+		});
+
+		//Keyboard and mouse tests only valid on desktop
+		if (Device.system.desktop) {
+			QUnit.test("SlideTile key down handler test", function(assert) {
+				//Arrange
+				var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown"),
+					oEvent = jQuery.Event("keydown");
+				oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(spy.calledOnce, "Key down handler is triggered");
+			});
+
+			QUnit.test("SlideTile key up handler and press delegation on GenericTile test", function(assert) {
+				//Arrange
+				var oEvent = jQuery.Event("keyup");
+				this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
+				this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
+				oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(this.fnPressHandler.calledOnce, "Press delegation on first GenericTile works");
+				assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
+			});
+
+			QUnit.test("SlideTile keyboard button B test", function(assert) {
+				//Arrange
+				var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+					oEvent = jQuery.Event("keyup");
+				oEvent.which = jQuery.sap.KeyCodes.B;
+				this.oSlideTile._bAnimationPause = true;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(spy.calledOnce, "Backwards scrolling by using key B works");
+			});
+
+			QUnit.test("SlideTile keyboard button B test - no scrolling if the Tile is sliding", function(assert) {
+				//Arrange
+				var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+					oEvent = jQuery.Event("keyup");
+				oEvent.which = jQuery.sap.KeyCodes.B;
+				this.oSlideTile._bAnimationPause = false;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(spy.notCalled, "No backward scrolling by using key B if the Tile is sliding");
+			});
+
+			QUnit.test("In Action Scope keyboard button B is ignored", function(assert) {
+				//Arrange
+				this.oSlideTile.setScope("Actions");
+				sap.ui.getCore().applyChanges();
+				var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+					oEvent = jQuery.Event("keyup");
+				oEvent.which = jQuery.sap.KeyCodes.B;
+				this.oSlideTile._bAnimationPause = true;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(spy.notCalled, "Backwards scrolling by using key B is not executed in Actions Scope");
+			});
+
+			QUnit.test("SlideTile keyboard button F test", function(assert) {
+				//Arrange
+				var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+					oEvent = jQuery.Event("keyup");
+				oEvent.which = jQuery.sap.KeyCodes.F;
+				this.oSlideTile._bAnimationPause = true;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(spy.calledOnce, "Forwards scrolling by using key F works");
+			});
+
+			QUnit.test("SlideTile keyboard button F test - no scrolling if the Tile is sliding", function(assert) {
+				//Arrange
+				var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+					oEvent = jQuery.Event("keyup");
+				oEvent.which = jQuery.sap.KeyCodes.F;
+				this.oSlideTile._bAnimationPause = false;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(spy.notCalled, "No forward scrolling by using key F if the Tile is sliding");
+			});
+
+			QUnit.test("In Action Scope keyboard button F is ignored", function(assert) {
+				//Arrange
+				this.oSlideTile.setScope("Actions");
+				sap.ui.getCore().applyChanges();
+				var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+					oEvent = jQuery.Event("keyup");
+				oEvent.which = jQuery.sap.KeyCodes.F;
+				this.oSlideTile._bAnimationPause = true;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(spy.notCalled, "Forwards scrolling by using key F is not executed in Actions Scope");
+			});
+
+			QUnit.test("SlideTile mouse down handler test", function(assert) {
+				//Arrange
+				var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
+				var oEvent = jQuery.Event("mousedown");
+				oEvent.target = oDom;
+				//Act
+				this.oSlideTile.$().trigger(oEvent);
+				//Assert
+				assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
+			});
+
+			QUnit.test("SlideTile mouse up handler and click delegation on GenericTile test", function(assert) {
+				//Arrange
+				var oEvent = {preventDefault: function(){}};
+				this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
+				this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
+				//Act
+				this.oSlideTile.onmouseup(oEvent);
+				//Assert
+				assert.ok(this.fnPressHandler.calledOnce, "Tap delegation on first GenericTile works");
+				assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
+			});
+		}
+
+		QUnit.test("SlideTile touch start handler test - touch on Pause/play icon", function(assert) {
+			//Arrange
+			var oEvent = {preventDefault: function(){}};
 			var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
-			var oEvent = jQuery.Event("mousedown");
 			oEvent.target = oDom;
 			//Act
-			this.oSlideTile.$().trigger(oEvent);
+			this.oSlideTile.ontouchstart(oEvent);
 			//Assert
 			assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
 		});
 
-		QUnit.test("SlideTile mouse up handler and click delegation on GenericTile test", function(assert) {
+		QUnit.test("SlideTile touch start handler test - touch on SlideTile", function(assert) {
 			//Arrange
 			var oEvent = {preventDefault: function(){}};
-			this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
-			this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
 			//Act
-			this.oSlideTile.onmouseup(oEvent);
+			this.oSlideTile.ontouchstart(oEvent);
 			//Assert
-			assert.ok(this.fnPressHandler.calledOnce, "Tap delegation on first GenericTile works");
-			assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
+			assert.notOk(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is not added");
+			assert.ok(this.oSlideTile.$().hasClass("sapMSTHvr"), true, "Hover Class is added");
 		});
-	}
 
-	QUnit.test("SlideTile touch start handler test - touch on Pause/play icon", function(assert) {
-		//Arrange
-		var oEvent = {preventDefault: function(){}};
-		var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
-		oEvent.target = oDom;
-		//Act
-		this.oSlideTile.ontouchstart(oEvent);
-		//Assert
-		assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
-	});
+		QUnit.test("SlideTile touch end handler test", function(assert) {
+			//Arrange
+			var oEvent = {preventDefault: function(){}};
+			//Act
+			this.oSlideTile.ontouchend(oEvent);
+			//Assert
+			assert.notOk(this.oSlideTile.$().hasClass("sapMSTHvr"), "Hover Class is removed");
+		});
 
-	QUnit.test("SlideTile touch start handler test - touch on SlideTile", function(assert) {
-		//Arrange
-		var oEvent = {preventDefault: function(){}};
-		//Act
-		this.oSlideTile.ontouchstart(oEvent);
-		//Assert
-		assert.notOk(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is not added");
-		assert.ok(this.oSlideTile.$().hasClass("sapMSTHvr"), true, "Hover Class is added");
-	});
+		QUnit.module("Methods - sap.m.SlideTile", {
+			beforeEach : function() {
+				fnCreateSlideTile.call(this);
+				this.oSlideTile.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.oSlideTile.destroy();
+				this.oSlideTile = null;
+			}
+		});
 
-	QUnit.test("SlideTile touch end handler test", function(assert) {
-		//Arrange
-		var oEvent = {preventDefault: function(){}};
-		//Act
-		this.oSlideTile.ontouchend(oEvent);
-		//Assert
-		assert.notOk(this.oSlideTile.$().hasClass("sapMSTHvr"), "Hover Class is removed");
-	});
+		QUnit.test("Method _getPreviousTileIndex", function(assert) {
+			//Arrange
+			var iPreviousTileIndex,
+				iCurrentTileIndex = 0;
+			//Act
+			iPreviousTileIndex = this.oSlideTile._getPreviousTileIndex(iCurrentTileIndex);
+			//Assert
+			assert.equal(iPreviousTileIndex, 2, "Expected previous tile index to the first one returned");
+		});
 
-	QUnit.module("Methods - sap.m.SlideTile", {
-		beforeEach : function() {
-			fnCreateSlideTile.call(this);
-			this.oSlideTile.placeAt("qunit-fixture");
+		QUnit.test("Method _getPreviousTileIndex", function(assert) {
+			//Arrange
+			var iPreviousTileIndex,
+				iCurrentTileIndex = 2;
+			//Act
+			iPreviousTileIndex = this.oSlideTile._getPreviousTileIndex(iCurrentTileIndex);
+			//Assert
+			assert.equal(iPreviousTileIndex, 1, "Expected previous tile index to the last one returned");
+		});
+
+		QUnit.test("Method _getNextTileIndex", function(assert) {
+			//Arrange
+			var iNextTileIndex,
+				iCurrentTileIndex = 0;
+			//Act
+			iNextTileIndex = this.oSlideTile._getNextTileIndex(iCurrentTileIndex);
+			//Assert
+			assert.equal(iNextTileIndex, 1, "Expected next tile index to the first one returned");
+		});
+
+		QUnit.test("Method _getNextTileIndex", function(assert) {
+			//Arrange
+			var iNextTileIndex,
+				iCurrentTileIndex = 1;
+			//Act
+			iNextTileIndex = this.oSlideTile._getNextTileIndex(iCurrentTileIndex);
+			//Assert
+			assert.equal(iNextTileIndex, 2, "Expected next tile index to the last one returned");
+		});
+
+		QUnit.test("Method _scrollToTile", function(assert) {
+			//Arrange
+			var iScrollToTile = 1;
+			var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+			//Act
+			this.oSlideTile._scrollToTile(iScrollToTile);
+			//Assert
+			assert.equal(this.oSlideTile.$("wrapper-" + iScrollToTile).css(sDir), "0px", "The expected tile is displayed");
+		});
+
+		QUnit.test("Method _scrollToNextTile - option: scroll backward and stop the animation", function(assert) {
+			//Arrange
+			var sAriaLabel,
+				sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+					oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+					oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
+					oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
+					oResBundle.getText("SLIDETILE_ACTIVATE"),
+				sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
+			this.oSlideTile._toggleAnimation();
+			//Act
+			this.oSlideTile._scrollToNextTile(true, true);
+			sAriaLabel = this.oSlideTile.$().attr("aria-label");
+
+			//Assert
+			assert.equal(sAriaLabel, sAriaLabelExpected, "Expected backward animation done");
+		});
+
+		QUnit.test("Method _scrollToNextTile - option: scroll forward and stop the animation", function(assert) {
+			//Arrange
+			var sAriaLabel,
+				sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+					oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+					oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
+					oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
+					oResBundle.getText("SLIDETILE_ACTIVATE"),
+				sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\n" + sAdditionalText;
+			this.oSlideTile._toggleAnimation();
+			//Act
+			this.oSlideTile._scrollToNextTile(true, false);
+			sAriaLabel = this.oSlideTile.$().attr("aria-label");
+
+			//Assert
+			assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
+		});
+
+		QUnit.test("Method _scrollToNextTile - option: scroll forward twice and stop the animation", function(assert) {
+			//Arrange
+			var sAriaLabel,
+				sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
+					oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
+					oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
+					oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
+					oResBundle.getText("SLIDETILE_ACTIVATE"),
+				sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
+			this.oSlideTile._toggleAnimation();
+			//Act
+			this.oSlideTile._scrollToNextTile(true, false);
+			this.oSlideTile._scrollToNextTile(true, false);
+			sAriaLabel = this.oSlideTile.$().attr("aria-label");
+			//Assert
+			assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
+		});
+
+		QUnit.test("Tests if multiple tiles indicator displayed when there are more tiles", function(assert) {
+			//Act
+			var $indicator = this.oSlideTile.$("tilesIndicator");
+			//Assert
+			assert.ok($indicator.length > 0, "Multiple tiles indicator displayed when there are more tiles");
+		});
+
+		QUnit.test("Tests if multiple tiles indicator not displayed when there is only one tile", function(assert) {
+			//Arrange
+			this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
+			this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
 			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function () {
-			this.oSlideTile.destroy();
-			this.oSlideTile = null;
-		}
-	});
+			//Act
+			var $indicator = this.oSlideTile.$("tilesIndicator");
+			//Assert
+			assert.ok($indicator.length === 0, "Multiple tiles indicator not displayed when there is only one tile");
+		});
 
-	QUnit.test("Method _getPreviousTileIndex", function(assert) {
-		//Arrange
-		var iPreviousTileIndex,
-			iCurrentTileIndex = 0;
-		//Act
-		iPreviousTileIndex = this.oSlideTile._getPreviousTileIndex(iCurrentTileIndex);
-		//Assert
-		assert.equal(iPreviousTileIndex, 2, "Expected previous tile index to the first one returned");
-	});
+		QUnit.test("Tests if the number of dots is correct", function(assert) {
+			//Act
+			var $indicator = this.oSlideTile.$("tilesIndicator");
+			var iTilesCount = this.oSlideTile.getTiles().length;
+			//Assert
+			assert.equal($indicator.children().length, iTilesCount, "The number of indicator dots is same as the number of tiles");
+		});
 
-	QUnit.test("Method _getPreviousTileIndex", function(assert) {
-		//Arrange
-		var iPreviousTileIndex,
-			iCurrentTileIndex = 2;
-		//Act
-		iPreviousTileIndex = this.oSlideTile._getPreviousTileIndex(iCurrentTileIndex);
-		//Assert
-		assert.equal(iPreviousTileIndex, 1, "Expected previous tile index to the last one returned");
-	});
+		QUnit.test("Tests if the active dot displayed correctly", function(assert) {
+			//Act
+			var $indicator = this.oSlideTile.$("tilesIndicator");
+			//Assert
+			assert.ok($($indicator[0].children[0]).hasClass("sapMSTActive"), "The first dot is displayed as active");
+		});
 
-	QUnit.test("Method _getNextTileIndex", function(assert) {
-		//Arrange
-		var iNextTileIndex,
-			iCurrentTileIndex = 0;
-		//Act
-		iNextTileIndex = this.oSlideTile._getNextTileIndex(iCurrentTileIndex);
-		//Assert
-		assert.equal(iNextTileIndex, 1, "Expected next tile index to the first one returned");
-	});
+		QUnit.test("Tests if the active dot displayed properly after click forward button", function(assert) {
+			//Act
+			var $indicator = this.oSlideTile.$("tilesIndicator");
+			this.oSlideTile._scrollToNextTile(true, false);
+			//Assert
+			assert.ok($($indicator[0].children[1]).hasClass("sapMSTActive"), "The second dot displayed as active");
+		});
 
-	QUnit.test("Method _getNextTileIndex", function(assert) {
-		//Arrange
-		var iNextTileIndex,
-			iCurrentTileIndex = 1;
-		//Act
-		iNextTileIndex = this.oSlideTile._getNextTileIndex(iCurrentTileIndex);
-		//Assert
-		assert.equal(iNextTileIndex, 2, "Expected next tile index to the last one returned");
-	});
+		QUnit.test("Tests if the active dot displayed properly after click backward button", function(assert) {
+			//Act
+			var $indicator = this.oSlideTile.$("tilesIndicator");
+			this.oSlideTile._scrollToNextTile(true, true);
+			//Assert
+			assert.ok($($indicator[0].children[2]).hasClass("sapMSTActive"),"The third dot displayed as active");
+		});
 
-	QUnit.test("Method _scrollToTile", function(assert) {
-		//Arrange
-		var iScrollToTile = 1;
-		var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
-		//Act
-		this.oSlideTile._scrollToTile(iScrollToTile);
-		//Assert
-		assert.equal(this.oSlideTile.$("wrapper-" + iScrollToTile).css(sDir), "0px", "The expected tile is displayed");
-	});
+		QUnit.module("SlideTile has GenericTile with NewsContent", {
+			beforeEach: function() {
+				var oNewsTileContent = new TileContent({
+					content: new NewsContent()
+				});
+				var oGenericTile = new GenericTile({
+					tileContent: [oNewsTileContent]
+				});
+				this.oSlideTile = new SlideTile("st-news", {
+					tiles: [oGenericTile]
+				});
+				this.oSlideTile.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oSlideTile.destroy();
+				this.oSlideTile = null;
+			}
+		});
 
-	QUnit.test("Method _scrollToNextTile - option: scroll backward and stop the animation", function(assert) {
-		//Arrange
-		var sAriaLabel,
-			sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
-				oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
-				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
-				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
-				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
-		this.oSlideTile._toggleAnimation();
-		//Act
-		this.oSlideTile._scrollToNextTile(true, true);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label");
+		QUnit.test("Method _hasNewsContent", function(assert) {
+			//Assert
+			assert.ok(this.oSlideTile._hasNewsContent(0), "The GenericTile in SlideTile has NewsContent");
+		});
 
-		//Assert
-		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected backward animation done");
-	});
-
-	QUnit.test("Method _scrollToNextTile - option: scroll forward and stop the animation", function(assert) {
-		//Arrange
-		var sAriaLabel,
-            sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
-				oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
-				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
-				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
-				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\n" + sAdditionalText;
-		this.oSlideTile._toggleAnimation();
-		//Act
-		this.oSlideTile._scrollToNextTile(true, false);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label");
-
-		//Assert
-		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
-	});
-
-	QUnit.test("Method _scrollToNextTile - option: scroll forward twice and stop the animation", function(assert) {
-		//Arrange
-		var sAriaLabel,
-            sAdditionalText = oResBundle.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
-				oResBundle.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
-				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
-				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
-				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
-		this.oSlideTile._toggleAnimation();
-		//Act
-		this.oSlideTile._scrollToNextTile(true, false);
-		this.oSlideTile._scrollToNextTile(true, false);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label");
-		//Assert
-		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
-	});
-
-	QUnit.test("Tests if multiple tiles indicator displayed when there are more tiles", function(assert) {
-		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
-		//Assert
-		assert.ok($indicator.length > 0, "Multiple tiles indicator displayed when there are more tiles");
-	});
-
-	QUnit.test("Tests if multiple tiles indicator not displayed when there is only one tile", function(assert) {
-		//Arrange
-		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
-		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
-		sap.ui.getCore().applyChanges();
-		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
-		//Assert
-		assert.ok($indicator.length === 0, "Multiple tiles indicator not displayed when there is only one tile");
-	});
-
-	QUnit.test("Tests if the number of dots is correct", function(assert) {
-		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
-		var iTilesCount = this.oSlideTile.getTiles().length;
-		//Assert
-		assert.equal($indicator.children().length, iTilesCount, "The number of indicator dots is same as the number of tiles");
-	});
-
-	QUnit.test("Tests if the active dot displayed correctly", function(assert) {
-		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
-		//Assert
-		assert.ok($($indicator[0].children[0]).hasClass("sapMSTActive"), "The first dot is displayed as active");
-	});
-
-	QUnit.test("Tests if the active dot displayed properly after click forward button", function(assert) {
-		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
-		this.oSlideTile._scrollToNextTile(true, false);
-		//Assert
-		assert.ok($($indicator[0].children[1]).hasClass("sapMSTActive"), "The second dot displayed as active");
-	});
-
-	QUnit.test("Tests if the active dot displayed properly after click backward button", function(assert) {
-		//Act
-		var $indicator = this.oSlideTile.$("tilesIndicator");
-		this.oSlideTile._scrollToNextTile(true, true);
-		//Assert
-		assert.ok($($indicator[0].children[2]).hasClass("sapMSTActive"),"The third dot displayed as active");
-	});
-
-	QUnit.module("SlideTile has GenericTile with NewsContent", {
-		beforeEach: function() {
-			var oNewsTileContent = new sap.m.TileContent({
-				content: new sap.m.NewsContent()
-			});
-			var oGenericTile = new sap.m.GenericTile({
-				tileContent: [oNewsTileContent]
-			});
-			this.oSlideTile = new sap.m.SlideTile("st-news", {
-				tiles: [oGenericTile]
-			});
-			this.oSlideTile.placeAt("qunit-fixture");
+		QUnit.test("Icon color is adapted to NewsContent", function(assert) {
+			//Act
+			this.oSlideTile.setScope("Actions");
 			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			this.oSlideTile.destroy();
-			this.oSlideTile = null;
-		}
-	});
+			//Assert
+			assert.ok(this.oSlideTile.hasStyleClass("sapMSTDarkBackground"), "The more icon color is adapted to NewsContent");
+		});
 
-	QUnit.test("Method _hasNewsContent", function(assert) {
-		//Assert
-		assert.ok(this.oSlideTile._hasNewsContent(0), "The GenericTile in SlideTile has NewsContent");
-	});
+		QUnit.module("Rendering - EmptyTile", {
+			beforeEach : function() {
 
-	QUnit.test("Icon color is adapted to NewsContent", function(assert) {
-		//Act
-		this.oSlideTile.setScope("Actions");
-		sap.ui.getCore().applyChanges();
-		//Assert
-		assert.ok(this.oSlideTile.hasStyleClass("sapMSTDarkBackground"), "The more icon color is adapted to NewsContent");
-	});
+				//One empty tile
+				this.oEmptySlideTile = new SlideTile("st-empty", {
+					displayTime : 500,
+					transitionTime : 0,
+					tiles : []
+				});
 
-	QUnit.module("Rendering - EmptyTile", {
-		beforeEach : function() {
+				this.oEmptySlideTile.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			//One empty tile
-			this.oEmptySlideTile = new sap.m.SlideTile("st-empty", {
-				displayTime : 500,
-				transitionTime : 0,
-				tiles : []
-			});
+			},
+			afterEach : function() {
+				this.oEmptySlideTile.destroy();
+				this.oEmptySlideTile = null;
+			}
+		});
 
-			this.oEmptySlideTile.placeAt("qunit-fixture");
+		QUnit.test("Empty tile displaying", function(assert) {
+			assert.ok(jQuery.sap.byId("st-empty").length !== 0, "Empty tile is shown");
+		});
+
+		QUnit.module("Play/pause button", {
+			beforeEach : function() {
+				fnCreateSlideTile.call(this);
+				this.oSlideTile.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function() {
+				this.oSlideTile.destroy();
+				this.oSlideTile = null;
+			}
+		});
+
+		QUnit.test("The pause icon is set initially", function(assert) {
+			// Arrange
+			// Act
+			// Assert
+			assert.ok(this.oSlideTile.$().hasClass("sapMSTPauseIcon"), "The pause icon is set");
+		});
+
+		QUnit.test("The pause/play icons are switched after a click on the icon", function(assert) {
+			// Arrange
+			// Act
+			this.oSlideTile.$().find(".sapMSTIconClickTapArea").trigger("mousedown");
+			this.oSlideTile.$().trigger("mouseup");
+			// Assert
+			assert.ok(this.oSlideTile._bAnimationPause === true, "The animation is stopped");
+			assert.ok(!this.oSlideTile.$().hasClass("sapMSTPauseIcon"), "The play icon is set");
+		});
+
+		QUnit.module("Event Tests", {
+			beforeEach : function() {
+				fnCreateSlideTile.call(this);
+				this.oSlideTile.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function() {
+				this.oSlideTile.destroy();
+				this.oSlideTile = null;
+			}
+		});
+
+		QUnit.test("No press event on 'tap' in Display scope", function(assert) {
+			//Arrange
+			var bEventNotTriggered = true;
+			this.oSlideTile.attachEvent("press", handlePress);
+
+			//Act
+			this.oSlideTile.$().trigger('tap');
+
+			//Assert
+			function handlePress(oEvent) {
+				bEventNotTriggered = false;
+			}
+			assert.ok(bEventNotTriggered, "No press event is triggered on mouse click.");
+		});
+
+		QUnit.test("Press event of inner GenericTile on 'tap' in Display scope", function(assert) {
+			//Arrange
+			var oGenericTile = this.oSlideTile.getTiles()[0];
+			oGenericTile.attachEvent("press", handlePress);
+
+			//Act
+			oGenericTile.$().trigger('tap');
+
+			//Assert
+			function handlePress(oEvent) {
+				assert.ok(true, "Press event of GenericTile is triggered on mouse click.");
+			}
+		});
+
+		QUnit.test("Press event of inner GenericTile on 'tap' in Actions scope", function(assert) {
+			//Arrange
+			var bEventNotTriggered = true,
+				oGenericTile = this.oSlideTile.getTiles()[0];
+			oGenericTile.attachEvent("press", handlePress);
+			this.oSlideTile.setScope(GenericTileScope.Actions);
 			sap.ui.getCore().applyChanges();
 
-		},
-		afterEach : function() {
-			this.oEmptySlideTile.destroy();
-			this.oEmptySlideTile = null;
-		}
-	});
+			//Act
+			oGenericTile.$().trigger('tap');
 
-	QUnit.test("Empty tile displaying", function(assert) {
-		assert.ok(jQuery.sap.byId("st-empty").length !== 0, "Empty tile is shown");
-	});
+			//Assert
+			function handlePress(oEvent) {
+				bEventNotTriggered = false;
+			}
+			assert.ok(bEventNotTriggered, "Press event of GenericTile is not triggered on mouse click.");
+		});
 
-	QUnit.module("Play/pause button", {
-		beforeEach : function() {
-			fnCreateSlideTile.call(this);
-			this.oSlideTile.placeAt("qunit-fixture");
+		QUnit.test("Press event on 'tap' with correct parameters in Actions scope", function(assert) {
+			//Arrange
+			var oSlideTile = this.oSlideTile;
+			this.oSlideTile.setScope(GenericTileScope.Actions);
 			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.oSlideTile.destroy();
-			this.oSlideTile = null;
-		}
-	});
+			this.oSlideTile.attachEvent("press", handlePress);
 
-	QUnit.test("The pause icon is set initially", function(assert) {
-		// Arrange
-		// Act
-		// Assert
-		assert.ok(this.oSlideTile.$().hasClass("sapMSTPauseIcon"), "The pause icon is set");
-	});
+			//Act
+			this.oSlideTile.$().trigger('tap');
 
-	QUnit.test("The pause/play icons are switched after a click on the icon", function(assert) {
-		// Arrange
-		// Act
-		this.oSlideTile.$().find(".sapMSTIconClickTapArea").trigger("mousedown");
-		this.oSlideTile.$().trigger("mouseup");
-		// Assert
-		assert.ok(this.oSlideTile._bAnimationPause === true, "The animation is stopped");
-		assert.ok(!this.oSlideTile.$().hasClass("sapMSTPauseIcon"), "The play icon is set");
-	});
+			//Assert
+			function handlePress(oEvent) {
+				assert.equal(oEvent.getParameter("scope"), GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+				assert.equal(oEvent.getParameter("action"), GenericTile._Action.Press, "Press event has correct parameter 'action'");
+				assert.equal(oEvent.getParameter("domRef"), oSlideTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
+			}
+		});
 
-	QUnit.module("Event Tests", {
-		beforeEach : function() {
-			fnCreateSlideTile.call(this);
-			this.oSlideTile.placeAt("qunit-fixture");
+		QUnit.test("Keyboard key 'Enter' fires press event with correct parameters in Actions scope", function(assert) {
+			//Arrange
+			var oSlideTile = this.oSlideTile;
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			this.oSlideTile.attachEvent("press", handlePress);
 			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.oSlideTile.destroy();
-			this.oSlideTile = null;
-		}
-	});
+			var oEvent = jQuery.Event("keyup");
+			oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+			oEvent.target = {
+				id : "-dummy"
+			};
+			//Act
+			this.oSlideTile.onkeyup(oEvent);
 
-	QUnit.test("No press event on 'tap' in Display scope", function(assert) {
-		//Arrange
-		var bEventNotTriggered = true;
-		this.oSlideTile.attachEvent("press", handlePress);
+			//Assert
+			function handlePress(oEvent) {
+				assert.equal(oEvent.getParameter("scope"), GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+				assert.equal(oEvent.getParameter("action"), GenericTile._Action.Press, "Press event has correct parameter 'action'");
+				assert.equal(oEvent.getParameter("domRef"), oSlideTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
+			}
+		});
 
-		//Act
-		this.oSlideTile.$().trigger('tap');
+		QUnit.test("Keyboard key 'Space' fires press event with correct parameters in Actions scope", function(assert) {
+			//Arrange
+			var oSlideTile = this.oSlideTile;
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			this.oSlideTile.attachEvent("press", handlePress);
+			sap.ui.getCore().applyChanges();
+			var oEvent = jQuery.Event("keyup");
+			oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
+			oEvent.target = {
+				id : "-dummy"
+			};
+			//Act
+			this.oSlideTile.onkeyup(oEvent);
 
-		//Assert
-		function handlePress(oEvent) {
-			bEventNotTriggered = false;
-		}
-		assert.ok(bEventNotTriggered, "No press event is triggered on mouse click.");
-	});
+			//Assert
+			function handlePress(oEvent) {
+				assert.equal(oEvent.getParameter("scope"), GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+				assert.equal(oEvent.getParameter("action"), GenericTile._Action.Press, "Press event has correct parameter 'action'");
+				assert.equal(oEvent.getParameter("domRef"), oSlideTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
+			}
+		});
 
-	QUnit.test("Press event of inner GenericTile on 'tap' in Display scope", function(assert) {
-		//Arrange
-		var oGenericTile = this.oSlideTile.getTiles()[0];
-		oGenericTile.attachEvent("press", handlePress);
+		QUnit.test("Keyboard key 'DELETE' fires press event with correct parameters in Actions scope", function(assert) {
+			//Arrange
+			var oSlideTile = this.oSlideTile;
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			this.oSlideTile.attachEvent("press", handlePress);
+			sap.ui.getCore().applyChanges();
+			var oEvent = jQuery.Event("keyup");
+			oEvent.keyCode = jQuery.sap.KeyCodes.DELETE;
+			oEvent.target = {
+				id : "-dummy"
+			};
+			//Act
+			this.oSlideTile.onkeyup(oEvent);
 
-		//Act
-		oGenericTile.$().trigger('tap');
+			//Assert
+			function handlePress(oEvent) {
+				assert.equal(oEvent.getParameter("scope"), GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+				assert.equal(oEvent.getParameter("action"), GenericTile._Action.Remove, "Press event has correct parameter 'action'");
+				assert.equal(oEvent.getParameter("domRef"), oSlideTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
+			}
+		});
 
-		//Assert
-		function handlePress(oEvent) {
-			assert.ok(true, "Press event of GenericTile is triggered on mouse click.");
-		}
-	});
+		QUnit.test("Keyboard key 'BACKSPACE' fires press event with correct parameters in Actions scope", function(assert) {
+			//Arrange
+			var oSlideTile = this.oSlideTile;
+			this.oSlideTile.setScope(GenericTileScope.Actions);
+			this.oSlideTile.attachEvent("press", handlePress);
+			sap.ui.getCore().applyChanges();
+			var oEvent = jQuery.Event("keyup");
+			oEvent.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
+			oEvent.target = {
+				id : "-dummy"
+			};
+			//Act
+			this.oSlideTile.onkeyup(oEvent);
 
-	QUnit.test("Press event of inner GenericTile on 'tap' in Actions scope", function(assert) {
-		//Arrange
-		var bEventNotTriggered = true,
-			oGenericTile = this.oSlideTile.getTiles()[0];
-		oGenericTile.attachEvent("press", handlePress);
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
-
-		//Act
-		oGenericTile.$().trigger('tap');
-
-		//Assert
-		function handlePress(oEvent) {
-			bEventNotTriggered = false;
-		}
-		assert.ok(bEventNotTriggered, "Press event of GenericTile is not triggered on mouse click.");
-	});
-
-	QUnit.test("Press event on 'tap' with correct parameters in Actions scope", function(assert) {
-		//Arrange
-		var oSlideTile = this.oSlideTile;
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
-		this.oSlideTile.attachEvent("press", handlePress);
-
-		//Act
-		this.oSlideTile.$().trigger('tap');
-
-		//Assert
-		function handlePress(oEvent) {
-			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
-			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
-			assert.equal(oEvent.getParameter("domRef"), oSlideTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
-		}
-	});
-
-	QUnit.test("Keyboard key 'Enter' fires press event with correct parameters in Actions scope", function(assert) {
-		//Arrange
-		var oSlideTile = this.oSlideTile;
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		this.oSlideTile.attachEvent("press", handlePress);
-		sap.ui.getCore().applyChanges();
-		oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
-		oEvent.target = {
-			id : "-dummy"
-		};
-		//Act
-		this.oSlideTile.onkeyup(oEvent);
-
-		//Assert
-		function handlePress(oEvent) {
-			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
-			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
-			assert.equal(oEvent.getParameter("domRef"), oSlideTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
-		}
-	});
-
-	QUnit.test("Keyboard key 'Space' fires press event with correct parameters in Actions scope", function(assert) {
-		//Arrange
-		var oSlideTile = this.oSlideTile;
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		this.oSlideTile.attachEvent("press", handlePress);
-		sap.ui.getCore().applyChanges();
-		oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
-		oEvent.target = {
-			id : "-dummy"
-		};
-		//Act
-		this.oSlideTile.onkeyup(oEvent);
-
-		//Assert
-		function handlePress(oEvent) {
-			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
-			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Press, "Press event has correct parameter 'action'");
-			assert.equal(oEvent.getParameter("domRef"), oSlideTile._oMoreIcon.getDomRef(), "Event parameter 'domRef' points to More Icon");
-		}
-	});
-
-	QUnit.test("Keyboard key 'DELETE' fires press event with correct parameters in Actions scope", function(assert) {
-		//Arrange
-		var oSlideTile = this.oSlideTile;
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		this.oSlideTile.attachEvent("press", handlePress);
-		sap.ui.getCore().applyChanges();
-		oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.DELETE;
-		oEvent.target = {
-			id : "-dummy"
-		};
-		//Act
-		this.oSlideTile.onkeyup(oEvent);
-
-		//Assert
-		function handlePress(oEvent) {
-			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
-			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Remove, "Press event has correct parameter 'action'");
-			assert.equal(oEvent.getParameter("domRef"), oSlideTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
-		}
-	});
-
-	QUnit.test("Keyboard key 'BACKSPACE' fires press event with correct parameters in Actions scope", function(assert) {
-		//Arrange
-		var oSlideTile = this.oSlideTile;
-		this.oSlideTile.setScope(sap.m.GenericTileScope.Actions);
-		this.oSlideTile.attachEvent("press", handlePress);
-		sap.ui.getCore().applyChanges();
-		oEvent = jQuery.Event("keyup");
-		oEvent.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
-		oEvent.target = {
-			id : "-dummy"
-		};
-		//Act
-		this.oSlideTile.onkeyup(oEvent);
-
-		//Assert
-		function handlePress(oEvent) {
-			assert.equal(oEvent.getParameter("scope"), sap.m.GenericTileScope.Actions, "Press event has correct parameter 'scope'");
-			assert.equal(oEvent.getParameter("action"), sap.m.GenericTile._Action.Remove, "Press event has correct parameter 'action'");
-			assert.equal(oEvent.getParameter("domRef"), oSlideTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
-		}
+			//Assert
+			function handlePress(oEvent) {
+				assert.equal(oEvent.getParameter("scope"), GenericTileScope.Actions, "Press event has correct parameter 'scope'");
+				assert.equal(oEvent.getParameter("action"), GenericTile._Action.Remove, "Press event has correct parameter 'action'");
+				assert.equal(oEvent.getParameter("domRef"), oSlideTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
+			}
+		});
 	});
 
 </script>

@@ -949,10 +949,9 @@ sap.ui.define([
 
 	Calendar.prototype.onclick = function(oEvent){
 		var oEventTarget = oEvent.target,
-			sTargetClassValue = oEventTarget.classList.value;
+			bTargetClassList = oEventTarget.classList.contains("sapUiCalWeekNum");
 
-		if (this.getIntervalSelection() && this.getPrimaryCalendarType() === sap.ui.core.CalendarType.Gregorian
-                    && sTargetClassValue && sTargetClassValue.indexOf("sapUiCalWeekNum") > -1) {
+		if (this.getIntervalSelection() && this.getPrimaryCalendarType() === sap.ui.core.CalendarType.Gregorian && bTargetClassList) {
 			this._handleWeekSelection(oEventTarget);
 		}
 
@@ -2304,6 +2303,7 @@ sap.ui.define([
 			oDateRange = new DateRange({startDate: oStartDate, endDate: oEndDate});
 
 		this.fireEvent("weekNumberSelect", {weekNumber: oSelectedWeekNumber, weekDays: oDateRange});
+		this.focusDate(oStartDate);
 	};
 
 	function _handleResize(oEvent){

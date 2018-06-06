@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Component - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-preload="async"
+	data-sap-ui-theme="sap_belize"
+	data-sap-ui-resourceroots='{"samples.components.button": "./samples/components/button/", "samples.components.sample": "./samples/components/sample/"}'
+	data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
+</script>
+
+<style>
+.sapUiComponentPlaceholder {
+	border: 3px dotted red;
+	border-radius: 10px;
+	margin: 10px;
+	padding: 10px;
+}
+</style>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1>Test Page for <code>sap.ui.core.Component</code></h1>
+	<div data-sap-ui-component class="sapUiComponentPlaceholder" id="content" data-id="cmpcnt" data-name="samples.components.styledbutton" data-url="./samples/components/styledbutton/" data-settings='{"id": "component1", "text": "Component 1"}'></div>
+	<div data-sap-ui-component class="sapUiComponentPlaceholder" data-name="samples.components.styledbutton" data-settings='{"id": "component2", "text": "Component 2"}'></div>
+	<div data-sap-ui-component class="sapUiComponentPlaceholder" data-manifest="./samples/components/sample/manifest.json" data-settings='{"id": "component3"}'></div>
+</body>
+</html>

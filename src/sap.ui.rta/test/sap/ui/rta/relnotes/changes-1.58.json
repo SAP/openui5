@@ -13,6 +13,30 @@
         "type": "FIX",
         "text": "sap.ui.rta - Add elements dialog model contains circular references",
         "references": []
+      },
+      {
+        "id": "ecd8e7b5544b1b841051625b8d11aa9fda56fc0b",
+        "type": "FIX",
+        "text": " sap.ui.rta - additionalElementsDialog replaced deprecated label",
+        "references": []
+      },
+      {
+        "id": "280970a41dbf5d7b361b190b37988fd97b50d522",
+        "type": "FIX",
+        "text": ": RTA rename jumping",
+        "references": []
+      },
+      {
+        "id": "27cee942e881e74a0c269876a5f2edbad1c86a5e",
+        "type": "FIX",
+        "text": "sap.ui.rta - Automatic rename on groups created in empty forms",
+        "references": []
+      },
+      {
+        "id": "ecda8f745941b0ce0ba5b2d897a28b4c9b60c77c",
+        "type": "FIX",
+        "text": ": RTA - better label display in Add Elements dialog",
+        "references": []
       }
     ]
   }

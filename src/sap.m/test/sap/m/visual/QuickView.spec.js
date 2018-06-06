@@ -15,7 +15,7 @@ describe('sap.m.QuickView', function() {
 	var _closeQuickView = function (sCloseName) {
 		var sName = bPhone ? sCloseName : "quickViewPage-title";
 		if (bPhone) {
-			browser.executeScript('document.getElementsByClassName("' + sName + '").click()');
+			element(by.css("." + sName)).click();
 		} else {
 			element(by.id(sName)).click();
 		}
@@ -57,7 +57,7 @@ describe('sap.m.QuickView', function() {
 	it('should visualize QuickView with single page', function () {
 		element(by.id('SinglePageQVButton')).click();
 		var qv2 = element(by.id(_resolveQuickView('QV2-quickView-popover')));
-		expect(takeScreenshot(qv2)).toLookAs('5_single_page_QuickView');
+		expect(takeScreenshot(qv2)).toLookAs('4_single_page_QuickView');
 		_closeQuickView("sapMBtn sapMBtnBase");
 	});
 

@@ -957,7 +957,9 @@ function(
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		// Overlays of elements in "dependents" aggregation or not in root elements should be destroyed
 		if (
-			oElementOverlay
+			!oElement.bIsDestroyed 	// element overlays for destroyed elements will be destroyed already,
+									// but element might be recreated with the same id, so a new element overlay might exist that shouldn't be removed
+			&& oElementOverlay
 			&& (!this._isElementInRootElements(oElement) || oElement.sParentAggregationName === "dependents")
 		) {
 			oElementOverlay.destroy();

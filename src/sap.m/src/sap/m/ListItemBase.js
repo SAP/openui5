@@ -248,6 +248,14 @@ function(
 		this._checkHighlight();
 	};
 
+	ListItemBase.prototype.invalidate = function() {
+		if (!this.bOutput) {
+			return;
+		}
+
+		Control.prototype.invalidate.apply(this, arguments);
+	};
+
 	/*
 	 * Returns the binding context path via checking the named model of parent
 	 *
@@ -807,7 +815,7 @@ function(
 
 		// do not handle already handled events
 		if (this._eventHandledByControl) {
-			return;
+			return oEvent.setMarked();
 		}
 
 		// do not handle in case of text selection

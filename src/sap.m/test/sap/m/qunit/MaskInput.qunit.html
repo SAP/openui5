@@ -1016,13 +1016,6 @@
 			checkForDeleteAndBackspace.call(this);
 		});
 
-		if (sap.ui.Device.browser.msie) {
-			QUnit.test("Backspace when only one character left should restore the default input value IE9", function (assert){
-				//stub - IE9
-				this.sandbox.stub(sap.ui.Device.browser, "version", 9);
-				checkForDeleteAndBackspace.call(this);
-			});
-		}
 
 		QUnit.test("Adding rule with placeholderSymbol that matches existing rule", function(assert){
 			//prepare

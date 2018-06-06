@@ -63,6 +63,22 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		assert.equal(bIsAtoEnabled, false);
 	});
 
+	QUnit.test("variants sharing is enabled by default", function(assert) {
+		assert.equal(this.cut._oSettings.isVariantSharingEnabled, true);
+		var bIsVariantSharingEnabled = this.cut.isVariantSharingEnabled();
+		assert.equal(bIsVariantSharingEnabled, true);
+	});
+
+	QUnit.test("variants sharing is set to false", function(assert) {
+		var oSettings = {
+			"isVariantSharingEnabled": false
+		};
+		this.cut = new Settings(oSettings);
+		assert.equal(this.cut._oSettings.isVariantSharingEnabled, false);
+		var bIsVariantSharingEnabled = this.cut.isVariantSharingEnabled();
+		assert.equal(bIsVariantSharingEnabled, false);
+	});
+
 	QUnit.test("get instance from flex settings request when flex data promise is not available", function(assert) {
 		var done = assert.async();
 

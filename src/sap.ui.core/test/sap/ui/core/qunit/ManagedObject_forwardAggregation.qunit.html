@@ -1652,6 +1652,63 @@
 					assert.ok(this.item.getParent().getModel("modelNameSetInComposite").inner, "Model of forwarding target should be the inner model");
 				});
 
+
+
+
+
+				QUnit.module("Specific Issues", {
+					beforeEach: function() {
+						this.item = new SimpleElement("item");
+						this.composite = new CompositeElement();
+						this.innerElement = this.composite.getAggregation("_innerElement");
+					},
+					afterEach: function() {
+						this.composite.destroy();
+					}
+				});
+
+				QUnit.test("Re-binding after destroy", function(assert) {
+					QUnit.expect(0);
+					var model = new sap.ui.model.json.JSONModel();
+					model.setData({results: [
+						{title: "t1", desc: "d1"}
+					]});
+					var model2 = new sap.ui.model.json.JSONModel();
+					model2.setData({results: [
+						{title: "2t1", desc: "d1"}
+					]});
+
+					this.composite.setModel(model);
+					this.composite.bindAggregation("outerAggregation", "/results", this.item);
+
+					this.composite.destroyOuterAggregation();
+
+					this.composite.setModel(model2);
+					this.composite.getOuterAggregation();
+				});
+
+				QUnit.test("Re-binding after destroy withForwardedBinding", function(assert) {
+					QUnit.expect(0);
+					var model = new sap.ui.model.json.JSONModel();
+					model.setData({results: [
+						{title: "t1", desc: "d1"}
+					]});
+					var model2 = new sap.ui.model.json.JSONModel();
+					model2.setData({results: [
+						{title: "2t1", desc: "d1"}
+					]});
+
+					this.composite.setModel(model);
+					this.composite.bindAggregation("outerAggregationWithForwardedBinding", "/results", this.item);
+
+					this.composite.destroyOuterAggregationWithForwardedBinding();
+
+					this.composite.setModel(model2);
+					this.composite.getOuterAggregationWithForwardedBinding();
+				});
+
+
+
 				QUnit.start();
 			});
 

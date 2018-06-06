@@ -1322,6 +1322,13 @@ function(
 				this._oButtonDelegate = {
 					ontap: function(){
 						that._oCloseTrigger = this;
+					},
+					//BCP: 1870320154
+					onkeyup: function(){
+						that._oCloseTrigger = this;
+					},
+					onkeydown: function(){
+						that._oCloseTrigger = this;
 					}
 				};
 			}
@@ -1508,7 +1515,7 @@ function(
 			} else {
 				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
 					text: sTitle,
-					level: "H1"
+					level: "H2"
 				}).addStyleClass("sapMDialogTitle");
 
 				this._createHeader();

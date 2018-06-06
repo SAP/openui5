@@ -186,8 +186,8 @@ sap.ui.define([
 			if (this._sDefaultIcon) {
 				this._sDefaultIcon = null;
 			}
-			if (this._iInitialWidth) {
-				this._iInitialWidth = null;
+			if (this._iInitialTextBtnContentWidth) {
+				this._iInitialTextBtnContentWidth = null;
 			}
 			if (this._lastActionItemId) {
 				this._lastActionItemId = null;
@@ -211,27 +211,46 @@ sap.ui.define([
 
 		};
 
+		MenuButton.prototype._needsWidth = function() {
+			return this._isSplitButton() && this.getWidth() === "";
+		};
+
+		/**
+		 * Gets the text button control DOM Element.
+		 * @returns {Element} The Element's DOM Element
+		 * @private
+		 */
+		MenuButton.prototype._getTextBtnContentDomRef = function() {
+			return this._getButtonControl()._getTextButton().getDomRef("content");
+		};
+
 		MenuButton.prototype.onAfterRendering = function() {
-			// call the function with delay to assure that the
-			// inner buttons are rendered with correct width before setting the initial width
-			jQuery.sap.delayedCall(0, this, "_setInitialBtnWidth");
+			if (this._needsWidth() && sap.ui.getCore().isThemeApplied() && this._getTextBtnContentDomRef()) {
+				this._getTextBtnContentDomRef().style.width = this._getInitialTextBtnWidth() + 'px';
+			}
 
 			this._setAriaHasPopup();
 		};
 
+		MenuButton.prototype.onThemeChanged = function(oEvent) {
+			//remember the initial width of the text button and hardcode it in the dom
+			if (this._needsWidth() && this.getDomRef() && !this._iInitialTextBtnContentWidth) {
+				this._getTextBtnContentDomRef().style.width = this._getInitialTextBtnWidth() + 'px';
+			}
+		};
 
 		/**
-		 * Sets the initial width of the control.
+		 * Gets the initial width of the text button control. To be used for 'split' mode only.
+		 * @returns {int} The width after the text button control was rendered for the first time and theme applied
 		 * @private
 		 */
-		MenuButton.prototype._setInitialBtnWidth = function() {
-			var iInitialWidth;
-			if (this._isSplitButton() && !this._iInitialWidth) {
-				iInitialWidth = this.$().outerWidth();
-				if (iInitialWidth) {
-					this._iInitialWidth = iInitialWidth + 1; //for IE
-				}
+		MenuButton.prototype._getInitialTextBtnWidth = function() {
+			if (!this._iInitialTextBtnContentWidth) {
+				//round the width upward in order to prevent content overflow (ellipses)
+				this._iInitialTextBtnContentWidth = Math.ceil(this._getTextBtnContentDomRef().getBoundingClientRect().width);
 			}
+
+			return this._iInitialTextBtnContentWidth;
 		};
 
 		MenuButton.prototype._setAriaHasPopup = function() {

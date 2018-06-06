@@ -91,6 +91,7 @@
 										<file name="sap/ui/thirdparty/baseuri.js"/>
 										<file name="sap/ui/thirdparty/es6-promise.js"/>
 										<file name="sap/ui/thirdparty/es6-string-methods.js"/>
+										<file name="sap/ui/thirdparty/es6-object-assign.js"/>
 										<file name="ui5loader.js"/>
 										<file name="ui5loader-autoconfig.js"/>
 									</filelist>
@@ -102,6 +103,7 @@
 										<file name="sap/ui/thirdparty/baseuri.js"/>
 										<file name="sap/ui/thirdparty/es6-promise.js"/>
 										<file name="sap/ui/thirdparty/es6-string-methods.js"/>
+										<file name="sap/ui/thirdparty/es6-object-assign.js"/>
 										<file name="ui5loader.js"/>
 										<file name="ui5loader-autoconfig.js"/>
 									</filelist>

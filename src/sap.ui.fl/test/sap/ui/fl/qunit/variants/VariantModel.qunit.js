@@ -93,7 +93,7 @@ function(
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
 			this.fnDeleteChangeStub = sandbox.stub(this.oFlexController, "deleteChange");
 
-			sandbox.stub(VariantUtil, "initializeHashRegister");
+			sandbox.spy(VariantUtil, "initializeHashRegister");
 			this.oModel = new VariantModel(this.oData, this.oFlexController, this.oComponent);
 		},
 		afterEach: function(assert) {
@@ -140,39 +140,35 @@ function(
 		this.oModel.getData()["variantMgmtId1"].updateVariantInURL = true;
 		this.oModel.getData()["variantMgmtId1"].currentVariant = "variant0";
 
-		sandbox.stub(this.oModel, "_updateVariantInURL");
+		sandbox.stub(this.oModel, "updateHasherEntry");
+		sandbox.stub(VariantUtil, "getCurrentHashParamsFromRegister").returns(["currentHash1", "currentHash2"]);
+		var mExpectedParameters = {
+			parameters:	[],
+			updateURL: true,
+			ignoreRegisterUpdate: true
+		};
 
 		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+		assert.strictEqual(VariantUtil.getCurrentHashParamsFromRegister.callCount, 0, "then VariantUtil.getCurrentHashParamsFromRegister not called");
 		assert.equal(this.oModel._bAdaptationMode, false, "the property _bAdaptationMode is initially false");
-		assert.deepEqual(this.oModel._updateVariantInURL.getCall(0).args, ["variantMgmtId1", "variant0"],
-			"then VariantModel._updateVariantInURL() called with the current variant");
+		assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {},
+			"then VariantModel.updateHasherEntry() called with an empty object initially");
 
 		this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
+		assert.strictEqual(VariantUtil.getCurrentHashParamsFromRegister.callCount, 0, "then VariantUtil.getCurrentHashParamsFromRegister not called");
 		assert.equal(this.oModel._bAdaptationMode, true, "the property _bAdaptationMode is true when adaptation mode is on");
-		assert.deepEqual(this.oModel._updateVariantInURL.getCall(1).args, ["variantMgmtId1", "variant1"],
-			"then VariantModel._updateVariantInURL() called with the default variant");
+		assert.deepEqual(this.oModel.updateHasherEntry.getCall(1).args[0], mExpectedParameters,
+			"then VariantModel.updateHasherEntry() called with empty hash parameters in UI adaptation mode");
 
+		mExpectedParameters.parameters = ["currentHash1", "currentHash2"];
 		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 		assert.equal(this.oModel._bAdaptationMode, false, "the property _bAdaptationMode is set to false when adaptation mode is turned off");
+		assert.deepEqual(this.oModel.updateHasherEntry.getCall(2).args[0], mExpectedParameters,
+			"then VariantModel.updateHasherEntry() called with current hash parameters when not in UI adaptation mode");
+		assert.strictEqual(VariantUtil.getCurrentHashParamsFromRegister.callCount, 1, "then VariantUtil.getCurrentHashParamsFromRegister called once");
 
-		assert.equal(this.oModel._updateVariantInURL.callCount, 3, "then VariantModel._updateVariantInURL() called 3 times");
+		assert.strictEqual(this.oModel.updateHasherEntry.callCount, 3, "then VariantModel._updateVariantInURL() called 3 times");
 
-	});
-
-	QUnit.test("when calling '_setModelPropertiesForControl' with updateVariantInURL = false", function(assert) {
-		this.oModel.getData()["variantMgmtId1"]._isEditable = true;
-		this.oModel.getData()["variantMgmtId1"].updateVariantInURL = false;
-
-		var mTechnicalParameters = {};
-		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
-		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
-
-		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
-
-		this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
-		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
-		assert.equal(this.oModel._bAdaptationMode, false, "the property _bAdaptationMode is false when adaptation mode is turned off");
-		assert.equal(fnSetTechnicalURLParameterValuesStub.callCount, 0, "but the URL is not modified");
 	});
 
 	QUnit.test("when calling 'switchToDefaultVariant' for a current variant reference", function(assert) {
@@ -539,12 +535,11 @@ function(
 		}), "then VariantModel.updateHasherEntry() called with the correct object with a parameter list excluding default variant");
 	});
 
-	QUnit.test("when calling '_updateVariantInURL' while in adaptation mode and a URL parameter is already present", function(assert) {
-		sandbox.stub(Utils, "getParsedURLHash").returns({
-			params: {
-				"sap-ui-fl-control-variant-id": ["Dummy", "variantMgmtId1", "Dummy1"]
-			}
-		});
+	QUnit.test("when calling '_updateVariantInURL' while in adaptation mode with parameters present in the hash register for the current index", function(assert) {
+		// to verify ushell
+		sandbox.stub(Utils, "getParsedURLHash").returns({params: true});
+		// return parameters saved at the current index of the hash register
+		sandbox.stub(VariantUtil, "getCurrentHashParamsFromRegister").returns(["Dummy", "variantMgmtId1", "Dummy1"]);
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 		var fnUpdateHasherEntryStub = sandbox.stub(this.oModel, "updateHasherEntry");
 		this.oModel._bAdaptationMode = true;
@@ -552,23 +547,23 @@ function(
 		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
 
 		assert.ok(fnUpdateHasherEntryStub.calledWith({
-			parameters: [],
-			updateURL: true
-		}), "then VariantModel.updateHasherEntry() called with the correct object with an empty parameter list");
+			parameters: ["Dummy", "variant0", "Dummy1"],
+			updateURL: false
+		}), "then VariantModel.updateHasherEntry() called with the update parameter list but the url is not updated");
 	});
 
-	QUnit.test("when calling '_updateVariantInURL' while in adaptation mode and there is no URL parameter present", function(assert) {
-		sandbox.stub(Utils, "getParsedURLHash").returns({
-			params: {}
-		});
+	QUnit.test("when calling '_updateVariantInURL' while in adaptation mode and there is no parameter saved in the hash register of the current index", function(assert) {
+		// to verify ushell
+		sandbox.stub(Utils, "getParsedURLHash").returns({params: true});
+
 		var fnUpdateHasherEntryStub = sandbox.stub(this.oModel, "updateHasherEntry");
 		this.oModel._bAdaptationMode = true;
 
 		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
 
 		assert.ok(fnUpdateHasherEntryStub.calledWith({
-			parameters: [],
-			updateURL: true
+			parameters: ["variant0"],
+			updateURL: false
 		}), "then VariantModel.updateHasherEntry() called with the correct object with an empty parameter list");
 	});
 

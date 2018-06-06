@@ -137,6 +137,65 @@ sap.ui.require([
 			}.bind(this));
 		});
 
+		QUnit.test("when two overlays are added to selection and a destroyed overlay is removed", function(assert) {
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oElementOverlay1 = new ElementOverlay({
+						element: new Button(),
+						init: fnResolve
+					});
+				}.bind(this)),
+				new Promise(function (fnResolve) {
+					this.oElementOverlay2 = new ElementOverlay({
+						element: new Button(),
+						init: fnResolve
+					});
+				}.bind(this))
+			]).then(function () {
+				sandbox.stub(OverlayRegistry, "getOverlay", function(oOverlay){
+					if (oOverlay.getId() === this.oElementOverlay1.getId()){
+						return oOverlay;
+					}
+				}.bind(this));
+				this.oSelectionManager.add(this.oElementOverlay1);
+				this.oSelectionManager.add(this.oElementOverlay2);
+				this.oElementOverlay2.destroy();
+				this.oSelectionManager.remove(this.oElementOverlay2);
+				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected");
+				this.oElementOverlay1.destroy();
+			}.bind(this));
+		});
+
+		QUnit.test("when two elements are added to selection and a destroyed element is removed", function(assert) {
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oElementOverlay1 = new ElementOverlay({
+						element: new Button(),
+						init: fnResolve
+					});
+				}.bind(this)),
+				new Promise(function (fnResolve) {
+					this.oElementOverlay2 = new ElementOverlay({
+						element: new Button(),
+						init: fnResolve
+					});
+				}.bind(this))
+			]).then(function () {
+				sandbox.stub(OverlayRegistry, "getOverlay", function(sElementId){
+					if (sElementId === this.oElementOverlay1.getElement().getId()){
+						return this.oElementOverlay1;
+					}
+				}.bind(this));
+				this.sButton2Id = this.oElementOverlay2.getElement().getId();
+				this.oSelectionManager.add(this.oElementOverlay1.getElement().getId());
+				this.oSelectionManager.add(this.sButton2Id);
+				this.oElementOverlay2.getElement().destroy();
+				this.oSelectionManager.remove(this.sButton2Id);
+				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected");
+				this.oElementOverlay1.destroy();
+			}.bind(this));
+		});
+
 		QUnit.test("avoid data mutation", function(assert) {
 			var fnDone = assert.async();
 

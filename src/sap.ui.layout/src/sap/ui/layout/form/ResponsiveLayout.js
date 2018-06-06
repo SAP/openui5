@@ -426,9 +426,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 	 */
 	function _deletePanel( oPanel ) {
 
-		oPanel.setContent("");
-		oPanel.setLayout("");
-		oPanel.setContainer("");
+		oPanel.setContent(null);
+		oPanel.setLayout(null);
+		oPanel.setContainer(null);
 		oPanel.destroy();
 
 	}

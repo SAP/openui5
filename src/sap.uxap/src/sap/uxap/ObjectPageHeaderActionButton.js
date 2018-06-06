@@ -56,7 +56,8 @@ sap.ui.define(["sap/m/Button", "./library", "./ObjectPageHeaderActionButtonRende
 					defaultValue: library.Importance.High
 				}
 
-			}
+			},
+			designtime: "sap/uxap/designtime/ObjectPageHeaderActionButton.designtime"
 		}
 	});
 

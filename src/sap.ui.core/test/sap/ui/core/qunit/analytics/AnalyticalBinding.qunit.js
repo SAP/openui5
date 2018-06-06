@@ -8,7 +8,9 @@ sap.ui.require([
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
 	"sap/ui/model/analytics/ODataModelAdapter",
 	'sap/ui/model/ChangeReason',
+	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
+	'sap/ui/model/Sorter',
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	'sap/ui/model/TreeAutoExpandMode',
@@ -20,7 +22,7 @@ sap.ui.require([
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
 ], function (jQuery, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
-		ODataModelAdapter, ChangeReason, FilterOperator, ODataModelV1, ODataModelV2,
+		ODataModelAdapter, ChangeReason, Filter, FilterOperator, Sorter, ODataModelV1, ODataModelV2,
 		TreeAutoExpandMode, o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0 */
@@ -217,7 +219,7 @@ sap.ui.require([
 		sPathHierarchy = "/TypeWithHierarchiesResults";
 
 	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo,
-			sBindingPath, bSkipInitialize) {
+			sBindingPath, bSkipInitialize, aSorters, aFilters) {
 		var oBinding,
 			oModel;
 
@@ -239,8 +241,8 @@ sap.ui.require([
 		}
 
 		ODataModelAdapter.apply(oModel);
-		oBinding = new AnalyticalBinding(oModel, sBindingPath || sPath, null, [], [],
-			/*mParameters*/ {
+		oBinding = new AnalyticalBinding(oModel, sBindingPath || sPath, null, aSorters || [],
+			aFilters || [], /*mParameters*/ {
 				analyticalInfo : aAnalyticalInfo,
 				autoExpandMode : mParameters.autoExpandMode,
 				custom: mParameters.custom || undefined,
@@ -657,6 +659,35 @@ sap.ui.require([
 			done();
 
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadURL: replace spaces with %20", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {
+				custom: {
+					"search": "AB Test String"
+				}
+			}, function (oBinding) {
+				var sURL = oBinding.getDownloadUrl();
+
+				assert.ok(sURL.indexOf("search=AB%20Test%20String") > 0,
+					"Replaces spaces in custom paramters of URL " + sURL);
+				assert.ok(sURL.indexOf("$orderby=CostCenter%20desc") > 0,
+					"Replaces spaces in $orderby of URL " + sURL);
+				assert.ok(sURL.indexOf("$filter=(CostCenter%20gt%20%271234%27)") > 0,
+					"Replaces spaces in $filter of URL " + sURL);
+
+				//just start() the test after the URL has been checked
+				done();
+			}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+			[new Sorter("CostCenter", true)],
+			[new Filter({
+				operator : FilterOperator.GT,
+				path : "CostCenter",
+				value1 : "1234"
+			})]);
 	});
 
 	//*********************************************************************************************

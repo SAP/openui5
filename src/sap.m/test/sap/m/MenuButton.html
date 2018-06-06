@@ -300,24 +300,25 @@ var oMenu22 = new sap.m.Menu({
         var oLabel3 = new sap.m.Label({
             text: "This one has a type Accept and no default action"
         });
-        var oMenuButton3 = new sap.m.MenuButton({
+        var oMenuButton3 = new sap.m.MenuButton('mb3', {
             text: "Accept",
             buttonMode: sap.m.MenuButtonMode.Split,
             type: sap.m.ButtonType.Accept,
             useDefaultActionOnly: true,
-            menu: oMenu3,
-            defaultAction: function() {
-                sap.m.MessageToast.show("Accepted");
-            }
-        });
+			menu: oMenu3,
+			defaultAction: function() {
+				sap.m.MessageToast.show("Accepted");
+			}
+		});
 
-		var oMenuButton4 = new sap.m.MenuButton({
+		var oMenuButton4 = new sap.m.MenuButton('mb4', {
 			text: "Accept",
 			buttonMode: sap.m.MenuButtonMode.Regular,
 			type: sap.m.ButtonType.Accept,
 			useDefaultActionOnly: true,
 			menu: oMenu3,
 			defaultAction: function() {
+				oMenuButton3.setType(sap.m.ButtonType.Reject);
 				sap.m.MessageToast.show("Accepted");
 			}
 		});

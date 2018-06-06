@@ -98,6 +98,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageWithStandardAndNavigationActions: function () {
+				return new DynamicPage({
+					title: this.getDynamicPageTitleWithStandardAndNavigationActions(),
+					header: this.getDynamicPageHeader(),
+					content: this.getContent(200),
+					footer: this.getFooter()
+				});
+			},
 			getDynamicPageWithNavigationActionsAndBreadcrumbs: function () {
 				return new DynamicPage({
 					title: this.getDynamicPageTitleWithNavigationActionsAndBreadcrumbs(),
@@ -109,6 +117,13 @@
 			getDynamicPageNoTitleAndHeader: function () {
 				return new DynamicPage({
 					content: this.getContent(20)
+				});
+			},
+			getDynamicPageToggleHeaderFalse: function () {
+				return new DynamicPage({
+					toggleHeaderOnTitleClick: false,
+					title: this.getDynamicPageTitle(),
+					content: this.getContent(100)
 				});
 			},
 			getDynamicPageTitle: function () {
@@ -127,6 +142,20 @@
 							new sap.m.Link({text: "link4"})
 						]
 					})
+				});
+			},
+			getDynamicPageTitleWithStandardAndNavigationActions:  function () {
+				return new DynamicPageTitle({
+					heading:  this.getTitle(),
+					actions: [
+						this.getAction(),
+						this.getAction()
+					],
+					navigationActions: [
+						this.getAction(),
+						this.getAction(),
+						this.getAction()
+					]
 				});
 			},
 			getDynamicPageTitleWithNavigationActions:  function () {
@@ -707,6 +736,13 @@
 		}
 	});
 
+	QUnit.test("DynamicPage Header default aggregation", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader(),
+			sHeaderDefaultAggregation = oHeader.getMetadata().getDefaultAggregationName();
+
+		assert.strictEqual(sHeaderDefaultAggregation, "content", "The default aggregation is 'content'");
+	});
+
 	QUnit.test("DynamicPage Header pinnable and not pinnable", function (assert) {
 		var oHeader = this.oDynamicPage.getHeader(),
 			oPinButton = oHeader.getAggregation("_pinButton");
@@ -926,6 +962,27 @@
 		assert.ok(this.oDynamicPage.$("vertSB")[0], "DynamicPage ScrollBar has rendered successfully");
 	});
 
+	QUnit.test("BCP: 1870261908 Header title cursor CSS reset is applied", function (assert) {
+		// Arrange
+		var $MainHeading = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainHeading"),
+			$MainContent = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainContent"),
+			$MainActions = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainActions");
+
+		/**
+		 * Asserts if proper CSS reset for cursor is applied to provided DOM element
+		 * @param {object} assert object
+		 * @param {object} oDomElement DOM element to be tested
+		 */
+		function assertCSSReset(assert, oDomElement) {
+			assert.strictEqual(window.getComputedStyle(oDomElement).cursor, "default",
+				"Proper CSS reset is applied to element");
+		}
+
+		// Assert
+		assertCSSReset(assert, $MainHeading[0]);
+		assertCSSReset(assert, $MainContent[0]);
+		assertCSSReset(assert, $MainActions[0]);
+	});
 
 	QUnit.module("DynamicPage - Rendering - No Title", {
 		beforeEach: function () {
@@ -1356,6 +1413,48 @@
 
 		// Assert
 		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true, "Top area should not be visible when all aggregations are removed");
+	});
+
+	QUnit.module("DynamicPage - Rendering - Title with navigationActions and actions", {
+		beforeEach: function () {
+			this.oDynamicPageStandardAndNavigationActions = oFactory.getDynamicPageWithStandardAndNavigationActions();
+			this.oDynamicPageTitle = this.oDynamicPageStandardAndNavigationActions.getTitle();
+			oUtil.renderObject(this.oDynamicPageStandardAndNavigationActions);
+		},
+		afterEach: function () {
+			this.oDynamicPageStandardAndNavigationActions.destroy();
+			this.oDynamicPageStandardAndNavigationActions = null;
+			this.oDynamicPageTitle = null;
+		}
+	});
+
+	QUnit.test("Top area visibility upon navigation actions visibility change", function (assert) {
+		var oTitle = this.oDynamicPageStandardAndNavigationActions.getTitle(),
+			$TitleTopArea = oTitle.$("top"),
+			iTitleSmallWidth = 900;
+
+		// Ensure the Title is smaller than 1280px, then navigationAction are in the Title`s top area.
+		oTitle._onResize(iTitleSmallWidth);
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), false,
+		"Top area should be visible when there is at least one visible navigation action");
+
+		// Act (1) - hide all navigation actions
+		oTitle.getNavigationActions().forEach(function(oAction) {
+			oAction.setVisible(false);
+		});
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true,
+			"Top area should not be visible when there are no visible navigation actions");
+
+		// Act (2) - show random navigation action
+		oTitle.getNavigationActions()[0].setVisible(true);
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), false,
+			"Top area should be visible when there is at least one visible navigation action");
 	});
 
 	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
@@ -1920,11 +2019,11 @@
 		// check
 		assert.equal(oSpy.callCount, 1, "scroll to show the 'collapse' visual indicator is called");
 
-		iCollapseButtonBottom = oCollapseButton.getDomRef().getBoundingClientRect().bottom;
-		iDynamicPageBottom = this.oDynamicPage.getDomRef().getBoundingClientRect().bottom;
+		iCollapseButtonBottom =  Math.round(oCollapseButton.getDomRef().getBoundingClientRect().bottom);
+		iDynamicPageBottom = Math.round(this.oDynamicPage.getDomRef().getBoundingClientRect().bottom);
 
 		// check position
-		assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page");
+		assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page, pos: " + iCollapseButtonBottom);
 	});
 
 
@@ -2274,6 +2373,65 @@
 
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToPin(), false,
 			"DynamicPage Header is not bigger than allowed");
+	});
+
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on desktop", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
+				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+			},
+			iSmallHeaderHeight = 700,
+			iLargeHeaderHeight = 1100,
+			iPageHeight = 1000;
+
+		// act (1) -  Header`s height is smaller than the Page`s height.
+		fnStubConfig(iSmallHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"DynamicPage Header is not bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (2) - Header`s height is bigger than the Page`s height.
+		fnStubConfig(iLargeHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
+			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
+	});
+
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on mobile", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
+				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+			},
+			iSmallHeaderHeight = 100,
+			iLargeHeaderHeight = 400,
+			iPageHeight = 1000;
+
+		// act (1) -  Header`s height is smaller than the Page`s height.
+		oUtil.toMobileMode();
+		fnStubConfig(iSmallHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"DynamicPage Header is not bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (2) - Header`s height is bigger than 1/3 (0.3) of the Page`s height.
+		fnStubConfig(iLargeHeaderHeight, iPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
+			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
+
+		oUtil.toDesktopMode();
 	});
 
 	QUnit.test("DynamicPage _getEntireHeaderHeight() return correct values", function (assert) {
@@ -2685,6 +2843,25 @@
 
 		oDynamicPage.addEventDelegate(oDelegate);
 		oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
+	});
+
+	QUnit.module("DynamicPage - toggleHeaderOnTitleClick", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageToggleHeaderFalse();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage toggleHeaderOnTitleClick initial behavior", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			$oDynamicPageTitle = oDynamicPage.getTitle().$();
+
+		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), false, "Initially toggleHeaderOnTitleClick = false");
+		assert.equal($oDynamicPageTitle.attr("tabindex"), undefined, "Initially the header title is not focusable");
 	});
 
 	/* --------------------------- DynamicPage ARIA ---------------------------------- */

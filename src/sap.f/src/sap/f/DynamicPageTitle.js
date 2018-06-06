@@ -880,7 +880,7 @@ sap.ui.define([
 			bHasVisibleActions,
 			bHasVisibleBreadcrumbs;
 
-		if (this.getNavigationActions().length === 0) {
+		if (this._getVisibleNavigationActions().length === 0) {
 			return false;
 		}
 

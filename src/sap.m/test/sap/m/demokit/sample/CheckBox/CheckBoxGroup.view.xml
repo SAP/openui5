@@ -9,6 +9,7 @@
 		<CheckBox text="Option c" selected="true" />
 		<CheckBox text="Option d" />
 		<CheckBox text="Option e" enabled="false" />
+		<CheckBox text="Option partially selected" selected="true" partiallySelected="true" />
 		<CheckBox text="Warning" valueState="Warning" />
 		<CheckBox text="Warning disabled" valueState="Warning" enabled="false" selected="true" />
 		<CheckBox text="Error" valueState="Error" />

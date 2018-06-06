@@ -409,6 +409,7 @@ function(
 				var vTargetAggregation = oTarget.mAggregations[this.targetAggregationInfo.name];
 				if (vTargetAggregation // target aggregation may not exist yet ... but an empty array is ok
 						&& !bConnectTargetInfo
+						&& !this.aggregation.forwarding.forwardBinding
 						&& !(Array.isArray(vTargetAggregation) && vTargetAggregation.length === 0)) {
 					// there should not be any content in the target at the time when the target has been found for the first time
 					throw new Error("There is already content in aggregation " + this.targetAggregationInfo.name + " of " + oTarget + " to which forwarding is being set up now.");
@@ -766,6 +767,7 @@ function(
 
 		// as oClassInfo is volatile, we need to store the info
 		this._oDesignTime = oClassInfo.metadata["designtime"] || oClassInfo.metadata["designTime"];
+		this._sProvider = oClassInfo.metadata["provider"];
 
 		if ( oClassInfo.metadata.__version > 1.0 ) {
 			this.generateAccessors();
@@ -792,6 +794,7 @@ function(
 			this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
 			this._sDefaultProperty = this._sDefaultProperty || oParent._sDefaultProperty;
 			this._mAllSpecialSettings = jQuery.extend({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
+			this._sProvider = this._sProvider || oParent._sProvider;
 		} else {
 			this._mAllEvents = this._mEvents;
 			this._mAllProperties = this._mProperties;

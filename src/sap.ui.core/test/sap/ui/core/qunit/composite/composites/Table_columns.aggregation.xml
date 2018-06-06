@@ -1,0 +1,6 @@
+<core:FragmentDefinition xmlns:t="composites"
+	xmlns:core="sap.ui.core">
+	<t:Column id="template1" label="Template1" path="Template1" />
+	<t:Column id="template2" label="Template2" path="Template2" />
+	<t:Column label="No id" path="Template3" />
+</core:FragmentDefinition>

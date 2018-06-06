@@ -1,11 +1,22 @@
 /*global QUnit,sinon*/
 
-(function () {
+sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
+	"jquery.sap.global",
+	"sap/m/UploadCollection",
+	"sap/m/UploadCollectionToolbarPlaceholder",
+	"sap/m/Title",
+	"sap/m/ToolbarSpacer",
+	"sap/ui/unified/FileUploader",
+	"sap/m/Button",
+	"sap/m/OverflowToolbar",
+	"sap/m/ToggleButton"
+], function (jQuery, UploadCollection, UploadCollectionToolbarPlaceholder, Title, ToolbarSpacer, FileUploader, Button,
+             OverflowToolbar, ToggleButton) {
 	"use strict";
 
 	QUnit.module("Toolbar Default", {
 		beforeEach: function () {
-			this.oUploadCollection = new sap.m.UploadCollection("noToolbarTest", {});
+			this.oUploadCollection = new UploadCollection("noToolbarTest", {});
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -18,9 +29,9 @@
 	QUnit.test("No Toolbar is provided. Test that default toolbar is set", function (assert) {
 		var aToolbarElements = this.oUploadCollection._oList.getAggregation("headerToolbar").getAggregation("content");
 		assert.equal(aToolbarElements.length, 3, "All elements are in the toolbar");
-		assert.ok(aToolbarElements[0] instanceof sap.m.Title, "First element is an instance of sap.m.Title");
-		assert.ok(aToolbarElements[1] instanceof sap.m.ToolbarSpacer, "Second element is an instance of sap.m.ToolbarSpacer");
-		assert.ok(aToolbarElements[2] instanceof sap.ui.unified.FileUploader, "Third element is an instance of sap.m.FileUploader");
+		assert.ok(aToolbarElements[0] instanceof Title, "First element is an instance of sap.m.Title");
+		assert.ok(aToolbarElements[1] instanceof ToolbarSpacer, "Second element is an instance of sap.m.ToolbarSpacer");
+		assert.ok(aToolbarElements[2] instanceof FileUploader, "Third element is an instance of sap.m.FileUploader");
 	});
 
 	QUnit.module("Toolbar missing Placeholder", {
@@ -38,14 +49,14 @@
 		var oInfoLogStub = sinon.stub(jQuery.sap.log, "info");
 
 		//Act
-		this.oUploadCollection = new sap.m.UploadCollection("noPHToolbarTest", {
-			toolbar: new sap.m.OverflowToolbar({
-				content: [new sap.m.Button({text: "Filter"}),
-					new sap.m.ToolbarSpacer(),
-					new sap.m.Button({icon: "sap-icon://money-bills"}),
-					new sap.m.Button({text: "New"}),
-					new sap.m.ToggleButton({text: "Toggle"}),
-					new sap.m.Button({text: "Open"})
+		this.oUploadCollection = new UploadCollection("noPHToolbarTest", {
+			toolbar: new OverflowToolbar({
+				content: [new Button({text: "Filter"}),
+					new ToolbarSpacer(),
+					new Button({icon: "sap-icon://money-bills"}),
+					new Button({text: "New"}),
+					new ToggleButton({text: "Toggle"}),
+					new Button({text: "Open"})
 				]
 			})
 		});
@@ -67,15 +78,15 @@
 
 	QUnit.module("Toolbar Custom", {
 		beforeEach: function () {
-			this.oUploadCollection = new sap.m.UploadCollection("PHToolbarTest", {
-				toolbar: new sap.m.OverflowToolbar({
-					content: [new sap.m.Button("element1", {text: "Filter"}),
-						new sap.m.ToolbarSpacer("element2"),
-						new sap.m.UploadCollectionToolbarPlaceholder("element3"),
-						new sap.m.Button("element4", {icon: "sap-icon://money-bills"}),
-						new sap.m.Button("element5", {text: "New"}),
-						new sap.m.ToggleButton("element6", {text: "Toggle"}),
-						new sap.m.Button("element7", {text: "Open"})
+			this.oUploadCollection = new UploadCollection("PHToolbarTest", {
+				toolbar: new OverflowToolbar({
+					content: [new Button("element1", {text: "Filter"}),
+						new ToolbarSpacer("element2"),
+						new UploadCollectionToolbarPlaceholder("element3"),
+						new Button("element4", {icon: "sap-icon://money-bills"}),
+						new Button("element5", {text: "New"}),
+						new ToggleButton("element6", {text: "Toggle"}),
+						new Button("element7", {text: "Open"})
 					]
 				})
 			});
@@ -91,14 +102,14 @@
 	QUnit.test("A correct Toolbar is provided", function (assert) {
 		var aToolbarElements = this.oUploadCollection._oList.getAggregation("headerToolbar").getAggregation("content");
 		assert.equal(aToolbarElements.length, 8, "All elements are in the toolbar");
-		assert.ok(aToolbarElements[0] instanceof sap.m.Button, "First element is a sap.m.Title");
-		assert.ok(aToolbarElements[1] instanceof sap.m.ToolbarSpacer, "Second element is a sap.m.ToolbarSpacer");
-		assert.ok(aToolbarElements[2] instanceof sap.ui.unified.FileUploader, "Third element is a sap.ui.unified.FileUploader");
-		assert.ok(aToolbarElements[3] instanceof sap.m.UploadCollectionToolbarPlaceholder, "Fourth element is an instance of sap.m.UploadCollectionToolbarPlaceholder");
-		assert.ok(aToolbarElements[4] instanceof sap.m.Button, "Fifth element is an instance of sap.m.Button");
-		assert.ok(aToolbarElements[5] instanceof sap.m.Button, "Sixth element is an instance of sap.m.Button");
-		assert.ok(aToolbarElements[6] instanceof sap.m.Button, "Seventh element is an instance of sap.m.Button");
-		assert.ok(aToolbarElements[7] instanceof sap.m.Button, "Eighth element is an instance of sap.m.Button");
+		assert.ok(aToolbarElements[0] instanceof Button, "First element is a sap.m.Title");
+		assert.ok(aToolbarElements[1] instanceof ToolbarSpacer, "Second element is a sap.m.ToolbarSpacer");
+		assert.ok(aToolbarElements[2] instanceof FileUploader, "Third element is a sap.ui.unified.FileUploader");
+		assert.ok(aToolbarElements[3] instanceof UploadCollectionToolbarPlaceholder, "Fourth element is an instance of sap.m.UploadCollectionToolbarPlaceholder");
+		assert.ok(aToolbarElements[4] instanceof Button, "Fifth element is an instance of sap.m.Button");
+		assert.ok(aToolbarElements[5] instanceof Button, "Sixth element is an instance of sap.m.Button");
+		assert.ok(aToolbarElements[6] instanceof Button, "Seventh element is an instance of sap.m.Button");
+		assert.ok(aToolbarElements[7] instanceof Button, "Eighth element is an instance of sap.m.Button");
 
 		//Checks that every element is in the right position
 		assert.deepEqual(aToolbarElements[0].getId(), "element1", "Element1 was placed in the right position");
@@ -110,4 +121,4 @@
 		assert.deepEqual(aToolbarElements[7].getId(), "element7", "Element7 was placed in the right position");
 
 	});
-}());
+});

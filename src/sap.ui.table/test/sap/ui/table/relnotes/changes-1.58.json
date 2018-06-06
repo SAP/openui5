@@ -1,0 +1,19 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "23070a32725bbecf970d0b638059c8ac88830dbd",
+        "type": "FIX",
+        "text": " Table: Avoid invalidation if NoData text string wasn\u0027t changed",
+        "references": []
+      },
+      {
+        "id": "af6892e564b36ebc5b9f59aba66a2f1408e886f9",
+        "type": "FIX",
+        "text": " Table: Correct positioning of the action column",
+        "references": []
+      }
+    ]
+  }
+}

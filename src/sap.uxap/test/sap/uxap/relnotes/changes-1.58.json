@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " uxap.ObjectPage: showEditHeaderButton custom setter added",
         "references": []
+      },
+      {
+        "id": "1327fc7bb63b16a1979f0b5c740257edea05f6c1",
+        "type": "FEATURE",
+        "text": " ObjectPageHeaderActionButton: Enabled RTA",
+        "references": []
       }
     ]
   }

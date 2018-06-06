@@ -38,18 +38,6 @@ sap.ui.define([
 
 			assertions : {
 
-				iShouldSeeTheBusyIndicator : function () {
-					return this.waitFor({
-						id : "page",
-						viewName : sViewName,
-						success : function (oPage) {
-							// we set the view busy, so we need to query the parent of the app
-							Opa5.assert.ok(oPage.getBusy(), "The detail view is busy");
-						},
-						errorMessage : "The detail view is not busy."
-					});
-				},
-
 				iShouldSeeNoBusyIndicator : function () {
 					return this.waitFor({
 						id : "detailPage",
@@ -185,7 +173,7 @@ sap.ui.define([
 
 				iShouldSeeHeaderActionButtons: function () {
 					return this.waitFor({
-						id : ["closeColumn", "fullScreenToggle", "shareEmail"],
+						id : ["closeColumn", "enterFullScreen"],
 						viewName : sViewName,
 						success : function () {
 							Opa5.assert.ok(true, "The action buttons are visible");
@@ -194,9 +182,9 @@ sap.ui.define([
 					});
 				},
 
-				theAppShowsFCLDesing: function (sLayout) {
+				theAppShowsFCLDesign: function (sLayout) {
 					return this.waitFor({
-						id : "idAppControl",
+						id : "app",
 						viewName : "App",
 						matchers : new PropertyStrictEquals({name: "layout", value: sLayout}),
 						success : function () {
@@ -204,7 +192,16 @@ sap.ui.define([
 						},
 						errorMessage : "The app doesn't show " + sLayout + " layout"
 					});
+				},
+
+				iShouldSeeTheFullScreenToggleButton : function (sId) {
+					return this.waitFor({
+						id : sId,
+						viewName : sViewName,
+						errorMessage : "The toggle button" + sId + "was not found"
+					});
 				}
+
 			}
 
 		}

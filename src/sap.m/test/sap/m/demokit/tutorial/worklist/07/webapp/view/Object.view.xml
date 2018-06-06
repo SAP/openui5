@@ -1,17 +1,17 @@
 <mvc:View
-	controllerName="mycompany.myapp.controller.Object"
+	controllerName="mycompany.myapp.MyWorklistApp.controller.Object"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:semantic="sap.m.semantic"
-	xmlns:form="sap.ui.layout.form"
-	xmlns="sap.m">
-	<semantic:FullscreenPage
+	xmlns:semantic="sap.f.semantic"
+	xmlns:form="sap.ui.layout.form">
+
+	<semantic:SemanticPage
 		id="page"
+		headerPinnable="false"
+		toggleHeaderOnTitleClick="false"
 		busy="{objectView>/busy}"
-		busyIndicatorDelay="{objectView>/delay}"
-		navButtonPress="onNavBack"
-		showNavButton="true"
-		title="{i18n>objectTitle}">
-		<semantic:content>
+		busyIndicatorDelay="{objectView>/delay}">
+		<semantic:headerContent>
 			<ObjectHeader
 				id="objectHeader"
 				responsive="true"
@@ -19,22 +19,21 @@
 				numberUnit="PC"
 				numberState="{
 					path: 'UnitsInStock',
-					formatter: '.formatter.quantityState'
-				}"
-				number="{UnitsInStock}">
+					formatter: '.formatter.quantityState'}"
+				number="{
+					path: 'UnitsInStock',
+					formatter: '.formatter.numberUnit'}">
 				<attributes>
 					<ObjectAttribute
 						title="{i18n>ObjectProductIdText}"
 						text="{
-							path: 'ProductID'
-						}"/>
+							path: 'ProductID',
+							formatter: '.formatter.numberUnit'}"/>
 					<ObjectAttribute
 						title="{i18n>ObjectPriceTitle}"
 						text="{
 							path: 'UnitPrice',
-							formatter: '.formatter.numberUnit'
-						} EUR"/>
-
+							formatter: '.formatter.numberUnit'} EUR"/>
 				</attributes>
 				<statuses>
 					<ObjectStatus
@@ -50,11 +49,14 @@
 							formatter: '.formatter.quantityState'}" />
 				</statuses>
 			</ObjectHeader>
+		</semantic:headerContent>
+		<semantic:content>
 			<Panel
 				class="sapUiNoContentPadding"
 				headerText="{i18n>ObjectSupplierTabTitle}">
 				<content>
 					<form:SimpleForm
+						minWidth="1024"
 						maxContainerCols="2"
 						editable="false"
 						layout="ResponsiveGridLayout"
@@ -102,9 +104,7 @@
 			</Panel>
 		</semantic:content>
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction
-				id="shareEmail"
-				press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
 		</semantic:sendEmailAction>
-	</semantic:FullscreenPage>
+	</semantic:SemanticPage>
 </mvc:View>

@@ -167,69 +167,65 @@
 		oPopover = oFF._getPopover();
 		assert.ok(oPopover.getFooter(), "Popover should contain the OK button in the footer");
 
-//		sap.ui.Device.browser.internet_explorer < 10
 		assert.ok(oPopover.getContentWidth("30%"),"Popover width set to 30% for IE");
 
 		oFF.destroy();
 	});
 
-	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-		QUnit.test("FacetFilter._openPopover", function(assert) {
-			var done = assert.async();
+	QUnit.test("FacetFilter._openPopover", function(assert) {
+		var done = assert.async();
 
-			var oFF = new sap.m.FacetFilter();
-			var oFFL = new sap.m.FacetFilterList();
+		var oFF = new sap.m.FacetFilter();
+		var oFFL = new sap.m.FacetFilterList();
 
-			oFFL.setWordWrap(true);
+		oFFL.setWordWrap(true);
 
-			oFF.addList(oFFL);
-			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
+		oFF.addList(oFFL);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
 
-			var oPopover = oFF._getPopover();
-			oPopover.attachEventOnce("afterOpen", function() {
-				assert.ok(oPopover.isOpen(), "Popover should be open");
-				assert.ok(oPopover.getContentWidth("30%"),"Popover width should be 30% if wordwrap is set to true");
+		var oPopover = oFF._getPopover();
+		oPopover.attachEventOnce("afterOpen", function() {
+			assert.ok(oPopover.isOpen(), "Popover should be open");
+			assert.ok(oPopover.getContentWidth("30%"),"Popover width should be 30% if wordwrap is set to true");
 
+			destroyFF(oFF);
+			done();
+		});
+
+		var oButton = oFF._getButtonForList(oFFL);
+		oFF._openPopover(oPopover, oButton);
+
+
+
+	});
+
+
+	QUnit.test("FacetFilter._closePopover", function(assert) {
+		var done = assert.async();
+
+		var oFF = new sap.m.FacetFilter();
+		var oFFL = new sap.m.FacetFilterList();
+		oFF.addList(oFFL);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oPopover = oFF._getPopover();
+		oPopover.attachEventOnce("afterOpen", function() {
+
+			oPopover.attachEventOnce("afterClose", function() {
+				assert.ok(!oPopover.isOpen(), "Popover should be closed");
+				assert.ok(!oPopover.getSubHeader(), "Popover subheader should be destroyed");
+
+				assert.equal(oPopover.getContent().length, 0, "Popover content should be destroyed");
 				destroyFF(oFF);
 				done();
 			});
-
-			var oButton = oFF._getButtonForList(oFFL);
-			oFF._openPopover(oPopover, oButton);
-
-
-
+			oFF._closePopover();
 		});
-	}
+		openPopover(oFF, 0);
+	});
 
-	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-		QUnit.test("FacetFilter._closePopover", function(assert) {
-			var done = assert.async();
-
-			var oFF = new sap.m.FacetFilter();
-			var oFFL = new sap.m.FacetFilterList();
-			oFF.addList(oFFL);
-			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			var oPopover = oFF._getPopover();
-			oPopover.attachEventOnce("afterOpen", function() {
-
-				oPopover.attachEventOnce("afterClose", function() {
-					assert.ok(!oPopover.isOpen(), "Popover should be closed");
-					if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-						assert.ok(!oPopover.getSubHeader(), "Popover subheader should be destroyed");
-					}
-					assert.equal(oPopover.getContent().length, 0, "Popover content should be destroyed");
-					destroyFF(oFF);
-					done();
-				});
-				oFF._closePopover();
-			});
-			openPopover(oFF, 0);
-		});
-	}
 
 	QUnit.test("FacetFilter._moveListToDisplayContainer, _restoreListFromDisplayContainer", function(assert) {
 
@@ -1438,7 +1434,7 @@
 				values: [{text: "Val1", key: "val1"}, {text: "Val2", key: "val3"}]
 			}));
 
-			assert.strictEqual(oFFL._searchValue, null, "Search value is cleared after items binding is reset");
+			assert.strictEqual(oFFL._searchValue, "", "Search value is cleared after items binding is reset");
 
 			assert.equal(oFFL.getSelectedItems().length, 2, "Selected items should not have been removed");
 
@@ -1483,56 +1479,14 @@
 			destroyFF(oFF);
 		});
 
-		QUnit.test("FacetFilterList._search is not called for null or empty values", function(assert){
-			//arrange
-			var oFF = new sap.m.FacetFilter(),
-				oFFL = new sap.m.FacetFilterList(),
-				oSearchSpy = this.spy(oFFL, "_search");
-			oFF.addList(oFFL);
-
-			//act
-			oFFL._applySearch();
-
-			//assert
-			assert.strictEqual(oSearchSpy.callCount, 0, "value is null and _search is not called");
-
-			//act
-			oFFL._setSearchValue("");
-			oFFL._applySearch();
-
-			//assert
-			assert.strictEqual(oSearchSpy.callCount, 0, "value is an empty string and _search is not called");
-
-			//destroy
-			oSearchSpy.reset();
-			oFF.destroy();
-		});
-
-		QUnit.test("FacetFilterList._resetSearch", function(assert){
-			//arrange
-			var oFF = new sap.m.FacetFilter(),
-				oFFL = new sap.m.FacetFilterList(),
-				oResetButton = oFF.getAggregation("resetButton"),
-				oResetSearchSpy = this.spy(oFFL, "_resetSearch");
-
-			//act
-			oFF.addList(oFFL);
-			oResetButton.firePress();
-
-			//assert
-			assert.strictEqual(oResetSearchSpy.callCount, 1, "_resetSearch is called when press on the reset button");
-
-			//destroy
-			oResetSearchSpy.reset();
-			oFF.destroy();
-		});
-
 		QUnit.test("FacetFilterItem.init", function(assert) {
 			var oItem = new sap.m.FacetFilterItem();
 
 			assert.ok(oItem.hasStyleClass("sapMFFLI"), "sapMFFLI style class set");
 			oItem.destroy();
 		});
+
+
 
 		QUnit.module("Public API");
 
@@ -2302,64 +2256,62 @@
 			oResetButton.firePress();
 		});
 
-		if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-			QUnit.test("FacetFilter click another button when popover is opened", function(assert) {
-				var done = assert.async();
-				var oFFL1ListCloseEvent = null, oFFL2ListOpenEvent=null;
-				var oFF = new sap.m.FacetFilter();
-				var oFFL1 = new sap.m.FacetFilterList({
-					title : "List1"
-				});
-				var oFFL2 = new sap.m.FacetFilterList({
-					title : "List2"
-				});
-				oFF.addList(oFFL1);
-				oFF.addList(oFFL2);
+		QUnit.test("FacetFilter click another button when popover is opened", function(assert) {
+			var done = assert.async();
+			var oFFL1ListCloseEvent = null, oFFL2ListOpenEvent=null;
+			var oFF = new sap.m.FacetFilter();
+			var oFFL1 = new sap.m.FacetFilterList({
+				title : "List1"
+			});
+			var oFFL2 = new sap.m.FacetFilterList({
+				title : "List2"
+			});
+			oFF.addList(oFFL1);
+			oFF.addList(oFFL2);
 
-				oFF.placeAt("content");
-				sap.ui.getCore().applyChanges();
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-				var oPopover = oFF._getPopover();
-				// click another button after the first popover is opened
-				oPopover.attachEventOnce("afterOpen", function(oEvent) {
-					setTimeout(function() {
-						openPopover(oFF, 1);
-					}, 1000);
-					oFF._closePopover();
-				});
+			var oPopover = oFF._getPopover();
+			// click another button after the first popover is opened
+			oPopover.attachEventOnce("afterOpen", function(oEvent) {
+				setTimeout(function() {
+					openPopover(oFF, 1);
+				}, 1000);
+				oFF._closePopover();
+			});
 
-				// timeout error will appear if oFFL2.listOpen is not called
+			// timeout error will appear if oFFL2.listOpen is not called
 
-				// mark the listClose event is called
-				oFFL1.attachEventOnce("listClose", function(oEvent) {
-					// fail if the oFFL2.listOpen was called before
-					assert.ok(!oFFL2ListOpenEvent, 'oFFL2.listOpen should not be called before oFFL1.listClose');
-					if (oFFL2ListOpenEvent) {
+			// mark the listClose event is called
+			oFFL1.attachEventOnce("listClose", function(oEvent) {
+				// fail if the oFFL2.listOpen was called before
+				assert.ok(!oFFL2ListOpenEvent, 'oFFL2.listOpen should not be called before oFFL1.listClose');
+				if (oFFL2ListOpenEvent) {
+					destroyFF(oFF);
+					done();
+				} else {
+					oFFL1ListCloseEvent = oEvent;
+				}
+			});
+
+			// check that the prevoius list was closed before
+			oFFL2.attachEventOnce("listOpen", function(oEvent) {
+				// fail if the oFFL1.listClose wasn't called
+				assert.ok(oFFL1ListCloseEvent, "oFFL1.listClose should be called before oFFL2.listOpen");
+				if (oFFL1ListCloseEvent) {
+					var oPopover = oFF._getPopover();
+					oPopover.attachEventOnce("afterOpen", function(oEvent) {
 						destroyFF(oFF);
 						done();
-					} else {
-						oFFL1ListCloseEvent = oEvent;
-					}
-				});
-
-				// check that the prevoius list was closed before
-				oFFL2.attachEventOnce("listOpen", function(oEvent) {
-					// fail if the oFFL1.listClose wasn't called
-					assert.ok(oFFL1ListCloseEvent, "oFFL1.listClose should be called before oFFL2.listOpen");
-					if (oFFL1ListCloseEvent) {
-						var oPopover = oFF._getPopover();
-						oPopover.attachEventOnce("afterOpen", function(oEvent) {
-							destroyFF(oFF);
-							done();
-						});
-					} else {
-						oFFL2ListOpenEvent = oEvent;
-					}
-				});
-
-				openPopover(oFF, 0);
+					});
+				} else {
+					oFFL2ListOpenEvent = oEvent;
+				}
 			});
-		}
+
+			openPopover(oFF, 0);
+		});
 
 		QUnit.test("Reset button & dialog with list items filtering sync", function (assert) {
 			var oFF = oSCHelper.createFFWithModel();
@@ -3526,7 +3478,7 @@
 
 
 
-	function createFF(oFF, aLists) { //TODO: see if this helps with ie9 qunit failures
+	function createFF(oFF, aLists) {
 
 		if (oFF) {
 			oFF.destroy();
@@ -3620,10 +3572,8 @@
 
 			oFFL.setMode(sap.m.ListMode.SingleSelectMaster);
 
-			if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-				oFFL._addSelectedKey();
-				assert.strictEqual(Object.getOwnPropertyNames(oFFL._oSelectedKeys).length, 0, "Undefined item is not added");
-			}
+			oFFL._addSelectedKey();
+			assert.strictEqual(Object.getOwnPropertyNames(oFFL._oSelectedKeys).length, 0, "Undefined item is not added");
 
 			oFFL._addSelectedKey(undefined, "test");
 			assert.strictEqual(Object.getOwnPropertyNames(oFFL._oSelectedKeys).length, 1, "Items without the keys are added");
@@ -4595,72 +4545,6 @@
 			destroyFF(oFF);
 		});
 
-		QUnit.test("FacetFilterList combines both filters - it's own and the one provided by the app", function(assert){
-			//arrange
-			var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}],
-					oFF = new sap.m.FacetFilter(),
-					oFFL = new sap.m.FacetFilterList({
-						items: {
-							path: "/values",
-							template: new sap.m.FacetFilterItem( {
-								text: "{text}",
-								key: "{key}"
-							})
-						}
-					}),
-					oFilterSpy,
-					oCombinedFilter;
-
-			oFFL.setModel(new sap.ui.model.json.JSONModel({
-				values: aItemsData
-			}));
-
-			oFFL.attachEventOnce("listOpen", function(oEvent) {
-				var oFFL = oEvent.getSource(),
-						aFilters = [];
-
-				aFilters.push(new sap.ui.model.Filter({
-					path: 'CategoryID',
-					operator: 'EQ',
-					value1: 2
-				}));
-				aFilters.push(new sap.ui.model.Filter({
-					path: 'CategoryID',
-					operator: 'EQ',
-					value1: 3
-				}));
-				oCombinedFilter = new sap.ui.model.Filter(aFilters, false);
-				oFFL.getBinding('items').filter(oCombinedFilter);
-			});
-
-			oFFL.bindAggregation("items", {
-				path: "/values",
-				template: new sap.m.FacetFilterItem({
-					text: "{text}",
-					key: "{key}"
-				})
-			});
-
-			oFilterSpy = this.spy(oFFL.getBinding("items"), "filter");
-
-			oFF.addList(oFFL);
-			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			//act
-			oFFL.fireListOpen();
-
-			oFFL._search("Val1");
-
-			//assert
-			assert.strictEqual(oFilterSpy.callCount, 2, "filter method of the ffl's items is called");
-			assert.strictEqual(oFilterSpy.getCall(1).args[0].aFilters[0].sPath, "text", "There is one element in the first filter with path 'text'");
-			assert.strictEqual(oFilterSpy.getCall(1).args[0].aFilters[1], oCombinedFilter, "The second element is the same as the combined filter");
-
-			//destroy
-			oFF.destroy();
-		});
-
 		QUnit.test("FacetFilter in Light mode has tabindex=0 only on a InfoBar inside it", function (assert) {
 			// Arrange
 			var oFF = new sap.m.FacetFilter({
@@ -4797,7 +4681,7 @@
 		 * Make sure the popover and dialog are closed before destroying, otherwise popover/dialog
 		 * timers still run and then find their object is destroyed, causing an error to be logged after a few seconds.
 		 */
-		function destroyFF(oFF, bAsync) { //TODO: see if this helps with ie9 qunit failures
+		function destroyFF(oFF, bAsync) {
 
 			var oPopover = oFF.getAggregation("popover");
 			if (oPopover) {
