@@ -809,8 +809,10 @@ sap.ui.define([
 										mAttributes["aria-label"] = sText;
 									}
 									mAttributes["aria-expanded"] = "" + (!!mParams.row._bIsExpanded);
+									mAttributes["aria-hidden"] = "false";
 								} else {
 									mAttributes["aria-label"] = TableUtils.getResourceText("TBL_LEAF");
+									mAttributes["aria-hidden"] = "true";
 								}
 							}
 						}
