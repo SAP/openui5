@@ -212,6 +212,7 @@ function(
 			sapnext : ["alt", "meta"],
 			sapprevious : ["alt", "meta"]
 		});
+
 		this.addDelegate(this._oItemNavigation);
 
 		this._oScroller = new ScrollEnablement(this, this.getId() + "-head", {
@@ -844,6 +845,7 @@ function(
 		//Reinitialize the ItemNavigation after rendering
 		this._oItemNavigation.setRootDomRef(oHeadDomRef);
 		this._oItemNavigation.setItemDomRefs(aTabDomRefs);
+		this._oItemNavigation.setPageSize(aTabDomRefs.length); // set the page size equal to the tab number so when we press pageUp/pageDown to focus first/last tab
 		this._oItemNavigation.setSelectedIndex(iSelectedDomIndex);
 	};
 
