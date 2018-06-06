@@ -268,24 +268,6 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/Obj
 		};
 
 		/**
-		 * @private
-		 * @returns {Array} The visible attributes of the control
-		 */
-		ObjectListItem.prototype._getVisibleAttributes = function() {
-
-			var aAllAttributes = this.getAttributes();
-			var aVisibleAttributes = [];
-
-			for (var i = 0; i < aAllAttributes.length; i++) {
-				if (aAllAttributes[i].getVisible()) {
-					aVisibleAttributes.push(aAllAttributes[i]);
-				}
-			}
-
-			return aVisibleAttributes;
-		};
-
-		/**
 		 * Lazy loads ObjectListItem's image.
 		 * @returns {object} The image control
 		 * @private
