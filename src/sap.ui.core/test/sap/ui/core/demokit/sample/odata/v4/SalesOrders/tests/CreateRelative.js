@@ -118,7 +118,6 @@ sap.ui.define([
 				When.onTheMainPage.pressCreateSalesOrderItemButton();
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheSuccessInfo.confirm();
-				When.onTheMainPage.selectSalesOrder(0);
 				When.onTheMainPage.pressConfirmSalesOrderButton();
 			}
 
