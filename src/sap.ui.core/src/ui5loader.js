@@ -2265,7 +2265,7 @@
 		 *   not sufficient.
 		 *
 		 *   A typical example are scripts that don't use <code>define</code> or <code>sap.ui.define</code>,
-		 *   but export to a global name. With the <code>exports<code> property, one or more export
+		 *   but export to a global name. With the <code>exports</code> property, one or more export
 		 *   names can be specified, and the loader can retrieve the exported value after executing the
 		 *   corresponding module. If such a module has dependencies, they can be specified in the
 		 *   <code>deps</code> array and are loaded and executed before executing the module.
