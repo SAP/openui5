@@ -1068,10 +1068,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			filterCompoundKeys: this.getSelectedFilterCompoundKeys(),
 			navPage : this._getNavContainer().getCurrentPage(),
 			contentPage : this._vContentPage,
-			contentItem : this._oContentItem ? this._oContentItem.clone() : null
+			contentItem : this._oContentItem
 		};
-
-		this.addDependent(this._oPreviousState.contentItem);
 
 		//focus the first focusable item in current page's content
 		if (Device.system.desktop) {
