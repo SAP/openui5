@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.QuickViewCard- Accessibility</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+
+		// create and add app
+		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
+		app.placeAt("body");
+
+
+		var oQuickViewPage = new sap.m.QuickViewPage({
+			header	: "Store",
+			title	: "Jumbo",
+			description	: "The best toy store in the USA",
+			icon	: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg",
+			groups	: [
+				new sap.m.QuickViewGroup({
+					heading		: "Store details",
+					elements	: [
+						new sap.m.QuickViewGroupElement({
+							label	: "Address",
+							value	: "Sunset Blvd. 7, Los Angeles"
+						}),
+						new sap.m.QuickViewGroupElement({
+							label	: "Website",
+							value	: "http://jumbo.com",
+							url 	: "http://jumbo.com",
+							type	: sap.m.QuickViewGroupElementType.link
+						}),
+						new sap.m.QuickViewGroupElement({
+							label	: "Email",
+							value	: "info@jumbo.com",
+							type	: sap.m.QuickViewGroupElementType.email
+						}),
+						new sap.m.QuickViewGroupElement({
+							label	: "Opening hours",
+							value	: "Every day from 8AM to 10PM",
+							type	: sap.m.QuickViewGroupElementType.text
+						})
+					]
+				})
+			]
+		});
+
+		var oPanel = new sap.m.Panel('quickViewPagePanel', {
+			width : '320px',
+			height : '292px',
+			headerText : 'Store',
+			content : [
+				oQuickViewPage
+			]
+		});
+
+		// create and add a page with icon tab bar
+		var page = new sap.m.Page("quickViewPage", {
+			title : "Quick View Page",
+			content : [
+				oPanel
+			]
+		});
+		app.addPage(page);
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

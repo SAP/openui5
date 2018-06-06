@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.TableSelectDialog - Accessibility</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+
+		// create the template for the items binding
+		var oItemTemplate1 = new sap.m.ColumnListItem({
+			type : "Active",
+			unread : false,
+			cells : [
+				new sap.m.Label({
+					text : "{name}"
+				}),
+				new sap.m.Label({
+					text: "{quantity}"
+				}), new sap.m.Label({
+					text: "{limit}"
+				}), new sap.m.Label({
+					text : "{price}"
+				})
+			]
+		});
+		// filter function for the list search
+		var fnDoSearch = function (oEvent, bProductSearch) {
+			var aFilters = [],
+					sSearchValue = oEvent.getParameter("value"),
+					itemsBinding = oEvent.getParameter("itemsBinding");
+
+			// create the local filter to apply
+			if(sSearchValue !== undefined && sSearchValue.length > 0) {
+				if(bProductSearch) {
+					// create multi-field filter to allow search over all attributes
+					aFilters.push(new sap.ui.model.Filter("ProductId", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					// apply the filter to the bound items, and the Select Dialog will update
+					itemsBinding.filter(aFilters, "Application");
+				} else {
+					// create multi-field filter to allow search over all attributes
+					aFilters.push(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("lname", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("ean13", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("ean8", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("quantity", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("limit", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("backorder", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("price", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					// apply the filter to the bound items, and the Select Dialog will update
+					itemsBinding.filter(new sap.ui.model.Filter(aFilters, false), "Application"); // filters connected with OR
+				}
+			} else {
+				// filter with empty array to reset filters
+				itemsBinding.filter(aFilters, "Application");
+			}
+		};
+
+
+		// create the data to be shown in the table
+		var oProductData1 = {
+			items : [{
+				name : "Headphone",
+				quantity : "10 EA",
+				limit : "15.00 Eur",
+				price : "12.00 EUR"
+			}, {
+				name : "Mouse Pad",
+				quantity : "1 EA",
+				limit : "5.00 Eur",
+				price : "3.00 EUR"
+			}, {
+				name : "Monitor",
+				quantity : "8 EA",
+				limit : "60.00 Eur",
+				price : "45.00 EUR"
+			}, {
+				name : "Optic Mouse",
+				quantity : "2 EA",
+				limit : "40.00 Eur",
+				price : "15.00 EUR"
+			}, {
+				name : "Dock Station",
+				quantity : "1 EA",
+				limit : "90.00 Eur",
+				price : "55.00 EUR"
+			}]
+		};
+
+		// create the model to hold the data
+		var oModel1 = new sap.ui.model.json.JSONModel();
+		oModel1.setDefaultBindingMode("OneWay");
+		oModel1.setData(oProductData1);
+
+		var fnCreateSimpleDialogColumns = function () {
+			return [
+				new sap.m.Column({
+					hAlign: "Center",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "Quantity"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					width: "30%",
+					header: new sap.m.Label({
+						text: "Value"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					width: "30%",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "Price"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				})];
+		};
+
+		var oTableSelectDialog3 = new sap.m.TableSelectDialog("TableSelectDialog3", {
+			title: "{dialog>/title}",
+			noDataText: "{dialog>/noDataMessage}",
+			search : fnDoSearch,
+			liveChange: fnDoSearch,
+			columns : [
+				fnCreateSimpleDialogColumns()
+			]
+		});
+
+		// attach confirm listener
+		oTableSelectDialog3.attachConfirm(function (evt) {
+			var selectedItem = evt.getParameter("selectedItem");
+			if (selectedItem) {
+				//Get all the cells and pull back the first one which will be the name content
+				var oCells = selectedItem.getCells();
+				var oCell = oCells[0];
+				//Now update the input with the value
+				sap.m.MessageBox.alert("Item selected is : " + oCell.getText());
+			}
+			//Now destroy it
+			oTableSelectDialog3.destroy();
+			oTableSelectDialog3 = null;
+		});
+
+		var oButton3 = new sap.m.Button("Button3", {
+			text: "Open TableSelectDialog with destroy call in close event & late binding",
+			press: function (evt) {
+				oTableSelectDialog3.open();
+
+				// then set model & bind Aggregation
+				oTableSelectDialog3.bindAggregation("items", "/items", oItemTemplate1);
+				oTableSelectDialog3.setModel(oModel1);
+			}
+		});
+
+		var aData = [];
+		for (var i = 0; i < 50; i++) {
+			aData.push({text : "Item" + i, selected : i>20 || i === 5});
+		}
+
+		//create TableSelectDialog with growing false, search is not implemented to work
+		var oTableSelectDialog11 = new sap.m.TableSelectDialog({
+			columns : [
+				new sap.m.Column({
+					header : new sap.m.Label({text : "Item"})
+				})
+			],
+			multiSelect : true,
+			rememberSelections: true,
+			contentWidth: "200px",
+			growing: false
+		});
+
+		oTableSelectDialog11.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog11.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+
+		oTableSelectDialog11.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog11.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+
+		var oButton11 = new sap.m.Button("Button11", {
+			text: "Open TableSelectDialog with property growing false",
+			press: function () {
+				oTableSelectDialog11.open();
+			}
+		});
+
+		// create the application page
+		var oPage = new sap.m.Page("page", {
+			title:" TableSelectDialog Acc Test Page",
+			content:[
+				new sap.m.VBox({
+					items: [
+						oButton3,
+						oButton11
+					]
+				})
+			]
+		});
+
+		var oApp = new sap.m.App("myApp", {initialPage:"page"});
+		oApp.addPage(oPage).placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+</html>
