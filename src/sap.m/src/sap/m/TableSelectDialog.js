@@ -79,11 +79,13 @@ sap.ui.define([
 	 * <li>You need to filter a set of items without any selection. Use the {@link https://experience.sap.com/fiori-design-web/filter-bar/ Filter Bar} control instead.</li>
 	 * </ul>
 	 * <h4>Limitations:</h4>
-	 * Since version 1.58, the columns headers and the info toolbar are sticky (remain fixed on top when scrolling). This feature is not supported in all browsers.
+	 * <ul>
+	 * <li>The property <code>growing</code> must not be used together with two-way binding.
+	 * <li>When the property <code>growing</code> is set to <code>true</code> (default value), the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, work only for the currently loaded items.
+	 * To make sure that all items in the table are loaded at once and the above features work properly, set the property to <code>false</code>.
+	 * <li>Since version 1.58, the columns headers and the info toolbar are sticky (remain fixed on top when scrolling). This feature is not supported in all browsers.
 	 * For more information on browser support limitations, you can refer to the {@link sap.m.Table sap.m.Table} <code>sticky</code> property.
-	 * <h4>Note:</h4>
-	 * The property <code>growing</code> determines the progressive loading. If it's set to true (the default value), the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, will work only for the currently loaded items.
-	 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
+	 * </ul>
 	 * <h3>Responsive Behavior</h3>
 	 * <ul>
 	 * <li>On smaller screens, the columns of the table wrap and build a list that shows all the information.</li>
@@ -120,9 +122,9 @@ sap.ui.define([
 			multiSelect : {type : "boolean", group : "Dimension", defaultValue : false},
 
 			/**
-			 * If set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the bound model (progressive loading).
+			 * Determines the progressive loading. When set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the bound model.
 			 * <b>Note:</b> This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
-			 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, will work only for the currently loaded items.
+			 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, work only for the currently loaded items.
 			 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
 			 * @since 1.56
 			 */
