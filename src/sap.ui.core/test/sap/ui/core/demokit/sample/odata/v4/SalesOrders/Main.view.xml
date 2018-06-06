@@ -257,32 +257,32 @@
 				<Toolbar design="Transparent" id="SalesOrderDetailsToolbar">
 					<Title text="Sales Order"/>
 				</Toolbar>
-				<Label text="Sales Order ID" />
-				<Text id="Details_SalesOrderID" text="{SalesOrderID}" />
-				<Label text="Created At" />
-				<Text text="{CreatedAt}" />
-				<Label text="Changed At" />
-				<Text text="{ChangedAt}" />
-				<Label text="Lifecycle Status Desc" />
-				<Text text="{LifecycleStatusDesc}" />
-				<Label labelFor="Note" text="Note" />
-				<Input id="Note" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
+				<Label labelFor="SOD_SalesOrderID" text="Sales Order ID" />
+				<Text id="SOD_SalesOrderID" text="{SalesOrderID}" />
+				<Label labelFor="SOD_CreatedAt" text="Created At" />
+				<Text id="SOD_CreatedAt" text="{CreatedAt}" />
+				<Label labelFor="SOD_ChangedAt" text="Changed At" />
+				<Text id="SOD_ChangedAt" text="{ChangedAt}" />
+				<Label labelFor="SOD_LifecycleStatusDesc" text="Lifecycle Status Desc" />
+				<Text id="SOD_LifecycleStatusDesc" text="{LifecycleStatusDesc}" />
+				<Label labelFor="SOD_Note" text="Note" />
+				<Input id="SOD_Note" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
 				<Toolbar design="Transparent" id="BusinessPartner" binding="{SO_2_BP}">
 					<Title text="Business Partner"/>
 					<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
 						id="deleteBusinessPartner" press="onDeleteBusinessPartner"
 						tooltip="Delete business partner"/>
 				</Toolbar>
-				<Label text="Business Partner ID" />
-				<Text text="{SO_2_BP/BusinessPartnerID}" />
-				<Label text="CompanyName" />
-				<Text text="{SO_2_BP/CompanyName}" />
-				<Label labelFor="BPPhoneNumber" text="PhoneNumber" />
-				<Input id="BPPhoneNumber" value="{SO_2_BP/PhoneNumber}" />
-				<Label labelFor="BPCity" text="City" />
-				<Input id="BPCity" value="{SO_2_BP/Address/City}"/>
-				<Label labelFor="BPPostalCode" text="Postal Code" />
-				<Input id="BPPostalCode" value="{SO_2_BP/Address/PostalCode}"/>
+				<Label labelFor="BP_BusinessPartnerID" text="Business Partner ID" />
+				<Text id="BP_BusinessPartnerID" text="{SO_2_BP/BusinessPartnerID}" />
+				<Label labelFor="BP_CompanyName" text="CompanyName" />
+				<Text id="BP_CompanyName" text="{SO_2_BP/CompanyName}" />
+				<Label labelFor="BP_PhoneNumber" text="PhoneNumber" />
+				<Input id="BP_PhoneNumber" value="{SO_2_BP/PhoneNumber}" />
+				<Label labelFor="BP_City" text="City" />
+				<Input id="BP_City" value="{SO_2_BP/Address/City}"/>
+				<Label labelFor="BP_PostalCode" text="Postal Code" />
+				<Input id="BP_PostalCode" value="{SO_2_BP/Address/PostalCode}"/>
 			</form:SimpleForm>
 			<Table id="SalesOrderLineItems"
 				items="{
@@ -399,10 +399,10 @@
 			<form:SimpleForm ariaLabelledBy="SupplierDetailsTitle"
 				binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true" id="SupplierDetailsForm"
 				layout="ResponsiveGridLayout">
-				<Label text="Supplier" />
-				<Text text="{CompanyName} {LegalForm}" />
-				<Label labelFor="PhoneNumber" text="Phone Number" />
-				<Input id="PhoneNumber" value="{PhoneNumber}" enabled="{= !!%{CompanyName}}"/>
+				<Label labelFor="SD_CompanyName" text="Supplier" />
+				<Text id="SD_CompanyName" text="{CompanyName} {LegalForm}" />
+				<Label labelFor="SD_PhoneNumber" text="Phone Number" />
+				<Input id="SD_PhoneNumber" value="{PhoneNumber}" enabled="{= !!%{CompanyName}}"/>
 			</form:SimpleForm>
 			<List headerText="Supplier Contact Information" id="SupplierContactData"
 				items="{

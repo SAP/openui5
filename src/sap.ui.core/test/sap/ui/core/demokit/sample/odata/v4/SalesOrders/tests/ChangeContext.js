@@ -51,9 +51,9 @@ sap.ui.define([
 			When.onTheMainPage.selectFirstSalesOrder();
 			When.onTheMainPage.pressDeleteBusinessPartnerButton();
 			When.onTheSuccessInfo.confirm();
-			Then.onTheMainPage.checkInputValue("BPPhoneNumber", "");
-			Then.onTheMainPage.checkInputValue("BPCity", "");
-			Then.onTheMainPage.checkInputValue("BPPostalCode", "");
+			Then.onTheMainPage.checkInputValue("BP_PhoneNumber", "");
+			Then.onTheMainPage.checkInputValue("BP_City", "");
+			Then.onTheMainPage.checkInputValue("BP_PostalCode", "");
 
 			Then.onAnyPage.checkLog();
 			Then.iTeardownMyUIComponent();

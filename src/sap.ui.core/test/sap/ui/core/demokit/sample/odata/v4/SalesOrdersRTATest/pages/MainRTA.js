@@ -6,8 +6,7 @@ sap.ui.require([
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties"
-], function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
-		Properties) {
+], function (Opa5, EnterText, Press, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
@@ -83,10 +82,10 @@ sap.ui.require([
 				}
 			},
 			assertions : {
-				checkNewPropertyAppears : function (sProperty) {
+				checkNewPropertyAppears : function (sPropertyId) {
 					return this.waitFor({
-						controlType : "sap.m.Label",
-						matchers : new Properties({text: sProperty}),
+						controlType : "sap.m.Text",
+						id : sPropertyId,
 						viewName : sViewName
 					});
 				},
