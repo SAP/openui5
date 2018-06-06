@@ -85,7 +85,6 @@ sap.ui.define([
 					},
 					preprocessors : {
 						xml : {
-							"X-async" : true, // eXperimental async switch, to be removed soon
 							bindingContexts : {
 								data : oModel.createBindingContext("/BusinessPartnerList")
 							},

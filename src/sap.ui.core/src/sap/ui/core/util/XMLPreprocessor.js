@@ -25,7 +25,6 @@ sap.ui.define([
 		oSyncPromiseResolved = SyncPromise.resolve(),
 		oSyncPromiseResolvedTrue = SyncPromise.resolve(true),
 		fnToString = Object.prototype.toString,
-		oUNBOUND = {}, // @see getAny
 		mVisitors = {}, // maps "<namespace URI> <local name>" to visitor function
 		/**
 		 * <template:with> control holding the models and the bindings. Also used as substitute for
@@ -330,12 +329,11 @@ sap.ui.define([
 	 * @param {object} oScope
 	 *   map of currently known aliases
 	 * @param {boolean} bAsync
-	 *   whether async processing is allowed and a <code>Promise</code> may be returned
-	 * @returns {any|Promise}
-	 *   the property value or a <code>Promise</code> resolving with the property value (in case
-	 *   async processing is allowed and supported by the respective model) or <code>oUNBOUND</code>
-	 *   in case the binding is not ready (because it refers to a model which is not available)
-	 * @throws {Error}
+	 *   whether async processing is allowed
+	 * @returns {sap.ui.base.SyncPromise|null}
+	 *   a sync promise which resolves with the property value or is rejected with a corresponding
+	 *   error (for example, an error thrown by a formatter), or <code>null</code> in case the
+	 *   binding is not ready (because it refers to a model which is not available)
 	 */
 	function getAny(oWithControl, oBindingInfo, mSettings, oScope, bAsync) {
 		var bValueAsPromise = false;
@@ -392,8 +390,10 @@ sap.ui.define([
 
 			oWithControl.bindProperty("any", oBindingInfo);
 			return oWithControl.getBinding("any")
-				? oWithControl.getAny()
-				: oUNBOUND;
+				? SyncPromise.resolve(oWithControl.getAny())
+				: null;
+		} catch (e) {
+			return SyncPromise.reject(e);
 		} finally {
 			oWithControl.unbindProperty("any", true);
 		}
@@ -423,7 +423,7 @@ sap.ui.define([
 	 *   Whatever elements we want to visit
 	 * @param {function} fnCallback
 	 *   A function to be called with a single element and its index and the array (like
-	 *   {@link Array#find} does it), returning a {sap.ui.base.SyncPromise}.
+	 *   {@link Array#find} does it), returning a {@link sap.ui.base.SyncPromise}.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A sync promise which resolves with the first element where the callback's sync promise
 	 *   resolved with a truthy value, or resolves with <code>undefined</code> as soon as the last
@@ -490,11 +490,14 @@ sap.ui.define([
 	 *   The XML DOM Element
 	 * @param {sap.ui.core.util.XMLPreprocessor.ICallback} oInterface
 	 *   The callback interface
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A thenable which resolves with <code>undefined</code> as soon as visiting is done, or is
+	 *   rejected with a corresponding error if visiting fails (since 1.57.0)
 	 *
 	 * @see sap.ui.core.util.XMLPreprocessor.visitNodeWrapper
 	 */
 	function visitNodeWrapper(oElement, oInterface) {
-		oInterface.visitNode(oElement);
+		return oInterface.visitNode(oElement);
 	}
 
 	/**
@@ -572,23 +575,20 @@ sap.ui.define([
 		 * @param {string} oViewInfo.name
 		 *   the view name (since 1.31; needed for extension point support)
 		 * @param {boolean} [oViewInfo.sync=false]
-		 *   whether the view is synchronous (since 1.57; needed for asynchronous XML templating)
+		 *   whether the view is synchronous (since 1.57.0; needed for asynchronous XML templating)
 		 * @param {object} [mSettings={}]
 		 *   map/JSON-object with initial property values, etc.
 		 * @param {object} mSettings.bindingContexts
 		 *   binding contexts relevant for template pre-processing
 		 * @param {object} mSettings.models
 		 *   models relevant for template pre-processing
-		 * @param {boolean} mSettings.X-async
-		 *   eXperimental async switch, to be removed soon
 		 * @returns {Element}
 		 *   <code>oRootElement</code>
 		 *
 		 * @private
 		 */
 		process : function (oRootElement, oViewInfo, mSettings) {
-			var bAsync,
-				sCaller = oViewInfo.caller,
+			var sCaller = oViewInfo.caller,
 				bDebug
 					= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sXMLPreprocessor),
 				bCallerLoggedForWarnings = bDebug, // debug output already contains caller
@@ -626,6 +626,37 @@ sap.ui.define([
 				 * @see sap.ui.core.util.XMLPreprocessor.plugIn
 				 */
 				return /** @lends sap.ui.core.util.XMLPreprocessor.ICallback */ {
+					/**
+					 * Visits the given elements one-by-one, calls the given callback for each of
+					 * them and stops and waits for each thenable returned by the callback before
+					 * going on to the next element. If a thenable resolves with a truthy value,
+					 * iteration stops and the corresponding element becomes the result of the
+					 * returned thenable.
+					 *
+					 * <b>Note:</b> If the visitor function is used for synchronous XML Templating,
+					 * the callback must return a sync promise; in other cases, any thenable is OK.
+					 *
+					 * @param {any[]} aElements
+					 *   Whatever elements we want to visit
+					 * @param {function} fnCallback
+					 *   A function to be called with a single element and its index and the array
+					 *   (like {@link Array#find} does it), returning a thenable, preferrably a
+					 *   {@link sap.ui.base.SyncPromise}
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A sync promise which resolves with the first element where the callback's
+					 *   thenable resolved with a truthy value, or resolves with
+					 *   <code>undefined</code> as soon as the last callback's thenable has
+					 *   resolved, or is rejected with a corresponding error if any callback returns
+					 *   a rejected thenable or throws an error
+					 */
+					find : function (aElements, fnCallback) {
+						try {
+							return SyncPromise.resolve(stopAndGo(aElements, fnCallback));
+						} catch (e) {
+							return SyncPromise.reject(e);
+						}
+					},
+
 					/**
 					 * Returns the model's context which corresponds to the given simple binding
 					 * path. Uses the map of currently known variables.
@@ -674,24 +705,18 @@ sap.ui.define([
 					 * @param {Element} [oElement]
 					 *   The XML DOM element the attribute value belongs to (needed only for
 					 *   warnings which are logged to the console)
-					 * @returns {any}
-					 *   The resulting value
-					 * @throws {Error}
-					 *   If the binding is not ready (because it refers to a model which is not
-					 *   available) or for other reasons (for example, an error thrown by a
-					 *   formatter)
+					 * @returns {sap.ui.base.SyncPromise|null}
+					 *   A thenable which resolves with the resulting value, or is rejected with a
+					 *   corresponding error (for example, an error thrown by a formatter) or
+					 *   <code>null</code> in case the binding is not ready (because it refers to a
+					 *   model which is not available) (since 1.57.0)
 					 *
 					 * @function
 					 * @public
 					 * @since 1.39.0
 					 */
 					getResult : function (sValue, oElement) {
-						var vResult = getResolvedBinding(sValue, oElement, oWithControl, true);
-
-						if (vResult === oUNBOUND) {
-							throw new Error("Binding not ready: " + sValue);
-						}
-						return vResult;
+						return getResolvedBinding(sValue, oElement, oWithControl, true);
 					},
 
 					/**
@@ -734,16 +759,21 @@ sap.ui.define([
 					 *   The fragment's resolved name
 					 * @param {Element} oElement
 					 *   The XML DOM element to be replaced
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as the
+					 *   fragment has been inserted, or is rejected with a corresponding error if
+					 *   loading or visiting fails (since 1.57.0)
 					 * @throws {Error}
 					 *   If a cycle is detected (same <code>sFragmentName</code> and
-					 *   <code>oControl</code>)
+					 *   {@link sap.ui.core.util.XMLPreprocessor.ICallback})
 					 *
 					 * @function
 					 * @public
+					 * @see #with
 					 * @since 1.39.0
 					 */
 					insertFragment : function (sFragmentName, oElement) {
-						insertFragment(sFragmentName, oElement, oWithControl);
+						return insertFragment(sFragmentName, oElement, oWithControl);
 					},
 
 					/**
@@ -755,6 +785,10 @@ sap.ui.define([
 					 *   The XML DOM element
 					 * @param {Attr} oAttribute
 					 *   One of the element's attribute nodes
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as the
+					 *   attribute's value has been replaced, or is rejected with a corresponding
+					 *   error if getting the binding's value fails (since 1.57.0)
 					 *
 					 * @function
 					 * @public
@@ -762,7 +796,7 @@ sap.ui.define([
 					 * @since 1.51.0
 					 */
 					visitAttribute : function (oElement, oAttribute) {
-						visitAttribute(oElement, oAttribute, oWithControl);
+						return visitAttribute(oElement, oAttribute, oWithControl);
 					},
 
 					/**
@@ -772,6 +806,10 @@ sap.ui.define([
 					 *
 					 * @param {Element} oElement
 					 *   The XML DOM element
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as all
+					 *   attributes' values have been replaced, or is rejected with a corresponding
+					 *   error if getting some binding's value fails (since 1.57.0)
 					 *
 					 * @function
 					 * @public
@@ -779,7 +817,7 @@ sap.ui.define([
 					 * @since 1.39.0
 					 */
 					visitAttributes : function (oElement) {
-						visitAttributes(oElement, oWithControl);
+						return visitAttributes(oElement, oWithControl);
 					},
 
 					/**
@@ -788,13 +826,17 @@ sap.ui.define([
 					 *
 					 * @param {Node} oNode
 					 *   The XML DOM node
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as visiting
+					 *   is done, or is rejected with a corresponding error if visiting fails
+					 *   (since 1.57.0)
 					 *
 					 * @function
 					 * @public
 					 * @since 1.39.0
 					 */
 					visitChildNodes : function (oNode) {
-						visitChildNodes(oNode, oWithControl);
+						return visitChildNodes(oNode, oWithControl);
 					},
 
 					/**
@@ -806,13 +848,21 @@ sap.ui.define([
 					 *
 					 * @param {Node} oNode
 					 *   The XML DOM node
+					 * @returns {sap.ui.base.SyncPromise}
+					 *   A thenable which resolves with <code>undefined</code> as soon as visiting
+					 *   is done, or is rejected with a corresponding error if visiting fails
+					 *   (since 1.57.0)
 					 *
 					 * @function
 					 * @public
 					 * @since 1.39.0
 					 */
 					visitNode : function (oNode) {
-						visitNode(oNode, oWithControl);
+						try {
+							return visitNode(oNode, oWithControl);
+						} catch (e) {
+							return SyncPromise.reject(e);
+						}
 					},
 
 					/**
@@ -1033,22 +1083,26 @@ sap.ui.define([
 			 * @param {function} [fnCallIfConstant]
 			 *   optional function to be called in case the return value is obviously a constant,
 			 *   not influenced by any binding
-			 * @returns {any|Promise}
-			 *   the resulting value or a <code>Promise</code> resolving with the property value (in
-			 *   case async processing is allowed and supported by the respective model) or
-			 *   <code>oUNBOUND</code> in case the binding is not ready (because it refers to a
-			 *   model which is not available)
-			 * @throws {Error}
+			 * @returns {sap.ui.base.SyncPromise|null}
+			 *   a sync promise which resolves with the property value or is rejected with a
+			 *   corresponding error (for example, an error thrown by a formatter), or
+			 *   <code>null</code> in case the binding is not ready (because it refers to a model
+			 *   which is not available)
 			 */
 			function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
 					fnCallIfConstant) {
-				var vBindingInfo;
+				var vBindingInfo,
+					oPromise;
 
 				jQuery.sap.measure.average(sPerformanceGetResolvedBinding, "",
 					aPerformanceCategories);
-				vBindingInfo
-					= BindingParser.complexParser(sValue, oScope, bMandatory, true, true)
-					|| sValue; // in case there is no binding and nothing to unescape
+				try {
+					vBindingInfo
+						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true)
+						|| sValue; // in case there is no binding and nothing to unescape
+				} catch (e) {
+					return SyncPromise.reject(e);
+				}
 
 				if (vBindingInfo.functionsNotFound) {
 					if (bMandatory) {
@@ -1056,19 +1110,23 @@ sap.ui.define([
 							vBindingInfo.functionsNotFound.join(", "), 'not found');
 					}
 					jQuery.sap.measure.end(sPerformanceGetResolvedBinding);
-					return oUNBOUND; // treat incomplete bindings as unrelated
+					return null; // treat incomplete bindings as unrelated
 				}
 
 				if (typeof vBindingInfo === "object") {
-					vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings, oScope, bAsync);
-					if (bMandatory && vBindingInfo === oUNBOUND) {
+					oPromise = getAny(oWithControl, vBindingInfo, mSettings, oScope,
+						!oViewInfo.sync);
+					if (bMandatory && !oPromise) {
 						warn(oElement, 'Binding not ready');
 					}
-				} else if (fnCallIfConstant) { // string
-					fnCallIfConstant();
+				} else {
+					oPromise = SyncPromise.resolve(vBindingInfo);
+					if (fnCallIfConstant) { // string
+						fnCallIfConstant();
+					}
 				}
 				jQuery.sap.measure.end(sPerformanceGetResolvedBinding);
-				return vBindingInfo;
+				return oPromise;
 			}
 
 			/**
@@ -1094,9 +1152,9 @@ sap.ui.define([
 			 */
 			function insertFragment(sFragmentName, oElement, oWithControl) {
 				var oFragmentPromise,
-					fnLoad = bAsync
-						? XMLTemplateProcessor.loadTemplatePromise
-						: XMLTemplateProcessor.loadTemplate,
+					fnLoad = oViewInfo.sync
+						? XMLTemplateProcessor.loadTemplate
+						: XMLTemplateProcessor.loadTemplatePromise,
 					sPreviousName = sCurrentName;
 
 				// Note: It is perfectly valid to include the very same fragment again, as long as
@@ -1174,19 +1232,15 @@ sap.ui.define([
 			function performTest(oElement, oWithControl) {
 				// constant test conditions are suspicious, but useful during development
 				var fnCallIfConstant = warn.bind(null, oElement, 'Constant test condition'),
-					vTest;
+					oPromise
+						= getResolvedBinding(oElement.getAttribute("test"), oElement, oWithControl,
+								true, fnCallIfConstant)
+						|| SyncPromise.resolve(false);
 
-				try {
-					vTest = getResolvedBinding(oElement.getAttribute("test"), oElement,
-						oWithControl, true, fnCallIfConstant);
-					if (vTest === oUNBOUND) {
-						vTest = false;
-					}
-				} catch (ex) {
+				return oPromise.catch(function (ex) {
 					warn(oElement, 'Error in formatter:', ex);
-					vTest = undefined; // "test == undefined --> false" in debug log
-				}
-				return SyncPromise.resolve(vTest).then(function (vTest) {
+					// "test == undefined --> false" in debug log
+				}).then(function (vTest) {
 					var bResult = !!vTest && vTest !== "false";
 
 					if (bDebug) {
@@ -1219,12 +1273,14 @@ sap.ui.define([
 			 *   binding's value fails.
 			 */
 			function resolveAttributeBinding(oElement, oAttribute, oWithControl) {
-				return new SyncPromise(function (resolve) {
-					resolve(getResolvedBinding(oAttribute.value, oElement, oWithControl, false));
-				}).then(function (vValue) {
-					if (vValue === oUNBOUND) {
-						debug(oElement, 'Binding not ready for attribute', oAttribute.name);
-					} else if (vValue === undefined) {
+				var oPromise = getResolvedBinding(oAttribute.value, oElement, oWithControl, false);
+
+				if (!oPromise) {
+					debug(oElement, 'Binding not ready for attribute', oAttribute.name);
+					return oSyncPromiseResolved;
+				}
+				return oPromise.then(function (vValue) {
+					if (vValue === undefined) {
 						// if the formatter returns null, the value becomes undefined
 						// (the default value of _With.any)
 						debug(oElement, "Removed attribute", oAttribute.name);
@@ -1303,24 +1359,31 @@ sap.ui.define([
 			 *   whether the <sap.ui.core:ExtensionPoint> element has been replaced
 			 */
 			function templateExtensionPoint(oElement, oWithControl) {
-				var sName = oElement.getAttribute("name"),
-					vName = oUNBOUND,
+				var CustomizingConfiguration,
+					sName,
+					oPromise,
+					sValue = oElement.getAttribute("name"),
 					oViewExtension;
 
 				try {
 					// resolve name, no matter if CustomizingConfiguration is present!
-					vName = getResolvedBinding(sName, oElement, oWithControl, true);
-					if (vName !== oUNBOUND && vName !== sName) {
-						// debug trace for dynamic names only
-						debug(oElement, "name =", vName);
+					oPromise = getResolvedBinding(sValue, oElement, oWithControl, true);
+					if (!oPromise) {
+						return false;
 					}
-				} catch (ex) {
-					warn(oElement, 'Error in formatter:', ex);
+					sName = oPromise.unwrap();
+					if (sName !== sValue) {
+						// debug trace for dynamic names only
+						debug(oElement, "name =", sName);
+					}
+				} catch (e) {
+					warn(oElement, 'Error in formatter:', e);
+					return false;
 				}
 
-				var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-				if (vName !== oUNBOUND && CustomizingConfiguration) {
-					oViewExtension = CustomizingConfiguration.getViewExtension(sCurrentName, vName,
+				CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
+				if (CustomizingConfiguration) {
+					oViewExtension = CustomizingConfiguration.getViewExtension(sCurrentName, sName,
 						oViewInfo.componentId);
 					if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
 							&& oViewExtension.type === "XML") {
@@ -1345,21 +1408,16 @@ sap.ui.define([
 			 */
 			function templateFragment(oElement, oWithControl) {
 				var sFragmentName = oElement.getAttribute("fragmentName"),
-					vFragmentName;
+					oPromise = getResolvedBinding(sFragmentName, oElement, oWithControl, true);
 
-				try {
-					vFragmentName = getResolvedBinding(sFragmentName, oElement, oWithControl, true);
-				} catch (ex) {
-					warn(oElement, 'Error in formatter:', ex);
+				if (!oPromise) {
 					return oSyncPromiseResolved;
 				}
-
-				if (vFragmentName !== oUNBOUND) {
-					return SyncPromise.resolve(vFragmentName).then(function (sFragmentName) {
-						return insertFragment(sFragmentName, oElement, oWithControl);
-					});
-				}
-				return oSyncPromiseResolved;
+				return oPromise.then(function (sFragmentName) {
+					return insertFragment(sFragmentName, oElement, oWithControl);
+				}, function (ex) {
+					warn(oElement, 'Error in formatter:', ex);
+				});
 			}
 
 			/**
@@ -1646,12 +1704,10 @@ sap.ui.define([
 			 *   A sync promise which resolves with <code>undefined</code> as soon as visiting is
 			 *   done, or is rejected with a corresponding error if visiting fails.
 			 * @throws {Error}
-			 *   If an unexpected tag in the template namespace is encountered, or if a plugged-in
-			 *   visitor returns a value.
+			 *   If an unexpected tag in the template namespace is encountered
 			 */
 			function visitNode(oNode, oWithControl) {
-				var fnVisitor,
-					vVisitorResult;
+				var fnVisitor;
 
 				// process only ELEMENT_NODEs
 				if (oNode.nodeType !== 1 /* Node.ELEMENT_NODE */) {
@@ -1700,14 +1756,15 @@ sap.ui.define([
 					if (fnVisitor) {
 						iNestingLevel++;
 						debug(oNode, "Calling visitor");
-						vVisitorResult = fnVisitor(oNode, createCallbackInterface(oWithControl));
-						if (vVisitorResult !== undefined) {
-							// prepare for later enhancements using return value
-							error("Unexpected return value from visitor for ", oNode);
-						}
-						debugFinished(oNode);
-						iNestingLevel--;
-						return oSyncPromiseResolved;
+						return fnVisitor(oNode, createCallbackInterface(oWithControl))
+							.then(function (vVisitorResult) {
+								if (vVisitorResult !== undefined) {
+									// prepare for later enhancements using return value
+									error("Unexpected return value from visitor for ", oNode);
+								}
+								debugFinished(oNode);
+								iNestingLevel--;
+							});
 					}
 				}
 
@@ -1745,7 +1802,6 @@ sap.ui.define([
 
 			jQuery.sap.measure.average(sPerformanceProcess, "", aPerformanceCategories);
 			mSettings = mSettings || {};
-			bAsync = !oViewInfo.sync && mSettings["X-async"];
 
 			if (bDebug) {
 				debug(undefined, "Start processing", sCaller);
