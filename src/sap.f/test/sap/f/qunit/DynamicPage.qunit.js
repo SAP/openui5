@@ -98,6 +98,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageWithStandardAndNavigationActions: function () {
+				return new DynamicPage({
+					title: this.getDynamicPageTitleWithStandardAndNavigationActions(),
+					header: this.getDynamicPageHeader(),
+					content: this.getContent(200),
+					footer: this.getFooter()
+				});
+			},
 			getDynamicPageWithNavigationActionsAndBreadcrumbs: function () {
 				return new DynamicPage({
 					title: this.getDynamicPageTitleWithNavigationActionsAndBreadcrumbs(),
@@ -134,6 +142,20 @@
 							new sap.m.Link({text: "link4"})
 						]
 					})
+				});
+			},
+			getDynamicPageTitleWithStandardAndNavigationActions:  function () {
+				return new DynamicPageTitle({
+					heading:  this.getTitle(),
+					actions: [
+						this.getAction(),
+						this.getAction()
+					],
+					navigationActions: [
+						this.getAction(),
+						this.getAction(),
+						this.getAction()
+					]
 				});
 			},
 			getDynamicPageTitleWithNavigationActions:  function () {
@@ -1393,6 +1415,48 @@
 		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true, "Top area should not be visible when all aggregations are removed");
 	});
 
+	QUnit.module("DynamicPage - Rendering - Title with navigationActions and actions", {
+		beforeEach: function () {
+			this.oDynamicPageStandardAndNavigationActions = oFactory.getDynamicPageWithStandardAndNavigationActions();
+			this.oDynamicPageTitle = this.oDynamicPageStandardAndNavigationActions.getTitle();
+			oUtil.renderObject(this.oDynamicPageStandardAndNavigationActions);
+		},
+		afterEach: function () {
+			this.oDynamicPageStandardAndNavigationActions.destroy();
+			this.oDynamicPageStandardAndNavigationActions = null;
+			this.oDynamicPageTitle = null;
+		}
+	});
+
+	QUnit.test("Top area visibility upon navigation actions visibility change", function (assert) {
+		var oTitle = this.oDynamicPageStandardAndNavigationActions.getTitle(),
+			$TitleTopArea = oTitle.$("top"),
+			iTitleSmallWidth = 900;
+
+		// Ensure the Title is smaller than 1280px, then navigationAction are in the Title`s top area.
+		oTitle._onResize(iTitleSmallWidth);
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), false,
+		"Top area should be visible when there is at least one visible navigation action");
+
+		// Act (1) - hide all navigation actions
+		oTitle.getNavigationActions().forEach(function(oAction) {
+			oAction.setVisible(false);
+		});
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), true,
+			"Top area should not be visible when there are no visible navigation actions");
+
+		// Act (2) - show random navigation action
+		oTitle.getNavigationActions()[0].setVisible(true);
+
+		// Assert
+		assert.equal($TitleTopArea.hasClass("sapUiHidden"), false,
+			"Top area should be visible when there is at least one visible navigation action");
+	});
+
 	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
 
 	QUnit.test("No heading at all", function (assert) {
@@ -1955,11 +2019,11 @@
 		// check
 		assert.equal(oSpy.callCount, 1, "scroll to show the 'collapse' visual indicator is called");
 
-		iCollapseButtonBottom = oCollapseButton.getDomRef().getBoundingClientRect().bottom;
-		iDynamicPageBottom = this.oDynamicPage.getDomRef().getBoundingClientRect().bottom;
+		iCollapseButtonBottom =  Math.round(oCollapseButton.getDomRef().getBoundingClientRect().bottom);
+		iDynamicPageBottom = Math.round(this.oDynamicPage.getDomRef().getBoundingClientRect().bottom);
 
 		// check position
-		assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page");
+		assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page, pos: " + iCollapseButtonBottom);
 	});
 
 
