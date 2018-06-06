@@ -470,6 +470,30 @@ ul.feature-links > li {
 .feature-anchor {
   color: #666;
 }
+
+.ui5-sticker {
+  display:block;
+  float:right;
+  margin-top:40px;
+  margin-right:10%;
+  z-index:999;
+  position: relative;
+}
+
+.ui5con-flag {
+
+}
+.bangalore-flag {
+  position:absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.germany-flag {
+  position:absolute;
+  top: 0;
+  left: 0;
+}
 /*******************************************************************************
 Small Device Styles
 *******************************************************************************/
