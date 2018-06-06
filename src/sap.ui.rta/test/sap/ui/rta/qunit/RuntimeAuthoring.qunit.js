@@ -618,8 +618,7 @@ function(
 			sap.ui.getCore().applyChanges();
 			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
 			assert.ok(true, "then the new container starts the edit for rename");
-			this.oCommandStack.undo();
-			done();
+			this.oCommandStack.undo().then(done);
 		}.bind(this));
 
 		this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);
@@ -637,8 +636,7 @@ function(
 			sap.ui.getCore().applyChanges();
 			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
 			assert.ok(true, "then the new container starts the edit for rename");
-			this.oCommandStack.undo();
-			done();
+			this.oCommandStack.undo().then(done);
 		}.bind(this));
 
 		this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);

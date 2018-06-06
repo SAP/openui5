@@ -138,6 +138,37 @@
 			return sReturn;
 		},
 
+		_undoRedoStack : function(oStack){
+			function undo(oStack){
+				if (oStack.canUndo()){
+					return oStack.undo().then(function(){
+						return undo(oStack);
+					});
+				} else {
+					return Promise.resolve();
+				}
+			}
+			function redo(oStack){
+				if (oStack.canRedo()){
+					return oStack.redo().then(function(){
+						return redo(oStack);
+					});
+				}else {
+					return Promise.resolve();
+				}
+			}
+
+			undo(oStack)
+				.then(function(){
+					sap.m.MessageToast.show("All changes undone", {duration : 1000});
+
+					return redo(oStack);
+				})
+				.then(function(){
+					sap.m.MessageToast.show("All changes redone", {duration : 1000});
+				});
+		},
+
 		switchToAdaptionMode : function() {
 
 			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
@@ -156,6 +187,9 @@
 
 			sap.ui.rta.command.Stack.initializeWithChanges(sap.ui.getCore().byId("Comp1---idMain1"), aFileNames)
 			.then(function(oStack) {
+				//expose undo/redo test function to console
+				window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
+
 				var oRta = new sap.ui.rta.RuntimeAuthoring({
 					rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
 					commandStack: oStack,
@@ -167,11 +201,11 @@
 					oRta.destroy();
 				});
 				oRta.attachEvent('start', function() {
-					sap.m.MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.", {duration : 10000});
+					sap.m.MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.\n To test the visual editor usage of our stack, there is a undoRedoStack() function in console available", {duration : 10000});
 				});
 
 				oRta.start();
-			});
+			}.bind(this));
 		},
 
 		openSmartFormDialog : function() {
