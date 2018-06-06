@@ -18,14 +18,16 @@ sap.ui.define([
 
 			init : function () {
 				var oUriParameters = jQuery.sap.getUriParameters(),
-					sJsonFilesUrl = jQuery.sap.getModulePath(_sJsonFilesModulePath),
-					sManifestUrl = jQuery.sap.getModulePath(_sAppModulePath + "manifest", ".json"),
+					sJsonFilesUrl = sap.ui.require.toUrl((_sJsonFilesModulePath).replace(/\./g, "/")),
+					sManifestUrl = sap.ui.require.toUrl((_sAppModulePath + "manifest").replace(/\./g, "/")) + ".json",
 					sEntity = "Products",
 					sErrorParam = oUriParameters.get("errorType"),
 					iErrorCode = sErrorParam === "badRequest" ? 400 : 500,
 					oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
 					oMainDataSource = oManifest["sap.app"].dataSources.mainService,
-					sMetadataUrl = jQuery.sap.getModulePath(_sAppModulePath + oMainDataSource.settings.localUri.replace(".xml", ""), ".xml"),
+					sMetadataUrl = sap.ui.require.toUrl(
+					    (_sAppModulePath + oMainDataSource.settings.localUri.replace(".xml", "")).replace(/\./g, "/")
+					) + ".xml",
 					// ensure there is a trailing slash
 					sMockServerUrl = /.*\/$/.test(oMainDataSource.uri) ? oMainDataSource.uri : oMainDataSource.uri + "/";
 
