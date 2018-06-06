@@ -19,7 +19,7 @@
 				id="iconTabBar"
 				select="onQuickFilter"
 				expandable="false"
-				applyContentPadding="false">
+				headerBackgroundDesign="Transparent">
 				<items>
 					<IconTabFilter
 						key="all"
@@ -50,7 +50,6 @@
 					<Table
 						id="table"
 						busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-						class="sapUiResponsiveMargin"
 						growing="true"
 						growingScrollToLoad="true"
 						noDataText="{worklistView>/tableNoDataText}"
