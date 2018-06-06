@@ -1938,10 +1938,12 @@
 						text: "STATUS",
 						items: [
 							new sap.m.ViewSettingsItem({
+								key: "Key1",
 								text: "Text 1",
 								selected: false
 							}),
 							new sap.m.ViewSettingsItem({
+								key: "Key2",
 								text: "Text 2",
 								selected: true
 							})
@@ -1994,6 +1996,133 @@
 				that.oVSD._dialog.detachAfterClose(afterClose);
 
 				done();
+			}
+		});
+
+
+		test("Reopening filter detail page after reset + cancel buttons click", function () {
+			var that = this,
+				done = assert.async(),
+				oVSDFilterItem = new sap.m.ViewSettingsFilterItem({
+					multiSelect: true,
+					key: "STATUS",
+					text: "STATUS",
+					items: [
+						new sap.m.ViewSettingsItem({
+							key: "key1",
+							text: "Text 1",
+							selected: false
+						}),
+						new sap.m.ViewSettingsItem({
+							key: "key2",
+							text: "Text 2",
+							selected: false
+						})
+					]
+				});
+			// navigates to the details page of the first filter item and calls the given callback once navigation completes
+			function navigateToFirstFilterItemsDetailPage(fnCallback) {
+				that.oVSD._getNavContainer().attachEventOnce("afterNavigate", fnCallback);
+				that.oVSD._filterList.getItems()[0].$().trigger('tap');
+			}
+
+			that.oVSD.addFilterItem(oVSDFilterItem);
+
+			// Act
+			// - Step 1: go to filter details page, select first item, press ok
+			// - Step 2: go to the same details page, select second item, press "reset" button, then press "Cancel" button
+			// - Step 3: go to the same details page, deselect first item, select the second item
+			// Expectation - confirm event should contain second item as 'filterItems' parameter.
+
+
+			// Step 1
+			// Open ViewSettingsDialog
+			// There is no dialog, so we cannot attach to its even "afterOpen", so the only option is to delay the execution
+			setTimeout(afterFirstOpen);
+			that.oVSD.open();
+
+			function afterFirstOpen() {
+				that.oVSD._dialog.detachAfterOpen(afterFirstOpen);
+
+				navigateToFirstFilterItemsDetailPage(function () {
+					// pre-assert selected items
+					var aFilterItems = that.oVSD._filterDetailList.getItems();
+					strictEqual(aFilterItems[0].getSelected(), false, "After first opening of VSD, first item should not be selected");
+					strictEqual(aFilterItems[1].getSelected(), false, "After first opening of VSD, ssecond item should not be selected");
+
+					// "Select" first item
+					that.oVSD._filterDetailList.getItems()[0].$().trigger('tap');
+
+					// Simulate confirm button click
+					that.oVSD._dialog.attachEventOnce("afterClose", afterFirstClose);
+					that.oVSD._onConfirm();
+				});
+			}
+
+			function afterFirstClose() {
+				that.oVSD._dialog.attachEventOnce("afterOpen", afterSecondOpen);
+
+				// Step 2
+				// Open ViewSettingsDialog
+				that.oVSD.open();
+			}
+
+			function afterSecondOpen() {
+				var aFilterItems = oVSDFilterItem.getItems();
+				// pre-asserts
+				strictEqual(that.oVSD._getNavContainer().getCurrentPage().getId(), that.oVSD.getId() + "-page2",
+					"Filter Details page should be opened after second opening of the VSD");
+
+				strictEqual(aFilterItems[0].getSelected(), true, "After second opening of VSD, first item should be selected");
+				strictEqual(aFilterItems[1].getSelected(), false, "After second opening of VSD, second item should not be selected");
+
+				// Simulate Clear filters button click
+				that.oVSD._onClearFilters();
+				// Simulate Cancel Button click
+				that.oVSD.attachEventOnce("cancel", cancelHandler);
+				that.oVSD._onCancel();
+			}
+
+			function cancelHandler() {
+				// Step 3
+				// Open ViewSettingsDialog
+				that.oVSD._dialog.attachEventOnce("afterOpen", afterThirdOpen);
+				that.oVSD.open();
+			}
+
+
+			function afterThirdOpen() {
+				var aInternalFilterDetailItems = that.oVSD._filterDetailList.getItems(),
+					aPublicFilterDetailItems = that.oVSD.getFilterItems()[0].getItems();
+
+				// pre-asserts
+				strictEqual(that.oVSD._getNavContainer().getCurrentPage().getId(), that.oVSD.getId() + "-page2",
+					"Filter Details page should be opened after third opening of the VSD");
+
+				strictEqual(aInternalFilterDetailItems[0].getSelected(), true, "After third opening of VSD, " +
+					"first internal item should be selected");
+				strictEqual(aInternalFilterDetailItems[1].getSelected(), false, "After third opening of VSD, " +
+					"second internal item should not be selected");
+
+				strictEqual(aPublicFilterDetailItems[0].getSelected(), true, "After third opening of VSD, " +
+					"first public item should be selected when dialog opened for the third time");
+				strictEqual(aPublicFilterDetailItems[1].getSelected(), false, "After third opening of VSD, " +
+					"second public item should not be selected when dialog opened for the third time");
+
+				// deselect the first item
+				that.oVSD._filterDetailList.getItems()[0].$().trigger('tap');
+				// select the second item
+				that.oVSD._filterDetailList.getItems()[1].$().trigger('tap');
+
+				that.oVSD.attachEventOnce('confirm', function (oEvent) {
+					ok(oEvent.getParameter("filterItems"), "The confirm event contains values in parameter 'filterItem'");
+					deepEqual(oEvent.getParameter("filterItems")[0].getText(), oVSDFilterItem.getItems()[1].getText(),
+						".. and only the selected filter sub-item is given as value");
+					done();
+				});
+
+				// Act
+				that.oVSD._onConfirm();
 			}
 		});
 
