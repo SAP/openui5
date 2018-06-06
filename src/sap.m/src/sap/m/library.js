@@ -198,6 +198,7 @@ sap.ui.define([
 			"sap.m.ObjectNumber",
 			"sap.m.ObjectStatus",
 			"sap.m.OnePersonGrid",
+			"sap.m.OnePersonHeader",
 			"sap.m.OverflowToolbar",
 			"sap.m.OverflowToolbarButton",
 			"sap.m.OverflowToolbarToggleButton",
