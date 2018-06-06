@@ -30,8 +30,8 @@ sap.ui.require([
 	QUnit.start();
 
 	// FIXME: change as soon as a public method for this is available
-	var fnWaitForLrepSerialization = function() {
-		return this.oRta._oSerializer._lastPromise;
+	var fnWaitForExecutionAndSerializationBeingDone = function() {
+		return this.oRta.getCommandStack()._oLastCommand;
 	};
 
 	FakeLrepConnectorLocalStorage.enableFakeConnector();
@@ -87,7 +87,8 @@ sap.ui.require([
 			var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 			if (oFirstExecutedCommand &&
 				oFirstExecutedCommand.getName() === 'remove') {
-				fnWaitForLrepSerialization.call(this).then(function() {
+					//TODO fix timing as modified is called before serializer is triggered...
+				fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 					assert.strictEqual(oFieldToHide.getVisible(), false, " then field is not visible");
 					assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 					this.oRta.stop();
@@ -113,7 +114,7 @@ sap.ui.require([
 			var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 			if (oFirstExecutedCommand &&
 				oFirstExecutedCommand.getName() === "move") {
-				fnWaitForLrepSerialization.call(this).then(function() {
+				fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 					var iIndex = this.oGroup.getGroupElements().length - 1;
 					assert.equal(this.oGroup.getGroupElements()[iIndex].getId(), this.oField.getId(), " then the field is moved");
 					assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
@@ -150,7 +151,7 @@ sap.ui.require([
 							var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 							if (oFirstExecutedCommand &&
 								oFirstExecutedCommand.getName() === "rename") {
-								fnWaitForLrepSerialization.call(this).then(function() {
+								fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 									assert.strictEqual(this.oGroup.getLabel(), "Test", "then title of the group is Test");
 									assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 									fnResolve();
@@ -200,7 +201,7 @@ sap.ui.require([
 							oCommandStack.attachModified(function(oEvent) {
 								var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 								if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
-									fnWaitForLrepSerialization.call(this).then(function() {
+									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 										assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
 										assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 										fnResolve();
@@ -343,7 +344,7 @@ sap.ui.require([
 							aCommands.length  === 3) {
 							sap.ui.getCore().applyChanges();
 
-							fnWaitForLrepSerialization.call(this).then(function() {
+							fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 								var oGroupElements = this.oGeneralGroup.getGroupElements();
 								var iIndex = oGroupElements.indexOf(this.oField) + 1;
 								assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
@@ -414,7 +415,7 @@ sap.ui.require([
 						var aCommands = oCommandStack.getAllExecutedCommands();
 						if (aCommands &&
 							aCommands.length  === 3) {
-							fnWaitForLrepSerialization.call(this).then(function() {
+							fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 								sap.ui.getCore().applyChanges();
 								assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
 							})
@@ -460,7 +461,7 @@ sap.ui.require([
 			var aCommands = oCommandStack.getAllExecutedCommands();
 			if (aCommands &&
 				aCommands.length  === 1) {
-				fnWaitForLrepSerialization.call(this).then(function() {
+				fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 					sap.ui.getCore().applyChanges();
 					assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there ia a dirty change in the FL ChangePersistence");
 				})
