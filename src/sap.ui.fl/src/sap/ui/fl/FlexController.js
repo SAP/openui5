@@ -580,12 +580,9 @@ sap.ui.define([
 
 		var mAppliedChangesCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
 		var sAppliedChanges = mAppliedChangesCustomData.customDataValue;
-		var aAppliedChanges = mAppliedChangesCustomData.customDataEntries;
 		var oAppliedChangeCustomData = mAppliedChangesCustomData.customData;
 
-		var sChangeId = oChange.getId();
-
-		if (aAppliedChanges.indexOf(sChangeId) === -1) {
+		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier, mAppliedChangesCustomData)) {
 			oChange.PROCESSING = oChange.PROCESSING ? oChange.PROCESSING : true;
 			var vResult;
 			var vError;
@@ -598,6 +595,7 @@ sap.ui.define([
 			return new Utils.FakePromise(vResult, vError)
 
 			.then(function() {
+				var sChangeId = oChange.getId();
 				var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 				this._writeAppliedChangesCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
 				if (oChange.aPromiseFn) {
@@ -643,6 +641,7 @@ sap.ui.define([
 					});
 				}
 				delete oChange.PROCESSING;
+				oChange.APPLIED = true;
 				return false;
 			}.bind(this));
 		}
@@ -922,6 +921,28 @@ sap.ui.define([
 		});
 	};
 
+	FlexController.prototype._isChangeCurrentlyApplied = function(oControl, oChange, oModifier, mCustomData) {
+		if (!mCustomData) {
+			mCustomData = this._getAppliedCustomData(oChange, oControl, JsControlTreeModifier);
+		}
+		var aAppliedChanges = mCustomData.customDataEntries;
+		var sChangeId = oChange.getId();
+		return aAppliedChanges.indexOf(sChangeId) > -1;
+	};
+
+	FlexController.prototype._checkIfDependencyIsStillValid = function(oAppComponent, oModifier, sChangeId) {
+		var oChange = Utils.getChangeFromChangesMap(this._oChangePersistence._mChanges.mChanges, sChangeId);
+		if (!oChange.APPLIED) {
+			return true;
+		}
+
+		var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
+		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier)) {
+			return true;
+		}
+		return false;
+	};
+
 	/**
 	 * Apply the changes in the control; this function is called just before the end of the
 	 * creation process, changes are applied synchronously.
@@ -939,14 +960,25 @@ sap.ui.define([
 		var mDependencies = mChangesMap.mDependencies;
 		var mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent
+		};
 		aChangesForControl.forEach(function (oChange) {
+
+			// if a change was already processed and is not applied anymore,
+			// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
+			if (oChange.APPLIED && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier));
+				mDependencies = mChangesMap.mDependencies;
+				mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
+				delete oChange.APPLIED;
+			}
+
 			if (!mDependencies[oChange.getId()]) {
 				oChange.QUEUED = true;
 				aPromiseStack.push(function() {
-					return this.checkTargetAndApplyChange(oChange, oControl, {
-						modifier: JsControlTreeModifier,
-						appComponent: oAppComponent
-					})
+					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 					.then(function(bUpdate) {
 						if (bUpdate) {
 							this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
