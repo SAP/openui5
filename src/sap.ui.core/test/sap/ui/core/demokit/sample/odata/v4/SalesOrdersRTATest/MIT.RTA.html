@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>
+			Manual Integration Test: suspend/resume
+		</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: suspend/resume</h1>
+		<h2>DESCRIPTION</h2>
+			Test OData V4 Model suspend/resume via runtime adaptation (RTA)
+
+		<h2>PREPARATION</h2>
+			To check console errors open the developer tools before starting the application and
+			check with each step, that there are no errors and warnings.
+
+		<h3>Testing with back end</h3>
+		Start the Sales Orders RTA test application URL (adjust host and port if necessary) locally.
+		Note: The test only works with backend (realOData=true):
+			<a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrdersRTATest&realOData=true">
+			http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrdersRTATest&realOData=true
+			</a>
+
+		Configure your IDE to be able to execute the Sales Orders RTA test application against an
+		OData back end system. Start the Sales Orders application URL (adjust host and port if necessary):
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>Adapt Sales Orders table</h3>
+		<ol>
+			<li>After the application is started, click on the gearwheel button with the
+			tooltip "Adapt Sales Orders Table" of the Sales Orders table. </li>
+			<li><b>Check:</b>An adaptation dialog opens.</li>
+			<li><b>Check:</b>The number of checked properties in the adaptation dialog is equals the
+				number of Sales Order table columns.</li>
+			<li>In the adaptation dialog: Uncheck "SalesOrderId", check "LifecycleStatus".
+				Click "Apply Changes".</li>
+			<li><b>Check:</b>The "SalesOrdersId" column is no longer displayed.</li>
+			<li><b>Check:</b>A "LifecycleStatus" column is now displayed.
+				It contains the value "N" for all rows.</li>
+		</ol>
+		<h3>Adapt Sales Orders details</h3>
+		<ol>
+			<li>Select the first entry in Sales Orders table. After loading the Sales Order Details
+			click on the gearwheel button which is the one with tooltip "Adapt Sales Order Details"
+			of the Sales Orders Details form.
+			</li>
+			<li><b>Check:</b>An adaptation dialog opens.</li>
+			<li>In the adaptation dialog: Uncheck "SalesOrderId", check "LifecycleStatus".
+				Click "Apply Changes".</li>
+			<li><b>Check:</b>The "SalesOrdersId" column is no longer displayed.</li>
+			<li><b>Check:</b>A "LifecycleStatus" column is now displayed.</li>
+		</ol>
+		<h3>Adapt Business Partner</h3>
+		<ol>
+			<li>Click on the gearwheel button which is the one with tooltip
+				"Adapt Business Partner Table" of the Business Partner Details form.
+			</li>
+			<li><b>Check:</b>An adaptation dialog opens.</li>
+			<li>In the adaptation dialog: Uncheck "BusinessPartnerID", check "BusinessPartnerRole".
+				Click "Apply Changes".</li>
+			<li><b>Check:</b>The "BusinessPartnerID" column is no longer displayed.</li>
+			<li><b>Check:</b>A "BusinessPartnerRole" column is now displayed.</li>
+		</ol>
+		<h3>Adapt Sales Order Line Items</h3>
+		<ol>
+			<li>Click on the gearwheel button which is the one with tooltip
+				"Adapt Sales Order Line Items Table" of the Sales Order Line Items table.
+			</li>
+			<li><b>Check:</b>An adaptation dialog opens.</li>
+			<li>In the adaptation dialog: Uncheck "ProductID", check "NoteLanguage".
+				Click "Apply Changes".</li>
+			<li><b>Check:</b>The "ProductID" column is no longer displayed.</li>
+			<li><b>Check:</b>A "NoteLanguage" column is now displayed.</li>
+		</ol>
+	</body>
+</html>

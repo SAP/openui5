@@ -17,26 +17,35 @@ sap.ui.define([
 				oAdaptSalesOrdersButton = new Button({
 					enabled : bRealOData,
 					icon : "sap-icon://settings",
-					press : this.onAdaptSalesOrders.bind(this)
+					id : "AdaptUISalesOrdersTable",
+					press : this.onAdaptSalesOrders.bind(this),
+					tooltip : "Adapt Sales Orders Table"
 				});
 
 			oAdaptSalesOrdersButton.addDependent(sap.ui.xmlfragment(
 				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog", this));
 			this.byId("SalesOrdersToolbar").addContent(oAdaptSalesOrdersButton);
+
 			this.byId("SalesOrderDetailsToolbar").addContent(new Button({
 				enabled : bRealOData,
 				icon : "sap-icon://settings",
-				press : this.onAdaptSODetails.bind(this)
+				id : "AdaptUISalesOrdersDetails",
+				press : this.onAdaptSODetails.bind(this),
+				tooltip : "Adapt Sales Order Details"
 			}));
 			this.byId("BusinessPartner").addContent(new Button({
 				enabled : bRealOData,
 				icon : "sap-icon://settings",
-				press : this.onAdaptBusinessPartner.bind(this)
+				id : "AdaptUIBusinessPartner",
+				press : this.onAdaptBusinessPartner.bind(this),
+				tooltip : "Adapt Business Partner Table"
 			}));
 			this.byId("SalesOrderLineItemsTitleToolbar").addContent(new Button({
 				enabled : bRealOData,
 				icon : "sap-icon://settings",
-				press : this.onAdaptSalesOrderItems.bind(this)
+				id : "AdaptUISalesOrderLineItems",
+				press : this.onAdaptSalesOrderItems.bind(this),
+				tooltip : "Adapt Sales Order Line Items Table"
 			}));
 		},
 
