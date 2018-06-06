@@ -152,8 +152,8 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 	}
 }
 
-html.sap-desktop .sapUiCalItem:not(.sapUiCalItemNow):focus > .sapUiCalItemText,
-html.sap-desktop .sapUiCalItem:not(.sapUiCalItemNow):hover > .sapUiCalItemText {
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemNow):focus > .sapUiCalItemText:not(.sapUiCalWeekNum):hover,
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemNow):hover > .sapUiCalItemText:not(.sapUiCalWeekNum):hover {
 	border: 0 none;
 	border-left: 0.0625rem solid transparent;
 }
@@ -185,11 +185,11 @@ html.sap-desktop .sapUiCalItemSel:focus{
 }
 
 /* define after weekend and selection focus to overrule it*/
-html.sap-desktop .sapUiCalItem:hover{
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover{
 	background-color: @sapUiHighlight;
 }
 
-html.sap-desktop .sapUiCalItemOtherMonth:hover > .sapUiCalItemText {
+html.sap-desktop .sapUiCalItemOtherMonth:hover > .sapUiCalItemText:not(.sapUiCalWeekNum):hover {
 	margin-left: -0.125rem;
 }
 
