@@ -470,6 +470,7 @@ ul.feature-links > li {
 .feature-anchor {
   color: #666;
 }
+
 /*******************************************************************************
 Small Device Styles
 *******************************************************************************/
@@ -701,6 +702,27 @@ Simple Syntax Highlighter
   color: #c26230;
 }
 
+/*********************************************
+UI5con sticker
+**********************************************/
 
+.ui5-sticker {
+  display:block;
+  float:right;
+  margin-top:40px;
+  margin-right:10%;
+  z-index:999;
+  position: relative;
+}
 
+.ui5-sticker__bangalore-flag {
+  position:absolute;
+  bottom: 0;
+  right: 0;
+}
 
+.ui5-sticker__germany-flag {
+  position:absolute;
+  top: 0;
+  left: 0;
+}
