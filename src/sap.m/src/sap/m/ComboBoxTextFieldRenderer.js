@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, InputBaseRenderer, Renderer) {
+sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement'],
+	function(jQuery, InputBaseRenderer, Renderer, LabelEnablement) {
 		"use strict";
 
 		/**
@@ -159,14 +159,24 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 			var sId = oControl.getId(),
 				sButtonId = sId + "-arrow",
 				bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility(),
-				oArrowDownInvisibleLabel = oControl.getAggregation("_buttonLabelText");
+				oArrowDownInvisibleLabel = oControl.getAggregation("_buttonLabelText"),
+				sArrowLabel,
+				sReferenceLabelsToAdd,
+				sLabelsToWrite;
 
 			oRm.write('<span tabindex="-1" ');
 			oRm.writeAttribute("id", sButtonId);
 
 			if (bAccessibilityOn) {
 				oRm.writeAttribute("role", "button");
-				oRm.writeAttribute("aria-labelledby", oArrowDownInvisibleLabel.getId());
+				sArrowLabel = oArrowDownInvisibleLabel.getId();
+				sReferenceLabelsToAdd = LabelEnablement.getReferencingLabels(oControl).join(" ");
+				sLabelsToWrite = sArrowLabel;
+				if (sReferenceLabelsToAdd) {
+					sLabelsToWrite = [sArrowLabel, sReferenceLabelsToAdd].join(" ");
+				}
+
+				oRm.writeAttribute("aria-labelledby", sLabelsToWrite);
 			}
 
 			this.addButtonClasses(oRm, oControl);
