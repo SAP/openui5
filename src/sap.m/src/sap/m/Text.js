@@ -38,6 +38,8 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Text
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/text/ Text}
+	 * @see {@link topic:f94deb45de184a3a87850b75d610d9c0 Text}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Text = Control.extend("sap.m.Text", /** @lends sap.m.Text.prototype */ { metadata : {
