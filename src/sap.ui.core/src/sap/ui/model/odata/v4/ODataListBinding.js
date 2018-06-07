@@ -93,6 +93,7 @@ sap.ui.define([
 				this.aChildCanUseCachePromises = [];
 				this.oDiff = undefined;
 				this.aFilters = [];
+				this.bHasAnalyticalInfo = false;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
 				// a lock to ensure that submitBatch waits for an expected read
@@ -405,7 +406,7 @@ sap.ui.define([
 			});
 		}
 
-		oGroupLock = this.oModel.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
+		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
 		oCreatePromise = this.createInCache(oGroupLock, vCreatePath, "", oInitialData,
 			function () {
 				// cancel callback
@@ -422,7 +423,7 @@ sap.ui.define([
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";
 				}
-				return that.refreshSingle(oContext, that.oModel.lockGroup(sGroupId));
+				return that.refreshSingle(oContext, that.lockGroup(sGroupId));
 			}
 		}, function (oError) {
 			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
@@ -545,6 +546,9 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.destroy = function () {
+		if (this.bHasAnalyticalInfo && this.aContexts === undefined) {
+			return;
+		}
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
@@ -557,6 +561,8 @@ sap.ui.define([
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
 		this.oContext = undefined;
+		this.aContexts = undefined;
+		this.oHeaderContext = undefined;
 		ListBinding.prototype.destroy.apply(this);
 	};
 
@@ -1030,7 +1036,7 @@ sap.ui.define([
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					// getContexts needs no lock, only the group ID (or re-use the refresh lock)
-					oGroupLock = that.oModel.lockGroup(that.getGroupId(), oGroupLock);
+					oGroupLock = that.lockGroup(that.getGroupId(), oGroupLock);
 					return oCache.read(iStartInModel, iLength, iMaximumPrefetchSize, oGroupLock,
 						function () {
 							bDataRequested = true;
@@ -1813,6 +1819,7 @@ sap.ui.define([
 		});
 		this.oAggregation = oAggregation; // Note: needed by #doCreateCache!
 		this.changeParameters({$apply : _Helper.buildApply(oAggregation)});
+		this.bHasAnalyticalInfo = true;
 		if (bHasMinMax) {
 			return {
 				measureRangePromise : Promise.resolve(this.oCachePromise.then(function (oCache) {

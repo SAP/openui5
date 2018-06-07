@@ -3235,7 +3235,7 @@ sap.ui.define([
 				oType = new clType(oPart.formatOptions, oPart.constraints);
 			}
 
-			oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
+			oBinding = oModel.bindProperty(oPart.path, oContext, oPart.parameters || oBindingInfo.parameters);
 			oBinding.setType(oType, oPart.targetType || sInternalType);
 			oBinding.setFormatter(oPart.formatter);
 			if (oPart.suspended) {

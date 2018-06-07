@@ -295,6 +295,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Unwraps this {@link sap.ui.base.SyncPromise} by returning the current result if this promise
+	 * is already fulfilled, returning the wrapped thenable if this promise is still pending, or
+	 * throwing the reason if this promise is already rejected.
+	 *
+	 * @returns {any|Promise}
+	 *   The result in case this {@link sap.ui.base.SyncPromise} is already fulfilled, or the
+	 *   wrapped thenable if this promise is still pending
+	 * @throws {any}
+	 *   The reason if this promise is already rejected
+	 *
+	 * @see #getResult
+	 */
+	SyncPromise.prototype.unwrap = function () {
+		if (this.isRejected()) {
+			this.caught();
+			throw this.getResult();
+		}
+		return this.getResult();
+	};
+
+	/**
 	 * Returns a new {@link sap.ui.base.SyncPromise} for the given array of values just like
 	 * <code>Promise.all(aValues)</code>.
 	 *
