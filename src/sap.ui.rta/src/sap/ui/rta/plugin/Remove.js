@@ -222,29 +222,31 @@ sap.ui.define([
 
 		var oNextOverlaySelection = Remove._getElementToFocus(aSelectedOverlays);
 
-		aSelectedOverlays
-			.forEach(function(oOverlay) {
-				var oCommand;
-				var oRemovedElement = oOverlay.getElement();
-				var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-				var oRemoveAction = this.getAction(oOverlay);
-				var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
-				var sConfirmationText = this._getConfirmationText(oOverlay);
+		aSelectedOverlays.forEach(function(oOverlay) {
+			var oCommand;
+			var oRemovedElement = oOverlay.getElement();
+			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+			var oRemoveAction = this.getAction(oOverlay);
+			var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
+			var sConfirmationText = this._getConfirmationText(oOverlay);
 
-				if (sConfirmationText) {
-					aPromises.push(
-						Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText)
-						.then(function(bConfirmed) {
-							if (bConfirmed) {
-								oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
-								oCompositeCommand.addCommand(oCommand);
-							}
-						}.bind(this))
-					);
-				} else {
-					oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
-					oCompositeCommand.addCommand(oCommand);
-				}
+			if (sConfirmationText) {
+				aPromises.push(
+					Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText)
+					.then(function(bConfirmed) {
+						if (bConfirmed) {
+							oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
+							oCompositeCommand.addCommand(oCommand);
+						}
+					}.bind(this))
+				);
+			} else {
+				oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
+				oCompositeCommand.addCommand(oCommand);
+			}
+
+			// deselect overlay before we remove to avoid unnecessary checks which could happen when multiple elements get removed at once
+			oOverlay.setSelected(false);
 		}, this);
 
 		// since Promise.all is always asynchronous, we want to call it only if at least one promise exists
