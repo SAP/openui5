@@ -334,9 +334,12 @@ sap.ui.define([
 		};
 		return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 
-		.catch(function(oException) {
-			this._oChangePersistence.deleteChange(oChange);
-			throw oException;
+		.then(function(oReturn) {
+			if (!oReturn.success) {
+				var oException = oReturn.error || new Error("The change could not be applied.");
+				this._oChangePersistence.deleteChange(oChange);
+				throw oException;
+			}
 		}.bind(this));
 	};
 
@@ -654,7 +657,7 @@ sap.ui.define([
 				}
 				delete oChange.PROCESSING;
 				oChange.APPLIED = true;
-				return true;
+				return {success: true};
 			}.bind(this))
 
 			.catch(function(ex) {
@@ -690,10 +693,10 @@ sap.ui.define([
 					});
 				}
 				delete oChange.PROCESSING;
-				return false;
+				return {success: false, error: ex};
 			}.bind(this));
 		}
-		return new Utils.FakePromise(true);
+		return new Utils.FakePromise({success: true});
 	};
 
 	FlexController.prototype._removeFromAppliedChangesAndMaybeRevert = function(oChange, oControl, mPropertyBag, bRevert) {
@@ -1035,8 +1038,8 @@ sap.ui.define([
 				oChange.QUEUED = true;
 				aPromiseStack.push(function() {
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
-					.then(function(bUpdate) {
-						if (bUpdate) {
+					.then(function(oResult) {
+						if (oResult.success) {
 							this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
 						}
 						delete oChange.QUEUED;
@@ -1226,9 +1229,11 @@ sap.ui.define([
 					function() {
 						return oDependency[FlexController.PENDING]()
 
-						.then(function (){
-							aDependenciesToBeDeleted.push(sDependencyKey);
-							aAppliedChanges.push(oDependency.changeObject.getId());
+						.then(function (oReturn) {
+							if (oReturn.success) {
+								aDependenciesToBeDeleted.push(sDependencyKey);
+								aAppliedChanges.push(oDependency.changeObject.getId());
+							}
 						});
 					}
 				);
