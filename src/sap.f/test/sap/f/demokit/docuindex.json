@@ -4,10 +4,16 @@
 		"appComponent": "CA-UI5-CTR",
 		"formFactors": "ML"
 	  },
-	  "samplesRef": {
+	  "samplesRef": [
+		{
 		  "namespace": "sap.f.sample",
 		  "ref": "test-resources/sap/f/demokit/sample"
 		},
+		{
+		  "namespace": "sap.f.tutorial",
+		  "ref": "test-resources/sap/f/demokit/tutorial"
+		}
+	  ],
 	  "entities": [
 		{
 		  "id": "sap.f.Avatar",
@@ -43,6 +49,30 @@
 		  "category": "Container",
 		  "since": "1.46",
 		  "samples": ["sap.f.sample.SemanticPage", "sap.f.sample.SemanticPageFreeStyle"]
+		},
+		{
+		  "id": "sap.f.tutorial.fiori2",
+		  "name": "SAP Fiori 2.0 App",
+		  "category": "Tutorial",
+		  "since": "1.56",
+		  "formFactors": "-",
+		  "description": "In this tutorial, we showcase how to structure your UI5 app using the layout patterns that comply with the latest SAP Fiori guidelines.",
+		  "docuLink": "#docs/guide/d8dac02bffb246589e45997af9591e95.html",
+		  "samplesAsSteps": [
+			"Setting Up the Initial App",
+			"Creating an Empty Flexible Column Layout",
+			"Using Dynamic Page for the Master View",
+			"Adding a Detail Page",
+			"Using Object Page Layout as a Detail Page",
+			"Adding a Floating Footer",
+			"Routing",
+			"Enhancing the Detail Page",
+			"Adding a Detail-Detail Page",
+			"Adding More Pages",
+			"Using the Flexible Column Layout Semantic Helper",
+			"Starting with Two Columns",
+			"Setting the Master-Detail Pattern"
+		  ]
 		}
 	  ],
 	  "samples": [

@@ -1,0 +1,4 @@
+<core:View displayBlock="true"
+		   height="100%"
+		   xmlns:core="sap.ui.core">
+</core:View>
