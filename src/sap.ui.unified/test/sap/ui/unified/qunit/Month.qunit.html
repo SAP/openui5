@@ -396,6 +396,56 @@
 					isSelectedDaySpy.restore();
 				});
 
+				QUnit.test("select event is also called when click on sapUiCalDayName", function (assert) {
+					// Arrange
+					var oTarget = document.createElement("span"),
+						oTargetParent = document.createElement("div"),
+						oMouseEvent = { clientX: 10, clientY: 10, target: oTarget},
+						deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+						oMonthSelectSpy = this.spy(this.oM, "fireSelect");
+
+					oTarget.classList.add("sapUiCalDayName");
+					oTargetParent.setAttribute('data-sap-day', "20170101");
+					oTargetParent.appendChild(oTarget);
+					this.oM._oMousedownPosition = oMouseEvent;
+					this.oM._oItemNavigation = new sap.ui.core.delegate.ItemNavigation();
+
+					// Act
+					this.oM.onmouseup(oMouseEvent);
+
+					// Assert
+					assert.equal(oMonthSelectSpy.callCount, 1, "select was fired");
+
+					// Cleanup
+					deviceStub.restore();
+					oMonthSelectSpy.reset();
+				});
+
+				QUnit.test("select event is also called when click on sapUiCalItemText", function (assert) {
+					// Arrange
+					var oTarget = document.createElement("span"),
+						oTargetParent = document.createElement("div"),
+						oMouseEvent = { clientX: 10, clientY: 10, target: oTarget},
+						deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+						oMonthSelectSpy = this.spy(this.oM, "fireSelect");
+
+					oTarget.classList.add("sapUiCalItemText");
+					oTargetParent.setAttribute('data-sap-day', "20170101");
+					oTargetParent.appendChild(oTarget);
+					this.oM._oMousedownPosition = oMouseEvent;
+					this.oM._oItemNavigation = new sap.ui.core.delegate.ItemNavigation();
+
+					// Act
+					this.oM.onmouseup(oMouseEvent);
+
+					// Assert
+					assert.equal(oMonthSelectSpy.callCount, 1, "select was fired");
+
+					// Cleanup
+					deviceStub.restore();
+					oMonthSelectSpy.reset();
+				});
+
 				QUnit.module("Aria", {
 					beforeEach: function() {
 						//Prepare
