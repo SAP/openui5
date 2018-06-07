@@ -44,6 +44,7 @@ function(
 			};
 			assert.deepEqual(VariantUtil.getCurrentHashParamsFromRegister.call(this), ["expectedParameter1", "expectedParameter2"], "then expected parameters are returned");
 		});
+
 		QUnit.test("when calling 'initializeHashRegister' with oHashRegister.currentIndex set to null", function (assert) {
 			this.sVariantTechnicalParameterName = "myParamName";
 			sandbox.stub(VariantUtil, "_setCustomNavigationForParameter");
@@ -56,6 +57,7 @@ function(
 			assert.ok(VariantUtil._setCustomNavigationForParameter.calledOnce, "then VariantUtil._setCustomNavigationForParameter() called once");
 			assert.ok(VariantUtil._setCustomNavigationForParameter.calledOn(this), "then VariantUtil._setCustomNavigationForParameter() called once");
 		});
+
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex set to null", function (assert) {
 			assert.expect(3);
 			this._oHashRegister.currentIndex = null;
@@ -74,12 +76,14 @@ function(
 
 			VariantUtil.attachHashHandlers.call(this);
 		});
+
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex not set to null", function (assert) {
 			this._oHashRegister.currentIndex = 0;
 			sandbox.stub(VariantUtil, "_navigationHandler");
 			VariantUtil.attachHashHandlers.call(this);
 			assert.strictEqual(VariantUtil._navigationHandler.callCount, 0, "then VariantUtil._navigationHandler() not called");
 		});
+
 		QUnit.test("when calling '_setCustomNavigationForParameter' with ShellNavigation service", function (assert) {
 			var fnRegisterNavigationFilter = sandbox.stub();
 			sandbox.stub(Utils, "getUshellContainer").returns({
@@ -93,6 +97,7 @@ function(
 			assert.strictEqual(fnRegisterNavigationFilter.getCall(0).args[0].toString(), VariantUtil._navigationFilter.bind(this).toString(),
 				"then the VariantUtil._navigationFilter() is passed to registerNavigationFilter of ShellNavigation service");
 		});
+
 		QUnit.test("when calling 'updateHasherEntry' to update the URL with a hash register update", function (assert) {
 			var mPropertyBag = {
 				component: { id : "TestComponent" },
@@ -111,6 +116,7 @@ function(
 				"then Utils.setTechnicalURLParameterValues() with the required parameters");
 			assert.deepEqual(this._oHashRegister.hashParams[this._oHashRegister.currentIndex], mPropertyBag.parameters, "then hash register for the current index was updated");
 		});
+
 		QUnit.test("when calling 'updateHasherEntry' to update the URL without a hash register update", function (assert) {
 			var mPropertyBag = {
 				component: { id : "TestComponent" },
@@ -129,6 +135,7 @@ function(
 				"then Utils.setTechnicalURLParameterValues() with the required parameters");
 			assert.notOk(this._oHashRegister.hashParams[this._oHashRegister.currentIndex], "then hash register for the current index was not updated");
 		});
+
 		QUnit.test("when calling 'updateHasherEntry' without a component", function (assert) {
 			var mPropertyBag = {
 				parameters: ["testParam1", "testParam2"],
@@ -143,6 +150,7 @@ function(
 			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oComponent, this.sVariantTechnicalParameterName, mPropertyBag.parameters),
 				"then Utils.setTechnicalURLParameterValues() with the required parameters");
 		});
+
 		QUnit.test("when calling 'updateHasherEntry' to update hash register without a URL update", function (assert) {
 			var mPropertyBag = {
 				component: { id : "TestComponent" },
@@ -159,6 +167,7 @@ function(
 				"then Utils.setTechnicalURLParameterValues() not called");
 			assert.deepEqual(this._oHashRegister.hashParams[this._oHashRegister.currentIndex], mPropertyBag.parameters, "then hash register for the current index was updated");
 		});
+
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex set to null and 'Unknown' navigation direction", function (assert) {
 			this._oHashRegister.currentIndex = null;
 			this.sVariantTechnicalParameterName = "testTechnicalParamName";
@@ -184,6 +193,16 @@ function(
 				parameters: ["newEntry"]
 			}), "then VarintModel.updateHasherEntry() called with the required parameters");
 		});
+
+		QUnit.test("when calling '_navigationHandler' with parsed URL hash returning undefined", function (assert) {
+			this._oHashRegister.currentIndex = null;
+			this.updateHasherEntry = sandbox.stub();
+			sandbox.stub(Utils, "getParsedURLHash").returns(undefined);
+
+			VariantUtil._navigationHandler.call(this);
+			assert.ok(this.updateHasherEntry.called, "then no errors occur");
+		});
+
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex > 0 and 'Unknown' navigation direction", function (assert) {
 			this._oHashRegister = {
 				currentIndex: 5,
@@ -214,6 +233,7 @@ function(
 				parameters: ["newEntry"]
 			}), "then VariantModel.updateHasherEntry() called with new variant hash parameters, URL update and _oHashRegister update");
 		});
+
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex > 0 and 'Backwards' navigation direction", function (assert) {
 			this._oHashRegister = {
 				currentIndex: 2,
@@ -240,6 +260,7 @@ function(
 				ignoreRegisterUpdate: true
 			}), "then VariantModel.updateHasherEntry() called with variant hash parameters from previous index, URL update and no _oHashRegister update");
 		});
+
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex set to 0 and 'Backwards' navigation direction", function (assert) {
 			this._oHashRegister = {
 				currentIndex: 0
@@ -262,6 +283,7 @@ function(
 				ignoreRegisterUpdate: true
 			}), "then VariantModel.updateHasherEntry() called with empty variant hash parameters, URL update and no _oHashRegister update");
 		});
+
 		QUnit.test("when calling '_navigationHandler' with 'Forwards' navigation direction", function (assert) {
 			this._oHashRegister = {
 				currentIndex: 0,
@@ -288,6 +310,7 @@ function(
 				ignoreRegisterUpdate: true
 			}), "then VariantModel.updateHasherEntry() called with variant hash parameters from next index, URL update and no _oHashRegister update");
 		});
+
 		QUnit.test("when calling '_navigationHandler' with 'NewEntry' navigation direction, with no existing parameters for the new index", function (assert) {
 			this._oHashRegister = {
 				currentIndex: 0,
@@ -316,6 +339,7 @@ function(
 				parameters: ["newEntry"]
 			}), "then VariantModel.updateHasherEntry() called with variant hash parameters from next index, URL update and no _oHashRegister update");
 		});
+
 		QUnit.test("when calling '_navigationHandler' with 'NewEntry' navigation direction, with existing parameters for the new index", function (assert) {
 			this._oHashRegister = {
 				currentIndex: 0,
@@ -351,6 +375,7 @@ function(
 			assert.ok(this.switchToDefaultVariant.getCall(1).calledWithExactly("existingParameter3"), "then VariantModel.switchToDefaultVariant() called with existing hash parameters for the incremented index");
 		});
 	});
+
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function (assert) {
 			this.sVariantTechnicalParameterName = "testTechnicalParamName";
@@ -411,6 +436,7 @@ function(
 			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
 			assert.deepEqual(vStatus, this.oCustomNavigationStatus, "then the correct status object was returned");
 		});
+
 		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with new hash containing variant parameters only", function (assert) {
 			assert.expect(3);
 			this.sVariantTechnicalParameterName = "testTechnicalParamName";
@@ -427,6 +453,7 @@ function(
 			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
 			assert.deepEqual(vStatus, this.oCustomNavigationStatus, "then the correct status object was returned");
 		});
+
 		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with both old and new hash containing variant parameters", function (assert) {
 			assert.expect(3);
 			this.sVariantTechnicalParameterName = "testTechnicalParamName";
@@ -445,6 +472,7 @@ function(
 			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
 			assert.deepEqual(vStatus, this.oCustomNavigationStatus, "then the correct status object was returned");
 		});
+
 		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with both old and new hash not containing variant parameters", function (assert) {
 			assert.expect(1);
 			var oOldHash = {
@@ -458,6 +486,7 @@ function(
 			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
 			assert.strictEqual(vStatus, this.sDefaultStatus, "then the correct status object was returned");
 		});
+
 		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with variant parameters along with other parameters", function (assert) {
 			assert.expect(1);
 			var oOldHash = {
