@@ -3,7 +3,8 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:semantic="sap.f.semantic"
-	xmlns:form="sap.ui.layout.form">
+	xmlns:form="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout">
 
 	<semantic:SemanticPage
 		id="page"
@@ -11,19 +12,14 @@
 		toggleHeaderOnTitleClick="false"
 		busy="{objectView>/busy}"
 		busyIndicatorDelay="{objectView>/delay}">
+		<semantic:titleHeading>
+			<Title text="{ProductName}" />
+		</semantic:titleHeading>
 		<semantic:headerContent>
-			<ObjectHeader
-				id="objectHeader"
-				responsive="true"
-				title="{ProductName}"
-				numberUnit="PC"
-				numberState="{
-					path: 'UnitsInStock',
-					formatter: '.formatter.quantityState'}"
-				number="{
-					path: 'UnitsInStock',
-					formatter: '.formatter.numberUnit'}">
-				<attributes>
+			<FlexBox
+				alignItems="Start"
+				justifyContent="SpaceBetween">
+				<Panel backgroundDesign="Transparent">
 					<ObjectAttribute
 						title="{i18n>ObjectProductIdText}"
 						text="{
@@ -34,25 +30,39 @@
 						text="{
 							path: 'UnitPrice',
 							formatter: '.formatter.numberUnit'} EUR"/>
-				</attributes>
-				<statuses>
+				</Panel>
+				<Panel backgroundDesign="Transparent">
+					<ObjectNumber
+						id="objectHeader"
+						unit="PC"
+						textAlign="End"
+						state="{
+							path: 'UnitsInStock',
+							formatter: '.formatter.quantityState'}"
+						number="{
+							path: 'UnitsInStock',
+							formatter: '.formatter.numberUnit'}">
+					</ObjectNumber>
 					<ObjectStatus
 						text="{i18n>ObjectDiscontinuedStatusText}"
 						state="Error"
 						visible="{path:'Discontinued'}"/>
 					<ProgressIndicator
+						width="300px"
 						percentValue="{UnitsInStock}"
 						displayValue="{UnitsInStock}"
 						showValue="true"
 						state="{
 							path: 'UnitsInStock',
 							formatter: '.formatter.quantityState'}" />
-				</statuses>
-			</ObjectHeader>
+				</Panel>
+
+			</FlexBox>
 		</semantic:headerContent>
 		<semantic:content>
+			<l:VerticalLayout width="100%">
 			<Panel
-				class="sapUiNoContentPadding"
+				backgroundDesign="Transparent"
 				headerText="{i18n>ObjectSupplierTabTitle}">
 				<content>
 					<form:SimpleForm
@@ -79,29 +89,30 @@
 					</form:SimpleForm>
 				</content>
 			</Panel>
-			<Panel
-				class="sapUiContentPadding"
-				headerText="{i18n>ObjectCommentsTabTitle}">
-				<content>
-					<FeedInput post="onPost"/>
-					<List
-						id="idCommentsList"
-						noDataText="{i18n>ObjectCommentNoData}"
-						showSeparators="Inner"
-						items="{
-							path: 'productFeedback>/productComments',
-							sorter: {
-								path: 'date',
-								descending: true
-							}
-						}">
-						<FeedListItem
-							info="{productFeedback>type}"
-							text="{productFeedback>comment}"
-							timestamp="{productFeedback>date}"/>
-					</List>
-				</content>
-			</Panel>
+				<Panel
+					backgroundDesign="Transparent"
+					headerText="{i18n>ObjectCommentsTabTitle}">
+					<content>
+						<FeedInput post="onPost"/>
+						<List
+							id="idCommentsList"
+							noDataText="{i18n>ObjectCommentNoData}"
+							showSeparators="Inner"
+							items="{
+								path: 'productFeedback>/productComments',
+								sorter: {
+									path: 'date',
+									descending: true
+								}
+							}">
+							<FeedListItem
+								info="{productFeedback>type}"
+								text="{productFeedback>comment}"
+								timestamp="{productFeedback>date}"/>
+						</List>
+					</content>
+				</Panel>
+			</l:VerticalLayout>
 		</semantic:content>
 		<semantic:sendEmailAction>
 			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>

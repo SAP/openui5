@@ -17,7 +17,6 @@
 			<Table
 				id="table"
 				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-				class="sapUiResponsiveMargin"
 				growing="true"
 				growingScrollToLoad="true"
 				noDataText="{worklistView>/tableNoDataText}"
