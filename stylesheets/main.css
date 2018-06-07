@@ -479,10 +479,6 @@ ul.feature-links > li {
   z-index:999;
   position: relative;
 }
-
-.ui5con-flag {
-
-}
 .bangalore-flag {
   position:absolute;
   bottom: 0;
@@ -521,6 +517,13 @@ Small Device Styles
 
   .header-container {
 	min-height: 0px;
+  }
+
+  .ui5-sticker {
+    position: absolute;
+    width: 25%;
+    top: 50px;
+    right: 40px;
   }
 }
 
