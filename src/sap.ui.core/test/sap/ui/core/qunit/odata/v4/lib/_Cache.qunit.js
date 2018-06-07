@@ -3985,7 +3985,8 @@ sap.ui.require([
 						fnFetchMetadata : function () {
 							return SyncPromise.resolve({});
 						},
-						fnGetGroupProperty : defaultGetGroupProperty
+						fnGetGroupProperty : defaultGetGroupProperty,
+						fnReportUnboundMessages : function () {}
 					}),
 				sResourcePath = "TEAMS('TEAM_01')",
 				oCache = _Cache.createSingle(oRequestor, sResourcePath);

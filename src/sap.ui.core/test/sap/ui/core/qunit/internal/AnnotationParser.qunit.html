@@ -30,13 +30,8 @@
 		<!-- @see ../testsuites/testsuite.databinding.qunit.html -->
 		<script src="../ODataAnnotationsFakeService.js"></script>
 		<script src="../ODataAnnotationsTest.qunit.js"></script>
-		<script>
-			runODataAnnotationTests();
-		</script>
 		<script src="../ODataAnnotationsV2Test.qunit.js"></script>
-		<script>
-			runODataAnnotationsV2Tests();
-		</script>
+		<script src="runODataAnnotationTests.js"></script>
 
 		<!-- Note: these tests MUST run last because their afterEach() cleans up the global XHR
 			created by ODataAnnotationsFakeService.js -->
