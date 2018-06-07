@@ -715,13 +715,13 @@ UI5con sticker
   position: relative;
 }
 
-.bangalore-flag {
+.ui5-sticker__bangalore-flag {
   position:absolute;
   bottom: 0;
   right: 0;
 }
 
-.germany-flag {
+.ui5-sticker__germany-flag {
   position:absolute;
   top: 0;
   left: 0;
