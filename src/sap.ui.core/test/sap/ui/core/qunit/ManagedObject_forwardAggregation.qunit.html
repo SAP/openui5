@@ -1707,6 +1707,56 @@
 					this.composite.getOuterAggregationWithForwardedBinding();
 				});
 
+				QUnit.test("updateItems in sap.m.Select", function(assert) {
+					QUnit.expect(3);
+					var done = assert.async();
+
+					sap.ui.require(["sap/m/Select", "sap/ui/model/json/JSONModel", "sap/ui/model/Filter", "sap/ui/model/FilterOperator"],
+							function(Select, JSONModel, Filter, FilterOperator) {
+
+						var oSelect = new Select({
+							items: {
+								path: "/",
+								template: new sap.ui.core.Item({text: "{name}", key: "{key}"})
+							},
+							selectedKey: "{rm>selected}"
+						});
+						oSelect.bindElement({path: "/somePath", model: "rm"});
+
+						var oModel = new JSONModel();
+						oModel.setData([
+							{name: "A", key: "a"},
+							{name: "A2", key: "a2"},
+							{name: "B", key: "b"},
+							{name: "C", key: "c"}
+						]);
+						oSelect.setModel(oModel);
+
+						var oModel2 = new JSONModel();
+						oModel2.setData({
+							somePath: {
+								selected: "b"
+							}
+						});
+
+						var filter = new Filter({
+							path: "key",
+							operator: FilterOperator.StartsWith,
+							value1: "a"
+						});
+						oSelect.getBinding("items").filter(filter);
+
+						assert.strictEqual(oSelect.mForwardedAggregations["items"].length, 2, "The filtered list should have two items");
+						assert.strictEqual(oSelect.getList().mAggregations["items"].length, 2, "The filtered list should have two items");
+
+						oSelect.setModel(oModel2, "rm");
+
+						var sModelId = oSelect.getItems()[0].getModel("rm") ? oSelect.getItems()[0].getModel("rm").getId() : undefined;
+						assert.strictEqual(sModelId, oSelect.getModel("rm").getId(), "The current items should have received the new rm model");
+						done();
+					});
+				});
+
 
 
 				QUnit.start();
