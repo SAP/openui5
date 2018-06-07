@@ -1556,7 +1556,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var oContentDomRef = oTable ? oTable.getDomRef("tableCCnt") : null;
 
-		if (!oContentDomRef || VerticalScrollingHelper.isUpdatePending(oTable)) {
+		if (!TableUtils.isVariableRowHeightEnabled(oTable) || !oContentDomRef || VerticalScrollingHelper.isUpdatePending(oTable)) {
 			return;
 		}
 
@@ -1568,12 +1568,16 @@ sap.ui.define([
 			// position should be reset.
 
 			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension", "updateInnerVerticalScrollPosition: 0", oTable);
+			oTable.setFirstVisibleRow(0, true);
+			this._nVerticalScrollPosition = 0;
 			oContentDomRef.scrollTop = 0;
 			return;
 		}
 
 		// Only update the inner scroll position if the table is not going to update the rows.
 		if (oTable._getFirstRenderedRowIndex() !== oTable._iRenderedFirstVisibleRow) {
+			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+				"updateInnerVerticalScrollPosition: Skipped, because rows will be updated", oTable);
 			return;
 		}
 

@@ -1392,7 +1392,7 @@ sap.ui.define([
 		this._aRowHeights = this._collectRowHeights(false);
 		var aColumnHeaderRowHeights = this._collectRowHeights(true);
 
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
+		if (TableUtils.isVariableRowHeightEnabled(this) && !TableUtils.isNoDataVisible(this)) {
 			// Necessary in case the visible row count does not change after a resize (for example, this is always the case
 			// if visibleRowCountMode is set to "Fixed"). The row heights might change due to decreased column widths, so the inner scroll position
 			// must be adjusted.
@@ -3507,6 +3507,10 @@ sap.ui.define([
 			}
 		}
 		this._ignoreInvalidateOfChildControls = false;
+
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
+		}
 
 		var bFireRowsUpdated = bUpdateUI && aContexts.length > 0;
 		return this._renderRows(sReason, bFireRowsUpdated);
