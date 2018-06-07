@@ -94,6 +94,7 @@
 			},
 			"messagesInSalesOrderLineItem" : [{
 				"code" : "STATE/4713",
+				"longtextUrl" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/Messages(2)",
 				"message" : "Minimum order quantity is 2",
 				"numericSeverity" : 4,
 				"target" : "Quantity",

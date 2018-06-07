@@ -74,6 +74,7 @@
 		},
 		"messagesInSalesOrder" : [{
 			"code" : "TRANSIENT/1234",
+			"longtextUrl" : "SalesOrderList('0500000001')/Messages(1)",
 			"message" : "Enter customer reference if available",
 			"numericSeverity" : 3,
 			"target" : "Note",
