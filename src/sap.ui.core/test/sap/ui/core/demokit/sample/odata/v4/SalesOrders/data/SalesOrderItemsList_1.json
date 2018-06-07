@@ -45,7 +45,8 @@
 					"PhoneNumber" : "2208791738",
 					"BP_2_CONTACT" : []
 				}
-			}
+			},
+			"messagesInSalesOrderLineItem" : []
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -90,7 +91,14 @@
 					"PhoneNumber" : "4440238917",
 					"BP_2_CONTACT" : []
 				}
-			}
+			},
+			"messagesInSalesOrderLineItem" : [{
+				"code" : "STATE/4713",
+				"message" : "Minimum order quantity is 2",
+				"numericSeverity" : 4,
+				"target" : "Quantity",
+				"transient" : false
+			}]
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -135,7 +143,8 @@
 					"PhoneNumber" : "6328490087",
 					"BP_2_CONTACT" : []
 				}
-			}
+			},
+			"messagesInSalesOrderLineItem" : []
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -180,7 +189,8 @@
 					"PhoneNumber" : "4050378468",
 					"BP_2_CONTACT" : []
 				}
-			}
+			},
+			"messagesInSalesOrderLineItem" : []
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -225,7 +235,8 @@
 					"PhoneNumber" : "6065470312",
 					"BP_2_CONTACT" : []
 				}
-			}
+			},
+			"messagesInSalesOrderLineItem" : []
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -270,7 +281,8 @@
 					"PhoneNumber" : "7980023486",
 					"BP_2_CONTACT" : []
 				}
-			}
+			},
+			"messagesInSalesOrderLineItem" : []
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -315,7 +327,8 @@
 					"PhoneNumber" : "3629731486",
 					"BP_2_CONTACT" : []
 				}
-			}
+			},
+			"messagesInSalesOrderLineItem" : []
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -360,6 +373,7 @@
 					"PhoneNumber" : "3206580974",
 					"BP_2_CONTACT" : []
 				}
-			}
+			},
+			"messagesInSalesOrderLineItem" : []
 		}]
 }

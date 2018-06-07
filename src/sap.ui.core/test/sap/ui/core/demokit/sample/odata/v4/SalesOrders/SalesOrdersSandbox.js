@@ -38,8 +38,8 @@ sap.ui.define([
 						"code" : "42",
 						"message" : "Example for an unbound message",
 						"severity" : "info",
-						"@Common.NumericMessageSeverity" : 3,
-						"@Common.LongtextUrl" : "//raw.githubusercontent.com/SAP/openui5/master/NOTICE.txt"}])
+						"numericSeverity" : 2,
+						"longtextUrl" : "//raw.githubusercontent.com/SAP/openui5/master/NOTICE.txt"}])
 				},
 				source : "ProductList.json"
 			},
