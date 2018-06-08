@@ -65,12 +65,18 @@ sap.ui.define([
 		.coverageSummary {\
 			background-color: #0D3349;\
 			border-radius: 0 0 5px 5px;\
-			color: #C6E746;\
-			font-size: 1.5em;\
 			font-family: Calibri, Helvetica, Arial, sans-serif;\
-			line-height: 1em;\
+			font-size: 1.5em;\
 			font-weight: 400;\
+			line-height: 1em;\
 			padding: 0.5em 0 0.5em 1em;\
+		}\
+		.coverageSummary a {\
+			color: #C6E746;\
+		}\
+		.coverageSummary a:hover,\
+		.coverageSummary a:focus {\
+			color: #FFFFFF;\
 		}\
 	';
 
@@ -501,8 +507,12 @@ sap.ui.define([
 			}
 
 			oDiv.setAttribute("class", "coverageSummary");
-			oDiv.innerHTML = "Blanket Code Coverage: OK";
-			//TODO checkbox to show/hide details UI
+			oDiv.innerHTML = '<a href="javascript:void(0);">Blanket Code Coverage: OK</a>';
+			jQuery(oDiv).one("click", function (oMouseEvent) {
+				jQuery(oDiv).fadeOut(function () {
+					createView(oModel).placeAt(getDiv());
+				});
+			});
 		}
 	};
 }, /* bExport= */ false);
