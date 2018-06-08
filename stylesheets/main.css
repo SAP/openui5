@@ -499,6 +499,13 @@ Small Device Styles
   .header-container {
 	min-height: 0px;
   }
+
+  .ui5-sticker {
+	position: absolute;
+	width: 25%;
+	top: 20px;
+	right: 25px;
+  }
 }
 
 @media screen and (max-width: 840px) {
