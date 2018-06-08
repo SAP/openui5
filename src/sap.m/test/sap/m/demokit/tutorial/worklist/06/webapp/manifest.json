@@ -1,7 +1,7 @@
 {
-	"_version": "1.8.0",
+	"_version": "1.9.0",
 	"sap.app": {
-		"id": "mycompany.myapp",
+		"id": "mycompany.myapp.MyWorklistApp",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
@@ -11,7 +11,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "/destinations/northwind/V2/Northwind/Northwind.svc/",
+				"uri": "/northwind/V2/Northwind/Northwind.svc/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
@@ -21,7 +21,7 @@
 		},
 		"sourceTemplate": {
 			"id": "sap.ui.ui5-template-plugin.1worklist",
-			"version": "1.30.4"
+			"version": "1.52.7"
 		}
 	},
 	"sap.ui": {
@@ -42,17 +42,17 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "mycompany.myapp.view.App",
+			"viewName": "mycompany.myapp.MyWorklistApp.view.App",
 			"type": "XML",
 			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.30.0",
+			"minUI5Version": "1.42.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
-				"sap.ui.layout": {}
+				"sap.f": {}
 			}
 		},
 		"contentDensities": {
@@ -63,27 +63,25 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "mycompany.myapp.i18n.i18n"
+					"bundleName": "mycompany.myapp.MyWorklistApp.i18n.i18n"
 				}
 			},
 			"": {
 				"dataSource": "mainService",
-				"settings": {
-					"metadataUrlParams": {
-						"sap-documentation": "heading"
-					}
-				}
+				"preload": true
 			}
 		},
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "mycompany.myapp.view",
+				"viewPath": "mycompany.myapp.MyWorklistApp.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
-					"target": "notFound"
+					"target": [
+						"notFound"
+					]
 				},
 				"async": true
 			},
@@ -91,24 +89,30 @@
 				{
 					"pattern": "",
 					"name": "worklist",
-					"target": "worklist"
+					"target": [
+						"worklist"
+					]
 				},
 				{
 					"pattern": "Products/{objectId}",
 					"name": "object",
-					"target": "object"
+					"target": [
+						"object"
+					]
 				}
 			],
 			"targets": {
 				"worklist": {
 					"viewName": "Worklist",
 					"viewId": "worklist",
-					"viewLevel": 1
+					"viewLevel": 1,
+					"title": "{i18n>worklistViewTitle}"
 				},
 				"object": {
 					"viewName": "Object",
 					"viewId": "object",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "{i18n>objectViewTitle}"
 				},
 				"objectNotFound": {
 					"viewName": "ObjectNotFound",
