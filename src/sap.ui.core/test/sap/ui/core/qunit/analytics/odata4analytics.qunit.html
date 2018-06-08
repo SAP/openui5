@@ -26,8 +26,7 @@
 		<script src="../../../../../../resources/sap/ui/test/BranchTracking.js"></script>
 
 		<script>
-			jQuery.sap.registerModulePath("sap.ui.core.qunit",
-				"../../../../../../test-resources/sap/ui/core/qunit");
+			sap.ui.loader.config({paths: {"sap/ui/core/qunit": "../../../../../../test-resources/sap/ui/core/qunit"}});
 		</script>
 		<script src="odata4analytics.qunit.js"></script>
 		<title>sap.ui.model.analytics.odata4analytics</title>

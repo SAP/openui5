@@ -551,7 +551,7 @@ html.sap-phone .sapUiDocumentationTopicTitle {
 	width: 20% !important;
 }
 
-.sapUiDocumentationReturnsTable {
+.sapUiDocumentation2ColumnsEqualTable {
 	margin-top: 20px;
 }
 
@@ -1817,6 +1817,16 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	padding-left: 0.5rem;
 }
 
+.sapUiParamText .experimental {
+	font-weight: normal;
+	color: #e78c07;
+}
+
+.sapUiParamText .experimental .experimentalText {
+	vertical-align: top;
+	padding-left: 0.5rem;
+}
+
 html.sapUiMedia-Std-Phone .sapUiParamText,
 .sapUiParamText.depth-0 {
 	font-weight: bold;
@@ -1922,17 +1932,17 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 
 .sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationParamsTable,
 .sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-3,
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-2:not(.sapUiDocumentationReturnsTable) {
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-2:not(.sapUiDocumentation2ColumnsEqualTable) {
 	table-layout: fixed;
 }
 
 .sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationParamsTable .cell:last-child,
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationReturnsTable .cell:last-child,
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentation2ColumnsEqualTable .cell:last-child,
 .sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationSpecialSettingsTable .cell:last-child {
 	width: 50%;
 }
 
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-2:not(.sapUiDocumentationReturnsTable) .cell:last-child {
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-2:not(.sapUiDocumentation2ColumnsEqualTable) .cell:last-child {
 	width: 70%
 }
 

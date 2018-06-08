@@ -5,7 +5,7 @@ describe("sap.m.IconTabBar", function() {
 
 	var bPhone = null;
 	var _closeIconTabBarOverflow = function () {
-		var sId = bPhone ? "__popover0-dialog-footer" : "page5-intHeader";
+		var sId = bPhone ? "__popover0-dialog-footer" : "page1-intHeader";
 
 		element(by.id(sId)).click();
 	};

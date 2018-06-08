@@ -153,7 +153,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 			"sap.ui.core.mvc.HTMLView",
 			"sap.ui.core.mvc.TemplateView",
 			"sap.ui.mdc.FilterBar", //The control only runs in views with XML pre-processor. The test can't provide this environment
-			"sap.ui.mdc.Table", //The control only runs in views with XML pre-processor. The test can't provide this environment
+            "sap.ui.mdc.Table", //The control only runs in views with XML pre-processor. The test can't provide this environment
+			"sap.ui.mdc.TableOld", //The control only runs in views with XML pre-processor. The test can't provide this environment
 			"sap.ui.mdc.Field", //The control only runs in views with XML pre-processor. The test can't provide this environment
 			"sap.ui.mdc.XMLComposite", //The control only runs in views with XML pre-processor. The test can't provide this environment
 			"sap.ui.mdc.ValueHelpDialog", //The control only runs in views with XML pre-processor. The test can't provide this environment

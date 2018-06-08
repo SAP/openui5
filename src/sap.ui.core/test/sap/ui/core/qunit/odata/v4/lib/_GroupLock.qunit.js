@@ -147,8 +147,38 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("owner & toString", function (assert) {
+		var oGroupLock,
+			oOwner = {
+				toString : function () {
+					return "owner";
+				}
+			};
+
+		oGroupLock = new _GroupLock();
+		assert.strictEqual(oGroupLock.oOwner, undefined);
+		assert.strictEqual(oGroupLock.toString(), "sap.ui.model.odata.v4.lib._GroupLock(unlocked)");
+
+		oGroupLock = new _GroupLock("group", true);
+		assert.strictEqual(oGroupLock.toString(),
+			"sap.ui.model.odata.v4.lib._GroupLock(locked,group=group)");
+
+		oGroupLock = new _GroupLock("group", false, oOwner);
+		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.toString(),
+			"sap.ui.model.odata.v4.lib._GroupLock(unlocked,group=group,owner=owner)");
+
+		oGroupLock = new _GroupLock(undefined, true, oOwner);
+		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.toString(),
+			"sap.ui.model.odata.v4.lib._GroupLock(locked,owner=owner)");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("constants", function (assert) {
 		assert.strictEqual(_GroupLock.$cached.getGroupId(), "$cached");
+		assert.notOk(_GroupLock.$cached.isLocked());
+		assert.strictEqual(_GroupLock.$cached.oOwner, undefined);
 
 		// ensure that $cached can be unlocked several times
 		_GroupLock.$cached.unlock();

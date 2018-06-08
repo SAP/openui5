@@ -62,6 +62,7 @@
 												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 											</m:MessageStrip>
 										</template:if>
+
 										<custom:JSDocText text="{/description}"/>
 
 										<template:if test="{data>/hasAnnotations}">
@@ -89,7 +90,7 @@
 
 										<template:if test="{data>/hasChildren}">
 											<custom:LightTable
-												 rows="{ path : '/nodes'}"
+												 rows="{path : '/nodes'}"
 												 columnTitles="Namespaces &amp; Classes,Description"
 												 columnCount="2"
 												 class="sapUiSmallMarginTop">
@@ -113,14 +114,32 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/properties'}"
+										<custom:LightTable rows="{path : '/properties'}"
 											 columnCount="2"
 											 columnTitles="Name,Description"
-											 class="sapUiSmallMarginTop">
+											 class="sapUiSmallMarginTop sapUiDocumentation2ColumnsEqualTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
 												<layout:VerticalLayout>
 													<custom:JSDocText text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
 													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 												</layout:VerticalLayout>
 											</custom:Row>
@@ -142,14 +161,14 @@
 											<custom:JSDocText text="{/constructor/description}"/>
 
 											<layout:VerticalLayout visible="{= ${/constructor/examples} !== undefined}"
-																   content="{ path : '/constructor/examples', templateShareable: 'false'}">
+																   content="{path : '/constructor/examples', templateShareable: 'false'}">
 												<custom:JSDocText text="{data}"/>
 											</layout:VerticalLayout>
 
 											<custom:JSDocText text="{/constructor/codeExample}"/>
 
 											<template:if test="{= !!${data>/constructor/parameters} }">
-												<custom:LightTable rows="{ path: '/constructor/parameters'}"
+												<custom:LightTable rows="{path: '/constructor/parameters'}"
 														columnTitles="Param,Type,Default Value,Description"
 														columnCount="4"
 														class="sapUiDocumentationParamsTable">
@@ -167,10 +186,10 @@
 											</template:if>
 
 											<template:if test="{= ${data>/constructor/throws} !== undefined}">
-												<custom:LightTable rows="{ path : '/constructor/throws', templateShareable: 'false'}"
+												<custom:LightTable rows="{path : '/constructor/throws', templateShareable: 'false'}"
 														columnTitles="Throws,Desktop"
 														columnCount="2"
-														class="sapUiDocumentationReturnsTable">
+														class="sapUiDocumentation2ColumnsEqualTable">
 													<custom:Row>
 														<m:Link text="{type}"
 																href="#/api/{type}"
@@ -193,7 +212,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/properties'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/properties'}"
 											columnTitles="Name,Type,Default Value,Description"
 											columnCount="4"
 											class="sapUiSmallMarginTop">
@@ -240,7 +259,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/aggregations'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/aggregations'}"
 											columnTitles="Name,Cardinality,Type,Description"
 											columnCount="4"
 											class="sapUiSmallMarginTop">
@@ -250,7 +269,27 @@
 												<m:Link text="{type}"
 														href="#/api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<custom:JSDocText text="{description}"/>
+												<layout:VerticalLayout width="100%">
+													<custom:JSDocText text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -266,7 +305,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/associations'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/associations'}"
 											columnCount="4"
 											columnTitles="Name,Cardinality,Type,Description"
 											class="sapUiSmallMarginTop">
@@ -276,7 +315,27 @@
 												<m:Link text="{type}"
 														href="#/api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<custom:JSDocText text="{description}"/>
+												<layout:VerticalLayout width="100%">
+													<custom:JSDocText text="{description}"/>
+													<m:MessageStrip
+															visible="{=${deprecated} !== undefined}"
+															text="Deprecated as of version {deprecated/since}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+															visible="{=${experimental} !== undefined}"
+															text="Experimental API since {experimental/since} {experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -303,7 +362,7 @@
 																		href="#/api/{data>/name}/events/{event>name}"
 																		deprecated="{= ${event>deprecated} !== undefined }"
 																		press="scrollToEvent"/>
-															<custom:JSDocText text="{event>description}"/>
+															<custom:JSDocText text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
 												</custom:LightTable>
@@ -329,7 +388,7 @@
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<custom:JSDocText text="{event>description}"/>
+												<custom:JSDocText text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
 												<m:ObjectStatus text="Visibility: {event>visibility}" state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
@@ -395,6 +454,7 @@
 															<custom:ParamText text="{method>name}"
 																		href="#/api/{data>/name}/methods/{method>name}"
 																		deprecated="{= ${method>deprecated} !== undefined }"
+																        experimental="{= ${method>experimental} !== undefined }"
 																		press="scrollToMethod"/>
 															<custom:JSDocText text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</custom:Row>
@@ -418,10 +478,10 @@
 								</custom:ObjectPageSubSection>
 
 								<template:repeat list="{data>/methods}" var="method">
-									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '') }_method">
+									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '').replace('#', '.') }_method">
 										<custom:blocks>
 
-											<ObjectPageLazyLoader stashed="true" id="{= ${method>name}.replace('$', '') }__method">
+											<ObjectPageLazyLoader stashed="true" id="{= ${method>name}.replace('$', '').replace('#', '.') }__method">
 
 												<layout:VerticalLayout width="100%">
 
@@ -470,12 +530,19 @@
 																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
 																	<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																		<template:repeat list="{parameter>types}" var="type">
-																			<m:Link text="{type>value}"
-																					href="#/api/{= ${path: 'type>value'}.replace('[]', '') }"
-																					enabled="{= !!${type>linkEnabled} }"/>
+																			<template:if test="{= !!${type>linkEnabled} }">
+																				<template:then>
+																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
+																							href="{type>href}"
+																							enabled="true"/>
+																				</template:then>
+																				<template:else>
+																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" enabled="false"/>
+																				</template:else>
+																			</template:if>
 																		</template:repeat>
 																	</layout:VerticalLayout>
-																	<m:Text text="{{parameter>defaultValue}" wrapping="false"/>
+																	<m:Text text="{parameter>defaultValue}" wrapping="false"/>
 																	<custom:JSDocText text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 																</custom:Row>
 															</template:repeat>
@@ -485,7 +552,7 @@
 													<template:if test="{= ${method>returnValue} !== undefined}">
 														<custom:LightTable columnCount="2"
 																	columnTitles="Returns,Description"
-																	class="sapUiDocumentationReturnsTable">
+																	class="sapUiDocumentation2ColumnsEqualTable">
 															<custom:Row>
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
@@ -503,7 +570,7 @@
 														<custom:LightTable
 																columnTitles="Throws,Description"
 																columnCount="2"
-																class="sapUiDocumentationReturnsTable">
+																class="sapUiDocumentation2ColumnsEqualTable">
 															<template:repeat list="{method>throws}" var="throws">
 																<custom:Row>
 																	<m:Link text="{throws>type}"
@@ -533,7 +600,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<custom:LightTable rows="{ path : '/ui5-metadata/specialSettings'}"
+										<custom:LightTable rows="{path : '/ui5-metadata/specialSettings'}"
 											columnCount="3"
 											columnTitles="Name,Type,Description"
 											class="sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">

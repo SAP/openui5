@@ -89,20 +89,6 @@ sap.ui.define([
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
-	 * Logs an error with the given message and details and throws it.
-	 *
-	 * @param {string} sMessage
-	 *   Error message
-	 * @param {string} sDetails
-	 *   Error details
-	 * @throws {Error}
-	 */
-	function logAndThrowError(sMessage, sDetails) {
-		jQuery.sap.log.error(sMessage, sDetails, sODataMetaModel);
-		throw new Error(sDetails + ": " + sMessage);
-	}
-
-	/**
 	 * Adds the given reference URI to the map of reference URIs for schemas.
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
@@ -121,18 +107,17 @@ sap.ui.define([
 			mUrls = oMetaModel.mSchema2MetadataUrl[sSchema];
 
 		if (!mUrls) {
-			oMetaModel.mSchema2MetadataUrl[sSchema] = {};
-			oMetaModel.mSchema2MetadataUrl[sSchema][sReferenceUri] = false;
+			mUrls = oMetaModel.mSchema2MetadataUrl[sSchema] = {};
+			mUrls[sReferenceUri] = false;
 		} else if (!(sReferenceUri in mUrls)) {
 			sUrl0 = Object.keys(mUrls)[0];
-			if (oMetaModel.mSchema2MetadataUrl[sSchema][sUrl0]) {
+			if (mUrls[sUrl0]) {
 				// document already processed, no different URLs allowed
 				logAndThrowError("A schema cannot span more than one document: " + sSchema
 					+ " - expected reference URI " + sUrl0
 					+ " but instead saw " + sReferenceUri, sDocumentUri);
-			} else {
-				oMetaModel.mSchema2MetadataUrl[sSchema][sReferenceUri] = false;
 			}
+			mUrls[sReferenceUri] = false;
 		}
 	}
 
@@ -156,7 +141,7 @@ sap.ui.define([
 	 *   If the schema has already been loaded and read from a different URI
 	 */
 	function getOrFetchSchema(oMetaModel, mScope, sSchema, fnLog) {
-		var oPromise, sUrl, aUrls, oUrls;
+		var oPromise, sUrl, aUrls, mUrls;
 
 		/**
 		 * Include the schema (and all of its children) with namespace <code>sSchema</code> from
@@ -189,16 +174,16 @@ sap.ui.define([
 			return mScope[sSchema];
 		}
 
-		oUrls = oMetaModel.mSchema2MetadataUrl[sSchema];
-		if (oUrls) {
-			aUrls = Object.keys(oUrls);
+		mUrls = oMetaModel.mSchema2MetadataUrl[sSchema];
+		if (mUrls) {
+			aUrls = Object.keys(mUrls);
 			if (aUrls.length > 1) {
 				logAndThrowError("A schema cannot span more than one document: schema is referenced"
 					+ " by following URLs: " + aUrls.join(", "), sSchema);
 			}
 
 			sUrl = aUrls[0];
-			oUrls[sUrl] = true;
+			mUrls[sUrl] = true;
 			fnLog(DEBUG, "Namespace ", sSchema, " found in $Include of ", sUrl);
 			oPromise = oMetaModel.mMetadataUrl2Promise[sUrl];
 			if (!oPromise) {
@@ -235,6 +220,20 @@ sap.ui.define([
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
+	}
+
+	/**
+	 * Logs an error with the given message and details and throws it.
+	 *
+	 * @param {string} sMessage
+	 *   Error message
+	 * @param {string} sDetails
+	 *   Error details
+	 * @throws {Error}
+	 */
+	function logAndThrowError(sMessage, sDetails) {
+		jQuery.sap.log.error(sMessage, sDetails, sODataMetaModel);
+		throw new Error(sDetails + ": " + sMessage);
 	}
 
 	/**
@@ -483,6 +482,10 @@ sap.ui.define([
 
 			// Updates the binding's value and sends a change event if the <code>bForceUpdate</code>
 			// parameter is set to <code>true</code> or if the value has changed.
+			// If the binding parameter <code>$$valueAsPromise</code> is <code>true</code> and the
+			// value cannot be fetched synchronously then <code>getValue</code> returns a
+			// <code>SyncPromise</code> resolving with the value. After the value is resolved a
+			// second change event is fired and <code>getValue</code> returns the value itself.
 			//
 			// @param {boolean} [bForceUpdate=false]
 			//   If <code>true</code>, the change event is always fired.
@@ -491,19 +494,28 @@ sap.ui.define([
 			// @override
 			// @see sap.ui.model.Binding#checkUpdate
 			checkUpdate : function (bForceUpdate, sChangeReason) {
-				var that = this;
+				var oPromise,
+					that = this;
 
-				this.oModel.fetchObject(this.sPath, this.oContext, this.mParameters)
-					.then(function (vValue) {
-						if (bForceUpdate || vValue !== that.vValue) {
-							that.vValue = vValue;
-							that._fireChange({
-								reason : sChangeReason || ChangeReason.Change
-							});
-						}
-					});
+				function setValue(vValue) {
+					if (bForceUpdate || vValue !== that.vValue) {
+						that.vValue = vValue;
+						that._fireChange({
+							reason : sChangeReason || ChangeReason.Change
+						});
+					}
+					return vValue;
+				}
+
+				oPromise = this.oModel.fetchObject(this.sPath, this.oContext, this.mParameters)
+					.then(setValue);
+				if (this.mParameters && this.mParameters.$$valueAsPromise && oPromise.isPending()) {
+					setValue(oPromise);
+				}
 			},
 
+			// May return a <code>SyncPromise</code> instead of the value if
+			// <code>$$valueAsPromise</code> is <code>true</code>
 			// @override
 			// @see sap.ui.model.PropertyBinding#getValue
 			getValue : function () {
@@ -590,6 +602,14 @@ sap.ui.define([
 			this.sUrl = sUrl;
 		}
 	});
+
+	/**
+	 * Indicates that the property bindings of this model may return their value as a
+	 * <code>SyncPromise</code> if the value cannot be fetched synchronously.
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.$$valueAsPromise = true;
 
 	/**
 	 * Merges <code>$Annotations</code> from the given $metadata and additional annotation files
@@ -704,6 +724,9 @@ sap.ui.define([
 	 * @param {object} [mParameters]
 	 *   Optional binding parameters that are passed to {@link #getObject} to compute the binding's
 	 *   value; if they are given, <code>oContext</code> cannot be omitted
+	 * @param {boolean} [mParameters.$$valueAsPromise]
+	 *   Whether {@link sap.ui.model.PropertyBinding#getValue} may return a <code>SyncPromise</code>
+	 *   resolving with the value (since 1.57.0)
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {sap.ui.model.PropertyBinding}

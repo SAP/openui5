@@ -79,6 +79,234 @@
         "type": "FIX",
         "text": " sap.m.TimePicker: Select time with num keypad",
         "references": []
+      },
+      {
+        "id": "7138a8eabff47c6cfa718daf4f7b1c9b37e1f58c",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Added ctrlKey \u0026 metaKey parameters to press event",
+        "references": []
+      },
+      {
+        "id": "e70d73693331e1f6be7fb73776a644b0650fbc1c",
+        "type": "FIX",
+        "text": " SliderTooltipContainer: Positioning available for subclasses",
+        "references": []
+      },
+      {
+        "id": "21f746e4c7cc29cb5219dc434fe5f6f9e577f1ff",
+        "type": "FIX",
+        "text": " m.Select: selectedKey API documentation updated",
+        "references": []
+      },
+      {
+        "id": "fe17b2833468eff056f60fc706b8d159b816fca7",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Close event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "4d7f65eb08ed25c21368c342e97c66ea103704b6",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selecting items is now working in IE",
+        "references": []
+      },
+      {
+        "id": "a8223fea7b402e9b10f6c1c4c56c1000fd81028f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: After double click on header dialog content is visualized correctly",
+        "references": []
+      },
+      {
+        "id": "0ff7ffb5a7d0d67ac5de20b565c7e48030c05e07",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Now the control handles filters correctly",
+        "references": []
+      },
+      {
+        "id": "834d5a2bdb6769bd9c020c99f8ccd6aae34db59b",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem : List Count was not readout on accessing FeedListItems so added logic to calculate the count and readout.",
+        "references": []
+      },
+      {
+        "id": "bec97e8d7bc52debe733b0540ef26e8e302fade2",
+        "type": "FIX",
+        "text": " sap.m.FormattedTextAnchorGenerator: Anchor tag conversion improved",
+        "references": []
+      },
+      {
+        "id": "1cfa4c649d6fc559b9bf4679092db071dc62997d",
+        "type": "FIX",
+        "text": " sap.m.Input: Input width is now correct",
+        "references": []
+      },
+      {
+        "id": "eda6a89fe8b3b429b7351cb1175914e365460a63",
+        "type": "FIX",
+        "text": " sap.m.ObjectListeItem: render properly hidden marker",
+        "references": []
+      },
+      {
+        "id": "f5963d95fd6884daccef6b5ae79128d686f79062",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header aligment when icon is used",
+        "references": []
+      },
+      {
+        "id": "11c596df09e94695f28bb5e7d98e17be55370f4e",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      },
+      {
+        "id": "eae21db82ee6b31d9dc3982cc0cfe033a058f03a",
+        "type": "FIX",
+        "text": " sap.m.Text: Normalisation and visualisation of line endings and whitespace characters is now fixed",
+        "references": []
+      },
+      {
+        "id": "b74dfb7a857aa64348954cd8ce835480a2fa84a2",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Updating with special characters is now correct",
+        "references": []
+      },
+      {
+        "id": "2c882434ae5158daa57390478e07e9a5e695dc9d",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: now doesn\u0027t create global DateTimePickerPopup",
+        "references": []
+      },
+      {
+        "id": "01d4f367ebe9d39fdee14323c8a637e4fe30c4ec",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Remove additional tab stop in Light mode",
+        "references": []
+      },
+      {
+        "id": "ae0049eff7bfb99af891953f059cc1bec59b0447",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: Calls to the backend are now optimized",
+        "references": []
+      },
+      {
+        "id": "3734c37277a2dae1f63f31cdf664334decf8adf3",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Overflow arrows in header is now fixed",
+        "references": []
+      },
+      {
+        "id": "0bd19fd61fd87ac6d7ef106a1d1bd32be419196b",
+        "type": "FIX",
+        "text": " sap.m.Input: step attribute set to any",
+        "references": []
+      },
+      {
+        "id": "975844ca461e393330f21a7f271e0f40e31c09f4",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: on Android, caret positioning is improved.",
+        "references": []
+      },
+      {
+        "id": "b0812f0ce31f1daff5ffe906cac4605c93f950d2",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Test page adjusted",
+        "references": []
+      },
+      {
+        "id": "ba18987a57b8369ab68b2658eb37112ccfffbcab",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: now doesn\u0027t create global CustomText and CustomLink controls",
+        "references": []
+      },
+      {
+        "id": "783409bea13efdc4042077ccca5f14b5a9b5fbe6",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: text / icon alignment is correct now",
+        "references": []
+      },
+      {
+        "id": "d1954a53a27471be7be26e77d106e4810b93cba7",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "79330aebe8ba2f639645d0c3719e54ab288f8149",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "c93cdca6491c582f338802dd196c801d2e38c5f2",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: \"Hide\" animation is now smooth",
+        "references": []
+      },
+      {
+        "id": "5503e079bb0092b66287f152fa89fdaa8c443721",
+        "type": "FIX",
+        "text": " sap.m.StandardTile: focus outline is visible on click in IE",
+        "references": []
+      },
+      {
+        "id": "ebb866241656476ede63993dc07c50916f6a2cc8",
+        "type": "FEATURE",
+        "text": " CheckBox: partiallySelected property added",
+        "references": []
+      },
+      {
+        "id": "00b6bd10fa9f68d82ef3d56e426a946bf38294c1",
+        "type": "FEATURE",
+        "text": " sap.m.App: Exposed new mobileWebAppCapable property for iOS devices",
+        "references": []
+      },
+      {
+        "id": "c9f00579ca2856aab77da8d9f09ad11ff1ae13aa",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: Tooltips of predefined colors are internationalized",
+        "references": []
+      },
+      {
+        "id": "fd2af9511092bc1cf12820068d62ae8208469efa",
+        "type": "FEATURE",
+        "text": " sap.m.TableSelectDialog: Make headers and info toolbar sticky",
+        "references": []
+      },
+      {
+        "id": "c7650a3bed1d30d566ed58940ca0873cc3fa3f2d",
+        "type": "FIX",
+        "text": " MessagePage: failing visual test corrected",
+        "references": []
+      },
+      {
+        "id": "2565fa91a9d0b82a1e3ea58ea54e62f35ac55f1f",
+        "type": "FIX",
+        "text": " P13DimeasurePanel: Align items with chart API",
+        "references": []
+      },
+      {
+        "id": "eac1710aa5b0d05e22e0e60c21f1e82e3ea8cc8a",
+        "type": "FIX",
+        "text": " Toolbar: sample page changed",
+        "references": []
+      },
+      {
+        "id": "78ed8e7a0dd7eac905a98381dc6311c2e16b3645",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Origin is now set on Space and Enter",
+        "references": []
+      },
+      {
+        "id": "54e00b88d48b9f9a5d62d81c414f1ff88ef13ff3",
+        "type": "FIX",
+        "text": " sap.m.Select: Item selection on data binding update corrected",
+        "references": []
+      },
+      {
+        "id": "26b2897726f363d7fcc625d75dcc664eec5fcc9c",
+        "type": "FIX",
+        "text": " sap.m.Select: Revert Item selection on data binding update corrected\"",
+        "references": []
       }
     ]
   }

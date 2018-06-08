@@ -6,9 +6,11 @@
  */
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/support/library"
 ], function(
 	jQuery,
+	LoaderExtensions,
 	SupportLib) {
 	"use strict";
 
@@ -38,9 +40,10 @@ sap.ui.define([
 		}],
 		check: function(oIssueManager, oCoreFacade) {
 			// Check for FLP scenario
-			var oUshellLib = sap.ui.getCore().getLoadedLibraries()["sap.ushell"];
+			var oUshellLib = sap.ui.getCore().getLoadedLibraries()["sap.ushell"],
+				bIsDebug = sap.ui.getCore().getConfiguration().getDebug();
 
-			if (sap.ui.getCore().getConfiguration().getPreload() !== "async" && !oUshellLib) {
+			if (!bIsDebug && sap.ui.getCore().getConfiguration().getPreload() !== "async" && !oUshellLib) {
 				oIssueManager.addIssue({
 					severity: Severity.High,
 					details: "Preloading libraries asynchronously improves the application performance massively.",
@@ -133,7 +136,7 @@ sap.ui.define([
 
 			// 2. Ignore libraries with declared modules
 			// Alternative: More exact, but request-dependent solution would be loading and evaluating the resources.json file for each library
-			var aDeclaredModules = jQuery.sap.getAllDeclaredModules();
+			var aDeclaredModules = LoaderExtensions.getAllRequiredModules();
 			Object.keys(mLibraries).forEach(function(sLibrary) {
 				var sLibraryWithDot = sLibrary + ".";
 				for (var i = 0; i < aDeclaredModules.length; i++) {

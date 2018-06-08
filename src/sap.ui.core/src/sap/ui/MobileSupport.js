@@ -107,7 +107,7 @@ sap.ui.define(["sap/ui/initjQuerySupport", 'sap/ui/Device', 'sap/base/Log'], fun
 	 * Does some basic modifications to the HTML page that make it more suitable for mobile apps.
 	 * Only the first call to this method is executed, subsequent calls are ignored. Note that this method is also
 	 * called by the constructor of toplevel controls like sap.m.App, sap.m.SplitApp and sap.m.Shell. Exception: if
-	 * no homeIcon was set, subsequent calls have the chance to set it.
+	 * <code>homeIcon</code> or <code>mobileWebAppCapable</code> were not set, subsequent calls have the chance to set them.
 	 *
 	 * The "options" parameter configures what exactly should be done.
 	 *
@@ -214,8 +214,6 @@ sap.ui.define(["sap/ui/initjQuerySupport", 'sap/ui/Device', 'sap/base/Log'], fun
 					$head.append(jQuery('<meta name="apple-mobile-web-app-capable" content="yes">')); // since iOS
 				                                                                                      // 2.1
 				}
-			} else {
-				oMobileSupport.setMobileWebAppCapable(options.mobileWebAppCapable);
 			}
 
 			if (Device.os.ios) {
@@ -255,6 +253,10 @@ sap.ui.define(["sap/ui/initjQuerySupport", 'sap/ui/Device', 'sap/base/Log'], fun
 			oIcons.favicon = options.homeIcon.icon || oIcons.favicon;
 			oIcons.icon = undefined;
 			oMobileSupport.setIcons(oIcons);
+		}
+
+		if (options && options.mobileWebAppCapable !== "default") {
+			oMobileSupport.setMobileWebAppCapable(options.mobileWebAppCapable);
 		}
 	};
 

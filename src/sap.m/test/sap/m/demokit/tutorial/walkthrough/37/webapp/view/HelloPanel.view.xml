@@ -10,6 +10,7 @@
 		expanded="{= !${device>/system/phone} }">
 		<content>
 			<Button
+				id="helloDialogButton"
 				icon="sap-icon://world"
 				text="{i18n>openDialogButtonText}"
 				press="onOpenDialog"

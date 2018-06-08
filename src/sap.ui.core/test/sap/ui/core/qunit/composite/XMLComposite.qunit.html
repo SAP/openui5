@@ -40,6 +40,18 @@
 
 </head>
 
+    <script id="view" type="application/xml">
+        <mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:t="composites" xmlns="sap.m">
+            <t:Table id="table">
+                <t:actions>
+                    <t:Action call=".handler" text="Outer" id="outer" />
+                </t:actions>
+                <t:columns>
+                    <t:Column id="OWN" label="Own" path="any" />
+                </t:columns>
+            </t:Table>
+        </mvc:View>
+    </script>
 <body>
 <div id="qunit"></div>
 <div id="content"></div>

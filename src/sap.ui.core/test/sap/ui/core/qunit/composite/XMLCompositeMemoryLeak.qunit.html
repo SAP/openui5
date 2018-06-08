@@ -37,7 +37,7 @@
     <script src="resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
     <script>
-        jQuery.sap.registerModulePath("composites", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites");
+      sap.ui.loader.config({paths: {"composites": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites"}});
     </script>
     <script src="test-resources/sap/ui/core/qunit/composite/XMLCompositeMemoryLeak.qunit.js"></script>
 

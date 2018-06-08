@@ -34,7 +34,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/test/integration/navigationJourney.js",
 							"webapp/test/integration/opaTests.qunit.html",
 							"webapp/test/unit/model/formatter.js",
-							"webapp/test/unit/unitTests.qunit.html"
+							"webapp/test/unit/unitTests.qunit.html",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}

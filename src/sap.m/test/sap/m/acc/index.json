@@ -328,12 +328,12 @@
 		},
 		{
 			"control": "sap.m.QuickView",
-			"url": "../QuickView.html",
+			"url": "QuickView.html",
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.QuickViewCard",
-			"url": "../QuickViewCard.html",
+			"url": "QuickViewCard.html",
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
@@ -439,7 +439,7 @@
 		},
 		{
 			"control": "sap.m.TableSelectDialog",
-			"url": "../TableSelectDialog.html",
+			"url": "TableSelectDialog.html",
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{

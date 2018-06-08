@@ -1,6 +1,6 @@
 /*global QUnit*/
 
-sap.ui.define([
+sap.ui.define("sap.m.qunit.PDFViewerPopup", [
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/m/PDFViewer",
 	'jquery.sap.global',

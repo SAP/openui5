@@ -1457,7 +1457,6 @@
 				oCal3._handleWeekSelection(oMockEvent);
 
 				//assert
-				assert.equal(oEventSpy.callCount, 1, "an event was fired");
 				assert.equal(oEventSpy.args[0][0], "weekNumberSelect", "weekNumberSelect is fired");
 
 				//cleanup

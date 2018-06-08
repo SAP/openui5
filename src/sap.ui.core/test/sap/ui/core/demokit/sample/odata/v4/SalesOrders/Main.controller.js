@@ -194,7 +194,8 @@ sap.ui.define([
 		onCreateSalesOrderLineItem : function (oEvent) {
 			var oContext,
 				oDeliveryDate = new Date(),
-				oUiModel = this.getView().getModel("ui");
+				oUiModel = this.getView().getModel("ui"),
+				that = this;
 
 			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
 			oDeliveryDate.setMilliseconds(0);
@@ -219,16 +220,16 @@ sap.ui.define([
 			this.byId("SalesOrderLineItems").setSelectedItem(
 				this.byId("SalesOrderLineItems").getItems()[oContext.getIndex()]);
 			this._setSalesOrderLineItemBindingContext(oContext);
-			oUiModel.setProperty("/bCreateItemPending", true);
+			this.toggleSelectionMode(false);
 			this.byId("SalesOrderLineItems").getItems()[0].focus();
 
 			// Note: this promise fails only if the transient entity is deleted
 			this.oSalesOrderLineItemCreated = oContext.created().then(function () {
-				oUiModel.setProperty("/bCreateItemPending", false);
+				that.toggleSelectionMode(true);
 				MessageBox.success("Line item created: " + oContext.getProperty("ItemPosition"));
 			}, function (oError) {
 				// delete of transient entity
-				oUiModel.setProperty("/bCreateItemPending", false);
+				that.toggleSelectionMode(true);
 			});
 		},
 
@@ -260,7 +261,7 @@ sap.ui.define([
 		onDeleteBusinessPartner: function () {
 			var oContext = this.byId("BusinessPartner").getBindingContext();
 
-			oContext["delete"](oContext.getModel().getGroupId()).then(function () {
+			oContext.delete(oContext.getModel().getGroupId()).then(function () {
 				MessageBox.success("Deleted Business Partner");
 			}, function (oError) {
 				MessageBox.error("Could not delete Business Partner: " + oError.message);
@@ -278,7 +279,7 @@ sap.ui.define([
 					return;
 				}
 				// Use "$auto" or "$direct" just like selected when creating the model
-				oSalesOrderContext["delete"](oSalesOrderContext.getModel().getGroupId())
+				oSalesOrderContext.delete(oSalesOrderContext.getModel().getGroupId())
 					.then(function () {
 						MessageBox.success("Deleted Sales Order " + sOrderID);
 					}, function (oError) {
@@ -305,7 +306,7 @@ sap.ui.define([
 					return;
 				}
 				// Use "$auto" or "$direct" just like selected when creating the model
-				oSOLineItemContext["delete"](oSOLineItemContext.getModel().getGroupId())
+				oSOLineItemContext.delete(oSOLineItemContext.getModel().getGroupId())
 					.then(function () {
 						MessageBox.success("Deleted Sales Order " + sSalesOrderLineItem);
 					}, function (oError) {
@@ -328,7 +329,7 @@ sap.ui.define([
 
 			// Special case: Delete entities deeply nested in the cache
 			oTable.getSelectedContexts().forEach(function (oContext) {
-				aPromises.push(oContext["delete"](sGroupId));
+				aPromises.push(oContext.delete(sGroupId));
 			});
 			Promise.all(aPromises).then(function () {
 				oTable.removeSelections();
@@ -617,6 +618,30 @@ sap.ui.define([
 
 			oView.setBusy(true);
 			return oView.getModel().submitBatch(sGroupId).then(resetBusy, resetBusy);
+		},
+
+		/**
+		 * Toggles the selection mode for the sales order table. Remembers or restores the last
+		 * selected item.
+		 *
+		 * @param {boolean} bSingleSelectMaster
+		 *   If <code>true</code> the selection mode is set to <code>SingleSelectMaster</code>
+		 *   and the last selected item is restored. Otherwise the selection mode is set to <code>
+		 *   None</code> and the currently selected item is remembered.
+		 */
+		toggleSelectionMode : function (bSingleSelectMaster) {
+			var oTable = this.byId("SalesOrders"),
+				oSelectedItem = oTable.getSelectedItem();
+
+			// Note: The table's selection mode depends on bCreateItemPending, - see view
+			this.getView().getModel("ui").setProperty("/bCreateItemPending", !bSingleSelectMaster);
+
+			if (!bSingleSelectMaster) {
+				this.iSelectedSalesOrder = oSelectedItem.getBindingContext().getIndex();
+			} else if (this.iSelectedSalesOrder !== undefined) {
+				oTable.setSelectedItem(oTable.getItems()[this.iSelectedSalesOrder]);
+				this.iSelectedSalesOrder = undefined;
+			}
 		}
 	});
 

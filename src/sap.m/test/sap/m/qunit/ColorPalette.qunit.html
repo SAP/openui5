@@ -734,7 +734,7 @@
 		QUnit.module("ColorPalette - ARIA");
 
 		// The ARIA tests are the only ones, that checks something at the DOM. DOM rendering is supposed to be tested via OPA.
-		QUnit.test("ARIA attributes are rendered", function (assert) {
+		QUnit.test("ARIA attributes and tooltips are rendered", function (assert) {
 			// Prepare
 			var oCP = new ColorPalette({
 					colors: [
@@ -744,6 +744,8 @@
 					]/*black, white, non-named*/
 				}),
 				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				sBlack = oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_BLACK"),
+				sWhite = oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_WHITE"),
 				$SwatchContainer,
 				$aSwatches,
 				sCPSwatchContainerTitle = oBundle.getText("COLOR_PALETTE_SWATCH_CONTAINER_TITLE");
@@ -762,17 +764,24 @@
 			$aSwatches = oCP._getAllSwatches();
 
 			assert.equal($aSwatches[0].getAttribute("role"), "button", "Swatch 1 role");
-			assert.equal($aSwatches[0].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [1, "black"]),
+			assert.equal($aSwatches[0].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [1, sBlack]),
 				"Swatch 1 label");
+			assert.equal($aSwatches[0].getAttribute("title"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [1, sBlack]),
+			"Swatch 1 title");
 
 			assert.equal($aSwatches[1].getAttribute("role"), "button", "Swatch 2 role");
-			assert.equal($aSwatches[1].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [2, "white"]),
+			assert.equal($aSwatches[1].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [2, sWhite]),
 				"Swatch 2 label");
+			assert.equal($aSwatches[1].getAttribute("title"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [2, sWhite]),
+			"Swatch 2 title");
 
 			assert.equal($aSwatches[2].getAttribute("role"), "button", "Swatch 3 role");
 			assert.equal($aSwatches[2].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [3,
 					oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_CUSTOM")]),
 				"Swatch 3 label");
+			assert.equal($aSwatches[2].getAttribute("title"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [3,
+				oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_CUSTOM")]),
+			"Swatch 3 title");
 
 			// Cleanup
 			oCP.destroy()

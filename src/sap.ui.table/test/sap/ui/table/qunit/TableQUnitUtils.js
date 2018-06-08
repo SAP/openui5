@@ -183,9 +183,9 @@
 		}
 		if (assert) {
 			if (bFocus) {
-				assert.ok(oCell === document.activeElement, "Cell [" + iRow + ", " + iCol + "] focused");
+				assert.deepEqual(oCell, document.activeElement, "Cell [" + iRow + ", " + iCol + "] focused");
 			} else {
-				assert.ok(oCell != document.activeElement, "Cell [" + iRow + ", " + iCol + "] not focused");
+				assert.notEqual(oCell, document.activeElement, "Cell [" + iRow + ", " + iCol + "] not focused");
 			}
 		}
 		return jQuery(oCell);
@@ -202,9 +202,9 @@
 		}
 		if (assert) {
 			if (bFocus) {
-				assert.ok(oCell === document.activeElement, "Column Header " + iCol + " focused");
+				assert.deepEqual(oCell, document.activeElement, "Column Header " + iCol + " focused");
 			} else {
-				assert.ok(oCell != document.activeElement, "Column Header " + iCol + " not focused");
+				assert.notEqual(oCell, document.activeElement, "Column Header " + iCol + " not focused");
 			}
 		}
 		return jQuery(oCell);
@@ -221,9 +221,9 @@
 		}
 		if (assert) {
 			if (bFocus) {
-				assert.ok(oCell === document.activeElement, "Row Header " + iRow + " focused");
+				assert.deepEqual(oCell, document.activeElement, "Row Header " + iRow + " focused");
 			} else {
-				assert.ok(oCell != document.activeElement, "Row Header " + iRow + " not focused");
+				assert.notEqual(oCell, document.activeElement, "Row Header " + iRow + " not focused");
 			}
 		}
 		return jQuery(oCell);
@@ -240,9 +240,9 @@
 		}
 		if (assert) {
 			if (bFocus) {
-				assert.ok(oCell === document.activeElement, "Row Action " + iRow + " focused");
+				assert.deepEqual(oCell, document.activeElement, "Row Action " + iRow + " focused");
 			} else {
-				assert.ok(oCell != document.activeElement, "Row Action " + iRow + " not focused");
+				assert.notEqual(oCell, document.activeElement, "Row Action " + iRow + " not focused");
 			}
 		}
 		return jQuery(oCell);
@@ -259,9 +259,9 @@
 		}
 		if (assert) {
 			if (bFocus) {
-				assert.ok(oCell === document.activeElement, "Select All focused");
+				assert.deepEqual(oCell, document.activeElement, "Select All focused");
 			} else {
-				assert.ok(oCell != document.activeElement, "Select All not focused");
+				assert.notEqual(oCell, document.activeElement, "Select All not focused");
 			}
 		}
 		return jQuery(oCell);
@@ -271,7 +271,7 @@
 		sId = sId || "outerelement";
 		var oOuterElement = jQuery.sap.domById(sId);
 		oOuterElement.focus();
-		assert.ok(oOuterElement === document.activeElement, "Outer element with id '" + sId + "' focused");
+		assert.deepEqual(oOuterElement, document.activeElement, "Outer element with id '" + sId + "' focused");
 		return jQuery(oOuterElement);
 	};
 
@@ -285,7 +285,7 @@
 		var $ActiveElement = jQuery(document.activeElement);
 		var $Element = jQuery(oElement);
 
-		assert.ok($Element[0] === document.activeElement, "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
+		assert.deepEqual($Element[0], document.activeElement, "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
 
 		return $ActiveElement;
 	};

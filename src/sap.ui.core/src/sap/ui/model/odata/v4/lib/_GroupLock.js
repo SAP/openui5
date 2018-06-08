@@ -19,14 +19,17 @@ sap.ui.define([
 	 *   The group ID
 	 * @param {boolean} [bLocked=false]
 	 *   Whether the lock is locked
+	 * @param {object} [oOwner]
+	 *   The lock's owner for debugging
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._GroupLock
 	 * @constructor
 	 * @private
 	 */
-	function _GroupLock(sGroupId, bLocked) {
+	function _GroupLock(sGroupId, bLocked, oOwner) {
 		this.sGroupId = sGroupId;
 		this.bLocked = bLocked;
+		this.oOwner = oOwner;
 		// maps a group ID to a promise waiting for it, see waitFor
 		this.mPromiseForGroup = {};
 		// maps a group ID to the resolve function of the promise above
@@ -89,6 +92,26 @@ sap.ui.define([
 				}
 			}
 		}
+	};
+
+	/**
+	 * Returns a string representation of this object including the lock status and the owner.
+	 *
+	 * @returns {string} A string description of this lock
+	 *
+	 * @public
+	 */
+	_GroupLock.prototype.toString = function () {
+		var sDescription = "sap.ui.model.odata.v4.lib._GroupLock("
+				+ (this.isLocked() ? "locked" : "unlocked");
+
+		if (this.sGroupId) {
+			sDescription += ",group=" + this.sGroupId;
+		}
+		if (this.oOwner) {
+			sDescription += ",owner=" + this.oOwner;
+		}
+		return sDescription + ")";
 	};
 
 	/**

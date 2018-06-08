@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			// resolve the base URL of the component depending of given base
 			// URL or the module path of the component
 			var sComponentName = this.getComponentName(),
-			    sBaseUrl = mOptions && mOptions.baseUrl || sComponentName && jQuery.sap.getModulePath(sComponentName, "/");
+				sBaseUrl = mOptions && mOptions.baseUrl || sComponentName && sap.ui.require.toUrl(sComponentName.replace(/\./g, "/")) + "/";
 			if (sBaseUrl) {
 				this._oBaseUri = new URI(sBaseUrl).absoluteTo(new URI(document.baseURI).search(""));
 			}
@@ -460,7 +460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 					for (var sName in mComponents) {
 						if (!mComponents[sName].lazy) {
 							jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
-							sap.ui.component.load({
+							sap.ui.requireSync("sap/ui/core/Component").load({
 								name: sName
 							});
 						}
@@ -493,7 +493,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 						continue;
 					}
 					sResourceRootPath = this.resolveUri(oResourceRootURI).toString();
-					jQuery.sap.registerModulePath(sResourceRoot, sResourceRootPath);
+					var mPaths = {};
+					mPaths[sResourceRoot.replace(/\./g, "/")] = sResourceRootPath;
+					sap.ui.loader.config({paths:mPaths});
 				}
 			}
 

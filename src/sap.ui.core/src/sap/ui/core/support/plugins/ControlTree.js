@@ -1494,17 +1494,19 @@ sap.ui.define([
 						if (aBindingBuffer.length > iIndex && aBindingBuffer[iIndex]) {
 
 							var oBinding = aBindingBuffer[iIndex],
-								oModel = oBinding.getModel();
-
-							var sAbsolutePath;
+								oModel = oBinding.getModel(),
+								sPath = oBinding.getPath(),
+								sAbsolutePath;
 
 							if (oModel) {
-								sAbsolutePath = oModel.resolve(oBinding.getPath(), oBinding.getContext());
+								sAbsolutePath = oModel.resolve(sPath, oBinding.getContext());
 
-								if (oModel.getProperty(sAbsolutePath) != null) {
+								if (oModel.getProperty(sAbsolutePath) !== undefined) {
 									mData.invalidPath = false;
+								} else if (oModel.getProperty(sPath) !== undefined) {
+									mData.invalidPath = false;
+									sAbsolutePath = sPath;
 								}
-
 							}
 
 							mData.absolutePath = (typeof (sAbsolutePath) === 'undefined') ? 'Unresolvable' : sAbsolutePath;

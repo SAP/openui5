@@ -8,6 +8,15 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/*
+	 * The following code has been taken from the component JSON in JavaScript
+	 * from Douglas Crockford which is licensed under Public Domain
+	 * (http://www.json.org/ > JavaScript > json-2). The code contains
+	 * local modifications.
+	 *
+	 * Git URL: https://github.com/douglascrockford/JSON-js/blob/42c18c621a411c3f39a81bb0a387fc50dcd738d9/json_parse.js
+	 */
+
 	/**
 	 * A factory returning a tokenizer object for JS values.
 	 *

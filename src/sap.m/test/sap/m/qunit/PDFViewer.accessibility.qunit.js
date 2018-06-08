@@ -1,6 +1,6 @@
 /*global QUnit*/
 
-sap.ui.define([
+sap.ui.define("sap.m.qunit.PDFViewerAccessibility", [
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/ui/Device",
 	"sap/m/PDFViewer",

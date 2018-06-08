@@ -239,7 +239,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 				checkForMetadata();
 			}
 
-			if (this._oModel.getServiceMetadata().dataServices == undefined) {
+			if (this._oModel.getServiceMetadata()
+					&& this._oModel.getServiceMetadata().dataServices == undefined) {
 				throw "Model could not be loaded";
 			}
 
@@ -1754,8 +1755,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 */
 		getSuperOrdinateDimension : function() {
 			if (!this._sSuperOrdinateDimension) {
-				var sSuperOrdPropName = this._oQueryResult.getEntityType().getSuperOrdinatePropertyOfProperty(this.getName()).name;
-				this._sSuperOrdinateDimension = this._oQueryResult.findDimensionByName(sSuperOrdPropName);
+				var oSuperOrdProperty = this._oQueryResult.getEntityType().getSuperOrdinatePropertyOfProperty(this.getName());
+				if (oSuperOrdProperty) {
+					this._sSuperOrdinateDimension = this._oQueryResult.findDimensionByName(oSuperOrdProperty.name);
+				}
 			}
 			return this._sSuperOrdinateDimension;
 		},

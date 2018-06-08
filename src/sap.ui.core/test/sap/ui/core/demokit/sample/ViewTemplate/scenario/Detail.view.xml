@@ -7,7 +7,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<layout:VerticalLayout>
+	<layout:VerticalLayout class="sapUiSmallMarginBottom">
 		<!-- Note: "meta>" MUST point to an entity set! -->
 		<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
 		<template:alias name=".formatParts" value="sap.ui.core.sample.ViewTemplate.scenario.Helper.formatParts">
@@ -17,8 +17,8 @@
 
 				<template:if test="{entityType>com.sap.vocabularies.UI.v1.LineItem}">
 					<!-- Note: this limits the data shown to 5 rows! -->
-					<Table includeItemInSelection="true" mode="SingleSelectMaster" selectionChange="onSelectionChange"
-							items="{:= '{path:\'/' + ${meta>name} + '\', length: 5}' }">
+					<Table headerText="Items" includeItemInSelection="true" mode="SingleSelectMaster"
+						selectionChange="onSelectionChange" items="{:= '{path:\'/' + ${meta>name} + '\', length: 5}' }">
 						<template:with path="entityType>com.sap.vocabularies.UI.v1.LineItem" var="target">
 							<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
 						</template:with>
@@ -52,11 +52,11 @@
 					</scenario:Form>
 				</template:repeat>
 
-				<scenario:Form title="Facets">
+				<Panel expandable="true" expanded="true" headerText="Facets">
 					<template:with path="entityType>com.sap.vocabularies.UI.v1.Facets" var="facets">
 						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Facets" type="XML"/>
 					</template:with>
-				</scenario:Form>
+				</Panel>
 			</template:with>
 
 			<template:with path="meta>com.sap.vocabularies.UI.v1.DataPoint" var="dataPoint">

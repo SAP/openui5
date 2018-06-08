@@ -4,8 +4,8 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/commons/Label',
-	'sap/ui/commons/LabelDesign',
+	'sap/m/Label',
+	'sap/m/LabelDesign',
 	'sap/m/Dialog',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/SearchField',
@@ -149,7 +149,7 @@ sap.ui.define([
 
 		// Fields of the List
 		var oFieldName = new Label({
-			design: LabelDesign.Bold,
+			design: LabelDesign.Standard,
 			tooltip: "{tooltip}",
 			text: {
 				parts: [{path: "label"}, {path: "referencedComplexPropertyName"}, {path: "duplicateComplexName"}],

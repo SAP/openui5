@@ -23,8 +23,7 @@
 	<script>
 		sap.ui.require(["sap/ui/core/XMLTemplateProcessor", "jquery.sap.xml"], function(XMLTemplateProcessor) {
 			QUnit.begin(function() {
-				jQuery.sap.registerModulePath("testdata/view", "./testdata/view");
-				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+				sap.ui.loader.config({paths:{"testdata/view": "./testdata/view", "my": "../../../../../test-resources/sap/ui/core/qunit/fragment/"}});
 			});
 
 			QUnit.module("enrichTemplateIdsPromise", {

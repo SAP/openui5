@@ -34,8 +34,7 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script >
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		jQuery.sap.registerResourcePath("testlibs", "testdata/libraries/");
-
+		sap.ui.loader.config({paths: {"testlibs": "testdata/libraries/"}});
 
 		//****************************************************
 		// module loading (require/declare/define)
@@ -63,15 +62,15 @@
 					'my.second.module = "2nd";');
 
 			assert.equal(jQuery.sap.getObject("my.first.module"), undefined, "global name for module 'first' should be undefined");
-			assert.ok(!jQuery.sap.isDeclared("my.first.module"), "module 'first' should not be declared");
+			assert.ok(!sap.ui.require("my/first/module"), "module 'first' should not be declared");
 			assert.equal(jQuery.sap.getObject("my.second.module"), undefined, "global name for module 'second' should be undefined");
-			assert.ok(!jQuery.sap.isDeclared("my.second.module"), "module 'second' should not be declared");
+			assert.ok(!sap.ui.require("my/second/module"), "module 'second' should not be declared");
 
 			jQuery.sap.require("my.first.module");
 			assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "require of 'first' should have loaded 'first'");
-			assert.ok(jQuery.sap.isDeclared("my.first.module"), "module 'first' should be declared");
+			assert.ok(sap.ui.require("my/first/module"), "module 'first' should be declared");
 			assert.equal(jQuery.sap.getObject("my.second.module"), "2nd", "require of 'first' should have loaded 'second' (transitively)");
-			assert.ok(jQuery.sap.isDeclared("my.second.module"), "module 'first' should be declared");
+			assert.ok(sap.ui.require("my/second/module"), "module 'first' should be declared");
 
 			jQuery.sap.require("my.second.module");
 			assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "addtl. require of 'second' shouldn't touch globals");
@@ -95,9 +94,9 @@
 			jQuery.sap.require("my.first.module");
 
 			assert.equal(jQuery.sap.getObject("my.first.module"), "1st", "first module should have been loaded");
-			assert.ok(jQuery.sap.isDeclared("my.first.module"), "module 'first' should be declared");
+			assert.ok(sap.ui.loader._.getModuleState("my/first/module.js") !== 0, "module 'first' should be declared");
 			assert.equal(jQuery.sap.getObject("my.second.module"), undefined, "second module should have been loaded");
-			assert.ok(jQuery.sap.isDeclared("my.second.module"), "module 'second' should be declared");
+			assert.ok(sap.ui.loader._.getModuleState("my/second/module.js") !== 0, "module 'second' should be declared");
 
 		});
 
@@ -996,7 +995,7 @@
 			var done = assert.async();
 
 			jQuery.sap.registerResourcePath("", "resources/");
-			
+
 			// toURL special cases
 			assert.throws(
 				function() {
@@ -1015,7 +1014,7 @@
 			assert.equal(sap.ui.require.toUrl('sap/test/../.library'), "resources/sap/.library", "toUrl supports paths which contain relative segments with parent path and filename starting with dot character");
 			assert.equal(sap.ui.require.toUrl('sap/test/../library'), "resources/sap/library", "toUrl supports paths which contain relative segments with parent path");
 			assert.equal(sap.ui.require.toUrl('sap/test/.././test/./library'), "resources/sap/test/library", "toUrl supports paths which contain relative segments");
-			
+
 			/* relative names are not supported for the root
 			assert.equal(sap.ui.require.toUrl('/../.library'), "resources/sap/.library", "toUrl should leave trailing slash intact");
 			assert.equal(sap.ui.require.toUrl('../.library'), "resources/sap/.library", "toUrl should leave trailing slash intact");
@@ -1099,9 +1098,9 @@
 
 				// preconditions
 				assert.ok(
-					!jQuery.sap.isDeclared("sap/test/lazy/MyClass")
-					&& !jQuery.sap.isDeclared("sap/test/lazy/MyLegacyClass")
-					&& !jQuery.sap.isDeclared("sap/test/lazy/MyUtility")
+					!sap.ui.require("sap/test/lazy/MyClass")
+					&& !sap.ui.require("sap/test/lazy/MyLegacyClass")
+					&& !sap.ui.require("sap/test/lazy/MyUtility")
 					&& sap.test.lazy === undefined
 					&& sap.test.factory === undefined, "precondition: modules not loaded before test");
 
@@ -1135,7 +1134,7 @@
 
 			sap.ui.lazyRequire('sap.test.lazy.MyClass');
 
-			assert.ok(!jQuery.sap.isDeclared('sap/test/lazy/MyClass'), "module still not loaded after creation of lazy stub");
+			assert.ok(!sap.ui.require('sap/test/lazy/MyClass'), "module still not loaded after creation of lazy stub");
 			assert.ok(sap.test && typeof sap.test.lazy === 'object', "lazy loader did create the parent namespace sap.test.lazy");
 			assert.ok(this.isLazyStub(sap.test.lazy, 'MyClass'), "lazy loader defined property 'MyClass' with get and set methods");
 
@@ -1143,7 +1142,7 @@
 			var oRequireSpy = this.spy(jQuery.sap, 'require');
 			var oResult = new sap.test.lazy.MyClass();
 			sinon.assert.calledWith(oRequireSpy, 'sap.test.lazy.MyClass');
-			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyClass'), "read access should load the expected module");
+			assert.ok(sap.ui.require('sap/test/lazy/MyClass'), "read access should load the expected module");
 			assert.ok(oResult instanceof sap.ui.base.ManagedObject && oResult.getMetadata().getName() === 'sap.test.lazy.MyClass', "read access should return the expected module content");
 			assert.ok(!this.isLazyStub(sap.test.lazy, 'MyClass'), "the property must no longer be a lazy stub");
 			oRequireSpy.restore();
@@ -1184,7 +1183,7 @@
 
 			sap.test.lazy.MyUtility.show();
 
-			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "read access should load the expected module");
+			assert.ok(sap.ui.require('sap/test/lazy/MyUtility'), "read access should load the expected module");
 
 		});
 
@@ -1204,13 +1203,13 @@
 
 			sap.ui.lazyRequire('sap.test', 'factory', 'sap.test.lazy.MyUtility');
 
-			assert.ok(!jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "module still not loaded after creation of lazy stub");
+			assert.ok(!sap.ui.require('sap/test/lazy/MyUtility'), "module still not loaded after creation of lazy stub");
 			assert.ok(this.isLazyStub(sap.test, 'factory'), "lazy loader created a stub for the namespace");
 
 			// invoke out-of-line method, should load the right module
 			sap.test.factory(0);
 
-			assert.ok(jQuery.sap.isDeclared("sap/test/lazy/MyUtility"), "read access should load the expected module");
+			assert.ok(sap.ui.require("sap/test/lazy/MyUtility"), "read access should load the expected module");
 
 		});
 
@@ -1222,7 +1221,7 @@
 
 			new sap.test.lazy.MyLegacyClass();
 
-			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyLegacyClass'), "read access should load the expected module");
+			assert.ok(sap.ui.require('sap/test/lazy/MyLegacyClass'), "read access should load the expected module");
 
 		});
 
@@ -1247,7 +1246,7 @@
 			//sinon.assert.calledOnce(oLogSpy);
 			oLogSpy.restore();
 
-			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "read access should load the expected module");
+			assert.ok(sap.ui.require('sap/test/lazy/MyUtility'), "read access should load the expected module");
 
 			delete sap.test.noSuchFactory;
 

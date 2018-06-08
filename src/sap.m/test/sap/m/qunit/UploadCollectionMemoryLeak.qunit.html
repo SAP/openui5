@@ -5,398 +5,420 @@
 	<title>QUnit Test Page for sap.m.UploadCollection - Memory Leak</title>
 
 	<script src="../shared-config.js"></script>
-	<base href="../../../../">
 	<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
-	        data-sap-ui-libs="sap.m" src="resources/sap-ui-core.js"
+	        data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
 	        data-sap-ui-language="en">
 	</script>
 
 
-	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit-reporter-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 </head>
 <script>
-	sap.ui.require(["sap/ui/thirdparty/qunit", "sap/ui/thirdparty/sinon", "sap/ui/thirdparty/sinon-qunit", "sap/ui/qunit/qunit-junit", "sap/ui/qunit/qunit-coverage", "sap/ui/qunit/QUnitUtils"],
-		function () {
-			"use strict";
-			function createSpySetup(module) {
-				module.oManagedObjectSpy = sinon.spy(sap.ui.base.ManagedObject.prototype, "applySettings");
+	sap.ui.require([
+		"sap/ui/base/ManagedObject",
+		"sap/m/UploadCollectionItem",
+		"sap/m/UploadCollection",
+		"sap/m/ObjectAttribute",
+		"sap/m/ObjectStatus",
+		"sap/m/ObjectMarker",
+		"sap/m/Label",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/core/ValueState",
+		"sap/m/library",
+		"sap/ui/model/Sorter",
+		"sap/m/MessageBox",
+		"sap/ui/base/Event"
+	], function (ManagedObject, UploadCollectionItem, UploadCollection, ObjectAttribute, ObjectStatus, ObjectMarker, Label,
+	             JSONModel, ValueState, mlibrary, Sorter, MessageBox, Event) {
+		"use strict";
+		var ObjectMarkerType = mlibrary.ObjectMarkerType;
+		var ObjectMarkerVisibility = mlibrary.ObjectMarkerVisibility;
+
+		function createSpySetup(module) {
+			module.oManagedObjectSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+		}
+
+		function restoreSpySetup(module) {
+			module.oManagedObjectSpy.restore();
+		}
+
+		function checkDestroy(module, assert) {
+			var aInstances = module.oManagedObjectSpy.returnValues;
+			for (var i = 0; i < aInstances.length; i++) {
+				if (aInstances[i].getMetadata().getName() === "sap.ui.core.UIArea" ||
+					aInstances[i].getMetadata().getName() === "sap.ui.core.InvisibleText" ||
+					aInstances[i].getMetadata().getName() === "sap.ui.core.Popup" ||
+					isInMessageBox(aInstances[i])) {
+					continue;
+				}
+				assert.ok(aInstances[i]._bIsBeingDestroyed, "ManagedObject: " + aInstances[i].getMetadata().getName() + ", with id: " + aInstances[i].getId() + " is marked as destroyed");
 			}
 
-			function restoreSpySetup(module) {
-				module.oManagedObjectSpy.restore();
-			}
-
-			function checkDestroy(module, assert) {
-				var aInstances = module.oManagedObjectSpy.returnValues;
-				for (var i = 0; i < aInstances.length; i++) {
-					if (aInstances[i].getMetadata().getName() === "sap.ui.core.UIArea" ||
-						aInstances[i].getMetadata().getName() === "sap.ui.core.InvisibleText" ||
-						aInstances[i].getMetadata().getName() === "sap.ui.core.Popup" ||
-						isInMessageBox(aInstances[i])) {
-						continue;
+			function isInMessageBox(oControl) {
+				var oCheck = oControl;
+				do {
+					if (oCheck.getMetadata().getName() === 'sap.m.Dialog') {
+						return true;
 					}
-					assert.ok(aInstances[i]._bIsBeingDestroyed, "ManagedObject: " + aInstances[i].getMetadata().getName() + ", with id: " + aInstances[i].getId() + " is marked as destroyed");
-				}
-
-				function isInMessageBox(oControl) {
-					var oCheck = oControl;
-					do {
-						if (oCheck.getMetadata().getName() === 'sap.m.Dialog') {
-							return true;
-						}
-						oCheck = oCheck.getParent();
-					} while (oCheck);
-					return false;
-				}
+					oCheck = oCheck.getParent();
+				} while (oCheck);
+				return false;
 			}
+		}
 
-			function getItem() {
-				return new sap.m.UploadCollectionItem({
-					contributor: "Otto",
-					documentId: "4711",
-					fileName: "MyBusinessPlan.gif",
-					mimeType: "image/gif",
-					thumbnailUrl: "http://mydomain.subdomain.com/path/thumbnail.jpg",
-					uploadedDate: "01.04.1972",
-					enableEdit: false,
-					enableDelete: false,
-					visibleEdit: false,
-					visibleDelete: false,
-					ariaLabelForPicture: "Some hidden text",
-					selected: false,
-					attributes: [
-						new sap.m.ObjectAttribute({
-							title: "My super title",
-							text: "My super text",
-							active: false
-						})
-					],
-					statuses: [
-						new sap.m.ObjectStatus({
-							title: "My super title",
-							text: "My super text",
-							state: sap.ui.core.ValueState.None,
-							icon: ""
-						})
-					],
-					markers: [
-						new sap.m.ObjectMarker({
-							type: sap.m.ObjectMarkerType.Locked,
-							visibility: sap.m.ObjectMarkerVisibility.IconAndText,
-							additionalInfo: "Some super text"
-						})
-					]
-				});
+		function getItem() {
+			return new UploadCollectionItem({
+				contributor: "Otto",
+				documentId: "4711",
+				fileName: "MyBusinessPlan.gif",
+				mimeType: "image/gif",
+				thumbnailUrl: "http://mydomain.subdomain.com/path/thumbnail.jpg",
+				uploadedDate: "01.04.1972",
+				enableEdit: false,
+				enableDelete: false,
+				visibleEdit: false,
+				visibleDelete: false,
+				ariaLabelForPicture: "Some hidden text",
+				selected: false,
+				attributes: [
+					new ObjectAttribute({
+						title: "My super title",
+						text: "My super text",
+						active: false
+					})
+				],
+				statuses: [
+					new ObjectStatus({
+						title: "My super title",
+						text: "My super text",
+						state: ValueState.None,
+						icon: ""
+					})
+				],
+				markers: [
+					new ObjectMarker({
+						type: ObjectMarkerType.Locked,
+						visibility: ObjectMarkerVisibility.IconAndText,
+						additionalInfo: "Some super text"
+					})
+				]
+			});
+		}
+
+		QUnit.module("Setup check", {
+			beforeEach: function () {
+				createSpySetup(this);
+			},
+			afterEach: function () {
+				restoreSpySetup(this);
 			}
-
-			QUnit.module("Setup check", {
-				beforeEach: function () {
-					createSpySetup(this);
-				},
-				afterEach: function () {
-					restoreSpySetup(this);
-				}
-			});
-
-			QUnit.test("Creating a new control and ID is saved", function (assert) {
-				//Act
-				var oLabel = new sap.m.Label("labelOne");
-				//Assert
-				assert.ok(this.oManagedObjectSpy.callCount, "Spy was called");
-				assert.equal(this.oManagedObjectSpy.returnValues[0].getId(), "labelOne", "Spy returns created ManagedObject");
-				//Cleanup
-				oLabel.destroy();
-			});
-
-			QUnit.test("Helper 'checkDestroy'", function (assert) {
-				//Arrange
-				var oLabel = new sap.m.Label("labelOne");
-				var oStub = sinon.stub(assert, "ok");
-				//Act
-				checkDestroy(this, assert);
-				oStub.restore();
-				//Assert
-				assert.ok(oStub.called);
-				//Cleanup
-				oLabel.destroy();
-			});
-
-			QUnit.module("Display - no interaction", {
-				beforeEach: function () {
-					createSpySetup(this);
-					this.oItem = getItem();
-				},
-				afterEach: function () {
-					restoreSpySetup(this);
-				}
-			});
-			QUnit.test("UCI read only", function (assert) {
-				var oCollection = new sap.m.UploadCollection({
-					items: [ this.oItem ]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.test("UCI without thumbnail url", function (assert) {
-				this.oItem.setThumbnailUrl();
-				var oCollection = new sap.m.UploadCollection({
-					items: [ this.oItem ]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.test("UCI with edit and delete button", function (assert) {
-				this.oItem.setEnableEdit(true);
-				this.oItem.setEnableDelete(true);
-				this.oItem.setVisibleEdit(true);
-				this.oItem.setVisibleDelete(true);
-				var oCollection = new sap.m.UploadCollection({
-					items: [ this.oItem ]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.module("Display - no interaction, but grouping", {
-				beforeEach: function () {
-					createSpySetup(this);
-				},
-				afterEach: function () {
-					restoreSpySetup(this);
-				}
-			});
-
-			QUnit.test("UCI with grouping", function (assert) {
-				var oModel = new sap.ui.model.json.JSONModel({
-					"items": [
-						{
-							contributor: "Otto",
-							documentId: "4711",
-							fileName: "MyBusinessPlan.gif",
-							mimeType: "image/gif",
-							thumbnailUrl: "http://mydomain.subdomain.com/path/thumbnail.jpg",
-							uploadedDate: "01.04.1972"
-						},
-						{
-							contributor: "Otto",
-							documentId: "4711",
-							fileName: "MyBusinessPlan.gif",
-							mimeType: "image/gif",
-							thumbnailUrl: "http://mydomain.subdomain.com/path/thumbnail.jpg",
-							uploadedDate: "02.04.1972"
-						}
-					]
-				});
-				var oCollection = new sap.m.UploadCollection({
-					items: {
-						path: "/items",
-						template: new sap.m.UploadCollectionItem({
-							contributor: "{contributor}",
-							documentId: "{documentId}",
-							fileName: "{fileName}f",
-							mimeType: "{mimeType}",
-							thumbnailUrl: "{thumbnailUrl}",
-							uploadedDate: "{uploadedDate}"
-						}),
-						templateShareable: false,
-						sorter: new sap.ui.model.Sorter("/uploadedDate", true, true)
-					}
-				}).setModel(oModel).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.module("Edit", {
-				beforeEach: function () {
-					createSpySetup(this);
-					this.oItem = getItem();
-				},
-				afterEach: function () {
-					restoreSpySetup(this);
-				}
-			});
-
-			QUnit.test("UCI enter edit", function (assert) {
-				this.oItem.setEnableEdit(true);
-				this.oItem.setVisibleEdit(true);
-				var oCollection = new sap.m.UploadCollection({
-					items: [ this.oItem ]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.test("UCI enter edit - cancel edit", function (assert) {
-				this.oItem.setEnableEdit(true);
-				this.oItem.setVisibleEdit(true);
-				var oCollection = new sap.m.UploadCollection({
-					items: [ this.oItem ]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
-				sap.ui.getCore().applyChanges();
-				sap.ui.getCore().byId(this.oItem.getId() + "-cancelButton").firePress();
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.test("UCI enter edit - change name - cancel edit", function (assert) {
-				this.oItem.setEnableEdit(true);
-				this.oItem.setVisibleEdit(true);
-				var oCollection = new sap.m.UploadCollection({
-					items: [ this.oItem ]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
-				sap.ui.getCore().applyChanges();
-				sap.ui.getCore().byId(this.oItem.getId() + "-ta_editFileName").setValue("NewFileName");
-				sap.ui.getCore().applyChanges();
-				sap.ui.getCore().byId(this.oItem.getId() + "-okButton").firePress();
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.module("Delete", {
-				beforeEach: function () {
-					createSpySetup(this);
-					this.oItem = getItem();
-				},
-				afterEach: function () {
-					restoreSpySetup(this);
-				}
-			});
-
-			QUnit.test("UCI delete item", function (assert) {
-				this.oItem.setEnableDelete(true);
-				this.oItem.setVisibleDelete(true);
-				var oCollection = new sap.m.UploadCollection({
-					items: [ this.oItem ]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				var oStubShow = sinon.stub(sap.m.MessageBox, "show");
-				sap.ui.getCore().byId(this.oItem.getId() + "-deleteButton").firePress();
-				sap.ui.getCore().applyChanges();
-				oCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-				oStubShow.restore();
-			});
-
-			QUnit.module("Uploading", {
-				beforeEach: function () {
-					createSpySetup(this);
-				},
-				afterEach: function () {
-					restoreSpySetup(this);
-				}
-			});
-
-			QUnit.test("Uploading a file - progress case", function (assert) {
-				var oCollection = new sap.m.UploadCollection().placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				var oFileUploader = oCollection._getFileUploader();
-				oFileUploader.fireChange({
-					files: [{
-						name: "file1"
-					}]
-				});
-				oCollection.invalidate();
-				sap.ui.getCore().applyChanges();
-
-				oFileUploader.fireUploadProgress({
-					fileName : "file1",
-					loaded: 50,
-					total: 100
-				});
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.test("Uploading a file - upload complete", function (assert) {
-				var oCollection = new sap.m.UploadCollection({
-					items: [ this.oItem ]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				var oFileUploader = oCollection._getFileUploader();
-				oFileUploader.fireChange({
-					files: [{
-						name: "file1"
-					}]
-				});
-				oCollection.invalidate();
-				sap.ui.getCore().applyChanges();
-				var oFileUploaderEventMock = {
-					fileName: "file1",
-					response: { "propertyOne": "ValueOne" },
-					readyStateXHR: 4,
-					status: 200,
-					responseRaw: '{ "propertyOne": "ValueOne" }',
-					headers: {
-						"headerOne": "headerValueOne",
-						"headerTwo": "headerValueTwo"
-					}
-				};
-				oCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", oFileUploader, oFileUploaderEventMock));
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.test("Uploading a file - terminate upload", function (assert) {
-				var oCollection = new sap.m.UploadCollection().placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				var oFileUploader = oCollection._getFileUploader();
-				oFileUploader.fireChange({
-					files: [{
-						name: "file1"
-					}]
-				});
-				oCollection.invalidate();
-				sap.ui.getCore().applyChanges();
-				oCollection._getFileUploader().fireUploadAborted({
-					fileName: "file1",
-					requestHeaders: []
-				});
-				sap.ui.getCore().applyChanges();
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
-
-			QUnit.test("Uploading a file - terminate upload via popover", function (assert) {
-				var oCollection = new sap.m.UploadCollection().placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				var oFileUploader = oCollection._getFileUploader();
-				oFileUploader.fireChange({
-					files: [{
-						name: "file1"
-					}]
-				});
-				oCollection.invalidate();
-				sap.ui.getCore().applyChanges();
-				oCollection._handleTerminate({}, oCollection.aItems[0]);
-				sap.ui.getCore().applyChanges();
-				var oDialog = sap.ui.getCore().byId(oCollection.getId() + "deleteDialog");
-				oDialog.getButtons()[1].firePress();
-				sap.ui.getCore().applyChanges();
-				oDialog.fireEvent("afterClose");
-				oCollection.destroy();
-				checkDestroy(this, assert);
-			});
 		});
+
+		QUnit.test("Creating a new control and ID is saved", function (assert) {
+			//Act
+			var oLabel = new Label("labelOne");
+			//Assert
+			assert.ok(this.oManagedObjectSpy.callCount, "Spy was called");
+			assert.equal(this.oManagedObjectSpy.returnValues[0].getId(), "labelOne", "Spy returns created ManagedObject");
+			//Cleanup
+			oLabel.destroy();
+		});
+
+		QUnit.test("Helper 'checkDestroy'", function (assert) {
+			//Arrange
+			var oLabel = new Label("labelOne");
+			var oStub = sinon.stub(assert, "ok");
+			//Act
+			checkDestroy(this, assert);
+			oStub.restore();
+			//Assert
+			assert.ok(oStub.called);
+			//Cleanup
+			oLabel.destroy();
+		});
+
+		QUnit.module("Display - no interaction", {
+			beforeEach: function () {
+				createSpySetup(this);
+				this.oItem = getItem();
+			},
+			afterEach: function () {
+				restoreSpySetup(this);
+			}
+		});
+		QUnit.test("UCI read only", function (assert) {
+			var oCollection = new UploadCollection({
+				items: [this.oItem]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.test("UCI without thumbnail url", function (assert) {
+			this.oItem.setThumbnailUrl();
+			var oCollection = new UploadCollection({
+				items: [this.oItem]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.test("UCI with edit and delete button", function (assert) {
+			this.oItem.setEnableEdit(true);
+			this.oItem.setEnableDelete(true);
+			this.oItem.setVisibleEdit(true);
+			this.oItem.setVisibleDelete(true);
+			var oCollection = new UploadCollection({
+				items: [this.oItem]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.module("Display - no interaction, but grouping", {
+			beforeEach: function () {
+				createSpySetup(this);
+			},
+			afterEach: function () {
+				restoreSpySetup(this);
+			}
+		});
+
+		QUnit.test("UCI with grouping", function (assert) {
+			var oModel = new JSONModel({
+				"items": [
+					{
+						contributor: "Otto",
+						documentId: "4711",
+						fileName: "MyBusinessPlan.gif",
+						mimeType: "image/gif",
+						thumbnailUrl: "http://mydomain.subdomain.com/path/thumbnail.jpg",
+						uploadedDate: "01.04.1972"
+					},
+					{
+						contributor: "Otto",
+						documentId: "4711",
+						fileName: "MyBusinessPlan.gif",
+						mimeType: "image/gif",
+						thumbnailUrl: "http://mydomain.subdomain.com/path/thumbnail.jpg",
+						uploadedDate: "02.04.1972"
+					}
+				]
+			});
+			var oCollection = new UploadCollection({
+				items: {
+					path: "/items",
+					template: new UploadCollectionItem({
+						contributor: "{contributor}",
+						documentId: "{documentId}",
+						fileName: "{fileName}f",
+						mimeType: "{mimeType}",
+						thumbnailUrl: "{thumbnailUrl}",
+						uploadedDate: "{uploadedDate}"
+					}),
+					templateShareable: false,
+					sorter: new Sorter("/uploadedDate", true, true)
+				}
+			}).setModel(oModel).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.module("Edit", {
+			beforeEach: function () {
+				createSpySetup(this);
+				this.oItem = getItem();
+			},
+			afterEach: function () {
+				restoreSpySetup(this);
+			}
+		});
+
+		QUnit.test("UCI enter edit", function (assert) {
+			this.oItem.setEnableEdit(true);
+			this.oItem.setVisibleEdit(true);
+			var oCollection = new UploadCollection({
+				items: [this.oItem]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.test("UCI enter edit - cancel edit", function (assert) {
+			this.oItem.setEnableEdit(true);
+			this.oItem.setVisibleEdit(true);
+			var oCollection = new UploadCollection({
+				items: [this.oItem]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
+			sap.ui.getCore().applyChanges();
+			sap.ui.getCore().byId(this.oItem.getId() + "-cancelButton").firePress();
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.test("UCI enter edit - change name - cancel edit", function (assert) {
+			this.oItem.setEnableEdit(true);
+			this.oItem.setVisibleEdit(true);
+			var oCollection = new UploadCollection({
+				items: [this.oItem]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
+			sap.ui.getCore().applyChanges();
+			sap.ui.getCore().byId(this.oItem.getId() + "-ta_editFileName").setValue("NewFileName");
+			sap.ui.getCore().applyChanges();
+			sap.ui.getCore().byId(this.oItem.getId() + "-okButton").firePress();
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.module("Delete", {
+			beforeEach: function () {
+				createSpySetup(this);
+				this.oItem = getItem();
+			},
+			afterEach: function () {
+				restoreSpySetup(this);
+			}
+		});
+
+		QUnit.test("UCI delete item", function (assert) {
+			this.oItem.setEnableDelete(true);
+			this.oItem.setVisibleDelete(true);
+			var oCollection = new UploadCollection({
+				items: [this.oItem]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oStubShow = sinon.stub(MessageBox, "show");
+			sap.ui.getCore().byId(this.oItem.getId() + "-deleteButton").firePress();
+			sap.ui.getCore().applyChanges();
+			oCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+			oStubShow.restore();
+		});
+
+		QUnit.module("Uploading", {
+			beforeEach: function () {
+				createSpySetup(this);
+			},
+			afterEach: function () {
+				restoreSpySetup(this);
+			}
+		});
+
+		QUnit.test("Uploading a file - progress case", function (assert) {
+			var oCollection = new UploadCollection().placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oFileUploader = oCollection._getFileUploader();
+			oFileUploader.fireChange({
+				files: [{
+					name: "file1"
+				}]
+			});
+			oCollection.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			oFileUploader.fireUploadProgress({
+				fileName: "file1",
+				loaded: 50,
+				total: 100
+			});
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.test("Uploading a file - upload complete", function (assert) {
+			var oCollection = new UploadCollection({
+				items: [this.oItem]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oFileUploader = oCollection._getFileUploader();
+			oFileUploader.fireChange({
+				files: [{
+					name: "file1"
+				}]
+			});
+			oCollection.invalidate();
+			sap.ui.getCore().applyChanges();
+			var oFileUploaderEventMock = {
+				fileName: "file1",
+				response: {"propertyOne": "ValueOne"},
+				readyStateXHR: 4,
+				status: 200,
+				responseRaw: '{ "propertyOne": "ValueOne" }',
+				headers: {
+					"headerOne": "headerValueOne",
+					"headerTwo": "headerValueTwo"
+				}
+			};
+			oCollection._onUploadComplete(new Event("uploadComplete", oFileUploader, oFileUploaderEventMock));
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.test("Uploading a file - terminate upload", function (assert) {
+			var oCollection = new UploadCollection().placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oFileUploader = oCollection._getFileUploader();
+			oFileUploader.fireChange({
+				files: [{
+					name: "file1"
+				}]
+			});
+			oCollection.invalidate();
+			sap.ui.getCore().applyChanges();
+			oCollection._getFileUploader().fireUploadAborted({
+				fileName: "file1",
+				requestHeaders: []
+			});
+			sap.ui.getCore().applyChanges();
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+
+		QUnit.test("Uploading a file - terminate upload via popover", function (assert) {
+			var oCollection = new UploadCollection().placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oFileUploader = oCollection._getFileUploader();
+			oFileUploader.fireChange({
+				files: [{
+					name: "file1"
+				}]
+			});
+			oCollection.invalidate();
+			sap.ui.getCore().applyChanges();
+			oCollection._handleTerminate({}, oCollection.aItems[0]);
+			sap.ui.getCore().applyChanges();
+			var oDialog = sap.ui.getCore().byId(oCollection.getId() + "deleteDialog");
+			oDialog.getButtons()[1].firePress();
+			sap.ui.getCore().applyChanges();
+			oDialog.fireEvent("afterClose");
+			oCollection.destroy();
+			checkDestroy(this, assert);
+		});
+	});
 </script>
 <body class="sapUiBody">
 <div id="qunit"></div>

@@ -53,6 +53,19 @@ sap.ui.define([
 			} else {
 				jQuery.sap.log.error("Can't find object class '" + sClassName + "' for XML-view", "", "XMLTemplateProcessor.js");
 			}
+		},
+		getChildren: function(oNode) {
+			var i, oNodeList = oNode.childNodes, n = oNodeList.length, aChildren = [];
+
+			// cache live collection so that removing a template node does not hurt
+			for (i = 0; i < n; i++) {
+				// process only ELEMENT_NODEs
+				if (oNodeList.item(i).nodeType === 1 /* Node.ELEMENT_NODE */) {
+					aChildren.push(oNodeList.item(i));
+				}
+			}
+
+			return aChildren;
 		}
 
 	};

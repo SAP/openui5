@@ -56,15 +56,14 @@ function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
 	// ensure that assert.* even works if a test page doesn't provide 'assert' as a param (e.g. pages outside openui5 repo)
 	assert = assert || window;
 
-	// skip the bootstrap library checks 
+	// skip the bootstrap library checks
 	if (/[?&]sap-ui-skip(B|-b)ootstrap(T|-t)ests=(true|x|X)/.test(top.location.search)) {
 		assert.ok(true, "Skipped checkLibrary(\"" + sLibraryName + "\", " + bExpectLazyStubs + ") due to availability of URL parameter!");
 		return;
 	}
 
 	ajaxCallsReset();
-
-	assert.ok(jQuery.sap.isDeclared(sLibraryName + ".library"), "module for library " + sLibraryName + " must have been declared");
+	assert.ok(sap.ui.require(sLibraryName.replace(/\./g,"/") + "/library"), "module for library " + sLibraryName + " must have been declared");
 	assert.ok(jQuery.sap.getObject(sLibraryName), "namespace " + sLibraryName + " must exists");
 
 	var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
@@ -89,7 +88,7 @@ function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
 
 	jQuery.each(oLib.elements, function(idx,sElement) {
 		if ( jQuery.inArray(sElement, aExcludes) < 0 ) {
-			assert.notEqual(jQuery.sap.isDeclared(sElement), bExpectLazyStubs, "module for element " + sElement + " must have been declared");
+			assert.notEqual(sap.ui.require(sElement), bExpectLazyStubs, "module for element " + sElement + " must have been declared");
 			assert.equal(sap.ui.lazyRequire._isStub(sElement), bExpectLazyStubs, sMessage + ":" + sElement);
 			if ( !bExpectLazyStubs ) {
 				var oClass = jQuery.sap.getObject(sElement);
@@ -100,7 +99,7 @@ function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
 
 	jQuery.each(oLib.controls, function(idx,sControl) {
 		if ( jQuery.inArray(sControl, aExcludes) < 0 ) {
-			assert.notEqual(jQuery.sap.isDeclared(sControl), bExpectLazyStubs, "module for element " + sControl + " must have been declared");
+			assert.notEqual(sap.ui.require(sControl), bExpectLazyStubs, "module for element " + sControl + " must have been declared");
 			assert.equal(sap.ui.lazyRequire._isStub(sControl), bExpectLazyStubs, sMessage + ":" + sControl);
 			if ( !bExpectLazyStubs ) {
 				var oClass = jQuery.sap.getObject(sControl);

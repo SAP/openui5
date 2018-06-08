@@ -194,100 +194,6 @@ function(
 				undefined
 			);
 		});
-		QUnit.test("data parameter", function (assert) {
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: undefined
-				}),
-				undefined
-			);
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: true
-				}),
-				undefined
-			);
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: 0
-				}),
-				undefined
-			);
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: 0.01
-				}),
-				undefined
-			);
-			assert.strictEqual(
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: {
-						a: "b",
-						c: {
-							d: "e",
-							f: "g"
-						}
-					}
-				}),
-				undefined
-			);
-			assert.throws(function () {
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: function () {}
-				});
-			}.bind(this));
-			assert.throws(function () {
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: {
-						foo: "bar",
-						fn: function () {}
-					}
-				});
-			}.bind(this));
-			assert.throws(function () {
-				// Create cyclic object to provoke JSON.stringify() to fail
-				var mObj1 = {};
-				var mObj2 = {};
-				mObj1.mObj2 = mObj2;
-				mObj2.mObj1 = mObj1;
-
-				this.oPostMessageBus.publish({
-					target: this.oIframeWindow,
-					origin: window.location.origin,
-					channelId: 'fakeChannel',
-					eventId: 'fakeEvent',
-					data: mObj1
-				});
-			}.bind(this));
-		});
 	});
 
 	QUnit.module("Sending message", {
@@ -349,30 +255,34 @@ function(
 				data: mData
 			});
 		});
-		QUnit.test("when READY message is sent, origin and target are optional", function (assert) {
+		QUnit.test("when READY message is sent, origin and target are optional (window.opener use case)", function (assert) {
 			var fnDone = assert.async();
-			var sData = 'sample';
+			sandbox.stub(window, 'parent').value(window);
+			sandbox.stub(window, 'opener').value(this.oIframeWindow);
 
-			// 1. Clear accepted origins (simulate cross-origin message)
-			this.oPostMessageBus.resetAcceptedOrigins();
-
-			// 2. Stub confirmation dialog
-			var oConfirmationStub = sandbox.stub().returns(Promise.resolve());
-			sandbox.stub(sap.ui, "require").withArgs(["sap/ui/core/postmessage/confirmationDialog"]).callsArgWithAsync(1, oConfirmationStub);
-
-			// 3. Subscribe
-			this.oPostMessageBus.subscribe('fakeChannel', PostMessageBus.event.READY, function (oEvent) {
-				assert.strictEqual(oEvent.data, undefined); // no data is allowed in ready event
-				assert.ok(oConfirmationStub.notCalled);
-				assert.notOk(includes(this.oPostMessageBus.getAcceptedOrigins(), oEvent.origin));
+			this.oPostMessageBusInFrame.subscribe('fakeChannel', PostMessageBus.event.READY, function (oEvent) {
+				assert.ok(true);
 				fnDone();
 			}, this);
 
-			// 4. Send message
-			this.oPostMessageBusInFrame.publish({
+			this.oPostMessageBus.publish({
 				channelId: 'fakeChannel',
-				eventId: PostMessageBus.event.READY,
-				data: sData
+				eventId: PostMessageBus.event.READY
+			});
+		});
+		QUnit.test("when READY message is sent, origin and target are optional (window.parent use case)", function (assert) {
+			var fnDone = assert.async();
+			sandbox.stub(window, 'opener').value(null);
+			sandbox.stub(window, 'parent').value(this.oIframeWindow);
+
+			this.oPostMessageBusInFrame.subscribe('fakeChannel', PostMessageBus.event.READY, function (oEvent) {
+				assert.ok(true);
+				fnDone();
+			}, this);
+
+			this.oPostMessageBus.publish({
+				channelId: 'fakeChannel',
+				eventId: PostMessageBus.event.READY
 			});
 		});
 	});
@@ -399,10 +309,11 @@ function(
 	}, function () {
 		QUnit.test("when a message is received with an object payload", function (assert) {
 			var fnDone = assert.async();
-			var mData = new this.oIframeWindow.Object();
-			mData.foo = 'bar';
+			var mData = {
+				foo: 'bar'
+			};
 			this.oPostMessageBus.subscribe('fakeChannel', 'fakeEvent', function (oEvent) {
-				assert.deepEqual(oEvent.data, {foo: 'bar'});
+				assert.deepEqual(oEvent.data, mData);
 				fnDone();
 			});
 			this.oPostMessageBusInFrame.publish({
@@ -477,6 +388,32 @@ function(
 				data: sData
 			});
 		});
+		QUnit.test("when READY message is sent, origin and target are optional", function (assert) {
+			var fnDone = assert.async();
+			var sData = 'sample';
+
+			// 1. Clear accepted origins (simulate cross-origin message)
+			this.oPostMessageBus.resetAcceptedOrigins();
+
+			// 2. Stub confirmation dialog
+			var oConfirmationStub = sandbox.stub().returns(Promise.resolve());
+			sandbox.stub(sap.ui, "require").withArgs(["sap/ui/core/postmessage/confirmationDialog"]).callsArgWithAsync(1, oConfirmationStub);
+
+			// 3. Subscribe
+			this.oPostMessageBus.subscribe('fakeChannel', PostMessageBus.event.READY, function (oEvent) {
+				assert.strictEqual(oEvent.data, undefined); // no data is allowed in ready event
+				assert.ok(oConfirmationStub.notCalled);
+				assert.notOk(includes(this.oPostMessageBus.getAcceptedOrigins(), oEvent.origin));
+				fnDone();
+			}, this);
+
+			// 4. Send message
+			this.oPostMessageBusInFrame.publish({
+				channelId: 'fakeChannel',
+				eventId: PostMessageBus.event.READY,
+				data: sData
+			});
+		});
 		QUnit.test("when a CONNECT message is received from already accepted origin", function (assert) {
 			var fnDone = assert.async();
 
@@ -514,7 +451,7 @@ function(
 			sandbox.stub(sap.ui, "require").withArgs(["sap/ui/core/postmessage/confirmationDialog"]).callsArgWithAsync(1, function (sMessage) {
 				assert.ok(typeof sMessage === 'string' && sMessage.indexOf(sServiceName) !== -1);
 				return Promise.reject();
-			}.bind(this));
+			});
 
 			// 3.1. Subscribe
 			this.oPostMessageBus.subscribe('fakeChannel', 'fakeEvent', function () {
@@ -603,7 +540,6 @@ function(
 		});
 		QUnit.test("when READY message is received (confirmation dialog must not be shown)", function (assert) {
 			var fnDone = assert.async();
-			var sData = 'sample';
 
 			// 1. Clear accepted origins (simulate cross-origin message)
 			this.oPostMessageBus.resetAcceptedOrigins();
@@ -626,7 +562,7 @@ function(
 				origin: window.location.origin,
 				channelId: 'fakeChannel',
 				eventId: PostMessageBus.event.READY,
-				data: sData
+				data: 'sample'
 			});
 		});
 		QUnit.test("when PostMessageBus is destroyed between message processing, then event queue must be erased", function (assert) {
@@ -703,7 +639,162 @@ function(
 				origin: window.location.origin,
 				channelId: 'fakeChannel',
 				eventId: PostMessageBus.event.CONNECT,
-				data: new this.oIframeWindow.Object()
+				data: {}
+			});
+		});
+		QUnit.test("when several consequent messages have been received", function (assert) {
+			var fnDone = sandbox.spy(assert.async(2));
+
+			this.oPostMessageBus.subscribe('fakeChannel', 'fakeEvent', function (oEvent) {
+				assert.deepEqual(oEvent.data, 'foo' + fnDone.callCount);
+				fnDone();
+			});
+
+			this.oPostMessageBusInFrame.publish({
+				target: window,
+				origin: window.location.origin,
+				channelId: 'fakeChannel',
+				eventId: 'fakeEvent',
+				data: 'foo0'
+			});
+			this.oPostMessageBusInFrame.publish({
+				target: window,
+				origin: window.location.origin,
+				channelId: 'fakeChannel',
+				eventId: 'fakeEvent',
+				data: 'foo1'
+			});
+		});
+		QUnit.test("when error in subscriber function happens, following message has to be still delivered (Error object case)", function (assert) {
+			var fnDone = sandbox.spy(assert.async(2));
+			var Log = sap.ui.requireSync('sap/base/Log');
+			var oSpy = sandbox.stub(Log, 'error');
+
+			this.oPostMessageBus.subscribe('fakeChannel', 'fakeEvent', function (oEvent) {
+				switch (fnDone.callCount) {
+					case 0:
+						fnDone();
+						throw new Error('some error happens');
+					case 1:
+						assert.deepEqual(oEvent.data, 'bar');
+						assert.ok(oSpy.calledOnce);
+						assert.ok(
+							oSpy.withArgs(
+								sinon.match(function (sMessage, sDetail) {
+									return (
+										typeof sMessage === 'string' && sMessage.includes('some error happens')
+										|| typeof sDetail === 'string' && sDetail.includes('some error happens')
+									);
+								})
+							)
+						);
+						fnDone();
+						break;
+					// no default
+				}
+			});
+
+			this.oPostMessageBusInFrame.publish({
+				target: window,
+				origin: window.location.origin,
+				channelId: 'fakeChannel',
+				eventId: 'fakeEvent',
+				data: 'foo'
+			});
+			this.oPostMessageBusInFrame.publish({
+				target: window,
+				origin: window.location.origin,
+				channelId: 'fakeChannel',
+				eventId: 'fakeEvent',
+				data: 'bar'
+			});
+		});
+		QUnit.test("when error in subscriber function happens, second message has to be still delivered still (String error case)", function (assert) {
+			var fnDone = sandbox.spy(assert.async(2));
+			var Log = sap.ui.requireSync('sap/base/Log');
+			var oSpy = sandbox.stub(Log, 'error');
+
+			this.oPostMessageBus.subscribe('fakeChannel', 'fakeEvent', function (oEvent) {
+				switch (fnDone.callCount) {
+					case 0:
+						fnDone();
+						throw 'some error happens';
+					case 1:
+						assert.deepEqual(oEvent.data, 'bar');
+						assert.ok(oSpy.calledOnce);
+						assert.ok(
+							oSpy.withArgs(
+								sinon.match(function (sMessage, sDetail) {
+									return (
+										typeof sMessage === 'string' && sMessage.includes('some error happens')
+										|| typeof sDetail === 'string' && sDetail.includes('some error happens')
+									);
+								})
+							)
+						);
+						fnDone();
+						break;
+					// no default
+				}
+			});
+
+			this.oPostMessageBusInFrame.publish({
+				target: window,
+				origin: window.location.origin,
+				channelId: 'fakeChannel',
+				eventId: 'fakeEvent',
+				data: 'foo'
+			});
+			this.oPostMessageBusInFrame.publish({
+				target: window,
+				origin: window.location.origin,
+				channelId: 'fakeChannel',
+				eventId: 'fakeEvent',
+				data: 'bar'
+			});
+		});
+		QUnit.test("when error in subscriber function happens, second message has to be still delivered still (Empty error case)", function (assert) {
+			var fnDone = sandbox.spy(assert.async(2));
+			var Log = sap.ui.requireSync('sap/base/Log');
+			var oSpy = sandbox.stub(Log, 'error');
+
+			this.oPostMessageBus.subscribe('fakeChannel', 'fakeEvent', function (oEvent) {
+				switch (fnDone.callCount) {
+					case 0:
+						fnDone();
+						throw 0;
+					case 1:
+						assert.deepEqual(oEvent.data, 'bar');
+						assert.ok(oSpy.calledOnce);
+						assert.ok(
+							oSpy.withArgs(
+								sinon.match(function (sMessage, sDetail) {
+									return (
+										typeof sMessage === 'string' && sMessage.includes('Some unexpected error happened during post message processing')
+										|| typeof sDetail === 'string' && sDetail.includes('Some unexpected error happened during post message processing')
+									);
+								})
+							)
+						);
+						fnDone();
+						break;
+					// no default
+				}
+			});
+
+			this.oPostMessageBusInFrame.publish({
+				target: window,
+				origin: window.location.origin,
+				channelId: 'fakeChannel',
+				eventId: 'fakeEvent',
+				data: 'foo'
+			});
+			this.oPostMessageBusInFrame.publish({
+				target: window,
+				origin: window.location.origin,
+				channelId: 'fakeChannel',
+				eventId: 'fakeEvent',
+				data: 'bar'
 			});
 		});
 	});

@@ -7,26 +7,26 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/test/Opa5",
-	"mycompany/myapp/test/integration/pages/Common",
+	"mycompany/myapp/MyWorklistApp/test/integration/pages/Common",
 	"sap/ui/test/opaQunit",
-	"mycompany/myapp/test/integration/pages/Worklist",
-	"mycompany/myapp/test/integration/pages/Object",
-	"mycompany/myapp/test/integration/pages/NotFound",
-	"mycompany/myapp/test/integration/pages/Browser",
-	"mycompany/myapp/test/integration/pages/App"
-], function(Opa5, Common) {
+	"mycompany/myapp/MyWorklistApp/test/integration/pages/Worklist",
+	"mycompany/myapp/MyWorklistApp/test/integration/pages/Object",
+	"mycompany/myapp/MyWorklistApp/test/integration/pages/NotFound",
+	"mycompany/myapp/MyWorklistApp/test/integration/pages/Browser",
+	"mycompany/myapp/MyWorklistApp/test/integration/pages/App"
+], function (Opa5, Common) {
 	"use strict";
 	Opa5.extendConfig({
 		arrangements: new Common(),
-		viewNamespace: "mycompany.myapp.view."
+		viewNamespace: "mycompany.myapp.MyWorklistApp.view."
 	});
 
 	sap.ui.require([
-		"mycompany/myapp/test/integration/WorklistJourney",
-		"mycompany/myapp/test/integration/ObjectJourney",
-		"mycompany/myapp/test/integration/NavigationJourney",
-		"mycompany/myapp/test/integration/NotFoundJourney"
-	], function() {
+		"mycompany/myapp/MyWorklistApp/test/integration/WorklistJourney",
+		"mycompany/myapp/MyWorklistApp/test/integration/ObjectJourney",
+		"mycompany/myapp/MyWorklistApp/test/integration/NavigationJourney",
+		"mycompany/myapp/MyWorklistApp/test/integration/NotFoundJourney"
+	], function () {
 		QUnit.start();
 	});
 });

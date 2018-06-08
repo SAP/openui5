@@ -49,7 +49,7 @@ html[data-sap-ui-browser^="ie"] {
 .sapFDynamicPageContent,
 .sapFDynamicPageContentFitContainer {
 	position: relative;
-	padding: 2rem 3rem 0 3rem;
+	padding: 1rem 3rem 0 3rem;
 }
 
 .sapFDynamicPageContent > .sapFDynamicPageContentFitContainer {
@@ -142,6 +142,13 @@ html[data-sap-ui-browser^="ie"] {
 	&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
 		cursor: pointer;
 	}
+}
+
+.sapFDynamicPageTitleMainHeading,
+.sapFDynamicPageTitleMainContent,
+.sapFDynamicPageTitleMainActions {
+	// BCP: 1870261908 - CSS cursor reset is needed here to prevent showing pointer for not clickable control types
+	cursor: default;
 }
 
 .sapFDynamicPage {

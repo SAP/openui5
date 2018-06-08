@@ -3139,29 +3139,34 @@ sap.ui.require([
 
 		oTable.setNoData("Hello");
 		sap.ui.getCore().applyChanges();
-		assert.ok(!bRendered, "Table not rendered when changing text from default to custom text");
+		assert.ok(!bRendered, "Table should not render when changing NoData from default text to custom text");
 		bRendered = false;
 
 		oTable.setNoData("Hello2");
 		sap.ui.getCore().applyChanges();
-		assert.ok(!bRendered, "Table not rendered when changing text from custom text 1 to custom text 2");
+		assert.ok(!bRendered, "Table should not render when changing NoData from text to a different text");
+		bRendered = false;
+
+		oTable.setNoData("Hello2");
+		sap.ui.getCore().applyChanges();
+		assert.ok(!bRendered, "Table should not render when changing NoData from text to the same text");
 		bRendered = false;
 
 		var oText1 = new Text();
 		oTable.setNoData(oText1);
 		sap.ui.getCore().applyChanges();
-		assert.ok(bRendered, "Table rendered when changing text from text to control");
+		assert.ok(bRendered, "Table should render when changing NoData from text to control");
 		bRendered = false;
 
 		var oText2 = new Text();
 		oTable.setNoData(oText2);
 		sap.ui.getCore().applyChanges();
-		assert.ok(bRendered, "Table rendered when changing text from control to control");
+		assert.ok(bRendered, "Table rendered when changing NoData from control to control");
 		bRendered = false;
 
 		oTable.setNoData("Hello2");
 		sap.ui.getCore().applyChanges();
-		assert.ok(bRendered, "Table rendered when changing text from control to text");
+		assert.ok(bRendered, "Table rendered when changing NoData from control to text");
 		bRendered = false;
 
 		oText1.destroy();

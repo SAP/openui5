@@ -1,0 +1,55 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "f33949aa3a61a44d20fdb55727f7145cc9839333",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextmenu overlaps rta-toolbar",
+        "references": []
+      },
+      {
+        "id": "cd32420d082c1a6a4851064424928a41b79e7c25",
+        "type": "FIX",
+        "text": " sap.ui.dt - selection with contextMenu",
+        "references": []
+      },
+      {
+        "id": "f521e3bcc9420f2c4323afbfc09e5f571f221e9d",
+        "type": "FIX",
+        "text": " sap.ui.dt - wrong height calculation of exp. contextMenu",
+        "references": []
+      },
+      {
+        "id": "105941b9a1629fd036a7e07a7481ae225ce744b5",
+        "type": "FIX",
+        "text": "sap.ui.dt - Metadata propagation error",
+        "references": []
+      },
+      {
+        "id": "07e3739021da31d19b355d8dce265cead1dae5e2",
+        "type": "FIX",
+        "text": "sap.ui.dt - Metadata propagation with multiple propagate functions",
+        "references": []
+      },
+      {
+        "id": "6b9d17db720ddb1cd91f8122b08c77d991166674",
+        "type": "FIX",
+        "text": " Write explanation for failure in overlay creation",
+        "references": []
+      },
+      {
+        "id": "95806c7cda3dd1f2de869089628e6ea75715dea3",
+        "type": "FIX",
+        "text": "sap.ui.dt - SelectionManager selection mode discrepancy with DT",
+        "references": []
+      },
+      {
+        "id": "f8ba865568e51cf165243d260c217bb369d1b5bf",
+        "type": "FIX",
+        "text": "sap.ui.dt - Removed overlays are still part of the selection",
+        "references": []
+      }
+    ]
+  }
+}

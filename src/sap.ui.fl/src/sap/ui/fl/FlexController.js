@@ -251,7 +251,8 @@ sap.ui.define([
 		};
 		if (sAppVersion &&
 			oChangeSpecificData.developerMode &&
-			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AdaptationProject
+			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AdaptationProject &&
+			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AppVariant
 		) {
 			oValidAppVersions.to = sAppVersion;
 		}
@@ -333,9 +334,12 @@ sap.ui.define([
 		};
 		return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 
-		.catch(function(oException) {
-			this._oChangePersistence.deleteChange(oChange);
-			throw oException;
+		.then(function(oReturn) {
+			if (!oReturn.success) {
+				var oException = oReturn.error || new Error("The change could not be applied.");
+				this._oChangePersistence.deleteChange(oChange);
+				throw oException;
+			}
 		}.bind(this));
 	};
 
@@ -535,8 +539,10 @@ sap.ui.define([
 				aPromiseStack.push(function() {
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 
-					.catch(function(oException) {
-						this._logApplyChangeError(oException, oChange);
+					.then(function(oReturn) {
+						if (!oReturn.success) {
+							this._logApplyChangeError(oReturn.error || {}, oChange);
+						}
 					}.bind(this));
 				}.bind(this));
 
@@ -592,23 +598,20 @@ sap.ui.define([
 		var oRtaControlTreeModifier;
 
 		if (!oChangeHandler) {
-			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
-			return new Utils.FakePromise();
+			var sErrorMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
+			Utils.log.warning(sErrorMessage);
+			return new Utils.FakePromise({success: false, error: new Error(sErrorMessage)});
 		}
 		if (bXmlModifier && oChange.getDefinition().jsOnly) {
 			//change is not capable of xml modifier
-			return new Utils.FakePromise();
+			return new Utils.FakePromise({success: false, error: new Error("Change can not be applied in XML. Retrying in JS.")});
 		}
 
 		var mAppliedChangesCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
 		var sAppliedChanges = mAppliedChangesCustomData.customDataValue;
-		var aAppliedChanges = mAppliedChangesCustomData.customDataEntries;
 		var oAppliedChangeCustomData = mAppliedChangesCustomData.customData;
 
-		var sChangeId = oChange.getId();
-
-		// if change was not yet applied
-		if (aAppliedChanges.indexOf(sChangeId) === -1) {
+		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier, mAppliedChangesCustomData)) {
 			var bRevertible = this.isChangeHandlerRevertible(oChange, oControl, oChangeHandler);
 
 			return new Utils.FakePromise()
@@ -647,6 +650,7 @@ sap.ui.define([
 				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier){
 					oChange.setUndoOperations(oRtaControlTreeModifier.stopRecordingUndo());
 				}
+				var sChangeId = oChange.getId();
 				var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 				this._writeAppliedChangesCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
 				if (oChange.aPromiseFn) {
@@ -655,7 +659,8 @@ sap.ui.define([
 					});
 				}
 				delete oChange.PROCESSING;
-				return true;
+				oChange.APPLIED = true;
+				return {success: true};
 			}.bind(this))
 
 			.catch(function(ex) {
@@ -691,10 +696,10 @@ sap.ui.define([
 					});
 				}
 				delete oChange.PROCESSING;
-				return false;
+				return {success: false, error: ex};
 			}.bind(this));
 		}
-		return new Utils.FakePromise(true);
+		return new Utils.FakePromise({success: true});
 	};
 
 	FlexController.prototype._removeFromAppliedChangesAndMaybeRevert = function(oChange, oControl, mPropertyBag, bRevert) {
@@ -904,7 +909,14 @@ sap.ui.define([
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator)
 			.then( function(oResponse) {
 				if (oComponent) {
-					Utils.setTechnicalURLParameterValues(oComponent, FlexController.variantTechnicalParameterName, []);
+					var oModel = oComponent.getModel("$FlexVariants");
+					if (oModel) {
+						oModel.updateHasherEntry({
+							parameters: [],
+							updateURL: true,
+							component: oComponent
+						});
+					}
 				}
 				return oResponse;
 		});
@@ -970,6 +982,28 @@ sap.ui.define([
 		});
 	};
 
+	FlexController.prototype._isChangeCurrentlyApplied = function(oControl, oChange, oModifier, mCustomData) {
+		if (!mCustomData) {
+			mCustomData = this._getAppliedCustomData(oChange, oControl, JsControlTreeModifier);
+		}
+		var aAppliedChanges = mCustomData.customDataEntries;
+		var sChangeId = oChange.getId();
+		return aAppliedChanges.indexOf(sChangeId) > -1;
+	};
+
+	FlexController.prototype._checkIfDependencyIsStillValid = function(oAppComponent, oModifier, sChangeId) {
+		var oChange = Utils.getChangeFromChangesMap(this._oChangePersistence._mChanges.mChanges, sChangeId);
+		if (!oChange.APPLIED) {
+			return true;
+		}
+
+		var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
+		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier)) {
+			return true;
+		}
+		return false;
+	};
+
 	/**
 	 * Apply the changes in the control; this function is called just before the end of the
 	 * creation process, changes are applied synchronously.
@@ -993,12 +1027,22 @@ sap.ui.define([
 			view: Utils.getViewForControl(oControl)
 		};
 		aChangesForControl.forEach(function (oChange) {
+
+			// if a change was already processed and is not applied anymore,
+			// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
+			if (oChange.APPLIED && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier));
+				mDependencies = mChangesMap.mDependencies;
+				mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
+				delete oChange.APPLIED;
+			}
+
 			if (!mDependencies[oChange.getId()]) {
 				oChange.QUEUED = true;
 				aPromiseStack.push(function() {
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
-					.then(function(bUpdate) {
-						if (bUpdate) {
+					.then(function(oResult) {
+						if (oResult.success) {
 							this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
 						}
 						delete oChange.QUEUED;
@@ -1188,9 +1232,11 @@ sap.ui.define([
 					function() {
 						return oDependency[FlexController.PENDING]()
 
-						.then(function (){
-							aDependenciesToBeDeleted.push(sDependencyKey);
-							aAppliedChanges.push(oDependency.changeObject.getId());
+						.then(function (oReturn) {
+							if (oReturn.success) {
+								aDependenciesToBeDeleted.push(sDependencyKey);
+								aAppliedChanges.push(oDependency.changeObject.getId());
+							}
 						});
 					}
 				);

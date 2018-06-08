@@ -5,8 +5,8 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
-	function (jQuery, ToolsAPI, URI) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI", "sap/base/util/LoaderExtensions"],
+	function (jQuery, ToolsAPI, URI, LoaderExtensions) {
 	"use strict";
 
 	/**
@@ -111,7 +111,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 		};
 
 		//add absolute paths for resources
-		var aModules = jQuery.sap.getAllDeclaredModules();
+		var aModules = LoaderExtensions.getAllRequiredModules();
 		var aResults = [];
 		for (var i = 0; i < aModules.length; i++) {
 			aResults.push({
@@ -126,6 +126,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 		var mLibraries = this._oCore.getLoadedLibraries();
 		aResults = [];
 		for (var n in mLibraries) {
+			if (n === "") {
+				// Ignoring "unnamed" libraries.
+				// This might happen when a control without namespace is defined
+				// (e.g. "MyControl" instead of "com.example.MyControl").
+				continue;
+			}
 			var sPath = this._oCore._getThemePath(n, this._oCore.oConfiguration.theme);
 			aResults.push({
 				theme : this._oCore.oConfiguration.theme,

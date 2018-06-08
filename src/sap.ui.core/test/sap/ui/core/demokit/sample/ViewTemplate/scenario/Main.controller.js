@@ -50,6 +50,7 @@ sap.ui.define([
 					var aEntitySets = oMetaModel.getODataEntityContainer().entitySet,
 						oUiModel = new JSONModel({
 							bindTexts : false,
+							code : "",
 							entitySet : aEntitySets,
 							icon : bIsRealOData ? "sap-icon://building" : "sap-icon://record",
 							iconTooltip
@@ -125,13 +126,11 @@ sap.ui.define([
 				that = this;
 
 			oMetaModel.loaded().then(function () {
-				var oDetailBox = that.byId("detailBox"),
-					oDetailView,
-					sMetadataPath = oMetaModel.getODataEntitySet(that._getSelectedSet(), true),
-					iStart;
+				var sMetadataPath = oMetaModel.getODataEntitySet(that._getSelectedSet(), true);
 
 				Component.getOwnerComponentFor(that.getView()).runAsOwner(function () {
-					oDetailView = sap.ui.view({
+					sap.ui.view({
+						async: true,
 						preprocessors : {
 							xml : {
 								bindingContexts : {
@@ -145,17 +144,22 @@ sap.ui.define([
 						},
 						type : ViewType.XML,
 						viewName : "sap.ui.core.sample.ViewTemplate.scenario.Detail"
+					}).loaded().then(function (oDetailView) {
+						var oDetailBox = that.byId("detailBox"),
+							iStart;
+
+						oDetailView.bindElement(sPath);
+
+						oDetailBox.destroyContent();
+						iStart = Date.now();
+						oDetailBox.addContent(oDetailView);
+						jQuery.sap.log.info("addContent took " + (Date.now() - iStart) + " ms",
+							null, "sap.ui.core.sample.ViewTemplate.scenario.Main");
+
+						that.onSourceCode();
 					});
-					oDetailView.bindElement(sPath);
 				});
 
-				oDetailBox.destroyContent();
-				iStart = Date.now();
-				oDetailBox.addContent(oDetailView);
-				jQuery.sap.log.info("addContent took " + (Date.now() - iStart) + " ms", null,
-					"sap.ui.core.sample.ViewTemplate.scenario.Main");
-
-				that.onSourceCode();
 			}).catch(alertError);
 		}
 	});

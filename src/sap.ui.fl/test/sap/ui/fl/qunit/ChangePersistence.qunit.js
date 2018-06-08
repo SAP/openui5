@@ -1767,6 +1767,103 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			"the change was written for the original selector ID");
 	});
 
+	QUnit.test("copyDependenciesFromInitialChangesMap", function(assert) {
+		var oChange0 = {
+			getId: function() {
+				return "fileNameChange0";
+			}
+		};
+		var oChange1 = {
+			getId: function() {
+				return "fileNameChange1";
+			}
+		};
+		var oChange2 = {
+			getId: function() {
+				return "fileNameChange2";
+			}
+		};
+		var mChanges = {
+			"field3-2": [oChange1, oChange2],
+			"group1": [oChange0]
+		};
+		var mInitialDependenciesMap = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
+				"fileNameChange2": {
+					"changeObject": oChange2,
+					"dependencies": ["fileNameChange1", "fileNameChange0"],
+					"controlsDependencies": ["group2", "group1"]
+				}
+			},
+			mDependentChangesOnMe: {
+				"fileNameChange0": ["fileNameChange2"],
+				"fileNameChange1": ["fileNameChange2"]
+			}
+		};
+		var mCurrentDependenciesMap = {
+			mChanges: mChanges,
+			mDependencies: {},
+			mDependentChangesOnMe: {}
+		};
+		var mExpectedDependenciesMapAfterFirstChange = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				}
+			},
+			mDependentChangesOnMe: {}
+		};
+
+		var mExpectedDependenciesMapAfterSecondChange = {
+			mChanges: mChanges,
+			mDependencies: {
+				"fileNameChange1": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
+				"fileNameChange2": {
+					"changeObject": oChange2,
+					"dependencies": [],
+					"controlsDependencies": ["group2", "group1"]
+				}
+			},
+			mDependentChangesOnMe: {}
+		};
+
+		this.oChangePersistence._mChangesInitial = mInitialDependenciesMap;
+		this.oChangePersistence._mChanges = mCurrentDependenciesMap;
+		function fnCallbackTrue() {
+			return true;
+		}
+		function fnCallbackFalse() {
+			return false;
+		}
+
+		var mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, fnCallbackTrue);
+		assert.deepEqual(mUpdatedDependenciesMap, mCurrentDependenciesMap, "no dependencies got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, fnCallbackTrue);
+		assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackFalse);
+		assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterSecondChange, "no dependencies from change2 got copied");
+
+		mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackTrue);
+		assert.deepEqual(mUpdatedDependenciesMap, mInitialDependenciesMap, "all dependencies from change2 got copied");
+
+		assert.deepEqual(mUpdatedDependenciesMap, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
+	});
+
 	QUnit.test("deleteChanges shall remove the given change from the map", function(assert) {
 
 		var that = this;
@@ -2030,6 +2127,35 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		assert.strictEqual(aChanges.length, 1);
 		assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
 		assert.strictEqual(aChanges[0], newChange);
+	});
+
+	QUnit.test("Shall not add the same change twice", function (assert) {
+		// possible scenario: change gets saved, then without reload undo and redo gets called. both would add a dirty change
+		var oChangeContent, aChanges;
+
+		oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		var fnAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
+
+		var oNewChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+		var oSecondChange = this.oChangePersistence.addChange(oNewChange, this._oComponentInstance);
+
+		assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
+		assert.ok(fnAddDirtyChangeSpy.callCount, 2, "addDirtyChange was called twice");
+		aChanges = this.oChangePersistence._aDirtyChanges;
+		assert.ok(aChanges);
+		assert.strictEqual(aChanges.length, 1);
+		assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
+		assert.strictEqual(aChanges[0], oNewChange);
+		assert.deepEqual(oNewChange, oSecondChange);
 	});
 
 	QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet", function (assert) {

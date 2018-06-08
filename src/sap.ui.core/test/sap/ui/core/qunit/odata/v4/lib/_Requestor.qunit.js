@@ -18,7 +18,8 @@ sap.ui.require([
 				throw new Error("Do not call me!");
 			},
 			fnGetGroupProperty : defaultGetGroupProperty,
-			fnOnCreateGroup : function () {}
+			fnOnCreateGroup : function () {},
+			fnReportUnboundMessages : function () {}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		sSampleServiceUrl
@@ -35,8 +36,8 @@ sap.ui.require([
 	 *   the XHR's status as text
 	 * @param {object} mResponseHeaders
 	 *   the header attributes of the response; supported header attributes are "Content-Type",
-	 *   "DataServiceVersion", "OData-Version" and "X-CSRF-Token" all with default value
-	 *   <code>null</code>; if no response headers are given at all the default value for
+	 *   "DataServiceVersion", "OData-Version", "sap-message" and "X-CSRF-Token" all with default
+	 *   value <code>null</code>; if no response headers are given at all the default value for
 	 *   "OData-Version" is "4.0";
 	 * @returns {object}
 	 *   a mock for jQuery's XHR wrapper
@@ -58,6 +59,8 @@ sap.ui.require([
 						return mResponseHeaders["DataServiceVersion"] || null;
 					case "OData-Version":
 						return mResponseHeaders["OData-Version"] || null;
+					case "sap-message":
+						return mResponseHeaders["sap-message"] || null;
 					case "X-CSRF-Token":
 						return mResponseHeaders["X-CSRF-Token"] || null;
 					default:
@@ -68,6 +71,22 @@ sap.ui.require([
 		}, 0);
 
 		return jqXHR;
+	}
+
+	/**
+	 * Creates a response object as contained in the array returned by
+	 * <code>_Batch.deserializeBatchResponse</code> without <code>status</code> and
+	 * <code>statusText</code> from the given response body and response headers.
+	 *
+	 * @param {object} [oBody] the response body
+	 * @param {object} [mHeaders={}] the map of response header name to response header value
+	 * @returns {object} the response object
+	 */
+	function createResponse(oBody, mHeaders) {
+		return {
+			headers : mHeaders || {},
+			responseText : oBody ? JSON.stringify(oBody) : ""
+		};
 	}
 
 	/*
@@ -283,7 +302,8 @@ sap.ui.require([
 						&& oSettings.headers["X-CSRF-Token"] === "abc123") {
 						jqXHR = createMock(assert, oResponsePayload, "OK", {
 							"Content-Type" : "application/json",
-							"OData-Version" : "4.0"
+							"OData-Version" : "4.0",
+							"sap-message" : "[{code : 42}]"
 						});
 					} else {
 						jqXHR = new jQuery.Deferred();
@@ -321,6 +341,7 @@ sap.ui.require([
 					assert.ok(bSuccess, "success possible");
 					assert.strictEqual(oPayload.contentType, "application/json");
 					assert.strictEqual(oPayload.body, oResponsePayload);
+					assert.strictEqual(oPayload.messages, "[{code : 42}]");
 				}, function (oError0) {
 					assert.ok(!bSuccess, "certain failure");
 					assert.strictEqual(oError0, o.bReadFails ? oReadFailure : oError);
@@ -372,7 +393,7 @@ sap.ui.require([
 			.withArgs("/Employees")
 			.returns(createMock(assert, {}, "OK"));
 		oRequestorMock.expects("doCheckVersionHeader")
-			.withExactArgs(sinon.match.func, "Employees")
+			.withExactArgs(sinon.match.func, "Employees", false)
 			.throws(oError);
 		oRequestorMock.expects("doConvertResponse").never();
 
@@ -496,7 +517,7 @@ sap.ui.require([
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, {
 					"foo" : "URL params are ignored for normal requests"
 				}),
-				oResponse = {body : {}},
+				oResponse = {body : {}, messages : {}},
 				fnSubmit = this.spy();
 
 			if (oGroupLock) {
@@ -513,6 +534,8 @@ sap.ui.require([
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 					}, JSON.stringify(oChangedPayload))
 				.resolves(oResponse);
+			this.mock(oRequestor).expects("reportUnboundMessages")
+				.withExactArgs(sinon.match.same(oResponse.messages));
 			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
 				.returns(oConvertedResponse);
@@ -664,7 +687,7 @@ sap.ui.require([
 					method : "GET"
 				}).returns(createMock(assert, oResponsePayload, "OK"));
 			oRequestorMock.expects("doCheckVersionHeader")
-				.withExactArgs(sinon.match.func, "Employees");
+				.withExactArgs(sinon.match.func, "Employees", false);
 			oRequestorMock.expects("doConvertResponse")
 				.withExactArgs(oResponsePayload, sMetaPath)
 				.returns(oConvertedResponse);
@@ -677,6 +700,23 @@ sap.ui.require([
 					assert.strictEqual(result, oConvertedResponse);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sendRequest: optional OData-Version header for empty response", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(jQuery).expects("ajax")
+			.withExactArgs(sServiceUrl + "SalesOrderList('0500000676')", sinon.match.object)
+			.returns(createMock(assert, undefined, "No Content", {}));
+		this.mock(oRequestor).expects("doCheckVersionHeader")
+			.withExactArgs(sinon.match.func, "SalesOrderList('0500000676')", true);
+
+		// code under test
+		return oRequestor.request("DELETE", "SalesOrderList('0500000676')")
+			.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+			});
 	});
 
 	//*********************************************************************************************
@@ -916,11 +956,9 @@ sap.ui.require([
 			}],
 			aPromises = [],
 			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, undefined],
-			aBatchResults = [[
-					{responseText : JSON.stringify(aResults[1])},
-					{responseText : ""}
-				],
-				{responseText : JSON.stringify(aResults[0])}
+			aBatchResults = [
+				[createResponse(aResults[1]), createResponse()],
+				createResponse(aResults[0])
 			],
 			oRequestor = _Requestor.create("/Service/", oModelInterface,
 				{"Accept-Language" : "ab-CD"}),
@@ -988,7 +1026,7 @@ sap.ui.require([
 				// Note: no empty change set!
 				sinon.match({method : "GET", url : "Products"})
 			]).resolves([
-				{responseText : "{}"}
+				createResponse({})
 			]);
 
 		// code under test
@@ -1074,14 +1112,13 @@ sap.ui.require([
 				})
 			]).resolves([
 				[
-					{responseText : JSON.stringify({Name : "bar", Note : "hello, world"})},
-					{responseText : JSON.stringify({Note : "no merge!"})},
-					{responseText : JSON.stringify({Name : "baz"})},
-					{responseText : JSON.stringify({Address : null})},
-					{responseText :
-						JSON.stringify({Address : {City : "Walldorf", PostalCode : "69190"}})}
+					createResponse({Name : "bar", Note : "hello, world"}),
+					createResponse({Note : "no merge!"}),
+					createResponse({Name : "baz"}),
+					createResponse({Address : null}),
+					createResponse({Address : {City : "Walldorf", PostalCode : "69190"}})
 				],
-				{responseText : JSON.stringify({Name : "Name", Note : "Note"})}
+				createResponse({Name : "Name", Note : "Note"})
 			]);
 
 		// code under test
@@ -1163,9 +1200,7 @@ sap.ui.require([
 
 			oRequestorMock.expects("sendBatch")
 				.withExactArgs(aExpectedRequests)
-				.resolves([
-					{responseText : JSON.stringify(oFixture.mProductsResponse)}
-				]);
+				.resolves([createResponse(oFixture.mProductsResponse)]);
 
 			return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
 		});
@@ -1190,9 +1225,31 @@ sap.ui.require([
 				assert.strictEqual(oError0, oError);
 			});
 		oRequestorMock.expects("sendBatch") // arguments don't matter
-			.resolves([{responseText : JSON.stringify(oResponse)}]);
+			.resolves([createResponse(oResponse)]);
 
 		return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
+	});
+
+	//*********************************************************************************************
+	[{
+		response : {id : 42}, method : "GET"
+	}, {
+		response : undefined, method : "DELETE"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("submitBatch: report unbound messages, " + i, function (assert) {
+			var mHeaders = {"sap-message" : {}},
+				oRequestor = _Requestor.create("/Service/", oModelInterface),
+				oRequestorMock = this.mock(oRequestor),
+				oRequestPromise = oRequestor.request(oFixture.method, "Products(42)",
+					new _GroupLock("group1"));
+
+			oRequestorMock.expects("reportUnboundMessages")
+				.withExactArgs(sinon.match.same(mHeaders["sap-message"]));
+			oRequestorMock.expects("sendBatch") // arguments don't matter
+				.resolves([createResponse(oFixture.response, mHeaders)]);
+
+			return Promise.all([oRequestPromise, oRequestor.submitBatch("group1")]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -1341,40 +1398,49 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("sendBatch(...)", function (assert) {
-		var oBatchRequest = {
-				body : "abcd",
-				headers : {
-					"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
-					"MIME-Version" : "1.0"
-				}
-			},
-			aBatchRequests = [{}],
-			aExpectedResponses = [],
-			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
-				{"sap-client" : "123"}),
-			oResult = "abc",
-			sResponseContentType = "multipart/mixed; boundary=foo";
+	[null, "[{code : 42}]"].forEach(function (sMessage) {
+		QUnit.test("sendBatch(...), message=" + sMessage, function (assert) {
+			var oBatchRequest = {
+					body : "abcd",
+					headers : {
+						"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+						"MIME-Version" : "1.0"
+					}
+				},
+				aBatchRequests = [{}],
+				aExpectedResponses = [],
+				oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
+					{"sap-client" : "123"}),
+				oResult = "abc",
+				sResponseContentType = "multipart/mixed; boundary=foo";
 
-		this.mock(_Batch).expects("serializeBatchRequest")
-			.withExactArgs(sinon.match.same(aBatchRequests))
-			.returns(oBatchRequest);
+			this.mock(_Batch).expects("serializeBatchRequest")
+				.withExactArgs(sinon.match.same(aBatchRequests))
+				.returns(oBatchRequest);
 
-		this.mock(oRequestor).expects("sendRequest")
-			.withExactArgs("POST", "$batch?sap-client=123", sinon.match({
-					"Content-Type" : oBatchRequest.headers["Content-Type"],
-					"MIME-Version" : oBatchRequest.headers["MIME-Version"]
-				}), sinon.match.same(oBatchRequest.body))
-			.resolves({contentType : sResponseContentType, body : oResult});
+			this.mock(oRequestor).expects("sendRequest")
+				.withExactArgs("POST", "$batch?sap-client=123", sinon.match({
+						"Content-Type" : oBatchRequest.headers["Content-Type"],
+						"MIME-Version" : oBatchRequest.headers["MIME-Version"]
+					}), sinon.match.same(oBatchRequest.body))
+				.resolves({contentType : sResponseContentType, body : oResult,
+					messages : sMessage});
 
-		this.mock(_Batch).expects("deserializeBatchResponse")
-			.withExactArgs(sResponseContentType, oResult)
-			.returns(aExpectedResponses);
+			this.mock(_Batch).expects("deserializeBatchResponse").exactly(sMessage === null ? 1 : 0)
+				.withExactArgs(sResponseContentType, oResult)
+				.returns(aExpectedResponses);
 
-		return oRequestor.sendBatch(aBatchRequests)
-			.then(function (oPayload) {
-				assert.strictEqual(oPayload, aExpectedResponses);
-			});
+			return oRequestor.sendBatch(aBatchRequests)
+				.then(function (oPayload) {
+					assert.ok(sMessage === null ? true : false, "unexpected success");
+					assert.strictEqual(oPayload, aExpectedResponses);
+				}, function (oError) {
+					assert.ok(sMessage !== null ? true : false, "unexpected error");
+					assert.ok(oError instanceof Error);
+					assert.strictEqual(oError.message,
+						"Unexpected 'sap-message' response header for batch request");
+				});
+		});
 	});
 
 	//*****************************************************************************************
@@ -1402,7 +1468,7 @@ sap.ui.require([
 			Promise.resolve().then(function () {
 				oBatchMock.expects("deserializeBatchResponse")
 					.withExactArgs(null, "body")
-					.returns([{}]);
+					.returns([createResponse()]);
 
 				jqXHR.resolve("body", "OK", { // mock jqXHR for success handler
 					getResponseHeader : function (sHeader) {
@@ -1531,7 +1597,7 @@ sap.ui.require([
 					method : "GET",
 					url : "Employees"
 				})
-			]).resolves([{}, {}]);
+			]).resolves([createResponse(), createResponse()]);
 
 		oRequestor.submitBatch("groupId");
 
@@ -1641,10 +1707,7 @@ sap.ui.require([
 					method : "GET",
 					url : "Employees"
 				})
-			]).resolves([
-				{responseText : "{}"},
-				{responseText : "{}"}
-			]);
+			]).resolves([createResponse({}), createResponse({})]);
 
 		// code under test
 		oRequestor.removePatch(oPromise);
@@ -1663,7 +1726,8 @@ sap.ui.require([
 		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"), {},
 			{Name : "bar"});
 
-		this.mock(oRequestor).expects("sendBatch").resolves([{}]); // arguments don't matter
+		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
+			.resolves([createResponse({})]);
 
 		oRequestor.submitBatch("groupId");
 
@@ -1706,7 +1770,7 @@ sap.ui.require([
 					url : "Products",
 					body : {Name : "bar"}
 				})
-			]).resolves([{}]);
+			]).resolves([createResponse()]);
 
 		// code under test
 		oRequestor.submitBatch("groupId");
@@ -1748,7 +1812,8 @@ sap.ui.require([
 
 		oRequestor.request("POST", "Products", new _GroupLock("groupId"), {}, oPayload);
 
-		this.mock(oRequestor).expects("sendBatch").resolves([{}]); // arguments don't matter
+		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
+			.resolves([createResponse({})]);
 
 		oRequestor.submitBatch("groupId");
 
@@ -1779,7 +1844,7 @@ sap.ui.require([
 					url : "Products",
 					body : {Name : "bar"}
 				})
-			]).resolves([{}]);
+			]).resolves([createResponse()]);
 
 		// code under test
 		return oRequestor.submitBatch("groupId");
@@ -1900,10 +1965,14 @@ sap.ui.require([
 	QUnit.test("request: $cached as groupId", function (assert) {
 		var oRequestor = _Requestor.create("/");
 
-		assert.throws(function(){
+		assert.throws(function () {
 			//code under test
 			oRequestor.request("GET", "/FOO", new _GroupLock("$cached"));
-		},  new Error("Unexpected request: GET /FOO"));
+		},  function (oError) {
+			assert.strictEqual(oError.message, "Unexpected request: GET /FOO");
+			assert.strictEqual(oError.$cached, true);
+			return oError instanceof Error;
+		});
 	});
 
 	//*********************************************************************************************
@@ -2425,6 +2494,29 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/");
 
 		assert.strictEqual(oRequestor.isActionBodyOptional(), false);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("reportUnboundMessages", function (assert) {
+		var sMessages = '[{"code" : "42"}]',
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oModelInterface).expects("fnReportUnboundMessages")
+			.withExactArgs([{code : "42"}]);
+
+		// code under test
+		oRequestor.reportUnboundMessages(sMessages);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("reportUnboundMessages without messages", function (assert) {
+		var oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oModelInterface).expects("fnReportUnboundMessages")
+			.withExactArgs(null);
+
+		// code under test
+		oRequestor.reportUnboundMessages();
 	});
 });
 // TODO: continue-on-error? -> flag on model

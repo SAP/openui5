@@ -756,6 +756,9 @@ sap.ui.require([
 			oMetaModel;
 
 		// code under test
+		assert.strictEqual(ODataMetaModel.prototype.$$valueAsPromise, true);
+
+		// code under test
 		oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
 
 		assert.ok(oMetaModel instanceof MetaModel);
@@ -2542,13 +2545,43 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaPropertyBinding#checkUpdate", function (assert) {
+	[undefined, {}, {$$valueAsPromise : false}].forEach(function (mParameters, i) {
+		QUnit.test("ODataMetaPropertyBinding#checkUpdate: " + i, function (assert) {
+			var oBinding,
+				oContext = {},
+				sPath = "foo",
+				oValue = {},
+				oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+
+			oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+
+			this.oMetaModelMock.expects("fetchObject")
+				.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
+				.returns(oPromise);
+			this.mock(oBinding).expects("_fireChange")
+				.withExactArgs({reason : ChangeReason.Change});
+
+			// code under test
+			oBinding.checkUpdate();
+
+			assert.strictEqual(oBinding.getValue(), undefined);
+			oPromise.then(function () {
+				assert.strictEqual(oBinding.getValue(), oValue);
+			});
+
+			return oPromise;
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: $$valueAsPromise=true, sync",
+			function (assert) {
 		var oBinding,
 			oContext = {},
-			mParameters = {},
+			mParameters = {$$valueAsPromise : true},
 			sPath = "foo",
 			oValue = {},
-			oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+			oPromise = SyncPromise.resolve(oValue);
 
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
 
@@ -2560,10 +2593,7 @@ sap.ui.require([
 		// code under test
 		oBinding.checkUpdate();
 
-		assert.strictEqual(oBinding.getValue(), undefined);
-		oPromise.then(function () {
-			assert.strictEqual(oBinding.getValue(), oValue);
-		});
+		assert.strictEqual(oBinding.getValue(), oValue, "Value sync");
 
 		return oPromise;
 	});
@@ -2613,6 +2643,43 @@ sap.ui.require([
 		oBinding.checkUpdate(true, "Foo");
 
 		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: $$valueAsPromise = true", function (assert) {
+		var oBinding,
+			oContext = {},
+			mParameters = {
+				$$valueAsPromise : true
+			},
+			sPath = "foo",
+			oValue = {},
+			oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+		oBinding.vValue = oValue;
+
+		this.oMetaModelMock.expects("fetchObject")
+			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
+			.returns(oPromise);
+		this.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : "Foo"})
+			.twice()
+			.onFirstCall().callsFake(function () {
+				assert.ok(oBinding.getValue().isPending(), "Value is still a pending SyncPromise");
+			})
+			.onSecondCall().callsFake(function () {
+				assert.strictEqual(oBinding.getValue(), oValue, "Value resolved");
+			});
+
+		// code under test
+		oBinding.checkUpdate(false, "Foo");
+
+		assert.ok(oBinding.getValue().isPending(), "Value is a pending SyncPromise");
+		return oBinding.getValue().then(function (oResult) {
+			assert.strictEqual(oResult, oValue);
+			assert.strictEqual(oBinding.getValue(), oValue);
+		});
 	});
 
 	//*********************************************************************************************
@@ -3096,6 +3163,9 @@ sap.ui.require([
 							"B.", "B.B."
 						]
 					},
+					"/C/$metadata" : {
+						"$Include" : ["C."]
+					},
 					"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
 						"$Include" : [
 							"tea_busi_product."
@@ -3112,6 +3182,8 @@ sap.ui.require([
 		// simulate a previous reference to a schema with the _different_ reference URI
 		// --> allowed as long as the document is not yet read (and will never be read)
 		this.oMetaModel.mSchema2MetadataUrl["B.B."] = {"/B/V2/$metadata" : false};
+		// simulate a previous reference to a schema with the _same_ reference URI, already loaded
+		this.oMetaModel.mSchema2MetadataUrl["C."] = {"/C/$metadata" : true};
 
 		// code under test
 		assert.strictEqual(this.oMetaModel.validate(sUrl, mScope), mScope);
@@ -3124,6 +3196,7 @@ sap.ui.require([
 				"/B/$metadata" : false,
 				"/B/V2/$metadata" : false
 			},
+			"C." : {"/C/$metadata" : true},
 			"tea_busi_product." : {"/a/default/iwbep/tea_busi_product/0001/$metadata" : false}
 		});
 	});

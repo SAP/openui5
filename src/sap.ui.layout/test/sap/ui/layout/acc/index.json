@@ -2,7 +2,7 @@
 	"tests": [
 	  {
 		"control": "sap.ui.layout.BlockLayout",
-		"url": "../BlockLayout.html",
+		"url": "BlockLayout.html",
 		"appComponent": "CA-UI5-CTR-RIL"
 	  },
 	  {

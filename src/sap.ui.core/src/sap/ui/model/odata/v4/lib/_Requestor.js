@@ -405,6 +405,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts an OData response payload if needed. For OData V4 payloads no conversion is done.
+	 * May be overwritten for other OData service versions. The resulting payload has to
+	 * be an OData V4 payload.
+	 *
+	 * @param {object} oResponsePayload
+	 *   The OData response payload
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
+	 * @returns {object}
+	 *   The OData V4 response payload
+	 */
+	Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
+		return oResponsePayload;
+	};
+
+
+	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
 	 * May be overwritten for other OData service versions.
@@ -444,24 +463,6 @@ sap.ui.define([
 			}
 			fnResultHandler(sKey, vValue);
 		});
-	};
-
-	/**
-	 * Converts an OData response payload if needed. For OData V4 payloads no conversion is done.
-	 * May be overwritten for other OData service versions. The resulting payload has to
-	 * be an OData V4 payload.
-	 *
-	 * @param {object} oResponsePayload
-	 *   The OData response payload
-	 * @param {string} [sMetaPath]
-	 *   The meta path corresponding to the resource path; needed in case V2 response does not
-	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
-	 *   Request"
-	 * @returns {object}
-	 *   The OData V4 response payload
-	 */
-	Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
-		return oResponsePayload;
 	};
 
 	/**
@@ -669,6 +670,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * Searches the request identified by the given group and body, removes it from that group and
+	 * triggers a new request with the new group ID, based on the found request.
+	 * The result of the new request is delegated to the found request.
+	 *
+	 * @param {string} sCurrentGroupId
+	 *   The ID of the group in which to search the request
+	 * @param {object} oBody
+	 *   The body of the request to be searched
+	 * @param {string} sNewGroupId
+	 *   The ID of the group for the new request
+	 * @throws {Error}
+	 *   If the request could not be found
+	 */
+	Requestor.prototype.relocate = function (sCurrentGroupId, oBody, sNewGroupId) {
+		var aRequests = this.mBatchQueue[sCurrentGroupId],
+			that = this,
+			bFound = aRequests && aRequests[0].some(function (oChange, i) {
+				if (oChange.body === oBody) {
+					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
+							oChange.headers, oBody, oChange.$submit, oChange.$cancel)
+						.then(oChange.$resolve, oChange.$reject);
+					aRequests[0].splice(i, 1);
+					deleteEmptyGroup(that, sCurrentGroupId);
+					return true;
+				}
+			});
+
+		if (!bFound) {
+			throw new Error("Request not found in group '" + sCurrentGroupId + "'");
+		}
+	};
+
+	/**
 	 * Removes the pending PATCH request for the given promise from its group. Only requests for
 	 * which the <code>$cancel</code> callback is defined are removed.
 	 *
@@ -712,6 +746,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Reports unbound OData messages.
+	 *
+	 * @param {string} [sMessages]
+	 *   The messages in the serialized form as contained in the sap-message response header
+	 */
+	Requestor.prototype.reportUnboundMessages = function (sMessages) {
+		this.oModelInterface.fnReportUnboundMessages(JSON.parse(sMessages || null));
+	};
+
+	/**
 	 * Sends an HTTP request using the given method to the given relative URL, using the given
 	 * request-specific headers in addition to the mandatory OData V4 headers and the default
 	 * headers given to the factory. Takes care of CSRF token handling. Non-GET requests are bundled
@@ -749,19 +793,22 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
 	 * @throws {Error}
-	 *   If group ID is '$cached'
+	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
 			fnSubmit, fnCancel, sMetaPath) {
-		var sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
+		var oError,
+			sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
 			oPromise,
 			oRequest,
 			that = this;
 
 		if (sGroupId === "$cached") {
-			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
+			oError = new Error("Unexpected request: " + sMethod + " " + sResourcePath);
+			oError.$cached = true;
+			throw oError;
 		}
 
 		if (oGroupLock) {
@@ -810,41 +857,9 @@ sap.ui.define([
 			jQuery.extend({}, mHeaders, this.mFinalHeaders),
 			JSON.stringify(_Requestor.cleanPayload(oPayload))
 		).then(function (oResponse) {
+			that.reportUnboundMessages(oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
 		});
-	};
-
-	/**
-	 * Searches the request identified by the given group and body, removes it from that group and
-	 * triggers a new request with the new group ID, based on the found request.
-	 * The result of the new request is delegated to the found request.
-	 *
-	 * @param {string} sCurrentGroupId
-	 *   The ID of the group in which to search the request
-	 * @param {object} oBody
-	 *   The body of the request to be searched
-	 * @param {string} sNewGroupId
-	 *   The ID of the group for the new request
-	 * @throws {Error}
-	 *   If the request could not be found
-	 */
-	Requestor.prototype.relocate = function (sCurrentGroupId, oBody, sNewGroupId) {
-		var aRequests = this.mBatchQueue[sCurrentGroupId],
-			that = this,
-			bFound = aRequests && aRequests[0].some(function (oChange, i) {
-				if (oChange.body === oBody) {
-					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
-							oChange.headers, oBody, oChange.$submit, oChange.$cancel)
-						.then(oChange.$resolve, oChange.$reject);
-					aRequests[0].splice(i, 1);
-					deleteEmptyGroup(that, sCurrentGroupId);
-					return true;
-				}
-			});
-
-		if (!bFound) {
-			throw new Error("Request not found in group '" + sCurrentGroupId + "'");
-		}
 	};
 
 	/**
@@ -859,6 +874,9 @@ sap.ui.define([
 		return this.sendRequest("POST", "$batch" + this.sQueryParams,
 			jQuery.extend(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
 		).then(function (oResponse) {
+			if (oResponse.messages !== null) {
+				throw new Error("Unexpected 'sap-message' response header for batch request");
+			}
 			return _Batch.deserializeBatchResponse(oResponse.contentType, oResponse.body);
 		});
 	};
@@ -899,14 +917,17 @@ sap.ui.define([
 					method : sMethod
 				}).then(function (oResponse, sTextStatus, jqXHR) {
 					try {
-						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
+						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath,
+							!oResponse);
 					} catch (oError) {
 						fnReject(oError);
 						return;
 					}
 					that.mHeaders["X-CSRF-Token"]
 						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+
 					fnResolve({
+						messages : jqXHR.getResponseHeader("sap-message"),
 						body : oResponse,
 						contentType : jqXHR.getResponseHeader("Content-Type")
 					});
@@ -926,7 +947,7 @@ sap.ui.define([
 			}
 
 			if (that.oSecurityTokenPromise && sMethod !== "GET") {
-			    return that.oSecurityTokenPromise.then(send);
+				return that.oSecurityTokenPromise.then(send);
 			}
 			return send();
 		});
@@ -1008,11 +1029,13 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
+						that.reportUnboundMessages(vResponse.headers["sap-message"]);
 						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}
 				} else {
+					that.reportUnboundMessages(vResponse.headers["sap-message"]);
 					vRequest.$resolve();
 				}
 			});
@@ -1182,6 +1205,9 @@ sap.ui.define([
 		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
+		 * @param {function (object[])} oModelInterface.fnReportUnboundMessages
+		 *   A function to report unbound OData messages contained in the <code>sap-message</code>
+		 *   response header
 		 * @param {object} [mHeaders={}]
 		 *   Map of default headers; may be overridden with request-specific headers; certain
 		 *   OData V4 headers are predefined, but may be overridden by the default or

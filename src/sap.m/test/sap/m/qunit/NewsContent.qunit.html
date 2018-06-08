@@ -23,112 +23,117 @@
 		blanket.options("sap-ui-cover-only", /sap\/m\/NewsContent.*/);
 	}
 
-	QUnit.module("Basic rendering", {
-		beforeEach : function() {
-			this.oNewsContent = new sap.m.NewsContent("news-cnt", {
-				size : sap.m.Size.M,
-				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
-				subheader : "August 21, 2013",
-				tooltip : "Test tooltip",
-				press : function() {
-					sap.m.MessageToast.show("The news content is pressed.");
-				}
-			});
-			this.oNewsContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.oNewsContent.destroy();
-		}
-	});
+	sap.ui.require([
+		"jquery.sap.global",
+		"sap/m/NewsContent",
+		"sap/m/Size",
+		"sap/m/MessageToast",
+		"sap/ui/core/TooltipBase"
+	], function (jQuery, NewsContent, Size, MessageToast, TooltipBase) {
+		"use strict";
 
-	QUnit.test("News Content rendered.", function(assert) {
-		// Arrange
-		var oSpy = sinon.spy(this.oNewsContent, "_setPointerOnContentText");
-		// Act
-		this.oNewsContent.rerender();
-		// Assert
-		assert.ok(jQuery.sap.domById("news-cnt"), "NewsContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("news-cnt-content-text"), "Content text was rendered successfully");
-		assert.ok(jQuery.sap.domById("news-cnt-subheader"), "Subheader was rendered successfully");
-		assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnContentText has been called");
-	});
+		QUnit.module("Basic rendering", {
+			beforeEach : function() {
+				this.oNewsContent = new NewsContent("news-cnt", {
+					size : Size.M,
+					contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+					subheader : "August 21, 2013",
+					tooltip : "Test tooltip",
+					press : function() {
+						MessageToast.show("The news content is pressed.");
+					}
+				});
+				this.oNewsContent.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function() {
+				this.oNewsContent.destroy();
+			}
+		});
 
-	QUnit.module("Functional tests", {
-		beforeEach : function() {
-			this.oNewsContent = new sap.m.NewsContent({
-				size : sap.m.Size.M
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function () {
-			this.oNewsContent.destroy();
-			this.oNewsContent = null;
-		}
-	});
+		QUnit.test("News Content rendered.", function(assert) {
+			// Arrange
+			var oSpy = sinon.spy(this.oNewsContent, "_setPointerOnContentText");
+			// Act
+			this.oNewsContent.rerender();
+			// Assert
+			assert.ok(jQuery.sap.domById("news-cnt"), "NewsContent was rendered successfully");
+			assert.ok(jQuery.sap.domById("news-cnt-content-text"), "Content text was rendered successfully");
+			assert.ok(jQuery.sap.domById("news-cnt-subheader"), "Subheader was rendered successfully");
+			assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnContentText has been called");
+		});
 
-	QUnit.test("Setter method 'setContentText'", function(assert) {
-		//Act
-		var oResult = this.oNewsContent.setContentText("My new Text");
-		//Assert
-		assert.deepEqual(oResult, this.oNewsContent, "Instance is returned");
-		assert.equal(this.oNewsContent.getProperty("contentText"), "My new Text", "Control property updated");
-		assert.equal(this.oNewsContent._oContentText.getText(), "My new Text", "Inner control property updated");
-	});
+		QUnit.module("Functional tests", {
+			beforeEach : function() {
+				this.oNewsContent = new NewsContent({
+					size : Size.M
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.oNewsContent.destroy();
+				this.oNewsContent = null;
+			}
+		});
 
-	QUnit.test("Alternative text tests", function(assert) {
-		//Act
-		var sAltText = this.oNewsContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "", "Alternative text is correct");
+		QUnit.test("Setter method 'setContentText'", function(assert) {
+			//Act
+			var oResult = this.oNewsContent.setContentText("My new Text");
+			//Assert
+			assert.deepEqual(oResult, this.oNewsContent, "Instance is returned");
+			assert.equal(this.oNewsContent.getProperty("contentText"), "My new Text", "Control property updated");
+			assert.equal(this.oNewsContent._oContentText.getText(), "My new Text", "Inner control property updated");
+		});
 
-		//Arrange
-		this.oNewsContent.setSubheader("August 21, 2013");
-		//Act
-		sAltText = this.oNewsContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "August 21, 2013", "Alternative text is correct with subheader");
+		QUnit.test("Alternative text tests", function(assert) {
+			//Act
+			var sAltText = this.oNewsContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "", "Alternative text is correct");
 
-		//Arrange
-		this.oNewsContent.setContentText("SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com");
-		//Act
-		sAltText = this.oNewsContent.getAltText();
-		//Assert
-		assert.equal(sAltText, "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com\nAugust 21, 2013", "Alternative text is correct with content text");
-	});
+			//Arrange
+			this.oNewsContent.setSubheader("August 21, 2013");
+			//Act
+			sAltText = this.oNewsContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "August 21, 2013", "Alternative text is correct with subheader");
 
-	QUnit.test("Tooltip tests", function(assert) {
-		//Arrange
-		this.oNewsContent.setTooltip(null);
-		//Act
-		var sTooltip = this.oNewsContent.getTooltip_AsString();
-		//Assert
-		assert.deepEqual(sTooltip, "", "No tooltip is correct");
+			//Arrange
+			this.oNewsContent.setContentText("SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com");
+			//Act
+			sAltText = this.oNewsContent.getAltText();
+			//Assert
+			assert.equal(sAltText, "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com\nAugust 21, 2013", "Alternative text is correct with content text");
+		});
 
-		//Arrange
-		this.oNewsContent.setTooltip("Tooltip");
-		//Act
-		var sTooltip = this.oNewsContent.getTooltip_AsString();
-		//Assert
-		assert.deepEqual(sTooltip, "Tooltip", "Tooltip is correct");
+		QUnit.test("Tooltip tests", function(assert) {
+			//Arrange
+			this.oNewsContent.setTooltip(null);
+			//Act
+			var sTooltip = this.oNewsContent.getTooltip_AsString();
+			//Assert
+			assert.deepEqual(sTooltip, "", "No tooltip is correct");
 
-		//Arrange
-		var oTooltip = new sap.ui.core.TooltipBase({text: "Tooltip"});
-		this.oNewsContent.setTooltip(oTooltip);
-		//Act
-		var sTooltip = this.oNewsContent.getTooltip_AsString();
-		//Assert
-		assert.deepEqual(sTooltip.getText(), "Tooltip", "Tooltip is an object with a text property containing the correct string"); //TODO
-	});
+			//Arrange
+			this.oNewsContent.setTooltip("Tooltip");
+			//Act
+			var sTooltip = this.oNewsContent.getTooltip_AsString();
+			//Assert
+			assert.deepEqual(sTooltip, "Tooltip", "Tooltip is correct");
 
-	/* Module wrapper to define a scope for helper functions. This can be replaced with nested approach of QUnit in the future
-	 * This approach is not working in the current TestSuite configuration.
-	 * See 'Hooks stack on nested modules' sample at https://api.qunitjs.com/QUnit.module/ */
-	(function() {
+			//Arrange
+			var oTooltip = new TooltipBase({text: "Tooltip"});
+			this.oNewsContent.setTooltip(oTooltip);
+			//Act
+			var sTooltip = this.oNewsContent.getTooltip_AsString();
+			//Assert
+			assert.deepEqual(sTooltip.getText(), "Tooltip", "Tooltip is an object with a text property containing the correct string"); //TODO
+		});
+
 		QUnit.module("Events test", {
 			beforeEach : function() {
-				this.oNewsContent = new sap.m.NewsContent({
-					size : sap.m.Size.M,
+				this.oNewsContent = new NewsContent({
+					size : Size.M,
 					contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
 					subheader : "August 21, 2013",
 					tooltip : "Test tooltip"
@@ -188,13 +193,13 @@
 
 		/* --- Helpers --- */
 
-		fnHoverHandler = function() {
-		};
+		function fnHoverHandler() {
+		}
 
-		fnPressHandler = function() {
-		};
+		function fnPressHandler() {
+		}
 
-		hasAttribute = function(sAttribute, oCurrentObject) {
+		function hasAttribute(sAttribute, oCurrentObject) {
 			var sAttributeValue = oCurrentObject.$().attr(sAttribute);
 			if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
 				return true;
@@ -202,7 +207,8 @@
 				return false;
 			}
 		}
-	}());
+	});
+
 </script>
 </head>
 

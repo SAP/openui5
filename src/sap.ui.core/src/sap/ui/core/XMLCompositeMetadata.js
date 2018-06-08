@@ -98,6 +98,32 @@ sap.ui.define([
 		}
 	};
 
+	XMLCompositeMetadata.prototype.usesTemplating = function () {
+		var that = this;
+		var fnTemplatingInFragment = function(oFragment) {
+			var aTemplateNodes = oFragment.getElementsByTagNameNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1", "*");
+			if (aTemplateNodes.length > 0) {
+				return true;
+			}
+			var oEmbeddedFragment, aEmbeddedFragments = oFragment.getElementsByTagNameNS("sap.ui.core", "Fragment");
+			for (var i = 0; i < aEmbeddedFragments.length; i++) {
+				oEmbeddedFragment = that._loadFragment(aEmbeddedFragments[i].getAttribute("fragmentName"), "fragment");
+				if (fnTemplatingInFragment(oEmbeddedFragment)) {
+					return true;
+				}
+			}
+			return false;
+		};
+
+		if (this._fragment) {
+			if (this._bUsesTemplating === undefined) {
+				this._bUsesTemplating = fnTemplatingInFragment(this._fragment);
+			}
+			return this._bUsesTemplating;
+		}
+		return false;
+	};
+
 	XMLCompositeMetadata.prototype._applyAggregationSettings = function () {
 		// TBD: Is this till needed?
 		var mAggregations = this.getAllAggregations();
@@ -174,12 +200,13 @@ sap.ui.define([
 	};
 
 	XMLCompositeMetadata.prototype._loadFragment = function (sFragmentName, sExtension) {
-		if (!mFragmentCache[sFragmentName]) {
-			mFragmentCache[sFragmentName] = XMLTemplateProcessor.loadTemplate(sFragmentName, sExtension);
-			this.requireFor(mFragmentCache[sFragmentName]);
+		var sFragmentKey = sExtension + "$" + sFragmentName;
+		if (!mFragmentCache[sFragmentKey]) {
+			mFragmentCache[sFragmentKey] = XMLTemplateProcessor.loadTemplate(sFragmentName, sExtension);
+			this.requireFor(mFragmentCache[sFragmentKey]);
 		}
 
-		return mFragmentCache[sFragmentName];
+		return mFragmentCache[sFragmentKey];
 	};
 
 	XMLCompositeMetadata.prototype.hasAggregation = function(sName) {

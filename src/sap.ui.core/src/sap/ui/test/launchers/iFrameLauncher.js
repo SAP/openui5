@@ -110,7 +110,7 @@ sap.ui.define([
 	}
 
 	function handleUi5Loaded () {
-		registerFrameModulePaths();
+		registerFrameResourcePaths();
 
 		if (Device.browser.firefox) {
 			// In Firefox there is a bug when the app loads sinon and OPA loads it from outside.
@@ -130,13 +130,13 @@ sap.ui.define([
 		bUi5Loaded = true;
 	}
 
-	function registerFrameModulePaths () {
+	function registerFrameResourcePaths () {
 		oFrameJQuery = oFrameWindow.jQuery;
 		//All Opa related resources in the iframe should be the same version
 		//that is running in the test and not the (evtl. not available) version of Opa of the running App.
-		registerAbsoluteModulePathInIframe("sap.ui.test");
-		registerAbsoluteModulePathInIframe("sap.ui.qunit");
-		registerAbsoluteModulePathInIframe("sap.ui.thirdparty");
+		registerAbsoluteResourcePathInIframe("sap/ui/test");
+		registerAbsoluteResourcePathInIframe("sap/ui/qunit");
+		registerAbsoluteResourcePathInIframe("sap/ui/thirdparty");
 	}
 
 	/**
@@ -277,10 +277,21 @@ sap.ui.define([
 		});
 	}
 
-	function registerAbsoluteModulePathInIframe(sModule) {
-		var sOpaLocation = $.sap.getModulePath(sModule);
+	function registerAbsoluteResourcePathInIframe(sResource) {
+		var sOpaLocation = sap.ui.require.toUrl(sResource);
 		var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
-		oFrameJQuery.sap.registerModulePath(sModule,sAbsoluteOpaPath);
+		var fnConfig = oFrameWindow.sap.ui._ui5loader || oFrameWindow.sap.ui.loader.config;
+		if (fnConfig) {
+			var paths = {};
+			paths[sResource] = sAbsoluteOpaPath;
+			fnConfig({
+				paths: paths
+			});
+		} else if (oFrameJQuery && oFrameJQuery.sap && oFrameJQuery.sap.registerResourcePath) {
+			oFrameJQuery.sap.registerResourcePath(sResource, sAbsoluteOpaPath);
+		} else {
+			throw new Error("iFrameLauncher.js: UI5 module system not found.");
+		}
 	}
 
 	function destroyFrame () {

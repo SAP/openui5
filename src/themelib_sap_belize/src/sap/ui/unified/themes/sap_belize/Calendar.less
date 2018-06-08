@@ -3,10 +3,10 @@
 /* Belize theme                             */
 /* ======================================== */
 
-@_sap_ui_unified_Calendar_ItemColor: lighten(@sapUiContentForegroundColor,5);
+@_sap_ui_unified_Calendar_ItemColor: lighten(@sapUiContentForegroundColor,7);
 @_sap_ui_unified_Calendar_ItemHoverColor: darken(@sapUiContentForegroundColor,5);
 @_sap_ui_unified_Calendar_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
-@_sap_ui_unified_Calendar_ItemWeekEndColor: @sapUiContentForegroundColor;
+@_sap_ui_unified_Calendar_ItemWeekEndColor: darken(@sapUiContentForegroundColor, 3);
 @_sap_ui_unified_Calendar_ItemWeekEndHoverColor: darken(@sapUiContentForegroundColor, 10);
 @_sap_ui_unified_Calendar_ItemOtherMonthColor: lighten(@sapUiBaseText, 30);
 @_sap_ui_unified_Calendar_ItemSelBetweenColor: lighten(@sapUiSelected, 43);
@@ -99,8 +99,8 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 
 .sapUiCalRowWeekNumber {
 	color: @sapUiBaseText;
-	background-color: lighten(@sapUiContentForegroundColor,5);
-	border-color: @_sap_ui_unified_Calendar_ItemBorderColor;
+	background-color: @sapUiListBackground;
+	border-color: @sapUiListBorderColor;
 }
 
 .sapUiCalItemNow {
@@ -115,7 +115,7 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
-html.sap-desktop .sapUiCalItem:hover {
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
 	background-color: @_sap_ui_unified_Calendar_ItemHoverColor;
 }
 
@@ -181,7 +181,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	background-color: @_sap_ui_unified_Calendar_ItemWeekEndColor;
 }
 
-html.sap-desktop .sapUiCalItemWeekEnd:hover,
+html.sap-desktop .sapUiCalItemWeekEnd:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover,
 html.sap-desktop .sapUiCalItemWeekEnd:focus {
 	background-color: @_sap_ui_unified_Calendar_ItemWeekEndHoverColor;
 }
@@ -195,7 +195,7 @@ html.sap-desktop .sapUiCalItemWeekEnd:focus {
 	color: @_sap_ui_unified_Calendar_ItemOtherMonthColor;
 }
 
-html.sap-desktop .sapUiCalItemOtherMonth:hover,
+html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover,
 html.sap-desktop .sapUiCalItemOtherMonth:focus {
 	background-color: darken(@sapUiListBackground , 10);
 }

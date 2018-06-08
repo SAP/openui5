@@ -178,9 +178,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 
 			rm.write("</div>"); // End Top row container
 
-			if (!(Device.browser.internet_explorer && Device.browser.version < 10)) {
-				rm.write("<div style=\"clear: both;\"></div>");
-			}
+			rm.write("<div style=\"clear: both;\"></div>");
 
 			// Bottom row container.
 			if (oLI._hasBottomContent()) {
@@ -191,7 +189,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 
 				var aAttribs = oLI._getVisibleAttributes();
 				var statuses = [];
-				var markers = oLI._getVisibleMarkers();
+				var markers = oLI.getMarkers();
 
 				markers._isEmpty = function() {
 					return !(markers.length);

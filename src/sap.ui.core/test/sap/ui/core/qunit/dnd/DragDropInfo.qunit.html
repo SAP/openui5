@@ -20,7 +20,7 @@
 	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
-		jQuery.sap.registerModulePath("test", "./");
+		sap.ui.loader.config({paths: {"test": "./"}});
 	</script>
 
 	<script src="DragInfo.qunit.js"></script>

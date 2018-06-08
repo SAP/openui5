@@ -20,8 +20,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/library',
-	'./DialogRenderer',
-	'jquery.sap.mobile'
+	'./DialogRenderer'
 	],
 function(
 	jQuery,
@@ -371,7 +370,7 @@ function(
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
 			this.oPopup.setNavigationMode("SCOPE");
-			if (jQuery.device.is.iphone && !this._bMessageType) {
+			if (Device.os.ios && Device.system.phone && !this._bMessageType) {
 				this.oPopup.setModal(true, "sapMDialogTransparentBlk");
 			} else {
 				this.oPopup.setModal(true, "sapMDialogBlockLayerInit");
@@ -1010,7 +1009,7 @@ function(
 		 * @private
 		 */
 		Dialog.prototype._clearBlockLayerAnimation = function () {
-			if (jQuery.device.is.iphone && !this._bMessageType) {
+			if (Device.os.ios && Device.system.phone && !this._bMessageType) {
 				delete this.oPopup._showBlockLayer;
 				this.oPopup._hideBlockLayer = function () {
 					var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
@@ -1323,6 +1322,13 @@ function(
 				this._oButtonDelegate = {
 					ontap: function(){
 						that._oCloseTrigger = this;
+					},
+					//BCP: 1870320154
+					onkeyup: function(){
+						that._oCloseTrigger = this;
+					},
+					onkeydown: function(){
+						that._oCloseTrigger = this;
 					}
 				};
 			}
@@ -1509,7 +1515,7 @@ function(
 			} else {
 				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
 					text: sTitle,
-					level: "H1"
+					level: "H2"
 				}).addStyleClass("sapMDialogTitle");
 
 				this._createHeader();

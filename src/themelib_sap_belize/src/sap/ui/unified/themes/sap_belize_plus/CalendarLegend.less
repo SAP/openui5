@@ -25,3 +25,11 @@
 @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType18: lighten(desaturate(@sapUiAccent8,30),25);
 @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType19: lighten(desaturate(@sapUiAccent6,50), 20);
 @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType20: lighten(saturate(@sapUiAccent5, 30),20);
+
+.sapUiUnifiedLegendWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	background: lighten(@sapUiContentForegroundColor, 1);
+}
+
+.sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+	background: darken(@sapUiContentForegroundColor, 5);
+}

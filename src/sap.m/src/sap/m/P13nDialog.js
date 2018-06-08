@@ -95,6 +95,15 @@ sap.ui.define([
 					type: "object",
 					group: "Misc",
 					defaultValue: null
+				},
+
+				/**
+				 * Callback function which is called by 'changeNotifier' in order to update the <code>showResetEnabled</code> value.
+				 * @since 1.58.0
+				 */
+				updateShowResetEnabled: {
+					type: "object",
+					group: "Misc"
 				}
 			},
 			aggregations: {
@@ -191,7 +200,7 @@ sap.ui.define([
 				}),
 				contentMiddle: new Title(this.getId() + "-phoneTitle", {
 					text: this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"),
-					level: "H1"
+					level: "H2"
 				})
 			}));
 			this.addButton(this._createOKButton());
@@ -290,12 +299,6 @@ sap.ui.define([
 					aValidationResult.push({
 						messageType: MessageType.Warning,
 						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE")
-					});
-					break;
-				case P13nPanelType.dimeasure:
-					aValidationResult.push({
-						messageType: MessageType.Error,
-						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_CHARTTYPE")
 					});
 					break;
 				default:
@@ -457,37 +460,37 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDialog.prototype._updateDialogTitle = function() {
-        var oPanelVisible = this.getVisiblePanel();
-        var sTitle = this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");
+		var oPanelVisible = this.getVisiblePanel();
+		var sTitle = this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");
 
-        // Only if one visible panel (i.e. NavigationControl) exists we set specific title
-        if (!this._isNavigationControlExpected() && oPanelVisible) {
-            switch (oPanelVisible.getType()) {
-                case P13nPanelType.filter:
-                    sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_FILTER");
-                    break;
-                case P13nPanelType.sort:
-                    sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_SORT");
-                    break;
-                case P13nPanelType.group:
-                    sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_GROUP");
-                    break;
-                case P13nPanelType.columns:
-                    sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_COLUMNS");
-                    break;
-                case P13nPanelType.dimeasure:
-                    sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_DIMEASURE");
-                    break;
-                default:
-                    sTitle = oPanelVisible.getTitleLarge() || this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");
-            }
-        }
+		// Only if one visible panel (i.e. NavigationControl) exists we set specific title
+		if (!this._isNavigationControlExpected() && oPanelVisible) {
+			switch (oPanelVisible.getType()) {
+				case P13nPanelType.filter:
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_FILTER");
+					break;
+				case P13nPanelType.sort:
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_SORT");
+					break;
+				case P13nPanelType.group:
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_GROUP");
+					break;
+				case P13nPanelType.columns:
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_COLUMNS");
+					break;
+				case P13nPanelType.dimeasure:
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_DIMEASURE");
+					break;
+				default:
+					sTitle = oPanelVisible.getTitleLarge() || this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");
+			}
+		}
 
-        if (Device.system.phone) {
-            this.getCustomHeader().getContentMiddle()[0].setText(sTitle);
-        } else {
-            this.setTitle(sTitle);
-        }
+		if (Device.system.phone) {
+			this.getCustomHeader().getContentMiddle()[0].setText(sTitle);
+		} else {
+			this.setTitle(sTitle);
+		}
 	};
 
 	/**
@@ -527,7 +530,14 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDialog.prototype._callChangeNotifier = function(oPanel) {
-		if (this.getShowReset()) {
+		if (!this.getShowReset()) {
+			return;
+		}
+		var fnUpdateShowResetEnabled = this.getUpdateShowResetEnabled();
+		if (fnUpdateShowResetEnabled) {
+			this.setShowResetEnabled(fnUpdateShowResetEnabled());
+		} else {
+			// Due to backwards compatibility use cases
 			this.setShowResetEnabled(true);
 		}
 	};

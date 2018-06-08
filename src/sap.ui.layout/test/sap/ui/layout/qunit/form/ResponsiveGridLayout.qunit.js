@@ -1127,7 +1127,7 @@ sap.ui.require([
 
 		assert.equal(iLength, 2, "Layout control data exits");
 
-		oForm.setLayout("");
+		oForm.setLayout(null);
 		oResponsiveGridLayout.destroy();
 		iLength = 0;
 

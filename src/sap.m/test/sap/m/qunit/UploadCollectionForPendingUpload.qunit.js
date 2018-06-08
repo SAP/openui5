@@ -1,11 +1,23 @@
 /*global QUnit,sinon*/
 
-(function() {
+sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
+	"jquery.sap.global",
+	"sap/m/UploadCollection",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/ListMode",
+	"sap/m/UploadCollectionItem",
+	"sap/m/MessageBox",
+	"sap/ui/unified/FileUploader",
+	"sap/ui/base/Event",
+	"sap/m/UploadCollectionParameter",
+	"sap/ui/Device"
+], function (jQuery, UploadCollection, JSONModel, ListMode, UploadCollectionItem, MessageBox, FileUploader, Event,
+             UploadCollectionParameter, Device) {
 	"use strict";
 
 	QUnit.module("PendingUpload: public and private methods", {
 		beforeEach: function() {
-			this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {});
+			this.oUploadCollection = new UploadCollection("pendingUploads", {});
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -23,7 +35,7 @@
 		oUploadCollection.destroy();
 		oUploadCollection = null;
 
-		oUploadCollection = new sap.m.UploadCollection({
+		oUploadCollection = new UploadCollection({
 			instantUpload: false
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -33,7 +45,7 @@
 		oUploadCollection.destroy();
 		oUploadCollection = null;
 
-		oUploadCollection = new sap.m.UploadCollection("secondContructorWayToCall", {
+		oUploadCollection = new UploadCollection("secondContructorWayToCall", {
 			instantUpload: false
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -51,10 +63,10 @@
 		var oData = {
 			fileTypes: ["jpg", "gif"]
 		};
-		oUploadCollection = new sap.m.UploadCollection({
+		oUploadCollection = new UploadCollection({
 			instantUpload: false,
 			fileType: "{/fileTypes}"
-		}).setModel(new sap.ui.model.json.JSONModel(oData));
+		}).setModel(new JSONModel(oData));
 		oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		var aFileTypesExpected = oData.fileTypes.toString();
@@ -73,7 +85,7 @@
 		oUploadCollection.destroy();
 		oUploadCollection = null;
 
-		oUploadCollection = new sap.m.UploadCollection({
+		oUploadCollection = new UploadCollection({
 			instantUpload: false
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -85,7 +97,7 @@
 	});
 
 	QUnit.test("Container for FileUploader instances is created and destroyed when exiting the control.", function(assert) {
-		var oUploadCollection = new sap.m.UploadCollection({
+		var oUploadCollection = new UploadCollection({
 			instantUpload: false
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -97,7 +109,7 @@
 	});
 
 	QUnit.test("Test for method '_getFileUploader' for instantUpload = false", function(assert) {
-		var oUploadCollection = new sap.m.UploadCollection({
+		var oUploadCollection = new UploadCollection({
 			instantUpload: false,
 			multiple: true
 		}).placeAt("qunit-fixture");
@@ -118,7 +130,7 @@
 			name: "file1"
 		};
 		var aFiles = [oFile1];
-		var oUploadCollection = new sap.m.UploadCollection({
+		var oUploadCollection = new UploadCollection({
 			instantUpload: false
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -129,7 +141,7 @@
 		});
 		assert.deepEqual(oFileUploader, oUploadCollection._aFileUploadersForPendingUpload[0], "Array _aFileUploadersForPendingUpload should contain the FileUploader instance on which Change Event was fired");
 		assert.deepEqual(oFileUploader, sap.ui.getCore().byId(oUploadCollection.getItems()[0].getAssociation("fileUploader")), "Association fileUploader should contain the FileUploader instance with which the Change event was fired");
-		assert.equal(oUploadCollection.getItems()[0]._status, sap.m.UploadCollection._pendingUploadStatus, "Item should have the 'pendingUploadStatus'");
+		assert.equal(oUploadCollection.getItems()[0]._status, UploadCollection._pendingUploadStatus, "Item should have the 'pendingUploadStatus'");
 		oUploadCollection.destroy();
 		oUploadCollection = null;
 	});
@@ -140,10 +152,10 @@
 				if (this.oUploadCollection) {
 					this.oUploadCollection.destroy();
 				}
-				this.oUploadCollection = new sap.m.UploadCollection(oAddToContructor).placeAt("qunit-fixture");
+				this.oUploadCollection = new UploadCollection(oAddToContructor).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			};
-			this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {}).placeAt("qunit-fixture");
+			this.oUploadCollection = new UploadCollection("pendingUploads", {}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
@@ -344,10 +356,10 @@
 		//Act
 		this.createUploadCollection({
 			instantUpload: false,
-			mode: sap.m.ListMode.MultiSelect
+			mode: ListMode.MultiSelect
 		});
 		//Assert
-		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'MultiSelect' in pending upload is 'None'");
+		assert.equal(this.oUploadCollection.getMode(), ListMode.None, "Mode after setting 'MultiSelect' in pending upload is 'None'");
 	});
 
 	QUnit.test("Return type of overridden setter for property 'mode'", function(assert) {
@@ -359,7 +371,7 @@
 
 		//Act
 		//Assert
-		assert.equal(this.oUploadCollection.setUploadUrl(sap.m.ListMode.MultiSelect), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(this.oUploadCollection.setUploadUrl(ListMode.MultiSelect), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
 		assert.equal(oSpy.callCount, 1, "An error log has been written.");
 
 		//Cleanup
@@ -369,7 +381,7 @@
 	QUnit.module("Rendering of UploadCollection with instantUpload = false ", {
 
 		beforeEach: function() {
-			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection1", {
+			this.oUploadCollection = new UploadCollection("uploadCollection1", {
 				instantUpload: false
 			});
 			this.oUploadCollection.placeAt("qunit-fixture");
@@ -485,7 +497,7 @@
 	QUnit.module("Rendering of UploadCollection with instantUpload = false and uploadButtonInvisible = true", {
 
 		beforeEach: function() {
-			this.oUploadCollection = new sap.m.UploadCollection("uploadCollectionHiddenUpload", {
+			this.oUploadCollection = new UploadCollection("uploadCollectionHiddenUpload", {
 				instantUpload: false,
 				uploadButtonInvisible: true
 			});
@@ -509,7 +521,7 @@
 
 	QUnit.test("Focus is not set if file uploader is invisible", function(assert) {
 		//Arrange
-		var oItem = new sap.m.UploadCollectionItem();
+		var oItem = new UploadCollectionItem();
 		var oJQuerySpy = sinon.spy(this.oUploadCollection._oFileUploader, "$");
 		this.oUploadCollection._oItemForDelete = {
 			_iLineNumber: 0
@@ -517,7 +529,7 @@
 		this.oUploadCollection.aItems = [ oItem ];
 
 		//Act
-		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+		this.oUploadCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
 
 		//Assert
 		assert.equal(oJQuerySpy.callCount, 0, "The FileUploader's DOM reference has not been accessed.");
@@ -526,7 +538,7 @@
 	QUnit.module("PendingUpload: upload method", {
 
 		beforeEach: function() {
-			this.oUploadCollection = new sap.m.UploadCollection({ instantUpload: false });
+			this.oUploadCollection = new UploadCollection({ instantUpload: false });
 			var oFile = {
 				name: "file1"
 			};
@@ -575,7 +587,7 @@
 
 		var aToolbarElements = this.oUploadCollection._oHeaderToolbar.getContent();
 		for (var i = 0; i < aToolbarElements.length; i++) {
-			if (aToolbarElements[i] instanceof sap.ui.unified.FileUploader) {
+			if (aToolbarElements[i] instanceof FileUploader) {
 				assert.equal(aToolbarElements[i].getVisible(), true, "File Uploader in header content at position" + i + " is visible");
 			}
 		}
@@ -597,7 +609,7 @@
 
 		var aToolbarElements = this.oUploadCollection._oHeaderToolbar.getContent();
 		for (var i = 0; i < aToolbarElements.length; i++) {
-			if (aToolbarElements[i] instanceof sap.ui.unified.FileUploader) {
+			if (aToolbarElements[i] instanceof FileUploader) {
 				assert.equal(aToolbarElements[i].getVisible(), false, "File Uploader in header content at position" + i + " is not visible");
 			}
 		}
@@ -619,7 +631,7 @@
 
 		var aToolbarElements = this.oUploadCollection._oHeaderToolbar.getContent();
 		for (var i = 0; i < aToolbarElements.length; i++) {
-			if (aToolbarElements[i] instanceof sap.ui.unified.FileUploader) {
+			if (aToolbarElements[i] instanceof FileUploader) {
 				assert.equal(aToolbarElements[i].getVisible(), false, "File Uploader in header content at position" + i + " is not visible");
 			}
 		}
@@ -637,7 +649,7 @@
 		// delete the item
 		this.oUploadCollection._oItemForDelete = this.oUploadCollection.getAggregation("items")[0];
 		this.oUploadCollection._oItemForDelete._iLineNumber = 0;
-		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+		this.oUploadCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
 		sap.ui.getCore().applyChanges();
 		assert.deepEqual(oFileUploader1, this.oUploadCollection._oFileUploader, "After an item has been deleted from the list no new FileUploader instance should be created, thus the current one should be used for the next upload");
 		//create two more items
@@ -666,7 +678,7 @@
 		//delete an item in the middle of the list
 		this.oUploadCollection._oItemForDelete = this.oUploadCollection.getAggregation("items")[1];
 		this.oUploadCollection._oItemForDelete._iLineNumber = 1;
-		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+		this.oUploadCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
 		sap.ui.getCore().applyChanges();
 		assert.deepEqual(oFileUploader4, this.oUploadCollection._oFileUploader, "After an item has been deleted from the list no new FileUploader instance should be created, thus the current one should be used for the next upload");
 	});
@@ -694,7 +706,7 @@
 		}
 
 		this.oUploadCollection.attachUploadComplete(uploadComplete);
-		this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
+		this.oUploadCollection._onUploadComplete(new Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
 	QUnit.test("Event beforeUploadStarts", function(assert) {
@@ -708,9 +720,9 @@
 			sSecurityTokenValueBefore = jQuery.now(), sSecurityTokenValueAfter;
 
 		function onBeforeUploadStarts(oEvent) {
-			var oHeaderParameter1 = new sap.m.UploadCollectionParameter({ name: sSlugName, value: sSlugValueBefore });
+			var oHeaderParameter1 = new UploadCollectionParameter({ name: sSlugName, value: sSlugValueBefore });
 			oEvent.getParameters().addHeaderParameter(oHeaderParameter1);
-			var oHeaderParameter2 = new sap.m.UploadCollectionParameter({
+			var oHeaderParameter2 = new UploadCollectionParameter({
 				name: sSecurityTokenName,
 				value: sSecurityTokenValueBefore
 			});
@@ -780,7 +792,7 @@
 		sap.ui.getCore().applyChanges();
 		sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oSpyOnChange = sinon.spy(this.oUploadCollection, "_onChange");
-		var oStubMessageBox = sinon.stub(sap.m.MessageBox, "error");
+		var oStubMessageBox = sinon.stub(MessageBox, "error");
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		var oFileList = [
 			{
@@ -809,7 +821,7 @@
 
 	QUnit.module("Delete PendingUpload Item", {
 		beforeEach: function() {
-			this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
+			this.oUploadCollection = new UploadCollection("pendingUploads", {
 				instantUpload: false,
 				multiple: true
 			});
@@ -879,7 +891,7 @@
 			documentId: this.oUploadCollection.getItems()[0].getDocumentId(),
 			_iLineNumber: 0
 		};
-		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+		this.oUploadCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
 		sap.ui.getCore().applyChanges();
 
 		//check the deleted item by comparison of the name before and after the deletion
@@ -913,7 +925,7 @@
 
 	QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
 		beforeEach: function() {
-			this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
+			this.oUploadCollection = new UploadCollection("pendingUploads", {
 				instantUpload: false
 			});
 			this.oUploadCollection.placeAt("qunit-fixture");
@@ -936,7 +948,7 @@
 			this.simulateDeleteLastAddedItem = function() {
 				this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[0];
 				this.oUploadCollection._oItemForDelete._iLineNumber = 0;
-				this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+				this.oUploadCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
 				sap.ui.getCore().applyChanges();
 			};
 			this.simulateFilePreselection = function(aFiles) {
@@ -954,7 +966,7 @@
 					"requestHeaders": fileUploader.getHeaderParameters()
 				});
 			};
-			this.abortStub = sinon.stub(sap.ui.unified.FileUploader.prototype, "abort");
+			this.abortStub = sinon.stub(FileUploader.prototype, "abort");
 			this.encodeToAscii = function(value) {
 				var sEncodedValue = "";
 				for (var i = 0; i < value.length; i++) {
@@ -997,7 +1009,7 @@
 	});
 
 	QUnit.test("Checking if abort is properly called. 2 files, 1 instance of File Uploader", function(assert) {
-		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+		if (Device.browser.msie && Device.browser.version <= 9) {
 			// In case of IE9, multiple selection is not possible, so nothing needs to be tested.
 			assert.expect(0);
 			return;
@@ -1027,7 +1039,7 @@
 	});
 
 	QUnit.test("Checking if abort is properly called. 5 files, 2 instances of File Uploader, 2 deletions ", function(assert) {
-		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+		if (Device.browser.msie && Device.browser.version <= 9) {
 			// In case of IE9, multiple selection is not possible, so nothing needs to be tested.
 			assert.expect(0);
 			return;
@@ -1051,7 +1063,7 @@
 	});
 
 	QUnit.test("Checking if abort is properly called. 3 files with same names, 1 instance of File Uploader, 2 deletions ", function(assert) {
-		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+		if (Device.browser.msie && Device.browser.version <= 9) {
 			// In case of IE9, multiple selection is not possible, so nothing needs to be tested.
 			assert.expect(0);
 			return;
@@ -1073,7 +1085,7 @@
 
 	QUnit.module("PendingUpload uploadProgress Event", {
 		beforeEach: function() {
-			this.oUploadCollection = new sap.m.UploadCollection("pendingUploads");
+			this.oUploadCollection = new UploadCollection("pendingUploads");
 			sinon.spy(this.oUploadCollection, "_onUploadProgress");
 
 			this.oUploadCollection.placeAt("qunit-fixture");
@@ -1104,4 +1116,5 @@
 		//Assert
 		assert.strictEqual(this.oUploadCollection._onUploadProgress.callCount, 1, "Method _onUploadProgress has been called.");
 	});
-}());
+});
+

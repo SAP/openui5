@@ -379,6 +379,19 @@ function(
 			this.oButton1.destroy();
 		});
 
+		QUnit.test("when the element inside of the DesignTime is removed and then destroyed", function(assert) {
+			var fnDone = assert.async();
+
+			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
+				assert.notOk(OverlayRegistry.getOverlay(this.oButton1), "overlay for button1 destroyed");
+
+				fnDone();
+			}, this);
+
+			this.oInnerLayout.removeContent(this.oButton1);
+			this.oButton1.destroy();
+		});
+
 		QUnit.test("when the element inside of the DesignTime is moved to 'dependents' aggregation", function(assert) {
 			var fnDone = assert.async();
 
@@ -388,6 +401,43 @@ function(
 			}, this);
 
 			this.oInnerLayout.addDependent(this.oButton1);
+		});
+
+		QUnit.test("when the element inside of the DesignTime is moved from one control to another", function(assert) {
+			var fnDone = assert.async(2 /* callback will be called for remove and add aggregation */);
+			var oElement = this.oButton1;
+			var oOverlayBefore = OverlayRegistry.getOverlay(oElement);
+			var fnOriginalCheckIfOverlayShouldBeDestroyed = this.oDesignTime._checkIfOverlayShouldBeDestroyed;
+
+			//stub the important async functionality to get a trigger that it was called
+			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed", function(){
+				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, arguments);
+
+				var oOverlayAfterwards = OverlayRegistry.getOverlay(oElement);
+				assert.strictEqual(oOverlayBefore, oOverlayAfterwards, "overlay for moved control is not destroyed");
+				fnDone();
+			});
+
+			this.oInnerLayout.removeContent(this.oButton1);
+			this.oOuterLayout.addContent(this.oButton1);
+		});
+
+		QUnit.test("when the element inside of the DesignTime is destroyed and recreated with the same ID", function(assert) {
+			var fnDone = assert.async();
+			var sElementId = this.oButton1.getId();
+			var fnOriginalCheckIfOverlayShouldBeDestroyed = this.oDesignTime._checkIfOverlayShouldBeDestroyed;
+
+			//stub the important async functionality to get a trigger that it was called
+			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed", function(){
+				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, arguments);
+				var oOverlayAfterwards = OverlayRegistry.getOverlay(sElementId);
+				assert.ok(oOverlayAfterwards, "overlay for recreated control is not destroyed");
+				fnDone();
+			});
+
+			this.oInnerLayout.removeContent(this.oButton1); //triggers setParent modified
+			this.oButton1.destroy(); //triggers overlay removal
+			this.oInnerLayout.addContent( new Button({ id : sElementId, text : "recreated"} )); //triggers overlay being added
 		});
 
 		// TODO: check after DesignTime API Enhancement
@@ -412,7 +462,6 @@ function(
 			this.oDesignTime.setSelectionMode(oSelectionMode);
 
 			assert.equal(this.oDesignTime.getSelectionMode(), oSelectionMode, "then 'SelectionMode' property is properly set");
-			assert.equal(this.oDesignTime.getSelectionManager().getMode(), oSelectionMode, "then 'Mode' property of Selection Plugin is properly set");
 		});
 
 		QUnit.test("when the DesignTime is disabled and then enabled again", function(assert) {

@@ -15,7 +15,7 @@ sap.ui.define([
 			function delay(count) {
 				setTimeout(function() {
 					if (count == 0) {
-						var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+						var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 						that.getView().setModel(oModel);
 					} else {
 						delay(count-1);

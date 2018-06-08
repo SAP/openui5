@@ -16,14 +16,18 @@ function setBlanketFilters(sFilters) {
 sinon.config.useFakeTimers = true;
 
 sap.ui.require([
-	"jquery.sap.global"
-], function (jQuery) {
+	"jquery.sap.global", "sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite"
+], function (jQuery, XMLPreprocessor, XMLComposite) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
-	jQuery.sap.registerModulePath("composites", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites");
-	jQuery.sap.registerModulePath("composites2", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites2");
-	jQuery.sap.registerModulePath("bundles", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/bundles");
+	sap.ui.loader.config({
+		paths: {
+			"composites": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites",
+			"composites2": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites2",
+			"bundles": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/bundles"
+		}
+	});
 	jQuery.sap.require("composites.SimpleText");
 	jQuery.sap.require("composites.TextButton");
 	jQuery.sap.require("composites.TextList");
@@ -40,6 +44,8 @@ sap.ui.require([
 	jQuery.sap.require("composites.TranslatableText");
 	jQuery.sap.require("composites.TranslatableTextLib");
 	jQuery.sap.require("composites.TranslatableTextBundle");
+	jQuery.sap.require("composites.Table");
+	jQuery.sap.require("composites.Column");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Simple Text XMLComposite Control", {
@@ -621,7 +627,29 @@ sap.ui.require([
 			}
 		});
 	});
+	sap.ui.define("my/aggregations/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
+		return UIComponent.extend("my.aggregations.Component", {
+			metadata: {
+				rootView: "composites.TestComponent"
+			},
+			constructor: function(sId, mSettings) {
+				this.oController = mSettings ? mSettings.controller : null;
+				UIComponent.prototype.constructor.apply(this,arguments);
+			},
+			createContent: function () {
+				XMLPreprocessor.plugIn(function(oNode,oVisitor) { XMLComposite.initialTemplating(oNode, oVisitor, "composites.Table");}, "composites", "Table");
+				var oConfig = {}, oController = this.oController;
 
+				return sap.ui.xmlview({
+					viewContent: jQuery('#view').html(),
+					id: "comp",
+					async: false,
+					controller: oController,
+					preprocessors: { xml: oConfig }
+				});
+			}
+		});
+	});
 	QUnit.test("property", function (assert) {
 		var fnInitialTemplatingSpy = sinon.spy(sap.ui.core.XMLComposite, "initialTemplating");
 
@@ -1032,4 +1060,78 @@ sap.ui.require([
 		});
 	});
 	//*********************************************************************************************
+	QUnit.test("inner Aggregations", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: new my.aggregations.Component("aggregations")
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oView = oComponentContainer.getComponentInstance().getRootControl();
+
+		oView.loaded().then(function() {
+			var oTable = oView.byId("table");
+			assert.ok(oTable, "The table is there");
+			var aColumns = oTable.getColumns();
+			assert.equal(aColumns.length,4,"The table has 4 columns");
+
+			var oColumn = oTable.byId("OWN");
+			assert.notOk(oColumn,"The user-defined column can not be be accessed bye the composite");
+			oColumn = oTable.byId("template2");
+			assert.ok(oColumn,"The templated column can be accessed");
+			assert.equal(oColumn.getId(), "comp--table--template2","The corresponding Id is correct");
+
+			//Use the Managed Object model
+			var oTableModel = oTable._getManagedObjectModel();
+			var oColumn2 = oTableModel.getProperty("/#template2");
+			assert.ok(oColumn2,"The templated column can be accessed");
+			assert.equal(oColumn2.getId(), "comp--table--template2","The corresponding Id is correct");
+			assert.equal(oColumn, oColumn,"The column from byId and from the managed object model are equal");
+			oComponentContainer.destroy();
+			done();
+		});
+		//*********************************************************************************************
+		QUnit.test("event forwarding", function (assert) {
+			var done = assert.async(), oAction;
+			var oController = {
+					handler: function(oEvent) {
+						oAction = oEvent.getSource();
+						oAction.setText("controller");
+					}
+			};
+
+			var fnControllerSpy = sinon.spy(oController, "handler");
+			var fnCompositeSpy = sinon.spy(composites.Table.prototype, "handler");
+			
+			var oComponentContainer = new sap.ui.core.ComponentContainer({
+				component: new my.aggregations.Component("events", {controller: oController})
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oView.loaded().then(function() {
+				var oTable = oView.byId("table");
+				assert.ok(oTable, "The table is there");
+				var aActions = oTable.getActions();
+				assert.equal(aActions.length,2,"The table has 2 actions");
+
+				//press the outer action
+				var oOuterAction = oTable.byId("button--outer");
+				oOuterAction.firePress();
+				assert.ok(oAction, "The action from outside fires the event");
+				assert.equal(oAction.getId(), "comp--outer", "It is the correct action");
+				assert.equal(oAction.getText(),"controller","The action from the view controller is called");
+				assert.ok(fnControllerSpy.calledOnce,"The controller handles the event");
+				assert.equal(fnCompositeSpy.callCount, 0, "The composite method is not called");
+
+				var oInnerAction = oTable.byId("button--table--inner");
+				oInnerAction.firePress();
+				oAction = oTable.byId("inner");
+				assert.equal(oAction.getText(),"composite","The action from the control is called");
+				assert.ok(fnCompositeSpy.calledOnce,"The composite handles the event");
+				assert.equal(fnControllerSpy.callCount, 1, "The controller method is not called any more");
+				oComponentContainer.destroy();
+				done();
+			});
+		});
+	});
 });

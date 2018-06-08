@@ -63,6 +63,7 @@ sap.ui.define([
 	 */
 	Stack.initializeWithChanges = function(oControl, aFileNames) {
 		var oStack = new Stack();
+		oStack._aPersistedChanges = aFileNames;
 		var mComposite = {};
 		if (aFileNames && aFileNames.length > 0) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
@@ -188,13 +189,15 @@ sap.ui.define([
 				}.bind(this))
 
 				.catch(function(oError) {
-					this.pop(); // remove failing command
+					oError = oError || new Error("Executing of the change failed.");
+					oError.index = this._toBeExecuted;
+					oError.command = this.removeCommand(this._toBeExecuted); // remove failing command
+					this._toBeExecuted--;
 					return Promise.reject(oError);
 				}.bind(this));
 			}
 		}.bind(this));
 		return this._oLastCommand;
-
 	};
 
 	Stack.prototype._unExecute = function() {

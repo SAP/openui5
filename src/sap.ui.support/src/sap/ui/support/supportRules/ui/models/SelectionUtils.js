@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/core/util/File"
-], function (constants, storage, SharedModel, File) {
+], function (jQuery, constants, storage, SharedModel, File) {
 	"use strict";
 
 	var fnNumericSortAscending = function fnNumericSortAscending(a, b) {
@@ -56,7 +57,7 @@ sap.ui.define([
 				sKey;
 
 			for (sKey in mRules) {
-				if (Number.isInteger(Number.parseInt(sKey, 10))) {
+				if (jQuery.isNumeric(parseInt(sKey, 10))) {
 					iTo++;
 				}
 			}
@@ -83,13 +84,13 @@ sap.ui.define([
 
 			// Set selected flag for each library node in the TreeTable
 			for (var i in oTreeViewModel) {
-				if (Number.isInteger(Number.parseInt(i, 10))) {
+				if (jQuery.isNumeric(parseInt(i, 10))) {
 					oModel.setProperty("/treeViewModel/" + i + "/selected", bSelectAll);
 					oLibrary = oModel.getProperty("/treeViewModel/" + i);
 
 					// Set selected flag for each rule node in the TreeTable
 					for (var k in oLibrary) {
-						if (Number.isInteger(Number.parseInt(k, 10))) {
+						if (jQuery.isNumeric(parseInt(k, 10))) {
 							oModel.setProperty("/treeViewModel/" + i + "/" + k + "/selected", bSelectAll);
 						}
 					}
@@ -99,6 +100,7 @@ sap.ui.define([
 			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
 				this.persistSelection();
 			}
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		/**
@@ -130,7 +132,7 @@ sap.ui.define([
 			// Select / Deselect the library row
 			if (bSelected) {
 				for (var i in oLibrary) {
-					if (Number.isInteger(Number.parseInt(i, 10)) && !oLibrary[i].selected) {
+					if (jQuery.isNumeric(parseInt(i, 10)) && !oLibrary[i].selected) {
 						return;
 					}
 				}
@@ -151,9 +153,9 @@ sap.ui.define([
 
 			for (var ruleIndex in treeTableTempLibrary) {
 
-				var iRuleIndex = Number.parseInt(ruleIndex, 10);
+				var iRuleIndex = parseInt(ruleIndex, 10);
 
-				if (!Number.isInteger(iRuleIndex)) {
+				if (!jQuery.isNumeric(iRuleIndex)) {
 					continue;
 				}
 
@@ -229,11 +231,11 @@ sap.ui.define([
 
 			// Update the "selected" flag of the new model based on the old one.
 			for (var i in oNewTreeModel) {
-				if (Number.isInteger(Number.parseInt(i, 10))) {
+				if (jQuery.isNumeric(parseInt(i, 10))) {
 					for (var k in oNewTreeModel[i]) {
 						var oRule = mIndex[oNewTreeModel[i][k].id];
 
-						if (Number.isInteger(Number.parseInt(k, 10)) && oRule && oRule.selected) {
+						if (jQuery.isNumeric(parseInt(k, 10)) && oRule && oRule.selected) {
 							oNewTreeModel[i][k].selected = oRule.selected;
 
 							if (aLibrariesToUpdate.indexOf(oNewTreeModel[i][k].libName) < 0) {
@@ -280,7 +282,7 @@ sap.ui.define([
 				bLibrarySelected = true;
 
 				for (var i in oLibrary) {
-					if (Number.isInteger(Number.parseInt(i, 10))) {
+					if (jQuery.isNumeric(parseInt(i, 10))) {
 						if (!oLibrary[i].selected) {
 							bLibrarySelected = false;
 							break;
@@ -349,7 +351,7 @@ sap.ui.define([
 				.keys(oTreeViewModel)
 
 				.map(function (sNum) {
-					return Number.parseInt(sNum, 10);
+					return parseInt(sNum, 10);
 				})
 				.sort(fnNumericSortAscending)
 
@@ -363,11 +365,11 @@ sap.ui.define([
 						.keys(oTreeViewModel[sLibKey])
 						// we first need to get the numeric keys in the library, i.e. rules
 						.filter(function (sRuleKeyToFilter) {
-							return Number.isInteger(Number.parseInt(sRuleKeyToFilter, 10));
+							return jQuery.isNumeric(parseInt(sRuleKeyToFilter, 10));
 						})
 
 						.map(function (sNum) {
-							return Number.parseInt(sNum, 10);
+							return parseInt(sNum, 10);
 						})
 						.sort(fnNumericSortAscending)
 
@@ -402,6 +404,7 @@ sap.ui.define([
 						oTreeTable.removeSelectionInterval(iTableLibIndex, iTableLibIndex);
 					}
 			 });
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		/**
@@ -523,7 +526,7 @@ sap.ui.define([
 				}
 
 				for (sKey in mRules) {
-					if (Number.isInteger(Number.parseInt(sKey, 10))) {
+					if (jQuery.isNumeric(parseInt(sKey, 10))) {
 						oRowModel.setProperty(sPath + "/" + sKey + "/selected", bSelected);
 					}
 				}
@@ -542,6 +545,8 @@ sap.ui.define([
 			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
 				this.persistSelection();
 			}
+
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		toggleOpenStateHandler: function (oEvent) {
@@ -565,7 +570,7 @@ sap.ui.define([
 			}
 
 			for (sKey in mRules) {
-				if (Number.isInteger(Number.parseInt(sKey, 10))) {
+				if (jQuery.isNumeric(parseInt(sKey, 10))) {
 					bSelected = oRowModel.getProperty(sPath + "/" + sKey + "/selected");
 
 					if (bSelected) {
@@ -590,11 +595,11 @@ sap.ui.define([
 				oRule;
 
 			for (var i in oModel.getProperty("/treeViewModel/")) {
-				if (Number.isInteger(Number.parseInt(i, 10))) {
+				if (jQuery.isNumeric(parseInt(i, 10))) {
 					for (var k in oModel.getProperty("/treeViewModel/" + i)) {
 						oRule = oModel.getProperty("/treeViewModel/" + i + "/" + k);
 
-						if (Number.isInteger(Number.parseInt(k, 10)) && oRule && oRule.selected) {
+						if (jQuery.isNumeric(parseInt(k, 10)) && oRule && oRule.selected) {
 							aSelectedRules.push({
 								ruleId: oRule.id,
 								libName: oRule.libName

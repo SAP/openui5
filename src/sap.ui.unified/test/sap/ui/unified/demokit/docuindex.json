@@ -59,7 +59,8 @@
 					"sap.ui.unified.sample.CalendarSpecialDaysLegend",
 					"sap.ui.unified.sample.CalendarMultipleMonth",
 					"sap.ui.unified.sample.CalendarCalendarType",
-					"sap.ui.unified.sample.CalendarMinMax"
+					"sap.ui.unified.sample.CalendarMinMax",
+					"sap.ui.unified.sample.CalendarDateDeselection"
 				]
 			},
 			{
@@ -160,6 +161,11 @@
 				"id": "sap.ui.unified.sample.CalendarMinMax",
 				"name": "calendar - min., max., disabled and show/hide week numbers",
 				"description": "Calendar with minimum date 2000-01-01 and maximum date 2050-12-31, some disabled days (in January 2016) and ability to show or hide week numbers."
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarDateDeselection",
+				"name": "Date Deselection",
+				"description": "An example of recommended implementation of deselection logic when the calendar is in single selection mode."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",

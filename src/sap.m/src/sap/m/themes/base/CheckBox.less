@@ -96,12 +96,19 @@ html[dir="rtl"] .sapMCb {
 	display: inline-block;
 }
 
-html[data-sap-ui-browser^=sf] body:not(.sapUiSizeCompact) .sapMCbBg.sapMCbMarkChecked:before {
-	padding-left: 0.065rem;
+.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	background-color: currentColor;
+	border: 0.1875rem solid transparent;
+	box-sizing: border-box;
+	background-clip: padding-box;
 }
 
-html[data-sap-ui-browser^=sf] .sapUiSizeCompact .sapMCbBg.sapMCbMarkChecked:before {
-	padding-left: 0.0625rem;
+.sapUiSizeCompact.sapMCb .sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before,
+.sapUiSizeCompact .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+	border-width: 0.125rem;
 }
 
 .sapMCbBg > input {

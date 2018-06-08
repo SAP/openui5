@@ -68,6 +68,7 @@ sap.ui.define([
 					 */
 					pinnable: {type: "boolean", group: "Appearance", defaultValue: true}
 				},
+				defaultAggregation: "content",
 				aggregations: {
 
 					/**

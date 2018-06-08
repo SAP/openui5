@@ -8,8 +8,8 @@
 	<!-- UI5 Bootstrap -->
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"></script>
+	        src="../../../../resources/sap-ui-core.js"
+	        data-sap-ui-libs="sap.m"></script>
 
 	<!-- QUnit libraries -->
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
@@ -28,6 +28,7 @@
 		QUnit.config.autostart = false;
 
 		sap.ui.require([
+			"jquery.sap.global",
 			"sap/m/FeedListItem",
 			"sap/m/FeedListItemAction",
 			"sap/m/List",
@@ -44,8 +45,11 @@
 			"sap/m/LinkConversion",
 			"sap/m/PlacementType",
 			"sap/ui/Device",
-			"sap/m/FormattedText"
-		], function(FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, ButtonType, App, Page, ListType, LinkConversion, PlacementType, Device, FormattedText) {
+			"sap/m/FormattedText",
+			"sap/ui/core/IconPool"
+		], function (jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar,
+		             ActionSheet, ButtonType, App, Page, ListType, LinkConversion, PlacementType, Device, FormattedText,
+		             IconPool) {
 			var oList2 = new List({
 				inset: true
 			});
@@ -112,7 +116,7 @@
 			var oLeftButton = new Button({
 				text: "Modal",
 				type: ButtonType.Reject,
-				press: function() {
+				press: function () {
 					oPopover.setModal(!oPopover.getModal());
 				}
 			});
@@ -120,16 +124,16 @@
 			var oRightButton = new Button({
 				text: "Close",
 				type: ButtonType.Accept,
-				press: function() {
+				press: function () {
 					oPopover.close();
 				}
 			});
 
 			var footer = new Bar({
 				contentLeft: [],
-				contentMiddle: [new Button({ icon: "../images/favorite@2x.png" }),
-					new Button({ icon: "../images/feed@2x.png" }),
-					new Button({ icon: "../images/flag@2x.png" })],
+				contentMiddle: [new Button({icon: "../images/favorite@2x.png"}),
+					new Button({icon: "../images/feed@2x.png"}),
+					new Button({icon: "../images/flag@2x.png"})],
 				contentRight: []
 			});
 
@@ -139,16 +143,16 @@
 				showHeader: true,
 				leftButton: oLeftButton,
 				rightButton: oRightButton,
-				beforeOpen: function(oEvent) {
+				beforeOpen: function (oEvent) {
 					jQuery.sap.log.info("before popover opens!!!");
 				},
-				afterOpen: function(oEvent) {
+				afterOpen: function (oEvent) {
 					jQuery.sap.log.info("popover is opened finally!!!");
 				},
-				beforeClose: function(oEvent) {
+				beforeClose: function (oEvent) {
 					jQuery.sap.log.info("before popover closes!!!");
 				},
-				afterClose: function(oEvent) {
+				afterClose: function (oEvent) {
 					jQuery.sap.log.info("popover is closed properly!!!");
 				},
 				footer: footer,
@@ -161,7 +165,7 @@
 				mode: "SingleSelectMaster"
 			});
 
-			var fnOpenPopup = function(oControlEvent) {
+			var fnOpenPopup = function (oControlEvent) {
 				if (oControlEvent.getSource().getSender() === "Jack Jones") {
 					jQuery.sap.log.info("senderPress called");
 					oControlEvent.getSource().setSender("Event was fired");
@@ -197,8 +201,7 @@
 				list.bindAggregation("items", "/chunks", itemTemplate);
 			}
 
-			jQuery.sap.require("sap.ui.core.IconPool");
-			var sURI = sap.ui.core.IconPool.getIconURI("personnel-view");
+			var sURI = IconPool.getIconURI("personnel-view");
 
 			var feedData = {
 				chunks: [{
@@ -281,9 +284,9 @@
 
 			bindFeedListData(feedData, oFeedListItemTemplate, oFeedList);
 
-			var appFeedList = new App("myApp", { initialPage: "feedListPage" });
+			var appFeedList = new App("myApp", {initialPage: "feedListPage"});
 			var feedListPage = new Page("feedListPage",
-					{ title: "Feed List Item Test Page" }
+				{title: "Feed List Item Test Page"}
 			);
 
 			feedListPage.addContent(oFeedList);
@@ -292,11 +295,11 @@
 
 			QUnit.module("Properties");
 
-			QUnit.test("ImagePool Icon", function(assert) {
+			QUnit.test("ImagePool Icon", function (assert) {
 				assert.ok($('#__item1-oFeedItemList-1 .sapMFeedListItemImage.sapUiIcon').length === 1, "Image pool icon displayed");
 			});
 
-			QUnit.test("All Properties", function(assert) {
+			QUnit.test("All Properties", function (assert) {
 				assert.ok(!!oFeedList.getItems()[0]._oImageControl.$(), "Image rendered");
 				assert.ok(oFeedList.getItems()[0]._oImageControl.getSrc() === oFeedList.getItems()[0].getIcon(), "Image rendered (icon <> initial)");
 				assert.ok(oFeedList.getItems()[0]._oImageControl.$().hasClass("sapMImg"), "property icon set: image should have class sapMImg ");
@@ -309,48 +312,48 @@
 				assert.ok(oFeedList.getItems()[8].$().find('*').hasClass("sapUiSelectable"), "Item should have class sapUiSelectable");
 			});
 
-			QUnit.test("The convertLinksToAnchorTags property is set by default to LinkConversion.None", function(assert) {
+			QUnit.test("The convertLinksToAnchorTags property is set by default to LinkConversion.None", function (assert) {
 				assert.equal(oFeedList.getItems()[2].getConvertLinksToAnchorTags(), LinkConversion.None, "The default value is sap.m.LinkConversion.None");
 			});
 
-			QUnit.test("The convertedLinksDefaultTarget property is set by default to _blank", function(assert) {
+			QUnit.test("The convertedLinksDefaultTarget property is set by default to _blank", function (assert) {
 				assert.equal(oFeedList.getItems()[2].getConvertedLinksDefaultTarget(), "_blank", "The default value is _blank");
 			});
 
 
-			QUnit.test("Sender inactive, Icon inactive", function(assert) {
+			QUnit.test("Sender inactive, Icon inactive", function (assert) {
 				assert.ok(oFeedList.getItems()[2]._oLinkControl.$().hasClass("sapMLnkDsbl"), " Sender Link inactive");
 			});
 
-			QUnit.test("Show default icon (icon is initial + showIcon = true)", function(assert) {
-				assert.ok(oFeedList.getItems()[3]._oImageControl.getSrc() === sap.ui.core.IconPool.getIconURI("person-placeholder"), "Placeholder icon rendered (icon  initial)");
+			QUnit.test("Show default icon (icon is initial + showIcon = true)", function (assert) {
+				assert.ok(oFeedList.getItems()[3]._oImageControl.getSrc() === IconPool.getIconURI("person-placeholder"), "Placeholder icon rendered (icon  initial)");
 			});
 
-			QUnit.test("Do not show icon", function(assert) {
+			QUnit.test("Do not show icon", function (assert) {
 				assert.ok(!oFeedList.getItems()[7]._oImageControl, "No icon rendered");
 			});
 
-			QUnit.test("No Icon", function(assert) {
+			QUnit.test("No Icon", function (assert) {
 				assert.ok(!oFeedList.getItems()[4]._oImageControl.$().hasClass("sapMImg"), "property icon initial: image should not have class sapMImg ");
 			});
 
-			QUnit.test("No Timestamp", function(assert) {
+			QUnit.test("No Timestamp", function (assert) {
 				assert.ok(oFeedList.getItems()[4].$("timestamp").length === 0, "no timestamp should be rendered");
 			});
 
-			QUnit.test("No Info", function(assert) {
+			QUnit.test("No Info", function (assert) {
 				assert.ok(oFeedList.getItems()[5].$("info").length === 0, "no info should be rendered");
 			});
 
-			QUnit.test("No Sender", function(assert) {
+			QUnit.test("No Sender", function (assert) {
 				assert.ok(!oFeedList.getItems()[6]._oLinkControl, "No sender name rendered");
 			});
 
-			QUnit.test("Sender link disabled", function(assert) {
+			QUnit.test("Sender link disabled", function (assert) {
 				assert.ok(!oFeedList.getItems()[2]._oLinkControl.getEnabled(), "Sender link disabled (senderActive = false)");
 			});
 
-			QUnit.test("expand/collapse function", function(assert) {
+			QUnit.test("expand/collapse function", function (assert) {
 				assert.ok(oFeedList.getItems()[8].$("realtext").text() === oFeedList.getItems()[8]._sShortText, "the collapsed text displayed ");
 				assert.ok(oFeedList.getItems()[8].$("threeDots").hasClass("sapMFeedListItemTextString"), "three dots should have class sapMFeedListItemTextString");
 				assert.ok(oFeedList.getItems()[8]._oLinkExpandCollapse.$(), "expand/collapse Link rendered");
@@ -367,15 +370,15 @@
 			});
 
 			QUnit.module("Overridden setter method for property 'type'", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oFeedListItem = new FeedListItem();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("Property is not set if value does not changed", function(assert) {
+			QUnit.test("Property is not set if value does not changed", function (assert) {
 				//Arrange
 				var oSpy = sinon.spy(this.oFeedListItem, "setProperty");
 				//Act
@@ -384,7 +387,7 @@
 				assert.notOk(oSpy.called, "Property not updated");
 			});
 
-			QUnit.test("ListType 'Navigation' ends in type 'Active'", function(assert) {
+			QUnit.test("ListType 'Navigation' ends in type 'Active'", function (assert) {
 				//Act
 				var oResult = this.oFeedListItem.setType(ListType.Navigation);
 				//Assert
@@ -392,7 +395,7 @@
 				assert.deepEqual(this.oFeedListItem, oResult, "Instance returned");
 			});
 
-			QUnit.test("Other ListTypes in type corresponding type", function(assert) {
+			QUnit.test("Other ListTypes in type corresponding type", function (assert) {
 				//Act
 				var oResult = this.oFeedListItem.setType(ListType.Inactive);
 				//Assert
@@ -401,49 +404,49 @@
 			});
 
 			QUnit.module("Behavior depending on device: only phone", {
-				beforeEach: function() {
-					this.bOriginalIsPhone = sap.ui.Device.system.phone;
-					sap.ui.Device.system.phone = true;
+				beforeEach: function () {
+					this.bOriginalIsPhone = Device.system.phone;
+					Device.system.phone = true;
 					appFeedList.invalidate();
 					sap.ui.getCore().applyChanges();
 				},
-				afterEach: function() {
-					sap.ui.Device.system.phone = this.bOriginalIsPhone;
+				afterEach: function () {
+					Device.system.phone = this.bOriginalIsPhone;
 				}
 			});
 
-			QUnit.test("Correct class is added to realtext element", function(assert) {
+			QUnit.test("Correct class is added to realtext element", function (assert) {
 				assert.ok(oFeedList.getItems()[8].$("realtext").hasClass("sapMFeedListItemText"), "Text should have the necessary class for phone");
 			});
 
-			QUnit.test("Sender name rendering", function(assert) {
+			QUnit.test("Sender name rendering", function (assert) {
 				var sLinkControlText = feedData.chunks[0].sender;
 				assert.equal(oFeedList.getItems()[0]._oLinkControl.getText(), sLinkControlText, "Sender name rendered for phone");
 			});
 
 			QUnit.module("Behavior depending on device: all except phone", {
-				beforeEach: function() {
-					this.bOriginalIsPhone = sap.ui.Device.system.phone;
-					sap.ui.Device.system.phone = false;
+				beforeEach: function () {
+					this.bOriginalIsPhone = Device.system.phone;
+					Device.system.phone = false;
 					appFeedList.invalidate();
 					sap.ui.getCore().applyChanges();
 				},
-				afterEach: function() {
-					sap.ui.Device.system.phone = this.bOriginalIsPhone;
+				afterEach: function () {
+					Device.system.phone = this.bOriginalIsPhone;
 				}
 			});
 
-			QUnit.test("Correct class is added to realtext element", function(assert) {
+			QUnit.test("Correct class is added to realtext element", function (assert) {
 				assert.ok(oFeedList.getItems()[8].$("realtext").hasClass("sapMFeedListItemTextString"), "Text should have the necessary class for tablet and desktop");
 			});
 
-			QUnit.test("Sender name rendering", function(assert) {
+			QUnit.test("Sender name rendering", function (assert) {
 				var sLinkControlText = feedData.chunks[0].sender + FeedListItem._oRb.getText("COLON");
 				assert.equal(oFeedList.getItems()[0]._oLinkControl.getText(), sLinkControlText, "Sender name rendered with colon for tablet and desktop");
 			});
 
 			QUnit.module("Check property combination", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oFeedListItem = new FeedListItem({
 						sender: null,
 						text: "Some text which is displayed.",
@@ -455,12 +458,12 @@
 					}).placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("The links in the text are recognised", function(assert) {
+			QUnit.test("The links in the text are recognised", function (assert) {
 				//Arrange
 				var sOriginal = "sample text: www.sap.com to be surrounded by tags",
 					sTransformed = "sample text: <a href=\"//www.sap.com\" target=\"_self\" class=\"sapMLnk\">www.sap.com</a> to be surrounded by tags",
@@ -481,7 +484,7 @@
 				oSpy.restore();
 			});
 
-			QUnit.test("Correct setter is used if convertLinksToAnchorTags is set to sap.m.LinkConversion.None", function(assert) {
+			QUnit.test("Correct setter is used if convertLinksToAnchorTags is set to sap.m.LinkConversion.None", function (assert) {
 				//Arrange
 				var oSpy = sinon.spy(this.oFeedListItem.getAggregation("_text"), "setHtmlText");
 				this.oFeedListItem.onBeforeRendering();
@@ -491,7 +494,7 @@
 				oSpy.restore();
 			});
 
-			QUnit.test("Correct setter is used if convertLinksToAnchorTags is set to sap.m.LinkConversion.All", function(assert) {
+			QUnit.test("Correct setter is used if convertLinksToAnchorTags is set to sap.m.LinkConversion.All", function (assert) {
 				//Arrange
 				var oSpy = sinon.spy(this.oFeedListItem.getAggregation("_text"), "setHtmlText");
 				this.oFeedListItem.setConvertLinksToAnchorTags(LinkConversion.All);
@@ -504,11 +507,11 @@
 			});
 			QUnit.module("Events");
 
-			QUnit.test("Press Icon", function(assert) {
+			QUnit.test("Press Icon", function (assert) {
 				// Arrange
 				var oFeedListItem = oFeedList.getItems()[0];
 				oFeedListItem.detachIconPress(fnOpenPopup);
-				oFeedListItem.attachIconPress(function(oEvent) {
+				oFeedListItem.attachIconPress(function (oEvent) {
 					// Assert
 					// Deprecated event parameter
 					assert.ok(oEvent.getParameter("domRef"));
@@ -521,11 +524,11 @@
 				qutils.triggerEvent("tap", oFeedListItem._oImageControl.getId());
 			});
 
-			QUnit.test("Press Sender", function(assert) {
+			QUnit.test("Press Sender", function (assert) {
 				// Arrange
 				var oFeedListItem = oFeedList.getItems()[0];
 				oFeedListItem.detachSenderPress(fnOpenPopup);
-				oFeedListItem.attachSenderPress(function(oEvent) {
+				oFeedListItem.attachSenderPress(function (oEvent) {
 					// Assert
 					// Deprecated event parameter
 					assert.ok(oEvent.getParameter("domRef"));
@@ -538,32 +541,32 @@
 				oFeedListItem._oLinkControl.firePress();
 			});
 
-			QUnit.test("Press SPACE Key on Sender", function(assert) {
+			QUnit.test("Press SPACE Key on Sender", function (assert) {
 				qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkControl.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				assert.equal(oFeedList.getItems()[9].getSender(), "Event was fired", "Sender Press event was fired");
 				oFeedList.getItems()[9].setSender("Jack Jones");
 			});
 
-			QUnit.test("Press X Key on Sender", function(assert) {
+			QUnit.test("Press X Key on Sender", function (assert) {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkControl.getId(), jQuery.sap.KeyCodes.X, false, false, false);
 				assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 			});
 
-			QUnit.test("Press SPACE Key on MORE", function(assert) {
+			QUnit.test("Press SPACE Key on MORE", function (assert) {
 				qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				assert.ok(oFeedList.getItems()[9].$("realtext").text() === oFeedList.getItems()[9]._sFullText, "the expanded text displayed ");
 				qutils.triggerKeyup(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				assert.ok(oFeedList.getItems()[9].$("realtext").text() === oFeedList.getItems()[9]._sShortText, "the collapsed text displayed ");
 			});
 
-			QUnit.test("Press X Key on MORE", function(assert) {
+			QUnit.test("Press X Key on MORE", function (assert) {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.X, false, false, false);
 				assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 			});
 
 			QUnit.module("Rendering behavior");
 
-			QUnit.test("Expanded text should appear also after rerendering", function(assert) {
+			QUnit.test("Expanded text should appear also after rerendering", function (assert) {
 				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
 				oFeedList.getItems()[10]._toggleTextExpanded();
 				oFeedList.getItems()[10].rerender();
@@ -573,13 +576,13 @@
 				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
 			});
 
-			QUnit.test("Invalidation leads to collapsed text", function(assert) {
+			QUnit.test("Invalidation leads to collapsed text", function (assert) {
 				oFeedList.getItems()[10]._toggleTextExpanded();
 				oFeedList.getItems()[10].invalidate();
 				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
 			});
 
-			QUnit.test("Item with a clickable icon is rendered", function(assert) {
+			QUnit.test("Item with a clickable icon is rendered", function (assert) {
 				//Arrange
 				var oItem = oFeedList.getItems()[0];
 				//Act
@@ -589,7 +592,7 @@
 				assert.ok(sStyleClass.indexOf("sapMFeedListItemImage") >= 0, "Css class 'sapMFeedListItemImage' is present");
 			});
 
-			QUnit.test("Item with a non clickable icon is rendered", function(assert) {
+			QUnit.test("Item with a non clickable icon is rendered", function (assert) {
 				//Arrange
 				var oItem = oFeedList.getItems()[0];
 				//Act
@@ -602,7 +605,7 @@
 			});
 
 			QUnit.module("Check property combination", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oFeedListItem = new FeedListItem({
 						sender: null,
 						text: "Some text which is displayed.",
@@ -614,12 +617,12 @@
 					}).placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("'sender' is set to null and 'senderActive' is set to false", function(assert) {
+			QUnit.test("'sender' is set to null and 'senderActive' is set to false", function (assert) {
 				this.oFeedListItem.ontap({
 					srcControl: this.oFeedListItem
 				});
@@ -627,19 +630,19 @@
 			});
 
 			QUnit.module("HTML Text inside", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oFeedListItem = new FeedListItem({
 						sender: null,
 						text: "Some text <strong>which</strong> is <em>displayed</em>."
 					}).placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("Converts html text to plain text and back to html text", function(assert) {
+			QUnit.test("Converts html text to plain text and back to html text", function (assert) {
 				//Arrange
 				var sHtmlText = this.oFeedListItem._sFullText;
 				var sPlainText = "Some text which is displayed.";
@@ -651,7 +654,7 @@
 				assert.equal(sConvertedText2, sHtmlText, "Plain text is converted back to html text");
 			});
 
-			QUnit.test("No html text", function(assert) {
+			QUnit.test("No html text", function (assert) {
 				//Arrange
 				var sPlainText = "Some text which is displayed.";
 				//Act
@@ -662,7 +665,7 @@
 				assert.equal(sPlainText, sText, "Text does not have html tags");
 			});
 
-			QUnit.test("Html collapsed text ", function(assert) {
+			QUnit.test("Html collapsed text ", function (assert) {
 				//Arrange
 				var sCollapsedText = "Some text <strong>which</strong>";
 				var sFullText = this.oFeedListItem.getText();
@@ -677,7 +680,7 @@
 				assert.equal(sFullText, sFullTextNew, "Full text has html tags");
 			});
 
-			QUnit.test("No collapsed text", function(assert) {
+			QUnit.test("No collapsed text", function (assert) {
 				//Arrange
 				var sText = this.oFeedListItem._getCollapsedText();
 				var sShortText = this.oFeedListItem._sShortText;
@@ -688,7 +691,7 @@
 				assert.equal(this.oFeedListItem._checkTextIsExpandable(), false, "Text is not expandable");
 			});
 
-			QUnit.test("Empty html tags are removed for collapsed text", function(assert) {
+			QUnit.test("Empty html tags are removed for collapsed text", function (assert) {
 				//Arrange
 				var sText = "<p></p><ul></ul><strong></strong><p>Some</p> text";
 				var sCollapsedText = "<p>Some</p>";
@@ -703,7 +706,7 @@
 				assert.equal(sText, sFullText, "Full text remains the same");
 			});
 
-			QUnit.test("Collapsed text is not cleared from empty tags during onAfterRendering if rendered in expanded mode", function(assert) {
+			QUnit.test("Collapsed text is not cleared from empty tags during onAfterRendering if rendered in expanded mode", function (assert) {
 				//Arrange
 				this.oFeedListItem.setText("<p></p><ul></ul><strong></strong><p>Some</p> text");
 				this.oFeedListItem.setMaxCharacters(5);
@@ -716,7 +719,7 @@
 				assert.equal(oSinonSpy.called, false, "Empty HTML tags for collapsed text are not removed");
 			});
 
-			QUnit.test("Collapsed text is cleared from empty tags during onAfterRendering if rendered in collapsed mode", function(assert) {
+			QUnit.test("Collapsed text is cleared from empty tags during onAfterRendering if rendered in collapsed mode", function (assert) {
 				//Arrange
 				this.oFeedListItem.setText("<p></p><ul></ul><strong></strong><p>Some</p> text");
 				this.oFeedListItem.setMaxCharacters(5);
@@ -730,7 +733,7 @@
 				assert.equal(this.oFeedListItem._bEmptyTagsInShortTextCleared, true, "The flag variable has been set to prevent unnecessary clearing of empty tags");
 			});
 
-			QUnit.test("Collapsed text is cleared from empty tags during _toggleTextExpanded if collapsing the text", function(assert) {
+			QUnit.test("Collapsed text is cleared from empty tags during _toggleTextExpanded if collapsing the text", function (assert) {
 				//Arrange
 				this.oFeedListItem.setText("<p></p><ul></ul><strong></strong><p>Some</p> text");
 				this.oFeedListItem.setMaxCharacters(5);
@@ -744,7 +747,7 @@
 				assert.equal(this.oFeedListItem._bEmptyTagsInShortTextCleared, true, "The flag variable has been set to prevent unnecessary clearing of empty tags");
 			});
 
-			QUnit.test("A flag _bEmptyTagsInShortTextCleared is set to false before rendering", function(assert) {
+			QUnit.test("A flag _bEmptyTagsInShortTextCleared is set to false before rendering", function (assert) {
 				//Arrange
 				this.oFeedListItem._bEmptyTagsInShortTextCleared = true;
 				//Act
@@ -753,7 +756,7 @@
 				assert.equal(this.oFeedListItem._bEmptyTagsInShortTextCleared, false, "The flag variable has been reset to false");
 			});
 
-			QUnit.test("Treatment of newline character is backward compatible", function(assert) {
+			QUnit.test("Treatment of newline character is backward compatible", function (assert) {
 				//Arrange
 				var sText = "Test\n with a \n \n newline\n";
 				//Act
@@ -765,7 +768,7 @@
 			});
 
 			QUnit.module("Special characters", {
-				beforeEach: function() {
+				beforeEach: function () {
 					var oData, oModel;
 
 					this.oFeedListItem = new FeedListItem({
@@ -785,17 +788,17 @@
 					this.oFeedListItem.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("Special characters in the sender property do not lead to an exception", function(assert) {
+			QUnit.test("Special characters in the sender property do not lead to an exception", function (assert) {
 				assert.ok(true, "No exception occurred");
 			});
 
 			QUnit.module("Actions aggregation and hidden aggregations", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oFeedListItem = new FeedListItem({
 						actions: [
 							new FeedListItemAction(),
@@ -804,22 +807,22 @@
 					}).placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("Action aggregation and hidden aggregations", function(assert) {
+			QUnit.test("Action aggregation and hidden aggregations", function (assert) {
 				assert.equal(this.oFeedListItem.getActions().length, 2, "There are two actions in the aggregation.");
 				assert.ok(this.oFeedListItem.getAggregation("_actionButton") instanceof Button, "Hidden aggregation _actionButton is added");
 				assert.notOk(this.oFeedListItem.getAggregation("_actionSheet") instanceof ActionSheet, "Hidden aggregation _actionSheet not added");
 			});
 
-			QUnit.test("Shows action button", function(assert) {
+			QUnit.test("Shows action button", function (assert) {
 				assert.ok(this.oFeedListItem.$("actionButton").length > 0, "The action button is rendered");
 			});
 
-			QUnit.test("Hides action button", function(assert) {
+			QUnit.test("Hides action button", function (assert) {
 				// Arrange
 				this.oFeedListItem.destroyAggregation("actions");
 
@@ -831,17 +834,17 @@
 			});
 
 			QUnit.module("Method 'init'", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oStub = sinon.stub(FeedListItem.prototype, "_onActionButtonPress");
 					this.oFeedListItem = new FeedListItem();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 					this.oStub.restore();
 				}
 			});
 
-			QUnit.test("The aggregation '_actionButton' is populated with a sap.m.Button", function(assert) {
+			QUnit.test("The aggregation '_actionButton' is populated with a sap.m.Button", function (assert) {
 				// Act
 				var oActionButton = this.oFeedListItem.getAggregation("_actionButton");
 
@@ -849,7 +852,7 @@
 				assert.ok(oActionButton instanceof Button, "The aggregation contains the correct control instance.");
 			});
 
-			QUnit.test("The method '_onActionButtonPress' is called when the action button is pressed", function(assert) {
+			QUnit.test("The method '_onActionButtonPress' is called when the action button is pressed", function (assert) {
 				// Act
 				this.oFeedListItem.getAggregation("_actionButton").firePress();
 
@@ -858,18 +861,18 @@
 			});
 
 			QUnit.module("Method '_onActionButtonPress'", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oFeedListItem = new FeedListItem();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("Lazy load ActionSheet and call method '_openActionSheet'", function(assert) {
+			QUnit.test("Lazy load ActionSheet and call method '_openActionSheet'", function (assert) {
 				// Arrange
 				this.oFeedListItem._openActionSheet = sinon.stub();
-				var oRequireStub = sinon.stub(sap.ui, "require", function() {
+				var oRequireStub = sinon.stub(sap.ui, "require", function () {
 					this.oFeedListItem._openActionSheet();
 				}.bind(this));
 
@@ -885,15 +888,15 @@
 			});
 
 			QUnit.module("Method '_openActionSheet'", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oFeedListItem = new FeedListItem();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("Creates an instance of type sap.m.ActionSheet", function(assert) {
+			QUnit.test("Creates an instance of type sap.m.ActionSheet", function (assert) {
 				// Arrange
 				var oOpenByStub = sinon.stub(ActionSheet.prototype, "openBy");
 
@@ -909,7 +912,7 @@
 				oOpenByStub.restore();
 			});
 
-			QUnit.test("The method '_onBeforeOpenActionSheet' is called before the ActionSheet instance is opened.", function(assert) {
+			QUnit.test("The method '_onBeforeOpenActionSheet' is called before the ActionSheet instance is opened.", function (assert) {
 				// Arrange
 				var oOpenByStub = sinon.stub(ActionSheet.prototype, "openBy");
 				this.oFeedListItem._onBeforeOpenActionSheet = sinon.stub();
@@ -925,7 +928,7 @@
 				oOpenByStub.restore();
 			});
 
-			QUnit.test("The ActionSheet's aggregation 'buttons' gets destroyed before new buttons are added to it.", function(assert) {
+			QUnit.test("The ActionSheet's aggregation 'buttons' gets destroyed before new buttons are added to it.", function (assert) {
 				// Arrange
 				var oOpenByStub = sinon.stub(ActionSheet.prototype, "openBy");
 				var oDestroyAggregationsStub = sinon.stub(ActionSheet.prototype, "destroyAggregation");
@@ -942,7 +945,7 @@
 				oDestroyAggregationsStub.restore();
 			});
 
-			QUnit.test("For each item in aggregation 'actions', a sap.m.Button instance is added to the ActionSheet's aggregation 'buttons'.", function(assert) {
+			QUnit.test("For each item in aggregation 'actions', a sap.m.Button instance is added to the ActionSheet's aggregation 'buttons'.", function (assert) {
 				// Arrange
 				var oOpenByStub = sinon.stub(ActionSheet.prototype, "openBy");
 				this.oFeedListItem.addAction(new FeedListItemAction({
@@ -971,7 +974,7 @@
 				oOpenByStub.restore();
 			});
 
-			QUnit.test("The ActionSheet instance is opened by the action button.", function(assert) {
+			QUnit.test("The ActionSheet instance is opened by the action button.", function (assert) {
 				// Arrange
 				var oOpenByStub = sinon.stub(ActionSheet.prototype, "openBy");
 
@@ -987,21 +990,21 @@
 			});
 
 			QUnit.module("Method '_onBeforeOpenActionSheet'", {
-				beforeEach: function() {
+				beforeEach: function () {
 					this.oFeedListItem = new FeedListItem();
 				},
-				afterEach: function() {
+				afterEach: function () {
 					this.oFeedListItem.destroy();
 				}
 			});
 
-			QUnit.test("When the theme is 'sap_belize' and the device is not a phone, the CSS contrast class 'sapContrast' is set on the ActionSheet's popover .", function(assert) {
+			QUnit.test("When the theme is 'sap_belize' and the device is not a phone, the CSS contrast class 'sapContrast' is set on the ActionSheet's popover .", function (assert) {
 				// Arrange
 				var oPopover = new Popover();
 				var oEvent = {
-					getSource: function() {
+					getSource: function () {
 						return {
-							getParent: function() {
+							getParent: function () {
 								return oPopover;
 							}
 						}
@@ -1022,13 +1025,13 @@
 				Device.system.phone = bOriginSystemPhone;
 			});
 
-			QUnit.test("When the theme is 'sap_belize_plus' and the device is not a phone, the CSS contrast class 'sapContrastPlus' is set on the ActionSheet's popover.", function(assert) {
+			QUnit.test("When the theme is 'sap_belize_plus' and the device is not a phone, the CSS contrast class 'sapContrastPlus' is set on the ActionSheet's popover.", function (assert) {
 				// Arrange
 				var oPopover = new Popover();
 				var oEvent = {
-					getSource: function() {
+					getSource: function () {
 						return {
-							getParent: function() {
+							getParent: function () {
 								return oPopover;
 							}
 						}
@@ -1049,13 +1052,13 @@
 				Device.system.phone = bOriginSystemPhone;
 			});
 
-			QUnit.test("When the device is a phone, no CSS contrast class is set on the ActionSheet's popover.", function(assert) {
+			QUnit.test("When the device is a phone, no CSS contrast class is set on the ActionSheet's popover.", function (assert) {
 				// Arrange
 				var oPopover = new Popover();
 				var oEvent = {
-					getSource: function() {
+					getSource: function () {
 						return {
-							getParent: function() {
+							getParent: function () {
 								return oPopover;
 							}
 						}
@@ -1080,7 +1083,7 @@
 	</script>
 </head>
 <body id="body" class="sapUiBody">
-	<div id="qunit"></div>
-	<div id="qunit-fixture"></div>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
 </body>
 </html>

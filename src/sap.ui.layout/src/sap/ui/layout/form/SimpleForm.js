@@ -91,9 +91,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * <b>Note:</b> The setting of this property does not change the content of the form.
 			 * For example, <code>Input</code> controls in a form with <code>editable</code> set to false are still editable.
 			 *
-			 * <b>Warning:</b> If this property is set wrong this could lead to visual issues, the labels are fields could be misaligned,
-			 * the labels could be rendered in the wrong mode, the spacing between the single controls could be wrong and control, not
-			 * fitting to the mode, could be rendered incorrect.
+			 * <b>Warning:</b> If this property is wrongly set, this might lead to visual issues.
+			 * The labels and fields might be misaligned, the labels might be rendered in the wrong mode,
+			 * and the spacing between the single controls might be wrong.
+			 * Also, controls that do not fit the mode might be rendered incorrectly.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : null},
 

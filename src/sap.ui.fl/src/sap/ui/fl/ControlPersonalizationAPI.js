@@ -7,17 +7,19 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
+	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/core/Component"
 ], function(
 	Utils,
 	ChangeRegistry,
 	JsControlTreeModifier,
 	Element,
+	VariantManagement,
 	Component
 ) {
 	"use strict";
 
-	var sVariantTechnicalParameterName = "sap-ui-fl-control-variant-id";
+	var VARIANT_TECHNICAL_PARAMETER_NAME = "sap-ui-fl-control-variant-id";
 
 	var ControlPersonalizationAPI = {
 
@@ -87,20 +89,34 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element} [oVariantManagementControl] The variant management control for which URL technical parameter has to be cleared
 		 * @public
 		 */
-		clearVariantParameterInURL : function (oVariantManagementControl) {
+		clearVariantParameterInURL : function (oControl) {
 			var aUrlParameters = [];
-			if (oVariantManagementControl instanceof Element) {
-				var oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
-				var oVariantModel = oAppComponent.getModel("$FlexVariants");
-				var sVariantManagementReference = oVariantModel._getLocalId(oVariantManagementControl.getId(), oAppComponent);
+			var oAppComponent = Utils.getAppComponentForControl(oControl);
+			var oVariantModel = oAppComponent instanceof Component ? oAppComponent.getModel("$FlexVariants") : undefined;
+			if (!oVariantModel) {
+				//technical parameters are not updated, only URL hash is updated
+				Utils.setTechnicalURLParameterValues(undefined, VARIANT_TECHNICAL_PARAMETER_NAME, aUrlParameters);
+				return Utils.log.error("Variant model could not be found on the provided control");
+			}
+
+			//check if variant for the passed variant management control is present
+			if (oControl instanceof VariantManagement) {
+				var sVariantManagementReference = oVariantModel._getLocalId(oControl.getId(), oAppComponent);
 				var mVariantParametersInURL = oVariantModel.getVariantIndexInURL(sVariantManagementReference);
 
 				if (mVariantParametersInURL.index > -1) {
-					mVariantParametersInURL.parameters[sVariantTechnicalParameterName].splice(mVariantParametersInURL.index, 1);
-					aUrlParameters = mVariantParametersInURL.parameters[sVariantTechnicalParameterName].slice(0);
+					mVariantParametersInURL.parameters[VARIANT_TECHNICAL_PARAMETER_NAME].splice(mVariantParametersInURL.index, 1);
+					aUrlParameters = mVariantParametersInURL.parameters[VARIANT_TECHNICAL_PARAMETER_NAME].slice(0);
 				}
 			}
-			Utils.setTechnicalURLParameterValues(oAppComponent, sVariantTechnicalParameterName, aUrlParameters);
+
+			//both technical parameters and URL hash updated
+			oVariantModel.updateHasherEntry({
+				parameters: aUrlParameters,
+				updateURL: true,
+				component: oAppComponent
+			});
+
 		},
 
 		/**

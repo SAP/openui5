@@ -842,6 +842,20 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns URL hash when ushell container is available
+		 *
+		 * @returns {object} Returns the parsed URL hash object or an empty object if ushell container is not available
+		 */
+		getParsedURLHash : function(){
+			var oUshellContainer = Utils.getUshellContainer();
+			if (oUshellContainer) {
+				var oURLParser = oUshellContainer.getService("URLParsing");
+				return oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
+			}
+			return { };
+		},
+
+		/**
 		 * Sets the values for url hash and technical parameters for the component data.
 		 * Deactivates hash based navigation while performing the operations, which is then re-activated upon completion.
 		 * If the passed doesn't exist in the url hash or technical parameters, then a new object is added respectively.
@@ -851,27 +865,25 @@ sap.ui.define([
 		 * @param {string[]} aValues Array of values for the technical parameter
 		 */
 		setTechnicalURLParameterValues: function (oComponent, sParameterName, aValues) {
-			var oUshellContainer = Utils.getUshellContainer();
-			if (oUshellContainer) {
-				hasher.changed.active = false; //disable changed signal
+				var oParsedHash = Utils.getParsedURLHash(sParameterName);
 
-				var oURLParser = oUshellContainer.getService("URLParsing");
-				var oParsedHash = oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
-				var mParams = oParsedHash.params;
-				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
-				if (!mTechnicalParameters) {
-					this.log.error("Component instance not provided, so technical parameters in component data would remain unchanged");
+				if (oParsedHash.params) {
+					hasher.changed.active = false; //disable changed signal
+
+					var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
+					if (!mTechnicalParameters) {
+						this.log.error("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
+					}
+					if (aValues.length === 0) {
+						delete oParsedHash.params[sParameterName];
+						mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
+					} else {
+						oParsedHash.params[sParameterName] = aValues;
+						mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
+					}
+					hasher.replaceHash(Utils.getUshellContainer().getService("URLParsing").constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
+					hasher.changed.active = true; // Re-enable signal
 				}
-				if (aValues.length === 0) {
-					delete mParams[sParameterName];
-					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // clearVariantParameterInURL
-				} else {
-					mParams[sParameterName] = aValues;
-					mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
-				}
-				hasher.replaceHash(oURLParser.constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
-				hasher.changed.active = true; // Re-enable signal
-			}
 		},
 
 		/**
@@ -902,6 +914,11 @@ sap.ui.define([
 			return jQuery.sap.getUriParameters().get(sParameterName);
 		},
 
+		/**
+		 * Returns ushell container if available
+		 *
+		 * @returns {object|undefined} Returns ushell container object if available or undefined
+		 */
 		getUshellContainer: function() {
 			return sap.ushell && sap.ushell.Container;
 		},

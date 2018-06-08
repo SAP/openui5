@@ -729,6 +729,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 			.then(function() {
 				mSource.annotations
 					= AnnotationParser.parse(this._oMetadata, mSource.document, mSource.data);
+				//delete document as it is not needed anymore after parsing
+				delete mSource.document;
 				return mSource;
 			}.bind(this));
 	};

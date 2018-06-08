@@ -7,24 +7,33 @@ sap.ui.require([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/SelectionManager",
-	"sap/ui/dt/DesignTime"
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	'sap/ui/thirdparty/sinon'
 ], function(
 	Button,
 	VerticalLayout,
 	ElementOverlay,
 	SelectionManager,
-	DesignTime
+	DesignTime,
+	OverlayRegistry,
+	sinon
 ) {
 	"use strict";
 
 	QUnit.start();
 
-	QUnit.module("Given that an Selection is initialized with mode SingleSelection", {
+	var sandbox = sinon.sandbox.create();
+
+	QUnit.module("Given that a Selection Manager is initialized", {
 		beforeEach : function() {
 			this.oSelectionManager = new SelectionManager();
+
+			sandbox.stub(ElementOverlay.prototype, "isSelectable").returns(true);
 		},
 		afterEach : function() {
 			this.oSelectionManager.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when it's initialized", function(assert) {
@@ -37,7 +46,8 @@ sap.ui.require([
 			var oElementOverlay = new ElementOverlay({
 				element: new Button(),
 				init: function () {
-					this.oSelectionManager._add(oElementOverlay);
+					sandbox.stub(OverlayRegistry, "getOverlay").returns(oElementOverlay);
+					this.oSelectionManager.add(oElementOverlay);
 				}.bind(this)
 			});
 
@@ -58,7 +68,8 @@ sap.ui.require([
 			var oElementOverlay = new ElementOverlay({
 				element: new Button(),
 				init: function () {
-					this.oSelectionManager._add(oElementOverlay);
+					sandbox.stub(OverlayRegistry, "getOverlay").returns(oElementOverlay);
+					this.oSelectionManager.add(oElementOverlay);
 
 					this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 						var aSelection = oEvent.getParameter("selection");
@@ -68,44 +79,11 @@ sap.ui.require([
 						done();
 					}, this);
 
-					this.oSelectionManager._remove(oElementOverlay);
+					this.oSelectionManager.remove(oElementOverlay);
 				}.bind(this)
 			});
 		});
 
-		QUnit.test("when two overlay are added to selection", function(assert) {
-			return Promise.all([
-				new Promise(function (fnResolve) {
-					this.oElementOverlay1 = new ElementOverlay({
-						element: new Button(),
-						init: fnResolve
-					});
-				}.bind(this)),
-				new Promise(function (fnResolve) {
-					this.oElementOverlay2 = new ElementOverlay({
-						element: new Button(),
-						init: fnResolve
-					});
-				}.bind(this))
-			]).then(function () {
-				this.oSelectionManager._add(this.oElementOverlay1);
-				this.oSelectionManager._add(this.oElementOverlay2);
-				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected");
-				assert.strictEqual(this.oSelectionManager.get()[0], this.oElementOverlay2, "just a second overlay is selected");
-				this.oElementOverlay1.destroy();
-				this.oElementOverlay2.destroy();
-			}.bind(this));
-		});
-	});
-
-	QUnit.module("Given that an Selection is initialized with mode MultipleSelection", {
-		beforeEach : function() {
-			this.oSelectionManager = new SelectionManager({mode : "Multi"});
-		},
-		afterEach : function() {
-			this.oSelectionManager.destroy();
-		}
-	}, function () {
 		QUnit.test("when two overlays are added to selection", function(assert) {
 			return Promise.all([
 				new Promise(function (fnResolve) {
@@ -121,8 +99,11 @@ sap.ui.require([
 					});
 				}.bind(this))
 			]).then(function () {
-				this.oSelectionManager._add(this.oElementOverlay1);
-				this.oSelectionManager._add(this.oElementOverlay2);
+				sandbox.stub(OverlayRegistry, "getOverlay", function(oOverlay){
+					return oOverlay;
+				});
+				this.oSelectionManager.add(this.oElementOverlay1);
+				this.oSelectionManager.add(this.oElementOverlay2);
 				assert.strictEqual(this.oSelectionManager.get().length, 2, "two overlays are selected");
 				this.oElementOverlay1.destroy();
 				this.oElementOverlay2.destroy();
@@ -144,16 +125,19 @@ sap.ui.require([
 					});
 				}.bind(this))
 			]).then(function () {
-				this.oSelectionManager._add(this.oElementOverlay1);
-				this.oSelectionManager._add(this.oElementOverlay2);
-				this.oSelectionManager._remove(this.oElementOverlay2);
+				sandbox.stub(OverlayRegistry, "getOverlay", function(oOverlay){
+					return oOverlay;
+				});
+				this.oSelectionManager.add(this.oElementOverlay1);
+				this.oSelectionManager.add(this.oElementOverlay2);
+				this.oSelectionManager.remove(this.oElementOverlay2);
 				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected");
 				this.oElementOverlay1.destroy();
 				this.oElementOverlay2.destroy();
 			}.bind(this));
 		});
 
-		QUnit.test("when more 3 overlays are added to selection, selectionMode is switched to Single and one more overlay is added", function(assert) {
+		QUnit.test("when two overlays are added to selection and a destroyed overlay is removed", function(assert) {
 			return Promise.all([
 				new Promise(function (fnResolve) {
 					this.oElementOverlay1 = new ElementOverlay({
@@ -166,28 +150,23 @@ sap.ui.require([
 						element: new Button(),
 						init: fnResolve
 					});
-				}.bind(this)),
-				new Promise(function (fnResolve) {
-					this.oElementOverlay3 = new ElementOverlay({
-						element: new Button(),
-						init: fnResolve
-					});
 				}.bind(this))
 			]).then(function () {
-				this.oSelectionManager._add(this.oElementOverlay1);
-				this.oSelectionManager._add(this.oElementOverlay2);
-				this.oSelectionManager.setMode("Single");
-				assert.strictEqual(this.oSelectionManager.get().length, 2, "2 overlays are selected after mode switch");
-				this.oSelectionManager._add(this.oElementOverlay3);
-				assert.strictEqual(this.oSelectionManager.get().length, 1, "1 overlay is selected after add in single mode");
-				assert.strictEqual(this.oSelectionManager.get()[0], this.oElementOverlay3, "last overlay is selected");
-				this.oElementOverlay1.destroy();
+				sandbox.stub(OverlayRegistry, "getOverlay", function(oOverlay){
+					if (oOverlay.getId() === this.oElementOverlay1.getId()){
+						return oOverlay;
+					}
+				}.bind(this));
+				this.oSelectionManager.add(this.oElementOverlay1);
+				this.oSelectionManager.add(this.oElementOverlay2);
 				this.oElementOverlay2.destroy();
-				this.oElementOverlay3.destroy();
+				this.oSelectionManager.remove(this.oElementOverlay2);
+				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected");
+				this.oElementOverlay1.destroy();
 			}.bind(this));
 		});
 
-		QUnit.test("when more 3 overlays are added to selection, selectionMode is switched to Single and one overlay is removed from selection", function(assert) {
+		QUnit.test("when two elements are added to selection and a destroyed element is removed", function(assert) {
 			return Promise.all([
 				new Promise(function (fnResolve) {
 					this.oElementOverlay1 = new ElementOverlay({
@@ -202,13 +181,18 @@ sap.ui.require([
 					});
 				}.bind(this))
 			]).then(function () {
-				this.oSelectionManager._add(this.oElementOverlay1);
-				this.oSelectionManager._add(this.oElementOverlay2);
-				this.oSelectionManager.setMode("Single");
-				this.oSelectionManager._remove(this.oElementOverlay2);
-				assert.strictEqual(this.oSelectionManager.get().length, 0, "no overlays is selected after remove in single mode");
+				sandbox.stub(OverlayRegistry, "getOverlay", function(sElementId){
+					if (sElementId === this.oElementOverlay1.getElement().getId()){
+						return this.oElementOverlay1;
+					}
+				}.bind(this));
+				this.sButton2Id = this.oElementOverlay2.getElement().getId();
+				this.oSelectionManager.add(this.oElementOverlay1.getElement().getId());
+				this.oSelectionManager.add(this.sButton2Id);
+				this.oElementOverlay2.getElement().destroy();
+				this.oSelectionManager.remove(this.sButton2Id);
+				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected");
 				this.oElementOverlay1.destroy();
-				this.oElementOverlay2.destroy();
 			}.bind(this));
 		});
 
@@ -218,7 +202,10 @@ sap.ui.require([
 			this.oElementOverlay = new ElementOverlay({
 				element: new Button(),
 				init: function () {
-					this.oSelectionManager._add(this.oElementOverlay);
+					sandbox.stub(OverlayRegistry, "getOverlay", function(oOverlay){
+						return oOverlay;
+					});
+					this.oSelectionManager.add(this.oElementOverlay);
 					var aSelections1 = this.oSelectionManager.get();
 					var aSelections2 = this.oSelectionManager.get();
 					assert.ok(aSelections1 !== aSelections2, "then returned arrays are unique");
@@ -227,8 +214,8 @@ sap.ui.require([
 				}.bind(this)
 			});
 		});
-	});
 
+	});
 
 	QUnit.module("Given that Selection API is initialized", {
 		beforeEach : function(assert) {
@@ -291,7 +278,6 @@ sap.ui.require([
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected after execution");
 				assert.strictEqual(this.aOverlays[1].getSelected(), true, "the correct overlay is selected");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Single", "the selection Mode is Single");
 				done();
 			}, this);
 
@@ -308,7 +294,6 @@ sap.ui.require([
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 0, "no overlay is selected after execution");
 				assert.strictEqual(this.aOverlays[1].getSelected(), false, "the correct overlay is deselected");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Single", "the selection Mode is Single");
 				done();
 			}, this);
 
@@ -327,7 +312,6 @@ sap.ui.require([
 			this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 5, "five overlays are selected after execution");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Multi", "the selection Mode is Multi");
 				this.aOverlays.pop();  // the last Overlay is not selectable, remove it from the array
 				this.aOverlays.forEach(function(oOverlay){
 					assert.strictEqual(oOverlay.getSelected(), true, "correct overlay is selected");
@@ -346,7 +330,6 @@ sap.ui.require([
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected after execution");
 				assert.strictEqual(this.aOverlays[1].getSelected(), true, "the correct overlay is selected");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Single", "the selection Mode is Single");
 				done();
 			}, this);
 
@@ -360,7 +343,6 @@ sap.ui.require([
 			this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 3, "three overlays are selected after execution");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Multi", "the selection Mode is Multi");
 				assert.strictEqual(this.aOverlays[1].getSelected(), true, "overlay of Button1 is selected");
 				assert.strictEqual(this.aOverlays[2].getSelected(), true, "overlay of Button2 is selected");
 				assert.strictEqual(this.aOverlays[3].getSelected(), false, "overlay of Button3 is not selected");
@@ -410,7 +392,6 @@ sap.ui.require([
 			this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 5, "five overlays are selected after execution");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Multi", "the selection Mode is Multi");
 				this.aOverlays.pop(); //button 5 is not selectable, remove it from the array
 				this.aOverlays.forEach(function(oOverlay){
 					assert.strictEqual(oOverlay.getSelected(), true, "correct overlay is selected");
@@ -433,7 +414,6 @@ sap.ui.require([
 
 			assert.strictEqual(this.oSelectionManager.get().length, 1, "it is still one overlay selected after execution");
 			assert.strictEqual(this.aOverlays[1].getSelected(), true, "the selection didn't change");
-			assert.strictEqual(this.oSelectionManager.getMode(), "Single", "the selection Mode dibn't change");
 		});
 
 		QUnit.test("when add() is called with one overlay", function(assert) {
@@ -446,7 +426,6 @@ sap.ui.require([
 			this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 2, "two overlays are selected after execution");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Multi", "the selection Mode is updatet accordingly");
 				assert.strictEqual(this.aOverlays[1].getSelected(), true, "overlay of Button1 is selected");
 				assert.strictEqual(this.aOverlays[2].getSelected(), true, "overlay of Button2 is selected");
 				done();
@@ -465,7 +444,6 @@ sap.ui.require([
 			this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 4, "four overlays are selected after execution");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Multi", "the selection Mode is updatet accordingly");
 				assert.strictEqual(this.aOverlays[1].getSelected(), true, "overlay of Button1 is selected");
 				assert.strictEqual(this.aOverlays[2].getSelected(), true, "overlay of Button2 is selected");
 				assert.strictEqual(this.aOverlays[3].getSelected(), true, "overlay of Button3 is selected");
@@ -484,7 +462,6 @@ sap.ui.require([
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected after execution");
 				assert.strictEqual(this.aOverlays[1].getSelected(), true, "the correct overlay is selected");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Single", "the selection Mode is Single");
 				done();
 			}, this);
 
@@ -498,7 +475,6 @@ sap.ui.require([
 			this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 3, "three overlays are selected after execution");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Multi", "the selection Mode is Multi");
 				assert.strictEqual(this.aOverlays[1].getSelected(), true, "overlay of Button1 is selected");
 				assert.strictEqual(this.aOverlays[2].getSelected(), true, "overlay of Button2 is selected");
 				assert.strictEqual(this.aOverlays[3].getSelected(), false, "overlay of Button3 is not selected");
@@ -553,7 +529,6 @@ sap.ui.require([
 			this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 5, "five overlays are selected after execution");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Multi", "the selection Mode is updatet accordingly");
 				assert.strictEqual(this.aOverlays[1].getSelected(), true, "overlay of Button1 is selected");
 				assert.strictEqual(this.aOverlays[2].getSelected(), true, "overlay of Button2 is selected");
 				assert.strictEqual(this.aOverlays[3].getSelected(), true, "overlay of Button3 is selected");
@@ -698,12 +673,10 @@ sap.ui.require([
 			// select all overlays
 			this.oSelectionManager.set(this.aOverlays);
 			assert.strictEqual(this.oSelectionManager.get().length, 5, "five overlays are selected before execution");
-			assert.strictEqual(this.oSelectionManager.getMode(), "Multi", "the selection Mode is Multi before");
 
 			this.oSelectionManager.attachEventOnce("change", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("selection"), this.oSelectionManager.get(), "selection change event is fired with a correct selection");
 				assert.strictEqual(this.oSelectionManager.get().length, 1, "one overlay is selected after execution");
-				assert.strictEqual(this.oSelectionManager.getMode(), "Single", "the selection Mode is updatet accordingly");
 				assert.strictEqual(this.aOverlays[0].getSelected(), false, "overlay of Layout is not selected");
 				assert.strictEqual(this.aOverlays[1].getSelected(), false, "overlay of Button1 is not selected");
 				assert.strictEqual(this.aOverlays[2].getSelected(), true, "overlay of Button2 is selected");

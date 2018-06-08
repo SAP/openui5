@@ -10,12 +10,24 @@ function updateCsrfToken() {
 	csrfToken = "" + Math.floor(Math.random() * 1000000000);
 }
 
+function setCsrfToken(newCsrfToken) {
+	csrfToken = newCsrfToken;
+}
+
 function deleteCsrfToken() {
 	csrfToken = undefined;
 }
 
 function updateSessionContextId() {
-		sessionContextId = "SID-" + Math.floor(Math.random() * 1000000000) + "-NEW";
+	sessionContextId = "SID-" + Math.floor(Math.random() * 1000000000) + "-NEW";
+}
+
+function resetBaseUrl() {
+  baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
+}
+
+function setBaseUrl(newBaseUrl) {
+  baseURL = newBaseUrl;
 }
 
 function getHeader(headers, header) {

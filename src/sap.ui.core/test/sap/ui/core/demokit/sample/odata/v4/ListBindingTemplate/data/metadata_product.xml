@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="../../../../default/iwbep/tea_busi_supplier/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.default.iwbep.tea_busi_supplier.v0001"
+					  Alias="TEA_BUSI_SUPPLIER"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference
+			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.iwbep.tea_busi_product.v0001" Alias="SAP__self">
+			<EntityType Name="Category">
+				<Key>
+					<PropertyRef Name="CategoryIdentifier"/>
+				</Key>
+				<Property Name="CategoryIdentifier" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="50"/>
+			</EntityType>
+			<EntityType Name="Product">
+				<Key>
+					<PropertyRef Name="ID"/>
+				</Key>
+				<Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="Name" Type="Edm.String" Nullable="false"/>
+				<Property Name="SupplierIdentifier" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="ProductPicture"
+						  Type="com.sap.gateway.default.iwbep.tea_busi_product.v0001.ComplexTypePicture" Nullable="false"/>
+				<NavigationProperty Name="PRODUCT_2_CATEGORY"
+									Type="Collection(com.sap.gateway.default.iwbep.tea_busi_product.v0001.Category)"/>
+				<NavigationProperty Name="PRODUCT_2_SUPPLIER"
+									Type="com.sap.gateway.default.iwbep.tea_busi_supplier.v0001.Supplier" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="Registration">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Id" Type="Edm.String" Nullable="false"/>
+				<Property Name="Serial_Number" Type="Edm.String" Nullable="false"/>
+				<Property Name="Registration_Date" Type="Edm.Date" Nullable="false"/>
+				<Property Name="Name" Type="Edm.String" Nullable="false"/>
+				<Property Name="Product_Id" Type="Edm.Int32" Nullable="false"/>
+				<NavigationProperty Name="REGISTRATION_2_PRODUCT"
+									Type="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product" Nullable="false"/>
+			</EntityType>
+			<ComplexType Name="ComplexTypePicture">
+				<Property Name="Picture" Type="Edm.Stream" Nullable="true"/>
+			</ComplexType>
+			<Action Name="ReorderProduct" IsBound="true">
+				<Parameter Name="PRODUCT" Type="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product"
+						   Nullable="false"/>
+				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product"
+							Nullable="false"/>
+			</Action>
+			<EntityContainer Name="Container">
+				<EntitySet Name="Categories" EntityType="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Category"/>
+				<EntitySet Name="Products" EntityType="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product">
+					<NavigationPropertyBinding Path="PRODUCT_2_CATEGORY" Target="Categories"/>
+					<NavigationPropertyBinding Path="PRODUCT_2_SUPPLIER"
+											   Target="com.sap.gateway.default.iwbep.tea_busi_supplier.v0001.Container/Suppliers"/>
+				</EntitySet>
+				<EntitySet Name="Registrations" EntityType="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Registration">
+					<NavigationPropertyBinding Path="REGISTRATION_2_PRODUCT" Target="Products"/>
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.Category/CategoryIdentifier">
+				<Annotation Term="SAP__common.Label" String="Category ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Category/CategoryName">
+				<Annotation Term="SAP__common.Label" String="char 50"/>
+				<Annotation Term="SAP__common.QuickInfo" String="TEA V4 - Char 50"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/ID">
+				<Annotation Term="SAP__common.Label" String="Product ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/Name">
+				<Annotation Term="SAP__common.Label" String="String"/>
+				<Annotation Term="SAP__common.QuickInfo" String="TEA V4 - String"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Product/SupplierIdentifier">
+				<Annotation Term="SAP__common.Label" String="Supplier ID"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

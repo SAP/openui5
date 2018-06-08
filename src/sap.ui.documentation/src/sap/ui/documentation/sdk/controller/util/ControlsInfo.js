@@ -251,6 +251,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 								oStep.nextSampleId = oEnt.id + "." + fnPrependZero(i + 2);
 							}
 
+							oStep.entityId = oEnt.id;
+
 							// add generated sample to this entity and to the samples array
 							oEnt.samples.push(oStep);
 							data.samples[oStep.id] = oStep;

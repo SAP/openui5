@@ -245,18 +245,35 @@ function(
 		});
 
 		QUnit.test("when calling pushAndExecute with an failing command as the only command", function(assert) {
-			var done = assert.async();
+			assert.expect(4);
 			var fnStackModifiedSpy = sinon.spy();
 			this.stack.attachModified(fnStackModifiedSpy);
-			this.stack.pushAndExecute(this.failingCommand)
+			return this.stack.pushAndExecute(this.failingCommand)
 
 			.catch(function(oError) {
 				assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
-				assert.strictEqual(oError, ERROR_INTENTIONALLY, " an error is rejected and catched");
+				assert.strictEqual(oError, ERROR_INTENTIONALLY, "an error is rejected and catched");
+				assert.strictEqual(oError.command, this.failingCommand, "and the command is part of the error");
 				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
-				setTimeout(function() {
-					done();
-				}, 0);
+			}.bind(this));
+		});
+
+		QUnit.test("when calling pushAndExecute with an failing command as the only command and no error is passed", function(assert) {
+			assert.expect(5);
+			var fnStackModifiedSpy = sinon.spy();
+			this.stack.attachModified(fnStackModifiedSpy);
+			this.failingCommand.execute = function(oElement) {
+				return Promise.reject();
+			};
+			var oStandardError = new Error("Executing of the change failed.");
+			return this.stack.pushAndExecute(this.failingCommand)
+
+			.catch(function(oError) {
+				assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
+				assert.equal(oError.message, oStandardError.message, "an error is rejected and catched");
+				assert.strictEqual(oError.command, this.failingCommand, "and the command is part of the error");
+				assert.equal(oError.index, 0, "and the index is part of the error");
+				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
 			}.bind(this));
 		});
 
@@ -296,6 +313,20 @@ function(
 				assert.equal(oTopCommand.getId(), this.command.getId(), "then it is on the top of stack");
 				assert.ok(this.stack.canUndo(), "then a command can be undone");
 				assert.ok(!this.stack.canRedo(), "then stack cannot be redone");
+			}.bind(this));
+		});
+
+		QUnit.test("when pushing a failing command and a working command to the stack and calling execute, ", function(assert) {
+			this.stack.push(this.failingCommand);
+			this.stack.push(this.command);
+			return this.stack.execute()
+
+			.catch(function(oError) {
+				var aCommands = this.stack.getCommands();
+				assert.equal(aCommands.length, 1, "the CommandStack contains one command afterwards");
+				assert.equal(aCommands[0].getId(), this.command.getId(), "the remaining command is the one which has been pushed last");
+				assert.equal(this.stack._getCommandToBeExecuted().getId(), this.command.getId(), "the variable '_toBeExecuted' points to the remaining command");
+				assert.equal(oError.command.getId(), this.failingCommand.getId(), "the error object contains the failing command");
 			}.bind(this));
 		});
 

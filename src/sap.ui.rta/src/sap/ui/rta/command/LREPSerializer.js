@@ -69,6 +69,10 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	LREPSerializer.prototype._isPersistedChange = function(oPreparedChange) {
+		return !!this.getCommandStack()._aPersistedChanges && this.getCommandStack()._aPersistedChanges.indexOf(oPreparedChange.getId()) !== -1;
+	};
+
 	LREPSerializer.prototype.handleCommandExecuted = function(oEvent) {
 		(function (oEvent) {
 			var oParams = oEvent.getParameters();
@@ -113,12 +117,14 @@ sap.ui.define([
 								if (oPreparedChange.getState() === Change.states.DELETED) {
 									oPreparedChange.setState(Change.states.NEW);
 								}
-								oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
+								if (!this._isPersistedChange(oPreparedChange)) {
+									oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
+								}
 							}
 						} else if (oCommand instanceof AppDescriptorCommand) {
 							aDescriptorCreateAndAdd.push(oCommand.createAndStoreChange());
 						}
-					});
+					}.bind(this));
 
 					return Promise.all(aDescriptorCreateAndAdd);
 				}

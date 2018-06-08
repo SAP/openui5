@@ -52,6 +52,10 @@ describe("sap.m.MessagePage", function() {
 
 		//compare
 		expect(takeScreenshot()).toLookAs("nav-container-with-message-page");
+
+		//back to menu
+		element(by.id("__page1-navButton-iconBtn")).click(); // back to menu
+		element(by.id("master-title-inner")).click(); // wait for menu page to show
 	});
 
 	it("Should test MessagePage with buttons and FormattedText", function () {

@@ -52,6 +52,10 @@ sap.ui.require([
 			this.mock(this.oModel.oRequestor).expects("request").never();
 		},
 
+		afterEach : function () {
+			return TestUtils.awaitRendering();
+		},
+
 		/**
 		 * Creates a Sinon mock for a cache object with read and refresh method.
 		 * @returns {object}
@@ -108,13 +112,11 @@ sap.ui.require([
 				oContextBindingMock = that.mock(oControl.getObjectBinding());
 				fnFetchValue = oContextBindingMock.expects("fetchValue");
 				fnFetchValue.exactly(iNoOfRequests || 1)
-					.withExactArgs("/EntitySet('foo')/property", sinon.match.object,
-						new _GroupLock())
+					.withExactArgs("/EntitySet('foo')/property", sinon.match.object, undefined)
 					.returns(Promise.resolve("value"));
 				if (oError) {
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs("/EntitySet('foo')/property", sinon.match.object,
-							new _GroupLock())
+						.withExactArgs("/EntitySet('foo')/property", sinon.match.object, undefined)
 						.returns(Promise.reject(oError));
 				}
 				oControl.bindProperty("text", {
@@ -387,8 +389,8 @@ sap.ui.require([
 
 					oBinding.setType(null, sType);
 					oCacheMock.expects("fetchValue")
-						.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func,
-							sinon.match.same(oBinding))
+						.withExactArgs(new _GroupLock("$auto", undefined, oBinding), undefined,
+							sinon.match.func, sinon.match.same(oBinding))
 						.returns(SyncPromise.resolve(vValue));
 					if (sType !== "any") {
 						this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
@@ -535,7 +537,8 @@ sap.ui.require([
 		oBinding = this.oModel.bindProperty("/EntitySet('foo')/property");
 		oBinding.setType(null, "any"); // avoid fetchUI5Type()
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(new _GroupLock("group"), undefined, sinon.match.func, oBinding)
+			.withExactArgs(new _GroupLock("group", undefined, oBinding), undefined,
+				sinon.match.func, oBinding)
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -549,7 +552,7 @@ sap.ui.require([
 
 		oBinding.setType(null, "any"); // avoid fetchUI5Type()
 		this.mock(oContext).expects("fetchValue")
-			.withExactArgs("property", oBinding, new _GroupLock("group"))
+			.withExactArgs("property", oBinding)
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -672,8 +675,7 @@ sap.ui.require([
 				} else {
 					sResolvedPath = sContextPath + "/" + sPath;
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object,
-							new _GroupLock())
+						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object, undefined)
 						.returns(Promise.resolve(oValue));
 				}
 				that.mock(that.oModel.getMetaModel()).expects("fetchUI5Type")
@@ -807,11 +809,11 @@ sap.ui.require([
 
 		// initial read and after refresh
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func, sinon.match.object)
+			.withExactArgs(sinon.match.object, undefined, sinon.match.func, sinon.match.object)
 			.returns(SyncPromise.resolve("foo"));
 		// force non-primitive error
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func, sinon.match.object)
+			.withExactArgs(sinon.match.object, undefined, sinon.match.func, sinon.match.object)
 			.returns(SyncPromise.resolve({}));
 
 		this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
@@ -841,7 +843,7 @@ sap.ui.require([
 			done = assert.async();
 
 		this.getPropertyCacheMock().expects("fetchValue")
-			.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func, sinon.match.object)
+			.withExactArgs(sinon.match.object, undefined, sinon.match.func, sinon.match.object)
 			.returns(SyncPromise.resolve("foo"));
 		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
 
@@ -864,7 +866,7 @@ sap.ui.require([
 			done = assert.async();
 
 		this.getPropertyCacheMock().expects("fetchValue")
-			.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func, sinon.match.object)
+			.withExactArgs(sinon.match.object, undefined, sinon.match.func, sinon.match.object)
 			.returns(SyncPromise.resolve("foo"));
 		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
 
@@ -889,7 +891,7 @@ sap.ui.require([
 			done = assert.async();
 
 		this.getPropertyCacheMock().expects("fetchValue")
-			.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func, sinon.match.object)
+			.withExactArgs(sinon.match.object, undefined, sinon.match.func, sinon.match.object)
 			.returns(SyncPromise.resolve("foo"));
 		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 			.withExactArgs(sPath)
@@ -927,11 +929,11 @@ sap.ui.require([
 					};
 
 				oCacheMock.expects("fetchValue")
-					.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func,
+					.withExactArgs(sinon.match.object, undefined, sinon.match.func,
 						sinon.match.object)
 					.returns(SyncPromise.resolve("foo"));
 				oCacheMock.expects("fetchValue")
-					.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func,
+					.withExactArgs(sinon.match.object, undefined, sinon.match.func,
 						sinon.match.object)
 					.returns(SyncPromise.resolve("update")); // 2nd read gets an update
 
@@ -1076,8 +1078,8 @@ sap.ui.require([
 			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 				.returns(oTypePromise);
 			this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-				.withExactArgs(new _GroupLock(sGroupId || "$auto"), undefined, sinon.match.func,
-					sinon.match.object)
+				.withExactArgs(new _GroupLock(sGroupId || "$auto", undefined, oBinding), undefined,
+					sinon.match.func, sinon.match.object)
 				.callsArg(2)
 				.returns(oReadPromise);
 
@@ -1106,7 +1108,7 @@ sap.ui.require([
 			that = this;
 
 		this.getPropertyCacheMock().expects("fetchValue")
-			.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func, sinon.match.object)
+			.withExactArgs(sinon.match.object, undefined, sinon.match.func, sinon.match.object)
 			.returns(SyncPromise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
 			models : this.oModel,
@@ -1139,7 +1141,7 @@ sap.ui.require([
 			that = this;
 
 		this.getPropertyCacheMock().expects("fetchValue")
-			.withExactArgs(new _GroupLock("$auto"), undefined, sinon.match.func, sinon.match.object)
+			.withExactArgs(sinon.match.object, undefined, sinon.match.func, sinon.match.object)
 			.returns(SyncPromise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
 			models : this.oModel,
@@ -1303,7 +1305,7 @@ sap.ui.require([
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(this.oModel).expects("checkGroupId").withExactArgs(oFixture.updateGroupId);
-			this.mock(this.oModel).expects("lockGroup").withExactArgs(oFixture.updateGroupId, true)
+			this.mock(oBinding).expects("lockGroup").withExactArgs(oFixture.updateGroupId, true)
 				.returns(oGroupLock);
 			this.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
 				.withExactArgs("Address/City", sinon.match.same(oContext))
@@ -1352,7 +1354,8 @@ sap.ui.require([
 		oPropertyBinding.vValue = "fromServer"; // simulate a read
 
 		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("lockGroup").withExactArgs("up", true).returns(oGroupLock);
+		this.mock(oPropertyBinding).expects("lockGroup").withExactArgs("up", true)
+			.returns(oGroupLock);
 		this.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("Name", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve({
@@ -1422,7 +1425,7 @@ sap.ui.require([
 		oPropertyBinding.vValue = "fromServer"; // simulate a read
 
 		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("lockGroup").withExactArgs(undefined, true)
+		this.mock(oPropertyBinding).expects("lockGroup").withExactArgs(undefined, true)
 			.returns(oGroupLock);
 		this.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("Name", sinon.match.same(oContext))
@@ -1451,7 +1454,7 @@ sap.ui.require([
 		oPropertyBinding.oCachePromise = oPromise;
 
 		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("lockGroup").withExactArgs(undefined, true)
+		this.mock(oPropertyBinding).expects("lockGroup").withExactArgs(undefined, true)
 			.returns(oGroupLock);
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to update path /ProductList('HT-1000')/Name", sClassName,

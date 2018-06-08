@@ -236,7 +236,10 @@
 		  "name": "Check Box",
 		  "category": "User Input",
 		  "since": "1.10",
-		  "samples": ["sap.m.sample.CheckBox"]
+		  "samples": [
+			  "sap.m.sample.CheckBox",
+			  "sap.m.sample.CheckBoxTriState"
+			]
 		},
 		{
 		  "id": "sap.m.Column",
@@ -1914,6 +1917,11 @@
 		  "id": "sap.m.sample.CheckBox",
 		  "name": "Check Box",
 		  "description": "Checkboxes allow users to select a subset of options. If you want to offer an off/on setting you should use the Switch control instead."
+		},
+		{
+			"id": "sap.m.sample.CheckBoxTriState",
+			"name": "Tri-State Check Box",
+			"description": "In this sample, the CheckBox reflects the selection states of its dependent input fields - selected, not selected, and partially selected."
 		},
 		{
 		  "id": "sap.m.sample.DatePicker",

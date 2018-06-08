@@ -534,8 +534,7 @@ sap.ui.define([
 	 * @since 1.25.1
 	 */
 	Component.getOwnerComponentFor = function(oObject) {
-		var sOwnerId = Component.getOwnerIdFor(oObject);
-		return sOwnerId && sap.ui.component(sOwnerId);
+		return Component.get(Component.getOwnerIdFor(oObject));
 	};
 
 	/**
@@ -1009,7 +1008,12 @@ sap.ui.define([
 		}
 		// create the nested component in the context of this component
 		return this.runAsOwner(function() {
-			return sap.ui.component(mConfig);
+			if ( mConfig.async === true ) {
+				return Component.create(mConfig);
+			} else {
+				// use deprecated factory for sync use case only
+				return sap.ui.component(mConfig);
+			}
 		});
 	};
 
@@ -1699,7 +1703,7 @@ sap.ui.define([
 				// Only create models:
 				//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
 				//   - in case the model class is already loaded (otherwise log a warning)
-				if (jQuery.sap.isDeclared(mModelConfig.type, true)) {
+				if (sap.ui.loader._.getModuleState(mModelConfig.type.replace(/\./g, "/") + ".js")) {
 					mModelConfigs.afterManifest[sModelName] = mModelConfig;
 				} else {
 					jQuery.sap.log.warning("Can not preload model \"" + sModelName + "\" as required class has not been loaded: \"" + mModelConfig.type + "\"",
@@ -1711,6 +1715,30 @@ sap.ui.define([
 
 		return mModelConfigs;
 	}
+
+	/**
+	 * Retrieves the component manifest url.
+	 * @param {string} sComponentName component name.
+	 * @returns {string} component manifest url.
+	 */
+	function getManifestUrl(sComponentName){
+		return sap.ui.require.toUrl(sComponentName.replace(/\./g, "/") + "/manifest.json");
+	}
+
+	/**
+	 * Registers the given library or component path.
+	 * @param {string} sName component or library name.
+	 * @param {string} sUrl component or library path.
+	 */
+	function registerModulePath(sName, sUrl) {
+		var mPaths = {};
+		mPaths[sName.replace(/\./g, "/")] = sUrl;
+		sap.ui.loader.config({
+			paths: mPaths
+		});
+	}
+
+
 
 	function loadManifests(oRootMetadata, oRootManifest) {
 		var aManifestsToLoad = [];
@@ -1733,7 +1761,7 @@ sap.ui.define([
 				// a potential request a bit earlier. Right now the whole component loading would be delayed by the async request.
 
 				var sName = oMetadata.getComponentName();
-				var sDefaultManifestUrl = jQuery.sap.getModulePath(sName, "/manifest.json");
+				var sDefaultManifestUrl = getManifestUrl(sName);
 
 				var pLoadManifest;
 				if (oManifest) {
@@ -1899,20 +1927,21 @@ sap.ui.define([
 	 *     mandatory <code>name</code> property and optionally, an <code>url</code> that will be used for a <code>registerModulePath</code>.
 	 * @param {Promise|Promise[]} [mOptions.asyncHints.waitFor] <code>Promise</code> or array of <code>Promise</code>s for which the Component instantiation should wait
 	 * @returns {Promise<sap.ui.core.Component>} A Promise that resolves with the newly created component instance
-	 *
+	 * @throws {TypeError} When <code>mOptions</code> is null or not an object.
 	 * @since 1.56.0
 	 * @static
 	 * @public
 	 */
 	Component.create = function(mOptions) {
-		if (typeof mOptions === "string") {
-			throw new Error("Component.create() cannot be called with a string.");
+		if (mOptions == null || typeof mOptions !== "object") {
+			throw new TypeError("Component.create() must be called with a configuration object.");
 		}
 
 		var mParameters = extend(true, {}, mOptions);
 		mParameters.async = true;
 
 		// if no manifest option is given, the default is true
+		// Note: this intentionally prevents the use of the legacy options manifestUrl and manifestFirst
 		if (mParameters.manifest === undefined) {
 			mParameters.manifest = true;
 		}
@@ -1975,7 +2004,9 @@ sap.ui.define([
 	 * @deprecated Since 1.56.0, use one of the following alternatives instead:
 	 * <ul>
 	 * <li>to load a component class, use {@link sap.ui.core.Component.load Component.load}</li>
-	 * <li>to create a new component instance, use {@link sap.ui.core.Component.create Component.create}</li>
+	 * <li>to create a new component instance, use {@link sap.ui.core.Component.create Component.create};
+	 *     note that this new factory does not support synchronous loading (<code>async:false</code>) nor does
+	 *     it support the deprecated options <code>manifestFirst</code> or <code>manifestUrl<code>.</li>
 	 * <li>to retrieve an existing component instance by its ID, use {@link sap.ui.core.Component.get Component.get}</li>
 	 * </ul>
 	 * @public
@@ -1986,10 +2017,20 @@ sap.ui.define([
 	 *   not experimental and can be used without restrictions.
 	 */
 	sap.ui.component = function(vConfig) {
-		if (vConfig && vConfig.async) {
-			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.component'. Use 'Component.create' instead");
-		} else if (typeof vConfig === 'string') {
+		// a parameter must be given!
+		if (!vConfig) {
+			throw new Error("sap.ui.component cannot be called without parameter!");
+		}
+
+		if (typeof vConfig === 'string') {
 			jQuery.sap.log.warning("Do not use deprecated function 'sap.ui.component' for Component instance lookup. Use 'Component.get' instead");
+			// when only a string is given then this function behaves like a
+			// getter and returns an existing component instance
+			return sap.ui.getCore().getComponent(vConfig);
+		}
+
+		if (vConfig.async) {
+			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.component'. Use 'Component.create' instead");
 		} else {
 			jQuery.sap.log.warning("Do not use synchronous component creation! Use the new asynchronous factory 'Component.create' instead");
 		}
@@ -1997,21 +2038,9 @@ sap.ui.define([
 	};
 
 	/*
-	 * The old sap.ui.component implementation
+	 * Part of the old sap.ui.component implementation than can be re-used by the new factory
 	 */
 	function componentFactory(vConfig) {
-		// a parameter must be given!
-		if (!vConfig) {
-			throw new Error("sap.ui.component cannot be called without parameter!");
-		}
-
-		// when only a string is given then this function behaves like a
-		// getter and returns an existing component instance
-		if (typeof vConfig === 'string') {
-			// lookup and return the component
-			return sap.ui.getCore().getComponent(vConfig);
-
-		}
 
 		function createInstance(oClass) {
 
@@ -2328,7 +2357,7 @@ sap.ui.define([
 		// if a component name and a URL is given, we register this URL for the name of the component:
 		// the name is the package in which the component is located (dot separated)
 		if (sName && sUrl) {
-			jQuery.sap.registerModulePath(sName, sUrl);
+			registerModulePath(sName, sUrl);
 		}
 
 		// in case of loading the manifest first by configuration we need to
@@ -2337,7 +2366,7 @@ sap.ui.define([
 		// the Components' modules namespace
 		if (bManifestFirst && !oManifest) {
 			oManifest = Manifest.load({
-				manifestUrl: jQuery.sap.getModulePath(sName, "/manifest.json"),
+				manifestUrl: getManifestUrl(sName),
 				componentName: sName,
 				async: oConfig.async,
 				failOnError: false
@@ -2418,7 +2447,7 @@ sap.ui.define([
 
 			if ( typeof vObj === 'object' ) {
 				if ( vObj.url ) {
-					jQuery.sap.registerModulePath(vObj.name, vObj.url);
+					registerModulePath(vObj.name, vObj.url);
 				}
 				return (vObj.lazy && bIgnoreLazy !== true) ? undefined : vObj.name; // expl. check for true to allow usage in Array.prototype.map below
 			}
@@ -2433,7 +2462,7 @@ sap.ui.define([
 				sPreloadName;
 
 			// only load the Component-preload file if the Component module is not yet available
-			if ( bComponentPreload && sComponentName != null && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
+			if ( bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js") ) {
 
 				if ( bAsync ) {
 					sPreloadName = jQuery.sap.getResourceName(sController, http2 ? '-h2-preload.js' : '-preload.js'); // URN
@@ -2609,7 +2638,7 @@ sap.ui.define([
 					// if a URL is given we register this URL for the name of the component:
 					// the name is the package in which the component is located (dot separated)
 					if (sUrl) {
-						jQuery.sap.registerModulePath(sComponentName, sUrl);
+						registerModulePath(sComponentName, sUrl);
 					}
 
 					// preload the component
@@ -2758,7 +2787,7 @@ sap.ui.define([
 				}).then(function(oClass) {
 					var oMetadata = oClass.getMetadata();
 					var sName = oMetadata.getComponentName();
-					var sDefaultManifestUrl = jQuery.sap.getModulePath(sName, "/manifest.json");
+					var sDefaultManifestUrl = getManifestUrl(sName);
 					var pLoaded;
 
 					// Check if we loaded the manifest.json from the default location

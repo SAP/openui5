@@ -549,6 +549,7 @@
 		label.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		sut.applyAlignTo(label, align);
+		sap.ui.getCore().applyChanges();
 
 		//Assert
 		assert.strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());

@@ -11,8 +11,7 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
-],
-function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
+], function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
 		Properties) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
@@ -268,7 +267,7 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 							var oSalesOrderContext = oSalesOrderTable.getSelectedItem()
 									.getBindingContext(),
 								sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
-							oSalesOrderContext["delete"](sGroupId).then(function () {
+							oSalesOrderContext.delete(sGroupId).then(function () {
 									Opa5.assert.ok(true, "Deleted Sales Order: " + sOrderID);
 								}, function (oError) {
 									Opa5.assert.ok(false, "Error deleting Sales Order: " + sOrderID
@@ -424,6 +423,17 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 						id : "cancelSalesOrderListChanges",
 						success : function (oCancelSalesOrderListChangesButton) {
 							Opa5.assert.ok(true, "Cancel Sales Order List Changes button pressed");
+						},
+						viewName : sViewName
+					});
+				},
+				pressConfirmSalesOrderButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "confirmSalesOrder",
+						success : function (oCancelSalesOrderChangesButton) {
+							Opa5.assert.ok(true, "Confirm Selected Sales Order button pressed");
 						},
 						viewName : sViewName
 					});

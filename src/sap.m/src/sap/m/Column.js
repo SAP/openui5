@@ -150,6 +150,51 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		this._clearMedia();
 	};
 
+	Column.prototype.getTable = function() {
+		var oParent = this.getParent();
+		if (oParent && oParent.isA("sap.m.Table")) {
+			return oParent;
+		}
+	};
+
+	Column.prototype.informTable = function(sEvent, vParam1, vParam2) {
+		var oTable = this.getTable();
+		if (oTable) {
+			var sMethod = "onColumn" + sEvent;
+			if (oTable[sMethod]) {
+				oTable[sMethod](this, vParam1, vParam2);
+			}
+		}
+	};
+
+	Column.prototype.ontouchstart = function(oEvent) {
+		this._bTouchStartMarked = oEvent.isMarked();
+	};
+
+	Column.prototype.ontap = function(oEvent) {
+		if (!this._bTouchStartMarked && !oEvent.isMarked()) {
+			this.informTable("Press");
+		}
+	};
+
+	Column.prototype.onsapspace = function(oEvent) {
+		if (oEvent.srcControl === this) {
+			this.informTable("Press");
+			oEvent.preventDefault();
+		}
+	};
+
+	Column.prototype.onsapenter = Column.prototype.onsapspace;
+
+	Column.prototype.invalidate = function() {
+		var oParent = this.getParent();
+		if (!oParent || !oParent.bOutput) {
+			return;
+		}
+
+		Element.prototype.invalidate.apply(this, arguments);
+	};
+
 	Column.prototype._clearMedia = function() {
 		if (this._media && this._minWidth) {
 			this._detachMediaContainerWidthChange(this._notifyResize, this, this.getId());
@@ -188,11 +233,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 
 		// inform parent delayed
 		jQuery.sap.delayedCall(0, this, function() {
-			var parent = this.getParent();
 			this.fireEvent("media", this);
-			if (parent && parent.onColumnResize) {
-				parent.onColumnResize(this);
-			}
+			this.informTable("Resize");
 		});
 	};
 
@@ -260,15 +302,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			return oControl;
 		}
 
-		oControl.setProperty("textAlign", sAlign, true);
-		var oDomRef = oControl.getDomRef();
-		sAlign = this.getCssAlign(sAlign);
-
-		if (oDomRef && sAlign) {
-			oDomRef.style.textAlign = sAlign;
-		}
-
-		return oControl;
+		return oControl.setTextAlign(sAlign);
 	};
 
 
@@ -360,12 +394,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			return this._initialOrder;
 		}
 
-		var oParent = this.getParent();
-		if (oParent && oParent.indexOfColumn) {
-			return oParent.indexOfColumn(this);
+		var oTable = this.getTable();
+		if (!oTable) {
+			return -1;
 		}
 
-		return -1;
+		return oTable.indexOfColumn(this);
 	};
 
 	/**

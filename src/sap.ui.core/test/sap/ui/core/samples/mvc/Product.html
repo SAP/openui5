@@ -21,7 +21,7 @@
 
 			// this test page is not below "resources", but "test-resources"
 			// usually this redirect is NOT needed - but possible if useful
-			jQuery.sap.registerModulePath("sap.ui.core.mvctest", "../../../../../../test-resources/sap/ui/core/samples/mvc/");
+			sap.ui.loader.config({paths: {"sap/ui/core/mvctest": "../../../../../../test-resources/sap/ui/core/samples/mvc/"}});
 
 			// define View and place it onto the page
 			sap.ui.xmlview({

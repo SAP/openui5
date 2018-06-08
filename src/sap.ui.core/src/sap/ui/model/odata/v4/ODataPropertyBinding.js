@@ -214,7 +214,7 @@ sap.ui.define([
 			// Use Promise to become async so that only the latest sync call to checkUpdate wins
 			vValue = Promise.resolve(this.oCachePromise.then(function (oCache) {
 				if (oCache) {
-					return oCache.fetchValue(that.oModel.lockGroup(sGroupId || that.getGroupId()),
+					return oCache.fetchValue(that.lockGroup(sGroupId || that.getGroupId()),
 						/*sPath*/undefined, function () {
 							bDataRequested = true;
 							that.fireDataRequested();
@@ -227,7 +227,7 @@ sap.ui.define([
 				if (that.oContext.getIndex() === -2) { // virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}
-				return that.oContext.fetchValue(that.sPath, that, that.oModel.lockGroup(sGroupId));
+				return that.oContext.fetchValue(that.sPath, that);
 			}).then(function (vValue) {
 				if (!vValue || typeof vValue !== "object"
 					|| (that.sInternalType === "any"
@@ -609,7 +609,7 @@ sap.ui.define([
 		}
 
 		if (this.vValue !== vValue) {
-			oGroupLock = that.oModel.lockGroup(sGroupId, true);
+			oGroupLock = that.lockGroup(sGroupId, true);
 			this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					reportError(new Error("Cannot set value on this binding"));

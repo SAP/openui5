@@ -10656,6 +10656,26 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("ariaLabelledBy attribute of the combobox must be set to the according label id", function(assert) {
+			var oLabel = new sap.m.Label({
+				id: "country",
+				text: "Country",
+				labelFor: "apa"
+			});
+			var oComboBox = new sap.m.ComboBox({
+				id: "apa"
+			});
+
+			oLabel.placeAt("content");
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
+			assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "Combobox aria-labelledby attribute is set to label id");
+
+			oLabel.destroy();
+			oComboBox.destroy();
+		});
+
 		QUnit.module("Integration");
 
 		QUnit.test("Keep selected value on parent re-render", function (assert) {
@@ -11016,7 +11036,7 @@
 			oComboBox.destroy();
 		});
 
-		QUnit.module("Input Text Selecting", {
+		QUnit.module("Input Text Selecting without data binding", {
 			beforeEach: function () {
 				this.comboBox = new sap.m.ComboBox({
 					items: [
@@ -11077,6 +11097,59 @@
 			assert.equal(selectedText, "aa", "The text inside the combo box is selected on focus in");
 		});
 
+		QUnit.module("Selection when typing non ASCII characters", {
+			beforeEach: function () {
+				var oSpecialCharsModel = new sap.ui.model.json.JSONModel({
+					"special": [
+						{"text" : "product", "key" : "productId"},
+						{"text" : "näme", "key" : "name"},
+						{"text" : "näme1", "key" : "name1"},
+						{"text" : "näme11", "key" : "name11"}
+					]
+				});
+
+				this.comboBox = new sap.m.ComboBox({
+					items: {
+						path: "/special",
+						template: new sap.ui.core.ListItem({
+							key: "{key}",
+							text: "{text}"
+						})
+					}
+				}).placeAt("content");
+
+				this.comboBox.setModel(oSpecialCharsModel);
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.comboBox.destroy();
+				this.comboBox = null;
+			}
+		});
+
+		QUnit.test('Input text selection "without" re-rendering on selection change', function (assert) {
+
+			this.comboBox._$input.focus().val("n").trigger("input");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			var selectedText = this.comboBox._$input.getSelectedText();
+			assert.equal(selectedText, "äme", "Selected text is correct");
+		});
+
+		QUnit.test('Input text selection "with" re-rendering on selection change', function (assert) {
+			this.comboBox.attachEvent('selectionChange', function () {
+				this.comboBox.rerender();
+			}.bind(this));
+
+			this.comboBox._$input.focus().val("n").trigger("input");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			var selectedText = this.comboBox._$input.getSelectedText();
+			assert.equal(selectedText, "äme", "Selected text is correct");
+		});
 
 		</script>
 	</head>

@@ -247,10 +247,11 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 }
 
 /* table column header */
-.sapMListTbl .sapMTableTH {
+.sapMListTblHeader > .sapMTableTH {
 	background: @sapUiListHeaderBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
 	background-clip: padding-box;
+	vertical-align: middle;
 }
 
 /* sticky headerToolbar, infoToolbar and column headers */
@@ -370,6 +371,13 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 .sapMListTblSubCntGridSmall > .sapMListTblSubCntRow,
 .sapMListTblSubCntGridLarge > .sapMListTblSubCntRow {
 	margin-top: .5rem;
+}
+
+.sapMTableTH > .sapMLnk,
+.sapMTableTH > .sapMText,
+.sapMTableTH > .sapMLabel,
+.sapMTableTH > .sapMObjectNumber {
+	vertical-align: middle;
 }
 
 /********** COMPACT DESIGN ************/

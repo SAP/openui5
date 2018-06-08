@@ -328,7 +328,6 @@ function(
 	 */
 	DesignTime.prototype.setSelectionMode = function (oMode) {
 		this.setProperty("selectionMode", oMode);
-		this.getSelectionManager().setMode(oMode);
 
 		return this;
 	};
@@ -472,8 +471,10 @@ function(
 					this._oTaskManager.complete(iTaskId);
 					return oElementOverlay;
 				}.bind(this),
-				function () {
-					jQuery.sap.log.error('sap.ui.dt: root element with id = "' + vRootElement.getId() + '" initialization is failed');
+				function (oError) {
+					var sErrorText = 'sap.ui.dt: root element with id = "' + vRootElement.getId() + '" initialization is failed';
+					sErrorText = oError ? sErrorText + ' due to: ' + oError.message : sErrorText;
+					jQuery.sap.log.error(sErrorText);
 					this._oTaskManager.cancel(iTaskId);
 				}.bind(this)
 			);
@@ -808,7 +809,7 @@ function(
 		}
 
 		if (oElementOverlay.getSelected()) {
-			this.getSelectionManager()._remove(oElementOverlay);
+			this.getSelectionManager().remove(oElementOverlay);
 		}
 
 		this.fireElementOverlayDestroyed({
@@ -841,7 +842,15 @@ function(
 		var oElementOverlay = oEvent.getSource();
 		var bSelected = oEvent.getParameter("selected");
 
-		this.getSelectionManager()[bSelected ? "_add" : "_remove"](oElementOverlay);
+		if (bSelected){
+			if (this.getSelectionMode() === sap.ui.dt.SelectionMode.Multi){
+				this.getSelectionManager().add(oElementOverlay);
+			} else {
+				this.getSelectionManager().set(oElementOverlay);
+			}
+		} else {
+			this.getSelectionManager().remove(oElementOverlay);
+		}
 	};
 
 	/**
@@ -948,7 +957,9 @@ function(
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		// Overlays of elements in "dependents" aggregation or not in root elements should be destroyed
 		if (
-			oElementOverlay
+			!oElement.bIsDestroyed 	// element overlays for destroyed elements will be destroyed already,
+									// but element might be recreated with the same id, so a new element overlay might exist that shouldn't be removed
+			&& oElementOverlay
 			&& (!this._isElementInRootElements(oElement) || oElement.sParentAggregationName === "dependents")
 		) {
 			oElementOverlay.destroy();

@@ -102,7 +102,7 @@ sap.ui.define([
 				});
 			}
 		});
-		oCachePromise["catch"](function (oError) {
+		oCachePromise.catch(function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
 			// key predicate is rejected with a canceled error
 			that.oModel.reportError("Failed to create cache for binding " + that, sClassName,
@@ -382,6 +382,24 @@ sap.ui.define([
 	ODataBinding.prototype.isRefreshable = function () {
 		return (!this.bRelative || this.oContext && !this.oContext.getBinding)
 			&& !this.isSuspended();
+	};
+
+	/**
+	 * Creates or modifies a lock for a group at the model with this as owner.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID. If not given here, it can be set later on the created lock.
+	 * @param {boolean|sap.ui.model.odata.v4.lib._GroupLock} [vLock]
+	 *   If vLock is a group lock, it is modified and returned. Otherwise a lock is created which
+	 *   locks if vLock is truthy.
+	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
+	 *   The group lock
+	 *
+	 * @private
+	 * @see {sap.ui.model.odata.v4.ODataModel#lockGroup}
+	 */
+	ODataBinding.prototype.lockGroup = function (sGroupId, vLock) {
+		return this.oModel.lockGroup(sGroupId, vLock, this);
 	};
 
 	/**

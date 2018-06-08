@@ -150,7 +150,7 @@ sap.ui.define([
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders)
-				["catch"](function (oError) {
+				.catch(function (oError) {
 					if (oError.status !== 404) {
 						delete oEntity["$ui5.deleting"];
 						throw oError;
@@ -1201,7 +1201,7 @@ sap.ui.define([
 				that.aElements.$tail = undefined;
 			}
 			that.handleResponse(iStart, iEnd, aResult[0], aResult[1]);
-		})["catch"](function (oError) {
+		}).catch(function (oError) {
 			that.fill(undefined, iStart, iEnd);
 			throw oError;
 		});

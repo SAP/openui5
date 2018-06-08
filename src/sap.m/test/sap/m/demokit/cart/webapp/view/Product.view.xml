@@ -78,7 +78,7 @@
 				renderType="Div">
 				<Image
 					id="productImage"
-					src="{PictureUrl}"
+					src="{path : 'PictureUrl', formatter : '.formatter.pictureUrl'}"
 					decorative="true"
 					densityAware="false"
 					class="sapUiSmallMargin"
@@ -88,7 +88,7 @@
 						<LightBox id="lightBox">
 							<imageContent>
 								<LightBoxItem
-									imageSrc="{PictureUrl}"
+									imageSrc="{path : 'PictureUrl', formatter : '.formatter.pictureUrl'}"
 									title="{Name}"/>
 							</imageContent>
 						</LightBox>

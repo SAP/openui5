@@ -7,20 +7,15 @@ sap.ui.define([
 
 	QUnit.module("Desktop navigation");
 
-	opaTest("Should start the app with empty hash: the hash should reflect the selection of the first item in the list", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartTheApp();
-		//Actions
-		When.onTheMasterPage.iRememberTheSelectedItem();
-
-		// Assertions
-		Then.onTheMasterPage.theFirstItemShouldBeSelected();
-		Then.onTheBrowserPage.iShouldSeeTheHashForTheRememberedObject();
-	});
-
 	opaTest("Should navigate on press", function (Given, When, Then) {
+		// Arrangements
+		Given.iStartTheApp({
+			hash: "/Objects/ObjectID_13"
+		});
+
 		// Actions
-		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(1).
+		When.onTheMasterPage.iRememberTheSelectedItem().
+			and.iRememberTheIdOfListItemAtPosition(1).
 			and.iPressOnTheObjectAtPosition(1);
 
 		// Assertions
@@ -30,18 +25,20 @@ sap.ui.define([
 
 	opaTest("Should press full screen toggle button: The app shows one column", function (Given, When, Then) {
 		// Actions
-		When.onTheDetailPage.iPressTheHeaderActionButton("fullScreenToggle");
+		When.onTheDetailPage.iPressTheHeaderActionButton("enterFullScreen");
 
 		// Assertions
-		Then.onTheDetailPage.theAppShowsFCLDesing("MidColumnFullScreen");
+		Then.onTheDetailPage.theAppShowsFCLDesign("MidColumnFullScreen").
+			and.iShouldSeeTheFullScreenToggleButton("exitFullScreen");
 	});
 
 	opaTest("Should press full screen toggle button: The app shows two columns", function (Given, When, Then) {
 		// Actions
-		When.onTheDetailPage.iPressTheHeaderActionButton("fullScreenToggle");
+		When.onTheDetailPage.iPressTheHeaderActionButton("exitFullScreen");
 
 		// Assertions
-		Then.onTheDetailPage.theAppShowsFCLDesing("TwoColumnsMidExpanded");
+		Then.onTheDetailPage.theAppShowsFCLDesign("TwoColumnsMidExpanded").
+			and.iShouldSeeTheFullScreenToggleButton("enterFullScreen");
 	});
 
 	opaTest("Should react on hash change", function (Given, When, Then) {
@@ -80,7 +77,8 @@ sap.ui.define([
 		When.onTheDetailPage.iPressTheHeaderActionButton("closeColumn");
 
 		// Assertions
-		Then.onTheDetailPage.theAppShowsFCLDesing("OneColumn");
+		Then.onTheDetailPage.theAppShowsFCLDesign("OneColumn");
+		Then.onTheMasterPage.theListShouldHaveNoSelection();
 
 		// Cleanup
 		Then.iTeardownMyAppFrame();

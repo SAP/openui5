@@ -104,10 +104,10 @@ function (jQuery) {
 	 * @private
 	 * @static
 	 * @method
-	 * @name sap.ui.support.WindowCommunicationBus.destroyChanels
+	 * @name sap.ui.support.WindowCommunicationBus.destroyChannels
 	 * @memberof sap.ui.support.WindowCommunicationBus
 	 */
-	CommunicationBus.destroyChanels = function () {
+	CommunicationBus.destroyChannels = function () {
 		CommunicationBus.channels = {};
 	};
 

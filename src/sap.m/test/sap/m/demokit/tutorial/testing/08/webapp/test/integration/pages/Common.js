@@ -6,7 +6,7 @@ sap.ui.define([
 
 		function getFrameUrl(sHash, sUrlParameters) {
 			sHash = sHash || "";
-			var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/bulletinboard/app", ".html");
+			var sUrl = sap.ui.require.toUrl("sap/ui/demo/bulletinboard/app/mockServer.html");
 
 			if (sUrlParameters) {
 				sUrlParameters = "?" + sUrlParameters;
