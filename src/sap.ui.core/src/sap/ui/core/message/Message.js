@@ -27,19 +27,18 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 *
-	 * @param {object} [mParameters] (optional) a map which contains the following parameter properties:
-	 * @param {string} [mParameters.id] The message id: will be defaulted if no id is set
+	 * @param {object} [mParameters] a map which contains the following parameter properties:
+	 * @param {string} [mParameters.id] The message id: will be generated if no id is set
 	 * @param {string} [mParameters.message] The message text
 	 * @param {string} [mParameters.description] The message description
 	 * @param {string} [mParameters.descriptionUrl] The message description url to get a more detailed message
 	 * @param {string} [mParameters.additionalText] The message additionalText
-	 * @param {sap.ui.core.MessageType} [mParameters.type] The message type
+	 * @param {sap.ui.core.MessageType} [mParameters.type=sap.ui.core.MessageType.None] The message type
 	 * @param {string} [mParameters.code] The message code
 	 * @param {boolean} [mParameters.technical=false] If the message is set as technical message
 	 * @param {sap.ui.core.message.MessageProcessor} [mParameters.processor]
 	 * @param {string} [mParameters.target] The message target: The syntax is MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
-	 * @param {boolean} [mParameters.persistent] Sets message persistent: If persistent is set <code>true</code> the message lifecycle is controlled by the application
+	 * @param {boolean} [mParameters.persistent=false] Sets message persistent: If persistent is set <code>true</code> the message lifecycle is controlled by the application
 	 * @param {int} [mParameters.date=Date.now()] Sets message date which can be used to remove old messages. Number of milliseconds elapsed since 1 January 1970 00:00:00 UTC
 	 *
 	 * @public
@@ -49,13 +48,14 @@ sap.ui.define([
 
 		constructor : function (mParameters) {
 			Object.apply(this, arguments);
+			mParameters = mParameters || {};
 
 			this.id = mParameters.id ? mParameters.id : uid();
 			this.message = mParameters.message;
 			this.description = mParameters.description;
 			this.descriptionUrl = mParameters.descriptionUrl;
 			this.additionalText = mParameters.additionalText;
-			this.setType(mParameters.type);
+			this.setType(mParameters.type || sap.ui.core.MessageType.None);
 			this.code = mParameters.code;
 			this.target = mParameters.target;
 			this.processor = mParameters.processor;
@@ -179,7 +179,7 @@ sap.ui.define([
 	/**
 	 * Set message description URL which should be used to download the description content
 	 *
-	 * @param {string} sDescription The URL pointing to the description long text
+	 * @param {string} sDescriptionUrl The URL pointing to the description long text
 	 * @public
 	 */
 	Message.prototype.setDescriptionUrl = function(sDescriptionUrl) {
@@ -337,10 +337,8 @@ sap.ui.define([
 		if (sId in this.references) {
 			if (!sProperty) {
 				delete this.references[sId];
-			} else {
-				if (this.references[sId].properties[sProperty]) {
-					delete this.references[sId].properties[sProperty];
-				}
+			} else if (this.references[sId].properties[sProperty]) {
+				delete this.references[sId].properties[sProperty];
 			}
 		}
 	};

@@ -86,7 +86,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {sap.ui.model.Context} oContext object which is used for serialization.
-	 * @returns string representation of the context's object.
+	 * @returns {string} string representation of the context's object.
 	 */
 	MessageListBinding.prototype.getEntryData = function(oContext) {
 		var oObject = oContext.getObject();
