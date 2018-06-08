@@ -255,22 +255,9 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 }
 
 /* sticky headerToolbar, infoToolbar and column headers */
-.sapMSticky > .sapMListHdr,
-.sapMSticky > .sapMListInfoTBar,
 .sapMSticky .sapMTableTH {
 	position: sticky;
 	position: -webkit-sticky;
-}
-
-.sapMSticky > .sapMListHdr {
-	z-index: 3;
-}
-
-.sapMSticky > .sapMListInfoTBar {
-	z-index: 2;
-}
-
-.sapMSticky .sapMTableTH {
 	z-index: 1;
 }
 
@@ -278,16 +265,10 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 /* .sapMSticky6 denotes that the infoToolbar and column headers are sticky */
 /* .sapMSticky5 denotes that the headerToolbar and column headers are sticky */
 /* .sapMSticky4 denotes that only the column headers are sticky */
-/* .sapMSticky3 denotes that the headerToolbar/headerText and the infoToolbar are sticky */
-/* .sapMSticky2 denotes that only the infoToolbar is sticky */
-/* .sapMSticky1 denotes that only the headerToolbar/headerText is sticky */
 /* top: 0 sticky conditions */
-.sapMSticky1 > .sapMListHdr,
-.sapMSticky2 > .sapMListInfoTBar,
-.sapMSticky3 > .sapMListHdr,
 .sapMSticky4 .sapMTableTH,
 .sapMSticky5 > .sapMListHdr,
-.sapMSticky6 > .sapMListInfoTBar,
+.sapMSticky6 > .sapMListInfoTBarContainer,
 .sapMSticky7 > .sapMListHdr {
 	top: 0;
 }
@@ -298,10 +279,8 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 }
 
 /* top: 3rem sticky conditions */
-.sapMSticky3 > .sapMListInfoTBar,
 .sapMSticky5 .sapMTableTH,
-.sapMSticky7 > .sapMListInfoTBar,
-.sapMSticky7 > .sapMListInfoTBar {
+.sapMSticky7 > .sapMListInfoTBarContainer {
 	top: 3rem;
 }
 

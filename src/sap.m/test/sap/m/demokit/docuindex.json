@@ -2116,7 +2116,7 @@
 		{
 		  "id": "sap.m.sample.TreeExpandMulti",
 		  "name": "Tree - Multi Expand & Collapse",
-		  "description": "This example shows how to expand/collapse multiple nodes."
+		  "description": "This example shows how to expand/collapse multiple nodes and demonstrates the sticky header toolbar and info toolbar options."
 		},
 		{
           "id": "sap.m.sample.TreeJSONLazyLoading",
@@ -2270,7 +2270,7 @@
 		{
 		  "id": "sap.m.sample.ListToolbar",
 		  "name": "List - Header & Info Toolbar",
-		  "description": "The 'headerText' property is an easy but limited way of setting the list header. If you need more flexibility you should assemble your own header or info toolbar that can also contain buttons."
+		  "description": "The 'headerText' property is an easy but limited way of setting the list header. If you need more flexibility you should assemble your own header or info toolbar that can also contain buttons. This example also demonstrates the sticky header toolbar and info toolbar options."
 		},
 		{
 		  "id": "sap.m.sample.ListNoData",

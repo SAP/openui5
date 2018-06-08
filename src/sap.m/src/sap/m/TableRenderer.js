@@ -192,13 +192,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	 */
 	TableRenderer.renderContainerAttributes = function(rm, oControl) {
 		rm.addClass("sapMListTblCnt");
-
-		// add sticky style classes
-		var iStickyValue = oControl.getStickyStyleValue();
-		if (iStickyValue) {
-			rm.addClass("sapMSticky");
-			rm.addClass("sapMSticky" + iStickyValue);
-		}
+		ListBaseRenderer.renderContainerAttributes.apply(this, arguments);
 	};
 
 	/**

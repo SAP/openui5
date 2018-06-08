@@ -20,6 +20,21 @@ sap.ui.define([
 
 		handleButtonPress : function (evt) {
 			MessageToast.show("header toolbar button pressed");
+		},
+
+		onSelectionFinish: function(oEvent) {
+			var aSelectedItems = oEvent.getParameter("selectedItems");
+			var oList = this.byId("productList");
+			var aSticky = aSelectedItems.map(function(oItem) {
+				return oItem.getKey();
+			});
+
+			oList.setSticky(aSticky);
+		},
+
+		onToggleInfoToolbar: function(oEvent) {
+			var oList = this.byId("productList");
+			oList.getInfoToolbar().setVisible(!oEvent.getParameter("pressed"));
 		}
 	});
 
