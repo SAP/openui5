@@ -105,6 +105,27 @@
 				equal(oDTP4.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
 			});
 
+			module("API");
+
+			test("setMinDate/setMaxDate preserve the time part for internal oMinDate/oMaxDate properties", function () {
+				//Prepare
+				var oDateTime1 = new Date(2017, 0, 1, 13, 12, 3),
+					oDateTime2 = new Date(2017, 0, 10, 13, 3, 12),
+					oSut;
+
+				//Act
+				oSut = new sap.m.DateTimePicker({
+					minDate: oDateTime1,
+					maxDate: oDateTime2
+				});
+
+				//Assert
+				equal(oSut._oMinDate.toString(), oDateTime1.toString(), "Time part of _oMinDate should be as given by the app");
+				equal(oSut._oMaxDate.toString(), oDateTime2.toString(), "Time part of _oMaxDate should be as given by the app");
+
+				//Cleanup - redundant
+			});
+
 			module("Rendering");
 
 			test("date format", function() {
