@@ -2086,6 +2086,24 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
+	QUnit.test("checkForOpenDependenciesForControl", function(assert) {
+		var oModifier = {
+			getControlIdBySelector: function(oSelector) {
+				return oSelector.id;
+			}
+		};
+		this.oChangePersistence._mChanges.mDependencies = {
+				"fileNameChange1": {
+					"changeObject": {getDependentIdList: function() {return ["id"];}}
+				},
+				"fileNameChange2": {
+					"changeObject": {getDependentIdList: function() {return ["id2"];}}
+				}
+			};
+
+		assert.ok(this.oChangePersistence.checkForOpenDependenciesForControl({id: "id"}, oModifier), "the unresolved dependency was found");
+		assert.notOk(this.oChangePersistence.checkForOpenDependenciesForControl({id: "anotherId"}, oModifier), "there is no unresolved dependency, so false is returned");
+	});
 
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
 		beforeEach: function () {

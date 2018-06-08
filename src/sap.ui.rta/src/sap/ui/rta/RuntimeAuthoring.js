@@ -1173,7 +1173,10 @@ sap.ui.define([
 			return this.getCommandStack().pushAndExecute(oCommand)
 			// Error handling when a command fails is done in the Stack
 			.catch(function(oError) {
-				throw new Error(oError);
+				if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
+					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_DEPENDENCY_ERROR", "MSG_DEPENDENCY_ERROR", oError);
+				}
+				FlexUtils.log.error("sap.ui.rta: " + oError.message);
 			});
 		}
 		return Promise.resolve();

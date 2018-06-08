@@ -16,6 +16,7 @@ sap.ui.require([
 	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
 	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
 	'sap/ui/fl/FlexControllerFactory',
+	'sap/ui/fl/FlexController',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/variants/VariantModel',
 	'sap/ui/fl/variants/VariantManagement',
@@ -35,6 +36,7 @@ sap.ui.require([
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
 	FlexControllerFactory,
+	FlexController,
 	Change,
 	VariantModel,
 	VariantManagement,
@@ -108,6 +110,7 @@ sap.ui.require([
 	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
 	var oAppDescriptorFlexController = FlexControllerFactory.create(COMPONENT_NAME, "1.2.3");
 	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+	sandbox.stub(oFlexController, "checkForOpenDependenciesForControl").returns(false);
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		beforeEach : function(assert) {
@@ -187,6 +190,7 @@ sap.ui.require([
 		.then(function(){
 			// simulate command having no app component
 			sandbox.stub(oSettingsCommand2, "getAppComponent");
+			sandbox.stub(FlexController.prototype, "checkForOpenDependenciesForControl").returns(false);
 			assert.equal(oAddPreparedChangeSpy.callCount, 2, "until now 2 changes got added");
 			assert.equal(oDeleteChangeSpy.callCount, 0, "until now no changes got deleted");
 			return this.oCommandStack.undo();
