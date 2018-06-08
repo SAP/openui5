@@ -539,8 +539,10 @@ sap.ui.define([
 				aPromiseStack.push(function() {
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 
-					.catch(function(oException) {
-						this._logApplyChangeError(oException, oChange);
+					.then(function(oReturn) {
+						if (!oReturn.success) {
+							this._logApplyChangeError(oReturn.error || {}, oChange);
+						}
 					}.bind(this));
 				}.bind(this));
 
@@ -596,12 +598,13 @@ sap.ui.define([
 		var oRtaControlTreeModifier;
 
 		if (!oChangeHandler) {
-			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
-			return new Utils.FakePromise();
+			var sErrorMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
+			Utils.log.warning(sErrorMessage);
+			return new Utils.FakePromise({success: false, error: new Error(sErrorMessage)});
 		}
 		if (bXmlModifier && oChange.getDefinition().jsOnly) {
 			//change is not capable of xml modifier
-			return new Utils.FakePromise();
+			return new Utils.FakePromise({success: false, error: new Error("Change can not be applied in XML. Retrying in JS.")});
 		}
 
 		var mAppliedChangesCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
