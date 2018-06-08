@@ -167,6 +167,33 @@ function(
 	};
 
 	/**
+	 * Returns last descendant of given ElementOverlay which fulfills
+	 * the given condition. Recursive function.
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
+	 * @param {function} fnCondition - condition to search
+	 * @returns {sap.ui.dt.ElementOverlay} Returns the overlay which fulfills the condition, otherwise it returns 'undefined'
+	 * @private
+	 */
+	OverlayUtil.getLastDescendantByCondition = function(oOverlay, fnCondition) {
+		if (!fnCondition) {
+			throw new Error("expected condition is 'undefined' or not a function");
+		}
+		var aChildrenOverlays = OverlayUtil.getAllChildOverlays(oOverlay);
+		for (var i = aChildrenOverlays.length - 1, n = -1; i > n; i--) {
+			var oChildOverlay = aChildrenOverlays[i];
+			if (fnCondition(oChildOverlay)) {
+				return oChildOverlay;
+			}
+			var oDescendantOverlay = this.getLastDescendantByCondition(oChildOverlay, fnCondition);
+			if (oDescendantOverlay) {
+				return oDescendantOverlay;
+			}
+		}
+		return undefined;
+	};
+
+	/**
 	 * Returns all overlay children as ElementOverlay.
 	 *
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
