@@ -24,12 +24,22 @@ sap.ui.define([
 						errorMessage : "Did not find the nav button on detail page"
 					});
 				},
+
 				iPressProcessorTab: function () {
 					return this.waitFor({
 						id: "iconTabFilterProcessor",
 						viewName: sViewName,
 						actions: new Press(),
 						errorMessage: "Did not find the processor tab on detail page"
+					});
+				},
+
+				iPressTheHeaderActionButton: function (sId) {
+					return this.waitFor({
+						id : sId,
+						viewName : sViewName,
+						actions: new Press(),
+						errorMessage : "Did not find the button with id " + sId + " on detail page"
 					});
 				}
 
@@ -194,6 +204,37 @@ sap.ui.define([
 							Opa5.assert.ok("The processor tab is rendered");
 						},
 						errorMessage: "Did not find processor info"
+					});
+				},
+
+				iShouldSeeHeaderActionButtons: function () {
+					return this.waitFor({
+						id : ["closeColumn", "enterFullScreen"],
+						viewName : sViewName,
+						success : function () {
+							Opa5.assert.ok(true, "The action buttons are visible");
+						},
+						errorMessage : "The action buttons were not found"
+					});
+				},
+
+				theAppShowsFCLDesign: function (sLayout) {
+					return this.waitFor({
+						id : "app",
+						viewName : "App",
+						matchers : new PropertyStrictEquals({name: "layout", value: sLayout}),
+						success : function () {
+							Opa5.assert.ok(true, "the app shows " + sLayout + " layout");
+						},
+						errorMessage : "The app doesn't show " + sLayout + " layout"
+					});
+				},
+
+				iShouldSeeTheFullScreenToggleButton : function (sId) {
+					return this.waitFor({
+						id : sId,
+						viewName : sViewName,
+						errorMessage : "The toggle button" + sId + "was not found"
 					});
 				}
 			}
