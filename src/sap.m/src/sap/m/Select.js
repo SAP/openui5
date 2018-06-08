@@ -2372,11 +2372,7 @@ function(
 		 * @public
 		 */
 		Select.prototype.destroyItems = function() {
-			var oList = this.getList();
-
-			if (oList) {
-				oList.destroyItems();
-			}
+			this.destroyAggregation("items");
 
 			this.setValue("");
 
