@@ -21,9 +21,13 @@ sap.ui.require([
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
-	jQuery.sap.registerModulePath("composites", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites");
-	jQuery.sap.registerModulePath("composites2", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites2");
-	jQuery.sap.registerModulePath("bundles", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/bundles");
+	sap.ui.loader.config({
+		paths: {
+			"composites": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites",
+			"composites2": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites2",
+			"bundles": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/bundles"
+		}
+	});
 	jQuery.sap.require("composites.SimpleText");
 	jQuery.sap.require("composites.TextButton");
 	jQuery.sap.require("composites.TextList");

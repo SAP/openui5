@@ -29,7 +29,7 @@
 		});
 
 		QUnit.test("overridden by external script (jQuery.sap.require)", function(assert) {
-			jQuery.sap.registerModulePath("dummy", "./");
+			sap.ui.loader.config({paths: {"dummy": "./"}});
 			jQuery.sap.require("dummy.QUnitExt");
 			assert.ok(typeof window.assert === "function", "window.assert is a function!");
 		});

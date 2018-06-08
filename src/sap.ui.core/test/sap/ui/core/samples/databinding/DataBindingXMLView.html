@@ -26,7 +26,7 @@
 		}
 
 		// set application namespace. Views and controller are loaded relative to this page
-		jQuery.sap.registerModulePath("sap.ui.commons.databinding", "./testdata/");
+		sap.ui.loader.config({paths: {"sap/ui/commons/databinding": "./testdata/"}});
 
 		var myModel = new sap.ui.model.json.JSONModel();
     	myModel.setData({

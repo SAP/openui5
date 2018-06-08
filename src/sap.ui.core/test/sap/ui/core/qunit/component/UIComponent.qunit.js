@@ -293,7 +293,7 @@ sap.ui.define([
 			]);
 
 			// define the Components
-			jQuery.sap.registerModulePath("my.own", "/anylocation");
+			sap.ui.loader.config({paths:{"my/own":"/anylocation"}});
 			sap.ui.define("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.Component", {});
@@ -480,7 +480,7 @@ sap.ui.define([
 		},
 
 		beforeEach : function() {
-			jQuery.sap.registerModulePath("manifestModules", "/manifestModules/");
+			sap.ui.loader.config({paths:{"manifestModules":"/manifestModules/"}});
 
 			// Define Views
 			var sXMLView1 = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"\></mvc:View>';

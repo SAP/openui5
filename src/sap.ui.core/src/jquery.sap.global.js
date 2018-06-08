@@ -1371,6 +1371,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @static
+		 * @deprecated since 1.58 set path mappings via {@link sap.ui.loader.config} instead.
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
 		 */
 		jQuery.sap.registerModulePath = function registerModulePath(sModuleName, vUrlPrefix) {
@@ -1413,6 +1414,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @static
+		 * @deprecated since 1.58 set path mappings via {@link sap.ui.loader.config} instead.
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
 		 */
 		jQuery.sap.registerResourcePath = function(sResourceNamePrefix, vUrlPrefix) {
@@ -1532,11 +1534,11 @@ sap.ui.define([
 
 
 		// take resource roots from configuration
-		if ( oCfgData.resourceroots ) {
-			for ( var n in oCfgData.resourceroots ) {
-				jQuery.sap.registerModulePath(n, oCfgData.resourceroots[n]);
+		var paths = {};
+		for ( var n in oCfgData.resourceroots ) {
+				paths[n.replace(/\./g, "/")] = oCfgData.resourceroots[n] || ".";
 			}
-		}
+		sap.ui.loader.config({paths: paths});
 
 		var mUrlPrefixes = _ui5loader.getUrlPrefixes();
 		// dump the URL prefixes

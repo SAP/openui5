@@ -21,7 +21,7 @@
 
 
 			// set application namespace. Views and controller are loaded relative to this page
-			jQuery.sap.registerModulePath("sap.ui.core.mvctest", "./");
+			sap.ui.loader.config({paths:{"sap/ui/core/mvctest": "./"}});
 
 			new sap.ui.commons.Button({text:"Destroy View",press:function(){
 				view.destroy();

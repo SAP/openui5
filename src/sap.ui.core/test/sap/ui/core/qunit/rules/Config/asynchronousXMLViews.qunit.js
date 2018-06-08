@@ -37,7 +37,7 @@ sap.ui.define([
 				]
 			});
 
-			jQuery.sap.registerModulePath("samples.components.routing", "../../../../../test-resources/sap/ui/core/samples/components/routing/");
+			sap.ui.loader.config({paths:{"samples/components/routing":"../../../../../test-resources/sap/ui/core/samples/components/routing/"}});
 
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "samples.components.routing"

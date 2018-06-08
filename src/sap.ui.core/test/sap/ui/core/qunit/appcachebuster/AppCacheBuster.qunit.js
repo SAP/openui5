@@ -306,7 +306,7 @@ sap.ui.require([
 			assert.expect(2);
 
 			// register the module path to resolve the module name properly
-			jQuery.sap.registerModulePath("anyapp", "./");
+			sap.ui.loader.config({paths:{"anyapp":"./"}});
 
 			// check normal URLs
 			var done = assert.async();
@@ -473,7 +473,7 @@ sap.ui.require([
 		assert.expect(2);
 
 		// register the module path to resolve the module name properly
-		jQuery.sap.registerModulePath("remoteanyapp", location.protocol + "//anyserver.company.corp:4711/anyapp/");
+		sap.ui.loader.config({paths:{"remoteanyapp": location.protocol + "//anyserver.company.corp:4711/anyapp/"}});
 
 		// check normal URLs
 		var done = assert.async();

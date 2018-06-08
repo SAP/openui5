@@ -22,7 +22,7 @@
 
 	<script>
 
-	jQuery.sap.registerModulePath("sap.ui.test", "./");
+	sap.ui.loader.config({paths: {"sap/ui/test": "./"}});
 
 	sap.ui.require([
 		"jquery.sap.global",
