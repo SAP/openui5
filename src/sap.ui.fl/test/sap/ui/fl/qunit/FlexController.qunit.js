@@ -295,6 +295,37 @@ function (
 		});
 	});
 
+	QUnit.test("_resolveGetChangesForView continues the processing if an error occurs during change applying", function (assert) {
+		var oChange = new Change(labelChangeContent);
+		var oSelector = {};
+		oSelector.id = "id";
+
+		this.oChange.selector = oSelector;
+		this.oChange.getSelector = function(){return oSelector;};
+
+		var mPropertyBagStub = {
+			modifier: {
+				bySelector: function() {
+					return true;
+				}
+			}
+		};
+		var oLoggingStub = sandbox.stub(jQuery.sap.log, "warning");
+		var oCheckTargetAndApplyChangeStub = sandbox.stub(
+			this.oFlexController,
+			"checkTargetAndApplyChange",
+			function(){
+				return new Utils.FakePromise({success: false});
+			}
+		);
+		return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange, oChange])
+
+		.then(function() {
+			assert.strictEqual(oCheckTargetAndApplyChangeStub.callCount, 2, "all changes  were processed");
+			assert.ok(oLoggingStub.calledTwice, "the issues were logged");
+		});
+	});
+
 	QUnit.test("_resolveGetChangesForView process the applyChange promises in the correct order (async, async, async)", function (assert) {
 		var oChange = new Change(labelChangeContent);
 		var completeChangeContentStub = sinon.stub();
@@ -2504,7 +2535,7 @@ function (
 		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
 
 		.then(function(vReturn) {
-			assert.equal(vReturn, undefined, "the function returns undefined as parameter");
+			assert.deepEqual(vReturn, {success: false, error: Error("Change can not be applied in XML. Retrying in JS.")}, "the function returns success: false and an error as parameter");
 			assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the changeHandler was not called");
 			assert.notOk(this.oControl.getElementsByTagName("customData")[0], "the custom data is not set");
 		}.bind(this));
