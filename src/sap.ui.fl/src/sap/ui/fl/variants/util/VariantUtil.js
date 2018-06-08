@@ -108,7 +108,7 @@ sap.ui.define([
 				var mPropertyBag = {};
 				if (sDirection === "NewEntry" || sDirection === "Unknown") {
 					// get URL hash parameters
-					var mHashParameters = flUtils.getParsedURLHash().params;
+					var mHashParameters = flUtils.getParsedURLHash() && flUtils.getParsedURLHash().params;
 					aVariantParamValues = ( mHashParameters && mHashParameters[this.sVariantTechnicalParameterName] ) || [];
 
 					// check if variant management control for previously existing register entry exists
