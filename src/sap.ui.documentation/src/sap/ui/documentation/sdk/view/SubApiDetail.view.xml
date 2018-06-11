@@ -264,7 +264,7 @@
 											columnCount="4"
 											class="sapUiSmallMarginTop">
 											<custom:Row visible="{= ${visibility} === 'public'}">
-												<custom:ParamText text="{name}" deprecated="{= ${deprecated} !== undefined }" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
+												<custom:ParamText text="{name}" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
 												<m:Text text="{cardinality}" wrapping="false"/>
 												<m:Link text="{type}"
 														href="#/api/{type}"
@@ -310,7 +310,7 @@
 											columnTitles="Name,Cardinality,Type,Description"
 											class="sapUiSmallMarginTop">
 											<custom:Row visible="{visibility === 'public'}">
-												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
+												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" />
 												<m:Text text="{cardinality}" wrapping="false"/>
 												<m:Link text="{type}"
 														href="#/api/{type}"
