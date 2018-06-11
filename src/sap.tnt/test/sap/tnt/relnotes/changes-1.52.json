@@ -58,5 +58,16 @@
         ]
       }
     ]
+  },
+  "1.52.14": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "b5d4810bf578dd702a24788e2e48b31c0e0f1257",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Size M has correct width now",
+        "references": []
+      }
+    ]
   }
 }
