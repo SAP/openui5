@@ -67,7 +67,7 @@ jQuery.sap.require("sap.ui.model.odata.ODataModel");
 jQuery.sap.require("jquery.sap.sjax");
 function cleanOdataCache() {
 	sap.ui.model.odata.ODataModel.mServiceData = {};
-	sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+	sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 }
 
 QUnit.config.testTimeout = 6000;
@@ -586,7 +586,7 @@ function runODataAnnotationTests() {
 		return function(assert) {
 			var done = assert.async();
 			if (!bSharedMetadata){
-				sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+				sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 			}
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 
@@ -887,7 +887,7 @@ function runODataAnnotationTests() {
 		return function(assert) {
 			var done = assert.async();
 			if (!bSharedMetadata){
-				sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+				sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 			}
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 			var that = this;
