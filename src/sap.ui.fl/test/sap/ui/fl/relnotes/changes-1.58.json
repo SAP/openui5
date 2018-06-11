@@ -37,6 +37,12 @@
         "type": "FIX",
         "text": " update mChangesEntries in case this has not taken place",
         "references": []
+      },
+      {
+        "id": "8c86bead81a3ebb54df97f66ea9520129071130c",
+        "type": "FIX",
+        "text": " sap.ui.fl - Undefined parsed URL causing dump in VariantUtil",
+        "references": []
       }
     ]
   }

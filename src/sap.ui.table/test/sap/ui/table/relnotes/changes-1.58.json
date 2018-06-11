@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": " Table: Correct positioning of the action column",
         "references": []
+      },
+      {
+        "id": "2da9921a6f815d6e681d1b2e8b6e9d33b635ca0a",
+        "type": "FIX",
+        "text": " GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": []
+      },
+      {
+        "id": "fc45bf132f9b902734beb23f8f0a8f2aedecff5a",
+        "type": "FIX",
+        "text": " TreeTable: Hide tree icon on leafs for screenreaders",
+        "references": []
       }
     ]
   }

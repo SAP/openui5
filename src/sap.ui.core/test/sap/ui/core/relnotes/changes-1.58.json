@@ -169,6 +169,36 @@
         "type": "FIX",
         "text": " core.Popup: modal popup should blur the previous DOM after open",
         "references": []
+      },
+      {
+        "id": "dd543bf8487ac18822f9f39a4a2592c2fa7820d4",
+        "type": "FIX",
+        "text": " ODataAnnotations: don\u0027t cache xml document",
+        "references": []
+      },
+      {
+        "id": "3667c3e47dd66d943ce9c9e66bfd0f9b6fd23e99",
+        "type": "FIX",
+        "text": " Select: do not circumvent aggregation forwarding",
+        "references": []
+      },
+      {
+        "id": "60d15005a9ef5b972e2823c61cd95a79c1c4fda8",
+        "type": "FIX",
+        "text": " XMLComposite: Allow templating inside the composite",
+        "references": []
+      },
+      {
+        "id": "a3fb79e8d94609ab66415d689a03fc20fe16d400",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
+        "references": []
+      },
+      {
+        "id": "c538d5bee119fe1f0b4cc0295de8b52d8106455b",
+        "type": "FIX",
+        "text": " ui5loader: Add Missing slash for JSDoc in closing code tag",
+        "references": []
       }
     ]
   }

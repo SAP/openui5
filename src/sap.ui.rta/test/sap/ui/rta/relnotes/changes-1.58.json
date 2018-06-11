@@ -37,6 +37,24 @@
         "type": "FIX",
         "text": ": RTA - better label display in Add Elements dialog",
         "references": []
+      },
+      {
+        "id": "67cf43b30ad9e5dc7d183a2e978a2058ef815e88",
+        "type": "FIX",
+        "text": " Already persisted change should not be saved again",
+        "references": []
+      },
+      {
+        "id": "c1db68b448ce9fd9b1607217c1a8cd89c0739d87",
+        "type": "FIX",
+        "text": " Command and Index mismatch in stack error response",
+        "references": []
+      },
+      {
+        "id": "7482e1626a2fa9f0559e08f6d3d96d994272f5a5",
+        "type": "FIX",
+        "text": " sap.ui.rta: deselect overlays before removing them",
+        "references": []
       }
     ]
   }

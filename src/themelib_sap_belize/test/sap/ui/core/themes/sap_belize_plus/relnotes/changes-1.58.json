@@ -25,6 +25,18 @@
         "type": "FIX",
         "text": " sap.tnt.ToolHeader: Border is now correct",
         "references": []
+      },
+      {
+        "id": "2192bec6998ee6fa4e2c57de78ac98d02b2c7eab",
+        "type": "FIX",
+        "text": " CheckBox: right focus otline cut off fixed",
+        "references": []
+      },
+      {
+        "id": "2d7f09d180b3b67e7d708886547268b17f216caf",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
       }
     ]
   }

@@ -307,6 +307,54 @@
         "type": "FIX",
         "text": " sap.m.Select: Revert Item selection on data binding update corrected\"",
         "references": []
+      },
+      {
+        "id": "3667c3e47dd66d943ce9c9e66bfd0f9b6fd23e99",
+        "type": "FIX",
+        "text": " Select: do not circumvent aggregation forwarding",
+        "references": []
+      },
+      {
+        "id": "bf70d61c213005bc49c9ca5f1c5449599dc41408",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: pageUp and pageDown keys focus first and last tab",
+        "references": []
+      },
+      {
+        "id": "1835f5266715550fe69e359202d2eb049d80c9f6",
+        "type": "FIX",
+        "text": " sap.m.Image: Test page adjusted",
+        "references": []
+      },
+      {
+        "id": "62c53e94cc7219632476e6a4090adced7bd89703",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Button now looks correctly when on formfactor change",
+        "references": []
+      },
+      {
+        "id": "47856088fb1e69c6f65c78b98c4a23ee621f8f53",
+        "type": "FIX",
+        "text": " sap.m.Panel: Drawing in IE when animated",
+        "references": []
+      },
+      {
+        "id": "c37698fdced6d19348062421d05b2cfcea36f022",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog/sap.m.SelecctDialog: InfoTooolbar label changed from \"Items selected\" to \"Selected\"",
+        "references": []
+      },
+      {
+        "id": "4238cdf354d07f44de890223c3a596c48e5cf31b",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - press reset then cancel button behavior is fixed.",
+        "references": []
+      },
+      {
+        "id": "8d873809b5d4f1f8b9f79f952e11aa4a2712de99",
+        "type": "FIX",
+        "text": " tutorial-worklist: fix design findings",
+        "references": []
       }
     ]
   }

@@ -31,6 +31,12 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Pointer cursor on passive controls in title fix",
         "references": []
+      },
+      {
+        "id": "188c53d214aebefee46fe417c41e8e0dac50fd7e",
+        "type": "FIX",
+        "text": " DynamicPageTitle: top area visibility fixed",
+        "references": []
       }
     ]
   }

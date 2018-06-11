@@ -13,6 +13,18 @@
         "type": "FEATURE",
         "text": " ObjectPageHeaderActionButton: Enabled RTA",
         "references": []
+      },
+      {
+        "id": "e009d4a3eea9170590711f0320145cc0238b4101",
+        "type": "FIX",
+        "text": " AnchorBar: Anchors cut off is fixed",
+        "references": []
+      },
+      {
+        "id": "11750a542b7740e5013857d4e59730e30fd3ebdf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: f.Avatar alignment fixed",
+        "references": []
       }
     ]
   }

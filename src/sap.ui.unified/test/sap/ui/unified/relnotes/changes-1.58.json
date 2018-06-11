@@ -19,6 +19,12 @@
         "type": "FIX",
         "text": " sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
         "references": []
+      },
+      {
+        "id": "2d7f09d180b3b67e7d708886547268b17f216caf",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
       }
     ]
   }

@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": "sap.ui.dt - Removed overlays are still part of the selection",
         "references": []
+      },
+      {
+        "id": "16d1757e4a92fc43bcbfa30fdf4e4eeb87833c2e",
+        "type": "FIX",
+        "text": " sap.ui.dt  fix element overlay destroyed on recreation",
+        "references": []
       }
     ]
   }
