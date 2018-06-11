@@ -17,7 +17,7 @@ sap.ui.require([
 		"use strict";
 		var SupportStub = sap.ui.require("sap/ui/core/support/Support").getStub();
 
-		QUnit.module("sap.ui.fl.support.Flexibility - init", {
+		QUnit.module("init", {
 			beforeEach: function () {
 				this.oFlexibility = new Flexibility(SupportStub);
 			},
@@ -42,7 +42,7 @@ sap.ui.require([
 		});
 
 
-		QUnit.module("sap.ui.fl.support.Flexibility - onRefresh", {
+		QUnit.module("onRefresh", {
 			beforeEach: function () {
 				this.oFlexibility = new Flexibility(SupportStub);
 			},
@@ -60,7 +60,7 @@ sap.ui.require([
 			this.oFlexibility.onRefresh();
 		});
 
-		QUnit.module("sap.ui.fl.support.Flexibility - _onAppSelected", {
+		QUnit.module("onsapUiSupportFlexibilityGetApps", {
 			beforeEach: function () {
 				this.oFlexibility = new Flexibility(SupportStub);
 			},
@@ -68,23 +68,6 @@ sap.ui.require([
 			}
 		});
 
-		QUnit.test("requests the current data for apps", function (assert) {
-			var done = assert.async();
-			this.stub(SupportStub, "sendEvent", function (sEventName) {
-				assert.equal(sEventName, "sapUiSupportFlexibilityGetChangesMaps", "the GetChangesMaps event was triggered");
-				done();
-			});
-
-			this.oFlexibility._onAppSelected();
-		});
-
-		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilityGetApps", {
-			beforeEach: function () {
-				this.oFlexibility = new Flexibility(SupportStub);
-			},
-			afterEach: function () {
-			}
-		});
 		QUnit.test("sends a '" + Flexibility.prototype.sNoDebug + "' flag in case the application side is not debugging the fl-library", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			this.stub(oConfig, "getDebug").returns(false);
@@ -174,54 +157,7 @@ sap.ui.require([
 			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
 		});
 
-		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilitySetApps", {
-			beforeEach: function () {
-				this.oFlexibility = new Flexibility(SupportStub);
-			},
-			afterEach: function () {
-			}
-		});
-
-		QUnit.test("sets the data on the apps model and preselects the first entry", function (assert) {
-			this.stub(Plugin.prototype.init, "apply");
-			this.oFlexibility.init({
-				isToolStub: function () {return true;}
-			});
-			var oAppSelection = this.oFlexibility.oView.byId("appSelection");
-			var oFireChangeStub = this.stub(oAppSelection, "fireChange");
-			var oPassedParameters = {dummyKey: "dummyValue"};
-			var oEvent = new sap.ui.base.Event(undefined, undefined, oPassedParameters);
-
-			this.oFlexibility.onsapUiSupportFlexibilitySetApps(oEvent);
-
-			var oData = this.oFlexibility.oAppModel.getData();
-			assert.deepEqual(oData, oPassedParameters, "the data was set in the apps model");
-			assert.equal(oFireChangeStub.callCount, 1, "the selection of the first entry is triggered");
-		});
-
-		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilitySetChangesMaps", {
-			beforeEach: function () {
-				this.oFlexibility = new Flexibility(SupportStub);
-			},
-			afterEach: function () {
-			}
-		});
-
-		QUnit.test("sets the data on the changes model", function (assert) {
-			this.stub(Plugin.prototype.init, "apply");
-			this.oFlexibility.init({
-				isToolStub: function () {return true;}
-			});
-			var oPassedParameters = {dummyKey: "dummyValue"};
-			var oEvent = new sap.ui.base.Event(undefined, undefined, oPassedParameters);
-
-			this.oFlexibility.onsapUiSupportFlexibilitySetChangesMaps(oEvent);
-
-			var oData = this.oFlexibility.oChangesModel.getData();
-			assert.deepEqual(oData, oPassedParameters, "the data was set in the changes model");
-		});
-
-		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilityGetChangesMaps", {
+		QUnit.module("onsapUiSupportFlexibilityGetChangesMaps", {
 			beforeEach: function () {
 				this.oFlexibility = new Flexibility(SupportStub);
 			},
