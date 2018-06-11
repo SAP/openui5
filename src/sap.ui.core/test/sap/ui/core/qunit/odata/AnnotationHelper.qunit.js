@@ -543,7 +543,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				this.oLogMock.expects("error").never();
 			},
 			afterEach : function () {
-				ODataModel.mServiceData = {}; // clear cache
+				ODataModel.mSharedData = {server: {}, service: {}, meta: {}}; // clear cache
 			}
 		};
 

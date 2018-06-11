@@ -580,7 +580,7 @@ function runODataAnnotationsV2Tests() {
 	var fnTestModelLoading = function(mService, assert) {
 		var done = assert.async();
 
-		// sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+		// sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
 			annotationURI: mService.annotations,
 			/* default: loadAnnotationsJoined: true, */
@@ -638,7 +638,7 @@ function runODataAnnotationsV2Tests() {
 	var fnTestModelMetadataLoading = function(mService, assert) {
 		var done = assert.async();
 
-		// sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+		// sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
 			annotationURI: mService.annotations,
 			skipMetadataAnnotationParsing: false
