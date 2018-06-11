@@ -96,6 +96,24 @@ module.exports = function(grunt, config) {
 						allowDynamicPolicyDefinition: true,
 						defaultPolicyIsReportOnly: true,
 						definedPolicies: {
+							"sap-target-level-1": 
+								"default-src 'self'; " +
+								"script-src  'self' 'unsafe-eval'; " + 
+								"style-src   'self' 'unsafe-inline'; " +
+								"font-src    'self' data:; " +
+								"img-src     'self' * data: blob:; " + 
+								"frame-src   'self' https: data: blob:; " +
+								"child-src   'self' https: data: blob:; " +
+								"connect-src 'self' https: wss:;",
+							"sap-target-level-2":
+								"default-src 'self'; " +
+								"script-src  'self'; " + 
+								"style-src   'self' 'unsafe-inline'; " +
+								"font-src    'self' data:; " +
+								"img-src     'self' * data: blob:; " + 
+								"frame-src   'self' https: data: blob:; " +
+								"child-src   'self' https: data: blob:; " +
+								"connect-src 'self' https: wss:;",
 							"detailed-directives": "default-src 'none'; script-src 'self'; frame-src 'self'; connect-src 'self'; font-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';",
 							"almost-default": "default-src 'self'; script-src 'self'; style-src 'unsafe-inline' *;",
 							"ui5-working": "default-src 'self'; script-src 'unsafe-eval' * ; style-src 'unsafe-inline' * ;"
