@@ -44,6 +44,7 @@ function(
 	* <ul>
 	* <li> New valid tokens are created, when the user presses Enter, selects a value from the suggestions drop-down, or when the focus leaves the field.</li>
 	* <li> Provide meaningful labels for all input fields. Do not use the placeholder as a replacement for the label.</li>
+	* <li> As of version 1.58, MultiInput is now supported in Condensed mode, which means that it can be used in tables.</li>
 	* </ul>
 	* <h3>Usage</h3>
 	* <h4>When to use:</h4>
@@ -53,7 +54,7 @@ function(
 	* </ul>
 	* <h4>When not to use:</h4>
 	* <ul>
-	* <li> Do not use multi-line inputs in tables and forms.</li>
+	* <li> Do not use multi-line inputs in forms.</li>
 	* <li> When you need to select only one value.</li>
 	* <li> When you want the user to select from a predefined set of options. Use {@link sap.m.MultiComboBox} instead.</li>
 	* </ul>
