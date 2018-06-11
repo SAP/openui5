@@ -106,9 +106,9 @@ sap.ui.define([
 			 * <b>Note:</b> There is limited browser support.
 			 * Browsers that do not support this feature are listed below:
 			 * <ul>
-			 * <li>IE.</li>
-			 * <li>Edge lower than version 41 (EdgeHTML 16).</li>
-			 * <li>Firefox lower than version 59.</li>
+			 * <li>IE</li>
+			 * <li>Edge lower than version 41 (EdgeHTML 16)</li>
+			 * <li>Firefox lower than version 59</li>
 			 * </ul>
 			 *
 			 * There are also some known limitations with respect to the scrolling behavior. A few are given below:
@@ -786,8 +786,8 @@ sap.ui.define([
 		// check the all the sticky element and get their height
 		var iTHRectHeight = 0,
 			iTHRectBottom = 0,
-			iInfoToolbarRectHeight = 0,
-			iInfoToolbarRectBottom = 0,
+			iInfoTBarContainerRectHeight = 0,
+			iInfoTBarContainerRectBottom = 0,
 			iHeaderToolbarRectHeight = 0,
 			iHeaderToolbarRectBottom = 0;
 
@@ -799,10 +799,11 @@ sap.ui.define([
 		}
 
 		if (this._iStickyValue & 2 /* InfoToolbar */) {
-			var oInfoToolbarDomRef = this.getInfoToolbar().getDomRef();
-			var oInfoToolbarRect = oInfoToolbarDomRef.getBoundingClientRect();
-			iInfoToolbarRectBottom = parseInt(oInfoToolbarRect.bottom, 10);
-			iInfoToolbarRectHeight = parseInt(oInfoToolbarRect.height, 10);
+			// additional padding is applied in HCW and HCB theme, hence infoToolbarContainer height is required
+			var oInfoToolbarContainer = this.getInfoToolbar().$().parent()[0];
+			var oInfoToolbarContainerRect = oInfoToolbarContainer.getBoundingClientRect();
+			iInfoTBarContainerRectBottom = parseInt(oInfoToolbarContainerRect.bottom, 10);
+			iInfoTBarContainerRectHeight = parseInt(oInfoToolbarContainerRect.height, 10);
 		}
 
 		if (this._iStickyValue & 1 /* HeaderToolbar */) {
@@ -814,9 +815,9 @@ sap.ui.define([
 
 		var iItemTop = oItemDomRef.getBoundingClientRect().top;
 
-		if (iTHRectBottom > iItemTop || iInfoToolbarRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
+		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoToolbarRectHeight - iHeaderToolbarRectHeight]);
+				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight]);
 			});
 		}
 
