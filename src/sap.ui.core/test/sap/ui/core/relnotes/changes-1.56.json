@@ -852,6 +852,12 @@
         "type": "FIX",
         "text": " qunit-junit reporter: Add null-check for qunit DOM node",
         "references": []
+      },
+      {
+        "id": "79f39a4c5fbd5472761e898c49ec1009f8b17cb3",
+        "type": "FIX",
+        "text": " ODataAnnotations: don\u0027t cache xml document",
+        "references": []
       }
     ]
   }
