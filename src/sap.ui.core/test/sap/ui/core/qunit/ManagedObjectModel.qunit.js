@@ -492,9 +492,15 @@ QUnit.test("ManagedObject Model  - List Binding", function(assert) {
 	iIndex = 1;
 	iLength = 1;
 
+	var aSubObjects = this.oManagedObjectModel.getProperty("/subObjects/");
+	assert.equal(aSubObjects.length, 2, "There are two sub objects in the list binding");
 	this.obj.removeSubObj(this.subObj2);
+	aSubObjects = this.oManagedObjectModel.getProperty("/subObjects/");
+	assert.equal(aSubObjects.length, 1, "After removal there is one sub object in the list binding");
 	iLength = 2;
 	this.obj.insertSubObj(this.subObj2, 0);
+	aSubObjects = this.oManagedObjectModel.getProperty("/subObjects/");
+	assert.equal(aSubObjects.length, 2, "After inserting again there are two sub object in the list binding");
 	assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected");
 	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj, true, "Contexts are correctly applied");
 	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj2, true, "Contexts are correctly applied");

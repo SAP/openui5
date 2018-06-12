@@ -620,21 +620,22 @@ sap.ui.define([
 					properties: true,
 					aggegations: true
 				});
+
+
+				if (this.mListBinding[oChange.name]) {
+					var oListBinding = this._oObject.getBinding(oChange.name);
+					var oAggregation = this._oObject.getAggregation(oChange.name);
+
+					if (oListBinding && oListBinding.getLength() != oAggregation.length) {
+						return;
+					}
+				}
 			} else {
 				// stop listening inner changes
 				this._oObserver.unobserve(oChange.child, {
 					properties: true,
 					aggegations: true
 				});
-			}
-
-			if (this.mListBinding[oChange.name]) {
-				var oListBinding = this._oObject.getBinding(oChange.name);
-				var oAggregation = this._oObject.getAggregation(oChange.name);
-
-				if (oListBinding && oListBinding.getLength() != oAggregation.length) {
-					return;
-				}
 			}
 		}
 
