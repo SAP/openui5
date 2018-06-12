@@ -34,6 +34,8 @@ function (
 	 *   <li>via the static method <code>sap.ui.core.postmessage.Bus.getInstance()</code></li>
 	 * </ul>
 	 *
+	 * For supported data types for payload messages see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm}
+	 *
 	 * @extends sap.ui.core.EventBus
 	 * @alias sap.ui.core.postmessage.Bus
 	 * @author SAP SE
@@ -100,7 +102,7 @@ function (
 	 * @param {string} mParameters.origin - Origin of the receiving window, e.g. http://example.com
 	 * @param {string} mParameters.channelId - Channel identifier
 	 * @param {string} mParameters.eventId - Event identifier
-	 * @param {*} [mParameters.data] - Payload data
+	 * @param {*} [mParameters.data] - Payload data. For supported data types see - {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm}
 	 * @throws {TypeError} when invalid data is specified
 	 * @public
 	 */
