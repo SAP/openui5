@@ -4,14 +4,17 @@
 /**
  * Adds support rules of the sap.ui.table library to the support infrastructure.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./rules/TableHelper.support", 'sap/ui/Device'],
-	function(jQuery, SupportLib, Ruleset, SupportHelper, Device) {
+sap.ui.define([
+	"jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./rules/TableHelper.support", "sap/ui/Device",
+	"sap/ui/table/library"
+], function(jQuery, SupportLib, Ruleset, SupportHelper, Device, TableLib) {
 	"use strict";
 
 	// shortcuts
 	var Categories = SupportLib.Categories, // Accessibility, Performance, Memory, ...
-		Severity = SupportLib.Severity;	// Hint, Warning, Error
+		Severity = SupportLib.Severity,	// Hint, Warning, Error
 		//Audiences = SupportLib.Audiences; // Control, Internal, Application
+		VisibleRowCountMode = TableLib.VisibleRowCountMode;
 
 	var oLib = {
 		name: "sap.ui.table",
@@ -284,6 +287,50 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 						}
 					}
 				}
+			}
+		}
+	});
+
+	/*
+	 * Checks the configuration of the sap.f.DynamicPage. If the DynamicPage contains a table with <code>visibleRowCountMode=Auto</code>, the
+	 * <code>fitContent</code> property of the DynamicPage should be set to true, otherwise false.
+	 */
+	createRule({
+		id: "DynamicPageConfiguration",
+		categories: [Categories.Usage],
+		title: "Table environment validation - 'sap.f.DynamicPage'",
+		description: "Verifies that the DynamicPage is configured correctly from the table's perspective.",
+		resolution: "If a table with visibleRowCountMode=Auto is placed inside a sap.f.DynamicPage, the fitContent property of the DynamicPage"
+					+ " should be set to true, otherwise false.",
+		resolutionurls: [
+			SupportHelper.createDocuRef("API Reference: sap.f.DynamicPage#getFitContent", "#/api/sap.f.DynamicPage/methods/getFitContent")
+		],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var aTables = SupportHelper.find(oScope, true, "sap/ui/table/Table");
+
+			function checkAllParentDynamicPages(oControl, fnCheck) {
+				if (oControl) {
+					if (oControl.isA("sap.f.DynamicPage")) {
+						fnCheck(oControl);
+					}
+					checkAllParentDynamicPages(oControl.getParent(), fnCheck);
+				}
+			}
+
+			function checkConfiguration(oTable, oDynamicPage) {
+				if (oTable.getVisibleRowCountMode() === VisibleRowCountMode.Auto && !oDynamicPage.getFitContent()) {
+					SupportHelper.reportIssue(oIssueManager,
+						"A table with visibleRowCountMode=\"Auto\" is placed inside a sap.f.DynamicPage with fitContent=\"false\"",
+						Severity.High, oTable.getId());
+				} else if (oTable.getVisibleRowCountMode() !== VisibleRowCountMode.Auto && oDynamicPage.getFitContent()) {
+					SupportHelper.reportIssue(oIssueManager,
+						"A table with visibleRowCountMode=\"Fixed|Interactive\" is placed inside a sap.f.DynamicPage with fitContent=\"true\"",
+						Severity.Low, oTable.getId());
+				}
+			}
+
+			for (var i = 0; i < aTables.length; i++) {
+				checkAllParentDynamicPages(aTables[i], checkConfiguration.bind(null, aTables[i]));
 			}
 		}
 	});
