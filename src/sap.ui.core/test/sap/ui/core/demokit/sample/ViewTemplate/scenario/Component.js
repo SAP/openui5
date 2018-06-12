@@ -36,6 +36,9 @@ sap.ui.define([
 	 *   The <sap.ui.core.sample.ViewTemplate.scenario:Form> element
 	 * @param {object} oInterface
 	 *   Visitor callbacks
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A sync promise which resolves with <code>undefined</code> as soon as visiting is done, or
+	 *   is rejected with a corresponding error if visiting fails.
 	 */
 	XMLPreprocessor.plugIn(function (oForm, oInterface) {
 		var sBinding = oForm.getAttribute("binding"),
@@ -60,7 +63,7 @@ sap.ui.define([
 		oForm.parentNode.insertBefore(oSimpleForm, oForm);
 		oForm.parentNode.removeChild(oForm);
 
-		oInterface.visitNode(oSimpleForm);
+		return oInterface.visitNode(oSimpleForm);
 	}, "sap.ui.core.sample.ViewTemplate.scenario", "Form");
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {

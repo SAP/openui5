@@ -92,8 +92,8 @@ sap.ui.require([
 	 *   a settings object for the preprocessor
 	 * @param {boolean} [bAsync]
 	 *   Whether the view should be async
-	 * @returns {Element}
-	 *   the processed view content as an XML document element
+	 * @returns {Element|Promise}
+	 *   the processed view content as an XML document element, or a promise on it
 	 */
 	function process(oViewContent, mSettings, bAsync) {
 		var oViewInfo = {
@@ -105,9 +105,6 @@ sap.ui.require([
 				_supportInfo : function () {} // Note: FAKE support info handler
 			};
 
-		if (bAsync) {
-			mSettings["X-async"] = true; // eXperimental async switch, to be removed soon
-		}
 		return XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
 	}
 
@@ -273,13 +270,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.util.XMLPreprocessor", {
 		afterEach : function () {
-			sap.ui.core.CustomizingConfiguration = this.oCustomizingConfiguration;
 			jQuery.sap.log.setLevel(iOldLogLevel, sComponent);
 			delete window.foo;
+			this.oLogMock.expects("debug")
+				.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'", null,
+					sComponent);
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
 		},
 
 		beforeEach : function () {
-			this.oCustomizingConfiguration = sap.ui.core.CustomizingConfiguration;
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG, sComponent);
 
@@ -426,14 +425,25 @@ sap.ui.require([
 		 *   a regular expression which is expected to match the serialized original view content.
 		 * @param {boolean} [bAsync]
 		 *   Whether the view should be async
+		 * @param {function} [fnVisitor]
+		 *   A visitor for namespace 'foo', local name 'Bar'
 		 * @returns {sap.ui.base.SyncPromise}
 		 *   A sync promise for timing
 		 */
 		checkTracing : function (assert, bDebug, aExpectedMessages, aViewContent, mSettings,
-				vExpected, bAsync) {
+				vExpected, bAsync, fnVisitor) {
 			var aMessagesInActualOrder = [],
 				aMessagesInExpectedOrder = [],
 				that = this;
+
+			if (fnVisitor) {
+				// BEWARE: w/o this expectation, checkTracing() will NOT complain about any
+				// "Unexpected call: debug(...)"!
+				this.oLogMock.expects("debug")
+					.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'",
+						sinon.match.func, sComponent);
+				XMLPreprocessor.plugIn(fnVisitor, "foo", "Bar");
+			}
 
 			this.oDebugExpectation.never();
 			if (!bDebug) {
@@ -734,8 +744,7 @@ sap.ui.require([
 				function (assert) {
 					var oError = new Error("deliberate failure");
 
-					this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
-						.never();
+					this.mock(CustomizingConfiguration).expects("getViewExtension").never();
 					if (!bWarn) {
 						jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 					}
@@ -826,8 +835,7 @@ sap.ui.require([
 				vExpected = oFixture.vExpected && oFixture.vExpected.slice();
 
 			QUnit.test(aViewContent[1] + ", warn = " + bWarn, function (assert) {
-				this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
-					.never();
+				this.mock(CustomizingConfiguration).expects("getViewExtension").never();
 				if (!bWarn) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
 				}
@@ -2261,6 +2269,7 @@ sap.ui.require([
 					}]
 				}),
 				oBazModel = new JSONModel({}),
+				oSapUiMock = this.mock(sap.ui),
 				aViewContent = [
 					mvcView("t"),
 					'<t:with path="bar>Label" var="foo">',
@@ -2294,8 +2303,12 @@ sap.ui.require([
 				'<In src="fragment"/>',
 				'</FragmentDefinition>'
 			]));
+			// @see sap.ui.base.Event#init
+			oSapUiMock.expects("require").atLeast(0)
+				.withExactArgs("sap/ui/base/EventProvider").callThrough();
 			// debug output for dynamic names must still appear!
-			delete sap.ui.core.CustomizingConfiguration;
+			oSapUiMock.expects("require").twice()
+				.withExactArgs("sap/ui/core/CustomizingConfiguration"); // not yet loaded
 
 			this.checkTracing(assert, bDebug, [
 				{m : "[ 0] Start processing qux"},
@@ -2346,16 +2359,17 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		sap.ui.core.CustomizingConfiguration, // symbolic value, see below!
+		CustomizingConfiguration, // symbolic value, see below!
 		undefined,
 		{className : "sap.ui.core.Fragment", type : "JSON"},
 		{className : "sap.ui.core.mvc.View", type : "XML"}
 	].forEach(function (oViewExtension) {
 		QUnit.test("<ExtensionPoint>: no (supported) configuration", function (assert) {
-			if (oViewExtension === sap.ui.core.CustomizingConfiguration) {
-				delete sap.ui.core.CustomizingConfiguration;
+			if (oViewExtension === CustomizingConfiguration) {
+				this.mock(sap.ui).expects("require")
+					.withExactArgs("sap/ui/core/CustomizingConfiguration"); // not yet loaded
 			} else {
-				this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
+				this.mock(CustomizingConfiguration).expects("getViewExtension")
 					.withExactArgs("this.sViewName", "myExtensionPoint", "this._sOwnerId")
 					.returns(oViewExtension);
 			}
@@ -2380,7 +2394,7 @@ sap.ui.require([
 	["outerExtensionPoint", "{:= 'outerExtensionPoint' }"].forEach(function (sName) {
 		QUnit.test("<ExtensionPoint name='" + sName + "'>: XML fragment configured",
 			function (assert) {
-				var oCustomizingConfigurationMock = this.mock(sap.ui.core.CustomizingConfiguration),
+				var oCustomizingConfigurationMock = this.mock(CustomizingConfiguration),
 					aOuterReplacement = [
 						'<template:if test="true" xmlns="sap.ui.core" xmlns:template='
 							+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
@@ -2757,7 +2771,7 @@ sap.ui.require([
 		sLocalName : undefined
 	}].forEach(function (oFixture) {
 		QUnit.test("plugIn, sLocalName: " + oFixture.sLocalName, function (assert) {
-			var fnVisitor = this.spy(),
+			var fnVisitor = this.stub().returns(SyncPromise.resolve()),
 				oXml = xml(assert, oFixture.aContent); // <mvc:View>
 
 			window.foo = {
@@ -2785,6 +2799,7 @@ sap.ui.require([
 			assert.ok(fnVisitor.alwaysCalledWithExactly(
 				oXml.firstChild,
 				{
+					find : sinon.match.func,
 					getContext : sinon.match.func,
 					getResult : sinon.match.func,
 					getSettings : sinon.match.func,
@@ -2828,7 +2843,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
-		QUnit.test("plugIn, debug tracing for visitor calls: " + bDebug, function (assert) {
+		QUnit.test("plugIn, debug tracing for visitor calls = " + bDebug, function (assert) {
 			var aExpectedMessages = [
 					{m : "[ 0] Start processing qux"},
 					{m : "[ 1] Calling visitor", d : 1},
@@ -2842,21 +2857,15 @@ sap.ui.require([
 					'</mvc:View>'
 				];
 
-			try {
-				XMLPreprocessor.plugIn(function () {
-					if (bDebug) {
-						jQuery.sap.log.debug("I am your visitor!", undefined, sComponent);
-					}
-				}, "foo", "Bar");
+			XMLPreprocessor.plugIn(function () {
+				if (bDebug) {
+					jQuery.sap.log.debug("I am your visitor!", undefined, sComponent);
+				}
+				return SyncPromise.resolve();
+			}, "foo", "Bar");
 
-				this.checkTracing(assert, bDebug, aExpectedMessages, aViewContent, {},
-					[aViewContent[1]]);
-			} finally {
-				this.oLogMock.expects("debug")
-					.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'", null,
-						sComponent);
-				XMLPreprocessor.plugIn(null, "foo", "Bar");
-			}
+			this.checkTracing(assert, bDebug, aExpectedMessages, aViewContent, {},
+				[aViewContent[1]]);
 		});
 	});
 
@@ -2869,26 +2878,60 @@ sap.ui.require([
 			],
 			that = this;
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				assert.strictEqual(oInterface.getResult(oElement.getAttribute("test"), oElement),
-					42, "returns {any} value");
-				assert.strictEqual(oInterface.getResult(oElement.getAttribute("value"), oElement),
-					"{}", "bMandatory must be hardcoded to true");
-				assert.throws(function () {
-					warn(that.oLogMock, "[ 1] Binding not ready", aViewContent[1]);
-					oInterface.getResult("{missing>/}", oElement);
-				}, new Error("Binding not ready: {missing>/}"));
-				assert.strictEqual(oInterface.getResult(""), "");
-				// Note: oInterface.getResult() throws
-				//       TypeError: Cannot read property 'length' of undefined
-				//           at Object.BindingParser.complexParser
-			}, "foo", "Bar");
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			var oPromise;
 
-			process(xml(assert, aViewContent), {models: new JSONModel({answer: 42})});
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			// code under test
+			assert.strictEqual(oInterface.getResult(oElement.getAttribute("test")).unwrap(),
+				42, "returns {any} value");
+
+			// code under test
+			assert.strictEqual(oInterface.getResult(oElement.getAttribute("value")).unwrap(),
+				"{}", "bMandatory must be hardcoded to true");
+
+			warn(that.oLogMock, "[ 1] Binding not ready", aViewContent[1]);
+			// code under test
+			assert.strictEqual(oInterface.getResult("{missing>/}", oElement), null);
+
+			// code under test
+			assert.strictEqual(oInterface.getResult("").unwrap(), "");
+
+			// TypeError: Cannot read property 'length' of undefined
+			//   at Object.BindingParser.complexParser
+			oPromise = oInterface.getResult();
+			assert.strictEqual(oPromise.isRejected(), true);
+			oPromise.caught();
+
+			return SyncPromise.resolve();
+		}, "foo", "Bar");
+
+		process(xml(assert, aViewContent), {models: new JSONModel({answer: 42})});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, async getResult", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] Calling visitor", d : 1},
+			{m : "[ 1] tooltip = sync",
+				d : '<f:Bar xmlns:f="foo" test="world" tooltip="{/sync}"/>'},
+			{m : "[ 1] Finished", d : "</f:Bar>"},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView(),
+			'<f:Bar xmlns:f="foo" test="{/hello}" tooltip="{/sync}"/>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({hello : "world", sync : "sync"})
+		}, [
+			'<f:Bar xmlns:f="foo" test="world" tooltip="sync"/>'
+		], true, function (oElement, oInterface) { // visitor for f:Bar
+			// code under test
+			return oInterface.getResult(oElement.getAttribute("test")).then(function (vValue) {
+				oElement.setAttribute("test", vValue);
+				return oInterface.visitAttributes(oElement);
+			});
+		});
 	});
 
 	//*********************************************************************************************
@@ -2910,105 +2953,200 @@ sap.ui.require([
 				}
 			};
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				var mMySettings = oInterface.getSettings(),
-					oMyViewInfo = oInterface.getViewInfo();
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			var mMySettings = oInterface.getSettings(),
+				oMyViewInfo = oInterface.getViewInfo();
 
-				assert.deepEqual(mMySettings, mSettings);
-				// Note: jQuery.extend() cannot clone objects constructed via new operator!
-//				mMySettings.models.setProperty("/answer", -1);
-//				assert.strictEqual(mSettings.models.getProperty("/answer"), 42, "deep copy");
+			assert.deepEqual(mMySettings, mSettings);
+			// Note: jQuery.extend() cannot clone objects constructed via new operator!
+//			mMySettings.models.setProperty("/answer", -1);
+//			assert.strictEqual(mSettings.models.getProperty("/answer"), 42, "deep copy");
 
-				assert.deepEqual(oMyViewInfo, oViewInfo);
-				//TODO If we cannot win for mSettings, is it worth trying for oViewInfo?
-				oMyViewInfo.nestedObject.foo = "hacked";
-				assert.strictEqual(oViewInfo.nestedObject.foo, "bar", "deep copy");
-			}, "foo", "Bar");
+			assert.deepEqual(oMyViewInfo, oViewInfo);
+			//TODO If we cannot win for mSettings, is it worth trying for oViewInfo?
+			oMyViewInfo.nestedObject.foo = "hacked";
+			assert.strictEqual(oViewInfo.nestedObject.foo, "bar", "deep copy");
 
-			XMLPreprocessor.process(xml(assert, aViewContent), oViewInfo, mSettings);
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			return SyncPromise.resolve();
+		}, "foo", "Bar");
+
+		XMLPreprocessor.process(xml(assert, aViewContent), oViewInfo, mSettings);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("plugIn, visit*", function (assert) {
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				var oChildNodes = oElement.childNodes;
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitAttribute; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42})
+				: new JSONModel({answer : 42});
 
-				oInterface.visitAttributes(oChildNodes.item(0));
-				oInterface.visitChildNodes(oChildNodes.item(1));
-				oInterface.visitNode(oChildNodes.item(2));
-				// this is initially returned as old visitor, see above
-				XMLPreprocessor.visitNodeWrapper(oChildNodes.item(3), oInterface);
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				var oChildNode = oElement.childNodes.item(0);
+
 				// Note: there is also getAttributeNode()...
-				oInterface.visitAttribute(oChildNodes.item(4),
-					oChildNodes.item(4).getAttributeNodeNS("", "text"));
+				return oInterface.visitAttribute(oChildNode,
+					oChildNode.getAttributeNodeNS("", "text"));
 			}, "foo", "Bar");
 
-			this.check(assert, [
+			return this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitAttribute" src="{/answer}" text="{/answer}"/>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {models: oModel}, [
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitAttribute" src="{/answer}" text="42"/>',
+				'</f:Bar>'
+			], bAsync);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitAttributes; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42})
+				: new JSONModel({answer : 42});
+
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				return oInterface.visitAttributes(oElement.childNodes.item(0));
+			}, "foo", "Bar");
+
+			return this.check(assert, [
 				mvcView(),
 				'<f:Bar xmlns:f="foo">',
 				'<In id="visitAttributes: {/answer}">',
 					'<Out id="no visitAttributes: {/answer}"/>',
 				'</In>',
-				'<Out id="no visitChildNodes: {/answer}">',
-					'<In id="visitChildNodes: {/answer}"/>',
-				'</Out>',
-				'<In id="visitNode: {/answer}">',
-					'<In id="visitNode: {/pi}"/>',
-				'</In>',
-				'<In id="visitNodeWrapper: {/answer}">',
-					'<In id="visitNodeWrapper: {/pi}"/>',
-				'</In>',
-				'<In id="visitAttribute" src="{/answer}" text="{/answer}"/>',
 				'</f:Bar>',
 				'</mvc:View>'
-			], {
-				models: new JSONModel({answer : 42, pi : 3.14})
-			}, [
+			], {models: oModel}, [
 				'<f:Bar xmlns:f="foo">',
 				'<In id="visitAttributes: 42">',
 					'<Out id="no visitAttributes: {/answer}"/>',
 				'</In>',
-				'<Out id="no visitChildNodes: {/answer}">',
-					'<In id="visitChildNodes: 42"/>',
-				'</Out>',
-				'<In id="visitNode: 42">',
-					'<In id="visitNode: 3.14"/>',
-				'</In>',
-				'<In id="visitNodeWrapper: 42">',
-					'<In id="visitNodeWrapper: 3.14"/>',
-				'</In>',
-				'<In id="visitAttribute" src="{/answer}" text="42"/>',
 				'</f:Bar>'
-			]);
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			], bAsync);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("plugIn, insertFragment", function (assert) {
-		this.expectLoad(false, "fragmentName", xml(assert, ['<In xmlns="sap.ui.core"/>']));
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitChildNodes; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42})
+				: new JSONModel({answer : 42});
 
-		try {
 			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				oInterface.insertFragment("fragmentName", oElement);
+				return oInterface.visitChildNodes(oElement.childNodes.item(0));
 			}, "foo", "Bar");
 
-			this.check(assert, [
+			return this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<Out id="no visitChildNodes: {/answer}">',
+					'<In id="visitChildNodes: {/answer}"/>',
+				'</Out>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {models: oModel}, [
+				'<f:Bar xmlns:f="foo">',
+				'<Out id="no visitChildNodes: {/answer}">',
+					'<In id="visitChildNodes: 42"/>',
+				'</Out>',
+				'</f:Bar>'
+			], bAsync);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitNode; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42, pi : 3.14})
+				: new JSONModel({answer : 42, pi : 3.14});
+
+			this.oLogMock.expects("error")
+				.withExactArgs('Unexpected tag <template:foo id="unexpected"/>', "qux", sComponent);
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				oInterface.visitNode(oElement.childNodes.item(1)).then(function () {
+					assert.ok(false);
+				}, function () {
+					assert.ok(true);
+				});
+
+				return oInterface.visitNode(oElement.childNodes.item(0));
+			}, "foo", "Bar");
+
+			return this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitNode: {/answer}">',
+					'<In id="visitNode: {/pi}"/>',
+				'</In>',
+				'<template:foo id="unexpected"/>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {models: oModel}, [
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitNode: 42">',
+					'<In id="visitNode: 3.14"/>',
+				'</In>',
+				'<template:foo id="unexpected"/>',
+				'</f:Bar>'
+			], bAsync);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, visitNodeWrapper; async = " + bAsync, function (assert) {
+			var oModel = bAsync
+				? asyncModel({answer : 42, pi : 3.14})
+				: new JSONModel({answer : 42, pi : 3.14});
+
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				// this is initially returned as old visitor, see above
+				return XMLPreprocessor.visitNodeWrapper(oElement.childNodes.item(0),
+					oInterface);
+			}, "foo", "Bar");
+
+			return this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitNodeWrapper: {/answer}">',
+					'<In id="visitNodeWrapper: {/pi}"/>',
+				'</In>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {models: oModel}, [
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitNodeWrapper: 42">',
+					'<In id="visitNodeWrapper: 3.14"/>',
+				'</In>',
+				'</f:Bar>'
+			], bAsync);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("plugIn, insertFragment; async = " + bAsync, function (assert) {
+			this.expectLoad(bAsync, "fragmentName", xml(assert, ['<In xmlns="sap.ui.core"/>']));
+
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				return oInterface.insertFragment("fragmentName", oElement);
+			}, "foo", "Bar");
+
+			return this.check(assert, [
 				mvcView(),
 				'<f:Bar xmlns:f="foo"/>',
 				'</mvc:View>'
-			], null, [
+			], {}, [
 				'<In />'
-			]);
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			], bAsync);
+		});
 	});
 
 	//*********************************************************************************************
@@ -3019,16 +3157,12 @@ sap.ui.require([
 				'</mvc:View>'
 			];
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				return null; // something other than undefined
-			}, "foo", "Bar");
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			return SyncPromise.resolve(null); // something other than undefined
+		}, "foo", "Bar");
 
-			this.checkError(assert, aViewContent, "Unexpected return value from visitor for {0}",
-				null, 1);
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+		this.checkError(assert, aViewContent, "Unexpected return value from visitor for {0}",
+			null, 1);
 	});
 
 	//*********************************************************************************************
@@ -3044,44 +3178,42 @@ sap.ui.require([
 				'</mvc:View>'
 			];
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				var oContext = oInterface.getContext(oElement.getAttribute("path")),
-					oDefaultContext = oInterface.getContext(/*default model, empty path*/);
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			var oContext = oInterface.getContext(oElement.getAttribute("path")),
+				oDefaultContext = oInterface.getContext(/*default model, empty path*/);
 
-				assert.strictEqual(oContext.getModel(), oModel);
-				assert.strictEqual(oContext.getPath(), "/hidden/answer");
+			assert.strictEqual(oContext.getModel(), oModel);
+			assert.strictEqual(oContext.getPath(), "/hidden/answer");
 
-				assert.strictEqual(oDefaultContext.getModel(), oModel);
-				assert.strictEqual(oDefaultContext.getPath(), "/hidden/answer");
+			assert.strictEqual(oDefaultContext.getModel(), oModel);
+			assert.strictEqual(oDefaultContext.getPath(), "/hidden/answer");
 
-				assert.throws(function () {
-					oInterface.getContext("{meta>answer}");
-				}, new Error("Must be a simple path, not a binding: {meta>answer}"));
+			assert.throws(function () {
+				oInterface.getContext("{meta>answer}");
+			}, new Error("Must be a simple path, not a binding: {meta>answer}"));
 
-				assert.throws(function () {
-					oInterface.getContext("foo>");
-				}, new Error("Unknown model 'foo': foo>"));
+			assert.throws(function () {
+				oInterface.getContext("foo>");
+			}, new Error("Unknown model 'foo': foo>"));
 
-				assert.throws(function () {
-					oInterface.getContext("other>");
-				}, new Error("Cannot resolve path: other>"));
-			}, "foo", "Bar");
+			assert.throws(function () {
+				oInterface.getContext("other>");
+			}, new Error("Cannot resolve path: other>"));
 
-			process(xml(assert, aViewContent), {
-				bindingContexts : {
-					"undefined" : oModel.createBindingContext("/hidden/answer"),
-					meta : oModel.createBindingContext("/hidden")
-				},
-				models : {
-					"undefined" : oModel,
-					meta : oModel,
-					other : oModel
-				}
-			});
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			return SyncPromise.resolve();
+		}, "foo", "Bar");
+
+		process(xml(assert, aViewContent), {
+			bindingContexts : {
+				"undefined" : oModel.createBindingContext("/hidden/answer"),
+				meta : oModel.createBindingContext("/hidden")
+			},
+			models : {
+				"undefined" : oModel,
+				meta : oModel,
+				other : oModel
+			}
+		});
 	});
 
 	//*********************************************************************************************
@@ -3098,48 +3230,124 @@ sap.ui.require([
 			],
 			that = this;
 
-		try {
-			XMLPreprocessor.plugIn(function (oElement, oInterface) {
-				var oContext = oInterface.getContext(oElement.getAttribute("path")),
-					oDerivedInterface = oInterface.with({a : oContext, b : oContext}),
-					oEmptyInterface = oInterface.with(null, /*bReplace*/true),
-					oNewInterface = oInterface.with({a : oContext, b : oContext}, /*bReplace*/true);
+		XMLPreprocessor.plugIn(function (oElement, oInterface) {
+			var oContext = oInterface.getContext(oElement.getAttribute("path")),
+				oDerivedInterface = oInterface.with({a : oContext, b : oContext}),
+				oEmptyInterface = oInterface.with(null, /*bReplace*/true),
+				oNewInterface = oInterface.with({a : oContext, b : oContext}, /*bReplace*/true);
 
-				assert.strictEqual(oDerivedInterface.getResult("{a>}"), 42, "a is known");
-				assert.strictEqual(oDerivedInterface.getResult("{b>}"), 42, "b is known");
-				assert.strictEqual(oDerivedInterface.getResult("{meta>answer}"), 42,
-					"meta is inherited");
+			assert.strictEqual(oDerivedInterface.getResult("{a>}").unwrap(), 42, "a is known");
+			assert.strictEqual(oDerivedInterface.getResult("{b>}").unwrap(), 42, "b is known");
+			assert.strictEqual(oDerivedInterface.getResult("{meta>answer}").unwrap(), 42,
+				"meta is inherited");
 
-				assert.throws(function () { // no inheritance here!
-					warn(that.oLogMock, "[ 1] Binding not ready");
-					oEmptyInterface.getResult("{meta>}");
-				}, new Error("Binding not ready: {meta>}"));
+			// no inheritance here!
+			warn(that.oLogMock, "[ 1] Binding not ready");
+			assert.strictEqual(oEmptyInterface.getResult("{meta>}"), null);
 
-				assert.strictEqual(oNewInterface.getResult("{a>}"), 42, "a is known");
-				assert.strictEqual(oNewInterface.getResult("{b>}"), 42, "b is known");
-				assert.throws(function () { // no inheritance here!
-					warn(that.oLogMock, "[ 1] Binding not ready");
-					oNewInterface.getResult("{meta>}");
-				}, new Error("Binding not ready: {meta>}"));
+			assert.strictEqual(oNewInterface.getResult("{a>}").unwrap(), 42, "a is known");
+			assert.strictEqual(oNewInterface.getResult("{b>}").unwrap(), 42, "b is known");
+			// no inheritance here!
+			warn(that.oLogMock, "[ 1] Binding not ready");
+			assert.strictEqual(oNewInterface.getResult("{meta>}"), null);
 
-				assert.strictEqual(oInterface.with(), oInterface, "no map");
-				assert.strictEqual(oInterface.with({}), oInterface, "empty map");
-			}, "foo", "Bar");
+			assert.strictEqual(oInterface.with(), oInterface, "no map");
+			assert.strictEqual(oInterface.with({}), oInterface, "empty map");
 
-			process(xml(assert, aViewContent), {
-				bindingContexts : {
-					meta : oModel.createBindingContext("/hidden")
-				},
-				models : {
-					meta : oModel
-				}
-			});
-		} finally {
-			XMLPreprocessor.plugIn(null, "foo", "Bar");
-		}
+			return SyncPromise.resolve();
+		}, "foo", "Bar");
+
+		process(xml(assert, aViewContent), {
+			bindingContexts : {
+				meta : oModel.createBindingContext("/hidden")
+			},
+			models : {
+				meta : oModel
+			}
+		});
 	});
 	//TODO safety check for invalidated ICallback instances in each visit*() etc. call?
 	//     !bReplace && !oWithControl.getParent()
+
+	//*********************************************************************************************
+	[function (assert, oElement, oInterface) { // use find() like Array#forEach
+		var aElements = ["test", "tooltip"];
+
+		// code under test
+		return oInterface.find(aElements, function (sAttribute, i, aElements0) {
+			assert.strictEqual(i, sAttribute === "test" ? 0 : 1);
+			assert.strictEqual(aElements0, aElements);
+			return oInterface.visitAttribute(oElement,
+				oElement.attributes.getNamedItem(sAttribute));
+		}).then(function (vResult) {
+			assert.strictEqual(vResult, undefined);
+		});
+	}, function (assert, oElement, oInterface) { // use find() like Array#find
+		var aElements = ["test", "tooltip", "unknown"];
+
+		// code under test
+		return oInterface.find(aElements, function (sAttribute, i, aElements0) {
+			assert.strictEqual(i, sAttribute === "test" ? 0 : 1);
+			assert.strictEqual(aElements0, aElements);
+			return oInterface.visitAttribute(oElement,
+				oElement.attributes.getNamedItem(sAttribute)).then(function () {
+					return sAttribute === "tooltip";
+				});
+		}).then(function (vResult) {
+			assert.strictEqual(vResult, "tooltip");
+		});
+	}, function (assert, oElement, oInterface) { // special cases
+		var oSyncPromise;
+
+		// code under test
+		oSyncPromise = oInterface.find([]);
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), undefined);
+
+		// code under test
+		oSyncPromise = oInterface.find(["foo"], function (vElement) {
+			throw new Error(vElement);
+		});
+
+		assert.strictEqual(oSyncPromise.isRejected(), true, "rejects instead of throwing");
+		assert.strictEqual(oSyncPromise.getResult().message, "foo");
+		oSyncPromise.caught();
+
+		// code under test
+		oSyncPromise = oInterface.find(["foo"], function () {
+			return Promise.resolve();
+		});
+
+		assert.ok(oSyncPromise instanceof SyncPromise);
+		assert.strictEqual(oSyncPromise.isPending(), true, "a pending sync promise");
+
+		// do like the other visitors
+		return oInterface.visitAttributes(oElement).then(function () {
+			return oSyncPromise;
+		});
+	}].forEach(function (fnVisitor, i) {
+		QUnit.test("plugIn, find:" + i, function (assert) {
+			return this.checkTracing(assert, true, [
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 1] Calling visitor", d : 1},
+				{m : "[ 1] test = world", d : 1},
+				{m : "[ 1] tooltip = sync",
+					d : '<f:Bar xmlns:f="foo" test="world" tooltip="{/sync}"/>'},
+				{m : "[ 1] Finished", d : "</f:Bar>"},
+				{m : "[ 0] Finished processing qux"}
+			], [
+				mvcView(),
+				'<f:Bar xmlns:f="foo" test="{/hello}" tooltip="{/sync}"/>',
+				'</mvc:View>'
+			], {
+				models : asyncModel({hello : "world", sync : "sync"})
+			}, [
+				'<f:Bar xmlns:f="foo" test="world" tooltip="sync"/>'
+			], true, fnVisitor.bind(null, assert));
+		});
+	});
+	//TODO sanity check that visitor returns a *sync* promise in case of sync XML Templating?
 
 	//*********************************************************************************************
 	QUnit.test("async fragment in template:alias/if/repeat/with", function (assert) {
