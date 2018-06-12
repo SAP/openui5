@@ -2534,7 +2534,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		));
 
 		mUrlParameters = jQuery.extend({}, this.mParameters);
-		mUrlParameters.select =  sKeySelect + "," + this.oTreeProperties["hierarchy-node-descendant-count-for"] + "," + this.oTreeProperties["hierarchy-drill-state-for"] + "," + this.oTreeProperties["hierarchy-preorder-rank-for"];
+		mUrlParameters.select =  sKeySelect +
+									"," + this.oTreeProperties["hierarchy-node-for"] +
+									"," + this.oTreeProperties["hierarchy-node-descendant-count-for"] +
+									"," + this.oTreeProperties["hierarchy-drill-state-for"] +
+									"," + this.oTreeProperties["hierarchy-preorder-rank-for"];
 
 		// request the magnitude and preorder
 		this.oModel.read(this.getPath(), {
