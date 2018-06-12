@@ -37,9 +37,6 @@ sap.ui.define(["sap/base/util/isPlainObject"], function(isPlainObject) {
 		assert.ok(isPlainObject({}), "is a plain object");
 		assert.ok(isPlainObject({x: 47}), "is a plain object");
 
-
-		assert.throws(function() {
-			isPlainObject(null);
-		}, "null is not a plain object");
+		assert.notOk(isPlainObject(null), "null is not a plain object");
 	});
 });

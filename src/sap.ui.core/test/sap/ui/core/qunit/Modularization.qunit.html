@@ -37,77 +37,72 @@
 			// sap/base/*
 			"local/base/assert.qunit",
 			"local/base/Log.qunit",
-			"local/base/storage.qunit",
 
-			// sap/base/encoding/*
-			"local/base/encoding/encodeCSS.qunit",
-			"local/base/encoding/encodeJS.qunit",
-			"local/base/encoding/encodeURL.qunit",
-			"local/base/encoding/encodeURLParameters.qunit",
-			"local/base/encoding/encodeXML.qunit",
-			"local/base/encoding/sanitizeHTML.qunit",
-			"local/base/encoding/toHex.qunit",
+			// sap/base/security/*
+			"local/base/security/encodeCSS.qunit",
+			"local/base/security/encodeJS.qunit",
+			"local/base/security/encodeURL.qunit",
+			"local/base/security/encodeURLParameters.qunit",
+			"local/base/security/encodeXML.qunit",
+			"local/base/security/sanitizeHTML.qunit",
+			"local/base/security/URLWhitelist.qunit",
 
 			// sap/base/strings/*
-			"local/base/strings/camelCase.qunit",
-			"local/base/strings/charToUpperCase.qunit",
-			"local/base/strings/endsWithIgnoreCase.qunit",
+			"local/base/strings/camelize.qunit",
+			"local/base/strings/capitalize.qunit",
 			"local/base/strings/escapeRegExp.qunit",
 			"local/base/strings/formatMessage.qunit",
-			"local/base/strings/hyphen.qunit",
-			"local/base/strings/normalize-polyfill.qunit",
-			"local/base/strings/startsWithIgnoreCase.qunit",
+			"local/base/strings/hash.qunit",
+			"local/base/strings/hyphenate.qunit",
+			"local/base/strings/NormalizePolyfill.qunit",
+			"local/base/strings/toHex.qunit",
 
 			// sap/base/util/*
-			"local/base/util/arrayDiff.qunit",
-			"local/base/util/arraySymbolDiff.qunit",
+			"local/base/util/deepEqual.qunit",
 			"local/base/util/each.qunit",
-			"local/base/util/equal.qunit",
-			"local/base/util/extend.qunit",
-			"local/base/util/getObject.qunit",
-			"local/base/util/getter.qunit",
-			"local/base/util/hashCode.qunit",
+			"local/base/util/merge.qunit",
 			"local/base/util/includes.qunit",
 			"local/base/util/isPlainObject.qunit",
-			"local/base/util/isWindow.qunit",
 			"local/base/util/JSTokenizer.qunit",
-			"local/base/util/lazyProperty.qunit",
+			"local/base/util/defineLazyProperty.qunit",
 			"local/base/util/LoaderExtensions.qunit",
 			"local/base/util/now.qunit",
 			"local/base/util/uid.qunit",
-			"local/base/util/unique.qunit",
 			"local/base/util/UriParameters.qunit",
-			"local/base/util/URLWhiteList.qunit",
 			"local/base/util/values.qunit",
+			"local/base/util/ObjectPath.qunit",
+
+  			// sap/base/util/array/*
+			"local/base/util/array/diff.qunit",
+			"local/base/util/array/uniqueSort.qunit",
 
 			// sap/ui/*
-			"local/ActivityDetection.qunit",
-			"local/MobileSupport.qunit",
 			"local/Device.qunit",
-			"local/initjQueryBrowser.qunit",
-			"local/initjQuerySupport.qunit",
-			"local/XHRProxy.qunit",
 
-			// sap/ui/bootstrap/*
-			"local/bootstrap/StoredConfig.qunit",
+			// sap/ui/base/*
+			"local/ui/base/syncXHRFix.qunit",
 
 			// sap/ui/dom/*
-			"local/dom/appendHead.qunit",
 			"local/dom/includeScript.qunit",
 			"local/dom/includeStylesheet.qunit",
+			"local/dom/patch.qunit",
 
 			// sap/ui/performance/*
-			"local/performance/E2ETrace/Passport.qunit",
-			"local/performance/FESR.qunit",
-			"local/performance/Interaction.qunit",
 			"local/performance/XHRInterceptor.qunit",
+
+			// sap/ui/performance/trace/*
+			"local/performance/trace/FESR.qunit",
+			"local/performance/trace/Interaction.qunit",
+			"local/performance/trace/Passport.qunit",
 
 			// sap/ui/security/*
 			"local/security/FrameOptions.qunit",
 
-			// sap/ui/xml/*
-			"local/xml/serializeXML.qunit",
-			"local/xml/XMLParser.qunit"
+			// sap/ui/util/*
+			"local/util/Mobile.qunit",
+			"local/util/ActivityDetection.qunit",
+			"local/util/Storage.qunit",
+			"local/util/XMLHelper.qunit"
 
 		], function(applyPolyfills) {
 			applyPolyfills();

@@ -3,7 +3,7 @@
  */
 
 // Provides functionality for activity detection
-sap.ui.define(['sap/ui/ActivityDetection', 'jquery.sap.global'],
+sap.ui.define(['sap/ui/util/ActivityDetection', 'jquery.sap.global'],
 function(ActivityDetection, jQuery) {
 	"use strict";
 

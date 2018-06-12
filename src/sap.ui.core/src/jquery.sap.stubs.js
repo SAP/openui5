@@ -3,8 +3,8 @@
  */
 
 /* global console */
-sap.ui.define(["sap/base/Log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/jquery"],
-	function(Log, lazyProperty, jQuery) {
+sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/thirdparty/jquery"],
+	function(Log, defineLazyProperty, jQuery) {
 	"use strict";
 
 	// Make sure to initialize the jQuery.sap namespace to apply stubs
@@ -56,9 +56,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 					"handleF6GroupNavigation",
 					"_FASTNAVIGATIONKEY",
 					"_refreshMouseEventDelayedFlag",
-					"isMouseEventDelayed",
-					"_suppressTriggerEvent",
-					"_releaseTriggerEvent"
+					"isMouseEventDelayed"
 				],
 				"jquery.sap.global": [
 					"Version",
@@ -170,17 +168,11 @@ sap.ui.define(["sap/base/Log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 				]
 			}
 		},
-		"jQuery.support.": {
-			target: jQuery.support,
-			stubs: {
-				"jquery.sap.mobile": [
-					"retina"
-				]
-			}
-		},
 		"jQuery Plugin ": {
 			target: jQuery.fn,
 			stubs: {
+				"jquery.sap.ui": ["root", "uiarea", "sapui"],
+				"jquery.sap.dom": ["outerHTML"],
 				"sap/ui/dom/jquery/Aria": [
 					"addAriaLabelledBy",
 					"removeAriaLabelledBy",
@@ -195,16 +187,12 @@ sap.ui.define(["sap/base/Log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 				],
 				"sap/ui/dom/jquery/getSelectedText": ["getSelectedText"],
 				"sap/ui/dom/jquery/hasTabIndex": ["hasTabIndex"],
-				"sap/ui/dom/jquery/outerHTML": ["outerHTML"],
 				"sap/ui/dom/jquery/parentByAttribute": ["parentByAttribute"],
 				"sap/ui/dom/jquery/rect": ["rect"],
 				"sap/ui/dom/jquery/rectContains": ["rectContains"],
-				"sap/ui/dom/jquery/root": ["root"],
-				"sap/ui/dom/jquery/sapui": ["sapui"],
 				"sap/ui/dom/jquery/scrollLeftRTL": ["scrollLeftRTL"],
 				"sap/ui/dom/jquery/scrollRightRTL": ["scrollRightRTL"],
 				"sap/ui/dom/jquery/selectText": ["selectText"],
-				"sap/ui/dom/jquery/uiarea": ["uiarea"],
 				"sap/ui/dom/jquery/zIndex": ["zIndex"],
 				"sap/ui/dom/jquery/Selection": [
 					"disableSelection",
@@ -215,7 +203,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 		"jQuery Event method ": {
 			target: jQuery.Event.prototype,
 			stubs: {
-				"sap/ui/events/jqueryEvent": [
+				"sap/ui/events/jquery/EventExtension": [
 					"getPseudoTypes",
 					"isPseudoType",
 					"getOffsetX",
@@ -258,8 +246,8 @@ sap.ui.define(["sap/base/Log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 			var aProperties = mModuleToProp[sModule];
 			aProperties.forEach(function(sProperty) {
 				// Do not stub already defined properties
-				if (!oTarget[sProperty]) {
-					lazyProperty(oTarget, sProperty, lazyLoad(sModule, oTarget, sProperty, sTargetName));
+				if (oTarget && !oTarget[sProperty]) {
+					defineLazyProperty(oTarget, sProperty, lazyLoad(sModule, oTarget, sProperty, sTargetName));
 				}
 			});
 		});

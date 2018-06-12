@@ -19,7 +19,7 @@ sap.ui.define([
 
 	// only use unorm and apply polyfill if needed and when not in a mobile browser
 	if (!String.prototype.normalize && !Device.browser.mobile) {
-		NormalizePolyfill = sap.ui.requireSync('sap/base/strings/normalize-polyfill');
+		NormalizePolyfill = sap.ui.requireSync('sap/base/strings/NormalizePolyfill');
 		NormalizePolyfill.apply();
 		fnIsStringNFC = NormalizePolyfill.isStringNFC;
 	} else {

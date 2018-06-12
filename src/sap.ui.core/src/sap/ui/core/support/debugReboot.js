@@ -56,7 +56,7 @@
 			// replace the bootstrap tag with a newly created script tag to enable restarting the core from a different server
 			var _getScript = function(oScript, rRegex) {
 				if (oScript && oScript.getAttribute("src") && rRegex.exec(oScript.getAttribute("src"))) {
-					return oScript;
+					  return oScript;
 				}
 			};
 

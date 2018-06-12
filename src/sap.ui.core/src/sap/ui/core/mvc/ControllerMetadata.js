@@ -3,8 +3,8 @@
  */
 
 // Provides ControllerMetadata
-sap.ui.define(['sap/ui/base/Metadata', 'sap/base/util/extend', 'sap/ui/core/mvc/OverrideExecution'],
-	function(Metadata, extend, OverrideExecution) {
+sap.ui.define(['sap/ui/base/Metadata', 'sap/base/util/merge', 'sap/ui/core/mvc/OverrideExecution'],
+	function(Metadata, merge, OverrideExecution) {
 	"use strict";
 
 	var ControllerMetadata = function(sClassName, oClassInfo) {
@@ -59,7 +59,7 @@ sap.ui.define(['sap/ui/base/Metadata', 'sap/base/util/extend', 'sap/ui/core/mvc/
 			* extend method metadata: make lifecycle hooks public
 			*/
 			if (bExtendsController && bDefinesMethods) {
-			    extend(oStaticInfo.methods, this._defaultLifecycleMethodMetadata);
+			    merge(oStaticInfo.methods, this._defaultLifecycleMethodMetadata);
 			}
 		}
 
@@ -112,7 +112,7 @@ sap.ui.define(['sap/ui/base/Metadata', 'sap/base/util/extend', 'sap/ui/core/mvc/
 			if (this._mMethods[sMethod] && !bIsExtension) {
 			var bPublic = this._mMethods[sMethod].public;
 			//copy parent method definition as final/overrideExecution should not be overridden
-			this._mMethods[sMethod] = extend({}, mParentMethods[sMethod]);
+			this._mMethods[sMethod] = merge({}, mParentMethods[sMethod]);
 			if (bPublic !== undefined) {
 			this._mMethods[sMethod].public = bPublic;
 			}

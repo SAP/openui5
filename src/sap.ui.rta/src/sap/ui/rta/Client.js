@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/postmessage/Bus",
 	"sap/base/util/uid",
-	"sap/base/util/extend",
+	"sap/base/util/merge",
+	"sap/ui/dt/Util",
 	"sap/ui/rta/util/ServiceEventBus",
 	"sap/ui/thirdparty/URI"
 ], function (
 	ManagedObject,
 	PostMessageBus,
 	uid,
-	extend,
+	merge,
+	DtUtil,
 	ServiceEventBus,
 	URI
 ) {
@@ -296,7 +298,7 @@ sap.ui.define([
 				var sServiceName = mRequest.request.data.body.arguments[0];
 				var aMethods = mData.body.methods || [];
 				var aEvents = mData.body.events;
-				var mService = extend(
+				var mService = merge(
 					// Create placeholders for methods
 					aMethods.reduce(function (mResult, sMethodName) {
 						mResult[sMethodName] = function () {
@@ -322,7 +324,7 @@ sap.ui.define([
 					if (!this._oServiceEventBus) {
 						this._oServiceEventBus = new ServiceEventBus();
 					}
-					extend(mService, {
+					merge(mService, {
 						attachEvent: function (sEventName, fnCallback, oContext) {
 							if (typeof (sEventName) !== "string" || !sEventName) {
 								throw new TypeError("sap.ui.rta.Client: sEventName must be a non-empty string when calling attachEvent() for a service");

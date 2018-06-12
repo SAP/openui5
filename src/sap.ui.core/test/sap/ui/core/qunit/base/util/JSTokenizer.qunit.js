@@ -5,7 +5,7 @@
 sap.ui.define(['sap/base/util/JSTokenizer'], function(JSTokenizer) {
 	"use strict";
 
-	QUnit.module("sap.base.util.JSTokenizer");
+	QUnit.module("sap/base/util/JSTokenizer");
 
 	QUnit.test("valid expressions", function(assert) {
 		var list = [

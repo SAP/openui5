@@ -5,7 +5,6 @@
 // Provides base class for controllers (part of MVC concept)
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/base/util/extend',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/mvc/ControllerMetadata',
@@ -13,7 +12,6 @@ sap.ui.define([
 	'sap/ui/core/mvc/OverrideExecution'
 	], function(
 		jQuery,
-		extend,
 		EventProvider,
 		ManagedObject,
 		ControllerMetadata,

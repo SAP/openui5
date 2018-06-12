@@ -5,7 +5,7 @@
 /*
  * Provides constants for key codes. Useful in the implementation of keypress/keydown event handlers.
  */
-sap.ui.define(['jquery.sap.global', 'sap/base/events/KeyCodes'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/events/KeyCodes'],
 	function(jQuery, KeyCodes) {
 	"use strict";
 

@@ -3,7 +3,7 @@
  */
 
 // Provides utility class sap.ui.core.BlockLayerUtils
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/events/jquery/EventTriggerHook'], function(jQuery, EventTriggerHook) {
 	"use strict";
 
 	/**
@@ -292,7 +292,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 					capture: true,
 					passive: false
 				});
-				aSuppressHandler.push(jQuery.sap._suppressTriggerEvent(aPreventedEvents[i], oParentDOM, oBlockLayerDOM));
+				aSuppressHandler.push(EventTriggerHook.suppress(aPreventedEvents[i], oParentDOM, oBlockLayerDOM));
 			}
 			//for jQuery triggered events we also need the keydown handler
 			this.$blockLayer.bind('keydown', fnHandler);
@@ -320,7 +320,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			if (this._aSuppressHandler) {
 				for (i = 0; i < this._aSuppressHandler.length; i++) {
 					// this part should be done even no DOMRef exists
-					jQuery.sap._releaseTriggerEvent(this._aSuppressHandler[i]);
+					EventTriggerHook.release(this._aSuppressHandler[i]);
 				}
 			}
 			if (oBlockLayerDOM) {
