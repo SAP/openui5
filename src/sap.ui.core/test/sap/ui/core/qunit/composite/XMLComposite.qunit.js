@@ -16,8 +16,8 @@ function setBlanketFilters(sFilters) {
 sinon.config.useFakeTimers = true;
 
 sap.ui.require([
-	"jquery.sap.global", "sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite"
-], function (jQuery, XMLPreprocessor, XMLComposite) {
+	"jquery.sap.global", "sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite", "sap/ui/core/mvc/Controller"
+], function (jQuery, XMLPreprocessor, XMLComposite, Controller) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -1093,16 +1093,17 @@ sap.ui.require([
 		//*********************************************************************************************
 		QUnit.test("event forwarding", function (assert) {
 			var done = assert.async(), oAction;
-			var oController = {
-					handler: function(oEvent) {
-						oAction = oEvent.getSource();
-						oAction.setText("controller");
-					}
-			};
+			var ControllerClass = Controller.extend("test", {
+				handler: function(oEvent) {
+					oAction = oEvent.getSource();
+					oAction.setText("controller");
+				}
+			});
 
+			var oController = new ControllerClass();
 			var fnControllerSpy = sinon.spy(oController, "handler");
 			var fnCompositeSpy = sinon.spy(composites.Table.prototype, "handler");
-			
+
 			var oComponentContainer = new sap.ui.core.ComponentContainer({
 				component: new my.aggregations.Component("events", {controller: oController})
 			}).placeAt("content");
