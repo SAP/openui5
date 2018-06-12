@@ -215,6 +215,8 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded
 		});
+		this.oFCL._onFirstPageRendered();
+
 		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
 	});
 
@@ -222,6 +224,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded
 		});
+		this.oFCL._onFirstPageRendered();
 
 		this.getBeginColumnBackArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
@@ -234,6 +237,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded
 		});
+		this.oFCL._onFirstPageRendered();
 
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 	});
@@ -242,6 +246,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded
 		});
+		this.oFCL._onFirstPageRendered();
 
 		this.getMidColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
@@ -480,6 +485,8 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded
 		});
+		this.oFCL._onFirstPageRendered();
+
 		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
 	});
 
@@ -487,6 +494,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded
 		});
+		this.oFCL._onFirstPageRendered();
 
 		this.getBeginColumnBackArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
@@ -499,6 +507,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded
 		});
+		this.oFCL._onFirstPageRendered();
 
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 	});
@@ -507,6 +516,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded
 		});
+		this.oFCL._onFirstPageRendered();
 
 		this.getMidColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
@@ -828,6 +838,41 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 
 		// assert the opposite
 		assert.ok(!FlexibleColumnLayoutSemanticHelper._oInstances[sId], "Semantic helper no longer has an entry for this FCL");
+	});
+
+	QUnit.module("Private API", {
+		afterEach: function () {
+			this.oFCL.destroy();
+		}
+	});
+
+	QUnit.test("_onFirstPageRendered", function (assert) {
+		// setup
+		this.oFCL = oFactory.createFCL();
+		var oEventSpy = this.spy(this.oFCL, "_hideShowArrows");
+
+		// assert
+		assert.equal(this.oFCL._bIsNavContainersContentRendered, false, "_bIsNavContainersContentRendered is false before first invokation");
+
+		// act
+		this.oFCL._onFirstPageRendered();
+
+		// assert
+		assert.equal(this.oFCL._bIsNavContainersContentRendered, true, "_bIsNavContainersContentRendered is true after first invokation");
+		assert.ok(oEventSpy.calledOnce, "_hideShowArrows is called");
+
+		// act
+		this.oFCL._onFirstPageRendered();
+
+		// assert
+		assert.equal(this.oFCL._bIsNavContainersContentRendered, true, "_bIsNavContainersContentRendered is still true after second invokation");
+		assert.ok(oEventSpy.calledOnce, "_hideShowArrows is not called again");
+
+		// act
+		this.oFCL.rerender();
+
+		// assert
+		assert.equal(this.oFCL._bIsNavContainersContentRendered, true, "_bIsNavContainersContentRendered is still true after rerender");
 	});
 
 
