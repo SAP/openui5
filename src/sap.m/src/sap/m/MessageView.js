@@ -77,6 +77,8 @@ sap.ui.define([
 	 * <br><br>
 	 * <strong>Notes:</strong>
 	 * <ul>
+	 * <li>If your application changes its model between two interactions with the MessageView, this could lead to outdated messages being shown.
+	 * To avoid this, you need to call <code>navigateBack</code> on the MessageView BEFORE opening its container.</li>
 	 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>. </li>
 	 * <li> If the message cannot be fully displayed or includes a long description, the MessageView provides navigation to the detailed description. </li>
 	 * </ul>
