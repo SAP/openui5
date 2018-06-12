@@ -59,7 +59,7 @@ sap.ui.define([
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
 
 			When.onAdaptUIDialog.applyDialog();
-			Then.onTheMainPageRTA.checkNewPropertyAppears("LifecycleStatus");
+			Then.onTheMainPageRTA.checkNewPropertyAppears(/RTA_LifecycleStatus1/);
 
 			// uncheck LifecycleStatus
 			When.onTheMainPageRTA.pressAdaptUIButton(/AdaptUISalesOrdersDetails/);
@@ -78,7 +78,7 @@ sap.ui.define([
 			When.onAdaptUIDialog.checkCheckBox("BusinessPartnerRole");
 
 			When.onAdaptUIDialog.applyDialog();
-			Then.onTheMainPageRTA.checkNewPropertyAppears("BusinessPartnerRole");
+			Then.onTheMainPageRTA.checkNewPropertyAppears(/RTA_BusinessPartnerRole2/);
 
 
 			// unheck BusinessPartnerRole

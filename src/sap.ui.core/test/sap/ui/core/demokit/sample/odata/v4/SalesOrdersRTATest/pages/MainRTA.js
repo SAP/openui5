@@ -82,10 +82,10 @@ sap.ui.require([
 				}
 			},
 			assertions : {
-				checkNewPropertyAppears : function (sProperty) {
+				checkNewPropertyAppears : function (sPropertyId) {
 					return this.waitFor({
-						controlType : "sap.m.Label",
-						matchers : new Properties({text: sProperty}),
+						controlType : "sap.m.Text",
+						id : sPropertyId,
 						viewName : sViewName
 					});
 				},
