@@ -1383,6 +1383,29 @@
 					oOverflowTB,
 					spy;
 
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			aContent[5].setVisible(false);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing selected item of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy;
+
 			var oSelect = new sap.m.Select({
 				autoAdjustWidth: true,
 				items: [
@@ -1400,22 +1423,11 @@
 
 			var iInvalidationCountBefore = spy.callCount;
 
-			aContent[5].setVisible(false);
-
-			this.clock.tick(1000);
-
-			var iInvalidationCountAfter = spy.callCount;
-
-			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
-
-			//Assert usage of sap.m.Select with autoAdjustWidth: true, causing control size change
-			iInvalidationCountBefore = spy.callCount;
-
 			oSelect.setSelectedItemId("idItem2");
 
 			this.clock.tick(1000);
 
-			iInvalidationCountAfter = spy.callCount;
+			var iInvalidationCountAfter = spy.callCount;
 
 			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
 
@@ -1426,7 +1438,7 @@
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy;
-
+			
 			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
 			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
@@ -1441,6 +1453,39 @@
 			var iInvalidationCountAfter = spy.callCount;
 
 			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation not triggered (_resetAndInvalidateToolbar not called)");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing selected item of sap.m.Select, which has autoAdjustWidth: false (does Not affect control size), does Not force recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy;
+
+			var oSelect = new sap.m.Select({
+				autoAdjustWidth: false,
+				items: [
+					new sap.ui.core.Item({id: "idItem1", text: "Item 1"}),
+					new sap.ui.core.Item({id: "idItem2", text: "This is an extremely long Item 2"}),
+				]
+			});
+
+			aContent.push(oSelect);
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			oSelect.setSelectedItemId("idItem2");
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation Not triggered (_resetAndInvalidateToolbar Not called)");
 
 			oOverflowTB.destroy();
 		});
