@@ -3,11 +3,13 @@
  */
 sap.ui.require([
 	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils"
-], function (ODataModelV2, ODataModelV4, V2MetadataConverter, V4MetadataConverter, TestUtils) {
+], function (ODataModelV1, ODataModelV2, ODataModelV4, V2MetadataConverter, V4MetadataConverter,
+		TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 
@@ -103,11 +105,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("ODataMetaModel (V1)", function (assert) {
+		return repeatAsyncTest(10, function () {
+			var iStart = Date.now();
+
+			ODataModelV1.mServiceData = {}; // clear the cache for compatibility
+			return new ODataModelV1("/fake/v2/").getMetaModel().loaded().then(function () {
+				return {time: Date.now() - iStart};
+			});
+		}).then(function (oResult) {
+			assert.ok(true, "time: " + oResult.time + " ms");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("v2.ODataMetaModel", function (assert) {
 		return repeatAsyncTest(10, function () {
 			var iStart = Date.now();
 
-			ODataModelV2.mServiceData = {}; // clear the cache for compatibility
+			ODataModelV2.mSharedData.meta = {}; // clear the cache for compatibility
 			return new ODataModelV2("/fake/v2/").getMetaModel().loaded().then(function () {
 				return {time: Date.now() - iStart};
 			});
