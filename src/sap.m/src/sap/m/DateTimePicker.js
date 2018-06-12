@@ -343,6 +343,24 @@ sap.ui.define([
 
 	};
 
+	DateTimePicker.prototype.setMinDate = function (oDate) {
+		DatePicker.prototype.setMinDate.call(this, oDate);
+
+		if (oDate) { //make sure the time part is as the original one
+			this._oMinDate.setHours(oDate.getHours(), oDate.getMinutes(), oDate.getSeconds());
+		}
+		return this;
+	};
+
+	DateTimePicker.prototype.setMaxDate = function (oDate) {
+		DatePicker.prototype.setMaxDate.call(this, oDate);
+
+		if (oDate) { //make sure the time part is as the original one
+			this._oMaxDate.setHours(oDate.getHours(), oDate.getMinutes(), oDate.getSeconds());
+		}
+		return this;
+	};
+
 	DateTimePicker.prototype.setSecondsStep = function(iSecondsStep) {
 
 		this.setProperty('secondsStep', iSecondsStep, true);
