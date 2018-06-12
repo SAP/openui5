@@ -161,6 +161,9 @@ sap.ui.define([
 					key: "category",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_CATEGORY')
 				}, {
+					key: "category2",
+					text: oRb.getText('COLUMNSPANEL_CHARTROLE_CATEGORY2')
+				},{
 					key: "series",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_SERIES')
 				}
@@ -172,6 +175,13 @@ sap.ui.define([
 				}, {
 					key: "axis2",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS2')
+				},
+				{
+					key: "axis3",
+					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS3')
+				}, {
+					key: "axis4",
+					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS4')
 				}
 			]
 		};
