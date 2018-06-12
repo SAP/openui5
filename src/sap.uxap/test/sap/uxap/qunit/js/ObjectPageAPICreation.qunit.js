@@ -273,6 +273,46 @@
 		helpers.renderObject(this.oObjectPage);
 	});
 
+	QUnit.test("test selected section when removing another one", function (assert) {
+		/* Arrange */
+		var oObjectPage = this.oObjectPage,
+			iNonIntegerHeaderContentHeight = 99.7, // header content height should not be an integer
+			oHeaderContent = new sap.ui.core.HTML({content: "<div style='height:" + iNonIntegerHeaderContentHeight + "px'>some content</div>"}),
+			oExpected = {
+				oSelectedSection: this.oSecondSection,
+				sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle()
+			},
+			done = assert.async();
+
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.addHeaderContent(oHeaderContent);
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// assert that the page internally rounds (ceils) the header content heights
+			assert.notEqual(oObjectPage.iHeaderContentHeight, iNonIntegerHeaderContentHeight, "cached headerContent height is rounded");
+			assert.strictEqual(oObjectPage.iHeaderContentHeight, 100, "cached headerContent height is ceiled");
+
+			// Act: make an action that causes the page to have (1) first visible section selected but (2) header snapped
+			oObjectPage.removeSection(0);
+
+			// as the above causes invalidation, hook to onAfterRendering to check resulting state:
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				setTimeout(function() {
+					sectionIsSelected(oObjectPage, assert, oExpected);
+					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), oObjectPage.iHeaderContentHeight, "top section is selected");
+					assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
+					assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
+
+					oObjectPage._onScroll({target: { scrollTop: iNonIntegerHeaderContentHeight}}); // scrollEnablement kicks in to restore last saved Y position, which is not rounded (ceiled)
+					assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is still snapped");
+					assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is still snapped");
+					done();
+				}, 0);
+			});
+		});
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.test("unset selected section", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = this.oObjectPage.getSections()[0],
