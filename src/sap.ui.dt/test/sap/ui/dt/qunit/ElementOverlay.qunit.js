@@ -161,7 +161,7 @@ function(
 				}
 			};
 			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 1, "with propertyChanged and text as parameters, the modified event is not fired");
+			assert.equal(oEventSpy.callCount, 2, "with propertyChanged and text as parameters, the modified event is fired");
 			assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was not called");
 
 			sandbox.stub(this.oElementOverlay, "getAggregationOverlay").returns(this.oElementOverlay);
@@ -174,7 +174,7 @@ function(
 				}
 			};
 			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 2, "with insertAggregation and a name, the modified event is fired");
+			assert.equal(oEventSpy.callCount, 3, "with insertAggregation and a name, the modified event is fired");
 			assert.equal(oSetRelevantSpy.callCount, 2, "and setRelevantOverlays was called");
 
 			oEvent = {
@@ -185,7 +185,7 @@ function(
 				}
 			};
 			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 3, "with setParent as type, the modified event is fired");
+			assert.equal(oEventSpy.callCount, 4, "with setParent as type, the modified event is fired");
 			assert.equal(oSetRelevantSpy.callCount, 2, "and setRelevantOverlays was not called");
 		});
 
@@ -237,10 +237,21 @@ function(
 			assert.strictEqual(this.oElementOverlay.hasStyleClass("sapUiDtOverlayMovable"), true, "the Overlay has the sapUiDtOverlayMovable StyleClass");
 
 			this.oElementOverlay.setEditable(undefined);
+
 			assert.equal(this.oElementOverlay.isEditable(), false, 'then the overlay is not editable');
 			assert.strictEqual(this.oElementOverlay.hasStyleClass("sapUiDtOverlayEditable"), false, "the Overlay doesn't have the sapUiDtOverlayEditable StyleClass");
+		});
+
+		QUnit.test("when setEditable is called on the overlay with true", function (assert) {
+			assert.equal(this.oElementOverlay.isEditable(), false, 'then the overlay is initially not editable');
+			var oEventSpy = sandbox.spy(this.oElementOverlay, "fireEditableChange");
 			this.oElementOverlay.setEditable(true);
 			assert.equal(this.oElementOverlay.isEditable(), true, 'then the overlay is editable');
+			assert.strictEqual(oEventSpy.callCount, 1, "then 'editableChange' was fired");
+			assert.deepEqual(oEventSpy.getCall(0).args[0], {
+				id: this.oElementOverlay.getId(),
+				editable : true
+			}, "then 'editableChange' was fired with the required parameters");
 			assert.strictEqual(this.oElementOverlay.hasStyleClass("sapUiDtOverlayEditable"), true, "the Overlay has the sapUiDtOverlayEditable StyleClass");
 		});
 

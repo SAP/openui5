@@ -859,5 +859,15 @@ function(
 		return this.getIsRoot();
 	};
 
+	/**
+	 * Returns true if the overlay should be destroyed
+	 *
+	 * @return {boolean} - true if overlay is scheduled to be destroyed
+	 * @public
+	 */
+	Overlay.prototype.getShouldBeDestroyed = function() {
+		return this._bShouldBeDestroyed ;
+	};
+
 	return Overlay;
 }, /* bExport= */ true);

@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/fl/registry/Settings',
-	'sap/m/MessageBox'
+	'sap/m/MessageBox',
+	'sap/base/util/extend'
 ],
 function(
 	jQuery,
 	FlexUtils,
 	OverlayUtil,
 	Settings,
-	MessageBox
+	MessageBox,
+	Extend
 ) {
 	"use strict";
 
@@ -570,6 +572,25 @@ function(
 				styleClass: Utils.getRtaStyleClassName()
 			});
 		});
+	};
+
+	/**
+	 * Returns a new object composed of the own and inherited property paths
+	 * of given object which are not in the given array
+	 *
+	 * Example: for obj = { 'a': 1, 'b': '2', 'c': 3 };
+	 * omit(obj, ['a', 'c']); -> Returns { 'b': '2' }
+	 *
+	 * @param  {Object} oObject     Source object
+	 * @param  {string[]} aProperties Property paths to omit
+	 * @return {Object}             Returns new object
+	 */
+	Utils.omit = function(oObject, aPropertyPaths){
+		var oNewObject = Extend(true, {}, oObject);
+		aPropertyPaths.forEach(function (sProperty) {
+			delete oNewObject[sProperty];
+		});
+		return oNewObject;
 	};
 
 	return Utils;
