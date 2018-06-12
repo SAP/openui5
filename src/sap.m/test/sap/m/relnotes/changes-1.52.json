@@ -3074,5 +3074,82 @@
         "references": []
       }
     ]
+  },
+  "1.52.14": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "e8bc78c4dcd505007aa75199ca73ddfd185a3ce9",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Close event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "cce686f733e40e7bac7976eeba14d70621f221a5",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selecting items is now working in IE",
+        "references": []
+      },
+      {
+        "id": "2051204e2099c89b3c756771d714f4b65c195bdd",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Updating with special characters is now correct",
+        "references": []
+      },
+      {
+        "id": "7e7e90149995563223e3c8af3e76e8d831322027",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Remove additional tab stop in Light mode",
+        "references": []
+      },
+      {
+        "id": "08a6ceff0e6f01e293b6a923983cddb298f9ebda",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: Calls to the backend are now optimized",
+        "references": []
+      },
+      {
+        "id": "fde35048a3c5c4a4bfa3cc13a0583d89a3124357",
+        "type": "FIX",
+        "text": " sap.m.FormattedTextAnchorGenerator: Anchor tag conversion improved",
+        "references": []
+      },
+      {
+        "id": "87a79d7fa23f2d72166aed4443f3d125aa7c21d5",
+        "type": "FIX",
+        "text": " sap.m.Input: step attribute set to any",
+        "references": []
+      },
+      {
+        "id": "fffe1b686f6e49895d263ce546f17ce268eed51b",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: on Android, caret positioning is improved.",
+        "references": []
+      },
+      {
+        "id": "d01a052360f7c3aa5cbe107f144b7edcc8a39a0b",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Enable positioning in ObjectPage",
+        "references": []
+      },
+      {
+        "id": "88c96c009922f364a3c6d4e84aac729d3a91ce0b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Single pasted values are not turned into tokens",
+        "references": []
+      },
+      {
+        "id": "94a08fe714b9a207d2030a7f6820df646ec04649",
+        "type": "FIX",
+        "text": " sap.m.ObjectListeItem: render properly hidden marker",
+        "references": []
+      },
+      {
+        "id": "0c510da87b6d2961e74abc4cf0faa02078b6d46f",
+        "type": "FIX",
+        "text": " sap.m.Switch: Description when checked off fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -101,6 +101,12 @@
         "type": "FIX",
         "text": " sap.ui.fl App variant version validity",
         "references": []
+      },
+      {
+        "id": "920b7e95c4ed45f903afd2cb15504158a3f58b63",
+        "type": "FIX",
+        "text": " sap.ui.fl - Undefined parsed URL causing dump in VariantUtil",
+        "references": []
       }
     ]
   }

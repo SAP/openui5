@@ -92,5 +92,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.14": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ee459a3b1b52980859ae48684f465add58b049fc",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPage: Added class for content alignment",
+        "references": []
+      },
+      {
+        "id": "76971dd6ea8f60544f8536d1579d6a9e2d0014df",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Expand button appearance corrected",
+        "references": []
+      }
+    ]
   }
 }

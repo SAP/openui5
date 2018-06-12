@@ -1266,6 +1266,12 @@
         "type": "FIX",
         "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
         "references": []
+      },
+      {
+        "id": "4026d9cd86f4a0ca6b4932c45051913e294469ba",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Origin is now set on Space and Enter",
+        "references": []
       }
     ]
   }
