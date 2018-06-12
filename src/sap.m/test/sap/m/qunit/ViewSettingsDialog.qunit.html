@@ -2086,19 +2086,21 @@
 			function cancelHandler() {
 				// Step 3
 				// Open ViewSettingsDialog
-				that.oVSD._dialog.attachEventOnce("afterOpen", afterThirdOpen);
+
+				that.oVSD._getNavContainer().attachEvent("afterNavigate", function(oEvent) {
+					if (oEvent.getParameter("to").getId() === that.oVSD.getId() + "-page2") {
+						afterThirdOpen();
+					}
+				});
+
 				that.oVSD.open();
 			}
-
 
 			function afterThirdOpen() {
 				var aInternalFilterDetailItems = that.oVSD._filterDetailList.getItems(),
 					aPublicFilterDetailItems = that.oVSD.getFilterItems()[0].getItems();
 
 				// pre-asserts
-				strictEqual(that.oVSD._getNavContainer().getCurrentPage().getId(), that.oVSD.getId() + "-page2",
-					"Filter Details page should be opened after third opening of the VSD");
-
 				strictEqual(aInternalFilterDetailItems[0].getSelected(), true, "After third opening of VSD, " +
 					"first internal item should be selected");
 				strictEqual(aInternalFilterDetailItems[1].getSelected(), false, "After third opening of VSD, " +
