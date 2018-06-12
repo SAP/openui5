@@ -4581,7 +4581,7 @@ sap.ui.define([
 			// if the value is an empty string, it should be treated as such in the generated key
 			var sSaveDimVal = sDimVal === "" ? '""' : sDimVal;
 			sSaveDimVal = sSaveDimVal === undefined ? "" : sSaveDimVal;
-			sMultiUnitEntryKey += (sSaveDimVal + ",");
+			sMultiUnitEntryKey += (encodeURIComponent(sSaveDimVal) + ",");
 		}
 		sMultiUnitEntryKey += "-multiple-units-not-dereferencable";
 
