@@ -221,7 +221,7 @@
 			this.oSecondSection = this.oObjectPage.getSections()[1];
 			this.oThirdSection = this.oObjectPage.getSections()[2];
 			this.oObjectPage.setSelectedSection(this.oSecondSection.getId());
-			this.iLoadingDelay = 500;
+			this.iLoadingDelay = 1000;
 
 		},
 		afterEach: function () {
