@@ -294,6 +294,24 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	};
 
+	DateTimePicker.prototype.setMinDate = function (oDate) {
+		DatePicker.prototype.setMinDate.call(this, oDate);
+
+		if (oDate) { //make sure the time part is as the original one
+			this._oMinDate.setHours(oDate.getHours(), oDate.getMinutes(), oDate.getSeconds());
+		}
+		return this;
+	};
+
+	DateTimePicker.prototype.setMaxDate = function (oDate) {
+		DatePicker.prototype.setMaxDate.call(this, oDate);
+
+		if (oDate) { //make sure the time part is as the original one
+			this._oMaxDate.setHours(oDate.getHours(), oDate.getMinutes(), oDate.getSeconds());
+		}
+		return this;
+	};
+
 	DateTimePicker.prototype._getFormatInstance = function(oArguments, bDisplayFormat){
 
 		var oMyArguments = jQuery.extend({}, oArguments);
