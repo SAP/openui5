@@ -82,7 +82,9 @@ sap.ui.define([
 	 * <h3>Responsive Behavior</h3>
 	 *
 	 * The responsive behavior of the <code>DynamicPage</code> depends on the behavior of
-	 * the content that is displayed.
+	 * the content that is displayed. To adjust the <code>DynamicPage</code> content
+	 * padding, the <code>sapUiContentPadding</code>, <code>sapUiNoContentPadding</code>,
+	 * and <code>sapUiResponsiveContentPadding</code> CSS classes can be used.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -176,9 +178,14 @@ sap.ui.define([
 				 * <code> &lt;Panel class=“sapFDynamicPageAlignContent” width=“auto”&gt;&lt;/Panel&gt; </code>
 				 * </pre>
 				 *
-				 * Please keep in mind that the alignment is not possible when the controls are placed in
-				 * a {@link sap.ui.layout.Grid} or in other layout controls that use
-				 * <code>overflow:hidden</code> CSS property.
+				 * Please keep in mind that the alignment is not possible in the following cases:
+				 * <ul>
+				 * <li> When the controls are placed in an {@link sap.ui.layout.Grid} or other layout
+				 * controls that use <code>overflow:hidden</code> CSS property</li>
+				 * <li> In case any of the following CSS classes is applied to
+				 * <code>DynamicPage</code>: <code>sapUiContentPadding</code>,
+				 * <code>sapUiNoContentPadding</ce> or <code>sapUiResponsiveContentPadding</code></li>
+				 * </ul>
 				 *
 				 */
 				content: {type: "sap.ui.core.Control", multiple: false},
