@@ -137,7 +137,7 @@ function(
 			ManagedObject._sOwnerId = "<component name>";
 
 			// perparation of the changes
-			var sCodeContent1 = "sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {\nonInit: function() {\nthis.base.getView().callDone();\n}\n});\n});";
+			var sCodeContent1 = "sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {\noverride:{\nonInit: function() {\nthis.base.getView().callDone();\n}\n}\n});\n});";
 			var sAsciiCodeContent1 = sap.ui.fl.Utils.stringToAscii(sCodeContent1);
 			var oCodingChange1 = {
 				fileName: "id_1436877480596_108",
@@ -161,7 +161,7 @@ function(
 				}
 			};
 
-			var sCodeContent2 = "sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension2', {\nonInit: function() {\nthis.base.getView().callDone();\n}\n});\n});";
+			var sCodeContent2 = "sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension2', {\noverride:{\nonInit: function() {\nthis.base.getView().callDone();\n}\n}\n});\n});";
 			var sAsciiCodeContent2 = sap.ui.fl.Utils.stringToAscii(sCodeContent2);
 			var oCodingChange2 = {
 				fileName: "id_1436877480596_109",
