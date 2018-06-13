@@ -12,7 +12,6 @@ sap.ui.define([
 	"./Link",
 	"./FormattedText",
 	"sap/ui/core/library",
-	"sap/ui/Device",
 	"./MessageStripRenderer"
 ], function(
 	jQuery,
@@ -23,7 +22,6 @@ sap.ui.define([
 	Link,
 	FormattedText,
 	coreLibrary,
-	Device,
 	MessageStripRenderer
 ) {
 	"use strict";
@@ -265,11 +263,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (Device.browser.internet_explorer && Device.browser.version < 10) {
-			MSUtils.closeTransitionWithJavascript.call(this, fnClosed);
-		} else {
-			MSUtils.closeTransitionWithCSS.call(this, fnClosed);
-		}
+		MSUtils.closeTransitionWithCSS.call(this, fnClosed);
 	};
 
 	return MessageStrip;

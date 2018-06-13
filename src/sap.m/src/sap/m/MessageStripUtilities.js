@@ -68,13 +68,6 @@ sap.ui.define(function () {
 			oTarget.parentNode.className.indexOf(MessageStripUtilities.CLASSES.CLOSE_BUTTON) !== -1;
 	};
 
-	MessageStripUtilities.closeTransitionWithJavascript = function (fnCallback) {
-		this.$().animate({opacity: 0}, {
-			duration: 200,
-			complete: fnCallback
-		});
-	};
-
 	MessageStripUtilities.closeTransitionWithCSS = function (fnCallback) {
 		this.$().addClass(MessageStripUtilities.CLASSES.CLOSING_TRANSITION)
 				.one("webkitTransitionEnd transitionend", fnCallback);
