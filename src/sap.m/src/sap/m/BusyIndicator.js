@@ -246,69 +246,18 @@ sap.ui.define([
 			return;
 		}
 
-		if (jQuery.support.cssAnimations) {
-			var $icon = this._iconImage.$();
-			var sRotationSpeed = this.getCustomIconRotationSpeed() + "ms";
-
-			$icon.css("-webkit-animation-duration", sRotationSpeed)
-				.css("animation-duration", sRotationSpeed);
-
-			//Bug in Chrome: After changing height of image -> changing the rotationspeed will have no affect
-			//chrome needs a rerendering of this element.
-			$icon.css("display", "none");
-			setTimeout(function() {
-				$icon.css("display", "inline");
-			}, 0);
-		} else { // IE9
-			this._rotateCustomIcon();
-		}
-	};
-
-	BusyIndicator.prototype._rotateCustomIcon = function(){
-		if (!this._iconImage) {
-			return;
-		}
 		var $icon = this._iconImage.$();
+		var sRotationSpeed = this.getCustomIconRotationSpeed() + "ms";
 
-		// stop if the custom icon is not available or hidden:
-		if (!$icon[0] || !$icon[0].offsetWidth) {
-			return;
-		}
+		$icon.css("-webkit-animation-duration", sRotationSpeed)
+			.css("animation-duration", sRotationSpeed);
 
-		var iRotationSpeed = this.getCustomIconRotationSpeed();
-		if (!iRotationSpeed) {
-			return;
-		}
-
-		if (!this._fnRotateCustomIcon) {
-			this._fnRotateCustomIcon = jQuery.proxy(this._rotateCustomIcon, this);
-		}
-		var fnRotateCustomIcon = this._fnRotateCustomIcon;
-
-		if (!this._$CustomRotator) {
-			this._$CustomRotator = jQuery({deg: 0});
-		}
-		var $rotator = this._$CustomRotator;
-
-		if ($rotator.running) {
-			return;
-		}
-
-		// restart animation
-		$rotator[0].deg = 0;
-
-		$rotator.animate({deg: 360}, {
-			duration: iRotationSpeed,
-			easing: "linear",
-			step: function(now) {
-				$rotator.running = true;
-				$icon.css("-ms-transform", 'rotate(' + now + 'deg)');
-			},
-			complete: function(){
-				$rotator.running = false;
-				window.setTimeout(fnRotateCustomIcon, 10);
-			}
-		});
+		//Bug in Chrome: After changing height of image -> changing the rotationspeed will have no affect
+		//chrome needs a rerendering of this element.
+		$icon.css("display", "none");
+		setTimeout(function() {
+			$icon.css("display", "inline");
+		}, 0);
 	};
 
 	return BusyIndicator;
