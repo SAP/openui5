@@ -29,7 +29,7 @@ sap.ui.define([
 			rm.write(">");
 			var aChildren = oControl.getChildren();
 			if (!aChildren.length) {
-				rm.write("No data");
+				rm.write("<span>No data</span>");
 			} else {
 				oControl.getChildren().forEach(function(oChild) {
 					rm.renderControl(oChild);
