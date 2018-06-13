@@ -30,6 +30,13 @@
 					content: this.getContent(100)
 				});
 			},
+			getDynamicPageHeaderSnappedNoContent: function () {
+				return new DynamicPage({
+					headerExpanded: false,
+					title: this.getDynamicPageTitle(),
+					header: this.getDynamicPageHeader()
+				});
+			},
 			getDynamicPageWithBigContent: function () {
 				return new DynamicPage({
 					showFooter: true,
@@ -345,6 +352,29 @@
 
 		this.oDynamicPage.setHeaderExpanded(false);
 		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should be hidden again");
+	});
+
+	QUnit.module("DynamicPage - API - header initially snapped without content", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageHeaderSnappedNoContent();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	// BCP: 1880249493 - tests if initially empty page with snapped header expands correctly on click
+	QUnit.test("DynamicPage headerExpanded=false expand header with click", function (assert) {
+		// setup
+		this.oDynamicPage.setContent(oFactory.getContent(500));
+		sap.ui.getCore().applyChanges();
+		this.oDynamicPage.getHeader().$().addClass("sapFDynamicPageHeaderHidden");
+		this.oDynamicPage._titleExpandCollapseWhenAllowed(true);
+
+		// assert
+		assert.notOk(this.oDynamicPage.getHeader().$().hasClass("sapFDynamicPageHeaderHidden"), "DynamicPage header is shown correctly");
 	});
 
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
