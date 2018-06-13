@@ -400,20 +400,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Load required modules for the given element synchronously, according to its
-	 * "template:require" attribute which may contain a space separated list.
-	 *
-	 * @param {Element} oElement
-	 *   any XML DOM element
-	 */
-	function requireFor(oElement) {
-		var sModuleNames = oElement.getAttribute("template:require");
-		if (sModuleNames) {
-			jQuery.sap.require.apply(jQuery.sap, sModuleNames.split(" "));
-		}
-	}
-
-	/**
 	 * Visits the given elements one-by-one, calls the given callback for each of them and stops
 	 * and waits for each sync promise returned by the callback before going on to the next element.
 	 * If a sync promise resolves with a truthy value, iteration stops and the corresponding element
@@ -1181,13 +1167,14 @@ sap.ui.define([
 					oFragmentElement = oElement.ownerDocument.importNode(oFragmentElement, true);
 					jQuery.sap.measure.end(sPerformanceInsertFragment);
 
-					requireFor(oFragmentElement);
-					if (oFragmentElement.namespaceURI === "sap.ui.core"
-						&& oFragmentElement.localName === "FragmentDefinition") {
-						return liftChildNodes(oFragmentElement, oWithControl, oElement);
-					}
-					oElement.parentNode.insertBefore(oFragmentElement, oElement);
-					return visitNode(oFragmentElement, oWithControl);
+					return requireFor(oFragmentElement).then(function () {
+						if (oFragmentElement.namespaceURI === "sap.ui.core"
+							&& oFragmentElement.localName === "FragmentDefinition") {
+							return liftChildNodes(oFragmentElement, oWithControl, oElement);
+						}
+						oElement.parentNode.insertBefore(oFragmentElement, oElement);
+						return visitNode(oFragmentElement, oWithControl);
+					});
 				}).then(function () {
 					oElement.parentNode.removeChild(oElement);
 					sCurrentName = sPreviousName;
@@ -1255,6 +1242,42 @@ sap.ui.define([
 					}
 					return bResult;
 				});
+			}
+
+			/**
+			 * Load required modules for the given element (a)synchronously, according to its
+			 * "template:require" attribute which may contain a space separated list.
+			 *
+			 * @param {Element} oElement
+			 *   any XML DOM element
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as all required
+			 *   modules have been loaded
+			 * @throws {Error}
+			 *   If loading fails in sync mode
+			 */
+			function requireFor(oElement) {
+				var aModuleNames,
+					sModuleNames = oElement.getAttribute("template:require");
+
+				if (sModuleNames) {
+					aModuleNames = sModuleNames.split(" ");
+					if (!oViewInfo.sync) {
+						// map dot-separated module names to slash-separated Unified Resource Names
+						aModuleNames = aModuleNames.map(function (sModuleName) {
+							return jQuery.sap.getResourceName(sModuleName, /*sSuffix*/"");
+						});
+						return new SyncPromise(function (resolve) {
+							// Note: currently there is no way to detect failure
+							sap.ui.require(aModuleNames, function (/*oModule,...*/) {
+								resolve();
+							});
+						});
+					}
+
+					jQuery.sap.require.apply(jQuery.sap, aModuleNames);
+				}
+				return oSyncPromiseResolved;
 			}
 
 			/**
@@ -1824,11 +1847,12 @@ sap.ui.define([
 							type: "template"}
 					});
 			}
-			requireFor(oRootElement);
-			return visitNode(oRootElement, new With({
-				models : mSettings.models,
-				bindingContexts : mSettings.bindingContexts
-			})).then(function () {
+			return requireFor(oRootElement).then(function () {
+				return visitNode(oRootElement, new With({
+					models : mSettings.models,
+					bindingContexts : mSettings.bindingContexts
+				}));
+			}).then(function () {
 				debug(undefined, "Finished processing", sCaller);
 				jQuery.sap.measure.end(sPerformanceProcess);
 				return oRootElement;

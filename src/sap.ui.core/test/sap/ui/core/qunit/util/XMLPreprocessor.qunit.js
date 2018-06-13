@@ -293,6 +293,11 @@ sap.ui.require([
 			this.oXMLTemplateProcessorMock = this.mock(XMLTemplateProcessor);
 			this.oXMLTemplateProcessorMock.expects("loadTemplate").never();
 			this.oXMLTemplateProcessorMock.expects("loadTemplatePromise").never();
+
+			this.oSapUiMock = this.mock(sap.ui);
+			// @see sap.ui.base.Event#init
+			this.oSapUiMock.expects("require").on(sap.ui).atLeast(0)
+				.withExactArgs("sap/ui/base/EventProvider").callThrough();
 		},
 
 		/**
@@ -491,6 +496,43 @@ sap.ui.require([
 			} else {
 				this.oXMLTemplateProcessorMock.expects("loadTemplate")
 					.withExactArgs(sName, "fragment").returns(sXml);
+			}
+		},
+
+		/**
+		 * Sets up a mock that allows to require the given module names. Calls the given callback
+		 * (a)synchronously to retrieve the module values.
+		 *
+		 * @param {boolean} bAsync - Whether the async API is expected to be used
+		 * @param {string[]} aModuleNames - The dot-separated module names
+		 * @param {function} [fnCallback] - A callback function which returns the array of module
+		 *   values and adds modules to the global namespace as a side effect
+		 */
+		expectRequire : function (bAsync, aModuleNames, fnCallback) {
+			var oExpectation;
+
+			if (bAsync) {
+				// map dot-separated module names to slash-separated Unified Resource Names (URNs)
+				aModuleNames = aModuleNames.map(function (sModuleName) {
+					return jQuery.sap.getResourceName(sModuleName, ""); //TODO mock?
+				});
+				this.oSapUiMock.expects("require").on(sap.ui)
+					.withExactArgs(aModuleNames, sinon.match.func)
+					.callsFake(function (aDependencies, fnFactory) {
+						setTimeout(function () {
+							fnFactory.apply(null, fnCallback && fnCallback());
+						}, 0); // simulate AMD
+					});
+				this.mock(jQuery.sap).expects("require").never();
+			} else {
+				oExpectation = this.mock(jQuery.sap).expects("require");
+				// Note: jQuery.sap.require() supports "varargs" style
+				oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames)
+					.callsFake(function () {
+						if (fnCallback) {
+							fnCallback();
+						}
+					});
 			}
 		},
 
@@ -2050,17 +2092,29 @@ sap.ui.require([
 			QUnit.test("fragment support incl. template:require, async = " + bAsync
 					+ ", debug = " + bDebug, function (assert) {
 				var sModuleName = "sap.ui.core.sample.ViewTemplate.scenario.Helper",
-					sInElement = '<In xmlns="sap.ui.core" xmlns:template='
+					sTextElement = '<Text xmlns="sap.ui.core" xmlns:template='
 						+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
-						+ ' template:require="' + sModuleName + '"/>';
+						+ ' template:require="' + sModuleName + '" text="'
+						+ "{formatter: 'foo.Helper.bar', path: '/flag'}" + '"/>',
+					sFragmentXml = xml(assert, [sTextElement]);
 
-				this.mock(jQuery.sap).expects("require").on(jQuery.sap).withExactArgs(sModuleName);
-				this.expectLoad(bAsync, "myFragment", xml(assert, [sInElement]));
+				this.expectLoad(bAsync, "myFragment", sFragmentXml);
+				this.expectRequire(bAsync, [sModuleName], function () {
+					window.foo = {
+						Helper : {
+							bar : function (vValue) {
+								return "*" + vValue + "*";
+							}
+						}
+					};
+					return [window.foo.Helper];
+				});
 				this.expectLoad(bAsync, "yetAnotherFragment",
 					xml(assert, ['<In xmlns="sap.ui.core"/>']));
 				return this.checkTracing(assert, bDebug, [
 						{m : "[ 0] Start processing qux"},
 						{m : "[ 1] fragmentName = myFragment", d : 1},
+						{m : "[ 1] text = *true*", d : sTextElement},
 						{m : "[ 1] Finished", d : "</Fragment>"},
 						{m : "[ 1] fragmentName = yetAnotherFragment", d : 4},
 						{m : "[ 1] Finished", d : "</Fragment>"},
@@ -2072,8 +2126,10 @@ sap.ui.require([
 						'</Fragment>',
 						'<Fragment fragmentName="yetAnotherFragment" type="XML"/>',
 						'</mvc:View>'
-					], {}, [
-						sInElement,
+					], {
+						models : new JSONModel({flag : true})
+					}, [
+						'<Text template:require="' + sModuleName + '" text="*true*"/>',
 						'<In/>'
 					], bAsync);
 			});
@@ -2081,8 +2137,7 @@ sap.ui.require([
 			//**************************************************************************************
 			QUnit.test("fragment with FragmentDefinition incl. template:require, async = " + bAsync
 					+ ", debug = " + bDebug, function (assert) {
-				var oExpectation = this.mock(jQuery.sap).expects("require"),
-					aModuleNames = [
+				var aModuleNames = [
 						"foo.Helper",
 						"sap.ui.core.sample.ViewTemplate.scenario.Helper",
 						"sap.ui.model.odata.AnnotationHelper"
@@ -2091,16 +2146,24 @@ sap.ui.require([
 						'<FragmentDefinition xmlns="sap.ui.core" xmlns:template='
 							+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
 							+ ' template:require="' + aModuleNames.join(" ") + '">',
-						'<In id="first"/>',
+						'<Text id="first" text="'
+							+ "{formatter: 'foo.Helper.bar', path: '/flag'}" + '"/>',
 						'<Fragment fragmentName="innerFragment" type="XML"/>',
 						'<In id="last"/>',
 						'</FragmentDefinition>'
 					];
 
-				// Note: jQuery.sap.require() supports "varargs" style
-				oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames);
-
 				this.expectLoad(bAsync, "myFragment", xml(assert, aFragmentContent));
+				this.expectRequire(bAsync, aModuleNames, function () {
+					window.foo = {
+						Helper : {
+							bar : function (vValue) {
+								return "*" + vValue + "*";
+							}
+						}
+					};
+					return [window.foo.Helper, {}, {}];
+				});
 				this.expectLoad(bAsync, "innerFragment",
 					xml(assert, ['<In xmlns="sap.ui.core" id="inner"/>']));
 				this.expectLoad(bAsync, "yetAnotherFragment",
@@ -2108,6 +2171,7 @@ sap.ui.require([
 				return this.checkTracing(assert, bDebug, [
 						{m : "[ 0] Start processing qux"},
 						{m : "[ 1] fragmentName = myFragment", d : 1},
+						{m : "[ 1] text = *true*", d : aFragmentContent[1]},
 						{m : "[ 2] fragmentName = innerFragment", d : aFragmentContent[2]},
 						{m : "[ 2] Finished", d : "</Fragment>"},
 						{m : "[ 1] Finished", d : "</Fragment>"},
@@ -2119,8 +2183,10 @@ sap.ui.require([
 						'<Fragment fragmentName="myFragment" type="XML"/>',
 						'<Fragment fragmentName="yetAnotherFragment" type="XML"/>',
 						'</mvc:View>'
-					], {}, [
-						'<In id="first"/>',
+					], {
+						models : new JSONModel({flag : true})
+					}, [
+						'<Text id="first" text="*true*"/>',
 						'<In id="inner"/>',
 						'<In id="last"/>',
 						'<In id="yetAnother"/>'
@@ -2269,7 +2335,6 @@ sap.ui.require([
 					}]
 				}),
 				oBazModel = new JSONModel({}),
-				oSapUiMock = this.mock(sap.ui),
 				aViewContent = [
 					mvcView("t"),
 					'<t:with path="bar>Label" var="foo">',
@@ -2303,11 +2368,8 @@ sap.ui.require([
 				'<In src="fragment"/>',
 				'</FragmentDefinition>'
 			]));
-			// @see sap.ui.base.Event#init
-			oSapUiMock.expects("require").atLeast(0)
-				.withExactArgs("sap/ui/base/EventProvider").callThrough();
 			// debug output for dynamic names must still appear!
-			oSapUiMock.expects("require").twice()
+			this.oSapUiMock.expects("require").on(sap.ui).twice()
 				.withExactArgs("sap/ui/core/CustomizingConfiguration"); // not yet loaded
 
 			this.checkTracing(assert, bDebug, [
@@ -2363,12 +2425,16 @@ sap.ui.require([
 		undefined,
 		{className : "sap.ui.core.Fragment", type : "JSON"},
 		{className : "sap.ui.core.mvc.View", type : "XML"}
-	].forEach(function (oViewExtension) {
-		QUnit.test("<ExtensionPoint>: no (supported) configuration", function (assert) {
+	].forEach(function (oViewExtension, i) {
+		QUnit.test("<ExtensionPoint>: no (supported) configuration, " + i, function (assert) {
 			if (oViewExtension === CustomizingConfiguration) {
-				this.mock(sap.ui).expects("require")
-					.withExactArgs("sap/ui/core/CustomizingConfiguration"); // not yet loaded
+				this.oSapUiMock.expects("require").on(sap.ui)
+					.withExactArgs("sap/ui/core/CustomizingConfiguration")
+					.returns(); // not yet loaded
 			} else {
+				this.oSapUiMock.expects("require").on(sap.ui)
+					.withExactArgs("sap/ui/core/CustomizingConfiguration")
+					.returns(CustomizingConfiguration);
 				this.mock(CustomizingConfiguration).expects("getViewExtension")
 					.withExactArgs("this.sViewName", "myExtensionPoint", "this._sOwnerId")
 					.returns(oViewExtension);
@@ -2403,6 +2469,10 @@ sap.ui.require([
 						'</template:if>'
 					];
 
+				this.oSapUiMock.expects("require").on(sap.ui).exactly(5)
+					.withExactArgs("sap/ui/core/CustomizingConfiguration")
+					.returns(CustomizingConfiguration);
+
 				// <ExtensionPoint name="outerExtensionPoint">
 				oCustomizingConfigurationMock.expects("getViewExtension")
 					.withExactArgs("this.sViewName", "outerExtensionPoint", "this._sOwnerId")
@@ -2414,8 +2484,7 @@ sap.ui.require([
 				this.expectLoad(false, "acme.OuterReplacement", xml(assert, aOuterReplacement));
 				// Note: mock result of loadTemplate() is not analyzed by check() method, of course
 				warn(this.oLogMock, '[ 2] Constant test condition', aOuterReplacement[0]);
-				this.mock(jQuery.sap).expects("require").on(jQuery.sap)
-					.withExactArgs("foo.Helper", "bar.Helper");
+				this.expectRequire(false, ["foo.Helper", "bar.Helper"]);
 
 				// <ExtensionPoint name="outerReplacement">
 				// --> nothing configured, just check that it is processed
@@ -2475,15 +2544,14 @@ sap.ui.require([
 				'</mvc:View>'
 			]);
 
-		this.mock(jQuery.sap).expects("require").on(jQuery.sap).withExactArgs(sModuleName);
+		this.expectRequire(false, [sModuleName]);
 
 		process(oRootElement);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("template:require - multiple modules", function (assert) {
-		var oExpectation = this.mock(jQuery.sap).expects("require"),
-			aModuleNames = [
+		var aModuleNames = [
 				"foo.Helper",
 				"sap.ui.core.sample.ViewTemplate.scenario.Helper",
 				"sap.ui.model.odata.AnnotationHelper"
@@ -2493,8 +2561,7 @@ sap.ui.require([
 				'</mvc:View>'
 			]);
 
-		// Note: jQuery.sap.require() supports "varargs" style
-		oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames);
+		this.expectRequire(false, aModuleNames);
 
 		process(oRootElement);
 	});
@@ -3552,6 +3619,37 @@ sap.ui.require([
 		], {
 			models : asyncModel({hello : "world"})
 		}, undefined, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async require on view level", function (assert) {
+		var aModuleNames = ["foo.Helper"],
+			aViewContent = [
+				mvcView().replace(">", ' template:require="' + aModuleNames.join(" ") + '">'),
+				"<Text text=\"{formatter: 'foo.Helper.bar', path: '/flag'}\"/>",
+				'</mvc:View>'
+			];
+
+		this.expectRequire(true, aModuleNames, function () {
+			window.foo = {
+				Helper : {
+					bar : function (vValue) {
+						return "*" + vValue + "*";
+					}
+				}
+			};
+			return [window.foo.Helper];
+		});
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 0] text = *true*", d : 1},
+			{m : "[ 0] Finished processing qux"}
+		], aViewContent, {
+			models : new JSONModel({flag : true})
+		}, [
+			'<Text text="*true*"/>'
+		], true);
 	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
