@@ -1,41 +1,13 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-
-<title>QUnit tests: Messaging</title>
-
-<!-- Initialization -->
-<script src="../../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.m,sap.ui.layout"
-	data-sap-ui-bindingSyntax='complex'
-	data-sap-ui-language='en'>
-</script>
-
-<link rel="stylesheet"
-	href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script
-	src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-	<script
-		src="../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script
-	src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<!-- Test functions -->
-<script charset="utf-8"> // IE needs this :-/
-
+/* global sinon, QUnit*/
+sap.ui.require([
+	'sap/ui/model/Model',
+	'sap/ui/core/message/Message',
+	'sap/ui/core/library',
+	'sap/ui/core/ComponentContainer',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/UIComponent'
+], function(Model, Message, library, ComponentContainer, JSONModel, UIComponent){
+	"use strict";
 	var oModel;
 
 	function spyDataState(oControl, fnTest) {
@@ -45,21 +17,21 @@
 				sap.m.Input.prototype.refreshDataState.apply(oControl, arguments);
 				fnTest(sName, oDataState);
 				oControl.refreshDataState = fnRefresh;
-			}
+			};
 		}
-	};
+	}
 	//create some components for testing
 	sap.ui.localResources("components");
-	var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
+	var oCompCont = new ComponentContainer("CompCont", {
 		name: "components",
-		id: "myMessageTest1",
+		id: "myMessageTest1"
 	});
-	var oCompCont2 = new sap.ui.core.ComponentContainer("CompCont2", {
+	var oCompCont2 = new ComponentContainer("CompCont2", {
 		name: "components.enabled",
 		id: "myMessageTest2",
 		handleValidation: true
 	});
-	var oCompCont3 = new sap.ui.core.ComponentContainer("CompCont3", {
+	var oCompCont3 = new ComponentContainer("CompCont3", {
 		name: "components.disabled",
 		id: "myMessageTest3",
 		handleValidation: true
@@ -71,7 +43,7 @@
 
 	var initModel = function(sType) {
 		if (sType === "json") {
-			oModel = new sap.ui.model.json.JSONModel();
+			oModel = new JSONModel();
 			var oData = {
 				form: {
 					firstname: "Fritz",
@@ -80,11 +52,12 @@
 					nr: 1,
 					zip: "12345"
 				}
-			}
+			};
 			oModel.setData(oData);
 		}
 		sap.ui.getCore().setModel(oModel);
-	}
+	};
+
 	QUnit.module("MessageManager components", {
 		beforeEach : function() {
 			initModel("json");
@@ -97,14 +70,12 @@
 
 	QUnit.test("componentEnabled", function(assert) {
 		var done = assert.async();
-		var oMessageManager = sap.ui.getCore().getMessageManager();
-		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
 
 		spyDataState(oCompZip, function(sName, oDataState) {
 			assert.ok(oDataState.getMessages().length == 1, 'Format Message created');
-			assert.ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			assert.ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
+			assert.ok(oCompZip.getValueState() === library.ValueState.Error, 'Input: ValueState set correctly');
+			assert.ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
 		});
 		var oCoreValHandler = function(oEvent) {
 			assert.ok(false,"should never be called");
@@ -115,8 +86,8 @@
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oCompZip, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
-				assert.ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
-				assert.ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
+				assert.ok(oCompZip.getValueState() === library.ValueState.None, 'Input: ValueState set correctly');
+				assert.ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly');
 				done();
 			});
 			oCompZip.setValue('12345');
@@ -169,7 +140,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {}
 		});
 
@@ -187,7 +158,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {}
 		});
 
@@ -206,7 +177,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {}
 		});
 
@@ -226,7 +197,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {
 				handleValidation: false
 			}
@@ -248,7 +219,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {
 				handleValidation: false
 			}
@@ -269,7 +240,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {
 				handleValidation: false
 			}
@@ -291,7 +262,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {
 				handleValidation: true
 			}
@@ -313,7 +284,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {
 				handleValidation: true
 			}
@@ -334,7 +305,7 @@
 		var oRegisterObjectSpy = this.spy(oMessageManager, "registerObject");
 
 		jQuery.sap.declare(sComponentName + ".Component");
-		sap.ui.core.UIComponent.extend(sComponentName + ".Component", {
+		UIComponent.extend(sComponentName + ".Component", {
 			metadata: {
 				handleValidation: true
 			}
@@ -351,11 +322,11 @@
 	});
 
 	QUnit.test("Model: checkMessages", function(assert) {
-		var oCheckMessagesSpy = sinon.spy(sap.ui.model.Model.prototype, "checkMessages");
-		var oModel = new sap.ui.model.Model();
+		var oCheckMessagesSpy = sinon.spy(Model.prototype, "checkMessages");
+		var oModel = new Model();
 		var mMessages = {"foo": {"key1": "value1"}};
 
-		oModel.mMessages = mMessages
+		oModel.mMessages = mMessages;
 		oModel.setMessages(mMessages);
 		assert.equal(oCheckMessagesSpy.callCount, 0, "No changes detected - Skip check messages");
 
@@ -367,12 +338,16 @@
 		assert.deepEqual(oModel.mMessages, {}, "Model messages cleared");
 	});
 
-</script>
+	QUnit.test("Model: Refresh with force update", function(assert) {
+		var done = assert.async();
+		var oModel = new Model();
+		var oMessage = new Message({message: "myMessage", type: library.MessageType.Error});
+		oModel.setMessages({"/test": oMessage});
+		oModel.attachMessageChange(function(oEvent){
+			assert.strictEqual(oMessage, oEvent.getParameter("oldMessages")[0]);
+			done();
+		});
+		oModel.refresh(true);
+	});
 
-</head>
-<body>
-<div id="qunit"></div>
-<br>
-<div id="content"></div>
-</body>
-</html>
+});
