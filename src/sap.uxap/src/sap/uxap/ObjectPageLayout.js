@@ -2222,7 +2222,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._onScroll = function (oEvent) {
-		var iScrollTop = Math.max(oEvent.target.scrollTop, 0), // top of the visible page
+		var iScrollTop = Math.max(Math.ceil(oEvent.target.scrollTop), 0), // top of the visible page
 			iPageHeight,
 			oHeader = this.getHeaderTitle(),
 			bShouldStick = this._shouldSnapHeaderOnScroll(iScrollTop),
