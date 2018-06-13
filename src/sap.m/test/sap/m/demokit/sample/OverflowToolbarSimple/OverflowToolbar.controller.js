@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 			this.byId("otb4").setWidth(iValue + "%");
 			this.byId("otb5").setWidth(iValue + "%");
 			this.byId("otb6").setWidth(iValue + "%");
+			this.byId("otb7").setWidth(iValue + "%");
 		}
 	});
 

@@ -686,6 +686,99 @@
 		})
 	];
 
+	var toolbarContent10 = [
+		new sap.m.Label({
+			id: "labelNoLayout",
+			text : "Label no LayoutData"
+		}),
+		new sap.m.Button({
+			text: "Button no LayoutData"
+		}),
+		new sap.m.Label({
+			id: "labelLayoutData",
+			text : "Shrinkable LayoutData",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.Button({
+			text: "Shrinkable LayoutData",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "50px"
+			})
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.SearchField("searchLayoutData",
+		{
+			width:"25%",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.Select("selectLanguage", {
+			name: "select-language",
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "French"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "English"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "German"
+				})
+			],
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.Input({
+			placeholder: "Input",
+			width: "10%",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.CheckBox({
+			text : "Checkbox",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "100px"
+			})
+		}),
+		new sap.m.ComboBox("comboBox", {
+			items: [
+						new sap.ui.core.Item({
+								key: "0",
+								text: "item 0"
+						}),
+						new sap.ui.core.Item({
+							key: "1",
+							text: "item 1",
+						}),
+						new sap.ui.core.Item({
+							key: "2",
+							text: "item 2"
+						})
+					],
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				shrinkable: true,
+				minWidth: "50px"
+			})
+		})
+	];
+
 	var toolbarContentFooter = [
 		new sap.m.Label({
 			text : "When the toolbar is in the footer, the action sheet opens above it."
@@ -776,6 +869,11 @@
 		new sap.m.OverflowToolbar("otb9", {
 			width: 'auto',
 			content: toolbarContent9
+		}),
+
+		new sap.m.OverflowToolbar("otb10", {
+			width: 'auto',
+			content: toolbarContent10
 		}),
 
 		new sap.m.OverflowToolbar("otbFooter", {

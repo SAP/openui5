@@ -503,6 +503,8 @@ sap.ui.define([
 			}
 		}
 
+		this._markControlsWithShrinkableLayoutData();
+
 		// If all content fits - put the buttons from the previous step (if any) in the action sheet and stop here
 		if (iContentSize <= iToolbarSize) {
 			fnFlushButtonsToActionSheet.call(this, aButtonsToMoveToActionSheet);
@@ -534,6 +536,30 @@ sap.ui.define([
 		}
 
 		fnInvalidateIfHashChanged.call(this, sIdsHash);
+	};
+
+	/*
+	 * Checks if the given control has shrinkable <code>LayoutData</code> or not and marks it with shrinkable class.
+	 *
+	 * @private
+	 */
+	OverflowToolbar.prototype._markControlsWithShrinkableLayoutData = function() {
+		this.getContent().forEach(function(oControl) {
+			// remove old class
+			oControl.removeStyleClass(Toolbar.shrinkClass);
+
+			// ignore the controls that have fixed width
+			var sWidth = Toolbar.getOrigWidth(oControl.getId());
+			if (!Toolbar.isRelativeWidth(sWidth)) {
+				return;
+			}
+
+			// check shrinkable via layout data
+			var oLayout = oControl.getLayoutData();
+			if (oLayout && oLayout.isA("sap.m.ToolbarLayoutData") && oLayout.getShrinkable()) {
+				oControl.addStyleClass(Toolbar.shrinkClass);
+			}
+		});
 	};
 
 	/**
@@ -996,12 +1022,18 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar._getOptimalControlWidth = function (oControl, iOldSize) {
-		var iOptimalWidth;
+		var iOptimalWidth,
+			oLayoutData = oControl.getLayoutData(),
+			bShrinkable = oLayoutData ? oLayoutData.getShrinkable() : false,
+			iMinWidth = bShrinkable ? parseInt(oLayoutData.getMinWidth(), 10) : 0;
 
 		// For spacers, get the min-width + margins
 		if (oControl instanceof ToolbarSpacer) {
 			iOptimalWidth = parseInt(oControl.$().css('min-width'), 10) || 0 + oControl.$().outerWidth(true) - oControl.$().outerWidth();
-			// For other elements, get the outer width
+		// For elements with LayoutData get minWidth + margins
+		} else if (bShrinkable && iMinWidth > 0) {
+			iOptimalWidth = iMinWidth + oControl.$().outerWidth(true) - oControl.$().outerWidth();
+		// For other elements, get the outer width
 		} else {
 			iOptimalWidth = oControl.getVisible() ? oControl.$().outerWidth(true) : 0;
 		}
