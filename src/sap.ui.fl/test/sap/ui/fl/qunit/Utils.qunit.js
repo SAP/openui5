@@ -905,6 +905,21 @@ function(
 		assert.deepEqual(Utils.getParsedURLHash(), oParameters, "then the url parameters calculated from the url are received");
 	});
 
+	QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert){
+		sandbox.stub(Utils, "getUshellContainer", function() {
+			return {
+				getService: function () {
+					return {
+						getHash: function () { },
+						parseShellHash: function (sHash) { }
+					};
+				}
+			};
+		});
+
+		assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then an empty object is received");
+	});
+
 	QUnit.test("when calling 'getParsedURLHash' without a ushell container", function(assert){
 		assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then no url parameters are received");
 	});
