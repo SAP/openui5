@@ -851,6 +851,58 @@
 			"Correct, if the provided TitleLevel is not valid, TitleLevel.Auto should be returned " + sap.ui.core.TitleLevel.Auto);
 	});
 
+	QUnit.module("Private methods");
+
+	QUnit.test("BCP:1870298358 - cloned header should not introduce scrollbar - " +
+		"_obtainSnappedTitleHeight and _obtainExpandedTitleHeight", function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
+			oCSSSpy;
+
+		oObjectPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
+
+		// Act - render OP and call method
+		oObjectPage._obtainSnappedTitleHeight(true/* via clone */);
+
+		// Assert
+		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
+		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
+		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+
+		// ACT - Reset spy and call method
+		oCSSSpy.reset();
+		oObjectPage._obtainExpandedTitleHeight(true/* via clone */);
+
+		// Assert
+		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
+		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
+		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+
+		// Cleanup
+		oCSSSpy.restore();
+		oObjectPage.destroy();
+	});
+
+	QUnit.test("BCP:1870298358 - _getScrollableViewportHeight method should acquire the exact height", function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
+			oGetBoundingClientRectSpy;
+
+		oObjectPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oGetBoundingClientRectSpy = sinon.spy(oObjectPage.getDomRef(), "getBoundingClientRect");
+
+		// Act - call method
+		oObjectPage._getScrollableViewportHeight();
+
+		// Assert
+		assert.strictEqual(oGetBoundingClientRectSpy.callCount, 1, "Exact height is acquired using getBoundingClientRect");
+	});
+
 	QUnit.module("ObjectPage API: AnchorBar", {
 		beforeEach: function () {
 			this.appControl = new sap.m.App();
