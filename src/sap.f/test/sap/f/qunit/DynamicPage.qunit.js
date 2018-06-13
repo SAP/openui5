@@ -2019,8 +2019,8 @@
 		// check
 		assert.equal(oSpy.callCount, 1, "scroll to show the 'collapse' visual indicator is called");
 
-		iCollapseButtonBottom =  Math.round(oCollapseButton.getDomRef().getBoundingClientRect().bottom);
-		iDynamicPageBottom = Math.round(this.oDynamicPage.getDomRef().getBoundingClientRect().bottom);
+		iCollapseButtonBottom =  Math.floor(oCollapseButton.getDomRef().getBoundingClientRect().bottom);
+		iDynamicPageBottom = Math.floor(this.oDynamicPage.getDomRef().getBoundingClientRect().bottom);
 
 		// check position
 		assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page, pos: " + iCollapseButtonBottom);
