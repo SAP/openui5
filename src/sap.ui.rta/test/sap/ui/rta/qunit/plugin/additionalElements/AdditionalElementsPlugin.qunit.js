@@ -209,6 +209,7 @@ sap.ui.require([
 			return test.overlay()
 
 			.then(function(oOverlay) {
+				oPlugin.setDesignTime(oDesignTime);
 				oPlugin.registerElementOverlay(oOverlay);
 				var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
 				assert.equal(oPlugin.getContextMenuTitle(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
@@ -269,7 +270,6 @@ sap.ui.require([
 			oDesignTime.destroy();
 			oPlugin.destroy();
 			oPseudoPublicParent.destroy();
-			// this.oOverlay && this.oOverlay.destroy();
 			sandbox.restore();
 		}
 	});
@@ -336,7 +336,6 @@ sap.ui.require([
 			oDesignTime.destroy();
 			oPlugin.destroy();
 			oPseudoPublicParent.destroy();
-			// this.oOverlay && this.oOverlay.destroy();
 			sandbox.restore();
 		}
 	});
@@ -572,7 +571,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when the Child-controls have no designtime Metadata", function(assert) {
-		return createOverlayWithoutDesignTime({
+		return createOverlayWithoutDesignTimeMetadata({
 			"reveal" : {
 				changeType : "unhideControl"
 			}
@@ -710,7 +709,6 @@ sap.ui.require([
 			sap.ushell = this.originalUShell;
 			oPlugin.destroy();
 			oPseudoPublicParent.destroy();
-			// this.oOverlay && this.oOverlay.destroy();
 		}
 	});
 
@@ -1039,7 +1037,6 @@ sap.ui.require([
 		return new Promise(function(resolve) {
 			oDesignTime = new DesignTime({
 				rootElements : [oPseudoPublicParent],
-				// plugins: [this.oRemovePlugin, this.oRenamePlugin],
 				designTimeMetadata: oCustomDesignTimeMetadata
 			});
 
@@ -1060,114 +1057,6 @@ sap.ui.require([
 				case ON_IRRELEVANT : return oIrrelevantOverlay;
 			}
 		});
-
-		// oPseudoPublicParentOverlay = new ElementOverlay({
-		// 	element : oPseudoPublicParent,
-		// 	designTimeMetadata : new ElementDesignTimeMetadata({
-		// 		libraryName : "sap.ui.layout",
-		// 		data : {
-		// 			aggregations : {
-		// 				panes : {
-		// 					//in hiddenTree actions and childNames belong at the public parent
-		// 					actions : bInHiddenTree ? mActions : null,
-		// 					childNames : bInHiddenTree ? mChildNames : null,
-		// 					getStableElements: function() {
-		// 						return [];
-		// 					},
-		// 					getIndex: function(oBar, oBtn) {
-		// 						if (oBtn){
-		// 							return oBar.getContentLeft().indexOf(oBtn) + 1;
-		// 						} else {
-		// 							return oBar.getContentLeft().length;
-		// 						}
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-		// 	})
-		// });
-		// oParentOverlay = new ElementOverlay({
-		// 	element : oControl,
-		// 	designTimeMetadata : new ElementDesignTimeMetadata({
-		// 		libraryName : "sap.m",
-		// 		data : {
-		// 			aggregations : {
-		// 				contentLeft : {
-		// 					childNames : !bInHiddenTree ? mChildNames : null,
-		// 					//normaly actions and childNames belong here, but in hiddenTree at the public parent
-		// 					//actions :  !bInHiddenTree ? mActions : null,
-		// 					actions :  !bInHiddenTree && (mActions.addODataProperty || mActions.move) ? {
-		// 						addODataProperty : mActions.addODataProperty,
-		// 						move : mActions.move
-		// 					} : null
-		// 				}
-		// 			}
-		// 		}
-		// 	})
-		// });
-		// oSibilingOverlay = new ElementOverlay({
-		// 	element : oSibling,
-		// 	designTimeMetadata : new ElementDesignTimeMetadata({
-		// 		libraryName : "sap.m",
-		// 		data : {
-		// 			name : mName,
-		// 			actions :  !bInHiddenTree && mActions.reveal ? {
-		// 				reveal : mActions.reveal
-		// 			} : null
-		// 		}
-		// 	})
-		// });
-		// oIrrelevantOverlay = new ElementOverlay({
-		// 	element : oIrrelevantChild,
-		// 	designTimeMetadata : new ElementDesignTimeMetadata({
-		// 		libraryName : "sap.m",
-		// 		data : {
-		// 			name : mName,
-		// 			actions :  !bInHiddenTree && mActions.reveal ? {
-		// 				reveal : mActions.reveal
-		// 			} : null
-		// 		}
-		// 	})
-		// });
-		// new ElementOverlay({
-		// 	element : oInvisible1,
-		// 	designTimeMetadata : new ElementDesignTimeMetadata({
-		// 		libraryName : "sap.m",
-		// 		data : {
-		// 			name : mName,
-		// 			actions :  !bInHiddenTree && mActions.reveal ? {
-		// 				reveal : mActions.reveal
-		// 			} : null
-		// 		}
-		// 	})
-		// });
-		// new ElementOverlay({
-		// 	element : oInvisible2,
-		// 	designTimeMetadata : new ElementDesignTimeMetadata({
-		// 		libraryName : "sap.m",
-		// 		data : {
-		// 			name : mName,
-		// 			actions :  !bInHiddenTree && mActions.reveal ? {
-		// 				reveal : mActions.reveal
-		// 			} : null
-		// 		}
-		// 	})
-		// });
-		// new ElementOverlay({
-		// 	element : oUnsupportedInvisible,
-		// 	designTimeMetadata : new ElementDesignTimeMetadata({
-		// 		libraryName : "sap.m",
-		// 		data : {
-		// 			//unsupported control without any designtime metadata
-		// 		}
-		// 	})
-		// });
-		//AggregationOverlays will be created automatically
-		// switch (sOverlayType){
-		// 	case ON_SIBLING : return oSibilingOverlay;
-		// 	case ON_CHILD : return oParentOverlay;
-		// 	case ON_IRRELEVANT : return oIrrelevantOverlay;
-		// }
 	}
 
 	function createUnsupportedOverlayWithAggregationActions(){
@@ -1209,26 +1098,7 @@ sap.ui.require([
 		});
 	}
 
-	function createOverlayWithoutDesignTime(mActions, bOnSibling) {
-		// oParentOverlay = new ElementOverlay({
-		// 	element: oControl,
-		// 	designTimeMetadata: new ElementDesignTimeMetadata({
-		// 	})
-		// });
-		// oSibilingOverlay = new ElementOverlay({
-		// 	element: oSibling
-		// });
-		// new ElementOverlay({
-		// 	element: oInvisible1
-		// });
-		// new ElementOverlay({
-		// 	element: oInvisible2
-		// });
-		// new ElementOverlay({
-		// 	element : oUnsupportedInvisible
-		// });
-		// //AggregationOverlays will be created automatically
-		// return bOnSibling ? oSibilingOverlay : oParentOverlay;
+	function createOverlayWithoutDesignTimeMetadata(mActions, bOnSibling) {
 		var oEmptyActions = { actions: null };
 		var oCustomDesignTimeMetadata = {
 			"sap.m.Bar" : oEmptyActions,
