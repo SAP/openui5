@@ -550,7 +550,7 @@ sap.ui.define([
 		 * @private
 		 */
 		isVariableRowHeightEnabled : function(oTable) {
-			return oTable._bVariableRowHeightEnabled && oTable.getFixedRowCount() <= 0 && oTable.getFixedBottomRowCount() <= 0;
+			return oTable && oTable._bVariableRowHeightEnabled && oTable.getFixedRowCount() <= 0 && oTable.getFixedBottomRowCount() <= 0;
 		},
 
 		/**
