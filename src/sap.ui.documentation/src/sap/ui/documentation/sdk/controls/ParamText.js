@@ -98,6 +98,13 @@ sap.ui.define([
 				oRm.write("(default)");
 				oRm.write("</span>");
 			}
+			if (sHref) {
+				oRm.write("</a>");
+				oRm.write("<div");
+				oRm.addClass("sapUiParamText");
+				oRm.writeClasses();
+				oRm.write(">");
+			}
 			if (oControl.getDeprecated()) {
 
 				oRm.write("<div");
@@ -134,7 +141,7 @@ sap.ui.define([
 
 				oRm.write("</div>");
 			}
-			oRm.write(sHref ? "</a>" : "</div>");
+			oRm.write("</div>");
 		}
 	});
 
