@@ -910,7 +910,8 @@ sap.ui.define([
 				sSegment = sSegment.slice(2);
 				fnAnnotation = sSegment[0] === "."
 					? jQuery.sap.getObject(sSegment.slice(1), undefined, mParameters.scope)
-					: jQuery.sap.getObject(sSegment);
+					: mParameters && jQuery.sap.getObject(sSegment, undefined, mParameters.scope)
+						|| jQuery.sap.getObject(sSegment);
 				if (typeof fnAnnotation !== "function") {
 					// Note: "varargs" syntax does not help because Array#join ignores undefined
 					return log(WARNING, sSegment, " is not a function but: " + fnAnnotation);
@@ -1935,12 +1936,13 @@ sap.ui.define([
 	 * Annotations starting with "@@", for example
 	 * "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple" or "@@.AH.isMultiple" or
 	 * "@@.isMultiple", represent computed annotations. Their name without the "@@" prefix must
-	 * refer to a function either in the global namespace (in case of an absolute name) or in
-	 * <code>mParameters.scope</code> (in case of a relative name starting with a dot, which is
-	 * stripped before lookup; see the <code>&lt;template:alias></code> instruction for XML
-	 * Templating). This function is called with the current object (or primitive value) and
-	 * additional details and returns the result of this {@link #requestObject} call. The additional
-	 * details are given as an object with the following properties:
+	 * refer to a function in <code>mParameters.scope</code> in case of a relative name starting
+	 * with a dot, which is stripped before lookup; see the <code>&lt;template:alias></code>
+	 * instruction for XML Templating. In case of an absolute name, it is searched in
+	 * <code>mParameters.scope</code> first and then in the global namespace. This function is
+	 * called with the current object (or primitive value) and additional details and returns the
+	 * result of this {@link #requestObject} call. The additional details are given as an object
+	 * with the following properties:
 	 * <ul>
 	 * <li><code>{boolean} $$valueAsPromise</code> Whether the computed annotation may return a
 	 *   <code>Promise</code> resolving with its value (since 1.57.0)

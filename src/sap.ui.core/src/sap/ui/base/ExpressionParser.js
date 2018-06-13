@@ -5,8 +5,9 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/thirdparty/URI',
+	'jquery.sap.script', // for jQuery.sap.parseJS
 	'jquery.sap.strings'
-], function (jQuery, URI/*, jQuerySap1 */) {
+], function (jQuery, URI/*, jQuerySap1, jQuerySap2 */) {
 	"use strict";
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,
