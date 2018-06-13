@@ -40,6 +40,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 					generator: "Dallas beta 1",
 					user: this.sUserId
 				},
+				oDataPropertyInformation: {
+					propertyName: "propertyName",
+					entityType: "entityType",
+					oDataServiceUri: "oDataServiceUri"
+				},
 				dependentSelector: {
 					source: {
 						id: "controlSource1",
@@ -291,6 +296,11 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 				from: "1.0.0",
 				to: "1.0.0"
 			},
+			oDataInformation: {
+				propertyName: "propertyName",
+				entityType: "entityType",
+				oDataServiceUri: "oDataServiceUri"
+			},
 			jsOnly: true
 		};
 
@@ -309,6 +319,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 		assert.deepEqual(oCreatedFile.selector, {"id": "control1"});
 		assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
 		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
+		assert.deepEqual(oCreatedFile.oDataInformation, {propertyName: "propertyName", entityType: "entityType", oDataServiceUri: "oDataServiceUri"});
 		assert.ok(oCreatedFile.jsOnly);
 	});
 
