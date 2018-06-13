@@ -17,8 +17,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
-
 	/**
 	 * Helper object to handle variants and their changes
 	 *

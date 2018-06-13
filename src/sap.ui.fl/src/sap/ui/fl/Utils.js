@@ -850,7 +850,8 @@ sap.ui.define([
 			var oUshellContainer = Utils.getUshellContainer();
 			if (oUshellContainer) {
 				var oURLParser = oUshellContainer.getService("URLParsing");
-				return oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
+				var oParsedHash = oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
+				return oParsedHash ? oParsedHash : { };
 			}
 			return { };
 		},
