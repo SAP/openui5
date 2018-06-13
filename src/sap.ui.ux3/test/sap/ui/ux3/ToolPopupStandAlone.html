@@ -195,16 +195,12 @@
 		text : "Move Opener Button",
 		checked : false,
 		change : function() {
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
-				alert("Use a modern browser damnit :-)");
+			if (this.getChecked()) {
+				oButton.addStyleClass("animate");
+				oButtonOpenToolPopFollowOf.setEnabled(true);
 			} else {
-				if (this.getChecked()) {
-					oButton.addStyleClass("animate");
-					oButtonOpenToolPopFollowOf.setEnabled(true);
-				} else {
-					oButton.removeStyleClass("animate");
-					oButtonOpenToolPopFollowOf.setEnabled(false);
-				}
+				oButton.removeStyleClass("animate");
+				oButtonOpenToolPopFollowOf.setEnabled(false);
 			}
 		}
 	}).placeAt("checkFollowOf");

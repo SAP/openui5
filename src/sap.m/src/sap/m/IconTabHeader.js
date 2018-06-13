@@ -596,12 +596,6 @@ function(
 		this._oScroller.setHorizontal(!this._isTouchScrollingDisabled && (!this.getEnableTabReordering() || !Device.system.desktop));
 
 		this._setsDragAndDropConfigurations();
-
-		// Deregister resize event before re-rendering
-		if (this._sResizeListenerNoFlexboxSupportId) {
-			ResizeHandler.deregister(this._sResizeListenerNoFlexboxSupportId);
-			this._sResizeListenerNoFlexboxSupportId = null;
-		}
 	};
 
 	/**
@@ -1405,19 +1399,6 @@ function(
 	};
 
 	/**
-	 * Resize handler for ITB content inside FixFlex layout (IE9 fix)
-	 * Calculate height on the content
-	 * @private
-	 */
-	IconTabHeader.prototype._fnResizeNoFlexboxSupport = function() {
-		var $content = this.getParent().$("containerContent"),
-			iDiffOuterInnerHeight = $content.outerHeight(true) - $content.height();
-
-		// calculate and set content div height
-		$content.height(this.getParent().$().height() - $content.position().top - iDiffOuterInnerHeight);
-	};
-
-	/**
 	 * Sets tabs visibility when touch scrolling is disabled
 	 * @private
 	 */
@@ -1517,14 +1498,6 @@ function(
 		}
 
 		return true;
-	};
-
-	IconTabHeader.prototype.onExit = function() {
-		// Deregister resize event before re-rendering
-		if (this._sResizeListenerNoFlexboxSupportId) {
-			ResizeHandler.deregister(this._sResizeListenerNoFlexboxSupportId);
-			this._sResizeListenerNoFlexboxSupportId = null;
-		}
 	};
 
 	/**
