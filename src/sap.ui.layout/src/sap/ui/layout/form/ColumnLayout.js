@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.ui.layout.form.ColumnLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
-               'sap/ui/Device', 'sap/ui/core/ResizeHandler', './ColumnLayoutRenderer'],
-	function(jQuery, library, FormLayout, Device, ResizeHandler, ColumnLayoutRenderer) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/layout/library',
+	'./FormLayout',
+	'./ColumnLayoutRenderer'],
+	function(jQuery, Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer) {
 	"use strict";
 
 	/**
