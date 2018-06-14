@@ -3,8 +3,25 @@
  */
 
 // Provides TablePersoDialog
-sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', './List', './Toolbar', 'sap/ui/base/ManagedObject', 'sap/m/library', 'sap/ui/Device', 'sap/ui/model/Sorter', 'sap/ui/model/Filter', 'sap/ui/model/json/JSONModel', 'sap/m/CheckBox', 'sap/m/SearchField', 'sap/m/ScrollContainer'],
-	function(jQuery, Button, Dialog, InputListItem, List, Toolbar, ManagedObject, library, Device, Sorter, Filter, JSONModel, CheckBox, SearchField, ScrollContainer) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Button',
+	'./Dialog',
+	'./InputListItem',
+	'./List',
+	'./Toolbar',
+	'sap/ui/base/ManagedObject',
+	'sap/m/library',
+	'sap/ui/Device',
+	'sap/ui/model/Sorter',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/CheckBox',
+	'sap/m/SearchField',
+	'sap/m/ScrollContainer'],
+	function(jQuery, Button, Dialog, InputListItem, List, Toolbar, ManagedObject, library, Device, Sorter, Filter,
+			FilterOperator, JSONModel, CheckBox, SearchField, ScrollContainer) {
 	"use strict";
 
 
@@ -678,7 +695,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	 */
 	TablePersoDialog.prototype._executeSearch = function () {
 		var sValue = this._oSearchField.getValue(),
-			oFilter = new Filter("text", sap.ui.model.FilterOperator.Contains, sValue),
+			oFilter = new Filter("text", FilterOperator.Contains, sValue),
 			oBinding = this._oList.getBinding("items");
 
 		this._oSelectAllToolbar.setVisible(!sValue && this.getShowSelectAll());
