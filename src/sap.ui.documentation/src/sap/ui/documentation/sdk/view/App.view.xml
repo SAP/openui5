@@ -35,12 +35,12 @@
 						change="navigateToSection"
 						autoAdjustWidth="true">
 					<items>
-						<core:Item id="welcomeTab" text="Home" key="home"/>
-						<core:Item id="topicMasterTab" text="Documentation" key="topic"/>
-						<core:Item id="apiMasterTab" text="API Reference" key="api"/>
-						<core:Item id="controlsMasterTab" text="Samples" key="controls"/>
-						<core:Item id="demoAppsTab" text="Demo Apps" key="demoapps"/>
-						<core:Item id="toolsTab" text="Tools" key="tools"/>
+						<core:Item text="Home" key="home"/>
+						<core:Item text="Documentation" key="topic"/>
+						<core:Item text="API Reference" key="api"/>
+						<core:Item text="Samples" key="controls"/>
+						<core:Item text="Demo Apps" key="demoapps"/>
+						<core:Item text="Tools" key="tools"/>
 					</items>
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
@@ -57,17 +57,17 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
 					</layoutData>
 					<items>
-						<IconTabFilter id="welcomeTabMobile" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
+						<IconTabFilter id="welcomeTab" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
 						</IconTabFilter>
-						<IconTabFilter id="topicMasterTabbMobile" text="Documentation" key="topic" visible="{= !${appView>/bHideTopicSection}}">
+						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic" visible="{= !${appView>/bHideTopicSection}}">
 						</IconTabFilter>
-						<IconTabFilter id="apiMasterTabbMobile" text="API Reference" key="api" visible="{= !${appView>/bHideApiSection}}">
+						<IconTabFilter id="apiMasterTab" text="API Reference" key="api" visible="{= !${appView>/bHideApiSection}}">
 						</IconTabFilter>
-						<IconTabFilter id="controlsMasterTabbMobile" text="Samples" key="controls">
+						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
 						</IconTabFilter>
-						<IconTabFilter id="demoAppsTabbMobile" text="Demo Apps" key="demoapps">
+						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
 						</IconTabFilter>
-						<IconTabFilter id="toolsTabbMobile" text="Tools" key="tools">
+						<IconTabFilter id="toolsTab" text="Tools" key="tools">
 						</IconTabFilter>
 					</items>
 				</IconTabHeader>
