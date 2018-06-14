@@ -307,6 +307,21 @@
 				sap.ui.Device.system.desktop = true;
 				sap.ui.Device.system.tablet = false;
 				sap.ui.Device.system.phone = false;
+			},
+			testExpandedCollapsedARIA: function (assert, oDynamicPage, bShouldBeExpanded, sMessage) {
+				var sTitleLabelledBy = oDynamicPage.getTitle().$().attr("aria-labelledby"),
+					sToggleHeaderTextId = sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER"),
+					sExpandedHeaderTextId = sap.ui.core.InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER"),
+					sCollapsedHeaderTextId = sap.ui.core.InvisibleText.getStaticId("sap.f", "SNAPPED_HEADER"),
+					bFoundExpandedHeaderARIAReferences =
+						sTitleLabelledBy.indexOf(sExpandedHeaderTextId + " " + sToggleHeaderTextId) > -1,
+					bFoundCollapsedHeaderARIAReferences =
+						sTitleLabelledBy.indexOf(sCollapsedHeaderTextId + " " + sToggleHeaderTextId) > -1;
+
+				assert.strictEqual(bFoundExpandedHeaderARIAReferences, bShouldBeExpanded,
+					sMessage + ": found expanded header texts=" + bFoundExpandedHeaderARIAReferences);
+				assert.strictEqual(bFoundCollapsedHeaderARIAReferences, !bShouldBeExpanded,
+					sMessage + ": found collapsed header texts=" + bFoundCollapsedHeaderARIAReferences);
 			}
 		};
 
@@ -797,36 +812,28 @@
 		var oDynamicPage = this.oDynamicPage,
 			$oDynamicPageHeader = oDynamicPage.getHeader().$(),
 			sSnappedClass = "sapFDynamicPageTitleSnapped",
-			oSetPropertySpy = this.spy(oDynamicPage, "setProperty"),
-			sExpandedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER")
-				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER"),
-			sCollapsedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "SNAPPED_HEADER")
-				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
+			oSetPropertySpy = this.spy(oDynamicPage, "setProperty");
 
 		this.oDynamicPage._bHeaderInTitleArea = true;
 
 		assert.ok(oDynamicPage.getHeaderExpanded(), "initial value for the headerExpanded prop is true");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, true, "Initial aria-labelledby references");
 		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sExpandedHeaderARIAReferences, "Initial aria-labelledby references indicate that the header is expanded");
 
 		oDynamicPage.setHeaderExpanded(false);
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false under regular conditions works");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, false, "Header is now snapped");
 		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 		oSetPropertySpy.reset();
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sCollapsedHeaderARIAReferences, "aria-labelledby should indicate that the header is snapped after the call");
 
 		oDynamicPage.setHeaderExpanded(true);
 		assert.ok(oDynamicPage.getHeaderExpanded(), "header converted to expanded");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, true, "Header is expanded again");
 		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", true, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sExpandedHeaderARIAReferences, "aria-labelledby should be back to it's original value");
-
 		oSetPropertySpy.reset();
 
 		oDynamicPage._snapHeader();
@@ -845,26 +852,19 @@
 			oPinButton = oDynamicPage.getHeader()._getPinButton(),
 			oFakeEvent = {
 				srcControl: oDynamicPageTitle
-			},
-			sExpandedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER")
-				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER"),
-			sCollapsedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "SNAPPED_HEADER")
-				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
+			};
 
 		this.oDynamicPage._bHeaderInTitleArea = true;
 
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "Initially the header is expanded");
 		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), true, "Initially toggleHeaderOnTitleClick = true");
 		assert.equal($oDynamicPageTitle.attr("tabindex"), 0, "Initially the header title is focusable");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sExpandedHeaderARIAReferences, "Initial aria-labelledby references indicate that the header is expanded");
 
 		oDynamicPageTitle.ontap(oFakeEvent);
 
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "After one click, the header is collapsed");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, false, "Header is collapsed after tap");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sCollapsedHeaderARIAReferences, "aria-labelledby should indicate that the header is collapsed");
 
 		oDynamicPage.setToggleHeaderOnTitleClick(false);
 
@@ -872,24 +872,23 @@
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be still excluded from the tab chain");
 		assert.equal($oDynamicPageTitle.attr("tabindex"), undefined, "The header title is not focusable");
-		assert.notOk(oDynamicPage.getTitle().$().attr("aria-labelledby"), "aria-labelledby should still indicate that the header is collapsed");
+		assert.notOk(oDynamicPage.getTitle().$().attr("aria-labelledby"),
+			"Since the header isn't toggleable, an aria-labelledby attribute shouldn't be rendered");
 
 		oDynamicPage.setToggleHeaderOnTitleClick(true);
 
 		oDynamicPageTitle.ontap(oFakeEvent);
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, true, "Header is back to expanded");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
 		assert.equal($oDynamicPageTitle.attr("tabindex"), 0, "The header title is focusable again");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sExpandedHeaderARIAReferences, "aria-labelledby should be back to it's initial value");
 
 		oPinButton.firePress();
 		oDynamicPageTitle.ontap(oFakeEvent);
 
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "After one click, the header is collapsed even it's pinned");
+		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, false, "Header is collapsed after tap");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sCollapsedHeaderARIAReferences, "aria-labelledby should indicate that the header is collapsed");
 		assert.strictEqual(oPinButton.getPressed(), false, "Pin button pressed state should be reset.");
 		assert.strictEqual(oDynamicPage.$().hasClass("sapFDynamicPageHeaderPinned"), false, "DynamicPage header should be unpinned.");
 	});
