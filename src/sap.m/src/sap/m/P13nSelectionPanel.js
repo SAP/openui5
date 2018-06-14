@@ -4,8 +4,29 @@
 
 // Provides control sap.m.P13nSelectionPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './SearchField', './Table', './library', 'sap/ui/core/library','sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/m/ScrollContainer', './P13nSelectionItem'
-], function(jQuery, ColumnListItem, P13nPanel, SearchField, Table, library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, ScrollContainer /*, kept for compatibility: P13nSelectionItem */) {
+	'jquery.sap.global',
+	'./library',
+	'./ColumnListItem',
+	'./P13nPanel',
+	'./SearchField',
+	'./Text',
+	'./Table',
+	'./Column',
+	'./ScrollContainer',
+	'./P13nSelectionItem',
+	'./VBox',
+	'./Link',
+	'./OverflowToolbar',
+	'./OverflowToolbarLayoutData',
+	'./ToolbarSpacer',
+	'sap/ui/core/library',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/BindingMode',
+	'sap/ui/core/ResizeHandler'
+], function(jQuery, library, ColumnListItem, P13nPanel, SearchField, Text, Table, Column, ScrollContainer, P13nSelectionItem /* kept for compatibility*/,
+		VBox, Link, OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer,
+		CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler ) {
 	"use strict";
 
 	// shortcut for sap.m.ToolbarDesign
@@ -334,9 +355,9 @@ sap.ui.define([
 			rememberSelections: false,
 			selectionChange: jQuery.proxy(this._onSelectionChange, this),
 			columns: [
-				new sap.m.Column({
+				new Column({
                     vAlign: CoreLibrary.VerticalAlign.Middle,
-					header: new sap.m.Text({
+					header: new Text({
 						text: {
 							parts: [
 								{
@@ -358,9 +379,9 @@ sap.ui.define([
 				path: "/items",
 				templateShareable: false,
 				template: new ColumnListItem({
-					cells: new sap.m.VBox({
+					cells: new VBox({
 						items: [
-							new sap.m.Link({
+							new Link({
 								href: "{href}",
 								text: "{text}",
 								target: "{target}",
@@ -379,7 +400,7 @@ sap.ui.define([
 										fOnLinkPress(oEvent);
 									}
 								}
-							}), new sap.m.Text({
+							}), new Text({
 								visible: {
 									path: 'description',
 									formatter: function(sDescription) {
@@ -402,10 +423,10 @@ sap.ui.define([
 
 	P13nSelectionPanel.prototype._createToolbar = function() {
 		var that = this;
-		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
+		var oToolbar = new OverflowToolbar(this.getId() + "-toolbar", {
 			design: ToolbarDesign.Auto,
 			content: [
-				new sap.m.ToolbarSpacer(), new SearchField(this.getId() + "-searchField", {
+				new ToolbarSpacer(), new SearchField(this.getId() + "-searchField", {
 					liveChange: function(oEvent) {
 						var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
 
@@ -421,13 +442,13 @@ sap.ui.define([
 					},
 					// execute the standard search
 					search: jQuery.proxy(this._onExecuteSearch, this),
-					layoutData: new sap.m.OverflowToolbarLayoutData({
+					layoutData: new OverflowToolbarLayoutData({
 						minWidth: "12.5rem",
 						maxWidth: "23.077rem",
 						shrinkable: true,
 						moveToOverflow: false,
 						stayInOverflow: false
-					// priority: sap.m.OverflowToolbarPriority.High
+					// priority: OverflowToolbarPriority.High
 					})
 				})
 			]
