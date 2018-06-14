@@ -303,6 +303,17 @@ function(
 	};
 
 	/**
+	 * Returns the last focusable child overlay. Loop over siblings and parents when no focusable siblings found
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Target overlay object
+	 * @returns {sap.ui.dt.ElementOverlay} Found overlay object
+	 * @private
+	 */
+	Utils.getLastFocusableDescendantOverlay = function(oOverlay) {
+		return OverlayUtil.getLastDescendantByCondition(oOverlay, this.isOverlaySelectable);
+	};
+
+	/**
 	 * Returns the next focusable sibling overlay
 	 *
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Target overlay object
@@ -310,10 +321,14 @@ function(
 	 * @private
 	 */
 	Utils.getNextFocusableSiblingOverlay = function(oOverlay) {
+		var NEXT = true;
 		var oNextFocusableSiblingOverlay = OverlayUtil.getNextSiblingOverlay(oOverlay);
 
 		while (oNextFocusableSiblingOverlay && !this.isOverlaySelectable(oNextFocusableSiblingOverlay)) {
 			oNextFocusableSiblingOverlay = OverlayUtil.getNextSiblingOverlay(oNextFocusableSiblingOverlay);
+		}
+		if (!oNextFocusableSiblingOverlay) {
+			oNextFocusableSiblingOverlay = this._findSiblingOverlay(oOverlay, NEXT);
 		}
 		return oNextFocusableSiblingOverlay;
 	};
@@ -326,13 +341,41 @@ function(
 	 * @private
 	 */
 	Utils.getPreviousFocusableSiblingOverlay = function(oOverlay) {
+		var PREVIOUS = false;
 		var oPreviousFocusableSiblingOverlay = OverlayUtil.getPreviousSiblingOverlay(oOverlay);
 
 		while (oPreviousFocusableSiblingOverlay && !this.isOverlaySelectable(oPreviousFocusableSiblingOverlay)) {
 			oPreviousFocusableSiblingOverlay = OverlayUtil
 					.getPreviousSiblingOverlay(oPreviousFocusableSiblingOverlay);
 		}
+		if (!oPreviousFocusableSiblingOverlay) {
+			oPreviousFocusableSiblingOverlay = this._findSiblingOverlay(oOverlay, PREVIOUS);
+		}
 		return oPreviousFocusableSiblingOverlay;
+	};
+
+	/**
+	 * Returns an element overlay which is sibling to the given element overlay
+	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay The overlay to get the information from
+	 * @param  {boolean} bNext true for next sibling, false for previous sibling
+	 * @return {sap.ui.dt.ElementOverlay} the element overlay which is sibling to the given overlay
+	 * @private
+	 */
+	Utils._findSiblingOverlay = function(oOverlay, bNext) {
+		var oParentOverlay = oOverlay.getParentElementOverlay();
+		if (oParentOverlay) {
+			var oSiblingOverlay = bNext ?
+				OverlayUtil.getNextSiblingOverlay(oParentOverlay) : OverlayUtil.getPreviousSiblingOverlay(oParentOverlay);
+			if (!oSiblingOverlay) {
+				return this._findSiblingOverlay(oParentOverlay, bNext);
+			} else {
+				var oDescendantOverlay = bNext ?
+					this.getFirstFocusableDescendantOverlay(oSiblingOverlay) : this.getLastFocusableDescendantOverlay(oSiblingOverlay);
+				return oDescendantOverlay;
+			}
+		} else {
+			return undefined;
+		}
 	};
 
 	/**

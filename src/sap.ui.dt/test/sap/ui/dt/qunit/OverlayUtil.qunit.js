@@ -239,6 +239,36 @@ function(
 				"and function-parameter is 'undefined' -> throws error");
 		});
 
+		QUnit.test("when Overlays are created and the getLastDescendantByCondition function is called", function(assert) {
+			var aSelectableOverlays = [
+				this.oButtonOverlay01,
+				this.oButtonOverlay02,
+				this.oButtonOverlay21
+			];
+			var fnCondition = function(oOverlay) {
+				return aSelectableOverlays.indexOf(oOverlay) >= 0;
+			};
+
+			var oChildOverlay = OverlayUtil.getLastDescendantByCondition(this.oLayoutOverlay0, fnCondition);
+			assert.strictEqual(oChildOverlay, this.oButtonOverlay02, "oLayoutOverlay0 -> oButtonOverlay02 is the last overlay which fulfill the condition");
+
+			oChildOverlay = OverlayUtil.getLastDescendantByCondition(this.oLayoutOverlay2, fnCondition);
+			assert.strictEqual(oChildOverlay, this.oButtonOverlay21, "oLayoutOverlay2 -> oButtonOverlay21 is the last overlay which fulfill the condition");
+
+			oChildOverlay = OverlayUtil.getLastDescendantByCondition(this.oButtonOverlay01, fnCondition);
+			assert.strictEqual(oChildOverlay, undefined, "oButtonOverlay01 has no children and returns 'undefined'");
+
+			oChildOverlay = OverlayUtil.getLastDescendantByCondition(this.oLayoutOverlay3, fnCondition);
+			assert.strictEqual(oChildOverlay, undefined, "oLayoutOverlay3 children do not fulfill the condition and returns 'undefined'");
+
+			oChildOverlay = OverlayUtil.getLastDescendantByCondition(undefined, fnCondition);
+			assert.strictEqual(oChildOverlay, undefined, "and overlay-parameter is 'undefined' -> returns 'undefined'");
+
+			assert.throws(function() { OverlayUtil.getLastDescendantByCondition(this.oLayoutOverlay0); },
+				/expected condition is 'undefined' or not a function/,
+				"and function-parameter is 'undefined' -> throws error");
+		});
+
 		QUnit.test("when getParentInformation is requested for a control with a parent ", function(assert) {
 			var oParentInformation = OverlayUtil.getParentInformation(this.oButtonOverlay01);
 
