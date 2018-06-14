@@ -607,6 +607,110 @@
 			assert.notOk(oWizardStep.getValidated(), "The step is not validated.");
 			assert.strictEqual(oNextButton.$().attr("aria-hidden"), "true", "The next button has aria-hidden=true for not validated steps.");
 		});
+
+		QUnit.module("Wizard Navigation", {
+			sWizardId: "wizard-nav-id",
+			beforeEach: function () {
+				this.oWizard = new sap.m.Wizard(this.sWizardId, {
+					steps: [
+						new sap.m.WizardStep({
+							validated: true,
+							title: "Step 1",
+						}),
+						new sap.m.WizardStep({
+							validated: true,
+							title: "Step 2",
+						}),
+						new sap.m.WizardStep({
+							title: "Step 3"
+						})
+					]
+				});
+
+				this.oWizard.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			},
+			afterEach: function () {
+				this.oWizard.destroy();
+				this.oWizard = null;
+				this.oResourceBundle = null;
+			}
+		});
+
+		QUnit.test("Basic interaction", function (assert) {
+			var oNextButton = this.oWizard._getNextButton();
+
+			// assert
+			assert.strictEqual(oNextButton.getText(), this.oResourceBundle.getText("WIZARD_STEP") + " " + 2, "The next button's text is correct.");
+
+			// act
+			oNextButton.$().tap();
+			sap.ui.getCore().applyChanges();
+			// assert
+			oNextButton = this.oWizard._getNextButton();
+			assert.strictEqual(this.oWizard.getProgressStep().getId(), this.oWizard.getSteps()[1].getId(), "The wizard has navigated to the next step on next button click.");
+			assert.strictEqual(oNextButton.getText(), this.oResourceBundle.getText("WIZARD_STEP") + " " + 3, "The next button's text is correct.");
+		});
+
+		QUnit.test("Step rerendering on navigation", function (assert) {
+			var oNextButton = this.oWizard._getNextButton();
+
+			var oRenderingSpy =  sinon.spy(sap.m.WizardStep.prototype, "onBeforeRendering");
+			// act
+			oNextButton.$().tap();
+			sap.ui.getCore().applyChanges();
+			// assert
+			assert.notOk(oRenderingSpy.called, "The wizard step should not be rerendered on navigation.");
+		});
+
+		QUnit.test("setShowNextButton(false)", function (assert) {
+			this.oWizard.setShowNextButton(false);
+			var oNextButton = this.oWizard._getNextButton();
+
+			assert.notOk(oNextButton.getVisible(), "The next button for step 1 should be hidden.");
+			// act
+			this.oWizard.nextStep();
+			sap.ui.getCore().applyChanges();
+			// assert
+			oNextButton = this.oWizard._getNextButton();
+			assert.notOk(oNextButton.getVisible(), "The next button for step 2 should be hidden.");
+		});
+
+		QUnit.test("setShowNextButton()", function (assert) {
+			assert.ok(this.oWizard._getNextButton().getVisible(), "The next button for step 1 should be visible.");
+
+			// act
+			this.oWizard.setShowNextButton(false);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.notOk(this.oWizard._getNextButton().getVisible(), "The next button for step 1 should be hidden.");
+
+			// act
+			this.oWizard.nextStep();
+			// assert
+			assert.notOk(this.oWizard._getNextButton().getVisible(), "The next button for step 2 should be hidden.");
+
+		});
+
+		QUnit.test("nextButton visibility on discardProgress", function (assert) {
+			// act
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
+			this.clock.tick(100);
+
+			// assert
+			this.oWizard.getSteps().forEach(function(oStep, iIndex){
+				if (iIndex === 0) {
+					assert.ok(oStep.getAggregation("_nextButton").$().hasClass("sapMWizardNextButtonVisible"), "The current step next button is visible.");
+				} else {
+					assert.notOk(oStep.$().hasClass("sapMWizardStepActivated"), "The discarded steps are hidden.");
+				}
+			}, this);
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">

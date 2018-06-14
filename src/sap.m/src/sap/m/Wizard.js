@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./WizardProgressNavigator",
-	"./Button",
 	"sap/ui/Device",
 	"./WizardRenderer"
 ], function(
@@ -17,14 +16,10 @@ sap.ui.define([
 	Control,
 	ScrollEnablement,
 	WizardProgressNavigator,
-	Button,
 	Device,
 	WizardRenderer
 	) {
 		"use strict";
-
-		// shortcut for sap.m.ButtonType
-		var ButtonType = library.ButtonType;
 
 		/**
 		 * Constructor for a new Wizard.
@@ -177,14 +172,12 @@ sap.ui.define([
 				jQuery.sap.log.error("The Wizard is supposed to handle from 3 to 8 steps.");
 			}
 
-			this._initNextButton();
 			this._saveInitialValidatedState();
 
 			var step = this._getStartingStep();
 			if (step && this._stepPath.indexOf(step) < 0) {
 				this._activateStep(step);
 				this._updateProgressNavigator();
-				this._setNextButtonPosition();
 			}
 		};
 
@@ -362,10 +355,14 @@ sap.ui.define([
 			this._getProgressNavigator().discardProgress(progressNavigatorIndex, true);
 
 			this._updateNextButtonState();
-			this._setNextButtonPosition();
 			this._restoreInitialValidatedState(progressNavigatorIndex);
 			this._stepPath[index]._markAsLast();
 
+			for (var j = 0; j < progressNavigatorIndex - 1; j++) {
+				var oButton = steps[j].getAggregation("_nextButton");
+				oButton.setEnabled(false);
+				oButton.removeStyleClass("sapMWizardNextButtonVisible");
+			}
 			for (var i = progressNavigatorIndex; i < steps.length; i++) {
 				steps[i]._deactivate();
 				if (steps[i].getSubsequentSteps().length > 1) {
@@ -405,16 +402,16 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the visiblity of the next button.
+		 * Sets the visibility of the next button.
 		 * @param {boolean} value True to show the button or false to hide it.
 		 * @returns {sap.m.Wizard} Reference to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.setShowNextButton = function (value) {
-			this.setProperty("showNextButton",value, true);
-			if (this._getNextButton()) {
-				this._getNextButton().setVisible(value);
-			}
+			this.setProperty("showNextButton", value, true);
+			this.getSteps().forEach(function(oStep){
+				oStep.getAggregation("_nextButton").setVisible(value);
+			});
 			return this;
 		};
 
@@ -454,7 +451,7 @@ sap.ui.define([
 				jQuery.sap.log.error("The Wizard is supposed to handle up to 8 steps.");
 				return this;
 			}
-
+			wizardStep._oNextButton.attachPress(this._handleNextButtonPress.bind(this));
 			this._incrementStepCount();
 			return this.addAggregation("steps", wizardStep);
 		};
@@ -578,45 +575,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Initializes the next button
-		 * @private
-		 */
-		Wizard.prototype._initNextButton = function () {
-			if (this._getNextButton()) {
-				return;
-			}
-
-			this.setAggregation("_nextButton", this._createNextButton());
-			this._setNextButtonPosition();
-		};
-
-		/**
-		 * Creates the next button, and adds onAfterRendering delegate
-		 * @returns {Button} The created button
-		 * @private
-		 */
-		Wizard.prototype._createNextButton = function () {
-			var firstStep = this._getStartingStep(),
-				isStepValidated = (firstStep) ? firstStep.getValidated() : true,
-				nextButton = new Button(this.getId() + "-nextButton", {
-					text: this._resourceBundle.getText("WIZARD_STEP") + " " + 2,
-					type: ButtonType.Emphasized,
-					enabled: isStepValidated,
-					press: this._handleNextButtonPress.bind(this),
-					visible: this.getShowNextButton()
-				});
-
-			nextButton.addStyleClass("sapMWizardNextButton");
-			nextButton.addEventDelegate({
-				onAfterRendering: this._toggleNextButtonVisibility
-			}, this);
-			this._nextButton = nextButton;
-
-			return nextButton;
-		};
-
-		/**
-		 * Handler for the next button press, and updates the button state
+		 * Handler for the next button press
 		 * @private
 		 */
 		Wizard.prototype._handleNextButtonPress = function () {
@@ -630,6 +589,10 @@ sap.ui.define([
 				this.fireComplete();
 			} else {
 				var progressStep = this.getProgressStep();
+				// hide the next button only if it not the review button
+				// otherwise when completing the wizard and going back to edit it
+				// the review button won't be shown
+				this._getNextButton().setVisible(false);
 				progressStep._complete();
 
 				if (!this._isNextStepDetermined()) {
@@ -646,29 +609,7 @@ sap.ui.define([
 				this._handleStepChanged(progressNavigator.getProgress());
 				this.setAssociation("currentStep", this._stepPath[this._stepPath.length - 1], true);
 			}
-
 			this._updateNextButtonState();
-		};
-
-		/**
-		 * Toggles the next button visibility
-		 * @private
-		 */
-		Wizard.prototype._toggleNextButtonVisibility = function () {
-			jQuery.sap.delayedCall(0, this, function () {
-				var oButton = this._getNextButton(),
-					oButtonDomRef = oButton.getDomRef();
-
-				if (oButton.getEnabled()) {
-					oButton.addStyleClass("sapMWizardNextButtonVisible");
-					oButtonDomRef && oButtonDomRef.removeAttribute("aria-hidden");
-				} else {
-					oButton.removeStyleClass("sapMWizardNextButtonVisible");
-					// aria-hidden attribute is used instead of setVisible(false)
-					// in order to preserve the current animation implementation
-					oButtonDomRef && oButtonDomRef.setAttribute("aria-hidden", true);
-				}
-			});
 		};
 
 		/**
@@ -690,8 +631,8 @@ sap.ui.define([
 			 * additionalOffset is added like this.
 			 */
 			if (!Device.system.phone &&
-				!jQuery.sap.containsOrEquals(progressStep.getDomRef(), this._nextButton.getDomRef())) {
-				additionalOffset = this._nextButton.$().outerHeight();
+				!jQuery.sap.containsOrEquals(progressStep.getDomRef(), this._getNextButton().getDomRef())) {
+				additionalOffset = this._getNextButton().$().outerHeight();
 			}
 
 			return (scrollerTop + stepTop) - (Wizard.CONSTANTS.SCROLL_OFFSET + additionalOffset);
@@ -736,7 +677,6 @@ sap.ui.define([
 			this._activateStep(nextStep);
 			this._updateProgressNavigator();
 			this.fireStepActivate({index: index});
-			this._setNextButtonPosition();
 		};
 
 		/**
@@ -878,30 +818,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the next button position. The position is different depending on the used device.
-		 * @private
-		 */
-		Wizard.prototype._setNextButtonPosition = function () {
-			if (Device.system.phone) {
-				return;
-			}
-
-			var button = this._getNextButton(),
-				progress = this._getProgressNavigator().getProgress(),
-				currentStep = this._stepPath[progress - 2],
-				configuration = sap.ui.getCore().getConfiguration(),
-				progressStep = this._stepPath[progress - 1];
-
-			if (progressStep) {
-				progressStep.addContent(button);
-
-				if (!configuration.getAnimation() && currentStep) {
-					currentStep.rerender();
-				}
-			}
-		};
-
-		/**
 		 * Updates the next button state, changing the enablement, and changing the text,
 		 * depending on the validation of the progress step
 		 * @private
@@ -937,7 +853,12 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._getNextButton = function () {
-			return this._nextButton;
+			var step = this._stepPath[this._stepPath.length - 1];
+			if (step) {
+				return step.getAggregation("_nextButton");
+			} else {
+				return null;
+			}
 		};
 
 		/**
