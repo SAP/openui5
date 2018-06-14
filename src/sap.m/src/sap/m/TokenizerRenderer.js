@@ -67,6 +67,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 		if ((Device.system.desktop || Device.system.combi) && aTokens.length) {
 			oRm.write("<div id='" + oControl.getId() + "-clip' class='sapMTokenizerClip'");
 			if (window.clipboardData) { //IE
+				/* TODO remove after 1.62 version */
 				oRm.writeAttribute("contenteditable", "true");
 				oRm.writeAttribute("tabindex", "-1");
 			}
