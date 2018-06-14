@@ -1174,9 +1174,14 @@ sap.ui.define([
 	};
 
 	DynamicPageTitle.prototype._getARIALabelReferences = function (bHeaderExpanded) {
-		var sReferences = "";
+		var sReferences = "",
+			oHeading = this.getHeading();
 
-		sReferences += bHeaderExpanded ? DynamicPageTitle.EXPANDED_HEADER_TEXT_ID : DynamicPageTitle.COLLAPSED_HEADER_TEXT_ID;
+		if (oHeading) {
+			sReferences += oHeading.getId();
+		}
+
+		sReferences += " " + (bHeaderExpanded ? DynamicPageTitle.EXPANDED_HEADER_TEXT_ID : DynamicPageTitle.COLLAPSED_HEADER_TEXT_ID);
 		sReferences += " " + DynamicPageTitle.TOGGLE_HEADER_TEXT_ID;
 
 		return sReferences;
