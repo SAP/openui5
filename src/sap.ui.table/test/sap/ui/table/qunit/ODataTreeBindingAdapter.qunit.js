@@ -1952,4 +1952,116 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.test("expandNodeToLevel: Correct filter creation", function(assert) {
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
+				rootLevel: 2,
+				displayRootNode: false
+			});
+
+			function fnChangeHandler() {
+				oBinding.getContexts(0, 100);
+				oBinding.sCustomParams = "SOME_CUST_PARAMS";
+
+				var aExpectedParams = [
+					"$filter=HierarchyNode%20eq%20%27000002%27%20and%20FinStatementHierarchyLevelVal%20le%202",
+					"SOME_CUST_PARAMS"
+				];
+				var oExpectedNode = oBinding.findNode(0);
+
+				oBinding._expandSubTree = function(oNode, aResults) {
+					assert.deepEqual(oNode, oExpectedNode, "Passed correct node object to _expandSubTree()");
+					assert.deepEqual(aResults, "dummy data array", "Passed correct data array");
+				};
+
+				oBinding._fireChange = function(oEvent) {
+					assert.deepEqual(oEvent.reason, "expand", "Change event fired with correct reason");
+					done();
+				};
+
+				oBinding._loadSubTree = function(oNode, aParams) {
+					assert.deepEqual(aParams, aExpectedParams, "Generated correct parameters");
+					assert.deepEqual(oNode, oExpectedNode, "Passed correct node object to _loadSubTree()");
+					return Promise.resolve({
+						results: "dummy data array"
+					});
+				};
+
+
+				oBinding.expandNodeToLevel(0, 2);
+			}
+
+			oBinding.attachChange(fnChangeHandler);
+			oBinding.getContexts(0, 100);
+
+		});
+	});
+
+	QUnit.test("_expandSubTree: Expands correctly", function(assert) {
+		var done = assert.async();
+		var aExpectedGroupIDs = ["/123", "/123/FinancialStatementItem:001",
+			"/123/FinancialStatementItem:003", "/123/FinancialStatementItem:001 3",
+			"/123/FinancialStatementItem:001 5", "/123/FinancialStatementItem:001 6"];
+
+
+		oModel.attachMetadataLoaded(function() {
+			sap.ui.require([
+				"sap/ui/model/odata/v2/ODataTreeBinding", "sap/ui/model/odata/ODataTreeBindingAdapter"],
+				function (ODataTreeBinding, ODataTreeBindingAdapter) {
+					var oBinding = new ODataTreeBinding({
+						checkFilterOperation: function() { }
+					}, "/");
+					ODataTreeBindingAdapter.apply(oBinding);
+
+					oBinding.oTreeProperties = {
+						"hierarchy-node-for": "GLAccount_NodeID",
+						"hierarchy-parent-node-for": "GLAccount_ParentID",
+						"hierarchy-drill-state-for": "GLAccount_Drillstate"
+					};
+
+					oBinding.oModel.getContext = function(sInput) {
+						return sInput;
+					};
+
+					oBinding.oModel._getKey = function(oNode) {
+						return oNode["GLAccount_NodeID"];
+					};
+
+					oBinding._calculateGroupID = function(oArgs) {
+						return oArgs.parent.groupID + oArgs.context;
+					};
+
+					var oReq = new XMLHttpRequest();
+					oReq.addEventListener("load", fnDataLoaded);
+					oReq.open("GET", "test-resources/sap/ui/core/qunit/testdata/odata/sfin.json");
+					oReq.send();
+
+					function fnDataLoaded () {
+						var oData, aExpandedTreeState;
+						oData = JSON.parse(this.responseText);
+
+						oBinding._expandSubTree({
+							groupID: "/123",
+							context: {
+								getProperty: function() {
+									return oData.results[0]["GLAccount_NodeID"];
+								}
+							}
+						}, oData.results);
+
+						aExpandedTreeState = oBinding._mTreeState["expanded"];
+
+						aExpectedGroupIDs.forEach(function(sGroupId) {
+							assert.ok(aExpandedTreeState[sGroupId], "group id: " + sGroupId + " is expanded");
+						});
+
+						assert.equal(Object.keys(aExpandedTreeState).length, aExpectedGroupIDs.length,
+							"Only expected group ids have been expanded");
+						done();
+					}
+			});
+		});
+	});
 });

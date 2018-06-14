@@ -1187,6 +1187,332 @@
 		});
 	});
 
+	QUnit.test("_getParentMap: Should return all parent keys", function(assert) {
+		var done = assert.async(),
+			mExpectedParentMap = {
+				"000001": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000001')",
+				"000002": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000002')",
+				"000362": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000362')",
+				"000682": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000682')",
+				"001073": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='001073')",
+				"001131": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='001131')",
+				"001136": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='001136')",
+				"001153": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='001153')",
+				"001179": "GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='001179')"
+			};
+
+		oModel.attachMetadataLoaded(function () {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 1,
+				numberOfExpandedLevels: 2
+			});
+
+			var oContext;
+
+			var fnHandler1 = function (oEvent) {
+				oBinding.detachChange(fnHandler1);
+				oBinding.attachChange(fnHandler2);
+				// contexts should be now loaded
+				oBinding.getContexts(0, 9);
+			};
+
+			var fnHandler2 = function (oEvent) {
+				oBinding.detachChange(fnHandler2);
+
+				var aContexts = oBinding.getContexts(0, 9);
+
+				var aData = aContexts.map(function(oContext) {
+					return oContext.getProperty();
+				})
+
+				var mParentMap = oBinding._getParentMap(aData);
+
+				assert.deepEqual(mParentMap, mExpectedParentMap, "Correct parent map");
+				done();
+			};
+
+			oBinding.attachChange(fnHandler1);
+			oBinding.getContexts(0, 9);
+		});
+	});
+
+	QUnit.test("_loadSubTree: Should abort repetitive identical requests", 2, function(assert) {
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function () {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 1,
+				numberOfExpandedLevels: 2
+			});
+
+			oBinding.oModel.read = function() {
+				return {
+					abort: function() {
+						assert.ok(true, "Requests got aborted");
+						done();
+					}
+				}
+			};
+
+			var aParams = ["PONY", "PINKY PIE"];
+
+			oBinding._loadSubTree(null, aParams); // Adds request key to mRequestHandles
+			setTimeout(function() { // Wait for _loadSubTree promise executor function to start
+				assert.equal(Object.keys(oBinding.mRequestHandles).length, 1, "One request handle got added")
+				oBinding._loadSubTree(null, aParams);
+			}, 0)
+		});
+	});
+
+	QUnit.test("_loadSubTree: Should reject if binding is missing tree annotations", function(assert) {
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function () {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 1,
+				numberOfExpandedLevels: 2
+			});
+
+			oBinding.bHasTreeAnnotations = false;
+
+			oBinding._loadSubTree().catch(function(err) {
+				assert.equal(err.message, "_loadSubTree: doesn't support hierarchies without tree annotations",
+					"Rejected with correct error");
+				done();
+			});
+		});
+	});
+
+	QUnit.test("_loadSubTree: Should fire correct events in error scenario", 3, function(assert) {
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function () {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 1,
+				numberOfExpandedLevels: 2
+			});
+
+			oBinding.oModel.read = function(sPath, mParameters) {
+				setTimeout(function() {
+					mParameters.error(); // Simulate error
+				}, 0);
+				return {};
+			};
+
+			var dataRequestedEventSpy = sinon.spy(oBinding, "fireDataRequested");
+			var dataReceivedEventSpy = sinon.spy(oBinding, "fireDataReceived");
+
+			var aParams = ["PONY", "PINKY PIE"];
+
+			oBinding._loadSubTree(null, aParams).catch(function () {
+				assert.equal(Object.keys(oBinding.mRequestHandles).length, 0,
+					"Request handle got removed");
+				assert.ok(dataRequestedEventSpy.calledOnce, "fireDataRequested was called once");
+				assert.ok(dataReceivedEventSpy.calledOnce, "fireDataReceived was called once");
+				done();
+			});
+		});
+	});
+
+	QUnit.test("_loadSubTree: Should process expansion correctly", 11, function(assert) {
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function () {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 1,
+				numberOfExpandedLevels: 2
+			});
+			var oFakeData = {
+				results: ["APPLE JACK", "RAINBOW DASH"]
+			};
+
+			var sFakeParentKey = "PARENT KEY";
+
+			var oFakeKeys = {
+				foo: "bar"
+			};
+
+			oBinding.oModel.read = function(sPath, mParameters) {
+				setTimeout(function() {
+					mParameters.success(oFakeData);
+				}, 0);
+				return {};
+			};
+
+			oBinding.oModel.getKey = function() {
+				return sFakeParentKey;
+			};
+
+			oBinding.oModel.callAfterUpdate = function(callback) {
+				callback();
+			};
+
+			var dataReceivedEventSpy = sinon.spy(oBinding, "fireDataReceived");
+			var dataRequestedEventSpy = sinon.spy(oBinding, "fireDataRequested");
+			var updateNodeKeyStub = sinon.stub(oBinding, "_updateNodeKey");
+			var createKeyMapStub = sinon.stub(oBinding, "_createKeyMap").returns(oFakeKeys);
+			var importCompleteKeysHierarchyStub = sinon.stub(oBinding, "_importCompleteKeysHierarchy");
+
+			var aParams = ["PONY", "PINKY PIE"];
+
+			oBinding._loadSubTree(null, aParams).then(function (oData) {
+				assert.deepEqual(oData.results, oFakeData.results, "Resolved with correct data");
+				assert.equal(Object.keys(oBinding.mRequestHandles).length, 0,
+					"Request handle got removed");
+				assert.equal(oBinding.bNeedsUpdate, true, 'Binding flagged as "bNeedsUpdate"');
+
+				assert.ok(dataRequestedEventSpy.calledOnce, "fireDataRequested was called once");
+				assert.ok(dataReceivedEventSpy.calledOnce, "fireDataReceived was called once");
+
+				assert.ok(updateNodeKeyStub.calledOnce, "_updateNodeKey was called once");
+				assert.ok(updateNodeKeyStub.alwaysCalledWith(null, sFakeParentKey),
+					"_updateNodeKey was called with correct arguments");
+
+				assert.ok(createKeyMapStub.calledOnce, "_createKeyMap was called once");
+				assert.ok(createKeyMapStub.alwaysCalledWith(oFakeData.results),
+					"_createKeyMap was called with correct arguments");
+
+				assert.ok(importCompleteKeysHierarchyStub.calledOnce,
+					"_importCompleteKeysHierarchy was called once");
+				assert.ok(importCompleteKeysHierarchyStub.alwaysCalledWith(oFakeKeys),
+					"_importCompleteKeysHierarchy was called with correct arguments");
+
+				done();
+			});
+		});
+	});
+
+
+	QUnit.test("_importCompleteKeysHierarchy: Should add keys to internal structures", function(assert) {
+
+		var done = assert.async();
+
+		oModel.attachMetadataLoaded(function () {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 1
+			});
+
+			var mKeys = {
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000001')": [
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000002')"
+				],
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000002')": [
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000003')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000008')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000015')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000135')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000350')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000352')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000360')"
+				]
+			};
+
+			var oExpectedLengths = {
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000001')": 1,
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000002')": 7
+			};
+
+			var oExpectedFinalLengths = {
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000001')": true,
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000002')": true
+			};
+
+			var mExpectedSections = {
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000001')": [ { startIndex: 0, length: 1 } ],
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000002')": [ { startIndex: 0, length: 7 } ]
+			};
+
+
+			oBinding._importCompleteKeysHierarchy(mKeys);
+			assert.deepEqual(oBinding.oKeys, mKeys, "Key maps are correct");
+			assert.deepEqual(oBinding.oLengths, oExpectedLengths, "Keys lengths are correct");
+			assert.deepEqual(oBinding.oFinalLengths, oExpectedFinalLengths,  "Final lengths is correct");
+			assert.deepEqual(oBinding._mLoadedSections, mExpectedSections,  "Loaded sections are correct");
+
+			done();
+		});
+	});
+
+	QUnit.test("_updateNodeKey: Should update node keys", function(assert) {
+		// TODO: Add addional test for nodes with siblings
+		var done = assert.async();
+
+		oModel.attachMetadataLoaded(function () {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 1
+			});
+
+			var oContext;
+
+			var fnHandler = function (oEvent) {
+				oBinding.detachChange(fnHandler);
+				oBinding.getContexts(0, 1);
+				var oNode = oBinding.getNodeByIndex(0);
+				oBinding._updateNodeKey(oNode, "Pony");
+
+				assert.deepEqual(oBinding.oKeys["null"], ["Pony"], "Correct child keys");
+				done();
+			};
+
+			oBinding.attachChange(fnHandler);
+			oBinding.getContexts(0, 1);
+		});
+
+	});
+
+	QUnit.test("_createKeyMap: Should create key map", function(assert) {
+		var done = assert.async(),
+			mExpectedKeyMap = {
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000001')": [
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000002')"
+				],
+				"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000002')": [
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000003')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000008')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000015')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000135')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000350')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000352')",
+					"GLAccountHierarchyInChartOfAccountsLiSet(FinancialStatementVariant='undefined',HierarchyNode='000360')"
+				]
+			};
+
+		oModel.attachMetadataLoaded(function () {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 1,
+				numberOfExpandedLevels: 3
+			});
+
+			var oContext;
+
+			var fnHandler1 = function (oEvent) {
+				oBinding.detachChange(fnHandler1);
+				oBinding.attachChange(fnHandler2);
+				oBinding.getContexts(0, 15);
+			};
+
+			var fnHandler2 = function (oEvent) {
+				oBinding.detachChange(fnHandler2);
+				oBinding.attachChange(fnHandler3);
+				var aContexts = oBinding.getContexts(0, 9);
+			};
+
+			var fnHandler3 = function (oEvent) {
+				oBinding.detachChange(fnHandler3);
+
+				var aContexts = oBinding.getContexts(0, 9);
+
+				var aData = aContexts.map(function(oContext) {
+					return oContext.getProperty();
+				})
+
+				var mKeyMap = oBinding._createKeyMap(aData, true);
+
+				assert.deepEqual(mKeyMap, mExpectedKeyMap, "Correct key map");
+				done();
+			};
+
+			oBinding.attachChange(fnHandler1);
+			oBinding.getContexts(0, 9);
+		});
+	});
+
 	QUnit.test("Sequential expand over 3 levels", function(assert){
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {

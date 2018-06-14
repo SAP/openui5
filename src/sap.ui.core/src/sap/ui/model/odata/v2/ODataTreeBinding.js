@@ -888,6 +888,188 @@ sap.ui.define([
 	};
 
 	/**
+	 * Retrieves parent ids from a given data set
+	 *
+	 * @param {Array} aData Lookup array to search for parent ids
+	 * @param {Boolean} bExcludeRootNodes Can be set to exclude root node elements
+	 * @returns {Array} Array of all parent ids
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._getParentMap = function(aData) {
+		var mParentKeys = {};
+
+		for (var i = 0; i < aData.length; i++) {
+			var sID = aData[i][this.oTreeProperties["hierarchy-node-for"]];
+			if (mParentKeys[sID]) {
+				jQuery.sap.log.warning("ODataTreeBinding: Duplicate key: " + sID + "!");
+			}
+			mParentKeys[sID] = this.oModel._getKey(aData[i]);
+
+		}
+
+		return mParentKeys;
+	};
+
+	/**
+	 * Creates key map for given data
+	 *
+	 * @param {Array} aData data which should be preprocessed
+	 * @returns {Map} map of parent and child keys
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._createKeyMap = function(aData, bSkipFirstNode) {
+		if (aData && aData.length > 0) {
+			var mParentsKeys = this._getParentMap(aData), mKeys = {};
+
+			for (var i = bSkipFirstNode ? 1 : 0; i < aData.length; i++) {
+				var sParentNodeID = aData[i][this.oTreeProperties["hierarchy-parent-node-for"]],
+					sParentKey = mParentsKeys[sParentNodeID];
+
+				if (parseInt(aData[i][this.oTreeProperties["hierarchy-level-for"]], 10) === this.iRootLevel) {
+					sParentKey = "null";
+				}
+
+				if (!mKeys[sParentKey]) {
+					mKeys[sParentKey] = [];
+				}
+
+				// add the current entry key to the key map, as a child of its parent node
+				mKeys[sParentKey].push(this.oModel._getKey(aData[i]));
+			}
+
+			return mKeys;
+		}
+	};
+
+	/**
+	 * Should import the complete keys hierarchy
+	 *
+	 * @param {Map} mKeys Keys to add
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._importCompleteKeysHierarchy = function (mKeys) {
+		var iChildCount, sKey;
+		for (sKey in mKeys) {
+			iChildCount = mKeys[sKey].length || 0;
+			this.oKeys[sKey] = mKeys[sKey];
+			// update the length of the parent node
+			this.oLengths[sKey] = iChildCount;
+			this.oFinalLengths[sKey] = true;
+
+			// keep up with the loaded sections
+			this._mLoadedSections[sKey] = [ { startIndex: 0, length: iChildCount } ];
+		}
+	};
+
+	/**
+	 * Update node key in case if it changes
+	 *
+	 * @param {object} oNode
+	 * @param {string} sNewKey
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._updateNodeKey = function (oNode, sNewKey) {
+		var sOldKey = this.oModel.getKey(oNode.context),
+			sParentKey, nIndex;
+		if (parseInt(oNode.context.getProperty(this.oTreeProperties["hierarchy-level-for"]), 10) === this.iRootLevel) {
+			sParentKey = "null";
+		} else {
+			sParentKey = this.oModel.getKey(oNode.parent.context);
+		}
+
+		nIndex = this.oKeys[sParentKey].indexOf(sOldKey);
+		if (nIndex !== -1) {
+			this.oKeys[sParentKey][nIndex] = sNewKey;
+		} else {
+			this.oKeys[sParentKey].push(sNewKey);
+		}
+	};
+
+	/**
+	 * Triggers backend requests to load the subtree of a given node
+	 *
+	 * @param {object} oNode Root node of the requested subtree
+	 * @param {string[]} aParams odata url parameters
+	 * @return {Promise} A promise resolving once the data has been imported
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._loadSubTree = function (oNode, aParams) {
+		return new Promise(function (resolve, reject) {
+			var sRequestKey, sGroupId, sAbsolutePath;
+
+			// Prevent data from loading if no tree annotation is available
+			if (!this.bHasTreeAnnotations) {
+				reject(new Error("_loadSubTree: doesn't support hierarchies without tree annotations"));
+				return;
+			}
+
+			sRequestKey = "loadSubTree-" + aParams.join("-");
+
+			// Skip previous request
+			if (this.mRequestHandles[sRequestKey]) {
+				this.mRequestHandles[sRequestKey].abort();
+			}
+
+			var fnSuccess = function (oData) {
+
+				var sParentKey = this.oModel.getKey(oData.results[0]);
+
+				// Collecting contexts
+				// beware: oData.results can be an empty array -> so the length has to be checked
+				if (Array.isArray(oData.results) && oData.results.length > 0) {
+					this._updateNodeKey(oNode, sParentKey);
+					var mKeys = this._createKeyMap(oData.results);
+					this._importCompleteKeysHierarchy(mKeys);
+				}
+
+				delete this.mRequestHandles[sRequestKey];
+				this.bNeedsUpdate = true;
+
+				this.oModel.callAfterUpdate(function () {
+					this.fireDataReceived({ data: oData });
+				}.bind(this));
+
+				resolve(oData);
+			}.bind(this);
+
+			var fnError = function (oError) {
+				// Always fire data received event
+				this.fireDataReceived();
+
+				//Only perform error handling if the request was not aborted intentionally
+				if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
+					return;
+				}
+
+				delete this.mRequestHandles[sRequestKey];
+
+				reject(); // Application should retrieve error details via ODataModel events
+			}.bind(this);
+
+
+			// execute the request and use the metadata if available
+			this.fireDataRequested();
+			sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+
+			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
+			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+				urlParameters: aParams,
+				success: fnSuccess,
+				error: fnError,
+				sorters: this.aSorters,
+				groupId: sGroupId
+			});
+
+
+		}.bind(this));
+	};
+
+	/**
 	 * Triggers backend requests to load the child nodes of the node with the given sNodeId.
 	 *
 	 * @param {string} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
@@ -979,7 +1161,6 @@ sap.ui.define([
 				}
 			}
 
-			that.oRequestHandle = null;
 			delete that.mRequestHandles[sRequestKey];
 			that.bNeedsUpdate = true;
 
@@ -989,14 +1170,15 @@ sap.ui.define([
 		}
 
 		function fnError(oError) {
+			// Always fire data received event
+			that.fireDataReceived();
+
 			//Only perform error handling if the request was not aborted intentionally
 			if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
 				return;
 			}
 
-			that.oRequestHandle = null;
 			delete that.mRequestHandles[sRequestKey];
-			that.fireDataReceived();
 
 			if (oRequestedSection) {
 				// remove section from loadedSections so the data can be requested again.
@@ -1077,30 +1259,30 @@ sap.ui.define([
 				// process data and built tree
 				for (var i = 0; i < oData.results.length; i++) {
 					oDataObj = oData.results[i];
-					var sParentKey = oDataObj[that.oTreeProperties["hierarchy-parent-node-for"]];
-					var sParentNodeID = mParentIds[sParentKey]; //oDataObj[that.oTreeProperties["hierarchy-parent-node-for"]];
+					var sParentNodeId = oDataObj[that.oTreeProperties["hierarchy-parent-node-for"]];
+					var sParentKey = mParentIds[sParentNodeId]; //oDataObj[that.oTreeProperties["hierarchy-parent-node-for"]];
 
 					// the parentNodeID for root nodes (node level == iRootLevel) is "null"
 					if (parseInt(oDataObj[that.oTreeProperties["hierarchy-level-for"]], 10) === that.iRootLevel) {
-						sParentNodeID = "null";
+						sParentKey = "null";
 					}
 
 					// make sure the parent node is already present in the key map
-					that.oKeys[sParentNodeID] = that.oKeys[sParentNodeID] || [];
+					that.oKeys[sParentKey] = that.oKeys[sParentKey] || [];
 
 					// add the current entry key to the key map, as a child of its parent node
 					var sKey = that.oModel._getKey(oDataObj);
-					that.oKeys[sParentNodeID].push(sKey);
+					that.oKeys[sParentKey].push(sKey);
 
 					// update the length of the parent node
-					that.oLengths[sParentNodeID] = that.oLengths[sParentNodeID] || 0;
-					that.oLengths[sParentNodeID]++;
-					that.oFinalLengths[sParentNodeID] = true;
+					that.oLengths[sParentKey] = that.oLengths[sParentKey] || 0;
+					that.oLengths[sParentKey]++;
+					that.oFinalLengths[sParentKey] = true;
 
 					// keep up with the loaded sections
-					that._mLoadedSections[sParentNodeID] = that._mLoadedSections[sParentNodeID] || [];
-					that._mLoadedSections[sParentNodeID][0] = that._mLoadedSections[sParentNodeID][0] || {startIndex: 0, length: 0};
-					that._mLoadedSections[sParentNodeID][0].length++;
+					that._mLoadedSections[sParentKey] = that._mLoadedSections[sParentKey] || [];
+					that._mLoadedSections[sParentKey][0] = that._mLoadedSections[sParentKey][0] || {startIndex: 0, length: 0};
+					that._mLoadedSections[sParentKey][0].length++;
 				}
 
 			} else {
@@ -2179,6 +2361,21 @@ sap.ui.define([
 
 		return this.sFilterParams;
 	};
+
+	/**
+	 * Expand a nodes subtree to a given level
+	 *
+	 * This API is only supported in OperationMode.Server and if the OData service implements the full specification of the "hierarchy-node-for" annotation.
+	 *
+	 * @param {int} iIndex the absolute row index
+	 * @param {int} iLevel the level to which the data should be expanded
+	 * @param {boolean} bSuppressChange if set to true, no change event will be fired
+	 * @return {Promise} A promise resolving once the expansion process has been completed
+	 *
+	 * @function
+	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.expandNodeToLevel
+	 * @public
+	 */
 
 	/**
 	 * Adds the given contexts to the tree by adding them to the given parent context as children.

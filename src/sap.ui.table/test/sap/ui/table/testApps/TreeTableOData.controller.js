@@ -559,7 +559,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Submit the changes on the model
+		 * Refresh and restore tree state even if no changes have been made
 		 */
 		onRefreshAndRestore: function () {
 			MessageToast.show("Refreshing and restoring...");
@@ -578,6 +578,21 @@ sap.ui.define([
 				function (oEvent) {
 					oTable.setBusy(false);
 				});
+		},
+
+		/**
+		 * Expand selected node to level four
+		 */
+		onExpandNodeToLevel4: function () {
+			var oBinding = oTable.getBinding();
+
+			var iSelectedIndex = oTable.getSelectedIndex();
+			MessageToast.show("Expanding node with index " + iSelectedIndex + " to level 4...");
+			oBinding.expandNodeToLevel(iSelectedIndex, 4).then(function() {
+				MessageToast.show("Expanded node with index " + iSelectedIndex + " to level 4.");
+			}, function(err) {
+				MessageToast.show("Failed to expand node with index " + iSelectedIndex + " to level 4: " + err.message);
+			});
 		},
 
 		/**
