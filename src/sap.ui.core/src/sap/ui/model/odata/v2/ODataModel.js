@@ -144,6 +144,7 @@ sap.ui.define([
 				bSequentializeRequests,
 				bDisableSoftStateHeader,
 				aBindableResponseHeaders,
+				sWarmupUrl,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -177,7 +178,11 @@ sap.ui.define([
 				bSequentializeRequests = mParameters.sequentializeRequests;
 				bDisableSoftStateHeader = mParameters.disableSoftStateHeader;
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
+				sWarmupUrl = mParameters.warmupUrl;
 			}
+
+			this.sWarmupUrl = sWarmupUrl;
+			this.bWarmup = !!sWarmupUrl;
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
@@ -265,7 +270,8 @@ sap.ui.define([
 			}
 			// Get/create shared data containers
 			var sServerUrl = this._getServerUrl();
-			var sMetadataUrl = this._createMetadataUrl("/$metadata");
+			//use warmup url if provided
+			var sMetadataUrl = this.sWarmupUrl || this._createMetadataUrl("/$metadata");
 			this.oSharedServerData = ODataModel._getSharedData("server", sServerUrl);
 			this.oSharedServiceData = ODataModel._getSharedData("service", this.sServiceUrl);
 			this.oSharedMetaData = ODataModel._getSharedData("meta", sMetadataUrl);
@@ -283,7 +289,10 @@ sap.ui.define([
 					namespaces: mMetadataNamespaces,
 					withCredentials: this.bWithCredentials
 				});
-				this.oSharedMetaData.oMetadata = this.oMetadata;
+				//no caching in warmup scenario
+				if (!this.bWarmup) {
+					this.oSharedMetaData.oMetadata = this.oMetadata;
+				}
 			} else {
 				this.oMetadata = this.oSharedMetaData.oMetadata;
 			}
@@ -3147,6 +3156,10 @@ sap.ui.define([
 		var oRequestGroup = mRequests[sGroupId],
 			sRequestKey = oRequest.key ? oRequest.key : oRequest.method + ":" + oRequest.requestUri;
 
+		//ignore requests in warmup scenario
+		if (this.bWarmup) {
+			return;
+		}
 		//create request group if it does not exist
 		if (!oRequestGroup) {
 			oRequestGroup = {};
@@ -4001,6 +4014,12 @@ sap.ui.define([
 		var oRequestHandle, oRequest,
 			bAborted = false,
 			that = this;
+
+		if (this.bWarmup) {
+			return {
+				abort: function() {}
+			};
+		}
 
 		oRequestHandle = {
 				abort: function() {

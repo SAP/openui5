@@ -130,6 +130,46 @@
 		assert.ok(bChanged && bDataRequested, "dataRecieved fired");
 	};
 
+	QUnit.module("Model warmup");
+
+	QUnit.test("metadata loading from warmupUrl", function(assert){
+		var done = assert.async();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {warmupUrl:"./testdata/warmup.xml"}, true);
+
+		oModel.metadataLoaded().then(function() {
+			var oEntityType = oModel.oMetadata._getEntityTypeByName("Category");
+			assert.ok(oEntityType, "EntityType definition found!");
+			assert.equal(oEntityType.namespace, "NorthwindModel", "EntityType definition has correct namespace!");
+			oEntityType = oModel.oMetadata._getEntityTypeByName("NorthwindModel.Category");
+			assert.ok(oEntityType, "EntityType definition found!");
+			assert.equal(oEntityType.namespace, "NorthwindModel", "EntityType definition has correct namespace!");
+			spy.restore();
+			//timeout needed as requests are triggered async by a Promise
+			setTimeout(function() {
+				assert.equal(spy.callCount, 1, "only metadata loaded, data requests ignored!");
+				done();
+			},0);
+		});
+		oModel.attachMetadataLoaded(function() {
+			var oEntityType = oModel.oMetadata._getEntityTypeByName("Category");
+			assert.ok(oEntityType, "EntityType definition found!");
+			assert.equal(oEntityType.namespace, "NorthwindModel", "EntityType definition has correct namespace!");
+			oEntityType = oModel.oMetadata._getEntityTypeByName("NorthwindModel.Category");
+			assert.ok(oEntityType, "EntityType definition found!");
+			assert.equal(oEntityType.namespace, "NorthwindModel", "EntityType definition has correct namespace!");
+		});
+		oModel.annotationsLoaded().then(function(oAnnotations) {
+			assert.ok(typeof oAnnotations == 'object', "annotations loaded");
+			assert.ok(oAnnotations.annotations.EntityContainer, "annotations loaded");
+		});
+
+		oModel.read("Products");
+		oModel.remove("Products(1)");
+		oModel.update("Products(1)", {});
+		oModel.create("Products(1)", {});
+	});
+
 	QUnit.test("test metadata and 'complex' namespace - 'some.name.space'", function(assert){
 		var done = assert.async();
 		var oModel = initModel(sURI, {metadataUrlParams:{"test-namespace": true}}, true);
@@ -4883,7 +4923,7 @@
 					json: true
 				}, false);
 				refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
-				
+
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
 						assert.ok(!refreshSpy.called, "No additional token request");
@@ -4893,7 +4933,7 @@
 				});
 			}.bind(this)
 		});
-	}); 
+	});
 
 	QUnit.test("Token request for different services on different servers", function(assert) {
 		var done = assert.async(),
@@ -4917,7 +4957,7 @@
 					json: true
 				}, false);
 				refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
-				
+
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
 						assert.ok(refreshSpy.calledOnce, "Token requested for POST request");
@@ -4927,7 +4967,7 @@
 				});
 			}.bind(this)
 		});
-	}); 
+	});
 
 
 	QUnit.module("Soft State Header Support");
