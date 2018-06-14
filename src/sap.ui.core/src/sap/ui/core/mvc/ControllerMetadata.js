@@ -43,12 +43,14 @@ sap.ui.define(['sap/ui/base/Metadata', 'sap/base/util/extend', 'sap/ui/core/mvc/
 		var rPrivateCheck = /^_/;
 
 		var bExtendsController = this._oParent.isA("sap.ui.core.mvc.Controller");
+
+		var bDefinesMethods = oClassInfo.metadata && oClassInfo.metadata.methods ? true : false;
+
 		if (!bIsExtension) {
 			/*
 			* If methods are defined in metadata, only methods prefixed with '_' get private.
 			* If not, we stay compatible and every method prefixed with '-' or 'on' gets private.
 			*/
-			var bDefinesMethods = oClassInfo.metadata && oClassInfo.metadata.methods ? true : false;
 			if (bExtendsController && !bDefinesMethods) {
 			   rPrivateCheck = /^_|^on|^init$|^exit$/;
 			}
@@ -62,7 +64,10 @@ sap.ui.define(['sap/ui/base/Metadata', 'sap/base/util/extend', 'sap/ui/core/mvc/
 		}
 
 		//check public methods
-		this._aPublicMethods = [];
+		//in legacy scenarion the public methods defined in metadata must not be deleted
+		if (bIsExtension || bDefinesMethods) {
+			this._aPublicMethods = [];
+		}
 		this._mMethods = oStaticInfo.methods || {};
 		for ( var n in oClassInfo ) {
 			if ( n !== "metadata" && n !== "constructor") {
