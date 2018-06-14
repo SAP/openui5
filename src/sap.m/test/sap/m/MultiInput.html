@@ -1035,7 +1035,9 @@
 			}
 		});
 
-		var oSelectDialog = new sap.m.SelectDialog();
+		var oSelectDialog = new sap.m.SelectDialog({
+			title: "Search Dialog"
+		});
 			var openSelectDialog = function() {
 				oSelectDialog.open();
 			};
