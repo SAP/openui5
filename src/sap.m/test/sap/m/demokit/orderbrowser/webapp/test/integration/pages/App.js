@@ -6,7 +6,7 @@ sap.ui.define([
 	"use strict";
 
 	var sViewName = "App",
-		sAppControl = "idAppControl";
+		sAppControl = "app";
 
 	Opa5.createPageObjects({
 		onTheAppPage : {
