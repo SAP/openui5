@@ -414,6 +414,7 @@ sap.ui.define([
 		}
 
 		if (Device.browser.msie && window.clipboardData) {
+			/* TODO remove after 1.62 version */
 			window.clipboardData.setData("text", selectedText);
 		} else {
 			document.addEventListener('copy', copyToClipboard);
@@ -465,6 +466,7 @@ sap.ui.define([
 		}
 
 		if (Device.browser.msie && window.clipboardData) {
+			/* TODO remove after 1.62 version */
 			window.clipboardData.setData("text", selectedText);
 		} else {
 			document.addEventListener('cut', cutToClipboard);
