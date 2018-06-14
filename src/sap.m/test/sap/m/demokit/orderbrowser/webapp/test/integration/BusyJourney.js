@@ -15,11 +15,13 @@ sap.ui.define([
 		When.onTheAppPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.onTheAppPage.iShouldSeeTheBusyIndicator().
-			and.iTeardownMyAppFrame();
+		Then.onTheAppPage.iShouldSeeTheBusyIndicator();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
-	opaTest("Should see a busy indication on the master and detail after loading the metadata", function (Given, When, Then) {
+	opaTest("Should see a busy indication on the master after loading the metadata", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppWithDelay("", 2000);
 
@@ -29,8 +31,9 @@ sap.ui.define([
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheBusyIndicator().
 			and.theListHeaderDisplaysZeroHits();
-		Then.onTheDetailPage.iShouldSeeTheBusyIndicator().
-			and.iTeardownMyAppFrame();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
 });
