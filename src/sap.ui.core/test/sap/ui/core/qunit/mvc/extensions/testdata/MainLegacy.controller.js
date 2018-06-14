@@ -4,6 +4,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function(Controller) {
     return Controller.extend("my.test.MainLegacy", {
 		metadata: {
 			/*no methods defined: should lead to legacy private/public behavior*/
+			publicMethods: [
+				"onMyHook"
+			]
 		},
 		onInit: function() {
 
@@ -16,6 +19,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function(Controller) {
 		},
 		onAfterRendering: function() {
 
+		},
+		onMyHook: function() {
+			return "onMyHook";
 		},
 		publicMethod: function() {
 			return "publicMethodOnBase";
