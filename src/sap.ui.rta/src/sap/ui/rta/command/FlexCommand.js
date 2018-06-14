@@ -3,16 +3,16 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/rta/ControlTreeModifier",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Utils"
 ], function(
 	BaseCommand,
-	FlexControllerFactory,
 	RtaControlTreeModifier,
-	Utils,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	FlexControllerFactory,
+	FlUtils
 ) {
 	"use strict";
 
@@ -77,7 +77,7 @@ sap.ui.define([
 	FlexCommand.prototype.getAppComponent = function() {
 		if (!this._oControlAppComponent) {
 			var oElement = this.getElement();
-			this._oControlAppComponent = oElement ? Utils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
+			this._oControlAppComponent = oElement ? FlUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 		}
 		return this._oControlAppComponent;
 	};
@@ -95,7 +95,7 @@ sap.ui.define([
 			var oSelector = {
 				id: this.getElement().getId(),
 				appComponent: this.getAppComponent(),
-				controlType: Utils.getControlType(this.getElement())
+				controlType: FlUtils.getControlType(this.getElement())
 			};
 			this.setSelector(oSelector);
 		}
@@ -229,14 +229,23 @@ sap.ui.define([
 		var mPropertyBag = {
 			modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
 			appComponent: oAppComponent,
-			view: Utils.getViewForControl(oSelectorElement)
+			view: FlUtils.getViewForControl(oSelectorElement)
 		};
 
 		if (!bRevertible) {
 			RtaControlTreeModifier.startRecordingUndo();
 		}
 
-		return Promise.resolve(oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, mPropertyBag))
+		return Promise.resolve()
+		.then(function() {
+			if (oFlexController.checkForOpenDependenciesForControl(oChange.getSelector(), mPropertyBag.modifier, oAppComponent)) {
+				throw Error("The following Change cannot be applied because of a dependency: " + oChange.getId());
+			}
+		})
+
+		.then(function() {
+			return oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, mPropertyBag);
+		})
 
 		.then(function(oResult) {
 			if (oResult.success) {

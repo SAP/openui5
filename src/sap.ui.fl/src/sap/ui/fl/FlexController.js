@@ -868,6 +868,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Calls the same function in the change persistence, which actually does the work.
+	 *
+	 * @param {object} oSelector selector of the control
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - polymorph reuse operations handling the changes on the given view type
+	 * @param {sap.ui.core.Component} oAppComponent - component instance that is currently loading
+	 * @returns {boolean} Returns true if there are open dependencies
+	 */
+	FlexController.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oAppComponent) {
+		return this._oChangePersistence.checkForOpenDependenciesForControl(oSelector, oModifier, oAppComponent);
+	};
+
+	/**
 	 * Determines if an active personalization - user specific changes or variants - for the flexibility reference
 	 * of the controller instance (<code>this._sComponentName</code>) is in place.
 	 *

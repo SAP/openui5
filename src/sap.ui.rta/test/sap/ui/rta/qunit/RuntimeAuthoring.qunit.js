@@ -980,6 +980,54 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.test("when calling '_handleElementModified' and the command fails because of dependencies", function(assert) {
+		assert.expect(2);
+		var oLogStub = sandbox.stub(Utils.log, "error");
+		var oMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox");
+		var oCommandStack = {
+			pushAndExecute: function() {
+				return Promise.reject(Error("Some stuff.... The following Change cannot be applied because of a dependency .... some other stuff"));
+			}
+		};
+		sandbox.stub(this.oRta, "getCommandStack").returns(oCommandStack);
+		var oEvent = {
+			getParameter: function(sParameter) {
+				if (sParameter === "command") {
+					return new RTABaseCommand();
+				}
+			}
+		};
+		return this.oRta._handleElementModified(oEvent)
+		.then(function() {
+			assert.equal(oLogStub.callCount, 1, "one error got logged");
+			assert.equal(oMessageBoxStub.callCount, 1, "one MessageBox got shown");
+		});
+	});
+
+	QUnit.test("when calling '_handleElementModified' and the command fails, but not because of dependencies", function(assert) {
+		assert.expect(2);
+		var oLogStub = sandbox.stub(Utils.log, "error");
+		var oMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox");
+		var oCommandStack = {
+			pushAndExecute: function() {
+				return Promise.reject(Error("Some stuff........ some other stuff"));
+			}
+		};
+		sandbox.stub(this.oRta, "getCommandStack").returns(oCommandStack);
+		var oEvent = {
+			getParameter: function(sParameter) {
+				if (sParameter === "command") {
+					return new RTABaseCommand();
+				}
+			}
+		};
+		return this.oRta._handleElementModified(oEvent)
+		.then(function() {
+			assert.equal(oLogStub.callCount, 1, "one error got logged");
+			assert.equal(oMessageBoxStub.callCount, 0, "no MessageBox got shown");
+		});
+	});
+
 	QUnit.module("Given that RuntimeAuthoring is created without flexSettings", {
 		beforeEach : function(assert) {
 			sandbox.stub(Utils, "buildLrepRootNamespace").returns("rootNamespace/");
