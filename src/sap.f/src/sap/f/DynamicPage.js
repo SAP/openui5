@@ -1652,6 +1652,7 @@ sap.ui.define([
 			bAllowAppendHeaderToTitle = !this._headerBiggerThanAllowedToBeExpandedInTitleArea();
 			this._bExpandingWithAClick = true;
 			this._expandHeader(bAllowAppendHeaderToTitle, bUserInteraction);
+			this.getHeader().$().removeClass("sapFDynamicPageHeaderHidden");
 			if (!bAllowAppendHeaderToTitle) {
 				this._setScrollPosition(0);
 			}
