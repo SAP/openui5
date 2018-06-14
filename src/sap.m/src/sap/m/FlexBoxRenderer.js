@@ -12,11 +12,6 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', 'sap/m/library'],
 	// shortcut for sap.m.FlexRendertype
 	var FlexRendertype = library.FlexRendertype;
 
-	// Issue warning if flex algorithm is unsupported
-	if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
-		jQuery.sap.log.warning("This browser does not support flexible box layouts natively.");
-	}
-
 	/**
 	 * FlexBox renderer
 	 * @namespace

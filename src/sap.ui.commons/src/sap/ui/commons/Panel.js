@@ -160,10 +160,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./Panel
 
 			// adapt sizes
 			this._initializeSizes(); // TODO: delay this for Safari?
-			if (!jQuery.support.flexBoxLayout ||
-					(Panel._isSizeSet(this.getHeight()) && (this._hasIcon() || (this.getButtons().length > 0)))) {
-				this._handleResizeNow();
-			}
 		}
 	};
 
@@ -212,8 +208,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./Panel
 		this._initializeSizes(); // TODO: delay this for Safari?
 
 		// in browsers not supporting the FlexBoxLayout we need to listen to resizing
-		if (!jQuery.support.flexBoxLayout ||
-				(Panel._isSizeSet(this.getHeight()) && (this._hasIcon() || (this.getButtons().length > 0)))) {
+		if (Panel._isSizeSet(this.getHeight()) && (this._hasIcon() || (this.getButtons().length > 0))) {
 			this._handleResizeNow();
 			this.sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handleResizeSoon, this));
 		}
@@ -377,62 +372,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./Panel
 	 * @private
 	 */
 	Panel.prototype._handleResizeNow = function() {
-		// in IE8 (maybe also IE9) the sizes of the flexible items (title and toolbar) need to be adjusted
-		// whenever the Panel width changes
-		if (!jQuery.support.flexBoxLayout && this.getDomRef()) {
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-
-			/* Algorithm:
-			 * 1. calculate space available for the two elements
-			 * 2. if no toolbar is present, apply this width to the title, else:
-			 * 3.   reduce toolbar width until maxBtnSize is reached, then reduce title width until minimum (do not make either any smaller; the Panel has a min-width anyway)
-			 * 4.   apply these widths
-			 */
-
-			// begin of Panel to begin of Title
-			var beginBorderOfTitle = this._oTitleDomRef.offsetLeft; // displacement of the beginning of the title from the Panel border
-			var totalWidth = this.getDomRef().offsetWidth;
-			if (bRtl) {
-				beginBorderOfTitle = totalWidth - (beginBorderOfTitle + this._oTitleDomRef.offsetWidth); // RTL case
-			}
-
-			// begin of Panel to begin if "RightItems"
-			var beginBorderOfRightItems = 10000;
-			jQuery(this._oHeaderDomRef).children(".sapUiPanelHdrRightItem").each(function(){
-				var begin = this.offsetLeft;
-				if (bRtl) {
-					begin = totalWidth - (begin + this.offsetWidth); // RTL case
-				}
-				if ((begin < beginBorderOfRightItems) && (begin > 0)) {
-					beginBorderOfRightItems = begin;
-				}
-			});
-
-			var availableSpace = (beginBorderOfRightItems == 10000) ?
-						this.$().width() - beginBorderOfTitle - 20
-					: beginBorderOfRightItems - beginBorderOfTitle - 10;
-
-			var aButtons = this.getButtons();
-			if (aButtons && aButtons.length > 0) { // there are title and toolbar; calculate and set both sizes
-				// differentiate between two cases: 1. there is enough space for title plus minimum toolbar width
-				//                                  2. both need to be reduced in size
-				if ((availableSpace - this._iOptTitleWidth - this._iTitleMargin) > (this._iMaxTbBtnWidth - this._iTbMarginsAndBorders)) {
-					// if available width minus optimum title width is still more than the minimum toolbar width,
-					// give all remaining width to the toolbar
-					this._oToolbarDomRef.style.width = (availableSpace - this._iOptTitleWidth - this._iTitleMargin - this._iTbMarginsAndBorders) + "px";
-					this._oTitleDomRef.style.width = this._iOptTitleWidth + "px";
-				} else {
-					// both are affected => set toolbar to minimum and reduce title width, but not smaller than minimum
-					this._oToolbarDomRef.style.width = this._iMaxTbBtnWidth + "px";
-					this._oTitleDomRef.style.width = Math.max((availableSpace - this._iMaxTbBtnWidth - this._iTbMarginsAndBorders), this._iMinTitleWidth) + "px";
-				}
-
-			} else {
-				// no toolbar
-				this._oTitleDomRef.style.width = Math.max(availableSpace, this._iMinTitleWidth) + "px";
-			}
-		}
-
 		// in case the resizing caused button wrapping, adapt content height -- FOR ALL BROWSERS!
 		this._fixContentHeight();
 	};

@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/*
@@ -15,7 +15,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @private
 	 */
 	jQuery.fn.disableSelection = function() {
-		return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
+		return this.on(("onselectstart" in document.createElement("div") ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
 			oEvent.preventDefault();
 		});
 	};
