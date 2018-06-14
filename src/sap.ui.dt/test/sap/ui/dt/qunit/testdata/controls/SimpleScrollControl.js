@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 			oRm.addClass("sapUiDtTestSSCScrollContainer");
 			oRm.addStyle("height", "700px");
 			oRm.addStyle("width", "450px");
-			oRm.addStyle("overflow", "scroll");
+			oRm.addStyle("overflow", "auto");
 			oRm.writeStyles();
 			oRm.writeClasses();
 			oRm.write(">");
