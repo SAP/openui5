@@ -38,7 +38,9 @@ sap.ui.define([
         /*public by Controller impl*/
         "myFinalMethod",
         "privateMethod1",
-		"publicMethod"
+		"publicMethod",
+        /*public by medatata*/
+        "onMyHook"
     ];
 
     QUnit.module("Controller Metadata Legacy", {
@@ -61,7 +63,7 @@ sap.ui.define([
             var oControllerInterface = oView.getController().getInterface();
             var aInterfaceKeys = Object.keys(oControllerInterface);
             assert.ok(oControllerInterface, "Controller Interface created");
-            assert.equal(aInterfaceKeys.length, 5, "5 public methods are exposed");
+            assert.equal(aInterfaceKeys.length, 6, "6 public methods are exposed");
             assert.deepEqual(aInterfaceKeys.sort(), aLegacyPublicControllerMethods.sort(), "All public methods exposed are correctly");
             done();
         });
