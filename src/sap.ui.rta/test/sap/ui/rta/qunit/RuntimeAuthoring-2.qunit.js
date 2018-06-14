@@ -54,10 +54,8 @@ sap.ui.require([
 ) {
 	"use strict";
 
-	QUnit.start();
-
 	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitUtils.renderTestAppAt("test-view");
+	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
 	var oComp = oCompCont.getComponentInstance();
 
 	QUnit.module("Given that RuntimeAuthoring is created without a root control...", {
@@ -804,6 +802,8 @@ sap.ui.require([
 
 	QUnit.done(function( details ) {
 		oComp.destroy();
-		jQuery("#test-view").hide();
+		jQuery("#qunit-fixture").hide();
 	});
+
+	QUnit.start();
 });
