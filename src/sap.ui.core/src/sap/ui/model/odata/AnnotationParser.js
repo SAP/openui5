@@ -148,8 +148,8 @@ var AnnotationParser =  {
 		var mappingList = {}, schemaNodes, schemaNode,
 		termNodes, oTerms, termNode, sTermType, annotationNodes, annotationNode,
 		annotationTarget, annotationNamespace, annotation, propertyAnnotation, propertyAnnotationNodes,
-		propertyAnnotationNode, sTermValue, targetAnnotation, annotationTerm,
-		valueAnnotation, expandNodes, expandNode, path, pathValues, expandNodesApplFunc, i, nodeIndex;
+		propertyAnnotationNode, sTermValue, targetAnnotation,
+		expandNodes, expandNode, path, pathValues, expandNodesApplFunc, i, nodeIndex;
 
 		AnnotationParser._parserData = {};
 
@@ -296,19 +296,14 @@ var AnnotationParser =  {
 				for (var nodeIndexAnnotation = 0; nodeIndexAnnotation < propertyAnnotationNodes.length; nodeIndexAnnotation += 1) {
 					propertyAnnotationNode = AnnotationParser._oXPath.nextNode(propertyAnnotationNodes, nodeIndexAnnotation);
 
-					var mAnnotation = AnnotationParser._parseAnnotation(annotation, annotationNode, propertyAnnotationNode);
-					annotationTerm = mAnnotation.key;
-					valueAnnotation = mAnnotation.value;
-
-					if (!sContainerAnnotation) {
-						mTarget[annotationTerm] = valueAnnotation;
-					} else {
+					var oAnnotationTarget = mTarget;
+					if (sContainerAnnotation) {
 						if (!mTarget[sContainerAnnotation]) {
 							mTarget[sContainerAnnotation] = {};
 						}
-						mTarget[sContainerAnnotation][annotationTerm] = valueAnnotation;
+						oAnnotationTarget = mTarget[sContainerAnnotation];
 					}
-
+					AnnotationParser._parseAnnotation(annotation, annotationNode, propertyAnnotationNode, oAnnotationTarget);
 				}
 				// --- Setup of Expand nodes. ---
 				expandNodes = AnnotationParser._oXPath.selectNodes("//d:Annotations[contains(@Target, '" + targetAnnotation
@@ -372,24 +367,25 @@ var AnnotationParser =  {
 
 
 	/**
+	 * Sets the parsed annotation term at the given oAnnotationTarget object, using the given sPrefix
+	 * for annotations at annotations.
 	 * @static
 	 * @private
 	 */
-	_parseAnnotation: function (sAnnotationTarget, oAnnotationsNode, oAnnotationNode) {
-
+	_parseAnnotation: function (sAnnotationTarget, oAnnotationsNode, oAnnotationNode, oAnnotationTarget, sPrefix) {
 		var sQualifier = oAnnotationsNode.getAttribute("Qualifier") || oAnnotationNode.getAttribute("Qualifier");
 		var sTerm = AnnotationParser.replaceWithAlias(oAnnotationNode.getAttribute("Term"), AnnotationParser._parserData.aliases);
 		if (sQualifier) {
 			sTerm += "#" + sQualifier;
 		}
+		if (sPrefix) {
+			sTerm = sPrefix + "@" + sTerm;
+		}
 
-		var vValue = AnnotationParser.getPropertyValue(oAnnotationNode, AnnotationParser._parserData.aliases, sAnnotationTarget);
+		var vValue = AnnotationParser.getPropertyValue(oAnnotationNode, sAnnotationTarget, oAnnotationTarget, sTerm);
 		vValue = AnnotationParser.setEdmTypes(vValue, AnnotationParser._parserData.metadataProperties.types, sAnnotationTarget, AnnotationParser._parserData.schema);
 
-		return {
-			key: sTerm,
-			value: vValue
-		};
+		oAnnotationTarget[sTerm] = vValue;
 	},
 
 	/**
@@ -751,7 +747,7 @@ var AnnotationParser =  {
 	 * @static
 	 * @private
 	 */
-	getPropertyValue: function(oDocumentNode, sAnnotationTarget) {
+	getPropertyValue: function(oDocumentNode, sAnnotationTarget, oAnnotationTarget, sPrefix) {
 		var i;
 
 		var xPath = AnnotationParser._oXPath;
@@ -835,9 +831,13 @@ var AnnotationParser =  {
 			if (oNestedAnnotations.length > 0) {
 				for (i = 0; i < oNestedAnnotations.length; i++) {
 					var oNestedAnnotationNode = xPath.nextNode(oNestedAnnotations, i);
-					var mAnnotation = AnnotationParser._parseAnnotation(sAnnotationTarget, oDocumentNode, oNestedAnnotationNode);
-
-					vPropertyValue[mAnnotation.key] = mAnnotation.value;
+					if (Array.isArray(vPropertyValue)) {
+						// Properties at array are not serializable (via JSON.stringify/parse)!
+						// Additionally use an annotation of an annotation, e.g.
+						// "com.sap.vocabularies.UI.v1.LineItem@com.sap.vocabularies.UI.v1.Criticality"
+						AnnotationParser._parseAnnotation(sAnnotationTarget, oDocumentNode, oNestedAnnotationNode, oAnnotationTarget, sPrefix);
+					}
+					AnnotationParser._parseAnnotation(sAnnotationTarget, oDocumentNode, oNestedAnnotationNode, vPropertyValue);
 				}
 
 			}

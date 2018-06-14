@@ -5318,6 +5318,7 @@ var sNestedAnnotations = '\
 								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High"/>\
 						</Record>\
 					</Collection>\
+					<Annotation Term="UI.Criticality" Path="Criticality"/>\
 				</Annotation>\
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CategoryName">\
 					<!-- We are keeping this (invalid) example in to document the behavior of the parser in cases that are not allowed in actual annotation sources -->\
@@ -5326,7 +5327,7 @@ var sNestedAnnotations = '\
 						<Annotation Term="Core.Description2" String="If used for a single property the Common.Text annotation is annotated"/>\
 					</Term>\
 				</Annotation>\
-				<Annotation Term="com.sap.vocabularies.Common.v1.Text2" Path="CategoryName">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text#2" Path="CategoryName">\
 					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement" EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast" />\
 				</Annotation>\
 				<Annotation Term="unittest.ui5.parentAnnotation">\
