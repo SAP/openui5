@@ -266,7 +266,7 @@ sap.ui.define([
 	/**
 	 * Applies the given map of parameters to this binding's parameters.
 	 *
-	 * @param {object} [mParameters]
+	 * @param {object} mParameters
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason, used to distinguish calls by {@link #constructor} from calls by
@@ -278,23 +278,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
-		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
+		this.checkBindingParameters(mParameters,
 			["$$groupId", "$$inheritExpandSelect", "$$ownRequest", "$$updateGroupId"]);
 
-		if (oBindingParameters.$$inheritExpandSelect) {
-			if (!this.oOperation) {
-				throw new Error("Unsupported binding parameter $$inheritExpandSelect: "
-					+ "binding is not an operation binding");
-			}
-			if (oBindingParameters.$expand || oBindingParameters.$select) {
-				throw new Error("Must not set parameter $$inheritExpandSelect on binding which has "
-					+ "$expand or $select");
-			}
-		}
-
-		this.sGroupId = oBindingParameters.$$groupId;
-		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-		this.bInheritExpandSelect = oBindingParameters.$$inheritExpandSelect;
+		this.sGroupId = mParameters.$$groupId;
+		this.sUpdateGroupId = mParameters.$$updateGroupId;
+		this.bInheritExpandSelect = mParameters.$$inheritExpandSelect;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
 		if (!this.oOperation) {

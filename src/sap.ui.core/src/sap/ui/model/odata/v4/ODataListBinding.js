@@ -213,7 +213,7 @@ sap.ui.define([
 	 * Applies the given map of parameters to this binding's parameters and triggers the
 	 * creation of a new cache if called with a change reason.
 	 *
-	 * @param {object} [mParameters]
+	 * @param {object} mParameters
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason for {@link #reset}
@@ -224,29 +224,29 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
 		var oAggregation,
-			oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-				["$$aggregation", "$$groupId", "$$operationMode", "$$ownRequest",
-					"$$updateGroupId"]),
 			sOperationMode;
 
-		sOperationMode = oBindingParameters.$$operationMode || this.oModel.sOperationMode;
+		this.checkBindingParameters(mParameters,
+			["$$aggregation", "$$groupId", "$$operationMode", "$$ownRequest", "$$updateGroupId"]);
+
+		sOperationMode = mParameters.$$operationMode || this.oModel.sOperationMode;
 		// Note: $$operationMode is validated before, this.oModel.sOperationMode also
 		// Just check for the case that no mode was specified, but sort/filter takes place
 		if (!sOperationMode && (this.aSorters.length || this.aApplicationFilters.length)) {
 			throw new Error("Unsupported operation mode: " + sOperationMode);
 		}
 		this.sOperationMode = sOperationMode;
-		this.sGroupId = oBindingParameters.$$groupId;
-		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+		this.sGroupId = mParameters.$$groupId;
+		this.sUpdateGroupId = mParameters.$$updateGroupId;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
-		if ("$$aggregation" in oBindingParameters) {
+		if ("$$aggregation" in mParameters) {
 			// Note: this.mQueryOptions has been recreated from mParameters which does not contain
 			// our "implicit" $apply
 			if ("$apply" in this.mQueryOptions) {
 				throw new Error("Cannot combine $$aggregation and $apply");
 			}
-			oAggregation = _Helper.clone(oBindingParameters.$$aggregation);
+			oAggregation = _Helper.clone(mParameters.$$aggregation);
 			this.mQueryOptions.$apply = _Helper.buildApply(oAggregation);
 			this.oAggregation = oAggregation;
 		}

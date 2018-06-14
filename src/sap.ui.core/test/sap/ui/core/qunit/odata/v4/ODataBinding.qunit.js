@@ -7,8 +7,9 @@ sap.ui.require([
 	"sap/ui/model/Binding",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/ODataBinding"
-], function (jQuery, SyncPromise, Binding, _Helper, Context, asODataBinding) {
+	"sap/ui/model/odata/v4/ODataBinding",
+	"sap/ui/model/odata/v4/SubmitMode"
+], function (jQuery, SyncPromise, Binding, _Helper, Context, asODataBinding, SubmitMode) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -1662,5 +1663,137 @@ sap.ui.require([
 			.withExactArgs("group", sinon.match.same(vLock), sinon.match.same(oBinding));
 
 		oBinding.lockGroup("group", vLock);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, $$aggregation", function (assert) {
+		// code under test
+		new ODataBinding().checkBindingParameters({$$aggregation : []}, ["$$aggregation"]);
+	});
+
+	//*********************************************************************************************
+	["$$groupId", "$$updateGroupId"].forEach(function (sParameter) {
+		QUnit.test("checkBindingParameters, " + sParameter, function (assert) {
+			var aAllowedParams = [sParameter],
+				oBinding = new ODataBinding({
+					oModel : {
+						checkGroupId : function () {}
+					}
+				}),
+				oBindingParameters = {
+					custom : "foo"
+				};
+
+			oBindingParameters[sParameter] = "$auto";
+
+			this.mock(oBinding.oModel).expects("checkGroupId")
+				.withExactArgs("$auto", false,
+					"Unsupported value for binding parameter '" + sParameter + "': ");
+
+			// code under test
+			oBinding.checkBindingParameters(oBindingParameters, aAllowedParams);
+
+			assert.throws(function () {
+				oBinding.checkBindingParameters(oBindingParameters, []);
+			}, new Error("Unsupported binding parameter: " + sParameter));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, $$inheritExpandSelect", function (assert) {
+		var aAllowedParams = ["$$inheritExpandSelect"],
+			oBinding = new ODataBinding({
+				oOperation : {}
+			});
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$inheritExpandSelect : undefined}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$inheritExpandSelect': undefined"));
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$inheritExpandSelect : "foo"}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$inheritExpandSelect': foo"));
+
+		// code under test
+		oBinding.checkBindingParameters({$$inheritExpandSelect : true}, aAllowedParams);
+		oBinding.checkBindingParameters({$$inheritExpandSelect : false}, aAllowedParams);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, $$inheritExpandSelect, no operation binding",
+		function (assert) {
+		var aAllowedParams = ["$$inheritExpandSelect"],
+			oBinding = new ODataBinding();
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$inheritExpandSelect : true}, aAllowedParams);
+		}, new Error("Unsupported binding parameter $$inheritExpandSelect: "
+				+ "binding is not an operation binding"));
+	});
+
+	//*********************************************************************************************
+	[{$expand : {NavProperty : {}}}, {$select : "p0,p1"}].forEach(function (mExpandOrSelect, i) {
+		QUnit.test("checkBindingParameters: $$inheritExpandSelect with $expand or $select, " + i,
+			function (assert) {
+			var aAllowedParams = ["$$inheritExpandSelect"],
+				oBinding = new ODataBinding({
+					oOperation : {}
+				}),
+				mParameters = jQuery.extend({
+					$$inheritExpandSelect : true
+				}, mExpandOrSelect);
+
+			// code under test
+			assert.throws(function () {
+				oBinding.checkBindingParameters(mParameters, aAllowedParams);
+			}, new Error("Must not set parameter $$inheritExpandSelect on a binding which has "
+					+ "a $expand or $select binding parameter"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, $$operationMode", function (assert) {
+		var aAllowedParams = ["$$operationMode"],
+			oBinding = new ODataBinding();
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$operationMode : "Client"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: Client"));
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$operationMode : SubmitMode.Auto}, aAllowedParams);
+		}, new Error("Unsupported operation mode: Auto"));
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$operationMode : "any"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: any"));
+
+		// code under test
+		oBinding.checkBindingParameters({$$operationMode : "Server"}, aAllowedParams);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, $$ownRequest", function (assert) {
+		var aAllowedParams = ["$$ownRequest"],
+			oBinding = new ODataBinding();
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$ownRequest : "foo"}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$ownRequest': foo"));
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$ownRequest : false}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$ownRequest': false"));
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$ownRequest : undefined}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$ownRequest': undefined"));
+
+		// code under test
+		oBinding.checkBindingParameters({$$ownRequest : true}, aAllowedParams);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBindingParameters, unknown $$-parameter", function (assert) {
+		var oBinding = new ODataBinding();
+
+		assert.throws(function () {
+			oBinding.checkBindingParameters({$$someName : "~"}, ["$$someName"]);
+		}, new Error("Unknown binding-specific parameter: $$someName"));
 	});
 });
