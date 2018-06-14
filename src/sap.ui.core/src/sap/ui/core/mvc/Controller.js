@@ -539,11 +539,7 @@ sap.ui.define([
 		 * @return {void | sap.ui.core.mvc.Controller | Promise} void, the new controller instance or a Promise
 		 * 	resolving with the controller in async case
 		 * @static
-		 * @deprecated since 1.56:
-		 * <ul>
-		 * <li>For controller instance creation use <code>Controller.create</code> instead.</li>
-		 * <li>For defining controllers use <code>Controller.extend</code> instead.
-		 * </ul>
+		 * @deprecated Since 1.56, use {@link #.create Controller.create} or {@link #.extend Controller.extend} instead.
 		 * @public
 		 */
 		sap.ui.controller = function (sName, oControllerImpl, bAsync) {
