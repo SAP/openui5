@@ -79,7 +79,7 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 					/* Use case 1 */
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='001')/Results?$skip=0&$top=120&$inlinecount=allpages&$filter=(GLAccount_Level%20le%204)":
 						[200, oJSONHeaders, sResultsUC1L4Top120],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='001')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27i2uraf135q%27%20and%20GLAccount_Level%20le%204)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='001')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27i2uraf135q%27%20and%20GLAccount_Level%20le%204)":
 						[200, oJSONHeaders, sResultsUC1PrePosNODE111114],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='001')/Results?$skip=0&$top=62&$inlinecount=allpages&$filter=(GLAccount_Level%20le%204)":
 						[200, oJSONHeaders, sResultsUC1L4Top62],
@@ -91,7 +91,7 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 						[200, oJSONHeaders, sResultsUC2Top20ParentUI51383315],
 					"ZTJ_G4_C_GLHIERResults('uc2-new-node-1')?$select=GLAccount_SiblingsPosition":
 						[200, oJSONHeaders, sResultsUC2SibPosNode1],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='002')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%2714t10bv38u%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='002')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%2714t10bv38u%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='002')/Results?$skip=0&$top=45&$inlinecount=allpages&$filter=(GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC2L3Top45],
@@ -106,9 +106,9 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 						[200, oJSONHeaders, sResultsUC3L3Top120],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='003')/Results?$skip=0&$top=20&$inlinecount=allpages&$filter=(GLAccount_ParentID%20eq%20%27FinancialStatementItem%3a001%20UI53844872%27)":
 						[200, oJSONHeaders, sResultsUC3Top20ParentUI53844872],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='003')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27xccw7jnhn6%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='003')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27xccw7jnhn6%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='003')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%2797qiqdppge%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='003')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%2797qiqdppge%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='003')/Results?$skip=0&$top=45&$inlinecount=allpages&$filter=(GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC3L3Top45],
@@ -121,13 +121,13 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$skip=0&$top=120&$inlinecount=allpages&$filter=(GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC4L3Top120],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE500000%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE500000%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC4PrePosNODE500000],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE500001%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE500001%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.65.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.47.0.0.0_IEQCACNIEQ0010000052371%3aNODE500001001%200000360000500002-0000500002%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.65.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.47.0.0.0_IEQCACNIEQ0010000052371%3aNODE500001001%200000360000500002-0000500002%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.65.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.47.0.0.0_IEQCACNIEQ0010000052371%3aNODE500001001%200000360000500001-0000500001%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.65.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.47.0.0.0_IEQCACNIEQ0010000052371%3aNODE500001001%200000360000500001-0000500001%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results?$skip=0&$top=46&$inlinecount=allpages&$filter=(GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC4L3Top46],
@@ -141,13 +141,13 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 					*/
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$skip=0&$top=120&$inlinecount=allpages&$filter=(GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC4bL3Top120],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.37.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.19.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE40090%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.37.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.19.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE40090%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC4bPrePosNODE40090],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.37.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.19.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE40091%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.37.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.19.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE40091%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC4bPrePosNODE40091],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27d%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27d%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27c%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27c%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results?$skip=0&$top=36&$inlinecount=allpages&$filter=(GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC4bL3Top36],
@@ -162,7 +162,7 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 					*/
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x3')/Results?$skip=0&$top=120&$inlinecount=allpages&$filter=(GLAccount_Level%20le%202)":
 						[200, oJSONHeaders, sResultsUCx3L2Top120],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x3')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%273u8atky9ya%27%20and%20GLAccount_Level%20le%202)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x3')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%273u8atky9ya%27%20and%20GLAccount_Level%20le%202)":
 						[200, oJSONHeaders, sResultsUCx3PrePosNODE123456],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x3')/Results?$skip=0&$top=24&$inlinecount=allpages&$filter=(GLAccount_Level%20le%202)":
 						[200, oJSONHeaders, sResultsUCx3L2Top24],
@@ -177,7 +177,7 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 					*/
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x4')/Results?$skip=0&$top=120&$inlinecount=allpages&$filter=(GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUCx4L3Top120],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x4')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27cu59y0t37v%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x4')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27cu59y0t37v%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUCx4PrePosNODE000001],
 					"ZTJ_SFIN_HIERARCHY_02_SRV/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x4')/Results?$filter=(GLAccount_NodeID%20eq%20%27FinancialStatementItem%3a001%20NODE000001%27%20and%20GLAccount_Level%20le%203)&$select=GLAccount_NodeID%2cGLAccount_Nodecount&$top=1":
 						[200, oJSONHeaders, sResultsUCx4L3Top1NodeIDNODE000001], // TODO check if $select is necessary
@@ -199,7 +199,7 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 						[200, oJSONHeaders, sResultsUC8L3Top120],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='008')/Results?$skip=0&$top=20&$inlinecount=allpages&$filter=(GLAccount_ParentID%20eq%20%27FinancialStatementItem%3a001%20NODE500000%27)":
 						[200, oJSONHeaders, sResultsUC8L3Top20NodeIDNODE500000],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='008')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20UI57446534%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='008')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20UI57446534%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsEmptyCollection],
 					"ZTJ_G4_C_GLHIERResults('V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3A0.20.0.0.0_IEQCACNIEQ0010000052372%3A001%20UI57446534')?$select=GLAccount_SiblingsPosition":
 						[200, oJSONHeaders, sResultsUC8SibPosNodeIdUI57446534],
@@ -216,7 +216,7 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 					 */
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='010')/Results?$skip=0&$top=120&$inlinecount=allpages&$filter=(GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC10L3Top120],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='010')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE133700%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='010')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE133700%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC10PrePosNODE133700],
 					"ZTJ_G4_C_GLHIERResults('V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3A0.20.0.0.0_IEQCACNIEQ0010000052372%3A001%20NODE133700')?$select=GLAccount_SiblingsPosition":
 						[200, oJSONHeaders, sResultsUC10SibPosNodeIdUI133700],
@@ -239,7 +239,7 @@ sap.ui.define("ODataTreeBindingFakeService", function() {
 						[200, oJSONHeaders, sResultsUC17L3Parent05Top20],
 					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='017')/Results?$skip=0&$top=20&$inlinecount=allpages&$filter=(GLAccount_ParentID%20eq%20%27FinancialStatementItem%3a001%20NODE133706%27)":
 						[200, oJSONHeaders, sResultsUC17L3Parent06Top20],
-					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='017')/Results?$select=ID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE133704%27%20and%20GLAccount_Level%20le%203)":
+					"ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='017')/Results?$select=ID%2cGLAccount_NodeID%2cGLAccount_Nodecount%2cGLAccount_Drillstate%2cGLAccount_PreorderPosition&$filter=(ID%20eq%20%27V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3a0.20.0.0.0_IEQCACNIEQ0010000052372%3a001%20NODE133704%27%20and%20GLAccount_Level%20le%203)":
 						[200, oJSONHeaders, sResultsUC17PrePosNODE133704],
 					"ZTJ_G4_C_GLHIERResults('V2.34.38.0_1.2.4.0.1.2.3.0.1.2.1.1%3A0.20.0.0.0_IEQCACNIEQ0010000052372%3A001%20NODE133704')?$select=GLAccount_SiblingsPosition":
 						[200, oJSONHeaders, sResultsUC17SibPosNodeIdUI133704],
