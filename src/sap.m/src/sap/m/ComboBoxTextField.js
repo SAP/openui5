@@ -147,6 +147,7 @@ sap.ui.define([
 			this.selectText(iValueLength, iValueLength);
 		};
 
+		/* TODO remove after 1.62 version */
 		/**
 		 * Indicates whether the custom placeholder is used.
 		 *
