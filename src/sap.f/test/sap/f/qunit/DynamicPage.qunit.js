@@ -1828,7 +1828,7 @@
 		// Assert context changed as expected:
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
 		assert.ok(!this.oDynamicPage._needsVerticalScrollBar(), "not enough scrollHeight to scroll");//because header was hidden during snap
-		assert.equal(this.oDynamicPage._getScrollPosition(), 0); // because no more scrolled-out content
+		assert.equal(this.oDynamicPage._getScrollPosition(), this.oDynamicPage._bMSBrowser ? 1 : 0); // because no more scrolled-out content
 
 		// explicitly call the onscroll listener (to save a timeout in the test):
 		this.oDynamicPage._toggleHeaderOnScroll({target: {scrollTop: 0}});
@@ -2049,8 +2049,8 @@
 		// check
 		assert.equal(oSpy.callCount, 1, "scroll to show the 'collapse' visual indicator is called");
 
-		iCollapseButtonBottom =  Math.floor(oCollapseButton.getDomRef().getBoundingClientRect().bottom);
-		iDynamicPageBottom = Math.floor(this.oDynamicPage.getDomRef().getBoundingClientRect().bottom);
+		iCollapseButtonBottom =  Math.round(Math.abs(oCollapseButton.getDomRef().getBoundingClientRect().bottom));
+		iDynamicPageBottom = Math.round(Math.abs(this.oDynamicPage.getDomRef().getBoundingClientRect().bottom));
 
 		// check position
 		assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page, pos: " + iCollapseButtonBottom);
