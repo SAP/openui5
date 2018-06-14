@@ -1424,11 +1424,6 @@ function(
 				// Handle when F4 or Alt + DOWN arrow are pressed.
 				oEvent.setMarked();
 
-				// note: prevent browser address bar to be open in ie9, when F4 is pressed
-				if (oEvent.keyCode === jQuery.sap.KeyCodes.F4) {
-					oEvent.preventDefault();
-				}
-
 				if (this.isOpen()) {
 					this.close();
 					return;
