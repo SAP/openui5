@@ -1493,7 +1493,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getVerticalScrollRangeBuffer = function() {
 		var oTable = this.getTable();
 
-		if (!oTable || !TableUtils.isVariableRowHeightEnabled(oTable)) {
+		if (!TableUtils.isVariableRowHeightEnabled(oTable)) {
 			return 0;
 		}
 
@@ -1660,7 +1660,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.isVerticalScrollPositionInBuffer = function() {
 		var oTable = this.getTable();
 
-		if (!oTable || !TableUtils.isVariableRowHeightEnabled(oTable)) {
+		if (!TableUtils.isVariableRowHeightEnabled(oTable)) {
 			return false;
 		}
 
