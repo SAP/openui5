@@ -305,6 +305,19 @@ function(
 			assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: true}], "then evaluateEditable is called with the correct parameters");
 		});
 
+		QUnit.test("when the event elementModified is thrown but the plugin is busy", function(assert) {
+			var oModifyPluginListSpy = sandbox.spy(this.oRenamePlugin, "_modifyPluginList");
+			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			this.oRenamePlugin.isBusy = function(){
+				return true;
+			};
+			this.oLayoutOverlay.fireElementModified({
+				type: "overlayRendered",
+				id: this.oLayoutOverlay.getId()
+			});
+			assert.equal(oModifyPluginListSpy.callCount, 0, "then _modifyPluginList is not called");
+		});
+
 		QUnit.test("when _modifyPluginList is called multiple times", function(assert) {
 			assert.equal(this.oButtonOverlay.getEditableByPlugins(), "sap.ui.rta.plugin.Rename", "then initially the rename plugin is in the list");
 

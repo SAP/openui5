@@ -108,7 +108,7 @@ function(
 		oOverlay.attachElementModified(_onElementModified, this);
 
 		// the control can be set to visible, but still the control has no size when we do the check.
-		// that's why we also attach go 'geometryChanged' and check if the overlay has a size
+		// that's why we also attach to 'geometryChanged' and check if the overlay has a size
 		if (!oOverlay.getGeometry() || !oOverlay.getGeometry().visible) {
 			oOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
 		}
@@ -141,6 +141,15 @@ function(
 	 * @param {object} mPropertyBag Map of additional information to be passed to isEditable
 	 */
 	BasePlugin.prototype.evaluateEditable = function(aOverlays, mPropertyBag) {
+		var aPlugins = this.getDesignTime() ? this.getDesignTime().getPlugins() : [];
+		var bSkipEvaluation = aPlugins.some(function (oPlugin) {
+			// If a plugin is busy, do not evaluate
+			// When the action is finished, if the affected controls are modified, the evaluation will be done anyway
+			return oPlugin.isBusy && oPlugin.isBusy();
+		});
+		if (bSkipEvaluation){
+			return;
+		}
 		var vEditable;
 		aOverlays.forEach(function(oOverlay) {
 			var oElement = oOverlay.getElement();
@@ -158,8 +167,8 @@ function(
 				if (typeof vEditable === "boolean") {
 					this._modifyPluginList(oOverlay, vEditable);
 				} else {
-					this._modifyPluginList(oOverlay, vEditable["asChild"], false);
-					this._modifyPluginList(oOverlay, vEditable["asSibling"], true);
+					this._modifyPluginList(oOverlay, vEditable.asChild, false);
+					this._modifyPluginList(oOverlay, vEditable.asSibling, true);
 				}
 			}
 		}.bind(this));
