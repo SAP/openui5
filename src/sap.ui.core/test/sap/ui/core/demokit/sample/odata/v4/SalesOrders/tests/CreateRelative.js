@@ -69,7 +69,7 @@ sap.ui.define([
 				When.onTheMainPage.changeSalesOrderLineItemNote(0, "Line Item Note Changed - 2");
 				When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "0.0");
 				When.onTheMainPage.pressSaveSalesOrderButton();
-				When.onTheErrorInfo.confirm();
+				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "2.0");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 2");
@@ -93,7 +93,7 @@ sap.ui.define([
 				// because refresh on relative bindings is not supported
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 2");
 				When.onTheMainPage.pressSaveSalesOrderButton();
-				When.onTheErrorInfo.confirm();
+				When.onTheMessagePopover.close();
 
 				// check has pending changes
 				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();

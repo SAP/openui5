@@ -53,6 +53,9 @@
 				icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
 				tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
 				type="Transparent"/>
+			<Button id="MessagesButton" icon="sap-icon://message-popup" tooltip="Show messages"
+				press="onMessagePopoverPress" text="{ui>/iMessages}"
+				type="{= (${ui>/iMessages} ? 'Emphasized' : 'Default')}"/>
 			<dependents>
 				<Dialog id="CreateSalesOrderDialog" title="Create New Sales Order">
 					<buttons>

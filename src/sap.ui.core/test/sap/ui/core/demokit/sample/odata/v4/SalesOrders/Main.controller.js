@@ -4,28 +4,24 @@
 sap.ui.define([
 		'sap/m/Dialog',
 		'sap/m/MessageBox',
+		'sap/m/MessageItem',
+		'sap/m/MessagePopover',
 		'sap/m/MessageToast',
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/Item',
+		'sap/ui/core/MessageType',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
 		'sap/ui/model/FilterOperator',
 		'sap/ui/model/FilterType',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/Sorter'
-], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, Filter, FilterOperator,
-		FilterType, JSONModel, Sorter) {
+], function (Dialog, MessageBox, MessageItem, MessagePopover, MessageToast, DateFormat, Item,
+		MessageType, Controller, Filter, FilterOperator, FilterType, JSONModel, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
 		sServiceNamespace = "com.sap.gateway.default.zui5_epm_sample.v0002.";
-
-//	function onRejected(oError) {
-//		jQuery.sap.log.error(oError.message, oError.stack);
-//		MessageBox.alert(oError.message, {
-//			icon : MessageBox.Icon.ERROR,
-//			title : "Error"});
-//	}
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
 		_setSalesOrderBindingContext : function (oSalesOrderContext) {
@@ -90,6 +86,33 @@ sap.ui.define([
 				bDescending = undefined;
 			}
 			return {bDescending : bDescending, sNewIcon : sNewIcon};
+		},
+
+		/**
+		 * Listens to all changes in the message model, decides whether to open the message popover
+		 * and updates <code>iMessages</code> within the UI model.
+		 *
+		 * @param {object} oEvent
+		 *   The change event
+		 *
+		 */
+		handleMessagesChange : function (oEvent) {
+			var aMessageContexts = oEvent.getSource().getCurrentContexts();
+
+			function worthy(aMessageContexts) {
+				return aMessageContexts.some(function (oContext) {
+					var oMessage = oContext.getObject();
+
+					return oMessage.type === MessageType.Error
+						|| oMessage.type === MessageType.Warning
+						|| oMessage.technical === true;
+				});
+			}
+
+			if (!this.messagePopover.isOpen() && worthy(aMessageContexts)) {
+				this.messagePopover.openBy(this.byId("MessagesButton"));
+			}
+			this.getView().getModel("ui").setProperty("/iMessages", aMessageContexts.length);
 		},
 
 		onBeforeRendering : function () {
@@ -194,7 +217,6 @@ sap.ui.define([
 		onCreateSalesOrderLineItem : function (oEvent) {
 			var oContext,
 				oDeliveryDate = new Date(),
-				oUiModel = this.getView().getModel("ui"),
 				that = this;
 
 			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
@@ -344,6 +366,10 @@ sap.ui.define([
 			});
 		},
 
+		onExit : function () {
+			this.messagePopover.destroy();
+		},
+
 		onFilter : function (oEvent) {
 			var oBinding = this.byId("SalesOrders").getBinding("items"),
 				// TODO validation
@@ -375,41 +401,28 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var bMessageOpen = false,
-				oMessageManager = sap.ui.getCore().getMessageManager(),
-				oMessageModel = oMessageManager.getMessageModel();
-
-			this.oMessageModelBinding = oMessageModel.bindList("/", undefined,
-				[], new Filter("technical", FilterOperator.EQ, true));
-
-			this.oMessageModelBinding.attachChange(function (oEvent) {
-				var aContexts = oEvent.getSource().getContexts(),
-					aMessages = [],
-					sPrefix;
-
-				if (bMessageOpen || !aContexts.length) {
-					return;
+			this.messagePopover = new MessagePopover({
+				items : {
+					path :"message>/",
+					template : new MessageItem({
+						description : "{message>description}",
+						longtextUrl : "{message>descriptionUrl}",
+						title : "{message>message}",
+						type : "{message>type}"})
 				}
-
-				// Extract and remove the technical messages
-				aContexts.forEach(function (oContext) {
-					aMessages.push(oContext.getObject());
-				});
-				oMessageManager.removeMessages(aMessages);
-
-				// Due to batching there can be more than one technical message. However the UX
-				// guidelines say "display a single message in a message box" assuming that there
-				// will be only one at a time.
-				sPrefix = aMessages.length === 1 ? ""
-					: "There have been multiple technical errors. One example: ";
-				MessageBox.error(sPrefix + aMessages[0].message, {
-					id : "serviceErrorMessageBox",
-					onClose: function () {
-						bMessageOpen = false;
-					}
-				});
-				bMessageOpen = true;
 			});
+
+			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
+				"message");
+
+			this.messagePopover.getBinding("items").attachChange(this.handleMessagesChange, this);
+			this.messagePopover.attachAfterClose(function (oEvent) {
+				sap.ui.getCore().getMessageManager().removeAllMessages();
+			});
+		},
+
+		onMessagePopoverPress: function (oEvent) {
+			this.messagePopover.toggle(oEvent.getSource());
 		},
 
 		onRefreshAll : function () {
