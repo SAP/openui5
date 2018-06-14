@@ -21,6 +21,19 @@ sap.ui.define([
   iFrameLauncher) {
   "use strict";
 
+  QUnit.config.urlConfig.splice(0, 0, {
+    id: "closeFrame",
+    label: "Close Frame",
+    tooltip: "Closes the application-under-test's frame after all tests have executed",
+    value: "true"
+  });
+
+  QUnit.done(function() {
+    if (jQuery.sap.getUriParameters().get("closeFrame")) {
+      sap.ui.test.Opa5.emptyQueue();
+    }
+  });
+
   /**
    * Dynamically generates and executes Opa5 tests based on a Gherkin feature file and step definitions.
    *
@@ -131,13 +144,6 @@ sap.ui.define([
         afterEach: function() {
           if (this._oOpa5.hasAppStarted()) {
             this._oOpa5.iTeardownMyApp();
-          }
-
-          // Add a link to the page to allow the user to close the frame
-          if ($("#frame-close-link").length === 0) {
-            $("#qunit-header").append('<input id="frame-close-link" type="button"' +
-                'onclick="sap.ui.test.Opa5.emptyQueue(); $(\'#frame-close-link\').remove();" style="float: right; ' +
-                'margin-right: 0.5em; margin-top: -0.4em;" value="Close &#13;&#10;Frame"></input>');
           }
           oTestGenerator.tearDown();
         }.bind(this)
