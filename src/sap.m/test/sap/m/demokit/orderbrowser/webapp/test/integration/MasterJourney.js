@@ -51,9 +51,44 @@ sap.ui.define([
 		When.onTheMasterPage.iClearTheSearch();
 
 		// Assertions
-		Then.onTheMasterPage.theListShouldHaveAllEntries().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.theListShouldHaveAllEntries();
 	});
 
+	opaTest("MasterList Filtering on Shipped Orders", function(Given, When, Then) {
+		// Action
+		When.onTheMasterPage.iFilterTheListOn("Only Shipped Orders");
 
+		// Assertion
+		Then.onTheMasterPage.theListShouldBeFilteredOnShippedOrders();
+	});
+
+	opaTest("MasterList remove filter should display all items", function(Given, When, Then) {
+		// Action
+		When.onTheMasterPage.iOpenViewSettingsDialog().
+			and.iPressResetInViewSelectionDialog().
+			and.iPressOKInViewSelectionDialog();
+
+		// Assertion
+		Then.onTheMasterPage.theListShouldHaveAllEntries();
+	});
+
+	opaTest("MasterList grouping created group headers", function(Given, When, Then) {
+		// Action
+		When.onTheMasterPage.iGroupTheList();
+
+		// Assertion
+		Then.onTheMasterPage.theListShouldContainAGroupHeader();
+	});
+
+	opaTest("Remove grouping from MasterList delivers initial list", function(Given, When, Then) {
+		// Action
+		When.onTheMasterPage.iRemoveListGrouping();
+
+		// Assertion
+		Then.onTheMasterPage.theListShouldNotContainGroupHeaders().
+			and.theListShouldHaveAllEntries();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
+	});
 });

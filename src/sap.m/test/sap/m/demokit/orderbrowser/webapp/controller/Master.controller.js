@@ -8,8 +8,8 @@ sap.ui.define([
 		"sap/m/GroupHeaderListItem",
 		"sap/ui/Device",
 		"sap/ui/demo/orderbrowser/model/formatter",
-		"sap/ui/demo/orderbrowser/model/GroupState"
-	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter, GroupState) {
+		"sap/ui/core/format/DateFormat"
+	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter, DateFormat) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.orderbrowser.controller.Master", {
@@ -33,12 +33,50 @@ sap.ui.define([
 					// taken care of by the master list itself.
 					iOriginalBusyDelay = oList.getBusyIndicatorDelay();
 
-				this._oList = oList;
+				this._oGroupFunctions = {
+					CompanyName: function (oContext) {
+						var sCompanyName = oContext.getProperty("Customer/CompanyName");
+						return {
+							key: sCompanyName,
+							text: sCompanyName
+						};
+					},
 
-				// Remember initial sorter, to be able to "remove" a user-selected sorter
-				// and return to the default as defined in the XML view.
-				var oInitialSorter = oList.getBindingInfo("items").sorter;
-				this._oGroupState = new GroupState(oInitialSorter, this.getResourceBundle());
+					OrderDate: function (oContext) {
+						var oDate = oContext.getProperty("OrderDate"),
+							iYear = oDate.getFullYear(),
+							iMonth = oDate.getMonth() + 1,
+							sMonthName = this._oMonthNameFormat.format(oDate);
+
+						return {
+							key: iYear + "-" + iMonth,
+							text: this.getResourceBundle().getText("masterGroupTitleOrderedInPeriod", [sMonthName, iYear])
+						};
+					}.bind(this),
+
+					ShippedDate: function (oContext) {
+						var oDate = oContext.getProperty("ShippedDate");
+						// Special handling needed because shipping date may be empty (=> not yet shipped).
+						if (oDate != null) {
+							var iYear = oDate.getFullYear(),
+								iMonth = oDate.getMonth() + 1,
+								sMonthName = this._oMonthNameFormat.format(oDate);
+
+							return {
+								key: iYear + "-" + iMonth,
+								text: this.getResourceBundle().getText("masterGroupTitleShippedInPeriod", [sMonthName, iYear])
+							};
+						} else {
+							return {
+								key: 0,
+								text: this.getResourceBundle().getText("masterGroupTitleNotShippedYet")
+							};
+						}
+					}.bind(this)
+				};
+				this._oMonthNameFormat = DateFormat.getInstance({ pattern: "MMMM"});
+
+				this._oList = oList;
 
 				// keeps the filter and search state
 				this._oListFilterState = {
@@ -80,7 +118,7 @@ sap.ui.define([
 				// update the master list object counter after new data is loaded
 				this._updateListItemCount(oEvent.getParameter("total"));
 				// hide pull to refresh if necessary
-				this.byId("pullToRefresh").hide();
+				//this.byId("pullToRefresh").hide();
 			},
 
 			/**
@@ -165,44 +203,55 @@ sap.ui.define([
 			},
 
 			/**
-			 * Adds/changes/removes a filter according to the user selection in the footer
-			 * of the master list.
-			 * Note: In addition, there can be another filter based on the search field.
-			 * Both optional filters are combined in _applyFilterSearch().
-			 * @param {sap.ui.base.Event} oEvent The change event
+			 * Event handler called when ViewSettingsDialog has been confirmed, i.e.
+			 * has been closed with 'OK'. In the case, the currently chosen filters or groupers
+			 * are applied to the master list, which can also mean that they
+			 * are removed from the master list, in case they are
+			 * removed in the ViewSettingsDialog.
+			 * @param {sap.ui.base.Event} oEvent the confirm event
+			 * @public
 			 */
-			onFilter : function(oEvent) {
-				var sKey = oEvent.getSource().getSelectedItem().getKey();
-				var oFilter = null;
-				switch (sKey) {
-					case "Shipped":
-						oFilter = new Filter("ShippedDate", FilterOperator.NE, null);
+			onConfirmViewSettingsDialog : function (oEvent) {
+				var aFilterItems = oEvent.getParameter("filterItems"),
+					aFilters = [],
+					aCaptions = [];
+				aFilterItems.forEach(function (oItem) {
+					switch (oItem.getKey()) {
+						case "Shipped":
+							aFilters.push(new Filter("ShippedDate", FilterOperator.NE, null));
+							break;
+						case "NotShipped":
+							aFilters.push(new Filter("ShippedDate", FilterOperator.EQ, null));
+							break;
+						default:
 						break;
-					case "NotShipped":
-						oFilter = new Filter("ShippedDate", FilterOperator.EQ, null);
-						break;
-					case "NoFilter":
-					default:
-						oFilter = null;
-				}
-
-				if (oFilter) {
-					this._oListFilterState.aFilter = [ oFilter ];
-				} else {
-					this._oListFilterState.aFilter = [];
-				}
+					}
+					aCaptions.push(oItem.getText());
+				});
+				this._oListFilterState.aFilter = aFilters;
+				this._updateFilterBar(aCaptions.join(", "));
 				this._applyFilterSearch();
+				this._applyGrouper(oEvent);
 			},
 
 			/**
-			 * Event handler for selection of another grouping option.
-			 * @param {sap.ui.base.Event} oEvent the search field event
-			 * @public
+			 * Apply the chosen grouper to the master list
+			 * @param {sap.ui.base.Event} oEvent the confirm event
+			 * @private
 			 */
-			onGroup : function (oEvent) {
-				var sKey = oEvent.getSource().getSelectedItem().getKey(),
-					aSorters = this._oGroupState.groupBy(sKey);
-
+			_applyGrouper: function (oEvent) {
+				var mParams = oEvent.getParameters(),
+					sPath,
+					bDescending,
+					aSorters = [];
+				// apply sorter to binding
+				if (mParams.groupItem) {
+					mParams.groupItem.getKey() === "CompanyName" ?
+						sPath = "Customer/" + mParams.groupItem.getKey() : sPath = mParams.groupItem.getKey();
+					bDescending = mParams.groupDescending;
+					var vGroup = this._oGroupFunctions[mParams.groupItem.getKey()];
+					aSorters.push(new Sorter(sPath, bDescending, vGroup));
+				}
 				this._oList.getBinding("items").sort(aSorters);
 			},
 
@@ -221,28 +270,9 @@ sap.ui.define([
 				});
 			},
 
-			/**
-			 * If the master route was hit (empty hash) we have to set
-			 * the hash to to the first item in the list as soon as the
-			 * listLoading is done and the first item in the list is known
-			 * @private
-			 */
 			_onMasterMatched :  function() {
-				this.getOwnerComponent().oListSelector.oWhenListLoadingIsDone.then(
-					function (mParams) {
-						if (mParams.list.getMode() === "None") {
-							return;
-						}
-						var sObjectId = mParams.firstListitem.getBindingContext().getProperty("OrderID");
-						this.getRouter().navTo("object", {objectId : sObjectId}, true);
-					}.bind(this),
-					function (mParams) {
-						if (mParams.error) {
-							return;
-						}
-						this.getRouter().getTargets().display("detailNoObjectsAvailable");
-					}.bind(this)
-				);
+				//Set the layout property of the FCL control to 'OneColumn'
+				this.getModel("appView").setProperty("/layout", "OneColumn");
 			},
 
 			/**
@@ -253,6 +283,8 @@ sap.ui.define([
 			 */
 			_showDetail : function (oItem) {
 				var bReplace = !Device.system.phone;
+				// set the layout property of FCL control to show two columns
+				this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
 				this.getRouter().navTo("object", {
 					objectId : oItem.getBindingContext().getProperty("OrderID")
 				}, bReplace);
@@ -296,6 +328,28 @@ sap.ui.define([
 				var oViewModel = this.getModel("masterView");
 				oViewModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
 				oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sFilterBarText]));
+			},
+
+			/**
+			 * Event handler for the filter and group buttons to open the ViewSettingsDialog.
+			 * @param {sap.ui.base.Event} oEvent the button press event
+			 * @public
+			 */
+			onOpenViewSettings : function (oEvent) {
+				if (!this._oViewSettingsDialog) {
+					this._oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.orderbrowser.view.ViewSettingsDialog", this);
+					this.getView().addDependent(this._oViewSettingsDialog);
+					// forward compact/cozy style into Dialog
+					this._oViewSettingsDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+				}
+				var sDialogTab = "filter";
+				if (oEvent.getSource() instanceof sap.m.Button) {
+					var sButtonId = oEvent.getSource().sId;
+					if (sButtonId.match("group")) {
+						sDialogTab = "group";
+					}
+				}
+				this._oViewSettingsDialog.open(sDialogTab);
 			}
 
 		});
