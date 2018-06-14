@@ -1856,6 +1856,22 @@
 		assert.equal(oDynamicPage._getEntireHeaderHeight(), 0, "correct with no header and no title");
 	});
 
+	QUnit.test("DynamicPage _hasVisibleTitleAndHeader returns correct state" , function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oHeader = oDynamicPage.getHeader(),
+			aHeaderContent = oHeader.getContent();
+
+		// Assert
+		assert.ok(aHeaderContent.length, "Content aggregation is set");
+		assert.ok(oDynamicPage._hasVisibleTitleAndHeader(), "Title and Header are visible");
+
+		// Act
+		oHeader.destroyContent();
+
+		// Assert
+		assert.notOk(oDynamicPage._hasVisibleTitleAndHeader(), "Header is not visible");
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {

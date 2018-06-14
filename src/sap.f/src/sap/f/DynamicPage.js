@@ -1102,9 +1102,10 @@ sap.ui.define([
 	DynamicPage.prototype._updateToggleHeaderVisualIndicators = function () {
 		var bHeaderExpanded,
 			bCollapseVisualIndicatorVisible,
-			bExpandVisualIndicatorVisible;
+			bExpandVisualIndicatorVisible,
+			bHasTitleAndHeader = this._hasVisibleTitleAndHeader();
 
-		if (!this.getToggleHeaderOnTitleClick() || this._bPinned) {
+		if (!this.getToggleHeaderOnTitleClick() || this._bPinned || !bHasTitleAndHeader) {
 			bCollapseVisualIndicatorVisible = false;
 			bExpandVisualIndicatorVisible = false;
 		} else {
@@ -1115,6 +1116,18 @@ sap.ui.define([
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
 		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
+	};
+
+	/**
+	 * Returns <code>true</code> if DynamicPage has <code>title</code> and <code>header</code> aggregations set and they are both visible.
+	 * @private
+	 */
+	DynamicPage.prototype._hasVisibleTitleAndHeader = function () {
+		var oTitle = this.getTitle(),
+			oHeader = this.getHeader();
+
+		return exists(oTitle) && oTitle.getVisible()
+			&& exists(oHeader) && oHeader.getVisible() && exists(oHeader.getContent());
 	};
 
 	/**
