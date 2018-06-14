@@ -69,11 +69,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		var sValue = oControl.getValue();
 		sValue = jQuery.sap.encodeHTML(sValue);
 
-		// Convert the new line HTML entity rather than displaying it as a text.
-		//Normalize the /n and /r to /r/n - Carriage Return and Line Feed
-		if (Device.browser.msie && Device.browser.version < 11) {
-			sValue = sValue.replace(/&#xd;&#xa;|&#xd;|&#xa;/g, "&#13;");
-		}
 		oRm.write(sValue);
 	};
 
