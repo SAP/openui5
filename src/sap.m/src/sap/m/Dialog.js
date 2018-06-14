@@ -476,8 +476,7 @@ function(
 				this._setInitialFocus();
 			}
 
-			if (this.getType() === DialogType.Message ||
-				(Device.system.phone && !this.getStretch())) {
+			if (this.getType() === DialogType.Message) {
 				this.$("footer").removeClass("sapContrast sapContrastPlus");
 			}
 		};
