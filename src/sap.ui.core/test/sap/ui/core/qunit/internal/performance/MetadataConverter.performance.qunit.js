@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
@@ -107,7 +107,7 @@ sap.ui.require([
 		return repeatAsyncTest(10, function () {
 			var iStart = Date.now();
 
-			ODataModelV2.mServiceData = {}; // clear the cache for compatibility
+			ODataModelV2.mSharedData = {server: {}, service: {}, meta: {}}; // clear the cache for compatibility
 			return new ODataModelV2("/fake/v2/").getMetaModel().loaded().then(function () {
 				return {time: Date.now() - iStart};
 			});
