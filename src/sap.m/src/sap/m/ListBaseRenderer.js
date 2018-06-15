@@ -102,7 +102,11 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
 		if (oInfoTBar) {
 			oInfoTBar.setDesign(ToolbarDesign.Info, true);
 			oInfoTBar.addStyleClass("sapMListInfoTBar");
+			// render div for infoToolbar, as there is margin in HCB and HCW
+			// when sticky is enabled, the content behind the infoToolbar is visible due to the margins
+			rm.write("<div class='sapMListInfoTBarContainer'>");
 			rm.renderControl(oInfoTBar);
+			rm.write("</div>");
 		}
 
 		// determine items rendering
@@ -205,6 +209,12 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ListBaseRenderer.renderContainerAttributes = function(rm, oControl) {
+		// add sticky style classes
+		var iStickyValue = oControl.getStickyStyleValue();
+		if (iStickyValue) {
+			rm.addClass("sapMSticky");
+			rm.addClass("sapMSticky" + iStickyValue);
+		}
 	};
 
 	/**

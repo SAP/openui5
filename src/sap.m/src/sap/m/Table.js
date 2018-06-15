@@ -28,10 +28,6 @@ sap.ui.define([
 	// shortcut for sap.m.PopinLayout
 	var PopinLayout = library.PopinLayout;
 
-	// shortcut for sap.m.Sticky
-	var Sticky = library.Sticky;
-
-
 	/**
 	 * Constructor for a new Table.
 	 *
@@ -98,28 +94,7 @@ sap.ui.define([
 			 * <b>Note:</b> The <code>demandPopin</code> and <code>minScreenWidth</code> properties of the <code>Column</code> control must be configured appropriately.
 			 * @since 1.52
 			 */
-			popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block},
-
-			/**
-			 * Defines the section of the <code>sap.m.Table</code> control that remains fixed at the top of the page during vertical scrolling as long as the table is in the viewport.
-			 *
-			 * <b>Note:</b> There is limited browser support.
-			 * Browsers that do not support this feature are listed below:
-			 * <ul>
-			 * <li>IE.</li>
-			 * <li>Edge lower than version 41 (EdgeHTML 16).</li>
-			 * <li>Firefox lower than version 59.</li>
-			 * </ul>
-			 *
-			 * There are also some known limitations with respect to the scrolling behavior. A few are given below:
-			 * <ul>
-			 * <li>If the table is placed in certain layout containers, for example, the <code>sap.ui.layout.Grid</code> control,
-			 * the column headers are not fixed at the top of the viewport. The table behaves in a similar way when placed within the <code>sap.m.ObjectPage</code> control.</li>
-			 * <li>If the sticky column headers are enabled in the table, setting focus on the column headers will let the table scroll to the top.</li>
-			 * </ul>
-			 * @since 1.54
-			 */
-			sticky : {type : "sap.m.Sticky[]", group : "Appearance"}
+			popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block}
 		},
 		aggregations : {
 
@@ -673,92 +648,6 @@ sap.ui.define([
 		}
 	};
 
-	// check if browser supports css sticky
-	Table.getStickyBrowserSupport = function() {
-		var oBrowser = Device.browser;
-		return (oBrowser.safari || oBrowser.chrome
-				|| (oBrowser.firefox && oBrowser.version >= 59)
-				|| (oBrowser.edge && oBrowser.version >= 16));
-	};
-
-	// Returns the sticky value to be added to the sticky table container.
-	// sapMSticky7 is the result of sticky headerToolbar, infoToolbar and column headers.
-	// sapMSticky6 is the result of sticky infoToolbar and column headers.
-	// sapMSticky5 is the result of sticky headerToolbar and column headers.
-	// sapMSticky4 is the result of sticky column headers only.
-	// sapMSticky3 is the result of sticky headerToolbar and infoToolbar.
-	// sapMSticky2 is the result of sticky infoToolbar.
-	// sapMSticky1 is the result of sticky headerToolbar.
-	Table.prototype.getStickyStyleValue = function() {
-		var aSticky = this.getSticky();
-		if (!aSticky || !aSticky.length || !Table.getStickyBrowserSupport()) {
-			return (this._iStickyValue = 0);
-		}
-
-		var iStickyValue = 0,
-			sHeaderText = this.getHeaderText(),
-			oHeaderToolbar = this.getHeaderToolbar(),
-			bHeaderToolbarVisible = sHeaderText || (oHeaderToolbar && oHeaderToolbar.getVisible()),
-			oInfoToolbar = this.getInfoToolbar(),
-			bInfoToolbar = oInfoToolbar && oInfoToolbar.getVisible(),
-			bColumnHeadersVisible = this.getColumns().some(function(oColumn) {
-				return oColumn.getVisible() && oColumn.getHeader();
-			});
-
-		aSticky.forEach(function(sSticky) {
-			if (sSticky === Sticky.HeaderToolbar && bHeaderToolbarVisible) {
-				iStickyValue += 1;
-			} else if (sSticky === Sticky.InfoToolbar && bInfoToolbar) {
-				iStickyValue += 2;
-			} else if (sSticky === Sticky.ColumnHeaders && bColumnHeadersVisible) {
-				iStickyValue += 4;
-			}
-		});
-
-		return (this._iStickyValue = iStickyValue);
-	};
-
-	Table.prototype.setHeaderToolbar = function(oHeaderToolbar) {
-		return this._setToolbar("headerToolbar", oHeaderToolbar);
-	};
-
-	Table.prototype.setInfoToolbar = function(oInfoToolbar) {
-		return this._setToolbar("infoToolbar", oInfoToolbar);
-	};
-
-	Table.prototype._setToolbar = function(sAggregationName, oToolbar) {
-		var oOldToolbar = this.getAggregation(sAggregationName);
-		if (oOldToolbar) {
-			oOldToolbar.detachEvent("_change", this._onToolbarPropertyChanged, this);
-		}
-
-		this.setAggregation(sAggregationName, oToolbar);
-		if (oToolbar) {
-			oToolbar.attachEvent("_change", this._onToolbarPropertyChanged, this);
-		}
-		return this;
-	};
-
-	Table.prototype._onToolbarPropertyChanged = function(oEvent) {
-		if (oEvent.getParameter("name") !== "visible") {
-			return;
-		}
-
-		// update the sticky style class
-		var iOldStickyValue = this._iStickyValue,
-			iNewStickyValue = this.getStickyStyleValue();
-
-		if (iOldStickyValue !== iNewStickyValue) {
-			var oTableDomRef = this.getDomRef();
-			if (oTableDomRef) {
-				var aClassList = oTableDomRef.classList;
-				aClassList.toggle("sapMSticky", !!iNewStickyValue);
-				aClassList.remove("sapMSticky" + iOldStickyValue);
-				aClassList.toggle("sapMSticky" + iNewStickyValue, !!iNewStickyValue);
-			}
-		}
-	};
-
 	Table.prototype.onfocusin = function(oEvent) {
 		var oTarget = oEvent.target;
 		if (oTarget.id === this.getId("tblHeader")) {
@@ -776,63 +665,8 @@ sap.ui.define([
 		ListBase.prototype.onfocusin.call(this, oEvent);
 	};
 
-	// gets the sticky header position and scrolls the page so that the item is completely visible when focused
-	Table.prototype._handleStickyItemFocus = function(oItemDomRef) {
-		// when an item is focused and later focus is lost from the table and then table is scrolled and new item is focused,
-		// this resulted in unnecessary scroll jumping
-		if (!this._iStickyValue || this._sLastFocusedStickyItemId === oItemDomRef.id) {
-			return;
-		}
-
-		var oScrollDelegate = library.getScrollDelegate(this, true);
-		if (!oScrollDelegate) {
-			return;
-		}
-
-		// check the all the sticky element and get their height
-		var iTHRectHeight = 0,
-			iTHRectBottom = 0,
-			iInfoToolbarRectHeight = 0,
-			iInfoToolbarRectBottom = 0,
-			iHeaderToolbarRectHeight = 0,
-			iHeaderToolbarRectBottom = 0;
-
-		if (this._iStickyValue & 4 /* ColumnHeaders */) {
-			var oTblHeaderDomRef = this.getDomRef("tblHeader").firstChild;
-			var oTblHeaderRect = oTblHeaderDomRef.getBoundingClientRect();
-			iTHRectBottom = parseInt(oTblHeaderRect.bottom, 10);
-			iTHRectHeight = parseInt(oTblHeaderRect.height, 10);
-		}
-
-		if (this._iStickyValue & 2 /* InfoToolbar */) {
-			var oInfoToolbarDomRef = this.getInfoToolbar().getDomRef();
-			var oInfoToolbarRect = oInfoToolbarDomRef.getBoundingClientRect();
-			iInfoToolbarRectBottom = parseInt(oInfoToolbarRect.bottom, 10);
-			iInfoToolbarRectHeight = parseInt(oInfoToolbarRect.height, 10);
-		}
-
-		if (this._iStickyValue & 1 /* HeaderToolbar */) {
-			var oHeaderToolbarDomRef = this.getDomRef().querySelector(".sapMListHdr");
-			var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
-			iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom, 10);
-			iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
-		}
-
-		var iItemTop = oItemDomRef.getBoundingClientRect().top;
-
-		if (iTHRectBottom > iItemTop || iInfoToolbarRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
-			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoToolbarRectHeight - iHeaderToolbarRectHeight]);
-			});
-		}
-
-		this._sLastFocusedStickyItemId = oItemDomRef.id;
-	};
-
 	// function gets called when the focus is on the item or its content
 	Table.prototype.onItemFocusIn = function(oItem) {
-		this._handleStickyItemFocus(oItem.getDomRef());
-
 		ListBase.prototype.onItemFocusIn.apply(this, arguments);
 	};
 
