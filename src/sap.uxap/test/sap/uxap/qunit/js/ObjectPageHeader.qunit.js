@@ -1,6 +1,7 @@
 /*global QUnit*/
+/*global sinon*/
 
-(function ($, QUnit) {
+(function ($, QUnit, sinon) {
 	"use strict";
 
 	jQuery.sap.registerModulePath("view", "view");
@@ -380,6 +381,39 @@
 
 	});
 
+	QUnit.module("Resize");
+
+	QUnit.test("Resize listener is called after rerender while hidden", function (assert) {
+
+		var oHeader = oHeaderView.byId("header"),
+			oSpy = sinon.spy(oHeader, "_adaptLayoutForDomElement"),
+			done = assert.async();
+
+		// Setup: hide the container where the header is placed
+		oHeaderView.$().hide();
+
+		var oDelegate = {
+			onAfterRendering: function() {
+				oHeader.removeEventDelegate(oDelegate); // cleanup
+				setTimeout(function() { // allow the delayed layout onAfterRendering to execute
+
+					oSpy.reset();
+					// Act: show the view
+					oHeaderView.$().show();
+
+					setTimeout(function() {
+						assert.ok(oSpy.called, "the layout re-calculations are triggered");
+						done();
+					}, 100);
+				}, 100);
+			}
+		};
+
+		oHeader.addEventDelegate(oDelegate);
+		// Act: rerender the header while hidden
+		oHeader.rerender();
+	});
+
 	QUnit.module("Breadcrumbs rendering", {
 		beforeEach: function () {
 			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
@@ -499,4 +533,4 @@
 		this.assertAllButtonsAreDestroyed(assert);
 	});
 
-}(jQuery, QUnit));
+}(jQuery, QUnit, sinon));
