@@ -351,6 +351,7 @@ function(
 	TextArea.prototype.oninput = function(oEvent) {
 		InputBase.prototype.oninput.call(this, oEvent);
 
+		/* TODO remove after 1.62 version */
 		// Handles paste. This is before checking for "invalid" because in IE after paste the event is set as "invalid"
 		if (this._bPasteIsTriggered) {
 			this._bPasteIsTriggered = false;
