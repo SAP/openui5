@@ -1446,9 +1446,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 			var CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
 
 			for ( i = 0 ; i < aCalendars.length ; i++ ) {
-				sCalendarName = aCalendars[i];
+				// No support for calendar subtypes (islamic) yet, so ignore part after -
+				sCalendarName = aCalendars[i].split("-")[0];
 				for (sType in CalendarType) {
-					if (sCalendarName === getCLDRCalendarName(sType).substring(3)) {
+					if (sCalendarName === sType.toLowerCase()) {
 						return sType;
 					}
 				}
