@@ -141,7 +141,7 @@ sap.ui.define([
 		}
 
 		if (!!sap.ui.Device.browser.internet_explorer && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain
-			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0
+			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0 // TODO remove after 1.62 version
 			// as long as RadioButton is clicked on
 			this.$().attr("tabindex", 0).toggleClass("sapUiRbFoc");
 		}
@@ -165,6 +165,7 @@ sap.ui.define([
 		this.userSelect(oEvent);
 	};
 
+	// TODO remove after 1.62 version
 	/**
 	 * Event handler, called when the focus is set on a RadioButton.
 	 * Problem in HCB: Focus is set in IE8 to bullet, and not to the whole control.
@@ -192,7 +193,7 @@ sap.ui.define([
 
 		if (this.getEnabled() && oEvent.target.id == (this.getId() + "-RB")) {
 			if (this.bTabPressed) {
-				// this only occurs in IE in HCB mode
+				// this only occurs in IE in HCB mode // TODO remove after 1.62 version
 				var aFocusableElements = jQuery(":sapFocusable"),
 					bFound = false;
 				for (var i = 0; i < aFocusableElements.length; i++) {
@@ -221,7 +222,7 @@ sap.ui.define([
 	RadioButton.prototype.onfocusout = function(oEvent) {
 
 		if (!!sap.ui.Device.browser.internet_explorer && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain
-			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0
+			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0 // TODO remove after 1.62 version
 			// as long as RadioButton is clicked on
 			this.$().attr("tabindex", -1).toggleClass("sapUiRbFoc");
 		}

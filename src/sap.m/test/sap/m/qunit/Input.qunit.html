@@ -1131,7 +1131,7 @@
 
 	QUnit.test("Suggestion on Phone", function(assert){
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {// TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
 			return;
 		}
@@ -1199,7 +1199,7 @@
 
 	QUnit.test("Suggestion on Phone with changing the input value in SuggestionItemSelected event handler", function(assert){
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {// TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
 			return;
 		}
@@ -1252,7 +1252,7 @@
 
 	QUnit.test("Two value Suggestion on Phone", function(assert){
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {// TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
 			return;
 		}
@@ -1320,7 +1320,7 @@
 
 	QUnit.test("Suggestion with liveChange handler on phone", function(assert){
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {// TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
 			return;
 		}
@@ -1356,7 +1356,7 @@
 
 	QUnit.test("SuggestionPopup shouldn't invalidate when insert suggest item on phone", function(assert){
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {// TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
 			return;
 		}
@@ -1866,7 +1866,7 @@
 
 	QUnit.test("Tabular Suggestion on Phone", function(assert){
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {// TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
 			return;
 		}
@@ -1882,9 +1882,9 @@
 
 		this.stub(sap.ui.Device, "system", oSystem);
 
-		//test was failing inside ie9, because popup does special handling for this case
+		//test was failing inside ie9, because popup does special handling for this case// TODO remove after 1.62 version
 		this.stub(sap.ui.Device, "browser", {
-			internet_explorer : false
+			internet_explorer : false// TODO remove after 1.62 version
 		});
 
 		var oInput = new sap.m.Input({

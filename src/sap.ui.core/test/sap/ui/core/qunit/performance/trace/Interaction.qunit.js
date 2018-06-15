@@ -95,7 +95,7 @@ sap.ui.define(['sap/ui/performance/trace/Interaction'],
 			}, {
 				startTime: 10,
 				requestStart: 11,
-				responseEnd: 12 // undefined properties (Edge, IE, Safari...)
+				responseEnd: 12 // undefined properties (Edge, IE, Safari...)// TODO remove after 1.62 version
 			}];
 
 			// stub the foreign API call

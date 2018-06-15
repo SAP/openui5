@@ -22,6 +22,7 @@
 <!--[if IE]>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
+<!-- TODO remove after 1.62 version -->
 
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -743,7 +744,7 @@
 			oTPMaxHeight.detachOpened(fnOpened);
 			oTPRect = oTPMaxHeight.$().rect();
 
-			// IE10, 11 are adding some fractions to the calculation in some cases
+			// IE10, 11 are adding some fractions to the calculation in some cases// TODO remove after 1.62 version
 			bTest = Math.round(oTPRect.width) <= 120;
 			assert.ok(bTest, "ToolPopup's width of 120px");
 			done();
