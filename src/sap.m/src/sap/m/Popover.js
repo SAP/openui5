@@ -341,7 +341,6 @@ sap.ui.define([
 		/* =========================================================== */
 		/*                   begin: lifecycle methods                  */
 		/* =========================================================== */
-		Popover._bIE9 = (Device.browser.internet_explorer && Device.browser.version < 10);
 		Popover._bIOS7 = Device.os.ios && Device.os.version >= 7 && Device.os.version < 8 && Device.browser.name === "sf";
 
 		/**
