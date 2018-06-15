@@ -601,13 +601,13 @@ sap.ui.require([
 			},
 			createContent: function () {
 				sap.ui.core.util.XMLPreprocessor.plugIn(function (oNode, oVisitor) {
-					sap.ui.core.XMLComposite.initialTemplating(oNode, oVisitor, "composites.LabelButtonTemplate");
+					return sap.ui.core.XMLComposite.initialTemplating(oNode, oVisitor, "composites.LabelButtonTemplate");
 				}, "composites", "LabelButtonTemplate");
 
 				// For pre-templating we use here metadata model called "models.preprocessor". Via binding to
 				// the property 'labelFirst' we can control if-condition in templating.
 				return sap.ui.xmlview({
-					async: false,
+					async: true,
 					viewContent: '<View height="100%" xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="composites"> <m:VBox> <f:LabelButtonTemplate id="IDLabelButtonTemplate" label="{/label}" value="{/value}" labelFirst="{preprocessor>/labelFirst}"/></m:VBox></View>',
 					preprocessors: {
 						xml: {
@@ -633,13 +633,13 @@ sap.ui.require([
 				UIComponent.prototype.constructor.apply(this,arguments);
 			},
 			createContent: function () {
-				XMLPreprocessor.plugIn(function(oNode,oVisitor) { XMLComposite.initialTemplating(oNode, oVisitor, "composites.Table");}, "composites", "Table");
+				XMLPreprocessor.plugIn(function(oNode,oVisitor) { return XMLComposite.initialTemplating(oNode, oVisitor, "composites.Table");}, "composites", "Table");
 				var oConfig = {}, oController = this.oController;
 
 				return sap.ui.xmlview({
 					viewContent: jQuery('#view').html(),
 					id: "comp",
-					async: false,
+					async: true,
 					controller: oController,
 					preprocessors: { xml: oConfig }
 				});
@@ -648,53 +648,60 @@ sap.ui.require([
 	});
 	QUnit.test("property", function (assert) {
 		var fnInitialTemplatingSpy = sinon.spy(sap.ui.core.XMLComposite, "initialTemplating");
+		var done = assert.async();
 
 		var oComponentContainer = new sap.ui.core.ComponentContainer({
 			component: new my.composite.Component()
 		}).placeAt("content");
+		this.clock.tick(500);
 		sap.ui.getCore().applyChanges();
-
-		assert.ok(fnInitialTemplatingSpy.calledOnce);
-
 		var oView = oComponentContainer.getComponentInstance().getRootControl();
-		var oXMLComposite = oView.byId("IDLabelButtonTemplate");
-
-		var fnFragmentRetemplatingSpy = sinon.spy(oXMLComposite, "fragmentRetemplating");
-
-		// Now we define another model in order to fill properties in the XMLComposite control
-		oView.setModel(new sap.ui.model.json.JSONModel({
-			label: "Click",
-			value: "Me"
-		}));
-
-		assert.equal(fnFragmentRetemplatingSpy.called, false);
-		// act: change the order to 'label' after 'button'
-		oXMLComposite.setLabelFirst(false);
-		this.clock.tick(500);
-
-		assert.ok(fnFragmentRetemplatingSpy.calledOnce);
-
 		assert.ok(oView);
-		assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
-		assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
 
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "BUTTON");
-		assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "LABEL" || "SPAN");
+		oView.loaded().then(function() {
+			assert.ok(fnInitialTemplatingSpy.calledOnce);
 
-		// act: change the order to 'label' before 'button'
-		oXMLComposite.setLabelFirst(true);
-		this.clock.tick(500);
+			var oXMLComposite = oView.byId("IDLabelButtonTemplate");
 
-		assert.ok(oView);
-		assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
-		assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
+			var fnFragmentRetemplatingSpy = sinon.spy(oXMLComposite, "fragmentRetemplating");
 
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
-		assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "LABEL" || "SPAN");
-		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "BUTTON");
+			// Now we define another model in order to fill properties in the XMLComposite control
+			oView.setModel(new sap.ui.model.json.JSONModel({
+				label: "Click",
+				value: "Me"
+			}));
 
-		oComponentContainer.destroy();
+			assert.equal(fnFragmentRetemplatingSpy.called, false);
+			// act: change the order to 'label' after 'button'
+			oXMLComposite.setLabelFirst(false);
+
+			setTimeout(function() {
+				sap.ui.getCore().applyChanges();
+				assert.ok(fnFragmentRetemplatingSpy.calledOnce);
+
+				assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
+				assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
+
+				assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
+				assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "BUTTON");
+				assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "LABEL" || "SPAN");
+				// act: change the order to 'label' before 'button'
+				oXMLComposite.setLabelFirst(true);
+
+				setTimeout(function() {
+					sap.ui.getCore().applyChanges();
+					assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
+					assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
+
+					assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
+					assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "LABEL" || "SPAN");
+					assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "BUTTON");
+
+					oComponentContainer.destroy();
+					done();
+				}, 0);
+			}, 0);
+		}.bind(this));
 	});
 
 	sap.ui.define([
@@ -1061,7 +1068,7 @@ sap.ui.require([
 		var oComponentContainer = new sap.ui.core.ComponentContainer({
 			component: new my.aggregations.Component("aggregations")
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
 
 		var oView = oComponentContainer.getComponentInstance().getRootControl();
 
@@ -1102,7 +1109,8 @@ sap.ui.require([
 			var oComponentContainer = new sap.ui.core.ComponentContainer({
 				component: new my.aggregations.Component("events", {controller: oController})
 			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+			var oView = oComponentContainer.getComponentInstance().getRootControl();
 
 			oView.loaded().then(function() {
 				var oTable = oView.byId("table");
