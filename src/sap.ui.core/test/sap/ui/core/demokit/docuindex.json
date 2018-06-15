@@ -96,7 +96,7 @@
 			},
 			{
 				"id" : "sap.ui.core.XMLComposite",
-				"name" : "XMLComposite",
+				"name" : "XML Composite Control",
 				"category" : "Display",
 				"since" : "1.56",
 				"samples" : [
@@ -554,12 +554,12 @@
 			{
 				"id": "sap.ui.core.sample.XMLComposite.01",
 				"name": "XMLComposite: basic example",
-				"description": "Basic example to show the anatomy of an XMLComposite"
+				"description": "Basic example to show the structure of an XML composite control"
 			},
 			{
 				"id": "sap.ui.core.sample.XMLComposite.02",
 				"name": "XMLComposite: example showing usage of aggregation",
-				"description": "Example showing how aggregations can be dealt with in an XMLComposite"
+				"description": "Example showing how aggregations can be dealt with in an XML composite control"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
