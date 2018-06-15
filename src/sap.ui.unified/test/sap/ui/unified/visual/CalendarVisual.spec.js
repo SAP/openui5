@@ -210,11 +210,13 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			_pressDate(sCalId, "20150122"); // 20-22 selected, 22 focused
 			expect(takeScreenshot(oCal)).toLookAs("072_select_interval_end");
 
-			_initCalendar("2");
-			var sStartDateId = sCalId + "--Month0-" + "20150120";
-			var sEndDateId = sCalId + "--Month0-" + "20150130";
-			browser.actions().dragAndDrop(element(by.id(sStartDateId)), element(by.id(sEndDateId))).perform(); // old interval unselected, 20-30 selected, 30 focused
-			expect(takeScreenshot(oCal)).toLookAs("073_select_interval_move");
+			if (browser.testrunner.runtime.platformName != "android") {
+				_initCalendar("2");
+				var sStartDateId = sCalId + "--Month0-" + "20150120";
+				var sEndDateId = sCalId + "--Month0-" + "20150130";
+				browser.actions().dragAndDrop(element(by.id(sStartDateId)), element(by.id(sEndDateId))).perform(); // old interval unselected, 20-30 selected, 30 focused
+				expect(takeScreenshot(oCal)).toLookAs("073_select_interval_move");
+			}
 		});
 	}
 
