@@ -2,8 +2,9 @@
  * ${copyright}
  */
 
+// package documentation
 /**
- * Calendar Utility Class
+ * Controls and helper classes around the calendar control.
  *
  * @namespace
  * @name sap.ui.unified.calendar
