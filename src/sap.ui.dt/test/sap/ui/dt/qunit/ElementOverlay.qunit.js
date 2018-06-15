@@ -661,7 +661,7 @@ function(
 				width: "400px",
 				value: "bar"
 			}));
-			this.oVBox = new sap.m.VBox({
+			this.oVBox = new VBox({
 				items : [this.oSimpleScrollControl]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -706,7 +706,6 @@ function(
 			});
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
 		});
-
 		QUnit.test("when the overlay is scrolled", function(assert) {
 			var done = assert.async();
 			var oContent1 = this.oSimpleScrollControl.getContent1()[0];
@@ -941,6 +940,82 @@ function(
 			assert.ok(this.oScrollControlOverlay.getDomRef(), "overlay has domRef");
 			assert.ok(this.oScrollControlOverlay.getAggregationOverlay("content2").getDomRef(), "aggregation overlay in scroll container has domRef");
 			assert.ok(this.oScrollControlOverlay.getAggregationOverlay("footer").getDomRef(), "aggregation overlay outside scroll container has domRef");
+		});
+	});
+
+	QUnit.module("Scrollbar classes removal", {
+		beforeEach: function(assert) {
+			var ScrollControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.ScrollControl', {
+				metadata: {
+					designtime: {
+						scrollContainers: null
+					}
+				},
+				renderer: SimpleScrollControl.getMetadata().getRenderer().render
+			});
+
+			var fnDone = assert.async();
+
+			this.oScrollControl = new ScrollControl({
+				id: "scrollControl",
+				content1: [
+					new TextArea({
+						height: "500px",
+						width: "400px",
+						value: "foo"
+					})
+				],
+				content2: [
+					new TextArea({
+						height: "500px",
+						width: "400px",
+						value: "bar"
+					})
+				]
+			});
+
+			this.oScrollControl.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oScrollControl.$('content1').css({
+				height: 300,
+				overflow: 'auto'
+			});
+			this.oScrollControl.$('content2').css({
+				height: 300,
+				overflow: 'auto'
+			});
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oScrollControl]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
+				fnDone();
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oScrollControl.destroy();
+		}
+	}, function () {
+		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must persist on the parent overlay", function (assert) {
+			var fnDone = assert.async();
+			assert.ok(
+				this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+				&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+			);
+			this.oScrollControlOverlay.getAggregationOverlay('content2').attachEventOnce('geometryChanged', function (oEvent) {
+				var oAggregationOverlay = oEvent.getSource();
+				assert.strictEqual(oAggregationOverlay.$().find('>.sapUiDtDummyScrollContainer').length, 0, 'make sure dummy container has been removed');
+				assert.ok(
+					this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+					&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+				);
+				fnDone();
+			}, this);
+			this.oScrollControl.getContent2()[0].$().height(250);
 		});
 	});
 
