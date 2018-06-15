@@ -17,10 +17,10 @@ var aLocales = [
 	"hi_IN",
 	"he_IL",
 	"tr_TR",
+	"th_TH",
 	"nl_NL",
 	"pl_PL",
 	"ko_KR",
-	"zh_SG",
 	"zh_TW",
 	"zh_CN"
 ];
@@ -43,7 +43,7 @@ sap.m.ListItemBase.extend("LocaleListItem", {
 			sText = oControl.getText();
 		oRM.write("<div ")
 		oRM.writeControlData(oControl);
-		oRM.write("style=\"display:flex;align-items:center;height:40px;\">")			
+		oRM.write("style=\"display:flex;align-items:center;height:40px;\">")
 		oRM.write("<img title=\"" + sLocale + "\" src=\"flags/" + sLocale.substr(3) + ".png\" style=\"width:30px;margin:10px\" />");
 		oRM.write("<span " );
 		if (aRTLLocales.indexOf(sLocale) >= 0) {
@@ -127,19 +127,19 @@ function validateFormatOptions(oOptions, oSupportedOptions) {
 		vValue = oOptions[sName];
 		bError = false;
 		switch (oOption.type) {
-			case "enum": 
+			case "enum":
 				bError = (typeof vValue !== "string") || oOption.values.indexOf(vValue) === -1
 				break;
-			case "int": 
+			case "int":
 				bError = (typeof vValue !== "number") || Math.floor(vValue) !== vValue || (oOption.min !== undefined && vValue < oOption.min);
 				break;
-			case "float": 
+			case "float":
 				bError = (typeof vValue !== "number") || (oOption.hasOwnProperty("min") && vValue < oOption.min);
 				break;
-			case "string": 
+			case "string":
 				bError = (typeof vValue !== "string") || (oOption.regex && !oOption.regex.test(vValue));
 				break;
-			case "boolean": 
+			case "boolean":
 				bError = vValue !== true && vValue !== false;
 				break;
 		}
@@ -185,7 +185,7 @@ sap.ui.model.CompositeType.extend("HashParams", {
 		this.bUseRawValues = true;
 	},
 	parseValue: function(sValue) {
-		var aParts = sValue.substr(1).split("&"), 
+		var aParts = sValue.substr(1).split("&"),
 			oParams = {}, aParams;
 		aParts.forEach(function(oParam) {
 			var aSplit = oParam.split("="),
@@ -193,13 +193,13 @@ sap.ui.model.CompositeType.extend("HashParams", {
 				vValue = decodeURIComponent(aSplit[1]);
 			if (sName === "formatOptions") {
 				vValue = jQuery.sap.parseJS(vValue);
-			} 
+			}
 			if (sName === "date" || sName === "todate") {
 				vValue = new Date(parseFloat(vValue));
 			}
 			if (sName === "number") {
 				vValue = parseFloat(vValue);
-			} 
+			}
 			oParams[sName] = vValue;
 		})
 		aParams = this.aParams.map(function(oParam) {
@@ -216,7 +216,7 @@ sap.ui.model.CompositeType.extend("HashParams", {
 			}
 			if (oParam.name === "date" || oParam.name === "todate") {
 				vValue = vValue.valueOf();
-			} 
+			}
 			if (!jQuery.sap.equal(vValue, oParam.default)) aParams.push(oParam.name + "=" + encodeURIComponent(vValue));
 		})
 		return "#" + aParams.join("&");
@@ -231,7 +231,7 @@ sap.ui.model.CompositeType.extend("HashParams", {
 		});
 		if (sError) {
 			throw new sap.ui.model.ValidateException(sError);
-		} 
+		}
 		return true;
 	}
 })

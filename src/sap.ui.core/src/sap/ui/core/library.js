@@ -771,7 +771,13 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		 * The Persian Jalali calendar
 		 * @public
 		 */
-		Persian: "Persian"
+		Persian: "Persian",
+
+		/**
+		 * The Thai buddhist calendar
+		 * @public
+		 */
+		Buddhist: "Buddhist"
 	};
 
 	/**
