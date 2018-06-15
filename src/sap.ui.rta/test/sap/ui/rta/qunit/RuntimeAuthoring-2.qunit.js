@@ -8,23 +8,19 @@ sap.ui.require([
 	'sap/m/MessageToast',
 	// internal
 	'sap/ui/dt/plugin/ContextMenu',
-	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/fl/registry/Settings',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/FakeLrepLocalStorage',
-	'sap/ui/fl/variants/VariantManagement',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/plugin/Remove',
 	'sap/ui/rta/plugin/CreateContainer',
 	'sap/ui/rta/plugin/Rename',
-	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/base/Event',
-	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/thirdparty/sinon-4'
 ], function(
@@ -32,23 +28,19 @@ sap.ui.require([
 	MessageBox,
 	MessageToast,
 	ContextMenuPlugin,
-	OverlayRegistry,
 	DesignTime,
 	Settings,
 	Change,
 	Utils,
 	RtaUtils,
 	FakeLrepLocalStorage,
-	VariantManagement,
 	RuntimeAuthoring,
 	Stack,
 	CommandFactory,
 	Remove,
 	CreateContainerPlugin,
 	RenamePlugin,
-	ControlVariantPlugin,
 	Event,
-	RTABaseCommand,
 	RtaQunitUtils,
 	sinon
 ) {
@@ -84,7 +76,6 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is created and started with non-default plugin sets only...", {
 		beforeEach : function(assert) {
-			var done = assert.async();
 			FakeLrepLocalStorage.deleteChanges();
 			var oCommandFactory = new CommandFactory();
 
@@ -105,11 +96,7 @@ sap.ui.require([
 
 			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
 
-			this.oRta.attachStart(function() {
-				done();
-			});
-
-			this.oRta.start();
+			return this.oRta.start();
 		},
 		afterEach : function(assert) {
 			this.oContextMenuPlugin.destroy();
@@ -134,65 +121,8 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is created and started with default plugin sets...", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-			FakeLrepLocalStorage.deleteChanges();
-
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false
-			});
-
-			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
-
-			this.oRta.attachStart(function() {
-				done();
-			});
-
-			this.oRta.start();
-		},
-		afterEach : function(assert) {
-			this.oRta.destroy();
-			FakeLrepLocalStorage.deleteChanges();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when we check the plugins on RTA", function(assert) {
-			var done = assert.async();
-
-			assert.ok(this.oRta.getPlugins()['contextMenu'], " then the default ContextMenuPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['contextMenu'].bIsDestroyed, " and the default ContextMenuPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['dragDrop'], " and the default DragDropPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['dragDrop'].bIsDestroyed, " and the default DragDropPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['cutPaste'], " and the default CutPastePlugin is set");
-			assert.notOk(this.oRta.getPlugins()['cutPaste'].bIsDestroyed, " and the default CutPastePlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['remove'], " and the default RemovePlugin is set");
-			assert.notOk(this.oRta.getPlugins()['remove'].bIsDestroyed, " and the default RemovePlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['additionalElements'], " and the default AdditionalElementsPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['additionalElements'].bIsDestroyed, " and the default AdditionalElementsPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['rename'], " and the default RenamePlugin is set");
-			assert.notOk(this.oRta.getPlugins()['rename'].bIsDestroyed, " and the default RenamePlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['selection'], " and the default SelectionPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['selection'].bIsDestroyed, " and the default SelectionPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['settings'], " and the default SettingsPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['settings'].bIsDestroyed, " and the default SettingsPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['createContainer'], " and the default CreateContainerPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['createContainer'].bIsDestroyed, " and the default CreateContainerPlugin is not destroyed");
-			assert.ok(this.oRta.getPlugins()['tabHandling'], " and the default TabHandlingPlugin is set");
-			assert.notOk(this.oRta.getPlugins()['tabHandling'].bIsDestroyed, " and the default TabHandlingPlugin is not destroyed");
-
-			this.oRta.stop(false).then(function(){
-				this.oRta.destroy();
-				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
-				done();
-			}.bind(this));
-		});
-	});
-
 	QUnit.module("Given that RuntimeAuthoring is started with one different (non-default) plugin (using setPlugins method)...", {
 		beforeEach : function(assert) {
-			var done = assert.async();
 			FakeLrepLocalStorage.deleteChanges();
 
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
@@ -209,7 +139,8 @@ sap.ui.require([
 			mPlugins['contextMenu'] = this.oContextMenuPlugin;
 			this.oRta.setPlugins(mPlugins);
 
-			this.oRta.attachStart(function() {
+			return this.oRta.start()
+			.then(function() {
 				assert.throws(function () {
 					this.oRta.setPlugins(mPlugins);
 				}, /Cannot replace plugins/, " and setPlugins cannot be called after DT start");
@@ -217,10 +148,7 @@ sap.ui.require([
 				assert.ok(this.oRta.getDefaultPlugins()['rename'].bIsDestroyed, " and the default rename plugin has been destroyed");
 				assert.ok(this.oRta.getDefaultPlugins()['contextMenu'].bIsDestroyed, " and the default context menu plugin has been destroyed");
 				assert.equal(this.oRta.getPlugins()['contextMenu'].getId(), this.oContextMenuPlugin.getId(), " and the context menu plugin is used");
-				done();
 			}.bind(this));
-
-			this.oRta.start();
 		},
 		afterEach : function(assert) {
 			this.oContextMenuPlugin.destroy();
@@ -621,8 +549,6 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl ...", {
 		beforeEach : function(assert) {
-			var that = this;
-			var done = assert.async();
 			sandbox = sinon.sandbox.create();
 			var oSettings = {
 				isAtoAvailable: false,
@@ -633,11 +559,9 @@ sap.ui.require([
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
 			});
-			sap.ui.require(["sap/ui/fl/registry/Settings"], function(Settings) {
-				sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSettingsInstance));
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSettingsInstance));
 
-				that.oRta.start().then(done);
-			});
+			return this.oRta.start();
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();
@@ -652,8 +576,6 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		beforeEach : function(assert) {
-			var that = this;
-			var done = assert.async();
 			sandbox = sinon.sandbox.create();
 			var oSettings = {
 				isAtoAvailable: true,
@@ -664,11 +586,9 @@ sap.ui.require([
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
 			});
-			sap.ui.require(["sap/ui/fl/registry/Settings"], function(Settings) {
-				sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSettingsInstance));
+			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSettingsInstance));
 
-				that.oRta.start().then(done);
-			});
+			return this.oRta.start();
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();
@@ -683,16 +603,12 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		beforeEach : function(assert) {
-			var that = this;
-			var done = assert.async();
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
 			});
-			sap.ui.require(["sap/ui/fl/registry/Settings"], function(Settings) {
-				sandbox.stub(Settings, "getInstance").returns(Promise.reject());
+			sandbox.stub(Settings, "getInstance").returns(Promise.reject());
 
-				that.oRta.start().then(done);
-			});
+			return this.oRta.start();
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();
