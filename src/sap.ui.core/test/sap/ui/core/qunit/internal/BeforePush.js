@@ -30,6 +30,8 @@
 		'qunit/odata/v4/ODataModel.integration.qunit.html?hidepassed&coverage' : 'integration',
 		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html' : 'both',
 		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true' : 'both',
+		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html' : 'both',
+		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html?realOData=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html' : 'both',
 		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrdersRTATest/Opa.qunit.html?realOData=true' : 'both',
