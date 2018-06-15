@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit, sinon*/
 
 (function ($, QUnit) {
 	"use strict";
@@ -153,6 +153,30 @@
 		var oObjectPageLayout = new sap.uxap.ObjectPageLayout({enableLazyLoading: true});
 		oObjectPageLayout._triggerVisibleSubSectionsEvents();
 		assert.ok("passes before rendering (noop)");
+	});
+
+	QUnit.test("BCP: 1870326083 - _triggerVisibleSubSectionsEvents should force OP to recalculate", function (assert) {
+		// Arrange
+		var oObjectPageLayout = new sap.uxap.ObjectPageLayout({enableLazyLoading: true}),
+			oRequestAdjustLayoutSpy = sinon.spy(oObjectPageLayout, "_requestAdjustLayout");
+
+		// We have to render the OP as LazyLoading is initiated on onBeforeRendering
+		oObjectPageLayout.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act - call the method
+		oObjectPageLayout._oLazyLoading._triggerVisibleSubSectionsEvents();
+
+		// Assert
+		assert.strictEqual(oRequestAdjustLayoutSpy.callCount, 1,
+			"Method should be called from _triggerVisibleSubSectionsEvents");
+
+		assert.ok(oRequestAdjustLayoutSpy.calledWith(true),
+			"Method should be called with 'true' as a parameter for immediate execution");
+
+		// Clean
+		oRequestAdjustLayoutSpy.restore();
+		oObjectPageLayout.destroy();
 	});
 
 
