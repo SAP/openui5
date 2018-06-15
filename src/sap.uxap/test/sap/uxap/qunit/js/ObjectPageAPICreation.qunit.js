@@ -282,7 +282,8 @@
 				oSelectedSection: this.oSecondSection,
 				sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle()
 			},
-			done = assert.async();
+			done = assert.async(),
+			bFirefox = sap.ui.Device.browser.firefox;
 
 		oObjectPage.setUseIconTabBar(false);
 		oObjectPage.addHeaderContent(oHeaderContent);
@@ -299,7 +300,7 @@
 			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 				setTimeout(function() {
 					sectionIsSelected(oObjectPage, assert, oExpected);
-					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), oObjectPage.iHeaderContentHeight, "top section is selected");
+					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), bFirefox ? 0 : oObjectPage.iHeaderContentHeight, "top section is selected");
 					assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
 					assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
 
