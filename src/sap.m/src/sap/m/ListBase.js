@@ -1096,6 +1096,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		});
 	};
 
+	// event listener for theme changed
+	ListBase.prototype.onThemeChanged = function() {
+		if (this._oGrowingDelegate) {
+			this._oGrowingDelegate._updateTrigger();
+		}
+	};
+
 	// called on after rendering to finalize item update finished
 	ListBase.prototype._updateFinished = function() {
 		// check if data receiving/update is finished
@@ -1690,8 +1697,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		}
 
 		// if focus is not on the navigation items then only invalidate the item navigation
-		if (bIfNeeded && !this.getNavigationRoot().contains(document.activeElement)) {
+		var oNavigationRoot = this.getNavigationRoot();
+		var iTabIndex = (sKeyboardMode == mKeyboardMode.Edit) ? -1 : 0;
+		if (bIfNeeded && !oNavigationRoot.contains(document.activeElement)) {
 			this._bItemNavigationInvalidated = true;
+			if (!oNavigationRoot.getAttribute("tabindex")) {
+				oNavigationRoot.tabIndex = iTabIndex;
+			}
 			return;
 		}
 
@@ -1702,7 +1714,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			this.addEventDelegate(this._oItemNavigation);
 
 			// set the tab index of active items
-			var iTabIndex = (sKeyboardMode == mKeyboardMode.Edit) ? -1 : 0;
 			this._setItemNavigationTabIndex(iTabIndex);
 
 			// explicitly setting table mode with one column
@@ -1721,10 +1732,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		this._oItemNavigation.setPageSize(this.getGrowingThreshold());
 
 		// configure navigation root
-		var oNavigationRoot = this.getNavigationRoot();
 		this._oItemNavigation.setRootDomRef(oNavigationRoot);
 
-		// configure navigatable items
+		// configure navigation items
 		this.setNavigationItems(this._oItemNavigation, oNavigationRoot);
 
 		// clear invalidations

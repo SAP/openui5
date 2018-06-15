@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 				rm.write("</th>");
 				index++;
 			} else {
-				createBlankCell("SelCol");
+				createBlankCell("SelCol", "", true);
 			}
 		}
 
@@ -155,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		createBlankCell("NavCol", type + "Nav", !oTable._iItemNeedsColumn);
 
 		if (iModeOrder == 1) {
-			createBlankCell("SelCol");
+			createBlankCell("SelCol", "", true);
 		}
 
 		rm.write("</tr></" + groupTag + ">");
