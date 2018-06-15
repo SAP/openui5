@@ -919,16 +919,11 @@
 			aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
 
-			var fnGetDomRef = sut.getDomRef;
-
-			this.stub(oInfoToolbar, "getDomRef", function() {
+			var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
+			this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
 				return {
-					getBoundingClientRect: function() {
-						return {
-							bottom: 72,
-							height: 32
-						}
-					}
+					bottom: 72,
+					height: 32
 				}
 			});
 
@@ -946,9 +941,6 @@
 			oFocusedItemDomRef.focus();
 			this.clock.tick(0);
 			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
-
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
 
 			oScrollContainer.destroy();
 			// reset stub
@@ -997,7 +989,7 @@
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky classes added");
 
 			var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
-			var fnGetDomRef = sut.getDomRef;
+
 			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
 				return {
 					bottom: 88,
@@ -1027,9 +1019,6 @@
 			oFocusedItemDomRef.focus();
 			this.clock.tick(0);
 			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
-
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
 
 			oScrollContainer.destroy();
 			// reset stub
@@ -1105,14 +1094,11 @@
 				}
 			});
 
-			this.stub(oInfoToolbar, "getDomRef", function() {
+			var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
+			this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
 				return {
-					getBoundingClientRect: function() {
-						return {
-							bottom: 80,
-							height: 32
-						}
-					}
+					bottom: 80,
+					height: 32
 				}
 			});
 
@@ -1146,9 +1132,6 @@
 			oFocusedItemDomRef.focus();
 			this.clock.tick(0);
 			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -128]), "scrollToElement function called");
-
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
 
 			oScrollContainer.destroy();
 			// reset stub

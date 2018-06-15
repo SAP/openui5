@@ -102,7 +102,11 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
 		if (oInfoTBar) {
 			oInfoTBar.setDesign(ToolbarDesign.Info, true);
 			oInfoTBar.addStyleClass("sapMListInfoTBar");
+			// render div for infoToolbar, as there is margin in HCB and HCW
+			// when sticky is enabled, the content behind the infoToolbar is visible due to the margins
+			rm.write("<div class='sapMListInfoTBarContainer'>");
 			rm.renderControl(oInfoTBar);
+			rm.write("</div>");
 		}
 
 		// determine items rendering
