@@ -60,6 +60,13 @@
 	vertical-align: middle;
 }
 
+html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ed'] {
+	.sapMObjectAttributeActive .sapMObjectAttributeTitle,
+	.sapMObjectAttributeActive .sapMObjectAttributeText {
+		display: inline-block;
+	}
+}
+
 .sapMListTblCell .sapMObjectAttributeActive .sapMObjectAttributeTitle,
 .sapMListTblCell .sapMObjectAttributeActive .sapMObjectAttributeText {
 	white-space: normal;
@@ -98,7 +105,7 @@ html.sap-desktop .sapMObjectAttributeActive:focus {
 	line-height: normal;
 }
 
-html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ie'] {
+html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ed'] {
 	.sapMObjectAttributeActive:focus .sapMObjectAttributeText::after {
 		outline-style: dashed;
 	}
