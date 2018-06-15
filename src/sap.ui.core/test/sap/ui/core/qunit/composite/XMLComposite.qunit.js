@@ -42,6 +42,13 @@ sap.ui.require([
 	jQuery.sap.require("composites.TranslatableTextBundle");
 	jQuery.sap.require("composites.Table");
 	jQuery.sap.require("composites.Column");
+	jQuery.sap.require("composites.Cell");
+
+	function registerPlugin(oNode, oVisitor) {
+		return oVisitor.visitAttributes(oNode).then(function () {
+			return XMLComposite.initialTemplating(oNode, oVisitor, this);
+		}.bind(this));
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Simple Text XMLComposite Control", {
@@ -633,7 +640,8 @@ sap.ui.require([
 				UIComponent.prototype.constructor.apply(this,arguments);
 			},
 			createContent: function () {
-				XMLPreprocessor.plugIn(function(oNode,oVisitor) { return XMLComposite.initialTemplating(oNode, oVisitor, "composites.Table");}, "composites", "Table");
+				XMLPreprocessor.plugIn(registerPlugin.bind("composites.Table"), "composites", "Table");
+				XMLPreprocessor.plugIn(registerPlugin.bind("composites.Cell"), "composites", "Cell");
 				var oConfig = {}, oController = this.oController;
 
 				return sap.ui.xmlview({
@@ -1093,49 +1101,84 @@ sap.ui.require([
 			oComponentContainer.destroy();
 			done();
 		});
-		//*********************************************************************************************
-		QUnit.test("event forwarding", function (assert) {
-			var done = assert.async(), oAction;
-			var oController = {
-					handler: function(oEvent) {
-						oAction = oEvent.getSource();
-						oAction.setText("controller");
-					}
-			};
+	});
+	//*********************************************************************************************
+	QUnit.test("event forwarding", function (assert) {
+		var done = assert.async(), oAction;
+		var oController = {
+				handler: function(oEvent) {
+					oAction = oEvent.getSource();
+					oAction.setText("controller");
+				}
+		};
 
-			var fnControllerSpy = sinon.spy(oController, "handler");
-			var fnCompositeSpy = sinon.spy(composites.Table.prototype, "handler");
-			
-			var oComponentContainer = new sap.ui.core.ComponentContainer({
-				component: new my.aggregations.Component("events", {controller: oController})
-			}).placeAt("content");
-			this.clock.tick(500);
-			var oView = oComponentContainer.getComponentInstance().getRootControl();
+		var fnControllerSpy = sinon.spy(oController, "handler");
+		var fnCompositeSpy = sinon.spy(composites.Table.prototype, "handler");
 
-			oView.loaded().then(function() {
-				var oTable = oView.byId("table");
-				assert.ok(oTable, "The table is there");
-				var aActions = oTable.getActions();
-				assert.equal(aActions.length,2,"The table has 2 actions");
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: new my.aggregations.Component("events", {controller: oController})
+		}).placeAt("content");
+		this.clock.tick(500);
+		var oView = oComponentContainer.getComponentInstance().getRootControl();
 
-				//press the outer action
-				var oOuterAction = oTable.byId("button--outer");
-				oOuterAction.firePress();
-				assert.ok(oAction, "The action from outside fires the event");
-				assert.equal(oAction.getId(), "comp--outer", "It is the correct action");
-				assert.equal(oAction.getText(),"controller","The action from the view controller is called");
-				assert.ok(fnControllerSpy.calledOnce,"The controller handles the event");
-				assert.equal(fnCompositeSpy.callCount, 0, "The composite method is not called");
+		oView.loaded().then(function() {
+			var oTable = oView.byId("table");
+			assert.ok(oTable, "The table is there");
+			var aActions = oTable.getActions();
+			assert.equal(aActions.length,2,"The table has 2 actions");
 
-				var oInnerAction = oTable.byId("button--table--inner");
-				oInnerAction.firePress();
-				oAction = oTable.byId("inner");
-				assert.equal(oAction.getText(),"composite","The action from the control is called");
-				assert.ok(fnCompositeSpy.calledOnce,"The composite handles the event");
-				assert.equal(fnControllerSpy.callCount, 1, "The controller method is not called any more");
-				oComponentContainer.destroy();
-				done();
-			});
+			//press the outer action
+			var oOuterAction = oTable.byId("button--outer");
+			oOuterAction.firePress();
+			assert.ok(oAction, "The action from outside fires the event");
+			assert.equal(oAction.getId(), "comp--outer", "It is the correct action");
+			assert.equal(oAction.getText(),"controller","The action from the view controller is called");
+			assert.ok(fnControllerSpy.calledOnce,"The controller handles the event");
+			assert.equal(fnCompositeSpy.callCount, 0, "The composite method is not called");
+
+			var oInnerAction = oTable.byId("button--table--inner");
+			oInnerAction.firePress();
+			oAction = oTable.byId("inner");
+			assert.equal(oAction.getText(),"composite","The action from the control is called");
+			assert.ok(fnCompositeSpy.calledOnce,"The composite handles the event");
+			assert.equal(fnControllerSpy.callCount, 1, "The controller method is not called any more");
+			oComponentContainer.destroy();
+			done();
 		});
 	});
+	//************************************************************************************************
+	QUnit.test("nesting composites", function (assert) {
+		var done = assert.async();
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: new my.aggregations.Component("aggregations")
+		}).placeAt("content");
+		this.clock.tick(500);
+
+		var oView = oComponentContainer.getComponentInstance().getRootControl();
+
+		oView.loaded().then(function() {
+			var oTable = oView.byId("table");
+			assert.ok(oTable, "The table is there");
+
+			var oCellTemp1 = oTable.byId("cell-temp1");
+			assert.ok(oCellTemp1,"the first templating cell is there");
+			assert.ok(oCellTemp1 instanceof composites.Cell, "the cell is a composite cell");
+			assert.equal(oCellTemp1.getAsLink(), false, "the cells property 'asLink' is set to false");
+			var oInnerCell = oCellTemp1.getAggregation("_content");
+			assert.ok(oInnerCell, "The cell has an inner content");
+			assert.ok(oInnerCell instanceof sap.m.Text, "that is a text");
+
+			var oCellTemp2 = oTable.byId("cell-temp2");
+			assert.ok(oCellTemp2,"the second templating cell is there");
+			assert.ok(oCellTemp2 instanceof composites.Cell, "the cell is a composite cell");
+			assert.equal(oCellTemp2.getAsLink(), true, "the cells property 'asLink' is set to true");
+			oInnerCell = oCellTemp2.getAggregation("_content");
+			assert.ok(oInnerCell, "The cell has an inner content");
+			assert.ok(oInnerCell instanceof sap.m.Link, "that is a link");
+
+			oComponentContainer.destroy();
+			done();
+		});
+	});
+
 });

@@ -1,7 +1,7 @@
 <core:FragmentDefinition
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
-	xmlns="sap.m" xmlns:mdc="sap.ui.mdc" xmlns:core="sap.ui.core">
-	<Table items="{this>itemPath}">
+	xmlns:t="composites" xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Table>
 		<headerToolbar>
 			<Toolbar>
 				<template:repeat list="{this>actions}" var="action">
@@ -20,8 +20,8 @@
 		<items>
 			<ColumnListItem>
 				<cells>
-					<template:repeat list="{this>columns}" var="column">
-						<Text text="{column>path}" />
+					<template:repeat list="{this>columns}" var="cell">
+						<t:Cell asLink="{cell>asLink}" value="{cell>path}" id="cell-{cell>key}"/>
 					</template:repeat>
 				</cells>
 			</ColumnListItem>
