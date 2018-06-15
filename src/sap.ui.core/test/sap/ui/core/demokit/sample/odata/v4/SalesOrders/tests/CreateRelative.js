@@ -157,15 +157,6 @@ sap.ui.define([
 				level : jQuery.sap.log.Level.ERROR,
 				message : "Failed to update path /SalesOrderList/-1/Note"
 				//TODO: enable checkLog to deal with RegExp
-//TODO: take out again as soon as CPOUI5UISERVICESV3-1292 is solved
-			}, {
-				component : "sap.ui.model.odata.v4.lib._Cache",
-				level : jQuery.sap.log.Level.ERROR,
-				message : "Failed to drill-down into SO_2_SCHDL("
-			}, {
-				component : "sap.ui.model.odata.v4.lib._Cache",
-				level : jQuery.sap.log.Level.ERROR,
-				message : "Failed to drill-down into SO_2_SCHDL("
 			}] : undefined);
 			Then.onAnyPage.analyzeSupportAssistant();
 			Then.iTeardownMyUIComponent();

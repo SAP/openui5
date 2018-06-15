@@ -349,9 +349,7 @@ sap.ui.require([
 				oCachePromise : SyncPromise.resolve(Promise.resolve())
 			}),
 			oBinding = new ODataBinding({
-				oModel : {
-					getDependentBindings : function () {}
-				}
+				getDependentBindings : function () {}
 			}),
 			oChild1CacheMock = this.mock(oCache1),
 			oChild1Mock = this.mock(oChild1),
@@ -360,8 +358,8 @@ sap.ui.require([
 			oChild3CacheMock1 = this.mock(oCache31),
 			oChild3CacheMock2 = this.mock(oCache32);
 
-		this.mock(oBinding.oModel).expects("getDependentBindings").exactly(7)
-			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2, oChild3]);
+		this.mock(oBinding).expects("getDependentBindings").exactly(7)
+			.withExactArgs().returns([oChild1, oChild2, oChild3]);
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 		oChild1Mock.expects("hasPendingChangesInDependents").never();
 		oChild2Mock.expects("hasPendingChangesInDependents").never();
@@ -524,13 +522,11 @@ sap.ui.require([
 				}
 			}),
 			oBinding = new ODataBinding({
-				oModel : {
-					getDependentBindings : function () {}
-				}
+				getDependentBindings : function () {}
 			});
 
-		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2, oChild3]);
+		this.mock(oBinding).expects("getDependentBindings")
+			.withExactArgs().returns([oChild1, oChild2, oChild3]);
 		this.mock(oCache).expects("resetChangesForPath").withExactArgs("");
 		this.mock(oChild1).expects("resetChangesInDependents").withExactArgs();
 		this.mock(oChild1).expects("resetInvalidDataState").withExactArgs();
@@ -1795,5 +1791,22 @@ sap.ui.require([
 		assert.throws(function () {
 			oBinding.checkBindingParameters({$$someName : "~"}, ["$$someName"]);
 		}, new Error("Unknown binding-specific parameter: $$someName"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDependentBindings", function (assert) {
+		var oBinding = new ODataBinding({
+				oModel : {
+					getDependentBindings : function () {}
+				}
+			}),
+			aDependentBindings = [];
+
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns(aDependentBindings);
+
+		// code under test
+		assert.strictEqual(oBinding.getDependentBindings(), aDependentBindings);
 	});
 });

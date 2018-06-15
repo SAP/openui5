@@ -231,7 +231,11 @@ sap.ui.require([
 		asODataParentBinding(oMixin);
 
 		Object.keys(oMixin).forEach(function (sKey) {
-			assert.strictEqual(oBinding[sKey], oMixin[sKey]);
+			if (sKey === "getDependentBindings") {
+				assert.notStrictEqual(oBinding[sKey], oMixin[sKey]);
+			} else {
+				assert.strictEqual(oBinding[sKey], oMixin[sKey]);
+			}
 		});
 	});
 
@@ -1711,9 +1715,7 @@ sap.ui.require([
 		this.mock(oBinding).expects("createReadGroupLock")
 			.withExactArgs("myGroup", false);
 		that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
-		that.mock(that.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
-			.returns([]);
+		that.mock(oBinding).expects("getDependentBindings").withExactArgs().returns([]);
 		oBinding.mCacheByContext = {}; // would have been set by fetchCache
 
 		//code under test
@@ -1748,9 +1750,7 @@ sap.ui.require([
 
 		return oReadPromise.then(function () {
 			that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
-			that.mock(that.oModel).expects("getDependentBindings")
-				.withExactArgs(sinon.match.same(oBinding))
-				.returns([oChild0]);
+			that.mock(oBinding).expects("getDependentBindings").withExactArgs().returns([oChild0]);
 			that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", false);
 
 			//code under test
@@ -4900,8 +4900,8 @@ sap.ui.require([
 		oResetExpectation = oBindingMock.expects("reset").withExactArgs();
 		oFetchCacheExpectation = oBindingMock.expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext));
-		oGetDependentBindingsExpectation = this.mock(this.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
+		oGetDependentBindingsExpectation = oBindingMock.expects("getDependentBindings")
+			.withExactArgs()
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("resumeInternal").withExactArgs(false);
 		this.mock(oDependent1).expects("resumeInternal").withExactArgs(false);
@@ -4911,9 +4911,9 @@ sap.ui.require([
 		// code under test
 		oBinding.resumeInternal();
 
+		assert.ok(oResetExpectation.calledAfter(oGetDependentBindingsExpectation));
 		assert.ok(oFetchCacheExpectation.calledAfter(oResetExpectation));
-		assert.ok(oGetDependentBindingsExpectation.calledAfter(oFetchCacheExpectation));
-		assert.ok(oFireChangeExpectation.calledAfter(oGetDependentBindingsExpectation));
+		assert.ok(oFireChangeExpectation.calledAfter(oFetchCacheExpectation));
 	});
 	//TODO This is very similar to ODCB#resumeInternal; both should be refactored to
 	//  ODParentBinding#resumeInternal. Differences
@@ -4990,6 +4990,32 @@ sap.ui.require([
 			}, new Error("Filter for path '" + (i < 2 ? "Foo" : "item/Quantity")
 				+ "' has unsupported value for 'caseSensitive' : false"));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDependentBindings", function (assert) {
+		var oActiveBinding = {
+				oContext : {
+					getPath : function () { return "/FOO('1')/active"; }
+				}
+			},
+			oBinding = this.oModel.bindList("/FOO"),
+			oInactiveBinding = {
+				oContext : {
+					getPath : function () { return "/FOO('1')/inactive"; }
+				}
+			},
+			aDependentBindings = [oActiveBinding, oInactiveBinding];
+
+		// simulate inactive binding
+		oBinding.mPreviousContextsByPath["/FOO('1')/inactive"] = {};
+
+		this.mock(oBinding.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns(aDependentBindings);
+
+		// code under test
+		assert.deepEqual(oBinding.getDependentBindings(), [oActiveBinding]);
 	});
 });
 
