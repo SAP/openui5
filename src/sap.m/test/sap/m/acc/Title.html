@@ -27,14 +27,6 @@
 					level: level
 				}));
 			}
-			for (var level in sap.ui.core.TitleLevel) {
-				var sText = " with " + (level == sap.ui.core.TitleLevel.Auto ? "unspecified semantic level" : "semantic level " + level);
-				addTest("Title" + sText + " and a tooltip", new sap.m.Title({
-					text: "This is the title control" + sText,
-					level: level,
-					tooltip: "Some Tooltip"
-				}));
-			}
 		});
 
 		</script>
