@@ -3020,7 +3020,6 @@
 
 	QUnit.test("async test createEntity", function(assert){
 		var done = assert.async();
-		assert.expect(18);
 		var oSpy;
 		var oModel = initModel(sURI, {
 			json: true,
@@ -3068,10 +3067,10 @@
 			oSpy = sinon.spy(oModel, "_submitBatchRequest");
 			oModel.submitChanges();
 			jQuery.sap.delayedCall(0,this, function() {
-				assert.equal(oSpy.callCount, 0, "No request sent");
+				assert.ok(oSpy.callCount == 0, "No request sent");
 				oSpy.restore();
 				oModel.destroy();
-				done();
+				start();
 			});
 		};
 		oBinding.attachChange(handler);
@@ -5127,7 +5126,6 @@
 				assert.ok(!oInfo.getParameter('success'), "request should fail");
 				assert.ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
 				assert.ok(spy.args[0][0].created, "request flagged as created");
-                assert.notOk(spy.args[0][0].data.__metadata.uri, "create request: generated uri must not be part of __metadata");
 			};
 			var fnFailed = function(oInfo) {
 				that.oModel.detachRequestFailed(fnFailed);
