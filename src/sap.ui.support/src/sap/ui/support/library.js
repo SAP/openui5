@@ -155,5 +155,24 @@ sap.ui.define(["sap/ui/core/library"],
 		Other: "Other"
 	};
 
+	/**
+	 * Analysis history formats.
+	 * @enum {string}
+	 * @since ${version}
+	 * @public
+	 */
+	sap.ui.support.HistoryFormats = {
+		/**
+		 * ABAP history format.
+		 * @public
+		 */
+		Abap: "Abap",
+		/**
+		 * String history format.
+		 * @public
+		 */
+		String: "String"
+	};
+
 	return sap.ui.support;
 });

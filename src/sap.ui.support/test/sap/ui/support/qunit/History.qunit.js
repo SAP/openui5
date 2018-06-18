@@ -5,7 +5,8 @@ sap.ui.require([
 	"sap/ui/support/supportRules/RuleSetLoader"],
 function (History, IssueManager, RuleSetLoader) {
 	"use strict";
-var oTemplateObject = {
+
+	var oTemplateObject = {
 		analysisInfo: {
 			date: "",
 			duration: "",
@@ -49,7 +50,8 @@ var oTemplateObject = {
 		details: "",
 		name: "",
 		severity: ""
-	};
+	},
+	sReferenceFormattedHistory = "Run1---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|ruleid:breadcrumbsInOverflowToolbar||name:BreadcrumbsinOverflowToolbar||library:sap.m||categories:Usability||audiences:Control||description:TheBreadcrumbsshouldnotbeplacedinsideanOverflowToolbar||resolution:Placebreadcrumbsinanothercontainer.|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|id|classname|status|details|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
 
 	var compareJSON = function (oTemplateObj, oComparedObj) {
 		var aKeys = typeof oTemplateObj === "string" ? [] : Object.keys(oTemplateObj);
@@ -127,7 +129,7 @@ var oTemplateObject = {
 		};
 	};
 
-	QUnit.module('History API test', {
+	QUnit.module("History API test", {
 		beforeEach: function () {
 			this.oGetIssues = sinon.stub(IssueManager, "getIssues", function () {
 				return createMultipleIssues(9);
@@ -187,42 +189,74 @@ var oTemplateObject = {
 		}
 	});
 
-	QUnit.test('History saveAnalysis', function (assert) {
-		assert.strictEqual(History.getRuns().length, 0, 'The initial state of the history runs is empty');
-		//Act
+	QUnit.test("History saveAnalysis", function (assert) {
+		assert.strictEqual(History.getRuns().length, 0, "The initial state of the history runs is empty");
+		// Act
 		History.saveAnalysis(this.oContext);
 
-		assert.strictEqual(History.getRuns().length, 1, 'The analysis has been stored in the runs array');
-		assert.strictEqual(History.getRuns()[0]["analysisDuration"], "00:00:00:50", 'Check the value is correct');
+		assert.strictEqual(History.getRuns().length, 1, "The analysis has been stored in the runs array");
+		assert.strictEqual(History.getRuns()[0]["analysisDuration"], "00:00:00:50", "Check the value is correct");
 
 		History.saveAnalysis(this.oContext);
-		assert.strictEqual(History.getRuns().length, 2, 'Check if after second analysis the object is stored');
+		assert.strictEqual(History.getRuns().length, 2, "Check if after second analysis the object is stored");
 	});
 
-	QUnit.test('History clearHistory', function (assert) {
+	QUnit.test("History clearHistory", function (assert) {
 		History.saveAnalysis(this.oContext);
 		History.saveAnalysis(this.oContext);
 
-		assert.strictEqual(History.getRuns().length, 2, 'Ensure that we have some stored data');
-		//Act
+		assert.strictEqual(History.getRuns().length, 2, "Ensure that we have some stored data");
+		// Act
 		History.clearHistory();
 
-		assert.strictEqual(History.getRuns().length, 0, 'Ensure that everything was removed');
+		assert.strictEqual(History.getRuns().length, 0, "Ensure that everything was removed");
 	});
 
-	QUnit.test('History getHistory', function (assert) {
-		//Act
+	QUnit.test("History getHistory", function (assert) {
+		// Act
 		History.saveAnalysis(this.oContext);
 		var aResults = History.getHistory(),
 			aIssues = aResults[0]["loadedLibraries"]["sap.m"]["rules"]["breadcrumbsInOverflowToolbar"]["issues"],
 			bIsGeneratedJsonMatchTheTemplate = compareJSON(oTemplateObject, aResults[0]);
 
-		assert.strictEqual(bIsGeneratedJsonMatchTheTemplate, true, 'The returned json matched the template.');
+		// Assert
+		assert.strictEqual(bIsGeneratedJsonMatchTheTemplate, true, "The returned json matched the template.");
 
-		assert.strictEqual(aIssues.length, 9, 'The returned json matched the template.');
+		assert.strictEqual(aIssues.length, 9, "The returned json matched the template.");
 		aIssues.forEach(function (oIssue) {
-			assert.strictEqual(compareJSON(oTemplateForIssue, oIssue), true, 'The returned json matched the template.');
+			assert.strictEqual(compareJSON(oTemplateForIssue, oIssue), true, "The returned json matched the template.");
 		});
 		aIssues = null;
+	});
+
+	QUnit.test("History getFormattedHistory - ABAP format passed", function (assert) {
+		// Act
+		History.saveAnalysis(this.oContext);
+		var oFormattedHistory = History.getFormattedHistory(sap.ui.support.HistoryFormats.Abap);
+
+		// Assert
+		// For ABAP parser the Collections should be arrays instead of dictionaries with key/value pairs.
+		assert.ok(Array.isArray(oFormattedHistory), "History should be an array.");
+		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries), "Loaded libraries should be an array.");
+		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries[0].rules), "Rules should be an array.");
+		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries[0].rules[0].issues), "Issues should be an array.");
+	});
+
+	QUnit.test("History getFormattedHistory - String format passed", function (assert) {
+		// Act
+		History.saveAnalysis(this.oContext);
+		var sFormattedHistory = History.getFormattedHistory(sap.ui.support.HistoryFormats.String).replace(/\s/g, ""); // Remove white spaces for string comparison.
+
+		// Assert
+		assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");
+	});
+
+	QUnit.test("History getFormattedHistory - NO format passed", function (assert) {
+		// Act
+		History.saveAnalysis(this.oContext);
+		var sFormattedHistory = History.getFormattedHistory().replace(/\s/g, ""); // Remove white spaces for string comparison.
+
+		// Assert
+		assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");
 	});
 });
