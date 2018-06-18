@@ -19,7 +19,7 @@ sap.ui.define([
 	 *
 	 *   In {@link sap.ui.model.odata.v2.ODataModel} this type is represented as a
 	 *   <code>Date</code> instance in local time. In {@link sap.ui.model.odata.v4.ODataModel} this
-	 *   type is represented as a <code>string</code> like "2014-11-27T13:47:26Z". See parameter
+	 *   type is represented as a <code>string</code> like "1970-12-31T23:59:58Z". See parameter
 	 *   <code>oConstraints.V4</code> for more information.
 	 *
 	 * @extends sap.ui.model.odata.type.DateTimeBase
@@ -40,7 +40,7 @@ sap.ui.define([
 	 *   (OData V4 only); only integer values between 0 and 12 are valid (since 1.37.0)
 	 * @param {boolean} [oConstraints.V4=false]
 	 *   Whether OData V4 semantics apply and the model representation is expected to be a
-	 *   <code>string</code> like "2014-11-27T13:47:26Z" (see {@link #parseValue} and
+	 *   <code>string</code> like "1970-12-31T23:59:58Z" (see {@link #parseValue} and
 	 *   {@link #validateValue}); this type automatically adapts itself whenever it is used within
 	 *   an OData V4 model via {@link sap.ui.model.odata.v4.ODataPropertyBinding#setType}.
 	 * @public
@@ -99,7 +99,7 @@ sap.ui.define([
 	 *
 	 * @param {Date|string} vValue
 	 *   The value to be formatted, which is represented in the model as a <code>Date</code>
-	 *   instance (OData V2) or as a string like "2014-11-27T13:47:26Z" (OData V4); both
+	 *   instance (OData V2) or as a string like "1970-12-31T23:59:58Z" (OData V4); both
 	 *   representations are accepted independent of the model's OData version
 	 * @param {string} sTargetType
 	 *   The target type, may be "any", "string", or a type with one of these types as its
@@ -162,7 +162,7 @@ sap.ui.define([
 
 	/**
 	 * Parses the given value to a <code>Date</code> instance (OData V2) or a string like
-	 * "2014-11-27T13:47:26Z" (OData V4), depending on the model's OData version.
+	 * "1970-12-31T23:59:58Z" (OData V4), depending on the model's OData version.
 	 *
 	 * @param {string} sValue
 	 *   The value to be parsed; the empty string and <code>null</code> are parsed to

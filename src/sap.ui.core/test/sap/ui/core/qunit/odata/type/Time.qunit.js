@@ -39,7 +39,7 @@ sap.ui.require([
 			} catch (e) {
 				assert.ok(e instanceof ParseException, sReason + ": exception");
 				assert.strictEqual(e.message,
-					"EnterTime " + oType.formatValue(createTime(13, 47, 26, 0), "string"),
+					"EnterTime " + oType.formatValue(createTime(23, 59, 58, 0), "string"),
 					sReason + ": message");
 			}
 		});
@@ -222,7 +222,8 @@ sap.ui.require([
 				assert.ok(false);
 			} catch (e) {
 				assert.ok(e instanceof ValidateException, "ValidateException: exception");
-				assert.strictEqual(e.message, "EnterTime 1:47:26 PM", "ValidateException: message");
+				assert.strictEqual(e.message, "EnterTime 11:59:58 PM",
+					"ValidateException: message");
 			}
 		});
 	});

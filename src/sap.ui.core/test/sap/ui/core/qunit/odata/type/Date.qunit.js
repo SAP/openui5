@@ -33,7 +33,8 @@ sap.ui.require([
 				assert.ok(false);
 			} catch (e) {
 				assert.ok(e instanceof fnExpectedException, sReason + ": exception");
-				assert.strictEqual(e.message, "EnterDate Nov 27, 2014", sReason + ": message");
+				assert.strictEqual(e.message, "EnterDate Dec 31, " + new Date().getFullYear(),
+					sReason + ": message");
 			}
 		});
 	}
