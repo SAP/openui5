@@ -343,9 +343,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 		if (this._sType === mTypes.APPLICATION) {
 			if (!this._isOpen) {
-				if ( Device.browser.msie ) {
+				if (Device.browser.msie) {
 					var sIFrameUrl = sap.ui.require.toUrl("sap/ui/core/support/msiebridge.html");
-					getSupportArea().html("").append("<iframe id=\"" + ID_SUPPORT_AREA + "-frame\" src=\"" + sIFrameUrl + sParams + "\" onload=\"sap.ui.core.support.Support._onSupportIFrameLoaded();\"></iframe>");
+					getSupportArea().html("").append(getSupportFrame(sIFrameUrl, sParams));
 					this._sRemoteOrigin = checkLocalUrl(sIFrameUrl) ? this._sLocalOrigin : sIFrameUrl;
 				} else {
 					this._oRemoteWindow = openWindow(sToolUrl + sParams);
@@ -431,6 +431,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 				appendTo(document.body);
 		}
 		return $support;
+	}
+
+
+	function getSupportFrame(sIFrameUrl, sParams) {
+		var oFrame = document.createElement("iframe");
+		oFrame.id = ID_SUPPORT_AREA + "-frame";
+		oFrame.src = sIFrameUrl + sParams;
+		oFrame.onload = sap.ui.core.support.Support._onSupportIFrameLoaded;
+
+		return oFrame;
 	}
 
 
