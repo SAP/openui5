@@ -28,6 +28,8 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 				}
 				aStableElements = aStableElements.concat(oFormElement.getFields());
 			});
+		} else if (oElement.getMetadata().getName() === "sap.ui.layout.form.Form") {
+			aStableElements.push(oElement);
 		}
 		return aStableElements;
 	};
