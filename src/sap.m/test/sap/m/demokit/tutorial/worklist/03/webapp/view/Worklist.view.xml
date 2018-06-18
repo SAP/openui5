@@ -1,18 +1,22 @@
 <mvc:View
-	controllerName="mycompany.myapp.controller.Worklist"
+	controllerName="mycompany.myapp.MyWorklistApp.controller.Worklist"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:semantic="sap.m.semantic"
-	xmlns="sap.m">
-	<semantic:FullscreenPage
+	xmlns:semantic="sap.f.semantic">
+
+	<semantic:SemanticPage
 		id="page"
-		navButtonPress="onNavBack"
-		showNavButton="true"
-		title="{i18n>worklistViewTitle}">
+		headerPinnable="false"
+		toggleHeaderOnTitleClick="false">
+
+		<semantic:titleHeading>
+			<Title text="{i18n>worklistTitle}" />
+		</semantic:titleHeading>
+
 		<semantic:content>
 			<Table
 				id="table"
 				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-				class="sapUiResponsiveMargin"
 				growing="true"
 				growingScrollToLoad="true"
 				noDataText="{worklistView>/tableNoDataText}"
@@ -36,45 +40,49 @@
 						<ToolbarSpacer/>
 						<SearchField
 							id="searchField"
-							search="onSearch"
 							tooltip="{i18n>worklistSearchTooltip}"
-							width="auto"/>
+							search="onSearch"
+							width="auto">
+						</SearchField>
 					</Toolbar>
 				</headerToolbar>
-				<columns>
-					<Column id="nameColumn">
-						<Text
-							id="nameColumnTitle"
-							text="{i18n>TableNameColumnTitle}"/>
-					</Column>
-					<Column
-						id="supplierNameColumn"
-						demandPopin="false"
-						minScreenWidth="Tablet">
-						<Text text="{i18n>TableSupplierColumnTitle}"/>
-					</Column>
-					<Column
-						id="unitPriceColumn"
-						hAlign="End"
-						demandPopin="true"
-						minScreenWidth="Tablet">
-						<Text text="{i18n>TablePriceColumnTitle}"/>
-					</Column>
-					<Column id="unitsOnOrderColumn"
-						demandPopin="true"
-						minScreenWidth="Tablet"
-						hAlign="End">
-						<Text text="{i18n>TableUnitsOrderedColumnTitle}"/>
-					</Column>
-					<Column id="unitsInStockColumn"
-						hAlign="End">
-						<Text text="{i18n>TableUnitsInStockColumnTitle}"/>
-					</Column>
+
+					<columns>
+						<Column id="nameColumn">
+							<Text
+								id="nameColumnTitle"
+								text="{i18n>TableNameColumnTitle}"/>
+						</Column>
+						<Column
+							id="supplierNameColumn"
+							demandPopin="false"
+							minScreenWidth="Tablet">
+							<Text text="{i18n>TableSupplierColumnTitle}"/>
+						</Column>
+						<Column
+							id="unitPriceColumn"
+							hAlign="End"
+							demandPopin="true"
+							minScreenWidth="Tablet">
+							<Text text="{i18n>TablePriceColumnTitle}"/>
+						</Column>
+						<Column id="unitsOnOrderColumn"
+							demandPopin="true"
+							minScreenWidth="Tablet"
+							hAlign="End">
+							<Text text="{i18n>TableUnitsOrderedColumnTitle}"/>
+						</Column>
+						<Column
+							id="unitsInStockColumn"
+							hAlign="End">
+							<Text text="{i18n>TableUnitsInStockColumnTitle}"/>
+						</Column>
 				</columns>
+
 				<items>
 					<ColumnListItem
-						press="onPress"
-						type="Navigation">
+						type="Navigation"
+						press="onPress">
 						<cells>
 							<ObjectIdentifier
 								title="{ProductName}"/>
@@ -83,27 +91,30 @@
 								unit="EUR"
 								number="{
 									path: 'UnitPrice',
-									formatter: '.formatter.numberUnit'
-								}"/>
+									formatter: '.formatter.numberUnit'}"/>
 							<ObjectNumber
-								number="{UnitsOnOrder}"
-								unit="PC"/>
+								number="{
+									path: 'UnitsOnOrder',
+									formatter: '.formatter.numberUnit'}"
+									unit="PC"/>
 							<ObjectNumber
-								number="{UnitsInStock}"
+								number="{
+									path: 'UnitsInStock',
+									formatter: '.formatter.numberUnit'}"
 								unit="PC"
 								state="{
 									path: 'UnitsInStock',
-									formatter: '.formatter.quantityState'
-								}"/>
+									formatter: '.formatter.quantityState'}"/>
 						</cells>
 					</ColumnListItem>
 				</items>
 			</Table>
 		</semantic:content>
+
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction
-				id="shareEmail"
-				press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
 		</semantic:sendEmailAction>
-	</semantic:FullscreenPage>
+
+
+	</semantic:SemanticPage>
 </mvc:View>

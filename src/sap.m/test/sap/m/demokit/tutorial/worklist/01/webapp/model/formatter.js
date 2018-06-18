@@ -1,4 +1,5 @@
-sap.ui.define([], function() {
+sap.ui.define([
+] , function () {
 	"use strict";
 
 	return {
@@ -9,7 +10,7 @@ sap.ui.define([], function() {
 		 * @param {string} sValue the number string to be rounded
 		 * @returns {string} sValue with 2 digits rounded
 		 */
-		numberUnit: function(sValue) {
+		numberUnit : function (sValue) {
 			if (!sValue) {
 				return "";
 			}
@@ -17,5 +18,4 @@ sap.ui.define([], function() {
 		}
 
 	};
-
 });

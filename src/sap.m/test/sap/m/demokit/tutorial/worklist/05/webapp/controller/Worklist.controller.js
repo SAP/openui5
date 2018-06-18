@@ -1,15 +1,16 @@
+/*global location history */
 sap.ui.define([
-	"mycompany/myapp/controller/BaseController",
+	"mycompany/myapp/MyWorklistApp/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"mycompany/myapp/model/formatter",
+	"mycompany/myapp/MyWorklistApp/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox"
-], function(BaseController, JSONModel, formatter, Filter, FilterOperator, MessageToast, MessageBox) {
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, MessageToast, MessageBox) {
 	"use strict";
 
-	return BaseController.extend("mycompany.myapp.controller.Worklist", {
+	return BaseController.extend("mycompany.myapp.MyWorklistApp.controller.Worklist", {
 
 		formatter: formatter,
 
@@ -21,7 +22,7 @@ sap.ui.define([
 		 * Called when the worklist controller is instantiated.
 		 * @public
 		 */
-		onInit: function() {
+		onInit : function () {
 			var oViewModel,
 				iOriginalBusyDelay,
 				oTable = this.byId("table");
@@ -32,24 +33,22 @@ sap.ui.define([
 			iOriginalBusyDelay = oTable.getBusyIndicatorDelay();
 			this._oTable = oTable;
 			// keeps the search state
-			this._oTableSearchState = [];
+			this._aTableSearchState = [];
 
 			// Model used to manipulate control states
 			oViewModel = new JSONModel({
-				worklistTableTitle: this.getResourceBundle().getText("worklistTableTitle"),
-				saveAsTileTitle: this.getResourceBundle().getText("worklistViewTitle"),
-				shareOnJamTitle: this.getResourceBundle().getText("worklistViewTitle"),
-				shareSendEmailSubject: this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
-				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage", [location.href]),
-				tableNoDataText: this.getResourceBundle().getText("tableNoDataText"),
-				tableBusyDelay: 0,
+				worklistTableTitle : this.getResourceBundle().getText("worklistTableTitle"),
+				shareOnJamTitle: this.getResourceBundle().getText("worklistTitle"),
+				shareSendEmailSubject : this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
+				shareSendEmailMessage : this.getResourceBundle().getText("shareSendEmailWorklistMessage", [location.href]),
+				tableNoDataText : this.getResourceBundle().getText("tableNoDataText"),
+				tableBusyDelay : 0,
 				inStock: 0,
 				shortage: 0,
 				outOfStock: 0,
 				countAll: 0
 			});
 			this.setModel(oViewModel, "worklistView");
-
 			// Create an object of filters
 			this._mFilters = {
 				"inStock": [new sap.ui.model.Filter("UnitsInStock", "GT", 10)],
@@ -61,7 +60,7 @@ sap.ui.define([
 			// Make sure, busy indication is showing immediately so there is no
 			// break after the busy indication for loading the view's meta data is
 			// ended (see promise 'oWhenMetadataIsLoaded' in AppController)
-			oTable.attachEventOnce("updateFinished", function() {
+			oTable.attachEventOnce("updateFinished", function(){
 				// Restore original busy indicator delay for worklist's table
 				oViewModel.setProperty("/tableBusyDelay", iOriginalBusyDelay);
 			});
@@ -80,7 +79,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the update finished event
 		 * @public
 		 */
-		onUpdateFinished: function(oEvent) {
+		onUpdateFinished : function (oEvent) {
 			// update the worklist's object counter after the table update
 			var sTitle,
 				oTable = oEvent.getSource(),
@@ -90,14 +89,12 @@ sap.ui.define([
 			// the table is not empty
 			if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
-
 				// Get the count for all the products and set the value to 'countAll' property
 				this.getModel().read("/Products/$count", {
 					success: function (oData) {
 						oViewModel.setProperty("/countAll", oData);
 					}
 				});
-
 				// read the count for the unitsInStock filter
 				this.getModel().read("/Products/$count", {
 					success: function (oData) {
@@ -105,7 +102,6 @@ sap.ui.define([
 					},
 					filters: this._mFilters.inStock
 				});
-
 				// read the count for the outOfStock filter
 				this.getModel().read("/Products/$count", {
 					success: function(oData){
@@ -113,7 +109,6 @@ sap.ui.define([
 					},
 					filters: this._mFilters.outOfStock
 				});
-
 				// read the count for the shortage filter
 				this.getModel().read("/Products/$count", {
 					success: function(oData){
@@ -121,7 +116,6 @@ sap.ui.define([
 					},
 					filters: this._mFilters.shortage
 				});
-
 			} else {
 				sTitle = this.getResourceBundle().getText("worklistTableTitle");
 			}
@@ -133,27 +127,22 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the table selectionChange event
 		 * @public
 		 */
-		onPress: function(oEvent) {
+		onPress : function (oEvent) {
 			// The source is the list item that got pressed
 			this._showObject(oEvent.getSource());
 		},
 
 		/**
-		 * Navigates back in the browser history, if the entry was created by this app.
-		 * If not, it navigates to the Fiori Launchpad home page.
+		 * Event handler for navigating back.
+		 * We navigate back in the browser history
 		 * @public
 		 */
-		onNavBack: function() {
-			var oHistory = sap.ui.core.routing.History.getInstance(),
-				sPreviousHash = oHistory.getPreviousHash();
-
-			if (sPreviousHash !== undefined) {
-				// The history contains a previous entry
-				history.go(-1);
-			}
+		onNavBack : function() {
+			history.go(-1);
 		},
 
-		onSearch: function(oEvent) {
+
+		onSearch : function (oEvent) {
 			if (oEvent.getParameters().refreshButtonPressed) {
 				// Search field's 'refresh' button has been pressed.
 				// This is visible if you select any master list item.
@@ -161,13 +150,13 @@ sap.ui.define([
 				// refresh the list binding.
 				this.onRefresh();
 			} else {
-				var oTableSearchState = [];
+				var aTableSearchState = [];
 				var sQuery = oEvent.getParameter("query");
 
 				if (sQuery && sQuery.length > 0) {
-					oTableSearchState = [new Filter("ProductName", FilterOperator.Contains, sQuery)];
+					aTableSearchState = [new Filter("ProductName", FilterOperator.Contains, sQuery)];
 				}
-				this._applySearch(oTableSearchState);
+				this._applySearch(aTableSearchState);
 			}
 
 		},
@@ -177,12 +166,13 @@ sap.ui.define([
 		 * and group settings and refreshes the list binding.
 		 * @public
 		 */
-		onRefresh: function() {
-			this._oTable.getBinding("items").refresh();
+		onRefresh : function () {
+			var oTable = this.byId("table");
+			oTable.getBinding("items").refresh();
 		},
 
 		/* =========================================================== */
-		/* internal methods											*/
+		/* internal methods                                            */
 		/* =========================================================== */
 
 		/**
@@ -191,7 +181,7 @@ sap.ui.define([
 		 * @param {sap.m.ObjectListItem} oItem selected Item
 		 * @private
 		 */
-		_showObject: function(oItem) {
+		_showObject : function (oItem) {
 			this.getRouter().navTo("object", {
 				objectId: oItem.getBindingContext().getProperty("ProductID")
 			});
@@ -199,14 +189,15 @@ sap.ui.define([
 
 		/**
 		 * Internal helper method to apply both filter and search state together on the list binding
-		 * @param {array} oTableSearchState an array of filters for the search
+		 * @param {sap.ui.model.Filter[]} aTableSearchState An array of filters for the search
 		 * @private
 		 */
-		_applySearch: function(oTableSearchState) {
-			var oViewModel = this.getModel("worklistView");
-			this._oTable.getBinding("items").filter(oTableSearchState, "Application");
+		_applySearch: function(aTableSearchState) {
+			var oTable = this.byId("table"),
+				oViewModel = this.getModel("worklistView");
+			oTable.getBinding("items").filter(aTableSearchState, "Application");
 			// changes the noDataText of the list in case there are no filter results
-			if (oTableSearchState.length !== 0) {
+			if (aTableSearchState.length !== 0) {
 				oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
 			}
 		},
@@ -230,7 +221,6 @@ sap.ui.define([
 		onQuickFilter: function(oEvent) {
 			var oBinding = this._oTable.getBinding("items"),
 				sKey = oEvent.getParameter("selectedKey");
-
 			oBinding.filter(this._mFilters[sKey]);
 		},
 
@@ -242,6 +232,7 @@ sap.ui.define([
 		 * @param {number} iTotalRequests the number of all requests sent
 		 * @private
 		 */
+
 		_handleUnlistActionResult : function (sProductId, bSuccess, iRequestNumber, iTotalRequests){
 			// we could create a counter for successful and one for failed requests
 			// however, we just assume that every single request was successful and display a success message once
@@ -258,6 +249,7 @@ sap.ui.define([
 		 * @param {number} iTotalRequests the number of all requests sent
 		 * @private
 		 */
+
 		_handleReorderActionResult : function (sProductId, bSuccess, iRequestNumber, iTotalRequests){
 			// we could create a counter for successful and one for failed requests
 			// however, we just assume that every single request was successful and display a success message once
@@ -271,6 +263,7 @@ sap.ui.define([
 		 * product from the (local) model.
 		 * @public
 		 */
+
 		onUnlistObjects: function() {
 			var aSelectedProducts, i, sPath, oProduct, oProductId;
 
@@ -289,7 +282,6 @@ sap.ui.define([
 				this._showErrorMessage(this.getModel("i18n").getResourceBundle().getText("TableSelectProduct"));
 			}
 		},
-
 
 		/**
 		 * Event handler for the reorder button. Will reorder the
@@ -314,6 +306,5 @@ sap.ui.define([
 				this._showErrorMessage(this.getModel("i18n").getResourceBundle().getText("TableSelectProduct"));
 			}
 		}
-
 	});
 });
