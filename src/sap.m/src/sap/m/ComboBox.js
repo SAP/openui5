@@ -627,7 +627,7 @@ sap.ui.define([
 					oControl = oEvent.srcControl,
 					aVisibleItems;
 
-				if (bEmptyValue && !this.bOpenedByKeyboardOrButton) {
+				if (bEmptyValue && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog()) {
 					aVisibleItems = this.getItems();
 				} else {
 					aVisibleItems = this.filterItems({

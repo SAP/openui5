@@ -8817,6 +8817,55 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should filter with empty value when input is deleted on mobile device", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Test"
+					}),
+					new sap.ui.core.Item({
+						text: "aaa"
+					})
+				],
+				value: "t"
+			});
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oFocusDomRef = oComboBox.getFocusDomRef();
+
+			// act (type something in the text field input)
+			oFocusDomRef.value = "t";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "t" });
+
+			// wait for the word completion feature
+			this.clock.tick(0);
+
+			assert.strictEqual(oComboBox.getVisibleItems().length, 1, "One item should be visible");
+			assert.strictEqual(oComboBox.getVisibleItems()[0].getText(), "Test", "Visible item text should be 'Test'");
+
+			// act (clear input value)
+			oFocusDomRef.value = "";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "" });
+
+			// wait for the word completion feature
+			this.clock.tick(0);
+
+			oComboBox.open();
+
+			assert.strictEqual(oComboBox.getVisibleItems().length, 2, "All items should be visible");
+
+			oComboBox.destroy();
+		});
+
 		QUnit.module("onfocusin");
 
 		QUnit.test("onfocusin", function(assert) {
