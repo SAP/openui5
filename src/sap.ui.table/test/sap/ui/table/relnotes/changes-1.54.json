@@ -280,5 +280,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.7": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ab3119c7eecf2e9be52c0890281e9b163089cc54",
+        "type": "FIX",
+        "text": " GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": []
+      }
+    ]
   }
 }

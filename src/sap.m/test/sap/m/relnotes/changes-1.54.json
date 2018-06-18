@@ -2605,5 +2605,58 @@
         "references": []
       }
     ]
+  },
+  "1.54.7": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "0e5015d3720d4212588ea005d5a2a03e352d8bf7",
+        "type": "FIX",
+        "text": " P13DimeasurePanel: Align items with chart API",
+        "references": []
+      },
+      {
+        "id": "3e84c0547061ee3282fad74f3ca2ea8cc0f55d76",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: set min/max date does not modify its time part now.",
+        "references": []
+      },
+      {
+        "id": "bfb7d56448753f4d9ecec89769fe6ea2158edc25",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Remove additional tab stop in Light mode",
+        "references": []
+      },
+      {
+        "id": "3b8028f0ecf15358ab30a6030b95a233522e2f73",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Single pasted values are not turned into tokens",
+        "references": []
+      },
+      {
+        "id": "54bf3d600a1e2cbab4fc1e08f76af29c16838d65",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Press event is fired on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "07d148414f7de2321183f82f244e88ab93bea74f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: text / icon alignment is correct now",
+        "references": []
+      },
+      {
+        "id": "851651fd7c5601b731b472061de190a2a057a87d",
+        "type": "FIX",
+        "text": " sap.m.Switch: Description when checked off fixed",
+        "references": []
+      },
+      {
+        "id": "219bc6cdb222d59f87129041393e6fc79a3cf96a",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - press reset then cancel button behavior is fixed.",
+        "references": []
+      }
+    ]
   }
 }

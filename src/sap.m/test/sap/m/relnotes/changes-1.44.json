@@ -4968,5 +4968,76 @@
         "references": []
       }
     ]
+  },
+  "1.44.32": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "83230b9468b22adf285f01360289ddf99b6eccd5",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Extract base styles and fix padding",
+        "references": []
+      },
+      {
+        "id": "a7a8d382d7ebccddbf2d06988b79e848d801a40a",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Close event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "be3410142a0b99d0127deec67aca46c91d82f99d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selecting items is now working in IE",
+        "references": []
+      },
+      {
+        "id": "f9191e6fe702c532cd8ba8218da718e436c7858b",
+        "type": "FIX",
+        "text": " sap.m.ListBase: swipe actions are only for touch devices",
+        "references": []
+      },
+      {
+        "id": "d7684a7d133ace62e47f07c4e20ca06b81413419",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Enable positioning in ObjectPage",
+        "references": []
+      },
+      {
+        "id": "310367dbabc17ed64919ecf360517d3d6749a907",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Selecting an item now clears the input field",
+        "references": []
+      },
+      {
+        "id": "51efe7c31a459e4ca2d193ad924959f7ebbd0bfa",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Now escapes title and text of the inner controls",
+        "references": []
+      },
+      {
+        "id": "8829db04e1aafc63940f079b574200b165dab5e5",
+        "type": "FIX",
+        "text": " sap.m.Page: Do not focus on the hidden footer.",
+        "references": []
+      },
+      {
+        "id": "6fd1c502928ea1ab9a5aaf0c1044c0b37c663dd1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header aligment when icon is used",
+        "references": []
+      },
+      {
+        "id": "b3b8167e6d62f426bcb27e155fa518a6bbac814c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: load not density aware image by default",
+        "references": []
+      },
+      {
+        "id": "dd113008a2c322d9151ddc5aec29c510d0433582",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: reposition tiles when resize happens",
+        "references": []
+      }
+    ]
   }
 }

@@ -154,5 +154,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.7": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "3797e10f26eec716f3a038e570273eeb65d97195",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPage: Added class for content alignment",
+        "references": []
+      }
+    ]
   }
 }
