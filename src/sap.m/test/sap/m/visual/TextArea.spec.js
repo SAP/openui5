@@ -98,4 +98,10 @@ describe("sap.m.TextArea", function() {
 			expect(takeScreenshot(growingTextArea)).toLookAs("growing_textarea");
 		});
 	});
+
+	//TextArea - Set height and showExceededText=true
+	it("TextArea and Label total height should be the set height", function(){
+		var textAreaWithHeight = element(by.id("showExceededTextWithHeight"));
+		expect(takeScreenshot(textAreaWithHeight)).toLookAs("showExceededText_with_height");
+	});
 });
