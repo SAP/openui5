@@ -258,6 +258,7 @@ sap.ui.define([
 				}
 
 				if (oUi5Metadata) {
+					oControlData.dnd = oUi5Metadata.dnd;
 					if (oUi5Metadata.properties) {
 						oUi5Metadata.properties = this.filterElements(oUi5Metadata.properties);
 						oControlData.hasControlProperties = !!oUi5Metadata.properties.length;

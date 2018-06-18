@@ -65,6 +65,25 @@
 
 										<custom:JSDocText text="{/description}"/>
 
+										<template:if test="{=${data>/dnd/draggable} === false}">
+											<m:MessageStrip
+												text="This control cannot be a drag source."
+												type="Information"
+												showIcon="true"
+												showCloseButton="false"
+												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+											</m:MessageStrip>
+										</template:if>
+										<template:if test="{=${data>/dnd/droppable} === false}">
+											<m:MessageStrip
+												text="This control cannot be a drop target."
+												type="Information"
+												showIcon="true"
+												showCloseButton="false"
+												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+											</m:MessageStrip>
+										</template:if>
+
 										<template:if test="{data>/hasAnnotations}">
 											<layout:HorizontalLayout class="sapUiTinyMarginTop sapUiDocumentationAnnotationsText">
 												<m:Text text="A detailed description of the OData annotations handled by this control is available"/>
@@ -288,6 +307,22 @@
 															showCloseButton="false"
 															enableFormattedText="true"
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+														visible="{=${dnd/draggable} === true}"
+														text="This aggregation can be a drag source."
+														type="Information"
+														showIcon="true"
+														showCloseButton="false"
+														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+														visible="{=${dnd/droppable} === true}"
+														text="This aggregation can be a drop target."
+														type="Information"
+														showIcon="true"
+														showCloseButton="false"
+														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 													</m:MessageStrip>
 												</layout:VerticalLayout>
 											</custom:Row>
