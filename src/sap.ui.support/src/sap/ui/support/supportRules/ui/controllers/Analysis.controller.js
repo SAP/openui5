@@ -23,12 +23,13 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/Storage",
-	"sap/ui/support/supportRules/ui/models/SelectionUtils",
 	"sap/m/Dialog",
-	"sap/ui/unified/FileUploader"
+	"sap/ui/unified/FileUploader",
+	"sap/ui/support/supportRules/ui/models/CustomJSONListSelection",
+	"sap/ui/support/supportRules/ui/models/SelectionUtils"
 ], function (jQuery, BaseController, JSONModel, Panel, List, ListItemBase, StandardListItem, InputListItem, Button, Toolbar, ToolbarSpacer,
              Label, MessageToast, CommunicationBus, channelNames, SharedModel, RuleSerializer, constants, Ruleset, storage,
-						 SelectionUtils, Dialog, FileUploader) {
+             Dialog, FileUploader, CustomJSONListSelection, SelectionUtils) {
 	"use strict";
 
 
@@ -51,6 +52,8 @@ sap.ui.define([
 
 					this.bAdditionalViewLoaded = true;
 					this.loadAdditionalUI();
+					//attach adapter for custom selection
+					new CustomJSONListSelection(this.treeTable, true, "name");
 
 				}
 			}, this);
@@ -154,14 +157,18 @@ sap.ui.define([
 			CommunicationBus.subscribe(channelNames.VERIFY_RULE_CREATE_RESULT, function (data) {
 				var result = data.result,
 					newRule = RuleSerializer.deserialize(data.newRule, true),
-					tempLib = this.getTemporaryLib(),
-					treeTable = this.model.getProperty('/treeViewModel'),
-					treeTableTempLibrary;
+					tempLib = this.getTemporaryLib();
 
 				if (result == "success") {
 					tempLib.rules.push(newRule);
+					if (!this.oJsonModel) {
+						this.oJsonModel = new JSONModel();
+						this.treeTable.setModel(this.oJsonModel, "treeModel");
+					}
 
-					treeTableTempLibrary = this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
+					//Sync Selection of temporary rules
+					this._syncTreeTableVieModelTempRulesLib(tempLib, this.model.getProperty("/treeModel"));
+
 					if (this.model.getProperty("/persistingSettings")) {
 						storage.setRules(tempLib.rules);
 
@@ -170,14 +177,19 @@ sap.ui.define([
 							this.showRuleCreatedToast = false;
 						}
 					}
+					// set data to model
+					this.oJsonModel.setData(this.model.getProperty("/treeModel"));
 
+					//Set selected rules count to UI
+					SelectionUtils.getSelectedRules();
+
+					//Clean the new rule object
 					var emptyRule = this.model.getProperty("/newEmptyRule");
 					this.model.setProperty("/newRule", jQuery.extend(true, {}, emptyRule));
 					this.goToRuleProperties();
 					this.model.setProperty("/selectedRule", newRule);
-
-					SelectionUtils.updateTreeViewTempRulesSelection(treeTableTempLibrary);
 					this._updateRuleList();
+					tempLib = [];
 				} else {
 					MessageToast.show("Add rule failed because: " + result);
 				}
@@ -190,7 +202,7 @@ sap.ui.define([
 
 				if (result === "success") {
 					var ruleSource = this.model.getProperty("/editRuleSource"),
-						treeTable = this.model.getProperty('/treeViewModel');
+						treeTable = this.model.getProperty('/treeModel');
 					var libraries = this.model.getProperty('/libraries');
 					libraries.forEach(function (lib, libIndex) {
 						if (lib.title === constants.TEMP_RULESETS_NAME) {
@@ -207,9 +219,12 @@ sap.ui.define([
 						}
 					});
 
+					this.oJsonModel.setData(treeTable);
 					this.model.checkUpdate(true);
 					this.model.setProperty('/selectedRule', updateRule);
 
+					//Set selected rules count to UI
+					SelectionUtils.getSelectedRules();
 					this.goToRuleProperties();
 				} else {
 					MessageToast.show("Update rule failed because: " + result);
@@ -244,17 +259,28 @@ sap.ui.define([
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.GET_RULES_MODEL, function (oTreeViewModelRules) {
-				var bInitialLoading = this.model.getProperty("/initialRulesLoading");
+				this.oJsonModel = new JSONModel();
+				this.treeTable.setModel(this.oJsonModel, "treeModel");
+				this.oJsonModel.setData(oTreeViewModelRules);
 
-				if (bInitialLoading) {
-					this.model.setProperty("/initialRulesLoading", false);
-					this.model.setProperty("/treeViewModel", oTreeViewModelRules);
-					SelectionUtils.initializeSelection(bInitialLoading);
-				} else {
-					SelectionUtils._syncSelections(oTreeViewModelRules);
-					SelectionUtils.initializeSelection();
+				//Keep selection when additional  ruleset are loaded
+				if (this.model.getProperty("/loadingAdditionalRuleSets") && !this.model.getProperty("/persistingSettings")) {
+					 oTreeViewModelRules = this.model.getProperty("/treeModel");
+					this.oJsonModel.setData(oTreeViewModelRules);
+					this.treeTable.updateSelectionFromModel();
+					this.model.setProperty("/loadingAdditionalRuleSets", false);
 				}
-				this.model.setProperty("/selectedRulesCount", SelectionUtils.getSelectedRulesPlain().length);
+
+				if (this.model.getProperty("/persistingSettings")) {
+					oTreeViewModelRules = SelectionUtils.updateSelectedRulesFromLocalStorage(oTreeViewModelRules);
+					this.oJsonModel.setData(oTreeViewModelRules);
+					this.treeTable.updateSelectionFromModel();
+				} else {
+					this.treeTable.selectAll();
+				}
+
+				this.model.setProperty('/treeModel', oTreeViewModelRules);
+				this.model.setProperty("/selectedRulesCount", SelectionUtils.getSelectedRules().length);
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.POST_MESSAGE, function (data) {
@@ -282,7 +308,7 @@ sap.ui.define([
 		},
 
 		onAnalyze: function () {
-			var aSelectedRules = SelectionUtils.getSelectedRulesPlain(),
+			var aSelectedRules = SelectionUtils.getSelectedRules(),
 				oExecutionContext = this._getExecutionContext();
 
 			if (!aSelectedRules.length > 0) {
@@ -333,6 +359,7 @@ sap.ui.define([
 			var bShowRuleProperties = true;
 
 			if (oEvent.getParameter("selectedKey") === "additionalRulesets") {
+
 				bShowRuleProperties = false;
 				this.rulesViewContainer.setBusyIndicatorDelay(0);
 				this.rulesViewContainer.setBusy(true);
@@ -349,39 +376,40 @@ sap.ui.define([
 		 * @returns {Object} The temp library
 		 */
 		_syncTreeTableVieModelTempRulesLib: function (tempLib, treeTable) {
-			var innerIndex = 0,
-				library,
-				rule;
+			var library,
+				rule,
+				oTempLibCopy;
 
 			for (var i in treeTable) {
 
 				library = treeTable[i];
+				oTempLibCopy =  treeTable[i].nodes;
 
 				if (library.name !== constants.TEMP_RULESETS_NAME) {
 					continue;
 				}
-
+				//reset the model to add the temp rules
+				treeTable[i].nodes = [];
 				for (var ruleIndex in tempLib.rules) {
 
 					rule = tempLib.rules[ruleIndex];
 
-					library[innerIndex] = {
+					library.nodes.push({
 						name: rule.title,
 						description: rule.description,
 						id: rule.id,
-						audiences: rule.audiences,
-						categories: rule.categories,
+						audiences: rule.audiences.toString(),
+						categories: rule.categories.toString(),
 						minversion: rule.minversion,
 						resolution: rule.resolution,
 						title: rule.title,
-						selected: library[innerIndex] !== undefined ? library[innerIndex].selected : library.selected,
+						selected: oTempLibCopy[ruleIndex] !== undefined ?  oTempLibCopy[ruleIndex].selected : true,
 						libName: library.name,
 						check: rule.check
-					};
-
-					innerIndex++;
+					});
 				}
 
+				this.model.setProperty("/treeModel", treeTable);
 				return library;
 			}
 		},
@@ -395,9 +423,9 @@ sap.ui.define([
 			var ruleSource = this.model.getProperty("/editRuleSource");
 			for (var i in treeTable) {
 				if (treeTable[i].name === constants.TEMP_RULESETS_NAME) {
-					for (var innerIndex in treeTable[i]) {
-						if (treeTable[i][innerIndex].id === ruleSource.id) {
-							treeTable[i][innerIndex] = {
+					for (var innerIndex in treeTable[i].nodes) {
+						if (treeTable[i].nodes[innerIndex].id === ruleSource.id) {
+							treeTable[i].nodes[innerIndex] = {
 								name: tempRule.title,
 								description: tempRule.description,
 								id: tempRule.id,
@@ -517,7 +545,7 @@ sap.ui.define([
 					text: "Export",
 					press: function (oEvent) {
 						dialog.close();
-						SelectionUtils.exportSelectedRules(input.getValue(), textArea.getValue());
+						// SelectionUtils.exportSelectedRules(input.getValue(), textArea.getValue());
 					}
 				})
 
@@ -545,16 +573,10 @@ sap.ui.define([
 
 							that.model.setProperty("/persistingSettings", true);
 
-							// deselects all rows in model only
-							SelectionUtils.selectAllRows(false);
 
 							// resets persisted selections
 							storage.setSelectedRules(oOptionsToImport.selections);
 
-							// selects rows in model based on persisted selections
-							// and
-							// updates table from model selections
-							SelectionUtils.initializeModelSelection();
 
 							that.model.setProperty("/persistingSettings", bOriginalPersistingSettingsValue);
 						}
@@ -666,7 +688,8 @@ sap.ui.define([
 				libraries.push({
 					title: i,
 					type: "library",
-					rules: rules
+					rules: rules,
+					selected: true
 				});
 
 			}
@@ -824,10 +847,10 @@ sap.ui.define([
 			return mainModelRule;
 		},
 
-		duplicateRule: function (event) {
-			var path = event.getSource().getBindingContext().getPath(),
-				sourceObject = this.getView().getModel().getProperty(path),
-				selectedRule = this.getMainModelFromTreeViewModel(sourceObject),
+		duplicateRule: function (oEvent) {
+			var sPath = oEvent.getSource().getBindingContext("treeModel").getPath(),
+				oSourceObject = this.treeTable.getBinding().getModel().getProperty(sPath),
+				selectedRule = this.getMainModelFromTreeViewModel(oSourceObject),
 				selectedRuleCopy = jQuery.extend(true, {}, selectedRule);
 
 			this.model.setProperty("/newRule", selectedRuleCopy);
@@ -836,9 +859,9 @@ sap.ui.define([
 		},
 
 		editRule: function (event) {
-			var path = event.getSource().getBindingContext().getPath(),
-				sourceObject = this.getView().getModel().getProperty(path),
-				selectedRule = this.getMainModelFromTreeViewModel(sourceObject);
+			var sPath = event.getSource().getBindingContext("treeModel").getPath(),
+				oSourceObject = this.treeTable.getBinding().getModel().getProperty(sPath),
+				selectedRule = this.getMainModelFromTreeViewModel(oSourceObject);
 
 			this.model.setProperty("/editRuleSource", selectedRule);
 			this.model.setProperty("/editRule", jQuery.extend(true, {}, selectedRule));
@@ -848,37 +871,40 @@ sap.ui.define([
 		},
 		deleteTemporaryRule: function (event) {
 			var sourceObject = this.getObjectOnTreeRow(event),
-				treeViewModel = this.model.getProperty("/treeViewModel"),
-				mainModel = this.model.getProperty("/libraries"),
+				oTreeModel = this.treeTable.getBinding().getModel().getData(),
+				aLibraries = this.model.getProperty("/libraries"),
 				rulesNotToBeDeleted = [];
 
 
-			mainModel.forEach(function (lib, libIndex) {
-				if (lib.title === constants.TEMP_RULESETS_NAME) {
-					lib.rules.forEach(function (rule, ruleIndex) {
-						if (rule.id === sourceObject.id) {
-							lib.rules.splice(ruleIndex, 1);
+			aLibraries.forEach(function (oLibrary) {
+				if (oLibrary.title === constants.TEMP_RULESETS_NAME) {
+					oLibrary.rules.forEach(function (oRule, ruleIndex) {
+						if (oRule.id === sourceObject.id) {
+							oLibrary.rules.splice(ruleIndex, 1);
 							return;
 						} else {
-							rulesNotToBeDeleted.push(rule);
+							rulesNotToBeDeleted.push(oRule);
 						}
 					});
 				}
 			});
 
-			for (var i in treeViewModel) {
-				if (treeViewModel[i].name === constants.TEMP_RULESETS_NAME) {
-					for (var innerIndex in treeViewModel[i]) {
-						if (treeViewModel[i][innerIndex].id === sourceObject.id) {
-							delete treeViewModel[i][innerIndex];
+			for (var oLibrary in oTreeModel) {
+				if (oTreeModel[oLibrary].name === constants.TEMP_RULESETS_NAME) {
+					for (var iRuleIndex in oTreeModel[oLibrary].nodes) {
+						if (oTreeModel[oLibrary].nodes[iRuleIndex].id === sourceObject.id) {
+							oTreeModel[oLibrary].nodes.splice(iRuleIndex, 1);
 						}
 					}
 				}
 			}
-			this.model.setProperty("/treeViewModel", treeViewModel);
+			this.oJsonModel.setData(oTreeModel);
 			storage.removeSelectedRules(rulesNotToBeDeleted);
 
 			this._updateRuleList();
+
+			//Set selected rules count to UI
+			SelectionUtils.getSelectedRules();
 		},
 
 		/**
@@ -887,8 +913,8 @@ sap.ui.define([
 		* @returns {Object} ISelected rule from row
 		***/
 		getObjectOnTreeRow: function (event) {
-			var path = event.getSource().getBindingContext().getPath(),
-				sourceObject = this.getView().getModel().getProperty(path),
+			var sPath = event.getSource().getBindingContext("treeModel").getPath(),
+				sourceObject = this.treeTable.getBinding().getModel().getProperty(sPath),
 				libs = this.model.getProperty("/libraries");
 
 			libs.forEach(function (lib, libIndex) {
@@ -900,10 +926,6 @@ sap.ui.define([
 			});
 			return sourceObject;
 		},
-
-		onToggleOpenState: SelectionUtils.toggleOpenStateHandler.bind(SelectionUtils),
-
-		onRowSelectionChange: SelectionUtils.selectionChangeHandler.bind(SelectionUtils),
 
 		_updateRuleList: function() {
 			var oRuleList = this.getView().byId("ruleList"),

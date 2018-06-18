@@ -208,31 +208,35 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 					innerIndex = 0,
 					treeTableModel = {},
 					rulesViewModel,
-					rule;
+					rule,
+					rules = [];
 
 				rulesViewModel = this.getRulesViewModel(oRules, [], []);
 				for (var libraryName in rulesViewModel) {
 					treeTableModel[index] = {
 						name: libraryName,
+						selected: true,
 						type: "lib",
-						rules: []
+						nodes: rules
 					};
 
 					for (var ruleName in rulesViewModel[libraryName]) {
 						rule = rulesViewModel[libraryName][ruleName];
-						treeTableModel[index][innerIndex] = {
+						rules.push({
 							name: rule.title,
 							description: rule.description,
 							id: rule.id,
-							audiences: rule.audiences,
-							categories: rule.categories,
+							audiences: rule.audiences.toString(),
+							categories: rule.categories.toString(),
 							minversion: rule.minversion,
 							resolution: rule.resolution,
 							title:  rule.title,
-							libName: libraryName
-						};
+							libName: libraryName,
+							selected: true
+						});
 						innerIndex++;
 					}
+					rules = [];
 					index++;
 				}
 				return treeTableModel;
