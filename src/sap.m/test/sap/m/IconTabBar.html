@@ -349,6 +349,24 @@
 			}).addStyleClass("cozyLabel");
 
 
+			var contrastPlusIconTabBar = new sap.m.IconTabBar('contrastPlusIconTabBar', {
+				backgroundDesign: sap.m.BackgroundDesign.Transparent,
+				headerBackgroundDesign: sap.m.BackgroundDesign.Transparent,
+				items: [
+					new sap.m.IconTabFilter({
+						text: "Info",
+						content: new sap.m.Text({
+							text: "Info content goes here ..."
+						})
+					}),
+					new sap.m.IconTabFilter({
+						text: "Attachments",
+						content: new sap.m.Text({
+							text: "Attachments go here ..."
+						})
+					})
+				]
+			}).addStyleClass("sapContrast sapContrastPlus");
 
 
 			var page1 = new sap.m.Page("page1", {
@@ -1233,7 +1251,11 @@
 						]
 					}).addStyleClass("ITBContainer"),
 					iconTabBarOverflowSelectList,
-					panelBackgroundDesign
+					panelBackgroundDesign,
+					new sap.m.Label({
+						text: "Contrast IconTabBar with transparent backgrounds"
+					}),
+					contrastPlusIconTabBar
 				]
 			});
 			app.addPage(page1);
