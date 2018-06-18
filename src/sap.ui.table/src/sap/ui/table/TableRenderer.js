@@ -665,10 +665,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 					bRenderDummyColumn = false;
 					// in fixed area, use stored fixed width or 10rem:
 					if (bFixedTable) {
-						sWidth = (oColumn._iFixWidth || 160) + "px";
+						oColumn._iFixWidth = oColumn._iFixWidth || 160;
+						sWidth = oColumn._iFixWidth + "px";
 					} else if (sWidth && sWidth.indexOf("%") > 0) {
 						bHasPercentageWidths = true;
 					}
+				} else if (bFixedTable) {
+					delete oColumn._iFixWidth;
 				}
 				oColParam.width = sWidth;
 			}
