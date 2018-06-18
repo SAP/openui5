@@ -2025,9 +2025,37 @@ if ( eventCaptureSupported ) {
 					return;
 				}
 
-				var origTarget = event.target,
-					origEvent = event.originalEvent,
-					timer;
+				var mouseDownTarget = event.target,
+					mouseDownEvent = event.originalEvent,
+					timer,
+					// SAP Modification: Workaround for an Edge browser issue which occurs with EdgeHTML 14 and higher.
+					// The root cause are inconsistent event targets of fired events, when a button is tapped.
+
+					/**
+					 * Detects whether edge browser special tap handling is necessary.
+					 *
+					 * Inconsistent event targets for the sap.m.Button control:
+					 * EdgeHTML v.| 14 | 15 | 16 | 17 |
+					 * ----------------------------------
+					 * mousedown  |   S|   S|   B|   S|
+					 * mouseup    |   B|   B|   B|   B|
+					 * click      |   S| S/B|   S| S/B|
+					 * ----------------------------------
+					 * S = SPAN, B = BUTTON
+					 *
+					 * @param {object} event either mouseup or click event.
+					 * @returns {boolean} Returns true, when a button was pressed in edge browser with inconsistent event targets.
+					 */
+					buttonTappedInEdgeBrowser = function( event ) {
+						var eventTarget = event.target;
+						var browser = sap.ui.Device.browser;
+
+						return browser.edge && browser.version >= 14 &&
+							(eventTarget.tagName.toLowerCase() === "button" &&
+								eventTarget.contains(mouseDownTarget) ||
+								mouseDownTarget.tagName.toLowerCase() === "button" &&
+								mouseDownTarget.contains(eventTarget));
+					};
 
 				function clearTapTimer() {
 					clearTimeout( timer );
@@ -2046,19 +2074,10 @@ if ( eventCaptureSupported ) {
 
 				// SAP MODIFICATION: terminate the firing of 'tap' event if 'mouseup' event occurs
 				// out of the 'mousedown' target
-				function checkAndClearTapHandlers( event ) {
+				function checkAndClearTapHandlers( mouseUpEvent ) {
 					// if the mouseup event occurs out of the origin target of the mousedown event,
 					// unbind all of the listeners
-					if (event.target !== origTarget && !$.contains(origTarget, event.target) &&
-						// SAP Modification: Workaround for an Edge browser issue which occurs with EdgeHTML 15 and higher.
-						// The root cause are inconsistent event targets of fired events, when a button is tapped.
-						// E.g. the inconsistent targets for the sap.m.Button control:
-						// - mousedown: SPAN
-						// - mouseup: BUTTON
-						// - click: SPAN
-						!(sap.ui.Device.browser.edge && sap.ui.Device.browser.version >= 15
-							&& event.target.tagName.toLowerCase() === "button"
-							&& event.target.contains(origTarget))) {
+					if (mouseUpEvent.target !== mouseDownTarget && !$.contains(mouseDownTarget, mouseUpEvent.target) && !buttonTappedInEdgeBrowser( mouseUpEvent )) {
 						clearTapHandlers();
 					}
 				}
@@ -2068,7 +2087,7 @@ if ( eventCaptureSupported ) {
 
 					// ONLY trigger a 'tap' event if the start target is
 					// the same as the stop target.
-					if ( origTarget === event.target ) {
+					if ( mouseDownTarget === event.target || buttonTappedInEdgeBrowser( event )) {
 						triggerCustomEvent( thisObject, "tap", event );
 					}
 				}
@@ -2082,7 +2101,7 @@ if ( eventCaptureSupported ) {
 
 				timer = setTimeout( function() {
 					// SAP MODIFICATION: create the custom taphold event from the original event in order to preserve the properties
-					var oTapholdEvent = $.event.fix(origEvent);
+					var oTapholdEvent = $.event.fix(mouseDownEvent);
 					oTapholdEvent.type = "taphold";
 					triggerCustomEvent( thisObject, "taphold", oTapholdEvent );
 				}, $.event.special.tap.tapholdThreshold );
