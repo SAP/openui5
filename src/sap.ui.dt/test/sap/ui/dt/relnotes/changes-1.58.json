@@ -55,6 +55,12 @@
         "type": "FIX",
         "text": " sap.ui.dt  fix element overlay destroyed on recreation",
         "references": []
+      },
+      {
+        "id": "592004d1eb67972e445b9410a5153453f1fd6cc2",
+        "type": "FIX",
+        "text": " Revise arrow key navigation",
+        "references": []
       }
     ]
   }

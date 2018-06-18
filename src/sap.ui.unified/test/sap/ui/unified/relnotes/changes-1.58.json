@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
         "references": []
+      },
+      {
+        "id": "5ff60eea7a832d149157e54c065009b54694d9b3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: Now select event is fired correctly",
+        "references": []
       }
     ]
   }

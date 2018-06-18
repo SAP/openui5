@@ -55,6 +55,18 @@
         "type": "FIX",
         "text": " sap.ui.rta: deselect overlays before removing them",
         "references": []
+      },
+      {
+        "id": "592004d1eb67972e445b9410a5153453f1fd6cc2",
+        "type": "FIX",
+        "text": " Revise arrow key navigation",
+        "references": []
+      },
+      {
+        "id": "4d453761642b9dd95a8c6316ca261d7e12d6183f",
+        "type": "FIX",
+        "text": "sap.ui.rta - Prevent overlay plugin evaluation during drag\u0026drop",
+        "references": []
       }
     ]
   }

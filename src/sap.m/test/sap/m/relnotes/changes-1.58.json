@@ -355,6 +355,72 @@
         "type": "FIX",
         "text": " tutorial-worklist: fix design findings",
         "references": []
+      },
+      {
+        "id": "4ba21ffdeb4b7b68971f4305f7be4089e03eaf66",
+        "type": "FEATURE",
+        "text": " MultiInput condensed mode support",
+        "references": []
+      },
+      {
+        "id": "827862284b5412c1404ffbbee11d5f0994ef518c",
+        "type": "FEATURE",
+        "text": " sap.m.ListBase: enable sticky header toolbars",
+        "references": []
+      },
+      {
+        "id": "66fd5c89d535777ba37470df0b744c45618be782",
+        "type": "FIX",
+        "text": " Select: focusOut event is no longer triggered on span",
+        "references": []
+      },
+      {
+        "id": "85d2b43103422f06fd21fe7fe905972548a9fcc6",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: set min/max date does not modify its time part now.",
+        "references": []
+      },
+      {
+        "id": "6c2586e3a639b3244093d3909caf8d6e43474099",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Improved control navigation documentation and samples",
+        "references": []
+      },
+      {
+        "id": "6a5014f2bd7af46237c8b42af2c0d28016c4de65",
+        "type": "FIX",
+        "text": " sap.m.MultiInput Example Dialog title added",
+        "references": []
+      },
+      {
+        "id": "d27731f15478469adcad3db835a339b6285075f5",
+        "type": "FIX",
+        "text": " sap.m.MultiInput example enhanced",
+        "references": []
+      },
+      {
+        "id": "b887ee8201981d19985e93e5d74defd470978722",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem:  Attributes get the whole space when alone",
+        "references": []
+      },
+      {
+        "id": "e0e42f9ea8520d055b5bc54032073836129b7418",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "a45cbb09f63ba73948aa47de29635e0b6ff5201f",
+        "type": "FIX",
+        "text": "sap.m.GenericTileRenderer:Information about control added to Aria-label.",
+        "references": []
+      },
+      {
+        "id": "048f5f983062cd729442aeb98ec2b380f8640110",
+        "type": "FIX",
+        "text": "sap.m.TileContent.less:Allignment issue in IE.",
+        "references": []
       }
     ]
   }

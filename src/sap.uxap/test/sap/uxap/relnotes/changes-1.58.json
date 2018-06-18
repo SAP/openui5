@@ -25,6 +25,18 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageHeader: f.Avatar alignment fixed",
         "references": []
+      },
+      {
+        "id": "560c1cfcd81683db102949e996dcf20900af61d2",
+        "type": "FIX",
+        "text": " LazyLoading: Ensure doLazyLoading work with fresh subSection sizes",
+        "references": []
+      },
+      {
+        "id": "c9c987db2d58e3fcb90c986881938a1a815324d6",
+        "type": "FIX",
+        "text": " ObjectPageLayout: Infinity resizing loop fixed",
+        "references": []
       }
     ]
   }
