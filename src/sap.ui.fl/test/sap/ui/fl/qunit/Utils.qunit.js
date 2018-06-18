@@ -7,8 +7,8 @@ sap.ui.require([
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Button',
+	'sap/ui/Device',
 	'sap/ui/thirdparty/hasher',
-	// should be last:
 	'sap/ui/thirdparty/sinon'
 ],
 function(
@@ -16,6 +16,7 @@ function(
 	VerticalLayout,
 	HorizontalLayout,
 	Button,
+	Device,
 	hasher,
 	sinon
 ){
@@ -1626,4 +1627,49 @@ function(
 			);
 		});
 	});
+
+	QUnit.module("Utils.isCorrectAppVersionFormat", {
+	}, function(){
+
+		QUnit.test("when called with an empty appversion", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat(""), "then the format of the app version is not correct");
+		});
+
+		QUnit.test("when called with a number after the version", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("1.2.333336"), "then the format of the app version is not correct");
+		});
+
+		QUnit.test("when called with a dot after the version", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("1.2.33333.678"), "then the format of the app version is not correct");
+		});
+
+		QUnit.test("when called with more than 5 digits", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("1.222222.3"), "then the format of the app version is not correct");
+		});
+
+		QUnit.test("when called with a version without snapshot", function(assert) {
+			assert.ok(Utils.isCorrectAppVersionFormat("1.2.3"), "then the format of the app version is correct");
+		});
+
+		QUnit.test("when called with a version with snapshot", function(assert) {
+			assert.ok(Utils.isCorrectAppVersionFormat("1.2.3-SNAPSHOT"), "then the format of the app version is correct");
+		});
+
+		QUnit.test("when called with placeholder without a scenario", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("${project.version}"), "then the format of the app version is not valid");
+		});
+
+		QUnit.test("when called with placeholder and a web IDE scenario", function(assert) {
+			assert.ok(Utils.isCorrectAppVersionFormat("${project.version}", sap.ui.fl.Scenario.AppVariant), "then the format of the app version is valid");
+		});
+
+		QUnit.test("when called with placeholder and the UI-Adaptatopn scenario", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("${project.version}", sap.ui.fl.Scenario.UiAdaptation), "then the format of the app version is not valid");
+		});
+
+		QUnit.test("when called with placeholder and an unknown scenario", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("${project.version}", "SCENARIO_X"), "then the format of the app version is not valid");
+		});
+	});
+
 });

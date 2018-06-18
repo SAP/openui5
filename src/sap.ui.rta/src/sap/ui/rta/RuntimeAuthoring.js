@@ -496,10 +496,23 @@ sap.ui.define([
 		if (!this._oDesignTime) {
 			this._oRootControl = sap.ui.getCore().byId(this.getRootControl());
 			if (!this._oRootControl){
-				var vError = "Could not start Runtime Adaptation: Root control not found";
+				var vError = new Error("Root control not found");
 				FlexUtils.log.error(vError);
 				return Promise.reject(vError);
 			}
+
+			// Check if the App Variant has the correct Format
+			if (
+				!FlexUtils.isCorrectAppVersionFormat(
+					this._getFlexController().getAppVersion(),
+					this.getFlexSettings().scenario
+				)
+			) {
+				var vError = this._getTextResources().getText("MSG_INCORRECT_APP_VERSION_ERROR");
+				FlexUtils.log.error(vError);
+				return Promise.reject(vError);
+			}
+
 			//Check if the application has personalized changes and reload without them
 			return this._handlePersonalizationChangesOnStart()
 			.then(function(bReloadTriggered){
