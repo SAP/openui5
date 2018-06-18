@@ -1019,8 +1019,8 @@ var oData = [
 	var oPage = new sap.m.Page("TreeTest", {
 		title : "Test Page for sap.m.Tree - JSON",
 		content : [oTree],
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content: [
 				expandMulti(),
 				collapseMulti(),
 				addSizeMode(),
