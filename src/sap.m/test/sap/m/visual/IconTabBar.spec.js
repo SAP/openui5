@@ -213,5 +213,10 @@ describe("sap.m.IconTabBar", function() {
 	fnRunAllCases("ICp");
 
 
-
+	//check Contrast IconTabBar with transparent backgrounds
+	it("should have transparent background", function() {
+		browser.executeScript("document.getElementById('contrastPlusIconTabBar').scrollIntoView()").then(function() {
+			expect(takeScreenshot(element(by.id("contrastPlusIconTabBar")))).toLookAs("Contrast_Plus_IconTabBar");
+		});
+	});
 });
