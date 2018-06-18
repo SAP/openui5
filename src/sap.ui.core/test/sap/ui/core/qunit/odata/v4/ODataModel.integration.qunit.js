@@ -2167,11 +2167,6 @@ sap.ui.require([
 					}
 				}, {"ID" : "7", "Name" : "John Doe"})
 				.expectChange("id", "7", 0);
-			assert.throws(function () {
-				that.oView.byId("form").bindElement("/TEAMS('43')",
-						{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
-			}, new Error("setContext on relative binding is forbidden if a transient entity exists"
-				+ ": sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -2182,6 +2177,35 @@ sap.ui.require([
 			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
 			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario:
+	QUnit.test("setContext on relative binding is forbidden", function (assert) {
+		var oTeam2EmployeesBinding,
+			that = this;
+
+		return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
+			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
+			that.oView.byId("form").getObjectBinding();
+			// insert new employee at first row
+			that.expectChange("id", "", 0)
+				.expectChange("text", "John Doe", 0)
+				.expectChange("id", "2", 1)
+				.expectChange("text", "Frederic Fall", 1);
+			oTeam2EmployeesBinding.create({"ID" : null, "Name" : "John Doe"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.throws(function () {
+				that.oView.byId("form").bindElement("/TEAMS('43')",
+					{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
+			}, new Error("setContext on relative binding is forbidden if a transient entity exists"
+				+ ": sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
+
+			// Is needed for afterEach, to avoid that destroy is called twice
+			that.oView.byId("form").getObjectBinding().destroy = function () {};
 		});
 	});
 

@@ -113,6 +113,7 @@ sap.ui.require([
 
 		assert.ok(oBinding.hasOwnProperty("oCachePromise"));
 		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
+		assert.ok(oBinding.hasOwnProperty("mCacheQueryOptions"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("bInheritExpandSelect"));
 		assert.ok(oBinding.hasOwnProperty("oOperation"));
@@ -1717,12 +1718,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oBinding = this.bindContext("relative"),
-			oBindingMock = this.mock(ContextBinding.prototype),
+			oBindingPrototypeMock = this.mock(ContextBinding.prototype),
 			oContext = Context.create(this.oModel, {}, "/foo"),
 			oModelMock = this.mock(this.oModel),
 			oReturnValueContext = Context.create(this.oModel, {}, "/bar");
 
-		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
 		// code under test
@@ -1731,20 +1732,36 @@ sap.ui.require([
 		oBinding = this.bindContext("relative");
 		oBinding.setContext(oContext);
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
-		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
+
+		oBinding.mCacheByContext = {/*mCacheByContext*/};
+		oBinding.mCacheQueryOptions = {/*mCacheQueryOptions*/};
+		this.oOperation = {bAction : undefined};
+		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
+
 
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.oCachePromise, undefined);
+		assert.strictEqual(oBinding.mAggregatedQueryOptions, undefined);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
+		assert.strictEqual(oBinding.mCacheByContext, undefined);
+		assert.strictEqual(oBinding.aChildCanUseCachePromises, undefined);
 		assert.strictEqual(oBinding.oContext, undefined,
 			"context removed as in ODPropertyBinding#destroy");
+		assert.strictEqual(oBinding.oElementContext, undefined);
+		assert.strictEqual(oBinding.oOperation, undefined);
+		assert.strictEqual(oBinding.mParameters, undefined);
+		assert.strictEqual(oBinding.mQueryOptions, undefined);
 
 		oBinding = this.bindContext("/absolute", oContext);
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
-		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
+		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
 		// code under test
 		oBinding.destroy();
@@ -1753,12 +1770,15 @@ sap.ui.require([
 		oBinding.setContext(oContext);
 		oBinding.oReturnValueContext = oReturnValueContext;
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
-		this.mock(oBinding.oReturnValueContext).expects("destroy").withExactArgs();
-		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		this.mock(oReturnValueContext).expects("destroy").withExactArgs();
+		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
+		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
 		// code under test
 		oBinding.destroy();
+
+		assert.strictEqual(oBinding.oReturnValueContext, undefined);
 	});
 
 	//*********************************************************************************************

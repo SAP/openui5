@@ -300,6 +300,8 @@ sap.ui.define([
 		// resolving functions e.g. for oReadPromise in #checkUpdate may run after destroy of this
 		// binding and must not access the context
 		this.oContext = undefined;
+		this.mQueryOptions = undefined;
+		this.vValue = undefined;
 		PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 
