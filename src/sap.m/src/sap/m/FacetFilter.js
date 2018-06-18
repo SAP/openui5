@@ -1240,7 +1240,6 @@ sap.ui.define([
 			}
 
 			oButton.setText(sText);
-			oButton.setTooltip(sText);
 		}
 	};
 
