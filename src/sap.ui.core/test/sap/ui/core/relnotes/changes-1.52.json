@@ -1379,5 +1379,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.15": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "4ad6af4a1df7913c809f60b3f20ed0d7eb54cab0",
+        "type": "FIX",
+        "text": " model.Filter: Add new option \"caseSensitive\"",
+        "references": []
+      },
+      {
+        "id": "59a09d124365e3c2b0bb517cec5d427c433a04ec",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
+        "references": []
+      },
+      {
+        "id": "9e31be99e3c24ee46034287bd028a975def7ab9d",
+        "type": "FIX",
+        "text": " v2.ODataModel: filter \u0027toupper\u0027",
+        "references": []
+      }
+    ]
   }
 }

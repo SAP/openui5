@@ -3151,5 +3151,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.15": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "be8289e3f2029fd46cea2833deccb0e692ad9d88",
+        "type": "FIX",
+        "text": " P13DimeasurePanel: Align items with chart API",
+        "references": []
+      },
+      {
+        "id": "24052081fca76b1f29fb4a5b768cde6732f177f3",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: set min/max date does not modify its time part now.",
+        "references": []
+      },
+      {
+        "id": "aecda12c5997b8165f87e51381e61d6821655ccf",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - press reset then cancel button behavior is fixed.",
+        "references": []
+      }
+    ]
   }
 }

@@ -109,5 +109,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.15": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "272edbdff37a14f471334618e63a4b81d55643cd",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Visual indicator visibility corrected",
+        "references": []
+      }
+    ]
   }
 }

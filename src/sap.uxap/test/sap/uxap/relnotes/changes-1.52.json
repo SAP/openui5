@@ -154,5 +154,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.15": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "5a7bf6aff541d0ad8c47a25c90794a905e62fbf2",
+        "type": "FIX",
+        "text": " ObjectPageLayout: Infinity resizing loop fixed",
+        "references": []
+      }
+    ]
   }
 }
