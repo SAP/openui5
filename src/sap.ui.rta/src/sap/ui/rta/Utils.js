@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/fl/registry/Settings',
 	'sap/m/MessageBox',
-	'sap/base/util/extend'
+	'sap/base/util/merge'
 ],
 function(
 	jQuery,
@@ -17,7 +17,7 @@ function(
 	OverlayUtil,
 	Settings,
 	MessageBox,
-	Extend
+	merge
 ) {
 	"use strict";
 
@@ -625,11 +625,11 @@ function(
 	 * omit(obj, ['a', 'c']); -> Returns { 'b': '2' }
 	 *
 	 * @param  {Object} oObject     Source object
-	 * @param  {string[]} aProperties Property paths to omit
+	 * @param  {string[]} aPropertyPaths Property paths to omit
 	 * @return {Object}             Returns new object
 	 */
 	Utils.omit = function(oObject, aPropertyPaths){
-		var oNewObject = Extend(true, {}, oObject);
+		var oNewObject = merge({}, oObject);
 		aPropertyPaths.forEach(function (sProperty) {
 			delete oNewObject[sProperty];
 		});

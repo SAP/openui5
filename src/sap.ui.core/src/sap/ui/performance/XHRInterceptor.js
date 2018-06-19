@@ -5,7 +5,9 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/base/util/getObject", "sap/base/Log"], function(getObject, Log) {
+sap.ui.define([
+	"sap/base/Log"
+], function(Log) {
 	"use strict";
 
 	/**
@@ -78,7 +80,8 @@ sap.ui.define(["sap/base/util/getObject", "sap/base/Log"], function(getObject, L
 	 * @private
 	 */
 	function storeFunction(sName, sXHRMethod, fnCallback) {
-		var fnOldFunction = getObject(mRegistry, sName, true)[sXHRMethod];
+		mRegistry[sName] = mRegistry[sName] || {};
+		var fnOldFunction = mRegistry[sName][sXHRMethod];
 
 		if (fnOldFunction) {
 			// overwrite the old function
@@ -86,7 +89,7 @@ sap.ui.define(["sap/base/util/getObject", "sap/base/Log"], function(getObject, L
 			mOverrides[sXHRMethod][iIndex] = fnCallback;
 		} else {
 			// handle the newly registered function
-			getObject(mRegistry, sName, true)[sXHRMethod] = fnCallback;
+			mRegistry[sName][sXHRMethod] = fnCallback;
 			mOverrides[sXHRMethod].push(fnCallback);
 		}
 	}

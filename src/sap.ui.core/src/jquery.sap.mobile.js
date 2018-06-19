@@ -5,9 +5,9 @@
 //Provides common helper functions for the mobile version of UI5
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/MobileSupport',
+	'sap/ui/util/Mobile',
 	'sap/ui/Device'
-], function(jQuery, MobileSupport, Device) {
+], function(jQuery, Mobile, Device) {
 	"use strict";
 
 	// Using "Object.getOwnPropertyDescriptor" to not trigger the "getter" - see jquery.sap.stubs
@@ -86,16 +86,6 @@ sap.ui.define([
 		 * @deprecated since 1.20 use {@link sap.ui.Device.os.winphone} instead
 		 * @name jQuery.os.winphone
 		 */
-
-
-		// feature and state detection
-		jQuery.support = jQuery.support || {};
-		/**
-		 * Whether the device has a retina display (window.devicePixelRatio >= 2)
-		 * @type {boolean}
-		 * @public
-		 */
-		jQuery.support.retina = window.devicePixelRatio >= 2;
 
 		/**
 		 * @name jQuery.device
@@ -219,12 +209,6 @@ sap.ui.define([
 	})();
 
 	/**
-	 * @type {boolean}
-	 * @private
-	 */
-	jQuery.sap.simulateMobileOnDesktop = MobileSupport.simulateMobileOnDesktop;
-
-	/**
 	 * Does some basic modifications to the HTML page that make it more suitable for mobile apps.
 	 * Only the first call to this method is executed, subsequent calls are ignored. Note that this method is also
 	 * called by the constructor of toplevel controls like sap.m.App, sap.m.SplitApp and sap.m.Shell. Exception: if
@@ -275,7 +259,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	jQuery.sap.initMobile = MobileSupport.initMobile;
+	jQuery.sap.initMobile = Mobile.init;
 
 	/**
 	 * Sets the bookmark icon for desktop browsers and the icon to be displayed on the home screen of iOS devices
@@ -325,7 +309,7 @@ sap.ui.define([
 	 * @param {object} oIcons
 	 * @public
 	 */
-	jQuery.sap.setIcons = MobileSupport.setIcons;
+	jQuery.sap.setIcons = Mobile.setIcons;
 
 	/**
 	 * Sets the "apple-mobile-web-app-capable" and "mobile-web-app-capable" meta information which defines whether
@@ -346,7 +330,7 @@ sap.ui.define([
 	 *     screen from iOS Safari or mobile Chrome from version 31.
 	 * @public
 	 */
-	jQuery.sap.setMobileWebAppCapable = MobileSupport.setMobileWebAppCapable;
+	jQuery.sap.setMobileWebAppCapable = Mobile.setWebAppCapable;
 
 	return jQuery;
 

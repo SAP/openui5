@@ -5,9 +5,8 @@
 // Provides xml parsing and error checking functionality.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/xml/XMLParser',
-	'sap/ui/xml/serializeXML'
-], function(jQuery, XMLParser, serializeXML) {
+	'sap/ui/util/XMLHelper'
+], function(jQuery, XMLHelper) {
 	"use strict";
 
 	/**
@@ -24,7 +23,7 @@ sap.ui.define([
 	 * @public
 	 * @function
 	 */
-	jQuery.sap.parseXML = XMLParser.parse;
+	jQuery.sap.parseXML = XMLHelper.parse;
 
 	/**
 	 * Serializes the specified XML document into a string representation.
@@ -43,7 +42,7 @@ sap.ui.define([
 			}
 		}
 		if (window.XMLSerializer) {
-			return serializeXML(oXMLDocument);
+			return XMLHelper.serialize(oXMLDocument);
 		}
 		return sXMLString;
 	};
@@ -108,7 +107,7 @@ sap.ui.define([
 	 * @private
 	 * @function
 	 */
-	jQuery.sap.getParseError = XMLParser.getParseError;
+	jQuery.sap.getParseError = XMLHelper.getParseError;
 
 	return jQuery;
 

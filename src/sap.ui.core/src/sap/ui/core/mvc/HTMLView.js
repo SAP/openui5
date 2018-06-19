@@ -4,20 +4,20 @@
 
 // Provides control sap.ui.core.mvc.HTMLView.
 sap.ui.define([
-    'jquery.sap.global',
-    './View',
-    './HTMLViewRenderer',
-	'sap/base/util/extend',
-    'sap/ui/base/ManagedObject',
-    'sap/ui/core/DeclarativeSupport',
-    'sap/ui/core/library',
-    'sap/ui/model/resource/ResourceModel'
+	'jquery.sap.global',
+	'./View',
+	'./HTMLViewRenderer',
+	'sap/base/util/merge',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/DeclarativeSupport',
+	'sap/ui/core/library',
+	'sap/ui/model/resource/ResourceModel'
 ],
 	function(
-	    jQuery,
+		jQuery,
 		View,
 		HTMLViewRenderer,
-		extend,
+		merge,
 		ManagedObject,
 		DeclarativeSupport,
 		library,
@@ -69,7 +69,7 @@ sap.ui.define([
 	 * @return {Promise} A Promise which resolves with the created HTMLView instance
 	 */
 	HTMLView.create = function(mOptions) {
-		var mParameters = extend(true, {}, mOptions);
+		var mParameters = merge({}, mOptions);
 		mParameters.type = ViewType.HTML;
 		return View.create(mParameters);
 	};

@@ -8,21 +8,8 @@
 sap.ui.define(["sap/base/assert"], function(assert) {
 	"use strict";
 
-	// @evo-todo: Move into separate module? Also used within "./includeStylesheet.js"
-	function cloneMap(oSource) {
-		var oObject = {};
-		if (oSource) {
-			for (var sKey in oSource) {
-				if (oSource.hasOwnProperty(sKey)) {
-					oObject[sKey] = oSource[sKey];
-				}
-			}
-		}
-		return oObject;
-	}
-
 	function _includeScript(sUrl, mAttributes, fnLoadCallback, fnErrorCallback) {
-		var oScript = document.createElement("SCRIPT");
+		var oScript = document.createElement("script");
 		oScript.src = sUrl;
 		oScript.type = "text/javascript";
 		if (mAttributes && typeof mAttributes === "object") {
@@ -62,7 +49,6 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		document.head.appendChild(oScript);
 	}
 
-
 	return function includeScript(vUrl, vId, fnLoadCallback, fnErrorCallback) {
 		var mAttributes;
 		if (typeof vUrl === "string") {
@@ -70,7 +56,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			_includeScript(vUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		} else {
 			assert(typeof vUrl === 'object' && vUrl.url, "vUrl must be an object and requires a URL");
-			mAttributes = cloneMap(vUrl.attributes);
+			mAttributes = Object.assign({}, vUrl.attributes);
 			if (vUrl.id) {
 				mAttributes.id = vUrl.id;
 			}
@@ -79,6 +65,5 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			});
 		}
 	};
-
 
 });

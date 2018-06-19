@@ -4,14 +4,14 @@
 
 // Provides control sap.ui.core.mvc.JSView.
 sap.ui.define([
-    'jquery.sap.global',
-    './View',
-    './JSViewRenderer',
-	'sap/base/util/extend',
-    'sap/ui/base/ManagedObject',
-    'sap/ui/core/library'
+	'jquery.sap.global',
+	'./View',
+	'./JSViewRenderer',
+	'sap/base/util/merge',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/library'
 ],
-	function(jQuery, View, JSViewRenderer, extend, ManagedObject, library) {
+	function(jQuery, View, JSViewRenderer, merge, ManagedObject, library) {
 	"use strict";
 
 
@@ -78,7 +78,7 @@ sap.ui.define([
 	 * @return {Promise} A Promise that resolves with the view instance
 	 */
 	JSView.create = function(mOptions) {
-		var mParameters = extend(true, {}, mOptions);
+		var mParameters = merge({}, mOptions);
 		//remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'definition' || sOption === 'preprocessors') {

@@ -8,11 +8,11 @@ sap.ui.define([
 	'./Manifest',
 	'./ComponentMetadata',
 	'./Core',
-	'sap/base/util/extend',
+	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/URI',
 	'jquery.sap.trace'
-], function(jQuery, Manifest, ComponentMetadata, Core, extend, ManagedObject, URI /*, jQuery*/) {
+], function(jQuery, Manifest, ComponentMetadata, Core, merge, ManagedObject, URI /*, jQuery*/) {
 	"use strict";
 
 	/*global Promise */
@@ -1937,7 +1937,7 @@ sap.ui.define([
 			throw new TypeError("Component.create() must be called with a configuration object.");
 		}
 
-		var mParameters = extend(true, {}, mOptions);
+		var mParameters = merge({}, mOptions);
 		mParameters.async = true;
 
 		// if no manifest option is given, the default is true
@@ -2180,7 +2180,7 @@ sap.ui.define([
 	 */
 	Component.load = function (mOptions) {
 
-		var mParameters = extend(true, {}, mOptions);
+		var mParameters = merge({}, mOptions);
 		mParameters.async = true;
 
 		// if no manifest option is given, the default is true

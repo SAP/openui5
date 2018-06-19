@@ -2,6 +2,7 @@
 	<head>
 		<title>TestSuite for sap.ui.core: GTP testcase CORE/CORE</title>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="../../../../../../resources/sap/ui/Device.js"></script>
 		<script>
 
 		/**
@@ -48,6 +49,11 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile2.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile3.qunit.html");
+
+			if (sap.ui.Device.browser.chrome || sap.ui.Device.browser.phantomJS) {
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/fakeOS.qunit.html");
+			}
+
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.ui.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Locale.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/LocaleData.qunit.html");

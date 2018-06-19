@@ -5,7 +5,7 @@
 // Provides control sap.m.ListItemBase.
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/base/events/KeyCodes",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
 	"sap/ui/core/Control",

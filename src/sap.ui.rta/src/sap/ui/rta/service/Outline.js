@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/ElementUtil",
-	"sap/base/util/equal",
+	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/base/util/extend"
+	"sap/base/util/merge"
 ], function(
 	OverlayRegistry,
 	ElementOverlay,
@@ -21,9 +21,9 @@ sap.ui.define([
 	DtUtil,
 	Overlay,
 	ElementUtil,
-	equal,
+	deepEqual,
 	Log,
-	Extend
+	merge
 ) {
 	"use strict";
 
@@ -207,7 +207,7 @@ sap.ui.define([
 		 */
 		oOutline._removeDuplicate = function(aResponseUpdates, oResponse) {
 			return aResponseUpdates.filter(function(oUpdate){
-				return !equal(oResponse, oUpdate, Infinity);
+				return !deepEqual(oResponse, oUpdate, Infinity);
 			});
 		};
 
@@ -225,7 +225,7 @@ sap.ui.define([
 				this.aUpdates = [];
 			}
 
-			var oResponse = Extend(true, {}, mParams);
+			var oResponse = merge({}, mParams);
 
 			// Map overlay ids to element ids
 			var sElementId = oResponse.id ? OverlayRegistry.getOverlay(oResponse.id).getElement().getId() : undefined;

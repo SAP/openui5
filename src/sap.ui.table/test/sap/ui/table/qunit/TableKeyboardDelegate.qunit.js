@@ -3514,20 +3514,21 @@ sap.ui.require([
 			setupTest();
 
 			// Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM)
-			jQuery.sap.handleF6GroupNavigationOriginal = jQuery.sap.handleF6GroupNavigation;
-			jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
+			this.handleF6GroupNavigationOriginal = F6Navigation.handleF6GroupNavigation;
+			var that = this;
+			F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 				oSettings = oSettings ? oSettings : {};
 				if (!oSettings.scope) {
 					oSettings.scope = jQuery.sap.domById("qunit-fixture");
 				}
-				jQuery.sap.handleF6GroupNavigationOriginal(oEvent, oSettings);
+				that.handleF6GroupNavigationOriginal(oEvent, oSettings);
 			};
 		},
 		afterEach: function() {
 			teardownTest();
 
-			jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = jQuery.sap.handleF6GroupNavigationOriginal;
-			jQuery.sap.handleF6GroupNavigationOriginal = null;
+			F6Navigation.handleF6GroupNavigation = this.handleF6GroupNavigationOriginal;
+			this.handleF6GroupNavigationOriginal = null;
 		}
 	});
 

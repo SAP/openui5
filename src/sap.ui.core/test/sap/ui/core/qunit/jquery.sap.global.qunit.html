@@ -15,6 +15,8 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
 
 			/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */
@@ -772,7 +774,91 @@
 
 			});
 
+			/*eslint-disable no-console, no-native-reassign, no-undef*/
+			QUnit.module("LocalStorageConfig", {
+				beforeEach: function() {
+					// to check the behavior of this test in the absence of localStorage, uncomment the following line
+					// delete window.localStorage;
+					this.bLocalStorage = (function() {
+						try {
+							localStorage.setItem("foo", "foo");
+							localStorage.removeItem("foo");
+							return true;
+						} catch (e) {
+							return false;
+						}
+					}());
+					this.alert = window.alert;
+					window.alert = sinon.spy();
+					sinon.stub(console, 'warn');
+				},
+				afterEach: function() {
+					jQuery.sap.debug(false);
+					window.alert = this.alert;
+					console.warn.restore();
+				}
+			});
+			/*eslint-enable no-native-reassign, no-undef*/
 
+			QUnit.test("jQuery.sap.debug", function(assert) {
+				assert.expect(7);
+				assert.strictEqual(jQuery.sap.debug(true), this.bLocalStorage ? "true" : undefined, "activation - boolean");
+				assert.strictEqual(jQuery.sap.debug("foo"), this.bLocalStorage ? "foo" : undefined, "activation - string");
+				assert.strictEqual(jQuery.sap.debug("foo"), this.bLocalStorage ? "foo" : undefined, "activation - 1");
+				assert.strictEqual(jQuery.sap.debug(false), this.bLocalStorage ? null : undefined, "deactivation - boolean");
+				assert.strictEqual(jQuery.sap.debug(null), this.bLocalStorage ? null : undefined, "deactivation - null");
+				assert.strictEqual(jQuery.sap.debug(0), this.bLocalStorage ? null : undefined, "deactivation - 0");
+
+				if (this.bLocalStorage) {
+					assert.equal(window.alert.callCount, 5, "alerts");
+				} else {
+					assert.equal(console.warn.callCount, 6, "console warnings");
+				}
+			});
+
+			QUnit.test("jQuery.sap.setReboot", function(assert) {
+				assert.expect(4);
+				assert.strictEqual(jQuery.sap.setReboot("foo"), this.bLocalStorage ? "foo" : undefined, "activation - string");
+				assert.strictEqual(jQuery.sap.setReboot(""), this.bLocalStorage ? null : undefined, "deactivation - string");
+				assert.strictEqual(jQuery.sap.setReboot(), this.bLocalStorage ? null : undefined, "deactivation - undefined");
+
+				if (this.bLocalStorage) {
+					assert.equal(window.alert.callCount, 1, "alerts");
+				} else {
+					assert.equal(console.warn.callCount, 3, "console warnings");
+				}
+			});
+
+			QUnit.test("jQuery.sap.statistics", function(assert) {
+				assert.expect(4);
+				assert.strictEqual(jQuery.sap.statistics(true), this.bLocalStorage ? true : undefined, "activation - boolean");
+				assert.strictEqual(jQuery.sap.statistics(false), this.bLocalStorage ? false : undefined, "deactivation - boolean");
+				assert.strictEqual(jQuery.sap.statistics(), this.bLocalStorage ? false : undefined, "deactivation - undefined");
+				if (this.bLocalStorage) {
+					assert.equal(window.alert.callCount, 2, "alerts");
+				} else {
+					assert.equal(console.warn.callCount, 3, "console warnings");
+				}
+			});
+
+			QUnit.module("Test jQuery.browser");
+			QUnit.test("jQuery.browser", function(assert) {
+				assert.ok(jQuery.browser, "jQuery.browser should be available.");
+			});
+
+			QUnit.module("Test jQuery.support");
+			QUnit.test("jQuery.support", function(assert) {
+				assert.ok(jQuery.support, "jQuery.support should be available.");
+				assert.ok(typeof jQuery.support.cssTransforms === "boolean", "jQuery.support.cssTransforms should be set and type of boolean.");
+				assert.ok(typeof jQuery.support.cssTransforms3d === "boolean", "jQuery.support.cssTransforms3d should be set and type of boolean.");
+				assert.ok(typeof jQuery.support.cssTransitions === "boolean", "jQuery.support.cssTransitions should be set and type of boolean.");
+				assert.ok(typeof jQuery.support.cssAnimations === "boolean", "jQuery.support.cssAnimations should be set and type of boolean.");
+				assert.ok(typeof jQuery.support.cssGradients === "boolean", "jQuery.support.cssGradients should be set and type of boolean.");
+				assert.ok(typeof jQuery.support.flexBoxPrefixed === "boolean", "jQuery.support.flexBoxPrefixed should be set and type of boolean.");
+				assert.ok(typeof jQuery.support.flexBoxLayout === "boolean", "jQuery.support.flexBoxLayout should be set and type of boolean.");
+				assert.ok(typeof jQuery.support.newFlexBoxLayout === "boolean", "jQuery.support.newFlexBoxLayout should be set and type of boolean.");
+				assert.ok(typeof jQuery.support.hasFlexBoxSupport === "boolean", "jQuery.support.hasFlexBoxSupport should be set and type of boolean.");
+			});
 </script>
 
 	</head>

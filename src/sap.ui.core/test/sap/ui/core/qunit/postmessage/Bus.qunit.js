@@ -6,14 +6,12 @@ sap.ui.require([
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/Log",
-	"sap/base/util/equal",
 	"sap/base/util/includes"
 ],
 function(
 	PostMessageBus,
 	sinon,
 	Log,
-	equal,
 	includes
 ) {
 	"use strict";

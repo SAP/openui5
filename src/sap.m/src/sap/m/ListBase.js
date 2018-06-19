@@ -5,7 +5,7 @@
 // Provides control sap.m.ListBase.
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/base/events/KeyCodes",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",

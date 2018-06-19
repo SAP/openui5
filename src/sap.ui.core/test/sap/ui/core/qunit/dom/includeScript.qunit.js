@@ -140,4 +140,25 @@ sap.ui.define(["sap/ui/dom/includeScript"], function(includeScript) {
 
 	});
 
+	QUnit.test("ignore null parameters", function(assert) {
+		includeScript("testdata/dummy.js", null);
+		assert.ok(true, "No exception occurs when using null as parameter.");
+	});
+
+	QUnit.test("custom attributes (immutable)", function(assert) {
+
+		var mAttributes = {
+			"data-sap-ui-attr": "attrval"
+		};
+
+		return includeScript({
+			url: "testdata/dummy.js",
+			id : "myscript-immutable",
+			attributes: mAttributes
+		}).then(function() {
+			assert.notOk(mAttributes.id, "attributes should not be modified");
+		});
+
+	});
+
 });

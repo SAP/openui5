@@ -4,18 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/core/EventBus",
-	"sap/base/util/equal",
 	"sap/base/util/includes",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/isWindow",
 	"sap/base/Log"
 ],
 function (
 	EventBus,
-	equal,
 	includes,
 	isPlainObject,
-	isWindow,
 	Log
 ) {
 	"use strict";
@@ -131,7 +127,7 @@ function (
 
 		// Validation
 		if (
-			!isWindow(oTarget)
+			(typeof window === "undefined") || !(oTarget != null && oTarget === oTarget.window)
 			|| oTarget === window // avoid self-messaging
 		) {
 			throw TypeError("Target must be a window object and has to differ from current window");

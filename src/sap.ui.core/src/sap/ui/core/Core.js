@@ -6,7 +6,7 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
 		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 'sap/ui/events/EventSimulation',
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 'sap/ui/events/jquery/EventSimulation',
 		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
 	function(jQuery, Device, Global,
 		BindingParser, DataType, EventProvider, Interface, BaseObject, ManagedObject,
@@ -45,6 +45,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	var _oEventProvider;
+
+	/*
+	 * Internal class that can help to synchronize a set of asynchronous tasks.
+	 * Each task must be registered in the sync point by calling startTask with
+	 * an (purely informative) title. The returned value must be used in a later
+	 * call to finishTask.
+	 * When finishTask has been called for all tasks that have been started,
+	 * the fnCallback will be fired.
+	 * When a timeout is given and reached, the callback is called at that
+	 * time, no matter whether all tasks have been finished or not.
+	 */
+	var SyncPoint = function (sName, fnCallback) {
+		var aTasks = [],
+			iOpenTasks = 0,
+			iFailures = 0;
+
+		this.startTask = function(sTitle) {
+			var iId = aTasks.length;
+			aTasks[iId] = { name : sTitle, finished : false };
+			iOpenTasks++;
+			return iId;
+		};
+
+		this.finishTask = function(iId, bSuccess) {
+			if ( !aTasks[iId] || aTasks[iId].finished ) {
+				throw new Error("trying to finish non existing or already finished task");
+			}
+			aTasks[iId].finished = true;
+			iOpenTasks--;
+			if ( bSuccess === false ) {
+				iFailures++;
+			}
+			if ( iOpenTasks === 0 ) {
+				jQuery.sap.log.info("Sync point '" + sName + "' finished (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
+				finish();
+			}
+		};
+
+		function finish() {
+			if ( fnCallback ) {
+				fnCallback(iOpenTasks, iFailures);
+			}
+			fnCallback = null;
+		}
+
+		jQuery.sap.log.info("Sync point '" + sName + "' created");
+	};
 
 	/**
 	 * @class Core Class of the SAP UI Library.
@@ -340,7 +387,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this.oRenderManager = new RenderManager();
 
 			// sync point 1 synchronizes document ready and rest of UI5 boot
-			var oSyncPoint1 = jQuery.sap.syncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
+			var oSyncPoint1 = new SyncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
 				that.bDomReady = true;
 				that.init();
 			});
@@ -354,7 +401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			});
 
 			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
-			var oSyncPoint2 = jQuery.sap.syncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
+			var oSyncPoint2 = new SyncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot(bAsync, function() {
 					oSyncPoint1.finishTask(iCoreBootTask);

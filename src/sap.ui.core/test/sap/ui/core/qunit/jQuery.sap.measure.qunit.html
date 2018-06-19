@@ -182,11 +182,11 @@
 			assert.ok(oMeasurement, "Measurement for rendering all UIAreas found");
 			oMeasurement = jQuery.sap.measure.getMeasurement("target1---rerender");
 			assert.ok(oMeasurement, "Measurement for rendering UIArea found");
-			
+
 			/*
-			 * @evo-todo temp. disable test as JS resources are no longer loaded with jQuery.ajax 
+			 * @evo-todo temp. disable test as JS resources are no longer loaded with jQuery.ajax
 			 * In general, loading JS Resources no longer might be done with an XHR (e.g. <script> tag), how to write a generic test?
-					 
+
 			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button.js").absoluteTo(document.location.origin + document.location.pathname).href());
 			if (!oMeasurement){
 				// check if debug sources are used
@@ -369,6 +369,9 @@
 
 		});
 
+		// skip Interaction tests for phantomjs, which does not support window.performance.getEntriesByType
+		var sMethod = sap.ui.Device.browser.phantomJS ? "skip" : "test";
+
 		QUnit.module("Interaction", {
 			beforeEach: function() {
 				this.oButton = new sap.ui.commons.Button();
@@ -384,19 +387,19 @@
 			}
 		});
 
-		QUnit.test("startInteraction", function(assert) {
+		QUnit[sMethod]("startInteraction", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			assert.ok(!jQuery.sap.measure.getAllInteractionMeasurements().length, "No completed interaction");
 		});
 
-		QUnit.test("endInteraction", function(assert) {
+		QUnit[sMethod]("endInteraction", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			assert.ok(oMeasurement, "Measurement has been created");
 		});
 
-		QUnit.test("getAllInteractionMeasurements", function(assert) {
+		QUnit[sMethod]("getAllInteractionMeasurements", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 			assert.ok(Array.isArray(aMeasurements), "An array was returned");
@@ -413,7 +416,7 @@
 			assert.strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
 		});
 
-		QUnit.test("filterInteractionMeasurements", function(assert) {
+		QUnit[sMethod]("filterInteractionMeasurements", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.startInteraction("flick", this.oButton);
@@ -433,14 +436,14 @@
 			assert.equal(aFilteredMeasurements.length, 1, "Filter applied correctly");
 		});
 
-		QUnit.test("getPendingInteractionMeasurement", function(assert) {
+		QUnit[sMethod]("getPendingInteractionMeasurement", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oMeasurement = jQuery.sap.measure.getPendingInteractionMeasurement();
 			assert.ok(oMeasurement, "Measuerement was returned");
 			assert.strictEqual(oMeasurement.end, 0, "Measurements has not been finalized yet");
 		});
 
-		QUnit.test("Interaction properties", function(assert) {
+		QUnit[sMethod]("Interaction properties", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
@@ -466,7 +469,7 @@
 		// do not test safari as it does not seem to work in testing environments
 		var bStablePerformanceAPI = window.performance && window.performance.getEntries && !sap.ui.Device.browser.safari;
 
-		QUnit.test("Performance API depending measures", function(assert) {
+		QUnit[sMethod]("Performance API depending measures", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oReq = new XMLHttpRequest();
 			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
@@ -485,7 +488,7 @@
 			}
 		});
 
-		QUnit.test("Request depending measures", function(assert) {
+		QUnit[sMethod]("Request depending measures", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oReq = new XMLHttpRequest();
 			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
@@ -504,7 +507,7 @@
 			}
 		});
 
-		QUnit.test("jQuery.sap.measure Measurements", function(assert) {
+		QUnit[sMethod]("jQuery.sap.measure Measurements", function(assert) {
 			jQuery.sap.measure.setActive(true);
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.require("sap.m.Button");
@@ -517,7 +520,7 @@
 			});
 		});
 
-		QUnit.test("Component determination", function(assert) {
+		QUnit[sMethod]("Component determination", function(assert) {
 			// setup
 			var oButton = this.oButton;
 			var sComponentName = "MyComponent";

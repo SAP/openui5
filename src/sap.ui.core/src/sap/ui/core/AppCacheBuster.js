@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 	// URL normalizer
 
 
-	// 1.) Enableable
+	// 1.) Can be enabled
 	// 2.) Must match to index
 	// 3.) hook to suppress
 
@@ -218,7 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 
 				// use the syncpoint only during boot => otherwise the syncpoint
 				// is not given because during runtime the registration needs to
-				// be done synchrously.
+				// be done synchronously.
 				if (oRequest.async) {
 					var iSyncPoint = oSyncPoint.startTask("load " + sUrl);
 					var fnSuccess = oRequest.success, fnError = oRequest.error;
@@ -260,7 +260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 			 * Boots the AppCacheBuster by initializing and registering the
 			 * base URLs configured in the UI5 bootstrap.
 			 *
-			 * @param {jQuery.sap.syncPoint} [oSyncPoint] the sync point
+			 * @param {Object} [oSyncPoint] the sync point which is used to chain the execution of the AppCacheBuster
 			 *
 			 * @private
 			 */
@@ -324,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 			 */
 			init: function() {
 
-				// activate the session (do not create the session for compat reasons with mIndex previously)
+				// activate the session (do not create the session for compatibility reasons with mIndex previously)
 				oSession.active = true;
 
 				// store the original function / property description to intercept

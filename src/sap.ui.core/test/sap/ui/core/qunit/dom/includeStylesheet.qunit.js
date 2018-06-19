@@ -99,6 +99,7 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 		assert.equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
 		assert.equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
 		*/
+
 	});
 
 	QUnit.test("stylesheet count", function(assert) {
@@ -244,6 +245,73 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 			assert.ok(false, "includeStyleSheet must not fail here: " + ex);
 			done();
 		});
+	});
+
+	QUnit.test("ignore null parameters", function(assert) {
+		includeStyleSheet("testdata/testEmpty.css", null);
+		assert.ok(true, "No exception occurs when using null as parameter.");
+	});
+
+	QUnit.test("FOUC marker", function(assert) {
+		function getHrefForUrl(sUrl) {
+			var oLink = document.createElement("link");
+			oLink.href = sUrl;
+			return oLink.href;
+			// return new URI(sUrl).absoluteTo(document.location).query("").toString();
+		}
+
+		return includeStyleSheet({
+			url: "testdata/testA.css",
+			id: "mylink-fouc",
+			attributes: {
+				"data-sap-ui-foucmarker": "mylink-fouc"
+			}
+		}).then(function() {
+			return includeStyleSheet({
+				url: "testdata/testB.css",
+				id: "mylink-fouc"
+			});
+		}).then(function() {
+			// due to the FOUC marker the old stylesheet should still be in the head
+			// and the the new link should be added before the old link
+			var oLinkA = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']")[0];
+			assert.notOk(oLinkA.hasAttribute("id"), "The id attribute has been removed from the old link.");
+			assert.equal(oLinkA.parentNode, document.head, "Old link is still in the head.");
+			assert.equal(oLinkA.href, getHrefForUrl("testdata/testA.css"), "Href of old link is correct.");
+			var oLinkB = document.getElementById("mylink-fouc");
+			assert.equal(oLinkB.parentNode, document.head, "New link has been added into the head.");
+			assert.equal(oLinkB.href, getHrefForUrl("testdata/testB.css"), "Href of new link is correct.");
+			assert.equal(oLinkA.previousSibling, oLinkB, "New link has been added before the old link.");
+			oLinkA.parentNode.removeChild(oLinkA);
+			return includeStyleSheet({
+				url: "testdata/testA.css",
+				id: "mylink-fouc"
+			});
+		}).then(function() {
+			// Counter check to validate the proper removal of the old link without the marker
+			var oLinkA = document.getElementById("mylink-fouc");
+			assert.equal(oLinkA.parentNode, document.head, "New link has been added into the head.");
+			assert.equal(oLinkA.href, getHrefForUrl("testdata/testA.css"), "Href of new link is correct.");
+			var oLinkB = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']")[0];
+			assert.notOk(oLinkB, "Old link has been removed.");
+			oLinkA.parentNode.removeChild(oLinkA);
+		});
+	});
+
+	QUnit.test("custom attributes (immutable)", function(assert) {
+
+		var mAttributes = {
+			"data-sap-ui-attr": "attrval"
+		};
+
+		return includeStyleSheet({
+			url: "testdata/testA.css",
+			id: "mylink-immutable",
+			attributes: mAttributes
+		}).then(function() {
+			assert.notOk(mAttributes.id, "attributes should not be modified");
+		});
+
 	});
 
 });

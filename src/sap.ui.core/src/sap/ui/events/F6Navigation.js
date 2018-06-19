@@ -6,11 +6,9 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define([
-	'sap/base/events/KeyCodes',
-	'sap/ui/dom/focus',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/dom/jquery/Selectors'
-], function(KeyCodes, focus, jQuery /*, sapTabbable */) {
+], function(jQuery /*, sapTabbable */) {
 	"use strict";
 
 
@@ -211,13 +209,13 @@ sap.ui.define([
 				}
 
 				if (!oEvent || !oEvent.isDefaultPrevented()) {
-					focus(oTarget);
+					oTarget.focus();
 				}
 			}
 		}
 
 		if (oEvent.type != "keydown" ||
-			oEvent.keyCode != KeyCodes.F6 ||
+			oEvent.key != 'F6' ||
 			oEvent.isMarked("sapui5_handledF6GroupNavigation") ||
 			oEvent.isMarked() ||
 			oEvent.isDefaultPrevented()) {

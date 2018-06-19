@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Test Page for xx-fakeOS</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="base"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-fakeOS="ios"
+				>
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+			sap.ui.require(["sap/ui/Device"], function(Device) {
+				QUnit.module("Test xx-fakeOS");
+
+				QUnit.test("simulateMobileOnDesktop check", function (assert) {
+					assert.ok(jQuery.sap.simulateMobileOnDesktop, "simulateMobileOnDesktop flag is set to true");
+					assert.equal(navigator.userAgent, "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3", "The os should be set correctly");
+				});
+			});
+		</script>
+		</head>
+
+		<body>
+			<h1 id="qunit-header">QUnit page for jquery.sap.mobile</h1>
+			<h2 id="qunit-banner"></h2>
+		 	<h2 id="qunit-userAgent"></h2>
+			<div id="qunit-testrunner-toolbar"></div>
+			<ol id="qunit-tests"></ol>
+		</body>
+</html>
+

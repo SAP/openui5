@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/ownerWindow"], function(jQuery, domOwnerWindow) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/getOwnerWindow"], function(jQuery, domGetOwnerWindow) {
 	"use strict";
 
 	/**
@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/ownerWindow"], function(j
 						width : oClientRect.right - oClientRect.left,
 						height : oClientRect.bottom - oClientRect.top };
 
-				var oWnd = domOwnerWindow(oDomRef);
+				var oWnd = domGetOwnerWindow(oDomRef);
 				oRect.left += jQuery(oWnd).scrollLeft();
 				oRect.top += jQuery(oWnd).scrollTop();
 
