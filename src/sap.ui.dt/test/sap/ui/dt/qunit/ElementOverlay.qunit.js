@@ -1043,59 +1043,80 @@ function(
 				text : "Button3"
 			});
 
-			this.oPanel0 = new Panel({
+			this.oPanel = new Panel({
 				id : "SmallPanel",
 				content : [this.oButton, this.oButton2, this.oButton3],
 				width : "40px",
 				height : "100px"
 			});
 
-			this.oPanel0.placeAt("qunit-fixture");
+			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			this.oPanel0.$().find('>.sapMPanelContent').scrollLeft(20);
-			this.oPanel0.$().find('>.sapMPanelContent').scrollTop(20);
-			sap.ui.getCore().applyChanges();
+			this.oPanel.$().find('>.sapMPanelContent').scrollLeft(20);
+			this.oPanel.$().find('>.sapMPanelContent').scrollTop(50);
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPanel0]
+				rootElements : [this.oPanel]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				fnDone();
-			});
-
+			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
 		afterEach : function() {
-			this.oPanel0.destroy();
+			this.oPanel.destroy();
 			this.oDesignTime.destroy();
 		}
 	}, function(){
 		QUnit.test("then", function(assert) {
-			this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel0);
+			var fnDone = assert.async();
+			this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
 			this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 			this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
-			this.oPanelOverlay.applyStyles();
-			//Math.round is required for IE and Edge
-			assert.equal(
-				Math.round(this.oButtonOverlay.$().offset().left),
-				Math.round(this.oButton.$().offset().left),
-				"overlay has same left position as the control"
-			);
-			assert.equal(
-				Math.round(this.oButtonOverlay.$().offset().top),
-				Math.round(this.oButton.$().offset().top),
-				"overlay has same top position as the control"
-			);
-			assert.equal(
-				Math.round(this.oButton2Overlay.$().offset().left),
-				Math.round(this.oButton2.$().offset().left),
-				"overlay has same left position as the control"
-			);
-			assert.equal(
-				Math.round(this.oButton2Overlay.$().offset().top),
-				Math.round(this.oButton2.$().offset().top),
-				"overlay has same top position as the control"
-			);
+
+			var fnAssertPositions = function(){
+				// Math.round is required for IE and Edge
+				assert.equal(
+					Math.round(this.oPanelOverlay.$().offset().left),
+					Math.round(this.oPanel.$().offset().left),
+					"panel overlay has same left position as the panel control"
+				);
+				assert.equal(
+					Math.round(this.oPanelOverlay.$().offset().top),
+					Math.round(this.oPanel.$().offset().top),
+					"panel overlay has same top position as the panel control"
+				);
+				assert.equal(
+					Math.round(this.oButtonOverlay.$().offset().left),
+					Math.round(this.oButton.$().offset().left),
+					"button overlay has same left position as the button control"
+				);
+				assert.equal(
+					Math.round(this.oButtonOverlay.$().offset().top),
+					Math.round(this.oButton.$().offset().top),
+					"button overlay has same top position as the button control"
+				);
+				assert.equal(
+					Math.round(this.oButton2Overlay.$().offset().left),
+					Math.round(this.oButton2.$().offset().left),
+					"button2 overlay has same left position as the button2 control"
+				);
+				assert.equal(
+					Math.round(this.oButton2Overlay.$().offset().top),
+					Math.round(this.oButton2.$().offset().top),
+					"button2 overlay has same top position as the button2 control"
+				);
+			};
+
+			// In internet explorer/edge, the checks happen before the overlays inside the scroll container
+			// are properly placed, so we must wait until they are finalized before checking
+			if (this.oButtonOverlay.$().offset().left !== this.oButton.$().offset().left){
+				this.oButton2Overlay.attachEventOnce("geometryChanged", function(){
+					fnAssertPositions.apply(this);
+					fnDone();
+				},this);
+			} else {
+				fnAssertPositions.apply(this);
+				fnDone();
+			}
 		});
 	});
 
