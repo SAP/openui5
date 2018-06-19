@@ -390,7 +390,10 @@ sap.ui.define([
 		 * @param {string} sFetch
 		 *   A "fetch*" method's name
 		 * @param {boolean} [bThrow=false]
-		 *   Whether the "get*" method throws if the promise is not fulfilled
+		 *   Whether the "get*" method throws if the promise is not (yet) fulfilled instead of just
+		 *   returning <code>undefined</code> (Note:
+		 *   {@link sap.ui.model.odata.v4.ODataMetaModel#getObject} intentionally never throws
+		 *   because it is used for data binding)
 		 * @returns {function}
 		 *   A "get*" method returning the "fetch*" method's result or
 		 *   <code>undefined</code> in case the promise is not (yet) fulfilled
