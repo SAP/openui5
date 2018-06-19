@@ -12,8 +12,12 @@
  * @public
  */
 
-sap.ui.define('sap/ui/qunit/QUnitUtils', ['sap/ui/Device', 'sap/ui/base/DataType', 'sap/ui/events/KeyCodes', 'jquery.sap.script', 'jquery.sap.global'],
-	function(Device, DataType, KeyCodes/*, jQuerySap1 */) {
+sap.ui.define('sap/ui/qunit/QUnitUtils', [
+	'jquery.sap.global',
+	'sap/base/util/ObjectPath',
+	'sap/ui/Device', 'sap/ui/base/DataType', 'sap/ui/events/KeyCodes',
+	'jquery.sap.script', 'jquery.sap.keycodes'],
+	function(jQuery, ObjectPath, Device, DataType, KeyCodes/*, jQuerySap1 */) {
 	"use strict";
 
 	if ( typeof QUnit !== 'undefined' ) {
@@ -1057,7 +1061,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['sap/ui/Device', 'sap/ui/base/DataType
 
 	// export
 	// TODO: Get rid of the old namespace and adapt the existing tests accordingly
-	jQuery.sap.setObject("sap.ui.test.qunit", QUtils);
+	ObjectPath.set("sap.ui.test.qunit", QUtils);
 	window.qutils = QUtils;
 
 	return QUtils;

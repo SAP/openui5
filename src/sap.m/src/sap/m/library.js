@@ -11,10 +11,11 @@ sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/Control',
+	'sap/base/util/ObjectPath',
 	'sap/ui/core/library', // library dependency
 	'jquery.sap.mobile', // referenced here in case the Core decides to throw it out - shall always be available when using the mobile lib.
 	'./Support'], // referenced here to enable the Support feature
-	function(jQuery, Device, DataType, EventProvider, Control, CoreLibrary) {
+	function(jQuery, Device, DataType, EventProvider, Control, ObjectPath, CoreLibrary) {
 
 	"use strict";
 
@@ -4305,7 +4306,7 @@ sap.ui.define([
 
 	// implement Form helper factory with m controls
 	// possible is set before layout lib is loaded.
-	jQuery.sap.setObject("sap.ui.layout.form.FormHelper", {
+	ObjectPath.set("sap.ui.layout.form.FormHelper", {
 		createLabel: function(sText){
 			return new sap.m.Label({text: sText});
 		},
@@ -4347,7 +4348,7 @@ sap.ui.define([
 	});
 
 	//implement FileUploader helper factory with m controls
-	jQuery.sap.setObject("sap.ui.unified.FileUploaderHelper", {
+	ObjectPath.set("sap.ui.unified.FileUploaderHelper", {
 		createTextField: function(sId){
 			var oTextField = new sap.m.Input(sId);
 			return oTextField;
@@ -4364,7 +4365,7 @@ sap.ui.define([
 	});
 
 	// implements ColorPicker helper factory with common controls
-	jQuery.sap.setObject("sap.ui.unified.ColorPickerHelper", {
+	ObjectPath.set("sap.ui.unified.ColorPickerHelper", {
 		isResponsive: function () {
 			return true;
 		},
@@ -4390,7 +4391,7 @@ sap.ui.define([
 
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
-	jQuery.sap.setObject("sap.ui.table.TableHelper", {
+	ObjectPath.set("sap.ui.table.TableHelper", {
 		createLabel: function(mConfig){
 			return new sap.m.Label(mConfig);
 		},

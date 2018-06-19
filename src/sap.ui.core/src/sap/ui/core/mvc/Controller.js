@@ -5,6 +5,7 @@
 // Provides base class for controllers (part of MVC concept)
 sap.ui.define([
 	'jquery.sap.global',
+	'sap/base/util/ObjectPath',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/mvc/ControllerMetadata',
@@ -12,6 +13,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/OverrideExecution'
 	], function(
 		jQuery,
+		ObjectPath,
 		EventProvider,
 		ManagedObject,
 		ControllerMetadata,
@@ -210,8 +212,8 @@ sap.ui.define([
 			} else {
 				oExtensions[sNamespace] = oExtensionInfo;
 				oExtensionInfo.location = "extension." + sNamespace;
-				jQuery.sap.setObject("extension." + sNamespace, oExtensionInterface, oController);
-				jQuery.sap.setObject("extension." + sNamespace, oExtensionInterface, oInterface);
+				ObjectPath.set("extension." + sNamespace, oExtensionInterface, oController);
+				ObjectPath.set("extension." + sNamespace, oExtensionInterface, oInterface);
 			}
 		}
 
@@ -640,7 +642,7 @@ sap.ui.define([
 		 */
 		Controller.prototype.destroy = function() {
 			Object.keys(this["_sapui_Extensions"]).forEach(function(oExtensionInfo) {
-				jQuery.sap.setObject(oExtensionInfo.location, null, this);
+				ObjectPath.set(oExtensionInfo.location, null, this);
 			}.bind(this));
 			delete this["_sapui_Extensions"];
 			delete this["_sapui_Interface"];
