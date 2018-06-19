@@ -2130,6 +2130,10 @@
 
 		// Assert
 		assert.strictEqual(oGetBoundingClientRectSpy.callCount, 1, "Exact height is acquired using getBoundingClientRect");
+
+		// Cleanup
+		oGetBoundingClientRectSpy.restore();
+		oObjectPage.destroy();
 	});
 
 	function checkObjectExists(sSelector) {
