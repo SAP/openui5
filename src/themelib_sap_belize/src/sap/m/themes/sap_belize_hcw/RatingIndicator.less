@@ -51,7 +51,7 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 /* TODO remove after 1.62 version */
 /* IE ignores outline-offset. Use an overlay: */
 html[data-sap-ui-browser^="ie"].sap-desktop {
-	.sapMRI:focus {
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly) {
 		outline: none;
 		position: relative;
 	}
