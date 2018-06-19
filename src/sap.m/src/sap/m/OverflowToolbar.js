@@ -180,25 +180,13 @@ sap.ui.define([
 	 * Called after the control is rendered
 	 */
 	OverflowToolbar.prototype.onAfterRendering = function () {
-		// If a control of the toolbar was focused, and we're here, then the focused control overflowed, so set the focus to the overflow button
-		if (this._bControlWasFocused) {
-			this._getOverflowButton().focus();
-			this._bControlWasFocused = false;
-		}
-
-		// If before invalidation the overflow button was focused, and it's not visible any more, focus the last focusable control
-		if (this._bOverflowButtonWasFocused && !this._getOverflowButtonNeeded()) {
-			this.$().lastFocusableDomRef().focus();
-			this._bOverflowButtonWasFocused = false;
-		}
-
 		// TODO: refactor with addEventDelegate for onAfterRendering for both overflow button and its label
 		this._getOverflowButton().$().attr("aria-haspopup", "true");
 
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
 		this._doLayout();
+		this._applyFocus();
 	};
-
 
 	/*********************************************LAYOUT*******************************************************/
 
@@ -254,6 +242,48 @@ sap.ui.define([
 		this._bListenForControlPropertyChanges = true;
 	};
 
+	OverflowToolbar.prototype._applyFocus = function () {
+		var oFocusedChildControl = sap.ui.getCore().byId(this.sFocusedChildControlId),
+			$FocusedChildControl,
+			$LastFocusableChildControl = this.$().lastFocusableDomRef();
+
+		if (oFocusedChildControl) {
+			$FocusedChildControl = oFocusedChildControl.$();
+		}
+
+		if ($FocusedChildControl && $FocusedChildControl.length){
+			$FocusedChildControl.focus();
+
+		} else if (this._bControlWasFocused) {
+			// If a control of the toolbar was focused, and we're here, then the focused control overflowed, so set the focus to the overflow button
+			this._getOverflowButton().focus();
+			this._bControlWasFocused = false;
+			this._bOverflowButtonWasFocused = true;
+
+		} else if (this._bOverflowButtonWasFocused && !this._getOverflowButtonNeeded()) {
+			// If before invalidation the overflow button was focused, and it's not visible any more, focus the last focusable control
+			$LastFocusableChildControl && $LastFocusableChildControl.focus();
+			this._bOverflowButtonWasFocused = false;
+		}
+	};
+
+	/**
+	 * Preserves info to retain focus on child controls upon invalidation.
+	 * @private
+	 */
+	OverflowToolbar.prototype._preserveChildControlFocusInfo = function () {
+		// Preserve focus info
+		var sActiveElementId = sap.ui.getCore().getCurrentFocusedControlId();
+
+		if (this._getControlsIds().indexOf(sActiveElementId) !== -1) {
+			this._bControlWasFocused = true;
+			this.sFocusedChildControlId = sActiveElementId;
+		} else if (sActiveElementId === this._getOverflowButton().getId()) {
+			this._bOverflowButtonWasFocused = true;
+			this.sFocusedChildControlId = null;
+		}
+	};
+
 	/**
 	 * If the client does not support the latest flexbox spec, run some polyfill code
 	 * @private
@@ -270,7 +300,6 @@ sap.ui.define([
 		var bOverflow = oDomRef.scrollWidth > oDomRef.clientWidth;
 		bOverflow && $This.addClass("sapMTBOverflow");
 	};
-
 
 	/**
 	 * Stores the sizes and other info of controls so they don't need to be recalculated again until they change
@@ -365,15 +394,9 @@ sap.ui.define([
 			},
 			fnInvalidateIfHashChanged = function (sHash) { // helper: invalidate the toolbar if the signature of the action sheet changed (i.e. buttons moved)
 				if (typeof sHash === "undefined" || this._getPopover()._getContentIdsHash() !== sHash) {
-					this.invalidate();
-
 					// Preserve focus info
-					if (this._getControlsIds().indexOf(sap.ui.getCore().getCurrentFocusedControlId()) !== -1) {
-						this._bControlWasFocused = true;
-					}
-					if (sap.ui.getCore().getCurrentFocusedControlId() === this._getOverflowButton().getId()) {
-						this._bOverflowButtonWasFocused = true;
-					}
+					this._preserveChildControlFocusInfo();
+					this.invalidate();
 				}
 			},
 			fnAddOverflowButton = function (iContentSize) { // helper: show the overflow button and increase content size accordingly, if not shown already
@@ -583,6 +606,7 @@ sap.ui.define([
 		}
 
 		if (this.$().length) {
+			this._preserveChildControlFocusInfo();
 			this.invalidate();
 		}
 	};
