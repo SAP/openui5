@@ -724,6 +724,7 @@ sap.ui.require([
 						: sValue;
 
 				that.checkValue(assert, sExpectedValue, sControlId);
+				return sValue;
 			};
 		},
 
@@ -751,6 +752,7 @@ sap.ui.require([
 					&& (this.getBindingContext().getIndex
 						? this.getBindingContext().getIndex()
 						: this.getBindingContext().getPath()));
+				return sValue;
 			};
 		},
 
@@ -5883,12 +5885,12 @@ sap.ui.require([
 
 			that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
 					+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "&$count=true&$skip=23&$top=3", {
+					+ "&$count=true&$skip=7&$top=3", {
 					"@odata.count" : "26",
 					"value" : [
-						{"GrossAmount" : 24, "LifecycleStatus" : "C"},
-						{"GrossAmount" : 25, "LifecycleStatus" : "B"},
-						{"GrossAmount" : 26, "LifecycleStatus" : "A"}
+						{"GrossAmount" : 7, "LifecycleStatus" : "T"},
+						{"GrossAmount" : 8, "LifecycleStatus" : "S"},
+						{"GrossAmount" : 9, "LifecycleStatus" : "R"}
 					]
 				});
 			for (var i = 0; i < 3; i += 1) {
@@ -5898,42 +5900,28 @@ sap.ui.require([
 					.expectChange("grossAmount", undefined, null)
 					.expectChange("lifecycleStatus", null, null);
 			}
-			that.expectChange("isExpanded", [false, false, false], 23)
-				.expectChange("isTotal", [true, true, true], 23)
-				.expectChange("level", [1, 1, 1], 23)
-				.expectChange("grossAmount", [24, 25, 26], 23)
-				.expectChange("lifecycleStatus", ["C", "B", "A"], 23);
+			that.expectChange("isExpanded", [false, false, false], 7)
+				.expectChange("isTotal", [true, true, true], 7)
+				.expectChange("level", [1, 1, 1], 7)
+				.expectChange("grossAmount", [7, 8, 9], 7)
+				.expectChange("lifecycleStatus", ["T", "S", "R"], 7);
 
-			that.oView.byId("table").setFirstVisibleRow(23);
+			that.oView.byId("table").setFirstVisibleRow(7);
 
 			return that.waitForChanges(assert).then(function () {
-				that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
-						+ "&$apply=groupby((LifecycleStatus))&$count=true&$skip=23&$top=3", {
-						"@odata.count" : "26",
-						"value" : [
-							{"LifecycleStatus" : "C"},
-							{"LifecycleStatus" : "B"},
-							{"LifecycleStatus" : "A"}
-						]
-					})
-					//TODO why is this fired again? The values are unchanged
-					.expectChange("lifecycleStatus", ["C", "B", "A"], 23);
-				//TODO why does Table use $skip=7 here? why do we have 2 requests?
 				that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
 						+ "&$apply=groupby((LifecycleStatus))&$count=true&$skip=7&$top=3", {
 						"@odata.count" : "26",
 						"value" : [
+							{"LifecycleStatus" : "T"},
 							{"LifecycleStatus" : "S"},
-							{"LifecycleStatus" : "R"},
-							{"LifecycleStatus" : "Q"}
+							{"LifecycleStatus" : "R"}
 						]
-					});
-				that.expectChange("isExpanded", [false, false, false], 7)
+					})
+					.expectChange("isExpanded", [false, false, false], 7)
 					.expectChange("isTotal", [true, true, true], 7)
 					.expectChange("level", [1, 1, 1], 7)
-					.expectChange("lifecycleStatus", ["S", "R", "Q"], 7)
-					//TODO why is this fired a second time?
-					.expectChange("lifecycleStatus", ["S", "R", "Q"], 7);
+					.expectChange("lifecycleStatus", ["T", "S", "R"], 7);
 
 				oTable.removeColumn(4).destroy(); // GrossAmount
 				oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
