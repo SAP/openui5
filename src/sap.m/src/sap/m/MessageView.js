@@ -745,13 +745,15 @@ sap.ui.define([
 
 		LIST_TYPES.forEach(function (sListName) {
 			var oList = this._oLists[sListName],
+				sBundleText = sListName == "all" ? "MESSAGEPOPOVER_ALL" : "MESSAGEVIEW_BUTTON_TOOLTIP_" + sListName.toUpperCase(),
 				iCount = oList.getItems().filter(function(oItem) {
 					return (oItem instanceof StandardListItem);
 				}).length, oButton;
 
 			if (iCount > 0) {
 				oButton = new Button(this.getId() + "-" + sListName, {
-					text: sListName == "all" ? this._oResourceBundle.getText("MESSAGEPOPOVER_ALL") : iCount,
+					text: sListName == "all" ? this._oResourceBundle.getText(sBundleText) : iCount,
+					tooltip: this._oResourceBundle.getText(sBundleText),
 					icon: ICONS[sListName],
 					press: pressClosure(sListName)
 				}).addStyleClass(CSS_CLASS + "Btn" + sListName.charAt(0).toUpperCase() + sListName.slice(1));
