@@ -24,7 +24,7 @@ sap.ui.define([
 	 */
 	function getErrorMessage(oType) {
 		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterTime",
-			[oType.formatValue("13:47:26", "string")]);
+			[oType.formatValue("23:59:58", "string")]);
 	}
 
 	/*

@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 
 	var oDemoTime = {
 			__edmType : "Edm.Time",
-			ms : 49646000 // "13:47:26"
+			ms : 86398000 // "23:59:58"
 		},
 		// a "formatter" like DateFormat, see getModelFormat
 		oModelFormat = {
