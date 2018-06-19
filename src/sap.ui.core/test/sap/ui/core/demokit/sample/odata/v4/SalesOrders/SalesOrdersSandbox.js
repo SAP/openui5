@@ -33,6 +33,14 @@ sap.ui.define([
 				source : "BusinessPartnerList_0.json"
 			},
 			"ProductList('HT-1000')/Name?custom-option=value" : {
+				headers : {
+					"sap-message" : JSON.stringify([{
+						"code" : "42",
+						"message" : "Example for an unbound message",
+						"severity" : "info",
+						"@Common.NumericMessageSeverity" : 3,
+						"@Common.LongtextUrl" : "//raw.githubusercontent.com/SAP/openui5/master/NOTICE.txt"}])
+				},
 				source : "ProductList.json"
 			},
 			"ProductList('HT-1000')/ProductID?custom-option=value" : {

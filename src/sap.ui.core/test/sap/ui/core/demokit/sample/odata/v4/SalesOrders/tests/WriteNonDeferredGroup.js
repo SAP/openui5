@@ -39,14 +39,14 @@ sap.ui.define([
 		// Test: create a new SalesOrder with erroneous Note property,
 		// POST restarted automatically after note corrected
 		When.onTheMainPage.createInvalidSalesOrderViaAPI();
-		When.onTheErrorInfo.confirm();
+		When.onTheMessagePopover.close();
 		When.onTheMainPage.changeNote(0, "My Note");
 		When.onTheSuccessInfo.confirm();
 		Then.onTheMainPage.checkNote(0, "My Note");
 
 		// Test: update of SalesOrder note -> error, restart after note corrected
 		When.onTheMainPage.changeNote(0, "RAISE_ERROR");
-		When.onTheErrorInfo.confirm();
+		When.onTheMessagePopover.close();
 		When.onTheMainPage.changeNote(0, "My patched Note");
 		Then.onTheMainPage.checkNote(0, "My patched Note");
 		aExpectedLogs.push(oExpectedPatchLog);

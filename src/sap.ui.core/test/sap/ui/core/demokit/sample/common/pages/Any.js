@@ -179,7 +179,7 @@ function (Helper, Opa5, TestUtils, Properties) {
 			}
 		},
 		/*
-		 * Actions and assertions for the "Error" information dialog
+		 * Actions for the "Error" information dialog
 		 */
 		onTheErrorInfo : {
 			actions : {
@@ -190,6 +190,25 @@ function (Helper, Opa5, TestUtils, Properties) {
 						success : function (aControls) {
 							aControls[0].getButtons()[0].$().tap();
 							Opa5.assert.ok(true, "Confirm 'Error'");
+						}
+					});
+				}
+			}
+		},
+		/*
+		 * Actions for the "Message" popover
+		 */
+		onTheMessagePopover : {
+			actions : {
+				close : function () {
+					return this.waitFor({
+						controlType : "sap.m.MessagePopover",
+						success : function (aControls) {
+							var oPopover = aControls[0];
+							if (oPopover && oPopover.isOpen()) {
+								oPopover.close();
+								Opa5.assert.ok(true, "Message Popover closed");
+							}
 						}
 					});
 				}
