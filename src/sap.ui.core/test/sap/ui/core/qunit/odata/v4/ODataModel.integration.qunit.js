@@ -2995,7 +2995,7 @@ sap.ui.require([
 	// change the list binding's row (-> the dependent binding's context)
 	// TODO hasPendingChanges does work properly with changes in hidden caches if dependency between
 	// bindings get lost e.g. if context of a dependent binding is reset (set to null or undefined).
-	QUnit.skip("Pending change in hidden cache", function (assert) {
+	QUnit.test("Pending change in hidden cache", function (assert) {
 		var oListBinding,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -3064,7 +3064,22 @@ sap.ui.require([
 			// "select" the second row in the team table
 			that.oView.byId("employeeSet").setBindingContext(
 				that.oView.byId("teamSet").getItems()[1].getBindingContext());
-			assert.ok(oListBinding.hasPendingChanges());
+			assert.notOk(oListBinding.hasPendingChanges(),
+				"Binding lost context -> no pending changes");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES('03')?$select=ID,Name", {
+					ID : "03",
+					Name : "Jonathan Smith",
+					"@odata.etag" : "eTag"
+				})
+				.expectChange("employeeName", "Jonathan Smith");
+
+			// "select" the first row in the employee table
+			that.oView.byId("objectPage").setBindingContext(
+				that.oView.byId("employeeSet").getItems()[0].getBindingContext());
+			assert.ok(oListBinding.hasPendingChanges(),
+				"Binding hierarchy restored -> has pending changes");
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
@@ -3080,7 +3095,8 @@ sap.ui.require([
 			]);
 		}).then(function () {
 			// no requests because cache is reused
-			that.expectChange("employeeId", ["01", "02"]);
+			that.expectChange("employeeId", ["01", "02"])
+				.expectChange("employeeName", null);
 
 			// code under test
 			that.oView.byId("employeeSet").setBindingContext(
