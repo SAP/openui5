@@ -747,22 +747,44 @@
 		var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
 		var sPattern = "yyyy 'Week' ww EEEE";
 
-		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			pattern: sPattern
-		});
+		}, new sap.ui.core.Locale("en_US"));
 		var sFormatted = "2018 Week 12 Friday";
 
 		assert.equal(oDateFormat.format(oDate), sFormatted, "2018-12 Friday, Friday in en-US");
 		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
 
-		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
 		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			pattern: sPattern
-		});
+		}, new sap.ui.core.Locale("de_DE"));
 		sFormatted = "2018 Week 12 Freitag";
 
 		assert.equal(oDateFormat.format(oDate), sFormatted, "2018-12 Freitag in de-DE");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+
+
+	QUnit.test("format and parse week and dayName first week of year", function(assert) {
+		var oDate = new Date(2017, 0, 1); // 1st Jan 2017
+		var sPattern = "yyyy 'Week' ww EEEE";
+
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		}, new sap.ui.core.Locale("en_US"));
+		var sFormatted = "2017 Week 01 Sunday";
+
+		assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2018-12 Friday, Friday in en-US");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		}, new sap.ui.core.Locale("de_DE"));
+		sFormatted = "2017 Week 01 Sonntag";
+
+		assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2018-12 Freitag in de-DE");
 		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
 
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");
