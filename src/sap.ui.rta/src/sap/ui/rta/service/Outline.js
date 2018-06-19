@@ -27,24 +27,50 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 * Provides necessary functionality to get tree model data for an outline.
+	 * Takes into consideration different designtime root elements.
+	 *
+	 * @namespace
+	 * @name sap.ui.rta.service.Outline
+	 * @author SAP SE
+	 * @experimental Since 1.56
+	 * @since 1.56
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted
+	*/
+
+	/**
+	 * Object containing an outline of available nodes.
+	 *
+	 * <pre>
+	 * {
+	 *    id: &lt;string&gt; // id of the control,
+	 *    instanceName: &lt;string&gt; // text retrieved from node's designtime metadata getLabel(),
+	 *    name: &lt;string&gt; // singular name from node's designtime metadata,
+	 *    technicalName: &lt;string&gt; // class type for element nodes / aggregation name for aggregation nodes,
+	 *    editable: &lt;boolean&gt; // whether the node is editable,
+	 *    icon: &lt;string&gt; // icon path for the node,
+	 *    type: &lt;string&gt; // type of control node,
+	 *    elements: &lt;sap.ui.rta.service.Outline.OutlineObject[]&gt; // outline data for child nodes
+	 * }
+	 * </pre>
+	 *
+	 * @typedef {object} sap.ui.rta.service.Outline.OutlineObject
+	 * @property {string} id - id of the control
+	 * @property {string} [instanceName] - text retrieved from node's designtime metadata getLabel()
+	 * @property {string} [name] - singular name from node's designtime metadata
+	 * @property {string} technicalName - class type for element nodes / aggregation name for aggregation nodes
+	 * @property {boolean} editable - whether the node is editable
+	 * @property {string} [icon] - icon path for the node
+	 * @property {string} type - type of control node
+	 * @property {sap.ui.rta.service.Outline.OutlineObject[]} elements - outline data for child nodes
+	 * @public
+	 */
+
 	return function(oRta, fnPublish) {
-		/**
-		 * Provides necessary functionality to get tree model data for an outline
-		 * Takes into consideration different designtime root elements
-		 * @experimental Since 1.56
-		 * @private
-		 * @ui5-restricted
-		 *
-		 * @typedef {object} OutlineObject
-		 * @property {string} id - id of the control
-		 * @property {string} [instanceName] - text retrieved from node's designtime metadata getLabel()
-		 * @property {string} [name] - singular name from node's designtime metadata
-		 * @property {string} technicalName - class type for element nodes / aggregation name for aggregation nodes
-		 * @property {boolean} editable - whether the node is editable
-		 * @property {string} [icon] - icon path for the node
-		 * @property {string} type - type of control node
-		 * @property {OutlineObject[]} elements - outline data for child nodes
-		 */
+
 		var oOutline = { };
 
 		/**
@@ -52,10 +78,9 @@ sap.ui.define([
 		 * If an <code>sId</code> is given, the data contains the model data for this control.
 		 * If a <code>iDepth</code> is given, all sub elements are retrieved until the depth is reached.
 		 *
-		 * @param {string} [sId] - id of the control to start with, if omitted the root control(s) is used
+		 * @param {string} [sId] - id of the control to start with. If omitted the root control(s) is used
 		 * @param {int} [iDepth] - depth of childNode levels that should be returned based on the given control
-		 * @returns {OutlineObject[]} - an array containing outline data for each root control
-		 * @private
+		 * @returns {OutlineObject[]} an array containing outline data for each root control
 		 */
 		oOutline._getOutline = function (sId, iDepth) {
 			var oResponse;
@@ -91,15 +116,14 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns outline model data including the children until max depth (this.iDepth is reached)
+		 * Returns outline model data including the children until max depth (this.iDepth or last child is reached).
 		 * During execution the fnFilter is used to determine whether node data should be added.
-		 * If not, the children of the skipped node are processed, until max depth
+		 * If not, the children of the skipped node are processed until max depth.
 		 *
 		 * @param {sap.ui.dt.Overlay} oOverlay - overlay for this node
 		 * @param {int} [iDepth] - level of children to traverse
 		 * @param {sap.ui.dt.Overlay} [oParentOverlay] - parent overlay (if present) for the passed overlay
-		 * @returns {OutlineObject} - outline model data
-		 * @private
+		 * @returns {OutlineObject} outline model data
 		 */
 		oOutline._getChildrenNodes = function (oOverlay, iDepth, oParentOverlay) {
 			var bValidDepth = DtUtil.isInteger(iDepth);
@@ -135,12 +159,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Collects the necessary data for a node without the childNodes
+		 * Collects the necessary data for a node without the childNodes.
 		 *
 		 * @param {sap.ui.dt.Overlay} oOverlay - node's overlay for which properties are calculated
 		 * @param {sap.ui.dt.Overlay} [oParentOverlay] - parent overlay (if present) for the passed overlay
-		 * @returns {object} - data containing applicable properties
-		 * @private
+		 * @returns {object} data containing applicable properties
 		 */
 		oOutline._getNodeProperties = function (oOverlay, oParentOverlay) {
 			var oDtName;
@@ -201,9 +224,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Check if update object already exists in update list
+		 * Check if update object already exists in update list.
 		 *
-		 * @private
+		 * @param {array} aResponseUpdates - an array of existing updates
+		 * @param {Object} oResponse - update object to be checked if it already exists
+		 * @return {array} filtered array of updates
 		 */
 		oOutline._removeDuplicate = function(aResponseUpdates, oResponse) {
 			return aResponseUpdates.filter(function(oUpdate){
@@ -212,10 +237,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Event handler for events from design time representing
-		 * updates on the outline model
-		 *
-		 * @private
+		 * Event handler for events from designtime representing
+		 * updates on the outline model.
 		 */
 		oOutline._updatesHandler = function(oEvent) {
 			var mParams = oEvent.getParameters();
@@ -313,10 +336,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * When called, starts listening to any designtime and element property changes
-		 * When a change is detected the relevant response is published on the "update" event
-		 *
-		 * @private
+		 * When called starts listening to any designtime and element property changes.
+		 * When a change is detected the relevant response is published on the "update" event.
 		 */
 		oOutline._startUpdates = function () {
 			this.aUpdates = [];
@@ -332,6 +353,9 @@ sap.ui.define([
 			oRta._oDesignTime.attachEvent("elementOverlayEditableChanged", this._updatesHandler, this);
 		};
 
+		/**
+		 * Detaches all event listeners that were attached from the outline service and performs a clean up.
+		 */
 		oOutline.destroy = function () {
 			oRta._oDesignTime.detachEvent("elementOverlayCreated", this._updatesHandler, this);
 			oRta._oDesignTime.detachEvent("elementOverlayAdded", this._updatesHandler, this);
@@ -344,19 +368,66 @@ sap.ui.define([
 		};
 
 		var oServiceReturnObj = {
+			/**
+			 * @desc Attached listeners are notified of any modifications to existing nodes in the outline.
+			 * These notifications are an array of objects (updates) whenever modifications are encountered.
+			 *
+			 * The array will contain one or multiple occurrences of the following object types:
+			 * <pre>
+			 * {
+			 *   "type": "destroy",
+			 *   "element": {
+			 *      "id": &lt;string&gt; // elementId
+			 *   }
+			 * }
+			 *
+			 * {
+			 *   "type": "editableChange",
+			 *   "element": {
+			 *      "id": &lt;string&gt; // elementId,
+			 *      "editable": &lt;boolean&gt;
+			 *   }
+			 * }
+			 *
+			 * {
+			 *   "type": "new",
+			 *   "element": &lt;sap.ui.rta.service.Outline.OutlineObject&gt;
+			 *   "targetAggregation": &lt;string&gt;,
+			 *   "targetId": &lt;string&gt;,
+			 *   "targetIndex": &lt;integer&gt;
+			 * }
+			 *
+			 * {
+			 *   "type": "elementPropertyChange",
+			 *   "element": &lt;sap.ui.rta.service.Outline.OutlineObject&gt;
+			 *   "name": &lt;string&gt; // property name,
+			 *   "oldValue": &lt;string&gt; // old value,
+			 *   "value": &lt;integer&gt; // current value
+			 * }
+			 *
+			 * {
+			 *   "type": "move",
+			 *   "element": &lt;sap.ui.rta.service.Outline.OutlineObject&gt;
+			 *   "targetAggregation": &lt;string&gt;,
+			 *   "targetId": &lt;string&gt;,
+			 *   "targetIndex": &lt;integer&gt;
+			 * }
+			 * </pre>
+			 * @event sap.ui.rta.service.Outline.update
+			 * @public
+			 */
 			events: ["update"],
 			exports: {
 				/**
 				 * Returns an outline model data associated with the rta instance, starting from the passed control.
-				 * If no control is passed rta instance's root control(s) is taken as the initial control.
+				 * If no control is passed, the root control(s) of the respective rta instance is taken as the initial control.
 				 * Throws an error if the control id parameter is not a valid control with a stable id.
-				 * @experimental Since 1.56
-		 		 * @public
-		 		 * @ui5-restricted
 				 *
-				 * @param {string} [sId] - the id of the control to start with, if omitted the root control(s) is used
+				 * @method sap.ui.rta.service.Outline.get
+				 * @param {string} [sId] - the id of the control to start with. If omitted the root control(s) is used
 				 * @param {int} [iDepth] - the depth of childNode levels that should be returned based on the given control
-				 * @returns {OutlineObject[]} - an array containing outline data for each root control
+				 * @returns {sap.ui.rta.service.Outline.OutlineObject} an array containing outline data for each root control
+				 * @public
 				 */
 				get: oOutline._getOutline.bind(oOutline)
 			},
@@ -385,4 +456,4 @@ sap.ui.define([
 			}
 		});
 	};
-}, true);
+});
