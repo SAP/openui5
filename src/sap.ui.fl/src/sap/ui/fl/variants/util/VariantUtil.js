@@ -29,6 +29,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @experimental Since 1.56.0
 	 */
+	var sVariantParameterName = "sap-ui-fl-control-variant-id";
 	var VariantUtil = {
 
 		initializeHashRegister: function () {
@@ -37,20 +38,26 @@ sap.ui.define([
 				hashParams: []
 			};
 
-			//attach navigation filter for custom navigation
-			VariantUtil._setCustomNavigationForParameter.call(this);
+			// register navigation filter for custom navigation
+			VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, true);
 		},
 
 		attachHashHandlers: function () {
+			// only for first variant management control with 'updateVariantInURL' property set to true
 			if (this._oHashRegister.currentIndex === null) {
 				var oHashChanger = HashChanger.getInstance();
+
 				// register method to process hash changes
 				oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
 
 				// de-register method to process hash changes
 				var fnOriginalDestroy = this.oComponent.destroy;
 				this.oComponent.destroy = function () {
+					// deregister navigation filter if ushell is available
+					VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, false);
+					// detach navigation handler
 					oHashChanger.detachEvent("hashChanged", VariantUtil._navigationHandler, this);
+					// destroy VariantModel
 					this.destroy();
 					fnOriginalDestroy.apply(this.oComponent, arguments);
 				}.bind(this);
@@ -67,7 +74,8 @@ sap.ui.define([
 			if (mPropertyBag.updateURL) {
 				flUtils.setTechnicalURLParameterValues(
 					mPropertyBag.component || this.oComponent,
-					this.sVariantTechnicalParameterName, mPropertyBag.parameters
+					sVariantParameterName,
+					mPropertyBag.parameters
 				);
 			}
 			if (!mPropertyBag.ignoreRegisterUpdate) {
@@ -109,7 +117,7 @@ sap.ui.define([
 				if (sDirection === "NewEntry" || sDirection === "Unknown") {
 					// get URL hash parameters
 					var mHashParameters = flUtils.getParsedURLHash() && flUtils.getParsedURLHash().params;
-					aVariantParamValues = ( mHashParameters && mHashParameters[this.sVariantTechnicalParameterName] ) || [];
+					aVariantParamValues = ( mHashParameters && mHashParameters[sVariantParameterName] ) || [];
 
 					// check if variant management control for previously existing register entry exists
 					// if yes, reset to default variant
@@ -143,11 +151,11 @@ sap.ui.define([
 			this.updateHasherEntry(mPropertyBag);
 		},
 
-		_setCustomNavigationForParameter: function() {
+		_setOrUnsetCustomNavigationForParameter: function(bSet) {
+			var sMethodName = bSet ? "registerNavigationFilter" : "unregisterNavigationFilter";
 			var oUshellContainer = flUtils.getUshellContainer();
 			if (oUshellContainer) {
-				var fnFilterFunction = VariantUtil._navigationFilter.bind(this);
-				oUshellContainer.getService("ShellNavigation").registerNavigationFilter(fnFilterFunction);
+				oUshellContainer.getService("ShellNavigation")[sMethodName](VariantUtil._navigationFilter);
 			}
 		},
 
@@ -159,22 +167,41 @@ sap.ui.define([
 			var oOldParsed = oURLParsing.parseShellHash(sOldHash);
 			var oNewParsed = oURLParsing.parseShellHash(sNewHash);
 
-			var bSuppressDefaultNavigation = false;
-			[oOldParsed, oNewParsed].forEach(
-				function (oParsedHash) {
-					// Parameter should exists on either of the parsed hashes
-					// If parameter exists but it's not the only one, it's invalid
-					// If parameter doesn't exist but other parameters exist, it's invalid
-					if ( oParsedHash.params.hasOwnProperty(this.sVariantTechnicalParameterName) ) {
-						bSuppressDefaultNavigation = true;
-						if (Object.keys(oParsedHash.params).length !== 1) {
+			// params should exists on both parsed urls
+			var bSuppressDefaultNavigation = oOldParsed && oNewParsed;
+
+			if (bSuppressDefaultNavigation) {
+				// Verify if others parsed url properties are same
+				for (var sKey in oOldParsed) {
+					if (
+						sKey !== "params"
+						&& sKey !== "appSpecificRoute"
+						&& oOldParsed[sKey] !== oNewParsed[sKey]
+					) {
+						bSuppressDefaultNavigation = false;
+						break;
+					}
+				}
+			}
+
+			if (bSuppressDefaultNavigation) {
+				bSuppressDefaultNavigation = false;
+				[oOldParsed, oNewParsed].forEach(
+					function (oParsedHash) {
+						// Parameter should exists on either of the parsed hashes
+						// If parameter exists but it's not the only one, it's invalid
+						// If parameter doesn't exist but other parameters exist, it's invalid
+						if (oParsedHash.params.hasOwnProperty(sVariantParameterName)) {
+							bSuppressDefaultNavigation = true;
+							if (Object.keys(oParsedHash.params).length !== 1) {
+								bSuppressDefaultNavigation = false;
+							}
+						} else if (Object.keys(oParsedHash.params).length !== 0) {
 							bSuppressDefaultNavigation = false;
 						}
-					} else if (Object.keys(oParsedHash.params).length !== 0) {
-						bSuppressDefaultNavigation = false;
 					}
-				}.bind(this)
-			);
+				);
+			}
 
 			if (bSuppressDefaultNavigation) {
 				var sAppSpecificRoute = (oNewParsed.appSpecificRoute || "  ").substring(2);  // strip &/
