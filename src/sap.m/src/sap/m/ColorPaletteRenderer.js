@@ -27,7 +27,6 @@ sap.ui.define(['sap/ui/Device'],
 			oRm.writeControlData(oColorPalette);
 			oRm.addClass("sapMColorPalette");
 			oRm.writeClasses();
-			oRm.writeAttribute("tabIndex", "0");
 			oRm.write(">");
 
 			//render default button
@@ -59,7 +58,7 @@ sap.ui.define(['sap/ui/Device'],
 		ColorPaletteRenderer.renderSwatches = function (oRm, oColorPalette) {
 			var sColors = oColorPalette.getColors();
 
-			oRm.write("<div");
+			oRm.write("<div id='" + oColorPalette.getId() + "-swatchCont'");
 			oRm.addClass("sapMColorPaletteContent");
 			oRm.writeClasses();
 			oRm.writeAccessibilityState(oColorPalette, {
