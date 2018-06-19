@@ -3,8 +3,12 @@
  */
 
 // Provides control sap.ui.layout.form.FormContainer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/Parameters', 'sap/ui/layout/library'],
-	function(jQuery, Element, Parameters, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Element',
+	'sap/ui/core/theming/Parameters',
+	'sap/ui/layout/library'
+	], function(jQuery, Element, Parameters, library) {
 	"use strict";
 
 

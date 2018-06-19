@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRenderer'],
-	function(jQuery, Renderer, FormLayoutRenderer) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Renderer',
+	'sap/ui/core/theming/Parameters',
+	'./FormLayoutRenderer'
+	], function(jQuery, Renderer, themingParameters, FormLayoutRenderer) {
 	"use strict";
 
 
@@ -85,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 			var sSize;
 			if (!oToolbar) {
-				sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
+				sSize = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
 			}
 			this.renderHeader(rm, oToolbar, oTitle, undefined, false, sSize, oForm.getId());
 			rm.write("</th></tr>");

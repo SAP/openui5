@@ -2,8 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library'],
-	function(jQuery, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/layout/library'
+	], function(jQuery, library) {
 	"use strict";
 
 

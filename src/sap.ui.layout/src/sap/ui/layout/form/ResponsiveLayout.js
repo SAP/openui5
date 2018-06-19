@@ -3,11 +3,19 @@
  */
 
 // Provides control sap.ui.layout.form.ResponsiveLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/ui/layout/ResponsiveFlowLayoutData',
-               './Form', './FormContainer', './FormElement', './FormLayout',
-               'sap/ui/layout/library', 'sap/ui/core/Control', './ResponsiveLayoutRenderer'],
-	function(jQuery, ResponsiveFlowLayout, ResponsiveFlowLayoutData,
-	         Form, FormContainer, FormElement, FormLayout, library, Control, ResponsiveLayoutRenderer) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/layout/library',
+	'sap/ui/layout/ResponsiveFlowLayout',
+	'sap/ui/layout/ResponsiveFlowLayoutData',
+	'./Form',
+	'./FormContainer',
+	'./FormElement',
+	'./FormLayout',
+	'./ResponsiveLayoutRenderer'],
+	function(jQuery, Control, library, ResponsiveFlowLayout, ResponsiveFlowLayoutData,
+	         Form, FormContainer, FormElement, FormLayout, ResponsiveLayoutRenderer) {
 	"use strict";
 
 	/**
