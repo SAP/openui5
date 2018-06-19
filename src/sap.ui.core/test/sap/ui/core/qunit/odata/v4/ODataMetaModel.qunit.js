@@ -1389,7 +1389,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	(function () {
+	["@@computedAnnotation", "@@.computedAnnotation"].forEach(function (sSuffix) {
 		var sPath,
 			sPathPrefix,
 			mPathPrefix2SchemaChildName = {
@@ -1400,7 +1400,7 @@ sap.ui.require([
 			sSchemaChildName;
 
 		for (sPathPrefix in mPathPrefix2SchemaChildName) {
-			sPath = sPathPrefix + "@@.computedAnnotation";
+			sPath = sPathPrefix + sSuffix;
 			sSchemaChildName = mPathPrefix2SchemaChildName[sPathPrefix];
 
 			QUnit.test("fetchObject: " + sPath, function (assert) {
@@ -1440,7 +1440,7 @@ sap.ui.require([
 				assert.strictEqual(oContext.getObject(), oInput);
 			});
 		}
-	}());
+	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {

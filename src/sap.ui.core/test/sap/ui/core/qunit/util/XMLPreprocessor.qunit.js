@@ -175,7 +175,9 @@ sap.ui.require([
 			// Note: Chrome adds all namespaces at root level, but before other attributes!
 			.replace(/ xmlns.*?=\".*?\"/g, "")
 			// Note: browsers differ in whitespace for empty HTML(!) tags
-			.replace(/ \/>/g, '/>');
+			.replace(/ \/>/g, '/>')
+			// Note: template:require attribute is removed by the conversion
+			.replace(/ \w+:require=".*?"/, "");
 		if (Device.browser.msie || Device.browser.edge) {
 			// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
 			// - no escaped quotes in attribute values!
@@ -202,17 +204,15 @@ sap.ui.require([
 	 *   A sync promise for timing which resolves with the result of the code under test
 	 */
 	function _withBalancedBindAggregation(that, assert, fnCodeUnderTest) {
-		var fnBindAggregation = ManagedObject.prototype.bindAggregation,
-			oBindAggregationExpectation,
-			fnUnbindAggregation = ManagedObject.prototype.unbindAggregation,
+		var oBindAggregationExpectation,
 			oUnbindAggregationExpectation;
 
 		oBindAggregationExpectation = that.mock(ManagedObject.prototype).expects("bindAggregation")
 			.atLeast(0).withExactArgs("list", sinon.match({mode : BindingMode.OneTime}))
-			.callsFake(fnBindAggregation);
+			.callThrough();
 		oUnbindAggregationExpectation = that.mock(ManagedObject.prototype)
 			.expects("unbindAggregation").atLeast(0).withExactArgs("list", true)
-			.callsFake(fnUnbindAggregation);
+			.callThrough();
 
 		return SyncPromise.resolve(fnCodeUnderTest()).then(function (oResult) {
 			assert.strictEqual(oUnbindAggregationExpectation.callCount,
@@ -234,9 +234,7 @@ sap.ui.require([
 	 *   A sync promise for timing which resolves with the result of the code under test
 	 */
 	function _withBalancedBindProperty(that, assert, fnCodeUnderTest) {
-		var fnBindProperty = ManagedObject.prototype.bindProperty,
-			oBindPropertyExpectation,
-			fnUnbindProperty = ManagedObject.prototype.unbindProperty,
+		var oBindPropertyExpectation,
 			oUnbindPropertyExpectation;
 
 		function checkBindingMode(oBindingInfo) {
@@ -255,9 +253,9 @@ sap.ui.require([
 
 		oBindPropertyExpectation = that.mock(ManagedObject.prototype).expects("bindProperty")
 			.atLeast(0).withExactArgs("any", sinon.match(checkBindingMode))
-			.callsFake(fnBindProperty);
+			.callThrough();
 		oUnbindPropertyExpectation = that.mock(ManagedObject.prototype).expects("unbindProperty")
-			.atLeast(0).withExactArgs("any", true).callsFake(fnUnbindProperty);
+			.atLeast(0).withExactArgs("any", true).callThrough();
 
 		return SyncPromise.resolve(fnCodeUnderTest()).then(function (oResult) {
 			assert.strictEqual(oUnbindPropertyExpectation.callCount,
@@ -281,6 +279,8 @@ sap.ui.require([
 		beforeEach : function () {
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG, sComponent);
+
+			this.oJQuerySapMock = this.mock(jQuery.sap);
 
 			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
@@ -504,7 +504,7 @@ sap.ui.require([
 		 * (a)synchronously to retrieve the module values.
 		 *
 		 * @param {boolean} bAsync - Whether the async API is expected to be used
-		 * @param {string[]} aModuleNames - The dot-separated module names
+		 * @param {string[]} aModuleNames - The dot-separated module names or slash-separated URNs
 		 * @param {function} [fnCallback] - A callback function which returns the array of module
 		 *   values and adds modules to the global namespace as a side effect
 		 */
@@ -512,10 +512,6 @@ sap.ui.require([
 			var oExpectation;
 
 			if (bAsync) {
-				// map dot-separated module names to slash-separated Unified Resource Names (URNs)
-				aModuleNames = aModuleNames.map(function (sModuleName) {
-					return jQuery.sap.getResourceName(sModuleName, ""); //TODO mock?
-				});
 				this.oSapUiMock.expects("require").on(sap.ui)
 					.withExactArgs(aModuleNames, sinon.match.func)
 					.callsFake(function (aDependencies, fnFactory) {
@@ -523,9 +519,9 @@ sap.ui.require([
 							fnFactory.apply(null, fnCallback && fnCallback());
 						}, 0); // simulate AMD
 					});
-				this.mock(jQuery.sap).expects("require").never();
+				this.oJQuerySapMock.expects("require").never();
 			} else {
-				oExpectation = this.mock(jQuery.sap).expects("require");
+				oExpectation = this.oJQuerySapMock.expects("require");
 				// Note: jQuery.sap.require() supports "varargs" style
 				oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames)
 					.callsFake(function () {
@@ -750,8 +746,7 @@ sap.ui.require([
 	[{
 		aViewContent : [
 			mvcView(),
-			'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}"
-				+ '">',
+			'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}" + '">',
 			'<Out/>',
 			'</template:if>',
 			'</mvc:View>'
@@ -838,9 +833,8 @@ sap.ui.require([
 	}, {
 		aViewContent : [
 			mvcView(),
-			'<template:if test="'
-			+ "{path:'/some/path',formatter:'.someMethod'}{path:'/some/path',formatter:'foo.bar'}"
-			+ '">',
+			'<template:if test="' + "{path:'/some/path',formatter:'.someMethod'}"
+				+ "{path:'/some/path',formatter:'foo.bar'}" + '">',
 			'<Out/>',
 			'</template:if>',
 			'</mvc:View>'
@@ -1353,8 +1347,7 @@ sap.ui.require([
 			function checkInterfaceForPart(oInterface, i) {
 				var oCreateBindingContextExpectation,
 					oInterface2Part,
-					oModel = oInterface.getModel(i),
-					fnCreateBindingContext = oModel.createBindingContext;
+					oModel = oInterface.getModel(i);
 
 				// interface to ith part
 				oInterface2Part = oInterface.getInterface(i);
@@ -1403,7 +1396,7 @@ sap.ui.require([
 
 				try {
 					oCreateBindingContextExpectation = that.mock(oModel)
-						.expects("createBindingContext").callsFake(fnCreateBindingContext);
+						.expects("createBindingContext").callThrough();
 
 					// "drill-down" into ith part with absolute path
 					oInterface2Part = oInterface.getInterface(i, "/absolute/path");
@@ -2096,10 +2089,11 @@ sap.ui.require([
 						+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
 						+ ' template:require="' + sModuleName + '" text="'
 						+ "{formatter: 'foo.Helper.bar', path: '/flag'}" + '"/>',
-					sFragmentXml = xml(assert, [sTextElement]);
+					sFragmentXml = xml(assert, [sTextElement]),
+					aURNs = ["sap/ui/core/sample/ViewTemplate/scenario/Helper"];
 
 				this.expectLoad(bAsync, "myFragment", sFragmentXml);
-				this.expectRequire(bAsync, [sModuleName], function () {
+				this.expectRequire(bAsync, bAsync ? aURNs : [sModuleName], function () {
 					window.foo = {
 						Helper : {
 							bar : function (vValue) {
@@ -2151,10 +2145,15 @@ sap.ui.require([
 						'<Fragment fragmentName="innerFragment" type="XML"/>',
 						'<In id="last"/>',
 						'</FragmentDefinition>'
+					],
+					aURNs = [
+						"foo/Helper",
+						"sap/ui/core/sample/ViewTemplate/scenario/Helper",
+						"sap/ui/model/odata/AnnotationHelper"
 					];
 
 				this.expectLoad(bAsync, "myFragment", xml(assert, aFragmentContent));
-				this.expectRequire(bAsync, aModuleNames, function () {
+				this.expectRequire(bAsync, bAsync ? aURNs : aModuleNames, function () {
 					window.foo = {
 						Helper : {
 							bar : function (vValue) {
@@ -2568,10 +2567,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("template:alias", function (assert) {
-		var fnComplexParser = BindingParser.complexParser,
-			fnGetObject = jQuery.sap.getObject,
-			jQuerySapMock = this.mock(jQuery.sap);
-
 		window.foo = {
 			Helper : {
 				bar : function () {
@@ -2598,15 +2593,15 @@ sap.ui.require([
 		};
 
 		// make sure we do not create namespaces!
-		jQuerySapMock.expects("getObject").atLeast(1).withExactArgs(sinon.match.string)
-			.callsFake(fnGetObject);
-		jQuerySapMock.expects("getObject").atLeast(1)
+		this.oJQuerySapMock.expects("getObject").atLeast(1).withExactArgs(sinon.match.string)
+			.callThrough();
+		this.oJQuerySapMock.expects("getObject").atLeast(1)
 			.withExactArgs(sinon.match.string, /*iNoCreates*/undefined, sinon.match.object)
-			.callsFake(fnGetObject);
+			.callThrough();
 		this.mock(BindingParser).expects("complexParser").atLeast(1)
 			.withExactArgs(sinon.match.string, sinon.match.object, sinon.match.bool,
-				/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true)
-			.callsFake(fnComplexParser);
+				/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true, /*bPreferContext*/true)
+			.callThrough();
 
 		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
 		this.check(assert, [
@@ -2664,7 +2659,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	[
 		'<template:alias/>',
-		'<template:alias name="foo"/>',
+		'<template:alias name=""/>',
 		'<template:alias name="."/>',
 		'<template:alias name=".foo.bar"/>'
 	].forEach(function (sViewContent) {
@@ -3623,14 +3618,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("async require on view level", function (assert) {
-		var aModuleNames = ["foo.Helper"],
-			aViewContent = [
-				mvcView().replace(">", ' template:require="' + aModuleNames.join(" ") + '">'),
+		var aViewContent = [
+				mvcView().replace(">", ' template:require="foo.Helper">'),
 				"<Text text=\"{formatter: 'foo.Helper.bar', path: '/flag'}\"/>",
 				'</mvc:View>'
 			];
 
-		this.expectRequire(true, aModuleNames, function () {
+		this.oJQuerySapMock.expects("getResourceName").withExactArgs("foo.Helper", "")
+			.returns("~");
+		this.expectRequire(true, ["~"], function () {
 			window.foo = {
 				Helper : {
 					bar : function (vValue) {
@@ -3648,6 +3644,59 @@ sap.ui.require([
 		], aViewContent, {
 			models : new JSONModel({flag : true})
 		}, [
+			'<Text text="*true*"/>'
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("AMD require on view and fragment level", function (assert) {
+		var aFragmentContent = [
+				'<FragmentDefinition xmlns="sap.ui.core" xmlns:template='
+					+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
+					+ ' template:require="{Helper : \'bar/Helper\'}">',
+				"<Text text=\"{formatter: 'Helper.bar', path: '/flag'}\"/>",
+				'</FragmentDefinition>'
+			],
+			aViewContent = [
+				mvcView("t").replace(">", ' t:require="{Helper : \'foo/Helper\'}">'),
+				'<t:alias name="bar" value="Helper.bar">',
+				'<Fragment fragmentName="myFragment" type="XML"/>',
+				"<Text text=\"{formatter: 'bar', path: '/flag'}\"/>",
+				'</t:alias>',
+				'</mvc:View>'
+			];
+
+		this.expectRequire(true, ["foo/Helper"], function () {
+			var oHelper = {
+					bar : function (vValue) {
+						return "*" + vValue + "*";
+					}
+				};
+
+			return [oHelper];
+		});
+		this.expectLoad(true, "myFragment", xml(assert, aFragmentContent));
+		this.expectRequire(true, ["bar/Helper"], function () {
+			var oHelper = {
+					bar : function (vValue) {
+						return "%" + vValue + "%";
+					}
+				};
+
+			return [oHelper];
+		});
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] fragmentName = myFragment", d : 2},
+			{m : "[ 1] text = %true%", d : aFragmentContent[1]},
+			{m : "[ 1] Finished", d : "</Fragment>"},
+			{m : "[ 0] text = *true*", d : 3},
+			{m : "[ 0] Finished processing qux"}
+		], aViewContent, {
+			models : new JSONModel({flag : true})
+		}, [
+			'<Text text="%true%"/>',
 			'<Text text="*true*"/>'
 		], true);
 	});

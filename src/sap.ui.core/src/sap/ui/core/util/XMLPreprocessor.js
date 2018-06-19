@@ -4,16 +4,17 @@
 
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/base/SyncPromise',
-	'sap/ui/core/XMLTemplateProcessor',
-	'sap/ui/model/BindingMode',
-	'sap/ui/model/CompositeBinding',
-	'sap/ui/model/Context'
+	"jquery.sap.global",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/CompositeBinding",
+	"sap/ui/model/Context",
+	"jquery.sap.script" // for jQuery.sap.parseJS
 ], function (jQuery, BindingParser, ManagedObject, SyncPromise, XMLTemplateProcessor, BindingMode,
-		CompositeBinding, Context) {
+		CompositeBinding, Context/*, jQuerySap1 */) {
 	"use strict";
 
 	var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
@@ -1048,7 +1049,7 @@ sap.ui.define([
 				// Note: jQuery.sap.getObject("", ...) === undefined
 				return sName && sName.charAt(0) === "."
 					? jQuery.sap.getObject(sName.slice(1), undefined, oScope)
-					: jQuery.sap.getObject(sName);
+					: jQuery.sap.getObject(sName, undefined, oScope) || jQuery.sap.getObject(sName);
 			}
 
 			/**
@@ -1084,7 +1085,7 @@ sap.ui.define([
 					aPerformanceCategories);
 				try {
 					vBindingInfo
-						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true)
+						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true, true)
 						|| sValue; // in case there is no binding and nothing to unescape
 				} catch (e) {
 					return SyncPromise.reject(e);
@@ -1246,7 +1247,11 @@ sap.ui.define([
 
 			/**
 			 * Load required modules for the given element (a)synchronously, according to its
-			 * "template:require" attribute which may contain a space separated list.
+			 * "template:require" attribute which may contain either a space separated list of
+			 * dot-separated module names or a JSON representation of a map from alias to
+			 * slash-separated Unified Resource Names (URNs). In the first case, the resulting
+			 * modules must be accessed from the global namespace. In the second case, they are
+			 * available as local names (AMD style) similar to <template:alias> instructions.
 			 *
 			 * @param {Element} oElement
 			 *   any XML DOM element
@@ -1257,22 +1262,44 @@ sap.ui.define([
 			 *   If loading fails in sync mode
 			 */
 			function requireFor(oElement) {
-				var aModuleNames,
-					sModuleNames = oElement.getAttribute("template:require");
+				var mAlias2URN = {},
+					aModuleNames,
+					sModuleNames = oElement.getAttributeNS(sNAMESPACE, "require"),
+					aURNs;
+
+				function asyncRequire() {
+					return new SyncPromise(function (resolve) {
+						// Note: currently there is no way to detect failure
+						sap.ui.require(aURNs, function (/*oModule,...*/) {
+							var aModules = arguments;
+
+							Object.keys(mAlias2URN).forEach(function (sAlias, i) {
+								oScope[sAlias] = aModules[i];
+							});
+							resolve();
+						});
+					});
+				}
 
 				if (sModuleNames) {
+					// Note: remove the attribute because it might look like a binding and must not
+					// reach visitAttributes
+					oElement.removeAttributeNS(sNAMESPACE, "require");
+
+					if (sModuleNames[0] === "{") {
+						mAlias2URN = jQuery.sap.parseJS(sModuleNames);
+						aURNs = Object.keys(mAlias2URN).map(function (sAlias) {
+							return mAlias2URN[sAlias];
+						});
+						return asyncRequire();
+					}
 					aModuleNames = sModuleNames.split(" ");
 					if (!oViewInfo.sync) {
 						// map dot-separated module names to slash-separated Unified Resource Names
-						aModuleNames = aModuleNames.map(function (sModuleName) {
+						aURNs = aModuleNames.map(function (sModuleName) {
 							return jQuery.sap.getResourceName(sModuleName, /*sSuffix*/"");
 						});
-						return new SyncPromise(function (resolve) {
-							// Note: currently there is no way to detect failure
-							sap.ui.require(aModuleNames, function (/*oModule,...*/) {
-								resolve();
-							});
-						});
+						return asyncRequire();
 					}
 
 					jQuery.sap.require.apply(jQuery.sap, aModuleNames);
@@ -1349,10 +1376,12 @@ sap.ui.define([
 					oOldValue,
 					sValue = oElement.getAttribute("value");
 
-				if (!sName || sName.length <= 1 || sName.lastIndexOf(".") !== 0) {
+				if (sName && sName[0] === ".") {
+					sName = sName.slice(1);
+				}
+				if (!sName || sName.includes(".")) {
 					error("Missing proper relative name in ", oElement);
 				}
-				sName = sName.slice(1);
 
 				oNewValue = getObject(sValue);
 				if (!oNewValue) {
@@ -1437,7 +1466,12 @@ sap.ui.define([
 					return oSyncPromiseResolved;
 				}
 				return oPromise.then(function (sFragmentName) {
-					return insertFragment(sFragmentName, oElement, oWithControl);
+					var oOldScope = oScope;
+
+					oScope = Object.create(oScope);
+					return insertFragment(sFragmentName, oElement, oWithControl).then(function () {
+						oScope = oOldScope;
+					});
 				}, function (ex) {
 					warn(oElement, 'Error in formatter:', ex);
 				});
@@ -1494,7 +1528,8 @@ sap.ui.define([
 			 */
 			function templateRepeat(oElement, oWithControl) {
 				var sList = oElement.getAttribute("list") || "",
-					oBindingInfo = BindingParser.complexParser(sList, oScope, false, true, true),
+					oBindingInfo
+						= BindingParser.complexParser(sList, oScope, false, true, true, true),
 					aContexts,
 					oListBinding,
 					sModelName,
