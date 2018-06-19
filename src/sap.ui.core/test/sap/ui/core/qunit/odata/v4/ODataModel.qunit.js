@@ -394,6 +394,7 @@ sap.ui.require([
 			oExpectedBind1,
 			oExpectedBind2,
 			oExpectedBind3,
+			oExpectedBind4,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			fnFetchEntityContainer = function () {},
 			fnFetchMetadata = function () {},
@@ -414,6 +415,8 @@ sap.ui.require([
 			.returns(ODataModel.prototype.getGroupProperty);
 		oExpectedBind3 = this.mock(ODataModel.prototype.reportUnboundMessages).expects("bind")
 			.returns(ODataModel.prototype.reportUnboundMessages);
+		oExpectedBind4 = this.mock(ODataModel.prototype.reportBoundMessages).expects("bind")
+			.returns(ODataModel.prototype.reportBoundMessages);
 
 		// code under test
 		oModel = createModel("?sap-client=123");
@@ -424,6 +427,7 @@ sap.ui.require([
 		assert.strictEqual(oExpectedBind1.firstCall.args[0], oModel.oMetaModel);
 		assert.strictEqual(oExpectedBind2.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind3.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind4.firstCall.args[0], oModel);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto")
@@ -1537,6 +1541,67 @@ sap.ui.require([
 
 			// code under test
 			oModel.reportUnboundMessages();
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{numericSeverity : 1, type : MessageType.Success},
+		{numericSeverity : 2, type : MessageType.Information},
+		{numericSeverity : 3, type : MessageType.Warning},
+		{numericSeverity : 4, type : MessageType.Error},
+		{numericSeverity : 0, type : MessageType.None},
+		{numericSeverity : 5, type : MessageType.None},
+		{numericSeverity : null, type : MessageType.None},
+		{numericSeverity : undefined, type : MessageType.None}
+	].forEach(function (oFixture, i) {
+		QUnit.test("reportBoundMessages, " + i, function (assert) {
+			var aMessages = [{
+					"code" : "F42",
+//					"longtextUrl" : "foo/bar",
+					"message" : "foo0",
+					"numericSeverity" : oFixture.numericSeverity,
+					"target" : "Name",
+					"transient" : false
+				}, {
+					"code" : "UF1",
+//					"longtextUrl" : "",
+					"message" : "foo1",
+					"numericSeverity" : oFixture.numericSeverity,
+					"target" : "",
+					"transient" : true
+				}],
+				oModel = createModel(),
+				oModelMock = this.mock(oModel);
+
+			oModelMock.expects("fireMessageChange")
+				.withExactArgs(sinon.match(function (mArguments) {
+					var aNewMessages = mArguments.newMessages,
+						aOldMessages = mArguments.oldMessages;
+
+					return aNewMessages.length === aMessages.length
+						&& aOldMessages.length === 0
+						&& aNewMessages.every(function (oMessage, j) {
+							return oMessage instanceof Message
+								&& oMessage.getCode() === aMessages[j].code
+//TODO							&& oMessage.getDescriptionUrl() === aMessages[j].longtextUrl
+								&& oMessage.getMessage() === aMessages[j].message
+								&& oMessage.getMessageProcessor() === oModel
+								&& oMessage.getPersistent() === aMessages[j].transient
+								&& oMessage.getTarget() === "/Team('42')/foo/bar"
+									+ (aMessages[j].target ? "/" + aMessages[j].target : "")
+								&& oMessage.getTechnical() === false
+								&& oMessage.getType() === oFixture.type;
+						});
+				}));
+
+			// code under test
+			oModel.reportBoundMessages("Team('42')", {"/foo/bar" : aMessages});
+
+			oModelMock.expects("fireMessageChange").never();
+
+			// code under test
+			oModel.reportBoundMessages("Team('42')", {});
 		});
 	});
 });

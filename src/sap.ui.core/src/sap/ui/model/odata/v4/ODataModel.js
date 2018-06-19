@@ -259,6 +259,7 @@ sap.ui.define([
 										that._submitBatch.bind(that, sGroupId));
 								}
 							},
+							fnReportBoundMessages : this.reportBoundMessages.bind(this),
 							fnReportUnboundMessages : this.reportUnboundMessages.bind(this)
 						}, mHeaders, this.mUriParameters, sODataVersion);
 					if (mParameters.earlyRequests) {
@@ -1167,6 +1168,54 @@ sap.ui.define([
 				oBinding.refresh(sGroupId);
 			}
 		});
+	};
+
+	/**
+	 * Reports the given bound OData messages by firing a <code>messageChange</code> event with
+	 * the new messages.
+	 *
+	 * @param {string} sResourcePath
+	 *   The resource path of the cache that saw the messages
+	 * @param {object} mPathToODataMessages
+	 *   Maps a resource path with key predicates to an array of messages. The messages have at
+	 *   least following properties:
+	 *   {string} code - The error code
+	 *   {string} message - The message text
+	 *   {number} numericSeverity
+	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
+	 *      "error")
+	 *   {string} target - The target for the message relative to the resource path with key
+	 *      predicates
+	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
+	 *      application and are reported as persistent
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages) {
+		var sDataBindingPath = "/" + sResourcePath,
+			aNewMessages = [],
+			that = this;
+
+		Object.keys(mPathToODataMessages).forEach(function (sKeyPredicateTreePath) {
+			mPathToODataMessages[sKeyPredicateTreePath].forEach(function (oRawMessage) {
+				var sTarget = sDataBindingPath
+						+ sKeyPredicateTreePath
+						+ (oRawMessage.target ? "/" + oRawMessage.target : "");
+
+				aNewMessages.push(new Message({
+					code : oRawMessage.code,
+					message : oRawMessage.message,
+					persistent : oRawMessage.transient,
+					processor : that,
+					target : sTarget,
+					technical : false,
+					type : aMessageTypes[oRawMessage.numericSeverity] || MessageType.None
+				}));
+			});
+		});
+		if (aNewMessages.length) {
+			this.fireMessageChange({newMessages : aNewMessages, oldMessages : []});
+		}
 	};
 
 	/**
