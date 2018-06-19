@@ -26,6 +26,13 @@
 	opacity: 0;
 	transition: opacity 0.3s ease-in;
 	-webkit-transition: opacity 0.3s ease-in;
+
+	&:focus {
+		outline: 1px dotted @sapUiContentFocusColor;
+		html[data-sap-ui-browser^="ie"] & {
+			outline-style: dashed;
+		}
+	}
 }
 
 .sapUiBlockLayer:not(:last-child) {
