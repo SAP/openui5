@@ -381,10 +381,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		var oNavContainer = this._getFacetDialogNavContainer();
 		oDialog.addContent(oNavContainer);
 
-		this.getLists().forEach(function (oList) {
-			oList._preserveOriginalActiveState();
-		});
-
 		//keyboard acc - focus on 1st item of 1st page
 		oDialog.setInitialFocus(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
 		oDialog.open();
@@ -1175,8 +1171,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					that._openPopover(oPopover, oThisButton);
 				};
 
-				oList._preserveOriginalActiveState();
-
 				// TODO: Remove when ie 9 is no longer supported
 				if (Device.browser.internet_explorer && Device.browser.version < 10) {
 					// Opening popover is delayed so it is called after the previous popover is closed
@@ -1515,7 +1509,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					if (oNavContainer.getCurrentPage() === oFilterItemsPage) {
 
 						var oList = that._restoreListFromDisplayContainer(oFilterItemsPage);
-						oList._updateActiveState();
 						oList._fireListCloseEvent();
 						oList._search("");
 					}
@@ -1752,7 +1745,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		var oFilterItemsPage = oNavContainer.getPages()[1];
 		var oList = this._restoreListFromDisplayContainer(oFilterItemsPage);
 
-		oList._updateActiveState();
 		oList._fireListCloseEvent();
 		oList._search("");
 		this._selectedFacetItem.setCounter(oList.getAllCount());
