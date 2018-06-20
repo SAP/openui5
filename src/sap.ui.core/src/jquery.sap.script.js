@@ -161,7 +161,9 @@ sap.ui.define([
 	 * @private
 	 * @returns {object} - the tokenizer
 	 */
-	jQuery.sap._createJSTokenizer = JSTokenizer;
+	jQuery.sap._createJSTokenizer = function() {
+		return new JSTokenizer();
+	};
 
 	/**
 	 * Parse simple JS objects.
@@ -181,7 +183,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.11
 	 */
-	jQuery.sap.parseJS = JSTokenizer().parseJS;
+	jQuery.sap.parseJS = JSTokenizer.parseJS;
 
 	/**
 	 * Merge the contents of two or more objects together into the first object.
