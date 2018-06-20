@@ -9,6 +9,7 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.MessageViewInsideDialog.MessageView", {
 
 		onInit: function () {
+			var that = this;
 
 			var	oLink = new sap.m.Link({
 				text: "Show more information",
@@ -76,7 +77,7 @@ sap.ui.define([
 					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
-						this.oMessageView.navigateBack();
+						that.oMessageView.navigateBack();
 						this.setVisible(false);
 					}
 				});

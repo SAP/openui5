@@ -77,7 +77,7 @@ sap.ui.define([
 					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
-						this.oMessageView.navigateBack();
+						that.oMessageView.navigateBack();
 						this.setVisible(false);
 					}
 				});
