@@ -205,9 +205,9 @@ sap.ui.define([
 	 * @since 1.42.0
 	 */
 	TreeItemBase.prototype._getExpanderControl = function() {
-		var sSrc = "";
-		if (!this.isLeaf()) {
-			sSrc = this.getExpanded() ? this.ExpandedIconURI : this.CollapsedIconURI;
+		var sSrc = this.CollapsedIconURI;
+		if (this.getExpanded()) {
+			sSrc = this.ExpandedIconURI;
 		}
 
 		if (this._oExpanderControl) {
@@ -235,9 +235,9 @@ sap.ui.define([
 	 */
 	TreeItemBase.prototype._updateExpander = function() {
 		if (this._oExpanderControl) {
-			var sSrc = "";
-			if (!this.isLeaf()) {
-				sSrc = this.getExpanded() ? this.ExpandedIconURI : this.CollapsedIconURI;
+			var sSrc = this.CollapsedIconURI;
+			if (this.getExpanded()) {
+				sSrc = this.ExpandedIconURI;
 			}
 			this._oExpanderControl.setSrc(sSrc);
 			this.$().attr("aria-expanded", this.getExpanded());
