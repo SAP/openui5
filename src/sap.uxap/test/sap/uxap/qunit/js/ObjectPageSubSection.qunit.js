@@ -182,7 +182,9 @@
 			oBlock1 = oHelpers.getBlock(),
 			oBlock2 = oHelpers.getBlock(),
 			iBlockCount = 0,
-			iBlock2ExpectedIndex = 1;
+			iBlock2ExpectedIndex = 1,
+			aSeeMoreButtonLabels = oSubSection._getSeeMoreButton().getAriaLabelledBy(),
+			sSubSectionId = oSubSection.getId();
 
 		// Assert default.
 		assert.equal(oSubSection.getMoreBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
@@ -200,6 +202,8 @@
 		// Assert: check if the block is added to the end although it is being inserted at index 0.
 		assert.equal(oSubSection.indexOfMoreBlock(oBlock2), iBlock2ExpectedIndex,
 			"There inserted block is added to the end of the blocks aggregation.");
+
+		assert.ok(aSeeMoreButtonLabels.indexOf(sSubSectionId) > -1, "See more button is labelled correctly.");
 
 		oSubSection.removeAllMoreBlocks();
 		iBlockCount = 0;
