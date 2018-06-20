@@ -810,107 +810,96 @@
 
 		QUnit.test("Flip transition", function(assert) {
 			var done = assert.async();
-			if (jQuery.support.cssTransitions) {
-				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-				assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
+			assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
+			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
-				nc.addPage(new sap.m.Page("pageTransFlip", {
-					title: "Page Flip"
-				}));
+			nc.addPage(new sap.m.Page("pageTransFlip", {
+				title: "Page Flip"
+			}));
 
-				var $flipPage = jQuery("#pageTransFlip");
-				var $page2 = jQuery("#page2");
-				assert.equal($flipPage.length, 0, "Flip page should not be rendered yet");
+			var $flipPage = jQuery("#pageTransFlip");
+			var $page2 = jQuery("#page2");
+			assert.equal($flipPage.length, 0, "Flip page should not be rendered yet");
 
-				nc.to("pageTransFlip", "flip");
+			nc.to("pageTransFlip", "flip");
 
-				$flipPage = jQuery("#pageTransFlip");
-				assert.equal($flipPage.length, 1, "Flip page should be rendered now");
+			$flipPage = jQuery("#pageTransFlip");
+			assert.equal($flipPage.length, 1, "Flip page should be rendered now");
+
+			setTimeout(function() {
+				assert.ok($flipPage.hasClass("sapMNavItemFlipNext"), "Flip page should be prepared for flipping now");
 
 				setTimeout(function() {
-					assert.ok($flipPage.hasClass("sapMNavItemFlipNext"), "Flip page should be prepared for flipping now");
+
+					assert.ok($flipPage.hasClass("sapMNavItemFlipping"), "Flip page should be flipping now");
+
+					assert.ok($page2.hasClass("sapMNavItemFlipping"), "Page 2 should be flipping now");
+					assert.ok($page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 should be flipping now");
 
 					setTimeout(function() {
 
-						assert.ok($flipPage.hasClass("sapMNavItemFlipping"), "Flip page should be flipping now");
+						assert.ok(!$flipPage.hasClass("sapMNavItemFlipping"), "Flip page should not be flipping now");
+						assert.ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 should not be flipping now");
 
-						assert.ok($page2.hasClass("sapMNavItemFlipping"), "Page 2 should be flipping now");
-						assert.ok($page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 should be flipping now");
+						nc.back();
 
 						setTimeout(function() {
 
-							assert.ok(!$flipPage.hasClass("sapMNavItemFlipping"), "Flip page should not be flipping now");
-							assert.ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 should not be flipping now");
-
-							nc.back();
+							assert.ok($flipPage.hasClass("sapMNavItemFlipping"), "Flip page should be flipping now");
+							assert.ok($page2.hasClass("sapMNavItemFlipping"), "Page 2 should be flipping now");
 
 							setTimeout(function() {
+								assert.ok(!$flipPage.hasClass("sapMNavItemFlipping"), "Flip page classes should be cleaned up");
+								assert.ok(!$flipPage.hasClass("sapMNavItemFlipNext"), "Flip page classes should be cleaned up");
+								assert.ok(!$flipPage.hasClass("sapMNavItemFlipPrevious"), "Flip page classes should be cleaned up");
+								assert.ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 classes should be cleaned up");
+								assert.ok(!$page2.hasClass("sapMNavItemFlipNext"), "Page 2 classes should be cleaned up");
+								assert.ok(!$page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 classes should be cleaned up");
+								assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
+								assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
-								assert.ok($flipPage.hasClass("sapMNavItemFlipping"), "Flip page should be flipping now");
-								assert.ok($page2.hasClass("sapMNavItemFlipping"), "Page 2 should be flipping now");
-
-								setTimeout(function() {
-									assert.ok(!$flipPage.hasClass("sapMNavItemFlipping"), "Flip page classes should be cleaned up");
-									assert.ok(!$flipPage.hasClass("sapMNavItemFlipNext"), "Flip page classes should be cleaned up");
-									assert.ok(!$flipPage.hasClass("sapMNavItemFlipPrevious"), "Flip page classes should be cleaned up");
-									assert.ok(!$page2.hasClass("sapMNavItemFlipping"), "Page 2 classes should be cleaned up");
-									assert.ok(!$page2.hasClass("sapMNavItemFlipNext"), "Page 2 classes should be cleaned up");
-									assert.ok(!$page2.hasClass("sapMNavItemFlipPrevious"), "Page 2 classes should be cleaned up");
-									assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
-									assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
-
-									done();
-								}, 600);
-							}, 100);
-						}, 600);
-					}, 100);
-				}, 40);
-			} else {
-				// no CSS transitions
-				assert.expect(0);
-				nc.backToPage("page1");
-				setTimeout(function(){
-					done();
-				}, 500);
-			}
+								done();
+							}, 600);
+						}, 100);
+					}, 600);
+				}, 100);
+			}, 40);
 		});
 
 
-		if (jQuery.support.cssTransitions) {
-			QUnit.test("Slide back to page 1", function(assert) {
-				var done = assert.async();
-				nc.backToPage("page1");
+		QUnit.test("Slide back to page 1", function(assert) {
+			var done = assert.async();
+			nc.backToPage("page1");
 
-				var $page1 = jQuery("#page1");
-				var $page2 = jQuery("#page2");
+			var $page1 = jQuery("#page1");
+			var $page2 = jQuery("#page2");
 
-				assert.ok($page1.hasClass("sapMNavItemLeft"), "Page 1 should have left class");
-				assert.ok(!$page2.hasClass("sapMNavItemRight"), "Page 2 should have no right class");
+			assert.ok($page1.hasClass("sapMNavItemLeft"), "Page 1 should have left class");
+			assert.ok(!$page2.hasClass("sapMNavItemRight"), "Page 2 should have no right class");
+
+			setTimeout(function() {
+				$page1 = jQuery("#page1");
+				$page2 = jQuery("#page2");
+
+				assert.ok($page1.hasClass("sapMNavItemSliding"), "Page 1 should be sliding now"); // slide transition was the last one used
+				assert.ok($page2.hasClass("sapMNavItemSliding"), "Page 2 should be sliding now");
+
+				assert.ok(!$page1.hasClass("sapMNavItemLeft"), "Page 2 should have no left class");
+				assert.ok($page2.hasClass("sapMNavItemRight"), "Page 1 should have right class");
 
 				setTimeout(function() {
-					$page1 = jQuery("#page1");
-					$page2 = jQuery("#page2");
+					nc.back();
+					assert.ok(!$page1.hasClass("sapMNavItemSliding"), "Page 2 classes should be cleaned up");
+					assert.ok(!$page1.hasClass("sapMNavItemRight"), "Page 2 classes should be cleaned up");
+					assert.ok(!$page1.hasClass("sapMNavItemLeft"), "Page 2 classes should be cleaned up");
+					assert.ok(!$page2.hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
+					assert.ok(!$page2.hasClass("sapMNavItemRight"), "Page 1 classes should be cleaned up");
+					assert.ok(!$page2.hasClass("sapMNavItemLeft"), "Page 1 classes should be cleaned up");
 
-					assert.ok($page1.hasClass("sapMNavItemSliding"), "Page 1 should be sliding now"); // slide transition was the last one used
-					assert.ok($page2.hasClass("sapMNavItemSliding"), "Page 2 should be sliding now");
-
-					assert.ok(!$page1.hasClass("sapMNavItemLeft"), "Page 2 should have no left class");
-					assert.ok($page2.hasClass("sapMNavItemRight"), "Page 1 should have right class");
-
-					setTimeout(function() {
-						nc.back();
-						assert.ok(!$page1.hasClass("sapMNavItemSliding"), "Page 2 classes should be cleaned up");
-						assert.ok(!$page1.hasClass("sapMNavItemRight"), "Page 2 classes should be cleaned up");
-						assert.ok(!$page1.hasClass("sapMNavItemLeft"), "Page 2 classes should be cleaned up");
-						assert.ok(!$page2.hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
-						assert.ok(!$page2.hasClass("sapMNavItemRight"), "Page 1 classes should be cleaned up");
-						assert.ok(!$page2.hasClass("sapMNavItemLeft"), "Page 1 classes should be cleaned up");
-
-						done();
-					}, 600);
-				}, 100);
-			});
-		}
+					done();
+				}, 600);
+			}, 100);
+		});
 
 		QUnit.test("Should Build a navigation stack", function(assert) {
 			var done = assert.async();

@@ -903,14 +903,6 @@ function(
 		//listen to resize
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._fnResize, this));
 
-		// Change ITB content height on resize when ITB stretchContentHeight is set to true (IE9 fix)
-		if (!jQuery.support.newFlexBoxLayout &&
-			bIsParentIconTabBar &&
-			oParent.getStretchContentHeight()) {
-			this._sResizeListenerNoFlexboxSupportId = ResizeHandler.register(oParent.getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
-			this._fnResizeNoFlexboxSupport();
-		}
-
 		this._bCheckIfIntoView = true;
 	};
 

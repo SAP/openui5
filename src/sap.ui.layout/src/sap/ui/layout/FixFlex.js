@@ -330,13 +330,6 @@ sap.ui.define([
 		 * @private
 		 */
 		FixFlex.prototype.onAfterRendering = function () {
-			// Fallback for older browsers
-			if (!jQuery.support.hasFlexBoxSupport) {
-				this.sResizeListenerNoFlexBoxSupportFixedId = ResizeHandler.register(this.getDomRef("Fixed"), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
-				this.sResizeListenerNoFlexBoxSupportId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
-				this._handlerResizeNoFlexBoxSupport();
-			}
-
 			// Add handler for FixFlex scrolling option
 			if (this.getMinFlexSize() !== 0) {
 				this.sResizeListenerFixFlexScroll = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._changeScrolling, this));

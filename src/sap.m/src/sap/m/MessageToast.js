@@ -392,15 +392,12 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			// sets the position of the pop-up
 			oPopup.setPosition(mSettings.my, mSettings.at, mSettings.of, mSettings.offset, mSettings.collision);
 
-			if (jQuery.support.cssTransitions) {
-
-				// sets the animation functions to use for opening and closing the message toast
-				oPopup.setAnimations(function fnMessageToastOpen($MessageToast, iDuration, fnOpened) {
-					fnOpened();
-				}, function fnMessageToastClose($MessageToastDomRef, iDuration, fnClose) {
-					that._setCloseAnimation($MessageToastDomRef, iDuration, fnClose, mSettings);
-				});
-			}
+			// sets the animation functions to use for opening and closing the message toast
+			oPopup.setAnimations(function fnMessageToastOpen($MessageToast, iDuration, fnOpened) {
+				fnOpened();
+			}, function fnMessageToastClose($MessageToastDomRef, iDuration, fnClose) {
+				that._setCloseAnimation($MessageToastDomRef, iDuration, fnClose, mSettings);
+			});
 
 			oPopup.setShadow(false);
 			oPopup.__bAutoClose = mSettings.autoClose;

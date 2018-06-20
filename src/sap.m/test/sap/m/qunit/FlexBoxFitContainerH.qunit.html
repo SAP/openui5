@@ -131,7 +131,7 @@
 					item6Height = outerhboxHeight;
 
 					QUnit.start();
-					if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout) {
+					if (sap.ui.Device.browser.phantomJS) {
 						QUnit.test("Dummy Test", function(assert) {
 							assert.ok(true, "At least one test needs to run to avoid test timeouts!");
 						});
@@ -139,7 +139,7 @@
 				}, 1000);
 			});
 
-			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
+			if (!sap.ui.Device.browser.phantomJS) {
 				QUnit.test("Flex Boxes rendered", function(assert) {
 					assert.ok(jQuery.sap.domById("outerHBox"), "Outer HBox should be rendered");
 					assert.ok(jQuery.sap.domById("item1"), "Item 1 should be rendered");
