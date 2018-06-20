@@ -2029,6 +2029,15 @@ sap.ui.define([
 			return sap.ui.getCore().getComponent(vConfig);
 		}
 
+		// Remove url objects with final flag from asyncHints as the new loader no longer supports it
+		if (vConfig.asyncHints && vConfig.asyncHints.libs) {
+			vConfig.asyncHints.libs.forEach(function(oLib) {
+				if (oLib.url && typeof oLib.url === "object") {
+					oLib.url = oLib.url.url;
+				}
+			});
+		}
+
 		if (vConfig.async) {
 			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.component'. Use 'Component.create' instead");
 		} else {
