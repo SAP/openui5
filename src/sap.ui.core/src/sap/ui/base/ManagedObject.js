@@ -4110,7 +4110,7 @@ sap.ui.define([
 			}
 			this.updateBindingContext(false, sModelName);
 			this.propagateProperties(sModelName);
-			this.fireModelContextChange();
+			this.fireModelContextChange({modelName:sModelName});
 		}
 		return this;
 	};
