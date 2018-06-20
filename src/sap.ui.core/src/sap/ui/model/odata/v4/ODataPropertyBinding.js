@@ -41,9 +41,9 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.ODataPropertyBinding
 	 * @author SAP SE
 	 * @class Property binding for an OData V4 model.
-	 *   An event handler can only be attached to this binding for the following events: 'change',
-	 *   'dataReceived', and 'dataRequested'.
-	 *   For unsupported events, an error is thrown.
+	 *   An event handler can only be attached to this binding for the following events:
+	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested' and
+	 *   'DataStateChange'. For unsupported events, an error is thrown.
 	 * @extends sap.ui.model.PropertyBinding
 	 * @mixes sap.ui.model.odata.v4.ODataBinding
 	 * @public

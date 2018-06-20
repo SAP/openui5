@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Test Page for DataBinding Messages</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.core"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+        <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+        <!--[if IE]>
+            <script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+        <![endif]-->
+        <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+        <!-- This test is not running against the real Northwind service, but a fake service based on
+            Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
+        <script src="ODataModelFakeService.js"></script>
+		<script src="DataBindingMessages.qunit.js"></script>
+
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>
