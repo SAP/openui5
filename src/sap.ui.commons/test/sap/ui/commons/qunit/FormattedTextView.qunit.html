@@ -108,9 +108,7 @@
 		oFTV3.setHtmlText(evilText);
 		sap.ui.getCore().applyChanges();
 		goodText += 'START ' + 'END';
-		// for the sake of IE8 which capitalizes tags retrieved with innerHTML, we use lowercase for comparison of strings
-		goodText = goodText.toLowerCase();
-		var deliveredText = jQuery(jQuery.sap.domById('textView3')).html().toLowerCase();
+		var deliveredText = jQuery(jQuery.sap.domById('textView3')).html();
 		assert.equal(deliveredText, goodText, "Text has been sanitized");
 	});
 

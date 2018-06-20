@@ -122,7 +122,7 @@ function(
 			justifyContent : {type : "sap.m.FlexJustifyContent", group : "Appearance", defaultValue : FlexJustifyContent.Start},
 
 			/**
-			 * Determines the layout behavior of items along the cross-axis. "Baseline" is not supported in Internet Explorer 10.
+			 * Determines the layout behavior of items along the cross-axis.
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#align-items-property
 			 */
@@ -138,7 +138,7 @@ function(
 			wrap : {type : "sap.m.FlexWrap", group : "Appearance", defaultValue : FlexWrap.NoWrap},
 
 			/**
-			 * Determines the layout behavior of container lines when there's extra space along the cross-axis. This property has no effect in Internet Explorer 10.
+			 * Determines the layout behavior of container lines when there's extra space along the cross-axis.
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#align-content-property
 			 *
