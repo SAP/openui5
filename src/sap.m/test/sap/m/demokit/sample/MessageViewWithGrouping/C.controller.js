@@ -26,6 +26,7 @@ sap.ui.define([
 
 	var CController = Controller.extend("sap.m.sample.MessageViewWithGrouping.C", {
 		onInit: function () {
+			var that = this;
 			// create any data and a model and set it to the view
 
 			var sErrorDescription = 'First Error message description. \n' +
@@ -116,7 +117,7 @@ sap.ui.define([
 					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
-						this.oMessageView.navigateBack();
+						that.oMessageView.navigateBack();
 						this.setVisible(false);
 					}
 				});

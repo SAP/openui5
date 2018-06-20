@@ -659,31 +659,6 @@ function(
 			}
 		};
 
-		/**
-		 * Handles navigate event of the NavContainer
-		 *
-		 * @private
-		 */
-		MessagePopover.prototype._afterNavigate = function () {
-			// Just wait for the next tick to apply the focus
-			jQuery.sap.delayedCall(0, this, "_restoreFocus");
-		};
-
-		/**
-		 * Restores the focus after navigation
-		 *
-		 * @private
-		 */
-		MessagePopover.prototype._restoreFocus = function () {
-			if (this._oMessageView._isListPage()) {
-				var oRestoreFocus = this._oRestoreFocus && this._oRestoreFocus.control(0);
-
-				oRestoreFocus && oRestoreFocus.focus();
-			} else {
-				this._oMessageView._oBackButton.focus();
-			}
-		};
-
 		/*
 		 * =========================================
 		 * MessagePopover async handlers
