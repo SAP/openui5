@@ -50,8 +50,8 @@
 								id="ruleList"
 								selectionMode="MultiToggle"
 								rows="{
-								path: 'treeModel>/',
-								parameters: {numberOfExpandedLevels: 1}
+									path: 'treeModel>/',
+									parameters: {numberOfExpandedLevels: 1}
 								}"
 								collapseRecursive="false"
 								enableColumnReordering="false"
@@ -67,7 +67,7 @@
 								>
 							<t:columns>
 								<t:Column id="rulesColumn"
-										label="Rules ({/selectedRulesCount} selected)"
+										  label="Rules ({/selectedRulesCount} selected)"
 										  sortProperty="name"
 										  filterProperty="name">
 									<t:template>
@@ -75,7 +75,7 @@
 									</t:template>
 								</t:Column>
 								<t:Column id="categoriesColumn"
-										label="Categories"
+										  label="Categories"
 										  width="10rem"
 										  sortProperty="categories"
 										  filterProperty="categories">
@@ -84,8 +84,8 @@
 									</t:template>
 								</t:Column>
 								<t:Column id="audienceColumn"
-										label="Audience"
-										visible="false"
+										  label="Audience"
+										  visible="false"
 										  sortProperty="audiences"
 										  filterProperty="audiences">
 									<t:template>
@@ -93,7 +93,7 @@
 									</t:template>
 								</t:Column>
 								<t:Column id="idsColumn"
-										label="RuleID"
+										  label="RuleID"
 										  width="10rem"
 										  visible="false"
 										  sortProperty="id"

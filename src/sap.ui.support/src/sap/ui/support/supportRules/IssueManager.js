@@ -215,6 +215,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 				for (var libraryName in rulesViewModel) {
 					treeTableModel[index] = {
 						name: libraryName,
+						id: libraryName + " " + index,
 						selected: true,
 						type: "lib",
 						nodes: rules

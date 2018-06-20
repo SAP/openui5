@@ -34,6 +34,7 @@ sap.ui.define([
 
 
 	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Analysis", {
+
 		onInit: function () {
 			this.model = SharedModel;
 			this.setCommunicationSubscriptions();
@@ -45,6 +46,7 @@ sap.ui.define([
 			this.ruleSetView = this.byId("ruleSetsView");
 			this.rulesViewContainer = this.byId("rulesNavContainer");
 			this.bAdditionalViewLoaded = false;
+			this.bAdditionalRulesetsLoaded = false;
 
 			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
 				if (!this.bAdditionalViewLoaded) {
@@ -53,7 +55,7 @@ sap.ui.define([
 					this.bAdditionalViewLoaded = true;
 					this.loadAdditionalUI();
 					//attach adapter for custom selection
-					new CustomJSONListSelection(this.treeTable, true, "name");
+					new CustomJSONListSelection(this.treeTable, true, "id");
 
 				}
 			}, this);
@@ -63,6 +65,7 @@ sap.ui.define([
 				this.setColumnVisibility(aColumnsIds, true);
 			}
 		},
+
 		loadAdditionalUI: function () {
 			this._ruleDetails = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.RuleDetails", this);
 			this.byId("rulesDisplayPage").addContentArea(this._ruleDetails);
@@ -232,6 +235,7 @@ sap.ui.define([
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.POST_AVAILABLE_LIBRARIES, function (data) {
+				this.bAdditionalRulesetsLoaded = true;
 				this.model.setProperty("/availableLibrariesSet", data.libNames);
 				this.rulesViewContainer.setBusy(false);
 			}, this);
@@ -358,15 +362,36 @@ sap.ui.define([
 		onSelectedRuleSets: function (oEvent) {
 			var bShowRuleProperties = true;
 
-			if (oEvent.getParameter("selectedKey") === "additionalRulesets") {
-
+			// Ensure we don't make unnecessary requests. The requests will be made only
+			// the first time the user clicks AdditionalRulesets tab.
+			if (!this.bAdditionalRulesetsLoaded && oEvent.getParameter("selectedKey") === "additionalRulesets") {
 				bShowRuleProperties = false;
 				this.rulesViewContainer.setBusyIndicatorDelay(0);
 				this.rulesViewContainer.setBusy(true);
-				CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS);
+				CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS, {
+					loadedRulesets: this._getLoadedRulesets()
+				});
 			}
 
 			this.getView().getModel().setProperty("/showRuleProperties", bShowRuleProperties);
+		},
+
+		/**
+		 * @private
+		 * @returns {Array} All currently loaded rulesets.
+		 */
+		_getLoadedRulesets: function () {
+			var oRulesets = this.treeTable.getModel("treeModel").getData(),
+				aLoadedLibraries = [];
+
+			Object.keys(oRulesets).forEach(function (sKey) {
+				var sLibraryName = oRulesets[sKey].name;
+				if (sLibraryName && sLibraryName !== "temporary") {
+					aLoadedLibraries.push(sLibraryName);
+				}
+			});
+
+			return aLoadedLibraries;
 		},
 
 		/**
@@ -798,9 +823,12 @@ sap.ui.define([
 
 		loadMarkedSupportLibraries: function () {
 			var list = this.byId("availableLibrariesSet"),
-				aLibNames = list.getSelectedItems().map(function (item) {
-					return item.getTitle();
-				});
+				aLibNames = [],
+				aAvailableRulesets = this.model.getProperty("/availableLibrariesSet");
+
+			aLibNames = list.getSelectedItems().map(function (item) {
+				return item.getTitle();
+			});
 
 			list.getItems().forEach(function (item) {
 				item.setSelected(false);
@@ -808,6 +836,11 @@ sap.ui.define([
 			});
 
 			if (aLibNames.length > 0) {
+				aAvailableRulesets = aAvailableRulesets.filter(function (sLibName) {
+					return aLibNames.indexOf(sLibName) < 0;
+				});
+				this.model.setProperty("/availableLibrariesSet", aAvailableRulesets);
+
 				CommunicationBus.publish(channelNames.LOAD_RULESETS, {
 					aLibNames: { publicRules: aLibNames, internalRules: aLibNames }
 				});
