@@ -453,7 +453,8 @@ QUnit.test("data binding update", function(assert){
 	oModel.setProperty("/", oData2);
 	sap.ui.getCore().applyChanges();
 
-	assert.ok(!oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "binding updated successfully.");
+	assert.ok(oTree.getItems()[0].$().hasClass("sapMTreeItemBaseLeaf"), "data changed");
+	assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "icon has correct source.");
 });
 
 QUnit.test("context length", function(assert){
