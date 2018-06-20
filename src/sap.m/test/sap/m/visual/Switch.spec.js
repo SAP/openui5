@@ -4,7 +4,7 @@ describe("sap.m.Switch", function() {
 	"use strict";
 
 	it('should load test page',function(){
-		expect(takeScreenshot()).toLookAs('initial');
+		expect(takeScreenshot(element(by.id('SwitchPage')))).toLookAs('initial');
 	});
 
 	// verify regular switch
