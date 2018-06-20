@@ -23,7 +23,8 @@ sap.ui.define([
 			"sap.ui.unified.CalendarDayType",
 			"sap.ui.unified.GroupAppointmentsMode",
 			"sap.ui.unified.ContentSwitcherAnimation",
-			"sap.ui.unified.ColorPickerMode"
+			"sap.ui.unified.ColorPickerMode",
+			"sap.ui.unified.ColorPickerDisplayMode"
 		],
 		interfaces: [
 			"sap.ui.unified.IProcessableBlobs"
@@ -444,6 +445,36 @@ sap.ui.define([
 		 * @public
 		 */
 		HSL : "HSL"
+
+	};
+
+	/**
+	 * Types of a color picker display mode
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.58.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.ColorPickerDisplayMode = {
+
+		/**
+		 * Default display mode.
+		 * @public
+		 */
+		Default : "Default",
+
+		/**
+		 * Large display mode.
+		 * @public
+		 */
+		Large : "Large",
+
+		/**
+		 * Simplified display mode.
+		 * @public
+		 */
+		Simplified : "Simplified"
 
 	};
 

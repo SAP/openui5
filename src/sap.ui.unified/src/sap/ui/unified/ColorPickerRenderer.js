@@ -23,6 +23,9 @@ sap.ui.define([],
 	ColorPickerRenderer.render = function(oRm, oControl){
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
+		if (oControl.bResponsive) {
+			oRm.addClass("sapUiColorPicker-" + oControl.getDisplayMode());
+		}
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl.getAggregation("_grid"));

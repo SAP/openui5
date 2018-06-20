@@ -279,15 +279,14 @@
 				QUnit.test("_updateControlVisualState", function (oAssert) {
 					// Arrange
 					this.oCP._createLayout(); // Force creation of inner controls
-					var oGrid = this.oCP.getAggregation("_grid"),
-						oLayoutData = this.oCP._oLayoutData;
+					var oGrid = this.oCP.getAggregation("_grid");
 
 					// Act
 					this.oCP._updateControlVisualState();
 
 					// Assert
-					oAssert.strictEqual(oLayoutData.swatches.getSpanM(), 3, 'Property "spanM" should be set to 3');
-					oAssert.notOk(oLayoutData.swatches.getLinebreak(), 'Property "linebreak" should be false');
+					oAssert.strictEqual(this.oCP.swatches.getSpanM(), 3, 'Property "spanM" should be set to 3');
+					oAssert.notOk(this.oCP.swatches.getLinebreak(), 'Property "linebreak" should be false');
 					oAssert.notOk(oGrid.hasStyleClass(CONSTANTS.HSLClass),
 						'The grid should not have class "' + CONSTANTS.HSLClass + '"');
 
@@ -296,8 +295,8 @@
 					this.oCP._updateControlVisualState();
 
 					// Assert
-					oAssert.strictEqual(oLayoutData.swatches.getSpanM(), 4, 'Property "spanM" should be set to 4');
-					oAssert.ok(oLayoutData.swatches.getLinebreak(), 'Property "linebreak" should be true');
+					oAssert.strictEqual(this.oCP.swatches.getSpanM(), 4, 'Property "spanM" should be set to 4');
+					oAssert.ok(this.oCP.swatches.getLinebreak(), 'Property "linebreak" should be true');
 					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.HSLClass),
 						'The grid should have class "' + CONSTANTS.HSLClass + '"');
 				});
@@ -307,15 +306,14 @@
 					this.oCP.bResponsive = false; // Mock commons mode
 
 					this.oCP._createLayout(); // Force creation of inner controls
-					var oGrid = this.oCP.getAggregation("_grid"),
-						oLayoutData = this.oCP._oLayoutData;
+					var oGrid = this.oCP.getAggregation("_grid");
 
 					// Act
 					this.oCP._updateControlVisualState();
 
 					// Assert
-					oAssert.strictEqual(oLayoutData.swatches.getSpanS(), 3, 'Property "spanS" should be set to 3');
-					oAssert.notOk(oLayoutData.swatches.getLinebreak(), 'Property "linebreak" should be false');
+					oAssert.strictEqual(this.oCP.swatches.getSpanS(), 3, 'Property "spanS" should be set to 3');
+					oAssert.notOk(this.oCP.swatches.getLinebreak(), 'Property "linebreak" should be false');
 					oAssert.notOk(oGrid.hasStyleClass(CONSTANTS.HSLClass),
 						'The grid should not have class "' + CONSTANTS.HSLClass + '"');
 
@@ -324,8 +322,8 @@
 					this.oCP._updateControlVisualState();
 
 					// Assert
-					oAssert.strictEqual(oLayoutData.swatches.getSpanS(), 4, 'Property "spanS" should be set to 4');
-					oAssert.ok(oLayoutData.swatches.getLinebreak(), 'Property "linebreak" should be true');
+					oAssert.strictEqual(this.oCP.swatches.getSpanS(), 4, 'Property "spanS" should be set to 4');
+					oAssert.ok(this.oCP.swatches.getLinebreak(), 'Property "linebreak" should be true');
 					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.HSLClass),
 						'The grid should have class "' + CONSTANTS.HSLClass + '"');
 
@@ -394,10 +392,7 @@
 
 					// Assert
 					oAssert.strictEqual(oSpy.callCount, 1, "Method should be called only once");
-					oAssert.strictEqual(oGrid._iBreakPointTablet, 400, "The breakpoint for tablet should be changed");
 					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.CPResponsiveClass), "Responsive CSS class is applied to the Grid");
-					oAssert.strictEqual(this.oCP._adaptControlToLibrary, jQuery.noop,
-						"The method can't be called more than once on this instance");
 
 					// Cleanup
 					oSpy.restore();
@@ -422,8 +417,6 @@
 					oAssert.strictEqual(oSpy.callCount, 1, "Method should be called only once");
 					oAssert.notEqual(oGrid._iBreakPointTablet, 400, "The breakpoint for tablet shouldn't be applyed");
 					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.CPResponsiveClass), "Responsive CSS class is applied to the Grid");
-					oAssert.strictEqual(this.oCP._adaptControlToLibrary, jQuery.noop,
-						"The method can't be called more than once on this instance");
 
 					// Cleanup
 					oSpy.restore();
@@ -462,9 +455,8 @@
 					oAssert.strictEqual(oCounts["sap.ui.core.HTML"], 2, "There should be 3 HTML controls created");
 					oAssert.strictEqual(oCounts["sap.ui.layout.VerticalLayout"], 2, "There should be 2 VerticalLayouts created");
 					oAssert.strictEqual(oCounts["sap.m.Slider"], 2, "There should be 2 Sliders created");
-					oAssert.strictEqual(oCounts["sap.m.Label"], 12, "There should be 12 labels created");
-					oAssert.strictEqual(oCounts["sap.m.InputBase"], 9, "There should be 9 inputs created");
-					oAssert.strictEqual(oCounts["sap.m.RadioButtonGroup"], 1, "There should be 1 RadioButton group created");
+					oAssert.strictEqual(oCounts["sap.m.Label"], 17, "There should be 17 labels created");
+					oAssert.strictEqual(oCounts["sap.m.InputBase"], 10, "There should be 10 inputs created");
 					oAssert.strictEqual(oCounts["sap.ui.unified._ColorPickerBox"], 1, "There should be 1 ColorPickerBox created");
 				});
 
@@ -823,6 +815,37 @@
 
 					// Assert
 					oAssert.strictEqual(oResult.value, 0, "Result value should be 0");
+				});
+
+				QUnit.module("displayMode", {
+					beforeEach: function () {
+						this.oCP = new sap.ui.unified.ColorPicker();
+					},
+					afterEach: function () {
+						this.oCP.destroy();
+						this.oCP = null;
+					}
+				});
+
+				QUnit.test("rendering", function (oAssert) {
+					// Act
+					this.oCP.placeAt("qunit-fixture");
+					applyChanges();
+
+					// Assert
+					oAssert.strictEqual(this.oCP.getDisplayMode(), "Default", "The ColorPicker's default displayMode is 'Default'");
+
+					// Act
+					this.oCP.setDisplayMode(sap.ui.unified.ColorPickerDisplayMode.Simplified);
+
+					// Assert
+					oAssert.strictEqual(this.oCP.getDisplayMode(), "Simplified", "The ColorPicker's displayMode is Simplified");
+
+					// Act
+					this.oCP.setDisplayMode(sap.ui.unified.ColorPickerDisplayMode.Large);
+
+					// Assert
+					oAssert.strictEqual(this.oCP.getDisplayMode(), "Large", "The ColorPicker's displayMode is Large");
 				});
 
 			})();
