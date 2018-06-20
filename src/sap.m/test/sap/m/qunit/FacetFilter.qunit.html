@@ -1034,7 +1034,6 @@
 		oFFL.getItems()[0].setSelected(true);
 		oFF._setButtonText(oFFL);
 		assert.ok(oButton.getText().indexOf(sItemText1) !== -1, "Button should be updated with text for the first list item");
-		assert.ok(oButton.getTooltip().indexOf(sItemText1) !== -1, "Button tooltip should be updated  for the first list item");
 
 		oFFL.setMultiSelect(true);
 		//all items are selected
@@ -1045,7 +1044,6 @@
 		oFF._setButtonText(oFFL);
 
 		assert.equal(oButton.getText(), "List (All)", "Button should contain the 'All' if all items are selected");
-		assert.equal(oButton.getTooltip(), "List (All)", "Button tooltip should contain the 'All' if all items are selected");
 
 		//More than one(but not all) items are selected
 		oFFL.getItems()[0].setSelected(true);
@@ -1054,7 +1052,6 @@
 		oFF._setButtonText(oFFL);
 
 		assert.ok(oButton.getText().indexOf("List (2)") !== -1, "Button should contain the count of selected items");
-		assert.ok(oButton.getTooltip().indexOf("List (2)") !== -1, "Button tooltip should contain the count of selected items");
 
 		destroyFF(oFF);
 	});
@@ -3155,8 +3152,6 @@
 						sap.ui.getCore().applyChanges();
 						var oButton = getButtonCtrl(oFF, 0);
 						assert.ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
-						assert.ok(oButton.getTooltip().indexOf(sItem1Text) !== -1,
-								"Button tooltip should be updated with the selected value");
 						destroyFF(oFF);
 						done();
 					});
@@ -4152,33 +4147,27 @@
 					lists: [
 						new sap.m.FacetFilterList({
 							key: "20160831",
-							text: "8/31/2016",
-							selected: false
+							title: "8/31/2016"
 						}),
 						new sap.m.FacetFilterList({
 							key: "20160930",
-							text: "9/30/2016",
-							selected: true
+							title: "9/30/2016"
 						}),
 						new sap.m.FacetFilterList({
 							key: "20161031",
-							text: "10/31/2016",
-							selected: false
+							title: "10/31/2016"
 						}),
 						new sap.m.FacetFilterList({
 							key: "20161130",
-							text: "11/30/2016",
-							selected: false
+							title: "11/30/2016"
 						}),
 						new sap.m.FacetFilterList({
 							key: "20161231",
-							text: "12/31/2016",
-							selected: false
+							title: "12/31/2016"
 						}),
 						new sap.m.FacetFilterList({
 							key: "20170131",
-							text: "1/31/2017",
-							selected: false
+							title: "1/31/2017"
 						})
 					]
 				});
@@ -4254,6 +4243,11 @@
 				assert.equal(this.oFF.getRenderer().getAriaDescribedBy(this.oFF), aExpectedDescribedBy.join(" "), "FacetFilterRenderer.getAriaDescribedBy array check");
 			}
 		});
+
+		QUnit.test("Facet filter role", function (assert) {
+			assert.equal(this.oFF.$().attr("role"), "toolbar", "The role of the FacetFilter is 'toolbar'");
+		});
+
 		QUnit.test("Facet filter list positioning - initial", function (assert) {
 			this.testFacetFilterList(5);
 		});
