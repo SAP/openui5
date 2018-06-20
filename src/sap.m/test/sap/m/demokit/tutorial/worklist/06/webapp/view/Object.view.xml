@@ -11,44 +11,51 @@
 		toggleHeaderOnTitleClick="false"
 		busy="{objectView>/busy}"
 		busyIndicatorDelay="{objectView>/delay}">
+		<semantic:titleHeading>
+			<Title text="{ProductName}" />
+		</semantic:titleHeading>
 		<semantic:headerContent>
-			<ObjectHeader
-				id="objectHeader"
-				responsive="true"
-				title="{ProductName}"
-				numberUnit="PC"
-				numberState="{
-					path: 'UnitsInStock',
-					formatter: '.formatter.quantityState'}"
-				number="{
-					path: 'UnitsInStock',
-					formatter: '.formatter.numberUnit'}">
-				<attributes>
+			<FlexBox
+				alignItems="Start"
+				justifyContent="SpaceBetween">
+				<Panel backgroundDesign="Transparent">
 					<ObjectAttribute
 						title="{i18n>ObjectProductIdText}"
 						text="{
-							path: 'ProductID',
-							formatter: '.formatter.numberUnit'}"/>
+						path: 'ProductID',
+						formatter: '.formatter.numberUnit'}"/>
 					<ObjectAttribute
 						title="{i18n>ObjectPriceTitle}"
 						text="{
-							path: 'UnitPrice',
-							formatter: '.formatter.numberUnit'} EUR"/>
-				</attributes>
-				<statuses>
+						path: 'UnitPrice',
+						formatter: '.formatter.numberUnit'} EUR"/>
+				</Panel>
+				<Panel backgroundDesign="Transparent">
+					<ObjectNumber
+						id="objectHeader"
+						unit="PC"
+						textAlign="End"
+						state="{
+						path: 'UnitsInStock',
+						formatter: '.formatter.quantityState'}"
+						number="{
+						path: 'UnitsInStock',
+						formatter: '.formatter.numberUnit'}">
+					</ObjectNumber>
 					<ObjectStatus
 						text="{i18n>ObjectDiscontinuedStatusText}"
 						state="Error"
 						visible="{path:'Discontinued'}"/>
 					<ProgressIndicator
+						width="300px"
 						percentValue="{UnitsInStock}"
 						displayValue="{UnitsInStock}"
 						showValue="true"
 						state="{
-							path: 'UnitsInStock',
-							formatter: '.formatter.quantityState'}" />
-				</statuses>
-			</ObjectHeader>
+						path: 'UnitsInStock',
+						formatter: '.formatter.quantityState'}"/>
+				</Panel>
+			</FlexBox>
 		</semantic:headerContent>
 		<semantic:content>
 			<Panel

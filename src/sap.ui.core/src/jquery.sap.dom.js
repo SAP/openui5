@@ -4,17 +4,17 @@
 
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/dom/focus', 'sap/ui/dom/containsOrEquals',
-	'sap/ui/dom/replaceNode', 'sap/ui/dom/syncStyleClass', 'sap/ui/dom/ownerWindow', 'sap/ui/dom/scrollbarSize',
+	'jquery.sap.global', 'sap/ui/dom/containsOrEquals',
+	'sap/ui/dom/patch', 'sap/ui/core/syncStyleClass', 'sap/ui/dom/getOwnerWindow', 'sap/ui/dom/getScrollbarSize',
 	'sap/ui/dom/denormalizeScrollLeftRTL', 'sap/ui/dom/denormalizeScrollBeginRTL',
-	'sap/ui/dom/units/Rem', 'sap/ui/dom/jquery/byId', 'sap/ui/dom/jquery/Aria',
+	'sap/ui/dom/units/Rem', 'sap/ui/dom/jquery/Aria',
 	'sap/ui/dom/jquery/Selection', 'sap/ui/dom/jquery/zIndex', 'sap/ui/dom/jquery/parentByAttribute',
 	'sap/ui/dom/jquery/cursorPos', 'sap/ui/dom/jquery/selectText', 'sap/ui/dom/jquery/getSelectedText',
-	'sap/ui/dom/jquery/outerHTML', 'sap/ui/dom/jquery/rect', 'sap/ui/dom/jquery/rectContains', 'sap/ui/dom/jquery/Focusable',
+	'sap/ui/dom/jquery/rect', 'sap/ui/dom/jquery/rectContains', 'sap/ui/dom/jquery/Focusable',
 	'sap/ui/dom/jquery/hasTabIndex', 'sap/ui/dom/jquery/scrollLeftRTL', 'sap/ui/dom/jquery/scrollRightRTL', 'sap/ui/dom/jquery/Selectors'
-], function(jQuery, domFocus, domContainsOrEquals, domReplaceNode, domSyncStyleClass, domOwnerWindow,
-	domScrollbarSize, domDenormalizeScrollLeftRTL, domDenormalizeScrollBeginRTL, domUnitsRem,
-	jqueryById/*,
+], function(jQuery, domContainsOrEquals, domPatch, fnSyncStyleClass, domGetOwnerWindow,
+	domGetScrollbarSize, domDenormalizeScrollLeftRTL, domDenormalizeScrollBeginRTL, domUnitsRem
+	/*
 	jqueryAria,
 	jquerySelection,
 	jqueryzIndex,
@@ -22,7 +22,6 @@ sap.ui.define([
 	jqueryCursorPos,
 	jquerySelectText,
 	jqueryGetSelectedText,
-	jqueryOuterHTML,
 	jqueryRect,
 	jqueryRectContains,
 	jqueryFocusable,
@@ -61,7 +60,18 @@ sap.ui.define([
 	 * @since 0.9.1
 	 * @function
 	 */
-	jQuery.sap.byId = jqueryById;
+	jQuery.sap.byId = function byId(sId, oContext) {
+		var escapedId = "";
+		if (sId) {
+			// Note: This does not escape all relevant characters according to jQuery's documentation
+			// (see http://api.jquery.com/category/selectors/)
+			// As the behavior hasn't been changed for a long time it is not advisable to change it in
+			// future as users might be already escaping characters on their own or relying on the fact
+			// selector like byId("my-id > div") can be used.
+			escapedId = "#" + sId.replace(/(:|\.)/g,'\\$1');
+		}
+		return jQuery(escapedId, oContext);
+	};
 
 
 	/**
@@ -73,7 +83,13 @@ sap.ui.define([
 	 * @since 1.1.2
 	 * @function
 	 */
-	jQuery.sap.focus = domFocus;
+	jQuery.sap.focus = function focus(oDomRef) {
+		if (!oDomRef) {
+			return;
+		}
+		oDomRef.focus();
+		return true;
+	};
 
 	/*
 	 * Convert <code>px</code> values to <code>rem</code>.
@@ -145,6 +161,19 @@ sap.ui.define([
 	 * @since 0.9.0
 	 * @function
 	 */
+	jQuery.fn.outerHTML = function() {
+		var oDomRef = this.get(0);
+
+		if (oDomRef && oDomRef.outerHTML) {
+			return jQuery.trim(oDomRef.outerHTML);
+		} else {
+			var doc = this[0] ? this[0].ownerDocument : document;
+
+			var oDummy = doc.createElement("div");
+			oDummy.appendChild(oDomRef.cloneNode(true));
+			return oDummy.innerHTML;
+		}
+	};
 
 	/**
 	 * Returns whether <code>oDomRefChild</code> is contained in or equal to <code>oDomRefContainer</code>.
@@ -380,7 +409,7 @@ sap.ui.define([
 	 * @since 0.9.0
 	 * @function
 	 */
-	jQuery.sap.ownerWindow = domOwnerWindow;
+	jQuery.sap.ownerWindow = domGetOwnerWindow;
 
 	/**
 	 * Returns the size (width of the vertical / height of the horizontal) native browser scrollbars.
@@ -394,7 +423,7 @@ sap.ui.define([
 	 * @since 1.4.0
 	 * @function
 	 */
-	jQuery.sap.scrollbarSize = domScrollbarSize;
+	jQuery.sap.scrollbarSize = domGetScrollbarSize;
 
 	/**
 	 * Search ancestors of the given source DOM element for the specified CSS class name.
@@ -409,7 +438,7 @@ sap.ui.define([
 	 * @since 1.22
 	 * @function
 	 */
-	jQuery.sap.syncStyleClass = domSyncStyleClass;
+	jQuery.sap.syncStyleClass = fnSyncStyleClass;
 
 	/**
 	 * Adds the given ID reference to the the aria-labelledby attribute.
@@ -474,7 +503,21 @@ sap.ui.define([
 	 * @private
 	 * @function
 	 */
-	jQuery.sap.replaceDOM = domReplaceNode;
+	jQuery.sap.replaceDOM = function(oOldDom, vNewDom, bCleanData) {
+		var oNewDom;
+		if (typeof vNewDom === "string") {
+			oNewDom = jQuery.parseHTML(vNewDom)[0];
+		} else {
+			oNewDom = vNewDom;
+		}
+
+		if (bCleanData) {
+			jQuery.cleanData([oOldDom]);
+			jQuery.cleanData(oOldDom.getElementsByTagName("*"));
+		}
+
+		return domPatch(oOldDom, oNewDom);
+	};
 
 	return jQuery;
 

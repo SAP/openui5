@@ -12,8 +12,7 @@
 		if (!sComponentName) {
 			alert("Missing URL parameter 'component', e.g. '?component=ViewTemplate.scenario'");
 		} else {
-			jQuery.sap.registerModulePath(
-				"sap.ui.core.sample", "test-resources/sap/ui/core/demokit/sample");
+			sap.ui.loader.config({paths:{"sap/ui/core/sample": "test-resources/sap/ui/core/demokit/sample"}});
 			try {
 				new sap.ui.core.ComponentContainer({
 					component : sap.ui.component({

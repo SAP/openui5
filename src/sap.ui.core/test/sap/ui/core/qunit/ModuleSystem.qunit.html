@@ -34,8 +34,7 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script >
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		jQuery.sap.registerResourcePath("testlibs", "testdata/libraries/");
-
+		sap.ui.loader.config({paths: {"testlibs": "testdata/libraries/"}});
 
 		//****************************************************
 		// module loading (require/declare/define)

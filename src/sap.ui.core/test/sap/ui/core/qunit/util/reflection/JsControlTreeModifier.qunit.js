@@ -23,7 +23,7 @@ function(
 	QUnit.module("Using the JsControlTreeModifier...", {
 		beforeEach: function () {
 
-			jQuery.sap.registerModulePath("sap.ui.test", "../../component/testdata");
+			sap.ui.loader.config({paths:{"sap/ui/test":"../../component/testdata"}});
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"
@@ -106,7 +106,7 @@ function(
 	QUnit.module("Given the JsControlTreeModifier...", {
 		beforeEach: function () {
 
-			jQuery.sap.registerModulePath("sap.ui.test", "../../component/testdata");
+			sap.ui.loader.config({paths:{"sap/ui/test":"../../component/testdata"}});
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"

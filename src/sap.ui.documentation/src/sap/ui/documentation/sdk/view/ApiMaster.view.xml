@@ -27,6 +27,7 @@
 					id="tree"
 					mode="SingleSelectMaster"
 					selectionChange="onNodeSelect"
+					noDataText="No data, please try with the global search"
 					items="{
 						path: 'treeData>/',
 						sorter : {

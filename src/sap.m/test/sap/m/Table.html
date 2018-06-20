@@ -322,7 +322,7 @@
 		}),
 		new sap.m.Column({
 			header : new sap.m.Label({
-				text : "Raiting"
+				text : "Rating"
 			}),
 			minScreenWidth : "Tablet",
 			popinDisplay : "WithoutHeader",
@@ -372,6 +372,7 @@
 			new sap.ui.core.Icon({
 				src : "sap-icon://{src}",
 				decorative: false,
+				tooltip : "{src}",
 				press: function() {}
 			}),
 			new sap.m.RatingIndicator({

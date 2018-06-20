@@ -16,12 +16,13 @@ sap.ui.require([
 	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
 	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
 	'sap/ui/fl/FlexControllerFactory',
+	'sap/ui/fl/FlexController',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/variants/VariantModel',
 	'sap/ui/fl/variants/VariantManagement',
 	'sap/m/Input',
 	'sap/m/Panel',
-	'sap/ui/thirdparty/sinon'
+	'sap/ui/thirdparty/sinon-4'
 ], function(
 	CommandFactory,
 	DesignTimeMetadata,
@@ -35,6 +36,7 @@ sap.ui.require([
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
 	FlexControllerFactory,
+	FlexController,
 	Change,
 	VariantModel,
 	VariantManagement,
@@ -48,7 +50,7 @@ sap.ui.require([
 	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
-
+	var COMPONENT_NAME = "someName";
 	var oMockedAppComponent = {
 		getLocalId: function () {
 			return undefined;
@@ -65,7 +67,7 @@ sap.ui.require([
 		getMetadata: function () {
 			return {
 				getName: function () {
-					return "someName";
+					return COMPONENT_NAME;
 				}
 			};
 		},
@@ -106,7 +108,9 @@ sap.ui.require([
 	};
 
 	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
+	var oAppDescriptorFlexController = FlexControllerFactory.create(COMPONENT_NAME, "1.2.3");
 	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+	sandbox.stub(oFlexController, "checkForOpenDependenciesForControl").returns(false);
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		beforeEach : function(assert) {
@@ -179,19 +183,24 @@ sap.ui.require([
 
 		return this.oCommandStack.pushAndExecute(oSettingsCommand1)
 		.then(function(){
+			assert.equal(oAddPreparedChangeSpy.callCount, 1, "1. change got added");
+
 			return this.oCommandStack.pushAndExecute(oSettingsCommand2);
 		}.bind(this))
 		.then(function(){
 			// simulate command having no app component
 			sandbox.stub(oSettingsCommand2, "getAppComponent");
+			sandbox.stub(FlexController.prototype, "checkForOpenDependenciesForControl").returns(false);
 			assert.equal(oAddPreparedChangeSpy.callCount, 2, "until now 2 changes got added");
 			assert.equal(oDeleteChangeSpy.callCount, 0, "until now no changes got deleted");
 			return this.oCommandStack.undo();
 		}.bind(this))
 		.then(function() {
+			assert.equal(oDeleteChangeSpy.callCount, 0, "no change without app component got deleted");
 			return this.oCommandStack.undo();
 		}.bind(this))
 		.then(function() {
+			assert.equal(oDeleteChangeSpy.callCount, 1, "2. change got deleted");
 			return this.oCommandStack.redo();
 		}.bind(this))
 		.then(function() {
@@ -246,6 +255,8 @@ sap.ui.require([
 		// then two changes are expected to be written in LREP
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
 
+		var oAddPreparedChangeSpy = sandbox.spy(oFlexController, "addPreparedChange");
+
 		// Create commands
 		this.oRemoveCommand1 = CommandFactory.getCommandFor(this.oInput1, "Remove", {
 			removedElement : this.oInput1
@@ -256,9 +267,11 @@ sap.ui.require([
 
 		return this.oCommandStack.pushAndExecute(this.oRemoveCommand1)
 		.then(function(){
+			assert.equal(oAddPreparedChangeSpy.callCount, 1, "now 1. change got added directly after execute");
 			return this.oCommandStack.pushAndExecute(this.oRemoveCommand2);
 		}.bind(this))
 		.then(function(){
+			assert.equal(oAddPreparedChangeSpy.callCount, 2, "now 2. change got added directly after execute");
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 		.then(function() {
@@ -334,7 +347,7 @@ sap.ui.require([
 			removedElement : this.oInput1
 		}, this.oInputDesignTimeMetadata);
 		this.oAddLibraryCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : "someName",
+			reference : COMPONENT_NAME,
 			parameters: {
 					libraries : {
 					"sap.ui.rta" : {
@@ -346,7 +359,7 @@ sap.ui.require([
 			appComponent : oMockedAppComponent
 		}, {}, {"layer" : "CUSTOMER"});
 		this.oAddLibraryCommand2 = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : "someName",
+			reference : COMPONENT_NAME,
 			parameters: {
 					libraries : {
 					"sap.ui.rta" : {
@@ -391,7 +404,7 @@ sap.ui.require([
 			removedElement : this.oInput2
 		}, this.oInputDesignTimeMetadata);
 		this.oAddLibraryCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : "someName",
+			reference : COMPONENT_NAME,
 			parameters: {
 					libraries : {
 					"sap.ui.rta" : {
@@ -437,7 +450,7 @@ sap.ui.require([
 			removedElement : this.oInput1
 		}, this.oInputDesignTimeMetadata);
 		this.oAddLibraryCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : "someName",
+			reference : COMPONENT_NAME,
 			parameters: {
 					libraries : {
 					"sap.ui.rta" : {
@@ -478,7 +491,7 @@ sap.ui.require([
 
 		// Create commands
 		this.oAddLibraryCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : "someName",
+			reference : COMPONENT_NAME,
 			parameters: {
 					libraries : {
 					"sap.ui.rta" : {
@@ -490,14 +503,20 @@ sap.ui.require([
 			appComponent : oMockedAppComponent
 		}, {}, {"layer" : "CUSTOMER"});
 
+		var oCreateAndStoreChangeSpy = sandbox.spy(this.oAddLibraryCommand, "createAndStoreChange");
+		var oDeleteChangeSpy = sandbox.spy(oAppDescriptorFlexController, "deleteChange");
+
 		return this.oCommandStack.pushAndExecute(this.oAddLibraryCommand)
 		.then(function(){
+			assert.equal(oCreateAndStoreChangeSpy.callCount, 1, "now app descriptor change got created directly after execute");
 			return this.oCommandStack.undo();
 		}.bind(this))
 		.then(function(){
+			assert.equal(oDeleteChangeSpy.callCount, 1, "now app descriptor change got removed directly after undo");
 			return this.oCommandStack.redo();
 		}.bind(this))
 		.then(function(){
+			assert.equal(oCreateAndStoreChangeSpy.callCount, 2,"now app descriptor change got created directly after redo");
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 		.then(function() {
@@ -521,7 +540,7 @@ sap.ui.require([
 			removedElement : this.oInput1
 		}, this.oInputDesignTimeMetadata);
 		this.oAddLibraryCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : "someName",
+			reference : COMPONENT_NAME,
 			parameters: {
 					libraries : {
 					"sap.ui.rta" : {
@@ -579,7 +598,7 @@ sap.ui.require([
 			removedElement : this.oInput1
 		}, this.oInputDesignTimeMetadata);
 		this.oAnyAppDescriptorCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : "someName",
+			reference : COMPONENT_NAME,
 			parameters: {
 					libraries : {
 					"sap.ui.rta" : {
@@ -611,7 +630,7 @@ sap.ui.require([
 			removedElement : this.oInput1
 		}, this.oInputDesignTimeMetadata);
 		this.oAnyAppDescriptorCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : "someName",
+			reference : COMPONENT_NAME,
 			parameters: {
 					libraries : {
 					"sap.ui.rta" : {
@@ -708,7 +727,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("when the LREPSerializer.handleCommandExecuted gets called after 2 remove commands created via CommandFactory and afterwards saveCommands gets called", function(assert) {
+	QUnit.test("when changes belonging to a variant management are executed/partially undone and later saved ", function(assert) {
 		// then two changes are expected to be written in LREP -> the remove which was not undone + the variant
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
 
@@ -720,7 +739,6 @@ sap.ui.require([
 			removedElement : this.oInput2
 		}, this.oInputDesignTimeMetadata);
 
-		var oHandleCommandExecutedSpy = sandbox.spy(this.oSerializer, "handleCommandExecuted");
 		sandbox.stub(this.oRemoveCommand1.getPreparedChange(), "getVariantReference").returns("test-variant");
 		sandbox.stub(this.oRemoveCommand2.getPreparedChange(), "getVariantReference").returns("test-variant");
 		sandbox.stub(oMockedAppComponent, "getModel").returns({
@@ -743,19 +761,18 @@ sap.ui.require([
 
 		return this.oCommandStack.pushAndExecute(this.oRemoveCommand1)
 		.then(function(){
+			assert.equal(oAddChangeSpy.callCount, 1, "then variant model's _addChange is called for both changes as VariantManagement Change is detected");
 			return this.oCommandStack.pushAndExecute(this.oRemoveCommand2);
 		}.bind(this))
 		.then(function(){
-			assert.equal(oHandleCommandExecutedSpy.callCount, 2, "then the promise for LREPSerializer.handleCommandExecuted() is called for both changes");
-			assert.ok(oAddChangeSpy.calledTwice, "then model's _addChange is called for both changes as VariantManagement Change is detected");
+			assert.equal(oAddChangeSpy.callCount, 2, "then variant model's _addChange is called for both changes as VariantManagement Change is detected");
 			return this.oCommandStack.undo();
 		}.bind(this))
 		.then(function(){
+			assert.equal(oRemoveChangeSpy.callCount, 1, "then variant model's _removeChange is called as VariantManagement Change is detected");
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 		.then(function() {
-			assert.equal(oHandleCommandExecutedSpy.callCount, 3, "then the promise for LREPSerializer.handleCommandExecuted() is called for undo of change");
-			assert.ok(oRemoveChangeSpy.calledOnce, "then model's _removeChange is called as VariantManagement Change is detected");
 			assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
 			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
 			fnCleanUp();

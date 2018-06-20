@@ -6084,6 +6084,10 @@
 				assert.ok(oSelect.$().length, "The HTML div container html element exists");
 				assert.ok(oSelect.$("label").length, "The HTML label first-child element exists");
 				assert.ok(oSelect.$("arrow").length, "The HTML span element for the arrow exists");
+				assert.strictEqual(getComputedStyle(
+					oSelect.$("arrow")[0]).pointerEvents,
+					sap.ui.Device.browser.internet_explorer ? "none" : "auto",
+					"The HTML span element for the arrow has pointer-events = 'none' in IE, and 'auto' in all other browsers");
 			} else if (oSelect.getType() === sap.m.SelectType.IconOnly) {
 				assert.ok(oSelect.$("icon").length, "The HTML span element for the icon exists");
 			}

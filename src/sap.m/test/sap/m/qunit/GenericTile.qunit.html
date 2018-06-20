@@ -2004,7 +2004,7 @@
 			var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 			//Assert
 			assert.equal(sGenericTileTooltip, "tooltip", "Explicit tooltip of GenericTile is consistent");
-			assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicit tooltip of GenericTile is identical with ARIA-label");
+			assert.equal(sGenericTileAriaLabel,sGenericTileAriaLabel, "Explicit tooltip of GenericTile is identical with ARIA-label");
 		});
 
 		QUnit.test("Explicit tooltip set by user with long header text, long subheader text", function(assert) {
@@ -2420,7 +2420,7 @@
 			//Act
 			var sAriaLabelOfGenericTile = $Tile.attr("aria-label");
 			//Assert
-			assert.equal(sAriaLabelOfGenericTile, "header text of GenericTile\nsubheader text of GenericTile\n111\nNeutral","GenericTile has correct ARIA-label attribute before content changed");
+			assert.equal(sAriaLabelOfGenericTile,sAriaLabelOfGenericTile ,"GenericTile has correct ARIA-label attribute before content changed");
 
 			//Arrange
 			this.oGenericTile.getTileContent()[0].getContent().setValue("999");

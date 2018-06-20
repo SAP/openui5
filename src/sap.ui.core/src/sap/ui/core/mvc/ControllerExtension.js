@@ -3,8 +3,8 @@
  */
 
 // Provides controller extension class (part of MVC concept)
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadata', 'sap/ui/core/mvc/OverrideExecution'],
-	function(BaseObject, ControllerExtensionMetadata, OverrideExecution) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/base/Metadata', 'sap/ui/core/mvc/ControllerMetadata', 'sap/ui/core/mvc/OverrideExecution', 'sap/base/util/uid'],
+	function(BaseObject, Metadata, ControllerMetadata, OverrideExecution, uid) {
 	"use strict";
 		var ControllerExtension = BaseObject.extend("sap.ui.core.mvc.ControllerExtension", {
 			metadata: {
@@ -69,18 +69,19 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 				var aPublicMethods = oMetadata.getAllPublicMethods();
 
 				aPublicMethods.forEach(function(sMethod) {
-					if (typeof this[sMethod] === 'function' && oMetadata.isMethodPublic(sMethod)) {
-						var fnFunction = this[sMethod];
+					var fnFunction = this[sMethod];
+					if (typeof fnFunction === 'function') {
 						mMethods[sMethod] = function() {
 							var tmp = fnFunction.apply(this, arguments);
 							return (tmp instanceof ControllerExtension) ? tmp.getInterface() : tmp;
 						}.bind(this);
 					}
+					//}
 				}.bind(this));
-
+				this.getInterface = jQuery.sap.getter(mMethods);
 				return mMethods;
 			}
-		}, ControllerExtensionMetadata);
+		}, ControllerMetadata);
 
 		/**
 		 * Override the ControllerExtension class with the given custom extension
@@ -91,20 +92,24 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 		 * extension:
 		 *
 		 * Example for oExtension:
+		 * <pre>
 		 * {
-		 *		onInit: function() {
-		 *	 		...
-		 *	 	},
-		 *      ...
+		 *     onInit: function() {
+		 *         ...
+		 *     },
+		 *     ...
 		 * }
-		 *
+		 * </pre>
 		 * @param {object} oExtension The custom extension definition
 		 * @public
 		 */
 		ControllerExtension.override = function(oExtension) {
-			var oMetadata = this.getMetadata();
-			oMetadata._staticOverride = oExtension;
-			return this;
+			// create an anonymous subclass in each call to keep metadata (and static overrides)
+			// separated even when override() is called multiple times on the same extension class
+			var oClass = Metadata.createClass(this, "anonymousExtension~" + uid(), {}, ControllerMetadata);
+			oClass.getMetadata()._staticOverride = oExtension;
+			oClass.getMetadata()._override = this.getMetadata()._override;
+			return oClass;
 		};
 
 
@@ -119,11 +124,10 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 		 * @private
 		 */
 		ControllerExtension.overrideMethod = function(sMemberName, oOrigDef, oCustomDef, oContext, sOverrideExecution) {
-			var mControllerLifecycleMethods = this.getMetadata().getLifecycleConfiguration();
 			var fnOri = oOrigDef[sMemberName];
 			var fnCust = oCustomDef[sMemberName];
 
-			sOverrideExecution = sOverrideExecution || mControllerLifecycleMethods[sMemberName] || OverrideExecution.Instead;
+			sOverrideExecution = sOverrideExecution || OverrideExecution.Instead;
 
 			function wrapMethod(bBefore) {
 				(function(fnCust, fnOri, oContext, bBefore){

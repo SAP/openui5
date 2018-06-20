@@ -699,15 +699,21 @@ function(
 
 		if ($DummyScrollContainer.length) {
 			$DummyScrollContainer.remove();
-			if (this.getParent() && this.getParent().$) { // FIXME: replace with isRoot() check?
-				var $Parent = this.getParent().$();
-				$Parent.removeClass("sapUiDtOverlayWithScrollBar");
-				$Parent.removeClass("sapUiDtOverlayWithScrollBarVertical");
-				$Parent.removeClass("sapUiDtOverlayWithScrollBarHorizontal");
-			}
-
 			this._oScrollbarSynchronizers.get($Overlay.get(0)).destroy();
 			this._oScrollbarSynchronizers.delete($Overlay.get(0));
+
+			if (
+				!this.isRoot()
+				&& this.getParent()._oScrollbarSynchronizers.size === 0
+				&& !this.getParent().getChildren().some(function (oAggregationOverlay) {
+					return oAggregationOverlay._oScrollbarSynchronizers.size > 0;
+				})
+			) {
+				var $Parent = this.getParent();
+				$Parent.removeStyleClass("sapUiDtOverlayWithScrollBar");
+				$Parent.removeStyleClass("sapUiDtOverlayWithScrollBarVertical");
+				$Parent.removeStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
+			}
 		}
 	};
 
@@ -747,12 +753,12 @@ function(
 				oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
 
 				if (oOverlayParent && DOMUtil.hasVerticalScrollBar(oOriginalDomRef)) {
-					oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
-					oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarVertical");
+					oOverlayParent.addStyleClass("sapUiDtOverlayWithScrollBar");
+					oOverlayParent.addStyleClass("sapUiDtOverlayWithScrollBarVertical");
 				}
 				if (oOverlayParent && DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)) {
-					oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
-					oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarHorizontal");
+					oOverlayParent.addStyleClass("sapUiDtOverlayWithScrollBar");
+					oOverlayParent.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
 				}
 				$overlayDomRef.append(oDummyScrollContainer);
 				var oScrollbarSynchronizer = new ScrollbarSynchronizer({
@@ -857,6 +863,16 @@ function(
 	 */
 	Overlay.prototype.isRoot = function() {
 		return this.getIsRoot();
+	};
+
+	/**
+	 * Returns true if the overlay should be destroyed
+	 *
+	 * @return {boolean} - true if overlay is scheduled to be destroyed
+	 * @public
+	 */
+	Overlay.prototype.getShouldBeDestroyed = function() {
+		return this._bShouldBeDestroyed ;
 	};
 
 	return Overlay;

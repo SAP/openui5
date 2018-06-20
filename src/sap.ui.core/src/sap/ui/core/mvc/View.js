@@ -4,15 +4,15 @@
 
 // Provides control sap.ui.core.mvc.View.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/base/ManagedObject',
-    'sap/ui/core/Control',
-    'sap/ui/core/mvc/Controller',
-	'sap/base/util/extend',
-    'sap/ui/core/library',
-    "./ViewRenderer"
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/Control',
+	'sap/ui/core/mvc/Controller',
+	'sap/base/util/merge',
+	'sap/ui/core/library',
+	"./ViewRenderer"
 ],
-	function(jQuery, ManagedObject, Control, Controller, extend, library, ViewRenderer) {
+	function(jQuery, ManagedObject, Control, Controller, merge, library, ViewRenderer) {
 	"use strict";
 
 
@@ -347,16 +347,20 @@ sap.ui.define([
 					oController = sap.ui.controller(defaultController, true /* oControllerImpl = true: do not extend controller inside factory; happens below (potentially async)! */, bAsync);
 				}
 			} else if (oController) {
-				// we need to extend the controller if an instance is passed
+				// if passed controller is not extended yet we need to do it.
 				var sOwnerId = ManagedObject._sOwnerId;
-				if (bAsync) {
-					oController = Controller.extendByCustomizing(oController, sName, bAsync)
-						.then(function(oController) {
-							return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
-						});
-				} else {
-					oController = Controller.extendByCustomizing(oController, sName, bAsync);
-					oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
+				if (!oController._isExtended()) {
+					if (bAsync) {
+						oController = Controller.extendByCustomizing(oController, sName, bAsync)
+							.then(function(oController) {
+								return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
+							});
+					} else {
+						oController = Controller.extendByCustomizing(oController, sName, bAsync);
+						oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
+					}
+				} else if (bAsync) {
+					oController = Promise.resolve(oController);
 				}
 			}
 
@@ -866,7 +870,7 @@ sap.ui.define([
 	 * @return {Promise} a Promise which resolves with the created View instance
 	 */
 	View.create = function(mOptions) {
-		var mParameters = extend(true, {}, mOptions);
+		var mParameters = merge({}, mOptions);
 		mParameters.async = true;
 		mParameters.viewContent = mParameters.definition;
 

@@ -4,18 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/core/EventBus",
-	"sap/base/util/equal",
 	"sap/base/util/includes",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/isWindow",
 	"sap/base/Log"
 ],
 function (
 	EventBus,
-	equal,
 	includes,
 	isPlainObject,
-	isWindow,
 	Log
 ) {
 	"use strict";
@@ -33,6 +29,8 @@ function (
 	 *   <li>via the constructor <code>new sap.ui.core.postmessage.Bus()</code></li>
 	 *   <li>via the static method <code>sap.ui.core.postmessage.Bus.getInstance()</code></li>
 	 * </ul>
+	 *
+	 * For supported data types for payload messages see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm}
 	 *
 	 * @extends sap.ui.core.EventBus
 	 * @alias sap.ui.core.postmessage.Bus
@@ -100,7 +98,7 @@ function (
 	 * @param {string} mParameters.origin - Origin of the receiving window, e.g. http://example.com
 	 * @param {string} mParameters.channelId - Channel identifier
 	 * @param {string} mParameters.eventId - Event identifier
-	 * @param {*} [mParameters.data] - Payload data
+	 * @param {*} [mParameters.data] - Payload data. For supported data types see - {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm}
 	 * @throws {TypeError} when invalid data is specified
 	 * @public
 	 */
@@ -129,7 +127,7 @@ function (
 
 		// Validation
 		if (
-			!isWindow(oTarget)
+			(typeof window === "undefined") || !(oTarget != null && oTarget === oTarget.window)
 			|| oTarget === window // avoid self-messaging
 		) {
 			throw TypeError("Target must be a window object and has to differ from current window");

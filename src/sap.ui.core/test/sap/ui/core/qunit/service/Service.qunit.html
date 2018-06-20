@@ -38,7 +38,7 @@
 	// ===========================================================================
 
 	// register the module path
-	jQuery.sap.registerModulePath("samples.components", "../../../../../sap/ui/core/samples/components/");
+	sap.ui.loader.config({paths: {"samples/components": "../../../../../sap/ui/core/samples/components/"}});
 
 	sap.ui.define("my/Service", ["sap/ui/core/service/Service"], function(Service) {
 

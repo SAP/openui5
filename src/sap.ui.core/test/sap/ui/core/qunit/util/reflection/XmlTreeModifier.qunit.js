@@ -22,7 +22,7 @@ function(
 			this.TEXT_ID = "textId";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 
-			jQuery.sap.registerModulePath("sap.ui.test", "../../component/testdata");
+			sap.ui.loader.config({paths: {"sap/ui/test": "../../component/testdata"}});
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"

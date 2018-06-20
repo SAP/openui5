@@ -161,7 +161,7 @@ function(
 				}
 			};
 			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 1, "with propertyChanged and text as parameters, the modified event is not fired");
+			assert.equal(oEventSpy.callCount, 2, "with propertyChanged and text as parameters, the modified event is fired");
 			assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was not called");
 
 			sandbox.stub(this.oElementOverlay, "getAggregationOverlay").returns(this.oElementOverlay);
@@ -174,7 +174,7 @@ function(
 				}
 			};
 			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 2, "with insertAggregation and a name, the modified event is fired");
+			assert.equal(oEventSpy.callCount, 3, "with insertAggregation and a name, the modified event is fired");
 			assert.equal(oSetRelevantSpy.callCount, 2, "and setRelevantOverlays was called");
 
 			oEvent = {
@@ -185,7 +185,7 @@ function(
 				}
 			};
 			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 3, "with setParent as type, the modified event is fired");
+			assert.equal(oEventSpy.callCount, 4, "with setParent as type, the modified event is fired");
 			assert.equal(oSetRelevantSpy.callCount, 2, "and setRelevantOverlays was not called");
 		});
 
@@ -237,10 +237,21 @@ function(
 			assert.strictEqual(this.oElementOverlay.hasStyleClass("sapUiDtOverlayMovable"), true, "the Overlay has the sapUiDtOverlayMovable StyleClass");
 
 			this.oElementOverlay.setEditable(undefined);
+
 			assert.equal(this.oElementOverlay.isEditable(), false, 'then the overlay is not editable');
 			assert.strictEqual(this.oElementOverlay.hasStyleClass("sapUiDtOverlayEditable"), false, "the Overlay doesn't have the sapUiDtOverlayEditable StyleClass");
+		});
+
+		QUnit.test("when setEditable is called on the overlay with true", function (assert) {
+			assert.equal(this.oElementOverlay.isEditable(), false, 'then the overlay is initially not editable');
+			var oEventSpy = sandbox.spy(this.oElementOverlay, "fireEditableChange");
 			this.oElementOverlay.setEditable(true);
 			assert.equal(this.oElementOverlay.isEditable(), true, 'then the overlay is editable');
+			assert.strictEqual(oEventSpy.callCount, 1, "then 'editableChange' was fired");
+			assert.deepEqual(oEventSpy.getCall(0).args[0], {
+				id: this.oElementOverlay.getId(),
+				editable : true
+			}, "then 'editableChange' was fired with the required parameters");
 			assert.strictEqual(this.oElementOverlay.hasStyleClass("sapUiDtOverlayEditable"), true, "the Overlay has the sapUiDtOverlayEditable StyleClass");
 		});
 
@@ -661,7 +672,7 @@ function(
 				width: "400px",
 				value: "bar"
 			}));
-			this.oVBox = new sap.m.VBox({
+			this.oVBox = new VBox({
 				items : [this.oSimpleScrollControl]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -706,7 +717,6 @@ function(
 			});
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
 		});
-
 		QUnit.test("when the overlay is scrolled", function(assert) {
 			var done = assert.async();
 			var oContent1 = this.oSimpleScrollControl.getContent1()[0];
@@ -944,6 +954,82 @@ function(
 		});
 	});
 
+	QUnit.module("Scrollbar classes removal", {
+		beforeEach: function(assert) {
+			var ScrollControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.ScrollControl', {
+				metadata: {
+					designtime: {
+						scrollContainers: null
+					}
+				},
+				renderer: SimpleScrollControl.getMetadata().getRenderer().render
+			});
+
+			var fnDone = assert.async();
+
+			this.oScrollControl = new ScrollControl({
+				id: "scrollControl",
+				content1: [
+					new TextArea({
+						height: "500px",
+						width: "400px",
+						value: "foo"
+					})
+				],
+				content2: [
+					new TextArea({
+						height: "500px",
+						width: "400px",
+						value: "bar"
+					})
+				]
+			});
+
+			this.oScrollControl.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oScrollControl.$('content1').css({
+				height: 300,
+				overflow: 'auto'
+			});
+			this.oScrollControl.$('content2').css({
+				height: 300,
+				overflow: 'auto'
+			});
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oScrollControl]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
+				fnDone();
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oScrollControl.destroy();
+		}
+	}, function () {
+		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must persist on the parent overlay", function (assert) {
+			var fnDone = assert.async();
+			assert.ok(
+				this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+				&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+			);
+			this.oScrollControlOverlay.getAggregationOverlay('content2').attachEventOnce('geometryChanged', function (oEvent) {
+				var oAggregationOverlay = oEvent.getSource();
+				assert.strictEqual(oAggregationOverlay.$().find('>.sapUiDtDummyScrollContainer').length, 0, 'make sure dummy container has been removed');
+				assert.ok(
+					this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+					&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+				);
+				fnDone();
+			}, this);
+			this.oScrollControl.getContent2()[0].$().height(250);
+		});
+	});
+
 	QUnit.module("Given that an Overlay is created when scrolling is present", {
 		beforeEach : function(assert) {
 			var fnDone = assert.async();
@@ -957,59 +1043,80 @@ function(
 				text : "Button3"
 			});
 
-			this.oPanel0 = new Panel({
+			this.oPanel = new Panel({
 				id : "SmallPanel",
 				content : [this.oButton, this.oButton2, this.oButton3],
 				width : "40px",
 				height : "100px"
 			});
 
-			this.oPanel0.placeAt("qunit-fixture");
+			this.oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			this.oPanel0.$().find('>.sapMPanelContent').scrollLeft(20);
-			this.oPanel0.$().find('>.sapMPanelContent').scrollTop(20);
-			sap.ui.getCore().applyChanges();
+			this.oPanel.$().find('>.sapMPanelContent').scrollLeft(20);
+			this.oPanel.$().find('>.sapMPanelContent').scrollTop(50);
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPanel0]
+				rootElements : [this.oPanel]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				fnDone();
-			});
-
+			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
 		afterEach : function() {
-			this.oPanel0.destroy();
+			this.oPanel.destroy();
 			this.oDesignTime.destroy();
 		}
 	}, function(){
 		QUnit.test("then", function(assert) {
-			this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel0);
+			var fnDone = assert.async();
+			this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
 			this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 			this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
-			this.oPanelOverlay.applyStyles();
-			//Math.round is required for IE and Edge
-			assert.equal(
-				Math.round(this.oButtonOverlay.$().offset().left),
-				Math.round(this.oButton.$().offset().left),
-				"overlay has same left position as the control"
-			);
-			assert.equal(
-				Math.round(this.oButtonOverlay.$().offset().top),
-				Math.round(this.oButton.$().offset().top),
-				"overlay has same top position as the control"
-			);
-			assert.equal(
-				Math.round(this.oButton2Overlay.$().offset().left),
-				Math.round(this.oButton2.$().offset().left),
-				"overlay has same left position as the control"
-			);
-			assert.equal(
-				Math.round(this.oButton2Overlay.$().offset().top),
-				Math.round(this.oButton2.$().offset().top),
-				"overlay has same top position as the control"
-			);
+
+			var fnAssertPositions = function(){
+				// Math.round is required for IE and Edge
+				assert.equal(
+					Math.round(this.oPanelOverlay.$().offset().left),
+					Math.round(this.oPanel.$().offset().left),
+					"panel overlay has same left position as the panel control"
+				);
+				assert.equal(
+					Math.round(this.oPanelOverlay.$().offset().top),
+					Math.round(this.oPanel.$().offset().top),
+					"panel overlay has same top position as the panel control"
+				);
+				assert.equal(
+					Math.round(this.oButtonOverlay.$().offset().left),
+					Math.round(this.oButton.$().offset().left),
+					"button overlay has same left position as the button control"
+				);
+				assert.equal(
+					Math.round(this.oButtonOverlay.$().offset().top),
+					Math.round(this.oButton.$().offset().top),
+					"button overlay has same top position as the button control"
+				);
+				assert.equal(
+					Math.round(this.oButton2Overlay.$().offset().left),
+					Math.round(this.oButton2.$().offset().left),
+					"button2 overlay has same left position as the button2 control"
+				);
+				assert.equal(
+					Math.round(this.oButton2Overlay.$().offset().top),
+					Math.round(this.oButton2.$().offset().top),
+					"button2 overlay has same top position as the button2 control"
+				);
+			};
+
+			// In internet explorer/edge, the checks happen before the overlays inside the scroll container
+			// are properly placed, so we must wait until they are finalized before checking
+			if (this.oButtonOverlay.$().offset().left !== this.oButton.$().offset().left){
+				this.oButton2Overlay.attachEventOnce("geometryChanged", function(){
+					fnAssertPositions.apply(this);
+					fnDone();
+				},this);
+			} else {
+				fnAssertPositions.apply(this);
+				fnDone();
+			}
 		});
 	});
 

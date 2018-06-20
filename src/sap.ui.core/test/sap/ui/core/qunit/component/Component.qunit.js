@@ -574,7 +574,7 @@ sap.ui.define([
 		var oServer = this.oServer, oManifest = this.oAltManifest1;
 
 		// create an invalid registration for samples.components.config to see that the "url" parameter works
-		jQuery.sap.registerModulePath("samples.components.config", "../../../../../../test-resources/invalid/");
+		sap.ui.loader.config({paths:{"samples/components/config":"../../../../../../test-resources/invalid/"}});
 
 		//start test
 		var fnComponentClass = sap.ui.component.load({
@@ -605,7 +605,7 @@ sap.ui.define([
 		var oServer = this.oServer, oManifest = this.oAltManifest2;
 
 		// create an invalid registration for samples.components.config to see that the "url" parameter works
-		jQuery.sap.registerModulePath("samples.components.oneview", "../../../../../../test-resources/invalid/");
+		sap.ui.loader.config({paths:{"samples/components/oneview":"../../../../../../test-resources/invalid/"}});
 
 		//start test
 		var done = assert.async();

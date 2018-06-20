@@ -221,7 +221,7 @@
 			this.oSecondSection = this.oObjectPage.getSections()[1];
 			this.oThirdSection = this.oObjectPage.getSections()[2];
 			this.oObjectPage.setSelectedSection(this.oSecondSection.getId());
-			this.iLoadingDelay = 500;
+			this.iLoadingDelay = 1000;
 
 		},
 		afterEach: function () {
@@ -271,6 +271,47 @@
 		}, this.iLoadingDelay);
 
 		helpers.renderObject(this.oObjectPage);
+	});
+
+	QUnit.test("test selected section when removing another one", function (assert) {
+		/* Arrange */
+		var oObjectPage = this.oObjectPage,
+			iNonIntegerHeaderContentHeight = 99.7, // header content height should not be an integer
+			oHeaderContent = new sap.ui.core.HTML({content: "<div style='height:" + iNonIntegerHeaderContentHeight + "px'>some content</div>"}),
+			oExpected = {
+				oSelectedSection: this.oSecondSection,
+				sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle()
+			},
+			done = assert.async(),
+			bFirefox = sap.ui.Device.browser.firefox;
+
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.addHeaderContent(oHeaderContent);
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// assert that the page internally rounds (ceils) the header content heights
+			assert.notEqual(oObjectPage.iHeaderContentHeight, iNonIntegerHeaderContentHeight, "cached headerContent height is rounded");
+			assert.strictEqual(oObjectPage.iHeaderContentHeight, 100, "cached headerContent height is ceiled");
+
+			// Act: make an action that causes the page to have (1) first visible section selected but (2) header snapped
+			oObjectPage.removeSection(0);
+
+			// as the above causes invalidation, hook to onAfterRendering to check resulting state:
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				setTimeout(function() {
+					sectionIsSelected(oObjectPage, assert, oExpected);
+					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), bFirefox ? 0 : oObjectPage.iHeaderContentHeight, "top section is selected");
+					assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
+					assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
+
+					oObjectPage._onScroll({target: { scrollTop: iNonIntegerHeaderContentHeight}}); // scrollEnablement kicks in to restore last saved Y position, which is not rounded (ceiled)
+					assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is still snapped");
+					assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is still snapped");
+					done();
+				}, 0);
+			});
+		});
+		helpers.renderObject(oObjectPage);
 	});
 
 	QUnit.test("unset selected section", function (assert) {
@@ -2038,6 +2079,62 @@
 
 		// Act: render page to test scrolling behavior
 		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.module("Private methods");
+
+	QUnit.test("BCP:1870298358 - cloned header should not introduce scrollbar - " +
+		"_obtainSnappedTitleHeight and _obtainExpandedTitleHeight", function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
+			oCSSSpy;
+
+		oObjectPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
+
+		// Act - render OP and call method
+		oObjectPage._obtainSnappedTitleHeight(true/* via clone */);
+
+		// Assert
+		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
+		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
+		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+
+		// ACT - Reset spy and call method
+		oCSSSpy.reset();
+		oObjectPage._obtainExpandedTitleHeight(true/* via clone */);
+
+		// Assert
+		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
+		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
+		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+
+		// Cleanup
+		oCSSSpy.restore();
+		oObjectPage.destroy();
+	});
+
+	QUnit.test("BCP:1870298358 - _getScrollableViewportHeight method should acquire the exact height", function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
+			oGetBoundingClientRectSpy;
+
+		oObjectPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oGetBoundingClientRectSpy = sinon.spy(oObjectPage.getDomRef(), "getBoundingClientRect");
+
+		// Act - call method
+		oObjectPage._getScrollableViewportHeight();
+
+		// Assert
+		assert.strictEqual(oGetBoundingClientRectSpy.callCount, 1, "Exact height is acquired using getBoundingClientRect");
+
+		// Cleanup
+		oGetBoundingClientRectSpy.restore();
+		oObjectPage.destroy();
 	});
 
 	function checkObjectExists(sSelector) {

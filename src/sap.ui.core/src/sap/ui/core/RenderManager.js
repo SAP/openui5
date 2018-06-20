@@ -5,9 +5,9 @@
 // Provides the render manager sap.ui.core.RenderManager
 sap.ui.define([
 		'jquery.sap.global',
-		'./LabelEnablement', 'sap/ui/base/Object',
+		'./LabelEnablement', 'sap/ui/base/Object', 'sap/ui/dom/patch',
 		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom', 'jquery.sap.trace'
-], function(jQuery, LabelEnablement, BaseObject /* , jQuerySapAct, jQuerySapEncoder, jQuerySapDom, jQuerySapTrace */) {
+], function(jQuery, LabelEnablement, BaseObject, domPatch /* , jQuerySapAct, jQuerySapEncoder, jQuerySapDom, jQuerySapTrace */) {
 
 	"use strict";
 
@@ -715,7 +715,10 @@ sap.ui.define([
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
 									jQuery(oldDomNode).html(sHTML);
 								} else if ( isDomPatchingEnabled() ) {
-									jQuery.sap.replaceDOM(oldDomNode, sHTML, true);
+									var oNewDom = jQuery.parseHTML(sHTML)[0];
+									jQuery.cleanData([oldDomNode]);
+									jQuery.cleanData(oldDomNode.getElementsByTagName("*"));
+									domPatch(oldDomNode, oNewDom);
 								} else {
 									jQuery(oldDomNode).replaceWith(sHTML);
 								}

@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.tnt.ToolHeader: Border is now correct",
         "references": []
+      },
+      {
+        "id": "c413e800120fe79aa254d2476dd6c8ae9af29860",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Expand/collapse animation visual glitches solved",
+        "references": []
       }
     ]
   }

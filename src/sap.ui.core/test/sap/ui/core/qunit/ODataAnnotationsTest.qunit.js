@@ -1,4 +1,5 @@
 /*global QUnit */
+/*eslint max-nested-callbacks: 0 */
 
 /**
  * Test-Function to be used in place of deepEquals which only tests for the existence of the given
@@ -67,7 +68,7 @@ jQuery.sap.require("sap.ui.model.odata.ODataModel");
 jQuery.sap.require("jquery.sap.sjax");
 function cleanOdataCache() {
 	sap.ui.model.odata.ODataModel.mServiceData = {};
-	sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+	sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 }
 
 QUnit.config.testTimeout = 6000;
@@ -586,7 +587,7 @@ function runODataAnnotationTests() {
 		return function(assert) {
 			var done = assert.async();
 			if (!bSharedMetadata){
-				sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+				sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 			}
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 
@@ -887,7 +888,7 @@ function runODataAnnotationTests() {
 		return function(assert) {
 			var done = assert.async();
 			if (!bSharedMetadata){
-				sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+				sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 			}
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
 			var that = this;
@@ -984,7 +985,7 @@ function runODataAnnotationTests() {
 				assert.ok(false, 'Metadata promise rejected');
 			});
 		} else if (bServiceValid && sAnnotationsValid === "metadata") {
-			oModel.metadataLoaded().then(fnOnLoaded.bind(this, "Both"))
+			oModel.metadataLoaded().then(fnOnLoaded.bind(this, "Both"));
 		} else if (bServiceValid && sAnnotationsValid === "none"){
 				//internal metadata needs to be sucessful prior to the failed annotations
 				jQuery.when(internalMetadataDfd).done(function(){
@@ -1107,7 +1108,7 @@ function runODataAnnotationTests() {
 	QUnit.test("Asynchronous loading", function(assert) {
 		var done = assert.async();
 		assert.expect(12);
-		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
+//		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
 		// Don't use metadata/annotation cache
 		cleanOdataCache();
@@ -3456,11 +3457,11 @@ function runODataAnnotationTests() {
 					done();
 
 				}).catch(function(mResults) {
-					assert.ok(false, "Third Annotations could not be loaded...")
-				})
+					assert.ok(false, "Third Annotations could not be loaded...");
+				});
 			}).catch(function(mResults) {
-				assert.ok(false, "Second Annotations could not be loaded...")
-			})
+				assert.ok(false, "Second Annotations could not be loaded...");
+			});
 		});
 	});
 
@@ -3545,19 +3546,19 @@ function runODataAnnotationTests() {
 						assert.ok(false, "Third Annotations could not be parsed...");
 						oModel.destroy();
 						done();
-					})
+					});
 				}).catch(function(mResults) {
-					assert.ok(false, "Second Annotations could not be parsed...")
+					assert.ok(false, "Second Annotations could not be parsed...");
 					oModel.destroy();
 					done();
-				})
+				});
 			}).catch(function(mResults) {
-				assert.ok(false, "First Annotations could not be parsed...")
+				assert.ok(false, "First Annotations could not be parsed...");
 				oModel.destroy();
 				done();
 			});
 		}).catch(function() {
-			assert.ok(false, "Metadata could not be loaded...")
+			assert.ok(false, "Metadata could not be loaded...");
 			oModel.destroy();
 			done();
 		});
@@ -3937,7 +3938,7 @@ function runODataAnnotationTests() {
 							}
 						},
 						"RecordType": "com.sap.vocabularies.Test.v1.Data.DataFieldWithUrl"
-					},
+					}
 				},
 				"LabeledElement"
 			);
@@ -3975,7 +3976,7 @@ function runODataAnnotationTests() {
 				oModel4.destroy();
 				window.setTimeout(done, 500);
 			}
-		}
+		};
 
 		var fnTestAnnotations = function(sTestType, oModel, sSource) {
 			var oMetadata = oModel.getServiceMetadata();
@@ -3995,8 +3996,8 @@ function runODataAnnotationTests() {
 
 		var fnTestMetaModel = function(oModel, bV4AnnotationsAvailable, sV4AnnotationSource) {
 			var sContainerName = oModel.getMetaModel().getProperty("/dataServices/schema/1/entityContainer/0/name");
-			var sLabelString  = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/com.sap.vocabularies.Common.v1.Label/String")
-			var sSource = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/annotationSource/String")
+			var sLabelString  = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/com.sap.vocabularies.Common.v1.Label/String");
+			var sSource = oModel.getMetaModel().getProperty("/dataServices/schema/0/entityType/0/property/0/annotationSource/String");
 
 			assert.equal(sContainerName, "NorthwindEntities", "EntityContainer \"NorthwindEntities\" available");
 			assert.equal(sLabelString, bV4AnnotationsAvailable ? "LabelString" : undefined, "LabelString for \"CategoryID\" is correct");
@@ -4070,7 +4071,7 @@ function runODataAnnotationTests() {
 		var mTest = mAdditionalTestsServices["Apply in If"];
 
 		var oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
-			annotationURI : mTest.annotations,
+			annotationURI : mTest.annotations
 		});
 
 
@@ -4153,7 +4154,7 @@ function runODataAnnotationTests() {
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
 			annotationURI : mTest.annotations,
-			skipMetadataAnnotationParsing: true,
+			skipMetadataAnnotationParsing: true
 		});
 
 
@@ -4272,10 +4273,10 @@ function runODataAnnotationTests() {
 				oModel.destroy();
 				oModel2.destroy();
 				setTimeout(done, 500);
-			} else if(iCount > 2) {
+			} else if (iCount > 2) {
 				assert.ok(false, "Too many events have been fired");
 			}
-		}
+		};
 
 		oModel.attachMetadataLoaded(fnTestAllAnnotations);
 		oModel2.attachAnnotationsLoaded(fnTestAllAnnotations);
@@ -4356,7 +4357,7 @@ function runODataAnnotationTests() {
 			oModel.destroy();
 			done();
 		});
-	}
+	};
 
 	QUnit.test("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
 	QUnit.test("V2: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
@@ -4794,7 +4795,7 @@ function runODataAnnotationTests() {
 			done();
 		});
 
-	}
+	};
 
 	QUnit.test("V1: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 1));
 	QUnit.test("V2: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 2));
@@ -5144,7 +5145,7 @@ function runODataAnnotationTests() {
 
 	var fnTestNestedAnnotations = function(iModelVersion, assert) {
 		var done = assert.async();
-		assert.expect(150);
+		assert.expect(306);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Nested Annotations"];
@@ -5156,146 +5157,154 @@ function runODataAnnotationTests() {
 			assert.equal(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
 
 			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
-				var oAnnotations = oModel.getServiceAnnotations();
-
-				deepContains(assert, oAnnotations["NorthwindModel.Product"], {
-					"com.sap.vocabularies.UI.v1.LineItem" : [{
-						"Label" : {
-							"String" : "Business Partner"
-						},
-						"Value" : {
-							"Path" : "BusinessPartnerID"
-						},
-						"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
-						"com.sap.vocabularies.UI.v1.Importance" : {
-							"EnumMember" : "com.sap.vocabularies.UI.v1.ImportanceType/High"
-						}
-					}],
-					"com.sap.vocabularies.Common.v1.Text": {
-						"Term": {
-							"Name": "TextArrangement",
-							"Type": "com.sap.vocabularies.UI.v1.TextArrangementType",
-							"AppliesTo": "Annotation EntityType",
-
-							"Core.Description1": {
-								"String": "Describes the arrangement of the property values and its text"
+				var oAnnotations = oModel.getServiceAnnotations(),
+					oExpectedProductAnnotations = {
+						"com.sap.vocabularies.UI.v1.LineItem" : [{
+							"Label" : {
+								"String" : "Business Partner"
 							},
-							"Core.Description2": {
-								"String": "If used for a single property the Common.Text annotation is annotated"
+							"Value" : {
+								"Path" : "BusinessPartnerID"
 							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
+							"com.sap.vocabularies.UI.v1.Importance" : {
+								"EnumMember" : "com.sap.vocabularies.UI.v1.ImportanceType/High"
+							}
+						}],
+						"com.sap.vocabularies.UI.v1.LineItem@com.sap.vocabularies.UI.v1.Criticality" : {
+							"Path" : "Criticality"
 						},
-						"Path": "CategoryName",
-					},
-					"com.sap.vocabularies.Common.v1.Text2": {
-						"Path": "CategoryName",
-						"com.sap.vocabularies.UI.v1.TextArrangement": {
-							"EnumMember": "com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"
-						}
-					},
-					"unittest.ui5.parentAnnotation": {
-						"unittest.ui5.constantExpressions": {
-							"String": "Rosinenbroetchen",
-							"Binary": "1100101",
-							"Bool": "almost true",
-							"Date": "2016-04-14",
-							"DateTimeOffset": "2016-04-14T16:19:00.000-02:00",
-							"Decimal": "3.14159",
-							"Duration": "P11D23H59M59.999999999999S",
-							"EnumMember": "unittest.ui5.enum/test1",
-							"Float": "6.28318",
-							"Guid": "21EC2020-3AEA-1069-A2DD-08002B30309D",
-							"Int": "23",
-							"TimeOfDay": "23:42:58"
+						"com.sap.vocabularies.Common.v1.Text": {
+							"Term": {
+								"Name": "TextArrangement",
+								"Type": "com.sap.vocabularies.UI.v1.TextArrangementType",
+								"AppliesTo": "Annotation EntityType",
+
+								"Core.Description1": {
+									"String": "Describes the arrangement of the property values and its text"
+								},
+								"Core.Description2": {
+									"String": "If used for a single property the Common.Text annotation is annotated"
+								}
+							},
+							"Path": "CategoryName"
 						},
-						"unittest.ui5.dynamicExpression1": {
-							"Apply": {
-								"Name": "odata.concat",
-								"Parameters": [
+						"com.sap.vocabularies.Common.v1.Text#2": {
+							"Path": "CategoryName",
+							"com.sap.vocabularies.UI.v1.TextArrangement": {
+								"EnumMember": "com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"
+							}
+						},
+						"unittest.ui5.parentAnnotation": {
+							"unittest.ui5.constantExpressions": {
+								"String": "Rosinenbroetchen",
+								"Binary": "1100101",
+								"Bool": "almost true",
+								"Date": "2016-04-14",
+								"DateTimeOffset": "2016-04-14T16:19:00.000-02:00",
+								"Decimal": "3.14159",
+								"Duration": "P11D23H59M59.999999999999S",
+								"EnumMember": "unittest.ui5.enum/test1",
+								"Float": "6.28318",
+								"Guid": "21EC2020-3AEA-1069-A2DD-08002B30309D",
+								"Int": "23",
+								"TimeOfDay": "23:42:58"
+							},
+							"unittest.ui5.dynamicExpression1": {
+								"Apply": {
+									"Name": "odata.concat",
+									"Parameters": [
+										{
+											"Type": "String",
+											"Value": "***"
+										},
+										{
+											"Type": "String",
+											"Value": ", "
+										},
+										{
+											"Type": "String",
+											"Value": "Drugs "
+										},
+										{
+											"Type": "String",
+											"Value": " and "
+										},
+										{
+											"Type": "String",
+											"Value": "Rock 'n Roll"
+										}
+									]
+								}
+							},
+							"unittest.ui5.dynamicExpression2": [
+								{
+									"String": "One"
+								},
+								{
+									"String": "Two"
+								},
+								{
+									"String": "Five"
+								}
+							],
+							"unittest.ui5.dynamicExpression3": {
+								"If": [
 									{
-										"Type": "String",
-										"Value": "***"
+										"Path": "IsFemale"
 									},
 									{
-										"Type": "String",
-										"Value": ", "
+										"String": "Iron Man"
 									},
 									{
-										"Type": "String",
-										"Value": "Drugs "
-									},
-									{
-										"Type": "String",
-										"Value": " and "
-									},
-									{
-										"Type": "String",
-										"Value": "Rock 'n Roll"
+										"String": "Someone else"
 									}
 								]
-							}
-						},
-						"unittest.ui5.dynamicExpression2": [
-							{
-								"String": "One"
 							},
-							{
-								"String": "Two"
+							"unittest.ui5.dynamicExpression4": {
+								"Null": null
 							},
-							{
-								"String": "Five"
-							}
-						],
-						"unittest.ui5.dynamicExpression3": {
-							"If": [
-								{
-									"Path": "IsFemale"
+							"unittest.ui5.dynamicExpression5": {
+								"GivenName": {
+									"Path": "FirstName"
 								},
-								{
-									"String": "Iron Man"
+								"Surname": {
+									"Path": "LastName"
 								},
-								{
-									"String": "Someone else"
-								}
-							]
-						},
-						"unittest.ui5.dynamicExpression4": {
-							"Null": null
-						},
-						"unittest.ui5.dynamicExpression5": {
-							"GivenName": {
-								"Path": "FirstName"
-							},
-							"Surname": {
-								"Path": "LastName"
-							},
-							"Manager": {
-								"Path": "DirectSupervisor"
-							},
-							"CostCenter": {
-								"UrlRef": {
-									"Apply": {
-										"Name": "odata.fillUriTemplate",
-										"Parameters": [
-											{
-												"Type": "String",
-												"Value": "http://host/anotherservice/CostCenters('{ccid}')"
-											},
-											{
-												"Type": "LabeledElement",
-												"Value": {
-													"Path": "CostCenterID"
+								"Manager": {
+									"Path": "DirectSupervisor"
+								},
+								"CostCenter": {
+									"UrlRef": {
+										"Apply": {
+											"Name": "odata.fillUriTemplate",
+											"Parameters": [
+												{
+													"Type": "String",
+													"Value": "http://host/anotherservice/CostCenters('{ccid}')"
 												},
-												"Name": "ccid"
-											}
-										]
+												{
+													"Type": "LabeledElement",
+													"Value": {
+														"Path": "CostCenterID"
+													},
+													"Name": "ccid"
+												}
+											]
+										}
 									}
 								}
 							}
 						}
-					}
-				}, "NorthwindModel.Product");
+					};
 
-
+				assert.deepEqual(
+					oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem"]
+						["com.sap.vocabularies.UI.v1.Criticality"],
+					{"Path" : "Criticality"},
+					"annotation at array value still present");
+				deepContains(assert, oAnnotations["NorthwindModel.Product"], oExpectedProductAnnotations, "NorthwindModel.Product");
+				deepContains(assert, JSON.parse(JSON.stringify(oAnnotations["NorthwindModel.Product"])), oExpectedProductAnnotations, "Cloned NorthwindModel.Product");
 
 				done();
 			});

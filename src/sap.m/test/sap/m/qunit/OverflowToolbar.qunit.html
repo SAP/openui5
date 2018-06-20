@@ -1383,6 +1383,29 @@
 					oOverflowTB,
 					spy;
 
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			aContent[5].setVisible(false);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing selected item of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy;
+
 			var oSelect = new sap.m.Select({
 				autoAdjustWidth: true,
 				items: [
@@ -1400,22 +1423,11 @@
 
 			var iInvalidationCountBefore = spy.callCount;
 
-			aContent[5].setVisible(false);
-
-			this.clock.tick(1000);
-
-			var iInvalidationCountAfter = spy.callCount;
-
-			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
-
-			//Assert usage of sap.m.Select with autoAdjustWidth: true, causing control size change
-			iInvalidationCountBefore = spy.callCount;
-
 			oSelect.setSelectedItemId("idItem2");
 
 			this.clock.tick(1000);
 
-			iInvalidationCountAfter = spy.callCount;
+			var iInvalidationCountAfter = spy.callCount;
 
 			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
 
@@ -1426,7 +1438,7 @@
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy;
-
+			
 			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
 			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
@@ -1441,6 +1453,39 @@
 			var iInvalidationCountAfter = spy.callCount;
 
 			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation not triggered (_resetAndInvalidateToolbar not called)");
+
+			oOverflowTB.destroy();
+		});
+
+		QUnit.test("Changing selected item of sap.m.Select, which has autoAdjustWidth: false (does Not affect control size), does Not force recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					spy;
+
+			var oSelect = new sap.m.Select({
+				autoAdjustWidth: false,
+				items: [
+					new sap.ui.core.Item({id: "idItem1", text: "Item 1"}),
+					new sap.ui.core.Item({id: "idItem2", text: "This is an extremely long Item 2"}),
+				]
+			});
+
+			aContent.push(oSelect);
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			oSelect.setSelectedItemId("idItem2");
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Layout recalculation Not triggered (_resetAndInvalidateToolbar Not called)");
 
 			oOverflowTB.destroy();
 		});
@@ -1861,6 +1906,135 @@
 			oOverflowTB.addContent(oButton1.clone());
 			oButton1.setLayoutData(new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}));
 			oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.module("Focusing", {
+			beforeEach: function () {
+				this.oButtonUnderTest = new sap.m.Button({
+					id: "btnUnderTest",
+					width: "150px"
+				});
+				this.oButtonUnderTest2 = new sap.m.Button({
+					id: "btnUnderTest2",
+					width: "150px"
+				});
+				this.oOTB = new sap.m.OverflowToolbar({
+					width: "300px",
+					content: [
+						this.oButtonUnderTest
+					]
+				});
+				this.oOTBOverflowed = new sap.m.OverflowToolbar({
+					id: "smallOverflowTB",
+					width: "100px",
+					content: [
+						new sap.m.Button({
+							text: "Press me",
+							width: "200px"
+						}),
+						this.oButtonUnderTest2
+					]
+				});
+
+				this.oOTB.placeAt("qunit-fixture");
+				this.oOTBOverflowed.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				sinon.config.useFakeTimers = false;
+			},
+			afterEach: function () {
+				this.oOTB.destroy();
+				this.oOTBOverflowed.destroy();
+				this.oOTB = null;
+				this.oOTBOverflowed = null;
+				this.oButtonUnderTest = null;
+				this.oButtonUnderTest2 = null;
+				sinon.config.useFakeTimers = true;
+			}
+		});
+
+		QUnit.test("Focus on toolbar child is retained after toolbar invalidation", function (assert) {
+			assert.expect(2);
+
+			// arrange
+			var done = assert.async(),
+				oApplyFocusSpy = this.spy(sap.m.OverflowToolbar.prototype, "_applyFocus"),
+				oDelegate = {
+					onAfterRendering: function() {
+						this.oOTB.removeEventDelegate(oDelegate);
+
+						// assert
+						assert.ok(oApplyFocusSpy.calledOnce, "Method _applyFocus called upon button focus.");
+						assert.strictEqual(document.activeElement, this.oButtonUnderTest.getDomRef(), "Button is focused correctly :: " + this.oButtonUnderTest.getId());
+						done();
+					}.bind(this)
+				};
+
+			this.oOTB.addEventDelegate(oDelegate);
+
+			// act - child control is on focus, invalidate the toolbar.
+			this.oOTB.sFocusedChildControlId = this.oButtonUnderTest.getId();
+			this.oOTB.setWidth("1000px");
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("Focus on overflow button is retained after toolbar invalidation", function (assert) {
+			assert.expect(1);
+
+			// arrange
+			var done = assert.async(),
+				oOverflowButton = this.oOTBOverflowed._getOverflowButton(),
+				oDelegate = {
+					onAfterRendering: function() {
+						this.oOTBOverflowed.removeEventDelegate(oDelegate);
+
+						// assert
+						assert.strictEqual(document.activeElement, oOverflowButton.getDomRef(), "OverflowButton is focused correctly :: " + oOverflowButton.getId());
+						done();
+
+					}.bind(this)
+				};
+
+			this.oOTBOverflowed.addEventDelegate(oDelegate);
+
+			// act - overvlow button has been focused, then invalidate the toolbar.
+			this.oOTBOverflowed.sFocusedChildControlId = oOverflowButton.getId();
+			this.oOTBOverflowed.rerender();
+		});
+
+		QUnit.test("Focus should move on last child after toolbar expanding", function (assert) {
+			assert.expect(3);
+
+			// arrange
+			var done = assert.async(),
+				oOverflowButton = this.oOTBOverflowed._getOverflowButton(),
+				oDelegate = {
+					onAfterRendering: function() {
+						// act (2) - remove delegate and simulate that overflow button is focused
+						// Note: the _bOverflowButtonWasFocused flag is set after the invalidation,
+						// because in this scenario the OTB invalidates twice and if the flag is set in act (1),
+						// it will be internaly overwritten.
+						this.oOTBOverflowed.removeEventDelegate(oDelegate);
+						this.oOTBOverflowed._bOverflowButtonWasFocused = true;
+
+						setTimeout(function() {
+							// assert
+							assert.strictEqual(document.activeElement.id, this.oButtonUnderTest2.getId(), "Last child control is focused correctly :: " + this.oButtonUnderTest2.getId());
+							assert.strictEqual(this.oOTBOverflowed._getOverflowButtonNeeded(), false, "Toolbar has been expanded.");
+							done();
+						}.bind(this), 0);
+
+					}.bind(this)
+				};
+
+			this.oOTBOverflowed.addEventDelegate(oDelegate);
+
+			// assert
+			assert.equal(this.oOTBOverflowed._getOverflowButtonNeeded(), true, "Toolbar is overflowed.");
+
+			// act (1) - set toolbar width to larger than its content and invalidate the toolbar.
+			this.oOTBOverflowed.setWidth("500px");
 			sap.ui.getCore().applyChanges();
 		});
 

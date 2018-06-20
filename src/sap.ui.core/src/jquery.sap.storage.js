@@ -7,8 +7,8 @@
  */
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/base/storage'
-], function(jQuery, storage) {
+	'sap/ui/util/Storage'
+], function(jQuery, Storage) {
 	"use strict";
 
 	/**
@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @borrows jQuery.sap.storage.Storage#removeAll as removeAll
 	 * @borrows jQuery.sap.storage.Storage#isSupported as isSupported
 	 */
-	jQuery.sap.storage = storage(window).getInstance;
+	jQuery.sap.storage = Storage.getInstance;
 
 	/**
 	 * @interface A Storage API for JavaScript.
@@ -172,7 +172,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 0.11.0
 	 */
-	jQuery.sap.storage.Type = storage.Type;
+	jQuery.sap.storage.Type = Storage.Type;
 
 	/**
 	 * Indicates usage of the browser's localStorage feature
@@ -187,14 +187,6 @@ sap.ui.define([
 	 * @public
 	 * @name jQuery.sap.storage.Type.session
 	 */
-
-	/**
-	 * Indicates usage of the browser's globalStorage feature
-	 * @type {string}
-	 * @public
-	 * @name jQuery.sap.storage.Type.global
-	 */
-
 
 	return jQuery;
 

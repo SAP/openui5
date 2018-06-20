@@ -1,10 +1,6 @@
-/*global QUnit sinon*/
+/*global QUnit*/
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/rta/plugin/Remove",
@@ -13,7 +9,8 @@ sap.ui.require([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry"
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	RemovePlugin,
@@ -22,7 +19,8 @@ function(
 	DesignTime,
 	CommandFactory,
 	OverlayRegistry,
-	ChangeRegistry
+	ChangeRegistry,
+	sinon
 ) {
 	"use strict";
 
@@ -80,14 +78,13 @@ function(
 			this.oButton1 = new Button("button1", {text : "Button1"});
 			this.oVerticalLayout = new VerticalLayout({
 				content : [this.oButton, this.oButton1]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oVerticalLayout],
 				plugins : [this.oRemovePlugin]
 			});
-
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
@@ -219,11 +216,12 @@ function(
 		this.oButtonOverlay.setSelected(true);
 
 		this.oRemovePlugin.attachEventOnce("elementModified", function(oEvent) {
+			assert.notOk(this.oButtonOverlay.getSelected(), "the overlay was deselected");
 			var oCompositeCommand = oEvent.getParameter("command");
 			assert.strictEqual(oCompositeCommand.getCommands().length, 1, "... command is created for selected overlay");
 			assert.strictEqual(oCompositeCommand.getCommands()[0].getMetadata().getName(), "sap.ui.rta.command.Remove", "and command is of the correct type");
 			done();
-		});
+		}.bind(this));
 		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 		assert.ok(true, "... when plugin removeElement is called ...");
 
@@ -285,14 +283,14 @@ function(
 
 		var bIsAvailable = true;
 
-		sandbox.stub(this.oRemovePlugin, "isAvailable", function(oOverlay){
+		sandbox.stub(this.oRemovePlugin, "isAvailable").callsFake(function(oOverlay) {
 			assert.equal(oOverlay, this.oButtonOverlay, "the 'available' function calls isAvailable with the correct overlay");
 			return bIsAvailable;
 		}.bind(this));
-		sandbox.stub(this.oRemovePlugin, "handler", function(aSelectedOverlays){
+		sandbox.stub(this.oRemovePlugin, "handler").callsFake(function(aSelectedOverlays) {
 			assert.deepEqual(aSelectedOverlays, [this.oButtonOverlay], "the 'handler' method is called with the right overlays");
 		}.bind(this));
-		sandbox.stub(this.oRemovePlugin, "isEnabled", function(oOverlay){
+		sandbox.stub(this.oRemovePlugin, "isEnabled").callsFake(function(oOverlay) {
 			assert.equal(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
 		}.bind(this));
 
@@ -336,7 +334,7 @@ function(
 			this.oButton3 = new Button("button3", {text : "Button3"});
 			this.oVerticalLayout = new VerticalLayout({
 				content : [this.oButton1, this.oButton2, this.oButton3]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -381,4 +379,9 @@ function(
 		assert.equal(RemovePlugin._getElementToFocus([this.oButtonOverlay2]).getId(), this.oButtonOverlay1.getId(), "then the second button is returned");
 	});
 
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
+
+	QUnit.start();
 });

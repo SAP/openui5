@@ -87,10 +87,11 @@
 	QUnit.test("Section receives correct AriaLabelledBy", function (assert) {
 		var oSection = this.objectPageView.byId("testSection"),
 				sSectionTitle = oSection.getTitle(),
-				oHiddenLabel = oSection.getAggregation("ariaLabelledBy");
+				oHiddenLabel = oSection.getAggregation("ariaLabelledBy"),
+				sSectionText = sap.uxap.ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
 
-		assert.strictEqual(oSection._getAriaLabelledBy().getText(), sSectionTitle, "The AriaLabelledBy element is set a" +
-		" hidden label is created with the title of the section as text");
+		assert.strictEqual(oSection._getAriaLabelledBy().getText(), sSectionTitle + " " + sSectionText,
+			"A hidden text is created with the title of the section plus the word 'Section' as text");
 
 		assert.strictEqual(oHiddenLabel.sId, oSection.$().attr("aria-labelledby"),
 				"The 'aria-labelledby' attribute is correctly set to the section");

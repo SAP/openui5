@@ -87,7 +87,10 @@ function(
 		 */
 		var Select = Control.extend("sap.m.Select", /** @lends sap.m.Select.prototype */ {
 			metadata: {
-				interfaces: ["sap.ui.core.IFormContent"],
+				interfaces: [
+					"sap.ui.core.IFormContent",
+					"sap.m.IOverflowToolbarContent"
+				],
 				library: "sap.m",
 				properties: {
 
@@ -422,6 +425,33 @@ function(
 			}
 
 			return "";
+		};
+
+		/**
+		 * Enables the <code>sap.m.Select</code> to move inside the sap.m.OverflowToolbar.
+		 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+		 *
+		 * @public
+		 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+		 */
+		Select.prototype.getOverflowToolbarConfig = function() {
+
+			var noInvalidationProps = ["enabled", "selectedKey"];
+
+			// selectedItemId should be added to the noInvalidation properties list
+			// only if autoAdjustWidth property is 'false'
+			// JIRA: BGSOFUIPIRIN-2808
+			if (!this.getAutoAdjustWidth()) {
+				noInvalidationProps.push("selectedItemId");
+			}
+
+			var oConfig = {
+				canOverflow: true,
+				listenForEvents: ["change"],
+				propsUnrelatedToSize: noInvalidationProps
+			};
+
+			return oConfig;
 		};
 
 		/**
@@ -2372,11 +2402,7 @@ function(
 		 * @public
 		 */
 		Select.prototype.destroyItems = function() {
-			var oList = this.getList();
-
-			if (oList) {
-				oList.destroyItems();
-			}
+			this.destroyAggregation("items");
 
 			this.setValue("");
 

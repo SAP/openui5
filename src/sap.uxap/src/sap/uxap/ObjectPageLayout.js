@@ -2065,15 +2065,16 @@ sap.ui.define([
 	* Computes the height of the viewport bellow the sticky area
 	* */
 	ObjectPageLayout.prototype._getScrollableViewportHeight = function(bIsStickyMode) {
-		var iScreenHeight = this.$().height();
-		return iScreenHeight - this._getStickyAreaHeight(bIsStickyMode);
+		return this.getDomRef().getBoundingClientRect().height - this._getStickyAreaHeight(bIsStickyMode);
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
-		var iPosition = this._oSectionInfo[oSectionBase.getId()].positionTop; //sticky position
-		if (!bShouldStick) {
-			iPosition += this.iAnchorBarHeight;
+		var iPosition = oSectionBase.$().position().top;
+
+		if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea && bShouldStick) { // in sticky mode the anchor bar is not part of the content
+			iPosition -= this.iAnchorBarHeight;
 		}
+
 		return iPosition;
 	};
 
@@ -2418,7 +2419,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._onScroll = function (oEvent) {
-		var iScrollTop = Math.max(oEvent.target.scrollTop, 0), // top of the visible page
+		var iScrollTop = Math.max(Math.ceil(oEvent.target.scrollTop), 0), // top of the visible page
 			$wrapper = this._$opWrapper.length && this._$opWrapper[0],
 			$spacer = this._$spacer.length && this._$spacer[0],
 			iSpacerHeight = $spacer.offsetHeight,
@@ -2916,9 +2917,13 @@ sap.ui.define([
 			iHeight;
 
 		if (bViaClone) {
+			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
+			// scrollbar appearing during measurement of cloned header
+			this._$opWrapper.css("overflow-y", "hidden");
 			$Clone = this._appendTitleCloneToDOM(true /* enable snapped mode */);
 			iHeight = $Clone.height();
 			$Clone.remove(); //clean dom
+			this._$opWrapper.css("overflow-y", "auto");
 		} else if (oTitle && oTitle.snap) {
 			oTitle.snap(false);
 			iHeight = oTitle.$().outerHeight();
@@ -2935,9 +2940,13 @@ sap.ui.define([
 			iHeight;
 
 		if (bViaClone) {
+			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
+			// scrollbar appearing during measurement of cloned header
+			this._$opWrapper.css("overflow-y", "hidden");
 			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
 			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
 			$Clone.remove(); //clean dom
+			this._$opWrapper.css("overflow-y", "auto");
 		} else if (oTitle && oTitle.unSnap) {
 			oTitle.unSnap(false);
 			iHeight = oTitle.$().outerHeight();

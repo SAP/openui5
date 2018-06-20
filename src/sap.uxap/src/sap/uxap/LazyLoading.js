@@ -70,6 +70,8 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 		 */
 		LazyLoading.prototype._triggerVisibleSubSectionsEvents = function () {
 			this._oPrevSubSectionsInView = {};
+			// BCP: 1870326083 - force OP to recalculate immediately so Lazy Loading wont work with outdated size data
+			this._oObjectPageLayout._requestAdjustLayout(true);
 			this.doLazyLoading();
 		};
 

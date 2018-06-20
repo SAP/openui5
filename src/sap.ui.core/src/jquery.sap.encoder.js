@@ -4,15 +4,15 @@
 
 // Provides encoding functions for JavaScript.
 sap.ui.define(['jquery.sap.global',
-		'sap/base/encoding/encodeXML',
-		'sap/base/encoding/encodeJS',
-		'sap/base/encoding/encodeURL',
-		'sap/base/encoding/encodeURLParameters',
-		'sap/base/encoding/encodeCSS',
-		'sap/base/util/URLWhiteList',
-		'sap/base/encoding/sanitizeHTML'
+		'sap/base/security/encodeXML',
+		'sap/base/security/encodeJS',
+		'sap/base/security/encodeURL',
+		'sap/base/security/encodeURLParameters',
+		'sap/base/security/encodeCSS',
+		'sap/base/security/URLWhitelist',
+		'sap/base/security/sanitizeHTML'
 	],
-	function(jQuery, encodeXML, encodeJS, encodeURL, encodeURLParameters, encodeCSS, URLWhiteList, sanitizeHTML) {
+	function(jQuery, encodeXML, encodeJS, encodeURL, encodeURLParameters, encodeCSS, URLWhitelist /*, sanitizeHTML*/) {
 	"use strict";
 
 	/**
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @function
 	 */
-	jQuery.sap.clearUrlWhitelist = URLWhiteList.clear;
+	jQuery.sap.clearUrlWhitelist = URLWhitelist.clear;
 
 	/**
 	 * Adds a whitelist entry for URL validation.
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @function
 	 */
-	jQuery.sap.addUrlWhitelist = URLWhiteList.add;
+	jQuery.sap.addUrlWhitelist = URLWhitelist.add;
 
 	/**
 	 * Removes a whitelist entry for URL validation.
@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @function
 	 */
 	jQuery.sap.removeUrlWhitelist = function(iIndex) {
-		URLWhiteList.delete(URLWhiteList.entries()[iIndex]);
+		URLWhitelist.delete(URLWhitelist.entries()[iIndex]);
 	};
 
 	/**
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @function
 	 */
-	jQuery.sap.getUrlWhitelist = URLWhiteList.entries;
+	jQuery.sap.getUrlWhitelist = URLWhitelist.entries;
 
 	/**
 	 * Validates a URL. Check if it's not a script or other security issue.
@@ -272,7 +272,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @function
 	 */
-	jQuery.sap.validateUrl = URLWhiteList.validate;
+	jQuery.sap.validateUrl = URLWhitelist.validate;
 
 	/**
 	 * Strips unsafe tags and attributes from HTML.
@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global',
 	 */
 	Object.defineProperty(jQuery.sap, "_sanitizeHTML", {
 		get: function() {
-			var _sanitizeHTML = sap.ui.requireSync('sap/base/encoding/sanitizeHTML');
+			var _sanitizeHTML = sap.ui.requireSync('sap/base/security/sanitizeHTML');
 
 			Object.defineProperty(this, "_sanitizeHTML", {
 				value: _sanitizeHTML,

@@ -63,7 +63,7 @@ sap.ui.define([
 
 			oModel.setData(aMockMessages);
 
-			var oMessageView = new sap.m.MessageView({
+			this.oMessageView = new sap.m.MessageView({
 					showDetailsPageHeader: false,
 					itemSelect: function () {
 						oBackButton.setVisible(true);
@@ -72,17 +72,17 @@ sap.ui.define([
 						path: "/",
 						template: oMessageTemplate
 					}
-				}),
-				oBackButton = new sap.m.Button({
+				});
+			var oBackButton = new sap.m.Button({
 					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
-						oMessageView.navigateBack();
+						this.oMessageView.navigateBack();
 						this.setVisible(false);
 					}
 				});
 
-			oMessageView.setModel(oModel);
+			this.oMessageView.setModel(oModel);
 
 			var oCloseButton =  new sap.m.Button({
 					text: "Close",
@@ -111,12 +111,13 @@ sap.ui.define([
 				contentHeight: "440px",
 				verticalScrolling: false,
 				modal: true,
-				content: [oMessageView],
+				content: [this.oMessageView],
 				footer: oPopoverFooter
 			});
 		},
 
 		handlePopoverPress: function (oEvent) {
+			this.oMessageView.navigateBack();
 			this._oPopover.openBy(oEvent.getSource());
 		}
 

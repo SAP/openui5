@@ -51,7 +51,7 @@
 		myView.placeAt("content");
 		//sap.ui.template({
 		//});
-		jQuery.sap.registerModulePath('test', './');
+		sap.ui.loader.config({paths: {'test': './'}});
 
 		setTimeout(function(){
 			sap.ui.template({

@@ -28,8 +28,7 @@
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
 <script>
-	jQuery.sap.registerModulePath("sap.ui.core.qunit",
-	"../../../../../test-resources/sap/ui/core/qunit");
+	sap.ui.loader.config({ paths: { "sap/ui/core/qunit": "../../../../../test-resources/sap/ui/core/qunit" } });
 </script>
 
 	<link rel="stylesheet" href="shared-qunit.css">

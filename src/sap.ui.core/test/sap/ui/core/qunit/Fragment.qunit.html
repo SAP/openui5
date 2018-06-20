@@ -668,7 +668,7 @@
 
 			QUnit.module("DataBinding", {
 				beforeEach : function() {
-					jQuery.sap.registerModulePath("my", "./fragment");
+					sap.ui.loader.config({paths: {"my": "./fragment"}});
 				},
 
 				afterEach : function() {

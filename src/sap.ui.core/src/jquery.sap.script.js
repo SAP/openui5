@@ -6,17 +6,15 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/base/util/uid',
-	'sap/base/util/hashCode',
-	'sap/base/util/unique',
-	'sap/base/util/equal',
+	'sap/base/strings/hash',
+	'sap/base/util/array/uniqueSort',
+	'sap/base/util/deepEqual',
 	'sap/base/util/each',
-	'sap/base/util/arraySymbolDiff',
+	'sap/base/util/array/diff',
 	'sap/base/util/JSTokenizer',
-	'sap/base/util/extend',
-	'sap/base/util/UriParameters',
-	'sap/base/util/arrayDiff'
-], function(jQuery, uid, hashCode, unique, equal, each, arraySymbolDiff, JSTokenizer, extend, UriParameters, arrayDiff) {
-
+	'sap/base/util/merge',
+	'sap/base/util/UriParameters'
+], function(jQuery, uid, hash, uniqueSort, deepEqual, each, diff, JSTokenizer, merge, UriParameters) {
 	"use strict";
 
 	/**
@@ -39,7 +37,7 @@ sap.ui.define([
 	 * @sap-restricted sap.ui.core
 	 * @function
 	 */
-	jQuery.sap.hashCode = hashCode;
+	jQuery.sap.hashCode = hash;
 
 
 	/**
@@ -52,7 +50,7 @@ sap.ui.define([
 	 * @public
 	 * @function
 	 */
-	jQuery.sap.unique = unique;
+	jQuery.sap.unique = uniqueSort;
 
 	/**
 	 * Compares the two given values for equality, especially takes care not to compare
@@ -68,7 +66,7 @@ sap.ui.define([
 	 * @public
 	 * @function
 	 */
-	jQuery.sap.equal = equal;
+	jQuery.sap.equal = deepEqual;
 
 	/**
 	 * Iterates over elements of the given object or array.
@@ -153,7 +151,7 @@ sap.ui.define([
 	 * @public
 	 * @function
 	 */
-	jQuery.sap.arraySymbolDiff = arraySymbolDiff;
+	jQuery.sap.arraySymbolDiff = diff;
 
 
 	/**
@@ -163,7 +161,9 @@ sap.ui.define([
 	 * @private
 	 * @returns {object} - the tokenizer
 	 */
-	jQuery.sap._createJSTokenizer = JSTokenizer;
+	jQuery.sap._createJSTokenizer = function() {
+		return new JSTokenizer();
+	};
 
 	/**
 	 * Parse simple JS objects.
@@ -183,17 +183,73 @@ sap.ui.define([
 	 * @private
 	 * @since 1.11
 	 */
-	jQuery.sap.parseJS = JSTokenizer().parseJS;
+	jQuery.sap.parseJS = JSTokenizer.parseJS;
 
 	/**
 	 * Merge the contents of two or more objects together into the first object.
 	 * Usage is the same as jQuery.extend, but Arguments that are null or undefined are NOT ignored.
 	 *
+	 * @deprecated since 1.58. For shallow extend use <code>Object.assign</code> (polyfilled), for deep extend use <code>sap/base/util/merge</code>
 	 * @function
 	 * @since 1.26
 	 * @private
 	 */
-	jQuery.sap.extend = extend;
+	jQuery.sap.extend = function () {
+		var args = arguments,
+			deep = false;
+
+		// Check whether the first argument is the deep-flag
+		if (typeof arguments[0] === "boolean") {
+			deep = arguments[0];
+
+			// skip the first argument while creating a shallow copy of arguments
+			args = Array.prototype.slice.call(arguments, 1);
+		}
+
+		if (deep) {
+			return merge.apply(this, args);
+		} else {
+			/*
+			 * The code in this function is taken from jQuery 2.2.3 "jQuery.extend" and got modified.
+			 *
+			 * jQuery JavaScript Library v2.2.3
+			 * http://jquery.com/
+			 *
+			 * Copyright jQuery Foundation and other contributors
+			 * Released under the MIT license
+			 * http://jquery.org/license
+			 */
+			var copy, name, options,
+				target = arguments[0] || {},
+				i = 1,
+				length = arguments.length;
+
+			// Handle case when target is a string or something (possible in deep copy)
+			if (typeof target !== "object" && typeof target !== "function") {
+				target = {};
+			}
+
+			for (; i < length; i++) {
+
+				options = arguments[i];
+
+				// Extend the base object
+				for (name in options) {
+					copy = options[name];
+
+					// Prevent never-ending loop
+					if (target === copy) {
+						continue;
+					}
+
+					target[name] = copy;
+				}
+			}
+
+			// Return the modified object
+			return target;
+		}
+	};
 
 	// Javadoc for private inner class "UriParams" - this list of comments is intentional!
 	/**
@@ -352,7 +408,144 @@ sap.ui.define([
 	 * @param {boolean} [bUniqueEntries] Whether entries are unique, so no duplicate entries exist
 	 * @return {Array} List of changes
 	 */
-	jQuery.sap.arrayDiff = arrayDiff;
+	jQuery.sap.arrayDiff = function(aOld, aNew, fnCompare, bUniqueEntries){
+		fnCompare = fnCompare || function(vValue1, vValue2) {
+			return deepEqual(vValue1, vValue2);
+		};
+
+		var aOldRefs = [];
+		var aNewRefs = [];
+
+		//Find references
+		var aMatches = [];
+		for (var i = 0; i < aNew.length; i++) {
+			var oNewEntry = aNew[i];
+			var iFound = 0;
+			var iTempJ;
+			// if entries are unique, first check for whether same index is same entry
+			// and stop searching as soon the first matching entry is found
+			if (bUniqueEntries && fnCompare(aOld[i], oNewEntry)) {
+				iFound = 1;
+				iTempJ = i;
+			} else {
+				for (var j = 0; j < aOld.length; j++) {
+					if (fnCompare(aOld[j], oNewEntry)) {
+						iFound++;
+						iTempJ = j;
+						if (bUniqueEntries || iFound > 1) {
+							break;
+						}
+					}
+				}
+			}
+			if (iFound == 1) {
+				var oMatchDetails = {
+					oldIndex: iTempJ,
+					newIndex: i
+				};
+				if (aMatches[iTempJ]) {
+					delete aOldRefs[iTempJ];
+					delete aNewRefs[aMatches[iTempJ].newIndex];
+				} else {
+					aNewRefs[i] = {
+						data: aNew[i],
+						row: iTempJ
+					};
+					aOldRefs[iTempJ] = {
+						data: aOld[iTempJ],
+						row: i
+					};
+					aMatches[iTempJ] = oMatchDetails;
+				}
+			}
+		}
+
+		//Pass 4: Find adjacent matches in ascending order
+		for (var i = 0; i < aNew.length - 1; i++) {
+			if (aNewRefs[i] &&
+				!aNewRefs[i + 1] &&
+				aNewRefs[i].row + 1 < aOld.length &&
+				!aOldRefs[aNewRefs[i].row + 1] &&
+				fnCompare(aOld[ aNewRefs[i].row + 1 ], aNew[i + 1])) {
+
+				aNewRefs[i + 1] = {
+					data: aNew[i + 1],
+					row: aNewRefs[i].row + 1
+				};
+				aOldRefs[aNewRefs[i].row + 1] = {
+					data: aOldRefs[aNewRefs[i].row + 1],
+					row: i + 1
+				};
+
+			}
+		}
+
+		//Pass 5: Find adjacent matches in descending order
+		for (var i = aNew.length - 1; i > 0; i--) {
+			if (aNewRefs[i] &&
+				!aNewRefs[i - 1] &&
+				aNewRefs[i].row > 0 &&
+				!aOldRefs[aNewRefs[i].row - 1] &&
+				fnCompare(aOld[aNewRefs[i].row - 1], aNew[i - 1])) {
+
+				aNewRefs[i - 1] = {
+					data: aNew[i - 1],
+					row: aNewRefs[i].row - 1
+				};
+				aOldRefs[aNewRefs[i].row - 1] = {
+					data: aOldRefs[aNewRefs[i].row - 1],
+					row: i - 1
+				};
+
+			}
+		}
+
+		//Pass 6: Generate diff data
+		var aDiff = [];
+
+		if (aNew.length == 0) {
+			//New list is empty, all items were deleted
+			for (var i = 0; i < aOld.length; i++) {
+				aDiff.push({
+					index: 0,
+					type: 'delete'
+				});
+			}
+		} else {
+			var iNewListIndex = 0;
+			if (!aOldRefs[0]) {
+				//Detect all deletions at the beginning of the old list
+				for (var i = 0; i < aOld.length && !aOldRefs[i]; i++) {
+					aDiff.push({
+						index: 0,
+						type: 'delete'
+					});
+					iNewListIndex = i + 1;
+				}
+			}
+
+			for (var i = 0; i < aNew.length; i++) {
+				if (!aNewRefs[i] || aNewRefs[i].row > iNewListIndex) {
+					//Entry doesn't exist in old list = insert
+					aDiff.push({
+						index: i,
+						type: 'insert'
+					});
+				} else {
+					iNewListIndex = aNewRefs[i].row + 1;
+					for (var j = aNewRefs[i].row + 1; j < aOld.length && (!aOldRefs[j] || aOldRefs[j].row < i); j++) {
+						aDiff.push({
+							index: i + 1,
+							type: 'delete'
+						});
+						iNewListIndex = j + 1;
+					}
+				}
+			}
+		}
+
+		return aDiff;
+	};
 
 	return jQuery;
 });

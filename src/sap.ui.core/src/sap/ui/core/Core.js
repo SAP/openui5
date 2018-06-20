@@ -6,7 +6,7 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
 		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 'sap/ui/events/EventSimulation',
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 'sap/ui/events/jquery/EventSimulation',
 		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
 	function(jQuery, Device, Global,
 		BindingParser, DataType, EventProvider, Interface, BaseObject, ManagedObject,
@@ -45,6 +45,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	var _oEventProvider;
+
+	/*
+	 * Internal class that can help to synchronize a set of asynchronous tasks.
+	 * Each task must be registered in the sync point by calling startTask with
+	 * an (purely informative) title. The returned value must be used in a later
+	 * call to finishTask.
+	 * When finishTask has been called for all tasks that have been started,
+	 * the fnCallback will be fired.
+	 * When a timeout is given and reached, the callback is called at that
+	 * time, no matter whether all tasks have been finished or not.
+	 */
+	var SyncPoint = function (sName, fnCallback) {
+		var aTasks = [],
+			iOpenTasks = 0,
+			iFailures = 0;
+
+		this.startTask = function(sTitle) {
+			var iId = aTasks.length;
+			aTasks[iId] = { name : sTitle, finished : false };
+			iOpenTasks++;
+			return iId;
+		};
+
+		this.finishTask = function(iId, bSuccess) {
+			if ( !aTasks[iId] || aTasks[iId].finished ) {
+				throw new Error("trying to finish non existing or already finished task");
+			}
+			aTasks[iId].finished = true;
+			iOpenTasks--;
+			if ( bSuccess === false ) {
+				iFailures++;
+			}
+			if ( iOpenTasks === 0 ) {
+				jQuery.sap.log.info("Sync point '" + sName + "' finished (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
+				finish();
+			}
+		};
+
+		function finish() {
+			if ( fnCallback ) {
+				fnCallback(iOpenTasks, iFailures);
+			}
+			fnCallback = null;
+		}
+
+		jQuery.sap.log.info("Sync point '" + sName + "' created");
+	};
 
 	/**
 	 * @class Core Class of the SAP UI Library.
@@ -340,7 +387,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this.oRenderManager = new RenderManager();
 
 			// sync point 1 synchronizes document ready and rest of UI5 boot
-			var oSyncPoint1 = jQuery.sap.syncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
+			var oSyncPoint1 = new SyncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
 				that.bDomReady = true;
 				that.init();
 			});
@@ -354,7 +401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			});
 
 			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
-			var oSyncPoint2 = jQuery.sap.syncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
+			var oSyncPoint2 = new SyncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot(bAsync, function() {
 					oSyncPoint1.finishTask(iCoreBootTask);
@@ -928,7 +975,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// check whether for this combination (theme+lib) a URL is registered or for this theme a default location is registered
 			if (path) {
 				path = path + sLibName.replace(/\./g, "/") + "/themes/" + sThemeName + "/";
-				jQuery.sap.registerModulePath(sLibName + ".themes." + sThemeName, path);
+				registerModulePath(sLibName + ".themes." + sThemeName, path);
 			}
 		}
 	};
@@ -947,7 +994,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._ensureThemeRoot(sLibName, sThemeName);
 
 		// use the library location as theme location
-		return sap.ui.require.toUrl((sLibName + "/themes/" + sThemeName).replace(/\./g, "/")) + "/";
+		return getModulePath(sLibName + ".themes." + sThemeName, "/");
 	};
 
 
@@ -1519,7 +1566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	}
 
 	function loadJSONAsync(lib) {
-		var sURL = sap.ui.require.toUrl(lib.replace(/\./g, "/") + "/library-preload.json");
+		var sURL = getModulePath(lib, "/library-preload.json");
 
 		return Promise.resolve(jQuery.ajax({
 			dataType : "json",
@@ -1621,7 +1668,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	}
 
 	function loadJSONSync(lib) {
-		var sURL = sap.ui.require.toUrl(lib.replace(/\./g, "/") + "/library-preload.json");
+		var sURL = getModulePath(lib, "/library-preload.json");
 		var dependencies;
 
 		jQuery.ajax({
@@ -1647,6 +1694,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			});
 		}
 		return dependencies;
+	}
+
+	/**
+	 * Retrieves the module path.
+	 * @param {string} sModuleName module name.
+	 * @param {string} sSuffix is used untouched (dots are not replaced with slashes).
+	 * @returns {string} module path.
+	 */
+	function getModulePath(sModuleName, sSuffix){
+		return sap.ui.require.toUrl(sModuleName.replace(/\./g, "/") + sSuffix);
+	}
+
+	/**
+	 * Registers the given module path.
+	 * @param {string} sModuleName module name.
+	 * @param {string} sPath module path.
+	 */
+	function registerModulePath(sModuleName, sPath) {
+		var mPaths = {};
+		mPaths[sModuleName.replace(/\./g, "/")] = sPath;
+		sap.ui.loader.config({
+			paths: mPaths
+		});
 	}
 
 	/**
@@ -1701,7 +1771,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if ( typeof vUrl === 'object' ) {
 			if ( vUrl.async ) {
 				if ( vUrl.url && mLibraryPreloadBundles[sLibrary] == null ) { // only if lib has not been loaded yet
-					jQuery.sap.registerModulePath(sLibrary, vUrl.url);
+					registerModulePath(sLibrary, vUrl.url);
 				}
 				return this.loadLibraries([sLibrary]);
 			}
@@ -1715,7 +1785,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// if a sUrl is given, redirect access to it
 			if ( vUrl ) {
-				jQuery.sap.registerModulePath(sLibrary, vUrl);
+				registerModulePath(sLibrary, vUrl);
 			}
 
 			if ( this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async' ) {

@@ -16,6 +16,15 @@
 	border-radius: 12px;
 	padding: 3px 6px;
 }
+
+.SmallPaddingBegin {
+	padding-left: 1rem;
+}
+
+html[dir=rtl] .SmallPaddingBegin {
+	padding-right: 1rem;
+	padding-left: 0;
+}
 </style>
 
 <script>
@@ -105,7 +114,7 @@
 	});
 	// ================================================================================
 
-		var standardListThumb = new sap.m.Page("standardListThumb", {
+	var standardListThumb = new sap.m.Page("standardListThumb", {
 		title : "Standard List Thumb",
 		showNavButton : true,
 		navButtonText : "Back",
@@ -581,6 +590,7 @@
 	});
 
 	var selectionList = new sap.m.Page("selectionList", {
+		title: "Selection List", //Only needed for the Dialog (see addDialogButton)
 		customHeader : new sap.m.OverflowToolbar({
 			content: [
 				oButtonSelectionBack = new sap.m.Button('myButtonSelectionBack', {text:"Back", type:sap.m.ButtonType.Back, press:function() {app.back();},
@@ -1315,7 +1325,7 @@
 			type : sap.m.ButtonType.Reject
 		}),
 		press : handlePress
-	});
+	}).addStyleClass("SmallPaddingBegin");
 
 	var oItemTemplateHtml = new sap.m.CustomListItem({
 		unread: "{unread}",
@@ -1600,11 +1610,18 @@
 			selected: false,
 			info: "Error message",
 			infoState: "Error",
-			})
+			press : handlePress,
+			customData: [
+				new sap.ui.core.CustomData({
+					key : "xyz",
+					value: "detailPage"
+				})
+			]
+		});
 		oListStandardThumb.addItem(addedItem);
 	}});
 	var actionListItem2 = new sap.m.ActionListItem({id: "actionListItem2", text: "Add Item to Model", press: function(){
-		(oListStandardThumb.getModel()).getData().navigation[(oListStandardThumb.getModel()).getData().navigation.length] = (oListStandardThumb.getModel()).getData().navigation[0];
+		(oListStandardThumb.getModel()).getData().navigation.push(jQuery.extend({}, oListStandardThumb.getModel().getData().navigation[0]));
 		(oListStandardThumb.getModel()).setData((oListStandardThumb.getModel()).getData());
 	}});
 

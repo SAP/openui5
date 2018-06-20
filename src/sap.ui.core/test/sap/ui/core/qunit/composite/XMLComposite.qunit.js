@@ -16,14 +16,18 @@ function setBlanketFilters(sFilters) {
 sinon.config.useFakeTimers = true;
 
 sap.ui.require([
-	"jquery.sap.global", "sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite"
-], function (jQuery, XMLPreprocessor, XMLComposite) {
+	"jquery.sap.global", "sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite", "sap/ui/core/mvc/Controller"
+], function (jQuery, XMLPreprocessor, XMLComposite, Controller) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
-	jQuery.sap.registerModulePath("composites", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites");
-	jQuery.sap.registerModulePath("composites2", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites2");
-	jQuery.sap.registerModulePath("bundles", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/bundles");
+	sap.ui.loader.config({
+		paths: {
+			"composites": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites",
+			"composites2": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites2",
+			"bundles": location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/bundles"
+		}
+	});
 	jQuery.sap.require("composites.SimpleText");
 	jQuery.sap.require("composites.TextButton");
 	jQuery.sap.require("composites.TextList");
@@ -1105,13 +1109,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("event forwarding", function (assert) {
 		var done = assert.async(), oAction;
-		var oController = {
-				handler: function(oEvent) {
-					oAction = oEvent.getSource();
-					oAction.setText("controller");
-				}
-		};
+		var ControllerClass = Controller.extend("test", {
+			handler: function(oEvent) {
+				oAction = oEvent.getSource();
+				oAction.setText("controller");
+			}
+		});
 
+		var oController = new ControllerClass();
 		var fnControllerSpy = sinon.spy(oController, "handler");
 		var fnCompositeSpy = sinon.spy(composites.Table.prototype, "handler");
 

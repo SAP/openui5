@@ -46,11 +46,11 @@ sap.ui.define([
 		},
 
 		disablePointerEvents: function () {
-			this.byId("idProductsTable").$().css("pointer-events", "none");
+			this.byId("idProductsTable").setBlocked(true);
 		},
 
 		enablePointerEvents: function () {
-			this.byId("idProductsTable").$().css("pointer-events", "all");
+			this.byId("idProductsTable").setBlocked(false);
 		},
 
 		handleActionPress: function (oEvent) {

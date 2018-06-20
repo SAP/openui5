@@ -80,11 +80,25 @@
 						</template>
 					</Column>
 					<Column width="12rem">
-						<m:Label text="Category" />
+						<m:Label text="Main Category" />
 						<template>
 							<m:Select selectedKey="{Category}" items="{/Categories}">
 								<c:Item text="{Name}" key="{Name}"/>
 							</m:Select>
+						</template>
+					</Column>
+					<Column width="12rem">
+						<m:Label text="Additional Categories" />
+						<template>
+							<m:MultiInput
+								suggestionItems="{
+									path: '/Categories',
+									sorter: { path: 'Name' }
+								}"
+								showValueHelp="false"
+								>
+								<c:Item key="{ProductId}" text="{Name}" />
+							</m:MultiInput>
 						</template>
 					</Column>
 					<Column width="6rem" hAlign="Center">

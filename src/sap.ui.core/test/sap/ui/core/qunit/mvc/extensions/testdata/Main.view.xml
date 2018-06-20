@@ -1,0 +1,31 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="my.test.Main" height="100%">
+	<Toolbar>
+	</Toolbar>
+	<Table id="employeeTable" items="{/employees}">
+		<headerToolbar>
+			<Toolbar id="tableToolbar">
+				<Title id="toolbarTitle"/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="Name" />
+			</Column>
+			<Column>
+				<Text text="Salary" />
+			</Column>
+			<Column>
+				<Text text="JobTitle" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<Text text="{Name}" />
+				<Text text="{Salary}" />
+				<Text text="{JobTitle}" />
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

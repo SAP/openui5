@@ -307,6 +307,120 @@
         "type": "FIX",
         "text": " sap.m.Select: Revert Item selection on data binding update corrected\"",
         "references": []
+      },
+      {
+        "id": "3667c3e47dd66d943ce9c9e66bfd0f9b6fd23e99",
+        "type": "FIX",
+        "text": " Select: do not circumvent aggregation forwarding",
+        "references": []
+      },
+      {
+        "id": "bf70d61c213005bc49c9ca5f1c5449599dc41408",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: pageUp and pageDown keys focus first and last tab",
+        "references": []
+      },
+      {
+        "id": "1835f5266715550fe69e359202d2eb049d80c9f6",
+        "type": "FIX",
+        "text": " sap.m.Image: Test page adjusted",
+        "references": []
+      },
+      {
+        "id": "62c53e94cc7219632476e6a4090adced7bd89703",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Button now looks correctly when on formfactor change",
+        "references": []
+      },
+      {
+        "id": "47856088fb1e69c6f65c78b98c4a23ee621f8f53",
+        "type": "FIX",
+        "text": " sap.m.Panel: Drawing in IE when animated",
+        "references": []
+      },
+      {
+        "id": "c37698fdced6d19348062421d05b2cfcea36f022",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog/sap.m.SelecctDialog: InfoTooolbar label changed from \"Items selected\" to \"Selected\"",
+        "references": []
+      },
+      {
+        "id": "4238cdf354d07f44de890223c3a596c48e5cf31b",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - press reset then cancel button behavior is fixed.",
+        "references": []
+      },
+      {
+        "id": "8d873809b5d4f1f8b9f79f952e11aa4a2712de99",
+        "type": "FIX",
+        "text": " tutorial-worklist: fix design findings",
+        "references": []
+      },
+      {
+        "id": "4ba21ffdeb4b7b68971f4305f7be4089e03eaf66",
+        "type": "FEATURE",
+        "text": " MultiInput condensed mode support",
+        "references": []
+      },
+      {
+        "id": "827862284b5412c1404ffbbee11d5f0994ef518c",
+        "type": "FEATURE",
+        "text": " sap.m.ListBase: enable sticky header toolbars",
+        "references": []
+      },
+      {
+        "id": "66fd5c89d535777ba37470df0b744c45618be782",
+        "type": "FIX",
+        "text": " Select: focusOut event is no longer triggered on span",
+        "references": []
+      },
+      {
+        "id": "85d2b43103422f06fd21fe7fe905972548a9fcc6",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: set min/max date does not modify its time part now.",
+        "references": []
+      },
+      {
+        "id": "6c2586e3a639b3244093d3909caf8d6e43474099",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Improved control navigation documentation and samples",
+        "references": []
+      },
+      {
+        "id": "6a5014f2bd7af46237c8b42af2c0d28016c4de65",
+        "type": "FIX",
+        "text": " sap.m.MultiInput Example Dialog title added",
+        "references": []
+      },
+      {
+        "id": "d27731f15478469adcad3db835a339b6285075f5",
+        "type": "FIX",
+        "text": " sap.m.MultiInput example enhanced",
+        "references": []
+      },
+      {
+        "id": "b887ee8201981d19985e93e5d74defd470978722",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem:  Attributes get the whole space when alone",
+        "references": []
+      },
+      {
+        "id": "e0e42f9ea8520d055b5bc54032073836129b7418",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Corrected content focus preserving",
+        "references": []
+      },
+      {
+        "id": "a45cbb09f63ba73948aa47de29635e0b6ff5201f",
+        "type": "FIX",
+        "text": "sap.m.GenericTileRenderer:Information about control added to Aria-label.",
+        "references": []
+      },
+      {
+        "id": "048f5f983062cd729442aeb98ec2b380f8640110",
+        "type": "FIX",
+        "text": "sap.m.TileContent.less:Allignment issue in IE.",
+        "references": []
       }
     ]
   }

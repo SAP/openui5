@@ -336,6 +336,16 @@ function(
 			"then oLabel1Overlay is returned");
 	});
 
+	QUnit.test("when DesignTime is created and getLastFocusableDescendantOverlay is called", function(assert) {
+		var getLastDescendantByCondition = this.sandbox.stub(OverlayUtil,
+			"getLastDescendantByCondition").returns(this.oLabel3Overlay);
+		var oOverlay = Utils.getLastFocusableDescendantOverlay(this.oObjectPageSection1Overlay);
+		assert.equal(getLastDescendantByCondition.callCount, 1,
+			"then OverlayUtil.getLastDescendantByCondition function is called once");
+		assert.strictEqual(oOverlay, this.oLabel3Overlay,
+			"then oLabel3Overlay is returned");
+	});
+
 	QUnit.test("when DesignTime is created and getNextFocusableSiblingOverlay is called", function(assert) {
 		var getNextSiblingOverlay = this.sandbox.stub(OverlayUtil, "getNextSiblingOverlay")
 			.onFirstCall().returns(this.oObjectPageSubSection2Overlay)
@@ -358,6 +368,100 @@ function(
 			"then OverlayUtil.getPreviousSiblingOverlay function is called twice");
 		assert.strictEqual(oOverlay, this.oObjectPageSubSection1Overlay,
 			"when oObjectPageSubSection3Overlay parameter set then oObjectPageSubSection1Overlay is returned");
+	});
+
+	QUnit.module("Given an ObjectPageLayout with Overlays created, but all except for the button overlays are not selectable", {
+		beforeEach : function(assert) {
+			var fnDone = assert.async();
+
+			//		Layout0
+			//			Section0
+			//				SubSection0
+			//					Button0
+			//			Section1
+			//				SubSection1
+			//					Button1
+			//					Button4 -- different aggregation, but invisible
+			//					Button2 -- different Aggregation
+			//				SubSection2
+			//					Button3
+
+			this.sandbox = sinon.sandbox.create();
+
+			this.oButton0 = new Button("button0", {text: "button0"});
+			this.oButton1 = new Button("button1", {text: "button1"});
+			this.oButton2 = new Button("button2", {text: "button2"});
+			this.oButton3 = new Button("button3", {text: "button3"});
+			this.oButton4 = new Button("button4", {text: "button4"});
+			this.oSubSection0 = new ObjectPageSubSection("subsection0", {
+				blocks: [this.oButton0]
+			});
+			this.oSubSection1 = new ObjectPageSubSection("subsection1", {
+				blocks: [this.oButton1],
+				moreBlocks: [this.oButton4],
+				actions: [this.oButton2]
+			});
+			this.oSubSection2 = new ObjectPageSubSection("subsection2", {
+				blocks: [this.oButton3]
+			});
+			this.oSection0 = new ObjectPageSection("section0", {
+				subSections: [this.oSubSection0]
+			});
+			this.oSection1 = new ObjectPageSection("section1", {
+				subSections: [this.oSubSection1, this.oSubSection2]
+			});
+			this.oLayout0 = new ObjectPageLayout("layout0", {
+				sections : [this.oSection0, this.oSection1]
+			}).placeAt('test-view2');
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oLayout0]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay0 = OverlayRegistry.getOverlay(this.oLayout0);
+				this.oSectionOverlay0 = OverlayRegistry.getOverlay(this.oSection0);
+				this.oSectionOverlay1 = OverlayRegistry.getOverlay(this.oSection1);
+				this.oSubSectionOverlay0 = OverlayRegistry.getOverlay(this.oSubSection0);
+				this.oSubSectionOverlay1 = OverlayRegistry.getOverlay(this.oSubSection1);
+				this.oSubSectionOverlay2 = OverlayRegistry.getOverlay(this.oSubSection2);
+				this.oButtonOverlay0 = OverlayRegistry.getOverlay(this.oButton0);
+				this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
+				this.oButtonOverlay2 = OverlayRegistry.getOverlay(this.oButton2);
+				this.oButtonOverlay3 = OverlayRegistry.getOverlay(this.oButton3);
+				this.oButtonOverlay4 = OverlayRegistry.getOverlay(this.oButton4);
+				this.oLayoutOverlay0.setSelectable(false);
+				this.oSectionOverlay0.setSelectable(false);
+				this.oSectionOverlay1.setSelectable(false);
+				this.oSubSectionOverlay0.setSelectable(false);
+				this.oSubSectionOverlay1.setSelectable(false);
+				this.oSubSectionOverlay2.setSelectable(false);
+				this.oButtonOverlay0.setSelectable(true);
+				this.oButtonOverlay1.setSelectable(true);
+				this.oButtonOverlay2.setSelectable(true);
+				this.oButtonOverlay3.setSelectable(true);
+				this.oButtonOverlay4.setSelectable(true);
+				fnDone();
+			}.bind(this));
+
+		},
+		afterEach : function(assert) {
+			this.oLayout0.destroy();
+			this.oDesignTime.destroy();
+			this.sandbox.restore();
+		}
+	});
+
+	QUnit.test("when the function for the next or previous sibling overlay is called", function(assert) {
+		assert.equal(Utils.getNextFocusableSiblingOverlay(this.oButtonOverlay1).getId(), this.oButtonOverlay2.getId(), "the next sibling gets selected in another aggregation");
+		assert.equal(Utils.getNextFocusableSiblingOverlay(this.oButtonOverlay0).getId(), this.oButtonOverlay1.getId(), "the next sibling gets selected in same aggregation with another parent");
+		assert.equal(Utils.getNextFocusableSiblingOverlay(this.oButtonOverlay2).getId(), this.oButtonOverlay3.getId(), "the next sibling gets selected in another aggregation with another parent");
+		assert.equal(Utils.getNextFocusableSiblingOverlay(this.oButtonOverlay3), undefined, "the last overlay has no next sibling");
+		assert.equal(Utils.getPreviousFocusableSiblingOverlay(this.oButtonOverlay2).getId(), this.oButtonOverlay1.getId(), "the previous sibling gets selected in another aggregation");
+		assert.equal(Utils.getPreviousFocusableSiblingOverlay(this.oButtonOverlay1).getId(), this.oButtonOverlay0.getId(), "the previous sibling gets selected in same aggregation with another parent");
+		assert.equal(Utils.getPreviousFocusableSiblingOverlay(this.oButtonOverlay3).getId(), this.oButtonOverlay2.getId(), "the next sibling gets selected in another aggregation with another parent");
+		assert.equal(Utils.getPreviousFocusableSiblingOverlay(this.oButtonOverlay0), undefined, "the first overlay has no previous sibling");
 	});
 
 	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
@@ -458,7 +562,6 @@ function(
 	});
 
 	QUnit.test("when mergeWith is called with a customizer function", function(assert){
-
 		var fnCustomizer = function(vDestinationValue, vSourceValue, sProperty, mDestination, mSource){
 			return function(){ return "mergedProperty"; };
 		};
@@ -468,7 +571,30 @@ function(
 		assert.equal(this.oObject1.function11(), "mergedProperty", "then the merged function returns 'mergedProperty'");
 	});
 
+	QUnit.test("when omit is called with an object and some properties", function(assert){
+		var oSourceObject = {'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4};
+
+		assert.deepEqual(Utils.omit(oSourceObject, ['b', 'd']), {'a' : 1, 'c' : 3}, "then a new object is returned without the properties");
+	});
+
+	QUnit.test("when omit is called with an object containing a property with undefined value and the other properties are removed", function(assert){
+		var oSourceObject = {'a' : 1, 'b' : undefined, 'c' : 3};
+
+		assert.deepEqual(Utils.omit(oSourceObject, ['a', 'c']), {'b' : undefined}, "then the new object returned has only the property that has undefined value");
+	});
+
+	QUnit.test("when omit is called with a deep object and some properties", function(assert){
+		var oSourceObject = {'a' : 1, 'b' : { 'd': 4, 'e': 5 }, 'c' : 3};
+		var oNewObject = Utils.omit(oSourceObject, ['a', 'c', 'd']);
+
+		assert.deepEqual(oNewObject, {'b' : { 'd': 4, 'e': 5 }},  "then a new object is returned without the properties");
+
+		oSourceObject.b = 0;
+		assert.deepEqual(oNewObject.b, { 'd': 4, 'e': 5 }, "then modifying the old object does not change the new object");
+	});
+
 	QUnit.done(function() {
 		jQuery("#test-view").hide();
+		jQuery("#test-view2").hide();
 	});
 });

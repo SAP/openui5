@@ -4,25 +4,25 @@
 
 // Provides control sap.ui.core.mvc.XMLView.
 sap.ui.define([
-    'jquery.sap.global',
-    './View',
-    "./XMLViewRenderer",
-	"sap/base/util/extend",
-    'sap/ui/base/ManagedObject',
-    'sap/ui/core/XMLTemplateProcessor',
-    'sap/ui/core/library',
-    'sap/ui/core/Control',
-    'sap/ui/core/RenderManager',
-    'sap/ui/core/cache/CacheManager',
-    'sap/ui/model/resource/ResourceModel',
-    'jquery.sap.xml',
-    'jquery.sap.script'
+	'jquery.sap.global',
+	'./View',
+	"./XMLViewRenderer",
+	"sap/base/util/merge",
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/XMLTemplateProcessor',
+	'sap/ui/core/library',
+	'sap/ui/core/Control',
+	'sap/ui/core/RenderManager',
+	'sap/ui/core/cache/CacheManager',
+	'sap/ui/model/resource/ResourceModel',
+	'jquery.sap.xml',
+	'jquery.sap.script'
 ],
 	function(
-	    jQuery,
+		jQuery,
 		View,
 		XMLViewRenderer,
-		extend,
+		merge,
 		ManagedObject,
 		XMLTemplateProcessor,
 		library,
@@ -181,7 +181,7 @@ sap.ui.define([
 		 * @return {Promise} a Promise that resolves with the view instance and rejects with any thrown error.
 		 */
 		XMLView.create = function (mOptions) {
-			var mParameters = extend(true, {}, mOptions);
+			var mParameters = merge({}, mOptions);
 
 			// mapping renamed parameters
 			mParameters.viewContent = mParameters.definition;

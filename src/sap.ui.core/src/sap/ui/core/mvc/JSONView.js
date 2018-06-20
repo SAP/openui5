@@ -4,16 +4,16 @@
 
 // Provides control sap.ui.core.mvc.JSONView.
 sap.ui.define([
-    'jquery.sap.global',
-    './View',
-    './JSONViewRenderer',
-    './EventHandlerResolver',
-	'sap/base/util/extend',
-    'sap/ui/base/ManagedObject',
-    'sap/ui/core/library',
-    'sap/ui/model/resource/ResourceModel'
+	'jquery.sap.global',
+	'./View',
+	'./JSONViewRenderer',
+	'./EventHandlerResolver',
+	'sap/base/util/merge',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/library',
+	'sap/ui/model/resource/ResourceModel'
 ],
-	function(jQuery, View, JSONViewRenderer, EventHandlerResolver, extend, ManagedObject, library, ResourceModel) {
+	function(jQuery, View, JSONViewRenderer, EventHandlerResolver, merge, ManagedObject, library, ResourceModel) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -56,7 +56,7 @@ sap.ui.define([
 	 * @return {Promise} a Promise which resolves with the created JSONView instance.
 	 */
 	JSONView.create = function(mOptions) {
-		var mParameters = extend(true, {}, mOptions);
+		var mParameters = merge({}, mOptions);
 		//remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'preprocessors') {

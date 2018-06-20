@@ -796,7 +796,7 @@ if (typeof window.sap.ui !== "object") {
 		}
 
 		// Check for Blink rendering engine (https://stackoverflow.com/questions/20655470/how-to-detect-blink-in-chrome)
-		if ((window.chrome || (window.Intl && window.Intl.v8BreakIterator)) && 'CSS' in window) {
+		if ((oBrowser.chrome || window.Intl && window.Intl.v8BreakIterator) && 'CSS' in window) {
 			oResult.blink = true;
 		}
 

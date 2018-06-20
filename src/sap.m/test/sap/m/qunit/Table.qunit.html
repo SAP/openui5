@@ -705,91 +705,6 @@
 			sut.destroy();
 		});
 
-		QUnit.test("Sticky chrome browser support", function(assert) {
-			// stub for Chrome
-			var oChromeStub = this.stub(sap.ui.Device, "browser", {"chrome": true});
-			var sut = createSUT("idSticky", true);
-			sut.placeAt("qunit-fixture");
-			sut.setSticky(["ColumnHeaders"]);
-			sap.ui.getCore().applyChanges();
-
-			assert.ok(sap.m.Table.getStickyBrowserSupport(), "sticky css supported in Chrome");
-			assert.ok(sut.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
-			assert.ok(sut.getDomRef().classList.contains("sapMSticky4"), "Sticky style class added");
-
-			sut.destroy();
-			// reset stub
-			oChromeStub.restore();
-		});
-
-		QUnit.test("Sticky edge browser support", function(assert) {
-			// stub for Edge version 16
-			var oEdgeStub = this.stub(sap.ui.Device, "browser", {"edge": true, "version": 16});
-			var sut1 = createSUT("idSticky1", true);
-			sut1.placeAt("qunit-fixture");
-			sut1.setSticky(["ColumnHeaders"]);
-			sap.ui.getCore().applyChanges();
-
-			assert.ok(sap.m.Table.getStickyBrowserSupport(), "sticky css supported");
-			assert.ok(sut1.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
-			assert.ok(sut1.getDomRef().classList.contains("sapMSticky4"), "Sticky style class added");
-
-			sut1.destroy();
-			// reset stub
-			oEdgeStub.restore();
-		});
-
-		QUnit.test("Sticky safari browser support", function() {
-			// stub for Safari
-			var oSafariStub = this.stub(sap.ui.Device, "browser", {"safari": true});
-			var sut2 = createSUT("idSticky2", true);
-			sut2.placeAt("qunit-fixture");
-			sut2.setSticky(["ColumnHeaders"]);
-			sap.ui.getCore().applyChanges();
-
-			assert.ok(sap.m.Table.getStickyBrowserSupport(), "sticky css supported");
-			assert.ok(sut2.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
-			assert.ok(sut2.getDomRef().classList.contains("sapMSticky4"), "Sticky style class added");
-
-			sut2.destroy();
-			// reset stub
-			oSafariStub.restore();
-		});
-
-		QUnit.test("Sticky firefox browser support", function(assert) {
-			// stub for Firefox version 59
-			var oFirefoxStub = this.stub(sap.ui.Device, "browser", {"firefox": true, "version": 59});
-			var sut3 = createSUT("idSticky3", true);
-			sut3.placeAt("qunit-fixture");
-			sut3.setSticky(["ColumnHeaders"]);
-			sap.ui.getCore().applyChanges();
-
-			assert.ok(sap.m.Table.getStickyBrowserSupport(), "sticky css supported");
-			assert.ok(sut3.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
-			assert.ok(sut3.getDomRef().classList.contains("sapMSticky4"), "Sticky style class added");
-
-			sut3.destroy();
-			// reset stub
-			oFirefoxStub.restore();
-		});
-
-		QUnit.test("Sticky IE browser support", function(assert) {
-			// stub for Internet Explorer
-			var oIEStub = this.stub(sap.ui.Device, "browser", {"msie": true});
-			var sut4 = createSUT("idSticky4", true);
-			sut4.placeAt("qunit-fixture");
-			sut4.setSticky(["ColumnHeaders"]);
-			sap.ui.getCore().applyChanges();
-
-			assert.ok(!sap.m.Table.getStickyBrowserSupport(), "sticky css not supported");
-			assert.ok(!sut4.getDomRef().classList.contains("sapMSticky"), "Sticky style class not added");
-			assert.ok(!sut4.getDomRef().classList.contains("sapMSticky4"), "Sticky style class not added");
-
-			sut4.destroy();
-			// reset stub
-			oIEStub.restore();
-		});
-
 		QUnit.test("Sticky class based on element visibility", function(assert) {
 			if (sap.ui.Device.browser.msie) {
 				assert.ok(true, "Feature is not supported in IE");
@@ -938,16 +853,11 @@
 				aClassList = sut.$()[0].classList;
 				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
 
-				var fnGetDomRef = sut.getDomRef;
-
-				this.stub(oInfoToolbar, "getDomRef", function() {
+				var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
+				this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
 					return {
-						getBoundingClientRect: function() {
-							return {
-								bottom: 72,
-								height: 32
-							}
-						}
+						bottom: 72,
+						height: 32
 					}
 				});
 
@@ -965,9 +875,6 @@
 				oFocusedItemDomRef.focus();
 				this.clock.tick(0);
 				assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
-
-				// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-				sut.getDomRef = fnGetDomRef;
 
 				oScrollContainer.destroy();
 				// reset stub
@@ -1132,14 +1039,11 @@
 					}
 				});
 
-				this.stub(oInfoToolbar, "getDomRef", function() {
+				var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
+				this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
 					return {
-						getBoundingClientRect: function() {
-							return {
-								bottom: 80,
-								height: 32
-							}
-						}
+						bottom: 80,
+						height: 32
 					}
 				});
 

@@ -3,9 +3,9 @@
  */
 sap.ui.define([
 	'sap/ui/Device',
-	'sap/ui/XHRProxy',
+	'sap/ui/base/syncXHRFix',
 	'sap/ui/thirdparty/es6-promise'
-], function(Device, xhrProxy, ES6Promise) {
+], function(Device, syncXHRFix, ES6Promise) {
 	'use strict';
 
 	var fnPolyFill = function() {
@@ -23,7 +23,7 @@ sap.ui.define([
 		}
 
 		if (Device.browser.firefox && window.Proxy) {
-			xhrProxy();
+			syncXHRFix();
 		}
 	};
 

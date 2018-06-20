@@ -25,6 +25,36 @@
         "type": "FIX",
         "text": " sap.tnt.ToolHeader: Border is now correct",
         "references": []
+      },
+      {
+        "id": "2192bec6998ee6fa4e2c57de78ac98d02b2c7eab",
+        "type": "FIX",
+        "text": " CheckBox: right focus otline cut off fixed",
+        "references": []
+      },
+      {
+        "id": "2d7f09d180b3b67e7d708886547268b17f216caf",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "827862284b5412c1404ffbbee11d5f0994ef518c",
+        "type": "FEATURE",
+        "text": " sap.m.ListBase: enable sticky header toolbars",
+        "references": []
+      },
+      {
+        "id": "9eed19dc624a04808bfe8e932124bf31501acb5f",
+        "type": "FIX",
+        "text": " Select: Double fours outline in sap_belize_hcw fixed",
+        "references": []
+      },
+      {
+        "id": "bdb7654d7e9b0205cb3ac151081d4871bf777a06",
+        "type": "FIX",
+        "text": " sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": []
       }
     ]
   }

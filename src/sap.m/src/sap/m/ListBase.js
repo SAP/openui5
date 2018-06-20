@@ -5,7 +5,7 @@
 // Provides control sap.m.ListBase.
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/base/events/KeyCodes",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
@@ -56,6 +56,9 @@ function(
 
 	// shortcut for sap.m.ListHeaderDesign
 	var ListHeaderDesign = library.ListHeaderDesign;
+
+	// shortcut for sap.m.Sticky
+	var Sticky = library.Sticky;
 
 
 	/**
@@ -210,7 +213,30 @@ function(
 			 * Defines keyboard handling behavior of the control.
 			 * @since 1.38.0
 			 */
-			keyboardMode : {type : "sap.m.ListKeyboardMode", group : "Behavior", defaultValue : ListKeyboardMode.Navigation}
+			keyboardMode : {type : "sap.m.ListKeyboardMode", group : "Behavior", defaultValue : ListKeyboardMode.Navigation},
+
+			/**
+			 * Defines the section of the control that remains fixed at the top of the page during vertical scrolling as long as the control is in the viewport.
+			 *
+			 * <b>Note:</b> Enabling sticky column headers in List controls will not have any effect.
+			 *
+			 * There is limited browser support.
+			 * Browsers that do not support this feature are listed below:
+			 * <ul>
+			 * <li>IE</li>
+			 * <li>Edge lower than version 41 (EdgeHTML 16)</li>
+			 * <li>Firefox lower than version 59</li>
+			 * </ul>
+			 *
+			 * There are also some known limitations with respect to the scrolling behavior. A few are given below:
+			 * <ul>
+			 * <li>If the control is placed in certain layout containers, for example, the <code>sap.ui.layout.Grid</code> control,
+			 * the sticky elements of the control are not fixed at the top of the viewport. The control behaves in a similar way when placed within the <code>sap.m.ObjectPage</code> control.</li>
+			 * <li>If sticky column headers are enabled in the <code>sap.m.Table</code> control, setting focus on the column headers will let the table scroll to the top.</li>
+			 * </ul>
+			 * @since 1.58
+			 */
+			sticky : {type : "sap.m.Sticky[]", group : "Appearance"}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -1668,6 +1694,9 @@ function(
 
 	// this gets called when the focus is on the item or its content
 	ListBase.prototype.onItemFocusIn = function(oItem, oFocusedControl) {
+		// focus and scroll handling for sticky elements
+		this._handleStickyItemFocus(oItem.getDomRef());
+
 		if (oItem !== oFocusedControl) {
 			return;
 		}
@@ -2123,6 +2152,150 @@ function(
 	// invalidation of the table list is not required for destroying the context menu
 	ListBase.prototype.destroyContextMenu = function() {
 		this.destroyAggregation("contextMenu", true);
+	};
+
+	// check if browser supports css sticky
+	ListBase.getStickyBrowserSupport = function() {
+		var oBrowser = Device.browser;
+		return (oBrowser.safari || oBrowser.chrome
+			|| (oBrowser.firefox && oBrowser.version >= 59)
+			|| (oBrowser.edge && oBrowser.version >= 16));
+	};
+
+	// Returns the sticky value to be added to the sticky table container.
+	// sapMSticky7 is the result of sticky headerToolbar, infoToolbar and column headers.
+	// sapMSticky6 is the result of sticky infoToolbar and column headers.
+	// sapMSticky5 is the result of sticky headerToolbar and column headers.
+	// sapMSticky4 is the result of sticky column headers only.
+	// sapMSticky3 is the result of sticky headerToolbar and infoToolbar.
+	// sapMSticky2 is the result of sticky infoToolbar.
+	// sapMSticky1 is the result of sticky headerToolbar.
+	ListBase.prototype.getStickyStyleValue = function() {
+		var aSticky = this.getSticky();
+		if (!aSticky || !aSticky.length || !ListBase.getStickyBrowserSupport()) {
+			return (this._iStickyValue = 0);
+		}
+
+		var iStickyValue = 0,
+			sHeaderText = this.getHeaderText(),
+			oHeaderToolbar = this.getHeaderToolbar(),
+			bHeaderToolbarVisible = sHeaderText || (oHeaderToolbar && oHeaderToolbar.getVisible()),
+			oInfoToolbar = this.getInfoToolbar(),
+			bInfoToolbar = oInfoToolbar && oInfoToolbar.getVisible(),
+			bColumnHeadersVisible = false;
+
+		if (this.isA("sap.m.Table")) {
+			bColumnHeadersVisible = this.getColumns().some(function(oColumn) {
+				return oColumn.getVisible() && oColumn.getHeader();
+			});
+		}
+
+		aSticky.forEach(function(sSticky) {
+			if (sSticky === Sticky.HeaderToolbar && bHeaderToolbarVisible) {
+				iStickyValue += 1;
+			} else if (sSticky === Sticky.InfoToolbar && bInfoToolbar) {
+				iStickyValue += 2;
+			} else if (sSticky === Sticky.ColumnHeaders && bColumnHeadersVisible) {
+				iStickyValue += 4;
+			}
+		});
+
+		return (this._iStickyValue = iStickyValue);
+	};
+
+	// gets the sticky header position and scrolls the page so that the item is completely visible when focused
+	ListBase.prototype._handleStickyItemFocus = function(oItemDomRef) {
+		// when an item is focused and later focus is lost from the list control, the list control is scrolled and new item is focused,
+		// this resulted in unnecessary scroll jumping
+		if (!this._iStickyValue || this._sLastFocusedStickyItemId === oItemDomRef.id) {
+			return;
+		}
+
+		var oScrollDelegate = library.getScrollDelegate(this, true);
+		if (!oScrollDelegate) {
+			return;
+		}
+
+		// check the all the sticky element and get their height
+		var iTHRectHeight = 0,
+			iTHRectBottom = 0,
+			iInfoTBarContainerRectHeight = 0,
+			iInfoTBarContainerRectBottom = 0,
+			iHeaderToolbarRectHeight = 0,
+			iHeaderToolbarRectBottom = 0;
+
+		if (this._iStickyValue & 4 /* ColumnHeaders */) {
+			var oTblHeaderDomRef = this.getDomRef("tblHeader").firstChild;
+			var oTblHeaderRect = oTblHeaderDomRef.getBoundingClientRect();
+			iTHRectBottom = parseInt(oTblHeaderRect.bottom, 10);
+			iTHRectHeight = parseInt(oTblHeaderRect.height, 10);
+		}
+
+		if (this._iStickyValue & 2 /* InfoToolbar */) {
+			// additional padding is applied in HCW and HCB theme, hence infoToolbarContainer height is required
+			var oInfoToolbarContainer = this.getInfoToolbar().$().parent()[0];
+			var oInfoToolbarContainerRect = oInfoToolbarContainer.getBoundingClientRect();
+			iInfoTBarContainerRectBottom = parseInt(oInfoToolbarContainerRect.bottom, 10);
+			iInfoTBarContainerRectHeight = parseInt(oInfoToolbarContainerRect.height, 10);
+		}
+
+		if (this._iStickyValue & 1 /* HeaderToolbar */) {
+			var oHeaderToolbarDomRef = this.getDomRef().querySelector(".sapMListHdr");
+			var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
+			iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom, 10);
+			iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
+		}
+
+		var iItemTop = oItemDomRef.getBoundingClientRect().top;
+
+		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
+			window.requestAnimationFrame(function () {
+				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight]);
+			});
+		}
+
+		this._sLastFocusedStickyItemId = oItemDomRef.id;
+	};
+
+	ListBase.prototype.setHeaderToolbar = function(oHeaderToolbar) {
+		return this._setToolbar("headerToolbar", oHeaderToolbar);
+	};
+
+	ListBase.prototype.setInfoToolbar = function(oInfoToolbar) {
+		return this._setToolbar("infoToolbar", oInfoToolbar);
+	};
+
+	ListBase.prototype._setToolbar = function(sAggregationName, oToolbar) {
+		var oOldToolbar = this.getAggregation(sAggregationName);
+		if (oOldToolbar) {
+			oOldToolbar.detachEvent("_change", this._onToolbarPropertyChanged, this);
+		}
+
+		this.setAggregation(sAggregationName, oToolbar);
+		if (oToolbar) {
+			oToolbar.attachEvent("_change", this._onToolbarPropertyChanged, this);
+		}
+		return this;
+	};
+
+	ListBase.prototype._onToolbarPropertyChanged = function(oEvent) {
+		if (oEvent.getParameter("name") !== "visible") {
+			return;
+		}
+
+		// update the sticky style class
+		var iOldStickyValue = this._iStickyValue,
+			iNewStickyValue = this.getStickyStyleValue();
+
+		if (iOldStickyValue !== iNewStickyValue) {
+			var oDomRef = this.getDomRef();
+			if (oDomRef) {
+				var aClassList = oDomRef.classList;
+				aClassList.toggle("sapMSticky", !!iNewStickyValue);
+				aClassList.remove("sapMSticky" + iOldStickyValue);
+				aClassList.toggle("sapMSticky" + iNewStickyValue, !!iNewStickyValue);
+			}
+		}
 	};
 
 	return ListBase;

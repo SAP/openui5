@@ -2260,6 +2260,45 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_createMultiUnitRepresentativeEntry: URI encoded multi unit entry key parts",
+			function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oExpectedMultiUnitEntry = {
+					oEntry: {
+						"ActualCosts" : null,
+						"CostCenter" : "100/1000%2F",
+						"Currency" : "EUR",
+						"^~volatile" : true,
+						"__metadata" : {
+							"uri" : ",100%2F1000%252F,,EUR,,,,,,-multiple-units-not-dereferencable"
+						}
+					},
+					bIsNewEntry: true,
+					aReloadMeasurePropertyName: ["ActualCosts"]
+				},
+				oMultiUnitEntry,
+				oReferenceEntry = {
+					ActualCosts : "1588416",
+					CostCenter : "100/1000%2F",
+					Currency : "EUR",
+					__metadata : {
+						uri : "foo"
+					}
+				};
+
+			// code under test
+			oMultiUnitEntry = oBinding._createMultiUnitRepresentativeEntry("/", oReferenceEntry,
+				[], [], true);
+
+			assert.deepEqual(oMultiUnitEntry, oExpectedMultiUnitEntry);
+
+			done();
+		});
+	});
+
+	//*********************************************************************************************
 	[{
 		oContext : {},
 		bRelative : false

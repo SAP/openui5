@@ -162,6 +162,9 @@ sap.ui.define([
 				if (that.getAggregation('fixedItem')) {
 					that.getAggregation('fixedItem').setExpanded(isExpanded);
 				}
+			} else {
+				// hide scroller during collapsing animation
+				this._scroller.setVertical(false);
 			}
 
 			that._hasActiveAnimation = true;
@@ -201,12 +204,16 @@ sap.ui.define([
 				if (this.getAggregation('fixedItem')) {
 					this.getAggregation('fixedItem').setExpanded(isExpanded);
 				}
+
+				// enable back the scroller after collapsing animation
+				this._scroller.setVertical(true);
 			}
 
 			this.$().css('width', '');
 			this._hasActiveAnimation = false;
 
-			this._toggleArrows();
+			// wait for any re-rendering after the animation, before calling toggle arrows
+			jQuery.sap.delayedCall(0, this, this._toggleArrows);
 		};
 
 		/**

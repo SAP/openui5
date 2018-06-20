@@ -1167,12 +1167,25 @@ sap.ui.define([
 
 		var iFixedColumnCount = this.getFixedColumnCount();
 		var iFixedHeaderWidthSum = 0;
+
 		if (iFixedColumnCount) {
+			var aColumns = this.getColumns();
 			var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol:not(.sapUiTableCHTHR) > th");
+
 			for (var i = 0; i < aHeaderElements.length; i++) {
 				var iColIndex = parseInt(aHeaderElements[i].getAttribute("data-sap-ui-headcolindex"), 10);
+
 				if (!isNaN(iColIndex) && (iColIndex < iFixedColumnCount)) {
-					iFixedHeaderWidthSum += aHeaderElements[i].getBoundingClientRect().width;
+					var oColumn = aColumns[iColIndex];
+					var iWidth;
+
+					if (oColumn._iFixWidth != null) {
+						iWidth = oColumn._iFixWidth;
+					} else {
+						iWidth = aHeaderElements[i].getBoundingClientRect().width;
+					}
+
+					iFixedHeaderWidthSum += iWidth;
 				}
 			}
 		}
@@ -1192,20 +1205,11 @@ sap.ui.define([
 				}
 			}
 
-			// If the columns fit into the table, we do not need to ignore the fixed column count.
-			// Otherwise, check if the new fixed columns fit into the table. If they don't, the fixed column count setting will be ignored.
-			var bNonFixedColumnsFitIntoTable = oSizes.tableCtrlScrollWidth === oSizes.tableCtrlScrWidth; // Also true if no non-fixed columns exist.
+			iUsedHorizontalTableSpace += TableUtils.Column.getMinColumnWidth();
 
-			if (!bNonFixedColumnsFitIntoTable) { // horizontal scrollbar should be at least 48px wide
-				iUsedHorizontalTableSpace += TableUtils.Column.getMinColumnWidth();
-			}
-
-			var bFixedColumnsFitIntoTable = oSizes.tableCtrlFixedWidth + iUsedHorizontalTableSpace <= oSizes.tableCntWidth; // Also true if no fixed columns exist.
-			var bIgnoreFixedColumnCountCandidate = false;
-
-			if (!bNonFixedColumnsFitIntoTable || !bFixedColumnsFitIntoTable) {
-				bIgnoreFixedColumnCountCandidate = (oSizes.tableCntWidth - iUsedHorizontalTableSpace < iFixedHeaderWidthSum);
-			}
+			var iAvailableSpace = oSizes.tableCntWidth - iUsedHorizontalTableSpace;
+			var bFixedColumnsFitIntoTable = iAvailableSpace > iFixedHeaderWidthSum;
+			var bIgnoreFixedColumnCountCandidate = !bFixedColumnsFitIntoTable;
 
 			if (this._bIgnoreFixedColumnCount !== bIgnoreFixedColumnCountCandidate) {
 				this._bIgnoreFixedColumnCount = bIgnoreFixedColumnCountCandidate;
@@ -1392,7 +1396,7 @@ sap.ui.define([
 		this._aRowHeights = this._collectRowHeights(false);
 		var aColumnHeaderRowHeights = this._collectRowHeights(true);
 
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
+		if (TableUtils.isVariableRowHeightEnabled(this) && !TableUtils.isNoDataVisible(this)) {
 			// Necessary in case the visible row count does not change after a resize (for example, this is always the case
 			// if visibleRowCountMode is set to "Fixed"). The row heights might change due to decreased column widths, so the inner scroll position
 			// must be adjusted.
@@ -3507,6 +3511,10 @@ sap.ui.define([
 			}
 		}
 		this._ignoreInvalidateOfChildControls = false;
+
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
+		}
 
 		var bFireRowsUpdated = bUpdateUI && aContexts.length > 0;
 		return this._renderRows(sReason, bFireRowsUpdated);

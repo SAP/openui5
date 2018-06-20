@@ -550,7 +550,7 @@ sap.ui.define([
 		 * @private
 		 */
 		isVariableRowHeightEnabled : function(oTable) {
-			return oTable._bVariableRowHeightEnabled && oTable.getFixedRowCount() <= 0 && oTable.getFixedBottomRowCount() <= 0;
+			return oTable && oTable._bVariableRowHeightEnabled && oTable.getFixedRowCount() <= 0 && oTable.getFixedBottomRowCount() <= 0;
 		},
 
 		/**
@@ -1005,7 +1005,7 @@ sap.ui.define([
 		 */
 		getContentDensity : function(oControl) {
 			var sContentDensity;
-			var aContentDensityStyleClasses = ["sapUiSizeCompact", "sapUiSizeCondensed", "sapUiSizeCozy"];
+			var aContentDensityStyleClasses = ["sapUiSizeCondensed", "sapUiSizeCompact", "sapUiSizeCozy"];
 
 			var fnGetContentDensity = function (sFnName, oObject) {
 				if (!oObject[sFnName]) {

@@ -8,11 +8,11 @@ sap.ui.define([
 	'./Manifest',
 	'./ComponentMetadata',
 	'./Core',
-	'sap/base/util/extend',
+	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/URI',
 	'jquery.sap.trace'
-], function(jQuery, Manifest, ComponentMetadata, Core, extend, ManagedObject, URI /*, jQuery*/) {
+], function(jQuery, Manifest, ComponentMetadata, Core, merge, ManagedObject, URI /*, jQuery*/) {
 	"use strict";
 
 	/*global Promise */
@@ -1718,12 +1718,27 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the component manifest url.
-	 * @param {string} sComponentName component name
-	 * @returns {string} component manifest url
+	 * @param {string} sComponentName component name.
+	 * @returns {string} component manifest url.
 	 */
 	function getManifestUrl(sComponentName){
 		return sap.ui.require.toUrl(sComponentName.replace(/\./g, "/") + "/manifest.json");
 	}
+
+	/**
+	 * Registers the given library or component path.
+	 * @param {string} sName component or library name.
+	 * @param {string} sUrl component or library path.
+	 */
+	function registerModulePath(sName, sUrl) {
+		var mPaths = {};
+		mPaths[sName.replace(/\./g, "/")] = sUrl;
+		sap.ui.loader.config({
+			paths: mPaths
+		});
+	}
+
+
 
 	function loadManifests(oRootMetadata, oRootManifest) {
 		var aManifestsToLoad = [];
@@ -1922,7 +1937,7 @@ sap.ui.define([
 			throw new TypeError("Component.create() must be called with a configuration object.");
 		}
 
-		var mParameters = extend(true, {}, mOptions);
+		var mParameters = merge({}, mOptions);
 		mParameters.async = true;
 
 		// if no manifest option is given, the default is true
@@ -2165,7 +2180,7 @@ sap.ui.define([
 	 */
 	Component.load = function (mOptions) {
 
-		var mParameters = extend(true, {}, mOptions);
+		var mParameters = merge({}, mOptions);
 		mParameters.async = true;
 
 		// if no manifest option is given, the default is true
@@ -2342,7 +2357,7 @@ sap.ui.define([
 		// if a component name and a URL is given, we register this URL for the name of the component:
 		// the name is the package in which the component is located (dot separated)
 		if (sName && sUrl) {
-			jQuery.sap.registerModulePath(sName, sUrl);
+			registerModulePath(sName, sUrl);
 		}
 
 		// in case of loading the manifest first by configuration we need to
@@ -2432,7 +2447,7 @@ sap.ui.define([
 
 			if ( typeof vObj === 'object' ) {
 				if ( vObj.url ) {
-					jQuery.sap.registerModulePath(vObj.name, vObj.url);
+					registerModulePath(vObj.name, vObj.url);
 				}
 				return (vObj.lazy && bIgnoreLazy !== true) ? undefined : vObj.name; // expl. check for true to allow usage in Array.prototype.map below
 			}
@@ -2623,7 +2638,7 @@ sap.ui.define([
 					// if a URL is given we register this URL for the name of the component:
 					// the name is the package in which the component is located (dot separated)
 					if (sUrl) {
-						jQuery.sap.registerModulePath(sComponentName, sUrl);
+						registerModulePath(sComponentName, sUrl);
 					}
 
 					// preload the component

@@ -1,12 +1,13 @@
 function main() {
 	"use strict";
-
-	jQuery.sap.registerModulePath("test1.Component", "./Component1");
-	jQuery.sap.registerModulePath("test1", "./");
-	jQuery.sap.registerModulePath("test2.Component", "./Component2");
-	jQuery.sap.registerModulePath("test2", "./");
-	jQuery.sap.registerModulePath("test3.Component", "./Component3");
-	jQuery.sap.registerModulePath("test3", "./");
+	sap.ui.loader.config({paths: {
+		"test1/Component": "./Component1",
+		"test1":  "./",
+		"test2/Component": "./Component2",
+		"test2": "./",
+		"test3/Component": "./Component3",
+		"test3": "./"
+	}});
 	sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
 
 		var oCompCont = new sap.ui.core.ComponentContainer({

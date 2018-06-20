@@ -677,6 +677,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks the current dependencies map for any unresolved dependencies belonging to the given control
+	 * Returns true as soon as the first dependency is found, otherwise false
+	 *
+	 * @param {object} oSelector selector of the control
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - polymorph reuse operations handling the changes on the given view type
+	 * @param {sap.ui.core.Component} oAppComponent - component instance that is currently loading
+	 * @returns {boolean} Returns true if there are open dependencies
+	 */
+	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oModifier, oAppComponent) {
+		return Object.keys(this._mChanges.mDependencies).some(function(sKey) {
+			return this._mChanges.mDependencies[sKey].changeObject.getDependentIdList().some(function(sDependencyId) {
+				return sDependencyId === oModifier.getControlIdBySelector(oSelector, oAppComponent);
+			});
+		}, this);
+	};
+
+	/**
 	 * This function copies the initial dependencies (before any changes got applied and dependencies got deleted) for the given change to the mChanges map
 	 * Also checks if the dependency is still valid in a callback
 	 * This function is used in the case that controls got destroyed and recreated

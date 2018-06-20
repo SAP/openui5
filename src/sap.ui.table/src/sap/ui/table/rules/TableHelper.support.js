@@ -16,7 +16,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 
 	var TableSupportHelper = {
 
-		DOCU_REF : "https://sapui5.hana.ondemand.com/",
+		DOCU_REF : "https://ui5.sap.com/",
 
 		DEFAULT_RULE_DEF : {
 			audiences: [Audiences.Application],

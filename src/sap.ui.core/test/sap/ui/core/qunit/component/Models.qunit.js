@@ -1275,7 +1275,7 @@ sap.ui.define([
 			this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
 			this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
 
-			jQuery.sap.registerModulePath("samples.components", "../../samples/components/");
+			sap.ui.loader.config({paths:{"samples/components":"../../samples/components/"}});
 
 			// enable async preloading
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;

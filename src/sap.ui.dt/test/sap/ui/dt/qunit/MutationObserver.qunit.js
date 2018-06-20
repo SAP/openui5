@@ -4,91 +4,147 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	'sap/ui/dt/MutationObserver',
-	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/Overlay',
+	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/m/Panel',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
-	'sap/m/Label',
+	'sap/base/util/includes',
 	'sap/ui/thirdparty/sinon'
 ],
 function(
 	MutationObserver,
-	OverlayUtil,
 	Overlay,
+	ElementOverlay,
 	DesignTime,
 	OverlayRegistry,
 	Panel,
 	Button,
 	VerticalLayout,
-	Label,
+	includes,
 	sinon
 ) {
 	'use strict';
-	QUnit.start();
 
 	QUnit.module("Given that a MutationObserver is created", {
-		beforeEach : function() {
-			this.oLabel = new Label({
-				text : "text text text text text text text text text text text text text text text text text text"
-			});
-			this.oLabel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+		beforeEach: function() {
+			this.$Node = jQuery("<div/>", {
+				id: 'node-id'
+			}).appendTo("#qunit-fixture");
+
 			this.oMutationObserver = new MutationObserver();
-			this.oMutationObserver.addToWhiteList(this.oLabel.getId());
+			this.oMutationObserver.addToWhiteList(this.$Node.attr('id'));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oMutationObserver.destroy();
-			this.oLabel.destroy();
 		}
-	});
+	}, function () {
+		QUnit.test("when window is resized", function(assert) {
+			var fnDone = assert.async();
 
-	QUnit.test("when window is resized", function(assert) {
-		var done = assert.async();
-
-		this.oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
-			assert.ok(oEvent, 'DomChanged event is fired');
-			done();
+			this.oMutationObserver.attachEventOnce("domChanged", function (oEvent) {
+				assert.ok(oEvent, 'DomChanged event is fired');
+				fnDone();
+			});
+			jQuery(window).trigger("resize");
 		});
-		jQuery(window).trigger("resize");
-	});
 
-	QUnit.test("when the text node of a control is modified", function(assert) {
-		var done = assert.async();
+		QUnit.test("when a relevant Node is modified", function (assert) {
+			var fnDone = assert.async();
 
-		this.oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
-			assert.ok(oEvent, 'then a "domChanged" event is fired because of the mutation observer');
-			assert.notEqual(oEvent.mParameters.targetNodes.indexOf(this.oLabel.getDomRef().firstChild), -1, "the label change is not part of the event");
-			done();
-		}.bind(this));
+			this.oMutationObserver.attachEventOnce("domChanged", function (oEvent) {
+				assert.ok(includes(oEvent.getParameter('targetNodes'), this.$Node.get(0)), "then domChanged is fired for relevant node");
+				fnDone();
+			}.bind(this));
 
-		this.oLabel.setText("test");
-	});
-
-	QUnit.test("when a mutation is ignored", function(assert) {
-		var $Fixture = jQuery('#qunit-fixture');
-		var iFixtureWidth = $Fixture.width();
-		var done = assert.async();
-		this.oMutationObserver.ignoreOnce({
-			target: this.oLabel.getDomRef(),
-			type: "childList"
+			this.$Node.text("test");
 		});
-		assert.equal(this.oMutationObserver._aIgnoredMutations.length, 1, "the mutation is in ignore list");
 
-		this.oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
-			assert.equal(oEvent.mParameters.targetNodes.indexOf(this.oLabel.getDomRef()), -1, "the label change is not part of the event");
-			assert.equal(this.oMutationObserver._aIgnoredMutations.length, 0, "the mutation is no longer ignored");
-			$Fixture.width(iFixtureWidth);
-			done();
-		}.bind(this));
-		this.oLabel.$().append("<div />");
-		$Fixture.width(100);
+		QUnit.test("when the text node of a relevant node is modified", function (assert) {
+			var fnDone = assert.async();
+			this.$Node.append("test");
+			// setTimeout is needed to ignore a mutation from setting text to Node
+			setTimeout(function () {
+				this.oMutationObserver.attachEventOnce("domChanged", function (oEvent) {
+					assert.ok(includes(oEvent.getParameter('targetNodes'), this.$Node.get(0)), "then domChanged is fired with a relevant node");
+					fnDone();
+				}.bind(this));
+				this.$Node.contents().get(0).nodeValue = "123";
+			}.bind(this));
+		});
+
+		QUnit.test("ignoreOnce()", function (assert) {
+			var fnDone = assert.async();
+			assert.expect(1);
+			this.oMutationObserver.ignoreOnce({
+				target: this.$Node.get(0),
+				type: "childList"
+			});
+			this.oMutationObserver.attachEvent("domChanged", function (oEvent) {
+				assert.ok(includes(oEvent.getParameter('targetNodes'), this.$Node.get(0)), "the node change is part of the event, but emitted only once (first mutation is ignored)");
+				fnDone();
+			}, this);
+			this.$Node.append("<div />");
+			// setTimeout is needed to avoid native throttling by MutationObserver
+			setTimeout(function () {
+				this.$Node.append("<div />");
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Static area mutations", {
+		beforeEach: function() {
+			this.$StaticUIArea = jQuery("<div/>", {
+				id: "sap-ui-static"
+			}).appendTo("#qunit-fixture");
+
+			this.$Node = jQuery("<div/>", {
+				id: 'node-id'
+			}).appendTo(this.$StaticUIArea);
+
+			this.oMutationObserver = new MutationObserver();
+			this.oMutationObserver.addToWhiteList(this.$Node.attr('id'));
+		},
+		afterEach: function() {
+			this.oMutationObserver.destroy();
+		}
+	}, function () {
+		QUnit.test("when mutations in static UIArea happen inside irrelevant node", function (assert) {
+			var fnDone = assert.async();
+			var oSpy = sinon.spy();
+			this.oMutationObserver.attachEvent("domChanged", oSpy);
+			jQuery("<div/>").appendTo("#sap-ui-static");
+			// setTimeout is needed because of async nature of native MutationObserver
+			setTimeout(function () {
+				assert.notOk(oSpy.called, 'then domChanged event has not been emitted');
+				fnDone();
+			});
+		});
+
+		QUnit.test("when mutations in static UIArea happen inside relevant node", function (assert) {
+			var fnDone = assert.async();
+			assert.expect(1);
+			this.oMutationObserver.attachEvent("domChanged", function () {
+				assert.ok(true, 'then domChanged event has been emitted');
+				fnDone();
+			});
+			jQuery("<div/>").appendTo(this.$Node);
+		});
+
+		QUnit.test("when mutations in static UIArea happen on relevant node (simulate UI5 re-rendering)", function (assert) {
+			var fnDone = assert.async();
+			this.oMutationObserver.attachEventOnce("domChanged", function (oEvent) {
+				assert.ok(true, 'then domChanged event has been emitted');
+				fnDone();
+			}, this);
+			this.$Node.replaceWith(this.$Node.clone());
+		});
 	});
 
 	QUnit.module("Given a Vertical Layout with a scrollable Panel and another Vertical Layout with two scrollable panels for which DT is started...", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 
 			var aButtons0 = [20,21,22,23,24,25].map(function(i) {
 				return new Button("button" + i);
@@ -146,51 +202,53 @@ function(
 				rootElements : [this.oVerticalLayoutRoot]
 			});
 
-			var done = assert.async();
+			var fnDone = assert.async();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oVerticalLayoutRootOverlay = OverlayRegistry.getOverlay(this.oVerticalLayoutRoot);
-				done();
+				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oOuterPanel.destroy();
 			this.oDesignTime.destroy();
 		}
-	});
-
-	QUnit.test("when the panel outside of DT is scrolled", function(assert) {
-		var done = assert.async();
-		var spy = sinon.spy();
-		Overlay.getMutationObserver().attachEventOnce("domChanged", spy);
-		setTimeout(function () {
-			assert.equal(spy.called, false, "then the event was not fired");
-			done();
+	}, function () {
+		QUnit.test("when the panel outside of DT is scrolled", function(assert) {
+			var fnDone = assert.async();
+			var spy = sinon.spy();
+			Overlay.getMutationObserver().attachEventOnce("domChanged", spy);
+			setTimeout(function () {
+				assert.equal(spy.called, false, "then the event was not fired");
+				fnDone();
+			});
+			this.oOutsidePanel.$().find('>.sapMPanelContent').scrollTop(50);
 		});
-		this.oOutsidePanel.$().find('>.sapMPanelContent').scrollTop(50);
-	});
 
-	QUnit.test("when the outer vertical layout is scrolled", function(assert) {
-		var done = assert.async();
-		Overlay.getMutationObserver().attachEventOnce("domChanged", function(oEvent) {
-			assert.strictEqual(oEvent.mParameters.type, "scroll", "then a 'domChanged' with 'scroll'-type is triggered");
-			done();
+		QUnit.test("when the outer vertical layout is scrolled", function(assert) {
+			var fnDone = assert.async();
+			Overlay.getMutationObserver().attachEventOnce("domChanged", function(oEvent) {
+				assert.strictEqual(oEvent.mParameters.type, "scroll", "then a 'domChanged' with 'scroll'-type is triggered");
+				fnDone();
+			});
+			this.oOuterPanel.$().find('>.sapMPanelContent').scrollTop(50);
 		});
-		this.oOuterPanel.$().find('>.sapMPanelContent').scrollTop(50);
-	});
 
-	QUnit.test("when a panel inside DT is scrolled", function(assert) {
-		var done = assert.async();
-		var spy = sinon.spy();
-		Overlay.getMutationObserver().attachEventOnce("domChanged", spy);
-		setTimeout(function(){
-			assert.equal(spy.called, false, "then the event was not fired");
-			done();
+		QUnit.test("when a panel inside DT is scrolled", function(assert) {
+			var fnDone = assert.async();
+			var spy = sinon.spy();
+			Overlay.getMutationObserver().attachEventOnce("domChanged", spy);
+			setTimeout(function(){
+				assert.equal(spy.called, false, "then the event was not fired");
+				fnDone();
+			});
+			this.Panel0.$().find('>.sapMPanelContent').scrollTop(50);
 		});
-		this.Panel0.$().find('>.sapMPanelContent').scrollTop(50);
 	});
 
 	QUnit.done(function( details ) {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	QUnit.start();
 });

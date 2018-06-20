@@ -1117,7 +1117,7 @@ sap.ui.define([
 	 * @param {object} vAction       The create action from designtime metadata
 	 * @param {string} sNewControlID The id of the newly created container
 	 */
-	RuntimeAuthoring.prototype._setRenameOnCreatedContainer = function(vAction, sNewControlID) {
+	RuntimeAuthoring.prototype._scheduleRenameOnCreatedContainer = function(vAction, sNewControlID) {
 		var fnStartEdit = function (oElementOverlay) {
 			oElementOverlay.setSelected(true);
 			this.getPlugins()["rename"].startEdit(oElementOverlay);
@@ -1167,15 +1167,16 @@ sap.ui.define([
 
 		var oCommand = oEvent.getParameter("command");
 		if (oCommand instanceof sap.ui.rta.command.BaseCommand) {
-			return this.getCommandStack().pushAndExecute(oCommand).then(function(){
-				if (vAction && sNewControlID){
-					this._setRenameOnCreatedContainer(vAction, sNewControlID);
-				}
-			}.bind(this))
-
+			if (vAction && sNewControlID){
+				this._scheduleRenameOnCreatedContainer(vAction, sNewControlID);
+			}
+			return this.getCommandStack().pushAndExecute(oCommand)
 			// Error handling when a command fails is done in the Stack
 			.catch(function(oError) {
-				throw new Error(oError);
+				if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
+					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_DEPENDENCY_ERROR", "MSG_DEPENDENCY_ERROR", oError);
+				}
+				FlexUtils.log.error("sap.ui.rta: " + oError.message);
 			});
 		}
 		return Promise.resolve();

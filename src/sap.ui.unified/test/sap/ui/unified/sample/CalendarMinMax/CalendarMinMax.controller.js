@@ -25,12 +25,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			var oText = this.byId("selectedDate");
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
-			if (aSelectedDates.length > 0 ) {
-				oDate = aSelectedDates[0].getStartDate();
-				oText.setText(this.oFormatYyyymmdd.format(oDate));
-			} else {
-				oText.setValue("No Date Selected");
-			}
+			oDate = aSelectedDates[0].getStartDate();
+			oText.setText(this.oFormatYyyymmdd.format(oDate));
 		},
 
 		handleShowWeekNumbers: function(oEvent) {

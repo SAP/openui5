@@ -21,14 +21,14 @@
 			border: 1px solid black;
 			padding: 5px;
 		}
-		
+
 		.TestControl>div {
 			border-color: green;
 		}
 	</style>
 
 	<script>
-		sap.ui.require(['sap/ui/events/F6Navigation', 'sap/base/events/KeyCodes', 'jquery.sap.strings'], function(F6Navigation, KeyCodes) {
+		sap.ui.require(['sap/ui/events/F6Navigation', 'sap/ui/events/KeyCodes', 'jquery.sap.strings'], function(F6Navigation, KeyCodes) {
 
         // Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM) and the target of the event instead of the activeElement
         // to be more focus independent (-> More test stability)

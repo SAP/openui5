@@ -228,10 +228,6 @@
 			testStorage(jQuery.sap.storage.Type.local, "myprefix", sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
 
-		QUnit.test("Global Storage", function(assert) {
-			testStorage(jQuery.sap.storage.Type.global, "myprefix", sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_NO_SUPPORT);
-		});
-
 		QUnit.test("Custom Storage", function(assert) {
 			testStorage(new SimpleStorage("custom1"), "myprefix", SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
@@ -245,7 +241,6 @@
 		QUnit.test("Cache", function(assert) {
 			testCache(jQuery.sap.storage.Type.session, "myprefix", true);
 			testCache(jQuery.sap.storage.Type.local, "myprefix", true);
-			testCache(jQuery.sap.storage.Type.global, "myprefix", true);
 			testCache(new SimpleStorage("custom2"), "myprefix", false);
 		});
 

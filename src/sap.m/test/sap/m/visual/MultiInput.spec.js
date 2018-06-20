@@ -96,4 +96,8 @@ describe('sap.m.MultiInput', function() {
 		element(by.id("multiInputNotEditable")).click();
 		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable-selected");
 	});
+
+	it("multiinput should be in condensed mode", function() {
+		expect(takeScreenshot(element(by.id("condensed-table")))).toLookAs("table-in-condensed-mode");
+	});
 });

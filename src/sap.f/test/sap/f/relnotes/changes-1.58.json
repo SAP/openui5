@@ -31,6 +31,24 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Pointer cursor on passive controls in title fix",
         "references": []
+      },
+      {
+        "id": "188c53d214aebefee46fe417c41e8e0dac50fd7e",
+        "type": "FIX",
+        "text": " DynamicPageTitle: top area visibility fixed",
+        "references": []
+      },
+      {
+        "id": "832e95152bb3b0821fd6f6004321ef24509f201f",
+        "type": "FIX",
+        "text": " DynamicPageTitle: Heading ARIA reference added",
+        "references": []
+      },
+      {
+        "id": "336abe253cd74d41c08ff303d4b650588e25bfcc",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Initially snapped header behavior fixed",
+        "references": []
       }
     ]
   }

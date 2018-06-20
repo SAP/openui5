@@ -1,4 +1,4 @@
-/*global QUnit sinon*/
+/*global QUnit*/
 
 sap.ui.require([
 	'sap/m/Button',
@@ -14,18 +14,18 @@ sap.ui.require([
 	'sap/ui/rta/command/Remove',
 	'sap/ui/rta/command/CompositeCommand',
 	'sap/ui/rta/command/Stack',
+	'sap/ui/rta/Utils',
 	'sap/ui/fl/changeHandler/MoveControls',
 	'sap/ui/fl/changeHandler/HideControl',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/registry/SimpleChanges',
+	'sap/ui/fl/FlexControllerFactory',
+	'sap/ui/fl/ChangePersistenceFactory',
 	'sap/ui/fl/Change',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/ControlTreeModifier',
-	'sap/ui/fl/FlexControllerFactory',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon'
 ],
 function(
 	Button,
@@ -41,15 +41,18 @@ function(
 	Remove,
 	CompositeCommand,
 	Stack,
+	Utils,
 	MoveControls,
 	HideControl,
 	ChangeRegistry,
 	SimpleChanges,
+	FlexControllerFactory,
+	ChangePersistenceFactory,
 	Change,
 	JSONModel,
 	FlexUtils,
 	RtaControlTreeModifier,
-	FlexControllerFactory
+	sinon
 ) {
 	"use strict";
 
@@ -172,6 +175,14 @@ function(
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
 			}.bind(this));
 		});
+
+		QUnit.test("when executing a command that fails because of dependencies", function(assert) {
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oMockedAppComponent);
+			sandbox.stub(oChangePersistence, "checkForOpenDependenciesForControl").returns(true);
+			return this.oFlexCommand.execute().catch(function(oError) {
+				assert.deepEqual(oError.message, "The following Change cannot be applied because of a dependency: " + this.oFlexCommand.getPreparedChange().getId(), "the execute promise got rejected with the correct error message");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Given a command stack", {
@@ -244,7 +255,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when calling pushAndExecute with an failing command as the only command", function(assert) {
+		QUnit.test("when calling pushAndExecute with a failing command as the only command", function(assert) {
 			assert.expect(4);
 			var fnStackModifiedSpy = sinon.spy();
 			this.stack.attachModified(fnStackModifiedSpy);
@@ -258,7 +269,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when calling pushAndExecute with an failing command as the only command and no error is passed", function(assert) {
+		QUnit.test("when calling pushAndExecute with a failing command as the only command and no error is passed", function(assert) {
 			assert.expect(5);
 			var fnStackModifiedSpy = sinon.spy();
 			this.stack.attachModified(fnStackModifiedSpy);
@@ -277,7 +288,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when calling pushAndExecute with an failing command and afterwards with a succeeding command", function(assert) {
+		QUnit.test("when calling pushAndExecute with a failing command and afterwards with a succeeding command", function(assert) {
 			return this.stack.pushAndExecute(this.failingCommand)
 
 			.catch(function(oError) {

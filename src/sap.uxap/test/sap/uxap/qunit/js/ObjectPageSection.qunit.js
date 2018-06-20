@@ -358,20 +358,25 @@
 		var oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
 			sFirstSectionAriaLabelledBy = oFirstSection.$().attr("aria-labelledby"),
 			oSectionWithoutTitle = this.ObjectPageSectionView.byId("SectionWithNoTitleAndTwoSubSections"),
-			sSectionWithoutTitleAriaLabel = oSectionWithoutTitle.$().attr("aria-label"),
+			sSectionWithoutTitleAriaLabel = oSectionWithoutTitle.$().attr("aria-labelledby"),
 			oLastSection = this.ObjectPageSectionView.byId("SectionWithNoTitleAndOneSubSection"),
-			sLastSectionAriaLabelledBy = oLastSection.$().attr("aria-labelledby");
+			sLastSectionAriaLabelledBy = oLastSection.$().attr("aria-labelledby"),
+			sSectionText = sap.uxap.ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
 
 		// assert
-		assert.strictEqual(oFirstSection._getTitle(), sap.ui.getCore().byId(sFirstSectionAriaLabelledBy).getText(), "aria-labelledby is set properly");
-		assert.strictEqual(sSectionWithoutTitleAriaLabel, sap.uxap.ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME"), "sections without title have aria-label='Section'");
-		assert.strictEqual(oLastSection._getTitle(), sap.ui.getCore().byId(sLastSectionAriaLabelledBy).getText(), "aria-labelledby is set properly");
+		assert.strictEqual(sap.ui.getCore().byId(sFirstSectionAriaLabelledBy).getText(),
+			oFirstSection._getTitle() + " " + sSectionText, "aria-labelledby is set properly");
+		assert.strictEqual(sap.ui.getCore().byId(sSectionWithoutTitleAriaLabel).getText(),
+			sSectionText, "sections without title are labelled by 'Section' texts");
+		assert.strictEqual(sap.ui.getCore().byId(sLastSectionAriaLabelledBy).getText(),
+			oLastSection._getTitle() + " " + sSectionText, "aria-labelledby is set properly");
 
 		// act
 		oFirstSection.setTitle("New title");
 
 		// assert
-		assert.strictEqual(oFirstSection._getTitle(), sap.ui.getCore().byId(sFirstSectionAriaLabelledBy).getText(), "aria-labelledby is updated properly");
+		assert.strictEqual(sap.ui.getCore().byId(sFirstSectionAriaLabelledBy).getText(),
+			oFirstSection._getTitle() + " " + sSectionText, "aria-labelledby is updated properly");
 	});
 
 }(jQuery, QUnit, sinon, sap.uxap.Importance));

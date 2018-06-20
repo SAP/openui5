@@ -18,6 +18,9 @@
 		jQuery.sap.require("sap.m.MultiComboBox");
 		jQuery.sap.require("sap.m.Token");
 		jQuery.sap.require("sap.m.Table");
+		jQuery.sap.require("sap.ui.table.Table");
+		jQuery.sap.require("sap.ui.table.Row");
+		jQuery.sap.require("sap.ui.table.Column");
 
 		//*******************************
  		var oEventList = new sap.m.List();
@@ -1035,7 +1038,9 @@
 			}
 		});
 
-		var oSelectDialog = new sap.m.SelectDialog();
+		var oSelectDialog = new sap.m.SelectDialog({
+			title: "Search Dialog"
+		});
 			var openSelectDialog = function() {
 				oSelectDialog.open();
 			};
@@ -1136,6 +1141,18 @@
 	   //******************************************
 		var app = new sap.m.App("myApp");
 
+		var oCondensedTable = new sap.ui.table.Table("condensed-table", {
+			columns: [
+				new sap.ui.table.Column({
+					template: new sap.m.MultiInput()
+				})
+			],
+			visibleRowCountMode: "Auto",
+			rows: "{/modelData}"
+		});
+		oTable.addStyleClass("sapUiSizeCompact");
+		oTable.addStyleClass("sapUiSizeCondensed");
+
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile MultiInput Control",
 			content : [
@@ -1146,7 +1163,7 @@
 					oCheckBoxAcceptValidation,
 					oMultiInputCustomAsyncValidator,
 					oChangeTextValidatorMultiInput,
-					new sap.m.Label({labelFor: oTabularSuggestMultiInput.getId(), text: "Tabular Suggest MultiInput: "}),
+					new sap.m.Label({labelFor: oTabularSuggestMultiInput.getId(), text: "Tabular Suggest MultiInput: ", width: "100%"}),
 					oTabularSuggestMultiInput,
 					new sap.m.Label({labelFor: oMultiInput5.getId(), text : "EnableMultiLineMode: true + synchronously validation", width:"100%"}),
 					oMultiInput5,
@@ -1187,7 +1204,8 @@
 					new sap.m.Label({labelFor: multiInputWithSelectDialog.getId(), text : "MultiInput with SelectDialog", width: "100%"}),
 					multiInputWithSelectDialog,
 					new sap.m.Label({labelFor: multiInputWithDataBinding.getId(), text : "MultiInput with DataBinding", width: "100%"}),
-					multiInputWithDataBinding
+					multiInputWithDataBinding,
+					oCondensedTable
 			],
 			showNavButton: true,
 			navButtonPress: function(){ app.to("page2"); }

@@ -379,6 +379,7 @@ sap.ui.define([
 		 * @version ${version}
 		 * @since 1.56.0
 		 * @alias sap.ui.core.XMLComposite
+		 * @see {@link topic:b83a4dcb7d0e46969027345b8d32fd44 XML Composite Controls}
 		 *
 		 * @abstract
 		   * @public

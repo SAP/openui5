@@ -101,9 +101,9 @@ QUnit.test("jQuery.fn function stub", function(assert) {
 QUnit.test("jQuery.Event.prototype function stub", function(assert) {
 	var done = assert.async();
 	sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-		scriptsLoaded(assert, ["sap/ui/events/jqueryEvent"], false);
+		scriptsLoaded(assert, ["sap/ui/events/jquery/EventExtension"], false);
 		assert.ok(typeof new jQuery.Event().getPseudoTypes === "function", "jqQuery.Event.prototype stub works");
-		scriptsLoaded(assert, ["sap/ui/events/jqueryEvent"]);
+		scriptsLoaded(assert, ["sap/ui/events/jquery/EventExtension"]);
 		done();
 	});
 });

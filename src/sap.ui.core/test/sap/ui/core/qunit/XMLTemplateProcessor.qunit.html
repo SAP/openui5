@@ -127,7 +127,7 @@
 				sap.ui.getCore().getConfiguration().getDesignMode = function () {
 					return true;
 				};
-				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+				sap.ui.loader.config({paths:{"my": "../../../../../test-resources/sap/ui/core/qunit/fragment/"}});
 				var oView = sap.ui.view({
 					viewName: "my.View",
 					type: sap.ui.core.mvc.ViewType.XML
@@ -149,7 +149,7 @@
 			});
 
 			QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo", function (assert) {
-				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+				sap.ui.loader.config({paths:{"my": "../../../../../test-resources/sap/ui/core/qunit/fragment/"}});
 				return sap.ui.view({
 					viewName: "my.View",
 					type: sap.ui.core.mvc.ViewType.XML
@@ -172,7 +172,7 @@
 					mMetadataContexts = mSettings.metadataContexts;
 				};
 
-				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+				sap.ui.loader.config({paths:{"my": "../../../../../test-resources/sap/ui/core/qunit/fragment/"}});
 				return sap.ui.view({
 					viewName: "my.View",
 					type: sap.ui.core.mvc.ViewType.XML

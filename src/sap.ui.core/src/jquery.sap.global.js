@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global ActiveXObject, XMLHttpRequest, alert, confirm, console, document, Promise */
+/*global ActiveXObject, XMLHttpRequest, localStorage, alert, confirm, console, document, Promise */
 
 /**
  * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -21,15 +21,13 @@
  */
 sap.ui.define([
 	// new sap/base/* modules
-	"sap/base/util/now",
-	"sap/base/util/getObject", "sap/base/util/getter", "sap/base/Version",
-	"sap/base/util/extend", "sap/base/assert", "sap/base/Log",
+	"sap/base/util/now", "sap/base/util/Version", "sap/base/assert", "sap/base/Log",
 
 	// new sap/ui/* modules
-	"sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/activeElementFix", "sap/ui/dom/includeScript",
-	"sap/ui/dom/includeStylesheet", "sap/ui/initjQuerySupport", "sap/ui/initSupportHooks", "sap/ui/initjQueryBrowser",
-	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/Interaction", "sap/ui/performance/ResourceTimings",
-	"sap/ui/bootstrap/StoredConfig", "sap/ui/SyncPoint", "sap/ui/XHRProxy", "sap/base/util/LoaderExtensions",
+	"sap/ui/dom/getComputedStyleFix", "sap/ui/dom/activeElementFix", "sap/ui/dom/includeScript",
+	"sap/ui/dom/includeStylesheet", "sap/ui/core/support/Hotkeys",
+	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/trace/Interaction",
+	"sap/ui/base/syncXHRFix", "sap/base/util/LoaderExtensions",
 
 	// former sap-ui-core.js dependencies
 	"sap/ui/Device", "sap/ui/thirdparty/URI",
@@ -38,17 +36,16 @@ sap.ui.define([
 	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
 	"ui5loader-autoconfig",
 	"jquery.sap.stubs"
-], function(now, getObject, getter, Version, extend, assert, Log,
+], function(now, Version, assert, Log,
 
-     Configuration, appendHead, computedStylePolyfill, activeElementFix, includeScript,
-     includeStylesheet, initjQuerySupport, initSupportHooks, initjQueryBrowser,
-     FrameOptions, Measurement, Interaction, ResourceTimings,
-     StoredConfig, SyncPoint, XHRProxy, LoaderExtensions,
+	getComputedStyleFix, activeElementFix, includeScript,
+	includeStylesheet, SupportHotkeys,
+	FrameOptions, Measurement, Interaction,
+	syncXHRFix, LoaderExtensions,
 
+	Device, URI,
 
-     Device, URI,
-
-     jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs */) {
+	jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs */) {
 
 	"use strict";
 
@@ -76,6 +73,165 @@ sap.ui.define([
 
 	var oJQVersion = Version(jQuery.fn.jquery);
 
+	(function() {
+		/**
+		 * Holds information about the browser's capabilities and quirks.
+		 * This object is provided and documented by jQuery.
+		 * But it is extended by SAPUI5 with detection for features not covered by jQuery. This documentation ONLY covers the detection properties added by UI5.
+		 * For the standard detection properties, please refer to the jQuery documentation.
+		 *
+		 * These properties added by UI5 are only available temporarily until jQuery adds feature detection on their own.
+		 *
+		 * @name jQuery.support
+		 * @namespace
+		 * @private
+		 */
+		jQuery.support = jQuery.support || {};
+
+		/**
+		 * Whether the device has a retina display (window.devicePixelRatio >= 2)
+		 * @type {boolean}
+		 * @public
+		 * @deprecated since 1.58.0 Use <code>sap.ui.Device.support.retina</code> instead
+		 */
+		jQuery.support.retina = Device.support.retina;
+
+		jQuery.extend(jQuery.support, {touch: Device.support.touch}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
+
+		var aPrefixes = ["Webkit", "ms", "Moz"];
+		var oStyle = document.documentElement.style;
+
+		var preserveOrTestCssPropWithPrefixes = function(detectionName, propName) {
+			if (jQuery.support[detectionName] === undefined) {
+
+				if (oStyle[propName] !== undefined) { // without vendor prefix
+					jQuery.support[detectionName] = true;
+					// If one of the flex layout properties is supported without the prefix, set the flexBoxPrefixed to false
+					if (propName === "boxFlex" || propName === "flexOrder" || propName === "flexGrow") {
+						// Exception for Chrome up to version 28
+						// because some versions implemented the non-prefixed properties without the functionality
+						if (!Device.browser.chrome || Device.browser.version > 28) {
+							jQuery.support.flexBoxPrefixed = false;
+						}
+					}
+					return;
+
+				} else { // try vendor prefixes
+					propName = propName.charAt(0).toUpperCase() + propName.slice(1);
+					for (var i in aPrefixes) {
+						if (oStyle[aPrefixes[i] + propName] !== undefined) {
+							jQuery.support[detectionName] = true;
+							return;
+						}
+					}
+				}
+				jQuery.support[detectionName] = false;
+			}
+		};
+
+		/**
+		 * Whether the current browser supports (2D) CSS transforms
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.cssTransforms
+		 */
+		preserveOrTestCssPropWithPrefixes("cssTransforms", "transform");
+
+		/**
+		 * Whether the current browser supports 3D CSS transforms
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.cssTransforms3d
+		 */
+		preserveOrTestCssPropWithPrefixes("cssTransforms3d", "perspective");
+
+		/**
+		 * Whether the current browser supports CSS transitions
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.cssTransitions
+		 */
+		preserveOrTestCssPropWithPrefixes("cssTransitions", "transition");
+
+		/**
+		 * Whether the current browser supports (named) CSS animations
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.cssAnimations
+		 */
+		preserveOrTestCssPropWithPrefixes("cssAnimations", "animationName");
+
+		/**
+		 * Whether the current browser supports CSS gradients. Note that ANY support for CSS gradients leads to "true" here, no matter what the syntax is.
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.cssGradients
+		 */
+		if (jQuery.support.cssGradients === undefined) {
+			var oElem = document.createElement('div'),
+			oStyle = oElem.style;
+			try {
+				oStyle.backgroundImage = "linear-gradient(left top, red, white)";
+				oStyle.backgroundImage = "-moz-linear-gradient(left top, red, white)";
+				oStyle.backgroundImage = "-webkit-linear-gradient(left top, red, white)";
+				oStyle.backgroundImage = "-ms-linear-gradient(left top, red, white)";
+				oStyle.backgroundImage = "-webkit-gradient(linear, left top, right bottom, from(red), to(white))";
+			} catch (e) {/* no support...*/}
+			jQuery.support.cssGradients = (oStyle.backgroundImage && oStyle.backgroundImage.indexOf("gradient") > -1);
+
+			oElem = null; // free for garbage collection
+		}
+
+		/**
+		 * Whether the current browser supports only prefixed flexible layout properties
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.flexBoxPrefixed
+		 */
+		jQuery.support.flexBoxPrefixed = true;	// Default to prefixed properties
+
+		/**
+		 * Whether the current browser supports the OLD CSS3 Flexible Box Layout directly or via vendor prefixes
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.flexBoxLayout
+		 */
+		preserveOrTestCssPropWithPrefixes("flexBoxLayout", "boxFlex");
+
+		/**
+		 * Whether the current browser supports the NEW CSS3 Flexible Box Layout directly or via vendor prefixes
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.newFlexBoxLayout
+		 */
+		preserveOrTestCssPropWithPrefixes("newFlexBoxLayout", "flexGrow");	// Use a new property that IE10 doesn't support
+
+		/**
+		 * Whether the current browser supports the IE10 CSS3 Flexible Box Layout directly or via vendor prefixes
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.ie10FlexBoxLayout
+		 */
+		// Just using one of the IE10 properties that's not in the new FlexBox spec
+		if (!jQuery.support.newFlexBoxLayout && oStyle.msFlexOrder !== undefined) {
+			jQuery.support.ie10FlexBoxLayout = true;
+		} else {
+			jQuery.support.ie10FlexBoxLayout = false;
+		}
+
+		/**
+		 * Whether the current browser supports any kind of Flexible Box Layout directly or via vendor prefixes
+		 * @type {boolean}
+		 * @private
+		 * @name jQuery.support.hasFlexBoxSupport
+		 */
+		if (jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
+			jQuery.support.hasFlexBoxSupport = true;
+		} else {
+			jQuery.support.hasFlexBoxSupport = false;
+		}
+	}());
+
 	// XHR overrides for IE
 	if ( Device.browser.msie ) {
 
@@ -87,7 +243,7 @@ sap.ui.define([
 		// requests are simply forbidden nevertheless if it works. In our case we
 		// simply load our script resources from another domain when using the CDN
 		// variant of SAPUI5. The following fix is also recommended by jQuery:
-		jQuery.support = jQuery.support || {};
+
 		jQuery.support.cors = true;
 
 		// Fixes XHR factory issue (introduced by jQuery 1.11). In case of IE
@@ -116,7 +272,7 @@ sap.ui.define([
 
 	// getComputedStyle polyfill for firefox
 	if ( Device.browser.firefox ) {
-		computedStylePolyfill();
+		getComputedStyleFix();
 	}
 
 	// document.activeElement iframe fix
@@ -126,7 +282,7 @@ sap.ui.define([
 
 	// XHR proxy for Firefox
 	if ( Device.browser.firefox && window.Proxy ) {
-		XHRProxy();
+		syncXHRFix();
 	}
 
 	/*
@@ -138,7 +294,156 @@ sap.ui.define([
 	 * <li>other <code>data-sap-ui-<i>xyz</i></code> attributes of the bootstrap tag</li>
 	 * </ol>
 	 */
-	var oCfgData = window["sap-ui-config"] = Configuration;
+	var oCfgData = window["sap-ui-config"] = (function() {
+		function normalize(o) {
+			for (var i in o) {
+				var v = o[i];
+				var il = i.toLowerCase();
+				if ( !o.hasOwnProperty(il) ) {
+					o[il] = v;
+					delete o[i];
+				}
+			}
+			return o;
+		}
+
+		function loadExternalConfig(url) {
+			var sCfgFile = "sap-ui-config.json",
+				config;
+
+			Log.warning("Loading external bootstrap configuration from \"" + url + "\". This is a design time feature and not for productive usage!");
+			if (url !== sCfgFile) {
+				Log.warning("The external bootstrap configuration file should be named \"" + sCfgFile + "\"!");
+			}
+
+			var xhr = new XMLHttpRequest();
+			xhr.addEventListener('load', function(e) {
+				if ( xhr.status === 200 && xhr.responseText ) {
+					try {
+						config = JSON.parse( xhr.responseText );
+					} catch (error) {
+						Log.error("Parsing externalized bootstrap configuration from \"" + url + "\" failed! Reason: " + error + "!");
+					}
+				} else {
+					Log.error("Loading externalized bootstrap configuration from \"" + url + "\" failed! Response: " + xhr.status + "!");
+				}
+			});
+			xhr.open('GET', url, false);
+			try {
+				xhr.send();
+			} catch (error) {
+				Log.error("Loading externalized bootstrap configuration from \"" + url + "\" failed! Reason: " + error + "!");
+			}
+
+			config = config || {};
+			config.__loaded = true; // mark config as 'being loaded', needed to detect sync call
+
+			return config;
+		}
+
+		function getInfo() {
+			function check(oScript, rUrlPattern) {
+				var sUrl = oScript && oScript.getAttribute("src");
+				var oMatch = rUrlPattern.exec(sUrl);
+				if ( oMatch ) {
+					return {
+						tag: oScript,
+						url: sUrl,
+						resourceRoot: oMatch[1] || ""
+					};
+				}
+			}
+
+			var rResources = /^((?:.*\/)?resources\/)/,
+				rBootScripts, aScripts, i, oResult;
+
+			// Prefer script tags which have the sap-ui-bootstrap ID
+			// This prevents issues when multiple script tags point to files named
+			// "sap-ui-core.js", for example when using the cache buster for UI5 resources
+			oResult = check(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), rResources);
+
+			if ( !oResult ) {
+				aScripts = document.querySelectorAll('SCRIPT[src]');
+				rBootScripts = /^(.*\/)?(?:sap-ui-(core|custom|boot|merged)(?:-.*)?)\.js(?:[?#]|$)/;
+				for ( i = 0; i < aScripts.length; i++ ) {
+					oResult = check(aScripts[i], rBootScripts);
+					if ( oResult ) {
+						break;
+					}
+				}
+			}
+
+			return oResult || {};
+		}
+
+		var _oBootstrap = getInfo(),
+			oScriptTag = _oBootstrap.tag,
+			oCfg = window["sap-ui-config"];
+
+		// load the configuration from an external JSON file
+		if (typeof oCfg === "string") {
+			oCfg = loadExternalConfig(oCfg);
+		}
+
+		oCfg = normalize(oCfg || {});
+		oCfg.resourceroots = oCfg.resourceroots || {};
+		oCfg.themeroots = oCfg.themeroots || {};
+		oCfg.resourceroots[''] = oCfg.resourceroots[''] || _oBootstrap.resourceRoot;
+
+		// map loadall mode to sync preload mode
+		if ( /(^|\/)(sap-?ui5|[^\/]+-all).js([?#]|$)/.test(_oBootstrap.url) ) {
+			Log.error(
+				"The all-in-one file 'sap-ui-core-all.js' has been abandoned in favour of standard preloads." +
+				" Please migrate to sap-ui-core.js and consider to use async preloads.");
+			oCfg.preload = 'sync';
+		}
+
+		// if a script tag has been identified, collect its configuration info
+		if ( oScriptTag ) {
+			// evaluate the config attribute first - if present
+			var sConfig = oScriptTag.getAttribute("data-sap-ui-config");
+			if ( sConfig ) {
+				try {
+					var oParsedConfig;
+					try {
+						// first try to parse the config as a plain JSON
+						oParsedConfig = JSON.parse("{" + sConfig + "}");
+					} catch (e) {
+						// if the JSON.parse fails, we fall back to the more lenient "new Function" eval for compatibility reasons
+						Log.error("JSON.parse on the data-sap-ui-config attribute failed. Please check the config for JSON syntax violations.");
+						/*eslint-disable no-new-func */
+						oParsedConfig = (new Function("return {" + sConfig + "};"))();
+						/*eslint-enable no-new-func */
+					}
+					Object.assign(oCfg, normalize(oParsedConfig));
+				} catch (e) {
+					// no log yet, how to report this error?
+					Log.error("failed to parse data-sap-ui-config attribute: " + (e.message || e));
+				}
+			}
+
+			// merge with any existing "data-sap-ui-" attributes
+			for (var i = 0; i < oScriptTag.attributes.length; i++) {
+				var attr = oScriptTag.attributes[i];
+				var m = attr.name.match(/^data-sap-ui-(.*)$/);
+				if ( m ) {
+					// the following (deactivated) conversion would implement multi-word names like "resource-roots"
+					m = m[1].toLowerCase(); // .replace(/\-([a-z])/g, function(s,w) { return w.toUpperCase(); })
+					if ( m === 'resourceroots' ) {
+						// merge map entries instead of overwriting map
+						Object.assign(oCfg[m], JSON.parse(attr.value));
+					} else if ( m === 'theme-roots' ) {
+						// merge map entries, but rename to camelCase
+						Object.assign(oCfg.themeroots, JSON.parse(attr.value));
+					} else if ( m !== 'config' ) {
+						oCfg[m] = attr.value;
+					}
+				}
+			}
+		}
+
+		return oCfg;
+	}());
 
 	var syncCallBehavior = 0; // ignore
 	if ( oCfgData['xx-nosync'] === 'warn' || /(?:\?|&)sap-ui-xx-nosync=(?:warn)/.exec(window.location.search) ) {
@@ -260,7 +565,7 @@ sap.ui.define([
 	/**
 	 * Compares this version with a given one.
 	 *
-	 * The version with which this version should be compared can be given as a <code>sap.base.Version</code> instance,
+	 * The version with which this version should be compared can be given as a <code>jQuery.sap.Version</code> instance,
 	 * as a string (e.g. <code>v.compareto("1.4.5")</code>). Or major, minor, patch and suffix values can be given as
 	 * separate parameters (e.g. <code>v.compareTo(1, 4, 5)</code>) or in an array (e.g. <code>v.compareTo([1, 4, 5])</code>).
 	 *
@@ -302,7 +607,31 @@ sap.ui.define([
 	 */
 	jQuery.sap.now = now;
 
-	jQuery.sap.debug = StoredConfig.debug;
+	// Reads the value for the given key from the localStorage or writes a new value to it.
+	var fnMakeLocalStorageAccessor = function(key, type, callback) {
+		return function(value) {
+			try {
+				if ( value != null || type === 'string' ) {
+					if (value) {
+						localStorage.setItem(key, type === 'boolean' ? 'X' : value);
+					} else {
+						localStorage.removeItem(key);
+					}
+					callback(value);
+				}
+				value = localStorage.getItem(key);
+				return type === 'boolean' ? value === 'X' : value;
+			} catch (e) {
+				Log.warning("Could not access localStorage while accessing '" + key + "' (value: '" + value + "', are cookies disabled?): " + e.message);
+			}
+		};
+	};
+
+	jQuery.sap.debug = fnMakeLocalStorageAccessor.call(this, 'sap-ui-debug', '', function(vDebugInfo) {
+		/*eslint-disable no-alert */
+		alert("Usage of debug sources is " + (vDebugInfo ? "on" : "off") + " now.\nFor the change to take effect, you need to reload the page.");
+		/*eslint-enable no-alert */
+	});
 
 	/**
 	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
@@ -314,9 +643,19 @@ sap.ui.define([
 	 * @private
 	 * @function
 	 */
-	jQuery.sap.setReboot = StoredConfig.setReboot;
+	jQuery.sap.setReboot = fnMakeLocalStorageAccessor.call(this, 'sap-ui-reboot-URL', 'string', function(sRebootUrl) { // null-ish clears the reboot request
+		if ( sRebootUrl ) {
+			/*eslint-disable no-alert */
+			alert("Next time this app is launched (only once), it will load UI5 from:\n" + sRebootUrl + ".\nPlease reload the application page now.");
+			/*eslint-enable no-alert */
+		}
+	});
 
-	jQuery.sap.statistics = StoredConfig.statistics;
+	jQuery.sap.statistics = fnMakeLocalStorageAccessor.call(this, 'sap-ui-statistics', 'boolean', function(bUseStatistics) {
+		/*eslint-disable no-alert */
+		alert("Usage of Gateway statistics " + (bUseStatistics ? "on" : "off") + " now.\nFor the change to take effect, you need to reload the page.");
+		/*eslint-enable no-alert */
+	});
 
 	// -------------------------- Logging -------------------------------------
 
@@ -525,7 +864,7 @@ sap.ui.define([
 	 * @borrows jQuery.sap.log.Logger#setLevel as setLevel
 	 * @borrows jQuery.sap.log.Logger#isLoggable as isLoggable
 	 */
-	jQuery.sap.log = extend(Log.getLogger(), /** @lends jQuery.sap.log */ {
+	jQuery.sap.log = Object.assign(Log.getLogger(), /** @lends jQuery.sap.log */ {
 
 		/**
 		 * Enumeration of the configurable log levels that a Logger should persist to the log.
@@ -786,7 +1125,11 @@ sap.ui.define([
 	 * @static
 	 * @function
 	 */
-	jQuery.sap.getter = getter;
+	jQuery.sap.getter = function(oValue) {
+		return function() {
+			return oValue;
+		};
+	};
 
 	/**
 	 * Returns a JavaScript object which is identified by a sequence of names.
@@ -869,19 +1212,20 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	jQuery.sap.setObject = function(sName, vValue, oContext) {
-		if (sName != undefined) {
-			var aNames = sName.split(".");
-			oContext = oContext || window;
+	jQuery.sap.setObject = function (sName, vValue, oContext) {
+		var oObject = oContext || window,
+			aNames = (sName || "").split("."),
+			l = aNames.length, i;
 
-			if (aNames.length > 1) {
-				var sObjName = aNames.pop();
-				getObject(oContext, aNames.join("."), true)[sObjName] = vValue;
-			} else if (aNames.length == 1) {
-				oContext[sName] = vValue;
+		if ( l > 0 ) {
+			for (i = 0; oObject && i < l - 1; i++) {
+				if (!oObject[aNames[i]] ) {
+					oObject[aNames[i]] = {};
+				}
+				oObject = oObject[aNames[i]];
 			}
+			oObject[aNames[l - 1]] = vValue;
 		}
-
 	};
 
 	// ---------------------- performance measurement -----------------------------------------------------------
@@ -897,7 +1241,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	jQuery.sap.measure = extend({}, _ui5loader.measure);
+	jQuery.sap.measure = Object.assign({}, _ui5loader.measure);
 
 	/**
 	 * Gets the current state of the performance measurement functionality
@@ -1164,7 +1508,9 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 */
-	jQuery.sap.measure.getRequestTimings = ResourceTimings.getRequestTimings;
+	jQuery.sap.measure.getRequestTimings = function() {
+		return window.performance.getEntriesByType("resource");
+	};
 
 	/**
 	 * Clears all request timings safely.
@@ -1173,7 +1519,11 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 */
-	jQuery.sap.measure.clearRequestTimings = ResourceTimings.clearRequestTimings;
+	jQuery.sap.measure.clearRequestTimings = function() {
+		if (window.performance.clearResourceTimings) {
+			window.performance.clearResourceTimings();
+		}
+	};
 
 
 	/**
@@ -1184,16 +1534,10 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 */
-	jQuery.sap.measure.setRequestBufferSize = ResourceTimings.setRequestBufferSize;
-
-	// ---------------------- sync point -------------------------------------------------------------
-
-	/**
-	 * Internal function to create a sync point.
-	 * @private
-	 */
-	jQuery.sap.syncPoint = function(sName, fnCallback, iTimeout) {
-		return new SyncPoint(sName, fnCallback, iTimeout);
+	jQuery.sap.measure.setRequestBufferSize = function(iSize) {
+		if (window.performance.setResourceTimingBufferSize) {
+			window.performance.setResourceTimingBufferSize(iSize);
+		}
 	};
 
 	// ---------------------- require/declare --------------------------------------------------------
@@ -1371,6 +1715,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @static
+		 * @deprecated since 1.58 set path mappings via {@link sap.ui.loader.config} instead.
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
 		 */
 		jQuery.sap.registerModulePath = function registerModulePath(sModuleName, vUrlPrefix) {
@@ -1413,6 +1758,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @static
+		 * @deprecated since 1.58 set path mappings via {@link sap.ui.loader.config} instead.
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
 		 */
 		jQuery.sap.registerResourcePath = function(sResourceNamePrefix, vUrlPrefix) {
@@ -1532,11 +1878,11 @@ sap.ui.define([
 
 
 		// take resource roots from configuration
-		if ( oCfgData.resourceroots ) {
-			for ( var n in oCfgData.resourceroots ) {
-				jQuery.sap.registerModulePath(n, oCfgData.resourceroots[n]);
+		var paths = {};
+		for ( var n in oCfgData.resourceroots ) {
+				paths[n.replace(/\./g, "/")] = oCfgData.resourceroots[n] || ".";
 			}
-		}
+		sap.ui.loader.config({paths: paths});
 
 		var mUrlPrefixes = _ui5loader.getUrlPrefixes();
 		// dump the URL prefixes
@@ -1985,7 +2331,7 @@ sap.ui.define([
 
 	// TODO should be in core, but then the 'callback' could not be implemented
 	if ( !(oCfgData.productive === true || oCfgData.productive === "true"  || oCfgData.productive === "x") ) {
-		initSupportHooks(getModuleSystemInfo, oCfgData);
+		SupportHotkeys.init(getModuleSystemInfo, oCfgData);
 	}
 
 	// -----------------------------------------------------------------------
@@ -1995,12 +2341,6 @@ sap.ui.define([
 		// the application
 		Log.warning("SAPUI5's default jQuery version is 2.2.3; current version is " + jQuery.fn.jquery + ". Please note that we only support version 2.2.3.");
 	}
-
-	initjQueryBrowser();
-
-	// --------------------- feature detection, enriching jQuery.support  ----------------------------------------------------
-
-	initjQuerySupport();
 
 	// --------------------- frame protection -------------------------------------------------------
 
@@ -2023,6 +2363,110 @@ sap.ui.define([
 		eval(arguments[0]);
 		/*eslint-enable no-eval */
 	};
+
+	(function() {
+		// TODO move to a separate module? Only adds 385 bytes (compressed), but...
+		if ( !jQuery.browser ) {
+			// re-introduce the jQuery.browser support if missing (jQuery-1.9ff)
+			jQuery.browser = (function( ua ) {
+
+				var rwebkit = /(webkit)[ \/]([\w.]+)/,
+					ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
+					rmsie = /(msie) ([\w.]+)/,
+					rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/,
+					ua = ua.toLowerCase(),
+					match = rwebkit.exec( ua ) ||
+						ropera.exec( ua ) ||
+						rmsie.exec( ua ) ||
+						ua.indexOf("compatible") < 0 && rmozilla.exec( ua ) ||
+						[],
+					browser = {};
+
+				if ( match[1] ) {
+					browser[ match[1] ] = true;
+					browser.version = match[2] || "0";
+					if ( browser.webkit ) {
+						browser.safari = true;
+					}
+				}
+
+				return browser;
+
+			}(window.navigator.userAgent));
+		}
+	}());
+
+	//init simulateMobileOnDesktop
+	(function() {
+		/**
+		 * @type {boolean}
+		 * @private
+		 */
+		jQuery.sap.simulateMobileOnDesktop = false;
+
+		var FAKE_OS_PATTERN = /(?:\?|&)sap-ui-xx-fakeOS=([^&]+)/;
+
+		// OS overriding mechanism
+		if ((Device.browser.webkit || Device.browser.msie) && !Device.support.touch) { // on non-touch webkit browsers and IE we are interested in overriding
+
+			var result = document.location.search.match(FAKE_OS_PATTERN);
+			var resultUA = result && result[1] || jQuery("#sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
+
+			if (resultUA) {
+				Log.error("The experimental parameter 'sap-ui-xx-fakeOS' must NOT be used. The results are unreliable. The parameter will be removed in one of the next versions of UI5!");
+				jQuery.sap.simulateMobileOnDesktop = true;
+
+				var ua = { // for "ios"/"android"/"blackberry" we have defined fake user-agents; these will affect all other browser/platform
+					// detection mechanisms
+					ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
+					iphone: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
+					ipad: "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206",
+					android: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
+					android_phone: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
+					android_tablet: "Mozilla/5.0 (Linux; Android 4.1.2; Nexus 7 Build/JZ054K) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
+					blackberry: "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.10+ (KHTML, like Gecko) Version/10.0.9.2372 Mobile Safari/537.10+",
+					winphone: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; NOKIA; Lumia 920)"
+				}[resultUA];
+
+				if (ua &&
+					(Device.browser.webkit && resultUA !== "winphone" || Device.browser.msie && resultUA === "winphone")) { // only for the working combinations
+
+					// code for modifying the real user-agent
+					if (Device.browser.safari) {
+						var __originalNavigator = window.navigator;
+						window.navigator = {};
+						/*eslint-disable no-proto */
+						window.navigator.__proto__ = __originalNavigator;
+						/*eslint-enable no-proto */
+						window.navigator.__defineGetter__('userAgent', function() {
+							return ua;
+						});
+					} else { // Chrome, IE10
+						Object.defineProperty(navigator, "userAgent", {
+							get: function() {
+								return ua;
+							}
+						});
+					}
+
+					if (Device.browser.webkit) {
+
+						// all downstream checks will be fine with the faked user-agent.
+						// But now we also need to adjust the wrong upstream settings in jQuery:
+						jQuery.browser.msie = jQuery.browser.opera = jQuery.browser.mozilla = false;
+						jQuery.browser.webkit = true;
+						jQuery.browser.version = "534.46"; // this is not exactly true for all UAs, but there are
+					                                       // much bigger shortcomings of this approach than a
+					                                       // minor version of the browser, so giving the exact
+					                                       // value is not worth the effort
+					} // else in IE10 with winphone emulation, jQuery.browser has already the correct information
+
+					// update the sap.ui.Device.browser.* information
+					Device._update(jQuery.sap.simulateMobileOnDesktop);
+				}
+			}
+		}
+	})();
 
 	return jQuery;
 

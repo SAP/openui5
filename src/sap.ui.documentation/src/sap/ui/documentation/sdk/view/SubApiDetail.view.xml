@@ -65,6 +65,25 @@
 
 										<custom:JSDocText text="{/description}"/>
 
+										<template:if test="{=${data>/dnd/draggable} === false}">
+											<m:MessageStrip
+												text="This control cannot be a drag source."
+												type="Information"
+												showIcon="true"
+												showCloseButton="false"
+												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+											</m:MessageStrip>
+										</template:if>
+										<template:if test="{=${data>/dnd/droppable} === false}">
+											<m:MessageStrip
+												text="This control cannot be a drop target."
+												type="Information"
+												showIcon="true"
+												showCloseButton="false"
+												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+											</m:MessageStrip>
+										</template:if>
+
 										<template:if test="{data>/hasAnnotations}">
 											<layout:HorizontalLayout class="sapUiTinyMarginTop sapUiDocumentationAnnotationsText">
 												<m:Text text="A detailed description of the OData annotations handled by this control is available"/>
@@ -264,7 +283,7 @@
 											columnCount="4"
 											class="sapUiSmallMarginTop">
 											<custom:Row visible="{= ${visibility} === 'public'}">
-												<custom:ParamText text="{name}" deprecated="{= ${deprecated} !== undefined }" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
+												<custom:ParamText text="{name}" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
 												<m:Text text="{cardinality}" wrapping="false"/>
 												<m:Link text="{type}"
 														href="#/api/{type}"
@@ -289,6 +308,22 @@
 															enableFormattedText="true"
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
+													<m:MessageStrip
+														visible="{=${dnd/draggable} === true}"
+														text="This aggregation can be a drag source."
+														type="Information"
+														showIcon="true"
+														showCloseButton="false"
+														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+														visible="{=${dnd/droppable} === true}"
+														text="This aggregation can be a drop target."
+														type="Information"
+														showIcon="true"
+														showCloseButton="false"
+														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+													</m:MessageStrip>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -310,7 +345,7 @@
 											columnTitles="Name,Cardinality,Type,Description"
 											class="sapUiSmallMarginTop">
 											<custom:Row visible="{visibility === 'public'}">
-												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
+												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" />
 												<m:Text text="{cardinality}" wrapping="false"/>
 												<m:Link text="{type}"
 														href="#/api/{type}"
@@ -533,7 +568,7 @@
 																			<template:if test="{= !!${type>linkEnabled} }">
 																				<template:then>
 																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
-																							href="#/api/{type>href}"
+																							href="{type>href}"
 																							enabled="true"/>
 																				</template:then>
 																				<template:else>
