@@ -291,7 +291,7 @@ sap.ui.define([
 						this._oRTA = new RuntimeAuthoring({flexSettings: {
 							developerMode: false
 						}});
-						this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+						this._oRTA.setRootControl(this.getView().byId("page"));
 						this._oRTA.attachStop(function () {
 							this._oRTA.destroy();
 							delete this._oRTA;
