@@ -1260,7 +1260,6 @@ function(
 	});
 
 	QUnit.test("getFlexReference returns the componentName if it exists and variantId does not exist", function (assert) {
-
 		var sComponentName = "componentName";
 		var sAppId = "appId";
 		var oManifest = {
@@ -1280,7 +1279,6 @@ function(
 	});
 
 	QUnit.test("getFlexReference returns the appId if neither the variantId nor the componentName exist", function (assert) {
-
 		var sAppId = "appId";
 		var oManifest = {
 			"sap.app": {
@@ -1296,7 +1294,6 @@ function(
 	});
 
 	QUnit.test("getFlexReference returns the value from getComponentName function if neither the sap.ui5.variantId nor the sap.ui5.componentName exist and sap.app.id is at design time", function (assert) {
-
 		var sAppId = Utils.APP_ID_AT_DESIGN_TIME;
 		var sComName = "comName";
 		var oManifest = {
@@ -1322,7 +1319,6 @@ function(
 	});
 
 	QUnit.test("getAppVersionFromManifest returns the application version from manifest", function (assert) {
-
 		var sAppVersion = "1.2.3";
 		var oManifestJson = {
 			"sap.app": {
@@ -1345,6 +1341,28 @@ function(
 		assert.equal(Utils.getAppVersionFromManifest(oManifest), sAppVersion, "if the manifest object was passed");
 		assert.equal(Utils.getAppVersionFromManifest(oManifestJson), sAppVersion, "if the manifest json data was passed");
 		assert.equal(Utils.getAppVersionFromManifest(), "", "if nothing was passed, return empty string");
+	});
+
+	QUnit.test("getODataServiceUriFromManifest returns the OData service uri from manifest", function(assert) {
+		var oLogStub = sandbox.stub(Utils.log, "warning");
+		var sUri = "ODataUri";
+		var oManifest = {
+			"sap.app": {
+				dataSources : {
+					mainService: {
+						uri: sUri
+					}
+				}
+			},
+			getEntry: function (key) {
+				return this[key];
+			}
+		};
+
+		assert.equal(Utils.getODataServiceUriFromManifest(oManifest), sUri, "if the manifest object was passed");
+		assert.equal(oLogStub.callCount, 0, "no warning was logged");
+		assert.equal(Utils.getODataServiceUriFromManifest(), "", "if nothing was passed, return empty string");
+		assert.equal(oLogStub.callCount, 1, "1 warning was logged");
 	});
 
 	QUnit.module("Utils.execPromiseQueueSequentially", {

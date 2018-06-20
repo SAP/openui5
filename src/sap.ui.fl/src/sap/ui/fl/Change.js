@@ -813,6 +813,10 @@ sap.ui.define([
 	 * @param {String}  [oPropertyBag.projectId] The project id of the change file
 	 * @param {String}  [oPropertyBag.generator] The tool which is used to generate the change file
 	 * @param {Boolean}  [oPropertyBag.jsOnly] The change can only be applied with the JS modifier
+	 * @param {Object}  [oPropertyBag.oDataInformation] Object with information about the oData service
+	 * @param {String}  [oPropertyBag.oDataInformation.propertyName] The name of the OData Property
+	 * @param {String}  [oPropertyBag.oDataInformation.entityType] The name of the OData entity type that the property belongs to
+	 * @param {String}  [oPropertyBag.oDataInformation.oDataServiceUri] The uri of the OData service
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -857,6 +861,7 @@ sap.ui.define([
 				sapui5Version: sap.ui.version,
 				compositeCommand: ""
 			},
+			oDataInformation: oPropertyBag.oDataInformation || {},
 			dependentSelector: oPropertyBag.dependentSelector || {},
 			validAppVersions: oPropertyBag.validAppVersions || {},
 			jsOnly: oPropertyBag.jsOnly || false

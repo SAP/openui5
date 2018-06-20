@@ -221,6 +221,7 @@ sap.ui.require([
 					sapui5Version: sap.ui.version,
 					compositeCommand: ""
 				},
+				oDataInformation: {},
 				dependentSelector: {},
 				validAppVersions: {},
 				jsOnly: false
@@ -252,6 +253,7 @@ sap.ui.require([
 					sapui5Version: sap.ui.version,
 					compositeCommand: ""
 				},
+				oDataInformation: {},
 				dependentSelector: {},
 				validAppVersions: {},
 				jsOnly: false

@@ -1035,6 +1035,26 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the uri of the main service specified in the app manifest
+		 *
+		 * @param {object} oManifest - Manifest of the component
+		 * @returns {string} Returns the uri if the manifest is available, otherwise an empty string
+		 * @public
+		 */
+		getODataServiceUriFromManifest: function (oManifest) {
+			var sUri = "";
+			if (oManifest){
+				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
+				if (oSapApp && oSapApp.dataSources && oSapApp.dataSources.mainService && oSapApp.dataSources.mainService.uri){
+					sUri = oSapApp.dataSources.mainService.uri;
+				}
+			} else {
+				this.log.warning("No Manifest received.");
+			}
+			return sUri;
+		},
+
+		/**
 		 * Returns whether provided layer is a customer dependent layer
 		 *
 		 * @param {string} sLayerName - layer name
