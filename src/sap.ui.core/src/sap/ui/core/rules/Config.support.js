@@ -6,11 +6,9 @@
  */
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/base/util/LoaderExtensions",
 	"sap/ui/support/library"
 ], function(
 	jQuery,
-	LoaderExtensions,
 	SupportLib) {
 	"use strict";
 
@@ -136,7 +134,7 @@ sap.ui.define([
 
 			// 2. Ignore libraries with declared modules
 			// Alternative: More exact, but request-dependent solution would be loading and evaluating the resources.json file for each library
-			var aDeclaredModules = LoaderExtensions.getAllRequiredModules();
+			var aDeclaredModules = jQuery.sap.getAllDeclaredModules();
 			Object.keys(mLibraries).forEach(function(sLibrary) {
 				var sLibraryWithDot = sLibrary + ".";
 				for (var i = 0; i < aDeclaredModules.length; i++) {

@@ -67,17 +67,24 @@ function (RuleSerializer, constants) {
 		 * @returns {object[]} An array containing all the temporary rules.
 		 */
 		getRules: function () {
-			var rawLSData = localStorage.getItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY);
+			var tempRules = [],
+				rawLSData;
 
-			if (!rawLSData) {
-				return null;
+			try {
+				rawLSData = localStorage.getItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY);
+
+				if (!rawLSData) {
+					return null;
+				}
+
+				tempRules = JSON.parse(decode(rawLSData));
+
+				tempRules = tempRules.map(function (tempRule) {
+					return RuleSerializer.deserialize(tempRule);
+				});
+			} catch (oError) {
+				// Swallow "Access Denied" exceptions in cross-origin scenarios.
 			}
-
-			var tempRules = JSON.parse(decode(rawLSData));
-
-			tempRules = tempRules.map(function (tempRule) {
-				return RuleSerializer.deserialize(tempRule);
-			});
 
 			return tempRules;
 		},

@@ -39,18 +39,22 @@ sap.ui.define([
 		},
 
 		_zoomUI: function () {
-			var sZoomUI = window.localStorage.getItem("support-assistant-zoom-ui");
-			var sFontSize = "100%";
+			try {
+				var sZoomUI = window.localStorage.getItem("support-assistant-zoom-ui");
+				var sFontSize = "100%";
 
-			switch (sZoomUI) {
-				case "S":
-					sFontSize = "90%";
-					break;
-				default:
-					// noop
+				switch (sZoomUI) {
+					case "S":
+						sFontSize = "90%";
+						break;
+					default:
+						// noop
+				}
+
+				document.querySelector("html").style.fontSize = sFontSize;
+			} catch (oError) {
+				// Swallow "Access Denied" exceptions in cross-origin scenarios.
 			}
-
-			document.querySelector("html").style.fontSize = sFontSize;
 		},
 
 		loadAdditionalUI: function () {
