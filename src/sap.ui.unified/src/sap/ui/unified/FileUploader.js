@@ -1171,6 +1171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 					iKeyCode != eKC.PAGE_UP &&
 					iKeyCode != eKC.PAGE_DOWN &&
 					iKeyCode != eKC.END &&
+					iKeyCode != eKC.ESCAPE &&
 					iKeyCode != eKC.HOME &&
 					iKeyCode != eKC.ARROW_LEFT &&
 					iKeyCode != eKC.ARROW_UP &&
