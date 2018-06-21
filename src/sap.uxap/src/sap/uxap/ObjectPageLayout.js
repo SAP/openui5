@@ -971,7 +971,8 @@ sap.ui.define([
 				vertical: true,
 				size: "100%",
 				scrollPosition: 0,
-				scroll: this.onCustomScrollerScroll.bind(this)
+				scroll: this.onCustomScrollerScroll.bind(this),
+				visible: false
 			});
 			this.setAggregation("_customScrollBar", oVSB, true);
 		}
