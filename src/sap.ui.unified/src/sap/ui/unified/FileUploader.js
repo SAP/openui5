@@ -1187,6 +1187,7 @@ sap.ui.define([
 					iKeyCode != eKC.PAGE_UP &&
 					iKeyCode != eKC.PAGE_DOWN &&
 					iKeyCode != eKC.END &&
+					iKeyCode != eKC.ESCAPE &&
 					iKeyCode != eKC.HOME &&
 					iKeyCode != eKC.ARROW_LEFT &&
 					iKeyCode != eKC.ARROW_UP &&

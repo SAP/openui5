@@ -647,6 +647,27 @@
 		assert.equal($Frame.css("display"), "none", "Blindlayer is 'display:none'");
 	});
 
+	QUnit.module("Keyboard handling");
+
+	QUnit.test("ESCAPE key propagation", function (assert) {
+		var oFileUploader = createFileUploader(),
+			oMockEscapePress = {
+				keyCode: 27,
+				stopPropagation: function() {},
+				preventDefault: function () {}
+			},
+			stopPropagationSpy = sinon.spy(oMockEscapePress, "stopPropagation");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader.onkeypress(oMockEscapePress);
+
+		assert.strictEqual(stopPropagationSpy.callCount, 0, "stopPropagation shouldn't be fired on ESCAPE key press");
+
+		oFileUploader.destroy();
+	});
+
 </script>
 </head>
 <body>
