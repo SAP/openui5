@@ -504,7 +504,8 @@ sap.ui.require([
 					? Promise.reject(oResponseBody)
 					: Promise.resolve({
 						body : oResponseBody,
-						messages : mResponseHeaders["sap-message"]
+						messages : mResponseHeaders["sap-message"],
+						resourcePath : oExpectedRequest.url
 					});
 			}
 
@@ -6896,17 +6897,19 @@ sap.ui.require([
 		QUnit.test("Unbound messages in response: " + sGroupId, function (assert) {
 			var oModel = createTeaBusiModel({"groupId" : sGroupId}),
 				sView = '\
-<FlexBox binding="{/TEAMS(\'42\')}">\
-	<Text id="id" text="{Team_Id}" />\
+<FlexBox binding="{path : \'/TEAMS(\\\'42\\\')/TEAM_2_MANAGER\',\
+	parameters : {custom : \'foo\'}}">\
+	<Text id="id" text="{ID}" />\
 </FlexBox>';
 
-			this.expectRequest("TEAMS('42')", {"Team_Id" : "42"}, {
+			this.expectRequest("TEAMS('42')/TEAM_2_MANAGER?custom=foo", {"ID" : "23"}, {
 					"sap-message" : JSON.stringify([
-						{"code" : "foo-42", "message" : "text0", "numericSeverity" : 3},
+						{"code" : "foo-42", "message" : "text0", "numericSeverity" : 3,
+							"longtextUrl" : "Messages(1)/LongText/$value"},
 						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}
 					])
 				})
-				.expectChange("id", "42");
+				.expectChange("id", "23");
 
 			return this.createView(assert, sView, oModel).then(function () {
 				var aMessages = sap.ui.getCore().getMessageManager().getMessageModel()
@@ -6919,12 +6922,15 @@ sap.ui.require([
 				assert.strictEqual(aMessages[0].getPersistent(), true);
 				assert.strictEqual(aMessages[0].getTechnical(), false);
 				assert.strictEqual(aMessages[0].getType(), "Warning");
+				assert.strictEqual(aMessages[0].getDescriptionUrl(), oModel.sServiceUrl
+					+ "TEAMS('42')/Messages(1)/LongText/$value");
 				assert.strictEqual(aMessages[1].getCode(), "foo-77");
 				assert.strictEqual(aMessages[1].getMessage(), "text1");
 				assert.strictEqual(aMessages[1].getMessageProcessor(), oModel);
 				assert.strictEqual(aMessages[1].getPersistent(), true);
 				assert.strictEqual(aMessages[1].getTechnical(), false);
 				assert.strictEqual(aMessages[1].getType(), "Information");
+
 			});
 		});
 	});

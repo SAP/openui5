@@ -748,11 +748,13 @@ sap.ui.define([
 	/**
 	 * Reports unbound OData messages.
 	 *
+	 * @param {string} sResourcePath
+	 *   The resource path of the request whose response contained the messages
 	 * @param {string} [sMessages]
 	 *   The messages in the serialized form as contained in the sap-message response header
 	 */
-	Requestor.prototype.reportUnboundMessages = function (sMessages) {
-		this.oModelInterface.fnReportUnboundMessages(JSON.parse(sMessages || null));
+	Requestor.prototype.reportUnboundMessages = function (sResourcePath, sMessages) {
+		this.oModelInterface.fnReportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
 	};
 
 	/**
@@ -857,7 +859,7 @@ sap.ui.define([
 			jQuery.extend({}, mHeaders, this.mFinalHeaders),
 			JSON.stringify(_Requestor.cleanPayload(oPayload))
 		).then(function (oResponse) {
-			that.reportUnboundMessages(oResponse.messages);
+			that.reportUnboundMessages(oResponse.resourcePath, oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
 		});
 	};
@@ -927,9 +929,10 @@ sap.ui.define([
 						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
 
 					fnResolve({
-						messages : jqXHR.getResponseHeader("sap-message"),
 						body : oResponse,
-						contentType : jqXHR.getResponseHeader("Content-Type")
+						contentType : jqXHR.getResponseHeader("Content-Type"),
+						messages : jqXHR.getResponseHeader("sap-message"),
+						resourcePath : sResourcePath
 					});
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
 					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
@@ -1029,13 +1032,13 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
-						that.reportUnboundMessages(vResponse.headers["sap-message"]);
+						that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-message"]);
 						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}
 				} else {
-					that.reportUnboundMessages(vResponse.headers["sap-message"]);
+					that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-message"]);
 					vRequest.$resolve();
 				}
 			});

@@ -1502,10 +1502,11 @@ sap.ui.require([
 					message : "foo3",
 					numericSeverity : oFixture.numericSeverity
 				}],
-				oModel = createModel();
+				oModel = createModel(),
+				sResourcePath = "Foo('42')/to_Bar";
 
 			this.mock(_Helper).expects("makeAbsolute")
-				.withExactArgs(aMessages[0].longtextUrl, oModel.sServiceUrl)
+				.withExactArgs(aMessages[0].longtextUrl, oModel.sServiceUrl + sResourcePath)
 				.returns("URL");
 			this.mock(oModel).expects("fireMessageChange")
 				.withExactArgs(sinon.match(function (mArguments) {
@@ -1527,16 +1528,16 @@ sap.ui.require([
 				}));
 
 			// code under test
-			oModel.reportUnboundMessages(aMessages);
+			oModel.reportUnboundMessages(sResourcePath, aMessages);
 
 			// code under test
-			oModel.reportUnboundMessages([]);
+			oModel.reportUnboundMessages(sResourcePath, []);
 
 			// code under test
-			oModel.reportUnboundMessages(null);
+			oModel.reportUnboundMessages(sResourcePath, null);
 
 			// code under test
-			oModel.reportUnboundMessages();
+			oModel.reportUnboundMessages(sResourcePath);
 		});
 	});
 });
