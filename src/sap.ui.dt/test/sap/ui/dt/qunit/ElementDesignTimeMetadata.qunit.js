@@ -67,6 +67,9 @@
 						testAssociation: {
 							aggregationLike : true
 						}
+					},
+					getStableElements: function(oElement) {
+						return [oElement, oElement];
 					}
 				}
 			});
@@ -152,4 +155,32 @@
 		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregations(), {}, "then an empty object is returned");
 	});
 
+	QUnit.test("when getStableElements method is called and DT Metadata has a getStableElements function returning valid data", function(assert) {
+		var oOverlay = {
+			getElement: function() {
+				return "element";
+			}
+		};
+		assert.deepEqual(this.oElementDesignTimeMetadata.getStableElements(oOverlay), ["element", "element"], "the function returns the value of the function");
+	});
+
+	QUnit.test("when getStableElements method is called and DT Metadata has a getStableElements function returning invalid data", function(assert) {
+		var oOverlay = {
+			getElement: function() {
+				return "element";
+			}
+		};
+		this.oElementDesignTimeMetadata.getData().getStableElements = function() {return "notAnArray";};
+		assert.deepEqual(this.oElementDesignTimeMetadata.getStableElements(oOverlay), [], "the function returns an empty array");
+	});
+
+	QUnit.test("when getStableElements method is called and DT Metadata has no getStableElements function", function(assert) {
+		var oOverlay = {
+			getElement: function() {
+				return "element";
+			}
+		};
+		this.oElementDesignTimeMetadata.getData().getStableElements = undefined;
+		assert.deepEqual(this.oElementDesignTimeMetadata.getStableElements(oOverlay), ["element"], "the function returns the value of the function");
+	});
 })();
