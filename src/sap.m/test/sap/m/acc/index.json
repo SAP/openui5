@@ -208,7 +208,7 @@
 		},
 		{
 			"control": "sap.m.MessageStrip",
-			"url": "../MessageStrip.html",
+			"url": "MessageStrip.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
