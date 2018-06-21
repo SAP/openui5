@@ -924,6 +924,18 @@
 				" to the given sap.m.MenuItem");
 		});
 
+		QUnit.test("onsapshow closes the menu", function(assert) {
+			//arrange
+			var fnMenuCloseSpy = sinon.spy(this.sutRootMenu._getVisualParent(), "close");
+
+			//act
+			sap.ui.getCore().byId(this.sut._getVisualControl()).onsapshow(new jQuery.Event('sapshow'));
+
+			//assert
+			assert.strictEqual(fnMenuCloseSpy.called, true, "menu is closed after F4 on an item");
+			fnMenuCloseSpy.restore();
+		});
+
 		QUnit.module('MenuListItem', {
 			beforeEach: function () {
 				this.menuItem = new sap.m.MenuItem({
