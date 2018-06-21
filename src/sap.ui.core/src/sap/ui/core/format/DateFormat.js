@@ -2149,7 +2149,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	};
 
 	DateFormat.prototype._adaptDayOfWeek = function(iDayOfWeek) {
-		var iFirstDayOfWeek = this.oLocaleData.getFirstDayOfWeek();
+		// day of week depends on the format locale
+		// the DateFormat's locale is independent
+		var iFirstDayOfWeek = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()).getFirstDayOfWeek();
 		var iDayNumberOfWeek = iDayOfWeek - (iFirstDayOfWeek - 1);
 
 		if (iDayNumberOfWeek <= 0) {
