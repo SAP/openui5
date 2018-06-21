@@ -41,12 +41,13 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		rApplicationGroupID = /^\w+$/,
 		rGroupID = /^(\$auto|\$direct|\w+)$/,
-		mMessageSeverity2Type = {
-			"error" : MessageType.Error,
-			"info" : MessageType.Information,
-			"success" : MessageType.Success,
-			"warning" : MessageType.Warning
-		},
+		aMessageTypes = [
+			undefined,
+			MessageType.Success,
+			MessageType.Information,
+			MessageType.Warning,
+			MessageType.Error
+		],
 		mSupportedEvents = {
 			messageChange : true
 		},
@@ -1235,17 +1236,18 @@ sap.ui.define([
 		if (aMessages && aMessages.length) {
 			this.fireMessageChange({
 				newMessages : aMessages.map(function (oMessage) {
+					var sMessageLongTextUrl = oMessage.longtextUrl;
+
 					return new Message({
 						code : oMessage.code,
-						descriptionUrl : oMessage["@Common.LongtextUrl"]
-							? _Helper.makeAbsolute(oMessage["@Common.LongtextUrl"],
-								that.sServiceUrl)
+						descriptionUrl : sMessageLongTextUrl
+							? _Helper.makeAbsolute(sMessageLongTextUrl, that.sServiceUrl)
 							: undefined,
 						message : oMessage.message,
 						persistent : true,
 						processor : that,
 						technical : false,
-						type : mMessageSeverity2Type[oMessage.severity] || MessageType.None
+						type : aMessageTypes[oMessage.numericSeverity] || MessageType.None
 					});
 				})
 			});

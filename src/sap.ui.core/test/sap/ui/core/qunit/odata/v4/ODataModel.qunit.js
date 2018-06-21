@@ -1477,32 +1477,35 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{severity : undefined, type : MessageType.None},
-		{severity : "error", type : MessageType.Error},
-		{severity : "info", type : MessageType.Information},
-		{severity : "success", type : MessageType.Success},
-		{severity : "warning", type : MessageType.Warning}
+		{numericSeverity : 1, type : MessageType.Success},
+		{numericSeverity : 2, type : MessageType.Information},
+		{numericSeverity : 3, type : MessageType.Warning},
+		{numericSeverity : 4, type : MessageType.Error},
+		{numericSeverity : 0, type : MessageType.None},
+		{numericSeverity : 5, type : MessageType.None},
+		{numericSeverity : null, type : MessageType.None},
+		{numericSeverity : undefined, type : MessageType.None}
 	].forEach(function (oFixture, i) {
 		QUnit.test("reportUnboundMessages, " + i, function (assert) {
 			var aMessages = [{
 					code : 42,
 					message : "foo0",
-					"@Common.LongtextUrl" : "foo/bar0",
-					severity : oFixture.severity
+					longtextUrl : "foo/bar0",
+					numericSeverity : oFixture.numericSeverity
 				}, {
 					code : 78,
 					message : "foo2",
-					"@Common.LongtextUrl" : "",
-					severity : oFixture.severity
+					longtextUrl : "",
+					numericSeverity : oFixture.numericSeverity
 				}, {
 					code : 79,
 					message : "foo3",
-					severity : oFixture.severity
+					numericSeverity : oFixture.numericSeverity
 				}],
 				oModel = createModel();
 
 			this.mock(_Helper).expects("makeAbsolute")
-				.withExactArgs(aMessages[0]["@Common.LongtextUrl"], oModel.sServiceUrl)
+				.withExactArgs(aMessages[0].longtextUrl, oModel.sServiceUrl)
 				.returns("URL");
 			this.mock(oModel).expects("fireMessageChange")
 				.withExactArgs(sinon.match(function (mArguments) {
