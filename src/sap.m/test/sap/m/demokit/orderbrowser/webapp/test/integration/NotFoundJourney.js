@@ -12,8 +12,7 @@ sap.ui.define([
 		Given.iStartTheApp();
 
 		//Actions
-		When.onTheMasterPage.iWaitUntilTheListIsLoaded()
-			.and.iWaitUntilTheFirstItemIsSelected();
+		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
 		When.onTheBrowserPage.iChangeTheHashToSomethingInvalid();
 
 		// Assertions
