@@ -1031,9 +1031,16 @@
 	QUnit.test("DynamicPage Pin button is hidden", function (assert) {
 		var $pinButton = this.oDynamicPageWithPreserveHeaderStateOnScroll.getHeader().getAggregation("_pinButton").$();
 
+		// assert
 		assert.ok($pinButton.hasClass("sapUiHidden"), "The DynamicPage Header Pin Button not rendered");
-	});
 
+		// act
+		this.oDynamicPageWithPreserveHeaderStateOnScroll._snapHeader();
+		this.oDynamicPageWithPreserveHeaderStateOnScroll._expandHeader();
+
+		// assert
+		assert.ok($pinButton.hasClass("sapUiHidden"), "The DynamicPage Header Pin Button is hidden");
+	});
 
 	QUnit.module("DynamicPage - Rendering - No Header", {
 		beforeEach: function () {

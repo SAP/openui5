@@ -591,7 +591,9 @@ sap.ui.define([
 		if (this._hasVisibleTitleAndHeader()) {
 			this.$titleArea.removeClass("sapFDynamicPageTitleSnapped");
 			this._updateToggleHeaderVisualIndicators();
-			this._togglePinButtonVisibility(true);
+			if (!this.getPreserveHeaderStateOnScroll()) {
+				this._togglePinButtonVisibility(true);
+			}
 		}
 
 		this._toggleHeaderInTabChain(true);
