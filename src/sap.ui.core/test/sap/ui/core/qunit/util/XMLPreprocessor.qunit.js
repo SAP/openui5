@@ -3700,6 +3700,17 @@ sap.ui.require([
 			'<Text text="*true*"/>'
 		], true);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("empty template:require", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView().replace(">", ' template:require="">'),
+			'</mvc:View>'
+		], {}, [], true);
+	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
 //TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS

@@ -1263,8 +1263,9 @@ sap.ui.define([
 			 */
 			function requireFor(oElement) {
 				var mAlias2URN = {},
+					oAttribute = oElement.getAttributeNodeNS(sNAMESPACE, "require"),
 					aModuleNames,
-					sModuleNames = oElement.getAttributeNS(sNAMESPACE, "require"),
+					sModuleNames,
 					aURNs;
 
 				function asyncRequire() {
@@ -1281,10 +1282,11 @@ sap.ui.define([
 					});
 				}
 
-				if (sModuleNames) {
+				if (oAttribute && oAttribute.value) {
+					sModuleNames = oAttribute.value;
 					// Note: remove the attribute because it might look like a binding and must not
 					// reach visitAttributes
-					oElement.removeAttributeNS(sNAMESPACE, "require");
+					oElement.removeAttributeNode(oAttribute);
 
 					if (sModuleNames[0] === "{") {
 						mAlias2URN = jQuery.sap.parseJS(sModuleNames);
@@ -1334,7 +1336,7 @@ sap.ui.define([
 						// if the formatter returns null, the value becomes undefined
 						// (the default value of _With.any)
 						debug(oElement, "Removed attribute", oAttribute.name);
-						oElement.removeAttribute(oAttribute.name);
+						oElement.removeAttributeNode(oAttribute);
 					} else if (vValue !== oAttribute.value) {
 						switch (typeof vValue) {
 						case "boolean":
