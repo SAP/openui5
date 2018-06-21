@@ -86,6 +86,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/service/Selection"]
 				}
 			},
+			"service/Property": {
+				group: 'Service',
+				coverage: {
+					only: ["sap/ui/rta/service/Property"]
+				}
+			},
 
 			"client/Client": {
 				group: 'Client',
