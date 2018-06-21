@@ -10,7 +10,7 @@
 		"applicationVersion": {
 			"version": "${sap.ui5.dist.version}"
 		},
-		"ach": "CA-UI5-FL-CLS"
+		"ach": "CA-UI5-FL-CLN"
 	},
 
 	"sap.ui": {
