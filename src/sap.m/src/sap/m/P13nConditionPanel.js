@@ -38,9 +38,9 @@ sap.ui.define([
 	'./TimePicker',
 	'./DateTimePicker'
 ], function(jQuery, library, coreLibrary, Control, DateFormat, NumberFormat, IconPool, Device, InvisibleText, ResizeHandler,
-		Item, ListItem, BooleanOdataType, StringType, StringOdataType, DateType, TimeType, DateTimeOdataType, DoubleOdataType,
-		Button, OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, Text, SearchField, CheckBox, ComboBox, Select, Label,
-		Input, DatePicker, TimePicker, DateTimePicker) {
+	Item, ListItem, BooleanOdataType, StringType, StringOdataType, DateType, TimeType, DateTimeOdataType, DoubleOdataType,
+	Button, OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, Text, SearchField, CheckBox, ComboBox, Select, Label,
+	Input, DatePicker, TimePicker, DateTimePicker) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -1927,11 +1927,7 @@ sap.ui.define([
 			oCtrl = this._createValueField(oCurrentKeyField, fieldInfo, oConditionGrid);
 			oConditionGrid[fieldInfo["ID"]] = oCtrl;
 
-			// we have to insert the control into the content with rerendering (bSuppressInvalidate=false) the UI,
-			// otherwise in some use cases the "between" value fields will not be rendered.
-			// This additional rerender might trigger some problems for screenreader.
-			oConditionGrid.insertContent(oCtrl, ctrlIndex === -1 ? 0 : ctrlIndex);
-			//oConditionGrid.insertAggregation("content", oCtrl, ctrlIndex, true);
+			oConditionGrid.insertContent(oCtrl, ctrlIndex === -1 ? oConditionGrid.indexOfContent(oConditionGrid.operation) + 1 : ctrlIndex);
 
 			var oValue, sValue;
 			if (oConditionGrid.oType && sOldValue) {
@@ -1978,7 +1974,7 @@ sap.ui.define([
 		var aOperations = this._oTypeOperations["default"];
 		var oCurrentSelectedItem = oOperation.getSelectedItem();
 
-		if (oKeyField && !this.getExclude()) {
+		if (oKeyField) {
 			if (oKeyField.type && oKeyField.type !== "" && this._oTypeOperations[oKeyField.type]) {
 				sType = oKeyField.type;
 				aOperations = this._oTypeOperations[sType];
@@ -2666,10 +2662,57 @@ sap.ui.define([
 	 * @returns {string} the condition text
 	 */
 	P13nConditionPanel.prototype._getFormatedConditionText = function(sOperation, sValue1, sValue2, bExclude, sKeyField, bShowIfGrouped) {
-		var sConditionText = "";
+		var sConditionText = P13nConditionPanel.getFormatedConditionText(sOperation, sValue1, sValue2, bExclude);
+		if (!sConditionText) {
+			switch (sOperation) {
+				case P13nConditionOperation.Initial:
+					sConditionText = "=''";
+					break;
 
-		var sKeyFieldText = null;
+				case P13nConditionOperation.NotEmpty:
+					sConditionText = "!''";
+					break;
+
+				case P13nConditionOperation.Ascending:
+					sConditionText = "ascending";
+					break;
+				case P13nConditionOperation.GroupAscending:
+					sConditionText = "ascending";
+					sConditionText += " showIfGrouped:" + bShowIfGrouped;
+					break;
+
+				case P13nConditionOperation.Descending:
+					sConditionText = "descending";
+					break;
+				case P13nConditionOperation.GroupDescending:
+					sConditionText = "descending";
+					sConditionText += " showIfGrouped:" + bShowIfGrouped;
+					break;
+
+				case P13nConditionOperation.Total:
+					sConditionText = "total";
+					break;
+
+				case P13nConditionOperation.Average:
+					sConditionText = "average";
+					break;
+
+				case P13nConditionOperation.Minimum:
+					sConditionText = "minimum";
+					break;
+
+				case P13nConditionOperation.Maximum:
+					sConditionText = "maximum";
+					break;
+			}
+
+			if (bExclude && sConditionText !== "") {
+				sConditionText = "!(" + sConditionText + ")";
+			}
+		}
+
 		if (this._aKeyFields && this._aKeyFields.length > 1) {
+			var sKeyFieldText = null;
 			// search the text for the KeyField
 			for (var i = 0; i < this._aKeyFields.length; i++) {
 				var oKeyField = this._aKeyFields[i];
@@ -2679,105 +2722,111 @@ sap.ui.define([
 					}
 				}
 			}
+
+			if (sKeyFieldText && sConditionText !== "") {
+				sConditionText = sKeyFieldText + ": " + sConditionText;
+			}
 		}
 
+		return sConditionText;
+	};
+
+	/**
+	 * @enum {string}
+	 * @public
+	 * @experimental since version 1.26 !!! THIS TYPE IS ONLY FOR INTERNAL USE !!!
+	 */
+	// TODO: move to library.js
+	var P13nConditionOperation = sap.m.P13nConditionOperation = {
+		// filter operations
+		BT: "BT",
+		EQ: "EQ",
+		Contains: "Contains",
+		StartsWith: "StartsWith",
+		EndsWith: "EndsWith",
+		LT: "LT",
+		LE: "LE",
+		GT: "GT",
+		GE: "GE",
+		Initial: "Initial",
+		Empty: "Empty",
+		NotEmpty: "NotEmpty",
+
+		// sort operations
+		Ascending: "Ascending",
+		Descending: "Descending",
+
+		// group operations
+		GroupAscending: "GroupAscending",
+		GroupDescending: "GroupDescending",
+
+		// calculation operations
+		Total: "Total",
+		Average: "Average",
+		Minimum: "Minimum",
+		Maximum: "Maximum"
+	};
+
+	P13nConditionPanel._oConditionMap = {
+		"EQ": "=%1",
+		"GT": ">%1",
+		"GE": ">=%1",
+		"LT": "<%1",
+		"LE": "<=%1",
+		"Contains": "*%1*",
+		"StartsWith": "%1*",
+		"EndsWith": "*%1",
+		"BT": "%1...%2",
+		"Empty": "<%r>"
+	};
+
+	// Replase %r params in operation by resource bundle text
+	(function() {
+		var _oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty] = P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty].replace("%r", _oRb.getText("CONDITIONPANEL_OPTIONEmpty"));
+	})();
+
+	/**
+	 * creates and returns a formatted text for the specified condition
+	 * @public
+	 * @param {string} sOperation the operation type sap.m.P13nConditionOperation
+	 * @param {string} sValue1 value of the first range field
+	 * @param {string} sValue2 value of the second range field
+	 * @param {boolean} bExclude indicates if the range is an Exclude range
+	 * @returns {string} the range token text. An empty string when no operation matches or the values for the operation are wrong
+	 */
+	P13nConditionPanel.getFormatedConditionText = function(sOperation, sValue1, sValue2, bExclude) {
+		var sConditionText = "";
+
 		switch (sOperation) {
+			case P13nConditionOperation.Empty:
+				// sConditionText = P13nConditionPanel._oConditionMap[sOperation];
+				sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
+				break;
+
 			case P13nConditionOperation.EQ:
-				if (sValue1 !== "" && sValue1 !== undefined) {
-					sConditionText = "=" + sValue1;
-				}
-				break;
 			case P13nConditionOperation.GT:
-				if (sValue1 !== "" && sValue1 !== undefined) {
-					sConditionText = ">" + sValue1;
-				}
-				break;
 			case P13nConditionOperation.GE:
-				if (sValue1 !== "" && sValue1 !== undefined) {
-					sConditionText = ">=" + sValue1;
-				}
-				break;
-
 			case P13nConditionOperation.LT:
-				if (sValue1 !== "" && sValue1 !== undefined) {
-					sConditionText = "<" + sValue1;
-				}
-				break;
-
 			case P13nConditionOperation.LE:
-				if (sValue1 !== "" && sValue1 !== undefined) {
-					sConditionText = "<=" + sValue1;
-				}
-				break;
-
 			case P13nConditionOperation.Contains:
-				if (sValue1 !== "" && sValue1 !== undefined) {
-					sConditionText = "*" + sValue1 + "*";
-				}
-				break;
-
 			case P13nConditionOperation.StartsWith:
-				if (sValue1 !== "" && sValue1 !== undefined) {
-					sConditionText = sValue1 + "*";
-				}
-				break;
-
 			case P13nConditionOperation.EndsWith:
 				if (sValue1 !== "" && sValue1 !== undefined) {
-					sConditionText = "*" + sValue1;
+					// sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1);
+					sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
 				}
 				break;
 
 			case P13nConditionOperation.BT:
 				if (sValue1 !== "" && sValue1 !== undefined) {
-					if (sValue2 !== "") {
-						sConditionText = sValue1 + "..." + sValue2;
+					if (sValue2 !== "" && sValue2 !== undefined) {
+						sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
 					}
 				}
 				break;
 
-			case P13nConditionOperation.Initial:
-				sConditionText = "=''";
-				break;
-
-			case P13nConditionOperation.Empty:
-				sConditionText = "''";
-				break;
-
-			case P13nConditionOperation.NotEmpty:
-				sConditionText = "!''";
-				break;
-
-			case P13nConditionOperation.Ascending:
-				sConditionText = "ascending";
-				break;
-			case P13nConditionOperation.GroupAscending:
-				sConditionText = "ascending";
-				sConditionText += " showIfGrouped:" + bShowIfGrouped;
-				break;
-
-			case P13nConditionOperation.Descending:
-				sConditionText = "descending";
-				break;
-			case P13nConditionOperation.GroupDescending:
-				sConditionText = "descending";
-				sConditionText += " showIfGrouped:" + bShowIfGrouped;
-				break;
-
-			case P13nConditionOperation.Total:
-				sConditionText = "total";
-				break;
-
-			case P13nConditionOperation.Average:
-				sConditionText = "average";
-				break;
-
-			case P13nConditionOperation.Minimum:
-				sConditionText = "minimum";
-				break;
-
-			case P13nConditionOperation.Maximum:
-				sConditionText = "maximum";
+			default:
 				break;
 		}
 
@@ -2785,12 +2834,9 @@ sap.ui.define([
 			sConditionText = "!(" + sConditionText + ")";
 		}
 
-		if (sKeyFieldText && sConditionText !== "") {
-			sConditionText = sKeyFieldText + ": " + sConditionText;
-		}
-
 		return sConditionText;
 	};
+
 
 	P13nConditionPanel.prototype._updateLayout = function(oRangeInfo) {
 		if (!this._oConditionsGrid) {
@@ -2880,43 +2926,6 @@ sap.ui.define([
 			this._sLayoutMode = oRangeInfo.name;
 		}
 	};
-
-	/**
-	 * @enum {string}
-	 * @public
-	 * @experimental since version 1.26 !!! THIS TYPE IS ONLY FOR INTERNAL USE !!!
-	 */
-	// TODO: move to library.js
-	var P13nConditionOperation = sap.m.P13nConditionOperation = {
-		// filter operations
-		BT: "BT",
-		EQ: "EQ",
-		Contains: "Contains",
-		StartsWith: "StartsWith",
-		EndsWith: "EndsWith",
-		LT: "LT",
-		LE: "LE",
-		GT: "GT",
-		GE: "GE",
-		Initial: "Initial",
-		Empty: "Empty",
-		NotEmpty: "NotEmpty",
-
-		// sort operations
-		Ascending: "Ascending",
-		Descending: "Descending",
-
-		// group operations
-		GroupAscending: "GroupAscending",
-		GroupDescending: "GroupDescending",
-
-		// calculation operations
-		Total: "Total",
-		Average: "Average",
-		Minimum: "Minimum",
-		Maximum: "Maximum"
-	};
-
 
 	// this._findConfig("sap.ui.model.odata.type.Date", "operators") -->["EQ", "BT", "LE", "LT", "GE", "GT", "NE"]
 	// this._findConfig("sap.ui.model.odata.type.Date", "ctrl") -->"DatePicker"
