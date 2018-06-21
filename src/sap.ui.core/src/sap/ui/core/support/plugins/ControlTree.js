@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/Binding',
 	'sap/ui/model/CompositeBinding',
+	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
 	'jquery.sap.keycodes'
 ], function(
@@ -31,6 +32,7 @@ sap.ui.define([
 	Controller,
 	Binding,
 	CompositeBinding,
+	ObjectPath,
 	jQueryDOM
 ) {
 	"use strict";
@@ -1335,7 +1337,7 @@ sap.ui.define([
 
 					if (!mAllElements[mAssoc.id]) {
 
-						var oType = jQuery.sap.getObject(mAssoc.type);
+						var oType = ObjectPath.get(mAssoc.type || "");
 
 						if (!(typeof oType === "function")) {
 							continue;

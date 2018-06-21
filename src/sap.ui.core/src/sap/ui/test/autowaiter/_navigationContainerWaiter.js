@@ -3,17 +3,18 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/_opaCorePlugin"
-], function ($, _OpaLogger, _opaCorePlugin) {
+    "jquery.sap.global",
+    "sap/ui/test/_OpaLogger",
+    "sap/ui/test/_opaCorePlugin",
+    "sap/base/util/ObjectPath"
+], function($, _OpaLogger, _opaCorePlugin, ObjectPath) {
 	"use strict";
 
 	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._navigationContainerWaiter#hasPending");
 
 	function hasNavigatingNavContainers () {
 		var sControlType = "sap.m.NavContainer";
-		var fnNavContainer = $.sap.getObject(sControlType);
+		var fnNavContainer = ObjectPath.get(sControlType);
 		// no Nav container has been loaded - continue
 		if (sap.ui.lazyRequire._isStub(sControlType) || !fnNavContainer) {
 			return false;

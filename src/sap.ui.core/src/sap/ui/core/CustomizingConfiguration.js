@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Core', './Component'],
-	function(jQuery, Core, Component) {
+sap.ui.define(['jquery.sap.global', './Core', './Component', "sap/base/util/ObjectPath"],
+	function(jQuery, Core, Component, ObjectPath) {
 	"use strict";
 
 
@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 				jQuery.sap.log.info("CustomizingConfiguration: activateForComponent('" + sComponentName + "')");
 				var sFullComponentName = sComponentName + ".Component";
 				jQuery.sap.require(sFullComponentName);
-				var oCustomizingConfig = jQuery.sap.getObject(sFullComponentName).getMetadata().getCustomizing();
+				var oCustomizingConfig = ObjectPath.get(sFullComponentName).getMetadata().getCustomizing();
 				mComponentConfigs[sComponentName] = oCustomizingConfig;
 
 				jQuery.sap.log.debug("CustomizingConfiguration: customizing configuration for component '" + sComponentName + "' loaded: " + JSON.stringify(oCustomizingConfig));

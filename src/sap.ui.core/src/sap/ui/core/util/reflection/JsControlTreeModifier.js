@@ -3,12 +3,14 @@
  */
 
 sap.ui.define([
-	"./BaseTreeModifier",
-	"jquery.sap.global",
+    "./BaseTreeModifier",
+    "sap/base/util/ObjectPath",
+    "jquery.sap.global",
 	"sap/ui/core/Fragment", // needed to have sap.ui.xmlfragment
 	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
-], function (
-	BaseTreeModifier,
+], function(
+    BaseTreeModifier,
+	ObjectPath,
 	jQuery
 	/* other jQuery.sap dependencies */
 ) {
@@ -123,7 +125,7 @@ sap.ui.define([
 			}
 
 			jQuery.sap.require(sClassName); //ensure class is there
-			var ClassObject = jQuery.sap.getObject(sClassName);
+			var ClassObject = ObjectPath.get(sClassName);
 			var sId = this.getControlIdBySelector(oSelector, oAppComponent);
 			return new ClassObject(sId, mSettings);
 		},

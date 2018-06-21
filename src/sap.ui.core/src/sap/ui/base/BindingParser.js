@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/Filter',
 	'sap/ui/model/Sorter',
+	'sap/base/util/ObjectPath',
 	'jquery.sap.script'],
-	function(jQuery, ExpressionParser, BindingMode, Filter, Sorter/* , jQuerySap */) {
+	function(jQuery, ExpressionParser, BindingMode, Filter, Sorter, ObjectPath/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -164,12 +165,10 @@ sap.ui.define([
 			if ( typeof o[sProp] === "string" ) {
 				var fn, sName = o[sProp];
 				if ( o[sProp][0] === "." ) {
-					fn = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
+					fn = ObjectPath.get(o[sProp].slice(1), oEnv.oContext);
 					o[sProp] = oEnv.bStaticContext ? fn : (fn && fn.bind(oEnv.oContext));
 				} else {
-					o[sProp] = oEnv.bPreferContext
-						&& jQuery.sap.getObject(o[sProp], undefined, oEnv.oContext)
-						|| jQuery.sap.getObject(o[sProp]);
+					o[sProp] = oEnv.bPreferContext && ObjectPath.get(o[sProp], oEnv.oContext) || ObjectPath.get(o[sProp]);
 				}
 				if (typeof (o[sProp]) !== "function") {
 					if (oEnv.bTolerateFunctionsNotFound) {
@@ -199,9 +198,9 @@ sap.ui.define([
 			var FNType;
 			if (typeof o.type === "string" ) {
 				if ( o.type[0] === "." ) {
-					FNType = jQuery.sap.getObject(o.type.slice(1), undefined, oEnv.oContext);
+					FNType = ObjectPath.get(o.type.slice(1), oEnv.oContext);
 				} else {
-					FNType = jQuery.sap.getObject(o.type);
+					FNType = ObjectPath.get(o.type);
 				}
 				// TODO find another solution for the type parameters?
 				if (typeof FNType === "function") {

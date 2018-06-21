@@ -6,12 +6,14 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'./DataType',
-	'./Metadata'
+	'./Metadata',
+	'sap/base/util/ObjectPath'
 ],
 function(
 	jQuery,
 	DataType,
-	Metadata
+	Metadata,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -1632,7 +1634,7 @@ function(
 	 */
 	function loadInstanceDesignTime(oInstance) {
 		var sInstanceSpecificModule =
-			oInstance instanceof jQuery.sap.getObject('sap.ui.base.ManagedObject')
+			oInstance instanceof ObjectPath.get('sap.ui.base.ManagedObject')
 			&& typeof oInstance.data === "function"
 			&& oInstance.data("sap-ui-custom-settings")
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"]

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.DeclarativeSupport
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject', './Control', './CustomData', './HTML', './mvc/View', './mvc/EventHandlerResolver'],
-	function(jQuery, DataType, ManagedObject, Control, CustomData, HTML, View, EventHandlerResolver) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject', './Control', './CustomData', './HTML', './mvc/View', './mvc/EventHandlerResolver', 'sap/base/util/ObjectPath'],
+	function(jQuery, DataType, ManagedObject, Control, CustomData, HTML, View, EventHandlerResolver, ObjectPath) {
 	"use strict";
 
 
@@ -160,7 +160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		var sType = $element.attr("data-sap-ui-type");
 		if (sType) {
 			jQuery.sap.require(sType); // make sure fnClass.getMatadata() is available
-			var fnClass = jQuery.sap.getObject(sType);
+			var fnClass = ObjectPath.get(sType);
 			jQuery.sap.assert(typeof fnClass !== "undefined", "Class not found: " + sType);
 
 

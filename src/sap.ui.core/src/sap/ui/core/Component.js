@@ -11,17 +11,9 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/URI',
+    "sap/base/util/ObjectPath",
 	"sap/ui/performance/trace/Interaction"
-], function(
-	jQuery,
-	Manifest,
-	ComponentMetadata,
-	Core,
-	merge,
-	ManagedObject,
-	URI,
-	Interaction
-) {
+], function(jQuery, Manifest, ComponentMetadata, Core, merge, ManagedObject, URI, ObjectPath, Interaction) {
 	"use strict";
 
 	/*global Promise */
@@ -1621,7 +1613,7 @@ sap.ui.define([
 			}
 
 			// get model class object
-			var ModelClass = jQuery.sap.getObject(oModelConfig.type);
+			var ModelClass = ObjectPath.get(oModelConfig.type);
 			if (!ModelClass) {
 				// this could be the case if the required module doesn't register itself in the defined namespace
 				jQuery.sap.log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);

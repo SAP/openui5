@@ -668,7 +668,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				} catch (e) {
 					//escape eslint check for empty block
 				}
-				var oType = jQuery.sap.getObject(sType);
+				var oType = ObjectPath.get(sType);
 				if ( !(oType instanceof DataType) ) {
 					var r = [];
 					for (var n in oType) {

@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/base/BindingParser',
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
+	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
 	'jquery.sap.sjax'
 ],
@@ -17,7 +18,8 @@ sap.ui.define([
 		ManagedObject,
 		BindingParser,
 		Control,
-		RenderManager /*, jQuerySap1 */,
+		RenderManager,
+		ObjectPath,
 		jQueryDOM
 	) {
 	"use strict";
@@ -254,7 +256,7 @@ sap.ui.define([
 			});
 
 			// returns the constructor function
-			return jQuery.sap.getObject(sControl);
+			return ObjectPath.get(sControl || "");
 
 		}
 
@@ -576,7 +578,7 @@ sap.ui.define([
 
 			// require and instantiate the proper template
 			jQuery.sap.require(sClass);
-			var oClass = jQuery.sap.getObject(sClass);
+			var oClass = ObjectPath.get(sClass || "");
 
 			// create a new instance of the template
 			var oInstance = new oClass({

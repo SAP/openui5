@@ -13,9 +13,10 @@ sap.ui.require([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
+	"sap/base/util/ObjectPath",
 	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
 ], function (jQuery, Device, BindingParser, ManagedObject, SyncPromise, CustomizingConfiguration,
-		XMLTemplateProcessor, XMLPreprocessor, BindingMode, Context, JSONModel/*, jQuerySapXml*/) {
+		XMLTemplateProcessor, XMLPreprocessor, BindingMode, Context, JSONModel, ObjectPath/*, jQuerySapXml*/) {
 	/*global QUnit, sinon, window */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
@@ -281,6 +282,7 @@ sap.ui.require([
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG, sComponent);
 
 			this.oJQuerySapMock = this.mock(jQuery.sap);
+			this.oObjectPathMock = this.mock(ObjectPath);
 
 			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
@@ -2593,10 +2595,10 @@ sap.ui.require([
 		};
 
 		// make sure we do not create namespaces!
-		this.oJQuerySapMock.expects("getObject").atLeast(1).withExactArgs(sinon.match.string)
+		this.oObjectPathMock.expects("get").atLeast(1).withExactArgs(sinon.match.string)
 			.callThrough();
-		this.oJQuerySapMock.expects("getObject").atLeast(1)
-			.withExactArgs(sinon.match.string, /*iNoCreates*/undefined, sinon.match.object)
+		this.oObjectPathMock.expects("get").atLeast(1)
+			.withExactArgs(sinon.match.string, sinon.match.object)
 			.callThrough();
 		this.mock(BindingParser).expects("complexParser").atLeast(1)
 			.withExactArgs(sinon.match.string, sinon.match.object, sinon.match.bool,

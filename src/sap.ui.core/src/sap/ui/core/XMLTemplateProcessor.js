@@ -13,8 +13,9 @@ sap.ui.define([
 	'./mvc/EventHandlerResolver',
 	'./ExtensionPoint',
 	'./StashedControlSupport',
-	'sap/ui/base/SyncPromise'],
-function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver, ExtensionPoint, StashedControlSupport, SyncPromise) {
+	'sap/ui/base/SyncPromise',
+	'sap/base/util/ObjectPath'],
+function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver, ExtensionPoint, StashedControlSupport, SyncPromise, ObjectPath) {
 	"use strict";
 
 
@@ -453,7 +454,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 				// this is against the AMD definition, but is required for backward compatibility
 				if (!oClassObject) {
 					jQuery.sap.log.error("Control '" + sClassName + "' did not return a class definition from sap.ui.define.", "", "XMLTemplateProcessor");
-					oClassObject = jQuery.sap.getObject(sClassName);
+					oClassObject = ObjectPath.get(sClassName);
 				}
 				if (!oClassObject) {
 					jQuery.sap.log.error("Can't find object class '" + sClassName + "' for XML-view", "", "XMLTemplateProcessor");

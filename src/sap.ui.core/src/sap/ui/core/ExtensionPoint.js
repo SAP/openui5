@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', "sap/base/util/ObjectPath"],
+	function(jQuery, ObjectPath) {
 
 	"use strict";
 
@@ -77,7 +77,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (extensionConfig) {
 				if (extensionConfig.className) {
 					jQuery.sap.require(extensionConfig.className); // make sure oClass.getMetadata() exists
-					var oClass = jQuery.sap.getObject(extensionConfig.className),
+					var oClass = ObjectPath.get(extensionConfig.className),
 						sId = oView && extensionConfig.id ? oView.createId(extensionConfig.id) : extensionConfig.id;
 					jQuery.sap.log.info("Customizing: View extension found for extension point '" + sExtName
 							+ "' in View '" + oView.sViewName + "': " + extensionConfig.className + ": " + (extensionConfig.viewName || extensionConfig.fragmentName));
