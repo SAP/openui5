@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>DT Tool</title>
+	<script id="sap-ui-bootstrap"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_belize"
+		data-sap-ui-libs="sap.m,sap.ui.codeeditor"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-resourceroots='{
+				"sap.ui.rta.dttool": "./",
+				"sap.ui.rta.dttool.DTToolListItem": "./../../../../../resources/sap/ui/rta/dttool/DTToolListItem",
+				"sap.ui.rta.dttool.OutlineTree": "./../../../../../resources/sap/ui/rta/dttool/OutlineTree",
+				"sap.m.sample": "./../../../../sap/m/demokit/sample/",
+				"sap.ui.layout.form": "./../../../../sap/m/demokit/sample/",
+				"sap.ui.demo.mock": "./../../../../../test-resources/sap/ui/documentation/sdk/"
+			}'>
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			new sap.ui.core.ComponentContainer({
+				name : "sap.ui.rta.dttool"
+			}).placeAt("content");
+		});
+	</script>
+</head>
+
+<body class='sapUiBody'>
+	<div id="content"></div>
+</body>
+
+</html>
