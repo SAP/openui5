@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/postmessage/Bus",
 	"sap/base/util/uid",
 	"sap/base/util/merge",
-	"sap/ui/dt/Util",
 	"sap/ui/rta/util/ServiceEventBus",
 	"sap/ui/thirdparty/URI"
 ], function (
@@ -15,7 +14,6 @@ sap.ui.define([
 	PostMessageBus,
 	uid,
 	merge,
-	DtUtil,
 	ServiceEventBus,
 	URI
 ) {
