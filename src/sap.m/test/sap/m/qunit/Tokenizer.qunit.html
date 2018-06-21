@@ -19,6 +19,8 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
+
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	QUnit.module("Init", {
 		beforeEach : function() {
 			this.tokenizer = new sap.m.Tokenizer();
@@ -345,7 +347,7 @@
     QUnit.test("selected token is visible after select with left arrow", function(assert) {
         var oSpecialToken = new sap.m.Token({text: "Token 5", key: "0005"}),
         	oMultiInput = new sap.m.MultiInput({
-            	width: '300px',
+            	width: '800px',
             	tokens: [
             	    new sap.m.Token({text: "Token 1", key: "0001"}),
             	    new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -433,6 +435,17 @@
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.width, WIDTH + "px", "Tokenizer width is set to 300px");
+	});
+
+	QUnit.test("setMaxWidth", function(assert) {
+		var MAX_WIDTH = "300px";
+
+		// act
+		this.tokenizer.setMaxWidth(MAX_WIDTH);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(this.tokenizer.getDomRef().style.maxWidth, MAX_WIDTH, "Tokenizer max-width is set to " + MAX_WIDTH);
 	});
 
 	QUnit.module("Scrolling public API", {
@@ -768,6 +781,59 @@
 			window.clipboardData.setData("text", "Hello");
 		}
 	});
+
+	QUnit.module("useCollapsedMode", {
+		beforeEach : function() {
+			this.tokenizer = new sap.m.Tokenizer();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("Basic: ", function(assert) {
+		var aTokens, oIndicator;
+		this.tokenizer = new sap.m.Tokenizer({
+			maxWidth:"200px",
+			tokens: [
+				new sap.m.Token({text: "XXXX"}),
+				new sap.m.Token({text: "XXX"}),
+				new sap.m.Token({text: "XXXX"})
+			]
+		});
+
+		this.tokenizer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		aTokens = this.tokenizer.getTokens();
+		aTokens.forEach(function(oToken, iIndex){
+			assert.strictEqual(oToken.$().hasClass("sapMHiddenToken"), false, "Token on position " +  iIndex +  " is visible");
+		});
+
+		this.tokenizer._useCollapsedMode(true);
+		sap.ui.getCore().applyChanges();
+
+		aTokens = this.tokenizer.getTokens();
+		aTokens.forEach(function(oToken, iIndex){
+			if (iIndex === 0) {
+				assert.strictEqual(oToken.$().hasClass("sapMHiddenToken"), true, "Token on position " +  iIndex +  " is hidden when the tokenizer is collapsed.");
+			} else {
+				assert.strictEqual(oToken.$().hasClass("sapMHiddenToken"), false, "Token on position " +  iIndex +  " is shown when the tokenizer is collapsed.");
+			}
+		});
+
+		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
+		assert.ok(oIndicator, true, "N-more label is added.");
+		assert.strictEqual(oIndicator.innerHTML, oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", 1), "N-more label's text is correct.");
+
+		this.tokenizer._useCollapsedMode(false);
+		sap.ui.getCore().applyChanges();
+
+		aTokens = this.tokenizer.getTokens();
+		aTokens.forEach(function(oToken, iIndex) {
+			assert.strictEqual(oToken.$().hasClass("sapMHiddenToken"), false, "Token on position " + iIndex + " is shown when the tokenizer is collapsed.");
+		});
+	});
+
 
 </script>
 

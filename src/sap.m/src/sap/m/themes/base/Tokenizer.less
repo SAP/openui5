@@ -34,6 +34,14 @@ html.sap-desktop .sapMTokenizer:focus {
 	.sapMTokenIcon {
 		display: none;
 	}
+
+	.sapMTokenizerIndicator {
+		color: @sapUiLink;
+
+		&:hover{
+			color: @sapUiLinkHover;
+		}
+	}
 }
 
 .sapMTokenizerClip {
@@ -63,6 +71,14 @@ html.sap-desktop .sapMTokenizer:focus {
 	position: relative;
 }
 
+.sapMTokenizerIndicator {
+	display: inline-block;
+	cursor: pointer;
+	font-size: @sapMFontMediumSize;
+	line-height: 2rem;
+	overflow: hidden;
+}
+
 .sapMTokenTruncate > .sapMTokenIcon {
 	position: absolute;
 	right: 0;
@@ -82,13 +98,16 @@ html.sap-desktop .sapMTokenizer:focus {
 	max-width: calc(~"100% - 0.25rem");
 }
 
+.sapUiSizeCompact .sapMTokenizerIndicator {
+	line-height: 1.5rem;
+}
+
 .sapUiSizeCompact .sapMTokenTruncate > .sapMTokenText {
 	line-height: 1.25rem;
 	width: calc(~"100% - 1.25rem");
 }
 
 .sapMTokenizerScrollContainer {
-	width: 100%;
 	display: inline-block;
 	-moz-user-select: none;
 	-webkit-user-select: none;

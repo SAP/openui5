@@ -17,10 +17,6 @@ sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer'],
 
 		oRm.addClass("sapMMultiInput");
 
-		if (oControl.getEnableMultiLineMode()) {
-			oRm.addClass("sapMMultiInputMultiLine");
-		}
-
 		if (oControl.getTokens().length > 0) {
 			oRm.addClass("sapMMultiInputNoPlaceholder");
 		}
@@ -54,11 +50,6 @@ sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer'],
 
 			oControl._isMultiLineMode = true;
 
-			if (oControl.getEditable()) {
-				oControl._showIndicator();
-			} else {
-				oControl._showAllTokens();
-			}
 		}
 
 		oRm.writeClasses();

@@ -69,7 +69,11 @@ sap.ui.define([
 			/**
 			 * Defines the width of the Tokenizer.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+			/**
+			 * Defines the maximum width of the Tokenizer.
+			 */
+			maxWidth : {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue : "100%"}
 		},
 		defaultAggregation : "tokens",
 		aggregations : {
@@ -173,6 +177,8 @@ sap.ui.define([
 
 	Tokenizer.prototype.init = function() {
 		this.bAllowTextSelection = false;
+		this._oTokensWidthMap = {};
+		this._oIndicator = null;
 
 		this._aTokenValidators = [];
 
@@ -189,6 +195,104 @@ sap.ui.define([
 
 			this.setAggregation("_tokensInfo", sAriaTokenizerContainToken);
 		}
+	};
+
+	/**
+	 * Function determines the callback to be executed on N-more label press
+	 *
+	 * @param {function} fCallback The callback
+	 * @private
+	 */
+	Tokenizer.prototype._handleNMoreIndicatorPress = function(fCallback) {
+		this._fnOnNMorePress = fCallback;
+	};
+
+	/**
+	 * Function determines which tokens should be displayed and adds N-more label
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype._adjustTokensVisibility = function() {
+		if (!this.getDomRef()) {
+			return;
+		}
+
+		var iTokenizerWidth = parseInt(this.getMaxWidth(), 10),
+			aTokens = this.getTokens().reverse(),
+			iTokensCount = aTokens.length,
+			iLabelWidth, iFreeSpace,
+			iCounter,
+			iFirstTokenToHide = 0;
+
+		if (iTokensCount < 2) {
+			return;
+		}
+
+		// find the index of the first overflowing token
+		aTokens.some(function (oToken, iIndex) {
+			iTokenizerWidth = iTokenizerWidth - this._oTokensWidthMap[oToken.getId()];
+			if (iTokenizerWidth <= 0) {
+				iFirstTokenToHide = iIndex;
+				return true;
+			} else {
+				iFreeSpace = iTokenizerWidth;
+			}
+		}.bind(this));
+
+		// adjust the visibility of the tokens
+		if (iFirstTokenToHide) {
+			for (iCounter = 0; iCounter < iTokensCount; iCounter++) {
+				if (iCounter >= iFirstTokenToHide) {
+					aTokens[iCounter].addStyleClass("sapMHiddenToken");
+				} else {
+					aTokens[iCounter].removeStyleClass("sapMHiddenToken");
+				}
+			}
+
+			this._handleNMoreIndicator( iTokensCount - iFirstTokenToHide);
+			iLabelWidth = this._oIndicator.width();
+
+			// if there is not enough space, hide the last first visible token
+			// and update the n-more indicator
+			if (iLabelWidth >= iFreeSpace) {
+				this._handleNMoreIndicator( iTokensCount - iFirstTokenToHide + 1);
+				aTokens[iFirstTokenToHide - 1].addStyleClass("sapMHiddenToken");
+			}
+		} else {
+			// if no token needs to be hidden, show all
+			this._showAllTokens();
+		}
+	};
+
+	/**
+	 * Renders the N-more label
+	 * @private
+	 *
+	 * @param {number} iHiddenTokensCount The number of hidden tokens
+	 * @returns {sap.m.Tokenizer} this instance for method chaining
+	 */
+	Tokenizer.prototype._handleNMoreIndicator = function (iHiddenTokensCount) {
+		if (iHiddenTokensCount) {
+			this._oIndicator.removeClass("sapUiHidden");
+			this._oIndicator.html(oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", iHiddenTokensCount));
+		} else {
+			this._oIndicator.addClass("sapUiHidden");
+		}
+
+		return this;
+	};
+
+	/**
+	 * Function makes all tokens visible, used for collapsed=false
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype._showAllTokens = function() {
+		this._handleNMoreIndicator(0);
+
+		this.getTokens().forEach(function(oToken) {
+			oToken.removeStyleClass("sapMHiddenToken");
+		});
 	};
 
 	/**
@@ -305,6 +409,22 @@ sap.ui.define([
 			this._sResizeHandlerId = ResizeHandler.register(this.getDomRef(), function() {
 				that.scrollToEnd();
 			});
+		}
+
+		this._oIndicator = this.$().find(".sapMTokenizerIndicator");
+	};
+
+		/**
+		 * Handles the setting of collapsed state
+		 *
+		 * @param {boolean} If true collapses the tokenizer's content
+		 * @private
+		 */
+	Tokenizer.prototype._useCollapsedMode = function(bCollapse) {
+		if (bCollapse) {
+			this._adjustTokensVisibility();
+		} else {
+			this._showAllTokens();
 		}
 	};
 
@@ -915,6 +1035,13 @@ sap.ui.define([
 			type : Tokenizer.TokenChangeType.Added
 		});
 
+		oToken.addEventDelegate({
+			onAfterRendering: function () {
+				if (oToken.getDomRef() && !oToken.$().hasClass("sapMHiddenToken")) {
+					this._oTokensWidthMap[oToken.getId()] = oToken.getDomRef().offsetWidth;
+				}
+			}.bind(this)
+		});
 		return this;
 	};
 
@@ -1127,6 +1254,7 @@ sap.ui.define([
 				return;
 			}
 
+			delete this._oTokensWidthMap[token.getId()];
 			token.destroy();
 
 			this.fireTokenChange({
@@ -1228,6 +1356,18 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.onsapend = function(oEvent) {
 		this.scrollToEnd();
+	};
+
+	/**
+	 * Handle the focus event on the control
+	 *
+	 * @param {jQuery.Event} oEvent The occuring event
+	 * @protected
+	 */
+	Tokenizer.prototype.onclick = function(oEvent) {
+		if (jQuery(oEvent.target).hasClass("sapMTokenizerIndicator")) {
+			this._fnOnNMorePress && this._fnOnNMorePress(oEvent);
+		}
 	};
 
 	/**
