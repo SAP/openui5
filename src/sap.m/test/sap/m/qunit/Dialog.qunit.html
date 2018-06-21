@@ -1421,6 +1421,25 @@
 				assert.strictEqual(this.oAfterCloseOrigin, this.oCloseButton, "After close origin should be the oCloseButton");
 			});
 
+			QUnit.module("Title ID propagation");
+
+			QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
+				// Arrange
+				var oSpy = sinon.spy(sap.m.Dialog.prototype, "_initTitlePropagationSupport"),
+					oControl;
+
+				// Act
+				oControl = new sap.m.Dialog();
+
+				// Assert
+				assert.strictEqual(oSpy.callCount, 1, "Method _initTitlePropagationSupport called on init of control");
+				assert.ok(oSpy.calledOn(oControl), "The spy is called on the tested control instance");
+
+				// Cleanup
+				oSpy.restore();
+				oControl.destroy();
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
