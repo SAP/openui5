@@ -212,7 +212,12 @@
 			var oComponent = this.getOwnerComponent();
 			oComponent.runAsOwner(function() {
 				if (!this._oDialog || !sap.ui.getCore().byId(this._oDialog.getId())) {
-					this._oDialogForm = sap.ui.xmlfragment(this.getView().createId("SmartFormDialog"), "sap.ui.rta.test.fragment.Popup", {});
+					this._oDialogForm = new sap.ui.core.mvc.XMLView(
+						this.getView().createId("SmartFormDialog"),
+						{
+							viewName: "sap.ui.rta.test.Popup"
+						}
+					);
 
 					this._oDialog = new sap.m.Dialog({
 						id: oComponent.createId("SmartFormDialog"),
