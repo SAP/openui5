@@ -23,7 +23,7 @@
 }
 
 .sapUiRb:hover > label {
-	position: static;  /* IE11 bug: even though "static" is the default, we need to make SOME change to make background-position work */
+	position: static;  /* IE11 bug: even though "static" is the default, we need to make SOME change to make background-position work */ // TODO remove after 1.62 version
 }
 
 /* disabled */
@@ -37,12 +37,12 @@
 	outline-offset: -1px;
 }
 
-html[data-sap-ui-browser^="ie"] .sapUiRb:focus{
+html[data-sap-ui-browser^="ie"] .sapUiRb:focus{ // TODO remove after 1.62 version
 	outline: none;
 	position: relative; /* otherwise the Border is not displayed */
 }
 
-html[data-sap-ui-browser^="ie"] .sapUiRb:focus:after {
+html[data-sap-ui-browser^="ie"] .sapUiRb:focus:after { // TODO remove after 1.62 version
 	content: "";
 	position: absolute;
 	top: 0;

@@ -10,7 +10,7 @@ sap.ui.require([
 	'sap/ui/core/TooltipBase',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
+	'sap/ui/thirdparty/sinon-ie',// TODO remove after 1.62 version
 	'sap/ui/thirdparty/sinon-qunit'
 ],
 function(

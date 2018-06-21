@@ -524,10 +524,10 @@ function(
 		 */
 		TabStrip.prototype._scroll = function(iDelta, iDuration) {
 			var iScrollLeft = this.getDomRef("tabsContainer").scrollLeft,
-				bIE_Edge = Device.browser.internet_explorer || Device.browser.edge,
+				bIE_Edge = Device.browser.internet_explorer || Device.browser.edge,// TODO remove after 1.62 version
 				iScrollTarget;
 
-			if (this._bRtl && !bIE_Edge) {
+			if (this._bRtl && !bIE_Edge) {// TODO remove after 1.62 version
 				iScrollTarget = iScrollLeft - iDelta;
 
 				if (Device.browser.firefox) {

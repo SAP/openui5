@@ -150,7 +150,7 @@
 		this.oBox.setRenderType("Bare");
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
-		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {
+		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {// TODO remove after 1.62 version
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
 		}
@@ -655,7 +655,7 @@
 		this.oItem2DomRef.style.width = "100%";
 		this.oItem3DomRef.style.width = "100%";
 		if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.phantomJS) {
-			// IE 10-11, PhantomJS miscalculate the width of the flex items when box-sizing: border-box
+			// IE 10-11, PhantomJS miscalculate the width of the flex items when box-sizing: border-box// TODO remove after 1.62 version
 			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 247) <= 1, "Width of Item 1 should be 247 (is " + this.oItem1DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 107) <= 1, "Width of Item 2 should be 107 (is " + this.oItem2DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 34) <= 1, "Width of Item 3 should be 34 (is " + this.oItem3DomRef.offsetWidth + ")");

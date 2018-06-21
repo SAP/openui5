@@ -15,6 +15,7 @@ sap.ui.define([
 ], function(jQuery, Control) {
 	"use strict";
 
+	// TODO remove after 1.62 version
 	/**
 	 * Constructor for a new CodeEditor.
 	 *

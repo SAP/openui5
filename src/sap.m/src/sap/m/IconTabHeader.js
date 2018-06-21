@@ -1228,7 +1228,7 @@ function(
 				var sId = this.getId();
 
 				// For items: do not navigate away! Stay on the page and handle the click in-place. Right-click + "Open in new Tab" still works.
-				// For scroll buttons: Prevent IE from firing beforeunload event -> see CSN 4378288 2012
+				// For scroll buttons: Prevent IE from firing beforeunload event -> see CSN 4378288 2012// TODO remove after 1.62 version
 				oEvent.preventDefault();
 
 				//on mobile devices click on arrows has no effect
@@ -1337,8 +1337,8 @@ function(
 
 		var oDomRef = this.getDomRef("head");
 		var iScrollLeft = oDomRef.scrollLeft;
-		var bIsIE = Device.browser.msie || Device.browser.edge;
-		if (!bIsIE && this._bRtl) {
+		var bIsIE = Device.browser.msie || Device.browser.edge;// TODO remove after 1.62 version
+		if (!bIsIE && this._bRtl) {// TODO remove after 1.62 version
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 		var iScrollTarget = iScrollLeft + iDelta;

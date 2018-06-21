@@ -39,7 +39,7 @@ sap.ui.define(['./FlexBoxStylingHelper', './library', 'sap/ui/core/LayoutData'],
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#align-items-property
 			 */
-			alignSelf : {type : "sap.m.FlexAlignSelf", group : "Misc", defaultValue : FlexAlignSelf.Auto},
+			alignSelf : {type : "sap.m.FlexAlignSelf", group : "Misc", defaultValue : FlexAlignSelf.Auto}, // TODO remove after 1.62 version
 
 			/**
 			 * Determines the display order of flex items independent of their source code order.

@@ -42,7 +42,7 @@
 
 			sap.ui.test.qunit.delayTestStart();
 
-			function overwriteAnimationIE(oDialog) {
+			function overwriteAnimationIE(oDialog) {// TODO remove after 1.62 version
 				if (sap.ui.Device.browser.msie) {
 					// Sinon fake timer doesn't work correctly with jQuery fadeIn. The fadeIn Animation which is used in IE9
 					// can't be controlled by the sinon fake timer. Therefore the animation has to be overwritten with no

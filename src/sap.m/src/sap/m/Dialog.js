@@ -764,7 +764,7 @@ function(
 			$Ref.addClass("sapMDialogOpen");
 
 			$Ref.css("display", "block");
-			setTimeout(fnOpened, 300); // the time should be longer the longest transition in the CSS (200ms), because of focusing and transition relate issues especially in IE where 200ms transition sometimes seems to last a little longer
+			setTimeout(fnOpened, 300); // the time should be longer the longest transition in the CSS (200ms), because of focusing and transition relate issues especially in IE where 200ms transition sometimes seems to last a little longer// TODO remove after 1.62 version
 		};
 
 		/**
@@ -875,7 +875,7 @@ function(
 				sContentWidth = this.getContentWidth(),
 				iDialogHeight,
 				maxDialogWidth =  Math.floor(window.innerWidth * 0.9), //90% of the max screen size
-				BORDER_THICKNESS = 2, // solves Scrollbar issue in IE when Table is in Dialog
+				BORDER_THICKNESS = 2, // solves Scrollbar issue in IE when Table is in Dialog// TODO remove after 1.62 version
 				oBrowser = Device.browser;
 
 			//if height is set by manually resizing return;
@@ -1282,7 +1282,7 @@ function(
 			var _$srollSontent = this.$("scroll");
 
 			//The content have to have explicit size so the scroll will work when the user's content is larger than the available space.
-			//This can be removed and the layout change to flex when the support for IE9 is dropped
+			//This can be removed and the layout change to flex when the support for IE9 is dropped// TODO remove after 1.62 version
 			this._resizeListenerId = ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
 			Device.resize.attachHandler(this._onResize, this);
 

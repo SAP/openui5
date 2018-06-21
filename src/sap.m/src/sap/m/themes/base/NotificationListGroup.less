@@ -94,7 +94,7 @@
 	}
 }
 
-/* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
+/* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */// TODO remove after 1.62 version
 html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
 	display: block;
 	width: auto;
@@ -244,7 +244,7 @@ html.sap-desktop .sapMLIB.sapMNLG:focus {
 	outline: none;
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ie"].sap-desktop,// TODO remove after 1.62 version
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMNLG:focus::before {
 		border: 1px dashed @sapUiContentFocusColor;
