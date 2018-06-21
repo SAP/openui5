@@ -970,7 +970,7 @@ sap.ui.define([
 			oObjectPageLayout = this.getParent(),
 			bUseIconTabBar = oObjectPageLayout.getUseIconTabBar(),
 			sCurrentSectionId = oObjectPageLayout.getSelectedSection(),
-			aSections = oObjectPageLayout.getSections(),
+			aSections = oObjectPageLayout._getVisibleSections(),
 			aSubSections = [this.getDomRef()],
 			aCurrentSubSections = [];
 
