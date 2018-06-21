@@ -325,6 +325,23 @@
 		assert.strictEqual(jQuery("#UxAP-70_KeyboardHandling--single-subsection-show-section").is(":focus"), true, "The single subsection button should be in focus");
 	});
 
+	QUnit.test("F6: Anchor level with hidden section", function (assert) {
+		var oAncorBar, oFirstAnchor;
+
+		this.oObjectPage.getSections()[0].setVisible(false);
+
+		oAncorBar = getAnchorBar();
+		oFirstAnchor = oAncorBar.getContent()[0].getDomRef();
+
+		// Focus the first anchor and trigger F6
+		jQuery(oFirstAnchor).focus();
+		sap.ui.test.qunit.triggerKeydown(oFirstAnchor, jQuery.sap.KeyCodes.F6);
+		assert.strictEqual(jQuery("#UxAP-70_KeyboardHandling--single-subsection-show-section").is(":focus"), true, "The single subsection button should be in focus");
+
+		// restore
+		this.oObjectPage.getSections()[0].setVisible(true);
+	});
+
 	QUnit.module("Section/Subsection", {
 		beforeEach: function () {
 			var sFocusable = "0",
