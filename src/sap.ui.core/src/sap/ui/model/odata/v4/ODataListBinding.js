@@ -26,9 +26,11 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		mSupportedEvents = {
+			AggregatedDataStateChange : true,
 			change : true,
 			dataReceived : true,
 			dataRequested : true,
+			DataStateChange : true,
 			refresh : true
 		};
 
@@ -55,9 +57,9 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
 	 * @author SAP SE
 	 * @class List binding for an OData V4 model.
-	 *   An event handler can only be attached to this binding for the following events: 'change',
-	 *   'dataReceived', 'dataRequested', and 'refresh'.
-	 *   For other events, an error is thrown.
+	 *   An event handler can only be attached to this binding for the following events:
+	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested', 'DataStateChange'
+	 *   and 'refresh'. For other events, an error is thrown.
 	 * @extends sap.ui.model.ListBinding
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
@@ -252,15 +254,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'AggregatedDataStateChange' event is not supported by this binding.
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#AggregatedDataStateChange
-	 * @public
-	 * @since 1.37.0
-	 */
-
-	/**
 	 * The 'change' event is fired when the binding is initialized or new contexts are created or
 	 * its parent context is changed. It is to be used by controls to get notified about changes to
 	 * the binding contexts of this list binding. Registered event handlers are called with the
@@ -317,15 +310,6 @@ sap.ui.define([
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
-	 * @public
-	 * @since 1.37.0
-	 */
-
-	/**
-	 * The 'DataStateChange' event is not supported by this binding.
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#DataStateChange
 	 * @public
 	 * @since 1.37.0
 	 */

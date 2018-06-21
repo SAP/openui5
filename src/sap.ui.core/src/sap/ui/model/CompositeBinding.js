@@ -400,7 +400,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 
 	/**
 	 * Attach event-handler <code>fnFunction</code> to the 'AggregatedDataStateChange' event of this
-	 * <code>sap.ui.model.CompositeBinding</code>. The AggregatedDataStateChange event is fired asynchronously, meaning
+	 * <code>sap.ui.model.CompositeBinding</code>. The 'AggregatedDataStateChange' event is fired asynchronously, meaning
 	 * that the datastate object given as parameter of the event contains all changes that were applied to the datastate
 	 * in the running thread.
 	 *

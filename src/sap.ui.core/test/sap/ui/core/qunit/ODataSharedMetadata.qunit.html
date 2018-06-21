@@ -36,7 +36,7 @@
 <!-- Test functions -->
 <script>
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
-	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
+	sURI = "/proxy/http/" + sURI.replace("http://","");
 	var oLabel = new sap.ui.commons.Label("myLabel");
 	oLabel.placeAt("target1");
 

@@ -504,7 +504,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
 		if (sRequestTargetName.indexOf("(") > -1) {
 			// It is an entity
-			sTarget = sRequestTarget + "/" + sTarget;
+			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
 		} else {
 			// It's a collection
 			sTarget = sRequestTarget + sTarget;

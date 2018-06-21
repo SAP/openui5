@@ -759,7 +759,8 @@ sap.ui.require([
 
 		oBinding = this.oModel.bindContext("SO_2_BP");
 
-		["change", "dataRequested", "dataReceived"].forEach(function (sEvent) {
+		["AggregatedDataStateChange", "change", "dataReceived", "dataRequested", "DataStateChange"]
+		.forEach(function (sEvent) {
 			oBindingMock.expects("attachEvent")
 				.withExactArgs(sEvent, sinon.match.same(mEventParameters)).returns(oReturn);
 
@@ -767,8 +768,8 @@ sap.ui.require([
 		});
 
 		assert.throws(function () {
-			oBinding.attachDataStateChange();
-		}, new Error("Unsupported event 'DataStateChange': v4.ODataContextBinding#attachEvent"));
+			oBinding.attachEvent("unsupportedEvent");
+		}, new Error("Unsupported event 'unsupportedEvent': v4.ODataContextBinding#attachEvent"));
 	});
 
 	//*********************************************************************************************
