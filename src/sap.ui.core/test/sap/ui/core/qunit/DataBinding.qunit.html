@@ -38,7 +38,7 @@
 <!-- Test functions -->
 <script charset="utf-8"> // IE needs this :-/
 	var sUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
-	sUri = "../../../../../proxy/http/" + sUri.replace("http://","");
+	sUri = "/proxy/http/" + sUri.replace("http://","");
 
 	sap.ui.core.Control.extend("sap.ui.core.TestControl", {
 		metadata : {
