@@ -1172,6 +1172,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
+	 * @deprecated since 1.58 use <code>sap/base/util/ObjectPath</code> instead
 	 */
 	jQuery.sap.getObject = function(sName, iNoCreates, oContext) {
 		var oObject = oContext || window,
@@ -1211,6 +1212,7 @@ sap.ui.define([
 	 * @param {object} [oContext=window] the context to execute the search in
 	 * @public
 	 * @static
+	 * @deprecated since 1.58 use <code>sap/base/util/ObjectPath</code> instead
 	 */
 	jQuery.sap.setObject = function (sName, vValue, oContext) {
 		var oObject = oContext || window,
@@ -1610,6 +1612,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @static
+		 * @deprecated since 1.58 use {@link sap.ui.require_toUrl} instead
 		 */
 		jQuery.sap.getModulePath = function(sModuleName, sSuffix) {
 			return jQuery.sap.getResourcePath(ui5ToRJS(sModuleName), sSuffix);
@@ -1661,7 +1664,7 @@ sap.ui.define([
 		 * @param {string} sResourceName unified resource name of the resource
 		 * @returns {string} URL to load the resource from
 		 * @public
-		 * @experimental Since 1.27.0
+		 * @deprecated since 1.58 use {@link sap.ui.require_toUrl} instead
 		 */
 		jQuery.sap.getResourcePath = function(sResourceName, sSuffix) {
 			// if no suffix was given and if the name is not empty, try to guess the suffix from the last segment
