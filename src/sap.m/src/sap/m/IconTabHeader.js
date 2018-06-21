@@ -20,8 +20,6 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Icon',
 	'./IconTabBarDragAndDropUtil',
-	'sap/ui/core/dnd/DragInfo',
-	'sap/ui/core/dnd/DropInfo',
 	'./IconTabHeaderRenderer'
 ],
 function(
@@ -40,8 +38,6 @@ function(
 	ResizeHandler,
 	Icon,
 	IconTabBarDragAndDropUtil,
-	DragInfo,
-	DropInfo,
 	IconTabHeaderRenderer
 ) {
 	"use strict";
@@ -164,7 +160,12 @@ function(
 			/**
 			 * The items displayed in the IconTabHeader.
 			 */
-			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : {draggable: true, droppable: true, layout: "Horizontal"} }
+			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : {draggable: true, droppable: true, layout: "Horizontal"} },
+
+			/**
+			 * Internal aggregation for managing the overflow button.
+			 */
+			_overflowButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"}
 		},
 		events : {
 
@@ -258,16 +259,20 @@ function(
 	 * @private
 	 */
 	IconTabHeader.prototype._getOverflowButton = function () {
-		if (!this._oOverflowButton) {
-			this._oOverflowButton = new Button({
+		var oOverflowButton = this.getAggregation("_overflowButton");
+
+		if (!oOverflowButton) {
+			oOverflowButton = new Button({
 				id: this.getId() + '-overflow',
 				icon: "sap-icon://slim-arrow-down",
 				type: ButtonType.Transparent,
 				press: this._overflowButtonPress.bind(this)
 			});
+			oOverflowButton.addEventDelegate(this._onOverflowButtonEventDelegate);
+			this.setAggregation("_overflowButton", oOverflowButton);
 		}
 
-		return this._oOverflowButton;
+		return oOverflowButton;
 	};
 
 	/**
@@ -500,22 +505,32 @@ function(
 			this._oPopover.destroy();
 			this._oPopover = null;
 		}
+	};
 
-		if (this._oOverflowButton) {
-			this._oOverflowButton.removeEventDelegate(this._onDragOverEventDelegate);
-			this._oOverflowButton.destroy();
-			this._oOverflowButton = null;
+	/**
+	 * Handles onLongDragOver of overflow button.
+	 * @private
+	 */
+	IconTabHeader.prototype._handleOnLongDragOver = function() {
+		if (!this._oPopover || !this._oPopover.isOpen()) {
+			this._overflowButtonPress();
 		}
 	};
 
 	/**
-	 * Handles onDragOver of overflow button.
+	 * Handles onDragOver of the overflow button.
 	 * @private
 	 */
-	IconTabHeader.prototype._handlesOnDragOver = function() {
-		if (!this._oPopover || !this._oPopover.isOpen()) {
-			this._overflowButtonPress();
-		}
+	IconTabHeader.prototype._handleOnDragOver = function() {
+		this._getOverflowButton().addStyleClass("sapMBtnDragOver");
+	};
+
+	/**
+	 * Handles onDragLeave of the overflow button.
+	 * @private
+	 */
+	IconTabHeader.prototype._handleOnDragLeave = function() {
+		this._getOverflowButton().removeStyleClass("sapMBtnDragOver");
 	};
 
 	/**
@@ -523,17 +538,12 @@ function(
 	 * @private
 	 */
 	IconTabHeader.prototype._setsDragAndDropConfigurations = function() {
-		var oOverflowButton = this._getOverflowButton();
-
 		if (!this.getEnableTabReordering() && this.getDragDropConfig().length) {
 			//Destroying Drag&Drop aggregation
 			this.destroyDragDropConfig();
 		} else if (this.getEnableTabReordering() && !this.getDragDropConfig().length) {
-
-			//open select list when drag element is over it
-			oOverflowButton.addEventDelegate(this._onDragOverEventDelegate);
 			//Adding Drag&Drop configuration to the dragDropConfig aggregation if needed
-			IconTabBarDragAndDropUtil.setDragDropAggregations(this, DragInfo, DropInfo, "Horizontal");
+			IconTabBarDragAndDropUtil.setDragDropAggregations(this, "Horizontal");
 		}
 	};
 
@@ -545,8 +555,10 @@ function(
 			bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar,
 			bIsParentToolHeader = oParent && oParent.getMetadata().getName() == 'sap.tnt.ToolHeader';
 			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
-			this._onDragOverEventDelegate = {
-				ondragover: this._handlesOnDragOver.bind(this)
+			this._onOverflowButtonEventDelegate = {
+				onlongdragover: this._handleOnLongDragOver.bind(this),
+				ondragover: this._handleOnDragOver.bind(this),
+				ondragleave: this._handleOnDragLeave.bind(this)
 			};
 
 		if (this._sResizeListenerId) {
