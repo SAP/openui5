@@ -155,7 +155,7 @@ sap.ui.define([
 								key : sReference + that.sDelimiter + sVersion,
 								text : sReference,
 								additionalText : sVersion,
-								data: Extractor.extractAppVersion(oChangePersistanceInstance)
+								data: Extractor.extractData(oChangePersistanceInstance)
 							});
 						});
 					});

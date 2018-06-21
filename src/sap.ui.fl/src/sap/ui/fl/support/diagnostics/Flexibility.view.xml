@@ -13,7 +13,7 @@
 		<Link
 				text="Open UI Flexibility Diagnostics application"
 				target="_blank"
-				href="../../../../sap/ui/fl/support/apps/flexInvestigation/index.html"
+				href="../../../../sap/ui/fl/support/apps/uiFlexibilityDiagnostics/index.html"
 				class="sapUiSmallMargin" />
 		<Table
 			   inset="false"

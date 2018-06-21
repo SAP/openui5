@@ -5,7 +5,7 @@ sap.ui.require([
 ], function (Extractor) {
 	"use strict";
 
-	QUnit.module("extractAppVersion", {});
+	QUnit.module("extractData", {});
 
 	QUnit.test("works correct", function (assert) {
 		var sName = "name";
@@ -21,7 +21,7 @@ sap.ui.require([
 			}
 		};
 
-		var oExport = Extractor.extractAppVersion(oChangePersistence);
+		var oExport = Extractor.extractData(oChangePersistence);
 
 		assert.ok(oExport.bIsInvestigationExport, "'bIsInvestigationExport' was set correct");
 		assert.ok(oExport.mControlData, "'mControlData' is present");
