@@ -48,57 +48,67 @@
 						</m:subHeader>
 						<t:TreeTable
 								id="ruleList"
-								collapseRecursive="false"
 								selectionMode="MultiToggle"
+								rows="{
+								path: 'treeModel>/',
+								parameters: {numberOfExpandedLevels: 1}
+								}"
+								collapseRecursive="false"
 								enableColumnReordering="false"
-								expandFirstLevel="true"
-								rows="{path: '/treeViewModel'}"
 								cellClick="onCellClick"
 								class="sapUiSizeCondensed"
-								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
 								visibleRowCountMode="Auto"
 								selectionBehavior="RowSelector"
 								rowActionCount="1"
-								toggleOpenState="onToggleOpenState"
-								rowSelectionChange="onRowSelectionChange"
+								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
 								showColumnVisibilityMenu="true"
-								columnVisibility="onColumnVisibilityChange">
+								columnVisibility="onColumnVisibilityChange"
+								expandFirstLevel="true"
+								>
 							<t:columns>
 								<t:Column id="rulesColumn"
-										label="Rules ({/selectedRulesCount} selected)">
+										label="Rules ({/selectedRulesCount} selected)"
+										  sortProperty="name"
+										  filterProperty="name">
 									<t:template>
-										<m:Text text="{name}" wrapping="false"/>
+										<m:Text text="{treeModel>name}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="categoriesColumn"
 										label="Categories"
-										  width="10rem">
+										  width="10rem"
+										  sortProperty="categories"
+										  filterProperty="categories">
 									<t:template>
-										<m:Text text="{categories}" wrapping="false"/>
+										<m:Text text="{treeModel>categories}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="audienceColumn"
 										label="Audience"
-										visible="false">
+										visible="false"
+										  sortProperty="audiences"
+										  filterProperty="audiences">
 									<t:template>
-										<m:Text text="{audiences}" wrapping="false"/>
+										<m:Text text="{treeModel>audiences}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="idsColumn"
 										label="RuleID"
 										  width="10rem"
-										  visible="false">
+										  visible="false"
+										  sortProperty="id"
+										  filterProperty="id">
 									<t:template>
-										<m:Text text="{id}" wrapping="false"/>
+										<m:Text text="{treeModel>id}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 							</t:columns>
 							<t:rowActionTemplate>
 									<t:RowAction>
 										<t:items>
-											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}" />
+											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${treeModel>libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${treeModel>libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${treeModel>libName} !== 'temporary' &amp;&amp; ${treeModel>type} !== 'lib'}" />
 										</t:items>
 									</t:RowAction>
 							</t:rowActionTemplate>
