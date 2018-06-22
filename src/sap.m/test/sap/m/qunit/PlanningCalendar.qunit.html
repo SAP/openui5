@@ -1891,24 +1891,21 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			assert.ok(!oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the info bar");
-			assert.ok(!oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the toolbar");
+			assert.equal(oPC.getAggregation("table").getSticky().length, 0, "sticky property shouldn't be set on the info bar and on the toolbar inside Table");
 
 			// act
 			oPC.setStickyHeader(true);
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			assert.ok(oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class should be set on the info bar");
-			assert.ok(oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class should be set on the toolbar");
+			assert.equal(oPC.getAggregation("table").getSticky().length, 2, "sticky property should be set on the info bar and on the toolbar inside Table");
 
 			// act
 			oPC.setStickyHeader(false);
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			assert.ok(!oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the info bar");
-			assert.ok(!oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the toolbar");
+			assert.equal(oPC.getAggregation("table").getSticky().length, 0, "sticky property shouldn't be set on the info bar and on the toolbar inside Table");
 
 			// cleanup
 			oPC.destroy();
@@ -3368,8 +3365,23 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			assert.ok(this.oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class should be set on the info bar");
-			assert.ok(this.oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class should be set on the toolbar");
+			assert.equal(this.oPC.getAggregation("table").getSticky().length, 2, "sticky property should be set on the info bar and on the toolbar inside Table");
+		});
+
+		QUnit.test("Has sticky header on phone size", function () {
+			//Prepare
+			this.oPC.setStickyHeader(true);
+			_switchToView.call(this, CalendarIntervalType.Month, this.oPC);
+
+			this.stub(sap.ui.Device, "system", {desktop: false, phone: true, tablet: false});
+			this.stub(sap.ui.Device, "orientation", {portrait: true, landscape: false});
+
+			//act
+			this.oPC._updateStickyHeader();
+
+			// assert
+			assert.ok(this.oPC.getAggregation("table").getSticky().indexOf("InfoToolbar") > -1, "sticky property should be set on the info bar only");
+			assert.ok(this.oPC.getAggregation("table").getSticky().indexOf("HeaderToolbar") === -1, "sticky property shouldn't be set on the toolbar");
 		});
 
 		QUnit.module("OneMonth view (size S)", {
@@ -3627,8 +3639,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			assert.ok(!this._oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the info bar");
-			assert.ok(!this._oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the toolbar");
+			assert.equal(this._oPC.getAggregation("table").getSticky().length, 0, "sticky property shouldn't be set on the info bar and on the toolbar inside Table");
 		});
 
 		QUnit.module("ARIA", {
