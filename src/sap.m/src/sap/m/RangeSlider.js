@@ -306,7 +306,7 @@ sap.ui.define([
                 oFormInput = this.getDomRef("input");
 
             if (!!this.getName()) {
-                oFormInput.setAttribute(oHandle.getAttribute("data-range-val"), aRange[iIndex]);
+                oFormInput.setAttribute(oHandle.getAttribute("data-range-val"), this.toFixed(aRange[iIndex], this._iDecimalPrecision));
                 oFormInput.setAttribute("value", this.getValue());
             }
 
@@ -335,6 +335,9 @@ sap.ui.define([
                 oProgressHandle = this.getDomRef("progress"),
                 fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision),
                 sScaleLabel = this._formatValueByCustomElement(fNormalizedValue);
+
+            aRange[0] = this.toFixed(aRange[0], this._iDecimalPrecision);
+            aRange[1] = this.toFixed(aRange[1], this._iDecimalPrecision);
 
             this._updateHandlesAriaLabels();
 
