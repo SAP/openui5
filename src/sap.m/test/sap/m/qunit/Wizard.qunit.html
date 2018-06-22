@@ -672,11 +672,28 @@
 
 			assert.notOk(oNextButton.getVisible(), "The next button for step 1 should be hidden.");
 			// act
-			oNextButton.$().tap();
+			this.oWizard.nextStep();
 			sap.ui.getCore().applyChanges();
 			// assert
 			oNextButton = this.oWizard._getNextButton();
 			assert.notOk(oNextButton.getVisible(), "The next button for step 2 should be hidden.");
+		});
+
+		QUnit.test("setShowNextButton()", function (assert) {
+			assert.ok(this.oWizard._getNextButton().getVisible(), "The next button for step 1 should be visible.");
+
+			// act
+			this.oWizard.setShowNextButton(false);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.notOk(this.oWizard._getNextButton().getVisible(), "The next button for step 1 should be hidden.");
+
+			// act
+			this.oWizard.nextStep();
+			// assert
+			assert.notOk(this.oWizard._getNextButton().getVisible(), "The next button for step 2 should be hidden.");
+
 		});
 
 		QUnit.test("nextButton visibility on discardProgress", function (assert) {
