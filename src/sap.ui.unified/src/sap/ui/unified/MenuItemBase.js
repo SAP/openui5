@@ -151,6 +151,15 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 		}
 	};
 
+	MenuItemBase.prototype.onsapshow = function(oEvent) {
+		if (this.getParent() && this.getParent().close) {
+			this.getParent().close();
+		}
+		oEvent.preventDefault(); //IE focuses the address bar
+	};
+
+	MenuItemBase.prototype.onsaphide = MenuItemBase.prototype.onsapshow;
+
 	return MenuItemBase;
 
 });
