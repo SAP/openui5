@@ -1959,6 +1959,23 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Method used to propagate the <code>Title</code> control ID of a container control
+	 * (like a <code>Dialog</code> control) to use it as aria-label in the <code>SimpleForm</code>.
+	 * So the <code>SimpleForm</code> must not have an own title.
+	 * @param {string} sTitleID <code>Title</code> control ID
+	 * @private
+	 * @return {sap.ui.layout.form.SimpleForm} Reference to <code>this</code> to allow method chaining
+	 */
+	SimpleForm.prototype._suggestTitleId = function (sTitleID) {
+
+		var oForm = this.getAggregation("form");
+		oForm._suggestTitleId(sTitleID);
+
+		return this;
+
+	};
+
 	return SimpleForm;
 
 });

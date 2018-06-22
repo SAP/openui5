@@ -71,6 +71,8 @@ sap.ui.define([
 				sId = oTitle.getId();
 			}
 			mAriaProps["labelledby"] = {value: sId, append: true};
+		} else if (oForm._sSuggestedTitleId) {
+			mAriaProps["labelledby"] = {value: oForm._sSuggestedTitleId, append: true};
 		}
 
 		rm.writeAccessibilityState(oForm, mAriaProps);

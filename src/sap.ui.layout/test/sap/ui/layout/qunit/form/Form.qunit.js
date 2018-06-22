@@ -171,12 +171,27 @@ sap.ui.require([
 	QUnit.test("ariaLabelledBy", function(assert) {
 		oForm.addAriaLabelledBy("X");
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery("#F1").attr("aria-labelledby"), "X", "aria-labelledby points to property");
+		assert.equal(jQuery("#F1").attr("aria-labelledby"), "X", "aria-labelledby points to AriaLabel");
 
 		var oTitle = new Title("T1", {text: "Test"});
 		oForm.setTitle(oTitle);
 		sap.ui.getCore().applyChanges();
-		assert.equal(jQuery("#F1").attr("aria-labelledby"), "X T1", "aria-labelledby points to Title and property");
+		assert.equal(jQuery("#F1").attr("aria-labelledby"), "X T1", "aria-labelledby points to Title and AriaLabel");
+	});
+
+	QUnit.test("_suggestTitleId", function(assert) {
+		oForm._suggestTitleId("ID1");
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#F1").attr("aria-labelledby"), "ID1", "aria-labelledby points to TitleID");
+
+		var oTitle = new Title("T1", {text: "Test"});
+		oForm.setTitle(oTitle);
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#F1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
+
+		oForm.addAriaLabelledBy("X");
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#F1").attr("aria-labelledby"), "X T1", "aria-labelledby points to AriaLabel and Title");
 	});
 
 	QUnit.module("FormContainer", {
