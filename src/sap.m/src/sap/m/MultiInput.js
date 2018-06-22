@@ -275,6 +275,12 @@ function(
 			this._oSelectedItemPicker = null;
 		}
 
+		if (this._getReadOnlyPopover()) {
+			var oReadOnlyPopover = this._getReadOnlyPopover();
+			oReadOnlyPopover.destroy();
+			oReadOnlyPopover = null;
+		}
+
 		this._deregisterResizeHandler();
 	};
 

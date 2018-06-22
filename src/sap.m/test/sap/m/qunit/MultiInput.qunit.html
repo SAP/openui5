@@ -1437,6 +1437,22 @@
 		this.multiInput1.destroy();
 	});
 
+	QUnit.test("Read-only popover ", function(assert) {
+		//arrange
+		var multiInput = new sap.m.MultiInput({editable: true});
+		// create the lazy initializated read-only popover
+		multiInput._getReadOnlyPopover();
+
+		var fnReadOnlyPopDestroySpy = this.spy(multiInput._oReadOnlyPopover, "destroy");
+		multiInput.destroy();
+
+		// assert
+		assert.strictEqual(fnReadOnlyPopDestroySpy.callCount, 1, "The tokenizer was destroyed once during cloning");
+
+		// clean up
+		fnReadOnlyPopDestroySpy.restore();
+	});
+
 </script>
 
 </head>
