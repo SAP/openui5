@@ -5354,6 +5354,21 @@
 		assert.strictEqual(this.oMCB1.getSelectedItems().length, 3, "A selected item was removed after deselecting an item from the popover");
 	});
 
+	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+		var oMultiComboBox = new sap.m.MultiComboBox(),
+			output;
+
+		oMultiComboBox.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
+		sap.ui.getCore().applyChanges();
+
+		output = oMultiComboBox._calculateSpaceForTokenizer();
+
+		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
+	});
+
 
 </script>
 </head>

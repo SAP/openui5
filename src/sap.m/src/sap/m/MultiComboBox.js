@@ -351,7 +351,7 @@ function(
 		if (this.getDomRef()) {
 			var iWidth = this.getDomRef().offsetWidth,
 				iArrowButtonWidth = parseInt(this.getDomRef("arrow").offsetWidth, 10),
-				iInputWidth = parseInt(this.$().find(".sapMMultiComboBoxInputContainer").css("min-width"), 10);
+				iInputWidth = parseInt(this.$().find(".sapMMultiComboBoxInputContainer").css("min-width"), 10) || 0;
 
 			return iWidth - (iArrowButtonWidth + iInputWidth) + "px";
 		} else {

@@ -154,6 +154,21 @@
 		assert.equal(this.multiInput1.getTokens().length, 2, "no more than 2 tokens can be added");
 	});
 
+	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+		var multiInput = new sap.m.MultiInput(),
+			output;
+
+		multiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		multiInput.$().find(".sapMMultiInputInputContainer").removeClass("sapMMultiInputInputContainer");
+		sap.ui.getCore().applyChanges();
+
+		output = multiInput._calculateSpaceForTokenizer();
+
+		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
+	});
+
 	QUnit.test("token data binding", function(assert) {
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
 
