@@ -2885,18 +2885,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("ODataMetaListBinding#update (async)", function (assert) {
-		var oBinding,
+		var done = assert.async(),
+			oBinding,
 			oBindingMock,
 			oContext = this.oMetaModel.getContext("/EMPLOYEES"),
 			aContexts = [{}],
 			sPath = "path",
 			oFetchPromise = SyncPromise.resolve(Promise.resolve()).then(function () {
 				// This is expected to happen after the promise is resolved
-				oBindingMock.expects("setContexts").withExactArgs(sinon.match.same(aContexts));
-				oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+				oBindingMock.expects("setContexts").withExactArgs(sinon.match.same(aContexts))
+					.callThrough();
+				oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
+					.callThrough();
 
 				return aContexts;
-			});
+			}),
+			aResult;
 
 		// avoid request to backend during initialization
 		this.oMetaModelMock.expects("fetchObject").returns(SyncPromise.resolve());
@@ -2905,13 +2909,25 @@ sap.ui.require([
 		oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("fetchContexts").withExactArgs().returns(oFetchPromise);
-		oBindingMock.expects("setContexts").withExactArgs([]);
+		oBindingMock.expects("setContexts").withExactArgs(sinon.match(function (aContexts) {
+			return aContexts.length === 0 && aContexts.dataRequested === true;
+		})).callThrough();
 		oBindingMock.expects("_fireChange").never(); // initially
 
 		// code under test
 		oBinding.update();
 
-		return oFetchPromise;
+		aResult = oBinding.getContexts();
+		assert.strictEqual(aResult.length, 0);
+		assert.strictEqual(aResult.dataRequested, true);
+
+		oBinding.attachEventOnce("change", function () {
+			aResult = oBinding.getContexts();
+			assert.strictEqual(aResult.length, 1);
+			assert.strictEqual(aResult[0], aContexts[0]);
+			assert.notOk("dataRequested" in aResult);
+			done();
+		});
 	});
 
 	//*********************************************************************************************
@@ -3016,10 +3032,10 @@ sap.ui.require([
 			"/EMPLOYEES/SALÃRY"
 		]
 	}, {
-		// <template:repeat list="{meta>EMPLOYEES}" ...>
-		// same as before, but with non-empty path
+		// <template:repeat list="{meta>EMPLOYEES/}" ...>
+		// same as before, but with non-empty path and a trailing slash
 		contextPath : "/",
-		metaPath : "EMPLOYEES",
+		metaPath : "EMPLOYEES/",
 		result : [
 			"/EMPLOYEES/ID",
 			"/EMPLOYEES/AGE",

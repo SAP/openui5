@@ -1536,6 +1536,7 @@ sap.ui.define([
 					oListBinding,
 					sModelName,
 					oNewWithControl,
+					oPromise,
 					sVar = oElement.getAttribute("var");
 
 				if (sVar === "") {
@@ -1562,7 +1563,18 @@ sap.ui.define([
 				if (!oListBinding) {
 					error("Missing model '" + sModelName + "' in ", oElement);
 				}
+				oListBinding.enableExtendedChangeDetection();
 				aContexts = oListBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
+				if (aContexts.dataRequested) {
+					oPromise = new SyncPromise(function (resolve) {
+						oListBinding.attachEventOnce("change", resolve);
+					}).then(function () {
+						return oListBinding.getContexts(oBindingInfo.startIndex,
+							oBindingInfo.length);
+					});
+				} else {
+					oPromise = SyncPromise.resolve(aContexts);
+				}
 
 				// set up the model for the loop variable
 				sVar = sVar || sModelName; // default loop variable is to keep the same model
@@ -1571,21 +1583,23 @@ sap.ui.define([
 				// the actual loop
 				iNestingLevel++;
 				debug(oElement, "Starting");
-				return stopAndGo(aContexts, function (oContext, i) {
-					var oSourceNode = (i === aContexts.length - 1)
-							? oElement
-							: oElement.cloneNode(true);
+				return oPromise.then(function (aContexts) {
+					return stopAndGo(aContexts, function (oContext, i) {
+						var oSourceNode = (i === aContexts.length - 1)
+								? oElement
+								: oElement.cloneNode(true);
 
-					// Note: because sVar and sModelName refer to the same model instance, it is OK
-					// to use sModelName's context for sVar as well (the name is not part of the
-					// context!)
-					oNewWithControl.setBindingContext(oContext, sVar);
-					debug(oElement, sVar, "=", oContext.getPath());
-					return liftChildNodes(oSourceNode, oNewWithControl, oElement);
-				}).then(function () {
-					debugFinished(oElement);
-					iNestingLevel--;
-					oElement.parentNode.removeChild(oElement);
+						// Note: because sVar and sModelName refer to the same model instance, it
+						// is OK to use sModelName's context for sVar as well (the name is not part
+						// of the context!)
+						oNewWithControl.setBindingContext(oContext, sVar);
+						debug(oElement, sVar, "=", oContext.getPath());
+						return liftChildNodes(oSourceNode, oNewWithControl, oElement);
+					}).then(function () {
+						debugFinished(oElement);
+						iNestingLevel--;
+						oElement.parentNode.removeChild(oElement);
+					});
 				});
 			}
 

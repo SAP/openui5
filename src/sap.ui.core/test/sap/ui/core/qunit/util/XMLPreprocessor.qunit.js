@@ -11,11 +11,13 @@ sap.ui.require([
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
 	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
 ], function (jQuery, Device, BindingParser, ManagedObject, SyncPromise, CustomizingConfiguration,
-		XMLTemplateProcessor, XMLPreprocessor, BindingMode, Context, JSONModel/*, jQuerySapXml*/) {
+		XMLTemplateProcessor, XMLPreprocessor, BindingMode, ChangeReason, Context, JSONModel/*,
+		jQuerySapXml*/) {
 	/*global QUnit, sinon, window */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
@@ -40,10 +42,11 @@ sap.ui.require([
 		var oModel = new JSONModel(oData);
 
 		oModel.$$valueAsPromise = true;
+
 		oModel.bindProperty = function () {
 			var oBinding = JSONModel.prototype.bindProperty.apply(this, arguments);
 
-			oBinding.checkUpdate = function (){
+			oBinding.checkUpdate = function () {
 				var vValue = this._getValue();
 
 				if (this.mParameters.$$valueAsPromise) {
@@ -61,6 +64,39 @@ sap.ui.require([
 				}
 				this.oValue = vValue;
 				this._fireChange({reason : "change"});
+			};
+
+			return oBinding;
+		};
+
+		oModel.bindList = function () {
+			var oBinding = JSONModel.prototype.bindList.apply(this, arguments),
+				fnGetContexts = oBinding.getContexts,
+				bWaited = false;
+
+			oBinding.enableExtendedChangeDetection = function (bDetectUpdates, vKey) {
+				if (bDetectUpdates || vKey !== undefined) {
+					throw new Error("Unexpected: enableExtendedChangeDetection(" + bDetectUpdates
+						+ ", " + vKey + ")");
+				}
+				this.bUseExtendedChangeDetection = true;
+			};
+
+			oBinding.getContexts = function () {
+				var aContexts;
+
+				if (bWaited) {
+					return fnGetContexts.apply(this, arguments);
+				}
+				setTimeout(function () {
+					bWaited = true;
+					oBinding._fireChange({reason: ChangeReason.Change});
+				}, 5);
+				aContexts = [];
+				if (this.bUseExtendedChangeDetection) {
+					aContexts.dataRequested = true;
+				}
+				return aContexts;
 			};
 
 			return oBinding;
@@ -3750,6 +3786,42 @@ sap.ui.require([
 		}, [
 			'<Text text="bar"/>',
 			'<Text text="true"/>'
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async <template:repeat>", function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] Starting", d : 1},
+			{m : "[ 1]  = /items/0", d : 1},
+			{m : "[ 1] src = A", d : 2},
+			{m : "[ 1]  = /items/1", d : 1},
+			{m : "[ 1] src = B", d : 2},
+			{m : "[ 1]  = /items/2", d : 1},
+			{m : "[ 1] src = C", d : 2},
+			{m : "[ 1] Finished", d : "</template:repeat>"},
+			{m : "[ 0] Finished processing qux"}
+		], [
+			mvcView(),
+			'<template:repeat list="{/items}">',
+			'<In src="{src}"/>',
+			'</template:repeat>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({
+				items : [{
+					src : "A"
+				}, {
+					src : "B"
+				}, {
+					src : "C"
+				}]
+			})
+		}, [
+			'<In src="A"/>',
+			'<In src="B"/>',
+			'<In src="C"/>'
 		], true);
 	});
 });
