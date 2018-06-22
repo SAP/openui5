@@ -322,7 +322,6 @@ sap.ui.define([
 			bKeyAdded = true;
 		}, this);
 		if (bKeyAdded) {
-			this.setActive(true);
 			this._selectItemsByKeys();
 		} else {
 			sap.m.ListBase.prototype.removeSelections.call(this);
@@ -510,20 +509,6 @@ sap.ui.define([
 			selectedKeys: oSelectedKeys,
 			allSelected: bAllSelected
 		});
-	};
-
-
-	/**
-	 * Sets this list active if at least one list item is selected, or the all checkbox is selected.
-	 *
-	 * @private
-	 */
-	FacetFilterList.prototype._updateActiveState = function() {
-
-		var oCheckbox = sap.ui.getCore().byId(this.getAssociation("allcheckbox"));
-		if (Object.getOwnPropertyNames(this._oSelectedKeys).length > 0 || (oCheckbox && oCheckbox.getSelected())) {
-			this.setActive(true);
-		}
 	};
 
 
@@ -739,8 +724,6 @@ sap.ui.define([
 	 * @private
 	 */
 	FacetFilterList.prototype._handleSelectAllClick = function(bSelected) {
-		var bActive;
-
 		this._getNonGroupItems().forEach(function (oItem) {
 			if (bSelected) {
 				this._addSelectedKey(oItem.getKey(), oItem.getText());
@@ -750,9 +733,6 @@ sap.ui.define([
 			oItem.setSelected(bSelected, true);
 		}, this);
 
-		// At least one item needs to be selected to consider the list as active or it appeared as active once
-		bActive = this._getOriginalActiveState() || bSelected;
-		this.setActive(bActive);
 		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
 	};
 
@@ -776,8 +756,6 @@ sap.ui.define([
 	 * @param {boolean} bSelect <code>true</code> if selected
 	 */
 	FacetFilterList.prototype.onItemSelectedChange = function(oItem, bSelect) {
-		var bActive;
-
 		if (bSelect) {
 			this._addSelectedKey(oItem.getKey(), oItem.getText());
 		} else {
@@ -785,18 +763,12 @@ sap.ui.define([
 		}
 		sap.m.ListBase.prototype.onItemSelectedChange.apply(this, arguments);
 
-		/* At least one item needs to be selected to consider the list as active.
-		 When selectedItems == 1 and bSelect is false, that means this is the last item currently being deselected */
-		bActive = this._getOriginalActiveState() || bSelect || this.getSelectedItems().length > 1;
-		this.setActive(bActive);
-
 		!this.getDomRef() && this.getParent() && this.getParent().getDomRef() && this.getParent().invalidate();
 
 		// Postpone the _updateSelectAllCheckBox, as the oItem(type ListItemBase) has not yet set it's 'selected' property
 		// See ListItemBase.prototype.setSelected
 		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
 	};
-
 
 	/**
 	 * This method overrides runs when the list updates its items.
@@ -814,14 +786,6 @@ sap.ui.define([
 	  if (!this.getGrowing() || sReason === ChangeReason.Filter) {
 	  this._selectItemsByKeys();
 	  }
-	};
-
-	FacetFilterList.prototype._getOriginalActiveState = function() {
-		return this._bOriginalActiveState;
-	};
-
-	FacetFilterList.prototype._preserveOriginalActiveState = function () {
-		this._bOriginalActiveState = this.getActive();
 	};
 
 	return FacetFilterList;
