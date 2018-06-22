@@ -92,8 +92,8 @@
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapMITBSelectList .sapMITBSelectItem:active,
-.sapMITBSelectList .sapMITBSelectItem.sapMITBSelectItemSelected:active {
+.sapMITBSelectList .sapMITBSelectItem:not(.sapUiDnDDragging):active,
+.sapMITBSelectList .sapMITBSelectItem.sapMITBSelectItemSelected:not(.sapUiDnDDragging):active {
 	background-color: @sapUiListActiveBackground;
 
 	& > .sapMText {
