@@ -833,7 +833,8 @@ sap.ui.define([
 		if (!this._oSeeMoreButton) {
 			this._oSeeMoreButton = new Button(this.getId() + "--seeMore", {
 				type: ButtonType.Transparent,
-				iconFirst: false
+				iconFirst: false,
+				ariaLabelledBy: this.getId()
 			}).addStyleClass("sapUxAPSubSectionSeeMoreButton").attachPress(this._seeMoreLessControlPressHandler, this);
 		}
 
