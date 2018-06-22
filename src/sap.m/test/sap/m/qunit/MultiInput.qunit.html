@@ -1234,7 +1234,12 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
+
 		this.clock.tick(1);
 
 		// assert
@@ -1260,9 +1265,14 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
+
 		oPicker = this.multiInput._getSelectedItemsPicker();
-		this.clock.tick(1);
+		this.clock.tick(100);
 
 		// deselect the first item
 		jQuery(oPicker.getContent()[0].getItems()[0]).tap();
@@ -1271,7 +1281,12 @@
 
 		//close and open the picker
 		oPicker.close();
-		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		// act
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
 		//assert
 		assert.strictEqual(oPicker.getContent()[0].getItems().length, 3, "The items in the list are updated");
 	});
@@ -1425,7 +1440,12 @@
 
 
 		sap.ui.getCore().applyChanges();
-		this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
+		// act
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput1._tokenizer.$().click();
+		} else {
+			this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
+		}
 		this.clock.tick(1000);
 
 		assert.ok(oStub.called, "The suggestion dialog is opened on click on N-more");

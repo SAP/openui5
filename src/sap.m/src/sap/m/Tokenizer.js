@@ -1369,7 +1369,16 @@ sap.ui.define([
 	 * @protected
 	 */
 	Tokenizer.prototype.onclick = function(oEvent) {
-		if (jQuery(oEvent.target).hasClass("sapMTokenizerIndicator")) {
+		var bFireIndicatorHandler;
+
+		if (Device.browser.msie) {
+			// on IE the indicator span doesn't capture the press event
+			bFireIndicatorHandler = (oEvent.target === this.getFocusDomRef());
+		} else {
+			bFireIndicatorHandler = jQuery(oEvent.target).hasClass("sapMTokenizerIndicator");
+		}
+
+		if (bFireIndicatorHandler) {
 			this._fnOnNMorePress && this._fnOnNMorePress(oEvent);
 		}
 	};
