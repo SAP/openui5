@@ -228,7 +228,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	position: absolute;
 	right: 100%;
 	width: 100%;
-	color: @sapUiContentLabelColor;
+	color: @sapUiBaseText;;
 	font-size: @sapUiFontSmallSize;
 	cursor: default;
 	pointer-events: none;
@@ -236,7 +236,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 }
 
 .sapUiCalWH{
-	color: @sapUiContentLabelColor;
+	color: @sapUiBaseText;;
 	white-space: nowrap;
 	height: 2rem;
 	line-height: 1.875rem;
@@ -245,7 +245,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 
 .sapUiCalItem{
 	color: @sapUiBaseText;
-	background-color: lighten(@sapUiContentForegroundColor,5);
+	background-color: lighten(@sapUiContentForegroundColor,7);
 }
 
 .sapUiCalItemDsbl{
@@ -281,7 +281,7 @@ html.sap-desktop .sapUiCalItem:focus{
 }
 
 .sapUiCalItemWeekEnd{
-	background-color: @sapUiContentForegroundColor;
+	background-color: darken(@sapUiContentForegroundColor, 3);
 }
 
 .sapUiCalItemWeekEnd.sapUiCalItemDsbl{
@@ -335,7 +335,7 @@ html.sap-desktop .sapUiCalItem:focus{
 	right: 0;
 	height: 33%;
 	width: 100%;
-	color: @sapUiContentLabelColor;
+	color: @sapUiBaseText;
 	overflow: hidden;
 	white-space: nowrap;
 	line-height: 100%;
@@ -485,7 +485,6 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	line-height: 1rem;
 	height: 1rem;
 	font-size: 0.75rem;
-	color: @sapUiContentLabelColor;
 	padding-top: 0.375rem;
 }
 
