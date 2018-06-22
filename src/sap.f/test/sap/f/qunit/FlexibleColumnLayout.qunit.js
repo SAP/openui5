@@ -770,6 +770,37 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.clock.restore();
 	});
 
+	QUnit.module("ResizeHandler suspend and resume", {
+		beforeEach: function () {
+			this.oFCL = oFactory.createFCL({
+				layout: LT.TwoColumnsBeginExpanded
+			});
+		},
+		afterEach: function () {
+			this.oFCL.destroy();
+			this.oFCL = null;
+		}
+	});
+
+	QUnit.test("Test ResizeHandler is suspoended upon column layout change", function (assert) {
+		var fnDone = assert.async(),
+			iAnimationDelay = 600,
+			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow");
+
+		// аct
+		oBeginColumnArrow.firePress();
+
+		// assert
+		assert.notEqual(this.oFCL._iResumeResizeHandlerTimeout, null, "ResizeHandler suspended and resume scheduled.");
+
+		setTimeout(function() {
+			// assert
+			assert.strictEqual(this.oFCL._iResumeResizeHandlerTimeout, null, "ResizeHandler resumed.");
+
+			fnDone();
+		}.bind(this), iAnimationDelay);
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
