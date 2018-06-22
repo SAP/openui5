@@ -272,6 +272,10 @@ sap.ui.define([
 	 * @returns {sap.m.Tokenizer} this instance for method chaining
 	 */
 	Tokenizer.prototype._handleNMoreIndicator = function (iHiddenTokensCount) {
+		if (!this.getDomRef()) {
+			return this;
+		}
+
 		if (iHiddenTokensCount) {
 			this._oIndicator.removeClass("sapUiHidden");
 			this._oIndicator.html(oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", iHiddenTokensCount));

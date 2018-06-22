@@ -832,6 +832,12 @@
 		});
 	});
 
+	QUnit.test("_handleNMoreIndicator", function(assert) {
+		var oTokenizer = new sap.m.Tokenizer();
+		assert.strictEqual(oTokenizer._handleNMoreIndicator(), oTokenizer, "The method return a instance of the tokenizer");
+
+		oTokenizer.destroy();
+	});
 
 </script>
 
