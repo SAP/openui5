@@ -5320,6 +5320,20 @@ var sNestedAnnotations = '\
 					</Collection>\
 					<Annotation Term="UI.Criticality" Path="Criticality"/>\
 				</Annotation>\
+				<Annotation Term="UI.Facets">\
+					<Collection>\
+						<Record Type="UI.CollectionFacet">\
+							<PropertyValue Property="Facets">\
+								<Collection>\
+									<Record Type="UI.ReferenceFacet">\
+										<PropertyValue Property="Target" AnnotationPath="Supplier/@UI.Identification" />\
+									</Record>\
+								</Collection>\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Supplier Identification"/>\
+							</PropertyValue>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CategoryName">\
 					<!-- We are keeping this (invalid) example in to document the behavior of the parser in cases that are not allowed in actual annotation sources -->\
 					<Term Name="TextArrangement" Type="UI.TextArrangementType" AppliesTo="Annotation EntityType">\
