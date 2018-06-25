@@ -3,8 +3,15 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', '../Device', 'jquery.sap.strings', 'jquery.sap.trace'],
-	function(jQuery, BaseObject, ManagedObject, ElementMetadata, Device/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', '../Device', "sap/ui/performance/trace/Interaction", 'jquery.sap.strings'],
+	function(
+		jQuery,
+		BaseObject,
+		ManagedObject,
+		ElementMetadata,
+		Device,
+		Interaction
+	) {
 	"use strict";
 
 	/**
@@ -486,7 +493,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 */
 	Element.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
 		if (this.hasListeners(sEventId)) {
-			jQuery.sap.interaction.notifyStepStart(this);
+			Interaction.notifyStepStart(this);
 		}
 
 		// get optional parameters right

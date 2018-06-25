@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
-	function(jQuery, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/ui/performance/trace/Passport"],
+	function(jQuery, Device, Passport) {
 		"use strict";
 
 		/*global alert, confirm, performance */
@@ -324,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 				}
 
 				// start jQuery.sap.trace and override xhr
-				jQuery.sap.passport.setActive(true);
+				Passport.setActive(true);
 
 				fopen = window.XMLHttpRequest.prototype.open;
 				fsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
@@ -358,7 +358,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 						//jQuery.sap.log.info(this.xstartTimestamp + ", " + idx + " " + arguments[0] + " " + arguments[1]);
 						this.xmethod = arguments[0];
 						this.xurl = arguments[1];
-						this.xDsrGuid = jQuery.sap.fesr.getCurrentTransactionId(); //see jquery.sap.trace, former EbbLib.js
+						this.xDsrGuid = Passport.getTransactionId(); //see jquery.sap.trace, former EbbLib.js
 
 						//do not set passport as this is done already in jquery.sap.trace
 						//this.setRequestHeader("SAP-PASSPORT", EppLib.passportHeader(busTrx.getCurrentTransactionStep().trcLvl, busTrx.id, this.xDsrGuid));
@@ -387,9 +387,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 						}
 
 						busTrx = new BusinessTransaction(
-							jQuery.sap.fesr.getRootId(),
+							Passport.getRootId(),
 							new Date(),
-							jQuery.sap.passport.traceFlags(sTraceLevel),
+							Passport.traceFlags(sTraceLevel),
 							fnCallback
 						);
 						busTrx.createTransactionStep();

@@ -9,10 +9,17 @@ sap.ui.define([
     './Control',
     './library',
     "./ScrollBarRenderer",
-    'jquery.sap.script',
-    'jquery.sap.trace'
+    "sap/ui/performance/trace/Interaction",
+    'jquery.sap.script'
 ],
-	function(jQuery, Device, Control, library /*, jQuery*/, ScrollBarRenderer) {
+	function(
+		jQuery,
+		Device,
+		Control,
+		library,
+		ScrollBarRenderer,
+		Interaction /*, jQuery*/
+	) {
 	"use strict";
 
 
@@ -729,7 +736,7 @@ sap.ui.define([
 		this._bMouseWheel = false;
 
 		// notify for a scroll event
-		jQuery.sap.interaction.notifyScrollEvent({type: sAction});
+		Interaction.notifyScrollEvent({type: sAction});
 	};
 
 	ScrollBar.prototype.onThemeChanged = function() {

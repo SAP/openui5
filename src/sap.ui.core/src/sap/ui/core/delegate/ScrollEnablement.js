@@ -9,8 +9,14 @@
  */
 
 // Provides class sap.ui.core.delegate.ScrollEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ResizeHandler', 'jquery.sap.keycodes', 'jquery.sap.trace'],
-	function(jQuery, Device, BaseObject, ResizeHandler /* ,jQuerySapKeycodes, jQuerySapTrace */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ResizeHandler', "sap/ui/performance/trace/Interaction", 'jquery.sap.keycodes'],
+	function(
+		jQuery,
+		Device,
+		BaseObject,
+		ResizeHandler,
+		Interaction /* ,jQuerySapKeycodes, jQuerySapTrace */
+	) {
 	"use strict";
 
 
@@ -433,7 +439,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 					fScrollTop = $Container.scrollTop(),
 					fVerticalMove = fScrollTop - this._scrollY;
 
-				jQuery.sap.interaction.notifyStepStart(this._oControl);
+				Interaction.notifyStepStart(this._oControl);
 
 				this._scrollX = $Container.scrollLeft(); // remember position
 				this._scrollY = fScrollTop;
@@ -534,7 +540,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			},
 
 			_onEnd : function(oEvent){
-				jQuery.sap.interaction.notifyEventStart(oEvent);
+				Interaction.notifyEventStart(oEvent);
 
 				if (this._oPullDown && this._oPullDown._bTouchMode) {
 					this._oPullDown.doScrollEnd();

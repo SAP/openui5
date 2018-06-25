@@ -3,8 +3,14 @@
  */
 
 // Provides class sap.ui.core.UIArea
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', 'jquery.sap.act', 'jquery.sap.ui', 'jquery.sap.keycodes', 'jquery.sap.trace'],
-	function(jQuery, ManagedObject, Element, RenderManager /* , jQuerySap1, jQuerySap, jQuerySap2 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', "sap/ui/performance/trace/Interaction", 'jquery.sap.act', 'jquery.sap.ui', 'jquery.sap.keycodes'],
+	function(
+		jQuery,
+		ManagedObject,
+		Element,
+		RenderManager,
+		Interaction /* , jQuerySap1, jQuerySap, jQuerySap2 */
+	) {
 	"use strict";
 
 
@@ -795,10 +801,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 		// notify interaction tracing for relevant event - it is important to have evaluated all the previous switches
 		// in case the method would return before dispatching the event, we should not notify an event start
-		if (jQuery.sap.interaction.getActive()) {
+		if (Interaction.getActive()) {
 			bInteractionRelevant = oEvent.type.match(rEvents);
 			if (bInteractionRelevant) {
-				jQuery.sap.interaction.notifyEventStart(oEvent);
+				Interaction.notifyEventStart(oEvent);
 			}
 		}
 
@@ -877,7 +883,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		});
 
 		if (bInteractionRelevant) {
-			jQuery.sap.interaction.notifyEventEnd(oEvent);
+			Interaction.notifyEventEnd(oEvent);
 		}
 
 		// reset previously changed currentTarget

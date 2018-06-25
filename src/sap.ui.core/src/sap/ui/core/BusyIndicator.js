@@ -3,8 +3,26 @@
  */
 
 // A static class to show a busy indicator
-sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core', './BusyIndicatorUtils', 'sap/ui/core/library'],
-	function(jQuery, EventProvider, Popup, Core, BusyIndicatorUtils, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'../base/EventProvider',
+	'./Popup',
+	'./Core',
+	'./BusyIndicatorUtils',
+	'sap/ui/core/library',
+	"sap/ui/performance/trace/FESR",
+	"sap/ui/performance/trace/Interaction"
+],
+	function(
+		jQuery,
+		EventProvider,
+		Popup,
+		Core,
+		BusyIndicatorUtils,
+		library,
+		FESR,
+		Interaction
+	) {
 	"use strict";
 
 	//shortcut for sap.ui.core.BusyIndicatorSize
@@ -187,7 +205,7 @@ sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core'
 				|| (parseInt(iDelay, 10) < 0)) {
 			iDelay = this.iDEFAULT_DELAY_MS;
 		}
-		if (jQuery.sap.fesr.getActive()) {
+		if (FESR.getActive()) {
 			this._fDelayedStartTime = jQuery.sap.now() + iDelay;
 		}
 
@@ -254,7 +272,7 @@ sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core'
 			// The busy indicator shown duration d is calculated with:
 			// d = "time busy indicator was hidden" - "time busy indicator was requested" - "busy indicator delay"
 			var fBusyIndicatorShownDuration = jQuery.sap.now() - this._fDelayedStartTime;
-			jQuery.sap.fesr.addBusyDuration((fBusyIndicatorShownDuration > 0) ? fBusyIndicatorShownDuration : 0);
+			Interaction.addBusyDuration((fBusyIndicatorShownDuration > 0) ? fBusyIndicatorShownDuration : 0);
 			delete this._fDelayedStartTime;
 		}
 		var bi = BusyIndicator; // Restore scope in case we are called with setTimeout or so...

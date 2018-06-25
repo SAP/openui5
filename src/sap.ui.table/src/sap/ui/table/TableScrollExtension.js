@@ -4,8 +4,8 @@
 
 // Provides helper sap.ui.table.TableScrollExtension.
 sap.ui.define([
-	"jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "./library", "jquery.sap.trace", "jquery.sap.events"
-], function(jQuery, TableExtension, TableUtils, Device, library) {
+	"jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "./library", "sap/ui/performance/trace/Interaction", "jquery.sap.events"
+], function(jQuery, TableExtension, TableUtils, Device, library, Interaction) {
 	"use strict";
 
 	// Shortcuts
@@ -60,7 +60,7 @@ sap.ui.define([
 			var oScrollExtension = this._getScrollExtension();
 
 			// For interaction detection.
-			jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
+			Interaction.notifyScrollEvent && Interaction.notifyScrollEvent(oEvent);
 
 			if (this._bOnAfterRendering) {
 				return;
@@ -214,7 +214,7 @@ sap.ui.define([
 			var oScrollExtension = this._getScrollExtension();
 
 			// For interaction detection.
-			jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
+			Interaction.notifyScrollEvent && Interaction.notifyScrollEvent(oEvent);
 
 			if (oScrollExtension._bIsScrolledVerticallyByKeyboard || VerticalScrollingHelper.isUpdatePending(this)) {
 				// When scrolling with the keyboard the first visible row is already correct and does not need adjustment.
@@ -1376,7 +1376,7 @@ sap.ui.define([
 
 		if (TableUtils.isVariableRowHeightEnabled(oTable)) {
 			iRowCount = Math.max(iTotalRowCount, iVisibleRowCount + 1);
-			iScrollHeight = iDefaultRowHeight * (iRowCount - 1 /* The last row is inside the buffer */) + this.getVerticalScrollRangeBuffer();
+			iScrollHeight = iDefaultRowHeight * ((iRowCount - 1) /* The last row is inside the buffer */) + this.getVerticalScrollRangeBuffer();
 		} else {
 			iRowCount = Math.max(iTotalRowCount, iVisibleRowCount);
 			iScrollHeight = iDefaultRowHeight * iRowCount;
