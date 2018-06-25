@@ -3,14 +3,15 @@
  */
 
 sap.ui.define([
-    "./BaseTreeModifier",
-    "sap/base/util/ObjectPath",
-    "jquery.sap.global",
-	"sap/ui/core/Fragment", // needed to have sap.ui.xmlfragment
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
+	"./BaseTreeModifier",
+	"sap/base/util/ObjectPath",
+	"sap/ui/util/XMLHelper",
+	"jquery.sap.global",
+	"sap/ui/core/Fragment" // needed to have sap.ui.xmlfragment
 ], function(
     BaseTreeModifier,
 	ObjectPath,
+    XMLHelper,
 	jQuery
 	/* other jQuery.sap dependencies */
 ) {
@@ -327,7 +328,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control[]} Returns an array with the controls of the fragment
 		 */
 		instantiateFragment: function(sFragment, sNamespace, oView) {
-			var oFragment = jQuery.sap.parseXML(sFragment);
+			var oFragment = XMLHelper.parse(sFragment);
 			oFragment = this._checkAndPrefixIdsInFragment(oFragment, sNamespace);
 
 			var aNewControls;
