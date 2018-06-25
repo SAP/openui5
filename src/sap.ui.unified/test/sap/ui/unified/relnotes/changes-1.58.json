@@ -31,6 +31,24 @@
         "type": "FIX",
         "text": " sap.ui.unified.Month: Now select event is fired correctly",
         "references": []
+      },
+      {
+        "id": "ac46d9e99cf5649b56c19b7b3caa5e331af91368",
+        "type": "FIX",
+        "text": " FileUploader: Accessing upload iframe adjusted",
+        "references": []
+      },
+      {
+        "id": "141fdd92280e5f769479a612441d4455441993e0",
+        "type": "FIX",
+        "text": " sap.m.Menu: F4 closes the menu",
+        "references": []
+      },
+      {
+        "id": "d38674d657c87400566b6e88524f5c6b464eb9ac",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": []
       }
     ]
   }

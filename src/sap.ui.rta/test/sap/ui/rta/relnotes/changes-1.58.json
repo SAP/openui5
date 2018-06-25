@@ -67,6 +67,18 @@
         "type": "FIX",
         "text": "sap.ui.rta - Prevent overlay plugin evaluation during drag\u0026drop",
         "references": []
+      },
+      {
+        "id": "cb7a43859a68149f9ce5ffb577321fab0ff46f87",
+        "type": "FIX",
+        "text": " sap.ui.rta: Fixed the text for failing catalog assignment",
+        "references": []
+      },
+      {
+        "id": "a2fb174c28e2c167e8251ad02a92a6bb7effebd2",
+        "type": "FIX",
+        "text": " sap.ui.rta:Change service.Outline.OutlineObject visibility",
+        "references": []
       }
     ]
   }

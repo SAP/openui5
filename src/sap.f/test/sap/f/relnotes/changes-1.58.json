@@ -49,6 +49,18 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Initially snapped header behavior fixed",
         "references": []
+      },
+      {
+        "id": "7e5a49c94c7eb0692725a168476d4b6ae90232cb",
+        "type": "FIX",
+        "text": " DynamicPage: Explored sample updated",
+        "references": []
+      },
+      {
+        "id": "701cfbfaca90e150ef08c24e1399b364237a235e",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Slider visibility fixed",
+        "references": []
       }
     ]
   }
