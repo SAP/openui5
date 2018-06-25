@@ -1840,7 +1840,7 @@ sap.ui.define([
 		}
 
 		if (fnCallBack) {
-			var bIsRelative = !jQuery.sap.startsWith(sPath, "/");
+			var bIsRelative = !sPath.startsWith("/");
 			if (sResolvedPath) {
 				var aParams = [],
 				sCustomParams = this.createCustomParams(mParameters);
@@ -1873,7 +1873,7 @@ sap.ui.define([
 	 * @param {string} sPath the path
 	 */
 	ODataModel.prototype._updateContext = function(oContext, sPath) {
-		if (!jQuery.sap.startsWith(sPath, "/")) {
+		if (!sPath.startsWith("/")) {
 			throw new Error("Path " + sPath + " must start with a / ");
 		}
 		oContext.sPath = sPath;
@@ -3461,7 +3461,7 @@ sap.ui.define([
 			sUri = oRequest.requestUri;
 			sPath = sUri.replace(this.sServiceUrl,"");
 			//in batch requests all paths are relative
-			if (!jQuery.sap.startsWith(sPath,'/')) {
+			if (!sPath.startsWith('/')) {
 				sPath = '/' + sPath;
 			}
 			sPath = this._normalizePath(sPath);
@@ -3809,7 +3809,7 @@ sap.ui.define([
 
 		// refresh ETag from response directly. We can not wait for the refresh.
 		sUrl = oRequest.requestUri.replace(this.sServiceUrl + '/', '');
-		if (!jQuery.sap.startsWith(sUrl , "/")) {
+		if (!sUrl.startsWith("/")) {
 			sUrl = "/" + sUrl;
 		}
 		oEntry = this._getObject(sUrl.split("?")[0]);
@@ -4344,7 +4344,7 @@ sap.ui.define([
 		}
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
-		if (!jQuery.sap.startsWith(sFunctionName, "/")) {
+		if (!sFunctionName.startsWith("/")) {
 			jQuery.sap.log.fatal(this + " callFunction: path '" + sFunctionName + "' must be absolute!");
 			return;
 		}
@@ -5318,7 +5318,7 @@ sap.ui.define([
 
 		function create() {
 			var oCreatedContext;
-			if (!jQuery.sap.startsWith(sPath, "/")) {
+			if (!sPath.startsWith("/")) {
 				sPath = "/" + sPath;
 			}
 			var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sPath);
@@ -5456,7 +5456,7 @@ sap.ui.define([
 		if (sPath && sPath.indexOf('?') !== -1 ) {
 			sPath = sPath.substr(0, sPath.indexOf('?'));
 		}
-		if (!oContext && !jQuery.sap.startsWith(sPath,"/")) {
+		if (!oContext && !sPath.startsWith("/")) {
 			jQuery.sap.log.fatal(this + " path " + sPath + " must be absolute if no Context is set");
 		}
 		return this.resolve(sPath, oContext);
@@ -6038,12 +6038,12 @@ sap.ui.define([
 			return aFilteredMessages;
 		}
 		//normalize Key
-		if (!jQuery.sap.startsWith(sEntityPath, '/')) {
+		if (!sEntityPath.startsWith('/')) {
 			sEntityPath = '/' + sEntityPath;
 		}
 		if (this.mMessages) {
 			for (sPath in this.mMessages) {
-				if (jQuery.sap.startsWith(sPath, sEntityPath)) {
+				if (typeof sEntityPath == "string" && sEntityPath.length > 0 && sPath.startsWith(sEntityPath)) {
 					aMessages = aMessages.concat(filterMessages(this.mMessages[sPath]));
 				}
 			}

@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			EventProvider.apply(this);
 
 			this.oModel = oModel;
-			this.bRelative = !jQuery.sap.startsWith(sPath,'/');
+			this.bRelative = !sPath.startsWith('/');
 			this.sPath = sPath;
 			this.oContext = oContext;
 			this.vMessages = undefined;

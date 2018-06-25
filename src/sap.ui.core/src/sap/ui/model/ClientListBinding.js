@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 		aContexts = [],
 		sPrefix = this.oModel.resolve(this.sPath, this.oContext);
 
-		if (sPrefix && !jQuery.sap.endsWith(sPrefix, "/")) {
+		if (sPrefix && !sPrefix.endsWith("/")) {
 			sPrefix += "/";
 		}
 

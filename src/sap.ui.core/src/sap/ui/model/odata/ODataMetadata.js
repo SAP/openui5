@@ -960,7 +960,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				if (oEntityType) {
 					oPropertyMetadata = that._getPropertyMetadata(oEntityType, aParts[0]);
 				}
-			} else if (!jQuery.sap.startsWith(oPropertyMetadata.type.toLowerCase(), "edm.")) {
+			} else if (!oPropertyMetadata.type.toLowerCase().startsWith("edm.")) {
 				var oNameInfo = this._splitName(oPropertyMetadata.type);
 				oPropertyMetadata = this._getPropertyMetadata(this._getObjectMetadata("complexType", oNameInfo.name, oNameInfo.namespace), aParts[1]);
 			}

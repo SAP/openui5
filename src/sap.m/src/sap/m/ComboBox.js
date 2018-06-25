@@ -212,7 +212,7 @@ sap.ui.define([
 				// update the selected item after the change event is fired (the selection may change)
 				oItem = this.getSelectedItem();
 
-				if (!jQuery.sap.startsWithIgnoreCase(oItem.getText(), sTypedValue) || !bIsTextSelected) {
+				if (!((typeof sTypedValue == "string" && sTypedValue != "" ? oItem.getText().toLowerCase().startsWith(sTypedValue.toLowerCase()) : false)) || !bIsTextSelected) {
 					iSelectionStart = 0;
 				}
 
@@ -476,7 +476,7 @@ sap.ui.define([
 				// the item match with the value
 				bMatch = bEmptyValue;
 				for (var j = 0; j < aMutators.length; j++) {
-					if (jQuery.sap.startsWithIgnoreCase(oItem[aMutators[j]](), sValue)) {
+					if ((typeof sValue == "string" && sValue != "" ? oItem[aMutators[j]]().toLowerCase().startsWith(sValue.toLowerCase()) : false)) {
 						bMatch = true;
 						if (aMutators[j] === "getText") {
 							bTextMatch = true;
@@ -632,7 +632,7 @@ sap.ui.define([
 
 				var bItemsVisible = !!aVisibleItems.length;
 				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
-				var bTextMatched = (oFirstVisibleItem && jQuery.sap.startsWithIgnoreCase(oFirstVisibleItem.getText(), sValue));
+				var bTextMatched = (oFirstVisibleItem && ((typeof sValue == "string" && sValue != "" ? oFirstVisibleItem.getText().toLowerCase().startsWith(sValue.toLowerCase()) : false)));
 				var bSearchBoth = this.getFilterSecondaryValues();
 				var bDesktopPlatform = Device.system.desktop;
 

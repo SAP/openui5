@@ -8,7 +8,7 @@ sap.ui.define([
 		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', './Object',
 		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException',
 		'../model/ParseException', '../model/Type', '../model/ValidateException', 'sap/base/util/ObjectPath',
-		"sap/ui/util/ActivityDetection", 'jquery.sap.script', 'jquery.sap.strings'
+		"sap/ui/util/ActivityDetection", 'jquery.sap.script'
 	], function(
 	jQuery,
 	BindingParser,
@@ -25,7 +25,7 @@ sap.ui.define([
 	ValidateException,
 	ObjectPath,
 	ActivityDetection
-	/*, jQuerySapScript, jQuerySapStrings */
+	/*, jQuerySapScript */
 ) {
 
 	"use strict";

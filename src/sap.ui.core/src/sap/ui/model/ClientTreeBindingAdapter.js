@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 				// slashes are used to separate levels. As in the data model not every path-part represents a level,
 				// the remaining slashes must be replaced by some other character. "_" is used
-				if (jQuery.sap.startsWith(sGroupId,"/")) {
+				if (sGroupId.startsWith("/")) {
 					sGroupId = sGroupId.substring(1, sGroupId.length);
 				}
 

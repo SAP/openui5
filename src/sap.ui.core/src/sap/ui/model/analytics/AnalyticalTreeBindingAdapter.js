@@ -611,7 +611,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 
 			// in case we collapsed a parent(chain) of the watermark node, we have to page, because we can not know how many
 			// nodes will move up after collapsing the subtree. This is important because the watermark node will never be visible
-			if (this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled) && this._oWatermark && jQuery.sap.startsWith(this._oWatermark.groupID, sGroupIDforCollapsingNode)) {
+			if (this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled) && this._oWatermark && (typeof sGroupIDforCollapsingNode == "string" && sGroupIDforCollapsingNode.length > 0 && this._oWatermark.groupID.startsWith(sGroupIDforCollapsingNode))) {
 				// move the watermark node to the parent of the collapsed node, because the auto-expand paging starting point needs to be moved
 				if (oNode && oNode.parent) {
 					this._oWatermark = {
@@ -632,7 +632,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			// All expanded nodes which start with 'sGroupIDforCollapsingNode', are basically children of it and also need to be collapsed
 			var that = this;
 			jQuery.each(this._mTreeState.expanded, function (sGroupID, oNodeState) {
-				if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode)) {
+				if (typeof sGroupIDforCollapsingNode == "string" && sGroupIDforCollapsingNode.length > 0 && sGroupID.startsWith(sGroupIDforCollapsingNode)) {
 					that._updateTreeState({groupID: sGroupID, expanded: false});
 				}
 			});
@@ -640,7 +640,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			var aDeselectedNodeIds = [];
 			// also remove selections from child nodes of the collapsed node
 			jQuery.each(this._mTreeState.selected, function (sGroupID, oNodeState) {
-				if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode)) {
+				if (typeof sGroupIDforCollapsingNode == "string" && sGroupIDforCollapsingNode.length > 0 && sGroupID.startsWith(sGroupIDforCollapsingNode)) {
 					oNodeState.selectAllMode = false;
 					that.setNodeSelection(oNodeState, false);
 					aDeselectedNodeIds.push(sGroupID);

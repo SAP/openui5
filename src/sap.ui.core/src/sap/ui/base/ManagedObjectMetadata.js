@@ -7,13 +7,15 @@ sap.ui.define([
 	'jquery.sap.global',
 	'./DataType',
 	'./Metadata',
-	'sap/base/util/ObjectPath'
+	'sap/base/util/ObjectPath',
+	"sap/base/strings/escapeRegExp"
 ],
 function(
 	jQuery,
 	DataType,
 	Metadata,
-	ObjectPath
+	ObjectPath,
+	escapeRegExp
 ) {
 	"use strict";
 
@@ -1830,7 +1832,7 @@ function(
 	 */
 	ManagedObjectMetadata.isGeneratedId = function(sId) {
 		sUIDPrefix = sUIDPrefix || sap.ui.getCore().getConfiguration().getUIDPrefix();
-		rGeneratedUID = rGeneratedUID || new RegExp( "(^|-{1,3})" + jQuery.sap.escapeRegExp(sUIDPrefix) );
+		rGeneratedUID = rGeneratedUID || new RegExp( "(^|-{1,3})" + escapeRegExp(sUIDPrefix) );
 
 		return rGeneratedUID.test(sId);
 	};

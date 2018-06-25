@@ -415,7 +415,7 @@ function(
 		var index;
 
 		while (sText) {
-			if (jQuery.sap.startsWithIgnoreCase(sText, sValue)) {
+			if ((typeof sValue == "string" && sValue != "" ? sText.toLowerCase().startsWith(sValue.toLowerCase()) : false)) {
 				return true;
 			}
 

@@ -1808,7 +1808,7 @@ sap.ui.define([
 		oCtrl.destroyItems();
 		for (var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
-			if (jQuery.sap.startsWith(sText, "CONDITIONPANEL_OPTION")) {
+			if (sText.startsWith("CONDITIONPANEL_OPTION")) {
 				// when for the specified type the resource does not exist use the normal string resource text
 				sText = this._oRb.getText("CONDITIONPANEL_OPTION" + aOperations[iOperation]);
 			}

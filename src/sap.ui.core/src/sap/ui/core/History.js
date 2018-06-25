@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/util/Storage"]
 			this._oStorage = Storage.getInstance(Storage.Type.local);
 
 			this._fFilter = mSettings.filter ? mSettings.filter : function(sHistoryValue, sValue) {
-				return sHistoryValue && (!sValue || (sValue && jQuery.sap.startsWithIgnoreCase(sHistoryValue, sValue)));
+				return sHistoryValue && (!sValue || (sValue && ((typeof sValue == "string" ? sHistoryValue.toLowerCase().startsWith(sValue.toLowerCase()) : false))));
 			};
 			this._fCheckHistory = mSettings.checkHistory ? mSettings.checkHistory : function(aHistory) {
 				return aHistory;

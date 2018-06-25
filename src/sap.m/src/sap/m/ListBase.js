@@ -17,6 +17,7 @@ sap.ui.define([
 	"./GroupHeaderListItem",
 	"./ListItemBase",
 	"./ListBaseRenderer",
+	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -33,6 +34,7 @@ function(
 	GroupHeaderListItem,
 	ListItemBase,
 	ListBaseRenderer,
+	capitalize,
 	jQueryDOM
 ) {
 	"use strict";
@@ -1163,7 +1165,7 @@ function(
 
 	// fire updateStarted event with update reason and actual/total info
 	ListBase.prototype._fireUpdateStarted = function(sReason, oInfo) {
-		this._sUpdateReason = jQuery.sap.charToUpperCase(sReason || "Refresh");
+		this._sUpdateReason = capitalize(sReason || "Refresh");
 		this.fireUpdateStarted({
 			reason : this._sUpdateReason,
 			actual : oInfo ? oInfo.actual : this.getItems(true).length,

@@ -3,15 +3,15 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', '../Device', "sap/ui/performance/trace/Interaction", 'jquery.sap.strings'],
-	function(
-		jQuery,
-		BaseObject,
-		ManagedObject,
-		ElementMetadata,
-		Device,
-		Interaction
-	) {
+sap.ui.define([
+	'jquery.sap.global',
+	'../base/Object',
+	'../base/ManagedObject',
+	'./ElementMetadata',
+	'../Device',
+	'sap/ui/performance/trace/Interaction'
+],
+	function(jQuery, BaseObject, ManagedObject, ElementMetadata, Device, Interaction) {
 	"use strict";
 
 	/**

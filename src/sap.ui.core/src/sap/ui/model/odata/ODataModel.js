@@ -1082,7 +1082,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 		}
 
 		if (fnCallBack) {
-			var bIsRelative = !jQuery.sap.startsWith(sPath, "/");
+			var bIsRelative = !sPath.startsWith("/");
 			if (sFullPath) {
 				var aParams = [],
 					sCustomParams = this.createCustomParams(mParameters);
@@ -1790,7 +1790,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 								if (aChangeRequests[j].method == "MERGE" || aChangeRequests[j].method == "PUT") {
 									//try to get the object to the uri from the model
 									sUrl = aChangeRequests[j].requestUri.replace(this.sServiceUrl + '/','');
-									if (!jQuery.sap.startsWith(sUrl , "/")) {
+									if (!sUrl.startsWith("/")) {
 										sUrl = "/" + sUrl;
 									}
 									oEntry = this._getObject(sUrl);
@@ -1811,7 +1811,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 		} else {
 			// refresh ETag from response directly. We can not wait for the refresh.
 			sUrl = oRequest.requestUri.replace(this.sServiceUrl + '/','');
-			if (!jQuery.sap.startsWith(sUrl , "/")) {
+			if (!sUrl.startsWith("/")) {
 				sUrl = "/" + sUrl;
 			}
 			oEntry = this._getObject(sUrl);
@@ -2452,7 +2452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 		jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
 
 		// for batch remove starting / if any
-		if (jQuery.sap.startsWith(sPath, "/")) {
+		if (sPath.startsWith("/")) {
 			sPath = sPath.substr(1);
 		}
 
@@ -3064,7 +3064,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			var sPath = oContext.getPath();
 			delete this.mContexts[sPath]; // contexts are stored starting with /
 			// remove starting / if any
-			if (jQuery.sap.startsWith(sPath, "/")) {
+			if (sPath.startsWith("/")) {
 				sPath = sPath.substr(1);
 			}
 			delete this.oRequestQueue[sPath];
@@ -3107,7 +3107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			sUrl,
 			oRequest;
 
-		if (!jQuery.sap.startsWith(sPath, "/")) {
+		if (!sPath.startsWith("/")) {
 			sPath = "/" + sPath;
 		}
 		var oEntityMetadata = this.oMetadata._getEntityTypeByPath(sPath);
@@ -3199,7 +3199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			sPath = sPath.substr(0, sPath.indexOf('?'));
 		}
 
-		if (!oContext && !jQuery.sap.startsWith(sPath,"/")) {
+		if (!oContext && !sPath.startsWith("/")) {
 			// we need to add a / due to compatibility reasons; but only if there is no context
 			sPath = '/' + sPath;
 			jQuery.sap.log.warning(this + " path " + sPath + " should be absolute if no Context is set");

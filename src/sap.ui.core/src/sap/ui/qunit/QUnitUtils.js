@@ -18,9 +18,20 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	'sap/ui/Device',
 	'sap/ui/base/DataType',
 	'sap/ui/events/KeyCodes',
+	"sap/base/strings/camelize",
+	"sap/base/strings/capitalize",
 	'jquery.sap.script'
 ],
-	function(jQuery, ObjectPath, Device, DataType, KeyCodes/*, jQuerySap1 */) {
+	function(
+		jQuery,
+		ObjectPath,
+		Device,
+		DataType,
+		KeyCodes,
+		camelize,
+		capitalize
+		/*, jQuerySapScript, jQuerySapKeycodes */
+	) {
 	"use strict";
 
 	if ( typeof QUnit !== 'undefined' ) {
@@ -347,10 +358,10 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		}
 		sKeyCode = sKeyCode.toLowerCase();
 		// replace underscores with dash character such as 'ARROW_LEFT' --> 'ARROW-LEFT' and then camelize it --> 'ArrowLeft'
-		sKeyCode = jQuery.sap.camelCase(sKeyCode.replace(/_/g, "-"));
+		sKeyCode = camelize(sKeyCode.replace(/_/g, "-"));
 
 		// capitalize key
-		var sKey = jQuery.sap.charToUpperCase(sKeyCode);
+		var sKey = capitalize(sKeyCode);
 
 		// remove "Digit" and "Numpad" from the resulting string as this info is present within the Location property and not the key property
 		// e.g. "Digit9" --> "9"
