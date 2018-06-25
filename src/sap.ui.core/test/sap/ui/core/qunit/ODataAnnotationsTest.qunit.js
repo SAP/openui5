@@ -5145,7 +5145,7 @@ function runODataAnnotationTests() {
 
 	var fnTestNestedAnnotations = function(iModelVersion, assert) {
 		var done = assert.async();
-		assert.expect(341);
+		assert.expect(368);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Nested Annotations"];
@@ -5189,6 +5189,16 @@ function runODataAnnotationTests() {
 						"com.sap.vocabularies.UI.v1.LineItem#foo@com.sap.vocabularies.UI.v1.Criticality#bar" : {
 							"Path" : "Criticality"
 						},
+						"com.sap.vocabularies.UI.v1.Facets" : [{
+							"Facets" : [{
+								"Target" : {
+									"AnnotationPath" : "Supplier/@com.sap.vocabularies.UI.v1.Identification"
+								},
+								"RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet"
+							}],
+//TODO							"Facets@com.sap.vocabularies.Common.v1.Label" : {"String" : "Supplier Identification"},
+							"RecordType" : "com.sap.vocabularies.UI.v1.CollectionFacet"
+						}],
 						"com.sap.vocabularies.Common.v1.Text": {
 							"Term": {
 								"Name": "TextArrangement",
@@ -5316,8 +5326,11 @@ function runODataAnnotationTests() {
 				assert.deepEqual(
 					oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem"]
 						["com.sap.vocabularies.UI.v1.Criticality"],
-					{"Path" : "Criticality"},
-					"annotation at array value still present");
+					{"Path" : "Criticality"}, "annotation at array value still present");
+				assert.deepEqual(
+					oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.Facets"][0]
+						.Facets["com.sap.vocabularies.Common.v1.Label"],
+					{"String" : "Supplier Identification"}, "another annotation at array");
 				assert.deepEqual(oAnnotations["NorthwindModel.Product"], oExpectedProductAnnotations);
 				deepContains(assert, oAnnotations["NorthwindModel.Product"], oExpectedProductAnnotations, "NorthwindModel.Product");
 				deepContains(assert, JSON.parse(JSON.stringify(oAnnotations["NorthwindModel.Product"])), oExpectedProductAnnotations, "Cloned NorthwindModel.Product");
