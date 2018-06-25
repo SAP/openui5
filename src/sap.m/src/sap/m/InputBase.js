@@ -270,7 +270,7 @@ function(
 		 * Internal variable used to handle html input firing input events when value contains accented characters in IE10+
 		 * @private
 		 */
-		this._bIgnoreNextInputEventNonASCII = false;
+		this._bIgnoreNextInputEventNonASCII = false; // TODO remove after 1.62 version
 
 		/**
 		 * Indicates whether the <code>onAfterRendering</code> event was called.
@@ -348,7 +348,7 @@ function(
 	 * @private
 	 */
 	InputBase.prototype.onfocusin = function(oEvent) {
-		// iE10+ fires the input event when an input field with a native placeholder is focused
+		// iE10+ fires the input event when an input field with a native placeholder is focused// TODO remove after 1.62 version
 		this._bIgnoreNextInput = !this.bShowLabelAsPlaceholder &&
 			Device.browser.msie &&
 			Device.browser.version > 9 &&
@@ -467,7 +467,7 @@ function(
 			this.setValue(sValue);
 
 			if (oEvent) {
-			//IE10+ fires Input event when Non-ASCII characters are used. As this is a real change
+			//IE10+ fires Input event when Non-ASCII characters are used. As this is a real change// TODO remove after 1.62 version
 			// event shouldn't be ignored.
 				this._bIgnoreNextInputEventNonASCII = false;
 			}
@@ -577,6 +577,7 @@ function(
 		}
 	};
 
+	// TODO remove after 1.62 version
 	/**
 	 * Handle DOM input event.
 	 *
@@ -639,7 +640,7 @@ function(
 	 */
 	InputBase.prototype.onkeydown = function(oEvent) {
 
-		// Prevents browser back to previous page in IE
+		// Prevents browser back to previous page in IE// TODO remove after 1.62 version
 		if (this.getDomRef("inner").getAttribute("readonly") && oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
 			oEvent.preventDefault();
 		}
@@ -789,8 +790,8 @@ function(
 		// respect to max length
 		sValue = this._getInputValue(sValue);
 
-		//Ignore the input event which is raised by MS Internet Explorer when non-ASCII characters are typed in
-		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(sValue)){
+		//Ignore the input event which is raised by MS Internet Explorer when non-ASCII characters are typed in// TODO remove after 1.62 version
+		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(sValue)){// TODO remove after 1.62 version
 			this._bIgnoreNextInput = true;
 		}
 
@@ -990,8 +991,8 @@ function(
 		// update the dom value when necessary
 		this.updateDomValue(sValue);
 
-		//Ignore the input event which is raised by MS Internet Explorer when non-ASCII characters are typed in
-		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(sValue)){
+		//Ignore the input event which is raised by MS Internet Explorer when non-ASCII characters are typed in// TODO remove after 1.62 version
+		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(sValue)){// TODO remove after 1.62 version
 			this._bIgnoreNextInputEventNonASCII = true;
 		}
 

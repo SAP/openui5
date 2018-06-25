@@ -268,7 +268,7 @@ module.exports = function(grunt, config) {
 			var sapUiBuildtime = config.buildtime;
 			var version = config.package && config.package.version;
 			var useDefaultTemplate = grunt.option('default-template');
-			
+
 			if (!useDefaultTemplate) {
 				var sapUiVersionJson = {
 					name: "openui5",
@@ -321,7 +321,8 @@ module.exports = function(grunt, config) {
 		    'npm-install:cldr-localenames-modern@32.0.0',
 		    'npm-install:cldr-cal-islamic-modern@32.0.0',
 		    'npm-install:cldr-cal-japanese-modern@32.0.0',
-		    'npm-install:cldr-cal-persian-modern@32.0.0'
+		    'npm-install:cldr-cal-persian-modern@32.0.0',
+		    'npm-install:cldr-cal-buddhist-modern@32.0.0'
 		],
 		'cldr-generate': function() {
 			var done = this.async();

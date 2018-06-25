@@ -369,6 +369,15 @@
 		}
 	});
 
+	QUnit.test("Tooltip set on HierarchicalSelect", function (assert) {
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oSelect = oAnchorBar._getHierarchicalSelect(),
+			oRB = library.i18nModel.getResourceBundle(),
+			sExpectedTooltip = oRB.getText("ANCHOR_BAR_OVERFLOW");
+
+		assert.strictEqual(oSelect.getTooltip(), sExpectedTooltip, "Tooltip correctly set.");
+	});
+
 	QUnit.test("Count information", function (assert) {
 		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
 			iAnchorBarContentLength = aAnchorBarContent.length,

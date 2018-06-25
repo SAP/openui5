@@ -115,6 +115,8 @@ sap.ui.define([
 		//case 2: on a real tablet or a desktop we need both as the size may change
 		this._bHasButtonsBar = Device.system.tablet || Device.system.desktop;
 
+		this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
+
 		this._oSelect = this._getHierarchicalSelect();
 
 		//case 2 requires the scrolling anchorBar
@@ -133,8 +135,6 @@ sap.ui.define([
 			//listen to resize
 			this._sResizeListenerId = undefined; //defined in onAfterRendering
 		}
-
-		this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
 
 		//composite controls
 		this.setDesign("Transparent"); //styling is coming from css
@@ -504,6 +504,7 @@ sap.ui.define([
 			this.setAggregation('_select', new HierarchicalSelect({
 				width: "100%",
 				icon: "sap-icon://slim-arrow-down",
+				tooltip: this.oLibraryResourceBundleOP.getText("ANCHOR_BAR_OVERFLOW"),
 				change: jQuery.proxy(this._onSelectChange, this)
 			}));
 		}
@@ -969,7 +970,7 @@ sap.ui.define([
 			oObjectPageLayout = this.getParent(),
 			bUseIconTabBar = oObjectPageLayout.getUseIconTabBar(),
 			sCurrentSectionId = oObjectPageLayout.getSelectedSection(),
-			aSections = oObjectPageLayout.getSections(),
+			aSections = oObjectPageLayout._getVisibleSections(),
 			aSubSections = [this.getDomRef()],
 			aCurrentSubSections = [];
 

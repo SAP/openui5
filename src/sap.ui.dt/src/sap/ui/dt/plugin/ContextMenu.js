@@ -78,7 +78,7 @@ sap.ui.define([
 		if (this.oContextMenuControl) {
 			this.oContextMenuControl.detachClosed(this._contextMenuClosed, this);
 			this.oContextMenuControl.detachOverflowButtonPressed(this._pressedOverflowButton, this);
-			this.oContextMenuControl.destroy();
+			this.oContextMenuControl.destroy(true); // "true" to suppress UI static area invalidation, see BCP#1880339211
 			delete this.oContextMenuControl;
 		}
 	};

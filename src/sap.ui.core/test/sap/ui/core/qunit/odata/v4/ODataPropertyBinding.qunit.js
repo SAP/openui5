@@ -976,38 +976,23 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
-		var mParams = {},
-			oMock = this.mock(PropertyBinding.prototype),
-			oPropertyBinding,
+		var oBinding,
+			oBindingMock = this.mock(PropertyBinding.prototype),
+			mEventParameters = {},
 			oReturn = {};
 
-		oMock.expects("attachEvent")
-			.withExactArgs("AggregatedDataStateChange", sinon.match.same(mParams))
-			.returns(oReturn);
-		oMock.expects("attachEvent").withExactArgs("change", sinon.match.same(mParams))
-			.returns(oReturn);
-		oMock.expects("attachEvent").withExactArgs("dataReceived", sinon.match.same(mParams))
-			.returns(oReturn);
-		oMock.expects("attachEvent").withExactArgs("dataRequested", sinon.match.same(mParams))
-			.returns(oReturn);
-		oMock.expects("attachEvent").withExactArgs("DataStateChange", sinon.match.same(mParams))
-			.returns(oReturn);
+		oBinding = this.oModel.bindProperty("Name");
 
-		oPropertyBinding = this.oModel.bindProperty("Name");
+		["AggregatedDataStateChange", "change", "dataReceived", "dataRequested", "DataStateChange"]
+		.forEach(function (sEvent) {
+			oBindingMock.expects("attachEvent")
+				.withExactArgs(sEvent, sinon.match.same(mEventParameters)).returns(oReturn);
 
-		assert.strictEqual(oPropertyBinding.attachEvent("AggregatedDataStateChange", mParams),
-			oReturn);
-		assert.strictEqual(oPropertyBinding.attachEvent("change", mParams),
-			oReturn);
-		assert.strictEqual(oPropertyBinding.attachEvent("dataReceived", mParams),
-			oReturn);
-		assert.strictEqual(oPropertyBinding.attachEvent("dataRequested", mParams),
-			oReturn);
-		assert.strictEqual(oPropertyBinding.attachEvent("DataStateChange", mParams),
-			oReturn);
+			assert.strictEqual(oBinding.attachEvent(sEvent, mEventParameters), oReturn);
+		});
 
 		assert.throws(function () {
-			oPropertyBinding.attachEvent("unsupportedEvent");
+			oBinding.attachEvent("unsupportedEvent");
 		}, new Error("Unsupported event 'unsupportedEvent': v4.ODataPropertyBinding#attachEvent"));
 	});
 

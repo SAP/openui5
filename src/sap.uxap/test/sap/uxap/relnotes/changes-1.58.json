@@ -37,6 +37,30 @@
         "type": "FIX",
         "text": " ObjectPageLayout: Infinity resizing loop fixed",
         "references": []
+      },
+      {
+        "id": "6bf511b5475647ab59cc733fa974ea6962b1be35",
+        "type": "FIX",
+        "text": " AnchorBar: Added tooltip to overflow menu",
+        "references": []
+      },
+      {
+        "id": "d3f537d27561a449d46c0f5ef7c7c52e0e47a058",
+        "type": "FIX",
+        "text": " ObjectPageSection: Default aria-labelledby adjusted",
+        "references": []
+      },
+      {
+        "id": "6a401c7ecfef7166b717fb9506a13d8e4184d944",
+        "type": "FIX",
+        "text": " uxap.AnchorBar: F6 navigation handling corrected",
+        "references": []
+      },
+      {
+        "id": "ad839bc02ae901cb4ac563bc2e0edc528562571f",
+        "type": "FIX",
+        "text": " uxap.ObjectPageSubSection: See more button accessibility improved",
+        "references": []
       }
     ]
   }

@@ -421,6 +421,120 @@
         "type": "FIX",
         "text": "sap.m.TileContent.less:Allignment issue in IE.",
         "references": []
+      },
+      {
+        "id": "2c185dbb77e8a59f99c847e05b48baf8d5463136",
+        "type": "FEATURE",
+        "text": " sap.m.Tokenizer - N-more Integration",
+        "references": []
+      },
+      {
+        "id": "84158663c4e59c1f8d74ae6c81a5bdffd2f28819",
+        "type": "FIX",
+        "text": " Wizard: Invalidation when going to next step prevented",
+        "references": []
+      },
+      {
+        "id": "47076d87e5592a84dbf6cf37f2603ec2f2431552",
+        "type": "FIX",
+        "text": " m.DateTimePicker: Closing software keyboard leaves correct height",
+        "references": []
+      },
+      {
+        "id": "80c3e175e8fcb1a407c4d6223c4a83eda36dbe71",
+        "type": "FIX",
+        "text": " m.FacetFilterList: Active state is never set internally",
+        "references": []
+      },
+      {
+        "id": "a98f94d60b7f9c858dedeee3cd24401227ca27aa",
+        "type": "FIX",
+        "text": " sap.m.BusyIndicator: Outline for focused busy indicator improved",
+        "references": []
+      },
+      {
+        "id": "4b82add0cb8d11b2905a6132e53de98361acdbd0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Color in the footer is now correct",
+        "references": []
+      },
+      {
+        "id": "bbd75915238d36670ec79f06a717c4ca44162b20",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Facet Buttons announced only once",
+        "references": []
+      },
+      {
+        "id": "b852acf2a93f05e9198843a5509677f7c1a74d65",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: renew item navigation after page load",
+        "references": []
+      },
+      {
+        "id": "98834da40522e3e88e56fe3f3ae4b7b4cad9cfe8",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: DnD visual improvements",
+        "references": []
+      },
+      {
+        "id": "2eabdf427e340074391bc76957e6aac06d7e01f9",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Overflow list is now open on long drag-over",
+        "references": []
+      },
+      {
+        "id": "c173db1214047804fe2807443b1be14909326419",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: headerBackgroundDesign now works correctly",
+        "references": []
+      },
+      {
+        "id": "20bb89ff59e098a296594d43fb3dc21327c3751e",
+        "type": "FIX",
+        "text": " sap.m.Label: Color is now correct inside an active list item",
+        "references": []
+      },
+      {
+        "id": "141fdd92280e5f769479a612441d4455441993e0",
+        "type": "FIX",
+        "text": " sap.m.Menu: F4 closes the menu",
+        "references": []
+      },
+      {
+        "id": "72768bb5a8bff319d8a7e4eb22e01db912bc0b07",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Accessibility test page added",
+        "references": []
+      },
+      {
+        "id": "541523b8c0fe36c3c86a1b8006d3805bc678bf46",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Focus is now on the list item after back navigation",
+        "references": []
+      },
+      {
+        "id": "ff8d39d52d2b8a0a1b6ad9f730d09edaedc64238",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Segmented buttons now have tooltips",
+        "references": []
+      },
+      {
+        "id": "1ea1ad358636d1d212dbe525c2ba4939794b14ec",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Press event is fired on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "a7990f7ab07c8e17b35410c3e5ab5f8581d0d0fb",
+        "type": "FIX",
+        "text": " sap.m.Wizard: showNextButton property is persisted for all steps",
+        "references": []
+      },
+      {
+        "id": "f17e36d577958ecaf3b67c6d2962c3ac495ceca5",
+        "type": "FIX",
+        "text": "sap.m.themes.base.FeedListItem: Allignmnet effected due to Inline-block property of sap.m.link",
+        "references": []
       }
     ]
   }

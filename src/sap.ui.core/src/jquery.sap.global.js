@@ -96,38 +96,8 @@ sap.ui.define([
 		 */
 		jQuery.support.retina = Device.support.retina;
 
-		jQuery.extend(jQuery.support, {touch: Device.support.touch}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
-
-		var aPrefixes = ["Webkit", "ms", "Moz"];
-		var oStyle = document.documentElement.style;
-
-		var preserveOrTestCssPropWithPrefixes = function(detectionName, propName) {
-			if (jQuery.support[detectionName] === undefined) {
-
-				if (oStyle[propName] !== undefined) { // without vendor prefix
-					jQuery.support[detectionName] = true;
-					// If one of the flex layout properties is supported without the prefix, set the flexBoxPrefixed to false
-					if (propName === "boxFlex" || propName === "flexOrder" || propName === "flexGrow") {
-						// Exception for Chrome up to version 28
-						// because some versions implemented the non-prefixed properties without the functionality
-						if (!Device.browser.chrome || Device.browser.version > 28) {
-							jQuery.support.flexBoxPrefixed = false;
-						}
-					}
-					return;
-
-				} else { // try vendor prefixes
-					propName = propName.charAt(0).toUpperCase() + propName.slice(1);
-					for (var i in aPrefixes) {
-						if (oStyle[aPrefixes[i] + propName] !== undefined) {
-							jQuery.support[detectionName] = true;
-							return;
-						}
-					}
-				}
-				jQuery.support[detectionName] = false;
-			}
-		};
+		// this is also defined by jquery-mobile-custom.js, but this information is needed earlier
+		jQuery.support.touch = Device.support.touch;
 
 		/**
 		 * Whether the current browser supports (2D) CSS transforms
@@ -135,7 +105,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.cssTransforms
 		 */
-		preserveOrTestCssPropWithPrefixes("cssTransforms", "transform");
+		jQuery.support.cssTransforms = true;
 
 		/**
 		 * Whether the current browser supports 3D CSS transforms
@@ -143,7 +113,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.cssTransforms3d
 		 */
-		preserveOrTestCssPropWithPrefixes("cssTransforms3d", "perspective");
+		jQuery.support.cssTransforms3d = true;
 
 		/**
 		 * Whether the current browser supports CSS transitions
@@ -151,7 +121,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.cssTransitions
 		 */
-		preserveOrTestCssPropWithPrefixes("cssTransitions", "transition");
+		jQuery.support.cssTransitions = true;
 
 		/**
 		 * Whether the current browser supports (named) CSS animations
@@ -159,7 +129,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.cssAnimations
 		 */
-		preserveOrTestCssPropWithPrefixes("cssAnimations", "animationName");
+		jQuery.support.cssAnimations = true;
 
 		/**
 		 * Whether the current browser supports CSS gradients. Note that ANY support for CSS gradients leads to "true" here, no matter what the syntax is.
@@ -167,20 +137,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.cssGradients
 		 */
-		if (jQuery.support.cssGradients === undefined) {
-			var oElem = document.createElement('div'),
-			oStyle = oElem.style;
-			try {
-				oStyle.backgroundImage = "linear-gradient(left top, red, white)";
-				oStyle.backgroundImage = "-moz-linear-gradient(left top, red, white)";
-				oStyle.backgroundImage = "-webkit-linear-gradient(left top, red, white)";
-				oStyle.backgroundImage = "-ms-linear-gradient(left top, red, white)";
-				oStyle.backgroundImage = "-webkit-gradient(linear, left top, right bottom, from(red), to(white))";
-			} catch (e) {/* no support...*/}
-			jQuery.support.cssGradients = (oStyle.backgroundImage && oStyle.backgroundImage.indexOf("gradient") > -1);
-
-			oElem = null; // free for garbage collection
-		}
+		jQuery.support.cssGradients = true;
 
 		/**
 		 * Whether the current browser supports only prefixed flexible layout properties
@@ -188,7 +145,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.flexBoxPrefixed
 		 */
-		jQuery.support.flexBoxPrefixed = true;	// Default to prefixed properties
+		jQuery.support.flexBoxPrefixed = false;
 
 		/**
 		 * Whether the current browser supports the OLD CSS3 Flexible Box Layout directly or via vendor prefixes
@@ -196,7 +153,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.flexBoxLayout
 		 */
-		preserveOrTestCssPropWithPrefixes("flexBoxLayout", "boxFlex");
+		jQuery.support.flexBoxLayout = false;
 
 		/**
 		 * Whether the current browser supports the NEW CSS3 Flexible Box Layout directly or via vendor prefixes
@@ -204,7 +161,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.newFlexBoxLayout
 		 */
-		preserveOrTestCssPropWithPrefixes("newFlexBoxLayout", "flexGrow");	// Use a new property that IE10 doesn't support
+		jQuery.support.newFlexBoxLayout = true;
 
 		/**
 		 * Whether the current browser supports the IE10 CSS3 Flexible Box Layout directly or via vendor prefixes
@@ -212,12 +169,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.ie10FlexBoxLayout
 		 */
-		// Just using one of the IE10 properties that's not in the new FlexBox spec
-		if (!jQuery.support.newFlexBoxLayout && oStyle.msFlexOrder !== undefined) {
-			jQuery.support.ie10FlexBoxLayout = true;
-		} else {
-			jQuery.support.ie10FlexBoxLayout = false;
-		}
+		jQuery.support.ie10FlexBoxLayout = false;
 
 		/**
 		 * Whether the current browser supports any kind of Flexible Box Layout directly or via vendor prefixes
@@ -225,11 +177,7 @@ sap.ui.define([
 		 * @private
 		 * @name jQuery.support.hasFlexBoxSupport
 		 */
-		if (jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
-			jQuery.support.hasFlexBoxSupport = true;
-		} else {
-			jQuery.support.hasFlexBoxSupport = false;
-		}
+		jQuery.support.hasFlexBoxSupport = true;
 	}());
 
 	// XHR overrides for IE
@@ -1172,6 +1120,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
+	 * @deprecated since 1.58 use <code>sap/base/util/ObjectPath</code> instead
 	 */
 	jQuery.sap.getObject = function(sName, iNoCreates, oContext) {
 		var oObject = oContext || window,
@@ -1211,6 +1160,7 @@ sap.ui.define([
 	 * @param {object} [oContext=window] the context to execute the search in
 	 * @public
 	 * @static
+	 * @deprecated since 1.58 use <code>sap/base/util/ObjectPath</code> instead
 	 */
 	jQuery.sap.setObject = function (sName, vValue, oContext) {
 		var oObject = oContext || window,
@@ -1610,6 +1560,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @static
+		 * @deprecated since 1.58 use {@link sap.ui.require_toUrl} instead
 		 */
 		jQuery.sap.getModulePath = function(sModuleName, sSuffix) {
 			return jQuery.sap.getResourcePath(ui5ToRJS(sModuleName), sSuffix);
@@ -1661,7 +1612,7 @@ sap.ui.define([
 		 * @param {string} sResourceName unified resource name of the resource
 		 * @returns {string} URL to load the resource from
 		 * @public
-		 * @experimental Since 1.27.0
+		 * @deprecated since 1.58 use {@link sap.ui.require_toUrl} instead
 		 */
 		jQuery.sap.getResourcePath = function(sResourceName, sSuffix) {
 			// if no suffix was given and if the name is not empty, try to guess the suffix from the last segment

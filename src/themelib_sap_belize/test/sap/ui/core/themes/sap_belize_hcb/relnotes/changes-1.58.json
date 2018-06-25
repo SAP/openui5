@@ -55,6 +55,18 @@
         "type": "FIX",
         "text": " sap_belize: @sapPositiveColor contrast ratio fixed",
         "references": []
+      },
+      {
+        "id": "c173db1214047804fe2807443b1be14909326419",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: headerBackgroundDesign now works correctly",
+        "references": []
+      },
+      {
+        "id": "e638f3c632e3e870c953d4397907f948c32f621d",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Focus outline fixed",
+        "references": []
       }
     ]
   }

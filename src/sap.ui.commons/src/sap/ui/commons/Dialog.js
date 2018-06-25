@@ -323,9 +323,6 @@ sap.ui.define([
 		Dialog.prototype.onAfterRendering = function () {
 
 			var $content = this.$("cont");
-			var bIsIE9Or10 = !!sap.ui.Device.browser.internet_explorer &&
-				(sap.ui.Device.browser.version == 9 || sap.ui.Device.browser.version == 10);
-			var bIsRTLOn = sap.ui.getCore().getConfiguration().getRTL();
 
 			var _minSize = this.getMinSize();
 			this._minWidth = _minSize.width;
@@ -358,27 +355,6 @@ sap.ui.define([
 					this.$().removeClass("sapUiDlgFlexHeight");
 				} // else normal case: Dialog content pushes its height to or beyond its minimum height - this works fine with "sapUiDlgFlexHeight"
 			}
-
-			// IE9+10 fix where subpixel font rendering may lead to rounding errors in RTL mode when the content has a width of "xyz.5px"
-			if (bIsIE9Or10 && $content.length > 0 && bIsRTLOn && !this._isSizeSet(this.getWidth())) {
-				var element = $content[0];
-				var hasGetComputedStyle = element.ownerDocument &&
-					element.ownerDocument.defaultView &&
-					element.ownerDocument.defaultView.getComputedStyle;
-
-				if (!hasGetComputedStyle) {
-					return;
-				}
-
-				var width = element.ownerDocument.defaultView.getComputedStyle(element).getPropertyValue("width");
-				if (width) {
-					var fWidth = parseFloat(width, 10);
-					if (fWidth % 1 == 0.5) {
-						// if all these conditions are fulfilled, the Dialog must be a LITTLE bit wider to avoid rounding errors
-						element.style.width = (fWidth + 0.01) + "px";
-					}
-				}
-			}
 		};
 
 		/**
@@ -391,7 +367,7 @@ sap.ui.define([
 			var sCloseBtnId = this.getId() + "-close";
 			if (oEvent.target.id === sCloseBtnId) {
 				this.close();
-				oEvent.preventDefault(); // avoid onbeforeunload event which happens at least in IE9 because of the "#" link target
+				oEvent.preventDefault(); // avoid onbeforeunload event which happens at least in IE9 because of the "#" link target// TODO remove after 1.62 version
 			}
 			return false;
 		};
@@ -637,7 +613,7 @@ sap.ui.define([
 			this.sLastRelevantNavigation = null;
 
 			if (!this._bInitialFocusSet) {
-				// since IE9 calls first "onfocusin" it has to be checked if the initial focus was set already
+				// since IE9 calls first "onfocusin" it has to be checked if the initial focus was set already// TODO remove after 1.62 version
 				return;
 			}
 

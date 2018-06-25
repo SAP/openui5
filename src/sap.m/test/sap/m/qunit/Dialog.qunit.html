@@ -42,7 +42,7 @@
 
 			sap.ui.test.qunit.delayTestStart();
 
-			function overwriteAnimationIE(oDialog) {
+			function overwriteAnimationIE(oDialog) {// TODO remove after 1.62 version
 				if (sap.ui.Device.browser.msie) {
 					// Sinon fake timer doesn't work correctly with jQuery fadeIn. The fadeIn Animation which is used in IE9
 					// can't be controlled by the sinon fake timer. Therefore the animation has to be overwritten with no
@@ -494,9 +494,7 @@
 				oDialog.destroy();
 			});
 
-			if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
-				// this test is designed for phone and taken out from IE9 because it's not relevate to IE9
-				// and fails for some unknown reason
+				// this test is designed for phone
 				QUnit.test("Set contentWidth to a fixed value on phone", function (assert) {
 					var oSystem = {
 						desktop: false,
@@ -544,7 +542,6 @@
 					assert.ok(marginCompare($Dialog.width(), iValue), "Portrait: dialog should also be as big as content");
 					oDialog.destroy();
 				});
-			}
 
 			QUnit.test("set ContentWidth/ContentHeight to percentage value", function (assert) {
 				var oSystem = {

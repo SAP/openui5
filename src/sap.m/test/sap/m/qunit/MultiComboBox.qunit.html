@@ -3450,6 +3450,7 @@
 		oStubSetSelection.withArgs("item").returns(oItem);
 		oStubSetSelection.withArgs("listItemUpdated").returns(true);
 
+		this.clock.tick(500);
 		oMultiComboBox.setSelection(oFakeEvent);
 
 		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when a new token is added");
@@ -4685,6 +4686,10 @@
 			oFakeEvent = {};
 
 		// act
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		//act
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
 
 		// assert
@@ -4699,6 +4704,9 @@
 		var oMultiComboBox = new sap.m.MultiComboBox().placeAt("MultiComboBox-content"),
 			oStub = this.stub(oMultiComboBox, "fireChangeEvent"),
 			oFakeEvent = {};
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
 
 		// act
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
@@ -5017,7 +5025,6 @@
 				]
 			}).placeAt("MultiComboBox-content"),
 			oFakeEvent = new sap.ui.base.Event,
-			oHandleFocusleaveStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter"),
 			fnTapSpy = sinon.spy(oMultiComboBox, "onfocusin");
 
 		oFakeEvent.relatedControlId = oMultiComboBox.getPicker().getId();
@@ -5277,9 +5284,8 @@
 		});
 
 		var oMultiComboBox = new sap.m.MultiComboBox(),
-				oMultiComboBoxPicker = oMultiComboBox.getPicker(),
-				oFakeEvent = null,
-				oFocusinStub = this.stub(oMultiComboBox, "focus");
+			oFakeEvent = null,
+			oFocusinStub = this.stub(oMultiComboBox, "focus");
 
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
@@ -5291,6 +5297,61 @@
 		assert.strictEqual(oFocusinStub.callCount, 0, "Focus should not be called");
 
 		oMultiComboBox.destroy();
+		oFocusinStub.restore()
+	});
+
+	QUnit.module("Collapsed state (N-more)", {
+		beforeEach : function() {
+			var aItems = [new sap.ui.core.Item({text: "XXXX"}),
+				new sap.ui.core.Item({text: "XXXX"}),
+				new sap.ui.core.Item({text: "XXXX"}),
+				new sap.ui.core.Item({text: "XXXX"})];
+
+			this.oMCB1 = new sap.m.MultiComboBox({
+				items: aItems,
+				selectedItems: aItems,
+				width: "200px"
+			});
+			this.oMCB1.placeAt("MultiComboBox-content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMCB1.destroy();
+		}
+	});
+
+	QUnit.test("onfocusin", function(assert) {
+		var oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator"),
+			oEventMock = {
+				target : {
+					classList: {
+						contains: function () {
+							return false;
+						}
+					}
+				}
+			};
+
+		//assert
+		assert.ok(oIndicator[0], "A n-more label is rendered");
+
+		//close and open the picker
+		this.oMCB1.onfocusin(oEventMock);
+		// assert
+		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
+	});
+
+	QUnit.test("SelectedItems Popover's interaction", function(assert) {
+		// act
+		this.oMCB1.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(200);
+
+		// deselect the first item
+		jQuery(this.oMCB1.getPicker().getContent()[0].getItems()[0]).tap();
+		this.clock.tick(200);
+		// assert
+		assert.strictEqual(this.oMCB1.getSelectedItems().length, 3, "A selected item was removed after deselecting an item from the popover");
 	});
 
 

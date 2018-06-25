@@ -31,6 +31,18 @@
         "type": "FEATURE",
         "text": " MultiInput condensed mode support",
         "references": []
+      },
+      {
+        "id": "0547bae800622b2ee055f66bca146a1381c7095e",
+        "type": "FIX",
+        "text": " Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": []
+      },
+      {
+        "id": "ce9551a589d3d93ad30dcf0b7bbfd6ea44851cc5",
+        "type": "FIX",
+        "text": " Table: Avoid layout and row updates if the table is invisible",
+        "references": []
       }
     ]
   }

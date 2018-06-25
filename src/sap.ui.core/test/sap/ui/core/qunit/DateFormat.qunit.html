@@ -747,22 +747,44 @@
 		var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
 		var sPattern = "yyyy 'Week' ww EEEE";
 
-		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			pattern: sPattern
-		});
+		}, new sap.ui.core.Locale("en_US"));
 		var sFormatted = "2018 Week 12 Friday";
 
 		assert.equal(oDateFormat.format(oDate), sFormatted, "2018-12 Friday, Friday in en-US");
 		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
 
-		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
 		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			pattern: sPattern
-		});
+		}, new sap.ui.core.Locale("de_DE"));
 		sFormatted = "2018 Week 12 Freitag";
 
 		assert.equal(oDateFormat.format(oDate), sFormatted, "2018-12 Freitag in de-DE");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+
+
+	QUnit.test("format and parse week and dayName first week of year", function(assert) {
+		var oDate = new Date(2017, 0, 1); // 1st Jan 2017
+		var sPattern = "yyyy 'Week' ww EEEE";
+
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		}, new sap.ui.core.Locale("en_US"));
+		var sFormatted = "2017 Week 01 Sunday";
+
+		assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2018-12 Friday, Friday in en-US");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		}, new sap.ui.core.Locale("de_DE"));
+		sFormatted = "2017 Week 01 Sonntag";
+
+		assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2018-12 Freitag in de-DE");
 		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
 
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");
@@ -1206,6 +1228,78 @@
 		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Persian}, "en", "yyyy-MM-dd, default range, en with calendar type Persian");
 		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Persian}, "en", "default style, range [-9, 0], en with calendar type Persian");
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "en", "style long, range [1, 5], en with calendar type Persian");
+	});
+
+	QUnit.module("Buddhist Date");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	QUnit.test("format date to Buddhist type", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Buddhist
+			}, new sap.ui.core.Locale("th_TH"));
+
+		assert.equal(oDateFormat.format(oDate), "4 ก.ค. 2544", "Date is formatted in Buddhist calendar");
+	});
+
+	QUnit.test("format date to Buddhist type with relative", function(assert) {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Buddhist}, "th_TH", "yyyy-MM-dd, default range, en with calendar type Buddhist");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Buddhist}, "th_TH", "default style, range [-9, 0], en with calendar type Buddhist");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Buddhist}, "th_TH", "style long, range [1, 5], en with calendar type Buddhist");
+	});
+
+	QUnit.test("parse date to Buddhist type", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Buddhist
+			}, new sap.ui.core.Locale("th_TH"));
+
+		var oDate = oDateFormat.parse("4 ก.ค. 2544");
+		assert.ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		assert.equal(oDate.getFullYear(), 2001, "Year 2001");
+		assert.equal(oDate.getMonth(), 6, "Month July");
+		assert.equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	QUnit.test("parse date to Buddhist type with relative", function(assert) {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Buddhist}, "th_TH", "yyyy-MM-dd, default range, en with calendar type Buddhist");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Buddhist}, "th_TH", "default style, range [-9, 0], en with calendar type Buddhist");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Buddhist}, "th_TH", "style long, range [1, 5], en with calendar type Buddhist");
+	});
+
+	QUnit.module("Buddhist Date in locale en");
+
+	var oDate = new Date("Wed Jul 4 2001");
+
+	QUnit.test("format date to Buddhist type with locale en", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Buddhist
+			});
+
+		assert.equal(oDateFormat.format(oDate), "Jul 4, 2544 BE", "Date is formatted in Buddhist calendar");
+	});
+
+	QUnit.test("format date to Buddhist type with relative and locale en", function(assert) {
+		doTestRelative(true, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Buddhist}, "en", "yyyy-MM-dd, default range, en with calendar type Buddhist");
+		doTestRelative(true, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Buddhist}, "en", "default style, range [-9, 0], en with calendar type Buddhist");
+		doTestRelative(true, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Buddhist}, "en", "style long, range [1, 5], en with calendar type Buddhist");
+	});
+
+	QUnit.test("parse date to Buddhist type with locale en", function(assert) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				calendarType: sap.ui.core.CalendarType.Buddhist
+			});
+
+		var oDate = oDateFormat.parse("Jul 4, 2544");
+		assert.ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
+		assert.equal(oDate.getFullYear(), 2001, "Year 2011");
+		assert.equal(oDate.getMonth(), 6, "Month July");
+		assert.equal(oDate.getDate(), 4, "Day 4th");
+	});
+
+	QUnit.test("parse date to Buddhist type with relative and locale en", function(assert) {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Buddhist}, "en", "yyyy-MM-dd, default range, en with calendar type Buddhist");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Buddhist}, "en", "default style, range [-9, 0], en with calendar type Buddhist");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Buddhist}, "en", "style long, range [1, 5], en with calendar type Buddhist");
 	});
 
 

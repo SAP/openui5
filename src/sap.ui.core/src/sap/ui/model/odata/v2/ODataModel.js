@@ -3687,6 +3687,9 @@ sap.ui.define([
 				mParams.urlParameters = this._createFunctionImportParameters(oData.__metadata.created.key, sMethod, oPayload );
 				// clear data
 				oPayload = undefined;
+			} else {
+				//delete the uri flag when a new entity was created, since the uri for the create request is generated and does not point to a valid resource
+				delete oPayload.__metadata['uri'];
 			}
 		} else if (sUpdateMethod === "MERGE") {
 			sMethod = "MERGE";

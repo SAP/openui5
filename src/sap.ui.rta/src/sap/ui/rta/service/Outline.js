@@ -58,6 +58,9 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * @typedef {object} sap.ui.rta.service.Outline.OutlineObject
+	 * @since 1.56
+	 * @private
+	 * @ui5-restricted
 	 * @property {string} id - id of the control
 	 * @property {string} [instanceName] - text retrieved from node's designtime metadata getLabel()
 	 * @property {string} [name] - singular name from node's designtime metadata
@@ -66,7 +69,6 @@ sap.ui.define([
 	 * @property {string} [icon] - icon path for the node
 	 * @property {string} type - type of control node
 	 * @property {sap.ui.rta.service.Outline.OutlineObject[]} elements - outline data for child nodes
-	 * @public
 	 */
 
 	return function(oRta, fnPublish) {

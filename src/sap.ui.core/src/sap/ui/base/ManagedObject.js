@@ -2913,8 +2913,19 @@ sap.ui.define([
 			oModel,
 			that = this;
 
-		var fChangeHandler = function(oEvent) {
+		var fnChangeHandler = function(oEvent) {
 			that.setElementBindingContext(oBinding.getBoundContext(), sModelName);
+		};
+
+		var fnDataStateChangeHandler = function(oEvent) {
+			var oDataState = oBinding.getDataState();
+			if (!oDataState) {
+				return;
+			}
+			//inform generic refreshDataState method
+			if (that.refreshDataState) {
+				that.refreshDataState('', oDataState);
+			}
 		};
 
 		sModelName = oBindingInfo.model;
@@ -2926,11 +2937,16 @@ sap.ui.define([
 		if (oBindingInfo.suspended) {
 			oBinding.suspend(true);
 		}
-		oBinding.attachChange(fChangeHandler);
+		oBinding.attachChange(fnChangeHandler);
 		oBindingInfo.binding = oBinding;
-		oBindingInfo.modelChangeHandler = fChangeHandler;
+		oBindingInfo.modelChangeHandler = fnChangeHandler;
+		oBindingInfo.dataStateChangeHandler = fnDataStateChangeHandler;
 
 		oBinding.attachEvents(oBindingInfo.events);
+
+		if (this.refreshDataState) {
+			oBinding.attachAggregatedDataStateChange(fnDataStateChangeHandler);
+		}
 
 		oBinding.initialize();
 	};
@@ -2976,6 +2992,9 @@ sap.ui.define([
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				if (this.refreshDataState) {
+					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+				}
 				oBindingInfo.binding.destroy();
 			}
 			delete this.mObjectBindingInfos[sModelName];
@@ -3186,7 +3205,7 @@ sap.ui.define([
 			sInternalType = oPropertyInfo._iKind === /* PROPERTY */ 0 ? oPropertyInfo.type : oPropertyInfo.altTypes[0],
 			that = this,
 			aBindings = [],
-			fModelChangeHandler = function(oEvent){
+			fnModelChangeHandler = function(oEvent){
 				that.updateProperty(sName);
 				//clear Messages from messageManager
 				var oDataState = oBinding.getDataState();
@@ -3194,7 +3213,7 @@ sap.ui.define([
 					var oControlMessages = oDataState.getControlMessages();
 					if (oControlMessages && oControlMessages.length > 0) {
 						var oMessageManager = sap.ui.getCore().getMessageManager();
-						oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid DataStateChange event to fire
+						oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid 'dataStateChange' event to fire
 						if (oControlMessages) {
 							oMessageManager.removeMessages(oControlMessages);
 						}
@@ -3203,13 +3222,14 @@ sap.ui.define([
 				}
 				if (oBinding.getBindingMode() === BindingMode.OneTime && oBinding.isResolved()) {
 					// if binding is one time but not resolved yet we don't destroy it yet.
-					oBinding.detachChange(fModelChangeHandler);
+					oBinding.detachChange(fnModelChangeHandler);
+					oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
 					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
 				}
 			},
-			fDataStateChangeHandler = function(){
+			fnDataStateChangeHandler = function(){
 				var oDataState = oBinding.getDataState();
 				if (!oDataState) {
 					return;
@@ -3268,9 +3288,9 @@ sap.ui.define([
 			oBinding = aBindings[0];
 		}
 
-		oBinding.attachChange(fModelChangeHandler);
+		oBinding.attachChange(fnModelChangeHandler);
 		if (this.refreshDataState) {
-			oBinding.attachAggregatedDataStateChange(fDataStateChangeHandler);
+			oBinding.attachAggregatedDataStateChange(fnDataStateChangeHandler);
 		}
 
 		// set only one formatter function if any
@@ -3281,8 +3301,8 @@ sap.ui.define([
 
 		// Set additional information on the binding info
 		oBindingInfo.binding = oBinding;
-		oBindingInfo.modelChangeHandler = fModelChangeHandler;
-		oBindingInfo.dataStateChangeHandler = fDataStateChangeHandler;
+		oBindingInfo.modelChangeHandler = fnModelChangeHandler;
+		oBindingInfo.dataStateChangeHandler = fnDataStateChangeHandler;
 		oBinding.attachEvents(oBindingInfo.events);
 
 		oBinding.initialize();
@@ -3572,7 +3592,7 @@ sap.ui.define([
 	ManagedObject.prototype._bindAggregation = function(sName, oBindingInfo) {
 		var that = this,
 			oBinding,
-			fModelChangeHandler = function(oEvent){
+			fnModelChangeHandler = function(oEvent){
 				var sUpdater = "update" + sName.substr(0,1).toUpperCase() + sName.substr(1);
 				if (that[sUpdater]) {
 					var sChangeReason = oEvent && oEvent.getParameter("reason");
@@ -3585,14 +3605,25 @@ sap.ui.define([
 					that.updateAggregation(sName);
 				}
 			},
-			fModelRefreshHandler = function(oEvent){
+			fnModelRefreshHandler = function(oEvent){
 				var sRefresher = "refresh" + sName.substr(0,1).toUpperCase() + sName.substr(1);
 				if (that[sRefresher]) {
 					that[sRefresher](oEvent.getParameter("reason"));
 				} else {
-					fModelChangeHandler(oEvent);
+					fnModelChangeHandler(oEvent);
+				}
+			},
+			fnDataStateChangeHandler = function(oEvent) {
+				var oDataState = oBinding.getDataState();
+				if (!oDataState) {
+					return;
+				}
+				//inform generic refreshDataState method
+				if (that.refreshDataState) {
+					that.refreshDataState(sName, oDataState);
 				}
 			};
+
 			var oModel = this.getModel(oBindingInfo.model);
 			if (this.isTreeBinding(sName)) {
 				oBinding = oModel.bindTree(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.filters, oBindingInfo.parameters, oBindingInfo.sorter);
@@ -3608,14 +3639,19 @@ sap.ui.define([
 		}
 
 		oBindingInfo.binding = oBinding;
-		oBindingInfo.modelChangeHandler = fModelChangeHandler;
-		oBindingInfo.modelRefreshHandler = fModelRefreshHandler;
+		oBindingInfo.modelChangeHandler = fnModelChangeHandler;
+		oBindingInfo.modelRefreshHandler = fnModelRefreshHandler;
+		oBindingInfo.dataStateChangeHandler = fnDataStateChangeHandler;
 
-		oBinding.attachChange(fModelChangeHandler);
+		oBinding.attachChange(fnModelChangeHandler);
 
-		oBinding.attachRefresh(fModelRefreshHandler);
+		oBinding.attachRefresh(fnModelRefreshHandler);
 
 		oBinding.attachEvents(oBindingInfo.events);
+
+		if (this.refreshDataState) {
+			oBinding.attachAggregatedDataStateChange(fnDataStateChangeHandler);
+		}
 
 		oBinding.initialize();
 
@@ -3645,6 +3681,9 @@ sap.ui.define([
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				if (this.refreshDataState) {
+					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+				}
 				oBindingInfo.binding.destroy();
 			}
 			// remove template if any
@@ -3660,7 +3699,6 @@ sap.ui.define([
 			if (this._observer) {
 				this._observer.bindingChange(this,sName,"remove", this.mBindingInfos[sName], "aggregation");
 			}
-
 			delete this.mBindingInfos[sName];
 			if (!bSuppressReset) {
 				this[oAggregationInfo._sDestructor]();

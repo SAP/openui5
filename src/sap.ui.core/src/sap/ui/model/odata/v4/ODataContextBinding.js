@@ -20,9 +20,11 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
 		mSupportedEvents = {
+			AggregatedDataStateChange : true,
 			change : true,
 			dataReceived : true,
-			dataRequested : true
+			dataRequested : true,
+			DataStateChange : true
 		};
 
 	/**
@@ -43,9 +45,9 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.ODataContextBinding
 	 * @author SAP SE
 	 * @class Context binding for an OData V4 model.
-	 *   An event handler can only be attached to this binding for the following events: 'change',
-	 *   'dataReceived', and 'dataRequested'.
-	 *   For other events, an error is thrown.
+	 *   An event handler can only be attached to this binding for the following events:
+	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested', and
+	 *   'DataStateChange'. For other events, an error is thrown.
 	 *
 	 *   A context binding can also be used as an <i>operation binding</i> to support bound actions,
 	 *   action imports, bound functions and function imports. If you want to control the execution
@@ -300,15 +302,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'AggregatedDataStateChange' event is not supported by this binding.
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#AggregatedDataStateChange
-	 * @public
-	 * @since 1.37.0
-	 */
-
-	/**
 	 * The 'change' event is fired when the binding is initialized or its parent context is changed.
 	 * It is to be used by controls to get notified about changes to the bound context of this
 	 * context binding.
@@ -370,15 +363,6 @@ sap.ui.define([
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
-	 * @public
-	 * @since 1.37.0
-	 */
-
-	/**
-	 * The 'DataStateChange' event is not supported by this binding.
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#DataStateChange
 	 * @public
 	 * @since 1.37.0
 	 */

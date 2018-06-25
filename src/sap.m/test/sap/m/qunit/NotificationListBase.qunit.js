@@ -10,9 +10,7 @@
 	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
 	sinon.config.useFakeTimers = false;
 
-	if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require('sap.ui.qunit.qunit-coverage');
-	}
+	jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
 	var RENDER_LOCATION = 'qunit-fixture';
 

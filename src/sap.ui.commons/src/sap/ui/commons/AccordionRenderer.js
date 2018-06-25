@@ -155,12 +155,12 @@ sap.ui.define(['jquery.sap.global'],
 			//Disabled --> Unavailable annoucement
 			if (oControl.getEnabled()) {
 				rm.writeAttribute("aria-disabled", "false");
-				if (!sap.ui.Device.browser.internet_explorer) {
+				if (!sap.ui.Device.browser.internet_explorer) {// TODO remove after 1.62 version
 					rm.writeAttribute("aria-grabbed", "false");
 				}
 			} else {
 				rm.writeAttribute("aria-disabled", "true");
-				if (!sap.ui.Device.browser.internet_explorer) {
+				if (!sap.ui.Device.browser.internet_explorer) {// TODO remove after 1.62 version
 					rm.writeAttribute("aria-grabbed", "");
 				}
 			}
@@ -208,7 +208,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (heightSet && widthSet) {
 				rm.write(" style='position:absolute;'");
 			} else {
-				rm.write(" style='position:relative;top:0px;'"); // for IE7, when Panel contains relatively positioned elements
+				rm.write(" style='position:relative;top:0px;'"); // for IE7, when Panel contains relatively positioned elements// TODO remove after 1.62 version
 			}
 
 			if ( sap.ui.getCore().getConfiguration().getAccessibility()) {

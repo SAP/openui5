@@ -1951,23 +1951,26 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
 		var oBinding,
+			oBindingMock = this.mock(ListBinding.prototype),
 			mEventParameters = {},
 			oReturn = {};
 
-		this.mock(ListBinding.prototype).expects("attachEvent")
-			.withExactArgs("change", sinon.match.same(mEventParameters)).returns(oReturn);
-
 		oBinding = this.bindList("/EMPLOYEES");
 
-		assert.throws(function () {
-			oBinding.attachEvent("filter");
-		}, new Error("Unsupported event 'filter': v4.ODataListBinding#attachEvent"));
+		["AggregatedDataStateChange", "change", "dataReceived", "dataRequested", "DataStateChange",
+			"refresh"]
+		.forEach(function (sEvent) {
+			oBindingMock.expects("attachEvent")
+				.withExactArgs(sEvent, sinon.match.same(mEventParameters)).returns(oReturn);
 
-		assert.throws(function () {
-			oBinding.attachEvent("sort");
-		}, new Error("Unsupported event 'sort': v4.ODataListBinding#attachEvent"));
+			assert.strictEqual(oBinding.attachEvent(sEvent, mEventParameters), oReturn);
+		});
 
-		assert.strictEqual(oBinding.attachEvent("change", mEventParameters), oReturn);
+		["filter", "sort", "unsupportedEvent"].forEach(function (sEvent) {
+			assert.throws(function () {
+				oBinding.attachEvent(sEvent);
+			}, new Error("Unsupported event '" + sEvent + "': v4.ODataListBinding#attachEvent"));
+		});
 	});
 
 	//*********************************************************************************************

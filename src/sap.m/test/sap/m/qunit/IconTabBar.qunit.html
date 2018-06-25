@@ -1371,7 +1371,6 @@
 				iFlexChildHeight = $FlexChild.height();
 
 				// Act
-				oIconTabBar._getIconTabHeader()._fnResizeNoFlexboxSupport();
 				sap.ui.getCore().applyChanges();
 
 				// Assert
@@ -3383,6 +3382,18 @@
                     this.oSelectList = null;
                 }
             });
+
+			QUnit.test("Overflow button", function(assert) {
+				sap.ui.getCore().applyChanges();
+
+				var oOverflowButton = this.oIconTabHeader._getOverflowButton();
+
+				assert.ok(!oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
+				this.oIconTabHeader._handleOnDragOver();
+				assert.ok(oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button is in 'drag over' state ");
+				this.oIconTabHeader._handleOnDragLeave();
+				assert.ok(!oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
+			});
 
             QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
                 // Assert

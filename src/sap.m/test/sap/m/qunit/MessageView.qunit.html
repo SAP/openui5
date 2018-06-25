@@ -332,6 +332,23 @@
 				assert.strictEqual(aItems[4].getInfoState(), ValueState.None, "The value state should be None in case of information message.");
 			});
 
+			QUnit.test("MessageView should restore the focus on back navigation", function (assert) {
+				// arrange
+				var focusSpy = sinon.spy(this.oMessageView, "_restoreFocus");
+
+				// act
+				this.oDialog.open();
+				this.oMessageView._fnHandleForwardNavigation(this.oMessageView._oLists.all.getItems()[0], "show");
+				this.oMessageView.navigateBack();
+				this.clock.tick(500);
+
+				// assert
+				assert.ok(focusSpy.called, "_restoreFocus should be called");
+
+				// cleanup
+				focusSpy.restore();
+			});
+
 			QUnit.test("MessageItems type Navigation when there is Description, else Inactive", function (assert) {
 				this.oDialog.open();
 				this.clock.tick(500);

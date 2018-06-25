@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var Extractor = {};
 
-	Extractor.extractAppVersion = function (oChangePersistence) {
+	Extractor.extractData = function (oChangePersistence) {
 		var oExport = {
 			bIsInvestigationExport: true,
 			mControlData : {},
@@ -122,7 +122,7 @@ sap.ui.define([
 			File.save(sExportString, "flexibilityDataExtraction", "json");
 		} catch (e) {
 			MessageBox.error(
-				"The export if the flexibility data was not successful.\n" + e.message
+				"The export of the flexibility data was not successful.\n" + e.message
 			);
 		}
 	};

@@ -33,11 +33,6 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.addClass('sapUiFixFlexRow');
 			}
 
-			// Setting css class for older browsers
-			if (!jQuery.support.hasFlexBoxSupport) {
-				oRm.addClass('sapUiFixFlex-Legacy');
-			}
-
 			oRm.writeClasses();
 			oRm.write('>');
 

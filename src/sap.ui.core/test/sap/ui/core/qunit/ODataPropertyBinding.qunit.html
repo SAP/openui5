@@ -26,7 +26,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
 	// time to wait for server responses
 	var oModel;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
-		sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
+		sURI = "/proxy/http/" + sURI.replace("http://","");
 
 	function removeSharedMetadata() {
 		var sServiceURI = sURI.replace(/\/$/, "");

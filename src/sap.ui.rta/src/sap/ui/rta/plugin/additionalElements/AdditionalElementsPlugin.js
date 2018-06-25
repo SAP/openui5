@@ -515,13 +515,17 @@ sap.ui.define([
 			if (mParents.parentOverlay.getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
 				sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
 			}
+			var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
+			var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
 			return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
 				newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
 				index: iIndex !== undefined ? iIndex : iAddTargetIndex,
 				bindingString: oSelectedElement.bindingPath,
 				entityType: oSelectedElement.entityType,
 				parentId: mParents.parent.getId(),
-				oDataServiceVersion: sODataServiceVersion
+				oDataServiceVersion: sODataServiceVersion,
+				oDataServiceUri: sServiceUri,
+				propertyName: oSelectedElement.name
 			}, oParentAggregationDTMetadata, sVariantManagementReference);
 		},
 

@@ -44,6 +44,7 @@
 					"en_ZA",
 					"es_MX",
 					"es_ES",
+					"fa_IR",
 					"fr_FR",
 					"fr_CA",
 					"fr_BE",
@@ -60,6 +61,7 @@
 					"nl_NL",
 					"pl_PL",
 					"ko_KR",
+					"th_TH",
 					"zh_SG",
 					"zh_TW",
 					"zh_CN",
@@ -529,6 +531,10 @@
 		assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
 		assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+	}
+
+	function customTests_th_TH(oLocaleData) {
+		assert.equal(oLocaleData.getPreferredCalendarType(), "Buddhist", "buddhist calendar preferred")
 	}
 
 	QUnit.module("Locale data types", {

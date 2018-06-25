@@ -1,5 +1,6 @@
+var sBaseUrl = "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
 var xhr = sinon.useFakeXMLHttpRequest(),
-	baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
+	baseURL = sBaseUrl,
 	responseDelay = 10,
 	_setTimeout = window.setTimeout,
 	csrfToken,
@@ -23,7 +24,7 @@ function updateSessionContextId() {
 }
 
 function resetBaseUrl() {
-  baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
+  baseURL = "/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
 }
 
 function setBaseUrl(newBaseUrl) {
@@ -76,12 +77,18 @@ xhr.onCreate = function(request) {
 				[200, oMetaDataHeaders, sMetadataComplex],
 			"$metadata?sap-language=en&test2=xx":
 				[200, oMetaDataHeaders, sMetaData],
-			"Categories/$count":
+			"Products?$skip=0&$top=100&Error500":
+				[500, oXMLErrorHeaders, sError],
+      "Products?Error500&$skip=0&$top=100":
+				[500, oXMLErrorHeaders, sError],
+		  "Categories/$count":
 				[200, oCountHeaders, "8"],
 			"Regions":
 				[200, oXMLHeaders, sRegionsXML],
 			"Products(2)":
 				[200, oXMLHeaders, sProducts2XML],
+      "Products(2)?Error500":
+				[500, oXMLErrorHeaders, sError],
 			"Products(3)":
 				[200, oXMLHeaders, sProducts3XML],
 			"Products(3)?$select=ProductName":
@@ -332,8 +339,8 @@ xhr.onCreate = function(request) {
 		"POST":{
 			//create Entry
 			"Products?Fail500=true":
-				[500, oJSONHeaders, ""],
-			"Products?Fail500=false":
+				[500, oJSONHeaders, ''],
+      "Products?Fail500=false":
 				[201, oJSONHeaders, sProduct2JSON],
 			"$batch":
 				[202, oJSONHeaders, sProduct2JSON],
@@ -630,6 +637,10 @@ var oXMLHeaders = 	{
 		"Invalid": "invalid"
 	};
 
+var oXMLErrorHeaders = 	{
+		"Content-Type": "application/xml;charset=utf-8"
+};
+
 var oJSONHeaders = 	{
 		"Content-Type": "application/json;charset=utf-8",
 		"DataServiceVersion": "2.0"
@@ -666,6 +677,11 @@ var oSpecialHeaders = {
 	"X-CuStOm-HeAdEr": "case-sensitive"
 };
 var sSAMLLoginPage = '<html><body><h1>SAML Login Page</h1></body></html>';
+
+var sError = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+  <error>\
+    <message xml:lang="en-US">Resource not found for the segment Products.</message>\
+  </error>';
 
 var sServiceDocXML = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
 	<service xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns="http://www.w3.org/2007/app">\

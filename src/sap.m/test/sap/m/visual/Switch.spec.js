@@ -1,10 +1,11 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
 
 describe("sap.m.Switch", function() {
 	"use strict";
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.Switch';
 
 	it('should load test page',function(){
-		expect(takeScreenshot()).toLookAs('initial');
+		expect(takeScreenshot(element(by.id('switch_page')))).toLookAs('initial');
 	});
 
 	// verify regular switch

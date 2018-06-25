@@ -11,26 +11,7 @@
 
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 
-	if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
-		QUnit.test("Dummy Test", function(assert) {
-			assert.ok(true, "At least one test needs to run to avoid test timeouts!");
-		});
-		return;
-	}
-
 	var DOM_RENDER_LOCATION = "qunit-fixture";
-
-	var sVendorPrefix = "";
-
-	if (jQuery.support.flexBoxPrefixed) {
-		if (sap.ui.Device.browser.webkit) {
-			sVendorPrefix = "-webkit-";
-		} else if (sap.ui.Device.browser.mozilla) {
-			sVendorPrefix = "-moz-";
-		} else if (sap.ui.Device.browser.msie) {
-			sVendorPrefix = "-ms-";
-		}
-	}
 
 	// Helper function to create the flexboxes for the tests
 	var getFlexBoxWithItems = function(oBoxConfig, vItemTemplates, vItemConfigs) {
@@ -169,7 +150,7 @@
 		this.oBox.setRenderType("Bare");
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
-		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {
+		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {// TODO remove after 1.62 version
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
 		}
@@ -194,24 +175,14 @@
 
 	QUnit.test("Inline", function(assert) {
 		this.oBox.setDisplayInline(true);
-		if (jQuery.support.newFlexBoxLayout) {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "inline-flex", "Flex Box display property should be set to inline");
-		} else if (jQuery.support.ie10FlexBoxLayout) {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "inline-flexbox", "Flex Box display property should be set to inline");
-		} else {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "inline-box", "Flex Box display property should be set to inline");
-		}
+		// phantomjs wants to add the webkit prefix here...
+		assert.equal(this.oBox.$().css('display'), (sap.ui.Device.browser.phantomJS ? "-webkit-" : "") + "inline-flex", "Flex Box display property should be set to inline");
 	});
 
 	QUnit.test("Block", function(assert) {
 		this.oBox.setDisplayInline(false);
-		if (jQuery.support.newFlexBoxLayout) {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "flex", "Flex Box display property should be set to block");
-		} else if (jQuery.support.ie10FlexBoxLayout) {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "flexbox", "Flex Box display property should be set to block");
-		} else {
-			assert.equal(this.oBox.$().css('display'), sVendorPrefix + "box", "Flex Box display property should be set to block");
-		}
+		// phantomjs wants to add the webkit prefix here...
+		assert.equal(this.oBox.$().css('display'), (sap.ui.Device.browser.phantomJS ? "-webkit-" : "") + "flex", "Flex Box display property should be set to block");
 	});
 
 	QUnit.module("Fit Container", {
@@ -475,7 +446,7 @@
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left) === 0, "Item 1 should be placed at the horizontal start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 179) <= 1, "Item 2 should be placed at the horizontal center");
 		assert.ok(Math.abs(this.oItem3DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 345) <= 1, "Item 3 should be placed at the horizontal end");
-		if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {	// Baseline is not supported for align-items by older browsers
+		if (!sap.ui.Device.browser.phantomJS) {	// Baseline is not supported for align-items by phantomjs
 			assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 22) <= 1, "Item 2 should be pushed down to align with Item 1 baseline");
 		}
 		this.oItem1DomRef.style.fontSize = "";
@@ -498,144 +469,138 @@
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
 	});
 
-	if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {	// align-self is not supported by older browsers
-		QUnit.test("Align Self: Start", function(assert) {
-			this.oBox.setAlignItems("Stretch");
-			this.oItem1LayoutData.setAlignSelf("Start");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
-		});
+	QUnit.test("Align Self: Start", function(assert) {
+		this.oBox.setAlignItems("Stretch");
+		this.oItem1LayoutData.setAlignSelf("Start");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
+	});
 
-		QUnit.test("Align Self: Center", function(assert) {
-			this.oItem1LayoutData.setAlignSelf("Center");
-			assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 173) <= 1, "Item 1 should be placed at the vertical center");
-		});
+	QUnit.test("Align Self: Center", function(assert) {
+		this.oItem1LayoutData.setAlignSelf("Center");
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 173) <= 1, "Item 1 should be placed at the vertical center");
+	});
 
-		QUnit.test("Align Self: End", function(assert) {
-			this.oItem1LayoutData.setAlignSelf("End");
-			assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
-		});
+	QUnit.test("Align Self: End", function(assert) {
+		this.oItem1LayoutData.setAlignSelf("End");
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
+	});
 
-		QUnit.test("Align Self: Baseline", function(assert) {
-			this.oItem2DomRef.style.fontSize = "40px";
-			this.oItem1LayoutData.setAlignSelf("Baseline");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
-			this.oItem2DomRef.style.fontSize = "";
-		});
+	QUnit.test("Align Self: Baseline", function(assert) {
+		this.oItem2DomRef.style.fontSize = "40px";
+		this.oItem1LayoutData.setAlignSelf("Baseline");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.abs(this.oBoxDomRef.getBoundingClientRect().bottom - this.oItem1DomRef.getBoundingClientRect().bottom - 346) <= 2, "Item 1 should not be stretched");
+		this.oItem2DomRef.style.fontSize = "";
+	});
 
-		QUnit.test("Align Self: Stretch", function(assert){
-			this.oItem1LayoutData.setAlignSelf("Stretch");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) === 0, "Item 1 should stretch to the vertical end");
-			this.oBox.setAlignItems("Start");
-			this.oItem1LayoutData.setAlignSelf("Auto");
-		});
-	}
+	QUnit.test("Align Self: Stretch", function(assert){
+		this.oItem1LayoutData.setAlignSelf("Stretch");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) === 0, "Item 1 should stretch to the vertical end");
+		this.oBox.setAlignItems("Start");
+		this.oItem1LayoutData.setAlignSelf("Auto");
+	});
 
-	if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {	// multi-line mode is not supported by older browsers
-		QUnit.module("Multi-line", {
-			beforeEach: function() {
-				this.oBoxConfig = {
-				};
-				this.vItemTemplates = 4;
-				this.vItemConfigs = 4;
-				this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
-				this.oBox.setWidth("388px");
-				this.oBox.setHeight("398px");
-				this.oBox.placeAt(DOM_RENDER_LOCATION);
-				sap.ui.getCore().applyChanges();
-				this.oBoxDomRef = this.oBox.getDomRef();
-				this.oItem1DomRef = this.oBox.getItems()[0].getDomRef().parentNode;
-				this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
-				this.oItem3DomRef = this.oBox.getItems()[2].getDomRef().parentNode;
-				this.oItem4DomRef = this.oBox.getItems()[3].getDomRef().parentNode;
-				this.oItem1DomRef.style.width = "100%";
-				this.oItem2DomRef.style.width = "50%";
-				this.oItem3DomRef.style.width = "50%";
-				this.oItem1DomRef.style.minHeight = "100px";
-				this.oItem2DomRef.style.minHeight = "75px";
-				this.oItem3DomRef.style.minHeight = "75px";
-				this.oItem4DomRef.style.minHeight = "50px";
-			},
-			afterEach: function() {
-				this.oBox.destroy();
-				this.oBox = null;
-			}
-		});
-
-		QUnit.test("Wrapping: No Wrap", function(assert) {
-			this.oBox.setWrap("NoWrap");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) === 0, "Item 1 should be on the same line as Item 2");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
-			assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem4DomRef.getBoundingClientRect().top) === 0, "Item 3 should be on the same line as Item 4");
-		});
-
-		QUnit.test("Wrapping: Wrap", function(assert) {
-			this.oBox.setWrap("Wrap");
-			assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 4 should be in a line below Item 2");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 2 should be in a line below Item 1");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
-		});
-
-		QUnit.test("Wrapping: Wrap Reverse", function(assert) {
-			this.oBox.setWrap("WrapReverse");
-			assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 4 should be in a line above Item 2");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 2 should be in a line above Item 1");
-			assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
-		});
-
-		QUnit.test("Align Content: Start", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("Start");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
-			assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
-		});
-
-		QUnit.test("Align Content: Center", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("Center");
-			assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 86) <= 2, "Item 1 should be placed towards the vertical center");
-			assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
-			assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
-		});
-
-		QUnit.test("Align Content: End", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("End");
-			assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
-			assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly above Item 4");
-			assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 1 should be directly above Item 2");
-		});
-
-		QUnit.test("Align Content: Space Between", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("SpaceBetween");
-			assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
-			assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
-		});
-
-		if (!jQuery.support.ie10FlexBoxLayout) {		// IE 10 doesn't support Space Around
-			QUnit.test("Align Content: Space Around", function(assert) {
-				this.oBox.setWrap("Wrap");
-				this.oBox.setAlignContent("SpaceAround");
-				assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 28) <= 1, "Item 1 should be placed below the vertical start");
-				assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
-				assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom + 28) <= 1, "Item 4 should be placed above the vertical end");
-			});
+	QUnit.module("Multi-line", {
+		beforeEach: function() {
+			this.oBoxConfig = {
+			};
+			this.vItemTemplates = 4;
+			this.vItemConfigs = 4;
+			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
+			this.oBox.setWidth("388px");
+			this.oBox.setHeight("398px");
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+			this.oBoxDomRef = this.oBox.getDomRef();
+			this.oItem1DomRef = this.oBox.getItems()[0].getDomRef().parentNode;
+			this.oItem2DomRef = this.oBox.getItems()[1].getDomRef().parentNode;
+			this.oItem3DomRef = this.oBox.getItems()[2].getDomRef().parentNode;
+			this.oItem4DomRef = this.oBox.getItems()[3].getDomRef().parentNode;
+			this.oItem1DomRef.style.width = "100%";
+			this.oItem2DomRef.style.width = "50%";
+			this.oItem3DomRef.style.width = "50%";
+			this.oItem1DomRef.style.minHeight = "100px";
+			this.oItem2DomRef.style.minHeight = "75px";
+			this.oItem3DomRef.style.minHeight = "75px";
+			this.oItem4DomRef.style.minHeight = "50px";
+		},
+		afterEach: function() {
+			this.oBox.destroy();
+			this.oBox = null;
 		}
+	});
 
-		QUnit.test("Align Content: Stretch", function(assert) {
-			this.oBox.setWrap("Wrap");
-			this.oBox.setAlignContent("Stretch");
-			assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) <= 1, "Item 1 should be placed at the vertical start");
-			assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) <= 1, "Item 2 should be placed directly below Item 1");
-			assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed directly below Item 2");
-			assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
-		});
-	}
+	QUnit.test("Wrapping: No Wrap", function(assert) {
+		this.oBox.setWrap("NoWrap");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) === 0, "Item 1 should be on the same line as Item 2");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
+		assert.ok((this.oItem3DomRef.getBoundingClientRect().top - this.oItem4DomRef.getBoundingClientRect().top) === 0, "Item 3 should be on the same line as Item 4");
+	});
+
+	QUnit.test("Wrapping: Wrap", function(assert) {
+		this.oBox.setWrap("Wrap");
+		assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 4 should be in a line below Item 2");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) > 0, "Item 2 should be in a line below Item 1");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
+	});
+
+	QUnit.test("Wrapping: Wrap Reverse", function(assert) {
+		this.oBox.setWrap("WrapReverse");
+		assert.ok((this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().top) < 0, "Item 4 should be in a line above Item 2");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().top) < 0, "Item 2 should be in a line above Item 1");
+		assert.ok((this.oItem2DomRef.getBoundingClientRect().top - this.oItem3DomRef.getBoundingClientRect().top) === 0, "Item 2 should be on the same line as Item 3");
+	});
+
+	QUnit.test("Align Content: Start", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("Start");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
+		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
+	});
+
+	QUnit.test("Align Content: Center", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("Center");
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 86) <= 2, "Item 1 should be placed towards the vertical center");
+		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly below Item 1");
+		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 4 should be directly below Item 2");
+	});
+
+	QUnit.test("Align Content: End", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("End");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
+		assert.ok(Math.round(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) === 0, "Item 2 should be directly above Item 4");
+		assert.ok(Math.round(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) === 0, "Item 1 should be directly above Item 2");
+	});
+
+	QUnit.test("Align Content: Space Between", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("SpaceBetween");
+		assert.ok((this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) === 0, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
+	});
+
+	QUnit.test("Align Content: Space Around", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("SpaceAround");
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 28) <= 1, "Item 1 should be placed below the vertical start");
+		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 186) <= 2, "Item 2 should be placed at the vertical center");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom + 28) <= 1, "Item 4 should be placed above the vertical end");
+	});
+
+	QUnit.test("Align Content: Stretch", function(assert) {
+		this.oBox.setWrap("Wrap");
+		this.oBox.setAlignContent("Stretch");
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top) <= 1, "Item 1 should be placed at the vertical start");
+		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oItem1DomRef.getBoundingClientRect().bottom) <= 1, "Item 2 should be placed directly below Item 1");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().top - this.oItem2DomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed directly below Item 2");
+		assert.ok(Math.abs(this.oItem4DomRef.getBoundingClientRect().bottom - this.oBoxDomRef.getBoundingClientRect().bottom) <= 1, "Item 4 should be placed at the vertical end");
+	});
 
 	QUnit.module("Flexibility", {
 		beforeEach: function() {
@@ -690,7 +655,7 @@
 		this.oItem2DomRef.style.width = "100%";
 		this.oItem3DomRef.style.width = "100%";
 		if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.phantomJS) {
-			// IE 10-11, PhantomJS miscalculate the width of the flex items when box-sizing: border-box
+			// IE 10-11, PhantomJS miscalculate the width of the flex items when box-sizing: border-box// TODO remove after 1.62 version
 			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 247) <= 1, "Width of Item 1 should be 247 (is " + this.oItem1DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 107) <= 1, "Width of Item 2 should be 107 (is " + this.oItem2DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 34) <= 1, "Width of Item 3 should be 34 (is " + this.oItem3DomRef.offsetWidth + ")");

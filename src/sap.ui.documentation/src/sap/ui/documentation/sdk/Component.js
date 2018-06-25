@@ -118,6 +118,7 @@ sap.ui.define([
 
 				this._indexPromise = new Promise(function (resolve, reject) {
 					APIInfo.getIndexJsonPromise().then(function (aData) {
+						this._aLibraryElements = aData;
 						this._parseLibraryElements(aData);
 						this._bindTreeModel(aTreeContent);
 						resolve(aData);
@@ -145,6 +146,7 @@ sap.ui.define([
 
 			_addElementToTreeData : function (oJSONElement) {
 				var oNewNodeNamespace,
+					oHiddenNamespace,
 					aAllowedMembers = this.aAllowedMembers;
 
 				if (aAllowedMembers.indexOf(oJSONElement.visibility) !== -1) {
@@ -161,14 +163,25 @@ sap.ui.define([
 							}
 							oExistingNodeNamespace.nodes.push(oTreeNode);
 						} else if (sNodeNamespace) {
-							oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId, oJSONElement.lib);
-							oNewNodeNamespace.nodes = [];
-							oNewNodeNamespace.nodes.push(oTreeNode);
-							aTreeContent.push(oNewNodeNamespace);
 
-							this._removeDuplicatedNodeFromTree(sNodeNamespace);
+							// Check for existing hidden namespace - In case we have a namespace with visibility that
+							// we should not show in this scenario we should also omit it's children
+							oHiddenNamespace = this._aLibraryElements.some(function (oNode) {
+								return oNode.name === sNodeNamespace && aAllowedMembers.indexOf(oNode.visibility) === -1;
+							});
+
+							if (!oHiddenNamespace) {
+								oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId, oJSONElement.lib);
+								oNewNodeNamespace.nodes = [];
+								oNewNodeNamespace.nodes.push(oTreeNode);
+
+								aTreeContent.push(oNewNodeNamespace);
+
+								this._removeDuplicatedNodeFromTree(sNodeNamespace);
+
+							}
 						} else {
-							// Entities for which we can't resolve namespace we are shown in the root level
+							// Entities for which we can't resolve namespace are shown in the root level
 							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib);
 							aTreeContent.push(oNewNodeNamespace);
 						}

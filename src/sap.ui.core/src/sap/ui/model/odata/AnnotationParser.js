@@ -373,7 +373,7 @@ var AnnotationParser =  {
 	 * @private
 	 */
 	_parseAnnotation: function (sAnnotationTarget, oAnnotationsNode, oAnnotationNode, oAnnotationTarget, sPrefix) {
-		var sQualifier = oAnnotationsNode.getAttribute("Qualifier") || oAnnotationNode.getAttribute("Qualifier");
+		var sQualifier = oAnnotationNode.getAttribute("Qualifier") || oAnnotationsNode.getAttribute("Qualifier");
 		var sTerm = AnnotationParser.replaceWithAlias(oAnnotationNode.getAttribute("Term"), AnnotationParser._parserData.aliases);
 		if (sQualifier) {
 			sTerm += "#" + sQualifier;

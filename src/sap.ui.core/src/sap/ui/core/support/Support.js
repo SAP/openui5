@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					this._isOpen = false;
 					this.attachEvent(mEvents.TEAR_DOWN, function(oEvent){
 						that._isOpen = false;
-						if ( Device.browser.msie ) {
+						if ( Device.browser.msie ) {// TODO remove after 1.62 version
 							jQuery.sap.byId(ID_SUPPORT_AREA + "-frame").remove();
 						} else {
 							close(that._oRemoteWindow);
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 	var mTypes = {
 		APPLICATION: "APPLICATION", //Application stub -> the "standard one"
-		IFRAME: "IFRAME", //Used by the Internet Explorer iFrame bridge only
+		IFRAME: "IFRAME", //Used by the Internet Explorer iFrame bridge only// TODO remove after 1.62 version
 		TOOL: "TOOL" //Used by the support tool only
 	};
 
@@ -288,11 +288,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 		mParams = mParams ? mParams : {};
 
-		if ( Device.browser.msie && this._sType === mTypes.TOOL ) {
+		if ( Device.browser.msie && this._sType === mTypes.TOOL ) {// TODO remove after 1.62 version
 			this._oRemoteWindow.sap.ui.core.support.Support.getStub(mTypes.IFRAME).sendEvent(sEventId, mParams);
 		} else {
 			var mParamsLocal = mParams;
-			if ( Device.browser.msie ) {
+			if ( Device.browser.msie ) {// TODO remove after 1.62 version
 				//Attention mParams comes from an other window
 				//-> (mParams instanceof Object == false)!
 				mParamsLocal = {};
@@ -343,7 +343,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 		if (this._sType === mTypes.APPLICATION) {
 			if (!this._isOpen) {
-				if (Device.browser.msie) {
+				if ( Device.browser.msie ) {// TODO remove after 1.62 version
 					var sIFrameUrl = sap.ui.require.toUrl("sap/ui/core/support/msiebridge.html");
 					getSupportArea().html("").append(getSupportFrame(sIFrameUrl, sParams));
 					this._sRemoteOrigin = checkLocalUrl(sIFrameUrl) ? this._sLocalOrigin : sIFrameUrl;
@@ -360,7 +360,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 		}
 	};
 
-
+	// TODO remove after 1.62 version
 	/**
 	 * Event Handler which is bound to the onload event of the Internet Explorer iFrame bridge.
 	 *

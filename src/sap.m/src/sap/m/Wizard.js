@@ -409,9 +409,9 @@ sap.ui.define([
 		 */
 		Wizard.prototype.setShowNextButton = function (value) {
 			this.setProperty("showNextButton", value, true);
-			if (this._getNextButton()) {
-				this._getNextButton().setVisible(value);
-			}
+			this.getSteps().forEach(function(oStep){
+				oStep.getAggregation("_nextButton").setVisible(value);
+			});
 			return this;
 		};
 

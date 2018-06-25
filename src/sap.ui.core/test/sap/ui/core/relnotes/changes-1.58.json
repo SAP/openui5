@@ -235,6 +235,30 @@
         "type": "FIX",
         "text": " sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
         "references": []
+      },
+      {
+        "id": "b3b397f85a3195111eebbe51c05d52074fd0eea0",
+        "type": "FEATURE",
+        "text": " Buddhist: Support Thai solar buddhist calendar",
+        "references": []
+      },
+      {
+        "id": "dcc0e7f468ff3eec8ef3607620d508895a1d09bd",
+        "type": "FIX",
+        "text": " Component: Make url-objects working again in asyncHints.libs",
+        "references": []
+      },
+      {
+        "id": "a98f94d60b7f9c858dedeee3cd24401227ca27aa",
+        "type": "FIX",
+        "text": " sap.m.BusyIndicator: Outline for focused busy indicator improved",
+        "references": []
+      },
+      {
+        "id": "f0221df90769b7ffcae752eed4e512ecc6e42b81",
+        "type": "FIX",
+        "text": " sap/ui/dom/ActiveElementFix: empty object document.activeElement",
+        "references": []
       }
     ]
   }

@@ -128,6 +128,8 @@
 			assert.equal(sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
 		} else {
 			// IE9
+			// IE9/IE10 cleanup comment: there are still issues with IE11 and placeholders
+			// TODO remove after 1.62 version
 			assert.equal(sf2.$("P").text(), sPlaceholder, "Placeholder in IE9");
 		}
 		assert.equal(sf2.getEnabled(), false, "Enabled property, UI5");
@@ -348,7 +350,7 @@
 		// arrange
 		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
 		//act
-		//IE does not apply focus correctly, this way works for all browsers
+		//IE does not apply focus correctly, this way works for all browsers// TODO remove after 1.62 version
 		this.oSearchField.onFocus(this.oMockEvent);
 
 		// assert
@@ -364,12 +366,40 @@
 		//act
 		this.oSearchField.setValue("Test");
 		this.oSearchField.rerender();
-		//IE does not apply focus correctly, this way works for all browsers
+		//IE does not apply focus correctly, this way works for all browsers// TODO remove after 1.62 version
 		this.oSearchField.onFocus(this.oMockEvent);
 
 		// assert
 		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
 		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"), "Reset button should be with 'Reset' tooltip");
+	});
+
+	QUnit.module("Input", {
+		beforeEach: function () {
+			this.SearchField = new sap.m.SearchField("sf7", {
+				placeholder: sPlaceholder,
+				enabled: true,
+				showRefreshButton: true,
+				visible: true
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.SearchField.destroy();
+		}
+	});
+
+	QUnit.test("Test input in SearchField", function(assert) {
+		// arrange
+		var fnLiveChange = this.spy();
+		this.SearchField.attachEvent("liveChange",fnLiveChange );
+
+		// act
+		this.SearchField.$("I").focus().val("abc").trigger("input");;
+
+		//assert
+		assert.strictEqual(fnLiveChange.callCount, 1, "LiveChange event is fired once");
+		assert.strictEqual(this.SearchField.getValue(), "abc", "Value is correct");
 	});
 </script>
 

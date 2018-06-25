@@ -1590,7 +1590,7 @@
 				oInput.destroy();
 			});
 
-			QUnit.test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function(assert) {
+			QUnit.test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function(assert) {// TODO remove after 1.62 version
 
 				// system under test
 				var oInput = new sap.m.InputBase({
@@ -2190,7 +2190,7 @@
 
 
 		QUnit.module("invalid input event");
-		QUnit.test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function(assert) {
+		QUnit.test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function(assert) {// TODO remove after 1.62 version
 			this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
 			var fnOnInputSpy = this.spy(sap.m.InputBase.prototype, "oninput");
 			this.stub(sap.ui.Device, "browser", {
@@ -2216,7 +2216,7 @@
 			oInput.destroy();
 		});
 
-		QUnit.test("iE11 should mark event invalid when an readonly input field fires input event", function(assert) {
+		QUnit.test("iE11 should mark event invalid when an readonly input field fires input event", function(assert) {// TODO remove after 1.62 version
 			var fnOnInputSpy = this.spy(sap.m.InputBase.prototype, "oninput");
 			this.stub(sap.ui.Device, "browser", {
 				msie: true,

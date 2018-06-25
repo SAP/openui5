@@ -143,7 +143,7 @@ input.sapMSFI[type="search"]:focus {
 	display: none;
 }
 
-/* remove clear x button in IE */
+/* remove clear x button in IE */// TODO remove after 1.62 version
 .sapMSFI::-ms-clear{
 	display: none;
 }
@@ -224,6 +224,8 @@ input.sapMSFI[type="search"]:focus {
 }
 
 /* custom placeholder if not natively supported (IE9) */
+/* IE9/IE10 cleanup comment: there are still issues with IE11 and placeholders */
+/* TODO remove after 1.62 version */
 .sapMSF>.sapMSFF>.sapMSFPlaceholder {
 	display: block;
 	color: @sapUiFieldPlaceholderTextColor;
@@ -281,6 +283,8 @@ input.sapMSFI[type="search"]:focus {
 	}
 
 	/* custom placeholder if not natively supported (IE9) */
+	/*IE9/IE10 cleanup comment: there are still issues with IE11 and placeholders*/
+	/* TODO remove after 1.62 version */
 	.sapMSF>.sapMSFF>.sapMSFPlaceholder {
 		left: 0.5rem;
 		height: 1.5rem;
@@ -288,7 +292,7 @@ input.sapMSFI[type="search"]:focus {
 
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ie"].sap-desktop,// TODO remove after 1.62 version
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMFocus > .sapMSFF::before  {
 		border: 1px dashed @sapUiContentFocusColor;

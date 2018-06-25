@@ -68,31 +68,18 @@
 			<!-- DynamicPage Header -->
 			<f:header>
 				<f:DynamicPageHeader pinnable="true">
-						<FlexBox
-								alignItems="Start"
-								justifyContent="SpaceBetween">
-							<items>
-								<Panel
-										backgroundDesign="Transparent"
-										class="sapUiNoContentPadding">
-									<content>
-										<layout:HorizontalLayout
-												allowWrapping="true">
-											<layout:VerticalLayout
-													class="sapUiMediumMarginEnd">
-												<ObjectAttribute title="Location" text="Warehouse A"/>
-												<ObjectAttribute title="Halway" text="23L"/>
-												<ObjectAttribute title="Rack" text="34"/>
-											</layout:VerticalLayout>
-											<layout:VerticalLayout>
-												<ObjectAttribute title="Availability"/>
-												<ObjectStatus text="In Stock" state="Success" />
-											</layout:VerticalLayout>
-										</layout:HorizontalLayout>
-									</content>
-								</Panel>
-							</items>
-						</FlexBox>
+					<layout:HorizontalLayout allowWrapping="true">
+						<layout:VerticalLayout class="sapUiMediumMarginEnd">
+							<ObjectAttribute title="Location" text="Warehouse A"/>
+							<ObjectAttribute title="Halway" text="23L"/>
+							<ObjectAttribute title="Rack" text="34"/>
+						</layout:VerticalLayout>
+
+						<layout:VerticalLayout>
+							<ObjectAttribute title="Availability"/>
+							<ObjectStatus text="In Stock" state="Success" />
+						</layout:VerticalLayout>
+					</layout:HorizontalLayout>
 				</f:DynamicPageHeader>
 			</f:header>
 			<f:content>

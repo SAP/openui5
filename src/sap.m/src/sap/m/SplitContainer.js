@@ -471,11 +471,6 @@ function(
 	**************************************************************/
 	SplitContainer.prototype.init = function() {
 		var that = this;
-		this._isMie9 = false;
-		//Check for IE9
-		if (Device.browser.internet_explorer && Device.browser.version < 10) {
-			this._isMie9 = true;
-		}
 
 		// Init static hidden text for ARIA
 		if (sap.ui.getCore().getConfiguration().getAccessibility() && !SplitContainer._sAriaPopupLabelId) {
@@ -621,7 +616,7 @@ function(
 		}
 		Device.resize.attachHandler(this._fnResize);
 
-		if (Device.os.windows && Device.browser.internet_explorer) { // not for windows_phone
+		if (Device.os.windows && Device.browser.internet_explorer) { // not for windows_phone// TODO remove after 1.62 version
 			this._oMasterNav.$().append('<iframe class="sapMSplitContainerMasterBlindLayer" src="about:blank"></iframe>');
 		}
 
@@ -1251,20 +1246,7 @@ function(
 		} else {
 			if ((this._portraitHide() || this._hideMode())
 				&& (!this._bMasterisOpen || this._bMasterClosing)) {
-				if (this._isMie9) {
-					this._oMasterNav.$().css("width", "320px");
-					_this$.animate({
-						left: "+=320"
-					}, {
-						duration: 300,
-						complete: fnAnimationEnd
-					});
-					this._bMasterisOpen = true;
-					that._bMasterOpening = false;
-					this._removeMasterButton(_curPage);
-				} else {
 					_this$.bind("webkitTransitionEnd transitionend", fnAnimationEnd);
-				}
 
 				this.fireBeforeMasterOpen();
 				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", true);
@@ -1307,16 +1289,7 @@ function(
 		} else {
 			if ((this._portraitHide() || this._hideMode()) &&
 				(this._bMasterisOpen || this._oMasterNav.$().hasClass("sapMSplitContainerMasterVisible"))) {
-				if (this._isMie9) {
-					_this$.animate({
-						left: "-=320"
-					}, {
-						duration: 300,
-						complete: fnAnimationEnd
-					});
-				} else {
 					_this$.bind("webkitTransitionEnd transitionend", fnAnimationEnd);
-				}
 
 				this.fireBeforeMasterClose();
 				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
@@ -1329,10 +1302,6 @@ function(
 
 	SplitContainer.prototype._afterShowMasterAnimation = function() {
 		if (this._portraitHide() || this._hideMode()) {
-			if (!this._isMie9) {
-				var $MasterNav = this._oMasterNav.$();
-				$MasterNav.unbind("webkitTransitionEnd transitionend", this._afterShowMasterAnimation);
-			}
 			this._bMasterOpening = false;
 			this._bMasterisOpen = true;
 			this.fireAfterMasterOpen();
@@ -1341,11 +1310,10 @@ function(
 
 	SplitContainer.prototype._afterHideMasterAnimation = function() {
 		if (this._portraitHide() || this._hideMode()) {
-			if (!this._isMie9) {
 				var $MasterNav = this._oMasterNav.$();
 				$MasterNav.unbind("webkitTransitionEnd transitionend", this._afterHideMasterAnimation);
-			}
 		}
+
 		var oCurPage = this._getRealPage(this._oDetailNav.getCurrentPage());
 		this._setMasterButton(oCurPage);
 
@@ -1563,12 +1531,6 @@ function(
 			if (sOldMode === "HideMode" && this._oldIsLandscape) {
 				//remove the master button
 				this._removeMasterButton(this._oDetailNav.getCurrentPage());
-				if (this._isMie9) {
-					this._oMasterNav.$().css({
-						left: 0,
-						width: ""
-					});
-				}
 			}
 
 			if (sMode !== "PopoverMode" && this._oPopOver.getContent().length > 0) {
@@ -1617,13 +1579,6 @@ function(
 				this._bMasterisOpen = false;
 
 				this._setMasterButton(this._oDetailNav.getCurrentPage());
-
-				if (this._isMie9) {
-					this._oMasterNav.$().css({
-						left: "",
-						width: "auto"
-					});
-				}
 			}
 		}
 		return this;
@@ -1738,22 +1693,6 @@ function(
 						this.fireBeforeMasterOpen();
 					} else {
 						this.fireBeforeMasterClose();
-					}
-				}
-
-				if (this._isMie9) {
-					if (isLandscape) {
-						this._oMasterNav.$().css({
-							left: 0,
-							width: ""
-						});
-					} else {
-						if (mode === "ShowHideMode" || mode === "PopoverMode") {
-							this._oMasterNav.$().css({
-								left: -320,
-								width: "auto"
-							});
-						}
 					}
 				}
 
@@ -1988,9 +1927,6 @@ function(
 				oPageHeader.insertAggregation(sHeaderAggregationName, this._oShowMasterBtn, 0, bSuppressRerendering);
 			}
 		} else {
-			if (this._isMie9) {
-				this._oShowMasterBtn.$().fadeIn();
-			}
 			this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnHide", false);
 			this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
 			this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnShow", true);
@@ -2058,12 +1994,6 @@ function(
 				var aHeaderContent = SplitContainer._getHeaderButtonAggregation(oPage).aAggregationContent;
 				for (var i = 0; i < aHeaderContent.length; i++) {
 					if (aHeaderContent[i] === this._oShowMasterBtn) {
-						if (this._isMie9) {
-							this._oShowMasterBtn.$().fadeOut();
-							if (fnCallBack) {
-								fnCallBack(oPage);
-							}
-						}
 
 						this._oShowMasterBtn.destroy();
 						/*eslint-disable no-loop-func */

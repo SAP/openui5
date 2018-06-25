@@ -20,7 +20,6 @@
 		"webapp/localService/mockserver.js",
 		"webapp/manifest.json",
 		"webapp/model/formatter.js",
-		"webapp/model/GroupState.js",
 		"webapp/model/models.js",
 		"webapp/test/integration/AllJourneys.js",
 		"webapp/test/integration/BusyJourney.js",
@@ -42,12 +41,10 @@
 		"webapp/test/mockServer.html",
 		"webapp/test/testsuite.qunit.html",
 		"webapp/test/unit/allTests.js",
-		"webapp/test/unit/controller/App.controller.js",
 		"webapp/test/unit/controller/Detail.controller.js",
 		"webapp/test/unit/controller/ListSelector.js",
 		"webapp/test/unit/helper/FakeI18nModel.js",
 		"webapp/test/unit/model/formatter.js",
-		"webapp/test/unit/model/GroupState.js",
 		"webapp/test/unit/model/models.js",
 		"webapp/test/unit/unitTests.qunit.html",
 		"webapp/test.html",
@@ -59,6 +56,7 @@
 		"webapp/view/NotFound.view.xml",
 		"webapp/view/Processor.view.xml",
 		"webapp/view/Shipping.view.xml",
+		"webapp/view/ViewSettingsDialog.fragment.xml",
 		"ui5.yaml",
 		"package.json"
 	]

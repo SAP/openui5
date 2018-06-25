@@ -2,15 +2,18 @@
 * ${copyright}
 */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/support/library",
 	"sap/ui/support/supportRules/IssueManager",
-	"sap/ui/support/supportRules/RuleSetLoader"
+	"sap/ui/support/supportRules/RuleSetLoader",
+	"sap/ui/support/supportRules/report/StringHistoryFormatter",
+	"sap/ui/support/supportRules/report/AbapHistoryFormatter"
 ],
-function (jQuery, IssueManager, RuleSetLoader ) {
+function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHistoryFormatter) {
 	"use strict";
+
 	var _aRuns = [];
 
-	var _generateRootLevelKeys = function (oRun) {
+	var _generateRootLevelKeys = function (oRun, sFormat) {
 		return {
 			loadedLibraries: {},
 			analysisInfo: {
@@ -21,7 +24,7 @@ function (jQuery, IssueManager, RuleSetLoader ) {
 			applicationInfo: oRun.application,
 			technicalInfo: oRun.technical,
 			totalIssuesCount: 0,
-			//This is stored for backward compatibility.
+			// This is stored for backward compatibility.
 			issues: oRun.onlyIssues
 		};
 	};
@@ -35,14 +38,14 @@ function (jQuery, IssueManager, RuleSetLoader ) {
 		oLibrary["issueCount"] = oRun.rules[sLibraryName].issueCount;
 		oLibrary["allRulesSelected"] = true;
 
-		//This sum the total issues count in root level
+		// This sum the total issues count in root level.
 		oTmp.totalIssuesCount += oRun.rules[sLibraryName].issueCount;
 	};
 
 	var _generateRuleStructure = function (oTmp, sLibraryName, sRuleId, oRun) {
 		var oRule = oRun.rules[sLibraryName][sRuleId];
 
-		//Generate specific rule properties
+		// Generate specific rule properties.
 		oTmp.loadedLibraries[sLibraryName]["rules"][sRuleId] = {
 			id: sRuleId,
 			library: sLibraryName,
@@ -57,20 +60,22 @@ function (jQuery, IssueManager, RuleSetLoader ) {
 			description: oRule.description
 		};
 
-		//This controls the selected key on the library level
-		//if some of library child rules has not be selected the hole library is
-		//marked as selected false
+		// This controls the selected key on the library level
+		// if some of library child rules has not be selected the hole library is
+		// marked as selected false
 		if (oRule.selected === false) {
 			oTmp.loadedLibraries[sLibraryName]["allRulesSelected"] = false;
 		}
 	};
+
 	/**
-	 * Gets all issues reported from specific rule in shorted format - containing
+	 * Gets all issues reported from a specific rule in shortened format - containing
 	 * only the necessary details of the issue.
-	 * @param oRun
-	 * @param sLibraryName
-	 * @param sRuleName
-	 * @returns {Array}
+	 *
+	 * @param {Object} oRun The analysis run
+	 * @param {string} sLibraryName The name of the library
+	 * @param {string} sRuleName The name of the rule
+	 * @returns {Array} All issues from a rule
 	 * @private
 	 * @method
 	 */
@@ -88,12 +93,15 @@ function (jQuery, IssueManager, RuleSetLoader ) {
 				aIssues.push(oMinimizedIssue);
 			});
 		}
+
 		return aIssues;
 	};
 
 	var History = {
+
 		/**
-		 * Get the passed runs as array.
+		 * Gets the passed runs as an array.
+		 *
 		 * @returns {Array}  Returns a copy of passed runs array.
 		 */
 		getRuns: function () {
@@ -102,9 +110,10 @@ function (jQuery, IssueManager, RuleSetLoader ) {
 
 		/**
 		 * Stores the passed analysis object to an array of passed runs.
+		 *
 		 * @public
 		 * @method
-		 * @param oContext the context of the analysis
+		 * @param {Object} oContext the context of the analysis
 		 * @name sap.ui.support.History.saveAnalysis
 		 */
 		saveAnalysis: function (oContext) {
@@ -131,7 +140,8 @@ function (jQuery, IssueManager, RuleSetLoader ) {
 		},
 
 		/**
-		 * Clears all stored analysis history objects
+		 * Clears all stored analysis history objects.
+		 *
 		 * @public
 		 * @method
 		 * @name sap.ui.support.History.clearHistory
@@ -141,24 +151,22 @@ function (jQuery, IssueManager, RuleSetLoader ) {
 		},
 
 		/**
-		 * Gets the all passed analysis in proper json object which can be converted easily in string.
+		 * Gets all passed analyses in a JSON object that can easily be converted into a string.
+		 *
 		 * @public
 		 * @method
 		 * @name sap.ui.support.History.getHistory
-		 * @returns {Array} which contains all passed run analysis object in its elements.
+		 * @returns {Array} Which contains all passed run analysis objects.
 		 */
 		getHistory: function () {
 			var aOutput = [];
 
-			//Loops over each stored run
 			_aRuns.forEach(function (oRun) {
 				var oTmp = _generateRootLevelKeys(oRun);
 
-				//Loops over each library
 				for (var sLibraryName in oRun.rules) {
 					_generateLibraryStructure(oTmp, sLibraryName, oRun);
 
-					//Loops over each rule in his library
 					for (var sRuleName in oRun.rules[sLibraryName]) {
 						_generateRuleStructure(oTmp, sLibraryName, sRuleName, oRun);
 					}
@@ -168,6 +176,30 @@ function (jQuery, IssueManager, RuleSetLoader ) {
 			});
 
 			return aOutput;
+		},
+
+		/**
+		 * Returns the history into formatted output depending on the passed format.
+		 *
+		 * @public
+		 * @method
+		 * @param {string} sFormat The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
+		 * @name sap.ui.support.History.getFormattedHistory
+		 * @returns {*} All analysis history objects in the correct format.
+		 */
+		getFormattedHistory: function (sFormat) {
+			var oFormattedHistory,
+				aHistory = this.getHistory();
+
+			switch (sFormat) {
+				case library.HistoryFormats.Abap:
+					oFormattedHistory = AbapHistoryFormatter.format(aHistory);
+					break;
+				default :
+					oFormattedHistory = StringHistoryFormatter.format(aHistory);
+			}
+
+			return oFormattedHistory;
 		}
 	};
 

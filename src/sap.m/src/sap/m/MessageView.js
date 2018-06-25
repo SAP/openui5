@@ -293,6 +293,28 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Handles navigate event of the NavContainer
+	 *
+	 * @private
+	 */
+	MessageView.prototype._afterNavigate = function () {
+		jQuery.sap.delayedCall(0, this, "_restoreFocus");
+	};
+
+	/**
+	 * Restores the focus after navigation
+	 *
+	 * @private
+	 */
+	MessageView.prototype._restoreFocus = function () {
+		if (this._isListPage() && this.getItems().length) {
+			this._oLists[this._sCurrentList || 'all'].focus();
+		} else if (this._oBackButton){
+			this._oBackButton.focus();
+		}
+	};
+
 	MessageView.prototype.onBeforeRendering = function () {
 		var oGroupedItems, aItems = this.getItems();
 
@@ -579,7 +601,8 @@ sap.ui.define([
 		// Initialize nav container with two main pages
 		this._navContainer = new NavContainer(this.getId() + "-navContainer", {
 			initialPage: this.getId() + "listPage",
-			pages: [this._listPage, this._detailsPage]
+			pages: [this._listPage, this._detailsPage],
+			afterNavigate: this._afterNavigate.bind(this)
 		});
 
 		this.setAggregation("_navContainer", this._navContainer);

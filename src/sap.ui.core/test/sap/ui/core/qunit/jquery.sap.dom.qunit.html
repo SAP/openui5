@@ -427,7 +427,7 @@
 			jQuery(oDomRef).disableSelection();
 
 			// arrange
-			var sEvent = jQuery.support.selectstart ? "selectstart" : "mousedown";
+			var sEvent = "onselectstart" in document.createElement("div") ? "selectstart" : "mousedown";
 			var oSelectstarListener = jQuery._data(oDomRef, "events")[sEvent];
 
 			// assertions

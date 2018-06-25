@@ -43,6 +43,12 @@
         "type": "FIX",
         "text": " sap.ui.fl - Undefined parsed URL causing dump in VariantUtil",
         "references": []
+      },
+      {
+        "id": "0eba7e2133902e5d7e341f8a3dc7b16e567f382a",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fix issues with variants and FLP navigation:",
+        "references": []
       }
     ]
   }

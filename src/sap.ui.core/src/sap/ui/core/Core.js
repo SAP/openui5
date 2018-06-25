@@ -780,16 +780,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		 * However, if the compatibility version is 1.16 or higher then the polyfill
 		 * should not be used.
 		 */
-		var useFlexBoxPolyfillCompatVersion = new jQuery.sap.Version(this.oConfiguration.getCompatibilityVersion("flexBoxPolyfill"));
-
-		// Always false if version is >= 1.16
-		if (useFlexBoxPolyfillCompatVersion.compareTo("1.16") >= 0) {
-			jQuery.support.useFlexBoxPolyfill = false;
-		} else if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
-			jQuery.support.useFlexBoxPolyfill = true;
-		} else {
-			jQuery.support.useFlexBoxPolyfill = false;
-		}
+		jQuery.support.useFlexBoxPolyfill = false;
 	};
 
 	/**
