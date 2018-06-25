@@ -474,7 +474,7 @@ function(
 		if (this.getDomRef()) {
 			var iWidth = this.getDomRef().offsetWidth,
 				iValueHelpButtonWidth = this.getDomRef("vhi") ? parseInt(this.getDomRef("vhi").offsetWidth, 10) : 0,
-				iInputWidth = parseInt(this.$().find(".sapMMultiInputInputContainer").css("min-width"), 10);
+				iInputWidth = parseInt(this.$().find(".sapMMultiInputInputContainer").css("min-width"), 10) || 0;
 
 			return iWidth - (iValueHelpButtonWidth + iInputWidth) + "px";
 		} else {
