@@ -16,8 +16,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 * @constructor
 	 * @public
-	 * @since 1.50
-	 * @experimental Since 1.50. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 * @since 1.56
 	 * @alias sap.ui.fl.variants.VariantManagement
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
