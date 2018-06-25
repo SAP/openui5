@@ -1,6 +1,6 @@
 /* global QUnit,sinon*/
 
-(function ($, QUnit, sinon, DynamicPage, DynamicPageTitle, DynamicPageHeader) {
+(function ($, QUnit, sinon, DynamicPage, DynamicPageTitle, DynamicPageHeader, Device) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
@@ -1813,6 +1813,8 @@
 	});
 
 	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
+		var bIsIE = Device.browser.internet_explorer,
+			bIsEdge = Device.browser.edge;
 
 		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
 		// Arrange
@@ -1826,7 +1828,7 @@
 		// Assert state arranged as expected:
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), true, "header is expanded");
 		assert.ok(!this.oDynamicPage._canSnapHeaderOnScroll(), "not enough scrollHeight to snap with scroll");
-		assert.ok(this.oDynamicPage._needsVerticalScrollBar(), "enough scrollHeight to scroll");
+		assert.equal(this.oDynamicPage._needsVerticalScrollBar(), bIsEdge ? false : true, "enough scrollHeight to scroll");
 
 		// Act: toggle title to snap the header
 		this.oDynamicPage._titleExpandCollapseWhenAllowed();
@@ -1834,7 +1836,7 @@
 		// Assert context changed as expected:
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
 		assert.ok(!this.oDynamicPage._needsVerticalScrollBar(), "not enough scrollHeight to scroll");//because header was hidden during snap
-		assert.equal(this.oDynamicPage._getScrollPosition(), this.oDynamicPage._bMSBrowser ? 1 : 0); // because no more scrolled-out content
+		assert.equal(this.oDynamicPage._getScrollPosition(), bIsIE ? 1 : 0); // because no more scrolled-out content
 
 		// explicitly call the onscroll listener (to save a timeout in the test):
 		this.oDynamicPage._toggleHeaderOnScroll({target: {scrollTop: 0}});
@@ -3268,4 +3270,4 @@
 		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 2, "Content shrink factor is correct");
 		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 4, "Actions shrink factor is correct");
 	});
-}(jQuery, QUnit, sinon, sap.f.DynamicPage, sap.f.DynamicPageTitle, sap.f.DynamicPageHeader));
+}(jQuery, QUnit, sinon, sap.f.DynamicPage, sap.f.DynamicPageTitle, sap.f.DynamicPageHeader, sap.ui.Device));
