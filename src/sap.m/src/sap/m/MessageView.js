@@ -26,7 +26,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"./MessageViewRenderer",
 	"sap/ui/thirdparty/jquery",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	Control,
@@ -50,7 +50,8 @@ sap.ui.define([
 	coreLibrary,
 	ManagedObject,
 	MessageViewRenderer,
-	jQueryDOM
+	jQueryDOM,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -482,7 +483,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._onkeypress = function (oEvent) {
-		if (oEvent.shiftKey && oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.shiftKey && oEvent.keyCode == KeyCodes.ENTER) {
 			this.navigateBack();
 		}
 	};

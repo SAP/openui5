@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	"./FileUploaderRenderer",
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	Control,
@@ -21,7 +21,8 @@ sap.ui.define([
 	coreLibrary,
 	Device,
 	FileUploaderRenderer,
-	containsOrEquals
+	containsOrEquals,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -1175,7 +1176,7 @@ sap.ui.define([
 			this.setValue("", true);
 		}
 		var iKeyCode = oEvent.keyCode,
-			eKC = jQuery.sap.KeyCodes;
+			eKC = KeyCodes;
 		if (iKeyCode == eKC.DELETE || iKeyCode == eKC.BACKSPACE) {
 			if (this.oFileUpload) {
 				this.setValue("", true);

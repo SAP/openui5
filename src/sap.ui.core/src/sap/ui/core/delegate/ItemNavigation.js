@@ -13,9 +13,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/base/EventProvider',
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, EventProvider /*, jQuerySapKeycodes */, containsOrEquals) {
+	function(jQuery, EventProvider, containsOrEquals, KeyCodes) {
 	"use strict";
 	/* eslint-disable no-lonely-if */
 
@@ -535,11 +535,11 @@ sap.ui.define([
 			if (this.bTableMode) {
 				var iCol = iIndex % this.iColumns;
 				var iOldIndex = iIndex;
-				if (oEvent && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_RIGHT) {
+				if (oEvent && oEvent.keyCode == KeyCodes.ARROW_RIGHT) {
 					if (iCol < this.iColumns - 1) {
 						iIndex += this.oConfiguration.getRTL() ? -1 : 1;
 					}
-				} else if (oEvent && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_LEFT) {
+				} else if (oEvent && oEvent.keyCode == KeyCodes.ARROW_LEFT) {
 					if (iCol > 1) {
 						iIndex -= this.oConfiguration.getRTL() ? -1 : 1;
 					}
@@ -924,7 +924,7 @@ sap.ui.define([
 					iRow = Math.floor(iIndex / this.iColumns),
 					iCol = iIndex % this.iColumns;
 
-				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
+				if (oEvent.keyCode == KeyCodes.ARROW_DOWN) {
 					if (iRow  < iRowCount - 1) {
 						iIndex += this.iColumns;
 					}
@@ -935,7 +935,7 @@ sap.ui.define([
 				}
 			} else {
 				do {
-					if (this.iColumns > 1 && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
+					if (this.iColumns > 1 && oEvent.keyCode == KeyCodes.ARROW_DOWN) {
 						if ((iIndex + this.iColumns) >= this.aItemDomRefs.length) {
 							if (!this.bNoColumnChange) {
 								// on bottom -> begin on top of next column
@@ -1056,7 +1056,7 @@ sap.ui.define([
 				var iRow = Math.floor(iIndex / this.iColumns);
 				iCol = iIndex % this.iColumns;
 
-				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
+				if (oEvent.keyCode == KeyCodes.ARROW_UP) {
 					if (iRow  > 0) {
 						iIndex -= this.iColumns;
 					}
@@ -1067,7 +1067,7 @@ sap.ui.define([
 				}
 			} else {
 				do {
-					if (this.iColumns > 1 && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
+					if (this.iColumns > 1 && oEvent.keyCode == KeyCodes.ARROW_UP) {
 						if ((iIndex - this.iColumns) < 0) {
 							if (!this.bNoColumnChange) {
 								// on top -> begin on end of previous column
@@ -1461,7 +1461,7 @@ sap.ui.define([
 	 */
 	ItemNavigation.prototype.onkeyup = function(oEvent) {
 
-		if (oEvent.keyCode == jQuery.sap.KeyCodes.F2) {
+		if (oEvent.keyCode == KeyCodes.F2) {
 
 			var $DomRef = jQuery(this.oDomRef);
 

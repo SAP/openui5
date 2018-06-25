@@ -8,8 +8,8 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/core/library',
-	'jquery.sap.keycodes'
-], function(Control, InputBase, jQuery, Device, coreLibrary) {
+	"sap/ui/events/KeyCodes"
+], function(Control, InputBase, jQuery, Device, coreLibrary, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -1095,7 +1095,7 @@ sap.ui.define([
 		 */
 		this._parseKeyBoardEvent = function (oEvent) {
 			var iPressedKey = oEvent.which || oEvent.keyCode,
-				mKC = jQuery.sap.KeyCodes,
+				mKC = KeyCodes,
 				bArrowRight = iPressedKey === mKC.ARROW_RIGHT,
 				bArrowLeft = iPressedKey === mKC.ARROW_LEFT,
 				bShift = oEvent.shiftKey;
@@ -1107,7 +1107,7 @@ sap.ui.define([
 				bAltKey: oEvent.altKey,
 				bMetaKey: oEvent.metaKey,
 				bShift: bShift,
-				bInsert: iPressedKey === jQuery.sap.KeyCodes.INSERT,
+				bInsert: iPressedKey === KeyCodes.INSERT,
 				bBackspace: iPressedKey === mKC.BACKSPACE,
 				bDelete: iPressedKey === mKC.DELETE,
 				bEscape: iPressedKey === mKC.ESCAPE,
@@ -1115,8 +1115,8 @@ sap.ui.define([
 				bIphoneEscape: (Device.system.phone && Device.os.ios && iPressedKey === 127),
 				bArrowRight: bArrowRight,
 				bArrowLeft: bArrowLeft,
-				bHome: iPressedKey === jQuery.sap.KeyCodes.HOME,
-				bEnd:  iPressedKey === jQuery.sap.KeyCodes.END,
+				bHome: iPressedKey === KeyCodes.HOME,
+				bEnd:  iPressedKey === KeyCodes.END,
 				bShiftLeftOrRightArrow: bShift && (bArrowLeft || bArrowRight),
 				bBeforeSpace: iPressedKey < mKC.SPACE
 			};

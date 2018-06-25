@@ -15,8 +15,11 @@
 sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	'jquery.sap.global',
 	'sap/base/util/ObjectPath',
-	'sap/ui/Device', 'sap/ui/base/DataType', 'sap/ui/events/KeyCodes',
-	'jquery.sap.script', 'jquery.sap.keycodes'],
+	'sap/ui/Device',
+	'sap/ui/base/DataType',
+	'sap/ui/events/KeyCodes',
+	'jquery.sap.script'
+],
 	function(jQuery, ObjectPath, Device, DataType, KeyCodes/*, jQuerySap1 */) {
 	"use strict";
 

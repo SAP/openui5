@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRenderer', 'sap/ui/core/IconPool', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, Control, TimePickerSliderRenderer, IconPool, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRenderer', 'sap/ui/core/IconPool', 'sap/ui/Device', "sap/ui/events/KeyCodes"],
+	function(jQuery, Control, TimePickerSliderRenderer, IconPool, Device, KeyCodes) {
 		"use strict";
 
 		/**
@@ -440,7 +440,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 */
 		TimePickerSlider.prototype.onkeydown = function(oEvent) {
 			var iKC = oEvent.which || oEvent.keyCode,
-				oKCs = jQuery.sap.KeyCodes;
+				oKCs = KeyCodes;
 
 			if (iKC >= oKCs.NUMPAD_0 && iKC <= oKCs.NUMPAD_9){
 				iKC = this._convertNumPadToNumKeyCode(iKC);
@@ -1137,7 +1137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		TimePickerSlider.prototype._convertNumPadToNumKeyCode = function (iKeyCode) {
-			var oKCs = jQuery.sap.KeyCodes;
+			var oKCs = KeyCodes;
 
 			// Translate keypad code to number row code
 			// The difference between NUM pad numbers and numbers in keycode is 48

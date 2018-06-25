@@ -4,8 +4,13 @@
 
 // Provides control sap.m.QuickViewBase.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', "sap/ui/thirdparty/jquery"],
-	function(jQuery, library, Control, jQueryDOM) {
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
+],
+	function(jQuery, library, Control, jQueryDOM, KeyCodes) {
 	"use strict";
 
 	/**
@@ -307,7 +312,7 @@ sap.ui.define([
 		 * @private
 		 */
 		QuickViewBase.prototype._processKeyboard = function(oEvent) {
-			if (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+			if (oEvent.shiftKey && oEvent.which === KeyCodes.ENTER) {
 
 				this.navigateBack();
 

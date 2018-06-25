@@ -11,8 +11,8 @@ sap.ui.define([
 	'sap/ui/performance/trace/Interaction',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/util/ActivityDetection",
-	'jquery.sap.ui',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes",
+	'jquery.sap.ui'
 ],
 	function(
 		jQuery,
@@ -21,8 +21,9 @@ sap.ui.define([
 		RenderManager,
 		Interaction,
 		containsOrEquals,
-		ActivityDetection
-		/* jQuerySapUi, jQuerySapKeycodes */
+		ActivityDetection,
+		KeyCodes
+		/* jQuerySapUi */
 	) {
 	"use strict";
 
@@ -1136,7 +1137,7 @@ sap.ui.define([
 	UIArea._oFieldGroupControl = null; // group control for all UI areas to handle change of field groups
 	UIArea._iFieldGroupDelayTimer = null; // delay timer for triggering field group changes if focus is forwarded or temporarily dispatched by selection
 	UIArea._oFieldGroupValidationKey = {// keycode and modifier combination that is used to fire a change group event (reason: validate)
-			keyCode : jQuery.sap.KeyCodes.ENTER,
+			keyCode : KeyCodes.ENTER,
 			shiftKey : false,
 			altKey: false,
 			ctrlKey: false

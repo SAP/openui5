@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/LocaleData',
 	'./DateTimePickerRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	DatePicker,
@@ -25,8 +25,9 @@ sap.ui.define([
 	Device,
 	DateFormat,
 	LocaleData,
-	DateTimePickerRenderer
-	) {
+	DateTimePickerRenderer,
+	KeyCodes
+) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -494,7 +495,7 @@ sap.ui.define([
 			if (Device.system.desktop) {
 				this._oPopoverKeydownEventDelegate = {
 						onkeydown: function(oEvent) {
-							var oKC = jQuery.sap.KeyCodes,
+							var oKC = KeyCodes,
 							iKC = oEvent.which || oEvent.keyCode,
 							bAlt = oEvent.altKey;
 

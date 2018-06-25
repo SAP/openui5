@@ -22,7 +22,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'./SelectRenderer',
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	jQuery,
@@ -43,7 +43,8 @@ function(
 	Device,
 	InvisibleText,
 	SelectRenderer,
-	containsOrEquals
+	containsOrEquals,
+	KeyCodes
 ) {
 		"use strict";
 
@@ -1137,7 +1138,7 @@ function(
 			oEvent.setMarked();
 
 			// note: prevent browser address bar to be open in ie9, when F4 is pressed
-			if (oEvent.which === jQuery.sap.KeyCodes.F4) {
+			if (oEvent.which === KeyCodes.F4) {
 				oEvent.preventDefault();
 			}
 

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.TooltipBase.
-sap.ui.define(['jquery.sap.global', './Control', './Popup', './library', 'jquery.sap.keycodes'],
-	function(jQuery, Control, Popup, library /*, jQuerySapKeycodes */) {
+sap.ui.define(['jquery.sap.global', './Control', './Popup', './library', "sap/ui/events/KeyCodes"],
+	function(jQuery, Control, Popup, library /*, jQuerySapKeycodes */, KeyCodes) {
 	"use strict";
 
 
@@ -430,7 +430,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library', 'jquery
 	 */
 	TooltipBase.prototype.onkeydown = function(oEvent) {
 		// Ctrl is pressed together with "i" - Open Rich tooltip.
-		if (oEvent.ctrlKey && oEvent.which == jQuery.sap.KeyCodes.I) {
+		if (oEvent.ctrlKey && oEvent.which == KeyCodes.I) {
 			// The Element or Control that initiated the event.
 
 			var oEventSource = jQuery(oEvent.target).control(0);
@@ -448,7 +448,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library', 'jquery
 					oEvent.stopPropagation();
 				}
 			}
-		} else if (oEvent.which == jQuery.sap.KeyCodes.ESCAPE) {
+		} else if (oEvent.which == KeyCodes.ESCAPE) {
 			// If ESC is pressed then close the Rich Tooltip.
 
 			if (TooltipBase.sOpenTimeout) {

@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/performance/trace/Interaction",
 	"sap/ui/thirdparty/jquery",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 	function(
 		jQuery,
@@ -24,7 +24,8 @@ sap.ui.define([
 		BaseObject,
 		ResizeHandler,
 		Interaction,
-		jQueryDOM
+		jQueryDOM,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -286,11 +287,11 @@ sap.ui.define([
 
 				if (oEvent.altKey && this.getHorizontal()) {
 					switch (oEvent.keyCode) {
-						case jQuery.sap.KeyCodes.PAGE_UP:
+						case KeyCodes.PAGE_UP:
 							// Navigate 1 page left
 							this._customScrollTo(this._scrollX - container.clientWidth, this._scrollY, oEvent);
 							break;
-						case jQuery.sap.KeyCodes.PAGE_DOWN:
+						case KeyCodes.PAGE_DOWN:
 							// Navigate 1 page right
 							this._customScrollTo(this._scrollX + container.clientWidth, this._scrollY, oEvent);
 							break;
@@ -299,31 +300,31 @@ sap.ui.define([
 
 				if (oEvent.ctrlKey) {
 					switch (oEvent.keyCode) {
-						case jQuery.sap.KeyCodes.ARROW_UP:
+						case KeyCodes.ARROW_UP:
 							// [CTRL]+[UP] - 1 page up
 							if (this.getVertical()) {
 								this._customScrollTo(this._scrollX, this._scrollY - container.clientHeight * this._scrollCoef, oEvent);
 							}
 							break;
-						case jQuery.sap.KeyCodes.ARROW_DOWN:
+						case KeyCodes.ARROW_DOWN:
 							// [CTRL]+[DOWN] - 1 page down
 							if (this.getVertical()) {
 								this._customScrollTo(this._scrollX, this._scrollY + container.clientHeight * this._scrollCoef, oEvent);
 							}
 							break;
-						case jQuery.sap.KeyCodes.ARROW_LEFT:
+						case KeyCodes.ARROW_LEFT:
 							// [CTRL]+[LEFT] - 1 page left
 							if (this.getHorizontal()) {
 								this._customScrollTo(this._scrollX - container.clientWidth, this._scrollY, oEvent);
 							}
 							break;
-						case jQuery.sap.KeyCodes.ARROW_RIGHT:
+						case KeyCodes.ARROW_RIGHT:
 							// [CTRL]+[RIGHT] - 1 page right
 							if (this.getHorizontal()) {
 								this._customScrollTo(this._scrollX + container.clientWidth, this._scrollY, oEvent);
 							}
 							break;
-						case jQuery.sap.KeyCodes.HOME:
+						case KeyCodes.HOME:
 							if (this.getHorizontal()) {
 								this._customScrollTo(0, this._scrollY, oEvent);
 							}
@@ -332,7 +333,7 @@ sap.ui.define([
 								this._customScrollTo(this._scrollX, 0, oEvent);
 							}
 							break;
-						case jQuery.sap.KeyCodes.END:
+						case KeyCodes.END:
 
 							var left = container.scrollWidth - container.clientWidth;
 							var top = container.scrollHeight - container.clientHeight;

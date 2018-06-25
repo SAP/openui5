@@ -11,9 +11,9 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/library',
 	'./CarouselRenderer',
+	"sap/ui/events/KeyCodes",
 	'sap/ui/thirdparty/mobify-carousel',
-	'sap/ui/core/IconPool',
-	'jquery.sap.keycodes'
+	'sap/ui/core/IconPool'
 ],
 function(
 	jQuery,
@@ -22,7 +22,8 @@ function(
 	Device,
 	ResizeHandler,
 	coreLibrary,
-	CarouselRenderer
+	CarouselRenderer,
+	KeyCodes
 	/*, mobifycarousel, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */
 ) {
 	"use strict";
@@ -829,7 +830,7 @@ function(
 	 */
 	Carousel.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.keyCode == jQuery.sap.KeyCodes.F7) {
+		if (oEvent.keyCode == KeyCodes.F7) {
 			this._handleF7Key(oEvent);
 			return;
 		}
@@ -844,13 +845,13 @@ function(
 			// Minus keys
 			// TODO  jQuery.sap.KeyCodes.MINUS is not returning 189
 			case 189:
-			case jQuery.sap.KeyCodes.NUMPAD_MINUS:
+			case KeyCodes.NUMPAD_MINUS:
 				this._fnSkipToIndex(oEvent, -1);
 				break;
 
 			// Plus keys
-			case jQuery.sap.KeyCodes.PLUS:
-			case jQuery.sap.KeyCodes.NUMPAD_PLUS:
+			case KeyCodes.PLUS:
+			case KeyCodes.NUMPAD_PLUS:
 				this._fnSkipToIndex(oEvent, 1);
 				break;
 		}
@@ -1037,7 +1038,7 @@ function(
 		this.$().focus();
 
 		oEventF6.target = oEvent.target;
-		oEventF6.keyCode = jQuery.sap.KeyCodes.F6;
+		oEventF6.keyCode = KeyCodes.F6;
 		oEventF6.shiftKey = bShiftKey;
 
 		jQuery.sap.handleF6GroupNavigation(oEventF6);

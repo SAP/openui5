@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/library', 'jquery.sap.keycodes'], function(SemanticButton, library, jQuery) {
+sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/library', "sap/ui/events/KeyCodes"], function(SemanticButton, library, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -67,7 +67,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/library', 'jquery.sap.key
 	 */
 	SemanticToggleButton.prototype._onKeydown = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 			this._onTap(oEvent);
 		}
 	};

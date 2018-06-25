@@ -19,7 +19,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./ComboBoxBaseRenderer',
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+		"sap/ui/events/KeyCodes"
 ],
 	function(
 		jQuery,
@@ -37,7 +37,8 @@ sap.ui.define([
 		Device,
 		coreLibrary,
 		ComboBoxBaseRenderer,
-		containsOrEquals
+		containsOrEquals,
+		KeyCodes
 	) {
 		"use strict";
 
@@ -443,7 +444,7 @@ sap.ui.define([
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (oEvent.keyCode === jQuery.sap.KeyCodes.F4) {
+			if (oEvent.keyCode === KeyCodes.F4) {
 				this.onF4(oEvent);
 			}
 

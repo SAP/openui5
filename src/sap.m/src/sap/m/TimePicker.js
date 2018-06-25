@@ -19,7 +19,7 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/core/LocaleData',
 	'./TimePickerRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	jQuery,
@@ -36,8 +36,9 @@ function(
 	Locale,
 	library,
 	LocaleData,
-	TimePickerRenderer
-	) {
+	TimePickerRenderer,
+	KeyCodes
+) {
 		"use strict";
 
 		// shortcut for sap.m.PlacementType
@@ -915,7 +916,7 @@ function(
 		 * @private
 		 */
 		TimePicker.prototype.onkeydown = function(oEvent) {
-			var oKC = jQuery.sap.KeyCodes,
+			var oKC = KeyCodes,
 				iKC = oEvent.which || oEvent.keyCode,
 				bAlt = oEvent.altKey,
 				bPickerOpened;
@@ -1071,7 +1072,7 @@ function(
 			if (Device.system.desktop) {
 				this._oPopoverKeydownEventDelegate = {
 					onkeydown: function(oEvent) {
-						var oKC = jQuery.sap.KeyCodes,
+						var oKC = KeyCodes,
 							iKC = oEvent.which || oEvent.keyCode,
 							bAlt = oEvent.altKey;
 

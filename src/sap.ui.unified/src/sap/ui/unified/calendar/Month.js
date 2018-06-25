@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	"./MonthRenderer",
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	Control,
@@ -31,7 +31,8 @@ sap.ui.define([
 	coreLibrary,
 	Locale,
 	MonthRenderer,
-	containsOrEquals
+	containsOrEquals,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -1167,7 +1168,7 @@ sap.ui.define([
 			case "sapnext":
 			case "sapnextmodifiers":
 				// last day in month reached
-				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
+				if (oEvent.keyCode == KeyCodes.ARROW_DOWN) {
 					//goto same day next week
 					oFocusedDate.setDate(oFocusedDate.getDate() + 7);
 				} else {
@@ -1179,7 +1180,7 @@ sap.ui.define([
 			case "sapprevious":
 			case "sappreviousmodifiers":
 				// first day in month reached
-				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
+				if (oEvent.keyCode == KeyCodes.ARROW_UP) {
 					//goto same day previous week
 					oFocusedDate.setDate(oFocusedDate.getDate() - 7);
 				} else {

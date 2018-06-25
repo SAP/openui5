@@ -32,7 +32,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./UploadCollectionRenderer",
 	"sap/ui/thirdparty/jquery",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	Library,
@@ -62,7 +62,8 @@ sap.ui.define([
 	ResizeHandler,
 	Device,
 	UploadCollectionRenderer,
-	jQueryDOM
+	jQueryDOM,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -2983,16 +2984,16 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype.onkeydown = function(event) {
 		switch (event.keyCode) {
-			case jQuery.sap.KeyCodes.F2 :
+			case KeyCodes.F2 :
 				this._handleF2(event);
 				break;
-			case jQuery.sap.KeyCodes.ESCAPE :
+			case KeyCodes.ESCAPE :
 				this._handleESC(event);
 				break;
-			case jQuery.sap.KeyCodes.DELETE :
+			case KeyCodes.DELETE :
 				this._handleDEL(event);
 				break;
-			case jQuery.sap.KeyCodes.ENTER :
+			case KeyCodes.ENTER :
 				this._handleENTER(event);
 				break;
 			default :

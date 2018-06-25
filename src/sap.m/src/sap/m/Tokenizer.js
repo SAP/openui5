@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./TokenizerRenderer',
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 	function(
 		jQuery,
@@ -24,7 +24,8 @@ sap.ui.define([
 		InvisibleText,
 		ResizeHandler,
 		TokenizerRenderer,
-		containsOrEquals
+		containsOrEquals,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -517,12 +518,12 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
+		if (oEvent.which === KeyCodes.TAB) {
 			this._changeAllTokensSelection(false);
 		}
 
 		// ctrl/meta + c OR ctrl/meta + A
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.A) {
 
 			//to check how many tokens are selected before Ctrl + A in Tokenizer
 			this._iSelectedToken = this.getSelectedTokens().length;
@@ -535,12 +536,12 @@ sap.ui.define([
 		}
 
 		// ctrl/meta + c OR ctrl/meta + Insert
-		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.C || oEvent.which === jQuery.sap.KeyCodes.INSERT)) {
+		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.C || oEvent.which === KeyCodes.INSERT)) {
 			this._copy();
 		}
 
 		// ctr/meta + x OR Shift + Delete
-		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.X) || (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.DELETE)) {
+		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.X) || (oEvent.shiftKey && oEvent.which === KeyCodes.DELETE)) {
 			if (this.getEditable()) {
 				this._cut();
 			} else {
@@ -705,7 +706,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onsapprevious = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP) {
+		if (oEvent.which === KeyCodes.ARROW_UP) {
 			return;
 		}
 
@@ -755,7 +756,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onsapnext = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN) {
+		if (oEvent.which === KeyCodes.ARROW_DOWN) {
 			return;
 		}
 
