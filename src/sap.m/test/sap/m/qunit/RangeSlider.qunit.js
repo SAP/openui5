@@ -423,6 +423,35 @@
 		assert.strictEqual(this.rangeSlider._calculateHandlePosition(value4), 31, "The function should return 31");
 	});
 
+	QUnit.test('Slider with decimal values, should apply all dom element attributes correctly', function (assert) {
+		// arrange
+		var oSliderInputElement, oProgressHandle,
+			oSlider = new sap.m.RangeSlider({
+				min: -10,
+				max: 10,
+				range: [-5.05, 3],
+				name: "RangeSlider12",
+				step: 0.05
+			}).placeAt(DOM_RENDER_LOCATION);
+
+		// act
+		oSlider.setValue(1.2542324);
+		oSlider.setValue2(3.4122);
+
+		sap.ui.getCore().applyChanges();
+
+		oSliderInputElement = oSlider.$().find('.sapMSliderInput')[0];
+		oProgressHandle = oSlider.getDomRef("progress");
+
+		// assert
+		assert.strictEqual(parseFloat(oSliderInputElement.getAttribute('start')), 1.25, "Range[0] to be set properly");
+		assert.strictEqual(parseFloat(oSliderInputElement.getAttribute('end')), 3.40, "Range[1] to be set properly");
+		assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), '1.25-3.40', "The aria-valuenow of the progress handle should be 0-1.");
+
+		// cleanup
+		oSlider.destroy();
+	});
+
 	QUnit.test("Calculate movement offset", function (assert) {
 		var aRange = [4, 27],
 			iStep = 5,
