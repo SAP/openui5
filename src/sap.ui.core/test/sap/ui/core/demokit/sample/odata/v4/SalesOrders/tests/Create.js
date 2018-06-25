@@ -141,7 +141,7 @@ sap.ui.define([
 				When.onTheCreateNewSalesOrderDialog.confirmDialog();
 				When.onTheMainPage.changeNote(0, "RAISE_ERROR");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
-				When.onTheErrorInfo.confirm();
+				When.onTheMessagePopover.close();
 				When.onTheMainPage.pressRefreshSalesOrdersButton();
 				When.onTheRefreshConfirmation.cancel();
 				Then.onTheMainPage.checkID(0, "");
@@ -152,10 +152,10 @@ sap.ui.define([
 				When.onTheCreateNewSalesOrderDialog.confirmDialog();
 				When.onTheMainPage.changeNote(0, "RAISE_ERROR");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
-				When.onTheErrorInfo.confirm();
+				When.onTheMessagePopover.close();
 				// Do it again to ensure that it is retried without update
 				When.onTheMainPage.pressSaveSalesOrdersButton();
-				When.onTheErrorInfo.confirm();
+				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeNote(0, "Valid Note");
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheSuccessInfo.confirm();

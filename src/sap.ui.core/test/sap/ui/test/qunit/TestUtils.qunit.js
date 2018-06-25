@@ -64,6 +64,11 @@ sap.ui.require([
 		expectedODataVersion : "4.0",
 		expectedDataServiceVersion : null
 	}, {
+		requestHeaders : { "DataServiceVersion" : "2.0" },
+		responseHeaders : { "OData-VerSion" : "4.0" },	// handle headers case sensitive
+		expectedODataVersion : "4.0",
+		expectedDataServiceVersion : null
+	}, {
 		requestHeaders : {},
 		responseHeaders : {},
 		expectedODataVersion : null,
@@ -141,6 +146,12 @@ sap.ui.require([
 				});
 				assert.strictEqual(bFoundODataVersionHeaders, bExpectedODataVersion,
 					"OData service version as expected in $batch response");
+				aResponseHeaders = aResponseHeaders.map(function (sHeader) {
+					return sHeader.toLowerCase();
+				});
+				assert.notOk(aResponseHeaders.some(function(sHeader, i) {
+					return aResponseHeaders.indexOf(sHeader, i + 1) !== -1;
+				}), "no duplicates");
 			});
 		});
 	});

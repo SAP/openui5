@@ -218,7 +218,7 @@ sap.ui.define([
 		}
 
 		function templateAggregations(oParent, oMetadata, oContextVisitor) {
-			var aAggregationFragments = oMetadata._aggregationFragments,
+			var aAggregationFragments = oMetadata._aggregationFragments, aAggregationPromises = [],
 				sLibrary = oMetadata.getLibraryName(),
 				bCheckMultiple;
 			if (aAggregationFragments) {
@@ -244,7 +244,7 @@ sap.ui.define([
 
 					var oAggregationFragment = aAggregationFragments[sAggregationName].cloneNode(true);
 					// resolve templating in composite aggregation fragment
-					oContextVisitor.visitChildNodes(oAggregationFragment);
+					aAggregationPromises.push(oContextVisitor.visitChildNodes(oAggregationFragment).then(function() {
 					var aAggregationNodes = Utils.getChildren(oAggregationFragment);
 					var id = oParent.getAttribute("id");
 
@@ -255,8 +255,10 @@ sap.ui.define([
 						}
 						oAggregationRoot.appendChild(aAggregationNodes[j]);
 					}
+					}));
 				});
 			}
+			return Promise.all(aAggregationPromises);
 		}
 
 		function observeChanges(oChanges) {
@@ -883,13 +885,15 @@ sap.ui.define([
 			addViewContext(mContexts,oVisitor);
 			var oContextVisitor = oVisitor["with"](mContexts, true);
 			//visit the children of the element in case this uses templating
-			oContextVisitor.visitChildNodes(oElement);
-			templateAggregations(oElement, oMetadata, oContextVisitor);
-			// resolve templating
-			oContextVisitor.visitChildNodes(oFragment);
-			var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", oMetadata.getCompositeAggregationName());
-			oNode.appendChild(oFragment);
-			oElement.appendChild(oNode);
+			return oContextVisitor.visitChildNodes(oElement).then(function() {
+				return templateAggregations(oElement, oMetadata, oContextVisitor);
+			}).then(function() {
+				return oContextVisitor.visitChildNodes(oFragment);
+			}).then(function() {
+				var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", oMetadata.getCompositeAggregationName());
+				oNode.appendChild(oFragment);
+				oElement.appendChild(oNode);
+			});
 		};
 
 		return XMLComposite;

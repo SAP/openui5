@@ -67,37 +67,36 @@ sap.ui.define([
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
 			}
 
-			oMetaModel.requestObject("/$EntityContainer/SalesOrderList/$Type").then(function () {
-				oLayout.addItem(sap.ui.view({
-					async : true,
-					bindingContexts : {
-						undefined : oModel.createBindingContext("/BusinessPartnerList")
-					},
-					models : {
-						// Note: XML Templating creates bindings to default model only!
-						undefined : oModel,
-						metaModel : oMetaModel,
-						ui : new JSONModel({
-							bRealOData : bRealOData,
-							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
-							iconTooltip : bRealOData ? "real OData service" : "mock OData service"
-						})
-					},
-					preprocessors : {
-						xml : {
-							"X-async" : true, // eXperimental async switch, to be removed soon
-							bindingContexts : {
-								data : oModel.createBindingContext("/BusinessPartnerList")
-							},
-							models : {
-								data : oModel,
-								meta : oMetaModel
-							}
+			View.create({
+				async : true,
+				bindingContexts : {
+					undefined : oModel.createBindingContext("/BusinessPartnerList")
+				},
+				models : {
+					// Note: XML Templating creates bindings to default model only!
+					undefined : oModel,
+					metaModel : oMetaModel,
+					ui : new JSONModel({
+						bRealOData : bRealOData,
+						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
+						iconTooltip : bRealOData ? "real OData service" : "mock OData service"
+					})
+				},
+				preprocessors : {
+					xml : {
+						bindingContexts : {
+							data : oModel.createBindingContext("/BusinessPartnerList")
+						},
+						models : {
+							data : oModel,
+							meta : oMetaModel
 						}
-					},
-					type : ViewType.XML,
-					viewName : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main"
-				}));
+					}
+				},
+				type : ViewType.XML,
+				viewName : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main"
+			}).then(function (oView) {
+				oLayout.addItem(oView);
 			});
 
 			return oLayout;

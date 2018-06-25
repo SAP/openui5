@@ -29,7 +29,7 @@ sap.ui.require([
 			} catch (e) {
 				assert.ok(e instanceof ParseException);
 				assert.strictEqual(e.message,
-					"EnterTime " + oType.formatValue("13:47:26", "string"));
+					"EnterTime " + oType.formatValue("23:59:58", "string"));
 			}
 		});
 	}
@@ -293,7 +293,7 @@ sap.ui.require([
 			var oType = new TimeOfDay({}, {nullable : false});
 
 			assert.throws(oType.validateValue.bind(oType, null),
-				new ValidateException("EnterTime 1:47:26 PM"));
+				new ValidateException("EnterTime 11:59:58 PM"));
 		});
 	});
 

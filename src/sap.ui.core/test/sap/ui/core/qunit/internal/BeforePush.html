@@ -9,15 +9,22 @@
 
 		<title>OData V4: Before Push Tests</title>
 
+		<style>
+			.failed {background-color: red;}
+			.hidden {display: none;}
+			.running {font-weight: bold;}
+			.selected {background-color: lightgrey; }
+			div {display: inline-block}
+		</style>
 		<script src="BeforePush.js"></script>
 	</head>
 	<body>
 		<h1>UI Services Before Push Tests</h1>
-		<p>
+		<p id="buttons">
 			<input id="run" type="button" value="Run">
 			<input id="runWithoutRealOData" type="button" value="w/o realOData">
 		</p>
+		<p id="status"></p>
 		<ol id="results" style="font-family: sans-serif; font-size: small"></ol>
-		<iframe height="900" id="frame" width="1600"></iframe>
 	</body>
 </html>

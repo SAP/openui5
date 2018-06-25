@@ -148,7 +148,7 @@ sap.ui.define([
 
 		function updateDependents() {
 			// Do not fire a change event in ListBinding, there is no change in the list of contexts
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+			that.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.checkUpdate();
 			});
 		}

@@ -9,7 +9,12 @@ sap.ui.define(['sap/ui/core/Control'], function(oControl) {
 		metadata : {
 			properties : {
 				label : "string",
-				path : "string"
+				path : "string",
+				asLink : {
+					type : "boolean",
+					defaultValue : false
+				},
+				key : "string"
 			}
 		}
 	});

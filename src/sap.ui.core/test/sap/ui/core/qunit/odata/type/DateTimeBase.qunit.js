@@ -29,9 +29,10 @@ sap.ui.require([
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
 		sDateTimeOffsetWithMS = "2014-11-27T13:47:26.456" + getTimezoneOffset(oDateTime),
 //		sFormattedDateTimeWithMS = "Nov 27, 2014, 1:47:26.456 PM",
+		iFullYear = new Date().getFullYear(),
 		oMessages = {
-			"EnterDateTime" : "EnterDateTime Nov 27, 2014, 1:47:26 PM",
-			"EnterDate" : "EnterDate Nov 27, 2014"
+			"EnterDateTime" : "EnterDateTime Dec 31, " + iFullYear + ", 11:59:58 PM",
+			"EnterDate" : "EnterDate Dec 31, " + iFullYear
 		};
 
 	function createInstance(sTypeName, oFormatOptions, oConstraints) {

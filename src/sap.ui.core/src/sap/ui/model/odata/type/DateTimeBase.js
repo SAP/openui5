@@ -12,7 +12,9 @@ sap.ui.define([
 ], function (jQuery, DateFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
-	var oDemoDate = new Date(2014, 10, 27, 13, 47, 26);
+	var iFullYear = new Date().getFullYear(),
+		oDemoDate = new Date(Date.UTC(iFullYear, 11, 31)), // UTC
+		oDemoDateTime = new Date(iFullYear, 11, 31, 23, 59, 58); // local time
 
 	/*
 	 * Returns true if the type uses only the date.
@@ -35,7 +37,7 @@ sap.ui.define([
 	function getErrorMessage(oType) {
 		return sap.ui.getCore().getLibraryResourceBundle().getText(
 			isDateOnly(oType) ? "EnterDate" : "EnterDateTime",
-				[oType.formatValue(oDemoDate, "string")]);
+				[oType.formatValue(isDateOnly(oType) ? oDemoDate : oDemoDateTime, "string")]);
 	}
 
 	/*

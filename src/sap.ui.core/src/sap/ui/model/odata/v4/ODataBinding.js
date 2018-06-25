@@ -4,8 +4,9 @@
 //Provides mixin sap.ui.model.odata.v4.ODataBinding for classes extending sap.ui.model.Binding
 sap.ui.define([
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/odata/OperationMode",
 	"./lib/_Helper"
-], function (SyncPromise, _Helper) {
+], function (SyncPromise, OperationMode, _Helper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
@@ -17,6 +18,84 @@ sap.ui.define([
 	 * @mixin
 	 */
 	function ODataBinding() {}
+
+	/**
+	 * Checks binding-specific parameters from the given map. "Binding-specific" parameters are
+	 * those with a key starting with '$$', i.e. OData query options provided as binding parameters
+	 * are ignored. The following parameters are supported, if the parameter name is contained in
+	 * the given 'aAllowed' parameter:
+	 * <ul>
+	 * <li> '$$aggregation' with allowed values as specified in
+	 *      {@link sap.ui.model.odata.v4.ODataListBinding#updateAnalyticalInfo} (but without
+	 *      validation here)
+	 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
+	 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
+	 * <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
+	 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
+	 * <li> '$$ownRequest' with value <code>true</code>
+	 * </ul>
+	 *
+	 * @param {object} mParameters
+	 *   The map of binding parameters
+	 * @param {string[]} aAllowed
+	 *   The array of allowed binding parameter names
+	 * @throws {Error}
+	 *   For unsupported parameter names or parameter values
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.checkBindingParameters = function (mParameters, aAllowed) {
+		var that = this;
+
+		Object.keys(mParameters).forEach(function (sKey) {
+			var vValue = mParameters[sKey];
+
+			if (sKey.indexOf("$$") !== 0) {
+				return;
+			}
+			if (aAllowed.indexOf(sKey) < 0) {
+				throw new Error("Unsupported binding parameter: " + sKey);
+			}
+
+			switch (sKey) {
+				case "$$aggregation":
+					// no validation here
+					break;
+				case "$$groupId":
+				case "$$updateGroupId":
+					that.oModel.checkGroupId(vValue, false,
+						"Unsupported value for binding parameter '" + sKey + "': ");
+					break;
+				case "$$inheritExpandSelect":
+					if (vValue !== true && vValue !== false) {
+						throw new Error("Unsupported value for binding parameter "
+							+ "'$$inheritExpandSelect': " + vValue);
+					}
+					if (!that.oOperation) {
+						throw new Error("Unsupported binding parameter $$inheritExpandSelect: "
+							+ "binding is not an operation binding");
+					}
+					if (mParameters.$expand || mParameters.$select) {
+						throw new Error("Must not set parameter $$inheritExpandSelect on a binding "
+							+ "which has a $expand or $select binding parameter");
+					}
+					break;
+				case "$$operationMode":
+					if (vValue !== OperationMode.Server) {
+						throw new Error("Unsupported operation mode: " + vValue);
+					}
+					break;
+				case "$$ownRequest":
+					if (vValue !== true) {
+						throw new Error("Unsupported value for binding parameter "
+							+ "'$$ownRequest': " + vValue);
+					}
+					break;
+				default:
+					throw new Error("Unknown binding-specific parameter: " + sKey);
+			}
+		});
+	};
 
 	/**
 	 * Throws an Error if the binding's root binding is suspended.
@@ -194,6 +273,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns all bindings which have this binding as parent binding.
+	 *
+	 * @returns {sap.ui.model.odata.v4.ODataBinding[]}
+	 *   A list of dependent bindings, never <code>null</code>
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.getDependentBindings = function () {
+		return this.oModel.getDependentBindings(this);
+	};
+
+	/**
 	 * Returns the group ID of the binding that is used for read requests.
 	 *
 	 * @returns {string}
@@ -333,7 +424,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.hasPendingChangesInDependents = function () {
-		return this.oModel.getDependentBindings(this).some(function (oDependent) {
+		return this.getDependentBindings().some(function (oDependent) {
 			var oCache, bHasPendingChanges;
 
 			if (oDependent.oCachePromise.isFulfilled()) {
@@ -520,7 +611,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetChangesInDependents = function () {
-		this.oModel.getDependentBindings(this).forEach(function (oDependent) {
+		this.getDependentBindings().forEach(function (oDependent) {
 			var oCache;
 
 			if (oDependent.oCachePromise.isFulfilled()) {

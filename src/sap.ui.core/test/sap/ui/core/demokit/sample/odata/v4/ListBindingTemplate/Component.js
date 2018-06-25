@@ -80,38 +80,34 @@ sap.ui.define([
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
 			}
 
-			oMetaModel.requestObject("/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/").then(function () {
-//			oMetaModel.requestObject("/").then(function () {
-				return View.create({
-					async : true,
-					bindingContexts : {
-						undefined : oModel.createBindingContext("/Equipments")
-					},
-					models : {
-						// Note: XML Templating creates bindings to default model only!
-						undefined : oModel,
-						metaModel : oMetaModel,
-						ui : new JSONModel({
-							bRealOData : bRealOData,
-							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
-							iconTooltip : bRealOData ? "real OData service" : "mock OData service"
-						})
-					},
-					preprocessors : {
-						xml : {
-							"X-async" : true, // eXperimental async switch, to be removed soon
-							bindingContexts : {
-								data : oModel.createBindingContext("/Equipments")
-							},
-							models : {
-								data : oModel,
-								meta : oMetaModel
-							}
+			View.create({
+				async : true,
+				bindingContexts : {
+					undefined : oModel.createBindingContext("/Equipments")
+				},
+				models : {
+					// Note: XML Templating creates bindings to default model only!
+					undefined : oModel,
+					metaModel : oMetaModel,
+					ui : new JSONModel({
+						bRealOData : bRealOData,
+						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
+						iconTooltip : bRealOData ? "real OData service" : "mock OData service"
+					})
+				},
+				preprocessors : {
+					xml : {
+						bindingContexts : {
+							data : oModel.createBindingContext("/Equipments")
+						},
+						models : {
+							data : oModel,
+							meta : oMetaModel
 						}
-					},
-					type : ViewType.XML,
-					viewName : "sap.ui.core.sample.odata.v4.ListBindingTemplate.Main"
-				});
+					}
+				},
+				type : ViewType.XML,
+				viewName : "sap.ui.core.sample.odata.v4.ListBindingTemplate.Main"
 			}).then(function (oView) {
 				oLayout.addItem(oView);
 			});

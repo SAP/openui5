@@ -1,17 +1,16 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main"
-	template:require="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper sap.ui.model.odata.v4.AnnotationHelper"
+	template:require="{Helper : 'sap/ui/core/sample/odata/v4/ListBindingTemplate/Helper',
+		AnnotationHelper : 'sap/ui/model/odata/v4/AnnotationHelper'}"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:demo="sap.ui.core.sample.common"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<template:alias name=".getValueListType"
-			value="sap.ui.model.odata.v4.AnnotationHelper.getValueListType">
-	<template:alias name=".stringify"
-			value="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper.stringify">
-	<template:alias name=".value" value="sap.ui.model.odata.v4.AnnotationHelper.value">
-	<template:alias name=".label" value="sap.ui.model.odata.v4.AnnotationHelper.label">
+	<template:alias name="getValueListType" value="AnnotationHelper.getValueListType">
+	<template:alias name="stringify" value="Helper.stringify">
+	<template:alias name="value" value="AnnotationHelper.value">
+	<template:alias name="label" value="AnnotationHelper.label">
 	<VBox>
 		<Panel expandable="true" headerText="(Technical Tests)">
 			<VBox>
@@ -78,9 +77,9 @@
 					<template:repeat
 						list="{path: 'property>@', filters: {path: '@sapui.name', operator: 'StartsWith', value1: '@com.sap.vocabularies.Common.v1.'}}"
 						var="annotation">
-						<Text text="{annotation>@sapui.name} = {path:'annotation>', formatter: '.stringify'}"/>
+						<Text text="{annotation>@sapui.name} = {path:'annotation>', formatter: 'stringify'}"/>
 					</template:repeat>
-					<Text text="ValueListType: {property>@@.getValueListType}"/>
+					<Text text="ValueListType: {property>@@getValueListType}"/>
 				</template:repeat>
 				<!-- TODO repeat over $* properties! -->
 			</VBox>
@@ -95,16 +94,16 @@
 							<Column>
 								<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance/$EnumMember}
 									=== 'com.sap.vocabularies.UI.v1.ImportanceType/High' ? 'Bold' : 'Standard'}"
-									text="{field>@@.label}"/>
+									text="{field>@@label}"/>
 							</Column>
 						</template:repeat>
 					</columns>
 					<ColumnListItem>
 						<template:repeat list="{lineItem>}" var="field">
 							<template:with path="field>Value/$Path" var="target">
-								<template:if test="{= ${target>@@.getValueListType} !== 'None' }">
+								<template:if test="{= ${target>@@getValueListType} !== 'None' }">
 									<template:then>
-										<demo:ValueHelp value="{field>Value/@@.value}"/>
+										<demo:ValueHelp value="{field>Value/@@value}"/>
 									</template:then>
 									<template:elseif test="{target>@com.sap.vocabularies.Common.v1.Text}">
 										<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
@@ -112,11 +111,11 @@
 											=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
 											<!-- Text: "A descriptive text for values of the annotated property.
 												Value MUST be a dynamic expression when used as metadata annotation." -->
-											<Text text="{field>Value/@@.value} {target>@com.sap.vocabularies.Common.v1.Text/@@.value}" />
+											<Text text="{field>Value/@@value} {target>@com.sap.vocabularies.Common.v1.Text/@@value}" />
 										</template:if>
 									</template:elseif>
 									<template:else>
-										<Text text="{field>Value/@@.value}" />
+										<Text text="{field>Value/@@value}" />
 									</template:else>
 								</template:if>
 							</template:with>

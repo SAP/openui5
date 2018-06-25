@@ -890,6 +890,31 @@ sap.ui.require([
 		oBindingInfo.formatter();
 	});
 
+	QUnit.test("Scope access w/o dot", function (assert) {
+		var sBinding1 = "{path : '/', formatter : 'foo'}",
+			sBinding2 = "{path : '/', formatter : 'Global.formatter'}",
+			oBindingInfo,
+			oScope = {
+				foo : function () {}
+			};
+
+		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true);
+
+		assert.strictEqual(oBindingInfo.formatter, undefined);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo"]);
+
+		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/true);
+
+		assert.strictEqual(oBindingInfo.formatter, oScope.foo);
+
+		oBindingInfo = parse(sBinding2, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/true);
+
+		assert.strictEqual(oBindingInfo.formatter, Global.formatter);
+	});
+
 	QUnit.test("Expression binding with embedded composite binding", function (assert) {
 		var sBinding
 			= "{:= ${parts:['m2>/foo',{path:'/bar'}],formatter:'Global.joiningFormatter'} }",

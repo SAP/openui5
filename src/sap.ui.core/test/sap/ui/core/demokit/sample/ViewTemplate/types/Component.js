@@ -80,6 +80,7 @@ sap.ui.define([
 			oModelV2.getMetaModel().loaded().then(function () {
 				var oMetaModel = oModelV2.getMetaModel(),
 					oView = sap.ui.view({
+						async : true,
 						preprocessors : {
 							xml : {
 								bindingContexts : {meta : oMetaModel.createBindingContext(
@@ -92,7 +93,9 @@ sap.ui.define([
 						viewName : "sap.ui.core.sample.ViewTemplate.types.TemplateV2"
 					});
 				oView.setLayoutData(new FlexItemData({growFactor : 1.0, baseSize : "0%"}));
-				oRootView.byId("identificationBox").addItem(oView);
+				oRootView.loaded().then(function() {
+					oRootView.byId("identificationBox").addItem(oView);
+				});
 				mViews["false"] = oView;
 			}, onError);
 
@@ -101,6 +104,7 @@ sap.ui.define([
 				.then(function () {
 					var oMetaModel = oModelV4.getMetaModel(),
 						oView = sap.ui.view({
+							async : true,
 							preprocessors : {
 								xml : {
 									bindingContexts : {meta : oMetaModel.createBindingContext(
@@ -117,9 +121,11 @@ sap.ui.define([
 				}, onError);
 
 			oRootView = sap.ui.view({
+				async : true,
 				models : {
 					undefined : oModelV2,
 					ui : new JSONModel({
+						code : "",
 						codeVisible : false,
 						realOData : bRealOData,
 						v2 : true,
