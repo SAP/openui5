@@ -16,9 +16,25 @@ sap.ui.define([
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/ValidateException",
 	"sap/m/library",
-	"jquery.sap.global",
-	"jquery.sap.storage"
-], function (moduleTreeHelper, Device, Global, DateFormat, ResourceModel, JSONModel, URI, MessageBox, MessageToast, Support, SimpleType, ValidateException, mobileLibrary, jQuery) {
+	"sap/ui/util/Storage",
+	"jquery.sap.global"
+], function(
+	moduleTreeHelper,
+	Device,
+	Global,
+	DateFormat,
+	ResourceModel,
+	JSONModel,
+	URI,
+	MessageBox,
+	MessageToast,
+	Support,
+	SimpleType,
+	ValidateException,
+	mobileLibrary,
+	Storage,
+	jQuery
+) {
 	"use strict";
 
 	return {
@@ -35,7 +51,7 @@ sap.ui.define([
 			OPEN_IN_NEW_WINDOW: "sap-ui-open-sa-in-new-window"
 		},
 
-		_storage : jQuery.sap.storage(jQuery.sap.storage.Type.local),
+		_storage : Storage.getInstance(Storage.Type.local),
 
 		_treeHelper: moduleTreeHelper,
 

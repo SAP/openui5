@@ -3,8 +3,8 @@
  */
 
 //Provides the history handler sap.ui.core.History
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.storage'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/util/Storage"],
+	function(jQuery, BaseObject, Storage) {
 	"use strict";
 
 	/**
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.storage'],
 			this._iMaxHistory = mSettings.max ? mSettings.max : 100;
 			this._sHistoryId = sHistoryPrefix + sId;
 
-			this._oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
+			this._oStorage = Storage.getInstance(Storage.Type.local);
 
 			this._fFilter = mSettings.filter ? mSettings.filter : function(sHistoryValue, sValue) {
 				return sHistoryValue && (!sValue || (sValue && jQuery.sap.startsWithIgnoreCase(sHistoryValue, sValue)));
