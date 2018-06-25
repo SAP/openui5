@@ -6,13 +6,16 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'./LabelEnablement', 'sap/ui/base/Object', 'sap/ui/dom/patch',
-		"sap/ui/performance/trace/Interaction", 'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom'
+		"sap/ui/performance/trace/Interaction",
+		"sap/ui/util/ActivityDetection", 'jquery.sap.encoder', 'jquery.sap.dom'
 ], function(
 	jQuery,
 	LabelEnablement,
 	BaseObject,
 	domPatch,
-	Interaction /* , jQuerySapAct, jQuerySapEncoder, jQuerySapDom, jQuerySapTrace */
+	Interaction,
+	ActivityDetection
+	/* jQuerySapEncoder, jQuerySapDom */
 ) {
 
 	"use strict";
@@ -567,7 +570,7 @@ sap.ui.define([
 
 			reset();
 
-			jQuery.sap.act.refresh();
+			ActivityDetection.refresh();
 
 			Interaction.notifyStepEnd();
 		}
