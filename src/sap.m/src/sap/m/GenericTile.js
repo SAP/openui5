@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	"sap/base/strings/camelize",
 	"sap/base/util/deepEqual",
-	'jquery.sap.events'
+	"sap/ui/events/PseudoEvents"
 ], function(
 	library,
 	Control,
@@ -30,7 +30,8 @@ sap.ui.define([
 	Device,
 	ResizeHandler,
 	camelize,
-	deepEqual
+	deepEqual,
+	PseudoEvents
 ) {
 	"use strict";
 
@@ -770,7 +771,7 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.onkeydown = function (event) {
-		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
+		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").addClass("sapMGTPressActive");
 			}
@@ -798,7 +799,7 @@ sap.ui.define([
 			sScope = this.getScope(),
 			bActionsScope = sScope === library.GenericTileScope.Actions;
 
-		if (bActionsScope && (jQuery.sap.PseudoEvents.sapdelete.fnCheck(event) || jQuery.sap.PseudoEvents.sapbackspace.fnCheck(event))) {
+		if (bActionsScope && (PseudoEvents.events.sapdelete.fnCheck(event) || PseudoEvents.events.sapbackspace.fnCheck(event))) {
 			oParams = {
 				scope: sScope,
 				action: GenericTile._Action.Remove,
@@ -806,7 +807,7 @@ sap.ui.define([
 			};
 			bFirePress = true;
 		}
-		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
+		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").removeClass("sapMGTPressActive");
 			}

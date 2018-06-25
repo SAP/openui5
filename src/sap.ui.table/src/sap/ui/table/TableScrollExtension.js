@@ -4,7 +4,12 @@
 
 // Provides helper sap.ui.table.TableScrollExtension.
 sap.ui.define([
-	"./TableExtension", "./TableUtils", "sap/ui/Device", "./library", "sap/ui/performance/trace/Interaction", "sap/base/Log", "jquery.sap.events"
+	"./TableExtension",
+	"./TableUtils",
+	"sap/ui/Device",
+	"./library",
+	"sap/ui/performance/trace/Interaction",
+	"sap/base/Log"
 ], function(TableExtension, TableUtils, Device, library, Interaction, Log) {
 	"use strict";
 

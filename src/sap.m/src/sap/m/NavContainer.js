@@ -10,8 +10,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./NavContainerRenderer',
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log",
-	'jquery.sap.events'
+	"sap/base/Log"
 ], function(
 	library,
 	Control,

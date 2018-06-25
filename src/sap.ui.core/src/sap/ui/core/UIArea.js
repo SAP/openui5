@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/performance/Measurement",
 	'sap/ui/events/jquery/EventExtension',
+	"sap/ui/events/ControlEvents",
 	'jquery.sap.ui'
 ],
 	function(
@@ -29,6 +30,7 @@ sap.ui.define([
 		assert,
 		Measurement,
 		EventExtension,
+		ControlEvents,
 		jQuery
 		/* jQuerySapUi */
 	) {
@@ -992,7 +994,7 @@ sap.ui.define([
 		}
 
 		// mark the DOM as UIArea and bind the required events
-		jQuery(oDomRef).attr("data-sap-ui-area", oDomRef.id).bind(jQuery.sap.ControlEvents.join(" "), this._handleEvent.bind(this));
+		jQuery(oDomRef).attr("data-sap-ui-area", oDomRef.id).bind(ControlEvents.events.join(" "), this._handleEvent.bind(this));
 
 	};
 

@@ -25,8 +25,7 @@ sap.ui.define([
 	'./TableDragAndDropExtension',
 	"./TableRenderer",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log",
-	'jquery.sap.events'
+	"sap/base/Log"
 ],
 	function(
 		Device,
