@@ -1696,4 +1696,16 @@ sap.ui.require([
 				"Foo/Bar(~42~)/Baz/Qux(~23~)" + sQuery);
 		});
 	});
+
+	//*****************************************************************************************
+	QUnit.test("reportUnboundMessages does not call model interface", function (assert) {
+		var sMessages = '[{"code" : "42"}]',
+			oModelInterface = {fnReportUnboundMessages : function () {}},
+			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
+
+		this.mock(oModelInterface).expects("fnReportUnboundMessages").never();
+
+		// code under test
+		oRequestor.reportUnboundMessages(sMessages);
+	});
 });
