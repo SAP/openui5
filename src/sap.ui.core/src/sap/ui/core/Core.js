@@ -3,11 +3,36 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
-		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
-		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', "sap/ui/util/ActivityDetection", "sap/ui/dom/getScrollbarSize", "sap/base/i18n/ResourceBundle", 'sap/base/util/ObjectPath',
-		'sap/ui/events/jquery/EventSimulation', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.script', 'jquery.sap.sjax'],
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/Global',
+	'sap/ui/base/BindingParser',
+	'sap/ui/base/DataType',
+	'sap/ui/base/EventProvider',
+	'sap/ui/base/Interface',
+	'sap/ui/base/Object',
+	'sap/ui/base/ManagedObject',
+	'./Component',
+	'./Configuration',
+	'./Control',
+	'./Element',
+	'./ElementMetadata',
+	'./FocusHandler',
+	'./RenderManager',
+	'./ResizeHandler',
+	'./ThemeCheck',
+	'./UIArea',
+	'./message/MessageManager',
+	"sap/ui/util/ActivityDetection",
+	"sap/ui/dom/getScrollbarSize",
+	"sap/base/i18n/ResourceBundle",
+	'sap/base/util/ObjectPath',
+	'sap/ui/events/jquery/EventSimulation',
+	'jquery.sap.events',
+	'jquery.sap.script',
+	'jquery.sap.sjax'
+],
 	function(
 		jQuery,
 		Device,
@@ -33,8 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		getScrollbarSize,
 		ResourceBundle,
 		ObjectPath
-		/* ,EventSimulation, jQuerySapEvents, jQuerySapMobile, jQuerySapScript, jQuerySapSjax */
-	) {
+		/* ,EventSimulation, jQuerySapEvents, jQuerySapScript, jQuerySapSjax */) {
 
 	"use strict";
 

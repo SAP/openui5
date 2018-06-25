@@ -1083,6 +1083,7 @@ sap.ui.define([
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
+			//TODO: global jquery call found
 			if (this.getDomRef() && (Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) { // as control could be destroyed during update binding
 				this._curpos = this._$input.val().length;
 				this._$input.cursorPos(this._curpos);
@@ -1099,7 +1100,8 @@ sap.ui.define([
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
 			}
-		} else if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
+		} else //TODO: global jquery call found
+		if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
 			this.focus();
 		}
 
@@ -1126,6 +1128,7 @@ sap.ui.define([
 
 		if (this._oPopup && this._oPopup.isOpen()) {
 			this._oPopup.close();
+			//TODO: global jquery call found
 			if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
 				this.focus();
 			}

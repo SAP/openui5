@@ -15,8 +15,6 @@ sap.ui.define([
 	// library dependency
 	'sap/ui/core/library',
 	"sap/ui/thirdparty/jquery",
-	// referenced here in case the Core decides to throw it out - shall always be available when using the mobile lib.
-	'jquery.sap.mobile',
 	// referenced here to enable the Support feature
 	'./Support'
 ],

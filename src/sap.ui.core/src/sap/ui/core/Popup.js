@@ -314,6 +314,7 @@ sap.ui.define([
 	 * @type {boolean}
 	 * @private
 	 */
+	//TODO: global jquery call found
 	Popup.prototype.touchEnabled = Device.support.touch || jQuery.sap.simulateMobileOnDesktop;
 
 	/**
@@ -325,6 +326,7 @@ sap.ui.define([
 	 * @type {boolean}
 	 * @private
 	 */
+	//TODO: global jquery call found
 	Popup.prototype.preventBrowserFocus = (Device.support.touch || jQuery.sap.simulateMobileOnDesktop) && !Device.system.combi;
 
 	//****************************************************
