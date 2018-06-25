@@ -831,7 +831,7 @@ var AnnotationParser =  {
 			if (oNestedAnnotations.length > 0) {
 				for (i = 0; i < oNestedAnnotations.length; i++) {
 					var oNestedAnnotationNode = xPath.nextNode(oNestedAnnotations, i);
-					if (Array.isArray(vPropertyValue)) {
+					if (oAnnotationTarget && Array.isArray(vPropertyValue)) {
 						// Properties at array are not serializable (via JSON.stringify/parse)!
 						// Additionally use an annotation of an annotation, e.g.
 						// "com.sap.vocabularies.UI.v1.LineItem@com.sap.vocabularies.UI.v1.Criticality"
