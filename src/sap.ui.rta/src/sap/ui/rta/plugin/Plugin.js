@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/ElementOverlay',
-	'sap/ui/fl/changeHandler/JsControlTreeModifier'
+	'sap/ui/fl/changeHandler/JsControlTreeModifier',
+	'sap/ui/base/ManagedObject'
 ],
 function(
 	Plugin,
@@ -19,7 +20,8 @@ function(
 	OverlayRegistry,
 	OverlayUtil,
 	ElementOverlay,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	ManagedObject
 ) {
 	"use strict";
 
@@ -131,6 +133,12 @@ function(
 		return aAlreadyDefinedRelevantOverlays;
 	};
 
+	function _isInAggregationBinding(aElements) {
+		return aElements.some(function(oStableElement) {
+			return oStableElement && OverlayUtil.isInAggregationBinding(OverlayRegistry.getOverlay(oStableElement), oStableElement.sParentAggregationName);
+		});
+	}
+
 	/**
 	 * Checks if the overlay has an associated element and calls the _isEditable function.
 	 * If there is an associated element it also modifies the plugin list.
@@ -140,14 +148,21 @@ function(
 	BasePlugin.prototype.evaluateEditable = function(aOverlays, mPropertyBag) {
 		var vEditable;
 		aOverlays.forEach(function(oOverlay) {
-			var oElement = oOverlay.getElement();
-			if (oElement && OverlayUtil.isInAggregationBinding(oOverlay, oElement.sParentAggregationName)) {
+			var bIsInAggregationBinding = false;
+			var aStableElements = oOverlay.getDesignTimeMetadata().getStableElements(oOverlay);
+
+			// for controls that don't return a ManagedObject, like for example the SmartLink, we skip this check
+			if (aStableElements[0] instanceof ManagedObject) {
+				bIsInAggregationBinding = _isInAggregationBinding(aStableElements);
+			}
+
+			if (bIsInAggregationBinding) {
 				vEditable = false;
 			} else {
 				// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 				// this means that getElementInstance is undefined when we get here via removeAggregation mutation
 				// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
-				vEditable = oElement && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
+				vEditable = oOverlay.getElement() && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
 			}
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.
@@ -213,24 +228,14 @@ function(
 		}
 
 		if (oOverlay.getElementHasStableId() === undefined){
-			var bStable = false;
-			var oElement = oOverlay.getElement();
-			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-			var fnGetStableElements = oDesignTimeMetadata && oDesignTimeMetadata.getData().getStableElements;
-			if (fnGetStableElements){
-				var aStableElements = fnGetStableElements(oElement);
-				var bUnstable = aStableElements ? aStableElements.some(function(vStableElement) {
-					var oControl = vStableElement.id || vStableElement;
-					if (!FlexUtils.checkControlId(oControl, vStableElement.appComponent)) {
-						return true;
-					}
-				}) : true;
-				bStable = !bUnstable;
-			} else {
-				bStable = FlexUtils.checkControlId(oElement);
-			}
-
-			oOverlay.setElementHasStableId(bStable);
+			var aStableElements = oOverlay.getDesignTimeMetadata().getStableElements(oOverlay);
+			var bUnstable = aStableElements.length > 0 ? aStableElements.some(function(vStableElement) {
+				var oControl = vStableElement.id || vStableElement;
+				if (!FlexUtils.checkControlId(oControl, vStableElement.appComponent)) {
+					return true;
+				}
+			}) : true;
+			oOverlay.setElementHasStableId(!bUnstable);
 		}
 		return oOverlay.hasElementStableId();
 	};
