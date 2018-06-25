@@ -12,18 +12,20 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
-	"./DatePickerRenderer"
+	"./DatePickerRenderer",
+	"sap/base/util/deepEqual"
 ],
 	function(
-	jQuery,
-	Device,
-	InputBase,
-	DateTimeField,
-	UniversalDate,
-	library,
-	Control,
-	coreLibrary,
-	DatePickerRenderer
+		jQuery,
+		Device,
+		InputBase,
+		DateTimeField,
+		UniversalDate,
+		library,
+		Control,
+		coreLibrary,
+		DatePickerRenderer,
+		deepEqual
 	) {
 	"use strict";
 
@@ -284,7 +286,7 @@ sap.ui.define([
 		}
 
 		if (this._iInvalidateCalendar) {
-			jQuery.sap.clearDelayedCall(this._iInvalidateCalendar);
+			clearTimeout(this._iInvalidateCalendar);
 		}
 
 		this._sUsedDisplayPattern = undefined;
@@ -301,7 +303,7 @@ sap.ui.define([
 			// Calendar is only invalidated by DatePicker itself -> so don't invalidate DatePicker
 			Control.prototype.invalidate.apply(this, arguments);
 			// Invalidate calendar with a delayed call so it could have updated specialDates aggregation from DatePicker
-			this._iInvalidateCalendar = jQuery.sap.delayedCall(0, this, _invalidateCalendar);
+			this._iInvalidateCalendar = setTimeout(_invalidateCalendar.bind(this), 0);
 		}
 
 	};
@@ -485,7 +487,7 @@ sap.ui.define([
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
-		if (jQuery.sap.equal(this.getMinDate(), oDate)) {
+		if (deepEqual(this.getMinDate(), oDate)) {
 			return this;
 		}
 
@@ -524,7 +526,7 @@ sap.ui.define([
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
-		if (jQuery.sap.equal(this.getMaxDate(), oDate)) {
+		if (deepEqual(this.getMaxDate(), oDate)) {
 			return this;
 		}
 
@@ -1078,7 +1080,7 @@ sap.ui.define([
 		var sValue = "";
 
 		// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
-		if (!jQuery.sap.equal(oDate, oDateOld)) {
+		if (!deepEqual(oDate, oDateOld)) {
 			this.setDateValue(new Date(oDate.getTime()));
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
@@ -1192,7 +1194,7 @@ sap.ui.define([
 				oDate = new UniversalDate(this._oMaxDate.getTime());
 			}
 
-			if (!jQuery.sap.equal(this.getDateValue(), oDate.getJSDate())) {
+			if (!deepEqual(this.getDateValue(), oDate.getJSDate())) {
 				this.setDateValue(new Date(oDate.getTime()));
 
 				this._curpos = iCurpos;

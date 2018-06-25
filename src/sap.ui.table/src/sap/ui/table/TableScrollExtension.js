@@ -240,14 +240,14 @@ sap.ui.define([
 				oScrollExtension._iFirstVisibleRowInBuffer = null;
 			}
 
-			jQuery.sap.clearDelayedCall(this._mTimeouts.largeDataScrolling);
+			clearTimeout(this._mTimeouts.largeDataScrolling);
 			delete this._mTimeouts.largeDataScrolling;
 
 			if (this._bLargeDataScrolling && !oScrollExtension._bIsScrolledVerticallyByWheel) {
-				this._mTimeouts.largeDataScrolling = jQuery.sap.delayedCall(300, this, function() {
+				this._mTimeouts.largeDataScrolling = setTimeout(function() {
 					delete this._mTimeouts.largeDataScrolling;
 					VerticalScrollingHelper.updateFirstVisibleRow(this);
-				});
+				}.bind(this), 300);
 			} else {
 				VerticalScrollingHelper.updateFirstVisibleRow(this);
 			}
@@ -1283,7 +1283,7 @@ sap.ui.define([
 			if (oTable._mAnimationFrames.verticalScrollUpdate) {
 				window.cancelAnimationFrame(oTable._mAnimationFrames.verticalScrollUpdate);
 			}
-			jQuery.sap.clearDelayedCall(oTable._mTimeouts.verticalScrollUpdate);
+			clearTimeout(oTable._mTimeouts.verticalScrollUpdate);
 			delete oTable._mTimeouts.verticalScrollUpdate;
 
 			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
@@ -1312,15 +1312,15 @@ sap.ui.define([
 				window.cancelAnimationFrame(oTable._mAnimationFrames.verticalScrollUpdate);
 				delete oTable._mAnimationFrames.verticalScrollUpdate;
 			}
-			jQuery.sap.clearDelayedCall(oTable._mTimeouts.verticalScrollUpdate);
+			clearTimeout(oTable._mTimeouts.verticalScrollUpdate);
 
 			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
 				"updateVerticalScrollPosition: firstVisibleRow will be set asynchronously", oTable);
 
-			oTable._mTimeouts.verticalScrollUpdate = jQuery.sap.delayedCall(0, this, function() {
+			oTable._mTimeouts.verticalScrollUpdate = setTimeout(function() {
 				delete oTable._mTimeouts.verticalScrollUpdate;
 				VerticalScrollingHelper.updateFirstVisibleRow(oTable);
-			});
+			}, 0);
 		} else {
 			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
 				"updateVerticalScrollPosition: scrollTop and nVerticalScrollPosition not changed -> update inner vertical scroll position", oTable);

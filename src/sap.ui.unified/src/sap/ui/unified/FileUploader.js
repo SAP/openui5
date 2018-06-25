@@ -659,7 +659,7 @@ sap.ui.define([
 			this.oBrowse.$().attr("aria-required", "true");
 		}
 
-		jQuery.sap.delayedCall(0, this, this._recalculateWidth);
+		setTimeout(this._recalculateWidth.bind(this), 0);
 
 		this.oFilePath.$().find('input').removeAttr("role").attr("aria-live", "polite");
 

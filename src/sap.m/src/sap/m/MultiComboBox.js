@@ -22,7 +22,8 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/deepEqual"
 ],
 function(
 	jQuery,
@@ -44,7 +45,8 @@ function(
 	ResizeHandler,
 	MultiComboBoxRenderer,
 	containsOrEquals,
-	KeyCodes
+	KeyCodes,
+	deepEqual
 ) {
 	"use strict";
 
@@ -431,7 +433,7 @@ function(
 		}
 
 		if (oPicker && oFocusDomRef) {
-			if (jQuery.sap.equal(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !this.isPickerDialog()) {
+			if (deepEqual(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !this.isPickerDialog()) {
 				// force the focus to stay in the MultiComboBox field when scrollbar
 				// is moving
 				this.focus();
@@ -682,10 +684,10 @@ function(
 
 		if (this.isPickerDialog()) {
 			this.getPickerTextField().setValueState(ValueState.Error);
-			jQuery.sap.delayedCall(1000, this.getPickerTextField(), "setValueState", [sOldValueState]);
+			setTimeout(this.getPickerTextField()["setValueState"].bind(this.getPickerTextField(), sOldValueState), 1000);
 		} else {
 			this.setValueState(ValueState.Error);
-			jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
+			setTimeout(this["setValueState"].bind(this, sOldValueState), 1000);
 		}
 	};
 
@@ -1614,7 +1616,7 @@ function(
 				var oPopup = this.getAggregation("picker");
 				var oControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 
-				if (oPopup && oControl && jQuery.sap.equal(oPopup.getFocusDomRef(), oControl.getFocusDomRef())) {
+				if (oPopup && oControl && deepEqual(oPopup.getFocusDomRef(), oControl.getFocusDomRef())) {
 
 					// force the focus to stay in the list item field when
 					// scrollbar is moving
@@ -1654,7 +1656,7 @@ function(
 			this._getFilterSelectedButton().setPressed(true);
 			this.bOpenedByKeyboardOrButton = true;
 		} else {
-			jQuery.sap.delayedCall(0, this._oTokenizer, "scrollToEnd");
+			setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
 		}
 	};
 
@@ -1683,7 +1685,7 @@ function(
 				// if a token is selected, the tokenizer should not scroll
 				if (this.getEditable() && jQuery(oEvent.target).hasClass("sapMToken")) {
 					oTokenizer._useCollapsedMode(false);
-					jQuery.sap.delayedCall(0, oTokenizer, "scrollToEnd");
+					setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
 				}
 			}
 		}, this);
@@ -1695,7 +1697,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
-		jQuery.sap.delayedCall(0, this._oTokenizer, "scrollToEnd");
+		setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
 	};
 
 	MultiComboBox.prototype._handleTokenChange = function(oEvent) {

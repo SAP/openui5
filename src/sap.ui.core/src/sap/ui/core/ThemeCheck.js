@@ -3,8 +3,13 @@
  */
 
 // Provides class sap.ui.core.ThemeCheck
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
-	function(jQuery, Device, BaseObject, URI/* , jQuerySapScript */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/base/Object',
+	'sap/ui/thirdparty/URI'
+],
+	function(jQuery, Device, BaseObject, URI) {
 	"use strict";
 
 
@@ -115,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 	function clear(oThemeCheck){
 		ThemeCheck.themeLoaded = false;
 		if (oThemeCheck._sThemeCheckId) {
-			jQuery.sap.clearDelayedCall(oThemeCheck._sThemeCheckId);
+			clearTimeout(oThemeCheck._sThemeCheckId);
 			oThemeCheck._sThemeCheckId = null;
 			oThemeCheck._iCount = 0;
 			oThemeCheck._sFallbackTheme = null;
@@ -399,7 +404,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			} else {
 				iDelay = 1000; // 3. After another 10 cycles (about 5 seconds)
 			}
-			this._sThemeCheckId = jQuery.sap.delayedCall(iDelay, this, delayedCheckTheme);
+			this._sThemeCheckId = setTimeout(delayedCheckTheme.bind(this), iDelay);
 		} else if (!bFirst) {
 			clear(this);
 			ThemeCheck.themeLoaded = true;

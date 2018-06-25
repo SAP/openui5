@@ -687,11 +687,11 @@ sap.ui.define([
 		 */
 		ViewSettingsPopover.prototype._hideToolbarButtons = function () {
 			this._getPopover().setShowHeader(false);
-			jQuery.sap.delayedCall(0, this, function () {
+			setTimeout(function () {
 				if (this._getPopover().getAggregation('_popup')._internalHeader) {
 					this._getPopover().getAggregation('_popup')._internalHeader.$().hide();
 				}
-			});
+			}.bind(this), 0);
 		};
 
 		/**
@@ -747,10 +747,10 @@ sap.ui.define([
 						oBackButton && oBackButton.destroy();
 						oBackButton = null;
 					} else {
-						jQuery.sap.delayedCall(0, this._getNavContainer(), "to", [this['_get' + sPageName + 'Page'](), "slide"]);
+						setTimeout(this._getNavContainer()["to"].bind(this._getNavContainer(), this['_get' + sPageName + 'Page'](), "slide"), 0);
 					}
 				} else {
-					jQuery.sap.delayedCall(0, this._getNavContainer(), 'back');
+					setTimeout(this._getNavContainer()['back'].bind(this._getNavContainer()), 0);
 				}
 			}
 
@@ -1254,7 +1254,7 @@ sap.ui.define([
 		ViewSettingsPopover.prototype._hideContent = function () {
 			this._removeSegmentedButtonSelection();
 			this._cleanAfterClose();
-			jQuery.sap.delayedCall(0, this, '_adjustInitialWidth');
+			setTimeout(this['_adjustInitialWidth'].bind(this), 0);
 		};
 
 

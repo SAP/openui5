@@ -734,7 +734,7 @@ sap.ui.define([
 			oItem.setSelected(bSelected, true);
 		}, this);
 
-		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
+		setTimeout(this._updateSelectAllCheckBox.bind(this), 0);
 	};
 
 	/**
@@ -768,7 +768,7 @@ sap.ui.define([
 
 		// Postpone the _updateSelectAllCheckBox, as the oItem(type ListItemBase) has not yet set it's 'selected' property
 		// See ListItemBase.prototype.setSelected
-		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
+		setTimeout(this._updateSelectAllCheckBox.bind(this), 0);
 	};
 
 	/**

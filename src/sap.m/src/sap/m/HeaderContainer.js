@@ -395,7 +395,7 @@ function(
 
 		HeaderContainer.prototype._scroll = function (iDelta, iDuration) {
 			this._setScrollInProcess(true);
-			jQuery.sap.delayedCall(iDuration + 300, this, this._setScrollInProcess, [false]);
+			setTimeout(this._setScrollInProcess.bind(this, false), iDuration + 300);
 			if (this.getOrientation() === Orientation.Horizontal) {
 				this._hScroll(iDelta, iDuration);
 			} else {

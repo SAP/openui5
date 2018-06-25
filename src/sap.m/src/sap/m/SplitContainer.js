@@ -623,9 +623,9 @@ function(
 		}
 
 		// "sapMSplitContainerNoTransition" prevents initial flickering, after that it needs to be removed
-		jQuery.sap.delayedCall(0, this, function () {
+		setTimeout(function () {
 			this._oMasterNav.removeStyleClass("sapMSplitContainerNoTransition");
-		});
+		}.bind(this), 0);
 	};
 	/**************************************************************
 	* END - Life Cycle Methods

@@ -20,7 +20,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	'sap/ui/events/KeyCodes',
 	"sap/base/strings/camelize",
 	"sap/base/strings/capitalize",
-	'jquery.sap.script'
+	"sap/base/util/UriParameters"
 ],
 	function(
 		jQuery,
@@ -29,8 +29,8 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		DataType,
 		KeyCodes,
 		camelize,
-		capitalize
-		/*, jQuerySapScript, jQuerySapKeycodes */
+		capitalize,
+		UriParameters
 	) {
 	"use strict";
 
@@ -41,7 +41,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
 
 		// extract the URL parameters
-		var mParams = jQuery.sap.getUriParameters();
+		var mParams = new UriParameters(window.location.href);
 
 		if ( bLegacySupport ) {
 		// TODO: Remove deprecated code once all projects adapted

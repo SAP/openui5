@@ -4,10 +4,28 @@
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', 'sap/ui/model/Sorter',
-		'./ODataUtils', './CountMode'
-	], function(jQuery, ChangeReason, Filter, FilterType, ListBinding, Sorter, ODataUtils, CountMode) {
+	'jquery.sap.global',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterType',
+	'sap/ui/model/ListBinding',
+	'sap/ui/model/Sorter',
+	'./ODataUtils',
+	'./CountMode',
+	"sap/base/util/deepEqual",
+	"sap/base/util/merge"
+], function(
+	jQuery,
+	ChangeReason,
+	Filter,
+	FilterType,
+	ListBinding,
+	Sorter,
+	ODataUtils,
+	CountMode,
+	deepEqual,
+	merge
+) {
 	"use strict";
 
 	/**
@@ -161,8 +179,9 @@ sap.ui.define([
 				//Check diff
 				if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
 					var that = this;
+					//TODO: global jquery call found
 					var aDiff = jQuery.sap.arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
-						return jQuery.sap.equal(
+						return deepEqual(
 								oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],
 								oNewContext && oContextData && oContextData[oNewContext.getPath()]
 							);
@@ -173,7 +192,7 @@ sap.ui.define([
 
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);
-			this.oLastContextData = jQuery.sap.extend(true, {}, oContextData);
+			this.oLastContextData = merge({}, oContextData);
 		}
 
 		return aContexts;
@@ -662,7 +681,7 @@ sap.ui.define([
 			// - set the new keys if there are no sortes/filters set
 			// - trigger a refresh if there are sorters/filters set
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
-			bRefChanged = Array.isArray(oRef) && !jQuery.sap.equal(oRef,this.aExpandRefs);
+			bRefChanged = Array.isArray(oRef) && !deepEqual(oRef,this.aExpandRefs);
 			this.aExpandRefs = oRef;
 			if (bRefChanged) {
 				if (this.aSorters.length > 0 || this.aFilters.length > 0) {
@@ -697,7 +716,7 @@ sap.ui.define([
 						oLastData = that.oLastContextData[oContext.getPath()];
 						oCurrentData = aContexts[iIndex].getObject();
 						// Compare whether last data is completely contained in current data
-						if (!jQuery.sap.equal(oLastData, oCurrentData, true)) {
+						if (!deepEqual(oLastData, oCurrentData, true)) {
 							bChangeDetected = true;
 							return false;
 						}

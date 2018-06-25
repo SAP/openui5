@@ -3,11 +3,41 @@
  */
 
 // Provides control sap.ui.table.Column.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library', 'sap/ui/core/Popup',
-'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/FilterType', 'sap/ui/model/Sorter', 'sap/ui/model/Type',
-'sap/ui/model/type/String', './TableUtils', './library', './ColumnMenu', 'sap/base/util/ObjectPath'],
-function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType, Sorter, Type, StringType, TableUtils, library, ColumnMenu, ObjectPath) {
-"use strict";
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Element',
+	'sap/ui/core/library',
+	'sap/ui/core/Popup',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/FilterType',
+	'sap/ui/model/Sorter',
+	'sap/ui/model/Type',
+	'sap/ui/model/type/String',
+	'./TableUtils',
+	'./library',
+	'./ColumnMenu',
+	'sap/base/util/ObjectPath',
+	"sap/base/util/JSTokenizer"
+],
+function(
+	jQuery,
+	Element,
+	coreLibrary,
+	Popup,
+	Filter,
+	FilterOperator,
+	FilterType,
+	Sorter,
+	Type,
+	StringType,
+	TableUtils,
+	library,
+	ColumnMenu,
+	ObjectPath,
+	JSTokenizer
+) {
+	"use strict";
 
 	// shortcuts
 	var HorizontalAlign = coreLibrary.HorizontalAlign,
@@ -921,7 +951,7 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 		if (typeof (vType) === "string") {
 			try {
 				// similar to BindingParser allow to specify formatOptions and constraints for types
-				var mConfig = jQuery.sap.parseJS(vType);
+				var mConfig = JSTokenizer.parseJS(vType);
 				if (typeof (mConfig.type) === "string") {
 					var fnType = ObjectPath.get(mConfig.type);
 					oType = fnType && new fnType(mConfig.formatOptions, mConfig.constraints);

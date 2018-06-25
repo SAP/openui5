@@ -10,16 +10,18 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/format/DateFormat',
-	'./DateRangeSelectionRenderer'
+	'./DateRangeSelectionRenderer',
+	"sap/base/util/deepEqual"
 ],
 	function(
-	jQuery,
-	Device,
-	DatePicker,
-	library,
-	LocaleData,
-	DateFormat,
-	DateRangeSelectionRenderer
+		jQuery,
+		Device,
+		DatePicker,
+		library,
+		LocaleData,
+		DateFormat,
+		DateRangeSelectionRenderer,
+		deepEqual
 	) {
 	"use strict";
 
@@ -417,7 +419,7 @@ sap.ui.define([
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
-		if (jQuery.sap.equal(this.getDateValue(), oDateValue)) {
+		if (deepEqual(this.getDateValue(), oDateValue)) {
 			return this;
 		}
 
@@ -434,7 +436,7 @@ sap.ui.define([
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
-		if (jQuery.sap.equal(this.getSecondDateValue(), oSecondDateValue)) {
+		if (deepEqual(this.getSecondDateValue(), oSecondDateValue)) {
 			return this;
 		}
 
@@ -762,9 +764,9 @@ sap.ui.define([
 				var oDate2Old = this.getSecondDateValue();
 
 				var sValue;
-				if (!jQuery.sap.equal(oDate1, oDate1Old) || !jQuery.sap.equal(oDate2, oDate2Old)) {
+				if (!deepEqual(oDate1, oDate1Old) || !deepEqual(oDate2, oDate2Old)) {
 					// compare Dates because value can be the same if only 2 digits for year
-					if (jQuery.sap.equal(oDate2, oDate2Old)) {
+					if (deepEqual(oDate2, oDate2Old)) {
 						this.setDateValue(oDate1);
 					} else {
 						this.setProperty("dateValue", oDate1, true); // no rerendering

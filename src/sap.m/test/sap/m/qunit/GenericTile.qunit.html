@@ -918,17 +918,13 @@
 			sinon.spy(GenericTileLineModeRenderer, "_updateHoverStyle");
 			sinon.stub(this.oGenericTile, "_getStyleData").returns(true);
 			sinon.spy(this.oGenericTile, "_queueAnimationEnd");
-
-			var fnOriginalDelayedCall = jQuery.sap.delayedCall;
-			jQuery.sap.delayedCall = function(delay, thisRef, callback, args) {
-				if (jQuery.isFunction(callback)) {
-					callback.apply(thisRef, args);
-				}
-			};
+			var oClock = sinon.useFakeTimers();
 
 			//Act
 			this.oGenericTile.invalidate();
 			sap.ui.getCore().applyChanges();
+
+			oClock.tick(11);
 
 			//Assert
 			assert.equal(this.oGenericTile._updateHoverStyle.callCount, 1, "The hover style is updated when the control is rendered.");
@@ -937,7 +933,7 @@
 
 			//Cleanup
 			GenericTileLineModeRenderer._updateHoverStyle.restore();
-			jQuery.sap.delayedCall = fnOriginalDelayedCall;
+			oClock.restore();
 		});
 
 		QUnit.test("Hover style is not updated on rendering", function(assert) {
@@ -1029,13 +1025,7 @@
 			//Arrange
 			sinon.stub(GenericTileLineModeRenderer, "_updateHoverStyle");
 			var done = assert.async();
-
-			var fnOriginalDelayedCall = jQuery.sap.delayedCall;
-			jQuery.sap.delayedCall = function(delay, thisRef, callback, args) {
-				if (jQuery.isFunction(callback)) {
-					callback.apply(thisRef, args);
-				}
-			};
+			var oClock = sinon.useFakeTimers();
 
 			//Act
 			this.oParent.setWidth("500px");
@@ -1044,12 +1034,13 @@
 			sap.ui.getCore().attachIntervalTimer(checkAssertions);
 
 			function checkAssertions() {
+				oClock.tick(11);
 				assert.ok(GenericTileLineModeRenderer._updateHoverStyle.called, "Renderer function _updateHoverStyle is called once.");
 
 				//Cleanup
-				jQuery.sap.delayedCall = fnOriginalDelayedCall;
 				sap.ui.getCore().detachIntervalTimer(checkAssertions);
 				GenericTileLineModeRenderer._updateHoverStyle.restore();
+				oClock.restore();
 
 				done();
 			}
@@ -1278,7 +1269,7 @@
 
 		QUnit.test("Function _clearAnimationUpdateQueue", function(assert) {
 			//Arrange
-			sinon.spy(jQuery.sap, "clearDelayedCall");
+			var oClearTimeoutSpy = sinon.spy(window, "clearTimeout");
 			this.oGenericTile._oAnimationEndCallIds = {
 				0: 100,
 				1: 200
@@ -1288,10 +1279,13 @@
 			this.oGenericTile._clearAnimationUpdateQueue();
 
 			//Assert
-			assert.equal(jQuery.sap.clearDelayedCall.callCount, 2, "Cleared delayedCall count is correct.");
-			assert.equal(jQuery.sap.clearDelayedCall.firstCall.args[0], 100, "Correct first ID has been cleared.");
-			assert.equal(jQuery.sap.clearDelayedCall.secondCall.args[0], 200, "Correct second ID has been cleared.");
+			assert.equal(oClearTimeoutSpy.callCount, 2, "Cleared delayedCall count is correct.");
+			assert.equal(oClearTimeoutSpy.firstCall.args[0], 100, "Correct first ID has been cleared.");
+			assert.equal(oClearTimeoutSpy.secondCall.args[0], 200, "Correct second ID has been cleared.");
 			assert.deepEqual(this.oGenericTile._oAnimationEndCallIds, {}, "All IDs have been removed from the object.");
+
+			//Cleanup
+			oClearTimeoutSpy.restore();
 		});
 
 		QUnit.module("Protected method getBoundingRects", {

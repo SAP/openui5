@@ -163,7 +163,7 @@ sap.ui.define([
 			this._proceed();
 			return;
 		}
-		this.iDelayedCallId = jQuery.sap.delayedCall(iTimeOut, this, this._proceed);
+		this.iDelayedCallId = setTimeout(this._proceed.bind(this), iTimeOut);
 	};
 
 	/**
@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DraftIndicator.prototype._resetDraftTimer = function() {
-		jQuery.sap.clearDelayedCall(this.iDelayedCallId);
+		clearTimeout(this.iDelayedCallId);
 		this.iDelayedCallId = null;
 	};
 

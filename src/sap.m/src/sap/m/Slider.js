@@ -954,13 +954,13 @@ function(
 			}
 
 			if (!this._parentResizeHandler) {
-				jQuery.sap.delayedCall(0, this, function () {
+				setTimeout(function () {
 					this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
-				});
+				}.bind(this), 0);
 			} else {
-				jQuery.sap.delayedCall(0, this, function () {
+				setTimeout(function () {
 					this._handleSliderResize({control: this});
-				});
+				}.bind(this), 0);
 			}
 		};
 
@@ -1017,7 +1017,7 @@ function(
 			if (oTouch.target !== oNearestHandleDomRef) {
 
 				// set the focus to the nearest slider handle
-				jQuery.sap.delayedCall(0, oNearestHandleDomRef, "focus");
+				setTimeout(oNearestHandleDomRef["focus"].bind(oNearestHandleDomRef), 0);
 			}
 
 			// recalculate some styles,

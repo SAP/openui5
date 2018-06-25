@@ -19,7 +19,8 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Locale',
 	"./CalendarRenderer",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/util/deepEqual"
 ], function(
 	jQuery,
 	Control,
@@ -37,7 +38,8 @@ sap.ui.define([
 	ResizeHandler,
 	Locale,
 	CalendarRenderer,
-	containsOrEquals
+	containsOrEquals,
+	deepEqual
 ) {
 	"use strict";
 
@@ -321,7 +323,7 @@ sap.ui.define([
 	Calendar.prototype.exit = function(){
 
 		if (this._sInvalidateMonth) {
-			jQuery.sap.clearDelayedCall(this._sInvalidateMonth);
+			clearTimeout(this._sInvalidateMonth);
 		}
 
 		if (this._sResizeListener) {
@@ -451,7 +453,7 @@ sap.ui.define([
 		} else if (this.getDomRef() && this._iMode == 0 && !this._sInvalidateMonth) {
 			// DateRange changed -> only rerender days
 			// do this only once if more DateRanges / Special days are changed
-			this._sInvalidateMonth = jQuery.sap.delayedCall(0, this, this._invalidateMonth, [oOrigin]);
+			this._sInvalidateMonth = setTimeout(this._invalidateMonth.bind(this, oOrigin), 0);
 		}
 
 	};
@@ -802,7 +804,7 @@ sap.ui.define([
 	 */
 	Calendar.prototype.setMinDate = function(oDate){
 
-		if (jQuery.sap.equal(oDate, this.getMinDate())) {
+		if (deepEqual(oDate, this.getMinDate())) {
 			return this;
 		}
 
@@ -847,7 +849,7 @@ sap.ui.define([
 	 */
 	Calendar.prototype.setMaxDate = function(oDate){
 
-		if (jQuery.sap.equal(oDate, this.getMaxDate())) {
+		if (deepEqual(oDate, this.getMaxDate())) {
 			return this;
 		}
 
@@ -1536,7 +1538,7 @@ sap.ui.define([
 
 		if (bRestoreOldDate) {
 			// in multimonth mode stay at the last focused date
-			if (!jQuery.sap.equal(this._getFocusedDate(), oDate)) {
+			if (!deepEqual(this._getFocusedDate(), oDate)) {
 				this._renderMonth(false, false, true);
 			}
 		} else {

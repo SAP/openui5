@@ -894,7 +894,7 @@ function(
 					.attr({ 'aria-selected': true });
 		}
 
-		jQuery.sap.delayedCall(350, this, "_checkOverflow");
+		setTimeout(this["_checkOverflow"].bind(this), 350);
 
 		// scroll to selected item if it is out of screen and we render the control the first time
 		if (this.oSelectedItem) {
@@ -1253,8 +1253,8 @@ function(
 					}
 					// execute manual scrolling with iScroll's scrollTo method (delayedCall 0 is needed for positioning glitch)
 					this._scrollPreparation();
-					jQuery.sap.delayedCall(0, this._oScroller, "scrollTo", [iScrollLeft, 0, 500]);
-					jQuery.sap.delayedCall(500, this, "_afterIscroll");
+					setTimeout(this._oScroller["scrollTo"].bind(this._oScroller, iScrollLeft, 0, 500), 0);
+					setTimeout(this["_afterIscroll"].bind(this), 500);
 
 				} else if (sTargetId == sId + "-arrowScrollRight" && Device.system.desktop) {
 					var iScrollLeft = this._oScroller.getScrollLeft() + IconTabHeader.SCROLL_STEP;
@@ -1265,8 +1265,8 @@ function(
 					}
 					// execute manual scrolling with iScroll's scrollTo method (delayedCall 0 is needed for positioning glitch)
 					this._scrollPreparation();
-					jQuery.sap.delayedCall(0, this._oScroller, "scrollTo", [iScrollLeft, 0, 500]);
-					jQuery.sap.delayedCall(500, this, "_afterIscroll");
+					setTimeout(this._oScroller["scrollTo"].bind(this._oScroller, iScrollLeft, 0, 500), 0);
+					setTimeout(this["_afterIscroll"].bind(this), 500);
 				} else {
 
 					// should be one of the items - select it
@@ -1331,8 +1331,8 @@ function(
 				this._scrollPreparation();
 				// store current scroll state to set it after rerendering
 				this._iCurrentScrollLeft = iNewScrollLeft;
-				jQuery.sap.delayedCall(0, this._oScroller, "scrollTo", [iNewScrollLeft, 0, iDuration]);
-				jQuery.sap.delayedCall(iDuration, this, "_afterIscroll");
+				setTimeout(this._oScroller["scrollTo"].bind(this._oScroller, iNewScrollLeft, 0, iDuration), 0);
+				setTimeout(this["_afterIscroll"].bind(this), iDuration);
 			}
 		}
 

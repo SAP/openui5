@@ -769,7 +769,7 @@ sap.ui.define([
 
 					// BCP: 1680140633 - Firefox issue
 					if (this._bRenderingInProgress) {
-						jQuery.sap.delayedCall(0, this, this.invalidate);
+						setTimeout(this.invalidate.bind(this), 0);
 					}
 
 					return this;

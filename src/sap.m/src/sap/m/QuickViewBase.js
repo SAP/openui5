@@ -389,7 +389,7 @@ sap.ui.define([
 			this._setLinkWidth();
 
 			// Just wait for the next tick to apply the focus
-			jQuery.sap.delayedCall(0, this, this._restoreFocus);
+			setTimeout(this._restoreFocus.bind(this), 0);
 		};
 
 		/**

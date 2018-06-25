@@ -2,8 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap/ui/core/Core', 'sap/ui/core/ElementMetadata', "sap/base/util/LoaderExtensions"],
-	function (jQuery, library, Global, Core, ElementMetadata, LoaderExtensions) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/library',
+	'sap/ui/Global',
+	'sap/ui/core/Core',
+	'sap/ui/core/ElementMetadata',
+	"sap/base/util/LoaderExtensions",
+	"sap/base/util/UriParameters"
+],
+	function(
+		jQuery,
+		library,
+		Global,
+		Core,
+		ElementMetadata,
+		LoaderExtensions,
+		UriParameters
+	) {
 		'use strict';
 
 		var configurationInfo = sap.ui.getCore().getConfiguration();
@@ -113,7 +129,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 
 				loadedModules: LoaderExtensions.getAllRequiredModules().sort(),
 
-				URLParameters: jQuery.sap.getUriParameters().mParams
+				URLParameters: new UriParameters(window.location.href).mParams
 			};
 		}
 

@@ -4,16 +4,22 @@
 
 // Provides the render manager sap.ui.core.RenderManager
 sap.ui.define([
-		'jquery.sap.global',
-		'./LabelEnablement', 'sap/ui/base/Object', 'sap/ui/dom/patch',
-		"sap/ui/performance/trace/Interaction",
-		"sap/ui/util/ActivityDetection", "sap/ui/thirdparty/jquery", 'jquery.sap.encoder'
+	'jquery.sap.global',
+	'./LabelEnablement',
+	'sap/ui/base/Object',
+	'sap/ui/dom/patch',
+	'sap/ui/performance/trace/Interaction',
+	'sap/base/util/uid',
+	"sap/ui/util/ActivityDetection",
+	"sap/ui/thirdparty/jquery",
+	'jquery.sap.encoder'
 ], function(
 	jQuery,
 	LabelEnablement,
 	BaseObject,
 	domPatch,
 	Interaction,
+	uid,
 	ActivityDetection,
 	jQueryDOM
 	/* jQuerySapEncoder */
@@ -1150,7 +1156,7 @@ sap.ui.define([
 		mAttributes = jQuery.extend(mDefaultAttributes, mAttributes);
 
 		if (!mAttributes.id) {
-			mAttributes.id = jQuery.sap.uid();
+			mAttributes.id = uid();
 		}
 
 		if (bIconURI) {

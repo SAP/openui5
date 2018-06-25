@@ -11,8 +11,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/theming/Parameters',
 	'./ShellOverlayRenderer',
-	"sap/ui/thirdparty/jquery",
-	'jquery.sap.script'],
+	"sap/ui/thirdparty/jquery"],
 	function(
 		jQuery,
 		Device,
@@ -20,7 +19,7 @@ sap.ui.define([
 		Popup,
 		library,
 		Parameters,
-		ShellOverlayRenderer/* , jQueryScript, jQueryDom */,
+		ShellOverlayRenderer,
 		jQueryDOM
 	) {
 	"use strict";
@@ -108,14 +107,14 @@ sap.ui.define([
 		this._opening = false;
 
 		if (this._getAnimActive()) {
-			jQuery.sap.delayedCall(50, this, function(){
+			setTimeout(function(){
 				jQueryDOM(document.getElementById("sap-ui-blocklayer-popup")).toggleClass("sapUiUfdShellOvrlyBlyTp", false);
-			});
+			}, 50);
 		}
 
-		jQuery.sap.delayedCall(this._getAnimDuration(true), this, function(){
+		setTimeout(function(){
 			this.$().toggleClass("sapUiUfdShellOvrlyOpening", false);
-		});
+		}.bind(this), this._getAnimDuration(true));
 	};
 
 	/**
@@ -132,19 +131,19 @@ sap.ui.define([
 
 		this._setSearchWidth();
 
-		jQuery.sap.delayedCall(Math.max(this._getAnimDuration(false) - this._getBLAnimDuration(), 0), this, function(){
+		setTimeout(function(){
 			var $Bl = jQueryDOM(document.getElementById("sap-ui-blocklayer-popup"));
 			if (Popup.blStack.length == 1 && this._getAnimActive() && $Bl.hasClass("sapUiUfdShellOvrlyBly")) {
 				$Bl.toggleClass("sapUiUfdShellOvrlyBlyTp", true);
 			}
-		});
+		}.bind(this), Math.max(this._getAnimDuration(false) - this._getBLAnimDuration(), 0));
 
-		jQuery.sap.delayedCall(this._getAnimDuration(false), this, function(){
+		setTimeout(function(){
 			this._getPopup().close(0);
 			this.$().remove();
 			this._forceShellHeaderVisible();
 			this.fireClosed();
-		});
+		}.bind(this), this._getAnimDuration(false));
 	};
 
 	ShellOverlay.prototype.setShell = function(vShell){
@@ -234,10 +233,10 @@ sap.ui.define([
 			this._setSearchWidth();
 		}
 
-		jQuery.sap.delayedCall(10, this, function(){
+		setTimeout(function(){
 			this.$().toggleClass("sapUiUfdShellOvrlyCntntHidden", false);
 			this.$("search").css("width", "");
-		});
+		}.bind(this), 10);
 	};
 
 	ShellOverlay.prototype.onclick = function(oEvent){

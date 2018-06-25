@@ -7,10 +7,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'../Device',
 	'../base/Object',
-	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.script'
+	"sap/ui/dom/containsOrEquals"
 ],
-	function(jQuery, Device, BaseObject/* , jQuerySap */, containsOrEquals) {
+	function(jQuery, Device, BaseObject, containsOrEquals) {
 	"use strict";
 
 
@@ -251,7 +250,7 @@ sap.ui.define([
 			this.oLast = sControlId;
 
 			this.oCurrent = null;
-			jQuery.sap.delayedCall(0, this, "checkForLostFocus");
+			setTimeout(this["checkForLostFocus"].bind(this), 0);
 		};
 
 		/**

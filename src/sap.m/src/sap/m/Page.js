@@ -282,7 +282,7 @@ function(
 		};
 
 		Page.prototype.onAfterRendering = function () {
-			jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
+			setTimeout(this._adjustFooterWidth.bind(this), 10);
 		};
 
 		/**
@@ -402,9 +402,9 @@ function(
 			}
 
 			if (useAnimation) {
-				jQuery.sap.delayedCall(Page.FOOTER_ANIMATION_DURATION, this, function () {
+				setTimeout(function () {
 					$footer.toggleClass("sapUiHidden", !bShowFooter);
-				});
+				}, Page.FOOTER_ANIMATION_DURATION);
 			} else {
 				$footer.toggleClass("sapUiHidden", !bShowFooter);
 			}

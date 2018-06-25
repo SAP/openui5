@@ -184,7 +184,7 @@ sap.ui.define([
 		}
 
 		if (this._sInvalidateMonths) {
-			jQuery.sap.clearDelayedCall(this._sInvalidateMonths);
+			clearTimeout(this._sInvalidateMonths);
 		}
 
 	};
@@ -230,7 +230,7 @@ sap.ui.define([
 			if (this._bInvalidateSync) { // set if calendar already invalidates in delayed call
 				_invalidateMonths.call(this);
 			} else {
-				this._sInvalidateMonths = jQuery.sap.delayedCall(0, this, _invalidateMonths);
+				this._sInvalidateMonths = setTimeout(_invalidateMonths.bind(this), 0);
 			}
 		}
 

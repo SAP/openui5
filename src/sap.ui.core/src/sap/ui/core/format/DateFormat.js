@@ -3,13 +3,22 @@
  */
 
 // Provides class sap.ui.core.format.DateFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData', 'sap/ui/core/date/UniversalDate', "sap/base/strings/formatMessage"],
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/library',
+	'sap/ui/core/Locale',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/date/UniversalDate',
+	"sap/base/util/deepEqual",
+	"sap/base/strings/formatMessage"
+],
 	function(
 		jQuery,
 		library,
 		Locale,
 		LocaleData,
-		UniversalDate/* , jQuerySapStrings*/,
+		UniversalDate,
+		deepEqual,
 		formatMessage
 	) {
 	"use strict";
@@ -1536,7 +1545,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				vFromValue = aDates[0][sMethodName].apply(aDates[0]),
 				vToValue = aDates[1][sMethodName].apply(aDates[1]);
 
-			if (!jQuery.sap.equal(vFromValue, vToValue)) {
+			if (!deepEqual(vFromValue, vToValue)) {
 				bDiffFound = true;
 				mDiff[sFieldGroup] = true;
 			}

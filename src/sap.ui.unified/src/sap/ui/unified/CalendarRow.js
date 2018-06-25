@@ -339,7 +339,7 @@ sap.ui.define([
 		}
 
 		if (this._sUpdateCurrentTime) {
-			jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
+			clearTimeout(this._sUpdateCurrentTime);
 			this._sUpdateCurrentTime = undefined;
 		}
 
@@ -353,7 +353,7 @@ sap.ui.define([
 		_determineVisibleIntervalHeaders.call(this);
 
 		if (this._sUpdateCurrentTime) {
-			jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
+			clearTimeout(this._sUpdateCurrentTime);
 			this._sUpdateCurrentTime = undefined;
 		}
 
@@ -703,7 +703,7 @@ sap.ui.define([
 				}
 
 				if (iTime > 0) {
-					this._sUpdateCurrentTime = jQuery.sap.delayedCall(iTime, this, this.updateCurrentTimeVisualization);
+					this._sUpdateCurrentTime = setTimeout(this.updateCurrentTimeVisualization.bind(this), iTime);
 				}
 			}
 		}else {
@@ -1717,9 +1717,9 @@ sap.ui.define([
 					this.setStartDate(CalendarUtils._createLocalDate(oUTCStartDate, true));
 					if (!containsOrEquals(this.getDomRef(), document.activeElement)) {
 						// focus is outside control -> set focus after rerendering
-						jQuery.sap.delayedCall(0, this, function(){
+						setTimeout(function(){
 							this.getFocusedAppointment().focus();
-						});
+						}.bind(this), 0);
 					}
 					this.fireStartDateChange();
 				}

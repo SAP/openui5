@@ -3,12 +3,13 @@
  */
 
 // Provides the basic UI5 support functionality
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ui/thirdparty/jquery", 'jquery.sap.encoder', 'jquery.sap.script'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", 'jquery.sap.encoder'],
 	function(
 		jQuery,
 		EventProvider,
 		Plugin,
-		Device/* , jQuerySap, jQuerySap2, jQuerySap1 */,
+		Device,
+		UriParameters,
 		jQueryDOM
 	) {
 	"use strict";
@@ -73,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					break;
 				case mTypes.IFRAME:
 					this._oRemoteWindow = window.parent;
-					this._sRemoteOrigin = jQuery.sap.getUriParameters().get("sap-ui-xx-support-origin");
+					this._sRemoteOrigin = new UriParameters(window.location.href).get("sap-ui-xx-support-origin");
 					this.openSupportTool();
 					jQuery(window).bind("unload", function(oEvent){
 						close(that._oOpenedWindow);
@@ -81,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					break;
 				case mTypes.TOOL:
 					this._oRemoteWindow = window.opener;
-					this._sRemoteOrigin = jQuery.sap.getUriParameters().get("sap-ui-xx-support-origin");
+					this._sRemoteOrigin = new UriParameters(window.location.href).get("sap-ui-xx-support-origin");
 					jQuery(window).bind("unload", function(oEvent){
 						that.sendEvent(mEvents.TEAR_DOWN);
 						Support.exitPlugins(that, true);
@@ -333,7 +334,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			}
 		} else if (this._sType === mTypes.IFRAME) {
 			// use script name from URI parameter to hand it over to the tool
-			sBootstrapScript = jQuery.sap.getUriParameters().get("sap-ui-xx-support-bootstrap");
+			sBootstrapScript = new UriParameters(window.location.href).get("sap-ui-xx-support-bootstrap");
 		}
 
 		// sap-ui-core.js is the default. no need for passing it to the support window

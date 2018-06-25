@@ -623,14 +623,14 @@ function(
 		this._showBusyIndicator();
 
 		if (this._dataReceivedHandlerId != null) {
-			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			clearTimeout(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
 		}
 	};
 
 	ListBase.prototype._onBindingDataReceivedListener = function(oEvent) {
 		if (this._dataReceivedHandlerId != null) {
-			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			clearTimeout(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
 		}
 
@@ -638,10 +638,10 @@ function(
 		// Under certain conditions it can happen that there are multiple requests in the request queue of the binding, which will be processed
 		// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
 		// processed. With this timer we avoid the flickering, as the list will only be set to not busy after all requests have been processed.
-		this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
+		this._dataReceivedHandlerId = setTimeout(function() {
 			this._hideBusyIndicator();
 			delete this._dataReceivedHandlerId;
-		});
+		}.bind(this), 0);
 	};
 
 	ListBase.prototype.destroyItems = function(bSuppressInvalidate) {
@@ -1192,14 +1192,14 @@ function(
 	// fire updateFinished event delayed to make sure rendering phase is done
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
 		this._hideBusyIndicator();
-		jQuery.sap.delayedCall(0, this, function() {
+		setTimeout(function() {
 			this._bItemNavigationInvalidated = true;
 			this.fireUpdateFinished({
 				reason : this._sUpdateReason,
 				actual : oInfo ? oInfo.actual : this.getItems(true).length,
 				total : oInfo ? oInfo.total : this.getMaxItemsCount()
 			});
-		});
+		}.bind(this), 0);
 	};
 
 	ListBase.prototype._showBusyIndicator = function() {
@@ -1208,10 +1208,10 @@ function(
 			this._bBusy = true;
 
 			// TODO: would be great to have an event when busy indicator visually seen
-			this._sBusyTimer = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, function() {
+			this._sBusyTimer = setTimeout(function() {
 				// clean no data text
 				this.$("nodata-text").text("");
-			});
+			}.bind(this), this.getBusyIndicatorDelay());
 
 			// set busy property
 			this.setBusy(true, "listUl");
@@ -1223,7 +1223,7 @@ function(
 			// revert busy state
 			this._bBusy = false;
 			this.setBusy(false, "listUl");
-			jQuery.sap.clearDelayedCall(this._sBusyTimer);
+			clearTimeout(this._sBusyTimer);
 
 			// revert no data texts when necessary
 			if (!this.getItems(true).length) {
@@ -1319,12 +1319,12 @@ function(
 		}
 
 		// fire event async
-		jQuery.sap.delayedCall(0, this, function() {
+		setTimeout(function() {
 			this.fireItemPress({
 				listItem : oListItem,
 				srcControl : oSrcControl
 			});
-		});
+		}.bind(this), 0);
 	};
 
 	// insert or remove given item's path from selection array

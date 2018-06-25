@@ -15,9 +15,9 @@ sap.ui.define([
 	'./Element',
 	'./ResizeHandler',
 	'./library',
+	"sap/base/util/uid",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/thirdparty/jquery",
-	'jquery.sap.script'
+	"sap/ui/thirdparty/jquery"
 ], function(
 	jQuery,
 	Device,
@@ -29,8 +29,8 @@ sap.ui.define([
 	RenderManager,
 	Element,
 	ResizeHandler,
-	library
-	/* , jQuerySapScript, jQuerySapDom */,
+	library,
+	uid,
 	containsOrEquals,
 	jQueryDOM
 ) {
@@ -95,7 +95,7 @@ sap.ui.define([
 
 			ManagedObject.apply(this);
 
-			this._popupUID = jQuery.sap.uid(); // internal ID to make event handlers unique
+			this._popupUID = uid(); // internal ID to make event handlers unique
 
 			this.bOpen = false; // true exactly if the Popup is opening, open, or closing
 			this.eOpenState = OpenState.CLOSED;
@@ -446,7 +446,7 @@ sap.ui.define([
 	});
 
 	Popup.BlindLayer.prototype.getDomString = function(){
-		return "<div class=\"sapUiBliLy\" id=\"sap-ui-blindlayer-" + jQuery.sap.uid() + "\"><iframe scrolling=\"no\" tabIndex=\"-1\"></iframe></div>";
+		return "<div class=\"sapUiBliLy\" id=\"sap-ui-blindlayer-" + uid() + "\"><iframe scrolling=\"no\" tabIndex=\"-1\"></iframe></div>";
 	};
 
 	/**
@@ -473,7 +473,7 @@ sap.ui.define([
 	});
 
 	Popup.ShieldLayer.prototype.getDomString = function(){
-		return "<div class=\"sapUiPopupShield\" id=\"sap-ui-shieldlayer-" + jQuery.sap.uid() + "\"></div>";
+		return "<div class=\"sapUiPopupShield\" id=\"sap-ui-shieldlayer-" + uid() + "\"></div>";
 	};
 
 	/**
@@ -844,18 +844,18 @@ sap.ui.define([
 				// very extreme case where the same popop is opened and closed again
 				// before the 500ms timed out. Reuse the same shieldlayer and clear
 				// the timeout
-				jQuery.sap.clearDelayedCall(this._iTopShieldRemoveTimer);
+				clearTimeout(this._iTopShieldRemoveTimer);
 				this._iTopShieldRemoveTimer = null;
 			} else {
 				this._oTopShieldLayer = this.oShieldLayerPool.borrowObject($Ref, this._iZIndex + 1);
 			}
 
 			// hide the shield layer after the delayed mouse events are fired.
-			this._iTopShieldRemoveTimer = jQuery.sap.delayedCall(500, this, function(){
+			this._iTopShieldRemoveTimer = setTimeout(function(){
 				this.oShieldLayerPool.returnObject(this._oTopShieldLayer);
 				this._oTopShieldLayer = null;
 				this._iTopShieldRemoveTimer = null;
-			});
+			}.bind(this), 500);
 		}
 
 		// get (and 'show' i.e. activate) the BlindLayer in IE (not Edge)
@@ -969,9 +969,9 @@ sap.ui.define([
 								// Suppose an autoclose popup is opened within a modal popup. Clicking
 								// on the blocklayer should wait the autoclose popup to first close then
 								// set the focus back to the lasted blurred element.
-								jQuery.sap.delayedCall(0, this, function() {
+								setTimeout(function() {
 									jQuery.sap.focus(this.oLastBlurredElement);
-								});
+								}.bind(this), 0);
 							} else {
 								// If the focus is set to somewhere else without a blurred element in popup,
 								// the focus is set to the root DOM element of the popup
@@ -981,7 +981,7 @@ sap.ui.define([
 					}
 				} else if (this._bAutoClose && bContains && this._sTimeoutId) { // case: autoclose popup and focus has returned into the popup immediately
 					// focus has returned, so it did only move inside the popup => clear timeout
-					jQuery.sap.clearDelayedCall(this._sTimeoutId);
+					clearTimeout(this._sTimeoutId);
 					this._sTimeoutId = null;
 				}
 			}
@@ -1003,7 +1003,7 @@ sap.ui.define([
 
 					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
 					// provide some additional event-parameters: closingDuration, where this delayed call comes from
-					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
+					this._sTimeoutId = setTimeout(function(){
 						this.close(iDuration, "autocloseBlur");
 						var oOf = this._oLastPosition && this._oLastPosition.of;
 						if (oOf) {
@@ -1016,7 +1016,7 @@ sap.ui.define([
 								sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
 							}
 						}
-					});
+					}.bind(this), iDuration);
 				}
 			}
 		}
@@ -1051,7 +1051,7 @@ sap.ui.define([
 			return;
 		}
 		if (this._sTimeoutId) {
-			jQuery.sap.clearDelayedCall(this._sTimeoutId);
+			clearTimeout(this._sTimeoutId);
 			this._sTimeoutId = null;
 
 			if (arguments.length > 1) {
@@ -1133,18 +1133,18 @@ sap.ui.define([
 
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
 				// reuse the same shieldlayer and clear the timeout
-				jQuery.sap.clearDelayedCall(this._iBottomShieldRemoveTimer);
+				clearTimeout(this._iBottomShieldRemoveTimer);
 				this._iBottomShieldRemoveTimer = null;
 			} else {
 				this._oBottomShieldLayer = this.oShieldLayerPool.borrowObject($Ref, this._iZIndex - 3);
 			}
 
 			// hide the shield layer after the delayed mouse events are fired.
-			this._iBottomShieldRemoveTimer = jQuery.sap.delayedCall(500, this, function(){
+			this._iBottomShieldRemoveTimer = setTimeout(function(){
 				this.oShieldLayerPool.returnObject(this._oBottomShieldLayer);
 				this._oBottomShieldLayer = null;
 				this._iBottomShieldRemoveTimer = null;
-			});
+			}.bind(this), 500);
 		}
 
 		// Check if this instance is a child Popup. If true de-register this from
@@ -2113,7 +2113,7 @@ sap.ui.define([
 
 		// remove the top shield layer if the timer isn't done yet
 		if (this._iTopShieldRemoveTimer) {
-			jQuery.sap.clearDelayedCall(this._iTopShieldRemoveTimer);
+			clearTimeout(this._iTopShieldRemoveTimer);
 			this.oShieldLayerPool.returnObject(this._oTopShieldLayer);
 			this._oTopShieldLayer = null;
 			this._iTopShieldRemoveTimer = null;
@@ -2121,7 +2121,7 @@ sap.ui.define([
 
 		// remove the bottom shield layer if the timer isn't done yet
 		if (this._iBottomShieldRemoveTimer) {
-			jQuery.sap.clearDelayedCall(this._iBottomShieldRemoveTimer);
+			clearTimeout(this._iBottomShieldRemoveTimer);
 			this.oShieldLayerPool.returnObject(this._oBottomShieldLayer);
 			this._oBottomShieldLayer = null;
 			this._iBottomShieldRemoveTimer = null;
@@ -2888,7 +2888,7 @@ sap.ui.define([
 		}
 
 		if (oFocusDomRef) {
-			jQuery.sap.delayedCall(0, this, function() {
+			setTimeout(function() {
 				// if the element is a control the focus should be called
 				// via the control
 				// especially if the control has an individual focus DOM-ref
@@ -2901,7 +2901,7 @@ sap.ui.define([
 				jQuery.sap.focus(oControl ? oControl : oFocusDomRef);
 
 				return oControl ? oControl.getId() : oFocusDomRef.id;
-			});
+			}, 0);
 		}
 	};
 

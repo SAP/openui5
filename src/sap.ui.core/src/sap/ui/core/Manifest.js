@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Component for all components
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', "sap/base/i18n/ResourceBundle"],
-	function(jQuery, BaseObject, URI, ResourceBundle) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', "sap/base/i18n/ResourceBundle", "sap/base/util/uid"],
+	function(jQuery, BaseObject, URI, ResourceBundle, uid) {
 	"use strict";
 
 	/*global Promise */
@@ -146,7 +146,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			BaseObject.apply(this, arguments);
 
 			// create a unique id per manifest
-			this._uid = jQuery.sap.uid();
+			this._uid = uid();
 
 			// instance variables
 			this._iInstanceCount = 0;

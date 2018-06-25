@@ -233,7 +233,7 @@ sap.ui.define([
 		}
 
 		if (this._sInvalidateMonth) {
-			jQuery.sap.clearDelayedCall(this._sInvalidateMonth);
+			clearTimeout(this._sInvalidateMonth);
 		}
 
 		this._aVisibleDays = null;

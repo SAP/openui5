@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	"sap/base/strings/camelize",
+	"sap/base/util/deepEqual",
 	'jquery.sap.events'
 ], function(
 	jQuery,
@@ -30,7 +31,8 @@ sap.ui.define([
 	LineModeRenderer,
 	Device,
 	ResizeHandler,
-	camelize
+	camelize,
+	deepEqual
 ) {
 	"use strict";
 
@@ -549,7 +551,7 @@ sap.ui.define([
 	GenericTile.prototype._getStyleData = function () {
 		var oStyleData = this._calculateStyleData();
 
-		if (!jQuery.sap.equal(this._oStyleData, oStyleData)) {
+		if (!deepEqual(this._oStyleData, oStyleData)) {
 			delete this._oStyleData;
 
 			//cache style data in order for it to be reused by other functions
@@ -623,7 +625,7 @@ sap.ui.define([
 		}
 
 		this._cHoverStyleUpdates++;
-		this._oAnimationEndCallIds[this._cHoverStyleUpdates] = jQuery.sap.delayedCall(10, this, this._handleAnimationEnd, [this._cHoverStyleUpdates]);
+		this._oAnimationEndCallIds[this._cHoverStyleUpdates] = setTimeout(this._handleAnimationEnd.bind(this, this._cHoverStyleUpdates), 10);
 	};
 
 	/**
@@ -648,7 +650,7 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._clearAnimationUpdateQueue = function () {
 		for (var k in this._oAnimationEndCallIds) {
-			jQuery.sap.clearDelayedCall(this._oAnimationEndCallIds[k]);
+			clearTimeout(this._oAnimationEndCallIds[k]);
 			delete this._oAnimationEndCallIds[k];
 		}
 	};
@@ -843,7 +845,7 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.setHeaderImage = function (uri) {
-		var bValueChanged = !jQuery.sap.equal(this.getHeaderImage(), uri);
+		var bValueChanged = !deepEqual(this.getHeaderImage(), uri);
 
 		if (bValueChanged) {
 			if (this._oImage) {

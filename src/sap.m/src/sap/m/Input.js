@@ -526,7 +526,7 @@ function(
 		this.cancelPendingSuggest();
 
 		if (this._iRefreshListTimeout) {
-			jQuery.sap.clearDelayedCall(this._iRefreshListTimeout);
+			clearTimeout(this._iRefreshListTimeout);
 			this._iRefreshListTimeout = null;
 		}
 
@@ -1577,7 +1577,7 @@ function(
 	 */
 	Input.prototype.cancelPendingSuggest = function() {
 		if (this._iSuggestDelay) {
-			jQuery.sap.clearDelayedCall(this._iSuggestDelay);
+			clearTimeout(this._iSuggestDelay);
 			this._iSuggestDelay = null;
 		}
 	};
@@ -1598,7 +1598,7 @@ function(
 		}
 
 		if (sValue.length >= this.getStartSuggestion()) {
-			this._iSuggestDelay = jQuery.sap.delayedCall(300, this, function(){
+			this._iSuggestDelay = setTimeout(function(){
 
 				// when using non ASCII characters the value might be the same as previous
 				// don't re populate the suggestion items in this case
@@ -1617,7 +1617,7 @@ function(
 
 					this._sPrevSuggValue = sValue;
 				}
-			});
+			}.bind(this), 300);
 		} else if (this._bUseDialog) {
 			if (this._oList instanceof Table) {
 				// CSN# 1421140/2014: hide the table for empty/initial results to not show the table columns
@@ -1628,13 +1628,13 @@ function(
 		} else if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 
 			// when compose a non ASCII character, in Chrome the value is updated in the next browser tick cycle
-			jQuery.sap.delayedCall(0, this, function () {
+			setTimeout(function () {
 				var sNewValue = this.getDOMValue() || '';
 				if (sNewValue < this.getStartSuggestion()) {
 					this._iPopupListSelectedIndex = -1;
 					this._closeSuggestionPopup();
 				}
-			});
+			}.bind(this), 0);
 		}
 	};
 
@@ -1805,8 +1805,8 @@ function(
 		 * @public
 		 */
 		Input.prototype._refreshItemsDelayed = function() {
-			jQuery.sap.clearDelayedCall(this._iRefreshListTimeout);
-			this._iRefreshListTimeout = jQuery.sap.delayedCall(0, this, refreshListItems, [ this ]);
+			clearTimeout(this._iRefreshListTimeout);
+			this._iRefreshListTimeout = setTimeout(refreshListItems.bind(this, this), 0);
 		};
 
 		/**

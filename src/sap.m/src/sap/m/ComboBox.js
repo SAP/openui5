@@ -1715,8 +1715,8 @@ sap.ui.define([
 				vResult = ComboBoxBase.prototype.updateItems.apply(this, arguments); //Update
 
 			//Debounce & emulate onBeforeRendering- all setters are done
-			jQuery.sap.clearDelayedCall(this._debounceItemsUpdate);
-			this._debounceItemsUpdate = jQuery.sap.delayedCall(0, this, "_syncItemsSelection", [oSelectedItem]);
+			clearTimeout(this._debounceItemsUpdate);
+			this._debounceItemsUpdate = setTimeout(this["_syncItemsSelection"].bind(this, oSelectedItem), 0);
 
 			return vResult;
 		};

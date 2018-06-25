@@ -141,9 +141,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		if (bHovered && oMenu.checkEnabled(this)) {
 			oMenu.closeSubmenu(false, true);
 			if (Device.browser.msie) {
-				jQuery.sap.delayedCall(0, this, function () {
-					this.$("tf").focus();
-				}.bind(this));
+				setTimeout(function () {
+					var fnMethod = function () {
+						this.$("tf").focus();
+					}.bind(this);
+					if (typeof fnMethod === "string" || fnMethod instanceof String) {
+						fnMethod = this[fnMethod];
+					}
+					fnMethod.apply(this, []);
+				}.bind(this), 0);
 			} else {
 				this.$("tf").focus();
 			}

@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/library',
 	'sap/ui/core/format/DateFormat',
-	'./DateTimeFieldRenderer'
+	'./DateTimeFieldRenderer',
+	"sap/base/util/deepEqual"
 ], function(
 	jQuery,
 	SimpleDateType,
@@ -20,7 +21,8 @@ sap.ui.define([
 	LocaleData,
 	coreLibrary,
 	DateFormat,
-	DateTimeFieldRenderer
+	DateTimeFieldRenderer,
+	deepEqual
 ) {
 	"use strict";
 
@@ -147,7 +149,7 @@ sap.ui.define([
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
-		if (jQuery.sap.equal(this.getDateValue(), oDate)) {
+		if (deepEqual(this.getDateValue(), oDate)) {
 			return this;
 		}
 

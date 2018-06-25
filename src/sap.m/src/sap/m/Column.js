@@ -232,10 +232,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		this._media.matches = !!oMedia.from;
 
 		// inform parent delayed
-		jQuery.sap.delayedCall(0, this, function() {
+		setTimeout(function() {
 			this.fireEvent("media", this);
 			this.informTable("Resize");
-		});
+		}.bind(this), 0);
 	};
 
 	Column.prototype._validateMinWidth = function(sWidth) {

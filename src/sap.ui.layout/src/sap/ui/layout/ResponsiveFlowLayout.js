@@ -88,7 +88,7 @@ sap.ui.define([
 			delete this._rows;
 
 			if (this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 
@@ -655,7 +655,7 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.addContent = function(oContent) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.addAggregation("content", oContent);
@@ -674,7 +674,7 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.insertContent = function(oContent, iIndex) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.insertAggregation("content", oContent, iIndex);
@@ -690,7 +690,7 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype.removeContent = function(oContent) {
 			if (oContent && this._IntervalCall) {
-				jQuery.sap.clearDelayedCall(this._IntervalCall);
+				clearTimeout(this._IntervalCall);
 				this._IntervalCall = undefined;
 			}
 			this.removeAggregation("content", oContent);

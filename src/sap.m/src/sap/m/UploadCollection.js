@@ -3258,8 +3258,18 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype._onResize = function() {
 		var aListItems = this._oList.getItems();
+
 		for (var i = 0; i < aListItems.length; i++) {
-			jQuery.sap.delayedCall(UploadCollection._resizeTimeoutInterval, this, this._truncateFileName.bind(this), [aListItems[i]._oUploadCollectionItem]);
+			var oLastItem = aListItems[i];
+			/* eslint-disable no-loop-func */
+			setTimeout(function () {
+				var fnMethod = this._truncateFileName.bind(this);
+				if (typeof fnMethod === "string" || fnMethod instanceof String) {
+					fnMethod = this[fnMethod];
+				}
+				fnMethod.apply(this, [oLastItem._oUploadCollectionItem] || []);
+			}.bind(this), UploadCollection._resizeTimeoutInterval);
+			/* eslint-enable no-loop-func */
 		}
 	};
 

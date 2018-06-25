@@ -395,7 +395,7 @@ function(
 				// BCP: 1580078315
 				if (sap.zen && sap.zen.commons && this.getParent() instanceof sap.zen.commons.layout.PositionContainer) {
 					if (this._isCarouselUsedWithCommonsLayout === undefined){
-						jQuery.sap.delayedCall(0, this, "invalidate");
+						setTimeout(this["invalidate"].bind(this), 0);
 						this._isCarouselUsedWithCommonsLayout = true;
 					}
 				}

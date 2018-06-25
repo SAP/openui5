@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ResizeHandler
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/util/ActivityDetection", 'jquery.sap.script'],
-	function(jQuery, BaseObject, ActivityDetection /* jQuerySapScript */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/util/ActivityDetection"],
+	function(jQuery, BaseObject, ActivityDetection) {
 	"use strict";
 
 	// local logger, by default only logging errors

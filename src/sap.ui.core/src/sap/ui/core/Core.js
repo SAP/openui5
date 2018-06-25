@@ -28,9 +28,10 @@ sap.ui.define([
 	"sap/ui/dom/getScrollbarSize",
 	"sap/base/i18n/ResourceBundle",
 	'sap/base/util/ObjectPath',
+	"sap/base/util/array/uniqueSort",
+	"sap/base/util/uid",
 	'sap/ui/events/jquery/EventSimulation',
 	'jquery.sap.events',
-	'jquery.sap.script',
 	'jquery.sap.sjax'
 ],
 	function(
@@ -57,8 +58,11 @@ sap.ui.define([
 		ActivityDetection,
 		getScrollbarSize,
 		ResourceBundle,
-		ObjectPath
-		/* ,EventSimulation, jQuerySapEvents, jQuerySapScript, jQuerySapSjax */) {
+		ObjectPath,
+		uniqueSort,
+		uid
+		/* ,EventSimulation, jQuerySapEvents, jQuerySapScript, jQuerySapSjax */
+	) {
 
 	"use strict";
 
@@ -2108,7 +2112,7 @@ sap.ui.define([
 						if ( oLibrary[sKey].length === 0 ) {
 							oLibrary[sKey] = vValue;
 						} else {
-							oLibrary[sKey] = jQuery.sap.unique(oLibrary[sKey].concat(vValue));
+							oLibrary[sKey] = uniqueSort(oLibrary[sKey].concat(vValue));
 						}
 					} else if ( oLibrary[sKey] === undefined ) {
 						// only set values for properties that are still undefined
@@ -2448,7 +2452,7 @@ sap.ui.define([
 
 		// if the domref does not have an ID or empty ID => generate one
 		if (!oDomRef.id || oDomRef.id.length == 0) {
-			oDomRef.id = jQuery.sap.uid();
+			oDomRef.id = uid();
 		}
 
 		// create a new or fetch an existing UIArea
@@ -2509,7 +2513,7 @@ sap.ui.define([
 	Core.prototype.addInvalidatedUIArea = function(oUIArea) {
 		if ( !this._sRerenderTimer ) {
 			oRenderLog.debug("Registering timer for delayed re-rendering");
-			this._sRerenderTimer = jQuery.sap.delayedCall(0,this,"renderPendingUIUpdates"); // decoupled for collecting several invalidations into one redraw
+			this._sRerenderTimer = setTimeout(this["renderPendingUIUpdates"].bind(this), 0); // decoupled for collecting several invalidations into one redraw
 		}
 	};
 
@@ -2559,7 +2563,7 @@ sap.ui.define([
 			// clear a pending timer so that the next call to re-render will create a new timer
 			if (this._sRerenderTimer) {
 				if ( this._sRerenderTimer !== this ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
-					jQuery.sap.clearDelayedCall(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+					clearTimeout(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
 				}
 				this._sRerenderTimer = undefined;
 			}

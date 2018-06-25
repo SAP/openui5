@@ -768,14 +768,14 @@ sap.ui.define([
 		// On IE/sometimes other browsers, if you click the toggle button again to close the popover, onAfterClose is triggered first, which closes the popup, and then the click event on the toggle button reopens it
 		// To prevent this behaviour, disable the overflow button till the end of the current javascript engine's "tick"
 		this._getOverflowButton().setEnabled(false);
-		jQuery.sap.delayedCall(0, this, function () {
+		setTimeout(function () {
 			this._getOverflowButton().setEnabled(true);
 
 			// In order to restore focus, we must wait another tick here to let the renderer enable it first
-			jQuery.sap.delayedCall(0, this, function () {
+			setTimeout(function () {
 				this._getOverflowButton().$().focus();
-			});
-		});
+			}.bind(this), 0);
+		}.bind(this), 0);
 	};
 
 	/**
@@ -876,9 +876,9 @@ sap.ui.define([
 	OverflowToolbar.prototype.destroyContent = function () {
 		this._resetAndInvalidateToolbar(false);
 
-		jQuery.sap.delayedCall(0, this, function () {
+		setTimeout(function () {
 			this._resetAndInvalidateToolbar(false);
-		});
+		}.bind(this), 0);
 
 		return this._callToolbarMethod("destroyContent", arguments);
 	};

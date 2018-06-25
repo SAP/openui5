@@ -534,7 +534,7 @@ sap.ui.define([
 
 		var oSliders = this._oPopup.getContent()[0] && this._oPopup.getContent()[0].getTimeSliders();
 		if (oSliders) {//Sliders values need to be updated after a popup is (especially sliders) is really visible
-			jQuery.sap.delayedCall(0, oSliders, oSliders._updateSlidersValues);
+			setTimeout(oSliders._updateSlidersValues.bind(oSliders), 0);
 		}
 	};
 

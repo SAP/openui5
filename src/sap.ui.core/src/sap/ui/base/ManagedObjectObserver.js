@@ -4,8 +4,14 @@
 
 // Provides class sap.ui.base.ManagedObjectObserver.
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject', 'sap/ui/base/EventProvider', 'jquery.sap.script'
-], function (jQuery, BaseObject, ManagedObject, EventProvider/*, jQuerySap1*/) {
+	'jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject', 'sap/ui/base/EventProvider', "sap/base/util/array/uniqueSort"
+], function(
+	jQuery,
+	BaseObject,
+	ManagedObject,
+	EventProvider,
+	uniqueSort
+) {
 	"use strict";
 
 	/**
@@ -629,7 +635,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var aUnion = jQuery.sap.unique(aFullArray.concat(aSubArray)); // merge arrays, remove duplicates
+		var aUnion = uniqueSort(aFullArray.concat(aSubArray)); // merge arrays, remove duplicates
 
 		//in case aSubArray is inside aFullArray the length did not change
 		return aFullArray.length === aUnion.length;
@@ -651,7 +657,7 @@ sap.ui.define([
 			aProperties = Object.keys(oMetadata.getAllProperties()),
 			aAggregations = Object.keys(oMetadata.getAllAggregations()),
 			aAssociations = Object.keys(oMetadata.getAllAssociations()),
-			aBindings = jQuery.sap.unique(aProperties.concat(aAggregations)),
+			aBindings = uniqueSort(aProperties.concat(aAggregations)),
 			aEvents = Object.keys(oMetadata.getAllEvents());
 
 		oConfiguration.properties = oConfiguration.properties === true ? aProperties : oConfiguration.properties;

@@ -7,9 +7,11 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/ClientListBinding',
-	"sap/ui/util/XMLHelper"
+	"sap/ui/util/XMLHelper",
+	"sap/base/util/array/diff",
+	"sap/base/util/deepEqual"
 ],
-	function(jQuery, ChangeReason, ClientListBinding, XMLHelper) {
+	function(jQuery, ChangeReason, ClientListBinding, XMLHelper, diff, deepEqual) {
 	"use strict";
 
 
@@ -60,7 +62,7 @@ sap.ui.define([
 
 			//Check diff
 			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-				aContexts.diff = jQuery.sap.arraySymbolDiff(this.aLastContextData, aContextData);
+				aContexts.diff = diff(this.aLastContextData, aContextData);
 			}
 
 			this.iLastEndIndex = iStartIndex + iLength;
@@ -146,7 +148,7 @@ sap.ui.define([
 			if (this.oList.length != oList.length) {
 				bChangeDetected = true;
 			}
-			if (!jQuery.sap.equal(this.oList, oList)) {
+			if (!deepEqual(this.oList, oList)) {
 				this.update();
 			}
 
