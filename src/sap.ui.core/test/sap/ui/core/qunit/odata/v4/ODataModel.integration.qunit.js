@@ -103,6 +103,7 @@ sap.ui.require([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="id" text="{ID}" />\
 			<Text id="text" text="{Name}" />\
@@ -492,6 +493,7 @@ sap.ui.require([
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				} else {
 					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
+					mResponseHeaders = {};
 				}
 
 				if (!that.aRequests.length) { // waiting may be over after promise has been handled
@@ -553,6 +555,9 @@ sap.ui.require([
 				});
 
 				oView.setModel(that.oModel);
+				// Place the view in the page so that it is actually rendered. In some situations,
+				// esp. for the table.Table this is essential.
+				oView.placeAt("qunit-fixture");
 				that.oView = oView;
 				return that.waitForChanges(assert);
 			});
@@ -719,6 +724,7 @@ sap.ui.require([
 						: sValue;
 
 				that.checkValue(assert, sExpectedValue, sControlId);
+				return sValue;
 			};
 		},
 
@@ -746,6 +752,7 @@ sap.ui.require([
 					&& (this.getBindingContext().getIndex
 						? this.getBindingContext().getIndex()
 						: this.getBindingContext().getPath()));
+				return sValue;
 			};
 		},
 
@@ -873,6 +880,7 @@ sap.ui.require([
 	// * Open the suggestion list for the "Buyer ID"
 	testViewStart("Absolute ODLB w/o parameters and relative ODPB", '\
 <Table items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
@@ -888,6 +896,7 @@ sap.ui.require([
 	// the SalesOrders application.
 	testViewStart("Absolute ODLB with parameters and relative ODPB", '\
 <Table items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
@@ -914,6 +923,7 @@ sap.ui.require([
 		filters : {path : \'AGE\', operator : \'GT\', value1 : 21},\
 		sorter : {path : \'AGE\'}\
 	}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
@@ -930,6 +940,7 @@ sap.ui.require([
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$select : \'Category\'}}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="category" text="{Category}" />\
 		</ColumnListItem>\
@@ -971,6 +982,7 @@ sap.ui.require([
 <FlexBox binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="text" text="{Name}" />\
 		</ColumnListItem>\
@@ -1012,6 +1024,7 @@ sap.ui.require([
 			sorter : {path : \'AGE\'},\
 			parameters : {foo : \'bar\'}\
 		}">\
+	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Text id="age" text="{AGE}" />\
@@ -1072,6 +1085,63 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Refreshing a single entry of a table must not cause "failed to drill-down" errors
+	// if data of a dependent binding has been deleted in between.
+	// This scenario is similar to the deletion of a sales order line item in the SalesOrders
+	// application. Deleting a sales order line item also deletes the corresponding schedule. After
+	// the deletion the application automatically refreshes the sales order which the item has
+	// belonged to.
+	QUnit.test("Context#refresh: No drill-down error for deleted data", function (assert) {
+		var oContext,
+			sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+		<Text id="age" text="{AGE}" />\
+	</ColumnListItem>\
+</Table>\
+<Table id="detailTable" items="{EMPLOYEE_2_EQUIPMENTS}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="equipmentName" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100",
+				{"value" : [{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70}]})
+			.expectChange("text", ["Frederic Fall"])
+			.expectChange("age", ["70"])
+			.expectChange("equipmentName", []);
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+				oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+				that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
+							+ "$select=Category,ID,Name&$skip=0&$top=100", {
+						"value" : [{
+							"Category" : "Electronics", "ID" : "1", "Name" : "Office PC"
+						}, {
+							"Category" : "Electronics", "ID" : "2", "Name" : "Tablet X"
+						}]})
+					.expectChange("equipmentName", ["Office PC", "Tablet X"]);
+				that.oView.byId("detailTable").setBindingContext(oContext);
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest("EMPLOYEES('0')?$select=AGE,ID,Name",
+						{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70})
+					.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
+							+ "$select=Category,ID,Name&$skip=0&$top=100", {
+						"value" : [{
+							"Category" : "Electronics", "ID" : "1", "Name" : "Office PC"
+						}]});
+				oContext.refresh();
+				return that.waitForChanges(assert);
+			});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Sort a list and select a list entry to see details
 	// See SalesOrders application:
 	// * Start the application with realOData=true so that sorting by "Gross Amount" is enabled
@@ -1082,6 +1152,7 @@ sap.ui.require([
 	QUnit.test("Absolute ODLB with sort, relative ODCB resolved on selection", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$expand : \'EMPLOYEE_2_MANAGER\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
 	</ColumnListItem>\
@@ -1142,6 +1213,7 @@ sap.ui.require([
 	QUnit.test("Absolute ODLB refresh", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
 	</ColumnListItem>\
@@ -1261,6 +1333,7 @@ sap.ui.require([
 	QUnit.test("Absolute ODLB changing parameters", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
 	</ColumnListItem>\
@@ -1323,6 +1396,7 @@ sap.ui.require([
 		// Note: The key property of the EMPLOYEES set is 'ID'
 		var sView = '\
 <Table growing="true" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
 	</ColumnListItem>\
@@ -1349,6 +1423,7 @@ sap.ui.require([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 	</ColumnListItem>\
@@ -1398,6 +1473,7 @@ sap.ui.require([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 	</ColumnListItem>\
@@ -1460,6 +1536,7 @@ sap.ui.require([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 	</ColumnListItem>\
@@ -1512,6 +1589,7 @@ sap.ui.require([
 		parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="item" text="{ItemPosition}" />\
 		</ColumnListItem>\
@@ -1571,6 +1649,7 @@ sap.ui.require([
 	QUnit.test("Modify a foreign property", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="item" text="{SO_2_BP/CompanyName}" />\
 	</ColumnListItem>\
@@ -1646,6 +1725,7 @@ sap.ui.require([
 	QUnit.test("Entity with key aliases", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EntitiesWithComplexKey}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="item" text="{Value}" />\
 	</ColumnListItem>\
@@ -1691,6 +1771,7 @@ sap.ui.require([
 	QUnit.test("Create with user input", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="note" text="{Note}" />\
 	</ColumnListItem>\
@@ -1885,6 +1966,7 @@ sap.ui.require([
 	QUnit.test("Metadata access to MANAGERS which is not loaded yet", function (assert) {
 		var sView = '\
 <Table id="table" items="{/MANAGERS}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="item" text="{@sapui.name}" />\
 	</ColumnListItem>\
@@ -1930,6 +2012,7 @@ sap.ui.require([
 	QUnit.test("Metadata: Manager -> Product", function (assert) {
 		var sView = '\
 <Table id="table" items="{}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="item" text="{@sapui.name}" />\
 	</ColumnListItem>\
@@ -2029,6 +2112,7 @@ sap.ui.require([
 			}\
 		}">\
 	<FlexBox binding="{EMPLOYEE_2_TEAM}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="name" text="{Name}" />\
 	</FlexBox>\
 </FlexBox>';
@@ -2160,13 +2244,14 @@ sap.ui.require([
 	// Scenario: bound action (success and failure)
 	QUnit.test("Bound action", function (assert) {
 		var sView = '\
-<VBox binding="{/EMPLOYEES(\'1\')}">\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name" text="{Name}" />\
-	<VBox id="action" \
+	<FlexBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="teamId" text="{TEAM_ID}" />\
-	</VBox>\
-</VBox>',
+	</FlexBox>\
+</FlexBox>',
 			sUrl = "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 				+ ".AcChangeTeamOfEmployee",
 			that = this;
@@ -2234,6 +2319,7 @@ sap.ui.require([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="id" text="{ID}" />\
 		</ColumnListItem>\
@@ -2282,6 +2368,7 @@ sap.ui.require([
 			path : \'/EMPLOYEES\',\
 			filters : {path : \'TEAM_ID\', operator : \'EQ\', value1 : \'77\'}\
 		}">\
+	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Text id="teamId" text="{TEAM_ID}" />\
@@ -2336,13 +2423,14 @@ sap.ui.require([
 	// Note: there are 3 binding types for __FAKE__AcOverload, but only Worker has Is_Manager
 	QUnit.test("Bound action w/ overloading", function (assert) {
 		var sView = '\
-<VBox binding="{/EMPLOYEES(\'1\')}">\
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name" text="{Name}" />\
-	<VBox id="action" \
+	<FlexBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcOverload(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="isManager" text="{Is_Manager}" />\
-	</VBox>\
-</VBox>',
+	</FlexBox>\
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES('1')", {
@@ -2446,14 +2534,15 @@ sap.ui.require([
 			}\
 		}">\
 	<FlexBox binding="{path : \'EMPLOYEE_2_TEAM\',\
-		parameters : {\
-			$expand : {\
-				TEAM_2_EMPLOYEES : {\
-					$orderby : \'AGE desc\'\
+				parameters : {\
+					$expand : {\
+						TEAM_2_EMPLOYEES : {\
+							$orderby : \'AGE desc\'\
+						}\
+					}\
 				}\
-			}\
-		}\
-	}">\
+			}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="name" text="{Name}" />\
 	</FlexBox>\
 	<Text id="age" text="{AGE}" />\
@@ -2500,6 +2589,7 @@ sap.ui.require([
 			filters : {path : \'AGE\', operator : \'LT\', value1 : \'77\'},\
 			parameters : {$orderby : \'Name\', $select : \'AGE\'}\
 		}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
@@ -2553,6 +2643,7 @@ sap.ui.require([
 		var sView = '\
 <FlexBox binding="{/TEAMS(\'2\')}">\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="text" text="{Name}" />\
 		</ColumnListItem>\
@@ -2594,6 +2685,7 @@ sap.ui.require([
 	testViewStart("Auto-$expand/$select: no $apply inside $expand", '\
 <FlexBox binding="{/TEAMS(\'42\')}">\
 	<Table items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$apply : \'filter(AGE lt 42)\'}}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="text" text="{Name}" />\
 		</ColumnListItem>\
@@ -2614,6 +2706,7 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{/TEAMS}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<List items="{path : \'TEAM_2_EMPLOYEES\',\
 			parameters : {$apply : \'filter(AGE lt 42)\'}, templateShareable : false}">\
@@ -2647,6 +2740,7 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/TEAMS}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text0" text="{Team_Id}" />\
 	</ColumnListItem>\
@@ -2682,6 +2776,7 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/TEAMS}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text0" text="{Team_Id}" />\
 	</ColumnListItem>\
@@ -2727,6 +2822,7 @@ sap.ui.require([
 		},\
 		path : \'/EMPLOYEES\'\
 	}">\
+	<columns><Column/></columns>\
 </Table>',
 			oController = {
 				employeesListFactory : function (sID, oContext) {
@@ -2818,6 +2914,7 @@ sap.ui.require([
 					: "EMPLOYEES?",
 				sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
@@ -2865,6 +2962,7 @@ sap.ui.require([
 			sView = '\
 <Table id="table"\
 		items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}, suspended : true}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
@@ -2897,16 +2995,20 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: Change a property in a dependent binding below a list binding with an own cache and
 	// change the list binding's row (-> the dependent binding's context)
+	// TODO hasPendingChanges does work properly with changes in hidden caches if dependency between
+	// bindings get lost e.g. if context of a dependent binding is reset (set to null or undefined).
 	QUnit.test("Pending change in hidden cache", function (assert) {
 		var oListBinding,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="teamSet" items="{/TEAMS}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="teamId" text="{Team_Id}" />\
 	</ColumnListItem>\
 </Table>\
 <Table id="employeeSet" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="employeeId" text="{ID}" />\
 	</ColumnListItem>\
@@ -2964,7 +3066,22 @@ sap.ui.require([
 			// "select" the second row in the team table
 			that.oView.byId("employeeSet").setBindingContext(
 				that.oView.byId("teamSet").getItems()[1].getBindingContext());
-			assert.ok(oListBinding.hasPendingChanges());
+			assert.notOk(oListBinding.hasPendingChanges(),
+				"Binding lost context -> no pending changes");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES('03')?$select=ID,Name", {
+					ID : "03",
+					Name : "Jonathan Smith",
+					"@odata.etag" : "eTag"
+				})
+				.expectChange("employeeName", "Jonathan Smith");
+
+			// "select" the first row in the employee table
+			that.oView.byId("objectPage").setBindingContext(
+				that.oView.byId("employeeSet").getItems()[0].getBindingContext());
+			assert.ok(oListBinding.hasPendingChanges(),
+				"Binding hierarchy restored -> has pending changes");
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
@@ -2980,7 +3097,8 @@ sap.ui.require([
 			]);
 		}).then(function () {
 			// no requests because cache is reused
-			that.expectChange("employeeId", ["01", "02"]);
+			that.expectChange("employeeId", ["01", "02"])
+				.expectChange("employeeName", null);
 
 			// code under test
 			that.oView.byId("employeeSet").setBindingContext(
@@ -3068,6 +3186,7 @@ sap.ui.require([
 		QUnit.test("filter all/any on list binding " + oFixture.request, function (assert) {
 			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{SalesOrderID}" />\
 	</ColumnListItem>\
@@ -3106,6 +3225,7 @@ sap.ui.require([
 <Table id="table" items="{path : \'/EMPLOYEES\',\
 		parameters : {$expand : {\'LOCATION/City/EmployeesInCity\' : {$select : [\'Name\']}}, \
 		$select : [\'ID\', \'Name\']}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
@@ -3213,6 +3333,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Table id="table" items="{LOCATION/City/EmployeesInCity}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="room" text="{ROOM_ID}"/>\
 		</ColumnListItem>\
@@ -3264,6 +3385,7 @@ sap.ui.require([
 		}}">\
 	<Text id="id" text="{path : \'SalesOrderID\', type : \'sap.ui.model.odata.type.String\'}" />\
 	<Table id="table" items="{ToLineItems}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="item" text="{path : \'ItemPosition\',\
 				type : \'sap.ui.model.odata.type.String\'}" />\
@@ -3323,6 +3445,7 @@ sap.ui.require([
 			$select : \'SalesOrderID\',\
 			$orderby : \'SalesOrderID\'\
 		}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 	</ColumnListItem>\
@@ -3387,6 +3510,7 @@ sap.ui.require([
 			$select : \'SalesOrderID\',\
 			$filter : \'' + oFixture.binding + '\'\
 		}}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 	</ColumnListItem>\
@@ -3468,22 +3592,17 @@ sap.ui.require([
 		</t:template>\
 	</t:Column>\
 </t:Table>',
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
-			that = this;
+			oModel = createTeaBusiModel({autoExpandSelect : true});
 
-		this.expectChange("text", false); // test listens to changes on table template control
-		return this.createView(assert, sView, oModel).then(function () {
-			// table.Table must render to call getContexts on its row aggregation's list binding
-			that.oView.placeAt("qunit-fixture");
-			that.expectRequest("EMPLOYEES?$filter=AGE%20gt%2042&$select=ID,Name&$skip=0&$top=105", {
-					"value" : [
-						{"Name" : "Frederic Fall"},
-						{"Name" : "Jonathan Smith"}
-					]
-				})
-				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
-			return that.waitForChanges(assert);
-		});
+		this.expectRequest("EMPLOYEES?$filter=AGE%20gt%2042&$select=ID,Name&$skip=0&$top=105", {
+				"value" : [
+					{"Name" : "Frederic Fall"},
+					{"Name" : "Jonathan Smith"}
+				]
+			})
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
@@ -3496,6 +3615,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
 	<FlexBox binding="{EQUIPMENT_2_PRODUCT}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="text" text="{SupplierIdentifier}" />\
 	</FlexBox>\
 </FlexBox>';
@@ -3549,6 +3669,7 @@ sap.ui.require([
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
 	</ColumnListItem>\
@@ -3579,6 +3700,7 @@ sap.ui.require([
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
 	</ColumnListItem>\
@@ -3608,6 +3730,7 @@ sap.ui.require([
 		var oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
 	</ColumnListItem>\
@@ -3635,6 +3758,7 @@ sap.ui.require([
 <VBox id="vbox" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
 		path : \'/TEAMS(\\\'42\\\')\'}">\
 	<Table items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="id" text="{ID}" />\
 		</ColumnListItem>\
@@ -3671,12 +3795,13 @@ sap.ui.require([
 	// Scenario: Behaviour of a deferred bound function
 	QUnit.test("Bound function", function (assert) {
 		var sView = '\
-<VBox binding="{/EMPLOYEES(\'1\')}">\
-	<VBox id="function" \
+<FlexBox binding="{/EMPLOYEES(\'1\')}">\
+	<FlexBox id="function" \
 		binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeSalaryForecast(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="status" text="{STATUS}" />\
-	</VBox>\
-</VBox>',
+	</FlexBox>\
+</FlexBox>',
 			that = this;
 
 		this.expectChange("status", null);
@@ -3812,6 +3937,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/TEAMS(\'42\')}">\
 	<FlexBox binding="{TEAM_2_MANAGER}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="id" text="{ID}" />\
 	</FlexBox>\
 </FlexBox>',
@@ -3846,6 +3972,7 @@ sap.ui.require([
 		var fnGetContexts = ODataListBinding.prototype.getContexts,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{Team_Id}" />\
 	</ColumnListItem>\
@@ -3950,6 +4077,7 @@ sap.ui.require([
 				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100",
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text binding="{SO_2_BP}" text="{CompanyName}"/>\
 	</ColumnListItem>\
@@ -4003,6 +4131,7 @@ sap.ui.require([
 	// Note: Use "$\{Name}" to avoid that Maven replaces "${Name}"
 	testViewStart("Expression binding in a list", '\
 <Table items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{= \'Hello, \' + $\{Name} }" />\
 	</ColumnListItem>\
@@ -4044,6 +4173,7 @@ sap.ui.require([
 		var oModel = this.createModelForV2FlightService({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/FlightCollection}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="carrid" text="{carrid}" />\
 	</ColumnListItem>\
@@ -4170,6 +4300,7 @@ sap.ui.require([
 <FlexBox binding="{/NotificationCollection(\'foo\')}">\
 	<Text id="updated" text="{= %{updated} }" />\
 	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.__FAKE__FunctionImport(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="value" text="{= %{value} }" />\
 	</FlexBox>\
 </FlexBox>',
@@ -4310,6 +4441,7 @@ sap.ui.require([
 <FlexBox binding="{/FlightCollection(carrid=\'AA\',connid=\'0017\',fldate=2017-08-10T00:00:00Z)}">\
 	<Text id="carrid" text="{carrid}" />\
 	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.GetFlightDetails(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="distance" text="{distance}" />\
 	</FlexBox>\
 </FlexBox>',
@@ -4424,6 +4556,7 @@ sap.ui.require([
 <FlexBox binding="{/SalesOrderSet(\'0815\')}">\
 	<Text id="id0" text="{SalesOrderID}" />\
 	<FlexBox id="action" binding="{GWSAMPLE_BASIC.SalesOrder_Confirm(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="id1" text="{SalesOrderID}" />\
 	</FlexBox>\
 </FlexBox>',
@@ -4524,6 +4657,7 @@ sap.ui.require([
 <FlexBox binding="{/TravelAgencies(\'00000061\')}">\
 	<Text id="oldPhone" text="{TELEPHONE}" />\
 	<FlexBox id="action" binding="{RMTSAMPLEFLIGHT.UpdateAgencyPhoneNo(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="newPhone" text="{TELEPHONE}" />\
 	</FlexBox>\
 </FlexBox>',
@@ -4650,6 +4784,7 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/Equipments\', suspended : true, templateShareable : false}">\
+	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
 			<Text id="idCategory" text="{Category}" />\
@@ -4746,6 +4881,7 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
 			<Text id="idCategory" text="{Category}" />\
@@ -4814,6 +4950,7 @@ sap.ui.require([
 <FlexBox id="outerForm" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
 	<Text id="idEquipmentName" text="{Name}" />\
 	<FlexBox id="innerForm" binding="{EQUIPMENT_2_EMPLOYEE}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="idEmployeeName" text="{Name}" />\
 		<Text id="idManagerId" text="{MANAGER_ID}" />\
 	</FlexBox>\
@@ -4877,6 +5014,7 @@ sap.ui.require([
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="idMemberCount" text="{MEMBER_COUNT}" />\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false}">\
+		<columns><Column/><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="idAge" text="{AGE}" />\
 			<Text id="idName" text="{Name}" />\
@@ -4947,6 +5085,7 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
 			<Text id="idEquipmentName" text="{Name}" />\
@@ -5002,6 +5141,7 @@ sap.ui.require([
 <FlexBox id="employee" binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="salary" text="{SALARY/YEARLY_BONUS_AMOUNT}" />\
 	<FlexBox id="function" binding="{' + sFunctionName + '(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="forecastSalary" text="{SALARY/YEARLY_BONUS_AMOUNT}" />\
 	</FlexBox>\
 </FlexBox>',
@@ -5073,6 +5213,7 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
 			<Text id="idEquipmentName" text="{Name}" />\
@@ -5157,6 +5298,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/GetSOContactList(...)}" id="function">\
 	<Table items="{value}">\
+		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
 				<Text id="id" text="{ContactGUID}" />\
@@ -5201,6 +5343,7 @@ sap.ui.require([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{/GetSOContactList(SalesOrderID=\'0500000001\')}">\
+	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
 			<Text id="id" text="{ContactGUID}" />\
@@ -5236,6 +5379,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/GetSOContactList(SalesOrderID=\'0500000001\')}" id="function">\
 	<Table items="{value}">\
+		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
 				<Text id="id" text="{ContactGUID}" />\
@@ -5274,6 +5418,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/MANAGERS(\'1\')/' + sFunctionName + '()}" id="function">\
 	<Table items="{value}">\
+		<columns><Column/><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
 				<Text id="id" text="{ID}" />\
@@ -5313,6 +5458,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">\
 	<FlexBox id="businessPartner" binding="{SO_2_BP}">\
+		<layoutData><FlexItemData/></layoutData>\
 		<Text id="phoneNumber" text="{PhoneNumber}" />\
 	</FlexBox>\
 	<Text id="companyName" text="{SO_2_BP/CompanyName}" />\
@@ -5386,8 +5532,6 @@ sap.ui.require([
 				})
 				.expectChange("position", ["10"]);
 
-			// table.Table must render to call getContexts on its row aggregation's list binding
-			that.oView.placeAt("qunit-fixture");
 			that.oView.byId("form").bindElement("/SalesOrderList('0500000000')");
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -5505,6 +5649,7 @@ sap.ui.require([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
 			<Text id="note" text="{Note}"/>\
@@ -5550,6 +5695,7 @@ sap.ui.require([
 	QUnit.test("ODLB: delayed filter", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}}">\
+	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
 			<Text id="name" text="{Name}"/>\
@@ -5653,8 +5799,6 @@ sap.ui.require([
 				})
 				.expectChange("name", ["Foo"]);
 
-			// table.Table must render to call getContexts on its row aggregation's list binding
-			that.oView.placeAt("qunit-fixture");
 			oListBinding.resume();
 			return Promise.all([
 				that.oModel.submitBatch("api"),
@@ -5757,12 +5901,12 @@ sap.ui.require([
 
 			that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
 					+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "&$count=true&$skip=23&$top=3", {
+					+ "&$count=true&$skip=7&$top=3", {
 					"@odata.count" : "26",
 					"value" : [
-						{"GrossAmount" : 24, "LifecycleStatus" : "C"},
-						{"GrossAmount" : 25, "LifecycleStatus" : "B"},
-						{"GrossAmount" : 26, "LifecycleStatus" : "A"}
+						{"GrossAmount" : 7, "LifecycleStatus" : "T"},
+						{"GrossAmount" : 8, "LifecycleStatus" : "S"},
+						{"GrossAmount" : 9, "LifecycleStatus" : "R"}
 					]
 				});
 			for (var i = 0; i < 3; i += 1) {
@@ -5772,38 +5916,28 @@ sap.ui.require([
 					.expectChange("grossAmount", undefined, null)
 					.expectChange("lifecycleStatus", null, null);
 			}
-			that.expectChange("isExpanded", [false, false, false], 23)
-				.expectChange("isTotal", [true, true, true], 23)
-				.expectChange("level", [1, 1, 1], 23)
-				.expectChange("grossAmount", [24, 25, 26], 23)
-				.expectChange("lifecycleStatus", ["C", "B", "A"], 23);
+			that.expectChange("isExpanded", [false, false, false], 7)
+				.expectChange("isTotal", [true, true, true], 7)
+				.expectChange("level", [1, 1, 1], 7)
+				.expectChange("grossAmount", [7, 8, 9], 7)
+				.expectChange("lifecycleStatus", ["T", "S", "R"], 7);
 
-			that.oView.byId("table").setFirstVisibleRow(23);
+			that.oView.byId("table").setFirstVisibleRow(7);
 
 			return that.waitForChanges(assert).then(function () {
-				that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
-						+ "&$apply=groupby((LifecycleStatus))&$count=true&$skip=23&$top=3", {
-						"@odata.count" : "26",
-						"value" : [
-							{"LifecycleStatus" : "C"},
-							{"LifecycleStatus" : "B"},
-							{"LifecycleStatus" : "A"}
-						]
-					});
-				//TODO why does Table use $skip=7 here? why do we have 2 requests?
 				that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
 						+ "&$apply=groupby((LifecycleStatus))&$count=true&$skip=7&$top=3", {
 						"@odata.count" : "26",
 						"value" : [
+							{"LifecycleStatus" : "T"},
 							{"LifecycleStatus" : "S"},
-							{"LifecycleStatus" : "R"},
-							{"LifecycleStatus" : "Q"}
+							{"LifecycleStatus" : "R"}
 						]
-					});
-				that.expectChange("isExpanded", [false, false, false], 7)
+					})
+					.expectChange("isExpanded", [false, false, false], 7)
 					.expectChange("isTotal", [true, true, true], 7)
 					.expectChange("level", [1, 1, 1], 7)
-					.expectChange("lifecycleStatus", ["S", "R", "Q"], 7);
+					.expectChange("lifecycleStatus", ["T", "S", "R"], 7);
 
 				oTable.removeColumn(4).destroy(); // GrossAmount
 				oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
@@ -5920,6 +6054,7 @@ sap.ui.require([
 	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/Equipments\', parameters : {$$updateGroupId : \'never\'}}">\
+	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
 			<Text id="name" text="{Name}"/>\
@@ -6135,9 +6270,9 @@ sap.ui.require([
 
 		this.expectChange("name", false);
 		return this.createView(assert, sView, oModel).then(function () {
-			// table must be rendered, as GrowingEnablement#updateItems only performs ECD if
-			// the associated control's method getItemsContainerDomRef returns a truthy value
-			that.oView.placeAt("qunit-fixture");
+			// Here it is essential that createView renders the table, as
+			// GrowingEnablement#updateItems only performs ECD if the associated control's method
+			// getItemsContainerDomRef returns a truthy value
 			oTable = that.oView.byId("table");
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
 				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
@@ -6528,6 +6663,7 @@ sap.ui.require([
 			that = this,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="Team_Id" text="{Team_Id}" />\
 	</ColumnListItem>\
@@ -6585,6 +6721,7 @@ sap.ui.require([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="id" text="{ID}" />\
 		</ColumnListItem>\
@@ -6648,11 +6785,13 @@ sap.ui.require([
 			that = this,
 			sView = '\
 <Table id="SalesOrders" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="SalesOrderID" text="{SalesOrderID}" />\
 	</ColumnListItem>\
 </Table>\
 <Table id="LineItems" items="{SO_2_SOITEM}">\
+	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="ItemSalesOrderID" text="{SalesOrderID}" />\
 		<Text id="ItemPosition" text="{ItemPosition}" />\

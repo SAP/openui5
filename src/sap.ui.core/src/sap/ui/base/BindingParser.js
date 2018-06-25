@@ -153,8 +153,9 @@ sap.ui.define([
 		 *
 		 * Names can consist of multiple segments, separated by dots.
 		 *
-		 * If the name starts with a dot ('.'), lookup will start with the
-		 * given context, otherwise it will start with the global context (window).
+		 * If the name starts with a dot ('.'), lookup happens within the given context only;
+		 * otherwise it will first happen within the given context (only if
+		 * <code>bPreferContext</code> is set) and then fall back to the global context (window).
 		 *
 		 * @param {object} o Object from which the property should be read and resolved
 		 * @param {string} sProp name of the property to resolve
@@ -166,7 +167,9 @@ sap.ui.define([
 					fn = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
 					o[sProp] = oEnv.bStaticContext ? fn : (fn && fn.bind(oEnv.oContext));
 				} else {
-					o[sProp] = jQuery.sap.getObject(o[sProp]);
+					o[sProp] = oEnv.bPreferContext
+						&& jQuery.sap.getObject(o[sProp], undefined, oEnv.oContext)
+						|| jQuery.sap.getObject(o[sProp]);
 				}
 				if (typeof (o[sProp]) !== "function") {
 					if (oEnv.bTolerateFunctionsNotFound) {
@@ -370,15 +373,19 @@ sap.ui.define([
 	 * @param {boolean} [bStaticContext=false]
 	 *   if true, relative function names found via <code>oContext</code> will not be treated as
 	 *   instance methods of the context, but as static methods
+	 * @param {boolean} [bPreferContext=false]
+	 *   if true, names without an initial dot are searched in the given context first and then
+	 *   globally
 	 */
 	BindingParser.complexParser = function(sString, oContext, bUnescape,
-			bTolerateFunctionsNotFound, bStaticContext) {
+			bTolerateFunctionsNotFound, bStaticContext, bPreferContext) {
 		var b2ndLevelMergedNeeded = false, // whether some 2nd level parts again have parts
 			oBindingInfo = {parts:[]},
 			bMergeNeeded = false, // whether some top-level parts again have parts
 			oEnv = {
 				oContext: oContext,
 				aFunctionsNotFound: undefined, // lazy creation
+				bPreferContext : bPreferContext,
 				bStaticContext: bStaticContext,
 				bTolerateFunctionsNotFound: bTolerateFunctionsNotFound
 			},

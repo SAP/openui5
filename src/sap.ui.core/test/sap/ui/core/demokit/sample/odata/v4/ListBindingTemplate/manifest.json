@@ -58,6 +58,7 @@
 		"models" : {
 			"" : {
 				"dataSource" : "default",
+				"preload" : true,
 				"settings" : {
 					"autoExpandSelect" : true,
 					"synchronizationMode" : "None"

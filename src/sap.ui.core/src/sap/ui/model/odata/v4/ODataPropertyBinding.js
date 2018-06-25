@@ -58,16 +58,19 @@ sap.ui.define([
 	var ODataPropertyBinding
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataPropertyBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
-				var oBindingParameters;
 
 				PropertyBinding.call(this, oModel, sPath);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				oBindingParameters = this.oModel.buildBindingParameters(mParameters, ["$$groupId"]);
+				if (mParameters) {
+					this.checkBindingParameters(mParameters, ["$$groupId"]);
+					this.sGroupId = mParameters.$$groupId;
+				} else {
+					this.sGroupId = undefined;
+				}
 				this.oCheckUpdateCallToken = undefined;
-				this.sGroupId = oBindingParameters.$$groupId;
 				// Note: no system query options supported at property binding
 				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
 					/*bSystemQueryOptionsAllowed*/false);

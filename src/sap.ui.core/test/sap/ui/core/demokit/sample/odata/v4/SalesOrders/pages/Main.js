@@ -180,7 +180,7 @@ sap.ui.require([
 					return this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sValue }),
 						controlType : "sap.m.Input",
-						id : "Note",
+						id : "SOD_Note",
 						success : function (oInput) {
 							Opa5.assert.ok(true, "Details Note text set to " + sValue);
 						},
@@ -833,7 +833,7 @@ sap.ui.require([
 				checkSalesOrderIdInDetails : function (bChanged) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						id : "Details_SalesOrderID",
+						id : "SOD_SalesOrderID",
 						success : function (oText) {
 							var sCurrentId = oText.getText(),
 								sIdBefore  = sap.ui.test.Opa.getContext().firstSalesOrderId,
@@ -915,7 +915,7 @@ sap.ui.require([
 				checkSupplierPhoneNumber : function (sExpectedPhoneNumber) {
 					return this.waitFor({
 						controlType : "sap.m.Input",
-						id : "PhoneNumber",
+						id : "SD_PhoneNumber",
 						success : function (oPhoneNumberInput) {
 							Opa5.assert.strictEqual(oPhoneNumberInput.getValue(),
 								sExpectedPhoneNumber, "checkSupplierPhoneNumber('"

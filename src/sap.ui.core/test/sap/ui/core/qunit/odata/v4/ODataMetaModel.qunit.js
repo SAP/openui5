@@ -1389,7 +1389,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	(function () {
+	["@@computedAnnotation", "@@.computedAnnotation"].forEach(function (sSuffix) {
 		var sPath,
 			sPathPrefix,
 			mPathPrefix2SchemaChildName = {
@@ -1400,11 +1400,12 @@ sap.ui.require([
 			sSchemaChildName;
 
 		for (sPathPrefix in mPathPrefix2SchemaChildName) {
-			sPath = sPathPrefix + "@@.computedAnnotation";
+			sPath = sPathPrefix + sSuffix;
 			sSchemaChildName = mPathPrefix2SchemaChildName[sPathPrefix];
 
 			QUnit.test("fetchObject: " + sPath, function (assert) {
-				var fnComputedAnnotation,
+				var $$valueAsPromise = {/*false, true*/},
+					fnComputedAnnotation,
 					oContext,
 					oInput,
 					oResult = {},
@@ -1419,12 +1420,16 @@ sap.ui.require([
 				fnComputedAnnotation = this.mock(oScope).expects("computedAnnotation");
 				fnComputedAnnotation
 					.withExactArgs(oInput, sinon.match({
+						$$valueAsPromise : sinon.match.same($$valueAsPromise),
 						context : sinon.match.object,
 						schemaChildName : sSchemaChildName
 					})).returns(oResult);
 
 				// code under test
-				oSyncPromise = this.oMetaModel.fetchObject(sPath, null, {scope : oScope});
+				oSyncPromise = this.oMetaModel.fetchObject(sPath, null, {
+					$$valueAsPromise : $$valueAsPromise,
+					scope : oScope
+				});
 
 				assert.strictEqual(oSyncPromise.isFulfilled(), true);
 				assert.strictEqual(oSyncPromise.getResult(), oResult);
@@ -1435,7 +1440,7 @@ sap.ui.require([
 				assert.strictEqual(oContext.getObject(), oInput);
 			});
 		}
-	}());
+	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
@@ -2654,29 +2659,30 @@ sap.ui.require([
 			},
 			sPath = "foo",
 			oValue = {},
-			oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+			oPromise,
+			oSyncPromise = SyncPromise.resolve(Promise.resolve(oValue));
 
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
-		oBinding.vValue = oValue;
 
 		this.oMetaModelMock.expects("fetchObject")
 			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
-			.returns(oPromise);
+			.returns(oSyncPromise);
 		this.mock(oBinding).expects("_fireChange")
-			.withExactArgs({reason : "Foo"})
+			.withExactArgs({reason : ChangeReason.Change})
 			.twice()
 			.onFirstCall().callsFake(function () {
-				assert.ok(oBinding.getValue().isPending(), "Value is still a pending SyncPromise");
+				oPromise = oBinding.getValue();
+				assert.ok(oPromise instanceof Promise, "Value is a Promise");
 			})
 			.onSecondCall().callsFake(function () {
 				assert.strictEqual(oBinding.getValue(), oValue, "Value resolved");
 			});
 
-		// code under test
-		oBinding.checkUpdate(false, "Foo");
+		// code under test - calls oBinding.checkUpdate(true)
+		oBinding.initialize();
 
-		assert.ok(oBinding.getValue().isPending(), "Value is a pending SyncPromise");
-		return oBinding.getValue().then(function (oResult) {
+		assert.strictEqual(oBinding.getValue(), oPromise, "Value is the pending Promise");
+		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oValue);
 			assert.strictEqual(oBinding.getValue(), oValue);
 		});

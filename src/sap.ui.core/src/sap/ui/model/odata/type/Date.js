@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	"use strict";
 
 	var rDate = /\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])/,
-		oDemoDate = "2014-11-27",
+		oDemoDate = new Date().getFullYear() + "-12-31",
 		oModelFormatter;
 
 	/**

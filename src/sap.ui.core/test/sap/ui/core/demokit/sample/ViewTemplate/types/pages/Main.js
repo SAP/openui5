@@ -12,8 +12,6 @@ function (Helper, EnterText, Press, Opa5, TestUtils) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
 
-	Opa5.extendConfig({autoWait : true, timeout : TestUtils.isRealOData() ? 30 : undefined});
-
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
@@ -110,56 +108,6 @@ function (Helper, EnterText, Press, Opa5, TestUtils) {
 									(bIsDirty ? "dirty" : "clean"));
 						},
 						viewName : sViewName
-					});
-				},
-				checkLog : function (aExpected) {
-					return this.waitFor({
-						success : function (oControl) {
-							function isExpected(oLog) {
-								if (!aExpected) {
-									return false;
-								}
-								return aExpected.some(function (oExpected, i) {
-									if (oLog.component === oExpected.component &&
-											oLog.level === oExpected.level &&
-											oLog.message.indexOf(oExpected.message) >= 0) {
-										aExpected.splice(i, 1);
-										return true;
-									}
-								});
-							}
-
-							jQuery.sap.log.getLogEntries()
-								.forEach(function (oLog) {
-									var sComponent = oLog.component || "";
-
-									if (Helper.isRelevantLog(oLog)) {
-										if (isExpected(oLog)) {
-											Opa5.assert.ok(true,
-												"Expected Warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-										} else {
-											Opa5.assert.ok(false,
-												"Unexpected warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-										}
-									}
-								});
-							if (aExpected) {
-								aExpected.forEach(function (oExpected) {
-									var bIsLoggable = jQuery.sap.log.isLoggable(oExpected.level,
-											oExpected.component);
-									Opa5.assert.notOk(bIsLoggable,
-										"Expected warning or error not logged: "
-											+ oExpected.component
-											+ " Level: " + oExpected.level
-											+ " Message: " + oExpected.message );
-								});
-							}
-							Opa5.assert.ok(true, "Log checked");
-						}
 					});
 				}
 			}

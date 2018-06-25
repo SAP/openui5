@@ -15,6 +15,8 @@ sap.ui.require([
 	//*****************************************************************************
 	opaTest("OData Types", function (Given, When, Then) {
 
+		When.onAnyPage.applySupportAssistant();
+
 		Given.iStartMyUIComponent({
 			autoWait : true,
 			componentConfig : {
@@ -44,9 +46,10 @@ sap.ui.require([
 		Then.onTheMainPage.checkBooleanValue(true);
 		Then.onTheMainPage.checkControlIsDirty("booleanInput", false);
 
-		Then.onTheMainPage.checkLog([{ component : "sap.ui.model.odata.v4.ODataMetaModel",
+		Then.onAnyPage.checkLog([{ component : "sap.ui.model.odata.v4.ODataMetaModel",
 			level : jQuery.sap.log.Level.WARNING,
 			message : "'Edm.Duration', using sap.ui.model.odata.type.Raw"}]);
+		Then.onAnyPage.analyzeSupportAssistant();
 		Then.iTeardownMyUIComponent();
 	});
 });

@@ -26,7 +26,9 @@ sap.ui.define([
 		bRealOData = bProxy || sRealOData === "direct",
 		TestUtils,
 		sV2VersionKey = "DataServiceVersion",
-		sV4VersionKey = "OData-Version";
+		sV2VersionKeyLower = sV2VersionKey.toLowerCase(),
+		sV4VersionKey = "OData-Version",
+		sV4VersionKeyLower = sV4VersionKey.toLowerCase();
 
 	if (bRealOData) {
 		document.title = document.title + " (real OData)";
@@ -259,9 +261,19 @@ sap.ui.define([
 						aResponse = mUrls[sServiceBase + aMatches[2]];
 						if (aResponse) {
 							try {
-								sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
-									// set headers for single request within $batch
-									+ convertToString(getVersionHeader(oRequestHeaders,
+								sResponse = "200\r\nContent-Type: " + sJson + "\r\n";
+								Object.keys(aResponse[1]).forEach(function (sHeader) {
+									var sHeaderLower = sHeader.toLowerCase();
+
+									if (sHeaderLower === sV2VersionKeyLower
+											|| sHeaderLower === sV4VersionKeyLower) {
+										return; // version headers are handled below
+									}
+									sResponse += sHeader + ": " + aResponse[1][sHeader]
+										+ "\r\n";
+								});
+								// set headers for single request within $batch
+								sResponse +=  convertToString(getVersionHeader(oRequestHeaders,
 										aResponse[1]))
 									+ "\r\n"
 									+ JSON.stringify(JSON.parse(aResponse[2]))
@@ -294,12 +306,14 @@ sap.ui.define([
 				var oHeaders,
 					sMessage,
 					oResponse,
+					oResponseHeaders,
 					sUrl,
 					mUrls = {};
 
 				for (sUrl in mFixture) {
 					oResponse = mFixture[sUrl];
 					oHeaders = oResponse.headers || {};
+					oResponseHeaders = oResponse.responseHeaders || {};
 					if (oResponse.source) {
 						sMessage = readMessage(sBase + oResponse.source);
 						oHeaders["Content-Type"] = oHeaders["Content-Type"]
@@ -307,7 +321,7 @@ sap.ui.define([
 					} else {
 						sMessage = oResponse.message || "";
 					}
-					mUrls[sUrl] = [oResponse.code || 200, oHeaders, sMessage];
+					mUrls[sUrl] = [oResponse.code || 200, oHeaders, sMessage, oResponseHeaders];
 				}
 				return mUrls;
 			}
@@ -353,7 +367,7 @@ sap.ui.define([
 			/*
 			 * Get the header for the OData service version from the given request and response
 			 * headers. First checks the given response headers and then the given request headers
-			 * if either "OData-Version" or "ODataServiceVersion" header is contained
+			 * if either "OData-Version" or "DataServiceVersion" header is contained
 			 * (case-insensitive) and returns the found header key and header value as an array.
 			 *
 			 * @param {object} oRequestHeaders The request headers

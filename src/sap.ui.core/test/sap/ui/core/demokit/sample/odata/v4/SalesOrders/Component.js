@@ -55,6 +55,7 @@ sap.ui.define([
 								filterProductID : "",
 								filterValue : "",
 								bLineItemSelected : false,
+								iMessages : 0,
 								bRealOData : TestUtils.isRealOData(),
 								bSalesOrderSelected : false,
 								bScheduleSelected : false,

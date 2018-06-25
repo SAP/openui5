@@ -22,6 +22,7 @@ sap.ui.define([
 					tooltip : "Adapt Sales Orders Table"
 				});
 
+			this.iIdCounter = 0;
 			oAdaptSalesOrdersButton.addDependent(sap.ui.xmlfragment(
 				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog", this));
 			this.byId("SalesOrdersToolbar").addContent(oAdaptSalesOrdersButton);
@@ -192,11 +193,13 @@ sap.ui.define([
 						? that.sNavigationProperty + "/" + sPropertyPath
 						: sPropertyPath,
 					iIndex,
+					sTextId = "RTA_" + sPropertyPath + that.iIdCounter,
 					oText = new Text({
+						id : sTextId,
 						text : "{" + sBindingPath + "}"
 					});
 
-
+				that.iIdCounter ++;
 				if (oItemsBinding) {
 					//TODO clarify: How to access template in change handler, there is no API?
 					oControl.getBindingInfo("items").template.addCell(oText);
@@ -205,7 +208,8 @@ sap.ui.define([
 				} else {
 					iIndex = that.iStart + that.aDisplayedProperties.length * 2;
 					oControl.insertContent(oText, iIndex);
-					oControl.insertContent(new Label({text : sPropertyPath}), iIndex);
+					oControl.insertContent(new Label({labelFor : sTextId, text : sPropertyPath}),
+						iIndex);
 				}
 				that.aDisplayedProperties.push(sPropertyPath);
 			}
