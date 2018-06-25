@@ -279,5 +279,22 @@
         "references": []
       }
     ]
+  },
+  "1.54.7": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "838ca4d7712aa0dfaf344a774f197c42b624f98f",
+        "type": "FIX",
+        "text": " CheckBox: right focus otline cut off fixed",
+        "references": []
+      },
+      {
+        "id": "83588110b0a980a178631ca1490c033b2fe57719",
+        "type": "FIX",
+        "text": " sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": []
+      }
+    ]
   }
 }

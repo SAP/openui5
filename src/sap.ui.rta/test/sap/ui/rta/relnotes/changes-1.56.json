@@ -187,5 +187,34 @@
         "references": []
       }
     ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "5381e1cce04da653cef9dfa231c3281847331dc4",
+        "type": "FIX",
+        "text": " Already persisted change should not be saved again",
+        "references": []
+      },
+      {
+        "id": "1724dae22c55e38f35fb371d032b000ba5216473",
+        "type": "FIX",
+        "text": " Command and Index mismatch in stack error response",
+        "references": []
+      },
+      {
+        "id": "b40d3c846c41031086afac8280df4fef917c0abf",
+        "type": "FIX",
+        "text": " sap.ui.rta: deselect overlays before removing them",
+        "references": []
+      },
+      {
+        "id": "38f64bb7eb8d9aa8a79bd6ebffcfb304f063db02",
+        "type": "FIX",
+        "text": "sap.ui.rta - Prevent overlay plugin evaluation during drag\u0026drop",
+        "references": []
+      }
+    ]
   }
 }

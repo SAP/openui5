@@ -1274,5 +1274,94 @@
         "references": []
       }
     ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "50b2e00e8e0531ef69a4fa62a86cb85c97d68e23",
+        "type": "FIX",
+        "text": " P13DimeasurePanel: Align items with chart API",
+        "references": []
+      },
+      {
+        "id": "0074ac1c9f332dff3d405a60964fb2c4fd273513",
+        "type": "FIX",
+        "text": " SliderTooltipContainer: Positioning available for subclasses",
+        "references": []
+      },
+      {
+        "id": "1ff376d48bc72497943bc282a4a0c47444c750a1",
+        "type": "FIX",
+        "text": " m.DateTimePicker: Closing software keyboard leaves correct height",
+        "references": []
+      },
+      {
+        "id": "49b3bb30ea2c3556be0424e6481510b0b001ca7c",
+        "type": "FIX",
+        "text": " m.FacetFilterList: Active state is never set internally",
+        "references": []
+      },
+      {
+        "id": "014aa45fdb84b738d78b3f4d11893b974de3828e",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: set min/max date does not modify its time part now.",
+        "references": []
+      },
+      {
+        "id": "eab4dbd9fe6f8b2fd648bbff03f93dc128e6cd26",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Facet Buttons announced only once",
+        "references": []
+      },
+      {
+        "id": "c8ab236dc5553d45c2f3966f0867edf09f7f422e",
+        "type": "FIX",
+        "text": " sap.m.Label: Color is now correct inside an active list item",
+        "references": []
+      },
+      {
+        "id": "01b0b795073c210a8f8e52b72b7e0e9b4273edf5",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: on Android, caret positioning is improved.",
+        "references": []
+      },
+      {
+        "id": "66237262b3c06fbdaae0021a43bdc1a416009237",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Button now looks correctly when on formfactor change",
+        "references": []
+      },
+      {
+        "id": "920180f00d116856e41c8dacc559f35d7d54520c",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: enabled property works correctly now",
+        "references": []
+      },
+      {
+        "id": "464401b54c2e88c9d84bf7cb9d6efc957e00980d",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Segmented buttons now have tooltips",
+        "references": []
+      },
+      {
+        "id": "7881446d2bda1466ceeafab1eba84ffc190e4237",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Press event is fired on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "348564a5207689356696a9b2a2e541276262d87f",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem:  Attributes get the whole space when alone",
+        "references": []
+      },
+      {
+        "id": "77b479fac53efdafadb59c76ff1904ceab1e52e2",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - press reset then cancel button behavior is fixed.",
+        "references": []
+      }
+    ]
   }
 }

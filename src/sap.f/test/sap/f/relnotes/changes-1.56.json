@@ -111,5 +111,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "48e119381daab7d64fc3533def607caf1574b207",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Initially snapped header behavior fixed",
+        "references": []
+      }
+    ]
   }
 }

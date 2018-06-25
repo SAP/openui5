@@ -211,5 +211,22 @@
         "references": []
       }
     ]
+  },
+  "1.54.7": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "6311f27004a24d64589837b867f2cd0f3442fe43",
+        "type": "FIX",
+        "text": " ObjectPageLayout: Infinity resizing loop fixed",
+        "references": []
+      },
+      {
+        "id": "9996c84a3d5e4d9a814b6679ca2af32b214661aa",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Overflow button visibility fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -169,5 +169,40 @@
         "references": []
       }
     ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "2cb7797097e092daa911782536d5f3d393ca17fe",
+        "type": "FIX",
+        "text": " CheckBox: right focus otline cut off fixed",
+        "references": []
+      },
+      {
+        "id": "bfe6a30402e14c3d2b49b18bbd5bfe93d7970ab8",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: headerBackgroundDesign now works correctly",
+        "references": []
+      },
+      {
+        "id": "8814ebdfa2caf9d82637b85320af0a5821da3f87",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, CalendarLegend: contrast ratio is fixed",
+        "references": []
+      },
+      {
+        "id": "b96197cdf87d030e87101e0777cb97de4c54153b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "ba4788d820a686ccdd17dddeeb6189b021771cb7",
+        "type": "FIX",
+        "text": " sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -164,5 +164,40 @@
         "references": []
       }
     ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "a7d4e06057275545441699d96ec83a1dd3dc68c0",
+        "type": "FIX",
+        "text": " FileUploader: Accessing upload iframe adjusted",
+        "references": []
+      },
+      {
+        "id": "8814ebdfa2caf9d82637b85320af0a5821da3f87",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, CalendarLegend: contrast ratio is fixed",
+        "references": []
+      },
+      {
+        "id": "b96197cdf87d030e87101e0777cb97de4c54153b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "d4a647abeb3449e4b3abe4e53198df0f3d4313f8",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": []
+      },
+      {
+        "id": "1d830a66948523fe98b6f160f65016abbb8139ef",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: Now select event is fired correctly",
+        "references": []
+      }
+    ]
   }
 }

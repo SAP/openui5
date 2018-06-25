@@ -158,5 +158,34 @@
         "references": []
       }
     ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "f481efa41733b3c7da0a8991f94de801bf6e7425",
+        "type": "FIX",
+        "text": " GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": []
+      },
+      {
+        "id": "8fd51b3528f26a4884749c5e7400519a82187ad5",
+        "type": "FIX",
+        "text": " Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": []
+      },
+      {
+        "id": "9008b174d83f22cedb969f2679484723bd5a037b",
+        "type": "FIX",
+        "text": " Table: Avoid layout and row updates if the table is invisible",
+        "references": []
+      },
+      {
+        "id": "b5d9e18806e203ef051c3f873a5cc0f7fdeb1a3b",
+        "type": "FIX",
+        "text": " TreeTable: Hide tree icon on leafs for screenreaders",
+        "references": []
+      }
+    ]
   }
 }

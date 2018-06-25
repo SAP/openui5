@@ -151,5 +151,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "d58cd7befe102305de446a3a68dd76844a177ba9",
+        "type": "FIX",
+        "text": " sap.ui.dt  fix element overlay destroyed on recreation",
+        "references": []
+      }
+    ]
   }
 }

@@ -860,5 +860,40 @@
         "references": []
       }
     ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "7693a999212ec2c74adbcd6676f41253ff314ba1",
+        "type": "FIX",
+        "text": " ControllerMetadata: don\u0027t delete public methods",
+        "references": []
+      },
+      {
+        "id": "eb6dcfa72637dde2a87278d553d22b7b246c6ecf",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_createMultiUnitRepresentativeEntry",
+        "references": []
+      },
+      {
+        "id": "f15700d9eed90a2e0cb3269b18decae31f496c0e",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
+        "references": []
+      },
+      {
+        "id": "95be9300eb7659362397b89eeba3f1f80aba61f6",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": []
+      },
+      {
+        "id": "492b68c748d1c6dcd3f73f4bd50a383771fd7bbe",
+        "type": "FIX",
+        "text": " ui5loader: Add Missing slash for JSDoc in closing code tag",
+        "references": []
+      }
+    ]
   }
 }
