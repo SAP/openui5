@@ -22,6 +22,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/IconPool',
 	'./MultiInputRenderer',
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.keycodes'
 ],
 function(
@@ -42,8 +43,9 @@ function(
 	Toolbar,
 	ResizeHandler,
 	IconPool,
-	MultiInputRenderer
-	) {
+	MultiInputRenderer,
+	containsOrEquals
+) {
 		"use strict";
 
     var PlacementType = library.PlacementType,
@@ -350,7 +352,7 @@ function(
 		}
 
 		// check if active element is part of MultiInput
-		var bFocusOnMultiInput = jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement);
+		var bFocusOnMultiInput = containsOrEquals(this.getDomRef(), document.activeElement);
 		if (args.getParameter("type") === "tokensChanged" && args.getParameter("removedTokens").length > 0 && bFocusOnMultiInput) {
 			this.focus();
 		}
@@ -916,7 +918,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._checkFocus = function () {
-		return this.getDomRef() && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement);
+		return this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement);
 	};
 
 	/**
@@ -936,11 +938,11 @@ function(
 		if (oPopup instanceof sap.m.Popover) {
 			if (oEvent.relatedControlId) {
 				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
-				bNewFocusIsInSuggestionPopup = jQuery.sap.containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
-				bNewFocusIsInTokenizer = jQuery.sap.containsOrEquals(this._tokenizer.getFocusDomRef(), oRelatedControlDomRef);
+				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
+				bNewFocusIsInTokenizer = containsOrEquals(this._tokenizer.getFocusDomRef(), oRelatedControlDomRef);
 
 				if (oSelectedItemsPopup) {
-					bFocusIsInSelectedItemPopup = jQuery.sap.containsOrEquals(oSelectedItemsPopup.getFocusDomRef(), oRelatedControlDomRef);
+					bFocusIsInSelectedItemPopup = containsOrEquals(oSelectedItemsPopup.getFocusDomRef(), oRelatedControlDomRef);
 				}
 			}
 		}

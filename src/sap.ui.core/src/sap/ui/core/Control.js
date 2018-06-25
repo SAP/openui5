@@ -189,7 +189,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @private
 	 */
 	Control.prototype.isActive = function() {
-		return jQuery.sap.domById(this.sId) != null;
+		return ((this.sId ? window.document.getElementById(this.sId) : null)) != null;
 	};
 
 	/**

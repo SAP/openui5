@@ -9,8 +9,13 @@
  */
 
 // Provides class sap.ui.core.delegate.ItemNavigation
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.keycodes'],
-	function(jQuery, EventProvider /*, jQuerySapKeycodes */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/EventProvider',
+	"sap/ui/dom/containsOrEquals",
+	'jquery.sap.keycodes'
+],
+	function(jQuery, EventProvider /*, jQuerySapKeycodes */, containsOrEquals) {
 	"use strict";
 	/* eslint-disable no-lonely-if */
 
@@ -760,7 +765,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 	 * @private
 	 */
 	ItemNavigation.prototype.onsapfocusleave = function(oEvent) {
-		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.oDomRef, sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.oDomRef, sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 
 			// entirely leaving the control handled by this ItemNavigation instance
 			var iIndex;
@@ -788,7 +793,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 					}
 				}
 
-				if (!oEvent.relatedControlId || jQuery.sap.containsOrEquals(oParentDomRef, sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+				if (!oEvent.relatedControlId || containsOrEquals(oParentDomRef, sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 					jQuery(this.aItemDomRefs[this.iFocusedIndex]).attr("tabIndex", -1);
 				}
 			}
@@ -838,12 +843,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 
 		};
 
-		if (jQuery.sap.containsOrEquals(this.oDomRef, oSource)) {
+		if (containsOrEquals(this.oDomRef, oSource)) {
 
 			// the mouse down occured inside the main dom ref
 			for (var i = 0; i < this.aItemDomRefs.length;i++) {
 				var oItem = this.aItemDomRefs[i];
-				if (jQuery.sap.containsOrEquals(oItem,oSource)) {
+				if (containsOrEquals(oItem,oSource)) {
 					if (!this.bTableMode) {
 
 						// the mousedown occured inside of an item
@@ -890,7 +895,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 	 */
 	ItemNavigation.prototype.onsapnext = function(oEvent) {
 
-		if (!jQuery.sap.containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
 
 			// current element is not part of the navigation content
 			return;
@@ -1023,7 +1028,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 	 */
 	ItemNavigation.prototype.onsapprevious = function(oEvent) {
 
-		if (!jQuery.sap.containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
 
 			// current element is not part of the navigation content
 			return;
@@ -1165,7 +1170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 	 */
 	ItemNavigation.prototype.onsappageup = function(oEvent) {
 
-		if (!jQuery.sap.containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
 
 			// current element is not part of the navigation content
 			return;
@@ -1228,7 +1233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 	 */
 	ItemNavigation.prototype.onsappagedown = function(oEvent) {
 
-		if (!jQuery.sap.containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
 
 			// current element is not part of the navigation content
 			return;
@@ -1292,7 +1297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 	 */
 	ItemNavigation.prototype.onsaphome = function(oEvent) {
 
-		if (!jQuery.sap.containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
 
 			// current element is not part of the navigation content
 			// or shift or alt key is pressed
@@ -1366,7 +1371,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 	 */
 	ItemNavigation.prototype.onsapend = function(oEvent) {
 
-		if (!jQuery.sap.containsOrEquals(this.oDomRef, oEvent.target)) {
+		if (!containsOrEquals(this.oDomRef, oEvent.target)) {
 
 			// current element is not part of the navigation content
 			// or shift or alt key is pressed

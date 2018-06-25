@@ -10,8 +10,17 @@ sap.ui.define([
 	'sap/ui/core/RenderManager',
 	'sap/ui/Device',
 	'./NavContainerRenderer',
+	"sap/ui/thirdparty/jquery",
 	'jquery.sap.events'
-], function(jQuery, library, Control, RenderManager, Device, NavContainerRenderer) {
+], function(
+	jQuery,
+	library,
+	Control,
+	RenderManager,
+	Device,
+	NavContainerRenderer,
+	jQueryDOM
+) {
 	"use strict";
 
 
@@ -489,7 +498,7 @@ sap.ui.define([
 	};
 
 	NavContainer._applyAutoFocusTo = function (sId) {
-		var focusSubjectDomRef = jQuery.sap.byId(sId).firstFocusableDomRef();
+		var focusSubjectDomRef = jQueryDOM(document.getElementById(sId)).firstFocusableDomRef();
 		if (focusSubjectDomRef) {
 			jQuery.sap.focus(focusSubjectDomRef);
 		}

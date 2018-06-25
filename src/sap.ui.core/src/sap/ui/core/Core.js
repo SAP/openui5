@@ -6,8 +6,8 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
 		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', "sap/ui/util/ActivityDetection",
-		'sap/ui/events/jquery/EventSimulation', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', "sap/ui/util/ActivityDetection", "sap/ui/dom/getScrollbarSize",
+		'sap/ui/events/jquery/EventSimulation', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
 	function(
 		jQuery,
 		Device,
@@ -29,8 +29,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		ThemeCheck,
 		UIArea,
 		MessageManager,
-		ActivityDetection
-		/* ,EventSimulation, jQuerySapDom, jQuerySapEvents, jQuerySapMobile, jQuerySapResources, jQuerySapScript, jQuerySapSjax */
+		ActivityDetection,
+		getScrollbarSize
+		/* ,EventSimulation, jQuerySapEvents, jQuerySapMobile, jQuerySapResources, jQuerySapScript, jQuerySapSjax */
 	) {
 
 	"use strict";
@@ -1205,7 +1206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			var sRootNode = oConfig["xx-rootComponentNode"];
 			if (sRootNode && oComponent.isA('sap.ui.core.UIComponent')) {
-				var oRootNode = jQuery.sap.domById(sRootNode);
+				var oRootNode = (sRootNode ? window.document.getElementById(sRootNode) : null);
 				if (oRootNode) {
 					log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
 					var ComponentContainer = sap.ui.requireSync('sap/ui/core/ComponentContainer'),
@@ -2412,7 +2413,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if (id == STATIC_UIAREA_ID) {
 				oDomRef = this.getStaticAreaRef();
 			} else {
-				oDomRef = jQuery.sap.domById(oDomRef);
+				oDomRef = (oDomRef ? window.document.getElementById(oDomRef) : null);
 				if (!oDomRef) {
 					throw new Error("DOM element with ID '" + id + "' not found in page, but application tries to insert content.");
 				}
@@ -2658,7 +2659,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {object} [mParameters.theme] Theme name (default is <code>sap.ui.getCore().getConfiguration().getTheme()</code>)
 	 */
 	Core.prototype.fireThemeChanged = function(mParameters) {
-		jQuery.sap.scrollbarSize(true);
+		getScrollbarSize(true);
 
 		// special hook for resetting theming parameters before the controls get
 		// notified (lightweight coupling to static Parameters module)
@@ -3110,7 +3111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.getStaticAreaRef = function() {
-		var oStatic = jQuery.sap.domById(STATIC_UIAREA_ID);
+		var oStatic = (STATIC_UIAREA_ID ? window.document.getElementById(STATIC_UIAREA_ID) : null);
 		if (!oStatic) {
 			if (!this.bDomReady) {
 				throw new Error("DOM is not ready yet. Static UIArea cannot be created.");

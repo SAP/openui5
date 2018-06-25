@@ -4,15 +4,36 @@
 
 // Provides helper class sap.ui.core.Popup
 sap.ui.define([
-		'jquery.sap.global', 'sap/ui/Device',
-		'sap/ui/base/ManagedObject', 'sap/ui/base/Object', 'sap/ui/base/ObjectPool',
-		'./Control', './IntervalTrigger', './RenderManager', './Element', './ResizeHandler', './library',
-		'jquery.sap.script', 'jquery.sap.dom'
-	], function(
-		jQuery, Device,
-		ManagedObject, BaseObject, ObjectPool,
-		Control, IntervalTrigger, RenderManager, Element, ResizeHandler, library
-		/* , jQuerySapScript, jQuerySapDom */) {
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/base/Object',
+	'sap/ui/base/ObjectPool',
+	'./Control',
+	'./IntervalTrigger',
+	'./RenderManager',
+	'./Element',
+	'./ResizeHandler',
+	'./library',
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery",
+	'jquery.sap.script'
+], function(
+	jQuery,
+	Device,
+	ManagedObject,
+	BaseObject,
+	ObjectPool,
+	Control,
+	IntervalTrigger,
+	RenderManager,
+	Element,
+	ResizeHandler,
+	library
+	/* , jQuerySapScript, jQuerySapDom */,
+	containsOrEquals,
+	jQueryDOM
+) {
 	"use strict";
 
 
@@ -771,7 +792,7 @@ sap.ui.define([
 				if (control) {
 					domRefToFocus = control.getFocusDomRef();
 				}
-				domRefToFocus = domRefToFocus || jQuery.sap.domById(this._sInitialFocusId);
+				domRefToFocus = domRefToFocus || ((this._sInitialFocusId ? window.document.getElementById(this._sInitialFocusId) : null));
 			}
 
 			jQuery.sap.focus(domRefToFocus || $Ref.firstFocusableDomRef());
@@ -874,7 +895,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var bContains = jQuery.sap.containsOrEquals(oPopupDomRef, oDomRef);
+		var bContains = containsOrEquals(oPopupDomRef, oDomRef);
 		var aChildPopups;
 
 		if (!bContains) {
@@ -884,8 +905,8 @@ sap.ui.define([
 				// sChildID can either be the popup id or the DOM id
 				// therefore we need to try with jQuery.sap.domById to check the DOM id case first
 				// only when it doesn't contain the given DOM, we publish an event to the event bus
-				var oContainDomRef = jQuery.sap.domById(sChildID);
-				var bContains = jQuery.sap.containsOrEquals(oContainDomRef, oDomRef);
+				var oContainDomRef = (sChildID ? window.document.getElementById(sChildID) : null);
+				var bContains = containsOrEquals(oContainDomRef, oDomRef);
 				if (!bContains) {
 					var sEventId = "sap.ui.core.Popup.contains-" + sChildID;
 					var oData = {
@@ -1321,7 +1342,7 @@ sap.ui.define([
 			} else {
 
 				// no SAPUI5 control... try to find the control by ID if an ID was there
-				var oElement = jQuery.sap.domById(oPreviousFocus.sFocusId)
+				var oElement = ((oPreviousFocus.sFocusId ? window.document.getElementById(oPreviousFocus.sFocusId) : null))
 						|| oPreviousFocus.oFocusedElement; // if not even an ID was available when focus was lost maybe the original DOM element is still there
 				jQuery.sap.focus(oElement); // also works for oElement == null
 			}
@@ -1574,7 +1595,7 @@ sap.ui.define([
 		var $Of;
 
 		if (typeof (oOf) === "string") {
-			$Of = jQuery.sap.byId(oOf);
+			$Of = jQueryDOM(document.getElementById(oOf));
 		} else if (oOf instanceof jQuery) {
 			$Of = oOf;
 		} else {
@@ -2109,7 +2130,7 @@ sap.ui.define([
 			var oElement;
 			this._aAutoCloseAreas.forEach(function(oAreaRef) {
 				if (oAreaRef.delegate) {
-					oElement = jQuery.sap.byId(oAreaRef.id).control(0);
+					oElement = jQueryDOM(document.getElementById(oAreaRef.id)).control(0);
 					if (oElement) {
 						oElement.removeEventDelegate(oAreaRef.delegate);
 					}
@@ -2149,7 +2170,7 @@ sap.ui.define([
 				$PopupRoot.get(0).addEventListener("blur", this.fEventHandler, true);
 
 				for (i = 0, l = aChildPopups.length; i < l; i++) {
-					oDomRef = jQuery.sap.domById(aChildPopups[i]);
+					oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
 					if (oDomRef) {
 						oDomRef.addEventListener("blur", this.fEventHandler, true);
 					}
@@ -2159,7 +2180,7 @@ sap.ui.define([
 				$PopupRoot.bind("deactivate." + this._popupUID, this.fEventHandler);
 
 				for (i = 0, l = aChildPopups.length; i < l; i++) {
-					oDomRef = jQuery.sap.domById(aChildPopups[i]);
+					oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
 					if (oDomRef) {
 						jQuery(oDomRef).bind("deactivate." + this._popupUID, this.fEventHandler);
 					}
@@ -2188,7 +2209,7 @@ sap.ui.define([
 			$PopupRoot.get(0).removeEventListener("blur", this.fEventHandler, true);
 
 			for (i = 0, l = aChildPopups.length; i < l; i++) {
-				oDomRef = jQuery.sap.domById(aChildPopups[i]);
+				oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
 				if (oDomRef) {
 					oDomRef.removeEventListener("blur", this.fEventHandler, true);
 				}
@@ -2200,7 +2221,7 @@ sap.ui.define([
 			$PopupRoot.unbind("deactivate." + this._popupUID, this.fEventHandler);
 
 			for (i = 0, l = aChildPopups.length; i < l; i++) {
-				oDomRef = jQuery.sap.domById(aChildPopups[i]);
+				oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
 				if (oDomRef) {
 					jQuery(oDomRef).unbind("deactivate." + this._popupUID, this.fEventHandler);
 				}
@@ -2433,7 +2454,7 @@ sap.ui.define([
 	Popup.prototype._isFocusInsidePopup = function () {
 		var oDomRef = this._$(false).get(0);
 
-		if (oDomRef && jQuery.sap.containsOrEquals(oDomRef, document.activeElement)) {
+		if (oDomRef && containsOrEquals(oDomRef, document.activeElement)) {
 			return true;
 		}
 
@@ -2460,7 +2481,7 @@ sap.ui.define([
 					this._oLastPosition.of.id) {
 				// sometimes the "of" was rerendered and therefore the new DOM-reference must be used for the checks.
 				// An id is only ensured for controls and only those can be re-rendered
-				this._oLastPosition.of = jQuery.sap.domById(this._oLastPosition.of.id);
+				this._oLastPosition.of = (this._oLastPosition.of.id ? window.document.getElementById(this._oLastPosition.of.id) : null);
 				oCurrentOfRef = this._getOfDom(this._oLastPosition.of);
 				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 
@@ -2473,11 +2494,11 @@ sap.ui.define([
 			// Check if the current 'of' dom element is removed from the dom tree which indicates that it
 			// was rerendered and all corresponding stuff has to be updated to position the popup
 			// properly again
-			if (!jQuery.sap.containsOrEquals(document.documentElement, oCurrentOfRef)) {
+			if (!containsOrEquals(document.documentElement, oCurrentOfRef)) {
 				if (oCurrentOfRef.id && oCurrentOfRef.id !== "") {
 					// The 'of' was rerendered so the newest DOM-element has to be updated for the corresponding rect-object.
 					// Because the id of the 'of' may be still the same but due to its rerendering the reference changed and has to be updated
-					var oNewestOf = jQuery.sap.domById(oCurrentOfRef.id);
+					var oNewestOf = (oCurrentOfRef.id ? window.document.getElementById(oCurrentOfRef.id) : null);
 					var oNewestOfRect = jQuery(oNewestOf).rect();
 
 					// if there is a newest corresponding DOM-reference and it differs from the current -> use the newest one

@@ -145,7 +145,7 @@ sap.ui.define([
 	 */
 	BusyIndicator._onOpen = function(oEvent) {
 		// Grab the focus once opened
-		var oDomRef = jQuery.sap.domById(BusyIndicator.sDOM_ID);
+		var oDomRef = (BusyIndicator.sDOM_ID ? window.document.getElementById(BusyIndicator.sDOM_ID) : null);
 		oDomRef.style.height = "100%";
 		oDomRef.style.width = "100%";
 

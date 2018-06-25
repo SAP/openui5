@@ -18,24 +18,26 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/library',
 	'./ComboBoxBaseRenderer',
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.keycodes'
 ],
 	function(
-	jQuery,
-	Dialog,
-	ComboBoxTextField,
-	Toolbar,
-	Button,
-	Bar,
-	Text,
-	Title,
-	InvisibleText,
-	IconPool,
-	ValueStateSupport,
-	library,
-	Device,
-	coreLibrary,
-	ComboBoxBaseRenderer
+		jQuery,
+		Dialog,
+		ComboBoxTextField,
+		Toolbar,
+		Button,
+		Bar,
+		Text,
+		Title,
+		InvisibleText,
+		IconPool,
+		ValueStateSupport,
+		library,
+		Device,
+		coreLibrary,
+		ComboBoxBaseRenderer,
+		containsOrEquals
 	) {
 		"use strict";
 
@@ -525,7 +527,7 @@ sap.ui.define([
 				oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
 			// to prevent the change event from firing when an item is pressed
-			if (oPicker && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			if (oPicker && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 				return;
 			}
 

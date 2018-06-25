@@ -7,14 +7,18 @@ sap.ui.define([
 	"sap/ui/base/DataType",
 	"sap/ui/core/XMLTemplateProcessor",
 	"jquery.sap.global",
-	"sap/ui/core/Fragment", // needed to have sap.ui.xmlfragment
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
-], function (
+	"sap/ui/thirdparty/jquery",
+	// needed to have sap.ui.xmlfragment
+	"sap/ui/core/Fragment",
+	// needed to have jQuery.sap.parseXML
+	"jquery.sap.xml"
+], function(
 	BaseTreeModifier,
 	DataType,
 	XMLTemplateProcessor,
 	jQuery
-	/* other jQuery.sap dependencies */
+	/* other jQuery.sap dependencies */,
+	jQueryDOM
 ) {
 
 	"use strict";
@@ -162,7 +166,7 @@ sap.ui.define([
 				}
 
 				// Use jQuery.find function to access control if getElementById(..) failed
-				var oNodes = jQuery.sap.byId(sId, oView);
+				var oNodes = jQueryDOM(document.getElementById(sId));
 				if (oNodes.length === 1) {
 					return oNodes[0];
 				}

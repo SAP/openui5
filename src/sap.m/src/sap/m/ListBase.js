@@ -16,7 +16,8 @@ sap.ui.define([
 	"./GrowingEnablement",
 	"./GroupHeaderListItem",
 	"./ListItemBase",
-	"./ListBaseRenderer"
+	"./ListBaseRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	jQuery,
@@ -31,7 +32,8 @@ function(
 	GrowingEnablement,
 	GroupHeaderListItem,
 	ListItemBase,
-	ListBaseRenderer
+	ListBaseRenderer,
+	jQueryDOM
 ) {
 	"use strict";
 
@@ -1939,7 +1941,7 @@ function(
 
 		// find the current section index
 		this._aNavSections.some(function(sSectionId, iSectionIndex) {
-			var oSectionDomRef = jQuery.sap.domById(sSectionId);
+			var oSectionDomRef = (sSectionId ? window.document.getElementById(sSectionId) : null);
 			if (oSectionDomRef && oSectionDomRef.contains(document.activeElement)) {
 				iIndex = iSectionIndex;
 				return true;
@@ -1948,7 +1950,7 @@ function(
 
 		// if current section is items container then save the current focus position
 		var oItemsContainerDomRef = this.getItemsContainerDomRef();
-		var $CurrentSection = jQuery.sap.byId(this._aNavSections[iIndex]);
+		var $CurrentSection = jQueryDOM(document.getElementById(this._aNavSections[iIndex]));
 		if ($CurrentSection[0] === oItemsContainerDomRef && this._oItemNavigation) {
 			$CurrentSection.data("redirect", this._oItemNavigation.getFocusedIndex());
 		}
@@ -1956,7 +1958,7 @@ function(
 		// find the next focusable section
 		this._aNavSections.some(function() {
 			iIndex = (iIndex + iStep + iLength) % iLength;	// circle
-			$TargetSection = jQuery.sap.byId(this._aNavSections[iIndex]);
+			$TargetSection = jQueryDOM(document.getElementById(this._aNavSections[iIndex]));
 
 			// if target is items container
 			if ($TargetSection[0] === oItemsContainerDomRef && this._oItemNavigation) {

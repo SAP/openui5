@@ -18,7 +18,8 @@ sap.ui.define([
 	'./calendar/CalendarDate',
 	'./Calendar',
 	'./CalendarRenderer',
-	"./CalendarMonthIntervalRenderer"
+	"./CalendarMonthIntervalRenderer",
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	jQuery,
 	Device,
@@ -34,7 +35,8 @@ sap.ui.define([
 	CalendarDate,
 	Calendar,
 	CalendarRenderer,
-	CalendarMonthIntervalRenderer
+	CalendarMonthIntervalRenderer,
+	containsOrEquals
 ) {
 		"use strict";
 
@@ -743,7 +745,7 @@ sap.ui.define([
 		var oHeader = this.getAggregation("header"),
 			oYearPicker, oMonthsRow;
 
-		if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
 			jQuery.sap.focus(oHeader.getDomRef("B2"));
 
 			if (!this._bPoupupMode) {
@@ -769,7 +771,7 @@ sap.ui.define([
 		var oHeader = this.getAggregation("header"),
 			oMonthsRow, oYearPicker;
 
-		if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
 			// tab from day or year -> go to header
 
 			if (this._bPoupupMode) {
@@ -829,7 +831,7 @@ sap.ui.define([
 		var oMonthsRow,
 			oYearPicker;
 
-		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			// put dummy element back to tab-chain
 			this.$("end").attr("tabindex", "0");
 

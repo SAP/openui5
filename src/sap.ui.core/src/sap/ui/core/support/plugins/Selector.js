@@ -3,8 +3,14 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Selector (Selector support plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Support'],
-	function(jQuery, Popup, Plugin, Support) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Popup',
+	'../Plugin',
+	'../Support',
+	"sap/ui/thirdparty/jquery"
+],
+	function(jQuery, Popup, Plugin, Support, jQueryDOM) {
 	"use strict";
 
 
@@ -55,10 +61,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Suppor
 				rm.flush(sap.ui.getCore().getStaticAreaRef(), false, true);
 				rm.destroy();
 
-				jPopupRef = jQuery.sap.byId(this._sPopupId);
+				jPopupRef = jQueryDOM(document.getElementById(this._sPopupId));
 				this._oPopup.setContent(jPopupRef[0]);
 			} else {
-				jPopupRef = jQuery.sap.byId(this._sPopupId);
+				jPopupRef = jQueryDOM(document.getElementById(this._sPopupId));
 			}
 
 			var that = this;
@@ -88,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Suppor
 		Selector.prototype.exit = function(oSupportStub){
 			this._oPopup.close(0);
 			if (this._fCloseHandler) {
-				jQuery.sap.byId(this._sPopupId).unbind("click", this._fCloseHandler);
+				jQueryDOM(document.getElementById(this._sPopupId)).unbind("click", this._fCloseHandler);
 				this._fCloseHandler = null;
 			}
 			if (this._fSelectHandler) {
@@ -103,7 +109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', '../Plugin', '../Suppor
 			if (sId) {
 				var oElem = sap.ui.getCore().byId(sId);
 				if (oElem) {
-					var jPopupRef = jQuery.sap.byId(oPlugin._sPopupId);
+					var jPopupRef = jQueryDOM(document.getElementById(oPlugin._sPopupId));
 					var jRef = oElem.$();
 					if (jRef.is(":visible")) {
 						jPopupRef.width(jRef.outerWidth());

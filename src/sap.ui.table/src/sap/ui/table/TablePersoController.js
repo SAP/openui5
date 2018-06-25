@@ -3,8 +3,12 @@
  */
 
 // Provides TablePersoController
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObject',
+	"sap/ui/core/syncStyleClass"
+],
+	function(jQuery, ManagedObject, syncStyleClass) {
 	"use strict";
 
 
@@ -400,7 +404,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		function _open() {
 			if (that._oDialog) {
-				jQuery.sap.syncStyleClass("sapUiSizeCompact", that._getTable(), that._oDialog._oDialog);
+				syncStyleClass("sapUiSizeCompact", that._getTable(), that._oDialog._oDialog);
 				that._oDialog.open();
 			}
 		}

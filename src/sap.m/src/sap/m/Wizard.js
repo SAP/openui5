@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./WizardProgressNavigator",
 	"sap/ui/Device",
-	"./WizardRenderer"
+	"./WizardRenderer",
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	jQuery,
 	library,
@@ -17,8 +18,9 @@ sap.ui.define([
 	ScrollEnablement,
 	WizardProgressNavigator,
 	Device,
-	WizardRenderer
-	) {
+	WizardRenderer,
+	containsOrEquals
+) {
 		"use strict";
 
 		/**
@@ -631,7 +633,7 @@ sap.ui.define([
 			 * additionalOffset is added like this.
 			 */
 			if (!Device.system.phone &&
-				!jQuery.sap.containsOrEquals(progressStep.getDomRef(), this._getNextButton().getDomRef())) {
+				!containsOrEquals(progressStep.getDomRef(), this._getNextButton().getDomRef())) {
 				additionalOffset = this._getNextButton().$().outerHeight();
 			}
 

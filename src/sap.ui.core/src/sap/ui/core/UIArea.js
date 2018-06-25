@@ -3,13 +3,24 @@
  */
 
 // Provides class sap.ui.core.UIArea
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', "sap/ui/performance/trace/Interaction", "sap/ui/util/ActivityDetection", 'jquery.sap.ui', 'jquery.sap.keycodes', 'jquery.sap.trace'],
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObject',
+	'./Element',
+	'./RenderManager',
+	'sap/ui/performance/trace/Interaction',
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/util/ActivityDetection",
+	'jquery.sap.ui',
+	'jquery.sap.keycodes'
+],
 	function(
 		jQuery,
 		ManagedObject,
 		Element,
 		RenderManager,
 		Interaction,
+		containsOrEquals,
 		ActivityDetection
 		/* jQuerySapUi, jQuerySapKeycodes */
 	) {
@@ -150,7 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			if (oRootNode != null) {
 				this.setRootNode(oRootNode);
 				// Figure out whether UI Area is pre-rendered (server-side JS rendering)!
-				this.bNeedsRerendering = this.bNeedsRerendering && !jQuery.sap.domById(oRootNode.id + "-Init");
+				this.bNeedsRerendering = this.bNeedsRerendering && !((oRootNode.id + "-Init" ? window.document.getElementById(oRootNode.id + "-Init") : null));
 			}
 			this.mInvalidatedControls = {};
 
@@ -428,7 +439,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 * @protected
 	 */
 	UIArea.prototype.isActive = function() {
-		return jQuery.sap.domById(this.getId()) != null;
+		return ((this.getId() ? window.document.getElementById(this.getId()) : null)) != null;
 	};
 
 	/**
@@ -677,7 +688,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			oDomRef = oControl.getDomRef();
 			if (!oDomRef || RenderManager.isPreservedContent(oDomRef) ) {
 				// In case no old DOM node was found or only preserved DOM, search for an 'invisible' placeholder
-				oDomRef = jQuery.sap.domById(RenderManager.RenderPrefixes.Invisible + oControl.getId());
+				oDomRef = (RenderManager.RenderPrefixes.Invisible + oControl.getId() ? window.document.getElementById(RenderManager.RenderPrefixes.Invisible + oControl.getId()) : null);
 			}
 		}
 
@@ -864,7 +875,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 			// Only process the touchend event which is emulated from mouseout event when the current domRef
 			// doesn't equal or contain the relatedTarget
-			if (oEvent.isMarked("fromMouseout") && jQuery.sap.containsOrEquals(oDomRef, oEvent.relatedTarget)) {
+			if (oEvent.isMarked("fromMouseout") && containsOrEquals(oDomRef, oEvent.relatedTarget)) {
 				break;
 			}
 

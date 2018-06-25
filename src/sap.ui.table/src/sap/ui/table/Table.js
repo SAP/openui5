@@ -25,11 +25,11 @@ sap.ui.define([
 	'./TableScrollExtension',
 	'./TableDragAndDropExtension',
 	"./TableRenderer",
-	'jquery.sap.dom',
+	"sap/ui/thirdparty/jquery",
 	'jquery.sap.events'
 ],
 	function(
-	    jQuery,
+		jQuery,
 		Device,
 		Control,
 		Element,
@@ -49,7 +49,8 @@ sap.ui.define([
 		TablePointerExtension,
 		TableScrollExtension,
 		TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */,
-		TableRenderer
+		TableRenderer,
+		jQueryDOM
 	) {
 	"use strict";
 
@@ -1617,7 +1618,7 @@ sap.ui.define([
 	 */
 	Table.prototype.applyFocusInfo = function(mFocusInfo) {
 		if (mFocusInfo && mFocusInfo.customId) {
-			jQuery.sap.byId(mFocusInfo.customId, this.getDomRef()).focus();
+			jQueryDOM(document.getElementById(mFocusInfo.customId)).focus();
 		} else {
 			//TBD: should be applyFocusInfo but changing it breaks the unit tests
 			Element.prototype.getFocusInfo.apply(this, arguments);

@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/m/NavContainer',
 	'sap/m/Popover',
-	'./SplitContainerRenderer'
+	'./SplitContainerRenderer',
+	"sap/ui/dom/containsOrEquals"
 ],
 function(
 	jQuery,
@@ -27,8 +28,9 @@ function(
 	ManagedObject,
 	NavContainer,
 	Popover,
-	SplitContainerRenderer
-	) {
+	SplitContainerRenderer,
+	containsOrEquals
+) {
 	"use strict";
 
 
@@ -680,7 +682,7 @@ function(
 				// press isn't occurring in master area
 				&& !bIsMasterNav
 				// press isn't triggered by the showMasterButton
-				&& !jQuery.sap.containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
+				&& !containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
 				&& (!metaData.getEvent("tap") || !metaData.getEvent("press"))) {
 			this.hideMaster();
 		}
@@ -1321,7 +1323,7 @@ function(
 		this._bMasterisOpen = false;
 		// If the focus is still inside the master area after master is open, the focus should be removed.
 		// Otherwise user can still type something on mobile device and the browser will show the master area again.
-		if (jQuery.sap.containsOrEquals(this._oMasterNav.getDomRef(), document.activeElement)) {
+		if (containsOrEquals(this._oMasterNav.getDomRef(), document.activeElement)) {
 			document.activeElement.blur();
 		}
 		this.fireAfterMasterClose();

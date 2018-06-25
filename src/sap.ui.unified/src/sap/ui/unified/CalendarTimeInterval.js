@@ -19,7 +19,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Locale',
 	'sap/ui/core/library',
-	"./CalendarTimeIntervalRenderer"
+	"./CalendarTimeIntervalRenderer",
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	jQuery,
 	Control,
@@ -36,7 +37,8 @@ sap.ui.define([
 	Device,
 	Locale,
 	coreLibrary,
-	CalendarTimeIntervalRenderer
+	CalendarTimeIntervalRenderer,
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -898,7 +900,7 @@ sap.ui.define([
 
 		// if tab was pressed on a day it should jump to the month and then to the year button
 
-		if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
 			if (this.getPickerPopup()) {
 				jQuery.sap.focus(oHeader.getDomRef("B1"));
 			} else {
@@ -939,7 +941,7 @@ sap.ui.define([
 		var oHeader = this.getAggregation("header"),
 			oMonthPicker, oYearPicker, oTimesRow;
 
-		if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
 			// tab from day or year -> go to header
 
 			if (this._bPoupupMode) {
@@ -1025,7 +1027,7 @@ sap.ui.define([
 
 	CalendarTimeInterval.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			// put dummy element back to tab-chain
 			this.$("end").attr("tabindex", "0");
 

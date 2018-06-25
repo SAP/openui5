@@ -4,8 +4,34 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-	'jquery.sap.global', './Dialog', './library', 'sap/ui/core/EnabledPropagator', './DialogRenderer', 'sap/ui/core/library', 'sap/ui/Device', './Bar', './Button', './Title', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/base/ManagedObjectObserver'
-], function(jQuery, Dialog, library, EnabledPropagator, DialogRenderer, coreLibrary, Device, Bar, Button, Title, OverflowToolbarLayoutData, ManagedObjectObserver) {
+	'jquery.sap.global',
+	'./Dialog',
+	'./library',
+	'sap/ui/core/EnabledPropagator',
+	'./DialogRenderer',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'./Bar',
+	'./Button',
+	'./Title',
+	'sap/m/OverflowToolbarLayoutData',
+	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/thirdparty/jquery"
+], function(
+	jQuery,
+	Dialog,
+	library,
+	EnabledPropagator,
+	DialogRenderer,
+	coreLibrary,
+	Device,
+	Bar,
+	Button,
+	Title,
+	OverflowToolbarLayoutData,
+	ManagedObjectObserver,
+	jQueryDOM
+) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -449,7 +475,7 @@ sap.ui.define([
 		var sId = this._getVisiblePanelID();
 		if (sId && oContent) {
 			// move panel div into dialog content div.
-			var $Panel = jQuery.sap.byId(sId);
+			var $Panel = jQueryDOM(document.getElementById(sId));
 			$Panel.appendTo(jQuery(oContent));
 		}
 	};

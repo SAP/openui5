@@ -3,13 +3,14 @@
  */
 
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    './library',
-    'sap/ui/core/ResizeHandler',
-    "./AlignedFlowLayoutRenderer"
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/core/ResizeHandler',
+	"./AlignedFlowLayoutRenderer",
+	"sap/ui/dom/units/Rem"
 ],
-	function(jQuery, Control, library, ResizeHandler, AlignedFlowLayoutRenderer) {
+	function(jQuery, Control, library, ResizeHandler, AlignedFlowLayoutRenderer, Rem) {
 		"use strict";
 
 		/**
@@ -293,7 +294,7 @@ sap.ui.define([
 
 			// the CSS unit of the minItemWidth control property is in rem
 			if (sMinItemWidth.lastIndexOf("rem") !== -1) {
-				fMinItemWidth = jQuery.sap.remToPx(sMinItemWidth);
+				fMinItemWidth = Rem.toPx(sMinItemWidth);
 
 			// the CSS unit of the minItemWidth control property is in px
 			} else if (sMinItemWidth.lastIndexOf("px") !== -1) {

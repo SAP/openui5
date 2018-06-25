@@ -1116,7 +1116,7 @@ function(
 				oFocusDomRef = oControl.getFocusDomRef();
 			}
 
-			oFocusDomRef = oFocusDomRef || jQuery.sap.domById(sFocusId);
+			oFocusDomRef = oFocusDomRef || ((sFocusId ? window.document.getElementById(sFocusId) : null));
 
 			// if focus dom ref is not found
 			if (!oFocusDomRef) {

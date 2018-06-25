@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/core/Renderer',
 	'sap/ui/unified/Calendar',
 	'sap/ui/unified/CalendarRenderer',
-	"./CalendarOneMonthIntervalRenderer"
+	"./CalendarOneMonthIntervalRenderer",
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	jQuery,
 	CalendarUtils,
@@ -26,8 +27,9 @@ sap.ui.define([
 	Renderer,
 	Calendar,
 	CalendarRenderer,
-	CalendarOneMonthIntervalRenderer
-	) {
+	CalendarOneMonthIntervalRenderer,
+	containsOrEquals
+) {
 		"use strict";
 
 		/*
@@ -291,7 +293,7 @@ sap.ui.define([
 		};
 
 		CustomMonthPicker.prototype._shouldFocusB2OnTabNext = function(oEvent) {
-			return jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target);
+			return containsOrEquals(this.getDomRef("content"), oEvent.target);
 		};
 
 		CustomMonthPicker.prototype.onAfterRendering = function () {

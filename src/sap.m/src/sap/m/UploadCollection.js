@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
 	"./UploadCollectionRenderer",
+	"sap/ui/thirdparty/jquery",
 	"jquery.sap.keycodes"
 ], function(
 	jQuery,
@@ -60,7 +61,8 @@ sap.ui.define([
 	CustomListItem,
 	ResizeHandler,
 	Device,
-	UploadCollectionRenderer
+	UploadCollectionRenderer,
+	jQueryDOM
 ) {
 	"use strict";
 
@@ -1069,7 +1071,7 @@ sap.ui.define([
 		if (this.getInstantUpload()) {
 			if (this.aItems || (this.aItems === this.getItems())) {
 				if (this.editModeItem) {
-					var $oEditBox = jQuery.sap.byId(this.editModeItem + "-ta_editFileName-inner");
+					var $oEditBox = jQueryDOM(document.getElementById(this.editModeItem + "-ta_editFileName-inner"));
 					if ($oEditBox) {
 						var sId = this.editModeItem;
 						if (!Device.os.ios) {
@@ -1547,7 +1549,7 @@ sap.ui.define([
 
 		sContainerId = sItemId + "-container";
 		// UploadCollection has to destroy the container as sap.ui.core.HTML is preserved by default which leads to problems at rerendering
-		$container = jQuery.sap.byId(sContainerId);
+		$container = jQueryDOM(document.getElementById(sContainerId));
 		if ($container) {
 			$container.remove();
 			$container = null;
@@ -1641,7 +1643,7 @@ sap.ui.define([
 		}
 		oRm.write("</div>"); // end of container for Filename, attributes and statuses
 		this._renderButtons(oRm, item, sStatus, sItemId);
-		oRm.flush(jQuery.sap.byId(containerId)[0], true); // after removal to UploadCollectionItemRenderer delete this line
+		oRm.flush(jQueryDOM(document.getElementById(containerId))[0], true); // after removal to UploadCollectionItemRenderer delete this line
 		this._truncateFileName(item);
 		this._sReziseHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
 		Device.orientation.attachHandler(this._onResize, this);
@@ -2103,7 +2105,7 @@ sap.ui.define([
 			return;
 		}
 		this.sDeletedItemId = sItemId;
-		if (jQuery.sap.byId(this.sId).hasClass("sapUiSizeCompact")) {
+		if (jQueryDOM(document.getElementById(this.sId)).hasClass("sapUiSizeCompact")) {
 			sCompact = "sapUiSizeCompact";
 		}
 
@@ -2753,7 +2755,7 @@ sap.ui.define([
 					oItem._percentUploaded = iPercentUploaded;
 					// add ARIA attribute for screen reader support
 
-					$busyIndicator = jQuery.sap.byId(oItem.getId() + "-ia_indicator");
+					$busyIndicator = jQueryDOM(document.getElementById(oItem.getId() + "-ia_indicator"));
 					if (iPercentUploaded === 100) {
 						$busyIndicator.attr("aria-label", sPercentUploaded);
 					} else {
@@ -3034,7 +3036,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollection.prototype._setFocusToLineItem = function(itemId) {
-		jQuery.sap.byId(itemId).focus();
+		jQueryDOM(document.getElementById(itemId)).focus();
 	};
 
 	/**
@@ -3123,7 +3125,7 @@ sap.ui.define([
 		if (oObj !== undefined) {
 			if (oObj._status === UploadCollection._displayStatus) {
 				//focus at list line (status = "display") and F2 pressed --> status = "Edit"
-				var o$Obj = jQuery.sap.byId(event.target.id);
+				var o$Obj = jQueryDOM(document.getElementById(event.target.id));
 				var o$EditButton = o$Obj.find("[id$='-editButton']");
 				var oEditButton = sap.ui.getCore().byId(o$EditButton[0].id);
 				if (oEditButton.getEnabled()) {

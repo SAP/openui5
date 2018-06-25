@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/library',
 	'sap/ui/core/Locale',
-	"./TimesRowRenderer"
+	"./TimesRowRenderer",
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	jQuery,
 	Control,
@@ -26,7 +27,8 @@ sap.ui.define([
 	DateFormat,
 	coreLibrary,
 	Locale,
-	TimesRowRenderer
+	TimesRowRenderer,
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -200,7 +202,7 @@ sap.ui.define([
 
 	TimesRow.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			if (this._bMouseMove) {
 				_unbindMousemove.call(this, true);
 

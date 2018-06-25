@@ -12,17 +12,19 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/ResizeHandler',
 	'./TokenizerRenderer',
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.keycodes'
 ],
 	function(
-	jQuery,
-	library,
-	Control,
-	ScrollEnablement,
-	Device,
-	InvisibleText,
-	ResizeHandler,
-	TokenizerRenderer
+		jQuery,
+		library,
+		Control,
+		ScrollEnablement,
+		Device,
+		InvisibleText,
+		ResizeHandler,
+		TokenizerRenderer,
+		containsOrEquals
 	) {
 	"use strict";
 
@@ -987,7 +989,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype._checkFocus = function() {
-		return this.getDomRef() && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement);
+		return this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement);
 	};
 
 

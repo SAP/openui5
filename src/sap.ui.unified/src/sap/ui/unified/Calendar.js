@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Locale',
-	"./CalendarRenderer"
+	"./CalendarRenderer",
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	jQuery,
 	Control,
@@ -35,7 +36,8 @@ sap.ui.define([
 	DateFormat,
 	ResizeHandler,
 	Locale,
-	CalendarRenderer
+	CalendarRenderer,
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -1001,7 +1003,7 @@ sap.ui.define([
 		// if tab was pressed on a day it should jump to the month and then to the year button
 		var oHeader = this.getAggregation("header");
 
-		if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
 			if (this._shouldFocusB2OnTabNext(oEvent)) {
 				jQuery.sap.focus(oHeader.getDomRef("B2"));
 			} else {
@@ -1055,7 +1057,7 @@ sap.ui.define([
 
 		var oHeader = this.getAggregation("header");
 
-		if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
 			// tab from day, month or year -> go to header
 
 			if (this._shouldFocusB2OnTabPrevious()) {
@@ -1149,7 +1151,7 @@ sap.ui.define([
 			oMonthPicker,
 			oYearPicker;
 
-		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			// put dummy element back to tab-chain
 			this.$("end").attr("tabindex", "0");
 

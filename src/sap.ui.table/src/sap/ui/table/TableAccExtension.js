@@ -4,8 +4,24 @@
 
 // Provides helper sap.ui.table.TableAccExtension.
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/core/Control", "./library", "./TableExtension", "./TableAccRenderExtension", "./TableUtils", "sap/ui/Device"
-], function(jQuery, Control, library, TableExtension, TableAccRenderExtension, TableUtils, Device) {
+	"jquery.sap.global",
+	"sap/ui/core/Control",
+	"./library",
+	"./TableExtension",
+	"./TableAccRenderExtension",
+	"./TableUtils",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(
+	jQuery,
+	Control,
+	library,
+	TableExtension,
+	TableAccRenderExtension,
+	TableUtils,
+	Device,
+	jQueryDOM
+) {
 	"use strict";
 
 	// shortcuts
@@ -1097,7 +1113,7 @@ sap.ui.define([
 
 		var aHeaders = ExtensionHelper.getRelevantColumnHeaders(this.getTable(), oColumn);
 		for (var i = 0; i < aHeaders.length; i++) {
-			var $Header = jQuery.sap.byId(aHeaders[i]);
+			var $Header = jQueryDOM(document.getElementById(aHeaders[i]));
 			if (!$Header.attr("colspan")) {
 				$Header.attr({
 					"aria-sort": mAttributes["aria-sort"] || null

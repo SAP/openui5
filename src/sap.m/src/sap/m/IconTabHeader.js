@@ -20,7 +20,8 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Icon',
 	'./IconTabBarDragAndDropUtil',
-	'./IconTabHeaderRenderer'
+	'./IconTabHeaderRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	jQuery,
@@ -38,7 +39,8 @@ function(
 	ResizeHandler,
 	Icon,
 	IconTabBarDragAndDropUtil,
-	IconTabHeaderRenderer
+	IconTabHeaderRenderer,
+	jQueryDOM
 ) {
 	"use strict";
 
@@ -1229,7 +1231,7 @@ function(
 			return;
 		}
 
-		var $sTargetId = jQuery.sap.byId(sTargetId);
+		var $sTargetId = jQueryDOM(document.getElementById(sTargetId));
 		/*eslint-disable no-empty */
 		// TODO check better implementation
 		if (jQuery.inArray(this.$("content")[0], $sTargetId.parents()) > -1) {

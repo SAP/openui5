@@ -24,7 +24,7 @@
 /*global OpenAjax */// declare unusual global vars for JSLint/SAPUI5 validation
 
 // Register to the OpenAjax Hub if it exists
-sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global', 'jquery.sap.dom'],
+sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global'],
 	function(VersionInfo, jQuery/* , jQuerySap */) {
 	"use strict";
 

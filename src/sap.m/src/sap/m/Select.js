@@ -21,6 +21,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
 	'./SelectRenderer',
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.keycodes'
 ],
 function(
@@ -41,8 +42,9 @@ function(
 	Item,
 	Device,
 	InvisibleText,
-	SelectRenderer
-	) {
+	SelectRenderer,
+	containsOrEquals
+) {
 		"use strict";
 
 		// shortcut for sap.m.SelectListKeyboardNavigationMode
@@ -1481,7 +1483,7 @@ function(
 			var oControl = sap.ui.getCore().byId(oEvent.relatedControlId),
 				oFocusDomRef = oControl && oControl.getFocusDomRef();
 
-			if (Device.system.desktop && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			if (Device.system.desktop && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 
 				// force the focus to stay in the input field
 				this.focus();

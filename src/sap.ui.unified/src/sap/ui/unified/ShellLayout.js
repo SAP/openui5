@@ -12,7 +12,7 @@ sap.ui.define([
 	'./SplitContainer',
 	'./library',
 	'./ShellLayoutRenderer',
-	'jquery.sap.dom',
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.script'
 ], function(
 	jQuery,
@@ -23,7 +23,8 @@ sap.ui.define([
 	SplitContainer,
 	library,
 	ShellLayoutRenderer
-	/* , jQueryDom, jQueryScript */
+	/* , jQueryDom, jQueryScript */,
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -158,7 +159,7 @@ sap.ui.define([
 
 		function headerFocus(oBrowserEvent){
 			var oEvent = jQuery.event.fix(oBrowserEvent);
-			if (jQuery.sap.containsOrEquals(that.getDomRef("hdr"), oEvent.target)) {
+			if (containsOrEquals(that.getDomRef("hdr"), oEvent.target)) {
 				that._timedHideHeader(oEvent.type === "focus");
 			}
 		}
@@ -445,7 +446,7 @@ sap.ui.define([
 		}
 
 		this._headerHidingTimer = jQuery.sap.delayedCall(this._iHeaderHidingDelay, this, function(){
-			if (this._isHeaderHidingActive() && this._iHeaderHidingDelay > 0 && !jQuery.sap.containsOrEquals(this.getDomRef("hdr"), document.activeElement)) {
+			if (this._isHeaderHidingActive() && this._iHeaderHidingDelay > 0 && !containsOrEquals(this.getDomRef("hdr"), document.activeElement)) {
 				this._doShowHeader(false);
 			}
 		});

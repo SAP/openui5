@@ -21,6 +21,7 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.xml',
 	'jquery.sap.keycodes'
 ],
@@ -42,8 +43,9 @@ function(
 	Device,
 	Item,
 	ResizeHandler,
-	MultiComboBoxRenderer
-	) {
+	MultiComboBoxRenderer,
+	containsOrEquals
+) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -1334,7 +1336,7 @@ function(
 		var oFocusedElement = sap.ui.getCore().byId(document.activeElement.id);
 
 		if (this.getList()
-			&& jQuery.sap.containsOrEquals(this.getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
+			&& containsOrEquals(this.getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
 			return oFocusedElement;
 		}
 

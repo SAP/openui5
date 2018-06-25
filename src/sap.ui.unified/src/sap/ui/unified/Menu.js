@@ -13,6 +13,8 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/library',
 	'sap/ui/unified/MenuRenderer',
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery",
 	'jquery.sap.script',
 	'jquery.sap.keycodes',
 	'jquery.sap.events'
@@ -25,7 +27,9 @@ sap.ui.define([
 	MenuItemBase,
 	library,
 	coreLibrary,
-	MenuRenderer
+	MenuRenderer,
+	containsOrEquals,
+	jQueryDOM
 ) {
 	"use strict";
 
@@ -688,7 +692,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.oOpenedSubMenu && jQuery.sap.containsOrEquals(this.oOpenedSubMenu.getDomRef(), oEvent.target)) {
+		if (this.oOpenedSubMenu && containsOrEquals(this.oOpenedSubMenu.getDomRef(), oEvent.target)) {
 			return;
 		}
 
@@ -778,7 +782,7 @@ sap.ui.define([
 			}
 			var that = this;
 			while (that && !isInMenuHierarchy) {
-				if (jQuery.sap.containsOrEquals(that.getDomRef(), oEvent.target)) {
+				if (containsOrEquals(that.getDomRef(), oEvent.target)) {
 					isInMenuHierarchy = true;
 				}
 				that = that.oOpenedSubMenu;
@@ -791,7 +795,7 @@ sap.ui.define([
 				var that = this;
 				while (that && !isInMenuHierarchy) {
 					if ((that.oOpenedSubMenu && that.oOpenedSubMenu.getId() == oEvent.relatedControlId)
-							|| jQuery.sap.containsOrEquals(that.getDomRef(), jQuery.sap.byId(oEvent.relatedControlId).get(0))) {
+							|| containsOrEquals(that.getDomRef(), jQueryDOM(document.getElementById(oEvent.relatedControlId)).get(0))) {
 						isInMenuHierarchy = true;
 					}
 					that = that.oOpenedSubMenu;
@@ -813,7 +817,7 @@ sap.ui.define([
 		for (var i = 0;i < iLength;i++) {
 			var oItem = oItems[i],
 				oItemRef = oItem.getDomRef();
-			if (jQuery.sap.containsOrEquals(oItemRef, oDomRef)) {
+			if (containsOrEquals(oItemRef, oDomRef)) {
 				return oItem;
 			}
 		}
@@ -1001,7 +1005,7 @@ sap.ui.define([
 	Menu.prototype._bringToFront = function() {
 		// This is a hack. We "simulate" a mouse-down-event on the submenu so that it brings itself
 		// to the front.
-		jQuery.sap.byId(this.getPopup().getId()).mousedown();
+		jQueryDOM(document.getElementById(this.getPopup().getId())).mousedown();
 	};
 
 	Menu.prototype.checkEnabled = function(oItem){
