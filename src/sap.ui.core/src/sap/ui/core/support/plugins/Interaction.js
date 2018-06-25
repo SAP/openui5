@@ -10,9 +10,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		'sap/m/MessageToast',
 		'sap/ui/thirdparty/jszip',
 		'sap/ui/core/util/File',
-		'jquery.sap.trace'
+		"sap/ui/performance/trace/Interaction"
 	],
-	function(jQuery, Plugin, InteractionSlider, InteractionTree, TimelineOverview, MessageToast, JSZip, File) {
+	function(
+		jQuery,
+		Plugin,
+		InteractionSlider,
+		InteractionTree,
+		TimelineOverview,
+		MessageToast,
+		JSZip,
+		File,
+		TraceInteraction
+	) {
 		"use strict";
 
 		/**
@@ -189,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		}
 
 		function getPerformanceData(oSupportStub, jsonData) {
-			var bActive = jQuery.sap.interaction.getActive() || this._bFesrActive;
+			var bActive = TraceInteraction.getActive() || this._bFesrActive;
 			var aMeasurements = [];
 
 			if (bActive || jsonData) {
@@ -340,8 +350,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 
 			var bActive = oEvent.getParameter("active");
 
-			if (jQuery.sap.interaction.getActive() != bActive) {
-				jQuery.sap.interaction.setActive(bActive);
+			if (TraceInteraction.getActive() != bActive) {
+				TraceInteraction.setActive(bActive);
 			}
 
 		};

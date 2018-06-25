@@ -11,8 +11,17 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/URI',
-	'jquery.sap.trace'
-], function(jQuery, Manifest, ComponentMetadata, Core, merge, ManagedObject, URI /*, jQuery*/) {
+	"sap/ui/performance/trace/Interaction"
+], function(
+	jQuery,
+	Manifest,
+	ComponentMetadata,
+	Core,
+	merge,
+	ManagedObject,
+	URI,
+	Interaction
+) {
 	"use strict";
 
 	/*global Promise */
@@ -2332,7 +2341,7 @@ sap.ui.define([
 		// set the name of this newly loaded component at the interaction measurement,
 		// as otherwise this would be the outer component from where it was called,
 		// which is not true - this component causes the load
-		jQuery.sap.interaction.setStepComponent(sName);
+		Interaction.setStepComponent(sName);
 
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)
