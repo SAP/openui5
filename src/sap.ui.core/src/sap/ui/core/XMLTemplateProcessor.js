@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/base/SyncPromise',
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/base/security/encodeXML"
 ],
 function(
 	jQuery,
@@ -30,7 +31,8 @@ function(
 	SyncPromise,
 	Log,
 	ObjectPath,
-	assert
+	assert,
+	encodeXML
 ) {
 	"use strict";
 
@@ -371,7 +373,7 @@ function(
 							bHasId = true;
 							value = getId(oView, xmlNode);
 						}
-						aResult.push(attr.name + "=\"" + jQuery.sap.encodeHTML(value) + "\" ");
+						aResult.push(attr.name + "=\"" + encodeXML(value) + "\" ");
 					}
 					if ( bRoot === true ) {
 						aResult.push("data-sap-ui-preserve" + "=\"" + oView.getId() + "\" ");
@@ -426,7 +428,7 @@ function(
 					parentName = localName(xmlNode.parentNode);
 				if (text) {
 					if (parentName != "style") {
-						text = jQuery.sap.encodeHTML(text);
+						text = encodeXML(text);
 					}
 					aResult.push(text);
 				}

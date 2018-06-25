@@ -9,9 +9,10 @@ sap.ui.define([
 	"./library",
 	"./ListItemBaseRenderer",
 	"./Label",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/security/encodeXML"
 ],
-	function(Renderer, coreLibrary, Device, library, ListItemBaseRenderer, Label, Log) {
+	function(Renderer, coreLibrary, Device, library, ListItemBaseRenderer, Label, Log, encodeXML) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -149,7 +150,7 @@ sap.ui.define([
 			// check column properties
 			if (oColumn) {
 				cls = oColumn.getStyleClass(true);
-				cls && rm.addClass(jQuery.sap.encodeHTML(cls));
+				cls && rm.addClass(encodeXML(cls));
 
 				// aria for virtual keyboard mode
 				oHeader = oColumn.getHeader();
@@ -286,7 +287,7 @@ sap.ui.define([
 			/* row start */
 			rm.write("<div");
 			rm.addClass("sapMListTblSubCntRow");
-			sStyleClass && rm.addClass(jQuery.sap.encodeHTML(sStyleClass));
+			sStyleClass && rm.addClass(encodeXML(sStyleClass));
 			rm.writeClasses();
 			rm.write(">");
 

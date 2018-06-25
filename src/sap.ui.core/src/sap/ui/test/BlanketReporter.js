@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/UriParameters"
-], function(jQuery, Controller, XMLView, Filter, FilterType, JSONModel, UriParameters) {
+	"sap/base/util/UriParameters",
+	"sap/base/security/encodeXML"
+], function (jQuery, Controller, XMLView, Filter, FilterType, JSONModel, UriParameters, encodeXML) {
 	"use strict";
 
 	// lower case package names, UpperCamelCase class name, optional lowerCamelCase method name
@@ -179,7 +180,7 @@ sap.ui.define([
 
 		// highlight given source code according to current level; updates iLastHighlightedLine
 		function highlight(iLine, sSourceCode) {
-			sSourceCode = jQuery.sap.encodeHTML(sSourceCode);
+			sSourceCode = encodeXML(sSourceCode);
 			if (sSourceCode && iHighlightLevel) {
 				iLastHighlightedLine = iLine;
 				sSourceCode = "<span class='highlight'>" + sSourceCode + "</span>";

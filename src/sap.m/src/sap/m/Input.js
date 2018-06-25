@@ -26,6 +26,7 @@ sap.ui.define([
 	'./InputRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
+	"sap/base/security/encodeXML",
 	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
 ],
 function(
@@ -50,7 +51,8 @@ function(
 	Control,
 	InputRenderer,
 	containsOrEquals,
-	assert
+	assert,
+	encodeXML
 ) {
 	"use strict";
 
@@ -2443,7 +2445,7 @@ function(
 			newText = '';
 
 		if (!Input._wordStartsWithValue(text, value)) {
-			return jQuery.sap.encodeHTML(text);
+			return encodeXML(text);
 		}
 
 		var index = lowerText.indexOf(value);
@@ -2454,12 +2456,12 @@ function(
 		}
 
 		if (index > -1) {
-			newText += jQuery.sap.encodeHTML(text.substring(0, index));
+			newText += encodeXML(text.substring(0, index));
 			subString = text.substring(index, index + count);
-			newText += '<span class="sapMInputHighlight">' + jQuery.sap.encodeHTML(subString) + '</span>';
-			newText += jQuery.sap.encodeHTML(text.substring(index + count));
+			newText += '<span class="sapMInputHighlight">' + encodeXML(subString) + '</span>';
+			newText += encodeXML(text.substring(index + count));
 		} else {
-			newText = jQuery.sap.encodeHTML(text);
+			newText = encodeXML(text);
 		}
 
 		return newText;

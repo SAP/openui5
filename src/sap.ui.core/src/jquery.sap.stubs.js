@@ -42,7 +42,8 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 					"addUrlWhitelist",
 					"removeUrlWhitelist",
 					"getUrlWhitelist",
-					"validateUrl"
+					"validateUrl",
+					"_sanitizeHTML"
 				],
 				"jquery.sap.events": [
 					"PseudoEvents",

@@ -2,8 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Core', './Template', './TemplateControl', 'sap/ui/thirdparty/handlebars', 'sap/ui/base/ManagedObject', "sap/base/util/ObjectPath"],
-	function(Core, Template, TemplateControl, Handlebars, ManagedObject, ObjectPath) {
+sap.ui.define([
+	'sap/ui/core/Core',
+	'./Template',
+	'./TemplateControl',
+	'sap/ui/thirdparty/handlebars',
+	'sap/ui/base/ManagedObject',
+	'sap/base/util/ObjectPath',
+	"sap/base/security/encodeXML"
+],
+	function(
+		Core,
+		Template,
+		TemplateControl,
+		Handlebars,
+		ManagedObject,
+		ObjectPath,
+		encodeXML
+	) {
 	"use strict";
 
 
@@ -240,7 +256,7 @@ sap.ui.define(['sap/ui/core/Core', './Template', './TemplateControl', 'sap/ui/th
 				if (sPath) {
 					// bind and return the text
 					var oValue = oRootControl.bindProp(sPath);
-					return oValue && new Handlebars.SafeString(jQuery.sap.encodeHTML(oValue));
+					return oValue && new Handlebars.SafeString(encodeXML(oValue));
 				} else {
 					throw new Error("The expression \"text\" requires the option \"path\"!");
 				}

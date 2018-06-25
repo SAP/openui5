@@ -3,8 +3,13 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Trace (Trace support plugin)
-sap.ui.define(['sap/ui/core/support/Plugin', 'sap/ui/core/format/DateFormat', "sap/base/Log"],
-	function(Plugin, DateFormat, Log) {
+sap.ui.define([
+	'sap/ui/core/support/Plugin',
+	'sap/ui/core/format/DateFormat',
+	"sap/base/Log",
+	"sap/base/security/encodeXML"
+],
+	function(Plugin, DateFormat, Log, encodeXML) {
 	"use strict";
 
 		/**
@@ -138,7 +143,7 @@ sap.ui.define(['sap/ui/core/support/Plugin', 'sap/ui/core/format/DateFormat', "s
 				jContentRef.html("");
 				oPlugin._aLogEntries = [];
 			} else if (typeof (oEntry) === "string") {
-				jContentRef.html(jQuery.sap.encodeHTML(oEntry));
+				jContentRef.html(encodeXML(oEntry));
 				jContentRef[0].scrollTop = jContentRef[0].scrollHeight;
 			} else {
 				oEntry._levelInfo = getLevel(oEntry.level);
@@ -156,7 +161,7 @@ sap.ui.define(['sap/ui/core/support/Plugin', 'sap/ui/core/format/DateFormat', "s
 			var sStyle = " style='color:" + aLevelInfo[1] + ";'";
 			var sResult = "<div class='sapUiSupportTraceEntry'><span class='sapUiSupportTraceEntryLevel'" + sStyle + ">" + aLevelInfo[0] +
 					"</span><span class='sapUiSupportTraceEntryTime'" + sStyle + ">" + oPlugin._oDateFormat.format(new Date(oEntry.timestamp)) +
-					"</span><span class='sapUiSupportTraceEntryMessage'>" + jQuery.sap.escapeHTML(oEntry.message || "") + "</div>";
+					"</span><span class='sapUiSupportTraceEntryMessage'>" + encodeXML(oEntry.message || "") + "</div>";
 			return sResult;
 		}
 

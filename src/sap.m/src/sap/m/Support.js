@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
-	function (jQuery, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/base/security/encodeXML"],
+	function(jQuery, Device, encodeXML) {
 		"use strict";
 
 		/**
@@ -72,12 +72,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 			// copied from core
 			function line(buffer, right, border, label, content) {
-				buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", jQuery.sap.encodeHTML(label), "</label><br>");
+				buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", encodeXML(label), "</label><br>");
 				var ctnt = content;
 				if ($.isFunction(content)) {
 					ctnt = content(buffer) || "";
 				}
-				buffer.push($.sap.encodeHTML(ctnt));
+				buffer.push(encodeXML(ctnt));
 				buffer.push("</td></tr>");
 			}
 

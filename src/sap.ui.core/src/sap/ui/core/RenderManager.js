@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/base/util/uid',
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/thirdparty/jquery",
-	'jquery.sap.encoder',
+	"sap/base/security/encodeXML",
 	"sap/base/assert",
 	"sap/ui/performance/Measurement",
 	"sap/base/Log"
@@ -23,7 +23,7 @@ sap.ui.define([
 	uid,
 	ActivityDetection,
 	jQueryDOM,
-	jQuery,
+	encodeXML,
 	assert,
 	Measurement,
 	Log
@@ -137,7 +137,7 @@ sap.ui.define([
 		 */
 		this.writeEscaped = function(sText, bLineBreaks) {
 			if ( sText != null ) {
-				sText = jQuery.sap.encodeHTML( String(sText) );
+				sText = encodeXML( String(sText) );
 				if (bLineBreaks) {
 					sText = sText.replace(/&#xa;/g, "<br>");
 				}
@@ -177,7 +177,7 @@ sap.ui.define([
 		 */
 		this.writeAttributeEscaped = function(sName, vValue) {
 			assert(typeof sName === "string", "sName must be a string");
-			aBuffer.push(" ", sName, "=\"", jQuery.sap.encodeHTML(String(vValue)), "\"");
+			aBuffer.push(" ", sName, "=\"", encodeXML(String(vValue)), "\"");
 			return this;
 		};
 

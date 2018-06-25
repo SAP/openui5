@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/base/security/encodeCSS"],
+	function(encodeCSS) {
 	"use strict";
 
 	/**
@@ -23,9 +23,9 @@ sap.ui.define([],
 		var sTooltip = oControl.getTooltip_AsString();
 		var sContentTypeClass = oControl._getContentType();
 		if (sContentTypeClass) {
-			sContentTypeClass = jQuery.sap.encodeCSS(sContentTypeClass);
+			sContentTypeClass = encodeCSS(sContentTypeClass);
 		}
-		var sFrameTypeClass = jQuery.sap.encodeCSS("sapMFrameType" + oControl.getFrameType());
+		var sFrameTypeClass = encodeCSS("sapMFrameType" + oControl.getFrameType());
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -89,7 +89,7 @@ sap.ui.define([],
 		// footer text div
 		oRm.write("<div");
 		oRm.addClass("sapMTileCntFtrTxt");
-		oRm.addClass(jQuery.sap.encodeCSS(sColorClass));
+		oRm.addClass(encodeCSS(sColorClass));
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-footer-text");
 		if (sTooltip.trim()) { // check for white space(s) needed since the IE11 renders it

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.search.OpenSearchProvider.
-sap.ui.define(['sap/ui/core/library', './SearchProvider', "sap/base/Log", 'jquery.sap.encoder'],
-	function(library, SearchProvider/* , jQuerySap */, Log) {
+sap.ui.define(['sap/ui/core/library', './SearchProvider', "sap/base/Log", "sap/base/security/encodeURL"],
+	function(library, SearchProvider, Log, encodeURL) {
 	"use strict";
 
 
@@ -57,7 +57,7 @@ sap.ui.define(['sap/ui/core/library', './SearchProvider', "sap/base/Log", 'jquer
 		if (!sUrl) {
 			return;
 		}
-		sUrl = sUrl.replace("{searchTerms}", jQuery.sap.encodeURL(sValue));
+		sUrl = sUrl.replace("{searchTerms}", encodeURL(sValue));
 
 		var sType = this.getSuggestType();
 		var fSuccess;

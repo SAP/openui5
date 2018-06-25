@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/defineLazyProperty",
+	"sap/base/security/encodeXML",
 	// referenced here to enable the Support feature
 	'./Support'
 ],
@@ -32,7 +33,8 @@ sap.ui.define([
 	jQueryDOM,
 	assert,
 	Log,
-	defineLazyProperty
+	defineLazyProperty,
+	encodeXML
 ) {
 
 	"use strict";
@@ -3901,7 +3903,7 @@ sap.ui.define([
 				rm.addStyle("filter", "none");
 			}
 			if (sBgColor) {
-				rm.addStyle("background-color", jQuery.sap.encodeHTML(sBgColor));
+				rm.addStyle("background-color", encodeXML(sBgColor));
 			}
 		},
 
@@ -3952,7 +3954,7 @@ sap.ui.define([
 
 			if (sBgImgUrl) { // use the settings only if a background image is configured
 				rm.addStyle("display", "block"); // enforce visibility even if a parent has also a background image
-				rm.addStyle("background-image", "url(" + jQuery.sap.encodeHTML(sBgImgUrl) + ")");
+				rm.addStyle("background-image", "url(" + encodeXML(sBgImgUrl) + ")");
 
 				rm.addStyle("background-repeat", bRepeat ? "repeat" : "no-repeat");
 				if (!bRepeat) {

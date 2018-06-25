@@ -3,8 +3,12 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Debugging
-sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/events/KeyCodes"],
-	function(Plugin, KeyCodes) {
+sap.ui.define([
+	'sap/ui/core/support/Plugin',
+	"sap/base/security/encodeXML",
+	"sap/ui/events/KeyCodes"
+],
+	function(Plugin, encodeXML, KeyCodes) {
 		"use strict";
 
 
@@ -149,8 +153,8 @@ sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/events/KeyCodes"],
 					rm.write(' class="selected"');
 				}
 
-				rm.write('><div><span class="className">' + jQuery.sap.escapeHTML(oValue + "") + '</span>' +
-						 '<span class="breakpoints">' + jQuery.sap.escapeHTML(bpCountText + "") + '</span></div>' +
+				rm.write('><div><span class="className">' + encodeXML(oValue + "") + '</span>' +
+						 '<span class="breakpoints">' + encodeXML(bpCountText + "") + '</span></div>' +
 						 '<img class="remove-class" style="cursor:pointer;margin-left:5px" ' +
 						 'src="../../debug/images/delete.gif" alt="X"></li>');
 			});
@@ -198,7 +202,7 @@ sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/events/KeyCodes"],
 					return;
 				}
 
-				rm.write('<li data-method-type="' + jQuery.sap.escapeHTML(oValue.type + "") + '"><span>' + jQuery.sap.escapeHTML(oValue.name + "") + '</span>' +
+				rm.write('<li data-method-type="' + encodeXML(oValue.type + "") + '"><span>' + encodeXML(oValue.name + "") + '</span>' +
 						 '<img class="remove-breakpoint" style="cursor:pointer;margin-left:5px" ' +
 						 'src="../../debug/images/delete.gif" alt="Remove"></li>');
 			});
@@ -467,7 +471,7 @@ sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/events/KeyCodes"],
 			for (var i = 0; i < aUserUrls.length; i++) {
 				var sUrl = aUserUrls[i];
 				if (sUrl && !this._mRebootUrls[sUrl]) {
-					mUrls[sUrl] = jQuery.sap.encodeHTML(sUrl) + " (user-defined URL)";
+					mUrls[sUrl] = encodeXML(sUrl) + " (user-defined URL)";
 				}
 			}
 

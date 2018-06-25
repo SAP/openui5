@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.core.HTML.
-sap.ui.define(['./Control', './RenderManager', "./HTMLRenderer", "sap/base/Log"],
-	function(Control, RenderManager, HTMLRenderer, Log) {
+sap.ui.define([
+	'jquery.sap.global',
+	"sap/base/Log",
+	'./Control',
+	'./RenderManager',
+	"./HTMLRenderer",
+	"sap/base/security/sanitizeHTML"
+],
+	function(jQuery, Log, Control, RenderManager, HTMLRenderer, sanitizeHTML) {
 	"use strict";
 
 	// local shortcut
@@ -163,7 +170,7 @@ sap.ui.define(['./Control', './RenderManager', "./HTMLRenderer", "sap/base/Log"]
 
 		if ( this.getSanitizeContent() ) {
 			Log.trace("sanitizing HTML content for " + this);
-			sContent = jQuery.sap._sanitizeHTML(sContent);
+			sContent = sanitizeHTML(sContent);
 		}
 
 		this.setProperty("content", sContent, true);

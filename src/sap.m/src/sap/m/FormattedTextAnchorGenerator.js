@@ -7,7 +7,11 @@
  * This class handles the <code>AnchorGeneration</code> for the <code>FormattedText</code> control.
  */
 
-sap.ui.define(["sap/ui/base/Metadata", "sap/m/library"], function(Metadata, library) {
+sap.ui.define([
+	"sap/ui/base/Metadata",
+	"sap/m/library",
+	"sap/base/security/URLWhitelist"
+], function(Metadata, library, URLWhitelist) {
 	"use strict";
 
 	// shortcut for sap.m.LinkConversion
@@ -88,7 +92,7 @@ sap.ui.define(["sap/ui/base/Metadata", "sap/m/library"], function(Metadata, libr
 	 * @private
 	 */
 	AnchorGenerator._shouldBeProcessed = function (sUrlCandidate, oCandidatePosition, aBlackListedPositions) {
-		return jQuery.sap.validateUrl(sUrlCandidate) && !AnchorGenerator._isAllowed(aBlackListedPositions, oCandidatePosition);
+		return URLWhitelist.validate(sUrlCandidate) && !AnchorGenerator._isAllowed(aBlackListedPositions, oCandidatePosition);
 	};
 
 	/**

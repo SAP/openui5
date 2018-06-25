@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Delegate', "sap/base/util/deepEqual"],
-	function(Delegate, deepEqual) {
+sap.ui.define(['./Delegate', "sap/base/util/deepEqual", "sap/base/security/encodeXML"],
+	function(Delegate, deepEqual, encodeXML) {
 	"use strict";
 
 
@@ -251,7 +251,7 @@ sap.ui.define(['./Delegate', "sap/base/util/deepEqual"],
 	 * @private
 	 */
 	XML.prototype._createAttribute = function (sAttribute, oValue) {
-		var oEncoded = jQuery.type(oValue) === "string" ? jQuery.sap.encodeHTML(oValue) : oValue;
+		var oEncoded = jQuery.type(oValue) === "string" ? encodeXML(oValue) : oValue;
 		return ' ' + sAttribute + '="' + oEncoded + '"';
 	};
 

@@ -6,9 +6,10 @@ sap.ui.define([
 	'sap/ui/core/Renderer',
 	'./InputBaseRenderer',
 	'sap/ui/Device',
-	'sap/ui/core/library'
+	'sap/ui/core/library',
+	"sap/base/security/encodeXML"
 ],
-	function(Renderer, InputBaseRenderer, Device, coreLibrary) {
+	function(Renderer, InputBaseRenderer, Device, coreLibrary, encodeXML) {
 	"use strict";
 
 
@@ -72,7 +73,7 @@ sap.ui.define([
 	// Write the value of the TextArea
 	TextAreaRenderer.writeInnerContent = function(oRm, oControl) {
 		var sValue = oControl.getValue();
-		sValue = jQuery.sap.encodeHTML(sValue);
+		sValue = encodeXML(sValue);
 
 		oRm.write(sValue);
 	};

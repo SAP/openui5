@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library"],
-	function(library) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
+	function(library, encodeCSS) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileMode
@@ -36,8 +36,8 @@ sap.ui.define(["sap/m/library"],
 		var bHasPress = oControl.hasListeners("press");
 		var sState = oControl.getState();
 		var sScope = oControl.getScope();
-		var sStateClass = jQuery.sap.encodeCSS("sapMGTState" + sState);
-		var sScopeClass = jQuery.sap.encodeCSS("sapMGTScope" + sScope);
+		var sStateClass = encodeCSS("sapMGTState" + sState);
+		var sScopeClass = encodeCSS("sapMGTScope" + sScope);
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);

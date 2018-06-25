@@ -16,9 +16,11 @@ sap.ui.define([
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/core/format/DateFormat',
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/security/encodeURL"
 ],
-	function(Sorter, FilterProcessor, DateFormat, Log, assert) {
+	function(Sorter, FilterProcessor, DateFormat, Log, assert, jquery, encodeURL ) {
 	"use strict";
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
@@ -382,11 +384,11 @@ sap.ui.define([
 		}
 
 		if (oValue1) {
-			oValue1 = jQuery.sap.encodeURL(String(oValue1));
+			oValue1 = encodeURL(String(oValue1));
 		}
 		if (oValue2) {
-			oValue2 = jQuery.sap.encodeURL(String(oValue2));
-	}
+			oValue2 = encodeURL(String(oValue2));
+		}
 
 		if (!bCaseSensitive && sType === "Edm.String") {
 			sPath =  "toupper(" + sPath + ")";

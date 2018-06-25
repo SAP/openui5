@@ -7,9 +7,9 @@ sap.ui.define([
 	'../Plugin',
 	'../Support',
 	'../ToolsAPI',
-	'jquery.sap.encoder'
+	"sap/base/security/encodeXML"
 ],
-	function(Plugin, Support, ToolsAPI, jQuery) {
+	function(Plugin, Support, ToolsAPI, encodeXML) {
 	"use strict";
 
 
@@ -288,7 +288,7 @@ sap.ui.define([
 
 
 		function encode(any) {
-			return any == null ? "" : jQuery.sap.encodeHTML(String(any));
+			return any == null ? "" : encodeXML(String(any));
 		}
 
 		function line(buffer, right, border, label, content){
