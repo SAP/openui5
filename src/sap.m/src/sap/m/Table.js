@@ -4,15 +4,15 @@
 
 // Provides control sap.m.Table.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/Device",
 	"./library",
 	"./ListBase",
 	"./ListItemBase",
 	"./CheckBox",
-	"./TableRenderer"
+	"./TableRenderer",
+	"sap/base/Log"
 ],
-	function(jQuery, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer) {
+	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log) {
 	"use strict";
 
 
@@ -243,7 +243,7 @@ sap.ui.define([
 		});
 
 		if (!bHasVisibleColumns) {
-			jQuery.sap.log.warning("No visible columns found in " + this);
+			Log.warning("No visible columns found in " + this);
 		}
 
 		return bHasVisibleColumns;

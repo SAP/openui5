@@ -4,13 +4,12 @@
 
 // Provides control sap.m.TabContainer.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'./TabContainerRenderer'
 ],
-	function(jQuery, library, Control, IconPool, TabContainerRenderer) {
+	function(library, Control, IconPool, TabContainerRenderer) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType

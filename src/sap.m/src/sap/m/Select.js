@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./Dialog',
 	'./Popover',
 	'./SelectList',
@@ -25,7 +24,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	Dialog,
 	Popover,
 	SelectList,

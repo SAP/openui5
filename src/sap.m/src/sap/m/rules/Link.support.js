@@ -4,8 +4,8 @@
 /**
  * Defines support rules of the Link control of sap.m library.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define(["sap/ui/support/library"],
+	function(SupportLib) {
 	"use strict";
 
 	// shortcuts

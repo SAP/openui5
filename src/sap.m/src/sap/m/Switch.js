@@ -4,22 +4,22 @@
 
 // Provides control sap.m.Switch.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/theming/Parameters',
-	'./SwitchRenderer'
+	'./SwitchRenderer',
+	"sap/base/assert"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	EnabledPropagator,
 	IconPool,
 	Parameters,
-	SwitchRenderer
+	SwitchRenderer,
+	assert
 	) {
 		"use strict";
 
@@ -331,7 +331,7 @@ function(
 
 			// only process single touches (only the first active touch point),
 			// the active touch has to be in the list of touches
-			jQuery.sap.assert(fnTouch.find(oEvent.touches, this._iActiveTouchId), "missing touchend");
+			assert(fnTouch.find(oEvent.touches, this._iActiveTouchId), "missing touchend");
 
 			// find the active touch point
 			oTouch = fnTouch.find(oEvent.changedTouches, this._iActiveTouchId);
@@ -372,8 +372,7 @@ function(
 			oEvent.setMarked();
 
 			var oTouch,
-				fnTouch = touch,
-				assert = jQuery.sap.assert;
+				fnTouch = touch;
 
 			if (!this.getEnabled() ||
 

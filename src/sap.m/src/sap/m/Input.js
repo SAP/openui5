@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Input.
 sap.ui.define([
-	'jquery.sap.global',
 	'./Bar',
 	'./Dialog',
 	'./InputBase',
@@ -25,10 +24,10 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Control',
 	'./InputRenderer',
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/assert"
 ],
 function(
-	jQuery,
 	Bar,
 	Dialog,
 	InputBase,
@@ -49,7 +48,8 @@ function(
 	ResizeHandler,
 	Control,
 	InputRenderer,
-	containsOrEquals
+	containsOrEquals,
+	assert
 ) {
 	"use strict";
 
@@ -415,7 +415,7 @@ function(
 		var index;
 
 		while (sText) {
-			if ((typeof sValue == "string" && sValue != "" ? sText.toLowerCase().startsWith(sValue.toLowerCase()) : false)) {
+			if (typeof sValue === "string" && sValue !== "" && sText.toLowerCase().startsWith(sValue.toLowerCase())) {
 				return true;
 			}
 
@@ -1061,7 +1061,7 @@ function(
 			return this;
 		}
 		// set custom function
-		jQuery.sap.assert(typeof (fnFilter) === "function", "Input.setFilterFunction: first argument fnFilter must be a function on " + this);
+		assert(typeof (fnFilter) === "function", "Input.setFilterFunction: first argument fnFilter must be a function on " + this);
 		this._fnFilter = fnFilter;
 		return this;
 	};
@@ -1084,7 +1084,7 @@ function(
 			return this;
 		}
 		// set custom function
-		jQuery.sap.assert(typeof (fnFilter) === "function", "Input.setRowResultFunction: first argument fnFilter must be a function on " + this);
+		assert(typeof (fnFilter) === "function", "Input.setRowResultFunction: first argument fnFilter must be a function on " + this);
 		this._fnRowResultFilter = fnFilter;
 
 		sSelectedRow = this.getSelectedRow();

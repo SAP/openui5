@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Link.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/InvisibleText',
@@ -12,10 +11,10 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./LinkRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	InvisibleText,
@@ -23,7 +22,8 @@ function(
 	coreLibrary,
 	Device,
 	LinkRenderer,
-	KeyCodes
+	KeyCodes,
+	Log
 ) {
 	"use strict";
 
@@ -320,7 +320,7 @@ function(
 
 		if (!bIsValid) {
 			this.$().removeAttr("href");
-			jQuery.sap.log.warning(this + ": The href tag of the link was not set since it's not valid.");
+			Log.warning(this + ": The href tag of the link was not set since it's not valid.");
 			return this;
 		}
 

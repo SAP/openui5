@@ -4,7 +4,6 @@
 
 // Provides control sap.m.TimePicker.
 sap.ui.define([
-	'jquery.sap.global',
 	'./InputBase',
 	'./DateTimeField',
 	'./MaskInputRule',
@@ -19,10 +18,10 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/core/LocaleData',
 	'./TimePickerRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	InputBase,
 	DateTimeField,
 	MaskInputRule,
@@ -37,7 +36,8 @@ function(
 	library,
 	LocaleData,
 	TimePickerRenderer,
-	KeyCodes
+	KeyCodes,
+	Log
 ) {
 		"use strict";
 
@@ -559,7 +559,7 @@ function(
 
 			if (!oDate) {
 				this._bValid = false;
-				jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+				Log.warning("Value can not be converted to a valid date", this);
 			} else {
 				this._bValid = true;
 				this.setProperty("dateValue", oDate, true); // no rerendering
@@ -659,7 +659,7 @@ function(
 					TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue);
 				if (!oDate) {
 					this._bValid = false;
-						jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+						Log.warning("Value can not be converted to a valid date", this);
 					}
 				}
 
@@ -1000,7 +1000,7 @@ function(
 			if (oPicker) {
 				oPicker.close();
 			} else {
-				jQuery.sap.log.warning("There is no picker to close.");
+				Log.warning("There is no picker to close.");
 			}
 
 			return oPicker;

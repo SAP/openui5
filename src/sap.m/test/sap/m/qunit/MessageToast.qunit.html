@@ -32,6 +32,8 @@
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
+			var Log = sap.ui.require("sap/base/Log");
+
 			var getBoxSizing = function($DomRef) {
 				return $DomRef.css("box-sizing") || $DomRef.css("-webkit-box-sizing") || $DomRef.css("-moz-box-sizing");
 			};
@@ -77,15 +79,16 @@
 
 			var isFiniteInteger = function(sTestName, vValue) {
 				QUnit.test(sTestName, function(assert) {
+					assert.ok(Log, "Log module should be available");
 
 					// arrange
-					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = sinon.spy(Log, "error");
 
 					// act
 					sap.m.MessageToast._isFiniteInteger(vValue);
 
 					// assert
-					assert.ok(fnErrorSpy.calledOnce, '"duration" needs to be a finite positive nonzero integer, jQuery.sap.log.error() method must be called exactly once');
+					assert.ok(fnErrorSpy.calledOnce, '"duration" needs to be a finite positive nonzero integer, Log.error() method must be called exactly once');
 
 					// cleanup
 					fnErrorSpy.restore();
@@ -106,9 +109,10 @@
 			/* ------------------------------ */
 
 			QUnit.test("width", function(assert) {
+				assert.ok(Log, "Log module should be available");
 
 				// arrange
-				var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				var fnErrorSpy = sinon.spy(Log, "error");
 
 				// act
 				sap.m.MessageToast._validateWidth("16");
@@ -126,9 +130,10 @@
 
 			var isDockPosition = function(sTestName, vValue, iNumberOfErrors) {
 				QUnit.test(sTestName, function(assert) {
+					assert.ok(Log, "Log module should be available");
 
 					// arrange
-					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = sinon.spy(Log, "error");
 
 					// act
 					sap.m.MessageToast._validateDockPosition(vValue);
@@ -164,9 +169,10 @@
 
 			var isValidOf = function(sTestName, vValue, iNumberOfErrors) {
 				QUnit.test(sTestName, function(assert) {
+					assert.ok(Log, "Log module should be available");
 
 					// arrange
-					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = sinon.spy(Log, "error");
 
 					// act
 					sap.m.MessageToast._validateOf(vValue);
@@ -193,9 +199,10 @@
 			/* ------------------------------ */
 
 			QUnit.test("offset", function(assert) {
+				assert.ok(Log, "Log module should be available");
 
 				// arrange
-				var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				var fnErrorSpy = sinon.spy(Log, "error");
 
 				// act
 				sap.m.MessageToast._validateOffset(50);
@@ -213,9 +220,10 @@
 
 			var isValidCollision = function(sTestName, vValue, iNumberOfErrors) {
 				QUnit.test(sTestName, function(assert) {
+					assert.ok(Log, "Log module should be available");
 
 					// arrange
-					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = sinon.spy(Log, "error");
 
 					// act
 					sap.m.MessageToast._validateCollision(vValue);
@@ -249,9 +257,10 @@
 
 			var isValidOnCloseFn = function (sTestName, vValue, iNumberOfErrors) {
 				QUnit.test(sTestName, function(assert) {
+					assert.ok(Log, "Log module should be available");
 
 					// arrange
-					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = sinon.spy(Log, "error");
 
 					// act
 					sap.m.MessageToast._validateOnClose(vValue);
@@ -274,9 +283,10 @@
 
 			var isValidAutoCloseValue = function(sTestName, vValue, iNumberOfErrors) {
 				QUnit.test(sTestName, function(assert) {
+					assert.ok(Log, "Log module should be available");
 
 					// arrange
-					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = sinon.spy(Log, "error");
 
 					// act
 					sap.m.MessageToast._validateAutoClose(vValue);
@@ -299,9 +309,10 @@
 
 			var isValidAnimationTimingFunction = function(sTestName, vValue, iNumberOfErrors) {
 				QUnit.test(sTestName, function(assert) {
+					assert.ok(Log, "Log module should be available");
 
 					// arrange
-					var fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = sinon.spy(Log, "error");
 
 					// act
 					sap.m.MessageToast._validateAnimationTimingFunction(vValue);

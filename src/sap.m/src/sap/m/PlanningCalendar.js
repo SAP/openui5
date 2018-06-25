@@ -4,7 +4,6 @@
 
 //Provides control sap.m.PlanningCalendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/unified/library',
@@ -37,9 +36,9 @@ sap.ui.define([
 	'sap/m/PlanningCalendarRow',
 	'sap/m/PlanningCalendarRenderer',
 	'sap/m/library',
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	Control,
 	ManagedObjectObserver,
 	unifiedLibrary,
@@ -72,7 +71,8 @@ sap.ui.define([
 	PlanningCalendarRow,
 	PlanningCalendarRenderer,
 	library,
-	deepEqual
+	deepEqual,
+	Log
 ) {
 	"use strict";
 
@@ -830,12 +830,12 @@ sap.ui.define([
 
 		var oMinDate = this.getMinDate();
 		if (oMinDate && oMinDate.getTime() > oStartDate.getTime()) {
-			jQuery.sap.log.warning("StartDate < minDate -> StartDate set to minDate", this);
+			Log.warning("StartDate < minDate -> StartDate set to minDate", this);
 			oStartDate = new Date(oMinDate.getTime());
 		} else {
 			var oMaxDate = this.getMaxDate();
 			if (oMaxDate && oMaxDate.getTime() < oStartDate.getTime()) {
-				jQuery.sap.log.warning("StartDate > maxDate -> StartDate set to minDate", this);
+				Log.warning("StartDate > maxDate -> StartDate set to minDate", this);
 				if (oMinDate) {
 					oStartDate = new Date(oMinDate.getTime());
 				} else {
@@ -892,7 +892,7 @@ sap.ui.define([
 			}, this);
 
 			if (oMaxDate && oMaxDate.getTime() < oDate.getTime()) {
-				jQuery.sap.log.warning("minDate > maxDate -> maxDate set to end of the month", this);
+				Log.warning("minDate > maxDate -> maxDate set to end of the month", this);
 				oMaxDate = new Date(oDate.getTime());
 				oMaxDate.setMonth(oMaxDate.getMonth() + 1, 0);
 				oMaxDate.setHours(23);
@@ -905,7 +905,7 @@ sap.ui.define([
 			this._bNoStartDateChange = undefined;
 			var oStartDate = this.getStartDate();
 			if (oStartDate && oStartDate.getTime() < oDate.getTime()) {
-				jQuery.sap.log.warning("StartDate < minDate -> StartDate set to minDate", this);
+				Log.warning("StartDate < minDate -> StartDate set to minDate", this);
 				oStartDate = new Date(oDate.getTime());
 				this.setStartDate(oStartDate);
 			}
@@ -954,7 +954,7 @@ sap.ui.define([
 			}, this);
 
 			if (oMinDate && oMinDate.getTime() > oDate.getTime()) {
-				jQuery.sap.log.warning("maxDate < minDate -> maxDate set to begin of the month", this);
+				Log.warning("maxDate < minDate -> maxDate set to begin of the month", this);
 				oMinDate = new Date(oDate.getTime());
 				oMinDate.setDate(1);
 				oMinDate.setHours(0);
@@ -967,7 +967,7 @@ sap.ui.define([
 			this._bNoStartDateChange = undefined;
 			var oStartDate = this.getStartDate();
 			if (oStartDate && oStartDate.getTime() > oDate.getTime()) {
-				jQuery.sap.log.warning("StartDate > maxDate -> StartDate set to minDate", this);
+				Log.warning("StartDate > maxDate -> StartDate set to minDate", this);
 				if (oMinDate) {
 					oStartDate = new Date(oMinDate.getTime());
 				} else {
@@ -2295,7 +2295,7 @@ sap.ui.define([
 							intervalsL: 31
 						}));
 				default:
-					jQuery.sap.log.error("Cannot get PlanningCalendar views. Invalid view key " + sViewKey);
+					Log.error("Cannot get PlanningCalendar views. Invalid view key " + sViewKey);
 					break;
 			}
 		}, this);
@@ -2354,7 +2354,7 @@ sap.ui.define([
 
 			this._fnCustomSortedAppointments = fnSorter;
 		} else {
-			jQuery.sap.log.warning("Your custom sort function won't be used, but the old one will be preserved.", this);
+			Log.warning("Your custom sort function won't be used, but the old one will be preserved.", this);
 		}
 		return this;
 	};
@@ -2629,7 +2629,7 @@ sap.ui.define([
 			if (oLegend) {
 				aTypes = oLegend.getAppointmentItems ? oLegend.getAppointmentItems() : oLegend.getItems();
 			} else {
-				jQuery.sap.log.error("PlanningCalendarLegend with id '" + sLegendId + "' does not exist!", oTimeline);
+				Log.error("PlanningCalendarLegend with id '" + sLegendId + "' does not exist!", oTimeline);
 			}
 		}
 		return aTypes;

@@ -4,14 +4,14 @@
 
 // Provides control sap.m.ObjectAttribute.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/m/Text',
-	'./ObjectAttributeRenderer'
+	'./ObjectAttributeRenderer',
+	"sap/base/Log"
 ],
-function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
+function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -207,7 +207,7 @@ function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 	 */
 	ObjectAttribute.prototype._isEmpty = function() {
 		if (this.getAggregation('customContent') && !(this.getAggregation('customContent') instanceof sap.m.Link || this.getAggregation('customContent') instanceof Text)) {
-			jQuery.sap.log.warning("Only sap.m.Link or sap.m.Text are allowed in \"sap.m.ObjectAttribute.customContent\" aggregation");
+			Log.warning("Only sap.m.Link or sap.m.Text are allowed in \"sap.m.ObjectAttribute.customContent\" aggregation");
 			return true;
 		}
 

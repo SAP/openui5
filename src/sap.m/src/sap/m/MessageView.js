@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"./MessageViewRenderer",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ], function(
 	jQuery,
 	Control,
@@ -51,7 +52,8 @@ sap.ui.define([
 	ManagedObject,
 	MessageViewRenderer,
 	jQueryDOM,
-	KeyCodes
+	KeyCodes,
+	Log
 ) {
 	"use strict";
 
@@ -247,7 +249,7 @@ sap.ui.define([
 					},
 					error: function () {
 						var sError = "A request has failed for long text data. URL: " + sLongTextUrl;
-						jQuery.sap.log.error(sError);
+						Log.error(sError);
 						config.promise.reject(sError);
 					}
 				});
@@ -744,7 +746,7 @@ sap.ui.define([
 			case MessageType.None:
 				return ValueState.None;
 			default:
-				jQuery.sap.log.warning("The provided MessageType is not mapped to a specific ValueState", sType);
+				Log.warning("The provided MessageType is not mapped to a specific ValueState", sType);
 				return null;
 		}
 	};
@@ -921,7 +923,7 @@ sap.ui.define([
 			return sUrl;
 		}
 
-		jQuery.sap.log.warning("You have entered invalid URL");
+		Log.warning("You have entered invalid URL");
 
 		return "";
 	};
@@ -1027,9 +1029,9 @@ sap.ui.define([
 						var $link = jQueryDOM(document.getElementById("sap-ui-" + that.getId() + "-link-under-validation-" + result.id));
 
 						if (result.allowed) {
-							jQuery.sap.log.info("Allow link " + href);
+							Log.info("Allow link " + href);
 						} else {
-							jQuery.sap.log.info("Disallow link " + href);
+							Log.info("Disallow link " + href);
 						}
 
 						// Adapt the link style
@@ -1039,7 +1041,7 @@ sap.ui.define([
 						that.fireUrlValidated();
 					})
 					.catch(function () {
-						jQuery.sap.log.warning("Async URL validation could not be performed.");
+						Log.warning("Async URL validation could not be performed.");
 					});
 			}
 
@@ -1053,7 +1055,9 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._sanitizeDescription = function (oMessageItem) {
+		//TODO: global jquery call found
 		jQuery.sap.require("jquery.sap.encoder");
+		//TODO: global jquery call found
 		jQuery.sap.require("sap.ui.thirdparty.caja-html-sanitizer");
 		var sDescription = oMessageItem.getDescription();
 
@@ -1107,7 +1111,7 @@ sap.ui.define([
 			oPromise
 				.then(proceed)
 				.catch(function () {
-					jQuery.sap.log.warning("Async description loading could not be performed.");
+					Log.warning("Async description loading could not be performed.");
 					proceed();
 				});
 

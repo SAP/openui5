@@ -109,6 +109,7 @@
 	ShellRenderer.getLogoImageHtml = function(oControl) {
 		var sImage = oControl.getLogo(); // configured logo
 		if (!sImage) {
+			//TODO: global jquery call found
 			jQuery.sap.require("sap.ui.core.theming.Parameters");
 			sImage = sap.ui.core.theming.Parameters._getThemeImage(); // theme logo
 		}

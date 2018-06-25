@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.Image
-sap.ui.define(['jquery.sap.global', 'sap/m/library'],
-	function(jQuery, library) {
+sap.ui.define(['sap/m/library'],
+	function(library) {
 	"use strict";
 
 	// shortcut for sap.m.ImageMode

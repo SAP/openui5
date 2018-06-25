@@ -22,6 +22,7 @@
 		<script>
 
 			jQuery.sap.require("sap.ui.model.FilterOperator");
+			var Log = sap.ui.require("sap/base/Log");
 			sinon.config.useFakeTimers = false;
 
 			/* definition of a custom control */
@@ -419,7 +420,8 @@
 			});
 
 			QUnit.test("setSelectedSortItem via string key throws error if the key is wrong, but does not prevent dialog open", function (assert) {
-				var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error"),
+				assert.ok(Log, "Log module should be available");
+				var oErrorLogSpy = sinon.spy(Log, "error"),
 					sErrorMessage,
 					sNonExistentItemKey = "non_existent_key";
 
@@ -436,11 +438,12 @@
 				assert.ok(this.oVSD._getDialog().isOpen(), "Dialog is still functional");
 
 				//clean
-				jQuery.sap.log.error.restore();
+				Log.error.restore();
 			});
 
 			QUnit.test("setSelectedSortItem does not throw error if the item is null or undefined", function (assert) {
-				var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error");
+				assert.ok(Log, "Log module should be available");
+				var oErrorLogSpy = sinon.spy(Log, "error");
 
 				//act
 				this.oVSD.setSelectedSortItem(undefined);
@@ -448,7 +451,7 @@
 				assert.strictEqual(oErrorLogSpy.callCount, 0, "setSelectedSortItem does not throw an error.");
 
 				//clean
-				jQuery.sap.log.error.restore();
+				Log.error.restore();
 			});
 
 			QUnit.test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function (assert) {

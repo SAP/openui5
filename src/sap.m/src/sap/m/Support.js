@@ -238,10 +238,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 					return dialog;
 				}
 
+				//TODO: global jquery call found
 				$.sap.require("sap.m.Dialog");
+				//TODO: global jquery call found
 				$.sap.require("sap.m.Button");
+				//TODO: global jquery call found
 				$.sap.require("sap.ui.core.HTML");
+				//TODO: global jquery call found
 				$.sap.require("sap.m.MessageToast");
+				//TODO: global jquery call found
 				$.sap.require("sap.ui.core.support.trace.E2eTraceLib");
 
 				dialog = new sap.m.Dialog({

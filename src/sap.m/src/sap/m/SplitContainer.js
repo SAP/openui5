@@ -4,7 +4,6 @@
 
 // Provides control sap.m.SplitContainer.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
@@ -15,10 +14,10 @@ sap.ui.define([
 	'sap/m/NavContainer',
 	'sap/m/Popover',
 	'./SplitContainerRenderer',
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	IconPool,
@@ -29,7 +28,8 @@ function(
 	NavContainer,
 	Popover,
 	SplitContainerRenderer,
-	containsOrEquals
+	containsOrEquals,
+	Log
 ) {
 	"use strict";
 
@@ -1588,7 +1588,7 @@ function(
 
 	SplitContainer.prototype.setBackgroundOpacity = function(fOpacity) {
 		if (fOpacity > 1 || fOpacity < 0) {
-			jQuery.sap.log.warning("Invalid value " + fOpacity + " for SplitContainer.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+			Log.warning("Invalid value " + fOpacity + " for SplitContainer.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
 			return this;
 		}
 		this.$("BG").css("opacity", fOpacity);

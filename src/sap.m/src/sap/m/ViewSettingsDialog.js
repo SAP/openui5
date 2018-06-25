@@ -4,7 +4,6 @@
 
 // Provides control sap.m.ViewSettingsDialog.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
@@ -17,10 +16,10 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
-	'./ViewSettingsDialogRenderer'
+	'./ViewSettingsDialogRenderer',
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	IconPool,
@@ -33,7 +32,8 @@ function(
 	EventProvider,
 	Device,
 	InvisibleText,
-	ViewSettingsDialogRenderer
+	ViewSettingsDialogRenderer,
+	Log
 ) {
 	"use strict";
 
@@ -1351,7 +1351,7 @@ function(
 
 				// skip if we don't have an item with this key
 				if (oFilterItem === null) {
-					jQuery.sap.log.warning('Cannot set state for key "' + sKey
+					Log.warning('Cannot set state for key "' + sKey
 					+ '" because there is no filter with these keys');
 					continue;
 				}
@@ -1398,7 +1398,7 @@ function(
 			var oParentItem = fnGetSelectedItemFromFilterKey(aFilterItems, oSelectedFilterKeys, sParentKey);
 
 			if (!oParentItem) {
-				jQuery.sap.log.warning('No filter with key "' + sParentKey);
+				Log.warning('No filter with key "' + sParentKey);
 				continue;
 			}
 
@@ -1413,7 +1413,7 @@ function(
 					var oItem = fnGetSelectedItemFromFilterKey(aSubFilterItems, oSelectedSubFilterKeys, sKey);
 
 					if (!oItem) {
-						jQuery.sap.log.warning('No filter with key "' + sKey);
+						Log.warning('No filter with key "' + sKey);
 						continue;
 					}
 
@@ -1616,7 +1616,7 @@ function(
 							}
 						}
 					}
-					jQuery.sap.log.info('press event segmented: '
+					Log.info('press event segmented: '
 					+ oEvent.getParameter('id'));
 				}
 			}).addStyleClass("sapMVSDSeg");
@@ -2251,7 +2251,7 @@ function(
 			// use the first valid page as default page id
 			sDefaultPageId = aValidPageIds[0];
 		} else {
-			jQuery.sap.log.warning('No available pages to load - missing items.');
+			Log.warning('No available pages to load - missing items.');
 		}
 
 		// if no specific page id is wanted give a default one
@@ -2331,7 +2331,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._isValidPredefinedPageId = function (sName) {
 		if (!sName) {
-			jQuery.sap.log.warning('Missing mandatory parameter.');
+			Log.warning('Missing mandatory parameter.');
 			return false;
 		}
 
@@ -2892,7 +2892,7 @@ function(
 			oItem = getViewSettingsItemByKey(aViewSettingsItems, vItemOrKey);
 
 			if (!oItem) {
-				jQuery.sap.log.error(sErrorMessage);
+				Log.error(sErrorMessage);
 			}
 		} else {
 			oItem = vItemOrKey;
@@ -3158,7 +3158,7 @@ function(
 				break;
 			default:
 				//warning when operator has been given but it doesn't match a value from sap.m.StringFilterOperator enum
-				jQuery.sap.log.warning("Unknown string compare operator. Use values from sap.m.StringFilterOperator. Default operator should be used.");
+				Log.warning("Unknown string compare operator. Use values from sap.m.StringFilterOperator. Default operator should be used.");
 				this.fnOperator = fnContains;
 				break;
 		}

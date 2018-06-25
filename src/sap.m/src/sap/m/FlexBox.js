@@ -4,7 +4,6 @@
 
 // Provides control sap.m.FlexBox.
 sap.ui.define([
-	'jquery.sap.global',
 	'./FlexBoxStylingHelper',
 	'./FlexItemData',
 	'./library',
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	FlexBoxStylingHelper,
 	FlexItemData,
 	library,

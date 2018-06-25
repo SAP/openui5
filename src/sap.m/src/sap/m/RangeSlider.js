@@ -2,23 +2,21 @@
  * ${copyright}
  */
 sap.ui.define([
-    "jquery.sap.global",
-    "sap/ui/core/InvisibleText",
-    "sap/base/Log",
-    "./Slider",
-    "./SliderTooltip",
-    "./SliderUtilities",
-    "./RangeSliderRenderer"
+	"sap/ui/core/InvisibleText",
+	"sap/base/Log",
+	"./Slider",
+	"./SliderTooltip",
+	"./SliderUtilities",
+	"./RangeSliderRenderer"
 ],
     function(
-    jQuery,
-    InvisibleText,
-    log,
-    Slider,
-    SliderTooltip,
-    SliderUtilities,
-    RangeSliderRenderer
-    ) {
+		InvisibleText,
+		log,
+		Slider,
+		SliderTooltip,
+		SliderUtilities,
+		RangeSliderRenderer
+	) {
         "use strict";
 
         /**

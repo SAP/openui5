@@ -2,14 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/m/library',
 	'sap/ui/Device',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log"
 ],
-	function(jQuery, Control, coreLibrary, library, Device, jQueryDOM) {
+	function(Control, coreLibrary, library, Device, jQueryDOM, Log) {
 	"use strict";
 
 
@@ -247,7 +247,7 @@ sap.ui.define([
 					if (aStatuses[i] instanceof sap.m.ObjectStatus || aStatuses[i] instanceof sap.m.ProgressIndicator) {
 						aVisibleStatuses.push([aStatuses[i]]);
 					} else {
-						jQuery.sap.log.warning("Only sap.m.ObjectStatus or sap.m.ProgressIndicator are allowed in \"sap.m.ObjectHeader.statuses\" aggregation." + " Current object is "
+						Log.warning("Only sap.m.ObjectStatus or sap.m.ProgressIndicator are allowed in \"sap.m.ObjectHeader.statuses\" aggregation." + " Current object is "
 								+ aStatuses[i].constructor.getMetadata().getName() + " with id \"" + aStatuses[i].getId() + "\"");
 					}
 				}
@@ -833,7 +833,7 @@ sap.ui.define([
 		if (!oOH.getTitle()) {
 			 //if value is set through data binding, there is time delay and fake warning will be logged, so set warning only if not data binding
 			if (!oOH.getBinding("title")) {
-				jQuery.sap.log.warning("The title shouldn't be empty!");
+				Log.warning("The title shouldn't be empty!");
 			}
 		}
 	};
@@ -1212,7 +1212,7 @@ sap.ui.define([
 				// render the header container
 				this._renderChildControl(oRM, oControl, oHeaderContainer);
 			} else {
-				jQuery.sap.log.warning("The control " + oHeaderContainer + " is not supported for aggregation \"headerContainer\"");
+				Log.warning("The control " + oHeaderContainer + " is not supported for aggregation \"headerContainer\"");
 			}
 		}
 		oRM.write("</div>");

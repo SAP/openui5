@@ -4,13 +4,12 @@
 
 // Provides control sap.m.Image.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'./ImageRenderer',
 	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, ImageRenderer, KeyCodes) {
+	function(library, Control, ImageRenderer, KeyCodes) {
 	"use strict";
 
 

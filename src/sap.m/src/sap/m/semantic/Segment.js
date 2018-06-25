@@ -10,7 +10,7 @@
  */
 
 // Provides class sap.m.semantic.Segment
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Metadata) {
+sap.ui.define(['sap/ui/base/Metadata', "sap/base/Log"], function(Metadata, Log) {
 	"use strict";
 
 	/**
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'], function(jQuery, Me
 
 		constructor : function(aContent, oContainer, sContainerAggregationName, fnSortFunction) {
 			if (!oContainer) {
-				jQuery.sap.log.error("missing argumment: constructor expects a container reference", this);
+				Log.error("missing argumment: constructor expects a container reference", this);
 				return;
 			}
 

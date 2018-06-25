@@ -4,22 +4,22 @@
 
 // Provides control sap.m.TileContainer.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
-	'./TileContainerRenderer'
+	'./TileContainerRenderer',
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	IconPool,
 	Device,
 	ResizeHandler,
-	TileContainerRenderer
+	TileContainerRenderer,
+	Log
 	) {
 	"use strict";
 
@@ -785,7 +785,7 @@ function(
 		}
 
 		if (!vTile) {
-			jQuery.sap.log.info("No Tile to move");
+			Log.info("No Tile to move");
 			return this;
 		}
 
@@ -1436,7 +1436,7 @@ function(
 		var iCurrentPage = Math.floor(iIndex / this._iMaxTiles || 0);
 		this._iCurrentTileStartIndex = iCurrentPage * (this._iMaxTiles || 0);
 
-		jQuery.sap.log.info("current index " + this._iCurrentTileStartIndex);
+		Log.info("current index " + this._iCurrentTileStartIndex);
 	};
 
 	/**

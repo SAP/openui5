@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Tokenizer.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/delegate/ScrollEnablement',
@@ -13,10 +12,10 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./TokenizerRenderer',
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		ScrollEnablement,
@@ -25,7 +24,8 @@ sap.ui.define([
 		ResizeHandler,
 		TokenizerRenderer,
 		containsOrEquals,
-		KeyCodes
+		KeyCodes,
+		Log
 	) {
 	"use strict";
 
@@ -389,7 +389,7 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.setPixelWidth = function(nWidth) {
 		if (typeof nWidth !== "number") {
-			jQuery.sap.log.warning("Tokenizer.setPixelWidth called with invalid parameter. Expected parameter of type number.");
+			Log.warning("Tokenizer.setPixelWidth called with invalid parameter. Expected parameter of type number.");
 			return;
 		}
 
@@ -1505,8 +1505,8 @@ sap.ui.define([
 				oRange.selectNodeContents(this.getDomRef("clip"));
 				oSelection.addRange(oRange);
 			}
-			if (window.clipboardData && document.activeElement.id == this.getId() + "-clip") {
-				jQuery.sap.focus(oFocusRef.id == this.getId() + "-clip" ? this.getDomRef() : oFocusRef);
+			if (window.clipboardData && oFocusRef.id == this.getId() + "-clip" && this.getDomRef()) {
+				this.getDomRef().focus();
 			}
 		}
 	};

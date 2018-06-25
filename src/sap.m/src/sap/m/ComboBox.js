@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./Popover',
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 	function(
-		jQuery,
 		ComboBoxTextField,
 		ComboBoxBase,
 		Popover,

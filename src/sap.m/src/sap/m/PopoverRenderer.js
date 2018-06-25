@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/m/library',
 	"sap/ui/dom/getScrollbarSize"
 ],
-	function(jQuery, Device, library, getScrollbarSize) {
+	function(Device, library, getScrollbarSize) {
 		"use strict";
 
 		// shortcut for sap.m.PlacementType

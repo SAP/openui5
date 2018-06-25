@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
@@ -11,10 +10,10 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/Icon',
 	'./HeaderContainerRenderer',
+	"sap/base/Log",
 	'jquery.sap.events'
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	Device,
@@ -22,7 +21,8 @@ function(
 	coreLibrary,
 	ManagedObject,
 	Icon,
-	HeaderContainerRenderer
+	HeaderContainerRenderer,
+	Log
 	) {
 		"use strict";
 
@@ -263,10 +263,10 @@ function(
 
 		HeaderContainer.prototype.onBeforeRendering = function () {
 			if (!this.getHeight()) {
-				jQuery.sap.log.warning("No height provided", this);
+				Log.warning("No height provided", this);
 			}
 			if (!this.getWidth()) {
-				jQuery.sap.log.warning("No width provided", this);
+				Log.warning("No width provided", this);
 			}
 			if (Device.system.desktop) {
 				this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");

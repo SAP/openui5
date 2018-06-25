@@ -4,7 +4,6 @@
 
 // Provides control sap.m.OverflowToolbar.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/m/ToggleButton",
 	"sap/ui/core/InvisibleText",
@@ -15,9 +14,9 @@ sap.ui.define([
 	"sap/m/OverflowToolbarAssociativePopoverControls",
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
-	"./OverflowToolbarRenderer"
+	"./OverflowToolbarRenderer",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	library,
 	ToggleButton,
 	InvisibleText,
@@ -28,7 +27,8 @@ sap.ui.define([
 	OverflowToolbarAssociativePopoverControls,
 	IconPool,
 	Device,
-	OverflowToolbarRenderer
+	OverflowToolbarRenderer,
+	Log
 ) {
 	"use strict";
 
@@ -205,7 +205,7 @@ sap.ui.define([
 
 		// If the theme is not applied, control widths should not be measured and cached
 		if (!oCore.isThemeApplied()) {
-			jQuery.sap.log.debug("OverflowToolbar: theme not applied yet, skipping calculations", this);
+			Log.debug("OverflowToolbar: theme not applied yet, skipping calculations", this);
 			return;
 		}
 

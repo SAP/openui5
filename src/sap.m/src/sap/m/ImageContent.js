@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Image',
@@ -12,7 +11,6 @@ sap.ui.define([
 	'./ImageContentRenderer',
 	"sap/ui/events/KeyCodes"
 ], function(
-	jQuery,
 	library,
 	Control,
 	Image,

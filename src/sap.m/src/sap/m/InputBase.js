@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	EnabledPropagator,

@@ -4,14 +4,14 @@
 
 // Provides control sap.m.RatingIndicator.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/theming/Parameters',
 	'./RatingIndicatorRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
-	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer, KeyCodes) {
+	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log) {
 	"use strict";
 
 
@@ -203,12 +203,12 @@ sap.ui.define([
 
 		// check for valid numbers
 		if (isNaN(fValue)) {
-			jQuery.sap.log.warning('Ignored new rating value "' + fValue + '" because it is NAN');
+			Log.warning('Ignored new rating value "' + fValue + '" because it is NAN');
 
 		// check if the number is in the range 0-maxValue (only if control is rendered)
 		// if control is not rendered it is handled by onBeforeRendering()
 		} else if (this.$().length && (fValue > this.getMaxValue())) {
-			jQuery.sap.log.warning('Ignored new rating value "' + fValue + '" because it is out  of range (0-' + this.getMaxValue() + ')');
+			Log.warning('Ignored new rating value "' + fValue + '" because it is out  of range (0-' + this.getMaxValue() + ')');
 		} else {
 			fValue = this._roundValueToVisualMode(fValue);
 			this.setProperty("value", fValue, true);
@@ -265,10 +265,10 @@ sap.ui.define([
 
 		if (fVal > iMVal) {
 			this.setValue(iMVal);
-			jQuery.sap.log.warning("Set value to maxValue because value is > maxValue (" + fVal + " > " + iMVal + ").");
+			Log.warning("Set value to maxValue because value is > maxValue (" + fVal + " > " + iMVal + ").");
 		} else if (fVal < 0) {
 			this.setValue(0);
-			jQuery.sap.log.warning("Set value to 0 because value is < 0 (" + fVal + " < 0).");
+			Log.warning("Set value to 0 because value is < 0 (" + fVal + " < 0).");
 		}
 
 		if (this.getIconSize()) {
@@ -425,7 +425,7 @@ sap.ui.define([
 			$SelectedDiv.show();
 		}
 
-		jQuery.sap.log.debug("Updated rating UI with value " + fValue + " and hover mode " + bHover);
+		Log.debug("Updated rating UI with value " + fValue + " and hover mode " + bHover);
 	};
 
 	/**
@@ -595,7 +595,7 @@ sap.ui.define([
 				}
 				break;
 			default:
-				jQuery.sap.log.warning("VisualMode not supported", sVisualMode);
+				Log.warning("VisualMode not supported", sVisualMode);
 		}
 
 		return fStep;

@@ -4,7 +4,6 @@
 
 // Provides control sap.m.MessagePage.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
@@ -16,7 +15,6 @@ sap.ui.define([
 	'sap/m/FormattedText',
 	'./MessagePageRenderer'
 ], function(
-	jQuery,
 	library,
 	coreLibrary,
 	Control,

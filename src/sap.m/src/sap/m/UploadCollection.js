@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/m/library",
 	"sap/m/MessageBox",
@@ -32,9 +31,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./UploadCollectionRenderer",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	Library,
 	MobileLibrary,
 	MessageBox,
@@ -63,7 +62,8 @@ sap.ui.define([
 	Device,
 	UploadCollectionRenderer,
 	jQueryDOM,
-	KeyCodes
+	KeyCodes,
+	Log
 ) {
 	"use strict";
 
@@ -102,10 +102,10 @@ sap.ui.define([
 			}
 			if (mSettings && mSettings.mode === Library.ListMode.MultiSelect && bInstantUpload === false) {
 				mSettings.mode = Library.ListMode.None;
-				jQuery.sap.log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Upload Pending scenario. Value has been resetted to 'None'");
+				Log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Upload Pending scenario. Value has been resetted to 'None'");
 			} else if (sId && sId.mode === Library.ListMode.MultiSelect && bInstantUpload === false) {
 				sId.mode = Library.ListMode.None;
-				jQuery.sap.log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Upload Pending scenario. Value has been resetted to 'None'");
+				Log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Upload Pending scenario. Value has been resetted to 'None'");
 			}
 			try {
 				Control.apply(this, arguments);
@@ -666,7 +666,7 @@ sap.ui.define([
 			return this;
 		}
 		if (!this.getInstantUpload()) {
-			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change fileType at runtime.");
+			Log.info("As property instantUpload is false it is not allowed to change fileType at runtime.");
 		} else {
 			var cLength = aFileTypes.length;
 			for (var i = 0; i < cLength; i++) {
@@ -683,7 +683,7 @@ sap.ui.define([
 
 	UploadCollection.prototype.setMaximumFilenameLength = function(iMaximumFilenameLength) {
 		if (!this.getInstantUpload()) {
-			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change maximumFilenameLength at runtime.");
+			Log.info("As property instantUpload is false it is not allowed to change maximumFilenameLength at runtime.");
 		} else if (this.getMaximumFilenameLength() !== iMaximumFilenameLength) {
 			this.setProperty("maximumFilenameLength", iMaximumFilenameLength, true);
 			this._getFileUploader().setMaximumFilenameLength(iMaximumFilenameLength);
@@ -693,7 +693,7 @@ sap.ui.define([
 
 	UploadCollection.prototype.setMaximumFileSize = function(iMaximumFileSize) {
 		if (!this.getInstantUpload()) {
-			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change maximumFileSize at runtime.");
+			Log.info("As property instantUpload is false it is not allowed to change maximumFileSize at runtime.");
 		} else if (this.getMaximumFileSize() !== iMaximumFileSize) {
 			this.setProperty("maximumFileSize", iMaximumFileSize, true);
 			this._getFileUploader().setMaximumFileSize(iMaximumFileSize);
@@ -703,7 +703,7 @@ sap.ui.define([
 
 	UploadCollection.prototype.setMimeType = function(aMimeTypes) {
 		if (!this.getInstantUpload()) {
-			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change mimeType at runtime.");
+			Log.info("As property instantUpload is false it is not allowed to change mimeType at runtime.");
 		} else if (this.getMimeType() !== aMimeTypes) {
 			this.setProperty("mimeType", aMimeTypes, true);
 			this._getFileUploader().setMimeType(aMimeTypes);
@@ -713,7 +713,7 @@ sap.ui.define([
 
 	UploadCollection.prototype.setMultiple = function(bMultiple) {
 		if (!this.getInstantUpload()) {
-			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change multiple at runtime.");
+			Log.info("As property instantUpload is false it is not allowed to change multiple at runtime.");
 		} else if (this.getMultiple() !== bMultiple) {
 			this.setProperty("multiple", bMultiple);
 			this._getFileUploader().setMultiple(bMultiple);
@@ -731,7 +731,7 @@ sap.ui.define([
 
 	UploadCollection.prototype.setUploadEnabled = function(bUploadEnabled) {
 		if (!this.getInstantUpload()) {
-			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change uploadEnabled at runtime.");
+			Log.info("As property instantUpload is false it is not allowed to change uploadEnabled at runtime.");
 		} else if (this.getUploadEnabled() !== bUploadEnabled) {
 			this.setProperty("uploadEnabled", bUploadEnabled);
 			this._getFileUploader().setEnabled(bUploadEnabled);
@@ -741,7 +741,7 @@ sap.ui.define([
 
 	UploadCollection.prototype.setUploadUrl = function(sUploadUrl) {
 		if (!this.getInstantUpload()) {
-			jQuery.sap.log.info("As property instantUpload is false it is not allowed to change uploadUrl at runtime.");
+			Log.info("As property instantUpload is false it is not allowed to change uploadUrl at runtime.");
 		} else if (this.getUploadUrl() !== sUploadUrl) {
 			this.setProperty("uploadUrl", sUploadUrl);
 			this._getFileUploader().setUploadUrl(sUploadUrl);
@@ -750,17 +750,17 @@ sap.ui.define([
 	};
 
 	UploadCollection.prototype.setInstantUpload = function() {
-		jQuery.sap.log.error("It is not supported to change the behavior at runtime.");
+		Log.error("It is not supported to change the behavior at runtime.");
 		return this;
 	};
 
 	UploadCollection.prototype.setMode = function(mode) {
 		if (mode === Library.ListMode.Delete) {
 			this._oList.setMode(Library.ListMode.None);
-			jQuery.sap.log.info("sap.m.ListMode.Delete is not supported by UploadCollection. Value has been resetted to 'None'");
+			Log.info("sap.m.ListMode.Delete is not supported by UploadCollection. Value has been resetted to 'None'");
 		} else if (mode === Library.ListMode.MultiSelect && !this.getInstantUpload()) {
 			this._oList.setMode(Library.ListMode.None);
-			jQuery.sap.log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Pending Upload. Value has been resetted to 'None'");
+			Log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Pending Upload. Value has been resetted to 'None'");
 		} else {
 			this._oList.setMode(mode);
 		}
@@ -827,7 +827,7 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype.upload = function() {
 		if (this.getInstantUpload()) {
-			jQuery.sap.log.error("Not a valid API call. 'instantUpload' should be set to 'false'.");
+			Log.error("Not a valid API call. 'instantUpload' should be set to 'false'.");
 		}
 		var iFileUploadersCounter = this._aFileUploadersForPendingUpload.length;
 		// upload files that are selected through popup
@@ -907,7 +907,7 @@ sap.ui.define([
 	UploadCollection.prototype.selectAll = function() {
 		var aSelectedList = this._oList.selectAll();
 		if (aSelectedList.getItems().length !== this.getItems().length) {
-			jQuery.sap.log.info("Internal 'List' and external 'UploadCollection' are not in sync.");
+			Log.info("Internal 'List' and external 'UploadCollection' are not in sync.");
 		}
 		this._setSelectedForItems(this.getItems(), true);
 		return this;
@@ -924,7 +924,7 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype.downloadItem = function(uploadCollectionItem, askForLocation) {
 		if (!this.getInstantUpload()) {
-			jQuery.sap.log.info("Download is not possible on Pending Upload mode");
+			Log.info("Download is not possible on Pending Upload mode");
 			return false;
 		} else {
 			return uploadCollectionItem.download(askForLocation);
@@ -948,7 +948,7 @@ sap.ui.define([
 					this._oItemToUpdate = item;
 					this._oFileUploader.$().find("input[type=file]").trigger("click");
 				} else {
-					jQuery.sap.log.warning("Version Upload cannot be used in multiple upload mode");
+					Log.warning("Version Upload cannot be used in multiple upload mode");
 				}
 			} else {
 				this._oFileUploader.$().find("input[type=file]").trigger("click");
@@ -1473,7 +1473,7 @@ sap.ui.define([
 				if (this._oHeaderToolbar && this._iFileUploaderPH > -1) {
 					this._setFileUploaderInToolbar(oFileUploader);
 				} else {
-					jQuery.sap.log.info("A place holder of type 'sap.m.UploadCollectionPlaceholder' needs to be provided.");
+					Log.info("A place holder of type 'sap.m.UploadCollectionPlaceholder' needs to be provided.");
 				}
 			}
 		} else if (!this.getInstantUpload()) {

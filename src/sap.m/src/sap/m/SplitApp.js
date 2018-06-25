@@ -4,14 +4,13 @@
 
 // Provides control sap.m.SplitApp.
 sap.ui.define([
-	'jquery.sap.global',
 	'./SplitContainer',
 	'./library',
 	'sap/ui/Device',
 	'./SplitAppRenderer',
 	"sap/ui/util/Mobile"
 ],
-	function(jQuery, SplitContainer, library, Device, SplitAppRenderer, Mobile) {
+	function(SplitContainer, library, Device, SplitAppRenderer, Mobile) {
 	"use strict";
 
 	/**

@@ -6,7 +6,6 @@
  * Initialization Code and shared classes of library sap.m.
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/base/DataType',
 	'sap/ui/base/EventProvider',
@@ -16,11 +15,12 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
+	"sap/base/assert",
+	"sap/base/Log",
 	// referenced here to enable the Support feature
 	'./Support'
 ],
 	function(
-	jQuery,
 	Device,
 	DataType,
 	EventProvider,
@@ -28,7 +28,9 @@ sap.ui.define([
 	ObjectPath,
 	CoreLibrary,
 	capitalize,
-	jQueryDOM
+	jQueryDOM,
+	assert,
+	Log
 ) {
 
 	"use strict";
@@ -3601,7 +3603,7 @@ sap.ui.define([
 		if (oTouch && typeof oTouch.identifier !== "undefined") {
 			oTouch = oTouch.identifier;
 		} else if (typeof oTouch !== "number") {
-			jQuery.sap.assert(false, 'sap.m.touch.find(): oTouch must be a touch object or a number');
+			assert(false, 'sap.m.touch.find(): oTouch must be a touch object or a number');
 			return;
 		}
 
@@ -3642,7 +3644,7 @@ sap.ui.define([
 		} else if (typeof vElement === "string") {
 			vElement = jQueryDOM(document.getElementById(vElement));
 		} else if (!(vElement instanceof jQuery)) {
-			jQuery.sap.assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
+			assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
 			return 0;
 		}
 
@@ -3777,16 +3779,16 @@ sap.ui.define([
 			 * @public
 			 */
 			redirect: function (sURL, bNewWindow) {
-				jQuery.sap.assert(isValidString(sURL), this + "#redirect: URL must be a string" );
+				assert(isValidString(sURL), this + "#redirect: URL must be a string" );
 				this.fireEvent("redirect", sURL);
 				if (!bNewWindow) {
 					window.location.href = sURL;
 				} else {
 					var oWindow = window.open(sURL, "_blank");
 					if (!oWindow) {
-						jQuery.sap.log.error(this + "#redirect: Could not open " + sURL);
+						Log.error(this + "#redirect: Could not open " + sURL);
 						if (Device.os.windows_phone || (Device.browser.edge && Device.browser.mobile)) {
-							jQuery.sap.log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
+							Log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
 							window.location.href = sURL;
 						}
 					}
@@ -4010,7 +4012,7 @@ sap.ui.define([
 			 * @protected
 			 */
 			getImageControl: function(sImgId, oImage, oParent, mProperties, aCssClassesToAdd, aCssClassesToRemove) {
-				jQuery.sap.assert( mProperties.src , "sap.m.ImageHelper.getImageControl: mProperties do not contain 'src'");
+				assert( mProperties.src , "sap.m.ImageHelper.getImageControl: mProperties do not contain 'src'");
 
 				// make sure, image is rerendered if icon source has changed
 				if (oImage && (oImage.getSrc() != mProperties.src)) {
@@ -4071,12 +4073,12 @@ sap.ui.define([
 		 */
 		calcPercentageSize: function(sPercentage, fBaseSize){
 			if (typeof sPercentage !== "string") {
-				jQuery.sap.log.warning("sap.m.PopupHelper: calcPercentageSize, the first parameter" + sPercentage + "isn't with type string");
+				Log.warning("sap.m.PopupHelper: calcPercentageSize, the first parameter" + sPercentage + "isn't with type string");
 				return null;
 			}
 
 			if (sPercentage.indexOf("%") <= 0) {
-				jQuery.sap.log.warning("sap.m.PopupHelper: calcPercentageSize, the first parameter" + sPercentage + "is not a percentage string (for example '25%')");
+				Log.warning("sap.m.PopupHelper: calcPercentageSize, the first parameter" + sPercentage + "is not a percentage string (for example '25%')");
 				return null;
 			}
 
@@ -4271,7 +4273,7 @@ sap.ui.define([
 						if (sSearchFocus) {
 							oCustomParams["search-focus"] = sSearchFocus;
 						} else {
-							jQuery.sap.assert(false, 'no search-focus defined');
+							assert(false, 'no search-focus defined');
 						}
 					}
 

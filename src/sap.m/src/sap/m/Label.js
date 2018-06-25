@@ -4,20 +4,20 @@
 
 // Provides control sap.m.Label
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/library',
-	'./LabelRenderer'
+	'./LabelRenderer',
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	LabelEnablement,
 	coreLibrary,
-	LabelRenderer
+	LabelRenderer,
+	Log
 	) {
 	"use strict";
 
@@ -183,7 +183,7 @@ function(
 
 	Label.prototype.setDisplayOnly = function(displayOnly) {
 		if (typeof displayOnly !== "boolean") {
-			jQuery.sap.log.error("DisplayOnly property should be boolean. The new value will not be set");
+			Log.error("DisplayOnly property should be boolean. The new value will not be set");
 			return this;
 		}
 

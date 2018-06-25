@@ -21,6 +21,7 @@
 
 	<script>
 		sinon.config.useFakeTimers = true;
+		var Log = sap.ui.require("sap/base/Log");
 		//the SUT won't be destroyed when single test is run
 		var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
 		QUnit.module("API", {
@@ -50,8 +51,9 @@
 		});
 
 		QUnit.test("Setting empty mask should give a warning", function (assert){
+			assert.ok(Log, "Log module should be available");
 			var oControl = this.oMaskInput;
-			var oWarningSpy = this.sandbox.spy(jQuery.sap.log, 'warning'),
+			var oWarningSpy = this.sandbox.spy(Log, 'warning'),
 				oSetterSpy = this.sandbox.spy(oControl, "setProperty");
 
 			this.oMaskInput.setMask('');
@@ -64,6 +66,7 @@
 
 
 		QUnit.test("Setting (invalid) placeholder symbol that is part of mask's regex", function (assert){
+			assert.ok(Log, "Log module should be available");
 			var oControl = this.oMaskInput,
 				sPlaceholderSymbol = '+',
 				oDefinition = new sap.m.MaskInputRule({
@@ -71,7 +74,7 @@
 					regex: '[a-z+]'
 				});
 
-			var oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
+			var oErrorSpy = this.sandbox.spy(Log, 'error');
 			oControl.addRule(oDefinition);
 			var sOriginalPlaceholderSymbol = oControl.getPlaceholderSymbol();
 			oControl.setPlaceholderSymbol(sPlaceholderSymbol);
@@ -84,6 +87,7 @@
 		});
 
 		QUnit.test("Setting (invalid) regex that contains the placeholder symbol", function (assert){
+			assert.ok(Log, "Log module should be available");
 			var oControl = this.oMaskInput,
 				sPlaceholderSymbol = '+',
 				oDefinition = new sap.m.MaskInputRule({
@@ -91,7 +95,7 @@
 					regex: '[a-z+]'
 				});
 
-			var oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
+			var oErrorSpy = this.sandbox.spy(Log, 'error');
 			oControl.setPlaceholderSymbol(sPlaceholderSymbol);
 			oControl.addRule(oDefinition);
 
@@ -187,8 +191,9 @@
 		});
 
 		QUnit.test("Setting an invalid placeholder symbol is not accepted", function (assert){
+			assert.ok(Log, "Log module should be available");
 			var oControl = this.oMaskInput,
-				oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
+				oErrorSpy = this.sandbox.spy(Log, 'error'),
 				oSetterSpy = this.sandbox.spy(oControl, 'setProperty');
 
 			setAndValidate("more_than_one_character", this.sandbox);
@@ -196,7 +201,7 @@
 
 			function setAndValidate(sSymbol, oSandbox) {
 				oErrorSpy.restore();
-				oErrorSpy = oSandbox.spy(jQuery.sap.log, 'error');
+				oErrorSpy = oSandbox.spy(Log, 'error');
 				oSetterSpy.restore();
 				oSetterSpy = oSandbox.spy(oControl, 'setProperty');
 				oControl.setPlaceholderSymbol(sSymbol);
@@ -971,10 +976,11 @@
 		});
 
 		QUnit.test("OnBeforeRendering captures any validation errors.", function (assert){
+			assert.ok(Log, "Log module should be available");
 			var oControl = this.oMaskInput,
 				oDefinition1 = new sap.m.MaskInputRule({maskFormatSymbol: "-", regex: "[']"}),
 				oDefinition2 = new sap.m.MaskInputRule({maskFormatSymbol: "+", regex: "[()]"}),
-				oWarningSpy = this.sandbox.spy(jQuery.sap.log, "warning");
+				oWarningSpy = this.sandbox.spy(Log, "warning");
 			oControl.addRule(oDefinition1);
 			oControl.addRule(oDefinition2);
 			oDefinition1.setMaskFormatSymbol("+");
@@ -1284,7 +1290,7 @@
 					bModified = true;
 				}
 				if (bModified) {
-					jQuery.sap.log.warning("Webkit bug for selection API. Modifying cursor position");
+					Log.warning("Webkit bug for selection API. Modifying cursor position");
 				}
 			}
 			return $oControl.cursorPos(iPosition);
@@ -1340,7 +1346,7 @@
 				bModified = true;
 			}
 			if (bModified) {
-				jQuery.sap.log.warning("Webkit bug for selection API. Modifying selectionStart & selectionEnd returned values");
+				Log.warning("Webkit bug for selection API. Modifying selectionStart & selectionEnd returned values");
 			}
 			return oSelection;
 		}

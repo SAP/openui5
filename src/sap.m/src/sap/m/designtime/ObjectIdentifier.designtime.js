@@ -5,8 +5,8 @@
 // Provides the Design Time Metadata for the sap.m.ObjectIdentifier control.
 sap.ui.define([
 	'sap/m/library',
-	'jquery.sap.global'
-], function(MLibrary, jQuery) {
+	"sap/base/Log"
+], function(MLibrary, Log) {
 	"use strict";
 	var oWrapper;
 	return {
@@ -31,7 +31,7 @@ sap.ui.define([
 					return;
 				}
 				if (!oWrapper.isSettingsAvailable()) {
-					jQuery.sap.log.error("sap.ui.comp.navpopover.ObjectIdentifier.designtime: 'settings' action is not available");
+					Log.error("sap.ui.comp.navpopover.ObjectIdentifier.designtime: 'settings' action is not available");
 					return;
 				}
 				return {

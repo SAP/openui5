@@ -21,6 +21,7 @@
 <script>
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	QUnit.module("Init", {
 		beforeEach : function() {
 			this.tokenizer = new sap.m.Tokenizer();
@@ -774,8 +775,7 @@
 				assert.ok(oRange.startContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
 				assert.ok(oRange.endContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
 			} catch (e) {
-				jQuery.sap.log.warning(e);
-				assert.ok(false, "Problems with selection");
+				assert.ok(false, "Problems with selection: " + e);
 			}
 		}
 

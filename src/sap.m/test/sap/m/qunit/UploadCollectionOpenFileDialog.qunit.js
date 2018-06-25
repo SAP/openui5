@@ -7,8 +7,9 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	"sap/ui/base/Event",
 	"sap/ui/Device",
 	"sap/m/UploadCollectionItem",
-	"sap/m/ObjectMarker"
-], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker) {
+	"sap/m/ObjectMarker",
+	"sap/base/Log"
+], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker, Log) {
 	"use strict";
 
 	var oData = {
@@ -126,18 +127,18 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		// Arrange
 		this.oUploadCollection.setMultiple(true);
 		var oItem = this.oUploadCollection.getItems()[0];
-		sinon.spy(jQuery.sap.log, "warning");
+		sinon.spy(Log, "warning");
 
 		// Act
 		var oReturnValue = this.oUploadCollection.openFileDialog(oItem);
 
 		// Assert
 		assert.ok(oReturnValue instanceof UploadCollection, "Function returns an instance of UploadCollection");
-		assert.equal(jQuery.sap.log.warning.callCount, 1, "Warning log was generated correctly");
-		assert.ok(jQuery.sap.log.warning.calledWith("Version Upload cannot be used in multiple upload mode"), "Warning log was generated with the correct message");
+		assert.equal(Log.warning.callCount, 1, "Warning log was generated correctly");
+		assert.ok(Log.warning.calledWith("Version Upload cannot be used in multiple upload mode"), "Warning log was generated with the correct message");
 
 		// Restore
-		jQuery.sap.log.warning.restore();
+		Log.warning.restore();
 	});
 
 	QUnit.test("Check trigger click event on FileUploader input element with item passed to openFileDialog", function (assert) {

@@ -4,14 +4,14 @@
 
 // Provides control sap.m.Shell.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/m/ShellRenderer',
-	"sap/ui/util/Mobile"
+	"sap/ui/util/Mobile",
+	"sap/base/Log"
 ],
-	function(jQuery, library, Control, coreLibrary, ShellRenderer, Mobile) {
+	function(library, Control, coreLibrary, ShellRenderer, Mobile, Log) {
 		"use strict";
 
 
@@ -217,7 +217,7 @@ sap.ui.define([
 
 		Shell.prototype.setBackgroundOpacity = function(fOpacity) {
 			if (fOpacity > 1 || fOpacity < 0) {
-				jQuery.sap.log.warning("Invalid value " + fOpacity + " for Shell.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+				Log.warning("Invalid value " + fOpacity + " for Shell.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
 				return this;
 			}
 			this.$("BG").css("opacity", fOpacity);

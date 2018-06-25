@@ -12,22 +12,22 @@
 
 // Provides class sap.m.semantic.ShareMenu
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/Metadata',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/m/Button',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/ui/core/IconPool',
 	'sap/m/OverflowToolbarButton',
-	'sap/m/OverflowToolbarPriority'],
-	function(jQuery,
-			 Metadata,
+	'sap/m/OverflowToolbarPriority',
+	"sap/base/Log"],
+	function(Metadata,
 			 ManagedObjectObserver,
 			 Button,
 			 OverflowToolbarLayoutData,
 			 IconPool,
 			 OverflowToolbarButton,
-			 OverflowToolbarPriority) {
+			 OverflowToolbarPriority,
+			 Log) {
 	"use strict";
 
 	/**
@@ -48,7 +48,7 @@ sap.ui.define([
 
 		constructor : function(oActionSheet) {
 			if (!oActionSheet) {
-				jQuery.sap.log.error("missing argumment: constructor expects an actionsheet reference", this);
+				Log.error("missing argumment: constructor expects an actionsheet reference", this);
 				return;
 			}
 
@@ -339,7 +339,7 @@ sap.ui.define([
 	ShareMenu.prototype._setMode = function (sMode, bSuppressInvalidate, oBaseButton) {
 
 		if (!ShareMenu._Mode[sMode]) {
-			jQuery.sap.log.error("unknown shareMenu mode " + sMode, this);
+			Log.error("unknown shareMenu mode " + sMode, this);
 			return this;
 		}
 

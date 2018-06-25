@@ -4,7 +4,6 @@
 
 // Provides control sap.m.MultiInput.
 sap.ui.define([
-	'jquery.sap.global',
 	'./Input',
 	'./Tokenizer',
 	'./Token',
@@ -26,7 +25,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	Input,
 	Tokenizer,
 	Token,

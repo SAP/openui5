@@ -27,6 +27,7 @@
 
 <script>
 	QUnit.config.autostart = false;
+	var Log = sap.ui.require("sap/base/Log");
 	sap.ui.test.qunit.delayTestStart();
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -1402,6 +1403,7 @@
 	// ------------------------------ //
 
 	QUnit.test("method: setSelectedItems() - [null] : should give an warning when called with faulty parameter", function(assert) {
+		assert.ok(Log, "Log module should be available");
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -1409,7 +1411,7 @@
 		// arrange
 		var fnSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 		var fnSetAssociationSpy = this.spy(oMultiComboBox, "setAssociation");
-		var fnErrorSpy = this.spy(jQuery.sap.log, "warning");
+		var fnErrorSpy = this.spy(Log, "warning");
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnSetSelectedItemsSpy = this.spy(oMultiComboBox, "setSelectedItems");
 
@@ -1417,7 +1419,7 @@
 		oMultiComboBox.setSelectedItems([null]);
 
 		// assertions
-		assert.strictEqual(fnErrorSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
+		assert.strictEqual(fnErrorSpy.callCount, 1, "Log.warning() method was called");
 		assert.strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
 		assert.strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
@@ -1466,6 +1468,7 @@
 		oMultiComboBox.destroy();
 	});
 	QUnit.test("method: setSelectedKeys() - {} : should give an warning when called with faulty parameter", function(assert) {
+		assert.ok(Log, "Log module should be available");
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -1473,7 +1476,6 @@
 		// arrange
 		var fnSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 		var fnSetAssociationSpy = this.spy(oMultiComboBox, "setAssociation");
-		var fnErrorSpy = this.spy(jQuery.sap.log, "warning");
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnSetSelectedKeysSpy = this.spy(oMultiComboBox, "setSelectedKeys");
 

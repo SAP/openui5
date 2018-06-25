@@ -4,13 +4,12 @@
 
 // Provides control sap.m.QuickViewBase.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, jQueryDOM, KeyCodes) {
+	function(library, Control, jQueryDOM, KeyCodes) {
 	"use strict";
 
 	/**
@@ -409,7 +408,7 @@ sap.ui.define([
 			}
 
 			if (oFocusDomRef) {
-				jQuery.sap.focus(oFocusDomRef);
+				oFocusDomRef.focus();
 			}
 		};
 

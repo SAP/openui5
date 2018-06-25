@@ -4,7 +4,6 @@
 
 // Provides TablePersoDialog
 sap.ui.define([
-	'jquery.sap.global',
 	'./Button',
 	'./Dialog',
 	'./InputListItem',
@@ -19,9 +18,25 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/m/CheckBox',
 	'sap/m/SearchField',
-	'sap/m/ScrollContainer'],
-	function(jQuery, Button, Dialog, InputListItem, List, Toolbar, ManagedObject, library, Device, Sorter, Filter,
-			FilterOperator, JSONModel, CheckBox, SearchField, ScrollContainer) {
+	'sap/m/ScrollContainer'
+],
+	function(
+		Button,
+		Dialog,
+		InputListItem,
+		List,
+		Toolbar,
+		ManagedObject,
+		library,
+		Device,
+		Sorter,
+		Filter,
+		FilterOperator,
+		JSONModel,
+		CheckBox,
+		SearchField,
+		ScrollContainer
+	) {
 	"use strict";
 
 
@@ -219,15 +234,15 @@ sap.ui.define([
 				if (that._oList.getItems()[0].getSelected()) {
 					// First item selected: disable button "arrow top" and focus button "arrow bottom"
 					bButtonUpEnabled = false;
-					if (bUpdateFocus) {
-						jQuery.sap.focus(that._oButtonDown.getDomRef());
+					if (bUpdateFocus && that._oButtonDown.getDomRef()) {
+						that._oButtonDown.getDomRef().focus();
 					}
 				}
 				if (that._oList.getItems()[iItemCount - 1].getSelected()) {
 					// Last item selected: disable button "arrow bottom" and focus button "arrow top"
 					bButtonDownEnabled = false;
-					if (bUpdateFocus) {
-						jQuery.sap.focus(that._oButtonUp.getDomRef());
+					if (bUpdateFocus && that._oButtonUp.getDomRef()) {
+						that._oButtonUp.getDomRef().focus();
 					}
 				}
 			}
