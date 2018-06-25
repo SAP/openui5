@@ -309,6 +309,12 @@ sap.ui.define([
 	};
 
 	Opa._parseParam = function(sParam) {
+		if (sParam && sParam.match(/^true$/i)) {
+			return true;
+		}
+		if (sParam && sParam.match(/^false$/i)) {
+			return false;
+		}
 		var iValue = parseInt(sParam,10);
 		return (typeof iValue === 'number' && isNaN(iValue)) ? sParam : iValue;
 	};
