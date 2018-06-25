@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.unified.SplitContainer.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/core/theming/Parameters',
 	'./library',
 	'sap/ui/core/library',
-	'./SplitContainerRenderer'
-], function(jQuery, Control, Parameters, library, coreLibrary, SplitContainerRenderer /*, jQueryScript*/ ) {
+	'./SplitContainerRenderer',
+	"sap/base/Log"
+], function(Control, Parameters, library, coreLibrary, SplitContainerRenderer, Log ) {
 	"use strict";
 
 
@@ -283,7 +283,7 @@ sap.ui.define([
 	// Backwards compatibility with old property name
 
 	SplitContainer.prototype.getSecondaryContentWidth = function() {
-		jQuery.sap.log.warning(
+		Log.warning(
 			"SplitContainer: Use of deprecated property \"SecondaryContentWidth\", please use " +
 			"\"SecondaryContentSize\" instead."
 		);
@@ -291,7 +291,7 @@ sap.ui.define([
 	};
 
 	SplitContainer.prototype.setSecondaryContentWidth = function() {
-		jQuery.sap.log.warning(
+		Log.warning(
 			"SplitContainer: Use of deprecated property \"SecondaryContentWidth\", please use " +
 			"\"SecondaryContentSize\" instead."
 		);

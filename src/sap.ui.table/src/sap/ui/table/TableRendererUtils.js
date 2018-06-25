@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableRendererUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
-	function(jQuery, Control) {
+sap.ui.define(['sap/ui/core/Control'],
+	function(Control) {
 	"use strict";
 
 	var TAGCONTEXT = null;

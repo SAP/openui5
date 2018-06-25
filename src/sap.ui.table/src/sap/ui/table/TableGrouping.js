@@ -4,14 +4,13 @@
 
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Element',
 	'sap/ui/model/Sorter',
 	'sap/ui/Device',
 	'./library',
 	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, Element, Sorter, Device, library, jQueryDOM) {
+	function(Element, Sorter, Device, library, jQueryDOM) {
 	"use strict";
 
 	/**

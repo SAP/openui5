@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Row.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', 'sap/ui/thirdparty/jquery'],
-	function(jQuery, Element, Context, TableUtils, jQueryDOM) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', 'sap/ui/thirdparty/jquery'],
+	function(Element, Context, TableUtils, jQueryDOM) {
 	"use strict";
 
 

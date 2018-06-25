@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/LocaleData',
@@ -18,7 +17,6 @@ sap.ui.define([
 	"./CalendarRowRenderer",
 	"sap/ui/dom/containsOrEquals"
 ], function(
-	jQuery,
 	Control,
 	Device,
 	LocaleData,

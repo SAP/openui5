@@ -3,14 +3,13 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"./library",
 	"sap/ui/core/ResizeHandler",
 	"./AlignedFlowLayoutRenderer",
 	"sap/ui/dom/units/Rem"
 ],
-	function(jQuery, Control, library, ResizeHandler, AlignedFlowLayoutRenderer, Rem) {
+	function(Control, library, ResizeHandler, AlignedFlowLayoutRenderer, Rem) {
 		"use strict";
 
 		/**

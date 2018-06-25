@@ -4,7 +4,6 @@
 
 // Provides helper sap.ui.table.TableKeyboardExtension.
 sap.ui.define([
-	"jquery.sap.global",
 	"./TableExtension",
 	"sap/ui/core/delegate/ItemNavigation",
 	"./TableUtils",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/dom/containsOrEquals"
 ], function(
-	jQuery,
 	TableExtension,
 	ItemNavigation,
 	TableUtils,

@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.table.Column.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Element',
 	'sap/ui/core/library',
 	'sap/ui/core/Popup',
@@ -18,10 +17,10 @@ sap.ui.define([
 	'./library',
 	'./ColumnMenu',
 	'sap/base/util/ObjectPath',
-	"sap/base/util/JSTokenizer"
+	"sap/base/util/JSTokenizer",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	Element,
 	coreLibrary,
 	Popup,
@@ -35,7 +34,8 @@ function(
 	library,
 	ColumnMenu,
 	ObjectPath,
-	JSTokenizer
+	JSTokenizer,
+	Log
 ) {
 	"use strict";
 
@@ -722,7 +722,7 @@ function(
 					oBinding.sort(aSorters);
 
 				} else {
-					jQuery.sap.log.warning("Sorting not performed because no binding present", this);
+					Log.warning("Sorting not performed because no binding present", this);
 				}
 			}
 		}
@@ -962,7 +962,7 @@ function(
 			}
 			// check for a valid type
 			if (!(oType instanceof Type)) {
-				jQuery.sap.log.error("The filter type is not an instance of sap.ui.model.Type! Ignoring the filter type!");
+				Log.error("The filter type is not an instance of sap.ui.model.Type! Ignoring the filter type!");
 				oType = undefined;
 			}
 		}

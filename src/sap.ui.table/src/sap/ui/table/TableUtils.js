@@ -4,9 +4,9 @@
 
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/library", "sap/ui/model/ChangeReason",
-	"./TableGrouping", "./TableColumnUtils", "./TableMenuUtils", "./TableBindingUtils", "./library"
-], function(jQuery, Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, TableBindingUtils, library) {
+	"sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/library", "sap/ui/model/ChangeReason", "./TableGrouping",
+	"./TableColumnUtils", "./TableMenuUtils", "./TableBindingUtils", "./library", "sap/base/Log"
+], function(Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, TableBindingUtils, library, Log) {
 	"use strict";
 
 	// Shortcuts
@@ -895,12 +895,12 @@ sap.ui.define([
 			if (typeof sIdSuffix == "string") {
 				oDomRef = oTable.getDomRef(sIdSuffix);
 			} else {
-				jQuery.sap.log.error("sIdSuffix must be a string", oTable);
+				Log.error("sIdSuffix must be a string", oTable);
 				return;
 			}
 
 			if (typeof fnHandler !== "function") {
-				jQuery.sap.log.error("fnHandler must be a function", oTable);
+				Log.error("fnHandler must be a function", oTable);
 				return;
 			}
 
@@ -1086,7 +1086,7 @@ sap.ui.define([
 		sanitizeSelectionMode: function(oTable, sSelectionMode) {
 			if (sSelectionMode === SelectionMode.Multi) {
 				sSelectionMode = SelectionMode.MultiToggle;
-				jQuery.sap.log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
+				Log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
 			}
 			return sSelectionMode;
 		},

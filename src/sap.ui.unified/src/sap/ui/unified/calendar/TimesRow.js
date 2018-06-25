@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.CalendarTimeInterval.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -18,7 +17,6 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual"
 ], function(
-	jQuery,
 	Control,
 	LocaleData,
 	ItemNavigation,

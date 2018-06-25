@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.ui.table.TreeTable.
-sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAdapter', 'sap/ui/model/TreeBindingCompatibilityAdapter', './library', 'sap/ui/core/Element', './TableUtils'],
-	function(jQuery, Table, ClientTreeBindingAdapter, TreeBindingCompatibilityAdapter, library, Element, TableUtils) {
+sap.ui.define([
+	'./Table',
+	'sap/ui/model/ClientTreeBindingAdapter',
+	'sap/ui/model/TreeBindingCompatibilityAdapter',
+	'./library',
+	'sap/ui/core/Element',
+	'./TableUtils',
+	"sap/base/Log",
+	"sap/base/assert"
+],
+	function(
+		Table,
+		ClientTreeBindingAdapter,
+		TreeBindingCompatibilityAdapter,
+		library,
+		Element,
+		TableUtils,
+		Log,
+		assert
+	) {
 	"use strict";
 
 	/**
@@ -178,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 	 */
 	TreeTable.prototype.setFixedRowCount = function(iRowCount) {
 		// this property makes no sense for the TreeTable
-		jQuery.sap.log.warning("TreeTable: the property \"fixedRowCount\" is not supported and will be ignored!");
+		Log.warning("TreeTable: the property \"fixedRowCount\" is not supported and will be ignored!");
 		return this;
 	};
 
@@ -204,7 +222,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 			} else if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding")) {
 				ClientTreeBindingAdapter.apply(oBinding);
 			} else {
-				jQuery.sap.log.error("Binding not supported by sap.ui.table.TreeTable");
+				Log.error("Binding not supported by sap.ui.table.TreeTable");
 			}
 		}
 
@@ -288,7 +306,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 	TreeTable.prototype.expandToLevel = function (iLevel) {
 		var oBinding = this.getBinding("rows");
 
-		jQuery.sap.assert(oBinding && oBinding.expandToLevel, "TreeTable.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
+		assert(oBinding && oBinding.expandToLevel, "TreeTable.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
 
 		if (oBinding && oBinding.expandToLevel) {
 			oBinding.expandToLevel(iLevel);
@@ -565,7 +583,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			jQuery.sap.assert(oBinding.setRootLevel, "rootLevel is not supported by the used binding");
+			assert(oBinding.setRootLevel, "rootLevel is not supported by the used binding");
 			if (oBinding.setRootLevel) {
 				oBinding.setRootLevel(iRootLevel);
 			}
@@ -583,7 +601,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 	TreeTable.prototype.setCollapseRecursive = function(bCollapseRecursive) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			jQuery.sap.assert(oBinding.setCollapseRecursive, "Collapse Recursive is not supported by the used binding");
+			assert(oBinding.setCollapseRecursive, "Collapse Recursive is not supported by the used binding");
 			if (oBinding.setCollapseRecursive) {
 				oBinding.setCollapseRecursive(bCollapseRecursive);
 			}
@@ -642,7 +660,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 	 * @public
 	 */
 	TreeTable.prototype.setEnableGrouping = function() {
-		jQuery.sap.log.warning("The property enableGrouping is not supported by the sap.ui.table.TreeTable control");
+		Log.warning("The property enableGrouping is not supported by the sap.ui.table.TreeTable control");
 		return this;
 	};
 
@@ -663,7 +681,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 	 * @public
 	 */
 	TreeTable.prototype.setGroupBy = function() {
-		jQuery.sap.log.warning("The groupBy association is not supported by the sap.ui.table.TreeTable control");
+		Log.warning("The groupBy association is not supported by the sap.ui.table.TreeTable control");
 		return this;
 	};
 

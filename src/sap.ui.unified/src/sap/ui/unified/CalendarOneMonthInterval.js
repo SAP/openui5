@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.CalendarOneMonthInterval.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
 	'./library',
@@ -17,7 +16,6 @@ sap.ui.define([
 	"./CalendarOneMonthIntervalRenderer",
 	"sap/ui/dom/containsOrEquals"
 ], function(
-	jQuery,
 	CalendarUtils,
 	CalendarDate,
 	library,
@@ -102,8 +100,10 @@ sap.ui.define([
 					this._oFocusDateOneMonth = oCalPickerFocusedDate;
 					// true means do not focus, as we set the this._oFocusDateOneMonth and focus will happen in .focusDateExtend
 					this._focusDate(oCalPickerFocusedDate, true);
-
-					jQuery.sap.focus(this.getAggregation("header").getDomRef("B1"));
+					var oDomRefB1 = this.getAggregation("header").getDomRef("B1");
+					if (oDomRefB1) {
+						oDomRefB1.focus();
+					}
 				}, this);
 				this.setAggregation("calendarPicker", oCalPicker);
 			}

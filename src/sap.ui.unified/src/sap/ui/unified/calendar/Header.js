@@ -4,12 +4,11 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/unified/library',
 	"./HeaderRenderer",
 	"sap/ui/dom/containsOrEquals"
-], function(jQuery, Control, library, HeaderRenderer, containsOrEquals) {
+], function(Control, library, HeaderRenderer, containsOrEquals) {
 	"use strict";
 
 	/**

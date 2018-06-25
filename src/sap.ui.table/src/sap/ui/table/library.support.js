@@ -5,9 +5,9 @@
  * Adds support rules of the sap.ui.table library to the support infrastructure.
  */
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./rules/TableHelper.support", "sap/ui/Device",
-	"sap/ui/table/library"
-], function(jQuery, SupportLib, Ruleset, SupportHelper, Device, TableLib) {
+	"sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./rules/TableHelper.support", "sap/ui/Device", "sap/ui/table/library",
+	"sap/base/Log"
+], function(SupportLib, Ruleset, SupportHelper, Device, TableLib, Log) {
 	"use strict";
 
 	// shortcuts
@@ -207,7 +207,7 @@ sap.ui.define([
 
 			SupportHelper.checkLogEntries(function(oLogEntry) {
 				// Filter out totally irrelevant issues
-				if (oLogEntry.level != jQuery.sap.log.Level.ERROR && oLogEntry.level != jQuery.sap.log.Level.FATAL) {
+				if (oLogEntry.level != Log.Level.ERROR && oLogEntry.level != Log.Level.FATAL) {
 					return false;
 				}
 				var oInfo = oLogEntry.supportInfo;

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.unified.ShellHeadItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool', './library', 'jquery.sap.encoder'],
-	function(jQuery, Element, IconPool, library /*, jQueryEncoder*/) {
+sap.ui.define([
+	'sap/ui/core/Element',
+	'sap/ui/core/IconPool',
+	'./library',
+	'jquery.sap.encoder'
+],
+	function(Element, IconPool, library /*, jQueryEncoder*/) {
 	"use strict";
 
 

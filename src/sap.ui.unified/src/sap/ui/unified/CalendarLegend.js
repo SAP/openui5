@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.CalendarLegend.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/Device', './CalendarLegendRenderer'],
-	function(jQuery, Control, library, Device, CalendarLegendRenderer) {
+sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/Device', './CalendarLegendRenderer', "sap/base/Log"],
+	function(Control, library, Device, CalendarLegendRenderer, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType
@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}).indexOf(oItem);
 
 		if (iNoTypeItemIndex < 0) {
-			jQuery.sap.log.error('Legend item is not in the legend', this);
+			Log.error('Legend item is not in the legend', this);
 			return sType;
 		}
 

@@ -6,11 +6,10 @@
  * Initialization Code and shared classes of library sap.ui.unified.
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Core',
 	'sap/ui/base/Object',
 	"sap/ui/thirdparty/jquery"
-], function(jQuery, Core, BaseObject, jQueryDOM)	{
+], function(Core, BaseObject, jQueryDOM) {
 
 	"use strict";
 
