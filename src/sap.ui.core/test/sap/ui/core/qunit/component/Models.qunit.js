@@ -1,5 +1,6 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -8,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery) {
+], function(jQuery, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -1503,8 +1504,8 @@ sap.ui.define([
 	QUnit.test("Early model instantiation (with failing ResourceBundle loading)", function(assert) {
 		var that = this,
 			iLoadResourceBundleAsync = 0,
-			fnJQuerySapResource = jQuery.sap.resources,
-			jQuerySapResourcesStub = sinon.stub(jQuery.sap, "resources", function(mConfig) {
+			fnJQuerySapResource = ResourceBundle.create,
+			jQuerySapResourcesStub = sinon.stub(ResourceBundle, "create", function(mConfig) {
 				if (mConfig.async) {
 					iLoadResourceBundleAsync++;
 					return Promise.reject();
