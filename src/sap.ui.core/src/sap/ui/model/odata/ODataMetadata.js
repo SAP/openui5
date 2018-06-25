@@ -6,14 +6,15 @@
 
 // Provides class sap.ui.model.odata.ODataMetadata
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/EventProvider',
 	'sap/ui/thirdparty/datajs',
 	'sap/ui/core/cache/CacheManager',
 	'./_ODataMetaModelUtils',
-	"sap/base/util/uid"
+	"sap/base/util/uid",
+	"sap/base/Log",
+	"sap/base/assert"
 ],
-	function(jQuery, EventProvider, OData, CacheManager, Utils, uid) {
+	function(EventProvider, OData, CacheManager, Utils, uid, Log, assert) {
 	"use strict";
 
 	/**
@@ -76,7 +77,7 @@ sap.ui.define([
 			}
 
 			function logError() {
-				jQuery.sap.log.error("[ODataMetadata] initial loading of metadata failed");
+				Log.error("[ODataMetadata] initial loading of metadata failed");
 			}
 
 			//check cache
@@ -284,7 +285,7 @@ sap.ui.define([
 		this.bLoaded = true;
 		this.bFailed = false;
 		this.fireEvent("loaded", mParams);
-		jQuery.sap.log.debug(this + " - loaded was fired");
+		Log.debug(this + " - loaded was fired");
 		return this;
 	};
 
@@ -392,7 +393,7 @@ sap.ui.define([
 	ODataMetadata.prototype._getEntityAssociationEnd = function(oEntityType, sName) {
 
 		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
-			jQuery.sap.assert(undefined, "No metadata loaded!");
+			assert(undefined, "No metadata loaded!");
 			return null;
 		}
 		// fill the cache
@@ -458,11 +459,11 @@ sap.ui.define([
 	 */
 	ODataMetadata.prototype._getEntityTypeByPath = function(sPath) {
 		if (!sPath) {
-			jQuery.sap.assert(undefined, "sPath not defined!");
+			assert(undefined, "sPath not defined!");
 			return null;
 		}
 		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
-			jQuery.sap.assert(undefined, "No metadata loaded!");
+			assert(undefined, "No metadata loaded!");
 			return null;
 		}
 
@@ -555,7 +556,7 @@ sap.ui.define([
 		var oEntityType, that = this, sEntityName, sNamespace, oEntityTypeInfo;
 
 		if (!sName) {
-			jQuery.sap.assert(undefined, "sName not defined!");
+			assert(undefined, "sName not defined!");
 			return null;
 		}
 		oEntityTypeInfo = this._splitName(sName);
@@ -563,7 +564,7 @@ sap.ui.define([
 		sEntityName = oEntityTypeInfo.name;
 
 		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
-			jQuery.sap.assert(undefined, "No metadata loaded!");
+			assert(undefined, "No metadata loaded!");
 			return null;
 		}
 		if (this.mEntityTypes[sName]) {
@@ -602,7 +603,7 @@ sap.ui.define([
 			// first part must be the entityType
 			oEntityType = this._getEntityTypeByName(aMetaParts[0]);
 
-			jQuery.sap.assert(oEntityType, aMetaParts[0] + " is not a valid EntityType");
+			assert(oEntityType, aMetaParts[0] + " is not a valid EntityType");
 
 			if (!oEntityType) {
 				return;
@@ -612,7 +613,7 @@ sap.ui.define([
 			sPropertyPath = aParts[1].substr(aParts[1].indexOf('/') + 1);
 			oProperty = this._getPropertyMetadata(oEntityType,sPropertyPath);
 
-			jQuery.sap.assert(oProperty, sPropertyPath + " is not a valid property path");
+			assert(oProperty, sPropertyPath + " is not a valid property path");
 			if (!oProperty) {
 				return;
 			}
@@ -623,7 +624,7 @@ sap.ui.define([
 			//getentityType from data Path
 			oEntityType = this._getEntityTypeByPath(aParts[0]);
 
-			jQuery.sap.assert(oEntityType, aParts[0] + " is not a valid path");
+			assert(oEntityType, aParts[0] + " is not a valid path");
 
 			if (!oEntityType) {
 				return;
@@ -637,7 +638,7 @@ sap.ui.define([
 				oProperty = this._getPropertyMetadata(oEntityType, sPropertyPath);
 			}
 
-			jQuery.sap.assert(oProperty, sPropertyPath + " is not a valid property path");
+			assert(oProperty, sPropertyPath + " is not a valid property path");
 			if (!oProperty) {
 				return;
 			}
@@ -726,7 +727,7 @@ sap.ui.define([
 		var oAnnotationNode, aAnnotations = [];
 
 		if (aParts.length > 1) {
-			jQuery.sap.assert(aParts.length == 1, "'" + aParts.join('/') + "' is not a valid annotation path");
+			assert(aParts.length == 1, "'" + aParts.join('/') + "' is not a valid annotation path");
 			return;
 		}
 

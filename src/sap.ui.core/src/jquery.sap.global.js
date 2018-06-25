@@ -1180,9 +1180,6 @@ sap.ui.define([
 
 	// ---------------------- performance measurement -----------------------------------------------------------
 
-	// Inject the measure implementation for compatibility reasons
-	_ui5loader.measure = Measurement;
-
 	/**
 	 * Namespace for the jQuery performance measurement plug-in provided by SAP SE.
 	 *
@@ -1191,7 +1188,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	jQuery.sap.measure = Object.assign({}, _ui5loader.measure);
+	jQuery.sap.measure = Measurement;
 
 	/**
 	 * Gets the current state of the performance measurement functionality

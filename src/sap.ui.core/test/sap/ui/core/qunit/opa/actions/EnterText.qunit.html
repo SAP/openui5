@@ -185,8 +185,10 @@
 			});
 
 			QUnit.module("Logging", {
-				beforeEach: function () {
-					this.fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				beforeEach: function (assert) {
+					var Log = sap.ui.require("sap/base/Log");
+					assert.ok(Log, "Log module should be available");
+					this.fnErrorSpy = sinon.spy(Log, "error");
 				},
 				afterEach: function () {
 					this.oControl.destroy();
@@ -217,7 +219,9 @@
 
 			QUnit.test("Should log a message if a control cannot be focused", function (assert) {
 				// Arrange
-				var oSpy = sinon.spy(jQuery.sap.log, "debug");
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
+				var oSpy = sinon.spy(Log, "debug");
 				this.oControl = new Input({
 					enabled : false
 				});

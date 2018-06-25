@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "jquery.sap.sjax"], function ($, sjax) {
+sap.ui.define(["jquery.sap.sjax",
+	"sap/ui/thirdparty/jquery"], function(jQuery, jQueryDOM) {
   "use strict";
 
   /**
@@ -61,7 +62,7 @@ sap.ui.define(["jquery.sap.global", "jquery.sap.sjax"], function ($, sjax) {
      */
     parse: function(sText) {
 
-      if ($.type(sText) !== "string") {
+      if (jQueryDOM.type(sText) !== "string") {
         throw new Error("simpleGherkinParser.parse: parameter 'sText' must be a valid string");
       }
 
@@ -149,7 +150,7 @@ sap.ui.define(["jquery.sap.global", "jquery.sap.sjax"], function ($, sjax) {
       oFeature.scenarios.forEach(function(oScenario) {
         oScenario.steps.forEach(function(oStep) {
           // if the data table has only one row
-          if ($.isArray(oStep.data) && (oStep.data.length === 1) && ($.type(oStep.data[0]) === "array")) {
+          if (jQueryDOM.isArray(oStep.data) && (oStep.data.length === 1) && (jQueryDOM.type(oStep.data[0]) === "array")) {
             // then convert into a 1D array
             oStep.data = oStep.data[0];
           }
@@ -174,14 +175,14 @@ sap.ui.define(["jquery.sap.global", "jquery.sap.sjax"], function ($, sjax) {
      */
     parseFile: function(sPath) {
 
-      if ($.type(sPath) !== "string") {
+      if (jQueryDOM.type(sPath) !== "string") {
         throw new Error("simpleGherkinParser.parseFile: parameter 'sPath' must be a valid string");
       }
 
       // Interpret the path as a standard SAPUI5 module path
-      sPath = $.sap.getModulePath(sPath, ".feature");
+      sPath = sap.ui.require.toUrl((sPath).replace(/\./g, "/")) + ".feature";
 
-      var oResult = $.sap.sjax({
+      var oResult = jQuery.sap.sjax({
         url: sPath,
         dataType: "text"
       });

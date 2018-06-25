@@ -2,13 +2,14 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/model/odata/v4/lib/_Batch",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/test/TestUtils"
-], function (jQuery, _Batch, _GroupLock, _Helper, _Requestor, TestUtils) {
+    "jquery.sap.global",
+    "sap/ui/model/odata/v4/lib/_Batch",
+    "sap/ui/model/odata/v4/lib/_GroupLock",
+    "sap/ui/model/odata/v4/lib/_Helper",
+    "sap/ui/model/odata/v4/lib/_Requestor",
+    "sap/ui/test/TestUtils",
+    "sap/base/Log"
+], function(jQuery, _Batch, _GroupLock, _Helper, _Requestor, TestUtils, Log) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -109,7 +110,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Requestor", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 

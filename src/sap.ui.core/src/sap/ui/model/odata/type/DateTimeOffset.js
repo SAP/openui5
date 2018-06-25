@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
-	"sap/ui/model/odata/type/DateTimeBase"
-], function (jQuery, DateFormat, FormatException, DateTimeBase) {
+	"sap/ui/model/odata/type/DateTimeBase",
+	"sap/base/Log"
+], function (DateFormat, FormatException, DateTimeBase, Log) {
 	"use strict";
 
 	/**
@@ -61,7 +61,7 @@ sap.ui.define([
 					if (bV4 === true) {
 						this.bV4 = true;
 					} else if (bV4 !== undefined && bV4 !== false) {
-						jQuery.sap.log.warning("Illegal V4: " + bV4, null, this.getName());
+						Log.warning("Illegal V4: " + bV4, null, this.getName());
 					}
 				}
 			}

@@ -4,7 +4,6 @@
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterType',
@@ -13,9 +12,10 @@ sap.ui.define([
 	'./ODataUtils',
 	'./CountMode',
 	"sap/base/util/deepEqual",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/Log",
+	"sap/base/assert"
 ], function(
-	jQuery,
 	ChangeReason,
 	Filter,
 	FilterType,
@@ -24,7 +24,9 @@ sap.ui.define([
 	ODataUtils,
 	CountMode,
 	deepEqual,
-	merge
+	merge,
+	Log,
+	assert
 ) {
 	"use strict";
 
@@ -570,7 +572,7 @@ sap.ui.define([
 			if (oError.response) {
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
 			}
-			jQuery.sap.log.warning(sErrorMsg);
+			Log.warning(sErrorMsg);
 		}
 
 		// Use context and check for relative binding
@@ -937,7 +939,7 @@ sap.ui.define([
 
 		if (sResolvedPath) {
 			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
-			jQuery.sap.assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
+			assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
 			return oEntityType;
 
 		}

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.MessageTest (Test  plugin for support tool communication)
-sap.ui.define(['jquery.sap.global', '../Plugin', '../Support'],
-	function(jQuery, Plugin, Support) {
+sap.ui.define(['../Plugin', '../Support'],
+	function(Plugin, Support) {
 	"use strict";
 
 		/**

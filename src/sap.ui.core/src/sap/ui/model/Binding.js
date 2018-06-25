@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for model bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason', './DataState'],
-	function(jQuery, EventProvider, ChangeReason, DataState) {
+sap.ui.define(['sap/ui/base/EventProvider', './ChangeReason', './DataState', "sap/base/Log"],
+	function(EventProvider, ChangeReason, DataState, Log) {
 	"use strict";
 
 
@@ -448,7 +448,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			if (that[sMethod]) {
 				that[sMethod](fnHandler);
 			} else {
-				jQuery.sap.log.warning(that.toString() + " has no handler for event '" + sEvent + "'");
+				Log.warning(that.toString() + " has no handler for event '" + sEvent + "'");
 			}
 		});
 		return this;
@@ -470,7 +470,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			if (that[sMethod]) {
 				that[sMethod](fnHandler);
 			} else {
-				jQuery.sap.log.warning(that.toString() + " has no handler for event '" + sEvent + "'");
+				Log.warning(that.toString() + " has no handler for event '" + sEvent + "'");
 			}
 		});
 		return this;

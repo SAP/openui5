@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ws.WebSocket for standard WebSocket support
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider', './ReadyState', 'sap/ui/thirdparty/URI'],
-	function(jQuery, Device, EventProvider, ReadyState, URI) {
+sap.ui.define(['sap/ui/Device', 'sap/ui/base/EventProvider', './ReadyState', 'sap/ui/thirdparty/URI', "sap/base/Log"],
+	function(Device, EventProvider, ReadyState, URI, Log) {
 	"use strict";
 
 	/**
@@ -441,7 +441,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 				this._oWs.send(sMessage);
 			});
 		} else {
-			jQuery.sap.log.warning("Unable to send WebSocket message. " +
+			Log.warning("Unable to send WebSocket message. " +
 				"Connection is already closed or closing. message: " + sMessage);
 		}
 		return this;
@@ -485,7 +485,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 				break;
 			}
 
-			jQuery.sap.log.warning("Unable to close WebSocket connection. " + sText);
+			Log.warning("Unable to close WebSocket connection. " + sText);
 		}
 
 		return this;

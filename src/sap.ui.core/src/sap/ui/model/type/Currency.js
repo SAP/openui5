@@ -3,8 +3,20 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/CompositeType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, NumberFormat, CompositeType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	'sap/ui/core/format/NumberFormat',
+	'sap/ui/model/CompositeType',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException'
+],
+	function(
+		NumberFormat,
+		CompositeType,
+		FormatException,
+		ParseException,
+		ValidateException
+	) {
 	"use strict";
 
 

@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/thirdparty/URI',
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/deepEqual",
-	'sap/base/strings/escapeRegExp'
-], function(jQuery, URI, JSTokenizer, deepEqual, escapeRegExp) {
+	'sap/base/strings/escapeRegExp',
+	"sap/base/Log",
+	"sap/ui/performance/Measurement"
+], function(URI, JSTokenizer, deepEqual, escapeRegExp, Log, Measurement) {
 	"use strict";
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,
@@ -89,7 +90,7 @@ sap.ui.define([
 				led: unexpected, // Note: cannot happen due to lbp: 0
 				nud: function (oToken, oParser) {
 					if (!(oToken.value in oParser.globals)) {
-						jQuery.sap.log.warning("Unsupported global identifier '" + oToken.value
+						Log.warning("Unsupported global identifier '" + oToken.value
 								+ "' in expression parser input '" + oParser.input + "'",
 							undefined,
 							sExpressionParser);
@@ -493,7 +494,7 @@ sap.ui.define([
 		if (iAt !== undefined) {
 			sMessage += " at position " + iAt;
 		}
-		jQuery.sap.log.error(sMessage, sInput, sExpressionParser);
+		Log.error(sMessage, sInput, sExpressionParser);
 		throw oError;
 	}
 
@@ -691,7 +692,7 @@ sap.ui.define([
 			try {
 				return fnFormatter.apply(this, arguments);
 			} catch (ex) {
-				jQuery.sap.log.warning(String(ex), sInput, sExpressionParser);
+				Log.warning(String(ex), sInput, sExpressionParser);
 			}
 		};
 	}
@@ -848,10 +849,10 @@ sap.ui.define([
 		parse: function (fnResolveBinding, sInput, iStart, mGlobals) {
 			var oResult, oTokens;
 
-			jQuery.sap.measure.average(sPerformanceParse, "", aPerformanceCategories);
+			Measurement.average(sPerformanceParse, "", aPerformanceCategories);
 			oTokens = tokenize(fnResolveBinding, sInput, iStart);
 			oResult = parse(oTokens.tokens, sInput, mGlobals || mDefaultGlobals);
-			jQuery.sap.measure.end(sPerformanceParse);
+			Measurement.end(sPerformanceParse);
 			if (!oTokens.parts.length) {
 				return {
 					constant: oResult.formatter(),

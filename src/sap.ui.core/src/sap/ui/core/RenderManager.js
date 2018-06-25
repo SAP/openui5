@@ -4,7 +4,6 @@
 
 // Provides the render manager sap.ui.core.RenderManager
 sap.ui.define([
-	'jquery.sap.global',
 	'./LabelEnablement',
 	'sap/ui/base/Object',
 	'sap/ui/dom/patch',
@@ -12,17 +11,22 @@ sap.ui.define([
 	'sap/base/util/uid',
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/thirdparty/jquery",
-	'jquery.sap.encoder'
+	'jquery.sap.encoder',
+	"sap/base/assert",
+	"sap/ui/performance/Measurement",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	LabelEnablement,
 	BaseObject,
 	domPatch,
 	Interaction,
 	uid,
 	ActivityDetection,
-	jQueryDOM
-	/* jQuerySapEncoder */
+	jQueryDOM,
+	jQuery,
+	assert,
+	Measurement,
+	Log
 ) {
 
 	"use strict";
@@ -89,7 +93,7 @@ sap.ui.define([
 		 * @private
 		 */
 		this._setFocusHandler = function(oNewFocusHandler) {
-			jQuery.sap.assert(oNewFocusHandler && BaseObject.isA(oNewFocusHandler, 'sap.ui.core.FocusHandler'), "oFocusHandler must be an sap.ui.core.FocusHandler");
+			assert(oNewFocusHandler && BaseObject.isA(oNewFocusHandler, 'sap.ui.core.FocusHandler'), "oFocusHandler must be an sap.ui.core.FocusHandler");
 			oFocusHandler = oNewFocusHandler;
 		};
 
@@ -116,7 +120,7 @@ sap.ui.define([
 		 * @SecSink {*|XSS}
 		 */
 		this.write = function(/** string|number */ sText /* ... */) {
-			jQuery.sap.assert(( typeof sText === "string") || ( typeof sText === "number"), "sText must be a string or number");
+			assert(( typeof sText === "string") || ( typeof sText === "number"), "sText must be a string or number");
 			aBuffer.push.apply(aBuffer, arguments);
 			return this;
 		};
@@ -154,8 +158,8 @@ sap.ui.define([
 		 * @SecSink {0 1|XSS} Attributes are written to HTML without validation
 		 */
 		this.writeAttribute = function(sName, vValue) {
-			jQuery.sap.assert(typeof sName === "string", "sName must be a string");
-			jQuery.sap.assert(typeof vValue === "string" || typeof vValue === "number" || typeof vValue === "boolean", "value must be a string, number or boolean");
+			assert(typeof sName === "string", "sName must be a string");
+			assert(typeof vValue === "string" || typeof vValue === "number" || typeof vValue === "boolean", "value must be a string, number or boolean");
 			aBuffer.push(" ", sName, "=\"", vValue, "\"");
 			return this;
 		};
@@ -172,7 +176,7 @@ sap.ui.define([
 		 * @SecSink {0|XSS}
 		 */
 		this.writeAttributeEscaped = function(sName, vValue) {
-			jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+			assert(typeof sName === "string", "sName must be a string");
 			aBuffer.push(" ", sName, "=\"", jQuery.sap.encodeHTML(String(vValue)), "\"");
 			return this;
 		};
@@ -188,9 +192,9 @@ sap.ui.define([
 		 * @SecSink {0 1|XSS} Styles are written to HTML without validation
 		 */
 		this.addStyle = function(sName, value) {
-			jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+			assert(typeof sName === "string", "sName must be a string");
 			if (value !=  null) {
-				jQuery.sap.assert((typeof value === "string" || typeof value === "number"), "value must be a string or number");
+				assert((typeof value === "string" || typeof value === "number"), "value must be a string or number");
 				var oStyle = aStyleStack[aStyleStack.length - 1];
 				if (!oStyle.aStyle) {
 					oStyle.aStyle = [];
@@ -225,7 +229,7 @@ sap.ui.define([
 		 */
 		this.addClass = function(sName) {
 			if (sName) {
-				jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+				assert(typeof sName === "string", "sName must be a string");
 				var oStyle = aStyleStack[aStyleStack.length - 1];
 				if (!oStyle.aClasses) {
 					oStyle.aClasses = [];
@@ -246,7 +250,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.writeClasses = function(oElement) {
-			jQuery.sap.assert(!oElement || typeof oElement === "boolean" || BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be empty, a boolean, or an sap.ui.core.Element");
+			assert(!oElement || typeof oElement === "boolean" || BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be empty, a boolean, or an sap.ui.core.Element");
 			var oStyle = aStyleStack[aStyleStack.length - 1];
 
 			// Custom classes are added by default from the currently rendered control. If an oElement is given, this Element's custom style
@@ -350,7 +354,7 @@ sap.ui.define([
 		 * @since 1.22.9
 		 */
 		this.cleanupControlWithoutRendering = function(oControl) {
-			jQuery.sap.assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
+			assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
 			if (!oControl || !oControl.getDomRef()) {
 				return;
 			}
@@ -372,7 +376,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.renderControl = function(oControl) {
-			jQuery.sap.assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
+			assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
 			// don't render a NOTHING
 			if (!oControl) {
 				return this;
@@ -384,13 +388,13 @@ sap.ui.define([
 			}
 			// stop the measurement of parent
 			if (aRenderStack && aRenderStack.length > 0) {
-				jQuery.sap.measure.pause(aRenderStack[0] + "---renderControl");
+				Measurement.pause(aRenderStack[0] + "---renderControl");
 			} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
-				jQuery.sap.measure.pause(oControl.getParent().getId() + "---rerender");
+				Measurement.pause(oControl.getParent().getId() + "---rerender");
 			}
 			aRenderStack.unshift(oControl.getId());
 			// start performance measurement
-			jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
+			Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 
 			//Remember the current buffer size to check later whether the control produced output
 			var iBufferLength = aBuffer.length;
@@ -402,7 +406,7 @@ sap.ui.define([
 
 			aStyleStack.push(oControlStyles);
 
-			jQuery.sap.measure.pause(oControl.getId() + "---renderControl");
+			Measurement.pause(oControl.getId() + "---renderControl");
 			// don't measure getRenderer because if Load needed its measured in Ajax call
 			// but start measurement before is to see general rendering time including loading time
 
@@ -433,7 +437,7 @@ sap.ui.define([
 					: oMetadata.getRenderer();
 			}
 
-			jQuery.sap.measure.resume(oControl.getId() + "---renderControl");
+			Measurement.resume(oControl.getId() + "---renderControl");
 
 			triggerBeforeRendering(oControl);
 
@@ -453,7 +457,7 @@ sap.ui.define([
 			if (oRenderer && typeof oRenderer.render === "function") {
 				oRenderer.render(oRendererInterface, oControl);
 			} else {
-				jQuery.sap.log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
+				Log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
 			}
 
 			aStyleStack.pop();
@@ -475,13 +479,13 @@ sap.ui.define([
 			}
 
 			// end performance measurement
-			jQuery.sap.measure.end(oControl.getId() + "---renderControl");
+			Measurement.end(oControl.getId() + "---renderControl");
 			aRenderStack.shift();
 			// resume the measurement of parent
 			if (aRenderStack && aRenderStack.length > 0) {
-				jQuery.sap.measure.resume(aRenderStack[0] + "---renderControl");
+				Measurement.resume(aRenderStack[0] + "---renderControl");
 			} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
-				jQuery.sap.measure.resume(oControl.getParent().getId() + "---rerender");
+				Measurement.resume(oControl.getParent().getId() + "---rerender");
 			}
 			return this;
 		};
@@ -498,7 +502,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.getHTML = function(oControl) {
-			jQuery.sap.assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+			assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 
 			var tmp = aBuffer;
 			var aResult = aBuffer = this.aBuffer = [];
@@ -527,10 +531,10 @@ sap.ui.define([
 						// store the element on the event (aligned with jQuery syntax)
 						oEvent.srcControl = oControl;
 						// start performance measurement
-						jQuery.sap.measure.start(oControl.getId() + "---AfterRendering","AfterRendering of " + oControl.getMetadata().getName(), ["rendering","after"]);
+						Measurement.start(oControl.getId() + "---AfterRendering","AfterRendering of " + oControl.getMetadata().getName(), ["rendering","after"]);
 						oControl._handleEvent(oEvent);
 						// end performance measurement
-						jQuery.sap.measure.end(oControl.getId() + "---AfterRendering");
+						Measurement.end(oControl.getId() + "---AfterRendering");
 					}
 				}
 
@@ -545,7 +549,7 @@ sap.ui.define([
 			try {
 				oFocusHandler.restoreFocus(oStoredFocusInfo);
 			} catch (e) {
-				jQuery.sap.log.warning("Problems while restoring the focus after rendering: " + e, null);
+				Log.warning("Problems while restoring the focus after rendering: " + e, null);
 			}
 
 			// Re-bind any generically bound browser event handlers (must happen after restoring focus to avoid focus event)
@@ -615,7 +619,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.flush = function(oTargetDomNode, bDoNotPreserve, vInsert) {
-			jQuery.sap.assert((typeof oTargetDomNode === "object") && (oTargetDomNode.ownerDocument == document), "oTargetDomNode must be a DOM element");
+			assert((typeof oTargetDomNode === "object") && (oTargetDomNode.ownerDocument == document), "oTargetDomNode must be a DOM element");
 
 			// preserve HTML content before flushing HTML into target DOM node
 			if (!bDoNotPreserve && (typeof vInsert !== "number") && !vInsert) { // expression mimics the conditions used below
@@ -673,10 +677,10 @@ sap.ui.define([
 		 * @public
 		 */
 		this.render = function(oControl, oTargetDomNode) {
-			jQuery.sap.assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be a control");
-			jQuery.sap.assert(typeof oTargetDomNode === "object" && oTargetDomNode.ownerDocument == document, "oTargetDomNode must be a DOM element");
+			assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be a control");
+			assert(typeof oTargetDomNode === "object" && oTargetDomNode.ownerDocument == document, "oTargetDomNode must be a DOM element");
 			if ( bLocked ) {
-				jQuery.sap.log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
+				Log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
 				return;
 			}
 
@@ -844,7 +848,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.writeControlData = function(oControl) {
-		jQuery.sap.assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 		this.writeElementData(oControl);
 		return this;
 	};
@@ -873,7 +877,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	RenderManager.prototype.writeInvisiblePlaceholderData = function(oElement) {
-		jQuery.sap.assert(BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an instance of sap.ui.core.Element");
+		assert(BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an instance of sap.ui.core.Element");
 
 		var sPlaceholderId = RenderManager.createInvisiblePlaceholderId(oElement),
 			sPlaceholderHtml = ' ' +
@@ -895,7 +899,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.writeElementData = function(oElement) {
-		jQuery.sap.assert(oElement && BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an sap.ui.core.Element");
+		assert(oElement && BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an sap.ui.core.Element");
 		var sId = oElement.getId();
 		if (sId) {
 			this.writeAttribute("id", sId).writeAttribute("data-sap-ui", sId);
@@ -1117,7 +1121,7 @@ sap.ui.define([
 			oIconInfo = IconPool.getIconInfo(sURI);
 
 			if (!oIconInfo) {
-				jQuery.sap.log.error("An unregistered icon: " + sURI + " is used in sap.ui.core.RenderManager's writeIcon method.");
+				Log.error("An unregistered icon: " + sURI + " is used in sap.ui.core.RenderManager's writeIcon method.");
 				return this;
 			}
 
@@ -1204,7 +1208,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.getRenderer = function(oControl) {
-		jQuery.sap.assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 		return RenderManager.getRenderer(oControl);
 	};
 
@@ -1250,7 +1254,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.getRenderer = function(oControl) {
-		jQuery.sap.assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 
 		return oControl.getMetadata().getRenderer();
 	};
@@ -1268,14 +1272,14 @@ sap.ui.define([
 		var oDomNode = typeof vDomNode == "string" ? oDomNodeById : vDomNode;
 
 		if ( oDomNode ) {
-			jQuery.sap.log.debug("forcing a repaint for " + (oDomNode.id || String(oDomNode)));
+			Log.debug("forcing a repaint for " + (oDomNode.id || String(oDomNode)));
 			var sOriginalDisplay = oDomNode.style.display;
 			var oActiveElement = document.activeElement;
 			oDomNode.style.display = "none";
 			oDomNode.offsetHeight;
 			oDomNode.style.display = sOriginalDisplay;
-			if (document.activeElement !== oActiveElement) {
-				jQuery.sap.focus(oActiveElement);
+			if (document.activeElement !== oActiveElement && oActiveElement) {
+				oActiveElement.focus();
 			}
 		}
 	};
@@ -1375,7 +1379,7 @@ sap.ui.define([
 	 * @static
 	 */
 	RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
-		jQuery.sap.assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
+		assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
 
 		aPreserveContentListeners.forEach(function(oListener) {
 			oListener.fn.call(oListener.context || RenderManager, {domNode : oRootNode});
@@ -1418,7 +1422,7 @@ sap.ui.define([
 
 		}
 
-		jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id, ["rendering","preserve"]);
+		Measurement.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id, ["rendering","preserve"]);
 		if ( bPreserveRoot ) {
 			check(oRootNode);
 		} else {
@@ -1426,7 +1430,7 @@ sap.ui.define([
 				check(oNode);
 			});
 		}
-		jQuery.sap.measure.end(oRootNode.id + "---preserveContent");
+		Measurement.end(oRootNode.id + "---preserveContent");
 	};
 
 	/**
@@ -1438,7 +1442,7 @@ sap.ui.define([
 	 * @static
 	 */
 	RenderManager.findPreservedContent = function(sId) {
-		jQuery.sap.assert(typeof sId === "string", "sId must be a string");
+		assert(typeof sId === "string", "sId must be a string");
 		var $preserve = getPreserveArea(),
 			$content = $preserve.children("[" + ATTR_PRESERVE_MARKER + "='" + sId.replace(/(:|\.)/g,'\\$1') + "']");
 		return $content;
@@ -1520,7 +1524,7 @@ sap.ui.define([
 		if (bDomPatching === undefined) {
 			bDomPatching = sap.ui.getCore().getConfiguration().getDomPatching();
 			if (bDomPatching) {
-				jQuery.sap.log.warning("DOM Patching is enabled: This feature should be used only for testing purposes!");
+				Log.warning("DOM Patching is enabled: This feature should be used only for testing purposes!");
 			}
 		}
 

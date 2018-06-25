@@ -151,8 +151,12 @@
 		});
 
 		QUnit.test("Should log an error if the target parent is not found", function (assert) {
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+
 			// Arrange
-			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(Log, "error", jQuery.noop);
 
 			this.oTarget._oOptions.rootView = "foo";
 
@@ -164,8 +168,12 @@
 		});
 
 		QUnit.test("Should log an error if the target control does not have an nonexistion aggregation specified", function (assert) {
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+
 			// Arrange
-			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(Log, "error", jQuery.noop);
 
 			this.oTarget._oOptions.controlAggregation = "foo";
 
@@ -177,8 +185,12 @@
 		});
 
 		QUnit.test("Should log an error if the target control does not have an aggregation specified", function (assert) {
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+
 			// Arrange
-			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(Log, "error", jQuery.noop);
 
 			this.oTarget._oOptions.controlAggregation = undefined;
 
@@ -190,8 +202,12 @@
 		});
 
 		QUnit.test("Should log an error if the target control could not be found", function (assert) {
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+
 			// Arrange
-			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(Log, "error", jQuery.noop);
 
 			this.oTarget._oOptions.controlId = "foo";
 

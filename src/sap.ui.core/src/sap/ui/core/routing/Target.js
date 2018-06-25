@@ -4,22 +4,22 @@
 
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/routing/async/Target',
 	'sap/ui/core/routing/sync/Target',
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/base/Log"
 ],
 	function(
-		jQuery,
 		Control,
 		EventProvider,
 		View,
 		asyncTarget,
 		syncTarget,
-		UriParameters
+		UriParameters,
+		Log
 	) {
 		"use strict";
 
@@ -44,7 +44,7 @@ sap.ui.define([
 				// temporarily: for checking the url param
 				function checkUrl() {
 					if (new UriParameters(window.location.href).get("sap-ui-xx-asyncRouting") === "true") {
-						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Target");
+						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Target");
 						return true;
 					}
 					return false;

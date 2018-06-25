@@ -3,8 +3,20 @@
  */
 
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/CompositeType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, DateFormat, CompositeType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/model/CompositeType',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException'
+],
+	function(
+		DateFormat,
+		CompositeType,
+		FormatException,
+		ParseException,
+		ValidateException
+	) {
 	"use strict";
 
 

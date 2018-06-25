@@ -84,7 +84,9 @@
 		beforeEach : function() {
 
 			// log spy
-			this.oLogSpy = sinon.spy(jQuery.sap.log, "warning");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			this.oLogSpy = sinon.spy(Log, "warning");
 
 		},
 
@@ -465,7 +467,7 @@
 
 	QUnit.module("Component Usage", {
 
-		beforeEach : function() {
+		beforeEach : function(assert) {
 
 			// define the manifest for the Component test
 			var oManifest = this.oManifest = {
@@ -524,7 +526,9 @@
 
 
 			// log spy
-			this.oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			this.oLogSpy = sinon.spy(Log, "error");
 
 			// register the Service Factories before component creation
 			sap.ui.core.service.ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());

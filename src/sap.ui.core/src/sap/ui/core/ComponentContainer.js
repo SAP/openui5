@@ -4,20 +4,22 @@
 
 // Provides control sap.ui.core.ComponentContainer.
 sap.ui.define([
-    'sap/ui/base/ManagedObject',
-    './Control',
-    './Component',
-    './Core',
-    './library',
-    "./ComponentContainerRenderer"
+	'sap/ui/base/ManagedObject',
+	'./Control',
+	'./Component',
+	'./Core',
+	'./library',
+	"./ComponentContainerRenderer",
+	"sap/base/Log"
 ],
 	function(
-	    ManagedObject,
+		ManagedObject,
 		Control,
 		Component,
 		Core,
 		library,
-		ComponentContainerRenderer
+		ComponentContainerRenderer,
+		Log
 	) {
 	"use strict";
 
@@ -323,7 +325,7 @@ sap.ui.define([
 					});
 				}.bind(this), function(oReason) {
 					delete this._oComponentPromise;
-					jQuery.sap.log.error("Failed to load component for container " + this.getId() + ". Reason: " + oReason);
+					Log.error("Failed to load component for container " + this.getId() + ". Reason: " + oReason);
 				}.bind(this));
 			} else {
 				this.setComponent(oComponent, true);

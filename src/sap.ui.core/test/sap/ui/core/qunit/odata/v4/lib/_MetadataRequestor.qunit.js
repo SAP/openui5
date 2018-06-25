@@ -2,15 +2,24 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_MetadataConverter",
-	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
-	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
-	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
-	"sap/ui/test/TestUtils"
-], function (jQuery, _Helper, _MetadataConverter, _MetadataRequestor, _V2MetadataConverter,
-		_V4MetadataConverter, TestUtils) {
+    "jquery.sap.global",
+    "sap/ui/model/odata/v4/lib/_Helper",
+    "sap/ui/model/odata/v4/lib/_MetadataConverter",
+    "sap/ui/model/odata/v4/lib/_MetadataRequestor",
+    "sap/ui/model/odata/v4/lib/_V2MetadataConverter",
+    "sap/ui/model/odata/v4/lib/_V4MetadataConverter",
+    "sap/ui/test/TestUtils",
+    "sap/base/Log"
+], function(
+    jQuery,
+	_Helper,
+	_MetadataConverter,
+	_MetadataRequestor,
+	_V2MetadataConverter,
+	_V4MetadataConverter,
+	TestUtils,
+	Log
+) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -72,7 +81,7 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.lib._MetadataRequestor", {
 		beforeEach : function () {
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", mFixture);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 

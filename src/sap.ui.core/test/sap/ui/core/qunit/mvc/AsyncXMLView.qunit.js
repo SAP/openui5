@@ -1,13 +1,24 @@
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/cache/CacheManager",
-	"sap/ui/core/Component",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/XMLView",
-	"./testdata/TestPreprocessor",
-	"./AnyViewAsync.qunit",
-	"jquery.sap.script"
-], function(jQuery, Cache, Component, View, XMLView, TestPreprocessor, asyncTestsuite /*, jQuery*/) {
+    "jquery.sap.global",
+    "sap/ui/core/cache/CacheManager",
+    "sap/ui/core/Component",
+    "sap/ui/core/mvc/View",
+    "sap/ui/core/mvc/XMLView",
+    "./testdata/TestPreprocessor",
+    "./AnyViewAsync.qunit",
+    "sap/base/Log",
+    "jquery.sap.script"
+], function(
+    jQuery,
+	Cache,
+	Component,
+	View,
+	XMLView,
+	TestPreprocessor,
+	asyncTestsuite,
+	Log
+    /*, jQuery*/
+) {
 
 	// setup test config with generic factory
 	var oConfig = {
@@ -215,7 +226,7 @@ sap.ui.define([
 			QUnit.test("no cache key - async part", function(assert) {
 				var error = new Error("Provided cache keys may not be empty or undefined."),
 					oSpy = this.oSpy,
-					oLogSpy = sinon.spy(jQuery.sap.log, "debug");
+					oLogSpy = sinon.spy(Log, "debug");
 
 				assert.expect(3);
 				return viewFactory({keys: [Promise.resolve()]}).loaded().then(function(oView) {

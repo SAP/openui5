@@ -1018,6 +1018,8 @@
 
 			QUnit.test("Bind aggregation without templateShareable (default)", function(assert) {
 
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 				var oTemplate = new sap.ui.core.Element("template");
 
 				this.obj.bindAggregation("elements", { path:"/list", template: oTemplate}); // old behavior
@@ -1067,8 +1069,8 @@
 				assert.ok(oTemplate._sapui_candidateForDestroy, "Template should be marked for destroy");
 
 				// create new UI object with same Id (must not throw exception, class can differ)
-				var oLogSpy = this.spy(jQuery.sap.log, "debug");
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+				var oLogSpy = this.spy(Log, "debug");
+				Log.setLevel(Log.Level.DEBUG);
 				var oTemplateNew = new sap.ui.core.Control("template", {value: "{value}"});
 				assert.ok(oLogSpy.calledWith(sinon.match(/destroying dangling template [\s\S]+ when creating new object with same ID/)), "destroyed elements should be reported with level debug");
 				oLogSpy.restore();
@@ -1088,6 +1090,9 @@
 			});
 
 			QUnit.test("Bind aggregation without templateShareable (default, Component)", function(assert) {
+
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 
 				var MyControl = sap.ui.core.Control.extend("MyControl", {
 					metadata : {
@@ -1124,8 +1129,8 @@
 				assert.ok(!oComponent.oMyTemplate.bIsDestroyed, "Template is not destroyed");
 
 				// when destroying the component, the template should be desroyed as well
-				var oLogSpy = this.spy(jQuery.sap.log, "debug");
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+				var oLogSpy = this.spy(Log, "debug");
+				Log.setLevel(Log.Level.DEBUG);
 				oComponent.destroy();
 				assert.ok(oLogSpy.calledWith(sinon.match(/destroying dangling template [\s\S]+ when destroying the owner component/)), "destroyed elements should be reported with level debug");
 				oLogSpy.restore();
@@ -1137,6 +1142,9 @@
 
 			QUnit.test("Bind aggregation and clone with different templateShareable values", function(assert) {
 
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
+
 				// undefined
 
 				var oTemplate = new sap.ui.core.Element();
@@ -1145,7 +1153,7 @@
 				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
 				assert.ok(typeof this.obj.getBindingInfo("elements").templateShareable !== 'boolean' && this.obj.getBindingInfo("elements").templateShareable, "default for templateShareable should be neither true nor false");
 
-				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oLogSpy = this.spy(Log, "error");
 				var oClone = this.obj.clone("clone");
 				sinon.assert.calledWith(oLogSpy,
 					sinon.match(/templateShareable/) // msg should contain the term templateShareable
@@ -1167,7 +1175,7 @@
 				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
 				assert.strictEqual(this.obj.getBindingInfo("elements").templateShareable, false, "value of templateShareable should be as specified");
 
-				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oLogSpy = this.spy(Log, "error");
 				var oClone = this.obj.clone("clone");
 				sinon.assert.neverCalledWith(oLogSpy, sinon.match(/templateShareable/));
 				oLogSpy.restore();
@@ -1186,7 +1194,7 @@
 				assert.equal(this.obj.getAggregation("elements", []).length, 3, "Aggregation length should match model list length");
 				assert.strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "value of templateShareable should be as specified");
 
-				var oLogSpy = this.spy(jQuery.sap.log, "error");
+				var oLogSpy = this.spy(Log, "error");
 				var oClone = this.obj.clone("clone");
 				sinon.assert.neverCalledWith(oLogSpy, sinon.match(/templateShareable/));
 				oLogSpy.restore();
@@ -1455,13 +1463,16 @@
 			});
 
 			QUnit.test("Accessor / Mutator functions 0..n Associations", function(assert) {
+
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 				assert.equal(typeof this.obj.getAssociatedObjects, "function", "there should be a named get function for a public 0..n association");
 				assert.equal(typeof this.obj.addAssociatedObj, "function", "there should be a named add function for a public 0..n association");
 				assert.equal(typeof this.obj.removeAssociatedObj, "function", "there should be a named remove function for a public 0..n association");
 				assert.equal(typeof this.obj.removeAllAssociatedObjects, "function", "there should be a named removeAll function for a public 0..n association");
 				assert.equal(typeof this.obj.removeAllAssociatedObj, "function", "wrongly named removeAll function must exist for compatibility reasons")
-				var oLogSpy = this.spy(jQuery.sap.log, "warning");
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+				var oLogSpy = this.spy(Log, "warning");
+				Log.setLevel(Log.Level.DEBUG);
 				this.obj.removeAllAssociatedObj();
 				assert.ok(oLogSpy.calledWith(sinon.match(/deprecated/)), "calling the wrongly named function should log a warning message");
 				oLogSpy.restore();

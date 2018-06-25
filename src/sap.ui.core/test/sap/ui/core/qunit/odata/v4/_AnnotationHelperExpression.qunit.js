@@ -2,13 +2,24 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/odata/_AnnotationHelperBasics',
-	'sap/ui/model/odata/v4/_AnnotationHelperExpression'
-], function (jQuery, BindingParser, ManagedObject, JSONModel, Basics, Expression) {
+    "jquery.sap.global",
+    'sap/ui/base/BindingParser',
+    'sap/ui/base/ManagedObject',
+    'sap/ui/model/json/JSONModel',
+    'sap/ui/model/odata/_AnnotationHelperBasics',
+    'sap/ui/model/odata/v4/_AnnotationHelperExpression',
+    "sap/base/Log",
+    "sap/ui/performance/Measurement"
+], function(
+    jQuery,
+	BindingParser,
+	ManagedObject,
+	JSONModel,
+	Basics,
+	Expression,
+	Log,
+	Measurement
+) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -22,7 +33,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4._AnnotationHelperExpression", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -1125,10 +1136,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getExpression: Performance measurement points", function (assert) {
-		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
+		var oAverageSpy = this.spy(Measurement, "average")
 				.withArgs("sap.ui.model.odata.v4.AnnotationHelper/getExpression", "",
 					["sap.ui.model.odata.v4.AnnotationHelper"]),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.model.odata.v4.AnnotationHelper/getExpression"),
 			oMockExpression = this.mock(Expression),
 			oPathValue = {value : 42};

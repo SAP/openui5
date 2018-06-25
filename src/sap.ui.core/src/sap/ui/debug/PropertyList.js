@@ -3,8 +3,8 @@
  */
 
 // Provides a (modifiable) list of properties for a given control
-sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/base/util/ObjectPath', "sap/base/strings/capitalize", 'jquery.sap.encoder'],
-	function(jQuery, DataType, EventProvider, Element, ElementMetadata, ObjectPath, capitalize/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/PropertyList', ['sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/base/util/ObjectPath', "sap/base/strings/capitalize", 'jquery.sap.encoder'],
+	function(DataType, EventProvider, Element, ElementMetadata, ObjectPath, capitalize, jQuery) {
 	"use strict";
 
 

@@ -1,7 +1,7 @@
 /*global QUnit */
 QUnit.config.autostart = false;
 
-sap.ui.require(['sap/base/i18n/ResourceBundle'], function(ResourceBundle) {
+sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(ResourceBundle, Log) {
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
 		var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
@@ -498,6 +498,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle'], function(ResourceBundle) {
 
 	QUnit.module("loadLibraries (from server)", {
 		beforeEach: function(assert) {
+			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 		},
 		afterEach: function(assert) {
@@ -691,7 +692,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle'], function(ResourceBundle) {
 	 */
 	QUnit.test("library with deeper dependency tree + conflicting sync request", function(assert) {
 
-		this.spy(jQuery.sap.log, 'warning');
+		this.spy(Log, 'warning');
 
 		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 		var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib1', 'testlibs.scenario5.lib3']);
@@ -703,7 +704,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle'], function(ResourceBundle) {
 		assert.isLibLoaded('testlibs.scenario5.lib5');
 		assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario5.lib1'], "lib1 should not have been loaded yet");
 		assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario5.lib4'], "lib4 should not have been loaded yet");
-		sinon.assert.calledWith(jQuery.sap.log.warning, sinon.match(/request to load.*while async loading is pending/));
+		sinon.assert.calledWith(Log.warning, sinon.match(/request to load.*while async loading is pending/));
 
 		sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib4']);
 
@@ -746,6 +747,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle'], function(ResourceBundle) {
 
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
+			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 		},
@@ -898,6 +900,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle'], function(ResourceBundle) {
 
 	QUnit.module("loadLibraries", {
 		beforeEach: function(assert) {
+			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
 			this.server = sinon.fakeServer.create();
 			this.server.autoRespond = true;
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;

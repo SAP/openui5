@@ -3,8 +3,8 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList'],
-	function(jQuery, Interface, ControlTree, LogViewer, PropertyList) {
+sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log"],
+	function(Interface, ControlTree, LogViewer, PropertyList, Log) {
 	"use strict";
 
 
@@ -40,7 +40,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		try {
 			this.bRunsEmbedded = typeof window.top.testfwk == "undefined"; // window || !top.frames["sap-ui-TraceWindow"]; // check only with ==, not === as the test otherwise fails on IE8
 
-			jQuery.sap.log.info("Starting DebugEnv plugin (" + (this.bRunsEmbedded ? "embedded" : "testsuite") + ")");
+			Log.info("Starting DebugEnv plugin (" + (this.bRunsEmbedded ? "embedded" : "testsuite") + ")");
 
 			// initialize only if running in testsuite or when debug views are not disabled via URL parameter
 			if (!this.bRunsEmbedded || oCore.getConfiguration().getInspect()) {
@@ -50,7 +50,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 				this.initLogger(jQuery.sap.log, bOnInit);
 			}
 		} catch (oException) {
-			jQuery.sap.log.warning("DebugEnv plugin can not be started outside the Testsuite.");
+			Log.warning("DebugEnv plugin can not be started outside the Testsuite.");
 		}
 	};
 
@@ -59,7 +59,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 * @public
 	 */
 	DebugEnv.prototype.stopPlugin = function() {
-		jQuery.sap.log.info("Stopping DebugEnv plugin.");
+		Log.info("Stopping DebugEnv plugin.");
 		this.oCore = null;
 	};
 
@@ -313,7 +313,10 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	(function(){
 		var oThis = new DebugEnv();
 		sap.ui.getCore().registerPlugin(oThis);
-		DebugEnv.getInstance = jQuery.sap.getter(new Interface(oThis, ["isRunningEmbedded", "isControlTreeShown", "showControlTree", "hideControlTree", "isTraceWindowShown", "showTraceWindow", "hideTraceWindow", "isPropertyListShown", "showPropertyList", "hidePropertyList"]));
+		var oInterface = new Interface(oThis, ["isRunningEmbedded", "isControlTreeShown", "showControlTree", "hideControlTree", "isTraceWindowShown", "showTraceWindow", "hideTraceWindow", "isPropertyListShown", "showPropertyList", "hidePropertyList"]);
+		DebugEnv.getInstance = function() {
+			return oInterface;
+		};
 	}());
 
 	return DebugEnv;

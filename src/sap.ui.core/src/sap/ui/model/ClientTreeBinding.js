@@ -3,8 +3,14 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/model/SorterProcessor', 'sap/ui/model/FilterProcessor', 'sap/ui/model/FilterType'],
-	function(jQuery, ChangeReason, TreeBinding, SorterProcessor, FilterProcessor, FilterType) {
+sap.ui.define([
+	'./ChangeReason',
+	'./TreeBinding',
+	'sap/ui/model/SorterProcessor',
+	'sap/ui/model/FilterProcessor',
+	'sap/ui/model/FilterType'
+],
+	function(ChangeReason, TreeBinding, SorterProcessor, FilterProcessor, FilterType) {
 	"use strict";
 
 

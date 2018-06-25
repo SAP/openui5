@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Sorter'],
-	function(jQuery, Sorter) {
+sap.ui.define(['./Sorter'],
+	function(Sorter) {
 	"use strict";
 
 	/**
@@ -95,4 +95,3 @@ sap.ui.define(['jquery.sap.global', './Sorter'],
 	return SorterProcessor;
 
 });
-

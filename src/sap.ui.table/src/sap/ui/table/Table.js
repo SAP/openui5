@@ -3555,7 +3555,7 @@ sap.ui.define([
 			oEvent.srcControl = this;
 			this._handleEvent(oEvent);
 
-			var oRM = new sap.ui.getCore().createRenderManager(),
+			var oRM = sap.ui.getCore().createRenderManager(),
 				oRenderer = this.getRenderer();
 
 			oRenderer.renderTableCCnt(oRM, this);

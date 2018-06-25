@@ -2,12 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/base/Object',
-		'./PipelineFactory'
-	],
-	function($, UI5Object, PipelineFactory) {
+sap.ui.define(['sap/ui/base/Object', './PipelineFactory', "sap/ui/thirdparty/jquery"],
+	function(UI5Object, PipelineFactory, jQueryDOM) {
 		"use strict";
 		var oPipelineFactory = new PipelineFactory({
 			name: "Action",
@@ -39,7 +35,7 @@ sap.ui.define([
 
 				var aActions = oPipelineFactory.create(oOptions.actions);
 
-				if (!$.isArray(vControl)) {
+				if (!jQueryDOM.isArray(vControl)) {
 					aControls = [vControl];
 				} else {
 					aControls = vControl;

@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
-		'sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
+		'sap/ui/model/ValidateException', "sap/base/Log"],
+	function(NumberFormat, FormatException, ODataType, ParseException, ValidateException, Log) {
 	"use strict";
 
 	/**
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 		oType._handleLocalizationChange();

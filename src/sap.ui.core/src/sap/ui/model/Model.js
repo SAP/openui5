@@ -4,14 +4,13 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/message/MessageProcessor',
 	'./BindingMode',
 	'./Context',
 	'./Filter',
 	"sap/base/util/deepEqual"
 ],
-	function(jQuery, MessageProcessor, BindingMode, Context, Filter, deepEqual) {
+	function(MessageProcessor, BindingMode, Context, Filter, deepEqual) {
 	"use strict";
 
 

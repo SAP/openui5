@@ -4,7 +4,6 @@
 
 // Provides class sap.ui.core.UIArea
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
 	'./Element',
 	'./RenderManager',
@@ -12,18 +11,23 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/events/KeyCodes",
+	"sap/base/Log",
+	"sap/base/assert",
+	"sap/ui/performance/Measurement",
 	'jquery.sap.ui'
 ],
 	function(
-		jQuery,
 		ManagedObject,
 		Element,
 		RenderManager,
 		Interaction,
 		containsOrEquals,
 		ActivityDetection,
-		KeyCodes
-		/* jQuerySapUi */
+		KeyCodes,
+		Log,
+		assert,
+		Measurement,
+		jQuery
 	) {
 	"use strict";
 
@@ -42,8 +46,8 @@ sap.ui.define([
 	 * @private
 	 * @todo Add more log output where helpful
 	 */
-	var oRenderLog = jQuery.sap.log.getLogger("sap.ui.Rendering",
-			((window["sap-ui-config"] && window["sap-ui-config"]["xx-debugRendering"]) || /sap-ui-xx-debug(R|-r)endering=(true|x|X)/.test(document.location.search)) ? jQuery.sap.log.Level.DEBUG : Math.min(jQuery.sap.log.Level.INFO, jQuery.sap.log.getLevel())
+	var oRenderLog = Log.getLogger("sap.ui.Rendering",
+			((window["sap-ui-config"] && window["sap-ui-config"]["xx-debugRendering"]) || /sap-ui-xx-debug(R|-r)endering=(true|x|X)/.test(document.location.search)) ? Log.Level.DEBUG : Math.min(Log.Level.INFO, Log.getLevel())
 		),
 		fnDbgWrap = function(oControl) {
 			return oControl;
@@ -232,7 +236,7 @@ sap.ui.define([
 		}
 
 		// oRootNode must either be empty or must be a DOMElement and must not be root node of some other UIArea
-		jQuery.sap.assert(!oRootNode || (oRootNode.nodeType === 1 && !jQuery(oRootNode).attr("data-sap-ui-area")), "UIArea root node must be a DOMElement");
+		assert(!oRootNode || (oRootNode.nodeType === 1 && !jQuery(oRootNode).attr("data-sap-ui-area")), "UIArea root node must be a DOMElement");
 
 		//TODO IS there something missing
 		if (this.oRootNode) {
@@ -538,9 +542,9 @@ sap.ui.define([
 		clearRenderingInfo();
 
 		// pause performance measurement for all UI Areas
-		jQuery.sap.measure.pause("renderPendingUIUpdates");
+		Measurement.pause("renderPendingUIUpdates");
 		// start performance measurement
-		jQuery.sap.measure.start(this.getId() + "---rerender","Rerendering of " + this.getMetadata().getName());
+		Measurement.start(this.getId() + "---rerender","Rerendering of " + this.getMetadata().getName());
 
 		fnDbgReport(this, mInvalidatedControls);
 
@@ -589,7 +593,7 @@ sap.ui.define([
 					try {
 						this.oCore.oFocusHandler.restoreFocus(oStoredFocusInfo);
 					} catch (e) {
-						jQuery.sap.log.warning("Problems while restoring the focus after full UIArea rendering: " + e, null, this);
+						Log.warning("Problems while restoring the focus after full UIArea rendering: " + e, null, this);
 					}
 				}
 
@@ -652,9 +656,9 @@ sap.ui.define([
 		// clearRenderingInfo();
 
 		// end performance measurement
-		jQuery.sap.measure.end(this.getId() + "---rerender");
+		Measurement.end(this.getId() + "---rerender");
 		// resume performance measurement for all UI Areas
-		jQuery.sap.measure.resume("renderPendingUIUpdates");
+		Measurement.resume("renderPendingUIUpdates");
 
 		return bUpdated;
 
@@ -793,7 +797,7 @@ sap.ui.define([
 		// in case of CRTL+SHIFT+ALT the contextmenu event should not be dispatched
 		// to allow to display the browsers context menu
 		if (oEvent.type === "contextmenu" && oEvent.shiftKey && oEvent.altKey && !!(oEvent.metaKey || oEvent.ctrlKey)) {
-			jQuery.sap.log.info("Suppressed forwarding the contextmenu event as control event because CTRL+SHIFT+ALT is pressed!");
+			Log.info("Suppressed forwarding the contextmenu event as control event because CTRL+SHIFT+ALT is pressed!");
 			return;
 		}
 
@@ -910,7 +914,7 @@ sap.ui.define([
 
 		// logging: propagation stopped
 		if (oEvent.isPropagationStopped()) {
-			jQuery.sap.log.debug("'" + oEvent.type + "' propagation has been stopped");
+			Log.debug("'" + oEvent.type + "' propagation has been stopped");
 		}
 
 		// logging: prevent the logging of some events that are verbose and for others do some info logging into the console
@@ -918,9 +922,9 @@ sap.ui.define([
 		if (!mVerboseEvents[sEventName]) {
 			var oElem = jQuery(oEvent.target).control(0);
 			if (oElem) {
-				jQuery.sap.log.debug("Event fired: '" + sEventName + "' on " + oElem, "", "sap.ui.core.UIArea");
+				Log.debug("Event fired: '" + sEventName + "' on " + oElem, "", "sap.ui.core.UIArea");
 			} else {
-				jQuery.sap.log.debug("Event fired: '" + sEventName + "'", "", "sap.ui.core.UIArea");
+				Log.debug("Event fired: '" + sEventName + "'", "", "sap.ui.core.UIArea");
 			}
 		}
 

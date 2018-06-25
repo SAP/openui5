@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragInfo", "./DropInfo"],
-	function(DragInfo, DropInfo) {
+sap.ui.define(["./DragInfo", "./DropInfo", "sap/base/Log"],
+	function(DragInfo, DropInfo, Log) {
 	"use strict";
 
 	/**
@@ -104,7 +104,7 @@ sap.ui.define(["./DragInfo", "./DropInfo"],
 	 * @returns {sap.ui.core.dnd.DragDropInfo} <code>this</code> to allow method chaining.
 	 */
 	DragDropInfo.prototype.setGroupName = function() {
-		jQuery.sap.log.error("groupName property must not be set on " + this);
+		Log.error("groupName property must not be set on " + this);
 		return this;
 	};
 

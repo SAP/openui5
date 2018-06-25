@@ -9,9 +9,10 @@ sap.ui.define([
 	'./JSViewRenderer',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/core/library'
+	'sap/ui/core/library',
+	"sap/base/Log"
 ],
-	function(jQuery, View, JSViewRenderer, merge, ManagedObject, library) {
+	function(jQuery, View, JSViewRenderer, merge, ManagedObject, library, Log) {
 	"use strict";
 
 
@@ -83,7 +84,7 @@ sap.ui.define([
 		for (var sOption in mParameters) {
 			if (sOption === 'definition' || sOption === 'preprocessors') {
 				delete mParameters[sOption];
-				jQuery.sap.log.warning("JSView.create does not support the options definition or preprocessor!");
+				Log.warning("JSView.create does not support the options definition or preprocessor!");
 			}
 		}
 		mParameters.type = ViewType.JS;
@@ -132,9 +133,9 @@ sap.ui.define([
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {
 		if (vView && vView.async) {
-			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.jsview' for view instance creation. Use 'JSView.create' instead.");
+			Log.info("Do not use deprecated factory function 'sap.ui.jsview' for view instance creation. Use 'JSView.create' instead.");
 		} else {
-			jQuery.sap.log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'JSView.create' for view instance creation instead.");
+			Log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'JSView.create' for view instance creation instead.");
 		}
 		return viewFactory.apply(this, arguments);
 	};
@@ -159,8 +160,9 @@ sap.ui.define([
 		} else if (vView && typeof (vView) == "object") { // definition sap.ui.jsview("name",definitionObject)
 			// sId is not given, but contains the desired value of sViewName
 			mRegistry[sId] = vView;
+			//TODO: global jquery call found
 			jQuery.sap.declare({modName:sId,type:"view"}, false);
-			jQuery.sap.log.info("For defining views use JSView.extend instead.");
+			Log.info("For defining views use JSView.extend instead.");
 		} else if (arguments.length == 1 && typeof sId == "string" ||
 			arguments.length == 2 && typeof arguments[0] == "string" && typeof arguments[1] == "boolean") { // instantiation sap.ui.jsview("name", [async])
 			mSettings.viewName = arguments[0];
@@ -180,6 +182,7 @@ sap.ui.define([
 
 		// require view definition if not yet done...
 		if (!mRegistry[mSettings.viewName]) {
+			//TODO: global jquery call found
 			var sModuleName = jQuery.sap.getResourceName(mSettings.viewName, ".view");
 			if ( mSettings.async ) {
 				oPromise = new Promise(function(resolve) {

@@ -3,8 +3,8 @@
  */
 
 // Provides the OData model implementation of a tree binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
-	function(jQuery, TreeBinding, CountMode) {
+sap.ui.define(['sap/ui/model/TreeBinding', './CountMode', "sap/base/Log"],
+	function(TreeBinding, CountMode, Log) {
 	"use strict";
 
 
@@ -41,13 +41,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 			if (!this.bHasTreeAnnotations) {
 				if (!mParameters || !mParameters.navigation) {
-					jQuery.sap.log.error("A navigation paths parameter object has to be defined");
+					Log.error("A navigation paths parameter object has to be defined");
 					this.oNavigationPaths = {};
 				} else {
 					this.oNavigationPaths = mParameters.navigation;
 				}
 			} else {
-				jQuery.sap.log.warning("Tree hierarchy annotations are deprecated and may not work correctly with the sap.ui.model.odata.ODataModel." +
+				Log.warning("Tree hierarchy annotations are deprecated and may not work correctly with the sap.ui.model.odata.ODataModel." +
 						" Please use the sap.ui.model.odata.v2.ODataModel (since version 1.28) instead which fully supports hierarchy annotations.");
 			}
 		}
@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 			if (oError.response) {
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
 			}
-			jQuery.sap.log.warning(sErrorMsg);
+			Log.warning(sErrorMsg);
 		}
 
 		var sPath;
@@ -515,7 +515,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @public
 	 */
 	ODataTreeBinding.prototype.filter = function(aFilters){
-		jQuery.sap.log.warning("Filtering is currently not possible in the ODataTreeBinding");
+		Log.warning("Filtering is currently not possible in the ODataTreeBinding");
 		return this;
 	};
 
@@ -618,7 +618,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 		};
 
 		if (!oEntityType) {
-			jQuery.sap.log.fatal("EntityType for path " + sAbsolutePath + " could not be found.");
+			Log.fatal("EntityType for path " + sAbsolutePath + " could not be found.");
 			return false;
 		}
 

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Performance
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
-	function (jQuery, Plugin) {
+sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/performance/Measurement"],
+	function (Plugin, Measurement) {
 		"use strict";
 
 		var _rawdata = [];
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 		function getPerformanceData(oSupportStub) {
 			//var bActive = jQuery.sap.measure.getActive();
-			var aMeasurements = jQuery.sap.measure.getAllMeasurements(true);
+			var aMeasurements = Measurement.getAllMeasurements(true);
 
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", {"measurements": aMeasurements});
 		}
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfClear = function (oEvent) {
-			jQuery.sap.measure.clear();
+			Measurement.clear();
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", {"measurements": []});
 		};
 
@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfStart = function (oEvent) {
-			jQuery.sap.measure.start(this.getId() + "-perf", "Measurement by support tool");
+			Measurement.start(this.getId() + "-perf", "Measurement by support tool");
 		};
 
 		/**
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfEnd = function (oEvent) {
-			jQuery.sap.measure.end(this.getId() + "-perf");
+			Measurement.end(this.getId() + "-perf");
 			getPerformanceData.call(this);
 		};
 
@@ -177,7 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfActivate = function (oEvent) {
-			jQuery.sap.measure.setActive(true);
+			Measurement.setActive(true);
 		};
 
 		/* =============================================================================================================

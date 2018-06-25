@@ -3,13 +3,22 @@
  */
 
 // Provides class sap.ui.core.ComponentSupport
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/library', 'sap/base/util/ObjectPath', "sap/base/strings/camelize", "sap/base/util/UriParameters"],
+sap.ui.define([
+	'sap/ui/base/DataType',
+	'sap/ui/core/Component',
+	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/library',
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
+	"sap/base/strings/camelize",
+	"sap/base/util/UriParameters"
+],
 	function(
-		jQuery,
 		DataType,
 		Component,
 		ComponentContainer,
 		library,
+		Log,
 		ObjectPath,
 		camelize,
 		UriParameters
@@ -45,10 +54,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Compone
 	ComponentSupport.run = function() {
 		var aElements = ComponentSupport._find();
 		for (var i = 0, l = aElements.length; i < l; i++) {
-			jQuery.sap.log.debug("ComponentSupport found and parses element: " + aElements[i]);
+			Log.debug("ComponentSupport found and parses element: " + aElements[i]);
 			var mSettings = ComponentSupport._parse(aElements[i]);
 			ComponentSupport._applyDefaultSettings(mSettings);
-			jQuery.sap.log.debug("ComponentSupport creates ComponentContainer with the following settings:\n" + JSON.stringify(mSettings, 0, 2));
+			Log.debug("ComponentSupport creates ComponentContainer with the following settings:\n" + JSON.stringify(mSettings, 0, 2));
 			new ComponentContainer(mSettings).placeAt(aElements[i]);
 		}
 	};
@@ -144,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Compone
 	if (!sAutorun || sAutorun.toLowerCase() !== "false") {
 		ComponentSupport.run();
 	} else {
-		jQuery.sap.log.info("ComponentSupport autorun has been interrupted by URL parameter.");
+		Log.info("ComponentSupport autorun has been interrupted by URL parameter.");
 	}
 
 	return ComponentSupport;

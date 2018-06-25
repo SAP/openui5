@@ -1,10 +1,12 @@
+/*global sinon, QUnit*/
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/base/DataType',
 	'sap/ui/base/Object',
 	'sap/ui/core/Popup',
+	'sap/base/Log',
 	'jquery.sap.strings'
-], function(jQuery, DataType, BaseObject, Popup) {
+], function(jQuery, DataType, BaseObject, Popup, Log) {
 
 	function random(values) {
 		if ( Array.isArray(values) ) {
@@ -305,9 +307,9 @@ sap.ui.define([
 	QUnit.module("Type Lookup");
 
 	QUnit.test("non-existing type", function(assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
-		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-		jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+		var oWarningSpy = this.spy(Log, "warning");
+		var oErrorSpy = this.spy(Log, "error");
+		Log.setLevel(Log.Level.DEBUG);
 
 		// check precondition
 		assert.equal(typeof nonExistingType, "undefined", "[precondition] There should be no global var 'nonExistingType'");
@@ -321,9 +323,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("invalid type", function(assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
-		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-		jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+		var oWarningSpy = this.spy(Log, "warning");
+		var oErrorSpy = this.spy(Log, "error");
+		Log.setLevel(Log.Level.DEBUG);
 
 		// check precondition
 		var vGlobalProperty = jQuery.sap.getObject("sap.ui.base.Object");
@@ -340,9 +342,9 @@ sap.ui.define([
 	QUnit.module("Type Creation");
 
 	QUnit.test("type derived from string", function(assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
-		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-		jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+		var oWarningSpy = this.spy(Log, "warning");
+		var oErrorSpy = this.spy(Log, "error");
+		Log.setLevel(Log.Level.DEBUG);
 
 		var oType = DataType.createType("myDerivedType", {
 			isValid: function(oValue) {
@@ -360,9 +362,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("derive without base type", function(assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
-		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-		jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+		var oWarningSpy = this.spy(Log, "warning");
+		var oErrorSpy = this.spy(Log, "error");
+		Log.setLevel(Log.Level.DEBUG);
 
 		var oType = DataType.createType("myTypeWithoutBase", {
 			isValid: function(oValue) {
@@ -379,9 +381,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("logical AND of validity checks", function(assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
-		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-		jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+		var oWarningSpy = this.spy(Log, "warning");
+		var oErrorSpy = this.spy(Log, "error");
+		Log.setLevel(Log.Level.DEBUG);
 
 		var oType = DataType.createType("myStrangeBoolean", {
 			isValid: function(oValue) {
@@ -398,9 +400,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("multiple levels of derivation", function(assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
-		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-		jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+		var oWarningSpy = this.spy(Log, "warning");
+		var oErrorSpy = this.spy(Log, "error");
+		Log.setLevel(Log.Level.DEBUG);
 
 		var oHelloPrefixType = DataType.createType("myHelloPrefixType", {
 			isValid: function(oValue) {
@@ -425,9 +427,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("re-defining a type", function(assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
-		var oErrorSpy = this.spy(jQuery.sap.log, "error");
-		jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+		var oWarningSpy = this.spy(Log, "warning");
+		var oErrorSpy = this.spy(Log, "error");
+		Log.setLevel(Log.Level.DEBUG);
 
 		var oType1 = DataType.createType("myNewType", {
 			isValid: function(oValue) {

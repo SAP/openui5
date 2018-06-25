@@ -3,6 +3,7 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/AnalyticalBinding",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
@@ -21,7 +22,7 @@ sap.ui.require([
 	"sap/ui/core/qunit/analytics/TBA_Batch_ExpandCollapseToggle",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
-], function (jQuery, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
+], function (jQuery, Log, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
 		ODataModelAdapter, ChangeReason, Filter, FilterOperator, Sorter, ODataModelV1, ODataModelV2,
 		TreeAutoExpandMode, o4aFakeService) {
 	/*global QUnit, sinon */
@@ -284,7 +285,7 @@ sap.ui.require([
 		},
 
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(Log);
 			this.oLogMock.expects("warning").atMost(1)
 				.withExactArgs("default count mode is ignored; OData requests will include"
 					+ " $inlinecout options");
@@ -1682,7 +1683,7 @@ sap.ui.require([
 			setupAnalyticalBinding(2, {}, function (oBinding) {
 				if (oFixture.message) {
 					that.oLogMock.expects("isLoggable")
-						.withExactArgs(jQuery.sap.log.Level.INFO, sClassName)
+						.withExactArgs(Log.Level.INFO, sClassName)
 						.returns(true);
 					that.oLogMock.expects("info").withExactArgs(oFixture.message, "", sClassName);
 				}

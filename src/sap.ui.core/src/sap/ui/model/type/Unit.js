@@ -4,7 +4,6 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/model/CompositeType',
 	'sap/ui/model/FormatException',
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/base/strings/hash"
 ],
 	function(
-		jQuery,
 		NumberFormat,
 		CompositeType,
 		FormatException,

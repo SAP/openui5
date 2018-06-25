@@ -1,7 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function ($) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery"], function(jQueryDOM) {
 	"use strict";
 	var _ParameterValidator = function (options) {
 		this._errorPrefix = options.errorPrefix;
@@ -121,49 +122,49 @@ sap.ui.define(['jquery.sap.global'], function ($) {
 
 	_ParameterValidator.types = {
 		func : function (fnValue, sPropertyName) {
-			if ($.isFunction(fnValue)) {
+			if (jQueryDOM.isFunction(fnValue)) {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be a function but '"
 				+ fnValue + "' was passed";
 		},
 		array: function (aValue, sPropertyName) {
-			if ($.isArray(aValue)) {
+			if (jQueryDOM.isArray(aValue)) {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be an array but '"
 				+ aValue + "' was passed";
 		},
 		object: function (oValue, sPropertyName) {
-			if ($.isPlainObject(oValue)) {
+			if (jQueryDOM.isPlainObject(oValue)) {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be an object but '"
 				+ oValue + "' was passed";
 		},
 		string: function (sValue, sPropertyName) {
-			if ($.type(sValue) === "string") {
+			if (jQueryDOM.type(sValue) === "string") {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be a string but '"
 				+ sValue + "' was passed";
 		},
 		bool: function (bValue, sPropertyName) {
-			if ($.type(bValue) === "boolean") {
+			if (jQueryDOM.type(bValue) === "boolean") {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be a boolean value but '"
 				+ bValue + "' was passed";
 		},
 		numeric: function (iValue, sPropertyName) {
-			if ($.isNumeric(iValue)) {
+			if (jQueryDOM.isNumeric(iValue)) {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be numeric but '"
 				+ iValue + "' was passed";
 		},
 		// no validation just for declaring optional and mandatory params
-		any: $.noop
+		any: jQueryDOM.noop
 	};
 
 	return _ParameterValidator;

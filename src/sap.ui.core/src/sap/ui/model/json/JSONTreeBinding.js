@@ -3,8 +3,8 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
-	function(jQuery, ClientTreeBinding) {
+sap.ui.define(['sap/ui/model/ClientTreeBinding'],
+	function(ClientTreeBinding) {
 	"use strict";
 
 

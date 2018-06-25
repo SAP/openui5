@@ -3,14 +3,15 @@
  */
 
 // Provides the basic UI5 support functionality
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", 'jquery.sap.encoder'],
+sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", "sap/base/Log", 'jquery.sap.encoder'],
 	function(
-		jQuery,
 		EventProvider,
 		Plugin,
 		Device,
 		UriParameters,
-		jQueryDOM
+		jQueryDOM,
+		Log,
+		jQuery
 	) {
 	"use strict";
 
@@ -680,7 +681,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 				oInfo.context = aSupportInfos[aSupportInfos.length - 1].context;
 			}
 			if (!oInfo.context) {
-				jQuery.sap.log.debug("Support Info does not have a context and is ignored");
+				Log.debug("Support Info does not have a context and is ignored");
 				return oInfo;
 			}
 			if (oInfo.context && oInfo.context.ownerDocument && oInfo.context.nodeType === 1) {
@@ -695,8 +696,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			aSupportInfos.push(oInfo);
 
 			if (aSupportInfosBreakpoints.indexOf(oInfo._idx) > -1) {
-				jQuery.sap.log.info(oInfo);
-				jQuery.sap.log.info("To remove this breakpoint execute:","\nsap.ui.core.support.Support.info.removeBreakpointAt(" + oInfo._idx + ")");
+				Log.info(oInfo);
+				Log.info("To remove this breakpoint execute:","\nsap.ui.core.support.Support.info.removeBreakpointAt(" + oInfo._idx + ")");
 				/*eslint-disable no-debugger */
 				debugger;
 				/*eslint-enable no-debugger */
@@ -1010,7 +1011,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 				};
 			}
 
-			jQuery.sap.log.info("sap.ui.core.support.Support.info initialized.");
+			Log.info("sap.ui.core.support.Support.info initialized.");
 		}
 
 		if ( bAsync ) {

@@ -4,19 +4,19 @@
 
 // Provides static class sap.ui.base.BindingParser
 sap.ui.define([
-	'jquery.sap.global',
 	'./ExpressionParser',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/Filter',
 	'sap/ui/model/Sorter',
+	"sap/base/Log",
 	'sap/base/util/ObjectPath',
 	"sap/base/util/JSTokenizer"
 ], function(
-		jQuery,
 		ExpressionParser,
 		BindingMode,
 		Filter,
 		Sorter,
+		Log,
 		ObjectPath,
 		JSTokenizer
 	) {
@@ -149,7 +149,7 @@ sap.ui.define([
 		try {
 			BindingParser.mergeParts(oBindingInfo);
 		} catch (e) {
-			jQuery.sap.log.error("Cannot merge parts: " + e.message, sBinding,
+			Log.error("Cannot merge parts: " + e.message, sBinding,
 				"sap.ui.base.BindingParser");
 			// rely on error in ManagedObject
 		}
@@ -183,7 +183,7 @@ sap.ui.define([
 						oEnv.aFunctionsNotFound = oEnv.aFunctionsNotFound || [];
 						oEnv.aFunctionsNotFound.push(sName);
 					} else {
-						jQuery.sap.log.error(sProp + " function " + sName + " not found!");
+						Log.error(sProp + " function " + sName + " not found!");
 					}
 				}
 			}

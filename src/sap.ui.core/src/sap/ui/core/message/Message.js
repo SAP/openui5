@@ -4,12 +4,12 @@
 
 // Provides the implementation for a Message
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/Object',
 	'./MessageProcessor',
-	"sap/base/util/uid"
+	"sap/base/util/uid",
+	"sap/base/Log"
 ],
-	function(jQuery, Object, MessageProcessor, uid) {
+	function(Object, MessageProcessor, uid, Log) {
 	"use strict";
 
 	/**
@@ -196,7 +196,7 @@ sap.ui.define([
 		if (sType in sap.ui.core.MessageType) {
 			this.type = sType;
 		} else {
-			jQuery.sap.log.error("MessageType must be of type sap.ui.core.MessageType");
+			Log.error("MessageType must be of type sap.ui.core.MessageType");
 		}
 	};
 
@@ -241,7 +241,7 @@ sap.ui.define([
 		if (oMessageProcessor instanceof MessageProcessor) {
 			this.processor = oMessageProcessor;
 		} else {
-			jQuery.sap.log.error("MessageProcessor must be an instance of sap.ui.core.message.MessageProcessor");
+			Log.error("MessageProcessor must be an instance of sap.ui.core.message.MessageProcessor");
 		}
 	};
 

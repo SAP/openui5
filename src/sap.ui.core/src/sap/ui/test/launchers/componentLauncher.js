@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/ComponentContainer', // sap.ui.component
 	"sap/base/util/uid",
-	// sap.ui.component
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/Component'
-], function($, ComponentContainer, uid/*, Component */) {
+], function(ComponentContainer, uid, jQueryDOM/*, Component */) {
 	"use strict";
 
 	var _loadingStarted = false,
@@ -39,8 +38,8 @@ sap.ui.define([
 				var sId = uid();
 
 				// create and add div to html
-				_$Component = $('<div id="' + sId + '" class="sapUiOpaComponent"></div>');
-				$("body").append(_$Component).addClass("sapUiOpaBodyComponent");
+				_$Component = jQueryDOM('<div id="' + sId + '" class="sapUiOpaComponent"></div>');
+				jQueryDOM("body").append(_$Component).addClass("sapUiOpaBodyComponent");
 
 				// create and place the component into html
 				_oComponentContainer = new ComponentContainer({component: oComponent});
@@ -62,7 +61,7 @@ sap.ui.define([
 			_oComponentContainer.destroy();
 			_$Component.remove();
 			_loadingStarted = false;
-			$("body").removeClass("sapUiOpaBodyComponent");
+			jQueryDOM("body").removeClass("sapUiOpaBodyComponent");
 		}
 	};
 

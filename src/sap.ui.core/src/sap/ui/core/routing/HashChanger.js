@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/hasher', 'sap/base/util/ObjectPath'],
-	function(jQuery, EventProvider, hasher, ObjectPath) {
+sap.ui.define([
+	'sap/ui/base/EventProvider',
+	'sap/ui/thirdparty/hasher',
+	"sap/base/Log",
+	"sap/base/util/ObjectPath"
+],
+	function(EventProvider, hasher, Log, ObjectPath) {
 	"use strict";
 
 	/**
@@ -33,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 */
 	HashChanger.prototype.init = function() {
 		if (this._initialized) {
-			jQuery.sap.log.info("this HashChanger instance has already been initialized.");
+			Log.info("this HashChanger instance has already been initialized.");
 			return false;
 		}
 

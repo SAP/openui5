@@ -8,13 +8,13 @@
  * Provides the AppCacheBuster mechanism to load application files using a timestamp
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
 	'./Core',
 	'sap/ui/thirdparty/URI',
+	"sap/base/Log",
 	"sap/base/strings/escapeRegExp"
 ],
-	function(jQuery, ManagedObject, Core, URI, escapeRegExp) {
+	function(ManagedObject, Core, URI, Log, escapeRegExp) {
 	"use strict";
 
 	/*
@@ -125,13 +125,13 @@ sap.ui.define([
 			var sContent = [];
 
 			// log
-			jQuery.sap.log.debug("sap.ui.core.AppCacheBuster.register(\"" + sRootUrl + "\"); // BATCH MODE!");
+			Log.debug("sap.ui.core.AppCacheBuster.register(\"" + sRootUrl + "\"); // BATCH MODE!");
 
 			// determine the base URL
 			var sAbsoluteRootUrl = AppCacheBuster.normalizeURL(sRootUrl); // "./" removes the html doc from path
 
 			// log
-			jQuery.sap.log.debug("  --> normalized to: \"" + sAbsoluteRootUrl + "\"");
+			Log.debug("  --> normalized to: \"" + sAbsoluteRootUrl + "\"");
 
 			// create the list of absolute base urls
 			sBaseUrl.forEach(function(sUrlEntry) {
@@ -164,7 +164,7 @@ sap.ui.define([
 							jQuery.extend(mIndex, data);
 						},
 						error: function() {
-							jQuery.sap.log.error("Failed to batch load AppCacheBuster index file from: \"" + sUrl + "\".");
+							Log.error("Failed to batch load AppCacheBuster index file from: \"" + sUrl + "\".");
 						}
 				};
 
@@ -176,13 +176,13 @@ sap.ui.define([
 			sBaseUrl = fnEnsureTrailingSlash(sBaseUrl);
 
 			// log
-			jQuery.sap.log.debug("sap.ui.core.AppCacheBuster.register(\"" + sBaseUrl + "\");");
+			Log.debug("sap.ui.core.AppCacheBuster.register(\"" + sBaseUrl + "\");");
 
 			// determine the base URL
 			sAbsoluteBaseUrl = AppCacheBuster.normalizeURL(sBaseUrl); // "./" removes the html doc from path
 
 			// log
-			jQuery.sap.log.debug("  --> normalized to: \"" + sAbsoluteBaseUrl + "\"");
+			Log.debug("  --> normalized to: \"" + sAbsoluteBaseUrl + "\"");
 
 			// if the index file has not been loaded yet => load!
 			if (!mIndex[sAbsoluteBaseUrl]) {
@@ -202,7 +202,7 @@ sap.ui.define([
 							mIndex[sAbsoluteBaseUrl] = data;
 						},
 						error: function() {
-							jQuery.sap.log.error("Failed to load AppCacheBuster index file from: \"" + sUrl + "\".");
+							Log.error("Failed to load AppCacheBuster index file from: \"" + sUrl + "\".");
 						}
 				};
 
@@ -218,7 +218,7 @@ sap.ui.define([
 			// if anything else than undefined or null is returned we will use this
 			// content as data for the cache buster index
 			if (mIndexInfo != null) {
-				jQuery.sap.log.info("AppCacheBuster index file injected for: \"" + sUrl + "\".");
+				Log.info("AppCacheBuster index file injected for: \"" + sUrl + "\".");
 				oRequest.success(mIndexInfo);
 			} else {
 
@@ -241,7 +241,7 @@ sap.ui.define([
 				}
 
 				// load it
-				jQuery.sap.log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
+				Log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
 				jQuery.ajax(oRequest);
 
 			}
@@ -406,13 +406,13 @@ sap.ui.define([
 				try {
 					Object.defineProperty(HTMLScriptElement.prototype, "src", fnCreateInterceptorDescriptor(descScriptSrc));
 				} catch (ex) {
-					jQuery.sap.log.error("Your browser doesn't support redefining the src property of the script tag. Disabling AppCacheBuster as it is not supported on your browser!\nError: " + ex);
+					Log.error("Your browser doesn't support redefining the src property of the script tag. Disabling AppCacheBuster as it is not supported on your browser!\nError: " + ex);
 					bError = true;
 				}
 				try {
 					Object.defineProperty(HTMLLinkElement.prototype, "href", fnCreateInterceptorDescriptor(descLinkHref));
 				} catch (ex) {
-					jQuery.sap.log.error("Your browser doesn't support redefining the href property of the link tag. Disabling AppCacheBuster as it is not supported on your browser!\nError: " + ex);
+					Log.error("Your browser doesn't support redefining the href property of the link tag. Disabling AppCacheBuster as it is not supported on your browser!\nError: " + ex);
 					bError = true;
 				}
 
@@ -487,7 +487,7 @@ sap.ui.define([
 			 */
 			convertURL: function(sUrl) {
 
-				jQuery.sap.log.debug("sap.ui.core.AppCacheBuster.convertURL(\"" + sUrl + "\");");
+				Log.debug("sap.ui.core.AppCacheBuster.convertURL(\"" + sUrl + "\");");
 
 				var mIndex = oSession.index;
 
@@ -498,7 +498,7 @@ sap.ui.define([
 					// local resources are registered with "./" => we remove the leading "./"!
 					// (code location for this: sap/ui/Global.js:sap.ui.localResources)
 					var sNormalizedUrl = AppCacheBuster.normalizeURL(sUrl);
-					jQuery.sap.log.debug("  --> normalized to: \"" + sNormalizedUrl + "\"");
+					Log.debug("  --> normalized to: \"" + sNormalizedUrl + "\"");
 
 					// should the URL be handled?
 					if (sNormalizedUrl && AppCacheBuster.handleURL(sNormalizedUrl)) {
@@ -513,7 +513,7 @@ sap.ui.define([
 								if (mBaseUrlIndex[sUrlPath]) {
 									// return the normalized URL only if found in the index
 									sUrl = sBaseUrl + "~" + mBaseUrlIndex[sUrlPath] + "~/" + sUrlPath;
-									jQuery.sap.log.debug("  ==> rewritten to \"" + sUrl + "\";");
+									Log.debug("  ==> rewritten to \"" + sUrl + "\";");
 									return false;
 								}
 							}

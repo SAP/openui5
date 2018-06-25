@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
-               'sap/ui/model/FormatException', 'sap/ui/model/ParseException',
-               'sap/ui/core/format/NumberFormat', 'sap/ui/model/ValidateException'],
-	function(jQuery, ODataType, FormatException, ParseException, NumberFormat, ValidateException) {
+sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatException',
+               'sap/ui/model/ParseException', 'sap/ui/core/format/NumberFormat',
+               'sap/ui/model/ValidateException', "sap/base/Log"],
+	function(ODataType, FormatException, ParseException, NumberFormat, ValidateException, Log) {
 	"use strict";
 
 	var rInteger = /^[-+]?(\d+)$/, // user input for an Int64 w/o the sign
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 		oType._handleLocalizationChange();

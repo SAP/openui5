@@ -13,7 +13,6 @@
 
 //Provides class sap.ui.model.odata.v4.ODataModel
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/MessageType",
 	"sap/ui/core/message/Message",
@@ -31,10 +30,31 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding",
-	"./SubmitMode"
-], function (jQuery, SyncPromise, MessageType, Message, BindingMode, BaseContext, Model,
-		OperationMode, URI, _GroupLock, _Helper, _MetadataRequestor, _Requestor, _Parser,
-		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding, SubmitMode) {
+	"./SubmitMode",
+	"sap/base/Log",
+	"sap/base/assert"
+], function(
+	SyncPromise,
+	MessageType,
+	Message,
+	BindingMode,
+	BaseContext,
+	Model,
+	OperationMode,
+	URI,
+	_GroupLock,
+	_Helper,
+	_MetadataRequestor,
+	_Requestor,
+	_Parser,
+	ODataContextBinding,
+	ODataListBinding,
+	ODataMetaModel,
+	ODataPropertyBinding,
+	SubmitMode,
+	Log,
+	assert
+) {
 
 	"use strict";
 
@@ -319,12 +339,12 @@ sap.ui.define([
 		}));
 		bBlocked = oPromise.isPending();
 		if (bBlocked) {
-			jQuery.sap.log.info("submitBatch('" + sGroupId + "') is waiting for locks", null,
+			Log.info("submitBatch('" + sGroupId + "') is waiting for locks", null,
 				sClassName);
 		}
 		return Promise.resolve(oPromise.then(function () {
 			if (bBlocked) {
-				jQuery.sap.log.info("submitBatch('" + sGroupId + "') continues", null, sClassName);
+				Log.info("submitBatch('" + sGroupId + "') continues", null, sClassName);
 			}
 			that.aLockedGroupLocks = that.aLockedGroupLocks.filter(function (oGroupLock) {
 				return oGroupLock.isLocked();
@@ -1289,11 +1309,11 @@ sap.ui.define([
 		}
 
 		if (oError.canceled) {
-			jQuery.sap.log.debug(sLogMessage, sDetails, sReportingClassName);
+			Log.debug(sLogMessage, sDetails, sReportingClassName);
 			return;
 		}
 
-		jQuery.sap.log.error(sLogMessage, sDetails, sReportingClassName);
+		Log.error(sLogMessage, sDetails, sReportingClassName);
 		if (oError.$reported) {
 			return;
 		}
@@ -1366,7 +1386,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
-		jQuery.sap.assert(oEntityContext.getModel() === this,
+		assert(oEntityContext.getModel() === this,
 				"oEntityContext must belong to this model");
 		return oEntityContext.requestCanonicalPath();
 	};

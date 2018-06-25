@@ -29,8 +29,8 @@
 
 	QUnit.config.autostart = false;
 
-	sap.ui.require(['sap/ui/core/Configuration', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/Locale'],
-		function(Configuration, Core, coreLibrary, Locale) {
+	sap.ui.require(['sap/ui/core/Configuration', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/Locale', 'sap/base/Log'],
+		function(Configuration, Core, coreLibrary, Locale, Log) {
 
 		var browserUrl = {
 			change: function(sUrl) {
@@ -410,13 +410,13 @@
 		});
 
 		QUnit.test("error reporting", function(assert) {
-			this.stub(jQuery.sap.log, 'warning');
+			this.stub(Log, 'warning');
 			var oConfig = this.setupConfig("de", "?sap-language=6N&sap-locale=en-GB");
-			assert.strictEqual(jQuery.sap.log.warning.called, false, "no warning should be written if accompanied by sap-locale");
+			assert.strictEqual(Log.warning.called, false, "no warning should be written if accompanied by sap-locale");
 			var oConfig = this.setupConfig("de", "?sap-language=6N&sap-ui-language=en-GB");
-			assert.strictEqual(jQuery.sap.log.warning.called, false, "no warning should be written if accompanied by sap-ui-language");
+			assert.strictEqual(Log.warning.called, false, "no warning should be written if accompanied by sap-ui-language");
 			var oConfig = this.setupConfig("de", "?sap-language=6N");
-			assert.ok(jQuery.sap.log.warning.calledWith(sinon.match(/6N/).and(sinon.match(/BCP-?47/i))), "warning must have been written");
+			assert.ok(Log.warning.calledWith(sinon.match(/6N/).and(sinon.match(/BCP-?47/i))), "warning must have been written");
 			assert.throws(function() {
 				var oConfig = this.setupConfig("de", "?sap-locale=6N&sap-language=6N");
 			}, "setting an invalid (non-BCP-47) sap-locale should cause an error");

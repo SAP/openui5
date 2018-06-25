@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "./DragDropBase"],
-	function(jQuery, DragDropBase) {
+sap.ui.define(["./DragDropBase", "sap/base/Log"],
+	function(DragDropBase, Log) {
 	"use strict";
 
 	/**
@@ -131,7 +131,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 		var sTargetAggregation = this.getTargetAggregation();
 		var oMetadata = oDropTarget.getMetadata().getDragDropInfo(sTargetAggregation);
 		if (!oMetadata.droppable) {
-			jQuery.sap.log.warning((sTargetAggregation ? sTargetAggregation + " aggregation of " : "") + oDropTarget + " is not configured to be droppable");
+			Log.warning((sTargetAggregation ? sTargetAggregation + " aggregation of " : "") + oDropTarget + " is not configured to be droppable");
 			return false;
 		}
 

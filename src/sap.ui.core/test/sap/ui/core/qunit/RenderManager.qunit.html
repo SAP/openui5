@@ -760,6 +760,9 @@
 
 		QUnit.test("RenderManager should not break for controls with invalid renderer", function(assert) {
 
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+
 			// define a control without an invalid renderer
 			sap.ui.core.Control.extend("my.InvalidRendererControl", {
 				renderer: {}
@@ -775,7 +778,7 @@
 			assert.ok(!oRenderer.render, "Invalid renderer should not provide a render function");
 
 			// spy the jQuery.sap.log.error function
-			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var oSpy = sinon.spy(Log, "error");
 
 			// rendering should not lead to an error
 			oControl.placeAt("area8");
@@ -786,7 +789,7 @@
 			assert.equal("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!", oSpy.getCall(0).args[0], "Error should be reported in the console!");
 
 			// restore the spy
-			jQuery.sap.log.error.restore();
+			oSpy.restore();
 
 		});
 

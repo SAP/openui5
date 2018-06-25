@@ -2,12 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([
-		'jquery.sap.global',
-		'./Opa',
-		'sap/ui/base/Object'
-	],
-	function($, Opa, Ui5Object) {
+sap.ui.define(['jquery.sap.global', './Opa', 'sap/ui/base/Object', "sap/base/Log"],
+	function($, Opa, Ui5Object, Log) {
 		"use strict";
 
 		/**
@@ -65,9 +61,10 @@ sap.ui.define([
 
 		function _createClassName(sNamespace, sPageObjectName, sOperationType) {
 			var sClassName = sNamespace + "." + sPageObjectName + "." + sOperationType;
+			//TODO: global jquery call found
 			var oObj = $.sap.getObject(sClassName,NaN);
 			if (oObj){
-				$.sap.log.error("Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.");
+				Log.error("Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.");
 			}
 			return sClassName;
 		}

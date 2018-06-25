@@ -3,12 +3,12 @@
  */
 
 // Provides class sap.ui.core.ResizeHandler
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/util/ActivityDetection"],
-	function(jQuery, BaseObject, ActivityDetection) {
+sap.ui.define(['sap/ui/base/Object', "sap/base/Log", "sap/ui/util/ActivityDetection"],
+	function(BaseObject, Log, ActivityDetection) {
 	"use strict";
 
 	// local logger, by default only logging errors
-	var log = jQuery.sap.log.getLogger("sap.ui.core.ResizeHandler", jQuery.sap.log.Level.ERROR);
+	var log = Log.getLogger("sap.ui.core.ResizeHandler", Log.Level.ERROR);
 
 	/**
 	 * Reference to the Core (implementation view, not facade)

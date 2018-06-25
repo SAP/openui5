@@ -4,7 +4,6 @@
 
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
@@ -19,15 +18,33 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
 	"./ValueListType",
+	"sap/base/Log",
+	"sap/base/assert",
 	"sap/base/util/ObjectPath"
-], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding, ContextBinding,
-		BaseContext, MetaModel, OperationMode, Int64, Raw, PropertyBinding, URI, _Helper,
-		ValueListType, ObjectPath) {
+], function(
+	SyncPromise,
+	BindingMode,
+	ChangeReason,
+	ClientListBinding,
+	ContextBinding,
+	BaseContext,
+	MetaModel,
+	OperationMode,
+	Int64,
+	Raw,
+	PropertyBinding,
+	URI,
+	_Helper,
+	ValueListType,
+	Log,
+	assert,
+	ObjectPath
+) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
 	var oCountType,
-		DEBUG = jQuery.sap.log.Level.DEBUG,
+		DEBUG = Log.Level.DEBUG,
 		ODataMetaContextBinding,
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
@@ -87,7 +104,7 @@ sap.ui.define([
 		mValueListModelByUrl = {},
 		sValueListReferences = "@com.sap.vocabularies.Common.v1.ValueListReferences",
 		sValueListWithFixedValues = "@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
-		WARNING = jQuery.sap.log.Level.WARNING;
+		WARNING = Log.Level.WARNING;
 
 	/**
 	 * Adds the given reference URI to the map of reference URIs for schemas.
@@ -233,7 +250,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 */
 	function logAndThrowError(sMessage, sDetails) {
-		jQuery.sap.log.error(sMessage, sDetails, sODataMetaModel);
+		Log.error(sMessage, sDetails, sODataMetaModel);
 		throw new Error(sDetails + ": " + sMessage);
 	}
 
@@ -299,7 +316,7 @@ sap.ui.define([
 	ODataMetaContextBinding
 		= ContextBinding.extend("sap.ui.model.odata.v4.ODataMetaContextBinding", {
 			constructor : function (oModel, sPath, oContext) {
-				jQuery.sap.assert(!oContext || oContext.getModel() === oModel,
+				assert(!oContext || oContext.getModel() === oModel,
 					"oContext must belong to this model");
 				ContextBinding.call(this, oModel, sPath, oContext);
 			},
@@ -316,7 +333,7 @@ sap.ui.define([
 			// @override
 			// @see sap.ui.model.Binding#setContext
 			setContext : function (oContext) {
-				jQuery.sap.assert(!oContext || oContext.getModel() === this.oModel,
+				assert(!oContext || oContext.getModel() === this.oModel,
 					"oContext must belong to this model");
 				if (oContext !== this.oContext) {
 					this.oContext = oContext;
@@ -873,7 +890,7 @@ sap.ui.define([
 			that = this;
 
 		if (!sResolvedPath) {
-			jQuery.sap.log.error("Invalid relative path w/o context", sPath, sODataMetaModel);
+			Log.error("Invalid relative path w/o context", sPath, sODataMetaModel);
 			return SyncPromise.resolve(null);
 		}
 
@@ -978,11 +995,11 @@ sap.ui.define([
 			function log(iLevel) {
 				var sLocation;
 
-				if (jQuery.sap.log.isLoggable(iLevel, sODataMetaModel)) {
+				if (Log.isLoggable(iLevel, sODataMetaModel)) {
 					sLocation = Array.isArray(vLocation)
 						? vLocation.join("/")
 						: vLocation;
-					jQuery.sap.log[iLevel === DEBUG ? "debug" : "warning"](
+					Log[iLevel === DEBUG ? "debug" : "warning"](
 						Array.prototype.slice.call(arguments, 1).join("")
 						+ (sLocation ? " at /" + sLocation : ""),
 						sResolvedPath, sODataMetaModel);
@@ -1281,7 +1298,7 @@ sap.ui.define([
 			}
 
 			if (!oProperty) {
-				jQuery.sap.log.warning("No metadata for path '" + sPath + "', using " + sTypeName,
+				Log.warning("No metadata for path '" + sPath + "', using " + sTypeName,
 					undefined, sODataMetaModel);
 				return oRawType;
 			}
@@ -1292,7 +1309,7 @@ sap.ui.define([
 			}
 
 			if (oProperty.$isCollection) {
-				jQuery.sap.log.warning("Unsupported collection type, using " + sTypeName,
+				Log.warning("Unsupported collection type, using " + sTypeName,
 					sPath, sODataMetaModel);
 			} else {
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
@@ -1309,7 +1326,7 @@ sap.ui.define([
 						setConstraint("nullable", false);
 					}
 				} else {
-					jQuery.sap.log.warning("Unsupported type '" + oProperty.$Type + "', using "
+					Log.warning("Unsupported type '" + oProperty.$Type + "', using "
 						+ sTypeName, sPath, sODataMetaModel);
 				}
 			}

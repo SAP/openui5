@@ -3,8 +3,15 @@
  */
 
 // Provides controller extension class (part of MVC concept)
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/base/Metadata', 'sap/ui/core/mvc/ControllerMetadata', 'sap/ui/core/mvc/OverrideExecution', 'sap/base/util/uid'],
-	function(BaseObject, Metadata, ControllerMetadata, OverrideExecution, uid) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'sap/ui/base/Metadata',
+	'sap/ui/core/mvc/ControllerMetadata',
+	'sap/ui/core/mvc/OverrideExecution',
+	'sap/base/util/uid',
+	"sap/base/Log"
+],
+	function(BaseObject, Metadata, ControllerMetadata, OverrideExecution, uid, Log) {
 	"use strict";
 		var ControllerExtension = BaseObject.extend("sap.ui.core.mvc.ControllerExtension", {
 			metadata: {
@@ -78,7 +85,9 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/base/Metadata', 'sap/ui/core/mvc/Co
 					}
 					//}
 				}.bind(this));
-				this.getInterface = jQuery.sap.getter(mMethods);
+				this.getInterface = function() {
+					return mMethods;
+				};
 				return mMethods;
 			}
 		}, ControllerMetadata);
@@ -152,7 +161,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/base/Metadata', 'sap/ui/core/mvc/Co
 					} else if (typeof fnCust === "function") {
 						oOrigDef[sMemberName] = fnCust;
 					} else {
-						jQuery.sap.log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
+						Log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
 					}
 					break;
 				case OverrideExecution.After:
@@ -161,17 +170,17 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/base/Metadata', 'sap/ui/core/mvc/Co
 					} else if (typeof fnCust === "function") {
 						oOrigDef[sMemberName] = fnCust;
 					} else {
-						jQuery.sap.log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
+						Log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
 					}
 					break;
 				case OverrideExecution.Instead:
 				default:
 					if (sMemberName in oOrigDef) {
-						jQuery.sap.log.debug("Overriding  member '" + sMemberName + "' of extension " + this.getMetadata().getName());
+						Log.debug("Overriding  member '" + sMemberName + "' of extension " + this.getMetadata().getName());
 						if (!this.getMetadata().isMethodFinal(sMemberName)) {
 							oOrigDef[sMemberName] = fnCust;
 						}  else {
-							jQuery.sap.log.error("Error in ControllerExtension.override: Method '" + sMemberName + "' of extension '" + this.getMetadata().getName() + "' is flagged final and cannot be overridden!");
+							Log.error("Error in ControllerExtension.override: Method '" + sMemberName + "' of extension '" + this.getMetadata().getName() + "' is flagged final and cannot be overridden!");
 						}
 					} else {
 						oOrigDef[sMemberName] = fnCust;

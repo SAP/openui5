@@ -20,7 +20,8 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	'sap/ui/events/KeyCodes',
 	"sap/base/strings/camelize",
 	"sap/base/strings/capitalize",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/base/Log"
 ],
 	function(
 		jQuery,
@@ -30,7 +31,8 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		KeyCodes,
 		camelize,
 		capitalize,
-		UriParameters
+		UriParameters,
+		Log
 	) {
 	"use strict";
 
@@ -632,7 +634,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		 * wrapper around window.console
 		 */
 		function info(msg) {
-			jQuery.sap.log.info(msg);
+			Log.info(msg);
 		}
 
 		var M_DEFAULT_TEST_VALUES = {
@@ -684,6 +686,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				}
 
 				try {
+					//TODO: global jquery call found
 					jQuery.sap.require(sType);
 				} catch (e) {
 					//escape eslint check for empty block

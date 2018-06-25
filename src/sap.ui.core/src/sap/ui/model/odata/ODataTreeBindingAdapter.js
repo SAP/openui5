@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataTreeBindingAdapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', './OperationMode'],
-	function(jQuery, TreeBinding, ODataTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason, OperationMode) {
+sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', './OperationMode', "sap/base/assert"],
+	function(TreeBinding, ODataTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason, OperationMode, assert) {
 	"use strict";
 
 	/**
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	 * @private
 	 */
 	ODataTreeBindingAdapter.prototype.nodeHasChildren = function(oNode) {
-		jQuery.sap.assert(oNode, "ODataTreeBindingAdapter.nodeHasChildren: No node given!");
+		assert(oNode, "ODataTreeBindingAdapter.nodeHasChildren: No node given!");
 
 		//check if the node has children
 		if (!oNode) {

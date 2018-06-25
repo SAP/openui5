@@ -6,7 +6,6 @@ sap.ui.define([
 	"./BaseTreeModifier",
 	"sap/ui/base/DataType",
 	"sap/ui/core/XMLTemplateProcessor",
-	"jquery.sap.global",
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
@@ -16,7 +15,6 @@ sap.ui.define([
 	BaseTreeModifier,
 	DataType,
 	XMLTemplateProcessor,
-	jQuery,
 	merge,
 	jQueryDOM,
 	XMLHelper

@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _LogCollector) {
+sap.ui.define(["sap/ui/test/_LogCollector", "sap/base/Log"], function (_LogCollector, Log) {
 	"use strict";
-	var oLogger = $.sap.log.getLogger("sap.ui.test.matchers.Ancestor", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = Log.getLogger("sap.ui.test.matchers.Ancestor", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
 
 	function matchControls(oParent, aAncestor) {
 		var bMatchById = typeof aAncestor === "string";

@@ -2,17 +2,28 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/core/Control",
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/model/FormatException",
-	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/model/odata/type/Time",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Control, DateFormat, FormatException, ParseException, ValidateException,
-		ODataType, Time, TestUtils) {
+    "jquery.sap.global",
+    "sap/ui/core/Control",
+    "sap/ui/core/format/DateFormat",
+    "sap/ui/model/FormatException",
+    "sap/ui/model/ParseException",
+    "sap/ui/model/ValidateException",
+    "sap/ui/model/odata/type/ODataType",
+    "sap/ui/model/odata/type/Time",
+    "sap/ui/test/TestUtils",
+    "sap/base/Log"
+], function(
+    jQuery,
+	Control,
+	DateFormat,
+	FormatException,
+	ParseException,
+	ValidateException,
+	ODataType,
+	Time,
+	TestUtils,
+	Log
+) {
 	/*global QUnit */
 	"use strict";
 
@@ -48,7 +59,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Time", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");

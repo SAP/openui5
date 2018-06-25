@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/EventHandlerResolver"
-], function(Control, JSONModel, EventHandlerResolver) {
+	"sap/ui/core/mvc/EventHandlerResolver",
+	"sap/base/Log"
+], function(Control, JSONModel, EventHandlerResolver, Log) {
 	"use strict";
 
 	var oController;
@@ -293,19 +294,19 @@ sap.ui.define([
 		}, "Correct error should be thrown for non-matching braces");
 
 		// unresolvable formatter
-		var spy = sinon.spy(jQuery.sap.log, "error");
+		var spy = sinon.spy(Log, "error");
 		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${path:'/someModelProperty', formatter: '.myNotExistingFormatter'})", oController)[0];
 		fnFromController(oDummyEvent);
 		assert.equal(spy.callCount, 1, "Error should be logged for unresolvable formatter");
 		assert.ok(spy.args[0][0].indexOf("formatter function .myNotExistingFormatter not found") > -1, "Error should be logged for unresolvable formatter");
 
 		// globals within the expression
-		spy = sinon.spy(jQuery.sap.log, "warning");
+		spy = sinon.spy(Log, "warning");
 		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(Math.max(1))", oController)[0];
 		fnFromController(oDummyEvent);
 		assert.equal(spy.callCount, 2, "Warning should be logged for globals inside parameter section");
 		assert.ok(spy.args[0][0].indexOf("Unsupported global identifier") > -1, "Warning should be logged for globals inside parameter section");
-		jQuery.sap.log.warning.restore();
+		Log.warning.restore();
 
 		// wrong expression syntax
 		assert.throws(function(){
@@ -316,11 +317,11 @@ sap.ui.define([
 		}, "Error should be thrown for expression syntax error");
 
 		// no expressions within
-		spy = sinon.spy(jQuery.sap.log, "warning");
+		spy = sinon.spy(Log, "warning");
 		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod({= 'abc'})", oController)[0];
 		assert.equal(spy.callCount, 1, "Warning should be logged for expressions inside parameter section");
 		assert.ok(spy.args[0][0].indexOf("event handler parameter contains a binding expression") > -1, "Warning should be logged for expressions inside parameter section");
-		jQuery.sap.log.warning.restore();
+		Log.warning.restore();
 		assert.throws(function(){
 			fnFromController(oDummyEvent);
 		}, function(err){
@@ -337,7 +338,7 @@ sap.ui.define([
 
 		// wrong binding path
 		/*	TODO: help the user detect such issues without making too much noise when an empty value is perfectly fine
-		spy = sinon.spy(jQuery.sap.log, "warning");
+		spy = sinon.spy(Log, "warning");
 		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/thisdoesnotExist})", oController)[0];
 		fnFromController(oDummyEvent);
 		assert.equal(spy.callCount, 1, "Warning should be logged for empty values (which may indicate wrong bindings)");

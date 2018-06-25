@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
-	function(jQuery, Object) {
+sap.ui.define(["sap/ui/base/Object", "sap/base/Log"],
+	function(Object, Log) {
 	"use strict";
 
 /**
@@ -69,7 +69,7 @@ MessageParser.prototype.getProcessor = function() {
  * @abstract
  */
 MessageParser.prototype.parse = function(oResponse) {
-	jQuery.sap.log.error(
+	Log.error(
 		"MessageParser: parse-method must be implemented in the specific parser class. Messages " +
 		"have been ignored."
 	);

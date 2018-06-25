@@ -3,8 +3,20 @@
  */
 
 // Provides client-based DataBinding implementation
-sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBinding', './ClientPropertyBinding', './ClientTreeBinding', './Model'],
-	function(jQuery, ClientContextBinding, ClientListBinding, ClientPropertyBinding, ClientTreeBinding, Model) {
+sap.ui.define([
+	'./ClientContextBinding',
+	'./ClientListBinding',
+	'./ClientPropertyBinding',
+	'./ClientTreeBinding',
+	'./Model'
+],
+	function(
+		ClientContextBinding,
+		ClientListBinding,
+		ClientPropertyBinding,
+		ClientTreeBinding,
+		Model
+	) {
 	"use strict";
 
 

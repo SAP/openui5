@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', './TemplateControl', 'sap/ui/thirdparty/handlebars', 'sap/ui/base/ManagedObject', 'sap/base/util/ObjectPath'],
-	function(jQuery, Core, Template, TemplateControl, Handlebars, ManagedObject, ObjectPath) {
+sap.ui.define(['sap/ui/core/Core', './Template', './TemplateControl', 'sap/ui/thirdparty/handlebars', 'sap/ui/base/ManagedObject', "sap/base/util/ObjectPath"],
+	function(Core, Template, TemplateControl, Handlebars, ManagedObject, ObjectPath) {
 	"use strict";
 
 

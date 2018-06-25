@@ -594,10 +594,12 @@
 
 	QUnit.test("No navigation object specified", function(assert) {
 		var done = assert.async();
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
 		oModel.attachMetadataLoaded(function() {
 			var iErrorCount = 0,
 				sErrorMessage = "";
-			sinon.stub(jQuery.sap.log, "error", function(sMsg) {
+			sinon.stub(Log, "error", function(sMsg) {
 				iErrorCount++;
 				sErrorMessage = sMsg;
 			});
@@ -606,7 +608,7 @@
 
 			assert.equal(iErrorCount, 1, "TreeBinding one error should have occured");
 			assert.equal(sErrorMessage, "Neither navigation paths parameters, nor (complete/valid) tree hierarchy annotations where provided to the TreeBinding.", "TreeBinding navigation error was thrown");
-			jQuery.sap.log.error.restore();
+			Log.error.restore();
 			done();
 		});
 	});
@@ -639,12 +641,13 @@
 
 	QUnit.test("Control filtering prohibited in OperationMode.Server", function(assert) {
 		var done = assert.async();
-
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
 		oModel.attachMetadataLoaded(function() {
 			var iWarningCount = 0,
 				sMessage = "";
 
-			sinon.stub(jQuery.sap.log, "warning", function(sMsg) {
+			sinon.stub(Log, "warning", function(sMsg) {
 				iWarningCount++;
 				sMessage = sMsg;
 			});
@@ -655,7 +658,7 @@
 			oBinding.filter(new sap.ui.model.Filter("FirstName", "EQ", "Tom"));
 
 			assert.equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 			done();
 		});
 	});
@@ -1644,6 +1647,8 @@
 	 */
 	QUnit.test("filter() API - OperationMode.Server - Control Filter - afterwards", function(assert) {
 		var done = assert.async();
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
@@ -1654,7 +1659,7 @@
 			//warning stub
 			var iWarningCount = 0,
 				sMessage = "";
-			sinon.stub(jQuery.sap.log, "warning", function(sMsg) {
+			sinon.stub(Log, "warning", function(sMsg) {
 				iWarningCount++;
 				sMessage = sMsg;
 			});
@@ -1667,7 +1672,7 @@
 			assert.equal(sMessage, "Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
 					"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.")
 
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 			done();
 		});
 	});
@@ -2054,17 +2059,19 @@
 
 	QUnit.test("Tried filtering - incomplete Annotations/Navigation Property Definitions", function(assert) {
 		var done = assert.async();
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
 		oModel.attachMetadataLoaded(function() {
 			//stub error
 			var iErrorCount = 0;
-			sinon.stub(jQuery.sap.log, "error", function(sMsg) {
+			sinon.stub(Log, "error", function(sMsg) {
 				iErrorCount++;
 			});
 
 			//warning stub
 			var iWarningCount = 0,
 				sMessage = "";
-			sinon.stub(jQuery.sap.log, "warning", function(sMsg) {
+			sinon.stub(Log, "warning", function(sMsg) {
 				iWarningCount++;
 				sMessage = sMsg;
 			});
@@ -2083,8 +2090,8 @@
 			assert.equal(iErrorCount, 1, "One error logged, if no navigation path properties are given, and hierarchy annotations are missing/incomplete.");
 			assert.equal(iWarningCount, 2, "One warning (that filtering is not enabled) and One for the incomplete annotations.");
 
-			jQuery.sap.log.warning.restore();
-			jQuery.sap.log.error.restore();
+			Log.warning.restore();
+			Log.error.restore();
 			done();
 		});
 	});

@@ -4,18 +4,16 @@
 
 // Provides control sap.ui.core.Icon.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/base/assert',
-    '../Device',
-    './Control',
-    './IconPool',
-    './InvisibleText',
-    './library',
-    "./IconRenderer",
-    "sap/ui/events/KeyCodes"
+	'sap/base/assert',
+	'../Device',
+	'./Control',
+	'./IconPool',
+	'./InvisibleText',
+	'./library',
+	"./IconRenderer",
+	"sap/ui/events/KeyCodes"
 ],
 	function(
-		jQuery,
 		assert,
 		Device,
 		Control,

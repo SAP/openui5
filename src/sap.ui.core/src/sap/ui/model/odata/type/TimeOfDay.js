@@ -3,19 +3,19 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType"
+	"sap/ui/model/odata/type/ODataType",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	DateFormat,
 	FormatException,
 	ParseException,
 	ValidateException,
-	ODataType
+	ODataType,
+	Log
 ) {
 	"use strict";
 
@@ -100,13 +100,13 @@ sap.ui.define([
 			if (vNullable === false) {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true) {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 			if (vPrecision === Math.floor(vPrecision) && vPrecision > 0 && vPrecision <= 12) {
 				oType.oConstraints = oType.oConstraints || {};
 				oType.oConstraints.precision = vPrecision;
 			} else if (vPrecision !== undefined && vPrecision !== 0) {
-				jQuery.sap.log.warning("Illegal precision: " + vPrecision, null, oType.getName());
+				Log.warning("Illegal precision: " + vPrecision, null, oType.getName());
 			}
 		}
 	}

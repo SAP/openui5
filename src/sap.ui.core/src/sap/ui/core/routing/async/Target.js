@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 							oContainerControl[oAggregationInfo._sRemoveAllMutator]();
 						}
 
-						jQuery.sap.log.info("Did place the view '" + sViewName + "' with the id '" + oView.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oContainerControl.getId() + "'", that);
+						Log.info("Did place the view '" + sViewName + "' with the id '" + oView.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oContainerControl.getId() + "'", that);
 						oContainerControl[oAggregationInfo._sMutator](oView);
 
 						that.fireDisplay({
@@ -233,7 +233,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			}
 
 			if (sLogMessage) {
-				jQuery.sap.log.error(sLogMessage, this);
+				Log.error(sLogMessage, this);
 			}
 
 			return bIsValid || sLogMessage;
@@ -244,7 +244,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		 */
 		_refuseInvalidTarget : function(sName, sMessage) {
 			if (sMessage) {
-				jQuery.sap.log.error(sMessage, this);
+				Log.error(sMessage, this);
 			}
 
 			return {

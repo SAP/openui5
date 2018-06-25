@@ -7,8 +7,13 @@
 /*eslint-disable camelcase, valid-jsdoc, no-warning-comments */
 
 // Provides API for analytical extensions in OData service metadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/Sorter', './AnalyticalVersionInfo'],
-	function(jQuery, Filter, FilterOperator, Sorter, AnalyticalVersionInfo) {
+sap.ui.define([
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/Sorter',
+	'./AnalyticalVersionInfo'
+],
+	function(Filter, FilterOperator, Sorter, AnalyticalVersionInfo) {
 	"use strict";
 
 	/**

@@ -5,12 +5,12 @@
 //Provides mixin sap.ui.model.odata.v4.ODataParentBinding for classes extending sap.ui.model.Binding
 //with dependent bindings
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
 	"./ODataBinding",
-	"./lib/_Helper"
-], function (jQuery, SyncPromise, ChangeReason, asODataBinding, _Helper) {
+	"./lib/_Helper",
+	"sap/base/Log"
+], function (SyncPromise, ChangeReason, asODataBinding, _Helper, Log) {
 	"use strict";
 
 	/**
@@ -254,7 +254,7 @@ sap.ui.define([
 					Promise.resolve().then(addUnlockTask);
 				} else if (that.oReadGroupLock === oGroupLock) {
 					// It is still the same, unused lock
-					jQuery.sap.log.debug("Timeout: unlocked " + oGroupLock, null, sClassName);
+					Log.debug("Timeout: unlocked " + oGroupLock, null, sClassName);
 					oGroupLock.unlock(true);
 					that.oReadGroupLock = undefined;
 				}
@@ -322,7 +322,7 @@ sap.ui.define([
 		}
 		if (oProperty.$kind === "Property") {
 			if (Object.keys(mChildQueryOptions).length > 0) {
-				jQuery.sap.log.error("Failed to enhance query options for "
+				Log.error("Failed to enhance query options for "
 						+ "auto-$expand/$select as the child binding has query options, "
 						+ "but its path '" + sChildMetaPath + "' points to a structural "
 						+ "property",
@@ -333,7 +333,7 @@ sap.ui.define([
 			this.addToSelect(mQueryOptionsForPathPrefix, [sExpandSelectPath]);
 		}
 		if ("$apply" in mChildQueryOptions) {
-			jQuery.sap.log.debug("Cannot wrap $apply into $expand: " + sChildMetaPath,
+			Log.debug("Cannot wrap $apply into $expand: " + sChildMetaPath,
 				JSON.stringify(mChildQueryOptions),
 				"sap.ui.model.odata.v4.ODataParentBinding");
 			return undefined;
@@ -493,7 +493,7 @@ sap.ui.define([
 			if (sChildMetaPath === "value") { // symbolic name for operation result
 				return that.aggregateQueryOptions(mChildQueryOptions, bCacheImmutable);
 			}
-			jQuery.sap.log.error("Failed to enhance query options for "
+			Log.error("Failed to enhance query options for "
 					+ "auto-$expand/$select as the path '"
 					+ sFullMetaPath
 					+ "' does not point to a property",

@@ -2,13 +2,22 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/model/FormatException",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/model/odata/type/Stream",
-	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException"
-], function (jQuery, FormatException, ODataType, Stream, ParseException, ValidateException) {
+    "jquery.sap.global",
+    "sap/ui/model/FormatException",
+    "sap/ui/model/odata/type/ODataType",
+    "sap/ui/model/odata/type/Stream",
+    "sap/ui/model/ParseException",
+    "sap/ui/model/ValidateException",
+    "sap/base/Log"
+], function(
+    jQuery,
+	FormatException,
+	ODataType,
+	Stream,
+	ParseException,
+	ValidateException,
+	Log
+) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
@@ -16,7 +25,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Stream", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}

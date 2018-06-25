@@ -3,8 +3,13 @@
  */
 
 // Provides class sap.ui.core.format.FileSizeFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData', 'sap/ui/core/format/NumberFormat'],
-	function(jQuery, BaseObject, Locale, LocaleData, NumberFormat) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'sap/ui/core/Locale',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/format/NumberFormat'
+],
+	function(BaseObject, Locale, LocaleData, NumberFormat) {
 	"use strict";
 
 

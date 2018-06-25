@@ -2,8 +2,22 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './DeclarativeSupport', './XMLTemplateProcessor'],
-	function(jQuery, ManagedObject, Element, DeclarativeSupport, XMLTemplateProcessor) {
+sap.ui.define([
+	'jquery.sap.global',
+	'../base/ManagedObject',
+	'./Element',
+	'./DeclarativeSupport',
+	'./XMLTemplateProcessor',
+	"sap/base/Log"
+],
+	function(
+		jQuery,
+		ManagedObject,
+		Element,
+		DeclarativeSupport,
+		XMLTemplateProcessor,
+		Log
+	) {
 	"use strict";
 
 
@@ -100,12 +114,12 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 */
 	Fragment.registerType = function(sType, oFragmentImpl) {
 		if (!typeof (sType) === "string") {
-			jQuery.sap.log.error("Ignoring non-string Fragment type: " + sType);
+			Log.error("Ignoring non-string Fragment type: " + sType);
 			return;
 		}
 
 		if (mTypes[sType]) {
-			jQuery.sap.log.warning("sap.ui.core.Fragment.registerType(): Fragment type '" + sType + "' is already defined. Overriding this type now!");
+			Log.warning("sap.ui.core.Fragment.registerType(): Fragment type '" + sType + "' is already defined. Overriding this type now!");
 		}
 
 		mTypes[sType] = oFragmentImpl;
@@ -171,7 +185,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 */
 	Fragment.byId = function(sFragmentId, sId) {
 		if (!(typeof (sFragmentId) === "string" && typeof (sId) === "string")) {
-			jQuery.sap.log.error("sap.ui.core.Fragment.byId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
+			Log.error("sap.ui.core.Fragment.byId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
 			return undefined;
 		}
 		return sap.ui.getCore().byId(sFragmentId + "--" + sId);
@@ -189,7 +203,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 */
 	Fragment.createId = function(sFragmentId, sId) {
 		if (!(typeof (sFragmentId) === "string" && typeof (sId) === "string")) {
-			jQuery.sap.log.error("sap.ui.core.Fragment.createId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
+			Log.error("sap.ui.core.Fragment.createId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
 			return undefined;
 		}
 		return sFragmentId + "--" + sId;
@@ -284,7 +298,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 				mSettings.oController = sType;
 			}
 		} else {
-			jQuery.sap.log.error("sap.ui.fragment() must be called with Fragment name or config object as first parameter, but is: " + sName);
+			Log.error("sap.ui.fragment() must be called with Fragment name or config object as first parameter, but is: " + sName);
 		}
 
 		return new Fragment(mSettings);
@@ -376,6 +390,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 			if (oFragmentDefinition.createContent) {
 				// Fragment DEFINITON
 				mRegistry[sName] = oFragmentDefinition;
+				//TODO: global jquery call found
 				jQuery.sap.declare({modName: sName, type:"fragment"}, false);
 				// TODO: return value?
 
@@ -398,7 +413,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 				// must be plain instantiation mode: ID+Name[+Controller]
 				return sap.ui.fragment({id: sName, fragmentName: oFragmentDefinition, type: "JS"}, arguments[2]);
 			} else {
-				jQuery.sap.log.error("sap.ui.jsfragment() was called with wrong parameter set: " + sName + " + " + oFragmentDefinition);
+				Log.error("sap.ui.jsfragment() was called with wrong parameter set: " + sName + " + " + oFragmentDefinition);
 			}
 		}
 	};
@@ -513,6 +528,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 		init: function(mSettings) {
 			/*** require fragment definition if not yet done... ***/
 			if (!mRegistry[mSettings.fragmentName]) {
+				//TODO: global jquery call found
 				jQuery.sap.require({modName: mSettings.fragmentName, type: "fragment"});
 			}
 			/*** Step 2: extend() ***/
@@ -561,7 +577,9 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 			var sResourceName;
 
 			if (!sHTML) {
+				//TODO: global jquery call found
 				sResourceName = jQuery.sap.getResourceName(sTemplateName, ".fragment.html");
+				//TODO: global jquery call found
 				sHTML = jQuery.sap.loadResource(sResourceName);
 				// TODO discuss
 				// a) why caching at all (more precise: why for HTML fragment although we refused to do it for other view/fragment types - risk of a memory leak!)

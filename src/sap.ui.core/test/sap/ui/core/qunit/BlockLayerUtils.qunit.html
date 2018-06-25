@@ -243,8 +243,10 @@
 			});
 
 			QUnit.test("setBlocked(true) → setBusy(true) : setBlocked(false) → setBlocked(true) → setBlocked(false)", function(assert) {
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 				var oSiblingDomRef,
-					oJQuerySapLogSpy = sinon.spy(jQuery.sap.log, "info");
+					oJQuerySapLogSpy = sinon.spy(Log, "info");
 
 				this.oButton.setBusyIndicatorDelay(0);
 
@@ -314,8 +316,10 @@
 			});
 
 			QUnit.test("setBusy(true) → setBlocked(true) : setBusy(false) → setBusy(true) → setBusy(false)", function(assert) {
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 				var oSiblingDomRef,
-					oJQuerySapLogSpy = sinon.spy(jQuery.sap.log, "info");
+					oJQuerySapLogSpy = sinon.spy(Log, "info");
 
 				this.oButton.setBusyIndicatorDelay(0);
 
@@ -352,8 +356,10 @@
 			});
 
 			QUnit.test("setBusy(true) → setBlocked(true) : setBlocked(false) → setBlocked(true) → setBlocked(false)", function(assert) {
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 				var oSiblingDomRef,
-					oJQuerySapLogSpy = sinon.spy(jQuery.sap.log, "info");
+					oJQuerySapLogSpy = sinon.spy(Log, "info");
 
 				this.oButton.setBusyIndicatorDelay(0);
 

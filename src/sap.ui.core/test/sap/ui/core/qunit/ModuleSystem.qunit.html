@@ -1233,8 +1233,9 @@
 			sap.ui.lazyRequire('sap.test', 'noSuchFactory', 'sap.test.lazy.MyUtility');
 
 			assert.ok(this.isLazyStub(sap.test, 'noSuchFactory'), "lazy loader created a stub for the namespace");
-
-			var oLogSpy = this.spy(jQuery.sap.log, 'error');
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			var oLogSpy = this.spy(Log, 'error');
 			var raised = false;
 			try {
 				sap.test.noSuchFactory();

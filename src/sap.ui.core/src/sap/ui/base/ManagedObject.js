@@ -4,7 +4,6 @@
 
 // Provides the base class for all objects with managed properties and aggregations.
 sap.ui.define([
-	'jquery.sap.global',
 	'./BindingParser',
 	'./DataType',
 	'./EventProvider',
@@ -17,12 +16,13 @@ sap.ui.define([
 	'../model/ParseException',
 	'../model/Type',
 	'../model/ValidateException',
-	'sap/base/util/ObjectPath',
 	"sap/ui/util/ActivityDetection",
+	"sap/base/util/ObjectPath",
+	"sap/base/Log",
+	"sap/base/assert",
 	"sap/base/util/deepEqual",
 	"sap/base/util/uid"
 ], function(
-	jQuery,
 	BindingParser,
 	DataType,
 	EventProvider,
@@ -35,8 +35,10 @@ sap.ui.define([
 	ParseException,
 	Type,
 	ValidateException,
-	ObjectPath,
 	ActivityDetection,
+	ObjectPath,
+	Log,
+	assert,
 	deepEqual,
 	uid
 ) {
@@ -900,7 +902,7 @@ sap.ui.define([
 		// we don't know how to create the ManagedObject from vData, so fail
 		// extension points could be integrated here
 		var message = "Don't know how to create a ManagedObject from " + vData + " (" + (typeof vData) + ")";
-		jQuery.sap.log.fatal(message);
+		Log.fatal(message);
 		throw new Error(message);
 	};
 
@@ -976,8 +978,8 @@ sap.ui.define([
 	 * @sap-restricted sap.ui.base,sap.ui.core
 	 */
 	ManagedObject.runWithPreprocessors = function(fn, oPreprocessors, oThisArg) {
-		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
-		jQuery.sap.assert(!oPreprocessors || typeof oPreprocessors === "object", "oPreprocessors must be an object");
+		assert(typeof fn === "function", "fn must be a function");
+		assert(!oPreprocessors || typeof oPreprocessors === "object", "oPreprocessors must be an object");
 
 		var oOldPreprocessors = { id : this._fnIdPreprocessor, settings : this._fnSettingsPreprocessor };
 		oPreprocessors = oPreprocessors || {};
@@ -1114,7 +1116,7 @@ sap.ui.define([
 						if (Array.isArray(oValue)){
 							// assumption: we have an extensionPoint here which is always an array, even if it contains a single control
 							if (oValue.length > 1){
-								jQuery.sap.log.error("Tried to add an array of controls to a single aggregation");
+								Log.error("Tried to add an array of controls to a single aggregation");
 							}
 							oValue = oValue[0];
 						}
@@ -1164,7 +1166,7 @@ sap.ui.define([
 				}
 			} else {
 				// there must be no unknown settings
-				jQuery.sap.assert(false, "ManagedObject.apply: encountered unknown setting '" + sKey + "' for class '" + oMetadata.getName() + "' (value:'" + oValue + "')");
+				assert(false, "ManagedObject.apply: encountered unknown setting '" + sKey + "' for class '" + oMetadata.getName() + "' (value:'" + oValue + "')");
 			}
 		}
 
@@ -1482,7 +1484,7 @@ sap.ui.define([
 		if (sId instanceof ManagedObject) {
 			sId = sId.getId();
 		} else if (sId != null && typeof sId !== "string") {
-			jQuery.sap.assert(false, "setAssociation(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
+			assert(false, "setAssociation(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
 			return this;
 		}
 
@@ -1582,7 +1584,7 @@ sap.ui.define([
 			sId = sId.getId();
 		} else if (typeof sId !== "string") {
 			// TODO what about empty string?
-			jQuery.sap.assert(false, "addAssociation(): sId must be a string or an instance of sap.ui.base.ManagedObject");
+			assert(false, "addAssociation(): sId must be a string or an instance of sap.ui.base.ManagedObject");
 			return this;
 		}
 
@@ -1666,7 +1668,7 @@ sap.ui.define([
 
 		if (typeof (vObject) == "number") { // "object" is the index now
 			if (vObject < 0 || vObject >= aIds.length) {
-				jQuery.sap.log.warning("ManagedObject.removeAssociation called with invalid index: " + sAssociationName + ", " + vObject);
+				Log.warning("ManagedObject.removeAssociation called with invalid index: " + sAssociationName + ", " + vObject);
 			} else {
 				sId = aIds[vObject];
 				aIds.splice(vObject, 1);
@@ -1803,7 +1805,7 @@ sap.ui.define([
 		// TODO make this stronger again (e.g. for FormattedText)
 		msg = "\"" + oObject + "\" is not valid for aggregation \"" + sAggregationName + "\" of " + this;
 		if ( DataType.isInterfaceType(oAggregation.type) ) {
-			jQuery.sap.assert(false, msg);
+			assert(false, msg);
 			return oObject;
 		} else {
 		  throw new Error(msg);
@@ -2037,7 +2039,7 @@ sap.ui.define([
 			i = iIndex;
 		}
 		if (i !== iIndex) {
-			jQuery.sap.log.warning("ManagedObject.insertAggregation: index '" + iIndex + "' out of range [0," + aChildren.length + "], forced to " + i);
+			Log.warning("ManagedObject.insertAggregation: index '" + iIndex + "' out of range [0," + aChildren.length + "], forced to " + i);
 		}
 		aChildren.splice(i, 0, oObject);
 		oObject.setParent(this, sAggregationName, bSuppressInvalidate);
@@ -2156,7 +2158,7 @@ sap.ui.define([
 
 		if (typeof (vObject) == "number") { // "vObject" is the index now
 			if (vObject < 0 || vObject >= aChildren.length) {
-				jQuery.sap.log.warning("ManagedObject.removeAggregation called with invalid index: " + sAggregationName + ", " + vObject);
+				Log.warning("ManagedObject.removeAggregation called with invalid index: " + sAggregationName + ", " + vObject);
 
 			} else {
 				oChild = aChildren[vObject];
@@ -2373,7 +2375,7 @@ sap.ui.define([
 	ManagedObject.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
 		if (!sAggregationName) {
 			// an aggregation name has to be specified!
-			jQuery.sap.log.error("Cannot remove aggregated child without aggregation name.", null, this);
+			Log.error("Cannot remove aggregated child without aggregation name.", null, this);
 		} else {
 			// set suppress invalidate flag
 			if (bSuppressInvalidate) {
@@ -2442,7 +2444,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
-		jQuery.sap.assert(oParent == null || oParent instanceof ManagedObject, "oParent either must be null, undefined or a ManagedObject");
+		assert(oParent == null || oParent instanceof ManagedObject, "oParent either must be null, undefined or a ManagedObject");
 
 		if ( !oParent ) {
 
@@ -3526,7 +3528,7 @@ sap.ui.define([
 			throw new Error("Aggregation \"" + sName + "\" does not exist in " + this);
 		}
 		if (!oAggregationInfo.multiple) {
-			jQuery.sap.log.error("Binding of single aggregation \"" + sName + "\" of " + this + " is not supported!");
+			Log.error("Binding of single aggregation \"" + sName + "\" of " + this + " is not supported!");
 		}
 
 		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
@@ -3573,7 +3575,7 @@ sap.ui.define([
 			// set default for templateShareable
 			if ( oBindingInfo.template._sapui_candidateForDestroy ) {
 				// template became active again, we should no longer consider to destroy it
-				jQuery.sap.log.warning(
+				Log.warning(
 					"A binding template that is marked as 'candidate for destroy' is reused in a binding. " +
 					"You can use 'templateShareable:true' to fix this issue for all bindings that are affected " +
 					"(The template is used in aggregation '" + sName + "' of object '" + this.getId() + "'). " +
@@ -3832,7 +3834,7 @@ sap.ui.define([
 						oClone.destroy("KeepDom");
 						break;
 					default:
-						jQuery.sap.log.error("Unknown diff type \"" + oDiff.type + "\"");
+						Log.error("Unknown diff type \"" + oDiff.type + "\"");
 				}
 			}
 
@@ -3921,7 +3923,7 @@ sap.ui.define([
 	* @since 1.28
 	*/
 	ManagedObject.prototype.propagateMessages = function(sName, aMessages) {
-		jQuery.sap.log.warning("Message for " + this + ", Property " + sName);
+		Log.warning("Message for " + this + ", Property " + sName);
 	};
 
 	/**
@@ -4165,7 +4167,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
-		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
+		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.oBindingContexts[sModelName];
 		if (Context.hasChanged(oOldContext, oContext)) {
 			if (oContext === undefined) {
@@ -4193,7 +4195,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype.setElementBindingContext = function(oContext, sModelName){
-		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
+		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.mElementBindingContexts[sModelName];
 
 		if (Context.hasChanged(oOldContext, oContext)) {
@@ -4386,8 +4388,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.setModel = function(oModel, sName) {
-		jQuery.sap.assert(oModel == null || BaseObject.isA(oModel, "sap.ui.model.Model"), "oModel must be an instance of sap.ui.model.Model, null or undefined");
-		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
+		assert(oModel == null || BaseObject.isA(oModel, "sap.ui.model.Model"), "oModel must be an instance of sap.ui.model.Model, null or undefined");
+		assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		if (!oModel && this.oModels[sName]) {
 			delete this.oModels[sName];
 			// propagate Models to children
@@ -4419,7 +4421,7 @@ sap.ui.define([
 	 * @sap-restricted sap.ui.fl
 	 */
 	ManagedObject.prototype.addPropagationListener = function(listener) {
-		jQuery.sap.assert(typeof listener === 'function', "listener must be a function");
+		assert(typeof listener === 'function', "listener must be a function");
 		this.aPropagationListeners.push(listener);
 		this.propagateProperties(false);
 		// call Listener on current object
@@ -4435,7 +4437,7 @@ sap.ui.define([
 	 * @sap-restricted sap.ui.fl
 	 */
 	ManagedObject.prototype.removePropagationListener = function(listener) {
-		jQuery.sap.assert(typeof listener === 'function', "listener must be a function");
+		assert(typeof listener === 'function', "listener must be a function");
 		var aListeners = this.aPropagationListeners;
 		var i = aListeners.indexOf(listener);
 		if ( i >= 0 ) {
@@ -4601,7 +4603,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.getModel = function(sModelName) {
-		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
+		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		return this.oModels[sModelName] || this.oPropagatedProperties.oModels[sModelName];
 	};
 
@@ -4799,7 +4801,7 @@ sap.ui.define([
 				} else if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
 					// a 'clone' operation implies sharing the template (if templateShareable is not set to false)
 					oBindingInfo.templateShareable = oCloneBindingInfo.templateShareable = true;
-					jQuery.sap.log.error(
+					Log.error(
 						"During a clone operation, a template was found that neither was marked with 'templateShareable:true' nor 'templateShareable:false'. " +
 						"The framework won't destroy the template. This could cause errors (e.g. duplicate IDs) or memory leaks " +
 						"(The template is used in aggregation '" + sName + "' of object '" + this.getId() + "')." +

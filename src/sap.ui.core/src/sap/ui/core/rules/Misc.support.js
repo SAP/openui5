@@ -4,8 +4,8 @@
 /**
  * Defines miscellaneous support rules.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.support" ],
-	function(jQuery, SupportLib, CoreHelper) {
+sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/base/Log" ],
+	function(SupportLib, CoreHelper, Log) {
 	"use strict";
 
 	// shortcuts
@@ -34,9 +34,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 			var count = 0,
 				message = "";
 
-			var log = jQuery.sap.log.getLogEntries();
+			var log = Log.getLog();
 			log.forEach(function(logEntry) {
-				if (logEntry.level === jQuery.sap.log.Level.ERROR) {
+				if (logEntry.level === Log.Level.ERROR) {
 					count++;
 					if (count <= 20) {
 						message += "- " + logEntry.message + "\n";
@@ -188,7 +188,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 		resolutionurls: [],
 		check: function(oIssueManager, oCoreFacade) {
 
-			var aLogEntries = jQuery.sap.log.getLog();
+			var aLogEntries = Log.getLog();
 			var aMessages = [];
 			aLogEntries.forEach(function(oLogEntry) {
 				if (oLogEntry.component === "sap.ui.core.EventBus") {

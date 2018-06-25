@@ -1,16 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"sap/ui/model/odata/v4/lib/_GroupLock"
-], function (_GroupLock) {
+sap.ui.require(["sap/ui/model/odata/v4/lib/_GroupLock", "sap/base/Log"], function(_GroupLock, Log) {
 	/*global QUnit */
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._GroupLock", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
