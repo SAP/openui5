@@ -542,21 +542,48 @@ function(
 			fnTriggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Y, false, false, true, false);
 		});
 
-		QUnit.test("when _handleElementModified is called if a create container command was executed", function(assert){
+		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert){
 			var done = assert.async();
 
-			// An existing Form is used for the test
-			var oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
-			var oFormOverlay = OverlayRegistry.getOverlay(oForm.getId());
+			var fnFireElementModifiedSpy = sandbox.spy(this.oRta._mDefaultPlugins["createContainer"], "fireElementModified");
+
+			var oSimpleForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
+			var oSimpleFormOverlay = OverlayRegistry.getOverlay(oSimpleForm.getAggregation("form").getId());
 
 			sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
 				sap.ui.getCore().applyChanges();
-				assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
+				var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
+				var sNewControlContainerId = this.oRta._mDefaultPlugins["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
+				assert.ok(fnFireElementModifiedSpy.calledOnce, "then 'fireElementModified' from the createContainer plugin is called once");
 				assert.ok(true, "then the new container starts the edit for rename");
+				assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
+				assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
 				this.oCommandStack.undo().then(done);
 			}.bind(this));
 
-			this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);
+			this.oRta.getPlugins()["createContainer"].handleCreate(false, oSimpleFormOverlay);
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("when _handleElementModified is called if a create container command was executed on a smart form", function(assert){
+			var done = assert.async();
+
+			var fnFireElementModifiedSpy = sinon.spy(this.oRta._mDefaultPlugins["createContainer"], "fireElementModified");
+
+			var oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+			var oSmartFormOverlay = OverlayRegistry.getOverlay(oSmartForm.getId());
+
+			sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
+				var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
+				var sNewControlContainerId = this.oRta._mDefaultPlugins["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
+				sap.ui.getCore().applyChanges();
+				assert.ok(true, "then the new container starts the edit for rename");
+				assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
+				assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
+				this.oCommandStack.undo().then(done);
+			}.bind(this));
+
+			this.oRta.getPlugins()["createContainer"].handleCreate(false, oSmartFormOverlay);
 			sap.ui.getCore().applyChanges();
 		});
 
