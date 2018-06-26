@@ -447,7 +447,7 @@ function(
 
 			var oConfig = {
 				canOverflow: true,
-				listenForEvents: ["change"],
+				autoCloseEvents: ["change"],
 				propsUnrelatedToSize: noInvalidationProps
 			};
 
