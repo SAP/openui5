@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		Device,
 		BaseObject,
 		ResizeHandler,
-		Interaction /* ,jQuerySapKeycodes, jQuerySapTrace */
+		Interaction /* ,jQuerySapKeycodes */
 	) {
 	"use strict";
 
