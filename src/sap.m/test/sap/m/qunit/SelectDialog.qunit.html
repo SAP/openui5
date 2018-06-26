@@ -92,17 +92,6 @@
 					oSelectDialog.bindAggregation("items", oConfiguration);
 				}
 
-				function notSupportedIE(bAsync, fDone){
-					// this test is not supported by IE9
-					if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
-						QUnit.expect(0);
-						if (bAsync) {
-							fDone();
-						}
-						return;
-					}
-				}
-
 				QUnit.module("API", {
 					beforeEach: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog", {
@@ -320,8 +309,6 @@
 				QUnit.test("Remember Selections after Cancel", function (assert) {
 					var done = assert.async();
 
-					notSupportedIE(true, done);
-
 					// arrange
 					this.oSelectDialog.setRememberSelections(true);
 
@@ -472,8 +459,6 @@
 				});
 
 				QUnit.test("liveChange event", function (assert) {
-					notSupportedIE(false);
-
 					// Arrange
 					var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
 						// Asert
@@ -494,8 +479,6 @@
 				QUnit.test("Confirm Event", function (assert) {
 					var done = assert.async(),
 						that = this;
-
-					notSupportedIE(true, done);
 
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
@@ -531,8 +514,6 @@
 					var done = assert.async(),
 						that = this;
 
-					notSupportedIE(true, done);
-
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
@@ -561,8 +542,6 @@
 					var done = assert.async(),
 						that = this,
 						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
-
-					notSupportedIE(true, done);
 
 					this.oSelectDialog.setMultiSelect(true);
 
@@ -597,8 +576,6 @@
 					var done = assert.async(),
 						that = this,
 						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
-
-					notSupportedIE(true, done);
 
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
@@ -635,8 +612,6 @@
 							assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 items selected again');
 							done();
 						};
-
-					notSupportedIE(true, done);
 
 					// bind items
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
@@ -676,8 +651,6 @@
 				QUnit.test("Destroy SelectDialog", function (assert) {
 					var done = assert.async(),
 						that = this;
-
-					notSupportedIE(true, done);
 
 					this.oSelectDialog.setMultiSelect(true);
 
@@ -776,8 +749,6 @@
 					var done = assert.async(),
 						that = this;
 
-					notSupportedIE(true, done);
-
 					this.oSelectDialog.setContentHeight("150px");
 					sap.ui.getCore().applyChanges();
 
@@ -850,8 +821,6 @@
 
 				QUnit.test("focus on SearchField after liveChange", function (assert) {
 					var done = assert.async();
-
-					notSupportedIE(true, done);
 
 					// Arrange
 					var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
