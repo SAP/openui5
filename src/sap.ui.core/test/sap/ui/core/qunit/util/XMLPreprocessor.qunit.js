@@ -3711,6 +3711,47 @@ sap.ui.require([
 			'</mvc:View>'
 		], {}, [], true);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("async extension point", function (assert) {
+		var oCustomizingConfigurationMock = this.mock(CustomizingConfiguration),
+			aReplacement = [
+				'<Text text=\"{/foo}\"/>'
+			],
+			aViewContent = [
+				mvcView(),
+				'<ExtensionPoint name="{/hello}"/>',
+				"<Text text=\"{/flag}\"/>",
+				'</mvc:View>'
+			];
+
+		this.oSapUiMock.expects("require").on(sap.ui)
+			.withExactArgs("sap/ui/core/CustomizingConfiguration")
+			.returns(CustomizingConfiguration);
+		oCustomizingConfigurationMock.expects("getViewExtension")
+			.withExactArgs("this.sViewName", "world", "this._sOwnerId")
+			.returns({
+				className : "sap.ui.core.Fragment",
+				fragmentName : "acme.Replacement",
+				type : "XML"
+			});
+		this.expectLoad(true, "acme.Replacement", xml(assert, aReplacement));
+
+		return this.checkTracing(assert, true, [
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 0] name = world", d : 1},
+			{m : "[ 1] fragmentName = acme.Replacement", d : 1},
+			{m : "[ 1] text = bar", d : aReplacement[0]},
+			{m : "[ 1] Finished", d : "</ExtensionPoint>"},
+			{m : "[ 0] text = true", d : 2},
+			{m : "[ 0] Finished processing qux"}
+		], aViewContent, {
+			models : asyncModel({flag : true, foo : "bar", hello : "world"})
+		}, [
+			'<Text text="bar"/>',
+			'<Text text="true"/>'
+		], true);
+	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
 //TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS

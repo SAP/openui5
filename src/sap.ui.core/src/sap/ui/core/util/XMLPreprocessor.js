@@ -1409,43 +1409,43 @@ sap.ui.define([
 			 *   the <sap.ui.core:ExtensionPoint> XML DOM element
 			 * @param {sap.ui.core.util._with} oWithControl
 			 *   the parent's "with" control
-			 * @returns {boolean}
-			 *   whether the <sap.ui.core:ExtensionPoint> element has been replaced
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A sync promise which resolves with <code>undefined</code> as soon as the
+			 *   <sap.ui.core:ExtensionPoint> element has been replaced and with <code>true</code>
+			 *   if there was no replacement
 			 */
 			function templateExtensionPoint(oElement, oWithControl) {
-				var CustomizingConfiguration,
-					sName,
-					oPromise,
-					sValue = oElement.getAttribute("name"),
-					oViewExtension;
-
-				try {
+				var sValue = oElement.getAttribute("name"),
 					// resolve name, no matter if CustomizingConfiguration is present!
 					oPromise = getResolvedBinding(sValue, oElement, oWithControl, true);
-					if (!oPromise) {
-						return false;
-					}
-					sName = oPromise.unwrap();
+
+				if (!oPromise) {
+					return oSyncPromiseResolvedTrue;
+				}
+				return oPromise.then(function (sName) {
+					var CustomizingConfiguration
+							= sap.ui.require("sap/ui/core/CustomizingConfiguration"),
+						oViewExtension;
+
 					if (sName !== sValue) {
 						// debug trace for dynamic names only
 						debug(oElement, "name =", sName);
 					}
-				} catch (e) {
-					warn(oElement, 'Error in formatter:', e);
-					return false;
-				}
-
-				CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
-				if (CustomizingConfiguration) {
-					oViewExtension = CustomizingConfiguration.getViewExtension(sCurrentName, sName,
-						oViewInfo.componentId);
-					if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
-							&& oViewExtension.type === "XML") {
-						insertFragment(oViewExtension.fragmentName, oElement, oWithControl);
-						return true;
+					if (CustomizingConfiguration) {
+						oViewExtension = CustomizingConfiguration.getViewExtension(sCurrentName,
+							sName, oViewInfo.componentId);
+						if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
+								&& oViewExtension.type === "XML") {
+							return insertFragment(oViewExtension.fragmentName, oElement,
+								oWithControl);
+						}
 					}
-				}
-				return false;
+
+					return true;
+				}, function (ex) {
+					warn(oElement, 'Error in formatter:', ex);
+					return true;
+				});
 			}
 
 			/**
@@ -1769,6 +1769,16 @@ sap.ui.define([
 			function visitNode(oNode, oWithControl) {
 				var fnVisitor;
 
+				function visitAttributesAndChildren() {
+					return visitAttributes(oNode, oWithControl).then(function () {
+						return visitChildNodes(oNode, oWithControl);
+					}).then(function () {
+						if (fnSupportInfo) {
+							fnSupportInfo({context:oNode, env:{caller:"visitNode", after: {name: oNode.tagName}}});
+						}
+					});
+				}
+
 				// process only ELEMENT_NODEs
 				if (oNode.nodeType !== 1 /* Node.ELEMENT_NODE */) {
 					return oSyncPromiseResolved;
@@ -1796,10 +1806,11 @@ sap.ui.define([
 				} else if (oNode.namespaceURI === "sap.ui.core") {
 					switch (oNode.localName) {
 					case "ExtensionPoint":
-						if (templateExtensionPoint(oNode, oWithControl)) {
-							return oSyncPromiseResolved;
-						}
-						break;
+						return templateExtensionPoint(oNode, oWithControl).then(function (bResult) {
+							if (bResult) {
+								return visitAttributesAndChildren();
+							}
+						});
 
 					case "Fragment":
 						if (oNode.getAttribute("type") === "XML") {
@@ -1828,13 +1839,7 @@ sap.ui.define([
 					}
 				}
 
-				return visitAttributes(oNode, oWithControl).then(function () {
-					return visitChildNodes(oNode, oWithControl);
-				}).then(function () {
-					if (fnSupportInfo) {
-						fnSupportInfo({context:oNode, env:{caller:"visitNode", after: {name: oNode.tagName}}});
-					}
-				});
+				return visitAttributesAndChildren();
 			}
 
 			/*
