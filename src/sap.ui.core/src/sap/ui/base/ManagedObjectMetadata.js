@@ -457,8 +457,6 @@ function(
 
 		oInstance.mForwardedAggregations[this.aggregation.name] = oAggregatedObject;
 
-		ManagedObjectMetadata.addAPIParentInfo(oAggregatedObject, oInstance, this.aggregation.name);
-
 		if (this.targetAggregationInfo.multiple) {
 			// target aggregation is multiple, but should behave like single (because the source aggregation is single)
 			var oPreviousElement = this.targetAggregationInfo.get(oTarget);
@@ -468,10 +466,14 @@ function(
 				}
 				this.targetAggregationInfo.removeAll(oTarget);
 			}
+			ManagedObjectMetadata.addAPIParentInfoBegin(oAggregatedObject, oInstance, this.aggregation.name);
 			this.targetAggregationInfo.add(oTarget, oAggregatedObject);
 		} else {
+			ManagedObjectMetadata.addAPIParentInfoBegin(oAggregatedObject, oInstance, this.aggregation.name);
 			this.targetAggregationInfo.set(oTarget, oAggregatedObject);
 		}
+		ManagedObjectMetadata.addAPIParentInfoEnd(oAggregatedObject);
+
 		return oInstance;
 	};
 
@@ -479,9 +481,10 @@ function(
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
 
-		ManagedObjectMetadata.addAPIParentInfo(oAggregatedObject, oInstance, this.aggregation.name);
-
+		ManagedObjectMetadata.addAPIParentInfoBegin(oAggregatedObject, oInstance, this.aggregation.name);
 		this.targetAggregationInfo.add(oTarget, oAggregatedObject);
+		ManagedObjectMetadata.addAPIParentInfoEnd(oAggregatedObject);
+
 		return oInstance;
 	};
 
@@ -489,54 +492,62 @@ function(
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
 
-		ManagedObjectMetadata.addAPIParentInfo(oAggregatedObject, oInstance, this.aggregation.name);
-
+		ManagedObjectMetadata.addAPIParentInfoBegin(oAggregatedObject, oInstance, this.aggregation.name);
 		this.targetAggregationInfo.insert(oTarget, oAggregatedObject, iIndex);
+		ManagedObjectMetadata.addAPIParentInfoEnd(oAggregatedObject);
+
 		return oInstance;
 	};
 
 	/**
-	 * Checks whether object <code>a</code> is an inclusive descendant of object <code>b</code>.
-	 *
-	 * @param {sap.ui.base.ManagedObject} a Object that should be checked for being a descendant
-	 * @param {sap.ui.base.ManagedObject} b Object that should be checked for having a descendant
-	 * @returns {boolean} Whether <code>a</code> is a descendant of (or the same as) <code>b</code>
-	 * @private
-	 */
-	function isInclusiveDescendantOf(a, b) {
-		while ( a && a !== b ) {
-			a = a.oParent;
-		}
-		return !!a;
-	}
-
-	/**
 	 * Adds information to the given oAggregatedObject about its original API parent (or a subsequent API parent in case of multiple forwarding).
+	 * MUST be called before an element is forwarded to another internal aggregation (in case forwarding is done explicitly/manually without using
+	 * the declarative mechanism introduced in UI5 1.56).
+	 *
+	 * CAUTION: ManagedObjectMetadata.addAPIParentInfoEnd(...) MUST be called AFTER the element has been forwarded (set to an aggregation of an
+	 * internal control). These two calls must wrap the forwarding.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oAggregatedObject Object to which the new API parent info should be added
 	 * @param {sap.ui.base.ManagedObject} oParent Object that is a new API parent
 	 * @param {string} sAggregationName the name of the aggregation under which oAggregatedObject is aggregated by the API parent
 	 * @protected
 	 */
-	ManagedObjectMetadata.addAPIParentInfo = function(oAggregatedObject, oParent, sAggregationName) {
+	ManagedObjectMetadata.addAPIParentInfoBegin = function(oAggregatedObject, oParent, sAggregationName) {
 		if (!oAggregatedObject) {
 			return;
 		}
 
 		var oNewAPIParentInfo = {parent: oParent, aggregationName: sAggregationName};
 
+		if (oAggregatedObject.aAPIParentInfos) {
+			if (oAggregatedObject.aAPIParentInfos.forwardingCounter) { // defined and >= 1
+				// this is another forwarding step from an element that was already the target of forwarding
+				oAggregatedObject.aAPIParentInfos.forwardingCounter++;
+			} else {
+				// this is a fresh new round of aggregation forwarding, remove any previous forwarding info
+				delete oAggregatedObject.aAPIParentInfos;
+			}
+		}
+
 		// update API parent of oAggregatedObject
 		if (!oAggregatedObject.aAPIParentInfos) {
 			oAggregatedObject.aAPIParentInfos = [oNewAPIParentInfo];
+			oAggregatedObject.aAPIParentInfos.forwardingCounter = 1;
 		} else {
-			var oPreviousAPIParentInfo = oAggregatedObject.aAPIParentInfos[oAggregatedObject.aAPIParentInfos.length - 1];
-			// if the previous API parent is not an ancestor of oInstance, oAggregatedObject is being moved to somewhere else
-			// TODO: but even IF the previous parent is an ancestor, this move may be NOT triggered by additional forwarding, but it may be a normal move further down the tree
-			if (oPreviousAPIParentInfo && !isInclusiveDescendantOf(oParent, oPreviousAPIParentInfo.parent)) {
-				oAggregatedObject.aAPIParentInfos = []; // => clear the previous API parent infos (new info will be added just below)
-			}
 			oAggregatedObject.aAPIParentInfos.push(oNewAPIParentInfo);
 		}
+	};
+
+	/**
+	 * Completes the information about the original API parent of the given element.
+	 * MUST be called after an element is forwarded to another internal aggregation. For every call to
+	 * ManagedObjectMetadata.addAPIParentInfoBegin(...) this method here must be called as well.
+	 *
+	 * @param {sap.ui.base.ManagedObject} oAggregatedObject Object to which the new API parent info should be added
+	 * @protected
+	 */
+	ManagedObjectMetadata.addAPIParentInfoEnd = function(oAggregatedObject) {
+		oAggregatedObject && oAggregatedObject.aAPIParentInfos.forwardingCounter--;
 	};
 
 	AggregationForwarder.prototype.remove = function(oInstance, vAggregatedObject) {
@@ -549,7 +560,7 @@ function(
 			// that forwards directly. That one now also sets the API parent info.
 			// When aAPIParentInfos is there, then the other conditions are always true:
 			// && result.aAPIParentInfos.length && result.aAPIParentInfos[result.aAPIParentInfos.length-1].parent === oInstance
-			result.aAPIParentInfos.pop();
+			result.aAPIParentInfos && result.aAPIParentInfos.pop();
 		}
 		return result;
 	};
