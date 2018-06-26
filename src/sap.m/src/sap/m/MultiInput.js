@@ -232,20 +232,12 @@ function(
 
 		this._bIsValidating = false;
 		this._tokenizer = new Tokenizer();
+		this._tokenizer._setAdjustable(true);
 
 		this.setAggregation("tokenizer", this._tokenizer);
 		this._tokenizer.attachTokenChange(this._onTokenChange, this);
 		this._tokenizer.attachTokenUpdate(this._onTokenUpdate, this);
 		this._tokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
-		this._tokenizer.addEventDelegate({
-			onAfterRendering: function(){
-				// show the collapsed state only if the selected items popup is closed
-				if (this.getEditable() && this._getSelectedItemsPicker().isOpen()) {
-					return;
-				}
-				this._tokenizer._useCollapsedMode(true);
-			}.bind(this)
-		});
 
 		this.setShowValueHelp(true);
 		this.setShowSuggestion(true);

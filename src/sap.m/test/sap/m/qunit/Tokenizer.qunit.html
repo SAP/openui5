@@ -448,6 +448,22 @@
 		assert.equal(this.tokenizer.getDomRef().style.maxWidth, MAX_WIDTH, "Tokenizer max-width is set to " + MAX_WIDTH);
 	});
 
+	QUnit.test("setMaxWidth in adjustable tokenizer calls _adjustTokensVisibility", function(assert) {
+		var MAX_WIDTH = "300px";
+		this.tokenizer._setAdjustable(true);
+
+		// act
+		var spy = this.spy(sap.m.Tokenizer.prototype, "_adjustTokensVisibility");
+		this.tokenizer.setMaxWidth(MAX_WIDTH);
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(spy.called, "tokenizer's _adjustTokensVisibility is called");
+
+		spy.restore();
+	});
+
 	QUnit.module("Scrolling public API", {
 		beforeEach : function() {
 			this.tokenizer = new sap.m.Tokenizer({
