@@ -58,7 +58,11 @@ sap.ui.define([
 
 
 	QUnit.module("Async (Pre-)Loading", {
+		beforeEach: function() {
+			this.oRegisterModulePathSpy = sinon.spy(jQuery.sap, "registerModulePath");
+		},
 		afterEach: function() {
+			this.oRegisterModulePathSpy.restore();
 			unloadResources();
 		}
 	});
@@ -187,6 +191,14 @@ sap.ui.define([
 						name: 'sap.test.lib6',
 						lazy: true
 					},
+					{
+						name: 'sap.test.lib7',
+						lazy: true,
+						url: {
+							url: './testdata/async/lib7',
+							'final': true
+						}
+					},
 					'sap.test.lib3'
 				],
 				components: [
@@ -202,6 +214,14 @@ sap.ui.define([
 					{
 						name: 'sap.test.my3rdsubcomp',
 						lazy: true
+					},
+					{
+						name: 'sap.test.my4thsubcomp',
+						lazy: true,
+						url: {
+							url: './testdata/async/my4thsubcomp',
+							'final': true
+						}
 					}
 				]
 			}
@@ -209,9 +229,21 @@ sap.ui.define([
 
 		assert.ok(oResult instanceof Promise, "load should return a promise");
 		oResult.then(function() {
+
+			// Only the "final" URLs should use the legacy jQuery.sap API
+			sinon.assert.calledTwice(this.oRegisterModulePathSpy);
+			sinon.assert.calledWithMatch(this.oRegisterModulePathSpy, "sap.test.lib7", {
+				url: "./testdata/async/lib7",
+				"final": true
+			});
+			sinon.assert.calledWithMatch(this.oRegisterModulePathSpy, "sap.test.my4thsubcomp", {
+				url: "./testdata/async/my4thsubcomp",
+				"final": true
+			});
+
 			sap.ui.component({name: "sap.test.mycomp"});
 			done();
-		}, function() {
+		}.bind(this), function() {
 			assert.ok(false, "loading component failed");
 			done();
 		});
@@ -530,6 +562,13 @@ sap.ui.define([
 
 			// install a manifest load callback hook
 			Component._fnLoadComponentCallback = function(oConfig, oManifest, oPassedConfig, oPassedManifest) {
+
+				// only run callback once as it's also called when loading a component dependency
+				// TODO: consider rewriting this test
+				if (this.manifestInCallback) {
+					return;
+				}
+
 				assert.ok(true, "Component._fnLoadComponentCallback called!");
 				assert.deepEqual(oConfig, oPassedConfig, "the config was passed");
 				assert.notEqual(oConfig, oPassedConfig, "the passed config is a copy");

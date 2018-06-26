@@ -2038,15 +2038,6 @@ sap.ui.define([
 			return sap.ui.getCore().getComponent(vConfig);
 		}
 
-		// Remove url objects with final flag from asyncHints as the new loader no longer supports it
-		if (vConfig.asyncHints && vConfig.asyncHints.libs) {
-			vConfig.asyncHints.libs.forEach(function(oLib) {
-				if (oLib.url && typeof oLib.url === "object") {
-					oLib.url = oLib.url.url;
-				}
-			});
-		}
-
 		if (vConfig.async) {
 			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.component'. Use 'Component.create' instead");
 		} else {
@@ -2465,7 +2456,16 @@ sap.ui.define([
 
 			if ( typeof vObj === 'object' ) {
 				if ( vObj.url ) {
-					registerModulePath(vObj.name, vObj.url);
+					if (typeof vObj.url === "object") {
+						if (vObj.url.final) {
+							// "final" module path can only be handled by legacy layer
+							jQuery.sap.registerModulePath(vObj.name, vObj.url);
+						} else {
+							registerModulePath(vObj.name, vObj.url.url);
+						}
+					} else {
+						registerModulePath(vObj.name, vObj.url);
+					}
 				}
 				return (vObj.lazy && bIgnoreLazy !== true) ? undefined : vObj.name; // expl. check for true to allow usage in Array.prototype.map below
 			}
