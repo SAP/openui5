@@ -60,9 +60,9 @@ html.sap-phone .sapMITBTextOnly .sapMITBTab {
 }
 
 /* Custom focus outline */
-html.sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
-html.sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
-html.sap-desktop .sapMITBItem:focus.sapMITBAll {
+html.sap-desktop .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon,
+html.sap-desktop .sapMITBTextOnly .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText,
+html.sap-desktop .sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
 	&::after {
 		content: "";
 		position: absolute;
