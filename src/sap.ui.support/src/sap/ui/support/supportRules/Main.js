@@ -118,7 +118,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					 *
 					 * @memberof jQuery.sap.support
 					 * @public
-					 * @param {sap.ui.support.HistoryFormats} sFormat The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
+					 * @param {sap.ui.support.HistoryFormats} [sFormat=sap.ui.support.HistoryFormats.String] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
 					 * @returns {*} All analysis history objects in the correct format.
 					 */
 					getFormattedAnalysisHistory: function (sFormat) {
