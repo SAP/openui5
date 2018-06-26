@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Control',
-	'./library',
-	'sap/ui/core/ResizeHandler',
+	"jquery.sap.global",
+	"sap/ui/core/Control",
+	"./library",
+	"sap/ui/core/ResizeHandler",
 	"./AlignedFlowLayoutRenderer",
 	"sap/ui/dom/units/Rem"
 ],
@@ -305,8 +305,9 @@ sap.ui.define([
 
 			if (fMinItemWidth) {
 
-				// we do not need more spacers than (documentElement.clientWidth / minItemWidth)
-				iSpacers = Math.abs(document.documentElement.clientWidth / fMinItemWidth);
+				// we do not need more spacers than (iAvailableWidth / minItemWidth)
+				var iAvailableWidth = Math.max(document.documentElement.clientWidth, window.screen.width);
+				iSpacers = Math.abs(iAvailableWidth / fMinItemWidth);
 			}
 
 			// we do not need more spacers than items
