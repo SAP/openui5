@@ -1435,6 +1435,44 @@
 			oOverflowTB.destroy();
 		});
 
+		QUnit.test("Changing selected item's data model of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oModel,
+					oOverflowTB,
+					spy;
+
+			var oSelect = new sap.m.Select({
+				autoAdjustWidth: true,
+				items: [
+					new sap.ui.core.Item({id: "idItem1", text: "{/}"})
+				]
+			});
+
+			aContent.push(oSelect);
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData("text");
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			oOverflowTB.setModel(oModel);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			oModel.setData("extremely long text");
+			oOverflowTB.setModel(oModel);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			oOverflowTB.destroy();
+		});
+
 		QUnit.test("Changing a control property that does not affect control size(enabled) does not force a recalculation of the layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,

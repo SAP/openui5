@@ -449,6 +449,7 @@ function(
 			var oConfig = {
 				canOverflow: true,
 				autoCloseEvents: ["change"],
+				invalidationEvents: ["_itemTextChange"],
 				propsUnrelatedToSize: noInvalidationProps
 			};
 
@@ -1818,6 +1819,8 @@ function(
 
 				switch (sProperty) {
 					case "text":
+						// Notify interested controls that an item's text was changed
+						this.fireEvent("_itemTextChange");
 						this.setValue(sNewValue);
 						break;
 
