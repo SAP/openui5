@@ -18,7 +18,7 @@
 
 	<script>
 		var oOPH = new sap.m.OnePersonHeader("OnePersonHeader",{
-			selectedDate: new Date(2018,3,12),
+			startDate: new Date(2018,3,12),
 			actions: [
 				new sap.m.Title("title",{
 					text: "OnePersonHeader"
@@ -48,13 +48,13 @@
 				})
 			],
 			pressPrevious: function () {
-				console.log("Previous pressed!")
+				console.log("Previous pressed!");
 			},
 			pressToday: function () {
-				console.log("Today pressed!")
+				console.log("Today pressed!");
 			},
 			pressNext: function () {
-				console.log("Next pressed!")
+				console.log("Next pressed!");
 			}
 		}).placeAt("body");
 
