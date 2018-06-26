@@ -310,7 +310,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 		if (!sId) {
 			return;
 		}
-		var oDomRef = (sId ? (getOwnerWindow(this.oParentDomRef) || window).document.getElementById(sId) : null);
+		var oDomRef = (getOwnerWindow(this.oParentDomRef) || window).document.getElementById(sId);
 		if ( !oDomRef ) {
 			jQuery.sap.log.warning("Control with Id '" + sId.substring(22) + "' not found in tree");
 			return;
@@ -332,7 +332,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 		if (!sId) {
 			return;
 		}
-		var oDomRef = (sId ? (getOwnerWindow(this.oParentDomRef) || window).document.getElementById(sId) : null);
+		var oDomRef = (getOwnerWindow(this.oParentDomRef) || window).document.getElementById(sId);
 		var oSpan = oDomRef.getElementsByTagName("SPAN")[0];
 		oSpan.style.backgroundColor = "transparent";
 		oSpan.style.color = "#000000";

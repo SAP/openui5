@@ -757,7 +757,7 @@ sap.ui.define([
 		if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
 			if (!this.getIntroHref()) {
 				this.fireIntroPress({
-					domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
+					domRef : window.document.getElementById(sSourceId)
 				});
 			}
 		} else if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
@@ -768,7 +768,7 @@ sap.ui.define([
 				sSourceId = this.getId() + "-title";
 
 				this.fireTitlePress({
-					domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
+					domRef : window.document.getElementById(sSourceId)
 				});
 			}
 		} else if (this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-txt" || jQuery(oEvent.target).parent().attr('id') === this.getId() + "-txt" )) {
@@ -778,16 +778,16 @@ sap.ui.define([
 				sSourceId = this.getId() + "-txt";
 
 				this.fireTitlePress({
-					domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
+					domRef : window.document.getElementById(sSourceId)
 				});
 			}
 		} else if (this.getIconActive() && (sSourceId === this.getId() + "-img" || sSourceId === this.getId() + "-icon")) {
 			this.fireIconPress({
-				domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
+				domRef : window.document.getElementById(sSourceId)
 			});
 		} else if (sSourceId === this.getId() + "-titleArrow") {
 			this.fireTitleSelectorPress({
-				domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
+				domRef : window.document.getElementById(sSourceId)
 			});
 		} else {
 			// we didn't click on any of the active parts of the ObjectHeader
