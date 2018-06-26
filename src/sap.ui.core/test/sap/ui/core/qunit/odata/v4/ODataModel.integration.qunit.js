@@ -6902,8 +6902,8 @@ sap.ui.require([
 
 			this.expectRequest("TEAMS('42')", {"Team_Id" : "42"}, {
 					"sap-message" : JSON.stringify([
-						{"code" : "42", "message" : "text0", "severity" : "warning"},
-						{"code" : "77", "message" : "text1", "severity" : "info"}
+						{"code" : "foo-42", "message" : "text0", "numericSeverity" : 3},
+						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}
 					])
 				})
 				.expectChange("id", "42");
@@ -6913,13 +6913,13 @@ sap.ui.require([
 						.getObject("/");
 
 				assert.strictEqual(aMessages.length, 2, "two messages in message model");
-				assert.strictEqual(aMessages[0].getCode(), "42");
+				assert.strictEqual(aMessages[0].getCode(), "foo-42");
 				assert.strictEqual(aMessages[0].getMessage(), "text0");
 				assert.strictEqual(aMessages[0].getMessageProcessor(), oModel);
 				assert.strictEqual(aMessages[0].getPersistent(), true);
 				assert.strictEqual(aMessages[0].getTechnical(), false);
 				assert.strictEqual(aMessages[0].getType(), "Warning");
-				assert.strictEqual(aMessages[1].getCode(), "77");
+				assert.strictEqual(aMessages[1].getCode(), "foo-77");
 				assert.strictEqual(aMessages[1].getMessage(), "text1");
 				assert.strictEqual(aMessages[1].getMessageProcessor(), oModel);
 				assert.strictEqual(aMessages[1].getPersistent(), true);
