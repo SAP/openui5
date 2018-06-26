@@ -1,4 +1,34 @@
-sap.ui.define([
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>QUnit Page for sap.ui.test.Opa5 - Basics</title>
+
+	<script src="../../../shared-config.js"></script>
+	<script
+		src="../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.ui.commons, sap.m"
+		data-sap-ui-logLevel="ERROR"
+		data-sap-ui-resourceroots='{
+		"samples" : "../../../samples/",
+		"unitTests" : "../"
+		}'>
+	</script>
+	<script src="../../_includeQUnit.js"></script>
+
+	<script>
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+	QUnit.config.autostart = false;
+
+	QUnit.test("Should not execute the test in debug mode", function (assert) {
+		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
+	});
+
+	sap.ui.define([
 		"sap/ui/test/Opa",
 		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit",
@@ -333,6 +363,18 @@ sap.ui.define([
 		});
 	});
 
+	opaTest("Should invoke check and success if nothing else is specified", function (oOpa) {
+		oOpa.waitFor({
+			check: function () {
+				Opa5.assert.strictEqual(arguments.length, 0);
+				return true;
+			},
+			success: function () {
+				Opa5.assert.strictEqual(arguments.length, 0);
+			}
+		});
+	});
+
 	QUnit.module("Config and waitFor",{
 		beforeEach: function () {
 			var sView = [
@@ -454,4 +496,14 @@ sap.ui.define([
 			}.bind(this)
 		});
 	});
-});
+	});
+
+	QUnit.start();
+
+</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>
