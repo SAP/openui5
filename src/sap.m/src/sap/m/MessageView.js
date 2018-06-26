@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/base/ManagedObject",
 	"./MessageViewRenderer",
+	"sap/ui/thirdparty/jquery",
 	"jquery.sap.keycodes"
 ], function(
 	jQuery,
@@ -48,7 +49,8 @@ sap.ui.define([
 	GroupHeaderListItem,
 	coreLibrary,
 	ManagedObject,
-	MessageViewRenderer
+	MessageViewRenderer,
+	jQueryDOM
 ) {
 	"use strict";
 
@@ -1021,7 +1023,7 @@ sap.ui.define([
 				oValidation
 					.then(function (result) {
 						// Update link in output
-						var $link = jQuery.sap.byId("sap-ui-" + that.getId() + "-link-under-validation-" + result.id);
+						var $link = jQueryDOM(document.getElementById("sap-ui-" + that.getId() + "-link-under-validation-" + result.id));
 
 						if (result.allowed) {
 							jQuery.sap.log.info("Allow link " + href);

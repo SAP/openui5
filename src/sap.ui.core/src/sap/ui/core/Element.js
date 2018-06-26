@@ -343,7 +343,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @protected
 	 */
 	Element.prototype.getDomRef = function(sSuffix) {
-		return jQuery.sap.domById(sSuffix ? this.getId() + "-" + sSuffix : this.getId());
+		return (((sSuffix ? this.getId() + "-" + sSuffix : this.getId())) ? window.document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId()) : null);
 	};
 
 	/**

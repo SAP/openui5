@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	"./FileUploaderRenderer",
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.keycodes'
 ], function(
 	jQuery,
@@ -19,7 +20,8 @@ sap.ui.define([
 	LabelEnablement,
 	coreLibrary,
 	Device,
-	FileUploaderRenderer
+	FileUploaderRenderer,
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -682,7 +684,7 @@ sap.ui.define([
 
 	FileUploader.prototype.onsapfocusleave = function(oEvent) {
 
-		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			this.closeValueStateMessage();
 		}
 
@@ -785,7 +787,7 @@ sap.ui.define([
 			}
 		}
 
-		if (jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement)) {
+		if (containsOrEquals(this.getDomRef(), document.activeElement)) {
 			switch (sValueState) {
 				case ValueState.Error:
 				case ValueState.Warning:
@@ -859,7 +861,7 @@ sap.ui.define([
 			if (this.oFilePath) {
 				this.oFilePath.setValue(sValue);
 				//refocus the Button, except bSupressFocus is set
-				if (this.oBrowse.getDomRef() && !bSupressFocus && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement)) {
+				if (this.oBrowse.getDomRef() && !bSupressFocus && containsOrEquals(this.getDomRef(), document.activeElement)) {
 					this.oBrowse.focus();
 				}
 			}
@@ -1157,7 +1159,7 @@ sap.ui.define([
 			this.setValue("", true);
 		}
 		//refocus the Button, except bSupressFocus is set
-		if (this.oBrowse.getDomRef() && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement)) {
+		if (this.oBrowse.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement)) {
 			this.oBrowse.focus();
 		}
 	};

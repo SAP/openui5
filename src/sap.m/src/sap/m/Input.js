@@ -24,7 +24,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Control',
-	'./InputRenderer'
+	'./InputRenderer',
+	"sap/ui/dom/containsOrEquals"
 ],
 function(
 	jQuery,
@@ -47,7 +48,8 @@ function(
 	Device,
 	ResizeHandler,
 	Control,
-	InputRenderer
+	InputRenderer,
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -1469,7 +1471,7 @@ function(
 		var oPopup = this._oSuggestionPopup;
 
 		if (oPopup instanceof Popover) {
-			if (oEvent.relatedControlId && jQuery.sap.containsOrEquals(oPopup.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+			if (oEvent.relatedControlId && containsOrEquals(oPopup.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 				// Force the focus to stay in input
 				this._bPopupHasFocus = true;
 				this.focus();
@@ -1486,7 +1488,7 @@ function(
 		var oFocusedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 		if (!(oPopup
 				&& oFocusedControl
-				&& jQuery.sap.containsOrEquals(oPopup.getDomRef(), oFocusedControl.getFocusDomRef())
+				&& containsOrEquals(oPopup.getDomRef(), oFocusedControl.getFocusDomRef())
 			)) {
 			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}

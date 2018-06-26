@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/model/ValidateException",
 	"sap/m/library",
 	"sap/ui/util/Storage",
+	"sap/ui/core/syncStyleClass",
 	"jquery.sap.global"
 ], function(
 	moduleTreeHelper,
@@ -33,6 +34,7 @@ sap.ui.define([
 	ValidateException,
 	mobileLibrary,
 	Storage,
+	syncStyleClass,
 	jQuery
 ) {
 	"use strict";
@@ -184,7 +186,7 @@ sap.ui.define([
 			if (!this._oDebugPopover) {
 				this._oDebugPopover = sap.ui.xmlfragment(this._DEBUG_MODULES_ID, "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog", this);
 				this._oDialog.addDependent(this._oDebugPopover);
-				jQuery.sap.syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oDebugPopover);
+				syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oDebugPopover);
 				var oControl = this._getControl("customDebugValue", this._DEBUG_MODULES_ID);
 				try {
 					this._validateCustomDebugValue(oControl.getValue());
@@ -399,7 +401,7 @@ sap.ui.define([
 				this._oAssistantPopover = sap.ui.xmlfragment(this._SUPPORT_ASSISTANT_POPOVER_ID, "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", this);
 				this._oAssistantPopover.attachAfterOpen(this._onAssistantPopoverOpened, this);
 				this._oDialog.addDependent(this._oAssistantPopover);
-				jQuery.sap.syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oAssistantPopover);
+				syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oAssistantPopover);
 
 				// register message validation and trigger it once to validate the value coming from local storage
 				var oCustomBootstrapURL =  this._getControl("customBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID);

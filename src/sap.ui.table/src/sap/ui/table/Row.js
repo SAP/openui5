@@ -150,9 +150,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 	 * @private
 	 */
 	Row.prototype.getDomRefs = function (bJQuery, bCollection) {
-		var sKey = (bJQuery === true) ? "jQuery" : "dom",
-			fnAccess = (bJQuery === true) ? jQuery.sap.byId : jQuery.sap.domById,
-			mDomRefs = this._mDomRefs;
+		//TODO: global jquery call found
+		var sKey = (bJQuery === true) ? "jQuery" : "dom", fnAccess = (bJQuery === true) ? jQuery.sap.byId : jQuery.sap.domById, mDomRefs = this._mDomRefs;
 
 		if (!mDomRefs[sKey]) {
 			mDomRefs[sKey] = {};

@@ -12,18 +12,20 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Item',
 	'./ComboBoxRenderer',
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.keycodes'
 ],
 	function(
-	jQuery,
-	ComboBoxTextField,
-	ComboBoxBase,
-	Popover,
-	SelectList,
-	library,
-	Device,
-	Item,
-	ComboBoxRenderer
+		jQuery,
+		ComboBoxTextField,
+		ComboBoxBase,
+		Popover,
+		SelectList,
+		library,
+		Device,
+		Item,
+		ComboBoxRenderer,
+		containsOrEquals
 	) {
 		"use strict";
 
@@ -1265,7 +1267,7 @@ sap.ui.define([
 			oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
-			if (jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet) {
+			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet) {
 
 				// force the focus to stay in the input field
 				this.focus();

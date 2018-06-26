@@ -12,7 +12,8 @@ sap.ui.define([
 	'./Button',
 	'./Dialog',
 	'./library',
-	'./ColorPaletteRenderer'
+	'./ColorPaletteRenderer',
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	Control,
 	Device,
@@ -22,8 +23,9 @@ sap.ui.define([
 	Button,
 	Dialog,
 	library,
-	ColorPaletteRenderer
-	) {
+	ColorPaletteRenderer,
+	containsOrEquals
+) {
 		"use strict";
 
 		// shortcut to ColorPicker (lazy initialized)

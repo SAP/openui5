@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
-	"./PageRenderer"
+	"./PageRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	jQuery,
@@ -29,8 +30,9 @@ function(
 	coreLibrary,
 	Device,
 	Element,
-	PageRenderer
-	) {
+	PageRenderer,
+	jQueryDOM
+) {
 		"use strict";
 
 
@@ -461,7 +463,7 @@ function(
 		};
 
 		Page.prototype._contentHasScroll = function () {
-			var $section = jQuery.sap.byId(this.getId() + "-cont", this.getDomRef());
+			var $section = jQueryDOM(document.getElementById(this.getId() + "-cont"));
 			return $section[0].scrollHeight > $section.innerHeight();
 		};
 

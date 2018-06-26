@@ -308,7 +308,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 	 */
 	function checkCustom (oThemeCheck, lib){
 
-		var cssFile = jQuery.sap.domById("sap-ui-theme-" + lib);
+		var cssFile = ("sap-ui-theme-" + lib ? window.document.getElementById("sap-ui-theme-" + lib) : null);
 
 		if (!cssFile) {
 			return false;

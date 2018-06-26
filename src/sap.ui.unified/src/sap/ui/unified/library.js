@@ -9,9 +9,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Core',
 	'sap/ui/base/Object',
-	'jquery.sap.dom',
+	"sap/ui/thirdparty/jquery",
 	'jquery.sap.script'
-], function(jQuery, Core, BaseObject/* jQuerySapDom,jQuerySapScript*/) {
+], function(jQuery, Core, BaseObject/* jQuerySapDom,jQuerySapScript*/, jQueryDOM)	{
 
 	"use strict";
 
@@ -509,7 +509,7 @@ sap.ui.define([
 			}
 
 			this._rerenderTimer = jQuery.sap.delayedCall(0, this, function(){
-				var $content = jQuery.sap.byId(this._id);
+				var $content = jQueryDOM(document.getElementById(this._id));
 				var doRender = $content.length > 0;
 
 				if (doRender) {

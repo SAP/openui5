@@ -3,7 +3,7 @@
  */
 
 // Provides a helper that can highlight a given control
-sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom', 'jquery.sap.script'],
+sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.script'],
 	function(jQuery/* , jQuerySap, jQuerySap1 */) {
 	"use strict";
 
@@ -51,7 +51,7 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom'
 			return;
 		}
 
-		var oHighlightRect = jQuery.sap.domById(this.sId);
+		var oHighlightRect = (this.sId ? window.document.getElementById(this.sId) : null);
 		if (!oHighlightRect) {
 			oHighlightRect = oDomRef.ownerDocument.createElement("DIV");
 			oHighlightRect.setAttribute("id", this.sId);
@@ -77,7 +77,7 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom'
 	 * Hides the rectangle/box if it is currently shown.
 	 */
 	Highlighter.prototype.hide = function() {
-		var oHighlightRect = jQuery.sap.domById(this.sId);
+		var oHighlightRect = (this.sId ? window.document.getElementById(this.sId) : null);
 		if (!oHighlightRect) {
 			return;
 		}

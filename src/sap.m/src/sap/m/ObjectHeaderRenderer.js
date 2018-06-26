@@ -1,8 +1,15 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/m/library', 'sap/ui/Device'],
-	function(jQuery, Control, coreLibrary, library, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	'sap/m/library',
+	'sap/ui/Device',
+	"sap/ui/thirdparty/jquery"
+],
+	function(jQuery, Control, coreLibrary, library, Device, jQueryDOM) {
 	"use strict";
 
 
@@ -1276,7 +1283,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		var sId = oOH.getId();
 
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
-		oRM.flush(jQuery.sap.byId(sId + "-title-arrow"));
+		oRM.flush(jQueryDOM(document.getElementById(sId + "-title-arrow")));
 	};
 
 	/**
@@ -1423,7 +1430,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 		this._renderResponsiveStatesColumn(oRM, oOH, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
 
-		oRM.flush(jQuery.sap.byId(sId + "-states")[0]);
+		oRM.flush(jQueryDOM(document.getElementById(sId + "-states"))[0]);
 	};
 
 	/**** responsive rendering end ****/

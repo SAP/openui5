@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/cache/CacheManager',
 	'sap/ui/model/resource/ResourceModel',
+	"sap/ui/thirdparty/jquery",
 	'jquery.sap.xml',
 	'jquery.sap.script'
 ],
@@ -29,7 +30,8 @@ sap.ui.define([
 		Control,
 		RenderManager,
 		Cache,
-		ResourceModel /* , jQuerySap */
+		ResourceModel /* , jQuerySap */,
+		jQueryDOM
 	) {
 	"use strict";
 
@@ -619,17 +621,17 @@ sap.ui.define([
 
 						// get DOM or invisible placeholder for child
 						var oChildDOM = aChildren[i].getDomRef() ||
-										jQuery.sap.domById(RenderPrefixes.Invisible + aChildren[i].getId());
+										((RenderPrefixes.Invisible + aChildren[i].getId() ? window.document.getElementById(RenderPrefixes.Invisible + aChildren[i].getId()) : null));
 
 						// if DOM exists, replace the preservation dummy with it
 						if ( oChildDOM ) {
-							jQuery.sap.byId(RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith(oChildDOM);
+							jQueryDOM(document.getElementById(RenderPrefixes.Dummy + aChildren[i].getId())).replaceWith(oChildDOM);
 						} // otherwise keep the dummy placeholder
 					}
 				}
 				// move preserved DOM into place
 				// jQuery.sap.log.debug("moving preserved dom into place for " + this);
-				jQuery.sap.byId(RenderPrefixes.Dummy + this.getId()).replaceWith(this._$oldContent);
+				jQueryDOM(document.getElementById(RenderPrefixes.Dummy + this.getId())).replaceWith(this._$oldContent);
 			}
 			this._$oldContent = undefined;
 		};

@@ -3,8 +3,14 @@
  */
 
 // Provides class sap.ui.core.FocusHandler
-sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.script'],
-	function(jQuery, Device, BaseObject/* , jQuerySap */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'../Device',
+	'../base/Object',
+	"sap/ui/dom/containsOrEquals",
+	'jquery.sap.script'
+],
+	function(jQuery, Device, BaseObject/* , jQuerySap */, containsOrEquals) {
 	"use strict";
 
 
@@ -306,7 +312,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 					oUiArea = oCore.getUIArea(oControlUIArea.getId());
 				} else {
 					var oPopupUIAreaDomRef = oCore.getStaticAreaRef();
-					if (jQuery.sap.containsOrEquals(oPopupUIAreaDomRef, oEvent.target)) {
+					if (containsOrEquals(oPopupUIAreaDomRef, oEvent.target)) {
 						oUiArea = oCore.getUIArea(oPopupUIAreaDomRef.id);
 					}
 				}

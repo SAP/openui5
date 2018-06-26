@@ -11,9 +11,18 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/theming/Parameters',
 	'./ShellOverlayRenderer',
-	'jquery.sap.script',
-	'jquery.sap.dom'],
-	function(jQuery, Device, Control, Popup, library, Parameters, ShellOverlayRenderer/* , jQueryScript, jQueryDom */) {
+	"sap/ui/thirdparty/jquery",
+	'jquery.sap.script'],
+	function(
+		jQuery,
+		Device,
+		Control,
+		Popup,
+		library,
+		Parameters,
+		ShellOverlayRenderer/* , jQueryScript, jQueryDom */,
+		jQueryDOM
+	) {
 	"use strict";
 
 
@@ -100,7 +109,7 @@ sap.ui.define([
 
 		if (this._getAnimActive()) {
 			jQuery.sap.delayedCall(50, this, function(){
-				jQuery.sap.byId("sap-ui-blocklayer-popup").toggleClass("sapUiUfdShellOvrlyBlyTp", false);
+				jQueryDOM(document.getElementById("sap-ui-blocklayer-popup")).toggleClass("sapUiUfdShellOvrlyBlyTp", false);
 			});
 		}
 
@@ -124,7 +133,7 @@ sap.ui.define([
 		this._setSearchWidth();
 
 		jQuery.sap.delayedCall(Math.max(this._getAnimDuration(false) - this._getBLAnimDuration(), 0), this, function(){
-			var $Bl = jQuery.sap.byId("sap-ui-blocklayer-popup");
+			var $Bl = jQueryDOM(document.getElementById("sap-ui-blocklayer-popup"));
 			if (Popup.blStack.length == 1 && this._getAnimActive() && $Bl.hasClass("sapUiUfdShellOvrlyBly")) {
 				$Bl.toggleClass("sapUiUfdShellOvrlyBlyTp", true);
 			}

@@ -9,13 +9,22 @@
  */
 
 // Provides class sap.ui.core.delegate.ScrollEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ResizeHandler', "sap/ui/performance/trace/Interaction", 'jquery.sap.keycodes'],
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/base/Object',
+	'sap/ui/core/ResizeHandler',
+	"sap/ui/performance/trace/Interaction",
+	"sap/ui/thirdparty/jquery",
+	'jquery.sap.keycodes'
+],
 	function(
 		jQuery,
 		Device,
 		BaseObject,
 		ResizeHandler,
-		Interaction /* ,jQuerySapKeycodes */
+		Interaction,
+		jQueryDOM
 	) {
 	"use strict";
 
@@ -609,7 +618,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			},
 
 			onAfterRendering: function() {
-				var $Container = this._$Container = this._sContainerId ? $.sap.byId(this._sContainerId) : $.sap.byId(this._sContentId).parent();
+				var $Container = this._$Container = this._sContainerId ? jQueryDOM(document.getElementById(this._sContainerId)) : jQueryDOM(document.getElementById(this._sContentId)).parent();
 				var _fnRefresh = jQuery.proxy(this._refresh, this);
 				var bElementVisible = $Container.is(":visible");
 

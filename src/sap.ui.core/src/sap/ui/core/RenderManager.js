@@ -7,15 +7,16 @@ sap.ui.define([
 		'jquery.sap.global',
 		'./LabelEnablement', 'sap/ui/base/Object', 'sap/ui/dom/patch',
 		"sap/ui/performance/trace/Interaction",
-		"sap/ui/util/ActivityDetection", 'jquery.sap.encoder', 'jquery.sap.dom'
+		"sap/ui/util/ActivityDetection", "sap/ui/thirdparty/jquery", 'jquery.sap.encoder'
 ], function(
 	jQuery,
 	LabelEnablement,
 	BaseObject,
 	domPatch,
 	Interaction,
-	ActivityDetection
-	/* jQuerySapEncoder, jQuerySapDom */
+	ActivityDetection,
+	jQueryDOM
+	/* jQuerySapEncoder */
 ) {
 
 	"use strict";
@@ -689,7 +690,7 @@ sap.ui.define([
 					var oldDomNode = oControl.getDomRef();
 					if ( !oldDomNode || RenderManager.isPreservedContent(oldDomNode) ) {
 						// In case no old DOM node was found or only preserved DOM, search for a placeholder (invisible or preserved DOM placeholder)
-						oldDomNode = jQuery.sap.domById(RenderPrefixes.Invisible + oControl.getId()) || jQuery.sap.domById(RenderPrefixes.Dummy + oControl.getId());
+						oldDomNode = ((RenderPrefixes.Invisible + oControl.getId() ? window.document.getElementById(RenderPrefixes.Invisible + oControl.getId()) : null)) || ((RenderPrefixes.Dummy + oControl.getId() ? window.document.getElementById(RenderPrefixes.Dummy + oControl.getId()) : null));
 					}
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;
@@ -1257,7 +1258,9 @@ sap.ui.define([
 	 * @private
 	 */
 	RenderManager.forceRepaint = function(vDomNode) {
-		var oDomNode = typeof vDomNode == "string" ? jQuery.sap.domById(vDomNode) : vDomNode;
+		var oDomNodeById = vDomNode ? window.document.getElementById(vDomNode) : null;
+		var oDomNode = typeof vDomNode == "string" ? oDomNodeById : vDomNode;
+
 		if ( oDomNode ) {
 			jQuery.sap.log.debug("forcing a repaint for " + (oDomNode.id || String(oDomNode)));
 			var sOriginalDisplay = oDomNode.style.display;
@@ -1296,7 +1299,7 @@ sap.ui.define([
 		ATTR_UI_AREA_MARKER = "data-sap-ui-area";
 
 	function getPreserveArea() {
-		var $preserve = jQuery.sap.byId(ID_PRESERVE_AREA);
+		var $preserve = jQueryDOM(document.getElementById(ID_PRESERVE_AREA));
 		if ($preserve.length === 0) {
 			$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
 				addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").

@@ -4,13 +4,14 @@
 
 // Provides control sap.ui.core.ScrollBar.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/Device',
-    './Control',
-    './library',
-    "./ScrollBarRenderer",
-    "sap/ui/performance/trace/Interaction",
-    'jquery.sap.script'
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'./Control',
+	'./library',
+	"./ScrollBarRenderer",
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/performance/trace/Interaction",
+	'jquery.sap.script'
 ],
 	function(
 		jQuery,
@@ -18,6 +19,7 @@ sap.ui.define([
 		Control,
 		library,
 		ScrollBarRenderer,
+		containsOrEquals,
 		Interaction /*, jQuery*/
 	) {
 	"use strict";
@@ -305,7 +307,7 @@ sap.ui.define([
 			// find out if the user is scrolling up= back or down= forward.
 			var bForward = wheelData > 0 ? true : false;
 
-			if (jQuery.sap.containsOrEquals(this._$ScrollDomRef[0], oEvent.target)) {
+			if (containsOrEquals(this._$ScrollDomRef[0], oEvent.target)) {
 				this._doScroll(ScrollBarAction.MouseWheel, bForward);
 			} else {
 

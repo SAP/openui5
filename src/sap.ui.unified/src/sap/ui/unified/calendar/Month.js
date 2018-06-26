@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Locale',
 	"./MonthRenderer",
+	"sap/ui/dom/containsOrEquals",
 	'jquery.sap.keycodes'
 ], function(
 	jQuery,
@@ -29,8 +30,9 @@ sap.ui.define([
 	DateFormat,
 	coreLibrary,
 	Locale,
-	MonthRenderer
-	) {
+	MonthRenderer,
+	containsOrEquals
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.CalendarType
@@ -309,7 +311,7 @@ sap.ui.define([
 
 	Month.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			if (this._bMouseMove) {
 				this._unbindMousemove(true);
 
@@ -912,7 +914,7 @@ sap.ui.define([
 
 		if ($Target.hasClass("sapUiCalItem")) {
 			var oOldFocusedDate = this._getDate();
-			if (!jQuery.sap.containsOrEquals(this.getDomRef(), oEvent.target)) {
+			if (!containsOrEquals(this.getDomRef(), oEvent.target)) {
 				// in multi month mode day can be in other month
 				var aSelectedDates = this.getSelectedDates();
 

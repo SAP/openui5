@@ -3,8 +3,13 @@
  */
 
 // Provides TablePersoController
-sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedObject'],
-	function(jQuery, TablePersoDialog, ManagedObject) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./TablePersoDialog',
+	'sap/ui/base/ManagedObject',
+	"sap/ui/core/syncStyleClass"
+],
+	function(jQuery, TablePersoDialog, ManagedObject, syncStyleClass) {
 	"use strict";
 
 
@@ -434,7 +439,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		if (oTablePersoDialog) {
 			// 'syncStyleClass' call because dialogs need to be informed of 'sapUISizeCompact'
 			// They do not get this information automatically
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", oTablePersoDialog.getPersoDialogFor(), oTablePersoDialog._oDialog);
+			syncStyleClass("sapUiSizeCompact", oTablePersoDialog.getPersoDialogFor(), oTablePersoDialog._oDialog);
 			oTablePersoDialog.open();
 		} else {
 			// SUGGESTED IMPROVEMENT: User should get some visual feedback as well

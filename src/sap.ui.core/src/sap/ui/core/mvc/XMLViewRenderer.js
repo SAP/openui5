@@ -3,8 +3,13 @@
  */
 
 // Provides default renderer for XMLView
-sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager'],
-	function(jQuery, ViewRenderer, RenderManager) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./ViewRenderer',
+	'../RenderManager',
+	"sap/ui/thirdparty/jquery"
+],
+	function(jQuery, ViewRenderer, RenderManager, jQueryDOM) {
 	"use strict";
 
 	// shortcut
@@ -130,9 +135,9 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager'],
 
 					// replace any old DOM (or invisible placeholder) for a child control with a dummy placeholder
 					var sFragmentId = fragment.getId(),
-						$fragment = jQuery.sap.byId(sFragmentId, $oldContent);
+						$fragment = jQueryDOM(document.getElementById(sFragmentId));
 					if ($fragment.length == 0) {
-						$fragment = jQuery.sap.byId(PREFIX_INVISIBLE + sFragmentId, $oldContent);
+						$fragment = jQueryDOM(document.getElementById(PREFIX_INVISIBLE + sFragmentId));
 					}
 					$fragment.replaceWith('<div id="' + PREFIX_DUMMY + sFragmentId + '" class="sapUiHidden"/>');
 				}

@@ -12,10 +12,24 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/Control',
 	'sap/base/util/ObjectPath',
-	'sap/ui/core/library', // library dependency
-	'jquery.sap.mobile', // referenced here in case the Core decides to throw it out - shall always be available when using the mobile lib.
-	'./Support'], // referenced here to enable the Support feature
-	function(jQuery, Device, DataType, EventProvider, Control, ObjectPath, CoreLibrary) {
+	// library dependency
+	'sap/ui/core/library',
+	"sap/ui/thirdparty/jquery",
+	// referenced here in case the Core decides to throw it out - shall always be available when using the mobile lib.
+	'jquery.sap.mobile',
+	// referenced here to enable the Support feature
+	'./Support'
+],
+	function(
+	jQuery,
+	Device,
+	DataType,
+	EventProvider,
+	Control,
+	ObjectPath,
+	CoreLibrary,
+	jQueryDOM
+) {
 
 	"use strict";
 
@@ -3626,7 +3640,7 @@ sap.ui.define([
 		if (vElement instanceof Element) {
 			vElement = jQuery(vElement);
 		} else if (typeof vElement === "string") {
-			vElement = jQuery.sap.byId(vElement);
+			vElement = jQueryDOM(document.getElementById(vElement));
 		} else if (!(vElement instanceof jQuery)) {
 			jQuery.sap.assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
 			return 0;
