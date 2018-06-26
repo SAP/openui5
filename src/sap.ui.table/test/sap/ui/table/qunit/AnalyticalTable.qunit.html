@@ -15,21 +15,18 @@
 	<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.ui.table,sap.m">
+			data-sap-ui-libs="sap.ui.table,sap.m"
+			data-sap-ui-resourceroots='{
+				"sap/ui/core/qunit": "../../../../../test-resources/sap/ui/core/qunit"
+			}'>
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
-			data-sap-ui-cover-only="sap/ui/table">
-	</script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/table"></script>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-
-<script>
-	sap.ui.loader.config({ paths: { "sap/ui/core/qunit": "../../../../../test-resources/sap/ui/core/qunit" } });
-</script>
 
 	<link rel="stylesheet" href="shared-qunit.css">
 	<script src="AnalyticalTable.qunit.js"></script>

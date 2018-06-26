@@ -1,14 +1,20 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TableUtils",
 	"sap/ui/table/TableKeyboardDelegate2",
 	"sap/ui/Device",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/events/F6Navigation"
-], function(qutils, TableUtils, TableKeyboardDelegate2, Device, MenuM, MenuItemM, F6Navigation) {
+	"sap/ui/events/F6Navigation",
+	"sap/ui/table/library",
+	"sap/ui/table/Table",
+	"sap/ui/table/Column",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/model/json/JSONModel"
+], function(TableQUnitUtils, qutils, TableUtils, TableKeyboardDelegate2, Device, MenuM, MenuItemM, F6Navigation, tableLibrary, Table, Column, KeyCodes, JSONModel) {
 	"use strict";
 
 	// mapping of global function calls
@@ -30,8 +36,11 @@ sap.ui.require([
 	// Helper Functions
 	//************************************************************************
 
+	var TestInputControl = TableQUnitUtils.getTestInputControl();
+	var TestControl = TableQUnitUtils.getTestControl();
+
 	function checkDelegateType(sExpectedType) {
-		var oTbl = new sap.ui.table.Table();
+		var oTbl = new Table();
 		var oExt = oTbl._getKeyboardExtension();
 		var sType = oExt._delegate && oExt._delegate.getMetadata ? oExt._delegate.getMetadata().getName() : null;
 		oTbl.destroy();
@@ -70,7 +79,7 @@ sap.ui.require([
 
 	function simulateTabEvent(oTarget, bBackward) {
 		var oParams = {};
-		oParams.keyCode = jQuery.sap.KeyCodes.TAB;
+		oParams.keyCode = KeyCodes.TAB;
 		oParams.which = oParams.keyCode;
 		oParams.shiftKey = !!bBackward;
 		oParams.altKey = false;
@@ -144,7 +153,7 @@ sap.ui.require([
 		var oControlTemplate;
 
 		if (bInputElement) {
-			oControlTemplate = new sap.ui.table.test.TestInputControl({
+			oControlTemplate = new TestInputControl({
 				text: bBindText ? "{" + sText + "}" : sText,
 				index: iNumberOfCols,
 				visible: true,
@@ -152,7 +161,7 @@ sap.ui.require([
 				type: sInputType
 			});
 		} else {
-			oControlTemplate = new sap.ui.table.test.TestControl({
+			oControlTemplate = new TestControl({
 				text: bBindText ? "{" + sText + "}" : sText,
 				index: iNumberOfCols,
 				visible: true,
@@ -161,7 +170,7 @@ sap.ui.require([
 			});
 		}
 
-		oTable.addColumn(new sap.ui.table.Column({
+		oTable.addColumn(new Column({
 			label: sTitle,
 			width: "100px",
 			template: oControlTemplate
@@ -177,13 +186,13 @@ sap.ui.require([
 
 	function setupTest() {
 		createTables(true, true);
-		var oFocus = new sap.ui.table.test.TestControl("Focus1", {text: "Focus1", tabbable: true});
+		var oFocus = new TestControl("Focus1", {text: "Focus1", tabbable: true});
 		oFocus.placeAt("qunit-fixture");
 		oTable.placeAt("qunit-fixture");
-		oFocus = new sap.ui.table.test.TestControl("Focus2", {text: "Focus2", tabbable: true});
+		oFocus = new TestControl("Focus2", {text: "Focus2", tabbable: true});
 		oFocus.placeAt("qunit-fixture");
 		oTreeTable.placeAt("qunit-fixture");
-		oFocus = new sap.ui.table.test.TestControl("Focus3", {text: "Focus3", tabbable: true});
+		oFocus = new TestControl("Focus3", {text: "Focus3", tabbable: true});
 		oFocus.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
@@ -201,26 +210,26 @@ sap.ui.require([
 	 */
 	var Key = {
 		Arrow: {
-			LEFT: sap.ui.getCore().getConfiguration().getRTL() ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT,
-			RIGHT: sap.ui.getCore().getConfiguration().getRTL() ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT,
-			UP: jQuery.sap.KeyCodes.ARROW_UP,
-			DOWN: jQuery.sap.KeyCodes.ARROW_DOWN
+			LEFT: sap.ui.getCore().getConfiguration().getRTL() ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT,
+			RIGHT: sap.ui.getCore().getConfiguration().getRTL() ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT,
+			UP: KeyCodes.ARROW_UP,
+			DOWN: KeyCodes.ARROW_DOWN
 		},
-		HOME: jQuery.sap.KeyCodes.HOME,
-		END: jQuery.sap.KeyCodes.END,
+		HOME: KeyCodes.HOME,
+		END: KeyCodes.END,
 		Page: {
-			UP: jQuery.sap.KeyCodes.PAGE_UP,
-			DOWN: jQuery.sap.KeyCodes.PAGE_DOWN
+			UP: KeyCodes.PAGE_UP,
+			DOWN: KeyCodes.PAGE_DOWN
 		},
-		SHIFT: jQuery.sap.KeyCodes.SHIFT,
-		F2: jQuery.sap.KeyCodes.F2,
-		F4: jQuery.sap.KeyCodes.F4,
-		F10: jQuery.sap.KeyCodes.F10,
-		SPACE: jQuery.sap.KeyCodes.SPACE,
-		ENTER: jQuery.sap.KeyCodes.ENTER,
-		ESCAPE: jQuery.sap.KeyCodes.ESCAPE,
-		A: jQuery.sap.KeyCodes.A,
-		CONTEXTMENU: jQuery.sap.KeyCodes.CONTEXT_MENU,
+		SHIFT: KeyCodes.SHIFT,
+		F2: KeyCodes.F2,
+		F4: KeyCodes.F4,
+		F10: KeyCodes.F10,
+		SPACE: KeyCodes.SPACE,
+		ENTER: KeyCodes.ENTER,
+		ESCAPE: KeyCodes.ESCAPE,
+		A: KeyCodes.A,
+		CONTEXTMENU: KeyCodes.CONTEXT_MENU,
 		PLUS: "+",
 		MINUS: "-"
 	};
@@ -916,8 +925,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("Extension and Footer", function(assert) {
-		oTable.addExtension(new sap.ui.table.test.TestControl("Extension", {text: "Extension", tabbable: true}));
-		oTable.setFooter(new sap.ui.table.test.TestControl("Footer", {text: "Footer", tabbable: true}));
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
 
 		var oElem = setFocusOutsideOfTable(assert, "Focus2");
@@ -1185,7 +1194,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("No Row Header", function(assert) {
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 		sap.ui.getCore().applyChanges();
 
 		this.testArrowKeys(assert);
@@ -1214,14 +1223,14 @@ sap.ui.require([
 	});
 
 	QUnit.test("Multi Header", function(assert) {
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b2"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
 		sap.ui.getCore().applyChanges();
 
 		var oElem = setFocusOutsideOfTable(assert, "Focus1");
@@ -1257,14 +1266,14 @@ sap.ui.require([
 
 	QUnit.test("Multi Header, Row Actions", function(assert) {
 		initRowActions(oTable, 1, 1);
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b2"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
 		sap.ui.getCore().applyChanges();
 
 		var oElem = checkFocus(getColumnHeader(iNumberOfCols - 1, true), assert);
@@ -1344,7 +1353,7 @@ sap.ui.require([
 		oTable.setVisibleRowCount(6);
 		oTable.setFixedRowCount(2);
 		oTable.setFixedBottomRowCount(2);
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowSelector);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowSelector);
 		sap.ui.getCore().applyChanges();
 
 		var i, iRowIndex, oRow;
@@ -1396,7 +1405,7 @@ sap.ui.require([
 
 		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
 		sap.ui.getCore().applyChanges();
 
 		oElem = checkFocus(getRowHeader(1, true), assert);
@@ -1417,7 +1426,7 @@ sap.ui.require([
 		oTable.setFixedBottomRowCount(2);
 		sap.ui.getCore().applyChanges();
 
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowOnly);
 
 		var i, iColumnIndex, oRow;
 		var iRowIndex = 0;
@@ -1491,7 +1500,7 @@ sap.ui.require([
 
 		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowSelector);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowSelector);
 
 		oElem = checkFocus(getCell(1, 1, true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
@@ -1504,8 +1513,8 @@ sap.ui.require([
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 		checkFocus(oElem, assert);
 
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowOnly);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
 
 		oElem = checkFocus(getCell(1, 1, true), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
@@ -1517,7 +1526,7 @@ sap.ui.require([
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 		checkFocus(oElem, assert);
 
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 
 		oElem = checkFocus(getCell(1, 1, true), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
@@ -1537,7 +1546,7 @@ sap.ui.require([
 		oTable.setFixedBottomRowCount(2);
 		sap.ui.getCore().applyChanges();
 
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowOnly);
 
 		var i, iRowIndex, oRow;
 		var iVisibleRowCount = oTable.getVisibleRowCount();
@@ -1588,7 +1597,7 @@ sap.ui.require([
 
 		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowSelector);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowSelector);
 
 		oElem = checkFocus(getRowAction(1, true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
@@ -1601,8 +1610,8 @@ sap.ui.require([
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 		checkFocus(oElem, assert);
 
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowOnly);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
 
 		oElem = checkFocus(getRowAction(1, true), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
@@ -1614,7 +1623,7 @@ sap.ui.require([
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
 		checkFocus(oElem, assert);
 
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 
 		oElem = checkFocus(getRowAction(1, true), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
@@ -1628,7 +1637,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Move between Row Header and Row (Range Selection)", function(assert) {
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 
 		var oElem = checkFocus(getRowHeader(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
@@ -1640,7 +1649,7 @@ sap.ui.require([
 
 	QUnit.test("Move between Row Actions and Row (Range Selection)", function(assert) {
 		initRowActions(oTable, 1, 1);
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 
 		var oElem = checkFocus(getRowAction(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
@@ -1660,7 +1669,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Default Test Table", function(assert) {
-		var oInput = new sap.ui.table.test.TestInputControl({tabbable: true});
+		var oInput = new TestInputControl({tabbable: true});
 		var iPreventDefaultCount = 0;
 
 		oTable.setFixedColumnCount(0);
@@ -1809,7 +1818,7 @@ sap.ui.require([
 
 	QUnit.test("No Row Header", function(assert) {
 		oTable.setFixedColumnCount(0);
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 		sap.ui.getCore().applyChanges();
 
 		/* Test on column header */
@@ -2210,17 +2219,17 @@ sap.ui.require([
 
 	QUnit.test("Fixed Columns with Multi Header", function(assert) {
 		var iColSpan = 2;
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
 		oTable.getColumns()[1].setHeaderSpan([iColSpan, 1]);
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b2"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
 		oTable.getColumns()[3].setHeaderSpan([iColSpan, 1]);
-		oTable.getColumns()[4].addMultiLabel(new sap.ui.table.test.TestControl({text: "d"}));
-		oTable.getColumns()[4].addMultiLabel(new sap.ui.table.test.TestControl({text: "d2"}));
+		oTable.getColumns()[4].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[4].addMultiLabel(new TestControl({text: "d2"}));
 		oTable.setFixedColumnCount(3);
 		sap.ui.getCore().applyChanges();
 
@@ -2712,15 +2721,15 @@ sap.ui.require([
 
 	QUnit.test("Multi Header and Fixed Top/Bottom Rows", function(assert) {
 		oTable.setFixedColumnCount(0);
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_1"}));
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_2"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_2"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_3"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
 		oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
 		oTable.setVisibleRowCount(6);
 		oTable.setFixedRowCount(2);
@@ -3180,14 +3189,14 @@ sap.ui.require([
 	});
 
 	QUnit.test("Multi Header", function(assert) {
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b2"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
 		sap.ui.getCore().applyChanges();
 
 		this.testPageKeys(assert);
@@ -3212,14 +3221,14 @@ sap.ui.require([
 	});
 
 	QUnit.test("Multi Header and Fixed Top/Bottom Rows", function(assert) {
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "b2"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d"}));
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl({text: "d1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
 		oTable.setVisibleRowCount(6);
 		oTable.setFixedRowCount(2);
 		oTable.setFixedBottomRowCount(2);
@@ -3235,10 +3244,10 @@ sap.ui.require([
 
 			// Add more columns for testing of horizontal "scrolling"
 			for (var i = 1; i <= this.iAdditionalColumns; i++) {
-				oTable.addColumn(new sap.ui.table.Column({
+				oTable.addColumn(new Column({
 					label: (iNumberOfCols + i) + "_TITLE",
 					width: "100px",
-					template: new sap.ui.table.test.TestControl({
+					template: new TestControl({
 						text: i
 					})
 				}));
@@ -3389,7 +3398,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("No Row Header", function(assert) {
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 		sap.ui.getCore().applyChanges();
 
 		var i;
@@ -3533,8 +3542,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("F6 - Forward navigation - With Extension and Footer", function(assert) {
-		oTable.addExtension(new sap.ui.table.test.TestControl("Extension", {text: "Extension", tabbable: true}));
-		oTable.setFooter(new sap.ui.table.test.TestControl("Footer", {text: "Footer", tabbable: true}));
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
 
 		var oElem = setFocusOutsideOfTable(assert, "Focus1");
@@ -3561,8 +3570,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("Shift+F6 - Backward navigation - With Extension and Footer", function(assert) {
-		oTable.addExtension(new sap.ui.table.test.TestControl("Extension", {text: "Extension", tabbable: true}));
-		oTable.setFooter(new sap.ui.table.test.TestControl("Footer", {text: "Footer", tabbable: true}));
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
 
 		var oElem = setFocusOutsideOfTable(assert, "Focus2");
@@ -3609,8 +3618,8 @@ sap.ui.require([
 
 	QUnit.test("Tab - With Extension and Footer", function(assert) {
 		oTable.setShowOverlay(true);
-		oTable.addExtension(new sap.ui.table.test.TestControl("Extension", {text: "Extension", tabbable: true}));
-		oTable.setFooter(new sap.ui.table.test.TestControl("Footer", {text: "Footer", tabbable: true}));
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
 
 		var oElem = setFocusOutsideOfTable(assert, "Focus1");
@@ -3632,8 +3641,8 @@ sap.ui.require([
 
 	QUnit.test("Shift+Tab - With Extension and Footer", function(assert) {
 		oTable.setShowOverlay(true);
-		oTable.addExtension(new sap.ui.table.test.TestControl("Extension", {text: "Extension", tabbable: true}));
-		oTable.setFooter(new sap.ui.table.test.TestControl("Footer", {text: "Footer", tabbable: true}));
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
 
 		var oElem = setFocusOutsideOfTable(assert, "Focus2");
@@ -3670,7 +3679,7 @@ sap.ui.require([
 		}
 
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("Tab - Without Column Header", function(assert) {
@@ -3691,7 +3700,7 @@ sap.ui.require([
 		oTable.setColumnHeaderVisible(false);
 		sap.ui.getCore().applyChanges();
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("Tab - With Extension and Footer", function(assert) {
@@ -3715,11 +3724,11 @@ sap.ui.require([
 			done();
 		}
 
-		oTable.addExtension(new sap.ui.table.test.TestControl("Extension", {text: "Extension", tabbable: true}));
-		oTable.setFooter(new sap.ui.table.test.TestControl("Footer", {text: "Footer", tabbable: true}));
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("Shift+Tab", function(assert) {
@@ -3740,7 +3749,7 @@ sap.ui.require([
 		}
 
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("Shift+Tab - With Extension and Footer", function(assert) {
@@ -3764,11 +3773,11 @@ sap.ui.require([
 			done();
 		}
 
-		oTable.addExtension(new sap.ui.table.test.TestControl("Extension", {text: "Extension", tabbable: true}));
-		oTable.setFooter(new sap.ui.table.test.TestControl("Footer", {text: "Footer", tabbable: true}));
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("No Vertical Navigation (Header <-> Content)", function(assert) {
@@ -3795,7 +3804,7 @@ sap.ui.require([
 		}
 
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Navigation > NoData & Overlay", {
@@ -3851,7 +3860,7 @@ sap.ui.require([
 		}
 
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("Tab", function(assert) {
@@ -3871,7 +3880,7 @@ sap.ui.require([
 
 		oTable.setShowOverlay(true);
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("Shift+Tab", function(assert) {
@@ -3891,7 +3900,7 @@ sap.ui.require([
 
 		oTable.setShowOverlay(true);
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Navigation > BusyIndicator", {
@@ -4006,7 +4015,7 @@ sap.ui.require([
 	QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+Up & Shift+Down (Range Selection)", {
 		beforeEach: function() {
 			setupTest();
-			oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+			oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
@@ -4242,7 +4251,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Default Test Table - Move between Row Header and Row", function(assert) {
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 		sap.ui.getCore().applyChanges();
 
 		var oElem = getRowHeader(0, true);
@@ -4346,15 +4355,15 @@ sap.ui.require([
 
 	QUnit.test("Multi Header - Resize spans", function(assert) {
 		oTable.setFixedColumnCount(0);
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_1"}));
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_2"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_2"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_3"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
 		oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
 		sap.ui.getCore().applyChanges();
 
@@ -4797,7 +4806,7 @@ sap.ui.require([
 		var bPreventDefault = false;
 
 		oTable.clearSelection();
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 		oTable.attachCellClick(function(oEvent) {
 			iCallCount++;
 			if (bPreventDefault) {
@@ -4993,7 +5002,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("(De)Select All possible", function(assert) {
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.MultiToggle);
 		sap.ui.getCore().applyChanges();
 
 		var oElem = checkFocus(getSelectAll(true), assert);
@@ -5025,7 +5034,7 @@ sap.ui.require([
 	QUnit.test("(De)Select All not possible", function(assert) {
 		function testLocal(bSelected) {
 			// Mass (De)Selection on column header is never allowed, regardless of the selection mode.
-			oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+			oTable.setSelectionMode(tableLibrary.SelectionMode.MultiToggle);
 			if (bSelected) {
 				oTable.selectAll();
 			} else {
@@ -5045,7 +5054,7 @@ sap.ui.require([
 			}
 
 			// Mass (De)Selection is not allowed in selection mode "Single".
-			oTable.setSelectionMode(sap.ui.table.SelectionMode.Single);
+			oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
 			sap.ui.getCore().applyChanges();
 
 			qutils.triggerKeydown(oElem, Key.A, false, false, true);
@@ -5068,7 +5077,7 @@ sap.ui.require([
 				"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 
 			// Mass (De)Selection is not allowed in selection mode "None".
-			oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+			oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 			sap.ui.getCore().applyChanges();
 
 			qutils.triggerKeydown(oElem, Key.A, false, false, true);
@@ -5145,9 +5154,9 @@ sap.ui.require([
 			});
 		}
 
-		testLocal(sap.ui.table.SelectionMode.None, []);
-		testLocal(sap.ui.table.SelectionMode.Single, [1]);
-		testLocal(sap.ui.table.SelectionMode.MultiToggle, [0, 1, 4], true);
+		testLocal(tableLibrary.SelectionMode.None, []);
+		testLocal(tableLibrary.SelectionMode.Single, [1]);
+		testLocal(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4], true);
 	});
 
 	QUnit.test("Deselect All not possible", function(assert) {
@@ -5173,9 +5182,9 @@ sap.ui.require([
 				"DeselectAll on cell \"" + oElem.attr("id") + "\": All rows are still selected");
 		}
 
-		testLocal(sap.ui.table.SelectionMode.None, []);
-		testLocal(sap.ui.table.SelectionMode.Single, [1]);
-		testLocal(sap.ui.table.SelectionMode.MultiToggle, [0, 1, 4]);
+		testLocal(tableLibrary.SelectionMode.None, []);
+		testLocal(tableLibrary.SelectionMode.Single, [1]);
+		testLocal(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4]);
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+F10 & ContextMenu (Open Context Menus)", {
@@ -5867,7 +5876,7 @@ sap.ui.require([
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus SelectAll cell: Table is in Navigation Mode");
 
 		// Remove row selectors.
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 		sap.ui.getCore().applyChanges();
 
 		// Enter Action Mode: Focus tabbable input control inside a data cell.
@@ -6659,7 +6668,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("TAB & Shift+TAB", function(assert) {
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 		sap.ui.getCore().applyChanges();
 
 		this.testActionModeTabNavigation(assert);
@@ -6711,7 +6720,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("TAB & Shift+TAB - Grouping", function(assert) {
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 		this.setupGrouping();
 
 		this.testActionModeTabNavigation(assert);

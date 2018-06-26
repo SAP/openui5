@@ -13,11 +13,13 @@ sap.ui.require([
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/TableUtils",
 	'sap/ui/table/library',
+	'sap/ui/core/library',
+	"sap/ui/core/Control",
 	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
 	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem"
 ], function(qutils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction, RowActionItem,
-			RowSettings, TableUtils, TableLibrary,
+			RowSettings, TableUtils, TableLibrary, CoreLibrary, Control,
 			Device, JSONModel, Sorter, Filter, FloatType,
 			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem, MenuM, MenuItemM) {
 	"use strict";
@@ -66,7 +68,7 @@ sap.ui.require([
 		aData[i].lastName += " - " + i;
 	}
 
-	var DummyControl = sap.ui.core.Control.extend("sap.ui.table.test.DummyControl", {
+	var DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
 		metadata: {
 			properties: {
 				height: "string"
@@ -710,12 +712,12 @@ sap.ui.require([
 		assert.ok(oRowSettings != null, "The rows have a settings template clone");
 
 		oOnAfterRenderingEventListener.reset();
-		oTable.getRowSettingsTemplate().setHighlight(sap.ui.core.MessageType.Success);
+		oTable.getRowSettingsTemplate().setHighlight(CoreLibrary.MessageType.Success);
 		sap.ui.getCore().applyChanges();
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "Changing the highlight property of the template did not cause the table to re-render");
 
 		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
-		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.None,
+		assert.strictEqual(oRowSettings.getHighlight(), CoreLibrary.MessageType.None,
 			"Changing the highlight property of the template did not change the highlight property of the template clones in the rows");
 
 		oOnAfterRenderingEventListener.reset();
@@ -724,18 +726,18 @@ sap.ui.require([
 		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Invalidating the template caused the table to re-render");
 
 		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
-		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.None,
+		assert.strictEqual(oRowSettings.getHighlight(), CoreLibrary.MessageType.None,
 			"Invalidating the template did not change the highlight property of the template clones in the rows");
 
 		oOnAfterRenderingEventListener.reset();
 		oTable.setRowSettingsTemplate(new RowSettings({
-			highlight: sap.ui.core.MessageType.Warning
+			highlight: CoreLibrary.MessageType.Warning
 		}));
 		sap.ui.getCore().applyChanges();
 		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Changing the template caused the table to re-render");
 
 		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
-		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.Warning,
+		assert.strictEqual(oRowSettings.getHighlight(), CoreLibrary.MessageType.Warning,
 			"Changing the template changed the highlight property of the template clones in the rows");
 	});
 
@@ -788,7 +790,7 @@ sap.ui.require([
 			var mChanges = {changes: {}};
 
 			oTable._bRtlMode = null;
-			oTable._oCellContextMenu = new sap.ui.core.Control();
+			oTable._oCellContextMenu = new Control();
 			oTable.getColumns()[0].getMenu()._bInvalidated = false;
 			oInvalidateSpy.reset();
 
@@ -876,8 +878,8 @@ sap.ui.require([
 
 		// check for row actions
 		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new sap.ui.table.RowAction({
-			items: new sap.ui.table.RowActionItem()
+		oTable.setRowActionTemplate(new RowAction({
+			items: new RowActionItem()
 		}));
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
@@ -939,13 +941,13 @@ sap.ui.require([
 
 		oColumn.attachColumnMenuOpen(fnHandler);
 		oColumn._openMenu();
-		assert.equal(oMenu.getPopup().getOpenState(), sap.ui.core.OpenState.OPEN, "ColumnMenu open");
+		assert.equal(oMenu.getPopup().getOpenState(), CoreLibrary.OpenState.OPEN, "ColumnMenu open");
 		oMenu.close();
 		oColumn.detachColumnMenuOpen(fnHandler);
 
 		oColumn.attachColumnMenuOpen(fnHandlerPreventDefault);
 		oColumn._openMenu();
-		assert.equal(oMenu.getPopup().getOpenState(), sap.ui.core.OpenState.CLOSED, "PreventDefault, ColumnMenu not open");
+		assert.equal(oMenu.getPopup().getOpenState(), CoreLibrary.OpenState.CLOSED, "PreventDefault, ColumnMenu not open");
 		oColumn.detachColumnMenuOpen(fnHandlerPreventDefault);
 	});
 
@@ -1037,7 +1039,7 @@ sap.ui.require([
 
 	QUnit.module("VisibleRowCountMode Auto", {
 		beforeEach: function() {
-			sinon.spy(sap.ui.table.Table.prototype, "_computeRequestLength");
+			sinon.spy(Table.prototype, "_computeRequestLength");
 			createTable({
 				visibleRowCountMode: VisibleRowCountMode.Auto
 			});
@@ -1047,7 +1049,7 @@ sap.ui.require([
 		afterEach: function() {
 			destroyTable();
 			document.getElementById("qunit-fixture").removeAttribute("style");
-			sap.ui.table.Table.prototype._computeRequestLength.restore(); // Unwraps the spy
+			Table.prototype._computeRequestLength.restore(); // Unwraps the spy
 		}
 	});
 
@@ -1055,7 +1057,7 @@ sap.ui.require([
 		var done = assert.async();
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			var spy = sap.ui.table.Table.prototype._computeRequestLength;
+			var spy = Table.prototype._computeRequestLength;
 
 			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Render) {
 				assert.strictEqual(oTable.getVisibleRowCount(), this.iExpectedVisibleRowCountInitial, "The visible row count after initialization is correct");
@@ -1595,11 +1597,6 @@ sap.ui.require([
 		beforeEach: function() {
 			createTable({}, null, "myModel");
 			oTable.filter(oTable.getColumns()[1], "Al");
-
-			jQuery.sap.require("sap.ui.core.util.ExportTypeCSV");
-			oExport = oTable.exportData({
-				exportType: new sap.ui.core.util.ExportTypeCSV()
-			});
 		},
 		afterEach: function() {
 			oExport.destroy();
@@ -1610,28 +1607,33 @@ sap.ui.require([
 
 	QUnit.test("Export filtered table with named model", function(assert) {
 		var done = assert.async();
-		oExport.generate()
-			   .done(function(sContent) {
-				   var sExpected =
-					   "Last Name,First Name,Checked,Web Site,Gender,Rating,Money\r\n" +
-					   "Dente - 0,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 20,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 40,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 60,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 80,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 100,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 120,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 140,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 160,Al,true,www.sap.com,male,4,3.45\r\n" +
-					   "Dente - 180,Al,true,www.sap.com,male,4,3.45";
-				   assert.equal(sContent, sExpected, "Generated file content should be correct.");
-			   })
-			   .fail(function() {
-				   assert.ok(false, "Generate should not fail.");
-			   })
-			   .always(function() {
-				   done();
-			   });
+		sap.ui.require(["sap/ui/core/util/ExportTypeCSV"], function(ExportTypeCSV) {
+			oExport = oTable.exportData({
+				exportType: new ExportTypeCSV()
+			});
+			oExport.generate()
+				.done(function(sContent) {
+					var sExpected =
+						"Last Name,First Name,Checked,Web Site,Gender,Rating,Money\r\n" +
+						"Dente - 0,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 20,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 40,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 60,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 80,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 100,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 120,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 140,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 160,Al,true,www.sap.com,male,4,3.45\r\n" +
+						"Dente - 180,Al,true,www.sap.com,male,4,3.45";
+					assert.equal(sContent, sExpected, "Generated file content should be correct.");
+				})
+				.fail(function() {
+					assert.ok(false, "Generate should not fail.");
+				})
+				.always(function() {
+					done();
+				});
+		});
 	});
 
 	QUnit.module("Toolbar", {
@@ -3364,14 +3366,14 @@ sap.ui.require([
 		assert.equal(fnInvalidateRowsAggregation.callCount, 3,
 			"invalidateRowsAggregation() NOT called after changing the 'flexible' property for invisible column");
 
-		oTable.getColumns()[0].setTemplate(new sap.ui.core.Control());
+		oTable.getColumns()[0].setTemplate(new Control());
 		assert.equal(fnInvalidateRowsAggregation.callCount, 3,
 			"invalidateRowsAggregation() NOT called after changing the column template for invisible column");
 
 		oTable.getColumns()[0].setVisible(true);
 		assert.equal(fnInvalidateRowsAggregation.callCount, 4, "invalidateRowsAggregation() called after changing the 'visible' property");
 
-		oTable.getColumns()[0].setTemplate(new sap.ui.core.Control());
+		oTable.getColumns()[0].setTemplate(new Control());
 		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
 	});
 

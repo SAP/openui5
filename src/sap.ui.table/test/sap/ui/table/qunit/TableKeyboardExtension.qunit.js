@@ -1,8 +1,17 @@
 /*global QUnit, oTable */
 
 sap.ui.require([
-	"sap/ui/qunit/QUnitUtils"
-], function(qutils) {
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/Table",
+	"sap/ui/table/TreeTable",
+	"sap/ui/table/AnalyticalTable",
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/table/TableExtension",
+	"sap/ui/table/TableKeyboardExtension",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"
+], function(TableQUnitUtils, qutils, Table, TreeTable, AnalyticalTable, containsOrEquals, TableExtension, TableKeyboardExtension, JSONModel, Device) {
 	"use strict";
 
 	// mapping of global function calls
@@ -13,6 +22,8 @@ sap.ui.require([
 	var getColumnHeader = window.getColumnHeader;
 	var iNumberOfCols = window.iNumberOfCols;
 	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
+
+	var TestControl = TableQUnitUtils.getTestControl();
 
 	QUnit.module("Initialization", {
 		beforeEach: function() {
@@ -58,7 +69,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("init() / destroy()", function(assert) {
-		var oExtension = sap.ui.table.TableExtension.enrich(new sap.ui.table.Table(), sap.ui.table.TableKeyboardExtension);
+		var oExtension = TableExtension.enrich(new Table(), TableKeyboardExtension);
 		assert.ok(!oExtension._itemNavigation, "Item Navigation not yet initialized");
 		oExtension.initItemNavigation();
 		assert.ok(oExtension._itemNavigation, "Item Navigation initialized on focus");
@@ -81,8 +92,8 @@ sap.ui.require([
 	];
 
 	function setupItemNavigationFakeTest(assert) {
-		var oControl = new sap.ui.table.test.TestControl();
-		var oExtension = sap.ui.table.TableExtension.enrich(oControl, sap.ui.table.TableKeyboardExtension);
+		var oControl = new TestControl();
+		var oExtension = TableExtension.enrich(oControl, TableKeyboardExtension);
 		oExtension._itemNavigation = {
 			destroy: function() {
 			}
@@ -235,8 +246,8 @@ sap.ui.require([
 			bHandlerCalled = true;
 		}
 
-		var oControl = new sap.ui.table.test.TestControl();
-		var oExtension = sap.ui.table.TableExtension.enrich(oControl, sap.ui.table.TableKeyboardExtension);
+		var oControl = new TestControl();
+		var oExtension = TableExtension.enrich(oControl, TableKeyboardExtension);
 		oExtension._delegate = {
 			enterActionMode: function(oArgs) {
 				testHandler(oArgs);
@@ -278,19 +289,19 @@ sap.ui.require([
 	});
 
 	QUnit.test("Table Type", function(assert) {
-		assert.strictEqual((new sap.ui.table.TreeTable())._getKeyboardExtension()._getTableType(),
-			sap.ui.table.TableExtension.TABLETYPES.TREE, "TREE");
-		assert.strictEqual((new sap.ui.table.Table())._getKeyboardExtension()._getTableType(),
-			sap.ui.table.TableExtension.TABLETYPES.STANDARD, "STANDARD");
-		assert.strictEqual((new sap.ui.table.AnalyticalTable())._getKeyboardExtension()._getTableType(),
-			sap.ui.table.TableExtension.TABLETYPES.ANALYTICAL, "ANALYTICAL");
+		assert.strictEqual((new TreeTable())._getKeyboardExtension()._getTableType(),
+			TableExtension.TABLETYPES.TREE, "TREE");
+		assert.strictEqual((new Table())._getKeyboardExtension()._getTableType(),
+			TableExtension.TABLETYPES.STANDARD, "STANDARD");
+		assert.strictEqual((new AnalyticalTable())._getKeyboardExtension()._getTableType(),
+			TableExtension.TABLETYPES.ANALYTICAL, "ANALYTICAL");
 	});
 
 	QUnit.test("Overly / NoData focus handling", function(assert) {
 		var done = assert.async();
 
 		function containsOrHasFocus(sIdSuffix) {
-			return jQuery.sap.containsOrEquals(oTable.getDomRef(sIdSuffix), document.activeElement);
+			return containsOrEquals(oTable.getDomRef(sIdSuffix), document.activeElement);
 		}
 
 		function doAfterNoDataDisplayed() {
@@ -317,20 +328,20 @@ sap.ui.require([
 		oTable.focus();
 		assert.ok(containsOrHasFocus("overlay"), "focus is on overlay after focus");
 		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("IEFocusOutlineWorkaround", function(assert) {
-		var bOriginalMSIE = sap.ui.Device.browser.msie;
+		var bOriginalMSIE = Device.browser.msie;
 
-		sap.ui.Device.browser.msie = false;
+		Device.browser.msie = false;
 		var $Cell = getCell(0, 0);
 		assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
 		$Cell.focus();
 		assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
 		getCell(0, 1, true, assert); // Put focus somewhere else
 
-		sap.ui.Device.browser.msie = true;
+		Device.browser.msie = true;
 		$Cell = getCell(0, 0);
 		assert.ok(!$Cell.attr("data-sap-ui-table-focus"), "'data-sap-ui-table-focus' attribute not set");
 		$Cell.focus();
@@ -344,7 +355,7 @@ sap.ui.require([
 		assert.ok(sValue1 != sValue2, "'data-sap-ui-table-focus' attribute value changed");
 		assert.ok(jQuery("head").text().indexOf(".sapUiTableStatic[data-sap-ui-table-focus]") >= 0, "Style set");
 
-		sap.ui.Device.browser.msie = bOriginalMSIE;
+		Device.browser.msie = bOriginalMSIE;
 	});
 
 	QUnit.module("Destruction", {

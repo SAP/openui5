@@ -15,30 +15,9 @@
 			data-sap-ui-xx-componentPreload='off' >
 	</script>
 	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-	<script>
-		// ignore "error" event fired via jQuery.trigger() (e.g. from sap.m.Image control in FF or PhantomJS)
-		// FF adds a prefix "uncaught exception: ", PhantomJS simply calls toString().
-		// therefore we test with a regular expression
-		window.onerror = function(e) {
-			return /\[object Object\]/.test(e);
-		};
-	</script>
 	<script src="resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script>
-
-		// prevent QUnit from atarting
-		QUnit.config.autostart = false;
-
-		sap.ui.require(['sap/ui/demo/mock/qunit/SampleTester'], function(SampleTester) {
-			new SampleTester(
-				'sap.ui.table',
-				[
-				]
-			).placeAt('content');
-		});
-
-	</script>
+	<script src="test-resources/sap/ui/table/qunit/ExploredSamples.qunit.js"></script>
 </head>
 <body class='sapUiBody'>
 	<div id="qunit"></div>

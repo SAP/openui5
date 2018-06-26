@@ -1,8 +1,13 @@
 /*global QUnit */
 
 sap.ui.require([
-	"sap/ui/model/ClientTreeBindingAdapter"
-], function(ClientTreeBindingAdapter) {
+	"sap/ui/model/ClientTreeBindingAdapter",
+	"sap/ui/table/TableUtils",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter"
+], function(ClientTreeBindingAdapter, TableUtils, JSONModel, Filter, FilterOperator, Sorter) {
 	"use strict";
 
 	var oModel, oBinding;
@@ -160,7 +165,7 @@ sap.ui.require([
 
 	QUnit.module("ClientBindingAdapter", {
 		beforeEach: function() {
-			oModel = new sap.ui.model.json.JSONModel();
+			oModel = new JSONModel();
 			oModel.setData(jQuery.extend({}, oData));
 		},
 		afterEach: function() {
@@ -172,7 +177,7 @@ sap.ui.require([
 		createTreeBindingAdapter("/bing/root", null, [], {});
 		assert.equal(oBinding.getPath(), "/bing/root", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		assert.ok(oBinding instanceof sap.ui.model.ClientTreeBinding, "treeBinding class check");
+		assert.ok(TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding"), "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert) {
@@ -666,9 +671,9 @@ sap.ui.require([
 		});
 
 		oBinding.getContexts(0, 100);
-		oBinding.filter(new sap.ui.model.Filter({
+		oBinding.filter(new Filter({
 			path: "name",
-			operator: sap.ui.model.FilterOperator.EQ,
+			operator: FilterOperator.EQ,
 			value1: "Hip-Hop"
 		}));
 
@@ -684,9 +689,9 @@ sap.ui.require([
 
 		oBinding.getContexts(0, 100);
 
-		oBinding.filter(new sap.ui.model.Filter({
+		oBinding.filter(new Filter({
 			path: "name",
-			operator: sap.ui.model.FilterOperator.Contains,
+			operator: FilterOperator.Contains,
 			value1: "chuck"
 		}));
 
@@ -949,7 +954,7 @@ sap.ui.require([
 
 		oBinding.attachChange(fnRefreshHandler);
 		//sort descending
-		oBinding.sort(new sap.ui.model.Sorter("name", true));
+		oBinding.sort(new Sorter("name", true));
 	});
 
 	/**
@@ -1074,7 +1079,7 @@ sap.ui.require([
 
 	QUnit.module("ClientBindingAdapter - Model Data 2", {
 		beforeEach: function() {
-			oModel = new sap.ui.model.json.JSONModel();
+			oModel = new JSONModel();
 			oModel.setData(jQuery.extend({}, oData2));
 		},
 		afterEach: function() {

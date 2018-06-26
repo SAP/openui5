@@ -1,9 +1,13 @@
 /*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TableUtils",
-	"sap/ui/Device"
-], function(TableUtils, Device) {
+	"sap/ui/Device",
+	"sap/ui/table/Table",
+	"sap/ui/table/TreeTable",
+	"sap/ui/table/AnalyticalTable"
+], function(TableQUnitUtils, TableUtils, Device, Table, TreeTable, AnalyticalTable) {
 	"use strict";
 
 	// mapping of global function calls
@@ -496,8 +500,7 @@ sap.ui.require([
 		assert.ok(Grouping.isGroupMode(oTreeTable), "Group Mode in sap.ui.table.TreeTable (when useGroupMode=true)");
 		assert.ok(!Grouping.isTreeMode(oTreeTable), "No Tree Mode in sap.ui.table.TreeTable (when useGroupMode=true)");
 
-		jQuery.sap.require("sap.ui.table.AnalyticalTable");
-		var oAnaTable = new sap.ui.table.AnalyticalTable();
+		var oAnaTable = new AnalyticalTable();
 
 		assert.ok(Grouping.isGroupMode(oAnaTable), "Group Mode in sap.ui.table.AnalyticalTable");
 		assert.ok(!Grouping.isTreeMode(oAnaTable), "No Tree Mode in sap.ui.table.AnalyticalTable");
@@ -515,23 +518,23 @@ sap.ui.require([
 	});
 
 	QUnit.test("showGroupMenuButton", function(assert) {
-		var bOrigDesktop = sap.ui.Device.system.desktop;
+		var bOrigDesktop = Device.system.desktop;
 
-		sap.ui.Device.system.desktop = false;
-		assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.Table()), "sap.ui.table.Table / no desktop");
-		assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.TreeTable()), "sap.ui.table.TreeTable / no desktop");
-		assert.ok(Grouping.showGroupMenuButton(new sap.ui.table.AnalyticalTable()), "sap.ui.table.AnalyticalTable / no desktop");
+		Device.system.desktop = false;
+		assert.ok(!Grouping.showGroupMenuButton(new Table()), "sap.ui.table.Table / no desktop");
+		assert.ok(!Grouping.showGroupMenuButton(new TreeTable()), "sap.ui.table.TreeTable / no desktop");
+		assert.ok(Grouping.showGroupMenuButton(new AnalyticalTable()), "sap.ui.table.AnalyticalTable / no desktop");
 
 		sap.ui.Device.system.desktop = true;
-		assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.Table()), "sap.ui.table.Table / desktop");
-		assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.TreeTable()), "sap.ui.table.TreeTable / desktop");
-		assert.ok(!Grouping.showGroupMenuButton(new sap.ui.table.AnalyticalTable()), "sap.ui.table.AnalyticalTable / desktop");
+		assert.ok(!Grouping.showGroupMenuButton(new Table()), "sap.ui.table.Table / desktop");
+		assert.ok(!Grouping.showGroupMenuButton(new TreeTable()), "sap.ui.table.TreeTable / desktop");
+		assert.ok(!Grouping.showGroupMenuButton(new AnalyticalTable()), "sap.ui.table.AnalyticalTable / desktop");
 
-		sap.ui.Device.system.desktop = bOrigDesktop;
+		Device.system.desktop = bOrigDesktop;
 	});
 
 	QUnit.test("_calcGroupIndent", function(assert) {
-		var oTable = new sap.ui.table.Table();
+		var oTable = new Table();
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.Table, Level 0, Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.Table, Level 0, !Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 1, true), 12, "sap.ui.table.Table, Level 1, Group Header");
@@ -543,7 +546,7 @@ sap.ui.require([
 		assert.equal(Grouping._calcGroupIndent(oTable, 4, true), 40, "sap.ui.table.Table, Level 4, Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 4, false), 32, "sap.ui.table.Table, Level 4, !Group Header");
 
-		oTable = new sap.ui.table.TreeTable();
+		oTable = new TreeTable();
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.TreeTable, Level 0, Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.TreeTable, Level 0, !Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 1, true), 12, "sap.ui.table.TreeTable, Level 1, Group Header");
@@ -555,7 +558,7 @@ sap.ui.require([
 		assert.equal(Grouping._calcGroupIndent(oTable, 4, true), 40, "sap.ui.table.TreeTable, Level 4, Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 4, false), 40, "sap.ui.table.TreeTable, Level 4, !Group Header");
 
-		oTable = new sap.ui.table.AnalyticalTable();
+		oTable = new AnalyticalTable();
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.AnalyticalTable, Level 0, Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.AnalyticalTable, Level 0, !Group Header");
 		assert.equal(Grouping._calcGroupIndent(oTable, 0, false, true), 0, "sap.ui.table.AnalyticalTable, Level 0, Sum");

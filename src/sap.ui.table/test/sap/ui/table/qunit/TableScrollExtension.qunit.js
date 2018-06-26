@@ -1,10 +1,14 @@
 /*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TableUtils",
-	"sap/ui/Device"
-], function(qutils, TableUtils, Device) {
+	"sap/ui/Device",
+	"sap/ui/table/library",
+	"sap/ui/table/Column",
+	"sap/ui/core/Control"
+], function(TableQUnitUtils, qutils, TableUtils, Device, tableLibrary, Column, Control) {
 	"use strict";
 
 	// mapping of global function calls
@@ -317,7 +321,7 @@ sap.ui.require([
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
 					assertScrollPositions("Binding length increased", 50, 2 * iDefaultRowHeight);
-					oTable.setProperty("visibleRowCountMode", sap.ui.table.VisibleRowCountMode.Auto, true);
+					oTable.setProperty("visibleRowCountMode", tableLibrary.VisibleRowCountMode.Auto, true);
 					oTable._updateTableSizes();
 					resolve();
 				}, iAssertionDelay);
@@ -517,7 +521,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("getHorizontalScrollbar", function(assert) {
-		assert.strictEqual(this.oScrollExtension.getHorizontalScrollbar(), oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar),
+		assert.strictEqual(this.oScrollExtension.getHorizontalScrollbar(), oTable.getDomRef(tableLibrary.SharedDomRef.HorizontalScrollBar),
 			"Returned: Horizontal scrollbar element");
 
 		this.oScrollExtension.destroy();
@@ -526,7 +530,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("getVerticalScrollbar", function(assert) {
-		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar),
+		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oTable.getDomRef(tableLibrary.SharedDomRef.VerticalScrollBar),
 			"Returned: Vertical scrollbar element");
 
 		this.oScrollExtension.destroy();
@@ -537,7 +541,7 @@ sap.ui.require([
 	QUnit.test("isHorizontalScrollbarVisible", function(assert) {
 		oTable.setFixedColumnCount(0);
 		oTable.removeAllColumns();
-		oTable.addColumn(new sap.ui.table.Column({
+		oTable.addColumn(new Column({
 			label: "large column",
 			template: "dummy",
 			width: "5000px"
@@ -1287,7 +1291,7 @@ sap.ui.require([
 		var that = this;
 		var iAssertionDelay = 100;
 		var iCurrentScrollPosition = this.oHSb.scrollLeft;
-		var iMinColumnWidth = sap.ui.table.TableUtils.Column.getMinColumnWidth();
+		var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
 		var DeltaMode = MouseWheelDeltaMode;
 
 		function scrollForwardAndBackToBeginning(oTargetElement) {
@@ -1647,7 +1651,7 @@ sap.ui.require([
 			var iDelay = this.iAssertionDelay;
 
 			setTimeout(function() {
-				var oVSb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+				var oVSb = oTable.getDomRef(tableLibrary.SharedDomRef.VerticalScrollBar);
 				oVSb.scrollTop = oSetting.scrollTop;
 
 				setTimeout(function() {
@@ -1742,7 +1746,7 @@ sap.ui.require([
 			}).then(function(resolve) {
 				return new Promise(function(resolve) {
 					window.setTimeout(function() {
-						var oInnerCellElement = sap.ui.table.TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCell")[0];
+						var oInnerCellElement = TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCell")[0];
 
 						assert.strictEqual(document.activeElement, oCellContentInColumn,
 							"The content of the cell in row " + iRowIndex + " column " + iColumnIndex + " is focused");
@@ -1755,7 +1759,7 @@ sap.ui.require([
 			});
 		}
 
-		var DummyControl = sap.ui.core.Control.extend("sap.ui.table.test.DummyControl", {
+		var DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
 			renderer: function(oRm, oControl) {
 				oRm.write("<div style=\"display: flex; flex-direction: column\">");
 				oRm.write("<span tabindex=\"0\" style=\"width: 100px; margin-top: 100px;\">really very looooooooooong text</span>");
@@ -1773,7 +1777,7 @@ sap.ui.require([
 		var oColumn1 = oTreeTable.getColumns()[0];
 		var oColumn2 = oTreeTable.getColumns()[1];
 
-		oTreeTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+		oTreeTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Auto);
 		oTreeTable.setRowHeight(10);
 		oColumn1.setTemplate(new DummyControl());
 		oColumn1.setWidth("20px");
