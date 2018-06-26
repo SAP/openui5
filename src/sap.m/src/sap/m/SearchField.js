@@ -792,13 +792,14 @@ sap.ui.define([
 
 	/**
 	 * Handles the <code>sapend</code> pseudo event when keyboard End key is pressed.
-	 * The first selectable item is selected.
+	 * The last selectable item is selected.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	SearchField.prototype.onsapend = function(oEvent) {
-		selectSuggestionItem(this, oEvent, -1, false);
+		var iLastIndex = this.getSuggestionItems().length - 1;
+		selectSuggestionItem(this, oEvent, iLastIndex, false);
 	};
 
 	/**
