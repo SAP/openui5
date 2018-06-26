@@ -8,12 +8,12 @@ sap.ui.require([
 	/*global QUnit */
 	"use strict";
 
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Adapt UI SalesORdersTble");
+	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Adapt UI SalesOrdersTable");
 
 	//*****************************************************************************
 	opaTest("Adapt UI SalesOrdersTable", function (Given, When, Then) {
 
-		AdaptSalesOrdersTable.AdaptSalesOrdersTable(Given, When, Then,
+		AdaptSalesOrdersTable.adaptSalesOrdersTable(Given, When, Then,
 			"sap.ui.core.sample.odata.v4.SalesOrdersRTATest");
 
 	});

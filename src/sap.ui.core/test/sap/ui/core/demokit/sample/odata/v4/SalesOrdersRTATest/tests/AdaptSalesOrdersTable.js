@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		AdaptSalesOrdersTable : function (Given, When, Then, sUIComponent) {
+		adaptSalesOrdersTable : function (Given, When, Then, sUIComponent) {
 			if (!TestUtils.isRealOData()) {
 				Opa5.assert.ok(true, "Test runs only with real OData");
 				return;
