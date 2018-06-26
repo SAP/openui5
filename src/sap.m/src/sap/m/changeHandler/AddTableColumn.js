@@ -176,8 +176,8 @@ sap.ui.define([
 		} else {
 			throw new Error("oSpecificChangeInfo.bindingPath attribute required");
 		}
-		if (oSpecificChangeInfo.entityType) {
-			oChangeDefinition.content.entityType = oSpecificChangeInfo.entityType;
+		if (oSpecificChangeInfo.oDataInformation.entityType) {
+			oChangeDefinition.content.entityType = oSpecificChangeInfo.oDataInformation.entityType;
 		} else {
 			throw new Error("oSpecificChangeInfo.entityType attribute required");
 		}
