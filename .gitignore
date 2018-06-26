@@ -1,6 +1,7 @@
-# Ignore .gitignore, target and tmp folders
+# Ignore .gitignore, target, dist and tmp folders
 src/*/.gitignore
 src/*/target/
+src/*/dist/
 /target
 /tmp
 
