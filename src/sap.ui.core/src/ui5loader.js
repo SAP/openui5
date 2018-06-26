@@ -16,23 +16,10 @@
 (function(__global) {
 	"use strict";
 
-	// ---- polyfills -----------------------------------------------------------------------------
-
-	// The native Promise in MS Edge and Apple Safari is not fully compliant with the ES6 spec for promises.
-	// MS Edge executes callbacks as tasks, not as micro tasks (see https://connect.microsoft.com/IE/feedback/details/1658365).
-	// We therefore enforce the use of the es6-promise polyfill also in MS Edge and Safari, which works properly.
-	(function(ua) {
-		// @evo-todo this is only a rough copy of the sap/ui/Device browser recognition code
-		var match = /(edge)[ \/]([\w.]+)/.exec( ua ) || /(webkit)[ \/]([\w.]+)/ || [];
-		if ( match[1] === 'edge' ||
-			 match[1] === 'webkit' && ( /(Version|PhantomJS)\/(\d+\.\d+).*Safari/.test(ua) || /iPhone|iPad|iPod/.test(ua) ) ) {
-			__global.Promise = undefined; // if not unset, the polyfill assumes that the native Promise is fine
-		}
-		// Enable promise polyfill if native promise is not available
-		if (!__global.Promise) {
-			ES6Promise.polyfill();
-		}
-	}(navigator.userAgent.toLowerCase()));
+	// Enable promise polyfill if native promise is not available
+	if (!__global.Promise) {
+		ES6Promise.polyfill();
+	}
 
 	/*
 	 * Helper function that returns the document base URL without search parameters and hash.
