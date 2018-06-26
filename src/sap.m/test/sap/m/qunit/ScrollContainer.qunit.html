@@ -119,7 +119,7 @@
 				} else if (sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome) {
 					aScrollPosition = jQuery.sap.byId(sScrollContainerId).css("-webkit-transform").split(" ");
 					s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
-				} else if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9) {
+				} else if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9) { /* TODO remove after 1.62 version */
 					s = jQuery.sap.byId(sScrollContainerId).css(sDirection);
 				}
 				return Math.round(parseFloat(s));
@@ -130,7 +130,7 @@
 			}
 		}
 
-		if (sap.ui.Device.browser.mozilla || sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome || (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9)) {
+		if (sap.ui.Device.browser.mozilla || sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome || (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9) /* TODO remove after 1.62 version */) {
 
 			QUnit.test("Scrolling - immediate", function(assert) {
 				assert.expect(4);

@@ -373,12 +373,6 @@
 
 			QUnit.test('PageDown keyboard handling mobile phone', function(assert){
 				var done = assert.async();
-				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
-						// this test is not supported by IE9
-						assert.expect(0);
-						done();
-						return;
-				}
 
 				var oSystem = {
 						desktop: false,
