@@ -600,10 +600,6 @@ sap.ui.define([
 		}
 
 		var oFocusedElement = jQuery(document.activeElement).control()[0];
-		if (oFocusedElement === this) {
-			// focus is on tokenizer itself - we do not handle this event and let it bubble
-			return;
-		}
 
 		// oFocusedElement could be undefined since the focus element might not correspond to an SAPUI5 Control
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
