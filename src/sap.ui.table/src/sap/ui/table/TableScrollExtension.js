@@ -1376,7 +1376,7 @@ sap.ui.define([
 
 		if (TableUtils.isVariableRowHeightEnabled(oTable)) {
 			iRowCount = Math.max(iTotalRowCount, iVisibleRowCount + 1);
-			iScrollHeight = iDefaultRowHeight * ((iRowCount - 1) /* The last row is inside the buffer */) + this.getVerticalScrollRangeBuffer();
+			iScrollHeight = iDefaultRowHeight * (iRowCount - 1 /* The last row is inside the buffer */) + this.getVerticalScrollRangeBuffer();
 		} else {
 			iRowCount = Math.max(iTotalRowCount, iVisibleRowCount);
 			iScrollHeight = iDefaultRowHeight * iRowCount;
