@@ -3,13 +3,15 @@
  */
 
 // Provides class sap.ui.core.UIArea
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', "sap/ui/performance/trace/Interaction", 'jquery.sap.act', 'jquery.sap.ui', 'jquery.sap.keycodes'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', "sap/ui/performance/trace/Interaction", "sap/ui/util/ActivityDetection", 'jquery.sap.ui', 'jquery.sap.keycodes', 'jquery.sap.trace'],
 	function(
 		jQuery,
 		ManagedObject,
 		Element,
 		RenderManager,
-		Interaction /* , jQuerySap1, jQuerySap, jQuerySap2 */
+		Interaction,
+		ActivityDetection
+		/* jQuerySapUi, jQuerySapKeycodes */
 	) {
 	"use strict";
 
@@ -748,7 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		// UIArea instance's scope -> nesting scenario
 		oElement = jQuery(oEvent.target).control(0);
 
-		jQuery.sap.act.refresh();
+		ActivityDetection.refresh();
 
 		if (oElement === null) {
 			return;

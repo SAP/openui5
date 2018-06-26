@@ -3,41 +3,35 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/Device',
-	'sap/ui/Global',
-	'sap/ui/base/BindingParser',
-	'sap/ui/base/DataType',
-	'sap/ui/base/EventProvider',
-	'sap/ui/base/Interface',
-	'sap/ui/base/Object',
-	'sap/ui/base/ManagedObject',
-	'./Component',
-	'./Configuration',
-	'./Control',
-	'./Element',
-	'./ElementMetadata',
-	'./FocusHandler',
-	'./RenderManager',
-	'./ResizeHandler',
-	'./ThemeCheck',
-	'./UIArea',
-	'./message/MessageManager',
-	'sap/ui/events/jquery/EventSimulation',
-	'jquery.sap.act',
-	'jquery.sap.dom',
-	'jquery.sap.events',
-	'jquery.sap.mobile',
-	'jquery.sap.resources',
-	'jquery.sap.script',
-	'jquery.sap.sjax'
-],
-	function(jQuery, Device, Global,
-		BindingParser, DataType, EventProvider, Interface, BaseObject, ManagedObject,
-		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
-		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
-		/* ,EventSimulation ,jQuerySapAct, jQuerySapDom, jQuerySapEvents, jQuerySapMobile, jQuerySapProperties, jQuerySapResources, jQuerySapScript, jQuerySapSjax */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
+		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
+		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', "sap/ui/util/ActivityDetection",
+		'sap/ui/events/jquery/EventSimulation', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
+	function(
+		jQuery,
+		Device,
+		Global,
+		BindingParser,
+		DataType,
+		EventProvider,
+		Interface,
+		BaseObject,
+		ManagedObject,
+		Component,
+		Configuration,
+		Control,
+		Element,
+		ElementMetadata,
+		FocusHandler,
+		RenderManager,
+		ResizeHandler,
+		ThemeCheck,
+		UIArea,
+		MessageManager,
+		ActivityDetection
+		/* ,EventSimulation, jQuerySapDom, jQuerySapEvents, jQuerySapMobile, jQuerySapResources, jQuerySapScript, jQuerySapSjax */
+	) {
 
 	"use strict";
 
@@ -2687,7 +2681,7 @@ sap.ui.define([
 			oElement._handleEvent(oEvent);
 		});
 
-		jQuery.sap.act.refresh();
+		ActivityDetection.refresh();
 
 		// notify the listeners via a control event
 		_oEventProvider.fireEvent(sEventId, mParameters);

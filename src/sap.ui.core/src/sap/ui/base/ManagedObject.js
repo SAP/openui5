@@ -8,13 +8,24 @@ sap.ui.define([
 		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', './Object',
 		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException',
 		'../model/ParseException', '../model/Type', '../model/ValidateException',
-		'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'
+		"sap/ui/util/ActivityDetection", 'jquery.sap.script', 'jquery.sap.strings'
 	], function(
-		jQuery,
-		BindingParser, DataType, EventProvider, ManagedObjectMetadata, BaseObject,
-		BindingMode, CompositeBinding, Context, FormatException,
-		ParseException, Type, ValidateException
-		/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
+	jQuery,
+	BindingParser,
+	DataType,
+	EventProvider,
+	ManagedObjectMetadata,
+	BaseObject,
+	BindingMode,
+	CompositeBinding,
+	Context,
+	FormatException,
+	ParseException,
+	Type,
+	ValidateException,
+	ActivityDetection
+	/*, jQuerySapScript, jQuerySapStrings */
+) {
 
 	"use strict";
 
@@ -1232,7 +1243,7 @@ sap.ui.define([
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
 			//Refresh only for property changes with suppressed invalidation (others lead to rerendering and refresh is handled there)
-			jQuery.sap.act.refresh();
+			ActivityDetection.refresh();
 			this.iSuppressInvalidate++;
 		}
 
@@ -2464,7 +2475,7 @@ sap.ui.define([
 				}.bind(this), 0);
 			}
 
-			jQuery.sap.act.refresh();
+			ActivityDetection.refresh();
 
 			// Note: no need (and no way how) to invalidate
 			return;
@@ -2477,7 +2488,7 @@ sap.ui.define([
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
 			//Refresh only for changes with suppressed invalidation (others lead to rerendering and refresh is handled there)
-			jQuery.sap.act.refresh();
+			ActivityDetection.refresh();
 			this.iSuppressInvalidate++;
 		}
 
