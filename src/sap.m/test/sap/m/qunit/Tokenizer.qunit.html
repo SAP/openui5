@@ -654,6 +654,41 @@
 		assert.equal(this.tokenizer.getSelectedTokens()[0].getId(), "t2", "The second token is selected");
 	});
 
+	QUnit.test("Arrow_right when tokenizer is focused", function(assert) {
+		//arrange
+		this.tokenizer.focus();
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.tokenizer.getId(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+		// assert
+		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
+		assert.equal(this.tokenizer.getSelectedTokens()[0].getId(), "t1", "The first token is selected");
+	});
+
+	QUnit.test("Arrow_right when last token in tokenizer is focused", function(assert) {
+		// arrange
+		var oTokenizer = this.tokenizer,
+			oSpy = sinon.spy(oTokenizer, "onsapnext"),
+			oEventArg;
+
+		sap.ui.getCore().byId("t3").focus();
+
+		// act
+		sap.ui.test.qunit.triggerKeydown("t", jQuery.sap.KeyCodes.ARROW_RIGHT);
+		oEventArg = oSpy.getCall(0).args[0];
+
+		// assert
+		assert.equal(document.activeElement.id, "t3", "The third token is still selected");
+
+		// The Tokenizer does not process right key press on its last token, but leaves the event
+		// to bubble up.
+		assert.equal(oSpy.callCount, 1, "Only one event is triggered");
+		assert.equal(oEventArg.isMarked(), false, "The event was not processed by the Tokenizer");
+
+		oSpy.restore();
+	});
+
 	QUnit.test("Arrow_up", function(assert) {
 		// arrange
 		sap.ui.getCore().byId("t1").focus();
