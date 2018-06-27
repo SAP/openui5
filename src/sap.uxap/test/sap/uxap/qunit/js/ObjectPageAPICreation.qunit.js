@@ -387,6 +387,33 @@
 		helpers.renderObject(this.oObjectPage);
 	});
 
+	QUnit.test("unset selected section when header always in title area", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		assert.expect(2);
+
+		// add header content
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
+		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+		oObjectPage.setIsHeaderContentAlwaysExpanded(true);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Act: unset the currently selected section
+			oObjectPage.setSelectedSection(null);
+
+			// Check: the header is still expanded in the title
+			setTimeout(function() {
+				assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
+				assert.equal(oObjectPage._bHeaderInTitleArea, true, "Header is still in the title area");
+				done();
+			}, 0);
+		});
+
+		helpers.renderObject(this.oObjectPage);
+	});
+
 	QUnit.test("unset selected section of hidden page", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = this.oObjectPage.getSections()[0],
@@ -1629,7 +1656,7 @@
 
 	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle", {
 		beforeEach: function () {
-			this.NUMBER_OF_SECTIONS = 1;
+			this.NUMBER_OF_SECTIONS = 2;
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
 			this.oObjectPage.setHeaderTitle(new sap.uxap.ObjectPageDynamicHeaderTitle());
 			this.oObjectPage.addHeaderContent(new sap.m.Text({text: "test"}));
@@ -1783,6 +1810,32 @@
 			}, iDelay);
 		});
 
+	});
+
+	QUnit.test("unset selected section when preserveHeaderStateOnScroll enabled", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSecondSection = this.oObjectPage.getSections()[1],
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		assert.expect(1);
+
+		this.oObjectPage.setSelectedSection(oSecondSection);
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setPreserveHeaderStateOnScroll(true);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+
+			// Act: unset the currently selected section
+			oObjectPage.setSelectedSection(null);
+
+			// Check
+			setTimeout(function() {
+				assert.equal(oObjectPage._bHeaderInTitleArea, true, "Header is still in the title area");
+				done();
+			}, 0);
+		});
+
+		helpers.renderObject(this.oObjectPage);
 	});
 
 	QUnit.module("ObjectPage with alwaysShowContentHeader", {
