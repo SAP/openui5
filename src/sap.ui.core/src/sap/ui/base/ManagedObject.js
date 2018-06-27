@@ -3235,7 +3235,9 @@ sap.ui.define([
 				if (oBinding.getBindingMode() === BindingMode.OneTime && oBinding.isResolved()) {
 					// if binding is one time but not resolved yet we don't destroy it yet.
 					oBinding.detachChange(fnModelChangeHandler);
-					oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
+					if (this.refreshDataState) {
+						oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
+					}
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
 					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
