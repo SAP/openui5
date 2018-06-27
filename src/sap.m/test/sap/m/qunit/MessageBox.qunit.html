@@ -402,6 +402,26 @@
 			oMessageBox.destroy();
 		});
 
+		QUnit.test("Only text shown when the details property is set to 'null'", function (assert) {
+			var oMessageBox;
+
+			//arrange and act
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK],
+				details: null,
+				id: "messageboxWithNullDetails",
+				styleClass: sClassName
+			});
+			sap.ui.getCore().applyChanges();
+
+			oMessageBox = sap.ui.getCore().byId("messageboxWithNullDetails");
+			iContent = oMessageBox.getContent()[0].getItems().length;
+
+			assert.strictEqual(iContent, 1,"There is only one item in the content - the text of the message box.");
+			oMessageBox.destroy();
+		});
+
 		QUnit.test("initial focus with string", function (assert) {
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
