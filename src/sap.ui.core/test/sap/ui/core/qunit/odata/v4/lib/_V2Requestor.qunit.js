@@ -1708,4 +1708,15 @@ sap.ui.require([
 		// code under test
 		oRequestor.reportUnboundMessages(sMessages);
 	});
+
+	//*****************************************************************************************
+	QUnit.test("reportBoundMessages does not call model interface", function (assert) {
+		var oModelInterface = {fnReportBoundMessages : function () {}},
+			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
+
+		this.mock(oModelInterface).expects("fnReportBoundMessages").never();
+
+		// code under test
+		oRequestor.reportBoundMessages("Teams('42')", {/*mPathToMessages*/});
+	});
 });
