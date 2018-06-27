@@ -835,6 +835,34 @@ function(
 			});
 		});
 
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.reject() with an array of error messages", function(assert) {
+			var oError = {messages :
+				[
+				 {
+					 severity : "Error",
+					 text : "Error text 1"
+				 },
+				 {
+					 severity : "Error",
+					 text : "Error text 2"
+				 }
+				]
+			};
+			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var sErrorBoxText = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
+					+ oTextResources.getText("MSG_ERROR_REASON", "Error text 1\nError text 2\n");
+			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.reject(oError));
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oShowErrorStub = sandbox.stub(jQuery.sap.log, "error");
+			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+				assert.equal(oShowErrorStub.callCount, 1, "then the error was logged");
+				assert.equal(oErrorBoxStub.callCount, 1, "and a MessageBox.error was shown");
+				assert.equal(oErrorBoxStub.args[0][0], sErrorBoxText, "and the shown error text is correct");
+			});
+		});
+
 		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() with 'Error' as parameter", function(assert) {
 			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve('Error'));
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");

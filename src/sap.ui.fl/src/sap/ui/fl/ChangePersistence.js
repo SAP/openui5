@@ -895,11 +895,15 @@ sap.ui.define([
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var sRequest = aRequests[0];
 			var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aDirtyChanges);
-			return this._oConnector.create(aPreparedDirtyChangesBulk, sRequest).then(this._massUpdateCacheAndDirtyState(aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache));
+			return this._oConnector.create(aPreparedDirtyChangesBulk, sRequest)
+			.then(function(oResponse) {
+				this._massUpdateCacheAndDirtyState(aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache);
+				return oResponse;
+			}.bind(this));
 		} else {
 			return aDirtyChangesClone.reduce(function (sequence, oDirtyChange) {
 				var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange));
-				saveAction.then(this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache));
+				saveAction.then(this._updateCacheAndDirtyState.bind(this, aDirtyChanges, oDirtyChange, bSkipUpdateCache));
 				return saveAction;
 			}.bind(this), Promise.resolve());
 		}
@@ -920,7 +924,7 @@ sap.ui.define([
 
 		return aDirtyChanges.reduce(function (sequence, oDirtyChange) {
 			var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange));
-			saveAction.then(this._updateCacheAndDirtyState(aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
+			saveAction.then(this._updateCacheAndDirtyState.bind(this, aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
 			return saveAction;
 		}.bind(this), Promise.resolve());
 	};
@@ -947,25 +951,23 @@ sap.ui.define([
 	  * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 */
 	ChangePersistence.prototype._updateCacheAndDirtyState = function (aDirtyChanges, oDirtyChange, bSkipUpdateCache) {
-		return function() {
-			if (!bSkipUpdateCache) {
-				if (oDirtyChange.getPendingAction() === "NEW" &&
-					oDirtyChange.getFileType() !== "ctrl_variant_change" &&
-					oDirtyChange.getFileType() !== "ctrl_variant_management_change" &&
-					oDirtyChange.getFileType() !== "ctrl_variant" &&
-					!oDirtyChange.getVariantReference()
-				) {
-					Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
-				} else if (oDirtyChange.getPendingAction() === "DELETE") {
-					Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
-				}
+		if (!bSkipUpdateCache) {
+			if (oDirtyChange.getPendingAction() === "NEW" &&
+				oDirtyChange.getFileType() !== "ctrl_variant_change" &&
+				oDirtyChange.getFileType() !== "ctrl_variant_management_change" &&
+				oDirtyChange.getFileType() !== "ctrl_variant" &&
+				!oDirtyChange.getVariantReference()
+			) {
+				Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
+			} else if (oDirtyChange.getPendingAction() === "DELETE") {
+				Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
 			}
+		}
 
-			var iIndex = aDirtyChanges.indexOf(oDirtyChange);
-			if (iIndex > -1) {
-				aDirtyChanges.splice(iIndex, 1);
-			}
-		}.bind(this);
+		var iIndex = aDirtyChanges.indexOf(oDirtyChange);
+		if (iIndex > -1) {
+			aDirtyChanges.splice(iIndex, 1);
+		}
 	};
 
 	/**
@@ -974,7 +976,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype._massUpdateCacheAndDirtyState = function (aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache) {
 		aDirtyChangesClone.forEach(function(oDirtyChange) {
-			this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache)();
+			this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache);
 		}, this);
 	};
 

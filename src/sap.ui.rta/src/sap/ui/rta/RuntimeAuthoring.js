@@ -645,7 +645,14 @@ sap.ui.define([
 
 	var fnShowTechnicalError = function(vError) {
 		BusyIndicator.hide();
-		var sErrorMessage = vError.stack || vError.message || vError.status || vError;
+		var sErrorMessage = "";
+		if (vError.messages && Array.isArray(vError.messages)) {
+			for (var i = 0; i < vError.messages.length; i++) {
+				sErrorMessage = (vError.messages[i].severity === "Error") ? sErrorMessage + vError.messages[i].text + "\n" : sErrorMessage;
+			}
+		} else {
+			sErrorMessage = vError.stack || vError.message || vError.status || vError;
+		}
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		jQuery.sap.log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
