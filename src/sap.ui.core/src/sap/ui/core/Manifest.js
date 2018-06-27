@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Component for all components
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', 'jquery.sap.resources'],
-	function(jQuery, BaseObject, URI /*, jQuery2 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', "sap/base/i18n/ResourceBundle"],
+	function(jQuery, BaseObject, URI, ResourceBundle) {
 	"use strict";
 
 	/*global Promise */
@@ -205,7 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 				oObject[sKey] = vValue.replace(rManifestTemplate, function(sMatch, s1) {
 					// only create a resource bundle if there is something to replace
 					if (!oResourceBundle) {
-						oResourceBundle = jQuery.sap.resources({
+						oResourceBundle = ResourceBundle.create({
 							url: that.resolveUri(new URI(sComponentRelativeI18nUri)).toString()
 						});
 					}

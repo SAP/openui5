@@ -3,8 +3,13 @@
  */
 
 // Provides class sap.ui.core.ComponentMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/core/Manifest', 'sap/ui/thirdparty/URI', 'jquery.sap.resources'],
-	function(jQuery, ManagedObjectMetadata, Manifest, URI /*, jQuery2 */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObjectMetadata',
+	'sap/ui/core/Manifest',
+	'sap/ui/thirdparty/URI'
+],
+	function(jQuery, ManagedObjectMetadata, Manifest, URI) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
