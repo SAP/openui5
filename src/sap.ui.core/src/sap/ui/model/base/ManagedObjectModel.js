@@ -589,6 +589,11 @@ sap.ui.define([
 
 		var sPart = aParts[0];
 
+		//handling of # for byId case of view
+		if (oNode.getMetadata().isInstanceOf("sap.ui.core.IDScope") && sPart.indexOf("#") === 0) {
+			oNode = oNode.byId(sPart.substring(1));
+			sPart = aParts[1];
+		}
 		if (oNode instanceof ManagedObject) {
 			var oNodeMetadata = oNode.getMetadata(), oProperty = oNodeMetadata.getProperty(sPart);
 			if (oProperty) {
