@@ -44,13 +44,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 				}
 			});
 
-			oIssueManager.addIssue({
-				severity: Severity.Low,
-				details: "Total error logs: " + count + "\n" + message,
-				context: {
-					id: "WEBPAGE"
-				}
-			});
+			if (count > 0) {
+				oIssueManager.addIssue({
+					severity: Severity.Low,
+					details: "Total error logs: " + count + "\n" + message,
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+			}
 		}
 	};
 
