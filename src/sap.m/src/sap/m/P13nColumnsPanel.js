@@ -27,7 +27,7 @@ sap.ui.define([
 	'./ToolbarSpacer'
 ], function(jQuery, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool,
 		library, Table, Column, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, ScrollContainer, Text, Button,
-		OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, OverflowToolbarButton) {
+		OverflowToolbar, OverflowToolbarLayoutData, OverflowToolbarButton, ToolbarSpacer) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
