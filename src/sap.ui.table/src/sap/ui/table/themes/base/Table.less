@@ -488,13 +488,15 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	color: @sapUiListTextColor;
 }
 
-.sapUiTableCol:active {
-	background-color: @sapUiListActiveBackground;
-}
+.sapUiTable:not(.sapUiTableDragDrop) {
+	.sapUiTableCol:active {
+		background-color: @sapUiListActiveBackground;
+	}
 
-.sapUiTableCol:active > div > label,
-.sapUiTableCol:active > div > span {
-	color: @sapUiListActiveTextColor;
+	.sapUiTableCol:active > div > label,
+	.sapUiTableCol:active > div > span {
+		color: @sapUiListActiveTextColor;
+	}
 }
 
 .sapUiTableColHdrTr > .sapUiTableCol {
