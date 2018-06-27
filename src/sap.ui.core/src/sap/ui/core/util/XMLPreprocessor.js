@@ -4,17 +4,17 @@
 
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/base/BindingParser",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/core/XMLTemplateProcessor",
-	"sap/ui/model/BindingMode",
-	"sap/ui/model/CompositeBinding",
-	"sap/ui/model/Context",
-	"jquery.sap.script" // for jQuery.sap.parseJS
+	'jquery.sap.global',
+	'sap/ui/base/BindingParser',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/base/SyncPromise',
+	'sap/ui/core/XMLTemplateProcessor',
+	'sap/ui/model/BindingMode',
+	'sap/ui/model/CompositeBinding',
+	'sap/ui/model/Context',
+	'sap/base/util/ObjectPath'
 ], function (jQuery, BindingParser, ManagedObject, SyncPromise, XMLTemplateProcessor, BindingMode,
-		CompositeBinding, Context/*, jQuerySap1 */) {
+		CompositeBinding, Context, ObjectPath) {
 	"use strict";
 
 	var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
@@ -918,15 +918,15 @@ sap.ui.define([
 			}
 
 			/*
-			 * Outputs a debug message with the current nesting level; takes care not to construct
-			 * the message or serialize XML in vain.
-			 *
-			 * @param {Element} [oElement]
-			 *   any XML DOM element which is serialized to the details
-			 * @param {...string} aTexts
-			 *   the main text of the message is constructed from the rest of the arguments by
-			 *   joining them separated by single spaces
-			 */
+			* Outputs a debug message with the current nesting level; takes care not to construct
+			* the message or serialize XML in vain.
+			*
+			* @param {Element} [oElement]
+			*   any XML DOM element which is serialized to the details
+			* @param {...string} aTexts
+			*   the main text of the message is constructed from the rest of the arguments by
+			*   joining them separated by single spaces
+			*/
 			function debug(oElement) {
 				if (bDebug) {
 					jQuery.sap.log.debug(
@@ -1048,8 +1048,8 @@ sap.ui.define([
 			function getObject(sName) {
 				// Note: jQuery.sap.getObject("", ...) === undefined
 				return sName && sName.charAt(0) === "."
-					? jQuery.sap.getObject(sName.slice(1), undefined, oScope)
-					: jQuery.sap.getObject(sName, undefined, oScope) || jQuery.sap.getObject(sName);
+					? ObjectPath.get(sName.slice(1), oScope)
+					: ObjectPath.get(sName || "", oScope) || ObjectPath.get(sName || "");
 			}
 
 			/**
@@ -1718,12 +1718,12 @@ sap.ui.define([
 			 */
 			function visitAttributes(oElement, oWithControl) {
 				/*
-				 * Comparator for DOM attributes by name.
-				 *
-				 * @param {Attr} oAttributeA
-				 * @param {Attr} oAttributeB
-				 * @returns {number} <0, 0, >0
-				 */
+				* Comparator for DOM attributes by name.
+				*
+				* @param {Attr} oAttributeA
+				* @param {Attr} oAttributeB
+				* @returns {number} <0, 0, >0
+				*/
 				function comparator(oAttributeA, oAttributeB) {
 					return oAttributeA.name.localeCompare(oAttributeB.name);
 				}
@@ -1838,15 +1838,15 @@ sap.ui.define([
 			}
 
 			/*
-			 * Outputs a warning message with the current nesting level; takes care not to
-			 * construct the message or serialize XML in vain.
-			 *
-			 * @param {Element} [oElement]
-			 *   any XML DOM element which is serialized to the details
-			 * @param {...string} aTexts
-			 *   the main text of the message is constructed from the rest of the arguments by
-			 *   joining them separated by single spaces
-			 */
+				* Outputs a warning message with the current nesting level; takes care not to
+				* construct the message or serialize XML in vain.
+				*
+				* @param {Element} [oElement]
+				*   any XML DOM element which is serialized to the details
+				* @param {...string} aTexts
+				*   the main text of the message is constructed from the rest of the arguments by
+				*   joining them separated by single spaces
+				*/
 			function warn(oElement) {
 				if (bWarning) {
 					if (!bCallerLoggedForWarnings) {

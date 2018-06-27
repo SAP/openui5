@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 			oClassInfo = {
 				metadata : oClassInfo || {},
 				// retrieve class by its name. Using a lookup costs time but avoids the need for redundant arguments to this function
-				constructor : jQuery.sap.getObject(sClassName)
+				constructor : ObjectPath.get(sClassName)
 			};
 			oClassInfo.metadata.__version = 1.0;
 		}
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 
 		if ( oStaticInfo.baseType ) {
 			// lookup base class by its name - same reasoning as above
-			var oParentClass = jQuery.sap.getObject(oStaticInfo.baseType);
+			var oParentClass = ObjectPath.get(oStaticInfo.baseType);
 			if ( typeof oParentClass !== "function" ) {
 				jQuery.sap.log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
 			}

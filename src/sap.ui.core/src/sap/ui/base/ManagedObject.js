@@ -7,7 +7,7 @@ sap.ui.define([
 		'jquery.sap.global',
 		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', './Object',
 		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException',
-		'../model/ParseException', '../model/Type', '../model/ValidateException',
+		'../model/ParseException', '../model/Type', '../model/ValidateException', 'sap/base/util/ObjectPath',
 		"sap/ui/util/ActivityDetection", 'jquery.sap.script', 'jquery.sap.strings'
 	], function(
 	jQuery,
@@ -23,6 +23,7 @@ sap.ui.define([
 	ParseException,
 	Type,
 	ValidateException,
+	ObjectPath,
 	ActivityDetection
 	/*, jQuerySapScript, jQuerySapStrings */
 ) {
@@ -874,7 +875,7 @@ sap.ui.define([
 				return vType;
 			}
 			if (typeof vType === "string" ) {
-				return jQuery.sap.getObject(vType);
+				return ObjectPath.get(vType);
 			}
 		}
 
@@ -1781,7 +1782,7 @@ sap.ui.define([
 		}
 
 		// legacy validation for (unsupported) types that don't subclass BaseObject
-		oType = jQuery.sap.getObject(oAggregation.type);
+		oType = ObjectPath.get(oAggregation.type);
 		if ( typeof oType === "function" && oObject instanceof oType ) {
 			return oObject;
 		}
@@ -3259,7 +3260,7 @@ sap.ui.define([
 			// Create type instance if needed
 			oType = oPart.type;
 			if (typeof oType == "string") {
-				clType = jQuery.sap.getObject(oType);
+				clType = ObjectPath.get(oType);
 				if (typeof clType !== "function") {
 					throw new Error("Cannot find type \"" + oType + "\" used in control \"" + that.getId() + "\"!");
 				}
@@ -3289,7 +3290,7 @@ sap.ui.define([
 			// Create type instance if needed
 			oType = oBindingInfo.type;
 			if (typeof oType == "string") {
-				clType = jQuery.sap.getObject(oType);
+				clType = ObjectPath.get(oType);
 				oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 			}
 			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);

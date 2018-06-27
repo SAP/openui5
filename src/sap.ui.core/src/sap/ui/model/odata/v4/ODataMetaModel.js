@@ -18,10 +18,11 @@ sap.ui.define([
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
-	"./ValueListType"
+	"./ValueListType",
+	"sap/base/util/ObjectPath"
 ], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding, ContextBinding,
 		BaseContext, MetaModel, OperationMode, Int64, Raw, PropertyBinding, URI, _Helper,
-		ValueListType) {
+		ValueListType, ObjectPath) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -909,9 +910,9 @@ sap.ui.define([
 
 				sSegment = sSegment.slice(2);
 				fnAnnotation = sSegment[0] === "."
-					? jQuery.sap.getObject(sSegment.slice(1), undefined, mParameters.scope)
-					: mParameters && jQuery.sap.getObject(sSegment, undefined, mParameters.scope)
-						|| jQuery.sap.getObject(sSegment);
+					? ObjectPath.get(sSegment.slice(1), mParameters.scope)
+					: mParameters && ObjectPath.get(sSegment, mParameters.scope)
+						|| ObjectPath.get(sSegment);
 				if (typeof fnAnnotation !== "function") {
 					// Note: "varargs" syntax does not help because Array#join ignores undefined
 					return log(WARNING, sSegment, " is not a function but: " + fnAnnotation);

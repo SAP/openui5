@@ -3,8 +3,8 @@
  */
 
 // Provides a (modifiable) list of properties for a given control
-sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'jquery.sap.strings', 'jquery.sap.encoder'],
-	function(jQuery, DataType, EventProvider, Element, ElementMetadata/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/base/util/ObjectPath', 'jquery.sap.strings', 'jquery.sap.encoder'],
+	function(jQuery, DataType, EventProvider, Element, ElementMetadata, ObjectPath/* , jQuerySap */) {
 	"use strict";
 
 
@@ -205,7 +205,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 				aHTML.push("/>");
 			} else if (sType != "void") {
 				//Enum or Custom Type
-				var oEnum = jQuery.sap.getObject(sType);
+				var oEnum = ObjectPath.get(sType || "");
 				if (!oEnum || oEnum instanceof DataType) {
 					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 				} else {

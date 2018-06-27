@@ -14,8 +14,8 @@
  */
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/XMLCompositeMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel', 'sap/ui/model/base/XMLNodeUtils', 'sap/ui/base/ManagedObjectObserver'],
-	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel, Utils, ManagedObjectObserver) {
+	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel', 'sap/ui/model/base/XMLNodeUtils', 'sap/ui/base/ManagedObjectObserver', 'sap/base/util/ObjectPath'],
+	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel, Utils, ManagedObjectObserver, ObjectPath) {
 		"use strict";
 
 		// private functions
@@ -24,7 +24,7 @@ sap.ui.define([
 		function initXMLComposite(sFragment, oFragmentContext) {
 			if (!mControlImplementations[sFragment]) {
 				jQuery.sap.require(sFragment);
-				mControlImplementations[sFragment] = jQuery.sap.getObject(sFragment);
+				mControlImplementations[sFragment] = ObjectPath.get(sFragment);
 			}
 			return mControlImplementations[sFragment];
 		}

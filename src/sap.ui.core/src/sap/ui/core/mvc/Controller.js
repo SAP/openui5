@@ -183,7 +183,7 @@ sap.ui.define([
 						//allow to override methods of other controller extensions
 						for (var sExtensionNamespace in oOverrides.extension) {
 							oOrigExtensionMetadata = oExtensions[sExtensionNamespace].extension.getMetadata();
-							var oOrigExtensionInterface = jQuery.sap.getObject(sExtensionNamespace, null, oController.extension);
+							var oOrigExtensionInterface = ObjectPath.create(sExtensionNamespace, oController.extension);
 							var oOrigExtension = oExtensions[sExtensionNamespace].extension;
 							var oExtensionOverrides = oOverrides.extension[sExtensionNamespace];
 							for (sExtensionOverride in oExtensionOverrides) {
@@ -266,7 +266,7 @@ sap.ui.define([
 					return Controller;
 				} else {
 					//legacy controller
-					return jQuery.sap.getObject(sName);
+					return ObjectPath.get(sName);
 				}
 			}
 

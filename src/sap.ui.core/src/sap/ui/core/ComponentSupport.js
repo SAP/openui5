@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ComponentSupport
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/library', 'jquery.sap.script', 'jquery.sap.strings'],
-	function(jQuery, DataType, Component, ComponentContainer, library /*, jQuerySapScript, jQuerySapStrings */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/library', 'sap/base/util/ObjectPath', 'jquery.sap.script', 'jquery.sap.strings'],
+	function(jQuery, DataType, Component, ComponentContainer, library, ObjectPath /*, jQuerySapScript, jQuerySapStrings */) {
 	"use strict";
 
 	var ComponentLifecycle = library.ComponentLifecycle;
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Compone
 						}
 						oValue = oType.parseValue(oValue);
 					} else if (oEvent) {
-						var fnCallback = jQuery.sap.getObject(oValue);
+						var fnCallback = ObjectPath.get(oValue);
 						if (typeof fnCallback !== "function") {
 							throw new Error("Callback handler for event \"" + oEvent.name + "\" not found");
 						}

@@ -6,7 +6,7 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
 		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', "sap/ui/util/ActivityDetection", "sap/ui/dom/getScrollbarSize", "sap/base/i18n/ResourceBundle",
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', "sap/ui/util/ActivityDetection", "sap/ui/dom/getScrollbarSize", "sap/base/i18n/ResourceBundle", 'sap/base/util/ObjectPath',
 		'sap/ui/events/jquery/EventSimulation', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.script', 'jquery.sap.sjax'],
 	function(
 		jQuery,
@@ -31,7 +31,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		MessageManager,
 		ActivityDetection,
 		getScrollbarSize,
-		ResourceBundle
+		ResourceBundle,
+		ObjectPath
 		/* ,EventSimulation, jQuerySapEvents, jQuerySapMobile, jQuerySapScript, jQuerySapSjax */
 	) {
 
@@ -1177,7 +1178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 					setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);
 				} else {
 					// lookup the name specified in onInit and try to call the function directly
-					var fn = jQuery.sap.getObject(vOnInit);
+					var fn = ObjectPath.get(vOnInit);
 					if (typeof fn === "function") {
 						fn();
 					} else {
@@ -1228,7 +1229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
 				log.info("Loading Application: " + sApplication,null,METHOD);
 				jQuery.sap.require(sApplication);
-				var oClass = jQuery.sap.getObject(sApplication);
+				var oClass = ObjectPath.get(sApplication);
 				jQuery.sap.assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
 				var oApplication = new oClass();
 				jQuery.sap.assert(BaseObject.isA(oApplication, 'sap.ui.app.Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
@@ -2099,7 +2100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		// ensure namespace
-		jQuery.sap.getObject(sLibName, 0);
+		ObjectPath.create(sLibName);
 
 		// Create lib info object or merge with existing 'adhoc' library
 		this.mLibraries[sLibName] = oLibInfo = extend(this.mLibraries[sLibName] || {
@@ -2902,7 +2903,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if ( !oLibrary ) {
 
 			// ensure namespace
-			jQuery.sap.getObject(sLibraryName, 0);
+			ObjectPath.create(sLibraryName);
 
 			oLibrary = this.mLibraries[sLibraryName] = {
 				name: sLibraryName,

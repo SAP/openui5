@@ -24,8 +24,8 @@
 /*global OpenAjax */// declare unusual global vars for JSLint/SAPUI5 validation
 
 // Register to the OpenAjax Hub if it exists
-sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global'],
-	function(VersionInfo, jQuery/* , jQuerySap */) {
+sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.global'],
+	function(VersionInfo, ObjectPath, jQuery) {
 	"use strict";
 
 	if (window.OpenAjax && window.OpenAjax.hub) {
@@ -122,7 +122,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global'],
 
 		jQuery.sap.assert(false, "sap.ui.namespace is long time deprecated and shouldn't be used");
 
-		return jQuery.sap.getObject(sNamespace, 0);
+		return ObjectPath.create(sNamespace);
 	};
 
 	/**
@@ -168,7 +168,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global'],
 			iLastDotPos = sFullClass.lastIndexOf("."),
 			sPackage = sFullClass.substr(0, iLastDotPos),
 			sClass = sFullClass.substr(iLastDotPos + 1),
-			oPackage = jQuery.sap.getObject(sPackage, 0),
+			oPackage = ObjectPath.create(sPackage),
 			oClass = oPackage[sClass],
 			aMethods = (sMethods || "new").split(" "),
 			iConstructor = aMethods.indexOf("new");
@@ -262,7 +262,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global'],
 		var iLastDotPos = sClassName.lastIndexOf("."),
 			sContext = sClassName.slice(0, iLastDotPos),
 			sProperty = sClassName.slice(iLastDotPos + 1),
-			oContext = jQuery.sap.getObject(sContext);
+			oContext = ObjectPath.get(sContext || "");
 
 		return !!(oContext && typeof oContext[sProperty] === "function" && oContext[sProperty]._sapUiLazyLoader);
 

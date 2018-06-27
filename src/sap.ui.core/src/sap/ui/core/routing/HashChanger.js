@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/hasher'],
-	function(jQuery, EventProvider, hasher) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/hasher', 'sap/base/util/ObjectPath'],
+	function(jQuery, EventProvider, hasher, ObjectPath) {
 	"use strict";
 
 	/**
@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		HashChanger.replaceHashChanger = function(oHashChanger) {
 			if (_oHashChanger && oHashChanger) {
 
-				var fnGetHistoryInstance = jQuery.sap.getObject("sap.ui.core.routing.History.getInstance"),
+				var fnGetHistoryInstance = ObjectPath.get("sap.ui.core.routing.History.getInstance"),
 					oHistory;
 
 				if (fnGetHistoryInstance) {

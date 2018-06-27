@@ -4,13 +4,14 @@
 
 // Provides control sap.m.UploadCollectionItem.
 sap.ui.define([
-	"jquery.sap.global",
-	"./library",
-	"sap/ui/core/Element",
-	"sap/m/ObjectAttribute",
-	"sap/ui/core/util/File",
-	"sap/ui/Device"
-], function(jQuery, library, Element, ObjectAttribute, FileUtil, Device) {
+    "jquery.sap.global",
+    "./library",
+    "sap/ui/core/Element",
+    "sap/m/ObjectAttribute",
+    "sap/ui/core/util/File",
+    "sap/ui/Device",
+    "sap/base/util/ObjectPath"
+], function(jQuery, library, Element, ObjectAttribute, FileUtil, Device, ObjectPath) {
 	"use strict";
 
 	/**
@@ -412,7 +413,7 @@ sap.ui.define([
 	 * @returns {sap.ui.base.ManagedObject} Newly created instance
 	 */
 	UploadCollectionItem.prototype._getControl = function(name, settings, getterName) {
-		var fnConstructor = jQuery.sap.getObject(name),
+		var fnConstructor = ObjectPath.get(name),
 			oInstance = new fnConstructor(settings);
 		this._aManagedInstances.push(oInstance);
 		if (getterName) {
