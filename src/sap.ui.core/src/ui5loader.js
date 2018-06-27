@@ -23,6 +23,8 @@
 
 	/*
 	 * Helper function that returns the document base URL without search parameters and hash.
+	 *
+	 * @returns {string}
 	 */
 	function docBase() {
 		var href = document.baseURI,
@@ -176,11 +178,13 @@
 
 	/**
 	 * Default base URL for modules, used when no other configuration is provided.
+	 * In case the base url is removed via <code>registerResourcePath("", null)</code>
+	 * it will be reset to this URL instead.
 	 * @const
 	 * @type {string}
 	 * @private
 	 */
-	var DEFAULT_BASE_URL = 'resources/';
+	var DEFAULT_BASE_URL = "./";
 
 	/**
 	 * Temporarily saved reference to the original value of the global define variable.
@@ -210,7 +214,7 @@
 	var mUrlPrefixes = Object.create(null);
 	mUrlPrefixes[''] = {
 		url: DEFAULT_BASE_URL,
-		absoluteUrl: resolveURL(DEFAULT_BASE_URL)
+		absoluteUrl: resolveURL(DEFAULT_BASE_URL, document.baseURI)
 	};
 
 	/**
@@ -465,6 +469,12 @@
 		return aSegments.join('/');
 	}
 
+	/**
+	 * Adds a resource path to the resources map.
+	 *
+	 * @param {string} sResourceNamePrefix prefix is used as map key
+	 * @param {string} sUrlPrefix path to the resource
+	 */
 	function registerResourcePath(sResourceNamePrefix, sUrlPrefix) {
 		sResourceNamePrefix = String(sResourceNamePrefix || "");
 
@@ -505,7 +515,14 @@
 		};
 	}
 
-	// find longest matching prefix for resource name
+	/**
+	 * Retrieves path to a given resource by finding the longest matching prefix for the resource name
+	 *
+	 * @param {string} sResourceName name of the resource stored in the resources map
+	 * @param {string} sSuffix url suffix
+	 *
+	 * @returns {string} resource path
+	 */
 	function getResourcePath(sResourceName, sSuffix) {
 
 		var sNamePrefix = sResourceName,
@@ -1919,7 +1936,7 @@
 
 	// ---- config --------------------------------------------------------------------------------
 
-	var mConfigHandlers = {
+	var mUI5ConfigHandlers = {
 		baseUrl: function(url) {
 			registerResourcePath("", url);
 		},
@@ -1986,21 +2003,33 @@
 		},
 		noConflict: function(bValue) {
 			log.warning("Config option 'noConflict' has been deprecated, use option 'amd' instead, if still needed.");
-			mConfigHandlers.amd(!bValue);
+			mUI5ConfigHandlers.amd(!bValue);
 		}
 	};
 
-	function config(cfg) {
-		if ( cfg === undefined ) {
-			return {
-				amd: bExposeAsAMDLoader,
-				async: bGlobalAsyncMode,
-				noConflict: !bExposeAsAMDLoader // TODO needed?
-			};
-		}
+	/**
+	 * Config handlers used when amd mode is enabled.
+	 * References only methods defined in the AMD spec.
+	 */
+	var mAMDConfigHandlers = {
+		baseUrl: mUI5ConfigHandlers.baseUrl,
+		paths: function (module, url) {
+			registerResourcePath(module, resolveURL(url, getResourcePath("") + "/"));
+		},
+		map: mUI5ConfigHandlers.map,
+		shim: mUI5ConfigHandlers.shim
+	};
 
-		forEach(cfg, function(key, value) {
-			var handler = mConfigHandlers[key];
+	/**
+	 * Executes all available handlers which are defined in the config object
+	 *
+	 * @param {object} oCfg config to handle
+	 * @param {map} mHandlers all available handlers
+	 */
+	function handleConfigObject(oCfg, mHandlers) {
+
+		function processConfig(key, value) {
+			var handler = mHandlers[key];
 			if ( typeof handler === 'function' ) {
 				if ( handler.length === 1) {
 					handler(value);
@@ -2010,7 +2039,38 @@
 			} else {
 				log.warning("configuration option " + key + " not supported (ignored)");
 			}
+		}
+
+		// Make sure the 'baseUrl' handler is called first as
+		// other handlers (e.g. paths) depend on it
+		if (oCfg.baseUrl) {
+			processConfig("baseUrl", oCfg.baseUrl);
+		}
+
+		forEach(oCfg, function(key, value) {
+			// Ignore "baseUrl" here as it will be handled above
+			if (key !== "baseUrl") {
+				processConfig(key, value);
+			}
 		});
+	}
+
+	function ui5Config(cfg) {
+		if ( cfg === undefined ) {
+			return {
+				amd: bExposeAsAMDLoader,
+				async: bGlobalAsyncMode,
+				noConflict: !bExposeAsAMDLoader // TODO needed?
+			};
+		}
+		handleConfigObject(cfg, mUI5ConfigHandlers);
+	}
+
+	function amdConfig(cfg) {
+		if ( cfg === undefined ) {
+			return undefined;
+		}
+		handleConfigObject(cfg, mAMDConfigHandlers);
 	}
 
 	// expose preload function as property of sap.ui.require
@@ -2024,7 +2084,7 @@
 	var privateAPI = {
 		amdDefine: amdDefine,
 		amdRequire: amdRequire,
-		config: config,
+		config: ui5Config,
 		declareModule: function(sResourceName) {
 			/* void */ declareModule( normalize(sResourceName) );
 		},
@@ -2073,7 +2133,6 @@
 			set: function(v) {
 				translate = v;
 			}
-
 		}
 	});
 
@@ -2153,7 +2212,7 @@
 		 *   If <code>cfg</code> is omitted or <code>undefined</code>, a copy of the current configuration
 		 *   gets returned, containing at least the properties <code>amd</code> and <code>async</code>.
 		 *
-		 * @param {string} [cfg.baseUrl='resources/']
+		 * @param {string} [cfg.baseUrl='./']
 		 *   Default location to load modules from. If none of the configured <code>paths</code> prefixes
 		 *   matches a module ID, the module will be loaded from the concatenation of the <code>baseUrl</code>
 		 *   and the module ID.
@@ -2226,7 +2285,7 @@
 		 * @since 1.56.0
 		 * @function
 		 */
-		config: config,
+		config: ui5Config,
 
 		/**
 		 * Internal API of the UI5 loader.
@@ -2236,6 +2295,77 @@
 		 */
 		_: privateAPI
 	};
+
+	/**
+	 * Sets the configuration of the ui5loader. The configuration can be updated multiple times.
+	 * Later changes do not impact modules that have been loaded before.
+	 *
+	 * Setting the <code>amd</code> option of the sap.ui.loader.config to <code>true</code> is a
+	 * prerequisite to use the <code>require.config</code> function
+	 * (see {@link sap.ui.loader.config sap.ui.loader.config option amd}).
+	 *
+	 * The ui5loader acts more AMD compliant in relation to resolution of paths defined as
+	 * part of the <code>paths</code> configuration option.
+	 *
+	 * @param {object} cfg The provided configuration gets merged with the UI5 loader configuration in use.
+	 *
+	 * @param {string} [cfg.baseUrl='./']
+	 *   Default location to load modules from. If none of the configured <code>paths</code> prefixes
+	 *   matches a module ID, the module will be loaded from the concatenation of the <code>baseUrl</code>
+	 *   and the module ID.
+	 *
+	 *   If the <code>baseUrl</code> itself is a relative URL, it is evaluated relative to <code>document.baseURI</code>.
+	 *
+	 * @param {object} [cfg.paths]
+	 *   A map of resource locations keyed by a corresponding module ID prefix.
+	 *   When a module is to be loaded, the longest key in <code>paths</code> is searched that is a
+	 *   prefix of the module ID. The module will be loaded from the concatenation of the corresponding
+	 *   value in <code>paths</code> and the remainder of the module ID (after the prefix). If no entry
+	 *   in <code>paths</code> matches, then the module will be loaded from the <code>baseUrl</code>.
+	 *
+	 *   The prefixes (keys) must not contain relative segments (./ or ../), a trailing slash will be
+	 *   removed, and only full name segment matches are considered a match (prefix 'sap/m' does not
+	 *   match a module ID 'sap/main').
+	 *
+	 *   <b>Note</b>: In contrast to the {@link sap.ui.loader.config sap.ui.loader.config option paths},
+	 *   the paths (values in the map) are interpreted relative to <code>cfg.baseUrl</code>,
+	 *   not relative to <code>document.baseURI</code>. The behaviour is exactly as described in the "Common Config" draft
+	 *   of the AMD spec (https://github.com/amdjs/amdjs-api/blob/master/CommonConfig.md).
+	 *
+	 * @param {Object.<string, Object.<string, string>>} [cfg.map]
+	 *   A map of maps that defines how to map module IDs to other module IDs (inner maps)
+	 *   in the context of a specific set of modules (keys of outer map).
+	 *
+	 *   Each key of the outer map represents a module ID prefix that describes the context for which
+	 *   its value (inner map) has to be used. The special key <code>*</code> describes the default
+	 *   context which applies for any module. Only the most specific matching context will be taken
+	 *   into account.
+	 *
+	 *   Each inner map maps a module ID or module ID prefix to another module ID or module ID prefix.
+	 *   Again, only the most specific match is taken into account and only one mapping is evaluated
+	 *   (the evaluation of the mappings is not done recursively).
+	 *
+	 *   Matches are always complete matches, a prefix 'a/b/c' does not match the module ID 'a/b/com'.
+	 *
+	 * @param {Object.<string, {deps: string[], exports: (string|string[])}>} [cfg.shim]
+	 *   Defines additional metadata for modules for which the normal behavior of the AMD APIs is
+	 *   not sufficient.
+	 *
+	 *   A typical example are scripts that don't use <code>define</code> or <code>sap.ui.define</code>,
+	 *   but export to a global name. With the <code>exports</code> property, one or more export
+	 *   names can be specified, and the loader can retrieve the exported value after executing the
+	 *   corresponding module. If such a module has dependencies, they can be specified in the
+	 *   <code>deps</code> array and are loaded and executed before executing the module.
+	 *
+	 *   <b>Note:</b> The ui5loader does not support the <code>init</code> option described by the
+	 *   "Common Config" section of the AMD spec.
+	 *
+	 * @returns {undefined}
+	 * @public
+	 * @name require_config
+	 * @function
+	 */
+	amdRequire.config = amdConfig;
 
 	/**
 	 * Defines a JavaScript module with its ID, its dependencies and a module export value or factory.
