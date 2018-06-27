@@ -2687,6 +2687,37 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		assert.strictEqual(aDirtyChanges.length, 0);
 	});
 
+	QUnit.test("shall not change the state of a dirty change in case of a connector error", function (assert) {
+		var oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		var oRaisedError = {messages: [{severity : "Error", text : "Error"}]};
+		this.lrepConnectorMock.loadChanges = sinon.stub().returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
+		this.lrepConnectorMock.create = sinon.stub().returns(Promise.reject(oRaisedError));
+		this._updateCacheAndDirtyStateSpy = sandbox.spy(this.oChangePersistence, "_updateCacheAndDirtyState");
+
+		//Call CUT
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+		return this.oChangePersistence.saveDirtyChanges()
+			['catch'](function(oError) {
+				assert.equal(oError, oRaisedError, "the error object is correct");
+				return this.oChangePersistence.getChangesForComponent();
+			}.bind(this))
+			.then(function(aChanges) {
+				assert.equal(aChanges.length, 1, "Change is not deleted from the cache");
+				var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
+				assert.equal(aDirtyChanges.length, 1, "Change is still a dirty change");
+				assert.equal(this._updateCacheAndDirtyStateSpy.callCount, 0, "no update of cache and dirty state took place");
+			}.bind(this));
+	});
+
 	QUnit.test("shall keep a change in the dirty changes, if it has a pending action of DELETE", function (assert) {
 
 		var oChangeContent = {
