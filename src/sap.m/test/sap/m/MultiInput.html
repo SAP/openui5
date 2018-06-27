@@ -1141,17 +1141,24 @@
 	   //******************************************
 		var app = new sap.m.App("myApp");
 
+		var oCondensedMultiInput = new sap.m.MultiInput("condensed-multiinput");
+		oCondensedMultiInput.setTokens([
+			new sap.m.Token({text: "Token 1", key: "0001"}),
+			new sap.m.Token({text: "Token 2", key: "0002"}),
+			new sap.m.Token({text: "Token 3", key: "0003"}),
+			]);
 		var oCondensedTable = new sap.ui.table.Table("condensed-table", {
-			columns: [
-				new sap.ui.table.Column({
-					template: new sap.m.MultiInput()
-				})
-			],
+			minAutoRowCount: 2,
 			visibleRowCountMode: "Auto",
 			rows: "{/modelData}"
-		});
-		oTable.addStyleClass("sapUiSizeCompact");
-		oTable.addStyleClass("sapUiSizeCondensed");
+		}).addStyleClass("sapUiMediumMarginBottom");
+		oCondensedTable.addColumn(new sap.ui.table.Column({
+			label: "Table with MultiInput (Condensed Mode)",
+			template: [
+				oCondensedMultiInput
+			]
+		}))
+		oCondensedTable.addStyleClass("sapUiSizeCondensed");
 
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile MultiInput Control",
