@@ -792,7 +792,7 @@ sap.ui.define([
 				if (control) {
 					domRefToFocus = control.getFocusDomRef();
 				}
-				domRefToFocus = domRefToFocus || ((this._sInitialFocusId ? window.document.getElementById(this._sInitialFocusId) : null));
+				domRefToFocus = domRefToFocus || window.document.getElementById(this._sInitialFocusId);
 			}
 
 			jQuery.sap.focus(domRefToFocus || $Ref.firstFocusableDomRef());
@@ -2481,7 +2481,7 @@ sap.ui.define([
 					this._oLastPosition.of.id) {
 				// sometimes the "of" was rerendered and therefore the new DOM-reference must be used for the checks.
 				// An id is only ensured for controls and only those can be re-rendered
-				this._oLastPosition.of = (this._oLastPosition.of.id ? window.document.getElementById(this._oLastPosition.of.id) : null);
+				this._oLastPosition.of = window.document.getElementById(this._oLastPosition.of.id);
 				oCurrentOfRef = this._getOfDom(this._oLastPosition.of);
 				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 
@@ -2495,10 +2495,10 @@ sap.ui.define([
 			// was rerendered and all corresponding stuff has to be updated to position the popup
 			// properly again
 			if (!containsOrEquals(document.documentElement, oCurrentOfRef)) {
-				if (oCurrentOfRef.id && oCurrentOfRef.id !== "") {
+				if (oCurrentOfRef.id) {
 					// The 'of' was rerendered so the newest DOM-element has to be updated for the corresponding rect-object.
 					// Because the id of the 'of' may be still the same but due to its rerendering the reference changed and has to be updated
-					var oNewestOf = (oCurrentOfRef.id ? window.document.getElementById(oCurrentOfRef.id) : null);
+					var oNewestOf = window.document.getElementById(oCurrentOfRef.id);
 					var oNewestOfRect = jQuery(oNewestOf).rect();
 
 					// if there is a newest corresponding DOM-reference and it differs from the current -> use the newest one
