@@ -35,61 +35,65 @@
 					return {};
 				}, /* bExport = */ true);
 
-				assert.throws(
-					function() {
-						var x = sap.test.MockModule;
-					},
-					TypeError,
-					"sap.test.MockModule was not exported"
-				);
-
 				define("sap/test/MockModule2", [], function () {
 					return {};
 				}, /* bExport = */ false);
-
-				assert.throws(
-					function() {
-						var x = sap.test.MockModule2;
-					},
-					TypeError,
-					"sap.test.MockModule2 was not exported"
-				);
 
 				// ------ Optional dependencies -------
 				define("sap/test/MockModule3", function () {
 					return {};
 				}, /* bExport = */ true);
 
-				assert.throws(
-					function() {
-						var x = sap.test.MockModule3;
-					},
-					TypeError,
-					"sap.test.MockModule3 was not exported"
-				);
-
 				define("sap/test/MockModule4", function () {
 					return {};
 				}, /* bExport = */ false);
 
-				assert.throws(
-					function() {
-						var x = sap.test.MockModule4;
-					},
-					TypeError,
-					"sap.test.MockModule4 was not exported"
-				);
 
-				// ------ No Modulename -------
-				assert.throws(
-					function() {
-						var x = testdata.modules["error-handling-standard-api"].amdModule.x;
-					},
-					ReferenceError,
-					"testdata.modules.error-handling-standard-api.amdModule was not exported"
-				);
+				// Waiting for loader queue to be processed
+				setTimeout(function() {
 
-				done();
+					assert.throws(
+						function() {
+							var x = sap.test.MockModule;
+						},
+						TypeError,
+						"sap.test.MockModule was not exported"
+					);
+
+					assert.throws(
+						function() {
+							var x = sap.test.MockModule2;
+						},
+						TypeError,
+						"sap.test.MockModule2 was not exported"
+					);
+
+					assert.throws(
+						function() {
+							var x = sap.test.MockModule3;
+						},
+						TypeError,
+						"sap.test.MockModule3 was not exported"
+					);
+
+					assert.throws(
+						function() {
+							var x = sap.test.MockModule4;
+						},
+						TypeError,
+						"sap.test.MockModule4 was not exported"
+					);
+
+					assert.throws(
+						function() {
+							var x = testdata.modules["error-handling-standard-api"].amdModule.x;
+						},
+						ReferenceError,
+						"testdata.modules.error-handling-standard-api.amdModule was not exported"
+					);
+
+					done();
+				});
 			});
 		});
 
@@ -117,19 +121,23 @@
 				return undefined;
 			});
 
-			var x = require("sap/test/A");
+			// Waiting for loader queue to be processed
+			setTimeout(function() {
 
-			assert.strictEqual(x, undefined, "undefined is returned");
-			assert.ok(true, "require('...') for empty inline Module in READY state does not fail");
+				var x = require("sap/test/A");
 
-			// loading a module with no return value
-			define("sap/test/B", ["testdata/modules/error-handling-standard-api/amdModule_undef"], function (amdModule_undef) {
-				var y = require("testdata/modules/error-handling-standard-api/amdModule_undef");
+				assert.strictEqual(x, undefined, "undefined is returned");
+				assert.ok(true, "require('...') for empty inline Module in READY state does not fail");
 
-				assert.strictEqual(y, undefined, "undefined is returned");
-				assert.ok(true, "require('...') for empty loaded Module in READY state does not fail");
+				// loading a module with no return value
+				define("sap/test/B", ["testdata/modules/error-handling-standard-api/amdModule_undef"], function (amdModule_undef) {
+					var y = require("testdata/modules/error-handling-standard-api/amdModule_undef");
 
-				done();
+					assert.strictEqual(y, undefined, "undefined is returned");
+					assert.ok(true, "require('...') for an empty already loaded Module in READY state does not fail");
+
+					done();
+				});
 			});
 		});
 
@@ -185,7 +193,7 @@
 					assert.strictEqual(oAmdReturn, amdModule, "require(): Module was correctly returned");
 
 					var oSapReturn = sap.ui.require("testdata/modules/error-handling-standard-api/amdModule2");
-					assert.strictEqual(oSapReturn, amdModule, "sap.ui.require returns undefined for missing module");
+					assert.strictEqual(oSapReturn, amdModule, "sap.ui.require(): Module was correctly returned");
 
 					done();
 				});
