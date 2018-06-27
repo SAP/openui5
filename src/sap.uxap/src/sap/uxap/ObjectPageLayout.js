@@ -1081,7 +1081,7 @@ sap.ui.define([
 
 		if (sId === null) {
 			this.setAssociation("selectedSection", null, true);
-			this._expandHeader();
+			this._expandHeader(this._bHeaderInTitleArea);
 			this._requestAdjustLayoutAndUxRules(true); // obtains the firstVisible section and scrolls to it if needed
 			return this;
 		}
