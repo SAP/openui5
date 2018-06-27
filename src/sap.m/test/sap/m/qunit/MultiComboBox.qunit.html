@@ -5371,6 +5371,24 @@
 		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
 	});
 
+	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
+		//arrange
+		var oTokenizerSpy = sinon.spy(sap.m.Tokenizer.prototype, "_adjustTokensVisibility"),
+			oMCB = new sap.m.MultiComboBox();
+
+		// act
+		oMCB.placeAt("qunit-fixture");
+		this.clock.tick(100);
+
+		// assert
+		assert.ok(oMCB._oTokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.ok(oTokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
+
+		// clean up
+		oTokenizerSpy.restore();
+		oMCB.destroy();
+	});
+
 
 </script>
 </head>

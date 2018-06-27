@@ -1668,6 +1668,7 @@ function(
 		var oTokenizer = new sap.m.Tokenizer({
 			tokens: []
 		}).attachTokenChange(this._handleTokenChange, this);
+		oTokenizer._setAdjustable(true);
 
 		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
 
@@ -1694,10 +1695,6 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
-		var bCollapse = !(this.isOpen() || this._bTokenDeleted);
-		this._oTokenizer._useCollapsedMode(bCollapse);
-
-		this._bTokenDeleted = false;
 		jQuery.sap.delayedCall(0, this._oTokenizer, "scrollToEnd");
 	};
 
@@ -1711,7 +1708,6 @@ function(
 		}
 
 		if (sType === sap.m.Tokenizer.TokenChangeType.Removed) {
-			this._bTokenDeleted = true;
 
 			oItem = (oToken && this._getItemByToken(oToken));
 

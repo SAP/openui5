@@ -181,6 +181,7 @@ sap.ui.define([
 		this.bAllowTextSelection = false;
 		this._oTokensWidthMap = {};
 		this._oIndicator = null;
+		this._bAdjustable = false;
 
 		this._aTokenValidators = [];
 
@@ -340,6 +341,43 @@ sap.ui.define([
 		this.setProperty("width", sWidth, true);
 		this.$().css("width", this.getWidth());
 		return this;
+	};
+
+	/**
+	 * Function sets the maximum width of the Tokenizer.
+	 *
+	 * @public
+	 * @param {number} nWidth The new maximal width
+	 */
+	Tokenizer.prototype.setMaxWidth = function(sWidth) {
+		this.setProperty("maxWidth", sWidth, true);
+		this.$().css("max-width", this.getMaxWidth());
+
+		if (this.getDomRef() && this._getAdjustable()) {
+			this._adjustTokensVisibility();
+		}
+
+		return this;
+	};
+
+	/**
+	 * Function sets whether the tokens visibility should be adjusted
+	 *
+	 * @protected
+	 * @param {boolean} If true the the tokenizer should adjust the tokens visibility
+	 */
+	Tokenizer.prototype._setAdjustable = function(bAdjust) {
+		this._bAdjustable = bAdjust;
+	};
+
+	/**
+	 * Function gets whether the tokens visibility should be adjusted
+	 *
+	 * @protected
+	 * @returns {boolean} If true the the tokenizer should adjust the tokens visibility
+	 */
+	Tokenizer.prototype._getAdjustable = function() {
+		return this._bAdjustable;
 	};
 
 	/**

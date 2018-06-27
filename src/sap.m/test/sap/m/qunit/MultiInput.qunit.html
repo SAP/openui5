@@ -1468,6 +1468,24 @@
 		fnReadOnlyPopDestroySpy.restore();
 	});
 
+	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
+		//arrange
+		var tokenizerSpy = sinon.spy(sap.m.Tokenizer.prototype, "_adjustTokensVisibility"),
+			multiInput = new sap.m.MultiInput();
+
+		// act
+		multiInput.placeAt("qunit-fixture");
+		this.clock.tick(100);
+
+		// assert
+		assert.ok(multiInput._tokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.ok(tokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
+
+		// clean up
+		tokenizerSpy.restore();
+		multiInput.destroy();
+	});
+
 </script>
 
 </head>
