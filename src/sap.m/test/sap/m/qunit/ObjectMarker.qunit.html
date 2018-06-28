@@ -417,6 +417,49 @@
 			oTable.destroy();
 		});
 
+		QUnit.test("Rendering of ObjectMarket inside Table, does not invalidate the Table", function(assert) {
+			// Arrange
+			var oData = {
+				items: [
+					{ type: sap.m.ObjectMarkerType.Locked },
+					{ type: sap.m.ObjectMarkerType.Flagged },
+					{ type: sap.m.ObjectMarkerType.Draft },
+					{ type: sap.m.ObjectMarkerType.Favorite }
+				]
+			};
+
+			var oTable = new sap.m.Table({
+				growing: true,
+				growingThreshold: 2
+			});
+
+			oTable.addColumn(new sap.m.Column({ header: new sap.m.Label({ text: "Object Marker" })}));
+
+			oTable.setModel(new sap.ui.model.json.JSONModel(oData));
+			oTable.bindAggregation("items", "/items", new sap.m.ColumnListItem({
+				cells: new sap.m.ObjectMarker({ type: "{type}" })
+			}));
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.equal(oTable.getItems().length, 2, "2 ObjectMarkers are shown in the table, growing is not triggered");
+
+			// Act
+			var oRenderSpy = this.spy(oTable, "invalidate");
+			var $trigger = oTable.$("trigger").focus();
+			qutils.triggerKeydown($trigger, jQuery.sap.KeyCodes.SPACE);
+
+			// Assert
+			assert.strictEqual(oTable.getItems().length, 4, "2 more ObjectMarkers were rendered");
+			assert.strictEqual(oRenderSpy.callCount, 0, "Table did not re-render");
+
+			// Cleanup
+			oTable.destroy();
+		});
+
+
 		QUnit.module("Helper methods");
 
 		QUnit.test("_getInnerControl private method", function (assert) {
