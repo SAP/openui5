@@ -16,7 +16,7 @@ sap.ui.define([
 					minDate: new Date(2000, 0, 1, 0, 0, 0),
 					maxDate: new Date(2050, 11, 31, 23, 59, 59),
 					people: [{
-						pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
+						pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
 						name: "John Miller",
 						role: "team member",
 						appointments: [{
