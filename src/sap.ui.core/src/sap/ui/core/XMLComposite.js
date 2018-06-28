@@ -14,8 +14,8 @@
  */
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/XMLCompositeMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel', 'sap/ui/model/base/XMLNodeUtils', 'sap/ui/base/ManagedObjectObserver', 'sap/base/util/ObjectPath'],
-	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel, Utils, ManagedObjectObserver, ObjectPath) {
+	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel', 'sap/ui/model/base/XMLNodeUtils', 'sap/ui/base/ManagedObjectObserver', 'sap/base/util/ObjectPath', 'sap/ui/base/SyncPromise'],
+	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel, Utils, ManagedObjectObserver, ObjectPath, SyncPromise) {
 		"use strict";
 
 		// private functions
@@ -36,6 +36,9 @@ sap.ui.define([
 				return oVisitor;
 			};
 
+			//needed in the preprocessor to allow promises as result
+			oAttributesModel.$$valueAsPromise = true;
+
 			oAttributesModel._getObject = function (sPath, oContext) {
 				var oResult;
 				sPath = this.resolve(sPath, oContext);
@@ -53,16 +56,16 @@ sap.ui.define([
 						return oProperty.defaultValue;
 					}
 					// try to resolve a result from templating time or keep the original value
-					oResult = oVisitor.getResult(oElement.getAttribute(sPath)) || oElement.getAttribute(sPath);
-					if (oResult) {
-						var oScalar = Utils.parseScalarType(oProperty.type, oResult, sPath);
-						if (typeof oScalar === "object" && oScalar.path) {
-							return oResult;
+					return SyncPromise.resolve(oVisitor.getResult(oElement.getAttribute(sPath)) || oElement.getAttribute(sPath)).then(function(oPromiseResult) {
+						if (oPromiseResult) {
+							var oScalar = Utils.parseScalarType(oProperty.type, oPromiseResult, sPath);
+							if (typeof oScalar === "object" && oScalar.path) {
+								return oPromiseResult;
+							}
+							return oScalar;
 						}
-						return oScalar;
-					}
-					return null;
-
+						return null;
+					});
 				} else if (mAggregations.hasOwnProperty(aPath[0])) {
 					var oAggregation = mAggregations[aPath[0]];
 					var oAggregationModel, oContent = XmlTreeModifier.getAggregation(oElement, aPath[0]);
@@ -81,6 +84,7 @@ sap.ui.define([
 						oResult = aContexts;
 					} else {
 						oAggregationModel = new XMLNodeAttributesModel(oContent, oVisitor, "");
+						oAggregationModel.$$valueAsPromise = true;//for Preprocessor
 						oResult = oAggregationModel.getContext("/");
 					}
 
@@ -93,20 +97,20 @@ sap.ui.define([
 						return oSpecialSetting.defaultValue || null;
 					}
 
-					oResult = oVisitor.getResult(oElement.getAttribute(sPath));
-
-					if (oSpecialSetting.type) {
-						var oScalar = Utils.parseScalarType(oSpecialSetting.type, oResult, sPath);
-						if (typeof oScalar === "object" && oScalar.path) {
-							return oResult;
+					return SyncPromise.resolve(oVisitor.getResult(oElement.getAttribute(sPath))).then(function(oPromiseResult) {
+						if (oSpecialSetting.type) {
+							var oScalar = Utils.parseScalarType(oSpecialSetting.type, oPromiseResult, sPath);
+							if (typeof oScalar === "object" && oScalar.path) {
+								return oPromiseResult;
+							}
+							return oScalar;
 						}
-						return oScalar;
-					}
 
-					if (oResult) {
-						return oResult;
-					}
-					return oElement.getAttribute(sPath);
+						if (oPromiseResult) {
+							return oPromiseResult;
+						}
+						return oElement.getAttribute(sPath);
+					});
 				}
 			};
 
