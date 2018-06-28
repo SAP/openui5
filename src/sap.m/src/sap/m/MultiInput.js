@@ -970,7 +970,9 @@ function(
 
 		if (!bFocusIsInSelectedItemPopup && !bNewFocusIsInTokenizer) {
 			this._tokenizer._useCollapsedMode(true);
-			this._setValueInvisible();
+
+			// hide the text value only if the indicator is visible
+			this._tokenizer._getIndicatorVisibility() && this._setValueInvisible();
 		}
 	};
 

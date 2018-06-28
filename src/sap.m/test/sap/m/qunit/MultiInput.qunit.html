@@ -1506,6 +1506,26 @@
 		multiInput.destroy();
 	});
 
+	QUnit.test("Input visibility", function(assert) {
+		//arrange
+		var multiInput = new sap.m.MultiInput();
+
+		// act
+		multiInput.placeAt("qunit-fixture");
+		this.clock.tick(100);
+
+		multiInput.updateDomValue("123");
+		sap.ui.test.qunit.triggerEvent("input", multiInput.getFocusDomRef());
+
+		multiInput.onsapfocusleave({});
+
+		// assert
+		assert.strictEqual(multiInput.$("inner").css("opacity"), "1", "The input value remains visible, if the n-more label is hidden");
+
+		// clean up
+		multiInput.destroy();
+	});
+
 </script>
 
 </head>
