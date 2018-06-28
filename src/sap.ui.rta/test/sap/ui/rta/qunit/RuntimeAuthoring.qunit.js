@@ -17,28 +17,22 @@ sap.ui.require([
 	'sap/ui/dt/Overlay',
 	'sap/ui/fl/registry/Settings',
 	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/LrepConnector',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/FakeLrepLocalStorage',
 	'sap/ui/fl/ChangePersistence',
-	'sap/ui/fl/transport/TransportSelection',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/plugin/Remove',
-	'sap/ui/rta/plugin/CreateContainer',
-	'sap/ui/rta/plugin/Rename',
 	'sap/ui/base/Event',
 	'sap/ui/base/EventProvider',
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/rta/appVariant/Feature',
 	// should be last
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	Button,
@@ -54,19 +48,15 @@ function(
 	Overlay,
 	Settings,
 	ChangeRegistry,
-	LrepConnector,
 	Change,
 	Utils,
 	RtaUtils,
 	FakeLrepLocalStorage,
 	ChangePersistence,
-	TransportSelection,
 	RuntimeAuthoring,
 	Stack,
 	CommandFactory,
 	Remove,
-	CreateContainerPlugin,
-	RenamePlugin,
 	Event,
 	EventProvider,
 	RTABaseCommand,
@@ -607,21 +597,49 @@ function(
 		assert.strictEqual(oTitleOverlay.getEditable(), false, "then the title is not editable.");
 	});
 
-	QUnit.test("when _handleElementModified is called if a create container command was executed", function(assert){
+
+	QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert){
 		var done = assert.async();
 
-		// An existing Form is used for the test
-		var oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
-		var oFormOverlay = OverlayRegistry.getOverlay(oForm.getId());
+		var fnFireElementModifiedSpy = sandbox.spy(this.oRta._mDefaultPlugins["createContainer"], "fireElementModified");
 
-		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit", function (oNewContainerOverlay) {
+		var oSimpleForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
+		var oSimpleFormOverlay = OverlayRegistry.getOverlay(oSimpleForm.getAggregation("form").getId());
+
+		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
 			sap.ui.getCore().applyChanges();
-			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
+			var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
+			var sNewControlContainerId = this.oRta._mDefaultPlugins["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
+			assert.ok(fnFireElementModifiedSpy.calledOnce, "then 'fireElementModified' from the createContainer plugin is called once");
 			assert.ok(true, "then the new container starts the edit for rename");
+			assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
+			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
 			this.oCommandStack.undo().then(done);
 		}.bind(this));
 
-		this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);
+		this.oRta.getPlugins()["createContainer"].handleCreate(false, oSimpleFormOverlay);
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("when _handleElementModified is called if a create container command was executed on a smart form", function(assert){
+		var done = assert.async();
+
+		var fnFireElementModifiedSpy = sinon.spy(this.oRta._mDefaultPlugins["createContainer"], "fireElementModified");
+
+		var oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+		var oSmartFormOverlay = OverlayRegistry.getOverlay(oSmartForm.getId());
+
+		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
+			var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
+			var sNewControlContainerId = this.oRta._mDefaultPlugins["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
+			sap.ui.getCore().applyChanges();
+			assert.ok(true, "then the new container starts the edit for rename");
+			assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
+			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
+			this.oCommandStack.undo().then(done);
+		}.bind(this));
+
+		this.oRta.getPlugins()["createContainer"].handleCreate(false, oSmartFormOverlay);
 		sap.ui.getCore().applyChanges();
 	});
 
@@ -632,7 +650,7 @@ function(
 		var oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm1");
 		var oFormOverlay = OverlayRegistry.getOverlay(oForm.getId());
 
-		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit", function (oNewContainerOverlay) {
+		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit"). callsFake(function (oNewContainerOverlay) {
 			sap.ui.getCore().applyChanges();
 			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
 			assert.ok(true, "then the new container starts the edit for rename");
@@ -715,7 +733,7 @@ function(
 		var fnStubSerialize = function() {
 			return Promise.reject();
 		};
-		sandbox.stub(this.oRta, "_serializeToLrep", fnStubSerialize);
+		sandbox.stub(this.oRta, "_serializeToLrep").callsFake(fnStubSerialize);
 
 		return this.oRta.stop(false).catch(function() {
 			assert.ok(true, "then the promise got rejected");
@@ -909,7 +927,7 @@ function(
 
 	QUnit.test("When restore function is called in the CUSTOMER layer", function(assert) {
 		var done = assert.async();
-		sandbox.stub(MessageBox, "confirm", function(sMessage, mParameters) {
+		sandbox.stub(MessageBox, "confirm").callsFake(function(sMessage, mParameters) {
 			assert.equal(sMessage, this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE"), "then the message is correct");
 			assert.equal(mParameters.title, this.oRta._getTextResources().getText("FORM_PERS_RESET_TITLE"), "then the message is correct");
 
@@ -932,7 +950,7 @@ function(
 		this.oRta.setFlexSettings({
 			layer: "USER"
 		});
-		sandbox.stub(MessageBox, "confirm", function(sMessage, mParameters) {
+		sandbox.stub(MessageBox, "confirm").callsFake(function(sMessage, mParameters) {
 			assert.equal(sMessage, this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION"), "then the message is correct");
 			assert.equal(mParameters.title, this.oRta._getTextResources().getText("BTN_RESTORE"), "then the message is correct");
 
@@ -952,7 +970,7 @@ function(
 
 	QUnit.test("when calling '_deleteChanges' successfully, ", function(assert) {
 		this.oDeleteChangesStub.restore();
-		sandbox.stub(this.oFlexController, "resetChanges", function() {
+		sandbox.stub(this.oFlexController, "resetChanges").callsFake(function() {
 			assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
 			assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
 			assert.deepEqual(arguments[2], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
@@ -967,11 +985,11 @@ function(
 	QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert){
 		this.oDeleteChangesStub.restore();
 
-		sandbox.stub(this.oFlexController, "resetChanges", function() {
+		sandbox.stub(this.oFlexController, "resetChanges").callsFake(function() {
 			return Promise.reject("Error");
 		});
 
-		sandbox.stub(RtaUtils, "_showMessageBox", function(sIconType, sHeader, sMessage, sError){
+		sandbox.stub(RtaUtils, "_showMessageBox").callsFake(function(sIconType, sHeader, sMessage, sError){
 			assert.equal(sError, "Error", "and a message box shows the error to the user");
 		});
 

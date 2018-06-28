@@ -45,7 +45,8 @@ sap.ui.define([
 		"sap/ui/rta/appVariant/Feature",
 		"sap/ui/Device",
 		"sap/ui/rta/service/index",
-		"sap/ui/rta/util/ServiceEventBus"
+		"sap/ui/rta/util/ServiceEventBus",
+		"sap/ui/dt/OverlayRegistry"
 	],
 	function(
 		jQuery,
@@ -89,7 +90,8 @@ sap.ui.define([
 		RtaAppVariantFeature,
 		Device,
 		ServicesIndex,
-		ServiceEventBus
+		ServiceEventBus,
+		OverlayRegistry
 	) {
 	"use strict";
 
@@ -1117,9 +1119,13 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype._scheduleRenameOnCreatedContainer = function(vAction, sNewControlID) {
 		var fnStartEdit = function (oElementOverlay) {
-			oElementOverlay.setSelected(true);
-			this.getPlugins()["rename"].startEdit(oElementOverlay);
+			// get container of the new control for rename
+			var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, oElementOverlay.getElement().getId());
+			var oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
+			oContainerElementOverlay.setSelected(true);
+			this.getPlugins()["rename"].startEdit(oContainerElementOverlay);
 		};
+
 		var fnGeometryChangedCallback = function(oEvent) {
 			var oElementOverlay = oEvent.getSource();
 			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
@@ -1139,15 +1145,17 @@ sap.ui.define([
 			}
 			oNewOverlay.detachEvent('afterRendering', fnOverlayRenderedCallback, this);
 		};
-		var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, sNewControlID);
 
-		this._oDesignTime.attachEvent("elementOverlayCreated", function(oEvent){
+		var fnElementOverlayCreatedCallback = function(oEvent){
 			var oNewOverlay = oEvent.getParameter("elementOverlay");
-			if (oNewOverlay.getElement().getId() === sNewContainerID) {
+			if (oNewOverlay.getElement().getId() === sNewControlID) {
+				this._oDesignTime.detachEvent("elementOverlayCreated", fnElementOverlayCreatedCallback, this);
 				// the overlay needs to be rendered before we can trigger the rename on it
 				oNewOverlay.attachEvent('afterRendering', fnOverlayRenderedCallback, this);
 			}
-		}.bind(this));
+		};
+
+		this._oDesignTime.attachEvent("elementOverlayCreated", fnElementOverlayCreatedCallback, this);
 	};
 
 	/**
