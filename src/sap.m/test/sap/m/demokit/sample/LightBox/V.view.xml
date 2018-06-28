@@ -5,14 +5,14 @@
 	<List>
 		<CustomListItem>
 			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
-				<Image src="test-resources/sap/ui/demokit/explored/img/HT-6100.jpg"
+				<Image src="test-resources/sap/ui/documentation/sdk/images/HT-6100.jpg"
 						decorative="false"
 						width="170px"
 						densityAware="false">
 					<detailBox>
 						<LightBox>
 							<LightBoxItem
-									imageSrc="test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg"
+									imageSrc="test-resources/sap/ui/documentation/sdk/images/HT-6100-large.jpg"
 									alt="Beamer"
 									title="This is a beamer"
 									subtitle="This is beamer's description">
@@ -36,14 +36,14 @@
 		</CustomListItem>
 		<CustomListItem>
 			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
-				<Image src="test-resources/sap/ui/demokit/explored/img/HT-6120.jpg"
+				<Image src="test-resources/sap/ui/documentation/sdk/images/HT-6120.jpg"
 						decorative="false"
 						width="170px"
 						densityAware="false">
 					<detailBox>
 						<LightBox>
 							<LightBoxItem
-									imageSrc="test-resources/sap/ui/demokit/explored/img/HT-6120-large.jpg"
+									imageSrc="test-resources/sap/ui/documentation/sdk/images/HT-6120-large.jpg"
 									alt="USB"
 									title="This is a USB"
 									subtitle="This is USB's description">
@@ -67,14 +67,14 @@
 		</CustomListItem>
 		<CustomListItem>
 			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
-				<Image src="test-resources/sap/ui/demokit/explored/img/HT-7777.jpg"
+				<Image src="test-resources/sap/ui/documentation/sdk/images/HT-7777.jpg"
 						decorative="false"
 						width="170px"
 						densityAware="false">
 					<detailBox>
 						<LightBox>
 							<LightBoxItem
-									imageSrc="test-resources/sap/ui/demokit/explored/img/HT-7777-large.jpg"
+									imageSrc="test-resources/sap/ui/documentation/sdk/images/HT-7777-large.jpg"
 									alt="Speakers"
 									title="These are speakers"
 									subtitle="This is speakers' description">
@@ -98,14 +98,14 @@
 		</CustomListItem>
 		<CustomListItem>
 			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
-				<Image src="test-resources/sap/ui/demokit/explored/img/nature/ALotOfElephants_small.jpg"
+				<Image src="test-resources/sap/ui/documentation/sdk/images/nature/ALotOfElephants_small.jpg"
 						decorative="false"
 						width="170px"
 						densityAware="false">
 					<detailBox>
 						<LightBox>
 							<LightBoxItem
-									imageSrc="test-resources/sap/ui/demokit/explored/img/nature/ALotOfElephants.jpg"
+									imageSrc="test-resources/sap/ui/documentation/sdk/images/nature/ALotOfElephants.jpg"
 									alt="Nature image"
 									title="This is a sample image"
 									subtitle="This is a place for description">
@@ -129,14 +129,14 @@
 		</CustomListItem>
 		<CustomListItem>
 			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
-				<Image src="test-resources/sap/ui/demokit/explored/img/nature/flatFish.jpg"
+				<Image src="test-resources/sap/ui/documentation/sdk/images/nature/flatFish.jpg"
 						decorative="false"
 						width="170px"
 						densityAware="false">
 					<detailBox>
 						<LightBox>
 							<LightBoxItem
-									imageSrc="test-resources/sap/ui/demokit/explored/img/nature/flatFish.jpg"
+									imageSrc="test-resources/sap/ui/documentation/sdk/images/nature/flatFish.jpg"
 									alt="Nature image"
 									title="This is a sample image"
 									subtitle="This is a place for description">
@@ -160,14 +160,14 @@
 		</CustomListItem>
 		<CustomListItem>
 			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
-				<Image src="test-resources/sap/ui/demokit/explored/img/nature/horses.jpg"
+				<Image src="test-resources/sap/ui/documentation/sdk/images/nature/horses.jpg"
 						decorative="false"
 						width="170px"
 						densityAware="false">
 					<detailBox>
 						<LightBox>
 							<LightBoxItem
-									imageSrc="test-resources/sap/ui/demokit/explored/img/nature/horses.jpg"
+									imageSrc="test-resources/sap/ui/documentation/sdk/images/nature/horses.jpg"
 									alt="Nature image"
 									title="This is a sample image"
 									subtitle="This is a place for description">
@@ -191,7 +191,7 @@
 		</CustomListItem>
 		<CustomListItem>
 			<HBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
-				<Image src="test-resources/sap/ui/demokit/explored/img/nature/elephant.jpg"
+				<Image src="test-resources/sap/ui/documentation/sdk/images/nature/elephant.jpg"
 						decorative="false"
 						width="170px"
 						densityAware="false">
@@ -199,7 +199,7 @@
 						<LightBox>
 							<imageContent>
 								<LightBoxItem
-										imageSrc="test-resources/sap/ui/demokit/explored/img/nature/image_does_not_exist.jpg"
+										imageSrc="test-resources/sap/ui/documentation/sdk/images/nature/image_does_not_exist.jpg"
 										alt="Nature image"
 										title="This is a sample image"
 										subtitle="This is a place for description">

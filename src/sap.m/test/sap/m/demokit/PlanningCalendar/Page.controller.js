@@ -45,7 +45,7 @@ sap.ui.define([
 						]
 					},
 						{
-							pic: "test-resources/sap/ui/demokit/explored/img/johnDoe.png",
+							pic: "test-resources/sap/ui/documentation/sdk/images/johnDoe.png",
 							name: "John Doe",
 							role: "team member",
 							appointments: [

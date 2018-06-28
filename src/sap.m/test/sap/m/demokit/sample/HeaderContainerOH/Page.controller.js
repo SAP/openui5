@@ -4,7 +4,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/m/MessageToast', 'sap/ui/core/mvc/Cont
 
 	var PageController = Controller.extend("sap.m.sample.HeaderContainerOH.Page", {
 		onInit: function() {
-			var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+			var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/documentation/sdk/products.json");
 			this.getView().setModel(oModel);
 		},
 

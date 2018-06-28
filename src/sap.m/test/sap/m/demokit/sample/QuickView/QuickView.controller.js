@@ -122,7 +122,7 @@ sap.ui.define([
 					{
 						pageId: "employeePageId",
 						header: "Employee Info",
-						icon: "test-resources/sap/ui/demokit/explored/img/johnDoe.png",
+						icon: "test-resources/sap/ui/documentation/sdk/images/johnDoe.png",
 						title: "Michael Muller",
 						description: "Account Manager",
 						groups: [

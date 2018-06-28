@@ -14,7 +14,7 @@ sap.ui.define([
 				oModel.setData({
 					startDate: new Date("2017", "2", "08", "8", "0"),
 					people: [{
-						pic: "test-resources/sap/ui/demokit/explored/img/John_Miller.png",
+						pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
 						name: "John Miller",
 						role: "team member",
 						appointments: [
