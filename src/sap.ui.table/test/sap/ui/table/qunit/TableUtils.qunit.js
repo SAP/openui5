@@ -1,14 +1,17 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/library",
-	"sap/ui/core/Control"
-], function(qutils, TableUtils, Table, Column, RowAction, TableLibrary, Control) {
+	"sap/ui/core/library",
+	"sap/ui/core/Control",
+	"sap/ui/table/RowSettings"
+], function(TableQUnitUtils, qutils, TableUtils, Table, Column, RowAction, TableLibrary, CoreLibrary, Control, RowSettings) {
 	"use strict";
 
 	// Shortcuts
@@ -25,6 +28,9 @@ sap.ui.require([
 	var iNumberOfCols = window.iNumberOfCols;
 	var iNumberOfRows = window.iNumberOfRows;
 	var initRowActions = window.initRowActions;
+
+	var TestControl = TableQUnitUtils.getTestControl();
+	var TestInputControl = TableQUnitUtils.getTestInputControl();
 
 	QUnit.module("TableUtils", {
 		beforeEach: function() {
@@ -174,8 +180,8 @@ sap.ui.require([
 	QUnit.test("getCellInfo", function(assert) {
 		initRowActions(oTable, 1, 1);
 		oTable.getColumns()[1].setVisible(false);
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
 		oTable.getColumns()[2].setHeaderSpan(2);
 		sap.ui.getCore().applyChanges();
 
@@ -320,7 +326,7 @@ sap.ui.require([
 		assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionMode 'None'");
 
 		oTable.setSelectionMode(SelectionMode.MultiToggle);
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
+		oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.RowOnly);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionBehavior 'RowOnly'");
 	});
@@ -351,37 +357,37 @@ sap.ui.require([
 		oTable.setRowSettingsTemplate(null);
 		assert.ok(!TableUtils.hasRowHighlights(oTable), "No row settings configured: Returned false");
 
-		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: null
 		}));
 		assert.ok(!TableUtils.hasRowHighlights(oTable), "No row highlight configured: Returned false");
 
-		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-			highlight: sap.ui.core.MessageType.None
+		oTable.setRowSettingsTemplate(new RowSettings({
+			highlight: CoreLibrary.MessageType.None
 		}));
 		assert.ok(!TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'None': Returned false");
 
-		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-			highlight: sap.ui.core.MessageType.Success
+		oTable.setRowSettingsTemplate(new RowSettings({
+			highlight: CoreLibrary.MessageType.Success
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Success': Returned true");
 
-		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-			highlight: sap.ui.core.MessageType.Warning
+		oTable.setRowSettingsTemplate(new RowSettings({
+			highlight: CoreLibrary.MessageType.Warning
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Warning': Returned true");
 
-		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-			highlight: sap.ui.core.MessageType.Error
+		oTable.setRowSettingsTemplate(new RowSettings({
+			highlight: CoreLibrary.MessageType.Error
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Error': Returned true");
 
-		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-			highlight: sap.ui.core.MessageType.Information
+		oTable.setRowSettingsTemplate(new RowSettings({
+			highlight: CoreLibrary.MessageType.Information
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Information': Returned true");
 
-		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: "{bindingPath}"
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is bound: Returned true");
@@ -402,8 +408,8 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 0, "Headers hidden");
 		oTable.setColumnHeaderVisible(true);
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "b1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
 		sap.ui.getCore().applyChanges();
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 2, "Multiline Headers");
@@ -464,7 +470,7 @@ sap.ui.require([
 
 		function testLocal(oRowIndicator) {
 			oTable.clearSelection();
-			oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+			oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.Row);
 			sap.ui.getCore().applyChanges();
 
 			var iRowIndex = 0;
@@ -497,7 +503,7 @@ sap.ui.require([
 		testLocal(getCell(0, 0));
 
 		// If row selection is not allowed on data cells the selection state should not change.
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowSelector);
+		oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.RowSelector);
 		sap.ui.getCore().applyChanges();
 
 		var oElem = getCell(0, 0);
@@ -815,6 +821,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("isInstanceOf", function(assert) {
+		var done = assert.async();
+
 		function checkLoaded(oObj) {
 			if (!oObj || !oObj.prototype || !oObj.prototype.destroy) {
 				//Check whether namespace is already available and whether it is not the lazy initialization hook
@@ -830,11 +838,16 @@ sap.ui.require([
 		assert.equal(TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable"), false, "Not of type sap.ui.table.AnalyticalTable");
 		assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
 
-		var oAnalyticalTable = new sap.ui.table.AnalyticalTable();
-		assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded before check");
-		assert.equal(TableUtils.isInstanceOf(oAnalyticalTable, "sap/ui/table/AnalyticalTable"), true, "Is of type sap.ui.table.AnalyticalTable");
-		assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
-		oAnalyticalTable.destroy();
+		sap.ui.require([
+			"sap/ui/table/AnalyticalTable"
+		], function(AnalyticalTable) {
+			var oAnalyticalTable = new AnalyticalTable();
+			assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable loaded before check");
+			assert.equal(TableUtils.isInstanceOf(oAnalyticalTable, "sap/ui/table/AnalyticalTable"), true, "Is of type sap.ui.table.AnalyticalTable");
+			assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable loaded after check");
+			oAnalyticalTable.destroy();
+			done();
+		});
 	});
 
 	QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
@@ -1126,8 +1139,8 @@ sap.ui.require([
 
 	QUnit.test("getContentDensity", function(assert) {
 		var oCore = sap.ui.getCore();
-		var oSecondLevel = new sap.ui.table.TableUtilsDummyControl({content: [this.oTable]});
-		var oFirstLevel = new sap.ui.table.TableUtilsDummyControl({content: [oSecondLevel]});
+		var oSecondLevel = new this.TableUtilsDummyControl({content: [this.oTable]});
+		var oFirstLevel = new this.TableUtilsDummyControl({content: [oSecondLevel]});
 		var $Body = jQuery(document.body);
 
 		oFirstLevel.placeAt("__table-outer", 0);
@@ -1174,8 +1187,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("getContentDensity without DOM", function(assert) {
-		var oSecondLevel = new sap.ui.table.TableUtilsDummyControl({content: [this.oTable]});
-		var oFirstLevel = new sap.ui.table.TableUtilsDummyControl({content: [oSecondLevel]});
+		var oSecondLevel = new this.TableUtilsDummyControl({content: [this.oTable]});
+		var oFirstLevel = new this.TableUtilsDummyControl({content: [oSecondLevel]});
 		var $Body = jQuery(document.body);
 
 		assert.strictEqual(TableUtils.getContentDensity(this.oTable), undefined, "No content density set to far");
@@ -1222,14 +1235,14 @@ sap.ui.require([
 			function addColumn(sTitle, sText, bFocusable, bTabbable) {
 				var oControlTemplate;
 				if (!bFocusable) {
-					oControlTemplate = new sap.ui.table.test.TestControl({
+					oControlTemplate = new TestControl({
 						text: "{" + sText + "}",
 						index: iNumberOfCols,
 						visible: true,
 						tabbable: bTabbable
 					});
 				} else {
-					oControlTemplate = new sap.ui.table.test.TestInputControl({
+					oControlTemplate = new TestInputControl({
 						text: "{" + sText + "}",
 						index: iNumberOfCols,
 						visible: true,

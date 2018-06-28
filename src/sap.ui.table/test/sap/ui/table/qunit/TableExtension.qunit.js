@@ -1,9 +1,14 @@
 /*global QUnit */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/TableExtension"
-], function(qutils, TableExtension) {
+	"sap/ui/table/TableExtension",
+	"sap/ui/table/Table",
+	"sap/ui/table/TreeTable",
+	"sap/ui/table/AnalyticalTable",
+	"sap/ui/base/Object"
+], function(TableQUnitUtils, qutils, TableExtension, Table, TreeTable, AnalyticalTable, BaseObject) {
 	"use strict";
 
 	//************************************************************************
@@ -13,7 +18,7 @@ sap.ui.require([
 	var TABLETYPES = TableExtension.TABLETYPES;
 	var oStandardTable, oTreeTable, oAnalyticalTable;
 
-	TableExtension.extend("sap.ui.table.test.MyExtension", {
+	var MyExtension = TableExtension.extend("sap.ui.table.test.MyExtension", {
 		_init: function(oTable, sTableType, mSettings) {
 
 			if (mSettings.assert) {
@@ -45,9 +50,9 @@ sap.ui.require([
 
 	QUnit.module("TableExtension", {
 		beforeEach: function() {
-			oStandardTable = new sap.ui.table.Table();
-			oTreeTable = new sap.ui.table.TreeTable();
-			oAnalyticalTable = new sap.ui.table.AnalyticalTable();
+			oStandardTable = new Table();
+			oTreeTable = new TreeTable();
+			oAnalyticalTable = new AnalyticalTable();
 		},
 		afterEach: function() {
 			if (oStandardTable) {
@@ -67,7 +72,7 @@ sap.ui.require([
 
 	QUnit.test("enrich - wrong type", function(assert) {
 		var iNumberOfStandardExtensions = oStandardTable._aExtensions.length;
-		var oExtension = TableExtension.enrich(oStandardTable, sap.ui.base.Object, {name: "TEST"});
+		var oExtension = TableExtension.enrich(oStandardTable, BaseObject, {name: "TEST"});
 		assert.strictEqual(oExtension, null, "enrich does not accept other types than TableExtension");
 		assert.ok(!oStandardTable._getTEST, "No getter for Extension created");
 		assert.ok(oStandardTable._aExtensions.length == iNumberOfStandardExtensions, "Number of registered Extensions not changed");
@@ -75,8 +80,8 @@ sap.ui.require([
 
 	QUnit.test("enrich - correct type", function(assert) {
 		var iNumberOfStandardExtensions = oStandardTable._aExtensions.length;
-		var oExtension = TableExtension.enrich(oStandardTable, sap.ui.table.test.MyExtension, {name: "TEST2"});
-		assert.ok(oExtension instanceof sap.ui.table.test.MyExtension, "enrich does not accept other types than TableExtension");
+		var oExtension = TableExtension.enrich(oStandardTable, MyExtension, {name: "TEST2"});
+		assert.ok(oExtension instanceof MyExtension, "enrich does not accept other types than TableExtension");
 		assert.ok(typeof oStandardTable._getTEST2 == "function", "Getter for Extension created");
 
 		var aExtensions = oStandardTable._aExtensions;
@@ -86,7 +91,7 @@ sap.ui.require([
 
 	QUnit.test("init parameters - Table", function(assert) {
 		assert.expect(4);
-		TableExtension.enrich(oStandardTable, sap.ui.table.test.MyExtension, {
+		TableExtension.enrich(oStandardTable, MyExtension, {
 			name: "TEST",
 			assert: assert
 		});
@@ -94,7 +99,7 @@ sap.ui.require([
 
 	QUnit.test("init parameters - AnalyticalTable", function(assert) {
 		assert.expect(4);
-		TableExtension.enrich(oAnalyticalTable, sap.ui.table.test.MyExtension, {
+		TableExtension.enrich(oAnalyticalTable, MyExtension, {
 			name: "TEST",
 			assert: assert
 		});
@@ -102,12 +107,12 @@ sap.ui.require([
 
 	QUnit.test("init parameters - TreeTable", function(assert) {
 		assert.expect(4);
-		TableExtension.enrich(oTreeTable, sap.ui.table.test.MyExtension, {name: "TEST", assert: assert});
+		TableExtension.enrich(oTreeTable, MyExtension, {name: "TEST", assert: assert});
 	});
 
 	QUnit.test("Cleanup", function(assert) {
 		assert.expect(3);
-		var oExtension = TableExtension.enrich(oStandardTable, sap.ui.table.test.MyExtension, {name: "TEST"});
+		var oExtension = TableExtension.enrich(oStandardTable, MyExtension, {name: "TEST"});
 		oExtension.destroy = function() {
 			assert.ok(true, "Destroy called");
 		};
@@ -118,16 +123,16 @@ sap.ui.require([
 	});
 
 	QUnit.test("Generated Getter", function(assert) {
-		var oExtension = TableExtension.enrich(oStandardTable, sap.ui.table.test.MyExtension, {name: "TEST"});
+		var oExtension = TableExtension.enrich(oStandardTable, MyExtension, {name: "TEST"});
 		assert.ok(typeof oStandardTable._getTEST == "function", "Getter for Extension created");
 		assert.strictEqual(oStandardTable._getTEST(), oExtension, "Getter returns extension instance");
 
 		// Extension without name and getter possible -> no error should occur
-		TableExtension.enrich(oStandardTable, sap.ui.table.test.MyExtension, {});
+		TableExtension.enrich(oStandardTable, MyExtension, {});
 	});
 
 	QUnit.test("Functions", function(assert) {
-		var oExtension = TableExtension.enrich(oStandardTable, sap.ui.table.test.MyExtension, {name: "TEST"});
+		var oExtension = TableExtension.enrich(oStandardTable, MyExtension, {name: "TEST"});
 		assert.ok(oExtension.getTable() === oStandardTable, "getTable");
 		assert.ok(oExtension.getInterface() === oExtension, "getInterface");
 	});
@@ -138,7 +143,7 @@ sap.ui.require([
 		var iCounter = 0;
 		var iCount = 0;
 		var bActive = true;
-		var oExtension = TableExtension.enrich(oStandardTable, sap.ui.table.test.MyExtension, {name: "TEST"});
+		var oExtension = TableExtension.enrich(oStandardTable, MyExtension, {name: "TEST"});
 		oExtension._attachEvents = function() {
 			if (bActive) {
 				assert.ok(true, "_attachEvents called");

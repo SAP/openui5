@@ -1,14 +1,16 @@
 /*global QUnit */
 
-sap.ui.require([], function() {
+sap.ui.require([
+	"sap/ui/table/TableRendererUtils",
+	"sap/ui/core/Element",
+	"sap/ui/core/Control"
+], function(TableRendererUtils, Element, Control) {
 	"use strict";
 
 	//************************************************************************
 	// Helper Functions
 	//************************************************************************
 
-	jQuery.sap.require("sap.ui.table.TableRendererUtils");
-	var TableRendererUtils = sap.ui.table.TableRendererUtils;
 	var oOutput;
 
 	function initOutput() {
@@ -193,8 +195,8 @@ sap.ui.require([], function() {
 	});
 
 	QUnit.test("startElement - id", function(assert) {
-		var oElement = new sap.ui.core.Element("CUSTOMELEMENT");
-		var oControl = new sap.ui.core.Control("CUSTOMCONTROL");
+		var oElement = new Element("CUSTOMELEMENT");
+		var oControl = new Control("CUSTOMCONTROL");
 		TableRendererUtils.startElement(oRm, oTable, {id: "HELLO"});
 		assert.equal(oOutput.attributes.length, 1, "ID written");
 		assert.equal(oOutput.attributes[0], "id=TABLEID-HELLO", "ID correct");

@@ -1,30 +1,43 @@
 /*global QUnit */
 
 sap.ui.require([
+	"sap/m/Label",
+	"sap/m/Text",
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TableUtils",
-	"sap/ui/model/json/JSONModel"
-], function(qutils, TableUtils, JSONModel) {
+	"sap/ui/table/Column",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/table/Table",
+	"sap/ui/table/library",
+	"sap/ui/core/library"
+], function(Label, Text, TableQUnitUtils, qutils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary) {
 	"use strict";
 
-	var TABLESETTINGS = window.TABLESETTINGS;
+	var TestControl = TableQUnitUtils.getTestControl();
+
+	var aData = [];
+	for (var i = 0; i < 10; i++) {
+		aData.push({text: "" + i});
+	}
+
 	var oTable;
 	var oModel = new JSONModel();
-	oModel.setData({modelData: TABLESETTINGS.listTestData});
+	oModel.setData({modelData: aData});
 
 	function createTable() {
 		function createColumns(oTable) {
 
 			// 1st column with multilabels
-			oTable.addColumn(new sap.ui.table.Column({
+			oTable.addColumn(new Column({
 				multiLabels: [
-					new sap.m.Text({text: "Row:1, Column:1 with a long description"}),
-					new sap.m.Text({text: "Row:2, Column:1"})
+					new Text({text: "Row:1, Column:1 with a long description"}),
+					new Text({text: "Row:2, Column:1"})
 				],
 				headerSpan: [3, 1],
-				template: new sap.m.Text({text: "{lastName}"}),
-				sortProperty: "lastName",
-				filterProperty: "lastName",
+				template: new TestControl({text: "{text}"}),
+				sortProperty: "text",
+				filterProperty: "text",
 				width: "100px",
 				flexible: false,
 				autoResizable: true,
@@ -32,15 +45,15 @@ sap.ui.require([
 			}));
 
 			// 2nd column with multilabels
-			oTable.addColumn(new sap.ui.table.Column({
+			oTable.addColumn(new Column({
 				multiLabels: [
-					new sap.m.Text({text: "Row:1, Column:2 with a long description"}),
-					new sap.m.Text({text: "Row:2, Column:2"})
+					new Text({text: "Row:1, Column:2 with a long description"}),
+					new Text({text: "Row:2, Column:2"})
 				],
 				headerSpan: [1, 2, 1],
-				template: new sap.m.Label({text: "{name}"}),
-				sortProperty: "name",
-				filterProperty: "name",
+				template: new TestControl({text: "{text}"}),
+				sortProperty: "text",
+				filterProperty: "text",
 				width: "100px",
 				flexible: false,
 				autoResizable: true,
@@ -48,14 +61,14 @@ sap.ui.require([
 			}));
 
 			// 3rd column with multilabels
-			oTable.addColumn(new sap.ui.table.Column({
+			oTable.addColumn(new Column({
 				multiLabels: [
-					new sap.m.Label({text: "Row:1, Column:3 - long text"}),
-					new sap.m.Text({text: "Row:2, Column:3"})
+					new Label({text: "Row:1, Column:3 - long text"}),
+					new Text({text: "Row:2, Column:3"})
 				],
-				template: new sap.m.ObjectStatus({text: "{objStatusText}", state: "{objStatusState}"}),
-				sortProperty: "objStatusState",
-				filterProperty: "objStatusState",
+				template: new TestControl({text: "{text}"}),
+				sortProperty: "text",
+				filterProperty: "text",
 				width: "100px",
 				flexible: true,
 				autoResizable: true,
@@ -63,38 +76,38 @@ sap.ui.require([
 			}));
 
 			// Other columns
-			oTable.addColumn(new sap.ui.table.Column({
-				label: new sap.m.Label({text: "Icon"}),
+			oTable.addColumn(new Column({
+				label: new Label({text: "Header"}),
 				headerSpan: "2",
-				template: new sap.ui.core.Icon({src: "sap-icon://account", decorative: false}),
-				hAlign: sap.ui.core.HorizontalAlign.Center,
+				template: new TestControl({text: "{text}"}),
+				hAlign: coreLibrary.HorizontalAlign.Center,
 				width: "100px",
 				flexible: true,
 				autoResizable: true,
 				resizable: true
 			}));
 
-			oTable.addColumn(new sap.ui.table.Column({
-				label: new sap.m.Label({text: "m.Checkbox"}),
-				template: new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"}),
+			oTable.addColumn(new Column({
+				label: new Label({text: "Some Header"}),
+				template: new TestControl({text: "{text}"}),
 				width: "100px",
 				flexible: false,
 				autoResizable: true,
 				resizable: true
 			}));
 
-			oTable.addColumn(new sap.ui.table.Column({
-				label: new sap.m.Label({text: "m.Link"}),
-				template: new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"}),
+			oTable.addColumn(new Column({
+				label: new Label({text: "Some other header"}),
+				template: new TestControl({text: "{text}"}),
 				width: "100px",
 				flexible: false,
 				autoResizable: true,
 				resizable: true
 			}));
 
-			oTable.addColumn(new sap.ui.table.Column({
-				label: new sap.m.Label({text: "unified.Currency"}),
-				template: new sap.ui.unified.Currency({value: "{money}", currency: "{currency}"}),
+			oTable.addColumn(new Column({
+				label: new Label({text: "Just another header"}),
+				template: new TestControl({text: "{text}"}),
 				width: "100px",
 				flexible: false,
 				autoResizable: true,
@@ -102,10 +115,10 @@ sap.ui.require([
 			}));
 		}
 
-		oTable = new sap.ui.table.Table();
+		oTable = new Table();
 		oTable.setTitle("Table 1");
 		oTable.setFooter("Footer");
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.MultiToggle);
 		oTable.setEnableColumnFreeze(true);
 		oTable.setShowColumnVisibilityMenu(true);
 		oTable.setColumnHeaderVisible(true);

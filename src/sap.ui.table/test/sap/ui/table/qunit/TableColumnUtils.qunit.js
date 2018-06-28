@@ -1,9 +1,14 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/TableUtils"
-], function(qutils, TableUtils) {
+	"sap/ui/table/TableUtils",
+	"sap/ui/table/Table",
+	"sap/ui/table/Column",
+	"sap/ui/core/Control",
+	"sap/ui/Device"
+], function(TableQUnitUtils, qutils, TableUtils, Table, Column, Control, Device) {
 	"use strict";
 
 	// mapping of global function calls
@@ -12,7 +17,8 @@ sap.ui.require([
 	var iNumberOfCols = window.iNumberOfCols;
 
 	// Shortcuts
-	var ColumnUtils = sap.ui.table.TableUtils.Column;
+	var ColumnUtils = TableUtils.Column;
+	var TestControl = TableQUnitUtils.getTestControl();
 
 	//************************************************************************
 	// Test Code
@@ -20,7 +26,7 @@ sap.ui.require([
 
 	QUnit.module("Misc", {
 		beforeEach: function() {
-			this.oTable = new sap.ui.table.Table();
+			this.oTable = new Table();
 			this.fnColumnMapToMinimum = function(oColumnMap) {
 				var oMinColumnMap = {};
 				var i;
@@ -82,9 +88,9 @@ sap.ui.require([
 	});
 
 	QUnit.test("No Header Spans", function(assert) {
-		this.oTable.addColumn(new sap.ui.table.Column("c1", {headerSpan: 1, template: new sap.ui.core.Control()}));
-		this.oTable.addColumn(new sap.ui.table.Column("c2", {headerSpan: 1, template: new sap.ui.core.Control()}));
-		this.oTable.addColumn(new sap.ui.table.Column("c3", {headerSpan: 1, template: new sap.ui.core.Control()}));
+		this.oTable.addColumn(new Column("c1", {headerSpan: 1, template: new Control()}));
+		this.oTable.addColumn(new Column("c2", {headerSpan: 1, template: new Control()}));
+		this.oTable.addColumn(new Column("c3", {headerSpan: 1, template: new Control()}));
 
 		// strip returned data to minimum for better analysis
 		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
@@ -110,12 +116,12 @@ sap.ui.require([
 	});
 
 	QUnit.test("Header Spans", function(assert) {
-		this.oTable.addColumn(new sap.ui.table.Column("c1", {headerSpan: 2, template: new sap.ui.core.Control()}));
-		this.oTable.addColumn(new sap.ui.table.Column("c2", {headerSpan: 1, template: new sap.ui.core.Control()}));
-		this.oTable.addColumn(new sap.ui.table.Column("c3", {headerSpan: 1, template: new sap.ui.core.Control()}));
-		this.oTable.addColumn(new sap.ui.table.Column("c4", {headerSpan: 3, template: new sap.ui.core.Control()}));
-		this.oTable.addColumn(new sap.ui.table.Column("c5", {headerSpan: 1, template: new sap.ui.core.Control()}));
-		this.oTable.addColumn(new sap.ui.table.Column("c6", {headerSpan: 1, template: new sap.ui.core.Control()}));
+		this.oTable.addColumn(new Column("c1", {headerSpan: 2, template: new Control()}));
+		this.oTable.addColumn(new Column("c2", {headerSpan: 1, template: new Control()}));
+		this.oTable.addColumn(new Column("c3", {headerSpan: 1, template: new Control()}));
+		this.oTable.addColumn(new Column("c4", {headerSpan: 3, template: new Control()}));
+		this.oTable.addColumn(new Column("c5", {headerSpan: 1, template: new Control()}));
+		this.oTable.addColumn(new Column("c6", {headerSpan: 1, template: new Control()}));
 
 		// strip returned data to minimum for better analysis
 		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
@@ -217,20 +223,20 @@ sap.ui.require([
 	});
 
 	QUnit.test("Header Spans with Multi-Headers", function(assert) {
-		this.oTable.addColumn(new sap.ui.table.Column("c1", {
+		this.oTable.addColumn(new Column("c1", {
 			headerSpan: [2, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c2", {
+		this.oTable.addColumn(new Column("c2", {
 			headerSpan: [1, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c3", {
+		this.oTable.addColumn(new Column("c3", {
 			headerSpan: [1, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control()],
+			template: new Control()
 		}));
 
 		// strip returned data to minimum for better analysis
@@ -265,20 +271,20 @@ sap.ui.require([
 	});
 
 	QUnit.test("Header Spans with Multi-Headers", function(assert) {
-		this.oTable.addColumn(new sap.ui.table.Column("c1", {
+		this.oTable.addColumn(new Column("c1", {
 			headerSpan: [3, 1, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c2", {
+		this.oTable.addColumn(new Column("c2", {
 			headerSpan: [1, 2, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c3", {
+		this.oTable.addColumn(new Column("c3", {
 			headerSpan: [1, 1, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
 
 		// strip returned data to minimum for better analysis
@@ -359,35 +365,35 @@ sap.ui.require([
 	});
 
 	QUnit.test("Header Spans with Multi-Headers, Odd Setup", function(assert) {
-		this.oTable.addColumn(new sap.ui.table.Column("c1", {
+		this.oTable.addColumn(new Column("c1", {
 			headerSpan: [1, 1, 3],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c2", {
+		this.oTable.addColumn(new Column("c2", {
 			headerSpan: [2, 1, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c3", {
+		this.oTable.addColumn(new Column("c3", {
 			headerSpan: [1, 2, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c4", {
+		this.oTable.addColumn(new Column("c4", {
 			headerSpan: [1, 1, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c5", {
+		this.oTable.addColumn(new Column("c5", {
 			headerSpan: [1, 2, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c6", {
+		this.oTable.addColumn(new Column("c6", {
 			headerSpan: [1, 1, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control(), new Control()],
+			template: new Control()
 		}));
 
 		var aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c1"));
@@ -440,30 +446,30 @@ sap.ui.require([
 	});
 
 	QUnit.test("getHeaderSpan", function(assert) {
-		this.oTable.addColumn(new sap.ui.table.Column("c1", {
+		this.oTable.addColumn(new Column("c1", {
 			headerSpan: [3, 1, 1],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c2", {
+		this.oTable.addColumn(new Column("c2", {
 			headerSpan: [1, 2],
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c3", {
+		this.oTable.addColumn(new Column("c3", {
 			headerSpan: 1,
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c4", {
+		this.oTable.addColumn(new Column("c4", {
 			headerSpan: 2,
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control()],
+			template: new Control()
 		}));
-		this.oTable.addColumn(new sap.ui.table.Column("c5", {
+		this.oTable.addColumn(new Column("c5", {
 			headerSpan: 1,
-			multiLabels: [new sap.ui.core.Control(), new sap.ui.core.Control()],
-			template: new sap.ui.core.Control()
+			multiLabels: [new Control(), new Control()],
+			template: new Control()
 		}));
 
 		var aColumns = this.oTable.getColumns();
@@ -521,8 +527,8 @@ sap.ui.require([
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column");
 
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column (Multi Header)");
@@ -567,8 +573,8 @@ sap.ui.require([
 		}
 
 		oTable.getColumns()[3].setHeaderSpan([2, 1]);
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl());
+		oTable.getColumns()[3].addMultiLabel(new TestControl());
+		oTable.getColumns()[3].addMultiLabel(new TestControl());
 		sap.ui.getCore().applyChanges();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
@@ -672,26 +678,26 @@ sap.ui.require([
 	});
 
 	QUnit.test("getMinColumnWidth", function(assert) {
-		var bDesktop = sap.ui.Device.system.desktop;
-		sap.ui.Device.system.desktop = true;
+		var bDesktop = Device.system.desktop;
+		Device.system.desktop = true;
 		assert.equal(ColumnUtils.getMinColumnWidth(), 48, "Desktop column width");
 		ColumnUtils._iColMinWidth = null;
-		sap.ui.Device.system.desktop = false;
+		Device.system.desktop = false;
 		assert.equal(ColumnUtils.getMinColumnWidth(), 88, "Mobile column width");
-		sap.ui.Device.system.desktop = bDesktop;
+		Device.system.desktop = bDesktop;
 	});
 
 	QUnit.test("resizeColumn", function(assert) {
 		oTable.setFixedColumnCount(0);
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_1"}));
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_1"}));
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_2_2"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_2"}));
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_3"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_1"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "a_2_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
 		oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
 		sap.ui.getCore().applyChanges();
 

@@ -2,8 +2,12 @@
 
 sap.ui.require([
 	"sap/ui/table/Table",
-	"sap/ui/table/Column"
-], function(Table, Column) {
+	"sap/ui/table/Column",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/unified/Menu",
+	"sap/m/Label",
+	"sap/m/Text"
+], function(Table, Column, JSONModel, Menu, Label, Text) {
 	"use strict";
 
 	sinon.config.useFakeTimers = true;
@@ -59,7 +63,7 @@ sap.ui.require([
 		assert.notEqual(oLabel, null, "Added label by passing a string");
 		assert.strictEqual(oLabel.getText(), "labelstring", "The text of the label is correct");
 
-		var oNewLabel = new sap.m.Label({text: "labelinstance"});
+		var oNewLabel = new Label({text: "labelinstance"});
 		this._oColumn.setLabel(oNewLabel);
 		assert.notEqual(oNewLabel, null, "Added label by passing a sap.m.Label instance");
 		assert.notEqual(oLabel, oNewLabel, "The column has a new label");
@@ -74,7 +78,7 @@ sap.ui.require([
 		assert.notEqual(oTemplate, null, "Added template by passing a string");
 		assert.strictEqual(oTemplate.getBindingPath("text"), "bindingpath", "The binding path of the template is correct");
 
-		var oNewTemplate = new sap.m.Text({text: "{anotherbindingpath}"});
+		var oNewTemplate = new Text({text: "{anotherbindingpath}"});
 		this._oColumn.setTemplate(oNewTemplate);
 		assert.notEqual(oNewTemplate, null, "Added template by passing a sap.m.Text instance");
 		assert.notEqual(oTemplate, oNewTemplate, "The column has a new template");
@@ -206,7 +210,7 @@ sap.ui.require([
 
 	QUnit.module("Column Menu", {
 		beforeEach: function() {
-			var oModel = new sap.ui.model.json.JSONModel();
+			var oModel = new JSONModel();
 			oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
 			this._oTable = new Table();
 			this._oTable.bindRows("/");
@@ -219,7 +223,7 @@ sap.ui.require([
 			this._oColumnWithUnifiedMenu = new Column({
 				filterProperty: "myOtherProp",
 				showFilterMenuEntry: true,
-				menu: new sap.ui.unified.Menu()
+				menu: new Menu()
 			});
 
 			this._oTable.addColumn(this._oColumnWithColumnMenu);
@@ -354,7 +358,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("getTemplateClone: No template clones exist -> Create a new template clone", function(assert) {
-		var oTemplate = new sap.m.Text();
+		var oTemplate = new Text();
 		this.oColumn.setTemplate(oTemplate);
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
@@ -374,7 +378,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("getTemplateClone: Only used template clones exist -> Create a new template clone", function(assert) {
-		var oTemplate = new sap.m.Text();
+		var oTemplate = new Text();
 		this.oColumn.setTemplate(oTemplate);
 		sinon.stub(this.oColumn.getTemplateClone(0), "getParent").returns("i have a parent");
 
@@ -395,7 +399,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("getTemplateClone: Reuse a free template clone", function(assert) {
-		var oTemplate = new sap.m.Text();
+		var oTemplate = new Text();
 		this.oColumn.setTemplate(oTemplate);
 		sinon.stub(this.oColumn.getTemplateClone(0), "getParent").returns("i have a parent");
 		var oFreeTemplateClone = this.oColumn.getTemplateClone(1);
@@ -454,7 +458,7 @@ sap.ui.require([
 		var oCloneWithParentDestroySpy = sinon.spy(this.oCloneWithParent, "destroy");
 		var oCloneWithoutParentADestroySpy = sinon.spy(this.oCloneWithoutParentA, "destroy");
 
-		this.oColumn.setTemplate(new sap.m.Text());
+		this.oColumn.setTemplate(new Text());
 
 		assert.ok(
 			oCloneWithParentDestroySpy.calledOnce

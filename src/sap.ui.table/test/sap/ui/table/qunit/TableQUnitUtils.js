@@ -1,11 +1,20 @@
-(function () {
+
+sap.ui.define([
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Control",
+	"sap/ui/table/Table",
+	"sap/ui/table/TreeTable",
+	"sap/ui/table/Column",
+	"sap/ui/table/RowAction",
+	"sap/ui/table/RowActionItem"
+], function (JSONModel, Control, Table, TreeTable, Column, RowAction, RowActionItem) {
 	"use strict";
 
 	//************************************************************************
 	// Preparation Code
 	//************************************************************************
 
-	sap.ui.core.Control.extend("sap.ui.table.test.TestControl", {
+	var TestControl = Control.extend("sap.ui.table.test.TestControl", {
 		metadata: {
 			properties: {
 				"text": "string",
@@ -37,7 +46,7 @@
 		}
 	});
 
-	sap.ui.core.Control.extend("sap.ui.table.test.TestInputControl", {
+	var TestInputControl = Control.extend("sap.ui.table.test.TestInputControl", {
 		metadata: {
 			properties: {
 				"text": "string",
@@ -63,10 +72,10 @@
 
 	sap.ui.table.TableHelper = {
 		createLabel: function (mConfig) {
-			return new sap.ui.table.test.TestControl(mConfig);
+			return new TestControl(mConfig);
 		},
 		createTextView: function (mConfig) {
-			return new sap.ui.table.test.TestControl(mConfig);
+			return new TestControl(mConfig);
 		},
 		addTableClass: function () {
 			return "sapUiTableTest";
@@ -74,11 +83,19 @@
 		bFinal: true
 	};
 
+	var TableQUnitUtils = { // TBD: Move global functions to this object
+		getTestControl: function() {
+			return TestControl;
+		},
+
+		getTestInputControl: function() {
+			return TestInputControl;
+		}
+	};
 
 	var oTable, oTreeTable;
-	jQuery.sap.require("sap.ui.model.json.JSONModel");
 
-	var oModel = new sap.ui.model.json.JSONModel();
+	var oModel = new JSONModel();
 	window.oModel = oModel;
 
 	var aFields = ["A", "B", "C", "D", "E"];
@@ -89,7 +106,7 @@
 	window.iNumberOfCols = iNumberOfCols;
 
 	window.createTables = function(bSkipPlaceAt, bFocusableCellTemplates) {
-		oTable = new sap.ui.table.Table({
+		oTable = new Table({
 			rows: "{/rows}",
 			title: "Grid Table",
 			selectionMode: "MultiToggle",
@@ -99,7 +116,7 @@
 		});
 		window.oTable = oTable;
 
-		oTreeTable = new sap.ui.table.TreeTable({
+		oTreeTable = new TreeTable({
 			rows: {
 				path: "/tree",
 				parameters: {arrayNames: ["rows"]}
@@ -123,21 +140,21 @@
 				oTree[aFields[j]] = aFields[j] + (i + 1);
 				oTree.rows[0][aFields[j]] = aFields[j] + "SUB" + (i + 1);
 				if (i == 0) {
-					oTable.addColumn(new sap.ui.table.Column({
+					oTable.addColumn(new Column({
 						label: aFields[j] + "_TITLE",
 						width: "100px",
 						tooltip: j == 2 ? aFields[j] + "_TOOLTIP" : null,
-						template: new sap.ui.table.test.TestControl({
+						template: new TestControl({
 							text: "{" + aFields[j] + "}",
 							index: j,
 							visible: j != 3,
 							tabbable: !!bFocusableCellTemplates
 						})
 					}));
-					oTreeTable.addColumn(new sap.ui.table.Column({
+					oTreeTable.addColumn(new Column({
 						label: aFields[j] + "_TITLE",
 						width: "100px",
-						template: new sap.ui.table.test.TestControl({
+						template: new TestControl({
 							text: "{" + aFields[j] + "}",
 							tabbable: !!bFocusableCellTemplates
 						})
@@ -332,10 +349,10 @@
 
 	window.initRowActions = function(oTable, iCount, iNumberOfActions) {
 		oTable.setRowActionCount(iCount);
-		var oRowAction = new sap.ui.table.RowAction();
+		var oRowAction = new RowAction();
 		var aActions = [{type: "Navigation"}, {type: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
 		for (var i = 0; i < Math.min(iNumberOfActions, 3); i++) {
-			var oItem = new sap.ui.table.RowActionItem({
+			var oItem = new RowActionItem({
 				icon: aActions[i].icon,
 				text: aActions[i].text,
 				type: aActions[i].type || "Custom"
@@ -346,4 +363,5 @@
 		sap.ui.getCore().applyChanges();
 	};
 
-}());
+	return TableQUnitUtils;
+});

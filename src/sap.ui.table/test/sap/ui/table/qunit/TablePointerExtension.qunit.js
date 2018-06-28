@@ -1,8 +1,13 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.require([
-	"sap/ui/qunit/QUnitUtils"
-], function(qutils) {
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/Device",
+	"sap/ui/table/TablePointerExtension",
+	"sap/ui/table/TableUtils",
+	"sap/ui/table/library"
+], function(TableQUnitUtils, qutils, Device, TablePointerExtension, TableUtils, tableLibrary) {
 	"use strict";
 
 	// mapping of global function calls
@@ -95,7 +100,7 @@ sap.ui.require([
 
 	QUnit.module("Column Resizing", {
 		beforeEach: function() {
-			this.bOriginalSystemDesktop = sap.ui.Device.system.desktop;
+			this.bOriginalSystemDesktop = Device.system.desktop;
 
 			createTables();
 
@@ -116,15 +121,15 @@ sap.ui.require([
 			sap.ui.getCore().applyChanges();
 
 			// Extend auto resize logic to know about the test control
-			sap.ui.table.TablePointerExtension._fnCheckTextBasedControl = function(oControl) {
+			TablePointerExtension._fnCheckTextBasedControl = function(oControl) {
 				return oControl.getMetadata().getName() === "TestControl";
 			};
 		},
 		afterEach: function() {
-			sap.ui.Device.system.desktop = this.bOriginalSystemDesktop;
+			Device.system.desktop = this.bOriginalSystemDesktop;
 
 			destroyTables();
-			sap.ui.table.TablePointerExtension._fnCheckTextBasedControl = null;
+			TablePointerExtension._fnCheckTextBasedControl = null;
 		}
 	});
 
@@ -153,7 +158,7 @@ sap.ui.require([
 
 	QUnit.test("Automatic Column Resize via Double Click", function(assert) {
 		var done = assert.async();
-		sap.ui.Device.system.desktop = true;
+		Device.system.desktop = true;
 
 		function triggerDoubleClick(bExpect, iIndex) {
 			// Move resizer to correct column
@@ -184,13 +189,13 @@ sap.ui.require([
 				sap.ui.getCore().applyChanges();
 				assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
 				assert.ok(oColumn.getResizable(), "Column is resizable");
-				sap.ui.Device.system.desktop = false;
+				Device.system.desktop = false;
 				triggerDoubleClick(true, 1);
 
 				setTimeout(function() {
 					assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 
-					sap.ui.Device.system.desktop = true;
+					Device.system.desktop = true;
 					triggerDoubleClick(true, 1);
 
 					setTimeout(function() {
@@ -288,8 +293,8 @@ sap.ui.require([
 
 		var $Resizer = oTable.$("rsz");
 		var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
-		sap.ui.Device.system.desktop = false;
-		sap.ui.table.TableUtils.Menu.openContextMenu(oTable, oColumn.getDomRef(), false);
+		Device.system.desktop = false;
+		TableUtils.Menu.openContextMenu(oTable, oColumn.getDomRef(), false);
 		var $ResizeButton = oColumn.$().find(".sapUiTableColResizer");
 		var iResizeButtonLeft = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 100);
 		qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
@@ -627,7 +632,7 @@ sap.ui.require([
 			bContextMenu = true;
 		};
 
-		var $FakeButton = sap.ui.table.TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
+		var $FakeButton = TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
 		$FakeButton.addClass("sapUiTableGroupMenuButton");
 		qutils.triggerMouseEvent($FakeButton, "click");
 		assert.ok(!bSelected, "No Selection should happen");
@@ -661,7 +666,7 @@ sap.ui.require([
 			}
 		}
 
-		var oRowColCell = sap.ui.table.TableUtils.getRowColCell(oTreeTable, 1, 2);
+		var oRowColCell = TableUtils.getRowColCell(oTreeTable, 1, 2);
 		initCellClickHandler(function(oEvent) {
 			bClickHandlerCalled = true;
 			assert.ok(oEvent.getParameter("cellControl") === oRowColCell.cell, "Cell Click Event: Parameter cellControl");
@@ -743,7 +748,7 @@ sap.ui.require([
 
 	QUnit.test("Selection", function(assert) {
 		oTable.clearSelection();
-		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 		initRowActions(oTable, 2, 2);
 		sap.ui.getCore().applyChanges();
 
