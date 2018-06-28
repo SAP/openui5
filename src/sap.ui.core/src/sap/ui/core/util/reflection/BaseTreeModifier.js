@@ -3,17 +3,17 @@
  */
 
 sap.ui.define([
-    "sap/ui/base/ManagedObject",
-    "sap/ui/base/ManagedObjectMetadata",
-    "sap/base/util/ObjectPath",
-    "jquery.sap.global",
-	"jquery.sap.xml" // needed to have jQuery.sap.getParseError
+	"sap/ui/base/ManagedObject",
+	"sap/ui/base/ManagedObjectMetadata",
+	"sap/base/util/ObjectPath",
+	"sap/ui/util/XMLHelper",
+	"jquery.sap.global"
 ], function(
     ManagedObject,
 	ManagedObjectMetadata,
 	ObjectPath,
-	jQuery
-	/* other jQuery.sap dependencies */
+	XMLHelper,
+    jQuery
 ) {
 
 	"use strict";
@@ -221,7 +221,7 @@ sap.ui.define([
 		 * @returns {Element} Returns the original fragment in XML with updated IDs.
 		 */
 		_checkAndPrefixIdsInFragment: function(oFragment, sIdPrefix) {
-			var oParseError = jQuery.sap.getParseError(oFragment);
+			var oParseError = XMLHelper.getParseError(oFragment);
 			if (oParseError.errorCode !== 0) {
 				throw new Error(oFragment.parseError.reason);
 			}
@@ -661,4 +661,3 @@ sap.ui.define([
 
 	};
 });
-

@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/core/cache/CacheManager',
 	'sap/ui/model/resource/ResourceModel',
 	"sap/ui/thirdparty/jquery",
-	'jquery.sap.xml',
+	"sap/ui/util/XMLHelper",
 	'jquery.sap.script'
 ],
 	function(
@@ -30,8 +30,10 @@ sap.ui.define([
 		Control,
 		RenderManager,
 		Cache,
-		ResourceModel /* , jQuerySap */,
-		jQueryDOM
+		ResourceModel,
+		jQueryDOM,
+		XMLHelper
+		/* jQuerySapScript */
 	) {
 	"use strict";
 
@@ -254,7 +256,7 @@ sap.ui.define([
 			// keep the content as a pseudo property to make cloning work but without supporting mutation
 			// TODO model this as a property as soon as write-once-during-init properties become available
 			oView.mProperties["viewContent"] = mSettings.viewContent;
-			var xContent = jQuery.sap.parseXML(mSettings.viewContent);
+			var xContent = XMLHelper.parse(mSettings.viewContent);
 			validatexContent(xContent);
 			return xContent.documentElement;
 		}
@@ -399,7 +401,7 @@ sap.ui.define([
 			// we don't want to write the key into the cache
 			var sKey = mCacheInput.key;
 			delete mCacheInput.key;
-			mCacheInput.xml = jQuery.sap.serializeXML(xContent);
+			mCacheInput.xml = XMLHelper.serialize(xContent);
 			return Cache.set(sKey, mCacheInput);
 		}
 
@@ -407,7 +409,7 @@ sap.ui.define([
 			return Cache.get(mCacheInput.key).then(function(mCacheOutput) {
 				// double check manifest to eliminate issues with hash collisions
 				if (mCacheOutput && mCacheOutput.componentManifest == mCacheInput.componentManifest) {
-					mCacheOutput.xml = jQuery.sap.parseXML(mCacheOutput.xml, "application/xml").documentElement;
+					mCacheOutput.xml = XMLHelper.parse(mCacheOutput.xml, "application/xml").documentElement;
 					if (mCacheOutput.additionalData) {
 						// extend the additionalData which was passed into cache configuration dynamically
 						jQuery.extend(true, mCacheInput.additionalData, mCacheOutput.additionalData);

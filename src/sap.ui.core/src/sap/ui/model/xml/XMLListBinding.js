@@ -3,8 +3,13 @@
  */
 
 // Provides the XML model implementation of a list binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/ClientListBinding'],
-	function(jQuery, ChangeReason, ClientListBinding) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/ClientListBinding',
+	"sap/ui/util/XMLHelper"
+],
+	function(jQuery, ChangeReason, ClientListBinding, XMLHelper) {
 	"use strict";
 
 
@@ -81,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @private
 	 */
 	XMLListBinding.prototype.getEntryData = function(oContext) {
-		return jQuery.sap.serializeXML(oContext.getObject());
+		return XMLHelper.serialize(oContext.getObject());
 	};
 
 	/**

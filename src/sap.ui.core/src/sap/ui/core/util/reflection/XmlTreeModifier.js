@@ -8,17 +8,16 @@ sap.ui.define([
 	"sap/ui/core/XMLTemplateProcessor",
 	"jquery.sap.global",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/XMLHelper",
 	// needed to have sap.ui.xmlfragment
-	"sap/ui/core/Fragment",
-	// needed to have jQuery.sap.parseXML
-	"jquery.sap.xml"
+	"sap/ui/core/Fragment"
 ], function(
 	BaseTreeModifier,
 	DataType,
 	XMLTemplateProcessor,
-	jQuery
-	/* other jQuery.sap dependencies */,
-	jQueryDOM
+	jQuery,
+	jQueryDOM,
+	XMLHelper
 ) {
 
 	"use strict";
@@ -464,7 +463,7 @@ sap.ui.define([
 		 * @returns {Node[]} Returns an array with the nodes of the controls of the fragment
 		 */
 		instantiateFragment: function(sFragment, sNamespace) {
-			var oFragment = jQuery.sap.parseXML(sFragment);
+			var oFragment = XMLHelper.parse(sFragment);
 			oFragment = this._checkAndPrefixIdsInFragment(oFragment, sNamespace);
 
 			if (oFragment.localName === "FragmentDefinition") {

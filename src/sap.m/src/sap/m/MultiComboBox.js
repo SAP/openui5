@@ -22,7 +22,6 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.xml',
 	'jquery.sap.keycodes'
 ],
 function(
