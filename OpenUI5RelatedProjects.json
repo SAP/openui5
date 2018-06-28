@@ -223,5 +223,14 @@
 			"owner": "wozjac",
 			"license": "MIT",
 			"type": "Brackets extension"
-  		}
+  		},
+		{
+			"name": "vscode-ui5-explorer",
+			"description": "UI5 Explorer for Visual Studio Code",
+			"githubLink": "https://github.com/kozubikmichal/vscode-ui5-explorer",
+			"documentationLink": "https://marketplace.visualstudio.com/items?itemName=MichalKozubik.ui5-explorer",
+			"owner": "kozubikmichal",
+			"license": "MIT",
+			"type": "Extension"
+		}
 	]
