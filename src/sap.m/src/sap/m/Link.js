@@ -402,7 +402,6 @@ function(
 				}
 			} else {
 				$this.attr("disabled", true);
-				$this.attr("tabindex", "-1");
 				$this.attr("aria-disabled", true);
 				$this.removeAttr("href");
 			}
