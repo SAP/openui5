@@ -3,8 +3,8 @@
  */
 
 // Provides inactive support for controls
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
-	function(jQuery, Element) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/base/Log'],
+	function(jQuery, Element, Log) {
 		"use strict";
 
 		/**
@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
 		 * @private
 		 */
 		StashedControl.prototype.setParent = function() {
-			jQuery.sap.log.error("Cannot set parent on a StashedControl", this.getId());
+			Log.error("Cannot set parent on a StashedControl", this.getId());
 		};
 
 		/**
@@ -86,9 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
 		 * @private
 		 */
 		StashedControl.prototype.clone = function() {
-			var c = Element.prototype.clone.apply(this, arguments);
-			stashedControls[c.getId()] = c;
-			return c;
+			Log.error("Cannot clone a StashedControl", this.getId());
 		};
 
 		/**
@@ -134,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
 						return;
 					}
 				} else if (bStashed) {
-					jQuery.sap.log.warning("Cannot re-stash a control", this.getId());
+					Log.warning("Cannot re-stash a control", this.getId());
 				}
 			};
 
@@ -234,7 +232,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
 		 * @private
 		 */
 		StashedControlSupport.createStashedControl = function(sId, mSettings) {
-			return new StashedControl(sId, mSettings);
+			if (!mSettings.sParentId) {
+				Log.error("Cannot create a StashedControl without a parent with stable ID.", "sap.ui.core.StashedControlSupport");
+			} else {
+				return new StashedControl(sId, mSettings);
+			}
 		};
 
 		return StashedControlSupport;
