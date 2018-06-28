@@ -1,7 +1,38 @@
-sap.ui.define([
-	"jquery.sap.global",
-	"unitTests/utils/loggerInterceptor"
-], function ($, loggerInterceptor) {
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>QUnit Page for sap.ui.test.Opa5 - Logging</title>
+
+	<script src="../../../shared-config.js"></script>
+	<script
+		src="../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.ui.commons, sap.m"
+		data-sap-ui-logLevel="ERROR"
+		data-sap-ui-resourceroots='{
+		"samples" : "../../../samples/",
+		"unitTests" : "../"
+		}'>
+	</script>
+	<script src="../../_includeQUnit.js"></script>
+
+	<script>
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+	QUnit.config.autostart = false;
+
+	QUnit.test("Should not execute the test in debug mode", function (assert) {
+		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
+	});
+
+	sap.ui.define([
+		"jquery.sap.global",
+		"sap/ui/test/Opa5",
+		"unitTests/utils/loggerInterceptor"
+	], function ($, Opa5, loggerInterceptor) {
 	"use strict";
 
 	// Opa5 needs to be unloaded because we want to intercept the logger
@@ -77,3 +108,13 @@ sap.ui.define([
 		sinon.assert.calledWith(this.debugSpy, "Found no view with the name: 'notExistingView'");
 	});
 });
+
+	QUnit.start();
+
+</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>

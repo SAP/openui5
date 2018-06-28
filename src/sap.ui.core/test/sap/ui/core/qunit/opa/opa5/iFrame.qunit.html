@@ -1,8 +1,39 @@
-sap.ui.define([
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>QUnit Page for sap.ui.test.Opa5 - iFrame</title>
+
+	<script src="../../../shared-config.js"></script>
+	<script
+		src="../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.ui.commons, sap.m"
+		data-sap-ui-logLevel="ERROR"
+		data-sap-ui-resourceroots='{
+		"samples" : "../../../samples/",
+		"unitTests" : "../"
+		}'>
+	</script>
+	<script src="../../_includeQUnit.js"></script>
+
+	<script>
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+	QUnit.config.autostart = false;
+
+	QUnit.test("Should not execute the test in debug mode", function (assert) {
+		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
+	});
+
+	sap.ui.define([
 		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit",
 		"unitTests/utils/browser",
-		"sap/ui/test/actions/Press"
+		"sap/ui/test/actions/Press",
+		"unitTests/utils/customQUnitAssertions"
 	], function (Opa5, opaTest, browser, Press) {
 
 		QUnit.module("IFrame utils");
@@ -32,7 +63,7 @@ sap.ui.define([
 
 				assert.deepEqual(Opa5[sGetter](), mUtils[sGetter](window), "Initially the outer context utils are returned");
 
-				oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+				oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html");
 				oOpa5.waitFor({
 					success: function () {
 						var oFrame = document.getElementById("OpaFrame");
@@ -57,7 +88,7 @@ sap.ui.define([
 			// System under Test
 			var oOpa5 = new Opa5(),
 				done = assert.async();
-			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
+			jQuery("body").append('<iframe id="OpaFrame" src="../../testdata/emptySite.html"></iframe>');
 			var oFrame = document.getElementById("OpaFrame");
 
 			// Act
@@ -89,7 +120,7 @@ sap.ui.define([
 					done = assert.async();
 
 				// Act
-				oOpa5.iStartMyAppInAFrame("../testdata/emptySiteDeferredUi5Load.html").done(function() {
+				oOpa5.iStartMyAppInAFrame("../../testdata/emptySiteDeferredUi5Load.html").done(function() {
 					var oWindow = Opa5.getWindow();
 
 					// Act
@@ -114,7 +145,7 @@ sap.ui.define([
 					oWindowOpaPlugin = Opa5.getPlugin();
 
 				// Act
-				oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
+				oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html").done(function() {
 					// Act + Assert
 					assert.strictEqual(jQuery("#OpaFrame").length, 1, "did create the frame");
 					assert.ok(Opa5.getWindow(), "initalized the window of the frame");
@@ -146,7 +177,7 @@ sap.ui.define([
 			var done = assert.async();
 			var oOpa5 = new Opa5();
 
-			oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
+			oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html").done(function() {
 				assert.ok(jQuery("#OpaFrame").hasClass("default-scale-both"), "Applied default size and scale");
 			});
 
@@ -158,7 +189,7 @@ sap.ui.define([
 			var done = assert.async();
 			var oOpa5 = new Opa5();
 
-			oOpa5.iStartMyAppInAFrame({source: "../testdata/emptySite.html", width: 700, height: 400}).done(function() {
+			oOpa5.iStartMyAppInAFrame({source: "../../testdata/emptySite.html", width: 700, height: 400}).done(function() {
 				assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
 				assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
 				assert.strictEqual(jQuery("#OpaFrame").css("height"), "400px", "Should have desired frame height");
@@ -166,7 +197,7 @@ sap.ui.define([
 
 			oOpa5.iTeardownMyAppFrame();
 
-			oOpa5.iStartMyAppInAFrame({source: "../testdata/emptySite.html", width: 700}).done(function() {
+			oOpa5.iStartMyAppInAFrame({source: "../../testdata/emptySite.html", width: 700}).done(function() {
 				assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame default-scale-y", "Should scale only frame height");
 				assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
 				assert.strictEqual(jQuery("#OpaFrame").css("height"), jQuery("body").css("height"), "Should have default frame height");
@@ -181,7 +212,7 @@ sap.ui.define([
 			var oOpa5 = new Opa5();
 			Opa5.extendConfig({frameWidth: 700, frameHeight: 400});
 
-			oOpa5.iStartMyAppInAFrame({source: "../testdata/emptySite.html", height: 500}).done(function() {
+			oOpa5.iStartMyAppInAFrame({source: "../../testdata/emptySite.html", height: 500}).done(function() {
 				assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
 				assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
 				assert.strictEqual(jQuery("#OpaFrame").css("height"), "500px", "Should have desired frame height");
@@ -198,7 +229,7 @@ sap.ui.define([
 			var oPluginWithoutIFrame = Opa5.getPlugin();
 
 			// Act
-			oOpa5.iStartMyAppInAFrame("../testdata/noOPA.html").done(function() {
+			oOpa5.iStartMyAppInAFrame("../../testdata/noOPA.html").done(function() {
 				// Act + Assert
 				var oOpaPlugin = Opa5.getPlugin();
 
@@ -215,7 +246,7 @@ sap.ui.define([
 		QUnit.test("Should throw error if the iFrame throws an error", function (assert) {
 			var done = assert.async();
 
-			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/uncaughtError.html"></iframe>');
+			jQuery("body").append('<iframe id="OpaFrame" src="../../testdata/uncaughtError.html"></iframe>');
 
 			// browsers don't have a standard way of forming error message => ignore the prefix in error name (eg: IE: "TestUncaughtError"; Chrome: "Uncaught Error: TestUncaughtError")
 			var $Frame = jQuery("#OpaFrame").on("load", function () {
@@ -234,7 +265,7 @@ sap.ui.define([
 
 				var oOpa5 = new Opa5();
 
-				oOpa5.iStartMyAppInAFrame("../testdata/uncaughtError.html");
+				oOpa5.iStartMyAppInAFrame("../../testdata/uncaughtError.html");
 
 				oOpa5.waitFor({
 					viewName: "myView",
@@ -258,7 +289,7 @@ sap.ui.define([
 		QUnit.module("IFrame navigation", {
 			beforeEach: function () {
 				this.oOpa5 = new Opa5();
-				this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+				this.oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html");
 
 				this.oOpa5.waitFor({
 					success: function () {
@@ -401,7 +432,7 @@ sap.ui.define([
 		QUnit.module("IFrame navigation - with window.location", {
 			beforeEach: function () {
 				this.oOpa5 = new Opa5();
-				this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+				this.oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html");
 
 				this.oOpa5.waitFor({
 					success: function () {
@@ -529,7 +560,7 @@ sap.ui.define([
 		QUnit.module("ControlType", {
 			beforeEach: function () {
 				this.oOpa5 = new Opa5();
-				this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+				this.oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html");
 			},
 			afterEach: function () {
 			}
@@ -588,7 +619,7 @@ sap.ui.define([
 				fnErrorSpy = sinon.spy(),
 				fnDone = assert.async();
 
-			this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+			this.oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html");
 
 			this.oOpa5.waitFor({
 				id: /bar/,
@@ -625,14 +656,8 @@ sap.ui.define([
 			}
 		}
 
-		function startApp (oOpa, sUrl) {
-			oOpa.iStartMyAppInAFrame(sUrl);
-		}
-
-
 		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
-			var qunitversion = parseInt(QUnit.version, 10) || 1;
-			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=4000&module=Timeouts");
+			oOpa.iStartMyAppInAFrame("../../testdata/failingOpaTest.html?sap-ui-qunittimeout=4000&module=Timeouts");
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
@@ -730,9 +755,7 @@ sap.ui.define([
 		});
 
 		opaTest("Should log exceptions in callbacks currectly", function (oOpa) {
-
-			var qunitversion = parseInt(QUnit.version, 10) || 1;
-			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=4000&module=Exceptions");
+			oOpa.iStartMyAppInAFrame("../../testdata/failingOpaTest.html?sap-ui-qunittimeout=4000&module=Exceptions");
 
 			function assertException ($Messages, sCallbackName) {
 				var sOpaMessage = $Messages.eq(0).text();
@@ -791,8 +814,7 @@ sap.ui.define([
 		});
 
 		opaTest("Should write log messages from an iFrame startup", function (oOpa) {
-			var qunitversion = parseInt(QUnit.version, 10) || 1;
-			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=90000&module=IFrame");
+			oOpa.iStartMyAppInAFrame("../../testdata/failingOpaTest.html?sap-ui-qunittimeout=90000&module=IFrame");
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
@@ -836,3 +858,13 @@ sap.ui.define([
 		});
 	}
 );
+
+	QUnit.start();
+
+</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>

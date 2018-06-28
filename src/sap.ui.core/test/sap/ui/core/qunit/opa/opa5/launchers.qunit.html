@@ -1,10 +1,42 @@
-sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/test/Opa5',
-	'sap/ui/thirdparty/URI',
-	'sap/ui/test/autowaiter/_autoWaiter',
-	'sap/ui/test/launchers/iFrameLauncher'
-], function ($, Opa5, URI, _autoWaiter, iFrameLauncher) {
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>QUnit Page for sap.ui.test.Opa5 - Launchers</title>
+
+	<script src="../../../shared-config.js"></script>
+	<script
+		src="../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.ui.commons, sap.m"
+		data-sap-ui-logLevel="ERROR"
+		data-sap-ui-resourceroots='{
+		"samples" : "../../../samples/",
+		"unitTests" : "../"
+		}'>
+	</script>
+	<script src="../../_includeQUnit.js"></script>
+
+	<script>
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+	jQuery.sap.require("samples.components.button.Component");
+	QUnit.config.autostart = false;
+
+	QUnit.test("Should not execute the test in debug mode", function (assert) {
+		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
+	});
+
+	sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/test/Opa5',
+		'sap/ui/thirdparty/URI',
+		'sap/ui/test/autowaiter/_autoWaiter',
+		'sap/ui/test/launchers/iFrameLauncher',
+		'unitTests/utils/customQUnitAssertions'
+	], function ($, Opa5, URI, _autoWaiter, iFrameLauncher) {
 	"use strict";
 
 	QUnit.module("Launchers and teardown");
@@ -40,7 +72,7 @@ sap.ui.define([
 		var fnDone = assert.async();
 		var oOpa5 = new Opa5();
 
-		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+		oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html");
 
 		oOpa5.waitFor({
 			success: function () {
@@ -106,7 +138,7 @@ sap.ui.define([
 			}
 		});
 
-		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+		oOpa5.iStartMyAppInAFrame("../../testdata/emptySite.html");
 
 		oOpa5.waitFor({
 			success: function () {
@@ -137,7 +169,7 @@ sap.ui.define([
 			}
 		});
 
-		oOpa5.iStartMyAppInAFrame(["../testdata/emptySite.html"]);
+		oOpa5.iStartMyAppInAFrame(["../../testdata/emptySite.html"]);
 
 		oOpa5.waitFor({
 			success: function () {
@@ -186,7 +218,7 @@ sap.ui.define([
 			autoWait: true
 		});
 
-		oOpa5.iStartMyAppInAFrame("../testdata/busyAfterStart.html").done(function () {
+		oOpa5.iStartMyAppInAFrame("../../testdata/busyAfterStart.html").done(function () {
 			sinon.assert.notCalled(fnAutoWaiterSpy);
 		});
 
@@ -209,7 +241,7 @@ sap.ui.define([
 			extendConfig: function () {}
 		});
 
-		oOpa5.iStartMyAppInAFrame({source: "../testdata/busyAfterStart.html", autoWait: true}).done(function () {
+		oOpa5.iStartMyAppInAFrame({source: "../../testdata/busyAfterStart.html", autoWait: true}).done(function () {
 			sinon.assert.called(fnAutoWaiterSpy);
 		});
 
@@ -321,3 +353,13 @@ sap.ui.define([
 		});
 	});
 });
+
+	QUnit.start();
+
+</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>
