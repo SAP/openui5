@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.m.App.
-sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRenderer'],
-	function(jQuery, NavContainer, library, AppRenderer) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./NavContainer',
+	'./library',
+	'./AppRenderer',
+	"sap/ui/util/Mobile"
+],
+	function(jQuery, NavContainer, library, AppRenderer, Mobile) {
 	"use strict";
 
 
@@ -144,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 		NavContainer.prototype.init.apply(this, arguments);
 
 		this.addStyleClass("sapMApp");
-		jQuery.sap.initMobile({
+		Mobile.init({
 			viewport: !this._debugZoomAndScroll,
 			statusBar: "default",
 			hideBrowser: true,
@@ -159,7 +165,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 		if (NavContainer.prototype.onBeforeRendering) {
 			NavContainer.prototype.onBeforeRendering.apply(this, arguments);
 		}
-		jQuery.sap.initMobile({
+		Mobile.init({
 			homeIcon: this.getHomeIcon(),
 			mobileWebAppCapable: this.getMobileWebAppCapable()
 		});

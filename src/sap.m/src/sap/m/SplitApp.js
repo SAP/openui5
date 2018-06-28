@@ -8,9 +8,10 @@ sap.ui.define([
 	'./SplitContainer',
 	'./library',
 	'sap/ui/Device',
-	'./SplitAppRenderer'
+	'./SplitAppRenderer',
+	"sap/ui/util/Mobile"
 ],
-	function(jQuery, SplitContainer, library, Device, SplitAppRenderer) {
+	function(jQuery, SplitContainer, library, Device, SplitAppRenderer, Mobile) {
 	"use strict";
 
 	/**
@@ -119,7 +120,7 @@ sap.ui.define([
 			SplitContainer.prototype.init.apply(this, arguments);
 		}
 		this.addStyleClass("sapMSplitApp");
-		jQuery.sap.initMobile({
+		Mobile.init({
 			viewport: !this._debugZoomAndScroll,
 			statusBar: "default",
 			hideBrowser: true,
@@ -137,7 +138,7 @@ sap.ui.define([
 		if (SplitContainer.prototype.onBeforeRendering) {
 			SplitContainer.prototype.onBeforeRendering.apply(this, arguments);
 		}
-		jQuery.sap.initMobile({
+		Mobile.init({
 			homeIcon: this.getHomeIcon()
 		});
 	};

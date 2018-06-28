@@ -81,6 +81,7 @@ sap.ui.define([
 	}});
 
 	PullToRefresh.prototype.init = function(){
+		//TODO: global jquery call found
 		this._bTouchMode = Device.support.touch && !Device.system.combi || jQuery.sap.simulateMobileOnDesktop;
 		this._iState = 0; // 0 - normal; 1 - release to refresh; 2 - loading
 	};

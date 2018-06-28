@@ -44,6 +44,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 			"role": oControl._getRootAccessibilityRole()
 		});
 
+		//TODO: global jquery call found
 		if (oControl.getTranslucent() && (Device.support.touch  || jQuery.sap.simulateMobileOnDesktop)) {
 			oRM.addClass("sapMBarTranslucent");
 		}

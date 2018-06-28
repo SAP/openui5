@@ -8,9 +8,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
-	'sap/m/ShellRenderer'
+	'sap/m/ShellRenderer',
+	"sap/ui/util/Mobile"
 ],
-	function(jQuery, library, Control, coreLibrary, ShellRenderer) {
+	function(jQuery, library, Control, coreLibrary, ShellRenderer, Mobile) {
 		"use strict";
 
 
@@ -156,7 +157,7 @@ sap.ui.define([
 			}, this));
 
 
-			jQuery.sap.initMobile({
+			Mobile.init({
 				statusBar: "default",
 				hideBrowser: true
 			});
@@ -225,7 +226,7 @@ sap.ui.define([
 
 		Shell.prototype.setHomeIcon = function(oIcons) {
 			this.setProperty("homeIcon", oIcons, true); // no rerendering
-			jQuery.sap.setIcons(oIcons);
+			Mobile.setIcons(oIcons);
 			return this;
 		};
 
