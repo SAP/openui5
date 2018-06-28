@@ -1,10 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-	'jquery.sap.global',
-	'./Matcher'
-], function (jQuery, Matcher) {
+sap.ui.define(['jquery.sap.global', './Matcher', "sap/base/strings/capitalize"], function(jQuery, Matcher, capitalize) {
 	"use strict";
 
 	/**
@@ -78,7 +75,7 @@ sap.ui.define([
 				sModelName = this.getModelName(),
 				oModel = oControl.getModel(sModelName),
 				oBundle,
-				fnProperty = oControl["get" + jQuery.sap.charToUpperCase(sPropertyName, 0)],
+				fnProperty = oControl["get" + capitalize(sPropertyName, 0)],
 				sPropertyValue,
 				sText,
 				bResult;

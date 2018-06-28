@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 			if (jQuery.type(oValue) === "string") {
 				oValue = encodeURIComponent(oValue);
 			}
-			sName = jQuery.sap.startsWith(sName,'$') ? sName : encodeURIComponent(sName);
+			sName = sName.startsWith('$') ? sName : encodeURIComponent(sName);
 			aUrlParams.push(sName + "=" + oValue);
 		});
 		return aUrlParams.join("&");

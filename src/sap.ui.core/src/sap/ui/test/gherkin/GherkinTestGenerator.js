@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
-  "jquery.sap.global",
-  "sap/ui/base/Object",
-  "sap/ui/test/gherkin/dataTableUtils",
-  "sap/ui/test/gherkin/simpleGherkinParser"
-], function($, UI5Object, dataTableUtils, simpleGherkinParser) {
+	"jquery.sap.global",
+	"sap/ui/base/Object",
+	"sap/ui/test/gherkin/dataTableUtils",
+	"sap/ui/test/gherkin/simpleGherkinParser",
+	"sap/base/strings/escapeRegExp"
+], function($, UI5Object, dataTableUtils, simpleGherkinParser, escapeRegExp) {
   "use strict";
 
   /**
@@ -288,7 +289,7 @@ sap.ui.define([
             // for each test step in the scenario
             oScenarioCopy.steps.forEach(function(oStep) {
               // in the scenario text, replace all occurences of the variable with the concrete value
-              var sEscapedVariableName = $.sap.escapeRegExp(sVariableName);
+              var sEscapedVariableName = escapeRegExp(sVariableName);
               oStep.text = oStep.text.replace(new RegExp("<" + sEscapedVariableName + ">", "g"), sVariableValue);
             });
           });

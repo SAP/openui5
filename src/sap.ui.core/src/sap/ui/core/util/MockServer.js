@@ -1095,7 +1095,7 @@ sap.ui
 					this._generateMockdata(this._mEntitySets, this._oMetadata);
 				} else {
 					// check the mockdata base URL to end with a slash
-					if (!jQuery.sap.endsWith(this._sMockdataBaseUrl, "/") && !jQuery.sap.endsWith(this._sMockdataBaseUrl, ".json")) {
+					if (!this._sMockdataBaseUrl.endsWith("/") && !this._sMockdataBaseUrl.endsWith(".json")) {
 						this._sMockdataBaseUrl += "/";
 					}
 					// load the mockdata
@@ -1387,7 +1387,7 @@ sap.ui
 				};
 
 				// load all the mock data in one single file
-				if (jQuery.sap.endsWith(sBaseUrl, ".json")) {
+				if (sBaseUrl.endsWith(".json")) {
 					var oResponse = jQuery.sap.sjax({
 						url: sBaseUrl,
 						dataType: "json"

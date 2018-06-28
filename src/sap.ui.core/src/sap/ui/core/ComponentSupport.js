@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ComponentSupport
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/library', 'sap/base/util/ObjectPath', 'jquery.sap.script', 'jquery.sap.strings'],
-	function(jQuery, DataType, Component, ComponentContainer, library, ObjectPath /*, jQuerySapScript, jQuerySapStrings */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/library', 'sap/base/util/ObjectPath', "sap/base/strings/camelize", 'jquery.sap.script'],
+	function(jQuery, DataType, Component, ComponentContainer, library, ObjectPath, camelize /*, jQuerySapScript */) {
 	"use strict";
 
 	var ComponentLifecycle = library.ComponentLifecycle;
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Compone
 			// parse every data- property besides data-sap-ui-component
 			var oParsedAttributeName = /^data-((?!sap-ui-component).+)/g.exec(oAttribute.name);
 			if (oParsedAttributeName) {
-				var sKey = jQuery.sap.camelCase(oParsedAttributeName[1]);
+				var sKey = camelize(oParsedAttributeName[1]);
 				var oValue = oAttribute.value;
 				// special handling for id property
 				if (sKey !== "id") {

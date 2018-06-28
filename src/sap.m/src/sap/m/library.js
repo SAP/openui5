@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	// library dependency
 	'sap/ui/core/library',
+	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
 	// referenced here to enable the Support feature
 	'./Support'
@@ -26,6 +27,7 @@ sap.ui.define([
 	Control,
 	ObjectPath,
 	CoreLibrary,
+	capitalize,
 	jQueryDOM
 ) {
 
@@ -3982,7 +3984,7 @@ sap.ui.define([
 		 */
 		function checkAndSetProperty(oControl, property, value) {
 			if (value !== undefined) {
-				var fSetter = oControl['set' + jQuery.sap.charToUpperCase(property)];
+				var fSetter = oControl['set' + capitalize(property)];
 				if (typeof (fSetter) === "function") {
 					fSetter.call(oControl, value);
 					return true;

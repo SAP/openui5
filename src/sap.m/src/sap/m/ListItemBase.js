@@ -15,7 +15,8 @@ sap.ui.define([
 	"./Button",
 	"./CheckBox",
 	"./RadioButton",
-	"./ListItemBaseRenderer"
+	"./ListItemBaseRenderer",
+	"sap/base/strings/capitalize"
 ],
 function(
 	jQuery,
@@ -29,7 +30,8 @@ function(
 	Button,
 	CheckBox,
 	RadioButton,
-	ListItemBaseRenderer
+	ListItemBaseRenderer,
+	capitalize
 ) {
 	"use strict";
 
@@ -309,7 +311,7 @@ function(
 	ListItemBase.prototype.getListProperty = function(sProperty, vFallbackValue) {
 		var oList = this.getList();
 		if (oList) {
-			sProperty = jQuery.sap.charToUpperCase(sProperty);
+			sProperty = capitalize(sProperty);
 			return oList["get" + sProperty]();
 		}
 

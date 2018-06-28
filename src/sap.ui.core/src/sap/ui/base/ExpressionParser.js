@@ -5,9 +5,8 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/thirdparty/URI',
-	'jquery.sap.script', // for jQuery.sap.parseJS
-	'jquery.sap.strings'
-], function (jQuery, URI/*, jQuerySap1, jQuerySap2 */) {
+	'sap/base/strings/escapeRegExp'
+], function(jQuery, URI, escapeRegExp) {
 	"use strict";
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,
@@ -242,7 +241,7 @@ sap.ui.define([
 		rTokens;
 
 	aTokens.forEach(function (sToken, i) {
-		aTokens[i] = jQuery.sap.escapeRegExp(sToken);
+		aTokens[i] = escapeRegExp(sToken);
 	});
 	rTokens = new RegExp(aTokens.join("|"), "g");
 

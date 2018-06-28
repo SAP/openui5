@@ -1257,7 +1257,7 @@ sap.ui.define([
 		var oMetaContext = this.getMetaContext(sPath),
 			that = this;
 
-		if (jQuery.sap.endsWith(sPath, "/$count")) {
+		if (sPath.endsWith("/$count")) {
 			oCountType = oCountType || new Int64();
 			return SyncPromise.resolve(oCountType);
 		}

@@ -15,9 +15,23 @@ sap.ui.define([
 	'sap/m/GenericTileLineModeRenderer',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
+	"sap/base/strings/camelize",
 	'jquery.sap.events'
-], function (jQuery, library, Control, Text, HTML, Icon, IconPool, Button, GenericTileRenderer, LineModeRenderer, Device,
-			 ResizeHandler) {
+], function(
+	jQuery,
+	library,
+	Control,
+	Text,
+	HTML,
+	Icon,
+	IconPool,
+	Button,
+	GenericTileRenderer,
+	LineModeRenderer,
+	Device,
+	ResizeHandler,
+	camelize
+) {
 	"use strict";
 
 	var GenericTileScope = library.GenericTileScope,
@@ -553,7 +567,7 @@ sap.ui.define([
 	 * @private
 	 */
 	GenericTile.prototype._getAnimationEvents = function () {
-		return "transitionend.sapMGT$id animationend.sapMGT$id".replace(/\$id/g, jQuery.sap.camelCase(this.getId()));
+		return "transitionend.sapMGT$id animationend.sapMGT$id".replace(/\$id/g, camelize(this.getId()));
 	};
 
 	/**

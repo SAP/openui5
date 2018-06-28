@@ -660,7 +660,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @param {string} sPath the path
 	 */
 	Model.prototype.getContext = function(sPath) {
-		if (!jQuery.sap.startsWith(sPath, "/")) {
+		if (!sPath.startsWith("/")) {
 			throw new Error("Path " + sPath + " must start with a / ");
 		}
 		var oContext = this.mContexts[sPath];
@@ -686,13 +686,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @return {string} resolved path or undefined
 	 */
 	Model.prototype.resolve = function(sPath, oContext) {
-		var bIsRelative = typeof sPath == "string" && !jQuery.sap.startsWith(sPath, "/"),
+		var bIsRelative = typeof sPath == "string" && !sPath.startsWith("/"),
 			sResolvedPath = sPath,
 			sContextPath;
 		if (bIsRelative) {
 			if (oContext) {
 				sContextPath = oContext.getPath();
-				sResolvedPath = sContextPath + (jQuery.sap.endsWith(sContextPath, "/") ? "" : "/") + sPath;
+				sResolvedPath = sContextPath + (sContextPath.endsWith("/") ? "" : "/") + sPath;
 			} else {
 				sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
 			}
@@ -701,7 +701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 			sResolvedPath = oContext.getPath();
 		}
 		// invariant: path never ends with a slash ... if root is requested we return /
-		if (sResolvedPath && sResolvedPath !== "/" && jQuery.sap.endsWith(sResolvedPath, "/")) {
+		if (sResolvedPath && sResolvedPath !== "/" && sResolvedPath.endsWith("/")) {
 			sResolvedPath = sResolvedPath.substr(0, sResolvedPath.length - 1);
 		}
 		return sResolvedPath;

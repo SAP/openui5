@@ -326,7 +326,7 @@ function(
 
 			this._bPreventValueRemove = false;
 
-			if (this.getValue() === "" || jQuery.sap.startsWithIgnoreCase(oItem.getText(), this.getValue())) {
+			if (this.getValue() === "" || ((typeof this.getValue() == "string" ? oItem.getText().toLowerCase().startsWith(this.getValue().toLowerCase()) : false))) {
 				if (this.getListItem(oItem).isSelected()) {
 					this.setValue('');
 				} else {
@@ -631,7 +631,7 @@ function(
 	 */
 	MultiComboBox.prototype.filterItems = function (aItems, sValue) {
 		aItems.forEach(function(oItem) {
-			var bMatch = jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
+			var bMatch = (typeof sValue == "string" && sValue != "" ? oItem.getText().toLowerCase().startsWith(sValue.toLowerCase()) : false);
 
 			if (sValue === "") {
 				bMatch = true;
@@ -1931,7 +1931,7 @@ function(
 
 		selectableItems.forEach(function(oItem) {
 
-			if (jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
+			if ((typeof sText == "string" && sText != "" ? oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) : false)) {
 				aItems.push(oItem);
 			}
 
@@ -1949,7 +1949,7 @@ function(
 	MultiComboBox.prototype._getUnselectedItemsStartingText = function(sText) {
 		var aItems = [];
 		this._getUnselectedItems().forEach(function(oItem) {
-			if (jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
+			if ((typeof sText == "string" && sText != "" ? oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) : false)) {
 				aItems.push(oItem);
 			}
 		}, this);

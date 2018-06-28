@@ -1100,9 +1100,13 @@ function(
 
 			this.sTypedChars += sTypedCharacter;
 
-			// the typed characters match the text of the selected item
-			if ((oSelectedItem && jQuery.sap.startsWithIgnoreCase(oSelectedItem.getText(), this.sTypedChars)) ||
+			var bStartsWithTypedChars = typeof this.sTypedChars === "string" &&
+				this.sTypedChars !== "" &&
+				oSelectedItem &&
+				oSelectedItem.getText().toLowerCase().startsWith(this.sTypedChars.toLowerCase());
 
+			// the typed characters match the text of the selected item
+			if (bStartsWithTypedChars ||
 				// one or more characters have been typed (excluding patterns such as "aa" or "bb")
 				((this.sTypedChars.length === 1) ||
 				((this.sTypedChars.length > 1) &&
@@ -1607,8 +1611,8 @@ function(
 
 			for (var i = 0, oItem; i < aItems.length; i++) {
 				oItem = aItems[i];
-
-				if (oItem.getEnabled() && !(oItem instanceof sap.ui.core.SeparatorItem) && jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
+				var bTextIsRelevantString = typeof sText === "string" && sText !== "";
+				if (oItem.getEnabled() && !(oItem instanceof sap.ui.core.SeparatorItem) && oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) && bTextIsRelevantString) {
 					return oItem;
 				}
 			}

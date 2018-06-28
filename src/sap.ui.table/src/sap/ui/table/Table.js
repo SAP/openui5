@@ -2625,9 +2625,9 @@ sap.ui.define([
 		var sPixelValue = TableUtils.Column.getMinColumnWidth();
 
 		if (sCSSSize) {
-			if (jQuery.sap.endsWith(sCSSSize, "px")) {
+			if (sCSSSize.endsWith("px")) {
 				sPixelValue = parseInt(sCSSSize, 10);
-			} else if (jQuery.sap.endsWith(sCSSSize, "em") || jQuery.sap.endsWith(sCSSSize, "rem")) {
+			} else if (sCSSSize.endsWith("em") || sCSSSize.endsWith("rem")) {
 				sPixelValue = Math.ceil(parseFloat(sCSSSize) * this._getBaseFontSize());
 			}
 		}

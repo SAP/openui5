@@ -353,7 +353,7 @@ sap.ui.define([
 
 	BindingParser.simpleParser = function(sString, oContext) {
 
-		if ( jQuery.sap.startsWith(sString, "{") && jQuery.sap.endsWith(sString, "}") ) {
+		if ( sString.startsWith("{") && sString.endsWith("}") ) {
 			return makeSimpleBindingInfo(sString.slice(1, -1));
 		}
 

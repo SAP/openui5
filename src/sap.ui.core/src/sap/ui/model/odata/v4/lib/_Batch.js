@@ -3,9 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._Batch
-sap.ui.define([
-	"jquery.sap.global"
-], function (jQuery) {
+sap.ui.define(["jquery.sap.global", "sap/base/strings/escapeRegExp"], function(jQuery, escapeRegExp) {
 	"use strict";
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
@@ -31,7 +29,7 @@ sap.ui.define([
 		}
 
 		// escape RegExp-related characters
-		sBatchBoundary = jQuery.sap.escapeRegExp(sBatchBoundary);
+		sBatchBoundary = escapeRegExp(sBatchBoundary);
 		return new RegExp('--' + sBatchBoundary + '(?:[ \t]*\r\n|--)');
 	}
 

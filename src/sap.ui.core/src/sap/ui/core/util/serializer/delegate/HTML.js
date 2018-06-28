@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Delegate'],
-	function(jQuery, Delegate) {
+sap.ui.define(['jquery.sap.global', './Delegate', "sap/base/strings/hyphenate"],
+	function(jQuery, Delegate, hyphenate) {
 	"use strict";
 
 
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 			var aCssClasses = [];
 			for (var i = 0; i < aCustomClasses.length; i++) {
 				var sCssClass = aCustomClasses[i];
-				if (!jQuery.sap.startsWith(sCssClass, "sapM") && !jQuery.sap.startsWith(sCssClass, "sapUi")) {
+				if (!sCssClass.startsWith("sapM") && !sCssClass.startsWith("sapUi")) {
 					aCssClasses.push(sCssClass);
 				}
 			}
@@ -259,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @private
 	 */
 	HTML.prototype._createHtmlAttributeName = function (sName) {
-		return jQuery.sap.hyphen(sName);
+		return hyphenate(sName);
 	};
 
 	return HTML;

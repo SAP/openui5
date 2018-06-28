@@ -7,8 +7,14 @@
 /*
  * Provides the AppCacheBuster mechanism to load application files using a timestamp
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, ManagedObject, Core, URI) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObject',
+	'./Core',
+	'sap/ui/thirdparty/URI',
+	"sap/base/strings/escapeRegExp"
+],
+	function(jQuery, ManagedObject, Core, URI, escapeRegExp) {
 	"use strict";
 
 	/*
@@ -74,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 	//var sTestResBaseUrl = URI("test-resources").absoluteTo(sBaseUrl).toString();
 
 	// create resources check regex
-	var oFilter = new RegExp("^" + jQuery.sap.escapeRegExp(sResBaseUrl));
+	var oFilter = new RegExp("^" + escapeRegExp(sResBaseUrl));
 
 	// helper function to append the trailing slashes if missing
 	var fnEnsureTrailingSlash = function(sUrl) {

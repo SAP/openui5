@@ -419,7 +419,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * Resolve the path relative to the given context
 	 */
 	XMLModel.prototype._resolve = function(sPath, oContext) {
-		var bIsRelative = !jQuery.sap.startsWith(sPath, "/"),
+		var bIsRelative = !sPath.startsWith("/"),
 			sResolvedPath = sPath;
 		if (bIsRelative) {
 			if (oContext) {
