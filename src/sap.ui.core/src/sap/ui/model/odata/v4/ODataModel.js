@@ -1225,12 +1225,14 @@ sap.ui.define([
 	 * Reports the given unbound OData messages by firing a <code>messageChange</code> event with
 	 * the new messages.
 	 *
+	 * @param {string} sResourcePath
+	 *   The resource path of the request whose response contained the messages
 	 * @param {object[]} [aMessages]
 	 *   The array of messages as contained in the <code>sap-message</code> response header
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.reportUnboundMessages = function (aMessages) {
+	ODataModel.prototype.reportUnboundMessages = function (sResourcePath, aMessages) {
 		var that = this;
 
 		if (aMessages && aMessages.length) {
@@ -1241,7 +1243,8 @@ sap.ui.define([
 					return new Message({
 						code : oMessage.code,
 						descriptionUrl : sMessageLongTextUrl
-							? _Helper.makeAbsolute(sMessageLongTextUrl, that.sServiceUrl)
+							? _Helper.makeAbsolute(sMessageLongTextUrl,
+								that.sServiceUrl + sResourcePath)
 							: undefined,
 						message : oMessage.message,
 						persistent : true,
