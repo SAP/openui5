@@ -12,8 +12,10 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.global-compat.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.stubs.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.stubs-async.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.stubs.qunit.html?test-mode=lazy-loading");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.stubs.qunit.html?test-mode=stub-replacement");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.stubs.qunit.html?sap-ui-xx-async=true&test-mode=lazy-loading");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.stubs.qunit.html?sap-ui-xx-async=true&test-mode=stub-replacement");
 			return suite;
 		}
 

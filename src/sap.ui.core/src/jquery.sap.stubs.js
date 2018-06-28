@@ -72,7 +72,6 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 					"getObject",
 					"setObject",
 					"measure",
-					"syncPoint",
 					"getModulePath",
 					"getResourcePath",
 					"registerModulePath",
@@ -230,7 +229,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 			aProperties.forEach(function(sProperty) {
 				// Do not stub already defined properties
 				if (oTarget && !oTarget[sProperty]) {
-					defineLazyProperty(oTarget, sProperty, lazyLoad(sModule, oTarget, sProperty, sTargetName));
+					defineLazyProperty(oTarget, sProperty, lazyLoad(sModule, oTarget, sProperty, sTargetName), "jquery.sap.stubs");
 				}
 			});
 		});
@@ -241,6 +240,11 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 		var oStub = mStubs[sStubName];
 		applyLazyProperties(sStubName, oStub.target, oStub.stubs);
 	});
+
+	// Export stubbing config for testing
+	if (typeof window === "object" && window["jquery.sap.stubs-test"]) {
+		window["jquery.sap.stubs-test"] = mStubs;
+	}
 
 	return jQuery;
 });

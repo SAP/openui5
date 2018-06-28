@@ -79,4 +79,14 @@ sap.ui.define([
 		assert.strictEqual(this.legacy.value, this.value, "property is still set");
 	});
 
+	QUnit.test("marker", function(assert) {
+		assert.expect(1);
+		defineLazyProperty(this.legacy, "value", function() {
+			assert.ok(false, "callback should not be called");
+			return this.value;
+		}, "marker");
+		var oDescriptor = Object.getOwnPropertyDescriptor(this.legacy, "value");
+		assert.ok(oDescriptor && oDescriptor.get && oDescriptor.get["marker"], "marker should be in place");
+	});
+
 });
