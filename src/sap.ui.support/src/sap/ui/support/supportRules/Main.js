@@ -377,8 +377,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				});
 			}
 		}, this);
-		CommunicationBus.subscribe(channelNames.GET_NON_LOADED_RULE_SETS, function () {
-			RuleSetLoader.fetchNonLoadedRuleSets();
+		CommunicationBus.subscribe(channelNames.GET_NON_LOADED_RULE_SETS, function (data) {
+			RuleSetLoader.fetchNonLoadedRuleSets(data.loadedRulesets);
 		}, this);
 	};
 

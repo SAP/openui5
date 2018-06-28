@@ -38,7 +38,7 @@ sap.ui.define([
 		var sSupportModulePath = jQuery.sap.getModulePath("sap.ui.support");
 		var sSupportModuleRootPath = sSupportModulePath.replace('/sap/ui/support', '');
 		var sAbsUrl = getAbsoluteUrl(sSupportModuleRootPath);
-		var bCanLoadInternalRules;
+		var bCanLoadInternalRules = !Utils.isDistributionOpenUI5(sap.ui.getVersionInfo()) && Utils.canLoadInternalRules();
 
 		var RuleSetLoader = {};
 
@@ -67,11 +67,6 @@ sap.ui.define([
 			var that = this,
 				mLoadedLibraries = sap.ui.getCore().getLoadedLibraries(),
 				oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
-
-			// Initializing the flag which shows if the internal rules are present and can be loaded
-			if (typeof bCanLoadInternalRules === "undefined") {
-				bCanLoadInternalRules = !Utils.isDistributionOpenUI5(sap.ui.getVersionInfo()) && Utils.canLoadInternalRules();
-			}
 
 			var oMainPromise = new Promise(function (resolve) {
 				RuleSet.versionInfo = sap.ui.getVersionInfo();
@@ -105,7 +100,6 @@ sap.ui.define([
 
 			Promise.all(aLibFetchPromises).then(function () {
 				that._bRulesCreated = true;
-
 				CommunicationBus.publish(channelNames.UPDATE_SUPPORT_RULES, RuleSerializer.serialize(that._mRuleSets));
 			});
 		};
@@ -122,7 +116,8 @@ sap.ui.define([
 
 				var oLibNames = {
 					publicRules: [],
-					internalRules: []
+					internalRules: [],
+					allRules: []
 				};
 
 				oLoadedLibraries = oLoadedLibraries || {};
@@ -157,11 +152,18 @@ sap.ui.define([
 				Promise.all(aAllMetaPromises).then(function (metaArgs) {
 					metaArgs.forEach(function (metaInfo) {
 						if (metaInfo.rcData) {
+							var bHasRules = false;
+
 							if (metaInfo.rcData.publicRules) {
 								oLibNames.publicRules.push(metaInfo.lib);
+								bHasRules = true;
 							}
-							if (metaInfo.rcData.internalRules) {
+							if (bCanLoadInternalRules && metaInfo.rcData.internalRules) {
 								oLibNames.internalRules.push(metaInfo.lib);
+								bHasRules = true;
+							}
+							if (bHasRules && oLibNames.allRules.indexOf(metaInfo.lib) < 0) {
+								oLibNames.allRules.push(metaInfo.lib);
 							}
 						}
 
@@ -365,31 +367,30 @@ sap.ui.define([
 		/**
 		 * Gets all non loaded libraries that contains support rules in them
 		 * Publishing the names to UI
+		 *
+		 * @public
+		 * @param {string[]} aLoadedLibraries The library names which are currently loaded by the Support Assistant.
 		 */
-		RuleSetLoader.fetchNonLoadedRuleSets = function () {
-			var aLibraries = sap.ui.getVersionInfo().libraries,
-				data = [],
+		RuleSetLoader.fetchNonLoadedRuleSets = function (aLoadedLibraries) {
+
+			var aNonLoadedLibraries = [],
 				oLibraries = {};
 
-			aLibraries.forEach(function (lib) {
-				oLibraries[lib.name] = lib;
+			sap.ui.getVersionInfo().libraries.forEach(function (oLib) {
+				oLibraries[oLib.name] = oLib;
 			});
 
-			var oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(oLibraries);
+			this._fetchLibraryNamesWithSupportRules(oLibraries).then(function (oLibNamesWithRules) {
 
-			oLibNamesWithRulesPromise.then(function (oLibNamesWithRules) {
-				var libFetchPromises = RuleSetLoader._fetchLibraryFiles(oLibNamesWithRules, function (sLibraryName) {
-					sLibraryName = sLibraryName.replace("." + sCustomSuffix, "").replace(".internal", "");
-
-					if (data.indexOf(sLibraryName) < 0) {
-						data.push(sLibraryName);
+				// Find the non loaded libraries which have rulesets.
+				oLibNamesWithRules.allRules.forEach(function (sLibName) {
+					if (aLoadedLibraries.indexOf(sLibName) < 0) {
+						aNonLoadedLibraries.push(sLibName);
 					}
-				}, true);
+				});
 
-				Promise.all(libFetchPromises).then(function () {
-					CommunicationBus.publish(channelNames.POST_AVAILABLE_LIBRARIES, {
-						libNames: data
-					});
+				CommunicationBus.publish(channelNames.POST_AVAILABLE_LIBRARIES, {
+					libNames: aNonLoadedLibraries
 				});
 			});
 		};

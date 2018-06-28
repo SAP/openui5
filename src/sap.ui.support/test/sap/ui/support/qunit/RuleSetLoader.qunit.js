@@ -1,10 +1,12 @@
 /*global QUnit,sinon*/
 
 sap.ui.require([
-		"jquery.sap.global",
-		"sap/ui/support/supportRules/RuleSet",
-		"sap/ui/support/supportRules/RuleSetLoader"],
-	function (jQuery, RuleSet, RuleSetLoader) {
+	"jquery.sap.global",
+	"sap/ui/support/supportRules/RuleSet",
+	"sap/ui/support/supportRules/RuleSetLoader",
+	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/WCBChannels"
+], function (jQuery, RuleSet, RuleSetLoader, CommunicationBus, channelNames) {
 		"use strict";
 
 		function createValidRule(sRuleId) {
@@ -343,6 +345,75 @@ sap.ui.require([
 
 			jQuery.sap.getObject.restore();
 			jQuery.sap.log.error.restore();
+		});
+
+		QUnit.test("fetchNonLoadedRuleSets", function (assert) {
+
+			// Arrange
+			this.clock = sinon.useFakeTimers();
+			var done = assert.async();
+			var that = this;
+
+			// Mocks the libraries which are currently loaded by the application.
+			var aLoadedLibraries = [
+				"sap.ui.core",
+				"sap.uxap",
+				"sap.m"
+			];
+
+			// Returns all libraries available in the application (including non-loaded ones).
+			sinon.stub(sap.ui, "getVersionInfo", function () {
+				return {
+					libraries: [
+						{ name: "sap.ui.core" },
+						{ name: "sap.m" },
+						{ name: "sap.uxap" },
+						{ name: "sap.ui.table" },
+						{ name: "sap.ui.fl" },
+						{ name: "sap.ui.documentation" },
+						{ name: "sap.ui.unknown" }
+					]
+				};
+			});
+
+			// Returns all libraries for which there are rulesets found.
+			sinon.stub(RuleSetLoader, "_fetchLibraryNamesWithSupportRules", function () {
+				return new Promise(function (resolve) {
+					resolve({
+						allRules: [
+							"sap.ui.core",
+							"sap.m",
+							"sap.uxap",
+							"sap.ui.table",
+							"sap.ui.fl"
+						]
+					});
+				});
+			});
+
+			sinon.stub(CommunicationBus, "publish", function (sChannel, oLibraries) {
+
+				if (sChannel !== channelNames.POST_AVAILABLE_LIBRARIES) {
+					return;
+				}
+
+				//Assert
+				assert.ok(oLibraries.libNames.length === 2, "Should have 2 libraries which are not loaded and have rules.");
+				assert.ok(oLibraries.libNames.indexOf("sap.ui.fl") > -1, "Should have sap.ui.fl as non-loaded library.");
+				assert.ok(oLibraries.libNames.indexOf("sap.ui.table") > -1, "Should have sap.ui.table as non-loaded library.");
+
+				sap.ui.getVersionInfo.restore();
+				RuleSetLoader._fetchLibraryNamesWithSupportRules.restore();
+				CommunicationBus.publish.restore();
+				that.clock.tick(500);
+				that.clock.restore();
+
+				done();
+			});
+
+			// Act
+			RuleSetLoader.fetchNonLoadedRuleSets(aLoadedLibraries);
+
 		});
 
 		QUnit.test("getAllRules", function (assert) {
