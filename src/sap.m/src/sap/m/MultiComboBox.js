@@ -22,7 +22,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	jQuery,
@@ -43,7 +43,8 @@ function(
 	Item,
 	ResizeHandler,
 	MultiComboBoxRenderer,
-	containsOrEquals
+	containsOrEquals,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -578,10 +579,10 @@ function(
 			return;
 		}
 
-		this._bIsPasteEvent = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.V);
+		this._bIsPasteEvent = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.V);
 
 		// only if there is no text and tokenizer has some tokens
-		if (this.getValue().length === 0 && (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.A)
+		if (this.getValue().length === 0 && (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.A)
 			&& this._hasTokens()) {
 
 			this._oTokenizer.focus();
@@ -1417,7 +1418,7 @@ function(
 				// If an item is selected with SPACE inside of
 				// suggest list the list
 				// with all entries should be opened
-				if (oEvent.which == jQuery.sap.KeyCodes.SPACE && this.isOpen() && this._isListInSuggestMode()) {
+				if (oEvent.which == KeyCodes.SPACE && this.isOpen() && this._isListInSuggestMode()) {
 					this.open();
 					oItem = this._getLastSelectedItem();
 
@@ -1433,17 +1434,17 @@ function(
 			onkeydown: function(oEvent) {
 				var oItem = null, oItemCurrent = null;
 
-				if (oEvent.shiftKey && oEvent.which == jQuery.sap.KeyCodes.ARROW_DOWN) {
+				if (oEvent.shiftKey && oEvent.which == KeyCodes.ARROW_DOWN) {
 					oItemCurrent = this._getCurrentItem();
 					oItem = this._getNextVisibleItemOf(oItemCurrent);
 				}
 
-				if (oEvent.shiftKey && oEvent.which == jQuery.sap.KeyCodes.ARROW_UP) {
+				if (oEvent.shiftKey && oEvent.which == KeyCodes.ARROW_UP) {
 					oItemCurrent = this._getCurrentItem();
 					oItem = this._getPreviousVisibleItemOf(oItemCurrent);
 				}
 
-				if (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+				if (oEvent.shiftKey && oEvent.which === KeyCodes.SPACE) {
 					oItemCurrent = this._getCurrentItem();
 					this._selectPreviousItemsOf(oItemCurrent);
 				}
@@ -1480,7 +1481,7 @@ function(
 				// Note: at first this function should be called and
 				// not the
 				// ListItemBase
-				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == jQuery.sap.KeyCodes.A) {
+				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == KeyCodes.A) {
 					oEvent.setMarked();
 					oEvent.preventDefault();
 

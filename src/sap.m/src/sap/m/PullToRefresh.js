@@ -9,9 +9,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'./PullToRefreshRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, Device, PullToRefreshRenderer) {
+	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes) {
 	"use strict";
 
 
@@ -280,7 +280,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PullToRefresh.prototype.onkeydown = function(event) {
-		if ( event.which == jQuery.sap.KeyCodes.F5) {
+		if ( event.which == KeyCodes.F5) {
 			this.onclick();
 			// do not refresh browser window
 			event.stopPropagation();

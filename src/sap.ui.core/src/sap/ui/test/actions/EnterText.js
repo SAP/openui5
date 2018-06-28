@@ -5,8 +5,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/test/_OpaLogger",
-	"./Action"
-], function ($, _OpaLogger, Action) {
+	"./Action",
+	"sap/ui/events/KeyCodes"
+], function($, _OpaLogger, Action, KeyCodes) {
 	"use strict";
 
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.actions.EnterText");
@@ -78,8 +79,8 @@ sap.ui.define([
 			this._tryOrSimulateFocusin($ActionDomRef, oControl);
 
 			if (this.getClearTextFirst()) {
-				oUtils.triggerKeydown(oActionDomRef, $.sap.KeyCodes.DELETE);
-				oUtils.triggerKeyup(oActionDomRef, $.sap.KeyCodes.DELETE);
+				oUtils.triggerKeydown(oActionDomRef, KeyCodes.DELETE);
+				oUtils.triggerKeyup(oActionDomRef, KeyCodes.DELETE);
 				$ActionDomRef.val("");
 				oUtils.triggerEvent("input", oActionDomRef);
 			}

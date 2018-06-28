@@ -16,21 +16,22 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'sap/ui/model/Filter',
 	'./FacetFilterRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 	function(
-	jQuery,
-	NavContainer,
-	library,
-	Control,
-	IconPool,
-	ItemNavigation,
-	InvisibleText,
-	Device,
-	ManagedObject,
-	Icon,
-	Filter,
-	FacetFilterRenderer
+		jQuery,
+		NavContainer,
+		library,
+		Control,
+		IconPool,
+		ItemNavigation,
+		InvisibleText,
+		Device,
+		ManagedObject,
+		Icon,
+		Filter,
+		FacetFilterRenderer,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -761,7 +762,7 @@ sap.ui.define([
 		}
 
 	// [CTRL]+[RIGHT] - keycode 39 - page down
-		if (oEvent.which == jQuery.sap.KeyCodes.ARROW_RIGHT) {
+		if (oEvent.which == KeyCodes.ARROW_RIGHT) {
 			this._previousTarget = oEvent.target;
 			var currentFocusIndex = this.oItemNavigation.getFocusedIndex() - 1;
 			var nextFocusIndex = currentFocusIndex + this._pageSize;
@@ -783,7 +784,7 @@ sap.ui.define([
 
 	// [CTRL]+[LEFT] - keycode 37 - page up
 		var currentFocusIndex = 0;
-		if (oEvent.which == jQuery.sap.KeyCodes.ARROW_LEFT) {
+		if (oEvent.which == KeyCodes.ARROW_LEFT) {
 			this._previousTarget = oEvent.target;
 			currentFocusIndex = this.oItemNavigation.getFocusedIndex() + 1;
 			var nextFocusIndex = currentFocusIndex - this._pageSize;

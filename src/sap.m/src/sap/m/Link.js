@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	'./LinkRenderer'
+	'./LinkRenderer',
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	jQuery,
@@ -21,8 +22,9 @@ function(
 	EnabledPropagator,
 	coreLibrary,
 	Device,
-	LinkRenderer
-	) {
+	LinkRenderer,
+	KeyCodes
+) {
 	"use strict";
 
 
@@ -225,7 +227,7 @@ function(
 	};
 
 	Link.prototype.onkeyup = function (oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.SPACE) {
 			this._handlePress(oEvent);
 
 			if (this.getHref() && !oEvent.isDefaultPrevented()) {

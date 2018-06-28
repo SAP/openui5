@@ -12,17 +12,18 @@ sap.ui.define([
     './InvisibleText',
     './library',
     "./IconRenderer",
-    'jquery.sap.keycodes'
+    "sap/ui/events/KeyCodes"
 ],
 	function(
-	    jQuery,
+		jQuery,
 		assert,
 		Device,
 		Control,
 		IconPool,
 		InvisibleText,
-		library /* ,jQuerySapKeycodes */,
-		IconRenderer
+		library,
+		IconRenderer,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -276,7 +277,7 @@ sap.ui.define([
 	 */
 	Icon.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 
 			// note: prevent document scrolling
 			oEvent.preventDefault();
@@ -305,7 +306,7 @@ sap.ui.define([
 	 */
 	Icon.prototype.onkeyup = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 
 			this.$().removeClass("sapUiIconActive");
 			this._restoreColors();

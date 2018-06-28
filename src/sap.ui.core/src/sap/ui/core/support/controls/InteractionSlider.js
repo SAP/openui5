@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'jquery.sap.keycodes'],
-    function (jQuery, ManagedObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', "sap/ui/events/KeyCodes"],
+    function(jQuery, ManagedObject, KeyCodes) {
         'use strict';
         var InteractionSlider = ManagedObject.extend("sap.ui.core.support.controls.InteractionSlider", {
             constructor: function () {
@@ -163,11 +163,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'jquery.sap.key
             var offsetLeft = 0;
             var STEP = 5;
 
-            if (evt.keyCode != jQuery.sap.KeyCodes.ARROW_LEFT && evt.keyCode != jQuery.sap.KeyCodes.ARROW_RIGHT) {
+            if (evt.keyCode != KeyCodes.ARROW_LEFT && evt.keyCode != KeyCodes.ARROW_RIGHT) {
                 return;
-            } else if (evt.keyCode == jQuery.sap.KeyCodes.ARROW_LEFT) {
+            } else if (evt.keyCode == KeyCodes.ARROW_LEFT) {
                 offsetLeft = -STEP;
-            } else if (evt.keyCode == jQuery.sap.KeyCodes.ARROW_RIGHT) {
+            } else if (evt.keyCode == KeyCodes.ARROW_RIGHT) {
                 offsetLeft = STEP;
             }
             var maxLeftOffset = Math.min((this.drag.handleOffsetLeft + offsetLeft),
@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'jquery.sap.key
         };
 
         InteractionSlider.prototype._onArrowUp = function (evt) {
-            if (evt.keyCode != jQuery.sap.KeyCodes.ARROW_LEFT && evt.keyCode != jQuery.sap.KeyCodes.ARROW_RIGHT) {
+            if (evt.keyCode != KeyCodes.ARROW_LEFT && evt.keyCode != KeyCodes.ARROW_RIGHT) {
                 return;
             }
             this._fireSelectEvent();

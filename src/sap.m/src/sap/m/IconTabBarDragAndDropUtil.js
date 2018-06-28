@@ -7,9 +7,10 @@
  */
 sap.ui.define([
 	'sap/ui/core/dnd/DragInfo',
-	'sap/ui/core/dnd/DropInfo'],
-	function(DragInfo,
-			 DropInfo) {
+	'sap/ui/core/dnd/DropInfo',
+	"sap/ui/events/KeyCodes"
+],
+	function(DragInfo, DropInfo, KeyCodes) {
 		"use strict";
 
 		var INSERT_POSITION_BEFORE = "Before",
@@ -146,7 +147,7 @@ sap.ui.define([
 					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 					iNewDropIndex,
 					$DroppedControl,
-					oKeyCodes = jQuery.sap.KeyCodes;
+					oKeyCodes = KeyCodes;
 
 				switch (iKeyCode) {
 					//Handles Ctrl + Home

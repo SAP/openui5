@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'./ComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 	function(
 		jQuery,
@@ -25,7 +25,8 @@ sap.ui.define([
 		Device,
 		Item,
 		ComboBoxRenderer,
-		containsOrEquals
+		containsOrEquals,
+		KeyCodes
 	) {
 		"use strict";
 
@@ -937,7 +938,7 @@ sap.ui.define([
 				return;
 			}
 
-			var mKeyCode = jQuery.sap.KeyCodes;
+			var mKeyCode = KeyCodes;
 			oControl._bDoTypeAhead = (oEvent.which !== mKeyCode.BACKSPACE) && (oEvent.which !== mKeyCode.DELETE);
 		};
 

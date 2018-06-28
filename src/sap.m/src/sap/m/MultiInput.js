@@ -23,7 +23,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'./MultiInputRenderer',
 	"sap/ui/dom/containsOrEquals",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	jQuery,
@@ -44,7 +44,8 @@ function(
 	ResizeHandler,
 	IconPool,
 	MultiInputRenderer,
-	containsOrEquals
+	containsOrEquals,
+	KeyCodes
 ) {
 		"use strict";
 
@@ -651,12 +652,12 @@ function(
 	 */
 	MultiInput.prototype.onkeydown = function (oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
+		if (oEvent.which === KeyCodes.TAB) {
 			this._tokenizer._changeAllTokensSelection(false);
 		}
 
 		// ctrl/meta + A - Select all Tokens
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.A) {
 			if (this._tokenizer.getTokens().length > 0) {
 				this._tokenizer.focus();
 				this._tokenizer._changeAllTokensSelection(true);
@@ -665,12 +666,12 @@ function(
 		}
 
 		// ctrl/meta + c OR ctrl/meta + Insert - Copy all selected Tokens
-		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.C || oEvent.which === jQuery.sap.KeyCodes.INSERT)) {
+		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.C || oEvent.which === KeyCodes.INSERT)) {
 			this._tokenizer._copy();
 		}
 
 		// ctr/meta + x OR Shift + Delete - Cut all selected Tokens if editable
-		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.X) || (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.DELETE)) {
+		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.X) || (oEvent.shiftKey && oEvent.which === KeyCodes.DELETE)) {
 			if (this.getEditable()) {
 				this._tokenizer._cut();
 			} else {

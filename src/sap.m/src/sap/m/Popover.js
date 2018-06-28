@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/getScrollbarSize",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 	function(
 		jQuery,
@@ -42,7 +42,8 @@ sap.ui.define([
 		PopoverRenderer,
 		containsOrEquals,
 		jQueryDOM,
-		getScrollbarSize
+		getScrollbarSize,
+		KeyCodes
 	) {
 		"use strict";
 
@@ -1008,7 +1009,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype.onkeydown = function (oEvent) {
-			var oKC = jQuery.sap.KeyCodes,
+			var oKC = KeyCodes,
 				iKC = oEvent.which || oEvent.keyCode,
 				bAlt = oEvent.altKey;
 

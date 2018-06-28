@@ -9,9 +9,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/theming/Parameters',
 	'./RatingIndicatorRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer) {
+	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer, KeyCodes) {
 	"use strict";
 
 
@@ -798,44 +798,44 @@ sap.ui.define([
 		}
 
 		switch (oEvent.which) {
-			case jQuery.sap.KeyCodes.DIGIT_0:
-			case jQuery.sap.KeyCodes.NUMPAD_0:
+			case KeyCodes.DIGIT_0:
+			case KeyCodes.NUMPAD_0:
 				this.setValue(0);
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_1:
-			case jQuery.sap.KeyCodes.NUMPAD_1:
+			case KeyCodes.DIGIT_1:
+			case KeyCodes.NUMPAD_1:
 				this.setValue(1);
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_2:
-			case jQuery.sap.KeyCodes.NUMPAD_2:
+			case KeyCodes.DIGIT_2:
+			case KeyCodes.NUMPAD_2:
 				this.setValue(Math.min(2, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_3:
-			case jQuery.sap.KeyCodes.NUMPAD_3:
+			case KeyCodes.DIGIT_3:
+			case KeyCodes.NUMPAD_3:
 				this.setValue(Math.min(3, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_4:
-			case jQuery.sap.KeyCodes.NUMPAD_4:
+			case KeyCodes.DIGIT_4:
+			case KeyCodes.NUMPAD_4:
 				this.setValue(Math.min(4, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_5:
-			case jQuery.sap.KeyCodes.NUMPAD_5:
+			case KeyCodes.DIGIT_5:
+			case KeyCodes.NUMPAD_5:
 				this.setValue(Math.min(5, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_6:
-			case jQuery.sap.KeyCodes.NUMPAD_6:
+			case KeyCodes.DIGIT_6:
+			case KeyCodes.NUMPAD_6:
 				this.setValue(Math.min(6, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_7:
-			case jQuery.sap.KeyCodes.NUMPAD_7:
+			case KeyCodes.DIGIT_7:
+			case KeyCodes.NUMPAD_7:
 				this.setValue(Math.min(7, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_8:
-			case jQuery.sap.KeyCodes.NUMPAD_8:
+			case KeyCodes.DIGIT_8:
+			case KeyCodes.NUMPAD_8:
 				this.setValue(Math.min(8, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_9:
-			case jQuery.sap.KeyCodes.NUMPAD_9:
+			case KeyCodes.DIGIT_9:
+			case KeyCodes.NUMPAD_9:
 				this.setValue(Math.min(9, iMaxValue));
 				break;
 		}

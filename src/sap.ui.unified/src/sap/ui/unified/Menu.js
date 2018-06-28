@@ -15,8 +15,8 @@ sap.ui.define([
 	'sap/ui/unified/MenuRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes",
 	'jquery.sap.script',
-	'jquery.sap.keycodes',
 	'jquery.sap.events'
 ], function(
 	jQuery,
@@ -29,7 +29,8 @@ sap.ui.define([
 	coreLibrary,
 	MenuRenderer,
 	containsOrEquals,
-	jQueryDOM
+	jQueryDOM,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -573,7 +574,7 @@ sap.ui.define([
 
 	Menu.prototype.onsapnext = function(oEvent){
 		//right or down (RTL: left or down)
-		if (oEvent.keyCode != jQuery.sap.KeyCodes.ARROW_DOWN) {
+		if (oEvent.keyCode != KeyCodes.ARROW_DOWN) {
 			//Go to sub menu if available
 			if (this.oHoveredItem && this.oHoveredItem.getSubmenu() && this.checkEnabled(this.oHoveredItem)) {
 				this.openSubmenu(this.oHoveredItem, true);
@@ -591,7 +592,7 @@ sap.ui.define([
 
 	Menu.prototype.onsapprevious = function(oEvent){
 		//left or up (RTL: right or up)
-		if (oEvent.keyCode != jQuery.sap.KeyCodes.ARROW_UP) {
+		if (oEvent.keyCode != KeyCodes.ARROW_UP) {
 			//Go to parent menu if this is a sub menu
 			if (this.isSubMenu()) {
 				this.close();

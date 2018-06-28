@@ -18,7 +18,7 @@ sap.ui.define([
 	'sap/ui/model/CompositeBinding',
 	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	Plugin,
@@ -33,7 +33,8 @@ sap.ui.define([
 	Binding,
 	CompositeBinding,
 	ObjectPath,
-	jQueryDOM
+	jQueryDOM,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -886,12 +887,12 @@ sap.ui.define([
 
 		ControlTree.prototype._autoComplete = function(oEvent) {
 
-			if (oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
+			if (oEvent.keyCode == KeyCodes.ENTER) {
 				this._updateSelectOptions(oEvent);
 				this._onAddBreakpointClicked();
 			}
 
-			if (oEvent.keyCode >= jQuery.sap.KeyCodes.ARROW_LEFT && oEvent.keyCode <= jQuery.sap.KeyCodes.ARROW_DOWN) {
+			if (oEvent.keyCode >= KeyCodes.ARROW_LEFT && oEvent.keyCode <= KeyCodes.ARROW_DOWN) {
 				return;
 			}
 
@@ -916,7 +917,7 @@ sap.ui.define([
 
 					var iCurrentStart = $input.cursorPos();
 
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
+					if (oEvent.keyCode == KeyCodes.BACKSPACE) {
 						iCurrentStart--;
 					}
 

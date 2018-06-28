@@ -12,9 +12,19 @@ sap.ui.define([
     'sap/ui/unified/Menu',
     'sap/ui/core/Popup',
     "./RowActionRenderer",
-    'jquery.sap.keycodes'
+    "sap/ui/events/KeyCodes"
 ],
-function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionRenderer) {
+function(
+	jQuery,
+	Control,
+	TableUtils,
+	library,
+	Icon,
+	Menu,
+	Popup,
+	RowActionRenderer,
+	KeyCodes
+) {
 	"use strict";
 
 	/**
@@ -75,7 +85,7 @@ function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionRende
 		};
 
 		var fnOnKeyUp = function(oEvent) {
-			this._bKeyboard = oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER;
+			this._bKeyboard = oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER;
 			Icon.prototype.onkeyup.apply(this, arguments);
 		};
 

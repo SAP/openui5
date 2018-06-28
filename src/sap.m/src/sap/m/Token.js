@@ -11,9 +11,18 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Icon',
 	'./TokenRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, Tokenizer, coreLibrary, Icon, TokenRenderer) {
+	function(
+		jQuery,
+		library,
+		Control,
+		Tokenizer,
+		coreLibrary,
+		Icon,
+		TokenRenderer,
+		KeyCodes
+	) {
 	"use strict";
 
 
@@ -359,7 +368,7 @@ sap.ui.define([
 	 */
 	Token.prototype.onkeydown = function(oEvent) {
 
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.SPACE) {
 			//metaKey for MAC command
 			this.onsapspace(oEvent);
 			oEvent.preventDefault();

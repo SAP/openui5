@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/m/Image',
 	'./NumericContentRenderer',
 	"sap/ui/thirdparty/jquery",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 	function(
 		jQuery,
@@ -19,7 +19,8 @@ sap.ui.define([
 		IconPool,
 		Image,
 		NumericContentRenderer,
-		jQueryDOM
+		jQueryDOM,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -271,7 +272,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.onkeyup = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.SPACE) {
 			this.firePress();
 			oEvent.preventDefault();
 		}
@@ -283,7 +284,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.SPACE) {
 			oEvent.preventDefault();
 		}
 	};
