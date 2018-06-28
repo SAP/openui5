@@ -153,6 +153,18 @@ sap.ui.define([
 				 */
 				_button: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
 			},
+			associations : {
+
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+			},
 			events: {
 				/**
 				 * Fired when the <code>buttonMode</code> is set to <code>Split</code> and the user presses the main button
