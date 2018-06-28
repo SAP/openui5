@@ -2422,7 +2422,9 @@
 			},
 			iSmallHeaderHeight = 700,
 			iLargeHeaderHeight = 1100,
-			iPageHeight = 1000;
+			iPageHeight = 1000,
+			iNoHeaderHeight = 0,
+			iNoPageHeight = 0;
 
 		// act (1) -  Header`s height is smaller than the Page`s height.
 		fnStubConfig(iSmallHeaderHeight, iPageHeight);
@@ -2439,6 +2441,17 @@
 		// assert
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
 			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (3) - Header`s height and Page`s height are 0.
+		fnStubConfig(iNoHeaderHeight, iNoPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"When Header is not on the page return false");
+
+		oSandBox.restore();
 	});
 
 	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on mobile", function (assert) {
@@ -2450,7 +2463,9 @@
 			},
 			iSmallHeaderHeight = 100,
 			iLargeHeaderHeight = 400,
-			iPageHeight = 1000;
+			iPageHeight = 1000,
+			iNoHeaderHeight = 0,
+			iNoPageHeight = 0;
 
 		// act (1) -  Header`s height is smaller than the Page`s height.
 		oUtil.toMobileMode();
@@ -2469,6 +2484,17 @@
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
 			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
 
+		oSandBox.restore();
+
+		// act (3) - Header`s height and Page`s height are 0.
+		fnStubConfig(iNoHeaderHeight, iNoPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"When Header is not on the page return false");
+
+		// cleanup
+		oSandBox.restore();
 		oUtil.toDesktopMode();
 	});
 
