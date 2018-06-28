@@ -3,12 +3,10 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
-	"sap/ui/rta/plugin/RTAElementMover",
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/ElementOverlay",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/comp/smartform/SmartForm",
@@ -19,12 +17,10 @@ sap.ui.require([
 	"sap/m/Bar",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	RTAElementMover,
 	DragDropPlugin,
 	OverlayRegistry,
 	DesignTime,
 	ElementDesignTimeMetadata,
-	ElementOverlay,
 	CommandFactory,
 	ChangeRegistry,
 	SmartForm,

@@ -26,7 +26,6 @@ sap.ui.define([
 		}
 	});
 
-
 	return TableController;
 
 });

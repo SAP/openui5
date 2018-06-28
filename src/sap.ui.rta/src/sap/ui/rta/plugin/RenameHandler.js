@@ -53,7 +53,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * @param {sap.ui.dt.Overlay} oOverlay - target overlay
+		 * @param {map} mPropertyBag - (required) contains required properties
 		 * @public
 		 */
 		startEdit : function (mPropertyBag) {
@@ -97,7 +97,7 @@ sap.ui.define([
 				}
 			}
 
-			var oOverlayForWrapper = sap.ui.dt.OverlayRegistry.getOverlay(
+			var oOverlayForWrapper = OverlayRegistry.getOverlay(
 				vEditableControlDomRef instanceof jQuery
 					? vEditableControlDomRef.get(0).id
 					: vEditableControlDomRef.id
@@ -226,9 +226,11 @@ sap.ui.define([
 
 		/**
 		 * @param {boolean} bRestoreFocus - true if the focus should be restored on overlay after rename
+		 * @param {string} sPluginMethodName - method name of the plugin
 		 * @private
 		 */
 		_stopEdit : function (bRestoreFocus, sPluginMethodName) {
+			var oOverlay;
 			this._bPreventMenu = false;
 
 			// exchange the dummy text at the label with the genuine empty text (see start_edit function)
@@ -243,7 +245,7 @@ sap.ui.define([
 			this._$oEditableControlDomRef.css("visibility", "visible");
 
 			if (bRestoreFocus) {
-				var oOverlay = this._oEditedOverlay;
+				oOverlay = this._oEditedOverlay;
 
 				oOverlay.setSelected(true);
 				oOverlay.focus();
@@ -263,8 +265,11 @@ sap.ui.define([
 		 * @private
 		 */
 		_onEditableFieldBlur : function (oEvent) {
-			this._emitLabelChangeEvent();
-			this.stopEdit(false);
+			this._emitLabelChangeEvent()
+
+			.then(function() {
+				this.stopEdit(false);
+			}.bind(this));
 		},
 
 		/**
@@ -274,9 +279,11 @@ sap.ui.define([
 		_onEditableFieldKeydown : function (oEvent) {
 			switch (oEvent.keyCode) {
 				case KeyCodes.ENTER:
-					this._emitLabelChangeEvent();
-					this.stopEdit(true);
-					oEvent.preventDefault();
+					this._emitLabelChangeEvent()
+					.then(function() {
+						this.stopEdit(true);
+						oEvent.preventDefault();
+					}.bind(this));
 					break;
 				case KeyCodes.ESCAPE:
 					this.stopEdit(true);

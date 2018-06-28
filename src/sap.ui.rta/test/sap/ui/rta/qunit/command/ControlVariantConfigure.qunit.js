@@ -9,11 +9,8 @@ sap.ui.define([
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementOverlay',
 	'sap/ui/fl/variants/VariantManagement',
-	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/fl/variants/VariantModel',
-	'sap/ui/fl/variants/VariantController',
 	'sap/ui/fl/FlexControllerFactory',
 	// should be last:
 	'sap/ui/thirdparty/sinon',
@@ -26,11 +23,8 @@ function(
 	CommandFactory,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
-	ElementOverlay,
 	VariantManagement,
-	ControlVariant,
 	VariantModel,
-	VariantController,
 	FlexControllerFactory
 ) {
 	'use strict';
@@ -45,6 +39,7 @@ function(
 			}
 		}
 	};
+	var oModel;
 	var oManifest = new Manifest(oManifestObj);
 
 	var oMockedAppComponent = {
@@ -85,7 +80,7 @@ function(
 		}
 	};
 
-	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+	oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
 
 	var oVariant = {
 		"content": {
@@ -113,15 +108,13 @@ function(
 
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oDummyOverlay);
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oVariantManagement.destroy();
 		}
 	});
 
 	QUnit.test("when calling command factory for configure and undo with setTitle, setFavorite and setVisible changes", function(assert) {
-		var done = assert.async();
-
 		sandbox.stub(oModel, "getVariant").returns(oVariant);
 		sandbox.stub(oModel.oVariantController, "_setVariantData").returns(1);
 		sandbox.stub(oModel.oVariantController, "_updateChangesForVariantManagementInMap");
@@ -151,39 +144,47 @@ function(
 			variantReference : "variant0",
 			visible : false
 		};
-		var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange];
-		var oControlVariantConfigureCommand = CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
+		var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange],
+			oControlVariantConfigureCommand, aPreparedChanges;
+
+		return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 			control : this.oVariantManagement,
 			changes : aChanges
-		}, oDesignTimeMetadata, mFlexSettings);
+		}, oDesignTimeMetadata, mFlexSettings)
 
-		assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
-		oControlVariantConfigureCommand.execute().then(function() {
+		.then(function(oCommand) {
+			oControlVariantConfigureCommand = oCommand;
+			assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
+			return oControlVariantConfigureCommand.execute();
+		})
+
+		.then(function() {
 			var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
-			var aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
+			aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
 			assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
 			assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 			assert.equal(oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
 			assert.equal(oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
 			assert.equal(oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
 			assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes are present");
+			return oControlVariantConfigureCommand.undo();
+		})
 
-			oControlVariantConfigureCommand.undo().then( function() {
-				aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
-				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
-				assert.equal(oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
-				assert.equal(oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
-				assert.equal(oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
-				assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty changes are removed");
-				done();
-			});
+		.then(function() {
+			aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
+			assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
+			assert.equal(oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
+			assert.equal(oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
+			assert.equal(oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
+			assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty changes are removed");
+		})
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
 		});
-
 	});
 
 	QUnit.test("when calling command factory for configure and undo with setDefault change", function(assert) {
-		var done = assert.async();
-
 		sandbox.stub(oModel, "getVariant").returns(oVariant);
 		sandbox.stub(oModel.oVariantController, "_updateChangesForVariantManagementInMap");
 		oModel.oVariantController._mVariantManagement = {};
@@ -199,28 +200,38 @@ function(
 				originalDefaultVariant : "variant0",
 				variantManagementReference : "variantMgmtId1"
 			};
-		var aChanges = [oDefaultChange];
-		var oControlVariantConfigureCommand = CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
+		var aChanges = [oDefaultChange],
+			oControlVariantConfigureCommand;
+		return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 			control : this.oVariantManagement,
 			changes : aChanges
-		}, oDesignTimeMetadata, mFlexSettings);
+		}, oDesignTimeMetadata, mFlexSettings)
 
-		assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
-		oControlVariantConfigureCommand.execute().then(function() {
+		.then(function(oCommand) {
+			oControlVariantConfigureCommand = oCommand;
+			assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
+			return oControlVariantConfigureCommand.execute();
+		})
+
+		.then(function() {
 			var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
 			assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 			var oData = oControlVariantConfigureCommand.oModel.getData();
 			assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
 			assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then 1 dirty change is present");
 
-			oControlVariantConfigureCommand.undo().then( function() {
-				oData = oControlVariantConfigureCommand.oModel.getData();
-				assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
-				assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
-				done();
-			});
-		});
+			return oControlVariantConfigureCommand.undo();
+		})
 
+		.then( function() {
+			oData = oControlVariantConfigureCommand.oModel.getData();
+			assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
+			assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
+		})
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 });

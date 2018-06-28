@@ -14,11 +14,8 @@ sap.ui.require([
 	"sap/m/Bar",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/AggregationOverlay",
-	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/fieldExt/Access",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/registry/Settings",
@@ -35,11 +32,8 @@ sap.ui.require([
 	Bar,
 	ElementOverlay,
 	ElementDesignTimeMetadata,
-	AggregationOverlay,
-	AggregationDesignTimeMetadata,
 	DesignTime,
 	OverlayRegistry,
-	FieldExtAccess,
 	ChangeRegistry,
 	SimpleChanges,
 	Settings,
@@ -119,7 +113,7 @@ sap.ui.require([
 
 	var oControl, oInvisible1, oInvisible2, oUnsupportedInvisible, oSibling, oIrrelevantChild,
 		oPseudoPublicParent,
-		//FIXME: remove eslint-disable
+		// FIXME: remove
 		oPseudoPublicParentOverlay, oParentOverlay, oSibilingOverlay, oIrrelevantOverlay, // eslint-disable-line
 		oPlugin, oDialog,
 		fnGetCommandSpy, fnEnhanceInvisibleElementsStub,
@@ -335,8 +329,7 @@ sap.ui.require([
 			givenThePluginWithOKClosingDialog();
 
 		},
-		afterEach: function () {
-			oDesignTime.destroy();
+		afterEach : function() {
 			oPlugin.destroy();
 			oPseudoPublicParent.destroy();
 			sandbox.restore();
@@ -1060,6 +1053,7 @@ sap.ui.require([
 				case ON_SIBLING : return oSibilingOverlay;
 				case ON_CHILD : return oParentOverlay;
 				case ON_IRRELEVANT : return oIrrelevantOverlay;
+				default : return undefined;
 			}
 		});
 	}

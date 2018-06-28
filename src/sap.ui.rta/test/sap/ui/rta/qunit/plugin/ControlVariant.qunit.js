@@ -16,13 +16,9 @@ sap.ui.require([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/registry/ChangeRegistry",
 	'sap/ui/fl/FlexControllerFactory',
-	"sap/ui/layout/form/FormContainer",
-	"sap/ui/layout/form/Form",
-	"sap/ui/layout/form/FormLayout",
 	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/rta/plugin/RenameHandler",
 	'sap/ui/core/Manifest',
-	"sap/ui/core/Title",
 	"sap/m/Button",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
@@ -30,7 +26,6 @@ sap.ui.require([
 	"sap/m/Page",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/m/delegate/ValueStateMessage",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -48,13 +43,9 @@ sap.ui.require([
 	ElementOverlay,
 	ChangeRegistry,
 	FlexControllerFactory,
-	FormContainer,
-	Form,
-	FormLayout,
 	ControlVariantPlugin,
 	RenameHandler,
 	Manifest,
-	Title,
 	Button,
 	ObjectPageLayout,
 	ObjectPageSection,
@@ -62,7 +53,6 @@ sap.ui.require([
 	Page,
 	VariantManagement,
 	VariantModel,
-	BaseTreeModifier,
 	ValueStateMessage,
 	RtaUtils,
 	sinon
@@ -318,7 +308,7 @@ sap.ui.require([
 					assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
 					this.oControlVariantPlugin._$oEditableControlDomRef.text("Test");
 					this.oControlVariantPlugin._$editableField.text(this.oControlVariantPlugin._$oEditableControlDomRef.text());
-					var $Event = jQuery.Event("keydown");
+					var $Event = jQuery.Event("keydown"); // eslint-disable-line new-cap
 					$Event.keyCode = jQuery.sap.KeyCodes.ENTER;
 					this.oControlVariantPlugin._$editableField.trigger($Event);
 					sap.ui.getCore().applyChanges();

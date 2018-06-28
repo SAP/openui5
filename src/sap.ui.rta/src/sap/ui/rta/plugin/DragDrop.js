@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	'sap/ui/dt/plugin/ControlDragDrop',
+	'sap/ui/dt/Util',
 	'sap/ui/rta/plugin/RTAElementMover',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils'
 ],
 function(
 	ControlDragDrop,
+	DtUtil,
 	RTAElementMover,
 	Plugin,
 	Utils
@@ -127,15 +129,23 @@ function(
 	 * @override
 	 */
 	DragDrop.prototype.onDragEnd = function(oOverlay) {
-		this.fireElementModified({
-			"command" : this.getElementMover().buildMoveCommand()
+		this.getElementMover().buildMoveCommand()
+
+		.then(function(oCommand) {
+			this.fireElementModified({
+				"command" : oCommand
+			});
+
+			oOverlay.$().removeClass("sapUiRtaOverlayPlaceholder");
+			oOverlay.setSelected(true);
+			oOverlay.focus();
+
+			ControlDragDrop.prototype.onDragEnd.apply(this, arguments);
+		}.bind(this))
+
+		.catch(function(oMessage) {
+			throw DtUtil.propagateError(oMessage);
 		});
-
-		oOverlay.$().removeClass("sapUiRtaOverlayPlaceholder");
-		oOverlay.setSelected(true);
-		oOverlay.focus();
-
-		ControlDragDrop.prototype.onDragEnd.apply(this, arguments);
 	};
 
 	/**

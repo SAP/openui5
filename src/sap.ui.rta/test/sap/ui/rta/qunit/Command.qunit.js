@@ -17,10 +17,8 @@ sap.ui.require([
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/command/FlexCommand',
 	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/rta/command/Remove',
 	'sap/ui/rta/command/CompositeCommand',
 	'sap/ui/rta/command/Stack',
-	'sap/ui/rta/Utils',
 	'sap/ui/fl/changeHandler/MoveControls',
 	'sap/ui/fl/changeHandler/HideControl',
 	'sap/ui/fl/registry/ChangeRegistry',
@@ -50,10 +48,8 @@ function(
 	CommandFactory,
 	FlexCommand,
 	BaseCommand,
-	Remove,
 	CompositeCommand,
 	Stack,
-	Utils,
 	MoveControls,
 	HideControl,
 	ChangeRegistry,
@@ -118,29 +114,37 @@ function(
 		}
 	}, function() {
 		QUnit.test("when getting a property change command for button,", function(assert) {
-			var oCommand = oCommandFactory.getCommandFor(this.oButton, "property", {
+			return oCommandFactory.getCommandFor(this.oButton, "property", {
 				propertyName : "visible",
 				oldValue : this.oButton.getVisible(),
 				newValue : false
-			});
-			assert.ok(oCommand, "then command without flex settings is available");
-			assert.strictEqual(oCommand.getNewValue(), false, "and its settings are merged correctly");
+			})
 
-			oCommandFactory.setFlexSettings({
-				layer: "VENDOR",
-				developerMode: true
-			});
-			var oCommand2 = oCommandFactory.getCommandFor(this.oButton, "property", {
-				propertyName : "visible",
-				oldValue : this.oButton.getVisible(),
-				newValue : false
-			});
-			assert.ok(oCommand2, "then command with flex settings is available");
-			assert.strictEqual(oCommand2.getNewValue(), false, "and its settings are merged correctly");
+			.then(function(oCommand) {
+				assert.ok(oCommand, "then command without flex settings is available");
+				assert.strictEqual(oCommand.getNewValue(), false, "and its settings are merged correctly");
 
-			oCommandFactory.setFlexSettings({
-				layer: "VENDOR",
-				developerMode: false
+			})
+
+			.then(function() {
+				oCommandFactory.setFlexSettings({
+					layer: "VENDOR",
+					developerMode: true
+				});
+				return oCommandFactory.getCommandFor(this.oButton, "property", {
+					propertyName : "visible",
+					oldValue : this.oButton.getVisible(),
+					newValue : false
+				});
+			}.bind(this))
+
+			.then(function(oCommand) {
+				assert.ok(oCommand, "then command with flex settings is available");
+				assert.strictEqual(oCommand.getNewValue(), false, "and its settings are merged correctly");
+			})
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		});
 
@@ -155,15 +159,21 @@ function(
 
 			var oPrepareStub = sandbox.stub(FlexCommand.prototype, "prepare");
 
-			CommandFactory.getCommandFor(this.oButton, "property", {
+			return CommandFactory.getCommandFor(this.oButton, "property", {
 				propertyName : "visible",
 				oldValue : this.oButton.getVisible(),
 				newValue : false
-			}, null, oFlexSettings);
+			}, null, oFlexSettings)
 
-			assert.equal(oPrepareStub.callCount, 1, "the _getCommandFor method was called");
-			assert.ok(oPrepareStub.lastCall.args[0].namespace, "and the namespace got added to the flexSettings");
-			assert.ok(oPrepareStub.lastCall.args[0].rootNamespace, "and the rootNamespace got added to the flexSettings");
+			.then(function() {
+				assert.equal(oPrepareStub.callCount, 1, "the _getCommandFor method was called");
+				assert.ok(oPrepareStub.lastCall.args[0].namespace, "and the namespace got added to the flexSettings");
+				assert.ok(oPrepareStub.lastCall.args[0].rootNamespace, "and the rootNamespace got added to the flexSettings");
+			})
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 	});
 
@@ -183,15 +193,27 @@ function(
 	}, function() {
 		QUnit.test("when executing the command,", function(assert) {
 			assert.ok(this.oFlexCommand.isEnabled(), "then command is enabled");
-			return this.oFlexCommand.execute().then(function() {
+			return this.oFlexCommand.execute()
+
+			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when executing a command that fails because of dependencies", function(assert) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oMockedAppComponent);
 			sandbox.stub(oChangePersistence, "checkForOpenDependenciesForControl").returns(true);
-			return this.oFlexCommand.execute().catch(function(oError) {
+			return this.oFlexCommand.execute()
+
+			.then(function() {
+				assert.ok(false, 'then must never be called. An Exception should be thrown');
+			})
+
+			.catch(function(oError) {
 				assert.deepEqual(oError.message, "The following Change cannot be applied because of a dependency: " + this.oFlexCommand.getPreparedChange().getId(), "the execute promise got rejected with the correct error message");
 			}.bind(this));
 		});
@@ -222,7 +244,11 @@ function(
 			.then(function() {
 				assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
 						" the to be executed index is in range");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when re-doing the empty stack, ", function(assert) {
@@ -233,7 +259,11 @@ function(
 			.then(function() {
 				assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
 								" the to be executed index is in range");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when pushing a command, ", function(assert) {
@@ -264,7 +294,11 @@ function(
 				assert.equal(this.stack.getCommands().length, 1, "  only first commmand is on the stack");
 				assert.equal(this.stack.getCommands()[0].getId(), this.command.getId(), "  only first commmand is on the stack");
 				assert.equal(oTopCommand.getId(), this.command2.getId(), " the correct command is returned");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when calling pushAndExecute with a failing command as the only command", function(assert) {
@@ -314,7 +348,11 @@ function(
 				assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
 				assert.ok(this.stack.isEmpty(), "and the command stack is empty");
 				assert.equal(oTopCommand.getId(), this.command.getId(), " the correct command is returned");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when calling pop at the command stack with an already executed and a not executed command at it's top, ", function(assert) {
@@ -325,7 +363,11 @@ function(
 				assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
 				assert.ok(this.stack.isEmpty(), "and the command stack is empty");
 				assert.equal(oTopCommand.getId(), this.command.getId(), " the correct command is returned");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when pushing and executing a command, ", function(assert) {
@@ -336,7 +378,11 @@ function(
 				assert.equal(oTopCommand.getId(), this.command.getId(), "then it is on the top of stack");
 				assert.ok(this.stack.canUndo(), "then a command can be undone");
 				assert.ok(!this.stack.canRedo(), "then stack cannot be redone");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when pushing a failing command and a working command to the stack and calling execute, ", function(assert) {
@@ -350,7 +396,11 @@ function(
 				assert.equal(aCommands[0].getId(), this.command.getId(), "the remaining command is the one which has been pushed last");
 				assert.equal(this.stack._getCommandToBeExecuted().getId(), this.command.getId(), "the variable '_toBeExecuted' points to the remaining command");
 				assert.equal(oError.command.getId(), this.failingCommand.getId(), "the error object contains the failing command");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when undoing and redo an empty stack, then no exception should come", function(assert) {
@@ -372,18 +422,17 @@ function(
 			this.oControl = new Column(oMockedAppComponent.createId("control"), {
 				width : this.OLD_VALUE
 			});
-			this.oPropertyCommand = CommandFactory.getCommandFor(this.oControl, "Property", {
+			return CommandFactory.getCommandFor(this.oControl, "Property", {
 				propertyName : "width",
 				newValue : this.NEW_VALUE,
 				oldValue : this.OLD_VALUE,
 				semanticMeaning : "resize"
-			}, null, oFlexSettings);
-			this.oPropertyCommandWithOutOldValueSet = CommandFactory.getCommandFor(this.oControl, "Property", {
-				propertyName : "width",
-				newValue : this.NEW_VALUE,
-				semanticMeaning : "resize"
-			}, null, oFlexSettings);
-			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
+			}, null, oFlexSettings)
+
+			.then(function(oCommand) {
+				this.oPropertyCommand = oCommand;
+				this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
+			}.bind(this));
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -410,7 +459,11 @@ function(
 			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
 				assert.equal(this.oControl.getWidth(), this.NEW_VALUE, "then the controls text changed accordingly");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 	});
 
@@ -442,28 +495,49 @@ function(
 			this.oInput.setModel(oModel);
 			this.oInput.setModel(oNamedModel, "namedModel");
 
-			this.oBindShowValueHelpCommand = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
+			return CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				propertyName : "showValueHelp",
 				newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
-			}, null, oFlexSettings);
-			this.oBindShowValueHelpCommandWithoutOldValueSet = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
-				element : this.oInput,
-				propertyName : "showValueHelp",
-				newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
-			}, null, oFlexSettings);
-			this.oBindValuePropertyCommand = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
-				propertyName : "value",
-				newBinding : this.NEW_VALUE_BINDING
-			}, null, oFlexSettings);
-			this.oBindValuePropertyCommandWithoutOldBindingSet = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
-				propertyName : "value",
-				newBinding : this.NEW_VALUE_BINDING
-			}, null, oFlexSettings);
-			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
+			}, null, oFlexSettings)
+
+			.then(function(oCommand) {
+				this.oBindShowValueHelpCommand = oCommand;
+				return CommandFactory.getCommandFor(this.oInput, "BindProperty", {
+					element : this.oInput,
+					propertyName : "showValueHelp",
+					newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
+				}, null, oFlexSettings);
+			}.bind(this))
+
+			.then(function(oCommand) {
+				this.oBindShowValueHelpCommandWithoutOldValueSet = oCommand;
+				return CommandFactory.getCommandFor(this.oInput, "BindProperty", {
+					propertyName : "value",
+					newBinding : this.NEW_VALUE_BINDING
+				}, null, oFlexSettings);
+			}.bind(this))
+
+			.then(function(oCommand) {
+				this.oBindValuePropertyCommand = oCommand;
+				return CommandFactory.getCommandFor(this.oInput, "BindProperty", {
+					propertyName : "value",
+					newBinding : this.NEW_VALUE_BINDING
+				}, null, oFlexSettings);
+			}.bind(this))
+
+			.then(function(oCommand) {
+				this.oBindValuePropertyCommandWithoutOldBindingSet = oCommand;
+				this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
 			this.oInput.destroy();
+			this.oBindShowValueHelpCommandWithoutOldValueSet.destroy();
 			this.oBindShowValueHelpCommand.destroy();
 			this.oBindValuePropertyCommand.destroy();
 			this.oBindValuePropertyCommandWithoutOldBindingSet.destroy();
@@ -487,7 +561,11 @@ function(
 			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
 				assert.equal(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "then the controls property changed accordingly");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when executing the bind property command for a property 'value' with an old binding and with a new binding", function(assert) {
@@ -508,7 +586,11 @@ function(
 			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
 				assert.equal(this.oInput.getValue(), this.NEW_VALUE, "then the controls property changed accordingly");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 	});
 
@@ -516,19 +598,22 @@ function(
 		beforeEach : function(assert) {
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
-			this.oCommand = CommandFactory.getCommandFor(this.oButton, "Remove", {
+
+			return CommandFactory.getCommandFor(this.oButton, "Remove", {
 				removedElement: this.oButton
 			}, new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							remove : {
-								changeType : "hideControl"
-							}
+				data : {
+					actions : {
+						remove : {
+							changeType : "hideControl"
 						}
 					}
-				}));
-
-			this.oCommand.prepare();
+				}
+			}))
+			.then(function(oCommand) {
+				this.oCommand = oCommand;
+				this.oCommand.prepare();
+			}.bind(this));
 		},
 		afterEach : function (assert) {
 			sandbox.restore();
@@ -561,7 +646,8 @@ function(
 
 			.then(this.stack.pushAndExecute.bind(this.stack, this.command2))
 
-			.then(function() {
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		},
 		afterEach : function(assert) {
@@ -590,7 +676,11 @@ function(
 				assert.equal(fnStackModified.callCount, 1, " the modify stack listener is called");
 
 				assert.ok(this.stack.canRedo(), "then stack can be redone");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when second time undo, then", function(assert) {
@@ -612,7 +702,11 @@ function(
 				assert.equal(fnFirstCommandUndo.callCount, 1, " the first command was undone");
 				assert.ok(fnLastCommandUndo.calledBefore(fnFirstCommandUndo), " the last is called before the first");
 				assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when undo and redo, then", function(assert) {
@@ -642,7 +736,11 @@ function(
 				assert.ok(this.stack.canUndo(), "then a command can be undone");
 				assert.ok(!this.stack.canRedo(), "then stack cannot be redone");
 				assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called for undo and redo");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when having nothing to redo, redo shouldn't do anything, next command to execute will be still the top command, then", function (assert) {
@@ -712,7 +810,11 @@ function(
 			.then(function() {
 				assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called on execute");
 				assert.equal(this.stack._toBeExecuted, -1, " nothing is to be executed");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("After pushing one command and calling pushAndExecute the top of stack, then", function(assert) {
@@ -739,7 +841,11 @@ function(
 				assert.equal(this.stack.getCommands().length, 1, " only second command on the stack");
 				assert.equal(this.stack._getCommandToBeExecuted().getId(), this.command2.getId(), " 2. command to be executed");
 				assert.equal(this.stack._toBeExecuted, 0, " one command to be executed");
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when pushing an executed command, ", function(assert) {
@@ -830,6 +936,10 @@ function(
 
 			.then(function() {
 				assert.ok(fnCommand2Undo.calledBefore(fnCommand1Undo), "commands are undone in the backward order");
+			})
+
+			.catch(function(oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		});
 
@@ -918,7 +1028,7 @@ function(
 		}
 	}, function() {
 		QUnit.test("when asking for a move command", function(assert){
-			var oMoveCmd = CommandFactory.getCommandFor(this.oSourceParent, "Move", {
+			return CommandFactory.getCommandFor(this.oSourceParent, "Move", {
 				movedElements : [{
 					id : this.oMovable.getId(),
 					sourceIndex : 0,
@@ -934,11 +1044,16 @@ function(
 					aggregation : "attributes",
 					publicAggregation : "attributes"
 				}
-			}, this.oSourceParentDesignTimeMetadata );
+			}, this.oSourceParentDesignTimeMetadata )
 
-			assert.equal(oMoveCmd.getChangeType(), "moveControls", "then the command with corresponding changeType is returned");
+			.then(function(oMoveCommand) {
+				assert.equal(oMoveCommand.getChangeType(), "moveControls", "then the command with corresponding changeType is returned");
+				oMoveCommand.destroy();
+			})
 
-			oMoveCmd.destroy();
+			.catch(function(oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 	});
 
@@ -1012,7 +1127,11 @@ function(
 							assert.equal(this.fnRtaStartRecordingStub.callCount, 0, "then recording of rta undo operations not started");
 							assert.equal(this.fnRtaStopRecordingStub.callCount, 0, "then recording of rta undo operations not stopped");
 						}.bind(this));
-				}.bind(this));
+				}.bind(this))
+
+				.catch(function(oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 		});
 
 		QUnit.test("when change handler is not revertible and command is executed", function (assert) {
@@ -1034,7 +1153,11 @@ function(
 							assert.equal(this.fnRtaStopRecordingStub.callCount, 1, "then recording of rta undo operations is stopped");
 							assert.ok(this.fnPerformUndoStub.calledWith(["undoOperation1", "undoOperation2"]), "then undo operation is performed with the correct operations");
 						}.bind(this));
-				}.bind(this));
+				}.bind(this))
+
+				.catch(function(oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 		});
 
 		QUnit.test("when change handler is not available", function (assert) {
@@ -1159,7 +1282,7 @@ function(
 					boundAggregation : "items"
 				}
 			};
-			var oCommand = oCommandFactory.getCommandFor(oRelevantContainer, "move", {
+			return oCommandFactory.getCommandFor(oRelevantContainer, "move", {
 				movedElements : [{
 					element : oMovedElement,
 					sourceIndex : 0,
@@ -1167,19 +1290,22 @@ function(
 				}],
 				source : oSource,
 				target : oTarget
-			}, oSourceParentDesignTimeMetadata);
+			}, oSourceParentDesignTimeMetadata)
 
-			assert.ok(oCommand, "then command is available");
-			assert.equal(oCreateChangeFromDataSpy.callCount, 2, "and '_createChangeFromData' is called twice (once for prepare change and once for undo change");
-			assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
-			assert.deepEqual(oCreateChangeFromDataSpy.args[1][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
-			assert.strictEqual(oCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
-			assert.strictEqual(oCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
-			assert.strictEqual(oCommand.getPreparedChange().getContent().source.selector.id, oCommand.getPreparedChange().getDefinition().dependentSelector.source.id, "and the content of the change is also adjusted");
-			assert.strictEqual(oCommand.getPreparedChange().getContent().target.selector.id, oCommand.getPreparedChange().getDefinition().dependentSelector.target.id, "and the content of the change is also adjusted");
-			assert.strictEqual(oCommand.getPreparedChange().getContent().movedElements[0].selector.id, oCommand.getPreparedChange().getDefinition().dependentSelector.movedElements[0].id, "and the content of the change is also adjusted");
+			.then(function(oMoveCommand) {
+				assert.ok(oMoveCommand, "then command is available");
+				assert.equal(oCreateChangeFromDataSpy.callCount, 2, "and '_createChangeFromData' is called twice (once for prepare change and once for undo change");
+				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
+				assert.deepEqual(oCreateChangeFromDataSpy.args[1][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().source.selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.source.id, "and the content of the change is also adjusted");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().target.selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.target.id, "and the content of the change is also adjusted");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().movedElements[0].selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.movedElements[0].id, "and the content of the change is also adjusted");
+				return oMoveCommand.execute();
+			})
 
-			return oCommand.execute().then(function() {
+			.then(function() {
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (once for prepare change and once for undo change)");
 				assert.equal(oApplyChangeSpy.callCount, 1, "then applyChange is called once");
 				assert.equal(this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getText(), "More Text 1", "and text control in first item has been moved");
@@ -1282,20 +1408,24 @@ function(
 				}
 			});
 
-			assert.throws(function() {
-					oCommandFactory.getCommandFor(oRelevantContainer, "move", {
-						movedElements : [{
-							element : oMovedElement,
-							sourceIndex : 1,
-							targetIndex : 2
-						}],
-						source : oSource,
-						target : oTarget
-					}, oSourceParentDesignTimeMetadata);
-				},
-				new Error("Multiple template bindings are not supported"),
-				"an error message is raised that multiple bindings are not supported"
-			);
+			return oCommandFactory.getCommandFor(oRelevantContainer, "move", {
+				movedElements : [{
+					element : oMovedElement,
+					sourceIndex : 1,
+					targetIndex : 2
+				}],
+				source : oSource,
+				target : oTarget
+			}, oSourceParentDesignTimeMetadata)
+
+			.then(function() {
+				assert.notOk(true, "then getCommandFor should reject an error promise but has resolved command");
+			})
+
+			.catch(function(oError) {
+				assert.equal(oError.message, "Multiple template bindings are not supported",
+					"an error message is raised that multiple bindings are not supported");
+			});
 		});
 	});
 

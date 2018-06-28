@@ -112,20 +112,26 @@ function(
 			}
 		});
 
-		var oSplitCommand = CommandFactory.getCommandFor(this.oButton1, "split", {
+		return CommandFactory.getCommandFor(this.oButton1, "split", {
 			newElementIds : ["dummy-1", "dummy-2"],
 			source : this.oButton1,
 			parentElement : this.oPanel
-		}, oDesignTimeMetadata);
+		}, oDesignTimeMetadata)
 
-		assert.ok(oSplitCommand, "split command exists for element");
-		oSplitCommand.execute()
+		.then(function(oSplitCommand) {
+			assert.ok(oSplitCommand, "split command exists for element");
+			return oSplitCommand.execute();
+		})
 
 		.then(function() {
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 			done();
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 

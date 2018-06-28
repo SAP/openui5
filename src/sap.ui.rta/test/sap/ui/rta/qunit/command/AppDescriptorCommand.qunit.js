@@ -119,18 +119,23 @@ function(
 			return Promise.resolve(oMockDescriptorChange);
 		}.bind(this));
 
-		this.oAppDescriptorCommand = CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
+		return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
 			reference : this.sReference,
 			parameters : this.mParameters,
 			texts : this.mTexts,
 			changeType : this.sChangeType,
 			appComponent : oMockedAppComponent
-		}, {}, {"layer" : this.sLayer});
+		}, {}, {"layer" : this.sLayer})
 
-		assert.ok(this.oAppDescriptorCommand, "App Descriptor command exists for element");
-		assert.ok(this.oAppDescriptorCommand.needsReload, "App Descriptor commands need restart to be applied");
+		.then(function(oAppDescriptorCommand) {
+			assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
+			assert.ok(oAppDescriptorCommand.needsReload, "App Descriptor commands need restart to be applied");
+			oAppDescriptorCommand.createAndStoreChange();
+		})
 
-		this.oAppDescriptorCommand.createAndStoreChange();
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 });

@@ -366,35 +366,15 @@ function (
 
 			var aSelectedOverlays = [oButtonOverlay];
 
-			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton }).catch(function() {
+			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton })
+
+			.catch(function() {
 				assert.notOk(that.oSettingsCommand, "... command is not created");
 			});
 		});
 
 		QUnit.test("when two changes are on the command stack,", function(assert) {
-			var done = assert.async();
-
-			var oSettingsCmd1 = this.oSettingsPlugin.getCommandFactory().getCommandFor(
-				{
-					id : "stableNavPopoverId",
-					controlType : "sap.m.Button",
-					appComponent : oMockedAppComponent
-				},
-				"settings",
-				{
-				changeType : "changeSettings",
-				content : "testchange1"
-				},
-				new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
-					actions : {
-						settings : function() {}
-					}
-				}
-			}));
-
-			var oSettingsCmd2 = this.oSettingsPlugin.getCommandFactory().getCommandFor(
+			return this.oSettingsPlugin.getCommandFactory().getCommandFor(
 				{
 					id : "stableNavPopoverId",
 					controlType : "sap.m.Button",
@@ -403,7 +383,7 @@ function (
 				"settings",
 				{
 					changeType : "changeSettings",
-					content : "testchange2"
+					content : "testchange1"
 				},
 				new ElementDesignTimeMetadata({
 					libraryName : "sap.m",
@@ -412,17 +392,50 @@ function (
 							settings : function() {}
 						}
 					}
-				}));
+				})
+			)
 
-			oSettingsCmd1.prepare();
-			oSettingsCmd2.prepare();
-			this.oCommandStack.pushAndExecute(oSettingsCmd1).then(function(){
-				this.oCommandStack.pushAndExecute(oSettingsCmd2).then(function(){
-					var aUnsavedChanges = this.oSettingsPlugin._getUnsavedChanges("stableNavPopoverId", ["changeSettings"]);
-					assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
-					done();
-				}.bind(this));
-			}.bind(this));
+			.then(function(oSettingsCommand) {
+				oSettingsCommand.prepare();
+				return this.oCommandStack.pushAndExecute(oSettingsCommand);
+			}.bind(this))
+
+			.then(function() {
+				return this.oSettingsPlugin.getCommandFactory().getCommandFor(
+					{
+						id : "stableNavPopoverId",
+						controlType : "sap.m.Button",
+						appComponent : oMockedAppComponent
+					},
+					"settings",
+					{
+						changeType : "changeSettings",
+						content : "testchange2"
+					},
+					new ElementDesignTimeMetadata({
+						libraryName : "sap.m",
+						data : {
+							actions : {
+								settings : function() {}
+							}
+						}
+					})
+				);
+			}.bind(this))
+
+			.then(function(oSettingsCommand) {
+				oSettingsCommand.prepare();
+				return this.oCommandStack.pushAndExecute(oSettingsCommand);
+			}.bind(this))
+
+			.then(function(){
+				var aUnsavedChanges = this.oSettingsPlugin._getUnsavedChanges("stableNavPopoverId", ["changeSettings"]);
+				assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change,", function(assert) {

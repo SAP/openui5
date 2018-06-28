@@ -4,14 +4,12 @@
 
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/Utils',
+	'sap/ui/dt/Util',
 	'sap/ui/fl/Utils',
 	"sap/base/util/uid"
 ], function(
 	Plugin,
-	OverlayRegistry,
-	Utils,
+	DtUtil,
 	FlexUtils,
 	uid
 ) {
@@ -131,15 +129,21 @@ sap.ui.define([
 		var oSplitAction = this.getAction(oElementOverlay);
 		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oSplitAction);
 
-		var oSplitCommand = this.getCommandFactory().getCommandFor(oSplitElement, "split", {
+		return this.getCommandFactory().getCommandFor(oSplitElement, "split", {
 			newElementIds : aNewElementIds,
 			source : oSplitElement,
 			parentElement : oParent
-		}, oDesignTimeMetadata, sVariantManagementReference);
-		this.fireElementModified({
-			"command" : oSplitCommand
-		});
+		}, oDesignTimeMetadata, sVariantManagementReference)
 
+		.then(function(oSplitCommand) {
+			this.fireElementModified({
+				"command" : oSplitCommand
+			});
+		}.bind(this))
+
+		.catch(function(oError) {
+			throw DtUtil.propagateError(oError);
+		});
 	};
 
 	/**

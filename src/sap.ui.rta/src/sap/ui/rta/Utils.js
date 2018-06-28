@@ -92,20 +92,27 @@ function(
 	 * @returns {Promise} resolves if service is up to date, rejects otherwise
 	 */
 	Utils.isServiceUpToDate = function(oControl) {
-		return this.isExtensibilityEnabledInSystem(oControl).then(function(bEnabled) {
+		return this.isExtensibilityEnabledInSystem(oControl)
+
+		.then(function(bEnabled) {
 			if (bEnabled) {
-				//TODO: global jquery call found
-				jQuery.sap.require("sap.ui.fl.fieldExt.Access");
-				var oModel = oControl.getModel();
-				if (oModel) {
-					var bServiceOutdated = sap.ui.fl.fieldExt.Access.isServiceOutdated(oModel.sServiceUrl);
-					if (bServiceOutdated) {
-						sap.ui.fl.fieldExt.Access.setServiceValid(oModel.sServiceUrl);
-						//needs FLP to trigger UI restart popup
-						sap.ui.getCore().getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption","RequestReload",{});
-						return Promise.reject();
-					}
-				}
+				return new Promise(function(fnResolve, fnReject) {
+					sap.ui.require([
+						"sap/ui/fl/fieldExt/Access"
+					], function(Access) {
+						var oModel = oControl.getModel();
+						if (oModel) {
+							var bServiceOutdated = sap.ui.fl.fieldExt.Access.isServiceOutdated(oModel.sServiceUrl);
+							if (bServiceOutdated) {
+								sap.ui.fl.fieldExt.Access.setServiceValid(oModel.sServiceUrl);
+								//needs FLP to trigger UI restart popup
+								sap.ui.getCore().getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption","RequestReload",{});
+								return fnReject();
+							}
+						}
+						return fnResolve();
+					});
+				});
 			}
 		});
 	};
@@ -114,48 +121,56 @@ function(
 	 * Utility function to check via backend calls if the custom field button shall be enabled or not
 	 *
 	 * @param {sap.ui.core.Control} oControl - Control to be checked
-	 * @returns {Boolean} true if CustomFieldCreation functionality is to be enabled, false if not
+	 * @returns {Promise} Returns <boolean> value - true if CustomFieldCreation functionality is to be enabled, false if not
 	 */
 	Utils.isCustomFieldAvailable = function(oControl) {
-		return this.isExtensibilityEnabledInSystem(oControl).then(function(bShowCreateExtFieldButton) {
+		return this.isExtensibilityEnabledInSystem(oControl)
+
+		.then(function(bShowCreateExtFieldButton) {
 			if (!bShowCreateExtFieldButton) {
 				return false;
 			} else if (!oControl.getModel()) {
 				return false;
 			} else {
-				var sServiceUrl = oControl.getModel().sServiceUrl;
-				var sEntityType = this.getBoundEntityType(oControl).name;
-				try {
-					//TODO: global jquery call found
-					jQuery.sap.require("sap.ui.fl.fieldExt.Access");
-					var oJQueryDeferred = sap.ui.fl.fieldExt.Access.getBusinessContexts(sServiceUrl,
-							sEntityType);
-					return Promise.resolve(oJQueryDeferred).then(function(oResult) {
-						if (oResult) {
-							if (oResult.BusinessContexts) {
-								if (oResult.BusinessContexts.length > 0) {
-									oResult.EntityType = sEntityType;
-									return oResult;
+				return new Promise(function(fnResolve) {
+					sap.ui.require([
+						"sap/ui/fl/fieldExt/Access"
+					], function(Access) {
+						var sServiceUrl = oControl.getModel().sServiceUrl;
+						var sEntityType = this.getBoundEntityType(oControl).name;
+						var oJQueryDeferred;
+						try {
+							oJQueryDeferred = Access.getBusinessContexts(sServiceUrl, sEntityType);
+						} catch (oError) {
+							Log.error("exception occured in sap.ui.fl.fieldExt.Access.getBusinessContexts", oError);
+							fnResolve(false);
+						}
+
+						return Promise.resolve(oJQueryDeferred)
+						.then(function(oResult) {
+							if (oResult) {
+								if (oResult.BusinessContexts) {
+									if (oResult.BusinessContexts.length > 0) {
+										oResult.EntityType = sEntityType;
+										return fnResolve(oResult);
+									}
+								}
+							} else {
+								return fnResolve(false);
+							}
+						})
+						.catch(function(oError){
+							if (oError) {
+								if (jQuery.isArray(oError.errorMessages)) {
+									for (var i = 0; i < oError.errorMessages.length; i++) {
+										Log.error(oError.errorMessages[i].text);
+									}
 								}
 							}
-						} else {
-							return false;
-						}
-					}).catch(function(oError){
-						if (oError) {
-							if (jQuery.isArray(oError.errorMessages)) {
-								for (var i = 0; i < oError.errorMessages.length; i++) {
-									Log.error(oError.errorMessages[i].text);
-								}
-							}
-						}
-						return false;
-					});
-				} catch (oError) {
-					Log
-							.error("exception occured in sap.ui.fl.fieldExt.Access.getBusinessContexts", oError);
-					return false;
-				}
+							return fnResolve(false);
+						});
+					}.bind(this));
+				}.bind(this));
 			}
 		}.bind(this));
 	};

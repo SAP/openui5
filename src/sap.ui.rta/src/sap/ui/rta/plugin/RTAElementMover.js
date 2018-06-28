@@ -272,7 +272,7 @@ function(
 
 	/**
 	 * Builds the Move command
-	 * @return {any} Move command object
+	 * @return {Promise} Move command object wrapped in a promise
 	 */
 	RTAElementMover.prototype.buildMoveCommand = function() {
 
@@ -296,7 +296,7 @@ function(
 		var oMoveAction = this._getMoveAction(oMovedOverlay);
 		var sVariantManagementReference = this.oBasePlugin.getVariantManagementReference(oMovedOverlay, oMoveAction, true);
 
-		var oMove = this.getCommandFactory().getCommandFor(oRelevantContainer, "Move", {
+		return this.getCommandFactory().getCommandFor(oRelevantContainer, "Move", {
 			movedElements : [{
 				element : oMovedElement,
 				sourceIndex : iSourceIndex,
@@ -305,9 +305,6 @@ function(
 			source : oSource,
 			target : oTarget
 		}, oParentAggregationOverlay.getDesignTimeMetadata(), sVariantManagementReference);
-
-		return oMove;
-
 	};
 
 	return RTAElementMover;

@@ -86,21 +86,25 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 		});
 
 		QUnit.test("when getting a rename command for a Button...", function(assert) {
-			var done = assert.async();
-			var oCommand = CommandFactory.getCommandFor(this.oButton, "Rename", {
+			return CommandFactory.getCommandFor(this.oButton, "Rename", {
 				renamedElement : this.oButton,
 				value : "new value"
-			}, this.oButtonDesignTimeMetadata);
+			}, this.oButtonDesignTimeMetadata)
 
-			var sChangeType = this.oButtonDesignTimeMetadata.getAction("rename", this.oButton).changeType;
+			.then(function(oRenameCommand) {
+				var sChangeType = this.oButtonDesignTimeMetadata.getAction("rename", this.oButton).changeType;
+				assert.ok(oRenameCommand, "rename command for Button exists");
+				assert.equal(oRenameCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
+				return oRenameCommand.execute();
+			}.bind(this))
 
-			assert.ok(oCommand, "rename command for Button exists");
-			assert.equal(oCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
-
-			oCommand.execute().then( function() {
+			.then( function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-				done();
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 });

@@ -84,14 +84,6 @@ sap.ui.require([
 	QUnit.test("when 2 Changes get executed at the same time", function(assert) {
 		var done = assert.async();
 
-		// Create commands
-		this.oRemoveCommand1 = CommandFactory.getCommandFor(this.oInput1, "Remove", {
-			removedElement : this.oInput1
-		}, this.oInputDesignTimeMetadata);
-		this.oRemoveCommand2 = CommandFactory.getCommandFor(this.oInput2, "Remove", {
-			removedElement : this.oInput2
-		}, this.oInputDesignTimeMetadata);
-
 		var iCounter = 0;
 		var aInputs = [this.oInput1, this.oInput2];
 		this.oCommandStack.attachCommandExecuted(function(oEvent) {
@@ -103,8 +95,27 @@ sap.ui.require([
 			}
 		});
 
-		this.oCommandStack.pushAndExecute(this.oRemoveCommand1);
-		this.oCommandStack.pushAndExecute(this.oRemoveCommand2);
+		// Create commands
+		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
+			removedElement : this.oInput1
+		}, this.oInputDesignTimeMetadata)
+
+		.then(function(oRemoveCommand) {
+			return this.oCommandStack.pushAndExecute(oRemoveCommand);
+		}.bind(this))
+
+		.then(CommandFactory.getCommandFor.bind(this, this.oInput2, "Remove", {
+			removedElement : this.oInput2
+		}, this.oInputDesignTimeMetadata))
+
+		.then(function(oRemoveCommand) {
+			this.oCommandStack.pushAndExecute(oRemoveCommand);
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
+
 	});
 
 	QUnit.module("Given an array of dirty changes...", {

@@ -9,9 +9,7 @@ sap.ui.define([
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementOverlay',
 	'sap/ui/fl/variants/VariantManagement',
-	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/fl/variants/VariantModel',
 	'sap/ui/fl/FlexControllerFactory',
 	// should be last:
@@ -25,9 +23,7 @@ function(
 	CommandFactory,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
-	ElementOverlay,
 	VariantManagement,
-	ControlVariant,
 	VariantModel,
 	FlexControllerFactory
 ) {
@@ -41,13 +37,14 @@ function(
 			}
 		}
 	};
-	var oManifest = new Manifest(oManifestObj);
+	var oModel,
+		oManifest = new Manifest(oManifestObj);
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
 			return undefined;
 		},
-		getModel: function () {return oModel;},
+		getModel: function () { return oModel; },
 		getId: function() {
 			return "RTADemoAppMD";
 		},
@@ -81,7 +78,7 @@ function(
 		}
 	};
 
-	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+	oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
 
 	var oVariant = {
 		"content": {
@@ -132,13 +129,19 @@ function(
 		var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
 		var mFlexSettings = {layer: "CUSTOMER"};
 		var sNewText = "Test";
+		var oControlVariantSetTitleCommand;
 
-		var oControlVariantSetTitleCommand = CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
+		return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
 			newText : sNewText
-		}, oDesignTimeMetadata, mFlexSettings);
+		}, oDesignTimeMetadata, mFlexSettings)
 
-		assert.ok(oControlVariantSetTitleCommand, "control variant setTitle command exists for element");
-		oControlVariantSetTitleCommand.execute().then(function() {
+		.then(function(oCommand) {
+			oControlVariantSetTitleCommand = oCommand;
+			assert.ok(oControlVariantSetTitleCommand, "control variant setTitle command exists for element");
+			return oControlVariantSetTitleCommand.execute();
+		})
+
+		.then(function() {
 			var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
 			var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
 			assert.equal(oPreparedChange, oTitleChange, "then the prepared change is available");
@@ -148,19 +151,24 @@ function(
 			assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
 			assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then 1 dirty change is present");
 
-			oControlVariantSetTitleCommand.undo().then( function() {
-				oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
-				oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
-				assert.notOk(oPreparedChange, "then no prepared change is available after undo");
-				oData = oControlVariantSetTitleCommand.oModel.getData();
-				assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
-				assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
-				assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
-				assert.notOk(oTitleChange, "then title change from command unset");
-				done();
-			}.bind(this));
-		}.bind(this));
+			return oControlVariantSetTitleCommand.undo();
+		}.bind(this))
 
+		.then( function() {
+			var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
+			var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
+			assert.notOk(oPreparedChange, "then no prepared change is available after undo");
+			oData = oControlVariantSetTitleCommand.oModel.getData();
+			assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
+			assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
+			assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
+			assert.notOk(oTitleChange, "then title change from command unset");
+			done();
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 

@@ -74,15 +74,19 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getting a switch command for VariantManagement...", function(assert) {
-		var oSwitchCommandData = {
+		var oSwitchCommand,
+			oSwitchCommandData = {
 			targetVariantReference : "newVariantReference",
 			sourceVariantReference : "oldVariantReference"
 		};
-		var oCommand = CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData);
 
-		assert.ok(oCommand, "switch command for VariantManagement exists");
+		return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
 
-		return oCommand.execute()
+		.then(function(oCommand) {
+			assert.ok(oCommand, "switch command for VariantManagement exists");
+			oSwitchCommand = oCommand;
+			return oSwitchCommand.execute();
+		})
 
 		.then(function() {
 			assert.equal(this.fnUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
@@ -90,32 +94,49 @@ sap.ui.require([
 				"then updateCurrentVariant after execute command is called with the correct parameters");
 		}.bind(this))
 
-		.then(oCommand.undo.bind(oCommand))
+		.then(function() {
+			return oSwitchCommand.undo();
+		})
 
 		.then(function() {
 			assert.equal(this.fnUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
 			assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(1).args, [this.sVariantManagementReference, oSwitchCommandData.sourceVariantReference, this.oMockedAppComponent],
 				"then updateCurrentVariant after undo command is called with the correct parameters");
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 	QUnit.test("when getting a switch command for VariantManagement with equal source and target variantId ...", function(assert) {
-		var oSwitchCommandData = {
+		var oSwitchCommand,
+			oSwitchCommandData = {
 			targetVariantReference : "variantReference",
 			sourceVariantReference : "variantReference"
 		};
-		var oCommand = CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData);
 
-		return oCommand.execute()
+		return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
+
+		.then(function(oCommand) {
+			oSwitchCommand = oCommand;
+			return oSwitchCommand.execute();
+		})
 
 		.then(function() {
 			assert.equal(this.fnUpdateCurrentVariantStub.callCount, 0, "then updateCurrentVariant after execute command is not called");
 		}.bind(this))
 
-		.then(oCommand.undo.bind(oCommand))
+		.then(function() {
+			return oSwitchCommand.undo();
+		})
 
 		.then(function() {
 			assert.equal(this.fnUpdateCurrentVariantStub.callCount, 0, "then updateCurrentVariant after undo command is not called");
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 });

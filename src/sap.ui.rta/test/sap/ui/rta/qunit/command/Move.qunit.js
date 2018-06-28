@@ -114,36 +114,47 @@ sap.ui.define([
 	});
 
 	QUnit.test("when getting a move command for a Button...", function(assert) {
-		var done = assert.async();
-		var oCommand = CommandFactory.getCommandFor(this.oButton, "move", {
+		return CommandFactory.getCommandFor(this.oButton, "move", {
 			movedElements : [this.oButton],
 			source : this.oSourceLayout,
 			target : this.oTargetLayout
-		}, this.oButtonDesignTimeMetadata);
+		}, this.oButtonDesignTimeMetadata)
 
-		var sChangeType = this.oButtonDesignTimeMetadata.getAction("move", this.oButton).changeType;
+		.then(function(oMoveCommand) {
+			var sChangeType = this.oButtonDesignTimeMetadata.getAction("move", this.oButton).changeType;
+			assert.ok(oMoveCommand, "move command for Button exists");
+			assert.equal(oMoveCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
+			return oMoveCommand.execute();
+		}.bind(this))
 
-		assert.ok(oCommand, "move command for Button exists");
-		assert.equal(oCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
-
-		oCommand.execute().then( function() {
+		.then( function() {
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (1x SF, 1x undo preparation)");
 			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-			done();
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 	QUnit.test("when getting a move command with _createChange returning an error", function(assert) {
 		sandbox.stub(FlexCommand.prototype, "_createChange").throws("MyError");
 		var oErrorLogSpy = sandbox.spy(Log, "error");
 
-		var oCommand = CommandFactory.getCommandFor(this.oButton, "move", {
+		return CommandFactory.getCommandFor(this.oButton, "move", {
 			movedElements : [this.oButton],
 			source : this.oSourceLayout,
 			target : this.oTargetLayout
-		}, this.oButtonDesignTimeMetadata);
-		assert.notOk(oCommand, "then no command is created");
-		assert.equal(oErrorLogSpy.callCount, 1, "and one error is thrown");
+		}, this.oButtonDesignTimeMetadata)
+
+		.then(function(oMoveCommand) {
+			assert.notOk(oMoveCommand, "then no command is created");
+			assert.equal(oErrorLogSpy.callCount, 1, "and one error is thrown");
+		})
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 
@@ -166,7 +177,7 @@ sap.ui.define([
 				content : [this.oObjectHeader, this.oButton]
 			});
 
-			this.oMoveCommand = CommandFactory.getCommandFor(this.oLayout, "Move", {
+			return CommandFactory.getCommandFor(this.oLayout, "Move", {
 				source : {
 					parent : this.oObjectHeader,
 					aggregation : "attributes",
@@ -188,8 +199,11 @@ sap.ui.define([
 						move : "moveControls"
 					}
 				}
-			}));
+			}))
 
+			.then(function(oMoveCommand) {
+				this.oMoveCommand = oMoveCommand;
+			}.bind(this));
 		},
 
 		afterEach : function(assert) {
@@ -209,7 +223,6 @@ sap.ui.define([
 
 	QUnit.test("After executing and undoing the command", function(assert) {
 		this.oMoveCommand.execute();
-
 		this.oMoveCommand.undo();
 		assertObjectAttributeNotMoved.call(this, assert);
 	});
@@ -233,7 +246,11 @@ sap.ui.define([
 
 		.then(this.oMoveCommand.execute.bind(this.oMoveCommand))
 
-		.then(assertObjectAttributeMoved.bind(this, assert));
+		.then(assertObjectAttributeMoved.bind(this, assert))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 	function assertObjectAttributeMoved(assert) {

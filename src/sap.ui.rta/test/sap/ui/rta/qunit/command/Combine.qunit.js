@@ -88,8 +88,6 @@ function(
 	});
 
 	QUnit.test("when calling command factory for combine ...", function(assert) {
-		var done = assert.async();
-
 		var oOverlay = new ElementOverlay({ element: this.oButton1 });
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 		sinon.stub(oOverlay, "getRelevantContainer", function() {
@@ -111,20 +109,27 @@ function(
 			}
 		});
 
-		var oCombineCommand = CommandFactory.getCommandFor(this.oButton1, "combine", {
+		return CommandFactory.getCommandFor(this.oButton1, "combine", {
 			source : this.oButton1,
 			combineFields : [
 				this.oButton1,
 				this.oButton2
 			]
-		}, oDesignTimeMetadata);
+		}, oDesignTimeMetadata)
 
-		assert.ok(oCombineCommand, "combine command exists for element");
-		oCombineCommand.execute().then( function() {
+		.then(function(oCombineCommand) {
+			assert.ok(oCombineCommand, "combine command exists for element");
+			return oCombineCommand.execute();
+		})
+
+		.then(function() {
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-			done();
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 

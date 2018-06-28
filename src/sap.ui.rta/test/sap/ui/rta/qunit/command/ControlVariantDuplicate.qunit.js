@@ -56,13 +56,14 @@ function(
 			}
 		}
 	};
+	var oModel;
 	var oManifest = new Manifest(oManifestObj);
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
 			return undefined;
 		},
-		getModel: function () {return oModel;},
+		getModel: function () { return oModel; },
 		getId: function() {
 			return "RTADemoAppMD";
 		},
@@ -76,7 +77,7 @@ function(
 
 	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
 
-	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+	oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
 
 	var oVariant = {
 		"content": {
@@ -119,8 +120,6 @@ function(
 	});
 
 	QUnit.test("when calling command factory for duplicate variants and undo", function(assert) {
-		var done = assert.async();
-
 		var oOverlay = new ElementOverlay({ element: this.oVariantManagement });
 		var fnCreateDefaultFileNameSpy = sinon.spy(Utils, "createDefaultFileName");
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
@@ -128,16 +127,22 @@ function(
 
 		var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
 		var mFlexSettings = {layer: "CUSTOMER"};
+		var oControlVariantDuplicateCommand, oDuplicateVariant, aPreparedChanges;
 
-		var oControlVariantDuplicateCommand = CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
+		return CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
 			sourceVariantReference : oVariant.content.variantReference,
 			newVariantTitle: "variant A Copy"
-		}, oDesignTimeMetadata, mFlexSettings);
+		}, oDesignTimeMetadata, mFlexSettings)
 
-		assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
-		oControlVariantDuplicateCommand.execute().then( function() {
-			var oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
-			var aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+		.then(function(oCommand) {
+			oControlVariantDuplicateCommand = oCommand;
+			assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
+			return oControlVariantDuplicateCommand.execute();
+		})
+
+		.then( function() {
+			oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+			aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
 			assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
 			assert.ok(fnCreateDefaultFileNameSpy.calledWith("Copy"), "then Copy appended to the fileName of the duplicate variant");
 			assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
@@ -146,17 +151,20 @@ function(
 			assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
 			assert.equal(oDuplicateVariant.getControlChanges()[0].support.sourceChangeFileName, oVariant.controlChanges[0].fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
 			assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
+			return oControlVariantDuplicateCommand.undo();
+		})
 
-			oControlVariantDuplicateCommand.undo().then( function() {
-				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
-				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
-				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
-				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then all dirty changes removed");
-				assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
-				done();
-			});
+		.then( function() {
+			oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+			aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+			assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
+			assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then all dirty changes removed");
+			assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
+		})
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
 		});
-
 	});
 
 
