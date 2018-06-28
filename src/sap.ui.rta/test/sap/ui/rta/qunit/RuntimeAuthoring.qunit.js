@@ -99,6 +99,25 @@ function(
 			assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
 			assert.notOk(RuntimeAuthoring.needsRestart(), "restart is not needed initially");
 
+			assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the exit Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('exit').getEnabled(), true, "then the exit Button is enabled");
+			assert.equal(this.oRta.getToolbar().getControl('modeSwitcher').getVisible(), true, "then the modeSwitcher Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('modeSwitcher').getEnabled(), true, "then the modeSwitcher Button is enabled");
+			assert.equal(this.oRta.getToolbar().getControl('undo').getVisible(), true, "then the undo Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('undo').getEnabled(), false, "then the undo Button is enabled");
+			assert.equal(this.oRta.getToolbar().getControl('redo').getVisible(), true, "then the redo Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('redo').getEnabled(), false, "then the redo Button is enabled");
+			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Restore Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
+			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), true, "then the Publish Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('publish').getEnabled(), false, "then the Publish Button is disabled");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('saveAs').getVisible(), false, "then the saveAs Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('saveAs').getEnabled(), false, "then the saveAs Button is not enabled");
+
 			var oInitialCommandStack = this.oRta.getCommandStack();
 			assert.ok(oInitialCommandStack, "the command stack is automatically created");
 			this.oRta.setCommandStack(new Stack());
@@ -156,7 +175,7 @@ function(
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"});
 
 			// simulate mode change from toolbar
-			this.oRta.getToolbar().fireModeChange({key: "adaptation"});
+			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "adaptation";}}});
 			assert.ok(this.oRta._oDesignTime.getEnabled(), "then the designTime property enabled is true again");
 			assert.ok(oTabHandlingRemoveSpy.callCount, 1, "removeTabIndex was called");
 			assert.ok(oFireModeChangedSpy.callCount, 2, "then the event was fired again");
@@ -195,27 +214,17 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when RTA is started in the customer layer", function(assert) {
-			var oFlexController = this.oRta._getFlexController();
-			sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
-
-			return this.oRta.start()
-			.then(function() {
-				assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
-				assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-			}.bind(this));
-		});
-
 		QUnit.test("when RTA is started in the user layer", function(assert) {
 			var oFlexController = this.oRta._getFlexController();
 			sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([this.oUserChange]));
+			this.oRta.setFlexSettings({layer: "USER"});
 
 			return this.oRta.start()
 			.then(function() {
+				assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Restore Button is visible");
 				assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
+				assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the Exit Button is visible");
+				assert.equal(this.oRta.getToolbar().getControl('exit').getEnabled(), true, "then the Exit Button is enabled");
 			}.bind(this));
 		});
 

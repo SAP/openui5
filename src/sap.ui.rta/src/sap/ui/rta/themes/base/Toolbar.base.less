@@ -1,19 +1,49 @@
 /**
 	Toolbar
- */
+*/
+
 .sapUiRtaToolbar.sapMTB {
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
 	padding: 0 20px;
-
 	height: 46px; /* Overrider `.sapUiSizeCompact .sapMTB` */
 	border-bottom: none; /* Override `.sapMTB` */
+
+	.sapMFlexBox {
+		margin-left: 0;
+		margin-right: 0;
+		height: inherit;
 	}
-	.sapUiRtaToolbar.sapMTB > :last-child {
-		margin-right: 0; /* Override `.sapMIBar.sapMTB .sapMBarChild` */
+
+	.sapMHBox.sapMFlexBox:first-child.sapMTBShrinkItem {
+		min-width: 0; /* Overrider '.sapMTBShrinkItem' */
+	}
+
+	.sapMHBox.sapMFlexBox:last-child {
+		.sapMFlexItem:first-child {
+			flex: auto !important;
+			width: 0; /* this is just to let the TB not grow over the button next to it. It will grow due to flex-grow */
+
+			.sapMTB {
+				border-bottom: none;
+				height: 46px;
+			}
+
+			.sapMSegB {
+				margin-left: 0;
+			}
 		}
-	.sapUiRtaToolbar.sapMTB > :first-child {
-		margin-left: 0; /* Override `.sapMIBar .sapMBarChild:first-child` */
+	}
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet, .sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile {
+	.sapUiRtaToolbar.sapMTB {
+		.sapMFlexBox:first-child {
+			.sapMImg {
+				visibility: hidden;
+			}
 		}
+	}
+}
