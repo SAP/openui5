@@ -149,7 +149,7 @@ function(
 		var vEditable;
 		aOverlays.forEach(function(oOverlay) {
 			var bIsInAggregationBinding = false;
-			var aStableElements = oOverlay.getDesignTimeMetadata().getStableElements(oOverlay);
+			var aStableElements = oOverlay.getDesignTimeMetadata() && oOverlay.getDesignTimeMetadata().getStableElements(oOverlay) || [oOverlay.getElement()];
 
 			// for controls that don't return a ManagedObject, like for example the SmartLink, we skip this check
 			if (aStableElements[0] instanceof ManagedObject) {
