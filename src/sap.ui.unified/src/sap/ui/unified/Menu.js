@@ -162,6 +162,32 @@ sap.ui.define([
 		this.bUseTopStyle = false;
 	};
 
+	/*
+	 * Allows for any custom function to be called back when accessibility attributes
+	 * of the menu are about to be rendered.
+	 * The function is called once per MenuItem.
+	 *
+	 * @param {function} fn The callback function
+	 * @protected
+	 * @sap-restricted sap.m.Menu
+	 * @returns void
+	 */
+	Menu.prototype._setCustomEnhanceAccStateFunction = function(fn) {
+		this._fnCustomEnhanceAccStateFunction = fn;
+	};
+
+	/*
+	 * Enables any consumer of the menu to enhance its accessibility state by calling
+	 * back its custom provided function Menu#_setCustomEnhanceAccStateFunction.
+	 *
+	 * @overrides sap.ui.core.Element.prototype.enhanceAccessibilityState
+	 */
+	Menu.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
+		var bIsAccFunctionValid = typeof this._fnCustomEnhanceAccStateFunction === "function";
+
+		return bIsAccFunctionValid ? this._fnCustomEnhanceAccStateFunction(oElement, mAriaProps) : mAriaProps;
+	};
+
 	/**
 	 * Does all the cleanup when the Menu is to be destroyed.
 	 * Called from Element's destroy() method.
