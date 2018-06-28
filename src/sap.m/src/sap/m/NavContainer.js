@@ -343,6 +343,8 @@ sap.ui.define([
 			oEvent.data = this._oToDataBeforeRendering || {};
 			oEvent.backData = {};
 			pageToRenderFirst._handleEvent(oEvent);
+
+			this.fireEvent("_onNavContainerRendered");
 		}
 	};
 
