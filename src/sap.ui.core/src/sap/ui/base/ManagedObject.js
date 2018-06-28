@@ -3222,7 +3222,7 @@ sap.ui.define([
 					// if binding is one time but not resolved yet we don't destroy it yet.
 					oBinding.detachChange(fnModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
-					if (this.refreshDataState) {	
+					if (this.refreshDataState) {
 						oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
 					}
 					oBinding.destroy();
