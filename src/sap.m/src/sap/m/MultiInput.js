@@ -1287,6 +1287,7 @@ function(
 		this._tokenizer.attachTokenUpdate(this._onTokenUpdate, this);
 		oClone._tokenizer.attachTokenChange(oClone._onTokenChange, oClone);
 		oClone._tokenizer.attachTokenUpdate(oClone._onTokenUpdate, oClone);
+		oClone._tokenizer._handleNMoreIndicatorPress(oClone._handleIndicatorPress.bind(oClone));
 
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 		this.attachLiveChange(this._onLiveChange, this);
