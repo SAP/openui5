@@ -516,6 +516,10 @@ sap.ui.define([
 			sPart;
 		while (oNode !== null && aParts[iIndex]) {
 			sPart = aParts[iIndex];
+			if (sPart == "id") {
+				//Managed Object Model should accept also /id as path to be used for templating
+				sPart = "@id";
+			}
 
 			if (sPart.indexOf("@") === 0) {
 				// special properties

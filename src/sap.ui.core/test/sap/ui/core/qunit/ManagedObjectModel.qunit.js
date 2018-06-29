@@ -164,7 +164,7 @@ QUnit.test("Create a ManagedObject Model - Property Access", function(assert) {
 
 	// Check special handling for id property
 	assert.equal(oModel.getProperty("/@id"), "myObject", "ID must be 'myObject'");
-	assert.equal(oModel.getProperty("/@id"), "myObject", "ID must be 'myObject'");
+	assert.equal(oModel.getProperty("/id"), "myObject", "ID must be 'myObject'");//access also via id
 
 	// access non existing
 	var aNonExistingPropertyPaths = [
