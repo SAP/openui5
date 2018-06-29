@@ -23,7 +23,7 @@
 										selectedKey="{/selectedSetPreviewKey}"
 										class="customIconTabHeader">
 									<m:items>
-										<m:IconTabFilter key="availableRules" text="Available Rulesets" />
+										<m:IconTabFilter id="availableRulesId" key="availableRules" text="Available Rulesets" />
 										<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
 									</m:items>
 								</m:IconTabHeader>

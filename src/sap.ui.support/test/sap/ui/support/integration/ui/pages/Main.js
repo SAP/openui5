@@ -36,6 +36,19 @@ sap.ui.define([
 						},
 						errorMessage: "Support Assistant header is not visible"
 					});
+				},
+
+				iShouldPersistingDataInStorageLabelOnToolbar: function () {
+					return this.waitFor({
+						id: "persistingSettingLbl",
+						viewName: "Main",
+						viewNamespace: "sap.ui.support.supportRules.ui.views.",
+						controlType:"sap.m.Text",
+						success: function (oText) {
+							Opa5.assert.ok(oText.getVisible(), 'Persisting settings in local storage');
+						},
+						errorMessage: "Not persisting setting in local storage"
+					});
 				}
 
 			}

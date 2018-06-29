@@ -49,7 +49,7 @@
 									visible="{= ${/analyzePressed} === true &amp;&amp; ${/coreStateChanged} === false &amp;&amp; ${/showProgressIndicator} === false }"
 									text='{/analysisDurationTitle}: {/lastAnalysisElapsedTime}'>
 							</Text>
-							<Text
+							<Text      id="persistingSettingLbl"
 									 visible="{= ${/persistingSettings} === true &amp;&amp;  ${/analyzePressed} === false &amp;&amp; ${/showProgressIndicator} === false }"
 									 text='There are settings persisted from your previous session'>
 							</Text>
@@ -63,7 +63,7 @@
 
 							<Button id="analysisBtn" text="{path: '/libraries', formatter: '.setRulesLabel'}" press="goToAnalysis" type="Emphasized"/>
 
-							<c:Icon width="100%" src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin"/>
+							<c:Icon width="100%" id="settingsIcon" src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin"/>
 
 							<c:Icon width="100%"  src="sap-icon://sys-help" press="goToWiki" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin" tooltip="Open Documentation" />
 
