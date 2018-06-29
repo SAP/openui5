@@ -77,6 +77,13 @@ sap.ui.define([
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
 	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+	 * @param {function} oModelInterface.fnReportBoundMessages
+	 *   A function called with parameters <code>sResourcePath</code> and
+	 *   <code>mPathToMessages</code> (see {@link #reportBoundMessages})reporting bound OData
+	 *   messages to the {@link sap.ui.core.message.MessageManager}.
+	 * @param {function} oModelInterface.fnReportUnboundMessages
+	 *   A function called with parameters <code>sResourcePath</code> and <code>sMessages</code>
+	 *   reporting unbound OData messages to the {@link sap.ui.core.message.MessageManager}.
 	 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
@@ -743,6 +750,29 @@ sap.ui.define([
 		if (!bCanceled) {
 			throw new Error("Cannot reset the changes, the batch request is running");
 		}
+	};
+
+	/**
+	 * Reports bound OData messages.
+	 *
+	 * @param {string} sResourcePath
+	 *   The resource path
+	 * @param {object} mPathToODataMessages
+	 *   Maps a resource path with key predicates to an array of messages belonging to this path.
+	 *   The path is relative to the given <code>sResourcePath</code>.
+	 *   The messages have at least the following properties:
+	 *   {string} code - The error code
+	 *   {string} message - The message text
+	 *   {number} numericSeverity
+	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
+	 *      "error")
+	 *   {string} target - The target for the message relative to the resource path with key
+	 *      predicates
+	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
+	 *      application and are reported as persistent
+	 */
+	Requestor.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages) {
+		this.oModelInterface.fnReportBoundMessages(sResourcePath, mPathToODataMessages);
 	};
 
 	/**

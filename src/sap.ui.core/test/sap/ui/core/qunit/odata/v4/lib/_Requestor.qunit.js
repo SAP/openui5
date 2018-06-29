@@ -19,6 +19,7 @@ sap.ui.require([
 			},
 			fnGetGroupProperty : defaultGetGroupProperty,
 			fnOnCreateGroup : function () {},
+			fnReportBoundMessages : function () {},
 			fnReportUnboundMessages : function () {}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
@@ -2519,6 +2520,19 @@ sap.ui.require([
 
 		// code under test
 		oRequestor.reportUnboundMessages("foo(42)/to_bar");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("reportBoundMessages", function (assert) {
+		var mPathToMessages = {"foo/bar" : {}},
+			oRequestor = _Requestor.create("/", oModelInterface),
+			sResourcePath = "Teams('42')";
+
+		this.mock(oModelInterface).expects("fnReportBoundMessages")
+			.withExactArgs(sResourcePath, sinon.match.same(mPathToMessages));
+
+		// code under test
+		oRequestor.reportBoundMessages(sResourcePath, mPathToMessages);
 	});
 });
 // TODO: continue-on-error? -> flag on model
