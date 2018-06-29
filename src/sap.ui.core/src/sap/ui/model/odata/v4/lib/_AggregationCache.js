@@ -88,7 +88,7 @@ sap.ui.define([
 					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
 						oFirstLevelAggregation)
 				}), bSortExpandSelect);
-			this.oFirstLevel.calculateKeyPredicates = _AggregationCache.calculateKeyPredicate
+			this.oFirstLevel.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate
 				.bind(null, oFirstLevelAggregation, this.oFirstLevel.sMetaPath,
 					this.oFirstLevel.aElements.$byPredicate);
 		}
