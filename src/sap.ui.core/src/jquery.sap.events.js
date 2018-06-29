@@ -13,8 +13,9 @@ sap.ui.define([
 	'sap/ui/events/F6Navigation',
 	'sap/ui/events/jquery/EventExtension',
 	'sap/ui/events/jquery/EventSimulation',
-	'sap/ui/events/KeyCodes'
-], function(jQuery, ControlEvents, PseudoEvents, fnCheckMouseEnterOrLeave, fnIsSpecialKey, fnIsMouseEventDelayed, F6Navigation, EventExtension, EventSimulation, KeyCodes) {
+	'sap/ui/events/KeyCodes',
+	'sap/base/util/defineCoupledProperty'
+], function(jQuery, ControlEvents, PseudoEvents, fnCheckMouseEnterOrLeave, fnIsSpecialKey, fnIsMouseEventDelayed, F6Navigation, EventExtension, EventSimulation, KeyCodes, defineCoupledProperty) {
 	"use strict";
 
 
@@ -491,7 +492,7 @@ sap.ui.define([
 	 * Defines touch event mode. Values used 'ON' and 'SIM'.
 	 * @private
 	 */
-	jQuery.sap.touchEventMode = EventSimulation.touchEventMode;
+	defineCoupledProperty(jQuery.sap, "touchEventMode", EventSimulation, "touchEventMode");
 
 	/**
 	 * Binds all events for listening with the given callback function.
