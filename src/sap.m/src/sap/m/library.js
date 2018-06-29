@@ -722,15 +722,15 @@ sap.ui.define([
 		/**
 		 * This is the default value for Dialog type.
 		 *
-		 * Standard dialog in iOS has a header on the top and the left, right buttons are put inside the header.
-		 * In android, the left, right buttons are put to the bottom of the Dialog.
+		 * The Standard Dialog in iOS has a header on the top. The Left and the Right buttons are put inside the header.
+		 * In Android, the Left and the Right buttons are put at the bottom of the Dialog.
 		 * @public
 		 */
 		Standard : "Standard",
 
 		/**
 		 * Dialog with type Message looks the same as the Standard Dialog in Android.
-		 * And it puts the left, right buttons to the bottom of the Dialog in iOS.
+		 * It puts the Left and the Right buttons at the bottom of the Dialog in iOS.
 		 * @public
 		 */
 		Message : "Message"
