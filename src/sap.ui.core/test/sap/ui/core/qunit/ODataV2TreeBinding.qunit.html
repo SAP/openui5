@@ -1949,7 +1949,7 @@
 				// Tree is correctly filtered, since it's done on the client, and the inner child nodes are collected for the filtered tree
 				// Level: 0
 				var aContexts = oBinding.getRootContexts(0, 10);
-				assert.equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
+				assert.equal(aContexts.length, 5, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
@@ -1959,13 +1959,13 @@
 				//Level: 1
 				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
 
-				assert.equal(aContexts.length, 5, "Correct child count on level 1");
-				assert.notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
-				assert.equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
+				assert.equal(aContexts.length, 3, "Correct child count on level 1");
+				assert.equal(aContexts[1].getProperty("FinancialStatementItemText")[0], "A", "0.1 - FinancialStatementItemText starts with 'A'");
+				assert.notEqual(aContexts[2].getProperty("FinancialStatementItemText")[0], "A", "0.2 - doesn't match filter - it's an inner node");
 
 				//Level: 2
-				aContexts = oBinding.getNodeContexts(aContexts[3], 0, 20);
-				assert.equal(aContexts.length, 4, "Inner node has exactly 1 child");
+				aContexts = oBinding.getNodeContexts(aContexts[2], 0, 20);
+				assert.equal(aContexts.length, 1, "Inner node has exactly 1 child");
 
 				oBinding.detachChange(handler1);
 
@@ -1975,7 +1975,7 @@
 			// should not break, even though no data is there
 			oBinding.filter(aFilters, "Application");
 			//apply also control filters -> should be applied after the loading on the client
-			oBinding.filter([new sap.ui.model.Filter("FinancialStatementItemText", "EndsWith", "e")], "Control");
+			oBinding.filter([new sap.ui.model.Filter("FinancialStatementItemText", "EndsWith", "n")], "Control");
 
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts(0, 10);

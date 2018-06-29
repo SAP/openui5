@@ -7,89 +7,190 @@ sap.ui.define(['./Filter', "sap/base/Log", 'jquery.sap.unicode'],
 	"use strict";
 
 	/**
-	 * Clientside Filter processor
+	 * Helper class for processing of filter objects
+	 *
 	 * @namespace sap.ui.model.FilterProcessor
 	 */
 	var FilterProcessor = {};
 
+
+	/**
+	 * Groups filters according to their path and combines filters on the same path using "OR" and filters on
+	 * different paths using "AND", all multi-filters contained are ANDed.
+	 *
+	 * @param {sap.ui.model.Filter[]} aFilters the filters to be grouped
+	 * @return {sap.ui.model.Filter} Single Filter containing all filters of the array combined or undefined
+	 * @private
+	 * @since 1.58
+	 */
+	FilterProcessor.groupFilters = function(aFilters) {
+		var aSorted, sCurPath, aSamePath, aResult = [];
+
+		function getFilter(aFilters, bAnd) {
+			if (aFilters.length === 1) {
+				return aFilters[0];
+			}
+			if (aFilters.length > 1) {
+				return new Filter(aFilters, bAnd);
+			}
+			return undefined;
+		}
+
+		if (!aFilters) {
+			return undefined;
+		}
+		// No need for grouping if only a single filter is contained
+		if (aFilters.length === 1) {
+			return aFilters[0];
+		}
+		// Sort by path
+		aSorted = aFilters.slice().sort(function(oFilter1, oFilter2) {
+			return (oFilter1.sPath > oFilter2.sPath) - (oFilter1.sPath < oFilter2.sPath);
+		});
+		// Create multifilters for properties on same path
+		aSorted.forEach(function(oFilter) {
+			if (oFilter.aFilters || oFilter.sVariable) { // Multifilter/Lambdafilter
+				aResult.push(oFilter);
+			} else {
+				if (oFilter.sPath !== sCurPath) {
+					if (aSamePath) {
+						aResult.push(getFilter(aSamePath, false)); //OR
+					}
+					sCurPath = oFilter.sPath;
+					aSamePath = [];
+				}
+				aSamePath.push(oFilter);
+			}
+		});
+		if (aSamePath && aSamePath.length > 0) {
+			aResult.push(getFilter(aSamePath, false)); //OR
+		}
+
+		return getFilter(aResult, true); //AND
+	};
+
+	/**
+	 * Combines control filters and application filters using AND and returns the resulting filter
+	 *
+	 * @param {sap.ui.model.Filter[]} aFilters control filters
+	 * @param {sap.ui.model.Filter[]} aApplicationFilters application filters
+	 * @return {sap.ui.model.Filter} Single Filter containing all filters of the array combined or undefined
+	 * @private
+	 * @since 1.58
+	 */
+	FilterProcessor.combineFilters = function(aFilters, aApplicationFilters) {
+		var oGroupedFilter, oGroupedApplicationFilter, oFilter, aCombinedFilters = [];
+
+		oGroupedFilter = this.groupFilters(aFilters);
+		oGroupedApplicationFilter = this.groupFilters(aApplicationFilters);
+
+		if (oGroupedFilter) {
+			aCombinedFilters.push(oGroupedFilter);
+		}
+		if (oGroupedApplicationFilter) {
+			aCombinedFilters.push(oGroupedApplicationFilter);
+		}
+		if (aCombinedFilters.length === 1) {
+			oFilter = aCombinedFilters[0];
+		} else if (aCombinedFilters.length > 1) {
+			oFilter = new Filter(aCombinedFilters, true); //AND
+		}
+
+		return oFilter;
+	};
+
 	/**
 	 * Filters the list
-	 * Filters are first grouped according to their binding path.
-	 * All filters belonging to a group are ORed and after that the
-	 * results of all groups are ANDed.
-	 * Usually this means, all filters applied to a single table column
-	 * are ORed, while filters on different table columns are ANDed.
-	 * Multiple MultiFilters are ORed.
+	 * Filters must be grouped and combined into a single Filter object in the binding
+	 * beforehand, this method just accepts a single filter object, as the root
+	 * of the filter tree.
 	 *
 	 * @param {array} aData the data array to be filtered
-	 * @param {array} aFilters the filter array
+	 * @param {sap.ui.model.Filter} oFilter the filter
 	 * @param {function} fnGetValue the method to get the actual value to filter on
 	 * @return {array} a new array instance containing the filtered data set
-	 *
-	 * @public
+	 * @private
 	 */
-	FilterProcessor.apply = function(aData, aFilters, fnGetValue){
+	FilterProcessor.apply = function(aData, oFilter, fnGetValue){
+		var aFiltered,
+			that = this;
+
 		if (!aData) {
 			return [];
-		} else if (!aFilters || aFilters.length == 0) {
+		} else if (!oFilter) {
 			return aData.slice();
 		}
-		var that = this,
-			oFilterGroups = {},
-			aFilterGroup,
-			aFiltered = [],
-			bGroupFiltered = false,
-			bFiltered = true;
 
-		jQuery.each(aFilters, function(j, oFilter) {
-			if (oFilter.sPath !== undefined) {
-				aFilterGroup = oFilterGroups[oFilter.sPath];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups[oFilter.sPath] = [];
+		aFiltered = aData.filter(function(vRef) {
+			return that._evaluateFilter(oFilter, vRef, fnGetValue);
+		});
+
+		return aFiltered;
+	};
+
+	/**
+	 * Evaluates the result of a single filter by calling the corresponding
+	 * filter function and returning the result.
+	 *
+	 * @param {sap.ui.model.Filter} oFilter the filter object
+	 * @param {object} vRef the reference to the list entry
+	 * @param {function} fnGetValue the function to get the value from the list entry
+	 * @return {boolean} whether the filter matches or not
+	 * @private
+	 */
+	FilterProcessor._evaluateFilter = function(oFilter, vRef, fnGetValue){
+		var oValue, fnTest;
+		if (oFilter.aFilters) {
+			return this._evaluateMultiFilter(oFilter, vRef, fnGetValue);
+		}
+		oValue = fnGetValue(vRef, oFilter.sPath);
+		fnTest = this.getFilterFunction(oFilter);
+		if (!oFilter.fnCompare) {
+			oValue = this.normalizeFilterValue(oValue, oFilter.bCaseSensitive);
+		}
+		if (oValue !== undefined && fnTest(oValue)) {
+			return true;
+		}
+		return false;
+	};
+
+	/**
+	 * Evaluates the result of a multi filter, by evaluating contained
+	 * filters. Depending on the type (AND/OR) not all contained filters need
+	 * to be evaluated.
+	 *
+	 * @param {sap.ui.model.Filter} oMultiFilter the filter object
+	 * @param {object} vRef the reference to the list entry
+	 * @param {function} fnGetValue the function to get the value from the list entry
+	 * @return {boolean} whether the filter matches or not
+	 * @private
+	 */
+	FilterProcessor._evaluateMultiFilter = function(oMultiFilter, vRef, fnGetValue){
+		var that = this,
+			bAnd = !!oMultiFilter.bAnd,
+			aFilters = oMultiFilter.aFilters,
+			oFilter,
+			bMatch,
+			bResult = bAnd;
+
+		for (var i = 0; i < aFilters.length; i++) {
+			oFilter = aFilters[i];
+			bMatch = that._evaluateFilter(oFilter, vRef, fnGetValue);
+			if (bAnd) {
+				// if operator is AND, first non matching filter breaks
+				if (!bMatch) {
+					bResult = false;
+					break;
 				}
 			} else {
-				aFilterGroup = oFilterGroups["__multiFilter"];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups["__multiFilter"] = [];
+				// if operator is OR, first matching filter breaks
+				if (bMatch) {
+					bResult = true;
+					break;
 				}
 			}
-			aFilterGroup.push(oFilter);
-		});
-		jQuery.each(aData, function(i, vRef) {
-			bFiltered = true;
-			jQuery.each(oFilterGroups, function(sPath, aFilterGroup) {
-				if (sPath !== "__multiFilter") {
-					bGroupFiltered = false;
-					jQuery.each(aFilterGroup, function(j, oFilter) {
-						var oValue = fnGetValue(vRef, sPath),
-							fnTest = that.getFilterFunction(oFilter);
-						if (!oFilter.fnCompare) {
-							oValue = that.normalizeFilterValue(oValue, oFilter.bCaseSensitive);
-						}
-						if (oValue !== undefined && fnTest(oValue)) {
-							bGroupFiltered = true;
-							return false;
-						}
-					});
-				} else {
-					bGroupFiltered = false;
-					jQuery.each(aFilterGroup, function(j, oFilter) {
-						bGroupFiltered = that._resolveMultiFilter(oFilter, vRef, fnGetValue);
-						if (bGroupFiltered) {
-							return false;
-						}
-					});
-				}
-				if (!bGroupFiltered) {
-					bFiltered = false;
-					return false;
-				}
-			});
-			if (bFiltered) {
-				aFiltered.push(vRef);
-			}
-		});
-		return aFiltered;
+		}
+		return bResult;
 	};
 
 	/**
@@ -121,47 +222,6 @@ sap.ui.define(['./Filter', "sap/base/Log", 'jquery.sap.unicode'],
 			return oValue.getTime();
 		}
 		return oValue;
-	};
-
-	/**
-	 * Resolve the client list binding and check if an index matches
-	 *
-	 * @private
-	 */
-	FilterProcessor._resolveMultiFilter = function(oMultiFilter, vRef, fnGetValue){
-		var that = this,
-			bMatched = !!oMultiFilter.bAnd,
-			aFilters = oMultiFilter.aFilters;
-
-		if (aFilters) {
-			jQuery.each(aFilters, function(i, oFilter) {
-				var bLocalMatch = false;
-				if (oFilter._bMultiFilter) {
-					bLocalMatch = that._resolveMultiFilter(oFilter, vRef, fnGetValue);
-				} else if (oFilter.sPath !== undefined) {
-					var oValue = fnGetValue(vRef, oFilter.sPath),
-						fnTest = that.getFilterFunction(oFilter);
-					if (!oFilter.fnCompare) {
-						oValue = that.normalizeFilterValue(oValue, oFilter.bCaseSensitive);
-					}
-					if (oValue !== undefined && fnTest(oValue)) {
-						bLocalMatch = true;
-					}
-				}
-
-				if ( bLocalMatch !== bMatched ) {
-					// (invariant: bMatched is still the same as oMultiFilter.bAnd)
-					// local match is false and mode is AND -> result is false
-					// local match is true and mode is OR -> result is true
-					bMatched = bLocalMatch;
-					return false;
-				}
-			});
-		}
-		// mode is AND and no local match was false -> result is true
-		// mode is OR and no local match was true -> result is false
-
-		return bMatched;
 	};
 
 	/**

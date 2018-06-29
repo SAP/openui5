@@ -50,6 +50,7 @@ sap.ui.define([
 			ListBinding.apply(this, arguments);
 
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
+			this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
 			this.bIgnoreSuspend = false;
 			this.update();
@@ -219,8 +220,10 @@ sap.ui.define([
 			this.aFilters = aFilters || [];
 			this.aApplicationFilters = [];
 		}
-		aFilters = this.aFilters.concat(this.aApplicationFilters);
-		if (aFilters.length == 0) {
+
+		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
+
+		if (this.aFilters.length === 0 && this.aApplicationFilters.length === 0) {
 			this.iLength = this._getLength();
 		} else {
 			this.applyFilter();
@@ -253,14 +256,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ClientListBinding.prototype.applyFilter = function(){
-		if (!this.aFilters) {
-			return;
-		}
+		var that = this;
 
-		var aFilters = this.aFilters.concat(this.aApplicationFilters),
-			that = this;
-
-		this.aIndices = FilterProcessor.apply(this.aIndices, aFilters, function(vRef, sPath) {
+		this.aIndices = FilterProcessor.apply(this.aIndices, this.oCombinedFilter, function(vRef, sPath) {
 			return that.oModel.getProperty(sPath, that.oList[vRef]);
 		});
 
