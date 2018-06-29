@@ -816,6 +816,22 @@
 			}
 		});
 
+		QUnit.test("Given a Hours slider, when collapsed before animation is completed", function(assert) {
+			// Prepare
+			var oSpyScrollerSnapped = this.spy(this.oTPS._getHoursSlider(), "_scrollerSnapped");
+
+			// Act
+			this.oTPS._getHoursSlider()._offsetValue(1); // moves (offsets) the value by one (vertically). Animation is stared.
+			try {
+				this.oTPS._getHoursSlider().setIsExpanded(false);
+			} catch (e) {
+				assert.ok(false, "then no exception should be thrown");
+			}
+
+			// Assert
+			assert.equal(oSpyScrollerSnapped.callCount, 0, "then no _scrollerSnapped should be called");
+		});
+
 	</script>
 </head>
 <body class="sapUiBody">
