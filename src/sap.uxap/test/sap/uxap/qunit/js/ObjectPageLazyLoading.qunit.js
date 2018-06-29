@@ -179,5 +179,98 @@
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.test("Early lazyLoading onAfterRendering", function (assert) {
+
+		var oObjectPage = new sap.uxap.ObjectPageLayout({enableLazyLoading: true}),
+			iExpectedLazyLoadingDelay,
+			spy,
+			done = assert.async();
+
+		assert.expect(1);
+
+		// Arrange: enable early lazy loading
+		oObjectPage._triggerVisibleSubSectionsEvents();
+		iExpectedLazyLoadingDelay = 0; // expect very small delay
+
+		oObjectPage.addEventDelegate({
+			"onBeforeRendering": function() {
+				spy = sinon.spy(oObjectPage._oLazyLoading, "lazyLoadDuringScroll");
+			},
+			"onAfterRendering": function() {
+				setTimeout(function() {
+					// Check:
+					assert.strictEqual(spy.callCount, 1, "lazy loading is called early");
+					oObjectPage.destroy();
+					done();
+				}, iExpectedLazyLoadingDelay);
+			}
+		}, this);
+
+		oObjectPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Early lazyLoading onAfterRendering when hidden", function (assert) {
+
+		var oObjectPage = new sap.uxap.ObjectPageLayout({enableLazyLoading: true}),
+			iExpectedLazyLoadingDelay,
+			recalcSpy = sinon.spy(oObjectPage, "_requestAdjustLayout"),
+			lazyLoadingSpy,
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+				oObjectPage.addEventDelegate({
+					"onBeforeRendering": function() {
+						lazyLoadingSpy = sinon.spy(oObjectPage._oLazyLoading, "doLazyLoading");
+					},
+					"onAfterRendering": function() {
+
+						setTimeout(function() {
+
+							// restore visibility
+							window["qunit-fixture"].style.display = "";
+							recalcSpy.reset();
+							lazyLoadingSpy.reset();
+							// call the resize listener explicitly in the test to avoid waiting for the ResizeHandler to react (would introduce extra delay in the test)
+							oObjectPage._onUpdateScreenSize({
+								size: {
+									width: 100,
+									height: 300
+								},
+								oldSize: {
+									height: 0
+								}
+							});
+							setTimeout(function() {
+								// Check:
+								assert.strictEqual(lazyLoadingSpy.callCount, 1, "lazy loading is called early");
+								assert.strictEqual(recalcSpy.callCount, 1, "layout adjustment is called early");
+								oObjectPage.destroy();
+								done();
+							}, iExpectedLazyLoadingDelay);
+						}, 0);
+
+					}
+				}, this);
+
+				// Arrange:
+				// we are interested in (1) subseqeuent (i.e. non-first) rendering (2) while the page is hidden child
+				oObjectPage._triggerVisibleSubSectionsEvents(); // enable early lazy loading
+				iExpectedLazyLoadingDelay = 0; // expect very small delay
+				window["qunit-fixture"].style.display = "none";
+				oObjectPage.rerender();
+
+
+
+
+		});
+
+		oObjectPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	});
+
 
 }(jQuery, QUnit));

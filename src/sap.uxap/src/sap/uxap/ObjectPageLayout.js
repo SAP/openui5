@@ -462,6 +462,7 @@ sap.ui.define([
 		this._bHeaderInTitleArea = false;
 		this._bHeaderExpanded = true;
 		this._bHeaderBiggerThanAllowedHeight = false;
+		this._bDelayDOMBasedCalculations = true;    //delay before obtaining DOM metrics to ensure that the final metrics are obtained
 		this._iStoredScrollPosition = 0;
 
 		// anchorbar management
@@ -836,7 +837,7 @@ sap.ui.define([
 			if (this._iAfterRenderingDomReadyTimeout) { // if the page was rerendered before the previous scheduled task completed, cancel the previous
 				clearTimeout(this._iAfterRenderingDomReadyTimeout);
 			}
-			this._iAfterRenderingDomReadyTimeout = jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
+			this._iAfterRenderingDomReadyTimeout = jQuery.sap.delayedCall(this._getDOMCalculationDelay(), this, this._onAfterRenderingDomReady);
 		}
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
@@ -937,6 +938,15 @@ sap.ui.define([
 			}
 		}
 		return {"sStyleAttribute": sStyleAttribute, "iActionsOffset": iActionsOffset, "iMarginalsOffset": iHeaderOffset};
+	};
+
+	/**
+	 * Get the amount of time (in ms) to wait before obtaining DOM metrics.
+	 * This delay is used for optimization purposes, to ensure that only the *final* metrics are obtained.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getDOMCalculationDelay = function () {
+		return this._bDelayDOMBasedCalculations ? ObjectPageLayout.HEADER_CALC_DELAY : 0;
 	};
 
 	ObjectPageLayout.prototype.exit = function () {
@@ -1570,6 +1580,7 @@ sap.ui.define([
 	 * @sap-restricted
 	 */
 	ObjectPageLayout.prototype._triggerVisibleSubSectionsEvents = function () {
+		this._bDelayDOMBasedCalculations = false;
 		if (this.getEnableLazyLoading() && this._oLazyLoading) {
 			this._oLazyLoading._triggerVisibleSubSectionsEvents();
 		}
@@ -2338,7 +2349,7 @@ sap.ui.define([
 
 		this._oLazyLoading.setLazyLoadingParameters();
 
-		jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, function () {
+		jQuery.sap.delayedCall(this._getDOMCalculationDelay(), this, function () {
 			this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
 			this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
@@ -2373,12 +2384,31 @@ sap.ui.define([
 			// => we need to restore the correct scroll position
 			if ((iOldHeight === 0) && bHeightChange && !this._isClosestScrolledSection(sSelectedSectionId)) {
 				this.scrollToSection(sSelectedSectionId, 0);
-				return;
 			}
 
 			this._scrollTo(this._$opWrapper.scrollTop(), 0);
+			// ensure lazy loading is triggered as soon as the page is restored (=> its latest page metrics are available)
+			if ((iOldHeight === 0) && bHeightChange && this.getEnableLazyLoading() && this._oLazyLoading && !this._bDelayDOMBasedCalculations) {
+				this._oLazyLoading.doLazyLoading();
+			}
 		});
 
+	};
+
+	ObjectPageLayout.prototype._onUpdateHeaderTitleSize = function (oEvent) {
+
+		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
+			jQuery.sap.log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
+			return;
+		}
+
+		if (!this._bDomReady) {
+			jQuery.sap.log.info("ObjectPageLayout :: cannot _onUpdateTitleSize before dom is ready");
+			return;
+		}
+
+		this._adjustHeaderHeights();
+		this._requestAdjustLayout();
 	};
 
 	/**

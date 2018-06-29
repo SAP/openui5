@@ -728,10 +728,10 @@ sap.ui.define([
 		this._attachDetachActionButtonsHandler(true);
 	};
 
-	ObjectPageHeader.prototype._onHeaderResize = function () {
+	ObjectPageHeader.prototype._onHeaderResize = function (oEvent) {
 		this._adaptLayout();
-		if (this.getParent() && typeof this.getParent()._adjustHeaderHeights === "function") {
-			this.getParent()._adjustHeaderHeights();
+		if (this.getParent() && typeof this.getParent()._onUpdateHeaderTitleSize === "function") {
+			this.getParent()._onUpdateHeaderTitleSize(oEvent);
 		}
 	};
 
