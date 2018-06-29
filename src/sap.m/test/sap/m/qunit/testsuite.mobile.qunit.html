@@ -19,8 +19,6 @@
 				ie9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9),
 				ie10 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 10);
 
-			if (!navigator.userAgent.match(/MSIE 8.0/g) && (navigator.platform.indexOf("Linux") === -1 || !sap.ui.Device.system.desktop)) {
-
 				// load all explored samples
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ExploredSamples.qunit.html");
 
@@ -461,7 +459,6 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Page.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Select.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/SplitContainer.qunit.html");
-			}
 
 			return suite;
 		}
