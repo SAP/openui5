@@ -17,7 +17,7 @@ sap.ui.define([
 	'sap/ui/model/resource/ResourceModel',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
-	'jquery.sap.script'
+	"sap/base/strings/hash"
 ],
 	function(
 		jQuery,
@@ -32,8 +32,8 @@ sap.ui.define([
 		Cache,
 		ResourceModel,
 		jQueryDOM,
-		XMLHelper
-		/* jQuerySapScript */
+		XMLHelper,
+		hash
 	) {
 	"use strict";
 
@@ -313,7 +313,7 @@ sap.ui.define([
 
 			return validateCacheKey(oView, aFutureKeyParts).then(function(sKey) {
 				return {
-					key: sKey +  "(" + jQuery.sap.hashCode(sManifest || "") + ")",
+					key: sKey +  "(" + hash(sManifest || "") + ")",
 					componentManifest: sManifest,
 					additionalData: mCacheSettings.additionalData
 				};
@@ -443,7 +443,7 @@ sap.ui.define([
 					XMLTemplateProcessor.parseViewAttributes(xContent, that, mSettingsFromXML);
 					if (!mSettings.async) {
 						// extend mSettings which get applied implicitly during view constructor
-						jQuery.sap.extend(mSettings, mSettingsFromXML);
+						Object.assign(mSettings, mSettingsFromXML);
 					} else {
 						// apply the settings from the loaded view source via an explicit call
 						that.applySettings(mSettingsFromXML);

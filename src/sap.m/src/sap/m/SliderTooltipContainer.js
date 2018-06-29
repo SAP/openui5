@@ -128,8 +128,8 @@ function(
 		 */
 		SliderTooltipContainer.prototype._getScrollListener = function () {
 			return function () {
-				jQuery.sap.clearDelayedCall(this._scrollDebounce);
-				this._scrollDebounce = jQuery.sap.delayedCall(0, this, this.repositionTooltips);
+				clearTimeout(this._scrollDebounce);
+				this._scrollDebounce = setTimeout(this.repositionTooltips.bind(this), 0);
 			}.bind(this);
 		};
 

@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 				MessageToast._resetPosition(MessageToast._aPopups);
 			}
 
-			jQuery.sap.delayedCall(0, MessageToast, "_applyPositions", [MessageToast._aPopups]);
+			setTimeout(MessageToast["_applyPositions"].bind(MessageToast, MessageToast._aPopups), 0);
 		};
 
 		MessageToast._handleMouseDownEvent = function(oEvent) {
@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 					mPosition = oPopup._oPosition;	// TODO _oPosition is a private property
 
 					if (Device.system.phone || Device.system.tablet) {
-						jQuery.sap.delayedCall(0, MessageToast, "_applyPosition", [oPopup, mPosition]);
+						setTimeout(MessageToast["_applyPosition"].bind(MessageToast, oPopup, mPosition), 0);
 					} else {
 						oPopup.setPosition(mPosition.my, mPosition.at, mPosition.of, mPosition.offset);
 					}
@@ -446,18 +446,18 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			oPopup.attachClosed(handleMTClosed);
 
 			// close the message toast
-			iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+			iCloseTimeoutId = setTimeout(oPopup["close"].bind(oPopup), mSettings.duration);
 			function fnClearTimeout() {
-				jQuery.sap.clearDelayedCall(iCloseTimeoutId);
+				clearTimeout(iCloseTimeoutId);
 				iCloseTimeoutId = null;
 
 				function fnMouseLeave() {
-					iMouseLeaveTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+					iMouseLeaveTimeoutId = setTimeout(oPopup["close"].bind(oPopup), mSettings.duration);
 					oPopup.getContent().removeEventListener("mouseleave", fnMouseLeave);
 				}
 
 				oPopup.getContent().addEventListener("mouseleave", fnMouseLeave);
-				jQuery.sap.clearDelayedCall(iMouseLeaveTimeoutId);
+				clearTimeout(iMouseLeaveTimeoutId);
 				iMouseLeaveTimeoutId = null;
 			}
 
@@ -467,7 +467,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			// WP 8.1 fires mouseleave event on tap
 			if (Device.system.desktop) {
 				oPopup.getContent().addEventListener("mouseleave", function () {
-					iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration,  oPopup, "close");
+					iCloseTimeoutId = setTimeout(oPopup["close"].bind(oPopup), mSettings.duration);
 				});
 			}
 		};

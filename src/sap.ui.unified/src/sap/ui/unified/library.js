@@ -9,9 +9,8 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Core',
 	'sap/ui/base/Object',
-	"sap/ui/thirdparty/jquery",
-	'jquery.sap.script'
-], function(jQuery, Core, BaseObject/* jQuerySapDom,jQuerySapScript*/, jQueryDOM)	{
+	"sap/ui/thirdparty/jquery"
+], function(jQuery, Core, BaseObject, jQueryDOM)	{
 
 	"use strict";
 
@@ -493,7 +492,7 @@ sap.ui.define([
 			delete this._cb;
 			delete this._ctrl;
 			if (this._rerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._rerenderTimer);
+				clearTimeout(this._rerenderTimer);
 				delete this._rerenderTimer;
 			}
 			BaseObject.prototype.destroy.apply(this, arguments);
@@ -505,10 +504,10 @@ sap.ui.define([
 			}
 
 			if (this._rerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._rerenderTimer);
+				clearTimeout(this._rerenderTimer);
 			}
 
-			this._rerenderTimer = jQuery.sap.delayedCall(0, this, function(){
+			this._rerenderTimer = setTimeout(function(){
 				var $content = jQueryDOM(document.getElementById(this._id));
 				var doRender = $content.length > 0;
 
@@ -525,7 +524,7 @@ sap.ui.define([
 				}
 
 				this._cb(doRender);
-			});
+			}.bind(this), 0);
 		}
 	});
 

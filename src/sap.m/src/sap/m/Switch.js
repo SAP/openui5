@@ -294,7 +294,7 @@ function(
 			this._bDragging = false;
 
 			// note: force ie browsers to set the focus to switch
-			jQuery.sap.delayedCall(0, this, "focus");
+			setTimeout(this["focus"].bind(this), 0);
 
 			// add active state
 			this.$("switch").addClass(CSS_CLASS + "Pressed")
@@ -404,7 +404,7 @@ function(
 				this._setDomState(this._bDragging ? this._bTempState : !this.getState());
 
 				// fire the change event after the CSS transition is completed
-				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
+				setTimeout(function() {
 					var bState = this.getState();
 
 					// change the state
@@ -413,7 +413,7 @@ function(
 					if (bState !== this.getState()) {
 						this.fireChange({ state: this.getState() });
 					}
-				});
+				}.bind(this), Switch._TRANSITIONTIME);
 			}
 		};
 
@@ -447,9 +447,9 @@ function(
 				bState = this.getState();
 
 				// fire the change event after the CSS transition is completed
-				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
+				setTimeout(function() {
 					this.fireChange({ state: bState });
-				});
+				}.bind(this), Switch._TRANSITIONTIME);
 			}
 		};
 

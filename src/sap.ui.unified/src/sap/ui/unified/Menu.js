@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	'jquery.sap.script',
 	'jquery.sap.events'
 ], function(
 	jQuery,
@@ -317,7 +316,7 @@ sap.ui.define([
 		this._resetDelayedRerenderItems();
 		this._discardOpenSubMenuDelayed();
 
-		this._itemRerenderTimer = jQuery.sap.delayedCall(0, this, function(){
+		this._itemRerenderTimer = setTimeout(function(){
 			var oDomRef = this.getDomRef();
 			if (oDomRef) {
 				var oRm = sap.ui.getCore().createRenderManager();
@@ -327,7 +326,7 @@ sap.ui.define([
 				this.onAfterRendering();
 				this.getPopup()._applyPosition(this.getPopup()._oLastPosition);
 			}
-		});
+		}.bind(this), 0);
 	};
 
 	/**
@@ -335,7 +334,7 @@ sap.ui.define([
 	 */
 	Menu.prototype._resetDelayedRerenderItems = function(){
 		if (this._itemRerenderTimer) {
-			jQuery.sap.clearDelayedCall(this._itemRerenderTimer);
+			clearTimeout(this._itemRerenderTimer);
 			delete this._itemRerenderTimer;
 		}
 	};
@@ -744,22 +743,19 @@ sap.ui.define([
 			return;
 		}
 		this._discardOpenSubMenuDelayed();
-		this._delayedSubMenuTimer = jQuery.sap.delayedCall(
-			oItem.getSubmenu() && this.checkEnabled(oItem) ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT,
-			this,
-			function(){
-				this.closeSubmenu();
-				if (!oItem.getSubmenu() || !this.checkEnabled(oItem)) {
-					return;
-				}
-				this.setHoveredItem(oItem);
-				this.openSubmenu(oItem, false, true);
-		});
+		this._delayedSubMenuTimer = setTimeout(function(){
+			this.closeSubmenu();
+			if (!oItem.getSubmenu() || !this.checkEnabled(oItem)) {
+				return;
+			}
+			this.setHoveredItem(oItem);
+			this.openSubmenu(oItem, false, true);
+	}.bind(this), oItem.getSubmenu() && this.checkEnabled(oItem) ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT);
 	};
 
 	Menu.prototype._discardOpenSubMenuDelayed = function(oItem){
 		if (this._delayedSubMenuTimer) {
-			jQuery.sap.clearDelayedCall(this._delayedSubMenuTimer);
+			clearTimeout(this._delayedSubMenuTimer);
 			this._delayedSubMenuTimer = null;
 		}
 	};

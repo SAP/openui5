@@ -156,7 +156,7 @@ function(
 		// Moving to flexbox is not suitable as we should ensure backwards compatibility with IE9
 		if (Device.os.name === Device.os.OS.IOS) {
 			$ProgressNavStep = this.$().find(".sapMWizardProgressNavStep").css("display", "block");
-			jQuery.sap.delayedCall(0, $ProgressNavStep, "css", ["display", ""]);
+			setTimeout($ProgressNavStep["css"].bind($ProgressNavStep, "display", ""), 0);
 		}
 	};
 

@@ -10,8 +10,7 @@ sap.ui.define([
 	'./library',
 	"./ScrollBarRenderer",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/performance/trace/Interaction",
-	'jquery.sap.script'
+	"sap/ui/performance/trace/Interaction"
 ],
 	function(
 		jQuery,
@@ -20,7 +19,7 @@ sap.ui.define([
 		library,
 		ScrollBarRenderer,
 		containsOrEquals,
-		Interaction /*, jQuery*/
+		Interaction
 	) {
 	"use strict";
 

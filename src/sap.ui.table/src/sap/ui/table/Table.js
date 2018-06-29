@@ -883,7 +883,7 @@ sap.ui.define([
 
 		// cleanup
 		if (this._dataReceivedHandlerId) {
-			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			clearTimeout(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
 		}
 		this._cleanUpTimers();
@@ -3900,7 +3900,7 @@ sap.ui.define([
 		}
 
 		if (this._dataReceivedHandlerId != null) {
-			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			clearTimeout(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
 		}
 	};
@@ -3925,13 +3925,13 @@ sap.ui.define([
 		if (!TableUtils.hasPendingRequests(this)) {
 			// This timer should avoid flickering of the busy indicator and unnecessary updates of NoData in case a request will be sent
 			// (dataRequested) immediately after the last response was received (dataReceived).
-			this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
+			this._dataReceivedHandlerId = setTimeout(function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);
 				}
 				this._updateNoData();
 				delete this._dataReceivedHandlerId;
-			});
+			}.bind(this), 0);
 		}
 	};
 

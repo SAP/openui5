@@ -198,7 +198,7 @@ sap.ui.define([
 		jQuery(window).unbind("resize", this._handleOrientationChange);
 
 		if (this._sInitTimer) {
-			jQuery.sap.clearDelayedCall(this._sInitTimer);
+			clearTimeout(this._sInitTimer);
 		}
 	};
 

@@ -124,7 +124,7 @@ sap.ui.define([
 
 		this._oNextButton.addEventDelegate({
 			onAfterRendering: function () {
-				jQuery.sap.delayedCall(0, this, function () {
+				setTimeout(function () {
 					var oButton = this._oNextButton,
 						oButtonDomRef = oButton.getDomRef();
 
@@ -137,7 +137,7 @@ sap.ui.define([
 						// in order to preserve the current animation implementation
 						oButtonDomRef && oButtonDomRef.setAttribute("aria-hidden", true);
 					}
-				});
+				}.bind(this), 0);
 			}
 		}, this);
 

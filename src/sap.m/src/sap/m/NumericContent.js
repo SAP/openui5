@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/m/Image',
 	'./NumericContentRenderer',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/deepEqual"
 ],
 	function(
 		jQuery,
@@ -20,7 +21,8 @@ sap.ui.define([
 		Image,
 		NumericContentRenderer,
 		jQueryDOM,
-		KeyCodes
+		KeyCodes,
+		deepEqual
 	) {
 	"use strict";
 
@@ -224,7 +226,7 @@ sap.ui.define([
 	};
 
 	NumericContent.prototype.setIcon = function(uri) {
-		var bValueChanged = !jQuery.sap.equal(this.getIcon(), uri);
+		var bValueChanged = !deepEqual(this.getIcon(), uri);
 		if (bValueChanged) {
 			if (this._oIcon) {
 				this._oIcon.destroy();

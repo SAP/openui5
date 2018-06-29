@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/base/DataType",
 	"sap/ui/core/XMLTemplateProcessor",
 	"jquery.sap.global",
+	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
 	// needed to have sap.ui.xmlfragment
@@ -16,6 +17,7 @@ sap.ui.define([
 	DataType,
 	XMLTemplateProcessor,
 	jQuery,
+	merge,
 	jQueryDOM,
 	XMLHelper
 ) {
@@ -481,8 +483,7 @@ sap.ui.define([
 		}
 	};
 
-	return jQuery.sap.extend(
-		true /* deep extend */,
+	return merge(
 		{} /* target object, to avoid changing of original modifier */,
 		BaseTreeModifier,
 		XmlTreeModifier

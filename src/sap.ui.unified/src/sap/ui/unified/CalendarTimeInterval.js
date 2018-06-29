@@ -20,7 +20,8 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	'sap/ui/core/library',
 	"./CalendarTimeIntervalRenderer",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/util/deepEqual"
 ], function(
 	jQuery,
 	Control,
@@ -38,7 +39,8 @@ sap.ui.define([
 	Locale,
 	coreLibrary,
 	CalendarTimeIntervalRenderer,
-	containsOrEquals
+	containsOrEquals,
+	deepEqual
 ) {
 	"use strict";
 
@@ -313,7 +315,7 @@ sap.ui.define([
 	CalendarTimeInterval.prototype.exit = function(){
 
 		if (this._sInvalidateContent) {
-			jQuery.sap.clearDelayedCall(this._sInvalidateContent);
+			clearTimeout(this._sInvalidateContent);
 		}
 
 	};
@@ -356,7 +358,7 @@ sap.ui.define([
 
 		CalendarUtils._checkJSDateObject(oStartDate);
 
-		if (jQuery.sap.equal(this.getStartDate(), oStartDate)) {
+		if (deepEqual(this.getStartDate(), oStartDate)) {
 			return this;
 		}
 
@@ -410,7 +412,7 @@ sap.ui.define([
 		} else if (this.getDomRef() && this._iMode == 0 && !this._sInvalidateContent) {
 			// DateRange changed -> only rerender times
 			// do this only once if more DateRanges / Special days are changed
-			this._sInvalidateContent = jQuery.sap.delayedCall(0, this, _invalidateTimesRow);
+			this._sInvalidateContent = setTimeout(_invalidateTimesRow.bind(this), 0);
 		}
 
 	};
@@ -725,7 +727,7 @@ sap.ui.define([
 			oYearPicker,
 			oCalPicker;
 
-		if (jQuery.sap.equal(oDate, this.getMinDate())) {
+		if (deepEqual(oDate, this.getMinDate())) {
 			return this;
 		}
 
@@ -786,7 +788,7 @@ sap.ui.define([
 			oYearPicker,
 			oCalPicker;
 
-		if (jQuery.sap.equal(oDate, this.getMaxDate())) {
+		if (deepEqual(oDate, this.getMaxDate())) {
 			return this;
 		}
 

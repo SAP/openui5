@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/base/Interface',
 	'sap/ui/Device',
 	'sap/ui/core/library',
-	'./SelectionDetailsRenderer'
+	'./SelectionDetailsRenderer',
+	"sap/base/util/uid"
 ],
 function(
 	jQuery,
@@ -20,8 +21,9 @@ function(
 	Interface,
 	Device,
 	CoreLibrary,
-	SelectionDetailsRenderer
-	) {
+	SelectionDetailsRenderer,
+	uid
+) {
 	"use strict";
 
 	/**
@@ -257,7 +259,7 @@ function(
 	 * @private
 	 */
 	SelectionDetails.prototype._handleNavLazy = function(pageTitle, content, Page, Toolbar, ToolbarSpacer, Title, Button) {
-		var sPageId = this.getId() + "-page-for-" + content.getId() + "-uid-" + jQuery.sap.uid();
+		var sPageId = this.getId() + "-page-for-" + content.getId() + "-uid-" + uid();
 
 		this._setPopoverHeight(SelectionDetails._POPOVER_MAX_HEIGHT);
 		var oPage = new Page(sPageId, {

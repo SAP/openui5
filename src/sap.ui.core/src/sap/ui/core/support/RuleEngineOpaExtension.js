@@ -2,10 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/base/Object'
-], function(jQuery, Ui5Object) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/base/util/UriParameters"], function(jQuery, Ui5Object, UriParameters) {
 	"use strict";
 
 	var Extension = Ui5Object.extend("sap.ui.core.support.RuleEngineOpaExtension", {
@@ -44,7 +41,7 @@ sap.ui.define([
 		getAssertions : function () {
 
 			var fnShouldSkipRulesIssues = function () {
-				return jQuery.sap.getUriParameters().get('sap-skip-rules-issues') == 'true';
+				return new UriParameters(window.location.href).get('sap-skip-rules-issues') == 'true';
 			};
 
 			return {

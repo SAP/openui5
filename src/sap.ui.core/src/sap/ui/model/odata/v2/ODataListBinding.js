@@ -3,8 +3,42 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataListBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/Filter', 'sap/ui/model/odata/OperationMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterProcessor', 'sap/ui/model/Sorter', 'sap/ui/model/SorterProcessor'],
-		function(jQuery, Context, FilterType, ListBinding, ODataUtils, CountMode, ODataFilter, OperationMode, ChangeReason, Filter, FilterProcessor, Sorter, SorterProcessor) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/Context',
+	'sap/ui/model/FilterType',
+	'sap/ui/model/ListBinding',
+	'sap/ui/model/odata/ODataUtils',
+	'sap/ui/model/odata/CountMode',
+	'sap/ui/model/odata/Filter',
+	'sap/ui/model/odata/OperationMode',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterProcessor',
+	'sap/ui/model/Sorter',
+	'sap/ui/model/SorterProcessor',
+	"sap/base/util/array/diff",
+	"sap/base/util/uid",
+	"sap/base/util/deepEqual"
+],
+		function(
+			jQuery,
+			Context,
+			FilterType,
+			ListBinding,
+			ODataUtils,
+			CountMode,
+			ODataFilter,
+			OperationMode,
+			ChangeReason,
+			Filter,
+			FilterProcessor,
+			Sorter,
+			SorterProcessor,
+			diff,
+			uid,
+			deepEqual
+		) {
 	"use strict";
 
 
@@ -195,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 			if (this.bUseExtendedChangeDetection) {
 				//Check diff
 				if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-					aContexts.diff = jQuery.sap.arraySymbolDiff(this.aLastContextData, aContextData);
+					aContexts.diff = diff(this.aLastContextData, aContextData);
 				}
 			}
 			this.iLastEndIndex = iStartIndex + iLength;
@@ -508,7 +542,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 
 		var that = this,
 		bInlineCountRequested = false,
-		sGuid = jQuery.sap.uid(),
+		sGuid = uid(),
 		sGroupId;
 
 		// create range parameters and store start index for sort/filter requests
@@ -984,7 +1018,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 				this.applyFilter();
 				this.applySort();
 			}
-			if (!jQuery.sap.equal(aOldRefs, this.aExpandRefs)) {
+			if (!deepEqual(aOldRefs, this.aExpandRefs)) {
 				bChangeDetected = true;
 			} else if (mChangedEntities) {
 				// Performance Optimization: if the length differs, we definitely have a change

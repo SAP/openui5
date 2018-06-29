@@ -1080,10 +1080,10 @@ sap.ui.define([
 		// is the popover causing facet filer item checkbox selection to not display the check mark when the item is selected.
 		this.destroyAggregation("popover");
 		if (this._oOpenPopoverDeferred) {
-			jQuery.sap.delayedCall(0, this, function () {
+			setTimeout(function () {
 				this._oOpenPopoverDeferred.resolve();
 				this._oOpenPopoverDeferred = undefined;
-			});
+			}.bind(this), 0);
 		}
 	};
 
@@ -1184,15 +1184,15 @@ sap.ui.define([
 				var oPopover = that._getPopover();
 				if (oPopover.isOpen()) {
 					// create a deferred that will be triggered after the popover is closed
-					jQuery.sap.delayedCall(100, this, function() {
+					setTimeout(function() {
 						if (oPopover.isOpen()) {
 							return;
 						}
 						that._oOpenPopoverDeferred = jQuery.Deferred();
 						that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
-					});
+					}, 100);
 				} else {
-					jQuery.sap.delayedCall(100, this, fnOpenPopover);
+					setTimeout(fnOpenPopover.bind(this), 100);
 				}
 			}
 		});
@@ -1270,7 +1270,7 @@ sap.ui.define([
 					that._displayRemoveIcon(false, oList);
 					oIcon._bTouchStarted = false;
 					//Schedule actual processing so eventual "press" event is caught.
-					jQuery.sap.delayedCall(100, this,  fnProcessRemoveFacetAction);
+					setTimeout(fnProcessRemoveFacetAction.bind(this), 100);
 				}
 			}, true);
 

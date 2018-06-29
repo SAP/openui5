@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	'./library',
 	'sap/ui/Device',
-	"./CalendarDateIntervalRenderer"
+	"./CalendarDateIntervalRenderer",
+	"sap/base/util/deepEqual"
 ], function(
 	jQuery,
 	CalendarUtils,
@@ -24,7 +25,8 @@ sap.ui.define([
 	CalendarDate,
 	library,
 	Device,
-	CalendarDateIntervalRenderer
+	CalendarDateIntervalRenderer,
+	deepEqual
 ) {
 	"use strict";
 
@@ -298,7 +300,7 @@ sap.ui.define([
 
 		CalendarUtils._checkJSDateObject(oStartDate);
 
-		if (jQuery.sap.equal(this.getStartDate(), oStartDate)) {
+		if (deepEqual(this.getStartDate(), oStartDate)) {
 			return this;
 		}
 

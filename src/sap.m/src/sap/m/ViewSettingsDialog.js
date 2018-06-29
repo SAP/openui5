@@ -1081,8 +1081,7 @@ function(
 
 		// if there is a default tab and the user has been at filter details view on page2, go back to page1
 		if (sPageId && this._vContentPage === 3) {
-			jQuery.sap.delayedCall(0, this._getNavContainer(), "to", [
-				this._getPage1().getId(), "show" ]);
+			setTimeout(this._getNavContainer()["to"].bind(this._getNavContainer(), this._getPage1().getId(), "show"), 0);
 		}
 
 		// init the dialog content based on the aggregations
@@ -2013,7 +2012,7 @@ function(
 								if (that._navContainer.getCurrentPage() .getId() !== that.getId() + '-page2') {
 									that._switchToPage(3, oItem);
 									that._prevSelectedFilterItem = this;
-									jQuery.sap.delayedCall(0, that._navContainer, "to", [ that.getId() + '-page2', "slide" ]);
+									setTimeout(that._navContainer["to"].bind(that._navContainer, that.getId() + '-page2', "slide"), 0);
 								}
 								if (Device.system.desktop && that._filterDetailList && that._filterDetailList.getItems()[0]) {
 									that._getNavContainer().attachEventOnce("afterNavigate", function() {
@@ -2362,7 +2361,7 @@ function(
 					that._prevSelectedFilterItem.focus();
 				}
 			});
-			jQuery.sap.delayedCall(0, this._getNavContainer(), 'back');
+			setTimeout(this._getNavContainer()['back'].bind(this._getNavContainer()), 0);
 			this._switchToPage(2);
 			this._segmentedButton.setSelectedButton(this._filterButton);
 		}
@@ -2982,8 +2981,7 @@ function(
 
 			// navigate to old page if necessary
 			if (that._navContainer.getCurrentPage() !== that._oPreviousState.navPage) {
-				jQuery.sap.delayedCall(0, that._navContainer, "to", [
-					that._oPreviousState.navPage.getId(), "show" ]);
+				setTimeout(that._navContainer["to"].bind(that._navContainer, that._oPreviousState.navPage.getId(), "show"), 0);
 			}
 
 			// navigate to old tab if necessary
@@ -3020,7 +3018,7 @@ function(
 
 		// page updates
 		if (this._vContentPage === 3) { // go to filter overview page if necessary
-			jQuery.sap.delayedCall(0, this._getNavContainer(), 'to', [this._getPage1().getId()]);
+			setTimeout(this._getNavContainer()['to'].bind(this._getNavContainer(), this._getPage1().getId()), 0);
 			this._switchToPage(2);
 			this._getSegmentedButton().setSelectedButton(this._getFilterButton());
 		}

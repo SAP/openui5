@@ -4,12 +4,24 @@
 
 // Provides the base class for all objects with managed properties and aggregations.
 sap.ui.define([
-		'jquery.sap.global',
-		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', './Object',
-		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException',
-		'../model/ParseException', '../model/Type', '../model/ValidateException', 'sap/base/util/ObjectPath',
-		"sap/ui/util/ActivityDetection", 'jquery.sap.script'
-	], function(
+	'jquery.sap.global',
+	'./BindingParser',
+	'./DataType',
+	'./EventProvider',
+	'./ManagedObjectMetadata',
+	'./Object',
+	'../model/BindingMode',
+	'../model/CompositeBinding',
+	'../model/Context',
+	'../model/FormatException',
+	'../model/ParseException',
+	'../model/Type',
+	'../model/ValidateException',
+	'sap/base/util/ObjectPath',
+	"sap/ui/util/ActivityDetection",
+	"sap/base/util/deepEqual",
+	"sap/base/util/uid"
+], function(
 	jQuery,
 	BindingParser,
 	DataType,
@@ -24,8 +36,9 @@ sap.ui.define([
 	Type,
 	ValidateException,
 	ObjectPath,
-	ActivityDetection
-	/*, jQuerySapScript */
+	ActivityDetection,
+	deepEqual,
+	uid
 ) {
 
 	"use strict";
@@ -1235,7 +1248,7 @@ sap.ui.define([
 		// value validation
 		oValue = this.validateProperty(sPropertyName, oValue);
 
-		if (jQuery.sap.equal(oOldValue, oValue)) {
+		if (deepEqual(oOldValue, oValue)) {
 			// ensure to set the own property explicitly to allow isPropertyInitial check (using hasOwnProperty on the map)
 			this.mProperties[sPropertyName] = oValue;
 			return this;
@@ -4668,7 +4681,7 @@ sap.ui.define([
 		}
 		// if no id suffix has been provided use a generated UID
 		if (!sIdSuffix) {
-			sIdSuffix = ManagedObjectMetadata.uid("clone") || jQuery.sap.uid();
+			sIdSuffix = ManagedObjectMetadata.uid("clone") || uid();
 		}
 		// if no local ID array has been passed, collect IDs of all aggregated objects to
 		// be able to properly adapt associations, which are within the cloned object hierarchy

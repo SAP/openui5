@@ -8,8 +8,14 @@
  * @public
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jquery.sap.sjax'],
-	function(jQuery, URI, Element /*, jQuerySap1 */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/thirdparty/URI',
+	'../Element',
+	"sap/base/util/UriParameters",
+	'jquery.sap.sjax'
+],
+	function(jQuery, URI, Element, UriParameters) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -129,7 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 			// Remove CSS file name and query to create theme base url (to resolve relative urls)
 			var sThemeBaseUrl = new URI(sStyleSheetUrl).filename("").query("").toString();
 
-			if (jQuery.sap.getUriParameters().get("sap-ui-xx-no-inline-theming-parameters") !== "true") {
+			if (new UriParameters(window.location.href).get("sap-ui-xx-no-inline-theming-parameters") !== "true") {
 				var $link = jQuery(oLink);
 				var sDataUri = $link.css("background-image");
 				var aParams = /\(["']?data:text\/plain;utf-8,(.*?)['"]?\)$/i.exec(sDataUri);

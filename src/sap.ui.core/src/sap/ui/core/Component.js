@@ -11,9 +11,21 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/URI',
-    "sap/base/util/ObjectPath",
-	"sap/ui/performance/trace/Interaction"
-], function(jQuery, Manifest, ComponentMetadata, Core, merge, ManagedObject, URI, ObjectPath, Interaction) {
+	"sap/base/util/ObjectPath",
+	'sap/ui/performance/trace/Interaction',
+	'sap/base/util/UriParameters'
+], function(
+	jQuery,
+	Manifest,
+	ComponentMetadata,
+	Core,
+	merge,
+	ManagedObject,
+	URI,
+	ObjectPath,
+	Interaction,
+	UriParameters
+) {
 	"use strict";
 
 	/*global Promise */
@@ -1678,7 +1690,7 @@ sap.ui.define([
 		//   sap-ui-xx-preload-component-models-<componentName>=, => prelaod default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo, => prelaod "foo" + default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => prelaod "foo" + "bar" models
-		var sPreloadModels = jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+		var sPreloadModels = new UriParameters(window.location.href).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
 		var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
 
 		for (var sModelName in mAllModelConfigurations) {

@@ -3,8 +3,14 @@
  */
 
 // Provides the XML model implementation of a property binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/ClientPropertyBinding', 'sap/ui/model/ChangeReason'],
-	function(jQuery, ChangeReason, ClientPropertyBinding) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/ClientPropertyBinding',
+	"sap/base/util/deepEqual",
+	'sap/ui/model/ChangeReason'
+],
+	function(jQuery, ChangeReason, ClientPropertyBinding, deepEqual) {
 	"use strict";
 
 
@@ -51,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		}
 
 		var oValue = this._getValue();
-		if (!jQuery.sap.equal(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
+		if (!deepEqual(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = oValue;
 			this._fireChange({reason: ChangeReason.Change});
 		}

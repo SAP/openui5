@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/Popup',
 	'../Plugin',
 	'../Support',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/uid"
 ],
-	function(jQuery, Popup, Plugin, Support, jQueryDOM) {
+	function(jQuery, Popup, Plugin, Support, jQueryDOM, uid) {
 	"use strict";
 
 
@@ -55,7 +56,7 @@ sap.ui.define([
 			var jPopupRef;
 
 			if (!this._sPopupId) {
-				this._sPopupId = this.getId() + "-" + jQuery.sap.uid();
+				this._sPopupId = this.getId() + "-" + uid();
 				var rm = sap.ui.getCore().createRenderManager();
 				rm.write("<div id='" + this._sPopupId + "' style='border: 2px solid rgb(0, 128, 0); background-color: rgba(0, 128, 0, .55);'></div>");
 				rm.flush(sap.ui.getCore().getStaticAreaRef(), false, true);

@@ -3,8 +3,17 @@
  */
 
 // Provides class sap.ui.core.ComponentSupport
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/library', 'sap/base/util/ObjectPath', "sap/base/strings/camelize", 'jquery.sap.script'],
-	function(jQuery, DataType, Component, ComponentContainer, library, ObjectPath, camelize /*, jQuerySapScript */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/library', 'sap/base/util/ObjectPath', "sap/base/strings/camelize", "sap/base/util/UriParameters"],
+	function(
+		jQuery,
+		DataType,
+		Component,
+		ComponentContainer,
+		library,
+		ObjectPath,
+		camelize,
+		UriParameters
+	) {
 	"use strict";
 
 	var ComponentLifecycle = library.ComponentLifecycle;
@@ -130,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/Compone
 	};
 
 	// get the URI parameters
-	var oUriParams = jQuery.sap.getUriParameters();
+	var oUriParams = new UriParameters(window.location.href);
 	var sAutorun = oUriParams.get("sap-ui-xx-componentsupport-autorun");
 	if (!sAutorun || sAutorun.toLowerCase() !== "false") {
 		ComponentSupport.run();

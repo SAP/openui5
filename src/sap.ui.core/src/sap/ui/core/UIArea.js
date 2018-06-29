@@ -1038,10 +1038,10 @@ sap.ui.define([
 		if (oEvent.type === "focusin") {
 			//check for field group change delayed to allow focus forwarding and resetting focus after selection
 			if (UIArea._iFieldGroupDelayTimer) {
-				jQuery.sap.clearDelayedCall(UIArea._iFieldGroupDelayTimer);
+				clearTimeout(UIArea._iFieldGroupDelayTimer);
 				UIArea._iFieldGroupDelayTimer = null;
 			}
-			UIArea._iFieldGroupDelayTimer = jQuery.sap.delayedCall(0,this, this.setFieldGroupControl,[oElement]);
+			UIArea._iFieldGroupDelayTimer = setTimeout(this.setFieldGroupControl.bind(this, oElement), 0);
 			return true; //no further checks because setFieldGroupControl already looked for a group id and fired the enter and leave events that bubble
 		} else if (this.getFieldGroupControl() &&
 				oEvent.type === "keyup" &&
@@ -1051,7 +1051,7 @@ sap.ui.define([
 				oEvent.ctrlKey === oKey.ctrlKey) {
 			//check for field group change (validate) after events where processed by elements
 			if (UIArea._iFieldGroupTriggerDelay) {
-				jQuery.sap.clearDelayedCall(UIArea._iFieldGroupTriggerDelay);
+				clearTimeout(UIArea._iFieldGroupTriggerDelay);
 			}
 			var oCurrentControl = this.getFieldGroupControl(),
 				aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []);

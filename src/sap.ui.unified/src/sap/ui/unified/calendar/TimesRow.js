@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Locale',
 	"./TimesRowRenderer",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/util/deepEqual"
 ], function(
 	jQuery,
 	Control,
@@ -28,7 +29,8 @@ sap.ui.define([
 	coreLibrary,
 	Locale,
 	TimesRowRenderer,
-	containsOrEquals
+	containsOrEquals,
+	deepEqual
 ) {
 	"use strict";
 
@@ -189,7 +191,7 @@ sap.ui.define([
 		}
 
 		if (this._sInvalidateTimes) {
-			jQuery.sap.clearDelayedCall(this._sInvalidateTimes);
+			clearTimeout(this._sInvalidateTimes);
 		}
 
 	};
@@ -232,7 +234,7 @@ sap.ui.define([
 			if (this._bInvalidateSync) { // set if calendar already invalidates in delayed call
 				_invalidateTimes.call(this);
 			} else {
-				this._sInvalidateTimes = jQuery.sap.delayedCall(0, this, _invalidateTimes);
+				this._sInvalidateTimes = setTimeout(_invalidateTimes.bind(this), 0);
 			}
 		}
 
@@ -1103,7 +1105,7 @@ sap.ui.define([
 		CalendarUtils._checkYearInValidRange(iYear);
 
 		var bFocusable = true; // if date not changed it is still focusable
-		if (!jQuery.sap.equal(this.getDate(), oDate)) {
+		if (!deepEqual(this.getDate(), oDate)) {
 			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
 			oUTCDate = this._getIntervalStart(oUTCDate);
 			bFocusable = this.checkDateFocusable(oDate);

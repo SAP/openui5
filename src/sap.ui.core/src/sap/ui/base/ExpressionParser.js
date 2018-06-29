@@ -5,8 +5,10 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/thirdparty/URI',
+	"sap/base/util/JSTokenizer",
+	"sap/base/util/deepEqual",
 	'sap/base/strings/escapeRegExp'
-], function(jQuery, URI, escapeRegExp) {
+], function(jQuery, URI, JSTokenizer, deepEqual, escapeRegExp) {
 	"use strict";
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,
@@ -518,7 +520,7 @@ sap.ui.define([
 		var aParts = [], // the resulting parts (corresponds to aPrimitiveValueBindings)
 			aPrimitiveValueBindings = [], // the bindings with primitive values only
 			aTokens = [],
-			oTokenizer = jQuery.sap._createJSTokenizer();
+			oTokenizer = new JSTokenizer();
 
 		/**
 		 * Saves the binding as a part. Reuses an existing part if the binding is identical.
@@ -570,7 +572,7 @@ sap.ui.define([
 			if (bHasNonPrimitiveValue) {
 				// the binding must be a complex binding; property "type" (and poss. others) are
 				// newly created objects and thus incomparable -> parse again to have the names
-				oPrimitiveValueBinding = jQuery.sap.parseJS(sInput, iStart).result;
+				oPrimitiveValueBinding = JSTokenizer.parseJS(sInput, iStart).result;
 				setTargetType(oPrimitiveValueBinding);
 			} else {
 				// only primitive values; easily comparable
@@ -578,7 +580,7 @@ sap.ui.define([
 			}
 			for (i = 0; i < aParts.length; i += 1) {
 				// Note: order of top-level properties must not matter for equality!
-				if (jQuery.sap.equal(aPrimitiveValueBindings[i], oPrimitiveValueBinding)) {
+				if (deepEqual(aPrimitiveValueBindings[i], oPrimitiveValueBinding)) {
 					return i;
 				}
 			}

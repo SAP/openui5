@@ -1173,9 +1173,9 @@ function(
 			}
 			this._getInput().setValueState(valueState);
 
-			jQuery.sap.delayedCall(0, this, function () {
+			setTimeout(function () {
 				this.$().toggleClass("sapMStepInputError", bError).toggleClass("sapMStepInputWarning", bWarning);
-			});
+			}.bind(this), 0);
 
 			this.setProperty("valueState", valueState, true);
 
@@ -1287,7 +1287,7 @@ function(
 			}
 
 			this.setValueState(ValueState.Error);
-			jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
+			setTimeout(this["setValueState"].bind(this, sOldValueState), 1000);
 		};
 
 		/**

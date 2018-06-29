@@ -32,6 +32,23 @@
 	sap.ui.require(['sap/ui/core/Configuration', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/Locale'],
 		function(Configuration, Core, coreLibrary, Locale) {
 
+		var browserUrl = {
+			change: function(sUrl) {
+				if (sUrl) {
+					if (!this.href) {
+						this.href = window.location.href;
+					}
+					window.history.pushState({},"Test URL", sUrl);
+				}
+			},
+			reset: function() {
+				if (this.href) {
+					window.history.pushState({},"Test URL reset", this.href);
+					this.href = null;
+				}
+			}
+		};
+
 		var CalendarType = coreLibrary.CalendarType;
 		var AnimationMode = Configuration.AnimationMode;
 
@@ -331,19 +348,18 @@
 
 		QUnit.module("SAP Logon Language (via url)", {
 			beforeEach: function(assert) {
-				var getUriParameters = jQuery.sap.getUriParameters;
 				this.setupConfig = function(sLanguage, sUrl) {
 					var oCoreMock = {
 						fireLocalizationChanged: function() {}
 					};
-					if ( typeof jQuery.sap.getUriParameters.restore === 'function' ) {
-						jQuery.sap.getUriParameters.restore();
-					}
 					window["sap-ui-config"] = window["sap-ui-config"] || {};
 					window["sap-ui-config"].language = sLanguage;
-					this.stub(jQuery.sap, 'getUriParameters').returns( getUriParameters.call(jQuery.sap, sUrl) );
+					browserUrl.change(sUrl);
 					return new Configuration(oCoreMock);
 				};
+			},
+			afterEach: function() {
+				browserUrl.reset();
 			}
 		});
 
@@ -452,8 +468,8 @@
 
 
 		QUnit.module("Format settings", {
-			beforeEach: function(assert) {
-				this.oGetParameterStub = sinon.stub();
+			afterEach: function() {
+				browserUrl.reset();
 			}
 		});
 
@@ -471,8 +487,7 @@
 			].forEach(function (data) {
 
 				// setup
-				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-number-format=' + encodeURIComponent(data.param));
-				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				browserUrl.change('?sap-ui-legacy-number-format=' + encodeURIComponent(data.param));
 				oSpySetLegacyNumberFormat.reset();
 
 				// call method under test
@@ -482,9 +497,7 @@
 				assert.equal(oSpySetLegacyNumberFormat.callCount, 1, "setLegacyNumberFormat with value: '" + data.param + "' must be called");
 				assert.equal(oConfig.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
 
-				oGetUriParametersStub.restore();
 				oConfig.destroy();
-
 			});
 		});
 
@@ -511,8 +524,7 @@
 				{ param: 'c', expected: 'C' },
 			].forEach(function (data) {
 
-				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-date-format=' + encodeURIComponent(data.param));
-				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				browserUrl.change('?sap-ui-legacy-date-format=' + encodeURIComponent(data.param));
 				oSpySetLegacyDateFormat.reset();
 
 				var oConfig = new Configuration();
@@ -520,7 +532,6 @@
 				assert.equal(oSpySetLegacyDateFormat.callCount, 1, "setLegacyDateFormat must have been called one time");
 				assert.equal(oConfig.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
 
-				oGetUriParametersStub.restore();
 				oConfig.destroy();
 
 			});
@@ -538,8 +549,7 @@
 				{ param: '4', expected: '4' },
 			].forEach(function (data) {
 
-				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-time-format=' + encodeURIComponent(data.param));
-				var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+				browserUrl.change('?sap-ui-legacy-time-format=' + encodeURIComponent(data.param));
 				oSpySetLegacyTimeFormat.reset();
 
 				var oConfig = new Configuration();
@@ -547,7 +557,6 @@
 				assert.equal(oSpySetLegacyTimeFormat.callCount, 1, "setLegacyTimeFormat must be called one time");
 				assert.equal(oConfig.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
 
-				oGetUriParametersStub.restore();
 				oConfig.destroy();
 
 			});
@@ -555,16 +564,17 @@
 
 		QUnit.module("SAP parameters", {
 			beforeEach: function(assert) {
-				this.oGetParameterStub = sinon.stub();
 				window["sap-ui-config"].language = "en";
+			},
+			afterEach: function() {
+				browserUrl.reset();
 			}
 		});
 
 		QUnit.test("Read SAP parameters from URL", function(assert) {
 
 			// setup
-			var oParams = jQuery.sap.getUriParameters('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=en');
-			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+			browserUrl.change('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=en');
 
 			// call method under test
 			var oConfig = new Configuration();
@@ -575,7 +585,6 @@
 			assert.equal(oConfig.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-system=abc');
 			assert.equal(oConfig.getSAPParam('sap-language'), 'en', 'SAP parameter sap-language=en');
 
-			oGetUriParametersStub.restore();
 			oConfig.destroy();
 
 		});
@@ -583,8 +592,7 @@
 		QUnit.test("Read SAP parameters from URL (ignoreUrlParams)", function(assert) {
 
 			// setup
-			var oParams = jQuery.sap.getUriParameters('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=de');
-			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns( oParams );
+			browserUrl.change('?sap-client=foo&sap-server=bar&sap-system=abc&sap-language=de');
 			window["sap-ui-config"].ignoreurlparams = true;
 
 			// call method under test
@@ -596,7 +604,6 @@
 			assert.equal(oConfig.getSAPParam('sap-system'), undefined, 'SAP parameter sap-system=abc');
 			assert.equal(oConfig.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=en');
 
-			oGetUriParametersStub.restore();
 			oConfig.destroy();
 			delete window["sap-ui-config"].ignoreurlparams;
 
@@ -605,8 +612,7 @@
 		QUnit.test("Set SAPLogonLanguage and SAP parameter is updated", function(assert) {
 
 			// setup
-			var oParams = jQuery.sap.getUriParameters('?sap-language=EN');
-			var oGetUriParametersStub = sinon.stub(jQuery.sap, 'getUriParameters').returns(oParams);
+			browserUrl.change('?sap-language=EN');
 
 			// call method under test
 			var oConfig = new Configuration();
@@ -616,7 +622,6 @@
 			oConfig.setLanguage("es");
 			assert.equal(oConfig.getSAPParam('sap-language'), 'ES', 'SAP parameter sap-language=ES');
 
-			oGetUriParametersStub.restore();
 			oConfig.destroy();
 
 		});

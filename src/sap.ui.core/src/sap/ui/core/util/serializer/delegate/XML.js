@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Delegate'],
-	function(jQuery, Delegate) {
+sap.ui.define(['jquery.sap.global', './Delegate', "sap/base/util/deepEqual"],
+	function(jQuery, Delegate, deepEqual) {
 	"use strict";
 
 
@@ -152,7 +152,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 		var oDefaults = oControl.getMetadata().getPropertyDefaults();
 		this._createAttributes(aXml, oControl, oProperties, null, function (sName, oValue) {
 			// write property only if it has a value different from the default value
-			return !jQuery.sap.equal(oValue, oDefaults[sName]);
+			return !deepEqual(oValue, oDefaults[sName]);
 		});
 
 		// write aggregations

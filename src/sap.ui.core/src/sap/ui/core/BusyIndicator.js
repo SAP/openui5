@@ -224,7 +224,7 @@ sap.ui.define([
 		if (iDelay === 0) { // avoid async call when there is no delay
 			this._showNowIfRequested();
 		} else {
-			jQuery.sap.delayedCall(iDelay, this, "_showNowIfRequested");
+			setTimeout(this["_showNowIfRequested"].bind(this), iDelay);
 		}
 	};
 

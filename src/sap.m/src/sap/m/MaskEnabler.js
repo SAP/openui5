@@ -875,24 +875,22 @@ sap.ui.define([
 
 			// give a chance the normal browser cut and oninput handler to finish its work with the current selection,
 			// before messing up the dom value (updateDomValue) or the selection (by setting a new cursor position)
-			jQuery.sap.delayedCall(iMinBrowserDelay, this,
-				function updateDomAndCursor(sValue, iPos, aOldTempValueContent) {
-					//update the temp value back
-					//because oninput breaks it
-					this._oTempValue._aContent = aOldTempValueContent;
-					this.updateDomValue(sValue);
+			setTimeout(function updateDomAndCursor(sValue, iPos, aOldTempValueContent) {
+				//update the temp value back
+				//because oninput breaks it
+				this._oTempValue._aContent = aOldTempValueContent;
+				this.updateDomValue(sValue);
 
-					//we want that shortly after updateDomValue
-					//but _positionCaret sets the cursor, also with a delayedCall
-					//so we must put our update in the queue
-					jQuery.sap.delayedCall(iMinBrowserDelay, this, this._setCursorPosition, [iPos]);
-				},
-				[
-					this._oTempValue.toString(),
-					Math.max(this._iUserInputStartPosition, iBegin),
-					this._oTempValue._aContent.slice(0)
-				]
-			);
+				//we want that shortly after updateDomValue
+				//but _positionCaret sets the cursor, also with a delayedCall
+				//so we must put our update in the queue
+				setTimeout(this._setCursorPosition.bind(this, iPos), iMinBrowserDelay);
+			}.bind(
+				this,
+				this._oTempValue.toString(),
+				Math.max(this._iUserInputStartPosition, iBegin),
+				this._oTempValue._aContent.slice(0)
+			), iMinBrowserDelay);
 		};
 
 		/**
@@ -1139,7 +1137,7 @@ sap.ui.define([
 				iEndSelectionIndex = sMask.length;
 			}
 
-			this._iCaretTimeoutId = jQuery.sap.delayedCall(iMinBrowserDelay, this, function () {
+			this._iCaretTimeoutId = setTimeout(function () {
 				if (this.getFocusDomRef() !== document.activeElement) {
 					return;
 				}
@@ -1148,7 +1146,7 @@ sap.ui.define([
 				} else {
 					this._setCursorPosition(iEndSelectionIndex);
 				}
-			});
+			}.bind(this), iMinBrowserDelay);
 		};
 
 		/**
@@ -1399,7 +1397,7 @@ sap.ui.define([
 			// the old and new value will be observed
 			this.updateDomValue(this._oKeyDownStateAndroid.sValue);
 
-			jQuery.sap.delayedCall(0, this, function(oInputEvent, oKeyDownState, oKey) {
+			setTimeout(function(oInputEvent, oKeyDownState, oKey) {
 				// delayed call is needed, as for some Android devices(e.g. S5) if _setCursorPosition (jQuery.cursorPos)
 				// is called from within the input handler, this won't really change the cursor position,
 				// even though _getCursorPosition() returns the one that had been previously set.
@@ -1409,7 +1407,7 @@ sap.ui.define([
 				} else {
 					this._keyPressHandler(oInputEvent, oKey);
 				}
-			}, [oEvent, this._oKeyDownStateAndroid, oKeyInfo]);
+			}.bind(this, oEvent, this._oKeyDownStateAndroid, oKeyInfo), 0);
 
 			delete this._oKeyDownStateAndroid;
 			oEvent.preventDefault();

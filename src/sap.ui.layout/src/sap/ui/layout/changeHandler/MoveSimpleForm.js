@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeModifier"],
-		function(jQuery, JsControlTreeModifier) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/util/uid"
+],
+		function(jQuery, JsControlTreeModifier, uid) {
 			"use strict";
 
 			/**
@@ -43,7 +47,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeMo
 				if (fnFirstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
 					var oView = mPropertyBag.view;
 					var oAppComponent = mPropertyBag.appComponent;
-					var sGroupId = oAppComponent.createId(jQuery.sap.uid());
+					var sGroupId = oAppComponent.createId(uid());
 
 					var oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, sGroupId);
 					oModifier.setProperty(oTitle, "text", "");

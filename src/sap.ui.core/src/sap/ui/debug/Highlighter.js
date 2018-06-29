@@ -3,8 +3,8 @@
  */
 
 // Provides a helper that can highlight a given control
-sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.script'],
-	function(jQuery/* , jQuerySap, jQuerySap1 */) {
+sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', "sap/base/util/uid"],
+	function(jQuery, uid) {
 	"use strict";
 
 
@@ -25,7 +25,7 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.scri
 	 * @alias sap.ui.debug.Highlighter
 	 */
 	var Highlighter = function(sId, bFilled, sColor, iBorderWidth) {
-		this.sId = sId || jQuery.sap.uid();
+		this.sId = sId || uid();
 		this.bFilled = (bFilled == true);
 		this.sColor = sColor || 'blue';
 		if ( isNaN(iBorderWidth ) ) {

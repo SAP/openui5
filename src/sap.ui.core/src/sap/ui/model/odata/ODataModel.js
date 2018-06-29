@@ -11,8 +11,42 @@
  */
 
 // Provides class sap.ui.model.odata.ODataModel
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Context', 'sap/ui/model/Model', './ODataUtils', './CountMode', './ODataContextBinding', './ODataListBinding', './ODataMetadata', './ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
-	function(jQuery, BindingMode, Context, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, URI, OData) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/BindingMode',
+	'sap/ui/model/Context',
+	'sap/ui/model/Model',
+	'./ODataUtils',
+	'./CountMode',
+	'./ODataContextBinding',
+	'./ODataListBinding',
+	'./ODataMetadata',
+	'./ODataPropertyBinding',
+	'./ODataTreeBinding',
+	'sap/ui/model/odata/ODataMetaModel',
+	'sap/ui/thirdparty/URI',
+	'sap/ui/thirdparty/datajs',
+	"sap/base/util/uid",
+	"sap/base/util/merge"
+],
+	function(
+		jQuery,
+		BindingMode,
+		Context,
+		Model,
+		ODataUtils,
+		CountMode,
+		ODataContextBinding,
+		ODataListBinding,
+		ODataMetadata,
+		ODataPropertyBinding,
+		ODataTreeBinding,
+		ODataMetaModel,
+		URI,
+		OData,
+		uid,
+		merge
+	) {
 	"use strict";
 
 
@@ -327,7 +361,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 		this.bUseBatch = this.bUseBatch || this.oMetadata.getUseBatch();
 		var doFire = function(bDelay){
 			if (!!bDelay) {
-				that.metadataLoadEvent = jQuery.sap.delayedCall(0, that, doFire);
+				that.metadataLoadEvent = setTimeout(doFire.bind(that), 0);
 			} else {
 				if (that.oMetadata) {
 					that.fireMetadataLoaded({metadata: that.oMetadata});
@@ -710,7 +744,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 				_submit(oRequest);
 			} else {
 				// all data is read so merge all data
-				jQuery.sap.extend(oResultData.results, aResults);
+				if (oResultData.results) {
+					var vValue, vKey;
+					for (vKey in aResults) {
+						vValue = aResults[vKey];
+
+						// Prevent never-ending loop
+						if (aResults === vValue) {
+							continue;
+						}
+
+						oResultData.results[vKey] = vValue;
+					}
+				}
+
 				// broken implementations need this
 				if (oResultData.results && !Array.isArray(oResultData.results)) {
 					oResultData = oResultData.results;
@@ -976,14 +1023,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities, bMetaModelOnly) {
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
-				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
+				this.sUpdateTimer = setTimeout(function() {
 					this.checkUpdate(bForceUpdate, false, mChangedEntities);
-				});
+				}.bind(this), 0);
 			}
 			return;
 		}
 		if (this.sUpdateTimer) {
-			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
+			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
 		}
 		var aBindings = this.aBindings.slice(0);
@@ -1438,7 +1485,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 		}
 
 		// do a value copy or the changes to that value will be modified in the model as well (reference)
-		oValue = jQuery.sap.extend(true, {}, oValue);
+		oValue = merge({}, oValue);
 
 		if (bIncludeExpandEntries == true) {
 			// include expand entries
@@ -2671,7 +2718,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 
 			if (jQuery.isPlainObject(oStoredEntry)) {
 				// do a copy of the payload or the changes will be deleted in the model as well (reference)
-				oPayload = jQuery.sap.extend(true, {}, oStoredEntry);
+				oPayload = merge({}, oStoredEntry);
 				// remove metadata, navigation properties to reduce payload
 				if (oPayload.__metadata) {
 					sType = oPayload.__metadata.type;
@@ -2733,7 +2780,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			var aChangeRequests = [];
 			jQuery.each(this.oRequestQueue, function(sKey, oCurrentRequest){
 				delete oCurrentRequest._oRef;
-				var oReqClone = jQuery.sap.extend(true, {}, oCurrentRequest);
+				var oReqClone = merge({}, oCurrentRequest);
 				oCurrentRequest._oRef = oReqClone;
 
 				oReqClone.requestUri = oReqClone.requestUri.replace(that.sServiceUrl + '/','');
@@ -2750,7 +2797,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 				// We send the cloned request which will be modified by datajs but we want to keep the original request stored
 				// because it may fail and we need to send the request again.
 				delete oCurrentRequest._oRef;
-				var oReqClone = jQuery.sap.extend(true, {}, oCurrentRequest);
+				var oReqClone = merge({}, oCurrentRequest);
 				oCurrentRequest._oRef = oReqClone;
 				//remove create flag
 				 if (oReqClone.data && oReqClone.data._bCreate) {
@@ -3137,7 +3184,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 		oEntity._bCreate = true;
 
 		// remove starting / for key only
-		sKey = sPath.substring(1) + "('" + jQuery.sap.uid() + "')";
+		sKey = sPath.substring(1) + "('" + uid() + "')";
 
 		this.oData[sKey] = oEntity;
 
@@ -3300,10 +3347,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			delete this.aPendingRequestHandles;
 		}
 		if (!!this.oMetadataLoadEvent) {
-			jQuery.sap.clearDelayedCall(this.oMetadataLoadEvent);
+			clearTimeout(this.oMetadataLoadEvent);
 		}
 		if (!!this.oMetadataFailedEvent) {
-			jQuery.sap.clearDelayedCall(this.oMetadataFailedEvent);
+			clearTimeout(this.oMetadataFailedEvent);
 		}
 
 		if (this.oMetadata) {

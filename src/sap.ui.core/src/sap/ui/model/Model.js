@@ -3,8 +3,15 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './BindingMode', './Context', './Filter'],
-	function(jQuery, MessageProcessor, BindingMode, Context, Filter) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/message/MessageProcessor',
+	'./BindingMode',
+	'./Context',
+	'./Filter',
+	"sap/base/util/deepEqual"
+],
+	function(jQuery, MessageProcessor, BindingMode, Context, Filter, deepEqual) {
 	"use strict";
 
 
@@ -838,14 +845,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	Model.prototype.checkUpdate = function(bForceUpdate, bAsync) {
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
-				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
+				this.sUpdateTimer = setTimeout(function() {
 					this.checkUpdate(bForceUpdate);
-				});
+				}.bind(this), 0);
 			}
 			return;
 		}
 		if (this.sUpdateTimer) {
-			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
+			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
 		}
 		var aBindings = this.aBindings.slice(0);
@@ -862,7 +869,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 */
 	Model.prototype.setMessages = function(mMessages) {
 		mMessages = mMessages || {};
-		if (!jQuery.sap.equal(this.mMessages, mMessages)) {
+		if (!deepEqual(this.mMessages, mMessages)) {
 			this.mMessages = mMessages;
 			this.checkMessages();
 		}
@@ -908,7 +915,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		this.aBindings = [];
 		this.mContexts = {};
 		if (this.sUpdateTimer) {
-			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
+			clearTimeout(this.sUpdateTimer);
 		}
 		this.bDestroyed = true;
 	};

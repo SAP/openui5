@@ -7,12 +7,15 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
 	"jquery.sap.global",
-	"sap/ui/core/Fragment" // needed to have sap.ui.xmlfragment
-], function(
-    BaseTreeModifier,
+	"sap/base/util/merge",
+	"sap/ui/core/Fragment", // needed to have sap.ui.xmlfragment
+	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
+], function (
+	BaseTreeModifier,
 	ObjectPath,
-    XMLHelper,
-	jQuery
+	XMLHelper,
+	jQuery,
+	merge
 	/* other jQuery.sap dependencies */
 ) {
 
@@ -355,8 +358,7 @@ sap.ui.define([
 		}
 	};
 
-	return jQuery.sap.extend(
-		true /* deep extend */,
+	return merge(
 		{} /* target object, to avoid changing of original modifier */,
 		BaseTreeModifier,
 		JsControlTreeModifier

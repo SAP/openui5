@@ -302,7 +302,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._afterNavigate = function () {
-		jQuery.sap.delayedCall(0, this, "_restoreFocus");
+		setTimeout(this["_restoreFocus"].bind(this), 0);
 	};
 
 	/**

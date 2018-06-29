@@ -3,7 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._Batch
-sap.ui.define(["jquery.sap.global", "sap/base/strings/escapeRegExp"], function(jQuery, escapeRegExp) {
+sap.ui.define(["jquery.sap.global", "sap/base/strings/escapeRegExp", "jquery.sap.script"], function(jQuery, escapeRegExp /* ,jQuerySapScript */) {
 	"use strict";
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},

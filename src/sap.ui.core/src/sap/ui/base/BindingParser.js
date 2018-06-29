@@ -10,8 +10,16 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/Sorter',
 	'sap/base/util/ObjectPath',
-	'jquery.sap.script'],
-	function(jQuery, ExpressionParser, BindingMode, Filter, Sorter, ObjectPath/* , jQuerySap */) {
+	"sap/base/util/JSTokenizer"
+], function(
+		jQuery,
+		ExpressionParser,
+		BindingMode,
+		Filter,
+		Sorter,
+		ObjectPath,
+		JSTokenizer
+	) {
 	"use strict";
 
 	/**
@@ -330,7 +338,7 @@ sap.ui.define([
 	 *   at: The position after the last character for the embedded binding in the input string
 	 */
 	function resolveEmbeddedBinding(oEnv, sInput, iStart) {
-		var parseObject = jQuery.sap.parseJS,
+		var parseObject = JSTokenizer.parseJS,
 			oParseResult,
 			iEnd;
 

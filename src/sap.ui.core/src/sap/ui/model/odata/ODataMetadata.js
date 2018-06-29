@@ -5,8 +5,15 @@
 
 
 // Provides class sap.ui.model.odata.ODataMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs', 'sap/ui/core/cache/CacheManager', './_ODataMetaModelUtils'],
-	function(jQuery, EventProvider, OData, CacheManager, Utils) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/EventProvider',
+	'sap/ui/thirdparty/datajs',
+	'sap/ui/core/cache/CacheManager',
+	'./_ODataMetaModelUtils',
+	"sap/base/util/uid"
+],
+	function(jQuery, EventProvider, OData, CacheManager, Utils, uid) {
 	"use strict";
 
 	/**
@@ -125,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			//sure that bLoaded is already set properly
 			this.bLoaded = true;
 			this.bFailed = false;
-			this.oLoadEvent = jQuery.sap.delayedCall(0, this, this.fireLoaded, [ mParams ]);
+			this.oLoadEvent = setTimeout(this.fireLoaded.bind(this, mParams), 0);
 		}
 	};
 
@@ -196,14 +203,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					that.fireFailed(mParams);
 				} else if (!that.bAsync && !bSuppressEvents){
 					that.bFailed = true;
-					that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [mParams]);
+					that.oFailedEvent = setTimeout(that.fireFailed.bind(that, mParams), 0);
 				}
 			}
 
 			// execute the request
 			oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
 			if (that.bAsync) {
-				oRequestHandle.id = jQuery.sap.uid();
+				oRequestHandle.id = uid();
 				that.mRequestHandles[oRequestHandle.id] = oRequestHandle;
 			}
 		});
@@ -981,10 +988,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			delete that.mRequestHandles[sKey];
 		});
 		if (!!this.oLoadEvent) {
-			jQuery.sap.clearDelayedCall(this.oLoadEvent);
+			clearTimeout(this.oLoadEvent);
 		}
 		if (!!this.oFailedEvent) {
-			jQuery.sap.clearDelayedCall(this.oFailedEvent);
+			clearTimeout(this.oFailedEvent);
 		}
 
 		EventProvider.prototype.destroy.apply(this, arguments);

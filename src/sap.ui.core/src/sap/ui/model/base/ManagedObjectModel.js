@@ -2,8 +2,26 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', '../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason'
-], function(jQuery, JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason) {
+	'jquery.sap.global',
+	'../json/JSONModel',
+	'../json/JSONPropertyBinding',
+	'../json/JSONListBinding',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/base/ManagedObjectObserver',
+	'../Context',
+	'../ChangeReason',
+	"sap/base/util/uid"
+], function(
+	jQuery,
+	JSONModel,
+	JSONPropertyBinding,
+	JSONListBinding,
+	ManagedObject,
+	ManagedObjectObserver,
+	Context,
+	ChangeReason,
+	uid
+) {
 	"use strict";
 
 	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding"),
@@ -395,7 +413,7 @@ sap.ui.define([
 		}
 
 		if (!sId) {
-			return oObject.getId() + ID_DELIMITER + jQuery.sap.uid();
+			return oObject.getId() + ID_DELIMITER + uid();
 		}
 
 		if (sId.indexOf(oObject.getId() + ID_DELIMITER) != 0) { // ID not already prefixed

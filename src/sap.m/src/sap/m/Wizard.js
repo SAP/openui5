@@ -568,9 +568,9 @@ sap.ui.define([
 
 			progressNavigator._setOnEnter(function (event, stepIndex) {
 				var step = that._stepPath[stepIndex];
-				jQuery.sap.delayedCall(Wizard.CONSTANTS.ANIMATION_TIME, that, function () {
+				setTimeout(function () {
 					this._focusFirstStepElement(step);
-				});
+				}.bind(that), Wizard.CONSTANTS.ANIMATION_TIME);
 			});
 
 			this.setAggregation("_progressNavigator", progressNavigator);
