@@ -130,7 +130,12 @@ function(
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function () {
+
+	}, function(){
+		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
+			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create: Group", "then the correct message key is returned");
+		});
+
 		QUnit.test("when an overlay has no createContainer action designTime metadata", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({});
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
@@ -263,7 +268,7 @@ function(
 		});
 
 		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
-			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create Group", "then the correct message key is returned");
+			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create: Group", "then the correct message key is returned");
 		});
 
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
