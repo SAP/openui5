@@ -255,13 +255,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					}
 				}
 			} else {
-				this._stopAnimation();
+				this._stopAnimation(); //stop any schedule(interval) for animation
 				//stop snap animation also
 				if (this._animatingSnap === true) {
 					this._animatingSnap = false;
 					this._getSliderContainerDomRef().stop(true);
-					//be careful not to invoke this method twice (the first time is on animate finish callback)
-					this._scrollerSnapped(this._iSelectedIndex);
+					//Be careful not to invoke this method twice (the first time is on animate finish callback).
+					//If this is the first animation, the _iSelectedIndex will remain its initial value, so no need
+					//to notify the scroller about any snap completion
+					if (this._iSelectedIndex !== -1) {
+						this._scrollerSnapped(this._iSelectedIndex);
+					}
 				}
 
 				$This.removeClass("sapMTPSliderExpanded");
