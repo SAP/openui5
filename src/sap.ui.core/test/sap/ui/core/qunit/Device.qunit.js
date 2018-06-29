@@ -440,7 +440,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		QUnit.test("User Agent - " + oUserAgentAndResult.name, function(assert) {
 
 			var currentTest = oUserAgentAndResult;
-			var actualResult = sap.ui.Device._testUserAgent(currentTest.ua, currentTest.nav);
+			var actualResult = Device._testUserAgent(currentTest.ua, currentTest.nav);
 
 			// redo additional settings normally done later
 			if (actualResult.name) {
@@ -461,15 +461,15 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					return;
 				}
 
-				var bOldSupportTouch = sap.ui.Device.support.touch,
-					oOldBrowserInfo = sap.ui.Device.browser;
+				var bOldSupportTouch = Device.support.touch,
+					oOldBrowserInfo = Device.browser;
 
-				sap.ui.Device._setOS(currentTest.ua);
-				sap.ui.Device.support.touch = currentTest.touch;
-				sap.ui.Device.browser = actualResult;
+				Device._setOS(currentTest.ua);
+				Device.support.touch = currentTest.touch;
+				Device.browser = actualResult;
 
 				if (currentTest.system) {
-					var oSystem = sap.ui.Device._getSystem(false, currentTest.ua);
+					var oSystem = Device._getSystem(false, currentTest.ua);
 
 					for (prop in currentTest.system) {
 						assert.strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property 'system." + prop + "' should match for " + currentTest.ua);
@@ -478,12 +478,12 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 				if (currentTest.os) {
 					for (prop in currentTest.os) {
-						assert.strictEqual(sap.ui.Device.os[prop], currentTest.os[prop], currentTest.name + ": browser detection property 'os." + prop + "' should match for " + currentTest.ua);
+						assert.strictEqual(Device.os[prop], currentTest.os[prop], currentTest.name + ": browser detection property 'os." + prop + "' should match for " + currentTest.ua);
 					}
 				}
 
-				sap.ui.Device.support.touch = bOldSupportTouch;
-				sap.ui.Device.browser = oOldBrowserInfo;
+				Device.support.touch = bOldSupportTouch;
+				Device.browser = oOldBrowserInfo;
 			}
 		});
 	};
