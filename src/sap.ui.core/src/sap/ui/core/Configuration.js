@@ -832,15 +832,22 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			var sLegacyDateFormat = this.oFormatSettings.getLegacyDateFormat();
 
 			switch (sLegacyDateFormat) {
+				case "1":
+				case "2":
+				case "3":
+				case "4":
+				case "5":
+				case "6":
+					return CalendarType.Gregorian;
+				case "7":
+				case "8":
+				case "9":
+					return CalendarType.Japanese;
 				case "A":
 				case "B":
 					return CalendarType.Islamic;
 				case "C":
 					return CalendarType.Persian;
-				case "7":
-				case "8":
-				case "9":
-					return CalendarType.Japanese;
 			}
 
 			return LocaleData.getInstance(this.getLocale()).getPreferredCalendarType();

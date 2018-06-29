@@ -81,6 +81,33 @@
 			oCfg.setCalendarType(null);
 			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The default calendar type is determined using the current locale");
 
+			oCfg.setLanguage("ar_SA");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The default calendar type for ar_SA is islamic");
+
+			oFormatSettings.setLegacyDateFormat("1");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '1' changes the calendar type to gregorian");
+
+			oFormatSettings.setLegacyDateFormat("2");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '2' changes the calendar type to gregorian");
+
+			oFormatSettings.setLegacyDateFormat("3");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '3' changes the calendar type to gregorian");
+
+			oFormatSettings.setLegacyDateFormat("4");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '4' changes the calendar type to gregorian");
+
+			oFormatSettings.setLegacyDateFormat("5");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '5' changes the calendar type to gregorian");
+
+			oFormatSettings.setLegacyDateFormat("6");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The legacy date format '6' changes the calendar type to gregorian");
+
+			oFormatSettings.setLegacyDateFormat(null);
+			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The default calendar type for ar_SA is islamic");
+
+			oCfg.setLanguage("en_US");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Gregorian, "The default calendar type for en_US is gregorian");
+
 			oFormatSettings.setLegacyDateFormat("A");
 			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
 
@@ -103,7 +130,7 @@
 			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
 			oFormatSettings.setLegacyDateFormat("9");
 			assert.equal(oCfg.getCalendarType(), CalendarType.Japanese, "The legacy date format '9' changes the calendar type to japanese");
-			
+
 			oFormatSettings.setLegacyDateFormat("C");
 			assert.equal(oCfg.getCalendarType(), CalendarType.Persian, "The legacy date format 'C' changes the calendar type to persian");
 
