@@ -274,6 +274,37 @@ sap.ui.define([
 			}
 		}
 
+		//repair the event handler registry
+		function repairListener(oControl, oTemplate, oClone) {
+			var sKey, vAggregation, i, aEvents;
+
+			if (!oControl) {
+				return;
+			}
+
+			for (var sEvent in oControl.mEventRegistry) {
+				aEvents = oControl.mEventRegistry[sEvent];
+				for (i = 0; i < aEvents.length; i++) {
+					if (aEvents[i].oListener == oTemplate) {
+						aEvents[i].oListener = oClone;
+					}
+				}
+			}
+
+			//dive in the Aggregations
+			for (sKey in oControl.mAggregations) {
+				vAggregation = oControl.mAggregations[sKey];
+
+				if (!Array.isArray(vAggregation)) {
+					vAggregation = [vAggregation];
+				}
+
+				for (i = 0; i < vAggregation.length; i++) {
+					repairListener(vAggregation[i], oTemplate, oClone);
+				}
+			}
+		}
+
 		/**
 		 * XMLComposite is the base class for composite controls that use a XML fragment representation
 		 * for their visual parts. From a user perspective such controls appear as any other control, but internally the
@@ -474,19 +505,8 @@ sap.ui.define([
 
 		XMLComposite.prototype.clone = function () {
 			var oClone = ManagedObject.prototype.clone.apply(this, arguments);
-			var aEvents, i, oContent = oClone.get_content();
-			if (oContent) {
-				//while cloning the children are also cloned which may yield in case the children
-				//use the composite as event handler that the clones use the template this is fixed here
-				for (var sEvent in oContent.mEventRegistry) {
-					aEvents = oContent.mEventRegistry[sEvent];
-					for (var i = 0; i < aEvents.length; i++) {
-						if (aEvents[i].oListener == this) {
-							aEvents[i].oListener = oClone;
-						}
-					}
-				}
-			}
+			var oContent = oClone.getAggregation(oClone.getMetadata().getCompositeAggregationName());
+			repairListener(oContent, this, oClone);
 			//also if the compisite is clone when already having children the propagated models are so far not set
 			//fix that
 			oClone.oPropagatedProperties = this.oPropagatedProperties;
