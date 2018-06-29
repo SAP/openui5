@@ -12,11 +12,16 @@ sap.ui.define([],
 					remove: {
 						changeType: "hideControl"
 					},
-					rename: {
-						changeType: "rename",
-						domRef: function (oControl) {
-							return oControl.$().find(".sapMBtnContent")[0];
+					rename: function (oButton) {
+						if (oButton.getIcon()) {
+							return null;
 						}
+						return {
+							changeType: "rename",
+							domRef: function (oControl) {
+								return oControl.$().find(".sapMBtnContent")[0];
+							}
+						};
 					},
 					reveal: {
 						changeType: "unhideControl"
