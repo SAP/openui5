@@ -48,14 +48,15 @@ sap.ui.define([
 			this.bAdditionalViewLoaded = false;
 			this.bAdditionalRulesetsLoaded = false;
 
+			//attach adapter for custom selection
+			new CustomJSONListSelection(this.treeTable, true, "id");
+
 			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
 				if (!this.bAdditionalViewLoaded) {
 					CommunicationBus.publish(channelNames.RESIZE_FRAME, { bigger: true });
 
 					this.bAdditionalViewLoaded = true;
 					this.loadAdditionalUI();
-					//attach adapter for custom selection
-					new CustomJSONListSelection(this.treeTable, true, "id");
 
 				}
 			}, this);
