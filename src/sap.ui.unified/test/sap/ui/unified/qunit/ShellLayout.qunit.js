@@ -1,4 +1,5 @@
 /*global QUnit, window */
+QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
@@ -221,4 +222,6 @@ sap.ui.require([
 		assert.expect(0);
 		jQuery("#uiArea1").remove();
 	});
+
+	QUnit.start();
 });

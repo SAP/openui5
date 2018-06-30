@@ -1,4 +1,5 @@
 /*global QUnit, window */
+QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
@@ -128,4 +129,5 @@ sap.ui.require([
 		}, 600);
 	});
 
+	QUnit.start();
 });
