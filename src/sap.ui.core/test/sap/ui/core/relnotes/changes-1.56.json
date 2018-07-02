@@ -893,6 +893,18 @@
         "type": "FIX",
         "text": " ui5loader: Add Missing slash for JSDoc in closing code tag",
         "references": []
+      },
+      {
+        "id": "6c574d623b2728f48c9bb6a253b73f4d22f508d8",
+        "type": "FIX",
+        "text": " DataState: Enable DS for List/Context/TreeBinding",
+        "references": []
+      },
+      {
+        "id": "07944d0e3141478aaa51cbaebb1d8950f7772034",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": []
       }
     ]
   }
