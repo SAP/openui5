@@ -76,6 +76,25 @@
 		}
 	};
 
+	QUnit.module("ObjectPage Content scroll visibility");
+	QUnit.test("ObjectPage Content CustomScrollBar visibility", 2, function (assert) {
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10),
+			fnDone = assert.async();
+
+		// assert default
+		assert.strictEqual(oObjectPage._hasVerticalScrollBar(), false,
+		"CustomScrollBar visibility is false initialy");
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				assert.strictEqual(oObjectPage._hasVerticalScrollBar(), true,
+				"CustomScrollBar visibility is true after rendering");
+
+				fnDone();
+		});
+
+		// act
+		helpers.renderObject(oObjectPage);
+	});
 
 	QUnit.module("ObjectPage Content scrolling");
 	QUnit.test("Should validate each section's position after scrolling to it, considering UI rules", function (assert) {
