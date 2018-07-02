@@ -176,7 +176,10 @@ sap.ui.define([
 	 * If the binding's path cannot be resolved or if reading the binding's value fails or if the
 	 * value read is invalid (e.g. not a primitive value), the binding's value is reset to
 	 * <code>undefined</code>. As described above, this may trigger a change event depending on the
-	 * previous value and the <code>bForceUpdate</code> parameter.
+	 * previous value and the <code>bForceUpdate</code> parameter. In the end the data state is
+	 * checked (see {@link sap.ui.model.PropertyBinding#checkDataState}) even if there is no change
+	 * event. If there are multiple synchronous <code>checkUpdate</code> calls the data state is
+	 * checked only after the last call is processed.
 	 *
 	 * @param {boolean} [bForceUpdate=false]
 	 *   If <code>true</code> the change event is always fired except there is no context for a
@@ -192,6 +195,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#checkUpdate
+	 * @see sap.ui.model.PropertyBinding#checkDataState
 	 */
 	// @override
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason, sGroupId,
@@ -264,6 +268,7 @@ sap.ui.define([
 					that.vValue = vValue;
 					that._fireChange({reason : sChangeReason || ChangeReason.Change});
 				}
+				that.checkDataState();
 			}
 			if (bDataRequested) {
 				that.fireDataReceived(mParametersForDataReceived);
