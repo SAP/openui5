@@ -45,3 +45,18 @@
 .sapContrast.sapMRbWarn.sapMRbSel .sapMRbBInn {
   background-color: @sapUiFieldWarningColor;
 }
+
+/* When printing border is needed for the selection */
+@media only print {
+	.sapMLIBActive .sapMRbSel .sapMRbBOut {
+		border-color: @sapUiListActiveBackground;
+	}
+
+	.sapMRbErr.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiFieldInvalidColor;
+	}
+
+	.sapMRbWarn.sapMRbSel .sapMRbBInn {
+		border-color: darken(@sapUiFieldWarningColor, 100);
+	}
+}
