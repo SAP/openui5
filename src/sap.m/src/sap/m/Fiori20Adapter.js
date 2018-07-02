@@ -140,7 +140,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 					id: oTitle.getId(),
 					text: oTitle.getText(),
 					oControl: oTitle,
-					sChangeEventId: "_change"
+					sChangeEventId: "_change",
+					sPropertyName: "text"
 				};
 			}
 		}
@@ -157,7 +158,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 					id: oHeaderTitle.getId(),
 					text: oHeaderTitle.getObjectTitle(),
 					oControl: oHeaderTitle,
-					sChangeEventId: "_titleChange"
+					sChangeEventId: "_titleChange",
+					sPropertyName: "objectTitle"
 				};
 			}
 		}
@@ -174,7 +176,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 				return {
 					id: oBackButton.getId(),
 					oControl: oBackButton,
-					sChangeEventId: "_change"
+					sChangeEventId: "_change",
+					sPropertyName: "visible"
 				};
 			}
 		}
@@ -694,6 +697,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 			var fnChangeListener = function (oEvent) {
 				var oTitleInfo = aTitleInfoCache[sViewId];
+				if (oEvent.getParameter("name") !== oTitleInfo.sPropertyName) {
+					return; // different property changed
+				}
 				oTitleInfo.text = oEvent.getParameter("newValue");
 				this._fireViewChange(sViewId, oAdaptOptions);
 			}.bind(this);
@@ -710,7 +716,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		if (oControlInfo && oControlInfo.oControl && oControlInfo.sChangeEventId && !oInfoToMerge.aChangeListeners[oControlInfo.id]) {
 
 			var fnChangeListener = function (oEvent) {
-
+				if (oEvent.getParameter("name") !== oControlInfo.sPropertyName) {
+					return; // different property changed
+				}
 				bVisible = oEvent.getParameter("newValue"); //actualize the value
 				if (!bVisible) {
 					jQuery.each(aControlInfoCache, function(iIndex, oCachedControlInfo) {
