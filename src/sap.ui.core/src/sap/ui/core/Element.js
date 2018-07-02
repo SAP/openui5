@@ -506,9 +506,26 @@ sap.ui.define([
 		mParameters = mParameters || {};
 		mParameters.id = mParameters.id || this.getId();
 
+		if (Element._trackEvent) {
+			Element._trackEvent(sEventId, this);
+		}
+
 		return ManagedObject.prototype.fireEvent.call(this, sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling);
 	};
 
+	/**
+	 * Tracks event. This method is meant for private usages. Apps are not supposed to used it.
+	 * It is created for an experimental purpose.
+	 * Implementation should be injected by outside(i.e. sap.ui.core.delegate.UsageAnalytics).
+	 *
+	 * @param {string} sEventId the name of the event
+	 * @param {sap.ui.core.Element} oElement the element itself
+	 * @function
+	 * @private
+	 * @experimental Since 1.58
+	 * @ui5-restricted
+	 */
+	Element._trackEvent = undefined;
 
 	/**
 	 * Adds a delegate that listens to the events of this element.
