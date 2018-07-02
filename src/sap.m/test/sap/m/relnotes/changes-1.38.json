@@ -5991,5 +5991,52 @@
         "references": []
       }
     ]
+  },
+  "1.38.37": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "ba594c813f1d57178237e5a731e6c421d75c5e56",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Close event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "a809a2f7df339f79ad5928c0d5db1dccdbdc768e",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Precision of milliseconds set to the third digit",
+        "references": []
+      },
+      {
+        "id": "455923765f3519079457ae952a1a3b15d3b84fc2",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: set min/max date does not modify its time part now.",
+        "references": []
+      },
+      {
+        "id": "32d351d42cfc6b5e9535eafb440d441dfbd05d2b",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Ellipsis not added for truncated test in IE",
+        "references": []
+      },
+      {
+        "id": "9a7ea88d37e3f251230e11e2e1130bbfdf6e701f",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - press reset then cancel button behavior is fixed.",
+        "references": []
+      },
+      {
+        "id": "8b820028b986e4ce3b356884c6b2afab5fc6f2e7",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: quint test works correctly now",
+        "references": []
+      },
+      {
+        "id": "14822b2846333ef035e9f893db943f51c4a59738",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Ellipsis not added for truncated test in IE",
+        "references": []
+      }
+    ]
   }
 }

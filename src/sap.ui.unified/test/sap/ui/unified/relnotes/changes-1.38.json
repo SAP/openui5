@@ -489,5 +489,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.37": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "561672ac4ad36379e6ca4cc46989879f00e6cfe1",
+        "type": "FIX",
+        "text": " FileUploader: Accessing upload iframe adjusted",
+        "references": []
+      },
+      {
+        "id": "6e2dbe4334279b0b340541820f81ce61c5334903",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": []
+      },
+      {
+        "id": "de2084c973551b9dcededa3656dbb1fbd9608662",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: tests no longer fail on IE",
+        "references": []
+      }
+    ]
   }
 }
