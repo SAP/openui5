@@ -323,6 +323,9 @@ sap.ui.define([
 				 *
 				 * This API should not be used in production environment.
 				 *
+				 *<b>Note:</b> The <code>stickyHeader</code> of the <code>PlanningCalendar</code> uses the <code>sticky</code> property of <code>sap.m.Table</code>.
+				 * Therefore, all features and limitations of the property in <code>sap.m.Table</code> apply to the <code>PlanningCalendar</code> as well.
+				 *
 				 * @experimental As of 1.54
 				 * @since 1.54
 				 */
