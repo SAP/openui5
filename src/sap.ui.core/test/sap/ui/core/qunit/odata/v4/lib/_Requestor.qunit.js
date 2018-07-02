@@ -2499,6 +2499,20 @@ sap.ui.require([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("fetchMetadata", function (assert) {
+		var sPath = {/*{string} any metadata path */},
+			oPromise = {},
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oModelInterface).expects("fnFetchMetadata")
+			.withExactArgs(sinon.match.same(sPath))
+			.returns(oPromise);
+
+		// code under test
+		assert.strictEqual(oRequestor.fetchMetadata(sPath), oPromise);
+	});
+
+	//*****************************************************************************************
 	QUnit.test("reportUnboundMessages", function (assert) {
 		var sMessages = '[{"code" : "42"}]',
 			oRequestor = _Requestor.create("/", oModelInterface),
@@ -2524,15 +2538,17 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("reportBoundMessages", function (assert) {
-		var mPathToMessages = {"foo/bar" : {}},
+		var aKeyPredicates = [/*any array of key predicates*/],
+			mPathToMessages = {/*any map of resource path to message object*/},
 			oRequestor = _Requestor.create("/", oModelInterface),
-			sResourcePath = "Teams('42')";
+			sResourcePath = {/*{string} any resource path*/};
 
 		this.mock(oModelInterface).expects("fnReportBoundMessages")
-			.withExactArgs(sResourcePath, sinon.match.same(mPathToMessages));
+			.withExactArgs(sinon.match.same(sResourcePath), sinon.match.same(mPathToMessages),
+				sinon.match.same(aKeyPredicates));
 
 		// code under test
-		oRequestor.reportBoundMessages(sResourcePath, mPathToMessages);
+		oRequestor.reportBoundMessages(sResourcePath, mPathToMessages, aKeyPredicates);
 	});
 });
 // TODO: continue-on-error? -> flag on model
