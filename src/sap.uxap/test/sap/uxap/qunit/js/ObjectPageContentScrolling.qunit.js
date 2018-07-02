@@ -9,6 +9,73 @@
 	jQuery.sap.require("sap.uxap.ObjectPageSection");
 	jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
 
+	var oFactory = {
+		getSection: function (iNumber, sTitleLevel, aSubSections) {
+			return new sap.uxap.ObjectPageSection({
+				title: "Section" + iNumber,
+				titleLevel: sTitleLevel,
+				subSections: aSubSections || []
+			});
+		},
+		getSubSection: function (iNumber, aBlocks, sTitleLevel) {
+			return new sap.uxap.ObjectPageSubSection({
+				title: "SubSection " + iNumber,
+				titleLevel: sTitleLevel,
+				blocks: aBlocks || []
+			});
+		},
+		getBlocks: function (sText) {
+			return [
+				new sap.m.Text({text: sText || "some text"})
+			];
+		},
+		getObjectPage: function () {
+			return new sap.uxap.ObjectPageLayout();
+		}
+	},
+
+	helpers = {
+		generateObjectPageWithContent: function (oFactory, iNumberOfSection) {
+			var oObjectPage = oFactory.getObjectPage(),
+				oSection,
+				oSubSection;
+
+			for (var i = 0; i < iNumberOfSection; i++) {
+				oSection = oFactory.getSection(i);
+				oSubSection = oFactory.getSubSection(i, oFactory.getBlocks());
+				oSection.addSubSection(oSubSection);
+				oObjectPage.addSection(oSection);
+			}
+
+			return oObjectPage;
+		},
+		renderObject: function (oSapUiObject) {
+			oSapUiObject.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			return oSapUiObject;
+		}
+	};
+
+	QUnit.module("ObjectPage Content scroll visibility");
+	QUnit.test("ObjectPage Content CustomScrollBar visibility", 2, function (assert) {
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10),
+			fnDone = assert.async();
+
+		// assert default
+		assert.strictEqual(oObjectPage._hasVerticalScrollBar(), false,
+		"CustomScrollBar visibility is false initialy");
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				assert.strictEqual(oObjectPage._hasVerticalScrollBar(), true,
+				"CustomScrollBar visibility is true after rendering");
+
+				fnDone();
+		});
+
+		// act
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("ObjectPage Content scrolling");
 	QUnit.test("Should validate each section's position after scrolling to it, considering UI rules", function (assert) {
 
