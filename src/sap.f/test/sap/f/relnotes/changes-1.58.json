@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": " FlexibleColumnLayout: Slider visibility fixed",
         "references": []
+      },
+      {
+        "id": "8b9b1041021589dddcbbe9169298d7342464d851",
+        "type": "FIX",
+        "text": " f.FlexibleColumnLayout: suspending/resuming of ResizeHander fixed",
+        "references": []
       }
     ]
   }

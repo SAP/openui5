@@ -535,6 +535,66 @@
         "type": "FIX",
         "text": "sap.m.themes.base.FeedListItem: Allignmnet effected due to Inline-block property of sap.m.link",
         "references": []
+      },
+      {
+        "id": "9039f4ddb39f21355f65fbc6e6b3fecb88d4e90a",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: up, down, home and end keys improvement.",
+        "references": []
+      },
+      {
+        "id": "a92a68f31dc9749d9c30c3d474f5e8af3ae3a245",
+        "type": "FIX",
+        "text": " Link: tabindex attribute for disabled links removed",
+        "references": []
+      },
+      {
+        "id": "d300575695f9845531deeba41cc05f12db411a95",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: DnD added tab background",
+        "references": []
+      },
+      {
+        "id": "66fa75414443663230b9b3d307fcb38edb54b40a",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: No longer shows link with null as details",
+        "references": []
+      },
+      {
+        "id": "42b3b1c236a547b2b843a465bc18161796b0193c",
+        "type": "FIX",
+        "text": " sap.m.MultiInput, sap.m.MultiComboBox: Tokenizer\u0027s width calculated correctly",
+        "references": []
+      },
+      {
+        "id": "adfb90376afae483979cf46bcb08e10e2ef77a32",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Slider with decimal values html element attributes corrected",
+        "references": []
+      },
+      {
+        "id": "b4a62417710589ec2307d508aa909b9e08f4a81b",
+        "type": "FIX",
+        "text": " sap.m.Select: Changed property of OverflowToolbarConfig",
+        "references": []
+      },
+      {
+        "id": "60759526dcf31bc6d39d19caa7ae1b2a06f9ab2c",
+        "type": "FIX",
+        "text": " sap.m.SelectionDetailsItemLine: Enable number as value in SelectionDetailsItemLine",
+        "references": []
+      },
+      {
+        "id": "2fcbf76aff4094630794716bb02f20df974a189a",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: collapsing before animation complete is now working.",
+        "references": []
+      },
+      {
+        "id": "49dfcf098f2eee74f304df0fe9810bbac7692e45",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Setting max-width doesn\u0027t rerender the control",
+        "references": []
       }
     ]
   }

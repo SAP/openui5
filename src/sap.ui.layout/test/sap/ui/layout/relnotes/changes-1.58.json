@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": "sap.ui.layout - SimpleForm rename undo issue",
         "references": []
+      },
+      {
+        "id": "fa56eb32eb9e72996938d2f4583cb8d4d61e3794",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: incorrect arrangement of items fixed",
+        "references": []
+      },
+      {
+        "id": "aff8d0a044bafef09d2c4545503567574bafb082",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: maxItemWidth property evaluated for all items",
+        "references": []
       }
     ]
   }
