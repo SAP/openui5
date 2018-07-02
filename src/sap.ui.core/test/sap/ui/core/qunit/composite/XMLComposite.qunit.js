@@ -1189,5 +1189,57 @@ sap.ui.require([
 			});
 		}, 0);
 	});
+	//*********************************************************************************************
+
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: create from given fragmentContent", {
+		beforeEach: function () {
+			this.sFragmentContent = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout">'
+				+ '<layout:HorizontalLayout><Input id="innerInput" placeholder="{$this>/placeholder}" />'
+				+ '<Button text="{$this>/buttonText}" press="handleSearch" /></layout:HorizontalLayout></core:FragmentDefinition>';
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("create from string", function (assert) {
+		XMLComposite.extend("control.SearchFieldFromString", {
+			metadata: {
+				properties: {
+					placeholder: { type: "string", defaultValue: "Enter Search Term..." },
+					buttonText: { type: "string", defaultValue: "Search" }
+				}
+			},
+			fragmentContent: this.sFragmentContent
+		});
+
+		var oSearchField = new control.SearchFieldFromString({placeholder: "custom placeholder"});
+
+		assert.ok(oSearchField, "Composite instance should be created");
+		assert.strictEqual(oSearchField.getPlaceholder(), "custom placeholder", "Property value should be applied");
+		assert.strictEqual(oSearchField.getButtonText(), "Search", "Default property value should be applied");
+	});
+	//*********************************************************************************************
+	QUnit.test("create from XML tree", function (assert) {
+		var oXml = new DOMParser().parseFromString(this.sFragmentContent, "text/xml").documentElement;
+
+		XMLComposite.extend("control.SearchFieldFromXml", {
+			metadata: {
+				properties: {
+					placeholder: { type: "string", defaultValue: "Enter Search Term..." },
+					buttonText: { type: "string", defaultValue: "Search" }
+				}
+			},
+			fragmentContent: oXml
+		});
+
+		var oSearchField = new control.SearchFieldFromXml({placeholder: "custom placeholder"});
+
+		assert.ok(oSearchField, "Composite instance should be created");
+		assert.strictEqual(oSearchField.getPlaceholder(), "custom placeholder", "Property value should be applied");
+		assert.strictEqual(oSearchField.getButtonText(), "Search", "Default property value should be applied");
+	});
 
 });

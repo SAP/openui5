@@ -62,7 +62,15 @@ sap.ui.define([
 			if (!this._fragment && oClassInfo.fragment) {
 				try {
 					if (!this._fragment) {
-						this._fragment = this._loadFragment(oClassInfo.fragment, "control");
+						if (oClassInfo.fragmentContent) { // content provided directly, do NOT load XML from file
+							if (typeof oClassInfo.fragmentContent === "string") { // parse if not already an XML document
+								var oParser = new DOMParser();
+								oClassInfo.fragmentContent = oParser.parseFromString(oClassInfo.fragmentContent, "text/xml").documentElement;
+							}
+							this._fragment = oClassInfo.fragmentContent; // otherwise assume XML
+						} else {
+							this._fragment = this._loadFragment(oClassInfo.fragment, "control");
+						}
 					}
 					if (oClassInfo.aggregationFragments) {
 						this._aggregationFragments = {};
