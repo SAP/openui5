@@ -58,17 +58,32 @@ function(
 		});
 
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex set to null", function (assert) {
-			assert.expect(3);
+			assert.expect(5);
+			var done = assert.async();
+			var iIndex = 0;
+			var aHashEvents = [{
+				name: "hashReplaced",
+				handler: "_handleHashReplaced"
+			}, {
+				name: "hashChanged",
+				handler: "_navigationHandler"
+			}];
+
 			this._oHashRegister.currentIndex = null;
 			VariantUtil.initializeHashRegister.call(this);
 			sandbox.stub(VariantUtil, "_navigationHandler").callsFake(function() {
 				assert.ok(true, "then VariantUtil._navigationHandler() was called intitally on attaching hash handler functions");
 			});
+
 			sandbox.stub(HashChanger, "getInstance").callsFake(function() {
 				return {
 					attachEvent: function(sEvtName, fnEventHandler) {
-						assert.strictEqual(sEvtName, "hashChanged", "then 'hashChanged' attachEvent is called for HashChanger.getInstance()");
-						assert.strictEqual(fnEventHandler.toString(), VariantUtil._navigationHandler.toString(), "then VariantUtil._navigationHandler() attached to this 'hashChanged' event");
+						assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' attachEvent is called for HashChanger.getInstance()");
+						assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " attached to '" + aHashEvents[iIndex].name + "'  event");
+						if (iIndex === 1) {
+							done();
+						}
+						iIndex++;
 					}
 				};
 			});
@@ -77,8 +92,16 @@ function(
 		});
 
 		QUnit.test("when Component is destroyed after 'attachHashHandlers' was already called", function (assert) {
-			assert.expect(5);
+			assert.expect(7);
+			var iIndex = 0;
 			this._oHashRegister.currentIndex = null;
+			var aHashEvents = [{
+				name: "hashReplaced",
+				handler: "_handleHashReplaced"
+			}, {
+				name: "hashChanged",
+				handler: "_navigationHandler"
+			}];
 
 			VariantUtil.initializeHashRegister.call(this);
 			sandbox.stub(VariantUtil, "_navigationHandler");
@@ -86,8 +109,9 @@ function(
 				return {
 					attachEvent: function () { },
 					detachEvent: function(sEvtName, fnEventHandler) {
-						assert.strictEqual(sEvtName, "hashChanged", "then 'hashChanged' detachEvent is called for HashChanger.getInstance()");
-						assert.strictEqual(fnEventHandler.toString(), VariantUtil._navigationHandler.toString(), "then VariantUtil._navigationHandler() detached for 'hashChanged' event");
+						assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' detachEvent is called for HashChanger.getInstance()");
+						assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " detached for '" + aHashEvents[iIndex].name + "' event");
+						iIndex++;
 					}
 				};
 			});
@@ -410,6 +434,50 @@ function(
 			assert.ok(this.switchToDefaultVariant.getCall(0).calledWithExactly("existingParameter2"), "then VariantModel.switchToDefaultVariant() called with existing hash parameters for the incremented index");
 			assert.ok(this.switchToDefaultVariant.getCall(1).calledWithExactly("existingParameter3"), "then VariantModel.switchToDefaultVariant() called with existing hash parameters for the incremented index");
 		});
+
+		QUnit.test("when calling '_navigationHandler' by HashChanger 'hashChanged' event, when hash was replaced", function (assert) {
+			var oEventReturn = {
+				newHash: "newMockHash"
+			};
+			var oHashChanger = HashChanger.getInstance();
+			var oHashRegister = {
+				currentIndex: 999,
+				hashParams: [
+					["existingParameter1"]
+				]
+			};
+			this._oHashRegister = jQuery.extend(true, {}, oHashRegister);
+
+			sandbox.spy(VariantUtil, "_navigationHandler");
+			oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
+			VariantUtil._handleHashReplaced.call(this, {
+				getParameter : function() {
+					return oEventReturn.newHash;
+				}
+			});
+			assert.strictEqual(this._sReplacedHash, oEventReturn.newHash, "then initially when hash is replaced, _sReplacedHash set to the replaced hash");
+			HashChanger.getInstance().fireEvent("hashChanged", oEventReturn);
+			assert.strictEqual(this._sReplacedHash, undefined, "then _sReplacedHash doesn't exist, after HashChanger 'hashChanged' event was fired");
+			assert.deepEqual(this._oHashRegister, oHashRegister, "then _oHashRegister values remain unchanged");
+		});
+
+		QUnit.test("when '_handleHashReplaced' is called from the HashChanger 'hashReplaced' event", function (assert) {
+			var oEventReturn = {
+				sHash: "newMockHash"
+			};
+			this._oHashRegister = {
+				currentIndex: null,
+				hashParams: []
+			};
+			this.oComponent = {
+				destroy: function () {
+				}
+			};
+			sandbox.stub(VariantUtil, "_navigationHandler");
+			VariantUtil.attachHashHandlers.call(this);
+			HashChanger.getInstance().fireEvent("hashReplaced", oEventReturn);
+			assert.strictEqual(this._sReplacedHash, oEventReturn.sHash, "then hash is replaced, _sReplacedHash set to the replaced hash");
+		});
 	});
 
 	QUnit.module("Given an instance of VariantModel", {
@@ -529,6 +597,24 @@ function(
 
 			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
 			assert.deepEqual(vStatus, this.oCustomNavigationStatus, "then the correct status object was returned");
+		});
+
+		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with both old and new hash containing same variant parameters", function (assert) {
+			assert.expect(1);
+			var oOldHash = {
+				params: { },
+				appSpecificRoute: "XXoldHashAppRoute"
+			};
+			oOldHash.params[sVariantParameterName] = ["testParam1"];
+
+			var oNewHash = {
+				params: { },
+				appSpecificRoute: "XXnewHashAppRoute"
+			};
+			oNewHash.params[sVariantParameterName] = ["testParam1"];
+
+			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
+			assert.deepEqual(vStatus, this.sDefaultStatus, "then the correct status object was returned");
 		});
 
 		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with both old and new hash containing variant parameters containing different parsed properties", function (assert) {
