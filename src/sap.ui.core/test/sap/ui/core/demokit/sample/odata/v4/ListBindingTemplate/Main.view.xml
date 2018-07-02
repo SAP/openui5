@@ -81,6 +81,13 @@
 					</template:repeat>
 					<Text text="ValueListType: {property>@@getValueListType}"/>
 				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<Title level="H1" text="async repeat"/>
+				<template:repeat
+					list="{meta>/com.sap.gateway.default.iwbep.tea_busi_supplier.v0001.Supplier/}"
+					var="property">
+					<Text text="{property>@sapui.name}"/>
+				</template:repeat>
 				<!-- TODO repeat over $* properties! -->
 			</VBox>
 		</Panel>
