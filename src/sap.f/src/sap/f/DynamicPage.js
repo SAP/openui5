@@ -163,6 +163,15 @@ sap.ui.define([
 				/**
 				 * <code>DynamicPage</code> content.
 				 *
+				 * <b>Note: </b> You can change the default paddings by adding the following CSS classes:
+				 * <ul>
+				 * <li><code>sapUiContentPadding</code></li>
+				 * <li><code>sapUiNoContentPadding</code></li>
+				 * <li><code>sapUiResponsiveContentPadding</code></li>
+				 * </ul>
+				 * For more information, see
+				 * {@link topic:c71f6df62dae47ca8284310a6f5fc80a Using Container Content Padding CSS Classes}.
+				 *
 				 * <b>Note:</b> The SAP Fiori Design guidelines require that the
 				 * <code>DynamicPageHeader</code>'s content and the <code>DynamicPage</code>'s content
 				 * are aligned vertically. When using {@link sap.ui.layout.form.Form},
@@ -184,7 +193,7 @@ sap.ui.define([
 				 * controls that use <code>overflow:hidden</code> CSS property</li>
 				 * <li> In case any of the following CSS classes is applied to
 				 * <code>DynamicPage</code>: <code>sapUiContentPadding</code>,
-				 * <code>sapUiNoContentPadding</ce> or <code>sapUiResponsiveContentPadding</code></li>
+				 * <code>sapUiNoContentPadding</code> or <code>sapUiResponsiveContentPadding</code></li>
 				 * </ul>
 				 *
 				 */
