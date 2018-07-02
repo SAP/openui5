@@ -841,7 +841,7 @@ sap.ui.define([
 					var oServiceManifestEntry = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias);
 
 					// lookup the factoryName in the manifest
-					var sServiceFactoryName = oServiceManifestEntry.factoryName;
+					var sServiceFactoryName = oServiceManifestEntry && oServiceManifestEntry.factoryName;
 					if (!sServiceFactoryName) {
 						fnReject(new Error("Service " + sLocalServiceAlias + " not declared!"));
 						return;
