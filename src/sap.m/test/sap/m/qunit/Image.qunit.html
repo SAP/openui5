@@ -257,7 +257,8 @@
 		QUnit.test("Image with mode sap.m.ImageMode.Background", function(assert) {
 			var done = assert.async();
 			var oImage = createImage({
-				mode: sap.m.ImageMode.Background
+				mode: sap.m.ImageMode.Background,
+				densityAware: false // BCP: 1880373683 - on zoom 150% img URL is appended with @2 for high density image
 			});
 
 			// System under test
