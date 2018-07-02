@@ -3,8 +3,28 @@
  */
 
 // Provides control sap.m.ActionSheet.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control','sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText', 'sap/ui/base/ManagedObject', 'sap/ui/Device', './ActionSheetRenderer'],
-	function(jQuery, Dialog, Popover, library, Control, ItemNavigation, InvisibleText, ManagedObject, Device, ActionSheetRenderer) {
+sap.ui.define([
+	'./Dialog',
+	'./Popover',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/Device',
+	'./ActionSheetRenderer'
+],
+	function(
+		Dialog,
+		Popover,
+		library,
+		Control,
+		ItemNavigation,
+		InvisibleText,
+		ManagedObject,
+		Device,
+		ActionSheetRenderer
+	) {
 	"use strict";
 
 

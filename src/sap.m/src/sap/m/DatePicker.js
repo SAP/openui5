@@ -13,7 +13,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	"./DatePickerRenderer",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/assert",
+	"sap/base/Log"
 ],
 	function(
 		jQuery,
@@ -25,7 +27,9 @@ sap.ui.define([
 		Control,
 		coreLibrary,
 		DatePickerRenderer,
-		deepEqual
+		deepEqual,
+		assert,
+		Log
 	) {
 	"use strict";
 
@@ -473,7 +477,7 @@ sap.ui.define([
 
 		if (oDate && (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime())) {
 			this._bValid = false;
-			jQuery.sap.assert(this._bValid, "Date must be in valid range");
+			assert(this._bValid, "Date must be in valid range");
 		}
 
 		this.setProperty("dateValue", oDate);
@@ -500,7 +504,7 @@ sap.ui.define([
 			this._oMinDate = new Date(oDate.getTime());
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() < oDate.getTime()) {
-				jQuery.sap.log.warning("DateValue not in valid date range", this);
+				Log.warning("DateValue not in valid date range", this);
 			}
 		} else {
 			this._oMinDate = new Date(1, 0, 1);
@@ -539,7 +543,7 @@ sap.ui.define([
 			this._oMaxDate = new Date(oDate.getTime());
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() > oDate.getTime()) {
-				jQuery.sap.log.warning("DateValue not in valid date", this);
+				Log.warning("DateValue not in valid date", this);
 			}
 		} else {
 			this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
@@ -561,7 +565,7 @@ sap.ui.define([
 	DatePicker.prototype._checkMinMaxDate = function () {
 
 		if (this._oMinDate.getTime() > this._oMaxDate.getTime()) {
-			jQuery.sap.log.warning("minDate > MaxDate -> dates switched", this);
+			Log.warning("minDate > MaxDate -> dates switched", this);
 			var oMaxDate = new Date(this._oMinDate.getTime());
 			var oMinDate = new Date(this._oMaxDate.getTime());
 			this._oMinDate = new Date(oMinDate.getTime());
@@ -578,7 +582,7 @@ sap.ui.define([
 
 		if (oDateValue &&
 			(oDateValue.getTime() < this._oMinDate.getTime() || oDateValue.getTime() > this._oMaxDate.getTime())) {
-			jQuery.sap.log.error("dateValue " + oDateValue.toString() + "(value=" + this.getValue() + ") does not match " +
+			Log.error("dateValue " + oDateValue.toString() + "(value=" + this.getValue() + ") does not match " +
 				"min/max date range(" + this._oMinDate.toString() + " - " + this._oMaxDate.toString() + "). App. " +
 				"developers should take care to maintain dateValue/value accordingly.", this);
 		}
@@ -594,7 +598,7 @@ sap.ui.define([
 
 		if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 			this._bValid = false;
-			jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+			Log.warning("Value can not be converted to a valid date", this);
 		}
 
 		this.setProperty("dateValue", oDate);
@@ -924,6 +928,7 @@ sap.ui.define([
 	DatePicker.prototype._createPopup = function(){
 
 		if (!this._oPopup) {
+			//TODO: global jquery call found
 			jQuery.sap.require("sap.ui.core.Popup");
 			this._oPopup = new sap.ui.core.Popup();
 			this._oPopup.setAutoClose(true);

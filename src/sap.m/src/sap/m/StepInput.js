@@ -4,7 +4,6 @@
 
 // Provides control sap.m.StepInput.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Icon",
 	"./Input",
 	"./InputRenderer",
@@ -15,10 +14,10 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/m/library",
 	"./StepInputRenderer",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	Icon,
 	Input,
 	InputRenderer,
@@ -29,7 +28,8 @@ function(
 	Renderer,
 	library,
 	StepInputRenderer,
-	KeyCodes
+	KeyCodes,
+	Log
 ) {
 		"use strict";
 
@@ -563,7 +563,7 @@ function(
 				return true;
 			}
 
-			jQuery.sap.log.error("The value of property '" + name + "' must be a number");
+			Log.error("The value of property '" + name + "' must be a number");
 			return false;
 		};
 
@@ -582,7 +582,7 @@ function(
 				vValuePrecision = parseInt(number, 10);
 			} else {
 				vValuePrecision = 0;
-				jQuery.sap.log.warning(this + ": ValuePrecision (" + number + ") is not correct. It should be a number between 0 and 20! Setting the default ValuePrecision:0.");
+				Log.warning(this + ": ValuePrecision (" + number + ") is not correct. It should be a number between 0 and 20! Setting the default ValuePrecision:0.");
 			}
 
 			return this.setProperty("displayValuePrecision", vValuePrecision, bSuppressInvalidate);
@@ -1402,7 +1402,7 @@ function(
 			} while (fResult % step !== 0 && iLoopCount);
 
 			if (fResult % step !== 0) {
-				jQuery.sap.log.error("Wrong next/previous value " + fResult + " for " + fValue + ", step: " + step +
+				Log.error("Wrong next/previous value " + fResult + " for " + fValue + ", step: " + step +
 					" and sign: " + iSign, this);
 			}
 

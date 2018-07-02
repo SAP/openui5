@@ -4,7 +4,6 @@
 
 // Provides control sap.m.ResponsivePopover.
 sap.ui.define([
-	'jquery.sap.global',
 	'./Dialog',
 	'./Popover',
 	'./library',
@@ -15,7 +14,6 @@ sap.ui.define([
 	'./ResponsivePopoverRenderer'
 ],
 	function(
-		jQuery,
 		Dialog,
 		Popover,
 		library,

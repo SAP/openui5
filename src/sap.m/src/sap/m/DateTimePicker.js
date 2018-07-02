@@ -572,6 +572,7 @@ sap.ui.define([
 		}
 
 		if (!this._oSliders) {
+			//TODO: global jquery call found
 			jQuery.sap.require("sap.m.TimePickerSliders");
 			this._oSliders = new sap.m.TimePickerSliders(this.getId() + "-Sliders", {
 				minutesStep: this.getMinutesStep(),

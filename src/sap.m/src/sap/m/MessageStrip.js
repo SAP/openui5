@@ -4,7 +4,6 @@
 
 // Provides control sap.m.MessageStrip.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"./MessageStripUtilities",
@@ -12,9 +11,9 @@ sap.ui.define([
 	"./Link",
 	"./FormattedText",
 	"sap/ui/core/library",
-	"./MessageStripRenderer"
+	"./MessageStripRenderer",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	library,
 	Control,
 	MSUtils,
@@ -22,7 +21,8 @@ sap.ui.define([
 	Link,
 	FormattedText,
 	coreLibrary,
-	MessageStripRenderer
+	MessageStripRenderer,
+	Log
 ) {
 	"use strict";
 
@@ -183,7 +183,7 @@ sap.ui.define([
 	 */
 	MessageStrip.prototype.setType = function (sType) {
 		if (sType === MessageType.None) {
-			jQuery.sap.log.warning(MSUtils.MESSAGES.TYPE_NOT_SUPPORTED);
+			Log.warning(MSUtils.MESSAGES.TYPE_NOT_SUPPORTED);
 			sType = MessageType.Information;
 		}
 

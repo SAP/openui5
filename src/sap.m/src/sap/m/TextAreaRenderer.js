@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/Device', 'sap/ui/core/library'],
-	function(jQuery, Renderer, InputBaseRenderer, Device, coreLibrary) {
+sap.ui.define([
+	'sap/ui/core/Renderer',
+	'./InputBaseRenderer',
+	'sap/ui/Device',
+	'sap/ui/core/library'
+],
+	function(Renderer, InputBaseRenderer, Device, coreLibrary) {
 	"use strict";
 
 

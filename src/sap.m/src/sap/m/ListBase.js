@@ -4,7 +4,6 @@
 
 // Provides control sap.m.ListBase.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
@@ -18,10 +17,10 @@ sap.ui.define([
 	"./ListItemBase",
 	"./ListBaseRenderer",
 	"sap/base/strings/capitalize",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	KeyCodes,
 	Device,
 	Control,
@@ -35,7 +34,8 @@ function(
 	ListItemBase,
 	ListBaseRenderer,
 	capitalize,
-	jQueryDOM
+	jQueryDOM,
+	Log
 ) {
 	"use strict";
 
@@ -767,7 +767,7 @@ function(
 	 */
 	ListBase.prototype.setSelectedItem = function(oListItem, bSelect, bFireEvent) {
 		if (this.indexOfItem(oListItem) < 0) {
-			jQuery.sap.log.warning("setSelectedItem is called without valid ListItem parameter on " + this);
+			Log.warning("setSelectedItem is called without valid ListItem parameter on " + this);
 			return;
 		}
 		if (this._bSelectionMode) {

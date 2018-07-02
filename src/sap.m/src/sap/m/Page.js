@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Page.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	ScrollEnablement,

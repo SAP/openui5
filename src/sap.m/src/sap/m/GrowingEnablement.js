@@ -3,8 +3,22 @@
  */
 
 // Provides class sap.m.GrowingEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat', 'sap/m/library', 'sap/ui/model/ChangeReason', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/core/HTML'],
-	function(jQuery, BaseObject, NumberFormat, library, ChangeReason, ManagedObjectMetadata, HTML) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'sap/ui/core/format/NumberFormat',
+	'sap/m/library',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/base/ManagedObjectMetadata',
+	'sap/ui/core/HTML'
+],
+	function(
+		BaseObject,
+		NumberFormat,
+		library,
+		ChangeReason,
+		ManagedObjectMetadata,
+		HTML
+	) {
 	"use strict";
 
 

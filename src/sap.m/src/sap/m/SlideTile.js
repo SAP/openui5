@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/GenericTile',
@@ -14,7 +13,6 @@ sap.ui.define([
 	'jquery.sap.events'
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		GenericTile,

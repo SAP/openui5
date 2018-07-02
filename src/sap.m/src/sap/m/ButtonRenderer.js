@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/core/InvisibleText'],
+sap.ui.define([
+	'sap/ui/Device',
+	'sap/ui/core/library',
+	'sap/ui/core/IconPool',
+	'sap/m/library',
+	'sap/ui/core/InvisibleText'
+],
 
-	function(jQuery, Device, coreLibrary, IconPool, library, InvisibleText) {
+	function(Device, coreLibrary, IconPool, library, InvisibleText) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType

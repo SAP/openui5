@@ -4,13 +4,14 @@
 
 // Provides control sap.m.App.
 sap.ui.define([
-	'jquery.sap.global',
 	'./NavContainer',
 	'./library',
 	'./AppRenderer',
-	"sap/ui/util/Mobile"
+	"sap/ui/util/Mobile",
+	"sap/base/Log"
 ],
-	function(jQuery, NavContainer, library, AppRenderer, Mobile) {
+	function(NavContainer, library, AppRenderer, Mobile, Log) {
+
 	"use strict";
 
 
@@ -218,7 +219,7 @@ sap.ui.define([
 
 	App.prototype.setBackgroundOpacity = function(fOpacity) {
 		if (fOpacity > 1 || fOpacity < 0) {
-			jQuery.sap.log.warning("Invalid value " + fOpacity + " for App.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+			Log.warning("Invalid value " + fOpacity + " for App.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
 			return this;
 		}
 		this.$("BG").css("opacity", fOpacity);

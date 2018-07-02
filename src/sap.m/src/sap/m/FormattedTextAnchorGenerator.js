@@ -7,7 +7,7 @@
  * This class handles the <code>AnchorGeneration</code> for the <code>FormattedText</code> control.
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata", "sap/m/library"], function(jQuery, Metadata, library) {
+sap.ui.define(["sap/ui/base/Metadata", "sap/m/library"], function(Metadata, library) {
 	"use strict";
 
 	// shortcut for sap.m.LinkConversion

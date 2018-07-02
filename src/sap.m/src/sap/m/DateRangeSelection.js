@@ -4,24 +4,26 @@
 
 // Provides control sap.m.DateRangeSelection.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'./DatePicker',
 	'./library',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/format/DateFormat',
 	'./DateRangeSelectionRenderer',
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/Log",
+	"sap/base/assert"
 ],
 	function(
-		jQuery,
 		Device,
 		DatePicker,
 		library,
 		LocaleData,
 		DateFormat,
 		DateRangeSelectionRenderer,
-		deepEqual
+		deepEqual,
+		Log,
+		assert
 	) {
 	"use strict";
 
@@ -273,7 +275,7 @@ sap.ui.define([
 			aDates = this._parseValue(sValue);
 			if (!_dateRangeValidityCheck.call(this, aDates[0], aDates[1])[0]) {//aDates can be undefined if don't fit to the min/max range
 				this._bValid = false;
-				jQuery.sap.log.warning("Value can not be converted to a valid dates", this);
+				Log.warning("Value can not be converted to a valid dates", this);
 			}
 		}
 
@@ -342,7 +344,7 @@ sap.ui.define([
 
 		this.setProperty("valueFormat", sValueFormat, true); // no rerendering
 
-		jQuery.sap.log.warning("Property valueFormat is not supported in sap.m.DateRangeSelection control.", this);
+		Log.warning("Property valueFormat is not supported in sap.m.DateRangeSelection control.", this);
 
 		return this;
 
@@ -444,7 +446,7 @@ sap.ui.define([
 
 		if (oSecondDateValue && (oSecondDateValue.getTime() < this._oMinDate.getTime() || oSecondDateValue.getTime() > this._oMaxDate.getTime())) {
 			this._bValid = false;
-			jQuery.sap.assert(this._bValid, "Date must be in valid range");
+			assert(this._bValid, "Date must be in valid range");
 		}
 
 		this.setProperty("secondDateValue", oSecondDateValue);
@@ -460,7 +462,7 @@ sap.ui.define([
 		if (oDate) {
 			var oSecondDateValue = this.getSecondDateValue();
 			if (oSecondDateValue && oSecondDateValue.getTime() < this._oMinDate.getTime()) {
-				jQuery.sap.log.warning("SecondDateValue not in valid date range", this);
+				Log.warning("SecondDateValue not in valid date range", this);
 			}
 		}
 
@@ -475,7 +477,7 @@ sap.ui.define([
 		if (oDate) {
 			var oSecondDateValue = this.getSecondDateValue();
 			if (oSecondDateValue && oSecondDateValue.getTime() > this._oMaxDate.getTime()) {
-				jQuery.sap.log.warning("SecondDateValue not in valid date range", this);
+				Log.warning("SecondDateValue not in valid date range", this);
 			}
 		}
 
@@ -491,7 +493,7 @@ sap.ui.define([
 
 		if (oSecondDate &&
 			(oSecondDate.getTime() < this._oMinDate.getTime() || oSecondDate.getTime() > this._oMaxDate.getTime())) {
-			jQuery.sap.log.error("secondDateValue " + oSecondDate.toString() + "(value=" + this.getValue() + ") does not match " +
+			Log.error("secondDateValue " + oSecondDate.toString() + "(value=" + this.getValue() + ") does not match " +
 				"min/max date range(" + this._oMinDate.toString() + " - " + this._oMaxDate.toString() + "). App. " +
 				"developers should take care to maintain secondDateValue/value accordingly.", this);
 		}

@@ -5,11 +5,11 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'./InputBase',
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/core/library',
-	"sap/ui/events/KeyCodes"
-], function(Control, InputBase, jQuery, Device, coreLibrary, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
+], function(Control, InputBase, Device, coreLibrary, KeyCodes, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -75,7 +75,7 @@ sap.ui.define([
 				var sValidationErrorMsg = this._validateDependencies();
 
 				if (sValidationErrorMsg) {
-					jQuery.sap.log.warning("Invalid mask input: " + sValidationErrorMsg);
+					Log.warning("Invalid mask input: " + sValidationErrorMsg);
 				}
 			}
 
@@ -268,7 +268,7 @@ sap.ui.define([
 		 */
 		this._validateRegexAgainstPlaceHolderSymbol = function (oRule) {
 			if (new RegExp(oRule.getRegex()).test(this.getPlaceholderSymbol())) {
-				jQuery.sap.log.error("Rejecting input mask rule because it includes the currently set placeholder symbol.");
+				Log.error("Rejecting input mask rule because it includes the currently set placeholder symbol.");
 				return false;
 			}
 			return true;
@@ -285,7 +285,7 @@ sap.ui.define([
 
 			// make sure the placeholder symbol is always a single regex supported character
 			if (!/^.$/i.test(sSymbol)) {
-				jQuery.sap.log.error("Invalid placeholder symbol string given");
+				Log.error("Invalid placeholder symbol string given");
 				return this;
 			}
 
@@ -296,7 +296,7 @@ sap.ui.define([
 			});
 
 			if (bSymbolFound) {
-				jQuery.sap.log.error("Rejecting placeholder symbol because it is included as a regex in an existing mask input rule.");
+				Log.error("Rejecting placeholder symbol because it is included as a regex in an existing mask input rule.");
 			} else {
 				this.setProperty("placeholderSymbol", sSymbol);
 				this._setupMaskVariables();
@@ -314,7 +314,7 @@ sap.ui.define([
 		this.setMask = function (sMask) {
 			if (!sMask) {
 				var sErrorMsg = "Setting an empty mask is pointless. Make sure you set it with a non-empty value.";
-				jQuery.sap.log.warning(sErrorMsg);
+				Log.warning(sErrorMsg);
 				return this;
 			}
 			this.setProperty("mask", sMask, true);
@@ -578,7 +578,7 @@ sap.ui.define([
 			var oResult = null;
 
 			if (typeof sMaskRuleSymbol !== "string" || sMaskRuleSymbol.length !== 1) {
-				jQuery.sap.log.error(sMaskRuleSymbol + " is not a valid mask rule symbol");
+				Log.error(sMaskRuleSymbol + " is not a valid mask rule symbol");
 				return null;
 			}
 

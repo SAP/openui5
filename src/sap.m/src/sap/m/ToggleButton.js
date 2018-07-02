@@ -4,14 +4,13 @@
 
 // Provides control sap.m.ToggleButton.
 sap.ui.define([
-	'jquery.sap.global',
 	'./Button',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
 	'./ToggleButtonRenderer',
 	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, Button, library, EnabledPropagator, ToggleButtonRenderer, KeyCodes) {
+	function(Button, library, EnabledPropagator, ToggleButtonRenderer, KeyCodes) {
 	"use strict";
 
 

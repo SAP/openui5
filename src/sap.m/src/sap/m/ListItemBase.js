@@ -4,7 +4,6 @@
 
 // Provides control sap.m.ListItemBase.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/base/strings/capitalize"
 ],
 function(
-	jQuery,
 	KeyCodes,
 	BindingMode,
 	Device,

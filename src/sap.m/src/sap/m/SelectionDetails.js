@@ -3,7 +3,6 @@
  */
 // Provides control sap.m.SelectionDetails.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Button',
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/base/util/uid"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	Button,
@@ -419,7 +417,9 @@ function(
 		var oFacade = new Interface(this, SelectionDetails.prototype._aFacadeMethods, true);
 		oFacade.getItems = this._getItemFacades.bind(this);
 
-		this.getFacade = jQuery.sap.getter(oFacade);
+		this.getFacade = function() {
+			return oFacade;
+		};
 		return oFacade;
 	};
 

@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.m.Column.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(jQuery, library, Element, Renderer, coreLibrary, Device) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Element',
+	'sap/ui/core/Renderer',
+	'sap/ui/core/library',
+	'sap/ui/Device'
+],
+	function(library, Element, Renderer, coreLibrary, Device) {
 	"use strict";
 
 

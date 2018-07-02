@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap', 'sap/ui/Device'],
-	function(jQuery, FlexBoxCssPropertyMap, Device) {
+sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
+	function(FlexBoxCssPropertyMap, Device) {
 	"use strict";
 
 	/**

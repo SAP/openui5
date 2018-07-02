@@ -3,8 +3,8 @@
  */
 /*global window, document *///declare unusual global vars for JSLint/SAPUI5 validation
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 

@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/base/Object',
 	'sap/ui/core/ValueStateSupport',
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
-		jQuery,
 		Device,
 		BaseObject,
 		ValueStateSupport,

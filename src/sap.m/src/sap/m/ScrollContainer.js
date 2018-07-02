@@ -4,7 +4,6 @@
 
 // Provides control sap.m.ScrollContainer
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/dom/denormalizeScrollBeginRTL"
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		ScrollEnablement,

@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Carousel.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
@@ -12,18 +11,19 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./CarouselRenderer',
 	"sap/ui/events/KeyCodes",
+	"sap/base/Log",
 	'sap/ui/thirdparty/mobify-carousel',
 	'sap/ui/core/IconPool'
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	Device,
 	ResizeHandler,
 	coreLibrary,
 	CarouselRenderer,
-	KeyCodes
+	KeyCodes,
+	Log
 	/*, mobifycarousel, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */
 ) {
 	"use strict";
@@ -504,7 +504,7 @@ function(
 		this.setAssociation("activePage", sNewActivePageId, true);
 		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iNewPageIndex, this.getPages().length]);
 
-		jQuery.sap.log.debug("sap.m.Carousel: firing pageChanged event: old page: " + sOldActivePageId
+		Log.debug("sap.m.Carousel: firing pageChanged event: old page: " + sOldActivePageId
 				+ ", new page: " + sNewActivePageId);
 
 		// close the soft keyboard
@@ -724,7 +724,7 @@ function(
 		if (this._oMobifyCarousel) {
 			this._oMobifyCarousel.prev();
 		} else {
-			jQuery.sap.log.warning("Unable to execute sap.m.Carousel.previous: carousel must be rendered first.");
+			Log.warning("Unable to execute sap.m.Carousel.previous: carousel must be rendered first.");
 		}
 		return this;
 	};
@@ -740,7 +740,7 @@ function(
 		if (this._oMobifyCarousel) {
 			this._oMobifyCarousel.next();
 		} else {
-			jQuery.sap.log.warning("Unable to execute sap.m.Carousel.next: carousel must be rendered first.");
+			Log.warning("Unable to execute sap.m.Carousel.next: carousel must be rendered first.");
 		}
 		return this;
 	};
@@ -1135,7 +1135,7 @@ function(
 	 * @public
 	 */
 	Carousel.prototype.setShowBusyIndicator = function() {
-		jQuery.sap.log.warning("sap.m.Carousel: Deprecated function 'setShowBusyIndicator' called. Does nothing.");
+		Log.warning("sap.m.Carousel: Deprecated function 'setShowBusyIndicator' called. Does nothing.");
 		return this;
 	};
 
@@ -1147,7 +1147,7 @@ function(
 	 * @public
 	 */
 	Carousel.prototype.getShowBusyIndicator = function() {
-		jQuery.sap.log.warning("sap.m.Carousel: Deprecated function 'getShowBusyIndicator' called. Does nothing.");
+		Log.warning("sap.m.Carousel: Deprecated function 'getShowBusyIndicator' called. Does nothing.");
 		return false;
 	};
 

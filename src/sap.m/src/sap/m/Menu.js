@@ -3,8 +3,36 @@
  */
 
 // Provides control sap.m.Menu.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './Dialog', './NavContainer', './List', './Page', './MenuListItem', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/CustomData'],
-	function(jQuery, library, Control, Button, Dialog, NavContainer, List, Page, MenuListItem, UfdMenu, UfdMenuItem, Device, EnabledPropagator, CustomData) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'./Button',
+	'./Dialog',
+	'./NavContainer',
+	'./List',
+	'./Page',
+	'./MenuListItem',
+	'sap/ui/unified/Menu',
+	'sap/ui/unified/MenuItem',
+	'sap/ui/Device',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/CustomData'
+],
+	function(
+		library,
+		Control,
+		Button,
+		Dialog,
+		NavContainer,
+		List,
+		Page,
+		MenuListItem,
+		UfdMenu,
+		UfdMenuItem,
+		Device,
+		EnabledPropagator,
+		CustomData
+	) {
 		"use strict";
 
 		// shortcut for sap.m.ListType

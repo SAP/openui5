@@ -4,7 +4,6 @@
 
 // Provides control sap.m.MenuButton.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'./Button',
@@ -16,7 +15,6 @@ sap.ui.define([
 	'sap/m/Menu',
 	"./MenuButtonRenderer"
 ], function(
-	jQuery,
 	library,
 	Control,
 	Button,
@@ -27,7 +25,7 @@ sap.ui.define([
 	Popup,
 	Menu,
 	MenuButtonRenderer
-	) {
+) {
 		"use strict";
 
 		// shortcut for sap.m.MenuButtonMode

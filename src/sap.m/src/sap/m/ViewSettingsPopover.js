@@ -3,7 +3,6 @@
  */
 // Provides control sap.m.ViewSettingsPopover.
 sap.ui.define([
-	"jquery.sap.global",
 	"./ResponsivePopover",
 	"./Button",
 	"./Toolbar",
@@ -21,9 +20,9 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"./ViewSettingsPopoverRenderer"
+	"./ViewSettingsPopoverRenderer",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	ResponsivePopover,
 	Button,
 	Toolbar,
@@ -41,7 +40,8 @@ sap.ui.define([
 	ManagedObject,
 	Device,
 	InvisibleText,
-	ViewSettingsPopoverRenderer
+	ViewSettingsPopoverRenderer,
+	Log
 	) {
 		"use strict";
 
@@ -1655,7 +1655,7 @@ sap.ui.define([
 				sSuffix = LIST_ITEMS_SUFFIX;
 
 			if (!oViewSettingsItem && !(oViewSettingsItem instanceof ViewSettingsItem)) {
-				jQuery.sap.log.error('Expecting instance of "sap.m.ViewSettingsItem": instead of ' + oViewSettingsItem + ' given.');
+				Log.error('Expecting instance of "sap.m.ViewSettingsItem": instead of ' + oViewSettingsItem + ' given.');
 				return;
 			}
 

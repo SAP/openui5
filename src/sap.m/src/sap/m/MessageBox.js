@@ -3,8 +3,32 @@
  */
 
 // Provides class sap.m.MessageBox
-sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './FormattedText', './Link', './VBox', 'sap/ui/core/IconPool', 'sap/ui/core/ElementMetadata', 'sap/ui/core/library', 'sap/ui/core/Control', 'sap/m/library'],
-		function(jQuery, Button, Dialog, Text, FormattedText, Link, VBox, IconPool, ElementMetadata, coreLibrary, Control, library) {
+sap.ui.define([
+	'./Button',
+	'./Dialog',
+	'./Text',
+	'./FormattedText',
+	'./Link',
+	'./VBox',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/ElementMetadata',
+	'sap/ui/core/library',
+	'sap/ui/core/Control',
+	'sap/m/library'
+],
+		function(
+			Button,
+			Dialog,
+			Text,
+			FormattedText,
+			Link,
+			VBox,
+			IconPool,
+			ElementMetadata,
+			coreLibrary,
+			Control,
+			library
+		) {
 			"use strict";
 
 			// shortcut for sap.m.DialogType

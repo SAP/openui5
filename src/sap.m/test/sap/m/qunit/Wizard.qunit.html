@@ -24,13 +24,15 @@
 	<script>
 		jQuery.sap.require("sap.m.WizardProgressNavigator");
 		jQuery.sap.require("sap.m.WizardStep");
+		var Log = sap.ui.require("sap/base/Log");
 
 		sinon.config.useFakeTimers = true;
 
 		QUnit.module("Wizard Public API", {
 			sWizardId: "wizard-id",
 			oSpies: {},
-			beforeEach: function () {
+			beforeEach: function (assert) {
+				assert.ok(Log, "Log module should be available");
 				var that = this;
 				this.oParams = {};
 				this.oSpies.onStepActivated = sinon.spy(function (oEvent) {
@@ -41,7 +43,7 @@
 					that.oParams.current = oEvent.getParameter("current");
 				});
 				this.oSpies.onComplete = sinon.spy();
-				this.oSpies.error = sinon.spy(jQuery.sap.log, "error");
+				this.oSpies.error = sinon.spy(Log, "error");
 
 				this.oSpies.firstStep = {
 					onActivate: sinon.spy(),

@@ -4,7 +4,6 @@
 
 // Provides control sap.m.QuickViewPage
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
@@ -30,7 +29,6 @@ sap.ui.define([
 	'./QuickViewPageRenderer'
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		IconPool,
@@ -55,7 +53,7 @@ sap.ui.define([
 		Device,
 		ResponsiveGridLayout,
 		QuickViewPageRenderer
-		) {
+	) {
 			"use strict";
 
 			// shortcut for sap.m.URLHelper

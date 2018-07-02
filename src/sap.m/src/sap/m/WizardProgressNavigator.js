@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/Device",
-	"jquery.sap.global",
 	"sap/m/ActionSheet",
 	"./WizardProgressNavigatorRenderer"
 ],
@@ -18,7 +17,6 @@ function(
 	ResizeHandler,
 	ItemNavigation,
 	Device,
-	jQuery,
 	ActionSheet,
 	WizardProgressNavigatorRenderer
 ) {

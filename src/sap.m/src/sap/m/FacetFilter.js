@@ -4,7 +4,6 @@
 
 // Provides control sap.m.FacetFilter.
 sap.ui.define([
-	'jquery.sap.global',
 	'./NavContainer',
 	'./library',
 	'sap/ui/core/Control',
@@ -16,10 +15,11 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'sap/ui/model/Filter',
 	'./FacetFilterRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/assert",
+	"sap/base/Log"
 ],
 	function(
-		jQuery,
 		NavContainer,
 		library,
 		Control,
@@ -31,7 +31,9 @@ sap.ui.define([
 		Icon,
 		Filter,
 		FacetFilterRenderer,
-		KeyCodes
+		KeyCodes,
+		assert,
+		Log
 	) {
 	"use strict";
 
@@ -1108,7 +1110,7 @@ sap.ui.define([
 		if (!oPopover.isOpen()) {
 
 			var oList = sap.ui.getCore().byId(oControl.getAssociation("list"));
-			jQuery.sap.assert(oList, "The facet filter button should be associated with a list.");
+			assert(oList, "The facet filter button should be associated with a list.");
 
 			oList.fireListOpen({});
 			this._moveListToDisplayContainer(oList, oPopover);
@@ -1357,7 +1359,7 @@ sap.ui.define([
 				// Destroy the search field bar
 				oFromPage.destroySubHeader();
 
-				jQuery.sap.assert(that._displayedList === null, "Filter items list should have been placed back in the FacetFilter aggregation before page content is destroyed.");
+				assert(that._displayedList === null, "Filter items list should have been placed back in the FacetFilter aggregation before page content is destroyed.");
 				oFromPage.destroyContent(); // Destroy the select all checkbox bar
 
 				// TODO: Find out why the counter is not updated without forcing rendering of the facet list item
@@ -1365,7 +1367,7 @@ sap.ui.define([
 				that._selectedFacetItem.invalidate();
 				//keyboard acc - focus on the original 1st page item
 				oToPage.invalidate();
-				jQuery.sap.focus(that._selectedFacetItem);
+				that._selectedFacetItem.focus();
 				that._selectedFacetItem = null;
 			}
 		});
@@ -1708,7 +1710,7 @@ sap.ui.define([
 
 		var oNavCont = this.getAggregation("dialog").getContent()[0];
 		var oCustomData = oFacetListItem.getCustomData();
-		jQuery.sap.assert(oCustomData.length === 1, "There should be exactly one custom data for the original facet list item index");
+		assert(oCustomData.length === 1, "There should be exactly one custom data for the original facet list item index");
 		var iIndex = oCustomData[0].getValue();
 		var oFacetFilterList = this.getLists()[iIndex];
 		this._listIndexAgg = this.indexOfAggregation("lists", oFacetFilterList);
@@ -1761,7 +1763,7 @@ sap.ui.define([
 	FacetFilter.prototype._moveListToDisplayContainer = function(oList, oContainer) {
 
 		this._listAggrIndex = this.indexOfAggregation("lists", oList);
-		jQuery.sap.assert(this._listAggrIndex > -1, "The lists index should be valid.");
+		assert(this._listAggrIndex > -1, "The lists index should be valid.");
 		// Suppress invalidate when removing the list from the FacetFilter since this will cause the Popover to close
 		ManagedObject.prototype.removeAggregation.call(this, "lists", oList, true);
 		oContainer.addAggregation("content", oList, false);
@@ -1894,7 +1896,10 @@ sap.ui.define([
 				for (var i = 0; i < aLists.length; i++) {
 					aLists[i]._searchValue = "";
 					aLists[i]._applySearch();
-					jQuery.sap.focus(aLists[i].getItems()[0]);
+					var oFirstItemInList = aLists[i].getItems()[0];
+					if (oFirstItemInList){
+						oFirstItemInList.focus();
+					}
 				}
 				// Make sure we update selection texts
 				that.invalidate();
@@ -2096,7 +2101,7 @@ sap.ui.define([
 				this.setAggregation("arrowRight", oArrowIcon);
 			}
 		} else {
-			jQuery.sap.log.error("Scrolling arrow name " + sName + " is not valid");
+			Log.error("Scrolling arrow name " + sName + " is not valid");
 		}
 		return oArrowIcon;
 	};

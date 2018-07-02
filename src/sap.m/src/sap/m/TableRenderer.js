@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer', 'sap/m/library'],
-	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer, library) {
+sap.ui.define([
+	'sap/ui/core/Renderer',
+	'./ListBaseRenderer',
+	'./ColumnListItemRenderer',
+	'sap/m/library'
+],
+	function(Renderer, ListBaseRenderer, ColumnListItemRenderer, library) {
 	"use strict";
 
 

@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Text',
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	'jquery.sap.events'
 ], function(
-	jQuery,
 	library,
 	Control,
 	Text,

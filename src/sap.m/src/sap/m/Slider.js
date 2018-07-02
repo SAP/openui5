@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/InvisibleText',
@@ -18,7 +17,6 @@ sap.ui.define([
 	'./ResponsiveScale'
 ],
 function(
-	jQuery,
 	Control,
 	EnabledPropagator,
 	InvisibleText,
@@ -31,7 +29,7 @@ function(
 	SliderUtilities,
 	SliderRenderer,
 	ResponsiveScale
-	) {
+) {
 		"use strict";
 
 		// shortcut for sap.m.touch

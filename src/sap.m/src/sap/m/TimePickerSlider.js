@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRenderer', 'sap/ui/core/IconPool', 'sap/ui/Device', "sap/ui/events/KeyCodes"],
-	function(jQuery, Control, TimePickerSliderRenderer, IconPool, Device, KeyCodes) {
+sap.ui.define(['sap/ui/core/Control', './TimePickerSliderRenderer', 'sap/ui/core/IconPool', 'sap/ui/Device', "sap/ui/events/KeyCodes"],
+	function(Control, TimePickerSliderRenderer, IconPool, Device, KeyCodes) {
 		"use strict";
 
 		/**

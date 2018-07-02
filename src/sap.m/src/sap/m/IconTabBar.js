@@ -4,13 +4,12 @@
 
 // Provides control sap.m.IconTabBar.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObject',
 	'./IconTabBarRenderer'
 ],
-	function(jQuery, library, Control, ManagedObject, IconTabBarRenderer) {
+	function(library, Control, ManagedObject, IconTabBarRenderer) {
 	"use strict";
 
 

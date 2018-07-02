@@ -5,7 +5,6 @@
 // Provides control sap.m.IconTabHeader.
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
@@ -21,10 +20,10 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'./IconTabBarDragAndDropUtil',
 	'./IconTabHeaderRenderer',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	EnabledPropagator,
@@ -40,7 +39,8 @@ function(
 	Icon,
 	IconTabBarDragAndDropUtil,
 	IconTabHeaderRenderer,
-	jQueryDOM
+	jQueryDOM,
+	Log
 ) {
 	"use strict";
 
@@ -928,7 +928,7 @@ function(
 			var sKey = oItem.getKey();
 			// check if key is a duplicate
 			if (this._aTabKeys.indexOf(sKey) !== -1) {
-				jQuery.sap.log.warning("sap.m.IconTabHeader: duplicate key '" + sKey + "' inside the IconTabFilter. Please use unique keys.");
+				Log.warning("sap.m.IconTabHeader: duplicate key '" + sKey + "' inside the IconTabFilter. Please use unique keys.");
 			}
 			this._aTabKeys.push(sKey);
 		}
@@ -940,7 +940,7 @@ function(
 			var sKey = oItem.getKey();
 			//check if key is a duplicate
 			if (this._aTabKeys.indexOf(sKey) !== -1) {
-				jQuery.sap.log.warning("sap.m.IconTabHeader: duplicate key '" + sKey + "' inside the IconTabFilter. Please use unique keys.");
+				Log.warning("sap.m.IconTabHeader: duplicate key '" + sKey + "' inside the IconTabFilter. Please use unique keys.");
 			}
 			this._aTabKeys.push(sKey);
 		}

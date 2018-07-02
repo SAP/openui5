@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./InputBase',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
@@ -23,10 +22,11 @@ sap.ui.define([
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/assert",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	InputBase,
 	ComboBoxTextField,
 	ComboBoxBase,
@@ -46,7 +46,9 @@ function(
 	MultiComboBoxRenderer,
 	containsOrEquals,
 	KeyCodes,
-	deepEqual
+	deepEqual,
+	assert,
+	Log
 ) {
 	"use strict";
 
@@ -328,7 +330,7 @@ function(
 
 			this._bPreventValueRemove = false;
 
-			if (this.getValue() === "" || ((typeof this.getValue() == "string" ? oItem.getText().toLowerCase().startsWith(this.getValue().toLowerCase()) : false))) {
+			if (this.getValue() === "" || (typeof this.getValue() === "string" && oItem.getText().toLowerCase().startsWith(this.getValue().toLowerCase()))) {
 				if (this.getListItem(oItem).isSelected()) {
 					this.setValue('');
 				} else {
@@ -527,7 +529,7 @@ function(
 		}
 
 		// pre-assertion
-		jQuery.sap.assert(oNewSelectedItem, "The corresponding mapped item was not found on " + this);
+		assert(oNewSelectedItem, "The corresponding mapped item was not found on " + this);
 
 		if (!oNewSelectedItem) {
 			return;
@@ -633,7 +635,7 @@ function(
 	 */
 	MultiComboBox.prototype.filterItems = function (aItems, sValue) {
 		aItems.forEach(function(oItem) {
-			var bMatch = (typeof sValue == "string" && sValue != "" ? oItem.getText().toLowerCase().startsWith(sValue.toLowerCase()) : false);
+			var bMatch = typeof sValue === "string" && sValue !== "" && oItem.getText().toLowerCase().startsWith(sValue.toLowerCase());
 
 			if (sValue === "") {
 				bMatch = true;
@@ -801,7 +803,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._registerResizeHandler = function () {
-		jQuery.sap.assert(!this._iResizeHandlerId, "Resize handler already registered");
+		assert(!this._iResizeHandlerId, "Resize handler already registered");
 		this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
 	};
 
@@ -1190,7 +1192,7 @@ function(
 
 		// no items
 		if (!aItems.length) {
-			jQuery.sap.log.info("Info: _synchronizeSelectedItemAndKey() the MultiComboBox control does not contain any item on ", this);
+			Log.info("Info: _synchronizeSelectedItemAndKey() the MultiComboBox control does not contain any item on ", this);
 			return;
 		}
 
@@ -1933,7 +1935,7 @@ function(
 
 		selectableItems.forEach(function(oItem) {
 
-			if ((typeof sText == "string" && sText != "" ? oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) : false)) {
+			if (typeof sText === "string" && sText !== "" && oItem.getText().toLowerCase().startsWith(sText.toLowerCase())) {
 				aItems.push(oItem);
 			}
 
@@ -1951,7 +1953,7 @@ function(
 	MultiComboBox.prototype._getUnselectedItemsStartingText = function(sText) {
 		var aItems = [];
 		this._getUnselectedItems().forEach(function(oItem) {
-			if ((typeof sText == "string" && sText != "" ? oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) : false)) {
+			if (typeof sText === "string" && sText !== "" && oItem.getText().toLowerCase().startsWith(sText.toLowerCase())) {
 				aItems.push(oItem);
 			}
 		}, this);
@@ -2211,14 +2213,14 @@ function(
 		}
 
 		if (!jQuery.isArray(aItems)) {
-			jQuery.sap.log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
+			Log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
 			return this;
 		}
 
 		aItems.forEach(function(oItem) {
 
 			if (!(oItem instanceof Item) && (typeof oItem !== "string")) {
-				jQuery.sap.log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
+				Log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
 
 				// Go to next item
 				return;

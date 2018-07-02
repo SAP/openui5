@@ -272,17 +272,20 @@ function(
 
 		switch (type) {
 			case DateTimeInputType.DateTime:
+				//TODO: global jquery call found
 				jQuery.sap.require("sap.m.DateTimePicker");
 				oPicker = new sap.m.DateTimePicker(this.getId() + "-Picker");
 				break;
 
 			case DateTimeInputType.Time:
+				//TODO: global jquery call found
 				jQuery.sap.require("sap.m.TimePicker");
 				oPicker = new sap.m.TimePicker(this.getId() + "-Picker",
 					{localeId: sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString()});
 				break;
 
 			default: // default is date
+				//TODO: global jquery call found
 				jQuery.sap.require("sap.m.DatePicker");
 				oPicker = new sap.m.DatePicker(this.getId() + "-Picker");
 				break;

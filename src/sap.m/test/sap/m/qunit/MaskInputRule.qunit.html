@@ -21,6 +21,7 @@
 
 	<script>
 		sinon.config.useFakeTimers = true;
+		var Log = sap.ui.require("sap/base/Log");
 
 		QUnit.module("API", {
 			beforeEach: function () {
@@ -48,9 +49,9 @@
 		});
 
 		QUnit.test("Setting an invalid Mask Format Symbol is not accepted", function (assert) {
-
+			assert.ok(Log, "Log module should be available");
 			var oRule = this.oMaskInputRule,
-					oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
+					oErrorSpy = this.sandbox.spy(Log, 'error'),
 					oSetterSpy = this.sandbox.spy(oRule, 'setProperty');
 
 			setAndValidate.call(this, "more_than_one_character");
@@ -60,7 +61,7 @@
 				var sExpectedError = "The mask format symbol '" + sSymbol + "' is not valid";
 
 				oErrorSpy.restore();
-				oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
+				oErrorSpy = this.sandbox.spy(Log, 'error');
 				oSetterSpy.restore();
 				oSetterSpy = this.sandbox.spy(oRule, 'setProperty');
 				oRule.setMaskFormatSymbol(sSymbol);
@@ -91,8 +92,9 @@
 		});
 
 		QUnit.test("Setting an invalid regex is not accepted", function (assert) {
+			assert.ok(Log, "Log module should be available");
 			var oRule = this.oMaskInputRule,
-					oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
+					oErrorSpy = this.sandbox.spy(Log, 'error'),
 					oSetterSpy = this.sandbox.spy(oRule, 'setProperty');
 
 			setAndValidate.call(this, "");
@@ -101,7 +103,7 @@
 				var sExpectedError = "The regex value '" + sRegex + "' is not valid";
 
 				oErrorSpy.restore();
-				oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
+				oErrorSpy = this.sandbox.spy(Log, 'error');
 				oSetterSpy.restore();
 				oSetterSpy = this.sandbox.spy(oRule, 'setProperty');
 				oRule.setRegex(sRegex);

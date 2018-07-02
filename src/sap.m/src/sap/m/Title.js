@@ -8,13 +8,12 @@
   */
 // Provides control sap.m.Title.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'./library',
 	'sap/ui/core/library',
 	'./TitleRenderer'
 ],
-	function(jQuery, Control, library, coreLibrary, TitleRenderer) {
+	function(Control, library, coreLibrary, TitleRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign

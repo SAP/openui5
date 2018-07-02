@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Text',
@@ -11,7 +10,7 @@ sap.ui.define([
 	'./NewsContentRenderer',
 	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, Text, Device, NewsContentRenderer, KeyCodes) {
+	function(library, Control, Text, Device, NewsContentRenderer, KeyCodes) {
 	"use strict";
 
 	/**

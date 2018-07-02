@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Toolbar.
 sap.ui.define([
-	'jquery.sap.global',
 	'./BarInPageEnabler',
 	'./ToolbarLayoutData',
 	'./ToolbarSpacer',
@@ -15,7 +14,6 @@ sap.ui.define([
 	'./ToolbarRenderer'
 ],
 function(
-	jQuery,
 	BarInPageEnabler,
 	ToolbarLayoutData,
 	ToolbarSpacer,

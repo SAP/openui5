@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/base/util/deepEqual"
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		IconPool,

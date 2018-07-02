@@ -4,7 +4,6 @@
 
 // Provides control sap.m.DateTimeField.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/type/Date',
 	'sap/ui/model/odata/type/ODataType',
 	'./InputBase',
@@ -12,9 +11,9 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/format/DateFormat',
 	'./DateTimeFieldRenderer',
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	SimpleDateType,
 	ODataType,
 	InputBase,
@@ -22,7 +21,8 @@ sap.ui.define([
 	coreLibrary,
 	DateFormat,
 	DateTimeFieldRenderer,
-	deepEqual
+	deepEqual,
+	Log
 ) {
 	"use strict";
 
@@ -118,7 +118,7 @@ sap.ui.define([
 			oDate = this._parseValue(sValue);
 			if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 				this._bValid = false;
-				jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+				Log.warning("Value can not be converted to a valid date", this);
 			}
 		}
 

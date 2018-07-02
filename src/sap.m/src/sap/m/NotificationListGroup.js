@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	library,
 	NotificationListBase,
 	InvisibleText,
