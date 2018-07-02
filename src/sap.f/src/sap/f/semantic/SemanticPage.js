@@ -280,6 +280,25 @@ sap.ui.define([
 
 				/**
 				* The <code>SemanticPage</code> content.
+				*
+				* <b>Note:</b> The SAP Fiori Design guidelines require that the
+				* <code>SemanticPage</code>'s header content and the <code>SemanticPage</code>'s content
+				* are aligned vertically. When using {@link sap.ui.layout.form.Form},
+				* {@link sap.m.Panel}, {@link sap.m.Table} and {@link sap.m.List} in the content area of
+				* <code>SemanticPage</code>, you need to adjust their left text offset to achieve the
+				* vertical alignment. To do this, apply the <code>sapFSemanticPageAlignContent</code>
+				* CSS class to them and set their <code>width</code> property to <code>auto</code>
+				* (if not set by default).
+				*
+				* Example:
+				*
+				* <pre>
+				* <code> &lt;Panel class=“sapFSemanticPageAlignContent” width=“auto”&gt;&lt;/Panel&gt; </code>
+				* </pre>
+				*
+				* Please keep in mind that the alignment is not possible when the controls are placed in
+				* a {@link sap.ui.layout.Grid} or in other layout controls that use
+				* <code>overflow:hidden</code> CSS property.
 				*/
 				content: {type: "sap.ui.core.Control", multiple: false},
 
