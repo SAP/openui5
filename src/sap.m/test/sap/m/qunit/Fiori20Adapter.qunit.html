@@ -495,6 +495,55 @@
                 Fiori20Adapter.detachViewChange(oSpy);
             });
 
+            QUnit.test("Button visibility is post adapted", function(assert) {
+                var oAdaptOptions = {bHideBackButton: true},
+                        oBackButton = new sap.m.Button("newBackButton", {type: "Back", visible: false}),
+                        oChangedBackButton,
+                        fnViewListener = function(oEvent) {
+                            oChangedBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnViewListener);
+
+                this.oPage.setCustomHeader(new sap.m.Bar({
+                    contentLeft: [oBackButton]
+                }));
+                Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                oBackButton.setVisible(true);
+
+                // Assert
+                assert.strictEqual(oSpy.callCount, 1, "change is fired");
+                assert.strictEqual(oChangedBackButton.getVisible(), true, "correct change is fired");
+
+                // cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
+            });
+
+            QUnit.test("Unrelated button properties are skipped in post adaptation", function(assert) {
+                var oAdaptOptions = {bHideBackButton: true},
+                        oBackButton = new sap.m.Button("newBackButton", {type: "Back", visible: false}),
+                        oChangedBackButton,
+                        fnViewListener = function(oEvent) {
+                            oChangedBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnViewListener);
+
+                this.oPage.setCustomHeader(new sap.m.Bar({
+                    contentLeft: [oBackButton]
+                }));
+                Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                // Act: change unrelated property
+                oBackButton.setText("Back");
+
+                // Assert
+                assert.strictEqual(oSpy.callCount, 0, "no change is fired");
+
+                // cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
+            });
 
             QUnit.test("Header is adapted if page body content is inserted at a later time", function(assert) {
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
@@ -1605,6 +1654,25 @@
 
                 // Assert
                 assert.ok(oTitleInfo.text === "ProfileChanged", "changed title is adapted");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(fnTitleListener);
+            });
+
+            QUnit.test("Only text of title is adapted if changed at a later time", function(assert) {
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                        oTitleInfo,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                        };
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                Fiori20Adapter.attachViewChange(fnTitleListener);
+
+                // Act: change unrelated property
+                this.oPage.byId("title").setMaxLines(1);
+
+                // Assert
+                assert.ok(!oTitleInfo, "no change is fired");
 
                 //cleanup
                 Fiori20Adapter.detachViewChange(fnTitleListener);
