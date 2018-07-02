@@ -1188,12 +1188,17 @@ sap.ui.define([
 	 *      predicates
 	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
 	 *      application and are reported as persistent
+	 * @param {string[]} [aKeyPredicates]
+	 *    An array of key predicates of the entities for which non-persistent messages have to be
+	 *    removed; if the array is not given, all entities are affected
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages) {
+	ODataModel.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
+			aKeyPredicates) {
 		var sDataBindingPath = "/" + sResourcePath,
 			aNewMessages = [],
+			aOldMessages = [],
 			that = this;
 
 		Object.keys(mPathToODataMessages).forEach(function (sKeyPredicateTreePath) {
@@ -1213,8 +1218,22 @@ sap.ui.define([
 				}));
 			});
 		});
-		if (aNewMessages.length) {
-			this.fireMessageChange({newMessages : aNewMessages, oldMessages : []});
+		Object.keys(this.mMessages || {}).forEach(function (sMessageTarget) {
+			(aKeyPredicates || [""]).forEach(function (sPredicatePath) {
+				var sPath = sDataBindingPath + sPredicatePath;
+
+				if (sMessageTarget === sPath
+						|| sMessageTarget.startsWith(sPath + "/")
+						|| sMessageTarget.startsWith(sPath + "(")) {
+					aOldMessages = aOldMessages.concat(
+						that.mMessages[sMessageTarget].filter(function (oMessage) {
+							return !oMessage.persistent;
+						}));
+				}
+			});
+		});
+		if (aNewMessages.length || aOldMessages.length) {
+			this.fireMessageChange({newMessages : aNewMessages, oldMessages : aOldMessages});
 		}
 	};
 
