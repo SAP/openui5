@@ -2190,6 +2190,59 @@
 		oObjectPage.destroy();
 	});
 
+
+	QUnit.module("Header DOM changes", {
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
+			this.oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+
+	QUnit.test("Change in title size retrigger layout calculations", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			sShortText = "sample object subtitle text",
+			sLongText = (function(s) {
+				for (var i = 0; i < 100; i++) {
+					s += sShortText;
+				}
+				return s;
+			}("")),
+			oHeaderTitle = new sap.uxap.ObjectPageHeader({
+				objectTitle: "Title",
+				objectSubtitle: sLongText
+			}),
+			layoutCalcSpy = sinon.spy(oObjectPage, "_requestAdjustLayout"),
+			headerCalcSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights"),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPage.setHeaderTitle(oHeaderTitle);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			layoutCalcSpy.reset();
+			headerCalcSpy.reset();
+
+			// Act: change size of title dom element [without control invalidation]
+			var $titleDescription = oObjectPage.getHeaderTitle().$().find('.sapUxAPObjectPageHeaderIdentifierDescription').get(0);
+			$titleDescription.innerText = sShortText;
+
+			setTimeout(function() {
+				assert.strictEqual(layoutCalcSpy.callCount, 1, "layout recalculations called");
+				assert.strictEqual(headerCalcSpy.callCount, 1, "header height recalculation called");
+				done();
+			}, 100);
+		});
+
+		helpers.renderObject(this.oObjectPage);
+	});
+
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
