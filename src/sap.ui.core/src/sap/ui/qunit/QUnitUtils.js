@@ -533,16 +533,22 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 *
 	 * @param {string | DOMElement} oInput The ID of a DOM input field or a DOM input field which serves as target
 	 * @param {string} sChar Only the first char of the string will be passed via keypress event
+	 * @param {string} [sValue] If passed, this will be set as the new value of the input and the method will not rely on the old value of the input
 	 * @public
 	 */
-	QUtils.triggerCharacterInput = function(oInput, sChar) {
+	QUtils.triggerCharacterInput = function(oInput, sChar, sValue) {
 		QUtils.triggerKeypress(oInput, sChar);
 
 		if (typeof (oInput) == "string") {
 			oInput = oInput ? document.getElementById(oInput) : null;
 		}
 		var $Input = jQuery(oInput);
-		$Input.val($Input.val() + sChar);
+
+		if (typeof sValue !== "undefined") {
+			$Input.val(sValue);
+		} else {
+			$Input.val($Input.val() + sChar);
+		}
 	};
 
 
