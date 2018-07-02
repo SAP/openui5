@@ -140,6 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 
 		if (bHovered && oMenu.checkEnabled(this)) {
 			oMenu.closeSubmenu(false, true);
+			/* TODO remove after 1.62 version */
 			if (Device.browser.msie) {
 				setTimeout(function () {
 					var fnMethod = function () {
