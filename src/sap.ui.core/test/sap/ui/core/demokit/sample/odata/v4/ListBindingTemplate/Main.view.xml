@@ -14,6 +14,13 @@
 	<VBox>
  		<Panel expandable="true" headerText="(Technical Tests)">
 			<VBox>
+				<Title level="H1" text="async helper"/>
+				<template:with var="product" path="meta>/Equipments" helper="Helper.asyncHelper">
+					<template:repeat list="{product>}" var="productProperty">
+						<Text text="{productProperty>@sapui.name}: {productProperty>$Type}"/>
+					</template:repeat>
+				</template:with>
+				<Text text="- - - - - - - - - -"/>
 				<Title level="H1" text="isMultiple"/>
 				<template:repeat list="{meta>/}" var="topLevel">
 					<template:if test="{:= ${topLevel>$kind} === 'EntitySet' }">

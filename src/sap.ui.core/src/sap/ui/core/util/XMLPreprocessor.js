@@ -1565,7 +1565,7 @@ sap.ui.define([
 				}
 				oListBinding.enableExtendedChangeDetection();
 				aContexts = oListBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
-				if (aContexts.dataRequested) {
+				if (!oViewInfo.sync && aContexts.dataRequested) {
 					oPromise = new SyncPromise(function (resolve) {
 						oListBinding.attachEventOnce("change", resolve);
 					}).then(function () {
@@ -1628,6 +1628,7 @@ sap.ui.define([
 					sHelper = oElement.getAttribute("helper"),
 					vHelperResult,
 					sPath = oElement.getAttribute("path"),
+					oPromise,
 					sResolvedPath,
 					sVar = oElement.getAttribute("var");
 
@@ -1658,40 +1659,50 @@ sap.ui.define([
 						}
 						vHelperResult = fnHelper(vHelperResult);
 					}
-					if (vHelperResult instanceof Context) {
-						oModel = vHelperResult.getModel();
-						sResolvedPath = vHelperResult.getPath();
-					} else if (vHelperResult !== undefined) {
-						if (typeof vHelperResult !== "string" || vHelperResult === "") {
-							error("Illegal helper result '" + vHelperResult + "' in ", oElement);
-						}
-						sResolvedPath = vHelperResult;
+					oPromise = SyncPromise.resolve(vHelperResult);
+					if (oViewInfo.sync && oPromise.isPending()) {
+						error("Async helper in sync view in ", oElement);
 					}
-					oNewWithControl.setModel(oModel, sVar);
-					oNewWithControl.bindObject({
-						model : sVar,
-						path : sResolvedPath
+					oPromise = oPromise.then(function (vHelperResult) {
+						if (vHelperResult instanceof Context) {
+							oModel = vHelperResult.getModel();
+							sResolvedPath = vHelperResult.getPath();
+						} else if (vHelperResult !== undefined) {
+							if (typeof vHelperResult !== "string" || vHelperResult === "") {
+								error("Illegal helper result '" + vHelperResult + "' in ",
+									oElement);
+							}
+							sResolvedPath = vHelperResult;
+						}
+						oNewWithControl.setModel(oModel, sVar);
+						oNewWithControl.bindObject({
+							model : sVar,
+							path : sResolvedPath
+						});
 					});
 				} else {
 					sResolvedPath = sPath;
 					oNewWithControl.bindObject(sResolvedPath);
+					oPromise = oSyncPromiseResolved;
 				}
 
-				iNestingLevel++;
-				debug(oElement, sVar, "=", sResolvedPath);
-				if (oNewWithControl.getBindingContext(sVar)
-						=== oWithControl.getBindingContext(sVar)) {
-					// Warn and ignore the new "with" control when its binding context is
-					// the same as a previous one.
-					// We test identity because models cache and reuse binding contexts.
-					warn(oElement, 'Set unchanged path:', sResolvedPath);
-					oNewWithControl = oWithControl;
-				}
+				return oPromise.then(function () {
+					iNestingLevel++;
+					debug(oElement, sVar, "=", sResolvedPath);
+					if (oNewWithControl.getBindingContext(sVar)
+							=== oWithControl.getBindingContext(sVar)) {
+						// Warn and ignore the new "with" control when its binding context is
+						// the same as a previous one.
+						// We test identity because models cache and reuse binding contexts.
+						warn(oElement, 'Set unchanged path:', sResolvedPath);
+						oNewWithControl = oWithControl;
+					}
 
-				return liftChildNodes(oElement, oNewWithControl).then(function () {
-					oElement.parentNode.removeChild(oElement);
-					debugFinished(oElement);
-					iNestingLevel--;
+					return liftChildNodes(oElement, oNewWithControl).then(function () {
+						oElement.parentNode.removeChild(oElement);
+						debugFinished(oElement);
+						iNestingLevel--;
+					});
 				});
 			}
 
