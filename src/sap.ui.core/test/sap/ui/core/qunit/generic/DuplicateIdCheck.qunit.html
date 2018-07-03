@@ -152,7 +152,11 @@
 							if (sControlName === "sap.m.PlanningCalendar" && sPropertyName === "viewKey") { // control fails when key is set where nothing is registered
 								return true;
 							}
-						}
+
+							if (sControlName === "sap.m.OnePersonGrid" && sPropertyName === "startDate") {
+								return true;
+							}
+						};
 
 
 						function fillControlAggregations(oControl, assert) {

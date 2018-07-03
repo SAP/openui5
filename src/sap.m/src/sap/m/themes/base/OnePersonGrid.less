@@ -1,0 +1,91 @@
+@sapMOnePersonGridRowHeadersWidth: 2.25rem;
+@sapMOnePersonGridRowHeadersFontSize: 0.8rem;
+
+.sapMOnePersonColumnHeader {
+	margin-left: @sapMOnePersonGridRowHeadersWidth;
+
+	.sapUiCalItems {
+		display: block;
+		overflow: hidden;
+	}
+}
+
+/** GRID CONTENT **/
+.sapMOnePersonGridContent {
+	display: flex;
+	position: relative;
+	align-items: flex-start;
+}
+
+.sapMOnePersonRowHeaders {
+	box-sizing: border-box;
+	font-size: 0.8rem;
+	margin-top: -0.5rem;
+	padding-right: 0.25rem;
+	text-align: right;
+	width: @sapMOnePersonGridRowHeadersWidth;
+}
+
+.sapMOnePersonRowHeader {
+	display: block;
+	height: 3rem;
+}
+
+.sapMOnePersonRowHeaderHidden {
+	visibility: hidden;
+}
+
+.sapMOnePersonColumns {
+	flex: 1;
+	display: flex;
+}
+
+.sapMOnePersonColumn {
+	position: relative;
+	flex: 1;
+}
+
+.sapMOnePersonAppointments {
+	position: absolute;
+	top: 0;
+	right: 0.5rem;
+	bottom: 0;
+	left: 0.5rem;
+}
+
+.sapMOnePersonRow {
+	box-sizing: border-box;
+	border-bottom: 0.0625rem solid @sapUiListBorderColor;
+	border-left: 0.0625rem solid @sapUiListBorderColor;
+	min-height: 3rem;
+
+	.sapMOnePersonColumn:last-child & {
+		border-right: 0.0625rem solid @sapUiListBorderColor;
+	}
+}
+
+.sapMOnePersonNonWorkingRow {
+	background-color: darken(@sapUiListBackground, 3);
+}
+
+.sapMOnePersonNowMarker {
+	color: @sapUiCalendarColorToday;
+	display: flex;
+	font-size: @sapMOnePersonGridRowHeadersFontSize;
+	margin-top: -0.5rem;
+	position: absolute;
+	right: 0;
+	left: 0;
+}
+
+.sapMOnePersonNowMarker::after {
+	content: "";
+	border-top: 0.125rem solid currentColor;
+	flex: 1;
+	margin-top: 0.5rem;
+	margin-left: 0.25rem;
+}
+
+.sapMOnePersonNowMarkerHidden {
+	display: none;
+}
