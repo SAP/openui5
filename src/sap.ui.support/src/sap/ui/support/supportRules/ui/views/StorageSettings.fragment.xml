@@ -3,6 +3,7 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core">
 	<Popover
+			id="storageSettings"
 			title="Settings"
 			contentMinWidth="250px"
 			class="sapUiContentPadding"
@@ -13,9 +14,11 @@
 			justifyContent="Center">
 				<l:VerticalLayout>
 					<l:HorizontalLayout>
-						<CheckBox text="I agree to use local storage persistency for:"
-							  select= "onPersistedSettingSelect"
-							  selected="{/persistingSettings}"
+						<CheckBox
+						id="persistChB"
+						text="I agree to use local storage persistency for:"
+						select= "onPersistedSettingSelect"
+						selected="{/persistingSettings}"
 						/>
 					</l:HorizontalLayout>
 					<FlexBox
