@@ -334,12 +334,16 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bForceUpdate) {
 		QUnit.test("checkUpdate(" + bForceUpdate + "): unchanged", function (assert) {
+			var that = this;
+
 			return this.createTextBinding(assert, 2).then(function (oBinding) {
 				var bGotChangeEvent = false;
 
 				oBinding.attachChange(function () {
 					bGotChangeEvent = true;
 				});
+				// checkDataState is called independently of bForceUpdate
+				that.mock(oBinding).expects("checkDataState").withExactArgs();
 
 				// code under test
 				oBinding.checkUpdate(bForceUpdate).then(function () {
@@ -431,6 +435,8 @@ sap.ui.require([
 		this.mock(oModel.getMetaModel()).expects("fetchUI5Type")
 			.withExactArgs("/.../relative")
 			.returns(SyncPromise.resolve());
+		// checkDataState is called only once even if checkUpdate is called twice
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
 
 		// code under test
 		oPromise0 = oBinding.checkUpdate(true);
