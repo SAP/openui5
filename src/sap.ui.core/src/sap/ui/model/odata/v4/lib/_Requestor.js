@@ -495,7 +495,7 @@ sap.ui.define([
 	 *   A promise that is resolved with the type at the given path or its name.
 	 */
 	Requestor.prototype.fetchTypeForPath = function (sMetaPath, bAsName) {
-		return this.oModelInterface.fnFetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
+		return this.fetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
 	};
 
 	/**

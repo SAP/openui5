@@ -181,8 +181,6 @@ sap.ui.require([
 			// ensure that the requestor does not trigger requests
 			this.mock(this.oModel.oRequestor).expects("request").never();
 			// avoid that the cache requests actual metadata for faked responses
-			this.mock(this.oModel.oRequestor).expects("fetchTypeForPath").atLeast(0)
-				.returns(SyncPromise.resolve({}));
 			this.mock(this.oModel.oRequestor).expects("fetchMetadata").atLeast(0)
 				.returns(SyncPromise.resolve());
 
