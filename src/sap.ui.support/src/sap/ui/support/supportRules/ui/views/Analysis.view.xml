@@ -5,7 +5,8 @@
 		xmlns:m="sap.m"
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:t="sap.ui.table">
+		xmlns:t="sap.ui.table"
+		xmlns:layout="sap.ui.layout">
 	<m:NavContainer
 		id="rulesNavContainer"
 		afterNavigate="onAfterNavigate">
@@ -37,9 +38,21 @@
 						<m:subHeader>
 							<m:Bar>
 								<m:contentLeft>
-									<m:Label text="Rule Selections:" />
-									<m:Button text="Export" press="exportSelectedRules"/>
-									<m:Button text="Import" press="importSelectedRules"/>
+									<m:Label text="Rule Preset:" labelFor="presetVariant" />
+									<layout:HorizontalLayout
+										id="presetVariant"
+										class="sapUiSupportToolVariantCont">
+										<m:Link
+											id="presetVariantLnk"
+											text="{/selectionPresetsCurrent/title}"
+											class="sapUiSupportToolVariantLnk"
+											tooltip="Select a Rule Preset"/>
+										<m:Button
+											id="presetVariantBtn"
+											icon="sap-icon://slim-arrow-down"
+											class="sapUiSupportToolVariantBtn"
+											tooltip="Select a Rule Preset"/>
+									</layout:HorizontalLayout>
 								</m:contentLeft>
 								<m:contentRight>
 									<m:Button text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>

@@ -6,9 +6,8 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
-	"sap/ui/support/supportRules/ui/models/SharedModel",
-	"sap/ui/core/util/File"
-], function (jQuery, constants, storage, SharedModel, File) {
+	"sap/ui/support/supportRules/ui/models/SharedModel"
+], function (jQuery, constants, storage, SharedModel) {
 	"use strict";
 
 	var SelectionUtils = {
@@ -96,7 +95,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Saves rule selections to the local storage
+		 * Saves rule selections and selection presets to the local storage
 		 */
 		persistSelection: function () {
 			var aSelectedRules = this.getRulesSelectionState();
@@ -104,45 +103,44 @@ sap.ui.define([
 			storage.setSelectedRules(aSelectedRules);
 		},
 
-		exportSelectedRules: function (title, description) {
-			var aSelectedRules = this.getSelectedRules();
-			var oRulesToExport = {
-				title: title,
-				description: description,
-				selections: aSelectedRules
-			};
+		/**
+		 * Sets the selected rules in the same format in which they are imported
+		 *
+		 * @param {Array} aSelectedRules The selected rules - same as the result of getSelectedRulesPlain
+		 */
+		setSelectedRules: function (aSelectedRules) {
+			var oTreeViewModelRules = this.model.getProperty("/treeModel");
 
-			var oExportObject = JSON.stringify(oRulesToExport);
+			// deselect all
+			Object.keys(oTreeViewModelRules).forEach(function(iKey) {
+				oTreeViewModelRules[iKey].nodes.forEach(function(oRule) {
+					oRule.selected = false;
+				});
+			});
 
-			File.save(oExportObject, constants.RULE_SELECTION_EXPORT_FILE_NAME, 'json', 'text/plain');
-		},
+			// select those from aSelectedRules
+			aSelectedRules.forEach(function (oRuleDescriptor) {
+				Object.keys(oTreeViewModelRules).forEach(function(iKey) {
+					oTreeViewModelRules[iKey].nodes.forEach(function(oRule) {
+						if (oRule.id === oRuleDescriptor.ruleId) {
+							oRule.selected = true;
+						}
+					});
+				});
+			});
 
-		isValidSelectionImport: function (oImport) {
-			var bIsFileValid = true;
+			// syncs the parent and child selected/deselected state
+			this.treeTable.syncParentNoteWithChildrenNotes(oTreeViewModelRules);
 
-			if (!oImport.hasOwnProperty("title")) {
-				bIsFileValid = false;
+			// apply selection to ui
+			this.treeTable.updateSelectionFromModel();
+
+			// update the count in ui
+			this.getSelectedRules();
+
+			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
+				this.persistSelection();
 			}
-
-			if (!oImport.hasOwnProperty("description")) {
-				bIsFileValid = false;
-			}
-
-			if (!oImport.hasOwnProperty("selections")) {
-				bIsFileValid = false;
-			} else if (!Array.isArray(oImport.selections)) {
-				bIsFileValid = false;
-			} else {
-				for (var i = 0; i < oImport.selections.length; i++) {
-					var oRuleSelection = oImport.selections[i];
-					if (!oRuleSelection.hasOwnProperty("ruleId") || !oRuleSelection.hasOwnProperty("libName")) {
-						bIsFileValid = false;
-						break;
-					}
-				}
-			}
-
-			return bIsFileValid;
 		}
 	};
 
