@@ -449,7 +449,9 @@ sap.ui.define([
 	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
 	 * them into a map from meta path to type. Checks the types' key properties and puts their types
-	 * into the map, too, if they are complex.
+	 * into the map, too, if they are complex. If a type has an "@Org.OData.Core.V1.Messages"
+	 * annotation for messages, the type is enriched by the property "@Org.OData.Core.V1.Messages"
+	 * containing the annotation object.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
@@ -486,6 +488,14 @@ sap.ui.define([
 		 */
 		function fetchType(sMetaPath) {
 			aPromises.push(that.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
+				var oMessageAnnotation = that.oRequestor
+						.fetchMetadata(sMetaPath + "/@Org.OData.Core.V1.Messages").getResult();
+
+				if (oMessageAnnotation) {
+					oType = Object.create(oType);
+					oType["@Org.OData.Core.V1.Messages"] = oMessageAnnotation;
+				}
+
 				mTypeForMetaPath[sMetaPath] = oType;
 				if (oType && oType.$Key) {
 					oType.$Key.forEach(function (vKey) {
@@ -791,8 +801,9 @@ sap.ui.define([
 
 	/**
 	 * Processes the response from the server. All arrays are annotated by their length, influenced
-	 * by the annotations "@odata.count" and "@odata.nextLink".
-	 * Recursively calculates the key predicates for all entities in the result.
+	 * by the annotations "@odata.count" and "@odata.nextLink". Recursively calculates the key
+	 * predicates for all entities in the result. Collects and reports OData messages via
+	 * {@link sap.ui.model.odata.v4.lib._Requestor#reportBoundMessages}.
 	 *
 	 * @param {*} vRoot An array of instances, a single top-level instance or even a simple value
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
@@ -802,7 +813,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.visitResponse = function (vRoot, mTypeForMetaPath, sRootMetaPath) {
-		var that = this;
+		var aKeyPredicates,
+			mPathToODataMessages = {},
+			that = this;
 
 		/*
 		 * Calls visitInstance for all object entries of the given collection and creates the map
@@ -810,16 +823,23 @@ sap.ui.define([
 		 *
 		 * @param {*[]} aInstances The collection
 		 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
+		 * @param {string} sPathWithKeyPredicates
+		 *    The path of the collection including key predicates
 		 */
-		function visitArray(aInstances, sMetaPath) {
+		function visitArray(aInstances, sMetaPath, sPathWithKeyPredicates) {
 			var i, vInstance, sPredicate;
 
 			aInstances.$byPredicate = {};
 			for (i = 0; i < aInstances.length; i++) {
 				vInstance = aInstances[i];
 				if (vInstance && typeof vInstance === "object") {
-					visitInstance(vInstance, sMetaPath);
+					visitInstance(vInstance, sMetaPath, sPathWithKeyPredicates, true);
 					sPredicate = _Helper.getPrivateAnnotation(vInstance, "predicate");
+					if (!sPathWithKeyPredicates) {
+						// for the root entries remember the key predicates to remove all
+						// messages for entities that have been read
+						aKeyPredicates.push(sPredicate);
+					}
 					if (sPredicate) {
 						aInstances.$byPredicate[sPredicate] = vInstance;
 					}
@@ -833,14 +853,35 @@ sap.ui.define([
 		 *
 		 * @param {object} oInstance The instance
 		 * @param {string} sMetaPath The meta path of the instance in mTypeForMetaPath
+		 * @param {string} sPathWithKeyPredicates
+		 *    The path of the instance including key predicates
+		 * @param {boolean} [bAddPredicateToPath=false]
+		 *    Whether to add the instance's key predicate to the path with key predicates
 		 */
-		function visitInstance(oInstance, sMetaPath) {
+		function visitInstance(oInstance, sMetaPath, sPathWithKeyPredicates, bAddPredicateToPath) {
+			var oType = mTypeForMetaPath[sMetaPath],
+				sMessageProperty = oType && oType["@Org.OData.Core.V1.Messages"]
+					&& oType["@Org.OData.Core.V1.Messages"].$Path;
+
+			that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
+			if (bAddPredicateToPath) {
+				sPathWithKeyPredicates += _Helper.getPrivateAnnotation(oInstance, "predicate");
+			}
+			if (sMessageProperty) { // collect messages
+				mPathToODataMessages[sPathWithKeyPredicates] = oInstance[sMessageProperty];
+			}
+
 			Object.keys(oInstance).forEach(function (sProperty) {
 				var sCount,
 					sPropertyPath = sMetaPath + "/" + sProperty,
-					vPropertyValue = oInstance[sProperty];
+					vPropertyValue = oInstance[sProperty],
+					sNewPathWithKeyPredicates = sPathWithKeyPredicates + "/" + sProperty;
 
+				if (sProperty.includes("@")) { // ignore all annotations
+					return;
+				}
 				if (Array.isArray(vPropertyValue)) {
+					// compute count
 					vPropertyValue.$count = undefined; // see setCount
 					sCount = oInstance[sProperty + "@odata.count"];
 					// Note: ignore change listeners, because any change listener that is already
@@ -851,18 +892,22 @@ sap.ui.define([
 						// Note: This relies on the fact that $skip/$top is not used on nested lists
 						setCount({}, "", vPropertyValue, vPropertyValue.length);
 					}
-					visitArray(vPropertyValue, sPropertyPath);
+					visitArray(vPropertyValue, sPropertyPath, sNewPathWithKeyPredicates);
 				} else if (vPropertyValue && typeof vPropertyValue === "object") {
-					visitInstance(vPropertyValue, sPropertyPath);
+					visitInstance(vPropertyValue, sPropertyPath, sNewPathWithKeyPredicates);
 				}
 			});
-			that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
 		}
 
 		if (Array.isArray(vRoot)) {
-			visitArray(vRoot, sRootMetaPath || this.sMetaPath);
+			aKeyPredicates = [];
+			visitArray(vRoot, sRootMetaPath || this.sMetaPath, "");
 		} else if (vRoot && typeof vRoot === "object") {
-			visitInstance(vRoot, sRootMetaPath || this.sMetaPath);
+			visitInstance(vRoot, sRootMetaPath || this.sMetaPath, "");
+		}
+		if (Object.keys(mPathToODataMessages).length) {
+			this.oRequestor.reportBoundMessages(this.sResourcePath, mPathToODataMessages,
+				aKeyPredicates);
 		}
 	};
 

@@ -78,9 +78,8 @@ sap.ui.define([
 	 *   returning the property value in question. Only 'submit' is supported for <code>
 	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
 	 * @param {function} oModelInterface.fnReportBoundMessages
-	 *   A function called with parameters <code>sResourcePath</code> and
-	 *   <code>mPathToMessages</code> (see {@link #reportBoundMessages})reporting bound OData
-	 *   messages to the {@link sap.ui.core.message.MessageManager}.
+	 *   A function for reporting bound messages; see {@link #reportBoundMessages} for the signature
+	 *   of this function
 	 * @param {function} oModelInterface.fnReportUnboundMessages
 	 *   A function called with parameters <code>sResourcePath</code> and <code>sMessages</code>
 	 *   reporting unbound OData messages to the {@link sap.ui.core.message.MessageManager}.
@@ -429,7 +428,6 @@ sap.ui.define([
 		return oResponsePayload;
 	};
 
-
 	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
@@ -470,6 +468,18 @@ sap.ui.define([
 			}
 			fnResultHandler(sKey, vValue);
 		});
+	};
+
+	/**
+	 * Fetches the metadata instance for the given meta path.
+	 *
+	 * @param {string} sMetaPath
+	 *   The meta path, for example "SalesOrderList/SO_2_BP"
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise that is resolved with the metadata instance for the given meta path
+	 */
+	Requestor.prototype.fetchMetadata = function (sMetaPath) {
+		return this.oModelInterface.fnFetchMetadata(sMetaPath);
 	};
 
 	/**
@@ -753,7 +763,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reports bound OData messages.
+	 * Reports the given bound OData messages via the owning model's interface
 	 *
 	 * @param {string} sResourcePath
 	 *   The resource path
@@ -763,16 +773,23 @@ sap.ui.define([
 	 *   The messages have at least the following properties:
 	 *   {string} code - The error code
 	 *   {string} message - The message text
-	 *   {number} numericSeverity
-	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
-	 *      "error")
+	 *   {number} numericSeverity - The numeric message severity (1 for "success", 2 for "info",
+	 *      3 for "warning" and 4 for "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
 	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
 	 *      application and are reported as persistent
+	 * @param {string[]} [aKeyPredicates]
+	 *    An array of key predicates of the entities for which non-persistent messages have to be
+	 *    removed; if the array is not given, all non-persistent messages whose target starts with
+	 *    the given resource path are removed
+	 *
+	 * @private
 	 */
-	Requestor.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages) {
-		this.oModelInterface.fnReportBoundMessages(sResourcePath, mPathToODataMessages);
+	Requestor.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
+			aKeyPredicates) {
+		this.oModelInterface.fnReportBoundMessages(sResourcePath, mPathToODataMessages,
+			aKeyPredicates);
 	};
 
 	/**

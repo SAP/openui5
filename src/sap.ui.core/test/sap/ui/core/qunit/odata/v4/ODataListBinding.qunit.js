@@ -183,6 +183,9 @@ sap.ui.require([
 			// avoid that the cache requests actual metadata for faked responses
 			this.mock(this.oModel.oRequestor).expects("fetchTypeForPath").atLeast(0)
 				.returns(SyncPromise.resolve({}));
+			this.mock(this.oModel.oRequestor).expects("fetchMetadata").atLeast(0)
+				.returns(SyncPromise.resolve());
+
 			// in case "request" is restored, this catches accidental requests
 			this.mock(_Helper).expects("createError").never();
 		},
@@ -195,7 +198,7 @@ sap.ui.require([
 		 * Calls <code>this.oModel.bindList</code> using the given arguments, but avoids creating
 		 * the prerendering task to unlock the read group lock.
 		 *
-		 * @returns {sap.ui.model.odata.v4.ODataListBinding}
+		 * @returns {sap.ui.model.odata.v4.ODataListBinding} The list binding
 		 */
 		bindList : function () {
 			try {
