@@ -11,6 +11,7 @@
 		headerPinnable="true"
 		toggleHeaderOnTitleClick="true"
 		preserveHeaderStateOnScroll="false"
+		titlePrimaryArea="Begin"
 		showFooter="{/showFooter}">
 
 		<!-- Title Heading-->
@@ -22,6 +23,11 @@
 		<semantic:titleSnappedContent>
 			<Text text="{/titleSnappedContent/text}"/>
 		</semantic:titleSnappedContent>
+
+		<!-- TitleSnapped content-->
+		<semantic:titleExpandedContent>
+			<Text text="{/titleExpandedContent/text}"/>
+		</semantic:titleExpandedContent>
 
 		<!-- Header Content -->
 		<semantic:headerContent>

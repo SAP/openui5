@@ -11,12 +11,30 @@
 		headerPinnable="true"
 		toggleHeaderOnTitleClick="true"
 		preserveHeaderStateOnScroll="false"
+		titlePrimaryArea="Begin"
 		showFooter="true">
 
 		<!-- Title Heading-->
 		<semantic:titleHeading>
 			<Title text="{/title}" />
 		</semantic:titleHeading>
+
+		<!-- Title Breadcrumbs-->
+		<semantic:titleBreadcrumbs>
+			<Breadcrumbs>
+				<Link text="Home" />
+				<Link text="Page 1" />
+				<Link text="Page 2" />
+				<Link text="Page 3" />
+				<Link text="Page 4" />
+				<Link text="Page 5" />
+			</Breadcrumbs>
+		</semantic:titleBreadcrumbs>
+
+		<!-- Title Content-->
+		<semantic:titleContent>
+			<Image src="./test-resources/sap/f/images/KPI.png" tooltip="This is just a placeholder, not a real KPI control." height="2rem" width="3.5rem"/>
+		</semantic:titleContent>
 
 		<!-- TitleExpanded content-->
 		<semantic:titleSnappedContent>
@@ -105,11 +123,11 @@
 		</semantic:closeAction>
 
 		<semantic:fullScreenAction>
-			<semantic:FullScreenAction />
+			<semantic:FullScreenAction visible="{/notMobile}"/>
 		</semantic:fullScreenAction>
 
 		<semantic:exitFullScreenAction>
-			<semantic:ExitFullScreenAction />
+			<semantic:ExitFullScreenAction visible="{/notMobile}"/>
 		</semantic:exitFullScreenAction>
 
 		<!-- Custom Title Text Content-->

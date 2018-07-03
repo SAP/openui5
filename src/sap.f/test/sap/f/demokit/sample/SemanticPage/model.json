@@ -1,12 +1,12 @@
 {
   "title" : "Products List",
   "titleExpandedContent" : {
-    "text": "I am Expanded Content",
+    "text": "This is a subheading",
     "status" : "Warning"
   },
   "showFooter" : false,
   "titleSnappedContent" : {
-    "text": "Functional Area: Business",
+    "text": "This is a subheading",
     "status" : "Success"
   },
   "headerExpanded": true,
