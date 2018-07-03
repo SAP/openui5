@@ -629,9 +629,26 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("test min-width", function(assert) {
-		oTable.getDomRef().style.width = "0px";
-		assert.ok(oTable.getDomRef("tableCCnt").clientHeight > 0, "CCnt still has clientHeight");
+	QUnit.test("Skip _updateTableSizes if table has no width", function(assert) {
+		var oDomRef = oTable.getDomRef();
+		var oResetRowHeights = sinon.spy(oTable, "_resetRowHeights"); // _resetRowHeights is used to check if a layout update was performed
+
+		oDomRef.style.width = "100px";
+		oDomRef.style.height = "100px";
+		oTable._updateTableSizes();
+		assert.ok(oResetRowHeights.called, "The table has a height and width -> _updateTableSizes should be executed");
+		oResetRowHeights.reset();
+
+		oDomRef.style.height = "0px";
+		oTable._updateTableSizes();
+		assert.ok(oResetRowHeights.called, "The table has no height -> _updateTableSizes should be executed");
+		oResetRowHeights.reset();
+
+		oDomRef.style.width = "0px";
+		oDomRef.style.height = "100px";
+		oTable._updateTableSizes();
+		assert.ok(oResetRowHeights.notCalled, "The table has no width -> _updateTableSizes should not be executed");
+		oResetRowHeights.reset();
 	});
 
 	QUnit.test("getCellControl", function(assert) {
