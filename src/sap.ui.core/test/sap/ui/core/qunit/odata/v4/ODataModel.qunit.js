@@ -1563,14 +1563,14 @@ sap.ui.require([
 		QUnit.test("reportBoundMessages, " + i, function (assert) {
 			var aMessages = [{
 					"code" : "F42",
-//					"longtextUrl" : "foo/bar",
+					"longtextUrl" : "Messages(3)/LongText/$value",
 					"message" : "foo0",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "Name",
 					"transient" : false
 				}, {
 					"code" : "UF1",
-//					"longtextUrl" : "",
+					"longtextUrl" : "baz",
 					"message" : "foo1",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "",
@@ -1579,26 +1579,28 @@ sap.ui.require([
 				oModel = createModel(),
 				oModelMock = this.mock(oModel);
 
-			oModelMock.expects("fireMessageChange")
-				.withExactArgs(sinon.match(function (mArguments) {
+			oModelMock.expects("fireMessageChange").withExactArgs(sinon.match.object)
+				.callsFake(function (mArguments) {
 					var aNewMessages = mArguments.newMessages,
 						aOldMessages = mArguments.oldMessages;
 
-					return aNewMessages.length === aMessages.length
-						&& aOldMessages.length === 0
-						&& aNewMessages.every(function (oMessage, j) {
-							return oMessage instanceof Message
-								&& oMessage.getCode() === aMessages[j].code
-//TODO							&& oMessage.getDescriptionUrl() === aMessages[j].longtextUrl
-								&& oMessage.getMessage() === aMessages[j].message
-								&& oMessage.getMessageProcessor() === oModel
-								&& oMessage.getPersistent() === aMessages[j].transient
-								&& oMessage.getTarget() === "/Team('42')/foo/bar"
-									+ (aMessages[j].target ? "/" + aMessages[j].target : "")
-								&& oMessage.getTechnical() === false
-								&& oMessage.getType() === oFixture.type;
-						});
-				}));
+					assert.strictEqual(aNewMessages.length, aMessages.length);
+					assert.strictEqual(aOldMessages.length, 0);
+
+					aNewMessages.forEach(function (oMessage, j) {
+						assert.ok(oMessage instanceof Message);
+						assert.strictEqual(oMessage.getCode(), aMessages[j].code);
+						assert.strictEqual(oMessage.getDescriptionUrl(),
+							"/Team('42')/foo/bar/" + aMessages[j].longtextUrl);
+						assert.strictEqual(oMessage.getMessage(), aMessages[j].message);
+						assert.strictEqual(oMessage.getMessageProcessor(), oModel);
+						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transient);
+						assert.strictEqual(oMessage.getTarget(), "/Team('42')/foo/bar"
+							+ (aMessages[j].target ? "/" + aMessages[j].target : ""));
+						assert.notOk(oMessage.getTechnical());
+						assert.strictEqual(oMessage.getType(), oFixture.type);
+					});
+				});
 
 			// code under test
 			oModel.reportBoundMessages("Team('42')", {"/foo/bar" : aMessages});
@@ -1608,6 +1610,23 @@ sap.ui.require([
 			// code under test
 			oModel.reportBoundMessages("Team('42')", {});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reportBoundMessages: longtextUrl special cases ", function (assert) {
+		var aMessages = [{"longtextUrl" : "/foo/bar"}, {"longtextUrl" : ""}, {}],
+			oModel = createModel();
+
+		this.mock(oModel).expects("fireMessageChange")
+			.withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				assert.strictEqual(mArguments.newMessages[0].getDescriptionUrl(), "/foo/bar");
+				assert.strictEqual(mArguments.newMessages[1].getDescriptionUrl(), undefined);
+				assert.strictEqual(mArguments.newMessages[2].getDescriptionUrl(), undefined);
+			});
+
+		// code under test
+		oModel.reportBoundMessages("Team('42')", {"" : aMessages});
 	});
 
 	//*********************************************************************************************
