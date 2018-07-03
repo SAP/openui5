@@ -3902,6 +3902,20 @@ sap.ui.require([
 			})
 		}, []);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("async formatter in sync view", function (assert) {
+		window.foo = function () {
+			return Promise.resolve();
+		};
+		this.checkError(assert, [
+			mvcView(),
+			'<Text text="{path: \'/\', formatter: \'foo\'}" tooltip="{/bar}"/>',
+			'</mvc:View>'
+		], "Async formatter in sync view in {path: '/', formatter: 'foo'} of {0}", {
+			models : new JSONModel()
+		});
+	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
 //TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS

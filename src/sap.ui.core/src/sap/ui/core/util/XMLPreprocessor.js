@@ -1075,6 +1075,8 @@ sap.ui.define([
 			 *   corresponding error (for example, an error thrown by a formatter), or
 			 *   <code>null</code> in case the binding is not ready (because it refers to a model
 			 *   which is not available)
+			 * @throws {Error}
+			 *   if a formatter returns a promise in sync mode
 			 */
 			function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
 					fnCallIfConstant) {
@@ -1105,6 +1107,8 @@ sap.ui.define([
 						!oViewInfo.sync);
 					if (bMandatory && !oPromise) {
 						warn(oElement, 'Binding not ready');
+					} else if (oViewInfo.sync && oPromise && oPromise.isPending()) {
+						error("Async formatter in sync view in " + sValue + " of ", oElement);
 					}
 				} else {
 					oPromise = SyncPromise.resolve(vBindingInfo);
