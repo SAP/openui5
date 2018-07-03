@@ -420,8 +420,13 @@ sap.ui.require([
 		 *   a settings object for the preprocessor
 		 * @param {number|string} [vOffender=1]
 		 *   (index of) offending statement
+		 * @param {boolean} [bAsync]
+		 *   Whether the view should be async
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   A sync promise for timing
 		 */
-		checkError : function (assert, aViewContent, sExpectedMessage, mSettings, vOffender) {
+		checkError : function (assert, aViewContent, sExpectedMessage, mSettings, vOffender,
+				bAsync) {
 			var oViewContent = xml(assert, aViewContent);
 
 			if (vOffender === undefined || typeof vOffender === "number") {
@@ -431,16 +436,17 @@ sap.ui.require([
 			this.oLogMock.expects("error")
 				.withExactArgs(_matchArg(sExpectedMessage), "qux", sComponent);
 
-			try {
-				process(oViewContent, mSettings);
+			return SyncPromise.resolve().then(function () {
+				return process(oViewContent, mSettings, bAsync);
+			}).then(function () {
 				assert.ok(false);
-			} catch (ex) {
+			}, function (oError) {
 				assert.strictEqual(
-					_normalizeXml(ex.message),
+					_normalizeXml(oError.message),
 					_normalizeXml("qux: " + sExpectedMessage),
-					ex.stack
+					oError.stack
 				);
-			}
+			});
 		},
 
 		/**
@@ -1749,35 +1755,45 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bWithVar) {
-		QUnit.test("template:with and helper, with var = " + bWithVar, function (assert) {
-			var oModel = new JSONModel({
-					target : {
-						flag : true
-					}
-				});
+	[false, true].forEach(function (bAsync) {
+		[false, true].forEach(function (bWithVar) {
+			QUnit.test("template:with and helper, async = " + bAsync + ", with var = " + bWithVar,
+					function (assert) {
+				var oModel = new JSONModel({
+						target : {
+							flag : true
+						}
+					});
 
-			window.foo = {
-				Helper : {
-					help : function (oContext) {
-						assert.ok(oContext instanceof Context);
-						assert.strictEqual(oContext.getModel(), oModel);
-						assert.strictEqual(oContext.getPath(), "/some/random/path");
-						return "/target";
+				window.foo = {
+					Helper : {
+						help : function (oContext) {
+							assert.ok(oContext instanceof Context);
+							assert.strictEqual(oContext.getModel(), oModel);
+							assert.strictEqual(oContext.getPath(), "/some/random/path");
+							return bAsync ? Promise.resolve("/target") : "/target";
+						}
 					}
-				}
-			};
-			this.check(assert, [
-				mvcView(),
-				'<template:with path="/some/random/path" helper="foo.Helper.help"'
-					+ (bWithVar ? ' var="target"' : '') + '>',
-				'<template:if test="{' + (bWithVar ? 'target>' : '') + 'flag}">',
-				'<In id="flag"/>',
-				'</template:if>',
-				'</template:with>',
-				'</mvc:View>'
-			], {
-				models : oModel
+				};
+				return this.checkTracing(assert, true, [
+					{m : "[ 0] Start processing qux"},
+					{m : "[ 1] " + (bWithVar ? "target" : "") + " = /target", d : 1},
+					{m : "[ 2] test == true --> true", d : 2},
+					{m : "[ 2] Finished", d : "</template:if>"},
+					{m : "[ 1] Finished", d : "</template:with>"},
+					{m : "[ 0] Finished processing qux"}
+				], [
+					mvcView(),
+					'<template:with path="/some/random/path" helper="foo.Helper.help"'
+						+ (bWithVar ? ' var="target"' : '') + '>',
+					'<template:if test="{' + (bWithVar ? 'target>' : '') + 'flag}">',
+					'<In id="flag"/>',
+					'</template:if>',
+					'</template:with>',
+					'</mvc:View>'
+				], {
+					models : oModel
+				}, /*vExpected*/undefined, bAsync);
 			});
 		});
 	});
@@ -1848,17 +1864,20 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[true, ""].forEach(function (vResult) {
-		QUnit.test("template:with and helper returning " + vResult, function (assert) {
-			window.foo = function () {
-				return vResult;
-			};
-			this.checkError(assert, [
-				mvcView(),
-				'<template:with path="/unused" var="target" helper="foo"/>',
-				'</mvc:View>'
-			], "Illegal helper result '" + vResult + "' in {0}", {
-				models : new JSONModel()
+	[false, true].forEach(function (bAsync) {
+		[true, ""].forEach(function (vResult) {
+			QUnit.test("template:with and helper returning " + vResult + ", bAsync = " + bAsync,
+					function (assert) {
+				window.foo = function () {
+					return vResult;
+				};
+				this.checkError(assert, [
+					mvcView(),
+					'<template:with path="/unused" var="target" helper="foo"/>',
+					'</mvc:View>'
+				], "Illegal helper result '" + vResult + "' in {0}", {
+					models : new JSONModel()
+				}, undefined, bAsync);
 			});
 		});
 	});
@@ -1889,6 +1908,44 @@ sap.ui.require([
 			bindingContexts : {
 				bar : oModel.createBindingContext("/my/path")
 			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("template:with synchronously and helper returning Promise", function (assert) {
+		window.foo = function () {
+			return Promise.resolve();
+		};
+		this.checkError(assert, [
+			mvcView(),
+			'<template:with path="/unused" helper="foo"/>',
+			'</mvc:View>'
+		], "Async helper in sync view in {0}", {
+			models : new JSONModel()
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("template:with synchronously and helper returning SyncPromise", function (assert) {
+		var oModel = new JSONModel({
+				target : {
+					flag : true
+				}
+			});
+
+		window.foo = function (oContext) {
+			return SyncPromise.resolve("/target");
+		};
+		this.check(assert, [
+			mvcView(),
+			'<template:with path="/some/random/path" helper="foo">',
+			'<template:if test="{flag}">',
+			'<In id="flag"/>',
+			'</template:if>',
+			'</template:with>',
+			'</mvc:View>'
+		], {
+			models : oModel
 		});
 	});
 
@@ -3790,7 +3847,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("async <template:repeat>", function (assert) {
+	QUnit.test("async template:repeat", function (assert) {
 		return this.checkTracing(assert, true, [
 			{m : "[ 0] Start processing qux"},
 			{m : "[ 1] Starting", d : 1},
@@ -3823,6 +3880,27 @@ sap.ui.require([
 			'<In src="B"/>',
 			'<In src="C"/>'
 		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("async template:repeat in sync view", function (assert) {
+		return this.check(assert, [
+			mvcView(),
+			'<template:repeat list="{/items}">',
+			'<In src="{src}"/>',
+			'</template:repeat>',
+			'</mvc:View>'
+		], {
+			models : asyncModel({
+				items : [{
+					src : "A"
+				}, {
+					src : "B"
+				}, {
+					src : "C"
+				}]
+			})
+		}, []);
 	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
