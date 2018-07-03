@@ -24,6 +24,7 @@ xhr.onCreate = function(request) {
 		var mHeaders = mXMLHeaders;
 		var sAnswer = "This should never be received as an answer!";
 		var bLastModified = true;
+		var bETag = true;
 
 		switch (request.url) {
 
@@ -78,6 +79,7 @@ xhr.onCreate = function(request) {
 				mHeaders = mMetaDataHeaders;
 				sAnswer = sMetadataWithEntityContainers;
 				bLastModified = false;
+				bETag = false;
 				break;
 
 			case "fakeService://testdata/odata/northwind-annotations-normal.xml":
@@ -258,7 +260,11 @@ xhr.onCreate = function(request) {
 		}
 
 		if (bLastModified) {
-			mHeaders["Last-Modified"] = "Wed, 15 Nov 1995 04:58:08 GMT";
+			mHeaders["last-Modified"] = "Wed, 15 Nov 1995 04:58:08 GMT";
+		}
+
+		if (bETag) {
+			mHeaders["eTag"] = "Wed, 15 Nov 1995 04:58:08 GMT";
 		}
 
 		if (request.async === true) {

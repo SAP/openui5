@@ -176,6 +176,10 @@ sap.ui.define([
 				if (sLastModified) {
 					mParams.lastModified = sLastModified;
 				}
+				var sETag = oResponse.headers["eTag"];
+				if (sETag) {
+					mParams.eTag = sETag;
+				}
 				that._handleLoaded(oMetadata, mParams, bSuppressEvents);
 				resolve(mParams);
 			}

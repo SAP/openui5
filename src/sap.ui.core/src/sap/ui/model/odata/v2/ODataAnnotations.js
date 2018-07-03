@@ -72,7 +72,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 					data: oMetadata.loaded().then(function(mParams) {
 						return {
 							xml: mParams["metadataString"],
-							lastModified: mParams["lastModified"]
+							lastModified: mParams["lastModified"],
+							eTag: mParams["eTag"]
 						};
 					})
 				});
@@ -593,6 +594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 				mSource.type = "xml";
 				mSource.xml = oData.xml;
 				mSource.lastModified = oData.lastModified;
+				mSource.eTag = oData.eTag;
 				return this._loadSource(mSource);
 			}.bind(this));
 		} else if (mSource.type === "xml") {
@@ -637,6 +639,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 				if (oXHR.getResponseHeader("Last-Modified")) {
 					mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
+				}
+
+				if (oXHR.getResponseHeader("eTag")) {
+					mSource.eTag = oXHR.getResponseHeader("eTag");
 				}
 
 				fnResolve(mSource);

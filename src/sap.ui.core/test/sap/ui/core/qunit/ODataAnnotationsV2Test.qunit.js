@@ -292,6 +292,21 @@ function runODataAnnotationsV2Tests() {
 			service          : "fakeService://testdata/odata/sapdata02/",
 			serviceValid     : true,
 			annotationsValid : "all"
+		},
+		"ETag Header": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : [
+				"fakeService://testdata/odata/multiple-annotations-01.xml",
+				"fakeService://testdata/odata/multiple-annotations-02.xml",
+				"fakeService://testdata/odata/multiple-annotations-03.xml"
+			],
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"No ETag Header": {
+			service          : "fakeService://testdata/odata/sapdata02/",
+			serviceValid     : true,
+			annotationsValid : "all"
 		}
 	};
 
@@ -864,4 +879,48 @@ function runODataAnnotationsV2Tests() {
 
 	QUnit.test("Access to lastModified header which is not set", fnTestNoLastModified);
 
+
+	var fnTestETag = function(assert) {
+		var done = assert.async();
+
+		assert.expect(4);
+
+		var mService = mAdditionalTestsServices["ETag Header"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
+			annotationURI: mService.annotations,
+			skipMetadataAnnotationParsing: false
+		});
+
+		oModel.annotationsLoaded().then(function(aAnnotations) {
+			var iEtag = new Date("Wed, 15 Nov 1995 04:58:08 GMT").getTime();
+
+			assert.equal(Date.parse(aAnnotations[0].eTag), iEtag, "ETag header exists for first annotation document");
+			assert.equal(Date.parse(aAnnotations[1].eTag), iEtag, "ETag header exists for second annotation document");
+			assert.equal(Date.parse(aAnnotations[2].eTag), iEtag, "ETag header exists for third annotation document");
+			assert.equal(Date.parse(aAnnotations[3].eTag), iEtag, "ETag header exists for fourth annotation document");
+
+			done();
+		});
+
+	};
+
+	QUnit.test("Access to ETag header", fnTestETag);
+
+
+
+	var fnTestNoETag = function(assert) {
+		var mService = mAdditionalTestsServices["No ETag Header"];
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
+			annotationURI: mService.annotations,
+			skipMetadataAnnotationParsing: false
+		});
+
+		return oModel.annotationsLoaded().then(function(aAnnotations) {
+			assert.notOk(aAnnotations[0].eTag, "ETag header does not exist for annotation document");
+		});
+	};
+
+	QUnit.test("Access to ETag header which is not set", fnTestNoETag);
 }
