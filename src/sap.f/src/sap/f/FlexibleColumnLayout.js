@@ -635,7 +635,7 @@ sap.ui.define([
 			defaultTransitionName: this["getDefaultTransitionName" + sColumnCap + "Column"]()
 		});
 
-		sColumn === "begin" && oNavContainer.attachEvent("_adaptableContentChange", this._onFirstPageRendered, this);
+		sColumn === "begin" && oNavContainer.attachEvent("_onNavContainerRendered", this._onFirstPageRendered, this);
 
 		return oNavContainer;
 	};

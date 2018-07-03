@@ -879,7 +879,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 
 	QUnit.test("_onFirstPageRendered", function (assert) {
 		// setup
-		this.oFCL = oFactory.createFCL();
+		this.oFCL = new FlexibleColumnLayout();
 		var oEventSpy = this.spy(this.oFCL, "_hideShowArrows");
 
 		// assert
