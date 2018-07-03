@@ -34,6 +34,11 @@ sap.ui.define([
 		properties: {
 
 			/**
+			 * Defines the minimum width of each Box
+			 */
+			boxMinWidth: { type: "sap.ui.core.CSSSize", defaultValue: "" },
+
+			/**
 			 * Defines the width of each Box
 			 */
 			boxWidth: { type: "sap.ui.core.CSSSize", defaultValue: "" },
@@ -155,6 +160,7 @@ sap.ui.define([
 	 */
 	["setHeaderText", "getHeaderText", "setGrowing", "getGrowing",
 	"setGrowingThreshold", "getGrowingThreshold", "setBoxWidth", "getBoxWidth",
+	"setBoxMinWidth", "getBoxMinWidth",
 	"setBoxesPerRowConfig", "getBoxesPerRowConfig"].forEach(function (sName) {
 		BoxContainer.prototype[sName] = function() {
 			var oList = this.getAggregation("_list");

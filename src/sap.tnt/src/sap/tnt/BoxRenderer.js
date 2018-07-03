@@ -21,11 +21,15 @@ sap.ui.define([
 		var oBoxContainerList = oLI.getList(),
 			sWidth;
 
-		if (oBoxContainerList && oBoxContainerList.getMetadata().getName() === "sap.tnt.BoxContainerList") {
-			sWidth = oBoxContainerList.getBoxWidth();
+		if (!Device.browser.msie) {
+			return;
 		}
 
-		if (Device.browser.msie && sWidth) {
+		if (oBoxContainerList && oBoxContainerList.getMetadata().getName() === "sap.tnt.BoxContainerList") {
+			sWidth = oBoxContainerList.getBoxWidth() || oBoxContainerList.getBoxMinWidth();
+		}
+
+		if (sWidth) {
 			rm.addStyle("width", sWidth);
 		}
 	};
