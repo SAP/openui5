@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/library'],
-	function(jQuery, library) {
+sap.ui.define(['sap/ui/unified/library'],
+	function(library) {
 	"use strict";
 
 

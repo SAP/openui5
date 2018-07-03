@@ -17,11 +17,11 @@ sap.ui.require([
 	"sap/ui/core/Control",
 	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
-	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem"
+	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log"
 ], function(qutils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction, RowActionItem,
 			RowSettings, TableUtils, TableLibrary, CoreLibrary, Control,
 			Device, JSONModel, Sorter, Filter, FloatType,
-			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem, MenuM, MenuItemM) {
+			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem, MenuM, MenuItemM, Log) {
 	"use strict";
 
 	// Shortcuts
@@ -420,7 +420,7 @@ sap.ui.require([
 
 	QUnit.test("VisibleRowCount", function(assert) {
 		assert.expect(6);
-		var fnError = sinon.spy(jQuery.sap.log, "error");
+		var fnError = sinon.spy(Log, "error");
 		oTable.setVisibleRowCount(8);
 		assert.equal(oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
 		oTable.setVisibleRowCount(Infinity);
@@ -432,11 +432,11 @@ sap.ui.require([
 		assert.ok(oTable.getVisibleRowCount() !== 15,
 			"setVisibleRowCount was ignored as visibleRowCountMode = Auto, error message must have been logged");
 		assert.equal(fnError.args[0][0], "VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", "Error was logged");
-		fnError.restore(); // restoring original jQuery.sap.log.error() method, else exception is thrown
+		fnError.restore(); // restoring original Log.error() method, else exception is thrown
 	});
 
 	QUnit.test("MinAutoRowCount", function(assert) {
-		var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error");
+		var oErrorLogSpy = sinon.spy(Log, "error");
 
 		assert.strictEqual(oTable.getMinAutoRowCount(), 5, "The default value is correct");
 
@@ -2808,7 +2808,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Check for Fixed Rows and Fixed Bottom Rows", function(assert) {
-		var fnError = sinon.spy(jQuery.sap.log, "error");
+		var fnError = sinon.spy(Log, "error");
 		assert.equal(oTable._getFixedRowContexts().length, 0, "fixedRowContexts returned an empty array");
 		oTable.setFixedRowCount(5);
 		assert.equal(oTable.getFixedRowCount(), 5, "fixedRowCount is set to 5");
@@ -2837,7 +2837,7 @@ sap.ui.require([
 		assert.ok(oTable.getFixedBottomRowCount() !== -1,
 			"Attempt to set fixedBottomRowCount as negative number, error mesaage must have been logged");
 		assert.equal(fnError.args[1][0], "Number of fixed bottom rows must be greater or equal 0", "Appropriate error message was logged");
-		fnError.restore(); // restoring original jQuery.sap.log.error() method, else exception is thrown
+		fnError.restore(); // restoring original Log.error() method, else exception is thrown
 	});
 
 	QUnit.test("Check show overlay", function(assert) {
@@ -2879,7 +2879,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Test for function that cannot be used programmatically", function(assert) {
-		var fnError = sinon.spy(jQuery.sap.log, "error");
+		var fnError = sinon.spy(Log, "error");
 		assert.equal(oTable.getRows().length, 10, "Row count before row operations is 10");
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
 		oTable.insertRow();

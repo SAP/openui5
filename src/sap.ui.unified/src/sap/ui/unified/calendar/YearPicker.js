@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -17,7 +16,6 @@ sap.ui.define([
 	"./YearPickerRenderer",
 	"sap/ui/events/KeyCodes"
 ], function(
-	jQuery,
 	Control,
 	Device,
 	ItemNavigation,

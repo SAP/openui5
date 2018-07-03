@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/LocaleData',
@@ -13,7 +12,6 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	"./MonthPickerRenderer"
 ], function(
-	jQuery,
 	Control,
 	Device,
 	LocaleData,

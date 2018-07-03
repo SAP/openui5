@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.AssociativeSplitter.
-sap.ui.define(['./Splitter', './SplitterRenderer', 'jquery.sap.global'],
-	function(Splitter, SplitterRenderer, jQuery) {
+sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log"],
+	function(Splitter, SplitterRenderer, Log) {
 	"use strict";
 
 	/**
@@ -294,7 +294,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', 'jquery.sap.global'],
 			fMoveC2Size = parseFloat(sMoveContentSize2);
 
 		if (isNaN(iPixels)) {
-			jQuery.sap.log.warning("Splitter: Received invalid resizing values - resize aborted.");
+			Log.warning("Splitter: Received invalid resizing values - resize aborted.");
 			return;
 		}
 
@@ -410,7 +410,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', 'jquery.sap.global'],
 					aAutosizeIdx.push(i);
 				}
 			} else {
-				jQuery.sap.log.error("Illegal size value: " + aSizes[i]);
+				Log.error("Illegal size value: " + aSizes[i]);
 			}
 		}
 
@@ -474,7 +474,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', 'jquery.sap.global'],
 			//       hand it might make analyzing of splitter bugs easier, since we can just ask
 			//       developers if there was a [Splitter] output on the console if the splitter looks
 			//       weird in their application.
-			jQuery.sap.log.info(
+			Log.info(
 				"[Splitter] The set sizes and minimal sizes of the splitter contents are bigger " +
 				"than the available space in the UI."
 			);
@@ -502,7 +502,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', 'jquery.sap.global'],
 		// Make sure LayoutData is set on the content
 		// But this approach has the advantage that "compatible" LayoutData can be used.
 		if (oLd && (!oLd.getResizable || !oLd.getSize || !oLd.getMinSize)) {
-			jQuery.sap.log.warning(
+			Log.warning(
 				"Content \"" + oContent.getId() + "\" for the Splitter contained wrong LayoutData. " +
 				"The LayoutData has been replaced with default values."
 			);

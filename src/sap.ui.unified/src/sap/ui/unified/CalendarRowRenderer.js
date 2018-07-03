@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppointment',
-		'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/Device', 'sap/ui/unified/library', 'sap/ui/core/InvisibleText'],
-	function (jQuery, UniversalDate, CalendarAppointment, CalendarLegendRenderer, Device, library, InvisibleText) {
+sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppointment', 'sap/ui/unified/CalendarLegendRenderer',
+		'sap/ui/Device', 'sap/ui/unified/library', 'sap/ui/core/InvisibleText', "sap/base/Log"],
+	function (UniversalDate, CalendarAppointment, CalendarLegendRenderer, Device, library, InvisibleText, Log) {
 		"use strict";
 
 
@@ -749,7 +749,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			if (oLegend) {
 				aResult = oLegend.getItems();
 			} else {
-				jQuery.sap.log.error("CalendarLegend with id '" + sLegendId + "' does not exist!", oCalRow);
+				Log.error("CalendarLegend with id '" + sLegendId + "' does not exist!", oCalRow);
 			}
 		}
 		return aResult;

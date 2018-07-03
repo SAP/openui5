@@ -4,8 +4,8 @@
 
 // Provides helper sap.ui.table.TableScrollExtension.
 sap.ui.define([
-	"jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "./library", "sap/ui/performance/trace/Interaction", "jquery.sap.events"
-], function(jQuery, TableExtension, TableUtils, Device, library, Interaction) {
+	"./TableExtension", "./TableUtils", "sap/ui/Device", "./library", "sap/ui/performance/trace/Interaction", "sap/base/Log", "jquery.sap.events"
+], function(TableExtension, TableUtils, Device, library, Interaction, Log) {
 	"use strict";
 
 	// Shortcuts
@@ -219,7 +219,7 @@ sap.ui.define([
 			if (oScrollExtension._bIsScrolledVerticallyByKeyboard || VerticalScrollingHelper.isUpdatePending(this)) {
 				// When scrolling with the keyboard the first visible row is already correct and does not need adjustment.
 				// In case an update is scheduled, we should wait for the other scroll event to avoid unnecessary updates.
-				jQuery.sap.log.debug("sap.ui.table.TableScrollExtension", "Vertical scroll event handler aborted: "
+				Log.debug("sap.ui.table.TableScrollExtension", "Vertical scroll event handler aborted: "
 					+ (oScrollExtension._bIsScrolledVerticallyByKeyboard ? "Scrolled by keyboard" : "Waiting for pending update"), this);
 				return;
 			}
@@ -233,7 +233,7 @@ sap.ui.define([
 
 			if (nNewScrollTop !== nOldScrollTop) {
 				// The scroll position has been set via HTMLElement#scrollTop.
-				jQuery.sap.log.debug("sap.ui.table.TableScrollExtension", "Scroll position changed by setting scrollTop: "
+				Log.debug("sap.ui.table.TableScrollExtension", "Scroll position changed by setting scrollTop: "
 					+ "From " + oScrollExtension._nVerticalScrollPosition + " to " + nNewScrollTop, this);
 				delete oEvent.target._scrollTop;
 				oScrollExtension._nVerticalScrollPosition = nNewScrollTop;
@@ -274,7 +274,7 @@ sap.ui.define([
 					// The actual new first visible row cannot be determined yet. It will be done when the inner scroll position gets updated.
 					iNewFirstVisibleRowIndex = oTable._getMaxFirstRenderedRowIndex();
 				}
-				jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+				Log.debug("sap.ui.table.TableScrollExtension",
 					"updateFirstVisibleRow: From " + iOldFirstVisibleRowIndex + " to " + iNewFirstVisibleRowIndex, oTable);
 				oTable.setFirstVisibleRow(iNewFirstVisibleRowIndex, true);
 				oTable._bIgnoreOnRowsUpdatedOnScroll = true;
@@ -283,7 +283,7 @@ sap.ui.define([
 					delete oTable._bIgnoreOnRowsUpdatedOnScroll;
 				});
 			} else if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-				jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+				Log.debug("sap.ui.table.TableScrollExtension",
 					"updateFirstVisibleRow: Update inner vertical scroll position", oTable);
 				oScrollExtension.updateInnerVerticalScrollPosition();
 			}
@@ -1265,7 +1265,7 @@ sap.ui.define([
 			this._iFirstVisibleRowInBuffer = null;
 		}
 
-		jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+		Log.debug("sap.ui.table.TableScrollExtension",
 			"updateVerticalScrollPosition: From " + nOldScrollPosition + " to " + this._nVerticalScrollPosition
 			+ " (diff: " + (this._nVerticalScrollPosition - nOldScrollPosition) + ")", oTable);
 
@@ -1286,7 +1286,7 @@ sap.ui.define([
 			clearTimeout(oTable._mTimeouts.verticalScrollUpdate);
 			delete oTable._mTimeouts.verticalScrollUpdate;
 
-			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+			Log.debug("sap.ui.table.TableScrollExtension",
 				"updateVerticalScrollPosition: scrollTop will be set asynchronously", oTable);
 
 			oTable._mAnimationFrames.verticalScrollUpdate = window.requestAnimationFrame(function() {
@@ -1294,7 +1294,7 @@ sap.ui.define([
 
 				delete oTable._mAnimationFrames.verticalScrollUpdate;
 
-				jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+				Log.debug("sap.ui.table.TableScrollExtension",
 					"updateVerticalScrollPosition: (async) Set scrollTop from " + nOldScrollTop + " to " + iNewScrollTop, oTable);
 
 				oVSb.scrollTop = iNewScrollTop;
@@ -1314,7 +1314,7 @@ sap.ui.define([
 			}
 			clearTimeout(oTable._mTimeouts.verticalScrollUpdate);
 
-			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+			Log.debug("sap.ui.table.TableScrollExtension",
 				"updateVerticalScrollPosition: firstVisibleRow will be set asynchronously", oTable);
 
 			oTable._mTimeouts.verticalScrollUpdate = setTimeout(function() {
@@ -1322,7 +1322,7 @@ sap.ui.define([
 				VerticalScrollingHelper.updateFirstVisibleRow(oTable);
 			}, 0);
 		} else {
-			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+			Log.debug("sap.ui.table.TableScrollExtension",
 				"updateVerticalScrollPosition: scrollTop and nVerticalScrollPosition not changed -> update inner vertical scroll position", oTable);
 			this.updateInnerVerticalScrollPosition();
 		}
@@ -1567,7 +1567,7 @@ sap.ui.define([
 			// bigger than 0, even though the calculated range is 0, so the browser does not automatically adjust it. Therefore the inner scroll
 			// position should be reset.
 
-			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension", "updateInnerVerticalScrollPosition: 0", oTable);
+			Log.debug("sap.ui.table.TableScrollExtension", "updateInnerVerticalScrollPosition: 0", oTable);
 			oTable.setFirstVisibleRow(0, true);
 			this._nVerticalScrollPosition = 0;
 			oContentDomRef.scrollTop = 0;
@@ -1576,7 +1576,7 @@ sap.ui.define([
 
 		// Only update the inner scroll position if the table is not going to update the rows.
 		if (oTable._getFirstRenderedRowIndex() !== oTable._iRenderedFirstVisibleRow) {
-			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+			Log.debug("sap.ui.table.TableScrollExtension",
 				"updateInnerVerticalScrollPosition: Skipped, because rows will be updated", oTable);
 			return;
 		}
@@ -1627,7 +1627,7 @@ sap.ui.define([
 
 				var iNewFirstVisibleRowIndex = oTable._getMaxFirstRenderedRowIndex() + iFirstVisibleRowIndexInBuffer;
 				if (iNewFirstVisibleRowIndex !== iFirstVisibleRowIndex) {
-					jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+					Log.debug("sap.ui.table.TableScrollExtension",
 						"updateInnerVerticalScrollPosition: Set firstVisibleRow from " + iFirstVisibleRowIndex + " to " + iNewFirstVisibleRowIndex,
 						oTable);
 					oTable.setFirstVisibleRow(iNewFirstVisibleRowIndex, true);
@@ -1638,14 +1638,14 @@ sap.ui.define([
 				var nNewScrollPosition = nScrollRangeWithoutBuffer + nVirtualScrollPosition;
 				nInnerScrollPercentage = 0;
 
-				jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+				Log.debug("sap.ui.table.TableScrollExtension",
 					"updateInnerVerticalScrollPosition: Set scroll position to " + nNewScrollPosition, oTable);
 				this.updateVerticalScrollPosition(nNewScrollPosition);
 				return;
 			}
 		}
 
-		jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
+		Log.debug("sap.ui.table.TableScrollExtension",
 			"updateInnerVerticalScrollPosition: " + iInnerScrollPosition + " of " + iInnerScrollRange + " (" + (nInnerScrollPercentage * 100) + "%)"
 			+ " (in buffer: " + bScrollPositionInBuffer + ")", oTable);
 

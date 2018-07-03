@@ -4,8 +4,8 @@
 
 // Provides helper sap.ui.table.TablePointerExtension.
 sap.ui.define([
-"./library", "jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "sap/ui/core/Popup"
-], function(library, jQuery, TableExtension, TableUtils, Device, Popup) {
+"./library", "./TableExtension", "./TableUtils", "sap/ui/Device", "sap/ui/core/Popup", "sap/base/Log"
+], function(library, TableExtension, TableUtils, Device, Popup, Log) {
 	"use strict";
 
 	// shortcuts
@@ -86,7 +86,7 @@ sap.ui.define([
 			}
 
 			if (bHasSelection) {
-				jQuery.sap.log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
+				Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
 				return true;
 			}
 

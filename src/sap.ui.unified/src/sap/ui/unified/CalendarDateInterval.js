@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'./Calendar',
 	'./calendar/DatesRow',
@@ -14,9 +13,9 @@ sap.ui.define([
 	'./library',
 	'sap/ui/Device',
 	"./CalendarDateIntervalRenderer",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	CalendarUtils,
 	Calendar,
 	DatesRow,
@@ -26,7 +25,8 @@ sap.ui.define([
 	library,
 	Device,
 	CalendarDateIntervalRenderer,
-	deepEqual
+	deepEqual,
+	Log
 ) {
 	"use strict";
 
@@ -187,8 +187,10 @@ sap.ui.define([
 			oCalPicker.attachEvent("select", this._handleCalendarPickerDateSelect, this);
 			oCalPicker.attachEvent("cancel", function (oEvent) {
 				this._closeCalendarPicker();
-
-				jQuery.sap.focus(this.getAggregation("header").getDomRef("B1"));
+				var oDomRefB1 = this.getAggregation("header").getDomRef("B1");
+				if (oDomRefB1) {
+					oDomRefB1.focus();
+				}
 			}, this);
 			this.setAggregation("calendarPicker", oCalPicker);
 		}
@@ -314,13 +316,13 @@ sap.ui.define([
 
 		var oMinDate = this.getMinDate();
 		if (oMinDate && oStartDate.getTime() < oMinDate.getTime()) {
-			jQuery.sap.log.warning("startDate < minDate -> minDate as startDate set", this);
+			Log.warning("startDate < minDate -> minDate as startDate set", this);
 			oStartDate = new Date(oMinDate.getTime());
 		}
 
 		var oMaxDate = this.getMaxDate();
 		if (oMaxDate && oStartDate.getTime() > oMaxDate.getTime()) {
-			jQuery.sap.log.warning("startDate > maxDate -> maxDate as startDate set", this);
+			Log.warning("startDate > maxDate -> maxDate as startDate set", this);
 			oStartDate = new Date(oMaxDate.getTime());
 		}
 
@@ -528,10 +530,10 @@ sap.ui.define([
 	CalendarDateInterval.prototype._focusOnShiftTab = function() {
 		var oHeader = this.getAggregation("header");
 
-		if (this.getPickerPopup()){
-			jQuery.sap.focus(oHeader.getDomRef("B1"));
-		} else {
-			jQuery.sap.focus(oHeader.getDomRef("B2"));
+		if (this.getPickerPopup() && oHeader.getDomRef("B1")){
+			oHeader.getDomRef("B1").focus();
+		} else if (!this.getPickerPopup() && oHeader.getDomRef("B2")){
+			oHeader.getDomRef("B2").focus();
 		}
 	};
 
@@ -591,13 +593,13 @@ sap.ui.define([
 		if (this._oStartDate) {
 			// check if still in valid range
 			if (this._oStartDate.isBefore(this._oMinDate)) {
-				jQuery.sap.log.warning("start date < minDate -> minDate will be start date", this);
+				Log.warning("start date < minDate -> minDate will be start date", this);
 				this._setStartDate(new CalendarDate(this._oMinDate, this.getPrimaryCalendarType()), true, true);
 			} else {
 				var oEndDate = new CalendarDate(this._oStartDate);
 				oEndDate.setDate(oEndDate.getDate() + this._getDays() - 1);
 				if (oEndDate.isAfter(this._oMaxDate)) {
-					jQuery.sap.log.warning("end date > maxDate -> start date will be changed", this);
+					Log.warning("end date > maxDate -> start date will be changed", this);
 					var oStartDate = new CalendarDate(this._oMaxDate);
 					oStartDate.setDate(oStartDate.getDate() - this._getDays() + 1);
 					this._setStartDate(oStartDate, true, true);
@@ -853,6 +855,7 @@ sap.ui.define([
 	CalendarDateInterval.prototype._openPickerPopup = function(oPicker){
 
 		if (!this._oPopup) {
+			//TODO: global jquery call found
 			jQuery.sap.require("sap.ui.core.Popup");
 			this._oPopup = new sap.ui.core.Popup();
 			this._oPopup.setAutoClose(true);

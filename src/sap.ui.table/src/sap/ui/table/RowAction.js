@@ -4,18 +4,16 @@
 
 // Provides control sap.ui.table.RowAction
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    "sap/ui/table/TableUtils",
-    './library',
-    'sap/ui/core/Icon',
-    'sap/ui/unified/Menu',
-    'sap/ui/core/Popup',
-    "./RowActionRenderer",
-    "sap/ui/events/KeyCodes"
+	'sap/ui/core/Control',
+	"sap/ui/table/TableUtils",
+	'./library',
+	'sap/ui/core/Icon',
+	'sap/ui/unified/Menu',
+	'sap/ui/core/Popup',
+	"./RowActionRenderer",
+	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	Control,
 	TableUtils,
 	library,

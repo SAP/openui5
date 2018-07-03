@@ -3,9 +3,7 @@
  */
 
 // Provides helper sap.ui.table.TableAccRenderExtension.
-sap.ui.define([
-	"jquery.sap.global", "./TableExtension", "./TableUtils", "./library"
-], function(jQuery, TableExtension, TableUtils, library) {
+sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableExtension, TableUtils, library) {
 	"use strict";
 
 	// Shortcuts

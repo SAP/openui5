@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.unified.ShellOverlay.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
@@ -13,7 +12,6 @@ sap.ui.define([
 	'./ShellOverlayRenderer',
 	"sap/ui/thirdparty/jquery"],
 	function(
-		jQuery,
 		Device,
 		Control,
 		Popup,
@@ -271,7 +269,7 @@ sap.ui.define([
 		}
 
 		if (oDomRef) {
-			jQuery.sap.focus(oDomRef);
+			oDomRef.focus();
 		}
 	};
 

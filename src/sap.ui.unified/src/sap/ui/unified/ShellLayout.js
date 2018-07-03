@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.unified.ShellLayout.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
@@ -12,9 +11,9 @@ sap.ui.define([
 	'./SplitContainer',
 	'./library',
 	'./ShellLayoutRenderer',
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	Device,
 	Control,
 	Popup,
@@ -22,7 +21,8 @@ sap.ui.define([
 	SplitContainer,
 	library,
 	ShellLayoutRenderer,
-	containsOrEquals
+	containsOrEquals,
+	Log
 ) {
 	"use strict";
 
@@ -178,12 +178,12 @@ sap.ui.define([
 	ShellLayout.prototype.onfocusin = function(oEvent) {
 		var sId = this.getId();
 
-		if (oEvent.target.id === sId + "-curt-focusDummyOut") {
+		if (oEvent.target.id === sId + "-curt-focusDummyOut" && this.$("hdrcntnt").firstFocusableDomRef()) {
 			// Jump back to shell when you reach the end of the curtain
-			jQuery.sap.focus(this.$("hdrcntnt").firstFocusableDomRef());
-		} else if (oEvent.target.id === sId + "-main-focusDummyOut") {
+			this.$("hdrcntnt").firstFocusableDomRef().focus();
+		} else if (oEvent.target.id === sId + "-main-focusDummyOut" && this.$("curtcntnt").firstFocusableDomRef()) {
 			// Jump to the curtain if it is open (can only reached by tabbing back when curtain is open)
-			jQuery.sap.focus(this.$("curtcntnt").firstFocusableDomRef());
+			this.$("curtcntnt").firstFocusableDomRef().focus();
 		}
 	};
 
@@ -427,7 +427,7 @@ sap.ui.define([
 					oResizeEvent.initUIEvent("resize", true, false, window, 0);
 					window.dispatchEvent(oResizeEvent);
 				} catch (e) {
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
 			}, 500);
 		}
@@ -495,7 +495,7 @@ sap.ui.define([
 
 		this._cssWorkaroundTimer = setTimeout(function(){
 			this._cssWorkaroundTimer = null;
-			jQuery.sap.log.debug("sap.ui.unified.ShellLayout: CSS Workaround applied.");
+			Log.debug("sap.ui.unified.ShellLayout: CSS Workaround applied.");
 			jQuery("head").append("<link type='text/css' rel='stylesheet' id='" + this.getId() + "-css' href='data:text/css;base64,LnNhcFVpVWZkU2hlbGxDaHJvbWVSZXBhaW50e291dGxpbmUtY29sb3I6aW5pdGlhbDt9'/>");
 			this._cssWorkaroundTimer = setTimeout(function(){
 				this.$("css").remove();

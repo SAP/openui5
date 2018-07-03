@@ -2,9 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	'sap/ui/fl/changeHandler/JsControlTreeModifier'
-], function(JsControlTreeModifier) {
+sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"], function(JsControlTreeModifier, Log) {
 	"use strict";
 
 	/**
@@ -119,7 +117,7 @@ sap.ui.define([
 			return true;
 		} catch (oError) {
 			oChange.resetRevertData();
-			jQuery.sap.log.error(oError.message || oError.name);
+			Log.error(oError.message || oError.name);
 		}
 	};
 

@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.layout.ResponsiveFlowLayout.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'./ResponsiveFlowLayoutData',
 	'./library',
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
-		jQuery,
 		Control,
 		ResponsiveFlowLayoutData,
 		library,

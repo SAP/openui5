@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
-	function(Control, library, BlockLayoutCellRenderer) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'./library',
+	"./BlockLayoutCellRenderer",
+	"sap/base/Log"
+],
+	function(Control, library, BlockLayoutCellRenderer, Log) {
 		"use strict";
 
 		/**
@@ -113,7 +118,7 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 
 		BlockLayoutCell.prototype.setTitleLink = function(oObject) {
 				if (oObject && oObject.getMetadata().getName() !== "sap.m.Link") {
-					jQuery.sap.log.warning("sap.ui.layout.BlockLayoutCell " + this.getId() + ": Can't add value for titleLink aggregation different than sap.m.Link.");
+					Log.warning("sap.ui.layout.BlockLayoutCell " + this.getId() + ": Can't add value for titleLink aggregation different than sap.m.Link.");
 					return;
 				}
 

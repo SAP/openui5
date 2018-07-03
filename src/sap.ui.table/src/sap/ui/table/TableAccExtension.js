@@ -4,7 +4,6 @@
 
 // Provides helper sap.ui.table.TableAccExtension.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"./library",
 	"./TableExtension",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	jQuery,
 	Control,
 	library,
 	TableExtension,

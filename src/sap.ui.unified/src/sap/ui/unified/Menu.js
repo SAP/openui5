@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.unified.Menu.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
@@ -16,9 +15,9 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
+	"sap/base/Log",
 	'jquery.sap.events'
 ], function(
-	jQuery,
 	Element,
 	Control,
 	Device,
@@ -29,7 +28,8 @@ sap.ui.define([
 	MenuRenderer,
 	containsOrEquals,
 	jQueryDOM,
-	KeyCodes
+	KeyCodes,
+	Log
 ) {
 	"use strict";
 
@@ -238,7 +238,7 @@ sap.ui.define([
 	 */
 	Menu.prototype.onAfterRendering = function() {
 		if (this.$().parent().attr("id") != "sap-ui-static") {
-			jQuery.sap.log.error("sap.ui.unified.Menu: The Menu is popup based and must not be rendered directly as content of the page.");
+			Log.error("sap.ui.unified.Menu: The Menu is popup based and must not be rendered directly as content of the page.");
 			this.close();
 			this.$().remove();
 		}
@@ -555,7 +555,7 @@ sap.ui.define([
 				try {
 					this.oOpenerRef.focus();
 				} catch (e) {
-					jQuery.sap.log.warning("Menu.close cannot restore the focus on opener " + this.oOpenerRef + ", " + e);
+					Log.warning("Menu.close cannot restore the focus on opener " + this.oOpenerRef + ", " + e);
 				}
 			}
 			this.oOpenerRef = undefined;

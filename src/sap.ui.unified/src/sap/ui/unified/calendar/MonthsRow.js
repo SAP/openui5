@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.CalendarMonthInterval.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -17,7 +16,6 @@ sap.ui.define([
 	"./MonthsRowRenderer",
 	"sap/ui/dom/containsOrEquals"
 ], function(
-	jQuery,
 	Control,
 	LocaleData,
 	ItemNavigation,
