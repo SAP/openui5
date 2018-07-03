@@ -151,6 +151,8 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
+			// Counter for batch requests
+			this.iBatchNo = 0;
 			// {map<string, object[]>}
 			// this.mBatchQueue["sGroupId"] is a list of queued requests for the group "sGroupId"
 			this.mBatchQueue = {};
@@ -440,6 +442,7 @@ sap.ui.require([
 			 * @returns {Promise} A promise on the array of batch responses
 			 */
 			function checkBatch(aRequests) {
+				that.iBatchNo += 1;
 				return Promise.all(aRequests.map(function (oRequest) {
 					return Array.isArray(oRequest)
 						? checkBatch(oRequest)
@@ -490,6 +493,9 @@ sap.ui.require([
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.response;
 					delete oExpectedRequest.responseHeaders;
+					if (oExpectedRequest.batchNo) {
+						oActualRequest.batchNo = that.iBatchNo;
+					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				} else {
 					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
@@ -3546,8 +3552,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Minimal test for two absolute ODataPropertyBindings using different auto groups.
-	QUnit.test("Absolute ODPBs using different $auto groups", function (assert) {
+	// Scenario: Minimal test for two absolute ODataPropertyBindings using different direct groups.
+	QUnit.test("Absolute ODPBs using different $direct groups", function (assert) {
 		var sView = '\
 <Text id="text1" text="{\
 	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
@@ -3571,6 +3577,28 @@ sap.ui.require([
 				}
 			})
 		);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Minimal test for two absolute ODataPropertyBindings using different auto groups.
+	// For group Ids starting with name "$auto." the submit mode will be set to auto automatically.
+	QUnit.test("Absolute ODPBs using different '$auto.X' groups", function (assert) {
+		var sView = '\
+<Text id="text1" text="{\
+	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
+	parameters : {$$groupId : \'$auto.1\'}}" />\
+<Text id="text2" text="{\
+	path : \'/EMPLOYEES(\\\'3\\\')/Name\',\
+	parameters : {$$groupId : \'$auto.2\'}}"\
+/>';
+
+		this.expectRequest({url : "EMPLOYEES('2')/Name", method : "GET", batchNo : 1},
+				{value : "Frederic Fall"})
+			.expectRequest({url : "EMPLOYEES('3')/Name", method : "GET", batchNo : 2},
+				{value : "Jonathan Smith"})
+			.expectChange("text1", "Frederic Fall")
+			.expectChange("text2", "Jonathan Smith");
+		return this.createView(assert, sView, createTeaBusiModel({}));
 	});
 
 	//*********************************************************************************************

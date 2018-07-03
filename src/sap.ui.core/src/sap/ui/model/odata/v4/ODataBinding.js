@@ -514,8 +514,8 @@ sap.ui.define([
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used.
 	 *
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @throws {Error}
 	 *   If the given group ID is invalid, the binding has pending changes, its root binding is
 	 *   suspended or refresh on this binding is not supported.

@@ -40,7 +40,7 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		rApplicationGroupID = /^\w+$/,
-		rGroupID = /^(\$auto|\$direct|\w+)$/,
+		rGroupID = /^(\$auto(\.\w+)?|\$direct|\w+)$/,
 		aMessageTypes = [
 			undefined,
 			MessageType.Success,
@@ -131,8 +131,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.updateGroupId]
 	 *   The group ID that is used for update requests. If no update group ID is specified, <code>
 	 *   mParameters.groupId</code> is used. Valid update group IDs are <code>undefined</code>,
-	 *   '$auto', '$direct' or an application group ID, which is a non-empty string consisting of
-	 *   alphanumeric characters from the basic Latin alphabet, including the underscore.
+	 *   '$auto', '$direct' or an application group ID.
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
 	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
 	 *   system query options or parameter aliases are specified as parameters, if an invalid group
@@ -156,8 +155,27 @@ sap.ui.define([
 	 *   binding and do not access data with their own service requests unless parameters are
 	 *   provided.
 	 *
-	 *   <b>Note: The model does not support any public events; attaching an event handler
-	 *   leads to an error.</b>
+	 *   <b>Group IDs</b> control the model's use of batch requests. Valid group IDs are:
+	 *   <ul>
+	 *   <li><b>$auto</b> and <b>$auto.*</b>: Bundles requests from the model in a batch request
+	 *   which is sent automatically before rendering. You can use different '$auto.*' group IDs to
+	 *   use different batch requests. The suffix may be any non-empty string consisting of
+	 *   alphanumeric characters from the basic Latin alphabet, including the underscore. The submit
+	 *   mode for these group IDs is always {@link sap.ui.model.odata.v4.SubmitMode#Auto}.
+	 *   </li>
+	 *   <li><b>$direct</b>: Sends requests directly without batch. The submit mode for this group
+	 *   ID is always {@link sap.ui.model.odata.v4.SubmitMode#Direct}.
+	 *   </li>
+	 *   <li>An application group ID, which is a non-empty string consisting of alphanumeric
+	 *   characters from the basic Latin alphabet, including the underscore. By default, an
+	 *   application group has the submit mode {@link sap.ui.model.odata.v4.SubmitMode#API}. It is
+	 *   possible to use a different submit mode; for details see
+	 *   <code>mParameters.groupProperties</code>.
+	 *   </li>
+	 *   </ul>
+	 *
+	 *   <b>Note: The model does not support any public events; attaching an event handler leads to
+	 *   an error.</b>
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @since 1.37.0
@@ -408,8 +426,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link #submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @param {boolean} [mParameters.$$inheritExpandSelect]
 	 *   For operation bindings only: Whether $expand and $select from the parent binding are used
 	 *   in the request sent on {@link #execute}. If set to <code>true</code>, the binding must not
@@ -515,8 +533,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link #submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
 	 *   <code>true</code> is allowed.
@@ -562,8 +580,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link #submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
 	 * @throws {Error}
@@ -695,10 +713,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the given group ID is a deferred application group, which is a non-empty
-	 * string consisting of alphanumeric characters from the basic Latin alphabet, including the
-	 * underscore and not having group property {@link sap.ui.model.odata.v4.SubmitMode.Auto}
-	 * or {@link sap.ui.model.odata.v4.SubmitMode.Direct}.
+	 * Checks whether the given group ID is a deferred application group as specified in
+	 * {@link sap.ui.model.odata.v4.ODataModel} and not having group property
+	 * {@link sap.ui.model.odata.v4.SubmitMode.Auto} or
+	 * {@link sap.ui.model.odata.v4.SubmitMode.Direct}.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -718,8 +736,8 @@ sap.ui.define([
 
 	/**
 	 * Checks whether the given group ID is valid, which means it is either undefined, '$auto',
-	 * '$direct' or an application group ID, which is a non-empty string consisting of
-	 * alphanumeric characters from the basic Latin alphabet, including the underscore.
+	 * '$auto.*', '$direct' or an application group ID as specified in
+	 * {@link sap.ui.model.odata.v4.ODataModel}.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -934,6 +952,9 @@ sap.ui.define([
 	ODataModel.prototype.getGroupProperty = function (sGroupId, sPropertyName) {
 		switch (sPropertyName) {
 			case "submit":
+				if (sGroupId.startsWith("$auto.")) {
+					return SubmitMode.Auto;
+				}
 				return this.mGroupProperties[sGroupId]
 					? this.mGroupProperties[sGroupId].submit
 					: SubmitMode.API;
@@ -1072,8 +1093,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.isAutoGroup = function (sGroupId) {
-		return this.mGroupProperties[sGroupId]
-			&& this.mGroupProperties[sGroupId].submit === SubmitMode.Auto;
+		return this.getGroupProperty(sGroupId, "submit") === SubmitMode.Auto;
 	};
 
 	/**
@@ -1087,8 +1107,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.isDirectGroup = function (sGroupId) {
-		return this.mGroupProperties[sGroupId]
-			&& this.mGroupProperties[sGroupId].submit === SubmitMode.Direct;
+		return this.getGroupProperty(sGroupId, "submit") === SubmitMode.Direct;
 	};
 
 	/**
@@ -1146,8 +1165,9 @@ sap.ui.define([
 	 * changes or {@link #resetChanges} to reset the changes before calling {@link #refresh}.
 	 *
 	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh; valid values are <code>undefined</code>,
-	 *   '$auto', '$direct' or application group IDs as specified in {@link #submitBatch}
+	 *   The group ID to be used for refresh; valid values are <code>undefined</code>, '$auto',
+	 *   '$auto.*', '$direct' or application group IDs as specified in
+	 *   {@link sap.ui.model.odata.v4.ODataModel}
 	 * @throws {Error}
 	 *   If the given group ID is invalid or if there are pending changes, see
 	 *   {@link #hasPendingChanges}
@@ -1340,8 +1360,7 @@ sap.ui.define([
 	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @param {string} [sGroupId]
-	 *   The application group ID, which is a non-empty string consisting of alphanumeric
-	 *   characters from the basic Latin alphabet, including the underscore. If it is
+	 *   The application group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}. If it is
 	 *   <code>undefined</code>, the model's <code>updateGroupId</code> is used. Note that the
 	 *   default <code>updateGroupId</code> is '$auto', which is invalid here.
 	 * @throws {Error}
@@ -1431,8 +1450,7 @@ sap.ui.define([
 	 * Submits the requests associated with the given application group ID in one batch request.
 	 *
 	 * @param {string} sGroupId
-	 *   The application group ID, which is a non-empty string consisting of alphanumeric
-	 *   characters from the basic Latin alphabet, including the underscore.
+	 *   The application group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails

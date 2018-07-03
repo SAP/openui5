@@ -291,6 +291,7 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oModel.getGroupProperty("$auto", "submit"), SubmitMode.Auto);
+		assert.strictEqual(oModel.getGroupProperty("$auto.foo", "submit"), SubmitMode.Auto);
 		assert.strictEqual(oModel.getGroupProperty("$direct", "submit"), SubmitMode.Direct);
 		assert.strictEqual(oModel.getGroupProperty("myGroup0", "submit"), SubmitMode.API);
 		assert.strictEqual(oModel.getGroupProperty("myGroup1", "submit"), SubmitMode.Auto);
@@ -342,6 +343,7 @@ sap.ui.require([
 
 		// code under test
 		assert.ok(oModel.isAutoGroup("$auto"));
+		assert.ok(oModel.isAutoGroup("$auto.foo"));
 		assert.notOk(oModel.isAutoGroup("Unknown"));
 		assert.ok(oModel.isAutoGroup("myAutoGroup"));
 		assert.notOk(oModel.isAutoGroup("myAPIGroup"));
@@ -1024,6 +1026,8 @@ sap.ui.require([
 		// valid group IDs
 		oModel.checkGroupId("myGroup");
 		oModel.checkGroupId("$auto");
+		oModel.checkGroupId("$auto.foo");
+		oModel.checkGroupId("$auto.1");
 		oModel.checkGroupId("$direct");
 		oModel.checkGroupId(undefined);
 		oModel.checkGroupId("myGroup", true);

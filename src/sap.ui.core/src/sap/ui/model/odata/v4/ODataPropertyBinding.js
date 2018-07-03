@@ -581,8 +581,8 @@ sap.ui.define([
 	 *   The group ID to be used for this update call; if not specified, the update group ID for
 	 *   this binding (or its relevant parent binding) is used, see
 	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended, the new value is not primitive or no value has
 	 *   been read before

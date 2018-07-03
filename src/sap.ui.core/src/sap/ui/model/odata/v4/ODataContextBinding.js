@@ -515,8 +515,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or a return value context when the operation
 	 *   call succeeded, or rejected with an instance of <code>Error</code> in case of failure,
