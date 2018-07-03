@@ -1609,7 +1609,136 @@ sap.ui.require([
 			oModel.reportBoundMessages("Team('42')", {});
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("reportBoundMessages: remove old messages w/o key predicates", function (assert) {
+		var mMessages = {
+				"/FOO('1')" : [{}, {}],
+				// TODO use Message.getPersistent() instead of Message.persistent?
+				"/FOO('1')/bar" : [{persistent : true}, {}, {persistent : true}, {}],
+				"/FOO('2')" : [{}],
+				"/FOO('3')/NavSingle" : [{}],
+				"/FOO('3')/NavSingle/Name" : [{}, {}],
+				"/FOO('3')/NavSingleBar/Name" : [{}]
+			},
+			oModel = createModel(),
+			oModelMock = this.mock(oModel);
+
+		oModel.mMessages = mMessages;
+
+		oModelMock.expects("fireMessageChange")
+			.withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				var aNewMessages = mArguments.newMessages,
+					aOldMessages = mArguments.oldMessages;
+
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][1]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')/bar"][0]) < 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')/bar"][1]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')/bar"][2]) < 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')/bar"][3]) >= 0);
+				assert.strictEqual(aNewMessages.length, 0);
+				assert.strictEqual(aOldMessages.length, 4);
+			});
+
+		// code under test
+		oModel.reportBoundMessages("FOO('1')", {});
+
+		oModelMock.expects("fireMessageChange")
+			.withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				var aNewMessages = mArguments.newMessages,
+					aOldMessages = mArguments.oldMessages;
+
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingle"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingle/Name"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingle/Name"][1]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingleBar/Name"][0]) < 0);
+				assert.strictEqual(aNewMessages.length, 0);
+				assert.strictEqual(aOldMessages.length, 3);
+			});
+
+		// code under test
+		oModel.reportBoundMessages("FOO('3')/NavSingle", {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reportBoundMessages: remove old messages with key predicates", function (assert) {
+		var mMessages = {
+				"/FOO('1')" : [{}, {}],
+				"/FOO('1')/bar" : [{}],
+				"/FOO('2')" : [{persistent : true}, {}, {persistent : true}, {}],
+				"/FOO('3')/NavSingle" : [{}],
+				"/FOO('3')/NavSingle/Name" : [{}, {}],
+				"/FOO('3')/NavSingleBar/Name" : [{}]
+			},
+			oModel = createModel(),
+			oModelMock = this.mock(oModel);
+
+		oModel.mMessages = mMessages;
+		oModelMock.expects("fireMessageChange")
+			.withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				var aNewMessages = mArguments.newMessages,
+					aOldMessages = mArguments.oldMessages;
+
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][1]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')/bar"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('2')"][0]) < 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('2')"][1]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('2')"][2]) < 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('2')"][3]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingleBar/Name"][0]) < 0);
+				assert.strictEqual(aNewMessages.length, 0);
+				assert.strictEqual(aOldMessages.length, 5);
+			});
+
+		// code under test - only keys 1 and 2 were read
+		oModel.reportBoundMessages("FOO", {}, ["('1')", "('2')"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reportBoundMessages: remove old messages - complete collection", function (assert) {
+		var mMessages = {
+				"/FOO('1')" : [{}, {}],
+				"/FOO('1')/bar" : [{}],
+				"/FOO('2')" : [{persistent : true}, {}, {persistent : true}, {}],
+				"/FOO('3')/NavSingle" : [{}],
+				"/FOO('3')/NavSingle/Name" : [{}, {}],
+				"/FOO('3')/NavSingleBar/Name" : [{}]
+			},
+			oModel = createModel(),
+			oModelMock = this.mock(oModel);
+
+		oModel.mMessages = mMessages;
+		oModelMock.expects("fireMessageChange")
+			.withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				var aNewMessages = mArguments.newMessages,
+					aOldMessages = mArguments.oldMessages;
+
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][1]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')/bar"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('2')"][0]) < 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('2')"][1]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('2')"][2]) < 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('2')"][3]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingle"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingle/Name"][0]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingle/Name"][1]) >= 0);
+				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingleBar/Name"][0]) >= 0);
+				assert.strictEqual(aNewMessages.length, 0);
+				assert.strictEqual(aOldMessages.length, 9);
+			});
+
+		// code under test
+		oModel.reportBoundMessages("FOO", {});
+	});
 });
+
 //TODO constructor: test that the service root URL is absolute?
 //TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
 //TODO read etc.: provide access to "abort" functionality
