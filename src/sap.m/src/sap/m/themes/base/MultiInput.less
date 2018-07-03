@@ -80,6 +80,13 @@ html.sap-desktop .sapMMultiInputBorder {
 	overflow: hidden;
 }
 
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder::before {
+		border-style: dashed;
+	}
+}
+
 .sapMMultiInput .sapMInputValHelp {
 	display: inline-block;
 	position: static;
