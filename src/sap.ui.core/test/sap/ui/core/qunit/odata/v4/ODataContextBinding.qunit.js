@@ -43,8 +43,6 @@ sap.ui.require([
 			// ensure that the requestor does not trigger requests
 			this.oRequestorMock.expects("request").never();
 			// avoid that the cache requests actual metadata for faked responses
-			this.oRequestorMock.expects("fetchTypeForPath").atLeast(0)
-				.returns(SyncPromise.resolve({}));
 			this.oRequestorMock.expects("fetchMetadata").atLeast(0)
 				.returns(SyncPromise.resolve());
 		},

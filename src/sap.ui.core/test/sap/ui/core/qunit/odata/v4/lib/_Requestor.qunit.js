@@ -2206,7 +2206,7 @@ sap.ui.require([
 		var oPromise = {},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oModelInterface).expects("fnFetchMetadata")
+		this.mock(oRequestor).expects("fetchMetadata")
 			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/").returns(oPromise);
 
 		// code under test
@@ -2218,7 +2218,7 @@ sap.ui.require([
 		var oPromise = {},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oModelInterface).expects("fnFetchMetadata")
+		this.mock(oRequestor).expects("fetchMetadata")
 			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/$Type").returns(oPromise);
 
 		// code under test
