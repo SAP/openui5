@@ -5147,7 +5147,7 @@ function runODataAnnotationTests() {
 
 	var fnTestNestedAnnotations = function(iModelVersion, assert) {
 		var done = assert.async();
-		assert.expect(334);
+		assert.expect(368);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Nested Annotations"];
@@ -5186,6 +5186,21 @@ function runODataAnnotationTests() {
 //TODO							"Facets@com.sap.vocabularies.Common.v1.Label" : {"String" : "Supplier Identification"},
 							"RecordType" : "com.sap.vocabularies.UI.v1.CollectionFacet"
 						}],
+						"com.sap.vocabularies.UI.v1.LineItem#foo" : [{
+							"Label" : {
+								"String" : "Business Partner"
+							},
+							"Value" : {
+								"Path" : "BusinessPartnerID"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
+							"com.sap.vocabularies.UI.v1.Importance" : {
+								"EnumMember" : "com.sap.vocabularies.UI.v1.ImportanceType/Medium"
+							}
+						}],
+						"com.sap.vocabularies.UI.v1.LineItem#foo@com.sap.vocabularies.UI.v1.Criticality#bar" : {
+							"Path" : "Criticality"
+						},
 						"com.sap.vocabularies.Common.v1.Text": {
 							"Term": {
 								"Name": "TextArrangement",
