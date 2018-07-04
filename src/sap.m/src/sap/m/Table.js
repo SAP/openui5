@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 			/**
 			 * Defines the columns of the table.
 			 */
-			columns : {type : "sap.m.Column", multiple : true, singularName : "column"}
+			columns : {type : "sap.m.Column", multiple : true, singularName : "column", dnd : {draggable : true, droppable : true, layout : "Horizontal"} }
 		},
 		designTime: true
 	}});
@@ -635,6 +635,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 
 	// event listener for theme changed
 	Table.prototype.onThemeChanged = function() {
+		ListBase.prototype.onThemeChanged.call(this);
 		this._bThemeChanged = true;
 	};
 
