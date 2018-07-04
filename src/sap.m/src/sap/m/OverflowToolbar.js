@@ -1072,7 +1072,7 @@ sap.ui.define([
 	OverflowToolbar._getOptimalControlWidth = function (oControl, iOldSize) {
 		var iOptimalWidth,
 			oLayoutData = oControl.getLayoutData(),
-			bShrinkable = oLayoutData ? oLayoutData.getShrinkable() : false,
+			bShrinkable = oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData") ? oLayoutData.getShrinkable() : false,
 			iMinWidth = bShrinkable ? parseInt(oLayoutData.getMinWidth(), 10) : 0;
 
 		// For spacers, get the min-width + margins
