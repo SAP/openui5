@@ -20,6 +20,7 @@ sap.ui.require([
 	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/core/Title",
 	"sap/m/Button",
+	"sap/ui/dt/Util",
 	"sap/m/Label"
 ],
 function(
@@ -35,6 +36,7 @@ function(
 	RenameHandler,
 	Title,
 	Button,
+	DtUtil,
 	Label
 ) {
 	"use strict";
@@ -153,27 +155,43 @@ function(
 
 	QUnit.test("when retrieving the context menu item", function(assert) {
 		var bIsAvailable = true;
-		sandbox.stub(this.oRenamePlugin, "isAvailable", function(oOverlay){
-			assert.equal(oOverlay, this.oFormContainerOverlay, "the 'available' function calls isAvailable with the correct overlay");
-			return bIsAvailable;
-		}.bind(this));
-		sandbox.stub(this.oRenamePlugin, "startEdit", function(oOverlay){
-			assert.deepEqual(oOverlay, this.oFormContainerOverlay, "the 'startEdit' method is called with the right overlay");
-		}.bind(this));
-		sandbox.stub(this.oRenamePlugin, "isEnabled", function(oOverlay){
-			assert.equal(oOverlay, this.oFormContainerOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
-		}.bind(this));
+		sandbox.stub(
+			this.oRenamePlugin,
+			"isAvailable",
+			function (vElementOverlays) {
+				var aElementOverlays = DtUtil.castArray(vElementOverlays);
+				assert.equal(aElementOverlays[0], this.oFormContainerOverlay, "the 'available' function calls isAvailable with the correct overlay");
+				return bIsAvailable;
+			}.bind(this)
+		);
+		sandbox.stub(
+			this.oRenamePlugin,
+			"startEdit",
+			function (oOverlay) {
+				assert.deepEqual(oOverlay, this.oFormContainerOverlay, "the 'startEdit' method is called with the right overlay");
+			}.bind(this)
+		);
+		sandbox.stub(
+			this.oRenamePlugin,
+			"isEnabled",
+			function (vElementOverlays) {
+				var aElementOverlays = DtUtil.castArray(vElementOverlays);
+				assert.equal(aElementOverlays[0], this.oFormContainerOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
+			}.bind(this)
+		);
 
-		var aMenuItems = this.oRenamePlugin.getMenuItems(this.oFormContainerOverlay);
+		var aMenuItems = this.oRenamePlugin.getMenuItems([this.oFormContainerOverlay]);
 		assert.equal(aMenuItems[0].id, "CTX_RENAME", "'getMenuItems' returns the context menu item for the plugin");
 
 		aMenuItems[0].handler([this.oFormContainerOverlay]);
-		aMenuItems[0].enabled(this.oFormContainerOverlay);
+		aMenuItems[0].enabled([this.oFormContainerOverlay]);
 
 		bIsAvailable = false;
-		assert.equal(this.oRenamePlugin.getMenuItems(this.oFormContainerOverlay).length,
+		assert.equal(
+			this.oRenamePlugin.getMenuItems([this.oFormContainerOverlay]).length,
 			0,
-			"and if plugin is not available for the overlay, no menu items are returned");
+			"and if plugin is not available for the overlay, no menu items are returned"
+		);
 	});
 
 	QUnit.test("when isAvailable and isEnabled are called without designTime", function(assert) {

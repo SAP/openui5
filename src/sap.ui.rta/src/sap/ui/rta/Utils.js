@@ -2,22 +2,19 @@
  * ${copyright}
  */
 
-// Provides object sap.ui.rta.Utils.
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/fl/registry/Settings',
-	'sap/m/MessageBox',
-	'sap/base/util/merge'
+	'sap/m/MessageBox'
 ],
 function(
 	jQuery,
 	FlexUtils,
 	OverlayUtil,
 	Settings,
-	MessageBox,
-	merge
+	MessageBox
 ) {
 	"use strict";
 
@@ -629,7 +626,7 @@ function(
 	 * @return {Object}             Returns new object
 	 */
 	Utils.omit = function(oObject, aPropertyPaths){
-		var oNewObject = merge({}, oObject);
+		var oNewObject = Object.assign({}, oObject);
 		aPropertyPaths.forEach(function (sProperty) {
 			delete oNewObject[sProperty];
 		});

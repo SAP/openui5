@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/Utils'
+	'sap/ui/rta/Utils',
+	'sap/ui/dt/Util'
 ], function(
 	jQuery,
 	Plugin,
@@ -20,7 +21,8 @@ sap.ui.define([
 	ElementUtil,
 	OverlayUtil,
 	OverlayRegistry,
-	Utils
+	Utils,
+	DtUtil
 ) {
 	"use strict";
 
@@ -99,8 +101,9 @@ sap.ui.define([
 		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.Rename.stopEdit");
 	};
 
-	Rename.prototype.handler = function (aOverlays) {
-		this.startEdit(aOverlays[0]);
+	Rename.prototype.handler = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+		this.startEdit(aElementOverlays[0]);
 	};
 
 	/**
@@ -120,12 +123,18 @@ sap.ui.define([
 
 	/**
 	 * Checks if rename is enabled for oOverlay
-	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
 	 * @returns {boolean} true if it's enabled
 	 * @public
 	 */
-	Rename.prototype.isEnabled = function(oOverlay) {
+	Rename.prototype.isEnabled = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+
+		if (aElementOverlays.length > 1) {
+			return false;
+		}
+
+		var oOverlay = aElementOverlays[0];
 		var bIsEnabled = true;
 		var oAction = this.getAction(oOverlay);
 		if (!oAction) {
@@ -147,7 +156,7 @@ sap.ui.define([
 			}
 		}
 
-		return bIsEnabled && this.isMultiSelectionInactive.call(this, oOverlay);
+		return bIsEnabled;
 	};
 
 	/**
@@ -222,11 +231,11 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the context menu item for the action.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
-	 * @return {object[]}          Returns array containing the items with required data
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
+	 * @return {object[]} - array of the items with required data
 	 */
-	Rename.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_RENAME", rank : 10, icon: "sap-icon://edit"});
+	Rename.prototype.getMenuItems = function (vElementOverlays) {
+		return this._getMenuItems(vElementOverlays, { pluginId : "CTX_RENAME", rank : 10, icon: "sap-icon://edit" });
 	};
 
 	/**

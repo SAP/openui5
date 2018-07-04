@@ -272,4 +272,21 @@ function(
 			});
 		});
 	});
+
+	QUnit.module('pick()', function () {
+		QUnit.test("basic functionality", function (assert) {
+			assert.deepEqual(Util.pick({ a: 1, b: 2, c: undefined }, 'a'), { a: 1 });
+			assert.deepEqual(Util.pick({ a: 1, b: 2, c: undefined }, ['a', 'c']), { a: 1, c: undefined });
+			assert.deepEqual(Util.pick({ null: 1, b: 2 }, null), {null: 1}); // eslint-disable-line quote-props
+			assert.deepEqual(Util.pick({ undefined: 1, b: 2 }), {});
+			assert.deepEqual(Util.pick({ undefined: 1, b: 2 }, undefined), {undefined: 1});
+		});
+		QUnit.test("when wrong parameters specified", function (assert) {
+			assert.deepEqual(Util.pick(), {});
+			assert.deepEqual(Util.pick(1), {});
+			assert.deepEqual(Util.pick(1, 'a'), {});
+			assert.deepEqual(Util.pick({ 1: 1, b: 2 }, 1), { 1: 1});
+			assert.deepEqual(Util.pick({ a: 1, b: 2 }), {});
+		});
+	});
 });

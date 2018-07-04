@@ -758,19 +758,19 @@ sap.ui.define([
 		 * Adds a menu action button to the contextMenu
 		 * @param {Object} oButtonItem the button configuration item
 		 * @param {function} fnContextMenuHandler the handler function for button press event
-		 * @param {object} oOverlay the target overlay
+		 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
 		 * @public
 		 */
-		addMenuButton: function(oButtonItem, fnContextMenuHandler, oOverlay) {
+		addMenuButton: function(oButtonItem, fnContextMenuHandler, aElementOverlays) {
 			var fnHandler = function(oEvent) {
 				this.bOpen = false;
 				this.bOpenNew = false;
 				fnContextMenuHandler(this);
 			};
 
-			var sText = typeof oButtonItem.text === "function" ? oButtonItem.text(oOverlay) : oButtonItem.text;
-			var bEnabled = typeof oButtonItem.enabled === "function" ? oButtonItem.enabled(oOverlay) : oButtonItem.enabled;
+			var sText = typeof oButtonItem.text === "function" ? oButtonItem.text(aElementOverlays[0]) : oButtonItem.text;
+			var bEnabled = typeof oButtonItem.enabled === "function" ? oButtonItem.enabled(aElementOverlays) : oButtonItem.enabled;
 			var oButtonOptions = {
 				icon: this._getIcon(oButtonItem.icon),
 				text: sText,
@@ -874,14 +874,14 @@ sap.ui.define([
 		 * Sets the Buttons of the ContextMenu
 		 * @param {Array} _aButtons the Buttons to insert
 		 * @param {function} fnContextMenuHandler - the source
-		 * @param {object} oOverlay - the target overlay
+		 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 		 * @public
 		 */
-		setButtons: function (_aButtons, fnContextMenuHandler, oOverlay) {
+		setButtons: function (_aButtons, fnContextMenuHandler, aElementOverlays) {
 			this.removeAllButtons();
 
 			_aButtons.forEach(function (oButton) {
-				this.addMenuButton(oButton, fnContextMenuHandler, oOverlay);
+				this.addMenuButton(oButton, fnContextMenuHandler, aElementOverlays);
 			}.bind(this));
 		},
 

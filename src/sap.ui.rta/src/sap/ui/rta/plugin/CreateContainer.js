@@ -7,13 +7,15 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
-	'sap/ui/dt/OverlayRegistry'
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/Util'
 
 ], function(
 	Plugin,
 	FlexUtils,
 	RtaUtils,
-	OverlayRegistry
+	OverlayRegistry,
+	DtUtil
 ) {
 	"use strict";
 
@@ -99,20 +101,23 @@ sap.ui.define([
 		return aActions[0];
 	};
 
-	CreateContainer.prototype.isAvailable = function(bSibling, oOverlay) {
-		return this._isEditableByPlugin(oOverlay, bSibling);
+	CreateContainer.prototype.isAvailable = function(bSibling, vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+		return this._isEditableByPlugin(aElementOverlays[0], bSibling);
 	};
 
-	CreateContainer.prototype.isEnabled = function(bSibling, oOverlay) {
-		var vAction = this.getCreateAction(bSibling, oOverlay);
+	CreateContainer.prototype.isEnabled = function(bSibling, vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+		var oElementOverlay = aElementOverlays[0];
+		var vAction = this.getCreateAction(bSibling, oElementOverlay);
 		if (!vAction) {
 			return false;
 		}
 
 		if (vAction.isEnabled && typeof vAction.isEnabled === "function") {
 			var fnIsEnabled = vAction.isEnabled;
-			var oParentOverlay = this._getParentOverlay(bSibling, oOverlay);
-			return fnIsEnabled.call(null, oParentOverlay.getElement());
+			var oParentOverlay = this._getParentOverlay(bSibling, oElementOverlay);
+			return fnIsEnabled(oParentOverlay.getElement());
 		} else {
 			return true;
 		}
@@ -198,18 +203,18 @@ sap.ui.define([
 	/**
 	 * Retrieve the context menu item for the actions.
 	 * Two items are returned here: one for when the overlay is sibling and one for when it is child.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
-	 * @return {object[]}          Returns array containing the items with required data
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlay to get actions for
+	 * @return {object[]} returns array containing the items with required data
 	 */
-	CreateContainer.prototype.getMenuItems = function(oOverlay){
+	CreateContainer.prototype.getMenuItems = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
 		var bOverlayIsSibling = true;
 		var sPluginId = "CTX_CREATE_SIBLING_CONTAINER";
 		var iRank = 40;
 		var aMenuItems = [];
 		for (var i = 0; i < 2; i++){
-			if (this.isAvailable(bOverlayIsSibling, oOverlay)){
+			if (this.isAvailable(bOverlayIsSibling, aElementOverlays)){
 				var sMenuItemText = this.getCreateContainerText.bind(this, bOverlayIsSibling);
-
 				aMenuItems.push({
 					id: sPluginId,
 					text: sMenuItemText,
@@ -237,12 +242,13 @@ sap.ui.define([
 
 	/**
 	 * Trigger the plugin execution.
-	 * @param  {boolean} bOverlayIsSibling True if the overlay is sibling
-	 * @param  {sap.ui.dt.ElementOverlay[]} aOverlays Selected overlays; targets of the action
+	 * @param {boolean} bOverlayIsSibling True if the overlay is sibling
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlays for the action
 	 */
-	CreateContainer.prototype.handler = function(bOverlayIsSibling, aOverlays){
+	CreateContainer.prototype.handler = function(bOverlayIsSibling, vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
 		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
-		this.handleCreate(bOverlayIsSibling, aOverlays[0]);
+		this.handleCreate(bOverlayIsSibling, aElementOverlays[0]);
 	};
 
 	return CreateContainer;

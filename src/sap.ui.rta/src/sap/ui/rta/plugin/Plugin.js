@@ -205,7 +205,7 @@ function(
 		return sName;
 	};
 
-	BasePlugin.prototype._isEditableByPlugin = function(oOverlay, bSibling) {
+	BasePlugin.prototype._isEditableByPlugin = function (oOverlay, bSibling) {
 		var sPluginName = this._retrievePluginName(bSibling);
 		var aPluginList = oOverlay.getEditableByPlugins();
 		return aPluginList.indexOf(sPluginName) > -1;
@@ -332,6 +332,10 @@ function(
 		}
 		var sLayer = this.getCommandFactory().getFlexSettings().layer;
 		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oElement, JsControlTreeModifier, sLayer);
+	};
+
+	BasePlugin.prototype.isAvailable = function () {
+		return Plugin.prototype.isAvailable.apply(this, arguments);
 	};
 
 	return BasePlugin;

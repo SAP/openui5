@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils',
 	'sap/ui/core/StashedControlSupport',
-	'sap/ui/dt/ElementDesignTimeMetadata'
+	'sap/ui/dt/ElementDesignTimeMetadata',
+	'sap/ui/dt/Util'
 ], function(jQuery,
 	Plugin,
 	ElementUtil,
@@ -18,7 +19,8 @@ sap.ui.define([
 	Utils,
 	FlUtils,
 	StashedControlSupport,
-	ElementDesignTimeMetadata
+	ElementDesignTimeMetadata,
+	DtUtil
 ){
 	"use strict";
 
@@ -194,11 +196,21 @@ sap.ui.define([
 			return _getText("CTX_ADD_ELEMENTS", mActions, mParents.parent, SINGULAR);
 		},
 
-		isAvailable: function(bOverlayIsSibling, oOverlay){
-			return this._isEditableByPlugin(oOverlay, bOverlayIsSibling);
+		isAvailable: function (bOverlayIsSibling, vElementOverlays) {
+			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+			return aElementOverlays.every(function (oElementOverlay) {
+				return this._isEditableByPlugin(oElementOverlay, bOverlayIsSibling);
+			}, this);
 		},
 
-		isEnabled: function(bOverlayIsSibling, oOverlay){
+		isEnabled: function(bOverlayIsSibling, vElementOverlays){
+			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+
+			if (aElementOverlays.length > 1) {
+				return false;
+			}
+
+			var oOverlay = aElementOverlays[0];
 			var oParentOverlay;
 			var bIsEnabled;
 			if (bOverlayIsSibling) {
@@ -217,7 +229,7 @@ sap.ui.define([
 				}
 			}
 
-			return bIsEnabled && this.isMultiSelectionInactive.call(this, oOverlay);
+			return bIsEnabled;
 		},
 
 		_getRevealActions: function(bSibling, oOverlay) {
@@ -357,18 +369,18 @@ sap.ui.define([
 			return !!mRevealActions && Object.keys(mRevealActions).length > 0;
 		},
 
-		showAvailableElements: function(bOverlayIsSibling, aOverlays, iIndex, sControlName) {
-			var oOverlay = aOverlays[0];
-			var mParents = _getParents(bOverlayIsSibling, oOverlay);
-			var oSiblingElement = bOverlayIsSibling && oOverlay.getElement();
+		showAvailableElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
+			var oElementOverlay = aElementOverlays[0];
+			var mParents = _getParents(bOverlayIsSibling, oElementOverlay);
+			var oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement();
 			var aPromises = [];
 
-			var mActions = this._getActions(bOverlayIsSibling, oOverlay);
+			var mActions = this._getActions(bOverlayIsSibling, oElementOverlay);
 			if (mActions.reveal) {
 					aPromises.push(this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions));
 			}
 			if (mActions.addODataProperty) {
-				mActions.addODataProperty.relevantContainer = oOverlay.getRelevantContainer(!bOverlayIsSibling);
+				mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
 				aPromises.push(this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty));
 			}
 			if (mActions.aggregation || sControlName) {
@@ -399,7 +411,7 @@ sap.ui.define([
 				this.getDialog().setElements(aAllElements);
 
 				return this.getDialog().open().then(function() {
-					this._createCommands(bOverlayIsSibling, oOverlay, mParents, oSiblingElement, mActions.designTimeMetadata, mActions, iIndex);
+					this._createCommands(bOverlayIsSibling, oElementOverlay, mParents, oSiblingElement, mActions.designTimeMetadata, mActions, iIndex);
 				}.bind(this)).catch(function(oError){
 					//no error means canceled dialog
 					if (oError instanceof Error){
@@ -669,22 +681,22 @@ sap.ui.define([
 		 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
 		 * @return {object[]}          Returns array containing the items with required data
 		 */
-		getMenuItems: function(oOverlay){
+		getMenuItems: function (aElementOverlays) {
 			var bOverlayIsSibling = true;
 			var sPluginId = "CTX_ADD_ELEMENTS_AS_SIBLING";
 			var iRank = 20;
 			var sIcon = "sap-icon://add";
 			var aMenuItems = [];
 			for (var i = 0; i < 2; i++){
-				if (this.isAvailable(bOverlayIsSibling, oOverlay)){
+				if (this.isAvailable(bOverlayIsSibling, aElementOverlays)){
 					var sMenuItemText = this.getContextMenuTitle.bind(this, bOverlayIsSibling);
 
 					aMenuItems.push({
 						id: sPluginId,
 						text: sMenuItemText,
-						handler: function(bOverlayIsSibling, aOverlays){
+						handler: function (bOverlayIsSibling, vElementOverlays) { // eslint-disable-line no-loop-func
 							// showAvailableElements has optional parameters, so currying is not possible here
-							return this.showAvailableElements(bOverlayIsSibling, aOverlays);
+							return this.showAvailableElements(bOverlayIsSibling, DtUtil.castArray(vElementOverlays));
 						}.bind(this, bOverlayIsSibling),
 						enabled: this.isEnabled.bind(this, bOverlayIsSibling),
 						rank: iRank,

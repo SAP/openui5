@@ -2,14 +2,14 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.CutPaste.
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/dt/plugin/CutPaste',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/plugin/RTAElementMover',
-	'sap/ui/rta/Utils'
+	'sap/ui/rta/Utils',
+	'sap/ui/dt/Util'
 ],
 function(
 	jQuery,
@@ -17,7 +17,8 @@ function(
 	OverlayUtil,
 	Plugin,
 	RTAElementMover,
-	Utils
+	Utils,
+	DtUtil
 ) {
 	"use strict";
 
@@ -94,11 +95,14 @@ function(
 
 	/**
 	 * @override
-	 * @param  {sap.ui.dt.Overlay}  oOverlay Selected overlay
-	 * @return {boolean}        Returns true if the plugin is available
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlays
+	 * @return {boolean} - true if the plugin is available
 	 */
-	CutPaste.prototype.isAvailable = function(oOverlay) {
-		return oOverlay.getMovable();
+	CutPaste.prototype.isAvailable = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+		return aElementOverlays.every(function (oElementOverlay) {
+			return oElementOverlay.getMovable();
+		});
 	};
 
 	/**
@@ -146,39 +150,44 @@ function(
 	/**
 	 * Retrieve the context menu item for the actions.
 	 * Two items are returned here: one for "cut" and one for "paste".
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
-	 * @return {object[]}          Returns array containing the items with required data
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlays
+	 * @return {object[]} - array of the items with required data
 	 */
-	CutPaste.prototype.getMenuItems = function(oOverlay){
+	CutPaste.prototype.getMenuItems = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
 		var aMenuItems = [],
 			oCutMenuItem = {
 				id: 'CTX_CUT',
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_CUT'),
-				handler: function(aOverlays){
-					return this.cut(aOverlays[0]);
+				handler: function (vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					return this.cut(aElementOverlays[0]);
 				}.bind(this),
-				enabled: function (){
-					return this.getSelectedOverlays().length === 1;
-				}.bind(this),
+				enabled: function (vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					return aElementOverlays.length === 1;
+				},
 				rank: 70,
 				icon: "sap-icon://scissors"
 			},
 			oPasteMenuItem = {
 				id: 'CTX_PASTE',
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_PASTE'),
-				handler: function(aOverlays){
-					return this.paste(aOverlays[0]);
+				handler: function (vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					return this.paste(aElementOverlays[0]);
 				}.bind(this),
-				enabled: function(oOverlay) {
-					return this.isElementPasteable(oOverlay);
+				enabled: function (vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					return this.isElementPasteable(aElementOverlays[0]);
 				}.bind(this),
 				rank: 80,
 				icon: "sap-icon://paste"
 			};
 
-		if (this.isAvailable(oOverlay)){
+		if (this.isAvailable(aElementOverlays)) {
 			aMenuItems.push(oCutMenuItem, oPasteMenuItem);
-		} else if (this._isPasteEditable(oOverlay)) {
+		} else if (this._isPasteEditable(aElementOverlays[0])) {
 			aMenuItems.push(oPasteMenuItem);
 		}
 

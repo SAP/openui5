@@ -7,12 +7,14 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
 	'sap/ui/rta/command/CompositeCommand',
-	'sap/ui/dt/OverlayRegistry'
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/Util'
 ], function(
 	Plugin,
 	Utils,
 	CompositeCommand,
-	OverlayRegistry
+	OverlayRegistry,
+	DtUtil
 ){
 	"use strict";
 
@@ -83,39 +85,42 @@ sap.ui.define([
 
 	/**
 	 * Checks if remove is enabled for oOverlay
-	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Remove.prototype.isEnabled = function(oOverlay) {
-		var oAction = this.getAction(oOverlay);
+	Remove.prototype.isEnabled = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+		var oElementOverlay = aElementOverlays[0];
+		var oAction = this.getAction(oElementOverlay);
 		var bIsEnabled = false;
+
 		if (!oAction) {
 			return bIsEnabled;
 		}
 
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				bIsEnabled = oAction.isEnabled(oOverlay.getElement());
+				bIsEnabled = oAction.isEnabled(oElementOverlay.getElement());
 			} else {
 				bIsEnabled = oAction.isEnabled;
 			}
 		} else {
 			bIsEnabled = true;
 		}
-		return bIsEnabled && this._canBeRemovedFromAggregation(oOverlay);
+		return bIsEnabled && this._canBeRemovedFromAggregation(aElementOverlays);
 	};
 
 	/**
 	 * Checks if Overlay control has a valid parent and if it is
 	 * not the last visible control in the aggregation
 	 *
-	 * @param  {sap.ui.dt.Overlay} oOverlay Overlay for the control
+	 * @param  {sap.ui.dt.ElementOverlay[]} aElementOverlays - overlays to be removed
 	 * @return {boolean} Returns true if the control can be removed
 	 * @private
 	 */
-	Remove.prototype._canBeRemovedFromAggregation = function(oOverlay){
+	Remove.prototype._canBeRemovedFromAggregation = function(aElementOverlays){
+		var oOverlay = aElementOverlays[0];
 		var oElement = oOverlay.getElement();
 		var oParent = oElement.getParent();
 		if (!oParent){
@@ -130,7 +135,7 @@ sap.ui.define([
 		}
 
 		// Fallback to 1 if no overlay is selected
-		var iNumberOfSelectedOverlays = this.getNumberOfSelectedOverlays() || 1;
+		var iNumberOfSelectedOverlays = aElementOverlays.length;
 		var aInvisibleElements = aElements.filter(function(oElement){
 			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 			return !(oElementOverlay && oElementOverlay.getElementVisibility());
@@ -210,7 +215,8 @@ sap.ui.define([
 		}
 	};
 
-	Remove.prototype.handler = function(aSelectedOverlays) {
+	Remove.prototype.handler = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
 		var aPromises = [];
 		var oCompositeCommand = new CompositeCommand();
 		var fnSetFocus = function (oOverlay) {
@@ -220,9 +226,9 @@ sap.ui.define([
 			}, 0);
 		};
 
-		var oNextOverlaySelection = Remove._getElementToFocus(aSelectedOverlays);
+		var oNextOverlaySelection = Remove._getElementToFocus(aElementOverlays);
 
-		aSelectedOverlays.forEach(function(oOverlay) {
+		aElementOverlays.forEach(function(oOverlay) {
 			var oCommand;
 			var oRemovedElement = oOverlay.getElement();
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
@@ -290,11 +296,11 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the context menu item for the action.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
-	 * @return {object[]}          Returns array containing the items with required data
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
+	 * @return {object[]} - array of the items with required data
 	 */
-	Remove.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_REMOVE", rank : 60, icon : "sap-icon://hide"});
+	Remove.prototype.getMenuItems = function (vElementOverlays) {
+		return this._getMenuItems(vElementOverlays, {pluginId : "CTX_REMOVE", rank : 60, icon : "sap-icon://hide"});
 	};
 
 	/**

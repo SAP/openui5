@@ -4,11 +4,11 @@ sap.ui.require([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ContextMenuControl",
+	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Rename",
 	'sap/ui/rta/command/CommandFactory',
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
-	// controls
 	"sap/m/Button",
 	"sap/m/Popover",
 	"sap/m/OverflowToolbarButton",
@@ -19,6 +19,7 @@ sap.ui.require([
 	OverlayRegistry,
 	DesignTime,
 	ContextMenuControl,
+	DtUtil,
 	RenamePlugin,
 	CommandFactory,
 	Device,
@@ -57,8 +58,9 @@ sap.ui.require([
 				id: "CTX_ENABLED_BUTTON1",
 				text: "enabled for button 1",
 				handler: sinon.spy(),
-				enabled: function (oOverlay) {
-					var oElement = oOverlay.getElement();
+				enabled: function (vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					var oElement = aElementOverlays[0].getElement();
 					return oElement === that.oButton1;
 				}
 			};
@@ -66,12 +68,9 @@ sap.ui.require([
 				id: "CTX_DISABLED_BUTTON1",
 				text: "disabled for button 1",
 				handler: sinon.spy(),
-				available: function (oOverlay) {
-					var oElement = oOverlay.getElement();
-					return oElement === that.oButton1 || oElement === that.oButton2;
-				},
-				enabled: function (oOverlay) {
-					var oElement = oOverlay.getElement();
+				enabled: function (vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					var oElement = aElementOverlays[0].getElement();
 					return oElement !== that.oButton1;
 				}
 			};
@@ -79,11 +78,7 @@ sap.ui.require([
 				id: "CTX_ONLY_BUTTON2",
 				text: "only shown for button 2",
 				rank: 1,
-				handler: sinon.spy(),
-				available: function (oOverlay) {
-					var oElement = oOverlay.getElement();
-					return oElement === that.oButton2;
-				}
+				handler: sinon.spy()
 			};
 			this.oMenuEntries.alwaysStartSection = {
 				id: "CTX_START_SECTION",
@@ -351,8 +346,9 @@ sap.ui.require([
 				id: "CTX_ENABLED_BUTTON1",
 				text: "enabled for button 1",
 				handler: sinon.spy(),
-				enabled: function (oOverlay) {
-					var oElement = oOverlay.getElement();
+				enabled: function (vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					var oElement = aElementOverlays[0].getElement();
 					return oElement === that.oButton1;
 				},
 				group: "Test1"
@@ -362,8 +358,9 @@ sap.ui.require([
 				id: "CTX_ENABLED_BUTTON3",
 				text: "enabled for button 3",
 				handler: sinon.spy(),
-				enabled: function (oOverlay) {
-					var oElement = oOverlay.getElement();
+				enabled: function (vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					var oElement = aElementOverlays[0].getElement();
 					return oElement === that.oButton1;
 				},
 				group: "Test2",
@@ -765,7 +762,7 @@ sap.ui.require([
 			};
 			this.oContextMenuControl = new ContextMenuControl();
 			for (var key in this.oMenuEntries) {
-				this.oContextMenuControl.addMenuButton(this.oMenuEntries[key]);
+				this.oContextMenuControl.addMenuButton(this.oMenuEntries[key], function () {}, []);
 			}
 			var done = assert.async();
 			this.oDesignTime = new DesignTime({
