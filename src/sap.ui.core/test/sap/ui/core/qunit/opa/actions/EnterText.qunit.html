@@ -29,13 +29,15 @@
 			"sap/m/Input",
 			"sap/m/SearchField",
 			"sap/m/DatePicker",
-			"sap/m/TextArea"
+			"sap/m/TextArea",
+			"sap/m/InputType"
 		], function(
 				EnterText,
 				Input,
 				SearchField,
 				DatePicker,
-				TextArea)
+				TextArea,
+				InputType)
 		{
 			"use strict";
 			QUnit.config.testTimeout = 5000;
@@ -264,6 +266,30 @@
 				oEnterText.executeOn(this.oControl);
 
 				sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/Please provide a text/), sinon.match(oEnterText._sLogPrefix));
+			});
+
+
+			QUnit.test("Should enter number with decimals in input of type number and preserve the value", function (assert) {
+				// Arrange
+				var fnChangeTriggered = assert.async();
+				this.oControl = new Input({
+					type: InputType.Number
+				});
+				this.oControl.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var sTextInControl = "12.4";
+				var oEnterText = new EnterText({
+					text: sTextInControl
+				});
+				
+				this.oControl.attachEvent("change", function (oEvent) {
+					assert.strictEqual(oEvent.getParameter("value"), sTextInControl, "Number with decimals is correct");
+					fnChangeTriggered();
+				});
+
+				// Act
+				oEnterText.executeOn(this.oControl);
 			});
 
 

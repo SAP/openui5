@@ -86,9 +86,11 @@ sap.ui.define([
 			}
 
 			// Trigger events for every keystroke - livechange controls
+			var sValueBuffer = $ActionDomRef.val();
 			this.getText().split("").forEach(function (sChar) {
+				sValueBuffer += sChar;
 				// Change the domref and fire the input event
-				oUtils.triggerCharacterInput(oActionDomRef, sChar);
+				oUtils.triggerCharacterInput(oActionDomRef, sChar, sValueBuffer);
 				oUtils.triggerEvent("input", oActionDomRef);
 			});
 
