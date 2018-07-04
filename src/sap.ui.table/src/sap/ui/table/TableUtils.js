@@ -1174,6 +1174,36 @@ sap.ui.define([
 		 */
 		getResourceText: function(sKey, aValues) {
 			return oResourceBundle ? oResourceBundle.getText(sKey, aValues) : "";
+		},
+
+		/**
+		 * Facilitates dynamic calling.
+		 *
+		 * @param {function():T | T} vObject The object, or a function returning the object, on which methods will be called.
+		 * @param {function(this:U, T) | Object<string, *[]>} vCall Called if <code>vObject</code> is, or returns an object.
+		 * @param {U} [oThis] Context in the function calls, or in the callback if <code>vCall</code>is a function. Default is <code>vObject</code>.
+		 * @template T, U
+		 */
+		dynamicCall: function(vObject, vCall, oThis) {
+			var oObject = vObject instanceof Function ? vObject() : vObject;
+
+			if (!oObject || !vCall) {
+				return;
+			}
+
+			oThis = oThis || oObject;
+
+			if (vCall instanceof Function) {
+				vCall.call(oThis, oObject);
+			} else {
+				var aParameters;
+				for (var sFunctionName in vCall) {
+					if (oObject[sFunctionName] instanceof Function) {
+						aParameters = vCall[sFunctionName];
+						oObject[sFunctionName].apply(oThis, aParameters);
+					}
+				}
+			}
 		}
 	};
 
