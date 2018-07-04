@@ -2,27 +2,34 @@
 	controllerName="sap.m.sample.DateTimePicker.Group"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox class="sapUiSmallMargin">
-		<Label text="simple DateTimePicker" labelFor="DTP1"/>
+	<Panel
+		id="dateTimePanel"
+		headerText="When DateTimePicker change events are fired the selected date and time is displayed in the Text control"
+		width="auto">
+		<Label text="Simple DateTimePicker" labelFor="DTP1"/>
 		<DateTimePicker
 			id="DTP1"
 			placeholder="Enter Date ..."
-			change="handleChange"/>
-		<Label text="with initialFocusedDateValue new Date(2017, 5, 13, 11, 12, 13)" labelFor="DTP6"/>
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
+		<Label text="With initialFocusedDateValue new Date(2017, 5, 13, 11, 12, 13)" labelFor="DTP6"/>
 		<DateTimePicker
-				id="DTP6"
-				placeholder="Enter Date ..."
-				change="handleChange"/>
+			id="DTP6"
+			placeholder="Enter Date ..."
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
 		<Label text="DateTimePicker with given Value and Formatter" labelFor="DTP2"/>
 		<DateTimePicker
 			id="DTP2"
 			value="2016-02-18-10-32-30" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long"
-			change="handleChange"/>
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
 		<Label text="DateTimePicker with given DateValue and Formatter" labelFor="DTP3"/>
 		<DateTimePicker
 			id="DTP3"
 			displayFormat="short"
-			change="handleChange"/>
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
 		<Label text="DateTimePicker with Islamic date and secondary Gregorian date in calendar" labelFor="DTP4"/>
 		<DateTimePicker
 			id="DTP4"
@@ -31,21 +38,32 @@
 			displayFormat="short"
 			displayFormatType="Islamic"
 			secondaryCalendarType="Gregorian"
-			change="handleChange"/>
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
+		<Label text="DateTimePicker with steps for minutes and seconds sliders"/>
+		<DateTimePicker
+			id="DTP7"
+			valueFormat="yyyy-MM-dd-HH-mm-ss"
+			minutesStep="3" secondsStep="5"
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
 		<Text
-			id="T1"
-			text="change event result"/>
+			id="textResult"
+			text="Change event result"
+			class="sapUiSmallMargin"/>
+	</Panel>
+	<Panel
+		id="dataBindingDateTimePanel"
+		headerText="DateTimePicker using data binding"
+		width="auto">
 		<Label text="DateTimePicker using DataBinding" labelFor="DTP5"/>
 		<DateTimePicker
 			id="DTP5"
 			value="{path:'/dateValue', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"
-			/>
-		<Label text="Text bound to the same model like DateTimePicker" labelFor="T2" />
+			class="sapUiSmallMarginBottom"/>
 		<Text
-			id="T2"
+			id="textResultForDataBinding"
 			text="{path:'/dateValue', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'long'}}"
-			/>
-		<Label text="DateTimePicker with steps for minutes and seconds sliders" />
-		<DateTimePicker minutesStep="3" secondsStep="5" />
-	</VBox>
+			class="sapUiSmallMargin"/>
+	</Panel>
 </mvc:View>
