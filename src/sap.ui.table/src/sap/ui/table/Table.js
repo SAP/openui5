@@ -1385,7 +1385,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (!oDomRef.offsetWidth) { // do not update sizes of an invisible table
+		if (oDomRef.offsetWidth === 0) { // do not update sizes of an invisible table
 			TableUtils.deregisterResizeHandler(this, "");
 			registerResizeHandler();
 			return;
