@@ -17,23 +17,29 @@ sap.ui.define([
 	});
 
 	QUnit.test("apply a lazy property stub from amd module", function(assert) {
-		assert.expect(2);
+		assert.expect(5);
 		defineLazyProperty(this.legacy, "value", function() {
 			assert.ok(true, "callback called");
 			return this.value;
 		}.bind(this));
-		assert.strictEqual(this.legacy.value, this.value, "stub is applied");
+		assert.notOk(Object.getOwnPropertyDescriptor(this.legacy, "value").value, "property should not have a value yet");
+		assert.strictEqual(this.legacy.value, this.value, "property set lazily via get");
+		assert.notOk(Object.getOwnPropertyDescriptor(this.legacy, "value").get, "lazy property getter removed");
+		assert.strictEqual(this.legacy.value, this.value, "property is still set");
 	});
 
 	QUnit.test("apply a lazy property stub from non-amd module", function(assert) {
-		assert.expect(2);
+		assert.expect();
 		defineLazyProperty(this.legacy, "value", function() {
 			assert.ok(true, "callback called");
 			// the defined setter is called by the following assignment and replaces the stub
 			this.legacy.value = this.value;
 			return this.legacy.value;
 		}.bind(this));
-		assert.strictEqual(this.legacy.value, this.value, "stub is applied");
+		assert.notOk(Object.getOwnPropertyDescriptor(this.legacy, "value").value, "property should not have a value yet");
+		assert.strictEqual(this.legacy.value, this.value, "property set lazily via get");
+		assert.notOk(Object.getOwnPropertyDescriptor(this.legacy, "value").get, "lazy property getter removed");
+		assert.strictEqual(this.legacy.value, this.value, "property is still set");
 	});
 
 	QUnit.test("overwriting a stubbed value", function(assert) {
@@ -61,13 +67,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("avoiding infinite loops", function(assert) {
-		assert.expect(3);
+		assert.expect(6);
 		defineLazyProperty(this.legacy, "value", function() {
 			assert.ok(true, "callback called");
 			assert.strictEqual(this.legacy.value, undefined, "stubbed value must be undefined");
 			return this.value;
 		}.bind(this));
-		assert.strictEqual(this.legacy.value, this.value, "stub is applied");
+		assert.notOk(Object.getOwnPropertyDescriptor(this.legacy, "value").value, "property should not have a value yet");
+		assert.strictEqual(this.legacy.value, this.value, "property set lazily via get");
+		assert.notOk(Object.getOwnPropertyDescriptor(this.legacy, "value").get, "lazy property getter removed");
+		assert.strictEqual(this.legacy.value, this.value, "property is still set");
 	});
 
 });
