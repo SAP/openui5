@@ -408,6 +408,10 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 			oValue2 = jQuery.sap.encodeURL(String(oValue2));
 		}
 
+		if (!bCaseSensitive && sType === "Edm.String") {
+			sPath =  "toupper(" + sPath + ")";
+		}
+
 		// TODO embed 2nd value
 		switch (sOperator) {
 			case "EQ":
@@ -416,7 +420,6 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 			case "GE":
 			case "LT":
 			case "LE":
-				sPath = bCaseSensitive ? sPath : "toupper(" + sPath + ")";
 				sFilterParam += sPath + "%20" + sOperator.toLowerCase() + "%20" + oValue1;
 				break;
 			case "BT":
