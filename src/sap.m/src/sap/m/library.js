@@ -197,6 +197,7 @@ sap.ui.define([
 			"sap.m.ObjectMarker",
 			"sap.m.ObjectNumber",
 			"sap.m.ObjectStatus",
+			"sap.m.OnePersonCalendar",
 			"sap.m.OnePersonGrid",
 			"sap.m.OnePersonHeader",
 			"sap.m.OverflowToolbar",

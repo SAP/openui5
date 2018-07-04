@@ -2,39 +2,41 @@
  * ${copyright}
  */
 
-// Provides control sap.m.DatePicker.
+// Provides control sap.m.OnePersonHeader.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/Device',
-	'./InputBase',
-	'./DateTimeField',
 	'sap/ui/core/Control',
-	'sap/m/library',
+	'./Toolbar',
+	'./OverflowToolbar',
+	'./ToolbarDesign',
+	'./Button',
 	'sap/ui/unified/Calendar',
-	'sap/ui/unified/calendar/CalendarDate',
-	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/DateRange',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/date/UniversalDate',
-	'sap/ui/core/Popup'
+	'sap/ui/core/Popup',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/LocaleData'
 ],
 function(
 	jQuery,
-	Device,
-	InputBase,
-	DateTimeField,
 	Control,
-	library,
+	Toolbar,
+	OverflowToolbar,
+	ToolbarDesign,
+	Button,
 	Calendar,
-	CalendarDate,
-	CalendarUtils,
+	DateRange,
 	DateFormat,
 	UniversalDate,
-	Popup
+	Popup,
+	IconPool,
+	LocaleData
 ) {
 	"use strict";
 
 	/**
-	 * Constructor for a new <code>DatePicker</code>.
+	 * Constructor for a new <code>OnePersonHeader</code>.
 	 *
 	 * @class
 	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
@@ -47,106 +49,84 @@ function(
 
 	var OnePersonHeader = Control.extend("sap.m.OnePersonHeader", /** @lends sap.m.OnePersonHeader.prototype */ { metadata : {
 
-			library : "sap.m",
-			properties : {
+		library : "sap.m",
 
-				selectedDate: {type : "object", group : "Data"},
+		properties : {
 
-				pickerText : {type : "string", group : "Data", visibility : "hidden"}
+			startDate: { type : "object", group : "Data" },
 
+			pickerText : { type : "string", group : "Data" }
+
+		},
+
+		aggregations : {
+
+			actions : {
+				type : "sap.ui.core.Control",
+				multiple: true,
+				singularName: "action",
+				forwarding: {
+					getter: "_getActionsToolbar",
+					aggregation: "content"
+				}
 			},
 
-			aggregations : {
+			actionsToolbar : { type: "sap.m.OverflowToolbar", multiple: false, visibility : "hidden" },
 
-				actionsToolbar : {type: "sap.m.OverflowToolbar", multiple: false, visibility : "hidden"},
+			navigationToolbar : { type: "sap.m.Toolbar", multiple: false, visibility : "hidden" },
 
-				navigationToolbar : {type: "sap.m.Toolbar", multiple: false, visibility : "hidden"},
+			picker : { type : "sap.ui.unified.Calendar", multiple : false, visibility : "hidden" }
+		},
 
-				actions : {
-					type : "sap.ui.core.Control",
-					multiple: true,
-					singularName: "action",
-					forwarding: {
-						getter: "_getActionsToolbar",
-						aggregation: "content"
-					}
-				},
+		events : {
 
-				picker : {type : "sap.ui.unified.Calendar", multiple : false, visibility : "hidden"}
-			},
+			pressPrevious: {},
 
-			events : {
+			pressToday: {},
 
-				pressPrevious: {},
+			pressNext: {},
 
-				pressToday: {},
+			dateSelect: {}
+		}
 
-				pressNext: {}
-			}
-
-		}});
-
-	// TODO: CSS: hide the border-bottom of OnePersonHeader-NavToolbar
-	// TODO: CSS: make OnePersonHeader-NavToolbar responsible
-	// TODO: CSS: align with v spec
-	// TODO: setter of selectedDate
-	// TODO: correct focus in the picker on ESC
+	}});
 
 	OnePersonHeader.prototype.init = function() {
 
 		var sOPHId = this.getId(),
 			sNavToolbarId = sOPHId + "-NavToolbar",
 			oDates,
-			oDateNow = new Date();
+			oDateNow = new Date(),
+			oPrevBtn,
+			oTodayBtn,
+			oNextBtn;
 
-		this.oSelectedUTCDate = new UniversalDate(UniversalDate.UTC(oDateNow.getFullYear(), oDateNow.getMonth(), oDateNow.getDate()));
-		oDates = this._getFirstAndLastWeekDate(this.oSelectedUTCDate);
+		this.oStartUTCDate = new UniversalDate(UniversalDate.UTC(oDateNow.getFullYear(), oDateNow.getMonth(), oDateNow.getDate()));
+		oDates = this._getFirstAndLastWeekDate(this.oStartUTCDate);
 
-		Control.prototype.init.apply(this, arguments);
-
-		this.setAggregation("actionsToolbar", new sap.m.OverflowToolbar(sOPHId + "-ActionsToolbar", { // !
-			design: library.ToolbarDesign.Transparent
+		this.setAggregation("actionsToolbar", new OverflowToolbar(sOPHId + "-ActionsToolbar", {
+			design: ToolbarDesign.Transparent
 		}));
 
-		this.oPrevBtn = new sap.m.Button(sNavToolbarId + "-PrevBtn", {
-			icon: "sap-icon://slim-arrow-left",
-			press: function (oEvent) {
+		oPrevBtn = new Button(sNavToolbarId + "-PrevBtn", {
+			icon: IconPool.getIconURI('slim-arrow-left'),
+			press: function () {
 				this.firePressPrevious();
-				// TODO: move the rest to OnePerson class
-
-				this._fireArrowsLogic(false);
 			}.bind(this)
 		});
-		this.oTodayBtn = new sap.m.Button(sNavToolbarId + "-TodayBtn", {
+		oTodayBtn = new Button(sNavToolbarId + "-TodayBtn", {
 			text: "Today",
-			press: function (oEvent) {
+			press: function () {
 				this.firePressToday();
-				// TODO: move the rest to OnePerson class
-
-				var oDateNow = new Date(),
-					oDates,
-					sPickerText;
-
-				this.setSelectedDate(oDateNow);
-				this.oSelectedUTCDate = new UniversalDate(UniversalDate.UTC(oDateNow.getFullYear(), oDateNow.getMonth(), oDateNow.getDate()));
-				oDates = this._getFirstAndLastWeekDate(this.oSelectedUTCDate);
-				sPickerText = this._formatPickerText(oDates.firstDate, oDates.lastDate);
-				this.setPickerText(sPickerText);
-				if (this.oPicker) {
-					this._setSelectedDateToCalendar();
-				}
 			}.bind(this)
 		});
-		this.oNextBtn = new sap.m.Button(sNavToolbarId + "-NextBtn", {
-			icon: "sap-icon://slim-arrow-right",
-			press: function (oEvent) {
+		oNextBtn = new Button(sNavToolbarId + "-NextBtn", {
+			icon: IconPool.getIconURI('slim-arrow-right'),
+			press: function () {
 				this.firePressNext();
-				// TODO: move the rest to OnePerson class
-
-				this._fireArrowsLogic(true);
 			}.bind(this)
 		});
-		this.oPickerButton = new sap.m.Button(sNavToolbarId + "-DateLink", {
+		this.oPickerBtn = new Button(sNavToolbarId + "-PickerBtn", {
 			text: this.getPickerText() || this._formatPickerText(oDates.firstDate, oDates.lastDate),
 			press: function () {
 				if (!this.oPicker) {
@@ -155,19 +135,19 @@ function(
 					this.setAggregation("picker", this.oPicker);
 				}
 
-				this.oPicker.displayDate(this.oSelectedUTCDate.oDate);
+				this.oPicker.displayDate(this.oStartUTCDate.oDate);
 				this._setSelectedDateToCalendar();
 				this._openPickerPopup(this.oPicker);
 			}.bind(this)
 		});
 
-		this.setAggregation("navigationToolbar", new sap.m.Toolbar(sNavToolbarId, { // !
-			design: library.ToolbarDesign.Transparent,
+		this.setAggregation("navigationToolbar", new Toolbar(sNavToolbarId, {
+			design: ToolbarDesign.Transparent,
 			content: [
-				this.oPrevBtn,
-				this.oTodayBtn,
-				this.oNextBtn,
-				this.oPickerButton
+				oPrevBtn,
+				oTodayBtn,
+				oNextBtn,
+				this.oPickerBtn
 			]
 		}));
 
@@ -179,14 +159,13 @@ function(
 		}
 	};
 
-	OnePersonHeader.prototype.setSelectedDate = function (oDate) {
+	OnePersonHeader.prototype.setStartDate = function (oDate) {
 		var oUniDate = new UniversalDate(UniversalDate.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate())),
-			oDates,
+			oDates = this._getFirstAndLastWeekDate(oUniDate),
 			sPickerText;
 
-		this.setProperty("selectedDate", oDate, true);
-		this.oSelectedUTCDate = oUniDate;
-		oDates = this._getFirstAndLastWeekDate(this.oSelectedUTCDate);
+		this.setProperty("startDate", oDates.firstDate.oDate, true);
+		this.oStartUTCDate = oUniDate;
 		sPickerText = this._formatPickerText(oDates.firstDate, oDates.lastDate);
 		this.setPickerText(sPickerText);
 
@@ -195,7 +174,7 @@ function(
 
 	OnePersonHeader.prototype.setPickerText = function (sText) {
 		this.setProperty("pickerText", sText, true);
-		this.oPickerButton.setText(sText);
+		this.oPickerBtn.setText(sText);
 
 		return this;
 	};
@@ -205,43 +184,49 @@ function(
 
 		var sResult;
 
-		if (oFirstDate.getUTCMonth() !== oLastDate.getUTCMonth()){
-			if (oFirstDate.getUTCFullYear() !== oLastDate.getUTCFullYear()) {
-				sResult = DateFormat.getDateInstance({style: "long"}).format(oFirstDate.oDate);
-			} else {
-				sResult = DateFormat.getDateInstance({pattern: "d MMMM"}).format(oFirstDate.oDate);
-			}
-		} else {
-			sResult = DateFormat.getDateInstance({pattern: "d"}).format(oFirstDate.oDate);
-		}
+		// if (oFirstDate.getUTCMonth() !== oLastDate.getUTCMonth()){
+		// 	if (oFirstDate.getUTCFullYear() !== oLastDate.getUTCFullYear()) {
+		// 		sResult = DateFormat.getDateInstance({style: "long"}).format(oFirstDate.oDate);
+		// 	} else {
+		// 		sResult = DateFormat.getDateInstance({pattern: "d MMMM"}).format(oFirstDate.oDate);
+		// 	}
+		// } else {
+		// 	sResult = DateFormat.getDateInstance({pattern: "d"}).format(oFirstDate.oDate);
+		// }
 
-		sResult += " - " + DateFormat.getDateInstance({style: "long"}).format(oLastDate.oDate);
+		sResult = DateFormat.getDateInstance({style: "long"}).format(oFirstDate.oDate) + " - " + DateFormat.getDateInstance({style: "long"}).format(oLastDate.oDate);
 
 		return sResult;
 	};
 
 	OnePersonHeader.prototype._handlePickerDateSelect = function () {
 		var oSelectedDate = this.oPicker.getSelectedDates()[0].getStartDate(),
-			oDates,
+			oSelectedUTCDate = new UniversalDate(UniversalDate.UTC(oSelectedDate.getFullYear(), oSelectedDate.getMonth(), oSelectedDate.getDate())),
+			oDates = this._getFirstAndLastWeekDate(oSelectedUTCDate),
 			sPickerText;
 
-		this.setSelectedDate(oSelectedDate);
-		this.oSelectedUTCDate = new UniversalDate(UniversalDate.UTC(oSelectedDate.getFullYear(), oSelectedDate.getMonth(), oSelectedDate.getDate()));
-		oDates = this._getFirstAndLastWeekDate(this.oSelectedUTCDate);
+		this.setStartDate(oDates.firstDate.oDate);
+		this.oStartUTCDate = new UniversalDate(UniversalDate.UTC(oDates.firstDate.getFullYear(), oDates.firstDate.getMonth(), oDates.firstDate.getDate()));
 		sPickerText = this._formatPickerText(oDates.firstDate, oDates.lastDate);
 		this.setPickerText(sPickerText);
 
 		this._setSelectedDateToCalendar();
 		this._closeCalendarPicker();
+		this.fireDateSelect();// TODO: pass the selected date
 	};
 
 	OnePersonHeader.prototype._getFirstAndLastWeekDate = function(oDate) {
 		var oWeek = UniversalDate.getWeekByDate(oDate.getCalendarType(), oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate()),
-			oFirstWeekDateNumbers = UniversalDate.getFirstDateOfWeek(this.oSelectedUTCDate.getCalendarType(), oWeek.year, oWeek.week),
+			oFirstWeekDateNumbers = UniversalDate.getFirstDateOfWeek(oDate.getCalendarType(), oWeek.year, oWeek.week),
 			oFirstWeekDate = new UniversalDate(UniversalDate.UTC(oFirstWeekDateNumbers.year, oFirstWeekDateNumbers.month, oFirstWeekDateNumbers.day)),
-			oLastWeekDate = new UniversalDate(oFirstWeekDate.getTime());
+			oLastWeekDate,
+			iCLDRFirstWeekDay = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()).getFirstDayOfWeek();
 
-		oLastWeekDate.setDate(oLastWeekDate.getDate() + 6);
+		while (oFirstWeekDate.getUTCDay() !== iCLDRFirstWeekDay) {
+			oFirstWeekDate.setUTCDate(oFirstWeekDate.getUTCDate() - 1);
+		}
+
+		oLastWeekDate = new UniversalDate(UniversalDate.UTC(oFirstWeekDate.getUTCFullYear(), oFirstWeekDate.getUTCMonth(), oFirstWeekDate.getUTCDate() + 6));
 
 		return {
 			firstDate: oFirstWeekDate,
@@ -250,11 +235,11 @@ function(
 	};
 
 	OnePersonHeader.prototype._setSelectedDateToCalendar = function() {
-		var oSelectedDate = this.oSelectedUTCDate,
-			aDates = this._getFirstAndLastWeekDate(oSelectedDate),
+		var oStartDate = this.oStartUTCDate,
+			aDates = this._getFirstAndLastWeekDate(oStartDate),
 			oFirstWeekDate = aDates.firstDate,
 			oLastWeekDate = aDates.lastDate,
-			oSelectedRange = new sap.ui.unified.DateRange({
+			oSelectedRange = new DateRange({
 				startDate: oFirstWeekDate.oDate,
 				endDate: oLastWeekDate.oDate
 			});
@@ -263,24 +248,9 @@ function(
 		this.oPicker.addSelectedDate(oSelectedRange);
 	};
 
-	OnePersonHeader.prototype._fireArrowsLogic = function (bNextLogic) {
-		var iNumberToAdd = bNextLogic ? 7 : -7,
-			oDates,
-			sPickerText;
-
-		if (this.getSelectedDate()) {
-			this.getSelectedDate().setDate(this.getSelectedDate().getDate() + iNumberToAdd);
-		}
-		this.oSelectedUTCDate.setDate(this.oSelectedUTCDate.getDate() + iNumberToAdd);
-		oDates = this._getFirstAndLastWeekDate(this.oSelectedUTCDate);
-		sPickerText = this._formatPickerText(oDates.firstDate, oDates.lastDate);
-		this.setPickerText(sPickerText);
-		if (this.oPicker) {
-			this._setSelectedDateToCalendar();
-		}
-	};
-
 	OnePersonHeader.prototype._openPickerPopup = function(oPicker){
+
+		var eDock;
 
 		if (!this._oPopup) {
 			this._oPopup = new Popup();
@@ -291,14 +261,23 @@ function(
 			this._oPopup.attachClosed(function() {
 				this._closeCalendarPicker(true);
 			}, this);
+			this._oPopup.onsapescape = function(oEvent) {
+				this._oCalendar.onsapescape(oEvent);
+			};
 		}
 
 		this._oPopup.setContent(oPicker);
 
-		var oLink = this.oPickerButton;
-		var eDock = sap.ui.core.Popup.Dock;
-		this._oPopup.open(0, eDock.CenterTop, eDock.CenterTop, oLink, null, "flipfit", true);
+		eDock = Popup.Dock;
+		this._oPopup.open(0, eDock.CenterTop, eDock.CenterTop, this.oPickerBtn, null, "flipfit", true);
 
+	};
+
+	OnePersonHeader.prototype.onsapescape = function(){
+		if (this._oPopup) {
+			this._closeCalendarPicker.call(this);
+			jQuery.sap.focus(this.oPickerBtn.getDomRef());
+		}
 	};
 
 	OnePersonHeader.prototype._closeCalendarPicker = function() {
@@ -312,11 +291,13 @@ function(
 	};
 
 	OnePersonHeader.prototype.exit = function() {
-
-		Control.prototype.exit.apply(this, arguments);
-
-		this.oSelectedUTCDate.destroy();
-
+		if (this.oStartUTCDate) {
+			this.oStartUTCDate.destroy();
+			this.oStartUTCDate = null;
+		}
+		if (this.oPickerBtn) {
+			this.oPickerBtn = null;
+		}
 	};
 
 	return OnePersonHeader;
