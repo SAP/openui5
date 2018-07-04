@@ -2256,7 +2256,14 @@
 										shrinkable: true,
 										minWidth: "20px"
 									})
+								}),
+							new sap.m.Button(
+							{
+								text: "3",
+								layoutData: new sap.m.FlexItemData({
+									growFactor: 1
 								})
+							})
 						];
 				this.oOTB = createOverflowToolbar({}, aDefaultContent);
 			},
@@ -2268,9 +2275,6 @@
 		QUnit.test("_markControlsWithShrinkableLayoutData with items with fixed widths", function (assert) {
 			var fnIsRelativeWidth = this.stub(sap.m.Toolbar, "isRelativeWidth", function () { return false }),
 				aContent = this.oOTB.getContent(),
-				oButton0 = aContent[0],
-				oButton1 = aContent[1],
-				oButton2 = aContent[2],
 				sShrinkClass = "sapMTBShrinkItem";
 
 			// act
@@ -2278,7 +2282,7 @@
 
 			// assert
 			aContent.forEach(function (oControl) {
-				assert.notOk(oButton0.hasStyleClass(sShrinkClass), "shrinkClass is not added");
+				assert.notOk(oControl.hasStyleClass(sShrinkClass), "shrinkClass is not added");
 			});
 
 			// cleanup
@@ -2291,6 +2295,7 @@
 				oButton0 = aContent[0],
 				oButton1 = aContent[1],
 				oButton2 = aContent[2],
+				oButton3 = aContent[3],
 				sShrinkClass = "sapMTBShrinkItem";
 
 			// act
@@ -2300,6 +2305,7 @@
 			assert.notOk(oButton0.hasStyleClass(sShrinkClass), "shrinkClass is not added when no LayoutData is set");
 			assert.notOk(oButton1.hasStyleClass(sShrinkClass), "shrinkClass is not added when LayoutData is not shrinkable");
 			assert.ok(oButton2.hasStyleClass(sShrinkClass), "shrinkClass is added when LayoutData is shrinkable");
+			assert.notOk(oButton3.hasStyleClass(sShrinkClass), "shrinkClass is not added when LayoutData is from a different type. Error is not thrown.");
 
 			// cleanup
 			fnIsRelativeWidth.restore();
