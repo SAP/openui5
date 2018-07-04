@@ -159,8 +159,11 @@ sap.ui.define([
 		// When set to true, means that the overflow toolbar is in a popup
 		this._bNestedInAPopover = null;
 
-		// When set to true, changes to the controls in the toolbar will trigger a recalculation
+		// When set to true, changes to the properties of the controls in the toolbar will trigger a recalculation
 		this._bListenForControlPropertyChanges = false;
+
+		// When set to true, invalidation events will trigger a recalculation
+		this._bListenForInvalidationEvents = false;
 
 		// When set to true, controls widths, etc... will not be recalculated, because they are already cached
 		this._bControlsInfoCached = false;
@@ -211,8 +214,11 @@ sap.ui.define([
 
 		var iWidth = this.$().width();
 
-		// Stop listening for control changes while calculating the layout to avoid an infinite loop scenario
+		// Stop listening for control property changes while calculating the layout to avoid an infinite loop scenario
 		this._bListenForControlPropertyChanges = false;
+
+		// Stop listening for invalidation events while calculating the layout to avoid an infinite loop scenario
+		this._bListenForInvalidationEvents = false;
 
 		// Deregister the resize handler to avoid multiple instances of the same code running at the same time
 		this._deregisterToolbarResize();
@@ -242,6 +248,9 @@ sap.ui.define([
 
 		// Start listening for property changes on the controls once again
 		this._bListenForControlPropertyChanges = true;
+
+		// Start listening for invalidation events once again
+		this._bListenForInvalidationEvents = true;
 	};
 
 	OverflowToolbar.prototype._applyFocus = function () {
@@ -917,6 +926,18 @@ sap.ui.define([
 	OverflowToolbar.prototype._registerControlListener = function (oControl) {
 		if (oControl) {
 			oControl.attachEvent("_change", this._onContentPropertyChangedOverflowToolbar, this);
+
+			// Check if the control implements sap.m.IOverflowToolbarContent interface
+			if (oControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") > -1) {
+				var aInvalidationEvents = oControl.getOverflowToolbarConfig().invalidationEvents;
+
+				if (aInvalidationEvents && Array.isArray(aInvalidationEvents)) {
+					// We start to listen for events listed in invalidationEvents array of the OverflowToolbarConfig
+					aInvalidationEvents.forEach(function (sEvent) {
+						oControl.attachEvent(sEvent, this._onInvalidationEventFired, this);
+					}, this);
+				}
+			}
 		}
 	};
 
@@ -928,6 +949,18 @@ sap.ui.define([
 	OverflowToolbar.prototype._deregisterControlListener = function (oControl) {
 		if (oControl) {
 			oControl.detachEvent("_change", this._onContentPropertyChangedOverflowToolbar, this);
+
+			// Check if the control implements sap.m.IOverflowToolbarContent interface
+			if (oControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") > -1) {
+				var aInvalidationEvents = oControl.getOverflowToolbarConfig().invalidationEvents;
+
+				if (aInvalidationEvents && Array.isArray(aInvalidationEvents)) {
+					// We stop to listen for events listed in invalidationEvents array of the OverflowToolbarConfig
+					aInvalidationEvents.forEach(function (sEvent) {
+						oControl.detachEvent(sEvent, this._onInvalidationEventFired, this);
+					}, this);
+				}
+			}
 		}
 	};
 
@@ -951,6 +984,21 @@ sap.ui.define([
 		// Do nothing if the changed property is in the blacklist above
 		if (typeof oControlConfig !== "undefined" &&
 			oControlConfig.noInvalidationProps.indexOf(sParameterName) !== -1) {
+			return;
+		}
+
+		// Trigger a recalculation
+		this._resetAndInvalidateToolbar(true);
+	};
+
+	/**
+	 * Triggered when invalidation event is fired. Resets and invalidates the OverflowToolbar.
+	 * @private
+	 */
+	OverflowToolbar.prototype._onInvalidationEventFired = function () {
+
+		// Listening for invalidation events is turned off during layout recalculation to avoid infinite loops
+		if (!this._bListenForInvalidationEvents) {
 			return;
 		}
 
