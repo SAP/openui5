@@ -5391,6 +5391,7 @@ var sNestedAnnotations = '\
 							<Path>IsFemale</Path>\
 							<String>Iron Man</String>\
 							<String>Someone else</String>\
+							<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Who am I?"/>\
 						</If>\
 					</Annotation>\
 					<Annotation Term="unittest.ui5.dynamicExpression4">\
@@ -5410,6 +5411,16 @@ var sNestedAnnotations = '\
 								</UrlRef>\
 							</PropertyValue>\
 						</Record>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression6">\
+						<Apply Function="odata.concat">\
+							<If>\
+								<Path>IsFemale</Path>\
+								<String>Iron Man</String>\
+								<String>Someone else</String>\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Who am I?"/>\
+							</If>\
+						</Apply>\
 					</Annotation>\
 				</Annotation>\
 			</Annotations>\
