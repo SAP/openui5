@@ -3389,7 +3389,7 @@
 				var oOverflowButton = this.oIconTabHeader._getOverflowButton();
 
 				assert.ok(!oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
-				this.oIconTabHeader._handleOnDragOver();
+				this.oIconTabHeader._handleOnDragOver({preventDefault: function () {}});
 				assert.ok(oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button is in 'drag over' state ");
 				this.oIconTabHeader._handleOnDragLeave();
 				assert.ok(!oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button has default state");

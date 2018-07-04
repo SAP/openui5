@@ -522,9 +522,19 @@ function(
 	/**
 	 * Handles onDragOver of the overflow button.
 	 * @private
+	 * @param {jQuery.Event} oEvent The jQuery drag over event
 	 */
-	IconTabHeader.prototype._handleOnDragOver = function() {
+	IconTabHeader.prototype._handleOnDragOver = function(oEvent) {
 		this._getOverflowButton().addStyleClass("sapMBtnDragOver");
+		oEvent.preventDefault(); // allow drop, so that the cursor is correct
+	};
+
+	/**
+	 * Handles onDrop of the overflow button.
+	 * @private
+	 */
+	IconTabHeader.prototype._handleOnDrop = function() {
+		this._getOverflowButton().removeStyleClass("sapMBtnDragOver");
 	};
 
 	/**
@@ -560,7 +570,8 @@ function(
 			this._onOverflowButtonEventDelegate = {
 				onlongdragover: this._handleOnLongDragOver.bind(this),
 				ondragover: this._handleOnDragOver.bind(this),
-				ondragleave: this._handleOnDragLeave.bind(this)
+				ondragleave: this._handleOnDragLeave.bind(this),
+				ondrop: this._handleOnDrop.bind(this)
 			};
 
 		if (this._sResizeListenerId) {
