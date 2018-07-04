@@ -255,6 +255,7 @@ function(
 			this._bValueHelpOpen = true;
 		}, this);
 
+		this._getValueHelpIcon().setProperty("visible", true, true);
 		this._modifySuggestionPicker();
 	};
 
@@ -340,11 +341,6 @@ function(
 		this.fireTokenChange(args.getParameters());
 		this.invalidate();
 
-		if (this._bUseDialog && this._tokenizer.getParent() instanceof sap.m.Dialog) {
-			this._tokenizer.setVisible(true);
-			return;
-		}
-
 		// check if active element is part of MultiInput
 		var bFocusOnMultiInput = containsOrEquals(this.getDomRef(), document.activeElement);
 		if (args.getParameter("type") === "tokensChanged" && args.getParameter("removedTokens").length > 0 && bFocusOnMultiInput) {
@@ -417,10 +413,6 @@ function(
 				this.setValue("");
 			}
 
-			if (this._tokenizer.getVisible() === false) {
-				this._tokenizer.setVisible(true);
-			}
-
 			if (this._oList instanceof sap.m.Table) {
 				// CSN# 1421140/2014: hide the table for empty/initial results to not show the table columns
 				this._oList.addStyleClass("sapMInputSuggestionTableHidden");
@@ -470,7 +462,7 @@ function(
 		if (this.getDomRef()) {
 			var iWidth = this.getDomRef().offsetWidth,
 				iValueHelpButtonWidth = this.getDomRef("vhi") ? parseInt(this.getDomRef("vhi").offsetWidth, 10) : 0,
-				iInputWidth = parseInt(this.$().find(".sapMMultiInputInputContainer").css("min-width"), 10) || 0;
+				iInputWidth = parseInt(this.$().find(".sapMInputBaseInner").css("min-width"), 10) || 0;
 
 			return iWidth - (iValueHelpButtonWidth + iInputWidth) + "px";
 		} else {
@@ -489,11 +481,11 @@ function(
 	MultiInput.prototype.setEnableMultiLineMode = function (bMultiLineMode) {
 		// the multiline functionality is deprecated
 		// the method is left for backwards compatibility
-		return this;
+		return this.setProperty("enableMultiLineMode", bMultiLineMode, true);
 	};
 
 	MultiInput.prototype.onmousedown = function (e) {
-		if (e.target == this.getDomRef('border')) {
+		if (e.target == this.getDomRef('content')) {
 			e.preventDefault();
 			e.stopPropagation();
 		}
@@ -550,6 +542,7 @@ function(
 		}
 
 		Input.prototype.onBeforeRendering.apply(this, arguments);
+
 		this._deregisterResizeHandler();
 	};
 	/**
@@ -805,9 +798,6 @@ function(
 							that._oPopupInput.setValue("");
 						}
 
-						if (that._tokenizer.getVisible() === false) {
-							that._tokenizer.setVisible(true);
-						}
 						that._setAllTokenVisible();
 					}
 
@@ -1305,7 +1295,7 @@ function(
 	 * @returns {domRef} The domref at which to open the suggestion menu
 	 */
 	MultiInput.prototype.getPopupAnchorDomRef = function () {
-		return this.getDomRef("border");
+		return this.getDomRef("content");
 	};
 
 	/**

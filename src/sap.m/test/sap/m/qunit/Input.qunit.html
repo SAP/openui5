@@ -245,8 +245,8 @@
 
 	QUnit.test("Value States", function(assert) {
 
-		assert.equal(i4.$().hasClass('sapMInputBaseError'), true, "Before new value state : Error");
-		assert.equal(i5.$().hasClass('sapMInputBaseWarning'), true, "Before new value state : Warning");
+		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "Before new value state : Error");
+		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "Before new value state : Warning");
 		assert.equal(i4.$().attr("title"), undefined, "No tooltip for error state");
 		assert.equal(i5.$().attr("title"), undefined, "No tooltip for warning state");
 
@@ -254,8 +254,8 @@
 		i5.setValueState("Error");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(i4.$().hasClass('sapMInputBaseWarning'), true, "After new value state : Warning");
-		assert.equal(i5.$().hasClass('sapMInputBaseError'), true, "After new value state : Error");
+		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "After new value state : Warning");
+		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "After new value state : Error");
 
 		i4.setValueState();
 		i5.setValueState("None");
@@ -278,16 +278,10 @@
 		// first check if value help indicator classes are not set by default
 		assert.ok(oInput.$().children(".sapMInputValHelp").length === 0, "Has no outer value help indicator element");
 		assert.ok(oInput.$().children(".sapMInputValHelpInner").length === 0, "Has no inner value help indicator element");
-		assert.ok(oInput.$().hasClass("sapMInputVH") === false, "Outer div has no additional CSS class\"sapMInputVH\"");
 
 		// set value help indicator to true
 		oInput.setShowValueHelp(true);
 		sap.ui.getCore().applyChanges();
-
-		// then check if value help indicator classes are set
-		assert.ok(oInput.$().children(".sapMInputValHelp").length === 1, "Has an outer value help indicator element");
-		assert.ok(oInput.$().children(".sapMInputValHelp").children(".sapMInputValHelpInner").length === 1, "Has an inner value help indicator element");
-		assert.ok(oInput.$().hasClass("sapMInputVH") === true, "Outer div has additional CSS class\"sapMInputVH\"");
 
 		// screen reader announcement for F4, there should be at least one description
 		var describedById = oInput.getFocusDomRef().getAttribute("aria-describedby");
@@ -298,15 +292,8 @@
 		assert.ok(!!describedById, "At least one described by ID is set for screen reader");
 		assert.ok(bLabelsExist, "All screen reader descriptions are rendered in DOM");
 
-		// temporarily overwrite function to get a placeholder on all browsers
-
-		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
-		oInput.rerender();
-		oInput.$().find("span").css("display","block");
-		assert.strictEqual(oInput.$().find("span").css("padding-right"), "12px", "Placeholder label has right padding of 12px when value help icon is enabled");
-
 		// event check
-		oInput.getAggregation("_valueHelpIcon").firePress();
+		oInput.getAggregation("_endIcon")[0].firePress();
 		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
 
@@ -452,12 +439,7 @@
 		oInputVHO.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		// check if valueHelpOnly class is set in addition to ValueHelp class
-		assert.ok(oInputVHO.$().hasClass("sapMInputVH") === true, "Outer div has additional CSS class\"sapMInputVH\"");
-		assert.ok(oInputVHO.$().hasClass("sapMInputVHO") === true, "Outer div has additional CSS class\"sapMInputVHO\"");
-
 		// Value help event check
-
 		oInputVHO._$input.focus().trigger("tap");
 		this.clock.tick(500);
         assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
@@ -873,6 +855,7 @@
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		oNextInput.focus();
+		this.clock.tick(300);
 
 		assert.equal(fnCallback.callCount, 1, "change event handler only called once");
 		var spyCall = fnCallback.getCall(0);
@@ -3009,18 +2992,15 @@
 		oInputWithDes.setDescription("EUR");
 		oInputWithDes.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		assert.equal(oInputWithDes.$().find(".sapMInputDescriptionText").text(), "EUR", "Input description is EUR");
- 		assert.equal(oInputWithDes.$().find("input").outerWidth(), Math.round(oInputWithDes.$().width()*0.5), "input field has default width");
 
-  		oInputWithDes.setFieldWidth("30%");
-  		sap.ui.getCore().applyChanges();
-  		assert.ok(Math.abs(oInputWithDes.$().find("input").outerWidth()-(oInputWithDes.$().width()*0.3)) <= 2, "input field has 30% width");
+		assert.equal(oInputWithDes.$().find(".sapMInputDescriptionText").text(), "EUR", "Input description is EUR");
 
   		oInputWithDes.setFieldWidth("100px");
-  		sap.ui.getCore().applyChanges();
-  		assert.equal(oInputWithDes.$().find("input").outerWidth(), "100", "input field has 100px width");
+		  sap.ui.getCore().applyChanges();
 
-		assert.equal(oInputWithDes.$('Descr').text(), "EUR", "Description ID is set to the correct span");
+  		// assert.equal(oInputWithDes.$().find("input").outerWidth(), "100", "input field has 100px width");
+
+		assert.equal(oInputWithDes.$('descr').text(), "EUR", "Description ID is set to the correct span");
 
   		oInputWithDes.destroy();
 	});

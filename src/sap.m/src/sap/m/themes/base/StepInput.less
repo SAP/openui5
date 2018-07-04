@@ -27,7 +27,7 @@
 		}
 	}
 
-	.sapMInputDivWrapper {
+	.sapMInputBaseContentWrapper {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -47,7 +47,7 @@ html[data-sap-ui-browser^='ed'] {
 
 .sapMStepInput-CTX {
 	.sapMInput {
-		.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
+		.sapMInputBaseInner:not(.sapMInputBaseReadonlyWrapper) {
 			-webkit-box-sizing: border-box;
 			-moz-box-sizing: border-box;
 			box-sizing: border-box;
@@ -59,7 +59,8 @@ html[data-sap-ui-browser^='ed'] {
 		height: 2.375rem;
 		width: 2.375rem;
 		line-height: 2.375rem;
-		margin-top: 0.3125rem;
+		// this is a temporal fix - should be fixed with the alignment of NumericInput
+		margin-top: 0.25rem;
 
 		&:hover {
 			background-color: @sapUiButtonLiteHoverBackground;
@@ -86,7 +87,7 @@ html[data-sap-ui-browser^='ed'] {
 	}
 
 	&:focus {
-		.sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMStepInputReadOnly) {
+		.sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState):not(.sapMStepInputReadOnly) {
 			&::before {
 				content: "";
 				position: absolute;
@@ -103,7 +104,7 @@ html[data-sap-ui-browser^='ed'] {
 }
 
 .sapUiSizeCompact .sapMStepInput-CTX {
-	.sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
+	.sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyWrapper) {
 		padding: 0 1.875rem;
 	}
 

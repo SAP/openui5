@@ -3,14 +3,12 @@
 /* Base theme                           */
 /* ==================================== */
 
-.sapMMultiComboBox.sapMInputBase {
-	&:not(.sapMInputBaseReadonly) {
-		background-color: @sapUiFieldBackground;
-	}
+.sapMMultiComboBox:not(.sapMMultiComboBoxHasToken) .sapMTokenizer {
+	padding-left: 0;
+}
 
-	& .sapMMultiComboBoxInputInner {
-		background-color: transparent;
-	}
+.sapMMultiComboBoxHasToken .sapMInputBaseInner {
+	padding-left: 0;
 }
 
 .sapMMultiComboBoxReadOnlyPopover {
@@ -24,23 +22,8 @@
 	}
 }
 
-.sapMMultiComboBoxFocus .sapMMultiComboBoxBorder::after {
-	border: 1px dotted @sapUiContentFocusColor;
-	content: "";
-	position: absolute;
-	top: 2px;
-	right: 2px;
-	bottom: 2px;
-	left: 2px;
-	pointer-events: none;
-}
-
-.sapMMultiComboBox.sapMComboBoxTextFieldReadonly {
-	background-color: @sapUiFieldReadOnlyBackground;
-}
-
-.sapMMultiComboBox.sapMMultiComboBoxFocus .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
-	outline: none;
+.sapMMultiComboBox .sapMInputBaseInner {
+	min-width: 3rem;
 }
 
 li.sapMMultiComboBoxItem .sapMCbBg {
@@ -58,107 +41,29 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 /* BorderDiv                      */
 /* ------------------------------ */
 
-/* on the desktop we hide the overflow */
-html.sap-desktop .sapMMultiComboBoxBorder {
-	overflow: hidden;
-}
-
-.sapMMultiComboBoxBorder {
-	height: 100%;
-	display: flex;
-
-	&.sapMMultiComboBoxBorder .sapMTokenizer {
-		flex: 0 1 auto;
-	}
-}
-
-.sapUiSizeCompact .sapMMultiComboBoxBorder .sapMTokenizer .sapMToken:first-child{
-		margin-left: 0.25rem;
-	}
-
-.sapMMultiComboBoxHasToken .sapMInputBaseInner {
-	padding-left: 0;
-}
-
-	/* ------------------------------ */
-/*             InputDiv           */
-/* ------------------------------ */
-
-.sapMMultiComboBoxInputContainer {
-	flex: 1;
-	margin-right: 2.5rem;
-	min-width: 3rem;
-	// in Safari height of the inner input calculated wrong
-	height: 100%;
-
-	& .sapMMultiComboBoxInputInner {
-		font-size: @sapMFontMediumSize;
-		font-family: @sapUiFontFamily;
-	}
-
-	& .sapMMultiComboBoxInputInner:not(.sapMComboBoxTextFieldInnerReadonly) {
-		padding-right: 0.75rem;
-	}
-}
-
-.sapUiSizeCompact {
-	.sapMMultiComboBoxInputContainer {
-		margin-right: 2rem;
-		min-width: 2rem;
-	}
-
-	& .sapMMultiComboBoxInputInner:not(.sapMComboBoxTextFieldInnerReadonly) {
-		padding-right: 0.5rem;
-	}
-
-	.sapMMultiComboBox .sapMTokenizer {
-		padding-left: 0;
-	}
+.sapUiSizeCompact .sapMMultiComboBox  .sapMTokenizer .sapMToken:first-child {
+	margin-left: 0.25rem;
 }
 
 /* Keep placeholder invisible, when at least one token is chosen */
-
-/* Webkit */
-.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner::-webkit-input-placeholder {
+.sapMMultiComboBoxHasToken .sapMInputBaseInner::-moz-placeholder {
 	color: transparent;
 }
 
-/* Firefox 19+ */
-.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner::-moz-placeholder {
+.sapMMultiComboBoxHasToken .sapMInputBaseInner::-webkit-input-placeholder {
 	color: transparent;
 }
 
-/* TODO remove after 1.62 version */
-/* IE */
-.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner:-ms-input-placeholder {
+.sapMMultiComboBoxHasToken .sapMInputBaseInner:-ms-input-placeholder {
 	color: transparent;
 }
 
-/* TODO remove after 1.62 version */
-/* Keep placeholder invisible, when at least one token is chosen. IE solution */
-.sapMMultiComboBoxHasToken > .sapMInputBasePlaceholder {
+.sapMMultiComboBoxHasToken .sapMInputBaseInner:-moz-placeholder {
 	color: transparent;
-	max-width: 0;
 }
-
-/* If a non-native placeholder is used, make sure that it is in front of children elements. */
-.sapMMultiComboBox > .sapMInputBasePlaceholder {
-	z-index: 1;
-	padding-left: 1.125rem;
-}
-
-/* If a non-native placeholder is used, make sure that arrow button is in front of placeholder. */
-.sapMMultiComboBox .sapMComboBoxBaseArrow {
-	z-index: 2;
-}
-
- .sapMMultiComboBox .sapMInputDivWrapper{
-		width:100% !important;
-	}
-
 
 /* ------------------------------ */
-/* InputInner                     */
+/* ListItem                       */
 /* ------------------------------ */
 
 .sapMMultiComboBoxItem .sapMCb {
@@ -183,5 +88,9 @@ html.sap-desktop li.sapMMultiComboBoxItemRangeSelection {
 	.sapMMultiComboBoxItem .sapMCb {
 		height: 2rem;
 		line-height: 2rem;
+	}
+
+	.sapMMultiComboBox .sapMTokenizer {
+		padding-left: 0px;
 	}
 }

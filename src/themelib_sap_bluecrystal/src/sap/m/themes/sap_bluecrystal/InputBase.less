@@ -8,13 +8,16 @@
 }
 
 .sapMInputBaseContentWrapper {
-	border: 1px solid @sapUiFieldBorderColor;
+	border: 1px solid @sapUiDarkBorder;
 	background: @sapUiFieldBackground;
 	&.sapMInputBaseContentWrapperState {
 		border-width: 2px;
 		.sapMInputBaseIcon {
 			line-height: 2.25rem;
 		}
+	}
+	&:hover:not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseDisabledWrapper):not(.sapMInputBaseReadonlyWrapper) {
+		border-color: @sapUiHighlight;
 	}
 }
 
@@ -29,14 +32,9 @@
 	}
 }
 
-.sapMInputBaseDisabledWrapper .sapMInputBaseIcon {
-	color: @sapUiContentDisabledTextColor;
-	background-color: @sapUiButtonBackground;
-}
-
 .sapMInputBaseContentWrapperWarning {
 	background: @sapUiFieldWarningBackground;
-	border-color: @sapUiFieldWarningColor;
+	border-color: @sapUiWarningBorder;
 }
 
 .sapMInputBaseContentWrapperSuccess {
@@ -46,25 +44,29 @@
 
 .sapMInputBaseContentWrapperError {
 	background: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor;
+	border-color: @sapUiErrorBorder;
 }
 
-.sapMInputBaseReadonlyWrapper,
-.sapMInputBaseDisabledWrapper {
+/*read only*/
+
+.sapMInputBaseReadonlyWrapper .sapMInputBaseInner {
+	border: 1px solid @sapUiFieldReadOnlyBorderColor;
 	background: @sapUiFieldReadOnlyBackground;
 }
 
-.sapMFocus .sapMInputBaseContentWrapper {
-	&::before {
-		border: 1px dotted @sapUiContentFocusColor;
-	}
+/*disabled*/
+
+.sapMInputBase .sapMInputBaseDisabledWrapper {
+	border: 1px solid @sapUiDarkBorder;
+	background: @sapUiLightestBG;
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMFocus .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
-		&::before {
-			border: 1px dashed @sapUiContentFocusColor;
-		}
-	}
+/* focus and hover */
+
+.sapMFocus:not(.sapMInputBaseReadonly):not(.sapMInputBaseReadonly):not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseDisabled):hover {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+.sapMFocus .sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseReadonlyWrapper) {
+	border: 1px solid @sapUiHighlight;
 }

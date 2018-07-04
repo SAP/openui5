@@ -27,24 +27,6 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 */
 	InputRenderer.addOuterClasses = function(oRm, oControl) {
 		oRm.addClass("sapMInput");
-		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
-			oRm.addClass("sapMInputVH");
-			if (oControl.getValueHelpOnly()) {
-				oRm.addClass("sapMInputVHO");
-			}
-		}
-		if (oControl.getDescription()) {
-				oRm.addClass("sapMInputDescription");
-		}
-	};
-
-	/**
-	 * Add extra styles for input container
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	InputRenderer.addOuterStyles = function(oRm, oControl) {
 	};
 
 	/**
@@ -82,79 +64,41 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	InputRenderer.addInnerClasses = function(oRm, oControl) {
+	InputRenderer.addInnerClasses = function(oRm, oControl) {};
+
+	InputRenderer.writeDescription = function (oRm, oControl) {
+		oRm.write("<div");
+		oRm.addClass("sapMInputDescriptionWrapper");
+		oRm.addStyle("width", "calc(100% - " + oControl.getFieldWidth() + ")");
+		oRm.writeClasses();
+		oRm.writeStyles();
+		oRm.write(">");
+
+		oRm.write("<span");
+		oRm.writeAttribute("id", oControl.getId() + "-descr");
+		oRm.addClass("sapMInputDescriptionText");
+		oRm.writeClasses();
+		oRm.write(">");
+
+		oRm.writeEscaped(oControl.getDescription());
+
+		oRm.write("</span>");
+		oRm.write("</div>");
 	};
 
-	/**
-	 * Add inner styles to the input field
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	InputRenderer.addWrapperStyles = function(oRm, oControl) {
-
+	InputRenderer.writeDecorations = function (oRm, oControl) {
 		if (oControl.getDescription()) {
-			oRm.addStyle("width", oControl.getFieldWidth() || "50%");
+			this.writeDescription(oRm, oControl);
 		}
 	};
 
-	/**
-	 * Write the decorations of the input.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-	 */
-	InputRenderer.writeDecorations = function(oRm, oControl) {
-
-		var id = oControl.getId(),
-			description = oControl.getDescription();
-
-		if (!description) {
-			this.writeValueHelpIcon(oRm, oControl);
-		} else {
-			oRm.write("<span>");
-			this.writeValueHelpIcon(oRm, oControl);
-			oRm.write('<span id="' + oControl.getId() + '-Descr" class="sapMInputDescriptionText">');
-			oRm.writeEscaped(description);
-			oRm.write("</span></span>");
-		}
-
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
-				oRm.write("<span id=\"" + id + "-SuggDescr\" class=\"sapUiPseudoInvisibleText\" role=\"status\" aria-live=\"polite\"></span>");
-			}
-		}
-
-	};
-
-	InputRenderer.writeValueHelpIcon = function(oRm, oControl) {
-
-		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
-			// Set tabindex to -1 to prevent the focus from going to the underlying list row,
-			// in case when the input is placed inside of a list/table.
-			oRm.write('<div class="sapMInputValHelp" tabindex="-1">');
-			oRm.renderControl(oControl._getValueHelpIcon());
-			oRm.write("</div>");
-		}
-
-	};
-
-	/**
-	 * Add inner styles to the placeholder
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	InputRenderer.addPlaceholderStyles = function(oRm, oControl) {
-
-		if (oControl.getDescription()) {
-			oRm.addStyle("width", oControl.getFieldWidth() || "50%");
-		}
-
+	InputRenderer.addWrapperStyles = function (oRm, oControl) {
+		oRm.addStyle("width", oControl.getDescription() ? oControl.getFieldWidth() : "100%");
 	};
 
 	InputRenderer.getAriaLabelledBy = function(oControl) {
 		var ariaLabels = InputBaseRenderer.getAriaLabelledBy.call(this, oControl) || "";
+
 		if (oControl.getDescription()) {
 			ariaLabels = ariaLabels + " " + oControl.getId() + "-Descr";
 		}

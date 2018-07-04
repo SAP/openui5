@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	'./InputBase',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./Popover',
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/base/security/encodeXML"
 ],
 	function(
+		InputBase,
 		ComboBoxTextField,
 		ComboBoxBase,
 		Popover,
@@ -409,7 +411,7 @@ sap.ui.define([
 			oDropdown.setInitialFocus(this);
 
 			oDropdown.open = function() {
-				return this.openBy(that);
+				return this.openBy(that.getDomRef("content"));
 			};
 
 			return oDropdown;
@@ -522,6 +524,10 @@ sap.ui.define([
 
 			// indicated if the ComboBox is already focused
 			this.bIsFocused = false;
+
+			if (Device.system.phone) {
+				this.attachEvent("_change", this.onPropertyChange, this);
+			}
 		};
 
 		ComboBox.prototype.onBeforeRendering = function() {
@@ -783,7 +789,7 @@ sap.ui.define([
 			}
 
 			// add the active state to the control field
-			this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+			this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 
 			if (oDomRef) {
 
@@ -857,7 +863,7 @@ sap.ui.define([
 			}
 
 			// remove the active state of the control's field
-			this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+			this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		};
 
 		/**
@@ -1189,6 +1195,13 @@ sap.ui.define([
 		ComboBox.prototype.onfocusin = function(oEvent) {
 			var bDropdownPickerType = this.getPickerType() === "Dropdown";
 
+			// when having an open dialog and destroy is called
+			// the popup is destroyed and the focus is return back to the combobox
+			// which checks for the presence of an icon which is already destroyed
+			if (this._bIsBeingDestroyed) {
+				return;
+			}
+
 			// the downward-facing arrow button is receiving focus
 			if (oEvent.target === this.getOpenArea()) {
 
@@ -1242,7 +1255,6 @@ sap.ui.define([
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 
 			this.bIsFocused = false;
-
 			var bTablet, oPicker,
 				oRelatedControl, oFocusDomRef,
 				oControl = oEvent.srcControl,

@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./InputBaseRenderer',
+	'sap/base/Log',
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/getSelectedText", // jQuery Plugin "getSelectedText"
@@ -27,6 +28,7 @@ function(
 	coreLibrary,
 	Device,
 	InputBaseRenderer,
+	log,
 	KeyCodes
 ) {
 	"use strict";
@@ -160,6 +162,19 @@ function(
 				}
 			}
 		},
+		aggregations: {
+			/**
+			 * Icons that will be placed after the input field
+			 * @since 1.58
+			*/
+			_endIcon: { type: "sap.ui.core.Icon", multiple: true, visibility: "hidden" },
+
+			/**
+			 * Icons that will be placed before the input field
+			 * @since 1.58
+			*/
+			_beginIcon: { type: "sap.ui.core.Icon", multiple: true, visibility: "hidden" }
+		},
 		designtime: "sap/m/designtime/InputBase.designtime"
 	}});
 
@@ -168,6 +183,9 @@ function(
 	// apply the message mixin so all message on the input will get the associated label-texts injected
 	MessageMixin.call(InputBase.prototype);
 
+	// protected constant for pressed state of icons in the input based controls
+	InputBase.ICON_PRESSED_CSS_CLASS = "sapMInputBaseIconPressed";
+	InputBase.ICON_CSS_CLASS = "sapMInputBaseIcon";
 
 	/* =========================================================== */
 	/* Private methods and properties                              */
@@ -201,18 +219,6 @@ function(
 	 */
 	InputBase.prototype._getPlaceholder = function() {
 		return this.getPlaceholder();
-	};
-
-	/**
-	 * Update the synthetic placeholder visibility.
-	 */
-	InputBase.prototype._setLabelVisibility = function() {
-		if (!this.bShowLabelAsPlaceholder) {
-			return;
-		}
-
-		var sValue = this.$("inner").val();
-		this.$("placeholder").css("display", sValue ? "none" : "inline");
 	};
 
 	/**
@@ -309,9 +315,6 @@ function(
 
 		// now dom value is up-to-date
 		this._bCheckDomValue = false;
-
-		// handle synthetic placeholder visibility
-		this._setLabelVisibility();
 
 		// rendering phase is finished
 		this.bRenderingPhase = false;
@@ -430,14 +433,8 @@ function(
 	 * @private
 	 */
 	InputBase.prototype.ontap = function(oEvent) {
-		// put the focus to the editable input when synthetic placeholder is tapped
-		// label for attribute breaks the screen readers labelledby announcement
-		if (this.getEnabled() &&
-			this.getEditable() &&
-			this.bShowLabelAsPlaceholder &&
-			oEvent.target.id === this.getId() + "-placeholder") {
-			this.focus();
-		}
+		// in order to stay backward compatible - we need to implement the tap
+		return;
 	};
 
 	/**
@@ -629,9 +626,6 @@ function(
 
 		// dom value updated other than value property
 		this._bCheckDomValue = true;
-
-		// update the synthetic placeholder visibility
-		this._setLabelVisibility();
 	};
 
 	/**
@@ -642,7 +636,7 @@ function(
 	 */
 	InputBase.prototype.onkeydown = function(oEvent) {
 
-		// Prevents browser back to previous page in IE// TODO remove after 1.62 version
+		// Prevents browser back to previous page in IE // TODO remove after 1.62 version
 		if (this.getDomRef("inner").getAttribute("readonly") && oEvent.keyCode == KeyCodes.BACKSPACE) {
 			oEvent.preventDefault();
 		}
@@ -806,9 +800,6 @@ function(
 			this._bCheckDomValue = true;
 		}
 
-		// update synthetic placeholder visibility
-		this._setLabelVisibility();
-
 		return this;
 	};
 
@@ -832,7 +823,7 @@ function(
 	 * @protected
 	 */
 	InputBase.prototype.getDomRefForValueStateMessage = function() {
-		return this.getFocusDomRef();
+		return this.getDomRef("content");
 	};
 
 	InputBase.prototype.iOpenMessagePopupDuration = 0;
@@ -884,18 +875,15 @@ function(
 	};
 
 	InputBase.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
-		var $This = this.$(),
-			$Input = this.$("inner"),
+		var $ContentWrapper = this.$("content"),
 			mValueState = ValueState;
 
 		if (sOldValueState !== mValueState.None) {
-			$This.removeClass("sapMInputBaseState sapMInputBase" + sOldValueState);
-			$Input.removeClass("sapMInputBaseStateInner sapMInputBase" + sOldValueState + "Inner");
+			$ContentWrapper.removeClass("sapMInputBaseContentWrapperState sapMInputBaseContentWrapper" + sOldValueState);
 		}
 
 		if (sValueState !== mValueState.None) {
-			$This.addClass("sapMInputBaseState sapMInputBase" + sValueState);
-			$Input.addClass("sapMInputBaseStateInner sapMInputBase" + sValueState + "Inner");
+			$ContentWrapper.addClass("sapMInputBaseContentWrapperState sapMInputBaseContentWrapper" + sValueState);
 		}
 	};
 
@@ -1091,6 +1079,47 @@ function(
 			enabled: this.getEnabled(),
 			editable: this.getEnabled() && this.getEditable()
 		};
+	};
+
+	/**
+	 * Adds an icon to be rendered
+	 * @param {string} sIconPosition a position for the icon to be rendered - begin or end
+	 * @param {object} oIconSettings settings for creating an icon
+	 * @see sap.ui.core.IconPool#createControlByURI
+	 * @private
+	 * @returns {null|sap.ui.core.Icon}
+	 */
+	InputBase.prototype._addIcon = function (sIconPosition, oIconSettings) {
+		if (["begin", "end"].indexOf(sIconPosition) === -1) {
+			log.error('icon position is not "begin", neither "end", please check again the passed setting');
+			return null;
+		}
+		var oIcon = IconPool.createControlByURI(oIconSettings).addStyleClass(InputBase.ICON_CSS_CLASS);
+		this.addAggregation("_" + sIconPosition + "Icon", oIcon);
+
+		return oIcon;
+	};
+
+	/**
+	 * Adds an icon to the begining of the input
+	 * @param {object} oIconSettings settings for creating an icon
+	 * @see sap.ui.core.IconPool#createControlByURI
+	 * @protected
+	 * @returns {null|sap.ui.core.Icon}
+	 */
+	InputBase.prototype.addBeginIcon = function (oIconSettings) {
+		return this._addIcon("begin", oIconSettings);
+	};
+
+	/**
+	 * Adds an icon to the end of the input
+	 * @param {object} oIconSettings settings for creating an icon
+	 * @see sap.ui.core.IconPool#createControlByURI
+	 * @protected
+	 * @returns {null|sap.ui.core.Icon}
+	 */
+	InputBase.prototype.addEndIcon = function (oIconSettings) {
+		return this._addIcon("end", oIconSettings);
 	};
 
 	// do not cache jQuery object and define _$input for compatibility reasons

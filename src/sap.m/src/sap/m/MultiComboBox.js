@@ -359,7 +359,7 @@ function(
 		if (this.getDomRef()) {
 			var iWidth = this.getDomRef().offsetWidth,
 				iArrowButtonWidth = parseInt(this.getDomRef("arrow").offsetWidth, 10),
-				iInputWidth = parseInt(this.$().find(".sapMMultiComboBoxInputContainer").css("min-width"), 10) || 0;
+				iInputWidth = parseInt(this.$().find(".sapMInputBaseInner").css("min-width"), 10) || 0;
 
 			return iWidth - (iArrowButtonWidth + iInputWidth) + "px";
 		} else {
@@ -461,7 +461,7 @@ function(
 		}
 
 		if (oEvent.target === this.getFocusDomRef()) {
-			this.getEditable() && this.addStyleClass("sapMMultiComboBoxFocus");
+			this.getEditable() && this.addStyleClass("sapMFocus");
 		}
 
 		if (oEvent.target === this.getOpenArea() && bDropdownPickerType && !this.isPlatformTablet()) {
@@ -860,7 +860,7 @@ function(
 		var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()];
 
 		// add the active state to the MultiComboBox's field
-		this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this._resetCurrentItem();
 		this.addContent();
 		this._aInitiallySelectedItems = this.getSelectedItems();
@@ -902,7 +902,7 @@ function(
 	MultiComboBox.prototype.onAfterClose = function() {
 		var bUseCollapsed = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog();
 		// remove the active state of the MultiComboBox's field
-		this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 
 		// Show all items when the list will be opened next time
 		this.clearFilter();
@@ -955,7 +955,7 @@ function(
 		var that = this;
 
 		oPopover.open = function() {
-			return this.openBy(that);
+			return this.openBy(that.getDomRef("content"));
 		};
 	};
 
@@ -1758,14 +1758,6 @@ function(
 
 	MultiComboBox.prototype.onAfterRendering = function() {
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
-
-		// TODO Dom reference to Border-DIV
-		// oPopover._oOpenBy = this.$().children("....")[0];
-		var oPicker = this.getPicker();
-		var oDomRef = jQuery(this.getDomRef());
-		var oBorder = oDomRef.find(this.getRenderer().DOT_CSS_CLASS_MULTICOMBOBOX + "Border");
-		oPicker._oOpenBy = oBorder[0];
-
 		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._registerResizeHandler();
 	};
@@ -1776,7 +1768,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
-		this.removeStyleClass("sapMMultiComboBoxFocus");
+		this.removeStyleClass("sapMFocus");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
 	};
 
@@ -2496,7 +2488,8 @@ function(
 			oToken.setTooltip(oItem.getText());
 
 			oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
-			this._oTokenizer.addToken(oToken);
+			// TODO: Check this invalidation
+			this._oTokenizer.addToken(oToken, true);
 		}
 
 		this.setSelectable(oItem, oItem.getEnabled());
@@ -2665,16 +2658,10 @@ function(
 	};
 
 	MultiComboBox.prototype.init = function() {
-		ComboBoxTextField.prototype.init.apply(this, arguments);
-
 		// initialize list
 		this.createList();
 
-		/**
-		 * To detect whether the data is updated.
-		 *
-		 */
-		this.bItemsUpdated = false;
+		ComboBoxBase.prototype.init.apply(this, arguments);
 
 		// To detect whether the List's item navigation is inited
 		this._bListItemNavigationInvalidated = false;
@@ -2690,7 +2677,6 @@ function(
 
 		// determines if value of the combobox should be empty string after popup's close
 		this._bPreventValueRemove = false;
-		this.setPickerType(Device.system.phone ? "Dialog" : "Dropdown");
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];
 		this._aInitiallySelectedItems = [];

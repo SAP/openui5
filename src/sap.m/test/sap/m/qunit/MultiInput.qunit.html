@@ -774,22 +774,6 @@
 		oSpy.restore();
 	});
 
-
-	QUnit.module("MultiLineMode", {
-		beforeEach: function() {
-			this.multiInput1 = new sap.m.MultiInput({
-				enableMultiLineMode : true
-			});
-
-			this.multiInput1.placeAt("qunit-fixture");
-
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			this.multiInput1.destroy();
-		}
-	});
-
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.multiInput1 = new sap.m.MultiInput();
@@ -1112,7 +1096,7 @@
 
 	QUnit.test("Placeholder opacity", function(assert) {
 		// assert
-		assert.ok(!this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder shows placeholder");
+		assert.ok(!this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder shows placeholder");
 
 		// act
 		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
@@ -1120,7 +1104,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder doesn't show placeholder");
+		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder doesn't show placeholder");
 	});
 
 	QUnit.module("Copy/Cut Functionality", {
@@ -1307,7 +1291,7 @@
 	});
 
 	QUnit.test("onfocusin", function(assert) {
-		var oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator"),
+		var oIndicator,
 			oEventMock = {
 				target : {
 					classList: {
@@ -1326,6 +1310,8 @@
 		]);
 
 		sap.ui.getCore().applyChanges();
+
+		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 
 		//assert
 		assert.ok(oIndicator[0], "A n-more label is rendered");
@@ -1490,20 +1476,20 @@
 
 	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
 		//arrange
-		var tokenizerSpy = sinon.spy(sap.m.Tokenizer.prototype, "_adjustTokensVisibility"),
-			multiInput = new sap.m.MultiInput();
+		var oMultiInput = new sap.m.MultiInput(),
+			tokenizerSpy = this.spy(oMultiInput._tokenizer, "_adjustTokensVisibility");
 
 		// act
-		multiInput.placeAt("qunit-fixture");
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 		this.clock.tick(100);
 
 		// assert
-		assert.ok(multiInput._tokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.ok(oMultiInput._tokenizer._getAdjustable(), "the tokenizer is adjustable");
 		assert.ok(tokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
 
 		// clean up
-		tokenizerSpy.restore();
-		multiInput.destroy();
+		oMultiInput.destroy();
 	});
 
 	QUnit.test("Input visibility", function(assert) {

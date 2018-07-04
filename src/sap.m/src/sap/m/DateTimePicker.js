@@ -5,6 +5,7 @@
 //Provides control sap.m.DateTimePicker.
 sap.ui.define([
 	'jquery.sap.global',
+	'./InputBase',
 	'./DatePicker',
 	'sap/ui/model/type/Date',
 	'sap/ui/unified/DateRange',
@@ -14,9 +15,11 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/LocaleData',
 	'./DateTimePickerRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/IconPool"
 ], function(
 	jQuery,
+	InputBase,
 	DatePicker,
 	Date1,
 	DateRange,
@@ -26,7 +29,8 @@ sap.ui.define([
 	DateFormat,
 	LocaleData,
 	DateTimePickerRenderer,
-	KeyCodes
+	KeyCodes,
+	IconPool
 ) {
 	"use strict";
 
@@ -289,12 +293,18 @@ sap.ui.define([
 
 	});
 
-
-	DateTimePicker.prototype.init = function(){
-
+	DateTimePicker.prototype.init = function() {
 		DatePicker.prototype.init.apply(this, arguments);
-		this._bOnlyCalendar = false;
 
+		this._bOnlyCalendar = false;
+	};
+
+	/**
+	 * Apply the correct icon to the used Date control
+	 * @protected
+	 */
+	DateTimePicker.prototype.getIconSrc = function () {
+		return IconPool.getIconURI("date-time");
 	};
 
 	DateTimePicker.prototype.exit = function(){
@@ -524,7 +534,7 @@ sap.ui.define([
 		if (!this._oPopup) {
 			return;
 		}
-
+		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this._storeInputSelection(this._$input.get(0));
 
 		var oPopover = this._oPopup.getAggregation("_popup");
@@ -689,6 +699,7 @@ sap.ui.define([
 	}
 
 	function _handleAfterClose(){
+		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this.$("inner").attr("aria-expanded", false);
 
 		this._restoreInputSelection(this._$input.get(0));

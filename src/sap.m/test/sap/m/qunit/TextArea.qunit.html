@@ -406,19 +406,6 @@
 
 
 	QUnit.module("Growing");
-	QUnit.test("after rendering whole content should be visible", function(assert) {
-		var sLongText = new Array(1000).join("text ");
-		var oTA = new sap.m.TextArea({
-			value: sLongText,
-			growing: true,
-			width: "100%"
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		oTA.focus();
-		assert.ok(oTA.getFocusDomRef().scrollHeight <= oTA.getFocusDomRef().offsetHeight, "No scrollbar. Whole content is visible");
-		oTA.destroy();
-	});
 
     QUnit.test("after setValue the height is adjusted", function(assert) {
         var sLongText = new Array(1000).join("text ");
