@@ -47,6 +47,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 			delayedCheckTheme.apply(this, [true]);
 
+			// Do not fire the event when the theme is already applied initially.
+			// bOnlyOnInitFail=true should only be passed from Core#init.
 			if (!bOnlyOnInitFail && !this._sThemeCheckId) {
 				this._oCore.fireThemeChanged({theme: this._oCore.getConfiguration().getTheme()});
 			}
