@@ -16,6 +16,7 @@ sap.ui.require([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_AggregationCache",
+	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
@@ -24,8 +25,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
-		FilterType, ListBinding, Model, Sorter, OperationMode, Context, _AggregationCache, _Cache,
-		_GroupLock, _Helper, ODataListBinding, ODataModel, asODataParentBinding, TestUtils) {
+		FilterType, ListBinding, Model, Sorter, OperationMode, Context, _AggregationCache,
+		_AggregationHelper, _Cache, _GroupLock, _Helper, ODataListBinding, ODataModel,
+		asODataParentBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
@@ -359,7 +361,8 @@ sap.ui.require([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(oAggregation))
 			.returns(oAggregationCloned);
-		this.mock(_Helper).expects("buildApply").withExactArgs(sinon.match.same(oAggregationCloned))
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregationCloned))
 			.returns(sApply);
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
@@ -408,7 +411,6 @@ sap.ui.require([
 			oAggregationCloned = {},
 			sApply = "A.P.P.L.E.",
 			sGroupId = "foo",
-			oHelperMock = this.mock(_Helper),
 			oModelMock = this.mock(this.oModel),
 			oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
@@ -426,9 +428,10 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
 			.returns({$filter : "bar"});
-		oHelperMock.expects("clone").withExactArgs(sinon.match.same(oAggregation))
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(oAggregation))
 			.returns(oAggregationCloned);
-		oHelperMock.expects("buildApply").withExactArgs(sinon.match.same(oAggregationCloned))
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregationCloned))
 			.returns(sApply);
 		oBinding.mCacheByContext = {
 			"/Products" : {}
@@ -487,7 +490,7 @@ sap.ui.require([
 			oError = new Error("This call intentionally failed");
 
 		oBinding.oAggregation = oAggregation;
-		this.mock(_Helper).expects("buildApply").throws(oError);
+		this.mock(_AggregationHelper).expects("buildApply").throws(oError);
 
 		assert.throws(function () {
 			//code under test
@@ -4467,7 +4470,7 @@ sap.ui.require([
 			}],
 			oBinding = this.bindList("/EMPLOYEES");
 
-		this.mock(_Helper).expects("buildApply").never();
+		this.mock(_AggregationHelper).expects("buildApply").never();
 		this.mock(oBinding).expects("changeParameters").never();
 
 		assert.throws(function () {
@@ -4512,7 +4515,7 @@ sap.ui.require([
 				}
 			};
 
-		this.mock(_Helper).expects("buildApply").withExactArgs(oTransformedAggregation)
+		this.mock(_AggregationHelper).expects("buildApply").withExactArgs(oTransformedAggregation)
 			.returns(sApply);
 		this.mock(oBinding).expects("changeParameters").withExactArgs({$apply : sApply});
 
@@ -4599,7 +4602,8 @@ sap.ui.require([
 				oNewCache = {getMeasureRangePromise : function () {}},
 				oResult;
 
-			this.mock(_Helper).expects("buildApply").withExactArgs(oFixture.oTransformedAggregation)
+			this.mock(_AggregationHelper).expects("buildApply")
+				.withExactArgs(oFixture.oTransformedAggregation)
 				.returns(sApply);
 			this.mock(oBinding).expects("changeParameters").callsFake(function () {
 					oBinding.oCachePromise = SyncPromise.resolve(oNewCache);

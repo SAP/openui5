@@ -6,10 +6,11 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
+	"./_AggregationHelper",
 	"./_Cache",
 	"./_Helper",
 	"./_Parser"
-], function (jQuery, SyncPromise, _Cache, _Helper, _Parser) {
+], function (jQuery, SyncPromise, _AggregationHelper, _Cache, _Helper, _Parser) {
 	"use strict";
 
 	var rComma = /,|%2C|%2c/,
@@ -58,7 +59,7 @@ sap.ui.define([
 			throw new Error("Unsupported system query option: $filter");
 		}
 
-		if (_Helper.hasMinOrMax(oAggregation.aggregate)) {
+		if (_AggregationHelper.hasMinOrMax(oAggregation.aggregate)) {
 			if (mQueryOptions.$orderby) {
 				throw new Error("Unsupported system query option: $orderby");
 			}
@@ -68,7 +69,7 @@ sap.ui.define([
 			this.oMeasureRangePromise = new Promise(function (resolve, reject) {
 				fnMeasureRangeResolve = resolve;
 			});
-			sApply = _Helper.buildApply(oAggregation, mAlias2MeasureAndMethod);
+			sApply = _AggregationHelper.buildApply(oAggregation, mAlias2MeasureAndMethod);
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
 				jQuery.extend({}, mQueryOptions, {$apply : sApply}), bSortExpandSelect);
 			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath
@@ -83,7 +84,7 @@ sap.ui.define([
 			oFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(oAggregation);
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
 				jQuery.extend({}, mQueryOptions, {
-					$apply : _Helper.buildApply(oFirstLevelAggregation),
+					$apply : _AggregationHelper.buildApply(oFirstLevelAggregation),
 					$count : true,
 					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
 						oFirstLevelAggregation)
@@ -395,7 +396,7 @@ sap.ui.define([
 			delete oDetails.min;
 			delete oDetails.max;
 		});
-		this.mQueryOptions.$apply = _Helper.buildApply(oAggregationNoMinMax);
+		this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregationNoMinMax);
 		this.sQueryString = this.oRequestor.buildQueryString(this.sMetaPath,
 			this.mQueryOptions, false, this.bSortExpandSelect);
 
