@@ -46,7 +46,7 @@ sap.ui.define([
 				},
 				"fillUriTemplate": function () {
 					if (!URI.expand) {
-						/* URI = */ sap.ui.requireSync("sap/ui/thirdparty/URITemplate");
+						/* URITemplate = */ sap.ui.requireSync("sap/ui/thirdparty/URITemplate");
 					}
 					return URI.expand.apply(URI, arguments).toString();
 				},
@@ -243,6 +243,7 @@ sap.ui.define([
 		rTokens;
 
 	aTokens.forEach(function (sToken, i) {
+		// Note: this function is executed at load time only!
 		aTokens[i] = escapeRegExp(sToken);
 	});
 	rTokens = new RegExp(aTokens.join("|"), "g");
@@ -456,6 +457,7 @@ sap.ui.define([
 	 * @return {object} the newly created symbol for the infix operator
 	 */
 	function addInfix(sId, iBindingPower, fnOperator, bLazy) {
+		// Note: this function is executed at load time only!
 		mSymbols[sId] = {
 			lbp: iBindingPower,
 			led: function (oToken, oParser, fnLeft) {

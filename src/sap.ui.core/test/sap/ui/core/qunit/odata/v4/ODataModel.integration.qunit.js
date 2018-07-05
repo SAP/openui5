@@ -151,6 +151,8 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
+			// Counter for batch requests
+			this.iBatchNo = 0;
 			// {map<string, object[]>}
 			// this.mBatchQueue["sGroupId"] is a list of queued requests for the group "sGroupId"
 			this.mBatchQueue = {};
@@ -440,6 +442,7 @@ sap.ui.require([
 			 * @returns {Promise} A promise on the array of batch responses
 			 */
 			function checkBatch(aRequests) {
+				that.iBatchNo += 1;
 				return Promise.all(aRequests.map(function (oRequest) {
 					return Array.isArray(oRequest)
 						? checkBatch(oRequest)
@@ -490,6 +493,9 @@ sap.ui.require([
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.response;
 					delete oExpectedRequest.responseHeaders;
+					if (oExpectedRequest.batchNo) {
+						oActualRequest.batchNo = that.iBatchNo;
+					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				} else {
 					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
@@ -504,7 +510,8 @@ sap.ui.require([
 					? Promise.reject(oResponseBody)
 					: Promise.resolve({
 						body : oResponseBody,
-						messages : mResponseHeaders["sap-message"]
+						messages : mResponseHeaders["sap-message"],
+						resourcePath : oExpectedRequest.url
 					});
 			}
 
@@ -3545,8 +3552,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Minimal test for two absolute ODataPropertyBindings using different auto groups.
-	QUnit.test("Absolute ODPBs using different $auto groups", function (assert) {
+	// Scenario: Minimal test for two absolute ODataPropertyBindings using different direct groups.
+	QUnit.test("Absolute ODPBs using different $direct groups", function (assert) {
 		var sView = '\
 <Text id="text1" text="{\
 	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
@@ -3570,6 +3577,28 @@ sap.ui.require([
 				}
 			})
 		);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Minimal test for two absolute ODataPropertyBindings using different auto groups.
+	// For group Ids starting with name "$auto." the submit mode will be set to auto automatically.
+	QUnit.test("Absolute ODPBs using different '$auto.X' groups", function (assert) {
+		var sView = '\
+<Text id="text1" text="{\
+	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
+	parameters : {$$groupId : \'$auto.1\'}}" />\
+<Text id="text2" text="{\
+	path : \'/EMPLOYEES(\\\'3\\\')/Name\',\
+	parameters : {$$groupId : \'$auto.2\'}}"\
+/>';
+
+		this.expectRequest({url : "EMPLOYEES('2')/Name", method : "GET", batchNo : 1},
+				{value : "Frederic Fall"})
+			.expectRequest({url : "EMPLOYEES('3')/Name", method : "GET", batchNo : 2},
+				{value : "Jonathan Smith"})
+			.expectChange("text1", "Frederic Fall")
+			.expectChange("text2", "Jonathan Smith");
+		return this.createView(assert, sView, createTeaBusiModel({}));
 	});
 
 	//*********************************************************************************************
@@ -6896,35 +6925,40 @@ sap.ui.require([
 		QUnit.test("Unbound messages in response: " + sGroupId, function (assert) {
 			var oModel = createTeaBusiModel({"groupId" : sGroupId}),
 				sView = '\
-<FlexBox binding="{/TEAMS(\'42\')}">\
-	<Text id="id" text="{Team_Id}" />\
+<FlexBox binding="{path : \'/TEAMS(\\\'42\\\')/TEAM_2_MANAGER\',\
+	parameters : {custom : \'foo\'}}">\
+	<Text id="id" text="{ID}" />\
 </FlexBox>';
 
-			this.expectRequest("TEAMS('42')", {"Team_Id" : "42"}, {
+			this.expectRequest("TEAMS('42')/TEAM_2_MANAGER?custom=foo", {"ID" : "23"}, {
 					"sap-message" : JSON.stringify([
-						{"code" : "42", "message" : "text0", "severity" : "warning"},
-						{"code" : "77", "message" : "text1", "severity" : "info"}
+						{"code" : "foo-42", "message" : "text0", "numericSeverity" : 3,
+							"longtextUrl" : "Messages(1)/LongText/$value"},
+						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}
 					])
 				})
-				.expectChange("id", "42");
+				.expectChange("id", "23");
 
 			return this.createView(assert, sView, oModel).then(function () {
 				var aMessages = sap.ui.getCore().getMessageManager().getMessageModel()
 						.getObject("/");
 
 				assert.strictEqual(aMessages.length, 2, "two messages in message model");
-				assert.strictEqual(aMessages[0].getCode(), "42");
+				assert.strictEqual(aMessages[0].getCode(), "foo-42");
 				assert.strictEqual(aMessages[0].getMessage(), "text0");
 				assert.strictEqual(aMessages[0].getMessageProcessor(), oModel);
 				assert.strictEqual(aMessages[0].getPersistent(), true);
 				assert.strictEqual(aMessages[0].getTechnical(), false);
 				assert.strictEqual(aMessages[0].getType(), "Warning");
-				assert.strictEqual(aMessages[1].getCode(), "77");
+				assert.strictEqual(aMessages[0].getDescriptionUrl(), oModel.sServiceUrl
+					+ "TEAMS('42')/Messages(1)/LongText/$value");
+				assert.strictEqual(aMessages[1].getCode(), "foo-77");
 				assert.strictEqual(aMessages[1].getMessage(), "text1");
 				assert.strictEqual(aMessages[1].getMessageProcessor(), oModel);
 				assert.strictEqual(aMessages[1].getPersistent(), true);
 				assert.strictEqual(aMessages[1].getTechnical(), false);
 				assert.strictEqual(aMessages[1].getType(), "Information");
+
 			});
 		});
 	});

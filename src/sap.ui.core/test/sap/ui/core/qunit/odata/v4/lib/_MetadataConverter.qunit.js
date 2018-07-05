@@ -91,6 +91,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._MetadataConverter", {
+		before : function () {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
+
 		beforeEach : function () {
 			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();

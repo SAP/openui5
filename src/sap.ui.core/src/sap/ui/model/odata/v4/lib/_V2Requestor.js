@@ -897,6 +897,18 @@ sap.ui.define([
 		return this.oModelInterface.fnFetchEntityContainer().then(function () {});
 	};
 
+	/**
+	 * Do not report bound OData messages.
+	 */
+	_V2Requestor.prototype.reportBoundMessages = function () {
+	};
+
+	/**
+	 * Do not report unbound OData messages.
+	 */
+	_V2Requestor.prototype.reportUnboundMessages = function () {
+	};
+
 	return function (oObject) {
 		jQuery.extend(oObject, _V2Requestor.prototype);
 	};

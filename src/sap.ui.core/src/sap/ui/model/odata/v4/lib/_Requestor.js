@@ -78,6 +78,12 @@ sap.ui.define([
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
 	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+	 * @param {function} oModelInterface.fnReportBoundMessages
+	 *   A function for reporting bound messages; see {@link #reportBoundMessages} for the signature
+	 *   of this function
+	 * @param {function} oModelInterface.fnReportUnboundMessages
+	 *   A function called with parameters <code>sResourcePath</code> and <code>sMessages</code>
+	 *   reporting unbound OData messages to the {@link sap.ui.core.message.MessageManager}.
 	 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
@@ -423,7 +429,6 @@ sap.ui.define([
 		return oResponsePayload;
 	};
 
-
 	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
@@ -467,6 +472,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fetches the metadata instance for the given meta path.
+	 *
+	 * @param {string} sMetaPath
+	 *   The meta path, for example "SalesOrderList/SO_2_BP"
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise that is resolved with the metadata instance for the given meta path
+	 */
+	Requestor.prototype.fetchMetadata = function (sMetaPath) {
+		return this.oModelInterface.fnFetchMetadata(sMetaPath);
+	};
+
+	/**
 	 * Fetches the type of the given meta path from the metadata.
 	 *
 	 * @param {string} sMetaPath
@@ -479,7 +496,7 @@ sap.ui.define([
 	 *   A promise that is resolved with the type at the given path or its name.
 	 */
 	Requestor.prototype.fetchTypeForPath = function (sMetaPath, bAsName) {
-		return this.oModelInterface.fnFetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
+		return this.fetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
 	};
 
 	/**
@@ -747,13 +764,45 @@ sap.ui.define([
 	};
 
 	/**
+	 * Reports the given bound OData messages via the owning model's interface
+	 *
+	 * @param {string} sResourcePath
+	 *   The resource path
+	 * @param {object} mPathToODataMessages
+	 *   Maps a resource path with key predicates to an array of messages belonging to this path.
+	 *   The path is relative to the given <code>sResourcePath</code>.
+	 *   The messages have at least the following properties:
+	 *   {string} code - The error code
+	 *   {string} message - The message text
+	 *   {number} numericSeverity - The numeric message severity (1 for "success", 2 for "info",
+	 *      3 for "warning" and 4 for "error")
+	 *   {string} target - The target for the message relative to the resource path with key
+	 *      predicates
+	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
+	 *      application and are reported as persistent
+	 * @param {string[]} [aKeyPredicates]
+	 *    An array of key predicates of the entities for which non-persistent messages have to be
+	 *    removed; if the array is not given, all non-persistent messages whose target starts with
+	 *    the given resource path are removed
+	 *
+	 * @private
+	 */
+	Requestor.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
+			aKeyPredicates) {
+		this.oModelInterface.fnReportBoundMessages(sResourcePath, mPathToODataMessages,
+			aKeyPredicates);
+	};
+
+	/**
 	 * Reports unbound OData messages.
 	 *
+	 * @param {string} sResourcePath
+	 *   The resource path of the request whose response contained the messages
 	 * @param {string} [sMessages]
 	 *   The messages in the serialized form as contained in the sap-message response header
 	 */
-	Requestor.prototype.reportUnboundMessages = function (sMessages) {
-		this.oModelInterface.fnReportUnboundMessages(JSON.parse(sMessages || null));
+	Requestor.prototype.reportUnboundMessages = function (sResourcePath, sMessages) {
+		this.oModelInterface.fnReportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
 	};
 
 	/**
@@ -858,7 +907,7 @@ sap.ui.define([
 			jQuery.extend({}, mHeaders, this.mFinalHeaders),
 			JSON.stringify(_Requestor.cleanPayload(oPayload))
 		).then(function (oResponse) {
-			that.reportUnboundMessages(oResponse.messages);
+			that.reportUnboundMessages(oResponse.resourcePath, oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
 		});
 	};
@@ -928,9 +977,10 @@ sap.ui.define([
 						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
 
 					fnResolve({
-						messages : jqXHR.getResponseHeader("sap-message"),
 						body : oResponse,
-						contentType : jqXHR.getResponseHeader("Content-Type")
+						contentType : jqXHR.getResponseHeader("Content-Type"),
+						messages : jqXHR.getResponseHeader("sap-message"),
+						resourcePath : sResourcePath
 					});
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
 					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
@@ -1030,13 +1080,13 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
-						that.reportUnboundMessages(vResponse.headers["sap-message"]);
+						that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-message"]);
 						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}
 				} else {
-					that.reportUnboundMessages(vResponse.headers["sap-message"]);
+					that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-message"]);
 					vRequest.$resolve();
 				}
 			});

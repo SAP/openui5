@@ -41,15 +41,14 @@
 	<!-- Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included! -->
 	<script src="1Ring_bootCore.js"></script>
 
-	<script src="ODataV4.qunit.js"></script>
+	<!-- alphabetic sort order according to module names -->
+	<!-- base -->
 	<script src="../BindingParser.qunit.js"></script>
 	<script src="../ExpressionParser.qunit.js"></script>
 	<script src="../SyncPromise.qunit.js"></script>
-	<script src="../odata/_AnnotationHelperBasics.qunit.js"></script>
-	<script src="../odata/_AnnotationHelperExpression.qunit.js"></script>
-	<script src="../odata/_ODataMetaModelUtils.qunit.js"></script>
-	<script src="../odata/AnnotationHelper.qunit.js"></script>
-	<script src="../odata/ODataMetaModel.qunit.js"></script>
+	<!-- core -->
+	<script src="../util/XMLPreprocessor.qunit.js"></script>
+	<!-- model -->
 	<script src="../odata/type/Boolean.qunit.js"></script>
 	<script src="../odata/type/Date.qunit.js"></script>
 	<script src="../odata/type/DateTimeBase.qunit.js"></script>
@@ -65,7 +64,14 @@
 	<script src="../odata/type/String.qunit.js"></script>
 	<script src="../odata/type/Time.qunit.js"></script>
 	<script src="../odata/type/TimeOfDay.qunit.js"></script>
-	<script src="../util/XMLPreprocessor.qunit.js"></script>
+	<!-- Note: some types use lazy loading and are used by AnnotationHelper tests! -->
+	<script src="../odata/_AnnotationHelperBasics.qunit.js"></script>
+	<script src="../odata/_AnnotationHelperExpression.qunit.js"></script>
+	<script src="../odata/_ODataMetaModelUtils.qunit.js"></script>
+	<script src="../odata/AnnotationHelper.qunit.js"></script>
+	<script src="../odata/ODataMetaModel.qunit.js"></script>
+	<script src="ODataV4.qunit.js"></script>
+	<!-- test -->
 	<script src="../../../test/qunit/TestUtils.qunit.js"></script>
 
 	</head>

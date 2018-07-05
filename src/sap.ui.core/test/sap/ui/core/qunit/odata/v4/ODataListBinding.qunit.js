@@ -181,8 +181,9 @@ sap.ui.require([
 			// ensure that the requestor does not trigger requests
 			this.mock(this.oModel.oRequestor).expects("request").never();
 			// avoid that the cache requests actual metadata for faked responses
-			this.mock(this.oModel.oRequestor).expects("fetchTypeForPath").atLeast(0)
-				.returns(SyncPromise.resolve({}));
+			this.mock(this.oModel.oRequestor).expects("fetchMetadata").atLeast(0)
+				.returns(SyncPromise.resolve());
+
 			// in case "request" is restored, this catches accidental requests
 			this.mock(_Helper).expects("createError").never();
 		},
@@ -195,7 +196,7 @@ sap.ui.require([
 		 * Calls <code>this.oModel.bindList</code> using the given arguments, but avoids creating
 		 * the prerendering task to unlock the read group lock.
 		 *
-		 * @returns {sap.ui.model.odata.v4.ODataListBinding}
+		 * @returns {sap.ui.model.odata.v4.ODataListBinding} The list binding
 		 */
 		bindList : function () {
 			try {
@@ -1457,7 +1458,7 @@ sap.ui.require([
 	[
 		{start : 0, result : 0, isFinal : true, length : 0, text : "no data"},
 		{start : 20, result : 29, isFinal : true, length : 49, text : "less data than requested"},
-		{start : 20, result : 0, isFinal : false, length : 10, changeEvent : false,
+		{start : 20, result : 0, isFinal : false, length : 0, changeEvent : false,
 			text : "no data for given start > 0"},
 		{start : 20, result : 30, isFinal : false, length : 60, text : "maybe more data"}
 	].forEach(function (oFixture) {
@@ -1481,7 +1482,7 @@ sap.ui.require([
 				.withExactArgs({reason : ChangeReason.Change});
 
 			assert.strictEqual(oBinding.isLengthFinal(), false, "Length is not yet final");
-			assert.strictEqual(oBinding.getLength(), 10, "Initial estimated length is 10");
+			assert.strictEqual(oBinding.getLength(), 0, "Initial estimated length is 0");
 
 			getContexts(assert, oBinding, oFixture.start, 30);
 
@@ -1565,7 +1566,7 @@ sap.ui.require([
 		{start : 15, result : 3, isFinal : true, curr : 20, len : 18, text : "less than before"},
 		{start : 0, result : 30, isFinal : true, curr : 30, len : 35, text : "full read before"},
 		{start : 18, result : 30, isFinal : false, curr : 17, len : 58, text : "full read after"},
-		{start : 10, result : 0, isFinal : false, curr : 25, len : 10, text : "empty read before"}
+		{start : 10, result : 0, isFinal : false, curr : 25, len : 0, text : "empty read before"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: adjust final length: " + oFixture.text, function (assert) {
 			var oCacheMock = this.getCacheMock(), // this is used in bindList
@@ -1594,7 +1595,7 @@ sap.ui.require([
 						new _GroupLock("$auto", undefined, oBinding), sinon.match.func)
 					.callsArg(4)
 					.returns(oReadPromise);
-				for (i = oFixture.start + oFixture.len; i < 35; i++) {
+				for (i = Math.max(20, oFixture.start + oFixture.len); i < 35; i++) {
 					that.mock(oBinding.aContexts[i]).expects("destroy").withExactArgs();
 				}
 
@@ -1607,8 +1608,6 @@ sap.ui.require([
 					oBinding.aContexts.slice(oFixture.start, oFixture.start + oFixture.result));
 				assert.strictEqual(oBinding.isLengthFinal(), oFixture.isFinal, "final");
 				assert.strictEqual(oBinding.getLength(), oFixture.len);
-				assert.strictEqual(oBinding.aContexts.length,
-					oFixture.len - (oFixture.isFinal ? 0 : 10), "Context array length");
 				for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i++) {
 					assert.strictEqual(oBinding.aContexts[i].sPath,
 						"/EMPLOYEES/" + i, "check content");
@@ -2555,7 +2554,7 @@ sap.ui.require([
 		// code under test
 		aContexts = oBinding.getContexts(oRange.start, oRange.length);
 
-		assert.strictEqual(oBinding.getLength(), 10, "added 10 because length is unknown");
+		assert.strictEqual(oBinding.getLength(), 0, "0 because length is unknown");
 		assert.strictEqual(aContexts.length, 0);
 	});
 
@@ -2639,7 +2638,7 @@ sap.ui.require([
 		}
 
 		assert.strictEqual(oBinding.isLengthFinal(), false);
-		assert.strictEqual(oBinding.getLength(), 10, "Initial estimated length is 10");
+		assert.strictEqual(oBinding.getLength(), 0, "Initial estimated length is 0");
 
 		// code under test: set length and length final flag
 		// Note: short reads are handled by _Cache and set $count!
@@ -4441,7 +4440,7 @@ sap.ui.require([
 
 			assert.strictEqual(aResult.length, 0);
 			assert.strictEqual(oBinding.isLengthFinal(), false);
-			assert.strictEqual(oBinding.getLength(), 10);
+			assert.strictEqual(oBinding.getLength(), 0);
 			done();
 		}
 

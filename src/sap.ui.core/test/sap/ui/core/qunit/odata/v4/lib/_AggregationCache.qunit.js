@@ -586,7 +586,7 @@ sap.ui.require([
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
 
 		// code under test (this normally happens inside read's handleResponse method)
-		oFirstLevelCache.calculateKeyPredicates(oResult.value[0], mTypeForMetaPath);
+		oFirstLevelCache.calculateKeyPredicate(oResult.value[0], mTypeForMetaPath);
 
 		this.mock(oFirstLevelCache).expects("read").on(oFirstLevelCache)
 			.withExactArgs(iIndex, iLength, iPrefetchLength, sGroupId,

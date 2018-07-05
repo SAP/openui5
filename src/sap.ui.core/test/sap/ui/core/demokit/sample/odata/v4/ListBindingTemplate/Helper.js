@@ -7,6 +7,10 @@ sap.ui.define([
 	"use strict";
 
 	return {
+		asyncHelper : function (oContext) {
+			return Promise.resolve(oContext.getPath() + "/EQUIPMENT_2_PRODUCT/");
+		},
+
 		format : function (vRawValue) {
 			return "*" + vRawValue + "*";
 		},
