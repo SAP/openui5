@@ -631,8 +631,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchFilter = function (oContext, sStaticFilter) {
-		var aNonEmptyFilters = [],
-			that = this;
+		var that = this;
 
 		/**
 		 * Concatenates the given $filter values using the given separator; the resulting
@@ -693,37 +692,43 @@ sap.ui.define([
 		 * grouped with a logical 'or'.
 		 *
 		 * @param {sap.ui.model.Filter[]} aFilters The non-empty array of filters
-		 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
+		 * @param {boolean} bAnd Whether the filters are combined with 'and'; combined with
 		 *   'or' if not given
+		 * @param {boolean} bGroup Whether filters for the same path are grouped (combined with
+		 *   'or')
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
 		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value
 		 */
-		function fetchArrayFilter(aFilters, bAnd, mLambdaVariableToPath) {
+		function fetchArrayFilter(aFilters, bAnd, bGroup, mLambdaVariableToPath) {
 			var aFilterPromises = [],
 				mFiltersByPath = {};
 
-			aFilters.forEach(function (oFilter) {
-				mFiltersByPath[oFilter.sPath] = mFiltersByPath[oFilter.sPath] || [];
-				mFiltersByPath[oFilter.sPath].push(oFilter);
-			});
+			if (bGroup) {
+				aFilters.forEach(function (oFilter) {
+					if (oFilter.sPath) {
+						mFiltersByPath[oFilter.sPath] = mFiltersByPath[oFilter.sPath] || [];
+						mFiltersByPath[oFilter.sPath].push(oFilter);
+					}
+				});
+			}
 			aFilters.forEach(function (oFilter) {
 				var aFiltersForPath;
-
 				if (oFilter.aFilters) { // array filter
-					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd,
+					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd, false,
 						mLambdaVariableToPath).then(function (sArrayFilter) {
 							return "(" + sArrayFilter + ")";
 						})
 					);
-					return;
+				} else if (bGroup) {
+					aFiltersForPath = mFiltersByPath[oFilter.sPath];
+					if (aFiltersForPath) { // filter group for path of oFilter not processed yet
+						delete mFiltersByPath[oFilter.sPath];
+						aFilterPromises.push(
+							fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
+					}
+				} else {
+					aFilterPromises.push(fetchGroupFilter([oFilter], mLambdaVariableToPath));
 				}
-				// single filter
-				aFiltersForPath = mFiltersByPath[oFilter.sPath];
-				if (!aFiltersForPath) { // filter group for path of oFilter already processed
-					return;
-				}
-				delete mFiltersByPath[oFilter.sPath];
-				aFilterPromises.push(fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
 			});
 
 			return SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
@@ -775,7 +780,7 @@ sap.ui.define([
 							= replaceLambdaVariables(oGroupFilter.sPath, mLambdaVariableToPath);
 
 						return (oCondition.aFilters
-								? fetchArrayFilter(oCondition.aFilters, oCondition.bAnd,
+								? fetchArrayFilter(oCondition.aFilters, oCondition.bAnd, false,
 									mLambdaVariableToPath)
 								: fetchGroupFilter([oCondition], mLambdaVariableToPath)
 							).then(function (sFilterValue) {
@@ -810,9 +815,11 @@ sap.ui.define([
 		}
 
 		return SyncPromise.all([
-			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, {}),
-			fetchArrayFilter(this.aFilters, /*bAnd*/true, {})
+			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, /*bGroup*/true, {}),
+			fetchArrayFilter(this.aFilters, /*bAnd*/true, /*bGroup*/true, {})
 		]).then(function (aFilterValues) {
+			var aNonEmptyFilters = [];
+
 			if (aFilterValues[0]) {
 				aNonEmptyFilters.push(aFilterValues[0]);
 			}
