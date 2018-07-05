@@ -185,7 +185,7 @@
 				&& !(Device && Device.browser.msie);
 		}
 
-		return oNode.body[0].leadingComments
+		return oNode.body[0] && oNode.body[0].leadingComments
 			&& oNode.body[0].leadingComments.some(isNotForDevice);
 	}
 
