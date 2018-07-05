@@ -16,12 +16,6 @@ sap.ui.define([
 ], function (jQuery, ElementMetadata, XMLTemplateProcessor) {
 	"use strict";
 
-	var InvalidationMode = {
-		Render: true,
-		Template: "template",
-		None: false
-	};
-
 	var mFragmentCache = {};
 
 	/*
@@ -40,6 +34,12 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var XMLCompositeMetadata = function (sClassName, oClassInfo) {
+		this.InvalidationMode = {
+				Render: true,
+				Template: "template",
+				None: false
+			};
+
 		if (!oClassInfo.hasOwnProperty("renderer")) {
 			oClassInfo.renderer = "sap.ui.core.XMLCompositeRenderer";
 		}
@@ -153,29 +153,12 @@ sap.ui.define([
 		}
 		if (!oMember.appData) {
 			oMember.appData = {};
-			oMember.appData.invalidate = InvalidationMode.None;
+			oMember.appData.invalidate = this.InvalidationMode.None;
 		}
-		if (oMember && oMember.appData && oMember.appData.invalidate === InvalidationMode.Render) {
+		if (oMember && oMember.appData && oMember.appData.invalidate === this.InvalidationMode.Render) {
 			return false;
 		}
 		return true; // i.e. invalidate = InvalidationMode.None || InvalidationMode.Template
-	};
-
-	XMLCompositeMetadata.prototype._requestFragmentRetemplatingCheck = function (oControl, oMember, bForce) {
-		if (!oControl._bIsCreating && !oControl._bIsBeingDestroyed && oMember && oMember.appData && oMember.appData.invalidate === InvalidationMode.Template &&
-			!oControl._requestFragmentRetemplatingPending) {
-			if (oControl.requestFragmentRetemplating) {
-				oControl._requestFragmentRetemplatingPending = true;
-				// to avoid several separate re-templating requests we collect them
-				// in a timeout
-				setTimeout(function () {
-					oControl.requestFragmentRetemplating(bForce);
-					oControl._requestFragmentRetemplatingPending = false;
-				}, 0);
-			} else {
-				throw new Error("Function requestFragmentRetemplating not available although invalidationMode was set to template");
-			}
-		}
 	};
 
 	XMLCompositeMetadata.prototype.getMandatoryAggregations = function () {
