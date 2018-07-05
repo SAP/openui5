@@ -444,7 +444,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	ObjectPageLayout._getLibraryResourceBundle = function () {
-		return library.i18nModel.getResourceBundle();
+		return sap.ui.getCore().getLibraryResourceBundle("sap.uxap");
 	};
 
 	/*************************************************************************************

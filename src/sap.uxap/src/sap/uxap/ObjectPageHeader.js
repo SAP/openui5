@@ -342,7 +342,7 @@ sap.ui.define([
 			this.oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
 		}
 		if (!this.oLibraryResourceBundleOP) {
-			this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
+			this.oLibraryResourceBundleOP = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"); // get resource translation bundle
 		}
 
 		// Overflow button

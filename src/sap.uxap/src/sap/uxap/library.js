@@ -281,12 +281,6 @@ sap.ui.define([
 		High: "High"
 	};
 
-	sap.uxap.i18nModel = (function () {
-		return new sap.ui.model.resource.ResourceModel({
-			bundleUrl: jQuery.sap.getModulePath("sap.uxap.i18n.i18n", ".properties")
-		});
-	}());
-
 	/**
 	 *
 	 * @type {{getClosestOPL: Function}}
