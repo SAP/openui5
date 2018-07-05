@@ -9,11 +9,51 @@ sap.ui.define([
 
 		onInit: function () {
 			var aData = [
-				{ product: "Power Projector 4713", price: 234 },
-				{ product: "Gladiator MX", price: 5435 },
-				{ product: "Hurricane GX", price: 6757 },
-				{ product: "Webcam", price: -59 },
-				{ product: "Deskjet Super Highspeed", price: 567 }
+				{
+					expense: "Flight",
+					transactionAmount: {
+						size: 560.67,
+						currency: "EUR"
+					},
+					exchangeRate: 1.00000,
+					amount: 560.67
+				},
+				{
+					expense: "Meals",
+					transactionAmount: {
+						size: 180.50,
+						currency: "USD"
+					},
+					exchangeRate: 0.85654,
+					amount: 154.72
+				},
+				{
+					expense: "Hotel",
+					transactionAmount: {
+						size: 675.00,
+						currency: "USD"
+					},
+					exchangeRate: 0.85654,
+					amount: 578.57
+				},
+				{
+					expense: "Taxi",
+					transactionAmount: {
+						size: 15,
+						currency: "USD"
+					},
+					exchangeRate: 0.85654,
+					amount: 12.86
+				},
+				{
+					expense: "Daily allowance",
+					transactionAmount: {
+						size: 80.00,
+						currency: "BGN"
+					},
+					exchangeRate: 0.51129,
+					amount: 40.90
+				}
 			];
 
 			var oModel = new JSONModel({
