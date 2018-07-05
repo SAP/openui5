@@ -46,12 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 			function writeCache(aResults) {
 				// write annotations to cache
-				// as aResults is an Array with additional properties we cannot stringify directly
-				var cacheObject = {
-					results: aResults,
-					annotations: aResults.annotations
-				};
-				CacheManager.set(that.sCacheKey, JSON.stringify(cacheObject));
+				CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
 			}
 
 			if (!mOptions || !mOptions.skipMetadata) {
@@ -83,16 +78,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 				this.setHeaders(mOptions.headers);
 				if (this.sCacheKey) {
 					//check cache
-					this._pLoaded =	CacheManager.get(that.sCacheKey)
+					this._pLoaded = CacheManager.get(that.sCacheKey)
 						.then(function(sAnnotations){
+							var aResults;
 							if (sAnnotations) {
+								aResults = JSON.parse(sAnnotations);
+							}
+							//old cache entries are an object; invalidate the cache in this case
+							if (Array.isArray(aResults)) {
 								// restore return array structure
-								var oAnnotations = JSON.parse(sAnnotations);
-								that._mAnnotations = oAnnotations.annotations;
-								var aResults = oAnnotations.results;
-								// Add for Promise compatibility with v1 version:
-								aResults.annotations = that._mAnnotations;
-
+								aResults.annotations = {};
+								aResults.forEach(function(oAnnotation) {
+									AnnotationParser.restoreAnnotationsAtArrays(oAnnotation.annotations);
+									AnnotationParser.merge(aResults.annotations, oAnnotation.annotations);
+								});
+								that._mAnnotations = aResults.annotations;
 								// only valid loading was cached - fire loaded event in this case
 								that._fireSomeLoaded(aResults);
 								that._fireLoaded(aResults);
