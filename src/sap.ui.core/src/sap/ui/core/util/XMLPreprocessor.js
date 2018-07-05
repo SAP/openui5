@@ -5,17 +5,17 @@
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/util/JSTokenizer",
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/CompositeBinding",
-	"sap/ui/model/Context",
-	"sap/base/util/ObjectPath",
-	"jquery.sap.script" // for jQuery.sap.parseJS
-], function (jQuery, BindingParser, ManagedObject, SyncPromise, XMLTemplateProcessor, BindingMode,
-		CompositeBinding, Context, ObjectPath/*, jQuerySap1 */) {
+	"sap/ui/model/Context"
+], function (jQuery, JSTokenizer, ObjectPath, BindingParser, ManagedObject, SyncPromise,
+		XMLTemplateProcessor, BindingMode, CompositeBinding, Context) {
 	"use strict";
 
 	var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
@@ -1294,7 +1294,7 @@ sap.ui.define([
 					oElement.removeAttributeNode(oAttribute);
 
 					if (sModuleNames[0] === "{") {
-						mAlias2URN = jQuery.sap.parseJS(sModuleNames);
+						mAlias2URN = JSTokenizer.parseJS(sModuleNames);
 						aURNs = Object.keys(mAlias2URN).map(function (sAlias) {
 							return mAlias2URN[sAlias];
 						});
