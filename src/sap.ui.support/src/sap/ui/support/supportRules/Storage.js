@@ -80,7 +80,7 @@ function (RuleSerializer, constants) {
 				tempRules = JSON.parse(decode(rawLSData));
 
 				tempRules = tempRules.map(function (tempRule) {
-					return RuleSerializer.deserialize(tempRule);
+					return RuleSerializer.deserialize(tempRule, true);
 				});
 			} catch (oError) {
 				// Swallow "Access Denied" exceptions in cross-origin scenarios.

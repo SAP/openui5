@@ -50,8 +50,6 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					});
 				};
 
-				RuleSetLoader._initTempRulesLib();
-
 				ManagedObject.apply(this, arguments);
 
 				/**
@@ -274,31 +272,6 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		// If configuration contains 'silent' there must be no subscription
 		// for temporary rules
 		if (this._supportModeConfig.indexOf("silent") < 0) {
-
-			CommunicationBus.subscribe(channelNames.VERIFY_CREATE_RULE, function (tempRuleSerialized) {
-				var tempRule = RuleSerializer.deserialize(tempRuleSerialized),
-					tempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset,
-					result = tempRuleSet.addRule(tempRule);
-
-				CommunicationBus.publish(channelNames.VERIFY_RULE_CREATE_RESULT, {
-					result: result,
-					newRule: RuleSerializer.serialize(tempRule)
-				});
-
-			}, this);
-
-			CommunicationBus.subscribe(channelNames.VERIFY_UPDATE_RULE, function (data) {
-
-				var tempRule = RuleSerializer.deserialize(data.updateObj),
-					tempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset,
-					result = tempRuleSet.updateRule(data.oldId, tempRule);
-
-				CommunicationBus.publish(channelNames.VERIFY_RULE_UPDATE_RESULT, {
-					result: result,
-					updateRule: RuleSerializer.serialize(tempRule)
-				});
-
-			}, this);
 
 			CommunicationBus.subscribe(channelNames.OPEN_URL, function (url) {
 				var win = window.open(url, "_blank");
