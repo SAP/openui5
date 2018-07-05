@@ -125,7 +125,7 @@
 				}
 				// revert changes to global names
 				ui5loader.config({
-					exposeAsAMDLoader:false
+					amd:false
 				});
 				window["sap-ui-optimized"] = false;
 
