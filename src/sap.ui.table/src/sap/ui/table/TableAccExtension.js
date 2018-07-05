@@ -4,8 +4,22 @@
 
 // Provides helper sap.ui.table.TableAccExtension.
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/core/Control", "./library", "./TableExtension", "./TableAccRenderExtension", "./TableUtils", "sap/ui/Device"
-], function(jQuery, Control, library, TableExtension, TableAccRenderExtension, TableUtils, Device) {
+	"sap/ui/core/Control",
+	"./library",
+	"./TableExtension",
+	"./TableAccRenderExtension",
+	"./TableUtils",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(
+	Control,
+	library,
+	TableExtension,
+	TableAccRenderExtension,
+	TableUtils,
+	Device,
+	jQueryDOM
+) {
 	"use strict";
 
 	// shortcuts
@@ -934,7 +948,7 @@ sap.ui.define([
 				return;
 			}
 			if (oTable._mTimeouts._cleanupACCExtension) {
-				jQuery.sap.clearDelayedCall(oTable._mTimeouts._cleanupACCExtension);
+				clearTimeout(oTable._mTimeouts._cleanupACCExtension);
 				oTable._mTimeouts._cleanupACCExtension = null;
 			}
 			this.updateAccForCurrentCell(true);
@@ -952,7 +966,7 @@ sap.ui.define([
 				return;
 			}
 			oTable.$("sapUiTableGridCnt").attr("role", ExtensionHelper.getAriaAttributesFor(this, "CONTENT", {}).role);
-			oTable._mTimeouts._cleanupACCExtension = jQuery.sap.delayedCall(100, this, function() {
+			oTable._mTimeouts._cleanupACCExtension = setTimeout(function() {
 				var oTable = this.getTable();
 				if (!oTable) {
 					return;
@@ -961,7 +975,7 @@ sap.ui.define([
 				this._iLastColumnNumber = null;
 				ExtensionHelper.cleanupCellModifications(this);
 				oTable._mTimeouts._cleanupACCExtension = null;
-			});
+			}.bind(this), 100);
 		}
 	});
 
@@ -1054,17 +1068,17 @@ sap.ui.define([
 			// to force screenreader announcements
 			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER)) {
 				if (oTable._mTimeouts._cleanupACCCellBusy) {
-					jQuery.sap.clearDelayedCall(oTable._mTimeouts._cleanupACCCellBusy);
+					clearTimeout(oTable._mTimeouts._cleanupACCCellBusy);
 					oTable._mTimeouts._cleanupACCCellBusy = null;
 				}
-				oTable._mTimeouts._cleanupACCCellBusy = jQuery.sap.delayedCall(100, this, function() {
+				oTable._mTimeouts._cleanupACCCellBusy = setTimeout(function() {
 					for (var i = 0; i < this._busyCells.length; i++) {
 						this._busyCells[i].removeAttr("aria-hidden");
 						this._busyCells[i].removeAttr("aria-busy");
 					}
 					oTable._mTimeouts._cleanupACCCellBusy = null;
 					this._busyCells = [];
-				});
+				}.bind(this), 100);
 				if (Device.browser.chrome) {
 					oInfo.cell.attr("aria-hidden", "true"); //Seems to be needed for Chrome
 				}
@@ -1097,7 +1111,7 @@ sap.ui.define([
 
 		var aHeaders = ExtensionHelper.getRelevantColumnHeaders(this.getTable(), oColumn);
 		for (var i = 0; i < aHeaders.length; i++) {
-			var $Header = jQuery.sap.byId(aHeaders[i]);
+			var $Header = jQueryDOM(document.getElementById(aHeaders[i]));
 			if (!$Header.attr("colspan")) {
 				$Header.attr({
 					"aria-sort": mAttributes["aria-sort"] || null

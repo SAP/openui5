@@ -4,8 +4,34 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-	'jquery.sap.global', './Dialog', './library', 'sap/ui/core/EnabledPropagator', './DialogRenderer', 'sap/ui/core/library', 'sap/ui/Device', './Bar', './Button', './Title', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/base/ManagedObjectObserver'
-], function(jQuery, Dialog, library, EnabledPropagator, DialogRenderer, coreLibrary, Device, Bar, Button, Title, OverflowToolbarLayoutData, ManagedObjectObserver) {
+	'./Dialog',
+	'./library',
+	'sap/ui/core/EnabledPropagator',
+	'./DialogRenderer',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'./Bar',
+	'./Button',
+	'./Title',
+	'sap/m/OverflowToolbarLayoutData',
+	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log"
+], function(
+	Dialog,
+	library,
+	EnabledPropagator,
+	DialogRenderer,
+	coreLibrary,
+	Device,
+	Bar,
+	Button,
+	Title,
+	OverflowToolbarLayoutData,
+	ManagedObjectObserver,
+	jQueryDOM,
+	Log
+) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -302,7 +328,7 @@ sap.ui.define([
 					});
 					break;
 				default:
-					jQuery.sap.log.error("Panel type '" + sPanelType + "' is not supported jet.");
+					Log.error("Panel type '" + sPanelType + "' is not supported jet.");
 			}
 		});
 
@@ -449,7 +475,7 @@ sap.ui.define([
 		var sId = this._getVisiblePanelID();
 		if (sId && oContent) {
 			// move panel div into dialog content div.
-			var $Panel = jQuery.sap.byId(sId);
+			var $Panel = jQueryDOM(document.getElementById(sId));
 			$Panel.appendTo(jQuery(oContent));
 		}
 	};
@@ -536,9 +562,6 @@ sap.ui.define([
 		var fnUpdateShowResetEnabled = this.getUpdateShowResetEnabled();
 		if (fnUpdateShowResetEnabled) {
 			this.setShowResetEnabled(fnUpdateShowResetEnabled());
-		} else {
-			// Due to backwards compatibility use cases
-			this.setShowResetEnabled(true);
 		}
 	};
 
@@ -735,7 +758,7 @@ sap.ui.define([
 								oPanel.setChangeNotifier();
 								break;
 							default:
-								jQuery.sap.log.error("Mutation '" + oChanges.mutation + "' is not supported jet.");
+								Log.error("Mutation '" + oChanges.mutation + "' is not supported jet.");
 						}
 					}, this);
 
@@ -762,7 +785,7 @@ sap.ui.define([
 					}
 					break;
 				default:
-					jQuery.sap.log.error("The property or aggregation '" + oChanges.name + "' has not been registered.");
+					Log.error("The property or aggregation '" + oChanges.name + "' has not been registered.");
 			}
 		} else if (this._isInstanceOf(oChanges.object, "sap/m/P13nPanel")) {
 			if (oChanges.name === "title") {

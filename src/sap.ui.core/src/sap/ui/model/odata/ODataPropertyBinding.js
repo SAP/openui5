@@ -3,8 +3,15 @@
  */
 
 // Provides class sap.ui.model.odata.ODataPropertyBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/ChangeReason', 'sap/ui/model/PropertyBinding', 'sap/ui/model/ChangeReason'],
-	function(jQuery, Context, ChangeReason, PropertyBinding) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/Context',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/PropertyBinding',
+	"sap/base/util/deepEqual",
+	'sap/ui/model/ChangeReason'
+],
+	function(jQuery, Context, ChangeReason, PropertyBinding, deepEqual) {
 	"use strict";
 
 
@@ -73,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 			return;
 		}
 
-		if (!jQuery.sap.equal(oValue, this.oValue) && this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
+		if (!deepEqual(oValue, this.oValue) && this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
 			this.oValue = oValue;
 
 			var oDataState = this.getDataState();
@@ -116,7 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 		var bChanged = false;
 
 		var vOriginalValue = this.oModel.getOriginalProperty(this.sPath, this.oContext);
-		if (bForceUpdate || !jQuery.sap.equal(vOriginalValue, this.vOriginalValue)) {
+		if (bForceUpdate || !deepEqual(vOriginalValue, this.vOriginalValue)) {
 			this.vOriginalValue = vOriginalValue;
 
 			oDataState.setOriginalValue(vOriginalValue);
@@ -124,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Change
 		}
 
 		var oValue = this._getValue();
-		if (bForceUpdate || !jQuery.sap.equal(oValue, this.oValue)) {
+		if (bForceUpdate || !deepEqual(oValue, this.oValue)) {
 			this.oValue = oValue;
 
 			oDataState.setValue(this.oValue);

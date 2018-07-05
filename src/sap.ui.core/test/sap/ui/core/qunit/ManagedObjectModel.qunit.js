@@ -164,7 +164,7 @@ QUnit.test("Create a ManagedObject Model - Property Access", function(assert) {
 
 	// Check special handling for id property
 	assert.equal(oModel.getProperty("/@id"), "myObject", "ID must be 'myObject'");
-	assert.equal(oModel.getProperty("/@id"), "myObject", "ID must be 'myObject'");
+	assert.equal(oModel.getProperty("/id"), "myObject", "ID must be 'myObject'");//access also via id
 
 	// access non existing
 	var aNonExistingPropertyPaths = [
@@ -756,5 +756,28 @@ QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling",
 
 	assert.ok(oPanel, "There is a panel");
 	assert.equal(oPanel.getId(),sIdPrefix + "panel","We get the correct panel");
+
+	//Check whether observer works on property bindings with ids
+	var oPropertyBinding = oManagedObjectModel.bindProperty("/#button2/text");
+	var iPropertyChangeCount = 0;
+	oPropertyBinding.attachChange(function() {
+		iPropertyChangeCount++;
+	});
+	oButton2.setText("Changed");
+	assert.equal(iPropertyChangeCount, 1, "Button text property binding change was fired");
+	assert.equal("Changed", oButton2.getText(), "Button Text was updated");
+
+	//Check whether observer works on list bindings with ids
+	var oListBinding = oManagedObjectModel.bindList("/#panel/content");
+	var iListChangeCount = 0;
+	oListBinding.attachChange(function() {
+		iListChangeCount++;
+	});
+	oPanel.removeContent(oButton2);
+	assert.equal(iListChangeCount, 1, "content list binding change was fired");
+	oPanel.addContent(oButton2);
+	assert.equal(iListChangeCount, 2, "content list binding change was fired");
+
+
 });
 

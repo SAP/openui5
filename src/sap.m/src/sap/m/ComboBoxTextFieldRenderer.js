@@ -1,8 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, InputBaseRenderer, Renderer, LabelEnablement) {
+sap.ui.define([
+	'./InputBaseRenderer',
+	'sap/ui/core/Renderer',
+	'sap/ui/core/LabelEnablement'
+],
+	function(InputBaseRenderer, Renderer, LabelEnablement) {
 		"use strict";
 
 		/**

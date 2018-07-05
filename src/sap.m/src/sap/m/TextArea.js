@@ -4,7 +4,6 @@
 
 // Provides control sap.m.TextArea.
 sap.ui.define([
-	'jquery.sap.global',
 	'./InputBase',
 	'./Text',
 	'sap/ui/core/ResizeHandler',
@@ -14,7 +13,6 @@ sap.ui.define([
 	'./TextAreaRenderer'
 ],
 function(
-	jQuery,
 	InputBase,
 	Text,
 	ResizeHandler,
@@ -22,7 +20,7 @@ function(
 	coreLibrary,
 	Device,
 	TextAreaRenderer
-	) {
+) {
 	"use strict";
 
 

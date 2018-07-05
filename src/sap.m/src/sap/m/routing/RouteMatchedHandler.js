@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TargetHandler', './Router'],
-	function(jQuery, BaseObject, TargetHandler, MobileRouter) {
+sap.ui.define(['sap/ui/base/Object', './TargetHandler', './Router', "sap/base/Log"],
+	function(BaseObject, TargetHandler, MobileRouter, Log) {
 	"use strict";
 
 
@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TargetHandler', './
 	var RouteMatchedHandler = BaseObject.extend("sap.m.routing.RouteMatchedHandler", {
 		constructor : function (oRouter, bCloseDialogs) {
 			if (oRouter instanceof MobileRouter) {
-				jQuery.sap.log.warning("A sap.m.routing.Router is used together with an sap.m.routing.RouteMatchedHandler (deprecated)." +
+				Log.warning("A sap.m.routing.Router is used together with an sap.m.routing.RouteMatchedHandler (deprecated)." +
 					"The RoutematchedHandler is not taking over triggering the navigations, the Router will do it.", this);
 				return;
 			}

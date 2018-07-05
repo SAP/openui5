@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
 					Element.apply(this, arguments);
 					// stashed is always true for instances of StashedControl
 					mSettings.stashed = true;
-					jQuery.sap.extend(this, mSettings);
+					Object.assign(this, mSettings);
 					this._stash(mSettings.sParentId, mSettings.sParentAggregationName);
 					return this;
 				},

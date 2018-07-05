@@ -9,9 +9,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'./PullToRefreshRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, Device, PullToRefreshRenderer) {
+	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes) {
 	"use strict";
 
 
@@ -81,6 +81,7 @@ sap.ui.define([
 	}});
 
 	PullToRefresh.prototype.init = function(){
+		//TODO: global jquery call found
 		this._bTouchMode = Device.support.touch && !Device.system.combi || jQuery.sap.simulateMobileOnDesktop;
 		this._iState = 0; // 0 - normal; 1 - release to refresh; 2 - loading
 	};
@@ -88,6 +89,7 @@ sap.ui.define([
 	PullToRefresh.prototype._loadBI = function(){
 		// lazy create a Busy indicator to avoid overhead when invisible at start
 		if (this.getVisible() && !this._oBusyIndicator) {
+			//TODO: global jquery call found
 			jQuery.sap.require("sap.m.BusyIndicator");
 			this._oBusyIndicator = new sap.m.BusyIndicator({
 				size: "1.7rem",
@@ -280,7 +282,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PullToRefresh.prototype.onkeydown = function(event) {
-		if ( event.which == jQuery.sap.KeyCodes.F5) {
+		if ( event.which == KeyCodes.F5) {
 			this.onclick();
 			// do not refresh browser window
 			event.stopPropagation();

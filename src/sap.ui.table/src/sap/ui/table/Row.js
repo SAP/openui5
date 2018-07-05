@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Row.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils'],
-	function(jQuery, Element, Context, TableUtils) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', 'sap/ui/thirdparty/jquery'],
+	function(Element, Context, TableUtils, jQueryDOM) {
 	"use strict";
 
 
@@ -150,9 +150,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 	 * @private
 	 */
 	Row.prototype.getDomRefs = function (bJQuery, bCollection) {
-		var sKey = (bJQuery === true) ? "jQuery" : "dom",
-			fnAccess = (bJQuery === true) ? jQuery.sap.byId : jQuery.sap.domById,
-			mDomRefs = this._mDomRefs;
+		var byId = function(sId) {
+			return jQueryDOM(document.getElementById(sId));
+		};
+		var domById = function(sId) {
+			return (sId ? window.document.getElementById(sId) : null);
+		};
+		var sKey = (bJQuery === true) ? "jQuery" : "dom", fnAccess = (bJQuery === true) ? byId : domById, mDomRefs = this._mDomRefs;
 
 		if (!mDomRefs[sKey]) {
 			mDomRefs[sKey] = {};

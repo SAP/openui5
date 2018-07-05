@@ -118,10 +118,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					 *
 					 * @memberof jQuery.sap.support
 					 * @public
-					 * @method
-					 * @name sap.ui.support.Main.getFormattedAnalysisHistory
-					 * @memberof sap.ui.support.Main
-					 * @param {string} sFormat The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
+					 * @param {sap.ui.support.HistoryFormats} [sFormat=sap.ui.support.HistoryFormats.String] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
 					 * @returns {*} All analysis history objects in the correct format.
 					 */
 					getFormattedAnalysisHistory: function (sFormat) {
@@ -380,8 +377,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				});
 			}
 		}, this);
-		CommunicationBus.subscribe(channelNames.GET_NON_LOADED_RULE_SETS, function () {
-			RuleSetLoader.fetchNonLoadedRuleSets();
+		CommunicationBus.subscribe(channelNames.GET_NON_LOADED_RULE_SETS, function (data) {
+			RuleSetLoader.fetchNonLoadedRuleSets(data.loadedRulesets);
 		}, this);
 	};
 

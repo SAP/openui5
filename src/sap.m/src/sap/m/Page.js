@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Page.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
@@ -15,10 +14,10 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
-	"./PageRenderer"
+	"./PageRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	ScrollEnablement,
@@ -29,8 +28,9 @@ function(
 	coreLibrary,
 	Device,
 	Element,
-	PageRenderer
-	) {
+	PageRenderer,
+	jQueryDOM
+) {
 		"use strict";
 
 
@@ -280,7 +280,7 @@ function(
 		};
 
 		Page.prototype.onAfterRendering = function () {
-			jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
+			setTimeout(this._adjustFooterWidth.bind(this), 10);
 		};
 
 		/**
@@ -400,9 +400,9 @@ function(
 			}
 
 			if (useAnimation) {
-				jQuery.sap.delayedCall(Page.FOOTER_ANIMATION_DURATION, this, function () {
+				setTimeout(function () {
 					$footer.toggleClass("sapUiHidden", !bShowFooter);
-				});
+				}, Page.FOOTER_ANIMATION_DURATION);
 			} else {
 				$footer.toggleClass("sapUiHidden", !bShowFooter);
 			}
@@ -461,7 +461,7 @@ function(
 		};
 
 		Page.prototype._contentHasScroll = function () {
-			var $section = jQuery.sap.byId(this.getId() + "-cont", this.getDomRef());
+			var $section = jQueryDOM(document.getElementById(this.getId() + "-cont"));
 			return $section[0].scrollHeight > $section.innerHeight();
 		};
 

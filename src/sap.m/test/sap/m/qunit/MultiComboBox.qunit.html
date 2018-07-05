@@ -27,6 +27,7 @@
 
 <script>
 	QUnit.config.autostart = false;
+	var Log = sap.ui.require("sap/base/Log");
 	sap.ui.test.qunit.delayTestStart();
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -1402,6 +1403,7 @@
 	// ------------------------------ //
 
 	QUnit.test("method: setSelectedItems() - [null] : should give an warning when called with faulty parameter", function(assert) {
+		assert.ok(Log, "Log module should be available");
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -1409,7 +1411,7 @@
 		// arrange
 		var fnSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 		var fnSetAssociationSpy = this.spy(oMultiComboBox, "setAssociation");
-		var fnErrorSpy = this.spy(jQuery.sap.log, "warning");
+		var fnErrorSpy = this.spy(Log, "warning");
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnSetSelectedItemsSpy = this.spy(oMultiComboBox, "setSelectedItems");
 
@@ -1417,7 +1419,7 @@
 		oMultiComboBox.setSelectedItems([null]);
 
 		// assertions
-		assert.strictEqual(fnErrorSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
+		assert.strictEqual(fnErrorSpy.callCount, 1, "Log.warning() method was called");
 		assert.strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
 		assert.strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
@@ -1466,6 +1468,7 @@
 		oMultiComboBox.destroy();
 	});
 	QUnit.test("method: setSelectedKeys() - {} : should give an warning when called with faulty parameter", function(assert) {
+		assert.ok(Log, "Log module should be available");
 
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
@@ -1473,7 +1476,6 @@
 		// arrange
 		var fnSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 		var fnSetAssociationSpy = this.spy(oMultiComboBox, "setAssociation");
-		var fnErrorSpy = this.spy(jQuery.sap.log, "warning");
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnSetSelectedKeysSpy = this.spy(oMultiComboBox, "setSelectedKeys");
 
@@ -2843,6 +2845,7 @@
 	});
 
 	QUnit.test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function(assert) {
+		/* TODO remove after 1.62 version */
 		// IE has security settings
 		// which prompt the user if he wants to let the page access the clipboard.
 		if (!sap.ui.Device.browser.internet_explorer) {
@@ -2887,6 +2890,7 @@
 	});
 
 	QUnit.test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function(assert) {
+		/* TODO remove after 1.62 version */
 		// IE has security settings
 		// which prompt the user if he wants to let the page access the clipboard.
 		if (!sap.ui.Device.browser.internet_explorer) {
@@ -5352,6 +5356,39 @@
 		this.clock.tick(200);
 		// assert
 		assert.strictEqual(this.oMCB1.getSelectedItems().length, 3, "A selected item was removed after deselecting an item from the popover");
+	});
+
+	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+		var oMultiComboBox = new sap.m.MultiComboBox(),
+			output;
+
+		oMultiComboBox.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
+		sap.ui.getCore().applyChanges();
+
+		output = oMultiComboBox._calculateSpaceForTokenizer();
+
+		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
+	});
+
+	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
+		//arrange
+		var oTokenizerSpy = sinon.spy(sap.m.Tokenizer.prototype, "_adjustTokensVisibility"),
+			oMCB = new sap.m.MultiComboBox();
+
+		// act
+		oMCB.placeAt("qunit-fixture");
+		this.clock.tick(100);
+
+		// assert
+		assert.ok(oMCB._oTokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.ok(oTokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
+
+		// clean up
+		oTokenizerSpy.restore();
+		oMCB.destroy();
 	});
 
 

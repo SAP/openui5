@@ -3,8 +3,15 @@
  */
 
 // Provides the XML model implementation of a list binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/ClientListBinding'],
-	function(jQuery, ChangeReason, ClientListBinding) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/ClientListBinding',
+	"sap/ui/util/XMLHelper",
+	"sap/base/util/array/diff",
+	"sap/base/util/deepEqual"
+],
+	function(jQuery, ChangeReason, ClientListBinding, XMLHelper, diff, deepEqual) {
 	"use strict";
 
 
@@ -55,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 
 			//Check diff
 			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-				aContexts.diff = jQuery.sap.arraySymbolDiff(this.aLastContextData, aContextData);
+				aContexts.diff = diff(this.aLastContextData, aContextData);
 			}
 
 			this.iLastEndIndex = iStartIndex + iLength;
@@ -81,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @private
 	 */
 	XMLListBinding.prototype.getEntryData = function(oContext) {
-		return jQuery.sap.serializeXML(oContext.getObject());
+		return XMLHelper.serialize(oContext.getObject());
 	};
 
 	/**
@@ -141,7 +148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			if (this.oList.length != oList.length) {
 				bChangeDetected = true;
 			}
-			if (!jQuery.sap.equal(this.oList, oList)) {
+			if (!deepEqual(this.oList, oList)) {
 				this.update();
 			}
 

@@ -10,7 +10,7 @@
 //@evo-todo check isEqualNode dependency: not yet available...
 //@evo-todo dependency to global name 'Node' contradicts sap/base package
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -40,6 +40,7 @@ sap.ui.define([], function() {
 			maxDepth = 10;
 		}
 		if (depth > maxDepth) {
+			Log.warning("deepEqual comparison exceeded maximum recursion depth of " + maxDepth + ". Treating values as unequal");
 			return false;
 		}
 		if (a === b) {

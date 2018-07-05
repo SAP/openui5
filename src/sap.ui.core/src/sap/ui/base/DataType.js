@@ -449,13 +449,13 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 
 					if ( sValue[0] === '.' ) {
 						// starts with a dot, must be a controller local function
-						// usage of jQuery.sap.getObject to allow addressing functions in properties
+						// usage of ObjectPath.get to allow addressing functions in properties
 						if ( contextObj ) {
-							fnResult = jQuery.sap.getObject(sValue.slice(1), undefined, contextObj);
+							fnResult = ObjectPath.get(sValue.slice(1), contextObj);
 							bLocal = true;
 						}
 					} else {
-						fnResult = jQuery.sap.getObject(sValue);
+						fnResult = ObjectPath.get(sValue);
 					}
 
 					if ( fnResult && this.isValid(fnResult) ) {
@@ -525,7 +525,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 					mTypes[sTypeName] = oType;
 				}
 			} else if ( sTypeName !== 'array') {
-				oType = jQuery.sap.getObject(sTypeName);
+				oType = ObjectPath.get(sTypeName);
 				if ( oType instanceof DataType ) {
 					mTypes[sTypeName] = oType;
 				} else if ( jQuery.isPlainObject(oType) ) {
@@ -641,7 +641,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 	 * @sap-restricted sap.ui.base,sap.ui.core.Core
 	 */
 	DataType.isInterfaceType = function(sType) {
-		return mInterfaces.hasOwnProperty(sType) && jQuery.sap.getObject(sType) === mInterfaces[sType];
+		return mInterfaces.hasOwnProperty(sType) && ObjectPath.get(sType) === mInterfaces[sType];
 	};
 
 	return DataType;

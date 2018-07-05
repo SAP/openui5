@@ -1,0 +1,156 @@
+<mvc:View
+	controllerName="sap.ui.rta.dttool.controller.App"
+	class="sapUiSizeCompact"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:dt="sap.ui.rta.dttool"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	displayBlock="true">
+
+	<App id="app">
+		<pages>
+			<Page id="page">
+				<customHeader>
+					<Toolbar id="theBar">
+						<ToolbarSpacer />
+						<Title text="{i18n>pageTitle}" />
+						<ToolbarSpacer />
+						<SegmentedButton selectionChange="onToggleRTA" class="sapUiTinyMarginEnd">
+							<items>
+								<SegmentedButtonItem id="startRTA" text="{i18n>startRTA}" />
+								<SegmentedButtonItem id="stopRTA" text="{i18n>stopRTA}" />
+							</items>
+						</SegmentedButton>
+					</Toolbar>
+				</customHeader>
+				<content>
+					<l:Splitter class="sapUiDtToolSplitter" resize="onSplitterResize">
+						<l:Splitter orientation="Vertical">
+							<dt:OutlineTree
+								id="Tree"
+								mode="SingleSelectMaster"
+								selectionChange="onSelectionChange"
+								items="{path:'outline>/', parameters: {arrayNames:['children']}}"
+								headerText="{i18n>outline}">
+								<CustomTreeItem app:id="{outline>id}" tooltip="{outline>type}">
+									<content>
+										<HBox>
+											<Image
+												src="{
+													path: 'outline>icon',
+													formatter: '.formatter'
+												}"
+												width="1.2rem"
+												height="1.2rem"
+												class="sapUiTinyMarginEnd" />
+											<Title text="{outline>displayName}" />
+										</HBox>
+									</content>
+								</CustomTreeItem>
+								<dt:layoutData><l:SplitterLayoutData size="50%" minSize="200px" /></dt:layoutData>
+							</dt:OutlineTree>
+							<List
+								id="palette"
+								width="100%"
+								items="{
+									path : 'palette>/groups',
+									sorter : {
+										path : 'groupName'
+									}
+								}">
+								<headerToolbar>
+									<Toolbar height="3rem" design="Transparent">
+										<Title text="{i18n>palette}"/>
+										<ToolbarSpacer />
+										<SearchField width="60%" liveChange="onPaletteSearch"/>
+										<Button id="addControlButton" icon="sap-icon://add" press="onAddControlToPalette" />
+									</Toolbar>
+								</headerToolbar>
+								<CustomListItem visible="{= ${palette>number} ? true : false}">
+									<Panel
+										expandable="true"
+										expandAnimation="false"
+										expand="onPanelExpand"
+										class="sapUiDtToolPanel">
+										<headerToolbar>
+											<Toolbar active="true">
+												<Title text="{palette>groupName}" />
+												<ToolbarSpacer />
+												<ObjectNumber number="{palette>number}" />
+											</Toolbar>
+										</headerToolbar>
+										<Table
+											app:group="{palette>groupName}"
+											items="{
+												path : 'palette>controls',
+												templateShareable : false,
+												sorter : {
+													path : 'name'
+												}
+											}">
+											<columns>
+												<Column width="2.5rem" />
+												<Column />
+											</columns>
+											<ColumnListItem>
+												<Image
+													src="{
+														path: 'palette>icon',
+														formatter: '.formatter'
+													}"
+													width="1.5rem"
+													height="1.5rem" />
+												<Title text="{palette>name}" tooltip="{palette>description}" />
+											</ColumnListItem>
+										</Table>
+									</Panel>
+								</CustomListItem>
+								<layoutData><l:SplitterLayoutData size="50%" minSize="200px" /></layoutData>
+							</List>
+							<l:layoutData><l:SplitterLayoutData size="20%" minSize="200px" /></l:layoutData>
+						</l:Splitter>
+						<l:Splitter orientation="Vertical">
+							<html:IFrame
+								id="theIFrame"
+								frameborder="none"
+								border="0"
+								src="./preview.html?sap-ui-rta-minimenu=false"
+								style="width:100%; height:100%; z-index:20;" />
+							<App id="codeApp">
+								<layoutData><l:SplitterLayoutData size="50%" minSize="300px" /></layoutData>
+							</App>
+						</l:Splitter>
+						<List id="PropertyPanel"
+							items="{properties>/propertiesList}">
+							<headerToolbar>
+								<Toolbar>
+									<content>
+										<Image src="{
+												path: 'properties>/palette/icons/svg',
+												formatter: '.formatter'
+											}" />
+										<Title text="{= ${properties>/displayName/singular} ? ${properties>/displayName/singular} + ' ' + ${i18n>properties} : ${i18n>propertyPanel}}" />
+									</content>
+								</Toolbar>
+							</headerToolbar>
+							<items>
+								<dt:DTToolListItem
+									propertyName="{properties>name}"
+									defaultValue="{properties>defaultValue}"
+									value="{properties>currentValue}"
+									type="{= ${properties>type} ? ${properties>type} : 'string' }"
+									change="onPropertyChange"
+									visible="{= ${properties>ignore} ? false : true}"/>
+							</items>
+							<layoutData><l:SplitterLayoutData size="20%" minSize="150px" /></layoutData>
+						</List>
+					</l:Splitter>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

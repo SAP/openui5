@@ -2,18 +2,8 @@
 * ${copyright}
 */
 
-sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Control',
-	'./library',
-	'./SliderTooltipBaseRenderer'
-],
-function(
-	jQuery,
-	Control,
-	Library,
-	SliderTooltipBaseRenderer
-	) {
+sap.ui.define(['sap/ui/core/Control', './library', './SliderTooltipBaseRenderer'],
+function(Control, Library, SliderTooltipBaseRenderer) {
 		"use strict";
 
 		/**

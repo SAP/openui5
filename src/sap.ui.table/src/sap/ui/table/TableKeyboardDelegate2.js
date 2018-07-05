@@ -4,7 +4,7 @@
 
 // Provides helper sap.ui.table.TableKeyboardDelegate2.
 sap.ui.define([
-"jquery.sap.global", "sap/ui/base/Object", "sap/ui/Device", "./library", "./TableUtils", "jquery.sap.keycodes"], function(jQuery, BaseObject, Device, library, TableUtils) {
+"sap/ui/base/Object", "sap/ui/Device", "./library", "./TableUtils", "sap/ui/events/KeyCodes"], function(BaseObject, Device, library, TableUtils, KeyCodes) {
 	"use strict";
 
 	// Shortcuts
@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @static
 	 * @constant
 	 */
-	var INTERACTIVE_ELEMENT_SELECTORS = ":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)";
+	var INTERACTIVE_ELEMENT_SELECTORS = ":sapTabbable, .sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)";
 
 	// Workaround until (if ever) these values can be set by applications.
 	var HORIZONTAL_SCROLLING_PAGE_SIZE = 5;
@@ -160,9 +160,9 @@ sap.ui.define([
 		var eventKey = typeof vKey === "string" ? String.fromCharCode(oEvent.charCode) : oEvent.keyCode;
 		var eventModifierKeyMask = 0;
 
-		eventModifierKeyMask |= (Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey) && vKey !== jQuery.sap.KeyCodes.CONTROL ? ModKey.CTRL : 0;
-		eventModifierKeyMask |= oEvent.shiftKey && vKey !== jQuery.sap.KeyCodes.SHIFT ? ModKey.SHIFT : 0;
-		eventModifierKeyMask |= oEvent.altKey && vKey !== jQuery.sap.KeyCodes.ALT ? ModKey.ALT : 0;
+		eventModifierKeyMask |= (Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey) && vKey !== KeyCodes.CONTROL ? ModKey.CTRL : 0;
+		eventModifierKeyMask |= oEvent.shiftKey && vKey !== KeyCodes.SHIFT ? ModKey.SHIFT : 0;
+		eventModifierKeyMask |= oEvent.altKey && vKey !== KeyCodes.ALT ? ModKey.ALT : 0;
 
 		var bValidKey = vKey == null || eventKey === vKey;
 		var bValidModifierKeys = modifierKeyMask === eventModifierKeyMask;
@@ -869,7 +869,7 @@ sap.ui.define([
 		var oKeyboardExtension = this._getKeyboardExtension();
 
 		// Toggle the action mode by changing the focus between a data cell and its interactive controls.
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F2)) {
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F2)) {
 			var bIsInActionMode = oKeyboardExtension.isInActionMode();
 			var $ParentCell = TableUtils.getParentCell(this, oEvent.target);
 
@@ -882,7 +882,7 @@ sap.ui.define([
 			return;
 
 		// Expand/Collapse group.
-		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F4) &&
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F4) &&
 				   TableKeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
 			TableUtils.Grouping.toggleGroupHeaderByRef(this, oEvent.target);
 			return;
@@ -892,7 +892,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE) &&
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE) &&
 			TableUtils.getCellInfo(oEvent.target).type) {
 			oEvent.preventDefault(); // Prevent scrolling the page.
 		}
@@ -902,7 +902,7 @@ sap.ui.define([
 		var sSelectionMode = this.getSelectionMode();
 
 		// Shift: Start the range selection mode.
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SHIFT) &&
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SHIFT) &&
 			sSelectionMode === SelectionMode.MultiToggle &&
 			(oCellInfo.isOfType(CellType.ROWHEADER) && TableUtils.isRowSelectorSelectionAllowed(this) ||
 			 (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) && TableUtils.isRowSelectionAllowed(this))) {
@@ -924,7 +924,7 @@ sap.ui.define([
 			};
 
 		// Ctrl+A: Select/Deselect all.
-		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.A, ModKey.CTRL)) {
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL)) {
 			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
@@ -932,19 +932,19 @@ sap.ui.define([
 			}
 
 		// Ctrl+Shift+A: Deselect all.
-		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.A, ModKey.CTRL + ModKey.SHIFT)) {
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL + ModKey.SHIFT)) {
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER)) {
 				this.clearSelection();
 			}
 
 		// F4: Enter the action mode.
-		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F4)) {
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F4)) {
 			if (oCellInfo.isOfType(CellType.DATACELL)) {
 				oKeyboardExtension.setActionMode(true);
 			}
 
 		// Shift+F10: Open the context menu.
-		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.F10, ModKey.SHIFT)) {
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F10, ModKey.SHIFT)) {
 			oEvent.preventDefault(); // Prevent opening the default browser context menu.
 			TableUtils.Menu.openContextMenu(this, oEvent.target, true, null, oEvent);
 		}
@@ -1010,11 +1010,11 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		// End the range selection mode.
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SHIFT)) {
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SHIFT)) {
 			delete this._oRangeSelection;
 		}
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.SPACE)) {
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 			// Open the column menu.
 			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
 				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
@@ -1023,7 +1023,7 @@ sap.ui.define([
 			}
 		}
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.ENTER)) {
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER)) {
 			// Open the column menu.
 			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
 				TableUtils.Menu.openContextMenu(this, oEvent.target, true);

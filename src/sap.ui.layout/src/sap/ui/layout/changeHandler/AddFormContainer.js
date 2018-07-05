@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
-		"sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/core/util/reflection/JsControlTreeModifier"
-	], function(FlexUtils, jQuery, Base, JsControlTreeModifier) {
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/changeHandler/Base",
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
+], function(FlexUtils, Base, JsControlTreeModifier) {
 		"use strict";
 
 		/*

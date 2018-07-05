@@ -1,8 +1,8 @@
  /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
-	function(jQuery, coreLibrary) {
+sap.ui.define(['sap/ui/core/library'],
+	function(coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation

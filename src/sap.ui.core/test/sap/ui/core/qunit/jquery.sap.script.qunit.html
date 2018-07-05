@@ -1370,6 +1370,24 @@
 				assert.equal(oClone.prop6.prop63, undefined, "undefined property cloned successfully");
 			});
 
+			QUnit.test("extend: arrays", function(assert) {
+
+				assert.deepEqual(jQuery.sap.extend([1, 2, 3], [6, 7, 8, 9]), [6, 7, 8, 9]);
+				assert.deepEqual(jQuery.sap.extend([6, 7, 8, 9], [1, 2, 3]), [1, 2, 3, 9]);
+
+				assert.deepEqual(jQuery.sap.extend([1, undefined], [6, 7, 8, 9]), [6, 7, 8, 9]);
+				assert.deepEqual(jQuery.sap.extend([6, 7, 8, 9], [1, undefined]), [1, undefined, 8, 9]);
+
+
+				assert.deepEqual(jQuery.sap.extend([1, null], [6, 7, 8, 9]), [6, 7, 8, 9]);
+				assert.deepEqual(jQuery.sap.extend([6, 7, 8, 9], [1, null]), [1, null, 8, 9]);
+
+				assert.deepEqual(jQuery.sap.extend(null, [1, null]), {"0": 1, "1": null});
+				assert.deepEqual(jQuery.sap.extend(undefined, [1, null]), {"0": 1, "1": null});
+				assert.deepEqual(jQuery.sap.extend(undefined, [1, null]), {"0": 1, "1": null});
+				assert.deepEqual(jQuery.sap.extend(undefined, [undefined]), {"0": undefined});
+			});
+
 		</script>
 	</head>
 	<body>

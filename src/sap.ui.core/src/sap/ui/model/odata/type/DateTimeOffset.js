@@ -83,7 +83,7 @@ sap.ui.define([
 		if (!oType.oModelFormat) {
 			iPrecision = oType.oConstraints && oType.oConstraints.precision;
 			if (iPrecision) {
-				sPattern += "." + jQuery.sap.padRight("", "S", iPrecision);
+				sPattern += "." + "".padEnd(iPrecision, "S");
 			}
 			oType.oModelFormat = DateFormat.getDateInstance({
 				pattern : sPattern + "X",

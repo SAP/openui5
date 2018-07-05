@@ -11,8 +11,21 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/URI',
-	'jquery.sap.trace'
-], function(jQuery, Manifest, ComponentMetadata, Core, merge, ManagedObject, URI /*, jQuery*/) {
+	"sap/base/util/ObjectPath",
+	'sap/ui/performance/trace/Interaction',
+	'sap/base/util/UriParameters'
+], function(
+	jQuery,
+	Manifest,
+	ComponentMetadata,
+	Core,
+	merge,
+	ManagedObject,
+	URI,
+	ObjectPath,
+	Interaction,
+	UriParameters
+) {
 	"use strict";
 
 	/*global Promise */
@@ -841,7 +854,7 @@ sap.ui.define([
 					var oServiceManifestEntry = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias);
 
 					// lookup the factoryName in the manifest
-					var sServiceFactoryName = oServiceManifestEntry.factoryName;
+					var sServiceFactoryName = oServiceManifestEntry && oServiceManifestEntry.factoryName;
 					if (!sServiceFactoryName) {
 						fnReject(new Error("Service " + sLocalServiceAlias + " not declared!"));
 						return;
@@ -1612,7 +1625,7 @@ sap.ui.define([
 			}
 
 			// get model class object
-			var ModelClass = jQuery.sap.getObject(oModelConfig.type);
+			var ModelClass = ObjectPath.get(oModelConfig.type);
 			if (!ModelClass) {
 				// this could be the case if the required module doesn't register itself in the defined namespace
 				jQuery.sap.log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
@@ -1677,7 +1690,7 @@ sap.ui.define([
 		//   sap-ui-xx-preload-component-models-<componentName>=, => prelaod default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo, => prelaod "foo" + default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => prelaod "foo" + "bar" models
-		var sPreloadModels = jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+		var sPreloadModels = new UriParameters(window.location.href).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
 		var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
 
 		for (var sModelName in mAllModelConfigurations) {
@@ -1931,6 +1944,8 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @static
 	 * @public
+	 * @experimental Since 1.56.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 *   It must not be used in productive code, except in code delivered by the UI5 teams.
 	 */
 	Component.create = function(mOptions) {
 		if (mOptions == null || typeof mOptions !== "object") {
@@ -2001,18 +2016,12 @@ sap.ui.define([
 	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
 	 * @returns {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
 	 *
-	 * @deprecated Since 1.56.0, use one of the following alternatives instead:
-	 * <ul>
-	 * <li>to load a component class, use {@link sap.ui.core.Component.load Component.load}</li>
-	 * <li>to create a new component instance, use {@link sap.ui.core.Component.create Component.create};
-	 *     note that this new factory does not support synchronous loading (<code>async:false</code>) nor does
-	 *     it support the deprecated options <code>manifestFirst</code> or <code>manifestUrl<code>.</li>
-	 * <li>to retrieve an existing component instance by its ID, use {@link sap.ui.core.Component.get Component.get}</li>
-	 * </ul>
+	 * @deprecated Since 1.56, use {@link #.get Component.get} or {@link #.create Component.create} instead.
+	 *   Note: {@link #.create Component.create} does not support synchronous loading or the deprecated options <code>manifestFirst</code> and <code>manifestUrl</code>.
 	 * @public
 	 * @static
 	 * @since 1.15.0
-	 * @experimental Since 1.27.0. Support for asyncHints is still experimental and might be modified or removed completely again.
+	 * @experimental Since 1.27.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
 	 *   It must not be used in productive code, except in code delivered by the UI5 teams. The synchronous usage of the API is
 	 *   not experimental and can be used without restrictions.
 	 */
@@ -2027,15 +2036,6 @@ sap.ui.define([
 			// when only a string is given then this function behaves like a
 			// getter and returns an existing component instance
 			return sap.ui.getCore().getComponent(vConfig);
-		}
-
-		// Remove url objects with final flag from asyncHints as the new loader no longer supports it
-		if (vConfig.asyncHints && vConfig.asyncHints.libs) {
-			vConfig.asyncHints.libs.forEach(function(oLib) {
-				if (oLib.url && typeof oLib.url === "object") {
-					oLib.url = oLib.url.url;
-				}
-			});
 		}
 
 		if (vConfig.async) {
@@ -2186,6 +2186,8 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @static
 	 * @public
+	 * @experimental Since 1.56.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 *   It must not be used in productive code, except in code delivered by the UI5 teams.
 	 */
 	Component.load = function (mOptions) {
 
@@ -2332,7 +2334,7 @@ sap.ui.define([
 		// set the name of this newly loaded component at the interaction measurement,
 		// as otherwise this would be the outer component from where it was called,
 		// which is not true - this component causes the load
-		jQuery.sap.interaction.setStepComponent(sName);
+		Interaction.setStepComponent(sName);
 
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)
@@ -2456,7 +2458,16 @@ sap.ui.define([
 
 			if ( typeof vObj === 'object' ) {
 				if ( vObj.url ) {
-					registerModulePath(vObj.name, vObj.url);
+					if (typeof vObj.url === "object") {
+						if (vObj.url.final) {
+							// "final" module path can only be handled by legacy layer
+							jQuery.sap.registerModulePath(vObj.name, vObj.url);
+						} else {
+							registerModulePath(vObj.name, vObj.url.url);
+						}
+					} else {
+						registerModulePath(vObj.name, vObj.url);
+					}
 				}
 				return (vObj.lazy && bIgnoreLazy !== true) ? undefined : vObj.name; // expl. check for true to allow usage in Array.prototype.map below
 			}

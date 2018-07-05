@@ -1814,21 +1814,21 @@
 
 	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
 		var bIsIE = Device.browser.internet_explorer,
-			bIsEdge = Device.browser.edge;
+			sHeight = this.oDynamicPage._bMSBrowser  ? "300px" : "400px"; // due to different MS browsers calculation
 
 		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
 		// Arrange
 		oUtil.renderObject(this.oDynamicPage);
 
 		// Arrange state:
-		this.oDynamicPage.$().height("400px"); // ensure not enough scrollHeight to snap with scrolling
+		this.oDynamicPage.$().height(sHeight); // ensure not enough scrollHeight to snap with scrolling
 		this.oDynamicPage.$().width("300px");
 		this.oDynamicPage._setScrollPosition(10); // scrollTop > 0
 
 		// Assert state arranged as expected:
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), true, "header is expanded");
 		assert.ok(!this.oDynamicPage._canSnapHeaderOnScroll(), "not enough scrollHeight to snap with scroll");
-		assert.equal(this.oDynamicPage._needsVerticalScrollBar(), bIsEdge ? false : true, "enough scrollHeight to scroll");
+		assert.equal(this.oDynamicPage._needsVerticalScrollBar(), true, "enough scrollHeight to scroll");
 
 		// Act: toggle title to snap the header
 		this.oDynamicPage._titleExpandCollapseWhenAllowed();
@@ -2422,7 +2422,9 @@
 			},
 			iSmallHeaderHeight = 700,
 			iLargeHeaderHeight = 1100,
-			iPageHeight = 1000;
+			iPageHeight = 1000,
+			iNoHeaderHeight = 0,
+			iNoPageHeight = 0;
 
 		// act (1) -  Header`s height is smaller than the Page`s height.
 		fnStubConfig(iSmallHeaderHeight, iPageHeight);
@@ -2439,6 +2441,17 @@
 		// assert
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
 			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
+
+		oSandBox.restore();
+
+		// act (3) - Header`s height and Page`s height are 0.
+		fnStubConfig(iNoHeaderHeight, iNoPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"When Header is not on the page return false");
+
+		oSandBox.restore();
 	});
 
 	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on mobile", function (assert) {
@@ -2450,7 +2463,9 @@
 			},
 			iSmallHeaderHeight = 100,
 			iLargeHeaderHeight = 400,
-			iPageHeight = 1000;
+			iPageHeight = 1000,
+			iNoHeaderHeight = 0,
+			iNoPageHeight = 0;
 
 		// act (1) -  Header`s height is smaller than the Page`s height.
 		oUtil.toMobileMode();
@@ -2469,6 +2484,17 @@
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true,
 			"DynamicPage Header is bigger than allowed to be expanded in the non-scrollable area");
 
+		oSandBox.restore();
+
+		// act (3) - Header`s height and Page`s height are 0.
+		fnStubConfig(iNoHeaderHeight, iNoPageHeight);
+
+		// assert
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), false,
+			"When Header is not on the page return false");
+
+		// cleanup
+		oSandBox.restore();
 		oUtil.toDesktopMode();
 	});
 

@@ -14,8 +14,8 @@
  */
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/XMLCompositeMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel', 'sap/ui/model/base/XMLNodeUtils', 'sap/ui/base/ManagedObjectObserver'],
-	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel, Utils, ManagedObjectObserver) {
+	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel', 'sap/ui/model/base/XMLNodeUtils', 'sap/ui/base/ManagedObjectObserver', 'sap/base/util/ObjectPath', 'sap/ui/base/SyncPromise'],
+	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel, Utils, ManagedObjectObserver, ObjectPath, SyncPromise) {
 		"use strict";
 
 		// private functions
@@ -24,7 +24,7 @@ sap.ui.define([
 		function initXMLComposite(sFragment, oFragmentContext) {
 			if (!mControlImplementations[sFragment]) {
 				jQuery.sap.require(sFragment);
-				mControlImplementations[sFragment] = jQuery.sap.getObject(sFragment);
+				mControlImplementations[sFragment] = ObjectPath.get(sFragment);
 			}
 			return mControlImplementations[sFragment];
 		}
@@ -35,6 +35,9 @@ sap.ui.define([
 			oAttributesModel.getVisitor = function () {
 				return oVisitor;
 			};
+
+			//needed in the preprocessor to allow promises as result
+			oAttributesModel.$$valueAsPromise = true;
 
 			oAttributesModel._getObject = function (sPath, oContext) {
 				var oResult;
@@ -53,16 +56,16 @@ sap.ui.define([
 						return oProperty.defaultValue;
 					}
 					// try to resolve a result from templating time or keep the original value
-					oResult = oVisitor.getResult(oElement.getAttribute(sPath)) || oElement.getAttribute(sPath);
-					if (oResult) {
-						var oScalar = Utils.parseScalarType(oProperty.type, oResult, sPath);
-						if (typeof oScalar === "object" && oScalar.path) {
-							return oResult;
+					return SyncPromise.resolve(oVisitor.getResult(oElement.getAttribute(sPath)) || oElement.getAttribute(sPath)).then(function(oPromiseResult) {
+						if (oPromiseResult) {
+							var oScalar = Utils.parseScalarType(oProperty.type, oPromiseResult, sPath);
+							if (typeof oScalar === "object" && oScalar.path) {
+								return oPromiseResult;
+							}
+							return oScalar;
 						}
-						return oScalar;
-					}
-					return null;
-
+						return null;
+					});
 				} else if (mAggregations.hasOwnProperty(aPath[0])) {
 					var oAggregation = mAggregations[aPath[0]];
 					var oAggregationModel, oContent = XmlTreeModifier.getAggregation(oElement, aPath[0]);
@@ -81,6 +84,7 @@ sap.ui.define([
 						oResult = aContexts;
 					} else {
 						oAggregationModel = new XMLNodeAttributesModel(oContent, oVisitor, "");
+						oAggregationModel.$$valueAsPromise = true;//for Preprocessor
 						oResult = oAggregationModel.getContext("/");
 					}
 
@@ -93,20 +97,20 @@ sap.ui.define([
 						return oSpecialSetting.defaultValue || null;
 					}
 
-					oResult = oVisitor.getResult(oElement.getAttribute(sPath));
-
-					if (oSpecialSetting.type) {
-						var oScalar = Utils.parseScalarType(oSpecialSetting.type, oResult, sPath);
-						if (typeof oScalar === "object" && oScalar.path) {
-							return oResult;
+					return SyncPromise.resolve(oVisitor.getResult(oElement.getAttribute(sPath))).then(function(oPromiseResult) {
+						if (oSpecialSetting.type) {
+							var oScalar = Utils.parseScalarType(oSpecialSetting.type, oPromiseResult, sPath);
+							if (typeof oScalar === "object" && oScalar.path) {
+								return oPromiseResult;
+							}
+							return oScalar;
 						}
-						return oScalar;
-					}
 
-					if (oResult) {
-						return oResult;
-					}
-					return oElement.getAttribute(sPath);
+						if (oPromiseResult) {
+							return oPromiseResult;
+						}
+						return oElement.getAttribute(sPath);
+					});
 				}
 			};
 
@@ -267,6 +271,37 @@ sap.ui.define([
 
 			if (oMember) {
 				oMetadata._requestFragmentRetemplatingCheck(this, oMember);
+			}
+		}
+
+		//repair the event handler registry
+		function repairListener(oControl, oTemplate, oClone) {
+			var sKey, vAggregation, i, aEvents;
+
+			if (!oControl) {
+				return;
+			}
+
+			for (var sEvent in oControl.mEventRegistry) {
+				aEvents = oControl.mEventRegistry[sEvent];
+				for (i = 0; i < aEvents.length; i++) {
+					if (aEvents[i].oListener == oTemplate) {
+						aEvents[i].oListener = oClone;
+					}
+				}
+			}
+
+			//dive in the Aggregations
+			for (sKey in oControl.mAggregations) {
+				vAggregation = oControl.mAggregations[sKey];
+
+				if (!Array.isArray(vAggregation)) {
+					vAggregation = [vAggregation];
+				}
+
+				for (i = 0; i < vAggregation.length; i++) {
+					repairListener(vAggregation[i], oTemplate, oClone);
+				}
 			}
 		}
 
@@ -470,19 +505,8 @@ sap.ui.define([
 
 		XMLComposite.prototype.clone = function () {
 			var oClone = ManagedObject.prototype.clone.apply(this, arguments);
-			var aEvents, i, oContent = oClone.get_content();
-			if (oContent) {
-				//while cloning the children are also cloned which may yield in case the children
-				//use the composite as event handler that the clones use the template this is fixed here
-				for (var sEvent in oContent.mEventRegistry) {
-					aEvents = oContent.mEventRegistry[sEvent];
-					for (var i = 0; i < aEvents.length; i++) {
-						if (aEvents[i].oListener == this) {
-							aEvents[i].oListener = oClone;
-						}
-					}
-				}
-			}
+			var oContent = oClone.getAggregation(oClone.getMetadata().getCompositeAggregationName());
+			repairListener(oContent, this, oClone);
 			//also if the compisite is clone when already having children the propagated models are so far not set
 			//fix that
 			oClone.oPropagatedProperties = this.oPropagatedProperties;

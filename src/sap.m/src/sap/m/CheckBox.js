@@ -4,7 +4,6 @@
 
 // Provides control sap.m.CheckBox.
 sap.ui.define([
-	'jquery.sap.global',
 	'./Label',
 	'./library',
 	'sap/ui/Device',
@@ -15,15 +14,14 @@ sap.ui.define([
 	'./CheckBoxRenderer'
 ],
 	function(
-	jQuery,
-	Label,
-	library,
-	Device,
-	Control,
-	IconPool,
-	EnabledPropagator,
-	coreLibrary,
-	CheckBoxRenderer
+		Label,
+		library,
+		Device,
+		Control,
+		IconPool,
+		EnabledPropagator,
+		coreLibrary,
+		CheckBoxRenderer
 	) {
 	"use strict";
 

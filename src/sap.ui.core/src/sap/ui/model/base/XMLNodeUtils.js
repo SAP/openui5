@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject'
-], function(jQuery, DataType, ManagedObject) {
+	'jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject', 'sap/base/util/ObjectPath'
+], function(jQuery, DataType, ManagedObject, ObjectPath) {
 	"use strict";
 
 	return {
@@ -47,7 +47,7 @@ sap.ui.define([
 
 			// ensure that control and library are loaded
 			jQuery.sap.require(sClassName); // make sure oClass.getMetadata() exists
-			var oClassObject = jQuery.sap.getObject(sClassName);
+			var oClassObject = ObjectPath.get(sClassName);
 			if (oClassObject) {
 				return oClassObject;
 			} else {

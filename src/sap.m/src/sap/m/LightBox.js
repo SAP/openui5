@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
@@ -19,7 +18,6 @@ sap.ui.define([
 	'./LightBoxRenderer'
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		Popup,

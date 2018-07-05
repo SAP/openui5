@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.layout.form.SimpleForm.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/core/ResizeHandler',
@@ -13,9 +12,10 @@ sap.ui.define([
 	'./FormContainer',
 	'./FormElement',
 	'./FormLayout',
-	'./SimpleFormRenderer'
-	], function(jQuery, Control, ManagedObjectObserver, ResizeHandler, library,
-	            Form, FormContainer, FormElement, FormLayout, SimpleFormRenderer) {
+	'./SimpleFormRenderer',
+	"sap/base/Log"
+	], function(Control, ManagedObjectObserver, ResizeHandler, library, Form,
+	            FormContainer, FormElement, FormLayout, SimpleFormRenderer, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
@@ -568,7 +568,7 @@ sap.ui.define([
 
 		if (this.indexOfContent(oElement) >= 0) {
 			// element is already there, remove before adding it
-			jQuery.sap.log.warning("SimpleForm.addContent: Content element '" + oElement + "' already assigned. Please remove before adding!", this);
+			Log.warning("SimpleForm.addContent: Content element '" + oElement + "' already assigned. Please remove before adding!", this);
 			this.removeContent(oElement);
 		}
 
@@ -655,7 +655,7 @@ sap.ui.define([
 
 		if (this.indexOfContent(oElement) >= 0) {
 			// element is already there, remove before insert it
-			jQuery.sap.log.warning("SimpleForm.insertContent: Content element '" + oElement + "' already assigned. Please remove before insert!", this);
+			Log.warning("SimpleForm.insertContent: Content element '" + oElement + "' already assigned. Please remove before insert!", this);
 			this.removeContent(oElement);
 		}
 
@@ -673,7 +673,7 @@ sap.ui.define([
 			iNewIndex = iIndex;
 		}
 		if (iNewIndex !== iIndex) {
-			jQuery.sap.log.warning("SimpleForm.insertContent: index '" + iIndex + "' out of range [0," + iLength + "], forced to " + iNewIndex);
+			Log.warning("SimpleForm.insertContent: index '" + iIndex + "' out of range [0," + iLength + "], forced to " + iNewIndex);
 		}
 
 		if (iNewIndex == iLength) {
@@ -898,7 +898,7 @@ sap.ui.define([
 
 			if (typeof (vElement) == "number") { // "vElement" is the index now
 				if (vElement < 0 || vElement >= this._aElements.length) {
-					jQuery.sap.log.warning("Element.removeAggregation called with invalid index: Items, " + vElement);
+					Log.warning("Element.removeAggregation called with invalid index: Items, " + vElement);
 				} else {
 					iIndex = vElement;
 					oElement = this._aElements[iIndex];
@@ -1507,7 +1507,7 @@ sap.ui.define([
 			} else if (!oLayoutData) {
 				oField.setLayoutData(_createRFLayoutData.call(this, iWeight, bLinebreak, bLinebreakable, iMinWidth));
 			} else {
-				jQuery.sap.log.warning("ResponsiveFlowLayoutData can not be set on Field " + oField.getId(), "_createFieldLayoutData", "SimpleForm");
+				Log.warning("ResponsiveFlowLayoutData can not be set on Field " + oField.getId(), "_createFieldLayoutData", "SimpleForm");
 			}
 		}
 

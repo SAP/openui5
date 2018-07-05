@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.util.LibraryInfo
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
-	function(jQuery, BaseObject/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
+	function(jQuery, BaseObject) {
 	"use strict";
 
 	/**
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 		sLibraryName = sLibraryName.replace(/\//g, ".");
 
 		if (this._oLibInfos[sLibraryName]) {
-			jQuery.sap.delayedCall(0, window, fnCallback, [this._oLibInfos[sLibraryName]]);
+			setTimeout(fnCallback.bind(window, this._oLibInfos[sLibraryName]), 0);
 			return;
 		}
 

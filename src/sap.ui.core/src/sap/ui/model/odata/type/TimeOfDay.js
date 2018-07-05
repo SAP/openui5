@@ -4,14 +4,19 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"jquery.sap.strings",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType"
-], function(jQuery, jQuerySapStrings, DateFormat, FormatException, ParseException,
-		ValidateException, ODataType) {
+], function(
+	jQuery,
+	DateFormat,
+	FormatException,
+	ParseException,
+	ValidateException,
+	ODataType
+) {
 	"use strict";
 
 	/*
@@ -42,7 +47,7 @@ sap.ui.define([
 		if (!oType.oModelFormat) {
 			iPrecision = oType.oConstraints && oType.oConstraints.precision;
 			if (iPrecision) {
-				sPattern += "." + jQuery.sap.padRight("", "S", iPrecision);
+				sPattern += "." + "".padEnd(iPrecision, "S");
 			}
 			oType.oModelFormat = DateFormat.getTimeInstance({pattern : sPattern,
 				strictParsing : true, UTC : true});
@@ -303,5 +308,3 @@ sap.ui.define([
 
 	return TimeOfDay;
 });
-
-

@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/LocaleData',
 	'./DateTimePickerRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	DatePicker,
@@ -25,8 +25,9 @@ sap.ui.define([
 	Device,
 	DateFormat,
 	LocaleData,
-	DateTimePickerRenderer
-	) {
+	DateTimePickerRenderer,
+	KeyCodes
+) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -494,7 +495,7 @@ sap.ui.define([
 			if (Device.system.desktop) {
 				this._oPopoverKeydownEventDelegate = {
 						onkeydown: function(oEvent) {
-							var oKC = jQuery.sap.KeyCodes,
+							var oKC = KeyCodes,
 							iKC = oEvent.which || oEvent.keyCode,
 							bAlt = oEvent.altKey;
 
@@ -533,7 +534,7 @@ sap.ui.define([
 
 		var oSliders = this._oPopup.getContent()[0] && this._oPopup.getContent()[0].getTimeSliders();
 		if (oSliders) {//Sliders values need to be updated after a popup is (especially sliders) is really visible
-			jQuery.sap.delayedCall(0, oSliders, oSliders._updateSlidersValues);
+			setTimeout(oSliders._updateSlidersValues.bind(oSliders), 0);
 		}
 	};
 
@@ -571,6 +572,7 @@ sap.ui.define([
 		}
 
 		if (!this._oSliders) {
+			//TODO: global jquery call found
 			jQuery.sap.require("sap.m.TimePickerSliders");
 			this._oSliders = new sap.m.TimePickerSliders(this.getId() + "-Sliders", {
 				minutesStep: this.getMinutesStep(),

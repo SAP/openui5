@@ -4,18 +4,18 @@
 
 // Provides control sap.m.FormattedText.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'./FormattedTextAnchorGenerator',
-	'./FormattedTextRenderer'
+	'./FormattedTextRenderer',
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	FormattedTextAnchorGenerator,
-	FormattedTextRenderer
+	FormattedTextRenderer,
+	Log
 	) {
 		"use strict";
 
@@ -207,7 +207,7 @@ function(
 
 				if (!this._renderingRules.ATTRIBS[attr] && !this._renderingRules.ATTRIBS[tagName + "::" + attr]) {
 					sWarning = 'FormattedText: <' + tagName + '> with attribute [' + attr + '="' + value + '"] is not allowed';
-					jQuery.sap.log.warning(sWarning, this);
+					Log.warning(sWarning, this);
 					// to remove the attribute by the sanitizer, set the value to null
 					attribs[i + 1] = null;
 					continue;
@@ -216,7 +216,7 @@ function(
 				// sanitize hrefs
 				if (attr == "href") { // a::href
 					if (!jQuery.sap.validateUrl(value)) {
-						jQuery.sap.log.warning("FormattedText: incorrect href attribute:" + value, this);
+						Log.warning("FormattedText: incorrect href attribute:" + value, this);
 						attribs[i + 1] = "#";
 						addTarget = false;
 					}
@@ -251,7 +251,7 @@ function(
 				return fnSanitizeAttribs.call(this, tagName, attribs);
 			} else {
 				var sWarning = '<' + tagName + '> is not allowed';
-				jQuery.sap.log.warning(sWarning, this);
+				Log.warning(sWarning, this);
 			}
 		}
 

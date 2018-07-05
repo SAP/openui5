@@ -4,17 +4,42 @@
 
 // Provides the base class for all objects with managed properties and aggregations.
 sap.ui.define([
-		'jquery.sap.global',
-		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', './Object',
-		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException',
-		'../model/ParseException', '../model/Type', '../model/ValidateException',
-		'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'
-	], function(
-		jQuery,
-		BindingParser, DataType, EventProvider, ManagedObjectMetadata, BaseObject,
-		BindingMode, CompositeBinding, Context, FormatException,
-		ParseException, Type, ValidateException
-		/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
+	'jquery.sap.global',
+	'./BindingParser',
+	'./DataType',
+	'./EventProvider',
+	'./ManagedObjectMetadata',
+	'./Object',
+	'../model/BindingMode',
+	'../model/CompositeBinding',
+	'../model/Context',
+	'../model/FormatException',
+	'../model/ParseException',
+	'../model/Type',
+	'../model/ValidateException',
+	'sap/base/util/ObjectPath',
+	"sap/ui/util/ActivityDetection",
+	"sap/base/util/deepEqual",
+	"sap/base/util/uid"
+], function(
+	jQuery,
+	BindingParser,
+	DataType,
+	EventProvider,
+	ManagedObjectMetadata,
+	BaseObject,
+	BindingMode,
+	CompositeBinding,
+	Context,
+	FormatException,
+	ParseException,
+	Type,
+	ValidateException,
+	ObjectPath,
+	ActivityDetection,
+	deepEqual,
+	uid
+) {
 
 	"use strict";
 
@@ -863,7 +888,7 @@ sap.ui.define([
 				return vType;
 			}
 			if (typeof vType === "string" ) {
-				return jQuery.sap.getObject(vType);
+				return ObjectPath.get(vType);
 			}
 		}
 
@@ -1223,7 +1248,7 @@ sap.ui.define([
 		// value validation
 		oValue = this.validateProperty(sPropertyName, oValue);
 
-		if (jQuery.sap.equal(oOldValue, oValue)) {
+		if (deepEqual(oOldValue, oValue)) {
 			// ensure to set the own property explicitly to allow isPropertyInitial check (using hasOwnProperty on the map)
 			this.mProperties[sPropertyName] = oValue;
 			return this;
@@ -1232,7 +1257,7 @@ sap.ui.define([
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
 			//Refresh only for property changes with suppressed invalidation (others lead to rerendering and refresh is handled there)
-			jQuery.sap.act.refresh();
+			ActivityDetection.refresh();
 			this.iSuppressInvalidate++;
 		}
 
@@ -1770,7 +1795,7 @@ sap.ui.define([
 		}
 
 		// legacy validation for (unsupported) types that don't subclass BaseObject
-		oType = jQuery.sap.getObject(oAggregation.type);
+		oType = ObjectPath.get(oAggregation.type);
 		if ( typeof oType === "function" && oObject instanceof oType ) {
 			return oObject;
 		}
@@ -2464,7 +2489,7 @@ sap.ui.define([
 				}.bind(this), 0);
 			}
 
-			jQuery.sap.act.refresh();
+			ActivityDetection.refresh();
 
 			// Note: no need (and no way how) to invalidate
 			return;
@@ -2477,7 +2502,7 @@ sap.ui.define([
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
 			//Refresh only for changes with suppressed invalidation (others lead to rerendering and refresh is handled there)
-			jQuery.sap.act.refresh();
+			ActivityDetection.refresh();
 			this.iSuppressInvalidate++;
 		}
 
@@ -3223,7 +3248,9 @@ sap.ui.define([
 				if (oBinding.getBindingMode() === BindingMode.OneTime && oBinding.isResolved()) {
 					// if binding is one time but not resolved yet we don't destroy it yet.
 					oBinding.detachChange(fnModelChangeHandler);
-					oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
+					if (this.refreshDataState) {
+						oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
+					}
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
 					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
@@ -3248,7 +3275,7 @@ sap.ui.define([
 			// Create type instance if needed
 			oType = oPart.type;
 			if (typeof oType == "string") {
-				clType = jQuery.sap.getObject(oType);
+				clType = ObjectPath.get(oType);
 				if (typeof clType !== "function") {
 					throw new Error("Cannot find type \"" + oType + "\" used in control \"" + that.getId() + "\"!");
 				}
@@ -3278,7 +3305,7 @@ sap.ui.define([
 			// Create type instance if needed
 			oType = oBindingInfo.type;
 			if (typeof oType == "string") {
-				clType = jQuery.sap.getObject(oType);
+				clType = ObjectPath.get(oType);
 				oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 			}
 			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
@@ -4654,7 +4681,7 @@ sap.ui.define([
 		}
 		// if no id suffix has been provided use a generated UID
 		if (!sIdSuffix) {
-			sIdSuffix = ManagedObjectMetadata.uid("clone") || jQuery.sap.uid();
+			sIdSuffix = ManagedObjectMetadata.uid("clone") || uid();
 		}
 		// if no local ID array has been passed, collect IDs of all aggregated objects to
 		// be able to properly adapt associations, which are within the cloned object hierarchy

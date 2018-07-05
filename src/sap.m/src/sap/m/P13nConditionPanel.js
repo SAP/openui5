@@ -4,7 +4,6 @@
 
 // Provides control sap.m.P13nConditionPanel.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
@@ -36,11 +35,12 @@ sap.ui.define([
 	'./Input',
 	'./DatePicker',
 	'./TimePicker',
-	'./DateTimePicker'
-], function(jQuery, library, coreLibrary, Control, DateFormat, NumberFormat, IconPool, Device, InvisibleText, ResizeHandler,
-	Item, ListItem, BooleanOdataType, StringType, StringOdataType, DateType, TimeType, DateTimeOdataType, DoubleOdataType,
-	Button, OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, Text, SearchField, CheckBox, ComboBox, Select, Label,
-	Input, DatePicker, TimePicker, DateTimePicker) {
+	'./DateTimePicker',
+	"sap/base/Log"
+], function(library, coreLibrary, Control, DateFormat, NumberFormat, IconPool, Device, InvisibleText, ResizeHandler, Item,
+	ListItem, BooleanOdataType, StringType, StringOdataType, DateType, TimeType, DateTimeOdataType, DoubleOdataType, Button,
+	OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, Text, SearchField, CheckBox, ComboBox, Select, Label, Input,
+	DatePicker, TimePicker, DateTimePicker, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -257,7 +257,7 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype.setConditions = function(aConditions) {
 		if (!aConditions) {
-			jQuery.sap.log.error("sap.m.P13nConditionPanel : aCondition is not defined");
+			Log.error("sap.m.P13nConditionPanel : aCondition is not defined");
 		}
 
 		if (this._bIgnoreSetConditions) {
@@ -521,10 +521,10 @@ sap.ui.define([
 				case "numc":
 					//formatSettings: {isDigitSequence: true, maxLength: 10},
 					if (!!oKeyField.formatSettings.isDigitSequence) {
-						jQuery.sap.log.error("sap.m.P13nConditionPanel", "NUMC type support requires isDigitSequence==true!");
+						Log.error("sap.m.P13nConditionPanel", "NUMC type support requires isDigitSequence==true!");
 					}
 					if (!!oKeyField.formatSettings.maxLength) {
-						jQuery.sap.log.error("sap.m.P13nConditionPanel", "NUMC type suppport requires maxLength!");
+						Log.error("sap.m.P13nConditionPanel", "NUMC type suppport requires maxLength!");
 					}
 					oKeyField.typeInstance = new StringOdataType({}, oKeyField.formatSettings);
 					break;
@@ -1644,7 +1644,7 @@ sap.ui.define([
 			// use the DatePicker when type is sap.ui.model.odata.type.DateTime and displayFormat = Date
 			if (sCtrlType === "DateTimePicker" && oType.getMetadata().getName() === "sap.ui.model.odata.type.DateTime") {
 				if (!(oType.oConstraints && oType.oConstraints.isDateOnly)) {
-					jQuery.sap.log.error("sap.m.P13nConditionPanel", "sap.ui.model.odata.type.DateTime without displayFormat = Date is not supported!");
+					Log.error("sap.m.P13nConditionPanel", "sap.ui.model.odata.type.DateTime without displayFormat = Date is not supported!");
 				}
 				sCtrlType = "DatePicker";
 			}
@@ -1808,7 +1808,7 @@ sap.ui.define([
 		oCtrl.destroyItems();
 		for (var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
-			if (jQuery.sap.startsWith(sText, "CONDITIONPANEL_OPTION")) {
+			if (sText.startsWith("CONDITIONPANEL_OPTION")) {
 				// when for the specified type the resource does not exist use the normal string resource text
 				sText = this._oRb.getText("CONDITIONPANEL_OPTION" + aOperations[iOperation]);
 			}

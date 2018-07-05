@@ -3,8 +3,15 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './BindingMode', './Context', './Filter'],
-	function(jQuery, MessageProcessor, BindingMode, Context, Filter) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/message/MessageProcessor',
+	'./BindingMode',
+	'./Context',
+	'./Filter',
+	"sap/base/util/deepEqual"
+],
+	function(jQuery, MessageProcessor, BindingMode, Context, Filter, deepEqual) {
 	"use strict";
 
 
@@ -660,7 +667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @param {string} sPath the path
 	 */
 	Model.prototype.getContext = function(sPath) {
-		if (!jQuery.sap.startsWith(sPath, "/")) {
+		if (!sPath.startsWith("/")) {
 			throw new Error("Path " + sPath + " must start with a / ");
 		}
 		var oContext = this.mContexts[sPath];
@@ -686,13 +693,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @return {string} resolved path or undefined
 	 */
 	Model.prototype.resolve = function(sPath, oContext) {
-		var bIsRelative = typeof sPath == "string" && !jQuery.sap.startsWith(sPath, "/"),
+		var bIsRelative = typeof sPath == "string" && !sPath.startsWith("/"),
 			sResolvedPath = sPath,
 			sContextPath;
 		if (bIsRelative) {
 			if (oContext) {
 				sContextPath = oContext.getPath();
-				sResolvedPath = sContextPath + (jQuery.sap.endsWith(sContextPath, "/") ? "" : "/") + sPath;
+				sResolvedPath = sContextPath + (sContextPath.endsWith("/") ? "" : "/") + sPath;
 			} else {
 				sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
 			}
@@ -701,7 +708,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 			sResolvedPath = oContext.getPath();
 		}
 		// invariant: path never ends with a slash ... if root is requested we return /
-		if (sResolvedPath && sResolvedPath !== "/" && jQuery.sap.endsWith(sResolvedPath, "/")) {
+		if (sResolvedPath && sResolvedPath !== "/" && sResolvedPath.endsWith("/")) {
 			sResolvedPath = sResolvedPath.substr(0, sResolvedPath.length - 1);
 		}
 		return sResolvedPath;
@@ -838,14 +845,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	Model.prototype.checkUpdate = function(bForceUpdate, bAsync) {
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
-				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
+				this.sUpdateTimer = setTimeout(function() {
 					this.checkUpdate(bForceUpdate);
-				});
+				}.bind(this), 0);
 			}
 			return;
 		}
 		if (this.sUpdateTimer) {
-			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
+			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
 		}
 		var aBindings = this.aBindings.slice(0);
@@ -862,7 +869,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 */
 	Model.prototype.setMessages = function(mMessages) {
 		mMessages = mMessages || {};
-		if (!jQuery.sap.equal(this.mMessages, mMessages)) {
+		if (!deepEqual(this.mMessages, mMessages)) {
 			this.mMessages = mMessages;
 			this.checkMessages();
 		}
@@ -908,7 +915,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		this.aBindings = [];
 		this.mContexts = {};
 		if (this.sUpdateTimer) {
-			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
+			clearTimeout(this.sUpdateTimer);
 		}
 		this.bDestroyed = true;
 	};

@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, Device, Parameters) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/theming/Parameters'
+],
+	function(library, Control, Device, Parameters) {
 	"use strict";
 
 

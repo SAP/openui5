@@ -9,8 +9,9 @@ sap.ui.define([
 	"./_Batch",
 	"./_GroupLock",
 	"./_Helper",
-	"./_V2Requestor"
-], function (jQuery, SyncPromise, _Batch, _GroupLock, _Helper, asV2Requestor) {
+	"./_V2Requestor",
+	"sap/base/util/deepEqual"
+], function(jQuery, SyncPromise, _Batch, _GroupLock, _Helper, asV2Requestor, deepEqual) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -1033,7 +1034,7 @@ sap.ui.define([
 					&& oPreviousChange.method === "PATCH"
 					&& oChange.method === "PATCH"
 					&& oPreviousChange.url === oChange.url
-					&& jQuery.sap.equal(oPreviousChange.headers, oChange.headers)) {
+					&& deepEqual(oPreviousChange.headers, oChange.headers)) {
 				oPreviousBody = oPreviousChange.body;
 				oBody = oChange.body;
 				for (sProperty in oPreviousBody) {

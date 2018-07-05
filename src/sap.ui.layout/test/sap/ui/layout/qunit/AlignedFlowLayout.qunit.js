@@ -6,8 +6,9 @@ sap.ui.test.qunit.delayTestStart();
 sap.ui.require([
 	"sap/ui/core/Control",
 	"sap/ui/Device",
-	"sap/ui/layout/AlignedFlowLayout"
-], function(Control, Device, AlignedFlowLayout) {
+	"sap/ui/layout/AlignedFlowLayout",
+	"sap/ui/dom/units/Rem"
+], function(Control, Device, AlignedFlowLayout, Rem) {
 	"use strict";
 
 	var CONTENT_ID = "content";
@@ -341,6 +342,26 @@ sap.ui.require([
 
 		// assert
 		assert.strictEqual(this.oAlignedFlowLayout.getContent().length, 0);
+	});
+
+	QUnit.test("it should set maximum width to the end item", function(assert) {
+
+		// system under test
+		var oButton = new Button({
+			width: "60rem"
+		});
+
+		// act
+		this.oAlignedFlowLayout.addEndContent(oButton);
+
+		// arrange
+		sap.ui.getCore().applyChanges();
+		var oEndItem = oButton.getDomRef().parentElement;
+		var sMaxItemWidth = "30rem"; // this value is specified in the QUnit module above
+
+		// assert
+		assert.strictEqual(oEndItem.style.maxWidth, sMaxItemWidth);
+		assert.strictEqual(Rem.fromPx(oEndItem.offsetWidth) + "rem", sMaxItemWidth);
 	});
 
 	QUnit.module("wrapping", {

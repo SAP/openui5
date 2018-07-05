@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRenderer', 'sap/ui/core/IconPool', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, Control, TimePickerSliderRenderer, IconPool, Device) {
+sap.ui.define(['sap/ui/core/Control', './TimePickerSliderRenderer', 'sap/ui/core/IconPool', 'sap/ui/Device', "sap/ui/events/KeyCodes"],
+	function(Control, TimePickerSliderRenderer, IconPool, Device, KeyCodes) {
 		"use strict";
 
 		/**
@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 */
 		TimePickerSlider.prototype.onAfterRendering = function () {
 			if (Device.system.phone) { //the layout still 'moves' at this point - dialog and its content, so wait a little
-				jQuery.sap.delayedCall(0, this, this._afterExpandCollapse);
+				setTimeout(this._afterExpandCollapse.bind(this), 0);
 			} else {
 				this._afterExpandCollapse();
 			}
@@ -242,12 +242,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				$This.addClass("sapMTPSliderExpanded");
 
 				if (Device.system.phone) {
-					jQuery.sap.delayedCall(0, this, function() {
+					setTimeout(function() {
 						this._updateDynamicLayout(bValue);
 						if (!suppressEvent) {
 							this.fireExpanded({ctrl: this});
 						}
-					});
+					}.bind(this), 0);
 				} else {
 					this._updateDynamicLayout(bValue);
 					if (!suppressEvent) {
@@ -255,20 +255,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					}
 				}
 			} else {
-				this._stopAnimation();
+				this._stopAnimation(); //stop any schedule(interval) for animation
 				//stop snap animation also
 				if (this._animatingSnap === true) {
 					this._animatingSnap = false;
 					this._getSliderContainerDomRef().stop(true);
-					//be careful not to invoke this method twice (the first time is on animate finish callback)
-					this._scrollerSnapped(this._iSelectedIndex);
+					//Be careful not to invoke this method twice (the first time is on animate finish callback).
+					//If this is the first animation, the _iSelectedIndex will remain its initial value, so no need
+					//to notify the scroller about any snap completion
+					if (this._iSelectedIndex !== -1) {
+						this._scrollerSnapped(this._iSelectedIndex);
+					}
 				}
 
 				$This.removeClass("sapMTPSliderExpanded");
 				this._updateMargins(bValue);
 
 				if (Device.system.phone) {
-					jQuery.sap.delayedCall(0, this, this._afterExpandCollapse);
+					setTimeout(this._afterExpandCollapse.bind(this), 0);
 				} else {
 					this._afterExpandCollapse();
 				}
@@ -440,7 +444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 */
 		TimePickerSlider.prototype.onkeydown = function(oEvent) {
 			var iKC = oEvent.which || oEvent.keyCode,
-				oKCs = jQuery.sap.KeyCodes;
+				oKCs = KeyCodes;
 
 			if (iKC >= oKCs.NUMPAD_0 && iKC <= oKCs.NUMPAD_9){
 				iKC = this._convertNumPadToNumKeyCode(iKC);
@@ -525,7 +529,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				$Frame.css("top", iFrameTopPosition);
 
 				if (Device.system.phone) {
-					jQuery.sap.delayedCall(0, this, this._afterExpandCollapse);
+					setTimeout(this._afterExpandCollapse.bind(this), 0);
 				} else {
 					this._afterExpandCollapse();
 				}
@@ -1137,7 +1141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		TimePickerSlider.prototype._convertNumPadToNumKeyCode = function (iKeyCode) {
-			var oKCs = jQuery.sap.KeyCodes;
+			var oKCs = KeyCodes;
 
 			// Translate keypad code to number row code
 			// The difference between NUM pad numbers and numbers in keycode is 48
@@ -1274,7 +1278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 						sCurrentKeyPrefix = "";
 					} else {
 						if (iLastTimeoutId !== -1) {
-							jQuery.sap.clearDelayedCall(iLastTimeoutId);
+							clearTimeout(iLastTimeoutId);
 							iLastTimeoutId = -1;
 						}
 					}
@@ -1286,11 +1290,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					});
 
 					if (aMatchingItems.length > 1) {
-						iLastTimeoutId = jQuery.sap.delayedCall(iWaitTimeout, this, function() {
+						iLastTimeoutId = setTimeout(function() {
 							this.setSelectedValue(sCurrentKeyPrefix);
 							sCurrentKeyPrefix = "";
 							iLastTimeoutId = -1;
-						});
+						}.bind(this), iWaitTimeout);
 					} else if (aMatchingItems.length === 1) {
 						this.setSelectedValue(aMatchingItems[0].getKey());
 						sCurrentKeyPrefix = "";

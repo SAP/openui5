@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Dialog.
 sap.ui.define([
-	'jquery.sap.global',
 	'./Bar',
 	'./InstanceManager',
 	'./AssociativeOverflowToolbar',
@@ -20,10 +19,10 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/library',
-	'./DialogRenderer'
+	'./DialogRenderer',
+	"sap/base/Log"
 	],
 function(
-	jQuery,
 	Bar,
 	InstanceManager,
 	AssociativeOverflowToolbar,
@@ -39,7 +38,8 @@ function(
 	Device,
 	ManagedObject,
 	coreLibrary,
-	DialogRenderer
+	DialogRenderer,
+	Log
 	) {
 		"use strict";
 
@@ -447,7 +447,7 @@ function(
 			if (this._hasSingleScrollableContent()) {
 				this.setProperty("verticalScrolling", false);
 				this.setProperty("horizontalScrolling", false);
-				jQuery.sap.log.info("VerticalScrolling and horizontalScrolling in sap.m.Dialog with ID " + this.getId() + " has been disabled because there's scrollable content inside");
+				Log.info("VerticalScrolling and horizontalScrolling in sap.m.Dialog with ID " + this.getId() + " has been disabled because there's scrollable content inside");
 			} else if (!this._oScroller) {
 				this._oScroller = new ScrollEnablement(this, this.getId() + "-scroll", {
 					horizontal: this.getHorizontalScrolling(), // will be disabled in adjustScrollingPane if content can fit in
@@ -673,14 +673,14 @@ function(
 				//Check if buttons are available
 				var oLastFocusableDomRef = this.$("footer").lastFocusableDomRef() || this.$("cont").lastFocusableDomRef() || (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || (this._getAnyHeader() && this._getAnyHeader().$().lastFocusableDomRef());
 				if (oLastFocusableDomRef) {
-					jQuery.sap.focus(oLastFocusableDomRef);
+					oLastFocusableDomRef.focus();
 				}
 			} else if (oSourceDomRef.id === this.getId() + "-lastfe") {
 				//Check if the invisible LAST focusable element (suffix '-lastfe') has gained focus
 				//First check if header content is available
 				var oFirstFocusableDomRef = (this._getAnyHeader() && this._getAnyHeader().$().firstFocusableDomRef()) || (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || this.$("cont").firstFocusableDomRef() || this.$("footer").firstFocusableDomRef();
 				if (oFirstFocusableDomRef) {
-					jQuery.sap.focus(oFirstFocusableDomRef);
+					oFirstFocusableDomRef.focus();
 				}
 			}
 		};
@@ -735,7 +735,7 @@ function(
 						that.close();
 					})
 					.catch(function () {
-						jQuery.sap.log.info("Disallow dialog closing");
+						Log.info("Disallow dialog closing");
 					});
 			} else {
 
@@ -1116,7 +1116,7 @@ function(
 				oFocusDomRef = oControl.getFocusDomRef();
 			}
 
-			oFocusDomRef = oFocusDomRef || jQuery.sap.domById(sFocusId);
+			oFocusDomRef = oFocusDomRef || ((sFocusId ? window.document.getElementById(sFocusId) : null));
 
 			// if focus dom ref is not found
 			if (!oFocusDomRef) {
@@ -1133,7 +1133,9 @@ function(
 			// consistently across devices. Therefore setting focus to those elements are disabled on mobile devices
 			// and the keyboard should be opened by the User explicitly
 			if (Device.system.desktop || (oFocusDomRef && !/input|textarea|select/i.test(oFocusDomRef.tagName))) {
-				jQuery.sap.focus(oFocusDomRef);
+				if (oFocusDomRef){
+					oFocusDomRef.focus();
+				}
 			} else {
 				// Set the focus to the popup itself in order to keep the tab chain
 				this.focus();
@@ -1596,7 +1598,7 @@ function(
 
 		Dialog.prototype.setStretchOnPhone = function (bStretchOnPhone) {
 			if (this._bStretchSet) {
-				jQuery.sap.log.warning("sap.m.Dialog: stretchOnPhone property is deprecated. Setting stretchOnPhone property is ignored when there's already stretch property set.");
+				Log.warning("sap.m.Dialog: stretchOnPhone property is deprecated. Setting stretchOnPhone property is ignored when there's already stretch property set.");
 				return this;
 			}
 			this.setProperty("stretchOnPhone", bStretchOnPhone);
@@ -1608,7 +1610,7 @@ function(
 				bHasSingleScrollableContent = this._hasSingleScrollableContent();
 
 			if (bHasSingleScrollableContent) {
-				jQuery.sap.log.warning("sap.m.Dialog: property verticalScrolling automatically reset to false. See documentation.");
+				Log.warning("sap.m.Dialog: property verticalScrolling automatically reset to false. See documentation.");
 				bValue = false;
 			}
 
@@ -1631,7 +1633,7 @@ function(
 				bHasSingleScrollableContent = this._hasSingleScrollableContent();
 
 			if (bHasSingleScrollableContent) {
-				jQuery.sap.log.warning("sap.m.Dialog: property horizontalScrolling automatically reset to false. See documentation.");
+				Log.warning("sap.m.Dialog: property horizontalScrolling automatically reset to false. See documentation.");
 				bValue = false;
 			}
 

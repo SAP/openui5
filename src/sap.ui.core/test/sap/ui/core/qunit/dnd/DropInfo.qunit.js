@@ -2,8 +2,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"test/TestControl",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/ui/base/ManagedObject"
-], function(jQuery, TestControl, DropInfo, ManagedObject) {
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/ElementMetadata"
+], function(jQuery, TestControl, DropInfo, ManagedObject, ElementMetadata) {
 	"use strict";
 
 	/*global QUnit,sinon*/
@@ -179,7 +180,7 @@ sap.ui.define([
 		});
 
 		var fnLogSpy = this.spy(jQuery.sap.log, "warning");
-		this.stub(sap.ui.core.ElementMetadata.prototype, "getDragDropInfo").returns({droppable: false});
+		this.stub(ElementMetadata.prototype, "getDragDropInfo").returns({droppable: false});
 		assert.notOk(oDropInfo.isDroppable(oParent), "Not droppable: Element metadata does not allow droppping");
 		assert.strictEqual(fnLogSpy.callCount, 1, "Not droppable is logged");
 

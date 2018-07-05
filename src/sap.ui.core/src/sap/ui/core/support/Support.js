@@ -3,8 +3,15 @@
  */
 
 // Provides the basic UI5 support functionality
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.sap.encoder', 'jquery.sap.script'],
-	function(jQuery, EventProvider, Plugin, Device/* , jQuerySap, jQuerySap2, jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", 'jquery.sap.encoder'],
+	function(
+		jQuery,
+		EventProvider,
+		Plugin,
+		Device,
+		UriParameters,
+		jQueryDOM
+	) {
 	"use strict";
 
 	/*global document, localStorage, window */
@@ -45,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					this.attachEvent(mEvents.TEAR_DOWN, function(oEvent){
 						that._isOpen = false;
 						if ( Device.browser.msie ) {// TODO remove after 1.62 version
-							jQuery.sap.byId(ID_SUPPORT_AREA + "-frame").remove();
+							jQueryDOM(document.getElementById(ID_SUPPORT_AREA + "-frame")).remove();
 						} else {
 							close(that._oRemoteWindow);
 						}
@@ -67,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					break;
 				case mTypes.IFRAME:
 					this._oRemoteWindow = window.parent;
-					this._sRemoteOrigin = jQuery.sap.getUriParameters().get("sap-ui-xx-support-origin");
+					this._sRemoteOrigin = new UriParameters(window.location.href).get("sap-ui-xx-support-origin");
 					this.openSupportTool();
 					jQuery(window).bind("unload", function(oEvent){
 						close(that._oOpenedWindow);
@@ -75,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					break;
 				case mTypes.TOOL:
 					this._oRemoteWindow = window.opener;
-					this._sRemoteOrigin = jQuery.sap.getUriParameters().get("sap-ui-xx-support-origin");
+					this._sRemoteOrigin = new UriParameters(window.location.href).get("sap-ui-xx-support-origin");
 					jQuery(window).bind("unload", function(oEvent){
 						that.sendEvent(mEvents.TEAR_DOWN);
 						Support.exitPlugins(that, true);
@@ -317,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 		var sBootstrapScript;
 		if (this._sType === mTypes.APPLICATION) {
 			// get bootstrap script name from script tag
-			var oBootstrap = jQuery.sap.domById("sap-ui-bootstrap");
+			var oBootstrap = window.document.getElementById("sap-ui-bootstrap");
 			if (oBootstrap) {
 				var sRootPath = sap.ui.require.toUrl("");
 				var sBootstrapSrc = oBootstrap.getAttribute('src');
@@ -327,7 +334,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			}
 		} else if (this._sType === mTypes.IFRAME) {
 			// use script name from URI parameter to hand it over to the tool
-			sBootstrapScript = jQuery.sap.getUriParameters().get("sap-ui-xx-support-bootstrap");
+			sBootstrapScript = new UriParameters(window.location.href).get("sap-ui-xx-support-bootstrap");
 		}
 
 		// sap-ui-core.js is the default. no need for passing it to the support window
@@ -368,7 +375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * @private
 	 */
 	Support._onSupportIFrameLoaded = function(){
-		_oStubInstance._oRemoteWindow = jQuery.sap.byId(ID_SUPPORT_AREA + "-frame")[0].contentWindow;
+		_oStubInstance._oRemoteWindow = jQueryDOM(document.getElementById(ID_SUPPORT_AREA + "-frame"))[0].contentWindow;
 	};
 
 
@@ -424,7 +431,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 
 	function getSupportArea() {
-		var $support = jQuery.sap.byId(ID_SUPPORT_AREA);
+		var $support = jQueryDOM(document.getElementById(ID_SUPPORT_AREA));
 		if ($support.length === 0) {
 			$support = jQuery("<DIV/>", {id:ID_SUPPORT_AREA}).
 				addClass("sapUiHidden").

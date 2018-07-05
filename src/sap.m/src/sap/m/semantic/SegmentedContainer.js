@@ -10,7 +10,7 @@
  */
 
 // Provides class sap.m.semantic.SegmentedContainer
-sap.ui.define(['jquery.sap.global', 'sap/m/semantic/Segment', 'sap/ui/base/Metadata'], function(jQuery, Segment, Metadata) {
+sap.ui.define(['sap/m/semantic/Segment', 'sap/ui/base/Metadata', "sap/base/Log"], function(Segment, Metadata, Log) {
 	"use strict";
 
 
@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/Segment', 'sap/ui/base/Metad
 
 		constructor : function(oContainer, sContainerAggregationName) {
 			if (!oContainer) {
-				jQuery.sap.log.error("missing argumment: constructor expects a container reference", this);
+				Log.error("missing argumment: constructor expects a container reference", this);
 				return;
 			}
 
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/Segment', 'sap/ui/base/Metad
 
 	SegmentedContainer.prototype.addSection = function (options) {
 		if (!options || !options.sTag) {
-			jQuery.sap.log.error("missing argumment: section options expected", this);
+			Log.error("missing argumment: section options expected", this);
 			return;
 		}
 

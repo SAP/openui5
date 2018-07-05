@@ -3,15 +3,25 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/m/Image',
 	'./NumericContentRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/deepEqual"
 ],
-	function(jQuery, library, Control, IconPool, Image, NumericContentRenderer) {
+	function(
+		library,
+		Control,
+		IconPool,
+		Image,
+		NumericContentRenderer,
+		jQueryDOM,
+		KeyCodes,
+		deepEqual
+	) {
 	"use strict";
 
 	/**
@@ -134,7 +144,7 @@ sap.ui.define([
 		this.$().bind("mouseleave", this._removeTooltip.bind(this));
 
 		if (library.LoadState.Loaded == this.getState() || this.getAnimateTextChange()) {
-			jQuery.sap.byId(this.getId()).animate({
+			jQueryDOM(document.getElementById(this.getId())).animate({
 				opacity : "1"
 			}, 1000);
 		}
@@ -214,7 +224,7 @@ sap.ui.define([
 	};
 
 	NumericContent.prototype.setIcon = function(uri) {
-		var bValueChanged = !jQuery.sap.equal(this.getIcon(), uri);
+		var bValueChanged = !deepEqual(this.getIcon(), uri);
 		if (bValueChanged) {
 			if (this._oIcon) {
 				this._oIcon.destroy();
@@ -262,7 +272,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.onkeyup = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.SPACE) {
 			this.firePress();
 			oEvent.preventDefault();
 		}
@@ -274,7 +284,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.SPACE) {
 			oEvent.preventDefault();
 		}
 	};

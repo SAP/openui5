@@ -4,12 +4,12 @@
 
 // Provides control sap.ui.layout.form.FormElement.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/layout/library'
-	], function(jQuery, Element, Control, ManagedObjectObserver, library) {
+	'sap/ui/layout/library',
+	"sap/base/Log"
+	], function(Element, Control, ManagedObjectObserver, library, Log) {
 	"use strict";
 
 	/**
@@ -357,7 +357,7 @@ sap.ui.define([
 
 		if (sMutation == "insert") {
 			if (!oField.isA("sap.ui.core.IFormContent")) {
-				jQuery.sap.log.warning(oField + " is not valid Form content", this);
+				Log.warning(oField + " is not valid Form content", this);
 			}
 			_attachDelegate.call(this, oField);
 		} else {

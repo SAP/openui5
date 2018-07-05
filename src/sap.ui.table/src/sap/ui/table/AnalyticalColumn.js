@@ -3,11 +3,30 @@
  */
 
 // Provides control sap.ui.table.AnalyticalColumn.
-sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Element',
-		'sap/ui/model/type/Boolean', 'sap/ui/model/type/DateTime', 'sap/ui/model/type/Float',
-		'sap/ui/model/type/Integer', 'sap/ui/model/type/Time', './TableUtils', './AnalyticalColumnMenu'
-	],
-	function(jQuery, Column, library, Element, BooleanType, DateTime, Float, Integer, Time, TableUtils, AnalyticalColumnMenu) {
+sap.ui.define([
+	'./Column',
+	'./library',
+	'sap/ui/core/Element',
+	'sap/ui/model/type/Boolean',
+	'sap/ui/model/type/DateTime',
+	'sap/ui/model/type/Float',
+	'sap/ui/model/type/Integer',
+	'sap/ui/model/type/Time',
+	'./TableUtils',
+	'./AnalyticalColumnMenu'
+],
+	function(
+		Column,
+		library,
+		Element,
+		BooleanType,
+		DateTime,
+		Float,
+		Integer,
+		Time,
+		TableUtils,
+		AnalyticalColumnMenu
+	) {
 	"use strict";
 
 	function isInstanceOfAnalyticalTable(oControl) {

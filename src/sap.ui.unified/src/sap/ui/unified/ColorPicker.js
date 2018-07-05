@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.unified.ColorPicker.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/HTML",
@@ -19,9 +18,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"./ColorPickerRenderer",
+	"sap/base/Log",
 	"sap/ui/Global"
 ], function(
-	jQuery,
 	Library,
 	Control,
 	HTML,
@@ -35,7 +34,8 @@ sap.ui.define([
 	InvisibleText,
 	Device,
 	coreLibrary,
-	ColorPickerRenderer
+	ColorPickerRenderer,
+	Log
 ) {
 	"use strict";
 
@@ -1076,7 +1076,7 @@ sap.ui.define([
 				this._processChanges = this._processHSVChanges;
 				break;
 			default:
-				jQuery.sap.log.error("Control must have a valid mode set to work correct");
+				Log.error("Control must have a valid mode set to work correct");
 				break;
 		}
 

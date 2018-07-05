@@ -866,7 +866,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Tr
 				// Collapse all subsequent child nodes, this is determined by a common groupID prefix, e.g.: "/A100-50/" is the parent of "/A100-50/Finance/"
 				// All expanded nodes which start with 'sGroupIDforCollapsingNode', are basically children of it and also need to be collapsed
 				jQuery.each(this._mTreeState.expanded, function (sGroupID, oNodeState) {
-					if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode)) {
+					if (typeof sGroupIDforCollapsingNode == "string" && sGroupIDforCollapsingNode.length > 0 && sGroupID.startsWith(sGroupIDforCollapsingNode)) {
 						that._updateTreeState({groupID: sGroupID, expanded: false});
 					}
 				});
@@ -875,7 +875,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Tr
 
 				// always remove selections from child nodes of the collapsed node
 				jQuery.each(this._mTreeState.selected, function (sGroupID, oNodeState) {
-					if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode) && sGroupID !== sGroupIDforCollapsingNode) {
+					if (typeof sGroupIDforCollapsingNode == "string" && sGroupIDforCollapsingNode.length > 0 && sGroupID.startsWith(sGroupIDforCollapsingNode) && sGroupID !== sGroupIDforCollapsingNode) {
 						//removes the selectAllMode from child nodes
 						oNodeState.selectAllMode = false;
 						that.setNodeSelection(oNodeState, false);

@@ -15,8 +15,9 @@ sap.ui.define([
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/cache/CacheManager',
 	'sap/ui/model/resource/ResourceModel',
-	'jquery.sap.xml',
-	'jquery.sap.script'
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/XMLHelper",
+	"sap/base/strings/hash"
 ],
 	function(
 		jQuery,
@@ -29,7 +30,10 @@ sap.ui.define([
 		Control,
 		RenderManager,
 		Cache,
-		ResourceModel /* , jQuerySap */
+		ResourceModel,
+		jQueryDOM,
+		XMLHelper,
+		hash
 	) {
 	"use strict";
 
@@ -252,7 +256,7 @@ sap.ui.define([
 			// keep the content as a pseudo property to make cloning work but without supporting mutation
 			// TODO model this as a property as soon as write-once-during-init properties become available
 			oView.mProperties["viewContent"] = mSettings.viewContent;
-			var xContent = jQuery.sap.parseXML(mSettings.viewContent);
+			var xContent = XMLHelper.parse(mSettings.viewContent);
 			validatexContent(xContent);
 			return xContent.documentElement;
 		}
@@ -309,7 +313,7 @@ sap.ui.define([
 
 			return validateCacheKey(oView, aFutureKeyParts).then(function(sKey) {
 				return {
-					key: sKey +  "(" + jQuery.sap.hashCode(sManifest || "") + ")",
+					key: sKey +  "(" + hash(sManifest || "") + ")",
 					componentManifest: sManifest,
 					additionalData: mCacheSettings.additionalData
 				};
@@ -397,7 +401,7 @@ sap.ui.define([
 			// we don't want to write the key into the cache
 			var sKey = mCacheInput.key;
 			delete mCacheInput.key;
-			mCacheInput.xml = jQuery.sap.serializeXML(xContent);
+			mCacheInput.xml = XMLHelper.serialize(xContent);
 			return Cache.set(sKey, mCacheInput);
 		}
 
@@ -405,7 +409,7 @@ sap.ui.define([
 			return Cache.get(mCacheInput.key).then(function(mCacheOutput) {
 				// double check manifest to eliminate issues with hash collisions
 				if (mCacheOutput && mCacheOutput.componentManifest == mCacheInput.componentManifest) {
-					mCacheOutput.xml = jQuery.sap.parseXML(mCacheOutput.xml, "application/xml").documentElement;
+					mCacheOutput.xml = XMLHelper.parse(mCacheOutput.xml, "application/xml").documentElement;
 					if (mCacheOutput.additionalData) {
 						// extend the additionalData which was passed into cache configuration dynamically
 						jQuery.extend(true, mCacheInput.additionalData, mCacheOutput.additionalData);
@@ -439,7 +443,7 @@ sap.ui.define([
 					XMLTemplateProcessor.parseViewAttributes(xContent, that, mSettingsFromXML);
 					if (!mSettings.async) {
 						// extend mSettings which get applied implicitly during view constructor
-						jQuery.sap.extend(mSettings, mSettingsFromXML);
+						Object.assign(mSettings, mSettingsFromXML);
 					} else {
 						// apply the settings from the loaded view source via an explicit call
 						that.applySettings(mSettingsFromXML);
@@ -619,17 +623,17 @@ sap.ui.define([
 
 						// get DOM or invisible placeholder for child
 						var oChildDOM = aChildren[i].getDomRef() ||
-										jQuery.sap.domById(RenderPrefixes.Invisible + aChildren[i].getId());
+										((RenderPrefixes.Invisible + aChildren[i].getId() ? window.document.getElementById(RenderPrefixes.Invisible + aChildren[i].getId()) : null));
 
 						// if DOM exists, replace the preservation dummy with it
 						if ( oChildDOM ) {
-							jQuery.sap.byId(RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith(oChildDOM);
+							jQueryDOM(document.getElementById(RenderPrefixes.Dummy + aChildren[i].getId())).replaceWith(oChildDOM);
 						} // otherwise keep the dummy placeholder
 					}
 				}
 				// move preserved DOM into place
 				// jQuery.sap.log.debug("moving preserved dom into place for " + this);
-				jQuery.sap.byId(RenderPrefixes.Dummy + this.getId()).replaceWith(this._$oldContent);
+				jQueryDOM(document.getElementById(RenderPrefixes.Dummy + this.getId())).replaceWith(this._$oldContent);
 			}
 			this._$oldContent = undefined;
 		};

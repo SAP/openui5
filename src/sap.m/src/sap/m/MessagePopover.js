@@ -4,7 +4,6 @@
 
 // Provides control sap.m.MessagePopover.
 sap.ui.define([
-	"jquery.sap.global",
 	"./ResponsivePopover",
 	"./Button",
 	"./Toolbar",
@@ -15,10 +14,10 @@ sap.ui.define([
 	"./Popover",
 	"./MessageView",
 	"sap/ui/Device",
-	"./MessagePopoverRenderer"
+	"./MessagePopoverRenderer",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	ResponsivePopover,
 	Button,
 	Toolbar,
@@ -29,7 +28,8 @@ function(
 	Popover,
 	MessageView,
 	Device,
-	MessagePopoverRenderer
+	MessagePopoverRenderer,
+	Log
 	) {
 		"use strict";
 
@@ -254,7 +254,7 @@ function(
 							},
 							error: function() {
 								var sError = "A request has failed for long text data. URL: " + sLongTextUrl;
-								jQuery.sap.log.error(sError);
+								Log.error(sError);
 								config.promise.reject(sError);
 							}
 						});

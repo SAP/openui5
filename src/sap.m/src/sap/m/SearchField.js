@@ -4,7 +4,6 @@
 
 // Provides control sap.m.SearchField.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
@@ -12,17 +11,17 @@ sap.ui.define([
 	'./Suggest',
 	'sap/ui/Device',
 	'./SearchFieldRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 	function(
-	jQuery,
-	library,
-	Control,
-	EnabledPropagator,
-	IconPool,
-	Suggest,
-	Device,
-	SearchFieldRenderer
+		library,
+		Control,
+		EnabledPropagator,
+		IconPool,
+		Suggest,
+		Device,
+		SearchFieldRenderer,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -550,7 +549,7 @@ sap.ui.define([
 	SearchField.prototype.onkeydown = function(event) {
 		var value;
 
-		if (event.which === jQuery.sap.KeyCodes.F5 || event.which === jQuery.sap.KeyCodes.ENTER) {
+		if (event.which === KeyCodes.F5 || event.which === KeyCodes.ENTER) {
 
 			// show search button active state
 			this.$("search").toggleClass("sapMSFBA", true);
@@ -559,7 +558,7 @@ sap.ui.define([
 			event.stopPropagation();
 			event.preventDefault();
 		}
-		if (event.which === jQuery.sap.KeyCodes.ESCAPE) {
+		if (event.which === KeyCodes.ESCAPE) {
 			// Escape button:
 			//   - close suggestions ||
 			//   - restore the original value ||
@@ -595,7 +594,7 @@ sap.ui.define([
 		var selectedIndex;
 		var suggestionItem;
 
-		if (event.which === jQuery.sap.KeyCodes.F5 || event.which === jQuery.sap.KeyCodes.ENTER) {
+		if (event.which === KeyCodes.F5 || event.which === KeyCodes.ENTER) {
 
 			// hide search button active state
 			this.$("search").toggleClass("sapMSFBA", false);
@@ -614,7 +613,7 @@ sap.ui.define([
 			this.fireSearch({
 				query: this.getValue(),
 				suggestionItem: suggestionItem,
-				refreshButtonPressed: this.getShowRefreshButton() && event.which === jQuery.sap.KeyCodes.F5,
+				refreshButtonPressed: this.getShowRefreshButton() && event.which === KeyCodes.F5,
 				clearButtonPressed: false
 			});
 		}
@@ -792,13 +791,14 @@ sap.ui.define([
 
 	/**
 	 * Handles the <code>sapend</code> pseudo event when keyboard End key is pressed.
-	 * The first selectable item is selected.
+	 * The last selectable item is selected.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	SearchField.prototype.onsapend = function(oEvent) {
-		selectSuggestionItem(this, oEvent, -1, false);
+		var iLastIndex = this.getSuggestionItems().length - 1;
+		selectSuggestionItem(this, oEvent, iLastIndex, false);
 	};
 
 	/**

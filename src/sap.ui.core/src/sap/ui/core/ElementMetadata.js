@@ -69,14 +69,14 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/base/Man
 		}
 
 		// check if renderer class exists already
-		var fnRendererClass = jQuery.sap.getObject(sRendererName);
+		var fnRendererClass = ObjectPath.get(sRendererName);
 		if (fnRendererClass) {
 			return fnRendererClass;
 		}
 
 		// if not, try to load a module with the same name
 		jQuery.sap.require(sRendererName);
-		return jQuery.sap.getObject(sRendererName);
+		return ObjectPath.get(sRendererName);
 	};
 
 	ElementMetadata.prototype.applySettings = function(oClassInfo) {

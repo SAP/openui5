@@ -5,8 +5,9 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/thirdparty/URI',
 		'sap/ui/Device',
-		'sap/ui/test/_LogCollector'
-	], function ($, URI, Device, _LogCollector) {
+		'sap/ui/test/_LogCollector',
+		'sap/base/util/ObjectPath'
+	], function ($, URI, Device, _LogCollector, ObjectPath) {
 	"use strict";
 
 	/*global CollectGarbage */
@@ -280,7 +281,7 @@ sap.ui.define([
 	function registerAbsoluteResourcePathInIframe(sResource) {
 		var sOpaLocation = sap.ui.require.toUrl(sResource);
 		var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
-		var fnConfig = oFrameWindow.sap.ui._ui5loader || oFrameWindow.sap.ui.loader.config;
+		var fnConfig = ObjectPath.get("sap.ui._ui5loader.config", oFrameWindow) || ObjectPath.get("sap.ui.loader.config", oFrameWindow);
 		if (fnConfig) {
 			var paths = {};
 			paths[sResource] = sAbsoluteOpaPath;

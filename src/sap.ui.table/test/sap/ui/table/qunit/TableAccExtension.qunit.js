@@ -1,9 +1,15 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/TableUtils"
-], function(qutils, TableUtils) {
+	"sap/ui/table/TableUtils",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/table/RowSettings",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device",
+	"sap/ui/core/library"
+], function(TableQUnitUtils, qutils, TableUtils, ManagedObject, RowSettings, JSONModel, Device, coreLibrary) {
 	"use strict";
 
 	// mapping of global function calls
@@ -24,7 +30,7 @@ sap.ui.require([
 	// Preparation Code
 	//************************************************************************
 
-	sap.ui.base.ManagedObject.extend("sap.ui.table.test.TextControl", {
+	var TextControl = ManagedObject.extend("sap.ui.table.test.TextControl", {
 		metadata: {
 			properties: {
 				text: {
@@ -39,7 +45,9 @@ sap.ui.require([
 		}
 	});
 
-	sap.ui.table.test.TestControl.prototype.getAccessibilityInfo = function() {
+	var TestControl = TableQUnitUtils.getTestControl();
+
+	TestControl.prototype.getAccessibilityInfo = function() {
 		var iMode = this.getIndex();
 		switch (iMode) {
 			case 0:
@@ -63,7 +71,7 @@ sap.ui.require([
 					description: "DESCRIPTION_" + this.getText(),
 					focusable: true,
 					enabled: false,
-					children: [new sap.ui.table.test.TextControl({text: "CHILD1"}), new sap.ui.table.test.TextControl({text: "CHILD2"})]
+					children: [new TextControl({text: "CHILD1"}), new TextControl({text: "CHILD2"})]
 				};
 			case 3:
 				return {
@@ -84,10 +92,10 @@ sap.ui.require([
 		oColumn.setSortOrder("Ascending");
 		oColumn.setSorted(true);
 		oColumn.setFiltered(true);
-		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: "Success"
 		}));
-		oTreeTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+		oTreeTable.setRowSettingsTemplate(new RowSettings({
 			highlight: "Success"
 		}));
 		oTreeTable.setSelectedIndex(0);
@@ -169,7 +177,7 @@ sap.ui.require([
 			}
 		}
 
-		if (oTable.isIndexSelected(iRow) && sap.ui.table.TableUtils.Grouping.isTreeMode(oTable)) {
+		if (oTable.isIndexSelected(iRow) && TableUtils.Grouping.isTreeMode(oTable)) {
 			aLabels.push(oTable.getId() + "-ariarowselected");
 		}
 
@@ -987,8 +995,8 @@ sap.ui.require([
 		beforeEach: function() {
 			createTables();
 			_modifyTables();
-			oTable.addExtension(new sap.ui.table.test.TestControl({text: "Extension"}));
-			oTable.setFooter(new sap.ui.table.test.TestControl({text: "Footer"}));
+			oTable.addExtension(new TestControl({text: "Extension"}));
+			oTable.setFooter(new TestControl({text: "Footer"}));
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
@@ -1132,7 +1140,7 @@ sap.ui.require([
 		}
 
 		oTable.attachEvent("_rowsUpdated", onNewModelApplied);
-		oTable.setModel(new sap.ui.model.json.JSONModel());
+		oTable.setModel(new JSONModel());
 	});
 
 	QUnit.test("HiddenTexts", function(assert) {
@@ -1160,14 +1168,14 @@ sap.ui.require([
 
 	QUnit.test("Highlight texts", function(assert) {
 		var aVisibleHighlights = [
-			sap.ui.core.MessageType.Success,
-			sap.ui.core.MessageType.Warning,
-			sap.ui.core.MessageType.Error,
-			sap.ui.core.MessageType.Information
+			coreLibrary.MessageType.Success,
+			coreLibrary.MessageType.Warning,
+			coreLibrary.MessageType.Error,
+			coreLibrary.MessageType.Information
 		];
 
 		var aInvisibleHighlights = [
-			sap.ui.core.MessageType.None,
+			coreLibrary.MessageType.None,
 			null
 		];
 
@@ -1198,7 +1206,7 @@ sap.ui.require([
 		for (i = 0; i < aVisibleHighlights.length; i++) {
 			sHighlight = aVisibleHighlights[i];
 
-			oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+			oTable.setRowSettingsTemplate(new RowSettings({
 				highlight: sHighlight
 			}));
 			sap.ui.getCore().applyChanges();
@@ -1209,7 +1217,7 @@ sap.ui.require([
 		for (i = 0; i < aInvisibleHighlights.length; i++) {
 			sHighlight = aInvisibleHighlights[i];
 
-			oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+			oTable.setRowSettingsTemplate(new RowSettings({
 				highlight: sHighlight
 			}));
 			sap.ui.getCore().applyChanges();
@@ -1240,7 +1248,7 @@ sap.ui.require([
 
 		setTimeout(function() {
 			assert.ok(!!$Cell.attr("aria-busy"), "Cell is temporarily set in busy mode");
-			if (sap.ui.Device.browser.chrome) {
+			if (Device.browser.chrome) {
 				assert.ok(!!$Cell.attr("aria-hidden"), "Cell is temporarily hidden");
 			}
 		}, oTable._iBindingTimerDelay + 10);
@@ -1303,15 +1311,15 @@ sap.ui.require([
 		var oHelper = oExtension._ExtensionHelper;
 
 		oTable.setFixedColumnCount(0);
-		oTable.getColumns()[0].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[1].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl());
-		oTable.getColumns()[3].addMultiLabel(new sap.ui.table.test.TestControl());
+		oTable.getColumns()[0].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[2].addMultiLabel(new TestControl());
+		oTable.getColumns()[2].addMultiLabel(new TestControl());
+		oTable.getColumns()[2].addMultiLabel(new TestControl());
+		oTable.getColumns()[3].addMultiLabel(new TestControl());
+		oTable.getColumns()[3].addMultiLabel(new TestControl());
 		oTable.getColumns()[1].setHeaderSpan([3, 2, 1]);
 		sap.ui.getCore().applyChanges();
 

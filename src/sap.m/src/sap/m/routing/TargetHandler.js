@@ -3,8 +3,8 @@
  */
 
  /*global Promise*/
-sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device'],
-	function($, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device) {
+sap.ui.define(['sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device', "sap/base/Log"],
+	function(InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device, Log) {
 		"use strict";
 
 
@@ -244,11 +244,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			// TODO: when target view is loaded asyncly, it could happen that the target control is rendered with empty content and
 			// the target view is added later. oTargetControl.getDomRef has to be adapted with some new method in target control.
 			if (oTargetControl.getDomRef() && oTargetControl.getCurrentPage(bNextPageIsMaster).getId() === sViewId) {
-				$.sap.log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.m.routing.TargetHandler");
+				Log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.m.routing.TargetHandler");
 				return false;
 			}
 
-			$.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
+			Log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
 
 			if (bBack) {
 				// insert previous page if not in nav container yet

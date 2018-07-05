@@ -11,8 +11,16 @@
  */
 
 // Provides the XML object based model implementation
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Context', './XMLListBinding', './XMLPropertyBinding', './XMLTreeBinding', 'jquery.sap.xml'],
-	function(jQuery, ClientModel, Context, XMLListBinding, XMLPropertyBinding, XMLTreeBinding/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Context', './XMLListBinding', './XMLPropertyBinding', './XMLTreeBinding', "sap/ui/util/XMLHelper"],
+	function(
+		jQuery,
+		ClientModel,
+		Context,
+		XMLListBinding,
+		XMLPropertyBinding,
+		XMLTreeBinding,
+		XMLHelper
+	) {
 	"use strict";
 
 
@@ -55,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * @public
 	 */
 	XMLModel.prototype.setXML = function(sXMLText){
-		var oXMLDocument = jQuery.sap.parseXML(sXMLText);
+		var oXMLDocument = XMLHelper.parse(sXMLText);
 
 		if (oXMLDocument.parseError.errorCode != 0) {
 			var oParseError = oXMLDocument.parseError;
@@ -75,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * @public
 	 */
 	XMLModel.prototype.getXML = function(){
-		return jQuery.sap.serializeXML(this.oData);
+		return XMLHelper.serialize(this.oData);
 	};
 
 	/**
@@ -411,7 +419,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * Resolve the path relative to the given context
 	 */
 	XMLModel.prototype._resolve = function(sPath, oContext) {
-		var bIsRelative = !jQuery.sap.startsWith(sPath, "/"),
+		var bIsRelative = !sPath.startsWith("/"),
 			sResolvedPath = sPath;
 		if (bIsRelative) {
 			if (oContext) {

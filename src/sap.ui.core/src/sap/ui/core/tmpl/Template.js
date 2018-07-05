@@ -3,8 +3,25 @@
  */
 
 // Provides base class sap.ui.core.tmpl.Template for all templates
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/BindingParser', 'sap/ui/core/Control', 'sap/ui/core/RenderManager', 'jquery.sap.sjax'],
-	function(jQuery, ManagedObject, BindingParser, Control, RenderManager /*, jQuerySap1 */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/base/BindingParser',
+	'sap/ui/core/Control',
+	'sap/ui/core/RenderManager',
+	'sap/base/util/ObjectPath',
+	"sap/ui/thirdparty/jquery",
+	'jquery.sap.sjax'
+],
+	function(
+		jQuery,
+		ManagedObject,
+		BindingParser,
+		Control,
+		RenderManager,
+		ObjectPath,
+		jQueryDOM
+	) {
 	"use strict";
 
 
@@ -239,7 +256,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 			});
 
 			// returns the constructor function
-			return jQuery.sap.getObject(sControl);
+			return ObjectPath.get(sControl || "");
 
 		}
 
@@ -300,7 +317,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 		if (!(oRef instanceof Control) && bInline) {
 
 			// lookup the DOM element in which to place the template
-			var $this = typeof oRef === "string" ? jQuery.sap.byId(oRef) : jQuery(oRef);
+			var $this = typeof oRef === "string" ? jQueryDOM(document.getElementById(oRef)) : jQuery(oRef);
 
 			// the DOM element must exist
 			if ($this.length > 0) {
@@ -507,7 +524,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 			} else {
 
 				// retrieve the required properties
-				var oElement = oTemplate.domref || jQuery.sap.domById(oTemplate.id),
+				var oElement = oTemplate.domref || ((oTemplate.id ? window.document.getElementById(oTemplate.id) : null)),
 					$element = jQuery(oElement);
 
 				bInline = false;
@@ -561,7 +578,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 
 			// require and instantiate the proper template
 			jQuery.sap.require(sClass);
-			var oClass = jQuery.sap.getObject(sClass);
+			var oClass = ObjectPath.get(sClass || "");
 
 			// create a new instance of the template
 			var oInstance = new oClass({

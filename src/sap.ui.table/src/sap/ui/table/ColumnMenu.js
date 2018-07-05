@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.ColumnMenu.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/unified/MenuTextFieldItem', 'sap/ui/Device', './TableUtils'],
-	function(jQuery, library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils) {
+sap.ui.define(['./library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/unified/MenuTextFieldItem', 'sap/ui/Device', './TableUtils', "sap/base/assert"],
+	function(library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils, assert) {
 	"use strict";
 
 	/**
@@ -100,11 +100,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/
 	ColumnMenu.prototype._updateReferences = function(oParent) {
 		this._oColumn = oParent;
 		if (oParent) {
-			jQuery.sap.assert(TableUtils.isInstanceOf(oParent, "sap/ui/table/Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
+			assert(TableUtils.isInstanceOf(oParent, "sap/ui/table/Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
 
 			this._oTable = this._oColumn.getParent();
 			if (this._oTable) {
-				jQuery.sap.assert(TableUtils.isInstanceOf(this._oTable, "sap/ui/table/Table"), "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
+				assert(TableUtils.isInstanceOf(this._oTable, "sap/ui/table/Table"), "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
 			}
 		}
 	};

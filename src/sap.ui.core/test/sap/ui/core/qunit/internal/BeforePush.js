@@ -25,7 +25,7 @@
 	// everything else: full & integration test mode
 	var mTests = {
 		'qunit/analytics/testsuite4analytics.qunit.html?hidepassed' : 'full',
-		'qunit/internal/AnnotationParser.qunit.html?hidepassed' : 'full',
+		'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'full',
 		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
 		'qunit/odata/v4/ODataModel.integration.qunit.html?hidepassed&coverage' : 'integration',
 		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html' : 'both',

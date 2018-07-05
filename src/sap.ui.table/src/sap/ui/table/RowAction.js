@@ -4,17 +4,25 @@
 
 // Provides control sap.ui.table.RowAction
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    "sap/ui/table/TableUtils",
-    './library',
-    'sap/ui/core/Icon',
-    'sap/ui/unified/Menu',
-    'sap/ui/core/Popup',
-    "./RowActionRenderer",
-    'jquery.sap.keycodes'
+	'sap/ui/core/Control',
+	"sap/ui/table/TableUtils",
+	'./library',
+	'sap/ui/core/Icon',
+	'sap/ui/unified/Menu',
+	'sap/ui/core/Popup',
+	"./RowActionRenderer",
+	"sap/ui/events/KeyCodes"
 ],
-function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionRenderer) {
+function(
+	Control,
+	TableUtils,
+	library,
+	Icon,
+	Menu,
+	Popup,
+	RowActionRenderer,
+	KeyCodes
+) {
 	"use strict";
 
 	/**
@@ -75,7 +83,7 @@ function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionRende
 		};
 
 		var fnOnKeyUp = function(oEvent) {
-			this._bKeyboard = oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER;
+			this._bKeyboard = oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER;
 			Icon.prototype.onkeyup.apply(this, arguments);
 		};
 

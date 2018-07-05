@@ -1,5 +1,5 @@
 {
-  "ColumnCollection": [
+  "Items": [
     {
       "text": "Product ID",
       "columnKey": "productId"
@@ -73,7 +73,8 @@
     },
     {
       "columnKey": "productId",
-      "visible": true
+      "visible": true,
+      "index": 1
     }
   ],
   "SortItems": [

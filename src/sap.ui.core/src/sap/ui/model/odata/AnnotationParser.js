@@ -82,7 +82,7 @@ var AnnotationParser =  {
 
 
 		var sTarget, sTerm;
-		var aSpecialCases = ["propertyAnnotations", "EntityContainer", "annotationReferences"];
+		var aSpecialCases = ["annotationsAtArrays", "propertyAnnotations", "EntityContainer", "annotationReferences"];
 
 		// First merge standard annotations
 		for (sTarget in mSourceAnnotations) {
@@ -95,8 +95,8 @@ var AnnotationParser =  {
 			AnnotationParser._mergeAnnotation(sTarget, mSourceAnnotations, mTargetAnnotations);
 		}
 
-		// Now merge special cases
-		for (var i = 0; i < aSpecialCases.length; ++i) {
+		// Now merge special cases except "annotationsAtArrays"
+		for (var i = 1; i < aSpecialCases.length; ++i) {
 			var sSpecialCase = aSpecialCases[i];
 
 			mTargetAnnotations[sSpecialCase] = mTargetAnnotations[sSpecialCase] || {}; // Make sure the target namespace exists
@@ -107,6 +107,11 @@ var AnnotationParser =  {
 					AnnotationParser._mergeAnnotation(sTerm, mSourceAnnotations[sSpecialCase][sTarget], mTargetAnnotations[sSpecialCase][sTarget]);
 				}
 			}
+		}
+
+		if (mSourceAnnotations.annotationsAtArrays) {
+			mTargetAnnotations.annotationsAtArrays = (mTargetAnnotations.annotationsAtArrays || [])
+				.concat(mSourceAnnotations.annotationsAtArrays);
 		}
 	},
 
@@ -149,7 +154,8 @@ var AnnotationParser =  {
 		termNodes, oTerms, termNode, sTermType, annotationNodes, annotationNode,
 		annotationTarget, annotationNamespace, annotation, propertyAnnotation, propertyAnnotationNodes,
 		propertyAnnotationNode, sTermValue, targetAnnotation,
-		expandNodes, expandNode, path, pathValues, expandNodesApplFunc, i, nodeIndex;
+		expandNodes, expandNode, path, pathValues, expandNodesApplFunc, i, nodeIndex,
+		annotationsAtArrays = [];
 
 		AnnotationParser._parserData = {};
 
@@ -160,6 +166,7 @@ var AnnotationParser =  {
 		AnnotationParser._parserData.schema = {};
 		AnnotationParser._parserData.aliases = {};
 		AnnotationParser._parserData.url = sSourceUrl ? sSourceUrl : "metadata document";
+		AnnotationParser._parserData.annotationsAtArrays = annotationsAtArrays;
 
 		// Schema Alias
 		schemaNodes = AnnotationParser._oXPath.selectNodes("//d:Schema", AnnotationParser._parserData.xmlDocument);
@@ -361,31 +368,174 @@ var AnnotationParser =  {
 			}
 		}
 
+		if (annotationsAtArrays.length) {
+			// A list of paths (as array of strings or numbers) to annotations at arrays
+			mappingList.annotationsAtArrays = annotationsAtArrays.map(
+				function (oAnnotationNode) {
+					return AnnotationParser.backupAnnotationAtArray(oAnnotationNode, mappingList);
+				});
+		}
+
 		delete AnnotationParser._parserData;
 		return mappingList;
 	},
 
+	/**
+	 * Backs up the annotation corresponding to the given element by adding it also as a sibling of
+	 * the array under the name of "Property@Term#Qualifier". This way, it will survive
+	 * (de-)serialization via JSON.stringify and JSON.parse. Returns a path which points to it.
+	 *
+	 * @param {Element} oElement
+	 *   The <Annotation> element of an annotation inside an array
+	 * @param {object} mAnnotations
+	 *   The annotation map
+	 * @returns {string[]}
+	 *   Path of string or number segments pointing to annotation at array
+	 *
+	 * @private
+	 * @see AnnotationParser.restoreAnnotationsAtArrays
+	 * @see AnnotationParser.syncAnnotationsAtArrays
+	 * @static
+	 */
+	backupAnnotationAtArray : function (oElement, mAnnotations) {
+		var oAnnotationsElement = oElement,
+			sAnnotationsQualifier,
+			sQualifier,
+			aSegments = [];
+
+		// returns the current oElement's index in its parentElement's "children" collection
+		// (but works in IE as well)
+		function index() {
+			return Array.prototype.filter.call(oElement.parentNode.childNodes, function (oNode) {
+					return oNode.nodeType === 1;
+				}).indexOf(oElement);
+		}
+
+		while (oAnnotationsElement.nodeName !== "Annotations") {
+			oAnnotationsElement = oAnnotationsElement.parentNode;
+		}
+		sAnnotationsQualifier = oAnnotationsElement.getAttribute("Qualifier");
+
+		while (oElement !== oAnnotationsElement) {
+			switch (oElement.nodeName) {
+				case "Annotation":
+					sQualifier = oElement.getAttribute("Qualifier") || sAnnotationsQualifier;
+					aSegments.unshift(oElement.getAttribute("Term")
+						+ (sQualifier ? "#" + sQualifier : ""));
+					break;
+
+				case "Collection":
+					break;
+
+				case "PropertyValue":
+					aSegments.unshift(oElement.getAttribute("Property"));
+					break;
+
+				case "Record":
+					if (oElement.parentNode.nodeName === "Collection") {
+						aSegments.unshift(index());
+					}
+					break;
+
+				default:
+					if (oElement.parentNode.nodeName === "Apply") {
+						aSegments.unshift("Value");
+						aSegments.unshift(index());
+						aSegments.unshift("Parameters");
+					} else {
+						aSegments.unshift(oElement.nodeName);
+					}
+					break;
+			}
+			oElement = oElement.parentNode;
+		}
+		aSegments.unshift(oAnnotationsElement.getAttribute("Target"));
+
+		aSegments = aSegments.map(function (vSegment) {
+			return typeof vSegment === "string"
+				? AnnotationParser.replaceWithAlias(vSegment)
+				: vSegment;
+		});
+
+		AnnotationParser.syncAnnotationsAtArrays(mAnnotations, aSegments, true);
+
+		return aSegments;
+	},
 
 	/**
-	 * Sets the parsed annotation term at the given oAnnotationTarget object, using the given sPrefix
-	 * for annotations at annotations.
+	 * Restores annotations at arrays which might have been lost due to serialization.
+	 *
+	 * @param {object} mAnnotations - The annotation map
+	 *
+	 * @protected
+	 * @see AnnotationParser.backupAnnotationAtArray
+	 * @see AnnotationParser.syncAnnotationsAtArrays
+	 * @static
+	 */
+	restoreAnnotationsAtArrays: function (mAnnotations) {
+		if (mAnnotations.annotationsAtArrays) {
+			mAnnotations.annotationsAtArrays.forEach(function (aSegments) {
+				AnnotationParser.syncAnnotationsAtArrays(mAnnotations, aSegments);
+			});
+		}
+	},
+
+	/**
+	 * Sync annotations at arrays and their siblings.
+	 *
+	 * @param {object} mAnnotations
+	 *   The annotation map
+	 * @param {string[]} aSegments
+	 *   Path of string or number segments pointing to annotation at array
+	 * @param {boolean} bWarn
+	 *   Whether warnings are allowed
+	 *
+	 * @see AnnotationParser.backupAnnotationAtArray
+	 * @see AnnotationParser.restoreAnnotationsAtArrays
+	 */
+	syncAnnotationsAtArrays: function (mAnnotations, aSegments, bWarn) {
+		var i,
+			n = aSegments.length - 2,
+			sAnnotation = aSegments[n + 1],
+			oParent = mAnnotations,
+			sProperty = aSegments[n],
+			sSiblingName = sProperty + "@" + sAnnotation;
+
+		for (i = 0; i < n; i += 1) {
+			oParent = oParent && oParent[aSegments[i]];
+		}
+		if (oParent && Array.isArray(oParent[sProperty])) {
+			if (!(sSiblingName in oParent)) {
+				oParent[sSiblingName] = oParent[sProperty][sAnnotation];
+			}
+			if (!(sAnnotation in oParent[sProperty])) {
+				oParent[sProperty][sAnnotation] = oParent[sSiblingName];
+			}
+		} else if (bWarn) {
+			jQuery.sap.log.warning("Wrong path to annotation at array", aSegments,
+				"sap.ui.model.odata.AnnotationParser");
+		}
+	},
+
+	/**
+	 * Sets the parsed annotation term at the given oAnnotationTarget object.
 	 * @static
 	 * @private
 	 */
-	_parseAnnotation: function (sAnnotationTarget, oAnnotationsNode, oAnnotationNode, oAnnotationTarget, sPrefix) {
+	_parseAnnotation: function (sAnnotationTarget, oAnnotationsNode, oAnnotationNode, oAnnotationTarget) {
 		var sQualifier = oAnnotationNode.getAttribute("Qualifier") || oAnnotationsNode.getAttribute("Qualifier");
-		var sTerm = AnnotationParser.replaceWithAlias(oAnnotationNode.getAttribute("Term"), AnnotationParser._parserData.aliases);
+		var sTerm = AnnotationParser.replaceWithAlias(oAnnotationNode.getAttribute("Term"));
 		if (sQualifier) {
 			sTerm += "#" + sQualifier;
 		}
-		if (sPrefix) {
-			sTerm = sPrefix + "@" + sTerm;
-		}
 
-		var vValue = AnnotationParser.getPropertyValue(oAnnotationNode, sAnnotationTarget, oAnnotationTarget, sTerm);
+		var vValue = AnnotationParser.getPropertyValue(oAnnotationNode, sAnnotationTarget);
 		vValue = AnnotationParser.setEdmTypes(vValue, AnnotationParser._parserData.metadataProperties.types, sAnnotationTarget, AnnotationParser._parserData.schema);
 
 		oAnnotationTarget[sTerm] = vValue;
+		if (Array.isArray(oAnnotationTarget)) {
+			AnnotationParser._parserData.annotationsAtArrays.push(oAnnotationNode);
+		}
 	},
 
 	/**
@@ -617,11 +767,7 @@ var AnnotationParser =  {
 				sPath = sPath.slice(sPath.indexOf("/") + 1);
 			}
 		}
-		for (var pIndex in oProperties[sTarget]) {
-			if (sPath === pIndex) {
-				return oProperties[sTarget][pIndex];
-			}
-		}
+		return oProperties[sTarget] && oProperties[sTarget][sPath];
 	},
 
 
@@ -747,7 +893,7 @@ var AnnotationParser =  {
 	 * @static
 	 * @private
 	 */
-	getPropertyValue: function(oDocumentNode, sAnnotationTarget, oAnnotationTarget, sPrefix) {
+	getPropertyValue: function(oDocumentNode, sAnnotationTarget) {
 		var i;
 
 		var xPath = AnnotationParser._oXPath;
@@ -831,12 +977,6 @@ var AnnotationParser =  {
 			if (oNestedAnnotations.length > 0) {
 				for (i = 0; i < oNestedAnnotations.length; i++) {
 					var oNestedAnnotationNode = xPath.nextNode(oNestedAnnotations, i);
-					if (Array.isArray(vPropertyValue)) {
-						// Properties at array are not serializable (via JSON.stringify/parse)!
-						// Additionally use an annotation of an annotation, e.g.
-						// "com.sap.vocabularies.UI.v1.LineItem@com.sap.vocabularies.UI.v1.Criticality"
-						AnnotationParser._parseAnnotation(sAnnotationTarget, oDocumentNode, oNestedAnnotationNode, oAnnotationTarget, sPrefix);
-					}
 					AnnotationParser._parseAnnotation(sAnnotationTarget, oDocumentNode, oNestedAnnotationNode, vPropertyValue);
 				}
 

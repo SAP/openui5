@@ -4,21 +4,23 @@
 
 // Provides control sap.m.Tree.
 sap.ui.define([
-	'jquery.sap.global',
 	'./ListBase',
 	'./library',
 	'sap/ui/model/ClientTreeBindingAdapter',
 	'sap/ui/model/TreeBindingCompatibilityAdapter',
-	'./TreeRenderer'
+	'./TreeRenderer',
+	"sap/base/Log",
+	"sap/base/assert"
 ],
 function(
-	jQuery,
 	ListBase,
 	library,
 	ClientTreeBindingAdapter,
 	TreeBindingCompatibilityAdapter,
-	TreeRenderer
-	) {
+	TreeRenderer,
+	Log,
+	assert
+) {
 	"use strict";
 
 
@@ -92,7 +94,7 @@ function(
 				// use legacy tree binding adapter
 				TreeBindingCompatibilityAdapter(oBinding, this);
 			} else {
-				jQuery.sap.log.error("TreeBinding is not supported for the " + this);
+				Log.error("TreeBinding is not supported for the " + this);
 			}
 		}
 
@@ -192,7 +194,7 @@ function(
 	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowing = function() {
-		jQuery.sap.log.error("Growing feature of " + this + " is not supported!");
+		Log.error("Growing feature of " + this + " is not supported!");
 		return this;
 	};
 
@@ -202,7 +204,7 @@ function(
 	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowingThreshold = function() {
-		jQuery.sap.log.error("GrowingThreshold of " + this + " is not supported!");
+		Log.error("GrowingThreshold of " + this + " is not supported!");
 		return this;
 	};
 
@@ -212,7 +214,7 @@ function(
 	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowingTriggerText = function() {
-		jQuery.sap.log.error("GrowingTriggerText of " + this + " is not supported!");
+		Log.error("GrowingTriggerText of " + this + " is not supported!");
 		return this;
 	};
 
@@ -222,7 +224,7 @@ function(
 	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowingScrollToLoad = function() {
-		jQuery.sap.log.error("GrowingScrollToLoad of " + this + " is not supported!");
+		Log.error("GrowingScrollToLoad of " + this + " is not supported!");
 		return this;
 	};
 
@@ -232,7 +234,7 @@ function(
 	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowingDirection = function() {
-		jQuery.sap.log.error("GrowingDirection of " + this + " is not supported!");
+		Log.error("GrowingDirection of " + this + " is not supported!");
 		return this;
 	};
 
@@ -257,7 +259,7 @@ function(
 	Tree.prototype.expandToLevel = function (iLevel) {
 		var oBinding = this.getBinding("items");
 
-		jQuery.sap.assert(oBinding && oBinding.expandToLevel, "Tree.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
+		assert(oBinding && oBinding.expandToLevel, "Tree.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
 
 		if (oBinding && oBinding.expandToLevel && oBinding.getNumberOfExpandedLevels) {
 			if (oBinding.getNumberOfExpandedLevels() > iLevel) {
@@ -291,7 +293,7 @@ function(
 	Tree.prototype.collapseAll = function () {
 		var oBinding = this.getBinding("items");
 
-		jQuery.sap.assert(oBinding && oBinding.expandToLevel, "Tree.collapseAll is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
+		assert(oBinding && oBinding.expandToLevel, "Tree.collapseAll is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
 
 		if (oBinding) {
 			oBinding.collapseToLevel(0);

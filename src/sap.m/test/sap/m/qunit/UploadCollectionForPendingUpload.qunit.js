@@ -10,9 +10,10 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	"sap/ui/unified/FileUploader",
 	"sap/ui/base/Event",
 	"sap/m/UploadCollectionParameter",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/base/Log"
 ], function (jQuery, UploadCollection, JSONModel, ListMode, UploadCollectionItem, MessageBox, FileUploader, Event,
-             UploadCollectionParameter, Device) {
+             UploadCollectionParameter, Device, Log) {
 	"use strict";
 
 	QUnit.module("PendingUpload: public and private methods", {
@@ -79,9 +80,9 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.test("API method 'upload' exists and reacts depending on usages.", function(assert) {
 		var oUploadCollection = this.oUploadCollection;
-		sinon.spy(jQuery.sap.log, "error");
+		sinon.spy(Log, "error");
 		oUploadCollection.upload();
-		assert.equal(jQuery.sap.log.error.callCount, 1, "Error logging shall be happend.");
+		assert.equal(Log.error.callCount, 1, "Error logging shall be happend.");
 		oUploadCollection.destroy();
 		oUploadCollection = null;
 
@@ -90,10 +91,10 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		oUploadCollection.upload();
-		assert.ok(jQuery.sap.log.error.calledOnce, "No error should be logged, because of valid API call.");
+		assert.ok(Log.error.calledOnce, "No error should be logged, because of valid API call.");
 		oUploadCollection.destroy();
 		oUploadCollection = null;
-		jQuery.sap.log.error.restore();
+		Log.error.restore();
 	});
 
 	QUnit.test("Container for FileUploader instances is created and destroyed when exiting the control.", function(assert) {
@@ -181,7 +182,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(jQuery.sap.log, "info");
+		var oSpy = sinon.spy(Log, "info");
 
 		//Act
 		//Assert
@@ -207,7 +208,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(jQuery.sap.log, "info");
+		var oSpy = sinon.spy(Log, "info");
 
 		//Act
 		//Assert
@@ -233,7 +234,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(jQuery.sap.log, "info");
+		var oSpy = sinon.spy(Log, "info");
 
 		//Act
 		//Assert
@@ -261,7 +262,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(jQuery.sap.log, "info");
+		var oSpy = sinon.spy(Log, "info");
 
 		//Act
 		//Assert
@@ -287,7 +288,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(jQuery.sap.log, "info");
+		var oSpy = sinon.spy(Log, "info");
 
 		//Act
 		//Assert
@@ -314,7 +315,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(jQuery.sap.log, "info");
+		var oSpy = sinon.spy(Log, "info");
 
 		//Act
 		//Assert
@@ -341,7 +342,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(jQuery.sap.log, "info");
+		var oSpy = sinon.spy(Log, "info");
 
 		//Act
 		//Assert
@@ -367,7 +368,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		this.createUploadCollection({
 			instantUpload: false
 		});
-		var oSpy = sinon.spy(jQuery.sap.log, "info");
+		var oSpy = sinon.spy(Log, "info");
 
 		//Act
 		//Assert

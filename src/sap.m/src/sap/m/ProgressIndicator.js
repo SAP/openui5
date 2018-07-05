@@ -4,20 +4,20 @@
 
 // Provides control sap.m.ProgressIndicator.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/ValueStateSupport',
 	'sap/ui/core/library',
-	'./ProgressIndicatorRenderer'
+	'./ProgressIndicatorRenderer',
+	"sap/base/Log"
 ],
 	function(
-	jQuery,
 	library,
 	Control,
 	ValueStateSupport,
 	coreLibrary,
-	ProgressIndicatorRenderer
+	ProgressIndicatorRenderer,
+	Log
 	) {
 	"use strict";
 
@@ -128,7 +128,7 @@ sap.ui.define([
 		if (!isValidPercentValue(fPercentValue)) {
 			fNotValidValue = fPercentValue;
 			fPercentValue = fPercentValue > 100 ? 100 : 0;
-			jQuery.sap.log.warning(this + ": percentValue (" + fNotValidValue + ") is not correct! Setting the percentValue to " + fPercentValue);
+			Log.warning(this + ": percentValue (" + fNotValidValue + ") is not correct! Setting the percentValue to " + fPercentValue);
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {

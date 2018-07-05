@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.InstanceManager
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/base/assert", "sap/base/Log"],
+	function(assert, Log) {
 	"use strict";
 
 /**
@@ -42,8 +42,8 @@ sap.ui.define(['jquery.sap.global'],
 		 * @function
 		*/
 		InstanceManager.addInstance = function(sCategoryId, oInstance) {
-			jQuery.sap.assert(sCategoryId, "In sap.m.InstanceManager.addInstance method, the parameter sCategoryId can't be null or empty string");
-			jQuery.sap.assert(oInstance instanceof Object, "In sap.m.InstanceManager.addInstance method, the parameter oInstance should be an object");
+			assert(sCategoryId, "In sap.m.InstanceManager.addInstance method, the parameter sCategoryId can't be null or empty string");
+			assert(oInstance instanceof Object, "In sap.m.InstanceManager.addInstance method, the parameter oInstance should be an object");
 
 			if (!mRegistry[sCategoryId]) {
 				mRegistry[sCategoryId] = [];
@@ -69,11 +69,11 @@ sap.ui.define(['jquery.sap.global'],
 			var aCategory = mRegistry[sCategoryId],
 				i;
 
-			jQuery.sap.assert(sCategoryId, "In sap.m.InstanceManager.removeInstance method, the parameter sCategoryId can't be null or empty string");
-			jQuery.sap.assert(oInstance instanceof Object, "In sap.m.InstanceManager.removeInstance method, the parameter oInstance should be an object");
+			assert(sCategoryId, "In sap.m.InstanceManager.removeInstance method, the parameter sCategoryId can't be null or empty string");
+			assert(oInstance instanceof Object, "In sap.m.InstanceManager.removeInstance method, the parameter oInstance should be an object");
 
 			if (!aCategory) {
-				jQuery.sap.log.warning("Can't remove control from a non-managed category id: " + sCategoryId);
+				Log.warning("Can't remove control from a non-managed category id: " + sCategoryId);
 				return null;
 			}
 
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * @function
 		*/
 		InstanceManager.getInstancesByCategoryId = function(sCategoryId) {
-			jQuery.sap.assert(sCategoryId, "In sap.m.InstanceManager.getInstancesByCategoryId method, the parameter sCategoryId can't be null or empty string");
+			assert(sCategoryId, "In sap.m.InstanceManager.getInstancesByCategoryId method, the parameter sCategoryId can't be null or empty string");
 
 			return mRegistry[sCategoryId] || aEmptyArray;
 		};
@@ -106,8 +106,8 @@ sap.ui.define(['jquery.sap.global'],
 		 * @function
 		 */
 		InstanceManager.isInstanceManaged = function(sCategoryId, oInstance) {
-			jQuery.sap.assert(sCategoryId, "In sap.m.InstanceManager.isInstanceManaged method, the parameter sCategoryId can't be null or empty string");
-			jQuery.sap.assert(oInstance instanceof Object, "In sap.m.InstanceManager.isInstanceManaged method, the parameter oInstance should be an object");
+			assert(sCategoryId, "In sap.m.InstanceManager.isInstanceManaged method, the parameter sCategoryId can't be null or empty string");
+			assert(oInstance instanceof Object, "In sap.m.InstanceManager.isInstanceManaged method, the parameter oInstance should be an object");
 
 			var aCategory = mRegistry[sCategoryId];
 
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * @function
 		*/
 		InstanceManager.isCategoryEmpty = function(sCategoryId) {
-			jQuery.sap.assert(sCategoryId, "In sap.m.InstanceManager.isCategoryEmpty method, the parameter sCategoryId can't be null or empty string");
+			assert(sCategoryId, "In sap.m.InstanceManager.isCategoryEmpty method, the parameter sCategoryId can't be null or empty string");
 
 			var aCategory = mRegistry[sCategoryId];
 
@@ -146,7 +146,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (typeof oPopover.close === "function") {
 				InstanceManager.addInstance(sPopoverCategoryId, oPopover);
 			} else {
-				jQuery.sap.log.warning("In method addPopoverInstance: the parameter doesn't have a close method and can't be managed.");
+				Log.warning("In method addPopoverInstance: the parameter doesn't have a close method and can't be managed.");
 			}
 			return this;
 		};
@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (typeof oDialog.close === "function" ) {
 				InstanceManager.addInstance(sDialogCategoryId, oDialog);
 			} else {
-				jQuery.sap.log.warning("In method addDialogInstance: the parameter doesn't have a close method and can't be managed.");
+				Log.warning("In method addDialogInstance: the parameter doesn't have a close method and can't be managed.");
 			}
 			return this;
 		};
@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (typeof oLightBox.close === "function" ) {
 				InstanceManager.addInstance(sLightBoxCategoryId, oLightBox);
 			} else {
-				jQuery.sap.log.warning("In method addLightBoxInstance: the parameter doesn't have a close method and can't be managed.");
+				Log.warning("In method addLightBoxInstance: the parameter doesn't have a close method and can't be managed.");
 			}
 			return this;
 		};

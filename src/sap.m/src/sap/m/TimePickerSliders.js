@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'sap/ui/model/type/Date',
@@ -18,7 +17,6 @@ sap.ui.define([
 	'./TimePickerSlidersRenderer'
 ],
 	function(
-		jQuery,
 		coreLibrary,
 		Control,
 		SimpleDateType,

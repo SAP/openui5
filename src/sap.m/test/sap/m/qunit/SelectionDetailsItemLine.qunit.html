@@ -77,6 +77,38 @@
 			assert.equal(sValue, "someValue","Returns string for value of type string");
 		});
 
+		QUnit.test("Accepts value type int", function(assert) {
+			//Arange
+			var iValue = 42;
+			this.oItemLine.setValue(iValue);
+
+			//Act
+			var sValue = this.oItemLine._getValueToRender();
+
+			//Assert
+			assert.equal(sValue, iValue.toString(),"Returns string for value of type int");
+		});
+
+		QUnit.test("Accepts value type float", function(assert) {
+			//Arange
+			var fValue = 66.6;
+			this.oItemLine.setValue(fValue);
+
+			//Act
+			var sValue = this.oItemLine._getValueToRender();
+
+			//Assert
+			assert.equal(sValue, fValue.toString(),"Returns string for value of type float");
+		});
+
+		QUnit.test("Accepts value type int", function(assert) {
+			//Act
+			var sValue = this.oItemLine._getValueToRender();
+
+			//Assert
+			assert.equal(sValue, "someValue","Returns string for value of type string");
+		});
+
 		QUnit.test("Accepts value type object containing day only", function(assert) {
 			//Arrange
 			var sValueFromObject;
@@ -120,6 +152,30 @@
 
 			//Assert
 			assert.equal(sValueFromObject, "someTime someDay", "Returns string containing time and day");
+		});
+
+		QUnit.test("Does not accept value type bool", function(assert) {
+			//Arange
+			var bValue = true;
+			this.oItemLine.setValue(bValue);
+
+			//Act
+			var sValue = this.oItemLine._getValueToRender();
+
+			//Assert
+			assert.equal(sValue, "","Returns empty string for value of type bool");
+		});
+
+		QUnit.test("Does not accept value type function", function(assert) {
+			//Arange
+			var bValue = true;
+			this.oItemLine.setValue(this.oItemLine.setValue);
+
+			//Act
+			var sValue = this.oItemLine._getValueToRender();
+
+			//Assert
+			assert.equal(sValue, "","Returns empty string for value of type function");
 		});
 
 		QUnit.module("SelectionDetailsListItemRenderer _isValidSvg");

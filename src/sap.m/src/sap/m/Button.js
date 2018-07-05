@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Button.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
@@ -13,9 +12,8 @@ sap.ui.define([
 	'sap/ui/core/ContextMenuSupport',
 	'sap/ui/core/library',
 	'./ButtonRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ], function(
-	jQuery,
 	library,
 	Control,
 	EnabledPropagator,
@@ -23,7 +21,8 @@ sap.ui.define([
 	Device,
 	ContextMenuSupport,
 	coreLibrary,
-	ButtonRenderer
+	ButtonRenderer,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -308,7 +307,7 @@ sap.ui.define([
 	 */
 	Button.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 
 			// mark the event for components that needs to know if the event was handled by the button
 			oEvent.setMarked();
@@ -317,7 +316,7 @@ sap.ui.define([
 			this._activeButton();
 		}
 
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.ENTER) {
 			this.firePress({/* no parameters */});
 		}
 	};
@@ -330,7 +329,7 @@ sap.ui.define([
 	 */
 	Button.prototype.onkeyup = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 
 			// mark the event for components that needs to know if the event was handled by the button
 			oEvent.setMarked();
@@ -339,7 +338,7 @@ sap.ui.define([
 			this._inactiveButton();
 		}
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.SPACE) {
 			this.firePress({/* no parameters */});
 		}
 	};

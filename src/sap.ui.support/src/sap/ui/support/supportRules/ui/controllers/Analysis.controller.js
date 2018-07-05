@@ -23,17 +23,17 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/Storage",
-	"sap/m/Dialog",
-	"sap/ui/unified/FileUploader",
-	"sap/ui/support/supportRules/ui/models/CustomJSONListSelection",
-	"sap/ui/support/supportRules/ui/models/SelectionUtils"
+	"sap/ui/support/supportRules/ui/models/SelectionUtils",
+	"sap/ui/support/supportRules/ui/controllers/PresetsController",
+	"sap/ui/support/supportRules/ui/models/PresetsUtils",
+	"sap/ui/support/supportRules/ui/models/CustomJSONListSelection"
 ], function (jQuery, BaseController, JSONModel, Panel, List, ListItemBase, StandardListItem, InputListItem, Button, Toolbar, ToolbarSpacer,
              Label, MessageToast, CommunicationBus, channelNames, SharedModel, RuleSerializer, constants, Ruleset, storage,
-             Dialog, FileUploader, CustomJSONListSelection, SelectionUtils) {
+						 SelectionUtils, PresetsController, PresetsUtils, CustomJSONListSelection) {
 	"use strict";
 
-
 	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Analysis", {
+
 		onInit: function () {
 			this.model = SharedModel;
 			this.setCommunicationSubscriptions();
@@ -45,6 +45,10 @@ sap.ui.define([
 			this.ruleSetView = this.byId("ruleSetsView");
 			this.rulesViewContainer = this.byId("rulesNavContainer");
 			this.bAdditionalViewLoaded = false;
+			this.bAdditionalRulesetsLoaded = false;
+
+			//attach adapter for custom selection
+			new CustomJSONListSelection(this.treeTable, true, "id");
 
 			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
 				if (!this.bAdditionalViewLoaded) {
@@ -52,8 +56,6 @@ sap.ui.define([
 
 					this.bAdditionalViewLoaded = true;
 					this.loadAdditionalUI();
-					//attach adapter for custom selection
-					new CustomJSONListSelection(this.treeTable, true, "name");
 
 				}
 			}, this);
@@ -62,7 +64,18 @@ sap.ui.define([
 				var aColumnsIds = storage.getVisibleColumns() || [];
 				this.setColumnVisibility(aColumnsIds, true);
 			}
+
+			this.byId("presetVariant").addEventDelegate({
+				onclick: this.onPresetVariantClick.bind(this)
+			});
+
+			this.treeTable.attachEvent("rowSelectionChange", function (oEvent) {
+				if (oEvent.getParameter("userInteraction")) {
+					PresetsUtils.syncCurrentSelectionPreset(SelectionUtils.getSelectedRules());
+				}
+			});
 		},
+
 		loadAdditionalUI: function () {
 			this._ruleDetails = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.RuleDetails", this);
 			this.byId("rulesDisplayPage").addContentArea(this._ruleDetails);
@@ -232,6 +245,7 @@ sap.ui.define([
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.POST_AVAILABLE_LIBRARIES, function (data) {
+				this.bAdditionalRulesetsLoaded = true;
 				this.model.setProperty("/availableLibrariesSet", data.libNames);
 				this.rulesViewContainer.setBusy(false);
 			}, this);
@@ -281,6 +295,8 @@ sap.ui.define([
 
 				this.model.setProperty('/treeModel', oTreeViewModelRules);
 				this.model.setProperty("/selectedRulesCount", SelectionUtils.getSelectedRules().length);
+
+				PresetsUtils.initializeSelectionPresets(SelectionUtils.getSelectedRules());
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.POST_MESSAGE, function (data) {
@@ -358,15 +374,36 @@ sap.ui.define([
 		onSelectedRuleSets: function (oEvent) {
 			var bShowRuleProperties = true;
 
-			if (oEvent.getParameter("selectedKey") === "additionalRulesets") {
-
+			// Ensure we don't make unnecessary requests. The requests will be made only
+			// the first time the user clicks AdditionalRulesets tab.
+			if (!this.bAdditionalRulesetsLoaded && oEvent.getParameter("selectedKey") === "additionalRulesets") {
 				bShowRuleProperties = false;
 				this.rulesViewContainer.setBusyIndicatorDelay(0);
 				this.rulesViewContainer.setBusy(true);
-				CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS);
+				CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS, {
+					loadedRulesets: this._getLoadedRulesets()
+				});
 			}
 
 			this.getView().getModel().setProperty("/showRuleProperties", bShowRuleProperties);
+		},
+
+		/**
+		 * @private
+		 * @returns {Array} All currently loaded rulesets.
+		 */
+		_getLoadedRulesets: function () {
+			var oRulesets = this.treeTable.getModel("treeModel").getData(),
+				aLoadedLibraries = [];
+
+			Object.keys(oRulesets).forEach(function (sKey) {
+				var sLibraryName = oRulesets[sKey].name;
+				if (sLibraryName && sLibraryName !== "temporary") {
+					aLoadedLibraries.push(sLibraryName);
+				}
+			});
+
+			return aLoadedLibraries;
 		},
 
 		/**
@@ -515,102 +552,6 @@ sap.ui.define([
 			this.model.setProperty("/newRule", jQuery.extend(true, {}, emptyRule));
 			this.model.setProperty("/tempLink", { href: "", text: "" });
 			this.goToCreateRule();
-		},
-
-		exportSelectedRules: function () {
-			var input = new sap.m.Input();
-			var textArea = new sap.m.TextArea({
-				width: "100%"
-			});
-
-			var dialog = new Dialog({
-				title: "Export Rulesets",
-				content: [
-					new sap.m.VBox({
-						items: [
-							new sap.m.Label({text: "Title", labelFor: input }),
-							input,
-							new sap.m.Label({ text: "Description", labelFor: textArea }),
-							textArea
-						]
-					})
-				],
-				beginButton: new sap.m.Button({
-					text: "Cancel",
-					press: function (oEvent) {
-						dialog.close();
-					}
-				}),
-				endButton: new sap.m.Button({
-					text: "Export",
-					press: function (oEvent) {
-						dialog.close();
-						// SelectionUtils.exportSelectedRules(input.getValue(), textArea.getValue());
-					}
-				})
-
-			});
-
-			dialog.open();
-		},
-
-		importSelectedRules: function () {
-			var that = this;
-
-			var fileup = new FileUploader({ //fileType should be discussed
-				uploadComplete: function(oEvent) {
-					/* global FileReader */
-					var reader = new FileReader();
-
-					reader.onloadend = importSettings;
-
-					function importSettings(file) {
-						var fileAsString = file.target.result;
-						var oOptionsToImport =  JSON.parse(fileAsString);
-
-						if (SelectionUtils.isValidSelectionImport(oOptionsToImport)) {
-							var bOriginalPersistingSettingsValue = that.model.getProperty("/persistingSettings");
-
-							that.model.setProperty("/persistingSettings", true);
-
-
-							// resets persisted selections
-							storage.setSelectedRules(oOptionsToImport.selections);
-
-
-							that.model.setProperty("/persistingSettings", bOriginalPersistingSettingsValue);
-						}
-
-						if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
-							SelectionUtils.persistSelection();
-						}
-					}
-
-					reader.readAsText(oEvent.oSource.oFileUpload.files[0], "UTF-8");
-				}
-			});
-
-			var dialog = new Dialog({
-				title: "Upload rule settings",
-				content: [
-					fileup,
-					new sap.m.Button({
-						text: "Upload File",
-						press: function(oEvent) {
-							fileup.upload();
-							dialog.close();
-						}
-					})
-				],
-				endButton: new sap.m.Button({
-					text: "Close",
-					press: function (oEvent) {
-						dialog.close();
-					}
-				})
-			});
-
-			dialog.open();
 		},
 
 		goToRuleProperties: function () {
@@ -798,9 +739,12 @@ sap.ui.define([
 
 		loadMarkedSupportLibraries: function () {
 			var list = this.byId("availableLibrariesSet"),
-				aLibNames = list.getSelectedItems().map(function (item) {
-					return item.getTitle();
-				});
+				aLibNames = [],
+				aAvailableRulesets = this.model.getProperty("/availableLibrariesSet");
+
+			aLibNames = list.getSelectedItems().map(function (item) {
+				return item.getTitle();
+			});
 
 			list.getItems().forEach(function (item) {
 				item.setSelected(false);
@@ -808,6 +752,11 @@ sap.ui.define([
 			});
 
 			if (aLibNames.length > 0) {
+				aAvailableRulesets = aAvailableRulesets.filter(function (sLibName) {
+					return aLibNames.indexOf(sLibName) < 0;
+				});
+				this.model.setProperty("/availableLibrariesSet", aAvailableRulesets);
+
 				CommunicationBus.publish(channelNames.LOAD_RULESETS, {
 					aLibNames: { publicRules: aLibNames, internalRules: aLibNames }
 				});
@@ -967,6 +916,17 @@ sap.ui.define([
 			}
 			oColumn.setVisible(bNewVisibilityState);
 			this.persistVisibleColumns();
+		},
+
+		/**
+		 * Handles the selection presets variant selector click.
+		 * Opens selection presets popover.
+		 */
+		onPresetVariantClick: function () {
+			if (!this._PresetsController) {
+				this._PresetsController = new PresetsController(this.model, this.getView());
+			}
+			this._PresetsController.openPresetVariant();
 		}
 	});
 });

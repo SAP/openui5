@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.unified.ShellLayout.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
@@ -12,18 +11,18 @@ sap.ui.define([
 	'./SplitContainer',
 	'./library',
 	'./ShellLayoutRenderer',
-	'jquery.sap.dom',
-	'jquery.sap.script'
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	Device,
 	Control,
 	Popup,
 	Parameters,
 	SplitContainer,
 	library,
-	ShellLayoutRenderer
-	/* , jQueryDom, jQueryScript */
+	ShellLayoutRenderer,
+	containsOrEquals,
+	Log
 ) {
 	"use strict";
 
@@ -158,7 +157,7 @@ sap.ui.define([
 
 		function headerFocus(oBrowserEvent){
 			var oEvent = jQuery.event.fix(oBrowserEvent);
-			if (jQuery.sap.containsOrEquals(that.getDomRef("hdr"), oEvent.target)) {
+			if (containsOrEquals(that.getDomRef("hdr"), oEvent.target)) {
 				that._timedHideHeader(oEvent.type === "focus");
 			}
 		}
@@ -179,12 +178,12 @@ sap.ui.define([
 	ShellLayout.prototype.onfocusin = function(oEvent) {
 		var sId = this.getId();
 
-		if (oEvent.target.id === sId + "-curt-focusDummyOut") {
+		if (oEvent.target.id === sId + "-curt-focusDummyOut" && this.$("hdrcntnt").firstFocusableDomRef()) {
 			// Jump back to shell when you reach the end of the curtain
-			jQuery.sap.focus(this.$("hdrcntnt").firstFocusableDomRef());
-		} else if (oEvent.target.id === sId + "-main-focusDummyOut") {
+			this.$("hdrcntnt").firstFocusableDomRef().focus();
+		} else if (oEvent.target.id === sId + "-main-focusDummyOut" && this.$("curtcntnt").firstFocusableDomRef()) {
 			// Jump to the curtain if it is open (can only reached by tabbing back when curtain is open)
-			jQuery.sap.focus(this.$("curtcntnt").firstFocusableDomRef());
+			this.$("curtcntnt").firstFocusableDomRef().focus();
 		}
 	};
 
@@ -422,21 +421,21 @@ sap.ui.define([
 		}
 
 		if (bWasVisible != this._showHeader && this._isHeaderHidingActive()){
-			jQuery.sap.delayedCall(500, this, function(){
+			setTimeout(function(){
 				try {
 					var oResizeEvent = document.createEvent("UIEvents");
 					oResizeEvent.initUIEvent("resize", true, false, window, 0);
 					window.dispatchEvent(oResizeEvent);
 				} catch (e) {
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
-			});
+			}, 500);
 		}
 	};
 
 	ShellLayout.prototype._timedHideHeader = function(bClearOnly){
 		if (this._headerHidingTimer) {
-			jQuery.sap.clearDelayedCall(this._headerHidingTimer);
+			clearTimeout(this._headerHidingTimer);
 			this._headerHidingTimer = null;
 		}
 
@@ -444,16 +443,16 @@ sap.ui.define([
 			return;
 		}
 
-		this._headerHidingTimer = jQuery.sap.delayedCall(this._iHeaderHidingDelay, this, function(){
-			if (this._isHeaderHidingActive() && this._iHeaderHidingDelay > 0 && !jQuery.sap.containsOrEquals(this.getDomRef("hdr"), document.activeElement)) {
+		this._headerHidingTimer = setTimeout(function(){
+			if (this._isHeaderHidingActive() && this._iHeaderHidingDelay > 0 && !containsOrEquals(this.getDomRef("hdr"), document.activeElement)) {
 				this._doShowHeader(false);
 			}
-		});
+		}.bind(this), this._iHeaderHidingDelay);
 	};
 
 	ShellLayout.prototype._timedCurtainClosed = function(bClearOnly){
 		if (this._curtainClosedTimer) {
-			jQuery.sap.clearDelayedCall(this._curtainClosedTimer);
+			clearTimeout(this._curtainClosedTimer);
 			this._curtainClosedTimer = null;
 		}
 
@@ -466,13 +465,13 @@ sap.ui.define([
 			duration = 0;
 		}
 
-		this._curtainClosedTimer = jQuery.sap.delayedCall(duration, this, function(){
+		this._curtainClosedTimer = setTimeout(function(){
 			this._curtainClosedTimer = null;
 			this.$("curt").css("z-index", "");
 			this.$("hdr").css("z-index", "");
 			this.$("brand").css("z-index", "");
 			this.$().toggleClass("sapUiUfdShellCurtainClosed", true);
-		});
+		}.bind(this), duration);
 	};
 
 	ShellLayout.prototype._isHeaderHidingActive = function(){
@@ -489,19 +488,19 @@ sap.ui.define([
 		}
 
 		if (this._cssWorkaroundTimer) {
-			jQuery.sap.clearDelayedCall(this._cssWorkaroundTimer);
+			clearTimeout(this._cssWorkaroundTimer);
 			this._cssWorkaroundTimer = null;
 		}
 		this.$("css").remove();
 
-		this._cssWorkaroundTimer = jQuery.sap.delayedCall(10, this, function(){
+		this._cssWorkaroundTimer = setTimeout(function(){
 			this._cssWorkaroundTimer = null;
-			jQuery.sap.log.debug("sap.ui.unified.ShellLayout: CSS Workaround applied.");
+			Log.debug("sap.ui.unified.ShellLayout: CSS Workaround applied.");
 			jQuery("head").append("<link type='text/css' rel='stylesheet' id='" + this.getId() + "-css' href='data:text/css;base64,LnNhcFVpVWZkU2hlbGxDaHJvbWVSZXBhaW50e291dGxpbmUtY29sb3I6aW5pdGlhbDt9'/>");
-			this._cssWorkaroundTimer = jQuery.sap.delayedCall(100, this, function(){
+			this._cssWorkaroundTimer = setTimeout(function(){
 				this.$("css").remove();
-			});
-		});
+			}.bind(this), 100);
+		}.bind(this), 10);
 	};
 
 	ShellLayout.prototype._setSidePaneWidth = function(sRange){

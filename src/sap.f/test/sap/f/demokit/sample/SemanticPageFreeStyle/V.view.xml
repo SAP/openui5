@@ -3,6 +3,7 @@
 	height="100%"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
+	xmlns:layout="sap.ui.layout"
 	xmlns:semantic="sap.f.semantic"
 	controllerName="sap.f.sample.SemanticPageFreeStyle.C">
 
@@ -11,12 +12,30 @@
 		headerPinnable="true"
 		toggleHeaderOnTitleClick="true"
 		preserveHeaderStateOnScroll="false"
+		titlePrimaryArea="Begin"
 		showFooter="true">
 
 		<!-- Title Heading-->
 		<semantic:titleHeading>
 			<Title text="{/title}" />
 		</semantic:titleHeading>
+
+		<!-- Title Breadcrumbs-->
+		<semantic:titleBreadcrumbs>
+			<Breadcrumbs>
+				<Link text="Home" />
+				<Link text="Page 1" />
+				<Link text="Page 2" />
+				<Link text="Page 3" />
+				<Link text="Page 4" />
+				<Link text="Page 5" />
+			</Breadcrumbs>
+		</semantic:titleBreadcrumbs>
+
+		<!-- Title Content-->
+		<semantic:titleContent>
+			<Image src="./test-resources/sap/f/images/KPI.png" tooltip="This is just a placeholder, not a real KPI control." height="2rem" width="3.5rem"/>
+		</semantic:titleContent>
 
 		<!-- TitleExpanded content-->
 		<semantic:titleSnappedContent>
@@ -29,13 +48,11 @@
 					alignItems="Start"
 					justifyContent="SpaceBetween">
 				<items>
-					<Panel backgroundDesign="Transparent">
-						<content>
-							<ObjectAttribute title="Functional Area" text="{/objectDescription/category}"/>
-							<ObjectAttribute title="Cost Center" text="{/objectDescription/center}"/>
-							<ObjectAttribute title="Email" text="{/objectDescription/email}"/>
-						</content>
-					</Panel>
+					<layout:VerticalLayout class="sapUiMediumMarginEnd">
+						<ObjectAttribute title="Functional Area" text="{/objectDescription/category}"/>
+						<ObjectAttribute title="Cost Center" text="{/objectDescription/center}"/>
+						<ObjectAttribute title="Email" text="{/objectDescription/email}"/>
+					</layout:VerticalLayout>
 					<ObjectStatus text="In Stock" state="{/objectDescription/status}" />
 				</items>
 			</FlexBox>
@@ -46,10 +63,12 @@
 			<Table
 				id="idProductsTable"
 				inset="false"
-				items="{path:'/ProductCollection'}">
+				items="{path:'/ProductCollection'}"
+				class="sapFSemanticPageAlignContent"
+				width="auto">
 
 				<columns>
-					<Column minScreenWidth="Tablet" demandPopin="true">
+					<Column>
 						<Text text="Name"/>
 					</Column>
 					<Column minScreenWidth="Tablet" demandPopin="true">
@@ -105,11 +124,11 @@
 		</semantic:closeAction>
 
 		<semantic:fullScreenAction>
-			<semantic:FullScreenAction />
+			<semantic:FullScreenAction visible="{/notMobile}"/>
 		</semantic:fullScreenAction>
 
 		<semantic:exitFullScreenAction>
-			<semantic:ExitFullScreenAction />
+			<semantic:ExitFullScreenAction visible="{/notMobile}"/>
 		</semantic:exitFullScreenAction>
 
 		<!-- Custom Title Text Content-->

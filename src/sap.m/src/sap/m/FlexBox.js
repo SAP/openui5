@@ -4,22 +4,22 @@
 
 // Provides control sap.m.FlexBox.
 sap.ui.define([
-	'jquery.sap.global',
 	'./FlexBoxStylingHelper',
 	'./FlexItemData',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
-	'./FlexBoxRenderer'
+	'./FlexBoxRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-	jQuery,
 	FlexBoxStylingHelper,
 	FlexItemData,
 	library,
 	Control,
 	RenderManager,
-	FlexBoxRenderer
+	FlexBoxRenderer,
+	jQueryDOM
 ) {
 	"use strict";
 
@@ -291,9 +291,9 @@ function(
 			oWrapper = null;
 
 		if (oItem.getLayoutData()) {
-			oWrapper = jQuery.sap.byId(oItem.getLayoutData().getId());
+			oWrapper = jQueryDOM(document.getElementById(oItem.getLayoutData().getId()));
 		} else {
-			oWrapper = jQuery.sap.byId(RenderManager.createInvisiblePlaceholderId(oItem)).parent();
+			oWrapper = jQueryDOM(document.getElementById(RenderManager.createInvisiblePlaceholderId(oItem))).parent();
 		}
 
 		if (oControlEvent.getParameter("newValue")) {

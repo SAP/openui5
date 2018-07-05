@@ -48,6 +48,7 @@
 			jQuery.sap.require("sap.ui.core.format.DateFormat");
 			jQuery.sap.require("sap.ui.test.TestUtils");
 			jQuery.sap.require("sap.ui.model.json.JSONModel");
+			var Log = sap.ui.require("sap/base/Log");
 
 			var JSONModel = sap.ui.model.json.JSONModel;
 			var DateRangeSelection = sap.m.DateRangeSelection;
@@ -577,6 +578,7 @@
 			QUnit.module("API");
 
 			QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", function (assert) {
+				assert.ok(Log, "Log module should be available");
 				var oDateValue = new Date(2017, 0, 1),
 					oNewMinDate = new Date(2018, 0, 1),
 					oSut = new DateRangeSelection({
@@ -592,7 +594,7 @@
 						"does not match min/max date range(" + oNewMinDate.toString() + " - " + oDefaultMaxDate.toString() + "). " +
 						"App. developers should take care to maintain secondDateValue/value accordingly.",
 					oSpySetProperty = this.spy(oSut, "setProperty"),
-					oSpyLogError = this.spy(jQuery.sap.log, "error");
+					oSpyLogError = this.spy(Log, "error");
 
 				oSut.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -618,6 +620,7 @@
 			});
 
 			QUnit.test("setMaxDate when dateValue & secondDateValue do not match the new max date", function (assert) {
+				assert.ok(Log, "Log module should be available");
 				var oDateValue = new Date(2017, 0, 1),
 					oNewMaxDate = new Date(2016, 0, 1),
 					oSut = new DateRangeSelection({
@@ -635,7 +638,7 @@
 						new Date(oNewMaxDate.setHours(23, 59, 59)).toString() + "). App. developers should take care to " +
 						"maintain secondDateValue/value accordingly.",
 					oSpySetProperty = this.spy(oSut, "setProperty"),
-					oSpyLogError = this.spy(jQuery.sap.log, "error");
+					oSpyLogError = this.spy(Log, "error");
 
 				oSut.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -662,6 +665,7 @@
 
 			QUnit.test("minDate and value in databinding scenario where the order of setters is not known",
 					function (assert) {
+						assert.ok(Log, "Log module should be available");
 						/**
 						 * value in second model is intentionally 20170120-20170130, in order to examine the scenario, where value
 						 * setter is called before the minDate setter and a potentially valid value is not yet considered such,
@@ -697,7 +701,7 @@
 									"secondDateValue/value accordingly.",
 								sErrorMsgDP21 = sErrorMsgDP11,
 								sErrorMsgDP22 = sErrorMsgDP12,
-						oSpyLogError = this.spy(jQuery.sap.log, "error");
+						oSpyLogError = this.spy(Log, "error");
 
 						oDP1.setModel(oModelInvalid);
 						oDP2.setModel(oModelInvalid);

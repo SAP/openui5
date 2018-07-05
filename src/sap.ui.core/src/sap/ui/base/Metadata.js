@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.base.Metadata
-sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device', 'jquery.sap.script'],
-	function(jQuery, ObjectPath, Device /* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device', "sap/base/util/array/uniqueSort"],
+	function(jQuery, ObjectPath, Device, uniqueSort) {
 	"use strict";
 
 
@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 			oClassInfo = {
 				metadata : oClassInfo || {},
 				// retrieve class by its name. Using a lookup costs time but avoids the need for redundant arguments to this function
-				constructor : jQuery.sap.getObject(sClassName)
+				constructor : ObjectPath.get(sClassName)
 			};
 			oClassInfo.metadata.__version = 1.0;
 		}
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 
 		if ( oStaticInfo.baseType ) {
 			// lookup base class by its name - same reasoning as above
-			var oParentClass = jQuery.sap.getObject(oStaticInfo.baseType);
+			var oParentClass = ObjectPath.get(oStaticInfo.baseType);
 			if ( typeof oParentClass !== "function" ) {
 				jQuery.sap.log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
 			}
@@ -178,9 +178,9 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 	 */
 	Metadata.prototype._dedupInterfaces = function () {
 		if (!this._bInterfacesUnique) {
-			jQuery.sap.unique(this._aInterfaces);
-			jQuery.sap.unique(this._aPublicMethods);
-			jQuery.sap.unique(this._aAllPublicMethods);
+			uniqueSort(this._aInterfaces);
+			uniqueSort(this._aPublicMethods);
+			uniqueSort(this._aAllPublicMethods);
 			this._bInterfacesUnique = true;
 		}
 	};

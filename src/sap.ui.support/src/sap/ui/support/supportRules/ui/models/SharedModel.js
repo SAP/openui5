@@ -89,7 +89,11 @@ sap.ui.define([
 		visibleRowCount: 5,
 		supportAssistantOrigin: "",
 		supportAssistantVersion: "",
-		initialRulesLoading: true
+		initialRulesLoading: true,
+		selectionPresets: [
+			{title: "My Selection", description: "My Current/Last Selection", isMySelection: true, selected: true, disableDelete: true}
+		],
+		selectionPresetsCurrent: null
 	});
 
 	return model;

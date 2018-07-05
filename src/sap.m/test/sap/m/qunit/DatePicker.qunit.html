@@ -73,6 +73,7 @@
 			jQuery.sap.require("sap.ui.test.TestUtils");
 			jQuery.sap.require("sap.ui.model.json.JSONModel");
 			jQuery.sap.require("sap.ui.core.format.DateFormat");
+			var Log = sap.ui.require("sap/base/Log");
 
 			var JSONModel = sap.ui.model.json.JSONModel;
 			var DatePicker = sap.m.DatePicker;
@@ -87,12 +88,12 @@
 			var oDefaultMaxDate = new sap.m.DatePicker()._oMaxDate;
 
 			function handleChange(oEvent){
-					var oDP = oEvent.oSource;
-					sValue = oEvent.getParameter("newValue");
-					bValid = oEvent.getParameter("valid");
-					bChange = true;
-					sId = oDP.getId();
-				};
+				var oDP = oEvent.oSource;
+				sValue = oEvent.getParameter("newValue");
+				bValid = oEvent.getParameter("valid");
+				bChange = true;
+				sId = oDP.getId();
+			}
 
 			var oDP1 = new DatePicker("DP1", {
 				change: handleChange
@@ -296,6 +297,7 @@
 			});
 
 			QUnit.test("setMinDate when dateValue does not match the new min date", function(assert) {
+				assert.ok(Log, "Log module should be available");
 				var oDateValue = new Date(2017, 0, 1),
 					oNewMinDate = new Date(2018, 0, 1),
 					oSut = new DatePicker({
@@ -306,7 +308,7 @@
 						" min/max date range(" + oNewMinDate.toString() + " - " + oDefaultMaxDate.toString() + ")." +
 						" App. developers should take care to maintain dateValue/value accordingly.",
 					oSpySetProperty = this.spy(oSut, "setProperty"),
-					oSpyLogError = this.spy(jQuery.sap.log, "error");
+					oSpyLogError = this.spy(Log, "error");
 
 				oSut.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -328,6 +330,7 @@
 			});
 
 			QUnit.test("setMaxDate when dateValue does not match the new max date", function(assert) {
+				assert.ok(Log, "Log module should be available");
 				var oDateValue = new Date(2017, 0, 1),
 					oNewMaxDate = new Date(2016, 0, 1),
 					oSut = new DatePicker({
@@ -338,7 +341,7 @@
 						" min/max date range(" + oDefaultMinDate.toString() + " - " + new Date(oNewMaxDate.setHours(23, 59, 59)).toString() + ")." +
 						" App. developers should take care to maintain dateValue/value accordingly.",
 					oSpySetProperty = this.spy(oSut, "setProperty"),
-					oSpyLogError = this.spy(jQuery.sap.log, "error");
+					oSpyLogError = this.spy(Log, "error");
 
 				oSut.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -362,6 +365,7 @@
 
 			QUnit.test("minDate and value in databinding scenario where the order of setters is not known",
 				function (assert) {
+					assert.ok(Log, "Log module should be available");
 					/**
 					 * value in second model is intentionally Jan 20, 2017, in order to examine the scenario, where value
 					 * setter is called before the minDate setter and a potentially valid value is not yet considered such,
@@ -389,7 +393,7 @@
 							" min/max date range(" + oModelInvalid.getProperty("/minDate").toString() + " - " + oDefaultMaxDate.toString() + ")." +
 							" App. developers should take care to maintain dateValue/value accordingly.",
 						sErrorMsgDP2 = sErrorMsgDP1,
-						oSpyLogError = this.spy(jQuery.sap.log, "error");
+						oSpyLogError = this.spy(Log, "error");
 
 					oDP1.setModel(oModelInvalid);
 					oDP2.setModel(oModelInvalid);
@@ -883,10 +887,11 @@
 			});
 
 			QUnit.test("min/max", function(assert) {
+				assert.ok(Log, "Log module should be available");
 				var oMinDate = new Date(1,0,1);
 				oMinDate.setFullYear("0001");
 				var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
-				var oSpyLogError = sinon.spy(jQuery.sap.log, "error");
+				var oSpyLogError = sinon.spy(Log, "error");
 
 				//Assert
 				assert.ok(!oDP3.getMinDate(), "DP3: no min date set");
@@ -1014,6 +1019,7 @@
 			});
 
 			QUnit.test("setValue with value outside min/max range", function (assert) {
+				assert.ok(Log, "Log module should be available");
 				//Prepare
 				var oMinDate = new Date(2017, 0, 1),
 					oMaxDate = new Date(2017, 11, 31),
@@ -1025,7 +1031,7 @@
 						maxDate: oMaxDate,
 						dateValue: oDateValue
 					}),
-					oSpyLogError = sinon.spy(jQuery.sap.log, "error"),
+					oSpyLogError = sinon.spy(Log, "error"),
 					sErrorMsg = "dateValue " + new Date(2020, 5, 30).toString() + "(value=20200630) does not match " +
 						"min/max date range(" + oMinDate.toString() + " - " + new Date(oMaxDate.setHours(23, 59, 59)).toString() +
 						"). App. developers should take care to maintain dateValue/value accordingly.";

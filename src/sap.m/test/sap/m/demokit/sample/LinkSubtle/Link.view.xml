@@ -48,10 +48,10 @@
 					<Link
 						text="{Name}"
 						href="{ProductPicUrl}" />
-					<Link
-						text="{ProductId}"
-						subtle="true"
-						press="handleLinkPress" />
+					<ObjectIdentifier
+						title="{ProductId}"
+						titleActive = "true"
+						titlePress="handleObjectIdentifierPress" />
 					<Link
 						text="{SupplierName}"
 						subtle="true"

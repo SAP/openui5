@@ -82,7 +82,9 @@ sap.ui.define([
 	 * <h3>Responsive Behavior</h3>
 	 *
 	 * The responsive behavior of the <code>DynamicPage</code> depends on the behavior of
-	 * the content that is displayed.
+	 * the content that is displayed. To adjust the <code>DynamicPage</code> content
+	 * padding, the <code>sapUiContentPadding</code>, <code>sapUiNoContentPadding</code>,
+	 * and <code>sapUiResponsiveContentPadding</code> CSS classes can be used.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -161,6 +163,15 @@ sap.ui.define([
 				/**
 				 * <code>DynamicPage</code> content.
 				 *
+				 * <b>Note: </b> You can change the default paddings by adding the following CSS classes:
+				 * <ul>
+				 * <li><code>sapUiContentPadding</code></li>
+				 * <li><code>sapUiNoContentPadding</code></li>
+				 * <li><code>sapUiResponsiveContentPadding</code></li>
+				 * </ul>
+				 * For more information, see
+				 * {@link topic:c71f6df62dae47ca8284310a6f5fc80a Using Container Content Padding CSS Classes}.
+				 *
 				 * <b>Note:</b> The SAP Fiori Design guidelines require that the
 				 * <code>DynamicPageHeader</code>'s content and the <code>DynamicPage</code>'s content
 				 * are aligned vertically. When using {@link sap.ui.layout.form.Form},
@@ -176,9 +187,14 @@ sap.ui.define([
 				 * <code> &lt;Panel class=“sapFDynamicPageAlignContent” width=“auto”&gt;&lt;/Panel&gt; </code>
 				 * </pre>
 				 *
-				 * Please keep in mind that the alignment is not possible when the controls are placed in
-				 * a {@link sap.ui.layout.Grid} or in other layout controls that use
-				 * <code>overflow:hidden</code> CSS property.
+				 * Please keep in mind that the alignment is not possible in the following cases:
+				 * <ul>
+				 * <li> When the controls are placed in an {@link sap.ui.layout.Grid} or other layout
+				 * controls that use <code>overflow:hidden</code> CSS property</li>
+				 * <li> In case any of the following CSS classes is applied to
+				 * <code>DynamicPage</code>: <code>sapUiContentPadding</code>,
+				 * <code>sapUiNoContentPadding</code> or <code>sapUiResponsiveContentPadding</code></li>
+				 * </ul>
 				 *
 				 */
 				content: {type: "sap.ui.core.Control", multiple: false},
@@ -1000,6 +1016,11 @@ sap.ui.define([
 	DynamicPage.prototype._headerBiggerThanAllowedToBeExpandedInTitleArea = function () {
 		var iEntireHeaderHeight = this._getEntireHeaderHeight(), // Title + Header
 			iDPageHeight = this._getOwnHeight();
+
+		// Return false when DynamicPage is not visible
+		if (iDPageHeight === 0) {
+			return false;
+		}
 
 		return Device.system.phone ? iEntireHeaderHeight >= DynamicPage.HEADER_MAX_ALLOWED_NON_SROLLABLE_ON_MOBILE * iDPageHeight : iEntireHeaderHeight >= iDPageHeight;
 	};

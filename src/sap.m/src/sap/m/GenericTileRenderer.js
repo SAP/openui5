@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "jquery.sap.global"],
-	function(library, jQuery) {
+sap.ui.define(["sap/m/library"],
+	function(library) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileMode

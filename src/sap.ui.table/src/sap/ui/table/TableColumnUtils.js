@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
-	function(jQuery, Device, library) {
+sap.ui.define(['sap/ui/Device', './library', "sap/base/Log"],
+	function(Device, library, Log) {
 		"use strict";
 
 		/**
@@ -159,7 +159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 				TableColumnUtils.initColumnUtils(oTable);
 				var oSourceColumnMapItem = oTable._oColumnInfo.columnMap[sColumnId];
 				if (!oSourceColumnMapItem) {
-					jQuery.sap.log.error("Column with ID '" + sColumnId + "' not found", oTable);
+					Log.error("Column with ID '" + sColumnId + "' not found", oTable);
 				} else {
 					return oSourceColumnMapItem;
 				}

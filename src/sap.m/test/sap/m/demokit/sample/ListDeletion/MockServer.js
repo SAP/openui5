@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
 
 		rootUri : "/mockserver/",
 
-		dataPath : "test-resources/sap/ui/demokit/explored/mockserver/",
+		dataPath : "test-resources/sap/ui/documentation/sdk/mockserver/",
 
 		start : function (oConfig) {
 			// configure respond to requests delay

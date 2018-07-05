@@ -4,13 +4,12 @@
 
 // Provides control sap.m.Image.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'./ImageRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, ImageRenderer) {
+	function(library, Control, ImageRenderer, KeyCodes) {
 	"use strict";
 
 
@@ -511,7 +510,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Image.prototype.onkeyup = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 			this.firePress({/* no parameters */});
 
 			// stop the propagation it is handled by the control

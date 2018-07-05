@@ -4,16 +4,14 @@
 
 // Provides control sap.ui.layout.Grid.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    './library',
-    'sap/ui/Device',
-    'sap/ui/core/ResizeHandler',
-    'sap/ui/base/ManagedObjectObserver',
-    "./GridRenderer"
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/base/ManagedObjectObserver',
+	"./GridRenderer"
 ],
 	function(
-	    jQuery,
 		Control,
 		library,
 		Device,

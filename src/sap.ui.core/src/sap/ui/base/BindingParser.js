@@ -9,8 +9,17 @@ sap.ui.define([
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/Filter',
 	'sap/ui/model/Sorter',
-	'jquery.sap.script'],
-	function(jQuery, ExpressionParser, BindingMode, Filter, Sorter/* , jQuerySap */) {
+	'sap/base/util/ObjectPath',
+	"sap/base/util/JSTokenizer"
+], function(
+		jQuery,
+		ExpressionParser,
+		BindingMode,
+		Filter,
+		Sorter,
+		ObjectPath,
+		JSTokenizer
+	) {
 	"use strict";
 
 	/**
@@ -164,12 +173,10 @@ sap.ui.define([
 			if ( typeof o[sProp] === "string" ) {
 				var fn, sName = o[sProp];
 				if ( o[sProp][0] === "." ) {
-					fn = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
+					fn = ObjectPath.get(o[sProp].slice(1), oEnv.oContext);
 					o[sProp] = oEnv.bStaticContext ? fn : (fn && fn.bind(oEnv.oContext));
 				} else {
-					o[sProp] = oEnv.bPreferContext
-						&& jQuery.sap.getObject(o[sProp], undefined, oEnv.oContext)
-						|| jQuery.sap.getObject(o[sProp]);
+					o[sProp] = oEnv.bPreferContext && ObjectPath.get(o[sProp], oEnv.oContext) || ObjectPath.get(o[sProp]);
 				}
 				if (typeof (o[sProp]) !== "function") {
 					if (oEnv.bTolerateFunctionsNotFound) {
@@ -199,9 +206,9 @@ sap.ui.define([
 			var FNType;
 			if (typeof o.type === "string" ) {
 				if ( o.type[0] === "." ) {
-					FNType = jQuery.sap.getObject(o.type.slice(1), undefined, oEnv.oContext);
+					FNType = ObjectPath.get(o.type.slice(1), oEnv.oContext);
 				} else {
-					FNType = jQuery.sap.getObject(o.type);
+					FNType = ObjectPath.get(o.type);
 				}
 				// TODO find another solution for the type parameters?
 				if (typeof FNType === "function") {
@@ -331,7 +338,7 @@ sap.ui.define([
 	 *   at: The position after the last character for the embedded binding in the input string
 	 */
 	function resolveEmbeddedBinding(oEnv, sInput, iStart) {
-		var parseObject = jQuery.sap.parseJS,
+		var parseObject = JSTokenizer.parseJS,
 			oParseResult,
 			iEnd;
 
@@ -354,7 +361,7 @@ sap.ui.define([
 
 	BindingParser.simpleParser = function(sString, oContext) {
 
-		if ( jQuery.sap.startsWith(sString, "{") && jQuery.sap.endsWith(sString, "}") ) {
+		if ( sString.startsWith("{") && sString.endsWith("}") ) {
 			return makeSimpleBindingInfo(sString.slice(1, -1));
 		}
 

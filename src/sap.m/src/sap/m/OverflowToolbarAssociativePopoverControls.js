@@ -11,8 +11,8 @@
  * where CONTROL is a camel-cased version of the getMetadata().getName() value, f.e. "sap.m.Button" becomes "sapMButton"
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToolbarToggleButton', './ToggleButton', './Button', 'sap/m/library'],
-	function(jQuery, Metadata, OverflowToolbarButton, OverflowToolbarToggleButton, ToggleButton, Button, library) {
+sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToolbarToggleButton', './ToggleButton', './Button', 'sap/m/library', "sap/base/Log"],
+	function(Metadata, OverflowToolbarButton, OverflowToolbarToggleButton, ToggleButton, Button, library, Log) {
 		"use strict";
 
 		// shortcut for sap.m.SelectType
@@ -262,13 +262,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 			// First check if the control's class implements the sap.m.IOverflowToolbarContent interface
 			if (oControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") !== -1) {
 				if (typeof oControl.getOverflowToolbarConfig !== "function") {
-					jQuery.sap.log.error("Required method getOverflowToolbarConfig not implemented by: " + oControl.getMetadata().getName());
+					Log.error("Required method getOverflowToolbarConfig not implemented by: " + oControl.getMetadata().getName());
 					return;
 				}
 
 				oConfig = oControl.getOverflowToolbarConfig();
 				if (typeof oConfig !== "object") {
-					jQuery.sap.log.error("Method getOverflowToolbarConfig implemented, but does not return an object in: " + oControl.getMetadata().getName());
+					Log.error("Method getOverflowToolbarConfig implemented, but does not return an object in: " + oControl.getMetadata().getName());
 					return;
 				}
 

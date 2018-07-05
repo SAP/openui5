@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 /*eslint max-nested-callbacks: 0 */
 
 /**
@@ -4804,7 +4804,7 @@ function runODataAnnotationTests() {
 
 	var fnTestOverwritingOnTermLevel2 = function(iModelVersion, assert) {
 		var done = assert.async();
-		assert.expect(6);
+		assert.expect(7);
 
 		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
 		var oModel = fnCreateModel(assert, iModelVersion, mTest.service);
@@ -4947,6 +4947,8 @@ function runODataAnnotationTests() {
 					},
 					"Correctly overwritten annotations: EntityContainer.ui5.test.NorthwindEntities"
 				);
+
+				assert.notOk("annotationsAtArrays" in oAnnotations, "avoid empty array");
 
 				oModel.destroy();
 				done();
@@ -5142,10 +5144,62 @@ function runODataAnnotationTests() {
 	QUnit.test("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
 	QUnit.test("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
 
+	/**
+	 * Checks that nested annotations work as expected.
+	 *
+	 * @param {object} assert - QUnit.assert instance
+	 * @param {object} oAnnotations - map of all annotations
+	 * @param {object} oExpectedProductAnnotations - expected annotations for NorthwindModel.Product
+	 */
+	function checkNestedAnnotations(assert, oAnnotations, oExpectedProductAnnotations) {
+		// annotations at array values still present
+		assert.deepEqual(
+			oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem"]
+				["com.sap.vocabularies.UI.v1.Criticality"],
+			{"Path" : "Criticality"});
+		assert.deepEqual(
+			oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem#foo"]
+				["com.sap.vocabularies.UI.v1.Criticality#bar"],
+			{"Path" : "Criticality"});
+		assert.deepEqual(
+			oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.Facets"][0]
+				.Facets["com.sap.vocabularies.Common.v1.Label"],
+			{"String" : "Supplier Identification"});
+		assert.deepEqual(
+			oAnnotations["NorthwindModel.Product"]["unittest.ui5.parentAnnotation"]
+				["unittest.ui5.dynamicExpression3"]
+				.If["com.sap.vocabularies.Common.v1.Label"],
+			{"String" : "Who am I?"});
+		assert.deepEqual(
+			oAnnotations["NorthwindModel.Product"]["unittest.ui5.parentAnnotation"]
+				["unittest.ui5.dynamicExpression6"].Apply.Parameters[0].Value
+				["com.sap.vocabularies.Common.v1.Label"],
+			{"String" : "Who am I?"});
+
+		// annotations at array values can be restored later on!
+		assert.deepEqual(oAnnotations.annotationsAtArrays, [
+			["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem",
+				"com.sap.vocabularies.UI.v1.Criticality"],
+			["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem#foo",
+				"com.sap.vocabularies.UI.v1.Criticality#bar"],
+			["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.Facets", 0, "Facets",
+				"com.sap.vocabularies.Common.v1.Label"],
+			["NorthwindModel.Product", "unittest.ui5.parentAnnotation",
+				"unittest.ui5.dynamicExpression3", "If",
+				"com.sap.vocabularies.Common.v1.Label"],
+			["NorthwindModel.Product", "unittest.ui5.parentAnnotation",
+				"unittest.ui5.dynamicExpression6", "Apply", "Parameters", 0, "Value",
+				"com.sap.vocabularies.Common.v1.Label"]
+		]);
+
+		assert.deepEqual(oAnnotations["NorthwindModel.Product"], oExpectedProductAnnotations);
+		deepContains(assert, oAnnotations["NorthwindModel.Product"], oExpectedProductAnnotations,
+			"NorthwindModel.Product");
+	}
 
 	var fnTestNestedAnnotations = function(iModelVersion, assert) {
 		var done = assert.async();
-		assert.expect(341);
+		assert.expect(437);
 
 		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Nested Annotations"];
@@ -5157,7 +5211,8 @@ function runODataAnnotationTests() {
 			assert.equal(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
 
 			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
-				var oAnnotations = oModel.getServiceAnnotations(),
+				var AnnotationParser = sap.ui.require("sap/ui/model/odata/AnnotationParser"),
+					oAnnotations = oModel.getServiceAnnotations(),
 					oExpectedProductAnnotations = {
 						"com.sap.vocabularies.UI.v1.LineItem" : [{
 							"Label" : {
@@ -5189,6 +5244,16 @@ function runODataAnnotationTests() {
 						"com.sap.vocabularies.UI.v1.LineItem#foo@com.sap.vocabularies.UI.v1.Criticality#bar" : {
 							"Path" : "Criticality"
 						},
+						"com.sap.vocabularies.UI.v1.Facets" : [{
+							"Facets" : [{
+								"Target" : {
+									"AnnotationPath" : "Supplier/@com.sap.vocabularies.UI.v1.Identification"
+								},
+								"RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet"
+							}],
+							"Facets@com.sap.vocabularies.Common.v1.Label" : {"String" : "Supplier Identification"},
+							"RecordType" : "com.sap.vocabularies.UI.v1.CollectionFacet"
+						}],
 						"com.sap.vocabularies.Common.v1.Text": {
 							"Term": {
 								"Name": "TextArrangement",
@@ -5274,7 +5339,10 @@ function runODataAnnotationTests() {
 									{
 										"String": "Someone else"
 									}
-								]
+								],
+								"If@com.sap.vocabularies.Common.v1.Label" : {
+									"String" : "Who am I?"
+								}
 							},
 							"unittest.ui5.dynamicExpression4": {
 								"Null": null
@@ -5309,18 +5377,34 @@ function runODataAnnotationTests() {
 										}
 									}
 								}
+							},
+							"unittest.ui5.dynamicExpression6": {
+								"Apply": {
+									"Name": "odata.concat",
+									"Parameters": [{
+										"Type": "If",
+										"Value": [{
+											"Path": "IsFemale"
+										}, {
+											"String": "Iron Man"
+										}, {
+											"String": "Someone else"
+										}],
+										"Value@com.sap.vocabularies.Common.v1.Label": {
+											"String" : "Who am I?"
+										}
+									}]
+								}
 							}
 						}
 					};
 
-				assert.deepEqual(
-					oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem"]
-						["com.sap.vocabularies.UI.v1.Criticality"],
-					{"Path" : "Criticality"},
-					"annotation at array value still present");
-				assert.deepEqual(oAnnotations["NorthwindModel.Product"], oExpectedProductAnnotations);
-				deepContains(assert, oAnnotations["NorthwindModel.Product"], oExpectedProductAnnotations, "NorthwindModel.Product");
-				deepContains(assert, JSON.parse(JSON.stringify(oAnnotations["NorthwindModel.Product"])), oExpectedProductAnnotations, "Cloned NorthwindModel.Product");
+				checkNestedAnnotations(assert, oAnnotations, oExpectedProductAnnotations);
+
+				// after deserialization from cache, everything must be as before
+				oAnnotations = JSON.parse(JSON.stringify(oAnnotations));
+				AnnotationParser.restoreAnnotationsAtArrays(oAnnotations);
+				checkNestedAnnotations(assert, oAnnotations, oExpectedProductAnnotations);
 
 				done();
 			});
@@ -5329,4 +5413,436 @@ function runODataAnnotationTests() {
 
 	QUnit.test("V1: Nested Annotations", fnTestNestedAnnotations.bind(this, 1));
 	QUnit.test("V2: Nested Annotations", fnTestNestedAnnotations.bind(this, 2));
+
+	//**********************************************************************************************
+	var sNestedAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
+		<edmx:Include Namespace="NorthwindModel" Alias="self" />\
+	</edmx:Reference>	\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="self.Product">\
+				<Annotation Term="UI.LineItem">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Business Partner"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+							<Annotation Term="UI.Importance"\
+								EnumMember="UI.ImportanceType/High"/>\
+						</Record>\
+					</Collection>\
+					<Annotation Term="UI.Criticality" Path="Criticality"/>\
+				</Annotation>\
+				<Annotation Term="UI.LineItem" Qualifier="foo">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Business Partner"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+							<Annotation Term="UI.Importance"\
+								EnumMember="UI.ImportanceType/Medium"/>\
+						</Record>\
+					</Collection>\
+					<Annotation Term="UI.Criticality" Qualifier="bar" Path="Criticality"/>\
+				</Annotation>\
+				<Annotation Term="UI.Facets">\
+					<Collection>\
+						<Record Type="UI.CollectionFacet">\
+							<PropertyValue Property="Facets">\
+								<Collection>\
+									<Record Type="UI.ReferenceFacet">\
+										<PropertyValue Property="Target" AnnotationPath="Supplier/@UI.Identification" />\
+									</Record>\
+								</Collection>\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Supplier Identification"/>\
+							</PropertyValue>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+				<Annotation Term="unittest.ui5.parentAnnotation">\
+					<Annotation Term="unittest.ui5.dynamicExpression3">\
+						<If>\
+							<Path>IsFemale</Path>\
+							<String>Iron Man</String>\
+							<String>Someone else</String>\
+							<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Who am I?"/>\
+						</If>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression6">\
+						<Apply Function="odata.concat">\
+							<If>\
+								<Path>IsFemale</Path>\
+								<String>Iron Man</String>\
+								<String>Someone else</String>\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Who am I?"/>\
+							</If>\
+						</Apply>\
+					</Annotation>\
+				</Annotation>\
+				<Annotation Term="UI.HeaderInfo">\
+					<Record>\
+						<PropertyValue Property="TypeName" String="Product" />\
+						<PropertyValue Property="TypeNamePlural" String="Products" />\
+						<PropertyValue Property="Title">\
+							<Record>\
+								<PropertyValue Property="Label" String="Product" />\
+								<PropertyValue Property="Value" Path="ProductName" />\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="hello, world!"/>\
+							</Record>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="self.Supplier" Qualifier="foo">\
+				<Annotation Term="UI.LineItem">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Business Partner"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+							<Annotation Term="UI.Importance"\
+								EnumMember="UI.ImportanceType/High"/>\
+						</Record>\
+					</Collection>\
+					<Annotation Term="UI.Criticality" Path="Criticality" Qualifier="bar"/>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+	/**
+	 * Creates a DOM document from the given string.
+	 *
+	 * @param {object} assert the assertions
+	 * @param {string} sContent the content
+	 * @returns {Element} the DOM document's root element
+	 */
+	function xml(assert, sContent) {
+		var oDocument;
+
+		jQuery.sap.require("jquery.sap.xml"); // needed to have jQuery.sap.parseXML
+		oDocument = jQuery.sap.parseXML(sContent.replace(/>\s+</g, "><")); // avoid Text nodes!
+		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
+		return oDocument.documentElement;
+	}
+
+	QUnit.module("Annotations@Arrays", {
+		beforeEach : function (assert) {
+			this.oDocumentElement = xml(assert, sNestedAnnotations);
+			this.oProductElement = this.oDocumentElement // <edm:Edm>
+				.childNodes[2] // <edm:DataServices>
+				.childNodes[0] // <Schema>
+				.childNodes[0]; // <Annotations Target="self.Product">
+			this.oLineItemElement = this.oProductElement
+				.childNodes[0] // <Annotation Term="UI.LineItem">
+				.childNodes[1]; // <Annotation Term="UI.Criticality">
+			this.oLineItemFooElement = this.oProductElement
+				.childNodes[1] // <Annotation Term="UI.LineItem" Qualifier="foo">
+				.childNodes[1]; // <Annotation Term="UI.Criticality" Qualifier="bar">
+			this.oFacetElement = this.oProductElement
+				.childNodes[2] // <Annotation Term="UI.Facets">
+				.childNodes[0] // <Collection>
+				.childNodes[0] // <Record Type="UI.CollectionFacet">
+				.childNodes[0] // <PropertyValue Property="Facets">
+				.childNodes[1]; // <Annotation Term="com.sap.vocabularies.Common.v1.Label">
+			this.oIfElement = this.oProductElement
+				.childNodes[3] // <Annotation Term="unittest.ui5.parentAnnotation">
+				.childNodes[0] // <Annotation Term="unittest.ui5.dynamicExpression3">
+				.childNodes[0] // <If>
+				.childNodes[3]; // <Annotation Term="com.sap.vocabularies.Common.v1.Label">
+			this.oIfInApplyElement = this.oProductElement
+				.childNodes[3] // <Annotation Term="unittest.ui5.parentAnnotation">
+				.childNodes[1] // <Annotation Term="unittest.ui5.dynamicExpression6">
+				.childNodes[0] // <Apply>
+				.childNodes[0] // <If>
+				.childNodes[3]; // <Annotation Term="com.sap.vocabularies.Common.v1.Label">
+			this.oHeaderInfoElement = this.oProductElement
+				.childNodes[4] // <Annotation Term="UI.HeaderInfo">
+				.childNodes[0] // <Record>
+				.childNodes[2] // <PropertyValue Property="Title">
+				.childNodes[0] // <Record>
+				.childNodes[2]; // <Annotation Term="com.sap.vocabularies.Common.v1.Label">
+			this.oSupplierElement = this.oDocumentElement // <edm:Edm>
+				.childNodes[2] // <edm:DataServices>
+				.childNodes[0] // <Schema>
+				.childNodes[1]; // <Annotations Target="self.Supplier" Qualifier="foo">
+			this.oSupplierLineItemElement = this.oSupplierElement
+				.childNodes[0] // <Annotation Term="UI.LineItem">
+				.childNodes[1]; // <Annotation Term="UI.Criticality" Qualifier="bar">
+		}
+	});
+
+	//**********************************************************************************************
+	QUnit.test("AnnotationParser.backupAnnotationAtArray: returns a path", function (assert) {
+		var AnnotationParser = sap.ui.require("sap/ui/model/odata/AnnotationParser"),
+			aSegments;
+
+		AnnotationParser._parserData = {
+			aliases : {
+				UI : "com.sap.vocabularies.UI.v1",
+				self : "NorthwindModel"
+			}
+		};
+		this.stub(AnnotationParser, "syncAnnotationsAtArrays");
+
+		// code under test
+		aSegments = AnnotationParser.backupAnnotationAtArray(this.oLineItemElement);
+
+		assert.deepEqual(aSegments, ["NorthwindModel.Product",
+			"com.sap.vocabularies.UI.v1.LineItem", "com.sap.vocabularies.UI.v1.Criticality"]);
+
+		// code under test
+		aSegments = AnnotationParser.backupAnnotationAtArray(this.oLineItemFooElement);
+
+		assert.deepEqual(aSegments, ["NorthwindModel.Product",
+			"com.sap.vocabularies.UI.v1.LineItem#foo",
+			"com.sap.vocabularies.UI.v1.Criticality#bar"]);
+
+		// code under test
+		aSegments = AnnotationParser.backupAnnotationAtArray(this.oFacetElement);
+
+		assert.deepEqual(aSegments, ["NorthwindModel.Product",
+			"com.sap.vocabularies.UI.v1.Facets", 0, "Facets",
+			"com.sap.vocabularies.Common.v1.Label"]);
+
+		// code under test
+		aSegments = AnnotationParser.backupAnnotationAtArray(this.oIfElement);
+
+		assert.deepEqual(aSegments, ["NorthwindModel.Product",
+			"unittest.ui5.parentAnnotation", "unittest.ui5.dynamicExpression3", "If",
+			"com.sap.vocabularies.Common.v1.Label"]);
+
+		// code under test
+		aSegments = AnnotationParser.backupAnnotationAtArray(this.oIfInApplyElement);
+
+		assert.deepEqual(aSegments, ["NorthwindModel.Product",
+			"unittest.ui5.parentAnnotation", "unittest.ui5.dynamicExpression6", "Apply",
+			"Parameters", 0, "Value", "com.sap.vocabularies.Common.v1.Label"]);
+
+		// code under test
+		aSegments = AnnotationParser.backupAnnotationAtArray(this.oHeaderInfoElement);
+
+		assert.deepEqual(aSegments, ["NorthwindModel.Product",
+			"com.sap.vocabularies.UI.v1.HeaderInfo", "Title",
+			"com.sap.vocabularies.Common.v1.Label"]);
+
+		// code under test
+		aSegments = AnnotationParser.backupAnnotationAtArray(this.oSupplierLineItemElement);
+
+		assert.deepEqual(aSegments, ["NorthwindModel.Supplier",
+			"com.sap.vocabularies.UI.v1.LineItem#foo",
+			// not sure if CSDL allows qualifier at indirect child of <Annotations Qualifier="...">,
+			// support it nevertheless
+			"com.sap.vocabularies.UI.v1.Criticality#bar"]);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("AnnotationParser.backupAnnotationAtArray: adds a sibling", function (assert) {
+		var AnnotationParser = sap.ui.require("sap/ui/model/odata/AnnotationParser"),
+			oCriticality = {"Path" : "Criticality"},
+			aFacets = [{
+				"Target" : {
+					"AnnotationPath"
+						: "Supplier/@com.sap.vocabularies.UI.v1.Identification"
+				},
+				"RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet"
+			}],
+			oCollectionFacet = {
+				"Facets" : aFacets,
+				"RecordType" : "com.sap.vocabularies.UI.v1.CollectionFacet"
+			},
+			oLabel = {"String" : "Supplier Identification"},
+			aLineItems = [{
+				"Label" : {
+					"String" : "Business Partner"
+				},
+				"Value" : {
+					"Path" : "BusinessPartnerID"
+				},
+				"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
+				"com.sap.vocabularies.UI.v1.Importance" : {
+					"EnumMember" : "com.sap.vocabularies.UI.v1.ImportanceType/High"
+				}
+			}],
+			mProduct = {
+				"com.sap.vocabularies.UI.v1.LineItem" : aLineItems,
+				"com.sap.vocabularies.UI.v1.Facets" : [oCollectionFacet]
+			},
+			oAnnotations = {
+				"NorthwindModel.Product" : mProduct
+			};
+
+		aLineItems["com.sap.vocabularies.UI.v1.Criticality"] = oCriticality;
+		aFacets["com.sap.vocabularies.Common.v1.Label"] = oLabel;
+		AnnotationParser._parserData = {
+			aliases : {
+				UI : "com.sap.vocabularies.UI.v1",
+				self : "NorthwindModel"
+			},
+			annotationsAtArrays : []
+		};
+		this.spy(AnnotationParser, "syncAnnotationsAtArrays");
+
+		// code under test
+		AnnotationParser.backupAnnotationAtArray(this.oLineItemElement, oAnnotations);
+
+		assert.strictEqual(
+			mProduct["com.sap.vocabularies.UI.v1.LineItem@com.sap.vocabularies.UI.v1.Criticality"],
+			oCriticality);
+
+		// code under test
+		AnnotationParser.backupAnnotationAtArray(this.oFacetElement, oAnnotations);
+
+		assert.strictEqual(
+			oCollectionFacet["Facets@com.sap.vocabularies.Common.v1.Label"],
+			oLabel);
+
+		sinon.assert.alwaysCalledWith(AnnotationParser.syncAnnotationsAtArrays,
+			sinon.match.object, sinon.match.array, true);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("AnnotationParser.restoreAnnotationsAtArrays", function (assert) {
+		var AnnotationParser = sap.ui.require("sap/ui/model/odata/AnnotationParser"),
+			oAnnotations = {
+				"NorthwindModel.Product" : {
+					"com.sap.vocabularies.UI.v1.LineItem" : [{
+						"Label" : {
+							"String" : "Business Partner"
+						},
+						"Value" : {
+							"Path" : "BusinessPartnerID"
+						},
+						"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
+						"com.sap.vocabularies.UI.v1.Importance" : {
+							"EnumMember" : "com.sap.vocabularies.UI.v1.ImportanceType/High"
+						}
+					}],
+					"com.sap.vocabularies.UI.v1.LineItem@com.sap.vocabularies.UI.v1.Criticality" : {
+						"Path" : "Criticality"
+					},
+					"com.sap.vocabularies.UI.v1.Facets" : [{
+						"Facets" : [{
+							"Target" : {
+								"AnnotationPath"
+									: "Supplier/@com.sap.vocabularies.UI.v1.Identification"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet"
+						}],
+						"Facets@com.sap.vocabularies.Common.v1.Label" : {
+							"String" : "Supplier Identification"
+						},
+						"RecordType" : "com.sap.vocabularies.UI.v1.CollectionFacet"
+					}]
+				},
+				annotationsAtArrays : [
+					["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem",
+						"com.sap.vocabularies.UI.v1.Criticality"],
+					// simulate a path that has been invalidated by AnnotationParser.merge
+					["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.Facets", 3, "Facets",
+						"com.sap.vocabularies.Common.v1.Label"],
+					["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.Facets", 0, "Facets",
+						"com.sap.vocabularies.Common.v1.Label"],
+					// unrealistic example: do not modify non-arrays
+					["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem", 0, "Label",
+						"com.sap.vocabularies.UI.v1.Criticality"],
+					// unrealistic examples, just to be cautious
+					["NorthwindModel.Product", "n/a", 0, "Facets",
+						"com.sap.vocabularies.Common.v1.Label"],
+					["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.Facets", 0, "n/a",
+						"com.sap.vocabularies.Common.v1.Label"],
+					["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem", 0, "Label",
+						"String", "com.sap.vocabularies.UI.v1.Criticality"]
+				]
+			},
+			aAnnotationsAtArrays = JSON.parse(JSON.stringify(oAnnotations.annotationsAtArrays));
+
+		this.spy(AnnotationParser, "syncAnnotationsAtArrays");
+
+		// code under test
+		AnnotationParser.restoreAnnotationsAtArrays(oAnnotations);
+
+		// annotations at array values now present
+		assert.strictEqual(
+			oAnnotations["NorthwindModel.Product"]
+				["com.sap.vocabularies.UI.v1.LineItem"]["com.sap.vocabularies.UI.v1.Criticality"],
+			oAnnotations["NorthwindModel.Product"]
+				["com.sap.vocabularies.UI.v1.LineItem@com.sap.vocabularies.UI.v1.Criticality"]
+		);
+		assert.strictEqual(
+			oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.Facets"][0]
+				.Facets["com.sap.vocabularies.Common.v1.Label"],
+			oAnnotations["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.Facets"][0]
+				["Facets@com.sap.vocabularies.Common.v1.Label"]
+		);
+
+		assert.deepEqual(oAnnotations.annotationsAtArrays, aAnnotationsAtArrays,
+			"annotationsAtArrays is unchanged");
+
+		assert.notOk("Label@com.sap.vocabularies.UI.v1.Criticality" in oAnnotations
+			["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem"][0],
+			"do not modify non-arrays");
+		assert.notOk("com.sap.vocabularies.UI.v1.Criticality" in oAnnotations
+			["NorthwindModel.Product"]["com.sap.vocabularies.UI.v1.LineItem"][0].Label,
+			"do not modify non-arrays");
+
+		// code under test
+		AnnotationParser.restoreAnnotationsAtArrays({/*no annotationsAtArrays!*/});
+
+		sinon.assert.alwaysCalledWith(AnnotationParser.syncAnnotationsAtArrays,
+			sinon.match.object, sinon.match.array);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("AnnotationParser.merge", function (assert) {
+		var AnnotationParser = sap.ui.require("sap/ui/model/odata/AnnotationParser"),
+			mSourceAnnotations1 = {
+				annotationsAtArrays : [1, 2, 3]
+			},
+			mSourceAnnotations2 = {
+				annotationsAtArrays : [4, 5, 6]
+			},
+			mTargetAnnotations = {};
+
+		// code under test
+		AnnotationParser.merge(mTargetAnnotations, {});
+
+		assert.notOk("annotationsAtArrays" in mTargetAnnotations);
+
+		// code under test
+		AnnotationParser.merge(mTargetAnnotations, mSourceAnnotations1);
+
+		assert.deepEqual(mTargetAnnotations.annotationsAtArrays, [1, 2, 3]);
+
+		// code under test
+		AnnotationParser.merge(mTargetAnnotations, {});
+		AnnotationParser.merge(mTargetAnnotations, mSourceAnnotations2);
+
+		assert.deepEqual(mTargetAnnotations.annotationsAtArrays, [1, 2, 3, 4, 5, 6]);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("AnnotationParser.syncAnnotationsAtArrays", function (assert) {
+		var AnnotationParser = sap.ui.require("sap/ui/model/odata/AnnotationParser"),
+			mAnnotations = {
+				"NorthwindModel.Product" : {}
+			},
+			aSegments = ["NorthwindModel.Product", "com.sap.vocabularies.UI.v1.LineItem",
+				"com.sap.vocabularies.UI.v1.Criticality"];
+
+		this.mock(jQuery.sap.log).expects("warning")
+			.withExactArgs("Wrong path to annotation at array", sinon.match.same(aSegments),
+				"sap.ui.model.odata.AnnotationParser");
+
+		// code under test
+		AnnotationParser.syncAnnotationsAtArrays(mAnnotations, aSegments, true);
+
+		// code under test - expect no second warning
+		AnnotationParser.syncAnnotationsAtArrays(mAnnotations, aSegments);
+
+	});
 }

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState) {
+sap.ui.define(['jquery.sap.global', './DataState', "sap/base/util/deepEqual"], function(jQuery, DataState, deepEqual) {
 	"use strict";
 
 	/**
@@ -65,7 +65,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 			this.mProperties.invalidValue = undefined;
 			this.mProperties.internalValue = [];
 
-			this.mChangedProperties = jQuery.sap.extend({},this.mProperties);
+			this.mChangedProperties = Object.assign({},this.mProperties);
 
 			this.aDataStates = aDataStates;
 		}
@@ -271,7 +271,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	CompositeDataState.prototype.changed = function(bNewState) {
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
-			this.mProperties = jQuery.sap.extend({},this.mChangedProperties);
+			this.mProperties = Object.assign({},this.mChangedProperties);
 
 			this.aDataStates.forEach(function(oDataState) {
 				oDataState.changed(false);
@@ -285,7 +285,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 			} else {
 				return oDataState.changed();
 			}
-		}, !jQuery.sap.equal(this.mProperties, this.mChangedProperties));
+		}, !deepEqual(this.mProperties, this.mChangedProperties));
 	};
 
 	/**
@@ -345,7 +345,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 
 		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
 			if (this.mChangedProperties[sProperty] &&
-					!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
+					!deepEqual(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
 				mAllChanges[sProperty] = {};
 				mAllChanges[sProperty].value = this.mChangedProperties[sProperty];
 				mAllChanges[sProperty].oldValue = this.mProperties[sProperty];

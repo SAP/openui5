@@ -33,7 +33,10 @@ sap.ui.require([
 	});
 
 	sap.ui.require([
-		"sap/ui/support/integration/ui/journeys/BootingJourney"
+		"sap/ui/support/integration/ui/journeys/BootingJourney",
+		"sap/ui/support/integration/ui/journeys/SelectionJourney",
+		"sap/ui/support/integration/ui/journeys/LocalStoragePersistencyJourney",
+		"sap/ui/support/integration/ui/journeys/FilteringAndSortingJourney"
 	], function () {
 		QUnit.start();
 	});

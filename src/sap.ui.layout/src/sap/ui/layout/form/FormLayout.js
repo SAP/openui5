@@ -3,12 +3,7 @@
  */
 
 // Provides control sap.ui.layout.form.FormLayout.
-sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Control',
-	'sap/ui/layout/library',
-	'./FormLayoutRenderer'
-	], function(jQuery, Control, library, FormLayoutRenderer) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormLayoutRenderer'], function(Control, library, FormLayoutRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
@@ -163,7 +158,7 @@ sap.ui.define([
 			}
 
 			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
+				oNewDomRef.focus();
 				oEvent.preventDefault(); // to avoid moving cursor in next field
 			}
 		}
@@ -189,7 +184,7 @@ sap.ui.define([
 			}
 
 			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
+				oNewDomRef.focus();
 				oEvent.preventDefault(); // to avoid moving cursor in next field
 			}
 		}
@@ -212,7 +207,7 @@ sap.ui.define([
 			oNewDomRef = this.findFirstFieldOfFirstElementInNextContainer(oForm, iCurrentIndex);
 
 			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
+				oNewDomRef.focus();
 				oEvent.preventDefault(); // to avoid moving cursor in next field
 			}
 		}
@@ -239,7 +234,7 @@ sap.ui.define([
 			oNewDomRef = this.findFirstFieldOfForm(oForm);
 
 			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
+				oNewDomRef.focus();
 				oEvent.preventDefault(); // to avoid moving cursor in next field
 			}
 		}
@@ -261,7 +256,7 @@ sap.ui.define([
 			oNewDomRef = this.findLastFieldOfLastElementInPrevContainer(oForm, iCurrentIndex);
 
 			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
+				oNewDomRef.focus();
 				oEvent.preventDefault(); // to avoid moving cursor in next field
 			}
 		}
@@ -291,7 +286,7 @@ sap.ui.define([
 			oNewDomRef = this.findLastFieldOfLastElementInPrevContainer(oForm, iLength - 1);
 
 			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
+				oNewDomRef.focus();
 				oEvent.preventDefault(); // to avoid moving cursor in next field
 			}
 		}
@@ -358,7 +353,7 @@ sap.ui.define([
 		oNewDomRef = this.findFirstFieldOfFirstElementInNextContainer(oForm, iCurrentIndex + 1);
 
 		if (oNewDomRef) {
-			jQuery.sap.focus(oNewDomRef);
+			oNewDomRef.focus();
 			oEvent.preventDefault(); // to avoid moving cursor in next field
 		}
 
@@ -393,7 +388,7 @@ sap.ui.define([
 		}
 
 		if (oNewDomRef) {
-			jQuery.sap.focus(oNewDomRef);
+			oNewDomRef.focus();
 			oEvent.preventDefault(); // to avoid moving cursor in next field
 		}
 
@@ -410,7 +405,7 @@ sap.ui.define([
 		} else {
 			var oNewDomRef = oEvent.forward ? this.findFirstFieldOfForm(this.getParent()) : this.findFirstFieldOfLastContainerOfForm(this.getParent());
 			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
+				oNewDomRef.focus();
 				oEvent.preventDefault();
 			}
 		}
@@ -470,7 +465,7 @@ sap.ui.define([
 		}
 
 		if (oNewDomRef) {
-			jQuery.sap.focus(oNewDomRef);
+			oNewDomRef.focus();
 			oEvent.preventDefault(); // to avoid moving cursor in next field
 		}
 
@@ -519,7 +514,7 @@ sap.ui.define([
 		}
 
 		if (oNewDomRef) {
-			jQuery.sap.focus(oNewDomRef);
+			oNewDomRef.focus();
 			oEvent.preventDefault(); // to avoid moving cursor in next field
 		}
 
@@ -687,7 +682,7 @@ sap.ui.define([
 		}
 
 		if (oNewDomRef) {
-			jQuery.sap.focus(oNewDomRef);
+			oNewDomRef.focus();
 			oEvent.preventDefault(); // to avoid moving cursor in next field
 		}
 
@@ -737,7 +732,7 @@ sap.ui.define([
 		}
 
 		if (oNewDomRef) {
-			jQuery.sap.focus(oNewDomRef);
+			oNewDomRef.focus();
 			oEvent.preventDefault(); // to avoid moving cursor in next field
 		}
 
@@ -885,7 +880,7 @@ sap.ui.define([
 	FormLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
 
 		if (this.getDomRef()) {
-			return jQuery.sap.domById(oContainer.getId());
+			return (oContainer.getId() ? window.document.getElementById(oContainer.getId()) : null);
 		}else {
 			return null;
 		}
@@ -902,7 +897,7 @@ sap.ui.define([
 	FormLayout.prototype.getElementRenderedDomRef = function(oElement) {
 
 		if (this.getDomRef()) {
-			return jQuery.sap.domById(oElement.getId());
+			return (oElement.getId() ? window.document.getElementById(oElement.getId()) : null);
 		}else {
 			return null;
 		}

@@ -4,13 +4,14 @@
 
 // Provides control sap.m.UploadCollectionItem.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Element",
 	"sap/m/ObjectAttribute",
 	"sap/ui/core/util/File",
-	"sap/ui/Device"
-], function(jQuery, library, Element, ObjectAttribute, FileUtil, Device) {
+	"sap/ui/Device",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath"
+], function(library, Element, ObjectAttribute, FileUtil, Device, Log, ObjectPath) {
 	"use strict";
 
 	/**
@@ -319,7 +320,7 @@ sap.ui.define([
 		}
 		// If there isn't URL, download is not possible
 		if (!this.getUrl()) {
-			jQuery.sap.log.warning("Items to download do not have a URL.");
+			Log.warning("Items to download do not have a URL.");
 			return false;
 		} else if (askForLocation) {
 			var oBlob = null;
@@ -412,11 +413,13 @@ sap.ui.define([
 	 * @returns {sap.ui.base.ManagedObject} Newly created instance
 	 */
 	UploadCollectionItem.prototype._getControl = function(name, settings, getterName) {
-		var fnConstructor = jQuery.sap.getObject(name),
+		var fnConstructor = ObjectPath.get(name || ""),
 			oInstance = new fnConstructor(settings);
 		this._aManagedInstances.push(oInstance);
 		if (getterName) {
-			this["_get" + getterName] = jQuery.sap.getter(oInstance);
+			this["_get" + getterName] = function() {
+				return oInstance;
+			};
 		}
 		return oInstance;
 	};

@@ -24,6 +24,7 @@
 
 		jQuery.sap.require("sap.m.OverflowToolbar");
 		jQuery.sap.require("sap.m.OverflowToolbarLayoutData");
+		jQuery.sap.require("sap.m.Toolbar");
 
 		/**
 		 * Generates some content that will be used for creating toolbars
@@ -1434,11 +1435,49 @@
 			oOverflowTB.destroy();
 		});
 
+		QUnit.test("Changing selected item's data model of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
+			var aContent = getDefaultContent(),
+					oModel,
+					oOverflowTB,
+					spy;
+
+			var oSelect = new sap.m.Select({
+				autoAdjustWidth: true,
+				items: [
+					new sap.ui.core.Item({id: "idItem1", text: "{/}"})
+				]
+			});
+
+			aContent.push(oSelect);
+
+			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+
+			oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData("text");
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			oOverflowTB.setModel(oModel);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountBefore = spy.callCount;
+
+			oModel.setData("extremely long text");
+			oOverflowTB.setModel(oModel);
+
+			this.clock.tick(1000);
+
+			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			oOverflowTB.destroy();
+		});
+
 		QUnit.test("Changing a control property that does not affect control size(enabled) does not force a recalculation of the layout", function (assert) {
 			var aContent = getDefaultContent(),
 					oOverflowTB,
 					spy;
-			
+
 			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
 			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
@@ -1733,6 +1772,96 @@
 			oOverflowTB.destroy();
 		});
 
+		function testShrinkableLayoutData(sTestName, sWidth, aControls, aSpyCalls, aAsserts) {
+			QUnit.test(sTestName, function (assert) {
+				// arrange
+				var aDefaultContent = aControls,
+						oOverflowTB = createOverflowToolbar({
+							width: "550px"
+						}, aDefaultContent),
+					spyResizeHandler = this.spy(sap.m.OverflowToolbar.prototype, "_setControlsOverflowAndShrinking"),
+					spyInvalidate = this.spy(sap.m.OverflowToolbar.prototype, "invalidate"),
+					spyFlexbox = this.spy(sap.m.OverflowToolbar.prototype, "_checkContents"),
+					spyFlexboxWithLayoutData = this.spy(sap.m.OverflowToolbar.prototype, "_markControlsWithShrinkableLayoutData");
+
+				// act
+				oOverflowTB.setWidth(sWidth);
+				assert.strictEqual(spyInvalidate.callCount, aSpyCalls[0], aAsserts[0]);
+				this.clock.tick(500);
+
+				// assert
+				assert.strictEqual(spyResizeHandler.callCount, aSpyCalls[1], aAsserts[1]);
+				assert.strictEqual(spyFlexboxWithLayoutData.callCount, aSpyCalls[2], aAsserts[2]);
+				assert.strictEqual(spyFlexbox.callCount, aSpyCalls[3], aAsserts[3]);
+
+				// cleanup
+				oOverflowTB.destroy();
+			});
+		}
+
+		testShrinkableLayoutData(
+			"Items with LayoutData and shrinkable = true overflow to min possible width \
+			and if there's still not enough space, items with no LayoutData go to overflow",
+			"230px",
+			[
+				new sap.m.Button({text: "This is a very very very long text"}),
+				new sap.m.Button(
+					{
+						text: "2",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							shrinkable: true,
+							minWidth: "20px"
+						})
+					})
+			],
+			[1, 1, 1, 0],
+			["invalidate is called by the framework after the resize",
+			"the resize handler is called once",
+			"_markControlsWithShrinkableLayoutData is called and the second button is shrinked",
+			"_checkContents is not called and the first button is not shrinked"]);
+
+		testShrinkableLayoutData(
+			"Items with LayoutData and shrinkable = true overflow to min possible width \
+			and if there's enough space, other items don't overflow",
+			"260px",
+			[
+				new sap.m.Button({text: "This is a very very very long text"}),
+				new sap.m.Button(
+					{
+						text: "2",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							shrinkable: true,
+							minWidth: "20px"
+						})
+					})
+			],
+			[1, 1, 1, 0],
+			["invalidate is called by the framework after the resize",
+			"the resize handler is called once",
+			"_markControlsWithShrinkableLayoutData is called and the second button is shrinked",
+			"_checkContents is not called and the first button is not shrinked"]);
+
+		testShrinkableLayoutData(
+			"If min possible width of item with LayoutData is reached and \
+			there is still not enough place for other items, they can also shrink",
+			"60px",
+			[
+				new sap.m.Text({text: "This is a very very very long text"}),
+				new sap.m.Button(
+					{
+						text: "2",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							shrinkable: true,
+							minWidth: "20px"
+						})
+					})
+			],
+			[1, 1, 1, 1],
+			["invalidate is called by the framework after the resize",
+			"the resize handler is called once",
+			"_markControlsWithShrinkableLayoutData is called and the button is shrinked",
+			"_checkContents is called and the text is also shrinked"]);
+
 		QUnit.module("Integration");
 
 		QUnit.test("Sliders work inside an overflow toolbar", function (assert) {
@@ -1858,6 +1987,42 @@
 
 			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton, 333);
 			assert.strictEqual(sSize, 333);
+		});
+
+		QUnit.test("Size of a control with LayoutData, shrinkable = true and minWidth, is reported correctly", function (assert) {
+			var oTestButton = new sap.m.Button(
+								{
+									text: "This is text",
+									layoutData: new sap.m.OverflowToolbarLayoutData({
+										shrinkable: true,
+										minWidth: "50px"
+									})
+								});
+			oTestButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton);
+			assert.strictEqual(sSize, 50, "Size is equal to minWidth + margins");
+		});
+
+		QUnit.test("Size of a control with LayoutData, shrinkable = false and minWidth, is reported correctly", function (assert) {
+			var oTestButton = new sap.m.Button(
+								{
+									text: "This is text",
+									width: "200px",
+									visible: true,
+									layoutData: new sap.m.OverflowToolbarLayoutData({
+										shrinkable: false,
+										minWidth: "50px"
+									})
+								});
+			oTestButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton);
+			assert.strictEqual(sSize, 200, "Size is equal to outer width");
 		});
 
 		QUnit.module("Content size measurement");
@@ -2071,6 +2236,79 @@
 			// Assert
 			assert.strictEqual(oOTB._bIsBeingDestroyed, true, "Toolbar is destroyed");
 			assert.strictEqual(oPopover, null, "Popover is destroyed");
+		});
+
+		QUnit.module("Private API: _markControlsWithShrinkableLayoutData", {
+			beforeEach: function () {
+				var aDefaultContent = [
+							new sap.m.Button(),
+							new sap.m.Button(
+								{
+									text: "This is text",
+									layoutData: new sap.m.OverflowToolbarLayoutData({
+										shrinkable: false
+									})
+								}),
+							new sap.m.Button(
+								{
+									text: "2",
+									layoutData: new sap.m.OverflowToolbarLayoutData({
+										shrinkable: true,
+										minWidth: "20px"
+									})
+								}),
+							new sap.m.Button(
+							{
+								text: "3",
+								layoutData: new sap.m.FlexItemData({
+									growFactor: 1
+								})
+							})
+						];
+				this.oOTB = createOverflowToolbar({}, aDefaultContent);
+			},
+			afterEach: function () {
+				this.oOTB.destroy();
+			}
+		});
+
+		QUnit.test("_markControlsWithShrinkableLayoutData with items with fixed widths", function (assert) {
+			var fnIsRelativeWidth = this.stub(sap.m.Toolbar, "isRelativeWidth", function () { return false }),
+				aContent = this.oOTB.getContent(),
+				sShrinkClass = "sapMTBShrinkItem";
+
+			// act
+			this.oOTB._markControlsWithShrinkableLayoutData();
+
+			// assert
+			aContent.forEach(function (oControl) {
+				assert.notOk(oControl.hasStyleClass(sShrinkClass), "shrinkClass is not added");
+			});
+
+			// cleanup
+			fnIsRelativeWidth.restore();
+		});
+
+		QUnit.test("_markControlsWithShrinkableLayoutData with items with not fixed width", function (assert) {
+			var fnIsRelativeWidth = this.stub(sap.m.Toolbar, "isRelativeWidth", function () { return true }),
+				aContent = this.oOTB.getContent(),
+				oButton0 = aContent[0],
+				oButton1 = aContent[1],
+				oButton2 = aContent[2],
+				oButton3 = aContent[3],
+				sShrinkClass = "sapMTBShrinkItem";
+
+			// act
+			this.oOTB._markControlsWithShrinkableLayoutData();
+
+			// assert
+			assert.notOk(oButton0.hasStyleClass(sShrinkClass), "shrinkClass is not added when no LayoutData is set");
+			assert.notOk(oButton1.hasStyleClass(sShrinkClass), "shrinkClass is not added when LayoutData is not shrinkable");
+			assert.ok(oButton2.hasStyleClass(sShrinkClass), "shrinkClass is added when LayoutData is shrinkable");
+			assert.notOk(oButton3.hasStyleClass(sShrinkClass), "shrinkClass is not added when LayoutData is from a different type. Error is not thrown.");
+
+			// cleanup
+			fnIsRelativeWidth.restore();
 		});
 
 	})();

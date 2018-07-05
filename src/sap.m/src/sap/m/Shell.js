@@ -4,13 +4,14 @@
 
 // Provides control sap.m.Shell.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
-	'sap/m/ShellRenderer'
+	'sap/m/ShellRenderer',
+	"sap/ui/util/Mobile",
+	"sap/base/Log"
 ],
-	function(jQuery, library, Control, coreLibrary, ShellRenderer) {
+	function(library, Control, coreLibrary, ShellRenderer, Mobile, Log) {
 		"use strict";
 
 
@@ -156,7 +157,7 @@ sap.ui.define([
 			}, this));
 
 
-			jQuery.sap.initMobile({
+			Mobile.init({
 				statusBar: "default",
 				hideBrowser: true
 			});
@@ -216,7 +217,7 @@ sap.ui.define([
 
 		Shell.prototype.setBackgroundOpacity = function(fOpacity) {
 			if (fOpacity > 1 || fOpacity < 0) {
-				jQuery.sap.log.warning("Invalid value " + fOpacity + " for Shell.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+				Log.warning("Invalid value " + fOpacity + " for Shell.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
 				return this;
 			}
 			this.$("BG").css("opacity", fOpacity);
@@ -225,7 +226,7 @@ sap.ui.define([
 
 		Shell.prototype.setHomeIcon = function(oIcons) {
 			this.setProperty("homeIcon", oIcons, true); // no rerendering
-			jQuery.sap.setIcons(oIcons);
+			Mobile.setIcons(oIcons);
 			return this;
 		};
 

@@ -13,8 +13,14 @@
  */
 
 // Provides the resource bundle based model implementation
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Model', './ResourcePropertyBinding'],
-	function(jQuery, BindingMode, Model, ResourcePropertyBinding) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/BindingMode',
+	'sap/ui/model/Model',
+	'./ResourcePropertyBinding',
+	"sap/base/i18n/ResourceBundle"
+],
+	function(jQuery, BindingMode, Model, ResourcePropertyBinding, ResourceBundle) {
 	"use strict";
 
 
@@ -108,7 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		}
 		bIncludeInfo = oConfiguration.getOriginInfo();
 		sUrl = _getUrl(oData.bundleUrl, oData.bundleName);
-		oRb = jQuery.sap.resources({url: sUrl, locale: sLocale, includeInfo: bIncludeInfo, async: bAsync});
+		oRb = ResourceBundle.create({url: sUrl, locale: sLocale, includeInfo: bIncludeInfo, async: bAsync});
 		return oRb;
 	};
 
@@ -134,7 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 			}) : null;
 
 		function doEnhance(){
-			if (jQuery.sap.resources.isBundle(oData)) {
+			if (oData instanceof ResourceBundle) {
 				that._oResourceBundle._enhance(oData);
 				that.checkUpdate(true);
 				if (oPromise) {

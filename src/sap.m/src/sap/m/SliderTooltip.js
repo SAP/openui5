@@ -3,7 +3,6 @@
 */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'./SliderUtilities',
 	'./SliderTooltipBase',
@@ -13,7 +12,6 @@ sap.ui.define([
 	'./SliderTooltipRenderer'
 ],
 function(
-	jQuery,
 	Library,
 	SliderUtilities,
 	SliderTooltipBase,
@@ -21,7 +19,7 @@ function(
 	coreLibrary,
 	ValueStateMessage,
 	SliderTooltipRenderer
-	) {
+) {
 		"use strict";
 
 		var ValueState = coreLibrary.ValueState;

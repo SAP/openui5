@@ -3,7 +3,6 @@
  */
 // Provides control sap.m.ViewSettingsPopover.
 sap.ui.define([
-	"jquery.sap.global",
 	"./ResponsivePopover",
 	"./Button",
 	"./Toolbar",
@@ -21,9 +20,9 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"./ViewSettingsPopoverRenderer"
+	"./ViewSettingsPopoverRenderer",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	ResponsivePopover,
 	Button,
 	Toolbar,
@@ -41,7 +40,8 @@ sap.ui.define([
 	ManagedObject,
 	Device,
 	InvisibleText,
-	ViewSettingsPopoverRenderer
+	ViewSettingsPopoverRenderer,
+	Log
 	) {
 		"use strict";
 
@@ -687,11 +687,11 @@ sap.ui.define([
 		 */
 		ViewSettingsPopover.prototype._hideToolbarButtons = function () {
 			this._getPopover().setShowHeader(false);
-			jQuery.sap.delayedCall(0, this, function () {
+			setTimeout(function () {
 				if (this._getPopover().getAggregation('_popup')._internalHeader) {
 					this._getPopover().getAggregation('_popup')._internalHeader.$().hide();
 				}
-			});
+			}.bind(this), 0);
 		};
 
 		/**
@@ -747,10 +747,10 @@ sap.ui.define([
 						oBackButton && oBackButton.destroy();
 						oBackButton = null;
 					} else {
-						jQuery.sap.delayedCall(0, this._getNavContainer(), "to", [this['_get' + sPageName + 'Page'](), "slide"]);
+						setTimeout(this._getNavContainer()["to"].bind(this._getNavContainer(), this['_get' + sPageName + 'Page'](), "slide"), 0);
 					}
 				} else {
-					jQuery.sap.delayedCall(0, this._getNavContainer(), 'back');
+					setTimeout(this._getNavContainer()['back'].bind(this._getNavContainer()), 0);
 				}
 			}
 
@@ -1254,7 +1254,7 @@ sap.ui.define([
 		ViewSettingsPopover.prototype._hideContent = function () {
 			this._removeSegmentedButtonSelection();
 			this._cleanAfterClose();
-			jQuery.sap.delayedCall(0, this, '_adjustInitialWidth');
+			setTimeout(this['_adjustInitialWidth'].bind(this), 0);
 		};
 
 
@@ -1655,7 +1655,7 @@ sap.ui.define([
 				sSuffix = LIST_ITEMS_SUFFIX;
 
 			if (!oViewSettingsItem && !(oViewSettingsItem instanceof ViewSettingsItem)) {
-				jQuery.sap.log.error('Expecting instance of "sap.m.ViewSettingsItem": instead of ' + oViewSettingsItem + ' given.');
+				Log.error('Expecting instance of "sap.m.ViewSettingsItem": instead of ' + oViewSettingsItem + ' given.');
 				return;
 			}
 

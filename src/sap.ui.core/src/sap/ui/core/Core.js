@@ -3,16 +3,66 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
-		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
-		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 'sap/ui/events/jquery/EventSimulation',
-		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
-	function(jQuery, Device, Global,
-		BindingParser, DataType, EventProvider, Interface, BaseObject, ManagedObject,
-		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
-		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
-		/* ,EventSimulation ,jQuerySapAct, jQuerySapDom, jQuerySapEvents, jQuerySapMobile, jQuerySapProperties, jQuerySapResources, jQuerySapScript, jQuerySapSjax */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/Global',
+	'sap/ui/base/BindingParser',
+	'sap/ui/base/DataType',
+	'sap/ui/base/EventProvider',
+	'sap/ui/base/Interface',
+	'sap/ui/base/Object',
+	'sap/ui/base/ManagedObject',
+	'./Component',
+	'./Configuration',
+	'./Control',
+	'./Element',
+	'./ElementMetadata',
+	'./FocusHandler',
+	'./RenderManager',
+	'./ResizeHandler',
+	'./ThemeCheck',
+	'./UIArea',
+	'./message/MessageManager',
+	"sap/ui/util/ActivityDetection",
+	"sap/ui/dom/getScrollbarSize",
+	"sap/base/i18n/ResourceBundle",
+	'sap/base/util/ObjectPath',
+	"sap/base/util/array/uniqueSort",
+	"sap/base/util/uid",
+	'sap/ui/events/jquery/EventSimulation',
+	'jquery.sap.events',
+	'jquery.sap.sjax'
+],
+	function(
+		jQuery,
+		Device,
+		Global,
+		BindingParser,
+		DataType,
+		EventProvider,
+		Interface,
+		BaseObject,
+		ManagedObject,
+		Component,
+		Configuration,
+		Control,
+		Element,
+		ElementMetadata,
+		FocusHandler,
+		RenderManager,
+		ResizeHandler,
+		ThemeCheck,
+		UIArea,
+		MessageManager,
+		ActivityDetection,
+		getScrollbarSize,
+		ResourceBundle,
+		ObjectPath,
+		uniqueSort,
+		uid
+		/* ,EventSimulation, jQuerySapEvents, jQuerySapScript, jQuerySapSjax */
+	) {
 
 	"use strict";
 
@@ -1156,7 +1206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 					setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);
 				} else {
 					// lookup the name specified in onInit and try to call the function directly
-					var fn = jQuery.sap.getObject(vOnInit);
+					var fn = ObjectPath.get(vOnInit);
 					if (typeof fn === "function") {
 						fn();
 					} else {
@@ -1186,7 +1236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			var sRootNode = oConfig["xx-rootComponentNode"];
 			if (sRootNode && oComponent.isA('sap.ui.core.UIComponent')) {
-				var oRootNode = jQuery.sap.domById(sRootNode);
+				var oRootNode = (sRootNode ? window.document.getElementById(sRootNode) : null);
 				if (oRootNode) {
 					log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
 					var ComponentContainer = sap.ui.requireSync('sap/ui/core/ComponentContainer'),
@@ -1207,7 +1257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
 				log.info("Loading Application: " + sApplication,null,METHOD);
 				jQuery.sap.require(sApplication);
-				var oClass = jQuery.sap.getObject(sApplication);
+				var oClass = ObjectPath.get(sApplication);
 				jQuery.sap.assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
 				var oApplication = new oClass();
 				jQuery.sap.assert(BaseObject.isA(oApplication, 'sap.ui.app.Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
@@ -2062,7 +2112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 						if ( oLibrary[sKey].length === 0 ) {
 							oLibrary[sKey] = vValue;
 						} else {
-							oLibrary[sKey] = jQuery.sap.unique(oLibrary[sKey].concat(vValue));
+							oLibrary[sKey] = uniqueSort(oLibrary[sKey].concat(vValue));
 						}
 					} else if ( oLibrary[sKey] === undefined ) {
 						// only set values for properties that are still undefined
@@ -2078,7 +2128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		// ensure namespace
-		jQuery.sap.getObject(sLibName, 0);
+		ObjectPath.create(sLibName);
 
 		// Create lib info object or merge with existing 'adhoc' library
 		this.mLibraries[sLibName] = oLibInfo = extend(this.mLibraries[sLibName] || {
@@ -2325,7 +2375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			if (vI18n !== false) {
 
-				vResult = jQuery.sap.resources({
+				vResult = ResourceBundle.create({
 					url : sap.ui.resource(sLibraryName, typeof vI18n === "string" ? vI18n : 'messagebundle.properties'),
 					locale : sLocale,
 					async: bAsync
@@ -2393,7 +2443,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if (id == STATIC_UIAREA_ID) {
 				oDomRef = this.getStaticAreaRef();
 			} else {
-				oDomRef = jQuery.sap.domById(oDomRef);
+				oDomRef = (oDomRef ? window.document.getElementById(oDomRef) : null);
 				if (!oDomRef) {
 					throw new Error("DOM element with ID '" + id + "' not found in page, but application tries to insert content.");
 				}
@@ -2402,7 +2452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// if the domref does not have an ID or empty ID => generate one
 		if (!oDomRef.id || oDomRef.id.length == 0) {
-			oDomRef.id = jQuery.sap.uid();
+			oDomRef.id = uid();
 		}
 
 		// create a new or fetch an existing UIArea
@@ -2463,7 +2513,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.addInvalidatedUIArea = function(oUIArea) {
 		if ( !this._sRerenderTimer ) {
 			oRenderLog.debug("Registering timer for delayed re-rendering");
-			this._sRerenderTimer = jQuery.sap.delayedCall(0,this,"renderPendingUIUpdates"); // decoupled for collecting several invalidations into one redraw
+			this._sRerenderTimer = setTimeout(this["renderPendingUIUpdates"].bind(this), 0); // decoupled for collecting several invalidations into one redraw
 		}
 	};
 
@@ -2513,7 +2563,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// clear a pending timer so that the next call to re-render will create a new timer
 			if (this._sRerenderTimer) {
 				if ( this._sRerenderTimer !== this ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
-					jQuery.sap.clearDelayedCall(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+					clearTimeout(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
 				}
 				this._sRerenderTimer = undefined;
 			}
@@ -2639,7 +2689,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {object} [mParameters.theme] Theme name (default is <code>sap.ui.getCore().getConfiguration().getTheme()</code>)
 	 */
 	Core.prototype.fireThemeChanged = function(mParameters) {
-		jQuery.sap.scrollbarSize(true);
+		getScrollbarSize(true);
 
 		// special hook for resetting theming parameters before the controls get
 		// notified (lightweight coupling to static Parameters module)
@@ -2662,7 +2712,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			oElement._handleEvent(oEvent);
 		});
 
-		jQuery.sap.act.refresh();
+		ActivityDetection.refresh();
 
 		// notify the listeners via a control event
 		_oEventProvider.fireEvent(sEventId, mParameters);
@@ -2881,7 +2931,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if ( !oLibrary ) {
 
 			// ensure namespace
-			jQuery.sap.getObject(sLibraryName, 0);
+			ObjectPath.create(sLibraryName);
 
 			oLibrary = this.mLibraries[sLibraryName] = {
 				name: sLibraryName,
@@ -3091,7 +3141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.getStaticAreaRef = function() {
-		var oStatic = jQuery.sap.domById(STATIC_UIAREA_ID);
+		var oStatic = (STATIC_UIAREA_ID ? window.document.getElementById(STATIC_UIAREA_ID) : null);
 		if (!oStatic) {
 			if (!this.bDomReady) {
 				throw new Error("DOM is not ready yet. Static UIArea cannot be created.");

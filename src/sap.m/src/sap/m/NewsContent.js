@@ -3,15 +3,14 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Text',
 	'sap/ui/Device',
 	'./NewsContentRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
-	function(jQuery, library, Control, Text, Device, NewsContentRenderer) {
+	function(library, Control, Text, Device, NewsContentRenderer, KeyCodes) {
 	"use strict";
 
 	/**
@@ -183,7 +182,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	NewsContent.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.SPACE) {
 			this.firePress();
 			oEvent.preventDefault();
 		}

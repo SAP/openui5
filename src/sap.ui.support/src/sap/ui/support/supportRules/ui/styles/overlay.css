@@ -163,3 +163,34 @@ body {
 .sapUiSupportToolIssuesPage .sapUiSupportToolIssueHeader {
 	border-bottom: none;
 }
+
+.sapUiSupportToolVariantCont {
+	cursor: pointer;
+}
+
+.sapUiSupportToolVariantCont .sapUiSupportToolVariantLnk {
+	color: #346187; /* @sapUiButtonTextColor */
+	text-decoration: none !important;
+}
+
+.sapUiSupportToolVariantCont  .sapMLnk.sapUiSupportToolVariantLnk:hover {
+	color: #427cac; /* @sapUiHighlight ?*/
+}
+
+.sapUiSupportToolVariantCont .sapUiSupportToolVariantBtn {
+	margin-left: 0.25rem;
+}
+
+.sapUiSupportToolVariantCont:hover .sapUiSupportToolVariantBtn>span {
+	background-image: none;
+	background-color: rgba(179,179,179,0.5) !important; /* @sapUiButtonLiteHoverBackground */
+	border-radius: 0.2rem;
+}
+
+.sapMText.sapUiSupportToolError {
+	color: #ee0000; /* @sapErrorCode */
+}
+
+.sapMScrollCont.sapUiSupportToolImportDescr {
+	max-height: 5rem;
+}

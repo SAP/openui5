@@ -3,8 +3,13 @@
  */
 
 // Provides the implementation for a Message
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
-	function(jQuery, Object, MessageProcessor) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/Object',
+	'./MessageProcessor',
+	"sap/base/util/uid"
+],
+	function(jQuery, Object, MessageProcessor, uid) {
 	"use strict";
 
 	/**
@@ -45,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 		constructor : function (mParameters) {
 			Object.apply(this, arguments);
 
-			this.id = mParameters.id ? mParameters.id : jQuery.sap.uid();
+			this.id = mParameters.id ? mParameters.id : uid();
 			this.message = mParameters.message;
 			this.description = mParameters.description;
 			this.descriptionUrl = mParameters.descriptionUrl;

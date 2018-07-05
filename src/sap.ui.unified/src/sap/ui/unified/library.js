@@ -6,12 +6,10 @@
  * Initialization Code and shared classes of library sap.ui.unified.
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Core',
 	'sap/ui/base/Object',
-	'jquery.sap.dom',
-	'jquery.sap.script'
-], function(jQuery, Core, BaseObject/* jQuerySapDom,jQuerySapScript*/) {
+	"sap/ui/thirdparty/jquery"
+], function(Core, BaseObject, jQueryDOM) {
 
 	"use strict";
 
@@ -493,7 +491,7 @@ sap.ui.define([
 			delete this._cb;
 			delete this._ctrl;
 			if (this._rerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._rerenderTimer);
+				clearTimeout(this._rerenderTimer);
 				delete this._rerenderTimer;
 			}
 			BaseObject.prototype.destroy.apply(this, arguments);
@@ -505,11 +503,11 @@ sap.ui.define([
 			}
 
 			if (this._rerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._rerenderTimer);
+				clearTimeout(this._rerenderTimer);
 			}
 
-			this._rerenderTimer = jQuery.sap.delayedCall(0, this, function(){
-				var $content = jQuery.sap.byId(this._id);
+			this._rerenderTimer = setTimeout(function(){
+				var $content = jQueryDOM(document.getElementById(this._id));
 				var doRender = $content.length > 0;
 
 				if (doRender) {
@@ -525,7 +523,7 @@ sap.ui.define([
 				}
 
 				this._cb(doRender);
-			});
+			}.bind(this), 0);
 		}
 	});
 

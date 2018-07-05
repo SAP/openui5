@@ -2,8 +2,22 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/Popup', 'sap/ui/core/library'],
-	function(jQuery, Device, BaseObject, ValueStateSupport, Popup, coreLibrary) {
+sap.ui.define([
+	'sap/ui/Device',
+	'sap/ui/base/Object',
+	'sap/ui/core/ValueStateSupport',
+	'sap/ui/core/Popup',
+	'sap/ui/core/library',
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		Device,
+		BaseObject,
+		ValueStateSupport,
+		Popup,
+		coreLibrary,
+		jQueryDOM
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.core.ValueState
@@ -162,7 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 
 			this._oPopup = new Popup(document.createElement("span"), false, false, false);
 			this._oPopup.attachClosed(function() {
-				jQuery.sap.byId(sID).remove();
+				jQueryDOM(document.getElementById(sID)).remove();
 			});
 
 			return this._oPopup;

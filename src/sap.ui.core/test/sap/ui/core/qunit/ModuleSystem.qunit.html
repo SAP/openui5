@@ -887,14 +887,14 @@
 			// remember URL without registration
 			var sUrl = jQuery.sap.getResourcePath("x.js");
 
+			// register different baseUrl
+			jQuery.sap.registerResourcePath("", "foo/resources/");
+			assert.notStrictEqual(jQuery.sap.getResourcePath("x.js"), sUrl, "returned URL should not be the same");
+
 			// try to deregister baseUrl
 			jQuery.sap.registerResourcePath("", null);
-			assert.notStrictEqual(jQuery.sap.getResourcePath("x.js"), sUrl, "returned URL should not be the same");
-			assert.strictEqual(jQuery.sap.getResourcePath("x.js"), "resources/x.js", "returned URL should use the default prefix");
+			assert.strictEqual(jQuery.sap.getResourcePath("x.js"), "./x.js", "returned URL should be the same as before the test");
 
-			// restore original configuration
-			jQuery.sap.registerResourcePath("", sUrl.slice(0,-4));
-			assert.strictEqual(jQuery.sap.getResourcePath("x.js"), sUrl, "returned URL should be the same as before the test");
 		});
 
 		QUnit.test("single log entry for redundant calls", function(assert) {

@@ -4,8 +4,20 @@
 
 // Provides helper sap.ui.table.TableKeyboardExtension.
 sap.ui.define([
-	"jquery.sap.global", "./TableExtension", "sap/ui/core/delegate/ItemNavigation", "./TableUtils", "./TableKeyboardDelegate2", "sap/ui/Device"
-], function(jQuery, TableExtension, ItemNavigation, TableUtils, TableKeyboardDelegate, Device) {
+	"./TableExtension",
+	"sap/ui/core/delegate/ItemNavigation",
+	"./TableUtils",
+	"./TableKeyboardDelegate2",
+	"sap/ui/Device",
+	"sap/ui/dom/containsOrEquals"
+], function(
+	TableExtension,
+	ItemNavigation,
+	TableUtils,
+	TableKeyboardDelegate,
+	Device,
+	containsOrEquals
+) {
 	"use strict";
 
 	var bIEFocusOutlineWorkaroundApplied = false;
@@ -381,16 +393,16 @@ sap.ui.define([
 
 		if (oTable.getShowOverlay()) {
 			// The overlay is shown
-			if (jQuery.sap.containsOrEquals(oTable.getDomRef(), oPreviousFocusRef)) {
+			if (containsOrEquals(oTable.getDomRef(), oPreviousFocusRef)) {
 				oTable.$("overlay").focus(); // Set focus on Overlay Container if it was somewhere in the table before
 			}
 		} else if (TableUtils.isNoDataVisible(oTable)) {
 			// The noData area is shown
-			if (jQuery.sap.containsOrEquals(oTable.getDomRef("sapUiTableCnt"), oPreviousFocusRef)) {
+			if (containsOrEquals(oTable.getDomRef("sapUiTableCnt"), oPreviousFocusRef)) {
 				oTable.$("noDataCnt").focus(); // Set focus on NoData Container if it was on the content before
 			}
-		} else if (jQuery.sap.containsOrEquals(oTable.getDomRef("noDataCnt"), oPreviousFocusRef)
-				   || jQuery.sap.containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
+		} else if (containsOrEquals(oTable.getDomRef("noDataCnt"), oPreviousFocusRef)
+				   || containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
 			// The overlay or noData area is not shown but was shown before
 			TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(this)); // Set focus on first focusable element
 		}

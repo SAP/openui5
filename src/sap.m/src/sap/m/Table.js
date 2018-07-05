@@ -4,15 +4,15 @@
 
 // Provides control sap.m.Table.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/Device",
 	"./library",
 	"./ListBase",
 	"./ListItemBase",
 	"./CheckBox",
-	"./TableRenderer"
+	"./TableRenderer",
+	"sap/base/Log"
 ],
-	function(jQuery, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer) {
+	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log) {
 	"use strict";
 
 
@@ -243,7 +243,7 @@ sap.ui.define([
 		});
 
 		if (!bHasVisibleColumns) {
-			jQuery.sap.log.warning("No visible columns found in " + this);
+			Log.warning("No visible columns found in " + this);
 		}
 
 		return bHasVisibleColumns;
@@ -264,9 +264,9 @@ sap.ui.define([
 	// this gets called when selected property of the item is changed
 	Table.prototype.onItemSelectedChange = function(oItem, bSelect) {
 		ListBase.prototype.onItemSelectedChange.apply(this, arguments);
-		jQuery.sap.delayedCall(0, this, function() {
+		setTimeout(function() {
 			this.updateSelectAllCheckbox();
-		});
+		}.bind(this), 0);
 	};
 
 	/*
@@ -359,14 +359,14 @@ sap.ui.define([
 			this.rerender();
 
 			// do not re-render if resize event comes so frequently
-			jQuery.sap.delayedCall(200, this, function() {
+			setTimeout(function() {
 				// but check if any event come during the wait-time
 				if (this._dirty != clean) {
 					this._dirty = 0;
 					this.rerender();
 				}
 				this._mutex = false;
-			});
+			}.bind(this), 200);
 		}
 	};
 

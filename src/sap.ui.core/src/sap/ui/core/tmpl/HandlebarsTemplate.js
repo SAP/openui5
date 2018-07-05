@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', './TemplateControl', 'sap/ui/thirdparty/handlebars', 'sap/ui/base/ManagedObject'],
-	function(jQuery, Core, Template, TemplateControl, Handlebars, ManagedObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', './TemplateControl', 'sap/ui/thirdparty/handlebars', 'sap/ui/base/ManagedObject', 'sap/base/util/ObjectPath'],
+	function(jQuery, Core, Template, TemplateControl, Handlebars, ManagedObject, ObjectPath) {
 	"use strict";
 
 
@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', './Templat
 					sParentPath = options.data.path,
 					mParentChildren = options.data.children,
 					sType = options.hash["sap-ui-type"],
-					oClass = jQuery.sap.getObject(sType),
+					oClass = ObjectPath.get(sType || ""),
 					oMetadata = oClass && oClass.getMetadata(),
 					sDefaultAggregation = options.hash["sap-ui-default-aggregation"] || oMetadata && oMetadata.getDefaultAggregationName(),
 					oView = options.data.view;

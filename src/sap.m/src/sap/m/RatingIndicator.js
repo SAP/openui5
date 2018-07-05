@@ -4,14 +4,14 @@
 
 // Provides control sap.m.RatingIndicator.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/theming/Parameters',
 	'./RatingIndicatorRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
-	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer) {
+	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log) {
 	"use strict";
 
 
@@ -203,12 +203,12 @@ sap.ui.define([
 
 		// check for valid numbers
 		if (isNaN(fValue)) {
-			jQuery.sap.log.warning('Ignored new rating value "' + fValue + '" because it is NAN');
+			Log.warning('Ignored new rating value "' + fValue + '" because it is NAN');
 
 		// check if the number is in the range 0-maxValue (only if control is rendered)
 		// if control is not rendered it is handled by onBeforeRendering()
 		} else if (this.$().length && (fValue > this.getMaxValue())) {
-			jQuery.sap.log.warning('Ignored new rating value "' + fValue + '" because it is out  of range (0-' + this.getMaxValue() + ')');
+			Log.warning('Ignored new rating value "' + fValue + '" because it is out  of range (0-' + this.getMaxValue() + ')');
 		} else {
 			fValue = this._roundValueToVisualMode(fValue);
 			this.setProperty("value", fValue, true);
@@ -265,10 +265,10 @@ sap.ui.define([
 
 		if (fVal > iMVal) {
 			this.setValue(iMVal);
-			jQuery.sap.log.warning("Set value to maxValue because value is > maxValue (" + fVal + " > " + iMVal + ").");
+			Log.warning("Set value to maxValue because value is > maxValue (" + fVal + " > " + iMVal + ").");
 		} else if (fVal < 0) {
 			this.setValue(0);
-			jQuery.sap.log.warning("Set value to 0 because value is < 0 (" + fVal + " < 0).");
+			Log.warning("Set value to 0 because value is < 0 (" + fVal + " < 0).");
 		}
 
 		if (this.getIconSize()) {
@@ -425,7 +425,7 @@ sap.ui.define([
 			$SelectedDiv.show();
 		}
 
-		jQuery.sap.log.debug("Updated rating UI with value " + fValue + " and hover mode " + bHover);
+		Log.debug("Updated rating UI with value " + fValue + " and hover mode " + bHover);
 	};
 
 	/**
@@ -595,7 +595,7 @@ sap.ui.define([
 				}
 				break;
 			default:
-				jQuery.sap.log.warning("VisualMode not supported", sVisualMode);
+				Log.warning("VisualMode not supported", sVisualMode);
 		}
 
 		return fStep;
@@ -798,44 +798,44 @@ sap.ui.define([
 		}
 
 		switch (oEvent.which) {
-			case jQuery.sap.KeyCodes.DIGIT_0:
-			case jQuery.sap.KeyCodes.NUMPAD_0:
+			case KeyCodes.DIGIT_0:
+			case KeyCodes.NUMPAD_0:
 				this.setValue(0);
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_1:
-			case jQuery.sap.KeyCodes.NUMPAD_1:
+			case KeyCodes.DIGIT_1:
+			case KeyCodes.NUMPAD_1:
 				this.setValue(1);
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_2:
-			case jQuery.sap.KeyCodes.NUMPAD_2:
+			case KeyCodes.DIGIT_2:
+			case KeyCodes.NUMPAD_2:
 				this.setValue(Math.min(2, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_3:
-			case jQuery.sap.KeyCodes.NUMPAD_3:
+			case KeyCodes.DIGIT_3:
+			case KeyCodes.NUMPAD_3:
 				this.setValue(Math.min(3, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_4:
-			case jQuery.sap.KeyCodes.NUMPAD_4:
+			case KeyCodes.DIGIT_4:
+			case KeyCodes.NUMPAD_4:
 				this.setValue(Math.min(4, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_5:
-			case jQuery.sap.KeyCodes.NUMPAD_5:
+			case KeyCodes.DIGIT_5:
+			case KeyCodes.NUMPAD_5:
 				this.setValue(Math.min(5, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_6:
-			case jQuery.sap.KeyCodes.NUMPAD_6:
+			case KeyCodes.DIGIT_6:
+			case KeyCodes.NUMPAD_6:
 				this.setValue(Math.min(6, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_7:
-			case jQuery.sap.KeyCodes.NUMPAD_7:
+			case KeyCodes.DIGIT_7:
+			case KeyCodes.NUMPAD_7:
 				this.setValue(Math.min(7, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_8:
-			case jQuery.sap.KeyCodes.NUMPAD_8:
+			case KeyCodes.DIGIT_8:
+			case KeyCodes.NUMPAD_8:
 				this.setValue(Math.min(8, iMaxValue));
 				break;
-			case jQuery.sap.KeyCodes.DIGIT_9:
-			case jQuery.sap.KeyCodes.NUMPAD_9:
+			case KeyCodes.DIGIT_9:
+			case KeyCodes.NUMPAD_9:
 				this.setValue(Math.min(9, iMaxValue));
 				break;
 		}

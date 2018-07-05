@@ -5,8 +5,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/test/_OpaLogger",
-	"./Action"
-], function ($, _OpaLogger, Action) {
+	"./Action",
+	"sap/ui/events/KeyCodes"
+], function($, _OpaLogger, Action, KeyCodes) {
 	"use strict";
 
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.actions.EnterText");
@@ -78,16 +79,18 @@ sap.ui.define([
 			this._tryOrSimulateFocusin($ActionDomRef, oControl);
 
 			if (this.getClearTextFirst()) {
-				oUtils.triggerKeydown(oActionDomRef, $.sap.KeyCodes.DELETE);
-				oUtils.triggerKeyup(oActionDomRef, $.sap.KeyCodes.DELETE);
+				oUtils.triggerKeydown(oActionDomRef, KeyCodes.DELETE);
+				oUtils.triggerKeyup(oActionDomRef, KeyCodes.DELETE);
 				$ActionDomRef.val("");
 				oUtils.triggerEvent("input", oActionDomRef);
 			}
 
 			// Trigger events for every keystroke - livechange controls
+			var sValueBuffer = $ActionDomRef.val();
 			this.getText().split("").forEach(function (sChar) {
+				sValueBuffer += sChar;
 				// Change the domref and fire the input event
-				oUtils.triggerCharacterInput(oActionDomRef, sChar);
+				oUtils.triggerCharacterInput(oActionDomRef, sChar, sValueBuffer);
 				oUtils.triggerEvent("input", oActionDomRef);
 			});
 

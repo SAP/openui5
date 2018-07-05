@@ -7,14 +7,19 @@ sap.ui.define([
 	"sap/ui/base/DataType",
 	"sap/ui/core/XMLTemplateProcessor",
 	"jquery.sap.global",
-	"sap/ui/core/Fragment", // needed to have sap.ui.xmlfragment
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
-], function (
+	"sap/base/util/merge",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/XMLHelper",
+	// needed to have sap.ui.xmlfragment
+	"sap/ui/core/Fragment"
+], function(
 	BaseTreeModifier,
 	DataType,
 	XMLTemplateProcessor,
-	jQuery
-	/* other jQuery.sap dependencies */
+	jQuery,
+	merge,
+	jQueryDOM,
+	XMLHelper
 ) {
 
 	"use strict";
@@ -162,7 +167,7 @@ sap.ui.define([
 				}
 
 				// Use jQuery.find function to access control if getElementById(..) failed
-				var oNodes = jQuery.sap.byId(sId, oView);
+				var oNodes = jQueryDOM(document.getElementById(sId));
 				if (oNodes.length === 1) {
 					return oNodes[0];
 				}
@@ -460,7 +465,7 @@ sap.ui.define([
 		 * @returns {Node[]} Returns an array with the nodes of the controls of the fragment
 		 */
 		instantiateFragment: function(sFragment, sNamespace) {
-			var oFragment = jQuery.sap.parseXML(sFragment);
+			var oFragment = XMLHelper.parse(sFragment);
 			oFragment = this._checkAndPrefixIdsInFragment(oFragment, sNamespace);
 
 			if (oFragment.localName === "FragmentDefinition") {
@@ -478,8 +483,7 @@ sap.ui.define([
 		}
 	};
 
-	return jQuery.sap.extend(
-		true /* deep extend */,
+	return merge(
 		{} /* target object, to avoid changing of original modifier */,
 		BaseTreeModifier,
 		XmlTreeModifier

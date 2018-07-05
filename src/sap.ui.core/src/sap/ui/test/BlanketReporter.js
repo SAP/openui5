@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterType",
-	"sap/ui/model/json/JSONModel"
-], function (jQuery, Controller, XMLView, Filter, FilterType, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/base/util/UriParameters"
+], function(jQuery, Controller, XMLView, Filter, FilterType, JSONModel, UriParameters) {
 	"use strict";
 
 	// lower case package names, UpperCamelCase class name, optional lowerCamelCase method name
@@ -468,7 +469,7 @@ sap.ui.define([
 				aTestedModules && aTestedModules.map(convertToFile));
 			oDiv = getDiv();
 
-			if (jQuery.sap.getUriParameters().get("testId")
+			if (new UriParameters(window.location.href).get("testId")
 				|| aTestedModules && !aTestedModules.every(isSingleClass)) {
 				// do not fail due to coverage
 				createView(oModel).placeAt(oDiv);

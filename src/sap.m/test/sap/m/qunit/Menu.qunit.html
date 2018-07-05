@@ -1138,6 +1138,56 @@
 			}
 		});
 
+		QUnit.module("Custom accessibility functions and custom data", {
+			beforeEach: function () {
+				this.oMenu = new sap.m.Menu();
+			},
+			afterEach: function () {
+				this.oMenu.destroy();
+				this.oMenu = null;
+			}
+		});
+
+		QUnit.test("Enhance accessibility functions", function (oAssert) {
+			var oButton = new sap.m.Button(),
+				oAriaProps = {type: "button"},
+				fnCustomAccFunction = function (oElement, mAriaProps) {
+					mAriaProps.controls = "sControlId";
+					return mAriaProps;
+				},
+				oUfdMenu;
+
+			// Arrange
+			this.oMenu._initAllMenuItems();
+			oUfdMenu = this.oMenu._getMenu();
+
+			// Default
+			assert.strictEqual(oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps), oAriaProps, "Should return passed mAriaProps if no custom function is set");
+
+			// Act
+			this.oMenu._setCustomEnhanceAccStateFunction(fnCustomAccFunction);
+			this.oMenu._initAllMenuItems();
+			oUfdMenu = this.oMenu._getMenu();
+
+			// Assert
+			assert.strictEqual(oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps).controls, "sControlId", "Should return also the additional mAriaProps if a custom function is set");
+		});
+
+		QUnit.test("Custom data is propagated properly", function (oAssert) {
+			var oItem = new sap.m.MenuItem(),
+				oUfdItem;
+
+			// Arrange
+			oItem.addCustomData(new sap.ui.core.CustomData({
+				key: "customKey",
+				value: "customValue"
+			}));
+			oUfdItem = this.oMenu._createVisualMenuItemFromItem(oItem);
+
+			// Assert
+			assert.strictEqual(oUfdItem.data("customKey"), "customValue", "Custom data is propagated properly to the Unified menu item");
+		});
+
 	</script>
 
 </head>

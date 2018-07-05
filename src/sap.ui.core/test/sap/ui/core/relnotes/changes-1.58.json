@@ -259,6 +259,84 @@
         "type": "FIX",
         "text": " sap/ui/dom/ActiveElementFix: empty object document.activeElement",
         "references": []
+      },
+      {
+        "id": "e5c018680c5c41b07c1cd7ae2caade5cacbeef99",
+        "type": "FEATURE",
+        "text": " ui5loader: Add AMD compliant require.config()",
+        "references": []
+      },
+      {
+        "id": "837827ee30f44b949afb625e60fb275204762e46",
+        "type": "FEATURE",
+        "text": " ui5loader: Enable async loading when switching to amd mode",
+        "references": []
+      },
+      {
+        "id": "9336ec8959dbc4df78fcf4ab8ca0036bb1ba3ad3",
+        "type": "FIX",
+        "text": " Component: asyncHints with \"final\" flag",
+        "references": []
+      },
+      {
+        "id": "3f4013953f146f725380457e905bc4848e21016a",
+        "type": "FIX",
+        "text": " Configuration: Ensure gregorian calendar for legacy patterns 1-6",
+        "references": []
+      },
+      {
+        "id": "f868d491437a5b1fc9eb7f1e0779c23d4971c753",
+        "type": "FIX",
+        "text": " ManagedObject: detach DS only if attached",
+        "references": []
+      },
+      {
+        "id": "56c2e86b7bcd3cd0fa190754f0c7e4d81ae49fa8",
+        "type": "FIX",
+        "text": " NumberFormat: Fix currency short format for RTL languages",
+        "references": []
+      },
+      {
+        "id": "339cfff4812065bf354278feb3c8ab21cd1830b9",
+        "type": "FIX",
+        "text": " Promise Polyfill: Use native Promise in Safari / Edge",
+        "references": []
+      },
+      {
+        "id": "ca3b4482a521ff7f439e6faf772eccf0d82ad900",
+        "type": "FIX",
+        "text": " Theming Parameters: Improve inline parameters decoding",
+        "references": []
+      },
+      {
+        "id": "3b4b778d2c840038c7d33d005dc91d38d790bfa7",
+        "type": "FIX",
+        "text": " XMLComposite: Callback getResult now a Promise",
+        "references": []
+      },
+      {
+        "id": "41287985940af1f1ffab7854dbc3830a7d21d7ab",
+        "type": "FIX",
+        "text": " sap.ui.model.base.ManagedObjectModel",
+        "references": []
+      },
+      {
+        "id": "e59c866f898eae8cb8cd436321b9e08b6ee153cf",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": []
+      },
+      {
+        "id": "57e0bdb76a4cd97153bf621d0a52ce2c0ada7bbf",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.Date/Time: use end of current year as example",
+        "references": []
+      },
+      {
+        "id": "4001273c9bc5154c9de74773871703a9f80e1bd0",
+        "type": "FIX",
+        "text": " test/launchers/iFrameLauncher: fixed loader config access",
+        "references": []
       }
     ]
   }

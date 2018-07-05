@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/routing/History",
 	"sap/ui/core/routing/HashChanger",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/deepEqual"
 ], function(
 	jQuery,
 	Component,
 	flUtils,
 	History,
 	HashChanger,
-	Log
+	Log,
+	deepEqual
 ) {
 	"use strict";
 
@@ -47,7 +49,9 @@ sap.ui.define([
 			if (this._oHashRegister.currentIndex === null) {
 				var oHashChanger = HashChanger.getInstance();
 
-				// register method to process hash changes
+				// attach handler to check if hash was replaced
+				oHashChanger.attachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
+				// attach handler to process hash changes
 				oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
 
 				// de-register method to process hash changes
@@ -55,6 +59,8 @@ sap.ui.define([
 				this.oComponent.destroy = function () {
 					// deregister navigation filter if ushell is available
 					VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, false);
+					// detach handler to check if hash was replaced
+					oHashChanger.detachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
 					// detach navigation handler
 					oHashChanger.detachEvent("hashChanged", VariantUtil._navigationHandler, this);
 					// destroy VariantModel
@@ -83,8 +89,19 @@ sap.ui.define([
 			}
 		},
 
-		_navigationHandler: function() {
+		_handleHashReplaced: function (oEvent) {
+			this._sReplacedHash = oEvent.getParameter("sHash");
+		},
+
+		_navigationHandler: function(oEvent) {
 			var sDirection;
+			var sNewHash = oEvent && oEvent.getParameter("newHash");
+
+			// check 2 for navigation - do not handle replaced hashes
+			if (sNewHash && this._sReplacedHash === sNewHash) {
+				delete this._sReplacedHash;
+				return;
+			}
 			// initialization - no direction required
 			if (this._oHashRegister.currentIndex === null) {
 				this._oHashRegister.currentIndex = 0;
@@ -168,7 +185,10 @@ sap.ui.define([
 			var oNewParsed = oURLParsing.parseShellHash(sNewHash);
 
 			// params should exists on both parsed urls
-			var bSuppressDefaultNavigation = oOldParsed && oNewParsed;
+			// check 1 for navigation - suppress should only work when variant parameters have changed
+			var bSuppressDefaultNavigation = oOldParsed
+				&& oNewParsed
+				&& !deepEqual(oOldParsed.params[sVariantParameterName], oNewParsed.params[sVariantParameterName]);
 
 			if (bSuppressDefaultNavigation) {
 				// Verify if others parsed url properties are same

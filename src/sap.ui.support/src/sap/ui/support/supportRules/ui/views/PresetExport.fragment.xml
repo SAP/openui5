@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form">
+	<Dialog
+		title="Export a Rule Preset"
+		resizable="true"
+		contentWidth="550px"
+		contentHeight="250px">
+		<f:SimpleForm
+			editable="true"
+			binding="{/selectionPresetsCurrent}"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="3"
+			labelSpanL="3"
+			labelSpanM="3"
+			labelSpanS="3">
+			<f:content>
+				<Label text="Title" labelFor="title" class="sapUiTinyMarginBottom" />
+				<Input id="title" value="{= ${isMySelection} ? '' : ${title}}" maxLength="80" class="sapUiTinyMarginBottom" />
+				<Label text="Description" labelFor="description" class="sapUiTinyMarginBottom" />
+				<TextArea id="description" width="100%" value="{= ${isMySelection} ? '' : ${description}}" class="sapUiTinyMarginBottom" />
+				<Label text="Date" labelFor="dateExportedForDisplay" class="sapUiTinyMarginBottom" />
+				<Text
+					id="dateExportedForDisplay"
+					text="{
+						path: '/dateExportedForDisplay',
+						type: 'sap.ui.model.type.DateTime',
+						formatOptions: {
+							style: 'medium'
+						}
+					}"
+					class="sapUiTinyMarginBottom" />
+			</f:content>
+		</f:SimpleForm>
+		<beginButton>
+			<Button text="Cancel" press="onExportCancelPress" />
+		</beginButton>
+		<endButton>
+			<Button text="Export" type="Emphasized" press="onExportFinalizePress" class="sapUiTinyMarginEnd" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

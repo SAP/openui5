@@ -4,20 +4,20 @@
 
 // Provides control sap.m.ScrollContainer
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/core/Element",
-	"./ScrollContainerRenderer"
+	"./ScrollContainerRenderer",
+	"sap/ui/dom/denormalizeScrollBeginRTL"
 ],
 	function(
-		jQuery,
 		library,
 		Control,
 		ScrollEnablement,
 		Element,
-		ScrollContainerRenderer
+		ScrollContainerRenderer,
+		denormalizeScrollBeginRTL
 	) {
 		"use strict";
 
@@ -156,7 +156,7 @@ sap.ui.define([
 				if (oDomRef) {
 					// only if rendered
 					if (sap.ui.getCore().getConfiguration().getRTL()) {
-						x = jQuery.sap.denormalizeScrollBeginRTL(x, oDomRef);
+						x = denormalizeScrollBeginRTL(x, oDomRef);
 					}
 					this._oScroller.scrollTo(x, y, time);
 				} else {

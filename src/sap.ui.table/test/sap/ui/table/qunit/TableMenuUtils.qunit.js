@@ -1,11 +1,13 @@
 /*global QUnit, oTable */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TableUtils",
 	"sap/m/Menu",
-	"sap/m/MenuItem"
-], function(qutils, TableUtils, Menu, MenuItem) {
+	"sap/m/MenuItem",
+	"sap/ui/Device"
+], function(TableQUnitUtils, qutils, TableUtils, Menu, MenuItem, Device) {
 	"use strict";
 
 	// mapping of global function calls
@@ -221,7 +223,7 @@ sap.ui.require([
 		$ColumnA = oColumnA.$();
 
 		// Open the context menu of column 1 on mobile.
-		sap.ui.Device.system.desktop = false;
+		Device.system.desktop = false;
 
 		// 1. The column header cell menu should be applied.
 		TableUtils.Menu.openContextMenu(oTable, $ColumnA);

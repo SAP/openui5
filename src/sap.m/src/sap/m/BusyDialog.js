@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.BusyDialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIndicator', 'sap/m/Label', 'sap/m/Button'],
-	function (jQuery, library, Control, Dialog, BusyIndicator, Label, Button, Popup, Parameters) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIndicator', 'sap/m/Label', 'sap/m/Button', "sap/base/Log"],
+	function (library, Control, Dialog, BusyIndicator, Label, Button, Log, Popup, Parameters) {
 		"use strict";
 
 		/**
@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.open = function () {
-			jQuery.sap.log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
+			Log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
 
 			if (this.getAriaLabelledBy() && !this._oDialog._$dialog) {
 				var that = this;

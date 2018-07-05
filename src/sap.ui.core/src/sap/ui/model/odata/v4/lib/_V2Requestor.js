@@ -136,7 +136,7 @@ sap.ui.define([
 			sOffset = aMatches[2] + aMatches[3] + ":"  + aMatches[4];
 		}
 		if (iPrecision > 0) {
-			sPattern += "." + jQuery.sap.padRight("", "S", iPrecision);
+			sPattern += "." + "".padEnd(iPrecision, "S");
 		}
 		if (!mPattern2Formatter[sPattern]) {
 			mPattern2Formatter[sPattern] =

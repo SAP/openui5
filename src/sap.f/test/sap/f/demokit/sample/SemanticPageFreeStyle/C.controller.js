@@ -3,15 +3,17 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/Filter',
 	'sap/ui/model/json/JSONModel',
+	'sap/ui/Device',
 	'sap/m/MessagePopover',
 	'sap/m/MessagePopoverItem'
-], function(jQuery, Controller, Filter, JSONModel, MessagePopover, MessagePopoverItem) {
+], function(jQuery, Controller, Filter, JSONModel, Device, MessagePopover, MessagePopoverItem) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.SemanticPageFreeStyle.C", {
 		onInit: function () {
 			this.oModel = new JSONModel();
 			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.SemanticPageFreeStyle", "/model.json"), null, false);
+			this.oModel.setProperty("/notMobile", !Device.system.phone);
 			this.oSemanticPage = this.byId("mySemanticPage");
 			this.oSemanticPage.setModel(this.oModel);
 

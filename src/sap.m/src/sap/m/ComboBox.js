@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./Popover',
@@ -12,18 +11,20 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Item',
 	'./ComboBoxRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/events/KeyCodes"
 ],
 	function(
-	jQuery,
-	ComboBoxTextField,
-	ComboBoxBase,
-	Popover,
-	SelectList,
-	library,
-	Device,
-	Item,
-	ComboBoxRenderer
+		ComboBoxTextField,
+		ComboBoxBase,
+		Popover,
+		SelectList,
+		library,
+		Device,
+		Item,
+		ComboBoxRenderer,
+		containsOrEquals,
+		KeyCodes
 	) {
 		"use strict";
 
@@ -209,7 +210,7 @@ sap.ui.define([
 				// update the selected item after the change event is fired (the selection may change)
 				oItem = this.getSelectedItem();
 
-				if (!jQuery.sap.startsWithIgnoreCase(oItem.getText(), sTypedValue) || !bIsTextSelected) {
+				if (!((typeof sTypedValue == "string" && sTypedValue != "" ? oItem.getText().toLowerCase().startsWith(sTypedValue.toLowerCase()) : false)) || !bIsTextSelected) {
 					iSelectionStart = 0;
 				}
 
@@ -473,7 +474,7 @@ sap.ui.define([
 				// the item match with the value
 				bMatch = bEmptyValue;
 				for (var j = 0; j < aMutators.length; j++) {
-					if (jQuery.sap.startsWithIgnoreCase(oItem[aMutators[j]](), sValue)) {
+					if ((typeof sValue == "string" && sValue != "" ? oItem[aMutators[j]]().toLowerCase().startsWith(sValue.toLowerCase()) : false)) {
 						bMatch = true;
 						if (aMutators[j] === "getText") {
 							bTextMatch = true;
@@ -629,7 +630,7 @@ sap.ui.define([
 
 				var bItemsVisible = !!aVisibleItems.length;
 				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
-				var bTextMatched = (oFirstVisibleItem && jQuery.sap.startsWithIgnoreCase(oFirstVisibleItem.getText(), sValue));
+				var bTextMatched = (oFirstVisibleItem && ((typeof sValue == "string" && sValue != "" ? oFirstVisibleItem.getText().toLowerCase().startsWith(sValue.toLowerCase()) : false)));
 				var bSearchBoth = this.getFilterSecondaryValues();
 				var bDesktopPlatform = Device.system.desktop;
 
@@ -935,7 +936,7 @@ sap.ui.define([
 				return;
 			}
 
-			var mKeyCode = jQuery.sap.KeyCodes;
+			var mKeyCode = KeyCodes;
 			oControl._bDoTypeAhead = (oEvent.which !== mKeyCode.BACKSPACE) && (oEvent.which !== mKeyCode.DELETE);
 		};
 
@@ -1265,7 +1266,7 @@ sap.ui.define([
 			oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
-			if (jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet) {
+			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet) {
 
 				// force the focus to stay in the input field
 				this.focus();
@@ -1712,8 +1713,8 @@ sap.ui.define([
 				vResult = ComboBoxBase.prototype.updateItems.apply(this, arguments); //Update
 
 			//Debounce & emulate onBeforeRendering- all setters are done
-			jQuery.sap.clearDelayedCall(this._debounceItemsUpdate);
-			this._debounceItemsUpdate = jQuery.sap.delayedCall(0, this, "_syncItemsSelection", [oSelectedItem]);
+			clearTimeout(this._debounceItemsUpdate);
+			this._debounceItemsUpdate = setTimeout(this["_syncItemsSelection"].bind(this, oSelectedItem), 0);
 
 			return vResult;
 		};

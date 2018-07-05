@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Popover.
 sap.ui.define([
-	'jquery.sap.global',
 	'./Bar',
 	'./Button',
 	'./InstanceManager',
@@ -19,24 +18,32 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/ResizeHandler',
 	'./PopoverRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/getScrollbarSize",
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
 	function(
-	jQuery,
-	Bar,
-	Button,
-	InstanceManager,
-	library,
-	Control,
-	Popup,
-	ScrollEnablement,
-	Parameters,
-	Device,
-	ManagedObject,
-	coreLibrary,
-	Element,
-	ResizeHandler,
-	PopoverRenderer
+		Bar,
+		Button,
+		InstanceManager,
+		library,
+		Control,
+		Popup,
+		ScrollEnablement,
+		Parameters,
+		Device,
+		ManagedObject,
+		coreLibrary,
+		Element,
+		ResizeHandler,
+		PopoverRenderer,
+		containsOrEquals,
+		jQueryDOM,
+		getScrollbarSize,
+		KeyCodes,
+		Log
 	) {
 		"use strict";
 
@@ -424,7 +431,7 @@ sap.ui.define([
 					this._sFocusControlId = oActiveControl && oActiveControl.getId();
 				},
 				onAfterRendering: function () {
-					if (this._sFocusControlId && !jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement)) {
+					if (this._sFocusControlId && !containsOrEquals(this.getDomRef(), document.activeElement)) {
 						sap.ui.getCore().byId(this._sFocusControlId).focus();
 					}
 				}
@@ -462,17 +469,17 @@ sap.ui.define([
 
 				// if the openBy dom reference is null there's no need to continue the reposition the popover
 				if (!oPosition.of) {
-					jQuery.sap.log.warning("sap.m.Popover: in function applyPosition, the openBy element doesn't have any DOM output. " + that);
+					Log.warning("sap.m.Popover: in function applyPosition, the openBy element doesn't have any DOM output. " + that);
 					return;
 				}
 
 				// if the openBy dom reference is already detached from the document, try to get the dom reference with the same id from dom tree again
-				if (!jQuery.sap.containsOrEquals(document.documentElement, oPosition.of) && oPosition.of.id) {
-					oOf = jQuery.sap.byId(oPosition.of.id);
+				if (!containsOrEquals(document.documentElement, oPosition.of) && oPosition.of.id) {
+					oOf = jQueryDOM(document.getElementById(oPosition.of.id));
 					if (oOf) {
 						oPosition.of = oOf;
 					} else {
-						jQuery.sap.log.warning("sap.m.Popover: in function applyPosition, the openBy element's DOM is already detached from DOM tree and can't be found again by the same id. " + that);
+						Log.warning("sap.m.Popover: in function applyPosition, the openBy element's DOM is already detached from DOM tree and can't be found again by the same id. " + that);
 						return;
 					}
 				}
@@ -554,7 +561,7 @@ sap.ui.define([
 			} else if (!this._bVScrollingEnabled && !this._bHScrollingEnabled && this._hasSingleScrollableContent()) {
 				// When scrolling isn't set manually and content has scrolling, disable scrolling automatically
 				this._forceDisableScrolling = true;
-				jQuery.sap.log.info("VerticalScrolling and horizontalScrolling in sap.m.Popover with ID " + this.getId() + " has been disabled because there's scrollable content inside");
+				Log.info("VerticalScrolling and horizontalScrolling in sap.m.Popover with ID " + this.getId() + " has been disabled because there's scrollable content inside");
 			} else {
 				this._forceDisableScrolling = false;
 			}
@@ -572,10 +579,13 @@ sap.ui.define([
 				this._bContentChanged = false;
 				oNavContent = this._getSingleNavContent();
 				oPageContent = this._getSinglePageContent();
+				//TODO: global jquery call found
 				if (oNavContent && !this.getModal() && !Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
 					//gain the focus back to popover in order to prevent the autoclose of the popover
 					oNavContent.attachEvent("afterNavigate", function (oEvent) {
-						jQuery.sap.focus(this.getDomRef());
+						if (this.getDomRef()){
+							this.getDomRef().focus();
+						}
 					}, this);
 				}
 				if (oNavContent || oPageContent) {
@@ -743,7 +753,7 @@ sap.ui.define([
 			if (iPlacePos > -1) {
 				oParentDomRef = this._getOpenByDomRef();
 				if (!oParentDomRef) {
-					jQuery.sap.log.error("sap.m.Popover id = " + this.getId() + ": is opened by a control which isn't rendered yet.");
+					Log.error("sap.m.Popover id = " + this.getId() + ": is opened by a control which isn't rendered yet.");
 					return this;
 				}
 
@@ -784,7 +794,7 @@ sap.ui.define([
 				};
 				fCheckAndOpen();
 			} else {
-				jQuery.sap.log.error(this.getPlacement() + "is not a valid value! It can only be top, right, bottom or left");
+				Log.error(this.getPlacement() + "is not a valid value! It can only be top, right, bottom or left");
 			}
 			return this;
 		};
@@ -949,9 +959,13 @@ sap.ui.define([
 
 			// Set focus to the first visible focusable element
 			var sFocusId = this._getInitialFocusId(),
-				oControl = sap.ui.getCore().byId(sFocusId);
-			jQuery.sap.focus(oControl ? oControl.getFocusDomRef() : jQuery.sap.domById(sFocusId));
-
+			oControl = sap.ui.getCore().byId(sFocusId),
+			oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
+			if (oControl && oControl.getFocusDomRef()){
+				oControl.getFocusDomRef().focus();
+			} else if (!oControl && oDomById){
+				oDomById.focus();
+			}
 			this.fireAfterOpen({openBy: this._oOpenBy});
 		};
 
@@ -986,11 +1000,15 @@ sap.ui.define([
 			if (oSourceDomRef.id === this.getId() + "-firstfe") {
 				// Search for anything focusable from bottom to top
 				var oLastFocusableDomref = $this.lastFocusableDomRef();
-				jQuery.sap.focus(oLastFocusableDomref);
+				if (oLastFocusableDomref){
+					oLastFocusableDomref.focus();
+				}
 			} else if (oSourceDomRef.id === this.getId() + "-lastfe") {
 				// Search for anything focusable from top to bottom
 				var oFirstFocusableDomref = $this.firstFocusableDomRef();
-				jQuery.sap.focus(oFirstFocusableDomref);
+				if (oFirstFocusableDomref){
+					oFirstFocusableDomref.focus();
+				}
 			}
 		};
 
@@ -1001,7 +1019,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype.onkeydown = function (oEvent) {
-			var oKC = jQuery.sap.KeyCodes,
+			var oKC = KeyCodes,
 				iKC = oEvent.which || oEvent.keyCode,
 				bAlt = oEvent.altKey;
 
@@ -1515,7 +1533,7 @@ sap.ui.define([
 		Popover.prototype._getPositionParams = function ($popover, $arrow, $content, $scrollArea) {
 			var oComputedStyle = window.getComputedStyle($popover[0]),
 				oContentComputedStyle = window.getComputedStyle($content[0]),
-				fScrollWidth = this.getDomRef().clientHeight != this.getDomRef().scrollHeight ? jQuery.sap.scrollbarSize().width : 0,
+				fScrollWidth = this.getDomRef().clientHeight != this.getDomRef().scrollHeight ? getScrollbarSize().width : 0,
 				oPosParams = {};
 
 			oPosParams._$popover = $popover;
@@ -1619,7 +1637,7 @@ sap.ui.define([
 				bOverLeft = oPosParams._fOffset.left < oPosParams._fMarginLeft,
 				//Include Scrollbar's width in these calculations
 				fScrollbarSize = this.getVerticalScrolling() && (oPosParams._fWidth !== oPosParams._fWidthInner) ?
-					jQuery.sap.scrollbarSize().width : 0,
+					getScrollbarSize().width : 0,
 				bOverRight = iPosToRightBorder < (oPosParams._fMarginRight + fScrollbarSize),
 				bOverTop = oPosParams._fOffset.top < oPosParams._fMarginTop,
 				bOverBottom = iPosToBottomBorder < oPosParams._fMarginBottom,
@@ -2092,8 +2110,13 @@ sap.ui.define([
 			if (this.isOpen()) {
 				//restore the focus after rendering when popover is already open
 				var sFocusId = this._getInitialFocusId(),
-					oControl = sap.ui.getCore().byId(sFocusId);
-				jQuery.sap.focus(oControl ? oControl.getFocusDomRef() : jQuery.sap.domById(sFocusId));
+				oControl = sap.ui.getCore().byId(sFocusId),
+				oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
+				if (oControl && oControl.getFocusDomRef()){
+					oControl.getFocusDomRef().focus();
+				} else if (!oControl && oDomById){
+					oDomById.focus();
+				}
 			}
 		};
 
