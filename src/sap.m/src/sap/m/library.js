@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/util/defineLazyProperty",
 	// referenced here to enable the Support feature
 	'./Support'
 ],
@@ -30,7 +31,8 @@ sap.ui.define([
 	capitalize,
 	jQueryDOM,
 	assert,
-	Log
+	Log,
+	defineLazyProperty
 ) {
 
 	"use strict";
@@ -3565,7 +3567,13 @@ sap.ui.define([
 	 * @private
 	 * @since 1.12
 	 */
-	thisLib.BaseFontSize = jQuery(document.documentElement).css("font-size") || "16px";
+	defineLazyProperty(thisLib, "BaseFontSize", function () {
+		// jQuery(...).css() is executed only on "BaseFontSize" property access.
+		// This avoids accessing the DOM during library evaluation
+		// which might be too early, e.g. when the library is loaded within the head element.
+		thisLib.BaseFontSize = jQuery(document.documentElement).css("font-size") || "16px";
+		return thisLib.BaseFontSize;
+	});
 
 	/**
 	 * Hide the soft keyboard.
