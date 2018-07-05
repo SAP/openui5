@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",

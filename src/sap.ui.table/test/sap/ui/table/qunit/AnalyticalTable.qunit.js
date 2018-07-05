@@ -1,7 +1,5 @@
-/*!
- * ${copyright}
- */
-sap.ui.require([
+
+sap.ui.define([
 	"sap/ui/table/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/odata/ODataModel",

@@ -1,4 +1,4 @@
-/*global QUnit, window */
+/*global window */
 
 (function() {
 	"use strict";
@@ -10,10 +10,7 @@
 		return /\[object Object\]/.test(e);
 	};
 
-	// prevent QUnit from starting
-	QUnit.config.autostart = false;
-
-	sap.ui.require([
+	sap.ui.define([
 		"sap/ui/demo/mock/qunit/SampleTester"
 	], function(SampleTester) {
 		new SampleTester('sap.ui.table', [] /*Excludes*/).placeAt('content');

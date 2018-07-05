@@ -1,6 +1,6 @@
 /*global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/table/qunit/TableQUnitUtils",

@@ -1,6 +1,6 @@
 /*global QUnit */
 
-sap.ui.require([], function() {
+sap.ui.define([], function() {
 	"use strict";
 
 	QUnit.module("Library", {});

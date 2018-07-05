@@ -1,6 +1,6 @@
 /*global QUnit, sinon, oTable, oTreeTable*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TableUtils",
 	"sap/ui/core/dnd/DragDropInfo",

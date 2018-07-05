@@ -1,6 +1,6 @@
 /*global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/table/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
