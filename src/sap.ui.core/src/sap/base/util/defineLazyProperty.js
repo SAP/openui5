@@ -11,7 +11,7 @@ sap.ui.define([], function() {
 	/**
 	 * Creates a property stub which allows to retrieve the according property value lazily
 	 * <strong>Note:</strong> Within the callback the property value shows as undefined and
-         * should not be set other than via assignment (no <code>Object.defineProperty</code>).
+	 * should not be set other than via assignment (no <code>Object.defineProperty</code>).
 	 * The function callback should return the actual property's value like that:
 	 * @example
 	 * sap.ui.require(["sap/base/util/defineLazyProperty"], function(defineLazyProperty){
