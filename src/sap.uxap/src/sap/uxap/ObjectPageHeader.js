@@ -855,14 +855,11 @@ sap.ui.define([
 	 */
 	ObjectPageHeader.prototype._adaptActions = function (iAvailableSpaceForActions) {
 		var bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange()) || Device.system.phone,
-			sOverflowButtonDisplay = this._oOverflowButton.$().css("display"),
-			iVisibleActionsWidth = this._oOverflowButton.$().show().width(), // overflowButton is now visible
+			$_oOverflowButton = this._oOverflowButton.$(),
+			iVisibleActionsWidth = $_oOverflowButton.show().width(),
 			aActions = this.getActions(),
 			iActionsLength = aActions.length,
 			oActionSheetButton;
-
-		// reset overflowButton's visibility
-		this._oOverflowButton.$().css("display", sOverflowButtonDisplay);
 
 		for (var i = 0; i < iActionsLength; i++) {
 			aActions[i].position = i;
@@ -877,8 +874,10 @@ sap.ui.define([
 				iVisibleActionsWidth += oAction.$().width();
 				if (iAvailableSpaceForActions > iVisibleActionsWidth && !bMobileScenario) {
 					this._setActionButtonVisibility(oAction, true);
+					$_oOverflowButton.hide();
 				} else {
 					this._setActionButtonVisibility(oAction, false);
+					$_oOverflowButton.show();
 				}
 			}
 		}, this);
