@@ -214,9 +214,10 @@ function (library, Device) {
 
 	// Adds the classes and attributes for the grid
 	BoxContainerListRenderer.renderGrid = function (rm, oControl) {
-		var sWidth = oControl.getBoxWidth();
+		var sWidth = oControl.getBoxWidth(),
+			sMinWidth = oControl.getBoxMinWidth();
 
-		if (!sWidth) {
+		if (!sWidth && !sMinWidth) {
 			rm.addClass("sapTntBoxContainerRelativeWidth");
 		}
 
@@ -226,8 +227,12 @@ function (library, Device) {
 			rm.addClass("sapTntBoxContainerGridGrouped");
 		}
 
-		if (!Device.browser.msie && sWidth) {
-			rm.addStyle("grid-template-columns", "repeat(auto-fit, " + sWidth + ")");
+		if (!Device.browser.msie) {
+			if (sMinWidth) {
+				rm.addStyle("grid-template-columns", "repeat(auto-fit, minmax(" + sMinWidth + ", 1fr)");
+			} else if (sWidth) {
+				rm.addStyle("grid-template-columns", "repeat(auto-fit, " + sWidth + ")");
+			}
 		}
 	};
 
@@ -247,8 +252,8 @@ function (library, Device) {
 			sSpanMediumClass,
 			sSpanSmallClass;
 
-		// Span classes are used only when no boxWidth is being set.
-		if (oControl.getBoxWidth()) {
+		// Span classes are used only when no boxWidth or boxMinWidth is being set.
+		if (oControl._hasBoxWidth()) {
 			return;
 		}
 

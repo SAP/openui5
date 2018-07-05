@@ -46,6 +46,11 @@ sap.ui.define([
 		properties: {
 
 			/**
+			 * Defines the minimum width of the Boxes
+			 */
+			boxMinWidth: { type: "sap.ui.core.CSSSize", defaultValue: "" },
+
+			/**
 			 * Defines the width of the Boxes
 			 */
 			boxWidth: { type: "sap.ui.core.CSSSize", defaultValue: "" },
@@ -70,8 +75,8 @@ sap.ui.define([
 	BoxContainerList.prototype.onAfterRendering = function () {
 		this._registerResizeListener();
 
-		// Size class is used when no boxWidth is being set.
-		if (!this.getBoxWidth()) {
+		// Size class is used when no boxWidth or boxMinWidth is being set.
+		if (!this._hasBoxWidth()) {
 			this._applySizeClass(this.$().width());
 		}
 
@@ -88,6 +93,14 @@ sap.ui.define([
 	 */
 	BoxContainerList.prototype._registerResizeListener = function () {
 		this._sResizeListenerId = ResizeHandler.register(this, this._onResize.bind(this));
+	};
+
+	/**
+	 * Checks if boxWidth or boxMinWidth is set
+	 * @private
+	 */
+	BoxContainerList.prototype._hasBoxWidth = function () {
+		return this.getBoxWidth() || this.getBoxMinWidth();
 	};
 
 	/**
@@ -112,8 +125,8 @@ sap.ui.define([
 	 */
 	BoxContainerList.prototype._onResize = function (oEvent) {
 		if (oEvent) {
-			// Size class is used when no boxWidth is being set.
-			if (!this.getBoxWidth()) {
+			// Size class is used when no boxWidth or boxMinWidth is being set.
+			if (!this._hasBoxWidth()) {
 				this._applySizeClass(oEvent.size.width);
 			}
 
