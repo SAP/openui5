@@ -277,9 +277,9 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Microsoft
 
-Component: es6-promise 2.3.0 - a tiny implementation of Promises/A+.
-Licensor: Jake Archibald
-Website: https://github.com/jakearchibald/es6-promise
+Component: es6-promise v4.2.4 - a tiny implementation of Promises/A+.
+Licensor: Stefan Penner
+Website: https://github.com/stefanpenner/es6-promise
 License: MIT License
 <year> = 2014
 <copyright holders> = Yehuda Katz, Tom Dale, Stefan Penner, Jake Archibald and contributors

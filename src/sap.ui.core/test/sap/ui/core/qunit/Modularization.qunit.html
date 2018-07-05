@@ -32,7 +32,6 @@
 		QUnit.config.autostart = false;
 		QUnit.config.reorder = true;
 		sap.ui.require([
-			"local/polyfillsForTests",
 
 			// sap/base/*
 			"local/base/assert.qunit",
@@ -106,9 +105,7 @@
 			"local/util/Storage.qunit",
 			"local/util/XMLHelper.qunit"
 
-		], function(applyPolyfills) {
-			applyPolyfills();
-
+		], function() {
 			QUnit.start();
 		});
 		</script>

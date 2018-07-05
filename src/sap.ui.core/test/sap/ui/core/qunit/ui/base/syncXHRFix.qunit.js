@@ -1,6 +1,11 @@
 /*global QUnit */
-sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHRFix'], function(jQuery, Device, syncXHRFix) {
 	'use strict';
+
+	// Fix is only required in Firefox
+	if (Device.browser.firefox && window.Proxy) {
+		syncXHRFix();
+	}
 
 	QUnit.module("sap/ui/base/syncXHRFix (window.XMLHttpRequest)");
 

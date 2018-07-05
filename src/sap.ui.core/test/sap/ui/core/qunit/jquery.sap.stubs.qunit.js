@@ -1,12 +1,6 @@
-/* global QUnit, sinon, ES6Promise */
+/* global QUnit, sinon */
 (function() {
 	"use strict";
-
-	// Promise polyfill needs to be applied manually before
-	// the loader is executed, as the test itself uses promises
-	if (typeof Promise === "undefined") {
-		ES6Promise.polyfill();
-	}
 
 	QUnit.config.autostart = false;
 
