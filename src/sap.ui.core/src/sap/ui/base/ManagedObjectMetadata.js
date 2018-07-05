@@ -6,12 +6,18 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'./DataType',
-	'./Metadata'
+	'./Metadata',
+	'sap/base/util/ObjectPath',
+	"sap/base/strings/escapeRegExp",
+	"sap/base/util/merge"
 ],
 function(
 	jQuery,
 	DataType,
-	Metadata
+	Metadata,
+	ObjectPath,
+	escapeRegExp,
+	merge
 ) {
 	"use strict";
 
@@ -1632,7 +1638,7 @@ function(
 	 */
 	function loadInstanceDesignTime(oInstance) {
 		var sInstanceSpecificModule =
-			oInstance instanceof jQuery.sap.getObject('sap.ui.base.ManagedObject')
+			oInstance instanceof ObjectPath.get('sap.ui.base.ManagedObject')
 			&& typeof oInstance.data === "function"
 			&& oInstance.data("sap-ui-custom-settings")
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"]
@@ -1659,8 +1665,7 @@ function(
 		var mResult = mMetadata;
 
 		if ("default" in mMetadata) {
-			mResult = jQuery.sap.extend(
-				true,
+			mResult = merge(
 				{},
 				mMetadata.default,
 				sScopeKey !== "default" && mMetadata[sScopeKey] || null
@@ -1708,12 +1713,10 @@ function(
 				return oWhenParentLoaded.then(function(mParentDesignTime) {
 					// we use jQuery.sap.extend to be able to also overwrite properties with null or undefined
 					// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
-					return jQuery.sap.extend(
-						true,
+					return merge(
 						{},
 						getScopeBasedDesignTime(mParentDesignTime, sScopeKey),
-						getScopeBasedDesignTime(mOwnDesignTime, sScopeKey),
-						{
+						getScopeBasedDesignTime(mOwnDesignTime, sScopeKey), {
 							designtimeModule: mOwnDesignTime.designtimeModule || undefined,
 							_oLib: mOwnDesignTime._oLib
 						}
@@ -1726,8 +1729,7 @@ function(
 			.then(function(aData){
 				var oInstanceDesigntime = aData[0],
 					oDesignTime = aData[1];
-				return jQuery.sap.extend(
-					true,
+				return merge(
 					{},
 					oDesignTime,
 					getScopeBasedDesignTime(oInstanceDesigntime || {}, sScopeKey)
@@ -1828,7 +1830,7 @@ function(
 	 */
 	ManagedObjectMetadata.isGeneratedId = function(sId) {
 		sUIDPrefix = sUIDPrefix || sap.ui.getCore().getConfiguration().getUIDPrefix();
-		rGeneratedUID = rGeneratedUID || new RegExp( "(^|-{1,3})" + jQuery.sap.escapeRegExp(sUIDPrefix) );
+		rGeneratedUID = rGeneratedUID || new RegExp( "(^|-{1,3})" + escapeRegExp(sUIDPrefix) );
 
 		return rGeneratedUID.test(sId);
 	};

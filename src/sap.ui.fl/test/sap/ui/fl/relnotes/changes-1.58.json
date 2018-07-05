@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": " sap.ui.fl: Fix issues with variants and FLP navigation:",
         "references": []
+      },
+      {
+        "id": "1a1d07ef0dfd27686df2496eef5d824f999bb062",
+        "type": "FIX",
+        "text": " Issues with displaying error messages in case of failed save",
+        "references": []
       }
     ]
   }

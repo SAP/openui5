@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -15,9 +14,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/library',
 	"./YearPickerRenderer",
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ], function(
-	jQuery,
 	Control,
 	Device,
 	ItemNavigation,
@@ -27,7 +25,8 @@ sap.ui.define([
 	library,
 	DateFormat,
 	coreLibrary,
-	YearPickerRenderer
+	YearPickerRenderer,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -470,7 +469,7 @@ sap.ui.define([
 			switch (oEvent.type) {
 			case "sapnext":
 			case "sapnextmodifiers":
-				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN && iColumns < iYears) {
+				if (oEvent.keyCode == KeyCodes.ARROW_DOWN && iColumns < iYears) {
 					//same column in first row of next group (only if more than one row)
 					_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex() - iYears + iColumns, true);
 				} else {
@@ -481,7 +480,7 @@ sap.ui.define([
 
 			case "sapprevious":
 			case "sappreviousmodifiers":
-				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP && iColumns < iYears) {
+				if (oEvent.keyCode == KeyCodes.ARROW_UP && iColumns < iYears) {
 					//same column in last row of previous group (only if more than one row)
 					_updatePage.call(this, false, iYears - iColumns + this._oItemNavigation.getFocusedIndex(), true);
 				} else {

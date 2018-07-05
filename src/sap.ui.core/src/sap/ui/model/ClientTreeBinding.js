@@ -209,10 +209,10 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 	 * @param {string} sContextPath the path to be checked
 	 */
 	ClientTreeBinding.prototype._sanitizePath = function (sContextPath) {
-		if (!jQuery.sap.endsWith(sContextPath,"/")) {
+		if (!sContextPath.endsWith("/")) {
 			sContextPath = sContextPath + "/";
 		}
-		if (!jQuery.sap.startsWith(sContextPath,"/")) {
+		if (!sContextPath.startsWith("/")) {
 			sContextPath = "/" + sContextPath;
 		}
 		return sContextPath;

@@ -1,8 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
-	function (jQuery, core, URI) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Core',
+	'sap/ui/thirdparty/URI',
+	"sap/base/i18n/ResourceBundle"
+],
+	function(jQuery, core, URI, ResourceBundle) {
 		"use strict";
 
 		/**
@@ -339,7 +344,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				sContent = makeChar(iconInfo.content);
 			}
 
-			if (jQuery.sap.resources.isBundle(iconInfo.resourceBundle)) {
+			if (iconInfo.resourceBundle instanceof ResourceBundle) {
 				sKey = "Icon." + iconName;
 				if (iconInfo.resourceBundle.hasText(sKey)) {
 					sText = iconInfo.resourceBundle.getText(sKey);

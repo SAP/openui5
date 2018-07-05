@@ -11,15 +11,49 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.P13nDialog.Page", {
 
 		oJSONModel: new JSONModel("test-resources/sap/m/demokit/sample/P13nDialog/products.json"),
-		oDataInitial: {},
+		oDataInitial: {
+			ShowResetEnabled: false,
+			Items: [],
+			ColumnsItems: []
+		},
 		oDataBeforeOpen: {},
 
 		onInit: function() {
 			var that = this;
 			this.oJSONModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+			this.setInitialData(this.oJSONModel);
 			this.oJSONModel.attachRequestCompleted(function() {
-				that.oDataInitial = jQuery.extend(true, {}, this.getData());
+				that.setInitialData(this);
 			});
+		},
+
+		setInitialData: function(oJsonModel) {
+			// Collect JSON 'Items'
+			this.oDataInitial.Items = jQuery.extend(true, {}, oJsonModel.getProperty("/Items"));
+
+			// Collect JSON 'ColumnsItems'
+			// First columns which are initially visible (note: we assume that 'ColumnsItems' are sorted by 'index').
+			var aColumnKeysVisible = [];
+			oJsonModel.getProperty("/ColumnsItems").filter(function(oItem) {
+				return !!oItem.visible;
+			}).forEach(function(oItem) {
+				aColumnKeysVisible.push(oItem.columnKey);
+				this.oDataInitial.ColumnsItems.push({
+					columnKey: oItem.columnKey,
+					visible: oItem.visible,
+					index: oItem.index
+				});
+			}.bind(this));
+			// Then remaining columns
+			oJsonModel.getProperty("/Items").filter(function(oItem) {
+				return aColumnKeysVisible.indexOf(oItem.columnKey) < 0;
+			}).forEach(function(oItem) {
+				this.oDataInitial.ColumnsItems.push({
+					columnKey: oItem.columnKey,
+					visible: false,
+					index: this.oDataInitial.ColumnsItems.length
+				});
+			}.bind(this));
 		},
 
 		onOK: function(oEvent) {
@@ -40,7 +74,7 @@ sap.ui.define([
 
 		onPersonalizationDialogPress: function() {
 			var oPersonalizationDialog = sap.ui.xmlfragment("sap.m.sample.P13nDialog.PersonalizationDialog", this);
-			this.oJSONModel.setProperty("/ShowResetEnabled", this._isChangedSortItems() || this._isChangedColumnsItems());
+			this.oJSONModel.setProperty("/ShowResetEnabled", this._isChangedColumnsItems());
 			oPersonalizationDialog.setModel(this.oJSONModel);
 
 			this.getView().addDependent(oPersonalizationDialog);
@@ -50,58 +84,42 @@ sap.ui.define([
 		},
 
 		onChangeColumnsItems: function(oEvent) {
-			var aMColumnsItems = oEvent.getParameter("items").map(function(oMChangedColumnsItem) {
-				return oMChangedColumnsItem;
-			});
-			this.oJSONModel.setProperty("/ColumnsItems", aMColumnsItems);
-		},
-
-		onAddSortItem: function(oEvent) {
-			var oParameters = oEvent.getParameters();
-			var aSortItems = this.oJSONModel.getProperty("/SortItems");
-			oParameters.index > -1 ? aSortItems.splice(oParameters.index, 0, {
-				columnKey: oParameters.sortItemData.getColumnKey(),
-				operation: oParameters.sortItemData.getOperation()
-			}) : aSortItems.push({
-				columnKey: oParameters.sortItemData.getColumnKey(),
-				operation: oParameters.sortItemData.getOperation()
-			});
-			this.oJSONModel.setProperty("/SortItems", aSortItems);
-		},
-
-		onRemoveSortItem: function(oEvent) {
-			var oParameters = oEvent.getParameters();
-			if (oParameters.index > -1) {
-				var aSortItems = this.oJSONModel.getProperty("/SortItems");
-				aSortItems.splice(oParameters.index, 1);
-				this.oJSONModel.setProperty("/SortItems", aSortItems);
-			}
-		},
-
-		_isChangedSortItems: function() {
-			var fnGetUnion = function(aDataBase, aData) {
-				if (!aData) {
-					return jQuery.extend(true, [], aDataBase);
-				}
-				return jQuery.extend(true, [], aData);
-			};
-			var fnIsEqual = function(aDataBase, aData) {
-				if (!aData) {
-					return true;
-				}
-				return JSON.stringify(aDataBase) === JSON.stringify(aData);
-			};
-			var aDataTotal = fnGetUnion(jQuery.extend(true, [], this.oDataInitial.SortItems), this.oJSONModel.getProperty("/SortItems"));
-			var aDataInitialTotal = jQuery.extend(true, [], this.oDataInitial.SortItems);
-			return !fnIsEqual(aDataTotal, aDataInitialTotal);
+			this.oJSONModel.setProperty("/ColumnsItems", oEvent.getParameter("items"));
+			this.oJSONModel.setProperty("/ShowResetEnabled", this._isChangedColumnsItems());
 		},
 
 		_isChangedColumnsItems: function() {
+			var fnGetArrayElementByKey = function(sKey, sValue, aArray) {
+				var aElements = aArray.filter(function(oElement) {
+					return oElement[sKey] !== undefined && oElement[sKey] === sValue;
+				});
+				return aElements.length ? aElements[0] : null;
+			};
 			var fnGetUnion = function(aDataBase, aData) {
 				if (!aData) {
 					return jQuery.extend(true, [], aDataBase);
 				}
-				return jQuery.extend(true, [], aData);
+				var aUnion = jQuery.extend(true, [], aData);
+				aDataBase.forEach(function(oMItemBase) {
+					var oMItemUnion = fnGetArrayElementByKey("columnKey", oMItemBase.columnKey, aUnion);
+					if (!oMItemUnion) {
+						aUnion.push(oMItemBase);
+						return;
+					}
+					if (oMItemUnion.visible === undefined && oMItemBase.visible !== undefined) {
+						oMItemUnion.visible = oMItemBase.visible;
+					}
+					if (oMItemUnion.width === undefined && oMItemBase.width !== undefined) {
+						oMItemUnion.width = oMItemBase.width;
+					}
+					if (oMItemUnion.total === undefined && oMItemBase.total !== undefined) {
+						oMItemUnion.total = oMItemBase.total;
+					}
+					if (oMItemUnion.index === undefined && oMItemBase.index !== undefined) {
+						oMItemUnion.index = oMItemBase.index;
+					}
+				});
+				return aUnion;
 			};
 			var fnIsEqual = function(aDataBase, aData) {
 				if (!aData) {
@@ -138,10 +156,8 @@ sap.ui.define([
 				return JSON.stringify(aDataBase) === JSON.stringify(aData);
 			};
 
-			var aDataTotal = fnGetUnion(this.oDataInitial.ColumnsItems, this.oJSONModel.getProperty("/ColumnsItems"));
-			var aDataInitialTotal = jQuery.extend(true, [], this.oDataInitial.ColumnsItems);
-			return !fnIsEqual(aDataTotal, aDataInitialTotal);
-
+			var aDataRuntime = fnGetUnion(this.oDataInitial.ColumnsItems, this.oJSONModel.getProperty("/ColumnsItems"));
+			return !fnIsEqual(aDataRuntime, this.oDataInitial.ColumnsItems);
 		}
 	});
 });

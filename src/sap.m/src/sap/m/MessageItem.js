@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/core/library"],
-	function(jQuery, library, Item, coreLibrary) {
+sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/core/library", "sap/base/Log"],
+	function(library, Item, coreLibrary, Log) {
 		"use strict";
 
 		// shortcut for sap.ui.core.MessageType
@@ -158,7 +158,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/cor
 		MessageItem.prototype.setType = function (sType) {
 			if (sType === MessageType.None) {
 				sType = MessageType.Information;
-				jQuery.sap.log.warning("The provided None type is handled and rendered as Information type");
+				Log.warning("The provided None type is handled and rendered as Information type");
 			}
 
 			return this.setProperty("type", sType, true);

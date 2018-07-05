@@ -4,13 +4,12 @@
 
 // Provides control sap.m.TabContainer.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'./TabContainerRenderer'
 ],
-	function(jQuery, library, Control, IconPool, TabContainerRenderer) {
+	function(library, Control, IconPool, TabContainerRenderer) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -336,7 +335,7 @@ sap.ui.define([
 				this.fireItemSelect({item: oNextItem});
 			}
 			// Focus (force to wait until invalidated)
-			jQuery.sap.delayedCall(0, this, fnFocusCallback);
+			setTimeout(fnFocusCallback.bind(this), 0);
 		};
 
 		/**

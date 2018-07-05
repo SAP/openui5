@@ -3,8 +3,26 @@
  */
 
 // Provides an abstract property binding.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './ChangeReason', './PropertyBinding', './CompositeType', './CompositeDataState'],
-	function(jQuery, DataType, BindingMode, ChangeReason, PropertyBinding, CompositeType, CompositeDataState) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/DataType',
+	'./BindingMode',
+	'./ChangeReason',
+	'./PropertyBinding',
+	'./CompositeType',
+	'./CompositeDataState',
+	"sap/base/util/deepEqual"
+],
+	function(
+		jQuery,
+		DataType,
+		BindingMode,
+		ChangeReason,
+		PropertyBinding,
+		CompositeType,
+		CompositeDataState,
+		deepEqual
+	) {
 	"use strict";
 
 
@@ -554,13 +572,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 		}
 		var oDataState = this.getDataState();
 		var aOriginalValues = this.getOriginalValue();
-		if (bForceUpdate || !jQuery.sap.equal(aOriginalValues, this.aOriginalValues)) {
+		if (bForceUpdate || !deepEqual(aOriginalValues, this.aOriginalValues)) {
 			this.aOriginalValues = aOriginalValues;
 			oDataState.setOriginalValue(aOriginalValues);
 			bChanged = true;
 		}
 		var aValues = this.getValue();
-		if (!jQuery.sap.equal(aValues, this.aValues) || bForceUpdate) {// optimize for not firing the events when unneeded
+		if (!deepEqual(aValues, this.aValues) || bForceUpdate) {// optimize for not firing the events when unneeded
 			this.aValues = aValues;
 			oDataState.setValue(aValues);
 			this._fireChange({reason: ChangeReason.Change});

@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
@@ -11,7 +10,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"./FeedInputRenderer"
 ],
-	function(jQuery, library, Control, IconPool, TextArea, Button, FeedInputRenderer) {
+	function(library, Control, IconPool, TextArea, Button, FeedInputRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType

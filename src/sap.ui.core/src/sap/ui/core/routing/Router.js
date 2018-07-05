@@ -2,8 +2,32 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventProvider', './HashChanger', './Route', './Views', './Targets', './History', 'sap/ui/thirdparty/crossroads'],
-	function(jQuery, library, EventProvider, HashChanger, Route, Views, Targets, History, crossroads) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/library',
+	'sap/ui/base/EventProvider',
+	'./HashChanger',
+	'./Route',
+	'./Views',
+	'./Targets',
+	'./History',
+	'sap/ui/thirdparty/crossroads',
+	"sap/base/util/UriParameters",
+	"sap/base/util/deepEqual"
+],
+	function(
+		jQuery,
+		library,
+		EventProvider,
+		HashChanger,
+		Route,
+		Views,
+		Targets,
+		History,
+		crossroads,
+		UriParameters,
+		deepEqual
+	) {
 	"use strict";
 
 		var oRouters = {};
@@ -175,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 				// temporarily: for checking the url param
 				function checkUrl() {
-					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
+					if (new UriParameters(window.location.href).get("sap-ui-xx-asyncRouting") === "true") {
 						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Router");
 						return true;
 					}
@@ -617,6 +641,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 */
 			fireRouteMatched : function(mArguments) {
 				this.fireEvent("routeMatched", mArguments);
+
+				if (Router._trackRouteMatched) {
+					Router._trackRouteMatched(this._oConfig.controlId, this, mArguments);
+				}
 				return this;
 			},
 
@@ -927,7 +955,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 					// check whether there's a duplicate history entry with the last history entry and remove it if there is
 					this._aHistory.some(function(oEntry, i, aHistory) {
-						if (i < aHistory.length - 1 && jQuery.sap.equal(oEntry, oLastHistoryEntry)) {
+						if (i < aHistory.length - 1 && deepEqual(oEntry, oLastHistoryEntry)) {
 							return aHistory.splice(i, 1);
 						}
 					});
@@ -944,7 +972,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 
 					// Array.some is sufficient here, as we ensure there is only one occurence
 					this._aHistory.some(function(oEntry, i, aHistory) {
-						if (jQuery.sap.equal(oEntry, oNewHistoryEntry)) {
+						if (deepEqual(oEntry, oNewHistoryEntry)) {
 							return aHistory.splice(i, 1);
 						}
 					});
@@ -1053,6 +1081,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			BYPASSED: "bypassed",
 			TITLE_CHANGED: "titleChanged"
 		};
+
+		/**
+		 * Tracks <code>routeMatched</code> event.
+		 * This method is meant for private usages. Apps are not supposed to used it.
+		 * It is created for an experimental purpose.
+		 * Implementation should be injected by outside(i.e. sap.ui.core.delegate.UsageAnalytics).
+		 *
+		 * @param {string} sControlId the name of the control
+		 * @param {sap.ui.core.routing.Router} oRouter The instance of the router
+		 * @param {object} [mArguments] the arguments passed along with the event.
+		 * @function
+		 * @private
+		 * @experimental Since 1.58
+		 * @ui5-restricted
+		 */
+		Router._trackRouteMatched = undefined;
 
 		/**
 		 * Get a registered router

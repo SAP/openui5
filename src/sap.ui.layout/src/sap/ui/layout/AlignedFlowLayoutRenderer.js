@@ -99,6 +99,7 @@ sap.ui.define(['./library'],
 					oRm.addStyle("flex-basis", oControl.getMinItemWidth());
 				}
 
+				oRm.addStyle("max-width", oControl.getMaxItemWidth());
 				oRm.writeClasses();
 				oRm.writeStyles();
 				oRm.write(">");

@@ -249,6 +249,78 @@
 		<Button text="Button 4" type="Transparent"/>
 	</OverflowToolbar>
 
-
+	<MessageStrip
+		class="sapUiTinyMargin"
+		text="Toolbar items with shrinkable LayoutData and minWidth"
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+	<OverflowToolbar id="otb7">
+		<Label text="Buttons:"/>
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "100px"/>
+			</layoutData>
+		<Label/>
+		<Button text="Min width 50px" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "50px"/>
+			</layoutData>
+		</Button>
+		<Button text="Min width 100px" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "100px"/>
+			</layoutData>
+		</Button>
+		<ToolbarSpacer/>
+		<Select>
+			<items>
+				<core:Item key="1" text="Option 1"/>
+				<core:Item key="2" text="Option 2"/>
+				<core:Item key="3" text="Option 3"/>
+				<core:Item key="4" text="Option 4"/>
+				<core:Item key="5" text="Option 5"/>
+			</items>
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "150px"/>
+			</layoutData>
+		</Select>
+		<Input width="10%" placeholder="Input">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "50px"/>
+			</layoutData>
+		</Input>
+		<SearchField width="10%" placeholder="Search">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "100px"/>
+			</layoutData>
+		</SearchField>
+		<ToolbarSpacer/>
+		<CheckBox text="I'm a CheckBox!">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "30px"/>
+			</layoutData>
+		</CheckBox>
+		<RadioButton text="I'm a radio button!">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					shrinkable="true"
+					minWidth = "100px"/>
+			</layoutData>
+		</RadioButton>
+	</OverflowToolbar>
 
 </mvc:View>

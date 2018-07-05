@@ -1,25 +1,22 @@
-
 /*!
  * ${copyright}
  */
 sap.ui.define([
-    "jquery.sap.global",
-    "sap/ui/core/InvisibleText",
-    "sap/base/Log",
-    "./Slider",
-    "./SliderTooltip",
-    "./SliderUtilities",
-    "./RangeSliderRenderer"
+	"sap/ui/core/InvisibleText",
+	"sap/base/Log",
+	"./Slider",
+	"./SliderTooltip",
+	"./SliderUtilities",
+	"./RangeSliderRenderer"
 ],
     function(
-    jQuery,
-    InvisibleText,
-    log,
-    Slider,
-    SliderTooltip,
-    SliderUtilities,
-    RangeSliderRenderer
-    ) {
+		InvisibleText,
+		log,
+		Slider,
+		SliderTooltip,
+		SliderUtilities,
+		RangeSliderRenderer
+	) {
         "use strict";
 
         /**
@@ -306,7 +303,7 @@ sap.ui.define([
                 oFormInput = this.getDomRef("input");
 
             if (!!this.getName()) {
-                oFormInput.setAttribute(oHandle.getAttribute("data-range-val"), aRange[iIndex]);
+                oFormInput.setAttribute(oHandle.getAttribute("data-range-val"), this.toFixed(aRange[iIndex], this._iDecimalPrecision));
                 oFormInput.setAttribute("value", this.getValue());
             }
 
@@ -326,8 +323,8 @@ sap.ui.define([
 
             // ARIA updates. Delay the update to prevent multiple updates- for example holding the arrow key.
             // We need only the latest state
-            jQuery.sap.clearDelayedCall(this._ariaUpdateDelay[iIndex]);
-            this._ariaUpdateDelay[iIndex] = jQuery.sap.delayedCall(100, this, "_updateHandleAria", [oHandle, sValue]);
+            clearTimeout(this._ariaUpdateDelay[iIndex]);
+            this._ariaUpdateDelay[iIndex] = setTimeout(this["_updateHandleAria"].bind(this, oHandle, sValue), 100);
         };
 
         RangeSlider.prototype._updateHandleAria = function (oHandle, sValue) {
@@ -335,6 +332,9 @@ sap.ui.define([
                 oProgressHandle = this.getDomRef("progress"),
                 fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision),
                 sScaleLabel = this._formatValueByCustomElement(fNormalizedValue);
+
+            aRange[0] = this.toFixed(aRange[0], this._iDecimalPrecision);
+            aRange[1] = this.toFixed(aRange[1], this._iDecimalPrecision);
 
             this._updateHandlesAriaLabels();
 
@@ -692,7 +692,7 @@ sap.ui.define([
             });
 
             oFocusItem = aHandles.length === 1 ? aHandles[0] : this.getDomRef("progress");
-            jQuery.sap.delayedCall(0, oFocusItem, "focus");
+            setTimeout(oFocusItem["focus"].bind(oFocusItem), 0);
         };
 
         /**

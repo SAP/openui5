@@ -6,9 +6,9 @@ sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/core/Core",
 		"sap/ui/thirdparty/URI",
-		"jquery.sap.script",
+		"sap/base/util/UriParameters",
 		"jquery.sap.sjax"
-], function(jQuery, Core, URI/*, jQuerySapScript, jQuerySapSjax */) {
+], function(jQuery, Core, URI, UriParameters) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.JS has been omitted deliberately. Most test files load it via
@@ -19,7 +19,7 @@ sap.ui.define([
 		mMessageForPath = {}, // a cache for files, see useFakeServer
 		sMimeHeaders = "\r\nContent-Type: application/http\r\n"
 			+ "Content-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 ",
-		sRealOData = jQuery.sap.getUriParameters().get("realOData"),
+		sRealOData = new UriParameters(window.location.href).get("realOData"),
 		rRequestLine = /^(GET|DELETE|PATCH|POST) (\S+) HTTP\/1\.1$/,
 		mData = {},
 		bProxy = sRealOData === "true" || sRealOData === "proxy",

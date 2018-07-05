@@ -1,0 +1,50 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ResponsivePopover
+		title="Selection Preset"
+		placement="Bottom"
+		contentWidth="300px"
+		contentHeight="300px">
+		<customHeader>
+			<Bar design="Header">
+				<contentMiddle>
+					<Title text="Rule Presets" />
+				</contentMiddle>
+				<contentRight>
+					<core:Icon width="18px" src="sap-icon://sys-help" decorative="false" press="openHelp" />
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<Page showHeader="false">
+			<List
+				id="select"
+				items="{path: '/selectionPresets'}"
+				itemPress="onPresetItemPress"
+				selectionChange="onPresetChange"
+				mode="SingleSelectMaster">
+				<CustomListItem selected="{selected}" type="Active" tooltip="{description}">
+					<HBox
+						alignItems="Start"
+						justifyContent="SpaceBetween">
+						<Text class="sapUiTinyMargin" text="{title}" />
+						<Button
+							class="sapUiTinyMarginEnd"
+							tooltip="Delete Preset"
+							icon="sap-icon://sys-cancel"
+							type="Transparent"
+							press="onPresetItemDelete"
+							visible="{= ${disableDelete} ? false : true}" />
+					</HBox>
+				</CustomListItem>
+			</List>
+			<footer>
+				<Toolbar>
+					<ToolbarSpacer />
+					<Button text="Import" press="onImportPress" />
+					<Button text="Export" press="onExportPress" />
+				</Toolbar>
+			</footer>
+		</Page>
+	</ResponsivePopover>
+</core:FragmentDefinition>

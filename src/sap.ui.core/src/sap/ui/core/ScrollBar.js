@@ -4,15 +4,23 @@
 
 // Provides control sap.ui.core.ScrollBar.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/Device',
-    './Control',
-    './library',
-    "./ScrollBarRenderer",
-    'jquery.sap.script',
-    'jquery.sap.trace'
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'./Control',
+	'./library',
+	"./ScrollBarRenderer",
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/performance/trace/Interaction"
 ],
-	function(jQuery, Device, Control, library /*, jQuery*/, ScrollBarRenderer) {
+	function(
+		jQuery,
+		Device,
+		Control,
+		library,
+		ScrollBarRenderer,
+		containsOrEquals,
+		Interaction
+	) {
 	"use strict";
 
 
@@ -174,7 +182,7 @@ sap.ui.define([
 		this._bStepMode = !sContentSize;
 
 		var iScrollBarSize = this.getSize();
-		if (jQuery.sap.endsWith(iScrollBarSize,"px")) {
+		if (iScrollBarSize.endsWith("px")) {
 			iScrollBarSize = iScrollBarSize.substr(0, iScrollBarSize.length - 2);
 		} else {
 			iScrollBarSize = this.getVertical() ? this.$().height() : this.$().width();
@@ -188,7 +196,7 @@ sap.ui.define([
 			if ( stepSize === 0) {
 				// the following code is used if a container of the scrollbar is rendered invisible and afterwards is set to visible
 				stepSize = window.getComputedStyle(jQuery("body").get(0))["font-size"];
-				if (jQuery.sap.endsWith(stepSize,"px")) {
+				if (stepSize.endsWith("px")) {
 					stepSize = stepSize.substr(0, stepSize.length - 2);
 				}
 				stepSize = parseInt(stepSize, 10);
@@ -298,7 +306,7 @@ sap.ui.define([
 			// find out if the user is scrolling up= back or down= forward.
 			var bForward = wheelData > 0 ? true : false;
 
-			if (jQuery.sap.containsOrEquals(this._$ScrollDomRef[0], oEvent.target)) {
+			if (containsOrEquals(this._$ScrollDomRef[0], oEvent.target)) {
 				this._doScroll(ScrollBarAction.MouseWheel, bForward);
 			} else {
 
@@ -729,7 +737,7 @@ sap.ui.define([
 		this._bMouseWheel = false;
 
 		// notify for a scroll event
-		jQuery.sap.interaction.notifyScrollEvent({type: sAction});
+		Interaction.notifyScrollEvent({type: sAction});
 	};
 
 	ScrollBar.prototype.onThemeChanged = function() {

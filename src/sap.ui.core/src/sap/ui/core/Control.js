@@ -189,7 +189,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @private
 	 */
 	Control.prototype.isActive = function() {
-		return jQuery.sap.domById(this.sId) != null;
+		return ((this.sId ? window.document.getElementById(this.sId) : null)) != null;
 	};
 
 	/**
@@ -673,7 +673,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				// Only do it via timeout if there is a delay. Otherwise append the
 				// BusyIndicator immediately
 				if (iDelay) {
-					this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(iDelay, this, fnAppendBusyIndicator);
+					this._busyIndicatorDelayedCallId = setTimeout(fnAppendBusyIndicator.bind(this), iDelay);
 				} else {
 					fnAppendBusyIndicator.call(this);
 				}
@@ -698,7 +698,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 		//If there is a pending delayed call to append the busy indicator, we can clear it now
 		if (this._busyIndicatorDelayedCallId) {
-			jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
+			clearTimeout(this._busyIndicatorDelayedCallId);
 			delete this._busyIndicatorDelayedCallId;
 		}
 
@@ -885,7 +885,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			this.removeDelegate(oRenderingDelegate);
 			//If there is a pending delayed call we clear it
 			if (this._busyIndicatorDelayedCallId) {
-				jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
+				clearTimeout(this._busyIndicatorDelayedCallId);
 				delete this._busyIndicatorDelayedCallId;
 			}
 		}
@@ -899,7 +899,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			if (this.getBusyIndicatorDelay() <= 0) {
 				fnAppendBusyIndicator.call(this);
 			} else {
-				this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
+				this._busyIndicatorDelayedCallId = setTimeout(fnAppendBusyIndicator.bind(this), this.getBusyIndicatorDelay());
 			}
 		} else {
 			fnRemoveBusyIndicator.call(this);
@@ -938,7 +938,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	Control.prototype._cleanupBusyIndicator = function() {
 		//If there is a pending delayed call we clear it
 		if (this._busyIndicatorDelayedCallId) {
-			jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
+			clearTimeout(this._busyIndicatorDelayedCallId);
 			delete this._busyIndicatorDelayedCallId;
 		}
 		fnRemoveBusyIndicator.call(this, true);

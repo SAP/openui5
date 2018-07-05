@@ -450,6 +450,7 @@ sap.ui.define([
 				sMainContentId = sControlId + "-" + MC_GRID_CELL_SELECTOR;
 
 			if (!this._oSCScroller && !this._oMCScroller) {
+				//TODO: global jquery call found
 				jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
 				this._oSCScroller = new sap.ui.core.delegate.ScrollEnablement(this, null, {
 					scrollContainerId: sSideContentId,

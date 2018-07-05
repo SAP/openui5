@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQuery) {
+sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 		"use strict";
 
 		/**

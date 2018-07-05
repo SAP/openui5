@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeModifier"],
-		function(jQuery, JsControlTreeModifier) {
+sap.ui.define([
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/util/uid",
+	"sap/base/Log"
+],
+		function(JsControlTreeModifier, uid, Log) {
 			"use strict";
 
 			/**
@@ -43,7 +47,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeMo
 				if (fnFirstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
 					var oView = mPropertyBag.view;
 					var oAppComponent = mPropertyBag.appComponent;
-					var sGroupId = oAppComponent.createId(jQuery.sap.uid());
+					var sGroupId = oAppComponent.createId(uid());
 
 					var oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, sGroupId);
 					oModifier.setProperty(oTitle, "text", "");
@@ -109,7 +113,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeMo
 
 			var fnMapFieldIndexToContentAggregationIndex = function(oModifier, aContent, iGroupStart, iFieldIndex, bUp) {
 				if (!fnIsTitleOrToolbar(aContent, iGroupStart, oModifier)) {
-					jQuery.sap.log.error("Illegal argument. iIndex has to point to a Label.");
+					Log.error("Illegal argument. iIndex has to point to a Label.");
 				} else {
 					iFieldIndex = bUp ? iFieldIndex + 1 : iFieldIndex;
 					var iCurrentRelativeFieldIndex = 0;
@@ -300,7 +304,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeMo
 
 					fnRemoveAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView);
 				} else {
-					jQuery.sap.log.warning("Unknown change type detected. Cannot apply to SimpleForm");
+					Log.warning("Unknown change type detected. Cannot apply to SimpleForm");
 				}
 
 				return true;
@@ -328,7 +332,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeMo
 				var oSimpleForm = oModifier.bySelector(mSpecificChangeInfo.selector, oAppComponent, oView);
 				var aMovedElements = mSpecificChangeInfo.movedElements;
 				if (aMovedElements.length > 1) {
-					jQuery.sap.log.warning("Moving more than 1 Formelement is not yet supported.");
+					Log.warning("Moving more than 1 Formelement is not yet supported.");
 				}
 				var mMovedElement = aMovedElements[0];
 				mMovedElement.element = sap.ui.getCore().byId(mMovedElement.id);
@@ -347,7 +351,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeMo
 						mStableChangeInfo = fnMoveFormElement(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag);
 					}
 				} else {
-					jQuery.sap.log.error("Element not found. This may caused by an instable id!");
+					Log.error("Element not found. This may caused by an instable id!");
 				}
 
 				var mChangeData = oChangeWrapper.getDefinition();

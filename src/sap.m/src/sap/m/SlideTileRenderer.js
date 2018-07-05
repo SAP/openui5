@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([ 'jquery.sap.global', './library'],
-	function(jQuery, library) {
+sap.ui.define(['./library'],
+	function(library) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileScope

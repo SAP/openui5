@@ -18,6 +18,9 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
 		if (!oLI.isTopLevel()) {
 			rm.addClass("sapMTreeItemBaseChildren");
 		}
+		if (oLI.isLeaf()) {
+			rm.addClass("sapMTreeItemBaseLeaf");
+		}
 
 		var iIndentation = oLI._getPadding();
 		if (sap.ui.getCore().getConfiguration().getRTL()){

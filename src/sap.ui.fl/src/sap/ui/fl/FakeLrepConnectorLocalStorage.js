@@ -78,9 +78,12 @@ sap.ui.define([
 	FakeLrepConnectorLocalStorage.prototype.send = function(sUri, sMethod, oData, mOptions) {
 		if (sMethod === "DELETE") {
 			return FakeLrepConnector.prototype.send.apply(this, arguments).then(function(oResponse) {
-				FakeLrepLocalStorage.getChanges().forEach(function(oChange) {
-					if (oChange.reference === oResponse.response.parameters[1]) {
-						FakeLrepLocalStorage.deleteChange(oChange.fileName);
+				FakeLrepLocalStorage.getChanges().forEach(function(oChangeDefinition) {
+					if (
+						oChangeDefinition.reference === oResponse.response.parameters[1] &&
+						oChangeDefinition.layer === oResponse.response.parameters[2]
+					) {
+						FakeLrepLocalStorage.deleteChange(oChangeDefinition.fileName);
 					}
 				});
 				return Promise.resolve({

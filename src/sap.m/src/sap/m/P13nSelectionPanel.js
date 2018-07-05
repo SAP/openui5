@@ -4,7 +4,6 @@
 
 // Provides control sap.m.P13nSelectionPanel.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'./ColumnListItem',
 	'./P13nPanel',
@@ -24,9 +23,27 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/BindingMode',
 	'sap/ui/core/ResizeHandler'
-], function(jQuery, library, ColumnListItem, P13nPanel, SearchField, Text, Table, Column, ScrollContainer, P13nSelectionItem /* kept for compatibility*/,
-		VBox, Link, OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer,
-		CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler ) {
+], function(
+	library,
+	ColumnListItem,
+	P13nPanel,
+	SearchField,
+	Text,
+	Table,
+	Column,
+	ScrollContainer,
+	P13nSelectionItem /* kept for compatibility*/,
+	VBox,
+	Link,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	ToolbarSpacer,
+	CoreLibrary,
+	ChangeReason,
+	JSONModel,
+	BindingMode,
+	ResizeHandler
+) {
 	"use strict";
 
 	// shortcut for sap.m.ToolbarDesign

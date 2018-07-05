@@ -4,10 +4,25 @@
 
 // Provides the implementation for a MessageManager
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject',
-		'sap/ui/model/message/MessageModel', './Message', './ControlMessageProcessor', 'sap/ui/core/message/MessageProcessor'],
-	function(jQuery, EventProvider, ManagedObject, MessageModel, Message, ControlMessageProcessor, MessageProcessor) {
+	'jquery.sap.global',
+	'sap/ui/base/EventProvider',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/model/message/MessageModel',
+	'./Message',
+	'./ControlMessageProcessor',
+	'sap/ui/core/message/MessageProcessor',
+	"sap/base/util/deepEqual"
+],
+	function(
+		jQuery,
+		EventProvider,
+		ManagedObject,
+		MessageModel,
+		Message,
+		ControlMessageProcessor,
+		MessageProcessor,
+		deepEqual
+	) {
 
 	"use strict";
 
@@ -298,7 +313,7 @@ sap.ui.define([
 		if (aMessages) {
 			for (var i = 0; i < aMessages.length; i++) {
 				var oMsg = aMessages[i];
-				if (jQuery.sap.equal(oMsg, oMessage)) {
+				if (deepEqual(oMsg, oMessage)) {
 					aMessages.splice(i,1);
 					--i; // Decrease counter as one element has been removed
 				}

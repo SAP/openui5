@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
-		'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/unified/library'],
-	function (jQuery, CalendarUtils, CalendarDate, CalendarLegendRenderer, library) {
+sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/CalendarLegendRenderer',
+		'sap/ui/unified/library', "sap/base/Log"],
+	function (CalendarUtils, CalendarDate, CalendarLegendRenderer, library, Log) {
 		"use strict";
 
 
@@ -197,7 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				}
 				oHelper.oLegend = oLegend;
 			} else {
-				jQuery.sap.log.warning("CalendarLegend " + sLegendId + " does not exist!", oMonthsRow);
+				Log.warning("CalendarLegend " + sLegendId + " does not exist!", oMonthsRow);
 			}
 		}
 

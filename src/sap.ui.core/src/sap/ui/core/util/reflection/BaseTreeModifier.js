@@ -5,13 +5,15 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/ManagedObjectMetadata",
-	"jquery.sap.global",
-	"jquery.sap.xml" // needed to have jQuery.sap.getParseError
+	"sap/base/util/ObjectPath",
+	"sap/ui/util/XMLHelper",
+	"jquery.sap.global"
 ], function(
-	ManagedObject,
+    ManagedObject,
 	ManagedObjectMetadata,
-	jQuery
-	/* other jQuery.sap dependencies */
+	ObjectPath,
+	XMLHelper,
+    jQuery
 ) {
 
 	"use strict";
@@ -46,8 +48,8 @@ sap.ui.define([
 		* @public
 		*/
 		bySelector: function (oSelector, oAppComponent, oView) {
-		   var sControlId = this.getControlIdBySelector(oSelector, oAppComponent);
-		   return this._byId(sControlId, oView);
+			var sControlId = this.getControlIdBySelector(oSelector, oAppComponent);
+			return this._byId(sControlId, oView);
 		},
 
 		/** Function determining the control ID from selector.
@@ -65,35 +67,35 @@ sap.ui.define([
 				return undefined;
 			}
 
-		   if (typeof oSelector === "string") {
-		      oSelector = {
-		         id: oSelector
-		      };
-		   }
+			if (typeof oSelector === "string") {
+				oSelector = {
+					id: oSelector
+				};
+			}
 
-		   var sControlId = oSelector.id;
+			var sControlId = oSelector.id;
 
-		   if (oSelector.idIsLocal) {
-		      if (oAppComponent) {
-		         sControlId = oAppComponent.createId(sControlId);
-		      } else {
-		         throw new Error("App Component instance needed to get a control's ID from selector");
-		      }
-		   } else {
-		      // does nothing except in the case of a FLP prefix
-		      var pattern = /^application-[^-]*-[^-]*-component---/igm;
-		      var bHasFlpPrefix = !!pattern.exec(oSelector.id);
-		      if (bHasFlpPrefix) {
-		         sControlId = sControlId.replace(/^application-[^-]*-[^-]*-component---/g, "");
-		         if (oAppComponent) {
-		            sControlId = oAppComponent.createId(sControlId);
-		         } else {
-		            throw new Error("App Component instance needed to get a control's ID from selector");
-		         }
-		      }
-		   }
+			if (oSelector.idIsLocal) {
+				if (oAppComponent) {
+					sControlId = oAppComponent.createId(sControlId);
+				} else {
+					throw new Error("App Component instance needed to get a control's ID from selector");
+				}
+			} else {
+				// does nothing except in the case of a FLP prefix
+				var pattern = /^application-[^-]*-[^-]*-component---/igm;
+				var bHasFlpPrefix = !!pattern.exec(oSelector.id);
+				if (bHasFlpPrefix) {
+					sControlId = sControlId.replace(/^application-[^-]*-[^-]*-component---/g, "");
+					if (oAppComponent) {
+					sControlId = oAppComponent.createId(sControlId);
+					} else {
+					throw new Error("App Component instance needed to get a control's ID from selector");
+					}
+				}
+			}
 
-		   return sControlId;
+			return sControlId;
 		},
 
 
@@ -219,7 +221,7 @@ sap.ui.define([
 		 * @returns {Element} Returns the original fragment in XML with updated IDs.
 		 */
 		_checkAndPrefixIdsInFragment: function(oFragment, sIdPrefix) {
-			var oParseError = jQuery.sap.getParseError(oFragment);
+			var oParseError = XMLHelper.getParseError(oFragment);
 			if (oParseError.errorCode !== 0) {
 				throw new Error(oFragment.parseError.reason);
 			}
@@ -279,7 +281,7 @@ sap.ui.define([
 		 * @returns {boolean} Returns true if the element is an instance of the type
 		 */
 		_isInstanceOf: function(oElement, sType) {
-			var oInstance = jQuery.sap.getObject(sType);
+			var oInstance = ObjectPath.get(sType);
 			if (typeof oInstance === "function") {
 				return oElement instanceof oInstance;
 			} else {
@@ -308,7 +310,7 @@ sap.ui.define([
 		_getControlMetadataInXml: function(oControl) {
 			var sControlType = this._getControlTypeInXml(oControl);
 			jQuery.sap.require(sControlType);
-			var ControlType = jQuery.sap.getObject(sControlType);
+			var ControlType = ObjectPath.get(sControlType);
 			return ControlType.getMetadata();
 		},
 
@@ -659,4 +661,3 @@ sap.ui.define([
 
 	};
 });
-

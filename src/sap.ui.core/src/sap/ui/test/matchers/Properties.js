@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _LogCollector) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/test/_LogCollector",
+	"sap/base/strings/capitalize"
+], function($, _LogCollector, capitalize) {
 	"use strict";
 	var oLogger = $.sap.log.getLogger("sap.ui.test.matchers.Properties", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
 
@@ -29,7 +33,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _
 		return function (oControl) {
 			var bIsMatching = true;
 			$.each(oProperties, function(sPropertyName, oPropertyValue) {
-				var fnProperty = oControl["get" + $.sap.charToUpperCase(sPropertyName, 0)];
+				var fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
 				if (!fnProperty) {
 					bIsMatching = false;

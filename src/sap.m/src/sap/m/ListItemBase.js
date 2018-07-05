@@ -4,7 +4,6 @@
 
 // Provides control sap.m.ListItemBase.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
@@ -15,10 +14,10 @@ sap.ui.define([
 	"./Button",
 	"./CheckBox",
 	"./RadioButton",
-	"./ListItemBaseRenderer"
+	"./ListItemBaseRenderer",
+	"sap/base/strings/capitalize"
 ],
 function(
-	jQuery,
 	KeyCodes,
 	BindingMode,
 	Device,
@@ -29,7 +28,8 @@ function(
 	Button,
 	CheckBox,
 	RadioButton,
-	ListItemBaseRenderer
+	ListItemBaseRenderer,
+	capitalize
 ) {
 	"use strict";
 
@@ -309,7 +309,7 @@ function(
 	ListItemBase.prototype.getListProperty = function(sProperty, vFallbackValue) {
 		var oList = this.getList();
 		if (oList) {
-			sProperty = jQuery.sap.charToUpperCase(sProperty);
+			sProperty = capitalize(sProperty);
 			return oList["get" + sProperty]();
 		}
 
@@ -850,14 +850,14 @@ function(
 				this.focus();
 			}
 
-			jQuery.sap.delayedCall(180, this, function() {
+			setTimeout(function() {
 				this.setActive(false);
-			});
+			}.bind(this), 180);
 
-			jQuery.sap.delayedCall(0, this, function() {
+			setTimeout(function() {
 				this.fireTap();
 				this.firePress();
-			});
+			}.bind(this), 0);
 		}
 
 		// tell the parent, item is pressed
@@ -880,9 +880,9 @@ function(
 		}
 
 		// timeout regarding active state when scrolling
-		this._timeoutIdStart = jQuery.sap.delayedCall(100, this, function() {
+		this._timeoutIdStart = setTimeout(function() {
 			this.setActive(true);
-		});
+		}.bind(this), 100);
 	};
 
 	// handle touchmove to prevent active state when scrolling
@@ -903,9 +903,9 @@ function(
 
 		// several fingers could be used
 		if (oEvent.targetTouches.length == 0 && this.hasActiveType()) {
-			this._timeoutIdEnd = jQuery.sap.delayedCall(100, this, function() {
+			this._timeoutIdEnd = setTimeout(function() {
 				this.setActive(false);
-			});
+			}.bind(this), 100);
 		}
 	};
 
@@ -989,15 +989,15 @@ function(
 			oEvent.setMarked();
 			this.setActive(true);
 
-			jQuery.sap.delayedCall(180, this, function() {
+			setTimeout(function() {
 				this.setActive(false);
-			});
+			}.bind(this), 180);
 
 			// fire own press event
-			jQuery.sap.delayedCall(0, this, function() {
+			setTimeout(function() {
 				this.fireTap();
 				this.firePress();
-			});
+			}.bind(this), 0);
 		}
 
 		// let the parent know item is pressed
@@ -1131,7 +1131,7 @@ function(
 		}
 
 		// inform the list async that this item should be focusable
-		jQuery.sap.delayedCall(0, oList, "setItemFocusable", [this]);
+		setTimeout(oList["setItemFocusable"].bind(oList, this), 0);
 		oEvent.setMarked();
 	};
 

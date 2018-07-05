@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./InputBase',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
@@ -21,11 +20,13 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
-	'jquery.sap.xml',
-	'jquery.sap.keycodes'
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/deepEqual",
+	"sap/base/assert",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	InputBase,
 	ComboBoxTextField,
 	ComboBoxBase,
@@ -42,8 +43,13 @@ function(
 	Device,
 	Item,
 	ResizeHandler,
-	MultiComboBoxRenderer
-	) {
+	MultiComboBoxRenderer,
+	containsOrEquals,
+	KeyCodes,
+	deepEqual,
+	assert,
+	Log
+) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -324,7 +330,7 @@ function(
 
 			this._bPreventValueRemove = false;
 
-			if (this.getValue() === "" || jQuery.sap.startsWithIgnoreCase(oItem.getText(), this.getValue())) {
+			if (this.getValue() === "" || (typeof this.getValue() === "string" && oItem.getText().toLowerCase().startsWith(this.getValue().toLowerCase()))) {
 				if (this.getListItem(oItem).isSelected()) {
 					this.setValue('');
 				} else {
@@ -351,7 +357,7 @@ function(
 		if (this.getDomRef()) {
 			var iWidth = this.getDomRef().offsetWidth,
 				iArrowButtonWidth = parseInt(this.getDomRef("arrow").offsetWidth, 10),
-				iInputWidth = parseInt(this.$().find(".sapMMultiComboBoxInputContainer").css("min-width"), 10);
+				iInputWidth = parseInt(this.$().find(".sapMMultiComboBoxInputContainer").css("min-width"), 10) || 0;
 
 			return iWidth - (iArrowButtonWidth + iInputWidth) + "px";
 		} else {
@@ -429,7 +435,7 @@ function(
 		}
 
 		if (oPicker && oFocusDomRef) {
-			if (jQuery.sap.equal(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !this.isPickerDialog()) {
+			if (deepEqual(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !this.isPickerDialog()) {
 				// force the focus to stay in the MultiComboBox field when scrollbar
 				// is moving
 				this.focus();
@@ -523,7 +529,7 @@ function(
 		}
 
 		// pre-assertion
-		jQuery.sap.assert(oNewSelectedItem, "The corresponding mapped item was not found on " + this);
+		assert(oNewSelectedItem, "The corresponding mapped item was not found on " + this);
 
 		if (!oNewSelectedItem) {
 			return;
@@ -577,10 +583,10 @@ function(
 			return;
 		}
 
-		this._bIsPasteEvent = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.V);
+		this._bIsPasteEvent = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.V);
 
 		// only if there is no text and tokenizer has some tokens
-		if (this.getValue().length === 0 && (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.A)
+		if (this.getValue().length === 0 && (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.A)
 			&& this._hasTokens()) {
 
 			this._oTokenizer.focus();
@@ -629,7 +635,7 @@ function(
 	 */
 	MultiComboBox.prototype.filterItems = function (aItems, sValue) {
 		aItems.forEach(function(oItem) {
-			var bMatch = jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
+			var bMatch = typeof sValue === "string" && sValue !== "" && oItem.getText().toLowerCase().startsWith(sValue.toLowerCase());
 
 			if (sValue === "") {
 				bMatch = true;
@@ -680,10 +686,10 @@ function(
 
 		if (this.isPickerDialog()) {
 			this.getPickerTextField().setValueState(ValueState.Error);
-			jQuery.sap.delayedCall(1000, this.getPickerTextField(), "setValueState", [sOldValueState]);
+			setTimeout(this.getPickerTextField()["setValueState"].bind(this.getPickerTextField(), sOldValueState), 1000);
 		} else {
 			this.setValueState(ValueState.Error);
-			jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
+			setTimeout(this["setValueState"].bind(this, sOldValueState), 1000);
 		}
 	};
 
@@ -797,7 +803,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._registerResizeHandler = function () {
-		jQuery.sap.assert(!this._iResizeHandlerId, "Resize handler already registered");
+		assert(!this._iResizeHandlerId, "Resize handler already registered");
 		this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
 	};
 
@@ -1186,7 +1192,7 @@ function(
 
 		// no items
 		if (!aItems.length) {
-			jQuery.sap.log.info("Info: _synchronizeSelectedItemAndKey() the MultiComboBox control does not contain any item on ", this);
+			Log.info("Info: _synchronizeSelectedItemAndKey() the MultiComboBox control does not contain any item on ", this);
 			return;
 		}
 
@@ -1334,7 +1340,7 @@ function(
 		var oFocusedElement = sap.ui.getCore().byId(document.activeElement.id);
 
 		if (this.getList()
-			&& jQuery.sap.containsOrEquals(this.getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
+			&& containsOrEquals(this.getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
 			return oFocusedElement;
 		}
 
@@ -1416,7 +1422,7 @@ function(
 				// If an item is selected with SPACE inside of
 				// suggest list the list
 				// with all entries should be opened
-				if (oEvent.which == jQuery.sap.KeyCodes.SPACE && this.isOpen() && this._isListInSuggestMode()) {
+				if (oEvent.which == KeyCodes.SPACE && this.isOpen() && this._isListInSuggestMode()) {
 					this.open();
 					oItem = this._getLastSelectedItem();
 
@@ -1432,17 +1438,17 @@ function(
 			onkeydown: function(oEvent) {
 				var oItem = null, oItemCurrent = null;
 
-				if (oEvent.shiftKey && oEvent.which == jQuery.sap.KeyCodes.ARROW_DOWN) {
+				if (oEvent.shiftKey && oEvent.which == KeyCodes.ARROW_DOWN) {
 					oItemCurrent = this._getCurrentItem();
 					oItem = this._getNextVisibleItemOf(oItemCurrent);
 				}
 
-				if (oEvent.shiftKey && oEvent.which == jQuery.sap.KeyCodes.ARROW_UP) {
+				if (oEvent.shiftKey && oEvent.which == KeyCodes.ARROW_UP) {
 					oItemCurrent = this._getCurrentItem();
 					oItem = this._getPreviousVisibleItemOf(oItemCurrent);
 				}
 
-				if (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+				if (oEvent.shiftKey && oEvent.which === KeyCodes.SPACE) {
 					oItemCurrent = this._getCurrentItem();
 					this._selectPreviousItemsOf(oItemCurrent);
 				}
@@ -1479,7 +1485,7 @@ function(
 				// Note: at first this function should be called and
 				// not the
 				// ListItemBase
-				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == jQuery.sap.KeyCodes.A) {
+				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == KeyCodes.A) {
 					oEvent.setMarked();
 					oEvent.preventDefault();
 
@@ -1612,7 +1618,7 @@ function(
 				var oPopup = this.getAggregation("picker");
 				var oControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 
-				if (oPopup && oControl && jQuery.sap.equal(oPopup.getFocusDomRef(), oControl.getFocusDomRef())) {
+				if (oPopup && oControl && deepEqual(oPopup.getFocusDomRef(), oControl.getFocusDomRef())) {
 
 					// force the focus to stay in the list item field when
 					// scrollbar is moving
@@ -1652,7 +1658,7 @@ function(
 			this._getFilterSelectedButton().setPressed(true);
 			this.bOpenedByKeyboardOrButton = true;
 		} else {
-			jQuery.sap.delayedCall(0, this._oTokenizer, "scrollToEnd");
+			setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
 		}
 	};
 
@@ -1666,6 +1672,7 @@ function(
 		var oTokenizer = new sap.m.Tokenizer({
 			tokens: []
 		}).attachTokenChange(this._handleTokenChange, this);
+		oTokenizer._setAdjustable(true);
 
 		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
 
@@ -1680,7 +1687,7 @@ function(
 				// if a token is selected, the tokenizer should not scroll
 				if (this.getEditable() && jQuery(oEvent.target).hasClass("sapMToken")) {
 					oTokenizer._useCollapsedMode(false);
-					jQuery.sap.delayedCall(0, oTokenizer, "scrollToEnd");
+					setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
 				}
 			}
 		}, this);
@@ -1692,11 +1699,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
-		var bCollapse = !(this.isOpen() || this._bTokenDeleted);
-		this._oTokenizer._useCollapsedMode(bCollapse);
-
-		this._bTokenDeleted = false;
-		jQuery.sap.delayedCall(0, this._oTokenizer, "scrollToEnd");
+		setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
 	};
 
 	MultiComboBox.prototype._handleTokenChange = function(oEvent) {
@@ -1709,7 +1712,6 @@ function(
 		}
 
 		if (sType === sap.m.Tokenizer.TokenChangeType.Removed) {
-			this._bTokenDeleted = true;
 
 			oItem = (oToken && this._getItemByToken(oToken));
 
@@ -1933,7 +1935,7 @@ function(
 
 		selectableItems.forEach(function(oItem) {
 
-			if (jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
+			if (typeof sText === "string" && sText !== "" && oItem.getText().toLowerCase().startsWith(sText.toLowerCase())) {
 				aItems.push(oItem);
 			}
 
@@ -1951,7 +1953,7 @@ function(
 	MultiComboBox.prototype._getUnselectedItemsStartingText = function(sText) {
 		var aItems = [];
 		this._getUnselectedItems().forEach(function(oItem) {
-			if (jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
+			if (typeof sText === "string" && sText !== "" && oItem.getText().toLowerCase().startsWith(sText.toLowerCase())) {
 				aItems.push(oItem);
 			}
 		}, this);
@@ -2211,14 +2213,14 @@ function(
 		}
 
 		if (!jQuery.isArray(aItems)) {
-			jQuery.sap.log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
+			Log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
 			return this;
 		}
 
 		aItems.forEach(function(oItem) {
 
 			if (!(oItem instanceof Item) && (typeof oItem !== "string")) {
-				jQuery.sap.log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
+				Log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
 
 				// Go to next item
 				return;

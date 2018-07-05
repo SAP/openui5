@@ -4,8 +4,12 @@
 
 // Provides control sap.m.QuickViewBase.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.sap.dom'],
-	function(jQuery, library, Control) {
+	'./library',
+	'sap/ui/core/Control',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
+],
+	function(library, Control, jQueryDOM, KeyCodes) {
 	"use strict";
 
 	/**
@@ -307,7 +311,7 @@ sap.ui.define([
 		 * @private
 		 */
 		QuickViewBase.prototype._processKeyboard = function(oEvent) {
-			if (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+			if (oEvent.shiftKey && oEvent.which === KeyCodes.ENTER) {
 
 				this.navigateBack();
 
@@ -331,8 +335,8 @@ sap.ui.define([
 			var sToPageId = oEvent.getParameter('toId');
 			var sFromPageId = oEvent.getParameter('fromId');
 
-			var iFromPageIndex = jQuery.sap.byId(sFromPageId).index();
-			var iToPageIndex = jQuery.sap.byId(sToPageId).index();
+			var iFromPageIndex = jQueryDOM(document.getElementById(sFromPageId)).index();
+			var iToPageIndex = jQueryDOM(document.getElementById(sToPageId)).index();
 
 			if (iToPageIndex == -1 || iToPageIndex > iFromPageIndex) {
 				oToPage.addStyleClass('sapMNavItemOffset');
@@ -363,8 +367,8 @@ sap.ui.define([
 			var sToPageId = oEvent.getParameter('toId');
 			var sFromPageId = oEvent.getParameter('fromId');
 
-			var iFromPageIndex = jQuery.sap.byId(sFromPageId).index();
-			var iToPageIndex = jQuery.sap.byId(sToPageId).index();
+			var iFromPageIndex = jQueryDOM(document.getElementById(sFromPageId)).index();
+			var iToPageIndex = jQueryDOM(document.getElementById(sToPageId)).index();
 
 			if (iToPageIndex > iFromPageIndex) {
 				oToPage.removeStyleClass('sapMNavItemOffset');
@@ -384,7 +388,7 @@ sap.ui.define([
 			this._setLinkWidth();
 
 			// Just wait for the next tick to apply the focus
-			jQuery.sap.delayedCall(0, this, this._restoreFocus);
+			setTimeout(this._restoreFocus.bind(this), 0);
 		};
 
 		/**
@@ -404,7 +408,7 @@ sap.ui.define([
 			}
 
 			if (oFocusDomRef) {
-				jQuery.sap.focus(oFocusDomRef);
+				oFocusDomRef.focus();
 			}
 		};
 

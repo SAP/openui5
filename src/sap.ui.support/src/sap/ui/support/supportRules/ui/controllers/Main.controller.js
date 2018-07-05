@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/thirdparty/URI",
-	"sap/m/library"
-], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, mLibrary) {
+	"sap/ui/support/supportRules/ui/models/Documentation"
+], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, Documentation) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Main", {
@@ -182,55 +182,9 @@ sap.ui.define([
 		goToIssues: function (oEvent) {
 			this._setActiveView("issues");
 		},
-		_pingUrl: function (sUrl) {
-			return jQuery.ajax({
-				type: "HEAD",
-				async:true,
-				context: this,
-				url: sUrl
-			});
-		},
-
-		/**
-		 * Pings the passed url for checking that this is valid path and if the ping is
-		 * success redirects to passed url. If something goes wrong it fallback
-		 * to default public url
-		 * @param sUrl URL that needs to be ping and redirect to.
-		 * @private
-		 */
-		_redirectToUrlWithFallback:function (sUrl) {
-			this._pingUrl(sUrl).then(function success() {
-				mLibrary.URLHelper.redirect(sUrl, true);
-			}, function error() {
-				jQuery.sap.log.info("Support Assistant tried to load documentation link in " + sUrl + "but fail");
-				sUrl = "https://ui5.sap.com/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
-				mLibrary.URLHelper.redirect(sUrl, true);
-			});
-		},
 
 		goToWiki: function () {
-			var sUrl = "",
-				sVersion = "",
-				sFullVersion = sap.ui.getVersionInfo().version,
-				iMajorVersion = jQuery.sap.Version(sFullVersion).getMajor(),
-				iMinorVersion = jQuery.sap.Version(sFullVersion).getMinor(),
-				sOrigin = window.location.origin;
-
-			//This check is to make sure that version is even. Example: 1.53 will back down to 1.52
-			// This is used to generate the correct path to demokit
-			if (iMinorVersion % 2 !== 0) {
-				iMinorVersion--;
-			}
-
-			sVersion += String(iMajorVersion) + "." + String(iMinorVersion);
-
-			if (sOrigin.indexOf("veui5infra") !== -1) {
-				sUrl = sOrigin + "/sapui5-sdk-internal/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
-			} else {
-				sUrl = sOrigin + "/demokit-" + sVersion + "/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
-			}
-
-			this._redirectToUrlWithFallback(sUrl);
+			Documentation.openTopic("57ccd7d7103640e3a187ed55e1d2c163");
 		},
 
 		setRulesLabel: function (libs) {

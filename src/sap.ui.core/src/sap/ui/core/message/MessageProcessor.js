@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all MessageProcessor implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global',	'sap/ui/base/EventProvider',	"sap/base/util/uid"],
+	function(jQuery, EventProvider, uid)	{
 	"use strict";
 
 
@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			EventProvider.apply(this, arguments);
 
 			this.mMessages = null;
-			this.id = jQuery.sap.uid();
+			this.id = uid();
 			sap.ui.getCore().getMessageManager().registerMessageProcessor(this);
 		},
 

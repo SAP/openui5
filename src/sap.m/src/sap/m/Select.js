@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./Dialog',
 	'./Popover',
 	'./SelectList',
@@ -21,10 +20,10 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
 	'./SelectRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	Dialog,
 	Popover,
 	SelectList,
@@ -41,8 +40,10 @@ function(
 	Item,
 	Device,
 	InvisibleText,
-	SelectRenderer
-	) {
+	SelectRenderer,
+	containsOrEquals,
+	KeyCodes
+) {
 		"use strict";
 
 		// shortcut for sap.m.SelectListKeyboardNavigationMode
@@ -447,7 +448,8 @@ function(
 
 			var oConfig = {
 				canOverflow: true,
-				listenForEvents: ["change"],
+				autoCloseEvents: ["change"],
+				invalidationEvents: ["_itemTextChange"],
 				propsUnrelatedToSize: noInvalidationProps
 			};
 
@@ -1097,9 +1099,13 @@ function(
 
 			this.sTypedChars += sTypedCharacter;
 
-			// the typed characters match the text of the selected item
-			if ((oSelectedItem && jQuery.sap.startsWithIgnoreCase(oSelectedItem.getText(), this.sTypedChars)) ||
+			var bStartsWithTypedChars = typeof this.sTypedChars === "string" &&
+				this.sTypedChars !== "" &&
+				oSelectedItem &&
+				oSelectedItem.getText().toLowerCase().startsWith(this.sTypedChars.toLowerCase());
 
+			// the typed characters match the text of the selected item
+			if (bStartsWithTypedChars ||
 				// one or more characters have been typed (excluding patterns such as "aa" or "bb")
 				((this.sTypedChars.length === 1) ||
 				((this.sTypedChars.length > 1) &&
@@ -1135,7 +1141,7 @@ function(
 			oEvent.setMarked();
 
 			// note: prevent browser address bar to be open in ie9, when F4 is pressed
-			if (oEvent.which === jQuery.sap.KeyCodes.F4) {
+			if (oEvent.which === KeyCodes.F4) {
 				oEvent.preventDefault();
 			}
 
@@ -1481,7 +1487,7 @@ function(
 			var oControl = sap.ui.getCore().byId(oEvent.relatedControlId),
 				oFocusDomRef = oControl && oControl.getFocusDomRef();
 
-			if (Device.system.desktop && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			if (Device.system.desktop && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 
 				// force the focus to stay in the input field
 				this.focus();
@@ -1604,8 +1610,8 @@ function(
 
 			for (var i = 0, oItem; i < aItems.length; i++) {
 				oItem = aItems[i];
-
-				if (oItem.getEnabled() && !(oItem instanceof sap.ui.core.SeparatorItem) && jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
+				var bTextIsRelevantString = typeof sText === "string" && sText !== "";
+				if (oItem.getEnabled() && !(oItem instanceof sap.ui.core.SeparatorItem) && oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) && bTextIsRelevantString) {
 					return oItem;
 				}
 			}
@@ -1813,6 +1819,8 @@ function(
 
 				switch (sProperty) {
 					case "text":
+						// Notify interested controls that an item's text was changed
+						this.fireEvent("_itemTextChange");
 						this.setValue(sNewValue);
 						break;
 

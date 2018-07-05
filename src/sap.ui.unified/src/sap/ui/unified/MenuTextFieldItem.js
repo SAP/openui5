@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.MenuTextFieldItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItemBase', './library', 'sap/ui/core/library', 'sap/ui/Device', 'jquery.sap.events'],
-	function(jQuery, ValueStateSupport, MenuItemBase, library, coreLibrary, Device) {
+sap.ui.define(['sap/ui/core/ValueStateSupport', './MenuItemBase', './library', 'sap/ui/core/library', 'sap/ui/Device', "sap/base/Log", 'jquery.sap.events'],
+	function(ValueStateSupport, MenuItemBase, library, coreLibrary, Device, Log) {
 	"use strict";
 
 
@@ -141,9 +141,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		if (bHovered && oMenu.checkEnabled(this)) {
 			oMenu.closeSubmenu(false, true);
 			if (Device.browser.msie) {
-				jQuery.sap.delayedCall(0, this, function () {
-					this.$("tf").focus();
-				}.bind(this));
+				setTimeout(function () {
+					var fnMethod = function () {
+						this.$("tf").focus();
+					}.bind(this);
+					if (typeof fnMethod === "string" || fnMethod instanceof String) {
+						fnMethod = this[fnMethod];
+					}
+					fnMethod.apply(this, []);
+				}.bind(this), 0);
 			} else {
 				this.$("tf").focus();
 			}
@@ -263,7 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	 * @deprecated As of version 1.21, the aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 */
 	MenuTextFieldItem.prototype.setSubmenu = function(oMenu){
-		jQuery.sap.log.warning("The aggregation 'submenu' is not supported for this type of menu item.", "", "sap.ui.unified.MenuTextFieldItem");
+		Log.warning("The aggregation 'submenu' is not supported for this type of menu item.", "", "sap.ui.unified.MenuTextFieldItem");
 		return this;
 	};
 

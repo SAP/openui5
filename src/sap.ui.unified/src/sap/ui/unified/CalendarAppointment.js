@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.CalendarAppointment.
-sap.ui.define(['jquery.sap.global', './DateTypeRange', 'sap/ui/core/format/DateFormat', './library'],
-	function(jQuery, DateTypeRange, DateFormat, library) {
+sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', './library', "sap/base/Log"],
+	function(DateTypeRange, DateFormat, library, Log) {
 	"use strict";
 
 	/**
@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', 'sap/ui/core/format/DateF
 	 */
 	CalendarAppointment.prototype.setColor = function (sColor) {
 		if (sColor && sColor.match(/^#[0-9a-f]{6}$/i)) {
-			jQuery.sap.log.warning("setColor accepts only full hex color value with pound symbol.");
+			Log.warning("setColor accepts only full hex color value with pound symbol.");
 		}
 		return this.setProperty("color", sColor);
 	};

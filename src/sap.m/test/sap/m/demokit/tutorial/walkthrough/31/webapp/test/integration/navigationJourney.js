@@ -11,7 +11,7 @@ sap.ui.require([
 	opaTest("Should open the hello dialog", function (Given, When, Then) {
 
 		// Arrangements
-		Given.iStartMyAppInAFrame(jQuery.sap.getResourcePath("sap/ui/demo/app/test", ".html"));
+		Given.iStartMyAppInAFrame(sap.ui.require.toUrl("sap/ui/demo/app/test") + ".html");
 
 		//Actions
 		When.onTheAppPage.iPressTheSayHelloWithDialogButton();
@@ -21,4 +21,3 @@ sap.ui.require([
 			and.iTeardownMyAppFrame();
 	});
 });
-

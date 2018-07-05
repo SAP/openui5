@@ -67,6 +67,18 @@
         "type": "FIX",
         "text": " sap.m.RatingIndicator: Focus outline fixed",
         "references": []
+      },
+      {
+        "id": "b540bdef9cc96effb664ba3153f303d6ef0ec61a",
+        "type": "FIX",
+        "text": " MessageView: Link in hcb/hcw contrast fixed",
+        "references": []
+      },
+      {
+        "id": "d300575695f9845531deeba41cc05f12db411a95",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: DnD added tab background",
+        "references": []
       }
     ]
   }

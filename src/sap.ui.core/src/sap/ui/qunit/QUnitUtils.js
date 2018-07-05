@@ -15,9 +15,23 @@
 sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	'jquery.sap.global',
 	'sap/base/util/ObjectPath',
-	'sap/ui/Device', 'sap/ui/base/DataType', 'sap/ui/events/KeyCodes',
-	'jquery.sap.script', 'jquery.sap.keycodes'],
-	function(jQuery, ObjectPath, Device, DataType, KeyCodes/*, jQuerySap1 */) {
+	'sap/ui/Device',
+	'sap/ui/base/DataType',
+	'sap/ui/events/KeyCodes',
+	"sap/base/strings/camelize",
+	"sap/base/strings/capitalize",
+	"sap/base/util/UriParameters"
+],
+	function(
+		jQuery,
+		ObjectPath,
+		Device,
+		DataType,
+		KeyCodes,
+		camelize,
+		capitalize,
+		UriParameters
+	) {
 	"use strict";
 
 	if ( typeof QUnit !== 'undefined' ) {
@@ -27,7 +41,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
 
 		// extract the URL parameters
-		var mParams = jQuery.sap.getUriParameters();
+		var mParams = new UriParameters(window.location.href);
 
 		if ( bLegacySupport ) {
 		// TODO: Remove deprecated code once all projects adapted
@@ -344,10 +358,10 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		}
 		sKeyCode = sKeyCode.toLowerCase();
 		// replace underscores with dash character such as 'ARROW_LEFT' --> 'ARROW-LEFT' and then camelize it --> 'ArrowLeft'
-		sKeyCode = jQuery.sap.camelCase(sKeyCode.replace(/_/g, "-"));
+		sKeyCode = camelize(sKeyCode.replace(/_/g, "-"));
 
 		// capitalize key
-		var sKey = jQuery.sap.charToUpperCase(sKeyCode);
+		var sKey = capitalize(sKeyCode);
 
 		// remove "Digit" and "Numpad" from the resulting string as this info is present within the Location property and not the key property
 		// e.g. "Digit9" --> "9"
@@ -519,16 +533,22 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 *
 	 * @param {string | DOMElement} oInput The ID of a DOM input field or a DOM input field which serves as target
 	 * @param {string} sChar Only the first char of the string will be passed via keypress event
+	 * @param {string} [sValue] If passed, this will be set as the new value of the input and the method will not rely on the old value of the input
 	 * @public
 	 */
-	QUtils.triggerCharacterInput = function(oInput, sChar) {
+	QUtils.triggerCharacterInput = function(oInput, sChar, sValue) {
 		QUtils.triggerKeypress(oInput, sChar);
 
 		if (typeof (oInput) == "string") {
 			oInput = oInput ? document.getElementById(oInput) : null;
 		}
 		var $Input = jQuery(oInput);
-		$Input.val($Input.val() + sChar);
+
+		if (typeof sValue !== "undefined") {
+			$Input.val(sValue);
+		} else {
+			$Input.val($Input.val() + sChar);
+		}
 	};
 
 
@@ -668,7 +688,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				} catch (e) {
 					//escape eslint check for empty block
 				}
-				var oType = jQuery.sap.getObject(sType);
+				var oType = ObjectPath.get(sType);
 				if ( !(oType instanceof DataType) ) {
 					var r = [];
 					for (var n in oType) {

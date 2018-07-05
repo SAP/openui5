@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.GridData.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
-	function(jQuery, LayoutData, library) {
+sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
+	function(LayoutData, library, Log) {
 	"use strict";
 
 
@@ -354,94 +354,94 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 		//Setter
 		GridData.prototype.setSpanLarge = function(iSpan) {
 			this.setSpanL(iSpan);
-			jQuery.sap.log.warning("Deprecated property spanLarge is used, please use spanL instead.");
+			Log.warning("Deprecated property spanLarge is used, please use spanL instead.");
 			return this;
 		};
 
 		GridData.prototype.setSpanMedium = function(iSpan) {
-			jQuery.sap.log.warning("Deprecated property spanMedium is used, please use spanM instead.");
+			Log.warning("Deprecated property spanMedium is used, please use spanM instead.");
 			return this.setSpanM(iSpan);
 		};
 
 		GridData.prototype.setSpanSmall = function(iSpan) {
-			jQuery.sap.log.warning("Deprecated property spanSmall is used, please use spanS instead.");
+			Log.warning("Deprecated property spanSmall is used, please use spanS instead.");
 			return this.setSpanS(iSpan);
 		};
 
 		GridData.prototype.setIndentLarge = function(iIndent) {
-			jQuery.sap.log.warning("Deprecated property indentLarge is used, please use indentL instead.");
+			Log.warning("Deprecated property indentLarge is used, please use indentL instead.");
 			return this.setIndentL(iIndent);
 		};
 
 		GridData.prototype.setIndentMedium = function(iIndent) {
-			jQuery.sap.log.warning("Deprecated property indentMedium is used, please use indentM instead.");
+			Log.warning("Deprecated property indentMedium is used, please use indentM instead.");
 			return this.setIndentM(iIndent);
 		};
 
 		GridData.prototype.setIndentSmall = function(iIndent) {
-			jQuery.sap.log.warning("Deprecated property indentSmall is used, please use indentS instead.");
+			Log.warning("Deprecated property indentSmall is used, please use indentS instead.");
 			return this.setIndentS(iIndent);
 		};
 
 		GridData.prototype.setVisibleOnLarge = function(bVisible) {
-			jQuery.sap.log.warning("Deprecated property visibleOnLarge is used, please use visibleL instead.");
+			Log.warning("Deprecated property visibleOnLarge is used, please use visibleL instead.");
 			return this.setVisibleL(bVisible);
 		};
 
 		GridData.prototype.setVisibleOnMedium = function(bVisible) {
-			jQuery.sap.log.warning("Deprecated property visibleOnMedium is used, please use visibleM instead.");
+			Log.warning("Deprecated property visibleOnMedium is used, please use visibleM instead.");
 			return this.setVisibleM(bVisible);
 		};
 
 		GridData.prototype.setVisibleOnSmall = function(bVisible) {
-			jQuery.sap.log.warning("Deprecated property visibleOnSmall is used, please use visibleS instead.");
+			Log.warning("Deprecated property visibleOnSmall is used, please use visibleS instead.");
 			return this.setVisibleS(bVisible);
 		};
 
 
 		// Getter
 		GridData.prototype.getSpanLarge = function() {
-			jQuery.sap.log.warning("Deprecated property spanLarge is used, please use spanL instead.");
+			Log.warning("Deprecated property spanLarge is used, please use spanL instead.");
 			return this.getSpanL();
 		};
 
 		GridData.prototype.getSpanMedium = function() {
-			jQuery.sap.log.warning("Deprecated property spanMedium is used, please use spanM instead.");
+			Log.warning("Deprecated property spanMedium is used, please use spanM instead.");
 			return this.getSpanM();
 		};
 
 		GridData.prototype.getSpanSmall = function() {
-			jQuery.sap.log.warning("Deprecated property spanSmall is used, please use spanS instead.");
+			Log.warning("Deprecated property spanSmall is used, please use spanS instead.");
 			return this.getSpanS();
 		};
 
 		GridData.prototype.getIndentLarge = function() {
-			jQuery.sap.log.warning("Deprecated property indentLarge is used, please use indentL instead.");
+			Log.warning("Deprecated property indentLarge is used, please use indentL instead.");
 			return this.getIndentL();
 		};
 
 		GridData.prototype.getIndentMedium = function() {
-			jQuery.sap.log.warning("Deprecated property indentMedium is used, please use indentM instead.");
+			Log.warning("Deprecated property indentMedium is used, please use indentM instead.");
 			return this.getIndentM();
 		};
 
 		GridData.prototype.getIndentSmall = function() {
-			jQuery.sap.log.warning("Deprecated property indentSmall is used, please use indentS instead.");
+			Log.warning("Deprecated property indentSmall is used, please use indentS instead.");
 			return this.getIndentS();
 		};
 
 		GridData.prototype.getVisibleOnLarge = function() {
-			jQuery.sap.log.warning("Deprecated property visibleOnLarge is used, please use visibleL instead.");
+			Log.warning("Deprecated property visibleOnLarge is used, please use visibleL instead.");
 			return this.getVisibleL();
 		};
 
 		GridData.prototype.getVisibleOnMedium = function() {
-			jQuery.sap.log.warning("Deprecated property visibleOnMedium is used, please use visibleM instead.");
+			Log.warning("Deprecated property visibleOnMedium is used, please use visibleM instead.");
 			return this.getVisibleM();
 		};
 
 		GridData.prototype.getVisibleOnSmall = function() {
-			jQuery.sap.log.warning("Deprecated property visibleOnSmall is used, please use visibleS instead.");
+			Log.warning("Deprecated property visibleOnSmall is used, please use visibleS instead.");
 			return this.getVisibleS();
 		};
 

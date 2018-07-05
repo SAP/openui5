@@ -8,15 +8,18 @@ sap.ui.define([
 
 	var LinkController = Controller.extend("sap.m.sample.LinkSubtle.Link", {
 
-		handleLinkPress: function (evt) {
-			jQuery.sap.require("sap.m.MessageBox");
-			MessageBox.alert("Link was clicked!");
-		},
-
 		onInit: function () {
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			this.getView().setModel(oModel);
+		},
+
+		handleLinkPress: function () {
+			MessageBox.alert("Link was clicked!");
+		},
+
+		handleObjectIdentifierPress: function () {
+			MessageBox.alert("Object Identifier was clicked!");
 		}
 
 	});

@@ -9,9 +9,10 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	"sap/ui/unified/FileUploader",
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
-	"sap/m/ToggleButton"
+	"sap/m/ToggleButton",
+	"sap/base/Log"
 ], function (jQuery, UploadCollection, UploadCollectionToolbarPlaceholder, Title, ToolbarSpacer, FileUploader, Button,
-             OverflowToolbar, ToggleButton) {
+             OverflowToolbar, ToggleButton, Log) {
 	"use strict";
 
 	QUnit.module("Toolbar Default", {
@@ -40,13 +41,13 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		afterEach: function () {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
-			jQuery.sap.log.info.restore();
+			Log.info.restore();
 		}
 	});
 
 	QUnit.test("A Toolbar without place holder is provided. Test that an info log has been written", function (assert) {
 		//Arrange
-		var oInfoLogStub = sinon.stub(jQuery.sap.log, "info");
+		var oInfoLogStub = sinon.stub(Log, "info");
 
 		//Act
 		this.oUploadCollection = new UploadCollection("noPHToolbarTest", {
@@ -64,7 +65,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		sap.ui.getCore().applyChanges();
 
 		var bInfoTextWasFound = false;
-		var aStubCalls = oInfoLogStub.getCalls(); //Get correct call of jQuery.sap.log.info(...)
+		var aStubCalls = oInfoLogStub.getCalls(); //Get correct call of Log.info(...)
 		for (var i = 0; i < aStubCalls.length; i++) {
 			if (aStubCalls[i] && aStubCalls[i].args && aStubCalls[i].args[0] === "A place holder of type 'sap.m.UploadCollectionPlaceholder' needs to be provided.") {
 				bInfoTextWasFound = true;
@@ -72,8 +73,8 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		}
 
 		//Assert
-		assert.ok(oInfoLogStub.called, "jQuery.sap.log.info has been called.");
-		assert.ok(bInfoTextWasFound, "jQuery.sap.log.info has been called with correct parameter.");
+		assert.ok(oInfoLogStub.called, "Log.info has been called.");
+		assert.ok(bInfoTextWasFound, "Log.info has been called with correct parameter.");
 	});
 
 	QUnit.module("Toolbar Custom", {

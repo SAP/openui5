@@ -4,15 +4,15 @@
 
 // Provides control sap.ui.layout.Splitter.
 sap.ui.define([
-    'jquery.sap.global',
     'sap/ui/core/Control',
     './library',
     'sap/ui/core/library',
     'sap/ui/core/ResizeHandler',
     'sap/ui/core/RenderManager',
-    './SplitterRenderer'
+    './SplitterRenderer',
+    "sap/base/Log"
 ],
-	function(jQuery, Control, library, coreLibrary, ResizeHandler, RenderManager, SplitterRenderer) {
+	function(Control, library, coreLibrary, ResizeHandler, RenderManager, SplitterRenderer, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
@@ -537,8 +537,9 @@ sap.ui.define([
 
 		// Enable auto resize after bar move if it was enabled before
 		this.enableAutoResize(/* temporarily: */ true);
-
-		jQuery.sap.focus(this._move.bar);
+		if (this._move.bar){
+			this._move.bar.focus();
+		}
 	};
 
 	/**
@@ -551,7 +552,7 @@ sap.ui.define([
 	 */
 	Splitter.prototype._resizeContents = function(iLeftContent, iPixels, bFinal) {
 		if (isNaN(iPixels)) {
-			jQuery.sap.log.warning("Splitter: Received invalid resizing values - resize aborted.");
+			Log.warning("Splitter: Received invalid resizing values - resize aborted.");
 			return;
 		}
 
@@ -620,8 +621,8 @@ sap.ui.define([
 
 		// If we are not rendered, we do not need to resize since resizing is done after rendering
 		if (this.getDomRef()) {
-			jQuery.sap.clearDelayedCall(this._resizeTimeout);
-			jQuery.sap.delayedCall(iDelay, this, "_resize", []);
+			clearTimeout(this._resizeTimeout);
+			setTimeout(this["_resize"].bind(this), iDelay);
 		}
 	};
 
@@ -816,7 +817,7 @@ sap.ui.define([
 					aAutosizeIdx.push(i);
 				}
 			} else {
-				jQuery.sap.log.error("Illegal size value: " + aSizes[i]);
+				Log.error("Illegal size value: " + aSizes[i]);
 			}
 		}
 
@@ -877,7 +878,7 @@ sap.ui.define([
 			//       hand it might make analyzing of splitter bugs easier, since we can just ask
 			//       developers if there was a [Splitter] output on the console if the splitter looks
 			//       weird in their application.
-			jQuery.sap.log.info(
+			Log.info(
 				"[Splitter] The set sizes and minimal sizes of the splitter contents are bigger " +
 				"than the available space in the UI."
 			);
@@ -1087,7 +1088,7 @@ sap.ui.define([
 		// Make sure LayoutData is set on the content
 		// But this approach has the advantage that "compatible" LayoutData can be used.
 		if (oLd && (!oLd.getResizable || !oLd.getSize || !oLd.getMinSize)) {
-			jQuery.sap.log.warning(
+			Log.warning(
 				"Content \"" + oContent.getId() + "\" for the Splitter contained wrong LayoutData. " +
 				"The LayoutData has been replaced with default values."
 			);

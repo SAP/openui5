@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
@@ -13,10 +12,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/m/Button',
 	'./NotificationListGroupRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	library,
 	NotificationListBase,
 	InvisibleText,
@@ -25,8 +23,9 @@ function(
 	coreLibrary,
 	Device,
 	Button,
-	NotificationListGroupRenderer
-	) {
+	NotificationListGroupRenderer,
+	KeyCodes
+) {
 	'use strict';
 
 	// shortcut for sap.ui.core.Priority
@@ -402,7 +401,7 @@ function(
 		var groupIndex = notificationGroup.indexOfItem(targetControl);
 
 		switch (event.which) {
-			case jQuery.sap.KeyCodes.ARROW_UP:
+			case KeyCodes.ARROW_UP:
 				if (groupIndex == 0) {
 					return;
 				}
@@ -410,7 +409,7 @@ function(
 				var previousIndex = groupIndex - 1;
 				notificationGroup.getItems()[previousIndex].focus();
 				break;
-			case jQuery.sap.KeyCodes.ARROW_DOWN:
+			case KeyCodes.ARROW_DOWN:
 				var nextIndex = groupIndex + 1;
 				if (nextIndex == notificationGroup.getItems().length) {
 					return;

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
-		function(jQuery, Core) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', "sap/base/util/ObjectPath"],
+		function(jQuery, Core, ObjectPath) {
 	"use strict";
 
 	/**
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 			return false;
 		}
 
-		var oControlClass = jQuery.sap.getObject(sControlName);
+		var oControlClass = ObjectPath.get(sControlName);
 		if (!oControlClass) {
 			return false;
 		}
@@ -368,7 +368,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 
 			if (shouldTestControl(sControlName, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable)) {
 				bCountThisControl = true;
-				var oControlClass = jQuery.sap.getObject(sControlName);
+				var oControlClass = ObjectPath.get(sControlName || "");
 
 				fnCallback(sControlName, oControlClass, {
 					canInstantiate: ControlIterator.controlCanBeInstantiated(sControlName),

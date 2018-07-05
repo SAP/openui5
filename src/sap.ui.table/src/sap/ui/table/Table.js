@@ -4,33 +4,31 @@
 
 // Provides control sap.ui.table.Table.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/Device',
-    'sap/ui/core/Control',
-    'sap/ui/core/Element',
-    'sap/ui/core/IconPool',
-    'sap/ui/model/ChangeReason',
-    'sap/ui/model/Filter',
-    'sap/ui/model/SelectionModel',
-    'sap/ui/model/Sorter',
-    'sap/ui/model/BindingMode',
-    './Column',
-    './Row',
-    './library',
-    './TableUtils',
-    './TableExtension',
-    './TableAccExtension',
-    './TableKeyboardExtension',
-    './TablePointerExtension',
-    './TableScrollExtension',
-    './TableDragAndDropExtension',
-    "./TableRenderer",
-    'jquery.sap.dom',
-    'jquery.sap.trace',
-    'jquery.sap.events'
+	'sap/ui/Device',
+	'sap/ui/core/Control',
+	'sap/ui/core/Element',
+	'sap/ui/core/IconPool',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/Filter',
+	'sap/ui/model/SelectionModel',
+	'sap/ui/model/Sorter',
+	'sap/ui/model/BindingMode',
+	'./Column',
+	'./Row',
+	'./library',
+	'./TableUtils',
+	'./TableExtension',
+	'./TableAccExtension',
+	'./TableKeyboardExtension',
+	'./TablePointerExtension',
+	'./TableScrollExtension',
+	'./TableDragAndDropExtension',
+	"./TableRenderer",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
+	'jquery.sap.events'
 ],
 	function(
-	    jQuery,
 		Device,
 		Control,
 		Element,
@@ -49,8 +47,10 @@ sap.ui.define([
 		TableKeyboardExtension,
 		TablePointerExtension,
 		TableScrollExtension,
-		TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */,
-		TableRenderer
+		TableDragAndDropExtension,
+		TableRenderer,
+		jQueryDOM,
+		Log
 	) {
 	"use strict";
 
@@ -883,7 +883,7 @@ sap.ui.define([
 
 		// cleanup
 		if (this._dataReceivedHandlerId) {
-			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			clearTimeout(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
 		}
 		this._cleanUpTimers();
@@ -1385,7 +1385,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (!oDomRef.offsetWidth) { // do not update sizes of an invisible table
+		if (oDomRef.offsetWidth === 0) { // do not update sizes of an invisible table
 			TableUtils.deregisterResizeHandler(this, "");
 			registerResizeHandler();
 			return;
@@ -1618,7 +1618,7 @@ sap.ui.define([
 	 */
 	Table.prototype.applyFocusInfo = function(mFocusInfo) {
 		if (mFocusInfo && mFocusInfo.customId) {
-			jQuery.sap.byId(mFocusInfo.customId, this.getDomRef()).focus();
+			jQueryDOM(document.getElementById(mFocusInfo.customId)).focus();
 		} else {
 			//TBD: should be applyFocusInfo but changing it breaks the unit tests
 			Element.prototype.getFocusInfo.apply(this, arguments);
@@ -1691,7 +1691,7 @@ sap.ui.define([
 	 */
 	Table.prototype.setFirstVisibleRow = function(iRowIndex, bOnScroll, bSuppressEvent) {
 		if (parseInt(iRowIndex, 10) < 0) {
-			jQuery.sap.log.error("The index of the first visible row must be greater than or equal to 0." +
+			Log.error("The index of the first visible row must be greater than or equal to 0." +
 								 " The value has been set to 0.", this);
 			iRowIndex = 0;
 		}
@@ -1699,7 +1699,7 @@ sap.ui.define([
 			var iMaxRowIndex = this._getMaxFirstVisibleRowIndex();
 
 			if (iMaxRowIndex < iRowIndex) {
-				jQuery.sap.log.warning("The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
+				Log.warning("The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
 									   " The value has been set to " + iMaxRowIndex + ".", this);
 				iRowIndex = iMaxRowIndex;
 			}
@@ -1785,7 +1785,7 @@ sap.ui.define([
 		if (sName === "rows" && oBinding) {
 			var oModel = oBinding.getModel();
 			if (oModel && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
-				jQuery.sap.log.error("The binding mode of the model is set to \"OneTime\"."
+				Log.error("The binding mode of the model is set to \"OneTime\"."
 									 + " This binding mode is not supported for the \"rows\" aggregation!"
 									 + " Scrolling can not be performed.", this);
 			}
@@ -1920,13 +1920,13 @@ sap.ui.define([
 
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
 		if (sVisibleRowCountMode == VisibleRowCountMode.Auto) {
-			jQuery.sap.log.error("VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", this);
+			Log.error("VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", this);
 			return this;
 		}
 
 		var iFixedRowsCount = this.getFixedRowCount() + this.getFixedBottomRowCount();
 		if (iVisibleRowCount <= iFixedRowsCount && iFixedRowsCount > 0) {
-			jQuery.sap.log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
+			Log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
 			return this;
 		}
 
@@ -1941,7 +1941,7 @@ sap.ui.define([
 
 	Table.prototype.setMinAutoRowCount = function(iMinAutoRowCount) {
 		if (parseInt(iMinAutoRowCount, 10) < 1) {
-			jQuery.sap.log.error("The minAutoRowCount property must be greater than 0. The value has been set to 1.", this);
+			Log.error("The minAutoRowCount property must be greater than 0. The value has been set to 1.", this);
 			iMinAutoRowCount = 1;
 		}
 		this.setProperty("minAutoRowCount", iMinAutoRowCount);
@@ -1969,13 +1969,13 @@ sap.ui.define([
 	 * @override
 	 */
 	Table.prototype.setTooltip = function(vTooltip) {
-		jQuery.sap.log.warning("The aggregation tooltip is not supported for sap.ui.table.Table");
+		Log.warning("The aggregation tooltip is not supported for sap.ui.table.Table");
 		return this.setAggregation("tooltip", vTooltip, true);
 	};
 
 	Table.prototype.setNavigationMode = function() {
 		this.setProperty("navigationMode", NavigationMode.Scrollbar, true);
-		jQuery.sap.log.error("The navigationMode property is deprecated and must not be used anymore. Your setting was defaulted to 'Scrollbar'", this);
+		Log.error("The navigationMode property is deprecated and must not be used anymore. Your setting was defaulted to 'Scrollbar'", this);
 	};
 
 	/**
@@ -2195,7 +2195,7 @@ sap.ui.define([
 	Table.prototype.refreshRows = function(vEvent) {
 		var oBinding = this.getBinding("rows");
 		if (!oBinding) {
-			jQuery.sap.log.error("RefreshRows must not be called without a binding", this);
+			Log.error("RefreshRows must not be called without a binding", this);
 			return;
 		}
 
@@ -2276,35 +2276,35 @@ sap.ui.define([
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.insertRow = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"insertRow\" cannot be used programmatically!", this);
+		Log.error("The control manages the rows aggregation. The method \"insertRow\" cannot be used programmatically!", this);
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.addRow = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"addRow\" cannot be used programmatically!", this);
+		Log.error("The control manages the rows aggregation. The method \"addRow\" cannot be used programmatically!", this);
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.removeRow = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!", this);
+		Log.error("The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!", this);
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.removeAllRows = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!", this);
+		Log.error("The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!", this);
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.destroyRows = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!", this);
+		Log.error("The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!", this);
 	};
 
 	/**
@@ -2625,9 +2625,9 @@ sap.ui.define([
 		var sPixelValue = TableUtils.Column.getMinColumnWidth();
 
 		if (sCSSSize) {
-			if (jQuery.sap.endsWith(sCSSSize, "px")) {
+			if (sCSSSize.endsWith("px")) {
 				sPixelValue = parseInt(sCSSSize, 10);
-			} else if (jQuery.sap.endsWith(sCSSSize, "em") || jQuery.sap.endsWith(sCSSSize, "rem")) {
+			} else if (sCSSSize.endsWith("em") || sCSSSize.endsWith("rem")) {
 				sPixelValue = Math.ceil(parseFloat(sCSSSize) * this._getBaseFontSize());
 			}
 		}
@@ -3321,7 +3321,7 @@ sap.ui.define([
 	 */
 	Table.prototype.setFixedRowCount = function(iFixedRowCount) {
 		if (!(parseInt(iFixedRowCount, 10) >= 0)) {
-			jQuery.sap.log.error("Number of fixed rows must be greater or equal 0", this);
+			Log.error("Number of fixed rows must be greater or equal 0", this);
 			return this;
 		}
 
@@ -3329,7 +3329,7 @@ sap.ui.define([
 			this.setProperty("fixedRowCount", iFixedRowCount);
 			this._updateBindingContexts();
 		} else {
-			jQuery.sap.log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
+			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
 		}
 		return this;
 	};
@@ -3339,7 +3339,7 @@ sap.ui.define([
 	 */
 	Table.prototype.setFixedBottomRowCount = function(iFixedRowCount) {
 		if (!(parseInt(iFixedRowCount, 10) >= 0)) {
-			jQuery.sap.log.error("Number of fixed bottom rows must be greater or equal 0", this);
+			Log.error("Number of fixed bottom rows must be greater or equal 0", this);
 			return this;
 		}
 
@@ -3347,7 +3347,7 @@ sap.ui.define([
 			this.setProperty("fixedBottomRowCount", iFixedRowCount);
 			this._updateBindingContexts();
 		} else {
-			jQuery.sap.log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
+			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
 		}
 		return this;
 	};
@@ -3900,7 +3900,7 @@ sap.ui.define([
 		}
 
 		if (this._dataReceivedHandlerId != null) {
-			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			clearTimeout(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
 		}
 	};
@@ -3925,13 +3925,13 @@ sap.ui.define([
 		if (!TableUtils.hasPendingRequests(this)) {
 			// This timer should avoid flickering of the busy indicator and unnecessary updates of NoData in case a request will be sent
 			// (dataRequested) immediately after the last response was received (dataReceived).
-			this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
+			this._dataReceivedHandlerId = setTimeout(function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);
 				}
 				this._updateNoData();
 				delete this._dataReceivedHandlerId;
-			});
+			}.bind(this), 0);
 		}
 	};
 

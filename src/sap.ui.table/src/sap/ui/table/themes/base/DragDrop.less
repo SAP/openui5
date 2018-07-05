@@ -121,14 +121,9 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 	right: 0;
 	bottom: -1px;
 	z-index: 3;
-	border-left: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
-	border-right: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
-	background-color: fade(@sapUiBaseColor, 80);
+	background-color: @sapUiListHoverBackground;
+	opacity: 0.5;
 	box-sizing: border-box;
-}
-
-.sapUiTableLastRow .sapUiTableColReorderFade:after {
-	border-bottom: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 }
 
 

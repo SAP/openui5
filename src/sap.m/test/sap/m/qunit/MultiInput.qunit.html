@@ -154,6 +154,21 @@
 		assert.equal(this.multiInput1.getTokens().length, 2, "no more than 2 tokens can be added");
 	});
 
+	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+		var multiInput = new sap.m.MultiInput(),
+			output;
+
+		multiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		multiInput.$().find(".sapMMultiInputInputContainer").removeClass("sapMMultiInputInputContainer");
+		sap.ui.getCore().applyChanges();
+
+		output = multiInput._calculateSpaceForTokenizer();
+
+		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
+	});
+
 	QUnit.test("token data binding", function(assert) {
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
 
@@ -805,7 +820,7 @@
 	});
 
 	QUnit.test("token update event", function(assert) {
-
+		/* TODO remove after 1.62 version */
 		if (!sap.ui.Device.browser.internet_explorer) {
 			//arrange
 			var sPastedString = "a\nb\nc\nd\ne\nf\n\a",
@@ -1167,7 +1182,7 @@
 	});
 
 	QUnit.test("Paste (with suggestions)", function(assert) {
-
+		/* TODO remove after 1.62 version */
 		if (!sap.ui.Device.browser.internet_explorer) {
 			//arrange
 			var sPastedString = "a\nb";
@@ -1234,7 +1249,12 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
+
 		this.clock.tick(1);
 
 		// assert
@@ -1260,9 +1280,14 @@
 		sap.ui.getCore().applyChanges();
 
 		// act
-		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
+
 		oPicker = this.multiInput._getSelectedItemsPicker();
-		this.clock.tick(1);
+		this.clock.tick(100);
 
 		// deselect the first item
 		jQuery(oPicker.getContent()[0].getItems()[0]).tap();
@@ -1271,7 +1296,12 @@
 
 		//close and open the picker
 		oPicker.close();
-		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		// act
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput._tokenizer.$().click();
+		} else {
+			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		}
 		//assert
 		assert.strictEqual(oPicker.getContent()[0].getItems().length, 3, "The items in the list are updated");
 	});
@@ -1425,7 +1455,12 @@
 
 
 		sap.ui.getCore().applyChanges();
-		this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
+		// act
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.multiInput1._tokenizer.$().click();
+		} else {
+			this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
+		}
 		this.clock.tick(1000);
 
 		assert.ok(oStub.called, "The suggestion dialog is opened on click on N-more");
@@ -1451,6 +1486,24 @@
 
 		// clean up
 		fnReadOnlyPopDestroySpy.restore();
+	});
+
+	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
+		//arrange
+		var tokenizerSpy = sinon.spy(sap.m.Tokenizer.prototype, "_adjustTokensVisibility"),
+			multiInput = new sap.m.MultiInput();
+
+		// act
+		multiInput.placeAt("qunit-fixture");
+		this.clock.tick(100);
+
+		// assert
+		assert.ok(multiInput._tokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.ok(tokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
+
+		// clean up
+		tokenizerSpy.restore();
+		multiInput.destroy();
 	});
 
 </script>

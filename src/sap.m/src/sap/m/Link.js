@@ -4,25 +4,27 @@
 
 // Provides control sap.m.Link.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	'./LinkRenderer'
+	'./LinkRenderer',
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	InvisibleText,
 	EnabledPropagator,
 	coreLibrary,
 	Device,
-	LinkRenderer
-	) {
+	LinkRenderer,
+	KeyCodes,
+	Log
+) {
 	"use strict";
 
 
@@ -225,7 +227,7 @@ function(
 	};
 
 	Link.prototype.onkeyup = function (oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.SPACE) {
 			this._handlePress(oEvent);
 
 			if (this.getHref() && !oEvent.isDefaultPrevented()) {
@@ -318,7 +320,7 @@ function(
 
 		if (!bIsValid) {
 			this.$().removeAttr("href");
-			jQuery.sap.log.warning(this + ": The href tag of the link was not set since it's not valid.");
+			Log.warning(this + ": The href tag of the link was not set since it's not valid.");
 			return this;
 		}
 
@@ -402,7 +404,6 @@ function(
 				}
 			} else {
 				$this.attr("disabled", true);
-				$this.attr("tabindex", "-1");
 				$this.attr("aria-disabled", true);
 				$this.removeAttr("href");
 			}

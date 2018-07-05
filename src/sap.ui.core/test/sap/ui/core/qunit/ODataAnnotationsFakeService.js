@@ -24,6 +24,7 @@ xhr.onCreate = function(request) {
 		var mHeaders = mXMLHeaders;
 		var sAnswer = "This should never be received as an answer!";
 		var bLastModified = true;
+		var bETag = true;
 
 		switch (request.url) {
 
@@ -78,6 +79,7 @@ xhr.onCreate = function(request) {
 				mHeaders = mMetaDataHeaders;
 				sAnswer = sMetadataWithEntityContainers;
 				bLastModified = false;
+				bETag = false;
 				break;
 
 			case "fakeService://testdata/odata/northwind-annotations-normal.xml":
@@ -258,7 +260,11 @@ xhr.onCreate = function(request) {
 		}
 
 		if (bLastModified) {
-			mHeaders["Last-Modified"] = "Wed, 15 Nov 1995 04:58:08 GMT";
+			mHeaders["last-Modified"] = "Wed, 15 Nov 1995 04:58:08 GMT";
+		}
+
+		if (bETag) {
+			mHeaders["eTag"] = "Wed, 15 Nov 1995 04:58:08 GMT";
 		}
 
 		if (request.async === true) {
@@ -5331,6 +5337,20 @@ var sNestedAnnotations = '\
 					</Collection>\
 					<Annotation Term="UI.Criticality" Qualifier="bar" Path="Criticality"/>\
 				</Annotation>\
+				<Annotation Term="UI.Facets">\
+					<Collection>\
+						<Record Type="UI.CollectionFacet">\
+							<PropertyValue Property="Facets">\
+								<Collection>\
+									<Record Type="UI.ReferenceFacet">\
+										<PropertyValue Property="Target" AnnotationPath="Supplier/@UI.Identification" />\
+									</Record>\
+								</Collection>\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Supplier Identification"/>\
+							</PropertyValue>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CategoryName">\
 					<!-- We are keeping this (invalid) example in to document the behavior of the parser in cases that are not allowed in actual annotation sources -->\
 					<Term Name="TextArrangement" Type="UI.TextArrangementType" AppliesTo="Annotation EntityType">\
@@ -5377,6 +5397,7 @@ var sNestedAnnotations = '\
 							<Path>IsFemale</Path>\
 							<String>Iron Man</String>\
 							<String>Someone else</String>\
+							<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Who am I?"/>\
 						</If>\
 					</Annotation>\
 					<Annotation Term="unittest.ui5.dynamicExpression4">\
@@ -5396,6 +5417,16 @@ var sNestedAnnotations = '\
 								</UrlRef>\
 							</PropertyValue>\
 						</Record>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression6">\
+						<Apply Function="odata.concat">\
+							<If>\
+								<Path>IsFemale</Path>\
+								<String>Iron Man</String>\
+								<String>Someone else</String>\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Who am I?"/>\
+							</If>\
+						</Apply>\
 					</Annotation>\
 				</Annotation>\
 			</Annotations>\

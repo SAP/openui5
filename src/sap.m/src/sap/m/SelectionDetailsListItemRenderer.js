@@ -1,11 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/Renderer",
-	"sap/m/ListItemBaseRenderer"
-], function(jQuery, Renderer, ListItemBaseRenderer) {
+sap.ui.define(["sap/ui/core/Renderer", "sap/m/ListItemBaseRenderer"], function(Renderer, ListItemBaseRenderer) {
 	"use strict";
 
 	var TAG_WHITELIST = {

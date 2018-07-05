@@ -3,8 +3,26 @@
  */
 
 //Provides class sap.ui.core.Configuration
-sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', './Locale', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
-	function(jQuery, Device, Global, BaseObject, Locale, URI /*, jQuerySapScript */ ) {
+sap.ui.define([
+	'jquery.sap.global',
+	'../Device',
+	'../Global',
+	'../base/Object',
+	'./Locale',
+	'sap/ui/thirdparty/URI',
+	"sap/base/util/UriParameters",
+	"sap/base/util/deepEqual"
+],
+	function(
+		jQuery,
+		Device,
+		Global,
+		BaseObject,
+		Locale,
+		URI,
+		UriParameters,
+		deepEqual
+	) {
 	"use strict";
 
 	// lazy dependencies. Can't be declared as this would result in cyclic dependencies
@@ -291,7 +309,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			// 6. apply the settings from the url (only if not blocked by app configuration)
 			if ( !config.ignoreUrlParams ) {
 				var sUrlPrefix = "sap-ui-";
-				var oUriParams = jQuery.sap.getUriParameters();
+				var oUriParams = new UriParameters(window.location.href);
 
 				// first map SAP parameters, can be overwritten by "sap-ui-*" parameters
 				if ( oUriParams.mParams['sap-language'] ) {
@@ -832,15 +850,22 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			var sLegacyDateFormat = this.oFormatSettings.getLegacyDateFormat();
 
 			switch (sLegacyDateFormat) {
+				case "1":
+				case "2":
+				case "3":
+				case "4":
+				case "5":
+				case "6":
+					return CalendarType.Gregorian;
+				case "7":
+				case "8":
+				case "9":
+					return CalendarType.Japanese;
 				case "A":
 				case "B":
 					return CalendarType.Islamic;
 				case "C":
 					return CalendarType.Persian;
-				case "7":
-				case "8":
-				case "9":
-					return CalendarType.Japanese;
 			}
 
 			return LocaleData.getInstance(this.getLocale()).getPreferredCalendarType();
@@ -1639,7 +1664,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				delete this.mSettings[sKey];
 			}
 			// report a change only if old and new value differ (null/undefined are treated as the same value)
-			if ( (oOldValue != null || oValue != null) && !jQuery.sap.equal(oOldValue, oValue) ) {
+			if ( (oOldValue != null || oValue != null) && !deepEqual(oOldValue, oValue) ) {
 				var mChanges = this.oConfiguration._collect();
 				mChanges[sKey] = oValue;
 				this.oConfiguration._endCollect();

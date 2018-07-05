@@ -3,8 +3,8 @@
  */
 
 // A renderer for the ScrollBar control
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
-	function(jQuery, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
+	function(jQuery, Device, getScrollbarSize) {
 	"use strict";
 
 
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var sSize = oScrollBar.getSize();
 		var sContentSize = oScrollBar.getContentSize();
 
-		var oBSS = jQuery.sap.scrollbarSize(sScrollBarTouchClass);
+		var oBSS = getScrollbarSize(sScrollBarTouchClass);
 		var sWidth = oBSS.width;
 		var sHeight = oBSS.height;
 		// Fix for Fiory Client and Edge in Mobile Mode on Win8 and Win10

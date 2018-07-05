@@ -3,8 +3,14 @@
  */
 
 // Provides class sap.ui.core.format.NumberFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
-	function(jQuery, BaseObject, Locale, LocaleData) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/Object',
+	'sap/ui/core/Locale',
+	'sap/ui/core/LocaleData',
+	"sap/base/strings/escapeRegExp"
+],
+	function(jQuery, BaseObject, Locale, LocaleData, escapeRegExp) {
 	"use strict";
 
 
@@ -761,14 +767,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 
 		// integer part length
 		if (sIntegerPart.length < oOptions.minIntegerDigits) {
-			sIntegerPart = jQuery.sap.padLeft(sIntegerPart, "0", oOptions.minIntegerDigits);
+			sIntegerPart = sIntegerPart.padStart(oOptions.minIntegerDigits, "0");
 		} else if (sIntegerPart.length > oOptions.maxIntegerDigits) {
-			sIntegerPart = jQuery.sap.padLeft("", "?", oOptions.maxIntegerDigits);
+			sIntegerPart = "".padStart(oOptions.maxIntegerDigits, "?");
 		}
 
 		// fraction part length
 		if (sFractionPart.length < oOptions.minFractionDigits) {
-			sFractionPart = jQuery.sap.padRight(sFractionPart, "0", oOptions.minFractionDigits);
+			sFractionPart = sFractionPart.padEnd(oOptions.minFractionDigits, "0");
 		} else if (sFractionPart.length > oOptions.maxFractionDigits) {
 			sFractionPart = sFractionPart.substr(0, oOptions.maxFractionDigits);
 		}
@@ -1245,11 +1251,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			iAfterMovePos = iDecimalPos + iStep;
 			if (iAfterMovePos <= 0) {
 				// pad 0 to the left when decimal point should be shifted far left
-				vValue = jQuery.sap.padLeft(vValue, '0', vValue.length - iAfterMovePos + 1);
+				vValue = vValue.padStart(vValue.length - iAfterMovePos + 1, '0');
 				iAfterMovePos = 1;
 			} else if (iAfterMovePos >= vValue.length - 1) {
 				// pad 0 to the right
-				vValue = jQuery.sap.padRight(vValue, '0', iAfterMovePos + 1);
+				vValue = vValue.padEnd(iAfterMovePos + 1, '0');
 				iAfterMovePos = vValue.length - 1;
 			}
 
@@ -1483,7 +1489,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 					if (bContainsExpression) {
 
 						//escape regex characters to match it properly
-						sUnitPattern = "^" + jQuery.sap.escapeRegExp(sUnitPattern).replace("\\{0\\}", "(.+)") + "$";
+						sUnitPattern = "^" + escapeRegExp(sUnitPattern).replace("\\{0\\}", "(.+)") + "$";
 
 						var regexp = new RegExp(sUnitPattern);
 						var match = regexp.exec(sValue);
@@ -1508,11 +1514,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 
 						//for units which do not have a number representation, get the number from the pattern
 						var sNumber;
-						if (jQuery.sap.endsWith(sKey, "-zero")) {
+						if (sKey.endsWith("-zero")) {
 							sNumber = "0";
-						} else if (jQuery.sap.endsWith(sKey, "-one")) {
+						} else if (sKey.endsWith("-one")) {
 							sNumber = "1";
-						} else if (jQuery.sap.endsWith(sKey, "-two")) {
+						} else if (sKey.endsWith("-two")) {
 							sNumber = "2";
 						}
 						oBestMatch.numberValue = sNumber;

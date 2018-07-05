@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": " uxap.ObjectPageSubSection: See more button accessibility improved",
         "references": []
+      },
+      {
+        "id": "8b04317a81836b0f7fa87ca4519c69fc803e8db4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ScrollBar flickering fixed",
+        "references": []
       }
     ]
   }

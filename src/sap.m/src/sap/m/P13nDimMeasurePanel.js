@@ -4,7 +4,6 @@
 
 // Provides control sap.m.P13nDimMeasurePanel.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'./P13nPanel',
 	'./P13nDimMeasureItem',
@@ -29,9 +28,32 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/IconPool'
-], function(jQuery, library, P13nPanel, P13nDimMeasureItem, SearchField, Table, Column, ColumnListItem, ScrollContainer,
-		Text, Select, ComboBox, Button, OverflowToolbar, OverflowToolbarLayoutData, OverflowToolbarButton, ToolbarSpacer,
-		CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, Item, InvisibleText, IconPool) {
+], function(
+	library,
+	P13nPanel,
+	P13nDimMeasureItem,
+	SearchField,
+	Table,
+	Column,
+	ColumnListItem,
+	ScrollContainer,
+	Text,
+	Select,
+	ComboBox,
+	Button,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	OverflowToolbarButton,
+	ToolbarSpacer,
+	CoreLibrary,
+	ChangeReason,
+	JSONModel,
+	BindingMode,
+	ResizeHandler,
+	Item,
+	InvisibleText,
+	IconPool
+) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority

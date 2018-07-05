@@ -19,10 +19,25 @@ sap.ui.define([
 	'sap/ui/model/TreeAutoExpandMode',
 	'./odata4analytics',
 	'./BatchResponseCollector',
-	'./AnalyticalVersionInfo'
-], function(jQuery, TreeBinding, ChangeReason, Filter, FilterOperator, FilterType, Sorter,
-		CountMode, TreeAutoExpandMode, odata4analytics, BatchResponseCollector,
-		AnalyticalVersionInfo) {
+	'./AnalyticalVersionInfo',
+	"sap/base/util/uid",
+	"sap/base/util/deepEqual"
+], function(
+	jQuery,
+	TreeBinding,
+	ChangeReason,
+	Filter,
+	FilterOperator,
+	FilterType,
+	Sorter,
+	CountMode,
+	TreeAutoExpandMode,
+	odata4analytics,
+	BatchResponseCollector,
+	AnalyticalVersionInfo,
+	uid,
+	deepEqual
+) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.analytics.AnalyticalBinding";
@@ -353,7 +368,7 @@ sap.ui.define([
 	function createSupportInfo(oAnalyticalBinding, sErrorId) {
 		return function() {
 			if (!oAnalyticalBinding.__supportUID) {
-				oAnalyticalBinding.__supportUID = jQuery.sap.uid();
+				oAnalyticalBinding.__supportUID = uid();
 			}
 			return {
 				type: sClassName,
@@ -1180,7 +1195,7 @@ sap.ui.define([
 		}
 
 		// check if something has changed --> deep equal on the column info objects, only 1 level "deep"
-		if (jQuery.sap.equal(this._aLastChangedAnalyticalInfo, aColumns)) {
+		if (deepEqual(this._aLastChangedAnalyticalInfo, aColumns)) {
 			if (bForceChange) {
 				setTimeout(function () {
 					this._fireChange({reason: ChangeReason.Change});
@@ -5042,4 +5057,3 @@ sap.ui.define([
 
 	return AnalyticalBinding;
 });
-

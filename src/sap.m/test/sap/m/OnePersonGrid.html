@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>sap.m.OnePersonGrid</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<style>
+		.test {
+			margin: 20px;
+		}
+	</style>
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+	        src="../../../resources/sap-ui-core.js"
+	        data-sap-ui-libs="sap.m, sap.ui.unified">
+	</script>
+	<script>
+			new sap.m.OnePersonGrid({
+				startDate: new Date(2018, 5, 18),
+				appointmentsVisualization: "Filled",
+				appointments: [
+					new sap.ui.unified.CalendarAppointment({
+						title: "App 0",
+						type: "Type02",
+						startDate: new Date(2018, 5, 20, 14, 0, 0),
+						endDate: new Date(2018, 5, 20, 18, 30, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						title: "App 1",
+						type: "Type02",
+						startDate: new Date(2018, 5, 20, 11, 0, 0),
+						endDate: new Date(2018, 5, 20, 12, 0, 0)
+					}),
+
+
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type01",
+						title: "App 2",
+						startDate: new Date(2018, 5, 18, 11, 0, 0),
+						endDate: new Date(2018, 5, 18, 16, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type02",
+						title: "App 31",
+						startDate: new Date(2018, 5, 18, 12, 0, 0),
+						endDate: new Date(2018, 5, 18, 17, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type02",
+						title: "App 3",
+						startDate: new Date(2018, 5, 18, 12, 0, 0),
+						endDate: new Date(2018, 5, 18, 16, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type03",
+						title: "App 4",
+						startDate: new Date(2018, 5, 18, 13, 0, 0),
+						endDate: new Date(2018, 5, 18, 17, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type04",
+						title: "App 5",
+						startDate: new Date(2018, 5, 18, 16, 0, 0),
+						endDate: new Date(2018, 5, 18, 17, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type05",
+						title: "App 6",
+						startDate: new Date(2018, 5, 18, 11, 0, 0),
+						endDate: new Date(2018, 5, 18, 12, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type06",
+						title: "App 7",
+						startDate: new Date(2018, 5, 18, 11, 30, 0),
+						endDate: new Date(2018, 5, 18, 12, 30, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type07",
+						title: "App 8",
+						startDate: new Date(2018, 5, 18, 12, 30, 0),
+						endDate: new Date(2018, 5, 18, 14, 30, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type08",
+						title: "App 9",
+						startDate: new Date(2018, 5, 18, 12, 30, 0),
+						endDate: new Date(2018, 5, 18, 13, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type09",
+						title: "App 10",
+						startDate: new Date(2018, 5, 18, 16, 0, 0),
+						endDate: new Date(2018, 5, 18, 17, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type09",
+						title: "App 11",
+						startDate: new Date(2018, 5, 18, 17, 30, 0),
+						endDate: new Date(2018, 5, 18, 18, 0, 0)
+					}),
+					new sap.ui.unified.CalendarAppointment({
+						type: "Type09",
+						title: "App 12",
+						startDate: new Date(2018, 5, 18, 15, 30, 0),
+						endDate: new Date(2018, 5, 18, 16, 30, 0)
+					})
+				]
+			}).placeAt("body").addStyleClass("test");
+	</script>
+</head>
+<body id="body" class="sapUiBody"></body>
+</html>

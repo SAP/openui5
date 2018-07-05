@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    './library',
-    'sap/ui/core/ResizeHandler',
-    "./AlignedFlowLayoutRenderer"
+	"sap/ui/core/Control",
+	"./library",
+	"sap/ui/core/ResizeHandler",
+	"./AlignedFlowLayoutRenderer",
+	"sap/ui/dom/units/Rem"
 ],
-	function(jQuery, Control, library, ResizeHandler, AlignedFlowLayoutRenderer) {
+	function(Control, library, ResizeHandler, AlignedFlowLayoutRenderer, Rem) {
 		"use strict";
 
 		/**
@@ -293,7 +293,7 @@ sap.ui.define([
 
 			// the CSS unit of the minItemWidth control property is in rem
 			if (sMinItemWidth.lastIndexOf("rem") !== -1) {
-				fMinItemWidth = jQuery.sap.remToPx(sMinItemWidth);
+				fMinItemWidth = Rem.toPx(sMinItemWidth);
 
 			// the CSS unit of the minItemWidth control property is in px
 			} else if (sMinItemWidth.lastIndexOf("px") !== -1) {
@@ -304,8 +304,9 @@ sap.ui.define([
 
 			if (fMinItemWidth) {
 
-				// we do not need more spacers than (documentElement.clientWidth / minItemWidth)
-				iSpacers = Math.abs(document.documentElement.clientWidth / fMinItemWidth);
+				// we do not need more spacers than (iAvailableWidth / minItemWidth)
+				var iAvailableWidth = Math.max(document.documentElement.clientWidth, window.screen.width);
+				iSpacers = Math.abs(iAvailableWidth / fMinItemWidth);
 			}
 
 			// we do not need more spacers than items

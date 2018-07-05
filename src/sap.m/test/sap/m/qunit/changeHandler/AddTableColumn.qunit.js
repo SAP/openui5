@@ -47,7 +47,9 @@ sap.ui.require([
 		return jQuery.extend(true, {}, {
 			"changeType": "addTableColumn",
 			"content": {
-				"entityType": "EntityTypeNav",
+				"oDataInformation": {
+					"entityType": "EntityTypeNav"
+				},
 				"bindingPath": "EntityTypeNav_Property04",
 				"newFieldSelector": {
 					"id": "view--table_EntityTypeNav_EntityTypeNav_Property04",

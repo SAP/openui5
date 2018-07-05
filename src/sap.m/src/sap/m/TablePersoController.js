@@ -3,8 +3,13 @@
  */
 
 // Provides TablePersoController
-sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedObject'],
-	function(jQuery, TablePersoDialog, ManagedObject) {
+sap.ui.define([
+	'./TablePersoDialog',
+	'sap/ui/base/ManagedObject',
+	"sap/ui/core/syncStyleClass",
+	"sap/base/Log"
+],
+	function(TablePersoDialog, ManagedObject, syncStyleClass, Log) {
 	"use strict";
 
 
@@ -203,7 +208,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		});
 		oReadPromise.fail(function() {
 			//SUGGESTED IMPROVEMENT: User should get some visual feedback as well
-			jQuery.sap.log.error("Problem reading persisted personalization data.");
+			Log.error("Problem reading persisted personalization data.");
 		});
 	};
 
@@ -343,7 +348,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 					oTableColumn = sap.ui.getCore().byId(oNewSetting.id);
 					if (oTableColumn) {
 						// migrate old persistence id which still contain generated column ids, example: __xmlview0--idColor
-						jQuery.sap.log.info("Migrating personalization persistence id of column " + oNewSetting.id );
+						Log.info("Migrating personalization persistence id of column " + oNewSetting.id );
 						oNewSetting.id = mPersoMap[oTableColumn];
 						bDoSaveMigration = true;
 					}
@@ -353,7 +358,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 					oTableColumn.setVisible(oNewSetting.visible);
 					oTableColumn.setOrder(oNewSetting.order);
 				} else {
-					jQuery.sap.log.warning("Personalization could not be applied to column " + oNewSetting.id + " - not found!");
+					Log.warning("Personalization could not be applied to column " + oNewSetting.id + " - not found!");
 				}
 			}
 
@@ -389,7 +394,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		});
 		oWritePromise.fail(function() {
 			// SUGGESTED IMPROVEMENT: User should get some visual feedback as well
-			jQuery.sap.log.error("Problem persisting personalization data.");
+			Log.error("Problem persisting personalization data.");
 		});
 
 	};
@@ -434,11 +439,11 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		if (oTablePersoDialog) {
 			// 'syncStyleClass' call because dialogs need to be informed of 'sapUISizeCompact'
 			// They do not get this information automatically
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", oTablePersoDialog.getPersoDialogFor(), oTablePersoDialog._oDialog);
+			syncStyleClass("sapUiSizeCompact", oTablePersoDialog.getPersoDialogFor(), oTablePersoDialog._oDialog);
 			oTablePersoDialog.open();
 		} else {
 			// SUGGESTED IMPROVEMENT: User should get some visual feedback as well
-			jQuery.sap.log.warning("sap.m.TablePersoController: trying to open TablePersoDialog before TablePersoService has been activated.");
+			Log.warning("sap.m.TablePersoController: trying to open TablePersoDialog before TablePersoService has been activated.");
 		}
 	};
 
@@ -643,7 +648,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 				// Table id is generated and can therefore not be used.
 				// SUGGESTED IMPROVEMENT: personalization does not take place in this case.
 				// User should get some visual feedback
-				jQuery.sap.log.error("Table " + oTable.getId() + " must have a static id suffix. Otherwise personalization can not be persisted.");
+				Log.error("Table " + oTable.getId() + " must have a static id suffix. Otherwise personalization can not be persisted.");
 				//Invalidate persoMap
 				mResult = null;
 				return null;
@@ -665,7 +670,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 						// Table id is generated and can therefore not be used.
 						// SUGGESTED IMPROVEMENT: personalization does not take place in this case.
 						// User should get some visual feedback
-						jQuery.sap.log.error("Suffix " + sNextColumnIdSuffix + " of table column " + sNextColumnId + " must be static. Otherwise personalization can not be persisted for its table.");
+						Log.error("Suffix " + sNextColumnIdSuffix + " of table column " + sNextColumnId + " must be static. Otherwise personalization can not be persisted for its table.");
 						// Invalidate persoMap
 						mResult = null;
 						return null;
@@ -735,7 +740,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 					if (!sCaption) {
 						// Fallback: use column id and issue warning to let app developer know to add captions to columns
 						sCaption = oColumn.getId();
-						jQuery.sap.log.warning("Please 'getCaption' callback implentation in your TablePersoProvider for column " +
+						Log.warning("Please 'getCaption' callback implentation in your TablePersoProvider for column " +
 							oColumn + ". Table personalization uses column id as fallback value.");
 					}
 				}

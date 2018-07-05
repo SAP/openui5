@@ -13,7 +13,7 @@
 		        data-sap-ui-resourceroots='{
 				"sap.ui.sample.appUnderTest" : "./applicationUnderTest",
 				"sap.ui.sample.appUnderTest.view" : "./applicationUnderTest/view",
-				"sap.ui.demo.mock" : "../../../../../../../sap/ui/demokit/explored/"
+				"sap.ui.demo.mock" : "../../../../../../../sap/ui/documentation/sdk/"
 			}'>
 		</script>
 
@@ -32,7 +32,7 @@
 				'sap/ui/test/opaQunit',
 				'sap/ui/test/matchers/AggregationFilled'
 			], function (Opa5, opaTest, AggregationFilled) {
-			
+
 				QUnit.module("iStartMyUIComponent");
 
 				opaTest("Should start and teardown a component", function (Given, When, Then) {
@@ -75,7 +75,7 @@
 						componentConfig: {
 							name: "sap.ui.sample.appUnderTest"
 						},
-						autoWait: true 		
+						autoWait: true
 					});
 
 					// should wait for the table to fully load

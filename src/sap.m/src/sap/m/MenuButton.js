@@ -4,7 +4,6 @@
 
 // Provides control sap.m.MenuButton.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'./Button',
@@ -16,7 +15,6 @@ sap.ui.define([
 	'sap/m/Menu',
 	"./MenuButtonRenderer"
 ], function(
-	jQuery,
 	library,
 	Control,
 	Button,
@@ -27,7 +25,7 @@ sap.ui.define([
 	Popup,
 	Menu,
 	MenuButtonRenderer
-	) {
+) {
 		"use strict";
 
 		// shortcut for sap.m.MenuButtonMode
@@ -152,6 +150,18 @@ sap.ui.define([
 				 * Internal aggregation that contains the button part.
 				 */
 				_button: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
+			},
+			associations : {
+
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
 			},
 			events: {
 				/**

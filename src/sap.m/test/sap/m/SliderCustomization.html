@@ -86,6 +86,11 @@
 			justify-content: center;
 			width: 100%;
 		}
+
+		.sapMSliderLabelZoomed {
+			width: 3rem;
+			left: -1.5rem;
+		}
 	</style>
 	<script>
 		var oApp = new sap.m.App("myApp", { initialPage: "page1" });
@@ -133,11 +138,20 @@
 
 		// should be implemented if you need special responsive behavior
 		CustomScale.prototype.handleResize = function () {
+			var fPixelRatio = (window.outerWidth - 8) / window.innerWidth;
+			$(".sapMSliderLabel").each(function(iIndex, oSliderLabel) {
+				if(fPixelRatio > 1.09) {
+					oSliderLabel.classList.add("sapMSliderLabelZoomed");
+				}
+				else {
+					oSliderLabel.classList.remove("sapMSliderLabelZoomed");				
+				}
+			});
 		};
 
 		// adds some acc adjustments to the scale (optional)
 		CustomScale.prototype.getLabel = function (fValue, oSlider) {
-			return parseFloat(fValue) + " March";
+			return parseFloat(fValue) + " May";
 		};
 
 		jQuery.sap.require("sap.m.SliderTooltipBase");
@@ -179,7 +193,7 @@
 						oRm.write(">");
 
 						// display the value
-						oRm.write(oControl.aDays[fValue % 7] + " " + fValue + " March");
+						oRm.write(oControl.aDays[fValue % 7] + " " + fValue + " May");
 						oRm.write("</div>")
 
 						if (oControl.getShowButtons()) {
@@ -211,7 +225,7 @@
 		};
 
 		CustomTooltip.prototype.getLabel = function (fValue) {
-			return this.aDays[fValue % 7] + " " + parseFloat(fValue) + " March";
+			return this.aDays[fValue % 7] + " " + parseFloat(fValue) + " May";
 		};
 
 		CustomTooltip.prototype.ontap = function (oEvent) {

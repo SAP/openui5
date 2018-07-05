@@ -929,12 +929,12 @@
 				oTfStub = { focus: this.spy(), toggleClass: function () {} },
 				oMenu$Stub = this.stub(oMenuItem, "$", function () { return oTfStub }),
 				oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true }),
-				oDelayedCallStub = this.stub(jQuery.sap, "delayedCall", function delayedCall(iDelay, oThis, fn) {
+				oSetTimeoutStub = this.stub(window, "setTimeout", function(fn, iDelay) {
 					fn.call(oMenuItem);
 
 					// Assert
-					assert.ok(true, "delayedCall function is called, so that the MenuTextFieldItem could accept the focus");
-					assert.equal(iDelay, 0, "the timeout passed to the delayedCall is 0");
+					assert.ok(true, "setTimeout function is called, so that the MenuTextFieldItem could accept the focus");
+					assert.equal(iDelay, 0, "the timeout passed to the setTimeout is 0");
 					assert.equal(oTfStub.focus.callCount, 1, "the MenuTextFieldItem is focused");
 				});
 
@@ -944,7 +944,7 @@
 			// Cleanup
 			oMenu$Stub.restore();
 			oBrowserStub.restore();
-			oDelayedCallStub.restore();
+			oSetTimeoutStub.restore();
 		});
 
 		QUnit.module("Aria");

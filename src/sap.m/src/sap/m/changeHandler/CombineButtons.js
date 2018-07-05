@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
-	function(FlexUtils, jQuery) {
+sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid"],
+	function(FlexUtils, uid) {
 		"use strict";
 
 		/**
@@ -167,12 +167,12 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
 				});
 
 				// generate ids for Menu and MenuButton
-				oChangeDefinition.content.menuButtonIdSelector = oModifier.getSelector(oAppComponent.createId(jQuery.sap.uid()), oAppComponent);
-				oChangeDefinition.content.menuIdSelector = oModifier.getSelector(oAppComponent.createId(jQuery.sap.uid()), oAppComponent);
+				oChangeDefinition.content.menuButtonIdSelector = oModifier.getSelector(oAppComponent.createId(uid()), oAppComponent);
+				oChangeDefinition.content.menuIdSelector = oModifier.getSelector(oAppComponent.createId(uid()), oAppComponent);
 
 				// generate id for menu button items
 				oChangeDefinition.content.buttonsIdForSave = aCombineButtonIds.map(function() {
-					return oModifier.getSelector(oAppComponent.createId(jQuery.sap.uid()), oAppComponent);
+					return oModifier.getSelector(oAppComponent.createId(uid()), oAppComponent);
 				});
 			} else {
 				throw new Error("Combine buttons action cannot be completed: oSpecificChangeInfo.combineFieldIds attribute required");

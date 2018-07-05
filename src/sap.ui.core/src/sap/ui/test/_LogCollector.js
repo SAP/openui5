@@ -26,7 +26,7 @@ sap.ui.define([
 			this._aLogs = [];
 			this._oListener = {
 				onLogEntry: function (oLogEntry) {
-					if (!$.sap.startsWith(oLogEntry.component, "sap.ui.test")) {
+					if (!oLogEntry.component.startsWith("sap.ui.test")) {
 						return;
 					}
 					var sLogText = oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;

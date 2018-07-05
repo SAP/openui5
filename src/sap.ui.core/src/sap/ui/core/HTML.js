@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', './Control', './RenderManager', "./HTMLRende
 	 */
 	HTML.prototype.getDomRef = function(sSuffix) {
 		var sId = sSuffix ? this.getId() + "-" + sSuffix : this.getId();
-		return jQuery.sap.domById(RenderPrefixes.Dummy + sId) || jQuery.sap.domById(sId);
+		return ((RenderPrefixes.Dummy + sId ? window.document.getElementById(RenderPrefixes.Dummy + sId) : null)) || ((sId ? window.document.getElementById(sId) : null));
 	};
 
 	HTML.prototype.setContent = function(sContent) {
@@ -202,7 +202,7 @@ sap.ui.define(['jquery.sap.global', './Control', './RenderManager', "./HTMLRende
 			return;
 		}
 
-		var $placeholder = jQuery(jQuery.sap.domById(RenderPrefixes.Dummy + this.getId()));
+		var $placeholder = jQuery((RenderPrefixes.Dummy + this.getId() ? window.document.getElementById(RenderPrefixes.Dummy + this.getId()) : null));
 		var $oldContent = RenderManager.findPreservedContent(this.getId());
 		var $newContent;
 		var isPreservedDOM = false;

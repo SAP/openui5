@@ -1,5 +1,5 @@
 <mvc:View
-		controllerName="sap.ui.unified.sample.CalendarMultipleMonth.CalendarMultipleMonth"
+		controllerName="sap.ui.unified.sample.CalendarDateIntervalBasic.CalendarDateIntervalBasic"
 		xmlns:l="sap.ui.layout"
 		xmlns:u="sap.ui.unified"
 		xmlns:mvc="sap.ui.core.mvc"

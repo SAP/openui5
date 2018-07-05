@@ -3,8 +3,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
-	function(jQuery, BarInPageEnabler, Device) {
+sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log"],
+	function(BarInPageEnabler, Device, Log) {
 	"use strict";
 
 
@@ -44,6 +44,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 			"role": oControl._getRootAccessibilityRole()
 		});
 
+		//TODO: global jquery call found
 		if (oControl.getTranslucent() && (Device.support.touch  || jQuery.sap.simulateMobileOnDesktop)) {
 			oRM.addClass("sapMBarTranslucent");
 		}
@@ -197,7 +198,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
 				}
 				break;
 			default:
-				jQuery.sap.log.error("Cannot determine which of the three content aggregations is alone");
+				Log.error("Cannot determine which of the three content aggregations is alone");
 		}
 	}
 

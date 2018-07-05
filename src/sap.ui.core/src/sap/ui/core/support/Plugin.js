@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.Plugin
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jquery.sap.script'],
-	function(jQuery, BaseObject/* , jQuerySap1, jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/uid"],
+	function(jQuery, BaseObject, jQueryDOM, uid) {
 	"use strict";
 
 
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	var Plugin = BaseObject.extend("sap.ui.core.support.Plugin", {
 		constructor : function(sId, sTitle, oStub) {
 			BaseObject.apply(this);
-			this._id = sId ? sId : jQuery.sap.uid();
+			this._id = sId ? sId : uid();
 			this._title = sTitle ? sTitle : "";
 			this._bActive = false;
 			this._aEventIds = [];
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 */
 	Plugin.prototype.$ = function(sSuffix){
 		if (this.isToolPlugin()) {
-			var jRef = jQuery.sap.byId(sSuffix ? this.getId() + "-" + sSuffix : this.getId());
+			var jRef = jQueryDOM(document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId()));
 			if (jRef.length == 0 && !sSuffix) {
 				jRef = jQuery("<DIV/>", {id:this.getId()});
 				jRef.appendTo(jQuery(".sapUiSupportCntnt"));

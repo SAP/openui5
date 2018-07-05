@@ -1194,45 +1194,42 @@
 			oButton.destroy();
 		});
 
-		if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
-			// Don't need to consider IE9 because it's a test for mobile device
-			QUnit.test("Restore scroll position on mobile device", function (assert){
-				var oSystem = {
-					desktop: false,
-					tablet: true,
-					phone: false
-				};
+		QUnit.test("Restore scroll position on mobile device", function (assert){
+			var oSystem = {
+				desktop: false,
+				tablet: true,
+				phone: false
+			};
 
-				this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(sap.ui.Device, "system", oSystem);
 
-				var oButton = new sap.m.Button({
-					text: "Open"
-				});
-
-				var oPopover = new sap.m.Popover({
-					contentWidth: "200px",
-					contentHeight: "200px",
-					content: new sap.ui.core.HTML({
-						content: "<div style='width: 400px;height: 400px'></div>"
-					})
-				});
-
-				oButton.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oPopover.openBy(oButton);
-
-				this.clock.tick(500);
-				assert.ok(oPopover.isOpen(), "Popover is open");
-				oPopover._oScroller.scrollTo(30, 20, 1);
-
-				oPopover._onOrientationChange();
-				assert.equal(oPopover._oScroller.getScrollTop(), 20, "scrollTop is restored");
-				assert.equal(oPopover._oScroller.getScrollLeft(), 30, "scrollLeft is restored");
-
-				oPopover.destroy();
-				oButton.destroy();
+			var oButton = new sap.m.Button({
+				text: "Open"
 			});
-		}
+
+			var oPopover = new sap.m.Popover({
+				contentWidth: "200px",
+				contentHeight: "200px",
+				content: new sap.ui.core.HTML({
+					content: "<div style='width: 400px;height: 400px'></div>"
+				})
+			});
+
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oPopover.openBy(oButton);
+
+			this.clock.tick(500);
+			assert.ok(oPopover.isOpen(), "Popover is open");
+			oPopover._oScroller.scrollTo(30, 20, 1);
+
+			oPopover._onOrientationChange();
+			assert.equal(oPopover._oScroller.getScrollTop(), 20, "scrollTop is restored");
+			assert.equal(oPopover._oScroller.getScrollLeft(), 30, "scrollLeft is restored");
+
+			oPopover.destroy();
+			oButton.destroy();
+		});
 
 		QUnit.test("Popover with NavContainer as Content", function (assert){
 			var oPopover = new sap.m.Popover({

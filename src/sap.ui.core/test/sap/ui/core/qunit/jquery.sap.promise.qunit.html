@@ -34,10 +34,9 @@
 		return (
 			sap.ui.Device.browser.firefox && sap.ui.Device.browser.version > 28 ||
 			sap.ui.Device.browser.chrome  && sap.ui.Device.browser.version > 32
-			// || sap.ui.Device.browser.safari  && sap.ui.Device.browser.version >= 7.1
-			// || sap.ui.Device.os.ios          && sap.ui.Device.browser.safari && sap.ui.Device.os.version >= 8
-			// || sap.ui.Device.browser.edge
-			// For Edge and Safari we currently replace the native promise with the polyfill due to timing issues (setTimeout vs Promise.resolve)
+			|| sap.ui.Device.browser.safari  && sap.ui.Device.browser.version >= 7.1
+			|| sap.ui.Device.os.ios          && sap.ui.Device.browser.safari && sap.ui.Device.os.version >= 8
+			|| sap.ui.Device.browser.edge
 		);
 	}
 
@@ -128,9 +127,9 @@
 
 		QUnit.test(sTestPrefix + "Native Support", function(assert) {
 			doOnNativeSupport(function(){
-				assert.ok(window.Promise.toString().indexOf("[native code]") > -1, "Firefox, Chrome and Safari support Promises natively.");
+				assert.ok(window.Promise.toString().indexOf("[native code]") > -1, "All browsers except IE11 / PhantomJS support Promises natively.");
 			}, function(){
-				assert.ok(window.Promise.toString().indexOf("[native code]") == -1, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
+				assert.ok(window.Promise.toString().indexOf("[native code]") == -1, "IE11 / PhantomJS do not support Promises natively.");
 			});
 		});
 

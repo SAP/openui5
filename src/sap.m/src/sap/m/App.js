@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.m.App.
-sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRenderer'],
-	function(jQuery, NavContainer, library, AppRenderer) {
+sap.ui.define([
+	'./NavContainer',
+	'./library',
+	'./AppRenderer',
+	"sap/ui/util/Mobile",
+	"sap/base/Log"
+],
+	function(NavContainer, library, AppRenderer, Mobile, Log) {
+
 	"use strict";
 
 
@@ -144,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 		NavContainer.prototype.init.apply(this, arguments);
 
 		this.addStyleClass("sapMApp");
-		jQuery.sap.initMobile({
+		Mobile.init({
 			viewport: !this._debugZoomAndScroll,
 			statusBar: "default",
 			hideBrowser: true,
@@ -159,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 		if (NavContainer.prototype.onBeforeRendering) {
 			NavContainer.prototype.onBeforeRendering.apply(this, arguments);
 		}
-		jQuery.sap.initMobile({
+		Mobile.init({
 			homeIcon: this.getHomeIcon(),
 			mobileWebAppCapable: this.getMobileWebAppCapable()
 		});
@@ -192,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 		jQuery(window).unbind("resize", this._handleOrientationChange);
 
 		if (this._sInitTimer) {
-			jQuery.sap.clearDelayedCall(this._sInitTimer);
+			clearTimeout(this._sInitTimer);
 		}
 	};
 
@@ -212,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 
 	App.prototype.setBackgroundOpacity = function(fOpacity) {
 		if (fOpacity > 1 || fOpacity < 0) {
-			jQuery.sap.log.warning("Invalid value " + fOpacity + " for App.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+			Log.warning("Invalid value " + fOpacity + " for App.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
 			return this;
 		}
 		this.$("BG").css("opacity", fOpacity);

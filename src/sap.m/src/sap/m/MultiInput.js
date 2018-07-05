@@ -4,7 +4,6 @@
 
 // Provides control sap.m.MultiInput.
 sap.ui.define([
-	'jquery.sap.global',
 	'./Input',
 	'./Tokenizer',
 	'./Token',
@@ -22,10 +21,10 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/IconPool',
 	'./MultiInputRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	Input,
 	Tokenizer,
 	Token,
@@ -42,8 +41,10 @@ function(
 	Toolbar,
 	ResizeHandler,
 	IconPool,
-	MultiInputRenderer
-	) {
+	MultiInputRenderer,
+	containsOrEquals,
+	KeyCodes
+) {
 		"use strict";
 
     var PlacementType = library.PlacementType,
@@ -232,20 +233,12 @@ function(
 
 		this._bIsValidating = false;
 		this._tokenizer = new Tokenizer();
+		this._tokenizer._setAdjustable(true);
 
 		this.setAggregation("tokenizer", this._tokenizer);
 		this._tokenizer.attachTokenChange(this._onTokenChange, this);
 		this._tokenizer.attachTokenUpdate(this._onTokenUpdate, this);
 		this._tokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
-		this._tokenizer.addEventDelegate({
-			onAfterRendering: function(){
-				// show the collapsed state only if the selected items popup is closed
-				if (this.getEditable() && this._getSelectedItemsPicker().isOpen()) {
-					return;
-				}
-				this._tokenizer._useCollapsedMode(true);
-			}.bind(this)
-		});
 
 		this.setShowValueHelp(true);
 		this.setShowSuggestion(true);
@@ -350,7 +343,7 @@ function(
 		}
 
 		// check if active element is part of MultiInput
-		var bFocusOnMultiInput = jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement);
+		var bFocusOnMultiInput = containsOrEquals(this.getDomRef(), document.activeElement);
 		if (args.getParameter("type") === "tokensChanged" && args.getParameter("removedTokens").length > 0 && bFocusOnMultiInput) {
 			this.focus();
 		}
@@ -474,7 +467,7 @@ function(
 		if (this.getDomRef()) {
 			var iWidth = this.getDomRef().offsetWidth,
 				iValueHelpButtonWidth = this.getDomRef("vhi") ? parseInt(this.getDomRef("vhi").offsetWidth, 10) : 0,
-				iInputWidth = parseInt(this.$().find(".sapMMultiInputInputContainer").css("min-width"), 10);
+				iInputWidth = parseInt(this.$().find(".sapMMultiInputInputContainer").css("min-width"), 10) || 0;
 
 			return iWidth - (iValueHelpButtonWidth + iInputWidth) + "px";
 		} else {
@@ -657,12 +650,12 @@ function(
 	 */
 	MultiInput.prototype.onkeydown = function (oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
+		if (oEvent.which === KeyCodes.TAB) {
 			this._tokenizer._changeAllTokensSelection(false);
 		}
 
 		// ctrl/meta + A - Select all Tokens
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.A) {
 			if (this._tokenizer.getTokens().length > 0) {
 				this._tokenizer.focus();
 				this._tokenizer._changeAllTokensSelection(true);
@@ -671,12 +664,12 @@ function(
 		}
 
 		// ctrl/meta + c OR ctrl/meta + Insert - Copy all selected Tokens
-		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.C || oEvent.which === jQuery.sap.KeyCodes.INSERT)) {
+		if ((oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.C || oEvent.which === KeyCodes.INSERT)) {
 			this._tokenizer._copy();
 		}
 
 		// ctr/meta + x OR Shift + Delete - Cut all selected Tokens if editable
-		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.X) || (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.DELETE)) {
+		if (((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.X) || (oEvent.shiftKey && oEvent.which === KeyCodes.DELETE)) {
 			if (this.getEditable()) {
 				this._tokenizer._cut();
 			} else {
@@ -916,7 +909,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._checkFocus = function () {
-		return this.getDomRef() && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement);
+		return this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement);
 	};
 
 	/**
@@ -936,11 +929,11 @@ function(
 		if (oPopup instanceof sap.m.Popover) {
 			if (oEvent.relatedControlId) {
 				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
-				bNewFocusIsInSuggestionPopup = jQuery.sap.containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
-				bNewFocusIsInTokenizer = jQuery.sap.containsOrEquals(this._tokenizer.getFocusDomRef(), oRelatedControlDomRef);
+				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
+				bNewFocusIsInTokenizer = containsOrEquals(this._tokenizer.getFocusDomRef(), oRelatedControlDomRef);
 
 				if (oSelectedItemsPopup) {
-					bFocusIsInSelectedItemPopup = jQuery.sap.containsOrEquals(oSelectedItemsPopup.getFocusDomRef(), oRelatedControlDomRef);
+					bFocusIsInSelectedItemPopup = containsOrEquals(oSelectedItemsPopup.getFocusDomRef(), oRelatedControlDomRef);
 				}
 			}
 		}
@@ -1292,6 +1285,7 @@ function(
 		this._tokenizer.attachTokenUpdate(this._onTokenUpdate, this);
 		oClone._tokenizer.attachTokenChange(oClone._onTokenChange, oClone);
 		oClone._tokenizer.attachTokenUpdate(oClone._onTokenUpdate, oClone);
+		oClone._tokenizer._handleNMoreIndicatorPress(oClone._handleIndicatorPress.bind(oClone));
 
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 		this.attachLiveChange(this._onLiveChange, this);

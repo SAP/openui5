@@ -207,8 +207,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * the global configuration of Opa.
-	 * All of the global values can be overwritten in an individual waitFor call.
+	 * The global configuration of Opa.
+	 * All of the global values can be overwritten in an individual <code>waitFor</code> call.
 	 * The default values are:
 	 * <ul>
 	 * 		<li>arrangements: A new Opa instance</li>
@@ -219,20 +219,20 @@ sap.ui.define([
 	 *		<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
 	 * 		<li>asyncPolling: false</li>
 	 * </ul>
-	 * You can either directly manipulate the config, or extend it using {@link sap.ui.test.Opa.extendConfig}
+	 * You can either directly manipulate the config, or extend it using {@link sap.ui.test.Opa.extendConfig}.
 	 * @public
 	 */
 	Opa.config = {};
 
 	/**
-	 * Extends and overwrites default values of the {@link sap.ui.test.Opa.config}.
+	 * Extends and overwrites default values of the {@link sap.ui.test.Opa sap.ui.test.Opa.config} field.
 	 * Sample usage:
 	 * <pre>
 	 *     <code>
 	 *         var oOpa = new Opa();
 	 *
-	 *         // this statement will  will time out after 15 seconds and poll every 400ms.
-	 *         // those two values come from the defaults of {@link sap.ui.test.Opa.config}.
+	 *         // this statement will time out after 15 seconds and poll every 400ms
+	 *         // those two values come from the defaults of sap.ui.test.Opa.config
 	 *         oOpa.waitFor({
 	 *         });
 	 *

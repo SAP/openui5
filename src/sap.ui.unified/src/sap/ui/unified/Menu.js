@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.unified.Menu.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
@@ -13,11 +12,12 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/library',
 	'sap/ui/unified/MenuRenderer',
-	'jquery.sap.script',
-	'jquery.sap.keycodes',
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log",
 	'jquery.sap.events'
 ], function(
-	jQuery,
 	Element,
 	Control,
 	Device,
@@ -25,7 +25,11 @@ sap.ui.define([
 	MenuItemBase,
 	library,
 	coreLibrary,
-	MenuRenderer
+	MenuRenderer,
+	containsOrEquals,
+	jQueryDOM,
+	KeyCodes,
+	Log
 ) {
 	"use strict";
 
@@ -158,6 +162,32 @@ sap.ui.define([
 		this.bUseTopStyle = false;
 	};
 
+	/*
+	 * Allows for any custom function to be called back when accessibility attributes
+	 * of the menu are about to be rendered.
+	 * The function is called once per MenuItem.
+	 *
+	 * @param {function} fn The callback function
+	 * @protected
+	 * @sap-restricted sap.m.Menu
+	 * @returns void
+	 */
+	Menu.prototype._setCustomEnhanceAccStateFunction = function(fn) {
+		this._fnCustomEnhanceAccStateFunction = fn;
+	};
+
+	/*
+	 * Enables any consumer of the menu to enhance its accessibility state by calling
+	 * back its custom provided function Menu#_setCustomEnhanceAccStateFunction.
+	 *
+	 * @overrides sap.ui.core.Element.prototype.enhanceAccessibilityState
+	 */
+	Menu.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
+		var bIsAccFunctionValid = typeof this._fnCustomEnhanceAccStateFunction === "function";
+
+		return bIsAccFunctionValid ? this._fnCustomEnhanceAccStateFunction(oElement, mAriaProps) : mAriaProps;
+	};
+
 	/**
 	 * Does all the cleanup when the Menu is to be destroyed.
 	 * Called from Element's destroy() method.
@@ -208,7 +238,7 @@ sap.ui.define([
 	 */
 	Menu.prototype.onAfterRendering = function() {
 		if (this.$().parent().attr("id") != "sap-ui-static") {
-			jQuery.sap.log.error("sap.ui.unified.Menu: The Menu is popup based and must not be rendered directly as content of the page.");
+			Log.error("sap.ui.unified.Menu: The Menu is popup based and must not be rendered directly as content of the page.");
 			this.close();
 			this.$().remove();
 		}
@@ -286,7 +316,7 @@ sap.ui.define([
 		this._resetDelayedRerenderItems();
 		this._discardOpenSubMenuDelayed();
 
-		this._itemRerenderTimer = jQuery.sap.delayedCall(0, this, function(){
+		this._itemRerenderTimer = setTimeout(function(){
 			var oDomRef = this.getDomRef();
 			if (oDomRef) {
 				var oRm = sap.ui.getCore().createRenderManager();
@@ -296,7 +326,7 @@ sap.ui.define([
 				this.onAfterRendering();
 				this.getPopup()._applyPosition(this.getPopup()._oLastPosition);
 			}
-		});
+		}.bind(this), 0);
 	};
 
 	/**
@@ -304,7 +334,7 @@ sap.ui.define([
 	 */
 	Menu.prototype._resetDelayedRerenderItems = function(){
 		if (this._itemRerenderTimer) {
-			jQuery.sap.clearDelayedCall(this._itemRerenderTimer);
+			clearTimeout(this._itemRerenderTimer);
 			delete this._itemRerenderTimer;
 		}
 	};
@@ -525,7 +555,7 @@ sap.ui.define([
 				try {
 					this.oOpenerRef.focus();
 				} catch (e) {
-					jQuery.sap.log.warning("Menu.close cannot restore the focus on opener " + this.oOpenerRef + ", " + e);
+					Log.warning("Menu.close cannot restore the focus on opener " + this.oOpenerRef + ", " + e);
 				}
 			}
 			this.oOpenerRef = undefined;
@@ -543,7 +573,7 @@ sap.ui.define([
 
 	Menu.prototype.onsapnext = function(oEvent){
 		//right or down (RTL: left or down)
-		if (oEvent.keyCode != jQuery.sap.KeyCodes.ARROW_DOWN) {
+		if (oEvent.keyCode != KeyCodes.ARROW_DOWN) {
 			//Go to sub menu if available
 			if (this.oHoveredItem && this.oHoveredItem.getSubmenu() && this.checkEnabled(this.oHoveredItem)) {
 				this.openSubmenu(this.oHoveredItem, true);
@@ -561,7 +591,7 @@ sap.ui.define([
 
 	Menu.prototype.onsapprevious = function(oEvent){
 		//left or up (RTL: right or up)
-		if (oEvent.keyCode != jQuery.sap.KeyCodes.ARROW_UP) {
+		if (oEvent.keyCode != KeyCodes.ARROW_UP) {
 			//Go to parent menu if this is a sub menu
 			if (this.isSubMenu()) {
 				this.close();
@@ -688,7 +718,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.oOpenedSubMenu && jQuery.sap.containsOrEquals(this.oOpenedSubMenu.getDomRef(), oEvent.target)) {
+		if (this.oOpenedSubMenu && containsOrEquals(this.oOpenedSubMenu.getDomRef(), oEvent.target)) {
 			return;
 		}
 
@@ -713,22 +743,19 @@ sap.ui.define([
 			return;
 		}
 		this._discardOpenSubMenuDelayed();
-		this._delayedSubMenuTimer = jQuery.sap.delayedCall(
-			oItem.getSubmenu() && this.checkEnabled(oItem) ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT,
-			this,
-			function(){
-				this.closeSubmenu();
-				if (!oItem.getSubmenu() || !this.checkEnabled(oItem)) {
-					return;
-				}
-				this.setHoveredItem(oItem);
-				this.openSubmenu(oItem, false, true);
-		});
+		this._delayedSubMenuTimer = setTimeout(function(){
+			this.closeSubmenu();
+			if (!oItem.getSubmenu() || !this.checkEnabled(oItem)) {
+				return;
+			}
+			this.setHoveredItem(oItem);
+			this.openSubmenu(oItem, false, true);
+	}.bind(this), oItem.getSubmenu() && this.checkEnabled(oItem) ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT);
 	};
 
 	Menu.prototype._discardOpenSubMenuDelayed = function(oItem){
 		if (this._delayedSubMenuTimer) {
-			jQuery.sap.clearDelayedCall(this._delayedSubMenuTimer);
+			clearTimeout(this._delayedSubMenuTimer);
 			this._delayedSubMenuTimer = null;
 		}
 	};
@@ -778,7 +805,7 @@ sap.ui.define([
 			}
 			var that = this;
 			while (that && !isInMenuHierarchy) {
-				if (jQuery.sap.containsOrEquals(that.getDomRef(), oEvent.target)) {
+				if (containsOrEquals(that.getDomRef(), oEvent.target)) {
 					isInMenuHierarchy = true;
 				}
 				that = that.oOpenedSubMenu;
@@ -791,7 +818,7 @@ sap.ui.define([
 				var that = this;
 				while (that && !isInMenuHierarchy) {
 					if ((that.oOpenedSubMenu && that.oOpenedSubMenu.getId() == oEvent.relatedControlId)
-							|| jQuery.sap.containsOrEquals(that.getDomRef(), jQuery.sap.byId(oEvent.relatedControlId).get(0))) {
+							|| containsOrEquals(that.getDomRef(), jQueryDOM(document.getElementById(oEvent.relatedControlId)).get(0))) {
 						isInMenuHierarchy = true;
 					}
 					that = that.oOpenedSubMenu;
@@ -813,7 +840,7 @@ sap.ui.define([
 		for (var i = 0;i < iLength;i++) {
 			var oItem = oItems[i],
 				oItemRef = oItem.getDomRef();
-			if (jQuery.sap.containsOrEquals(oItemRef, oDomRef)) {
+			if (containsOrEquals(oItemRef, oDomRef)) {
 				return oItem;
 			}
 		}
@@ -1001,7 +1028,7 @@ sap.ui.define([
 	Menu.prototype._bringToFront = function() {
 		// This is a hack. We "simulate" a mouse-down-event on the submenu so that it brings itself
 		// to the front.
-		jQuery.sap.byId(this.getPopup().getId()).mousedown();
+		jQueryDOM(document.getElementById(this.getPopup().getId())).mousedown();
 	};
 
 	Menu.prototype.checkEnabled = function(oItem){

@@ -79,6 +79,7 @@
 
 			QUnit.module('Creating BusyDialog with all available properties.', {
 				beforeEach: function () {
+					/* TODO remove after 1.62 version */
 					this.bIE_Edge = sap.ui.Device.browser.msie || sap.ui.Device.browser.edge;
 					this.oBusyDialog = new sap.m.BusyDialog({
 						text: 'I am a busy screen with text and a cancel button.',
@@ -141,6 +142,7 @@
 
 			QUnit.module('Creating Default BusyDialog.', {
 				beforeEach: function () {
+					/* TODO remove after 1.62 version */
 					this.bIE_Edge = sap.ui.Device.browser.msie || sap.ui.Device.browser.edge;
 					this.oBusyDialog = new sap.m.BusyDialog();
 					this.sId = '#' + this.oBusyDialog.sId;

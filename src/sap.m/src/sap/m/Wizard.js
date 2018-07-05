@@ -3,22 +3,24 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./WizardProgressNavigator",
 	"sap/ui/Device",
-	"./WizardRenderer"
+	"./WizardRenderer",
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	library,
 	Control,
 	ScrollEnablement,
 	WizardProgressNavigator,
 	Device,
-	WizardRenderer
-	) {
+	WizardRenderer,
+	containsOrEquals,
+	Log
+) {
 		"use strict";
 
 		/**
@@ -169,7 +171,7 @@ sap.ui.define([
 
 		Wizard.prototype.onBeforeRendering = function () {
 			if (!this._isMinStepCountReached() || this._isMaxStepCountExceeded()) {
-				jQuery.sap.log.error("The Wizard is supposed to handle from 3 to 8 steps.");
+				Log.error("The Wizard is supposed to handle from 3 to 8 steps.");
 			}
 
 			this._saveInitialValidatedState();
@@ -219,7 +221,7 @@ sap.ui.define([
 		 */
 		Wizard.prototype.validateStep = function (step) {
 			if (!this._containsStep(step)) {
-				jQuery.sap.log.error("The wizard does not contain this step");
+				Log.error("The wizard does not contain this step");
 				return this;
 			}
 
@@ -236,7 +238,7 @@ sap.ui.define([
 		 */
 		Wizard.prototype.invalidateStep = function (step) {
 			if (!this._containsStep(step)) {
-				jQuery.sap.log.error("The wizard does not contain this step");
+				Log.error("The wizard does not contain this step");
 				return this;
 			}
 
@@ -348,7 +350,7 @@ sap.ui.define([
 				progressNavigatorIndex = index + 1;
 
 			if (progressNavigatorIndex > progressAchieved || progressNavigatorIndex <= 0) {
-				jQuery.sap.log.warning("The given step is either not yet reached, or is not present in the wizard control.");
+				Log.warning("The given step is either not yet reached, or is not present in the wizard control.");
 				return this;
 			}
 
@@ -448,7 +450,7 @@ sap.ui.define([
 		 */
 		Wizard.prototype.addStep = function (wizardStep) {
 			if (this._isMaxStepCountExceeded()) {
-				jQuery.sap.log.error("The Wizard is supposed to handle up to 8 steps.");
+				Log.error("The Wizard is supposed to handle up to 8 steps.");
 				return this;
 			}
 			wizardStep._oNextButton.attachPress(this._handleNextButtonPress.bind(this));
@@ -566,9 +568,9 @@ sap.ui.define([
 
 			progressNavigator._setOnEnter(function (event, stepIndex) {
 				var step = that._stepPath[stepIndex];
-				jQuery.sap.delayedCall(Wizard.CONSTANTS.ANIMATION_TIME, that, function () {
+				setTimeout(function () {
 					this._focusFirstStepElement(step);
-				});
+				}.bind(that), Wizard.CONSTANTS.ANIMATION_TIME);
 			});
 
 			this.setAggregation("_progressNavigator", progressNavigator);
@@ -631,7 +633,7 @@ sap.ui.define([
 			 * additionalOffset is added like this.
 			 */
 			if (!Device.system.phone &&
-				!jQuery.sap.containsOrEquals(progressStep.getDomRef(), this._getNextButton().getDomRef())) {
+				!containsOrEquals(progressStep.getDomRef(), this._getNextButton().getDomRef())) {
 				additionalOffset = this._getNextButton().$().outerHeight();
 			}
 

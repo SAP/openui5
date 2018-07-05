@@ -4,11 +4,11 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/unified/library',
-	"./HeaderRenderer"
-], function(jQuery, Control, library, HeaderRenderer) {
+	"./HeaderRenderer",
+	"sap/ui/dom/containsOrEquals"
+], function(Control, library, HeaderRenderer, containsOrEquals) {
 	"use strict";
 
 	/**
@@ -432,19 +432,19 @@ sap.ui.define([
 			return;
 		}
 
-		if (jQuery.sap.containsOrEquals(this.getDomRef("prev"), oEvent.target) && this.getEnabledPrevious()) {
+		if (containsOrEquals(this.getDomRef("prev"), oEvent.target) && this.getEnabledPrevious()) {
 			this.firePressPrevious();
-		} else if (jQuery.sap.containsOrEquals(this.getDomRef("next"), oEvent.target) && this.getEnabledNext()){
+		} else if (containsOrEquals(this.getDomRef("next"), oEvent.target) && this.getEnabledNext()){
 			this.firePressNext();
-		} else if (jQuery.sap.containsOrEquals(this.getDomRef("B0"), oEvent.target)){
+		} else if (containsOrEquals(this.getDomRef("B0"), oEvent.target)){
 			this.firePressButton0();
-		} else if (jQuery.sap.containsOrEquals(this.getDomRef("B1"), oEvent.target)){
+		} else if (containsOrEquals(this.getDomRef("B1"), oEvent.target)){
 			this.firePressButton1();
-		} else if (jQuery.sap.containsOrEquals(this.getDomRef("B2"), oEvent.target)){
+		} else if (containsOrEquals(this.getDomRef("B2"), oEvent.target)){
 			this.firePressButton2();
-		} else if (jQuery.sap.containsOrEquals(this.getDomRef("B3"), oEvent.target)){
+		} else if (containsOrEquals(this.getDomRef("B3"), oEvent.target)){
 			this.fireEvent("pressButton3");
-		} else if (jQuery.sap.containsOrEquals(this.getDomRef("B4"), oEvent.target)){
+		} else if (containsOrEquals(this.getDomRef("B4"), oEvent.target)){
 			this.fireEvent("pressButton4");
 		}
 

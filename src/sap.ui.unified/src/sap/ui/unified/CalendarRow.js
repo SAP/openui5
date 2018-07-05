@@ -4,7 +4,6 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/LocaleData',
@@ -15,9 +14,9 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Locale',
-	"./CalendarRowRenderer"
+	"./CalendarRowRenderer",
+	"sap/ui/dom/containsOrEquals"
 ], function(
-	jQuery,
 	Control,
 	Device,
 	LocaleData,
@@ -28,7 +27,8 @@ sap.ui.define([
 	DateFormat,
 	ResizeHandler,
 	Locale,
-	CalendarRowRenderer
+	CalendarRowRenderer,
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -337,7 +337,7 @@ sap.ui.define([
 		}
 
 		if (this._sUpdateCurrentTime) {
-			jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
+			clearTimeout(this._sUpdateCurrentTime);
 			this._sUpdateCurrentTime = undefined;
 		}
 
@@ -351,7 +351,7 @@ sap.ui.define([
 		_determineVisibleIntervalHeaders.call(this);
 
 		if (this._sUpdateCurrentTime) {
-			jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
+			clearTimeout(this._sUpdateCurrentTime);
 			this._sUpdateCurrentTime = undefined;
 		}
 
@@ -486,7 +486,7 @@ sap.ui.define([
 
 			for (var i = 0; i < aVisibleAppointments.length; i++) {
 				oAppointment = aVisibleAppointments[i].appointment;
-				if (jQuery.sap.containsOrEquals(oAppointment.getDomRef(), oEvent.target)) {
+				if (containsOrEquals(oAppointment.getDomRef(), oEvent.target)) {
 					bFound = true;
 					oAppointment.focus();
 					break;
@@ -573,7 +573,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aVisibleAppointments.length; i++) {
 			var oAppointment = aVisibleAppointments[i].appointment;
-			if (jQuery.sap.containsOrEquals(oAppointment.getDomRef(), oEvent.target)) {
+			if (containsOrEquals(oAppointment.getDomRef(), oEvent.target)) {
 				_selectAppointment.call(this, oAppointment, !oEvent.ctrlKey);
 				break;
 			}
@@ -594,7 +594,7 @@ sap.ui.define([
 		// check if part of an Interval
 		for (iIndex = 0; iIndex < aIntervals.length; iIndex++) {
 			var oInterval = aIntervals[iIndex];
-			if (!this._isOneMonthIntervalOnSmallSizes() && jQuery.sap.containsOrEquals(oInterval, oEvent.target)) {
+			if (!this._isOneMonthIntervalOnSmallSizes() && containsOrEquals(oInterval, oEvent.target)) {
 				bInterval = true;
 				break;
 			}
@@ -701,7 +701,7 @@ sap.ui.define([
 				}
 
 				if (iTime > 0) {
-					this._sUpdateCurrentTime = jQuery.sap.delayedCall(iTime, this, this.updateCurrentTimeVisualization);
+					this._sUpdateCurrentTime = setTimeout(this.updateCurrentTimeVisualization.bind(this), iTime);
 				}
 			}
 		}else {
@@ -1713,11 +1713,11 @@ sap.ui.define([
 					this._sFocusedAppointmentId = oAppointment.getId();
 					var oUTCStartDate = _calculateStartDate.call(this, oAppointment.getStartDate());
 					this.setStartDate(CalendarUtils._createLocalDate(oUTCStartDate, true));
-					if (!jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement)) {
+					if (!containsOrEquals(this.getDomRef(), document.activeElement)) {
 						// focus is outside control -> set focus after rerendering
-						jQuery.sap.delayedCall(0, this, function(){
+						setTimeout(function(){
 							this.getFocusedAppointment().focus();
-						});
+						}.bind(this), 0);
 					}
 					this.fireStartDateChange();
 				}

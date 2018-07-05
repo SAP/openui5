@@ -79,6 +79,18 @@
         "type": "FIX",
         "text": " sap.ui.rta:Change service.Outline.OutlineObject visibility",
         "references": []
+      },
+      {
+        "id": "1a1d07ef0dfd27686df2496eef5d824f999bb062",
+        "type": "FIX",
+        "text": " Issues with displaying error messages in case of failed save",
+        "references": []
+      },
+      {
+        "id": "a32147a2be046d29b99de8582fe29f899da816cc",
+        "type": "FIX",
+        "text": " Revise message text in case of save error",
+        "references": []
       }
     ]
   }

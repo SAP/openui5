@@ -3,12 +3,12 @@
 sap.ui.require([
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
-	"sap/ui/model/odata/v2/ODataModel"
-], function(TreeTable, Column, ODataModel) {
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/table/TableUtils",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/thirdparty/sinon-qunit" /*Sinon itself already part of MockServer*/
+], function(TreeTable, Column, ODataModel, TableUtils, MockServer, SinonQUnit) {
 	"use strict";
-
-	//Initialize mock servers
-	var MockServer = sap.ui.core.util.MockServer;
 
 	//MockServer for use with annotated tree
 	var oAnnotationMockServer = new MockServer({
@@ -131,7 +131,7 @@ sap.ui.require([
 			// test expand root
 			var fnHandler1 = function() {
 				oBinding = this.oTable.getBinding("rows");
-				assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+				assert.ok(TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/v2/ODataTreeBinding"), "treeBinding class check");
 
 				assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
 					"Test that only one node is rendered, State: collapsed");
@@ -615,7 +615,7 @@ sap.ui.require([
 
 			// check if binding is available
 			oBinding = this.oTable.getBinding();
-			assert.equal(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, true, "Binding is created");
+			assert.equal(TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/v2/ODataTreeBinding"), true, "Binding is created");
 
 			// set the binding context for the table to make it absolute --> everything else should be handled by the tree binding
 			var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";

@@ -3,7 +3,7 @@
                 reset="onReset" class="sapUiSizeCompact">
         <panels>
             <P13nColumnsPanel changeColumnsItems="onChangeColumnsItems"
-                              items="{path: '/ColumnCollection'}"
+                              items="{path: '/Items'}"
                               columnsItems="{path: '/ColumnsItems'}">
                 <items>
                     <P13nItem columnKey="{columnKey}" text="{text}"/>
@@ -12,14 +12,6 @@
                     <P13nColumnsItem columnKey="{columnKey}" index="{index}" visible="{visible}"/>
                 </columnsItems>
             </P13nColumnsPanel>
-            <P13nSortPanel containerQuery="true" addSortItem="onAddSortItem" removeSortItem="onRemoveSortItem"
-                           items="{path: '/ColumnCollection'}"
-                           sortItems="{path: '/SortItems'}">
-                <P13nItem columnKey="{columnKey}" text="{text}"/>
-                <sortItems>
-                    <P13nSortItem columnKey="{columnKey}" operation="{operation}"/>
-                </sortItems>
-            </P13nSortPanel>
         </panels>
     </P13nDialog>
 </core:FragmentDefinition>

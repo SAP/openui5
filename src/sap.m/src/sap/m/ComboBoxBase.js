@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./Dialog',
 	'./ComboBoxTextField',
 	'./Toolbar',
@@ -18,24 +17,26 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/library',
 	'./ComboBoxBaseRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/dom/containsOrEquals",
+		"sap/ui/events/KeyCodes"
 ],
 	function(
-	jQuery,
-	Dialog,
-	ComboBoxTextField,
-	Toolbar,
-	Button,
-	Bar,
-	Text,
-	Title,
-	InvisibleText,
-	IconPool,
-	ValueStateSupport,
-	library,
-	Device,
-	coreLibrary,
-	ComboBoxBaseRenderer
+		Dialog,
+		ComboBoxTextField,
+		Toolbar,
+		Button,
+		Bar,
+		Text,
+		Title,
+		InvisibleText,
+		IconPool,
+		ValueStateSupport,
+		library,
+		Device,
+		coreLibrary,
+		ComboBoxBaseRenderer,
+		containsOrEquals,
+		KeyCodes
 	) {
 		"use strict";
 
@@ -441,7 +442,7 @@ sap.ui.define([
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (oEvent.keyCode === jQuery.sap.KeyCodes.F4) {
+			if (oEvent.keyCode === KeyCodes.F4) {
 				this.onF4(oEvent);
 			}
 
@@ -525,7 +526,7 @@ sap.ui.define([
 				oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
 			// to prevent the change event from firing when an item is pressed
-			if (oPicker && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			if (oPicker && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 				return;
 			}
 

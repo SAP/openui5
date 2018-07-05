@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
@@ -13,10 +12,9 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./InputBaseRenderer',
-	'jquery.sap.keycodes'
+	"sap/ui/events/KeyCodes"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	EnabledPropagator,
@@ -25,8 +23,9 @@ function(
 	MessageMixin,
 	coreLibrary,
 	Device,
-	InputBaseRenderer
-	) {
+	InputBaseRenderer,
+	KeyCodes
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -641,7 +640,7 @@ function(
 	InputBase.prototype.onkeydown = function(oEvent) {
 
 		// Prevents browser back to previous page in IE// TODO remove after 1.62 version
-		if (this.getDomRef("inner").getAttribute("readonly") && oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
+		if (this.getDomRef("inner").getAttribute("readonly") && oEvent.keyCode == KeyCodes.BACKSPACE) {
 			oEvent.preventDefault();
 		}
 	};

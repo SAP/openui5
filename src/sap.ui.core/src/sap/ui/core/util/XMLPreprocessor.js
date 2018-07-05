@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/CompositeBinding",
 	"sap/ui/model/Context",
+	"sap/base/util/ObjectPath",
 	"jquery.sap.script" // for jQuery.sap.parseJS
 ], function (jQuery, BindingParser, ManagedObject, SyncPromise, XMLTemplateProcessor, BindingMode,
-		CompositeBinding, Context/*, jQuerySap1 */) {
+		CompositeBinding, Context, ObjectPath/*, jQuerySap1 */) {
 	"use strict";
 
 	var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
@@ -1048,8 +1049,8 @@ sap.ui.define([
 			function getObject(sName) {
 				// Note: jQuery.sap.getObject("", ...) === undefined
 				return sName && sName.charAt(0) === "."
-					? jQuery.sap.getObject(sName.slice(1), undefined, oScope)
-					: jQuery.sap.getObject(sName, undefined, oScope) || jQuery.sap.getObject(sName);
+					? ObjectPath.get(sName.slice(1), oScope)
+					: ObjectPath.get(sName || "", oScope) || ObjectPath.get(sName || "");
 			}
 
 			/**

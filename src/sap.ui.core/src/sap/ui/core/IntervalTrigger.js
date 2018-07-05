@@ -49,14 +49,14 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 		 * @private
 		 */
 		var trigger = function() {
-			jQuery.sap.clearDelayedCall(this._delayedCallId);
+			clearTimeout(this._delayedCallId);
 
 			// if interval is active and there are registered listeners
 			var bHasListeners = this._oEventBus._defaultChannel.hasListeners(_EVENT_ID);
 			if (this._iInterval > 0 && bHasListeners) {
 				this._oEventBus.publish(_EVENT_ID);
 
-				this._delayedCallId = jQuery.sap.delayedCall(this._iInterval, this, this._triggerProxy);
+				this._delayedCallId = setTimeout(this._triggerProxy.bind(this), this._iInterval);
 			}
 		};
 

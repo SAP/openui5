@@ -1,8 +1,12 @@
 /*global QUnit, sinon, oTable, oTreeTable*/
 
 sap.ui.require([
-	"sap/ui/table/TableUtils", "sap/ui/core/dnd/DragDropInfo", "sap/ui/core/dnd/DropPosition", "sap/ui/Device"
-], function(TableUtils, DragDropInfo, DropPosition, Device) {
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/TableUtils",
+	"sap/ui/core/dnd/DragDropInfo",
+	"sap/ui/core/dnd/DropPosition",
+	"sap/ui/Device"
+], function(TableQUnitUtils, TableUtils, DragDropInfo, DropPosition, Device) {
 	"use strict";
 
 	// mapping of globals

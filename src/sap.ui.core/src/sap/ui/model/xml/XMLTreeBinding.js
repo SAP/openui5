@@ -42,10 +42,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 
 		var sContextPath = oContext.getPath();
 
-		if (!jQuery.sap.endsWith(sContextPath,"/")) {
+		if (!sContextPath.endsWith("/")) {
 			sContextPath = sContextPath + "/";
 		}
-		if (!jQuery.sap.startsWith(sContextPath,"/")) {
+		if (!sContextPath.startsWith("/")) {
 			sContextPath = "/" + sContextPath;
 		}
 

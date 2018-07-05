@@ -743,7 +743,31 @@
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 	});
 
-	QUnit.test("format and parse week and dayName", function(assert) {
+	QUnit.test("Parse precedence: day (d) over dayName (E)", function (assert) {
+		var oDate = new Date(1985, 9, 9); // 9th, October, 1985, Wednesday
+		var sPattern = "yyyy-MM-dd EEEE";
+
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		}, new sap.ui.core.Locale("en_US"));
+		var sFormattedWrongDayName = "1985-10-09 Friday"; // use Friday instead 1985-10-09 Wednesday
+		assert.equal(oDateFormat.format(oDate).toString(), "1985-10-09 Wednesday", "9th, October, 1985, Wednesday");
+		assert.equal(oDateFormat.parse(sFormattedWrongDayName).getTime(), oDate.getTime(), "DayName should be ignored and the date should be the input date");
+	});
+
+	QUnit.test("Parse precedence: year/month/day (yMd) over week (w)", function (assert) {
+		var oDate = new Date(1985, 9, 9); // 9th, October, 1985, Wednesday
+		var sPattern = "YYYY-MM-dd '(CW 'ww')'";
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		}, new sap.ui.core.Locale("en_US"));
+		var sFormattedWrongWeek = "1985-10-09 (CW 42)"; // use CW 42 instead 1985-10-09 (CW 41)
+
+		assert.equal(oDateFormat.format(oDate).toString(), "1985-10-09 (CW 41)", "2018-03-23 Freitag in de-DE");
+		assert.equal(oDateFormat.parse(sFormattedWrongWeek).getTime(), oDate.getTime(), "Week should be ignored and the date should be the input date");
+	});
+
+	QUnit.test("format and parse week and dayName", function (assert) {
 		var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
 		var sPattern = "yyyy 'Week' ww EEEE";
 

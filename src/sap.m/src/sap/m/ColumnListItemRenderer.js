@@ -3,15 +3,15 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"./library",
 	"./ListItemBaseRenderer",
-	"./Label"
+	"./Label",
+	"sap/base/Log"
 ],
-	function(jQuery, Renderer, coreLibrary, Device, library, ListItemBaseRenderer, Label) {
+	function(Renderer, coreLibrary, Device, library, ListItemBaseRenderer, Label, Log) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -165,7 +165,7 @@ sap.ui.define([
 						sFuncName = aFuncWithParam[0];
 
 					if (typeof oCell[sFuncName] != "function") {
-						jQuery.sap.log.warning("mergeFunctionName property is defined on " + oColumn + " but this is not function of " + oCell);
+						Log.warning("mergeFunctionName property is defined on " + oColumn + " but this is not function of " + oCell);
 					} else if (oTable._bRendering || !oCell.bOutput) {
 						var lastColumnValue = oColumn.getLastValue(),
 							cellValue = oCell[sFuncName](sFuncParam);

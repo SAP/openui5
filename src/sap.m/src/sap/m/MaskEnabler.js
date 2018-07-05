@@ -5,11 +5,11 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'./InputBase',
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/core/library',
-	'jquery.sap.keycodes'
-], function(Control, InputBase, jQuery, Device, coreLibrary) {
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
+], function(Control, InputBase, Device, coreLibrary, KeyCodes, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -75,7 +75,7 @@ sap.ui.define([
 				var sValidationErrorMsg = this._validateDependencies();
 
 				if (sValidationErrorMsg) {
-					jQuery.sap.log.warning("Invalid mask input: " + sValidationErrorMsg);
+					Log.warning("Invalid mask input: " + sValidationErrorMsg);
 				}
 			}
 
@@ -268,7 +268,7 @@ sap.ui.define([
 		 */
 		this._validateRegexAgainstPlaceHolderSymbol = function (oRule) {
 			if (new RegExp(oRule.getRegex()).test(this.getPlaceholderSymbol())) {
-				jQuery.sap.log.error("Rejecting input mask rule because it includes the currently set placeholder symbol.");
+				Log.error("Rejecting input mask rule because it includes the currently set placeholder symbol.");
 				return false;
 			}
 			return true;
@@ -285,7 +285,7 @@ sap.ui.define([
 
 			// make sure the placeholder symbol is always a single regex supported character
 			if (!/^.$/i.test(sSymbol)) {
-				jQuery.sap.log.error("Invalid placeholder symbol string given");
+				Log.error("Invalid placeholder symbol string given");
 				return this;
 			}
 
@@ -296,7 +296,7 @@ sap.ui.define([
 			});
 
 			if (bSymbolFound) {
-				jQuery.sap.log.error("Rejecting placeholder symbol because it is included as a regex in an existing mask input rule.");
+				Log.error("Rejecting placeholder symbol because it is included as a regex in an existing mask input rule.");
 			} else {
 				this.setProperty("placeholderSymbol", sSymbol);
 				this._setupMaskVariables();
@@ -314,7 +314,7 @@ sap.ui.define([
 		this.setMask = function (sMask) {
 			if (!sMask) {
 				var sErrorMsg = "Setting an empty mask is pointless. Make sure you set it with a non-empty value.";
-				jQuery.sap.log.warning(sErrorMsg);
+				Log.warning(sErrorMsg);
 				return this;
 			}
 			this.setProperty("mask", sMask, true);
@@ -578,7 +578,7 @@ sap.ui.define([
 			var oResult = null;
 
 			if (typeof sMaskRuleSymbol !== "string" || sMaskRuleSymbol.length !== 1) {
-				jQuery.sap.log.error(sMaskRuleSymbol + " is not a valid mask rule symbol");
+				Log.error(sMaskRuleSymbol + " is not a valid mask rule symbol");
 				return null;
 			}
 
@@ -875,24 +875,22 @@ sap.ui.define([
 
 			// give a chance the normal browser cut and oninput handler to finish its work with the current selection,
 			// before messing up the dom value (updateDomValue) or the selection (by setting a new cursor position)
-			jQuery.sap.delayedCall(iMinBrowserDelay, this,
-				function updateDomAndCursor(sValue, iPos, aOldTempValueContent) {
-					//update the temp value back
-					//because oninput breaks it
-					this._oTempValue._aContent = aOldTempValueContent;
-					this.updateDomValue(sValue);
+			setTimeout(function updateDomAndCursor(sValue, iPos, aOldTempValueContent) {
+				//update the temp value back
+				//because oninput breaks it
+				this._oTempValue._aContent = aOldTempValueContent;
+				this.updateDomValue(sValue);
 
-					//we want that shortly after updateDomValue
-					//but _positionCaret sets the cursor, also with a delayedCall
-					//so we must put our update in the queue
-					jQuery.sap.delayedCall(iMinBrowserDelay, this, this._setCursorPosition, [iPos]);
-				},
-				[
-					this._oTempValue.toString(),
-					Math.max(this._iUserInputStartPosition, iBegin),
-					this._oTempValue._aContent.slice(0)
-				]
-			);
+				//we want that shortly after updateDomValue
+				//but _positionCaret sets the cursor, also with a delayedCall
+				//so we must put our update in the queue
+				setTimeout(this._setCursorPosition.bind(this, iPos), iMinBrowserDelay);
+			}.bind(
+				this,
+				this._oTempValue.toString(),
+				Math.max(this._iUserInputStartPosition, iBegin),
+				this._oTempValue._aContent.slice(0)
+			), iMinBrowserDelay);
 		};
 
 		/**
@@ -1095,7 +1093,7 @@ sap.ui.define([
 		 */
 		this._parseKeyBoardEvent = function (oEvent) {
 			var iPressedKey = oEvent.which || oEvent.keyCode,
-				mKC = jQuery.sap.KeyCodes,
+				mKC = KeyCodes,
 				bArrowRight = iPressedKey === mKC.ARROW_RIGHT,
 				bArrowLeft = iPressedKey === mKC.ARROW_LEFT,
 				bShift = oEvent.shiftKey;
@@ -1107,7 +1105,7 @@ sap.ui.define([
 				bAltKey: oEvent.altKey,
 				bMetaKey: oEvent.metaKey,
 				bShift: bShift,
-				bInsert: iPressedKey === jQuery.sap.KeyCodes.INSERT,
+				bInsert: iPressedKey === KeyCodes.INSERT,
 				bBackspace: iPressedKey === mKC.BACKSPACE,
 				bDelete: iPressedKey === mKC.DELETE,
 				bEscape: iPressedKey === mKC.ESCAPE,
@@ -1115,8 +1113,8 @@ sap.ui.define([
 				bIphoneEscape: (Device.system.phone && Device.os.ios && iPressedKey === 127),
 				bArrowRight: bArrowRight,
 				bArrowLeft: bArrowLeft,
-				bHome: iPressedKey === jQuery.sap.KeyCodes.HOME,
-				bEnd:  iPressedKey === jQuery.sap.KeyCodes.END,
+				bHome: iPressedKey === KeyCodes.HOME,
+				bEnd:  iPressedKey === KeyCodes.END,
 				bShiftLeftOrRightArrow: bShift && (bArrowLeft || bArrowRight),
 				bBeforeSpace: iPressedKey < mKC.SPACE
 			};
@@ -1139,7 +1137,7 @@ sap.ui.define([
 				iEndSelectionIndex = sMask.length;
 			}
 
-			this._iCaretTimeoutId = jQuery.sap.delayedCall(iMinBrowserDelay, this, function () {
+			this._iCaretTimeoutId = setTimeout(function () {
 				if (this.getFocusDomRef() !== document.activeElement) {
 					return;
 				}
@@ -1148,7 +1146,7 @@ sap.ui.define([
 				} else {
 					this._setCursorPosition(iEndSelectionIndex);
 				}
-			});
+			}.bind(this), iMinBrowserDelay);
 		};
 
 		/**
@@ -1399,7 +1397,7 @@ sap.ui.define([
 			// the old and new value will be observed
 			this.updateDomValue(this._oKeyDownStateAndroid.sValue);
 
-			jQuery.sap.delayedCall(0, this, function(oInputEvent, oKeyDownState, oKey) {
+			setTimeout(function(oInputEvent, oKeyDownState, oKey) {
 				// delayed call is needed, as for some Android devices(e.g. S5) if _setCursorPosition (jQuery.cursorPos)
 				// is called from within the input handler, this won't really change the cursor position,
 				// even though _getCursorPosition() returns the one that had been previously set.
@@ -1409,7 +1407,7 @@ sap.ui.define([
 				} else {
 					this._keyPressHandler(oInputEvent, oKey);
 				}
-			}, [oEvent, this._oKeyDownStateAndroid, oKeyInfo]);
+			}.bind(this, oEvent, this._oKeyDownStateAndroid, oKeyInfo), 0);
 
 			delete this._oKeyDownStateAndroid;
 			oEvent.preventDefault();

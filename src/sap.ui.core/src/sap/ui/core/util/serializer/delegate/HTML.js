@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Delegate'],
-	function(jQuery, Delegate) {
+sap.ui.define(['jquery.sap.global', './Delegate', "sap/base/strings/hyphenate", "sap/base/util/deepEqual"],
+	function(jQuery, Delegate, hyphenate, deepEqual) {
 	"use strict";
 
 
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 			var aCssClasses = [];
 			for (var i = 0; i < aCustomClasses.length; i++) {
 				var sCssClass = aCustomClasses[i];
-				if (!jQuery.sap.startsWith(sCssClass, "sapM") && !jQuery.sap.startsWith(sCssClass, "sapUi")) {
+				if (!sCssClass.startsWith("sapM") && !sCssClass.startsWith("sapUi")) {
 					aCssClasses.push(sCssClass);
 				}
 			}
@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 		var oDefaults = oControl.getMetadata().getPropertyDefaults();
 		this._createAttributes(aHtml, oControl, oProperties, null, function (sName, oValue) {
 			// write property only if it has a value different from the default value
-			return !jQuery.sap.equal(oValue, oDefaults[sName]);
+			return !deepEqual(oValue, oDefaults[sName]);
 		});
 
 		// write aggregations
@@ -259,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @private
 	 */
 	HTML.prototype._createHtmlAttributeName = function (sName) {
-		return jQuery.sap.hyphen(sName);
+		return hyphenate(sName);
 	};
 
 	return HTML;

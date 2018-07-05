@@ -12,18 +12,24 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
-	"./DatePickerRenderer"
+	"./DatePickerRenderer",
+	"sap/base/util/deepEqual",
+	"sap/base/assert",
+	"sap/base/Log"
 ],
 	function(
-	jQuery,
-	Device,
-	InputBase,
-	DateTimeField,
-	UniversalDate,
-	library,
-	Control,
-	coreLibrary,
-	DatePickerRenderer
+		jQuery,
+		Device,
+		InputBase,
+		DateTimeField,
+		UniversalDate,
+		library,
+		Control,
+		coreLibrary,
+		DatePickerRenderer,
+		deepEqual,
+		assert,
+		Log
 	) {
 	"use strict";
 
@@ -284,7 +290,7 @@ sap.ui.define([
 		}
 
 		if (this._iInvalidateCalendar) {
-			jQuery.sap.clearDelayedCall(this._iInvalidateCalendar);
+			clearTimeout(this._iInvalidateCalendar);
 		}
 
 		this._sUsedDisplayPattern = undefined;
@@ -301,7 +307,7 @@ sap.ui.define([
 			// Calendar is only invalidated by DatePicker itself -> so don't invalidate DatePicker
 			Control.prototype.invalidate.apply(this, arguments);
 			// Invalidate calendar with a delayed call so it could have updated specialDates aggregation from DatePicker
-			this._iInvalidateCalendar = jQuery.sap.delayedCall(0, this, _invalidateCalendar);
+			this._iInvalidateCalendar = setTimeout(_invalidateCalendar.bind(this), 0);
 		}
 
 	};
@@ -471,7 +477,7 @@ sap.ui.define([
 
 		if (oDate && (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime())) {
 			this._bValid = false;
-			jQuery.sap.assert(this._bValid, "Date must be in valid range");
+			assert(this._bValid, "Date must be in valid range");
 		}
 
 		this.setProperty("dateValue", oDate);
@@ -485,7 +491,7 @@ sap.ui.define([
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
-		if (jQuery.sap.equal(this.getMinDate(), oDate)) {
+		if (deepEqual(this.getMinDate(), oDate)) {
 			return this;
 		}
 
@@ -498,7 +504,7 @@ sap.ui.define([
 			this._oMinDate = new Date(oDate.getTime());
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() < oDate.getTime()) {
-				jQuery.sap.log.warning("DateValue not in valid date range", this);
+				Log.warning("DateValue not in valid date range", this);
 			}
 		} else {
 			this._oMinDate = new Date(1, 0, 1);
@@ -524,7 +530,7 @@ sap.ui.define([
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
-		if (jQuery.sap.equal(this.getMaxDate(), oDate)) {
+		if (deepEqual(this.getMaxDate(), oDate)) {
 			return this;
 		}
 
@@ -537,7 +543,7 @@ sap.ui.define([
 			this._oMaxDate = new Date(oDate.getTime());
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() > oDate.getTime()) {
-				jQuery.sap.log.warning("DateValue not in valid date", this);
+				Log.warning("DateValue not in valid date", this);
 			}
 		} else {
 			this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
@@ -559,7 +565,7 @@ sap.ui.define([
 	DatePicker.prototype._checkMinMaxDate = function () {
 
 		if (this._oMinDate.getTime() > this._oMaxDate.getTime()) {
-			jQuery.sap.log.warning("minDate > MaxDate -> dates switched", this);
+			Log.warning("minDate > MaxDate -> dates switched", this);
 			var oMaxDate = new Date(this._oMinDate.getTime());
 			var oMinDate = new Date(this._oMaxDate.getTime());
 			this._oMinDate = new Date(oMinDate.getTime());
@@ -576,7 +582,7 @@ sap.ui.define([
 
 		if (oDateValue &&
 			(oDateValue.getTime() < this._oMinDate.getTime() || oDateValue.getTime() > this._oMaxDate.getTime())) {
-			jQuery.sap.log.error("dateValue " + oDateValue.toString() + "(value=" + this.getValue() + ") does not match " +
+			Log.error("dateValue " + oDateValue.toString() + "(value=" + this.getValue() + ") does not match " +
 				"min/max date range(" + this._oMinDate.toString() + " - " + this._oMaxDate.toString() + "). App. " +
 				"developers should take care to maintain dateValue/value accordingly.", this);
 		}
@@ -592,7 +598,7 @@ sap.ui.define([
 
 		if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 			this._bValid = false;
-			jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+			Log.warning("Value can not be converted to a valid date", this);
 		}
 
 		this.setProperty("dateValue", oDate);
@@ -922,6 +928,7 @@ sap.ui.define([
 	DatePicker.prototype._createPopup = function(){
 
 		if (!this._oPopup) {
+			//TODO: global jquery call found
 			jQuery.sap.require("sap.ui.core.Popup");
 			this._oPopup = new sap.ui.core.Popup();
 			this._oPopup.setAutoClose(true);
@@ -1078,11 +1085,12 @@ sap.ui.define([
 		var sValue = "";
 
 		// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
-		if (!jQuery.sap.equal(oDate, oDateOld)) {
+		if (!deepEqual(oDate, oDateOld)) {
 			this.setDateValue(new Date(oDate.getTime()));
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
+			//TODO: global jquery call found
 			if (this.getDomRef() && (Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) { // as control could be destroyed during update binding
 				this._curpos = this._$input.val().length;
 				this._$input.cursorPos(this._curpos);
@@ -1099,7 +1107,8 @@ sap.ui.define([
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
 			}
-		} else if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
+		} else //TODO: global jquery call found
+		if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
 			this.focus();
 		}
 
@@ -1126,6 +1135,7 @@ sap.ui.define([
 
 		if (this._oPopup && this._oPopup.isOpen()) {
 			this._oPopup.close();
+			//TODO: global jquery call found
 			if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
 				this.focus();
 			}
@@ -1189,7 +1199,7 @@ sap.ui.define([
 				oDate = new UniversalDate(this._oMaxDate.getTime());
 			}
 
-			if (!jQuery.sap.equal(this.getDateValue(), oDate.getJSDate())) {
+			if (!deepEqual(this.getDateValue(), oDate.getJSDate())) {
 				this.setDateValue(new Date(oDate.getTime()));
 
 				this._curpos = iCurpos;

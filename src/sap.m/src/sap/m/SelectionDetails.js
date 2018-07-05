@@ -3,25 +3,25 @@
  */
 // Provides control sap.m.SelectionDetails.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Button',
 	'sap/ui/base/Interface',
 	'sap/ui/Device',
 	'sap/ui/core/library',
-	'./SelectionDetailsRenderer'
+	'./SelectionDetailsRenderer',
+	"sap/base/util/uid"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	Button,
 	Interface,
 	Device,
 	CoreLibrary,
-	SelectionDetailsRenderer
-	) {
+	SelectionDetailsRenderer,
+	uid
+) {
 	"use strict";
 
 	/**
@@ -257,7 +257,7 @@ function(
 	 * @private
 	 */
 	SelectionDetails.prototype._handleNavLazy = function(pageTitle, content, Page, Toolbar, ToolbarSpacer, Title, Button) {
-		var sPageId = this.getId() + "-page-for-" + content.getId() + "-uid-" + jQuery.sap.uid();
+		var sPageId = this.getId() + "-page-for-" + content.getId() + "-uid-" + uid();
 
 		this._setPopoverHeight(SelectionDetails._POPOVER_MAX_HEIGHT);
 		var oPage = new Page(sPageId, {
@@ -417,7 +417,9 @@ function(
 		var oFacade = new Interface(this, SelectionDetails.prototype._aFacadeMethods, true);
 		oFacade.getItems = this._getItemFacades.bind(this);
 
-		this.getFacade = jQuery.sap.getter(oFacade);
+		this.getFacade = function() {
+			return oFacade;
+		};
 		return oFacade;
 	};
 

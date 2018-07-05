@@ -19,6 +19,8 @@
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 
+			var oCalendars = new sap.ui.model.json.JSONModel(sap.ui.core.CalendarType);
+
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 			var aSpecialDays = [["20160101",undefined,"Neujahr",1],
@@ -218,13 +220,13 @@
 			oFormElement = new sap.ui.layout.form.FormElement("F1E4", {
 				label: "primary calendar type",
 				fields: [ new sap.ui.commons.ComboBox("CB1",{
+										models: oCalendars,
 										editable: true,
 										width: "9em",
-										items: [
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese}),
-														],
+										items: {
+											path: "/",
+											template: new sap.ui.core.ListItem({text:"{}", key:"{}"})
+										},
 										change: function(oEvent){
 											var oCB = oEvent.oSource;
 											var oItem = oEvent.getParameter('selectedItem');
@@ -243,13 +245,13 @@
 			oFormElement = new sap.ui.layout.form.FormElement("F1E5", {
 				label: "secondary calendar type",
 				fields: [ new sap.ui.commons.ComboBox("CB2",{
+										models: oCalendars,
 										editable: true,
 										width: "9em",
-										items: [
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese}),
-														],
+										items: {
+											path: "/",
+											template: new sap.ui.core.ListItem({text:"{}", key:"{}"})
+										},
 										change: function(oEvent){
 											var oCB = oEvent.oSource;
 											var oItem = oEvent.getParameter('selectedItem');

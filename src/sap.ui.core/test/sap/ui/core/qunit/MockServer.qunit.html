@@ -3572,7 +3572,7 @@
 			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
 			assert.equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
 			assert.equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
-			assert.equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated");
+			assert.equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated"); // TODO clarify: is reason phrase mandatory in batch response?
 			// read to verify no changes made
 			var oGetResponse = jQuery.sap.sjax({
 				url : '/mock/LeaveHeaderCollection',
@@ -3830,8 +3830,6 @@
 
 		var fnReadResult = function(oResponse){
 			assert.ok(oResponse.statusCode != undefined, "Status Code "+ oResponse.statusCode + " is set");
-			assert.ok(oResponse.statusText != undefined, "Status Text "+ oResponse.statusText + " is set");
-			assert.ok(oResponse.statusText == oStatusList[oResponse.statusCode].statusText, "Status Text as expected");
 		}
 
 		var aStatusListKeys = Object.keys(oStatusList);

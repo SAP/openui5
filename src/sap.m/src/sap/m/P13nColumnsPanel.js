@@ -4,7 +4,6 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/library',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/json/JSONModel',
@@ -25,9 +24,28 @@ sap.ui.define([
 	'./OverflowToolbarLayoutData',
 	'./OverflowToolbarButton',
 	'./ToolbarSpacer'
-], function(jQuery, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool,
-		library, Table, Column, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, ScrollContainer, Text, Button,
-		OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, OverflowToolbarButton) {
+], function(
+	CoreLibrary,
+	ChangeReason,
+	JSONModel,
+	BindingMode,
+	ResizeHandler,
+	IconPool,
+	library,
+	Table,
+	Column,
+	ColumnListItem,
+	P13nPanel,
+	P13nColumnsItem,
+	SearchField,
+	ScrollContainer,
+	Text,
+	Button,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	OverflowToolbarButton,
+	ToolbarSpacer
+) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority

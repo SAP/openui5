@@ -1,11 +1,12 @@
 /*global QUnit, oTable */
 
 sap.ui.require([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/TableUtils",
 	"sap/ui/core/MessageType",
 	"sap/ui/core/theming/Parameters"
-], function(RowSettings, TableUtils, MessageType, ThemeParameters) {
+], function(TableQUnitUtils, RowSettings, TableUtils, MessageType, ThemeParameters) {
 	"use strict";
 
 	// mapping of global function calls

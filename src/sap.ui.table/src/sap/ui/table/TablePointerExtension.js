@@ -4,8 +4,8 @@
 
 // Provides helper sap.ui.table.TablePointerExtension.
 sap.ui.define([
-"./library", "jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "sap/ui/core/Popup"
-], function(library, jQuery, TableExtension, TableUtils, Device, Popup) {
+"./library", "./TableExtension", "./TableUtils", "sap/ui/Device", "sap/ui/core/Popup", "sap/base/Log"
+], function(library, TableExtension, TableUtils, Device, Popup, Log) {
 	"use strict";
 
 	// shortcuts
@@ -86,7 +86,7 @@ sap.ui.define([
 			}
 
 			if (bHasSelection) {
-				jQuery.sap.log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
+				Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
 				return true;
 			}
 
@@ -674,7 +674,7 @@ sap.ui.define([
 				if (oTable._bRtlMode) {
 					iStep = (-1) * iStep;
 				}
-				oTable._mTimeouts.horizontalReorderScrollTimerId = jQuery.sap.delayedCall(60, oTable, ReorderHelper.doScroll, [oTable, bForward]);
+				oTable._mTimeouts.horizontalReorderScrollTimerId = setTimeout(ReorderHelper.doScroll.bind(oTable, oTable, bForward), 60);
 				var $Scr = oTable.$("sapUiTableCtrlScr");
 				var ScrollLeft = oTable._bRtlMode ? "scrollLeftRTL" : "scrollLeft";
 				$Scr[ScrollLeft]($Scr[ScrollLeft]() + iStep);
@@ -780,9 +780,9 @@ sap.ui.define([
 					if (!bMenuOpen) {
 						// A long click starts column reordering, so it should not also open the menu in the onclick event handler.
 						oPointerExtension._bShowMenu = true;
-						this._mTimeouts.delayedMenuTimerId = jQuery.sap.delayedCall(200, this, function() {
+						this._mTimeouts.delayedMenuTimerId = setTimeout(function() {
 							delete oPointerExtension._bShowMenu;
-						});
+						}, 200);
 					}
 
 					if (this.getEnableColumnReordering()
@@ -841,7 +841,7 @@ sap.ui.define([
 
 		onmouseup: function(oEvent) {
 			// clean up the timer
-			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimerId);
+			clearTimeout(this._mTimeouts.delayedColumnReorderTimerId);
 		},
 
 		ondblclick: function(oEvent) {
@@ -853,7 +853,7 @@ sap.ui.define([
 
 		onclick: function(oEvent) {
 			// clean up the timer
-			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimerId);
+			clearTimeout(this._mTimeouts.delayedColumnReorderTimerId);
 
 			if (oEvent.isMarked()) {
 				// the event was already handled by some other handler, do nothing.
@@ -1027,9 +1027,9 @@ sap.ui.define([
 			var oTable = this.getTable();
 			if (oTable && TableUtils.Column.isColumnMovable(oTable.getColumns()[iColIndex])) {
 				// Starting column drag & drop. We wait 200ms to make sure it is no click on the column to open the menu.
-				oTable._mTimeouts.delayedColumnReorderTimerId = jQuery.sap.delayedCall(200, oTable, function() {
+				oTable._mTimeouts.delayedColumnReorderTimerId = setTimeout(function() {
 					ReorderHelper.initReordering(this, iColIndex, oEvent);
-				});
+				}.bind(oTable), 200);
 			}
 		},
 

@@ -3,8 +3,24 @@
  */
 
 // Provides class sap.ui.model.odata.ODataTreeBindingFlat
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils'],
-	function(jQuery, Filter, TreeBinding, ODataTreeBinding, ChangeReason, TreeBindingUtils) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/model/Filter',
+	'sap/ui/model/TreeBinding',
+	'sap/ui/model/odata/v2/ODataTreeBinding',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/TreeBindingUtils',
+	"sap/base/util/uid"
+],
+	function(
+		jQuery,
+		Filter,
+		TreeBinding,
+		ODataTreeBinding,
+		ChangeReason,
+		TreeBindingUtils,
+		uid
+	) {
 	"use strict";
 
 	/**
@@ -3311,8 +3327,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		var aDeepNodes = [], that = this;
 		this._map(function(oNode) {
 			if (oNode && oNode.nodeState.expanded && (
-					oNode.initiallyCollapsed || // server index nodes on the initial expansion level
-					oNode.isDeepOne // deep nodes
+					(// server index nodes on the initial expansion level
+					oNode.initiallyCollapsed || oNode.isDeepOne) // deep nodes
 			)) {
 				aDeepNodes.push({
 					oParentNode: oNode,
@@ -3492,7 +3508,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			// set unique node ID if the context was created and we did not assign an ID yet
 			var sNewlyGeneratedID = oContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
 			if (oContext.bCreated && !sNewlyGeneratedID) {
-				this.oModel.setProperty(this.oTreeProperties["hierarchy-node-for"], jQuery.sap.uid(), oContext);
+				this.oModel.setProperty(this.oTreeProperties["hierarchy-node-for"], uid(), oContext);
 			}
 		}
 	};

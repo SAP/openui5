@@ -173,6 +173,9 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
     RangeSliderRenderer.renderProgressIndicator = function(oRm, oSlider, sForwardedLabels) {
         var aRange = oSlider.getRange();
 
+        aRange[0] = oSlider.toFixed(aRange[0], oSlider._iDecimalPrecision);
+        aRange[1] = oSlider.toFixed(aRange[1], oSlider._iDecimalPrecision);
+
         oRm.write("<div");
         oRm.writeAttribute("id", oSlider.getId() + "-progress");
         if (oSlider.getEnabled()) {

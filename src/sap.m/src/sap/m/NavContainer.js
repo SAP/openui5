@@ -4,14 +4,23 @@
 
 // Provides control sap.m.NavContainer.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
 	'sap/ui/Device',
 	'./NavContainerRenderer',
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
 	'jquery.sap.events'
-], function(jQuery, library, Control, RenderManager, Device, NavContainerRenderer) {
+], function(
+	library,
+	Control,
+	RenderManager,
+	Device,
+	NavContainerRenderer,
+	jQueryDOM,
+	Log
+) {
 	"use strict";
 
 
@@ -334,6 +343,8 @@ sap.ui.define([
 			oEvent.data = this._oToDataBeforeRendering || {};
 			oEvent.backData = {};
 			pageToRenderFirst._handleEvent(oEvent);
+
+			this.fireEvent("_onNavContainerRendered");
 		}
 	};
 
@@ -350,7 +361,7 @@ sap.ui.define([
 			if (page) {
 				return page;
 			} else {
-				jQuery.sap.log.error("NavContainer: control with ID '" + pageId + "' was set as 'initialPage' but was not found as a DIRECT child of this NavContainer (number of current children: " + this.getPages().length + ").");
+				Log.error("NavContainer: control with ID '" + pageId + "' was set as 'initialPage' but was not found as a DIRECT child of this NavContainer (number of current children: " + this.getPages().length + ").");
 			}
 		}
 		var pages = this.getPages();
@@ -407,7 +418,7 @@ sap.ui.define([
 		if (stack.length >= 1) {
 			return this.getPage(stack[stack.length - 1].id);
 		} else {
-			jQuery.sap.log.warning(this + ": page stack is empty but should have been initialized - application failed to provide a page to display");
+			Log.warning(this + ": page stack is empty but should have been initialized - application failed to provide a page to display");
 			return undefined;
 		}
 	};
@@ -434,7 +445,7 @@ sap.ui.define([
 			return undefined;
 
 		} else {
-			jQuery.sap.log.warning(this + ": page stack is empty but should have been initialized - application failed to provide a page to display");
+			Log.warning(this + ": page stack is empty but should have been initialized - application failed to provide a page to display");
 		}
 	};
 
@@ -482,16 +493,16 @@ sap.ui.define([
 			}
 			stack.splice(index, 0, pageInfo);
 		} else {
-			jQuery.sap.log.warning(this + ": insertPreviousPage called with empty page stack; ignoring");
+			Log.warning(this + ": insertPreviousPage called with empty page stack; ignoring");
 		}
 
 		return this;
 	};
 
 	NavContainer._applyAutoFocusTo = function (sId) {
-		var focusSubjectDomRef = jQuery.sap.byId(sId).firstFocusableDomRef();
+		var focusSubjectDomRef = jQueryDOM(document.getElementById(sId)).firstFocusableDomRef();
 		if (focusSubjectDomRef) {
-			jQuery.sap.focus(focusSubjectDomRef);
+			focusSubjectDomRef.focus();
 		}
 
 		return focusSubjectDomRef;
@@ -514,7 +525,7 @@ sap.ui.define([
 			// if no focus was set set focus to first focusable object in "to page"
 			domRefRememberedFocusSubject = this._mFocusObject != null ? this._mFocusObject[sPageId] : null;
 			if (domRefRememberedFocusSubject) {
-				jQuery.sap.focus(domRefRememberedFocusSubject);
+				domRefRememberedFocusSubject.focus();
 			} else if (bAutoFocus) {
 				NavContainer._applyAutoFocusTo(sPageId);
 			}
@@ -541,10 +552,10 @@ sap.ui.define([
 		this.fireAfterNavigate(oNavInfo);
 		// TODO: destroy HTML? Remember to destroy ALL HTML of several pages when backToTop has been called
 
-		jQuery.sap.log.info(this + ": _afterTransitionCallback called, to: " + oNavInfo.toId);
+		Log.info(this + ": _afterTransitionCallback called, to: " + oNavInfo.toId);
 
 		if (oNavInfo.to.hasStyleClass("sapMNavItemHidden")) {
-			jQuery.sap.log.warning(this.toString() + ": target page '" + oNavInfo.toId + "' still has CSS class 'sapMNavItemHidden' after transition. This should not be the case, please check the preceding log statements.");
+			Log.warning(this.toString() + ": target page '" + oNavInfo.toId + "' still has CSS class 'sapMNavItemHidden' after transition. This should not be the case, please check the preceding log statements.");
 			oNavInfo.to.removeStyleClass("sapMNavItemHidden");
 		}
 
@@ -669,7 +680,7 @@ sap.ui.define([
 
 		//add to the queue before checking the current page, because this might change
 		if (this._bNavigating) {
-			jQuery.sap.log.info(this.toString() + ": Cannot navigate to page " + pageId + " because another navigation is already in progress. - navigation will be executed after the previous one");
+			Log.info(this.toString() + ": Cannot navigate to page " + pageId + " because another navigation is already in progress. - navigation will be executed after the previous one");
 
 			this._aQueue.push(jQuery.proxy(function () {
 				this.to(pageId, transitionName, data, oTransitionParameters, true);
@@ -685,7 +696,7 @@ sap.ui.define([
 
 		var oFromPage = this.getCurrentPage();
 		if (oFromPage && (oFromPage.getId() === pageId)) { // cannot navigate to the page that is already current
-			jQuery.sap.log.warning(this.toString() + ": Cannot navigate to page " + pageId + " because this is the current page.");
+			Log.warning(this.toString() + ": Cannot navigate to page " + pageId + " because this is the current page.");
 			if (bFromQueue) {
 				this._dequeueNavigation();
 			}
@@ -702,7 +713,7 @@ sap.ui.define([
 
 		if (oToPage) {
 			if (!oFromPage) {
-				jQuery.sap.log.warning("Navigation triggered to page with ID '" + pageId + "', but the current page is not known/aggregated by " + this);
+				Log.warning("Navigation triggered to page with ID '" + pageId + "', but the current page is not known/aggregated by " + this);
 				return this;
 			}
 
@@ -752,15 +763,15 @@ sap.ui.define([
 
 
 				this._pageStack.push(oFromPageInfo); // this actually causes/is the navigation
-				jQuery.sap.log.info(this.toString() + ": navigating to page '" + pageId + "': " + oToPage.toString());
+				Log.info(this.toString() + ": navigating to page '" + pageId + "': " + oToPage.toString());
 				this._mVisitedPages[pageId] = true;
 
 				if (!this.getDomRef()) { // the wanted animation has been recorded, but when the NavContainer is not rendered, we cannot animate, so just return
-					jQuery.sap.log.info("'Hidden' 'to' navigation in not-rendered NavContainer " + this.toString());
+					Log.info("'Hidden' 'to' navigation in not-rendered NavContainer " + this.toString());
 
 					// BCP: 1680140633 - Firefox issue
 					if (this._bRenderingInProgress) {
-						jQuery.sap.delayedCall(0, this, this.invalidate);
+						setTimeout(this.invalidate.bind(this), 0);
 					}
 
 					return this;
@@ -771,7 +782,7 @@ sap.ui.define([
 
 				if (!(oToPageDomRef = oToPage.getDomRef()) || oToPageDomRef.parentNode != this.getDomRef() || RenderManager.isPreservedContent(oToPageDomRef)) {
 					oToPage.addStyleClass("sapMNavItemRendering");
-					jQuery.sap.log.debug("Rendering 'to' page '" + oToPage.toString() + "' for 'to' navigation");
+					Log.debug("Rendering 'to' page '" + oToPage.toString() + "' for 'to' navigation");
 					var rm = sap.ui.getCore().createRenderManager();
 					rm.render(oToPage, this.getDomRef());
 					rm.destroy();
@@ -785,7 +796,7 @@ sap.ui.define([
 				var that = this;
 				window.setTimeout(function () {
 					if (that && (that._iTransitionsCompleted < iCompleted + 1)) {
-						jQuery.sap.log.warning("Transition '" + transitionName + "' 'to' was triggered five seconds ago, but has not yet invoked the end-of-transition callback.");
+						Log.warning("Transition '" + transitionName + "' 'to' was triggered five seconds ago, but has not yet invoked the end-of-transition callback.");
 					}
 				}, fnGetDelay(5000));
 
@@ -798,11 +809,11 @@ sap.ui.define([
 				}, this), oTransitionParameters); // trigger the transition
 
 			} else {
-				jQuery.sap.log.info("Navigation to page with ID '" + pageId + "' has been aborted by the application");
+				Log.info("Navigation to page with ID '" + pageId + "' has been aborted by the application");
 			}
 
 		} else {
-			jQuery.sap.log.warning("Navigation triggered to page with ID '" + pageId + "', but this page is not known/aggregated by " + this);
+			Log.warning("Navigation triggered to page with ID '" + pageId + "', but this page is not known/aggregated by " + this);
 		}
 		return this;
 	};
@@ -897,7 +908,7 @@ sap.ui.define([
 
 	NavContainer.prototype._backTo = function (sType, backData, oTransitionParameters, sRequestedPageId) {
 		if (this._bNavigating) {
-			jQuery.sap.log.warning(this.toString() + ": Cannot navigate back because another navigation is already in progress. - navigation will be executed after the previous one");
+			Log.warning(this.toString() + ": Cannot navigate back because another navigation is already in progress. - navigation will be executed after the previous one");
 
 
 			this._aQueue.push(jQuery.proxy(function () {
@@ -935,12 +946,12 @@ sap.ui.define([
 			} else if (sType === "backToPage") {
 				var info = this._findClosestPreviousPageInfo(sRequestedPageId);
 				if (!info) {
-					jQuery.sap.log.error(this.toString() + ": Cannot navigate backToPage('" + sRequestedPageId + "') because target page was not found among the previous pages.");
+					Log.error(this.toString() + ": Cannot navigate backToPage('" + sRequestedPageId + "') because target page was not found among the previous pages.");
 					return this;
 				}
 				oToPage = sap.ui.getCore().byId(info.id);
 				if (!oToPage) {
-					jQuery.sap.log.error(this.toString() + ": Cannot navigate backToPage('" + sRequestedPageId + "') because target page does not exist anymore.");
+					Log.error(this.toString() + ": Cannot navigate backToPage('" + sRequestedPageId + "') because target page does not exist anymore.");
 					return this;
 				}
 				oToPageData = info.data;
@@ -951,7 +962,7 @@ sap.ui.define([
 			}
 
 			if (!oToPage) {
-				jQuery.sap.log.error("NavContainer back navigation: target page is not defined or not aggregated by this NavContainer. Aborting navigation.");
+				Log.error("NavContainer back navigation: target page is not defined or not aggregated by this NavContainer. Aborting navigation.");
 				return;
 			}
 
@@ -998,12 +1009,12 @@ sap.ui.define([
 				oToPage._handleEvent(oEvent);
 
 				this._pageStack.pop(); // this actually causes/is the navigation
-				jQuery.sap.log.info(this.toString() + ": navigating back to page " + oToPage.toString());
+				Log.info(this.toString() + ": navigating back to page " + oToPage.toString());
 				this._mVisitedPages[oToPageId] = true;
 
 				if (sType === "backToTop") { // if we should navigate to top, just clean up the whole stack
 					this._pageStack = [];
-					jQuery.sap.log.info(this.toString() + ": navigating back to top");
+					Log.info(this.toString() + ": navigating back to top");
 					this.getCurrentPage(); // this properly restores the initial page on the stack
 
 				} else if (sType === "backToPage") {
@@ -1012,11 +1023,11 @@ sap.ui.define([
 						interimPage = this._pageStack.pop();
 						aPages.push(interimPage.id);
 					}
-					jQuery.sap.log.info(this.toString() + ": navigating back to specific page " + oToPage.toString() + " across the pages: " + aPages.join(", "));
+					Log.info(this.toString() + ": navigating back to specific page " + oToPage.toString() + " across the pages: " + aPages.join(", "));
 				}
 
 				if (!this.getDomRef()) { // the wanted animation has been recorded, but when the NavContainer is not rendered, we cannot animate, so just return
-					jQuery.sap.log.info("'Hidden' back navigation in not-rendered NavContainer " + this.toString());
+					Log.info("'Hidden' back navigation in not-rendered NavContainer " + this.toString());
 					return this;
 				}
 
@@ -1027,7 +1038,7 @@ sap.ui.define([
 				var that = this;
 				window.setTimeout(function () {
 					if (that && (that._iTransitionsCompleted < iCompleted + 1)) {
-						jQuery.sap.log.warning("Transition '" + transition + "' 'back' was triggered five seconds ago, but has not yet invoked the end-of-transition callback.");
+						Log.warning("Transition '" + transition + "' 'back' was triggered five seconds ago, but has not yet invoked the end-of-transition callback.");
 					}
 				}, fnGetDelay(5000));
 
@@ -1037,7 +1048,7 @@ sap.ui.define([
 				var oToPageDomRef;
 				if (!(oToPageDomRef = oToPage.getDomRef()) || oToPageDomRef.parentNode != this.getDomRef() || RenderManager.isPreservedContent(oToPageDomRef)) {
 					oToPage.addStyleClass("sapMNavItemRendering");
-					jQuery.sap.log.debug("Rendering 'to' page '" + oToPage.toString() + "' for back navigation");
+					Log.debug("Rendering 'to' page '" + oToPage.toString() + "' for back navigation");
 					var rm = sap.ui.getCore().createRenderManager();
 					var childPos = this.$().children().index(oFromPage.getDomRef());
 					rm.renderControl(oToPage);
@@ -1048,7 +1059,7 @@ sap.ui.define([
 
 				//if the from page and to page are identical, the transition is skipped.
 				if (oFromPage.getId() === oToPage.getId()) {
-					jQuery.sap.log.info("Transition is skipped when navigating back to the same page instance" + oToPage.toString());
+					Log.info("Transition is skipped when navigating back to the same page instance" + oToPage.toString());
 					this._afterTransitionCallback(oNavInfo, oToPageData, backData);
 					return this;
 				}
@@ -1596,7 +1607,7 @@ sap.ui.define([
 	 */
 	NavContainer.prototype.addCustomTransition = function (sName, fTo, fBack) {
 		if (NavContainer.transitions[sName]) {
-			jQuery.sap.log.warning("Transition with name " + sName + " already exists in " + this + ". It is now being replaced by custom transition.");
+			Log.warning("Transition with name " + sName + " already exists in " + this + ". It is now being replaced by custom transition.");
 		}
 
 		NavContainer.transitions[sName] = {to: fTo, back: fBack};

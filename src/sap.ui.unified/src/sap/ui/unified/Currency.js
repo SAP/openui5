@@ -4,11 +4,10 @@
 
 // Provides control sap.ui.unified.Currency.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/core/format/NumberFormat',
 	"./CurrencyRenderer"
-], function(jQuery, Control, NumberFormat, CurrencyRenderer) {
+], function(Control, NumberFormat, CurrencyRenderer) {
 		"use strict";
 
 		/**
@@ -303,7 +302,7 @@ sap.ui.define([
 
 			// create spaces
 			if (iPadding > 0) {
-				sFormattedCurrencyValue = jQuery.sap.padRight(sFormattedCurrencyValue, Currency.FIGURE_SPACE, sFormattedCurrencyValue.length + iPadding);
+				sFormattedCurrencyValue = sFormattedCurrencyValue.padEnd(sFormattedCurrencyValue.length + iPadding, Currency.FIGURE_SPACE);
 			} else if (iPadding < 0) {
 				sFormattedCurrencyValue = sFormattedCurrencyValue.substr(0, sFormattedCurrencyValue.length + iPadding);
 			}

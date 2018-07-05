@@ -4,14 +4,14 @@
 
 // Provides control sap.m.FacetFilterList.
 sap.ui.define([
-	'jquery.sap.global',
 	'./List',
 	'./library',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
-	'./FacetFilterListRenderer'
+	'./FacetFilterListRenderer',
+	"sap/base/Log"
 ],
-	function(jQuery, List, library, ChangeReason, Filter, FacetFilterListRenderer) {
+	function(List, library, ChangeReason, Filter, FacetFilterListRenderer, Log) {
 	"use strict";
 
 
@@ -595,7 +595,7 @@ sap.ui.define([
 					oBinding.filter([], sap.ui.model.FilterType.Control);
 				}
 			} else {
-				jQuery.sap.log.warning("No filtering performed", "The list must be defined with a binding for search to work",
+				Log.warning("No filtering performed", "The list must be defined with a binding for search to work",
 					this);
 			}
 		}
@@ -642,7 +642,7 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype._addSelectedKey = function(sKey, sText){
 		if (!sKey && !sText) {
-			jQuery.sap.log.error("Both sKey and sText are not defined. At least one must be defined.");
+			Log.error("Both sKey and sText are not defined. At least one must be defined.");
 			return;
 		}
 		if (this.getMode() === ListMode.SingleSelectMaster) {
@@ -665,7 +665,7 @@ sap.ui.define([
 	FacetFilterList.prototype._removeSelectedKey = function(sKey, sText) {
 
 		if (!sKey && !sText) {
-			jQuery.sap.log.error("Both sKey and sText are not defined. At least one must be defined.");
+			Log.error("Both sKey and sText are not defined. At least one must be defined.");
 			return false;
 		}
 
@@ -734,7 +734,7 @@ sap.ui.define([
 			oItem.setSelected(bSelected, true);
 		}, this);
 
-		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
+		setTimeout(this._updateSelectAllCheckBox.bind(this), 0);
 	};
 
 	/**
@@ -768,7 +768,7 @@ sap.ui.define([
 
 		// Postpone the _updateSelectAllCheckBox, as the oItem(type ListItemBase) has not yet set it's 'selected' property
 		// See ListItemBase.prototype.setSelected
-		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
+		setTimeout(this._updateSelectAllCheckBox.bind(this), 0);
 	};
 
 	/**

@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/m/semantic/SemanticConfiguration", "sap/ui/base/ManagedObject", "sap/ui/core/Element"], function (jQuery, SemanticConfiguration, ManagedObject, Element) {
+sap.ui.define([
+	"sap/m/semantic/SemanticConfiguration",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element"
+], function(SemanticConfiguration, ManagedObject, Element) {
 	"use strict";
 
 	/**

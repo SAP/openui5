@@ -6,8 +6,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/Object",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Visible"
-], function ($, UI5Object, Interactable, Visible) {
+	"sap/ui/test/matchers/Visible",
+	"sap/base/strings/capitalize"
+], function($, UI5Object, Interactable, Visible, capitalize) {
 	"use strict";
 
 	var MatcherFactory = {
@@ -49,7 +50,7 @@ sap.ui.define([
 		return Object.keys(mMatchers).filter(function (sMatcher) {
 				return aSupportedMatchers.indexOf(sMatcher) > -1;
 			}).map(function (sMatcher) {
-				var sMatcherCapitalized = $.sap.charToUpperCase(sMatcher);
+				var sMatcherCapitalized = capitalize(sMatcher);
 
 				sap.ui.require(["sap/ui/test/matchers/" + sMatcherCapitalized]);
 
@@ -58,7 +59,7 @@ sap.ui.define([
 
 				return aMatcherOptions.map(function (oOptions) {
 					if ($.isArray(oOptions)) {
-						return new function () {
+						return new function() {
 							return MatcherConstructor.apply(this, oOptions);
 						}();
 					} else {

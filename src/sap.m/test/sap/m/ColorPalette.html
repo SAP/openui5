@@ -151,8 +151,35 @@
 				expanded: true,
 				content: [
 					new Input({placeholder: " focus placeholder"}),
-					new ColorPalette({
-						colorSelect: handleColorSelect
+					new HBox({
+						items: [
+							new ColorPalette({
+								colorSelect: handleColorSelect
+							}),
+							new ColorPalette({
+								colorSelect: handleColorSelect,
+								colors: [
+									"red",
+									"#ffff00"
+								]
+							}),
+							new ColorPalette({
+								colorSelect: handleColorSelect,
+								colors: [
+									"red",
+									"#ffff00",
+									"green",
+									"hsl(350, 60%, 60%)",
+									"lightblue",
+									"#a811ff",
+									"hsl(120, 80%, 80%)",
+									"black",
+									"#ffaa00",
+									"hsl(20, 100%, 70%)",
+									"white",
+									"aqua"
+								]
+							})]
 					})
 				]
 			}).placeAt("content");

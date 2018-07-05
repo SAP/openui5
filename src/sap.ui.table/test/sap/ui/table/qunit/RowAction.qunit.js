@@ -4,8 +4,9 @@ sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/ui/table/TableUtils"
-], function(qutils, RowAction, RowActionItem, TableUtils) {
+	"sap/ui/table/TableUtils",
+	"sap/ui/Device"
+], function(qutils, RowAction, RowActionItem, TableUtils, Device) {
 	"use strict";
 
 	var MENUICON = "sap-icon://overflow";
@@ -329,7 +330,7 @@ sap.ui.require([
 		this.rowAction.getItems()[1].attachPress(function(oEvent) {
 			oEventParams = oEvent.getParameters();
 		});
-		qutils.triggerEvent(sap.ui.Device.support.touch && !sap.ui.Device.system.desktop ? "tap" : "click", this.aInnerIcons[1].getDomRef());
+		qutils.triggerEvent(Device.support.touch && !Device.system.desktop ? "tap" : "click", this.aInnerIcons[1].getDomRef());
 		assert.ok(!oEventParams, "Press Event Not Triggered");
 		var oMenu = this.rowAction.getAggregation("_menu");
 		assert.ok(oMenu, "Menu initialized");

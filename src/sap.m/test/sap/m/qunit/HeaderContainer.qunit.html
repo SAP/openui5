@@ -36,8 +36,9 @@
 			"sap/ui/Device",
 			"sap/ui/core/Icon",
 			"sap/ui/core/Orientation",
-			"sap/m/BackgroundDesign"
-		], function (jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, Orientation, BackgroundDesign) {
+			"sap/m/BackgroundDesign",
+			"sap/base/Log"
+		], function (jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, Orientation, BackgroundDesign, Log) {
 			"use strict";
 
 			jQuery.sap.initMobile();
@@ -55,18 +56,18 @@
 
 			QUnit.test("Warning is logged if no value for the mandatory width or height property is set", function (assert) {
 				//Arrange
-				sinon.spy(jQuery.sap.log, "warning");
+				sinon.spy(Log, "warning");
 				//Act
 				this.oHeaderContainer.onBeforeRendering();
 				//Assert
 				assert.equal(this.oHeaderContainer.getWidth(), undefined);
-				assert.equal(jQuery.sap.log.warning.callCount, 2, "Warning logged twice");
-				assert.ok(jQuery.sap.log.warning.calledWith("No width provided", this.oHeaderContainer),
+				assert.equal(Log.warning.callCount, 2, "Warning logged twice");
+				assert.ok(Log.warning.calledWith("No width provided", this.oHeaderContainer),
 					"Warning logged with expected message for width");
-				assert.ok(jQuery.sap.log.warning.calledWith("No height provided", this.oHeaderContainer),
+				assert.ok(Log.warning.calledWith("No height provided", this.oHeaderContainer),
 					"Warning logged with expected message for height");
 				// Restore
-				jQuery.sap.log.warning.restore();
+				Log.warning.restore();
 			});
 
 			QUnit.test("ScrollStep should be set to 300", function (assert) {

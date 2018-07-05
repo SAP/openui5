@@ -6,7 +6,7 @@ sap.ui.define(['sap/m/Token','sap/ui/core/mvc/Controller','sap/ui/model/json/JSO
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+			var oModel = new JSONModel("test-resources/sap/ui/documentation/sdk/products.json");
 			this.getView().setModel(oModel);
 			var oView = this.getView();
 

@@ -5,11 +5,11 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
-	"jquery.sap.global",
 	"./WizardStepRenderer",
-	"./Button"
+	"./Button",
+	"sap/base/Log"
 ],
-	function(library, Control, jQuery, WizardStepRenderer, Button) {
+	function(library, Control, WizardStepRenderer, Button, Log) {
 
 	"use strict";
 
@@ -124,7 +124,7 @@ sap.ui.define([
 
 		this._oNextButton.addEventDelegate({
 			onAfterRendering: function () {
-				jQuery.sap.delayedCall(0, this, function () {
+				setTimeout(function () {
 					var oButton = this._oNextButton,
 						oButtonDomRef = oButton.getDomRef();
 
@@ -137,7 +137,7 @@ sap.ui.define([
 						// in order to preserve the current animation implementation
 						oButtonDomRef && oButtonDomRef.setAttribute("aria-hidden", true);
 					}
-				});
+				}.bind(this), 0);
 			}
 		}, this);
 
@@ -193,7 +193,7 @@ sap.ui.define([
 	 */
 	WizardStep.prototype.setVisible = function (visible) {
 		this.setProperty("visible", visible, true);
-		jQuery.sap.log.warning("Don't use the set visible method for wizard steps. If you need to show/hide steps based on some condition - use the branching property of the Wizard instead.");
+		Log.warning("Don't use the set visible method for wizard steps. If you need to show/hide steps based on some condition - use the branching property of the Wizard instead.");
 		return this;
 	};
 

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Breakpoint (Breakpoint support Plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadata', '../Plugin', "sap/base/util/LoaderExtensions"],
-	function(jQuery, Device, ElementMetadata, Plugin, LoaderExtensions) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadata', '../Plugin', "sap/base/util/LoaderExtensions", "sap/base/util/ObjectPath"],
+	function(jQuery, Device, ElementMetadata, Plugin, LoaderExtensions, ObjectPath) {
 	"use strict";
 
 	/*global alert */
@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 		Breakpoint.prototype.getClassMethods = function(sClassName) {
 
 			// get class object
-			var oObj = jQuery.sap.getObject(sClassName);
+			var oObj = ObjectPath.get(sClassName);
 			var aMethods = [], sKey;
 
 			if (!oObj) {
@@ -281,7 +281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 						continue;
 					}
 
-					var oObj = jQuery.sap.getObject(aModules[i]);
+					var oObj = ObjectPath.get(aModules[i]);
 
 					if (typeof (oObj) === 'undefined' || oObj === null) {
 						continue;
@@ -326,7 +326,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 
 		Breakpoint.prototype.changeClassBreakpoint = function(sClassName, sMethodName, bActive, type) {
 
-			var oClass = jQuery.sap.getObject(sClassName);
+			var oClass = ObjectPath.get(sClassName);
 
 			// check if control was found and a method was specified
 			if (!oClass || !sMethodName) {

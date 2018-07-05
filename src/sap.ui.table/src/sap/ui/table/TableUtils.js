@@ -4,9 +4,9 @@
 
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/library", "sap/ui/model/ChangeReason",
-	"./TableGrouping", "./TableColumnUtils", "./TableMenuUtils", "./TableBindingUtils", "./library"
-], function(jQuery, Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, TableBindingUtils, library) {
+	"sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/library", "sap/ui/model/ChangeReason", "./TableGrouping",
+	"./TableColumnUtils", "./TableMenuUtils", "./TableBindingUtils", "./library", "sap/base/Log"
+], function(Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, TableBindingUtils, library, Log) {
 	"use strict";
 
 	// Shortcuts
@@ -895,12 +895,12 @@ sap.ui.define([
 			if (typeof sIdSuffix == "string") {
 				oDomRef = oTable.getDomRef(sIdSuffix);
 			} else {
-				jQuery.sap.log.error("sIdSuffix must be a string", oTable);
+				Log.error("sIdSuffix must be a string", oTable);
 				return;
 			}
 
 			if (typeof fnHandler !== "function") {
-				jQuery.sap.log.error("fnHandler must be a function", oTable);
+				Log.error("fnHandler must be a function", oTable);
 				return;
 			}
 
@@ -1086,7 +1086,7 @@ sap.ui.define([
 		sanitizeSelectionMode: function(oTable, sSelectionMode) {
 			if (sSelectionMode === SelectionMode.Multi) {
 				sSelectionMode = SelectionMode.MultiToggle;
-				jQuery.sap.log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
+				Log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
 			}
 			return sSelectionMode;
 		},
@@ -1174,6 +1174,36 @@ sap.ui.define([
 		 */
 		getResourceText: function(sKey, aValues) {
 			return oResourceBundle ? oResourceBundle.getText(sKey, aValues) : "";
+		},
+
+		/**
+		 * Facilitates dynamic calling.
+		 *
+		 * @param {function():T | T} vObject The object, or a function returning the object, on which methods will be called.
+		 * @param {function(this:U, T) | Object<string, *[]>} vCall Called if <code>vObject</code> is, or returns an object.
+		 * @param {U} [oThis] Context in the function calls, or in the callback if <code>vCall</code>is a function. Default is <code>vObject</code>.
+		 * @template T, U
+		 */
+		dynamicCall: function(vObject, vCall, oThis) {
+			var oObject = vObject instanceof Function ? vObject() : vObject;
+
+			if (!oObject || !vCall) {
+				return;
+			}
+
+			oThis = oThis || oObject;
+
+			if (vCall instanceof Function) {
+				vCall.call(oThis, oObject);
+			} else {
+				var aParameters;
+				for (var sFunctionName in vCall) {
+					if (oObject[sFunctionName] instanceof Function) {
+						aParameters = vCall[sFunctionName];
+						oObject[sFunctionName].apply(oThis, aParameters);
+					}
+				}
+			}
 		}
 	};
 

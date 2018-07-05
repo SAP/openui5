@@ -3,11 +3,32 @@
 sap.ui.require([
 	"sap/ui/table/TableUtils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device"
-], function(TableUtils, JSONModel, Device) {
+	"sap/ui/Device",
+	"sap/base/util/UriParameters",
+	"sap/m/Text",
+	"sap/m/Label",
+	"sap/m/ObjectStatus",
+	"sap/ui/core/Icon",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/DatePicker",
+	"sap/m/Select",
+	"sap/m/ComboBox",
+	"sap/m/MultiComboBox",
+	"sap/m/CheckBox",
+	"sap/m/Link",
+	"sap/ui/unified/Currency",
+	"sap/m/ProgressIndicator",
+	"sap/m/RatingIndicator",
+	"sap/m/HBox",
+	"sap/ui/table/Table",
+	"sap/ui/table/Column",
+	"sap/ui/table/TreeTable"
+], function(TableUtils, JSONModel, Device, UriParameters, Text, Label, ObjectStatus, Icon, Button, Input, DatePicker, Select, ComboBox, MultiComboBox, CheckBox,
+			Link, Currency, ProgressIndicator, RatingIndicator, HBox, Table, Column, TreeTable) {
 	"use strict";
 
-	var bExecuteAllTests = jQuery.sap.getUriParameters().get("sap-ui-xx-table-testall") === "true";
+	var bExecuteAllTests = (new UriParameters()).get("sap-ui-xx-table-testall") === "true";
 	var oTable;
 	var oTreeTable;
 	var sSomeVeryLargeTextWhichMightCauseWrapping = "Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test";
@@ -27,48 +48,48 @@ sap.ui.require([
 	oData.rows[0].rows = [oDataSet];
 
 	var aSupportedControls = [
-		new sap.m.Text({text: "{text}", wrapping: false}),
-		new sap.m.Label({text: "{text}"}),
-		new sap.m.ObjectStatus({title: "{text}", text: "{text}"}),
-		new sap.ui.core.Icon({src: "sap-icon://account", decorative: false}),
-		new sap.m.Button({text: "{text}"}),
-		new sap.m.Input({value: "{text}"}),
-		new sap.m.DatePicker({value: "{path: '/date', type: 'sap.ui.model.type.Date'}"}),
-		new sap.m.Select({items: [new sap.ui.core.Item({key: "key", text: "{text}"})]}),
-		new sap.m.ComboBox({items: [new sap.ui.core.Item({key: "key", text: "{text}"})]}),
-		new sap.m.MultiComboBox({items: [new sap.ui.core.Item({key: "key", text: "{text}"})]}),
-		new sap.m.CheckBox({selected: true, text: "{text}"}),
-		new sap.m.Link({text: "{text}", wrapping: false}),
-		new sap.ui.unified.Currency({value: "{money}", currency: "EUR"}),
-		new sap.m.ProgressIndicator({percentValue: "{percent}"}),
-		new sap.m.RatingIndicator({value: "{rating}"}),
-		new sap.m.HBox({
+		new Text({text: "{text}", wrapping: false}),
+		new Label({text: "{text}"}),
+		new ObjectStatus({title: "{text}", text: "{text}"}),
+		new Icon({src: "sap-icon://account", decorative: false}),
+		new Button({text: "{text}"}),
+		new Input({value: "{text}"}),
+		new DatePicker({value: "{path: '/date', type: 'sap.ui.model.type.Date'}"}),
+		new Select({items: [new sap.ui.core.Item({key: "key", text: "{text}"})]}),
+		new ComboBox({items: [new sap.ui.core.Item({key: "key", text: "{text}"})]}),
+		new MultiComboBox({items: [new sap.ui.core.Item({key: "key", text: "{text}"})]}),
+		new CheckBox({selected: true, text: "{text}"}),
+		new Link({text: "{text}", wrapping: false}),
+		new Currency({value: "{money}", currency: "EUR"}),
+		new ProgressIndicator({percentValue: "{percent}"}),
+		new RatingIndicator({value: "{rating}"}),
+		new HBox({
 			width: "100%",
 			items: [
-				new sap.m.Link({text: "{text}", wrapping: false}),
-				new sap.m.Text({text: "{text}", wrapping: false})
+				new Link({text: "{text}", wrapping: false}),
+				new Text({text: "{text}", wrapping: false})
 			]
 		}),
-		new sap.m.HBox({
+		new HBox({
 			width: "100%",
 			items: [
-				new sap.m.Button({text: "{text}"}),
-				new sap.m.Button({text: "{text}"})
+				new Button({text: "{text}"}),
+				new Button({text: "{text}"})
 			]
 		}),
-		new sap.m.HBox({
+		new HBox({
 			width: "100%",
 			items: [
-				new sap.m.Input({value: "{text}"}),
-				new sap.m.Input({value: "{text}"})
+				new Input({value: "{text}"}),
+				new Input({value: "{text}"})
 			]
 		})
 	];
 
 	var aSupportedHeaderLabelControls = [
-		new sap.m.Text({text: sSomeVeryLargeTextWhichMightCauseWrapping, wrapping: false}),
-		new sap.m.Label({text: sSomeVeryLargeTextWhichMightCauseWrapping}),
-		new sap.m.Link({text: sSomeVeryLargeTextWhichMightCauseWrapping, wrapping: false})
+		new Text({text: sSomeVeryLargeTextWhichMightCauseWrapping, wrapping: false}),
+		new Label({text: sSomeVeryLargeTextWhichMightCauseWrapping}),
+		new Link({text: sSomeVeryLargeTextWhichMightCauseWrapping, wrapping: false})
 	];
 
 	var aContentDensities = [
@@ -82,14 +103,14 @@ sap.ui.require([
 		var oModel = new JSONModel();
 		oModel.setData(oData);
 
-		oTable = new sap.ui.table.Table({
+		oTable = new Table({
 			rows: "{/rows}",
 			title: "Grid Table",
 			selectionMode: "MultiToggle",
 			visibleRowCount: 1,
 			ariaLabelledBy: "ARIALABELLEDBY",
 			columns: [
-				new sap.ui.table.Column({
+				new Column({
 					label: "Test",
 					template: null,
 					width: "30px"
@@ -97,7 +118,7 @@ sap.ui.require([
 			]
 		});
 
-		oTreeTable = new sap.ui.table.TreeTable({
+		oTreeTable = new TreeTable({
 			rows: {
 				path: "/rows",
 				parameters: {arrayNames: ["rows"]}
@@ -107,7 +128,7 @@ sap.ui.require([
 			visibleRowCount: 1,
 			ariaLabelledBy: "ARIALABELLEDBY",
 			columns: [
-				new sap.ui.table.Column({
+				new Column({
 					label: "Test",
 					template: null,
 					width: "30px"

@@ -4,7 +4,6 @@
 
 // Provides control sap.m.StepInput.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Icon",
 	"./Input",
 	"./InputRenderer",
@@ -15,10 +14,10 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/m/library",
 	"./StepInputRenderer",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	Icon,
 	Input,
 	InputRenderer,
@@ -28,8 +27,10 @@ function(
 	coreLibrary,
 	Renderer,
 	library,
-	StepInputRenderer
-	) {
+	StepInputRenderer,
+	KeyCodes,
+	Log
+) {
 		"use strict";
 
 		// shortcut for sap.m.InputType
@@ -562,7 +563,7 @@ function(
 				return true;
 			}
 
-			jQuery.sap.log.error("The value of property '" + name + "' must be a number");
+			Log.error("The value of property '" + name + "' must be a number");
 			return false;
 		};
 
@@ -581,7 +582,7 @@ function(
 				vValuePrecision = parseInt(number, 10);
 			} else {
 				vValuePrecision = 0;
-				jQuery.sap.log.warning(this + ": ValuePrecision (" + number + ") is not correct. It should be a number between 0 and 20! Setting the default ValuePrecision:0.");
+				Log.warning(this + ": ValuePrecision (" + number + ") is not correct. It should be a number between 0 and 20! Setting the default ValuePrecision:0.");
 			}
 
 			return this.setProperty("displayValuePrecision", vValuePrecision, bSuppressInvalidate);
@@ -981,24 +982,24 @@ function(
 		StepInput.prototype.onkeydown = function (oEvent) {
 			var bVerifyValue = false;
 
-			this._bPaste = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.V);
+			this._bPaste = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.V);
 
-			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP && !oEvent.altKey && oEvent.shiftKey &&
+			if (oEvent.which === KeyCodes.ARROW_UP && !oEvent.altKey && oEvent.shiftKey &&
 				(oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+up
 				this._applyValue(this.getMax());
 				bVerifyValue = true;
 			}
-			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN && !oEvent.altKey && oEvent.shiftKey &&
+			if (oEvent.which === KeyCodes.ARROW_DOWN && !oEvent.altKey && oEvent.shiftKey &&
 				(oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+down
 				this._applyValue(this.getMin());
 				bVerifyValue = true;
 			}
-			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+up
+			if (oEvent.which === KeyCodes.ARROW_UP && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+up
 				oEvent.preventDefault(); //preventing to be added both the minimum step (1) and the larger step
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), true).displayValue);
 				bVerifyValue = true;
 			}
-			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_DOWN && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+down
+			if (oEvent.which === KeyCodes.ARROW_DOWN && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+down
 				oEvent.preventDefault(); //preventing to be subtracted  both the minimum step (1) and the larger step
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
 				bVerifyValue = true;
@@ -1172,9 +1173,9 @@ function(
 			}
 			this._getInput().setValueState(valueState);
 
-			jQuery.sap.delayedCall(0, this, function () {
+			setTimeout(function () {
 				this.$().toggleClass("sapMStepInputError", bError).toggleClass("sapMStepInputWarning", bWarning);
-			});
+			}.bind(this), 0);
 
 			this.setProperty("valueState", valueState, true);
 
@@ -1286,7 +1287,7 @@ function(
 			}
 
 			this.setValueState(ValueState.Error);
-			jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
+			setTimeout(this["setValueState"].bind(this, sOldValueState), 1000);
 		};
 
 		/**
@@ -1401,7 +1402,7 @@ function(
 			} while (fResult % step !== 0 && iLoopCount);
 
 			if (fResult % step !== 0) {
-				jQuery.sap.log.error("Wrong next/previous value " + fResult + " for " + fValue + ", step: " + step +
+				Log.error("Wrong next/previous value " + fResult + " for " + fValue + ", step: " + step +
 					" and sign: " + iSign, this);
 			}
 

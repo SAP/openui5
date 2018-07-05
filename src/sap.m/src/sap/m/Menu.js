@@ -3,8 +3,36 @@
  */
 
 // Provides control sap.m.Menu.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './Dialog', './NavContainer', './List', './Page', './MenuListItem', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, Button, Dialog, NavContainer, List, Page, MenuListItem, UfdMenu, UfdMenuItem, Device, EnabledPropagator) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'./Button',
+	'./Dialog',
+	'./NavContainer',
+	'./List',
+	'./Page',
+	'./MenuListItem',
+	'sap/ui/unified/Menu',
+	'sap/ui/unified/MenuItem',
+	'sap/ui/Device',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/CustomData'
+],
+	function(
+		library,
+		Control,
+		Button,
+		Dialog,
+		NavContainer,
+		List,
+		Page,
+		MenuListItem,
+		UfdMenu,
+		UfdMenuItem,
+		Device,
+		EnabledPropagator,
+		CustomData
+	) {
 		"use strict";
 
 		// shortcut for sap.m.ListType
@@ -260,8 +288,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			this._initMenuForItems(this.getItems());
 		};
 
+		/*
+		 * Allows for any custom function to be called back when accessibility attributes
+		 * of underlying menu are about to be rendered.
+		 * The function is called once per MenuItem
+		 *
+		 * @param {function} fn The callback function
+		 * @protected
+		 * @sap-restricted ObjectPageLayoutABHelper
+		 * @returns void
+		 */
+		Menu.prototype._setCustomEnhanceAccStateFunction = function(fn) {
+			this._fnEnhanceUnifiedMenuAccState = fn;
+		};
+
 		Menu.prototype._initMenuForItems = function(aItems, oParentMenuItem) {
 			var oMenu = new UfdMenu();
+			oMenu._setCustomEnhanceAccStateFunction(this._fnEnhanceUnifiedMenuAccState);
 			oMenu.isCozy = this._isMenuCozy.bind(this, oMenu);
 
 			// Keep in mind that we are adding the style class to sap.m.Menu as the CustomStyleClassSupport is sync
@@ -408,7 +451,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		};
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
-			return new UfdMenuItem({
+			var oUfdMenuItem = new UfdMenuItem({
 				id  : this._generateUnifiedMenuItemId(oItem.getId()),
 				icon: oItem.getIcon(),
 				text: oItem.getText(),
@@ -416,7 +459,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				tooltip: oItem.getTooltip(),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled()
+			}),
+			aCustomData = oItem.getCustomData();
+
+			aCustomData.forEach(function(oData) {
+				oUfdMenuItem.addCustomData(new CustomData({
+					key: oData.getKey(),
+					value: oData.getValue()
+				}));
 			});
+
+			return oUfdMenuItem;
 		};
 
 		Menu.prototype._addVisualMenuItemFromItem = function(oItem, oMenu, iIndex) {

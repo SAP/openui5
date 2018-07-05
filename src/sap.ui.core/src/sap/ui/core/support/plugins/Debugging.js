@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Debugging
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.keycodes'],
-	function(jQuery, Plugin) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', "sap/ui/events/KeyCodes"],
+	function(jQuery, Plugin, KeyCodes) {
 		"use strict";
 
 
@@ -239,7 +239,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 
 			var $input = $(oEvent.target);
 
-			if (oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
+			if (oEvent.keyCode == KeyCodes.ENTER) {
 				this._updateSelectOptions(oEvent);
 
 				if ($input.attr('id') === "sapUiSupportDebuggingClassInput") {
@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 
 			}
 
-			if (oEvent.keyCode >= jQuery.sap.KeyCodes.ARROW_LEFT && oEvent.keyCode <= jQuery.sap.KeyCodes.ARROW_DOWN) {
+			if (oEvent.keyCode >= KeyCodes.ARROW_LEFT && oEvent.keyCode <= KeyCodes.ARROW_DOWN) {
 				return;
 			}
 
@@ -274,7 +274,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.ke
 
 					var iCurrentStart = $input.cursorPos();
 
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
+					if (oEvent.keyCode == KeyCodes.BACKSPACE) {
 						iCurrentStart--;
 					}
 

@@ -6,16 +6,32 @@
  * Initialization Code and shared classes of library sap.m.
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/base/DataType',
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/Control',
 	'sap/base/util/ObjectPath',
-	'sap/ui/core/library', // library dependency
-	'jquery.sap.mobile', // referenced here in case the Core decides to throw it out - shall always be available when using the mobile lib.
-	'./Support'], // referenced here to enable the Support feature
-	function(jQuery, Device, DataType, EventProvider, Control, ObjectPath, CoreLibrary) {
+	// library dependency
+	'sap/ui/core/library',
+	"sap/base/strings/capitalize",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/assert",
+	"sap/base/Log",
+	// referenced here to enable the Support feature
+	'./Support'
+],
+	function(
+	Device,
+	DataType,
+	EventProvider,
+	Control,
+	ObjectPath,
+	CoreLibrary,
+	capitalize,
+	jQueryDOM,
+	assert,
+	Log
+) {
 
 	"use strict";
 
@@ -181,6 +197,9 @@ sap.ui.define([
 			"sap.m.ObjectMarker",
 			"sap.m.ObjectNumber",
 			"sap.m.ObjectStatus",
+			"sap.m.OnePersonCalendar",
+			"sap.m.OnePersonGrid",
+			"sap.m.OnePersonHeader",
 			"sap.m.OverflowToolbar",
 			"sap.m.OverflowToolbarButton",
 			"sap.m.OverflowToolbarToggleButton",
@@ -1578,6 +1597,8 @@ sap.ui.define([
 	 *       allowing to optimize the behavior of controls that do not need to overflow, but are used in an <code>sap.m.OverflowToolbar</code> regardless.</li>
 	 *
 	 *       <li><code>autoCloseEvents</code> - An array of strings, listing all of the control's events that should trigger the closing of the overflow menu, when fired.</li>
+	 *
+	 *       <li><code>invalidationEvents</code> - An array of strings, listing all of the control's events that should trigger the invalidation of the <code>sap.m.OverflowToolbar</code>, when fired.</li>
 	 *
 	 *       <li><code>propsUnrelatedToSize</code> - An array of strings, listing all of the control's properties that, when changed, should not cause the overflow toolbar to invalidate.
 	 *
@@ -3587,7 +3608,7 @@ sap.ui.define([
 		if (oTouch && typeof oTouch.identifier !== "undefined") {
 			oTouch = oTouch.identifier;
 		} else if (typeof oTouch !== "number") {
-			jQuery.sap.assert(false, 'sap.m.touch.find(): oTouch must be a touch object or a number');
+			assert(false, 'sap.m.touch.find(): oTouch must be a touch object or a number');
 			return;
 		}
 
@@ -3626,9 +3647,9 @@ sap.ui.define([
 		if (vElement instanceof Element) {
 			vElement = jQuery(vElement);
 		} else if (typeof vElement === "string") {
-			vElement = jQuery.sap.byId(vElement);
+			vElement = jQueryDOM(document.getElementById(vElement));
 		} else if (!(vElement instanceof jQuery)) {
-			jQuery.sap.assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
+			assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
 			return 0;
 		}
 
@@ -3763,16 +3784,16 @@ sap.ui.define([
 			 * @public
 			 */
 			redirect: function (sURL, bNewWindow) {
-				jQuery.sap.assert(isValidString(sURL), this + "#redirect: URL must be a string" );
+				assert(isValidString(sURL), this + "#redirect: URL must be a string" );
 				this.fireEvent("redirect", sURL);
 				if (!bNewWindow) {
 					window.location.href = sURL;
 				} else {
 					var oWindow = window.open(sURL, "_blank");
 					if (!oWindow) {
-						jQuery.sap.log.error(this + "#redirect: Could not open " + sURL);
+						Log.error(this + "#redirect: Could not open " + sURL);
 						if (Device.os.windows_phone || (Device.browser.edge && Device.browser.mobile)) {
-							jQuery.sap.log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
+							Log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
 							window.location.href = sURL;
 						}
 					}
@@ -3970,7 +3991,7 @@ sap.ui.define([
 		 */
 		function checkAndSetProperty(oControl, property, value) {
 			if (value !== undefined) {
-				var fSetter = oControl['set' + jQuery.sap.charToUpperCase(property)];
+				var fSetter = oControl['set' + capitalize(property)];
 				if (typeof (fSetter) === "function") {
 					fSetter.call(oControl, value);
 					return true;
@@ -3996,7 +4017,7 @@ sap.ui.define([
 			 * @protected
 			 */
 			getImageControl: function(sImgId, oImage, oParent, mProperties, aCssClassesToAdd, aCssClassesToRemove) {
-				jQuery.sap.assert( mProperties.src , "sap.m.ImageHelper.getImageControl: mProperties do not contain 'src'");
+				assert( mProperties.src , "sap.m.ImageHelper.getImageControl: mProperties do not contain 'src'");
 
 				// make sure, image is rerendered if icon source has changed
 				if (oImage && (oImage.getSrc() != mProperties.src)) {
@@ -4057,12 +4078,12 @@ sap.ui.define([
 		 */
 		calcPercentageSize: function(sPercentage, fBaseSize){
 			if (typeof sPercentage !== "string") {
-				jQuery.sap.log.warning("sap.m.PopupHelper: calcPercentageSize, the first parameter" + sPercentage + "isn't with type string");
+				Log.warning("sap.m.PopupHelper: calcPercentageSize, the first parameter" + sPercentage + "isn't with type string");
 				return null;
 			}
 
 			if (sPercentage.indexOf("%") <= 0) {
-				jQuery.sap.log.warning("sap.m.PopupHelper: calcPercentageSize, the first parameter" + sPercentage + "is not a percentage string (for example '25%')");
+				Log.warning("sap.m.PopupHelper: calcPercentageSize, the first parameter" + sPercentage + "is not a percentage string (for example '25%')");
 				return null;
 			}
 
@@ -4257,7 +4278,7 @@ sap.ui.define([
 						if (sSearchFocus) {
 							oCustomParams["search-focus"] = sSearchFocus;
 						} else {
-							jQuery.sap.assert(false, 'no search-focus defined');
+							assert(false, 'no search-focus defined');
 						}
 					}
 

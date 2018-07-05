@@ -504,13 +504,13 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 					type:			"fail",
 					url:			sUrl,
 					message:		sStatusText,
-					statusCode:		oJQXHR.statusCode,
+					statusCode:		oJQXHR.status,
 					statusText:		oJQXHR.statusText,
 					responseText:	oJQXHR.responseText
 				};
 
 				if (that.bAsync) {
-					that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [ that.oError ]);
+					that.oFailedEvent = setTimeout(that.fireFailed.bind(that, that.oError), 0);
 				} else {
 					that.fireFailed(that.oError);
 				}
@@ -526,7 +526,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 							type:			"success",
 							url: 			sUrl,
 							message:		sStatusText,
-							statusCode:		oJQXHR.statusCode,
+							statusCode:		oJQXHR.status,
 							statusText:		oJQXHR.statusText,
 							responseText:		oJQXHR.responseText
 						});
@@ -555,10 +555,10 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 
 		EventProvider.prototype.destroy.apply(this, arguments);
 		if (this.oLoadEvent) {
-			jQuery.sap.clearDelayedCall(this.oLoadEvent);
+			clearTimeout(this.oLoadEvent);
 		}
 		if (this.oFailedEvent) {
-			jQuery.sap.clearDelayedCall(this.oFailedEvent);
+			clearTimeout(this.oFailedEvent);
 		}
 	};
 

@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>OnePersonCalendar - sap.m</title>
+    <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.PlanningCalendar.gif">
+
+    <script src="shared-config.js"></script>
+    <script src="../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-language="en_US"
+            data-sap-ui-libs="sap.m, sap.ui.unified">
+    </script>
+
+
+
+    <script>
+        var oOPH = new sap.m.OnePersonCalendar("OnePersonCalendar",{
+            startDate: new Date(2018,5,20),
+            startHour: 8,
+            endHour: 20,
+            appointmentsVisualization: "Filled",
+            showFullDay: false,
+            actions: [
+                new sap.m.Title("title",{
+                    text: "OnePersonHeader"
+                }),
+                new sap.m.ToolbarSpacer(),
+                new sap.m.SegmentedButton('ViewSwitch1', {
+                    buttons: [
+                        new sap.m.Button({
+                            text: "Days"
+                        }),
+                        new sap.m.Button({
+                            text: "Week"
+                        }),
+                        new sap.m.Button({
+                            text: "Months"
+                        })
+                    ]}
+                ),
+                new sap.m.Button("firstButton", {
+                    text: "hello world"
+                }),
+                new sap.m.Button("firstButton1", {
+                    text: "hello world"
+                }),
+                new sap.m.Button("firstButton2", {
+                    text: "hello world"
+                })
+            ],
+            appointments: [
+                new sap.ui.unified.CalendarAppointment("a1", {
+                    title: "Appointment 1",
+                    type: "Type02",
+                    startDate: new Date(2018, 5, 20, 14, 0, 0),
+                    endDate: new Date(2018, 5, 20, 18, 30, 0)
+                }),
+                new sap.ui.unified.CalendarAppointment("a2", {
+                    title: "Appointment 1",
+                    type: "Type02",
+                    startDate: new Date(2018, 5, 20, 11, 0, 0),
+                    endDate: new Date(2018, 5, 20, 12, 0, 0)
+                }),
+                new sap.ui.unified.CalendarAppointment("a3", {
+                    title: "Appointment 2",
+                    startDate: new Date(2018, 5, 18, 14, 30, 0),
+                    endDate: new Date(2018, 5, 18, 15, 0, 0)
+                }),
+                new sap.ui.unified.CalendarAppointment("a4", {
+                    title: "Appointment 3",
+                    startDate: new Date(2018, 5, 18, 14, 45, 0),
+                    endDate: new Date(2018, 5, 18, 15, 0, 0)
+                }),
+                new sap.ui.unified.CalendarAppointment("a5", {
+                    title: "Appointment 4",
+                    startDate: new Date(2018, 5, 18, 13, 30, 0),
+                    endDate: new Date(2018, 5, 18, 16, 0, 0)
+                })
+            ]
+        }).placeAt("body");
+    </script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

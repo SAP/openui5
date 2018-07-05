@@ -4,10 +4,38 @@
 
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
 sap.ui.define([
-'jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip',
-	'sap/ui/base/DataType', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/ui/core/UIArea', 'sap/ui/core/mvc/View', 'sap/ui/core/mvc/Controller',
-	'sap/ui/model/Binding', 'sap/ui/model/CompositeBinding', 'jquery.sap.keycodes'
-], function(jQuery, Plugin, ViewSerializer, JSZip, DataType, Element, ElementMetadata, UIArea, View, Controller, Binding, CompositeBinding) {
+	'jquery.sap.global',
+	'sap/ui/core/support/Plugin',
+	'sap/ui/core/util/serializer/ViewSerializer',
+	'sap/ui/thirdparty/jszip',
+	'sap/ui/base/DataType',
+	'sap/ui/core/Element',
+	'sap/ui/core/ElementMetadata',
+	'sap/ui/core/UIArea',
+	'sap/ui/core/mvc/View',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/Binding',
+	'sap/ui/model/CompositeBinding',
+	'sap/base/util/ObjectPath',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
+], function(
+	jQuery,
+	Plugin,
+	ViewSerializer,
+	JSZip,
+	DataType,
+	Element,
+	ElementMetadata,
+	UIArea,
+	View,
+	Controller,
+	Binding,
+	CompositeBinding,
+	ObjectPath,
+	jQueryDOM,
+	KeyCodes
+) {
 	"use strict";
 
 	/*global Blob, Uint8Array, alert */
@@ -859,12 +887,12 @@ sap.ui.define([
 
 		ControlTree.prototype._autoComplete = function(oEvent) {
 
-			if (oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
+			if (oEvent.keyCode == KeyCodes.ENTER) {
 				this._updateSelectOptions(oEvent);
 				this._onAddBreakpointClicked();
 			}
 
-			if (oEvent.keyCode >= jQuery.sap.KeyCodes.ARROW_LEFT && oEvent.keyCode <= jQuery.sap.KeyCodes.ARROW_DOWN) {
+			if (oEvent.keyCode >= KeyCodes.ARROW_LEFT && oEvent.keyCode <= KeyCodes.ARROW_DOWN) {
 				return;
 			}
 
@@ -889,7 +917,7 @@ sap.ui.define([
 
 					var iCurrentStart = $input.cursorPos();
 
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.BACKSPACE) {
+					if (oEvent.keyCode == KeyCodes.BACKSPACE) {
 						iCurrentStart--;
 					}
 
@@ -1061,10 +1089,10 @@ sap.ui.define([
 
 			$(".sapUiControlTreeElement > div").removeClass("sapUiSupportControlTreeSelected");
 			var that = this;
-			$.sap.byId("sap-debug-controltree-" + sControlId).parents("[data-sap-ui-collapsed]").each(function(iIndex, oValue) {
+			jQueryDOM(document.getElementById("sap-debug-controltree-" + sControlId)).parents("[data-sap-ui-collapsed]").each(function(iIndex, oValue) {
 				that._onIconClick({ target: $(oValue).find("img:first").get(0) });
 			});
-			var oPosition = $.sap.byId("sap-debug-controltree-" + sControlId).children("div").addClass("sapUiSupportControlTreeSelected").position();
+			var oPosition = jQueryDOM(document.getElementById("sap-debug-controltree-" + sControlId)).children("div").addClass("sapUiSupportControlTreeSelected").position();
 			var iScrollTop = this.$().find("#sapUiSupportControlTreeArea").scrollTop();
 			this.$().find("#sapUiSupportControlTreeArea").scrollTop(iScrollTop + oPosition.top);
 
@@ -1310,7 +1338,7 @@ sap.ui.define([
 
 					if (!mAllElements[mAssoc.id]) {
 
-						var oType = jQuery.sap.getObject(mAssoc.type);
+						var oType = ObjectPath.get(mAssoc.type || "");
 
 						if (!(typeof oType === "function")) {
 							continue;

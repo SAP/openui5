@@ -111,25 +111,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/For
 						}
 						break;
 					case "startsWith":  // expects string
-						if (!jQuery.sap.startsWith(sValue,oContent)) {
+						if (!(typeof oContent == "string" && oContent.length > 0 && sValue.startsWith(oContent))) {
 							aViolatedConstraints.push("startsWith");
 							aMessages.push(oBundle.getText("String.StartsWith", [oContent]));
 						}
 						break;
 					case "startsWithIgnoreCase":  // expects string
-						if (!jQuery.sap.startsWithIgnoreCase(sValue,oContent)) {
+						if (!((typeof oContent == "string" && oContent != "" ? sValue.toLowerCase().startsWith(oContent.toLowerCase()) : false))) {
 							aViolatedConstraints.push("startsWithIgnoreCase");
 							aMessages.push(oBundle.getText("String.StartsWith", [oContent]));
 						}
 						break;
 					case "endsWith":  // expects string
-						if (!jQuery.sap.endsWith(sValue,oContent)) {
+						if (!(typeof oContent == "string" && oContent.length > 0 && sValue.endsWith(oContent))) {
 							aViolatedConstraints.push("endsWith");
 							aMessages.push(oBundle.getText("String.EndsWith", [oContent]));
 						}
 						break;
 					case "endsWithIgnoreCase": // expects string
-						if (!jQuery.sap.endsWithIgnoreCase(sValue,oContent)) {
+						if (!((typeof oContent == "string" && oContent != "" ? sValue.toLowerCase().endsWith(oContent.toLowerCase()) : false))) {
 							aViolatedConstraints.push("endsWithIgnoreCase");
 							aMessages.push(oBundle.getText("String.EndsWith", [oContent]));
 						}

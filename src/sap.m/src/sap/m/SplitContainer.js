@@ -4,7 +4,6 @@
 
 // Provides control sap.m.SplitContainer.
 sap.ui.define([
-	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
@@ -14,10 +13,11 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/m/NavContainer',
 	'sap/m/Popover',
-	'./SplitContainerRenderer'
+	'./SplitContainerRenderer',
+	"sap/ui/dom/containsOrEquals",
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	library,
 	Control,
 	IconPool,
@@ -27,8 +27,10 @@ function(
 	ManagedObject,
 	NavContainer,
 	Popover,
-	SplitContainerRenderer
-	) {
+	SplitContainerRenderer,
+	containsOrEquals,
+	Log
+) {
 	"use strict";
 
 
@@ -621,9 +623,9 @@ function(
 		}
 
 		// "sapMSplitContainerNoTransition" prevents initial flickering, after that it needs to be removed
-		jQuery.sap.delayedCall(0, this, function () {
+		setTimeout(function () {
 			this._oMasterNav.removeStyleClass("sapMSplitContainerNoTransition");
-		});
+		}.bind(this), 0);
 	};
 	/**************************************************************
 	* END - Life Cycle Methods
@@ -680,7 +682,7 @@ function(
 				// press isn't occurring in master area
 				&& !bIsMasterNav
 				// press isn't triggered by the showMasterButton
-				&& !jQuery.sap.containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
+				&& !containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
 				&& (!metaData.getEvent("tap") || !metaData.getEvent("press"))) {
 			this.hideMaster();
 		}
@@ -1321,7 +1323,7 @@ function(
 		this._bMasterisOpen = false;
 		// If the focus is still inside the master area after master is open, the focus should be removed.
 		// Otherwise user can still type something on mobile device and the browser will show the master area again.
-		if (jQuery.sap.containsOrEquals(this._oMasterNav.getDomRef(), document.activeElement)) {
+		if (containsOrEquals(this._oMasterNav.getDomRef(), document.activeElement)) {
 			document.activeElement.blur();
 		}
 		this.fireAfterMasterClose();
@@ -1586,7 +1588,7 @@ function(
 
 	SplitContainer.prototype.setBackgroundOpacity = function(fOpacity) {
 		if (fOpacity > 1 || fOpacity < 0) {
-			jQuery.sap.log.warning("Invalid value " + fOpacity + " for SplitContainer.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
+			Log.warning("Invalid value " + fOpacity + " for SplitContainer.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
 			return this;
 		}
 		this.$("BG").css("opacity", fOpacity);
