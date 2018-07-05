@@ -270,7 +270,7 @@ sap.ui.define([
 				oMember = oMetadata.getProperty(sName) || oMetadata.getAggregation(sName) || oMetadata.getAllPrivateAggregations()[sName];
 
 			if (oMember) {
-				oMetadata._requestFragmentRetemplatingCheck(this, oMember);
+				this._requestFragmentRetemplatingCheck(oMember);
 			}
 		}
 
@@ -557,7 +557,7 @@ sap.ui.define([
 				return true;
 			}
 			bSuppressInvalidate = oMetadata._suppressInvalidate(oAggregation, bSuppressInvalidate);
-			oMetadata._requestFragmentRetemplatingCheck(this, oAggregation);
+			this._requestFragmentRetemplatingCheck(oAggregation);
 			return bSuppressInvalidate;
 		};
 
@@ -816,6 +816,25 @@ sap.ui.define([
 				}
 			}
 			this._bIsInitialized = bInitialized;
+		};
+
+		XMLComposite.prototype._requestFragmentRetemplatingCheck = function (oMember, bForce) {
+			var oMetadata = this.getMetadata();
+
+			if (!this._bIsCreating && !this._bIsBeingDestroyed && oMember && oMember.appData && oMember.appData.invalidate === oMetadata.InvalidationMode.Template &&
+				!this._requestFragmentRetemplatingPending) {
+				if (this.requestFragmentRetemplating) {
+					this._requestFragmentRetemplatingPending = true;
+					// to avoid several separate re-templating requests we collect them
+					// in a timeout
+					setTimeout(function () {
+						this.requestFragmentRetemplating(bForce);
+						this._requestFragmentRetemplatingPending = false;
+					}.bind(this), 0);
+				} else {
+					throw new Error("Function requestFragmentRetemplating not available although invalidationMode was set to template");
+				}
+			}
 		};
 
 		/**
