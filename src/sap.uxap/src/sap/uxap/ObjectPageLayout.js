@@ -1872,15 +1872,15 @@ sap.ui.define([
 			sPreviousSectionId,
 			bAllowScrollSectionToTop,
 			bStickyTitleMode = !this._bHeaderExpanded,
-			$domRef = this.getDomRef();
+			oDomRef = this.getDomRef();
 
-		if (!$domRef || !this._bDomReady) { //calculate the layout only if the object page is full ready
+		if (!oDomRef || !this._bDomReady) { //calculate the layout only if the object page is full ready
 			return false; // return success flag
 		}
 
 		jQuery.sap.log.debug("ObjectPageLayout :: _updateScreenHeightSectionBasesAndSpacer", "re-evaluating dom positions");
 
-		this.iScreenHeight = $domRef.parentElement ? $domRef.getBoundingClientRect().height : 0;
+		this.iScreenHeight = this._getDOMRefHeight(oDomRef);
 
 		if (this.iScreenHeight === 0) {
 			return; // element is hidden or not in DOM => the resulting calculations would be invalid
@@ -2421,7 +2421,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getScrollableContentLength = function () {
-		return this._$contentContainer.length ? this._$contentContainer[0].getBoundingClientRect().height : 0;
+		return this._$contentContainer.length ? this._getDOMRefHeight(this._$contentContainer[0]) : 0;
 	};
 
 	ObjectPageLayout.prototype._isContentScrolledToBottom = function () {
@@ -2893,7 +2893,7 @@ sap.ui.define([
 			// read the headerContentHeight ---------------------------
 			// Note: we are using getBoundingClientRect on the Dom reference to get the correct height taking into account
 			// possible browser zoom level. For more details BCP: 1780309606
-			this.iHeaderContentHeight = this._$headerContent[0].parentElement ? Math.ceil(this._$headerContent[0].getBoundingClientRect().height) : 0;
+			this.iHeaderContentHeight = this._$headerContent.length ? Math.ceil(this._getDOMRefHeight(this._$headerContent[0])) : 0;
 
 			//read the sticky headerContentHeight ---------------------------
 			this.iStickyHeaderContentHeight = this._$stickyHeaderContent.height();
@@ -3740,6 +3740,15 @@ sap.ui.define([
 		}
 
 		return sAriaLabelText;
+	};
+
+	/*
+	* Returns the <code>DOM reference</code> height, using the getBoundingClientRect method.
+	* Note: internally the method checks if the DOM reference has existing parent element
+	* to avoid errors, thrown in IE10 and IE11
+	*/
+	ObjectPageLayout.prototype._getDOMRefHeight = function (oDOMRef) {
+		return oDOMRef.parentElement ? oDOMRef.getBoundingClientRect().height : 0;
 	};
 
 	ObjectPageLayout.prototype._updateRootAriaLabel = function () {
