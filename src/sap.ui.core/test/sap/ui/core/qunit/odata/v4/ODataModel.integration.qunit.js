@@ -6388,11 +6388,10 @@ sap.ui.require([
 		method : "GET"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("bound operation: execute resolves with V4 context, " + i, function (assert) {
-			var oActiveArtistContext,
-				oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 				oOperation,
 				sView = '\
-<FlexBox id="objectPage" binding="{}">\
+<FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
 	<Text id="name" text="{Name}" />\
@@ -6414,15 +6413,14 @@ sap.ui.require([
 					.expectChange("isActive", "Yes")
 					.expectChange("name", "Hour Frustrated");
 
-				oActiveArtistContext = oModel
-					.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
-					.getBoundContext();
-				that.oView.byId("objectPage").setBindingContext(oActiveArtistContext);
+				that.oView.setBindingContext(
+					oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+						.getBoundContext());
 
 				return that.waitForChanges(assert);
 			}).then(function () {
 				oOperation = that.oModel.bindContext("special.cases." + oFixture.operation
-					+ "(...)", oActiveArtistContext);
+					+ "(...)", that.oView.getBindingContext());
 
 				that.expectRequest({
 					method : oFixture.method,
@@ -6483,11 +6481,9 @@ sap.ui.require([
 	// $select parameters used for loading the active entity. This way, all fields in the object
 	// page can be populated from the bound action response.
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
-		var oActiveArtistContext,
-			oInactiveArtistContext,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox id="objectPage" binding="{}">\
+<FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
 	<Text id="name" text="{Name}" />\
@@ -6513,16 +6509,15 @@ sap.ui.require([
 				.expectChange("isActive", "Yes")
 				.expectChange("name", "Hour Frustrated");
 
-			oActiveArtistContext = oModel
-				.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)", null,
-					{"custom" : "foo"})
-				.getBoundContext();
-			that.oView.byId("objectPage").setBindingContext(oActiveArtistContext);
+			that.oView.setBindingContext(
+				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)", null,
+						{"custom" : "foo"})
+					.getBoundContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var oOperation = that.oModel.bindContext("special.cases.EditAction(...)",
-					oActiveArtistContext, {$$inheritExpandSelect : true});
+					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
 			that.expectRequest({
 				method : "POST",
@@ -6546,18 +6541,17 @@ sap.ui.require([
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {
-			var oInactiveArtistContext0 = aPromiseResults[0];
+			var oInactiveArtistContext = aPromiseResults[0];
 
 			that.expectChange("isActive", "No")
 				.expectChange("inProcessByUser", "JOHNDOE");
 
-			oInactiveArtistContext = oInactiveArtistContext0;
-			that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
+			that.oView.setBindingContext(oInactiveArtistContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
-					oInactiveArtistContext, {$$inheritExpandSelect : true});
+					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
 
 			that.expectRequest({
 				method : "POST",
@@ -6585,10 +6579,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: Delete return value context obtained from bound action execute.
 	QUnit.test("bound operation: delete return value context", function (assert) {
-		var oActiveArtistContext,
-			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox id="objectPage" binding="{}">\
+<FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
 	<Text id="name" text="{Name}" />\
@@ -6610,9 +6603,9 @@ sap.ui.require([
 				.expectChange("isActive", "Yes")
 				.expectChange("name", "Hour Frustrated");
 
-			oActiveArtistContext = oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
-				.getBoundContext();
-			that.oView.byId("objectPage").setBindingContext(oActiveArtistContext);
+			that.oView.setBindingContext(
+				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+					.getBoundContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -6627,7 +6620,8 @@ sap.ui.require([
 			});
 
 			return Promise.all([
-				that.oModel.bindContext("special.cases.EditAction(...)", oActiveArtistContext)
+				that.oModel
+					.bindContext("special.cases.EditAction(...)", that.oView.getBindingContext())
 					.execute(),
 				that.waitForChanges(assert)
 			]);
