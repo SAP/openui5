@@ -35,7 +35,7 @@ html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
 }
 
 .sapUiIconBGColorNeutral {
-	background-color: @sapUiPositiveElement;
+	background-color: @sapUiNeutralElement;
 }
 
 .sapUiIconBGColorCritical {
@@ -48,4 +48,8 @@ html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
 
 .sapUiIconBGColorNegative {
 	background-color: @sapUiNegativeElement;
+}
+
+.sapUiIconBGColorContrast {
+	background-color: darken(@sapUiHighlight, 10);
 }
