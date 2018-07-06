@@ -3,6 +3,7 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
@@ -12,9 +13,12 @@ sap.ui.require([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/Button",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
+	jQuery,
 	QUnitUtils,
 	DesignTime,
 	CommandFactory,
@@ -24,10 +28,11 @@ function(
 	ObjectPageLayout,
 	ObjectPageSubSection,
 	Button,
+	FlUtils,
+	ChangeRegistry,
 	sinon
 ) {
 	"use strict";
-	QUnit.start();
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
@@ -54,13 +59,13 @@ function(
 		},
 		getModel: function () {}
 	};
-	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
+			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.uxap.ObjectPageSection" : {
 					"stashControl": {
@@ -112,7 +117,7 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -162,7 +167,7 @@ function(
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
+			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.uxap.ObjectPageSection" : {
 					"stashControl": {
@@ -200,7 +205,7 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach: function () {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -210,4 +215,10 @@ function(
 			assert.notOk(oDeleteButton, "then the Delete-Icon is not displayed");
 		});
 	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
+
+	QUnit.start();
 });

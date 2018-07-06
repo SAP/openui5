@@ -136,20 +136,6 @@ function(
 		}
 	}, function () {
 		QUnit.test("when using common methods of the plugin", function (assert) {
-			var aSelection = ["selection1"];
-			sandbox.stub(this.oPlugin, "getDesignTime").returns({
-				getSelectionManager : function(){
-					return {
-						get: function(){
-							return aSelection;
-						}
-					};
-				}
-			});
-			assert.equal(this.oPlugin.isMultiSelectionInactive(), true, "calling 'isMultiSelectionInactive' for a single selection returns true");
-			aSelection = ["selection1", "selection2"];
-			assert.equal(this.oPlugin.isMultiSelectionInactive(), false, "calling 'isMultiSelectionInactive' for multiple selection returns false");
-
 			this.oPlugin.getActionName = function(){
 				return "dummyActionName";
 			};
@@ -168,11 +154,11 @@ function(
 			};
 			this.oPlugin.getAction(oOverlay);
 
-			this.oPlugin._isEditableByPlugin = function(oOverlay){
+			this.oPlugin._isEditableByPlugin = function (oOverlay) {
 				assert.equal(oOverlay, "dummyOverlay", "when calling 'isAvailable', _isEditableByPlugin method of the plugin is called by default with the right overlay");
 			};
 
-			this.oPlugin.isAvailable("dummyOverlay");
+			this.oPlugin.isAvailable(["dummyOverlay"]);
 		});
 		QUnit.test("when calling _getMenuItems", function(assert){
 			var oOverlay = {
@@ -181,7 +167,7 @@ function(
 				}
 			};
 			assert.equal(
-				this.oPlugin._getMenuItems(oOverlay).length,
+				this.oPlugin._getMenuItems([oOverlay]).length,
 				0,
 				"if the overlay has no DesignTime Metadata, the method returns an empty array"
 			);
@@ -205,17 +191,17 @@ function(
 
 			var bIsAvailable = true;
 
-			this.oPlugin.handler = function(){
+			this.oPlugin.handler = function () {
 				return true;
 			};
-			this.oPlugin.isAvailable = function(){
+			this.oPlugin.isAvailable = function () {
 				return bIsAvailable;
 			};
-			this.oPlugin.isEnabled = function(){
+			this.oPlugin.isEnabled = function () {
 				return true;
 			};
 
-			var mMenuItem = this.oPlugin._getMenuItems(oOverlay, {pluginId : "dummyPluginId", rank: 10})[0];
+			var mMenuItem = this.oPlugin._getMenuItems([oOverlay], {pluginId : "dummyPluginId", rank: 10})[0];
 
 			assert.equal(mMenuItem.id, "dummyPluginId", "the method returns the right ID for the menu item");
 			assert.equal(mMenuItem.text, "dummyActionName", "the method returns the right text when it is defined in DT Metadata");
@@ -237,7 +223,7 @@ function(
 			};
 
 			assert.equal(
-				this.oPlugin._getMenuItems(oOverlay, {pluginId : "CTX_RENAME"})[0].text,
+				this.oPlugin._getMenuItems([oOverlay], {pluginId : "CTX_RENAME"})[0].text,
 				sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
 				"the method returns default text when no text is defined in DT Metadata"
 			);
@@ -260,21 +246,21 @@ function(
 			};
 
 			assert.equal(
-				this.oPlugin._getMenuItems(oOverlay, {pluginId : "CTX_DUMMY_ID"})[0].text,
+				this.oPlugin._getMenuItems([oOverlay], {pluginId : "CTX_DUMMY_ID"})[0].text,
 				"dummyElementname",
 				"the method returns the correct text when the name is defined as a function in DT Metadata"
 			);
 
 			bIsAvailable = false;
 			assert.equal(
-				this.oPlugin._getMenuItems(oOverlay, {pluginId : "CTX_DUMMY_ID"}).length,
+				this.oPlugin._getMenuItems([oOverlay], {pluginId : "CTX_DUMMY_ID"}).length,
 				0,
 				"then if the plugin is not available no menu items are returned"
 			);
 		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

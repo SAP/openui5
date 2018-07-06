@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.Selection.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',

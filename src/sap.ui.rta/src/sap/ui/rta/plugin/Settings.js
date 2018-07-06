@@ -2,17 +2,14 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.Settings.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
-	'sap/base/Log',
-	'sap/ui/dt/Util'
+	'sap/base/Log'
 ], function(
 	Plugin,
 	Utils,
-	BaseLog,
-	DtUtil
+	BaseLog
 ) {
 	"use strict";
 
@@ -75,21 +72,20 @@ sap.ui.define([
 	/**
 	 * Checks if settings is enabled for oOverlay
 	 *
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - overlays to be checked
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @returns {boolean} true if it's enabled
 	 * @public
 	 */
-	Settings.prototype.isEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
-		var oOverlay = aElementOverlays[0];
-		var oAction = this.getAction(oOverlay);
+	Settings.prototype.isEnabled = function (aElementOverlays) {
+		var oElementOverlay = aElementOverlays[0];
+		var oAction = this.getAction(oElementOverlay);
 		if (!oAction) {
 			return false;
 		}
 
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				return oAction.isEnabled(oOverlay.getElement());
+				return oAction.isEnabled(oElementOverlay.getElement());
 			} else {
 				return oAction.isEnabled;
 			}
@@ -197,11 +193,10 @@ sap.ui.define([
 	/**
 	 * Retrieve the context menu item for the actions.
 	 * If multiple actions are defined for Settings, it returns multiple menu items.
-	 * @param  {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
-	 * @return {object[]}          Returns array containing the items with required data
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @return {object[]} array of the items with required data
 	 */
-	Settings.prototype.getMenuItems = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	Settings.prototype.getMenuItems = function (aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		var vSettingsActions = this.getAction(oElementOverlay);
 		var iRank = 110;
@@ -231,17 +226,16 @@ sap.ui.define([
 							enabled: (
 								typeof oSettingsAction.isEnabled === 'function'
 								&& ( // eslint-disable-line no-extra-parens
-									function (vElementOverlays) {
-										var aElementOverlays = DtUtil.castArray(vElementOverlays);
+									function (aElementOverlays) {
 										return oSettingsAction.isEnabled(aElementOverlays[0].getElement());
 									}
 								)
 								|| oSettingsAction.isEnabled
 							),
-							handler: function(fnHandler, vElementOverlays, mPropertyBag) {
+							handler: function(fnHandler, aElementOverlays, mPropertyBag) {
 								mPropertyBag = mPropertyBag || {};
 								mPropertyBag.fnHandler = fnHandler;
-								return this.handler(DtUtil.castArray(vElementOverlays), mPropertyBag);
+								return this.handler(aElementOverlays, mPropertyBag);
 							}.bind(this, oSettingsAction.handler),
 							rank: iRank + iActionCounter
 						});

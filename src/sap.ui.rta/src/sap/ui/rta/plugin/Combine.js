@@ -76,13 +76,11 @@ sap.ui.define([
 
 	/**
 	 * Checks if Combine is available for oOverlay
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays to check
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	Combine.prototype.isAvailable = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
-
+	Combine.prototype.isAvailable = function (aElementOverlays) {
 		if (aElementOverlays.length <= 1) {
 			return false;
 		}
@@ -97,13 +95,11 @@ sap.ui.define([
 
 	/**
 	 * Checks if Combine is enabled for oOverlay
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays to check
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Combine.prototype.isEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
-
+	Combine.prototype.isEnabled = function (aElementOverlays) {
 		// check that at least 2 fields can be combined
 		if (!this.isAvailable(aElementOverlays) || aElementOverlays.length <= 1) {
 			return false;
@@ -165,12 +161,12 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the context menu item for the action.
-	 * @param  {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays for which actions are requested
+	 * @param  {sap.ui.dt.ElementOverlay[]} aElementOverlays - Overlays for which actions are requested
 	 * @return {object[]} - returns array containing the items with required data
 	 */
-	Combine.prototype.getMenuItems = function (vElementOverlays) {
+	Combine.prototype.getMenuItems = function (aElementOverlays) {
 		return this._getMenuItems(
-			vElementOverlays,
+			aElementOverlays,
 			{
 				pluginId: "CTX_GROUP_FIELDS",
 				rank: 90,
@@ -189,13 +185,9 @@ sap.ui.define([
 
 	/**
 	 * Trigger the plugin execution.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays to handle action for
-	 * @param {any} oEventItem - ContextMenu item which triggers the event
-	 * @param {any} oContextElement - Element where the action is triggered
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 */
-	Combine.prototype.handler = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
-		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
+	Combine.prototype.handler = function (aElementOverlays) {
 		this.handleCombine(aElementOverlays);
 	};
 

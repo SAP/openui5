@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/Util',
 	'sap/ui/fl/changeHandler/BaseTreeModifier',
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/variants/VariantManagement',
@@ -23,7 +22,6 @@ sap.ui.define([
 	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
-	DtUtil,
 	BaseTreeModifier,
 	flUtils,
 	VariantManagement,
@@ -58,9 +56,6 @@ sap.ui.define([
 	var ControlVariant = Plugin.extend("sap.ui.rta.plugin.ControlVariant", /** @lends sap.ui.rta.plugin.ControlVariant.prototype */
 	{
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties : {
 				oldValue : "string",
@@ -109,7 +104,7 @@ sap.ui.define([
 				oModel.checkUpdate(true);
 			}
 
-			aVariantManagementTargetElements = !jQuery.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
+			aVariantManagementTargetElements = !Array.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
 
 			aVariantManagementTargetElements.forEach( function(sVariantManagementTargetElement) {
 				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject ? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement),
@@ -224,13 +219,11 @@ sap.ui.define([
 
 	/**
 	 * Checks if Variant Switch is enabled for oOverlay
-	 *
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays to check
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	ControlVariant.prototype.isVariantSwitchEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	ControlVariant.prototype.isVariantSwitchEnabled = function (aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		var aVariants = [];
 		if (this._isVariantManagementControl(oElementOverlay)) {
@@ -259,36 +252,33 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ControlVariant.prototype.setDesignTime = function(oDesignTime) {
+	ControlVariant.prototype.setDesignTime = function (oDesignTime) {
 		RenameHandler._setDesignTime.call(this, oDesignTime);
 	};
 
 	/**
-	 * Checks if variant rename is available for oOverlay
+	 * Checks if variant rename is available for the overlay
 	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	ControlVariant.prototype.isRenameAvailable = function (oOverlay) {
-		return this._isVariantManagementControl(oOverlay);
+	ControlVariant.prototype.isRenameAvailable = function (oElementOverlay) {
+		return this._isVariantManagementControl(oElementOverlay);
 	};
 
 	/**
-	 * Checks if variant rename is enabled for oOverlay
-	 *
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays to check rename on
+	 * Checks if variant rename is enabled for the overlays
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	ControlVariant.prototype.isRenameEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	ControlVariant.prototype.isRenameEnabled = function (aElementOverlays) {
 		return this._isVariantManagementControl(aElementOverlays[0]);
 	};
 
 	/**
-	 * Checks if variant duplicate is available for oOverlay
-	 *
+	 * Checks if variant duplicate is available for the overlay
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
 	 * @return {boolean} true if available
 	 * @public
@@ -298,14 +288,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if variant duplicate is enabled for oOverlay
-	 *
-	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - overlay object
+	 * Checks if variant duplicate is enabled for the overlays
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	ControlVariant.prototype.isVariantDuplicateEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	ControlVariant.prototype.isVariantDuplicateEnabled = function (aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		var sVariantManagementReference = oElementOverlay.getVariantManagement ? oElementOverlay.getVariantManagement() : undefined;
 		if (!sVariantManagementReference || !this._isVariantManagementControl(oElementOverlay)) {
@@ -315,7 +303,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if variant configure is available for oOverlay
+	 * Checks if variant configure is available for the overlay
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
 	 * @return {boolean} true if available
 	 * @public
@@ -326,13 +314,11 @@ sap.ui.define([
 
 	/**
 	 * Checks if variant configure is enabled for oOverlay
-	 *
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	ControlVariant.prototype.isVariantConfigureEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	ControlVariant.prototype.isVariantConfigureEnabled = function (aElementOverlays) {
 		return this._isVariantManagementControl(aElementOverlays[0]);
 	};
 
@@ -359,11 +345,10 @@ sap.ui.define([
 
 	/**
 	 * Performs a variant set title
-	 *
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @public
 	 */
-	ControlVariant.prototype.renameVariant = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	ControlVariant.prototype.renameVariant = function (aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		this.setVariantManagementControlOverlay(oElementOverlay);
 		this.startEdit(oElementOverlay);
@@ -632,11 +617,10 @@ sap.ui.define([
 
 	/**
 	 * Opens a dialog for Variant configuration
-	* @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @public
 	 */
-	ControlVariant.prototype.configureVariants = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	ControlVariant.prototype.configureVariants = function (aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		var oVariantManagementControl = oElementOverlay.getElement();
 		var sVariantManagementReference = oElementOverlay.getVariantManagement();
@@ -666,11 +650,10 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the context menu item for the actions.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays to get actions for
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {object[]} - array containing the items with required data
 	 */
-	ControlVariant.prototype.getMenuItems = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	ControlVariant.prototype.getMenuItems = function (aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		var aMenuItems = [];
 
@@ -689,8 +672,7 @@ sap.ui.define([
 			aMenuItems.push({
 				id: "CTX_VARIANT_DUPLICATE",
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_DUPLICATE'),
-				handler: function (vElementOverlays) {
-					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+				handler: function (aElementOverlays) {
 					aElementOverlays[0]._triggerDuplicate = true;
 					this.renameVariant(aElementOverlays);
 				}.bind(this),
@@ -734,8 +716,7 @@ sap.ui.define([
 			aMenuItems.push({
 				id: "CTX_VARIANT_SWITCH_SUBMENU",
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SWITCH'),
-				handler: function(vElementOverlays, mPropertyBag) {
-					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+				handler: function(aElementOverlays, mPropertyBag) {
 					var oEventItemCustomData = mPropertyBag.eventItem.data();
 					var oTargetOverlay = aElementOverlays[0];
 					var sNewVariantKey = oEventItemCustomData.key;

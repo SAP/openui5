@@ -11,14 +11,13 @@ sap.ui.require([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
-	// controls
 	"sap/ui/comp/smartform/SmartForm",
 	"sap/ui/comp/smartform/Group",
 	"sap/ui/comp/smartform/GroupElement",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Bar",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RTAElementMover,
 	DragDropPlugin,
@@ -38,13 +37,11 @@ sap.ui.require([
 ) {
 	"use strict";
 
-	QUnit.start();
-
 	var sandbox = sinon.sandbox.create();
 
 	function fnRenderComplexView() {
 		var oView = sap.ui.xmlview("idMain1", "sap.ui.rta.test.additionalElements.ComplexTest");
-		oView.placeAt("test-view");
+		oView.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		return oView;
 	}
@@ -124,7 +121,7 @@ sap.ui.require([
 			});
 			this.oDragDropPlugin.setCommandFactory(oCommandFactory);
 
-			this.oLayout.placeAt("test-view");
+			this.oLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -154,29 +151,28 @@ sap.ui.require([
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach: function () {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 		}
-	});
+	}, function () {
+		QUnit.test("and a group with stable id, when checking the target zone,", function(assert) {
+			assert.ok(this.oElementMover.checkTargetZone(this.oGroup1AggrOverlay), "then the group is a possible target zone");
+			assert.notOk(this.oElementMover.checkMovable(this.oSmartGroupElementOverlay), "but the element is not movable as there are no more elements in this group");
+		});
 
-	QUnit.test("and a group with stable id, when checking the target zone,", function(assert) {
-		assert.ok(this.oElementMover.checkTargetZone(this.oGroup1AggrOverlay), "then the group is a possible target zone");
-		assert.notOk(this.oElementMover.checkMovable(this.oSmartGroupElementOverlay), "but the element is not movable as there are no more elements in this group");
-	});
+		QUnit.test("and a group from another smart form, when checking the target zone,", function(assert) {
+			assert.notOk(this.oElementMover.checkTargetZone(this.oGroup2AggrOverlay), "then the group is no target zone");
+		});
 
-	QUnit.test("and a group from another smart form, when checking the target zone,", function(assert) {
-		assert.notOk(this.oElementMover.checkTargetZone(this.oGroup2AggrOverlay), "then the group is no target zone");
-	});
-
-	QUnit.test("and a group without stable id, when checking the target zone,", function(assert) {
-		assert.notOk(this.oElementMover.checkTargetZone(this.oGroup3AggrOverlay), "then the group is not a possible target zone as the id is not stable");
+		QUnit.test("and a group without stable id, when checking the target zone,", function(assert) {
+			assert.notOk(this.oElementMover.checkTargetZone(this.oGroup3AggrOverlay), "then the group is not a possible target zone as the id is not stable");
+		});
 	});
 
 	QUnit.module("Given a complex test view with oData Model and a NavForm,", {
-
 		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
-		beforeEach : function(assert) {
+		beforeEach : function () {
 			this.oView = fnRenderComplexView();
 			this.oDragDropPlugin = new DragDropPlugin({
 				commandFactory : new CommandFactory()
@@ -209,23 +205,22 @@ sap.ui.require([
 				this.oElementMover.setMovedOverlay(this.oBoundGroupElementOverlay);
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oView.destroy();
 			this.oDesignTime.destroy();
 			this.oDragDropPlugin.destroy();
 			this.oElementMover.destroy();
 		}
-	});
-
-	QUnit.test("when moving the group element bound to EntityType01 inside the group bound to EntityTypeNav...", function(assert) {
-		assert.notOk(this.oElementMover.checkTargetZone(this.oNavGroupAggrOverlay), "then the group bound to the navigation is not a possible target zone");
-		assert.ok(this.oElementMover.checkTargetZone(this.oOtherGroupAggrOverlay), "then the group with the element is a possible target zone");
-		this.oOtherGroupButton.setVisible(false);
-		assert.notOk(this.oElementMover.checkMovable(this.oBoundGroupElementOverlay), "then the field is no longer movable if there are no more target zones");
+	}, function () {
+		QUnit.test("when moving the group element bound to EntityType01 inside the group bound to EntityTypeNav...", function(assert) {
+			assert.notOk(this.oElementMover.checkTargetZone(this.oNavGroupAggrOverlay), "then the group bound to the navigation is not a possible target zone");
+			assert.ok(this.oElementMover.checkTargetZone(this.oOtherGroupAggrOverlay), "then the group with the element is a possible target zone");
+			this.oOtherGroupButton.setVisible(false);
+			assert.notOk(this.oElementMover.checkMovable(this.oBoundGroupElementOverlay), "then the field is no longer movable if there are no more target zones");
+		});
 	});
 
 	QUnit.module("Given a complex test view with oData Model and a MainForm bound to EntityType2,", {
-
 		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
 		beforeEach : function(assert) {
 			this.oView = fnRenderComplexView(assert);
@@ -257,21 +252,21 @@ sap.ui.require([
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oDesignTime.destroy();
 			this.oDragDropPlugin.destroy();
 			this.oView.destroy();
 		}
-	});
+	}, function () {
+		QUnit.test("when DT is loaded and moving the group bound to EntityType02 inside the form bound to EntityType02...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oGroupEntityType02Overlay);
+			assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
+		});
 
-	QUnit.test("when DT is loaded and moving the group bound to EntityType02 inside the form bound to EntityType02...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oGroupEntityType02Overlay);
-		assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
-	});
-
-	QUnit.test("when moving the group bound to EntityType01 inside the form bound to EntityType02...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oGroupEntityType01Overlay);
-		assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
+		QUnit.test("when moving the group bound to EntityType01 inside the form bound to EntityType02...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oGroupEntityType01Overlay);
+			assert.ok(this.oElementMover.checkTargetZone(this.oFormAggrOverlay), "then the form is a possible target zone");
+		});
 	});
 
 	QUnit.module("Given verticalLayout with Buttons (first scenario) without relevantContainer propagation", {
@@ -293,7 +288,7 @@ sap.ui.require([
 				commandFactory : oCommandFactory
 			});
 
-			this.oLayout.placeAt("test-view");
+			this.oLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			// create designtime
@@ -326,7 +321,7 @@ sap.ui.require([
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oMovedButton1Overlay.destroy();
 			this.oLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -334,28 +329,28 @@ sap.ui.require([
 			this.oButton2.destroy();
 			sandbox.restore();
 		}
-	});
+	}, function () {
+		QUnit.test("when DT is loaded and moving the movedButton inside the layout...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
+			assert.ok(this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay), "then the layout is a possible target zone");
+		});
 
-	QUnit.test("when DT is loaded and moving the movedButton inside the layout...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
-		assert.ok(this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay), "then the layout is a possible target zone");
-	});
+		QUnit.test("when DT is loaded and moving the movedButton inside the layout but without changeHandler...", function(assert) {
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			sandbox.stub(oChangeRegistry, "getRegistryItems").returns(undefined);
+			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
+			assert.notOk(this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay), "then the layout is not a possible target zone");
+		});
 
-	QUnit.test("when DT is loaded and moving the movedButton inside the layout but without changeHandler...", function(assert) {
-		var oChangeRegistry = ChangeRegistry.getInstance();
-		sandbox.stub(oChangeRegistry, "getRegistryItems").returns(undefined);
-		this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
-		assert.notOk(this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay), "then the layout is not a possible target zone");
-	});
+		QUnit.test("when Button2 is removed, leaving movedButton as the only element left in the Layout...", function(assert){
+			this.oLayout.removeContent(this.oButton2);
+			assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
+		});
 
-	QUnit.test("when Button2 is removed, leaving movedButton as the only element left in the Layout...", function(assert){
-		this.oLayout.removeContent(this.oButton2);
-		assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
-	});
-
-	QUnit.test("when Button2 is destroyed, leaving movedButton as the only element left in the Layout...", function(assert){
-		this.oButton2.destroy();
-		assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
+		QUnit.test("when Button2 is destroyed, leaving movedButton as the only element left in the Layout...", function(assert){
+			this.oButton2.destroy();
+			assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
+		});
 	});
 
 	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
@@ -381,7 +376,7 @@ sap.ui.require([
 				commandFactory : oCommandFactory
 			});
 
-			this.oOuterLayout.placeAt("test-view");
+			this.oOuterLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			// create designtime
@@ -415,18 +410,18 @@ sap.ui.require([
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oMovedButton1Overlay.destroy();
 			this.oInnerLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oOuterLayout.destroy();
 			sandbox.restore();
 		}
-	});
-
-	QUnit.test("when DT is loaded and moving the movedButton to the innerLayout...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
-		assert.notOk(this.oElementMover.checkTargetZone(this.oInnerLayoutAggregationOverlay), "then the innerLayout is not a possible target zone");
+	}, function () {
+		QUnit.test("when DT is loaded and moving the movedButton to the innerLayout...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
+			assert.notOk(this.oElementMover.checkTargetZone(this.oInnerLayoutAggregationOverlay), "then the innerLayout is not a possible target zone");
+		});
 	});
 
 	QUnit.module("Given smartForm, Groups and GroupElements (third scenario) with relevantContainer propagation", {
@@ -463,7 +458,7 @@ sap.ui.require([
 				commandFactory : oCommandFactory
 			});
 
-			this.oSmartForm1.placeAt("test-view");
+			this.oSmartForm1.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			// stub designtime metadata
@@ -508,7 +503,7 @@ sap.ui.require([
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oMovedGroupElement1Overlay.destroy();
 			this.oGroupAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -516,18 +511,17 @@ sap.ui.require([
 			this.oGroup2.destroy();
 			sandbox.restore();
 		}
-	});
+	}, function () {
+		QUnit.test("when DT is loaded and moving the movedGroupElement1 to the Group2...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
+			assert.ok(this.oElementMover.checkTargetZone(this.oGroupAggregationOverlay), "then the group2 is a possible target zone");
+		});
 
-	QUnit.test("when DT is loaded and moving the movedGroupElement1 to the Group2...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
-		assert.ok(this.oElementMover.checkTargetZone(this.oGroupAggregationOverlay), "then the group2 is a possible target zone");
+		QUnit.test("when Group 2 is removed and movedGroupElement1 does not have any valid target zones anymore...", function(assert) {
+			this.oSmartForm1.removeGroup(this.oGroup2);
+			assert.notOk(this.oElementMover.checkMovable(this.oMovedGroupElement1Overlay), "then the movedGroupElement1 is no longer movable");
+		});
 	});
-
-	QUnit.test("when Group 2 is removed and movedGroupElement1 does not have any valid target zones anymore...", function(assert) {
-		this.oSmartForm1.removeGroup(this.oGroup2);
-		assert.notOk(this.oElementMover.checkMovable(this.oMovedGroupElement1Overlay), "then the movedGroupElement1 is no longer movable");
-	});
-
 
 	QUnit.module("Given Bar with Buttons (fourth scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
@@ -551,7 +545,7 @@ sap.ui.require([
 				commandFactory : oCommandFactory
 			});
 
-			this.oBar.placeAt("test-view");
+			this.oBar.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			// stub designtime metadata
@@ -599,23 +593,28 @@ sap.ui.require([
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oMovedButton1Overlay.destroy();
 			this.oBarRightAggregationOverlay.destroy();
 			this.oBarMiddleAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oBar.destroy();
 		}
+	}, function () {
+		QUnit.test("when DT is loaded and moving the movedButton to the right bar aggregation...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
+			assert.ok(this.oElementMover.checkTargetZone(this.oBarRightAggregationOverlay), "then the right bar aggregation is a possible target zone");
+		});
+
+		QUnit.test("when DT is loaded and moving the movedButton to the middle bar aggregation without move action...", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
+			assert.notOk(this.oElementMover.checkTargetZone(this.oBarMiddleAggregationOverlay), "then the middle bar aggregation is not a possible target zone");
+		});
 	});
 
-	QUnit.test("when DT is loaded and moving the movedButton to the right bar aggregation...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
-		assert.ok(this.oElementMover.checkTargetZone(this.oBarRightAggregationOverlay), "then the right bar aggregation is a possible target zone");
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 
-	QUnit.test("when DT is loaded and moving the movedButton to the middle bar aggregation without move action...", function(assert) {
-		this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
-		assert.notOk(this.oElementMover.checkTargetZone(this.oBarMiddleAggregationOverlay), "then the middle bar aggregation is not a possible target zone");
-	});
-
+	QUnit.start();
 });

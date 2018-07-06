@@ -227,24 +227,6 @@ function(
 	};
 
 	/**
-	 * Asks the Design Time if multiple overlays are selected
-	 * Used by plugins which do not support multiple selection
-	 * @return {Boolean} Returns true if there is no multiple selection active
-	 */
-	Plugin.prototype.isMultiSelectionInactive = function() {
-		return this.getNumberOfSelectedOverlays() < 2;
-	};
-
-	/**
-	 * Asks the DesignTime for the number of currently selected overlays.
-	 *
-	 * @return {integer} Returns the number of selected overlays as integer
-	 */
-	Plugin.prototype.getNumberOfSelectedOverlays = function() {
-		return this.getSelectedOverlays().length;
-	};
-
-	/**
 	 * Asks the Design Time which overlays are selected
 	 *
 	 * @return {sap.ui.dt.ElementOverlay[]} selected overlays
@@ -276,11 +258,10 @@ function(
 
 	/**
 	 * Checks if the plugin is available for an overlay
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Overlays to be checked
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Overlays to be checked
 	 * @return {Boolean} - true if the plugin is available
 	 */
-	Plugin.prototype.isAvailable = function (vElementOverlays) {
-		var aElementOverlays = Util.castArray(vElementOverlays);
+	Plugin.prototype.isAvailable = function (aElementOverlays) {
 		return aElementOverlays.every(function (oElementOverlay) {
 			return this._isEditableByPlugin(oElementOverlay);
 		}, this);
@@ -289,24 +270,24 @@ function(
 	/**
 	 * Executes the plugin action
 	 * Method to be overwritten by the different plugins
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlays for the action
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @override
 	 * @public
 	 */
-	Plugin.prototype.handler = function (vElementOverlays) {};
+	Plugin.prototype.handler = function (aElementOverlays) {};
 
 	/**
 	 * Checks if the plugin is enabled for a set of overlays
 	 * Method to be overwritten by the different plugins
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - overlays to be checked
+	 * @param {sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlays
 	 */
-	Plugin.prototype.isEnabled = function (vElementOverlays) {};
+	Plugin.prototype.isEnabled = function (aElementOverlays) {};
 
 	/**
 	 * Generic function to return the menu items for a context menu.
 	 * The text for the item can be defined in the control Designtime Metadata;
 	 * otherwise the default text is used.
-	 * @param {sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlays
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @param {object} mPropertyBag Additional properties for the menu item
 	 * @param {string} mPropertyBag.pluginId The ID of the plugin
 	 * @param {number} mPropertyBag.rank The rank deciding the position of the action in the context menu
@@ -314,8 +295,7 @@ function(
 	 * @param {string} mPropertyBag.group A group for buttons which should be grouped together in the MiniMenu
 	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
 	 */
-	Plugin.prototype._getMenuItems = function (vElementOverlays, mPropertyBag) {
-		var aElementOverlays = Util.castArray(vElementOverlays);
+	Plugin.prototype._getMenuItems = function (aElementOverlays, mPropertyBag) {
 		var oElementOverlay = aElementOverlays[0]; // by default we get menu items only for the first overlay
 		var mAction = this.getAction(oElementOverlay);
 		if (!mAction || !this.isAvailable(aElementOverlays)){

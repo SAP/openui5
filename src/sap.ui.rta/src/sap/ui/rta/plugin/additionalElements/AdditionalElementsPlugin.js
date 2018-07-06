@@ -10,17 +10,16 @@ sap.ui.define([
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils',
 	'sap/ui/core/StashedControlSupport',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/dt/Util'
-], function(jQuery,
+	'sap/ui/dt/ElementDesignTimeMetadata'
+], function (
+	jQuery,
 	Plugin,
 	ElementUtil,
 	OverlayRegistry,
 	Utils,
 	FlUtils,
 	StashedControlSupport,
-	ElementDesignTimeMetadata,
-	DtUtil
+	ElementDesignTimeMetadata
 ){
 	"use strict";
 
@@ -196,16 +195,13 @@ sap.ui.define([
 			return _getText("CTX_ADD_ELEMENTS", mActions, mParents.parent, SINGULAR);
 		},
 
-		isAvailable: function (bOverlayIsSibling, vElementOverlays) {
-			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+		isAvailable: function (bOverlayIsSibling, aElementOverlays) {
 			return aElementOverlays.every(function (oElementOverlay) {
 				return this._isEditableByPlugin(oElementOverlay, bOverlayIsSibling);
 			}, this);
 		},
 
-		isEnabled: function(bOverlayIsSibling, vElementOverlays){
-			var aElementOverlays = DtUtil.castArray(vElementOverlays);
-
+		isEnabled: function(bOverlayIsSibling, aElementOverlays) {
 			if (aElementOverlays.length > 1) {
 				return false;
 			}
@@ -694,9 +690,9 @@ sap.ui.define([
 					aMenuItems.push({
 						id: sPluginId,
 						text: sMenuItemText,
-						handler: function (bOverlayIsSibling, vElementOverlays) { // eslint-disable-line no-loop-func
+						handler: function (bOverlayIsSibling, aElementOverlays) { // eslint-disable-line no-loop-func
 							// showAvailableElements has optional parameters, so currying is not possible here
-							return this.showAvailableElements(bOverlayIsSibling, DtUtil.castArray(vElementOverlays));
+							return this.showAvailableElements(bOverlayIsSibling, aElementOverlays);
 						}.bind(this, bOverlayIsSibling),
 						enabled: this.isEnabled.bind(this, bOverlayIsSibling),
 						rank: iRank,
