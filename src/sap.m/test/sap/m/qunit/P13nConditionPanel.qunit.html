@@ -677,6 +677,53 @@
 		oP13nConditionPanel.destroy();
 	});
 
+	QUnit.test("testing empty operator", function(assert) {
+ 		// system under test
+		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1
+		});
+
+		var aOperations= [
+			sap.m.P13nConditionOperation.EQ,
+			sap.m.P13nConditionOperation.Empty];
+
+		var oKeyField2= {key: "CompanyName", text: "Name", typeInstance: new sap.ui.model.odata.type.String()};
+		var oKeyField5= {key: "int16", text: "int16", typeInstance: new sap.ui.model.odata.type.Int16()};
+		var aKeyFields= [oKeyField2,oKeyField5];
+	
+		oP13nConditionPanel.setKeyFields(aKeyFields);
+		oP13nConditionPanel.setOperations(aOperations); //, "string");
+		
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+ 		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
+  		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.Empty, "keyField": "CompanyName", "value1": "xxx", "value2": ""};
+ 		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.Empty, "keyField": "int16", "value1": 1, "value2": ""};
+ 		
+  		oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2]);
+
+ 		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
+		assert.strictEqual(oConditionGrid.value1.getValue(), "foo", "value1 of condition 0 must be foo!");
+		assert.strictEqual(oConditionGrid.value1.getVisible(), true, "value1 control is visible!");
+
+ 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
+		assert.strictEqual(oConditionGrid.value1.getVisible(), false, "value1 control is NOT visible!");
+
+		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[2];
+		assert.strictEqual(oConditionGrid.value1.getVisible(), false, "value1 control is NOT visible!");
+
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+
+
 	QUnit.test("testing suggest callback", function(assert) {
  		// system under test
 		var oP13nConditionPanel = new sap.m.P13nConditionPanel({
