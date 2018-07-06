@@ -5,13 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.tnt.
  */
-sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/base/DataType",
-		"sap/ui/core/library",
-		"sap/m/library"
-	],
-	function (jQuery, DataType) {
+sap.ui.define(["sap/ui/base/DataType", "sap/ui/core/library", "sap/m/library"],
+	function(DataType) {
 	"use strict";
 
 	/**
