@@ -249,12 +249,20 @@ sap.ui.define([
 	 * Exports the current selection preset
 	 */
 	PresetsController.prototype.onExportPress = function () {
-		if (!this.oModel.getProperty("/selectionPresetsCurrent").selections.length) {
+		var oCurrentPreset = this.oModel.getProperty("/selectionPresetsCurrent");
+		if (!oCurrentPreset.selections.length) {
 			MessageBox.error(
 				"Cannot export Rule Preset without selections."
 			);
 			return;
 		}
+
+		this.oModel.setProperty("/currentExportData", {
+			"title": oCurrentPreset.title,
+			"descriptionValue": oCurrentPreset.description, // there is an issue on build if we use ${description}
+			"dateExportedForDisplay": new Date(), // the current date is shown as export date
+			"isMySelection": oCurrentPreset.isMySelection
+		});
 
 		if (!this._oExportDialog) {
 			this._oExportDialog = sap.ui.xmlfragment(
@@ -264,9 +272,6 @@ sap.ui.define([
 			);
 			this.oView.addDependent(this._oExportDialog);
 		}
-
-		// the current date is shown as export date
-		this.oModel.setProperty("/dateExportedForDisplay", new Date());
 
 		this._oExportDialog.open();
 	};
