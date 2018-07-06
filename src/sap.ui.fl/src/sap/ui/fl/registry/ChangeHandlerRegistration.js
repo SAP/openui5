@@ -2,7 +2,7 @@
 * ${copyright}
 */
 
-sap.ui.define(["sap/ui/fl/registry/ChangeRegistry"], function(ChangeRegistry) {
+sap.ui.define(["sap/ui/fl/registry/ChangeRegistry", "sap/ui/thirdparty/jquery"], function(ChangeRegistry, jQuery) {
 	"use strict";
 
 	var ChangeHandlerRegistration = {

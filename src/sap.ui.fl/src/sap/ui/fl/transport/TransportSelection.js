@@ -3,18 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/transport/Transports",
 	"sap/ui/fl/transport/TransportDialog",
 	"sap/ui/fl/registry/Settings"
-], function(
-	jQuery,
-	Utils,
-	Transports,
-	TransportDialog,
-	FlexSettings
-) {
+], function(Utils, Transports, TransportDialog, FlexSettings) {
 	"use strict";
 	/**
 	 * @public

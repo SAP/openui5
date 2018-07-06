@@ -21,6 +21,7 @@ sap.ui.require([
 	"sap/ui/core/UIComponent",
 	"sap/m/Text",
 	"sap/m/Label",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
 ],
@@ -43,6 +44,7 @@ function (
 	UIComponent,
 	Text,
 	Label,
+	Log,
 	sinon
 ) {
 	'use strict';
@@ -255,7 +257,7 @@ function (
 		var completeChangeContentStub = sinon.stub();
 		var changeHandlerApplyChangeStub = sinon.stub().returns(Promise.resolve(true));
 
-		var oLoggerStub = sandbox.stub(jQuery.sap.log, 'error');
+		var oLoggerStub = sandbox.stub(Log, 'error');
 		this.stub(this.oFlexController, "_getChangeHandler").returns({
 			completeChangeContent: completeChangeContentStub,
 			applyChange: changeHandlerApplyChangeStub
@@ -284,7 +286,7 @@ function (
 		this.oChange.getSelector = function(){return oSelector;};
 
 		var mPropertyBagStub = {};
-		var oLoggingStub = sandbox.stub(jQuery.sap.log, "warning");
+		var oLoggingStub = sandbox.stub(Log, "warning");
 		var oGetTargetControlStub = sandbox.stub(this.oFlexController, "_getSelectorOfChange").returns(undefined);
 
 		return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange, oChange])
@@ -310,7 +312,7 @@ function (
 				}
 			}
 		};
-		var oLoggingStub = sandbox.stub(jQuery.sap.log, "warning");
+		var oLoggingStub = sandbox.stub(Log, "warning");
 		var oCheckTargetAndApplyChangeStub = sandbox.stub(
 			this.oFlexController,
 			"checkTargetAndApplyChange",
@@ -333,7 +335,7 @@ function (
 		var changeHandlerApplyChangeStub1 = sinon.stub().returns(Promise.resolve(true));
 		var changeHandlerApplyChangeStub2 = sinon.stub().returns(Promise.resolve(true));
 
-		var oLoggerStub = sandbox.stub(jQuery.sap.log, 'error');
+		var oLoggerStub = sandbox.stub(Log, 'error');
 		var oGetChangeHandlerStub = this.stub(this.oFlexController, "_getChangeHandler");
 		oGetChangeHandlerStub.onCall(0).returns({
 			completeChangeContent: completeChangeContentStub,
@@ -370,7 +372,7 @@ function (
 		var changeHandlerApplyChangeStub1 = sinon.stub().returns(true);
 		var changeHandlerApplyChangeStub2 = sinon.stub().returns(true);
 
-		var oLoggerStub = sandbox.stub(jQuery.sap.log, 'error');
+		var oLoggerStub = sandbox.stub(Log, 'error');
 		var oGetChangeHandlerStub = this.stub(this.oFlexController, "_getChangeHandler");
 		oGetChangeHandlerStub.onCall(0).returns({
 			completeChangeContent: completeChangeContentStub,
@@ -407,7 +409,7 @@ function (
 		var changeHandlerApplyChangeStub1 = sinon.stub().returns(Promise.resolve(true));
 		var changeHandlerApplyChangeStub2 = sinon.stub().returns(Promise.resolve(true));
 
-		var oLoggerStub = sandbox.stub(jQuery.sap.log, 'error');
+		var oLoggerStub = sandbox.stub(Log, 'error');
 		var oGetChangeHandlerStub = this.stub(this.oFlexController, "_getChangeHandler");
 		oGetChangeHandlerStub.onCall(0).returns({
 			completeChangeContent: completeChangeContentStub,
@@ -444,7 +446,7 @@ function (
 		var changeHandlerApplyChangeStub1 = sinon.stub().returns(true);
 		var changeHandlerApplyChangeStub2 = sinon.stub().returns(Promise.resolve(true));
 
-		var oLoggerStub = sandbox.stub(jQuery.sap.log, 'error');
+		var oLoggerStub = sandbox.stub(Log, 'error');
 		var oGetChangeHandlerStub = this.stub(this.oFlexController, "_getChangeHandler");
 		oGetChangeHandlerStub.onCall(0).returns({
 			completeChangeContent: completeChangeContentStub,
@@ -1811,7 +1813,7 @@ function (
 				applyChange: this.oChangeHandlerApplyChangeStub,
 				revertChange: this.oChangeHandlerRevertChangeStub
 			});
-			sandbox.stub(jQuery.sap.log, "error");
+			sandbox.stub(Log, "error");
 		},
 		afterEach: function (assert) {
 			this.oControl.destroy();
@@ -1951,7 +1953,7 @@ function (
 
 	QUnit.test("does not add appliedChanges custom data if an exception was raised during async applyChanges", function (assert) {
 		sandbox.restore();
-		sandbox.stub(jQuery.sap.log, "error");
+		sandbox.stub(Log, "error");
 		sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").returns(true);
 		var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 		this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(Promise.reject(new Error("myError")));
@@ -2486,7 +2488,7 @@ function (
 				fnReject(new Error("Test error"));
 			}, 0);
 		});
-		sandbox.stub(jQuery.sap.log, "error");
+		sandbox.stub(Log, "error");
 		var oFirstAsyncChangeHandlerApplyChangeStub = sandbox.stub().returns(fnDelayedPromiseReject);
 		var oFirstAsyncChangeHandlerRevertChangeStub = sandbox.stub().returns(Promise.resolve());
 		var oSetMergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
@@ -2849,7 +2851,7 @@ function (
 
 			sandbox.stub(this.oFlexController, "_setMergeError");
 
-			this.oErrorLogStub = sandbox.stub(jQuery.sap.log, "error");
+			this.oErrorLogStub = sandbox.stub(Log, "error");
 
 			sandbox.stub(FlexController.prototype, "_getFailedCustomDataJs", function(oChange) {
 				if (oChange === this.oChange5) {

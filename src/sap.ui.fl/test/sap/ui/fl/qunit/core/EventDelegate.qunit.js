@@ -17,7 +17,9 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		//Arrange
 		var oControl = {name: "ThisShouldBeASAPUI5Control"};
 		var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
-		var spyLog = sinon.spy(jQuery.sap.log, "error");
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+		var spyLog = sinon.spy(Log, "error");
 		//Act
 		var instance = new EventDelegate(oControl, oSupportedRegistryItems);
 
@@ -29,8 +31,10 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 	});
 
 	QUnit.test("constructor - without required parameters, errors should be logged", function(assert) {
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
 		//Arrange
-		var spyLog = sinon.spy(jQuery.sap.log, "error");
+		var spyLog = sinon.spy(Log, "error");
 		//Act
 
 		/*eslint-disable no-new*/

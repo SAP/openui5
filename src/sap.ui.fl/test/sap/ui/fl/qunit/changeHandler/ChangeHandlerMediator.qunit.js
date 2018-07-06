@@ -4,10 +4,12 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	'sap/ui/fl/changeHandler/ChangeHandlerMediator',
+	"sap/base/Log",
 	'jquery.sap.global'
 ],
 function(
 	ChangeHandlerMediator,
+	Log,
 	jQuery
 ) {
 	'use strict';
@@ -166,7 +168,7 @@ function(
 
 		ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }, this.mDummyLibrarySettings);
 
-		var spyLog = sinon.spy(jQuery.sap.log, "warning");
+		var spyLog = sinon.spy(Log, "warning");
 
 		assert.notOk(ChangeHandlerMediator.getChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }), "then no settings are returned");
 
@@ -286,7 +288,7 @@ function(
 
 		var oMockControl = { };
 
-		var spyLog = sinon.spy(jQuery.sap.log, "warning");
+		var spyLog = sinon.spy(Log, "warning");
 
 		assert.notOk(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl),
 			"then no settings are found");

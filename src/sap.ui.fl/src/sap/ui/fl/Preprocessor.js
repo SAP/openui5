@@ -3,9 +3,7 @@
  */
 
 // Provides object sap.ui.fl.Processor
-sap.ui.define([
-	'jquery.sap.global', 'sap/ui/base/Object'
-], function(jQuery, BaseObject) {
+sap.ui.define(['sap/ui/base/Object'], function(BaseObject) {
 	'use strict';
 
 	/**

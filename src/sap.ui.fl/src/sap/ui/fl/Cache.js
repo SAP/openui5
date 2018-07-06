@@ -2,7 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConnector, Utils) {
+sap.ui.define([
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Utils",
+	"sap/base/strings/formatMessage",
+	"sap/base/Log",
+	"jquery.sap.global"
+], function(LrepConnector, Utils, formatMessage, Log, jQuery) {
 	"use strict";
 
 	/**
@@ -215,8 +221,8 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 		}, function (oError) {
 			// if the back end is not reachable we still cache the results in a valid way because the url request is
 			// cached by the browser in its negative cache anyway.
-			var sErrorMessage = jQuery.sap.formatMessage("flexibility service is not available:\nError message: {0}", oError.status);
-			jQuery.sap.log.error(sErrorMessage);
+			var sErrorMessage = formatMessage("flexibility service is not available:\nError message: {0}", oError.status);
+			Log.error(sErrorMessage);
 			return Promise.resolve({
 				changes: {
 					changes: [],
@@ -271,9 +277,11 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 			return Promise.resolve([]);
 		}
 
+		//TODO: global jquery call found
 		var sResourcePath = jQuery.sap.getResourceName(mPropertyBag.appName, "/changes/changes-bundle.json");
 		var bChangesBundleLoaded = jQuery.sap.isResourceLoaded(sResourcePath);
 		if (bChangesBundleLoaded) {
+			//TODO: global jquery call found
 			return Promise.resolve(jQuery.sap.loadResource(sResourcePath));
 		} else {
 			if (!sap.ui.getCore().getConfiguration().getDebug()) {
@@ -282,9 +290,10 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 
 			// try to load the source in case a debugging takes place and the component could have no Component-preload
 			try {
+				//TODO: global jquery call found
 				return Promise.resolve(jQuery.sap.loadResource(sResourcePath));
 			} catch (e) {
-				jQuery.sap.log.warning("flexibility did not find a changesBundle.json  for the application");
+				Log.warning("flexibility did not find a changesBundle.json  for the application");
 				return Promise.resolve([]);
 			}
 		}
@@ -307,7 +316,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 	 */
 	Cache.getCacheKey = function (mComponent) {
 		if (!mComponent || !mComponent.name || !mComponent.appVersion) {
-			jQuery.sap.log.warning("Not all parameters were passed to determine a flexibility cache key.");
+			Log.warning("Not all parameters were passed to determine a flexibility cache key.");
 			return Promise.resolve(Cache.NOTAG);
 		}
 		return this.getChangesFillingCache(LrepConnector.createConnector(), mComponent).then(function (oWrappedChangeFileContent) {

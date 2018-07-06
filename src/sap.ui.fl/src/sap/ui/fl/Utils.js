@@ -3,16 +3,14 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
-	"sap/ui/thirdparty/hasher"
-], function(
-	jQuery,
-	Component,
-	BaseTreeModifier,
-	hasher
-) {
+	"sap/ui/thirdparty/hasher",
+	"sap/base/Log",
+	"sap/base/util/UriParameters",
+	"sap/base/util/uid"
+], function(jQuery, Component, BaseTreeModifier, hasher, Log, UriParameters, uid) {
 	"use strict";
 	//Stack of layers in the layered repository
 	var aLayers = [
@@ -53,13 +51,13 @@ sap.ui.define([
 		 */
 		log: {
 			error: function (sMessage, sDetails, sComponent) {
-				jQuery.sap.log.error(sMessage, sDetails, sComponent);
+				Log.error(sMessage, sDetails, sComponent);
 			},
 			warning: function (sMessage, sDetails, sComponent) {
-				jQuery.sap.log.warning(sMessage, sDetails, sComponent);
+				Log.warning(sMessage, sDetails, sComponent);
 			},
 			debug: function (sMessage, sDetails, sComponent) {
-				jQuery.sap.log.debug(sMessage, sDetails, sComponent);
+				Log.debug(sMessage, sDetails, sComponent);
 			}
 		},
 
@@ -400,7 +398,7 @@ sap.ui.define([
 
 		_getStartUpParameter: function (oComponentData, sParameterName) {
 			if (oComponentData && oComponentData.startupParameters && sParameterName) {
-				if (jQuery.isArray(oComponentData.startupParameters[sParameterName])) {
+				if (Array.isArray(oComponentData.startupParameters[sParameterName])) {
 					return oComponentData.startupParameters[sParameterName][0];
 				}
 			}
@@ -692,7 +690,7 @@ sap.ui.define([
 		},
 
 		_getUriParameters: function () {
-			return jQuery.sap.getUriParameters();
+			return new UriParameters(window.location.href);
 		},
 		/**
 		 * Returns whether the hot fix mode is active (url parameter hotfix=true)
@@ -912,7 +910,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getUrlParameter: function (sParameterName) {
-			return jQuery.sap.getUriParameters().get(sParameterName);
+			return new UriParameters(window.location.href).get(sParameterName);
 		},
 
 		/**
@@ -925,7 +923,7 @@ sap.ui.define([
 		},
 
 		createDefaultFileName: function (sNameAddition) {
-			var sFileName = jQuery.sap.uid().replace(/-/g, "_");
+			var sFileName = uid().replace(/-/g, "_");
 			if (sNameAddition) {
 				sFileName += '_' + sNameAddition;
 			}

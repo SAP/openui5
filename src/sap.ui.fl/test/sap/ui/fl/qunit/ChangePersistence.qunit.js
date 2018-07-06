@@ -9,9 +9,10 @@ sap.ui.require([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"sap/base/Log"
 ],
-function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector, Cache, Settings, MessageBox) {
+function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector, Cache, Settings, MessageBox, Log) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 
@@ -1023,7 +1024,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		]}}));
 
-		var fnWarningLogStub = sandbox.stub(jQuery.sap.log, "warning");
+		var fnWarningLogStub = sandbox.stub(Log, "warning");
 
 		return this.oChangePersistence.getChangesForComponent({includeVariants : true}).then(function(changes) {
 			assert.strictEqual(changes.length, 5, "both standard UI changes and smart variants were returned");

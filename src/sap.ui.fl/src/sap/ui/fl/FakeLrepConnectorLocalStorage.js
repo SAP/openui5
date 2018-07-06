@@ -8,9 +8,17 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Utils"
-	], function(
-	FakeLrepLocalStorage, FakeLrepConnector, LrepConnector, Cache, ChangePersistenceFactory, Utils) {
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/jquery"
+], function(
+	FakeLrepLocalStorage,
+	FakeLrepConnector,
+	LrepConnector,
+	Cache,
+	ChangePersistenceFactory,
+	Utils,
+	jQuery
+) {
 	"use strict";
 
 	FakeLrepConnectorLocalStorage._oBackendInstances = {};

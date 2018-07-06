@@ -7,8 +7,16 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
-	"sap/ui/fl/registry/Settings"
-], function(DescriptorInlineChangeFactory, FlexUtils, LrepConnector, Utils, Settings) {
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/thirdparty/jquery"
+], function(
+	DescriptorInlineChangeFactory,
+	FlexUtils,
+	LrepConnector,
+	Utils,
+	Settings,
+	jQuery
+) {
 	"use strict";
 
 	/**

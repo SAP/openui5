@@ -32,7 +32,7 @@ sap.ui.define(function() {
 		this.checkParameterAndType(oChange, "propertyPath", "string");
 		this.checkParameterAndType(oChange, "operation", "string");
 
-		if (jQuery.inArray(oChange.operation, ['INSERT', 'UPDATE', 'UPSERT', 'DELETE']) < 0) {
+		if (['INSERT', 'UPDATE', 'UPSERT', 'DELETE'].indexOf(oChange.operation) === -1) {
 			throw new Error("Parameter \"entityPropertyChange.operation\" needs to be one of 'INSERT', 'UPDATE', 'UPSERT', 'DELETE'");
 		}
 		if (oChange.propertyValue === undefined && oChange.operation !== 'DELETE') {

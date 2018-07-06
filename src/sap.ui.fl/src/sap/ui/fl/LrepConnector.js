@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils"
+	"sap/ui/thirdparty/jquery", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils"
 ], function(jQuery, uri, FlexUtils) {
 	"use strict";
 
@@ -129,7 +129,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Connector.prototype._resolveUrl = function(sRelativeUrl) {
-		if (!jQuery.sap.startsWith(sRelativeUrl, "/")) {
+		if (!sRelativeUrl.startsWith("/")) {
 			sRelativeUrl = "/" + sRelativeUrl;
 		}
 		sRelativeUrl = this._sRequestUrlPrefix + sRelativeUrl;

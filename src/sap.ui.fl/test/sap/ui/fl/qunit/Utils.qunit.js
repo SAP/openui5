@@ -9,6 +9,8 @@ sap.ui.require([
 	'sap/m/Button',
 	'sap/ui/Device',
 	'sap/ui/thirdparty/hasher',
+	"sap/base/Log",
+	// should be last:
 	'sap/ui/thirdparty/sinon'
 ],
 function(
@@ -18,6 +20,7 @@ function(
 	Button,
 	Device,
 	hasher,
+	Log,
 	sinon
 ){
 	"use strict";
@@ -478,9 +481,9 @@ function(
 		getUriParametersStub.restore();
 	});
 
-	QUnit.test("Utils.log shall call jQuery.sap.log.warning once", function (assert) {
+	QUnit.test("Utils.log shall call Log.warning once", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(jQuery.sap.log, "warning");
+		var spyLog = sinon.spy(Log, "warning");
 
 		// CUT
 		Utils.log.warning("");
@@ -492,9 +495,9 @@ function(
 		spyLog.restore();
 	});
 
-	QUnit.test("log shall call jQuery.sap.log.error once", function (assert) {
+	QUnit.test("log shall call Log.error once", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(jQuery.sap.log, "error");
+		var spyLog = sinon.spy(Log, "error");
 
 		// CUT
 		Utils.log.error("");
@@ -506,9 +509,9 @@ function(
 		spyLog.restore();
 	});
 
-	QUnit.test("log shall call jQuery.sap.log.debug once", function (assert) {
+	QUnit.test("log shall call Log.debug once", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(jQuery.sap.log, "debug");
+		var spyLog = sinon.spy(Log, "debug");
 
 		// CUT
 		Utils.log.debug("");
@@ -1389,7 +1392,7 @@ function(
 			this.aPromisesResolveAfterReject = [this.fnPromise4, this.fnPromise1];
 
 			this.fnExecPromiseQueueSpy = sandbox.spy(Utils, "execPromiseQueueSequentially");
-			sandbox.spyLog = sandbox.spy(jQuery.sap.log, "error");
+			sandbox.spyLog = sandbox.spy(Log, "error");
 		},
 
 		afterEach: function () {
