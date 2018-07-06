@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"./SemanticConfiguration"

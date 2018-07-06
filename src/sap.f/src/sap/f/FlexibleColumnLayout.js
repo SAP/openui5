@@ -4,19 +4,19 @@
 
 // Provides control sap.f.FlexibleColumnLayout.
 sap.ui.define([
-    "jquery.sap.global",
-    "./library",
-    "sap/ui/Device",
-    "sap/ui/core/ResizeHandler",
-    "sap/ui/core/Control",
-    "sap/m/library",
-    "sap/m/Button",
-    "sap/m/NavContainer",
-    "sap/ui/core/Configuration",
-    "./FlexibleColumnLayoutRenderer",
-    "jquery.sap.events"
+	"sap/ui/thirdparty/jquery",
+	"./library",
+	"sap/ui/Device",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Control",
+	"sap/m/library",
+	"sap/m/Button",
+	"sap/m/NavContainer",
+	"sap/ui/core/Configuration",
+	"./FlexibleColumnLayoutRenderer",
+	"sap/base/assert"
 ], function(
-    jQuery,
+	jQuery,
 	library,
 	Device,
 	ResizeHandler,
@@ -25,7 +25,8 @@ sap.ui.define([
 	Button,
 	NavContainer,
 	Configuration,
-	FlexibleColumnLayoutRenderer
+	FlexibleColumnLayoutRenderer,
+	assert
 ) {
 	"use strict";
 
@@ -774,7 +775,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._registerResizeHandler = function () {
-		jQuery.sap.assert(!this._iResizeHandlerId, "Resize handler already registered");
+		assert(!this._iResizeHandlerId, "Resize handler already registered");
 		this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
 	};
 
@@ -1107,7 +1108,7 @@ sap.ui.define([
 			bIsLayoutValid = typeof FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout] !== "undefined" && typeof FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout][sShiftDirection] !== "undefined",
 			sNewLayout;
 
-		jQuery.sap.assert(bIsLayoutValid, "An invalid layout was used for determining arrow behavior");
+		assert(bIsLayoutValid, "An invalid layout was used for determining arrow behavior");
 		sNewLayout = bIsLayoutValid ? FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout][sShiftDirection] : LT.OneColumn;
 
 		this.setLayout(sNewLayout);

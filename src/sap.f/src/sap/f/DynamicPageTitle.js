@@ -4,18 +4,19 @@
 
 // Provides control sap.f.DynamicPageTitle.
 sap.ui.define([
-    "./library",
-    "sap/ui/core/Control",
-    "sap/ui/base/ManagedObjectObserver",
-    "sap/m/library",
-    "sap/m/Toolbar",
-    "sap/m/ToolbarSeparator",
-    "sap/m/OverflowToolbar",
-    "sap/m/Button",
-    "sap/ui/core/InvisibleText",
-    "./DynamicPageTitleRenderer"
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/m/library",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSeparator",
+	"sap/m/OverflowToolbar",
+	"sap/m/Button",
+	"sap/ui/core/InvisibleText",
+	"./DynamicPageTitleRenderer",
+	"sap/base/Log"
 ], function(
-    library,
+	library,
 	Control,
 	ManagedObjectObserver,
 	mobileLibrary,
@@ -24,7 +25,8 @@ sap.ui.define([
 	OverflowToolbar,
 	Button,
 	InvisibleText,
-	DynamicPageTitleRenderer
+	DynamicPageTitleRenderer,
+	Log
 ) {
 	"use strict";
 
@@ -404,12 +406,12 @@ sap.ui.define([
 		var oShrinkFactorsInfo = this._getShrinkFactorsObject();
 
 		if (this.getPrimaryArea() === DynamicPageTitleArea.Middle) {
-			jQuery.sap.log.warning("DynamicPageTitle :: Property primaryArea is disregarded when areaShrinkRatio is set.", this);
+			Log.warning("DynamicPageTitle :: Property primaryArea is disregarded when areaShrinkRatio is set.", this);
 		}
 
 		// scale priority factors
 		if (oShrinkFactorsInfo.headingAreaShrinkFactor > 1 && oShrinkFactorsInfo.contentAreaShrinkFactor > 1 && oShrinkFactorsInfo.actionsAreaShrinkFactor > 1) {
-			jQuery.sap.log.warning("DynamicPageTitle :: One of the shrink factors should be set to 1.", this);
+			Log.warning("DynamicPageTitle :: One of the shrink factors should be set to 1.", this);
 		}
 
 		this._setShrinkFactors(oShrinkFactorsInfo.headingAreaShrinkFactor,
