@@ -46,16 +46,6 @@ function(
 	});
 
 	QUnit.test('When retrieving the context menu items', function(assert) {
-		sandbox.stub(this.CutPastePlugin, "getDesignTime").returns({
-			getSelectionManager : function(){
-				return {
-					get: function(){
-						return ['selection'];
-					}
-				};
-			}
-		});
-
 		var bIsAvailable = true;
 
 		//Cut
@@ -82,10 +72,10 @@ function(
 		var aMenuItems = this.CutPastePlugin.getMenuItems("dummyOverlay");
 		assert.equal(aMenuItems[0].id, "CTX_CUT", "'getMenuItems' returns a context menu item for 'cut'");
 		aMenuItems[0].handler(["dummyOverlay"]);
-		assert.equal(aMenuItems[0].enabled(), true, "the 'enabled' function returns true for single selection");
+		assert.equal(aMenuItems[0].enabled("dummyOverlay"), true, "the 'enabled' function returns true for single selection");
 
 		assert.equal(aMenuItems[1].id, "CTX_PASTE", "'getMenuItems' returns a context menu item for 'paste'");
-		aMenuItems[1].handler(["dummyOverlay"]);
+		aMenuItems[1].handler("dummyOverlay");
 		aMenuItems[1].enabled("dummyOverlay");
 
 		bIsAvailable = false;
@@ -146,8 +136,8 @@ function(
 	});
 
 	QUnit.test('when retrieving the context menu items and checking if paste is available', function(assert) {
-		var fnMoveAvailableOnRelevantContainerSpy = sandbox.spy(this.CutPastePlugin.getElementMover(), "_isMoveAvailableOnRelevantContainer"),
-			aMenuItemsForLayout = this.CutPastePlugin.getMenuItems(this.oVericalLayoutOverlay);
+		var fnMoveAvailableOnRelevantContainerSpy = sandbox.spy(this.CutPastePlugin.getElementMover(), "_isMoveAvailableOnRelevantContainer");
+		var aMenuItemsForLayout = this.CutPastePlugin.getMenuItems(this.oVericalLayoutOverlay);
 
 		sandbox.stub(this.oVericalLayoutOverlay, "getMovable").returns(false);
 		sandbox.stub(this.oObjectStatusOverlay1, "getMovable").returns(true);

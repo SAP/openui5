@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Split',
 	'sap/m/Button',
 	'sap/m/Panel',
-	'sap/ui/dt/SelectionManager',
+	'sap/ui/dt/Util',
 	// should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -27,7 +27,7 @@ function(
 	SplitPlugin,
 	Button,
 	Panel,
-	SelectionManager
+	DtUtil
 ) {
 	'use strict';
 
@@ -138,8 +138,7 @@ function(
 			"then the overlay is not editable");
 	});
 
-	QUnit.test("when an overlay has a split action in designTime metadata and the selected element has more than one control", function(assert) {
-
+	QUnit.test("when an overlay has a split action in designTime metadata and the specified element has more than one control", function(assert) {
 		var oDesignTimeMetadata1 = {
 			actions : {
 				split : {
@@ -154,23 +153,22 @@ function(
 		};
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
 
-		sandbox.stub(SelectionManager.prototype, "get").returns([
-			this.oButton1Overlay
-		]);
-
 		this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
 		this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 
 		assert.strictEqual(
-			this.oSplitPlugin.isAvailable(this.oButton1Overlay), true,
-			"isAvailable is called and returns true");
+			this.oSplitPlugin.isAvailable(this.oButton1Overlay),
+			true,
+			"isAvailable is called and returns true"
+		);
 		assert.strictEqual(
-			this.oSplitPlugin.isEnabled(this.oButton1Overlay), true,
-			"isEnabled is called and returns true");
+			this.oSplitPlugin.isEnabled(this.oButton1Overlay),
+			true,
+			"isEnabled is called and returns true"
+		);
 	});
 
-	QUnit.test("when isEnabled() is a function in designTime metadata and the selected element contains only one control", function (assert) {
-
+	QUnit.test("when isEnabled() is a function in designTime metadata and the specified element contains only one control", function (assert) {
 		var oDesignTimeMetadata2 = {
 				actions : {
 					split : {
@@ -188,92 +186,84 @@ function(
 
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata2);
 
-		sandbox.stub(SelectionManager.prototype, "get").returns([
-			this.oButton2Overlay
-		]);
-
 		this.oSplitPlugin.deregisterElementOverlay(this.oButton2Overlay);
 		this.oSplitPlugin.registerElementOverlay(this.oButton2Overlay);
 
 		assert.strictEqual(
-			this.oSplitPlugin.isAvailable(this.oButton2Overlay), false,
-			"isAvailable is called and returns false");
+			this.oSplitPlugin.isAvailable(this.oButton2Overlay),
+			false,
+			"isAvailable is called and returns false"
+		);
 		assert.strictEqual(
-			this.oSplitPlugin.isEnabled(this.oButton2Overlay), false,
-			"isEnabled is called and returns false");
+			this.oSplitPlugin.isEnabled(this.oButton2Overlay),
+			false,
+			"isEnabled is called and returns false"
+		);
 	});
 
 	QUnit.test("when there is no getControlsCount() function in designTime metadata", function (assert) {
-
 		var oDesignTimeMetadata3 = {
-				actions : {
-					split : {
-						changeType: "splitField",
-						changeOnRelevantContainer : true,
-						isEnabled : function() {
-							return true;
-						}
+			actions : {
+				split : {
+					changeType: "splitField",
+					changeOnRelevantContainer : true,
+					isEnabled : function() {
+						return true;
 					}
 				}
+			}
 		};
 
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata3);
 
-		sandbox.stub(SelectionManager.prototype, "get").returns([
-			this.oButton2Overlay
-		]);
-
 		this.oSplitPlugin.deregisterElementOverlay(this.oButton2Overlay);
 		this.oSplitPlugin.registerElementOverlay(this.oButton2Overlay);
 
 		assert.strictEqual(
-			this.oSplitPlugin.isAvailable(this.oButton2Overlay), false,
-			"isAvailable is called and returns false");
+			this.oSplitPlugin.isAvailable(this.oButton2Overlay),
+			false,
+			"isAvailable is called and returns false"
+		);
 		assert.strictEqual(
-			this.oSplitPlugin.isEnabled(this.oButton2Overlay), false,
-			"isEnabled is called and returns false");
+			this.oSplitPlugin.isEnabled(this.oButton2Overlay),
+			false,
+			"isEnabled is called and returns false"
+		);
 	});
 
-	QUnit.test("when two controls are selected", function (assert) {
+	QUnit.test("when two controls are specified", function (assert) {
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton3Overlay, DEFAULT_DTM);
 
-		sandbox.stub(SelectionManager.prototype, "get").returns([
-			this.oButton1Overlay,
-			this.oButton3Overlay
-		]);
-
 		this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
 		this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 
 		assert.strictEqual(
-			this.oSplitPlugin.isAvailable(this.oButton1Overlay), false,
-			"isAvailable is called and returns false");
+			this.oSplitPlugin.isAvailable([this.oButton1Overlay, this.oButton3Overlay]),
+			false,
+			"isAvailable is called and returns false"
+		);
 		assert.strictEqual(
-			this.oSplitPlugin.isEnabled(this.oButton1Overlay), false,
-			"isEnabled is called and returns false");
+			this.oSplitPlugin.isEnabled([this.oButton1Overlay, this.oButton3Overlay]),
+			false,
+			"isEnabled is called and returns false"
+		);
 	});
 
 	QUnit.test("when handleSplit is called", function(assert) {
-
 		var spy = sandbox.spy(this.oSplitPlugin, "fireElementModified");
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
-
-		sandbox.stub(SelectionManager.prototype, "get").returns([
-			this.oButton1Overlay
-		]);
 
 		this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
 		this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 
-		this.oSplitPlugin.handleSplit(this.oButton1);
+		this.oSplitPlugin.handleSplit(this.oButton1Overlay);
 
 		assert.strictEqual(spy.callCount, 1, "fireElementModified is called once");
 	});
 
-	QUnit.test("when an overlay has a split action designTime metadata", function(assert) {
+	QUnit.test("when an overlay has a split action designTime metadata", function (assert) {
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
-
 		assert.strictEqual(this.oSplitPlugin._isEditable(this.oButton1Overlay), true, "then the overlay is editable");
 	});
 
@@ -293,30 +283,35 @@ function(
 	});
 
 	QUnit.test("when retrieving the context menu item", function(assert) {
+		assert.expect(6);
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 
 		var bIsAvailable = true;
-		sandbox.stub(this.oSplitPlugin, "isAvailable", function(oOverlay){
-			assert.equal(oOverlay, this.oButton1Overlay, "the 'available' function calls isAvailable with the correct overlay");
+		sandbox.stub(this.oSplitPlugin, "isAvailable", function (vElementOverlays) {
+			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+			assert.equal(aElementOverlays[0].getId(), this.oButton1Overlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 			return bIsAvailable;
 		}.bind(this));
-		sandbox.stub(this.oSplitPlugin, "handleSplit", function(oSelectedElement){
-			assert.deepEqual(oSelectedElement, this.oButton1Overlay.getElement(), "the 'handleSplit' method is called with the right element");
+		sandbox.stub(this.oSplitPlugin, "handleSplit", function (oElementOverlay) {
+			assert.deepEqual(oElementOverlay.getId(), this.oButton1Overlay.getId(), "the 'handleSplit' method is called with the right overlay");
 		}.bind(this));
-		sandbox.stub(this.oSplitPlugin, "isEnabled", function(oOverlay){
-			assert.equal(oOverlay, this.oButton1Overlay, "the 'enabled' function calls isEnabled with the correct overlay");
+		sandbox.stub(this.oSplitPlugin, "isEnabled", function (vElementOverlays) {
+			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+			assert.equal(aElementOverlays[0].getId(), this.oButton1Overlay.getId(), "the 'enabled' function calls isEnabled with the correct element overlay");
 		}.bind(this));
 
 		var aMenuItems = this.oSplitPlugin.getMenuItems(this.oButton1Overlay);
 		assert.equal(aMenuItems[0].id, "CTX_UNGROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
 
-		aMenuItems[0].handler([this.oButton1Overlay], { contextElement: this.oButton1 });
+		aMenuItems[0].handler(this.oButton1Overlay, { contextElement: this.oButton1 });
 		aMenuItems[0].enabled(this.oButton1Overlay);
 
 		bIsAvailable = false;
-		assert.equal(this.oSplitPlugin.getMenuItems(this.oButton1Overlay).length,
+		assert.equal(
+			this.oSplitPlugin.getMenuItems(this.oButton1Overlay).length,
 			0,
-			"and if plugin is not available for the overlay, no menu items are returned");
+			"and if plugin is not available for the overlay, no menu items are returned"
+		);
 	});
 
 });

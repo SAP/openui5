@@ -6,11 +6,14 @@
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
-	'sap/base/Log'
+	'sap/base/Log',
+	'sap/ui/dt/Util'
 ], function(
 	Plugin,
 	Utils,
-	BaseLog) {
+	BaseLog,
+	DtUtil
+) {
 	"use strict";
 
 	/**
@@ -50,7 +53,7 @@ sap.ui.define([
 	 * @returns {boolean} true if it's editable
 	 * @private
 	 */
-	Settings.prototype._isEditable = function(oOverlay) {
+	Settings.prototype._isEditable = function (oOverlay) {
 		var vSettingsAction = this.getAction(oOverlay);
 		// If no additional actions are defined in settings, a handler must be present to make it available
 		if (vSettingsAction) {
@@ -72,11 +75,13 @@ sap.ui.define([
 	/**
 	 * Checks if settings is enabled for oOverlay
 	 *
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - overlays to be checked
 	 * @returns {boolean} true if it's enabled
 	 * @public
 	 */
-	Settings.prototype.isEnabled = function(oOverlay) {
+	Settings.prototype.isEnabled = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+		var oOverlay = aElementOverlays[0];
 		var oAction = this.getAction(oOverlay);
 		if (!oAction) {
 			return false;
@@ -110,19 +115,19 @@ sap.ui.define([
 	/**
 	 * Retrieves the available actions from the DesignTime Metadata and creates
 	 * the corresponding commands for them.
-	 * @param  {sap.ui.dt.ElementOverlay[]} aSelectedOverlays Target Overlays of the action
-	 * @param  {object} mPropertyBag Property bag
-	 * @param  {function} [mPropertyBag.fnHandler] Handler function for the case of multiple settings actions
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target Overlays of the action
+	 * @param {object} mPropertyBag Property bag
+	 * @param {function} [mPropertyBag.fnHandler] Handler function for the case of multiple settings actions
 	 * @return {Promise} Returns promise resolving with the creation of the commands
 	 */
-	Settings.prototype.handler = function(aSelectedOverlays, mPropertyBag) {
+	Settings.prototype.handler = function(aElementOverlays, mPropertyBag) {
 		mPropertyBag = mPropertyBag || {};
 		var oSettingsCommand, oAppDescriptorCommand, oCompositeCommand;
-		var oElement = aSelectedOverlays[0].getElement();
+		var oElement = aElementOverlays[0].getElement();
 		var fnHandler = mPropertyBag.fnHandler;
 
 		if (!fnHandler){
-			fnHandler = aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
+			fnHandler = aElementOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
 			if (!fnHandler) {
 				throw new Error("Handler not found for settings action");
 			}
@@ -147,8 +152,8 @@ sap.ui.define([
 							oControl = vSelectorControl;
 						}
 						var oChangeHandler = this._getChangeHandler(mChangeSpecificData.changeType, oControl, sControlType);
-						if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
-							sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
+						if (aElementOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+							sVariantManagementReference = aElementOverlays[0].getVariantManagement();
 						}
 						oSettingsCommand = this.getCommandFactory().getCommandFor(
 							vSelectorControl,
@@ -192,48 +197,59 @@ sap.ui.define([
 	/**
 	 * Retrieve the context menu item for the actions.
 	 * If multiple actions are defined for Settings, it returns multiple menu items.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+	 * @param  {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
 	 * @return {object[]}          Returns array containing the items with required data
 	 */
-	Settings.prototype.getMenuItems = function(oOverlay){
-		var vSettingsActions = this.getAction(oOverlay);
+	Settings.prototype.getMenuItems = function (vElementOverlays) {
+		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+		var oElementOverlay = aElementOverlays[0];
+		var vSettingsActions = this.getAction(oElementOverlay);
 		var iRank = 110;
 		var sPluginId = "CTX_SETTINGS";
 
 		if (vSettingsActions) {
 			// Only one action: simply return settings entry as usual
 			if (vSettingsActions.handler) {
-				return this._getMenuItems(oOverlay, {
-					pluginId : sPluginId,
-					rank : iRank,
-					icon : this._getActionIcon(vSettingsActions)
+				return this._getMenuItems([oElementOverlay], {
+					pluginId: sPluginId,
+					rank: iRank,
+					icon: this._getActionIcon(vSettingsActions)
 				});
 			// Multiple actions: return one menu item for each action
 			} else {
 				var aMenuItems = [];
 				var aSettingsActions = Object.keys(vSettingsActions);
 				var iActionCounter = 0;
-				aSettingsActions.forEach(function(sSettingsAction){
-					var oSettingsAction = vSettingsActions[sSettingsAction],
-						sActionText = this.getActionText(oOverlay, oSettingsAction, oSettingsAction.name);
-					if (oSettingsAction.handler){
+				aSettingsActions.forEach(function (sSettingsAction) {
+					var oSettingsAction = vSettingsActions[sSettingsAction];
+					var sActionText = this.getActionText(oElementOverlay, oSettingsAction, oSettingsAction.name);
+					if (oSettingsAction.handler) {
 						aMenuItems.push({
-							id : sPluginId + iActionCounter,
-							text : sActionText,
-							icon : this._getActionIcon(oSettingsAction),
-							enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElement()),
-							handler : function(fnHandler, aOverlays, mPropertyBag){
+							id: sPluginId + iActionCounter,
+							text: sActionText,
+							icon: this._getActionIcon(oSettingsAction),
+							enabled: (
+								typeof oSettingsAction.isEnabled === 'function'
+								&& ( // eslint-disable-line no-extra-parens
+									function (vElementOverlays) {
+										var aElementOverlays = DtUtil.castArray(vElementOverlays);
+										return oSettingsAction.isEnabled(aElementOverlays[0].getElement());
+									}
+								)
+								|| oSettingsAction.isEnabled
+							),
+							handler: function(fnHandler, vElementOverlays, mPropertyBag) {
 								mPropertyBag = mPropertyBag || {};
 								mPropertyBag.fnHandler = fnHandler;
-								return this.handler(aOverlays, mPropertyBag);
+								return this.handler(DtUtil.castArray(vElementOverlays), mPropertyBag);
 							}.bind(this, oSettingsAction.handler),
-							rank : iRank + iActionCounter
+							rank: iRank + iActionCounter
 						});
 						iActionCounter++;
 					} else {
 						jQuery.sap.log.warning("Handler not found for settings action '" + sActionText + "'");
 					}
-				}.bind(this));
+				}, this);
 				return aMenuItems;
 			}
 		}

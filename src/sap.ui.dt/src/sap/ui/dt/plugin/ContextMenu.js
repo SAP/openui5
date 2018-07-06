@@ -59,7 +59,7 @@ sap.ui.define([
 		this.iMenuHoverOpeningDelay = 500;
 		this.iMenuHoverClosingDelay = 250; //Should be lower than iMenuHoverOpeningDelay, otherwise ContextMenu is instantly closed
 
-		this.oContextMenuControl = new sap.ui.dt.ContextMenuControl({
+		this.oContextMenuControl = new ContextMenuControl({
 			maxButtonsDisplayed: 4 //The maximum number of buttons which should be displayed in the collapsed version of the ContextMenu (including overflow-button)
 		});
 
@@ -159,6 +159,11 @@ sap.ui.define([
 			}
 		}.bind(this));
 
+		var aSelectedOverlays = this.getSelectedOverlays().filter(function (oElementOverlay) {
+			return oElementOverlay !== oOverlay;
+		});
+		aSelectedOverlays.unshift(oOverlay);
+
 		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
 		this._aMenuItems = this._aMenuItems.filter(function (mMenuItemEntry) {
 			if (mMenuItemEntry.bPersistOneTime) {
@@ -175,7 +180,7 @@ sap.ui.define([
 			this._aSubMenus = [];
 
 			aPlugins.forEach(function (oPlugin) {
-				var aPluginMenuItems = oPlugin.getMenuItems(oOverlay) || [];
+				var aPluginMenuItems = oPlugin.getMenuItems(aSelectedOverlays) || [];
 				aPluginMenuItems.forEach(function (mMenuItem) {
 					if (mMenuItem.group != undefined && !bContextMenu) {
 						this._addMenuItemToGroup(mMenuItem);
@@ -199,7 +204,8 @@ sap.ui.define([
 			this.oContextMenuControl._bUseExpPop = !!bContextMenu;
 
 			aMenuItems = this._sortMenuItems(aMenuItems);
-			this.oContextMenuControl.setButtons(aMenuItems, this._onItemSelected.bind(this), oOverlay);
+
+			this.oContextMenuControl.setButtons(aMenuItems, this._onItemSelected.bind(this), aSelectedOverlays);
 
 			this.oContextMenuControl.setStyleClass(this.getStyleClass());
 			if (bIsSubMenu) {

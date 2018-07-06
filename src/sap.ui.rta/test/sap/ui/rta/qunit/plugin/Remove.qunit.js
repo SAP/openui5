@@ -10,6 +10,7 @@ sap.ui.require([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/dt/Util",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -20,6 +21,7 @@ function(
 	CommandFactory,
 	OverlayRegistry,
 	ChangeRegistry,
+	DtUtil,
 	sinon
 ) {
 	"use strict";
@@ -56,9 +58,6 @@ function(
 	QUnit.module("Given a designTime and remove plugin are instantiated", {
 		beforeEach : function(assert) {
 			var done = assert.async();
-
-			// simulate that one overlay is selected
-			this.oNumberOfOverlaysStub = sandbox.stub(RemovePlugin.prototype, "getNumberOfSelectedOverlays").returns(1);
 
 			var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
@@ -161,7 +160,7 @@ function(
 		assert.strictEqual(this.oRemovePlugin.isEnabled(this.oButtonOverlay), false, "... then isEnabled returns false");
 	});
 
-	QUnit.test("when multiple overlays have remove action designTime metadata, but all visible elements in an aggregation are selected", function(assert) {
+	QUnit.test("when remove is not available for all elements in the same aggregation (empty aggregation use-case)", function(assert) {
 		this.oButtonOverlay.setDesignTimeMetadata({
 			actions : {
 				remove : {
@@ -173,9 +172,7 @@ function(
 		this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
 		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
 
-		this.oNumberOfOverlaysStub.restore();
-		sandbox.stub(RemovePlugin.prototype, "getNumberOfSelectedOverlays").returns(2);
-		assert.notOk(this.oRemovePlugin.isEnabled(this.oButtonOverlay), "... then isEnabled returns false");
+		assert.notOk(this.oRemovePlugin.isEnabled([this.oButtonOverlay, this.oButtonOverlay1]), "... then isEnabled returns false");
 	});
 
 	QUnit.test("when an overlay has remove action designTime metadata, but the control has no parent", function(assert) {
@@ -283,18 +280,21 @@ function(
 
 		var bIsAvailable = true;
 
-		sandbox.stub(this.oRemovePlugin, "isAvailable").callsFake(function(oOverlay) {
-			assert.equal(oOverlay, this.oButtonOverlay, "the 'available' function calls isAvailable with the correct overlay");
+		sandbox.stub(this.oRemovePlugin, "isAvailable").callsFake(function (vElementOverlays) {
+			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+			assert.equal(aElementOverlays[0].getId(), this.oButtonOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 			return bIsAvailable;
 		}.bind(this));
-		sandbox.stub(this.oRemovePlugin, "handler").callsFake(function(aSelectedOverlays) {
-			assert.deepEqual(aSelectedOverlays, [this.oButtonOverlay], "the 'handler' method is called with the right overlays");
+		sandbox.stub(this.oRemovePlugin, "handler").callsFake(function (vElementOverlays) {
+			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+			assert.deepEqual(aElementOverlays, [this.oButtonOverlay], "the 'handler' method is called with the right overlays");
 		}.bind(this));
-		sandbox.stub(this.oRemovePlugin, "isEnabled").callsFake(function(oOverlay) {
-			assert.equal(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
+		sandbox.stub(this.oRemovePlugin, "isEnabled").callsFake(function (vElementOverlays) {
+			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+			assert.equal(aElementOverlays[0].getId(), this.oButtonOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
 		}.bind(this));
 
-		var aMenuItems = this.oRemovePlugin.getMenuItems(this.oButtonOverlay);
+		var aMenuItems = this.oRemovePlugin.getMenuItems([this.oButtonOverlay]);
 		assert.equal(aMenuItems[0].id, "CTX_REMOVE", "'getMenuItems' returns the context menu item for the plugin");
 
 		aMenuItems[0].handler([this.oButtonOverlay]);

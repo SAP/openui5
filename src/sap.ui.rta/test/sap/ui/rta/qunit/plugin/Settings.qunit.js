@@ -17,6 +17,7 @@ sap.ui.require([
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/fl/Utils",
+	"sap/ui/dt/Util",
 	"sap/base/Log"
 ],
 function(
@@ -34,6 +35,7 @@ function(
 	SettingsPlugin,
 	Stack,
 	Utils,
+	DtUtil,
 	BaseLog
 ) {
 	"use strict";
@@ -569,8 +571,9 @@ function(
 		});
 
 		var bIsAvailable = true;
-		sandbox.stub(this.oSettingsPlugin, "isAvailable", function(oOverlay){
-			assert.equal(oOverlay, oButtonOverlay, "the 'available' function calls isAvailable with the correct overlay");
+		sandbox.stub(this.oSettingsPlugin, "isAvailable", function (vElementOverlays) {
+			var aElementOverlays = DtUtil.castArray(vElementOverlays);
+			assert.equal(aElementOverlays[0], oButtonOverlay, "the 'available' function calls isAvailable with the correct overlay");
 			return bIsAvailable;
 		});
 		sandbox.stub(this.oSettingsPlugin, "handler", function(aOverlays){
@@ -580,14 +583,14 @@ function(
 			assert.equal(oOverlay, oButtonOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
 		});
 
-		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
+		var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 		assert.equal(aMenuItems[0].id, "CTX_SETTINGS", "'getMenuItems' returns the context menu item for the plugin");
 
 		aMenuItems[0].handler([oButtonOverlay]);
 		aMenuItems[0].enabled(oButtonOverlay);
 
 		bIsAvailable = false;
-		assert.equal(this.oSettingsPlugin.getMenuItems(oButtonOverlay).length,
+		assert.equal(this.oSettingsPlugin.getMenuItems([oButtonOverlay]).length,
 			0,
 			"and if plugin is not available for the overlay, no menu items are returned");
 	});
@@ -613,27 +616,27 @@ function(
 		};
 
 		var oButtonOverlay = new ElementOverlay({
-			element : this.oButton,
-			designTimeMetadata : new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
-					actions :
+			element: this.oButton,
+			designTimeMetadata: new ElementDesignTimeMetadata({
+				libraryName: "sap.m",
+				data: {
+					actions:
 					{
-						settings : function(){
+						settings: function () {
 							return [{
-								name : "CTX_ACTION1",
-								handler: function(oElement, mPropertyBag) {
-									return new Promise(function(resolve){
+								name: "CTX_ACTION1",
+								handler: function (oElement, mPropertyBag) {
+									return new Promise(function (resolve) {
 										resolve([mAction1Change]);
 									});
 								}
 							},
 							{
-								name : function(){
+								name: function () {
 									return "Action 2 Name";
 								},
-								handler: function(oElement, mPropertyBag) {
-									return new Promise(function(resolve){
+								handler: function (oElement, mPropertyBag) {
+									return new Promise(function (resolve) {
 										resolve([mAction2Change]);
 									});
 								}
@@ -739,14 +742,14 @@ function(
 		var oButton = this.oButton;
 
 		var oButtonOverlay = new ElementOverlay({
-			element : this.oButton,
-			designTimeMetadata : new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
-					actions : {
-						settings : {
-							"Button Settings 1" : {
-								name : function(){ return "CTX_ACTION1"; },
+			element: this.oButton,
+			designTimeMetadata: new ElementDesignTimeMetadata({
+				libraryName: "sap.m",
+				data: {
+					actions: {
+						settings: {
+							"Button Settings 1": {
+								name: function(){ return "CTX_ACTION1"; },
 								handler: function(oElement, mPropertyBag) {
 									return new Promise(function(resolve){
 										resolve([]);
@@ -754,13 +757,13 @@ function(
 								}
 							},
 							"Another Button Settings Action" : {
-								name : function(){ return "CTX_ACTION2"; },
+								name: function(){ return "CTX_ACTION2"; },
 								handler: function(oElement, mPropertyBag) {
 									return new Promise(function(resolve){
 										resolve([]);
 									});
 								},
-								isEnabled : function(oElement){
+								isEnabled: function (oElement) {
 									assert.equal(oElement, oButton, "isEnabled is called with the correct element");
 									return false;
 								}
@@ -777,7 +780,7 @@ function(
 		assert.equal(aMenuItems[0].text, "CTX_ACTION1", "'getMenuItems' returns the context menu item for action 1");
 		assert.equal(aMenuItems[0].enabled, undefined, "'getMenuItems' item for action 1 is undefined (hence default true will be used)");
 		assert.equal(aMenuItems[1].text, "CTX_ACTION2", "'getMenuItems' returns the context menu item for action 2");
-		assert.equal(aMenuItems[1].enabled(), false, "'getMenuItems' item for action 2 will be disabled");
+		assert.equal(aMenuItems[1].enabled(oButtonOverlay), false, "'getMenuItems' item for action 2 will be disabled");
 	});
 
 	QUnit.test("when retrieving the context menu items and executing two 'settings' actions with diffrent icon settings", function(assert) {
