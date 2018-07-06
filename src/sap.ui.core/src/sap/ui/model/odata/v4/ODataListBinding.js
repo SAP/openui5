@@ -61,6 +61,7 @@ sap.ui.define([
 	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested', 'DataStateChange'
 	 *   and 'refresh'. For other events, an error is thrown.
 	 * @extends sap.ui.model.ListBinding
+	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0

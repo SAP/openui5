@@ -571,6 +571,7 @@ sap.ui.define([
 	 *   This model is read-only.
 	 *
 	 * @extends sap.ui.model.MetaModel
+	 * @hideconstructor
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}

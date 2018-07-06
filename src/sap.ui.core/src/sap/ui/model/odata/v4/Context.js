@@ -78,6 +78,7 @@ sap.ui.define([
 	 *
 	 *   Context instances are immutable except for their indexes.
 	 * @extends sap.ui.model.Context
+	 * @hideconstructor
 	 * @public
 	 * @since 1.39.0
 	 * @version ${version}
