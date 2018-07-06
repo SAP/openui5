@@ -1,4 +1,6 @@
-sap.ui.define([
+/*global QUnit,sinon*/
+
+sap.ui.require([
 	"jquery.sap.global",
 	"test/TestControl",
 	"sap/ui/core/dnd/DropInfo",
@@ -6,8 +8,6 @@ sap.ui.define([
 	"sap/ui/core/ElementMetadata"
 ], function(jQuery, TestControl, DropInfo, ManagedObject, ElementMetadata) {
 	"use strict";
-
-	/*global QUnit,sinon*/
 
 	QUnit.test("Default values", function(assert) {
 		var oDropInfo = new DropInfo();
