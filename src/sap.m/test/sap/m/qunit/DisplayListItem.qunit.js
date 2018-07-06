@@ -1,72 +1,78 @@
 /*global QUnit */
-
-sap.ui.require([
-	"sap/ui/core/library",
-	"sap/m/DisplayListItem"
-], function(coreLibrary, DisplayListItem) {
+(function() {
 	"use strict";
 
-	QUnit.module("Rendering");
+	QUnit.config.autostart = false;
 
-	QUnit.test("test rendering", function(assert) {
-		var oDLI = new DisplayListItem({
-			label : "text",
-			value : "value"
+	sap.ui.require([
+		"sap/ui/core/library",
+		"sap/m/DisplayListItem"
+	], function(coreLibrary, DisplayListItem) {
+
+		QUnit.module("Rendering");
+
+		QUnit.test("test rendering", function(assert) {
+			var oDLI = new DisplayListItem({
+				label : "text",
+				value : "value"
+			});
+
+			oDLI.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oDLI.$().length, 1, "DisplayListItem is in DOM");
+			assert.ok(oDLI.$().hasClass("sapMDLI"), "DisplayListItem has correct class name");
+
+			oDLI.destroy();
 		});
 
-		oDLI.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		QUnit.module("Right to left support");
 
-		assert.strictEqual(oDLI.$().length, 1, "DisplayListItem is in DOM");
-		assert.ok(oDLI.$().hasClass("sapMDLI"), "DisplayListItem has correct class name");
+		QUnit.test("Value text direction set to RTL", function(assert) {
+			var sDisplayListItem = new DisplayListItem({
+				label: "Title text",
+				value: "(+359) 111 222 333",
+				valueTextDirection: coreLibrary.TextDirection.RTL
+			});
 
-		oDLI.destroy();
-	});
+			sDisplayListItem.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-	QUnit.module("Right to left support");
+			assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
 
-	QUnit.test("Value text direction set to RTL", function(assert) {
-		var sDisplayListItem = new DisplayListItem({
-			label: "Title text",
-			value: "(+359) 111 222 333",
-			valueTextDirection: coreLibrary.TextDirection.RTL
+			sDisplayListItem.destroy();
 		});
 
-		sDisplayListItem.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		QUnit.test("Value text direction set to LTR", function(assert) {
+			var sDisplayListItem = new DisplayListItem({
+				label: "Title text",
+				value: "(+359) 111 222 333",
+				valueTextDirection: coreLibrary.TextDirection.LTR
+			});
 
-		assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
+			sDisplayListItem.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-		sDisplayListItem.destroy();
-	});
+			assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
 
-	QUnit.test("Value text direction set to LTR", function(assert) {
-		var sDisplayListItem = new DisplayListItem({
-			label: "Title text",
-			value: "(+359) 111 222 333",
-			valueTextDirection: coreLibrary.TextDirection.LTR
+			sDisplayListItem.destroy();
 		});
 
-		sDisplayListItem.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		QUnit.test("Value text direction not set", function(assert) {
+			var sDisplayListItem = new DisplayListItem({
+				label: "Title text",
+				value: "(+359) 111 222 333"
+			});
 
-		assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
+			sDisplayListItem.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-		sDisplayListItem.destroy();
-	});
+			assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), undefined, "The dir attribute should not be rendered");
 
-	QUnit.test("Value text direction not set", function(assert) {
-		var sDisplayListItem = new DisplayListItem({
-			label: "Title text",
-			value: "(+359) 111 222 333"
+			sDisplayListItem.destroy();
 		});
 
-		sDisplayListItem.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), undefined, "The dir attribute should not be rendered");
-
-		sDisplayListItem.destroy();
+		QUnit.start();
 	});
 
-});
+})();
