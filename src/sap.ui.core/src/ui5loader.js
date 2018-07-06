@@ -22,14 +22,23 @@
 	}
 
 	/*
+	 * Helper function that removes any query and/or hash parts from the given URL.
+	 *
+	 * @param {string} href URL to remove query and hash from
+	 * @returns {string}
+	 */
+	function pathOnly(href) {
+		var p = href.search(/[?#]/);
+		return p < 0 ? href : href.slice(0, p);
+	}
+
+	/*
 	 * Helper function that returns the document base URL without search parameters and hash.
 	 *
 	 * @returns {string}
 	 */
 	function docBase() {
-		var href = document.baseURI,
-			p = href.search(/[?#]/);
-		return p < 0 ? href : href.slice(0, p);
+		return pathOnly(document.baseURI);
 	}
 
 	/**
@@ -495,13 +504,8 @@
 
 		}
 
-		sUrlPrefix = String(sUrlPrefix);
-
-		// remove query parameters and/or hash
-		var iQueryOrHashIndex = sUrlPrefix.search(/[?#]/);
-		if (iQueryOrHashIndex !== -1) {
-			sUrlPrefix = sUrlPrefix.slice(0, iQueryOrHashIndex);
-		}
+		// cast to string and remove query parameters and/or hash
+		sUrlPrefix = pathOnly(String(sUrlPrefix));
 
 		// ensure that the prefix ends with a '/'
 		if ( sUrlPrefix.slice(-1) !== '/' ) {
@@ -553,8 +557,9 @@
 			sUrlPrefix,
 			sResourceName;
 
-		// Make sure to have an absolute URL to check against absolute prefix URLs
-		sURL = resolveURL(sURL);
+		// Make sure to have an absolute URL without query parameters or hash
+		// to check against absolute prefix URLs
+		sURL = pathOnly(resolveURL(sURL));
 
 		for (sNamePrefix in mUrlPrefixes) {
 
