@@ -923,6 +923,7 @@
 			assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 		});
 
+		/* TODO remove after 1.62 version */
 		QUnit.test("mouseover will set the focus to MenuTextFieldItem domRef in IE", function (assert) {
 			// Arrange
 			var oMenuItem = new sap.ui.unified.MenuTextFieldItem(),
@@ -960,6 +961,7 @@
 
 		// BCP: 002075129500003736822017
 		// BCP: 002075129400000480702018
+		/* TODO remove after 1.62 version */
 		QUnit.test("mouseover will set the focus to the domRef always in IE", function (assert) {
 			// Arrange
 			var oMenu = new sap.ui.unified.Menu(),

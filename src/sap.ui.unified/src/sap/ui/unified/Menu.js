@@ -725,11 +725,13 @@ sap.ui.define([
 		this.setHoveredItem(oItem);
 
 		if (jQuery.sap.checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
+			/* TODO remove after 1.62 version */
 			if (!Device.browser.msie && !Device.browser.edge) { //for IE & Edge skip it, otherwise it will move the focus out of the hovered item set before
 				this.getDomRef().focus();
 			}
 		}
 
+		/* TODO remove after 1.62 version */
 		if (Device.browser.msie) {
 			this.getDomRef().focus();
 		}

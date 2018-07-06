@@ -293,6 +293,7 @@ sap.ui.define([
 		this._bExpandingWithAClick = false;
 		this._bSuppressToggleHeaderOnce = false;
 		this._headerBiggerThanAllowedHeight = false;
+		/* TODO remove after 1.62 version */
 		this._bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false;
 		this._oScrollHelper = new ScrollEnablement(this, this.getId() + "-content", {
 			horizontal: false,
