@@ -4,8 +4,8 @@
 /**
  * Helper for core functionality in Support Tool infrastructure.
  */
-sap.ui.define(["jquery.sap.global"],
-	function (jQuery) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		var CoreHelper = {

@@ -13,9 +13,41 @@
  *
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/XMLCompositeMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier', 'sap/ui/model/resource/ResourceModel', 'sap/ui/model/base/XMLNodeUtils', 'sap/ui/base/ManagedObjectObserver', 'sap/base/util/ObjectPath', 'sap/ui/base/SyncPromise'],
-	function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier, ResourceModel, Utils, ManagedObjectObserver, ObjectPath, SyncPromise) {
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/XMLCompositeMetadata',
+	'sap/ui/model/base/ManagedObjectModel',
+	'sap/ui/core/util/XMLPreprocessor',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/Fragment',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/base/DataType',
+	'sap/ui/model/base/XMLNodeAttributesModel',
+	'sap/ui/core/util/reflection/XmlTreeModifier',
+	'sap/ui/model/resource/ResourceModel',
+	'sap/ui/model/base/XMLNodeUtils',
+	'sap/ui/base/ManagedObjectObserver',
+	"sap/base/util/ObjectPath",
+	'sap/ui/base/SyncPromise'
+],
+	function(
+		jQuery,
+		Control,
+		XMLCompositeMetadata,
+		ManagedObjectModel,
+		XMLPreprocessor,
+		JSONModel,
+		Fragment,
+		ManagedObject,
+		DataType,
+		XMLNodeAttributesModel,
+		XmlTreeModifier,
+		ResourceModel,
+		Utils,
+		ManagedObjectObserver,
+		ObjectPath,
+		SyncPromise
+	) {
 		"use strict";
 
 		// private functions
@@ -23,6 +55,7 @@ sap.ui.define([
 
 		function initXMLComposite(sFragment, oFragmentContext) {
 			if (!mControlImplementations[sFragment]) {
+				//TODO: global jquery call found
 				jQuery.sap.require(sFragment);
 				mControlImplementations[sFragment] = ObjectPath.get(sFragment);
 			}
@@ -740,7 +773,9 @@ sap.ui.define([
 			} else {
 				// we rely on the library bundle
 				this.sLibraryName = this.sLibraryName || this.getMetadata().getLibraryName();
-				return XMLComposite.getLibraryResourceModel(this.sLibraryName);
+				if (this.sLibraryName) {
+					return XMLComposite.getLibraryResourceModel(this.sLibraryName);
+				}
 			}
 		};
 

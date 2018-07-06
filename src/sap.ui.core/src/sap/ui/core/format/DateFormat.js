@@ -4,22 +4,24 @@
 
 // Provides class sap.ui.core.format.DateFormat
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/library',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/date/UniversalDate',
 	"sap/base/util/deepEqual",
-	"sap/base/strings/formatMessage"
+	"sap/base/strings/formatMessage",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
-		jQuery,
 		library,
 		Locale,
 		LocaleData,
 		UniversalDate,
 		deepEqual,
-		formatMessage
+		formatMessage,
+		Log,
+		jQuery
 	) {
 	"use strict";
 
@@ -1447,12 +1449,12 @@ sap.ui.define([
 
 		if (Array.isArray(vJSDate)) {
 			if (!this.oFormatOptions.interval) {
-				jQuery.sap.log.error("Non-interval DateFormat can't format more than one date instance.");
+				Log.error("Non-interval DateFormat can't format more than one date instance.");
 				return "";
 			}
 
 			if (vJSDate.length !== 2) {
-				jQuery.sap.log.error("Interval DateFormat can only format with 2 date instances but " + vJSDate.length + " is given.");
+				Log.error("Interval DateFormat can only format with 2 date instances but " + vJSDate.length + " is given.");
 				return "";
 			}
 
@@ -1461,19 +1463,19 @@ sap.ui.define([
 			});
 
 			if (!bValid) {
-				jQuery.sap.log.error("At least one date instance which is passed to the interval DateFormat isn't valid.");
+				Log.error("At least one date instance which is passed to the interval DateFormat isn't valid.");
 				return "";
 			}
 
 			return this._formatInterval(vJSDate, bUTC);
 		} else {
 			if (!vJSDate || isNaN(vJSDate.getTime())) {
-				jQuery.sap.log.error("The given date instance isn't valid.");
+				Log.error("The given date instance isn't valid.");
 				return "";
 			}
 
 			if (this.oFormatOptions.interval) {
-				jQuery.sap.log.error("Interval DateFormat expects an array with two dates for the first argument but only one date is given.");
+				Log.error("Interval DateFormat expects an array with two dates for the first argument but only one date is given.");
 				return "";
 			}
 

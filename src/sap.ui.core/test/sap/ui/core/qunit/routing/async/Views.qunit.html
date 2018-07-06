@@ -23,8 +23,8 @@
 		sinon.config.useFakeTimers = false;
 
 
-		sap.ui.require(['sap/ui/core/routing/Views', 'sap/ui/core/UIComponent', 'qunit/routing/AsyncViewModuleHook'],
-			function (Views, UIComponent, ModuleHook) {
+		sap.ui.require(['sap/ui/core/routing/Views', 'sap/ui/core/UIComponent', 'qunit/routing/AsyncViewModuleHook', 'sap/base/Log'],
+			function (Views, UIComponent, ModuleHook, Log) {
 				"use strict";
 
 				function createXmlView () {
@@ -222,7 +222,7 @@
 					var done = assert.async();
 					// Arrange
 					var fnStub = this.stub(sap.ui, "view", this.fnView);
-					var fnErrorSpy = this.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = this.spy(Log, "error");
 
 					// Act
 					return this.oViews.getView().then(function() {
@@ -239,7 +239,7 @@
 					var done = assert.async();
 					// Arrange
 					var fnStub = this.stub(sap.ui, "view", this.fnView);
-					var fnErrorSpy = this.spy(jQuery.sap.log, "error");
+					var fnErrorSpy = this.spy(Log, "error");
 
 					// Act
 					return this.oViews.getView({}).then(function() {

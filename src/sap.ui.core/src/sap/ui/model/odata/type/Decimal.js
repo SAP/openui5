@@ -3,15 +3,15 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/model/FormatException',
 	"sap/ui/model/odata/ODataUtils",
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/model/ParseException',
-	'sap/ui/model/ValidateException'
-], function(jQuery, NumberFormat, FormatException, BaseODataUtils, ODataType, ParseException,
-		ValidateException) {
+	'sap/ui/model/ValidateException',
+	"sap/base/Log"
+], function(NumberFormat, FormatException, BaseODataUtils, ODataType, ParseException, ValidateException,
+		Log) {
 	"use strict";
 
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;
@@ -80,7 +80,7 @@ sap.ui.define([
 		var vNullable, iPrecision, vPrecision, iScale, vScale;
 
 		function logWarning(vValue, sName) {
-			jQuery.sap.log.warning("Illegal " + sName + ": " + vValue, null, oType.getName());
+			Log.warning("Illegal " + sName + ": " + vValue, null, oType.getName());
 		}
 
 		function validateInt(vValue, iDefault, iMinimum, sName) {
@@ -140,7 +140,7 @@ sap.ui.define([
 			iScale = vScale === "variable" ? Infinity : validateInt(vScale, 0, 0, "scale");
 			iPrecision = validateInt(vPrecision, Infinity, 1, "precision");
 			if (iScale !== Infinity && iPrecision <= iScale) {
-				jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
+				Log.warning("Illegal scale: must be less than precision (precision="
 					+ vPrecision + ", scale=" + vScale + ")", null, oType.getName());
 				iScale = Infinity; // "variable"
 			}

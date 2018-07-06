@@ -3,14 +3,13 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Breakpoint (Breakpoint support Plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadata', '../Plugin', "sap/base/util/LoaderExtensions", "sap/base/util/ObjectPath"],
-	function(jQuery, Device, ElementMetadata, Plugin, LoaderExtensions, ObjectPath) {
+sap.ui.define(['sap/ui/Device', 'sap/ui/core/ElementMetadata', '../Plugin', "sap/base/util/LoaderExtensions", "sap/base/util/ObjectPath", "sap/ui/thirdparty/jquery"],
+	function(Device, ElementMetadata, Plugin, LoaderExtensions, ObjectPath, jQueryDOM) {
 	"use strict";
 
 	/*global alert */
 
 
-		var $ = jQuery;
 		var Breakpoint = Plugin.extend("sap.ui.core.support.plugins.Breakpoint", {
 
 			constructor : function(oSupportStub) {
@@ -188,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 
 			// loop through control object
 			for (var oProperty in oControl) {
-				if (!$.isFunction(oControl[oProperty])) {
+				if (!jQueryDOM.isFunction(oControl[oProperty])) {
 					continue;
 				}
 
@@ -222,7 +221,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 
 			// class methods
 			for (sKey in oObj) {
-				if (!$.isFunction(oObj[sKey])) {
+				if (!jQueryDOM.isFunction(oObj[sKey])) {
 					continue;
 				}
 
@@ -241,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadat
 
 			// instance methods
 			for (sKey in oObj.prototype) {
-				if (!$.isFunction(oObj.prototype[sKey])) {
+				if (!jQueryDOM.isFunction(oObj.prototype[sKey])) {
 					continue;
 				}
 

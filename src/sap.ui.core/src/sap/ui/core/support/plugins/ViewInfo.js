@@ -4,8 +4,8 @@
 
 // Provides class sap.ui.core.support.plugins.ViewInfo (ViewInfo support plugin)
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/support/controls/TreeViewer', 'sap/ui/core/support/controls/ObjectViewer', 'sap/ui/Device'
-], function(jQuery, Plugin, TreeViewer, ObjectViewer, Device) {
+	'sap/ui/core/support/Plugin', 'sap/ui/core/support/controls/TreeViewer', 'sap/ui/core/support/controls/ObjectViewer', 'sap/ui/Device', "sap/base/Log"
+], function(Plugin, TreeViewer, ObjectViewer, Device, Log) {
 	"use strict";
 
 	/*global Blob, Uint8Array, alert */
@@ -644,7 +644,7 @@ sap.ui.define([
 					}
 				}
 			} catch (ex) {
-				jQuery.sap.log.debug("Diagnostics: ViewInfo failed to remove highlighting of controls");
+				Log.debug("Diagnostics: ViewInfo failed to remove highlighting of controls");
 			}
 
 		};

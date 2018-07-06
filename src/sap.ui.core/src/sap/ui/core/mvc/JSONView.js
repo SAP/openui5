@@ -11,9 +11,20 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/library',
-	'sap/ui/model/resource/ResourceModel'
+	'sap/ui/model/resource/ResourceModel',
+	"sap/base/Log"
 ],
-	function(jQuery, View, JSONViewRenderer, EventHandlerResolver, merge, ManagedObject, library, ResourceModel) {
+	function(
+		jQuery,
+		View,
+		JSONViewRenderer,
+		EventHandlerResolver,
+		merge,
+		ManagedObject,
+		library,
+		ResourceModel,
+		Log
+	) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -61,7 +72,7 @@ sap.ui.define([
 		for (var sOption in mParameters) {
 			if (sOption === 'preprocessors') {
 				delete mParameters[sOption];
-				jQuery.sap.log.warning("JSView.create does not support the option preprocessors!");
+				Log.warning("JSView.create does not support the option preprocessors!");
 			}
 		}
 		mParameters.type = ViewType.JSON;
@@ -219,11 +230,14 @@ sap.ui.define([
 	 * @private
 	 */
 	JSONView.prototype._loadTemplate = function(sTemplateName, mOptions) {
+		//TODO: global jquery call found
 		var sResourceName = jQuery.sap.getResourceName(sTemplateName, ".view.json");
 		if (!mOptions || !mOptions.async) {
+			//TODO: global jquery call found
 			this._oJSONView = jQuery.sap.loadResource(sResourceName);
 		} else {
 			var that = this;
+			//TODO: global jquery call found
 			return jQuery.sap.loadResource(sResourceName, mOptions).then(function(oJSONView) {
 				that._oJSONView = oJSONView;
 			});

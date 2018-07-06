@@ -128,6 +128,7 @@ sap.ui.define([
 				throw new Error("Can't create a control with duplicated id " + oSelector);
 			}
 
+			//TODO: global jquery call found
 			jQuery.sap.require(sClassName); //ensure class is there
 			var ClassObject = ObjectPath.get(sClassName);
 			var sId = this.getControlIdBySelector(oSelector, oAppComponent);

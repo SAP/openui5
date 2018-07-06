@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function(jQuery, Device) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/assert"], function(Device, Log, assert) {
 "use strict";
 
 /**
@@ -955,7 +955,7 @@ var AnnotationParser =  {
 								vPropertyValue = vValue;
 							} else {
 								if (vPropertyValue[sNodeName]) {
-									jQuery.sap.log.warning(
+									Log.warning(
 										"Annotation contained multiple " + sNodeName + " values. Only the last " +
 										"one will be stored: " + xPath.getPath(oChildNode)
 									);
@@ -1034,7 +1034,7 @@ var AnnotationParser =  {
 
 				// The following function definition inside the loop will be removed in non-debug builds.
 				/* eslint-disable no-loop-func */
-				jQuery.sap.assert(!mProperties[sTerm], function () {
+				assert(!mProperties[sTerm], function () {
 					return getAssertText(oParentElement, "Annotation", sTerm);
 				});
 				/* eslint-enable no-loop-func */
@@ -1048,7 +1048,7 @@ var AnnotationParser =  {
 
 				// The following function definition inside the loop will be removed in non-debug builds.
 				/* eslint-disable no-loop-func */
-				jQuery.sap.assert(!mProperties[sPropertyName], function () {
+				assert(!mProperties[sPropertyName], function () {
 					return getAssertText(oParentElement, "Property", sPropertyName);
 				});
 				/* eslint-enable no-loop-func */
@@ -1249,7 +1249,7 @@ var AnnotationParser =  {
 					}
 				}
 			} else {
-				jQuery.sap.log.error("Wrong Input node - cannot find XPath to it: " + sTagName);
+				Log.error("Wrong Input node - cannot find XPath to it: " + sTagName);
 			}
 
 			return sPath;

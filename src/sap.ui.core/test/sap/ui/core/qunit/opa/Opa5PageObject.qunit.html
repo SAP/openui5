@@ -19,11 +19,12 @@ sap.ui.getCore().attachInit(function () {
 	sap.ui.require([
 		"sap/ui/test/Opa",
 		"sap/ui/test/Opa5",
+		"sap/base/Log",
 		"sap/ui/thirdparty/sinon",
 		"sap/ui/qunit/qunit-junit",
 		"sap/ui/qunit/qunit-coverage",
 		"sap/ui/thirdparty/sinon-qunit"
-	], function (Opa, Opa5, sinon) {
+	], function (Opa, Opa5, Log, sinon) {
 		QUnit.module("Page Objects", {
 			afterEach : function () {
 				Opa5.resetConfig();
@@ -102,7 +103,7 @@ sap.ui.getCore().attachInit(function () {
 		});
 
 		QUnit.test("Should prevent namespaces clashes by logging an error", function preventNamespaceClashTest (assert) {
-			this.stub(jQuery.sap.log,"error"); //prevent the error from appearing in the console log as it is wanted here
+			this.stub(Log,"error"); //prevent the error from appearing in the console log as it is wanted here
 
 			Opa5.createPageObjects({
 				onMyFirstPage : {
@@ -264,9 +265,9 @@ sap.ui.getCore().attachInit(function () {
 		}
 
 		function assertNamespaceClashErrorLogged(assert, bIsCalled){
-			assert.equal(jQuery.sap.log.error.calledOnce,bIsCalled,"Error log is called");
+			assert.equal(Log.error.calledOnce,bIsCalled,"Error log is called");
 			if(bIsCalled){
-				assert.equal(jQuery.sap.log.error.args[0][0],"Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.","Should log namespace clash error message");
+				assert.equal(Log.error.args[0][0],"Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.","Should log namespace clash error message");
 			}
 		}
 

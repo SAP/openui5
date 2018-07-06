@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.v2.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/base/EventProvider', 'sap/ui/core/cache/CacheManager'],
-	function(jQuery, AnnotationParser, Device, EventProvider, CacheManager) {
+sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/base/EventProvider', 'sap/ui/core/cache/CacheManager', "sap/base/assert"],
+	function(AnnotationParser, Device, EventProvider, CacheManager, assert) {
 	"use strict";
 
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
@@ -621,7 +621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._loadUrl = function(mSource) {
-		jQuery.sap.assert(mSource.type === "url", "Source type must be \"url\" in order to be loaded");
+		assert(mSource.type === "url", "Source type must be \"url\" in order to be loaded");
 
 		return new Promise(function(fnResolve, fnReject) {
 			var mAjaxOptions = {
@@ -667,7 +667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._parseSourceXML = function(mSource) {
-		jQuery.sap.assert(typeof mSource.xml === "string", "Source must contain XML string in order to be parsed");
+		assert(typeof mSource.xml === "string", "Source must contain XML string in order to be parsed");
 
 		return new Promise(function(fnResolve, fnReject) {
 			var oXMLDocument;
@@ -729,7 +729,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 */
 	ODataAnnotations.prototype._parseSource = function(mSource) {
 		// On IE we have a special format for the XML documents on every other browser it must be a "Document" object.
-		jQuery.sap.assert(mSource.document instanceof window.Document || Device.browser.msie, "Source must contain a parsed XML document converted to an annotation object");
+		assert(mSource.document instanceof window.Document || Device.browser.msie, "Source must contain a parsed XML document converted to an annotation object");
 
 		return this._oMetadata.loaded()
 			.then(function() {
@@ -750,7 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._mergeSource = function(mSource) {
-		jQuery.sap.assert(typeof mSource.annotations === "object", "Source must contain an annotation object to be merged");
+		assert(typeof mSource.annotations === "object", "Source must contain an annotation object to be merged");
 
 		AnnotationParser.merge(this._mAnnotations, mSource.annotations);
 

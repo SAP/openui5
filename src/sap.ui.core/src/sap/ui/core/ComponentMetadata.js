@@ -7,9 +7,10 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/Manifest',
-	'sap/ui/thirdparty/URI'
+	'sap/ui/thirdparty/URI',
+	"sap/base/Log"
 ],
-	function(jQuery, ManagedObjectMetadata, Manifest, URI) {
+	function(jQuery, ManagedObjectMetadata, Manifest, URI, Log) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -68,20 +69,21 @@ sap.ui.define([
 		    sPackage = sName.replace(/\.\w+?$/, "");
 		if (oStaticInfo._src) {
 			if (oStaticInfo._src == "component.json") {
-				jQuery.sap.log.warning("Usage of declaration \"metadata: 'component.json'\" is deprecated (component " + sName + "). Use \"metadata: 'json'\" instead.");
+				Log.warning("Usage of declaration \"metadata: 'component.json'\" is deprecated (component " + sName + "). Use \"metadata: 'json'\" instead.");
 			} else if (oStaticInfo._src != "json") {
 				throw new Error("Invalid metadata declaration for component " + sName + ": \"" + oStaticInfo._src + "\"! Use \"metadata: 'json'\" to load metadata from component.json.");
 			}
 
 			var sResource = sPackage.replace(/\./g, "/") + "/component.json";
-			jQuery.sap.log.info("The metadata of the component " + sName + " is loaded from file " + sResource + ".");
+			Log.info("The metadata of the component " + sName + " is loaded from file " + sResource + ".");
 			try {
+				//TODO: global jquery call found
 				var oResponse = jQuery.sap.loadResource(sResource, {
 					dataType: "json"
 				});
 				jQuery.extend(oStaticInfo, oResponse);
 			} catch (err) {
-				jQuery.sap.log.error("Failed to load component metadata from \"" + sResource + "\" (component " + sName + ")! Reason: " + err);
+				Log.error("Failed to load component metadata from \"" + sResource + "\" (component " + sName + ")! Reason: " + err);
 			}
 		}
 
@@ -143,7 +145,7 @@ sap.ui.define([
 		// This could happen when the manifest is accessed (via #getManifestObject) while sap.ui.component is loading it.
 		// Then the async request wouldn't be cancelled and the manifest already loaded (sync) should not be be overridden.
 		if (this._oManifest) {
-			jQuery.sap.log.warning("Can't apply manifest to ComponentMetadata as it has already been created.", this.getName(), "sap.ui.core.ComponentMetadata");
+			Log.warning("Can't apply manifest to ComponentMetadata as it has already been created.", this.getName(), "sap.ui.core.ComponentMetadata");
 			return;
 		}
 
@@ -219,7 +221,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ComponentMetadata.prototype.onInitComponent = function(oInstance) {
-		jQuery.sap.log.error("The function ComponentMetadata#onInitComponent will be removed soon!");
+		Log.error("The function ComponentMetadata#onInitComponent will be removed soon!");
 	};
 
 	/**
@@ -230,7 +232,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ComponentMetadata.prototype.onExitComponent = function(oInstance) {
-		jQuery.sap.log.error("The function ComponentMetadata#onExitComponent will be removed soon!");
+		Log.error("The function ComponentMetadata#onExitComponent will be removed soon!");
 	};
 
 	/**
@@ -278,13 +280,13 @@ sap.ui.define([
 
 				// Only handle sync behavior if resource is not taken from preload cache
 				if (!bIsResourceLoaded && syncCallBehavior === 2) {
-					jQuery.sap.log.error("[nosync] Loading manifest of the component " + sName + " ignored.", sResource, "sap.ui.core.ComponentMetadata");
+					Log.error("[nosync] Loading manifest of the component " + sName + " ignored.", sResource, "sap.ui.core.ComponentMetadata");
 					oManifest = {};
 				} else {
 					if (!bIsResourceLoaded && syncCallBehavior === 1) {
-						jQuery.sap.log.error("[nosync] The manifest of the component " + sName + " is loaded with sync XHR.", sResource, "sap.ui.core.ComponentMetadata");
+						Log.error("[nosync] The manifest of the component " + sName + " is loaded with sync XHR.", sResource, "sap.ui.core.ComponentMetadata");
 					} else {
-						jQuery.sap.log.info("The manifest of the component " + sName + " is loaded from file " + sResource + ".");
+						Log.info("The manifest of the component " + sName + " is loaded from file " + sResource + ".");
 					}
 
 					try {
@@ -294,12 +296,13 @@ sap.ui.define([
 						// - sap.ui.component / sap.ui.component.load are used with "async=true" and/or
 						//   "manifest=true|String|Object" to create / load the component
 						//   (Also see #_applyManifest)
+						//TODO: global jquery call found
 						var oResponse = jQuery.sap.loadResource(sResource, {
 							dataType: "json"
 						});
 						oManifest = oResponse;
 					} catch (err) {
-						jQuery.sap.log.error("Failed to load component manifest from \"" + sResource + "\" (component " + sName + ")! Reason: " + err);
+						Log.error("Failed to load component manifest from \"" + sResource + "\" (component " + sName + ")! Reason: " + err);
 						// in case of error the manifest is an empty object
 						// to behave similar like for missing component.json
 						oManifest = {};
@@ -339,7 +342,7 @@ sap.ui.define([
 	 * @deprecated  Since 1.33.0. Please use the sap.ui.core.Component#getManifest
 	 */
 	ComponentMetadata.prototype._getManifest = function() {
-		jQuery.sap.log.warning("ComponentMetadata#_getManifest: do not use deprecated functions anymore!");
+		Log.warning("ComponentMetadata#_getManifest: do not use deprecated functions anymore!");
 		return this.getManifestObject().getJson();
 	};
 
@@ -364,7 +367,7 @@ sap.ui.define([
 	 * @deprecated  Since 1.33.0. Please use the sap.ui.core.Component#getRawManifest
 	 */
 	ComponentMetadata.prototype._getRawManifest = function() {
-		jQuery.sap.log.warning("ComponentMetadata#_getRawManifest: do not use deprecated functions anymore!");
+		Log.warning("ComponentMetadata#_getRawManifest: do not use deprecated functions anymore!");
 		return this.getManifestObject().getRawJson();
 	};
 
@@ -455,7 +458,7 @@ sap.ui.define([
 	 */
 	ComponentMetadata.prototype.getCustomEntry = function(sKey, bMerged) {
 		if (!sKey || sKey.indexOf(".") <= 0) {
-			jQuery.sap.log.warning("Component Metadata entries with keys without namespace prefix can not be read via getCustomEntry. Key: " + sKey + ", Component: " + this.getName());
+			Log.warning("Component Metadata entries with keys without namespace prefix can not be read via getCustomEntry. Key: " + sKey + ", Component: " + this.getName());
 			return null;
 		}
 
@@ -463,7 +466,7 @@ sap.ui.define([
 		    oData = this._oStaticInfo[sKey] || {};
 
 		if (!jQuery.isPlainObject(oData)) {
-			jQuery.sap.log.warning("Custom Component Metadata entry with key '" + sKey + "' must be an object. Component: " + this.getName());
+			Log.warning("Custom Component Metadata entry with key '" + sKey + "' must be an object. Component: " + this.getName());
 			return null;
 		}
 
@@ -761,7 +764,7 @@ sap.ui.define([
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getServices = function() {
-		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getServices is deprecated!");
+		Log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getServices is deprecated!");
 		// legacy API - for the manifest services has a different meaning!
 		return this._oStaticInfo.services || {};
 	};

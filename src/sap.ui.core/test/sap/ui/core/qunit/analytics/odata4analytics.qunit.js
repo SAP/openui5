@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/ODataModelAdapter",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/core/qunit/analytics/o4aMetadata"
-], function (jQuery, odata4analytics, ODataModelAdapter, ODataModel, o4aFakeService) {
+	"sap/ui/core/qunit/analytics/o4aMetadata",
+	"sap/base/Log"
+], function (jQuery, odata4analytics, ODataModelAdapter, ODataModel, o4aFakeService, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -30,7 +31,7 @@ sap.ui.require([
 				oQueryResult,
 				that = this;
 
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			o4aFakeService.fake({

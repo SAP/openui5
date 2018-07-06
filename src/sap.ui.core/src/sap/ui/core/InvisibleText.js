@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.InvisibleText.
-sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encoder'],
-	function(jQuery, Control, library/*, jQuerySap1 */) {
+sap.ui.define(['./Control', './library', "sap/base/Log", 'jquery.sap.encoder'],
+	function(Control, library/*, jQuerySap1 */, Log) {
 	"use strict";
 
 
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	// helper to create a dummy setter that logs a warning
 	function makeNotSupported(what) {
 		return function() {
-			jQuery.sap.log.warning(what + " is not supported by control sap.ui.core.InvisibleText.");
+			Log.warning(what + " is not supported by control sap.ui.core.InvisibleText.");
 			return this;
 		};
 	}

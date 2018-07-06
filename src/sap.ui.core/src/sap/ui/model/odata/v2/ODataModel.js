@@ -12,7 +12,6 @@
 
 //Provides class sap.ui.model.odata.v2.ODataModel
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/thirdparty/URI',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/Context',
@@ -31,12 +30,13 @@ sap.ui.define([
 	'sap/ui/core/message/MessageParser',
 	'sap/ui/model/odata/ODataMessageParser',
 	'sap/ui/thirdparty/datajs',
+	"sap/base/Log",
+	"sap/base/assert",
 	"sap/base/util/uid",
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge"
 ], function(
-	jQuery,
 	URI,
 	BindingMode,
 	Context,
@@ -55,6 +55,8 @@ sap.ui.define([
 	MessageParser,
 	ODataMessageParser,
 	OData,
+	Log,
+	assert,
 	uid,
 	UriParameters,
 	deepEqual,
@@ -859,7 +861,7 @@ sap.ui.define([
 			this.fireMetadataLoaded({
 				metadata: this.oMetadata
 			});
-			jQuery.sap.log.debug(this + " - metadataloaded fired");
+			Log.debug(this + " - metadataloaded fired");
 		}.bind(this);
 
 		this.initialize();
@@ -956,7 +958,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.fireAnnotationsFailed = function(mArguments) {
 		this.fireEvent("annotationsFailed", mArguments);
-		jQuery.sap.log.debug(this + " - annotationsfailed fired");
+		Log.debug(this + " - annotationsfailed fired");
 		return this;
 	};
 
@@ -1434,7 +1436,7 @@ sap.ui.define([
 			var oChildEntry = mVisitedEntries[sKey];
 			if (!oChildEntry) {
 				oChildEntry = that._getObject("/" + sKey);
-				jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " + sKey + " not found!");
+				assert(oChildEntry, "ODataModel inconsistent: " + sKey + " not found!");
 				if (oChildEntry) {
 					oChildEntry = merge({}, oChildEntry);
 					mVisitedEntries[sKey] = oChildEntry;
@@ -2172,7 +2174,7 @@ sap.ui.define([
 				mCustomQueryOptions = mParameters[sName];
 				for (sName in mCustomQueryOptions) {
 					if (sName.indexOf("$") === 0) {
-						jQuery.sap.log.warning(this + " - Trying to set OData parameter '" + sName + "' as custom query option!");
+						Log.warning(this + " - Trying to set OData parameter '" + sName + "' as custom query option!");
 					} else if (typeof mCustomQueryOptions[sName] === 'string') {
 						aCustomParams.push(sName + "=" + jQuery.sap.encodeURL(mCustomQueryOptions[sName]));
 					} else {
@@ -2328,11 +2330,11 @@ sap.ui.define([
 		//aKeys,
 		sName,
 		oProperty;
-		jQuery.sap.assert(oEntityType, "Could not find entity type of collection \"" + sCollection + "\" in service metadata!");
+		assert(oEntityType, "Could not find entity type of collection \"" + sCollection + "\" in service metadata!");
 		sKey += "(";
 		if (oEntityType.key.propertyRef.length === 1) {
 			sName = oEntityType.key.propertyRef[0].name;
-			jQuery.sap.assert(sName in oKeyProperties, "Key property \"" + sName + "\" is missing in object!");
+			assert(sName in oKeyProperties, "Key property \"" + sName + "\" is missing in object!");
 			oProperty = this.oMetadata._getPropertyMetadata(oEntityType, sName);
 			sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 		} else {
@@ -2341,7 +2343,7 @@ sap.ui.define([
 					sKey += ",";
 				}
 				sName = oPropertyRef.name;
-				jQuery.sap.assert(sName in oKeyProperties, "Key property \"" + sName + "\" is missing in object!");
+				assert(sName in oKeyProperties, "Key property \"" + sName + "\" is missing in object!");
 				oProperty = that.oMetadata._getPropertyMetadata(oEntityType, sName);
 				sKey += sName;
 				sKey += "=";
@@ -2465,7 +2467,7 @@ sap.ui.define([
 				if (oValue[sSelect] !== undefined) {
 					oResultValue[sSelect] = oValue[sSelect];
 				} else {
-					jQuery.sap.log.fatal("No data loaded for select property: " + sSelect + " of entry: " + that.getKey(oValue));
+					Log.fatal("No data loaded for select property: " + sSelect + " of entry: " + that.getKey(oValue));
 					return undefined;
 				}
 			}
@@ -2492,7 +2494,7 @@ sap.ui.define([
 					if (oNavValue !== undefined) {
 						oResultValue[sExpand] = oNavValue;
 					} else {
-						jQuery.sap.log.fatal("No data loaded for expand property: " + sExpand + " of entry: " + that.getKey(oNavValue));
+						Log.fatal("No data loaded for expand property: " + sExpand + " of entry: " + that.getKey(oNavValue));
 						return undefined;
 					}
 				}
@@ -2504,7 +2506,7 @@ sap.ui.define([
 						if (oNavValue !== undefined) {
 							aResultProps.push(oNavValue);
 						} else {
-							jQuery.sap.log.fatal("No data loaded for expand property: " + sExpand + " of entry: " + that.getKey(oNavValue));
+							Log.fatal("No data loaded for expand property: " + sExpand + " of entry: " + that.getKey(oNavValue));
 							return undefined;
 						}
 					}
@@ -3512,7 +3514,7 @@ sap.ui.define([
 				// Parse error messages from the back-end
 				this._parseResponse(oResponse, oRequest);
 
-				jQuery.sap.log.fatal(this + " - No data was retrieved by service: '" + oResponse.requestUri + "'");
+				Log.fatal(this + " - No data was retrieved by service: '" + oResponse.requestUri + "'");
 				that.fireRequestCompleted({url : oResponse.requestUri, type : "GET", async : oResponse.async,
 					info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
 				return false;
@@ -3892,7 +3894,7 @@ sap.ui.define([
 			mParameters.headers = oError.response.headers;
 			mParameters.responseText = oError.response.body;
 		}
-		jQuery.sap.log.fatal(sErrorMsg);
+		Log.fatal(sErrorMsg);
 
 		return mParameters;
 	};
@@ -3978,7 +3980,7 @@ sap.ui.define([
 		 if (oData && oData.__metadata) {
 			 oData.__metadata.etag = '*';
 		 } else {
-			 jQuery.sap.log.error(this + " - Entity with key " + sKey + " does not exist or has no change");
+			 Log.error(this + " - Entity with key " + sKey + " does not exist or has no change");
 		 }
 	 };
 
@@ -4384,7 +4386,7 @@ sap.ui.define([
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		if (!sFunctionName.startsWith("/")) {
-			jQuery.sap.log.fatal(this + " callFunction: path '" + sFunctionName + "' must be absolute!");
+			Log.fatal(this + " callFunction: path '" + sFunctionName + "' must be absolute!");
 			return;
 		}
 
@@ -4397,7 +4399,7 @@ sap.ui.define([
 
 		oRequestHandle = this._processRequest(function(requestHandle) {
 			oFunctionMetadata = that.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
-			jQuery.sap.assert(oFunctionMetadata, that + ": Function " + sFunctionName + " not found in the metadata !");
+			assert(oFunctionMetadata, that + ": Function " + sFunctionName + " not found in the metadata !");
 			if (!oFunctionMetadata) {
 				fnReject();
 				return;
@@ -4420,7 +4422,7 @@ sap.ui.define([
 						oData[oParam.name] = mUrlParams[oParam.name];
 						mUrlParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
 					} else {
-						jQuery.sap.log.warning(that + " - No value for parameter '" + oParam.name + "' found!'");
+						Log.warning(that + " - No value for parameter '" + oParam.name + "' found!'");
 					}
 				});
 			}
@@ -4470,7 +4472,7 @@ sap.ui.define([
 		delete mUrlParams.__metadata;
 		delete mUrlParams["$result"];
 		var oFunctionMetadata = this.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
-		jQuery.sap.assert(oFunctionMetadata, this + ": Function " + sFunctionName + " not found in the metadata !");
+		assert(oFunctionMetadata, this + ": Function " + sFunctionName + " not found in the metadata !");
 		if (!oFunctionMetadata) {
 			return;
 		}
@@ -4797,7 +4799,7 @@ sap.ui.define([
 		}
 
 		if (sGroupId && !this.mDeferredGroups[sGroupId]) {
-			jQuery.sap.log.fatal(this + " submitChanges: \"" + sGroupId + "\" is not a deferred group!");
+			Log.fatal(this + " submitChanges: \"" + sGroupId + "\" is not a deferred group!");
 		}
 
 		mChangedEntities = merge({}, that.mChangedEntities);
@@ -4953,7 +4955,7 @@ sap.ui.define([
 						that.mChangedEntities[sKey].__metadata = oEntityMetadata;
 					}
 				} else {
-					jQuery.sap.log.warning(that + " - resetChanges: " + sPath + " is not changed");
+					Log.warning(that + " - resetChanges: " + sPath + " is not changed");
 				}
 			});
 		} else {
@@ -5135,7 +5137,7 @@ sap.ui.define([
 			jQuery.each(mHeaders, function(sHeaderName, sHeaderValue){
 				// case sensitive check needed to make sure private headers cannot be overridden by difference in the upper/lower case (e.g. accept and Accept).
 				if (that._isHeaderPrivate(sHeaderName)){
-					jQuery.sap.log.warning(this + " - modifying private header: '" + sHeaderName + "' not allowed!");
+					Log.warning(this + " - modifying private header: '" + sHeaderName + "' not allowed!");
 				} else {
 					mCheckedHeaders[sHeaderName] = sHeaderValue;
 				}
@@ -5156,7 +5158,7 @@ sap.ui.define([
 			jQuery.each(mHeaders, function(sHeaderName, sHeaderValue){
 				// case sensitive check needed to make sure private headers cannot be overridden by difference in the upper/lower case (e.g. accept and Accept).
 				if (that._isHeaderPrivate(sHeaderName)){
-					jQuery.sap.log.warning(this + " - modifying private header: '" + sHeaderName + "' not allowed!");
+					Log.warning(this + " - modifying private header: '" + sHeaderName + "' not allowed!");
 				} else {
 					mCheckedHeaders[sHeaderName] = sHeaderValue;
 				}
@@ -5363,7 +5365,7 @@ sap.ui.define([
 			var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sPath);
 			if (!oEntityMetadata) {
 
-				jQuery.sap.assert(oEntityMetadata, "No Metadata for collection " + sPath + " found");
+				assert(oEntityMetadata, "No Metadata for collection " + sPath + " found");
 				return undefined;
 			}
 			if (typeof vProperties === "object" && !Array.isArray(vProperties)) {
@@ -5381,7 +5383,7 @@ sap.ui.define([
 					}
 				}
 				if (vProperties) {
-					jQuery.sap.assert(vProperties.length === 0, "No metadata for the following properties found: " + vProperties.join(","));
+					assert(vProperties.length === 0, "No metadata for the following properties found: " + vProperties.join(","));
 				}
 			}
 			//get EntitySet metadata for data storage
@@ -5432,7 +5434,7 @@ sap.ui.define([
 		} else if (this.oMetadata.isLoaded()) {
 			return create();
 		} else {
-			jQuery.sap.log.error("Tried to use createEntry without created-callback, before metadata is available!");
+			Log.error("Tried to use createEntry without created-callback, before metadata is available!");
 		}
 	};
 
@@ -5460,7 +5462,7 @@ sap.ui.define([
 		if (sNamespace.toUpperCase() !== 'EDM') {
 			var oComplexType = {};
 			var oComplexTypeMetadata = this.oMetadata._getObjectMetadata("complexType",sTypeName,sNamespace);
-			jQuery.sap.assert(oComplexTypeMetadata, "Complex type " + sType + " not found in the metadata !");
+			assert(oComplexTypeMetadata, "Complex type " + sType + " not found in the metadata !");
 			for (var i = 0; i < oComplexTypeMetadata.property.length; i++) {
 				var oPropertyMetadata = oComplexTypeMetadata.property[i];
 				oComplexType[oPropertyMetadata.name] = this._createPropertyValue(oPropertyMetadata.type);
@@ -5496,7 +5498,7 @@ sap.ui.define([
 			sPath = sPath.substr(0, sPath.indexOf('?'));
 		}
 		if (!oContext && !sPath.startsWith("/")) {
-			jQuery.sap.log.fatal(this + " path " + sPath + " must be absolute if no Context is set");
+			Log.fatal(this + " path " + sPath + " must be absolute if no Context is set");
 		}
 		return this.resolve(sPath, oContext);
 	};
@@ -5804,7 +5806,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.setMessageParser = function(oParser) {
 		if (!(oParser instanceof MessageParser)) {
-			jQuery.sap.log.error("Given MessageParser is not of type sap.ui.core.message.MessageParser");
+			Log.error("Given MessageParser is not of type sap.ui.core.message.MessageParser");
 			return this;
 		}
 		oParser.setProcessor(this);
@@ -5826,7 +5828,7 @@ sap.ui.define([
 			// Parse response and delegate messages to the set message parser
 			this.oMessageParser.parse(oResponse, oRequest, mGetEntities, mChangeEntities);
 		} catch (ex) {
-			jQuery.sap.log.error("Error parsing OData messages: " + ex);
+			Log.error("Error parsing OData messages: " + ex);
 		}
 	};
 
@@ -5871,7 +5873,7 @@ sap.ui.define([
 					sMessage = oError.xmlDoc.parseError.reason;
 					sDetails = oError.xmlDoc.parseError.srcText;
 				}
-				jQuery.sap.log.error("error in ODataMetaModel.loaded(): " + sMessage, sDetails,
+				Log.error("error in ODataMetaModel.loaded(): " + sMessage, sDetails,
 					"sap.ui.model.odata.v2.ODataModel");
 			});
 		}

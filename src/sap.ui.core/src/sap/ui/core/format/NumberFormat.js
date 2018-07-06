@@ -4,13 +4,13 @@
 
 // Provides class sap.ui.core.format.NumberFormat
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/Object',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	"sap/base/strings/escapeRegExp"
+	"sap/base/strings/escapeRegExp",
+	"sap/base/assert"
 ],
-	function(jQuery, BaseObject, Locale, LocaleData, escapeRegExp) {
+	function(BaseObject, Locale, LocaleData, escapeRegExp, assert) {
 	"use strict";
 
 
@@ -471,8 +471,8 @@ sap.ui.define([
 				});
 			}
 			if (oFormatOptions.emptyString !== undefined) {
-				jQuery.sap.assert(typeof oFormatOptions.emptyString !== "string", "The format option 'emptyString' can not be with type 'string'");
-				jQuery.sap.assert(oFormatOptions.emptyString === 0 || oFormatOptions.emptyString === null || /* check if it's NaN (only NaN doesn't equal to itself) */ oFormatOptions.emptyString !== oFormatOptions.emptyString, "The format option 'emptyString' must be either 0, null or NaN");
+				assert(typeof oFormatOptions.emptyString !== "string", "The format option 'emptyString' can not be with type 'string'");
+				assert(oFormatOptions.emptyString === 0 || oFormatOptions.emptyString === null || /* check if it's NaN (only NaN doesn't equal to itself) */ oFormatOptions.emptyString !== oFormatOptions.emptyString, "The format option 'emptyString' must be either 0, null or NaN");
 			}
 		}
 
@@ -862,12 +862,12 @@ sap.ui.define([
 		if (oOptions.showMeasure && oOptions.type === mNumberType.UNIT) {
 
 			sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
-			jQuery.sap.assert(sPluralCategory, "Cannot find plural category for " + (sIntegerPart + "." + sFractionPart));
+			assert(sPluralCategory, "Cannot find plural category for " + (sIntegerPart + "." + sFractionPart));
 
 			// a list of allowed unit types is given, so we check if the given measure is ok
 			var bUnitTypeAllowed = !oOptions.allowedUnits || oOptions.allowedUnits.indexOf(sMeasure) >= 0;
 			if (!bUnitTypeAllowed) {
-				jQuery.sap.assert(bUnitTypeAllowed, "The given unit '" + sMeasure + "' is not part of the allowed unit types: [" + oOptions.allowedUnits.join(",") + "].");
+				assert(bUnitTypeAllowed, "The given unit '" + sMeasure + "' is not part of the allowed unit types: [" + oOptions.allowedUnits.join(",") + "].");
 				return "";
 			}
 
@@ -877,13 +877,13 @@ sap.ui.define([
 				if (!sPattern) {
 					sPattern = mUnitPatterns["unitPattern-count-other"];
 				}
-				jQuery.sap.assert(sPattern, "Cannot find pattern 'unitPattern-count-" + sPluralCategory + "' in '" + sMeasure + "'");
+				assert(sPattern, "Cannot find pattern 'unitPattern-count-" + sPluralCategory + "' in '" + sMeasure + "'");
 				if (!sPattern) {
 					return "";
 				}
 				sResult = sPattern.replace("{0}", sResult);
 			} else {
-				jQuery.sap.assert(mUnitPatterns, "Unit '" + sMeasure + "' is unknown");
+				assert(mUnitPatterns, "Unit '" + sMeasure + "' is unknown");
 				return "";
 			}
 		}
@@ -1010,7 +1010,7 @@ sap.ui.define([
 			} else {
 				mUnitPatterns = this.oLocaleData.getUnitFormats();
 			}
-			jQuery.sap.assert(mUnitPatterns, "Unit patterns cannot be loaded");
+			assert(mUnitPatterns, "Unit patterns cannot be loaded");
 
 			// filter using allowedUnits option
 			if (oOptions.allowedUnits) {
@@ -1029,11 +1029,11 @@ sap.ui.define([
 				sMeasure = aUnitCode[0];
 			} else if (aUnitCode.length === 0) {
 				//unit not found
-				jQuery.sap.assert(aUnitCode.length === 1, "Cannot find unit for input: '" + (sValue) + "'");
+				assert(aUnitCode.length === 1, "Cannot find unit for input: '" + (sValue) + "'");
 				return null;
 			} else {
 				//ambiguous unit
-				jQuery.sap.assert(aUnitCode.length === 1, "Ambiguous unit [" + aUnitCode.join(", ") + "] for input: '" + (sValue) + "'");
+				assert(aUnitCode.length === 1, "Ambiguous unit [" + aUnitCode.join(", ") + "] for input: '" + (sValue) + "'");
 				sMeasure = undefined;
 			}
 

@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/library",
-	"./testdata/TestPreprocessor"
-], function(View, XMLView, XMLPreprocessor, JSONModel, coreLibrary, TestPreprocessor) {
+	"./testdata/TestPreprocessor",
+	"sap/base/Log"
+], function(View, XMLView, XMLPreprocessor, JSONModel, coreLibrary, TestPreprocessor, Log) {
 	"use strict";
 
 	var ViewType = coreLibrary.mvc.ViewType;
@@ -208,7 +209,7 @@ sap.ui.define([
 					}]
 				}
 			}),
-			logSpy = this.spy(jQuery.sap.log, "debug");
+			logSpy = this.spy(Log, "debug");
 
 		try {
 			oView.runPreprocessor("xml", oSource, true);
@@ -437,8 +438,7 @@ sap.ui.define([
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join('');
 			this.oPreprocessor = function(vSource, sCaller, mSettings) {
-				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				assert.ok(true, "Preprocessor executed");
+				assert.ok(true, "Preprocessor executed with message: '" + mSettings.message + "' from '" + sCaller + "'");
 				return new Promise(function(resolve) {
 					resolve(vSource);
 				});
@@ -553,8 +553,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			// async test part
-			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-			assert.ok(true, "Local preprocessor executed");
+			assert.ok(true, "Local Preprocessor executed with message: '" + mSettings.message + "' from '" + sCaller + "'");
 			return new Promise(function(resolve) {
 				resolve(vSource);
 			});
@@ -656,7 +655,7 @@ sap.ui.define([
 		assert.expect(4);
 		var done = assert.async();
 
-		var logSpy = sinon.spy(jQuery.sap.log, "debug");
+		var logSpy = sinon.spy(Log, "debug");
 
 		// call via init
 		var oView = sap.ui.xmlview({

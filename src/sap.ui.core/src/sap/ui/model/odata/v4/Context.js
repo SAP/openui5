@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
-	"./lib/_Helper"
-], function (SyncPromise, BaseContext, _Helper) {
+	"./lib/_Helper",
+	"sap/base/Log"
+], function(SyncPromise, BaseContext, _Helper, Log) {
 	"use strict";
 
 	/*
@@ -403,7 +404,7 @@ sap.ui.define([
 				throw oError;
 			} else if (!oError.$cached) {
 				// Note: errors due to data requests have already been logged
-				jQuery.sap.log.warning(oError.message, sPath, sClassName);
+				Log.warning(oError.message, sPath, sClassName);
 			}
 		}
 		return oSyncPromise.isFulfilled() ? oSyncPromise.getResult() : undefined;

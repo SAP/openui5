@@ -10,9 +10,10 @@ sap.ui.require([
 	"sap/ui/model/odata/_AnnotationHelperExpression",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/PropertyBinding",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/TestUtils",
+	"sap/base/Log"
 ], function (jQuery, BindingParser, ManagedObject, JSONModel, Basics, Expression, ODataModel,
-		PropertyBinding, TestUtils) {
+		PropertyBinding, TestUtils, Log) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
@@ -751,7 +752,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			};
 
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},

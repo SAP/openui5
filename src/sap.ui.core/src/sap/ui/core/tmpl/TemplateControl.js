@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.core.tmpl.TemplateControl.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/core/DeclarativeSupport',
 	'sap/ui/core/library',
@@ -13,10 +12,10 @@ sap.ui.define([
 	'./Template',
 	"./TemplateControlRenderer",
 	"sap/base/strings/capitalize",
-	"sap/base/strings/hyphenate"
+	"sap/base/strings/hyphenate",
+	"sap/base/Log"
 ],
 	function(
-		jQuery,
 		Control,
 		DeclarativeSupport,
 		library,
@@ -25,7 +24,8 @@ sap.ui.define([
 		Template,
 		TemplateControlRenderer,
 		capitalize,
-		hyphenate
+		hyphenate,
+		Log
 	) {
 	"use strict";
 
@@ -271,7 +271,7 @@ sap.ui.define([
 		// attach a change handler (if the binding exists)
 		if (oBinding) {
 			oBindingInfo.changeHandler = function() {
-				jQuery.sap.log.debug("TemplateControl#" + this.getId() + ": " + sType + " binding changed for path \"" + sPath + "\"");
+				Log.debug("TemplateControl#" + this.getId() + ": " + sType + " binding changed for path \"" + sPath + "\"");
 				this.invalidate();
 			}.bind(this);
 			oBinding.attachChange(oBindingInfo.changeHandler);

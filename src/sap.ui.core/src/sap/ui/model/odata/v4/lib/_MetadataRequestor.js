@@ -4,11 +4,11 @@
 
 //Provides class sap.ui.model.odata.v4.lib._MetadataRequestor
 sap.ui.define([
-	"jquery.sap.global",
 	"./_Helper",
 	"./_V2MetadataConverter",
-	"./_V4MetadataConverter"
-], function (jQuery, _Helper, _V2MetadataConverter, _V4MetadataConverter) {
+	"./_V4MetadataConverter",
+	"sap/base/Log"
+], function (_Helper, _V2MetadataConverter, _V4MetadataConverter, Log) {
 	"use strict";
 
 	return {
@@ -96,7 +96,7 @@ sap.ui.define([
 							}, function (jqXHR, sTextStatus, sErrorMessage) {
 								var oError = _Helper.createError(jqXHR);
 
-								jQuery.sap.log.error("GET " + sUrl, oError.message,
+								Log.error("GET " + sUrl, oError.message,
 									"sap.ui.model.odata.v4.lib._MetadataRequestor");
 								fnReject(oError);
 							});

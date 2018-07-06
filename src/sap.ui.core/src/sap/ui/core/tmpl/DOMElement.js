@@ -4,13 +4,13 @@
 
 // Provides control sap.ui.core.tmpl.DOMElement.
 sap.ui.define([
-    'jquery.sap.global',
     'sap/ui/core/Control',
     'sap/ui/core/library',
     './DOMAttribute',
-    "./DOMElementRenderer"
+    "./DOMElementRenderer",
+    "sap/base/Log"
 ],
-	function(jQuery, Control, library, DOMAttribute, DOMElementRenderer) {
+	function(Control, library, DOMAttribute, DOMElementRenderer, Log) {
 	"use strict";
 
 
@@ -89,7 +89,7 @@ sap.ui.define([
 					}
 				});
 			} else {
-				jQuery.sap.log.warning("DOMElement#" + this.getId() + ": custom attributes in settings will be ignored since attributes are provided!");
+				Log.warning("DOMElement#" + this.getId() + ": custom attributes in settings will be ignored since attributes are provided!");
 			}
 		}
 

@@ -17,7 +17,8 @@ sap.ui.define([
 	'sap/ui/model/resource/ResourceModel',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
-	"sap/base/strings/hash"
+	"sap/base/strings/hash",
+		"sap/base/Log"
 ],
 	function(
 		jQuery,
@@ -33,7 +34,8 @@ sap.ui.define([
 		ResourceModel,
 		jQueryDOM,
 		XMLHelper,
-		hash
+		hash,
+		Log
 	) {
 	"use strict";
 
@@ -391,8 +393,8 @@ sap.ui.define([
 				return sTimestamp;
 			}).catch(function(error) {
 				// Do not populate the cache if the version info could not be retrieved.
-				jQuery.sap.log.warning("sap.ui.getVersionInfo could not be retrieved", "sap.ui.core.mvc.XMLView");
-				jQuery.sap.log.debug(error);
+				Log.warning("sap.ui.getVersionInfo could not be retrieved", "sap.ui.core.mvc.XMLView");
+				Log.debug(error);
 				return "";
 			});
 		}
@@ -473,6 +475,7 @@ sap.ui.define([
 			}
 
 			function loadResourceAsync(sResourceName) {
+				//TODO: global jquery call found
 				return jQuery.sap.loadResource(sResourceName, {async: true}).then(function(oData) {
 					return oData.documentElement; // result is the document node
 				});
@@ -499,8 +502,8 @@ sap.ui.define([
 				}).catch(function(error) {
 					if (error.name === sXMLViewCacheError) {
 						// no sufficient cache keys, processing can continue
-						jQuery.sap.log.debug(error.message, error.name, "sap.ui.core.mvc.XMLView");
-						jQuery.sap.log.debug("Processing the View without caching.", "sap.ui.core.mvc.XMLView");
+						Log.debug(error.message, error.name, "sap.ui.core.mvc.XMLView");
+						Log.debug("Processing the View without caching.", "sap.ui.core.mvc.XMLView");
 						return processResource(sResourceName);
 					} else {
 						// an unknown error occured and should be exposed
@@ -522,6 +525,7 @@ sap.ui.define([
 
 			// either template name or XML node is given
 			if (mSettings.viewName) {
+				//TODO: global jquery call found
 				var sResourceName = jQuery.sap.getResourceName(mSettings.viewName, ".view.xml");
 				if (mSettings.async) {
 					// in async mode we need to return here as processing takes place in Promise callbacks
@@ -531,6 +535,7 @@ sap.ui.define([
 						return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);
 					}
 				} else {
+					//TODO: global jquery call found
 					_xContent = jQuery.sap.loadResource(sResourceName).documentElement;
 				}
 			} else if (mSettings.viewContent) {
@@ -697,7 +702,7 @@ sap.ui.define([
 			if (XMLView.PreprocessorType[sType]) {
 				View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, this.getMetadata().getClass()._sType, bSyncSupport, bOnDemand, mSettings);
 			} else {
-				jQuery.sap.log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
+				Log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
 			}
 		};
 

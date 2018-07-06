@@ -4,9 +4,9 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Helper
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/thirdparty/URI"
-], function (jQuery, URI) {
+	"sap/ui/thirdparty/URI",
+	"sap/base/Log"
+], function (URI, Log) {
 	"use strict";
 
 	var mAllowedAggregateDetails2Type =  {
@@ -374,7 +374,7 @@ sap.ui.define([
 						oResult.message = oResult.error.message.value;
 					}
 				} catch (e) {
-					jQuery.sap.log.warning(e.toString(), sBody,
+					Log.warning(e.toString(), sBody,
 						"sap.ui.model.odata.v4.lib._Helper");
 				}
 			} else if (sContentType === "text/plain") {

@@ -4,14 +4,13 @@
 
 // Provides class sap.ui.core.support.plugins.Selector (Selector support plugin)
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Popup',
 	'../Plugin',
 	'../Support',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/uid"
 ],
-	function(jQuery, Popup, Plugin, Support, jQueryDOM, uid) {
+	function(Popup, Plugin, Support, jQueryDOM, uid) {
 	"use strict";
 
 

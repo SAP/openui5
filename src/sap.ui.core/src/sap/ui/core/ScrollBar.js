@@ -4,22 +4,22 @@
 
 // Provides control sap.ui.core.ScrollBar.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/Device',
-	'./Control',
-	'./library',
-	"./ScrollBarRenderer",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/performance/trace/Interaction"
+    'sap/ui/Device',
+    './Control',
+    './library',
+    "./ScrollBarRenderer",
+    "sap/ui/performance/trace/Interaction",
+	"sap/base/Log",
+	"sap/ui/dom/containsOrEquals"
 ],
 	function(
-		jQuery,
 		Device,
 		Control,
 		library,
 		ScrollBarRenderer,
-		containsOrEquals,
-		Interaction
+		Interaction,
+		Log,
+		containsOrEquals
 	) {
 	"use strict";
 
@@ -715,7 +715,7 @@ sap.ui.define([
 				// Set new scrollposition without the rerendering
 				this.setCheckedScrollPosition(iStep, false);
 
-				jQuery.sap.log.debug("-----STEPMODE-----: New Step: " + iStep + " --- Old Step: " +  iOldStep  + " --- Scroll Pos in px: " + iScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
+				Log.debug("-----STEPMODE-----: New Step: " + iStep + " --- Old Step: " +  iOldStep  + " --- Scroll Pos in px: " + iScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
 				this.fireScroll({ action: sAction, forward: bForward, newScrollPos: iStep, oldScrollPos: iOldStep});
 				this._iOldStep = iStep;
 
@@ -726,7 +726,7 @@ sap.ui.define([
 			iScrollPos = Math.round(iScrollPos);
 			this.setProperty("scrollPosition", iScrollPos, true);
 
-			jQuery.sap.log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
+			Log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
 			this.fireScroll({ action: sAction, forward: bForward, newScrollPos: iScrollPos, oldScrollPos: this._iOldScrollPos});
 		}
 		// rounding errors in IE lead to infinite scrolling

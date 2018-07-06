@@ -2,8 +2,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/UIComponentMetadata"
-], function(jQuery, ComponentContainer, UIComponent, UIComponentMetadata) {
+	"sap/ui/core/UIComponentMetadata",
+	"sap/base/Log"
+], function(jQuery, ComponentContainer, UIComponent, UIComponentMetadata, Log) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -476,7 +477,7 @@ sap.ui.define([
 		before: function () {
 			sinon.config.useFakeTimers = false;
 			this.requireSpy = sinon.spy(sap.ui, "require");
-			this.logWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			this.logWarningSpy = sinon.spy(Log, "warning");
 		},
 
 		beforeEach : function() {

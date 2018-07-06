@@ -63,10 +63,12 @@
 			});
 
 			QUnit.test("Should not init hasher twice", function (assert) {
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 				//Arrange
 				var calls = [],
 						initSpy = this.spy(hasher, "init"),
-						warningSpy = this.spy(jQuery.sap.log, "info"),
+						warningSpy = this.spy(Log, "info"),
 						hashChanged = function (evt) {
 							calls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
 						};

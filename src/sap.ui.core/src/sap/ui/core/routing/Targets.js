@@ -2,14 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/EventProvider',
 	'./Target',
 	'./async/Targets',
 	'./sync/Targets',
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/base/Log"
 ],
-	function(jQuery, EventProvider, Target, asyncTargets, syncTargets, UriParameters) {
+	function(EventProvider, Target, asyncTargets, syncTargets, UriParameters, Log) {
 		"use strict";
 
 		/**
@@ -276,7 +276,7 @@ sap.ui.define([
 				// temporarily: for checking the url param
 				function checkUrl() {
 					if (new UriParameters(window.location.href).get("sap-ui-xx-asyncRouting") === "true") {
-						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Targets");
+						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Targets");
 						return true;
 					}
 					return false;
@@ -372,7 +372,7 @@ sap.ui.define([
 						if (oTarget) {
 							aResult.push(oTarget);
 						} else {
-							jQuery.sap.log.error("The target you tried to get \"" + sName + "\" does not exist!", that);
+							Log.error("The target you tried to get \"" + sName + "\" does not exist!", that);
 						}
 					});
 					return aResult;
@@ -395,7 +395,7 @@ sap.ui.define([
 					oTarget;
 
 				if (oOldTarget) {
-					jQuery.sap.log.error("Target with name " + sName + " already exists", this);
+					Log.error("Target with name " + sName + " already exists", this);
 				} else {
 					oTarget = this._createTarget(sName, oTargetOptions);
 					this._addParentTo(oTarget);
@@ -563,7 +563,7 @@ sap.ui.define([
 				oParentTarget = this._mTargets[sParent];
 
 				if (!oParentTarget) {
-					jQuery.sap.log.error("The target '" + oTarget._oOptions.name + " has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
+					Log.error("The target '" + oTarget._oOptions.name + " has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
 					return;
 				}
 
@@ -669,7 +669,7 @@ sap.ui.define([
 					oTitleTarget.attachTitleChanged({name:oTitleTarget._oOptions.name}, this._forwardTitleChanged, this);
 					this._oLastTitleTarget = oTitleTarget;
 				} else if (sTitleTarget) {
-					jQuery.sap.log.error("The target with the name \"" + sTitleTarget + "\" where the titleChanged event should be fired does not exist!", this);
+					Log.error("The target with the name \"" + sTitleTarget + "\" where the titleChanged event should be fired does not exist!", this);
 				}
 			}
 

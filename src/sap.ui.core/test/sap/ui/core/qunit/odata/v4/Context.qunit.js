@@ -7,8 +7,9 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, SyncPromise, BaseContext, Context, _GroupLock, _Helper) {
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/base/Log"
+], function (jQuery, SyncPromise, BaseContext, Context, _GroupLock, _Helper, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -16,7 +17,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.Context", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}

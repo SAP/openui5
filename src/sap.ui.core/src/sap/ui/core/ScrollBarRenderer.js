@@ -3,8 +3,8 @@
  */
 
 // A renderer for the ScrollBar control
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
-	function(jQuery, Device, getScrollbarSize) {
+sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
+	function(Device, getScrollbarSize) {
 	"use strict";
 
 

@@ -4,7 +4,6 @@
 
 // Provides helper class sap.ui.core.Popup
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/Object',
@@ -15,11 +14,13 @@ sap.ui.define([
 	'./Element',
 	'./ResizeHandler',
 	'./library',
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/Version",
 	"sap/base/util/uid",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	jQuery,
 	Device,
 	ManagedObject,
 	BaseObject,
@@ -30,6 +31,9 @@ sap.ui.define([
 	Element,
 	ResizeHandler,
 	library,
+	assert,
+	Log,
+	Version,
 	uid,
 	containsOrEquals,
 	jQueryDOM
@@ -88,10 +92,10 @@ sap.ui.define([
 	 */
 	var Popup = ManagedObject.extend("sap.ui.core.Popup", /** @lends sap.ui.core.Popup.prototype */ {
 		constructor: function (oContent, bModal, bShadow, bAutoClose) {
-			jQuery.sap.assert(arguments.length == 0 || (oContent && typeof oContent === "object"), "oContent must be an object or there may be no arguments at all");
-			jQuery.sap.assert((bModal === undefined || bModal === true || bModal === false), "bModal must be true, false, or undefined");
-			jQuery.sap.assert((bShadow === undefined || bShadow === true || bShadow === false), "bShadow must be true, false, or undefined");
-			jQuery.sap.assert((bAutoClose === undefined || bAutoClose === true || bAutoClose === false), "bAutoClose must be true, false, or undefined");
+			assert(arguments.length == 0 || (oContent && typeof oContent === "object"), "oContent must be an object or there may be no arguments at all");
+			assert((bModal === undefined || bModal === true || bModal === false), "bModal must be true, false, or undefined");
+			assert((bShadow === undefined || bShadow === true || bShadow === false), "bShadow must be true, false, or undefined");
+			assert((bAutoClose === undefined || bAutoClose === true || bAutoClose === false), "bAutoClose must be true, false, or undefined");
 
 			ManagedObject.apply(this);
 
@@ -421,7 +425,7 @@ sap.ui.define([
 	 * @function
 	 */
 	Popup.Layer.prototype.getDomString = function(){
-		jQuery.sap.log.error("sap.ui.core.Popup.Layer: getDomString function must be overwritten!");
+		Log.error("sap.ui.core.Popup.Layer: getDomString function must be overwritten!");
 
 		return "";
 	};
@@ -596,7 +600,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.open = function(iDuration, my, at, of, offset, collision, followOf) {
-		jQuery.sap.assert(this.oContent, "Popup content must have been set by now");
+		assert(this.oContent, "Popup content must have been set by now");
 		// other asserts follow after parameter shifting
 
 		if (this.eOpenState != OpenState.CLOSED) {
@@ -610,7 +614,7 @@ sap.ui.define([
 			oStatic = sap.ui.getCore().getStaticAreaRef();
 			oStatic = sap.ui.getCore().getUIArea(oStatic);
 		} catch (e) {
-			jQuery.sap.log.error(e);
+			Log.error(e);
 			throw new Error("Popup cannot be opened because static UIArea cannot be determined.");
 		}
 
@@ -632,12 +636,12 @@ sap.ui.define([
 			var oArea = this.oContent.getUIArea();
 
 			if (oArea === null) {
-				jQuery.sap.log.warning("The Popup content is NOT connected with a UIArea and may not work properly!");
+				Log.warning("The Popup content is NOT connected with a UIArea and may not work properly!");
 			} else if (Popup._bEnableUIAreaCheck && oArea.getRootNode().id !== oStatic.getRootNode().id) {
 
 				// the variable 'sap.ui.core.Popup._bEnableUIAreaCheck' isn't defined anywhere. To enable this check this variable
 				// has to be defined within the console or somehow else.
-				jQuery.sap.log.warning("The Popup content is NOT connected with the static-UIArea and may not work properly!");
+				Log.warning("The Popup content is NOT connected with the static-UIArea and may not work properly!");
 			}
 		}
 
@@ -660,12 +664,12 @@ sap.ui.define([
 		// all other parameters must be given if any subsequent parameter is given, hence no more shifting
 		// now every parameter should be in the right variable
 
-		jQuery.sap.assert(iDuration === -1 || (typeof iDuration === "number" && iDuration % 1 == 0), "iDuration must be an integer (or omitted)"); // omitted results in -1
-		jQuery.sap.assert(my === undefined || typeof my === "string", "my must be a string or empty");
-		jQuery.sap.assert(at === undefined || typeof at === "string", "at must be a string or empty");
-		jQuery.sap.assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
-		jQuery.sap.assert(!offset || typeof offset === "string", "offset must be empty or a string");
-		jQuery.sap.assert(!collision || typeof collision === "string", "collision must be empty or a string");
+		assert(iDuration === -1 || (typeof iDuration === "number" && iDuration % 1 == 0), "iDuration must be an integer (or omitted)"); // omitted results in -1
+		assert(my === undefined || typeof my === "string", "my must be a string or empty");
+		assert(at === undefined || typeof at === "string", "at must be a string or empty");
+		assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
+		assert(!offset || typeof offset === "string", "offset must be empty or a string");
+		assert(!collision || typeof collision === "string", "collision must be empty or a string");
 
 		// save current focused element to restore the focus after closing
 		this._oPreviousFocus = Popup.getCurrentFocusInfo();
@@ -734,7 +738,7 @@ sap.ui.define([
 		}
 		$Ref.css("z-index", this._iZIndex);
 
-		jQuery.sap.log.debug("position popup content " + $Ref.attr("id") + " at " + (window.JSON ? JSON.stringify(_oPosition.at) : String(_oPosition.at)));
+		Log.debug("position popup content " + $Ref.attr("id") + " at " + (window.JSON ? JSON.stringify(_oPosition.at) : String(_oPosition.at)));
 		this._applyPosition(_oPosition);
 
 		if (followOf !== undefined) {
@@ -797,7 +801,10 @@ sap.ui.define([
 				domRefToFocus = domRefToFocus || window.document.getElementById(this._sInitialFocusId);
 			}
 
-			jQuery.sap.focus(domRefToFocus || $Ref.firstFocusableDomRef());
+			domRefToFocus = domRefToFocus || $Ref.firstFocusableDomRef();
+			if (domRefToFocus) {
+				domRefToFocus.focus();
+			}
 			// if the opener was focused but it exceeds the current window width
 			// the window will scroll/reposition accordingly.
 			// When this popup registers the followOf-Handler the check if the
@@ -950,7 +957,7 @@ sap.ui.define([
 			if (oDomRef) {
 				bContains = this._contains(oEvent.target);
 
-				jQuery.sap.log.debug("focus event on " + oEvent.target.id + ", contains: " + bContains);
+				Log.debug("focus event on " + oEvent.target.id + ", contains: " + bContains);
 
 				if (this._bModal && !bContains) { // case: modal popup and focus has gone somewhere else in the document
 					// The popup is modal, but the focus has moved to a part of the document that is NOT inside the popup
@@ -970,12 +977,14 @@ sap.ui.define([
 								// on the blocklayer should wait the autoclose popup to first close then
 								// set the focus back to the lasted blurred element.
 								setTimeout(function() {
-									jQuery.sap.focus(this.oLastBlurredElement);
+									if (this.oLastBlurredElement) {
+										this.oLastBlurredElement.focus();
+									}
 								}.bind(this), 0);
 							} else {
 								// If the focus is set to somewhere else without a blurred element in popup,
 								// the focus is set to the root DOM element of the popup
-								jQuery.sap.focus(oDomRef);
+								oDomRef.focus();
 							}
 						}
 					}
@@ -986,7 +995,7 @@ sap.ui.define([
 				}
 			}
 		} else if (type == "blur") { // an element inside the popup is loosing focus - remember in case we need to re-set
-			jQuery.sap.log.debug("blur event on " + oEvent.target.id);
+			Log.debug("blur event on " + oEvent.target.id);
 			if (this._bModal) {
 				this.oLastBlurredElement = oEvent.target;
 			} else if (this._bAutoClose) {
@@ -1031,7 +1040,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.setInitialFocusId = function(sId) {
-		jQuery.sap.assert(!sId || typeof sId === "string", "sId must be a string or empty");
+		assert(!sId || typeof sId === "string", "sId must be a string or empty");
 		this._sInitialFocusId = sId;
 	};
 
@@ -1069,7 +1078,7 @@ sap.ui.define([
 			}
 		}
 
-		jQuery.sap.assert(iDuration === undefined || (typeof iDuration === "number" && (iDuration % 1 == 0)), "iDuration must be empty or an integer");
+		assert(iDuration === undefined || (typeof iDuration === "number" && (iDuration % 1 == 0)), "iDuration must be empty or an integer");
 
 		if (this.eOpenState == OpenState.CLOSED || this.eOpenState == OpenState.CLOSING) {
 			return;
@@ -1346,7 +1355,9 @@ sap.ui.define([
 				// no SAPUI5 control... try to find the control by ID if an ID was there
 				var oElement = ((oPreviousFocus.sFocusId ? window.document.getElementById(oPreviousFocus.sFocusId) : null))
 						|| oPreviousFocus.oFocusedElement; // if not even an ID was available when focus was lost maybe the original DOM element is still there
-				jQuery.sap.focus(oElement); // also works for oElement == null
+				if (oElement){
+					oElement.focus();
+				}
 			}
 		}
 	};
@@ -1359,7 +1370,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.setContent = function(oContent) {
-		jQuery.sap.assert(typeof oContent === "object", "oContent must be an object");
+		assert(typeof oContent === "object", "oContent must be an object");
 		this.oContent = oContent;
 		return this;
 	};
@@ -1387,11 +1398,11 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.setPosition = function(my, at, of, offset, collision) {
-		jQuery.sap.assert(typeof my === "string", "my must be a string");
-		jQuery.sap.assert(typeof at === "string" || (typeof at === "object" && (typeof at.left === "number") && (typeof at.top === "number")), "my must be a string or an object with 'left' and 'top' properties");
-		jQuery.sap.assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
-		jQuery.sap.assert(!offset || typeof offset === "string", "offset must be empty or a string");
-		jQuery.sap.assert(!collision || typeof collision === "string", "collision must be empty or a string");
+		assert(typeof my === "string", "my must be a string");
+		assert(typeof at === "string" || (typeof at === "object" && (typeof at.left === "number") && (typeof at.top === "number")), "my must be a string or an object with 'left' and 'top' properties");
+		assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
+		assert(!offset || typeof offset === "string", "offset must be empty or a string");
+		assert(!collision || typeof collision === "string", "collision must be empty or a string");
 
 		this._oPosition = this._createPosition(my, at, of, offset, collision);
 
@@ -1410,7 +1421,7 @@ sap.ui.define([
 		if (my && (my.indexOf("+") >= 0 || my.indexOf("-") >= 0)) {
 			bNewOffset = true;
 			if (offset && offset != "0 0") {
-				jQuery.sap.log.warning("offset used in my and in offset, the offset value will be ignored", "sap.ui.core.Popup", "setPosition");
+				Log.warning("offset used in my and in offset, the offset value will be ignored", "sap.ui.core.Popup", "setPosition");
 			}
 			offset = null;
 		}
@@ -1442,7 +1453,7 @@ sap.ui.define([
 		var aMy = [];
 		var aOffset = [];
 
-		if ( Popup._bNewOffset || jQuery.sap.Version(jQuery.ui.version).compareTo("1.8.23") > 0) {
+		if ( Popup._bNewOffset || Version(jQuery.ui.version).compareTo("1.8.23") > 0) {
 			if (offset && offset != "0 0") {
 				// convert offset to my
 				aMy = oPosition.my.split(" ");
@@ -1743,7 +1754,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.setShadow = function(bShowShadow) {
-		jQuery.sap.assert(typeof bShowShadow === "boolean", "bShowShadow must be boolean");
+		assert(typeof bShowShadow === "boolean", "bShowShadow must be boolean");
 		this._bShadow = bShowShadow;
 		if (this.eOpenState != OpenState.CLOSED) {
 			this._$().toggleClass("sapUiShd", bShowShadow);
@@ -1763,8 +1774,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.setModal = function(bModal, sModalCSSClass) {
-		jQuery.sap.assert(typeof bModal === "boolean", "bModal must be boolean");
-		jQuery.sap.assert(!sModalCSSClass || typeof sModalCSSClass === "string", "sModalCSSClass must be empty or a string");
+		assert(typeof bModal === "boolean", "bModal must be boolean");
+		assert(!sModalCSSClass || typeof sModalCSSClass === "string", "sModalCSSClass must be empty or a string");
 
 		var bOldModal = this._bModal;
 
@@ -1835,7 +1846,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.setAutoClose = function(bAutoClose) {
-		jQuery.sap.assert(typeof bAutoClose === "boolean", "bAutoClose must be boolean");
+		assert(typeof bAutoClose === "boolean", "bAutoClose must be boolean");
 
 		if (this.touchEnabled && this.isOpen() && this._bAutoClose !== bAutoClose) {
 			if (!this._bModal) {
@@ -1865,7 +1876,7 @@ sap.ui.define([
 	 */
 	Popup.prototype.setAutoCloseAreas = function(aAutoCloseAreas) {
 		//TODO: also handle the case when 'aAutoCloseAreas' is set with null
-		jQuery.sap.assert(Array.isArray(aAutoCloseAreas), "aAutoCloseAreas must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
+		assert(Array.isArray(aAutoCloseAreas), "aAutoCloseAreas must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
 
 		if (!this._aAutoCloseAreas) {
 			this._aAutoCloseAreas = [];
@@ -1948,8 +1959,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.setAnimations = function(fnOpen, fnClose) {
-		jQuery.sap.assert(fnOpen === null || typeof fnOpen === "function", "fnOpen must be a function");
-		jQuery.sap.assert(fnClose === null || typeof fnClose === "function", "fnClose must be a function");
+		assert(fnOpen === null || typeof fnOpen === "function", "fnOpen must be a function");
+		assert(fnClose === null || typeof fnClose === "function", "fnClose must be a function");
 
 		if (fnOpen && (typeof (fnOpen) == "function")) {
 			this._animations.open = fnOpen;
@@ -1974,8 +1985,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Popup.prototype.setDurations = function(iOpenDuration, iCloseDuration) {
-		jQuery.sap.assert(iOpenDuration === null || (typeof iOpenDuration === "number" && (iOpenDuration % 1 == 0)), "iOpenDuration must be null or an integer");
-		jQuery.sap.assert(!iCloseDuration || (typeof iCloseDuration === "number" && (iCloseDuration % 1 == 0)), "iOpenDuration must be undefined or an integer");
+		assert(iOpenDuration === null || (typeof iOpenDuration === "number" && (iOpenDuration % 1 == 0)), "iOpenDuration must be null or an integer");
+		assert(!iCloseDuration || (typeof iCloseDuration === "number" && (iCloseDuration % 1 == 0)), "iOpenDuration must be undefined or an integer");
 
 		if ((iOpenDuration > 0) || (iOpenDuration === 0)) {
 			this._durations.open = iOpenDuration;
@@ -2025,7 +2036,7 @@ sap.ui.define([
 			this._bFollowOf = false;
 
 			if (followOf !== null) {
-				jQuery.sap.log.error("Trying to set an invalid type to 'followOf: " + followOf);
+				Log.error("Trying to set an invalid type to 'followOf: " + followOf);
 			}
 		}
 
@@ -2349,7 +2360,7 @@ sap.ui.define([
 		if (typeof $Ref === "object") {
 			$Ref.attr("data-sap-ui-popup", this._popupUID);
 		} else {
-			jQuery.sap.log.warning("Incorrect DomRef-type for 'setIdentity': " + $Ref, this);
+			Log.warning("Incorrect DomRef-type for 'setIdentity': " + $Ref, this);
 			return;
 		}
 
@@ -2372,7 +2383,7 @@ sap.ui.define([
 		if (this.oContent instanceof Control) {
 			$ContentRef = this.oContent.$();
 			if (bForceReRender || ($ContentRef.length === 0 && !bGetOnly)) {
-				jQuery.sap.log.info("Rendering of popup content: " + this.oContent.getId());
+				Log.info("Rendering of popup content: " + this.oContent.getId());
 				if ($ContentRef.length > 0) {
 					RenderManager.preserveContent($ContentRef[0], /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
 				}
@@ -2643,7 +2654,7 @@ sap.ui.define([
 		var bottom = ref.style.bottom;
 
 		if (!(left && left != "auto" || right && right != "auto" || top && top != "auto" || bottom && bottom != "auto")) {
-			jQuery.sap.log.debug("reposition popup content " + $Ref.attr("id") + " at " + (window.JSON ? JSON.stringify(this._oLastPosition.at) : String(this._oLastPosition.at)));
+			Log.debug("reposition popup content " + $Ref.attr("id") + " at " + (window.JSON ? JSON.stringify(this._oLastPosition.at) : String(this._oLastPosition.at)));
 			this._applyPosition(this._oLastPosition);
 		}
 
@@ -2866,23 +2877,23 @@ sap.ui.define([
 		if (oSourceDomRef.id === mParameters.firstFocusable) {
 			// the FocusHandlingFirstElement was focused and thus the focus
 			// should move to the last element.
-			jQuery.sap.log.debug("First dummy focus element was focused", "", sName);
+			Log.debug("First dummy focus element was focused", "", sName);
 			if (mParameters.$FocusablesFooter.length > 0) {
-				jQuery.sap.log.debug("Last footer element will be focused", "", sName);
+				Log.debug("Last footer element will be focused", "", sName);
 				oFocusDomRef = mParameters.$FocusablesFooter[mParameters.$FocusablesFooter.length - 1];
 			} else {
-				jQuery.sap.log.debug("Last content element will be focused", "", sName);
+				Log.debug("Last content element will be focused", "", sName);
 				oFocusDomRef = mParameters.$FocusablesContent[mParameters.$FocusablesContent.length - 1];
 			}
 		} else if (oSourceDomRef.id === mParameters.lastFocusable) {
 			// the FocusHandlingEndElement was focused and thus the focus
 			// should move to the first element.
-			jQuery.sap.log.debug("Last dummy focus element was focues", "", sName);
+			Log.debug("Last dummy focus element was focues", "", sName);
 			if (mParameters.$FocusablesContent.length > 0) {
-				jQuery.sap.log.debug("First content element will be focused", "", sName);
+				Log.debug("First content element will be focused", "", sName);
 				oFocusDomRef = mParameters.$FocusablesContent[0];
 			} else {
-				jQuery.sap.log.debug("First footer element will be focused", "", sName);
+				Log.debug("First footer element will be focused", "", sName);
 				oFocusDomRef = mParameters.$FocusablesFooter[0];
 			}
 		}
@@ -2894,11 +2905,15 @@ sap.ui.define([
 				// especially if the control has an individual focus DOM-ref
 				var oControl = sap.ui.getCore().byId(oFocusDomRef.id);
 				if (oControl instanceof Control) {
-					jQuery.sap.log.debug("Focus will be handled by " + oControl.getMetadata().getName(), "", sName);
+					Log.debug("Focus will be handled by " + oControl.getMetadata().getName(), "", sName);
 				} else {
-					jQuery.sap.log.debug("oFocusDomRef will be focused", "", sName);
+					Log.debug("oFocusDomRef will be focused", "", sName);
 				}
-				jQuery.sap.focus(oControl ? oControl : oFocusDomRef);
+				if (oControl) {
+					oControl.focus();
+				} else if (oFocusDomRef) {
+					oFocusDomRef.focus();
+				}
 
 				return oControl ? oControl.getId() : oFocusDomRef.id;
 			}, 0);

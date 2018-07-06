@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "./_AnnotationHelperBasics"
-], function (jQuery, _AnnotationHelperBasics) {
+	"./_AnnotationHelperBasics", "sap/base/Log"
+], function (_AnnotationHelperBasics, Log) {
 	"use strict";
 
 	/*global Promise */
@@ -150,7 +150,7 @@ sap.ui.define([
 				"NonSortableProperties" ]
 		},
 		rValueList = /^com\.sap\.vocabularies\.Common\.v1\.ValueList(#.*)?$/,
-		iWARNING = jQuery.sap.log.Level.WARNING,
+		iWARNING = Log.Level.WARNING,
 		Utils;
 
 
@@ -204,8 +204,8 @@ sap.ui.define([
 				sFilterRestrictionValue = mFilterRestrictions[oProperty["sap:filter-restriction"]];
 
 			if (!sFilterRestrictionValue) {
-				if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-					jQuery.sap.log.warning("Unsupported sap:filter-restriction: "
+				if (Log.isLoggable(iWARNING, sLoggingModule)) {
+					Log.warning("Unsupported sap:filter-restriction: "
 							+ oProperty["sap:filter-restriction"],
 						oEntitySet.entityType + "." + oProperty.name, sLoggingModule);
 				}
@@ -317,8 +317,8 @@ sap.ui.define([
 					}
 					aMatches = rSemanticsWithTypes.exec(sV2Semantics);
 					if (!aMatches) {
-						if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-							jQuery.sap.log.warning("Unsupported sap:semantics: " + sV2Semantics,
+						if (Log.isLoggable(iWARNING, sLoggingModule)) {
+							Log.warning("Unsupported sap:semantics: " + sV2Semantics,
 								oType.name + "." + oProperty.name, sLoggingModule);
 						}
 						return;
@@ -412,8 +412,8 @@ sap.ui.define([
 									sAnnotationName = "Org.OData.Measures.V1.Unit";
 								} else if (sSemantics === "currency-code") {
 									sAnnotationName = "Org.OData.Measures.V1.ISOCurrency";
-								} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-									jQuery.sap.log.warning("Unsupported sap:semantics='"
+								} else if (Log.isLoggable(iWARNING, sLoggingModule)) {
+									Log.warning("Unsupported sap:semantics='"
 											+ sSemantics + "' at sap:unit='" + sUnitPath + "'; "
 											+ "expected 'currency-code' or 'unit-of-measure'",
 										oType.namespace + "." + oType.name + "/" + oProperty.name,
@@ -423,8 +423,8 @@ sap.ui.define([
 								if (sAnnotationName && !(sAnnotationName in oProperty)) {
 									oProperty[sAnnotationName] = oUnitPath;
 								}
-							} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-								jQuery.sap.log.warning("Path '" + sUnitPath
+							} else if (Log.isLoggable(iWARNING, sLoggingModule)) {
+								Log.warning("Path '" + sUnitPath
 										+ "' for sap:unit cannot be resolved",
 									oType.namespace + "." + oType.name + "/" + oProperty.name,
 									sLoggingModule);
@@ -761,8 +761,8 @@ sap.ui.define([
 					var sTargetType = oV4TypeInfo.typeMapping[sType];
 					if (sTargetType) {
 						aResult.push(oV4TypeInfo.v4EnumType + "/" + sTargetType);
-					} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-						jQuery.sap.log.warning("Unsupported type for sap:semantics: " + sType,
+					} else if (Log.isLoggable(iWARNING, sLoggingModule)) {
+						Log.warning("Unsupported type for sap:semantics: " + sType,
 							oType.name + "." + oProperty.name, sLoggingModule);
 					}
 				});
@@ -817,7 +817,7 @@ sap.ui.define([
 
 			if (sCreatable && sCreatablePath) {
 				// inconsistent service if both v2 annotations are set
-				jQuery.sap.log.warning("Inconsistent service",
+				Log.warning("Inconsistent service",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property "
 						+ "'" + oEntitySet.entityType + "/" + oNavigationProperty.name + "'",
 					sLoggingModule);
@@ -874,7 +874,7 @@ sap.ui.define([
 				// only if a second extension (sap:xable-path or sap:xable) is processed,
 				// the warning is logged and the entity set is marked as non-deletable or
 				// non-updatable
-				jQuery.sap.log.warning("Inconsistent service",
+				Log.warning("Inconsistent service",
 					"Use either 'sap:" + sV2Annotation + "' or 'sap:" + sV2Annotation + "-path'"
 						+ " at entity set '" + o.name + "'", sLoggingModule);
 				oValue = oBoolFalse;

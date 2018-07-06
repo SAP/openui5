@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './DataState', "sap/base/util/deepEqual"], function(jQuery, DataState, deepEqual) {
+sap.ui.define(['./DataState', "sap/base/util/deepEqual"], function(DataState, deepEqual) {
 	"use strict";
 
 	/**

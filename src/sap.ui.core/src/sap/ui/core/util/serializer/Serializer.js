@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
+	function(EventProvider, assert) {
 	"use strict";
 
 
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 */
 	Serializer.prototype._serializeRecursive = function (oControl, iLevel, sAggregationName, isDefaultAggregation) {
 
-		jQuery.sap.assert(typeof oControl !== "undefined", "The control must not be undefined");
+		assert(typeof oControl !== "undefined", "The control must not be undefined");
 
 		var aCode = [];
 

@@ -3,9 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/base/Object",
-	"jquery.sap.global",
-	"sap/ui/test/_OpaLogger"
-], function (UI5Object, $, _OpaLogger) {
+	"sap/ui/test/_OpaLogger",
+	"sap/base/Log",
+	'jquery.sap.global'
+], function (UI5Object, _OpaLogger, Log, jQuery) {
 	"use strict";
 	var oSingleton;
 	var sModuleName = "sap.ui.test._LogCollector";
@@ -13,7 +14,7 @@ sap.ui.define([
 
 	/**
 	 * @class A central place to collect all the logs during an OPA test
-	 * listens to $.sap.log.* to collect the logs
+	 * listens to jQuery.sap.log.* to collect the logs
 	 * collects only OPA component logs
 	 *
 	 * @private
@@ -41,7 +42,7 @@ sap.ui.define([
 					}
 				}.bind(this)
 			};
-			$.sap.log.addLogListener(this._oListener);
+			Log.addLogListener(this._oListener);
 		},
 		getAndClearLog: function () {
 			var sJoined = this._aLogs.join("\n");
@@ -50,7 +51,7 @@ sap.ui.define([
 		},
 		destroy: function () {
 			this._aLogs.length = 0;
-			$.sap.log.removeLogListener(this._oListener);
+			Log.removeLogListener(this._oListener);
 		}
 	});
 

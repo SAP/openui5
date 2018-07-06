@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.format.ListFormat
-sap.ui.define(['sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
-	function(Locale, LocaleData) {
+sap.ui.define(['sap/ui/core/Locale', 'sap/ui/core/LocaleData', "sap/base/Log"],
+	function(Locale, LocaleData, Log) {
 	"use strict";
 
 	/**
@@ -77,7 +77,7 @@ sap.ui.define(['sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
 	 */
 	ListFormat.prototype.format = function(aList) {
 		if (!Array.isArray(aList)) {
-			jQuery.sap.log.error("ListFormat can only format with an array given.");
+			Log.error("ListFormat can only format with an array given.");
 			return "";
 		}
 
@@ -90,7 +90,7 @@ sap.ui.define(['sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
 		mListPatterns = this.oLocaleData.getListFormat(oOriginalFormat.type, oOriginalFormat.style);
 
 		if (jQuery.isEmptyObject(mListPatterns)) {
-			jQuery.sap.log.error("No list pattern exists for the provided format options (type, style).");
+			Log.error("No list pattern exists for the provided format options (type, style).");
 			return "";
 		}
 
@@ -142,7 +142,7 @@ sap.ui.define(['sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
 	 */
 	ListFormat.prototype.parse = function(sValue) {
 		if (typeof sValue !== 'string') {
-			jQuery.sap.log.error("ListFormat can only parse a String.");
+			Log.error("ListFormat can only parse a String.");
 			return [];
 		}
 
@@ -161,7 +161,7 @@ sap.ui.define(['sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
 		mListPatterns = this.oLocaleData.getListFormat(oOriginalFormat.type, oOriginalFormat.style);
 
 		if (jQuery.isEmptyObject(mListPatterns)) {
-			jQuery.sap.log.error("No list pattern exists for the provided format options (type, style).");
+			Log.error("No list pattern exists for the provided format options (type, style).");
 			return [];
 		}
 

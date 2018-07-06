@@ -9,13 +9,13 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/thirdparty/URI',
 	'../Element',
 	"sap/base/util/UriParameters",
+	"sap/base/Log",
 	'jquery.sap.sjax'
 ],
-	function(jQuery, URI, Element, UriParameters) {
+	function(URI, Element, UriParameters, Log, jQuery) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -126,7 +126,7 @@ sap.ui.define([
 			var oLink = document.getElementById(sId);
 
 			if (!oLink) {
-				jQuery.sap.log.warning("Could not find stylesheet element with ID", sId, "sap.ui.core.theming.Parameters");
+				Log.warning("Could not find stylesheet element with ID", sId, "sap.ui.core.theming.Parameters");
 				return;
 			}
 
@@ -146,7 +146,7 @@ sap.ui.define([
 						try {
 							sParams = decodeURIComponent(sParams);
 						} catch (ex) {
-							jQuery.sap.log.warning("Could not decode theme parameters URI from " + sStyleSheetUrl);
+							Log.warning("Could not decode theme parameters URI from " + sStyleSheetUrl);
 						}
 					}
 					try {
@@ -154,7 +154,7 @@ sap.ui.define([
 						mergeParameters(oParams, sThemeBaseUrl);
 						return;
 					} catch (ex) {
-						jQuery.sap.log.warning("Could not parse theme parameters from " + sStyleSheetUrl + ". Loading library-parameters.json as fallback solution.");
+						Log.warning("Could not parse theme parameters from " + sStyleSheetUrl + ". Loading library-parameters.json as fallback solution.");
 					}
 				}
 			}
@@ -171,10 +171,10 @@ sap.ui.define([
 			});
 
 			if (syncCallBehavior === 2) {
-				jQuery.sap.log.error("[nosync] Loading library-parameters.json ignored", sUrl, "sap.ui.core.theming.Parameters");
+				Log.error("[nosync] Loading library-parameters.json ignored", sUrl, "sap.ui.core.theming.Parameters");
 				return;
 			} else if (syncCallBehavior === 1) {
-				jQuery.sap.log.error("[nosync] Loading library-parameters.json with sync XHR", sUrl, "sap.ui.core.theming.Parameters");
+				Log.error("[nosync] Loading library-parameters.json with sync XHR", sUrl, "sap.ui.core.theming.Parameters");
 			}
 
 			// load and evaluate parameter file
@@ -193,7 +193,7 @@ sap.ui.define([
 				}
 			} else {
 				// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
-				jQuery.sap.log.error("Could not load theme parameters from: " + sUrl, oResponse.error); // could be an error as well, but let's avoid more CSN messages...
+				Log.error("Could not load theme parameters from: " + sUrl, oResponse.error); // could be an error as well, but let's avoid more CSN messages...
 			}
 		}
 
@@ -395,7 +395,7 @@ sap.ui.define([
 			var sParam;
 
 			if (!sap.ui.getCore().isInitialized()) {
-				jQuery.sap.log.warning("Called sap.ui.core.theming.Parameters.get() before core has been initialized. " +
+				Log.warning("Called sap.ui.core.theming.Parameters.get() before core has been initialized. " +
 					"This could lead to bad performance and sync XHR as inline parameters might not be available, yet. " +
 					"Consider using the API only when required, e.g. onBeforeRendering.");
 			}

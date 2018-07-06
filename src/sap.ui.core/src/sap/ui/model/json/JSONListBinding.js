@@ -4,13 +4,13 @@
 
 // Provides the JSON model implementation of a list binding
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/ClientListBinding',
 	"sap/base/util/array/diff",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/Log"
 ],
-	function(jQuery, ChangeReason, ClientListBinding, diff, deepEqual) {
+	function(ChangeReason, ClientListBinding, diff, deepEqual, Log) {
 	"use strict";
 
 
@@ -79,7 +79,7 @@ sap.ui.define([
 				this.aLastContextData = aContextData.slice(0);
 			} catch (oError) {
 				this.bUseExtendedChangeDetection = false;
-				jQuery.sap.log.warning("JSONListBinding: Extended change detection has been disabled as JSON data could not be serialized.");
+				Log.warning("JSONListBinding: Extended change detection has been disabled as JSON data could not be serialized.");
 			}
 		}
 

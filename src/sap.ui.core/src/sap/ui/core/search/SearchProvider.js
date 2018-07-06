@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.search.SearchProvider.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library', "sap/base/Log"],
+	function(Element, library, Log) {
 	"use strict";
 
 
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library'
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SearchProvider.prototype.suggest = function(sValue, fnCallback) {
-		jQuery.sap.log.warning("sap.ui.core.search.SearchProvider is the abstract base class for all SearchProviders. Do not create instances of this class, but use a concrete sub class instead.");
+		Log.warning("sap.ui.core.search.SearchProvider is the abstract base class for all SearchProviders. Do not create instances of this class, but use a concrete sub class instead.");
 	};
 
 

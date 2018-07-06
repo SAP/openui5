@@ -202,8 +202,12 @@
 			});
 
 			QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {
+
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
+
 				// Arrange
-				var oStub = this.stub(jQuery.sap.log, "warning", jQuery.noop),
+				var oStub = this.stub(Log, "warning", jQuery.noop),
 					oFirstRouter = fnCreateRouter({
 						"matchingRoute" : {
 							pattern: "matches"
@@ -2069,8 +2073,9 @@
 					homeRoute: "home",
 					async: true
 				};
-
-				this.spy = sinon.spy(jQuery.sap.log, "error");
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
+				this.spy = sinon.spy(Log, "error");
 
 				this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
 

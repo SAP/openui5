@@ -75,6 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/base/Man
 		}
 
 		// if not, try to load a module with the same name
+		//TODO: global jquery call found
 		jQuery.sap.require(sRendererName);
 		return ObjectPath.get(sRendererName);
 	};

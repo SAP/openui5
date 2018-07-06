@@ -28,19 +28,18 @@ sap.ui.define([
 		beforeEach: function() {
 			sap.ui.loader.config({paths:{"sap/ui/customthemefallback/testlib":"./testdata/uilib-custom-theme-fallback/"}});
 			sap.ui.loader.config({paths:{"sap/ui/failingcssimport/testlib":"./testdata/uilib-failing-css-import/"}});
-
-			this.oIncludeStyleSheetSpy = sinon.spy(jQuery.sap, "includeStyleSheet");
 		},
 		afterEach: function() {
 			sap.ui.loader.config({paths:{"sap/ui/customthemefallback/testlib":null}});
 			sap.ui.loader.config({paths:{"sap/ui/failingcssimport/testlib":null}});
-
-			this.oIncludeStyleSheetSpy.restore();
 		}
 	});
 
 	QUnit.test("Fallback for sap.ui.customthemefallback.testlib", function(assert) {
-		var oIncludeStyleSheetSpy = this.oIncludeStyleSheetSpy;
+
+		var aLinksInitial = document.querySelectorAll("link[id^=sap-ui-theme-]");
+		assert.equal(aLinksInitial.length, 1, "There should be one library theme included");
+		assert.notOk(document.getElementById("sap-ui-theme-sap.ui.customthemefallback.testlib"), "there should be no customthemefallback element");
 
 		// check precondition for test
 		assert.equal(
@@ -65,30 +64,6 @@ sap.ui.define([
 		.then(themeApplied)
 		.then(function() {
 
-			assert.equal(oIncludeStyleSheetSpy.callCount, 3, "'includeStylesheet' should be called 3 times");
-
-			// first check for expected calls to includeStyleSheet triggered by loadLibrary
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/uilib-custom-theme-fallback/themes/customcss/library.css",
-					"sap-ui-theme-sap.ui.customthemefallback.testlib"
-				),
-				"sap.ui.customthemefallback.testlib should be requested"
-			);
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/uilib-failing-css-import/themes/customcss/library.css",
-					"sap-ui-theme-sap.ui.failingcssimport.testlib"
-				),
-				"sap.ui.failingcssimport.testlib should be requested"
-			);
-			// check for calls to includeStyleSheet triggered by ThemeCheck (theme fallback)
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/uilib-custom-theme-fallback/themes/sap_hcb/library.css",
-					"sap-ui-theme-sap.ui.customthemefallback.testlib"
-				),
-				"Fallback to sap_hcb (as defined in sapThemeMetadata) for sap.ui.customthemefallback.testlib should be requested"
-			);
-
-			// Check for library themes and their correct order
 			var aLinks = document.querySelectorAll("link[id^=sap-ui-theme-]");
 			assert.equal(aLinks.length, 3, "There should be three library themes included");
 
@@ -123,51 +98,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Theme change after fallback (with second fallback)", function(assert) {
-		var oIncludeStyleSheetSpy = this.oIncludeStyleSheetSpy;
 
 		var p = themeChanged().then(function() {
-
-			assert.equal(oIncludeStyleSheetSpy.callCount, 6, "'includeStylesheet' should be called 6 times");
-
-			// first check for expected calls to includeStyleSheet triggered by loadLibrary
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/customcss/sap/ui/core/themes/legacy/library.css",
-					"sap-ui-theme-sap.ui.core"
-				),
-				"sap.ui.core lib should be requested"
-			);
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/uilib-custom-theme-fallback/themes/legacy/library.css",
-					"sap-ui-theme-sap.ui.customthemefallback.testlib"
-				),
-				"sap.ui.customthemefallback.testlib lib should be requested"
-			);
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/uilib-failing-css-import/themes/legacy/library.css",
-					"sap-ui-theme-sap.ui.failingcssimport.testlib"
-				),
-				"sap.ui.failingcssimport.testlib lib should be requested"
-			);
-
-			// check for calls to includeStyleSheet triggered by ThemeCheck (theme fallback)
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/customcss/sap/ui/core/themes/legacy/custom.css",
-					"sap-ui-core-customcss"
-				),
-				"Custom css should be requested"
-			);
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/uilib-custom-theme-fallback/themes/sap_hcb/library.css",
-					"sap-ui-theme-sap.ui.customthemefallback.testlib"
-				),
-				"Fallback to sap_hcb (as defined in sapThemeMetadata) for sap.ui.customthemefallback.testlib should be requested"
-			);
-			assert.ok(oIncludeStyleSheetSpy.calledWithExactly(
-					"./testdata/uilib-failing-css-import/themes/sap_hcb/library.css",
-					"sap-ui-theme-sap.ui.failingcssimport.testlib"
-				),
-				"Fallback to sap_hcb (as defined in sapThemeMetadata) for sap.ui.failingcssimport.testlib should be requested"
-			);
 
 			// Check for library themes and their correct order
 			var aLinks = document.querySelectorAll("link[id^=sap-ui-theme-]");

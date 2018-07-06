@@ -1,4 +1,5 @@
-sap.ui.define([], function () {
+/* global sinon*/
+sap.ui.define(['sap/base/Log'], function (Log) {
 	"use strict";
 
 	return {
@@ -13,9 +14,9 @@ sap.ui.define([], function () {
 		 */
 		loadAndIntercept : function (sNamespaceOfModuleUnderTest) {
 			var aLoggers = [];
-			var fnOriginalGetLogger = jQuery.sap.log.getLogger;
+			var fnOriginalGetLogger = Log.getLogger;
 			// loadAndIntercept the logger created in the closure
-			var fnGetLoggerStub = sinon.stub(jQuery.sap.log, "getLogger", function () {
+			var fnGetLoggerStub = sinon.stub(Log, "getLogger", function () {
 				var oLogger = fnOriginalGetLogger.apply(this, arguments);
 				aLoggers.push(oLogger);
 				return oLogger;
@@ -24,5 +25,5 @@ sap.ui.define([], function () {
 			fnGetLoggerStub.restore();
 			return aLoggers;
 		}
-	}
+	};
 }, true);

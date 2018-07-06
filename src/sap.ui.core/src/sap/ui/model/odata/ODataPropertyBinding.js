@@ -4,14 +4,13 @@
 
 // Provides class sap.ui.model.odata.ODataPropertyBinding
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/Context',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/PropertyBinding',
 	"sap/base/util/deepEqual",
 	'sap/ui/model/ChangeReason'
 ],
-	function(jQuery, Context, ChangeReason, PropertyBinding, deepEqual) {
+	function(Context, ChangeReason, PropertyBinding, deepEqual) {
 	"use strict";
 
 

@@ -326,13 +326,19 @@ function(
 	});
 
 	QUnit.test("checkControlId shall throw an error if the id was generated", function (assert) {
-		var spyLog = sandbox.spy(jQuery.sap.log, "warning");
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
+		var spyLog = sandbox.spy(Log, "warning");
 		BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent);
 		assert.ok(spyLog.calledOnce);
 	});
 
 	QUnit.test("checkControlId does not throw an error if the id was generated but the logging was suppressed", function (assert) {
-		var spyLog = sandbox.spy(jQuery.sap.log, "warning");
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
+		var spyLog = sandbox.spy(Log, "warning");
 		BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent, true);
 		assert.equal(spyLog.callCount, 0);
 	});

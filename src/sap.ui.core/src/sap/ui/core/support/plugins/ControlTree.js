@@ -4,7 +4,6 @@
 
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/support/Plugin',
 	'sap/ui/core/util/serializer/ViewSerializer',
 	'sap/ui/thirdparty/jszip',
@@ -20,7 +19,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes"
 ], function(
-	jQuery,
 	Plugin,
 	ViewSerializer,
 	JSZip,

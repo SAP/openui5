@@ -4,18 +4,29 @@
 
 // Provides module sap.ui.core.mvc.EventHandlerResolver.
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/BindingParser",
 	"sap/ui/core/Element",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/CompositeBinding",
-	"sap/ui/model/json/JSONModel", // TODO: think about lazy-loading in async case
+	// TODO: think about lazy-loading in async case
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/base/ManagedObjectModel",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/base/Log"
 ],
-function(jQuery, ManagedObject, BindingParser, Element, BindingMode, CompositeBinding, JSONModel, MOM, ObjectPath) {
-	"use strict";
+	function(
+		ManagedObject,
+		BindingParser,
+		Element,
+		BindingMode,
+		CompositeBinding,
+		JSONModel,
+		MOM,
+		ObjectPath,
+		Log
+	) {
+		"use strict";
 
 		var EventHandlerResolver = {
 
@@ -96,7 +107,7 @@ function(jQuery, ManagedObject, BindingParser, Element, BindingMode, CompositeBi
 						if (iEndBracket > iStartBracket) {
 
 							if (sName.substring(iStartBracket).indexOf("{=") > -1) {
-								jQuery.sap.log.warning("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed and will cause an error later on " +
+								Log.warning("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed and will cause an error later on " +
 									"because the entire event handler is already considered an expression: " + sName);
 							}
 
@@ -155,7 +166,7 @@ function(jQuery, ManagedObject, BindingParser, Element, BindingMode, CompositeBi
 								};
 							})(sFunctionName, oController);
 						} else {
-							jQuery.sap.log.error("Syntax error in event handler '" + sName + "': arguments must be enclosed in a pair of brackets");
+							Log.error("Syntax error in event handler '" + sName + "': arguments must be enclosed in a pair of brackets");
 						}
 					}
 				}
@@ -168,7 +179,7 @@ function(jQuery, ManagedObject, BindingParser, Element, BindingMode, CompositeBi
 					return [ fnHandler, oController ];
 				}
 
-				jQuery.sap.log.warning("Event handler name '" + sName + "' could not be resolved to an event handler function");
+				Log.warning("Event handler name '" + sName + "' could not be resolved to an event handler function");
 				// return undefined
 			}
 		};

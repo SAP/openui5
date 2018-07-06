@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.Message.
-sap.ui.define(['jquery.sap.global', './Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['./Element', './library', "sap/base/Log"],
+	function(Element, library, Log) {
 	"use strict";
 
 	// shortcut
@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 			return -1;
 
 		default:
-			jQuery.sap.log.error("Comparison error", this);
+			Log.error("Comparison error", this);
 			return 0;
 		}
 	};

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery, IconPool, library) {
+sap.ui.define(['./IconPool', './library'], function(IconPool, library) {
 	"use strict";
 
 	// shortcut for enum(s)

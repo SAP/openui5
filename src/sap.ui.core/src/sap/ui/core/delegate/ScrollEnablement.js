@@ -10,7 +10,6 @@
 
 // Provides class sap.ui.core.delegate.ScrollEnablement
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/base/Object',
 	'sap/ui/core/ResizeHandler',
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 	function(
-		jQuery,
 		Device,
 		BaseObject,
 		ResizeHandler,

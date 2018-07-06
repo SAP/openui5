@@ -2,18 +2,30 @@
  *{copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/core/Control",
-	"sap/ui/core/format/NumberFormat",
-	"sap/ui/model/FormatException",
-	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException",
-	"sap/ui/model/type/Float",
-	"sap/ui/model/odata/type/Decimal",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Control, NumberFormat, FormatException, ParseException, ValidateException,
-		Float, Decimal, ODataType, TestUtils) {
+    "jquery.sap.global",
+    "sap/ui/core/Control",
+    "sap/ui/core/format/NumberFormat",
+    "sap/ui/model/FormatException",
+    "sap/ui/model/ParseException",
+    "sap/ui/model/ValidateException",
+    "sap/ui/model/type/Float",
+    "sap/ui/model/odata/type/Decimal",
+    "sap/ui/model/odata/type/ODataType",
+    "sap/ui/test/TestUtils",
+    "sap/base/Log"
+], function(
+    jQuery,
+	Control,
+	NumberFormat,
+	FormatException,
+	ParseException,
+	ValidateException,
+	Float,
+	Decimal,
+	ODataType,
+	TestUtils,
+	Log
+) {
 	/*global QUnit, sap, sinon */
 	"use strict";
 
@@ -22,7 +34,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Decimal", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");

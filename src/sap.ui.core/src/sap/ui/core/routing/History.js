@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
-	function(jQuery, library, HashChanger) {
+sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log"],
+	function(library, HashChanger, Log) {
 	"use strict";
 
 
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 		this._bIsInitial = true;
 
 		if (!oHashChanger) {
-			jQuery.sap.log.error("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
+			Log.error("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
 		}
 
 		this._setHashChanger(oHashChanger);

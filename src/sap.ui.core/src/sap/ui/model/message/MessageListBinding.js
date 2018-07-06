@@ -4,14 +4,13 @@
 
 // Provides the JSON model implementation of a list binding
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/ClientListBinding',
 	"sap/base/strings/hash",
 	"sap/base/util/array/diff",
 	"sap/base/util/deepEqual"
 ],
-	function(jQuery, ChangeReason, ClientListBinding, hash, diff, deepEqual) {
+	function(ChangeReason, ClientListBinding, hash, diff, deepEqual) {
 	"use strict";
 
 

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher', "sap/base/strings/capitalize"], function($, Matcher, capitalize) {
+sap.ui.define(['./Matcher', "sap/base/strings/capitalize", "sap/ui/thirdparty/jquery"], function(Matcher, capitalize, jQueryDOM) {
 	"use strict";
 
 	/**
@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './Matcher', "sap/base/strings/capitalize"],
 			}
 
 			var vAggregation = fnAggregation.call(oControl);
-			var aAggregation = $.isArray(vAggregation) ? vAggregation : [vAggregation];
+			var aAggregation = jQueryDOM.isArray(vAggregation) ? vAggregation : [vAggregation];
 
 			var bMatches = aAggregation.some(function (vAggregationItem) {
 				var fnPropertyGetter = vAggregationItem["get" + capitalize(sPropertyName, 0)];

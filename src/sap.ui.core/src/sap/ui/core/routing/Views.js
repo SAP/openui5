@@ -2,14 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/routing/async/Views',
 	'sap/ui/core/routing/sync/Views',
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/base/assert",
+	"sap/base/Log"
 ],
-	function(jQuery, EventProvider, UIComponent, asyncViews, syncViews, UriParameters) {
+	function(EventProvider, UIComponent, asyncViews, syncViews, UriParameters, assert, Log) {
 		"use strict";
 
 		/**
@@ -39,7 +40,7 @@ sap.ui.define([
 
 				this._oComponent = oOptions.component;
 				if (this._oComponent) {
-					jQuery.sap.assert(this._oComponent instanceof UIComponent, this + ' - the component passed to the constructor needs to be an instance of UIComponent');
+					assert(this._oComponent instanceof UIComponent, this + ' - the component passed to the constructor needs to be an instance of UIComponent');
 				}
 
 				EventProvider.apply(this, arguments);
@@ -47,7 +48,7 @@ sap.ui.define([
 				// temporarily: for checking the url param
 				function checkUrl() {
 					if (new UriParameters(window.location.href).get("sap-ui-xx-asyncRouting") === "true") {
-						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Views");
+						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Views");
 						return true;
 					}
 					return false;
@@ -210,7 +211,7 @@ sap.ui.define([
 			_checkViewName : function (sViewName) {
 
 				if (!sViewName) {
-					jQuery.sap.log.error("A name for the view has to be defined", this);
+					Log.error("A name for the view has to be defined", this);
 				}
 
 			}

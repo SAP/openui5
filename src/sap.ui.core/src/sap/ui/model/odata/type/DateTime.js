@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/DateTimeBase'],
-	function(jQuery, DateTimeBase) {
+sap.ui.define(['sap/ui/model/odata/type/DateTimeBase', "sap/base/Log"],
+	function(DateTimeBase, Log) {
 	"use strict";
 
 	/**
@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/DateTimeBase'],
 			case undefined:
 				break;
 			default:
-				jQuery.sap.log.warning("Illegal displayFormat: " + oConstraints.displayFormat,
+				Log.warning("Illegal displayFormat: " + oConstraints.displayFormat,
 					null, oType.getName());
 			}
 			oAdjustedConstraints.nullable = oConstraints.nullable;

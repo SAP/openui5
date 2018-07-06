@@ -4,24 +4,26 @@
 
 // Provides an abstract property binding.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/DataType',
 	'./BindingMode',
 	'./ChangeReason',
 	'./PropertyBinding',
 	'./CompositeType',
 	'./CompositeDataState',
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/assert",
+	"sap/base/Log"
 ],
 	function(
-		jQuery,
 		DataType,
 		BindingMode,
 		ChangeReason,
 		PropertyBinding,
 		CompositeType,
 		CompositeDataState,
-		deepEqual
+		deepEqual,
+		assert,
+		Log
 	) {
 	"use strict";
 
@@ -58,17 +60,17 @@ sap.ui.define([
 	});
 
 	CompositeBinding.prototype.getPath = function() {
-		jQuery.sap.assert(null, "Composite Binding has no path!");
+		assert(null, "Composite Binding has no path!");
 		return null;
 	};
 
 	CompositeBinding.prototype.getModel = function() {
-		jQuery.sap.assert(null, "Composite Binding has no model!");
+		assert(null, "Composite Binding has no model!");
 		return null;
 	};
 
 	CompositeBinding.prototype.getContext = function() {
-		jQuery.sap.assert(null, "Composite Binding has no context!");
+		assert(null, "Composite Binding has no context!");
 		return null;
 	};
 
@@ -192,7 +194,7 @@ sap.ui.define([
 
 		// No twoway binding when using formatters
 		if (this.fnFormatter) {
-			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
+			Log.warning("Tried to use twoway binding, but a formatter function is used");
 			return;
 		}
 

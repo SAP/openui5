@@ -7,6 +7,8 @@ sap.ui.define([
 	'jquery.sap.global',
 	'./DataType',
 	'./Metadata',
+	"sap/base/Log",
+	"sap/base/assert",
 	'sap/base/util/ObjectPath',
 	"sap/base/strings/escapeRegExp",
 	"sap/base/util/merge"
@@ -15,6 +17,8 @@ function(
 	jQuery,
 	DataType,
 	Metadata,
+	Log,
+	assert,
 	ObjectPath,
 	escapeRegExp,
 	merge
@@ -100,7 +104,7 @@ function(
 
 	function deprecation(fn, name) {
 		return function() {
-			jQuery.sap.log.warning("Usage of deprecated feature: " + name);
+			Log.warning("Usage of deprecated feature: " + name);
 			return fn.apply(this, arguments);
 		};
 	}
@@ -630,7 +634,7 @@ function(
 			add(that._sRemoveAllMutator, function() { return this.removeAllAssociation(n); });
 			if ( n !== that.singularName ) {
 				add('removeAll' + capitalize(that.singularName), function() {
-					jQuery.sap.log.warning("Usage of deprecated method " +
+					Log.warning("Usage of deprecated method " +
 						that._oParent.getName() + ".prototype." + 'removeAll' + capitalize(that.singularName) + "," +
 						" use method " + that._sRemoveAllMutator  + " (plural) instead.");
 					return this[that._sRemoveAllMutator]();
@@ -1456,7 +1460,7 @@ function(
 	 * @private
 	 */
 	ManagedObjectMetadata.prototype._enrichChildInfos = function() {
-		jQuery.sap.log.error("obsolete call to ManagedObjectMetadata._enrichChildInfos. This private method will be deleted soon");
+		Log.error("obsolete call to ManagedObjectMetadata._enrichChildInfos. This private method will be deleted soon");
 	};
 
 	/**
@@ -1519,7 +1523,7 @@ function(
 	 */
 	ManagedObjectMetadata.prototype.removeUnknownSettings = function(mSettings) {
 
-		jQuery.sap.assert(mSettings == null || typeof mSettings === 'object', "mSettings must be null or an object");
+		assert(mSettings == null || typeof mSettings === 'object', "mSettings must be null or an object");
 
 		if ( mSettings == null ) {
 			return mSettings;
@@ -1585,6 +1589,7 @@ function(
 			var oPromise;
 			if (sPreload === "async" || sPreload === "sync") {
 				//ignore errors _loadJSResourceAsync is true here, do not break if there is no preload.
+				//TODO: global jquery call found
 				oPromise = jQuery.sap._loadJSResourceAsync(oLibrary.designtime.replace(/\.designtime$/, "-preload.designtime.js"), true);
 			} else {
 				oPromise = Promise.resolve();
@@ -1617,6 +1622,7 @@ function(
 				//oMetadata._oDesignTime points to resource path to another file, for example: "sap/ui/core/designtime/<control>.designtime"
 				sModule = oMetadata._oDesignTime;
 			} else {
+				//TODO: global jquery call found
 				sModule = jQuery.sap.getResourceName(oMetadata.getName(), ".designtime");
 			}
 			preloadDesigntimeLibrary(oMetadata).then(function(oLib) {
@@ -1746,7 +1752,7 @@ function(
 		sUIDPrefix;
 
 	function uid(sId) {
-		jQuery.sap.assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
+		assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
 
 		//read prefix from configuration only once
 		sId = (sUIDPrefix || (sUIDPrefix = sap.ui.getCore().getConfiguration().getUIDPrefix())) + sId;

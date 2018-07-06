@@ -4,8 +4,9 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
-	"sap/ui/model/odata/_ODataMetaModelUtils"
-], function (jQuery, _AnnotationHelperBasics, Utils) {
+	"sap/ui/model/odata/_ODataMetaModelUtils",
+	"sap/base/Log"
+], function (jQuery, _AnnotationHelperBasics, Utils, Log) {
 	/*global QUnit, sinon */
 	"use strict";
 
@@ -440,16 +441,16 @@ sap.ui.require([
 		},
 
 		beforeEach : function () {
-			this.iOldLogLevel = jQuery.sap.log.getLevel(sLoggingModule);
+			this.iOldLogLevel = Log.getLevel(sLoggingModule);
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sLoggingModule);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			Log.setLevel(Log.Level.ERROR, sLoggingModule);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			jQuery.sap.log.setLevel(this.iOldLogLevel, sLoggingModule);
+			Log.setLevel(this.iOldLogLevel, sLoggingModule);
 		}
 	});
 	//*********************************************************************************************
@@ -567,7 +568,7 @@ sap.ui.require([
 				oProperty = { "name" : "bar", "sap:semantics" : sSemanticsValue };
 
 			this.oLogMock.expects("isLoggable").exactly(bLogExpected ? 1 : 0)
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+				.withExactArgs(Log.Level.WARNING, sLoggingModule)
 				.returns(true);
 			this.oLogMock.expects("warning").exactly(bLogExpected ? 1 : 0)
 				.withExactArgs("Unsupported type for sap:semantics: " + oFixture.oExpectedMessage,
@@ -720,7 +721,7 @@ sap.ui.require([
 				});
 
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
@@ -755,7 +756,7 @@ sap.ui.require([
 					Utils.liftSAPData(oProperty, "Property");
 				});
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!
@@ -860,7 +861,7 @@ sap.ui.require([
 					};
 
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sLoggingModule)
+					.withExactArgs(Log.Level.WARNING, sLoggingModule)
 					.returns(bIsLoggable);
 				this.oLogMock.expects("warning")
 					// do not construct arguments in vain!

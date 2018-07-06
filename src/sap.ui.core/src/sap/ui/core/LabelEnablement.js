@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.core.LabelEnablement
-sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
+	function(ManagedObject, assert) {
 	"use strict";
 
 	// Mapping between controls and labels
@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 			if (sId instanceof ManagedObject) {
 				sId = sId.getId();
 			} else if (sId != null && typeof sId !== "string") {
-				jQuery.sap.assert(false, "setAlternativeLabelFor(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
+				assert(false, "setAlternativeLabelFor(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
 				return this;
 			}
 

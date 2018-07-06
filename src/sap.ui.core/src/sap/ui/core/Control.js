@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Control for all controls
-sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', './RenderManager', './ResizeHandler', './BusyIndicatorUtils', './BlockLayerUtils'],
-	function(jQuery, CustomStyleClassSupport, Element, UIArea, RenderManager, ResizeHandler, BusyIndicatorUtils, BlockLayerUtils) {
+sap.ui.define(['./CustomStyleClassSupport', './Element', './UIArea', './RenderManager', './ResizeHandler', './BusyIndicatorUtils', './BlockLayerUtils', "sap/base/Log"],
+	function(CustomStyleClassSupport, Element, UIArea, RenderManager, ResizeHandler, BusyIndicatorUtils, BlockLayerUtils, Log) {
 	"use strict";
 
 	/**
@@ -531,7 +531,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 					bContainerSupportsPlaceAt = false;
 				}
 				if (!bContainerSupportsPlaceAt) {
-					jQuery.sap.log.warning("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
+					Log.warning("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
 					return this;
 				}
 			}
@@ -552,7 +552,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 						oContainer.addContent(this);
 						break;
 					default:
-						jQuery.sap.log.warning("Position " + vPosition + " is not supported for function placeAt.");
+						Log.warning("Position " + vPosition + " is not supported for function placeAt.");
 				}
 			}
 		} else {
@@ -705,7 +705,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		// if no busy section/control jquery instance could be retrieved -> the control is not part of the dom anymore
 		// this might happen in certain scenarios when e.g. a dialog is closed faster than the busyIndicatorDelay
 		if (!$this || $this.length === 0) {
-			jQuery.sap.log.warning("BusyIndicator could not be rendered. The outer control instance is not valid anymore.");
+			Log.warning("BusyIndicator could not be rendered. The outer control instance is not valid anymore.");
 			return;
 		}
 
@@ -833,7 +833,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				if (!this._oBusyBlockState && !this._oBlockState) {
 					fnAddStandaloneBlockLayer.call(this);
 				} else {
-					jQuery.sap.log.info("The control is already busy. Hence, no new block-layer was created for the shared section.");
+					Log.info("The control is already busy. Hence, no new block-layer was created for the shared section.");
 				}
 			} else {
 				fnAddStandaloneBlockLayer.call(this);
@@ -847,7 +847,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 				} else if (this.getBusy()) {
 					// Control or section is still busy, hence no removal required
-					jQuery.sap.log.info("The control is already busy. Hence, no new block-layer was created for the shared section.");
+					Log.info("The control is already busy. Hence, no new block-layer was created for the shared section.");
 
 				}
 			} else if (this._oBlockState) {

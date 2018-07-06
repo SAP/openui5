@@ -1328,14 +1328,15 @@
 
 
 	QUnit.module("interval options validation", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 			this.oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				interval: true
 			});
 
 			this.oFormat = sap.ui.core.format.DateFormat.getDateInstance();
-
-			this.oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			this.oErrorSpy = sinon.spy(Log, "error");
 		},
 		afterEach: function() {
 			this.oErrorSpy.restore();

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.LocalStorage (support plugin for functionality related to localStorage that should be executed on the app side)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
-	function(jQuery, Plugin) {
+sap.ui.define(['sap/ui/core/support/Plugin', "sap/base/Log"],
+	function(Plugin, Log) {
 	"use strict";
 
 
@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 					sValue = "";
 				}
 			} catch (e) {
-				jQuery.sap.log.error("Could not get item '" + sItemId + "' from localStorage: " + e.message);
+				Log.error("Could not get item '" + sItemId + "' from localStorage: " + e.message);
 				sValue = "";
 			}
 
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			try { // Necessary for FF when Cookies are disabled
 				window.localStorage.setItem(sItemId, sValue);
 			} catch (e) {
-				jQuery.sap.log.error("Could not write to localStorage: '" + sItemId + "' : '" + sValue + "': " + e.message);
+				Log.error("Could not write to localStorage: '" + sItemId + "' : '" + sValue + "': " + e.message);
 			}
 		};
 

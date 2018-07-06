@@ -2,13 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/test/_OpaLogger",
-		"sap/ui/base/Object",
-		"./PipelineFactory"
-	],
-	function($, _OpaLogger, UI5Object, PipelineFactory) {
+sap.ui.define(["sap/ui/test/_OpaLogger", "sap/ui/base/Object", "./PipelineFactory",	"sap/ui/thirdparty/jquery"],
+	function(_OpaLogger, UI5Object, PipelineFactory, jQueryDOM) {
 		"use strict";
 		var oPipelineFactory = new PipelineFactory({
 				name: "Matcher",
@@ -88,7 +83,7 @@ sap.ui.define([
 					return vControl;
 				}
 
-				if (!$.isArray(vControl)) {
+				if (!jQueryDOM.isArray(vControl)) {
 					iExpectedAmount = 1;
 					aControls = [vControl];
 				} else {

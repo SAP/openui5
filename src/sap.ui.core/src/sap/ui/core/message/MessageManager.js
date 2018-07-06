@@ -11,7 +11,8 @@ sap.ui.define([
 	'./Message',
 	'./ControlMessageProcessor',
 	'sap/ui/core/message/MessageProcessor',
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/Log"
 ],
 	function(
 		jQuery,
@@ -21,7 +22,8 @@ sap.ui.define([
 		Message,
 		ControlMessageProcessor,
 		MessageProcessor,
-		deepEqual
+		deepEqual,
+		Log
 	) {
 
 	"use strict";
@@ -382,7 +384,7 @@ sap.ui.define([
 	 */
 	MessageManager.prototype.registerObject = function(oObject, bHandleValidation) {
 		if (!oObject instanceof ManagedObject) {
-			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
 		}
 		oObject.attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
@@ -399,7 +401,7 @@ sap.ui.define([
 	 */
 	MessageManager.prototype.unregisterObject = function(oObject) {
 		if (!oObject instanceof ManagedObject) {
-			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
 		}
 		oObject.detachValidationSuccess(this._handleSuccess);
@@ -414,7 +416,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.destroy = function() {
-		jQuery.sap.log.warning("Deprecated: Do not call destroy on a MessageManager");
+		Log.warning("Deprecated: Do not call destroy on a MessageManager");
 	};
 
 	/**

@@ -11,7 +11,10 @@ sap.ui.define([
 	'./BusyIndicatorUtils',
 	'sap/ui/core/library',
 	"sap/ui/performance/trace/FESR",
-	"sap/ui/performance/trace/Interaction"
+	"sap/ui/performance/trace/Interaction",
+	"sap/base/Log",
+	"sap/base/assert",
+	"sap/base/util/now"
 ],
 	function(
 		jQuery,
@@ -21,7 +24,10 @@ sap.ui.define([
 		BusyIndicatorUtils,
 		library,
 		FESR,
-		Interaction
+		Interaction,
+		Log,
+		assert,
+		now
 	) {
 	"use strict";
 
@@ -153,7 +159,9 @@ sap.ui.define([
 
 		var oAnimation = oDomRef.querySelector(".sapUiLocalBusyIndicator");
 		oAnimation.className += " sapUiLocalBusyIndicatorFade";
-		jQuery.sap.focus(oDomRef);
+		if (oDomRef) {
+			oDomRef.focus();
+		}
 
 		jQuery("body").attr("aria-busy", true);
 
@@ -180,8 +188,8 @@ sap.ui.define([
 	 * @function
 	 */
 	BusyIndicator.show = function(iDelay) {
-		jQuery.sap.log.debug("sap.ui.core.BusyIndicator.show (delay: " + iDelay + ") at " + new Date().getTime());
-		jQuery.sap.assert(iDelay === undefined || (typeof iDelay == "number" && (iDelay % 1 == 0)), "iDelay must be empty or an integer");
+		Log.debug("sap.ui.core.BusyIndicator.show (delay: " + iDelay + ") at " + new Date().getTime());
+		assert(iDelay === undefined || (typeof iDelay == "number" && (iDelay % 1 == 0)), "iDelay must be empty or an integer");
 
 		// If body/Core are not available yet, give them some more time and open
 		// later if still required
@@ -206,7 +214,7 @@ sap.ui.define([
 			iDelay = this.iDEFAULT_DELAY_MS;
 		}
 		if (FESR.getActive()) {
-			this._fDelayedStartTime = jQuery.sap.now() + iDelay;
+			this._fDelayedStartTime = now() + iDelay;
 		}
 
 		// Initialize/create the BusyIndicator if this has not been done yet.
@@ -237,7 +245,7 @@ sap.ui.define([
 	 * @function
 	 */
 	BusyIndicator._showNowIfRequested = function() {
-		jQuery.sap.log.debug("sap.ui.core.BusyIndicator._showNowIfRequested (bOpenRequested: " + this.bOpenRequested + ") at " + new Date().getTime());
+		Log.debug("sap.ui.core.BusyIndicator._showNowIfRequested (bOpenRequested: " + this.bOpenRequested + ") at " + new Date().getTime());
 
 		// Do not open if the request has been canceled in the meantime
 		if (!this.bOpenRequested) {
@@ -267,11 +275,11 @@ sap.ui.define([
 	 * @function
 	 */
 	BusyIndicator.hide = function() {
-		jQuery.sap.log.debug("sap.ui.core.BusyIndicator.hide at " + new Date().getTime());
+		Log.debug("sap.ui.core.BusyIndicator.hide at " + new Date().getTime());
 		if (this._fDelayedStartTime) {  // Implies fesr header active
 			// The busy indicator shown duration d is calculated with:
 			// d = "time busy indicator was hidden" - "time busy indicator was requested" - "busy indicator delay"
-			var fBusyIndicatorShownDuration = jQuery.sap.now() - this._fDelayedStartTime;
+			var fBusyIndicatorShownDuration = now() - this._fDelayedStartTime;
 			Interaction.addBusyDuration((fBusyIndicatorShownDuration > 0) ? fBusyIndicatorShownDuration : 0);
 			delete this._fDelayedStartTime;
 		}

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 			// skip this event in the recursion
 			if (bInital) {
-				jQuery.sap.log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
+				Log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
 				this.fireEvent("patternMatched", oEventData);
 				oRouter.fireRoutePatternMatched(oEventData);
 			}

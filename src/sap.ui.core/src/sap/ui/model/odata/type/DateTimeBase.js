@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function (jQuery, DateFormat, FormatException, ODataType, ParseException, ValidateException) {
+], function (Log, DateFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var iFullYear = new Date().getFullYear(),
@@ -81,7 +81,7 @@ sap.ui.define([
 			if (vNullable === false || vNullable === "false") {
 				oType.oConstraints = {nullable : false};
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 
 			if (oConstraints.isDateOnly === true) {
@@ -95,7 +95,7 @@ sap.ui.define([
 					oType.oConstraints = oType.oConstraints || {};
 					oType.oConstraints.precision = iPrecision;
 				} else if (iPrecision !== 0) {
-					jQuery.sap.log.warning("Illegal precision: " + iPrecision, null,
+					Log.warning("Illegal precision: " + iPrecision, null,
 						oType.getName());
 				} // else: 0 is the default!
 			}

@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
-	function(jQuery, BaseObject, EventBus) {
+sap.ui.define(['../base/Object', './EventBus', "sap/base/assert"],
+	function(BaseObject, EventBus, assert) {
 	"use strict";
 
 
@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 		 *            triggering should occur.
 		 */
 		IntervalTrigger.prototype.setInterval = function(iInterval) {
-			jQuery.sap.assert((typeof iInterval === "number"), "Interval must be an integer value");
+			assert((typeof iInterval === "number"), "Interval must be an integer value");
 
 			// only change and (re)trigger if the interval is different
 			if (this._iInterval !== iInterval) {

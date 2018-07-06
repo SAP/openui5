@@ -3,7 +3,7 @@
  */
 
 // A renderer for the DOM element control
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(["jquery.sap.encoder"],
 	function(jQuery) {
 	"use strict";
 

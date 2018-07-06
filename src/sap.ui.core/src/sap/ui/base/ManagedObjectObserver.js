@@ -4,9 +4,11 @@
 
 // Provides class sap.ui.base.ManagedObjectObserver.
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject', 'sap/ui/base/EventProvider', "sap/base/util/array/uniqueSort"
+	'sap/ui/base/Object',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/base/EventProvider',
+	"sap/base/util/array/uniqueSort"
 ], function(
-	jQuery,
 	BaseObject,
 	ManagedObject,
 	EventProvider,

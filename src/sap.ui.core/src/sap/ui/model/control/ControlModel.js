@@ -11,8 +11,8 @@
  */
 
 // Provides the JSON object based model implementation
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBinding'],
-	function(jQuery, Model, ControlPropertyBinding) {
+sap.ui.define(['sap/ui/model/Model', './ControlPropertyBinding'],
+	function(Model, ControlPropertyBinding) {
 	"use strict";
 
 	/**

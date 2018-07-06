@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
-	function(Filter, jQuery /* jQuerySapUnicode */ ) {
+sap.ui.define(['./Filter', "sap/base/Log", 'jquery.sap.unicode'],
+	function(Filter, Log ) {
 	"use strict";
 
 	/**
@@ -233,7 +233,7 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 				};
 				break;
 			default:
-				jQuery.sap.log.error("The filter operator \"" + oFilter.sOperator + "\" is unknown, filter will be ignored.");
+				Log.error("The filter operator \"" + oFilter.sOperator + "\" is unknown, filter will be ignored.");
 				oFilter.fnTest = function(value) { return true; };
 		}
 		return oFilter.fnTest;

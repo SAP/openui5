@@ -3,8 +3,24 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType', './ListBinding', './FilterProcessor', './Sorter', './SorterProcessor'],
-	function(jQuery, ChangeReason, Filter, FilterType, ListBinding, FilterProcessor, Sorter, SorterProcessor) {
+sap.ui.define([
+	'./ChangeReason',
+	'./Filter',
+	'./FilterType',
+	'./ListBinding',
+	'./FilterProcessor',
+	'./Sorter',
+	'./SorterProcessor'
+],
+	function(
+		ChangeReason,
+		Filter,
+		FilterType,
+		ListBinding,
+		FilterProcessor,
+		Sorter,
+		SorterProcessor
+	) {
 	"use strict";
 
 	/**

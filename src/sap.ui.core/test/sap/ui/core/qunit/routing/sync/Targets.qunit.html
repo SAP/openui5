@@ -79,8 +79,11 @@
 		});
 
 		QUnit.test("Should be able to get multiple targets", function (assert) {
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+
 			// Arrange
-			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(Log, "error", jQuery.noop);
 
 			// Act
 			var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
@@ -106,8 +109,11 @@
 		});
 
 		QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
 			// Arrange
-			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(Log, "error", jQuery.noop);
 
 			// Act
 			this.oTargets.addTarget("myParent", {
@@ -171,6 +177,10 @@
 		});
 
 		QUnit.test("Should complain about an non existing parent", function (assert) {
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+
 			// Arrange
 			var oIncorrectConfig = {
 						targets: {
@@ -179,7 +189,7 @@
 						}
 					}
 				},
-				oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+				oErrorStub = this.stub(Log, "error", jQuery.noop);
 
 			// System under test + Act
 			this.oTargets = new sap.ui.core.routing.Targets(oIncorrectConfig);
@@ -234,8 +244,12 @@
 		});
 
 		QUnit.test("Should log an error if user tries to display a non existing Target", function (assert) {
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+
 			// Assert
-			var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var oErrorStub = this.stub(Log, "error", jQuery.noop);
 
 			// Act
 			this.oTargets.display("foo");
@@ -245,8 +259,11 @@
 		});
 
 		QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones", function (assert) {
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
 			// Assert
-			var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var oErrorStub = this.stub(Log, "error", jQuery.noop);
 			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
 
 			// Act
@@ -609,8 +626,9 @@
 			var oStub = this.stub(this.oViews, "_getView", function () {
 				return that.oView;
 			});
-
-		var oLogSpy = this.spy(jQuery.sap.log, "error");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			var oLogSpy = this.spy(Log, "error");
 
 			this.oTargets.attachTitleChanged(fnEventSpy);
 

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.base.DataType
-sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
-	function(jQuery, ObjectPath) {
+sap.ui.define(['sap/base/util/ObjectPath', "sap/base/assert", "sap/base/Log"],
+	function(ObjectPath, assert, Log) {
 	"use strict";
 
 
@@ -173,7 +173,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 	 * @public
 	 */
 	DataType.prototype.setNormalizer = function(fnNormalizer) {
-		jQuery.sap.assert(typeof fnNormalizer === "function", "DataType.setNormalizer: fnNormalizer must be a function");
+		assert(typeof fnNormalizer === "function", "DataType.setNormalizer: fnNormalizer must be a function");
 		this._fnNormalizer = typeof fnNormalizer === "function" ? fnNormalizer : undefined;
 	};
 
@@ -243,7 +243,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 	});
 
 	function createArrayType(componentType) {
-		jQuery.sap.assert(componentType instanceof DataType, "DataType.<createArrayType>: componentType must be a DataType");
+		assert(componentType instanceof DataType, "DataType.<createArrayType>: componentType must be a DataType");
 
 		// create a new type object with the base type as prototype
 		var oType = Object.create(DataType.prototype);
@@ -512,7 +512,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 	 * @public
 	 */
 	DataType.getType = function(sTypeName) {
-		jQuery.sap.assert( sTypeName && typeof sTypeName === 'string', "sTypeName must be a non-empty string");
+		assert( sTypeName && typeof sTypeName === 'string', "sTypeName must be a non-empty string");
 
 		var oType = mTypes[sTypeName];
 		if ( !(oType instanceof DataType) ) {
@@ -532,10 +532,10 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 					oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);
 				} else {
 					if ( oType ) {
-						jQuery.sap.log.warning("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
+						Log.warning("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
 						oType = mTypes.any;
 					} else {
-						jQuery.sap.log.error("data type '" + sTypeName + "' could not be found.");
+						Log.error("data type '" + sTypeName + "' could not be found.");
 						oType = undefined;
 					}
 				}
@@ -590,11 +590,11 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 	 * @public
 	 */
 	DataType.createType = function(sName, mSettings, oBase) {
-		jQuery.sap.assert(typeof sName === "string" && sName, "DataType.createType: type name must be a non-empty string");
-		jQuery.sap.assert(oBase == null || oBase instanceof DataType || typeof oBase === "string" && oBase,
+		assert(typeof sName === "string" && sName, "DataType.createType: type name must be a non-empty string");
+		assert(oBase == null || oBase instanceof DataType || typeof oBase === "string" && oBase,
 				"DataType.createType: base type must be empty or a DataType or a non-empty string");
 		if ( /[\[\]]/.test(sName) ) {
-			jQuery.sap.log.error(
+			Log.error(
 				"DataType.createType: array types ('something[]') must not be created with createType, " +
 				"they're created on-the-fly by DataType.getType");
 		}
@@ -603,13 +603,13 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 		}
 		oBase = oBase || mTypes.any;
 		if ( oBase.isArrayType() || oBase.isEnumType() ) {
-			jQuery.sap.log.error("DataType.createType: base type must not be an array- or enum-type");
+			Log.error("DataType.createType: base type must not be an array- or enum-type");
 		}
 		if ( sName === 'array' || mTypes[sName] instanceof DataType ) {
 			if ( sName === 'array' || mTypes[sName].getBaseType() == null ) {
 				throw new Error("DataType.createType: primitive or hidden type " + sName + " can't be re-defined");
 			}
-			jQuery.sap.log.warning("DataTypes.createType: type " + sName + " is redefined. " +
+			Log.warning("DataTypes.createType: type " + sName + " is redefined. " +
 				"This is an unsupported usage of DataType and might cause issues." );
 		}
 		var oType = mTypes[sName] = createType(sName, mSettings, oBase);

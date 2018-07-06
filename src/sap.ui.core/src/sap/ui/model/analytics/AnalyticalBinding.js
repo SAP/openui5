@@ -8,7 +8,6 @@
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/TreeBinding',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
@@ -21,9 +20,10 @@ sap.ui.define([
 	'./BatchResponseCollector',
 	'./AnalyticalVersionInfo',
 	"sap/base/util/uid",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	TreeBinding,
 	ChangeReason,
 	Filter,
@@ -36,7 +36,9 @@ sap.ui.define([
 	BatchResponseCollector,
 	AnalyticalVersionInfo,
 	uid,
-	deepEqual
+	deepEqual,
+	jQuery,
+	Log
 ) {
 	"use strict";
 
@@ -110,7 +112,7 @@ sap.ui.define([
 				sPropertyName = aComputedSelect[i];
 				j = aSelect.indexOf(sPropertyName);
 				if (j < 0) {
-					jQuery.sap.log.warning("Ignored the 'select' binding parameter, because"
+					Log.warning("Ignored the 'select' binding parameter, because"
 							+ " it does not contain the property '" + sPropertyName + "'",
 						oBinding.sPath, sClassName);
 					bError = true;
@@ -157,14 +159,14 @@ sap.ui.define([
 					? "dimension" : "measure";
 
 		if (oDimensionOrMeasure.getName() === sSelectedProperty) {
-			jQuery.sap.log.warning("Ignored the 'select' binding parameter, because it contains"
+			Log.warning("Ignored the 'select' binding parameter, because it contains"
 					+ " the " + sDimensionOrMeasure + " property '"
 					+ sSelectedProperty
 					+ "' which is not contained in the analytical info (see updateAnalyticalInfo)",
 				sPath, sClassName);
 
 		} else {
-			jQuery.sap.log.warning("Ignored the 'select' binding parameter, because the property '"
+			Log.warning("Ignored the 'select' binding parameter, because the property '"
 					+ sSelectedProperty + "' is associated with the "
 					+ sDimensionOrMeasure + " property '"
 					+ oDimensionOrMeasure.getName() + "' which is not contained in the analytical"
@@ -197,7 +199,7 @@ sap.ui.define([
 			sCurrentProperty = aSelect[i];
 			if (aSelect.indexOf(sCurrentProperty) !== i) {
 				// found duplicate
-				jQuery.sap.log.warning("Ignored the 'select' binding parameter, because it"
+				Log.warning("Ignored the 'select' binding parameter, because it"
 						+ " contains the property '" + sCurrentProperty + "' multiple times",
 					sPath, sClassName);
 				aSelect.splice(i, 1);
@@ -333,19 +335,19 @@ sap.ui.define([
 
 			// considering different count mode settings
 			if (mParameters && mParameters.countMode == CountMode.None) {
-				jQuery.sap.log.fatal("requested count mode is ignored; OData requests will include $inlinecout options");
+				Log.fatal("requested count mode is ignored; OData requests will include $inlinecout options");
 			} else if (mParameters
 					&& (mParameters.countMode == CountMode.Request
 						|| mParameters.countMode == CountMode.Both)) {
-				jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
+				Log.warning("default count mode is ignored; OData requests will include $inlinecout options");
 			} else if (this.oModel.sDefaultCountMode == CountMode.Request) {
-				jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
+				Log.warning("default count mode is ignored; OData requests will include $inlinecout options");
 			}
 
 			// detect ODataModel version
 			this.iModelVersion = AnalyticalVersionInfo.getVersion(this.oModel);
 			if (this.iModelVersion === null) {
-				jQuery.sap.log.error("The AnalyticalBinding does not support Models other than sap.ui.model.odata.ODataModel version 1 or 2.");
+				Log.error("The AnalyticalBinding does not support Models other than sap.ui.model.odata.ODataModel version 1 or 2.");
 				return;
 			}
 
@@ -542,7 +544,7 @@ sap.ui.define([
 */
 		}
 		if (aRootContext.length > 1) {
-			jQuery.sap.log.fatal("assertion failed: grand total represented by a single entry");
+			Log.fatal("assertion failed: grand total represented by a single entry");
 		}
 // 		this._trace_leave("API", "getRootContexts", "", aRootContext, ["length"]); // DISABLED FOR PRODUCTION
 		return aRootContext;
@@ -681,7 +683,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype.getTotalSize = function() {
 		if (!this.bProvideTotalSize) {
-			jQuery.sap.log.fatal("total size of result explicitly turned off, but getter invoked");
+			Log.fatal("total size of result explicitly turned off, but getter invoked");
 		}
 		return +this.iTotalSize;
 	};
@@ -1255,7 +1257,7 @@ sap.ui.define([
 				}
 				if (aColumns[i].grouped == true) {
 					if (jQuery.inArray(oDimension.getName(), this.getSortablePropertyNames()) == -1) {
-						jQuery.sap.log.fatal("property " + oDimension.getName() + " must be sortable in order to be used as grouped dimension");
+						Log.fatal("property " + oDimension.getName() + " must be sortable in order to be used as grouped dimension");
 					}
 					oDimensionDetails.grouped = true;
 				}
@@ -1306,8 +1308,8 @@ sap.ui.define([
 			var oHierarchyDetails = that.mHierarchyDetailsByName[sNodeIDName];
 			if (!("level" in oHierarchyDetails)) {
 				delete that.mHierarchyDetailsByName[sNodeIDName];
-				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.INFO, sClassName)) {
-					jQuery.sap.log.info("No level specified for hierarchy node '" + sNodeIDName
+				if (Log.isLoggable(Log.Level.INFO, sClassName)) {
+					Log.info("No level specified for hierarchy node '" + sNodeIDName
 						+ "'; ignoring hierarchy", "", sClassName);
 				}
 			} else if (!that.oDimensionDetailsSet[sNodeIDName]) {
@@ -1508,7 +1510,7 @@ sap.ui.define([
 		if (this.mFinalLength[sParentGroupId] && this.mLength[sParentGroupId] < iStartIndex + iLength) {
 			iLength = this.mLength[sParentGroupId] - iStartIndex;
 			if (iLength < 0) {
-				jQuery.sap.log.fatal("invalid start index greater than total group length passed");
+				Log.fatal("invalid start index greater than total group length passed");
 			}
 		}
 
@@ -1521,12 +1523,12 @@ sap.ui.define([
 		}
 		if (sParentGroupId == null) {
 			if (iNumberOfExpandedLevels > 0) {
-				jQuery.sap.log.fatal("invalid request to determine nodes of root context");
+				Log.fatal("invalid request to determine nodes of root context");
 				return null;
 			}
 		} else {
 			if (this._getGroupIdLevel(sParentGroupId) >= this.aAggregationLevel.length && iNumberOfExpandedLevels > 0) {
-				jQuery.sap.log.fatal("invalid request to determine nodes of context with group ID " + sParentGroupId);
+				Log.fatal("invalid request to determine nodes of context with group ID " + sParentGroupId);
 				return null;
 			}
 			if (this._getGroupIdLevel(sParentGroupId) + iNumberOfExpandedLevels > this.aAggregationLevel.length) {
@@ -1688,7 +1690,7 @@ sap.ui.define([
 
 		aHierarchyKeys = Object.keys(this.mHierarchyDetailsByName);
 		if (aHierarchyKeys.length > 0 && sGroupId !== "/") {
-			jQuery.sap.log.error("Hierarchy cannot be requested for members of a group",
+			Log.error("Hierarchy cannot be requested for members of a group",
 				sGroupId, sClassName);
 			return aHierarchyLevelFilters;
 		}
@@ -1773,7 +1775,7 @@ sap.ui.define([
 				break;
 			}
 			default:
-				jQuery.sap.log.fatal("unhandled request type " + aRequestQueue[i][0]);
+				Log.fatal("unhandled request type " + aRequestQueue[i][0]);
 				continue;
 			}
 		}
@@ -1937,7 +1939,7 @@ sap.ui.define([
 
 		// (7) set result page boundaries
 		if (iLength == 0) {
-			jQuery.sap.log.fatal("unhandled case: load 0 entities of sub group");
+			Log.fatal("unhandled case: load 0 entities of sub group");
 		}
 		var oKeyIndexMapping = this._getKeyIndexMapping(sGroupId, iStartIndex);
 		if (!this.bNoPaging) {
@@ -2037,13 +2039,13 @@ sap.ui.define([
 			var aFilterArray = [];
 
 			if (oGroupExpansionFirstMissingMember.groupId_Missing == null) {
-				jQuery.sap.log.fatal("missing group Id not present");
+				Log.fatal("missing group Id not present");
 				return aFilterArray;
 			}
 			var aGroupIdComponents_Missing = that._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing);
 			var iGroupIdLevel_Missing = aGroupIdComponents_Missing.length;
 			if (iGroupIdLevel_Missing > iAutoExpandGroupsToLevel) {
-				jQuery.sap.log.fatal("the given group ID is too deep for requested level for auto expansion");
+				Log.fatal("the given group ID is too deep for requested level for auto expansion");
 				return aFilterArray;
 			}
 
@@ -2258,7 +2260,7 @@ sap.ui.define([
 
 			// (7) set result page boundaries
 			if (iLength == 0) {
-				jQuery.sap.log.fatal("unhandled case: load 0 entities of sub group");
+				Log.fatal("unhandled case: load 0 entities of sub group");
 			}
 			var iEffectiveStartIndex = iStartIndex;
 			if (!bUseStartIndexForSkip) {
@@ -2299,7 +2301,7 @@ sap.ui.define([
 		var aGroupMembersAutoExpansionRequestDetails = [];
 		var aRequestId = [];
 		if (!oGroupExpansionFirstMissingMember) {
-			jQuery.sap.log.fatal("no first missing group member specified");
+			Log.fatal("no first missing group member specified");
 		}
 		var iAutoExpandGroupsToLevel = this._getGroupIdLevel(sGroupId) + iNumberOfExpandedLevels + 1;
 		var aGroupIdComponents_Missing = that._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing);
@@ -2324,11 +2326,11 @@ sap.ui.define([
 				}
 				var sGroupIdAtParentLevel = this._getGroupIdAncestors(oGroupExpansionFirstMissingMember.groupId_Missing, -(iGroupIdLevel_Missing - iLevel + 1))[0];
 				if (!sGroupIdAtParentLevel) {
-					jQuery.sap.log.fatal("failed to determine group id at parent level; group ID = " + sGroupId + ", level = " + iLevel);
+					Log.fatal("failed to determine group id at parent level; group ID = " + sGroupId + ", level = " + iLevel);
 				}
 				iStartIndex = this._findKeyIndex(sGroupIdAtParentLevel, this.mEntityKey[sGroupIdAtLevel]);
 				if (iStartIndex == -1) {
-					jQuery.sap.log.fatal("failed to determine position of value " + sGroupIdAtLevel + " in group " + sGroupIdAtParentLevel);
+					Log.fatal("failed to determine position of value " + sGroupIdAtLevel + " in group " + sGroupIdAtParentLevel);
 				}
 				sGroupIdAtLevel = sGroupIdAtParentLevel;
 				iStartIndex++; // point to first missing position
@@ -2347,7 +2349,7 @@ sap.ui.define([
 				aRequestId.push(oLevelMembersRequestDetails.sRequestId);
 			} else if (oLevelFilter && oLevelFilter.aFilters.length > 0) {
 				if (!oLevelFilter._bMultiFilter || oLevelFilter.bAnd) { // TODO remove this test once impl got mature to get rid of access to internal member; it is a consistency check if break-up will deliver expected results...
-					jQuery.sap.log.fatal("level filter in wrong shape; cannot break it up");
+					Log.fatal("level filter in wrong shape; cannot break it up");
 				}
 				for (var i = 0; i < oLevelFilter.aFilters.length; i++) { // break up level filter into its tuple filters combined with logical OR
 					var oTupleFilter = oLevelFilter.aFilters[i];
@@ -2493,7 +2495,7 @@ sap.ui.define([
 		try {
 			oAnalyticalQueryRequest.getFilterExpression().checkValidity(); // fails if false
 		} catch (e) {
-			jQuery.sap.log.fatal("filter expression is not valid", e.toString());
+			Log.fatal("filter expression is not valid", e.toString());
 			return undefined;
 		}
 
@@ -2657,7 +2659,7 @@ sap.ui.define([
 
 		//var iRequestHandleId = this._getIdForNewRequestHandle();
 		if (aBatchQueryRequest.length > 0) {
-			jQuery.sap.log.debug("AnalyticalBinding: executing batch request with " + aExecutedRequestDetails.length + " operations");
+			Log.debug("AnalyticalBinding: executing batch request with " + aExecutedRequestDetails.length + " operations");
 //			this._trace_message("ReqExec", "submitting batch with " + aExecutedRequestDetails.length + " operations");
 
 			var oBatchRequestHandle;
@@ -2703,7 +2705,7 @@ sap.ui.define([
 			that._deregisterHandleOfCompletedRequest(iRequestHandleId);
 
 			if (aExecutedRequestDetails.length != oData.__batchResponses.length) {
-				jQuery.sap.log.fatal("assertion failed: received " + oData.__batchResponses.length
+				Log.fatal("assertion failed: received " + oData.__batchResponses.length
 						+ " responses for " + aExecutedRequestDetails.length + " read operations in the batch request");
 			}
 
@@ -2741,7 +2743,7 @@ sap.ui.define([
 							that._processReloadMeasurePropertiesQueryResponse(aExecutedRequestDetails[k], oData.__batchResponses[k].data);
 							break;
 						default:
-							jQuery.sap.log.fatal("invalid request type " + aExecutedRequestDetails[k].iRequestType);
+							Log.fatal("invalid request type " + aExecutedRequestDetails[k].iRequestType);
 							continue;
 					}
 				}
@@ -2879,7 +2881,7 @@ sap.ui.define([
 		for (var j = 0; j < aParam.length; j++) {
 			aParam[j] = aParam[j].replace(/\ /g, "%20");
 		}
-		jQuery.sap.log.debug("AnalyticalBinding: executing query request");
+		Log.debug("AnalyticalBinding: executing query request");
 
 		var iRequestHandleId = this._getIdForNewRequestHandle();
 		if (this.iModelVersion === AnalyticalVersionInfo.V1) {
@@ -2921,7 +2923,7 @@ sap.ui.define([
 					that._processReloadMeasurePropertiesQueryResponse(oRequestDetails, oData);
 					break;
 				default:
-					jQuery.sap.log.fatal("invalid request type " + oRequestDetails.iRequestType);
+					Log.fatal("invalid request type " + oRequestDetails.iRequestType);
 					break;
 			}
 			that._deregisterCompletedRequest(oRequestDetails.sRequestId);
@@ -3062,7 +3064,7 @@ sap.ui.define([
 					}
 					if (iDeviatingUnitPropertyNameIndex == -1) {
 // 						this._trace_debug_if(true, "assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h);
-						jQuery.sap.log.fatal("assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h, null, null, createSupportInfo(this, "NO_DEVIATING_UNITS"));
+						Log.fatal("assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h, null, null, createSupportInfo(this, "NO_DEVIATING_UNITS"));
 					}
 				}
 				if ((sPreviousEntryDimensionKeyString != sDimensionKeyString || h == iODataResultsLength - 1)
@@ -3115,7 +3117,7 @@ sap.ui.define([
 					}
 					if (iMultiUnitEntryDiscardedEntriesCount < 0) {
 // 						this._trace_debug_if(iDiscardedEntriesCount < 0, "assertion failed: iDiscardedEntriesCount must be non-negative");
-						jQuery.sap.log.fatal("assertion failed: iDiscardedEntriesCount must be non-negative");
+						Log.fatal("assertion failed: iDiscardedEntriesCount must be non-negative");
 					}
 					iDiscardedEntriesCount += iMultiUnitEntryDiscardedEntriesCount;
 /* multi-unit verification: remember multi-unit key */
@@ -3315,7 +3317,7 @@ sap.ui.define([
 			}
 		}
 		// #TH
-		jQuery.sap.log.info("MultiUnit Situation in Group (" + sGroupId + "), discarded: " + iDiscardedEntriesCount + ", load-factor is now: " + this.aMultiUnitLoadFactor[aAggregationLevel.length]);
+		Log.info("MultiUnit Situation in Group (" + sGroupId + "), discarded: " + iDiscardedEntriesCount + ", load-factor is now: " + this.aMultiUnitLoadFactor[aAggregationLevel.length]);
 // 		this._trace_debug_if(this.iMultiUnitLoadFactor < 1, "load factor cannot be lower than 1!");
 
 /* multi-unit verification: check length of loaded data with colected cumulated discarded counts */
@@ -3354,7 +3356,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._processTotalSizeQueryResponse = function(oRequestDetails, oData) {
 		if (oData.__count == undefined) {
-			jQuery.sap.log.fatal("missing entity count in query result");
+			Log.fatal("missing entity count in query result");
 			return;
 		}
 		this.iTotalSize = oData.__count;
@@ -3393,7 +3395,7 @@ sap.ui.define([
 				var sParentGroupId = that._getParentGroupId(oGroupMembersRequestDetails.sGroupId);
 				var iPositionInParentGroup = that._findKeyIndex(sParentGroupId, that.mEntityKey[oGroupMembersRequestDetails.sGroupId]);
 				if (iPositionInParentGroup == -1) {
-					jQuery.sap.log.fatal("assertion failed: failed to determine position of " + oGroupMembersRequestDetails.sGroupId + " in group " + sParentGroupId);
+					Log.fatal("assertion failed: failed to determine position of " + oGroupMembersRequestDetails.sGroupId + " in group " + sParentGroupId);
 				}
 				if (iPositionInParentGroup > 0 && that._getKey(sParentGroupId, iPositionInParentGroup - 1) !== undefined) {
 					var sPreviousGroupMemberKey = that._getKey(sParentGroupId, iPositionInParentGroup - 1);
@@ -3464,14 +3466,14 @@ sap.ui.define([
 
 		if (oData.results.length != 1) {
 // 			this._trace_debug_if(true, "assertion failed: more than one entity for reloaded measure properties of entity with key " + sMultiUnitEntryKey);
-			jQuery.sap.log.fatal("assertion failed: more than one entity for reloaded measure properties of entity with key " + sMultiUnitEntryKey);
+			Log.fatal("assertion failed: more than one entity for reloaded measure properties of entity with key " + sMultiUnitEntryKey);
 			return;
 		}
 
 		var oReloadedEntry = oData.results[0];
 		var oMultiUnitEntry = this.oModel.getObject("/" + sMultiUnitEntryKey);
 		if (!oMultiUnitEntry) {
-			jQuery.sap.log.fatal("assertion failed: no entity found with key " + sMultiUnitEntryKey);
+			Log.fatal("assertion failed: no entity found with key " + sMultiUnitEntryKey);
 			return;
 		}
 		var aMeasureName = oMultiUnitRepresentative.aReloadMeasurePropertyName;
@@ -3851,7 +3853,7 @@ sap.ui.define([
 		var sGroupId = "/";
 		var sDimensionMember = null;
 		if (iLevel > this.aAggregationLevel.length) {
-			jQuery.sap.log.fatal("assertion failed: aggregation level deeper than number of current aggregation levels");
+			Log.fatal("assertion failed: aggregation level deeper than number of current aggregation levels");
 		}
 		for (var i = 0; i < iLevel; i++) {
 			sDimensionMember = oContext.getProperty(this.aAggregationLevel[i]);
@@ -3870,7 +3872,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._getGroupIdLevel = function(sGroupId) {
 		if (sGroupId == null) {
-			jQuery.sap.log.fatal("assertion failed: no need to determine level of group ID = null");
+			Log.fatal("assertion failed: no need to determine level of group ID = null");
 			return -1;
 		}
 		return sGroupId.split("/").length - 2;
@@ -3904,14 +3906,14 @@ sap.ui.define([
 			return [];
 		}
 		if (sGroupId == null) {
-			jQuery.sap.log.fatal("group ID null does not have ancestors");
+			Log.fatal("group ID null does not have ancestors");
 			return [];
 		}
 		if (sGroupId == "/") {
 			if (Math.abs(iNumLevels) == 1) {
 				return [ null ];
 			} else {
-				jQuery.sap.log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
+				Log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
 				return [];
 			}
 		}
@@ -3920,12 +3922,12 @@ sap.ui.define([
 		var iFromLevel = 0, iToLevel = aGroupId.length - 3;
 		if (iNumLevels > 0) {
 			if (iNumLevels - 1 > iToLevel) {
-				jQuery.sap.log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
+				Log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
 			} else {
 				iToLevel = iNumLevels - 1;
 			}
 		} else if (-(iNumLevels + 1) > iToLevel) {
-			jQuery.sap.log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
+			Log.fatal("invalid level count " + iNumLevels + " for ancestors of groupId " + sGroupId);
 		} else {
 			iFromLevel = iToLevel + 1 + iNumLevels;
 			for (var i = 0; i < iFromLevel; i++) {
@@ -3989,7 +3991,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._registerNewRequestHandle = function(iRequestHandleId, oRequestHandle) {
 		if (this.oPendingRequestHandle[iRequestHandleId] !== undefined) {
-			jQuery.sap.log.fatal("request handle ID already in use");
+			Log.fatal("request handle ID already in use");
 		}
 		this.oPendingRequestHandle[iRequestHandleId] = oRequestHandle;
 	};
@@ -4001,11 +4003,11 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._deregisterHandleOfCompletedRequest = function(iRequestHandleId) {
 		if (jQuery.isEmptyObject(this.oPendingRequestHandle)) {
-			jQuery.sap.log.warning("No request handles to be cleared. Previous abort/resetData?");
+			Log.warning("No request handles to be cleared. Previous abort/resetData?");
 			return;
 		}
 		if (this.oPendingRequestHandle[iRequestHandleId] === undefined) {
-			jQuery.sap.log.fatal("no handle found for this request ID");
+			Log.fatal("no handle found for this request ID");
 		}
 		this.oPendingRequestHandle[iRequestHandleId] = undefined;
 	};
@@ -4042,15 +4044,15 @@ sap.ui.define([
 		switch (iRequestType) {
 		case AnalyticalBinding._requestType.groupMembersQuery:
 			if (mParameters.groupId === undefined) {
-				jQuery.sap.log.fatal("missing group ID");
+				Log.fatal("missing group ID");
 			}
 			return AnalyticalBinding._requestType.groupMembersQuery + (mParameters.groupId == null ? "" : mParameters.groupId);
 		case AnalyticalBinding._requestType.levelMembersQuery:
 			if (mParameters.level === undefined) {
-				jQuery.sap.log.fatal("missing level");
+				Log.fatal("missing level");
 			}
 			if (mParameters.groupId === undefined) {
-				jQuery.sap.log.fatal("missing groupId");
+				Log.fatal("missing groupId");
 			}
 			// for accelerated auto-expand, group Id does not provide context, i.e. filter condition, for the requested data, but is only a starting point
 			return "" + AnalyticalBinding._requestType.levelMembersQuery + mParameters.level + (mParameters.tupleIndex ? "-" + mParameters.tupleIndex : "");
@@ -4058,11 +4060,11 @@ sap.ui.define([
 			return AnalyticalBinding._requestType.totalSizeQuery;
 		case AnalyticalBinding._requestType.reloadMeasuresQuery:
 			if (!mParameters.multiUnitEntryKey) {
-				jQuery.sap.log.fatal("missing multi unit entry key");
+				Log.fatal("missing multi unit entry key");
 			}
 			return AnalyticalBinding._requestType.reloadMeasuresQuery + mParameters.multiUnitEntryKey;
 		default:
-			jQuery.sap.log.fatal("invalid request type " + iRequestType);
+			Log.fatal("invalid request type " + iRequestType);
 			return -1;
 		}
 	};
@@ -4074,7 +4076,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._registerNewRequest = function(sRequestId) {
 		if (sRequestId == undefined || sRequestId == "") {
-			jQuery.sap.log.fatal("missing request ID");
+			Log.fatal("missing request ID");
 			return;
 		}
 		if (!this.oPendingRequests[sRequestId]) {
@@ -4120,12 +4122,12 @@ sap.ui.define([
 		// in case there are no pending request, log a warning. This might happen during a refresh call
 		// helps to keep track of timing issues / race conditions with already returned requests
 		if (jQuery.isEmptyObject(this.oPendingRequests)) {
-			jQuery.sap.log.warning("There are no pending requests which could be set to 'completed'.");
+			Log.warning("There are no pending requests which could be set to 'completed'.");
 			return;
 		}
 
 		if (!this.oPendingRequests[sRequestId]) {
-			jQuery.sap.log.fatal("assertion failed: there is no pending request ID " + sRequestId);
+			Log.fatal("assertion failed: there is no pending request ID " + sRequestId);
 		}
 		if (this.oPendingRequests[sRequestId] == 1) {
 			delete this.oPendingRequests[sRequestId];
@@ -4201,7 +4203,7 @@ sap.ui.define([
 					iLastOccupiedServiceKeyIndex = Math.abs(aKeyIndex[iLastOccupiedIndex + 1]) - 1;
 				}
 				if (aServiceKey[iLastOccupiedServiceKeyIndex] === undefined) {
-					jQuery.sap.log.fatal("assertion failed: no service key at iLastOccupiedServiceKeyIndex = " + iLastOccupiedServiceKeyIndex);
+					Log.fatal("assertion failed: no service key at iLastOccupiedServiceKeyIndex = " + iLastOccupiedServiceKeyIndex);
 				}
 			}
 			var iDistance = iStartIndex - iLastOccupiedIndex;
@@ -4230,13 +4232,13 @@ sap.ui.define([
 		}
 
 		if (this.mMultiUnitKey[sGroupId] === undefined) {
-			jQuery.sap.log.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId);
+			Log.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId);
 // 			this._trace_debug_if(true, "assertion failed: missing expected multi currency key for group with ID " + sGroupId);
 			return null;
 		}
 		var sKey = this.mMultiUnitKey[sGroupId][iIndex];
 		if (sKey === undefined) {
-			jQuery.sap.log.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId + " at pos " + iIndex);
+			Log.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId + " at pos " + iIndex);
 // 			this._trace_debug_if(true, "assertion failed: missing expected multi currency key for group with ID " + sGroupId + " at pos " + iIndex);
 			return null;
 		}
@@ -4394,7 +4396,7 @@ sap.ui.define([
 			return iDiscardedEntriesCount;
 		}
 		if (sPreviousServiceKey === undefined) {
-			jQuery.sap.log.fatal("assertion failed: missing expected entry before given key index");
+			Log.fatal("assertion failed: missing expected entry before given key index");
 			return iDiscardedEntriesCount;
 		}
 		var oPreviousEntry = this.oModel.getObject("/" + sPreviousServiceKey);
@@ -4411,7 +4413,7 @@ sap.ui.define([
 		// calculate nPrime_e for next steps
 		var nPrime_e = n_e;
 		if (nPrime_e >= this.mLength[oKeyIndexMapping.sGroupId]) {
-			jQuery.sap.log.fatal("assertion failed: service key exists,but no corresponding key index found");
+			Log.fatal("assertion failed: service key exists,but no corresponding key index found");
 // 			this._trace_debug_if(true, "assertion failed: service key exists,but no corresponding key index found");
 			return iDiscardedEntriesCount;
 		}
@@ -4509,7 +4511,7 @@ sap.ui.define([
 						oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, undefined, bIsFlatListRequest);
 						oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
 						if (!oMultiUnitRepresentative.bIsNewEntry) {
-							jQuery.sap.log.fatal("assertion failed: multi-unit entry already existed before");
+							Log.fatal("assertion failed: multi-unit entry already existed before");
 // 							this._trace_debug_if(! oMultiUnitRepresentative.bIsNewEntry, "assertion failed: multi-unit entry already existed before");
 						}
 						// make n_e - 1 a multi-unit entry
@@ -4522,7 +4524,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				jQuery.sap.log.fatal("assertion failed: uncovered case detected");
+				Log.fatal("assertion failed: uncovered case detected");
 				// this._trace_debug_if(true, "assertion failed: uncovered case detected");
 				return iDiscardedEntriesCount;
 			}
@@ -4531,7 +4533,7 @@ sap.ui.define([
 
 //				case a)
 // 				this._trace_message("SvcDatCons", "case 2.a"); // DISABLED FOR PRODUCTION
-				jQuery.sap.log.fatal("unstable query result for group ID " + oKeyIndexMapping.sGroupId + ": entries have been removed or added. Complete reload required");
+				Log.fatal("unstable query result for group ID " + oKeyIndexMapping.sGroupId + ": entries have been removed or added. Complete reload required");
 //				this._trace_debug_if(true, "unstable query result for group ID " + oKeyIndexMapping.sGroupId + ": entries have been removed or added. Complete reload required");
 			} else if (nPrime_e - n_e > 0) {
 				// case b)
@@ -5025,7 +5027,7 @@ sap.ui.define([
 				// check whether to log a warning and update sLastAutoExpandMode
 				if (sCurrentAutoExpandMode !== this.sLastAutoExpandMode
 						&& sCurrentAutoExpandMode !== TreeAutoExpandMode.Sequential) {
-					jQuery.sap.log.warning("Applying sorters to groups is only possible with auto"
+					Log.warning("Applying sorters to groups is only possible with auto"
 						+ " expand mode 'Sequential'; current mode is: " + sCurrentAutoExpandMode,
 						this.sPath, sClassName);
 				}
@@ -5050,7 +5052,7 @@ sap.ui.define([
 			if (sDetails) {
 				sMessage += "; " + sDetails;
 			}
-			jQuery.sap.log.warning(sMessage, this.sPath, sClassName);
+			Log.warning(sMessage, this.sPath, sClassName);
 		}
 		this.bApplySortersToGroups = false;
 	};

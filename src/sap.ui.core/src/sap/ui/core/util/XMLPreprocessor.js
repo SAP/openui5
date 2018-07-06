@@ -5,6 +5,7 @@
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/BindingParser",
@@ -13,9 +14,10 @@ sap.ui.define([
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/CompositeBinding",
-	"sap/ui/model/Context"
-], function (jQuery, JSTokenizer, ObjectPath, BindingParser, ManagedObject, SyncPromise,
-		XMLTemplateProcessor, BindingMode, CompositeBinding, Context) {
+	"sap/ui/model/Context",
+	"sap/ui/performance/Measurement"
+], function (jQuery, Log, JSTokenizer, ObjectPath, BindingParser, ManagedObject, SyncPromise,
+		XMLTemplateProcessor, BindingMode, CompositeBinding, Context, Measurement) {
 	"use strict";
 
 	var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
@@ -533,7 +535,7 @@ sap.ui.define([
 					|| sNamespace.indexOf(" ") >= 0) {
 				throw new Error("Invalid namespace: " + sNamespace);
 			}
-			jQuery.sap.log.debug("Plug-in visitor for namespace '" + sNamespace
+			Log.debug("Plug-in visitor for namespace '" + sNamespace
 				+ "', local name '" + sLocalName + "'", fnVisitor, sXMLPreprocessor);
 			if (sLocalName) {
 				sNamespace = sNamespace + " " + sLocalName;
@@ -577,8 +579,7 @@ sap.ui.define([
 		 */
 		process : function (oRootElement, oViewInfo, mSettings) {
 			var sCaller = oViewInfo.caller,
-				bDebug
-					= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sXMLPreprocessor),
+				bDebug = Log.isLoggable(Log.Level.DEBUG, sXMLPreprocessor),
 				bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 				sCurrentName = oViewInfo.name, // current view or fragment name
 				mFragmentCache = {},
@@ -586,8 +587,7 @@ sap.ui.define([
 				iNestingLevel = 0,
 				oScope = {}, // for BindingParser.complexParser()
 				fnSupportInfo = oViewInfo._supportInfo,
-				bWarning
-					= jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sXMLPreprocessor);
+				bWarning = Log.isLoggable(Log.Level.WARNING, sXMLPreprocessor);
 
 			/**
 			 * Returns a callback interface for visitor functions which provides access to private
@@ -930,7 +930,7 @@ sap.ui.define([
 			 */
 			function debug(oElement) {
 				if (bDebug) {
-					jQuery.sap.log.debug(
+					Log.debug(
 						getNestingLevel() + Array.prototype.slice.call(arguments, 1).join(" "),
 						oElement && serializeSingleElement(oElement), sXMLPreprocessor);
 				}
@@ -945,7 +945,7 @@ sap.ui.define([
 			 */
 			function debugFinished(oElement) {
 				if (bDebug) {
-					jQuery.sap.log.debug(getNestingLevel() + "Finished",
+					Log.debug(getNestingLevel() + "Finished",
 						"</" + oElement.nodeName + ">", sXMLPreprocessor);
 				}
 			}
@@ -964,7 +964,7 @@ sap.ui.define([
 			 */
 			function error(sMessage, oElement) {
 				sMessage = sMessage + serializeSingleElement(oElement);
-				jQuery.sap.log.error(sMessage, sCaller, sXMLPreprocessor);
+				Log.error(sMessage, sCaller, sXMLPreprocessor);
 				throw new Error(sCaller + ": " + sMessage);
 			}
 
@@ -1084,7 +1084,7 @@ sap.ui.define([
 				var vBindingInfo,
 					oPromise;
 
-				jQuery.sap.measure.average(sPerformanceGetResolvedBinding, "",
+				Measurement.average(sPerformanceGetResolvedBinding, "",
 					aPerformanceCategories);
 				try {
 					vBindingInfo
@@ -1099,7 +1099,7 @@ sap.ui.define([
 						warn(oElement, 'Function name(s)',
 							vBindingInfo.functionsNotFound.join(", "), 'not found');
 					}
-					jQuery.sap.measure.end(sPerformanceGetResolvedBinding);
+					Measurement.end(sPerformanceGetResolvedBinding);
 					return null; // treat incomplete bindings as unrelated
 				}
 
@@ -1117,7 +1117,7 @@ sap.ui.define([
 						fnCallIfConstant();
 					}
 				}
-				jQuery.sap.measure.end(sPerformanceGetResolvedBinding);
+				Measurement.end(sPerformanceGetResolvedBinding);
 				return oPromise;
 			}
 
@@ -1162,7 +1162,7 @@ sap.ui.define([
 				oWithControl.$mFragmentContexts[sFragmentName] = true;
 				sCurrentName = sFragmentName;
 
-				jQuery.sap.measure.average(sPerformanceInsertFragment, "", aPerformanceCategories);
+				Measurement.average(sPerformanceInsertFragment, "", aPerformanceCategories);
 				// take fragment promise from cache, then import fragment
 				oFragmentPromise = mFragmentCache[sFragmentName];
 				if (!oFragmentPromise) {
@@ -1171,7 +1171,7 @@ sap.ui.define([
 				}
 				return oFragmentPromise.then(function (oFragmentElement) {
 					oFragmentElement = oElement.ownerDocument.importNode(oFragmentElement, true);
-					jQuery.sap.measure.end(sPerformanceInsertFragment);
+					Measurement.end(sPerformanceInsertFragment);
 
 					return requireFor(oFragmentElement).then(function () {
 						if (oFragmentElement.namespaceURI === "sap.ui.core"
@@ -1886,16 +1886,16 @@ sap.ui.define([
 				if (bWarning) {
 					if (!bCallerLoggedForWarnings) {
 						bCallerLoggedForWarnings = true;
-						jQuery.sap.log.warning("Warning(s) during processing of " + sCaller, null,
+						Log.warning("Warning(s) during processing of " + sCaller, null,
 							sXMLPreprocessor);
 					}
-					jQuery.sap.log.warning(
+					Log.warning(
 						getNestingLevel() + Array.prototype.slice.call(arguments, 1).join(" "),
 						oElement && serializeSingleElement(oElement), sXMLPreprocessor);
 				}
 			}
 
-			jQuery.sap.measure.average(sPerformanceProcess, "", aPerformanceCategories);
+			Measurement.average(sPerformanceProcess, "", aPerformanceCategories);
 			mSettings = mSettings || {};
 
 			if (bDebug) {
@@ -1926,7 +1926,7 @@ sap.ui.define([
 				}));
 			}).then(function () {
 				debug(undefined, "Finished processing", sCaller);
-				jQuery.sap.measure.end(sPerformanceProcess);
+				Measurement.end(sPerformanceProcess);
 				return oRootElement;
 			}).unwrap();
 		}

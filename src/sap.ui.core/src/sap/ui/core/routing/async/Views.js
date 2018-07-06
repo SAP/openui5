@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			var oView, sViewName;
 
 			if (!oOptions) {
-				jQuery.sap.log.error("the oOptions parameter of getView is mandatory", this);
+				Log.error("the oOptions parameter of getView is mandatory", this);
 			} else {
 				if (oOptions.async === undefined) {
 					oOptions.async = true;

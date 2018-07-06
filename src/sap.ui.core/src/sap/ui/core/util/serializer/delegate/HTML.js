@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Delegate', "sap/base/strings/hyphenate", "sap/base/util/deepEqual"],
-	function(jQuery, Delegate, hyphenate, deepEqual) {
+sap.ui.define(['./Delegate', "sap/base/strings/hyphenate", "sap/base/util/deepEqual"],
+	function(Delegate, hyphenate, deepEqual) {
 	"use strict";
 
 

@@ -10,9 +10,10 @@ sap.ui.require([
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression",
 	"sap/ui/model/odata/v4/AnnotationHelper",
-	"sap/ui/model/odata/v4/ODataMetaModel"
+	"sap/ui/model/odata/v4/ODataMetaModel",
+	"sap/base/Log"
 ], function (jQuery, SyncPromise, Icon, BaseContext, JSONModel, Basics, Expression,
-		AnnotationHelper, ODataMetaModel) {
+		AnnotationHelper, ODataMetaModel, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -132,7 +133,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.AnnotationHelper", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}

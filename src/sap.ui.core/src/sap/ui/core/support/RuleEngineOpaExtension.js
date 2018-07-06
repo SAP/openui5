@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/base/util/UriParameters"], function(jQuery, Ui5Object, UriParameters) {
+sap.ui.define(["jquery.sap.global", 'sap/ui/base/Object', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery"], function(jQuery, BaseObject, UriParameters, jQueryDOM) {
 	"use strict";
 
-	var Extension = Ui5Object.extend("sap.ui.core.support.RuleEngineOpaExtension", {
+	var Extension = BaseObject.extend("sap.ui.core.support.RuleEngineOpaExtension", {
 		metadata : {
 			publicMethods : [
 				"getAssertions"
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/base/util/UriPara
 		 */
 		onAfterInit : function () {
 			var bLoaded = sap.ui.getCore().getLoadedLibraries()["sap.ui.support"],
-				deferred = jQuery.Deferred();
+				deferred = jQueryDOM.Deferred();
 
 			if (!bLoaded) {
 				sap.ui.require(["sap/ui/support/Bootstrap"], function (bootstrap) {
@@ -61,12 +61,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/base/util/UriPara
 				 * @param {string|string[]} [executionScope.selectors] The ids of the components or the subtree.
 				*/
 				noRuleFailures: function(options) {
-					var ruleDeferred = jQuery.Deferred(),
+					var ruleDeferred = jQueryDOM.Deferred(),
 						failOnAnyRuleIssues = options[0] && options[0]["failOnAnyIssues"],
 						failOnHighRuleIssues = options[0] && options[0]["failOnHighIssues"],
 						rules = options[0] && options[0].rules,
 						executionScope = options[0] && options[0].executionScope;
 
+					// private API provided by jquery.sap.global
 					jQuery.sap.support.analyze(executionScope, rules).then(function () {
 						var analysisHistory = jQuery.sap.support.getAnalysisHistory(),
 							lastAnalysis = { issues: [] };
@@ -112,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/base/util/UriPara
 				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
 				 */
 				getFinalReport: function () {
-					var ruleDeferred = jQuery.Deferred(),
+					var ruleDeferred = jQueryDOM.Deferred(),
 						history = jQuery.sap.support.getFormattedAnalysisHistory(),
 						analysisHistory = jQuery.sap.support.getAnalysisHistory(),
 						totalIssues = analysisHistory.reduce(function (total, analysis) {

@@ -3,11 +3,10 @@
  */
 
 sap.ui.define([
-    "jquery.sap.global",
-    "sap/ui/test/_OpaLogger",
-    "sap/ui/test/_opaCorePlugin",
-    "sap/base/util/ObjectPath"
-], function($, _OpaLogger, _opaCorePlugin, ObjectPath) {
+	"sap/ui/test/_OpaLogger",
+	"sap/ui/test/_opaCorePlugin",
+	"sap/base/util/ObjectPath"
+], function (_OpaLogger, _opaCorePlugin, ObjectPath) {
 	"use strict";
 
 	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._navigationContainerWaiter#hasPending");

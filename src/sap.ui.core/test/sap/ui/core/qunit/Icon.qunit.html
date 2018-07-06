@@ -503,8 +503,10 @@
 			});
 
 			QUnit.test("Render icon without loading the corresponding font", function (assert) {
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 				var IconPool = sap.ui.core.IconPool,
-					oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					oErrorSpy = sinon.spy(Log, "error");
 
 				this.createIcon({src: "sap-icon://tnt/technicalsystem"});
 				assert.strictEqual(oErrorSpy.callCount, 1, "Rendering of an icon without loading the corresponding font throws an error");
@@ -543,8 +545,10 @@
 			});
 
 			QUnit.test("Render a non-existent icon", function (assert) {
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
 				var IconPool = sap.ui.core.IconPool,
-					oErrorSpy = sinon.spy(jQuery.sap.log, "warning");
+					oErrorSpy = sinon.spy(Log, "warning");
 
 				this.createIcon({src: "sap-icon://tnt/doesnotexist"});
 				assert.ok(oErrorSpy.called, "Rendering of an icon without loading the corresponding font throws warning");

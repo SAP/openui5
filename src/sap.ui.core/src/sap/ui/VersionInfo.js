@@ -115,6 +115,7 @@ sap.ui.define([], function () {
 				throw oError;
 			};
 
+			//TODO: global jquery call found
 			var vReturn = jQuery.sap.loadResource("sap-ui-version.json", {
 				async: mOptions.async,
 

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Delegate', "sap/base/util/deepEqual"],
-	function(jQuery, Delegate, deepEqual) {
+sap.ui.define(['./Delegate', "sap/base/util/deepEqual"],
+	function(Delegate, deepEqual) {
 	"use strict";
 
 

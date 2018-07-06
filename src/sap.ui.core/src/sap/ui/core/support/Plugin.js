@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.Plugin
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/uid"],
-	function(jQuery, BaseObject, jQueryDOM, uid) {
+sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/uid"],
+	function(BaseObject, jQueryDOM, uid) {
 	"use strict";
 
 

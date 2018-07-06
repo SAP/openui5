@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_ParameterValidator",
-	"sap/ui/test/autowaiter/_utils"
-], function ($, _OpaLogger, _ParameterValidator, _utils) {
+	"sap/ui/test/autowaiter/_utils",
+	"sap/ui/thirdparty/jquery"
+], function(_OpaLogger, _ParameterValidator, _utils, jQueryDOM) {
 	"use strict";
 
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._timeoutWaiter");
@@ -201,7 +201,7 @@ sap.ui.define([
 					minDelay: "numeric"
 				}
 			});
-			$.extend(config, oConfig);
+			jQueryDOM.extend(config, oConfig);
 		}
 	};
 }, true);

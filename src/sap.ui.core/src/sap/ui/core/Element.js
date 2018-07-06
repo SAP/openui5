@@ -4,14 +4,23 @@
 
 // Provides the base class for all controls and UI elements.
 sap.ui.define([
-	'jquery.sap.global',
 	'../base/Object',
 	'../base/ManagedObject',
 	'./ElementMetadata',
 	'../Device',
-	'sap/ui/performance/trace/Interaction'
+	"sap/ui/performance/trace/Interaction",
+	"sap/base/Log",
+	"sap/base/assert"
 ],
-	function(jQuery, BaseObject, ManagedObject, ElementMetadata, Device, Interaction) {
+	function(
+		BaseObject,
+		ManagedObject,
+		ElementMetadata,
+		Device,
+		Interaction,
+		Log,
+		assert
+	) {
 	"use strict";
 
 	/**
@@ -477,7 +486,7 @@ sap.ui.define([
 			this.getMetadata().isInstanceOf("sap.ui.core.PopupInterface")) {
 			this.$().remove();
 		} else {
-			jQuery.sap.log.debug("DOM is not removed on destroy of " + this);
+			Log.debug("DOM is not removed on destroy of " + this);
 		}
 	};
 
@@ -544,7 +553,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Element.prototype.addDelegate = function (oDelegate, bCallBefore, oThis, bClone) {
-		jQuery.sap.assert(oDelegate, "oDelegate must be not null or undefined");
+		assert(oDelegate, "oDelegate must be not null or undefined");
 
 		if (!oDelegate) {
 			return this;
@@ -654,7 +663,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Element.prototype.focus = function () {
-		jQuery.sap.focus(this.getFocusDomRef());
+		var oFocusDomRef = this.getFocusDomRef();
+		if (oFocusDomRef) {
+			oFocusDomRef.focus();
+		}
 	};
 
 	/**

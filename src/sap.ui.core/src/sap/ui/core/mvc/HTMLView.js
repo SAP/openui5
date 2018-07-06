@@ -204,7 +204,9 @@ sap.ui.define([
 	 * @static
 	 */
 	HTMLView._loadTemplate = function(sTemplateName, mOptions) {
+		//TODO: global jquery call found
 		var sResourceName = jQuery.sap.getResourceName(sTemplateName, ".view.html");
+		//TODO: global jquery call found
 		return jQuery.sap.loadResource(sResourceName, mOptions);
 	};
 

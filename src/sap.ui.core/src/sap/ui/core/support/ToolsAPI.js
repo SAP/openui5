@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/library',
 	'sap/ui/Global',
 	'sap/ui/core/Core',
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/base/util/UriParameters"
 ],
 	function(
-		jQuery,
 		library,
 		Global,
 		Core,

@@ -27,7 +27,13 @@ sap.ui.define([
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/base/i18n/ResourceBundle",
-	'sap/base/util/ObjectPath',
+	"sap/base/Log",
+	"sap/ui/performance/Measurement",
+	"sap/ui/security/FrameOptions",
+	"sap/base/assert",
+	"sap/ui/dom/includeStylesheet",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/Version",
 	"sap/base/util/array/uniqueSort",
 	"sap/base/util/uid",
 	'sap/ui/events/jquery/EventSimulation',
@@ -58,7 +64,13 @@ sap.ui.define([
 		ActivityDetection,
 		getScrollbarSize,
 		ResourceBundle,
+		Log,
+		Measurement,
+		FrameOptions,
+		assert,
+		includeStylesheet,
 		ObjectPath,
+		Version,
 		uniqueSort,
 		uid
 		/* ,EventSimulation, jQuerySapEvents, jQuerySapScript, jQuerySapSjax */
@@ -128,7 +140,7 @@ sap.ui.define([
 				iFailures++;
 			}
 			if ( iOpenTasks === 0 ) {
-				jQuery.sap.log.info("Sync point '" + sName + "' finished (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
+				Log.info("Sync point '" + sName + "' finished (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
 				finish();
 			}
 		};
@@ -140,7 +152,7 @@ sap.ui.define([
 			fnCallback = null;
 		}
 
-		jQuery.sap.log.info("Sync point '" + sName + "' created");
+		Log.info("Sync point '" + sName + "' created");
 	};
 
 	/**
@@ -324,9 +336,9 @@ sap.ui.define([
 
 			log.info("Creating Core",null,METHOD);
 
-			jQuery.sap.measure.start("coreComplete", "Core.js - complete");
-			jQuery.sap.measure.start("coreBoot", "Core.js - boot");
-			jQuery.sap.measure.start("coreInit", "Core.js - init");
+			Measurement.start("coreComplete", "Core.js - complete");
+			Measurement.start("coreBoot", "Core.js - boot");
+			Measurement.start("coreInit", "Core.js - init");
 
 			/**
 			 * Object holding the interpreted configuration
@@ -339,7 +351,7 @@ sap.ui.define([
 			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
 			oFrameOptionsConfig.mode = this.oConfiguration.getFrameOptions();
 			oFrameOptionsConfig.whitelistService = this.oConfiguration.getWhitelistService();
-			this.oFrameOptions = new jQuery.sap.FrameOptions(oFrameOptionsConfig);
+			this.oFrameOptions = new FrameOptions(oFrameOptionsConfig);
 
 			// enable complex bindings if configured
 			if ( this.oConfiguration["bindingSyntax"] === "complex" ) {
@@ -431,7 +443,9 @@ sap.ui.define([
 			 * @public
 			 * @function
 			 */
-			sap.ui.getCore = jQuery.sap.getter(this.getInterface());
+			sap.ui.getCore = function() {
+				return that.getInterface();
+			};
 
 			// create the RenderManager so it can be used already
 			this.oRenderManager = new RenderManager();
@@ -455,7 +469,7 @@ sap.ui.define([
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot(bAsync, function() {
 					oSyncPoint1.finishTask(iCoreBootTask);
-					jQuery.sap.measure.end("coreBoot");
+					Measurement.end("coreBoot");
 				});
 			});
 
@@ -644,7 +658,7 @@ sap.ui.define([
 			for (var sElementId in that.mElements) {
 				var oElement = that.mElements[sElementId];
 				if ( oElement._sapui_candidateForDestroy && oElement._sOwnerId === sComponentId && !oElement.getParent() ) {
-					jQuery.sap.log.debug("destroying dangling template " + oElement + " when destroying the owner component");
+					Log.debug("destroying dangling template " + oElement + " when destroying the owner component");
 					oElement.destroy();
 				}
 			}
@@ -860,6 +874,7 @@ sap.ui.define([
 			if ( m ) {
 				that.loadLibrary(m[1]);
 			} else {
+				//TODO: global jquery call found
 				jQuery.sap.require( mod );
 			}
 		});
@@ -877,6 +892,7 @@ sap.ui.define([
 			if ( m ) {
 				aLibs.push( m[1] );
 			} else {
+				//TODO: global jquery call found
 				aModules.push( jQuery.sap.getResourceName( sModule, "" ) );
 			}
 		});
@@ -915,8 +931,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.applyTheme = function(sThemeName, sThemeBaseUrl) {
-		jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
-		jQuery.sap.assert(typeof sThemeBaseUrl === "string" || typeof sThemeBaseUrl === "undefined", "sThemeBaseUrl must be a string or undefined");
+		assert(typeof sThemeName === "string", "sThemeName must be a string");
+		assert(typeof sThemeBaseUrl === "string" || typeof sThemeBaseUrl === "undefined", "sThemeBaseUrl must be a string or undefined");
 
 		sThemeName = this.oConfiguration._normalizeTheme(sThemeName, sThemeBaseUrl);
 
@@ -989,7 +1005,7 @@ sap.ui.define([
 			// Changing "oLink.href" would also trigger loading the new stylesheet but
 			// the load/error handlers would not get called which causes issues with the ThemeCheck
 			// as the "data-sap-ui-ready" attribute won't be set.
-			jQuery.sap.includeStyleSheet(sHref, oLink.id);
+			includeStylesheet(sHref, oLink.id);
 		}
 	};
 
@@ -1087,8 +1103,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl) {
-		jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
-		jQuery.sap.assert((Array.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
+		assert(typeof sThemeName === "string", "sThemeName must be a string");
+		assert((Array.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
 
 		if (!this._mThemeRoots) {
 			this._mThemeRoots = {};
@@ -1141,7 +1157,7 @@ sap.ui.define([
 		this.oThemeCheck = new ThemeCheck(this);
 
 		log.info("Initialized",null,METHOD);
-		jQuery.sap.measure.end("coreInit");
+		Measurement.end("coreInit");
 
 		this.bInitialized = true;
 
@@ -1174,7 +1190,7 @@ sap.ui.define([
 			}, this);
 		}
 
-		jQuery.sap.measure.end("coreComplete");
+		Measurement.end("coreComplete");
 	};
 
 	Core.prototype._createUIAreas = function() {
@@ -1211,6 +1227,7 @@ sap.ui.define([
 						fn();
 					} else {
 						// DO NOT USE jQuery.globalEval as it executes async in FF!
+						//Remove this eval call
 						jQuery.sap.globalEval(vOnInit);
 					}
 				}
@@ -1256,11 +1273,12 @@ sap.ui.define([
 
 				log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
 				log.info("Loading Application: " + sApplication,null,METHOD);
+				//TODO: global jquery call found
 				jQuery.sap.require(sApplication);
 				var oClass = ObjectPath.get(sApplication);
-				jQuery.sap.assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
+				assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
 				var oApplication = new oClass();
-				jQuery.sap.assert(BaseObject.isA(oApplication, 'sap.ui.app.Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
+				assert(BaseObject.isA(oApplication, 'sap.ui.app.Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
 
 			}
 
@@ -1341,7 +1359,7 @@ sap.ui.define([
 	 * @deprecated since 1.13.2 Register with the more convenient {@link #attachInit} function instead
 	 */
 	Core.prototype.attachInitEvent = function (fnFunction) {
-		jQuery.sap.assert(typeof fnFunction === "function", "fnFunction must be a function");
+		assert(typeof fnFunction === "function", "fnFunction must be a function");
 		if (this.aInitListeners) {
 			this.aInitListeners.push(fnFunction);
 		}
@@ -1358,7 +1376,7 @@ sap.ui.define([
 	 * @since 1.13.2
 	 */
 	Core.prototype.attachInit = function (fnFunction) {
-		jQuery.sap.assert(typeof fnFunction === "function", "fnFunction must be a function");
+		assert(typeof fnFunction === "function", "fnFunction must be a function");
 		if (this.aInitListeners) {
 			this.aInitListeners.push(fnFunction);
 		} else {
@@ -1426,7 +1444,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.createRenderManager = function() {
-		jQuery.sap.assert(this.isInitialized(), "A RenderManager should be created only after the Core has been initialized");
+		assert(this.isInitialized(), "A RenderManager should be created only after the Core has been initialized");
 		var oRm = new RenderManager();
 		oRm._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
 		return oRm.getInterface();
@@ -1460,7 +1478,7 @@ sap.ui.define([
 
 	function evalLibConfig(lib) {
 
-		jQuery.sap.assert(
+		assert(
 			typeof lib === 'string' && lib ||
 			typeof lib === 'object' && typeof lib.name === 'string' && lib.name && (lib.json == null || typeof lib.json === 'boolean'),
 			"lib must be a non-empty string or an object with at least a non-empty 'name' property and an optional (boolean) property 'json'" );
@@ -1533,6 +1551,7 @@ sap.ui.define([
 		var p;
 		if ( fileType !== 'json' /* 'js' or 'both', not forced to JSON */ ) {
 			var sPreloadModule = libPackage + (http2 ? '/library-h2-preload.js' : '/library-preload.js');
+			//TODO: global jquery call found
 			p = jQuery.sap._loadJSResourceAsync(sPreloadModule).then(
 					function() {
 						return dependenciesFromManifest(lib);
@@ -1541,7 +1560,7 @@ sap.ui.define([
 						// loading library-preload.js failed, might be an old style lib with a library-preload.json only.
 						// with json === false, this fallback can be suppressed
 						if ( fileType !== 'js' /* 'both' */ ) {
-							jQuery.sap.log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
+							Log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
 							return loadJSONAsync(lib);
 						}
 						// ignore other errors
@@ -1560,7 +1579,7 @@ sap.ui.define([
 				aPromises = dependencies.map(preloadLibraryAsync.bind(that));
 			}
 
-			if (oManifest && jQuery.sap.Version(oManifest._version).compareTo("1.9.0") >= 0) {
+			if (oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0) {
 				aPromises.push(that.getLibraryResourceBundle(lib, true));
 			}
 
@@ -1579,6 +1598,7 @@ sap.ui.define([
 
 		if ( jQuery.sap.isResourceLoaded(manifestModule) ) {
 
+			//TODO: global jquery call found
 			return jQuery.sap.loadResource(manifestModule, {
 				dataType: 'json',
 				async: false, // always sync as we are sure to load from preload cache
@@ -1616,6 +1636,7 @@ sap.ui.define([
 			function(data) {
 				if ( data ) {
 					data.url = sURL;
+					//TODO: global jquery call found
 					jQuery.sap.registerPreloadedModules(data);
 					var dependencies = data.dependencies;
 					if ( Array.isArray(dependencies) ) {
@@ -1628,7 +1649,7 @@ sap.ui.define([
 				}
 			},
 			function(xhr, textStatus, error) {
-				jQuery.sap.log.error("failed to load '" + sURL + "': " + (error || textStatus));
+				Log.error("failed to load '" + sURL + "': " + (error || textStatus));
 			}
 		);
 
@@ -1666,11 +1687,11 @@ sap.ui.define([
 		// currently loading
 		if ( libInfo.pending ) {
 			if ( libInfo.async ) {
-				jQuery.sap.log.warning("request to load " + lib + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
+				Log.warning("request to load " + lib + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
 				// fall through and preload synchronously
 			} else {
 				// sync cycle -> ignore nested call (would nevertheless be a dependency cycle)
-				jQuery.sap.log.warning("request to load " + lib + " synchronously while sync loading is pending (cycle, ignored)");
+				Log.warning("request to load " + lib + " synchronously while sync loading is pending (cycle, ignored)");
 				return;
 			}
 		}
@@ -1690,7 +1711,7 @@ sap.ui.define([
 				sap.ui.requireSync(sPreloadModule);
 				dependencies = dependenciesFromManifest(lib);
 			} catch (e) {
-				jQuery.sap.log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + ")");
+				Log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + ")");
 				if ( e && e.loadError && fileType !== 'js' ) {
 					dependencies = loadJSONSync(lib);
 				} // ignore other errors (preload shouldn't fail)
@@ -1719,12 +1740,13 @@ sap.ui.define([
 			success: function(data) {
 				if ( data ) {
 					data.url = sURL;
+					//TODO: global jquery call found
 					jQuery.sap.registerPreloadedModules(data);
 					dependencies = data.dependencies;
 				}
 			},
 			error: function(xhr, textStatus, error) {
-				jQuery.sap.log.error("failed to load '" + sURL + "': " + (error || textStatus));
+				Log.error("failed to load '" + sURL + "': " + (error || textStatus));
 			}
 		});
 
@@ -1799,8 +1821,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.loadLibrary = function(sLibrary, vUrl) {
-		jQuery.sap.assert(typeof sLibrary === "string", "sLibrary must be a string");
-		jQuery.sap.assert(vUrl === undefined ||
+		assert(typeof sLibrary === "string", "sLibrary must be a string");
+		assert(vUrl === undefined ||
 			typeof vUrl === 'boolean' ||
 			typeof vUrl === 'string' ||
 			typeof vUrl === 'object' && (vUrl.url == null || vUrl.url === 'string') && (vUrl.async == null || typeof vUrl.async === 'boolean'),
@@ -1834,11 +1856,12 @@ sap.ui.define([
 			}
 
 			// require the library module (which in turn will call initLibrary())
+			//TODO: global jquery call found
 			jQuery.sap.require(sModule);
 
 			// check for legacy code
 			if ( !mLoadedLibraries[sLibrary] ) {
-				jQuery.sap.log.warning("library " + sLibrary + " didn't initialize itself");
+				Log.warning("library " + sLibrary + " didn't initialize itself");
 				this.initLibrary(sLibrary); // TODO redundant to generated initLibrary call....
 			}
 
@@ -1876,7 +1899,7 @@ sap.ui.define([
 	 */
 	Core.prototype.loadLibraries = function(aLibraries, mOptions) {
 
-		jQuery.sap.assert(Array.isArray(aLibraries), "aLibraries must be an array");
+		assert(Array.isArray(aLibraries), "aLibraries must be an array");
 
 		// default values for options
 		mOptions = jQuery.extend({ async : true, preloadOnly : false }, mOptions);
@@ -2073,7 +2096,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.initLibrary = function(oLibInfo) {
-		jQuery.sap.assert(typeof oLibInfo === 'string' || typeof oLibInfo === 'object', "oLibInfo must be a string or object");
+		assert(typeof oLibInfo === 'string' || typeof oLibInfo === 'object', "oLibInfo must be a string or object");
 
 		var bLegacyMode = typeof oLibInfo === 'string';
 		if ( bLegacyMode ) {
@@ -2119,7 +2142,7 @@ sap.ui.define([
 						oLibrary[sKey] = vValue;
 					} else if ( sKey != "name" ) {
 						// ignore other values (silently ignore "name")
-						jQuery.sap.log.warning("library info setting ignored: " + sKey + "=" + vValue);
+						Log.warning("library info setting ignored: " + sKey + "=" + vValue);
 					}
 				}
 			}
@@ -2157,6 +2180,7 @@ sap.ui.define([
 		// Only needed for backward compatibility: some code 'requires' such types although they never have been modules on their own
 		for (var i = 0; i < oLibInfo.types.length; i++) {
 			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLibInfo.types[i]) ) {
+				//TODO: global jquery call found
 				jQuery.sap.declare(oLibInfo.types[i]);
 			}
 		}
@@ -2203,8 +2227,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.includeLibraryTheme = function(sLibName, sVariant, sQuery) {
-		jQuery.sap.assert(typeof sLibName === "string", "sLibName must be a string");
-		jQuery.sap.assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
+		assert(typeof sLibName === "string", "sLibName must be a string");
+		assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
 
 		/*
 		 * by specifying a library name containing a colon (":") you can specify
@@ -2243,8 +2267,8 @@ sap.ui.define([
 
 			// log and include
 			var cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css" + (sQuery ? sQuery : "");
-			jQuery.sap.log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
-			jQuery.sap.includeStyleSheet(cssPathAndName, sLinkId);
+			Log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
+			includeStylesheet(cssPathAndName, sLinkId);
 
 			// if parameters have been used, update them with the new style sheet
 			var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
@@ -2359,8 +2383,8 @@ sap.ui.define([
 		}
 
 
-		jQuery.sap.assert((sLibraryName === undefined && sLocale === undefined) || typeof sLibraryName === "string", "sLibraryName must be a string or there is no argument given at all");
-		jQuery.sap.assert(sLocale === undefined || typeof sLocale === "string", "sLocale must be a string or omitted");
+		assert((sLibraryName === undefined && sLocale === undefined) || typeof sLibraryName === "string", "sLibraryName must be a string or there is no argument given at all");
+		assert(sLocale === undefined || typeof sLocale === "string", "sLocale must be a string or omitted");
 
 		sLibraryName = sLibraryName || "sap.ui.core";
 		sLocale = sLocale || this.getConfiguration().getLanguage();
@@ -2369,7 +2393,7 @@ sap.ui.define([
 		vResult = this.mResourceBundles[sKey];
 		if (!vResult || (!bAsync && vResult instanceof Promise)) {
 			oManifest = getManifest(sLibraryName);
-			if ( oManifest && jQuery.sap.Version(oManifest._version).compareTo("1.9.0") >= 0 ) {
+			if ( oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0 ) {
 				vI18n = oManifest["sap.ui5"] && oManifest["sap.ui5"].library && oManifest["sap.ui5"].library.i18n;
 			} // else vI18n = undefined
 
@@ -2412,8 +2436,8 @@ sap.ui.define([
 	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt oControl.placeAt(oDomRef, "only")} instead.
 	 */
 	Core.prototype.setRoot = function(oDomRef, oControl) {
-		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
-		jQuery.sap.assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
+		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
+		assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
 
 		if (oControl) {
 			oControl.placeAt(oDomRef, "only");
@@ -2430,7 +2454,7 @@ sap.ui.define([
 	 */
 	Core.prototype.createUIArea = function(oDomRef) {
 		var that = this;
-		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
+		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
 
 		if (!oDomRef) {
 			throw new Error("oDomRef must not be null");
@@ -2483,7 +2507,7 @@ sap.ui.define([
 	 * @return {sap.ui.core.UIArea} a UIArea with a given ID or DOM Element.
 	 */
 	Core.prototype.getUIArea = function(o) {
-		jQuery.sap.assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
+		assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
 
 		var sId = "";
 		if (typeof (o) == "string") {
@@ -2536,7 +2560,7 @@ sap.ui.define([
 		// start performance measurement
 		oRenderLog.debug("Render pending UI updates: start (" + (sCaller || "by timer" ) + ")");
 
-		jQuery.sap.measure.start("renderPendingUIUpdates","Render pending UI updates in all UIAreas");
+		Measurement.start("renderPendingUIUpdates","Render pending UI updates in all UIAreas");
 
 		var bUIUpdated = false,
 			bLooped = Core.MAX_RENDERING_ITERATIONS > 0,
@@ -2588,7 +2612,7 @@ sap.ui.define([
 		oRenderLog.debug("Render pending UI updates: finished");
 
 		// end performance measurement
-		jQuery.sap.measure.end("renderPendingUIUpdates");
+		Measurement.end("renderPendingUIUpdates");
 	};
 
 
@@ -2809,7 +2833,7 @@ sap.ui.define([
 			oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
 			fnAdapt = ManagedObject._handleLocalizationChange;
 
-		jQuery.sap.log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
+		Log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
 
 		/*
 		 * Notify models that are able to handle a localization change
@@ -2849,7 +2873,7 @@ sap.ui.define([
 			jQuery.each(this.mUIAreas, function() {
 				this.invalidate();
 			});
-			jQuery.sap.log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
+			Log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
 		}
 
 		// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
@@ -2948,7 +2972,7 @@ sap.ui.define([
 			// add class to corresponding category in library ('elements' or 'controls')
 			oLibrary[sCategory].push(sName);
 
-			jQuery.sap.log.debug("Class " + oMetadata.getName() + " registered for library " + oMetadata.getLibraryName());
+			Log.debug("Class " + oMetadata.getName() + " registered for library " + oMetadata.getLibraryName());
 			this.fireLibraryChanged({name : oMetadata.getName(), stereotype : oMetadata.getStereotype(), operation: "add", metadata : oMetadata});
 		}
 	};
@@ -2965,15 +2989,15 @@ sap.ui.define([
 
 		if ( oldElement && oldElement !== oElement ) {
 			if ( oldElement._sapui_candidateForDestroy ) {
-				jQuery.sap.log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
+				Log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
 				oldElement.destroy();
 			} else {
 				// duplicate ID detected => fail or at least log a warning
 				if (this.oConfiguration.getNoDuplicateIds()) {
-					jQuery.sap.log.error("adding element with duplicate id '" + sId + "'");
+					Log.error("adding element with duplicate id '" + sId + "'");
 					throw new Error("Error: adding element with duplicate id '" + sId + "'");
 				} else {
-					jQuery.sap.log.warning("adding element with duplicate id '" + sId + "'");
+					Log.warning("adding element with duplicate id '" + sId + "'");
 				}
 			}
 		}
@@ -3002,7 +3026,7 @@ sap.ui.define([
 			oldObject = this.getObject(sType, sId);
 
 		if ( oldObject && oldObject !== oObject ) {
-			jQuery.sap.log.error("adding object \"" + sType + "\" with duplicate id '" + sId + "'");
+			Log.error("adding object \"" + sType + "\" with duplicate id '" + sId + "'");
 			throw new Error("Error: adding object \"" + sType + "\" with duplicate id '" + sId + "'");
 		}
 
@@ -3028,7 +3052,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.byId = function(sId) {
-		jQuery.sap.assert(sId == null || typeof sId === "string", "sId must be a string when defined");
+		assert(sId == null || typeof sId === "string", "sId must be a string when defined");
 		// allow null, as this occurs frequently and it is easier to check whether there is a control in the end than
 		// first checking whether there is an ID and then checking for a control
 
@@ -3102,8 +3126,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Core.prototype.getObject = function(sType, sId) {
-		jQuery.sap.assert(sId == null || typeof sId === "string", "sId must be a string when defined");
-		jQuery.sap.assert(this.mObjects[sType] !== undefined, "sType must be a supported stereotype");
+		assert(sId == null || typeof sId === "string", "sId must be a string when defined");
+		assert(this.mObjects[sType] !== undefined, "sType must be a supported stereotype");
 		return sId == null ? undefined : this.mObjects[sType] && this.mObjects[sType][sId];
 	};
 
@@ -3306,7 +3330,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.registerPlugin = function(oPlugin) {
-		jQuery.sap.assert(typeof oPlugin === "object", "oPlugin must be an object");
+		assert(typeof oPlugin === "object", "oPlugin must be an object");
 
 		// check for a valid plugin
 		if (!oPlugin) {
@@ -3338,7 +3362,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.unregisterPlugin = function(oPlugin) {
-		jQuery.sap.assert(typeof oPlugin === "object", "oPlugin must be an object");
+		assert(typeof oPlugin === "object", "oPlugin must be an object");
 
 		// check for a valid plugin
 		if (!oPlugin) {
@@ -3416,8 +3440,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.setModel = function(oModel, sName) {
-		jQuery.sap.assert(oModel == null || BaseObject.isA(oModel, 'sap.ui.model.Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
-		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
+		assert(oModel == null || BaseObject.isA(oModel, 'sap.ui.model.Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
+		assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		var that = this,
 			oProperties;
 
@@ -3506,7 +3530,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.getModel = function(sName) {
-		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
+		assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		return this.oModels[sName];
 	};
 
@@ -3987,8 +4011,8 @@ sap.ui.define([
 	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead.
 	 */
 	sap.ui.setRoot = function(oDomRef, oControl) {
-		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
-		jQuery.sap.assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
+		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
+		assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
 
 		sap.ui.getCore().setRoot(oDomRef, oControl);
 	};

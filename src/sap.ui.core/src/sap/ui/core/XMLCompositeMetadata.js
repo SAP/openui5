@@ -12,8 +12,11 @@
  *
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/ElementMetadata', 'sap/ui/core/XMLTemplateProcessor'
-], function (jQuery, ElementMetadata, XMLTemplateProcessor) {
+	'jquery.sap.global',
+	'sap/ui/core/ElementMetadata',
+	'sap/ui/core/XMLTemplateProcessor',
+	"sap/base/Log"
+], function(jQuery, ElementMetadata, XMLTemplateProcessor, Log) {
 	"use strict";
 
 	var mFragmentCache = {};
@@ -73,7 +76,7 @@ sap.ui.define([
 						throw (e);
 					} else {
 						// should the class perhaps have been abstract ...
-						jQuery.sap.log.warning("Implicitly inferred fragment xml " + oClassInfo.fragment + " not found. " + sClassName + " is not abstract!");
+						Log.warning("Implicitly inferred fragment xml " + oClassInfo.fragment + " not found. " + sClassName + " is not abstract!");
 					}
 				}
 			}
@@ -178,6 +181,7 @@ sap.ui.define([
 	XMLCompositeMetadata.prototype.requireFor = function (oElement) {
 		var sModuleNames = oElement.getAttribute("template:require");
 		if (sModuleNames) {
+			//TODO: global jquery call found
 			jQuery.sap.require.apply(jQuery.sap, sModuleNames.split(" "));
 		}
 	};

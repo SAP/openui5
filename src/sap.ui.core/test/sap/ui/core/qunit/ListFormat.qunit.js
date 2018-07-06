@@ -1,9 +1,9 @@
-sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale'], function (ListFormat, Locale) {
+sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/Log"], function(ListFormat, Locale, Log) {
 
 	QUnit.module("ListFormat", {
 		beforeEach: function () {
 			this.oLocale = new Locale("de-DE");
-			this.jQuerySapLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
+			this.jQuerySapLogErrorSpy = sinon.spy(Log, "error");
 			this.aInput = [
 				[],
 				["1"],

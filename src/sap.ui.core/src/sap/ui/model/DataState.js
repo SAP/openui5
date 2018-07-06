@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', '../base/Object', "sap/base/util/deepEqual"], function(jQuery, BaseObject, deepEqual) {
+sap.ui.define(["sap/ui/thirdparty/jquery", '../base/Object', "sap/base/util/deepEqual"], function(jQuery, BaseObject, deepEqual) {
 	"use strict";
 
 	/**

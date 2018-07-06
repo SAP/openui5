@@ -3,8 +3,8 @@
  */
 
 //Provides the history handler sap.ui.core.History
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/util/Storage"],
-	function(jQuery, BaseObject, Storage) {
+sap.ui.define(['sap/ui/base/Object', "sap/ui/util/Storage"],
+	function(BaseObject, Storage) {
 	"use strict";
 
 	/**

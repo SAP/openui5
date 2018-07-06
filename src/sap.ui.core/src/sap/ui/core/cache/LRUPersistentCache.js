@@ -7,8 +7,8 @@
  * but modified. Please see the OpenUI5 LICENSE file for license information respecting node-lru-cache.
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function (jQuery) {
+sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
+	function(Log, Measurement) {
 		"use strict";
 
 		/**
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			set: function (key, value) {
 				if (keyMatchesExclusionStrings(key)) {
-					jQuery.sap.log.warning("Cache Manager ignored 'set' for key [" + key + "]");
+					Log.warning("Cache Manager ignored 'set' for key [" + key + "]");
 					return Promise.resolve();
 				}
 				if (key == null) { //undefined or null
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global'],
 				if (typeof value === "undefined") {
 					return Promise.reject("Cache Manager does not accept undefined as value");
 				}
-				jQuery.sap.log.debug("Cache Manager LRUPersistentCache: adding item with key [" + key + "]...");
+				Log.debug("Cache Manager LRUPersistentCache: adding item with key [" + key + "]...");
 				var self = this,
 					sMsrTotal = "[sync ] fnSet: total[sync]  key [" + key + "]",
 					sMsrOpeningTx = "[sync ] fnSet: txStart[sync]  key [" + key + "]",
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global'],
 					sMsrSerialize = "[sync ] fnSet: serialize[sync]  key [" + key + "]";
 
 				return new Promise(function fnSet(resolve, reject) {
-					jQuery.sap.measure.start(sMsrTotal, "CM", sMsrCatSet);
+					Measurement.start(sMsrTotal, "CM", sMsrCatSet);
 					var objectStore, objectStoreRequest,
 						objectMetadataStore,
 						oItem, backupMetadata;
@@ -91,13 +91,13 @@ sap.ui.define(['jquery.sap.global'],
 					backupMetadata = cloneMetadata(self._metadata);
 					oItem = new Item(key, value, typeof value, ++self._mru, sMsrSerialize, sMsrCatSet).serialize();
 
-					jQuery.sap.measure.start(sMsrOpeningTx, "CM", sMsrCatSet);
+					Measurement.start(sMsrOpeningTx, "CM", sMsrCatSet);
 					var transaction = self._db.transaction([self.defaultOptions._contentStoreName, self.defaultOptions._metadataStoreName], "readwrite");
-					jQuery.sap.measure.end(sMsrOpeningTx);
+					Measurement.end(sMsrOpeningTx);
 
 					transaction.onerror = function (event) {
 						var sMessage = "Cache Manager cannot complete add/put transaction for entry with key: " + oItem.oData.key + ". Details: " + collectErrorData(event);
-						jQuery.sap.log.error(sMessage);
+						Log.error(sMessage);
 						self._metadata = backupMetadata;
 						assignRUCounters(self);
 						reject(sMessage);
@@ -109,56 +109,56 @@ sap.ui.define(['jquery.sap.global'],
 						var iOriginalItemCount = getItemCount(self);
 
 						if (isQuotaExceeded(event) && iOriginalItemCount > 0) {
-							jQuery.sap.log.warning("Cache Manager is trying to free some space to add/put new item");
+							Log.warning("Cache Manager is trying to free some space to add/put new item");
 							cleanAndStore(self, key, value).then(
 								function () {
-									jQuery.sap.log.debug("Cache Manager LRUPersistentCache: set completed after freeing space. ItemCount changed from " +
+									Log.debug("Cache Manager LRUPersistentCache: set completed after freeing space. ItemCount changed from " +
 										iOriginalItemCount + " to " + getItemCount(self));
 									resolve();
 								},
 								function (sMessage) {
 									var sMsg = "Cache Manager LRUPersistentCache: set unsuccessful. Cannot free space to add/put entry. Details: " + sMessage;
-									jQuery.sap.log.error(sMsg);
+									Log.error(sMsg);
 									reject(sMsg);
 								});
 						} else {
 							var sErrMsg = "Cache Manager LRUPersistentCache: set failed: " + collectErrorData(event);
-							jQuery.sap.log.error(sErrMsg);
+							Log.error(sErrMsg);
 							reject(sErrMsg);
 						}
 					};
 
 					transaction.oncomplete = function () {
-						jQuery.sap.log.debug("Cache Manager LRUPersistentCache: adding item with key [" + key + "]... done");
+						Log.debug("Cache Manager LRUPersistentCache: adding item with key [" + key + "]... done");
 						resolve();
 					};
 
-					jQuery.sap.measure.start(sMsrOpeningStores, "CM", sMsrCatSet);
+					Measurement.start(sMsrOpeningStores, "CM", sMsrCatSet);
 					objectStore = transaction.objectStore(self.defaultOptions._contentStoreName);
 					objectMetadataStore = transaction.objectStore(self.defaultOptions._metadataStoreName);
-					jQuery.sap.measure.end(sMsrOpeningStores);
+					Measurement.end(sMsrOpeningStores);
 
-					jQuery.sap.measure.start(sMsrPutContent, "CM", sMsrCatSet);
+					Measurement.start(sMsrPutContent, "CM", sMsrCatSet);
 					objectStoreRequest = objectStore.put(oItem.oData, oItem.oData.key);
-					jQuery.sap.measure.end(sMsrPutContent);
-					jQuery.sap.measure.end(sMsrTotal);
+					Measurement.end(sMsrPutContent);
+					Measurement.end(sMsrTotal);
 
 					objectStoreRequest.onsuccess = function () {
 						updateItemUsage(self, oItem);
 
-						jQuery.sap.measure.start(sMsrPutMetadata, "CM", sMsrCatSet);
+						Measurement.start(sMsrPutMetadata, "CM", sMsrCatSet);
 						objectMetadataStore.put(self._metadata, self.defaultOptions._metadataKey);
-						jQuery.sap.measure.end(sMsrPutMetadata);
+						Measurement.end(sMsrPutMetadata);
 					};
 
-					if (jQuery.sap.log.getLevel() >= jQuery.sap.log.LogLevel.DEBUG) {
-						jQuery.sap.log.debug("Cache Manager LRUPersistentCache: measurements: "
-							+ sMsrTotal + ": " + jQuery.sap.measure.getMeasurement(sMsrTotal).duration
-							+ "; " + sMsrSerialize + ": " + jQuery.sap.measure.getMeasurement(sMsrSerialize).duration
-							+ "; " + sMsrOpeningTx + ": " + jQuery.sap.measure.getMeasurement(sMsrOpeningTx).duration
-							+ "; " + sMsrOpeningStores + ": " + jQuery.sap.measure.getMeasurement(sMsrOpeningStores).duration
-							+ "; " + sMsrPutContent + ": " + jQuery.sap.measure.getMeasurement(sMsrPutContent).duration
-							+ "; " + sMsrPutMetadata + ": " + jQuery.sap.measure.getMeasurement(sMsrPutMetadata).duration
+					if (Log.getLevel() >= Log.Level.DEBUG) {
+						Log.debug("Cache Manager LRUPersistentCache: measurements: "
+							+ sMsrTotal + ": " + Measurement.getMeasurement(sMsrTotal).duration
+							+ "; " + sMsrSerialize + ": " + Measurement.getMeasurement(sMsrSerialize).duration
+							+ "; " + sMsrOpeningTx + ": " + Measurement.getMeasurement(sMsrOpeningTx).duration
+							+ "; " + sMsrOpeningStores + ": " + Measurement.getMeasurement(sMsrOpeningStores).duration
+							+ "; " + sMsrPutContent + ": " + Measurement.getMeasurement(sMsrPutContent).duration
+							+ "; " + sMsrPutMetadata + ": " + Measurement.getMeasurement(sMsrPutMetadata).duration
 						);
 					}
 				});
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			has: function (key) {
 				if (keyMatchesExclusionStrings(key)) {
-					jQuery.sap.log.warning("Cache Manager ignored 'has' for key [" + key + "]");
+					Log.warning("Cache Manager ignored 'has' for key [" + key + "]");
 					return Promise.resolve(false);
 				}
 				return this.get(key).then(function (value) {
@@ -231,7 +231,7 @@ sap.ui.define(['jquery.sap.global'],
 						if (!transaction.errorHandled) {
 							transaction.errorHandled = true;
 							var sMessage = "Cache Manager cannot complete transaction for read metadata. Details: " + transaction.error;
-							jQuery.sap.log.error(sMessage);
+							Log.error(sMessage);
 							reject(sMessage);
 						}
 					};
@@ -244,7 +244,7 @@ sap.ui.define(['jquery.sap.global'],
 							self._metadata = objectStoreRequest.result ? objectStoreRequest.result : initMetadata(self._ui5version);
 							if (self._metadata.__ui5version !== self._ui5version) {
 								self.reset().then(resolve, function (e) {
-									jQuery.sap.log.error("Cannot reset the cache. Details:" + e);
+									Log.error("Cannot reset the cache. Details:" + e);
 									transaction.abort();
 								});
 							} else {
@@ -252,11 +252,11 @@ sap.ui.define(['jquery.sap.global'],
 							}
 						};
 						objectStoreRequest.onerror = function (event) {
-							jQuery.sap.log.error("Cache Manager cannot complete transaction for read metadata items. Details: " + event.message);
+							Log.error("Cache Manager cannot complete transaction for read metadata items. Details: " + event.message);
 							reject(event.message);
 						};
 					} catch (e) {
-						jQuery.sap.log.error("Cache Manager cannot read metadata entries behind key: " + self.defaultOptions._metadataKey + ". Details: " + e.message);
+						Log.error("Cache Manager cannot read metadata entries behind key: " + self.defaultOptions._metadataKey + ". Details: " + e.message);
 						reject(e.message);
 					}
 				});
@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			get: function (key) {
 				if (keyMatchesExclusionStrings(key)) {
-					jQuery.sap.log.warning("Cache Manager ignored 'get' for key [" + key + "]");
+					Log.warning("Cache Manager ignored 'get' for key [" + key + "]");
 					return Promise.resolve();
 				}
 				return get(this, key);
@@ -272,7 +272,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			del: function (key) {
 				if (keyMatchesExclusionStrings(key)) {
-					jQuery.sap.log.warning("Cache Manager ignored 'del' for key [" + key + "]");
+					Log.warning("Cache Manager ignored 'del' for key [" + key + "]");
 					return Promise.resolve();
 				}
 				return del(this, key);
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global'],
 						if (!transaction.errorHandled) {
 							transaction.errorHandled = true;
 							var sMessage = "Cache Manager LRUPersistentCache: transaction for reset() failed. Details: " + transaction.error;
-							jQuery.sap.log.error(sMessage);
+							Log.error(sMessage);
 							reject(sMessage);
 						}
 					};
@@ -330,13 +330,13 @@ sap.ui.define(['jquery.sap.global'],
 			var transaction = self._db.transaction([self.defaultOptions._contentStoreName, self.defaultOptions._metadataStoreName], "readwrite");
 
 			transaction.onerror = transaction.onabort = function (event) {
-				jQuery.sap.log.warning("Cache Manager cannot persist the information about usage of an entry. This may lead to earlier removal of the entry if browser storage space is over. Details: " + transaction.error);
+				Log.warning("Cache Manager cannot persist the information about usage of an entry. This may lead to earlier removal of the entry if browser storage space is over. Details: " + transaction.error);
 			};
 
 			try {
 				transaction.objectStore(self.defaultOptions._metadataStoreName).put(self._metadata, self.defaultOptions._metadataKey);
 			} catch (e) {
-				jQuery.sap.log.warning("Cache Manager cannot persist the information about usage of an entry. This may lead to earlier removal of the entry if browser storage space is over. Details: " + e.message);
+				Log.warning("Cache Manager cannot persist the information about usage of an entry. This may lead to earlier removal of the entry if browser storage space is over. Details: " + e.message);
 			}
 		}
 
@@ -352,7 +352,7 @@ sap.ui.define(['jquery.sap.global'],
 					assignRUCounters(self);
 
 					var sMessage = "Cache Manager LRUPersistentCache: cannot delete item with key: " + key + ". Details: " + collectErrorData(event);
-					jQuery.sap.log.error(sMessage);
+					Log.error(sMessage);
 
 					reject(sMessage);
 				}
@@ -369,15 +369,15 @@ sap.ui.define(['jquery.sap.global'],
 						self._metadata = initMetadata(self._ui5version);
 					}
 
-					jQuery.sap.log.debug("Cache Manager LRUPersistentCache: item with key " + key + " deleted");
+					Log.debug("Cache Manager LRUPersistentCache: item with key " + key + " deleted");
 					resolve();
 				};
 
-				jQuery.sap.log.debug("Cache Manager LRUPersistentCache: deleting item [" + key + "]");
+				Log.debug("Cache Manager LRUPersistentCache: deleting item [" + key + "]");
 				var oDeleteRst = tx.objectStore(self.defaultOptions._contentStoreName).delete(key);
 
 				oDeleteRst.onsuccess = function () {
-					jQuery.sap.log.debug("Cache Manager LRUPersistentCache: request for deleting item [" + key + "] is successful, updating metadata...");
+					Log.debug("Cache Manager LRUPersistentCache: request for deleting item [" + key + "] is successful, updating metadata...");
 					deleteMetadataForEntry(self, key);
 					tx.objectStore(self.defaultOptions._metadataStoreName).put(self._metadata, self.defaultOptions._metadataKey);
 				};
@@ -398,41 +398,41 @@ sap.ui.define(['jquery.sap.global'],
 				sMsrImplementationGet = "[sync ]  _instance.get",
 				sMsrGetRequestOnSuccess = "[sync ]  getRequest.onSuccess";
 
-			jQuery.sap.log.debug("Cache Manager LRUPersistentCache: get for key [" + key + "]...");
-			jQuery.sap.measure.start(sMsrImplementationGet, "CM", sMsrCatGet);
+			Log.debug("Cache Manager LRUPersistentCache: get for key [" + key + "]...");
+			Measurement.start(sMsrImplementationGet, "CM", sMsrCatGet);
 
 
 			var p = new Promise(function fnGet(resolve, reject) {
 				var result, transaction, getRequest, oItem;
 
-				jQuery.sap.measure.start(sMsrTotal, "CM", sMsrCatGet);
-				jQuery.sap.measure.start(sMsrOpeningTx, "CM", sMsrCatGet);
+				Measurement.start(sMsrTotal, "CM", sMsrCatGet);
+				Measurement.start(sMsrOpeningTx, "CM", sMsrCatGet);
 
 				transaction = self._db.transaction([self.defaultOptions._contentStoreName, self.defaultOptions._metadataStoreName], "readwrite");
-				jQuery.sap.measure.end(sMsrOpeningTx);
+				Measurement.end(sMsrOpeningTx);
 
 				transaction.onerror = function (event) {
 					var sMessage = "Cache Manager cannot complete delete transaction for entry with key: " + key + ". Details: " + transaction.error;
-					jQuery.sap.log.error(sMessage);
+					Log.error(sMessage);
 					reject(sMessage);
 				};
 
 				try {
-					jQuery.sap.measure.start(sMsrOpeningStores, "CM", sMsrCatGet);
+					Measurement.start(sMsrOpeningStores, "CM", sMsrCatGet);
 					getRequest = transaction.objectStore(self.defaultOptions._contentStoreName).get(key);
-					jQuery.sap.measure.end(sMsrOpeningStores);
+					Measurement.end(sMsrOpeningStores);
 
 					getRequest.onsuccess = function (event) {
-						jQuery.sap.measure.start(sMsrGetRequestOnSuccess, "CM", sMsrCatGet);
+						Measurement.start(sMsrGetRequestOnSuccess, "CM", sMsrCatGet);
 
-						jQuery.sap.measure.start(sMsrAccessingResult, "CM", sMsrCatGet);
+						Measurement.start(sMsrAccessingResult, "CM", sMsrCatGet);
 						oItem = new Item(getRequest.result, sMsrDeserialize, sMsrCatGet);
-						jQuery.sap.measure.end(sMsrAccessingResult);
+						Measurement.end(sMsrAccessingResult);
 
 						debugMsr("Cache Manager LRUPersistentCache: accessing the result", key, sMsrAccessingResult);
 
 						if (oItem.oData) {
-							jQuery.sap.measure.start(sMsrPutMetadata, "CM", sMsrCatGet);
+							Measurement.start(sMsrPutMetadata, "CM", sMsrCatGet);
 
 							if (oItem.oData.lu !== self._mru) { // Update the usage data only if the item is not already the most used one
 								oItem.oData.lu = ++self._mru;
@@ -440,26 +440,26 @@ sap.ui.define(['jquery.sap.global'],
 								scheduleMetadataSave(self); //postponed as update of the metadata is not crucial here
 							}
 
-							jQuery.sap.measure.end(sMsrPutMetadata);
+							Measurement.end(sMsrPutMetadata);
 							result = oItem.deserialize().oData.value;
 						}
-						jQuery.sap.measure.end(sMsrGetRequestOnSuccess);
-						jQuery.sap.log.debug("Cache Manager LRUPersistentCache: get for key [" + key + "]...done");
+						Measurement.end(sMsrGetRequestOnSuccess);
+						Log.debug("Cache Manager LRUPersistentCache: get for key [" + key + "]...done");
 						resolve(result); // whatever it is (null, undefined, real value from the storage) - we return it back
 					};
 					getRequest.onerror = function (event) {
-						jQuery.sap.log.error("Cache Manager cannot get entry with key: " + key + ". Details: " + event.message);
+						Log.error("Cache Manager cannot get entry with key: " + key + ". Details: " + event.message);
 						reject(event.message);
 					};
 				} catch (e) {
-					jQuery.sap.log.error("Cache Manager cannot get entry with key: " + key + ". Details: " + e.message);
+					Log.error("Cache Manager cannot get entry with key: " + key + ". Details: " + e.message);
 					reject(e.message);
 					return;
 				}
-				jQuery.sap.measure.end(sMsrTotal);
+				Measurement.end(sMsrTotal);
 			});
 
-			jQuery.sap.measure.end(sMsrImplementationGet);
+			Measurement.end(sMsrImplementationGet);
 			return p;
 		}
 
@@ -468,7 +468,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			if (vKeyToDelete == undefined) {
 				var sErrMsg = "Cache Manager LRUPersistentCache: deleteItemAndUpdateMetadata cannot find item to delete";
-				jQuery.sap.log.debug(sErrMsg);
+				Log.debug(sErrMsg);
 				return Promise.reject(sErrMsg);
 			}
 
@@ -478,7 +478,7 @@ sap.ui.define(['jquery.sap.global'],
 					return persistMetadata(self).then(function () {
 						return vKeyToDelete;
 					}, function () {
-						jQuery.sap.log.warning("Cache Manager LRUPersistentCache: Free space algorithm deleted item " +
+						Log.warning("Cache Manager LRUPersistentCache: Free space algorithm deleted item " +
 							"but the metadata changes could not be persisted. This won't break the functionality.");
 						return vKeyToDelete;
 					});
@@ -495,7 +495,7 @@ sap.ui.define(['jquery.sap.global'],
 					tx.onabort = errorHandler;
 
 					tx.oncomplete = function () {
-						jQuery.sap.log.debug("Cache Manager LRUPersistentCache: persistMetadata - metadata was successfully updated");
+						Log.debug("Cache Manager LRUPersistentCache: persistMetadata - metadata was successfully updated");
 						resolve();
 					};
 
@@ -507,7 +507,7 @@ sap.ui.define(['jquery.sap.global'],
 				function errorHandler(event, exception) {
 					var sErrMsg = "Cache Manager LRUPersistentCache: persistMetadata error - metadata was not successfully persisted. Details: " +
 						collectErrorData(event) + ". Exception: " + (exception ? exception.message : "");
-					jQuery.sap.log.debug(sErrMsg);
+					Log.debug(sErrMsg);
 					reject(sErrMsg);
 				}
 			});
@@ -520,7 +520,7 @@ sap.ui.define(['jquery.sap.global'],
 				function errorHandler(event) {
 					var sMessage = "Cache Manager LRUPersistentCache: internalDel cannot complete delete transaction for entry with key: "
 						+ key + ". Details: " + collectErrorData(event);
-					jQuery.sap.log.warning(sMessage);
+					Log.warning(sMessage);
 					reject(event);
 				}
 
@@ -536,11 +536,11 @@ sap.ui.define(['jquery.sap.global'],
 						self._metadata = initMetadata(self._ui5version);
 					}
 
-					jQuery.sap.log.debug("Cache Manager LRUPersistentCache: internalDel deleting item [" + key + "]...done");
+					Log.debug("Cache Manager LRUPersistentCache: internalDel deleting item [" + key + "]...done");
 					resolve();
 				};
 
-				jQuery.sap.log.debug("Cache Manager LRUPersistentCache: internalDel deleting item [" + key + "]...");
+				Log.debug("Cache Manager LRUPersistentCache: internalDel deleting item [" + key + "]...");
 				tx.objectStore(self.defaultOptions._contentStoreName).delete(key);
 			});
 		}
@@ -554,7 +554,7 @@ sap.ui.define(['jquery.sap.global'],
 
 					backupMetadata = cloneMetadata(self._metadata);
 					var oItem = new Item(key, value, typeof value, ++self._mru, sMsrSerialize, sMsrCatSet).serialize();
-					jQuery.sap.log.debug("Cache Manager: LRUPersistentCache: internal set with parameters: key [" + oItem.oData.key + "], access index [" + oItem.oData.lu + "]");
+					Log.debug("Cache Manager: LRUPersistentCache: internal set with parameters: key [" + oItem.oData.key + "], access index [" + oItem.oData.lu + "]");
 
 					//store in database
 					transaction = self._db.transaction([self.defaultOptions._contentStoreName, self.defaultOptions._metadataStoreName], "readwrite");
@@ -563,14 +563,14 @@ sap.ui.define(['jquery.sap.global'],
 					transaction.onabort = errorHandler;
 
 					function errorHandler(event) {
-						jQuery.sap.log.debug("Cache Manager: LRUPersistentCache: internal set failed. Details: " + collectErrorData(event));
+						Log.debug("Cache Manager: LRUPersistentCache: internal set failed. Details: " + collectErrorData(event));
 						self._metadata = backupMetadata;
 						assignRUCounters(self);
 						reject(event);
 					}
 
 					transaction.oncomplete = function () {
-						jQuery.sap.log.debug("Cache Manager: LRUPersistentCache: Internal set transaction completed. ItemCount: " + getItemCount(self));
+						Log.debug("Cache Manager: LRUPersistentCache: Internal set transaction completed. ItemCount: " + getItemCount(self));
 						resolve();
 					};
 
@@ -593,7 +593,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (self._metadata.__byKey__[oItem.oData.key] != null) { // ItemData already exists, we need to remove the old position index
 				var oldIndex = self._metadata.__byKey__[oItem.oData.key];
 				delete self._metadata.__byIndex__[oldIndex];
-				jQuery.sap.log.debug("Cache Manager LRUPersistentCache: set/internalset - item already exists, so its indexes are updated");
+				Log.debug("Cache Manager LRUPersistentCache: set/internalset - item already exists, so its indexes are updated");
 			}
 			self._metadata.__byIndex__[oItem.oData.lu] = oItem.oData.key;
 			self._metadata.__byKey__[oItem.oData.key] = oItem.oData.lu;
@@ -606,20 +606,20 @@ sap.ui.define(['jquery.sap.global'],
 			return new Promise(function executorInitIndexedDB(resolve, reject) {
 				var DBOpenRequest;
 
-				jQuery.sap.log.debug("Cache Manager " + "_initIndexedDB started");
+				Log.debug("Cache Manager " + "_initIndexedDB started");
 
 				function openDB() {
 					try {
 						DBOpenRequest = window.indexedDB.open(instance.defaultOptions.databaseName, 1);
 					} catch (e) {
-						jQuery.sap.log.error("Could not open Cache Manager database. Details: " + e.message);
+						Log.error("Could not open Cache Manager database. Details: " + e.message);
 						reject(e.message);
 					}
 				}
 
 				openDB();
 				DBOpenRequest.onerror = function (event) {
-					jQuery.sap.log.error("Could not initialize Cache Manager database. Details: " + event.message);
+					Log.error("Could not initialize Cache Manager database. Details: " + event.message);
 					reject(event.error);
 				};
 
@@ -633,7 +633,7 @@ sap.ui.define(['jquery.sap.global'],
 					};
 					instance._loadMetaStructure().then(
 						function () {
-							jQuery.sap.log.debug("Cache Manager " + " metadataLoaded. Serialization support: " + isSerializationSupportOn() + ", resolving initIndexDb promise");
+							Log.debug("Cache Manager " + " metadataLoaded. Serialization support: " + isSerializationSupportOn() + ", resolving initIndexDb promise");
 							resolve(instance);
 						}, reject);
 					oMsr.endSync();
@@ -642,14 +642,14 @@ sap.ui.define(['jquery.sap.global'],
 				DBOpenRequest.onupgradeneeded = function (event) {
 					var db = event.target.result;
 					db.onerror = function (event) {
-						jQuery.sap.log.error("Cache Manager error. Details: " + event.message);
+						Log.error("Cache Manager error. Details: " + event.message);
 						reject(db.error);
 					};
 					try {
 						var objectStore = db.createObjectStore(instance.defaultOptions._contentStoreName);
 						db.createObjectStore(instance.defaultOptions._metadataStoreName);
 					} catch (e) {
-						jQuery.sap.log.error("Could not initialize Cache Manager object store. Details: " + e.message);
+						Log.error("Could not initialize Cache Manager object store. Details: " + e.message);
 						throw e;
 					}
 
@@ -681,9 +681,9 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		Item.prototype.deserialize = function () {
 			if (isSerializationSupportOn() && this.oData.sOrigType === "object") {
-				jQuery.sap.measure.start(this.sMeasureId, this.sMeasureId, this.sMsrCat);
+				Measurement.start(this.sMeasureId, this.sMeasureId, this.sMsrCat);
 				this.oData.value = JSON.parse(this.oData.value);
-				jQuery.sap.measure.end(this.sMeasureId);
+				Measurement.end(this.sMeasureId);
 
 				debugMsr("Cache Manager LRUPersistentCache: de-serialization the result", this.oData.key, this.sMeasureId);
 			}
@@ -696,9 +696,9 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		Item.prototype.serialize = function () {
 			if (isSerializationSupportOn() && this.oData.sOrigType === "object") {
-				jQuery.sap.measure.start(this.sMeasureId, this.sMeasureId, this.sMsrCat);
+				Measurement.start(this.sMeasureId, this.sMeasureId, this.sMsrCat);
 				this.oData.value = JSON.stringify(this.oData.value);
-				jQuery.sap.measure.end(this.sMeasureId);
+				Measurement.end(this.sMeasureId);
 
 				debugMsr("Cache Manager LRUPersistentCache: serialization of the value", this.oData.key, this.sMeasureId);
 			}
@@ -735,7 +735,7 @@ sap.ui.define(['jquery.sap.global'],
 			self._mru = lrumru.mru;
 			self._lru = lrumru.lru;
 
-			jQuery.sap.log.debug("Cache Manager LRUPersistentCache: LRU counters are assigned to the CM: " + JSON.stringify(lrumru));
+			Log.debug("Cache Manager LRUPersistentCache: LRU counters are assigned to the CM: " + JSON.stringify(lrumru));
 		}
 
 		function getItemCount(self) {
@@ -787,13 +787,13 @@ sap.ui.define(['jquery.sap.global'],
 
 				function _cleanAndStore(self, key, value) {
 					attempt++;
-					jQuery.sap.log.debug("Cache Manager LRUPersistentCache: cleanAndStore: freeing space attempt [" + (attempt) + "]");
+					Log.debug("Cache Manager LRUPersistentCache: cleanAndStore: freeing space attempt [" + (attempt) + "]");
 
 					deleteItemAndUpdateMetadata(self).then(function (deletedKey) {
-						jQuery.sap.log.debug("Cache Manager LRUPersistentCache: cleanAndStore: deleted item with key [" + deletedKey + "]. Going to put " + key);
+						Log.debug("Cache Manager LRUPersistentCache: cleanAndStore: deleted item with key [" + deletedKey + "]. Going to put " + key);
 						return internalSet(self, key, value).then(resolve, function (event) {
 							if (isQuotaExceeded(event)) {
-								jQuery.sap.log.debug("Cache Manager LRUPersistentCache: cleanAndStore: QuotaExceedError during freeing up space...");
+								Log.debug("Cache Manager LRUPersistentCache: cleanAndStore: QuotaExceedError during freeing up space...");
 								if (getItemCount(self) > 0) {
 									_cleanAndStore(self, key, value);
 								} else {
@@ -874,17 +874,17 @@ sap.ui.define(['jquery.sap.global'],
 			var sMeasureAsync = "[async]  " + sOperation + "[" + key + "]- #" + (iMsrCounter),
 				sMeasureSync = "[sync ]  " + sOperation + "[" + key + "]- #" + (iMsrCounter);
 
-			jQuery.sap.measure.start(sMeasureAsync, "CM", ["LRUPersistentCache", sOperation]);
-			jQuery.sap.measure.start(sMeasureSync, "CM", ["LRUPersistentCache", sOperation]);
+			Measurement.start(sMeasureAsync, "CM", ["LRUPersistentCache", sOperation]);
+			Measurement.start(sMeasureSync, "CM", ["LRUPersistentCache", sOperation]);
 
 			return {
 				sMeasureAsync: sMeasureAsync,
 				sMeasureSync: sMeasureSync,
 				endAsync: function () {
-					jQuery.sap.measure.end(this.sMeasureAsync);
+					Measurement.end(this.sMeasureAsync);
 				},
 				endSync: function () {
-					jQuery.sap.measure.end(this.sMeasureSync);
+					Measurement.end(this.sMeasureSync);
 				}
 			};
 		}
@@ -897,11 +897,10 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		function debugMsr(sMsg, sKey, sMsrId) {
 			//avoid redundant string concatenation & getMeasurement call
-			if (jQuery.sap.log.getLevel() >= jQuery.sap.log.LogLevel.DEBUG) {
-				jQuery.sap.log.debug(sMsg + " for key [" + sKey + "] took: " + jQuery.sap.measure.getMeasurement(sMsrId).duration);
+			if (Log.getLevel() >= Log.Level.DEBUG) {
+				Log.debug(sMsg + " for key [" + sKey + "] took: " + Measurement.getMeasurement(sMsrId).duration);
 			}
 		}
 
 		return LRUPersistentCache;
 	}, /* bExport= */false);
-

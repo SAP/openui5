@@ -1,9 +1,10 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Manifest',
-	'sap/ui/thirdparty/URI',
-	"sap/ui/core/Component"
-], function(jQuery, Manifest, URI, Component) {
+    'jquery.sap.global',
+    'sap/ui/core/Manifest',
+    'sap/ui/thirdparty/URI',
+    "sap/ui/core/Component",
+    "sap/base/Log"
+], function(jQuery, Manifest, URI, Component, Log) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -769,10 +770,10 @@ sap.ui.define([
 				}
 				return this.oVersionInfo;
 			}.bind(this);
-			sinon.spy(jQuery.sap.log, "warning");
+			sinon.spy(Log, "warning");
 		},
 		afterEach: function() {
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 			sap.ui.getVersionInfo = this.fnGetVersionInfo;
 		}
 	});
@@ -782,7 +783,7 @@ sap.ui.define([
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
 		setTimeout(function() {
-			var aCalls = jQuery.sap.log.warning.getCalls();
+			var aCalls = Log.warning.getCalls();
 			var bFound = false;
 			for (var i = 0, l = aCalls.length; i < l; i++) {
 				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.20.0\"!") {
@@ -807,7 +808,7 @@ sap.ui.define([
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
 		setTimeout(function() {
-			var aCalls = jQuery.sap.log.warning.getCalls();
+			var aCalls = Log.warning.getCalls();
 			var bFound = false;
 			for (var i = 0, l = aCalls.length; i < l; i++) {
 				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.22.5\"!") {
@@ -826,7 +827,7 @@ sap.ui.define([
 		moduleSetup.call(this, "v2version", 2);
 		var oDone = assert.async(), that = this;
 		setTimeout(function() {
-			var aCalls = jQuery.sap.log.warning.getCalls();
+			var aCalls = Log.warning.getCalls();
 			var bFound = false;
 			for (var i = 0, l = aCalls.length; i < l; i++) {
 				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.31.0\"!") {
@@ -917,7 +918,7 @@ sap.ui.define([
 			return sap.ui.component(fnCreateConfig("./testdata/inheritAsyncError/manifest.json", "sap.ui.test.inheritAsyncError")).then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
 
-				var aLogEntries = jQuery.sap.log.getLog();
+				var aLogEntries = Log.getLog();
 				var result = aLogEntries.filter(function(oEntry){
 					return oEntry.message.indexOf(
 						"Failed to load component manifest from \"./testdata/inheritAsyncError/parentFAIL/manifest.json\""
