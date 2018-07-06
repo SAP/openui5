@@ -4,7 +4,7 @@
 
 // Provides control sap.uxap.ObjectPageHeader.
 sap.ui.define([
-    "jquery.sap.global",
+    "sap/ui/thirdparty/jquery",
     "sap/ui/core/Control",
     "sap/ui/core/IconPool",
     "sap/ui/core/CustomData",
@@ -872,12 +872,12 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
 		if (this._adaptLayoutTimeout) {
-			jQuery.sap.clearDelayedCall(this._adaptLayoutTimeout);
+			clearTimeout(this._adaptLayoutTimeout);
 		}
-		this._adaptLayoutTimeout = jQuery.sap.delayedCall(0, this, function() {
+		this._adaptLayoutTimeout = setTimeout(function() {
 			this._adaptLayoutTimeout = null;
 			this._adaptLayout();
-		});
+		}.bind(this), 0);
 	};
 
 	/**
@@ -1020,7 +1020,7 @@ sap.ui.define([
 
 		if ($headerDomRef) {
 			sId = this.getId() + '-' + sId;
-			return jQuery.sap.byId(sId, $headerDomRef);
+			return jQuery(document.getElementById(sId));
 		}
 
 		return this.$(sId); //if no dom reference then search within its own id-space (prepended with own id)

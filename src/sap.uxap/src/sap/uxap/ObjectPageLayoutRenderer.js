@@ -3,7 +3,7 @@
  */
 
 sap.ui.define(["sap/ui/Device"],
-	function (Device) {
+	function(Device) {
 		"use strict";
 
 		/**
@@ -135,8 +135,8 @@ sap.ui.define(["sap/ui/Device"],
 			oRm.writeClasses();
 			oRm.write(">");
 			aSections = oControl._getSectionsToRender();
-			if (jQuery.isArray(aSections)) {
-				jQuery.each(aSections, function (iIndex, oSection) {
+			if (Array.isArray(aSections)) {
+				aSections.forEach(function (oSection) {
 					oRm.renderControl(oSection);
 					if (bUseIconTabBar) {
 						oControl._oCurrentTabSection = oSection;
@@ -174,7 +174,7 @@ sap.ui.define(["sap/ui/Device"],
 				if (oControl.getIsChildPage() && oHeaderContent && oHeaderContent.supportsChildPageDesign()) {
 					oRm.write("<div ");
 					oRm.writeAttributeEscaped("id", oControl.getId() + "-childPageBar");
-					if (jQuery.isArray(aSections) && aSections.length > 1) {
+					if (Array.isArray(aSections) && aSections.length > 1) {
 						oRm.addClass('sapUxAPObjectChildPage');
 					}
 					oRm.writeClasses();

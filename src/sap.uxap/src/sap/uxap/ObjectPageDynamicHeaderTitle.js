@@ -4,23 +4,23 @@
 
 // Provides control sap.uxap.ObjectPageDynamicHeaderTitle.
 sap.ui.define([
-    'jquery.sap.global',
-    './library',
-    'sap/uxap/ObjectPageDynamicHeaderContent',
-    "./ObjectPageDynamicHeaderTitleRenderer"
+	'./library',
+	'sap/uxap/ObjectPageDynamicHeaderContent',
+	"./ObjectPageDynamicHeaderTitleRenderer",
+	"sap/base/Log"
 ],
 	function(
-	    jQuery,
 		library,
 		ObjectPageDynamicHeaderContent,
-		ObjectPageDynamicHeaderTitleRenderer
+		ObjectPageDynamicHeaderTitleRenderer,
+		Log
 	) {
 		"use strict";
 
 		try {
 			sap.ui.getCore().loadLibrary("sap.f");
 		} catch (e) {
-			jQuery.sap.log.error("The control 'sap.uxap.ObjectPageDynamicHeaderTitle' needs library 'sap.f'.");
+			Log.error("The control 'sap.uxap.ObjectPageDynamicHeaderTitle' needs library 'sap.f'.");
 			throw (e);
 		}
 

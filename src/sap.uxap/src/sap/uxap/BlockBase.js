@@ -4,7 +4,7 @@
 
 // Provides control sap.uxap.BlockBase.
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/CustomData",
 	"./BlockBaseMetadata",
@@ -13,8 +13,21 @@ sap.ui.define([
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"./library",
 	"sap/ui/core/Component",
-	"sap/ui/layout/library"
-], function (jQuery, Control, CustomData, BlockBaseMetadata, Context, Device, ResponsiveGridLayout, library, Component, layoutLibrary) {
+	"sap/ui/layout/library",
+	"sap/base/Log"
+], function(
+	jQuery,
+	Control,
+	CustomData,
+	BlockBaseMetadata,
+	Context,
+	Device,
+	ResponsiveGridLayout,
+	library,
+	Component,
+	layoutLibrary,
+	Log
+) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -172,7 +185,7 @@ sap.ui.define([
 				if (this.getMetadata().getView("defaultXML")) {
 					this.setMode("defaultXML");
 				} else {
-					jQuery.sap.log.error("BlockBase ::: there is no mode defined for rendering " + this.getMetadata().getName() +
+					Log.error("BlockBase ::: there is no mode defined for rendering " + this.getMetadata().getName() +
 						". You can either set a default mode on the block metadata or set the mode property before rendering the block.");
 				}
 			}
@@ -230,7 +243,7 @@ sap.ui.define([
 		 */
 		BlockBase.prototype._applyMapping = function () {
 			if (this._shouldLazyLoad()) {
-				jQuery.sap.log.debug("BlockBase ::: Ignoring the _applyMapping as the block is not connected");
+				Log.debug("BlockBase ::: Ignoring the _applyMapping as the block is not connected");
 			} else {
 				this.getMappings().forEach(function (oMapping, iIndex) {
 					var oModel,
@@ -258,7 +271,7 @@ sap.ui.define([
 							|| (this.getModel(sInternalModelName) !== this.getModel(sExternalModelName)) /* model changed, then we have to update internal model mapping */
 							|| (oBindingContext && (oBindingContext.getPath() !== sPath)) /* sExternalPath changed, then we have to update internal model mapping */) {
 
-							jQuery.sap.log.info("BlockBase :: mapping external model " + sExternalModelName + " to " + sInternalModelName);
+							Log.info("BlockBase :: mapping external model " + sExternalModelName + " to " + sInternalModelName);
 
 							this._oMappingApplied[sInternalModelName] = true;
 							Control.prototype.setModel.call(this, oModel, sInternalModelName);
@@ -386,7 +399,7 @@ sap.ui.define([
 				//the view wasn't defined.
 				//as a fallback mechanism: we look for the defaultXML one and raise an error before raising an exception
 				if (this.getMetadata().getView("defaultXML")) {
-					jQuery.sap.log.warning("BlockBase :: no view defined for block " + sBlockName + " for mode " + sMode + ", loading defaultXML instead");
+					Log.warning("BlockBase :: no view defined for block " + sBlockName + " for mode " + sMode + ", loading defaultXML instead");
 					sMode = "defaultXML";
 				} else {
 					throw new Error("BlockBase :: no view defined for block " + sBlockName + " for mode " + sMode);
@@ -469,7 +482,7 @@ sap.ui.define([
 			if (oView.getController() && oView.getController().onParentBlockModeChange) {
 				oView.getController().onParentBlockModeChange(sMode);
 			} else {
-				jQuery.sap.log.info("BlockBase ::: could not notify " + mParameter.viewName + " of loading in mode " + sMode + ": missing controller onParentBlockModeChange method");
+				Log.info("BlockBase ::: could not notify " + mParameter.viewName + " of loading in mode " + sMode + ": missing controller onParentBlockModeChange method");
 			}
 
 			return oView;
@@ -704,7 +717,7 @@ sap.ui.define([
 		 */
 		BlockBase.prototype.connectToModels = function () {
 			if (!this._bConnected) {
-				jQuery.sap.log.debug("BlockBase :: Connecting block to the UI5 model tree");
+				Log.debug("BlockBase :: Connecting block to the UI5 model tree");
 				this._bConnected = true;
 				if (this._bLazyLoading) {
 					//if lazy loading is enabled, the view has not been created during the setMode
@@ -739,7 +752,7 @@ sap.ui.define([
 			if (!this._shouldLazyLoad()) {
 				return Control.prototype.updateBindingContext.call(this, bSkipLocal, bSkipChildren, sModelName, bUpdateAll);
 			} else {
-				jQuery.sap.log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
+				Log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
 			}
 		};
 
@@ -754,7 +767,7 @@ sap.ui.define([
 			if (!this._shouldLazyLoad()) {
 				return Control.prototype.updateBindings.call(this, bUpdateAll, sModelName);
 			} else {
-				jQuery.sap.log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
+				Log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
 			}
 		};
 

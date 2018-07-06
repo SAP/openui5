@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ComponentContainer', 'sap/ui/core/Component'],
-	function(jQuery, ComponentContainer /*, Component */) {
+sap.ui.define(['sap/ui/core/ComponentContainer', "sap/base/Log", 'sap/ui/core/Component'],
+	function(ComponentContainer, Log /*, Component */) {
 		"use strict";
 
 		/**
@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ComponentContainer', 'sap/ui/co
 				if (this._oComponent && this._oComponent._oView) {
 					oObjectPageLayoutInstance = this._oComponent._oView.byId("ObjectPageLayout");
 				} else {
-					jQuery.sap.log.error("ObjectPageComponentContainer :: cannot find children ObjectPageLayout, has it been rendered already?");
+					Log.error("ObjectPageComponentContainer :: cannot find children ObjectPageLayout, has it been rendered already?");
 				}
 
 				return oObjectPageLayoutInstance;

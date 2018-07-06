@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Metadata",
 	"sap/ui/core/CustomData",
 	"sap/ui/base/ManagedObjectObserver",
@@ -180,7 +180,7 @@ sap.ui.define([
 			oObjectPage = this.getObjectPageLayout();
 
 		if (oSection && !oObjectPage.getUseIconTabBar()) {
-			jQuery.sap.delayedCall(this._iScrollDuration, oSection.$(), "focus");
+			setTimeout(oSection.$()["focus"].bind(oSection.$()), this._iScrollDuration);
 		}
 	};
 

@@ -4,7 +4,7 @@
 
 // Provides control sap.uxap.AnchorBar.
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	"sap/m/MenuButton",
 	"sap/m/library",
@@ -19,9 +19,11 @@ sap.ui.define([
 	"./HierarchicalSelect",
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
-	"jquery.sap.keycodes"
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/events/F6Navigation"
 ], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler,	ScrollEnablement,
-		HorizontalLayout, Device, CustomData, HierarchicalSelect, library, AnchorBarRenderer) {
+		HorizontalLayout, Device, CustomData, HierarchicalSelect, library, AnchorBarRenderer, Log, KeyCodes, F6Navigation) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -386,7 +388,7 @@ sap.ui.define([
 
 			this._requestScrollToSection(oSelectedSection.getId());
 		} else {
-			jQuery.sap.log.error("AnchorBar :: cannot find corresponding section", oSelectedItem.getKey());
+			Log.error("AnchorBar :: cannot find corresponding section", oSelectedItem.getKey());
 		}
 	};
 
@@ -576,7 +578,7 @@ sap.ui.define([
 				bNeedScrollingBegin = $scrollContainer.scrollLeft() >= this._iTolerance;
 			}
 
-			jQuery.sap.log.debug("AnchorBar :: scrolled at " + $scrollContainer.scrollLeft(), "scrollBegin [" + (bNeedScrollingBegin ? "true" : "false") + "] scrollEnd [" + (bNeedScrollingEnd ? "true" : "false") + "]");
+			Log.debug("AnchorBar :: scrolled at " + $scrollContainer.scrollLeft(), "scrollBegin [" + (bNeedScrollingBegin ? "true" : "false") + "] scrollEnd [" + (bNeedScrollingEnd ? "true" : "false") + "]");
 
 			$dom.toggleClass("sapUxAPAnchorBarScrollLeft", bNeedScrollingBegin);
 			$dom.toggleClass("sapUxAPAnchorBarScrollRight", bNeedScrollingEnd);
@@ -633,26 +635,26 @@ sap.ui.define([
 						}
 				}
 
-				jQuery.sap.log.debug("AnchorBar :: scrolling to section " + sId + " of " + iScrollTo);
+				Log.debug("AnchorBar :: scrolling to section " + sId + " of " + iScrollTo);
 
 				//avoid triggering twice the scrolling onto the same target section
 				if (this._sCurrentScrollId != sId) {
 					this._sCurrentScrollId = sId;
 
 					if (this._iCurrentScrollTimeout) {
-						jQuery.sap.clearDelayedCall(this._iCurrentScrollTimeout);
-						jQuery.sap.byId(this.getId() + "-scroll").parent().stop(true, false);
+						clearTimeout(this._iCurrentScrollTimeout);
+						jQuery(document.getElementById(this.getId() + "-scroll")).parent().stop(true, false);
 					}
 
-					this._iCurrentScrollTimeout = jQuery.sap.delayedCall(iDuration, this, function () {
+					this._iCurrentScrollTimeout = setTimeout(function () {
 						this._sCurrentScrollId = undefined;
 						this._iCurrentScrollTimeout = undefined;
-					});
+					}.bind(this), iDuration);
 
 					this._oScroller.scrollTo(iScrollTo, 0, iDuration);
 				}
 			} else {
-				jQuery.sap.log.debug("AnchorBar :: no need to scroll to " + sId);
+				Log.debug("AnchorBar :: no need to scroll to " + sId);
 			}
 		}
 	};
@@ -896,10 +898,11 @@ sap.ui.define([
 		this.$().focus();
 
 		oEventF6.target = oEvent.target;
-		oEventF6.keyCode = jQuery.sap.KeyCodes.F6;
+		oEventF6.keyCode = KeyCodes.F6;
+		oEventF6.key = "F6";
 		oEventF6.shiftKey = bShiftKey;
 
-		jQuery.sap.handleF6GroupNavigation(oEventF6, oSettings);
+		F6Navigation.handleF6GroupNavigation(oEventF6, oSettings);
 	};
 
 	/**
@@ -929,21 +932,21 @@ sap.ui.define([
 
 		//initial state
 		if (this._bHasButtonsBar) {
-			jQuery.sap.delayedCall(AnchorBar.DOM_CALC_DELAY, this, function () {
+			setTimeout(function () {
 				if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
 					this._computeBarSectionsInfo();
 				}
 				this._adjustSize();
-			});
+			}.bind(this), AnchorBar.DOM_CALC_DELAY);
 		}
 	};
 
 	AnchorBar.prototype._onScroll = function () {
 		if (!this._iCurrentSizeCheckTimeout) {
-			this._iCurrentSizeCheckTimeout = jQuery.sap.delayedCall(AnchorBar.SCROLL_DURATION, this, function () {
+			this._iCurrentSizeCheckTimeout = setTimeout(function () {
 				this._iCurrentSizeCheckTimeout = undefined;
 				this._adjustSize();
-			});
+			}.bind(this), AnchorBar.SCROLL_DURATION);
 		}
 	};
 

@@ -14,9 +14,10 @@ sap.ui.define([
     "sap/ui/Device",
     "./library",
     "sap/ui/core/InvisibleText",
-    "./BreadCrumbsRenderer"
+    "./BreadCrumbsRenderer",
+    "sap/ui/thirdparty/jquery"
 ], function(
-    Link,
+	Link,
 	Select,
 	Control,
 	ResizeHandler,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Device,
 	library,
 	InvisibleText,
-	BreadCrumbsRenderer
+	BreadCrumbsRenderer,
+	jQuery
 ) {
 	"use strict";
 

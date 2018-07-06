@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/uxap/library",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/library",
+	"sap/base/Log",
 	"sap/ui/core/Component"
-], function (jQuery, library, UIComponent, coreLibrary) {
+], function (library, UIComponent, coreLibrary, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -50,7 +50,7 @@ sap.ui.define([
 					this._oViewConfig.type = ViewType.XML;
 					break;
 				default:
-					jQuery.sap.log.error("UxAPComponent :: missing bootstrap information. Expecting one of the following: JsonURL, JsonModel and FacetsAnnotation");
+					Log.error("UxAPComponent :: missing bootstrap information. Expecting one of the following: JsonURL, JsonModel and FacetsAnnotation");
 			}
 			//create the UIComponent
 			UIComponent.prototype.init.call(this);
