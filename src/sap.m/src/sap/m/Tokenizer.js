@@ -362,6 +362,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Function returns whether the n-more indicator is visible
+	 *
+	 * @protected
+	 * @param {boolean} If true the indicator is visible
+	 */
+	Tokenizer.prototype._getIndicatorVisibility = function() {
+		return this._oIndicator && !this._oIndicator.hasClass("sapUiHidden");
+	};
+
+	/**
 	 * Function sets whether the tokens visibility should be adjusted
 	 *
 	 * @protected
