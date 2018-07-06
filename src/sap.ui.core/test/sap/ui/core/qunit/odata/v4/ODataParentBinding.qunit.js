@@ -52,10 +52,12 @@ sap.ui.require([
 		}, oTemplate);
 	}
 
-	asODataParentBinding(ODataParentBinding.prototype);
-
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataParentBinding", {
+		before : function () {
+			asODataParentBinding(ODataParentBinding.prototype);
+		},
+
 		beforeEach : function () {
 			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();

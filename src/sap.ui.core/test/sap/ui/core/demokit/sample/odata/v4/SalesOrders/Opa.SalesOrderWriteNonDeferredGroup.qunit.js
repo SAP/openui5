@@ -12,7 +12,7 @@ sap.ui.require([
 		"Write via application groups with SubmitMode.Auto/.Direct");
 
 	//*****************************************************************************
-	["myAutoGroup", "$auto", "myDirectGroup", "$direct"].forEach(function (sGroupId) {
+	["myAutoGroup", "$auto", "$auto.foo", "myDirectGroup", "$direct"].forEach(function (sGroupId) {
 		opaTest("POST/PATCH SalesOrder via group: " + sGroupId, function (Given, When, Then) {
 
 			WriteNonDeferredGroupTest.writeNonDeferredGroup(Given, When, Then, sGroupId);

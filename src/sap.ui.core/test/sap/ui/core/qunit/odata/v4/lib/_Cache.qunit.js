@@ -86,16 +86,19 @@ sap.ui.require([
 			this.oLogMock.expects("error").never();
 
 			this.oRequestor = {
-				buildQueryString : function () {return "";},
-				fetchTypeForPath : function () {return SyncPromise.resolve({}); },
+				buildQueryString : function () { return ""; },
+				fetchMetadata : function () { return SyncPromise.resolve(null); },
+				fetchTypeForPath : function () { return SyncPromise.resolve({}); },
 				getGroupSubmitMode : function (sGroupId) {
 					return defaultGetGroupProperty(sGroupId);
 				},
-				getServiceUrl : function () {return "/~/";},
+				getServiceUrl : function () { return "/~/"; },
 				isActionBodyOptional : function () {},
 				relocate : function () {},
 				removePatch : function () {},
 				removePost : function () {},
+				reportBoundMessages : function () {},
+				reportUnBoundMessages : function () {},
 				request : function () {}
 			};
 			this.oRequestorMock = this.mock(this.oRequestor);
@@ -1093,6 +1096,14 @@ sap.ui.require([
 			"/TEAMS" : {$Key : ["TeamId"]}
 		}
 	}, {
+		messageAnnotations : {
+			"/TEAMS/MANAGER" : {
+				$Path : "MANAGER_Messages"
+			},
+			"/TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENT" : {
+				$Path : "EMPLOYEE_2_EQUIPMENT_Messages"
+			}
+		},
 		options : {
 			$expand : {
 				"MANAGER" : null,
@@ -1128,6 +1139,10 @@ sap.ui.require([
 			Object.keys(oFixture.types).forEach(function (sPath) {
 				that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
 					.returns(Promise.resolve(oFixture.types[sPath]));
+				that.oRequestorMock.expects("fetchMetadata")
+					.withExactArgs(sPath + "/@Org.OData.Core.V1.Messages")
+					.returns(SyncPromise.resolve(
+						oFixture.messageAnnotations && oFixture.messageAnnotations[sPath] || null));
 			});
 			// create after the mocks have been set up, otherwise they won't be called
 			oCache = new _Cache(this.oRequestor, "TEAMS('42')", oFixture.options);
@@ -1137,7 +1152,27 @@ sap.ui.require([
 
 			assert.strictEqual(oCache.fetchTypes(), oPromise, "second call returns same promise");
 			return oPromise.then(function (mTypeForMetaPath) {
-				assert.deepEqual(mTypeForMetaPath, oFixture.types);
+				var aMetaPaths = Object.keys(oFixture.types);
+
+				//assert.deepEqual(mTypeForMetaPath, oFixture.types);
+				assert.strictEqual(Object.keys(mTypeForMetaPath).length, aMetaPaths.length);
+				aMetaPaths.forEach(function (sMetaPath) {
+					var oMessageAnnotation =
+							oFixture.messageAnnotations && oFixture.messageAnnotations[sMetaPath];
+
+					if (oMessageAnnotation) {
+						assert.strictEqual(
+							mTypeForMetaPath[sMetaPath]["@Org.OData.Core.V1.Messages"],
+							oMessageAnnotation,
+							"Message property for " + sMetaPath + ": " + oMessageAnnotation.$Path);
+						assert.ok(oFixture.types[sMetaPath]
+								.isPrototypeOf(mTypeForMetaPath[sMetaPath]),
+							"Type for " + sMetaPath + " cloned");
+					} else {
+						assert.strictEqual(mTypeForMetaPath[sMetaPath], oFixture.types[sMetaPath],
+							"No messages for type for" + sMetaPath + " -> no clone");
+					}
+				});
 			});
 		});
 	});
@@ -1174,20 +1209,45 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: ignore simple values", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS('42')/Name");
+	QUnit.test("Cache#visitResponse: key predicates: ignore simple values", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')/Foo"),
+			oCacheMock = this.mock(oCache),
+			oInstance = {results : ["Business Suite"]},
+			mTypeForMetaPath = {};
 
-		this.mock(_Helper).expects("getKeyPredicate").never();
+		oCacheMock.expects("calculateKeyPredicate").never();
 
 		// code under test
-		oCache.calculateKeyPredicates("Business Suite", {});
+		oCache.visitResponse("Business Suite", mTypeForMetaPath);
 
 		// code under test
-		oCache.calculateKeyPredicates({results : ["Business Suite"]}, {});
+		oCache.visitResponse(["Business Suite"], mTypeForMetaPath);
+
+		// code under test
+		oCache.visitResponse(undefined, mTypeForMetaPath);
+
+		// code under test
+		oCache.visitResponse(null, mTypeForMetaPath);
+
+		// code under test
+		oCache.visitResponse("", mTypeForMetaPath);
+
+		// code under test
+		oCache.visitResponse(true, mTypeForMetaPath);
+
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oInstance), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo").twice();
+
+		// code under test
+		oCache.visitResponse(oInstance, mTypeForMetaPath);
+
+		// code under test
+		oCache.visitResponse([oInstance], mTypeForMetaPath);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: simple entity", function (assert) {
+	QUnit.test("Cache#visitResponse: key predicates: simple entity", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
 			oEntity = {},
 			sPredicate = "('4711')",
@@ -1196,15 +1256,17 @@ sap.ui.require([
 		this.mock(_Helper).expects("getKeyPredicate").withExactArgs(sinon.match.same(oEntity),
 				"/TEAMS", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate);
+		this.oRequestorMock.expects("reportBoundMessages").never();
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
+		oCache.visitResponse(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: with root entity meta path", function (assert) {
+	QUnit.test("Cache#visitResponse: key predicates: with root entity meta path",
+			function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
 			oEntity = {},
 			sPredicate = "('4711')",
@@ -1213,15 +1275,16 @@ sap.ui.require([
 		this.mock(_Helper).expects("getKeyPredicate").withExactArgs(sinon.match.same(oEntity),
 			"/~/$Type", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate);
+		this.oRequestorMock.expects("reportBoundMessages").never();
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath, "/~/$Type");
+		oCache.visitResponse(oEntity, mTypeForMetaPath, "/~/$Type");
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: nested", function (assert) {
+	QUnit.test("Cache#visitResponse: key predicates: nested", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
 			oEntity = {
 				bar : {
@@ -1263,9 +1326,10 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oEntity.property.navigation),
 				"/TEAMS/property/navigation", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate4);
+		this.oRequestorMock.expects("reportBoundMessages").never();
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
+		oCache.visitResponse(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate1);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.bar, "predicate"), sPredicate2);
@@ -1277,7 +1341,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#calculateKeyPredicates: entity collection", function (assert) {
+	QUnit.test("Cache#visitResponse: key predicates: entity collection", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
 			oEntity = {
 				bar : [{}, {}]
@@ -1301,15 +1365,102 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oEntity.bar[1]), "/TEAMS/bar",
 				sinon.match.same(mTypeForMetaPath))
 			.returns(undefined);
+		this.oRequestorMock.expects("reportBoundMessages").never();
 
 		// code under test
-		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
+		oCache.visitResponse(oEntity, mTypeForMetaPath);
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate1);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.bar[0], "predicate"), sPredicate2);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.bar[1], "predicate"), undefined);
 		assert.strictEqual(oEntity.bar.$byPredicate[sPredicate2], oEntity.bar[0]);
 		assert.notOk(undefined in oEntity.bar.$byPredicate);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#visitResponse: reportBoundMessages; single entity", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
+			aMessagesInBusinessPartner = [{/* any message object */}],
+			aMessagesSalesOrder = [{/* any message object */}],
+			aMessagesSalesOrderSchedules0 = [{/* any message object */}],
+			aMessagesSalesOrderSchedules1 = [{/* any message object */}],
+			oData = {
+				messagesInSalesOrder : aMessagesSalesOrder,
+				SO_2_BP : {
+					messagesInBusinessPartner : aMessagesInBusinessPartner
+				},
+				SO_2_SCHDL : [{
+					messagesInSalesOrderSchedule : aMessagesSalesOrderSchedules0,
+					ScheduleKey : "42"
+				}, {
+					messagesInSalesOrderSchedule : aMessagesSalesOrderSchedules1,
+					ScheduleKey : "43"
+				}]
+			},
+			mExpectedMessages = {
+				"" : aMessagesSalesOrder,
+				"/SO_2_BP" : aMessagesInBusinessPartner,
+				"/SO_2_SCHDL('42')" : aMessagesSalesOrderSchedules0,
+				"/SO_2_SCHDL('43')" : aMessagesSalesOrderSchedules1
+			},
+			mTypeForMetaPath = {
+				"/SalesOrderList" : {
+					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrder"}
+				},
+				"/SalesOrderList/SO_2_BP" : {
+					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInBusinessPartner"}
+				},
+				"/SalesOrderList/SO_2_SCHDL" : {
+					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrderSchedule"},
+					$Key : ["ScheduleKey"],
+					ScheduleKey : {
+						$Type : "Edm.String"
+					}
+				}
+			};
+
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+
+		// code under test
+		oCache.visitResponse(oData, mTypeForMetaPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#visitResponse: reportBoundMessages; collection", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+			aMessagesSalesOrder = [{/* any message object */}],
+			aData = [{
+				messagesInSalesOrder : aMessagesSalesOrder,
+				SalesOrderID : "42"
+			}, {
+				messagesInSalesOrder : [],
+				SalesOrderID : "43"
+			}],
+			mExpectedMessages = {
+				"('42')" : aMessagesSalesOrder,
+				"('43')" : []
+			},
+			mTypeForMetaPath = {
+				"/SalesOrderList" : {
+					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrder"},
+					$Key : ["SalesOrderID"],
+					SalesOrderID : {
+						$Type : "Edm.String"
+					}
+				}
+			};
+
+		// $count and key predicates are also computed for messages array
+		mExpectedMessages["('42')"].$count = 1;
+		mExpectedMessages["('42')"].$byPredicate = {}; // no key predicates
+		mExpectedMessages["('43')"].$count = 0;
+		mExpectedMessages["('43')"].$byPredicate = {}; // no key predicates
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('42')", "('43')"]);
+
+		// code under test
+		oCache.visitResponse(aData, mTypeForMetaPath);
 	});
 
 	//*********************************************************************************************
@@ -1696,7 +1847,6 @@ sap.ui.require([
 		QUnit.test("CollectionCache#handleResponse: " + bWithCount, function (assert) {
 			var oCache = this.createCache("Employees"),
 				oCacheMock = this.mock(oCache),
-				oCacheClassMock = this.mock(_Cache),
 				mChangeListeners = {},
 				iCount = 4,
 				sDataContext = {/*string*/},
@@ -1725,16 +1875,12 @@ sap.ui.require([
 				.callsFake(function () {
 					oCache.aElements.$count = iCount;
 				});
-			oCacheClassMock.expects("computeCount").withExactArgs(oElement0);
-			oCacheMock.expects("calculateKeyPredicates")
-				.withExactArgs(sinon.match.same(oElement0), sinon.match.same(oFetchTypesResult))
+			oCacheMock.expects("visitResponse")
+				.withExactArgs(sinon.match.same(oResult.value),
+					sinon.match.same(oFetchTypesResult))
 				.callsFake(function () {
 					_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
 				});
-			oCacheClassMock.expects("computeCount").withExactArgs(oElement1);
-			// simulate no key predicate for oElement1
-			oCacheMock.expects("calculateKeyPredicates")
-				.withExactArgs(sinon.match.same(oElement1), sinon.match.same(oFetchTypesResult));
 
 			// code under test
 			oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
@@ -1778,7 +1924,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("CollectionCache#handleResponse: " + oFixture.sTitle, function (assert) {
 			var oCache = this.createCache("Employees"),
-				oCacheClassMock = this.mock(_Cache),
+				oCacheMock = this.mock(oCache),
 				aElements = [],
 				oFetchTypesResult = {},
 				oHelperMock = this.mock(_Helper),
@@ -1803,10 +1949,8 @@ sap.ui.require([
 						oCache.aElements.$count = oFixture.iExpectedCount;
 					});
 			}
-			oCacheClassMock.expects("computeCount").never();
-			oResult.value.forEach(function (oElement) {
-				oCacheClassMock.expects("computeCount").withExactArgs(sinon.match.same(oElement));
-			});
+			oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult.value),
+				sinon.match.same(oFetchTypesResult));
 			oHelperMock.expects("updateCache")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 					sinon.match.same(oCache.aElements), {$count : oFixture.iExpectedCount});
@@ -3075,8 +3219,7 @@ sap.ui.require([
 			sMetaPath = "~",
 			mQueryParams = {},
 			sResourcePath = "Employees('1')",
-			mTypeForMetaPath = {},
-			that = this;
+			mTypeForMetaPath = {};
 
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Employees", sinon.match.same(mQueryParams), false, true)
@@ -3094,10 +3237,9 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
 				undefined, sinon.match.same(fnDataRequested1), undefined, sMetaPath)
 			.returns(Promise.resolve(oExpectedResult).then(function () {
-					that.mock(oCache).expects("calculateKeyPredicates")
-						.withExactArgs(oExpectedResult, mTypeForMetaPath, undefined);
-					that.mock(_Cache).expects("computeCount")
-						.withExactArgs(sinon.match.same(oExpectedResult));
+					oCacheMock.expects("visitResponse")
+						.withExactArgs(sinon.match.same(oExpectedResult),
+							sinon.match.same(mTypeForMetaPath), undefined);
 					oCacheMock.expects("checkActive").twice();
 					oCacheMock.expects("drillDown")
 						.withExactArgs(sinon.match.same(oExpectedResult), undefined)
@@ -3141,8 +3283,7 @@ sap.ui.require([
 			sMetaPath = "~",
 			mQueryParams = {},
 			sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.Func",
-			mTypeForMetaPath = {},
-			that = this;
+			mTypeForMetaPath = {};
 
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/TEAMS/name.space.Func", sinon.match.same(mQueryParams), false, true)
@@ -3158,10 +3299,9 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
 				sinon.match.same(fnDataRequested1), undefined, sMetaPath)
 			.returns(Promise.resolve(oExpectedResult).then(function () {
-				that.mock(oCache).expects("calculateKeyPredicates")
-					.withExactArgs(oExpectedResult, mTypeForMetaPath, "~/$Type");
-				that.mock(_Cache).expects("computeCount")
-					.withExactArgs(sinon.match.same(oExpectedResult));
+				oCacheMock.expects("visitResponse")
+					.withExactArgs(sinon.match.same(oExpectedResult),
+						sinon.match.same(mTypeForMetaPath), "~/$Type");
 				oCacheMock.expects("checkActive");
 				oCacheMock.expects("drillDown")
 					.withExactArgs(sinon.match.same(oExpectedResult), "foo")
@@ -3291,7 +3431,7 @@ sap.ui.require([
 				.exactly(bFetchOperationReturnType ? 1 : 0)
 				.withExactArgs()
 				.resolves(mTypes);
-			this.mock(oCache).expects("calculateKeyPredicates")
+			this.mock(oCache).expects("visitResponse")
 				.exactly(bFetchOperationReturnType ? 1 : 0)
 				.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes),
 					sMetaPath + "/$Type");
@@ -3628,8 +3768,52 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache.computeCount", function(assert) {
-		var oResult = {
+	[{}, {"Bar/Baz" : {}}].forEach(function (mTypeForMetaPath) {
+		var sTitle = "_Cache#calculateKeyPredicate: no key; " + JSON.stringify(mTypeForMetaPath);
+
+		QUnit.test(sTitle, function(assert) {
+			var oCache = new _Cache(this.oRequestor, "Foo"),
+				oHelperMock = this.mock(_Helper),
+				vInstance = {},
+				sMetaPath = "Bar/Baz";
+
+			oHelperMock.expects("getKeyPredicate").never();
+			oHelperMock.expects("setPrivateAnnotation").never();
+
+			// code under test
+			oCache.calculateKeyPredicate(vInstance, mTypeForMetaPath, sMetaPath);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#calculateKeyPredicate: with key", function(assert) {
+		var oCache = new _Cache(this.oRequestor, "Foo"),
+			oHelperMock = this.mock(_Helper),
+			vInstance = {},
+			sKeyPredicate = {/* string */},
+			sMetaPath = "Bar/Baz",
+			mTypeForMetaPath = {"Bar/Baz" : {"$Key" : ["key"]}};
+
+		oHelperMock.expects("getKeyPredicate")
+			.withExactArgs(sinon.match.same(vInstance), sMetaPath,
+				sinon.match.same(mTypeForMetaPath))
+			.returns(sKeyPredicate);
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(vInstance), "predicate",
+				sinon.match.same(sKeyPredicate));
+
+		// code under test
+		oCache.calculateKeyPredicate(vInstance, mTypeForMetaPath, sMetaPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#visitResponse: compute count and calculate key predicates for single object",
+			function(assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')/Foo"),
+			oCacheMock = this.mock(oCache),
+			oResult = {
+				// do not call calculateKeyPredicate for instance annotations
+				"@instance.annotation" : {},
 				"foo" : "bar",
 				"list" : [{}, {}, {
 					"nestedList" : [{}]
@@ -3637,6 +3821,8 @@ sap.ui.require([
 				"property" : {
 					"nestedList" : [{}]
 				},
+				// do not call calculateKeyPredicate for instance annotations
+				"property@instance.annotation" : {},
 				"list2" : [{}, {}, {}],
 				"list2@odata.count" : "12",
 				"list2@odata.nextLink" : "List2?skip=3",
@@ -3645,12 +3831,52 @@ sap.ui.require([
 				"collectionValuedProperty" : ["test1", "test2"],
 				"null" : null,
 				"collectionWithNullValue" : [null]
-			};
+			},
+			mTypeForMetaPath = {};
 
 		this.spy(_Helper, "updateCache");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list[0]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list[1]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list[2]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list[2].nestedList[0]),
+				sinon.match.same(mTypeForMetaPath), "/TEAMS/Foo/list/nestedList");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.property), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/property");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.property.nestedList[0]),
+				sinon.match.same(mTypeForMetaPath), "/TEAMS/Foo/property/nestedList");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list2[0]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list2");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list2[1]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list2");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list2[2]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list2");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list3[0]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list3");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list3[1]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list3");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(oResult.list3[2]), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/Foo/list3");
 
 		// code under test
-		_Cache.computeCount(oResult);
+		oCache.visitResponse(oResult, mTypeForMetaPath);
 
 		sinon.assert.calledWithExactly(_Helper.updateCache, {}, "", oResult.list, {$count : 3});
 		assert.strictEqual(oResult.list.$count, 3);
@@ -3665,10 +3891,140 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#read uses computeCount", function(assert) {
+	QUnit.test("_Cache#visitResponse: compute count and calculate key predicates for an array",
+			function(assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS"),
+			oCacheMock = this.mock(oCache),
+			oHelperMock = this.mock(_Helper),
+			sPredicate0 = "(13)",
+			sPredicate1 = "(42)",
+			aResult = [{
+				"foo0" : "bar0",
+				"list0" : [{}]
+			}, {
+				"foo" : "bar",
+				"list" : [{}, {}, {
+					"nestedList" : [{}]
+				}],
+				"property" : {
+					"nestedList" : [{}]
+				},
+				// do not call calculateKeyPredicate for instance annotations
+				"property@instance.annotation" : {},
+				"list2" : [{}, {}, {}],
+				"list2@odata.count" : "12",
+				"list2@odata.nextLink" : "List2?skip=3",
+				"list3" : [{}, {}, {}],
+				"list3@odata.nextLink" : "List3?skip=3",
+				"collectionValuedProperty" : ["test1", "test2"],
+				"null" : null,
+				"collectionWithNullValue" : [null]
+			}],
+			mTypeForMetaPath = {};
+
+		oHelperMock.expects("updateCache")
+			.withExactArgs({/*mChangeListeners*/}, "", sinon.match.same(aResult[0].list0),
+				{$count : 1})
+			.callThrough();
+		oHelperMock.expects("updateCache")
+			.withExactArgs({/*mChangeListeners*/}, "", sinon.match.same(aResult[1].list),
+				{$count : 3})
+			.callThrough();
+		oHelperMock.expects("updateCache")
+			.withExactArgs({/*mChangeListeners*/}, "",
+				sinon.match.same(aResult[1].list[2].nestedList), {$count : 1})
+			.callThrough();
+		oHelperMock.expects("updateCache")
+			.withExactArgs({/*mChangeListeners*/}, "",
+				sinon.match.same(aResult[1].property.nestedList), {$count : 1})
+			.callThrough();
+		oHelperMock.expects("updateCache")
+			.withExactArgs({/*mChangeListeners*/}, "", sinon.match.same(aResult[1].list2),
+				{$count : 12})
+			.callThrough();
+		oHelperMock.expects("updateCache")
+			.withExactArgs({/*mChangeListeners*/}, "",
+				sinon.match.same(aResult[1].collectionValuedProperty), {$count : 2})
+			.callThrough();
+		oHelperMock.expects("updateCache")
+			.withExactArgs({/*mChangeListeners*/}, "",
+				sinon.match.same(aResult[1].collectionWithNullValue), {$count : 1})
+			.callThrough();
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[0]), sinon.match.same(mTypeForMetaPath),
+				"/FOO")
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(aResult[0], "predicate", sPredicate0);
+			});
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[0].list0[0]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/list0")
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(aResult[0].list0[0], "predicate", "('nested')");
+			});
+
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1]), sinon.match.same(mTypeForMetaPath),
+				"/FOO")
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(aResult[1], "predicate", sPredicate1);
+			});
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list[0]), sinon.match.same(mTypeForMetaPath),
+				"/FOO/list");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list[1]), sinon.match.same(mTypeForMetaPath),
+				"/FOO/list");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list[2]), sinon.match.same(mTypeForMetaPath),
+				"/FOO/list");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list[2].nestedList[0]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/list/nestedList");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].property),
+				sinon.match.same(mTypeForMetaPath), "/FOO/property");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].property.nestedList[0]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/property/nestedList");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list2[0]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/list2");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list2[1]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/list2");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list2[2]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/list2");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list3[0]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/list3");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list3[1]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/list3");
+		oCacheMock.expects("calculateKeyPredicate")
+			.withExactArgs(sinon.match.same(aResult[1].list3[2]),
+				sinon.match.same(mTypeForMetaPath), "/FOO/list3");
+		this.oRequestorMock.expects("reportBoundMessages").never();
+
+		// code under test
+		oCache.visitResponse(aResult, mTypeForMetaPath, "/FOO");
+
+		assert.strictEqual(aResult[1].list.$count, 3);
+		assert.strictEqual(aResult[1].list2.$count, 12);
+		assert.ok("$count" in aResult[1].list3);
+		assert.strictEqual(aResult[1].list3.$count, undefined);
+		assert.strictEqual(aResult[1].list[2].nestedList.$count, 1);
+		assert.strictEqual(aResult[1].property.nestedList.$count, 1);
+		assert.strictEqual(aResult[1].collectionValuedProperty.$count, 2);
+		assert.strictEqual(aResult[1].collectionWithNullValue.$count, 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read uses visitResponse", function(assert) {
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
-			oCacheClassMock = this.mock(_Cache),
+			oCacheMock = this.mock(oCache),
 			oValue0 = {},
 			oValue1 = {},
 			oData = {
@@ -3679,8 +4035,8 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=3", new _GroupLock("group"),
 				undefined, undefined, undefined)
 			.returns(Promise.resolve(oData));
-		oCacheClassMock.expects("computeCount").withExactArgs(sinon.match.same(oValue0));
-		oCacheClassMock.expects("computeCount").withExactArgs(sinon.match.same(oValue1));
+		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oData.value),
+			sinon.match.object);
 
 		// code under test
 		return oCache.read(0, 3, 0, new _GroupLock("group")).then(function () {
@@ -3718,10 +4074,8 @@ sap.ui.require([
 			.returns(Promise.resolve(oResponse));
 		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
-		this.mock(_Cache).expects("computeCount")
-			.withExactArgs(sinon.match.same(oResponse));
-		oCacheMock.expects("calculateKeyPredicates")
-			.withExactArgs(sinon.match.same(oResponse), mTypeForMetaPath);
+		oCacheMock.expects("visitResponse")
+			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath));
 
 		oCache.aElements = aElements;
 		oCache.aElements.$byPredicate = {};
@@ -3843,13 +4197,10 @@ sap.ui.require([
 				.withExactArgs(oCache.sMetaPath, oFixture.mQueryOptionsForRequest, false,
 					oCache.bSortExpandSelect)
 				.returns(oFixture.sQueryString);
-			oCacheMock.expects("calculateKeyPredicates")
+			oCacheMock.expects("visitResponse")
 				.exactly(oFixture.bRemoved ? 0 : 1)
 				.withExactArgs(sinon.match.same(oResponse.value[0]),
 					sinon.match.same(mTypeForMetaPath));
-			this.mock(_Cache).expects("computeCount")
-				.exactly(oFixture.bRemoved ? 0 : 1)
-				.withExactArgs(sinon.match.same(oResponse.value[0]));
 
 			// code under test
 			oPromise = oCache.refreshSingleWithRemove(oGroupLock, oFixture.iIndex, fnDataRequested,

@@ -387,7 +387,7 @@ sap.ui.define([
 				return SyncPromise.resolve([]);
 			}
 			bIterateAnnotations = sResolvedPath.slice(-1) === "@";
-			if (!bIterateAnnotations && sResolvedPath !== "/") {
+			if (!bIterateAnnotations && !sResolvedPath.endsWith("/")) {
 				sResolvedPath += "/";
 			}
 			return this.oModel.fetchObject(sResolvedPath).then(function (oResult) {
@@ -430,6 +430,9 @@ sap.ui.define([
 			for (i = this.iCurrentStart; i < n; i++) {
 				aContexts.push(this.oList[this.aIndices[i]]);
 			}
+			if (this.oList.dataRequested) {
+				aContexts.dataRequested = true;
+			}
 			return aContexts;
 		},
 
@@ -463,6 +466,7 @@ sap.ui.define([
 					that.setContexts(aContexts);
 					that._fireChange({reason: ChangeReason.Change});
 				});
+				aContexts.dataRequested = true;
 			}
 			this.setContexts(aContexts);
 		}

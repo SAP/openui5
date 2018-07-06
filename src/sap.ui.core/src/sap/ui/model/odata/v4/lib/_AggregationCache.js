@@ -88,7 +88,7 @@ sap.ui.define([
 					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
 						oFirstLevelAggregation)
 				}), bSortExpandSelect);
-			this.oFirstLevel.calculateKeyPredicates = _AggregationCache.calculateKeyPredicate
+			this.oFirstLevel.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate
 				.bind(null, oFirstLevelAggregation, this.oFirstLevel.sMetaPath,
 					this.oFirstLevel.aElements.$byPredicate);
 		}
@@ -377,7 +377,7 @@ sap.ui.define([
 	 * @returns {string} The resource path including the query string
 	 * @throws {Error} If <code>iStart</code> is not 0
 	 *
-	 * @protected
+	 * @private
 	 */
 	_AggregationCache.getResourcePath = function (oAggregation, fnGetResourcePath, iStart, iEnd) {
 		var oAggregationNoMinMax, sResourcePath;
@@ -425,8 +425,9 @@ sap.ui.define([
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
 	 *
-	 * @protected
+	 * @private
 	 */
+	// @override
 	_AggregationCache.handleResponse = function (mAlias2MeasureAndMethod, fnMeasureRangeResolve,
 			fnHandleResponse, iStart, iEnd, oResult, mTypeForMetaPath) {
 		var sAlias,

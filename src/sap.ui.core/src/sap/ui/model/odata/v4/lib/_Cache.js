@@ -213,70 +213,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Recursively calculates the key predicates for all entities in the result.
+	 * Calculates the key predicate for the given entity.
 	 *
-	 * @param {*} vRootInstance A single top-level instance (or even a simple value)
-	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
-	 *   {@link #fetchTypes})
-	 * @param {string} [sRootMetaPath=this.sMetaPath] The meta path for the cache root entity
+	 * @param {object} oInstance
+	 *   The instance for which to calculate the key predicate
+	 * @param {object} mTypeForMetaPath
+	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
+	 * @param {string} sMetaPath
+	 *   The meta path for the entity
 	 *
 	 * @private
 	 */
-	Cache.prototype.calculateKeyPredicates = function (vRootInstance, mTypeForMetaPath,
-			sRootMetaPath) {
+	Cache.prototype.calculateKeyPredicate = function (oInstance, mTypeForMetaPath, sMetaPath) {
+		var oType = mTypeForMetaPath[sMetaPath];
 
-		/*
-		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
-		 * from predicate to entity.
-		 *
-		 * @param {*[]} aInstances The collection
-		 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
-		 */
-		function visitArray(aInstances, sMetaPath) {
-			var i, vInstance, sPredicate;
-
-			aInstances.$byPredicate = {};
-			for (i = 0; i < aInstances.length; i++) {
-				vInstance = aInstances[i];
-				visitInstance(vInstance, sMetaPath);
-				sPredicate = _Helper.getPrivateAnnotation(vInstance, "predicate");
-				if (sPredicate) {
-					aInstances.$byPredicate[sPredicate] = vInstance;
-				}
-			}
+		if (oType && oType.$Key) {
+			_Helper.setPrivateAnnotation(oInstance, "predicate",
+				_Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath));
 		}
-
-		/*
-		 * Adds a predicate to the given instance if it is an entity.
-		 *
-		 * @param {*} vInstance The instance
-		 * @param {string} sMetaPath The meta path of the instance in mTypeForMetaPath
-		 */
-		function visitInstance(vInstance, sMetaPath) {
-			var oType = mTypeForMetaPath[sMetaPath];
-
-			if (typeof vInstance !== "object") {
-				return;
-			}
-
-			if (oType && oType.$Key) {
-				_Helper.setPrivateAnnotation(vInstance, "predicate",
-					_Helper.getKeyPredicate(vInstance, sMetaPath, mTypeForMetaPath));
-			}
-
-			Object.keys(vInstance).forEach(function (sProperty) {
-				var vPropertyValue = vInstance[sProperty],
-					sPropertyPath = sMetaPath + "/" + sProperty;
-
-				if (Array.isArray(vPropertyValue)) {
-					visitArray(vPropertyValue, sPropertyPath);
-				} else if (vPropertyValue && typeof vPropertyValue === "object") {
-					visitInstance(vPropertyValue, sPropertyPath);
-				}
-			});
-		}
-
-		visitInstance(vRootInstance, sRootMetaPath || this.sMetaPath);
 	};
 
 	/**
@@ -495,7 +449,9 @@ sap.ui.define([
 	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
 	 * them into a map from meta path to type. Checks the types' key properties and puts their types
-	 * into the map, too, if they are complex.
+	 * into the map, too, if they are complex. If a type has an "@Org.OData.Core.V1.Messages"
+	 * annotation for messages, the type is enriched by the property "@Org.OData.Core.V1.Messages"
+	 * containing the annotation object.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
@@ -532,6 +488,14 @@ sap.ui.define([
 		 */
 		function fetchType(sMetaPath) {
 			aPromises.push(that.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
+				var oMessageAnnotation = that.oRequestor
+						.fetchMetadata(sMetaPath + "/@Org.OData.Core.V1.Messages").getResult();
+
+				if (oMessageAnnotation) {
+					oType = Object.create(oType);
+					oType["@Org.OData.Core.V1.Messages"] = oMessageAnnotation;
+				}
+
 				mTypeForMetaPath[sMetaPath] = oType;
 				if (oType && oType.$Key) {
 					oType.$Key.forEach(function (vKey) {
@@ -835,6 +799,118 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Processes the response from the server. All arrays are annotated by their length, influenced
+	 * by the annotations "@odata.count" and "@odata.nextLink". Recursively calculates the key
+	 * predicates for all entities in the result. Collects and reports OData messages via
+	 * {@link sap.ui.model.odata.v4.lib._Requestor#reportBoundMessages}.
+	 *
+	 * @param {*} vRoot An array of instances, a single top-level instance or even a simple value
+	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
+	 *   {@link #fetchTypes})
+	 * @param {string} [sRootMetaPath=this.sMetaPath] The meta path for the cache root entity
+	 *
+	 * @private
+	 */
+	Cache.prototype.visitResponse = function (vRoot, mTypeForMetaPath, sRootMetaPath) {
+		var aKeyPredicates,
+			mPathToODataMessages = {},
+			that = this;
+
+		/*
+		 * Calls visitInstance for all object entries of the given collection and creates the map
+		 * $byPredicate from predicate to entity.
+		 *
+		 * @param {*[]} aInstances The collection
+		 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
+		 * @param {string} sPathWithKeyPredicates
+		 *    The path of the collection including key predicates
+		 */
+		function visitArray(aInstances, sMetaPath, sPathWithKeyPredicates) {
+			var i, vInstance, sPredicate;
+
+			aInstances.$byPredicate = {};
+			for (i = 0; i < aInstances.length; i++) {
+				vInstance = aInstances[i];
+				if (vInstance && typeof vInstance === "object") {
+					visitInstance(vInstance, sMetaPath, sPathWithKeyPredicates, true);
+					sPredicate = _Helper.getPrivateAnnotation(vInstance, "predicate");
+					if (!sPathWithKeyPredicates) {
+						// for the root entries remember the key predicates to remove all
+						// messages for entities that have been read
+						aKeyPredicates.push(sPredicate);
+					}
+					if (sPredicate) {
+						aInstances.$byPredicate[sPredicate] = vInstance;
+					}
+				}
+			}
+		}
+
+		/*
+		 * Recursively calculates the count for collection valued properties and calculates the key
+		 * predicate for the given instance.
+		 *
+		 * @param {object} oInstance The instance
+		 * @param {string} sMetaPath The meta path of the instance in mTypeForMetaPath
+		 * @param {string} sPathWithKeyPredicates
+		 *    The path of the instance including key predicates
+		 * @param {boolean} [bAddPredicateToPath=false]
+		 *    Whether to add the instance's key predicate to the path with key predicates
+		 */
+		function visitInstance(oInstance, sMetaPath, sPathWithKeyPredicates, bAddPredicateToPath) {
+			var oType = mTypeForMetaPath[sMetaPath],
+				sMessageProperty = oType && oType["@Org.OData.Core.V1.Messages"]
+					&& oType["@Org.OData.Core.V1.Messages"].$Path;
+
+			that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
+			if (bAddPredicateToPath) {
+				sPathWithKeyPredicates += _Helper.getPrivateAnnotation(oInstance, "predicate");
+			}
+			if (sMessageProperty) { // collect messages
+				mPathToODataMessages[sPathWithKeyPredicates] = oInstance[sMessageProperty];
+			}
+
+			Object.keys(oInstance).forEach(function (sProperty) {
+				var sCount,
+					sPropertyPath = sMetaPath + "/" + sProperty,
+					vPropertyValue = oInstance[sProperty],
+					sNewPathWithKeyPredicates = sPathWithKeyPredicates + "/" + sProperty;
+
+				if (sProperty.includes("@")) { // ignore all annotations
+					return;
+				}
+				if (Array.isArray(vPropertyValue)) {
+					// compute count
+					vPropertyValue.$count = undefined; // see setCount
+					sCount = oInstance[sProperty + "@odata.count"];
+					// Note: ignore change listeners, because any change listener that is already
+					// registered, is still waiting for its value and gets it via fetchValue
+					if (sCount) {
+						setCount({}, "", vPropertyValue, sCount);
+					} else if (!oInstance[sProperty + "@odata.nextLink"]) {
+						// Note: This relies on the fact that $skip/$top is not used on nested lists
+						setCount({}, "", vPropertyValue, vPropertyValue.length);
+					}
+					visitArray(vPropertyValue, sPropertyPath, sNewPathWithKeyPredicates);
+				} else if (vPropertyValue && typeof vPropertyValue === "object") {
+					visitInstance(vPropertyValue, sPropertyPath, sNewPathWithKeyPredicates);
+				}
+			});
+		}
+
+		if (Array.isArray(vRoot)) {
+			aKeyPredicates = [];
+			visitArray(vRoot, sRootMetaPath || this.sMetaPath, "");
+		} else if (vRoot && typeof vRoot === "object") {
+			visitInstance(vRoot, sRootMetaPath || this.sMetaPath, "");
+		}
+		if (Object.keys(mPathToODataMessages).length) {
+			this.oRequestor.reportBoundMessages(this.sResourcePath, mPathToODataMessages,
+				aKeyPredicates);
+		}
+	};
+
 	//*********************************************************************************************
 	// CollectionCache
 	//*********************************************************************************************
@@ -1047,11 +1123,10 @@ sap.ui.define([
 			this.iLimit = parseInt(sCount, 10);
 			setCount(this.mChangeListeners, "", this.aElements, this.iLimit);
 		}
+		this.visitResponse(oResult.value, mTypeForMetaPath);
 		for (i = 0; i < iResultLength; i++) {
 			oElement = oResult.value[i];
 			this.aElements[iStart + i] = oElement;
-			Cache.computeCount(oElement);
-			this.calculateKeyPredicates(oElement, mTypeForMetaPath);
 			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 			if (sPredicate) {
 				this.aElements.$byPredicate[sPredicate] = oElement;
@@ -1249,8 +1324,7 @@ sap.ui.define([
 			var oElement = aResult[0];
 			// _Helper.updateCache cannot be used because navigation properties cannot be handled
 			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
-			that.calculateKeyPredicates(oElement, aResult[1]);
-			Cache.computeCount(oElement);
+			that.visitResponse(oElement, aResult[1]);
 		});
 
 		this.bSentReadRequest = true;
@@ -1328,8 +1402,7 @@ sap.ui.define([
 						// _Helper.updateCache cannot be used because navigation properties cannot
 						// be handled
 						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
-						that.calculateKeyPredicates(oResult, mTypeForMetaPath);
-						Cache.computeCount(oResult);
+						that.visitResponse(oResult, mTypeForMetaPath);
 					}
 				});
 		});
@@ -1515,9 +1588,8 @@ sap.ui.define([
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
-				that.calculateKeyPredicates(aResult[0], aResult[1],
+				that.visitResponse(aResult[0], aResult[1],
 					that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
-				Cache.computeCount(aResult[0]);
 				return aResult[0];
 			});
 			this.bSentReadRequest = true;
@@ -1583,7 +1655,7 @@ sap.ui.define([
 		this.oPromise = SyncPromise.all(aPromises).then(function (aResult) {
 			that.bPosting = false;
 			if (that.bFetchOperationReturnType) {
-				that.calculateKeyPredicates(aResult[0], aResult[1], that.sMetaPath + "/$Type");
+				that.visitResponse(aResult[0], aResult[1], that.sMetaPath + "/$Type");
 			}
 			return aResult[0];
 		}, function (oError) {
@@ -1684,39 +1756,6 @@ sap.ui.define([
 			bPost, sMetaPath, bFetchOperationReturnType) {
 		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
 			sMetaPath, bFetchOperationReturnType);
-	};
-
-	/**
-	 * Processes the result received from the server. All arrays are annotated by their length;
-	 * influenced by the annotations "@odata.count" and "@odata.nextLink".
-	 *
-	 * @param {object} oResult The result
-	 *
-	 * @private
-	 */
-	Cache.computeCount = function (oResult) {
-		if (oResult && typeof oResult === "object") {
-			Object.keys(oResult).forEach(function (sKey) {
-				var sCount,
-					vValue = oResult[sKey];
-
-				if (Array.isArray(vValue)) {
-					vValue.$count = undefined; // see setCount
-					sCount = oResult[sKey + "@odata.count"];
-					// Note: ignore change listeners, because any change listener that is already
-					// registered, is still waiting for its value and gets it via fetchValue
-					if (sCount) {
-						setCount({}, "", vValue, sCount);
-					} else if (!oResult[sKey + "@odata.nextLink"]) {
-						// Note: This relies on the fact that $skip/$top is not used on nested lists.
-						setCount({}, "", vValue, vValue.length);
-					}
-					vValue.forEach(Cache.computeCount);
-				} else {
-					Cache.computeCount(vValue);
-				}
-			});
-		}
 	};
 
 	/**
