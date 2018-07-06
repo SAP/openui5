@@ -5,14 +5,13 @@
 /*global ace */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/codeeditor/js/ace/ace',
 	'sap/ui/codeeditor/js/ace/ext-language_tools',
 	'sap/ui/codeeditor/js/ace/ext-beautify',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
-], function(jQuery, Control) {
+], function(Control) {
 	"use strict";
 
 	// TODO remove after 1.62 version
@@ -169,7 +168,7 @@ sap.ui.define([
 		});
 
 	//configure the source paths
-	var sPath = jQuery.sap.getModulePath("sap.ui.codeeditor.js.ace");
+	var sPath = sap.ui.require.toUrl("sap/ui/codeeditor/js/ace");
 	ace.config.set("basePath", sPath);
 
 	// require language tools
