@@ -3,7 +3,7 @@
  */
 
 // Provides implementation of sap.ui.documentation.sdk.util.jsanalyzer.Doclet
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(["sap/ui/thirdparty/jquery"],
 	function (jQuery) {
 
 		"use strict";

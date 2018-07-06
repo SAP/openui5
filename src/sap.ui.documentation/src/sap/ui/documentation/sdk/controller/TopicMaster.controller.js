@@ -4,12 +4,12 @@
 
 /*global history */
 sap.ui.define([
-		"jquery.sap.global",
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/m/library"
-	], function (jQuery, Device, MasterTreeBaseController, JSONModel, mobileLibrary) {
+		"sap/m/library",
+		"sap/base/Log"
+	], function (Device, MasterTreeBaseController, JSONModel, mobileLibrary, Log) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
@@ -39,7 +39,7 @@ sap.ui.define([
 					this.showMasterSide();
 				} catch (e) {
 					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
 
 				this._topicId = event.getParameter("arguments").id;
@@ -56,13 +56,14 @@ sap.ui.define([
 				this._clearSelection();
 
 				if (Device.system.desktop) {
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this.getView().byId("searchField").getFocusDomRef().focus();
-					});
+					}.bind(this), 0);
 				}
 			},
 
 			_fetchDocuIndex : function () {
+				//TODO: global jquery call found
 				var oResponse = jQuery.sap.syncGetJSON(this.getConfig().docuPath + "index.json");
 				if (oResponse.data === undefined) {
 					return [];
@@ -120,7 +121,7 @@ sap.ui.define([
 					oRouter;
 
 				if (!sTopicId) {
-					jQuery.sap.log.warning("Missing key for entity: " + oNode.getId() + " - cannot navigate to topic");
+					Log.warning("Missing key for entity: " + oNode.getId() + " - cannot navigate to topic");
 					return;
 				}
 

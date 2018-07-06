@@ -4,7 +4,7 @@
 
 /*global location */
 sap.ui.define([
-		"jquery.sap.global",
+		"sap/ui/thirdparty/jquery",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
@@ -70,7 +70,7 @@ sap.ui.define([
 
 				this._buildHeaderLayout(this._oControlData, this._oEntityData);
 
-				jQuery.sap.delayedCall(0, this, function () {
+				setTimeout(function () {
 					// Initial prettify
 					this._prettify();
 
@@ -78,27 +78,27 @@ sap.ui.define([
 					this._objectPage.attachEvent("subSectionEnteredViewPort", function () {
 						// Clear previous calls if any
 						if (this._sPrettyPrintDelayedCallID) {
-							jQuery.sap.clearDelayedCall(this._sPrettyPrintDelayedCallID);
+							clearTimeout(this._sPrettyPrintDelayedCallID);
 						}
-						this._sPrettyPrintDelayedCallID = jQuery.sap.delayedCall(200, this, function () {
+						this._sPrettyPrintDelayedCallID = setTimeout(function () {
 							// The event is called even if all the sub-sections are un-stashed so apply the class and prettyPrint only when we have un-processed targets.
 							var $aNotApplied = jQuery('.sapUxAPObjectPageContainer .APIDetailMethodsSection pre:not(.prettyprint)', this._objectPage.$());
 							if ($aNotApplied.length > 0) {
 								$aNotApplied.addClass('prettyprint');
 								window.prettyPrint();
 							}
-						});
+						}.bind(this), 200);
 					}, this);
 
 					// Init scrolling right after busy indicator is cleared and prettify is ready
-					jQuery.sap.delayedCall(1000, this, function () {
+					setTimeout(function () {
 
 						if (this._sEntityType) {
 							this._scrollToEntity(this._sEntityType, this._sEntityId);
 						}
 
 						// Add listener's with a slight delay so they don't break scroll to entity
-						jQuery.sap.delayedCall(500, this, function () {
+						setTimeout(function () {
 							this._objectPage.attachEvent("_sectionChange", function (oEvent) {
 								var oSection = oEvent.getParameter("section"),
 									oSubSection = oEvent.getParameter("subSection");
@@ -122,10 +122,10 @@ sap.ui.define([
 								this._oNavigatingTo = oSubSection;
 								this._modifyURL(oSection, oSubSection, true);
 							}, this);
-						});
+						}.bind(this), 500);
 
-					});
-				});
+					}.bind(this), 1000);
+				}.bind(this), 0);
 
 				this.searchResultsButtonVisibilitySwitch(this.byId("apiDetailBackToSearch"));
 			},
@@ -247,10 +247,10 @@ sap.ui.define([
 						// Disable router as we are going to scroll only - this is only to prevent routing when a link
 						// pointing to a sub-section from the same entity with a href is clicked
 						this._oRouter.stop();
-						jQuery.sap.delayedCall(0, this, function () {
+						setTimeout(function () {
 							// Re-enable rooter after current operation
 							this._oRouter.initialize(true);
-						});
+						}.bind(this), 0);
 
 						// We scroll to the first sub-section found
 						this._objectPage.scrollToSection(aFilteredSubSections[0].getId(), 250);

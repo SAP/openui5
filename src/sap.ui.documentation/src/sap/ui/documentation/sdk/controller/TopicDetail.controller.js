@@ -25,6 +25,7 @@ sap.ui.define([
 				this.oPage.addStyleClass('docuPage');
 
 				if ( !window.prettyPrint ) {
+					//TODO: global jquery call found
 					jQuery.sap.require("sap.ui.documentation.sdk.thirdparty.google-code-prettify.prettify");
 				}
 
@@ -58,15 +59,13 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (event) {
-				var topicId = event.getParameter("arguments").id,
-					topicURL = this._oConfig.docuPath + topicId + (topicId.match(/\.html/) ? "" : ".html"),
-					htmlContent = jQuery.sap.syncGetText(topicURL).data,
-					jsonObj;
+				//TODO: global jquery call found
+				var topicId = event.getParameter("arguments").id, topicURL = this._oConfig.docuPath + topicId + (topicId.match(/\.html/) ? "" : ".html"), htmlContent = jQuery.sap.syncGetText(topicURL).data, jsonObj;
 
 				if (!htmlContent) {
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
-					});
+					}.bind(this), 0);
 					return;
 				}
 

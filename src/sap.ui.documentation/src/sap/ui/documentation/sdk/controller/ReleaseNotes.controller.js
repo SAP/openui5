@@ -4,11 +4,13 @@
 
 /*global location */
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/library"
-	], function (jQuery, BaseController, JSONModel, library) {
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/documentation/library",
+    "sap/base/util/Version",
+    "sap/base/Log"
+], function(jQuery, BaseController, JSONModel, library, Version, Log) {
 		"use strict";
 
 		var sNeoAppJsonPath = "neo-app.json",
@@ -45,7 +47,7 @@ sap.ui.define([
 					return;
 				}
 
-				oVersion = jQuery.sap.Version(oAppInfo.version);
+				oVersion = Version(oAppInfo.version);
 				iMajor = oVersion.getMajor();
 				iMinor = oVersion.getMinor();
 
@@ -86,7 +88,7 @@ sap.ui.define([
 					});
 
 					aLibs[i].versions.sort(function(a, b) {
-						return jQuery.sap.Version(b.version).compareTo(a.version);
+						return Version(b.version).compareTo(a.version);
 					});
 				};
 
@@ -124,7 +126,7 @@ sap.ui.define([
 					}.bind(this),
 					// Error
 					function() {
-						jQuery.sap.log.warning("No neo-app.json was detected");
+						Log.warning("No neo-app.json was detected");
 					}
 				);
 			},
@@ -133,8 +135,8 @@ sap.ui.define([
 			 * @returns {boolean}
 			 */
 			_compareUI5Versions: function (sVersionA, sVersionB) {
-				var oVA = jQuery.sap.Version(sVersionA),
-					oVB = jQuery.sap.Version(sVersionB);
+				var oVA = Version(sVersionA),
+					oVB = Version(sVersionB);
 
 				return (oVA.getMajor() + "." + oVA.getMinor()) === (oVB.getMajor() + "." + oVB.getMinor());
 			},

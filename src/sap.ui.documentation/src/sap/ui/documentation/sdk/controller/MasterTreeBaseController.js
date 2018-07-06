@@ -6,7 +6,7 @@
  * Common controller for the API Reference & Documentation master controllers (as they both use a tree)
  */
 sap.ui.define([
-		"jquery.sap.global",
+		"sap/ui/thirdparty/jquery",
 		"./BaseController",
 		"./util/TreeUtil",
 		"sap/ui/model/Filter",
@@ -54,11 +54,11 @@ sap.ui.define([
 					oLastItem.setSelected(true);
 
 					// Only scroll after the dom is ready
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						if (oLastItem.getDomRef() && !isInViewport(oLastItem.getDomRef())) {
 							this._scrollTreeItemIntoView(oLastItem);
 						}
-					});
+					}.bind(this), 0);
 				}
 			},
 
@@ -98,10 +98,10 @@ sap.ui.define([
 				var oBinding = oTree.getBinding("items");
 
 				if (this._filterTimeout) {
-					jQuery.sap.clearDelayedCall(this._filterTimeout);
+					clearTimeout(this._filterTimeout);
 				}
 
-				this._filterTimeout = jQuery.sap.delayedCall(250, this, function () {
+				this._filterTimeout = setTimeout(function () {
 
 					// 0 characters - clear filters and collapse all nodes
 					if (sFilterArgument.length === 0) {
@@ -125,7 +125,7 @@ sap.ui.define([
 					this._expandAllNodes();
 
 					this._filterTimeout = null;
-				});
+				}.bind(this), 250);
 
 			},
 

@@ -4,7 +4,7 @@
 
 /*global location */
 sap.ui.define([
-		"jquery.sap.global",
+		"sap/ui/thirdparty/jquery",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
@@ -58,7 +58,7 @@ sap.ui.define([
 
 				APIInfo.getDeprecatedPromise().then(function (oData) {
 					this.getModel("deprecatedAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
+					setTimeout(this._prettify.bind(this), 0);
 				}.bind(this));
 			},
 
@@ -73,7 +73,7 @@ sap.ui.define([
 
 				APIInfo.getExperimentalPromise().then(function (oData) {
 					this.getModel("experimentalAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
+					setTimeout(this._prettify.bind(this), 0);
 				}.bind(this));
 			},
 
@@ -91,7 +91,7 @@ sap.ui.define([
 						delete oData['noVersion'];
 					}
 					this.getModel("sinceAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
+					setTimeout(this._prettify.bind(this), 0);
 				}.bind(this));
 			},
 

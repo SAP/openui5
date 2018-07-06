@@ -4,9 +4,9 @@
 
 /* Utility class that facilitates route configuration handling */
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/base/Object"
-], function (jQuery, BaseObject) {
+	"sap/ui/base/Object",
+	"sap/base/strings/capitalize"
+], function (BaseObject, capitalize) {
 	"use strict";
 
 	return BaseObject.extend("sap.ui.documentation.sdk.controller.util.ConfigUtil", {
@@ -26,7 +26,7 @@ sap.ui.define([
 				sTargetConfig = this._getTargetConfig(sMasterTargetName),
 				sViewName = sTargetConfig.viewName;
 
-				sViewName = "sap.ui.documentation.sdk.view." + jQuery.sap.charToUpperCase(sViewName, 0);
+				sViewName = "sap.ui.documentation.sdk.view." + capitalize(sViewName, 0);
 
 				return this._oComponent.getRouter().getView(sViewName);
 		},

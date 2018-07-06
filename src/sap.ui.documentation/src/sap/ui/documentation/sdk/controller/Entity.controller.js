@@ -147,9 +147,9 @@ sap.ui.define([
 
 					this._switchPageTab();
 
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this._oObjectPage.setBusy(false);
-					});
+					}.bind(this), 0);
 				}
 
 				// set data model

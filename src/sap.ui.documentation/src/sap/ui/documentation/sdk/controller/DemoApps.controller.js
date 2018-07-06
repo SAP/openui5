@@ -4,20 +4,20 @@
 
 /*global history */
 sap.ui.define([
-		"jquery.sap.global",
+		"sap/ui/thirdparty/jquery",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/Device",
 		"sap/ui/model/json/JSONModel",
-		"jquery.sap.global",
 		"sap/ui/documentation/sdk/model/sourceFileDownloader",
 		"sap/ui/documentation/sdk/model/formatter",
 		"sap/m/MessageBox",
 		"sap/m/MessageToast",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
-		'sap/ui/documentation/sdk/model/libraryData'
-	], function(jQuery, BaseController, ResourceModel, Device, JSONModel, $, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator, libraryData) {
+		'sap/ui/documentation/sdk/model/libraryData',
+		"sap/base/Log"
+	], function(jQuery, BaseController, ResourceModel, Device, JSONModel, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator, libraryData, Log) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.DemoApps", {
@@ -147,7 +147,7 @@ sap.ui.define([
 					this.hideMasterSide();
 				} catch (e) {
 					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
 			},
 
@@ -202,7 +202,7 @@ sap.ui.define([
 					var oZipFile = new JSZip();
 
 					// load the config file from the custom data attached to the list item
-					$.getJSON(oListItem.data("config"), function (oConfig) {
+					jQuery.getJSON(oListItem.data("config"), function (oConfig) {
 						var aFiles = oConfig.files,
 							aPromises = [],
 							aFails = [];
@@ -263,14 +263,14 @@ sap.ui.define([
 				if (!oBindingContext.getObject().categoryId) { // demo app tile
 					if (oBindingContext.getObject().teaser) { // teaser cell (loads fragment from demo app)
 						try {
-							$.sap.registerResourcePath("test-resources","test-resources");
-							var sRelativePath = $.sap.getResourcePath(oBindingContext.getObject().teaser);
+							sap.ui.loader.config({paths:{"test-resources":"test-resources"}});
+							var sRelativePath = sap.ui.require.toUrl(oBindingContext.getObject().teaser);
 							var oTeaser = sap.ui.xmlfragment(sId, sRelativePath);
 							oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutTeaserCell", this);
 							oBlockLayoutCell.getContent()[0].addContent(oTeaser);
-							$.sap.registerResourcePath("test-resources",null);
+							sap.ui.loader.config({paths:{"test-resources":null}});
 						} catch (oException) {
-							$.sap.log.warning("Teaser for demo app \"" + oBindingContext.getObject().name + "\" could not be loaded: " + oException);
+							Log.warning("Teaser for demo app \"" + oBindingContext.getObject().name + "\" could not be loaded: " + oException);
 							oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.documentation.sdk.view.BlockLayoutCell", this);
 						}
 					} else { // normal cell
