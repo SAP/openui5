@@ -1,4 +1,5 @@
 var fs = require('fs');
+var url = require('url');
 var cspMiddleware = require('../../lib/csp/middleware.js');
 
 
@@ -120,6 +121,17 @@ module.exports = function(grunt, config) {
 						}
 					};
 					middlewares.unshift(cspMiddleware("sap-ui-xx-csp-policy", oCspConfig));
+
+					// Make sure .xml files are served with Content-Type application/xml instead of text/xml
+					// as it causes issues with OData / datajs.
+					// The new tooling (https://github.com/SAP/ui5-tooling) already uses the correct header.
+					middlewares.unshift(function(req, res, next) {
+						var sFilePath = url.parse(req.url).pathname;
+						if (sFilePath && sFilePath.endsWith(".xml")) {
+							res.setHeader("Content-Type", "application/xml");
+						}
+						next();
+					});
 
 					return middlewares;
 				}
