@@ -4,14 +4,15 @@
 
 /* global Map */
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/Element',
 	'sap/ui/dt/MutationObserver',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/DOMUtil',
 	'sap/ui/dt/ScrollbarSynchronizer',
-	'sap/ui/dt/Util'
+	'sap/ui/dt/Util',
+	'sap/base/Log'
 ],
 function(
 	jQuery,
@@ -21,7 +22,8 @@ function(
 	OverlayUtil,
 	DOMUtil,
 	ScrollbarSynchronizer,
-	Util
+	Util,
+	Log
 ) {
 	"use strict";
 
@@ -400,7 +402,7 @@ function(
 
 	Overlay.prototype.destroy = function () {
 		if (this.bIsDestroyed) {
-			jQuery.sap.log.error('FIXME: Do not destroy overlay twice (overlayId = ' + this.getId() + ')!');
+			Log.error('FIXME: Do not destroy overlay twice (overlayId = ' + this.getId() + ')!');
 			return;
 		}
 

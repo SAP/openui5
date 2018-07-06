@@ -4,6 +4,7 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	'jquery.sap.global',
+	'sap/base/Log',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/layout/HorizontalLayout',
@@ -26,6 +27,7 @@ sap.ui.require([
 ],
 function(
 	jQuery,
+	Log,
 	Button,
 	VerticalLayout,
 	HorizontalLayout,
@@ -175,7 +177,7 @@ function(
 
 			var oNewButton = new Button();
 
-			var stubLog = sandbox.stub(jQuery.sap.log, "error", function () {
+			var stubLog = sandbox.stub(Log, "error", function () {
 				assert.equal(stubLog.callCount, 1, "then an error is raised");
 				assert.ok(stubLog.args[0][0].indexOf("Error in sap.ui.dt.DesignTime#_onAddAggregation") > -1, "the error has the correct text");
 				assert.ok(stubLog.args[0][0].indexOf("custom error message") > -1, "the error contains information about custom error");
@@ -334,7 +336,7 @@ function(
 			this.oDesignTime.attachEventOnce("elementOverlayCreated", fnElementOverlayCreatedSpy);
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
 
-			sandbox.stub(jQuery.sap.log, "error", function() {
+			sandbox.stub(Log, "error", function() {
 				assert.ok(false, 'then the error must not be raised');
 			});
 
@@ -869,7 +871,7 @@ function(
 		});
 
 		QUnit.test("when getting the metadata for sap.m.Page from DesignTime (using control name - backwards compatibility)", function(assert) {
-			var spyLog = sandbox.stub(jQuery.sap.log, "error", function(){
+			var spyLog = sandbox.stub(Log, "error", function(){
 				assert.equal(spyLog.callCount, 1, "an error is raised telling how the method should be called now");
 			});
 			var oDTMetadata = this.oDesignTime.getDesignTimeMetadataFor("sap.m.Page");
@@ -1427,7 +1429,7 @@ function(
 			var someError = new Error("some error occurred");
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").returns(Promise.reject(someError));
 
-			sandbox.stub(jQuery.sap.log, "error", function() {
+			sandbox.stub(Log, "error", function() {
 				assert.ok(false, 'async public API should not raise any errors in console, Promise.reject() is enough');
 			});
 

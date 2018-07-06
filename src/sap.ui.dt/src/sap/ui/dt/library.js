@@ -6,10 +6,9 @@
  * Initialization Code and shared classes of library sap.ui.dt.
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/library'
 ], // library dependency
-function(jQuery) {
+function() {
 
 	"use strict";
 

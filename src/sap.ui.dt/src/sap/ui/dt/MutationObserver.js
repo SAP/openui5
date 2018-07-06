@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.dt.MutationObserver.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/base/ManagedObject',

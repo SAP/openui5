@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.dt.test.LibraryEnablementTest.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/test/Test',
 	'sap/ui/dt/test/ElementEnablementTest'
 ],

@@ -4,7 +4,7 @@
 // Provides control sap.ui.dt.ContextMenu.
 /* globals sap */
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'./library',
 	'sap/ui/unified/Menu',
 	'sap/ui/base/ManagedObject',

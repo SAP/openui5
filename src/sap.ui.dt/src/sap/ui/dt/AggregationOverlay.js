@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.dt.AggregationOverlay.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementUtil',

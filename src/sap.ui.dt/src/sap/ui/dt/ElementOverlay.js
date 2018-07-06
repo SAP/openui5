@@ -13,7 +13,11 @@ sap.ui.define([
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/DOMUtil',
 	'sap/ui/dt/Util',
-	'sap/ui/core/Control'
+	'sap/ui/core/Control',
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
+	"sap/base/util/isPlainObject",
+	"sap/base/util/merge"
 ],
 function(
 	Overlay,
@@ -25,7 +29,11 @@ function(
 	OverlayUtil,
 	DOMUtil,
 	Util,
-	Control
+	Control,
+	jQuery,
+	Log,
+	isPlainObject,
+	merge
 ) {
 	"use strict";
 
@@ -469,13 +477,13 @@ function(
 					Overlay.getOverlayContainer().append(this.render());
 					this.applyStyles();
 				} else {
-					jQuery.sap.log.error('sap.ui.dt.ElementOverlay: overlay is already rendered and can\'t be placed in overlay container. Isn\'t it already there?');
+					Log.error('sap.ui.dt.ElementOverlay: overlay is already rendered and can\'t be placed in overlay container. Isn\'t it already there?');
 				}
 			} else {
-				jQuery.sap.log.error('sap.ui.dt.ElementOverlay: it\'s not possible to place overlay inside overlay container while it\'s part of some hierarchy');
+				Log.error('sap.ui.dt.ElementOverlay: it\'s not possible to place overlay inside overlay container while it\'s part of some hierarchy');
 			}
 		} else {
-			jQuery.sap.log.error('sap.ui.dt.ElementOverlay: overlay is not ready yet. Please wait until "init" event happens');
+			Log.error('sap.ui.dt.ElementOverlay: overlay is not ready yet. Please wait until "init" event happens');
 		}
 	};
 
@@ -495,14 +503,14 @@ function(
 			} else {
 				oDesignTimeMetadata.setData(
 					vDesignTimeMetadata(
-						jQuery.sap.extend(true, {}, oDesignTimeMetadata.getData())
+						merge({}, oDesignTimeMetadata.getData())
 					)
 				);
 				return;
 			}
 		} else if (vDesignTimeMetadata instanceof ElementDesignTimeMetadata) {
 			oDesignTimeMetadata = vDesignTimeMetadata;
-		} else if (jQuery.isPlainObject(vDesignTimeMetadata)) {
+		} else if (isPlainObject(vDesignTimeMetadata)) {
 			mDesignTimeMetadata = vDesignTimeMetadata;
 
 			// enhance metadata by custom functions

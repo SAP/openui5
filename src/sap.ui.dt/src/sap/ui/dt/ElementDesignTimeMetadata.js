@@ -4,13 +4,11 @@
 
 // Provides class sap.ui.dt.ElementDesignTimeMetadata.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/AggregationDesignTimeMetadata',
 	'sap/ui/dt/ElementUtil'
 ],
 function(
-	jQuery,
 	DesignTimeMetadata,
 	AggregationDesignTimeMetadata,
 	ElementUtil

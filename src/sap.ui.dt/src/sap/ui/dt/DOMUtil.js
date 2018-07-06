@@ -4,7 +4,7 @@
 
 // Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/Device',
 	'sap/ui/dt/Util'
 ],

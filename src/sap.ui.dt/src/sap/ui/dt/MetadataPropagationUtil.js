@@ -4,7 +4,7 @@
 
 // Provides object sap.ui.dt.MetadataPropagationUtil.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/Util'
 ],
 function(

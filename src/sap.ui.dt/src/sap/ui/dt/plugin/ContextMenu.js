@@ -2,17 +2,21 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/Plugin',
 	'sap/ui/dt/ContextMenuControl',
 	'sap/ui/dt/Util',
-	'sap/ui/Device'
-], function (
+	'sap/ui/Device',
+	"sap/base/assert",
+	"sap/ui/events/KeyCodes"
+], function(
 	jQuery,
 	Plugin,
 	ContextMenuControl,
 	Utils,
-	Device
+	Device,
+	assert,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -298,7 +302,7 @@ sap.ui.define([
 			if (sSelectedButtonId === mMenuItemEntry.menuItem.id) {
 				var oItem = mMenuItemEntry.menuItem;
 				aSelection = this.getSelectedOverlays();
-				jQuery.sap.assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
+				assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 				var mPropertiesBag = {};
 				mPropertiesBag.eventItem = oEventItem;
 				mPropertiesBag.contextElement = oContextElement;
@@ -459,7 +463,7 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._onKeyDown = function (oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		if ((oEvent.keyCode === jQuery.sap.KeyCodes.SPACE || oEvent.keyCode === jQuery.sap.KeyCodes.ENTER) &&
+		if ((oEvent.keyCode === KeyCodes.SPACE || oEvent.keyCode === KeyCodes.ENTER) &&
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
 			(oEvent.ctrlKey === false)) {
@@ -469,7 +473,7 @@ sap.ui.define([
 				oEvent.stopPropagation();
 			}
 		}
-		if ((oEvent.keyCode === jQuery.sap.KeyCodes.F10) &&
+		if ((oEvent.keyCode === KeyCodes.F10) &&
 			(oEvent.shiftKey === true) &&
 			(oEvent.altKey === false) &&
 			(oEvent.ctrlKey === false)) {
