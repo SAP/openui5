@@ -5362,7 +5362,7 @@
 		var oMultiComboBox = new sap.m.MultiComboBox(),
 			output;
 
-		oMultiComboBox.placeAt("qunit-fixture");
+		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
@@ -5379,7 +5379,7 @@
 			oMCB = new sap.m.MultiComboBox();
 
 		// act
-		oMCB.placeAt("qunit-fixture");
+		oMCB.placeAt("MultiComboBox-content");
 		this.clock.tick(100);
 
 		// assert

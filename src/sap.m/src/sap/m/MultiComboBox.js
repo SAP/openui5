@@ -792,11 +792,6 @@ function(
 		this._deregisterResizeHandler();
 	};
 
-	MultiComboBox.prototype.onAfterRendering = function() {
-		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
-		this._registerResizeHandler();
-	};
-
 	/**
 	 * Registers resize handler
 	 *
@@ -825,7 +820,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._onResize = function () {
-		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 	};
 
 	/**
@@ -1770,6 +1765,7 @@ function(
 		oPicker._oOpenBy = oBorder[0];
 
 		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this._registerResizeHandler();
 	};
 
 	/**
