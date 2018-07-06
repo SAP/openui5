@@ -66,7 +66,7 @@ function(
 		getId: function() {
 			return "RTADemoAppMD";
 		},
-		getManifestObject: function() {
+		getManifest: function() {
 			return oManifest;
 		}
 	};

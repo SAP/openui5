@@ -1,21 +1,40 @@
 /*global QUnit*/
-jQuery.sap.require("sap.ui.fl.XmlPreprocessorImpl");
-jQuery.sap.require("sap.ui.fl.ChangePersistenceFactory");
-jQuery.sap.require("sap.ui.fl.ChangePersistence");
-jQuery.sap.require("sap.ui.fl.FlexControllerFactory");
-jQuery.sap.require("sap.ui.fl.Utils");
 
-(function(XmlPreprocessorImpl, ChangePersistenceFactory, ChangePersistence, FlexControllerFactory, Utils) {
+sap.ui.require([
+	"sap/ui/fl/XmlPreprocessorImpl",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/sinon-4"
+],
+function(
+	XmlPreprocessorImpl,
+	ChangePersistenceFactory,
+	ChangePersistence,
+	FlexControllerFactory,
+	Utils,
+	sinon
+) {
 	"use strict";
+	var sandbox = sinon.sandbox.create();
+
+	QUnit.module("Given sap.ui.fl.XmlPreprocessorImpl", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	});
 
 	QUnit.test("process is skipped if no cache key could be determined", function (assert) {
 		var oView = {
 			sId: "testView"
 		};
+		var sMockComponentId = "MockComponentId";
 		var sFlexReference = "someName";
 		var sAppVersion = "1.0.0";
 		var mProperties = {
-			sync: false
+			sync: false,
+			componentId: sMockComponentId
 		};
 		var oMockedComponent = {
 			getComponentClassName: function () {
@@ -28,13 +47,13 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference, appVersion: sAppVersion});
-		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create");
-		this.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
-		this.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		this.stub(Utils, "getComponentName").returns(sFlexReference);
-		this.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
-		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
-		this.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(ChangePersistence.NOTAG));
+		var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create");
+		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+		sandbox.stub(Utils, "getAppComponentForControl").withArgs(sMockComponentId, true).returns(oMockedAppComponent);
+		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
+		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(ChangePersistence.NOTAG));
 
 		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
 			assert.equal(oFlexControllerCreationStub.callCount, 0, "no flex controller creation was created for processing");
@@ -63,17 +82,17 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			getManifestEntry: function () {}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
-		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create").returns({
+		var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create").returns({
 			processXmlView: function(oView, mProperties){
 				return Promise.resolve(oView);
 			}
 		});
-		this.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
-		this.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		this.stub(Utils, "getComponentName").returns(sFlexReference);
-		this.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
-		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
-		this.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve("abc123"));
+		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
+		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve("abc123"));
 
 		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
 			assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller was created for processing");
@@ -101,17 +120,17 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
-		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create").returns({
+		var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create").returns({
 			processXmlView: function(oView, mProperties){
 				return Promise.resolve(oView);
 			}
 		});
-		this.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
-		this.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		this.stub(Utils, "getComponentName").returns(sFlexReference);
-		this.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
-		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
-		this.stub(oChangePersistence, "getCacheKey").returns(Promise.reject());
+		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
+		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.reject());
 
 		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
 			assert.equal(oFlexControllerCreationStub.callCount, 0, "no flex controller creation was created for processing");
@@ -132,12 +151,12 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			getManifestEntry: function () {}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
-		this.stub(sap.ui.getCore(), "getComponent");
-		this.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		this.stub(Utils, "getComponentName");
-		this.stub(Utils, "getAppVersionFromManifest");
-		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
-		this.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sCacheKey));
+		sandbox.stub(sap.ui.getCore(), "getComponent");
+		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+		sandbox.stub(Utils, "getComponentName");
+		sandbox.stub(Utils, "getAppVersionFromManifest");
+		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sCacheKey));
 
 		return XmlPreprocessorImpl.getCacheKey(mProperties).then(function (sReturnedCacheKey) {
 			assert.equal(sReturnedCacheKey, sCacheKey);
@@ -163,8 +182,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			},
 			getManifestEntry: function () {}
 		};
-		this.stub(sap.ui.getCore(), "getComponent");
-		this.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+		sandbox.stub(sap.ui.getCore(), "getComponent");
+		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 		return XmlPreprocessorImpl.getCacheKey(mProperties).then(function (response) {
 			assert.ok(!response, "an 'undefined' was returned to prevent the view caching");
@@ -207,16 +226,16 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
-		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create").returns({
+		var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create").returns({
 			processXmlView: function(oView, mProperties){
 				return Promise.resolve(oView);
 			}
 		});
-		this.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
-		this.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		this.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
-		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
-		this.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sValidCacheKey));
+		sandbox.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+		sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sValidCacheKey));
 
 		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
 			assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller creation was triggered for the xml processing");
@@ -226,24 +245,22 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	});
 
 
-    QUnit.test("skips the processing in case of a synchronous view", function (assert) {
-        var oView = {
-            sId: "testView"
-        };
-        var mProperties = {
-            sync: true
-        };
+	QUnit.test("skips the processing in case of a synchronous view", function (assert) {
+		var oView = {
+			sId: "testView"
+		};
+		var mProperties = {
+			sync: true
+		};
 
-        var Log = sap.ui.require("sap/base/Log");
-        assert.ok(Log, "Log module should be available");
-        var oLoggerSpy = this.spy(Log, "warning");
+		var oLoggerSpy = sandbox.spy(Utils.log, "warning");
 
-        var oProcessedView = XmlPreprocessorImpl.process(oView, mProperties);
+		var oProcessedView = XmlPreprocessorImpl.process(oView, mProperties);
 
-        assert.equal(oLoggerSpy.callCount, 1, "one warning was raised");
-        assert.equal(oLoggerSpy.getCall(0).args[0], "Flexibility feature for applying changes on an XML view is only available for " +
-            "asynchronous views; merge is be done later on the JS controls.");
-        assert.deepEqual(oProcessedView, oView, "the original view is returned");
-    });
+		assert.equal(oLoggerSpy.callCount, 1, "one warning was raised");
+		assert.equal(oLoggerSpy.getCall(0).args[0], "Flexibility feature for applying changes on an XML view is only available for " +
+			"asynchronous views; merge is be done later on the JS controls.");
+		assert.deepEqual(oProcessedView, oView, "the original view is returned");
+	});
 
-}(sap.ui.fl.XmlPreprocessorImpl, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.ChangePersistence, sap.ui.fl.FlexControllerFactory, sap.ui.fl.Utils));
+});

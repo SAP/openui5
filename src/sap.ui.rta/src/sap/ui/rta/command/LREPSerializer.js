@@ -198,9 +198,9 @@ sap.ui.define([
 	 * @param {sap.ui.base.ManagedObject} oControl control or app component for which the flex controller should be instantiated
 	 */
 	LREPSerializer.prototype._getAppDescriptorFlexController = function(oControl) {
-		var oAppComponent = FlexUtils.getAppComponentForControl(oControl);
-		var sComponentName = FlexUtils.getComponentClassName(oAppComponent).replace(".Component", "");
-		var sAppVersion = FlexUtils.getAppVersionFromManifest(oAppComponent.getManifest());
+		var oOuterAppComponent = FlexUtils.getAppComponentForControl(oControl, true);
+		var sComponentName = FlexUtils.getComponentClassName(oOuterAppComponent).replace(".Component", "");
+		var sAppVersion = FlexUtils.getAppVersionFromManifest(oOuterAppComponent.getManifest());
 		return FlexControllerFactory.create(sComponentName, sAppVersion);
 	};
 

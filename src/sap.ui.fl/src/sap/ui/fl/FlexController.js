@@ -163,7 +163,7 @@ sap.ui.define([
 	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
 	 * @param {sap.ui.core.Control | map} oControl - control for which the change will be added
 	 * @param {string} oControl.id id of the control in case a map has been used to specify the control
-	 * @param {sap.ui.base.Component} oControl.appComponent application component of the control at runtime in case a map has been used
+	 * @param {sap.ui.core.Component} oControl.appComponent application component of the control at runtime in case a map has been used
 	 * @param {string} oControl.controlType control type of the control in case a map has been used
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
@@ -274,8 +274,8 @@ sap.ui.define([
 	 */
 	FlexController.prototype.addChange = function (oChangeSpecificData, oControl) {
 		var oChange = this.createChange(oChangeSpecificData, oControl);
-		var oComponent = Utils.getAppComponentForControl(oControl);
-		this.addPreparedChange(oChange, oComponent);
+		var oAppComponent = Utils.getAppComponentForControl(oControl);
+		this.addPreparedChange(oChange, oAppComponent);
 		return oChange;
 	};
 
@@ -292,11 +292,14 @@ sap.ui.define([
 	 */
 	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
 		if (oChange.getVariantReference()) {
-			var oModel = oAppComponent.getModel("$FlexVariants");
+			var oOuterAppComponent = Utils.getAppComponentForControl(oAppComponent, true);
+			// variant model is always associated with the outer component
+			// app component can be null if no parent is found
+			var oModel = oOuterAppComponent && oOuterAppComponent.getModel("$FlexVariants");
 			oModel._addChange(oChange);
 		}
 
-		this._oChangePersistence.addChange(oChange, oAppComponent);
+		this._oChangePersistence.addChange(oChange, oAppComponent, oOuterAppComponent);
 
 		return oChange;
 	};
@@ -315,9 +318,10 @@ sap.ui.define([
 	 * @param {object} oAppComponent component object
 	 */
 	FlexController.prototype.deleteChange = function (oChange, oAppComponent) {
+		var oOuterAppComponent = Utils.getAppComponentForControl(oAppComponent, true);
 		this._oChangePersistence.deleteChange(oChange);
 		if (oChange.getVariantReference()) {
-			oAppComponent.getModel("$FlexVariants")._removeChange(oChange);
+			oOuterAppComponent.getModel("$FlexVariants")._removeChange(oChange);
 		}
 	};
 
@@ -494,7 +498,6 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.processViewByModifier = function (mPropertyBag) {
-
 		mPropertyBag.siteId = Utils.getSiteId(mPropertyBag.appComponent);
 
 		return this._oChangePersistence.getChangesForView(mPropertyBag.viewId, mPropertyBag)
@@ -779,9 +782,9 @@ sap.ui.define([
 		if (oCustomData) {
 			oModifier.setProperty(oCustomData, "value", sValue);
 		} else {
-			var oAppComponent = mPropertyBag.appComponent;
+			var oOuterAppComponent = mPropertyBag.appComponent;
 			var oView = mPropertyBag.view;
-			oCustomData = oModifier.createControl("sap.ui.core.CustomData", oAppComponent, oView);
+			oCustomData = oModifier.createControl("sap.ui.core.CustomData", oOuterAppComponent, oView);
 			oModifier.setProperty(oCustomData, "key", sCustomDataKey);
 			oModifier.setProperty(oCustomData, "value", sValue);
 			oModifier.insertAggregation(oControl, "customData", oCustomData, 0, oView);

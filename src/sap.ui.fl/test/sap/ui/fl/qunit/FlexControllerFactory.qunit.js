@@ -1,16 +1,30 @@
 /*global QUnit*/
-jQuery.sap.require("sap.ui.fl.FlexControllerFactory");
-jQuery.sap.require("sap.ui.fl.FlexController");
-jQuery.sap.require("sap.ui.fl.ChangePersistenceFactory");
-jQuery.sap.require("sap.ui.fl.Utils");
 
-(function (FlexControllerFactory, FlexController, ChangePersistenceFactory, Utils) {
+QUnit.config.autostart = false;
+
+sap.ui.require([
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/FlexController",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/sinon-4"
+],
+function (
+	FlexControllerFactory,
+	FlexController,
+	ChangePersistenceFactory,
+	Utils,
+	sinon
+) {
 	'use strict';
+
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("sap.ui.fl.FlexControllerFactory", {
 		beforeEach: function () {
 		},
 		afterEach: function () {
+			sandbox.restore();
 		}
 	});
 
@@ -37,8 +51,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	});
 
 	 QUnit.test("does not propagate if there are no changes for the component", function (assert) {
-		this.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve({}));
-		this.stub(Utils, "isApplication").returns(true);
+		sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve({}));
+		sandbox.stub(Utils, "isApplication").returns(true);
 
 		var oComponent = {
 			getManifestObject: function () {
@@ -47,7 +61,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			addPropagationListener: function () {}
 		};
 
-		var oAddPropagationListenerStub = this.stub(oComponent, "addPropagationListener");
+		var oAddPropagationListenerStub = sandbox.stub(oComponent, "addPropagationListener");
 
 		FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 
@@ -63,20 +77,83 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		 "someId": [{}]
 		 };
 
-		 this.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve(function() {return mDeterminedChanges;}));
-		 this.stub(Utils, "isApplication").returns(true);
-
 		 var oComponent = {
 			 getManifestObject: function () {
 				 return {};
 			 },
 			 addPropagationListener: function () {
-			 done();
-			 }
+				 done();
+			 },
+			 getManifest: function () {},
+			 setModel: function () {}
 		 };
+
+		 sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve(function() {return mDeterminedChanges;}));
+		 sandbox.stub(Utils, "isApplication").returns(true);
 
 		 FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 	 });
 
-}(sap.ui.fl.FlexControllerFactory, sap.ui.fl.FlexController, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.Utils));
+	QUnit.test("when getChangesForPropagate() is called for a non application type component", function (assert) {
+		assert.expect(4);
+		var oModel = {
+			addEmbeddedComponent: function () {}
+		};
+		var sVariantModelName = "$FlexVariants";
+		var oOuterAppComponent = {
+			getModel: function (sModelName) {
+				assert.strictEqual(sModelName, sVariantModelName, "then variant model called on the app component");
+				return oModel;
+			}
+		};
+
+		var oComponent = {
+			setModel: function (oModelSet, sModelName) {
+				assert.strictEqual(sModelName, sVariantModelName, "then variant model set on the app component");
+				assert.deepEqual(oModelSet, oModel, "then the correct model was set");
+			},
+			getManifestObject: function () { }
+		};
+
+		sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
+		sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent, true).returns(oOuterAppComponent);
+		sandbox.stub(FlexControllerFactory, "createForControl");
+
+		FlexControllerFactory.getChangesAndPropagate(oComponent, {});
+
+		assert.strictEqual(FlexControllerFactory.createForControl.callCount, 0, "then createForControl() not called");
+	});
+
+	QUnit.test("when createForControl() is called for a non application type component", function (assert) {
+		var oMockManifest = {
+			id: "MockManifestId"
+		};
+		var oMockControl = {
+			id: "MockControlId"
+		};
+		var oOuterAppComponent = {
+			getManifest: function (sModelName) {
+				return oMockManifest;
+			}
+		};
+		var sMockComponentName = "MockCompName";
+		var sMockComponentAppVersion = "1.23";
+
+		sandbox.stub(Utils, "getAppComponentForControl").withArgs(oMockControl, true).returns(oOuterAppComponent);
+		sandbox.stub(Utils, "getComponentClassName")
+			.withArgs(oOuterAppComponent)
+			.returns(sMockComponentName);
+
+		sandbox.stub(Utils, "getAppVersionFromManifest")
+			.withArgs(oMockManifest)
+			.returns(sMockComponentAppVersion);
+
+		sandbox.stub(FlexControllerFactory, "create");
+
+		FlexControllerFactory.createForControl(oMockControl);
+
+		assert.ok(FlexControllerFactory.create.calledWith(sMockComponentName, sMockComponentAppVersion), "then FlexController created with the correct component name and app version");
+	});
+	QUnit.start();
+});
 

@@ -556,13 +556,9 @@ function (
 	});
 
 	QUnit.test("addPreparedChange shall add a change with variant reference to flex persistence and create a variant change", function(assert) {
-
-		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
-		var oChange = new Change(labelChangeContent);
+		assert.expect(9);
 		var oAddChangeStub = sandbox.stub();
 		var oRemoveChangeStub = sandbox.stub();
-
-		oChange.setVariantReference("testVarRef");
 		var oModel = {
 			_addChange: oAddChangeStub,
 			_removeChange: oRemoveChangeStub,
@@ -578,11 +574,23 @@ function (
 				};
 			}
 		};
-		sandbox.stub(oComponent, "getModel").returns(oModel);
+		var oOuterAppComponent = {
+			getModel: function(sModel) {
+				assert.strictEqual(sModel, "$FlexVariants", "then variant model called on the app component");
+				return oModel;
+			}
+		};
+		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
+		sandbox.stub(Utils, "getAppComponentForControl")
+			.withArgs(oComponent, true).returns(oOuterAppComponent)
+			.withArgs(oComponent).returns(oComponent);
 
+		var oChange = new Change(labelChangeContent);
+
+		oChange.setVariantReference("testVarRef");
 
 		var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
-		assert.ok(oPrepChange);
+		assert.ok(oPrepChange, "then change object returned");
 		assert.ok(oAddChangeStub.calledOnce, "then model's _addChange is called as VariantManagement Change is detected");
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
 		var aDirtyChanges = oChangePersistence.getDirtyChanges();
