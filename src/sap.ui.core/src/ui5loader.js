@@ -551,6 +551,11 @@
 
 		// Make sure to have an absolute URL to check against absolute prefix URLs
 		sURL = resolveURL(sURL);
+		// remove url parameters
+		var pos = sURL.search(/[?#]/);
+		if (pos >= 0) {
+			sURL = sURL.slice(0, pos);
+		}
 
 		for (sNamePrefix in mUrlPrefixes) {
 
