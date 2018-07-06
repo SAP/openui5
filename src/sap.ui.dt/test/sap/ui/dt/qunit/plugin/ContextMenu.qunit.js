@@ -155,9 +155,9 @@ sap.ui.require([
 
 		QUnit.test("Reopen the ContextMenu on another overlay", function (assert) {
 			var done = assert.async();
+			var bIsEdge = Device.browser.edge;
 			Device.browser.edge = true;
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-			QUnitUtils.triggerMouseEvent(this.oButton1Overlay.getDomRef(), "contextmenu");
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 				QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
@@ -166,10 +166,11 @@ sap.ui.require([
 				assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
 				oContextMenuControl.attachEventOnce("Opened", function() {
 					assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be reopened again");
-					Device.browser.edge = false;
+					Device.browser.edge = bIsEdge;
 					done();
 				});
 			});
+			QUnitUtils.triggerMouseEvent(this.oButton1Overlay.getDomRef(), "contextmenu");
 		});
 
 		QUnit.test("Calling the _popupClosed function", function (assert) {
@@ -849,7 +850,7 @@ sap.ui.require([
 	QUnit.test("removing all buttons", function (assert) {
 		QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		this.oContextMenuControl.removeAllButtons();
-		assert.strictEqual(this.oContextMenuControl.getDependents()[0].getContent()[0].getItems().length, 0, "should remove all buttons");
+		assert.strictEqual(this.oContextMenuControl.getPopover().getContent()[0].getItems().length, 0, "should remove all buttons");
 	});
 
 	QUnit.test("getting all buttons", function (assert) {
@@ -1955,20 +1956,4 @@ sap.ui.require([
 			"then icon for blank icon in the button is returned");
 	});
 
-	QUnit.module("ContextMenuControl API", {
-		beforeEach: function (assert) {
-		},
-		afterEach: function () {
-			oSandbox.restore();
-		}
-	}, function() {
-
-		QUnit.test("when instantiating context menu which throws an error", function (assert) {
-			oSandbox.stub(sap.ui.getCore(), "getStaticAreaRef").throws(new Error("DOM is not ready yet. Static UIArea cannot be created."));
-			assert.throws(function() { this.oContextMenuControl = new ContextMenuControl(); },
-				/Popup cannot be opened because static UIArea cannot be determined./,
-				"then error with correct message ist thrown");
-			assert.ok(true);
-		});
-	});
 });
