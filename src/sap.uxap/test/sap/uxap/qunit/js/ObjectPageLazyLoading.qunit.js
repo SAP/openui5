@@ -210,6 +210,36 @@
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.test("Early lazyLoading onAfterRendering if already scheduled", function (assert) {
+
+		var oObjectPage = new sap.uxap.ObjectPageLayout({enableLazyLoading: true}),
+			spy,
+			done = assert.async();
+
+		assert.expect(1);
+
+		oObjectPage.addEventDelegate({
+			"onBeforeRendering": function() {
+				spy = sinon.spy(oObjectPage._oLazyLoading, "doLazyLoading");
+			},
+			"onAfterRendering": function() {
+				oObjectPage._triggerVisibleSubSectionsEvents();
+				// Arrange: reset any earlier recorded calls
+				spy.reset();
+			}
+		}, this);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				// Check:
+				assert.strictEqual(spy.callCount, 1, "lazy loading is called early");
+				oObjectPage.destroy();
+				done();
+		});
+
+		oObjectPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.test("Early lazyLoading onAfterRendering when hidden", function (assert) {
 
 		var oObjectPage = new sap.uxap.ObjectPageLayout({enableLazyLoading: true}),
