@@ -15,13 +15,14 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"./Context",
 	"./lib/_AggregationCache",
+	"./lib/_AggregationHelper",
 	"./lib/_Cache",
 	"./lib/_GroupLock",
 	"./lib/_Helper",
 	"./ODataParentBinding"
 ], function (jQuery, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
-		Sorter, OperationMode, Context, _AggregationCache, _Cache, _GroupLock, _Helper,
-		asODataParentBinding) {
+		Sorter, OperationMode, Context, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
+		_Helper, asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -249,7 +250,7 @@ sap.ui.define([
 				throw new Error("Cannot combine $$aggregation and $apply");
 			}
 			oAggregation = _Helper.clone(mParameters.$$aggregation);
-			this.mQueryOptions.$apply = _Helper.buildApply(oAggregation);
+			this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation);
 			this.oAggregation = oAggregation;
 		}
 
@@ -567,7 +568,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
 		var bAggregate = this.oAggregation && (this.oAggregation.groupLevels.length
-				|| _Helper.hasMinOrMax(this.oAggregation.aggregate));
+				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate));
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
@@ -1633,7 +1634,7 @@ sap.ui.define([
 				+ "'");
 		}
 		oAggregation = _Helper.clone(oAggregation);
-		this.mQueryOptions.$apply = _Helper.buildApply(oAggregation);
+		this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation);
 		this.oAggregation = oAggregation;
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
@@ -1821,7 +1822,7 @@ sap.ui.define([
 			}
 		});
 		this.oAggregation = oAggregation; // Note: needed by #doCreateCache!
-		this.changeParameters({$apply : _Helper.buildApply(oAggregation)});
+		this.changeParameters({$apply : _AggregationHelper.buildApply(oAggregation)});
 		this.bHasAnalyticalInfo = true;
 		if (bHasMinMax) {
 			return {
