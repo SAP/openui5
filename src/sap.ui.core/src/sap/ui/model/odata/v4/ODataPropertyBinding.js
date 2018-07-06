@@ -45,6 +45,7 @@ sap.ui.define([
 	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested' and
 	 *   'DataStateChange'. For unsupported events, an error is thrown.
 	 * @extends sap.ui.model.PropertyBinding
+	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataBinding
 	 * @public
 	 * @since 1.37.0

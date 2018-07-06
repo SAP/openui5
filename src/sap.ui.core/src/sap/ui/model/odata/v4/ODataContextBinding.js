@@ -80,6 +80,7 @@ sap.ui.define([
 	 *   parent.
 	 *
 	 * @extends sap.ui.model.ContextBinding
+	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
