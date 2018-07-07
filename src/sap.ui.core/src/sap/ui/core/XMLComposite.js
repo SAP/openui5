@@ -27,8 +27,10 @@ sap.ui.define([
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/model/base/XMLNodeUtils',
 	'sap/ui/base/ManagedObjectObserver',
-	"sap/base/util/ObjectPath",
-	'sap/ui/base/SyncPromise'
+	'sap/base/util/ObjectPath',
+	'sap/ui/base/SyncPromise',
+	'sap/base/Log',
+	'sap/ui/performance/Measurement'
 ],
 	function(
 		jQuery,
@@ -46,12 +48,14 @@ sap.ui.define([
 		Utils,
 		ManagedObjectObserver,
 		ObjectPath,
-		SyncPromise
+		SyncPromise,
+		Log,
+		Measurement
 	) {
 		"use strict";
 
 		// private functions
-		var mControlImplementations = {};
+		var mControlImplementations = {}, sXMLComposite = "sap.ui.core.XMLComposite";
 
 		function initXMLComposite(sFragment, oFragmentContext) {
 			if (!mControlImplementations[sFragment]) {
@@ -481,7 +485,8 @@ sap.ui.define([
 					_content: {
 						type: "sap.ui.core.Control",
 						multiple: false,
-						visibility: "hidden"
+						visibility: "hidden",
+						invalidate: true
 					}
 				}
 			},
@@ -490,14 +495,10 @@ sap.ui.define([
 
 				Control.apply(this,arguments);
 				delete this._bIsCreating;
-				if (this.getMetadata().usesTemplating() && !this._bIsInitialized) {
-					//for the case the template is written against the ManagedObjectModel a templating before
-					//creating was not possible so we have to retemplate against the Managed Object model
-					this.requestFragmentRetemplating();
-					delete this._bIsInitialized;
-				}
 			},
 			renderer: function (oRm, oControl) {
+				Log.debug("Start rendering '" + oControl.sId, sXMLComposite);
+				Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 				oRm.write("<div");
 				oRm.writeControlData(oControl);
 
@@ -524,6 +525,8 @@ sap.ui.define([
 					oRm.renderControl(oContent);
 				}
 				oRm.write("</div>");
+				Measurement.end(oControl.getId() + "---renderControl");
+				Log.debug("Stop rendering '" + oControl.sId, sXMLComposite);
 			}
 		}, XMLCompositeMetadata);
 
@@ -538,11 +541,12 @@ sap.ui.define([
 
 		XMLComposite.prototype.clone = function () {
 			var oClone = ManagedObject.prototype.clone.apply(this, arguments);
-			var oContent = oClone._getCompositeAggregation();
+			var oContent = oClone._renderingContent ? oClone._renderingContent() : oClone._getCompositeAggregation();
 			repairListener(oContent, this, oClone);
 			//also if the compisite is clone when already having children the propagated models are so far not set
 			//fix that
 			oClone.oPropagatedProperties = this.oPropagatedProperties;
+			oClone._bIsClone = true;
 			return oClone;
 		};
 
@@ -682,7 +686,7 @@ sap.ui.define([
 		XMLComposite.prototype._destroyCompositeAggregation = function () {
 			var oContent = this._getCompositeAggregation();
 			if (oContent) {
-				oContent.destroy();
+				oContent.destroy("KeepDom");
 			}
 			return this;
 		};
@@ -743,7 +747,6 @@ sap.ui.define([
 				}
 			}
 			this.setAggregation(sCompositeName, oNewContent);
-			this.invalidate();
 		};
 
 		/**
@@ -808,6 +811,10 @@ sap.ui.define([
 			if (this.observer) {
 				this.observer.destroy();
 			}
+
+			if (this._oManagedObjectModel) {
+				this._oManagedObjectModel.destroy();
+			}
 		};
 
 		/**
@@ -820,18 +827,16 @@ sap.ui.define([
 			var oMetadata = this.getMetadata(),
 				sAggregationName = oMetadata.getCompositeAggregationName(),
 				bInitialized = false;
-			if (mSettings && sAggregationName) {
+			if (mSettings && sAggregationName && mSettings[sAggregationName]) {
 				//this branch is taken if the _content of the compostie is there at creation time
 				var oNode = mSettings[sAggregationName];
 				if (oNode instanceof ManagedObject) {
 					//this happens either if we clone an existing composite and the children are already present
 					//note that we adapted the event handling in the clone method that is enhanced in the composite
-					this._destroyCompositeAggregation();
 					this._setCompositeAggregation(oNode);
 					bInitialized = true;
-				} else {
+				} else if (oNode.localName === "FragmentDefinition") {
 					//or if a preprocessing like in the mdc:Table has happened
-					if (oNode && oNode.localName === "FragmentDefinition") {
 						this._destroyCompositeAggregation();
 						this._setCompositeAggregation(sap.ui.xmlfragment({
 							sId: this.getId(),
@@ -839,32 +844,39 @@ sap.ui.define([
 							oController: this
 						}));
 						bInitialized = true;
-					}
 				}
 				delete mSettings[sAggregationName];
 			}
 			if (!bInitialized) {
 				//at this end the composite is not preprocessed or cloned
-				this._destroyCompositeAggregation();
 				if (!this.getMetadata().usesTemplating()) {
 					//in case there is no templating it is possible to insert the fragment as content
-					//Note: The applySettings comes later hence in this case there is no Managed Object model
+					//Note the fragment can also contain composites and all that runs in a promise
+					this._destroyCompositeAggregation();
 					this._setCompositeAggregation(sap.ui.xmlfragment({
 						sId: this.getId(),
 						fragmentContent: this.getMetadata()._fragment,
 						oController: this
 					}));
-					bInitialized = true;
+				} else {
+					this._requestFragmentRetemplatingCheck();
 				}
 			}
 			this._bIsInitialized = bInitialized;
 		};
 
 		XMLComposite.prototype._requestFragmentRetemplatingCheck = function (oMember, bForce) {
-			var oMetadata = this.getMetadata();
+			//also allow empty member
+			var bRetemplate = true, oMetadata = this.getMetadata();
+			if (oMember) {
+				bRetemplate = !this._bIsCreating && !this._bIsBeingDestroyed && !this._requestFragmentRetemplatingPending  && oMember.appData && oMember.appData.invalidate === oMetadata.InvalidationMode.Template;
+			}
 
-			if (!this._bIsCreating && !this._bIsBeingDestroyed && oMember && oMember.appData && oMember.appData.invalidate === oMetadata.InvalidationMode.Template &&
-				!this._requestFragmentRetemplatingPending) {
+			if (!bRetemplate) {
+				return;
+			}
+
+			if (!this._requestFragmentRetemplatingPending) {
 				if (this.requestFragmentRetemplating) {
 					this._requestFragmentRetemplatingPending = true;
 					// to avoid several separate re-templating requests we collect them
@@ -889,9 +901,15 @@ sap.ui.define([
 		XMLComposite.prototype.requestFragmentRetemplating = function (bForce) {
 			// check all binding context of aggregations
 			if (bForce) {
-				this.fragmentRetemplating();
+				return this.fragmentRetemplating();
+			}
+
+			//inital check for clone
+			if (this._bIsClone && (this._renderingContent ? this._renderingContent() : this._getCompositeAggregation())) {
+				delete this._bIsClone;
 				return;
 			}
+
 			var mAggregations = this.getMetadata().getMandatoryAggregations(),
 				bBound = true;
 			for (var n in mAggregations) {
