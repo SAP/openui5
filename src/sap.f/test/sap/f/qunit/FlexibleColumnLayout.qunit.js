@@ -782,20 +782,27 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		}
 	});
 
-	QUnit.test("Test ResizeHandler is suspoended upon column layout change", function (assert) {
+	QUnit.test("Test ResizeHandler is suspended upon column layout change", 6, function (assert) {
 		var fnDone = assert.async(),
 			iAnimationDelay = 600,
-			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow");
+			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow"),
+			aColumns = ["begin", "mid", "end"];
 
 		// аct
 		oBeginColumnArrow.firePress();
 
 		// assert
-		assert.notEqual(this.oFCL._iResumeResizeHandlerTimeout, null, "ResizeHandler suspended and resume scheduled.");
+		aColumns.forEach(function (sColumn) {
+			assert.notEqual(this.oFCL._$columns[sColumn]._iResumeResizeHandlerTimeout, null,
+				"ResizeHandler suspended for column '" + sColumn + "' and resume scheduled.");
+		}.bind(this));
 
 		setTimeout(function() {
-			// assert
-			assert.strictEqual(this.oFCL._iResumeResizeHandlerTimeout, null, "ResizeHandler resumed.");
+			aColumns.forEach(function (sColumn) {
+				// assert
+				assert.strictEqual(this.oFCL._$columns[sColumn]._iResumeResizeHandlerTimeout, null,
+					"ResizeHandler resumed for column '" + sColumn + "'.");
+			}.bind(this));
 
 			fnDone();
 		}.bind(this), iAnimationDelay);
