@@ -3391,5 +3391,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.37": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "13856d3cb6c03c22641c6df7f7ba06e9315e4768",
+        "type": "FIX",
+        "text": " sap.ui.polyfill.computedStyle: polyfill for firefox bug",
+        "references": []
+      }
+    ]
   }
 }
