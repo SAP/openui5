@@ -202,14 +202,12 @@ sap.ui.require([
 
 		var oViews = new Views();
 
-		try {
-			// Act
-			oViews.getView();
-		} catch (e) {
+		var oViewPromise = oViews.getView();
+		return oViewPromise.catch(function() {
 			// Assert
 			assert.strictEqual(fnErrorSpy.callCount, 1, "the error spy was called");
 			sinon.assert.calledWith(fnErrorSpy, sinon.match(/oOptions/), sinon.match(oViews));
-		}
+		});
 	});
 
 	QUnit.test("Should log an error if the viewName is missing", function (assert) {
@@ -219,14 +217,13 @@ sap.ui.require([
 
 		var oViews = new Views();
 
-		try {
-			// Act
-			oViews.getView({});
-		} catch (e) {
+		// Act
+		var oViewPromise = oViews.getView({});
+		return oViewPromise.catch(function() {
 			// Assert
 			assert.strictEqual(fnErrorSpy.callCount, 1, "the error spy was called");
 			sinon.assert.calledWith(fnErrorSpy, sinon.match(/name for the view has to be defined/), sinon.match(oViews));
-		}
+		});
 	});
 
 	QUnit.module("events", {

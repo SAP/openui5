@@ -9,7 +9,8 @@
 <script id="sap-ui-bootstrap"
 	src="../../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.m"
-	data-sap-ui-bindingSyntax="complex">
+	data-sap-ui-bindingSyntax="complex"
+	data-sap-ui-resourceroots='{"test.routing.target":"../fixture"}'>
 </script>
 <script>
 	(function () {
@@ -34,8 +35,9 @@ sap.ui.require([
 	"sap/ui/core/routing/Views",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
-	"sap/m/Panel"
-], function(Log, formatMessage, View, Target, Views, JSONModel, App, Panel) {
+	"sap/m/Panel",
+	"sap/ui/core/Component"
+], function(Log, formatMessage, View, Target, Views, JSONModel, App, Panel, Component) {
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -69,7 +71,7 @@ sap.ui.require([
 	QUnit.module("views - creation", {
 		beforeEach: function () {
 			this.oShell = new ShellSubstitute();
-			this.oViews = new Views();
+			this.oViews = new Views({async: true});
 			this.oView = createView(
 					['<View xmlns="sap.ui.core.mvc">',
 						'</View>']);
@@ -137,7 +139,7 @@ sap.ui.require([
 		// Arrange
 		var that = this,
 			oStub = this.stub(this.oViews, "_getView", function (oOptions) {
-				assert.strictEqual(oOptions.viewName, "bar.foo");
+				assert.strictEqual(oOptions.name, "bar.foo");
 				assert.strictEqual(oOptions.type, "XML");
 				assert.strictEqual(oOptions.id, "baz");
 				return that.oView;
@@ -155,7 +157,7 @@ sap.ui.require([
 		var that = this,
 			oSpy = this.spy(this.oViews, "_getView"),
 			oStub = this.stub(this.oViews, "_getViewWithGlobalId", function (oOptions) {
-				assert.strictEqual(oOptions.viewName, "bar.foo");
+				assert.strictEqual(oOptions.name, "bar.foo");
 				assert.strictEqual(oOptions.type, "XML");
 				assert.strictEqual(oOptions.id, "baz");
 				return that.oView;
@@ -167,7 +169,8 @@ sap.ui.require([
 
 		// Assert
 		assert.strictEqual(oStub.callCount, 1, "Did inform the view creation");
-		assert.strictEqual(oSpy.callCount, 0, "Did not use the prefix version");
+		assert.strictEqual(oSpy.callCount, 1, "Did use the non-prefix version");
+		assert.strictEqual(oSpy.getCall(0).args[1], true, "Did use the non-prefix version");
 	});
 
 	QUnit.test("Should clear a target aggregation", function (assert) {
@@ -206,6 +209,9 @@ sap.ui.require([
 			return {
 				loaded: function() {
 					return Promise.reject("View with name bar.foo could not be loaded");
+				},
+				isA: function(sClass) {
+					return sClass === "sap.ui.core.mvc.View";
 				}
 			};
 		});
@@ -242,6 +248,9 @@ sap.ui.require([
 				return {
 					loaded: function() {
 						return Promise.reject("View with name parent.foo could not be loaded");
+					},
+					isA: function(sClass) {
+						return sClass === "sap.ui.core.mvc.View";
 					}
 				};
 			}
@@ -349,6 +358,80 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.module("component - creation", {
+		beforeEach: function () {
+			this.oShell = new ShellSubstitute();
+			this.oViews = new Views({async: true});
+
+			// System under test + Arrange
+			this.oTarget = new Target(
+				{
+					_name: "componentTarget",
+					path: "test.routing",
+					name: "target",
+					controlAggregation: "content",
+					controlId: this.oShell.getId(),
+					type: "Component",
+					id: "baz",
+					_async: true,
+					options: {
+						manifest: false
+					}
+				},
+				this.oViews
+			);
+
+			this.sandbox = sinon.sandbox.create();
+		},
+		afterEach: function () {
+			this.oShell.destroy();
+			this.oTarget.destroy();
+			this.oViews.destroy();
+			this.sandbox.restore();
+		}
+	});
+
+	QUnit.test("Should load the component specified by a target", function (assert) {
+		var oCreationSpy = this.sandbox.spy(Component, "create"),
+			oDisplayed,
+			oCreationPromise,
+			bComponentCreated,
+			oCreatedComponent;
+
+		// Act
+		oDisplayed = this.oTarget.display();
+		assert.equal(oCreationSpy.callCount, 1, "Component create function is called");
+
+		oCreationPromise = oCreationSpy.getCall(0).returnValue;
+		oCreationPromise.then(function (oComponent) {
+			bComponentCreated = true;
+			oCreatedComponent = oComponent;
+		});
+
+		return oDisplayed.then(function(oInfo) {
+			// Assert
+			assert.ok(bComponentCreated, "component should be created before the display promise resolves");
+			assert.strictEqual(oInfo.name, "componentTarget", "The name of the target is included in the resolve info");
+			assert.strictEqual(oInfo.control, this.oShell, "The container is passed into the resolve info");
+			assert.ok(oInfo.view.isA("sap.ui.core.ComponentContainer"), "The return value should be an ComponentContainer");
+			assert.strictEqual(oInfo.view.getComponent(), oCreatedComponent.getId(), "The loaded component is added to the ComponentContainer");
+			assert.strictEqual(oInfo.view.getParent(), this.oShell, "The loaded component is placed into the shell");
+		}.bind(this));
+	});
+
+	QUnit.test("Should destroy the component container once the component is destroyed", function (assert) {
+		var oDisplayed = this.oTarget.display();
+
+		return oDisplayed.then(function (oInfo) {
+			var oComponentContainer = oInfo.view,
+				oDestroySpy = this.sandbox.spy(oComponentContainer, "destroy");
+
+			// Act
+			this.oViews.destroy();
+
+			assert.equal(oDestroySpy.callCount, 1, "The component container is also destroyed once the cache is destroyed");
+		}.bind(this));
+	});
 
 	QUnit.module("target parent and children", {
 		beforeEach: function () {
@@ -362,7 +445,7 @@ sap.ui.require([
 					['<View xmlns="sap.ui.core.mvc">',
 					'</View>']);
 
-			this.oViews = new Views();
+			this.oViews = new Views({async: true});
 			this.oViews.setView("child", this.oChildView);
 
 			// System under test + Arrange
@@ -509,7 +592,7 @@ sap.ui.require([
 				_async: true
 			};
 
-			this.oViews = new Views();
+			this.oViews = new Views({async: true});
 			// System under test + Arrange
 			this.oTarget = new Target(
 					this.oConfig,
@@ -596,7 +679,7 @@ sap.ui.require([
 				_async: true
 			};
 
-			this.oViews = new Views();
+			this.oViews = new Views({async: true});
 			this.oViews.setView("bar.foo", this.oView);
 
 		},
@@ -760,7 +843,7 @@ sap.ui.require([
 	QUnit.test("Should destroy all dependencies", function (assert) {
 		// Arrange
 		var oParentTarget = new Target({_async: true}),
-				oViews = new Views();
+			oViews = new Views({async: true});
 
 		// System under test
 		var oTarget = new Target(
@@ -780,7 +863,7 @@ sap.ui.require([
 		// Assert
 		assert.ok(oTarget.bIsDestroyed, "Did flag the target as destroyed");
 		assert.strictEqual(oTarget._oParent, null, "Did free the parent reference");
-		assert.strictEqual(oTarget._oViews, null, "Did free the views reference");
+		assert.strictEqual(oTarget._oCache, null, "Did free the views reference");
 		assert.ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
 		assert.strictEqual(oTarget._oOptions, null, "Did free the options reference");
 		assert.ok(oTitleProvider.bIsDestroyed, "TitleProvider is destroyed");

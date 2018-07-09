@@ -111,6 +111,7 @@ sap.ui.require([
 			this.oUIComponent = new UIComponent({});
 			// System under test
 			this.oViews = new Views({ component: this.oUIComponent, async: true });
+			this.oView = createXmlView();
 		},
 		afterEach: function () {
 			this.oViews.destroy();
@@ -121,10 +122,9 @@ sap.ui.require([
 	QUnit.test("Should create a view with an component", function (assert) {
 		// Arrange
 		var fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
-			oView = createXmlView(),
 			fnViewStub = this.stub(sap.ui, "view", function () {
-				return oView;
-			});
+				return this.oView;
+			}.bind(this));
 
 		// Act
 		var oReturnValue = this.oViews.getView({
@@ -144,10 +144,9 @@ sap.ui.require([
 		// Arrange
 		var sViewId = "ViewId",
 			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
-			oView = createXmlView(),
 			fnViewStub = this.stub(sap.ui, "view", function () {
-				return oView;
-			}),
+				return this.oView;
+			}.bind(this)),
 			oOptions = {
 				id : sViewId,
 				viewType : "XML",
@@ -169,10 +168,9 @@ sap.ui.require([
 		// Arrange
 		var sViewId = "ViewId",
 			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
-			oView = createXmlView(),
 			fnViewStub = this.stub(sap.ui, "view", function () {
-				return oView;
-			});
+				return this.oView;
+			}.bind(this));
 
 		// Act
 		var oReturnValue = this.oViews._getViewWithGlobalId({
@@ -231,7 +229,8 @@ sap.ui.require([
 		var fnErrorSpy = this.spy(Log, "error");
 
 		// Act
-		return this.oViews.getView().then(function() {
+		// the getView() returns a rejected promise if no oOptions parameter is provided
+		return this.oViews.getView().catch(function() {
 			// Assert
 			assert.strictEqual(fnErrorSpy.callCount, 1, "the error spy was called");
 			sinon.assert.calledWith(fnErrorSpy, sinon.match(/oOptions/), sinon.match(this.oViews));
@@ -246,7 +245,7 @@ sap.ui.require([
 		var fnErrorSpy = this.spy(Log, "error");
 
 		// Act
-		return this.oViews.getView({}).then(function() {
+		return this.oViews.getView({}).catch(function() {
 			// Assert
 			assert.strictEqual(fnErrorSpy.callCount, 1, "the error spy was called");
 			sinon.assert.calledWith(fnErrorSpy, sinon.match(/name for the view has to be defined/), sinon.match(this.oViews));
