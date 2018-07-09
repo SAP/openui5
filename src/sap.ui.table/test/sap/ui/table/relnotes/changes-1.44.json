@@ -849,5 +849,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.33": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "8cfcd35d13026a94388282df2d5da566ac33a9cb",
+        "type": "FIX",
+        "text": " Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": []
+      }
+    ]
   }
 }
