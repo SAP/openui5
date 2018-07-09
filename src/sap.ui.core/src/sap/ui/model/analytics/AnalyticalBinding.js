@@ -280,6 +280,7 @@ sap.ui.define([
 			this.sEntitySetName = (mParameters && mParameters.entitySet) ? mParameters.entitySet : undefined;
 			// attribute members for maintaining aggregated OData requests
 			this.bArtificalRootContext = false;
+			// Note: aApplicationFilter is used by sap.ui.comp.smarttable.SmartTable
 			this.aApplicationFilter = this._convertDeprecatedFilterObjects(aFilters);
 			this.aControlFilter = undefined;
 			this.aSorter = aSorter ? aSorter : [];
