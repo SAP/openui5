@@ -404,8 +404,8 @@
 					setTimeout(function() {
 						assert.ok(oSpy.called, "the layout re-calculations are triggered");
 						done();
-					}, 100);
-				}, 100);
+					}, 300);
+				}, 600);
 			}
 		};
 
