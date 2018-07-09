@@ -796,6 +796,16 @@ sap.ui.define([
 		this._adaptObjectPageHeaderIndentifierLine();
 	};
 
+	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
+		if (this._adaptLayoutTimeout) {
+			jQuery.sap.clearDelayedCall(this._adaptLayoutTimeout);
+		}
+		this._adaptLayoutTimeout = jQuery.sap.delayedCall(0, this, function() {
+			this._adaptLayoutTimeout = null;
+			this._adaptLayout();
+		});
+	};
+
 	/**
 	 * Adapt title/subtitle container and action buttons
 	 * @private
