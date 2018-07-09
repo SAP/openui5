@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 		},
 
 		handleCalendarSelect: function(oEvent) {
-			var oCalendar = oEvent.oSource;
+			var oCalendar = oEvent.getSource();
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
 			var oData = {selectedDates:[]};

@@ -35,17 +35,17 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			var sFrom = oEvent.getParameter("from");
 			var sTo = oEvent.getParameter("to");
 			var bValid = oEvent.getParameter("valid");
+			var oEventSource = oEvent.getSource();
 
 			this._iEvent++;
 
 			var oText = this.byId("TextEvent");
-			oText.setText("Id: " + oEvent.oSource.getId() + "\nFrom: " + sFrom + "\nTo: " + sTo);
+			oText.setText("Id: " + oEventSource.getId() + "\nFrom: " + sFrom + "\nTo: " + sTo);
 
-			var oDRS = oEvent.oSource;
 			if (bValid) {
-				oDRS.setValueState(sap.ui.core.ValueState.None);
+				oEventSource.setValueState(sap.ui.core.ValueState.None);
 			} else {
-				oDRS.setValueState(sap.ui.core.ValueState.Error);
+				oEventSource.setValueState(sap.ui.core.ValueState.Error);
 			}
 		}
 
