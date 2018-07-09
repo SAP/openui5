@@ -207,6 +207,32 @@ sap.ui.define([
 				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "heading"}},
 
 				/**
+				* The <code>titleExpandedHeading</code> is positioned in the <code>SemanticPage</code> title left area
+				* and is displayed when the header is in expanded state only.
+				* Use this aggregation to display a title (or any other UI5 control that serves
+				* as a heading) that has to be present in expanded state only.
+				*
+				* <b>Note:</b> In order for <code>titleExpandedHeading</code> to be taken into account,
+				* <code>titleHeading</code> has to be empty. Combine <code>titleExpandedHeading</code> with
+				* <code>titleSnappedHeading</code> to switch content when the header switches state.
+				* @since 1.58
+				*/
+				titleExpandedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "expandedHeading"}},
+
+				/**
+				* The <code>titleSnappedHeading</code> is positioned in the <code>SemanticPage</code> title left area
+				* and is displayed when the header is in collapsed (snapped) state only.
+				* Use this aggregation to display a title (or any other UI5 control that serves
+				* as a heading) that has to be present in collapsed state only.
+				*
+				* <b>Note:</b> In order for <code>titleSnappedHeading</code> to be taken into account,
+				* <code>titleHeading</code> has to be empty. Combine <code>titleSnappedHeading</code> with
+				* <code>expandedHeading</code> to switch content when the header switches state.
+				* @since 1.58
+				*/
+				titleSnappedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "snappedHeading"}},
+
+				/**
 				 * The <code>SemanticPage</code> breadcrumbs.
 				 *
 				 * A typical usage is the <code>sap.m.Breadcrumbs</code> control or any other UI5 control,

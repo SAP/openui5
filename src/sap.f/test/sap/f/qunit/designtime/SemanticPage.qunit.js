@@ -24,6 +24,8 @@
 				return new sap.f.semantic.SemanticPage({
 					showFooter : true,
 					titleHeading : new Title({text : "Title text"}),
+					titleSnappedHeading : [new Text({text : "Collapsed header content"})],
+					titleExpandedHeading : [new Text({text : "Expanded header content"})],
 					titleSnappedContent : [new Text({text : "Collapsed subheading"})],
 					titleExpandedContent : [new Text({text : "Expanded subheading"})],
 					titleMainAction : new sap.f.semantic.TitleMainAction({text : "TitleMainAction Text"}),
