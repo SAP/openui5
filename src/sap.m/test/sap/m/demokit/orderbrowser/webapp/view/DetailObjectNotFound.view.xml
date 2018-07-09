@@ -9,7 +9,11 @@
 		text="{i18n>noObjectFoundText}"
 		icon="sap-icon://product"
 		description=""
-		showNavButton="{device>/system/phone}"
+		showNavButton="{=
+			${device>/system/phone} ||
+			${device>/system/tablet} &amp;&amp;
+			${device>/orientation/portrait}
+		}"
 		navButtonPress="onNavBack">
 	</MessagePage>
 

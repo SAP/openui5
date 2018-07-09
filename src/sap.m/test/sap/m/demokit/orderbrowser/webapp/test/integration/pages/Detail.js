@@ -16,15 +16,6 @@ sap.ui.define([
 
 			actions : {
 
-				iPressTheBackButton : function () {
-					return this.waitFor({
-						id : "page",
-						viewName : sViewName,
-						actions: new Press(),
-						errorMessage : "Did not find the nav button on detail page"
-					});
-				},
-
 				iPressProcessorTab: function () {
 					return this.waitFor({
 						id: "iconTabFilterProcessor",
