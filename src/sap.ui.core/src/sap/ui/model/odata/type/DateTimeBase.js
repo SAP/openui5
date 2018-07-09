@@ -95,8 +95,7 @@ sap.ui.define([
 					oType.oConstraints = oType.oConstraints || {};
 					oType.oConstraints.precision = iPrecision;
 				} else if (iPrecision !== 0) {
-					Log.warning("Illegal precision: " + iPrecision, null,
-						oType.getName());
+					Log.warning("Illegal precision: " + iPrecision, null, oType.getName());
 				} // else: 0 is the default!
 			}
 		}

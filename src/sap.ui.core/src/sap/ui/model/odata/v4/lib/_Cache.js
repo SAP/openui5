@@ -378,8 +378,8 @@ sap.ui.define([
 		var that = this;
 
 		function invalidSegment(sSegment) {
-			Log.error("Failed to drill-down into " + sPath + ", invalid segment: "
-				+ sSegment, that.toString(), "sap.ui.model.odata.v4.lib._Cache");
+			Log.error("Failed to drill-down into " + sPath + ", invalid segment: " + sSegment,
+				that.toString(), "sap.ui.model.odata.v4.lib._Cache");
 			return undefined;
 		}
 

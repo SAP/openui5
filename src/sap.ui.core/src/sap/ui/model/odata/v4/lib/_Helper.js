@@ -374,8 +374,7 @@ sap.ui.define([
 						oResult.message = oResult.error.message.value;
 					}
 				} catch (e) {
-					Log.warning(e.toString(), sBody,
-						"sap.ui.model.odata.v4.lib._Helper");
+					Log.warning(e.toString(), sBody, "sap.ui.model.odata.v4.lib._Helper");
 				}
 			} else if (sContentType === "text/plain") {
 				oResult.message = sBody;

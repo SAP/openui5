@@ -493,8 +493,7 @@ sap.ui.define([
 			if (sChildMetaPath === "value") { // symbolic name for operation result
 				return that.aggregateQueryOptions(mChildQueryOptions, bCacheImmutable);
 			}
-			Log.error("Failed to enhance query options for "
-					+ "auto-$expand/$select as the path '"
+			Log.error("Failed to enhance query options for auto-$expand/$select as the path '"
 					+ sFullMetaPath
 					+ "' does not point to a property",
 				JSON.stringify(oProperty),

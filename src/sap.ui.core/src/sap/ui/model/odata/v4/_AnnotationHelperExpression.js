@@ -416,8 +416,7 @@ sap.ui.define([
 
 			if (!bSimpleParserWarningLogged
 					&& ManagedObject.bindingParser === BindingParser.simpleParser) {
-				Log.warning("Complex binding syntax not active", null,
-					sAnnotationHelper);
+				Log.warning("Complex binding syntax not active", null, sAnnotationHelper);
 				bSimpleParserWarningLogged = true;
 			}
 

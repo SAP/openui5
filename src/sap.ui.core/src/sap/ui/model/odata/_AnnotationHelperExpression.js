@@ -481,8 +481,7 @@ sap.ui.define([
 
 			if ( !Expression.simpleParserWarningLogged &&
 					ManagedObject.bindingParser === BindingParser.simpleParser) {
-				Log.warning("Complex binding syntax not active", null,
-					sAnnotationHelper);
+				Log.warning("Complex binding syntax not active", null, sAnnotationHelper);
 				Expression.simpleParserWarningLogged = true;
 			}
 
@@ -785,8 +784,8 @@ sap.ui.define([
 				}
 				oResult.constraints = oConstraints;
 			} else {
-				Log.warning("Could not find property '" + sBindingPath
-					+ "' starting from '" + oPathValue.path + "'", null, sAnnotationHelper);
+				Log.warning("Could not find property '" + sBindingPath + "' starting from '"
+					+ oPathValue.path + "'", null, sAnnotationHelper);
 			}
 
 			return oResult;

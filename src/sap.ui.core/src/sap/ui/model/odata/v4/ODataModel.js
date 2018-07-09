@@ -339,8 +339,7 @@ sap.ui.define([
 		}));
 		bBlocked = oPromise.isPending();
 		if (bBlocked) {
-			Log.info("submitBatch('" + sGroupId + "') is waiting for locks", null,
-				sClassName);
+			Log.info("submitBatch('" + sGroupId + "') is waiting for locks", null, sClassName);
 		}
 		return Promise.resolve(oPromise.then(function () {
 			if (bBlocked) {
@@ -1386,8 +1385,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
-		assert(oEntityContext.getModel() === this,
-				"oEntityContext must belong to this model");
+		assert(oEntityContext.getModel() === this, "oEntityContext must belong to this model");
 		return oEntityContext.requestCanonicalPath();
 	};
 

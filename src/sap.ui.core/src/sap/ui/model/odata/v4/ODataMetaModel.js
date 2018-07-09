@@ -1001,7 +1001,7 @@ sap.ui.define([
 						: vLocation;
 					Log[iLevel === DEBUG ? "debug" : "warning"](
 						Array.prototype.slice.call(arguments, 1).join("")
-						+ (sLocation ? " at /" + sLocation : ""),
+							+ (sLocation ? " at /" + sLocation : ""),
 						sResolvedPath, sODataMetaModel);
 				}
 				if (iLevel === WARNING) {
@@ -1298,8 +1298,8 @@ sap.ui.define([
 			}
 
 			if (!oProperty) {
-				Log.warning("No metadata for path '" + sPath + "', using " + sTypeName,
-					undefined, sODataMetaModel);
+				Log.warning("No metadata for path '" + sPath + "', using " + sTypeName, undefined,
+					sODataMetaModel);
 				return oRawType;
 			}
 
@@ -1309,8 +1309,8 @@ sap.ui.define([
 			}
 
 			if (oProperty.$isCollection) {
-				Log.warning("Unsupported collection type, using " + sTypeName,
-					sPath, sODataMetaModel);
+				Log.warning("Unsupported collection type, using " + sTypeName, sPath,
+					sODataMetaModel);
 			} else {
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 				if (oTypeInfo) {
@@ -1326,8 +1326,8 @@ sap.ui.define([
 						setConstraint("nullable", false);
 					}
 				} else {
-					Log.warning("Unsupported type '" + oProperty.$Type + "', using "
-						+ sTypeName, sPath, sODataMetaModel);
+					Log.warning("Unsupported type '" + oProperty.$Type + "', using " + sTypeName,
+						sPath, sODataMetaModel);
 				}
 			}
 

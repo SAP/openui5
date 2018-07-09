@@ -535,8 +535,8 @@ sap.ui.define([
 					|| sNamespace.indexOf(" ") >= 0) {
 				throw new Error("Invalid namespace: " + sNamespace);
 			}
-			Log.debug("Plug-in visitor for namespace '" + sNamespace
-				+ "', local name '" + sLocalName + "'", fnVisitor, sXMLPreprocessor);
+			Log.debug("Plug-in visitor for namespace '" + sNamespace + "', local name '"
+				+ sLocalName + "'", fnVisitor, sXMLPreprocessor);
 			if (sLocalName) {
 				sNamespace = sNamespace + " " + sLocalName;
 				fnOldVisitor = mVisitors[sNamespace] || fnOldVisitor;
@@ -945,8 +945,8 @@ sap.ui.define([
 			 */
 			function debugFinished(oElement) {
 				if (bDebug) {
-					Log.debug(getNestingLevel() + "Finished",
-						"</" + oElement.nodeName + ">", sXMLPreprocessor);
+					Log.debug(getNestingLevel() + "Finished", "</" + oElement.nodeName + ">",
+						sXMLPreprocessor);
 				}
 			}
 
@@ -1084,8 +1084,7 @@ sap.ui.define([
 				var vBindingInfo,
 					oPromise;
 
-				Measurement.average(sPerformanceGetResolvedBinding, "",
-					aPerformanceCategories);
+				Measurement.average(sPerformanceGetResolvedBinding, "", aPerformanceCategories);
 				try {
 					vBindingInfo
 						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true, true)

@@ -45,8 +45,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/ValidateExcept
 			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
 				oType.oConstraints = {maxLength : vMaxLength };
 			} else if (vMaxLength !== undefined) {
-				Log.warning("Illegal maxLength: " + oConstraints.maxLength,
-					null, oType.getName());
+				Log.warning("Illegal maxLength: " + oConstraints.maxLength, null, oType.getName());
 			}
 			vIsDigitSequence = oConstraints.isDigitSequence;
 			if (vIsDigitSequence === true || vIsDigitSequence === "true") {
@@ -54,8 +53,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/ValidateExcept
 				oType.oConstraints.isDigitSequence = true;
 			} else if (vIsDigitSequence !== undefined && vIsDigitSequence !== false
 					&& vIsDigitSequence !== "false") {
-				Log.warning("Illegal isDigitSequence: " + vIsDigitSequence, null,
-					oType.getName());
+				Log.warning("Illegal isDigitSequence: " + vIsDigitSequence, null, oType.getName());
 			}
 
 			vNullable = oConstraints.nullable;
