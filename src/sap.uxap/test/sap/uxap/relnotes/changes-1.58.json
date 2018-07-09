@@ -67,6 +67,18 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: ScrollBar flickering fixed",
         "references": []
+      },
+      {
+        "id": "c6f013162278253bb7f3f84f94c71e9087666d2b",
+        "type": "FIX",
+        "text": " ObjectPageHeaderActionButton: RTA \"Rename\" action is fixed",
+        "references": []
+      },
+      {
+        "id": "b62a26d044e50e0fed01b16527cec57c8c32f98a",
+        "type": "FIX",
+        "text": " ObjectPageLayout: test failures fixed",
+        "references": []
       }
     ]
   }

@@ -43,6 +43,12 @@
         "type": "FIX",
         "text": " Table: Avoid layout and row updates if the table is invisible",
         "references": []
+      },
+      {
+        "id": "fc00b48dd3ba60877d73d4aaff86408d13391802",
+        "type": "FIX",
+        "text": " Table: Edit mode navigation with sap.m.Select repaired",
+        "references": []
       }
     ]
   }

@@ -337,6 +337,66 @@
         "type": "FIX",
         "text": " test/launchers/iFrameLauncher: fixed loader config access",
         "references": []
+      },
+      {
+        "id": "09434ce403775258e8f752699479292fcb531fe6",
+        "type": "FEATURE",
+        "text": " ODataAnnotations: expose eTag header",
+        "references": []
+      },
+      {
+        "id": "763c200157791337bc0d6dab99556d2ac5f3e279",
+        "type": "FEATURE",
+        "text": " OverflowToolbar: shrinking of controls is enabled",
+        "references": []
+      },
+      {
+        "id": "44e9000fa60d010148f02fefdf71f34ef7b6007b",
+        "type": "FEATURE",
+        "text": " adding sap.ui.core.IconColor.Contrast",
+        "references": []
+      },
+      {
+        "id": "8958b6baf77e9f91cfadca4e7942df140be49ab2",
+        "type": "FIX",
+        "text": " Component.getService(): Promise not rejecting",
+        "references": []
+      },
+      {
+        "id": "690b94d22ebcc83bb27ed421b378a91b2ab60819",
+        "type": "FIX",
+        "text": " QUnit: EnterText for number input was improved",
+        "references": []
+      },
+      {
+        "id": "b2f62abe5c6663bd4c56901efc330b1db2c9ff4c",
+        "type": "FIX",
+        "text": " XMLComposite: Event propagation in cloning",
+        "references": []
+      },
+      {
+        "id": "7c121b646cc55b5b809e1d7db55f6ad19d2aaa46",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: ignore URL params",
+        "references": []
+      },
+      {
+        "id": "ec9d5d3b732518b6b2b9392ec17e2f02c9f3256c",
+        "type": "FIX",
+        "text": " model.ODataUtils: Complement toupper on all filter operators",
+        "references": []
+      },
+      {
+        "id": "afe894e1db2a172b1828481465f67009c28c93e2",
+        "type": "FIX",
+        "text": " sap/ui/dom/getComputedStyleFix: document.body is not there yet",
+        "references": []
+      },
+      {
+        "id": "7f880b3805a40813ba4c4c3abf4385098c18f68f",
+        "type": "FIX",
+        "text": " sap/ui/model/Model: Force update refresh fix",
+        "references": []
       }
     ]
   }
