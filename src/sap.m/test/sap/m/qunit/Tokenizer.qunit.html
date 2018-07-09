@@ -883,6 +883,34 @@
 		});
 	});
 
+	QUnit.test("Last token's visibility", function(assert) {
+		var aTokens;
+		this.tokenizer = new sap.m.Tokenizer({
+			maxWidth: "100px",
+			tokens: [
+				new sap.m.Token({text: "XXXXXXXXXXXX"}),
+				new sap.m.Token({text: "XXXXXXXXXXXX"}),
+			]
+		});
+
+		this.tokenizer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.tokenizer._useCollapsedMode(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		aTokens = this.tokenizer.getTokens();
+		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
+
+		assert.ok(aTokens[0].$().hasClass("sapMHiddenToken"), "The first token should be hidden.");
+		assert.ok(aTokens[1].$().hasClass("sapMHiddenToken"), "The last token is hidden.");
+
+		assert.ok(oIndicator, true, "An indicator label is added.");
+		assert.strictEqual(oIndicator.innerHTML, oRb.getText("TOKENIZER_SHOW_ALL_ITEMS", 2), "N-items label's text is correct.");
+	});
+
 	QUnit.test("_handleNMoreIndicator", function(assert) {
 		var oTokenizer = new sap.m.Tokenizer();
 		assert.strictEqual(oTokenizer._handleNMoreIndicator(), oTokenizer, "The method return a instance of the tokenizer");

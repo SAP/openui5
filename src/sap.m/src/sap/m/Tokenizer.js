@@ -225,8 +225,7 @@ sap.ui.define([
 			aTokens = this.getTokens().reverse(),
 			iTokensCount = aTokens.length,
 			iLabelWidth, iFreeSpace,
-			iCounter,
-			iFirstTokenToHide = 0;
+			iCounter, iFirstTokenToHide = -1;
 
 		if (iTokensCount < 2) {
 			return;
@@ -244,7 +243,8 @@ sap.ui.define([
 		}.bind(this));
 
 		// adjust the visibility of the tokens
-		if (iFirstTokenToHide) {
+		if (iFirstTokenToHide > -1) {
+
 			for (iCounter = 0; iCounter < iTokensCount; iCounter++) {
 				if (iCounter >= iFirstTokenToHide) {
 					aTokens[iCounter].addStyleClass("sapMHiddenToken");
@@ -253,14 +253,16 @@ sap.ui.define([
 				}
 			}
 
-			this._handleNMoreIndicator( iTokensCount - iFirstTokenToHide);
+			this._handleNMoreIndicator(iTokensCount - iFirstTokenToHide);
 			iLabelWidth = this._oIndicator.width();
 
-			// if there is not enough space, hide the last first visible token
+			// if there is not enough space after getting the actual indicator width, hide the last visible token
 			// and update the n-more indicator
 			if (iLabelWidth >= iFreeSpace) {
-				this._handleNMoreIndicator( iTokensCount - iFirstTokenToHide + 1);
-				aTokens[iFirstTokenToHide - 1].addStyleClass("sapMHiddenToken");
+				iFirstTokenToHide = iFirstTokenToHide - 1;
+
+				this._handleNMoreIndicator(iTokensCount - iFirstTokenToHide);
+				aTokens[iFirstTokenToHide].addStyleClass("sapMHiddenToken");
 			}
 		} else {
 			// if no token needs to be hidden, show all
@@ -281,8 +283,14 @@ sap.ui.define([
 		}
 
 		if (iHiddenTokensCount) {
+			var sLabelKey = "MULTIINPUT_SHOW_MORE_TOKENS";
+
+			if (iHiddenTokensCount === this.getTokens().length) {
+				sLabelKey = "TOKENIZER_SHOW_ALL_ITEMS";
+			}
+
 			this._oIndicator.removeClass("sapUiHidden");
-			this._oIndicator.html(oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", iHiddenTokensCount));
+			this._oIndicator.html(oRb.getText(sLabelKey, iHiddenTokensCount));
 		} else {
 			this._oIndicator.addClass("sapUiHidden");
 		}
@@ -467,6 +475,26 @@ sap.ui.define([
 		}
 
 		this._oIndicator = this.$().find(".sapMTokenizerIndicator");
+	};
+
+	/**
+	 * Called after a new theme is applied.
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype.onThemeChanged = function() {
+
+		if (!this._getAdjustable()) {
+			return;
+		}
+
+		this.getTokens().forEach(function(oToken){
+			if (oToken.getDomRef()  && !oToken.$().hasClass("sapMHiddenToken")) {
+				this._oTokensWidthMap[oToken.getId()] = oToken.getDomRef().offsetWidth;
+			}
+		}.bind(this));
+
+		this._adjustTokensVisibility();
 	};
 
 		/**
@@ -1088,7 +1116,7 @@ sap.ui.define([
 
 		oToken.addEventDelegate({
 			onAfterRendering: function () {
-				if (oToken.getDomRef() && !oToken.$().hasClass("sapMHiddenToken")) {
+				if (sap.ui.getCore().isThemeApplied() && oToken.getDomRef() && !oToken.$().hasClass("sapMHiddenToken")) {
 					this._oTokensWidthMap[oToken.getId()] = oToken.getDomRef().offsetWidth;
 				}
 			}.bind(this)
