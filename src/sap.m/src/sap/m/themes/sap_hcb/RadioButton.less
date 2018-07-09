@@ -178,3 +178,31 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 		height: 1.5rem;
 	}
 }
+
+/* When printing border is needed for the selection */
+@media only print {
+	.sapMRbB .sapMRbBOut {
+		border-color: @sapHCStandardBG;
+		border-style: solid;
+	}
+
+	.sapMRbErr .sapMRbBOut {
+		border-color: @sapHCHighlightBG;
+		border-style: dashed;
+	}
+
+	.sapMRbWarn .sapMRbBOut {
+		border-color: @sapHCStandardBG;
+		border-style: dashed;
+	}
+
+	/* Selected */
+	.sapMRbSel .sapMRbBInn {
+		border-color: @sapHCStandardBG;
+	}
+
+	/* Disabled */
+	.sapMRbDis.sapMRbSel .sapMRbBInn {
+		border-color: @sapHCStandardBG;
+	}
+}

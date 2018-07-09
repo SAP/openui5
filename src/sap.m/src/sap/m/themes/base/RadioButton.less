@@ -76,3 +76,31 @@
 	left: .4375rem;
 	right: .325rem;
 }
+
+/* When printing border is needed for the selection */
+@media only print {
+	.sapMRbBInn {
+		box-sizing: border-box;
+	}
+
+	.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiSelected;
+		border-style: solid;
+		border-width: 4px;
+	}
+
+	.sapMRbRo.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiContentNonInteractiveIconColor;
+	}
+
+	.sapMLIBActive .sapMRbSel .sapMRbBInn {
+		border-color: @sapUiListActiveTextColor;
+	}
+
+	/* Compact size */
+	.sapUiSizeCompact{
+		.sapMRbSel .sapMRbBInn {
+			border-width: 2px;
+		}
+	}
+}
