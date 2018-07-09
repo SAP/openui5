@@ -2113,6 +2113,7 @@ sap.ui.define([
 			var mAnnotationByTerm = aResults[2],
 				bFixedValues = aResults[3],
 				mMappingUrlByQualifier = {},
+				aModels = [],
 				// Only annotations in the type's namespace are relevant
 				sNamespace = _Helper.namespace(aResults[0]),
 				oProperty = aResults[1],
@@ -2125,10 +2126,23 @@ sap.ui.define([
 			 * @param {string} sQualifier The mapping qualifier
 			 * @param {string} sMappingUrl The mapping URL (for error messages)
 			 * @param {sap.ui.model.odata.v4.ODataModel} oModel The value list model
-			 * @throws {Error} If there is already a mapping for the given qualifier
+			 * @param {boolean} [bOverwrite] If true, a mapping for the qualifier may be overwritten
+			 * @throws {Error} If there is already a mapping for the given qualifier and bOverwrite
+			 *   is false
 			 */
-			function addMapping(mValueListMapping, sQualifier, sMappingUrl, oModel) {
-				if (mMappingUrlByQualifier[sQualifier]) {
+			function addMapping(mValueListMapping, sQualifier, sMappingUrl, oModel, bOverwrite) {
+				var sCollectionPath, iIndex;
+
+				mValueListMapping = jQuery.extend(true, {}, mValueListMapping);
+				sCollectionPath = mValueListMapping.CollectionPath;
+				iIndex = sCollectionPath && sCollectionPath.indexOf("/");
+				if (bOverwrite && iIndex > 0) {
+					oModel = findModelForContainer(sCollectionPath.slice(0, iIndex));
+					if (!oModel) {
+						throw new Error("No model found for CollectionPath " + sCollectionPath);
+					}
+					mValueListMapping.CollectionPath = sCollectionPath.slice(iIndex + 1);
+				} else if (mMappingUrlByQualifier[sQualifier]) {
 					throw new Error("Annotations '" + sValueListMapping.slice(1)
 						+ "' with identical qualifier '" + sQualifier
 						+ "' for property " + sPropertyPath + " in "
@@ -2139,23 +2153,27 @@ sap.ui.define([
 						+ "' but multiple '" + sValueListMapping.slice(1)
 						+ "' for property " + sPropertyPath);
 				}
+				mValueListMapping.$model = oModel;
 				mMappingUrlByQualifier[sQualifier] = sMappingUrl;
-				oValueListInfo[bFixedValues ? "" : sQualifier] = jQuery.extend(true, {
-					$model : oModel
-				}, mValueListMapping);
+				oValueListInfo[bFixedValues ? "" : sQualifier] = mValueListMapping;
+			}
+
+			/**
+			 * Finds the referenced model in which the entity container has the given name.
+			 *
+			 * @param {string} sEntityContainer The name of the entity container
+			 * @returns {sap.ui.model.odata.v4.ODataModel} The model or undefined if not found
+			 */
+			function findModelForContainer(sEntityContainer) {
+				return aModels.filter(function (oModel) {
+					return oModel.getMetaModel().fetchObject("/$EntityContainer").getResult()
+						=== sEntityContainer;
+				})[0];
 			}
 
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
-
-			Object.keys(mAnnotationByTerm).filter(function (sTerm) {
-				return getQualifier(sTerm, sValueListMapping) !== undefined;
-			}).forEach(function (sTerm) {
-				addMapping(mAnnotationByTerm[sTerm], getQualifier(sTerm, sValueListMapping),
-					that.sUrl, that.oModel);
-			});
-
 
 			// filter all reference annotations, for each create a promise to evaluate the mapping
 			// and wait for all of them to finish
@@ -2167,6 +2185,8 @@ sap.ui.define([
 				// fetch mappings for each entry and wait for all
 				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
 					var oValueListModel = that.getOrCreateValueListModel(sMappingUrl);
+
+					aModels.push(oValueListModel);
 					// fetch the mappings for the given mapping URL
 					return that.fetchValueListMappings(
 						oValueListModel, sNamespace, oProperty
@@ -2179,6 +2199,14 @@ sap.ui.define([
 					});
 				}));
 			})).then(function () {
+				// add all mappings in the data service (or local annotation files)
+				Object.keys(mAnnotationByTerm).filter(function (sTerm) {
+					return getQualifier(sTerm, sValueListMapping) !== undefined;
+				}).forEach(function (sTerm) {
+					addMapping(mAnnotationByTerm[sTerm], getQualifier(sTerm, sValueListMapping),
+						that.sUrl, that.oModel, true);
+				});
+
 				// Each reference must have contributed at least one qualifier. So if oValueListInfo
 				// is empty, there cannot have been a reference.
 				if (!Object.keys(oValueListInfo).length) {
