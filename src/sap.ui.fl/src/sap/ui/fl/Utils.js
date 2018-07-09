@@ -1055,6 +1055,67 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks if the application version has the correct format: "major.minor.patch".
+		 *
+		 * @param {string} sVersion - Version of application
+		 * @param {string} sScenario - Scenario from the FlexSettings
+		 * @returns {boolean} true if the format is correct, otherwise false
+		 * @public
+		 */
+		isCorrectAppVersionFormat: function (sVersion, sScenario) {
+			// Placeholder is allowed only in WEB-IDE Scenarios
+			// The string has been split into parts otherwise it will be replaced by a build with a current version
+			if (sVersion === "${project" + ".version}"){
+				if (!sScenario){
+					return false;
+				} else if (
+					sScenario === sap.ui.fl.Scenario.AppVariant
+					|| sScenario === sap.ui.fl.Scenario.AdaptationProject
+					|| sScenario === sap.ui.fl.Scenario.FioriElementsFromScratch
+				) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			// remove all whitespaces
+			sVersion = sVersion.replace(/\s/g, "");
+
+			// get version without snapshot
+			// we need to run the regex twice to avoid that version 1-2-3-SNAPSHOT will result in version 1.
+			var oRegexp1 = /\b\d{1,5}(.\d{1,5}){0,2}/g;
+			var oRegexp2 = /\b\d{1,5}(\.\d{1,5}){0,2}/g;
+			var nLength = sVersion.match(oRegexp1) ? sVersion.match(oRegexp1)[0].length : 0;
+			var nLenghtWithDot = sVersion.match(oRegexp2) ? sVersion.match(oRegexp2)[0].length : 0;
+
+			if (nLenghtWithDot < 1 || nLenghtWithDot != nLength){
+				return false;
+			}
+
+			//if the character after the version is also a number or a dot, it should also be a format error
+			if (nLenghtWithDot && sVersion != sVersion.substr(0,nLenghtWithDot)){
+				var cNextCharacter = sVersion.substr(nLenghtWithDot, 1);
+				var oRegexp = /^[0-9.]$/;
+				if (oRegexp.test(cNextCharacter)){
+					return false;
+				}
+			}
+
+			// split into number-parts and check if there are max. three parts
+			var aVersionParts = sVersion.substr(0,nLenghtWithDot).split(".");
+			if (aVersionParts.length > 3){
+				return false;
+			}
+
+			// 5 digits maximum per part
+			if (!aVersionParts.every(function(sPart){return sPart.length <= 5;})){
+				return false;
+			}
+			return true;
+		},
+
+		/**
 		 * Returns whether provided layer is a customer dependent layer
 		 *
 		 * @param {string} sLayerName - layer name
