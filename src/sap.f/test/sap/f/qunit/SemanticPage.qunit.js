@@ -180,6 +180,26 @@
 		this.oSemanticPage2 = null;
 	});
 
+	QUnit.test("test SemanticPage titleAreaShrinkRatio setter and getter", function (assert) {
+		var sDefaultRatio = "1:1.6:1.6",
+			sNewRatio = "3:5:8";
+
+		// Assert default
+		assert.strictEqual(this.oSemanticPage.getTitleAreaShrinkRatio(), sDefaultRatio,
+			"SemanticPage titleAreaShrinkRatio is " + sDefaultRatio + " in by default.");
+		assert.strictEqual(this.oSemanticPage._getTitle().getAreaShrinkRatio(), sDefaultRatio,
+			"DynamicPageTitle areaShrinkRatio is " + sDefaultRatio + " in by default.");
+
+		// Act
+		this.oSemanticPage.setTitleAreaShrinkRatio(sNewRatio);
+
+		// Assert
+		assert.strictEqual(this.oSemanticPage.getTitleAreaShrinkRatio(), sNewRatio,
+			"SemanticPage titleAreaShrinkRatio is " + sNewRatio + ".");
+		assert.strictEqual(this.oSemanticPage._getTitle().getAreaShrinkRatio(), sNewRatio,
+			"DynamicPageTitle areaShrinkRatio is " + sNewRatio + ".");
+	});
+
 	QUnit.test("test SemanticPage titleHeading aggregation methods", function (assert) {
 		var oTitle = oFactory.getTitle(),
 			vResult;
