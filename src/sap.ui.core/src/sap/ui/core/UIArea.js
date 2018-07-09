@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/performance/Measurement",
+	'sap/ui/events/jquery/EventExtension',
 	'jquery.sap.ui'
 ],
 	function(
@@ -27,13 +28,17 @@ sap.ui.define([
 		Log,
 		assert,
 		Measurement,
+		EventExtension,
 		jQuery
+		/* jQuerySapUi */
 	) {
 	"use strict";
 
 
 	//lazy dependency (to avoid cycle)
 	var Control;
+
+	EventExtension.apply();
 
 	/**
 	 * A private logger instance used for 'debugRendering' logging.

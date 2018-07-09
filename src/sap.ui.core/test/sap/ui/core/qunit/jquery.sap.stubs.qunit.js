@@ -101,16 +101,6 @@
 		});
 	});
 
-	QUnit.test("jQuery.Event.prototype function stub", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-			scriptsLoaded(assert, ["sap/ui/events/jquery/EventExtension"], false);
-			assert.ok(typeof new jQuery.Event().getPseudoTypes === "function", "jqQuery.Event.prototype stub works");
-			scriptsLoaded(assert, ["sap/ui/events/jquery/EventExtension"]);
-			done();
-		});
-	});
-
 	QUnit.test("coupled property", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/events/jquery/EventSimulation"], function(EventSimulation) {
