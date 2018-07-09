@@ -5320,6 +5320,17 @@ var sNestedAnnotations = '\
 					</Collection>\
 					<Annotation Term="UI.Criticality" Path="Criticality"/>\
 				</Annotation>\
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem" Qualifier="foo">\
+					<Collection>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Label" String="Business Partner"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"\
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/Medium"/>\
+						</Record>\
+					</Collection>\
+					<Annotation Term="UI.Criticality" Qualifier="bar" Path="Criticality"/>\
+				</Annotation>\
 				<Annotation Term="UI.Facets">\
 					<Collection>\
 						<Record Type="UI.CollectionFacet">\
@@ -5333,17 +5344,6 @@ var sNestedAnnotations = '\
 							</PropertyValue>\
 						</Record>\
 					</Collection>\
-				</Annotation>\
-				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem" Qualifier="foo">\
-					<Collection>\
-						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
-							<PropertyValue Property="Label" String="Business Partner"/>\
-							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
-							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"\
-								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/Medium"/>\
-						</Record>\
-					</Collection>\
-					<Annotation Term="UI.Criticality" Qualifier="bar" Path="Criticality"/>\
 				</Annotation>\
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CategoryName">\
 					<!-- We are keeping this (invalid) example in to document the behavior of the parser in cases that are not allowed in actual annotation sources -->\
@@ -5391,6 +5391,7 @@ var sNestedAnnotations = '\
 							<Path>IsFemale</Path>\
 							<String>Iron Man</String>\
 							<String>Someone else</String>\
+							<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Who am I?"/>\
 						</If>\
 					</Annotation>\
 					<Annotation Term="unittest.ui5.dynamicExpression4">\
@@ -5410,6 +5411,16 @@ var sNestedAnnotations = '\
 								</UrlRef>\
 							</PropertyValue>\
 						</Record>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression6">\
+						<Apply Function="odata.concat">\
+							<If>\
+								<Path>IsFemale</Path>\
+								<String>Iron Man</String>\
+								<String>Someone else</String>\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Who am I?"/>\
+							</If>\
+						</Apply>\
 					</Annotation>\
 				</Annotation>\
 			</Annotations>\
