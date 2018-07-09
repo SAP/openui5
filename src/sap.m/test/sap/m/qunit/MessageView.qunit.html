@@ -457,6 +457,50 @@
 				assert.equal(this.oMessageView._navContainer.getParent(), this.oMessageView, "Parent child relation is correct");
 			});
 
+			QUnit.module("MessageView behaviour with one message with different title length and without description", {
+
+				beforeEach: function () {
+					var that = this;
+					this.oMessageView = new sap.m.MessageView();
+
+					this.oDialog = new sap.m.Dialog({
+						title: "Dialog with MessageView",
+						content: that.oMessageView,
+						contentHeight: "440px",
+						contentWidth: "640px",
+						verticalScrolling: false
+					});
+				},
+				afterEach: function () {
+					this.oDialog.close();
+					this.oDialog.destroy();
+					this.oMessageView.destroy();
+				}
+			});
+
+			QUnit.test("Contains only one message with short title should stay in list view", function (assert) {
+				var oNavigateStub = this.stub(this.oMessageView, "_navigateToDetails");
+
+				this.oMessageView.addItem(new sap.m.MessageItem({
+					title: "Short title."
+				}));
+				sap.ui.getCore().applyChanges();
+				this.oDialog.open();
+
+				assert.notOk(oNavigateStub.called, "Navigation to details has not been triggered");
+			});
+
+			QUnit.test("Contains only one message with long title should stay go details view", function (assert) {
+				var oNavigateStub = this.stub(this.oMessageView, "_navigateToDetails");
+				this.oMessageView.addItem(new sap.m.MessageItem({
+					title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+				}));
+				this.oDialog.open();
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(oNavigateStub.called, "Navigation to details had been triggered");
+			});
+
 			QUnit.module("HTML representation", {
 				beforeEach: function () {
 					var that = this;
