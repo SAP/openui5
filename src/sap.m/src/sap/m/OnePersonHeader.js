@@ -106,7 +106,7 @@ function(
 
 		this.setAggregation("actionsToolbar", new OverflowToolbar(sOPHId + "-ActionsToolbar", {
 			design: ToolbarDesign.Transparent
-		}));
+		}).addStyleClass("sapMOnePerHeadActionsToolbar"));
 
 		oPrevBtn = new Button(sNavToolbarId + "-PrevBtn", {
 			icon: IconPool.getIconURI('slim-arrow-left'),
@@ -149,7 +149,7 @@ function(
 				oNextBtn,
 				this.oPickerBtn
 			]
-		}));
+		}).addStyleClass("sapMOnePerHeadNavToolbar"));
 
 	};
 

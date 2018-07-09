@@ -18,7 +18,7 @@ sap.ui.define([
 		var CalendarAppointmentVisualization = unifiedLibrary.CalendarAppointmentVisualization;
 
 		var ROW_HEIGHT = 48,
-			ONE_HOUR = 3600000;
+			HALF_HOUR = 3600000 / 2;
 
 		/**
 		 * Constructor for a new OnePersonGrid.
@@ -165,6 +165,12 @@ sap.ui.define([
 			return iMinMinutes <= iCurrentMinutes;
 		};
 
+		OnePersonGrid.prototype._isWeekend = function (oDate) {
+			var iDay = oDate.getDay();
+
+			return iDay % 6 === 0;
+		};
+
 		OnePersonGrid.prototype._shouldHideRowHeader = function (iRow) {
 			var iCurrentHour = this._getUniversalCurrentDate().getHours(),
 				bIsNearAfterCurrentHour = this._isCurrentMinutesLessThan(15) && iCurrentHour === iRow,
@@ -207,11 +213,12 @@ sap.ui.define([
 
 		OnePersonGrid.prototype._updateNowMarker = function (oDate) {
 			var $nowMarker = this.$("nowMarker"),
+				$nowMarkerText = this.$("nowMarkerText"),
 				bCurrentHourNotVisible = this._isOutsideVisibleHours(oDate.getHours());
 
 			$nowMarker.toggleClass("sapMOnePersonNowMarkerHidden", bCurrentHourNotVisible);
 			$nowMarker.css("top", this._calculateTopPosition(oDate) + "px");
-			$nowMarker.text(this._formatTimeAsString(oDate));
+			$nowMarkerText.text(this._formatTimeAsString(oDate));
 		};
 
 		OnePersonGrid.prototype._updateRowHeaders = function (oDate) {
@@ -308,10 +315,10 @@ sap.ui.define([
 							iAppointmentEnd = oAppointment.getEndDate().getTime(),
 							iAppointmentDuration = iAppointmentEnd - iAppointmentStart;
 
-						if (iAppointmentDuration < ONE_HOUR) {
+						if (iAppointmentDuration < HALF_HOUR) {
 							// Take into account that appointments smaller than one hour will be rendered as one hour
 							// in height. That's why the calculation for levels should consider this too.
-							iAppointmentEnd = iAppointmentEnd + (ONE_HOUR - iAppointmentDuration);
+							iAppointmentEnd = iAppointmentEnd + (HALF_HOUR - iAppointmentDuration);
 						}
 
 						if (iCurrentAppointmentStart >= iAppointmentStart && iCurrentAppointmentStart < iAppointmentEnd) {
@@ -347,10 +354,10 @@ sap.ui.define([
 					iCurrentAppointmentEnd = oCurrentAppointment.getEndDate().getTime(),
 					iCurrentAppointmentDuration = iCurrentAppointmentEnd - iCurrentAppointmentStart;
 
-				if (iCurrentAppointmentDuration < ONE_HOUR) {
+				if (iCurrentAppointmentDuration < HALF_HOUR) {
 					// Take into account that appointments smaller than one hour will be rendered as one hour
 					// in height. That's why the calculation for levels should consider this too.
-					iCurrentAppointmentEnd = iCurrentAppointmentEnd + (ONE_HOUR - iCurrentAppointmentDuration);
+					iCurrentAppointmentEnd = iCurrentAppointmentEnd + (HALF_HOUR - iCurrentAppointmentDuration);
 				}
 
 				new AppointmentsIterator(oAppointmentsList).forEach(function (oAppointmentNode) {
@@ -360,10 +367,10 @@ sap.ui.define([
 						iAppointmentEnd = oAppointment.getEndDate().getTime(),
 						iAppointmentDuration = iAppointmentEnd - iAppointmentStart;
 
-					if (iAppointmentDuration < ONE_HOUR) {
+					if (iAppointmentDuration < HALF_HOUR) {
 						// Take into account that appointments smaller than one hour will be rendered as one hour
 						// in height. That's why the calculation for levels should consider this too.
-						iAppointmentEnd = iAppointmentEnd + (ONE_HOUR - iAppointmentDuration);
+						iAppointmentEnd = iAppointmentEnd + (HALF_HOUR - iAppointmentDuration);
 					}
 
 					if (iCurrentAppointmentLevel >= iAppointmentLevel) {
