@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/base/Object", "./_OpaLogger", "sap/ui/thirdparty/jquery"]
 
     var _UsageReport = Ui5Object.extend("sap.ui.test._UsageReport", {
         constructor: function (oConfig) {
-            this.enabled = oConfig && oConfig.enableUsageReport === "true";
+            this.enabled = oConfig && oConfig.enableUsageReport;
             this.baseUrl = (oConfig && oConfig.usageReportUrl || DEFAULT_URL) + "/api/opa/suites/";
             if (this.enabled) {
                 oLogger.info("Enabled OPA usage report");
