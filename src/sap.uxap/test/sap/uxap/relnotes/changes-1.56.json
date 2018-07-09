@@ -177,5 +177,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "996cf205fc470c1493942a5eb4357967b9fe1e12",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ScrollBar flickering fixed",
+        "references": []
+      }
+    ]
   }
 }

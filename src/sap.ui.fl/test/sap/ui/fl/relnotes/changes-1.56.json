@@ -120,5 +120,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "f06c05b2efae9cf197a2e288d6d0540e18ca1533",
+        "type": "FIX",
+        "text": " Issues with displaying error messages in case of failed save",
+        "references": []
+      }
+    ]
   }
 }
