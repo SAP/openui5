@@ -328,7 +328,7 @@ sap.ui.require([
 		assert.ok(this.oAlignedFlowLayout.getLastVisibleDomRef() === null);
 	});
 
-	QUnit.test("it should not throw an exception when the content is destroyed", function(assert) {
+	QUnit.test("it should not raise an exception when the content is destroyed", function(assert) {
 
 		// system under test
 		var oButton = new Button();
@@ -362,6 +362,30 @@ sap.ui.require([
 		// assert
 		assert.strictEqual(oEndItem.style.maxWidth, sMaxItemWidth);
 		assert.strictEqual(Rem.fromPx(oEndItem.offsetWidth) + "rem", sMaxItemWidth);
+	});
+
+	// BCP: 1880394379
+	QUnit.test("it should not raise an exception", function(assert) {
+
+		// system under test
+		var oInput = new Input();
+		var oButton = new Button();
+
+		// arrange
+		this.oAlignedFlowLayout.addContent(oInput);
+		this.oAlignedFlowLayout.addEndContent(oButton);
+		this.stub(this.oAlignedFlowLayout, "getLastItemDomRef").returns(null);
+
+		// act
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(true);
+
+		// cleanup
+		oInput.destroy();
+		oButton.destroy();
 	});
 
 	QUnit.module("wrapping", {
@@ -734,7 +758,7 @@ sap.ui.require([
 		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, 480);
 	});
 
-	QUnit.test("getLastItemDomRef should not return the null empty object reference", function(assert) {
+	QUnit.test("getLastItemDomRef should return the null empty object reference", function(assert) {
 
 		// system under test
 		var oInput = new Input();
