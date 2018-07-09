@@ -200,23 +200,6 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 				]
 			}
 		},
-		"jQuery Event method ": {
-			target: jQuery.Event.prototype,
-			stubs: {
-				"sap/ui/events/jquery/EventExtension": [
-					"getPseudoTypes",
-					"isPseudoType",
-					"getOffsetX",
-					"getOffsetY",
-					"stopImmediatePropagation",
-					"isImmediateHandlerPropagationStopped",
-					"setMark",
-					"isMarked",
-					"getMark",
-					"setMarked"
-				]
-			}
-		},
 		"jQuery Selector :": {
 			target: jQuery.expr[":"],
 			stubs: {
