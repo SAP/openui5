@@ -56,6 +56,44 @@ sap.ui.define([
 				MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().Name; }).join(", "));
 			}
 			oEvent.getSource().getBinding("items").filter([]);
+		},
+
+		handleValueHelp : function() {
+			var sInputValue = this.byId("productInput").getValue(),
+				oModel = this.getView().getModel(),
+				aProducts = oModel.getProperty("/ProductCollection");
+
+			if (!this._oValueHelpDialog) {
+				this._oValueHelpDialog = sap.ui.xmlfragment(
+					"sap.m.sample.TableSelectDialog.ValueHelp",
+					this
+				);
+				this.getView().addDependent(this._oValueHelpDialog);
+			}
+
+			aProducts.forEach(function (oProduct) {
+				oProduct.selected = (oProduct.Name === sInputValue);
+			});
+			oModel.setProperty("/ProductCollection", aProducts);
+
+			this._oValueHelpDialog.open();
+		},
+
+		handleValueHelpClose : function() {
+			var oModel = this.getView().getModel(),
+				aProducts = oModel.getProperty("/ProductCollection"),
+				oInput = this.byId("productInput");
+
+			var bHasSelected = aProducts.some(function(oProduct) {
+				if (oProduct.selected) {
+					oInput.setValue(oProduct.Name);
+					return true;
+				}
+			});
+
+			if (!bHasSelected) {
+				oInput.setValue(null);
+			}
 		}
 	});
 
