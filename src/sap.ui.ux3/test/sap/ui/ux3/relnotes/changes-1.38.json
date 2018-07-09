@@ -150,5 +150,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.37": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "10dc5cd37dad0ca55f0b56fc99b557a9e61324d4",
+        "type": "FIX",
+        "text": " sap.ui.ux3.DataSetSimpleView: fix failing unit tests",
+        "references": []
+      }
+    ]
   }
 }

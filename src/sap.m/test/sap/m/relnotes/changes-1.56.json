@@ -1363,5 +1363,46 @@
         "references": []
       }
     ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "74d892e3675561cf9d4bd6c593f94aec38b1c886",
+        "type": "FIX",
+        "text": " Wizard: Invalidation when going to next step prevented",
+        "references": []
+      },
+      {
+        "id": "8496ad8bc264a8094498053019c5a332496a5907",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: renew item navigation after page load",
+        "references": []
+      },
+      {
+        "id": "77a7cd1da452b155a04b3d46323eb3862c5a3f79",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: suppress rerendering of the inner controls onBeforeRendering",
+        "references": []
+      },
+      {
+        "id": "842838d858296684c2b7af4239fbd78f1c2391c5",
+        "type": "FIX",
+        "text": " sap.m.Panel: Drawing in IE when animated",
+        "references": []
+      },
+      {
+        "id": "e31d00b186ca3d0d68acddff4be58c1bdcf9d404",
+        "type": "FIX",
+        "text": " sap.m.SelectionDetailsItemLine: Enable number as value in SelectionDetailsItemLine",
+        "references": []
+      },
+      {
+        "id": "52f96f8e97fcd7d1b345e6f70a2b10b3c79ee534",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Start token selection with arrow right",
+        "references": []
+      }
+    ]
   }
 }

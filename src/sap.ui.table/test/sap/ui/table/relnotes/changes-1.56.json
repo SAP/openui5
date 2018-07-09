@@ -187,5 +187,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "3f51c73568b079f280fd084ce09e3648777f46f9",
+        "type": "FIX",
+        "text": " Table: Edit mode navigation with sap.m.Select repaired",
+        "references": []
+      }
+    ]
   }
 }

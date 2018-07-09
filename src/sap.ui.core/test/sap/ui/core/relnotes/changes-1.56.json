@@ -907,5 +907,58 @@
         "references": []
       }
     ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "828d7a57d2d308285f84e67eae0a51ed32ac97e7",
+        "type": "FEATURE",
+        "text": " ui5loader: Enable async loading when switching to amd mode",
+        "references": []
+      },
+      {
+        "id": "56cb789946515b63e64cffb1b992f92dd3011d60",
+        "type": "FIX",
+        "text": " Component.getService(): Promise not rejecting",
+        "references": []
+      },
+      {
+        "id": "fa7a69bf8f42c5e94a83322207f86379db21030e",
+        "type": "FIX",
+        "text": " ManagedObject: remove trailing whitespaces",
+        "references": []
+      },
+      {
+        "id": "df477fdd30707650cc74e90778e16e1b324226e7",
+        "type": "FIX",
+        "text": " NumberFormat: Fix currency short format for RTL languages",
+        "references": []
+      },
+      {
+        "id": "156dca696f1bfef8b10c3103bedf4865ef970378",
+        "type": "FIX",
+        "text": " Theming Parameters: Improve inline parameters decoding",
+        "references": []
+      },
+      {
+        "id": "c8ad2e3a5bd01275356cd84f5cc978a7e0adb52f",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: ignore URL params",
+        "references": []
+      },
+      {
+        "id": "cdc3bb5934dd0cf0037e82d8fc98759cbd8547a1",
+        "type": "FIX",
+        "text": " sap.ui.model.base.ManagedObjectModel",
+        "references": []
+      },
+      {
+        "id": "5dc9875f583cb6153a6303470d97169c24cb761c",
+        "type": "FIX",
+        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": []
+      }
+    ]
   }
 }

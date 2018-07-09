@@ -122,5 +122,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "ef4ae2fb627bde00570a583c30fb6e55d3b4329d",
+        "type": "FIX",
+        "text": " f.FlexibleColumnLayout: suspending/resuming of ResizeHander fixed",
+        "references": []
+      }
+    ]
   }
 }
