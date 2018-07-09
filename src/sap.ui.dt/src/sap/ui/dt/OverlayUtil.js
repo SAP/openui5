@@ -558,5 +558,57 @@ function(
 			);
 	};
 
+	/**
+	 * Returns the element id and the aggregation name of the bound control for an Overlay which is part of an aggregation binding
+	 * The check is done recursively
+	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay Overlay being checked
+	 * @param  {string}  sAggregationName The name of the aggregation being checked
+	 * @return {map}                      Returns the element id and the aggregation name of the bound control together with the stack
+	 *                                    containing traversed element/aggregation information
+	 * - elementId {string}               id of the bound control
+	 * - aggregation {string}             name of the bound aggregation
+	 * - stack {Object[]}                 array of objects containing element, element type, aggregation name and index of the element in
+	 *                                    the aggregation for each traversed aggregation
+	 */
+	OverlayUtil.getAggregationInformation = function(oElementOverlay, sAggregationName) {
+		var aStack = [];
+		var fnEvaluateBinding = function(oElementOverlay, sAggregationName, aStack) {
+			var oElement = oElementOverlay.getElement();
+			var iIndex;
+			if (oElementOverlay.getParentAggregationOverlay()) {
+				iIndex = oElementOverlay.getParentAggregationOverlay().getChildren().indexOf(oElementOverlay);
+			} else {
+				iIndex = -1;
+			}
+			aStack.push({
+				element: oElement.getId(),
+				type: oElement.getMetadata().getName(),
+				aggregation: sAggregationName,
+				index: iIndex
+			});
+			if (sAggregationName && oElement.getBinding(sAggregationName)) {
+				return {
+					elementId: oElement.getId(),
+					aggregation: sAggregationName,
+					stack: aStack
+				};
+			}
+			return oElementOverlay.isRoot()
+				? {
+						elementId: undefined,
+						aggregation: undefined,
+						stack: aStack
+					}
+				: (
+					fnEvaluateBinding(
+						oElementOverlay.getParentElementOverlay(),
+						oElementOverlay.getElement().sParentAggregationName,
+						aStack
+					)
+				);
+		};
+		return fnEvaluateBinding(oElementOverlay, sAggregationName, aStack);
+	};
+
 	return OverlayUtil;
 }, /* bExport= */true);

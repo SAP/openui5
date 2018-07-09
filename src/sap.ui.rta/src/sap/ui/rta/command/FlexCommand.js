@@ -92,10 +92,14 @@ sap.ui.define([
 	 * @override
 	 */
 	FlexCommand.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
-		if (
-			!this.getSelector()
-			&& this.getElement()
-		) {
+		if (!this.getSelector() && mFlexSettings && mFlexSettings.templateSelector) {
+			var oSelector = {
+				id: mFlexSettings.templateSelector,
+				appComponent: this.getAppComponent(),
+				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
+			};
+			this.setSelector(oSelector);
+		} else if (!this.getSelector() && this.getElement()) {
 			var oSelector = {
 				id: this.getElement().getId(),
 				appComponent: this.getAppComponent(),
@@ -171,7 +175,7 @@ sap.ui.define([
 	 */
 	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference) {
 		if (mFlexSettings) {
-			jQuery.extend(mChangeSpecificData, mFlexSettings);
+			jQuery.extend(true, mChangeSpecificData, mFlexSettings);
 		}
 		mChangeSpecificData.jsOnly = this.getJsOnly();
 		var oModel = this.getAppComponent().getModel("$FlexVariants");
@@ -187,7 +191,13 @@ sap.ui.define([
 		if (sVariantReference) {
 			jQuery.extend(mChangeSpecificData, mVariantObj);
 		}
-		return oFlexController.createChange(mChangeSpecificData, this.getElement() || this.getSelector());
+		var oChange = oFlexController.createChange(mChangeSpecificData, this._validateControlForChange(mFlexSettings));
+		if (mFlexSettings && mFlexSettings.originalSelector) {
+			oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
+			oChange.getDefinition().selector = this.getSelector();
+			oChange.setContent(jQuery.extend(oChange.getContent(), mFlexSettings.content));
+		}
+		return oChange;
 	};
 
 	/**
@@ -228,7 +238,11 @@ sap.ui.define([
 		var oAppComponent = this.getAppComponent();
 		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-		var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, oSelectorElement);
+		var mControl = oFlexController._getControlIfTemplateAffected(oChange, oSelectorElement, oSelectorElement.getMetadata().getName(), {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent
+		});
+		var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, mControl.control);
 		var mPropertyBag = {
 			modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
 			appComponent: oAppComponent,
@@ -272,6 +286,18 @@ sap.ui.define([
 				return Promise.reject(oResult.error);
 			}
 		}.bind(this));
+	};
+
+	FlexCommand.prototype._validateControlForChange = function(mFlexSettings) {
+		if (mFlexSettings && mFlexSettings.originalSelector && mFlexSettings.content && mFlexSettings.content.boundAggregation) {
+			return {
+				id: mFlexSettings.originalSelector,
+				appComponent: this.getAppComponent(),
+				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
+			};
+		} else {
+			return this.getSelector() || this.getElement();
+		}
 	};
 
 	return FlexCommand;
