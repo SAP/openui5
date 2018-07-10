@@ -3,19 +3,36 @@
  */
 
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/core/ResizeHandler",
-		"sap/ui/Device",
-		"sap/ui/core/Fragment",
-		"sap/ui/documentation/library",
-		"sap/ui/core/IconPool",
-		"sap/m/SplitAppMode",
-		"sap/m/MessageBox",
-		"sap/m/library",
-		"sap/base/Log"
-	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary, Log) {
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/ResizeHandler",
+    "sap/ui/Device",
+    "sap/ui/core/Fragment",
+    "sap/ui/documentation/library",
+    "sap/ui/core/IconPool",
+    "sap/m/SplitAppMode",
+    "sap/m/MessageBox",
+    "sap/m/library",
+    "sap/base/Log",
+    "sap/base/util/Version",
+    "sap/ui/core/syncStyleClass"
+], function(
+    jQuery,
+	BaseController,
+	JSONModel,
+	ResizeHandler,
+	Device,
+	Fragment,
+	library,
+	IconPool,
+	SplitAppMode,
+	MessageBox,
+	mobileLibrary,
+	Log,
+	Version,
+	syncStyleClass
+) {
 		"use strict";
 
 		// shortcut for sap.m.URLHelper
@@ -146,6 +163,7 @@ sap.ui.define([
 			},
 
 			_trimOldDocSuffix: function(sLink) {
+				//TODO: global jquery call found
 				if (sLink && jQuery.sap.endsWith(sLink, this.OLD_DOC_LINK_SUFFIX)) {
 					sLink = sLink.slice(0, -this.OLD_DOC_LINK_SUFFIX.length);
 				}
@@ -420,7 +438,7 @@ sap.ui.define([
 			 * @returns {number}
 			 */
 			versionSwitchCustomComparator: function (sGroupTitleA, sGroupTitleB) {
-				return jQuery.sap.Version(sGroupTitleA).compareTo(jQuery.sap.Version(sGroupTitleB));
+				return Version(sGroupTitleA).compareTo(Version(sGroupTitleB));
 			},
 
 			/**
@@ -538,7 +556,7 @@ sap.ui.define([
 				}
 				this._oFeedbackDialog.updateContextData();
 				if (!this._oFeedbackDialog.isOpen()) {
-					jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oFeedbackDialog);
+					syncStyleClass("sapUiSizeCompact", this.getView(), this._oFeedbackDialog);
 					this._oFeedbackDialog.open();
 				}
 			},
@@ -701,9 +719,9 @@ sap.ui.define([
 				this._toggleTabHeaderClass();
 
 				if (bSearchMode) {
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this._oView.byId("searchControl").getAggregation("_searchField").getFocusDomRef().focus();
-					});
+					}.bind(this), 0);
 
 					if (bPhoneSize) {
 						this._selectHeader.setVisible(false);
@@ -772,7 +790,7 @@ sap.ui.define([
 						}
 
 						this._aNeoAppVersions = this._aNeoAppVersions.map(function(oRoute) {
-							var oVersion = jQuery.sap.Version(oRoute.target.version),
+							var oVersion = Version(oRoute.target.version),
 								oVersionSummary = {};
 
 							// Add the following properties, in order use them for grouping later

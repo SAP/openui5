@@ -4,11 +4,11 @@
 
 /*global history */
 sap.ui.define([
-		"jquery.sap.global",
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
-		"sap/m/library"
-	], function (jQuery, Device, MasterTreeBaseController, mobileLibrary) {
+		"sap/m/library",
+		"sap/base/Log"
+	], function (Device, MasterTreeBaseController, mobileLibrary, Log) {
 		"use strict";
 
 
@@ -58,7 +58,7 @@ sap.ui.define([
 					this.showMasterSide();
 				} catch (e) {
 					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
 
 				this._topicId = event.getParameter("arguments").id || event.getParameter("name");
@@ -79,9 +79,9 @@ sap.ui.define([
 				}
 
 				if (Device.system.desktop) {
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this.getView().byId("searchField").getFocusDomRef().focus();
-					});
+					}.bind(this), 0);
 				}
 			},
 
@@ -120,7 +120,7 @@ sap.ui.define([
 				var apiId = node.getCustomData()[0].getValue();
 
 				if (!apiId) {
-					jQuery.sap.log.warning("Missing name for entity: " + node.getId() + " - cannot navigate to API ref");
+					Log.warning("Missing name for entity: " + node.getId() + " - cannot navigate to API ref");
 					return;
 				}
 

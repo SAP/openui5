@@ -4,10 +4,10 @@
 
 /*global location */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/Device",
-	"sap/ui/documentation/sdk/controller/BaseController"
-], function (jQuery, Device, BaseController) {
+	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/base/Log"
+], function (Device, BaseController, Log) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.documentation.sdk.controller.Tools", {
@@ -65,7 +65,7 @@ sap.ui.define([
 				this.hideMasterSide();
 			} catch (e) {
 				// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-				jQuery.sap.log.error(e);
+				Log.error(e);
 			}
 		}
 	});

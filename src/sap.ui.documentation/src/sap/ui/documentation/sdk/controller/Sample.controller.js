@@ -4,19 +4,34 @@
 
 /*global location */
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/core/Component",
-		"sap/ui/core/ComponentContainer",
-		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/m/Text",
-		"sap/ui/core/HTML",
-		"sap/ui/Device",
-		"sap/ui/core/routing/History",
-		"sap/m/library"
-	], function (jQuery, BaseController, JSONModel, Component, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History, mobileLibrary) {
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Component",
+    "sap/ui/core/ComponentContainer",
+    "sap/ui/documentation/sdk/controller/util/ControlsInfo",
+    "sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+    "sap/m/Text",
+    "sap/ui/core/HTML",
+    "sap/ui/Device",
+    "sap/ui/core/routing/History",
+    "sap/m/library",
+    "sap/base/Log"
+], function(
+    jQuery,
+	BaseController,
+	JSONModel,
+	Component,
+	ComponentContainer,
+	ControlsInfo,
+	ToggleFullScreenHandler,
+	Text,
+	HTML,
+	Device,
+	History,
+	mobileLibrary,
+	Log
+) {
 		"use strict";
 
 		// shortcut for sap.m.URLHelper
@@ -73,9 +88,9 @@ sap.ui.define([
 					oContent;
 
 				if (!oSample) {
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						oPage.setBusy(false);
-					});
+					}, 0);
 					this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 					return;
 				}
@@ -95,9 +110,9 @@ sap.ui.define([
 				} catch (ex) {
 					oPage.removeAllContent();
 					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						oPage.setBusy(false);
-					});
+					}, 0);
 					return;
 				}
 
@@ -137,9 +152,9 @@ sap.ui.define([
 
 				this._viewModel.setData(oModelData);
 
-				jQuery.sap.delayedCall(0, this, function () {
+				setTimeout(function () {
 					oPage.setBusy(false);
-				});
+				}, 0);
 
 			},
 
@@ -206,9 +221,9 @@ sap.ui.define([
 					var sIframeWithoutUI5Ending = sFileName.replace(rStripUI5Ending, "");
 
 					// combine namespace with the file name again
-					this.sIFrameUrl = jQuery.sap.getModulePath(sIframePath + "/" + sIframeWithoutUI5Ending, sFileEnding || ".html");
+					this.sIFrameUrl = sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html";
 				} else {
-					jQuery.sap.log.error("no iframe source was provided");
+					Log.error("no iframe source was provided");
 					return;
 				}
 

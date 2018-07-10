@@ -3,11 +3,7 @@
  */
 
 /*global history */
-sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/Device"
-	], function (jQuery, BaseController, Device) {
+sap.ui.define(["sap/ui/documentation/sdk/controller/BaseController", "sap/ui/Device"], function(BaseController, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Controls", {
@@ -61,9 +57,9 @@ sap.ui.define([
 					newValue: sFilter
 				});
 				// Show master page: this call will show the master page only on small screen sizes but not on phone
-				jQuery.sap.delayedCall(0, this, function () {
+				setTimeout(function () {
 					this.getSplitApp().showMaster();
-				});
+				}.bind(this), 0);
 			}
 		});
 	}

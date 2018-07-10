@@ -4,13 +4,13 @@
 
 /*global history */
 sap.ui.define([
-		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/m/library",
 		"sap/ui/Device",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/resource/ResourceModel"
-	], function (jQuery, BaseController, mobileLibrary, Device, JSONModel, ResourceModel) {
+		"sap/ui/model/resource/ResourceModel",
+		"sap/base/Log"
+	], function (BaseController, mobileLibrary, Device, JSONModel, ResourceModel, Log) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Welcome", {
@@ -110,7 +110,7 @@ sap.ui.define([
 					this.hideMasterSide();
 				} catch (e) {
 					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
 			}
 		});

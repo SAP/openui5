@@ -4,15 +4,22 @@
 
 /*global location */
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/ui/core/library",
-		"sap/base/Log"
-	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo, CoreLibrary, Log) {
+    "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/documentation/sdk/controller/util/ControlsInfo",
+    "sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+    "sap/ui/documentation/sdk/controller/util/APIInfo",
+    "sap/ui/core/library",
+    "sap/base/Log"
+], function(
+    BaseController,
+	JSONModel,
+	ControlsInfo,
+	ToggleFullScreenHandler,
+	APIInfo,
+	CoreLibrary,
+	Log
+) {
 		"use strict";
 
 		var ViewType = CoreLibrary.mvc.ViewType;

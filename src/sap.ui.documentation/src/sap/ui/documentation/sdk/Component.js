@@ -3,17 +3,30 @@
  */
 
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/core/UIComponent",
-		"sap/ui/Device",
-		"sap/ui/documentation/sdk/model/models",
-		"sap/ui/documentation/sdk/controller/ErrorHandler",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/ConfigUtil",
-		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/ui/documentation/sdk/util/DocumentationRouter", // used via manifest.json
-		"sap/m/ColumnListItem" // implements sap.m.TablePopin
-	], function (jQuery, UIComponent, Device, models, ErrorHandler, JSONModel, ConfigUtil, APIInfo /*, DocumentationRouter, ColumnListItem*/) {
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/core/UIComponent",
+    "sap/ui/Device",
+    "sap/ui/documentation/sdk/model/models",
+    "sap/ui/documentation/sdk/controller/ErrorHandler",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/documentation/sdk/controller/util/ConfigUtil",
+    "sap/ui/documentation/sdk/controller/util/APIInfo",
+    "sap/base/util/Version",
+    // used via manifest.json
+	"sap/ui/documentation/sdk/util/DocumentationRouter",
+    // implements sap.m.TablePopin
+	"sap/m/ColumnListItem"
+], function(
+    jQuery,
+	UIComponent,
+	Device,
+	models,
+	ErrorHandler,
+	JSONModel,
+	ConfigUtil,
+	APIInfo /*, DocumentationRouter, ColumnListItem*/,
+	Version
+) {
 		"use strict";
 
 		var aTreeContent = [],
@@ -284,7 +297,7 @@ sap.ui.define([
 				oVersionInfoData = {
 					versionGav: oVersionInfo.gav,
 					versionName: oVersionInfo.name,
-					version: jQuery.sap.Version(sVersion).getMajor() + "." + jQuery.sap.Version(sVersion).getMinor() + "." + jQuery.sap.Version(sVersion).getPatch(),
+					version: Version(sVersion).getMajor() + "." + Version(sVersion).getMinor() + "." + Version(sVersion).getPatch(),
 					fullVersion: sVersion,
 					openUi5Version: sap.ui.version,
 					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav),

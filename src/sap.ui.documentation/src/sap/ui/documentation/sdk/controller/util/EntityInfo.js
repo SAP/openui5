@@ -3,8 +3,14 @@
  */
 
 // Provides reuse functionality for reading documentation from metamodel entities
-sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanalyzer/ModuleAnalyzer', './APIInfo'],
-	function(jQuery, analyzer, APIInfo) {
+sap.ui.define([
+    "sap/ui/thirdparty/jquery",
+    'sap/ui/documentation/sdk/thirdparty/jsanalyzer/ModuleAnalyzer',
+    './APIInfo',
+    "sap/base/Log",
+    "sap/base/util/ObjectPath"
+],
+	function(jQuery, analyzer, APIInfo, Log, ObjectPath) {
 	"use strict";
 
 	var oRootPackageInfo = {};
@@ -172,7 +178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 		jQuery.each(sNames.split("/"), function(i,n) {
 			$ = $.children(n);
 		});
-		$.each(function(i,e) {
+		jQuery.each(function(i,e) {
 			fnCallback(jQuery(e));
 		});
 	}
@@ -191,13 +197,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 
 		jQuery.ajax({
 			async: false,
-			url : jQuery.sap.getModulePath(sName, sType),
+			url : sap.ui.require.toUrl((sName).replace(/\./g, "/")) + sType,
 			dataType : sDataType,
 			success : function(vResponse) {
 				oEntityDoc = fnParser(vResponse, sEntityName, sName.replace(/\./g,'/'));
 			},
 			error : function (err) {
-				jQuery.sap.log.debug("tried to load entity docu for: " + sName + sType);
+				Log.debug("tried to load entity docu for: " + sName + sType);
 			}
 		});
 
@@ -232,7 +238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 		var oEntityDoc;
 
 		if (!sLibraryName) {
-			var oClass = jQuery.sap.getObject(sEntityName);
+			var oClass = ObjectPath.get(sEntityName || "");
 			if (oClass && oClass.getMetadata) {
 				var oMetadata = oClass.getMetadata();
 				if (oMetadata.getLibraryName) {
@@ -284,7 +290,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 			});
 
 		} else if ( oPackageInfo.__noAPIJson ) {
-			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
+			Log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
 		}
 
 		// legacy metamodel files
@@ -301,7 +307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 				oPackageInfo.__noSource = true;
 			}
 		} else if ( oPackageInfo.__noMetamodel ) {
-			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
+			Log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
 		}
 
 		// source code analysis
@@ -315,7 +321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 				oPackageInfo.__noMetamodel = true;
 			}
 		} else if ( oPackageInfo.__noSource ) {
-			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noSource'");
+			Log.debug("ancestor package for " + sEntityName + " is marked with 'noSource'");
 		}
 
 		return oEntityDoc;

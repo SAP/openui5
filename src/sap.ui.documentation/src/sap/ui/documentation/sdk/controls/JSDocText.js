@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	'sap/ui/core/Control',
-	'jquery.sap.global'
-], function(Control, jQuery) {
+	"sap/base/security/sanitizeHTML"
+], function(Control, sanitizeHTML) {
 	"use strict";
 
 	/**
@@ -31,7 +31,7 @@ sap.ui.define([
 			oRm.write(">");
 
 			// Sanitize HTML
-			oRm.write(jQuery.sap._sanitizeHTML(oControl.getText()));
+			oRm.write(sanitizeHTML(oControl.getText()));
 
 			oRm.write("</div>");
 		}

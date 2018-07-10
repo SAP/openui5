@@ -3,7 +3,7 @@
  */
 
 // Provides reuse functionality for reading documentation from api.json files (as created by the UI5 JSDoc3 template/plugin)
-sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery) {
+sap.ui.define(["sap/base/strings/escapeRegExp"], function(escapeRegExp) {
 
 	"use strict";
 
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery) {
 		}) + afterLastParagraph;
 
 		// remove empty paragraphs
-		src = src.replace(new RegExp(jQuery.sap.escapeRegExp(beforeParagraph) + "\s*" + jQuery.sap.escapeRegExp(afterParagraph), "g"), "");
+		src = src.replace(new RegExp(escapeRegExp(beforeParagraph) + "\s*" + escapeRegExp(afterParagraph), "g"), "");
 
 		return src;
 	}

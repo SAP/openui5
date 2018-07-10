@@ -4,12 +4,14 @@
 
 /*global history */
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/core/Component" // implements sap.ui.component
-	], function (jQuery, BaseController, ControlsInfo, JSONModel) {
+    "jquery.sap.global",
+    "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/documentation/sdk/controller/util/ControlsInfo",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/thirdparty/jquery",
+    // implements sap.ui.component
+	"sap/ui/core/Component"
+], function(jQuery, BaseController, ControlsInfo, JSONModel, jQuery0) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Code", {
@@ -91,7 +93,7 @@ sap.ui.define([
 					// retrieve files
 					// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
 					if (oConfig && oConfig.sample && oConfig.sample.files) {
-						var sRef = jQuery.sap.getModulePath(oSample.id);
+						var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
 						for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
 							var sFile = oConfig.sample.files[i];
 							var sContent = this.fetchSourceFile(sRef, sFile);
@@ -150,7 +152,7 @@ sap.ui.define([
 
 				if (!(sUrl in this._codeCache)) {
 					this._codeCache[sUrl] = "";
-					jQuery.ajax(sUrl, {
+					jQuery0.ajax(sUrl, {
 						async: false,
 						dataType: "text",
 						success: fnSuccess,
@@ -163,6 +165,7 @@ sap.ui.define([
 
 			onDownload : function (evt) {
 
+				//TODO: global jquery call found
 				jQuery.sap.require("sap.ui.thirdparty.jszip");
 				var JSZip = sap.ui.require("sap/ui/thirdparty/jszip");
 				var oZipFile = new JSZip();
@@ -189,7 +192,7 @@ sap.ui.define([
 					}
 				}
 
-				var sRef = jQuery.sap.getModulePath(this._sId),
+				var sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/")),
 					aExtraFiles = oData.includeInDownload || [],
 					that = this;
 
@@ -210,6 +213,7 @@ sap.ui.define([
 			},
 
 			_openGeneratedFile : function (oContent) {
+				//TODO: global jquery call found
 				jQuery.sap.require("sap.ui.core.util.File");
 				var File = sap.ui.require("sap/ui/core/util/File");
 				File.save(oContent, this._sId, "zip", "application/zip");
@@ -220,7 +224,7 @@ sap.ui.define([
 				var sHeight,
 					bScrolling;
 
-				var sRef = jQuery.sap.getModulePath("sap.ui.documentation.sdk.tmpl");
+				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/") + "tmpl";
 				var sIndexFile = this.fetchSourceFile(sRef, "index.html.tmpl");
 
 				sIndexFile = sIndexFile.replace(/{{TITLE}}/g, oData.name);
@@ -237,7 +241,7 @@ sap.ui.define([
 
 			downloadMockFile : function(sFile) {
 
-				var sRef = jQuery.sap.getModulePath("sap.ui.demo.mock");
+				var sRef = sap.ui.require.toUrl("sap/ui/demo/") + "mock";
 				var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/";
 				var sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/";
 				var oRegExp = new RegExp(sWrongPath,"g");
@@ -263,6 +267,7 @@ sap.ui.define([
 			 */
 			_convertCodeToHtml : function (code) {
 
+				//TODO: global jquery call found
 				jQuery.sap.require("jquery.sap.encoder");
 
 				code = code.toString();
@@ -284,12 +289,13 @@ sap.ui.define([
 
 			_changeIframeBootstrapToCloud : function (sRawIndexFileHtml) {
 
+				//TODO: global jquery call found
 				jQuery.sap.require("sap.ui.thirdparty.URI");
 				var URI = sap.ui.require("sap/ui/thirdparty/URI");
 
 				var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/;
 				var oCurrentURI = new URI(window.location.href).search("");
-				var oRelativeBootstrapURI = new URI(jQuery.sap.getResourcePath("", "/sap-ui-core.js"));
+				var oRelativeBootstrapURI = new URI(sap.ui.require.toUrl("") + "/sap-ui-core.js");
 				var sBootstrapURI = oRelativeBootstrapURI.absoluteTo(oCurrentURI).toString();
 
 				// replace the bootstrap path of the sample with the current to the core
@@ -319,9 +325,9 @@ sap.ui.define([
 				oAceInstance.gotoLine(/*line*/0, /*column*/0, /*animate*/false);
 
 				if (this._bFirstLoad) {
-					jQuery.sap.delayedCall(0, this, function(){
+					setTimeout(function(){
 						oAceRenderer.onResize();
-					});
+					}, 0);
 				}
 			},
 

@@ -5,9 +5,14 @@
 /**
  * Initialization Code and shared classes of library sap.ui.documentation.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
-	'sap/ui/core/library', 'sap/m/library'], // library dependency
-	function(jQuery, LibraryInfo) {
+sap.ui.define([
+    "sap/ui/thirdparty/jquery",
+    'sap/ui/core/util/LibraryInfo',
+    "sap/base/Log",
+    'sap/ui/core/library',
+    'sap/m/library'
+], // library dependency
+	function(jQuery, LibraryInfo, Log) {
 
 	'use strict';
 
@@ -57,12 +62,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 			url: sUrl,
 			dataType: "json",
 			error: function(xhr, status, e) {
-				jQuery.sap.log.error("failed to load library list from '" + sUrl + "': " + status + ", " + e);
+				Log.error("failed to load library list from '" + sUrl + "': " + status + ", " + e);
 				fnCallback(null);
 			},
 			success : function(oAppInfo, sStatus, oXHR) {
 				if (!oAppInfo) {
-					jQuery.sap.log.error("failed to load library list from '" + sUrl + "': " + sStatus + ", Data: " + oAppInfo);
+					Log.error("failed to load library list from '" + sUrl + "': " + sStatus + ", Data: " + oAppInfo);
 					fnCallback(null);
 					return;
 				}

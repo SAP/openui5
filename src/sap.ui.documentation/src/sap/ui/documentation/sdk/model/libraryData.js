@@ -2,10 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/documentation/library'
-],function (jQuery, library) {
+sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/base/Log"],function(jQuery, library, Log) {
 	"use strict";
 
 	// function to compute the app objects for a demo object
@@ -91,7 +88,7 @@ sap.ui.define([
 
 					// push demo app into helper structure
 					if (aCategories.indexOf(oDemoAppData.category) < 0) {
-						jQuery.sap.log.warning("Demo app category \"" + oDemoAppData.category + "\" not found, correcting demo app \"" + oDemoAppData.name + "\" to \"Misc\"");
+						Log.warning("Demo app category \"" + oDemoAppData.category + "\" not found, correcting demo app \"" + oDemoAppData.name + "\" to \"Misc\"");
 						oDemoAppData.category = "Misc";
 					}
 					if (oDemo.links[j].category !== "Tool") { // Exclude Tools from showing, but preserve them in Download dialog

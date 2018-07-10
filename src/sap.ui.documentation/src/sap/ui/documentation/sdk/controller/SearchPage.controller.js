@@ -4,11 +4,12 @@
 
 /*global location */
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/m/GroupHeaderListItem"
-	], function (jQuery, BaseController, JSONModel, GroupHeaderListItem) {
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/model/json/JSONModel",
+    "sap/m/GroupHeaderListItem",
+    "sap/base/Log"
+], function(jQuery, BaseController, JSONModel, GroupHeaderListItem, Log) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SearchPage", {
@@ -48,7 +49,7 @@ sap.ui.define([
 					this.hideMasterSide();
 				} catch (e) {
 					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					jQuery.sap.log.error(e);
+					Log.error(e);
 				}
 
 				// Build the full query strings, escape special characters
