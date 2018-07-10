@@ -347,7 +347,6 @@ sap.ui.define([
 			if (this.sMaxDataServiceVersion) {
 				this.oHeaders["MaxDataServiceVersion"] = this.sMaxDataServiceVersion;
 			}
-			this.oHeaders["sap-cancel-on-close"] = true;
 
 		},
 		metadata : {
@@ -2663,7 +2662,7 @@ sap.ui.define([
 
 		function requestToken(sRequestType, fnError) {
 			// trigger a read to the service url to fetch the token
-			var oRequest = that._createRequest(sUrl, sRequestType, that._getHeaders(), null, null, !!bAsync);
+			var oRequest = that._createRequest(sUrl, sRequestType, that._getHeaders(false, true), null, null, !!bAsync);
 			oRequest.headers["x-csrf-token"] = "Fetch";
 			return that._request(oRequest, handleSuccess, fnError, undefined, undefined, that.getServiceMetadata());
 		}
@@ -3038,10 +3037,20 @@ sap.ui.define([
 	ODataModel.prototype._createBatchRequest = function(aBatchRequests) {
 		var sUrl, oRequest,
 		oChangeHeader = {},
-		oPayload = {};
+		oPayload = {},
+		bCancelOnClose = true;
 
 		oPayload.__batchRequests = aBatchRequests;
 
+
+		// If one requests leads to data changes at the back-end side, the canceling of the batch request must be prevented.
+		for (var sIndex in aBatchRequests) {
+			if (aBatchRequests[sIndex] && aBatchRequests[sIndex].__changeRequests ||
+				aBatchRequests[sIndex] && aBatchRequests[sIndex].headers && !aBatchRequests[sIndex].headers['sap-cancel-on-close']) {
+				bCancelOnClose = false;
+				break;
+			}
+		}
 		sUrl = this.sServiceUrl	+ "/$batch";
 
 
@@ -3056,6 +3065,8 @@ sap.ui.define([
 
 		// reset
 		delete oChangeHeader["Content-Type"];
+
+		oChangeHeader['sap-cancel-on-close'] = bCancelOnClose;
 
 		oRequest = {
 				headers : oChangeHeader,
@@ -3323,7 +3334,7 @@ sap.ui.define([
 						}
 					}
 					if (aReadRequests.length > 0) {
-						var oBatchRequest = that._createBatchRequest(aReadRequests, true);
+						var oBatchRequest = that._createBatchRequest(aReadRequests);
 						oWrappedBatchRequestHandle.oRequestHandle = that._submitBatchRequest(oBatchRequest, aBatchGroup, fnSuccess, fnError);
 						aRequestHandles.push(oWrappedBatchRequestHandle.oRequestHandle);
 					}
@@ -4443,7 +4454,9 @@ sap.ui.define([
 		}
 
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
-		mHeaders = this._getHeaders(mHeaders);
+
+		mHeaders = this._getHeaders(mHeaders, true);
+
 		sMethod = "GET";
 		sETag = this._getETag(sPath, oContext);
 
@@ -5053,7 +5066,8 @@ sap.ui.define([
 		}
 	};
 
-	ODataModel.prototype._getHeaders = function(mHeaders) {
+	ODataModel.prototype._getHeaders = function(mHeaders, bCancelOnClose) {
+
 		var mCheckedHeaders = {},
 		that = this;
 		if (mHeaders) {
@@ -5066,7 +5080,7 @@ sap.ui.define([
 				}
 			});
 		}
-		return jQuery.extend({}, this.mCustomHeaders, mCheckedHeaders, this.oHeaders);
+		return jQuery.extend({'sap-cancel-on-close': !!bCancelOnClose}, this.mCustomHeaders, mCheckedHeaders, this.oHeaders);
 	};
 
 	/**
