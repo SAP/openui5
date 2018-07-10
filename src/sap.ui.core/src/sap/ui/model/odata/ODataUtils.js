@@ -405,12 +405,20 @@ sap.ui.define([
 				return sPath + "%20" + sOperator.toLowerCase() + "%20" + oValue1;
 			case "BT":
 				return "(" + sPath + "%20ge%20" + oValue1 + "%20and%20" + sPath + "%20le%20" + oValue2 + ")";
+			case "NB":
+				return "not%20(" + sPath + "%20ge%20" + oValue1 + "%20and%20" + sPath + "%20le%20" + oValue2 + ")";
 			case "Contains":
 				return "substringof(" + oValue1 + "," + sPath + ")";
+			case "NotContains":
+				return "not%20substringof(" + oValue1 + "," + sPath + ")";
 			case "StartsWith":
 				return "startswith(" + sPath + "," + oValue1 + ")";
+			case "NotStartsWith":
+				return "not%20startswith(" + sPath + "," + oValue1 + ")";
 			case "EndsWith":
 				return "endswith(" + sPath + "," + oValue1 + ")";
+			case "NotEndsWith":
+				return "not%20endswith(" + sPath + "," + oValue1 + ")";
 			default:
 				jQuery.sap.log.error("ODataUtils :: Unknown filter operator " + sOperator);
 				return "true";

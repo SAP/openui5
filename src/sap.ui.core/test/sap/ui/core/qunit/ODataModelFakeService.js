@@ -173,6 +173,22 @@ xhr.onCreate = function(request) {
 				[200, oCountHeaders, "1"],
 			"Categories?$filter=toupper(CategoryName)%20eq%20%27BEVERAGES%27":
 				[200, oXMLHeaders, sCategoriesFilter1XML],
+			"Categories/$count?$filter=not%20startswith(CategoryName,%27C%27)":
+				[200, oCountHeaders, "6"],
+			"Categories?$skip=0&$top=100&$filter=not%20startswith(CategoryName,%27C%27)&$select=CategoryName":
+				[200, oJSONHeaders, sCategoriesNotFilter1JSON],
+			"Categories/$count?$filter=not%20endswith(CategoryName,%27s%27)":
+				[200, oCountHeaders, "3"],
+			"Categories?$skip=0&$top=100&$filter=not%20endswith(CategoryName,%27s%27)&$select=CategoryName":
+				[200, oJSONHeaders, sCategoriesNotFilter2JSON],
+			"Categories/$count?$filter=not%20substringof(%27ry%27,CategoryName)":
+				[200, oCountHeaders, "6"],
+			"Categories?$skip=0&$top=100&$filter=not%20substringof(%27ry%27,CategoryName)&$select=CategoryName":
+				[200, oJSONHeaders, sCategoriesNotFilter3JSON],
+			"Categories/$count?$filter=(CategoryName%20lt%20%27C%27%20or%20CategoryName%20gt%20%27M%27)":
+				[200, oCountHeaders, "6"],
+			"Categories?$skip=0&$top=100&$filter=not%20(CategoryName%20ge%20%27C%27%20and%20CategoryName%20le%20%27M%27)&$select=CategoryName":
+				[200, oJSONHeaders, sCategoriesNotFilter4JSON],
 			"Categories/$count?$filter=CategoryName%20eq%20%27Beverages%27":
 				[200, oCountHeaders, "1"],
 			"Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27":
@@ -4859,6 +4875,174 @@ var sProducts1XML = '\
   </content>\
 </entry>\
 ';
+
+var sCategoriesNotFilter1JSON = '' +
+	'{' +
+	'	"d": {' +
+	'		"results": [' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(1)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Beverages"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(4)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Dairy Products"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(5)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Grains/Cereals"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(6)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Meat/Poultry"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Produce"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(8)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Seafood"' +
+	'			}' +
+	'		]' +
+	'	}' +
+	'}';
+
+
+var sCategoriesNotFilter2JSON = '' +
+	'{' +
+	'	"d": {' +
+	'		"results": [' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(6)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Meat/Poultry"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Produce"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(8)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Seafood"' +
+	'			}' +
+	'		]' +
+	'	}' +
+	'}';
+
+
+var sCategoriesNotFilter3JSON = '' +
+	'{' +
+	'	"d": {' +
+	'		"results": [' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Beverages"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Condiments"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(3)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Confections"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(5)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Grains/Cereals"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Produce"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(8)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Seafood"' +
+	'			}' +
+	'		]' +
+	'	}' +
+	'}';
+
+var sCategoriesNotFilter4JSON = '' +
+	'{' +
+	'	"d": {' +
+	'		"results": [' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Beverages"' +
+	'			},' +
+	'           {' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(6)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Meat/Poultry"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Produce"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(8)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Seafood"' +
+	'			}' +
+	'		]' +
+	'	}' +
+	'}';
+
 
 var sCategoriesFilter1XML = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\
