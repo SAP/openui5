@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+		confirm="handleGroupDialogConfirm">
+		<groupItems>
+			<ViewSettingsItem text="Supplier" key="SupplierName" />
+			<ViewSettingsItem text="Price" key="Price" />
+		</groupItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

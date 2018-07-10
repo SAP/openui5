@@ -2,17 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ViewSettingsDialog
-		confirm="handleConfirm">
-		<sortItems>
-			<ViewSettingsItem text="Product" key="Name" selected="true" />
-			<ViewSettingsItem text="Supplier" key="SupplierName" />
-			<ViewSettingsItem text="Weight" key="WeightMeasure" />
-			<ViewSettingsItem text="Price" key="Price" />
-		</sortItems>
-		<groupItems>
-			<ViewSettingsItem text="Supplier" key="SupplierName" />
-			<ViewSettingsItem text="Price" key="Price" />
-		</groupItems>
+		confirm="handleFilterDialogConfirm">
 		<filterItems>
 			<ViewSettingsFilterItem
 				text="Weight"
