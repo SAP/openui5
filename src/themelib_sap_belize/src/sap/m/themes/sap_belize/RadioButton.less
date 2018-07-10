@@ -42,3 +42,18 @@
 	border-color: @sapUiFieldWarningColor;
 	background-color: @sapUiFieldWarningBackground;
 }
+
+/* When printing border is needed for the selection */
+@media only print {
+	.sapMLIBActive .sapMRbSel .sapMRbBOut {
+		border-color: @sapUiListActiveBackground;
+	}
+
+	.sapMRbErr.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiFieldInvalidColor;
+	}
+
+	.sapMRbWarn.sapMRbSel .sapMRbBInn {
+		border-color: @_sap_m_RadioButton_SelectedWarningColor;
+	}
+}
