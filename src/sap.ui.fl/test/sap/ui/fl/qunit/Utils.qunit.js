@@ -1628,9 +1628,7 @@ function(
 		});
 	});
 
-	QUnit.module("Utils.isCorrectAppVersionFormat", {
-	}, function(){
-
+	QUnit.module("Utils.isCorrectAppVersionFormat", function () {
 		QUnit.test("when called with an empty appversion", function(assert) {
 			assert.notOk(Utils.isCorrectAppVersionFormat(""), "then the format of the app version is not correct");
 		});
@@ -1657,18 +1655,6 @@ function(
 
 		QUnit.test("when called with placeholder without a scenario", function(assert) {
 			assert.notOk(Utils.isCorrectAppVersionFormat("${project.version}"), "then the format of the app version is not valid");
-		});
-
-		QUnit.test("when called with placeholder and a web IDE scenario", function(assert) {
-			assert.ok(Utils.isCorrectAppVersionFormat("${project.version}", sap.ui.fl.Scenario.AppVariant), "then the format of the app version is valid");
-		});
-
-		QUnit.test("when called with placeholder and the UI-Adaptatopn scenario", function(assert) {
-			assert.notOk(Utils.isCorrectAppVersionFormat("${project.version}", sap.ui.fl.Scenario.UiAdaptation), "then the format of the app version is not valid");
-		});
-
-		QUnit.test("when called with placeholder and an unknown scenario", function(assert) {
-			assert.notOk(Utils.isCorrectAppVersionFormat("${project.version}", "SCENARIO_X"), "then the format of the app version is not valid");
 		});
 	});
 

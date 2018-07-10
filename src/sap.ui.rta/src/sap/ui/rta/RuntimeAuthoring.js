@@ -185,6 +185,14 @@ sap.ui.define([
 				"metadataScope": {
 					type: "string",
 					defaultValue: "default"
+				},
+
+				/**
+				 * Whether app version must be validated on start
+				 */
+				"validateAppVersion": {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			events : {
@@ -489,13 +497,13 @@ sap.ui.define([
 	 * @return {Promise} Returns a Promise with the initialization of RTA
 	 * @public
 	 */
-	RuntimeAuthoring.prototype.start = function() {
+	RuntimeAuthoring.prototype.start = function () {
 		var oDesignTimePromise;
 
 		// Create DesignTime
 		if (!this._oDesignTime) {
 			this._oRootControl = sap.ui.getCore().byId(this.getRootControl());
-			if (!this._oRootControl){
+			if (!this._oRootControl) {
 				var vError = new Error("Root control not found");
 				FlexUtils.log.error(vError);
 				return Promise.reject(vError);
@@ -503,10 +511,8 @@ sap.ui.define([
 
 			// Check if the App Variant has the correct Format
 			if (
-				!FlexUtils.isCorrectAppVersionFormat(
-					this._getFlexController().getAppVersion(),
-					this.getFlexSettings().scenario
-				)
+				this.getValidateAppVersion()
+				&& !FlexUtils.isCorrectAppVersionFormat(this._getFlexController().getAppVersion())
 			) {
 				var vError = this._getTextResources().getText("MSG_INCORRECT_APP_VERSION_ERROR");
 				FlexUtils.log.error(vError);

@@ -278,9 +278,6 @@ sap.ui.require([
 			var stubFlexController = {
 				isPersonalized : function(){
 					return Promise.resolve(false);
-				},
-				getAppVersion : function(){
-					return "1.0.0";
 				}
 			};
 
@@ -303,6 +300,17 @@ sap.ui.require([
 				assert.ok(true, "the start function rejects the promise");
 				assert.ok(oError instanceof Error, "the Error object has been returned");
 				assert.strictEqual(oError.message, "Root control not found", "with the correct Error");
+			});
+		});
+
+		QUnit.test("when RTA gets started with an app version validation", function(assert) {
+			assert.expect(3);
+			this.oRta.setValidateAppVersion(true);
+			return this.oRta.start()
+			.catch(function(vError) {
+				assert.ok(true, "the start function rejects the promise");
+				assert.ok(typeof vError === 'string', "the a string error has been returned");
+				assert.ok(vError.includes('version'));
 			});
 		});
 
