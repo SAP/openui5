@@ -3,8 +3,16 @@
  */
 
 // Provides control sap.ui.unified.MenuTextFieldItem.
-sap.ui.define(['sap/ui/core/ValueStateSupport', './MenuItemBase', './library', 'sap/ui/core/library', 'sap/ui/Device', "sap/base/Log", 'jquery.sap.events'],
-	function(ValueStateSupport, MenuItemBase, library, coreLibrary, Device, Log) {
+sap.ui.define(['sap/ui/core/ValueStateSupport', './MenuItemBase', './library', 'sap/ui/core/library', 'sap/ui/Device', "sap/base/Log", "sap/ui/events/PseudoEvents"],
+	function(
+		ValueStateSupport,
+		MenuItemBase,
+		library,
+		coreLibrary,
+		Device,
+		Log,
+		PseudoEvents
+	) {
 	"use strict";
 
 
@@ -228,7 +236,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', './MenuItemBase', './library', '
 
 	MenuTextFieldItem.prototype.onkeyup = function(oEvent){
 		//like sapenter but on keyup -> see Menu.prototype.onkeyup
-		if (!jQuery.sap.PseudoEvents.sapenter.fnCheck(oEvent)) {
+		if (!PseudoEvents.events.sapenter.fnCheck(oEvent)) {
 			return;
 		}
 		var sValue = this.$("tf").val();

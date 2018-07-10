@@ -19,7 +19,9 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/base/util/uid",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/F6Navigation",
+	"sap/ui/events/isMouseEventDelayed"
 ], function(
 	Device,
 	ManagedObject,
@@ -36,7 +38,9 @@ sap.ui.define([
 	Version,
 	uid,
 	containsOrEquals,
-	jQueryDOM
+	jQueryDOM,
+	F6Navigation,
+	isMouseEventDelayed
 ) {
 	"use strict";
 
@@ -189,7 +193,7 @@ sap.ui.define([
 						oSettings.skip = true; // Ignore the F6 key event
 				}
 
-				jQuery.sap.handleF6GroupNavigation(oEvent, oSettings);
+				F6Navigation.handleF6GroupNavigation(oEvent, oSettings);
 			};
 		},
 
@@ -846,7 +850,7 @@ sap.ui.define([
 		// shield layer is needed for mobile devices whose browser fires the mosue
 		// events with delay after touch events to prevent the delayed mouse events
 		// from reaching the dom element in popup while it's being open.
-		if (jQuery.sap.isMouseEventDelayed) {
+		if (isMouseEventDelayed()) {
 			if (this._oTopShieldLayer) {
 				// very extreme case where the same popop is opened and closed again
 				// before the 500ms timed out. Reuse the same shieldlayer and clear
@@ -1137,7 +1141,7 @@ sap.ui.define([
 
 		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
 		//  to prevent the delayed mouse events from reaching the underneath dom element.
-		if (jQuery.sap.isMouseEventDelayed) {
+		if (isMouseEventDelayed()) {
 			if (this._oBottomShieldLayer) {
 
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.

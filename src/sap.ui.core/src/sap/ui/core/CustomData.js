@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.core.CustomData.
-sap.ui.define(['./Element', './library', "sap/base/Log"],
-	function(Element, library, Log) {
+sap.ui.define([
+	'./Element',
+	'./library',
+	"sap/ui/events/F6Navigation",
+	"sap/base/Log"
+],
+	function(Element, library, F6Navigation, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ID
@@ -90,7 +95,7 @@ sap.ui.define(['./Element', './library', "sap/base/Log"],
 			return null;
 		}
 
-		if (key == jQuery.sap._FASTNAVIGATIONKEY) {
+		if (key == F6Navigation.fastNavigationKey) {
 			value = /^\s*(x|true)\s*$/i.test(value) ? "true" : "false"; // normalize values
 		} else if (key.indexOf("sap-ui") == 0) {
 			Log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but the key is not valid (may not start with 'sap-ui').");

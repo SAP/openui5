@@ -16,7 +16,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	'jquery.sap.events'
+	"sap/ui/events/ControlEvents",
+	"sap/ui/events/PseudoEvents",
+	"sap/ui/events/checkMouseEnterOrLeave"
 ], function(
 	Element,
 	Control,
@@ -29,7 +31,10 @@ sap.ui.define([
 	containsOrEquals,
 	jQueryDOM,
 	KeyCodes,
-	Log
+	Log,
+	ControlEvents,
+	PseudoEvents,
+	checkMouseEnterOrLeave
 ) {
 	"use strict";
 
@@ -200,7 +205,7 @@ sap.ui.define([
 			delete this.oPopup;
 		}
 
-		jQuery.sap.unbindAnyEvent(this.fAnyEventHandlerProxy);
+		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		if (this._bOrientationChangeBound) {
 			jQuery(window).unbind("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = false;
@@ -400,7 +405,7 @@ sap.ui.define([
 			this.setHoveredItem(this.getNextSelectableItem(-1));
 		}
 
-		jQuery.sap.bindAnyEvent(this.fAnyEventHandlerProxy);
+		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 		if (Device.support.orientation && this.getRootMenu() === this) {
 			jQuery(window).bind("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = true;
@@ -511,7 +516,7 @@ sap.ui.define([
 		// Remove fixed flag if it existed
 		delete this._bFixed;
 
-		jQuery.sap.unbindAnyEvent(this.fAnyEventHandlerProxy);
+		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		if (this._bOrientationChangeBound) {
 			jQuery(window).unbind("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = false;
@@ -685,7 +690,7 @@ sap.ui.define([
 		} else {
 			this._sapSelectOnKeyDown = false;
 		}
-		if (!jQuery.sap.PseudoEvents.sapselect.fnCheck(oEvent)) {
+		if (!PseudoEvents.events.sapselect.fnCheck(oEvent)) {
 			return;
 		}
 		this.selectItem(this.oHoveredItem, true, false);
@@ -724,7 +729,7 @@ sap.ui.define([
 
 		this.setHoveredItem(oItem);
 
-		if (jQuery.sap.checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
+		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			/* TODO remove after 1.62 version */
 			if (!Device.browser.msie && !Device.browser.edge) { //for IE & Edge skip it, otherwise it will move the focus out of the hovered item set before
 				this.getDomRef().focus();
@@ -767,7 +772,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (jQuery.sap.checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
+		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			if (!this.oOpenedSubMenu || !(this.oOpenedSubMenu.getParent() === this.oHoveredItem)) {
 				this.setHoveredItem(null);
 			}
