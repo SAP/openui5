@@ -4007,8 +4007,8 @@ sap.ui.define([
 			}
 			return false;
 		}
-
-		return /** @lends sap.m.ImageHelper */ {
+		/** @lends sap.m.ImageHelper */
+		var oImageHelper = {
 			/**
 			 * Creates or updates an image control.
 			 *
@@ -4065,6 +4065,7 @@ sap.ui.define([
 				return oImage;
 			}
 		};
+		return oImageHelper;
 	}());
 
 	/**
@@ -4233,7 +4234,8 @@ sap.ui.define([
 				oCtrl.attachSuggestionItemSelected(_fnSuggestionItemSelected);
 			}
 		};
-		return /** @lends sap.m.InputODataSuggestProvider */ {
+		/** @lends sap.m.InputODataSuggestProvider */
+		var oInputODataSuggestProvider = {
 
 			/**
 			 * @param {sap.ui.base.Event} oEvent
@@ -4331,6 +4333,7 @@ sap.ui.define([
 				}
 			}
 		};
+		return oInputODataSuggestProvider;
 	}());
 
 	// implement Form helper factory with m controls
