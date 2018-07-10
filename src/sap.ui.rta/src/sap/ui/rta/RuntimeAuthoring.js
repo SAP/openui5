@@ -1074,7 +1074,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.needsRestart = function(sLayer) {
 
-		var bRestart = !!window.localStorage.getItem("sap.ui.rta.restart." + sLayer);
+		var bRestart = !!window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
 		return bRestart;
 	};
 
@@ -1087,7 +1087,7 @@ sap.ui.define([
 	 * @param {string} sLayer The active layer
 	 */
 	RuntimeAuthoring.enableRestart = function(sLayer) {
-		window.localStorage.setItem("sap.ui.rta.restart." + sLayer, true);
+		window.sessionStorage.setItem("sap.ui.rta.restart." + sLayer, true);
 	};
 
 	/**
@@ -1098,7 +1098,7 @@ sap.ui.define([
 	 * @param {string} sLayer The active layer
 	 */
 	RuntimeAuthoring.disableRestart = function(sLayer) {
-		window.localStorage.removeItem("sap.ui.rta.restart." + sLayer);
+		window.sessionStorage.removeItem("sap.ui.rta.restart." + sLayer);
 	};
 
 	/**
