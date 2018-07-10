@@ -234,7 +234,7 @@ sap.ui.define([
 	ODataTreeBinding.prototype._getNodeFilterParams = function (mParams) {
 		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"] : this.oTreeProperties["hierarchy-parent-node-for"];
 		var oEntityType = this._getEntityType();
-		return ODataUtils._createFilterParams([new Filter(sPropName, "EQ", mParams.id)], this.oModel.oMetadata, oEntityType);
+		return ODataUtils._createFilterParams(new Filter(sPropName, "EQ", mParams.id), this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
@@ -242,7 +242,7 @@ sap.ui.define([
 	 */
 	ODataTreeBinding.prototype._getLevelFilterParams = function (sOperator, iLevel) {
 		var oEntityType = this._getEntityType();
-		return ODataUtils._createFilterParams([new Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel)], this.oModel.oMetadata, oEntityType);
+		return ODataUtils._createFilterParams(new Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel), this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
@@ -1395,20 +1395,19 @@ sap.ui.define([
 	 */
 	ODataTreeBinding.prototype._applyFilter = function () {
 		var that = this;
-
-		//collect application and control filters
-		var aApplicationFilters = this.aApplicationFilters || [];
-		var aAllFilters = this.aFilters || [];
+		var oCombinedFilter;
 
 		// if we do not use serverside application filters, we have to include them for the FilterProcessor
-		if (!this.bUseServersideApplicationFilters) {
-			aAllFilters = aAllFilters.concat(aApplicationFilters);
+		if (this.bUseServersideApplicationFilters) {
+			oCombinedFilter = FilterProcessor.groupFilters(this.aFilters);
+		} else {
+			oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 		}
 
 		// filter function for recursive filtering,
 		// checks if a single key matches the filters
 		var fnFilterKey = function (sKey) {
-			var aFiltered = FilterProcessor.apply([sKey], aAllFilters, function(vRef, sPath) {
+			var aFiltered = FilterProcessor.apply([sKey], oCombinedFilter, function(vRef, sPath) {
 				var oContext = that.oModel.getContext('/' + vRef);
 				return that.oModel.getProperty(sPath, oContext);
 			});
@@ -2166,10 +2165,12 @@ sap.ui.define([
 	 * @returns {string} the concatenated OData filters
 	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
+		var oGroupedFilter;
 		if (this.aApplicationFilters) {
 			this.aApplicationFilters = Array.isArray(this.aApplicationFilters) ? this.aApplicationFilters : [this.aApplicationFilters];
 			if (this.aApplicationFilters.length > 0 && !this.sFilterParams) {
-				this.sFilterParams = ODataUtils._createFilterParams(this.aApplicationFilters, this.oModel.oMetadata, this.oEntityType);
+				oGroupedFilter = FilterProcessor.groupFilters(this.aApplicationFilters);
+				this.sFilterParams = ODataUtils._createFilterParams(oGroupedFilter, this.oModel.oMetadata, this.oEntityType);
 				this.sFilterParams = this.sFilterParams ? this.sFilterParams : "";
 			}
 		} else {
