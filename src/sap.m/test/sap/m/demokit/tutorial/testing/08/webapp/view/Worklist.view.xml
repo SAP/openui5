@@ -39,7 +39,10 @@
 					<Column width="80px" id="flaggedColumn" demandPopin="true" vAlign="Middle"/>
 				</columns>
 				<items>
-					<ColumnListItem vAlign="Middle">
+					<ColumnListItem
+							vAlign="Middle"
+							type="Navigation"
+							press="onPress">
 						<cells>
 							<ObjectIdentifier
 									title="{Title}"/>

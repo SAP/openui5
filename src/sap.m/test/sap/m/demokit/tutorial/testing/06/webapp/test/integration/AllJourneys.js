@@ -1,26 +1,13 @@
-/*global QUnit*/
-
-jQuery.sap.require("sap.ui.qunit.qunit-css");
-jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
-QUnit.config.autostart = false;
-
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/bulletinboard/test/integration/pages/Common",
-	"sap/ui/demo/bulletinboard/test/integration/pages/Worklist"
-], function (Opa5, Common) {
+	"./arrangements/Arrangement",
+	"./WorklistJourney"
+], function (Opa5, Arrangement) {
 	"use strict";
+
 	Opa5.extendConfig({
-		arrangements: new Common(),
+		arrangements: new Arrangement(),
 		viewNamespace: "sap.ui.demo.bulletinboard.view.",
 		autoWait: true
-	});
-
-	sap.ui.require([
-		"sap/ui/demo/bulletinboard/test/integration/WorklistJourney"
-	], function () {
-		QUnit.start();
 	});
 });

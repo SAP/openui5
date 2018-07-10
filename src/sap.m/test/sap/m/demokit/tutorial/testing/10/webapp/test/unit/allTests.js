@@ -1,7 +1,7 @@
 sap.ui.define([
-	"test/unit/model/models",
-	"test/unit/model/formatter",
-	"test/unit/model/FlaggedType"
+	"./model/models",
+	"./model/formatter",
+	"./model/FlaggedType"
 ], function() {
 	"use strict";
 });
