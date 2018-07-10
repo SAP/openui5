@@ -43,6 +43,14 @@ sap.ui.define([
 		var RuleSetLoader = {};
 
 		RuleSetLoader._mRuleSets = {};
+		RuleSetLoader._mRuleSets[constants.TEMP_RULESETS_NAME] = {
+			lib: {
+				name: constants.TEMP_RULESETS_NAME
+			},
+			ruleset: new RuleSet({
+				name: constants.TEMP_RULESETS_NAME
+			})
+		};
 
 		RuleSetLoader.getRuleSets = function () {
 			return this._mRuleSets;
@@ -447,25 +455,6 @@ sap.ui.define([
 				lib: oLib,
 				ruleset: oRuleSet
 			};
-		};
-
-		/**
-		 * Creates a library for the temporary rules.
-		 * @private
-		 */
-		RuleSetLoader._initTempRulesLib = function () {
-			if (this.getRuleSet(constants.TEMP_RULESETS_NAME)) {
-				return;
-			}
-
-			this.addRuleSet(constants.TEMP_RULESETS_NAME, {
-				lib: {
-					name: constants.TEMP_RULESETS_NAME
-				},
-				ruleset: new RuleSet({
-					name: constants.TEMP_RULESETS_NAME
-				})
-			});
 		};
 
 		/**

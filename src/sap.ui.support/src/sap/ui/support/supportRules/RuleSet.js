@@ -225,25 +225,6 @@ function (jQuery, storage, constants) {
 	};
 
 	/**
-	 * Adds all previously created temporary rules to the current library rules.
-	 * @public
-	 * @static
-	 * @method
-	 * @name sap.ui.support.RuleSet.addToTempRules
-	 * @memberof sap.ui.support.RuleSet
-	 * @param {object} oLibraries The loaded libraries and their rules
-	 * @param {string[]} aTempRules The temporary rules previously created by the user
-	 */
-	RuleSet.addToTempRules = function (oLibraries, aTempRules) {
-		if (aTempRules) {
-			aTempRules.forEach(function (tempRule) {
-				var ruleName = tempRule.id;
-				oLibraries[constants.TEMP_RULESETS_NAME].RuleSet._mRules[ruleName] = tempRule;
-			});
-		}
-	};
-
-	/**
 	 * Stores which rules are selected to be run by the analyzer on the next check
 	 * @public
 	 * @static

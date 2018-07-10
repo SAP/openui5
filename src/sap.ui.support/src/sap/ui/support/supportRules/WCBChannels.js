@@ -89,34 +89,6 @@ function () {
 		POST_UI_INFORMATION:  "POST_UI_INFORMATION",
 
 		/**
-		 * Verifies rule creation.
-		 * @type {string}
-		 * @const
-		 */
-		VERIFY_CREATE_RULE:         "VERIFY_CREATE_RULE",
-
-		/**
-		 * Verifies rule creation after its finished.
-		 * @type {string}
-		 * @const
-		 */
-		VERIFY_RULE_CREATE_RESULT:  "VERIFY_RULE_CREATE_RESULT",
-
-		/**
-		 * Verifies rule update.
-		 * @type {string}
-		 * @const
-		 */
-		VERIFY_UPDATE_RULE:         "VERIFY_UPDATE_RULE",
-
-		/**
-		 * Verifies rule update after its finished.
-		 * @type {string}
-		 * @const
-		 */
-		VERIFY_RULE_UPDATE_RESULT:  "VERIFY_RULE_UPDATE_RESULT",
-
-		/**
 		 * Posts available libraries.
 		 * @type {string}
 		 * @const
