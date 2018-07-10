@@ -773,6 +773,8 @@ sap.ui.define([
 	 *   The path is relative to the given <code>sResourcePath</code>.
 	 *   The messages have at least the following properties:
 	 *   {string} code - The error code
+	 *   {string} longtextUrl - The URL for the message's long text relative to the resource path
+	 *      with key predicates
 	 *   {string} message - The message text
 	 *   {number} numericSeverity - The numeric message severity (1 for "success", 2 for "info",
 	 *      3 for "warning" and 4 for "error")
