@@ -5,6 +5,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:unified="sap.ui.unified">
 	<Dialog
+		id="importDialog"
 		title="Import a Rule Preset"
 		beforeClose="onImportDialogClose"
 		resizable="true"
@@ -35,6 +36,7 @@
 					<HBox>
 						<Text id="fileName" text="{fileName}" />
 						<Text
+							id="rulesCount"
 							text=" ({= ${selections} ? ${selections}.length : 0} rules selected)"
 							visible="{= ${selections} ? true : false}"
 							renderWhitespace="true"/>
@@ -66,7 +68,7 @@
 			</f:content>
 		</f:SimpleForm>
 		<beginButton>
-			<Button text="Cancel" press="onImportCancelPress" />
+			<Button id="cancel" text="Cancel" press="onImportCancelPress" />
 		</beginButton>
 		<endButton>
 			<Button id="importBtn" type="Emphasized" text="Import" enabled="false" press="onImportFinalizePress" class="sapUiTinyMarginEnd" />

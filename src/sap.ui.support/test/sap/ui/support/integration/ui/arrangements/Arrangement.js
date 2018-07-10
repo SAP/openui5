@@ -11,7 +11,18 @@ sap.ui.define([
 
 		iStartMyApp: function () {
 			Communication.init(Opa5.getWindow);
-			this.iStartMyAppInAFrame(_sSupportAssistantPath);
+			return this.iStartMyAppInAFrame(_sSupportAssistantPath);
+		},
+
+		iStartMyAppAndDeletePersistedData: function () {
+			this.iStartMyApp()
+				.done(function () {
+					var Storage = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Storage"),
+						Constants = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Constants");
+
+					Storage.deletePersistenceCookie(Constants.COOKIE_NAME);
+					Storage.removeAllData();
+				});
 		}
 
 	});

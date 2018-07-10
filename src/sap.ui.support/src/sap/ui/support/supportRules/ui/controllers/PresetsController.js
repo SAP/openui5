@@ -157,7 +157,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent The event which was fired.
 	 */
 	PresetsController.prototype.onImportFileChange = function (oEvent) {
-		var oFile = Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "fileUpload"),
+		var oFile = oEvent.getSource(),
 			/* global FileReader */
 			oReader = new FileReader();
 
@@ -169,7 +169,7 @@ sap.ui.define([
 		oReader.onloadend = this.onImportFileLoaded.bind(this);
 		oReader.onerror = this.onImportFileError.bind(this);
 
-		oReader.readAsText(oEvent.oSource.oFileUpload.files[0], "UTF-8");
+		oReader.readAsText(oEvent.getParameter("files")[0], "UTF-8");
 	};
 
 	/**

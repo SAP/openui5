@@ -53,9 +53,9 @@ sap.ui.define([
 		onTheRulesPage: {
 			actions : {
 
-				iPressOnTreeTableCheckBox: function (sId) {
+				iPressOnTreeTableCheckBox: function (sId, sSuccessMessage, sErrorMessage) {
 
-					return this.waitFor(createPressTreeTableButtonElement(sId, "The parent note button in tree table was pressed", "The parent note button in tree table is not there"));
+					return this.waitFor(createPressTreeTableButtonElement(sId, sSuccessMessage, sErrorMessage));
 
 				},
 
@@ -80,7 +80,7 @@ sap.ui.define([
 						actions: new Press(),
 						success: function (oCheckBox) {
 							oCheckBox.setSelected(bSelectedState);
-							Opa5.assert.ok(true, "Checkbox button was pressed and status enabled is:" + bSelectedState);
+							Opa5.assert.ok(true, "Checkbox button was pressed and status checked is: " + bSelectedState);
 						},
 						errorMessage: "Settings button was not found"
 					});
@@ -293,9 +293,9 @@ sap.ui.define([
 						id: "persistChB",
 						controlType : "sap.m.CheckBox",
 						success: function (oCheckBox) {
-							Opa5.assert.ok(oCheckBox.getSelected() === bState, "Persisting settings has been enabled");
+							Opa5.assert.ok(oCheckBox.getSelected() === bState, "Persisting settings has status " + bState);
 						},
-						errorMessage: "Persisting settings has not been enabled"
+						errorMessage: "Persisting settings does not have status " + bState
 					});
 				},
 

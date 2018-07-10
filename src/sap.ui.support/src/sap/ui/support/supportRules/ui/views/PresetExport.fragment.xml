@@ -3,6 +3,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:f="sap.ui.layout.form">
 	<Dialog
+		id="exportDialog"
 		title="Export a Rule Preset"
 		resizable="true"
 		contentWidth="550px"
@@ -34,10 +35,10 @@
 			</f:content>
 		</f:SimpleForm>
 		<beginButton>
-			<Button text="Cancel" press="onExportCancelPress" />
+			<Button id="cancel" text="Cancel" press="onExportCancelPress" />
 		</beginButton>
 		<endButton>
-			<Button text="Export" type="Emphasized" press="onExportFinalizePress" class="sapUiTinyMarginEnd" />
+			<Button id="exportBtn" text="Export" type="Emphasized" press="onExportFinalizePress" class="sapUiTinyMarginEnd" />
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>
