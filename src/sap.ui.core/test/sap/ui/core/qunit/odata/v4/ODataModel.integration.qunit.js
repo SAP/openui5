@@ -5857,6 +5857,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
+	//TODO support $filter : \'GrossAmount gt 0\',\
 	QUnit.test("Analytics by V4: $$aggregation", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
@@ -5872,7 +5873,7 @@ sap.ui.require([
 				},\
 				groupLevels : [\'LifecycleStatus\']\
 			},\
-			$orderby : \'LifecycleStatus desc\'\
+			$orderby : \'LifecycleStatus desc,ItemPosition asc\'\
 		}}" threshold="0" visibleRowCount="3">\
 	<t:Column>\
 		<t:template>\
@@ -5903,9 +5904,8 @@ sap.ui.require([
 			oModel = createSalesOrdersModel(),
 			that = this;
 
-		this.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
-				+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-				+ "&$count=true&$skip=0&$top=3", {
+		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+					+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
 				"value" : [
 					{"GrossAmount" : 1, "LifecycleStatus" : "Z"},
@@ -5928,9 +5928,9 @@ sap.ui.require([
 					"/SalesOrderList(LifecycleStatus='" + "ZYX"[i] + "')");
 			});
 
-			that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
-					+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "&$count=true&$skip=7&$top=3", {
+			that.expectRequest("SalesOrderList?"
+						+ "$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+						+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=7&$top=3", {
 					"@odata.count" : "26",
 					"value" : [
 						{"GrossAmount" : 7, "LifecycleStatus" : "T"},
@@ -5954,8 +5954,8 @@ sap.ui.require([
 			that.oView.byId("table").setFirstVisibleRow(7);
 
 			return that.waitForChanges(assert).then(function () {
-				that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
-						+ "&$apply=groupby((LifecycleStatus))&$count=true&$skip=7&$top=3", {
+				that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
+							+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=7&$top=3", {
 						"@odata.count" : "26",
 						"value" : [
 							{"LifecycleStatus" : "T"},
@@ -6186,7 +6186,8 @@ sap.ui.require([
 <t:Table id="table" rows="{\
 			path : \'/EMPLOYEES\',\
 			parameters : {$count : true},\
-			filters : {path : \'AGE\', operator : \'GE\', value1 : 30}\
+			filters : {path : \'AGE\', operator : \'GE\', value1 : 30},\
+			sorter : {path : \'AGE\'}\
 		}" threshold="0" visibleRowCount="3">\
 	<t:Column>\
 		<t:template>\
@@ -6214,12 +6215,14 @@ sap.ui.require([
 								min : 42
 							}
 						});
+					}, function (oError) {
+						assert.notOk(oError);
 					});
 				ODataListBinding.prototype.getContexts.restore();
 				return this.getContexts.apply(this, arguments);
 			});
 		this.expectRequest("EMPLOYEES?$count=true&$apply=groupby((Name),aggregate(AGE))"
-				+ "/filter(AGE%20ge%2030)"
+				+ "/filter(AGE%20ge%2030)/orderby(AGE)"
 				+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
 				+ "AGE%20with%20max%20as%20UI5max__AGE),identity)"
 				+ "&$skip=0&$top=4",
@@ -6233,14 +6236,14 @@ sap.ui.require([
 						"UI5min__AGE": 42,
 						"UI5max__AGE": 77
 					},
-					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
 					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
+					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
 					{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}
 				]
 			})
 			.expectChange("count")
-			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
-			.expectChange("age", ["70", "50", "77"]);
+			.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"])
+			.expectChange("age", ["50", "70", "77"]);
 
 		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
 			that.expectChange("count", "4");
@@ -6254,24 +6257,24 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("EMPLOYEES?$count=true"
-					+ "&$apply=groupby((Name),aggregate(AGE))"
+			that.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
 					// Note: for consistency, we prefer filter() over $filter here
-					+ "/filter(AGE%20ge%2030)"
+					// (same for orderby() vs. $orderby)
+					+ "/filter(AGE%20ge%2030)/orderby(AGE)"
 					+ "&$skip=3&$top=1",
 				{
 					"value" : [
-						{"ID" : "3", "Name" : "John Field", "AGE" : 42}
+						{"ID" : "3", "Name" : "John Field", "AGE" : 82}
 					]
 				})
 				.expectChange("text", null, null)
 				.expectChange("age", null, null)
-				.expectChange("text", "Jonathan Smith", 1)
+				.expectChange("text", "Frederic Fall", 1)
 				.expectChange("text", "Peter Burke", 2)
 				.expectChange("text", "John Field", 3)
-				.expectChange("age", "50", 1)
+				.expectChange("age", "70", 1)
 				.expectChange("age", "77", 2)
-				.expectChange("age", "42", 3);
+				.expectChange("age", "82", 3);
 
 			that.oView.byId("table").setFirstVisibleRow(1);
 

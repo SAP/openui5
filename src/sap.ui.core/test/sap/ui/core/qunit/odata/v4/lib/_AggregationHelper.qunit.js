@@ -196,7 +196,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildApply with mQueryOptions", function (assert) {
+	QUnit.test("buildApply with mQueryOptions, 1st request", function (assert) {
 		var oAggregation = {
 				aggregate : {
 					SalesNumber : {
@@ -212,21 +212,49 @@ sap.ui.require([
 			mQueryOptions = {
 				$count : true,
 				$filter : "SalesNumber ge 100",
-				$orderby : "Name"
+				$orderby : "Name desc"
 			};
 
 		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
 			$apply : "groupby((Name),aggregate(SalesNumber))"
-				+ "/filter(SalesNumber ge 100)"
+				+ "/filter(SalesNumber ge 100)/orderby(Name desc)"
 				+ "/concat(aggregate(SalesNumber with min as UI5min__SalesNumber,"
 				+ "SalesNumber with max as UI5max__SalesNumber),identity)",
-			$count : true,
-			$orderby : "Name"
+			$count : true
 		});
 		assert.deepEqual(mQueryOptions, {
 			$count : true,
 			$filter : "SalesNumber ge 100",
-			$orderby : "Name"
+			$orderby : "Name desc"
+		}, "unmodified");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply with mQueryOptions, 2nd request", function (assert) {
+		var oAggregation = {
+				aggregate : {
+					SalesNumber : {/*no min/max*/}
+				},
+				group : {
+					Name : {}
+				},
+				groupLevels : []
+			},
+			mQueryOptions = {
+				$count : true,
+				$filter : "SalesNumber ge 100",
+				$orderby : "Name desc"
+			};
+
+		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
+			$apply : "groupby((Name),aggregate(SalesNumber))"
+				+ "/filter(SalesNumber ge 100)/orderby(Name desc)",
+			$count : true
+		});
+		assert.deepEqual(mQueryOptions, {
+			$count : true,
+			$filter : "SalesNumber ge 100",
+			$orderby : "Name desc"
 		}, "unmodified");
 	});
 
