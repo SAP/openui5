@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.Remove.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
@@ -52,8 +51,8 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	Remove.prototype.registerElementOverlay = function(oOverlay) {
-		if (this.isEnabled(oOverlay)) {
+	Remove.prototype.registerElementOverlay = function (oOverlay) {
+		if (this.isEnabled([oOverlay])) {
 			oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
 		}
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
@@ -64,20 +63,20 @@ sap.ui.define([
 	 * @returns {boolean} editable or not
 	 * @private
 	 */
-	Remove.prototype._isEditable = function(oOverlay) {
+	Remove.prototype._isEditable = function (ElementOverlay) {
 		var bEditable = false;
-		var oElement = oOverlay.getElement();
+		var oElement = ElementOverlay.getElement();
 
-		var oRemoveAction = this.getAction(oOverlay);
+		var oRemoveAction = this.getAction(ElementOverlay);
 		if (oRemoveAction && oRemoveAction.changeType) {
 			if (oRemoveAction.changeOnRelevantContainer) {
-				oElement = oOverlay.getRelevantContainer();
+				oElement = ElementOverlay.getRelevantContainer();
 			}
 			bEditable = this.hasChangeHandler(oRemoveAction.changeType, oElement);
 		}
 
 		if (bEditable) {
-			return this.hasStableId(oOverlay);
+			return this.hasStableId(ElementOverlay);
 		}
 
 		return bEditable;
@@ -85,12 +84,11 @@ sap.ui.define([
 
 	/**
 	 * Checks if remove is enabled for oOverlay
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Remove.prototype.isEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	Remove.prototype.isEnabled = function (aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		var oAction = this.getAction(oElementOverlay);
 		var bIsEnabled = false;
@@ -162,7 +160,7 @@ sap.ui.define([
 	 * @override
 	 */
 	Remove.prototype.deregisterElementOverlay = function(oOverlay) {
-		if (this.isEnabled(oOverlay)) {
+		if (this.isEnabled([oOverlay])) {
 			oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
 		}
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
@@ -183,21 +181,18 @@ sap.ui.define([
 
 	/**
 	 * The selected (not the focused) element should be hidden!
-	 * @param {array} aOverlays overlay array
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @private
 	 */
-	Remove.prototype.removeElement = function(aOverlays) {
-		var aSelection;
-		if (aOverlays){
-			aSelection = aOverlays;
-		} else {
-			aSelection = this.getSelectedOverlays();
-		}
+	Remove.prototype.removeElement = function (aElementOverlays) {
+		var aTargetOverlays = aElementOverlays ? aElementOverlays : this.getSelectedOverlays();
 
-		aSelection = aSelection.filter(this.isEnabled, this);
+		aTargetOverlays = aTargetOverlays.filter(function (oElementOverlay) {
+			return this.isEnabled([oElementOverlay]);
+		}, this);
 
-		if (aSelection.length > 0) {
-			this.handler(aSelection);
+		if (aTargetOverlays.length > 0) {
+			this.handler(aTargetOverlays);
 		}
 	};
 
@@ -215,8 +210,7 @@ sap.ui.define([
 		}
 	};
 
-	Remove.prototype.handler = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	Remove.prototype.handler = function (aElementOverlays) {
 		var aPromises = [];
 		var oCompositeCommand = new CompositeCommand();
 		var fnSetFocus = function (oOverlay) {
@@ -296,11 +290,11 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the context menu item for the action.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {object[]} - array of the items with required data
 	 */
-	Remove.prototype.getMenuItems = function (vElementOverlays) {
-		return this._getMenuItems(vElementOverlays, {pluginId : "CTX_REMOVE", rank : 60, icon : "sap-icon://hide"});
+	Remove.prototype.getMenuItems = function (aElementOverlays) {
+		return this._getMenuItems(aElementOverlays, {pluginId : "CTX_REMOVE", rank : 60, icon : "sap-icon://hide"});
 	};
 
 	/**

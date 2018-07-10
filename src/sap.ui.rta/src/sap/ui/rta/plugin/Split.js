@@ -6,14 +6,12 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
-	'sap/ui/fl/Utils',
-	'sap/ui/dt/Util'
+	'sap/ui/fl/Utils'
 ], function(
 	Plugin,
 	OverlayRegistry,
 	Utils,
-	FlexUtils,
-	DtUtil
+	FlexUtils
 ) {
 	"use strict";
 
@@ -60,25 +58,23 @@ sap.ui.define([
 	/**
 	 * Checks if Split is available for oOverlay
 	 *
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	Split.prototype.isAvailable = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
-
+	Split.prototype.isAvailable = function (aElementOverlays) {
 		if (aElementOverlays.length !== 1) {
 			return false;
 		}
 
-		var oOverlay = aElementOverlays[0];
+		var oElementOverlay = aElementOverlays[0];
 
-		if (!this._isEditableByPlugin(oOverlay)) {
+		if (!this._isEditableByPlugin(oElementOverlay)) {
 			return false;
 		}
 
-		var vSplitAction = this.getAction(oOverlay);
-		var oElement = oOverlay.getElement();
+		var vSplitAction = this.getAction(oElementOverlay);
+		var oElement = oElementOverlay.getElement();
 		if (vSplitAction && vSplitAction.getControlsCount(oElement) <= 1) {
 			return false;
 		}
@@ -89,15 +85,13 @@ sap.ui.define([
 	/**
 	 * Checks if Split is enabled for oOverlay
 	 *
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Split.prototype.isEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	Split.prototype.isEnabled = function (aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 
-		// TODO: handle multi-selection
 		// check that each selected element has an enabled action
 		var oAction = this.getAction(oElementOverlay);
 		if (!oAction || !this.isAvailable(aElementOverlays)) {
@@ -165,11 +159,9 @@ sap.ui.define([
 
 	/**
 	 * Trigger the plugin execution.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 */
-	Split.prototype.handler = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
-		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
+	Split.prototype.handler = function (aElementOverlays) {
 		this.handleSplit(aElementOverlays[0]);
 	};
 

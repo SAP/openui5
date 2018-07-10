@@ -15,7 +15,9 @@ sap.ui.require([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/VBox",
 	"sap/m/Button",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/fl/Utils",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	DesignTime,
@@ -30,10 +32,11 @@ function(
 	ObjectPageSubSection,
 	VBox,
 	Button,
+	FlUtils,
+	QUnitUtils,
 	sinon
 ) {
 	"use strict";
-	QUnit.start();
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
@@ -60,7 +63,7 @@ function(
 		},
 		getModel: function () {}
 	};
-	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
@@ -99,7 +102,7 @@ function(
 			});
 			this.oVBox = new VBox({
 				items : [this.oLayout]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -117,7 +120,7 @@ function(
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -137,7 +140,7 @@ function(
 				this.oEasyAddPlugin.getDialog()._cancelDialog();
 				done();
 			}.bind(this));
-			sap.ui.qunit.QUnitUtils.triggerEvent("tap", oButton.getDomRef());
+			QUnitUtils.triggerEvent("tap", oButton.getDomRef());
 		});
 
 		QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used on the Section", function(assert) {
@@ -153,7 +156,7 @@ function(
 				this.oEasyAddPlugin.getDialog()._cancelDialog();
 				done();
 			}.bind(this));
-			sap.ui.qunit.QUnitUtils.triggerEvent("tap", oButton.getDomRef());
+			QUnitUtils.triggerEvent("tap", oButton.getDomRef());
 		});
 
 		QUnit.test("when the second section gets added and removed", function(assert) {
@@ -209,13 +212,13 @@ function(
 			this.oEasyAddPlugin = new EasyAdd({
 				commandFactory : new CommandFactory(),
 				dialog: new AddElementsDialog(),
-				analyzer : sap.ui.rta.plugin.additionalElements.AdditionalElementsAnalyzer
+				analyzer: AdditionalElementsAnalyzer
 			});
 
 			this.oLayout = new ObjectPageLayout("layout", {});
 			this.oVBox = new VBox({
 				items : [this.oLayout]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -230,7 +233,7 @@ function(
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -258,7 +261,7 @@ function(
 			});
 			this.oLayout = new ObjectPageLayout("layout", {
 				sections : [this.oSection]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -273,7 +276,7 @@ function(
 			}.bind(this));
 
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -283,4 +286,10 @@ function(
 			assert.notOk(oButton, "then the Add-Button is not displayed");
 		});
 	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
+
+	QUnit.start();
 });

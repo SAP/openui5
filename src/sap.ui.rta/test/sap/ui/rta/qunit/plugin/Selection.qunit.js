@@ -20,7 +20,7 @@ sap.ui.require([
 	"sap/m/Text",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	Remove,
@@ -42,7 +42,6 @@ sap.ui.require([
 	sinon
 ){
 	"use strict";
-	QUnit.start();
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach : function(assert) {
@@ -191,7 +190,7 @@ sap.ui.require([
 			this.oEvent.altKey = false;
 
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.sandbox.restore();
 			this.oComponent.destroy();
 			this.oVBox.destroy();
@@ -373,7 +372,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable", function (assert) {
-			this.sandbox.stub(sap.ui.Device.browser, "name", "ie");
+			this.sandbox.stub(sap.ui.Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			assert.notOk(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initially not focused");
 			var oMouseEvent = jQuery.Event('mousedown');
@@ -382,7 +381,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("Invoking Mouse-Down on an Overlay which is not selectable", function (assert) {
-			this.sandbox.stub(sap.ui.Device.browser, "name", "ie");
+			this.sandbox.stub(sap.ui.Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.setSelectable(false);
 			oOverlay.setFocusable(true);
@@ -439,7 +438,7 @@ sap.ui.require([
 			oOverlay.setEditable(false);
 			oOverlay.setSelectable(false);
 			this.oCommandFactory.setProperty("flexSettings", {layer:"CUSTOMER", developerMode: true});
-			this.oSelectionPlugin.attachEventOnce("elementEditableChange", function(oEvent) {
+			this.oSelectionPlugin.attachEventOnce("elementEditableChange", function () {
 				assert.ok(true, 'elementEditableChange event was called');
 				fnDone();
 			});
@@ -454,7 +453,9 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.done(function() {
+	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	QUnit.start();
 });

@@ -2,27 +2,14 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.Rename.
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/plugin/RenameHandler',
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/Utils',
-	'sap/ui/dt/Util'
+	'sap/ui/rta/plugin/RenameHandler'
 ], function(
 	jQuery,
 	Plugin,
-	RenameHandler,
-	Overlay,
-	ElementUtil,
-	OverlayUtil,
-	OverlayRegistry,
-	Utils,
-	DtUtil
+	RenameHandler
 ) {
 	"use strict";
 
@@ -101,8 +88,7 @@ sap.ui.define([
 		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.Rename.stopEdit");
 	};
 
-	Rename.prototype.handler = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
+	Rename.prototype.handler = function (aElementOverlays) {
 		this.startEdit(aElementOverlays[0]);
 	};
 
@@ -118,18 +104,16 @@ sap.ui.define([
 	};
 
 	Rename.prototype.isRenameEnabled = function (oOverlay) {
-		return this.isEnabled(oOverlay);
+		return this.isEnabled([oOverlay]);
 	};
 
 	/**
 	 * Checks if rename is enabled for oOverlay
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @returns {boolean} true if it's enabled
 	 * @public
 	 */
-	Rename.prototype.isEnabled = function (vElementOverlays) {
-		var aElementOverlays = DtUtil.castArray(vElementOverlays);
-
+	Rename.prototype.isEnabled = function (aElementOverlays) {
 		if (aElementOverlays.length > 1) {
 			return false;
 		}

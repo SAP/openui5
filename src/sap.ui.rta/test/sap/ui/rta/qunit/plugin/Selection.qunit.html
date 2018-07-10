@@ -1,12 +1,9 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>Selection Plugin Test Page</title>
-
+		<title>Test Page for sap.ui.rta.plugin.Selection</title>
 		<script src="../../shared-config.js"></script>
 		<script>
-			window['sap-ui-config'].libs = "sap.ui.rta";
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 		<script>
@@ -15,11 +12,10 @@
 			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
 			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
-			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta/plugin/Selection.js]');
+			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/rta/plugin/Selection]");
 
-			jQuery.sap.includeScript('./Selection.qunit.js');
+			jQuery.sap.includeScript("./Selection.qunit.js");
 		</script>
-
 	</head>
 	<body>
 		<div id="qunit"></div>
