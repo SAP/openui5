@@ -461,7 +461,7 @@
 		_define('sap/ui/thirdparty/jquery', function() {
 			return jQuery;
 		});
-		if (jQuery.prototype.position) {
+		if (jQuery.ui && jQuery.ui.position) {
 			_define('sap/ui/thirdparty/jqueryui/jquery-ui-position', function() {
 				return jQuery;
 			});

@@ -8,7 +8,6 @@
 
 		<!-- nojQuery bootstrap code starts here -->
 		<script src="../../../../../../resources/sap/ui/thirdparty/jquery.js"></script>
-		<script src="../../../../../../resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"></script>
 		<script>
 			var jQueryBeforeCoreBoot = jQuery;
 		</script>
@@ -44,7 +43,7 @@
 				assert.strictEqual(typeof sap.ui.core, "object", "...the namespace sap.ui.core should exist");
 				assert.strictEqual(typeof sap.ui.model, "object", "...the namespace sap.ui.model should exist (status quo, not mandatory)");
 				assert.strictEqual(typeof sap.ui.getCore, "function", "...the function sap.ui.getCore should exist");
-				
+
 				var done = assert.async();
 				sap.ui.getCore().attachInit(function() {
 					assert.ok(true, "...then the Core should fire the init event");
