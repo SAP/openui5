@@ -153,15 +153,15 @@ sap.ui.define([
 				bEnoughSpaceForEndItem = true;
 
 			oEndItemDomRef = oEndItemDomRef || this.getDomRef("endItem");
+			var oLastItemDomRef = this.getLastItemDomRef();
 
-			if (oEndItemDomRef) {
+			if (oEndItemDomRef && oLastItemDomRef) {
 				var mLastSpacerStyle = oDomRef.lastElementChild.style;
 				mLastSpacerStyle.height = "";
 				mLastSpacerStyle.display = "";
 				oDomRef.classList.remove(CSS_CLASS_ONE_LINE);
 
-				var oLastItemDomRef = this.getLastItemDomRef(),
-					iEndItemHeight = oEndItemDomRef.offsetHeight,
+				var iEndItemHeight = oEndItemDomRef.offsetHeight,
 					iEndItemWidth = oEndItemDomRef.offsetWidth,
 					iLastItemOffsetLeft = oLastItemDomRef.offsetLeft,
 					iAvailableWidthForEndItem;
