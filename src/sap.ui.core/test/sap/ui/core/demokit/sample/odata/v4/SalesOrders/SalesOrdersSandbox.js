@@ -34,7 +34,7 @@ sap.ui.define([
 			},
 			"ProductList('HT-1000')/Name?custom-option=value" : {
 				headers : {
-					"sap-message" : JSON.stringify([{
+					"sap-messages" : JSON.stringify([{
 						"code" : "42",
 						"message" : "Example for an unbound message",
 						"severity" : "info",
