@@ -31,10 +31,7 @@ function (
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application",
-							"applicationVersion": {
-								"version": "1.0.0"
-							}
+							"id": "fixture.application"
 						}
 					}
 				},
@@ -447,10 +444,7 @@ function (
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application",
-							"applicationVersion": {
-								"version": "1.0.0"
-							}
+							"id": "fixture.application"
 						}
 					}
 				},
@@ -513,10 +507,7 @@ function (
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application",
-							"applicationVersion": {
-								"version": "1.0.0"
-							}
+							"id": "fixture.application"
 						}
 					}
 				},

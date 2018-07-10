@@ -1058,27 +1058,10 @@ sap.ui.define([
 		 * Checks if the application version has the correct format: "major.minor.patch".
 		 *
 		 * @param {string} sVersion - Version of application
-		 * @param {string} sScenario - Scenario from the FlexSettings
 		 * @returns {boolean} true if the format is correct, otherwise false
 		 * @public
 		 */
-		isCorrectAppVersionFormat: function (sVersion, sScenario) {
-			// Placeholder is allowed only in WEB-IDE Scenarios
-			// The string has been split into parts otherwise it will be replaced by a build with a current version
-			if (sVersion === "${project" + ".version}"){
-				if (!sScenario){
-					return false;
-				} else if (
-					sScenario === sap.ui.fl.Scenario.AppVariant
-					|| sScenario === sap.ui.fl.Scenario.AdaptationProject
-					|| sScenario === sap.ui.fl.Scenario.FioriElementsFromScratch
-				) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-
+		isCorrectAppVersionFormat: function (sVersion) {
 			// remove all whitespaces
 			sVersion = sVersion.replace(/\s/g, "");
 

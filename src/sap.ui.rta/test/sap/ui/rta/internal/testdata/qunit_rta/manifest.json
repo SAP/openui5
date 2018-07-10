@@ -8,7 +8,7 @@
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
-			"version": "1.0.0"
+			"version": "incorrect_version"
 		},
 		"ach": "CA-UI5-FL-RTA",
 		"dataSources": {
