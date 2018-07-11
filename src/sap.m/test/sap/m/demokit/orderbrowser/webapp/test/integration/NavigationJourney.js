@@ -149,7 +149,7 @@ sap.ui.define([
 	opaTest("Start the app with an invalid tab url I should be on the shipping tab", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartTheApp({
-			hash: "/Orders/7827/?tab=foo"
+			hash: "/Orders/7991/?tab=foo"
 		});
 		//Assertions
 		Then.onTheDetailPage.iShouldSeeTheShippingInfo();
