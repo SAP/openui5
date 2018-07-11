@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	OverlayRegistry,
 	ElementOverlay,
@@ -23,7 +24,8 @@ sap.ui.define([
 	ElementUtil,
 	deepEqual,
 	Log,
-	merge
+	merge,
+	jQuery
 ) {
 	"use strict";
 

@@ -7,14 +7,16 @@ sap.ui.define([
 	'sap/ui/rta/Utils',
 	'sap/ui/rta/command/CompositeCommand',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/Util'
+	'sap/ui/dt/Util',
+	"sap/ui/events/KeyCodes"
 ], function(
 	Plugin,
 	Utils,
 	CompositeCommand,
 	OverlayRegistry,
-	DtUtil
-){
+	DtUtil,
+	KeyCodes
+) {
 	"use strict";
 
 	/**
@@ -173,7 +175,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Remove.prototype._onKeyDown = function(oEvent) {
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.DELETE) {
+		if (oEvent.keyCode === KeyCodes.DELETE) {
 			oEvent.stopPropagation();
 			this.removeElement();
 		}

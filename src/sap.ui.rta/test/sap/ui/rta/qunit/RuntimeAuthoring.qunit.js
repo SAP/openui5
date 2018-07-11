@@ -29,6 +29,8 @@ sap.ui.require([
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/rta/appVariant/Feature',
+	'sap/base/Log',
+	"sap/base/util/UriParameters",
 	// should be last
 	'sap/ui/thirdparty/sinon-4'
 ],
@@ -58,6 +60,8 @@ function(
 	RTABaseCommand,
 	RtaQunitUtils,
 	RtaAppVariantFeature,
+	Log,
+	UriParameters,
 	sinon
 ) {
 	"use strict";
@@ -772,7 +776,7 @@ function(
 			assert.equal(mDesignTimeMetadata2.someKeyToOverwriteInScopes, "scoped", "Scope can overwrite keys");
 			assert.equal(mDesignTimeMetadata2.some.deep, null, "Scope can delete keys");
 
-			var oErrorStub = sandbox.stub(jQuery.sap.log, "error");
+			var oErrorStub = sandbox.stub(Log, "error");
 			this.oRta.setMetadataScope("some other scope");
 			assert.equal(this.oRta.getMetadataScope(), "someScope", "then the scope in RTA didn't change");
 			assert.equal(oErrorStub.callCount, 1, "and an error was logged");
@@ -821,7 +825,7 @@ function(
 		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.reject()", function(assert) {
 			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.reject(new Error("Error")));
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
-			var oShowErrorStub = sandbox.stub(jQuery.sap.log, "error");
+			var oShowErrorStub = sandbox.stub(Log, "error");
 			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
@@ -848,7 +852,7 @@ function(
 					+ oTextResources.getText("MSG_ERROR_REASON", "Error text 1\nError text 2\n");
 			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.reject(oError));
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
-			var oShowErrorStub = sandbox.stub(jQuery.sap.log, "error");
+			var oShowErrorStub = sandbox.stub(Log, "error");
 			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
@@ -1031,15 +1035,12 @@ function(
 		QUnit.test("when the uri-parameter sap-ui-layer is set,", function(assert) {
 			assert.equal(this.oRta.getLayer(), "CUSTOMER", "then the layer is the default 'CUSTOMER'");
 
-			sandbox.stub(jQuery.sap, "getUriParameters").returns(
-				{
-					mParams: {
-						"sap-ui-layer": ["VENDOR"]
-				}
-			});
+			var oStub = sandbox.stub(UriParameters.prototype, "get");
+			oStub.withArgs("sap-ui-layer").returns("VENDOR");
 
 			this.oRta.setFlexSettings(this.oRta.getFlexSettings());
 			assert.equal(this.oRta.getLayer("CUSTOMER"), "VENDOR", "then the function reacts to the URL parameter and sets the layer to VENDOR");
+			oStub.restore();
 		});
 
 		QUnit.test("when setFlexSettings is called", function(assert) {

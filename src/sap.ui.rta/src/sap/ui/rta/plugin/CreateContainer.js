@@ -5,12 +5,13 @@
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/fl/Utils',
-	'sap/ui/rta/Utils'
-
+	'sap/ui/rta/Utils',
+	"sap/base/util/uid"
 ], function(
 	Plugin,
 	FlexUtils,
-	RtaUtils
+	RtaUtils,
+	uid
 ) {
 	"use strict";
 
@@ -172,7 +173,7 @@ sap.ui.define([
 			oSiblingElement = oOverlay.getElement();
 		}
 
-		var sNewControlID = oView.createId(jQuery.sap.uid());
+		var sNewControlID = oView.createId(uid());
 
 		var fnGetIndex = oDesignTimeMetadata.getAggregation(vAction.aggregation).getIndex;
 		var iIndex = this._determineIndex(oParent, oSiblingElement, vAction.aggregation, fnGetIndex);

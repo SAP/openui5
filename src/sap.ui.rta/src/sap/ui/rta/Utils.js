@@ -7,14 +7,16 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/fl/registry/Settings',
-	'sap/m/MessageBox'
+	'sap/m/MessageBox',
+	"sap/base/Log"
 ],
 function(
 	jQuery,
 	FlexUtils,
 	OverlayUtil,
 	Settings,
-	MessageBox
+	MessageBox,
+	Log
 ) {
 	"use strict";
 
@@ -92,6 +94,7 @@ function(
 	Utils.isServiceUpToDate = function(oControl) {
 		return this.isExtensibilityEnabledInSystem(oControl).then(function(bEnabled) {
 			if (bEnabled) {
+				//TODO: global jquery call found
 				jQuery.sap.require("sap.ui.fl.fieldExt.Access");
 				var oModel = oControl.getModel();
 				if (oModel) {
@@ -123,6 +126,7 @@ function(
 				var sServiceUrl = oControl.getModel().sServiceUrl;
 				var sEntityType = this.getBoundEntityType(oControl).name;
 				try {
+					//TODO: global jquery call found
 					jQuery.sap.require("sap.ui.fl.fieldExt.Access");
 					var oJQueryDeferred = sap.ui.fl.fieldExt.Access.getBusinessContexts(sServiceUrl,
 							sEntityType);
@@ -141,14 +145,14 @@ function(
 						if (oError) {
 							if (jQuery.isArray(oError.errorMessages)) {
 								for (var i = 0; i < oError.errorMessages.length; i++) {
-									jQuery.sap.log.error(oError.errorMessages[i].text);
+									Log.error(oError.errorMessages[i].text);
 								}
 							}
 						}
 						return false;
 					});
 				} catch (oError) {
-					jQuery.sap.log
+					Log
 							.error("exception occured in sap.ui.fl.fieldExt.Access.getBusinessContexts", oError);
 					return false;
 				}

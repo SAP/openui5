@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/plugin/RenameHandler'
+	'sap/ui/rta/plugin/RenameHandler',
+	"sap/base/Log"
 ], function(
-	jQuery,
 	Plugin,
-	RenameHandler
+	RenameHandler,
+	Log
 ) {
 	"use strict";
 
@@ -208,7 +208,7 @@ sap.ui.define([
 					"command" : oRenameCommand
 				});
 			} catch (oError) {
-				jQuery.sap.log.error("Error during rename : ", oError);
+				Log.error("Error during rename : ", oError);
 			}
 		}
 	};

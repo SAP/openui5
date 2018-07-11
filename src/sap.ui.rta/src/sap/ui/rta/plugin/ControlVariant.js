@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/fl/variants/VariantManagement',
 	'sap/ui/base/ManagedObject',
 	'sap/m/delegate/ValueStateMessage',
-	'sap/ui/rta/command/CompositeCommand'
+	'sap/ui/rta/command/CompositeCommand',
+	"sap/base/Log"
 ], function(
 	Plugin,
 	RenameHandler,
@@ -27,7 +28,8 @@ sap.ui.define([
 	VariantManagement,
 	ManagedObject,
 	ValueStateMessage,
-	CompositeCommand
+	CompositeCommand,
+	Log
 ) {
 	"use strict";
 
@@ -473,7 +475,7 @@ sap.ui.define([
 			});
 			return oCommand;
 		} else {
-			jQuery.sap.log.info("Control Variant title unchanged");
+			Log.info("Control Variant title unchanged");
 		}
 
 
@@ -591,7 +593,7 @@ sap.ui.define([
 				newText: mPropertyBag.text
 			}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference);
 		} catch (oError) {
-			jQuery.sap.log.error("Error during rename : ", oError);
+			Log.error("Error during rename : ", oError);
 		}
 		return oSetTitleCommand;
 	};

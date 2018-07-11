@@ -3,15 +3,16 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/plugin/Plugin",
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils',
 	'sap/ui/core/StashedControlSupport',
-	'sap/ui/dt/ElementDesignTimeMetadata'
-], function (
+	'sap/ui/dt/ElementDesignTimeMetadata',
+	"sap/base/Log"
+], function(
 	jQuery,
 	Plugin,
 	ElementUtil,
@@ -19,8 +20,9 @@ sap.ui.define([
 	Utils,
 	FlUtils,
 	StashedControlSupport,
-	ElementDesignTimeMetadata
-){
+	ElementDesignTimeMetadata,
+	Log
+) {
 	"use strict";
 
 	function _getParents(bSibling, oOverlay) {
@@ -352,7 +354,7 @@ sap.ui.define([
 			if (aAggregationNames.length === 0){
 				return {};
 			} else if (aAggregationNames.length > 1){
-				jQuery.sap.log.error("reveal or addODataProperty action defined for more than 1 aggregation, that is not yet possible");
+				Log.error("reveal or addODataProperty action defined for more than 1 aggregation, that is not yet possible");
 			}
 			var sAggregationName = aAggregationNames[0];
 			mOverall[sAggregationName].aggregation = sAggregationName;
@@ -418,7 +420,7 @@ sap.ui.define([
 				if (oError instanceof Error){
 					throw oError;
 				} else {
-					jQuery.sap.log.info("Service not up to date, skipping add dialog", "sap.ui.rta");
+					Log.info("Service not up to date, skipping add dialog", "sap.ui.rta");
 				}
 			});
 		},
@@ -474,7 +476,7 @@ sap.ui.define([
 							if (oCmd) {
 								oCompositeCommand.addCommand(oCmd);
 							} else {
-								jQuery.sap.log.warning("No move action configured for " + mParents.parent.getMetadata().getName() + ", aggregation: " + mActions.aggregation , "sap.ui.rta");
+								Log.warning("No move action configured for " + mParents.parent.getMetadata().getName() + ", aggregation: " + mActions.aggregation , "sap.ui.rta");
 							}
 
 							break;
@@ -495,7 +497,7 @@ sap.ui.define([
 							oCompositeCommand.addCommand(oCmd);
 							break;
 						default:
-							jQuery.sap.log.error("Can't create command for untreated element.type " + oSelectedElement.type);
+							Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
 					}
 				}, this);
 				this.fireElementModified({

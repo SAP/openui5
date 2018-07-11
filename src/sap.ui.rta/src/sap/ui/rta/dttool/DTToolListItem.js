@@ -4,8 +4,11 @@
 // Provides control sap.ui.rta.dttool.DTToolListItem.
 /* globals sap */
 sap.ui.define([
-	'jquery.sap.global', 'sap/m/InputListItem', 'sap/m/InputListItemRenderer'
-], function (jQuery, InputListItem, InputListItemRenderer) {
+	"sap/ui/thirdparty/jquery",
+	'sap/m/InputListItem',
+	'sap/m/InputListItemRenderer',
+	"sap/base/util/ObjectPath"
+], function(jQuery, InputListItem, InputListItemRenderer, ObjectPath) {
 	"use strict";
 
 	/**
@@ -114,9 +117,9 @@ sap.ui.define([
 					]
 				}));
 
-			} else if (jQuery.isPlainObject( jQuery.sap.getObject(sType))) {
+			} else if (jQuery.isPlainObject( ObjectPath.get(sType || ""))) {
 
-				var oEnum = jQuery.sap.getObject(sType);
+				var oEnum = ObjectPath.get(sType || "");
 
 				Object.keys(oEnum).forEach(function (sKey) {
 					aItems.push(new sap.ui.core.ListItem({

@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
 	'sap/m/Label',
 	'sap/m/LabelDesign',
@@ -24,8 +23,7 @@ sap.ui.define([
 	'sap/ui/dt/ElementUtil',
 	'sap/m/VBox',
 	'sap/ui/rta/Utils'
-], function (
-	jQuery,
+], function(
 	ManagedObject,
 	Label,
 	LabelDesign,

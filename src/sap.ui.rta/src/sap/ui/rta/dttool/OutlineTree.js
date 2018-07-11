@@ -4,8 +4,12 @@
 // Provides control sap.ui.rta.dttool.OutlineTree.
 /* globals sap */
 sap.ui.define([
-	'jquery.sap.global', 'sap/m/Tree', 'sap/m/TreeRenderer'
-], function (jQuery, Tree, TreeRenderer) {
+	'sap/m/Tree',
+	'sap/m/TreeRenderer'
+], function(
+	Tree,
+	TreeRenderer
+) {
 	"use strict";
 
 	/**

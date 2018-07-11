@@ -4,50 +4,55 @@
 
 // Provides class sap.ui.rta.Main.
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/base/ManagedObject",
-		"sap/ui/rta/toolbar/Fiori",
-		"sap/ui/rta/toolbar/Standalone",
-		"sap/ui/rta/toolbar/Personalization",
-		"sap/ui/dt/DesignTime",
-		"sap/ui/dt/Overlay",
-		"sap/ui/rta/command/Stack",
-		"sap/ui/rta/command/CommandFactory",
-		"sap/ui/rta/command/LREPSerializer",
-		"sap/ui/rta/plugin/Rename",
-		"sap/ui/rta/plugin/DragDrop",
-		"sap/ui/rta/plugin/RTAElementMover",
-		"sap/ui/rta/plugin/CutPaste",
-		"sap/ui/rta/plugin/Remove",
-		"sap/ui/rta/plugin/CreateContainer",
-		"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-		"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
-		"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-		"sap/ui/rta/plugin/Combine",
-		"sap/ui/rta/plugin/Split",
-		"sap/ui/rta/plugin/Selection",
-		"sap/ui/rta/plugin/Settings",
-		"sap/ui/rta/plugin/ControlVariant",
-		"sap/ui/dt/plugin/ContextMenu",
-		"sap/ui/dt/plugin/TabHandling",
-		"sap/ui/fl/FlexControllerFactory",
-		"sap/ui/rta/Utils",
-		"sap/ui/dt/Util",
-		"sap/ui/fl/Utils",
-		"sap/ui/fl/registry/Settings",
-		"sap/m/MessageBox",
-		"sap/m/MessageToast",
-		"sap/ui/rta/util/PopupManager",
-		"sap/ui/core/BusyIndicator",
-		"sap/ui/dt/DOMUtil",
-		"sap/ui/rta/util/StylesLoader",
-		"sap/ui/rta/util/UrlParser",
-		"sap/ui/rta/appVariant/Feature",
-		"sap/ui/Device",
-		"sap/ui/rta/service/index",
-		"sap/ui/rta/util/ServiceEventBus",
-		"sap/ui/dt/OverlayRegistry"
-	],
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/rta/toolbar/Fiori",
+	"sap/ui/rta/toolbar/Standalone",
+	"sap/ui/rta/toolbar/Personalization",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/Overlay",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/LREPSerializer",
+	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/DragDrop",
+	"sap/ui/rta/plugin/RTAElementMover",
+	"sap/ui/rta/plugin/CutPaste",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/plugin/CreateContainer",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
+	"sap/ui/rta/plugin/Combine",
+	"sap/ui/rta/plugin/Split",
+	"sap/ui/rta/plugin/Selection",
+	"sap/ui/rta/plugin/Settings",
+	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/dt/plugin/ContextMenu",
+	"sap/ui/dt/plugin/TabHandling",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast",
+	"sap/ui/rta/util/PopupManager",
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/rta/util/StylesLoader",
+	"sap/ui/rta/util/UrlParser",
+	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/Device",
+	"sap/ui/rta/service/index",
+	"sap/ui/rta/util/ServiceEventBus",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/base/strings/capitalize",
+	"sap/base/util/UriParameters",
+	"sap/ui/performance/Measurement",
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"
+],
 	function(
 		jQuery,
 		ManagedObject,
@@ -91,7 +96,12 @@ sap.ui.define([
 		Device,
 		ServicesIndex,
 		ServiceEventBus,
-		OverlayRegistry
+		OverlayRegistry,
+		capitalize,
+		UriParameters,
+		Measurement,
+		Log,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -365,7 +375,7 @@ sap.ui.define([
 		bCreateGetter = typeof bCreateGetter === 'undefined' ? true : !!bCreateGetter;
 		if (!(sName in this._dependents)) {
 			if (sName && bCreateGetter) {
-				this['get' + jQuery.sap.charToUpperCase(sName, 0)] = this.getDependent.bind(this, sName);
+				this['get' + capitalize(sName, 0)] = this.getDependent.bind(this, sName);
 			}
 			this._dependents[sName || oObject.getId()] = oObject;
 		} else {
@@ -452,13 +462,13 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
-		var oUriParams = jQuery.sap.getUriParameters();
-		var aUriLayer = oUriParams.mParams["sap-ui-layer"];
+		var oUriParams = new UriParameters(window.location.href);
+		var oUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
 
-		if (aUriLayer && aUriLayer.length > 0) {
-			mFlexSettings.layer = aUriLayer[0];
+		if (oUriLayer) {
+			mFlexSettings.layer = oUriLayer;
 		}
 
 		// TODO: this will lead to incorrect information if this function is first called with scenario or baseId and then called again without.
@@ -555,7 +565,7 @@ sap.ui.define([
 				}, this);
 
 				oDesignTimePromise = new Promise(function (fnResolve, fnReject) {
-					jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
+					Measurement.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
 					this._oDesignTime = new DesignTime({
 						scope: this.getMetadataScope(),
 						plugins: aPlugins
@@ -576,7 +586,7 @@ sap.ui.define([
 
 					this._oDesignTime.attachEventOnce("synced", function() {
 						fnResolve();
-						jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
+						Measurement.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
 					}, this);
 
 					this._oDesignTime.attachEventOnce("syncFailed", function(oEvent) {
@@ -673,7 +683,7 @@ sap.ui.define([
 			sErrorMessage = vError.stack || vError.message || vError.status || vError;
 		}
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		jQuery.sap.log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
+		Log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
 		MessageBox.error(sMsg, {
@@ -831,7 +841,7 @@ sap.ui.define([
 			// OSX: replace CTRL with CMD
 			var bCtrlKey = bMacintosh ? oEvent.metaKey : oEvent.ctrlKey;
 			if (
-				oEvent.keyCode === jQuery.sap.KeyCodes.Z
+				oEvent.keyCode === KeyCodes.Z
 				&& oEvent.shiftKey === false
 				&& oEvent.altKey === false
 				&& bCtrlKey === true
@@ -840,11 +850,11 @@ sap.ui.define([
 			} else if (
 				(( // OSX: CMD+SHIFT+Z
 					bMacintosh
-					&& oEvent.keyCode === jQuery.sap.KeyCodes.Z
+					&& oEvent.keyCode === KeyCodes.Z
 					&& oEvent.shiftKey === true
 				) || ( // Others: CTRL+Y
 					!bMacintosh
-					&& oEvent.keyCode === jQuery.sap.KeyCodes.Y
+					&& oEvent.keyCode === KeyCodes.Y
 					&& oEvent.shiftKey === false
 				))
 				&& oEvent.altKey === false
@@ -1468,7 +1478,7 @@ sap.ui.define([
 		// We do not support scope change after creation of DesignTime instance
 		// as this requires reinitialization of all overlays
 		if (this._oDesignTime) {
-			jQuery.sap.log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
+			Log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
 			return;
 		}
 

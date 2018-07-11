@@ -6,12 +6,14 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
-	'sap/ui/fl/Utils'
+	'sap/ui/fl/Utils',
+	"sap/base/util/uid"
 ], function(
 	Plugin,
 	OverlayRegistry,
 	Utils,
-	FlexUtils
+	FlexUtils,
+	uid
 ) {
 	"use strict";
 
@@ -123,7 +125,7 @@ sap.ui.define([
 		var aNewElementIds = [];
 		// Split needs iFieldsLength controls, only one is available so far
 		for (var i = 0; i < iFieldsLength - 1; i++){
-			aNewElementIds.push(oView.createId(jQuery.sap.uid()));
+			aNewElementIds.push(oView.createId(uid()));
 		}
 
 		var oSplitAction = this.getAction(oElementOverlay);
