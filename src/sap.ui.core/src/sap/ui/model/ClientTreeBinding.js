@@ -46,7 +46,6 @@ sap.ui.define([
 			this.filterInfo = {};
 			this.filterInfo.aFilteredContexts = [];
 			this.filterInfo.oParentContext = {};
-			this.oCombinedFilter = null;
 
 			if (aApplicationFilters) {
 				this.oModel.checkFilterOperation(aApplicationFilters);
@@ -230,7 +229,7 @@ sap.ui.define([
 		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
-			if (this.oCombinedFilter && !this.bIsFiltering) {
+			if (this.aAllFilters && !this.bIsFiltering) {
 				if (jQuery.inArray(oNodeContext, this.filterInfo.aFilteredContexts) != -1) {
 					aContexts.push(oNodeContext);
 				}
@@ -278,8 +277,11 @@ sap.ui.define([
 		}
 
 
-		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
-		if (this.oCombinedFilter) {
+		aFilters = this.aFilters.concat(this.aApplicationFilters);
+		if (aFilters.length == 0) {
+			this.aAllFilters = null;
+		} else {
+			this.aAllFilters = aFilters;
 			this.applyFilter();
 		}
 		this._mLengthsCache = {};
@@ -312,7 +314,7 @@ sap.ui.define([
 		var that = this,
 			aFilteredContexts = [];
 
-		if (!this.oCombinedFilter) {
+		if (jQuery.isEmptyObject(this.aAllFilters)) {
 			return;
 		}
 
@@ -335,7 +337,7 @@ sap.ui.define([
 				that._applyFilterRecursive(oContext);
 			});
 
-			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.oCombinedFilter, function (oContext, sPath) {
+			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.aAllFilters, function (oContext, sPath) {
 				return that.oModel.getProperty(sPath, oContext);
 			});
 

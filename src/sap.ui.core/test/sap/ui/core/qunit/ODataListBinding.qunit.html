@@ -417,7 +417,7 @@
 			assert.equal(aFilteredContexts.length, 5, "ControlFilter AND AppFilter, content length");
 			assert.equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chef Anton's Cajun Seasoning", "ControlFilter AND AppFilter, filtered content");
 			//check if the braces are set correct
-			assert.equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=substringof(%27o%27,ProductName)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
 
 			oBinding.detachChange(handler1);
 
@@ -435,7 +435,7 @@
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			assert.equal(aFilteredContexts.length, 6, "Changing the Control-Filters, content length");
 			assert.equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "ControlFilter AND AppFilter, filtered content");
-			assert.equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=UnitPrice%20le%2030.000m%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
+			assert.equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)", "Control and Application Filter, Braces when ANDed");
 
 			oBinding.detachChange(handler2);
 
@@ -484,6 +484,16 @@
 		oBinding.sFilterParams = "$filter=foo%20and%20bar";
 		oBinding.filter([]);
 		assert.strictEqual(oBinding.sFilterParams, undefined, "filter([]) - Filter-Caching should be reset to 'undefined'");
+
+		//test explicit call to createFilterParams with empty arrays
+		oBinding.sFilterParams = "$filter=foo%20and%20bar";
+		oBinding.createFilterParams([],[]);
+		assert.strictEqual(oBinding.sFilterParams, undefined, "createFilterParams([],[]) - Filte-Cache should be reset to 'undefined'");
+
+		//test explicit call to createFilterParams with no parameters
+		oBinding.sFilterParams = "$filter=foo%20and%20bar";
+		oBinding.createFilterParams();
+		assert.strictEqual(oBinding.sFilterParams, undefined, "createFilterParams() - Filte-Cache should be reset to 'undefined'");
 
 	});
 
