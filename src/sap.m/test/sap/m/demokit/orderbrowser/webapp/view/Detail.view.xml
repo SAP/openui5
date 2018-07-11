@@ -43,6 +43,7 @@
 							:${i18n>commonItemNotYetShipped} }"/>
 				</l:VerticalLayout>
 				<l:VerticalLayout>
+					<Label text="{i18n>priceText}"/>
 					<ObjectNumber
 						number="{
 							parts: [
