@@ -283,7 +283,7 @@ sap.ui.require([
 		var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 		oContextMenuControl.attachEventOnce("Opened", function() {
 			var oContextMenuButton = oContextMenuControl.getButtons()[1];
-			assert.equal(oContextMenuButton.getText(), "Add Field", "the the add field action button is available in the menu");
+			assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
 			oContextMenuButton.firePress();
 			sap.ui.getCore().applyChanges();
 		});
@@ -403,7 +403,7 @@ sap.ui.require([
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				oContextMenuControl.attachOpened(function() {
 					var oContextMenuButton = oContextMenuControl.getButtons()[1];
-					assert.equal(oContextMenuButton.getText(), "Add Field", "the the add field action button is available in the menu");
+					assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
 					oContextMenuButton.firePress();
 					sap.ui.getCore().applyChanges();
 				});
