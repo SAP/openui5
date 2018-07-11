@@ -545,10 +545,18 @@ sap.ui.define([
 			this.aContexts[-1].destroy();
 		}
 		this.oModel.bindingDestroyed(this);
+		this.removeReadGroupLock();
+		this.mAggregatedQueryOptions = undefined;
+		this.oAggregation = undefined;
+		this.aApplicationFilters = undefined;
 		this.oCachePromise = undefined;
 		this.oContext = undefined;
 		this.aContexts = undefined;
+		this.aFilters = undefined;
 		this.oHeaderContext = undefined;
+		this.mPreviousContextsByPath = undefined;
+		this.aPreviousData = undefined;
+		this.aSorters = undefined;
 		ListBinding.prototype.destroy.apply(this);
 	};
 

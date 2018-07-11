@@ -2339,17 +2339,14 @@ sap.ui.require([
 			oBinding.destroy();
 		});
 
+		assert.strictEqual(oBinding.mAggregatedQueryOptions, undefined);
+		assert.strictEqual(oBinding.oAggregation, undefined);
+		assert.strictEqual(oBinding.aApplicationFilters, undefined);
 		assert.strictEqual(oBinding.aContexts, undefined);
-
-//		assert.strictEqual(oBinding.oAggregation, undefined);
-//		assert.strictEqual(oBinding.mAggregatedQueryOptions, undefined);
-//		assert.strictEqual(oBinding.aApplicationFilters, undefined);
-//		assert.strictEqual(oBinding.aChildCanUseCachePromises, undefined);
-//		assert.strictEqual(oBinding.aFilters, undefined);
-//		assert.strictEqual(oBinding.oModel, undefined);
-//		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
-//		assert.strictEqual(oBinding.aPreviousData, undefined);
-//		assert.strictEqual(oBinding.aSorters, undefined);
+		assert.strictEqual(oBinding.aFilters, undefined);
+		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
+		assert.strictEqual(oBinding.aPreviousData, undefined);
+		assert.strictEqual(oBinding.aSorters, undefined);
 
 		oBinding = this.bindList("relative");
 		oBinding.setContext(oContext);
@@ -2361,15 +2358,16 @@ sap.ui.require([
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
 
+		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
+
 		// code under test
 		oBinding.destroy();
 
 		assert.strictEqual(oBinding.oCachePromise, undefined);
 		assert.strictEqual(oBinding.oContext, undefined,
 			"context removed as in ODPropertyBinding#destroy");
-//		assert.strictEqual(oBinding.oDiff, undefined);
+		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.strictEqual(oBinding.oHeaderContext, undefined);
-//		assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
 
 		oBinding = this.bindList("/absolute", oContext);
 		oBinding.aContexts = [oBindingContext];

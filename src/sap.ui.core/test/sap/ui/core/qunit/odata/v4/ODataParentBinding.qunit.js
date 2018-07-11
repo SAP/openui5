@@ -2008,13 +2008,21 @@ sap.ui.require([
 			var oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : oFixture.aggregated
 				}),
-				mCurrentQueryOptions = oFixture.current;
+				fnDestroy = function () {this.mAggregatedQueryOptions = undefined;};
+
+			oBinding.destroy = fnDestroy;
 
 			// code under test
-			assert.deepEqual(oBinding.updateAggregatedQueryOptions(mCurrentQueryOptions),
+			assert.deepEqual(oBinding.updateAggregatedQueryOptions(oFixture.current),
 				undefined);
 
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.result);
+
+			// code under test
+			oBinding.destroy();
+			oBinding.updateAggregatedQueryOptions(oFixture.current);
+
+			assert.deepEqual(oBinding.mAggregatedQueryOptions, undefined);
 		});
 	});
 
@@ -2200,7 +2208,7 @@ sap.ui.require([
 
 			assert.strictEqual(oBinding.oReadGroupLock, oGroupLock1);
 
-			this.mock(oGroupLock1).expects("unlock").withExactArgs(true);
+			oBindingMock.expects("removeReadGroupLock").withExactArgs();
 			oBindingMock.expects("lockGroup").withExactArgs("groupId", bLocked)
 				.returns(oGroupLock2);
 
@@ -2307,6 +2315,26 @@ sap.ui.require([
 		assert.strictEqual(oBinding.oReadGroupLock, oGroupLock2);
 	});
 
+	//*********************************************************************************************
+	QUnit.test("removeReadGroupLock", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oModel : {
+					lockGroup : function () {}
+				}
+			}),
+			oGroupLock = new _GroupLock();
+
+		oBinding.oReadGroupLock = oGroupLock;
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+
+		// code under test
+		oBinding.removeReadGroupLock();
+
+		assert.strictEqual(oBinding.oReadGroupLock, undefined);
+
+		// code under test
+		oBinding.removeReadGroupLock();
+	});
 	//TODO Fix issue with ODataModel.integration.qunit
 	//  "suspend/resume: list binding with nested context binding, only context binding is adapted"
 	//TODO ODLB#resumeInternal: checkUpdate on dependent bindings of header context after change

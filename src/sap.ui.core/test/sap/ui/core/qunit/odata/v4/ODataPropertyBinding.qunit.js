@@ -1536,6 +1536,7 @@ sap.ui.require([
 				this.oCachePromise = SyncPromise.resolve(oPromise);
 			});
 		oPropertyBinding = this.oModel.bindProperty("Name", oContext);
+		oPropertyBinding.vValue = "foo";
 		this.mock(oPropertyBinding).expects("deregisterChange").withExactArgs();
 		this.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
 		this.mock(this.oModel).expects("bindingDestroyed")
@@ -1546,6 +1547,8 @@ sap.ui.require([
 
 		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
 		assert.strictEqual(oPropertyBinding.oContext, undefined);
+		assert.strictEqual(oPropertyBinding.vValue, undefined);
+		assert.strictEqual(oPropertyBinding.mQueryOptions, undefined);
 
 		return oPromise;
 	});
