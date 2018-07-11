@@ -102,7 +102,10 @@ sap.ui.define([
 			_onObjectMatched : function (oEvent) {
 				var oArguments = oEvent.getParameter("arguments");
 				this._sObjectId = oArguments.objectId;
-				this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+				// Don't show two columns when in full screen mode
+				if (this.getModel("appView").getProperty("/layout") !== "MidColumnFullScreen") {
+					this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+				}
 				this.getModel().metadataLoaded().then( function() {
 					var sObjectPath = this.getModel().createKey("Orders", {
 						OrderID :  this._sObjectId
