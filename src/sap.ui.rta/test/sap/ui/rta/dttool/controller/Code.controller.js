@@ -228,23 +228,22 @@ sap.ui.define([
 		onUpdateDTFile : function (oEvent) {
 
 			if (oEvent) {
-
 				var sName = oEvent.data.name,
 					sDT = oEvent.data.module;
 
 				if (sName){
-                    var sDTFileName = sName.match(/^.*\.(.*?)$/)[1] + ".designtime.js";
-                }
+					var sDTFileName = sName.match(/^.*\.(.*?)$/)[1] + ".designtime.js";
+				}
 
 				var fnNoDT = function () {
 
-                    var sDisplayName = "",
-                        sLib = "";
+					var sDisplayName = "",
+						sLib = "";
 
-                    if (sName) {
-                        sDisplayName = sName.match(/^.*\.(.*?)$/)[1];
-                        sLib = sName.replace("." + sDisplayName, "").replace(/\./g, "/");
-                    }
+					if (sName) {
+						sDisplayName = sName.match(/^.*\.(.*?)$/)[1];
+						sLib = sName.replace("." + sDisplayName, "").replace(/\./g, "/");
+					}
 
 					var sFakeDTFile = "/*!\n ${copyright}\n*/\n\n// Provides the Design Time Metadata for the " + sName
 						+ " control\nsap.ui.define([],\n\tfunction () {\n\t\t'use strict';\n\n\t\treturn {\n\t\t\t//palette: {\n\t\t\t//\tgroup: 'CUSTOM',\n\t\t\t//\ticons: {\n\t\t\t//\t\tsvg : '"
@@ -313,9 +312,24 @@ sap.ui.define([
 			var oCodeEditor = this._getCodeEditor(),
 				oAceInstance = oCodeEditor._getEditorInstance();
 
-			var sType = sFileName.match(/.*\.(.*?)$/)[1];
+			oAceInstance.setTheme("ace/theme/github");
+			oAceInstance.getSession().setMode("ace/mode/javascript");
+			oAceInstance.getSession().setUseWrapMode(true);
+			oAceInstance.getSession().setNewLineMode("windows");
+			oAceInstance.setOption('minLines', 40);
+			oAceInstance.setAutoScrollEditorIntoView(false);
+			oAceInstance.setOption('maxLines', 40);
+			oAceInstance.setShowPrintMargin(false);
+			oAceInstance.renderer.setShowGutter(true);
+			oAceInstance.$blockScrolling = Infinity;
 
-			sType = sType.replace("js", "javascript");
+			// oAceInstance.session.on('change', function(delta) {
+			// //delta is change maybe use for updates
+			// });
+
+
+			var sType = sFileName.match(/.*\.(.*?)$/)[1];
+				sType = sType.replace("js", "javascript");
 
 			// set the <code>CodeEditor</code> new code base and its type - xml, js, json or css.
 			oCodeEditor.setValue(this._getCode(sFileName));
@@ -365,8 +379,7 @@ sap.ui.define([
 			}
 
 			try {
-				// var sText = oEvent.getSource()._getEditorInstance().getSession().getDocument().$lines.join("\n");
-                var sText = oEvent.getSource().getValue();
+				var sText = oEvent.getSource().getCurrentValue();
 
 				this.mEdited[sName] = sText;
 
@@ -378,17 +391,17 @@ sap.ui.define([
 				}.bind(this));
 
 				// TODO: check if really nessecary
-                /*eslint-disable no-new-func */
-                var fnDesigntime = new Function(sText);
-                /*eslint-enable no-new-func */
+				/*eslint-disable no-new-func */
+				var fnDesigntime = new Function(sText);
+				/*eslint-enable no-new-func */
 
-                var fnSapUiDefine = sap.ui.define;
-                var oResult = null;
-                sap.ui.define = function(s, fnFunction) {
-                    oResult = fnFunction();
-                };
-                fnDesigntime();
-                sap.ui.define = fnSapUiDefine;
+				var fnSapUiDefine = sap.ui.define;
+				var oResult = null;
+				sap.ui.define = function(s, fnFunction) {
+					oResult = fnFunction();
+				};
+				fnDesigntime();
+				sap.ui.define = fnSapUiDefine;
 
 				if (oResult) {
 

@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.rta.dttool.controller.App"
 	class="sapUiSizeCozy"
+	height="100%"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
@@ -8,8 +9,8 @@
 	xmlns:dt="sap.ui.rta.dttool"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	displayBlock="true">
 	<App id="app">
 		<pages>
 			<Page id="page">
@@ -115,7 +116,7 @@
 							</List>
 							</Page>
 
-							<l:layoutData><l:SplitterLayoutData size="20%" minSize="200px" /></l:layoutData>
+							<l:layoutData><l:SplitterLayoutData size="25%" minSize="200px" /></l:layoutData>
 						</l:Splitter>
 						<l:Splitter orientation="Vertical">
 							<Page>
@@ -144,9 +145,9 @@
 								TODO make iFrame height responsive
 								-->
 								<html:IFrame
-										title="tester"
+										align="middle"
 										id="theIFrame"
-										frameborder="none"
+										frameborder="true"
 										border="0"
 										src="./preview.html?sap-ui-rta-minimenu=false"
 										height="100%" width="100%" style=""/>
@@ -179,13 +180,14 @@
 									propertyName="{properties>name}"
 									defaultValue="{properties>defaultValue}"
 									value="{properties>currentValue}"
+									class="sapMTitleStyleAuto"
 									type="{= ${properties>type} ? ${properties>type} : 'string' }"
 									change="onPropertyChange"
 									visible="{= ${properties>ignore} ? false : true}"/>
 							</items>
 
 						</List>
-							<layoutData><l:SplitterLayoutData size="20%" minSize="200px" /></layoutData>
+							<layoutData><l:SplitterLayoutData size="25%" minSize="200px" /></layoutData>
 						</Page>
 					</l:Splitter>
 				</content>

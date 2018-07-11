@@ -4,7 +4,6 @@
 	"sap.app": {
 		"id": "sap.ui.rta.dttool",
 		"type": "application",
-		"title": "DT Tool",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}

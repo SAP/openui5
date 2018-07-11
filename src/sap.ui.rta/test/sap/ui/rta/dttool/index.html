@@ -1,57 +1,45 @@
 <!doctype html>
-<html>
-
-<head>
-	<title>DT Tool</title>
-	<script
+    <html>
+        <head>
+            <title>DT Tool</title>
+            <script
             id="sap-ui-bootstrap"
             src="../../../../../resources/sap-ui-core.js"
-
             data-sap-ui-theme="sap_belize"
             data-sap-ui-libs="sap.m,sap.ui.codeeditor"
             data-sap-ui-compatVersion="edge"
             data-sap-ui-preload="async"
             data-sap-ui-resourceroots='{
-                "sap.ui.rta.dttool": "./",
-                "sap.ui.rta.dttool.OutlineTree": "./../../../../../resources/sap/ui/rta/dttool/OutlineTree",
-                "sap.ui.rta.dttool.DTToolListItem": "./../../../../../resources/sap/ui/rta/dttool/DTToolListItem",
-                "sap.m.sample": "./../../../../sap/m/demokit/sample/",
-                "sap.ui.layout.form": "./../../../../sap/m/demokit/sample/",
-                "sap.ui.demo.mock": "./../../../../../test-resources/sap/ui/documentation/sdk/"
+            "sap.ui.rta.dttool": "./",
+            "sap.ui.rta.dttool.OutlineTree": "./../../../../../resources/sap/ui/rta/dttool/OutlineTree",
+            "sap.ui.rta.dttool.DTToolListItem": "./../../../../../resources/sap/ui/rta/dttool/DTToolListItem",
+            "sap.m.sample": "./../../../../sap/m/demokit/sample/",
+            "sap.ui.layout.form": "./../../../../sap/m/demokit/sample/",
+            "sap.ui.demo.mock": "./../../../../../test-resources/sap/ui/documentation/sdk/"
             }'>
+            </script>
+                <script>
+                sap.ui.getCore().attachInit(function () {
+                    var oCompContainer = new sap.ui.core.ComponentContainer({
+                        height: "100%"
+                    });
+                    new sap.m.Shell({
+                        app: oCompContainer,
+                        showLogout:false,
+                        appWidthLimited:false
+                    }).placeAt("content");
 
-        /** Test DEV
-         * excluded from resourceroots to decrease reload time
-
-         */
-
-    </script>
-
-	<script>
-		sap.ui.getCore().attachInit(function () {
-
-            var oCompContainer = new sap.ui.core.ComponentContainer({
-            });
-
-            new sap.m.Shell({
-                app: oCompContainer,
-                showLogout:false,
-                appWidthLimited:false
-            }).placeAt("content");
-
-            var oComponent = sap.ui.component({
-                name: "sap.ui.rta.dttool",
-                manifestFirst: false,
-                async: true
-            }).then(function(oComponent){
-                oCompContainer.setComponent(oComponent);
-            });
-		});
-	</script>
-</head>
-
-<body class='sapUiBody'>
-	<div id="content"></div>
-</body>
-
+                    var oComponent = sap.ui.component({
+                        name: "sap.ui.rta.dttool",
+                        manifestFirst: true,
+                        async: true
+                    }).then(function(oComponent){
+                        oCompContainer.setComponent(oComponent);
+                    });
+                });
+            </script>
+        </head>
+        <body class='sapUiBody'>
+            <div id="content"></div>
+        </body>
 </html>

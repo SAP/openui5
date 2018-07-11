@@ -42,8 +42,6 @@ sap.ui.define([
 			return "";
 		},
 
-
-
 		onInit : function () {
 			// 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288
 
@@ -61,70 +59,64 @@ sap.ui.define([
 
 			this.oPostMessageBus.subscribe("dtTool", "iFrameReady", this.onIFrameReady, this)
 				.subscribe("dtTool", "RTAstarted", this.onRTAstarted, this)
+				.subscribe("dtTool", "newRTA", this.onIFrameReady, this)
 				.subscribe("dtTool", "selectOverlayInOutline", this.onSelectOverlayInOutline, this)
 				.subscribe("dtTool", "updatePropertyPanel", this.onUpdatePropertyPanel, this)
 				.subscribe("dtTool", "loadLibs", this.onLoadLibs, this)
 				.subscribe("dtTool", "updateOutline", this.onUpdateOutline, this)
 				.subscribe("dtTool", "dtData", this.onDTData, this);
 
-            var oModel = new JSONModel();
+			var oModel = new JSONModel();
+			var oView = this.getView();
 
-            var oView = this.getView();
-            oView.setModel(oModel, "outline");
-            oView.byId("Tree").setBusy(true);
+			oView.setModel(oModel, "outline");
+			oView.byId("Tree").setBusy(true);
 
-            var oPropModel = new JSONModel();
-            oView.setModel(oPropModel, "properties");
-            oView.byId("PropertyPanel").setBusy(true);
+			var oPropModel = new JSONModel();
+			oView.setModel(oPropModel, "properties");
+			oView.byId("PropertyPanel").setBusy(true);
 
-            var oPaletteModel = new JSONModel();
-            oView.setModel(oPaletteModel, "palette");
-            oView.byId("palette").setBusy(true);
+			var oPaletteModel = new JSONModel();
+			oView.setModel(oPaletteModel, "palette");
+			oView.byId("palette").setBusy(true);
 
-        },
-
+		},
 		/**
 		 * Called, when the iFrame is ready to receive Messages
 		 */
 		onIFrameReady : function () {
+			if (this.oRTAClient) {
+				this.oRTAClient.destroy();
+			}
 			this.oRTAClient = new RTAClient({
 				window: this.getIFrameWindow(),
 				origin: this.getIFrameWindow().location.origin
 			});
-
 		},
-
-
 		/**
 		 * called when a palette item is dragged
 		 * @param {object} oPaletteDomRef the dom ref of the dragged palette item
 		 * @param {sap.ui.base.Event} oEvent the dragstart event
 		 */
 		onDragStart : function (oPaletteDomRef, oEvent) {
-
 			oEvent.stopPropagation();
-
 			var oItemDom = window.document.activeElement;
 			if (oItemDom.tagName === "TR" && oItemDom.id) {
 				var oItem = sap.ui.getCore().byId(oItemDom.id);
-
 				if (oItem) {
 					var oContext = oItem.getBindingContext("palette");
 					var sClassName = oContext.getProperty("className");
 					if (oContext.getProperty("is")) {
 						sClassName = oContext.getProperty("is");
 					}
-
 					var oData = {
 						className : sClassName
 					};
-
 					if (oContext.getProperty("NOPEcreateTemplate")) {
 						jQuery.extend(oData, {
 							module : oContext.getProperty("createTemplate")
 						});
 					}
-
 					this.oPostMessageBus.publish({
 						target : this.getIFrameWindow(),
 						origin : this.getIFrameWindow().origin,
@@ -137,88 +129,73 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 *  Called when selecting an Item in the Switch
+		 *  Load Samples
+		 * */
+		//TODO Create Model with Sample Libaries
+		goToPage : function(oEvent) {
 
-        /**
-         *  Called when selecting an Item in the Switch
-         *  Load Samples
-         * */
-        //TODO Create Model with Sample Libaries
-        goToPage : function(oEvent) {
-
-            var oItemSelected = oEvent.getParameters().selectedItem;
-            var sItemSelected = oItemSelected.getText();
-
-
-            var oHashChanger = new sap.ui.core.routing.HashChanger();
-            oHashChanger.setHash("sample/" + sItemSelected);
-        },
-
-        /**
-         * Used to expand the Palette when you click on the Toolbar
-         * not only on the arrow
-         */
-        expandPallete : function(oEvent) {
-
-            var oCustomListItem = oEvent.getSource().getParent().getParent();
-            var oLib = this._getPaletteModel().getObject(oCustomListItem.getBindingContextPath());
-            var sLib = oLib.groupName;
-
-                DTMetadata.loadLibraries([sLib]).then(function(mLibData, oModel) {
-                    var oPaletteData = Object.keys(mLibData[sLib]).reduce(function (oFilteredData, sKey) {
-
-                        if (mLibData[sLib][sKey].palette && mLibData[sLib][sKey].palette.group && !mLibData[sLib][sKey].palette.ignore) {
-
-                            var sGroup = mLibData[sLib][sKey].palette.group.toLowerCase();
-
-                            var oControlData = {
-                                icon : mLibData[sLib][sKey].palette.icons ? mLibData[sLib][sKey].palette.icons.svg : "",
-                                name : mLibData[sLib][sKey].displayName.singular,
-                                description : mLibData[sLib][sKey].descriptions ? "" + mLibData[sLib][sKey].descriptions.short.match(/[^\n\r]*/) : "",
-                                className : mLibData[sLib][sKey].className,
-                                createTemplate : mLibData[sLib][sKey].templates && mLibData[sLib][sKey].templates.create
-                            };
-
-                            if (!oFilteredData.groups.some(function (oGroup) {
-                                if (oGroup.groupName === sGroup) {
-                                    oGroup.controls.push(oControlData);
-                                    oGroup.number++;
-                                    return true;
-                                }
-                            })) {
-                                oFilteredData.groups.push({
-                                    groupName : sGroup,
-                                    number : 1,
-                                    controls : [oControlData]
-                                });
-                            }
-                        }
-                        return oFilteredData;
-                    }, Object.keys(this._getPaletteModel().getData()).length === 0 ? {groups : []} : this._getPaletteModel().getData());
-
-                    this._getPaletteModel().setProperty("/", oPaletteData);
-
-                    // var oPalette = this.getView().byId("palette");
-
-                }.bind(this));
+			var oItemSelected = oEvent.getParameters().selectedItem;
+			var sItemSelected = oItemSelected.getText();
 
 
+			var oHashChanger = new sap.ui.core.routing.HashChanger();
+			oHashChanger.setHash("sample/" + sItemSelected);
+		},
 
+		/**
+		 * Used to expand the Palette when you click on the Toolbar
+		 * not only on the arrow
+		 */
+		expandPallete : function(oEvent) {
 
-            var isExpanded = oEvent.getSource().getParent().getExpanded();
-            oEvent.getSource().getParent().setExpanded(!isExpanded);
+			var oCustomListItem = oEvent.getSource().getParent().getParent();
+			var oLib = this._getPaletteModel().getObject(oCustomListItem.getBindingContextPath());
+			var sLib = oLib.groupName;
 
-        },
+			DTMetadata.loadLibraries([sLib]).then(function(mLibData, oModel) {
+				var oPaletteData = Object.keys(mLibData[sLib]).reduce(function (oFilteredData, sKey) {
 
-        /**
-         *
-         * Used to expand the outline when you click on the item
-         * not only on the arrow
-         */
-        expandOutline : function(oEvent) {
-            // var isExpanded = oEvent.getSource().getParent().getExpanded();
-            this.byId("Tree").fireToggleOpenState();
+					if (mLibData[sLib][sKey].palette && mLibData[sLib][sKey].palette.group && !mLibData[sLib][sKey].palette.ignore) {
 
-        },
+						var sGroup = mLibData[sLib][sKey].palette.group.toLowerCase();
+
+						var oControlData = {
+							icon : mLibData[sLib][sKey].palette.icons ? mLibData[sLib][sKey].palette.icons.svg : "",
+							name : mLibData[sLib][sKey].displayName.singular,
+							description : mLibData[sLib][sKey].descriptions ? "" + mLibData[sLib][sKey].descriptions.short.match(/[^\n\r]*/) : "",
+							className : mLibData[sLib][sKey].className,
+							createTemplate : mLibData[sLib][sKey].templates && mLibData[sLib][sKey].templates.create
+						};
+
+						if (!oFilteredData.groups.some(function (oGroup) {
+							if (oGroup.groupName === sGroup) {
+								oGroup.controls.push(oControlData);
+								oGroup.number++;
+								return true;
+							}
+						})) {
+							oFilteredData.groups.push({
+								groupName : sGroup,
+								number : 1,
+								controls : [oControlData]
+							});
+						}
+					}
+					return oFilteredData;
+				}, Object.keys(this._getPaletteModel().getData()).length === 0 ? {groups : []} : this._getPaletteModel().getData());
+
+				this._getPaletteModel().setProperty("/", oPaletteData);
+
+				// var oPalette = this.getView().byId("palette");
+			}.bind(this));
+
+			var isExpanded = oEvent.getSource().getParent().getExpanded();
+			oEvent.getSource().getParent().setExpanded(!isExpanded);
+
+		},
+
 
 		/**
 		 * Called when the dragged palette item is dropped
@@ -270,6 +247,8 @@ sap.ui.define([
 		onLoadLibs : function (oEvent) {
 
             var aLibs = oEvent.data.libs;
+
+            // TODO load all libaries
             aLibs = ["sap.m"];
             // aLibs.splice(0, aLibs.length - 2);
             //
@@ -388,20 +367,20 @@ sap.ui.define([
 		},
 
 		/**
-		 * Called when RTA has started in the iframe
-		 */
+		* Called when RTA has started in the iframe
+		*/
 		onRTAstarted : function  () { // TODO
 			this.oRTAClient.getService("outline").then(function (oOutlineProvider) {
 				oOutlineProvider.get().then(function (oOutline) {
-					var oModel = this._getOutlineModel();
-					oModel.setProperty("/", [oOutline[0]]);
+				var oModel = this._getOutlineModel();
+				oModel.setProperty("/", [oOutline[0]]);
 
-                    var oTree = this._getTree();
-                    var oPropertyPanel = this._getPropertyPanel();
+				var oTree = this._getTree();
+				var oPropertyPanel = this._getPropertyPanel();
 
 
-                    oTree.setBusy(false);
-                    oPropertyPanel.setBusy(false);
+				oTree.setBusy(false);
+				oPropertyPanel.setBusy(false);
 
 
 				}.bind(this));
@@ -641,11 +620,15 @@ sap.ui.define([
 		 */
 		_mapDataForPalette : function (oControlData) {
 
+		    if (!oControlData){
+		        return true;
+		    }
+
 			var oControlPaletteData = {
 				className : oControlData.className,
 				description : oControlData.descriptions && oControlData.descriptions.short,
 				icon : oControlData.palette.icons && oControlData.palette.icons.svg,
-				name : oControlData.displayName.singular,
+				name : oControlData.displayName && oControlData.displayName.singular,
 				createTemplate : oControlData.templates && oControlData.templates.create
 			};
 
@@ -825,17 +808,16 @@ sap.ui.define([
 			return this.oPropertyModel;
 		},
 
-
-        /**
-         * Returns the tree
-         * @returns {sap.m.Tree} the tree
-         */
-        _getPropertyPanel : function () {
-            if (!this.oPropertyPanel) {
-                this.oPropertyPanel = this.byId("PropertyPanel");
-            }
-            return this.oPropertyPanel;
-        },
+		/**
+		* Returns the tree
+		* @returns {sap.m.Tree} the tree
+		*/
+		_getPropertyPanel : function () {
+			if (!this.oPropertyPanel) {
+				this.oPropertyPanel = this.byId("PropertyPanel");
+			}
+			return this.oPropertyPanel;
+		},
 
 		/**
 		 * Returns the palette model
