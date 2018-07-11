@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/model/json/JSONModel",

@@ -1,6 +1,6 @@
 /*global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/thirdparty/sinon-qunit", /*Sinon itself already part of MockServer*/
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -32,7 +32,8 @@ sap.ui.require([
 			rootUri: sServiceURI
 		});
 
-		oMockServer.simulate("mockdata/metadata.xml", "mockdata");
+		var sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
+		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", "mockdata");
 		oMockServer.start();
 		return oMockServer;
 	}

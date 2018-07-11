@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/ODataTreeBindingAdapter",
 	"sap/ui/table/TableUtils",
@@ -12,18 +12,20 @@ sap.ui.require([
 
 	sinon.config.useFakeTimers = false;
 
+	var sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
+
 	//Initialize mock servers
 	//Mock server for use with navigation properties
 	var oNavPropMockServer = new MockServer({
 		rootUri: "/navprop/"
 	});
-	oNavPropMockServer.simulate("../../core/qunit/model/metadata_odtb.xml", "../../core/qunit/model/odtb/");
+	oNavPropMockServer.simulate(sURLPrefix + "/model/metadata_odtb.xml", sURLPrefix + "/model/odtb/");
 
 	//MockServer for use with annotated tree
 	var oAnnotationMockServer = new MockServer({
 		rootUri: "/metadata/"
 	});
-	oAnnotationMockServer.simulate("../../core/qunit/model/metadata_odtbmd.xml", "../../core/qunit/model/odtbmd/");
+	oAnnotationMockServer.simulate(sURLPrefix + "/model/metadata_odtbmd.xml", sURLPrefix + "/model/odtbmd/");
 
 	/**
 	 * Clean-Up Hierarchy Annotation Mockdata/Metadata

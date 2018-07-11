@@ -1,6 +1,6 @@
 /*global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -14,7 +14,8 @@ sap.ui.require([
 	var oAnnotationMockServer = new MockServer({
 		rootUri: "/metadata/"
 	});
-	oAnnotationMockServer.simulate("../../core/qunit/model/metadata_odtbmd.xml", "../../core/qunit/model/odtbmd/");
+	var sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
+	oAnnotationMockServer.simulate(sURLPrefix + "/model/metadata_odtbmd.xml", sURLPrefix + "/model/odtbmd/");
 
 	/**
 	 * Clean-Up Hierarchy Annotation Mockdata/Metadata

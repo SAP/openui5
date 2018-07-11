@@ -1,6 +1,6 @@
 /*global QUnit, oTable, oTreeTable */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TableUtils",
