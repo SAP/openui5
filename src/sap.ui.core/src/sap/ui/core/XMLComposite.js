@@ -519,7 +519,7 @@ sap.ui.define([
 				oRm.write(">");
 
 				// render the content
-				var oContent = oControl.getAggregation(oControl.getMetadata().getCompositeAggregationName());
+				var oContent = oControl._renderingContent ? oControl._renderingContent() : oControl._getCompositeAggregation();
 				if (oContent) {
 					oRm.renderControl(oContent);
 				}
@@ -538,7 +538,7 @@ sap.ui.define([
 
 		XMLComposite.prototype.clone = function () {
 			var oClone = ManagedObject.prototype.clone.apply(this, arguments);
-			var oContent = oClone.getAggregation(oClone.getMetadata().getCompositeAggregationName());
+			var oContent = oClone._getCompositeAggregation();
 			repairListener(oContent, this, oClone);
 			//also if the compisite is clone when already having children the propagated models are so far not set
 			//fix that
@@ -680,8 +680,7 @@ sap.ui.define([
 		 * @private
 		 */
 		XMLComposite.prototype._destroyCompositeAggregation = function () {
-			var sCompositeName = this.getMetadata().getCompositeAggregationName(),
-				oContent = this.getAggregation(sCompositeName);
+			var oContent = this._getCompositeAggregation();
 			if (oContent) {
 				oContent.destroy();
 			}
@@ -708,6 +707,14 @@ sap.ui.define([
 				}
 			}
 			return oResult;
+		};
+
+		/**
+		 * Returns the composite aggregation
+		 */
+		XMLComposite.prototype._getCompositeAggregation = function () {
+			var sCompositeName = this.getMetadata().getCompositeAggregationName();
+			return this.getAggregation(sCompositeName);
 		};
 
 		/**
