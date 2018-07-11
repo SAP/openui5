@@ -297,8 +297,9 @@ sap.ui.define([
 
 			if (fMinItemWidth) {
 
-				// we do not need more spacers than (documentElement.clientWidth / minItemWidth)
-				iSpacers = Math.abs(document.documentElement.clientWidth / fMinItemWidth);
+				// we do not need more spacers than (iAvailableWidth / minItemWidth)
+				var iAvailableWidth = Math.max(document.documentElement.clientWidth, window.screen.width);
+				iSpacers = Math.abs(iAvailableWidth / fMinItemWidth);
 			}
 
 			// we do not need more spacers than items
