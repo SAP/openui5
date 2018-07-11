@@ -42,6 +42,8 @@ sap.ui.define([
 			return "";
 		},
 
+
+
 		onInit : function () {
 			// 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288
 
@@ -65,15 +67,21 @@ sap.ui.define([
 				.subscribe("dtTool", "updateOutline", this.onUpdateOutline, this)
 				.subscribe("dtTool", "dtData", this.onDTData, this);
 
-			var oModel = new JSONModel();
-			this.getView().setModel(oModel, "outline");
+            var oModel = new JSONModel();
 
-			var oPropModel = new JSONModel();
-			this.getView().setModel(oPropModel, "properties");
+            var oView = this.getView();
+            oView.setModel(oModel, "outline");
+            oView.byId("Tree").setBusy(true);
 
-			var oPaletteModel = new JSONModel();
-			this.getView().setModel(oPaletteModel, "palette");
-		},
+            var oPropModel = new JSONModel();
+            oView.setModel(oPropModel, "properties");
+            oView.byId("PropertyPanel").setBusy(true);
+
+            var oPaletteModel = new JSONModel();
+            oView.setModel(oPaletteModel, "palette");
+            oView.byId("palette").setBusy(true);
+
+        },
 
 		/**
 		 * Called, when the iFrame is ready to receive Messages
@@ -83,7 +91,9 @@ sap.ui.define([
 				window: this.getIFrameWindow(),
 				origin: this.getIFrameWindow().location.origin
 			});
+
 		},
+
 
 		/**
 		 * called when a palette item is dragged
@@ -127,6 +137,89 @@ sap.ui.define([
 			}
 		},
 
+
+        /**
+         *  Called when selecting an Item in the Switch
+         *  Load Samples
+         * */
+        //TODO Create Model with Sample Libaries
+        goToPage : function(oEvent) {
+
+            var oItemSelected = oEvent.getParameters().selectedItem;
+            var sItemSelected = oItemSelected.getText();
+
+
+            var oHashChanger = new sap.ui.core.routing.HashChanger();
+            oHashChanger.setHash("sample/" + sItemSelected);
+        },
+
+        /**
+         * Used to expand the Palette when you click on the Toolbar
+         * not only on the arrow
+         */
+        expandPallete : function(oEvent) {
+
+            var oCustomListItem = oEvent.getSource().getParent().getParent();
+            var oLib = this._getPaletteModel().getObject(oCustomListItem.getBindingContextPath());
+            var sLib = oLib.groupName;
+
+                DTMetadata.loadLibraries([sLib]).then(function(mLibData, oModel) {
+                    var oPaletteData = Object.keys(mLibData[sLib]).reduce(function (oFilteredData, sKey) {
+
+                        if (mLibData[sLib][sKey].palette && mLibData[sLib][sKey].palette.group && !mLibData[sLib][sKey].palette.ignore) {
+
+                            var sGroup = mLibData[sLib][sKey].palette.group.toLowerCase();
+
+                            var oControlData = {
+                                icon : mLibData[sLib][sKey].palette.icons ? mLibData[sLib][sKey].palette.icons.svg : "",
+                                name : mLibData[sLib][sKey].displayName.singular,
+                                description : mLibData[sLib][sKey].descriptions ? "" + mLibData[sLib][sKey].descriptions.short.match(/[^\n\r]*/) : "",
+                                className : mLibData[sLib][sKey].className,
+                                createTemplate : mLibData[sLib][sKey].templates && mLibData[sLib][sKey].templates.create
+                            };
+
+                            if (!oFilteredData.groups.some(function (oGroup) {
+                                if (oGroup.groupName === sGroup) {
+                                    oGroup.controls.push(oControlData);
+                                    oGroup.number++;
+                                    return true;
+                                }
+                            })) {
+                                oFilteredData.groups.push({
+                                    groupName : sGroup,
+                                    number : 1,
+                                    controls : [oControlData]
+                                });
+                            }
+                        }
+                        return oFilteredData;
+                    }, Object.keys(this._getPaletteModel().getData()).length === 0 ? {groups : []} : this._getPaletteModel().getData());
+
+                    this._getPaletteModel().setProperty("/", oPaletteData);
+
+                    // var oPalette = this.getView().byId("palette");
+
+                }.bind(this));
+
+
+
+
+            var isExpanded = oEvent.getSource().getParent().getExpanded();
+            oEvent.getSource().getParent().setExpanded(!isExpanded);
+
+        },
+
+        /**
+         *
+         * Used to expand the outline when you click on the item
+         * not only on the arrow
+         */
+        expandOutline : function(oEvent) {
+            // var isExpanded = oEvent.getSource().getParent().getExpanded();
+            this.byId("Tree").fireToggleOpenState();
+
+        },
+
 		/**
 		 * Called when the dragged palette item is dropped
 		 */
@@ -155,14 +248,13 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
 		onSelectionChange : function (oEvent) {
-
 			var sId = oEvent.getParameter("listItem").data().id;
 
 			var oModel = this._getOutlineModel();
 			var sPath = this.findOverlayInOutline(sId, oModel.getData());
 
 			if (oModel.getProperty(sPath).type === "aggregation") {
-				sId = oModel.getProperty(sPath.match(/(.*)\/children\/\d+$/)[1]).id;
+				sId = oModel.getProperty(sPath.match(/(.*)\/elements\/\d+$/)[1]).id;
 			}
 
 			this.oRTAClient.getService("selection").then(function (oSelectionManager) {
@@ -177,13 +269,27 @@ sap.ui.define([
 		 */
 		onLoadLibs : function (oEvent) {
 
-			var aLibs = oEvent.data.libs;
+            var aLibs = oEvent.data.libs;
+            aLibs = ["sap.m"];
+            // aLibs.splice(0, aLibs.length - 2);
+            //
+            // var oLibraryNames = {
+            //     groups : []
+            // };
+            // aLibs.reduce(function (iCounter, sLib) {
+            //     oLibraryNames.groups.push({
+            //         number: iCounter,
+            //         groupName: sLib,
+            //         controls: []
+            //     });
+            //     iCounter++;
+            //     return iCounter;
+            // }, 1);
+
 
 			aLibs.map(function (sLib) {
 				DTMetadata.loadLibraries([sLib]).then(function(mLibData, oModel) {
-
 					var oPaletteData = Object.keys(mLibData[sLib]).reduce(function (oFilteredData, sKey) {
-
 						if (mLibData[sLib][sKey].palette && mLibData[sLib][sKey].palette.group && !mLibData[sLib][sKey].palette.ignore) {
 
 							var sGroup = mLibData[sLib][sKey].palette.group.toLowerCase();
@@ -215,9 +321,15 @@ sap.ui.define([
 
 					this._getPaletteModel().setProperty("/", oPaletteData);
 
-					this.setDraggable();
 				}.bind(this));
 			}.bind(this));
+
+            // this._getPaletteModel().setProperty("/", oPaletteData);
+
+            var oPalette = this.getView().byId("palette");
+            oPalette.setBusy(false);
+
+            this.setDraggable();
 		},
 
 		/**
@@ -279,11 +391,19 @@ sap.ui.define([
 		 * Called when RTA has started in the iframe
 		 */
 		onRTAstarted : function  () { // TODO
-
 			this.oRTAClient.getService("outline").then(function (oOutlineProvider) {
 				oOutlineProvider.get().then(function (oOutline) {
 					var oModel = this._getOutlineModel();
 					oModel.setProperty("/", [oOutline[0]]);
+
+                    var oTree = this._getTree();
+                    var oPropertyPanel = this._getPropertyPanel();
+
+
+                    oTree.setBusy(false);
+                    oPropertyPanel.setBusy(false);
+
+
 				}.bind(this));
 			}.bind(this));
 		},
@@ -306,6 +426,9 @@ sap.ui.define([
 			}
 
 			oTree.setSelectedItemByPath(sPath);
+
+
+
 		},
 
 		/**
@@ -609,8 +732,9 @@ sap.ui.define([
 				if (oData.id === sId) {
 					sCorrectPath = sPath + iIndex;
 					return true;
-				} else if (Array.isArray(oData.children)) {
-					sCorrectPath = this.findOverlayInOutline(sId, oData.children, sPath + iIndex + "/children/");
+				} else if (Array.isArray(oData.elements)) {
+				    // TODO elements was children before -> how to prevent property changes like this
+					sCorrectPath = this.findOverlayInOutline(sId, oData.elements, sPath + iIndex + "/elements/");
 					return sCorrectPath;
 				}
 			}.bind(this), null);
@@ -700,6 +824,18 @@ sap.ui.define([
 			}
 			return this.oPropertyModel;
 		},
+
+
+        /**
+         * Returns the tree
+         * @returns {sap.m.Tree} the tree
+         */
+        _getPropertyPanel : function () {
+            if (!this.oPropertyPanel) {
+                this.oPropertyPanel = this.byId("PropertyPanel");
+            }
+            return this.oPropertyPanel;
+        },
 
 		/**
 		 * Returns the palette model
