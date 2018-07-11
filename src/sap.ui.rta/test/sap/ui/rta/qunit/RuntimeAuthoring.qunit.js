@@ -3,7 +3,6 @@
 QUnit.config.autostart = false;
 sap.ui.require([
 	// Controls
-	'sap/m/Button',
 	'sap/m/MessageBox',
 	'sap/ui/comp/smartform/Group',
 	'sap/ui/comp/smartform/GroupElement',
@@ -15,14 +14,12 @@ sap.ui.require([
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Overlay',
-	'sap/ui/fl/registry/Settings',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	'sap/ui/fl/FakeLrepLocalStorage',
-	'sap/ui/fl/ChangePersistence',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
@@ -36,7 +33,6 @@ sap.ui.require([
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
-	Button,
 	MessageBox,
 	Group,
 	GroupElement,
@@ -47,14 +43,12 @@ function(
 	DesignTimeMetadata,
 	OverlayRegistry,
 	Overlay,
-	Settings,
 	ChangeRegistry,
 	Change,
 	Utils,
 	RtaUtils,
 	AppVariantUtils,
 	FakeLrepLocalStorage,
-	ChangePersistence,
 	RuntimeAuthoring,
 	Stack,
 	CommandFactory,
@@ -103,6 +97,7 @@ function(
 		QUnit.test("when RTA gets initialized and command stack is changed,", function(assert) {
 			assert.ok(this.oRta, " then RuntimeAuthoring is created");
 			assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
+			assert.notOk(RuntimeAuthoring.needsRestart(), "restart is not needed initially");
 
 			var oInitialCommandStack = this.oRta.getCommandStack();
 			assert.ok(oInitialCommandStack, "the command stack is automatically created");
@@ -999,10 +994,28 @@ function(
 				assert.equal(oMessageBoxStub.callCount, 0, "no MessageBox got shown");
 			});
 		});
+
+		QUnit.test("when enabling restart", function(assert) {
+			var sLayer = "LAYER";
+			RuntimeAuthoring.enableRestart(sLayer);
+
+			assert.ok(RuntimeAuthoring.needsRestart(sLayer), "then restart is needed");
+		});
+
+		QUnit.test("when enabling and disabling restart", function(assert) {
+			var sLayer = "LAYER";
+			RuntimeAuthoring.enableRestart(sLayer);
+			RuntimeAuthoring.enableRestart(sLayer);
+			RuntimeAuthoring.enableRestart(sLayer);
+
+			RuntimeAuthoring.disableRestart(sLayer);
+
+			assert.notOk(RuntimeAuthoring.needsRestart(sLayer), "then restart is not needed");
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created without flexSettings", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			sandbox.stub(Utils, "buildLrepRootNamespace").returns("rootNamespace/");
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
@@ -1010,7 +1023,7 @@ function(
 				showToolbars : false
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
