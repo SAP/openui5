@@ -4,22 +4,24 @@
 
 // Provides control sap.tnt.NavigationList
 sap.ui.define([
-    'jquery.sap.global',
-    './library',
-    'sap/ui/core/Control',
-    'sap/m/Popover',
-    'sap/ui/core/delegate/ItemNavigation',
-    'sap/ui/core/InvisibleText',
-    "./NavigationListRenderer"
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/m/Popover',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/core/InvisibleText',
+	"./NavigationListRenderer",
+	"sap/base/Log"
 ],
 	function(
-	    jQuery,
+		jQuery,
 		library,
 		Control,
 		Popover,
 		ItemNavigation,
 		InvisibleText,
-		NavigationListRenderer
+		NavigationListRenderer,
+		Log
 	) {
 		"use strict";
 
@@ -236,6 +238,7 @@ sap.ui.define([
 		 * @return {sap.tnt.NavigationList|null} The <code>selectedItem</code> association
 		 */
 		NavigationList.prototype.setSelectedItem = function(selectedItem, suppressInvalidate) {
+			//TODO: global jquery call found
 			jQuery.sap.require('sap.tnt.NavigationListItem');
 			var navigationListItem;
 
@@ -249,7 +252,7 @@ sap.ui.define([
 			}
 
 			if (typeof selectedItem !== 'string' && !(selectedItem instanceof sap.tnt.NavigationListItem)) {
-				jQuery.sap.log.warning('Type of selectedItem association should be string or instance of sap.tnt.NavigationListItem. New value was not set.');
+				Log.warning('Type of selectedItem association should be string or instance of sap.tnt.NavigationListItem. New value was not set.');
 				return this;
 			}
 
@@ -264,7 +267,7 @@ sap.ui.define([
 				this._selectedItem = navigationListItem;
 				return sap.ui.core.Control.prototype.setAssociation.call(this, 'selectedItem', selectedItem, suppressInvalidate);
 			} else {
-				jQuery.sap.log.warning('Type of selectedItem association should be a valid NavigationListItem object or ID. New value was not set.');
+				Log.warning('Type of selectedItem association should be a valid NavigationListItem object or ID. New value was not set.');
 				return this;
 			}
 		};

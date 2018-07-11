@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
-		"sap/m/library",
-		"sap/m/ListBase",
-		"sap/tnt/Box",
-		"sap/ui/Device",
-		"sap/ui/core/ResizeHandler"
-	], function (library, ListBase, Box, Device, ResizeHandler) {
+	"sap/m/library",
+	"sap/m/ListBase",
+	"sap/tnt/Box",
+	"sap/ui/Device",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/thirdparty/jquery"
+], function(library, ListBase, Box, Device, ResizeHandler, jQuery0) {
 	"use strict";
 
 	// shortcut for sap.m.ListGrowingDirection
@@ -251,9 +252,9 @@ sap.ui.define([
 
 		// Ensure high specificity selectors in order not to mess with dom refs of lists created as content inside Boxes.
 		if (this.isGrouped()) {
-			aNavigationItems = jQuery(oNavigationRoot).find(".sapTntBoxContainerGrid > .sapMLIB").get();
+			aNavigationItems = jQuery0(oNavigationRoot).find(".sapTntBoxContainerGrid > .sapMLIB").get();
 		} else {
-			aNavigationItems = jQuery(oNavigationRoot).children(".sapMLIB").get();
+			aNavigationItems = jQuery0(oNavigationRoot).children(".sapMLIB").get();
 		}
 
 		oItemNavigation.setItemDomRefs(aNavigationItems);

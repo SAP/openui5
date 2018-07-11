@@ -3,11 +3,10 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/tnt/BoxContainerList",
 	"./BoxContainerRenderer"
-], function (jQuery, Control, BoxContainerList, BoxContainerRenderer) {
+], function(Control, BoxContainerList, BoxContainerRenderer) {
 	"use strict";
 
 	/**

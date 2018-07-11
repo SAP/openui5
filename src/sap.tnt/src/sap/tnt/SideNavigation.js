@@ -4,16 +4,14 @@
 
 // Provides control sap.t.SideNavigation.
 sap.ui.define([
-    'jquery.sap.global',
-    './library',
-    'sap/ui/core/Control',
-    'sap/ui/core/ResizeHandler',
-    'sap/ui/core/Icon',
-    'sap/ui/core/delegate/ScrollEnablement',
-    "./SideNavigationRenderer"
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/Icon',
+	'sap/ui/core/delegate/ScrollEnablement',
+	"./SideNavigationRenderer"
 ],
 	function(
-	    jQuery,
 		library,
 		Control,
 		ResizeHandler,
@@ -213,7 +211,7 @@ sap.ui.define([
 			this._hasActiveAnimation = false;
 
 			// wait for any re-rendering after the animation, before calling toggle arrows
-			jQuery.sap.delayedCall(0, this, this._toggleArrows);
+			setTimeout(this._toggleArrows.bind(this), 0);
 		};
 
 		/**
