@@ -310,7 +310,7 @@ QUnit.test("Restore tree state: Expand error handling, restore of deep nodes fai
 			that.fakeService.setServiceStatus({
 				url: {
 					500: [
-						/\$filter=GLAccount_ParentID%20eq%20%27FinancialStatementItem%3a99991%27/
+						/\$filter=\(GLAccount_ParentID%20eq%20%27FinancialStatementItem%3a99991%27\)/
 					]
 				}
 			});
@@ -375,7 +375,7 @@ QUnit.test("Restore tree state: Expand error handling, restore of server index n
 			that.fakeService.setServiceStatus({
 				url: {
 					500: [
-						/\$filter=GLAccount_Level%20le%200/
+						/\$filter=\(GLAccount_Level%20le%200\)/
 					]
 				}
 			});
@@ -438,8 +438,8 @@ QUnit.test("Restore tree state: Expand error handling, all sub requests fail", f
 			that.fakeService.setServiceStatus({
 				url: {
 					500: [
-						/\$filter=GLAccount_Level%20le%200/,
-						/\$filter=GLAccount_ParentID%20eq%20%27FinancialStatementItem%3a99991%27/
+						/\$filter=\(GLAccount_Level%20le%200\)/,
+						/\$filter=\(GLAccount_ParentID%20eq%20%27FinancialStatementItem%3a99991%27\)/
 					]
 				}
 			});
@@ -637,7 +637,7 @@ QUnit.test("Restore tree state: Collapse error handling, whole batch fails", fun
 			that.fakeService.setServiceStatus({
 				url: {
 					500: [
-						/\$filter=GLAccount_Level%20le%201/
+						/\$filter=\(GLAccount_Level%20le%201\)/
 					]
 				}
 			});

@@ -26,7 +26,6 @@ sap.ui.define([
 	'sap/ui/model/odata/ODataMetadata',
 	'sap/ui/model/odata/ODataPropertyBinding',
 	'./ODataTreeBinding',
-	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/odata/ODataMetaModel',
 	'sap/ui/core/message/MessageParser',
 	'sap/ui/model/odata/ODataMessageParser',
@@ -52,7 +51,6 @@ sap.ui.define([
 	ODataMetadata,
 	ODataPropertyBinding,
 	ODataTreeBinding,
-	FilterProcessor,
 	ODataMetaModel,
 	MessageParser,
 	ODataMessageParser,
@@ -4520,7 +4518,7 @@ sap.ui.define([
 		var oRequest, sUrl,
 		oContext, mUrlParams, fnSuccess, fnError,
 		aFilters, aSorters, sFilterParams, sSorterParams,
-		oFilter, oEntityType, sNormalizedPath,
+		oEntityType, sNormalizedPath,
 		aUrlParams, mHeaders, sMethod,
 		sGroupId, sETag,
 		mRequests,
@@ -4571,8 +4569,7 @@ sap.ui.define([
 
 			sNormalizedPath = that._normalizePath(sTempPath, oContext);
 			oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
-			oFilter = FilterProcessor.groupFilters(aFilters);
-			sFilterParams = ODataUtils.createFilterParams(oFilter, that.oMetadata, oEntityType);
+			sFilterParams = ODataUtils.createFilterParams(aFilters, that.oMetadata, oEntityType);
 			if (sFilterParams) {
 				aUrlParams.push(sFilterParams);
 			}

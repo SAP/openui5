@@ -22,7 +22,6 @@ sap.ui.define([
 	'./ODataMetadata',
 	'./ODataPropertyBinding',
 	'./ODataTreeBinding',
-	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/odata/ODataMetaModel',
 	'sap/ui/thirdparty/URI',
 	'sap/ui/thirdparty/datajs',
@@ -42,7 +41,6 @@ sap.ui.define([
 		ODataMetadata,
 		ODataPropertyBinding,
 		ODataTreeBinding,
-		FilterProcessor,
 		ODataMetaModel,
 		URI,
 		OData,
@@ -2434,7 +2432,7 @@ sap.ui.define([
 		var oRequest, sUrl, oRequestHandle, oBatchRequest,
 			oContext, mUrlParams, bAsync, fnSuccess, fnError,
 			aFilters, aSorters, sFilterParams, sSorterParams,
-			oFilter, oEntityType, sResolvedPath,
+			oEntityType, sResolvedPath,
 			aUrlParams;
 
 		if (mParameters && typeof (mParameters) == "object" && !(mParameters instanceof Context)) {
@@ -2469,8 +2467,7 @@ sap.ui.define([
 		} else {
 			sResolvedPath = this._normalizePath(sPath, oContext);
 			oEntityType = this.oMetadata && this.oMetadata._getEntityTypeByPath(sResolvedPath);
-			oFilter = FilterProcessor.groupFilters(aFilters);
-			sFilterParams = ODataUtils.createFilterParams(oFilter, this.oMetadata, oEntityType);
+			sFilterParams = ODataUtils.createFilterParams(aFilters, this.oMetadata, oEntityType);
 			if (sFilterParams) { aUrlParams.push(sFilterParams); }
 		}
 
