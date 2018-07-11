@@ -452,7 +452,7 @@ sap.ui.require([
 								var mHeaders = {};
 
 								if (oResponse.messages) {
-									mHeaders["sap-message"] = oResponse.messages;
+									mHeaders["sap-messages"] = oResponse.messages;
 								}
 								return {
 									headers : mHeaders,
@@ -510,7 +510,7 @@ sap.ui.require([
 					? Promise.reject(oResponseBody)
 					: Promise.resolve({
 						body : oResponseBody,
-						messages : mResponseHeaders["sap-message"],
+						messages : mResponseHeaders["sap-messages"],
 						resourcePath : oExpectedRequest.url
 					});
 			}
@@ -6953,7 +6953,7 @@ sap.ui.require([
 </FlexBox>';
 
 			this.expectRequest("TEAMS('42')/TEAM_2_MANAGER?custom=foo", {"ID" : "23"}, {
-					"sap-message" : JSON.stringify([
+					"sap-messages" : JSON.stringify([
 						{"code" : "foo-42", "message" : "text0", "numericSeverity" : 3,
 							"longtextUrl" : "Messages(1)/LongText/$value"},
 						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}

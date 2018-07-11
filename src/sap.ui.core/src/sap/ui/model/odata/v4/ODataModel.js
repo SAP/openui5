@@ -1325,7 +1325,7 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the request whose response contained the messages
 	 * @param {object[]} [aMessages]
-	 *   The array of messages as contained in the <code>sap-message</code> response header
+	 *   The array of messages as contained in the <code>sap-messages</code> response header
 	 *
 	 * @private
 	 */
