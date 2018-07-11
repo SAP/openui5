@@ -25,9 +25,11 @@ sap.ui.define([], function() {
 	 * @param {object} oTarget Target object of the property stub
 	 * @param {string} sProperty Name of the stubbed property
 	 * @param {function} fnCallback Function callback which returns the property value
+	 * @param {function} [sMarker] Marker to allow identification of the according property descriptor
+	 *	like <code>Object.getOwnPropertyDescriptor(oTarget, sProperty).get[sMarker]</code>
 	 * @private
 	 */
-	var lazyProperty = function(oTarget, sProperty, fnCallback) {
+	var lazyProperty = function(oTarget, sProperty, fnCallback, sMarker) {
 
 		var oPropertyDescriptor = {
 			configurable: true,
@@ -41,6 +43,9 @@ sap.ui.define([], function() {
 				oTarget[sProperty] = vValue;
 			}
 		};
+		if (sMarker) {
+			oPropertyDescriptor.get[sMarker] = true;
+		}
 
 		Object.defineProperty(oTarget, sProperty, oPropertyDescriptor);
 	};
