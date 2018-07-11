@@ -3,9 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._AggregationHelper
-sap.ui.define([
-	"jquery.sap.global"
-], function (jQuery) {
+sap.ui.define([], function () {
 	"use strict";
 
 	var mAllowedAggregateDetails2Type =  {
@@ -75,12 +73,21 @@ sap.ui.define([
 		}
 	}
 
+	/**
+	 * Collection of helper methods for data aggregation.
+	 *
+	 * @alias sap.ui.model.odata.v4.lib._AggregationHelper
+	 * @author SAP SE
+	 * @private
+	 */
 	_AggregationHelper = {
 		/**
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
 		 * information. The value is "groupby((&lt;groupable_1,...,groupable_N),aggregate(
 		 * &lt;aggregatable> with &lt;method> as &lt;alias>,...))" where the "aggregate" part is
 		 * only present if aggregatable properties are given and both "with" and "as" are optional.
+		 * If mQueryOptions.$filter is given the resulting $apply is extended:
+		 * ".../filter(&lt;mQueryOptions.$filter>)".
 		 * If at least one aggregatable property requesting minimum or maximum values is contained,
 		 * the resulting $apply is extended: ".../concat(aggregate(&lt;alias> with min as
 		 * UI5min__&lt;alias>,&lt;alias> with max as UI5max__&lt;alias>,...),identity)".
@@ -113,17 +120,25 @@ sap.ui.define([
 		 *   A list of groupable property names (which may, but don't need to be repeated in
 		 *   <code>oAggregation.group</code>) used to determine group levels; only a single group
 		 *   level is supported
+		 * @param {object} [mQueryOptions={}]
+		 *   A map of key-value pairs representing the query string
+		 * @param {string} [mQueryOptions.$filter]
+		 *   The value for a "$filter" system query option; it is removed from the returned map, but
+		 *   not from <code>mQueryOptions</code> itself
 		 * @param {object} [mAlias2MeasureAndMethod]
 		 *   An optional map which is filled in case an aggregatable property requests minimum or
 		 *   maximum values; the alias (for example "UI5min__&lt;alias>") for that value becomes the
 		 *   key; an object with "measure" and "method" becomes the corresponding value. Note that
 		 *   "measure" holds the aggregatable property's alias in case "3.1.1 Keyword as" is used.
-		 * @returns {string}
-		 *   The value for a "$apply" system query option
+		 * @returns {object}
+		 *   A map of key-value pairs representing the query string, including a value for the
+		 *   "$apply" system query option; it is a modified copy of <code>mQueryOptions</code>
 		 * @throws {Error}
 		 *   If the given data aggregation object is unsupported
+		 *
+		 * @public
 		 */
-		buildApply : function (oAggregation, mAlias2MeasureAndMethod) {
+		buildApply : function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod) {
 			var aAggregate,
 				sApply = "",
 				aGroupBy,
@@ -206,9 +221,16 @@ sap.ui.define([
 			if (aGroupBy.length) {
 				sApply = "groupby((" + aGroupBy.join(",") + (sApply ? ")," + sApply + ")" : "))");
 			}
+			mQueryOptions = jQuery.extend({}, mQueryOptions);
+			if (mQueryOptions.$filter) {
+				sApply += "/filter(" + mQueryOptions.$filter + ")";
+				delete mQueryOptions.$filter;
+			}
+			sApply
+				+= (aMinMax.length ? "/concat(aggregate(" + aMinMax.join(",") + "),identity)" : "");
+			mQueryOptions.$apply = sApply;
 
-			return sApply
-				+ (aMinMax.length ? "/concat(aggregate(" + aMinMax.join(",") + "),identity)" : "");
+			return mQueryOptions;
 		},
 
 		/**
@@ -220,6 +242,8 @@ sap.ui.define([
 		 * @returns {boolean}
 		 *   Whether minimum or maximum values are needed for at least one aggregatable
 		 *   property.
+		 *
+		 * @public
 		 */
 		hasMinOrMax : function (mAggregate) {
 			return !!mAggregate && Object.keys(mAggregate).some(function (sAlias) {

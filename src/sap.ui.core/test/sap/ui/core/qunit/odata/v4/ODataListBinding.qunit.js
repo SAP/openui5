@@ -363,7 +363,7 @@ sap.ui.require([
 			.returns(oAggregationCloned);
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregationCloned))
-			.returns(sApply);
+			.returns({$apply : sApply});
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oBinding.oContext))
 			.callsFake(function () {
@@ -432,7 +432,7 @@ sap.ui.require([
 			.returns(oAggregationCloned);
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregationCloned))
-			.returns(sApply);
+			.returns({$apply : sApply});
 		oBinding.mCacheByContext = {
 			"/Products" : {}
 		};
@@ -4514,7 +4514,7 @@ sap.ui.require([
 			};
 
 		this.mock(_AggregationHelper).expects("buildApply").withExactArgs(oTransformedAggregation)
-			.returns(sApply);
+			.returns({$apply : sApply});
 		this.mock(oBinding).expects("changeParameters").withExactArgs({$apply : sApply});
 
 		// code under test
@@ -4602,7 +4602,7 @@ sap.ui.require([
 
 			this.mock(_AggregationHelper).expects("buildApply")
 				.withExactArgs(oFixture.oTransformedAggregation)
-				.returns(sApply);
+				.returns({$apply : sApply});
 			this.mock(oBinding).expects("changeParameters").callsFake(function () {
 					oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 				}).withExactArgs({$apply : sApply});

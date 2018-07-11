@@ -6209,7 +6209,8 @@ sap.ui.require([
 <Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{\
 			path : \'/EMPLOYEES\',\
-			parameters : {$count : true}\
+			parameters : {$count : true},\
+			filters : {path : \'AGE\', operator : \'GE\', value1 : 30}\
 		}" threshold="0" visibleRowCount="3">\
 	<t:Column>\
 		<t:template>\
@@ -6242,6 +6243,7 @@ sap.ui.require([
 				return this.getContexts.apply(this, arguments);
 			});
 		this.expectRequest("EMPLOYEES?$count=true&$apply=groupby((Name),aggregate(AGE))"
+				+ "/filter(AGE%20ge%2030)"
 				+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
 				+ "AGE%20with%20max%20as%20UI5max__AGE),identity)"
 				+ "&$skip=0&$top=4",
@@ -6278,6 +6280,8 @@ sap.ui.require([
 		}).then(function () {
 			that.expectRequest("EMPLOYEES?$count=true"
 					+ "&$apply=groupby((Name),aggregate(AGE))"
+					// Note: for consistency, we prefer filter() over $filter here
+					+ "/filter(AGE%20ge%2030)"
 					+ "&$skip=3&$top=1",
 				{
 					"value" : [

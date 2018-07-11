@@ -166,11 +166,14 @@ sap.ui.require([
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
-			var mAlias2MeasureAndMethod = {};
+			var mAlias2MeasureAndMethod = {},
+				mResult;
 
-			assert.strictEqual(
-				_AggregationHelper.buildApply(oFixture.oAggregation, mAlias2MeasureAndMethod),
-				oFixture.sApply);
+			// code under test
+			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, null,
+				mAlias2MeasureAndMethod);
+
+			assert.deepEqual(mResult, {$apply : oFixture.sApply});
 			if (oFixture.mExpectedAlias2MeasureAndMethod) {
 				assert.deepEqual(mAlias2MeasureAndMethod, oFixture.mExpectedAlias2MeasureAndMethod);
 			}
@@ -180,7 +183,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("buildApply: optional mAlias2MeasureAndMethod", function (assert) {
 		// mAlias2MeasureAndMethod is optional in _AggregationHelper.buildApply
-		assert.strictEqual(_AggregationHelper.buildApply({
+		assert.deepEqual(_AggregationHelper.buildApply({
 				aggregate : {
 					Amount : {max : true}
 				},
@@ -188,8 +191,43 @@ sap.ui.require([
 					BillToParty : {}
 				}
 			}),
-			"groupby((BillToParty),aggregate(Amount))/concat(aggregate(Amount with max as"
-				+ " UI5max__Amount),identity)");
+			{$apply : "groupby((BillToParty),aggregate(Amount))"
+				+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply with mQueryOptions", function (assert) {
+		var oAggregation = {
+				aggregate : {
+					SalesNumber : {
+						max : true,
+						min : true
+					}
+				},
+				group : {
+					Name : {}
+				},
+				groupLevels : []
+			},
+			mQueryOptions = {
+				$count : true,
+				$filter : "SalesNumber ge 100",
+				$orderby : "Name"
+			};
+
+		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
+			$apply : "groupby((Name),aggregate(SalesNumber))"
+				+ "/filter(SalesNumber ge 100)"
+				+ "/concat(aggregate(SalesNumber with min as UI5min__SalesNumber,"
+				+ "SalesNumber with max as UI5max__SalesNumber),identity)",
+			$count : true,
+			$orderby : "Name"
+		});
+		assert.deepEqual(mQueryOptions, {
+			$count : true,
+			$filter : "SalesNumber ge 100",
+			$orderby : "Name"
+		}, "unmodified");
 	});
 
 	//*********************************************************************************************

@@ -251,7 +251,7 @@ sap.ui.define([
 				throw new Error("Cannot combine $$aggregation and $apply");
 			}
 			oAggregation = _Helper.clone(mParameters.$$aggregation);
-			this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation);
+			this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation).$apply;
 			this.oAggregation = oAggregation;
 		}
 
@@ -1643,7 +1643,7 @@ sap.ui.define([
 				+ "'");
 		}
 		oAggregation = _Helper.clone(oAggregation);
-		this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation);
+		this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation).$apply;
 		this.oAggregation = oAggregation;
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
@@ -1831,7 +1831,7 @@ sap.ui.define([
 			}
 		});
 		this.oAggregation = oAggregation; // Note: needed by #doCreateCache!
-		this.changeParameters({$apply : _AggregationHelper.buildApply(oAggregation)});
+		this.changeParameters(_AggregationHelper.buildApply(oAggregation));
 		this.bHasAnalyticalInfo = true;
 		if (bHasMinMax) {
 			return {
