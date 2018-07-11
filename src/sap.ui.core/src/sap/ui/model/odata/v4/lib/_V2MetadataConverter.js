@@ -451,8 +451,7 @@ sap.ui.define([
 				sValue = oAnnotatable.consume(sName);
 				if (oAnnotatable.peek(sConflictingV2Annotation)) {
 					oAnnotatable.convert(sName, false);
-					Log.warning(
-						"Inconsistent metadata in '" + this.url + "'",
+					Log.warning("Inconsistent metadata in '" + this.url + "'",
 						"Use either 'sap:" + sConflictingV2Annotation + "' or 'sap:"
 							+ sConflictingV2Annotation + "-path'"
 							+ " at entity set '" + oAnnotatable.sPath + "'",
@@ -603,8 +602,8 @@ sap.ui.define([
 							if (sTargetType) {
 								aResult.push(oV2toV4ComplexSemantic.v4EnumType + "/" + sTargetType);
 							} else {
-								Log.warning("Unsupported semantic type: " + sType,
-									undefined, sClassName);
+								Log.warning("Unsupported semantic type: " + sType, undefined,
+									sClassName);
 							}
 						});
 						if (aResult.length > 0) {
@@ -1226,8 +1225,8 @@ sap.ui.define([
 				vHere.push({"$PropertyPath" : sName});
 			} else {
 				Log.warning("Unsupported SAP annotation at a complex type in '"
-					+ that.url + "'", "sap:" + sAnnotation + " at property '"
-					+ oAnnotatable.sPath + "'", sClassName);
+					+ that.url + "'", "sap:" + sAnnotation + " at property '" + oAnnotatable.sPath
+					+ "'", sClassName);
 			}
 		}
 
@@ -1342,8 +1341,8 @@ sap.ui.define([
 				oType = that.result[sTypeName];
 				oUnitProperty = oType[aUnitPathSegments[i]];
 				if (!oUnitProperty) {
-					Log.warning("Path '" + sUnitPath
-						+ "' for sap:unit cannot be resolved", sPropertyPath, sClassName);
+					Log.warning("Path '" + sUnitPath + "' for sap:unit cannot be resolved",
+						sPropertyPath, sClassName);
 					return;
 				}
 				if (i < n - 1) {
