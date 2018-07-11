@@ -103,8 +103,8 @@ sap.ui.define([
 		return this._isEditableByPlugin(oOverlay);
 	};
 
-	Rename.prototype.isRenameEnabled = function (oOverlay) {
-		return this.isEnabled([oOverlay]);
+	Rename.prototype.isRenameEnabled = function (aOverlays) {
+		return this.isEnabled(aOverlays);
 	};
 
 	/**
