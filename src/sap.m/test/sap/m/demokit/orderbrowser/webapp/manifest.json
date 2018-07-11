@@ -89,10 +89,7 @@
 				"controlId": "app",
 				"controlAggregation": "midColumnPages",
 				"bypassed": {
-					"target": [
-						"master",
-						"notFound"
-					]
+					"target": "notFound"
 				},
 				"async": true
 			},
@@ -127,13 +124,10 @@
 					"viewName": "DetailObjectNotFound",
 					"viewId": "detailObjectNotFound"
 				},
-				"detailNoObjectsAvailable": {
-					"viewName": "DetailNoObjectsAvailable",
-					"viewId": "detailNoObjectsAvailable"
-				},
 				"notFound": {
 					"viewName": "NotFound",
-					"viewId": "notFound"
+					"viewId": "notFound",
+					"controlAggregation": "beginColumnPages"
 				},
 				"shipping": {
 					"viewName": "Shipping",
