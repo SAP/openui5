@@ -17,7 +17,8 @@
 
 
 	<script>
-		var oOPH = new sap.m.OnePersonCalendar("OnePersonCalendar",{
+		var oOPH = new sap.m.OnePersonCalendar("OnePersonCalendar", {
+			startDate: new Date(2018, 6, 8),
 			startHour: 8,
 			endHour: 20,
 			appointmentsVisualization: "Filled",
@@ -272,15 +273,41 @@
 				}),
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 29",
-					type: "Type01",
+					type: "Type02",
 					startDate: new Date(2018, 6, 11, 11, 0, 0),
 					endDate: new Date(2018, 6, 11, 12, 30, 0)
 				}),
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 30",
-					type: "Type01",
+					type: "Type03",
 					startDate: new Date(2018, 6, 11, 11, 30, 0),
-					endDate: new Date(2018, 6, 11, 16, 0, 0)
+					endDate: new Date(2018, 6, 11, 15, 0, 0)
+				})
+
+				,
+				// new sap.ui.unified.CalendarAppointment({
+				// 	title: "Appointment 31",
+				// 	type: "Type04",
+				// 	startDate: new Date(2018, 6, 12, 7, 0, 0),
+				// 	endDate: new Date(2018, 6, 12, 15, 30, 0)
+				// }),
+				// new sap.ui.unified.CalendarAppointment({
+				// 	title: "Appointment 32",
+				// 	type: "Type05",
+				// 	startDate: new Date(2018, 6, 12, 18, 0, 0),
+				// 	endDate: new Date(2018, 6, 12, 22, 30, 0)
+				// }),
+				new sap.ui.unified.CalendarAppointment({
+					title: "Appointment 33",
+					type: "Type06",
+					startDate: new Date(2018, 6, 12, 23, 0, 0),
+					endDate: new Date(2018, 6, 13, 0, 30, 0)
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					title: "Appointment 34",
+					type: "Type07",
+					startDate: new Date(2018, 6, 11, 15, 0, 0),
+					endDate: new Date(2018, 6, 13, 17, 0, 0)
 				})
 			]
 		}).placeAt("body");

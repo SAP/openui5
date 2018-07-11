@@ -202,6 +202,14 @@ sap.ui.define([
 			return (iRowHeight * iHour) + (iRowHeight / 60) * iMinutes;
 		};
 
+		OnePersonGrid.prototype._calculateBottomPosition = function (oDate) {
+			var iHour = this._getVisibleEndHour() + 1 - oDate.getHours(),
+				iMinutes = oDate.getMinutes(),
+				iRowHeight = this._getRowHeight();
+
+			return (iRowHeight * iHour) - (iRowHeight / 60) * iMinutes;
+		};
+
 		OnePersonGrid.prototype._updateRowHeaderAndNowMarker = function () {
 			var oCurrentDate = this._getUniversalCurrentDate();
 
@@ -239,17 +247,26 @@ sap.ui.define([
 			var that = this;
 
 			return aAppointments.reduce(function (oMap, oAppointment) {
-				var oStartDate = oAppointment.getStartDate(),
-					oEndDate = oAppointment.getEndDate();
+				var oAppStartDate = oAppointment.getStartDate(),
+					oAppEndDate = oAppointment.getEndDate();
 
-				if (oStartDate && that._areDatesInSameDay(oStartDate, oEndDate)) {
-					var sDay = that._formatDayAsString(oStartDate);
+				if (!oAppStartDate || !oAppEndDate) {
+					return oMap;
+				}
+
+				var oCurrentAppStartDate = new UniversalDate(oAppStartDate.getFullYear(), oAppStartDate.getMonth(), oAppStartDate.getDate()),
+					oCurrentAppEndDate = new UniversalDate(oAppEndDate.getFullYear(), oAppEndDate.getMonth(), oAppEndDate.getDate());
+
+				while (oCurrentAppStartDate.getTime() <= oCurrentAppEndDate.getTime()) {
+					var sDay = that._formatDayAsString(oCurrentAppStartDate);
 
 					if (!oMap[sDay]) {
 						oMap[sDay] = [];
 					}
 
 					oMap[sDay].push(oAppointment);
+
+					oCurrentAppStartDate.setDate(oCurrentAppStartDate.getDate() + 1);
 				}
 
 				return oMap;
