@@ -2774,10 +2774,11 @@ sap.ui.require([
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 				oInterface = oMetaModel.oODataModelInterface,
 				oMyError = new Error(),
-				oPromise;
+				oPromise = Promise.reject(oMyError);
 
 			that.mock(oInterface).expects("addAnnotationUrl")
-				.returns(Promise.reject(oMyError));
+				.returns(oPromise);
+			oPromise.catch(function () {}); // avoid "Uncaught (in promise)" info
 
 			oPromise = oMetaModel.getODataValueLists(oContext);
 			return oPromise.then(function () {

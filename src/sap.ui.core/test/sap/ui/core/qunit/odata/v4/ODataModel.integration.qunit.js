@@ -2238,6 +2238,9 @@ sap.ui.require([
 					.expectChange("text", "Frederic Fall", 1);
 
 				oNewContext = oTeam2EmployeesBinding.create({"ID" : null, "Name" : "John Doe"});
+				oNewContext.created().catch(function (oError) {
+					assert.ok(true, oError); // promise rejected because request is canceled below
+				});
 				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(),
 					"binding has pending changes");
 				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
