@@ -296,8 +296,9 @@ sap.ui.define([
 		/**
 		 * Opens the popover.
 		 * @param {Object} oControl Instance of the control that triggered the opening
+		 * @param {sap.ui.core.CSSSize} sPopoverWidth Width of the popover.
 		 */
-		ViewSettingsPopover.prototype.openBy = function (oControl) {
+		ViewSettingsPopover.prototype.openBy = function (oControl, sPopoverWidth) {
 			var oPopover = this._getPopover(oControl),
 				sPageToOpen = this._determinePageToOpen();
 
@@ -309,7 +310,13 @@ sap.ui.define([
 				} else {
 					// no tab pressed by default
 					this._removeSegmentedButtonSelection();
-					this._adjustInitialWidth();
+					// _adjustInitialWidth() calculates the width of the popover based on the first segmented button
+					// if the first segmented button is not visible then this results in an error, hence the below workaround
+					if (sPopoverWidth) {
+						this._getPopover().setContentWidth(sPopoverWidth);
+					} else {
+						this._adjustInitialWidth();
+					}
 				}
 			}
 
@@ -1200,9 +1207,11 @@ sap.ui.define([
 		 * @overwrite
 		 * @public
 		 * @param {sap.m.ViewSettingsCustomTab} oCustomTab The custom tab to be added
+		 * @param {function} fnCustomTabPress Function to attach to the press event of the custom tab
+		 * @param {sap.ui.core.Control} oListener The control that listen to the event
 		 * @returns {sap.m.ViewSettingsPopover} this pointer for chaining
 		 */
-		ViewSettingsPopover.prototype.addCustomTab = function (oCustomTab) {
+		ViewSettingsPopover.prototype.addCustomTab = function (oCustomTab, fnCustomTabPress, oListener) {
 			var sId = oCustomTab.getId();
 			if (sId === 'sort' || sId === 'filter' || sId === 'group') {
 				throw new Error('Id "' + sId + '" is reserved and cannot be used as custom tab id.');
@@ -1210,7 +1219,12 @@ sap.ui.define([
 			this.addAggregation('customTabs', oCustomTab);
 			if (!this._isEmptyCustomTab(oCustomTab)) {
 				var oButton = this._getTabButtonItem(oCustomTab);
-				oButton.attachEvent("press", this._handleCustomTabPress, this);
+				if (!fnCustomTabPress) {
+					oButton.attachEvent("press", this._handleCustomTabPress, this);
+				} else {
+					// attach press event with the provided function and the listener
+					oButton.attachEvent("press", fnCustomTabPress, oListener);
+				}
 				// add custom tab to segmented button
 				this._getSegmentedButton().addItem(oButton);
 			}
