@@ -19,7 +19,7 @@ sap.ui.define([
 			config: {
 				sample: {
 					files: [
-						"Page.view.xml", "Page.controller.js", "PersonalizationDialog.fragment.xml", "products.json"
+						"Page.view.xml", "Page.controller.js", "PersonalizationDialog.fragment.xml"
 					]
 				}
 			}

@@ -4,9 +4,8 @@
         <panels>
             <P13nDimMeasurePanel chartTypeKey="{path: '/SelectedChartType'}"
                                  changeDimMeasureItems="onChangeDimMeasureItems" changeChartType="onChangeChartType"
-                                 items="{path: '/DimMeasureCollection'}"
-                                 dimMeasureItems="{path: '/DimMeasureItems'}"
-                                 availableChartTypes="{path: '/ChartTypes'}">
+                                 items="{path: '/Items'}"
+                                 dimMeasureItems="{path: '/DimMeasureItems'}">
                 <items>
                     <P13nItem columnKey="{columnKey}" text="{text}" aggregationRole="{aggregationRole}"/>
                 </items>
@@ -14,7 +13,10 @@
                     <P13nDimMeasureItem columnKey="{columnKey}" index="{index}" visible="{visible}" role="{role}"/>
                 </dimMeasureItems>
                 <availableChartTypes>
-                    <core:Item key="{key}" text="{text}"/>
+                    <core:Item key="bar" text="Bar Chart"/>
+                    <core:Item key="column" text="Column Chart"/>
+                    <core:Item key="line" text="Line Chart"/>
+                    <core:Item key="pie" text="Pie Chart"/>
                 </availableChartTypes>
             </P13nDimMeasurePanel>
         </panels>
