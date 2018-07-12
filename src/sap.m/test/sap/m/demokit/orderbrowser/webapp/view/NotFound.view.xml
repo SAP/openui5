@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.orderbrowser.controller.BaseController"
+	controllerName="sap.ui.demo.orderbrowser.controller.NotFound"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 
@@ -8,8 +8,7 @@
 		title="{i18n>notFoundTitle}"
 		text="{i18n>notFoundText}"
 		icon="sap-icon://document"
-		description=""
-		showNavButton="{device>/system/phone}"
+		showNavButton="true"
 		navButtonPress="onNavBack">
 	</MessagePage>
 
