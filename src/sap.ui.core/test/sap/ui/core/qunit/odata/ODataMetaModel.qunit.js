@@ -1055,7 +1055,7 @@ sap.ui.require([
 				sPath = "dataServices",
 				aSorters = [];
 
-			fnApply.withArgs(["dataServiceVersion", "schema"], aFilters).returns(aIndices);
+			fnApply.withArgs(["dataServiceVersion", "schema"], undefined).returns(aIndices);
 
 			// code under test
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);

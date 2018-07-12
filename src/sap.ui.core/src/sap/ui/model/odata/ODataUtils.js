@@ -12,13 +12,13 @@
 
 // Provides class sap.ui.model.odata.ODataUtils
 sap.ui.define([
-	'./Filter',
 	'sap/ui/model/Sorter',
+	'sap/ui/model/FilterProcessor',
 	'sap/ui/core/format/DateFormat',
 	"sap/base/Log",
 	"sap/base/assert"
 ],
-	function(ODataFilter, Sorter, DateFormat, Log, assert) {
+	function(Sorter, FilterProcessor, DateFormat, Log, assert) {
 	"use strict";
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
@@ -65,95 +65,69 @@ sap.ui.define([
 	 * Creates URL parameters strings for filtering.
 	 * The Parameter string is prepended with the "$filter=" system query option to form
 	 * a valid URL part for OData Request.
+	 * In case an array of filters is passed, they will be grouped in a way that filters on the
+	 * same path are ORed and filters on different paths are ANDed with each other
 	 * @see ODataUtils._createFilterParams
-	 * @see {array} aFilters an array of sap.ui.model.Filter
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} vFilter the root filter or filter array
 	 * @param {object} oEntityType the entity metadata object
 	 * @return {string} the URL encoded filter parameters
 	 * @private
 	 */
-	ODataUtils.createFilterParams = function(aFilters, oMetadata, oEntityType) {
-		if (!aFilters || aFilters.length == 0) {
+	ODataUtils.createFilterParams = function(vFilter, oMetadata, oEntityType) {
+		var oFilter = Array.isArray(vFilter) ? FilterProcessor.groupFilters(vFilter) : vFilter;
+		if (!oFilter) {
 			return;
 		}
-		return "$filter=" + this._createFilterParams(aFilters, oMetadata, oEntityType);
+		return "$filter=" + this._createFilterParams(oFilter, oMetadata, oEntityType);
 	};
 
 	/**
 	 * Creates a string of logically (or/and) linked filter options,
 	 * which will be used as URL query parameters for filtering.
-	 * @param {array} aFilters an array of sap.ui.model.Filter
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} vFilter the root filter or filter array
 	 * @param {object} oEntityType the entity metadata object
 	 * @return {string} the URL encoded filter parameters
 	 * @private
 	 */
-	ODataUtils._createFilterParams = function(aFilters, oMetadata, oEntityType) {
-		var sFilterParam;
-		if (!aFilters || aFilters.length == 0) {
+	ODataUtils._createFilterParams = function(vFilter, oMetadata, oEntityType) {
+		var that = this,
+			oFilter = Array.isArray(vFilter) ? FilterProcessor.groupFilters(vFilter) : vFilter;
+
+		function create(oFilter, bOmitBrackets) {
+			if (oFilter.aFilters) {
+				return createMulti(oFilter, bOmitBrackets);
+			}
+			return that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, oFilter.bCaseSensitive);
+		}
+
+		function createMulti(oMultiFilter, bOmitBrackets) {
+			var aFilters = oMultiFilter.aFilters,
+				bAnd = !!oMultiFilter.bAnd,
+				sFilter = "";
+
+			if (aFilters.length === 1) {
+				return create(aFilters[0], true);
+			}
+
+			if (!bOmitBrackets) {
+				sFilter += "(";
+			}
+			sFilter += create(aFilters[0]);
+			for (var i = 1; i < aFilters.length; i++) {
+				sFilter += bAnd ? "%20and%20" : "%20or%20";
+				sFilter += create(aFilters[i]);
+			}
+			if (!bOmitBrackets) {
+				sFilter += ")";
+			}
+			return sFilter;
+		}
+
+		if (!oFilter) {
 			return;
 		}
-		var oFilterGroups = {},
-			iFilterGroupLength = 0,
-			aFilterGroup,
-			sFilterParam = "",
-			iFilterGroupCount = 0,
-			that = this;
-		//group filters by path
-		jQuery.each(aFilters, function(j, oFilter) {
-			if (oFilter.sPath) {
-				aFilterGroup = oFilterGroups[oFilter.sPath];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups[oFilter.sPath] = [];
-					iFilterGroupLength++;
-				}
-			} else {
-				aFilterGroup = oFilterGroups["__multiFilter"];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups["__multiFilter"] = [];
-					iFilterGroupLength++;
-				}
-			}
-			aFilterGroup.push(oFilter);
-		});
-		jQuery.each(oFilterGroups, function(sPath, aFilterGroup) {
-			if (aFilterGroup.length > 1) {
-				sFilterParam += '(';
-			}
-			jQuery.each(aFilterGroup, function(i,oFilter) {
-				if (oFilter instanceof ODataFilter) {
-					if (oFilter.aValues.length > 1) {
-						sFilterParam += '(';
-					}
-					jQuery.each(oFilter.aValues, function(i, oFilterSegment) {
-						if (i > 0) {
-							if (oFilter.bAND) {
-								sFilterParam += "%20and%20";
-							} else {
-								sFilterParam += "%20or%20";
-							}
-						}
-						sFilterParam = that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilterSegment.operator, oFilterSegment.value1, oFilterSegment.value2, sFilterParam, oFilter.bCaseSensitive);
-					});
-					if (oFilter.aValues.length > 1) {
-						sFilterParam += ')';
-					}
-				} else if (oFilter._bMultiFilter) {
-					sFilterParam += that._resolveMultiFilter(oFilter, oMetadata, oEntityType);
-				} else {
-					sFilterParam = that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, sFilterParam, oFilter.bCaseSensitive);
-				}
-				if (i < aFilterGroup.length - 1) {
-					sFilterParam += "%20or%20";
-				}
-			});
-			if (aFilterGroup.length > 1) {
-				sFilterParam += ')';
-			}
-			if (iFilterGroupCount < iFilterGroupLength - 1) {
-				sFilterParam += "%20and%20";
-			}
-			iFilterGroupCount++;
-		});
-		return sFilterParam;
+
+		return create(oFilter, true);
 	};
 
 	/**
@@ -386,7 +360,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataUtils._createFilterSegment = function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, sFilterParam, bCaseSensitive) {
+	ODataUtils._createFilterSegment = function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, bCaseSensitive) {
 
 		var oPropertyMetadata, sType;
 
@@ -412,7 +386,7 @@ sap.ui.define([
 		}
 		if (oValue2) {
 			oValue2 = jQuery.sap.encodeURL(String(oValue2));
-		}
+	}
 
 		if (!bCaseSensitive && sType === "Edm.String") {
 			sPath =  "toupper(" + sPath + ")";
@@ -426,24 +400,19 @@ sap.ui.define([
 			case "GE":
 			case "LT":
 			case "LE":
-				sFilterParam += sPath + "%20" + sOperator.toLowerCase() + "%20" + oValue1;
-				break;
+				return sPath + "%20" + sOperator.toLowerCase() + "%20" + oValue1;
 			case "BT":
-				sFilterParam += "(" + sPath + "%20ge%20" + oValue1 + "%20and%20" + sPath + "%20le%20" + oValue2 + ")";
-				break;
+				return "(" + sPath + "%20ge%20" + oValue1 + "%20and%20" + sPath + "%20le%20" + oValue2 + ")";
 			case "Contains":
-				sFilterParam += "substringof(" + oValue1 + "," + sPath + ")";
-				break;
+				return "substringof(" + oValue1 + "," + sPath + ")";
 			case "StartsWith":
-				sFilterParam += "startswith(" + sPath + "," + oValue1 + ")";
-				break;
+				return "startswith(" + sPath + "," + oValue1 + ")";
 			case "EndsWith":
-				sFilterParam += "endswith(" + sPath + "," + oValue1 + ")";
-				break;
+				return "endswith(" + sPath + "," + oValue1 + ")";
 			default:
-				sFilterParam += "true";
+				jQuery.sap.log.error("ODataUtils :: Unknown filter operator " + sOperator);
+				return "true";
 		}
-		return sFilterParam;
 	};
 
 	/**
