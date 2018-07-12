@@ -2241,7 +2241,7 @@ sap.ui.define([
 		//reset the scroll for anchorbar & scrolling management
 		this._sScrolledSectionId = "";
 		this._sCurrentScrollId = "";
-		this._onScroll({target: {scrollTop: iScrollTop}});//make sure that the handler for the scroll event is called
+		this._onScroll({target: {scrollTop: iScrollTop}}, true /* bImmediateLazyLoading */);//make sure that the handler for the scroll event is called
 		// because only when the handler for the scroll event is called => the selectedSection is set as currentSection => selected section is selected in the anchorBar)
 	};
 
@@ -2449,7 +2449,7 @@ sap.ui.define([
 	 * @param oEvent
 	 * @private
 	 */
-	ObjectPageLayout.prototype._onScroll = function (oEvent) {
+	ObjectPageLayout.prototype._onScroll = function (oEvent, bImmediateLazyLoading) {
 		var iScrollTop = Math.max(Math.ceil(oEvent.target.scrollTop), 0), // top of the visible page
 			$wrapper = this._$opWrapper.length && this._$opWrapper[0],
 			$spacer = this._$spacer.length && this._$spacer[0],
@@ -2535,7 +2535,7 @@ sap.ui.define([
 		if (this.getEnableLazyLoading()) {
 			//calculate the progress done between this scroll event and the previous one
 			//to see if we are scrolling fast (more than 5% of the page height)
-			this._oLazyLoading.lazyLoadDuringScroll(iScrollTop, oEvent.timeStamp, iPageHeight);
+			this._oLazyLoading.lazyLoadDuringScroll(bImmediateLazyLoading, iScrollTop, oEvent.timeStamp, iPageHeight);
 		}
 
 		if (oHeader && oHeader.supportsTitleInHeaderContent() &&  this.getShowHeaderContent() && this.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector()) {

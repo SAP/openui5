@@ -75,10 +75,17 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 			this.doLazyLoading();
 		};
 
-		LazyLoading.prototype.lazyLoadDuringScroll = function (iScrollTop, timeStamp, iPageHeight) {
+		LazyLoading.prototype.lazyLoadDuringScroll = function (bImmediateLazyLoading, iScrollTop, timeStamp, iPageHeight) {
 			var iProgressPercentage,
 				iDelay,
 				bFastScrolling = false;
+
+			if (bImmediateLazyLoading) {
+				this._sLazyLoadingTimer && jQuery.sap.clearDelayedCall(this._sLazyLoadingTimer);
+				this._sLazyLoadingTimer = null;
+				this.doLazyLoading();
+				return;
+			}
 
 			this._iScrollProgress = iScrollTop - this._iPreviousScrollTop;
 			iProgressPercentage = Math.round(Math.abs(this._iScrollProgress) / iPageHeight * 100);
