@@ -39,6 +39,8 @@ function(
 
 		properties : {
 
+			title: { type : "string", group : "Data", defaultValue : "" },
+
 			startDate: { type : "object", group : "Data" },
 
 			startHour: { type: "int", group: "Appearance", defaultValue: 8 },
@@ -73,9 +75,9 @@ function(
 				}
 			},
 
-			header : { type : "sap.m.OnePersonHeader", multiple : false, visibility : "hidden" },
+			_header : { type : "sap.m.OnePersonHeader", multiple : false, visibility : "hidden" },
 
-			grid : { type : "sap.m.OnePersonGrid", multiple : false, visibility : "hidden" }
+			_grid : { type : "sap.m.OnePersonGrid", multiple : false, visibility : "hidden" }
 
 		}
 
@@ -87,16 +89,51 @@ function(
 			oUniDate = new UniversalDate(UniversalDate.UTC(oDateNow.getFullYear(), oDateNow.getMonth(), oDateNow.getDate())),
 			oStartDate = this._getFirstAndLastWeekDate(oUniDate);
 
-		this.setAggregation("header", new OnePersonHeader(sOPCId + "-Header", {}));
+		this.setAggregation("_header", new OnePersonHeader(sOPCId + "-Header", {}));
 
-		this.getAggregation("header").attachEvent("pressPrevious", this._handlePressArrow, this);
-		this.getAggregation("header").attachEvent("pressToday", this._handlePressToday, this);
-		this.getAggregation("header").attachEvent("pressNext", this._handlePressArrow, this);
-		this.getAggregation("header").attachEvent("dateSelect", this._handleDateSelect, this);
+		var oHeader = this._getHeader();
+		oHeader.attachEvent("pressPrevious", this._handlePressArrow, this);
+		oHeader.attachEvent("pressToday", this._handlePressToday, this);
+		oHeader.attachEvent("pressNext", this._handlePressArrow, this);
+		oHeader.attachEvent("dateSelect", this._handleDateSelect, this);
 
-		this.setAggregation("grid", new OnePersonGrid(sOPCId + "-Grid", {}));
+		this.setAggregation("_grid", new OnePersonGrid(sOPCId + "-Grid", {}));
 
-		this.getAggregation("grid").setStartDate(oStartDate.firstDate.oDate);
+		this._getGrid().setStartDate(oStartDate.firstDate.oDate);
+	};
+
+	OnePersonCalendar.prototype.setTitle = function (sTitle) {
+		this._getHeader().setTitle(sTitle);
+
+		return this.setProperty("title", sTitle, true);
+	};
+
+	OnePersonCalendar.prototype.setStartHour = function (bValue) {
+		this.setProperty("startHour", bValue, true);
+		this._getGrid().setStartHour(bValue);
+
+		return this;
+	};
+
+	OnePersonCalendar.prototype.setEndHour = function (bValue) {
+		this.setProperty("endHour", bValue, true);
+		this._getGrid().setEndHour(bValue);
+
+		return this;
+	};
+
+	OnePersonCalendar.prototype.setShowFullDay = function (bValue) {
+		this.setProperty("showFullDay", bValue, true);
+		this._getGrid().setProperty("showFullDay", bValue);
+
+		return this;
+	};
+
+	OnePersonCalendar.prototype.setAppointmentsVisualization = function (oValue) {
+		this.setProperty("appointmentsVisualization", oValue, true);
+		this._getGrid().setProperty("appointmentsVisualization", oValue);
+
+		return this;
 	};
 
 	OnePersonCalendar.prototype._handlePressArrow = function (oEvent) {
@@ -131,8 +168,8 @@ function(
 			oUniFirstDate = this._getFirstAndLastWeekDate(oUniDate);
 
 		this.setProperty("startDate", oDate, true);
-		this.getAggregation("grid").setStartDate(oUniFirstDate.firstDate.oDate);
-		this.getAggregation("header").setStartDate(oDate);
+		this._getGrid().setStartDate(oUniFirstDate.firstDate.oDate);
+		this._getHeader().setStartDate(oDate);
 
 		return this;
 	};
@@ -156,40 +193,12 @@ function(
 		};
 	};
 
-	OnePersonCalendar.prototype.setStartHour = function (bValue) {
-		this.setProperty("startHour", bValue, true);
-		this.getAggregation("grid").setStartHour(bValue);
-
-		return this;
-	};
-
-	OnePersonCalendar.prototype.setEndHour = function (bValue) {
-		this.setProperty("endHour", bValue, true);
-		this.getAggregation("grid").setEndHour(bValue);
-
-		return this;
-	};
-
-	OnePersonCalendar.prototype.setShowFullDay = function (bValue) {
-		this.setProperty("showFullDay", bValue, true);
-		this.getAggregation("grid").setProperty("showFullDay", bValue);
-
-		return this;
-	};
-
-	OnePersonCalendar.prototype.setAppointmentsVisualization = function (oValue) {
-		this.setProperty("appointmentsVisualization", oValue, true);
-		this.getAggregation("grid").setProperty("appointmentsVisualization", oValue);
-
-		return this;
-	};
-
 	OnePersonCalendar.prototype._getHeader = function () {
-		return this.getAggregation("header");
+		return this.getAggregation("_header");
 	};
 
 	OnePersonCalendar.prototype._getGrid = function () {
-		return this.getAggregation("grid");
+		return this.getAggregation("_grid");
 	};
 
 	return OnePersonCalendar;

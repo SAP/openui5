@@ -18,16 +18,13 @@
 
 	<script>
 		var oOPH = new sap.m.OnePersonCalendar("OnePersonCalendar", {
+			title: "OnePersonCalendar",
 			startDate: new Date(2018, 6, 8),
 			startHour: 8,
 			endHour: 20,
 			appointmentsVisualization: "Filled",
 			showFullDay: false,
 			actions: [
-				new sap.m.Title("title",{
-					text: "OnePersonHeader"
-				}),
-				new sap.m.ToolbarSpacer(),
 				new sap.m.SegmentedButton('ViewSwitch1', {
 					buttons: [
 						new sap.m.Button({
@@ -168,9 +165,8 @@
 					type: "Type12",
 					startDate: new Date(2018, 6, 8, 20, 0, 0),
 					endDate: new Date(2018, 6, 8, 21, 0, 0)
-				})
+				}),
 
-				,
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 13",
 					type: "Type13",
@@ -218,9 +214,8 @@
 					type: "Type20",
 					startDate: new Date(2018, 6, 9, 15, 0, 0),
 					endDate: new Date(2018, 6, 9, 16, 0, 0)
-				})
+				}),
 
-				,
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 21 - 5",
 					type: "Type20",
@@ -262,9 +257,8 @@
 					type: "Type20",
 					startDate: new Date(2018, 6, 10, 19, 0, 0),
 					endDate: new Date(2018, 6, 10, 19, 35, 0)
-				})
+				}),
 
-				,
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 28",
 					type: "Type01",
@@ -282,21 +276,20 @@
 					type: "Type03",
 					startDate: new Date(2018, 6, 11, 11, 30, 0),
 					endDate: new Date(2018, 6, 11, 15, 0, 0)
-				})
+				}),
 
-				,
-				// new sap.ui.unified.CalendarAppointment({
-				// 	title: "Appointment 31",
-				// 	type: "Type04",
-				// 	startDate: new Date(2018, 6, 12, 7, 0, 0),
-				// 	endDate: new Date(2018, 6, 12, 15, 30, 0)
-				// }),
-				// new sap.ui.unified.CalendarAppointment({
-				// 	title: "Appointment 32",
-				// 	type: "Type05",
-				// 	startDate: new Date(2018, 6, 12, 18, 0, 0),
-				// 	endDate: new Date(2018, 6, 12, 22, 30, 0)
-				// }),
+				new sap.ui.unified.CalendarAppointment({
+					title: "Appointment 31",
+					type: "Type04",
+					startDate: new Date(2018, 6, 12, 7, 0, 0),
+					endDate: new Date(2018, 6, 12, 15, 30, 0)
+				}),
+				new sap.ui.unified.CalendarAppointment({
+					title: "Appointment 32",
+					type: "Type05",
+					startDate: new Date(2018, 6, 12, 18, 0, 0),
+					endDate: new Date(2018, 6, 12, 22, 30, 0)
+				}),
 				new sap.ui.unified.CalendarAppointment({
 					title: "Appointment 33",
 					type: "Type06",

@@ -24,12 +24,12 @@ sap.ui.define([],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			var oActionsToolbar = oHeader.getAggregation("actionsToolbar");
+			var oActionsToolbar = oHeader.getAggregation("_actionsToolbar");
 			if (oActionsToolbar) {
 				oRm.renderControl(oActionsToolbar);
 			}
 
-			var oNavigationToolbar = oHeader.getAggregation("navigationToolbar");
+			var oNavigationToolbar = oHeader.getAggregation("_navigationToolbar");
 			if (oNavigationToolbar) {
 				oRm.renderControl(oNavigationToolbar);
 			}

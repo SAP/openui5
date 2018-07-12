@@ -155,7 +155,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			var bFilled = oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled,
 				iRowHeight = oControl._getRowHeight(),
 				oColumnStartDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleStartHour()),
-				oColumnEndDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleEndHour()),
+				oColumnEndDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleEndHour(), 59, 59),
 				oAppStartDate = oAppointment.getStartDate(),
 				oAppEndDate = oAppointment.getEndDate(),
 				sTooltip = oAppointment.getTooltip_AsString(),
