@@ -220,17 +220,17 @@ function(
 	});
 	//_overrideAddFunctions
 	QUnit.test("when _overrideAddFunctions for dialog is called", function(assert) {
-		assert.expect(10);
+		assert.expect(11);
 		var done = assert.async();
 		fnSetRta(this.oRta);
-		this.oDialog.open();
 		this.oDialog.attachAfterOpen(function() {
+			assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oDialog), "the isPopupAdaptable is called with the in-app Dialog");
 			this.oNonRtaDialog.attachAfterOpen(function() {
 				assert.notEqual(InstanceManager.addDialogInstance, this.oOriginalInstanceManager.addDialogInstance, "InstanceManager.addDialogInstance overridden");
 				assert.notEqual(InstanceManager.addPopoverInstance, this.oOriginalInstanceManager.addPopoverInstance, "InstanceManager.addPopoverInstance overridden");
 				assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[0], "function", "then function is returned on the first call");
 				assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[1], "function", "then function is returned on the second call");
-				assert.ok(this.fnIsPopupAdaptableSpy.calledTwice, "then _isPopupAdaptable called twice for the 2 dialogs");
+				assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oNonRtaDialog), "the isPopupAdaptable is called with the non in-app Dialog");
 				//when dialog is opened, PopupManager.open() triggers bringToFront
 				assert.notStrictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 0, "then 'bringToFront' is called at least once");
 				assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then _createPopupOverlays called once for the relevant dialog");
@@ -242,6 +242,7 @@ function(
 			}.bind(this));
 			this.oNonRtaDialog.open();
 		}.bind(this));
+		this.oDialog.open();
 	});
 	//_isPopupAdaptable
 	QUnit.test("when _isPopupAdaptable is called with a dialog with a valid component", function(assert) {
@@ -283,13 +284,16 @@ function(
 	QUnit.test("when _overrideRemovePopupInstance for dialog is called and dialog is closed", function(assert) {
 		var done = assert.async();
 		fnSetRta(this.oRta);
+		this.oDialog.attachAfterOpen(function() {
+			assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oDialog), "the isPopupAdaptable is called with the in-app Dialog for open");
+		});
 		this.oDialog.open();
 		assert.notEqual(InstanceManager.removeDialogInstance, this.oOriginalInstanceManager.removeDialogInstance, "InstanceManager.removeDialogInstance overridden");
 		assert.notEqual(InstanceManager.removePopoverInstance, this.oOriginalInstanceManager.removePopoverInstance, "InstanceManager.removePopoverInstance overridden");
 		assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[0], "function", "then function is returned on the first call");
 		assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[1], "function", "then function is returned on the second call");
 		this.oDialog.attachAfterClose(function() {
-			assert.ok(this.fnIsPopupAdaptableSpy.calledTwice, "then _isPopupAdaptable called twice for opening and closing of the dialog");
+			assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oDialog), "the isPopupAdaptable is called with the in-app Dialog for close");
 			assert.strictEqual(this.fnRemoveRootElementSpy.callCount, 1, "then 'removeRootElement' is called once since RTA is set");
 			assert.ok(this.fnRemoveRootElementSpy.calledWith(this.oDialog), "then 'removeRootElement' called with the same app component dialog");
 			assert.strictEqual(this.oRta._oDesignTime.getRootElements().indexOf(this.oDialog.getId()), -1, "then the opened dialog was removed from root elements");

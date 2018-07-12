@@ -1439,7 +1439,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._onModeChange = function(oEvent) {
-		this.setMode(oEvent.getParameter('key'));
+		this.setMode(oEvent.getParameter("item").getKey());
 	};
 
 	/**
