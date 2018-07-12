@@ -401,7 +401,7 @@ function(
 		if (oNodeContext.parent) {
 			iSetSize = oNodeContext.parent.children.length;
 		}
-		if (oNodeContext.positionInParent) {
+		if (oNodeContext.positionInParent != undefined && oNodeContext.positionInParent != null) {
 			iPosInset = oNodeContext.positionInParent + 1;
 		}
 
