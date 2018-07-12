@@ -175,7 +175,7 @@ sap.ui.define(["sap/ui/support/library"],
 					if (sName.match("xmlns:")
 						&& sLocalName !== "xmlns:support"
 						&& sLocalName !== "mvc"
-						&& sLocalName.indexOf("schemas.sap.com") < 0) {
+						&& sFullName.indexOf("schemas.sap.com") < 0) {
 							var oContent = jQuery(oXMLView._xContent)[0];
 							// get the xml code of the view as a string
 							// The outerHTML doesn't work with IE, so we used
