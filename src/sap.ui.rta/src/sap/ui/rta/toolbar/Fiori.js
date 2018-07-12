@@ -5,12 +5,14 @@
 sap.ui.define([
 	'sap/m/Image',
 	'./Adaptation',
-	'../Utils'
+	'../Utils',
+	"sap/base/Log"
 ],
 function(
 	Image,
 	Adaptation,
-	Utils
+	Utils,
+	Log
 ) {
 	"use strict";
 
@@ -94,7 +96,7 @@ function(
 		var iNaturalHeight = $logo.get(0).naturalHeight;
 
 		if (iWidth !== iNaturalWidth || iHeight !== iNaturalHeight) {
-			jQuery.sap.log.error([
+			Log.error([
 				"sap.ui.rta: please check Fiori Launchpad logo, expected size is",
 				iWidth + "x" + iHeight + ",",
 				"but actual is " + iNaturalWidth + "x" + iNaturalHeight

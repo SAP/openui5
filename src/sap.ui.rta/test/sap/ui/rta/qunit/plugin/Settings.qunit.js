@@ -722,7 +722,7 @@ function (
 				done();
 			});
 
-			var spyLog = sinon.spy(jQuery.sap.log, "warning");
+			var spyLog = sinon.spy(BaseLog, "warning");
 
 			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");

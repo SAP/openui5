@@ -241,7 +241,7 @@ sap.ui.define([
 						});
 						iActionCounter++;
 					} else {
-						jQuery.sap.log.warning("Handler not found for settings action '" + sActionText + "'");
+						BaseLog.warning("Handler not found for settings action '" + sActionText + "'");
 					}
 				}, this);
 				return aMenuItems;

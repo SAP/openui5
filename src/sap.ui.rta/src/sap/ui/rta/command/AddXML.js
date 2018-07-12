@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/rta/command/FlexCommand',
 	'sap/ui/fl/Utils'
 ], function(
-	jQuery,
 	FlexCommand,
 	FlUtils
 ) {

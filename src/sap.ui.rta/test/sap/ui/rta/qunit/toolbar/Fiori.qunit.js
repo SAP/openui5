@@ -7,14 +7,16 @@ sap.ui.require([
 	'sap/ui/rta/toolbar/Fiori',
 	'sap/ui/rta/toolbar/Adaptation',
 	'sap/m/Image',
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon",
+	"sap/base/Log"
 ],
 function(
 	jQuery,
 	Fiori,
 	Adaptation,
 	Image,
-	sinon
+	sinon,
+	Log
 ) {
 	'use strict';
 
@@ -85,7 +87,7 @@ function(
 			assert.equal(oImage.getMetadata().getName(), "sap.m.Image", "then the logo control is set correctly");
 			assert.equal(oImage.getSrc(), "logo", "then the name of the logo is correctly set");
 
-			var oErrorSpy = sandbox.spy(jQuery.sap.log, "error");
+			var oErrorSpy = sandbox.spy(Log, "error");
 			this.oToolbar._checkLogoSize(jQuery({naturalWidth: 5, naturalHeight: 5}), 6, 6);
 			assert.equal(oErrorSpy.callCount, 1, "then an error was thrown");
 

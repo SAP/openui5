@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/dt/plugin/ControlDragDrop',
 	'sap/ui/rta/plugin/RTAElementMover',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils'
 ],
 function(
-	jQuery,
 	ControlDragDrop,
 	RTAElementMover,
 	Plugin,

@@ -2,16 +2,16 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/fl/LrepConnector",
-	"sap/ui/rta/appVariant/AppVariantUtils"],
-	function(jQuery, LrepConnector, AppVariantUtils) {
+	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/base/i18n/ResourceBundle"],
+	function(LrepConnector, AppVariantUtils, ResourceBundle) {
 		"use strict";
 
 		var Utils = {};
 
-		var sModulePath = jQuery.sap.getModulePath( "sap.ui.rta.appVariant.manageApps.webapp" );
-		var oI18n = jQuery.sap.resources({
+		var sModulePath = sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/") + "webapp";
+		var oI18n = ResourceBundle.create({
 			url : sModulePath + "/i18n/i18n.properties"
 		});
 

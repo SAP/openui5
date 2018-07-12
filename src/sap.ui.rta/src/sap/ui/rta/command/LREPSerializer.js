@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/Change',
 	'sap/ui/rta/ControlTreeModifier',
-	'sap/ui/fl/registry/Settings'
+	'sap/ui/fl/registry/Settings',
+	"sap/base/Log"
 ], function(
 	ManagedObject,
 	CommandStack,
@@ -22,7 +23,8 @@ sap.ui.define([
 	FlexUtils,
 	Change,
 	RtaControlTreeModifier,
-	Settings
+	Settings,
+	Log
 ) {
 	"use strict";
 	/**
@@ -183,7 +185,7 @@ sap.ui.define([
 		}.bind(this))
 
 		.then(function() {
-			jQuery.sap.log.info("UI adaptation successfully transfered changes to layered repository");
+			Log.info("UI adaptation successfully transfered changes to layered repository");
 			this.getCommandStack().removeAllCommands();
 		}.bind(this));
 

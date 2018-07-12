@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	'sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin',
-	'sap/ui/dt/OverlayRegistry'
+	'sap/ui/dt/OverlayRegistry',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	AdditionalElementsPlugin,
-	OverlayRegistry
+	OverlayRegistry,
+	jQuery
 ) {
 	"use strict";
 

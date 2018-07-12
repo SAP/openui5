@@ -7,13 +7,17 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/m/MessageBox",
-	"sap/ui/core/BusyIndicator"
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/UriParameters"
 ], function(
 	RtaUtils,
 	FlexUtils,
 	AppVariantUtils,
 	MessageBox,
-	BusyIndicator
+	BusyIndicator,
+	jQuery,
+	UriParameters
 ) {
   "use strict";
 
@@ -102,15 +106,15 @@ sap.ui.define([
 		 * When this method returns false, an app variant overview is shown only for a key user
 		 */
 		isOverviewExtended: function() {
-			var oUriParams = jQuery.sap.getUriParameters();
-			if (!oUriParams.mParams["sap-ui-xx-app-variant-overview-extended"]) {
+			var oUriParams = new UriParameters(window.location.href);
+			if (!oUriParams.get("sap-ui-xx-app-variant-overview-extended")) {
 				return false;
 			} else {
-				var aMode = oUriParams.mParams["sap-ui-xx-app-variant-overview-extended"];
+				var aMode = oUriParams.get("sap-ui-xx-app-variant-overview-extended", true);
 
 				if (aMode && aMode.length) {
-					var string = aMode[0].toLowerCase();
-					return string === 'true';
+					var sMode = aMode[0].toLowerCase();
+					return sMode === 'true';
 				}
 			}
 		},

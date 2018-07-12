@@ -3,7 +3,7 @@
  */
 
  sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/StashedControlSupport',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/rta/Utils',

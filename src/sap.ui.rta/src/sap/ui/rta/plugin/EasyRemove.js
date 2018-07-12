@@ -5,11 +5,13 @@
 sap.ui.define([
 	'sap/ui/rta/plugin/Remove',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/m/Button'
+	'sap/m/Button',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Remove,
 	OverlayRegistry,
-    Button
+	Button,
+	jQuery
 ) {
 	"use strict";
 

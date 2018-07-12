@@ -6,13 +6,17 @@ sap.ui.define([
 	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	BaseCommand,
 	RtaControlTreeModifier,
 	JsControlTreeModifier,
 	FlexControllerFactory,
-	FlUtils
+	FlUtils,
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -102,7 +106,7 @@ sap.ui.define([
 		try {
 			this._oPreparedChange = this._createChange(mFlexSettings, sVariantManagementReference);
 		} catch (oError) {
-			jQuery.sap.log.error(oError.message || oError.name);
+			Log.error(oError.message || oError.name);
 			return false;
 		}
 		return true;
@@ -199,7 +203,7 @@ sap.ui.define([
 					var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
 					var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, oControl);
 					if (!bRevertible) {
-						jQuery.sap.log.error("No revert change function available to handle revert data for " + oControl);
+						Log.error("No revert change function available to handle revert data for " + oControl);
 						return;
 					}
 					var oAppComponent = this.getAppComponent();
@@ -207,7 +211,7 @@ sap.ui.define([
 				} else if (this._aRecordedUndo) {
 					RtaControlTreeModifier.performUndo(this._aRecordedUndo);
 				} else {
-					jQuery.sap.log.warning("Undo is not available for " + oControl);
+					Log.warning("Undo is not available for " + oControl);
 				}
 			}.bind(this));
 	};

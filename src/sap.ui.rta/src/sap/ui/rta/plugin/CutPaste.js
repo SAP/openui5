@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/dt/plugin/CutPaste',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/rta/plugin/Plugin',
@@ -11,7 +10,6 @@ sap.ui.define([
 	'sap/ui/rta/Utils'
 ],
 function(
-	jQuery,
 	ControlCutPaste,
 	OverlayUtil,
 	Plugin,
