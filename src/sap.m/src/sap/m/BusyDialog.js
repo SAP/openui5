@@ -4,7 +4,7 @@
 
 // Provides control sap.m.BusyDialog.
 sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIndicator', 'sap/m/Label', 'sap/m/Button', "sap/base/Log"],
-	function (library, Control, Dialog, BusyIndicator, Label, Button, Log, Popup, Parameters) {
+	function (library, Control, Dialog, BusyIndicator, Label, Button, Log) {
 		"use strict";
 
 		/**
