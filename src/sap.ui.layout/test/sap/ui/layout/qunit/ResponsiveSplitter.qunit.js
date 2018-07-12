@@ -304,9 +304,9 @@
 
 	QUnit.test("SplitterBars' tooltip", function (assert) {
 		var aSplitterBars = this.oResponsiveSplitter.$().find(".sapUiLoSplitterBar");
-		assert.strictEqual(aSplitterBars[0].getAttribute("title"), "Resize split screen between pane 1 and pane 2");
-		assert.strictEqual(aSplitterBars[1].getAttribute("title"), "Resize split screen between pane 2 and pane 3");
-		assert.strictEqual(aSplitterBars[2].getAttribute("title"), "Resize split screen between pane 3.1 and pane 3.2");
+		assert.strictEqual(aSplitterBars[0].getAttribute("title"), "Resize between pane 1 and pane 2");
+		assert.strictEqual(aSplitterBars[1].getAttribute("title"), "Resize between pane 2 and pane 3");
+		assert.strictEqual(aSplitterBars[2].getAttribute("title"), "Resize between pane 3.1 and pane 3.2");
 	});
 
 	QUnit.test("Paginator button's tooltip", function (assert) {
