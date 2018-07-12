@@ -312,6 +312,7 @@ function(
 		MessagePopover.prototype.init = function () {
 			var that = this;
 			var oPopupControl;
+			this._oOpenByControl = null;
 
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -427,6 +428,13 @@ function(
 			}
 
 			this._setInitialFocus();
+
+			// If for some reason the control that opened the popover
+			// is destroyed or no longer visible in the DOM
+			// we should close the popover as its position cannot be determined anymore
+			if (this._oOpenByControl && !this._oOpenByControl.getVisible()) {
+				this._oPopover.close();
+			}
 		};
 
 		/**
@@ -452,6 +460,7 @@ function(
 		 */
 		MessagePopover.prototype.exit = function () {
 			this._oResourceBundle = null;
+			this._oOpenByControl = null;
 
 			if (this._oMessageView) {
 				this._oMessageView.destroy();
@@ -478,6 +487,8 @@ function(
 		MessagePopover.prototype.openBy = function (oControl) {
 			var oResponsivePopoverControl = this._oPopover.getAggregation("_popup"),
 				oParent = oControl.getParent();
+
+			this._oOpenByControl = oControl;
 
 			// If MessagePopover is opened from an instance of sap.m.Toolbar and is instance of sap.m.Popover remove the Arrow
 			if (oResponsivePopoverControl instanceof Popover) {
