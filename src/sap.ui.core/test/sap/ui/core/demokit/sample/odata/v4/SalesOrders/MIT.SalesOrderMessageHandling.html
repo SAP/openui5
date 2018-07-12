@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Message Handling</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Message Handling</h1>
+		<h2>DESCRIPTION</h2>
+		Test message handling with the Sales Orders application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+
+		<h3>Testing with mock data</h3>
+		Start the Sales Orders application with following URL (adjust host and port if necessary):
+		<ul>
+			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
+		</ul>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>Bound messages in Sales Orders application</h3>
+		<ol>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> has a colored border indicating a warning.</li>
+			<li><b>Check:</b> When clicking into the <code>Note</code> field of the sales order with
+				the ID <code>0500000001</code> the warning "Enter customer reference if available"
+				is displayed.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is diplayed containing 2 messages, an information message
+				with the text "Example for an unbound message" and a warning message with the text
+				"Enter customer reference if available".</li>
+			<li>Click on the message "Example for an unbound message" to get to the message details.
+			</li>
+			<li><b>Check:</b> The content of the message details is the same as you get with the URL
+				<a href="http://raw.githubusercontent.com/SAP/openui5/master/NOTICE.txt">
+				http://raw.githubusercontent.com/SAP/openui5/master/NOTICE.txt</a>.</li>
+			<li>Go back to the messages overview.
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is now
+				<code>0</code>.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> does not have a colored border any more.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is diplayed containing 0 messages.</li>
+			<li>Close the message popover.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000001</code>.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>2</code>.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> has a colored border indicating a warning.</li>
+			<li><b>Check:</b> When clicking into the <code>Note</code> field of the sales order with
+				the ID <code>0500000001</code> the warning "Enter customer reference if available"
+				is displayed.</li>
+			<li><b>Check:</b> The <code>Note</code> field in the <code>Sales Order Details</code>
+				section has a colored border indicating a warning.</li>
+			<li><b>Check:</b> When clicking into the <code>Note</code> field in the
+				<code>Sales Order Details</code> section the warning "Enter customer reference if
+				available" is displayed.</li>
+			<li><b>Check:</b> The <code>Quantity</code> field of the sales order line item with the
+				item position <code>0000000020</code> has a colored border indicating an error.</li>
+			<li><b>Check:</b> When clicking into the <code>Quantity</code> field of the sales order
+				line item with the item position <code>0000000020</code> the error "Minimum order
+				quantity is 2" is displayed.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is diplayed containing 2 messages, a warning message with
+				the text "Enter customer reference if available" and an error message with the text
+				"Minimum order quantity is 2".</li>
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>1</code>.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is diplayed containing 1 message, an error message with the
+				text "Minimum order quantity is 2".</li>
+			<li>Close the message popover.</li>
+			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
+				<code>0500000001</code> does not have a colored border any more.</li>
+			<li><b>Check:</b> The <code>Note</code> field in the <code>Sales Order Details</code>
+				section does not have a colored border any more.</li>
+			<li><b>Check:</b> The <code>Quantity</code> field of the sales order line item with the
+				item position <code>0000000020</code> still has a colored border indicating an
+				error.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000000</code>.</li>
+			<li><b>Check:</b> There is no input field with a colored border in the <code>Sales Order
+				Line Items</code> table.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				still <code>1</code>.</li>
+			<li>In the <code>New Sales Orders</code> table select again the sales order with the ID
+				<code>0500000001</code>.</li>
+			<li><b>Check:</b> The <code>Quantity</code> field of the sales order line item with the
+				item position <code>0000000020</code> again has a colored border indicating an
+				error.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				<code>1</code>.</li>
+			<li>Click on the <code>Show Messages</code> button.</li>
+			<li><b>Check:</b> A popover is diplayed containing 1 message, an error message with the
+				text "Minimum order quantity is 2".</li>
+			<li>Close the message popover.</li>
+		</ol>
+	</body>
+</html>

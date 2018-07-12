@@ -35,7 +35,8 @@
 					"Latitude" : "49.293673600000"
 				}
 			}
-		}
+		},
+		"messagesInSalesOrder" : []
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
@@ -43,7 +44,7 @@
 		"GrossAmount" : "5631.08",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
-		"Note" : "EPM DG: SO ID 0500000001 Deliver as fast as possible",
+		"Note" : "Note with message",
 		"SalesOrderID" : "0500000001",
 		"SO_2_BP" : {
 			"@odata.etag" : "W/\"20160613065313.0000000\"",
@@ -70,7 +71,14 @@
 					"Latitude" : "51.940081800000"
 				}
 			}
-		}
+		},
+		"messagesInSalesOrder" : [{
+			"code" : "TRANSIENT/1234",
+			"message" : "Enter customer reference if available",
+			"numericSeverity" : 3,
+			"target" : "Note",
+			"transient" : true
+		}]
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
@@ -105,7 +113,8 @@
 					"Latitude" : "52.382990802599"
 				}
 			}
-		}
+		},
+		"messagesInSalesOrder" : []
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
@@ -115,7 +124,8 @@
 		"LifecycleStatusDesc" : "New",
 		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
 		"SalesOrderID" : "0500000003",
-		"SO_2_BP" : null
+		"SO_2_BP" : null,
+		"messagesInSalesOrder" : []
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
@@ -150,6 +160,7 @@
 					"Latitude" : "-34.864871900000"
 				}
 			}
-		}
+		},
+		"messagesInSalesOrder" : []
 	}]
 }
