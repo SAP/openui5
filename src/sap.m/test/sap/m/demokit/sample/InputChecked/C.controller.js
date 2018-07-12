@@ -15,16 +15,33 @@ sap.ui.define([
 		 * Lifecycle hook that is called when the controller is instantiated
 		 */
 		onInit : function () {
-			var oView = this.getView();
+			this.oView = this.getView();
 
-			oView.setModel(new JSONModel({
+			this.oView.setModel(new JSONModel({
 				name : "",
 				email : ""
 			}));
 
 			// attach handlers for validation errors
-			sap.ui.getCore().getMessageManager().registerObject(oView.byId("nameInput"), true);
-			sap.ui.getCore().getMessageManager().registerObject(oView.byId("emailInput"), true);
+			sap.ui.getCore().getMessageManager().registerObject(this.oView.byId("nameInput"), true);
+			sap.ui.getCore().getMessageManager().registerObject(this.oView.byId("emailInput"), true);
+		},
+
+		_validateInput: function(oInput) {
+			var oBinding = oInput.getBinding("value");
+			var sValueState = "None";
+			var bValidationError = false;
+
+			try {
+				oBinding.getType().validateValue(oInput.getValue());
+			} catch (oException) {
+				sValueState = "Error";
+				bValidationError = true;
+			}
+
+			oInput.setValueState(sValueState);
+
+			return bValidationError;
 		},
 
 		/**
@@ -32,6 +49,7 @@ sap.ui.define([
 		 */
 		onContinue : function () {
 			// collect input controls
+			var that = this;
 			var oView = this.getView();
 			var aInputs = [
 				oView.byId("nameInput"),
@@ -42,13 +60,7 @@ sap.ui.define([
 			// check that inputs are not empty
 			// this does not happen during data binding as this is only triggered by changes
 			jQuery.each(aInputs, function (i, oInput) {
-				var oBinding = oInput.getBinding("value");
-				try {
-					oBinding.getType().validateValue(oInput.getValue());
-				} catch (oException) {
-					oInput.setValueState("Error");
-					bValidationError = true;
-				}
+				bValidationError = that._validateInput(oInput) || bValidationError;
 			});
 
 			// output result
@@ -57,6 +69,12 @@ sap.ui.define([
 			} else {
 				MessageBox.alert("A validation error has occured. Complete your input first");
 			}
+		},
+
+		// onChange update valueState of input
+		onChange: function(oEvent) {
+			var oInput = oEvent.getSource();
+			this._validateInput(oInput);
 		},
 
 		/**
