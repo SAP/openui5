@@ -793,7 +793,10 @@ sap.ui.require([
 	QUnit.module("clone");
 
 	QUnit.test("simple", function (assert) {
-		var oXMLComposite = new composites.TextToggleButton("Frag1");
+		var done = assert.async();
+		var oCloneModel = new sap.ui.model.json.JSONModel({ template: false });
+		var oXMLComposite = new composites.TextToggleButton("Frag1", {template: '{clone>/template}' });
+		oXMLComposite.setModel(oCloneModel, "clone");
 		var sId;
 		var iCount = 0;
 
@@ -803,23 +806,31 @@ sap.ui.require([
 		});
 
 		var fnVBoxCloneSpy = sinon.spy(oXMLComposite.getAggregation("_content"), "clone");
+		var fnRequestRetemplatingSpy = sinon.spy(composites.TextToggleButton.prototype, "requestFragmentRetemplating");
 
 		var oClone = oXMLComposite.clone("MyClone");
 		assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
-		var oContent = oClone.getAggregation("_content");
-		//TEMP-CLONE-ISSUE assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
-		//TEMP-CLONE-ISSUE assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
+		setTimeout(function() {
+			assert.ok(fnRequestRetemplatingSpy.called, "A check for retemplating is called");
+			assert.equal(fnRequestRetemplatingSpy.callCount, 2, "The check is called for the template and the clone");
+			assert.equal(oClone._iRetemplateCount, 0, "but the retemplating of the clone is not called");
+			assert.equal(oXMLComposite._iRetemplateCount, 1, "whereas the retemplate of the template was called");
+			var oContent = oClone.getAggregation("_content");
+			//TEMP-CLONE-ISSUE assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
+			//TEMP-CLONE-ISSUE assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
 
-		oXMLComposite.placeAt("content");
-		oClone.placeAt("content");
-		sap.ui.getCore().applyChanges();
+			oXMLComposite.placeAt("content");
+			oClone.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
-		//TEMP-CLONE-ISSUE assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
-		assert.equal(iCount, 1, "Event fired only once");
+			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+			//TEMP-CLONE-ISSUE assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
+			assert.equal(iCount, 1, "Event fired only once");
 
-		oXMLComposite.destroy();
-		oClone.destroy();
+			oXMLComposite.destroy();
+			oClone.destroy();
+			done();
+		}, 500);
 	});
 
 	QUnit.test("list", function (assert) {

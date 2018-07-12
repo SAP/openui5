@@ -9,16 +9,37 @@ sap.ui.define([
 					type: "string",
 					defaultValue: "Default Text",
 					invalidate: true
+				},
+				template: {
+					type: "boolean",
+					defaultValue: true,
+					invalidate: "template"
 				}
 			},
 			events: {
 				textChanged: {}
 			}
+		},
+		constructor: function(sId, mSettings) {
+			XMLComposite.apply(this,arguments);
+			this._iRetemplateCount = 0;
 		}
 	});
+
 	TextToggleButton.prototype.onPress = function() {
 		this.setText(this.getAggregation("_content").getItems()[1].getPressed() ? "On" : "Off");
 		this.fireTextChanged();
 	};
+
+	TextToggleButton.prototype.onPress = function() {
+		this.setText(this.getAggregation("_content").getItems()[1].getPressed() ? "On" : "Off");
+		this.fireTextChanged();
+	};
+
+	TextToggleButton.prototype.fragmentRetemplating = function() {
+		XMLComposite.prototype.fragmentRetemplating.apply(this,arguments);
+		this._iRetemplateCount++;
+	};
+
 	return TextToggleButton;
 }, /* bExport= */true);
