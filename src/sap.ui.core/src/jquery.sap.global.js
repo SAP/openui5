@@ -336,7 +336,6 @@ sap.ui.define([
 		oCfg = normalize(oCfg || {});
 		oCfg.resourceroots = oCfg.resourceroots || {};
 		oCfg.themeroots = oCfg.themeroots || {};
-		oCfg.resourceroots[''] = oCfg.resourceroots[''] || _oBootstrap.resourceRoot;
 
 		// map loadall mode to sync preload mode
 		if ( /(^|\/)(sap-?ui5|[^\/]+-all).js([?#]|$)/.test(_oBootstrap.url) ) {
@@ -1828,9 +1827,9 @@ sap.ui.define([
 		// take resource roots from configuration
 		var paths = {};
 		for ( var n in oCfgData.resourceroots ) {
-				paths[n.replace(/\./g, "/")] = oCfgData.resourceroots[n] || ".";
-			}
-		sap.ui.loader.config({paths: paths});
+			paths[ui5ToRJS(n)] = oCfgData.resourceroots[n] || ".";
+		}
+		ui5loader.config({paths: paths});
 
 		var mUrlPrefixes = _ui5loader.getUrlPrefixes();
 		// dump the URL prefixes
