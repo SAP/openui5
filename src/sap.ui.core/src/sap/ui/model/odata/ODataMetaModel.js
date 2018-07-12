@@ -64,10 +64,10 @@ sap.ui.define([
 		});
 
 	ODataMetaListBinding.prototype.applyFilter = function () {
-		var that = this;
+		var that = this,
+			oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
-		this.aIndices = FilterProcessor.apply(this.aIndices,
-			this.aFilters.concat(this.aApplicationFilters), function (vRef, sPath) {
+		this.aIndices = FilterProcessor.apply(this.aIndices, oCombinedFilter, function (vRef, sPath) {
 			return sPath === "@sapui.name"
 				? vRef
 				: that.oModel.getProperty(sPath, that.oList[vRef]);
