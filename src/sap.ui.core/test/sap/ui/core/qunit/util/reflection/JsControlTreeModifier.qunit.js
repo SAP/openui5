@@ -7,14 +7,15 @@ sap.ui.define([
 	'sap/m/Page',
 	'sap/f/DynamicPageTitle',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-qunit'
+	"sap/ui/core/StashedControlSupport",
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	Button,
 	Page,
 	DynamicPageTitle,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	StashedControlSupport
 ) {
 	"use strict";
 
@@ -182,25 +183,30 @@ function(
 		assert.strictEqual(fnGetVisibleSpy.callCount, 0, "then getVisible is not called");
 	});
 
-	QUnit.test("when setStashed is called for non-stash control", function(assert){
+	QUnit.test("when setStashed is called for an already unstashed control", function(assert){
 		this.oControl= new Button({ text: "Test"  });
 		this.oControl.getStashed = function () { };
-		this.oControl.setStashed = function () { };
-		var fnSetVisibleSpy = sandbox.spy(this.oControl, "setVisible");
+		this.oControl.setStashed = function () {
+			assert.ok(false, "then setStashed() should not be called on a non-stash control");
+		};
+		var fnSetVisibleSpy = sandbox.spy(JsControlTreeModifier, "setVisible");
 		JsControlTreeModifier.setStashed(this.oControl, true);
-		assert.strictEqual(this.oControl.getVisible(), false, "then visible property is set to false");
-		assert.ok(fnSetVisibleSpy.calledOnce, "then setVisible is called once");
+
+		assert.ok(fnSetVisibleSpy.calledOnce, "then modifier's setVisible() is called once");
+		assert.ok(fnSetVisibleSpy.calledWith(this.oControl, false), "then modifier's setVisible() is called with the correct arguments");
+		assert.strictEqual(this.oControl.getVisible(), false, "then visible property of control is set to false");
 	});
 
 	QUnit.test("when setStashed is called for stash control", function(assert){
-		this.oControl= new Button({ text: "Test"  });
-		this.oControl.getStashed = function () {
-			return true;
-		};
-		this.oControl.setStashed = function () { };
-		var fnSetVisibleSpy = sandbox.spy(this.oControl, "setVisible");
-		JsControlTreeModifier.setStashed(this.oControl, false);
-		assert.ok(fnSetVisibleSpy.callCount, 0, "then setVisible is not called");
+		var done = assert.async();
+		this.oControl = new Page("pageId");
+		var oStashedControl = StashedControlSupport.createStashedControl("stashedControlId", { sParentId: "pageId" });
+
+		sandbox.stub(oStashedControl, "setStashed").callsFake(function (bValue) {
+			assert.ok(!bValue, "then setStashed() called on control");
+			done();
+		});
+		JsControlTreeModifier.setStashed(oStashedControl, false);
 	});
 
 	QUnit.start();
