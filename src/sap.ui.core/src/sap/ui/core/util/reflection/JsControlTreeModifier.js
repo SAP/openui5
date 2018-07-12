@@ -53,7 +53,7 @@ sap.ui.define([
 		setStashed: function (oControl, bStashed) {
 			if (oControl.setStashed) {
 				if (oControl.setVisible) {
-					oControl.setVisible(!bStashed);
+					this.setVisible(oControl, !bStashed);
 				}
 				// check if the control is stashed and bStashed is false
 				if (oControl.getStashed() === true && bStashed === false) {
