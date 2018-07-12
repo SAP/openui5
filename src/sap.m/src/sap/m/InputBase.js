@@ -12,7 +12,10 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./InputBaseRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/getSelectedText", // jQuery Plugin "getSelectedText"
+	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
 ],
 function(
 	library,

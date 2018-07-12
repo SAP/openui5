@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/core/ValueStateSupport',
 	'sap/ui/core/Popup',
 	'sap/ui/core/library',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/Aria" // jQuery Plugin "addAriaDescribedBy", "removeAriaDescribedBy"
 ],
 	function(
 		Device,

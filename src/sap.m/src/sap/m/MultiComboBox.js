@@ -24,7 +24,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 function(
 	InputBase,
@@ -38,7 +40,7 @@ function(
 	Popover,
 	library,
 	EnabledPropagator,
-	IconPool/* , jQuerySap */,
+	IconPool,
 	coreLibrary,
 	Device,
 	Item,

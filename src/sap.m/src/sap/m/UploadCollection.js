@@ -32,7 +32,8 @@ sap.ui.define([
 	"./UploadCollectionRenderer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
 ], function(
 	Library,
 	MobileLibrary,

@@ -12,7 +12,8 @@ sap.ui.define([
 	'./DateRangeSelectionRenderer',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ],
 	function(
 		Device,

@@ -10,7 +10,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	'./TileContainerRenderer',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ':sapTabbable'
 ],
 function(
 	library,

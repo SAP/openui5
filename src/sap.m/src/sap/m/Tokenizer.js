@@ -13,7 +13,8 @@ sap.ui.define([
 	'./TokenizerRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
 		library,

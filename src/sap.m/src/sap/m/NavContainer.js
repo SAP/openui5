@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./NavContainerRenderer',
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ], function(
 	library,
 	Control,

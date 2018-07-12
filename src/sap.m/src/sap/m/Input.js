@@ -25,7 +25,8 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'./InputRenderer',
 	"sap/ui/dom/containsOrEquals",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
 ],
 function(
 	Bar,

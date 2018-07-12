@@ -20,8 +20,10 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/library',
 	'./DialogRenderer',
-	"sap/base/Log"
-	],
+	"sap/base/Log",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+],
 function(
 	Bar,
 	InstanceManager,

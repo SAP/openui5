@@ -22,7 +22,9 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'./MultiInputRenderer',
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 function(
 	Input,

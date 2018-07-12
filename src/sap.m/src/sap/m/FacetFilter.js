@@ -18,7 +18,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/ui/events/jquery/EventSimulation"
+	"sap/ui/events/jquery/EventSimulation",
+	"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
 ],
 	function(
 		NavContainer,
