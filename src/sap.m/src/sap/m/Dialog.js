@@ -59,23 +59,23 @@ function(
 		* @param {object} [mSettings] Initial settings for the new control
 		*
 		* @class
-		* A popup that interrupts the current processing and prompts the user for an action or an input, in a modal mode.
+		* A popup that interrupts the current processing and prompts the user for an action or an input in a modal mode.
 		* <h3>Overview</h3>
 		* The Dialog control is used to prompt the user for an action or a confirmation. It interrupts the current app processing as it is the only focused UI element and the main screen is dimmed/blocked.
-		* The content of the dialog is fully customizable.
+		* The content of the Dialog is fully customizable.
 		* <h3>Structure</h3>
-		* A dialog consists of a title, optional subtitle, content area and a footer for action buttons.
-		* The dialog is usually displayed at the center of the screen. Its size and position can be changed by the user.
+		* A Dialog consists of a title, optional subtitle, content area and a footer for action buttons.
+		* The Dialog is usually displayed at the center of the screen. Its size and position can be changed by the user.
 		* To enable this, you need to set the properties <code>resizable</code> and <code>draggable</code> accordingly.
 		*
 		* There are other specialized types of dialogs:
 		* <ul>
-		* <li>{@link sap.m.P13nDialog Personalization dialog} - used for personalizing sorting, filtering and grouping in tables</li>
-		* <li>{@link sap.m.SelectDialog Select dialog} - used to select one or more items from a comprehensive list</li>
-		* <li>{@link sap.m.TableSelectDialog Table select dialog} - used to  make a selection from a comprehensive table containing multiple attributes or values</li>
-		* <li>{@link sap.ui.comp.valuehelpdialog.ValueHelpDialog Value help dialog} - used to help the user find and select single and multiple values</li>
-		* <li>{@link sap.m.ViewSettingsDialog View settings dialog}  - used to sort, filter, or group data within a (master) list or a table</li>
-		* <li>{@link sap.m.BusyDialog Busy dialog} - used to block the screen and inform the user about an ongoing operation</li>
+		* <li>{@link sap.m.P13nDialog Personalization Dialog} - used for personalizing sorting, filtering and grouping in tables</li>
+		* <li>{@link sap.m.SelectDialog Select Dialog} - used to select one or more items from a comprehensive list</li>
+		* <li>{@link sap.m.TableSelectDialog Table Select Dialog} - used to  make a selection from a comprehensive table containing multiple attributes or values</li>
+		* <li>{@link sap.ui.comp.valuehelpdialog.ValueHelpDialog Value Help Dialog} - used to help the user find and select single and multiple values</li>
+		* <li>{@link sap.m.ViewSettingsDialog View Settings Dialog}  - used to sort, filter, or group data within a (master) list or a table</li>
+		* <li>{@link sap.m.BusyDialog Busy Dialog} - used to block the screen and inform the user about an ongoing operation</li>
 		* </ul>
 		* <h3>Usage</h3>
 		* <h4>When to use:</h4>
@@ -90,12 +90,12 @@ function(
 		* </ul>
 		* <h3>Responsive Behavior</h3>
 		* <ul>
-		* <li>If the <code>stretch</code> property is set to true, the dialog displays on full screen.</li>
-		* <li>If the <code>contentWidth</code> and/or <code>contentHeight</code> properties are set, the dialog will try to fill those sizes.</li>
-		* <li>If there is no specific sizing, the dialog will try to adjust its size to its content.</li>
+		* <li>If the <code>stretch</code> property is set to <code>true</code>, the Dialog displays on full screen.</li>
+		* <li>If the <code>contentWidth</code> and/or <code>contentHeight</code> properties are set, the Dialog will try to fill those sizes.</li>
+		* <li>If there is no specific sizing, the Dialog will try to adjust its size to its content.</li>
 		* </ul>
 		* <h4>Smartphones</h4>
-		* If the dialog has one or two actions they will cover the entire footer. If there are more actions, they will overflow.
+		* If the Dialog has one or two actions, they will cover the entire footer. If there are more actions, they will overflow.
 		* <h4>Tablets</h4>
 		* The action buttons in the toolbar are <b>right-aligned</b>. Use <b>cozy</b> mode on tablet devices.
 		* <h4>Desktop</h4>
@@ -121,87 +121,87 @@ function(
 				properties: {
 
 					/**
-					 * Icon displayed in the dialog's header. This icon is invisible on the iOS platform and it's density aware. You can use the density convention (@2, @1.5, etc.) to provide higher resolution image for higher density screen.
+					 * Icon displayed in the Dialog header. This <code>icon</code> is invisible on the iOS platform and it is density-aware. You can use the density convention (@2, @1.5, etc.) to provide higher resolution image for higher density screen.
 					 */
 					icon: {type: "sap.ui.core.URI", group: "Appearance", defaultValue: null},
 
 					/**
-					 * Title text appears in the dialog header.
+					 * Title text appears in the Dialog header.
 					 */
 					title: {type: "string", group: "Appearance", defaultValue: null},
 
 					/**
-					 * Determines whether the header is shown inside the dialog. If this property is set to true, the text and icon property are ignored. This property has a default value true.
+					 * Determines whether the header is shown inside the Dialog. If this property is set to <code>true</code>, the <code>text</code> and <code>icon</code> properties are ignored. This property has a default value <code>true</code>.
 					 * @since 1.15.1
 					 */
 					showHeader: {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
-					 * The type of the dialog. In some themes, the type "message" will limit the dialog's width within 480px on tablet and desktop.
+					 * The <code>type</code> of the Dialog. In some themes, the type Message will limit the Dialog width within 480px on tablet and desktop.
 					 */
 					type: {type: "sap.m.DialogType", group: "Appearance", defaultValue: DialogType.Standard},
 
 					/**
-					 * The state affects the icon and the title color. If other than "None" is set, a predefined icon will be added to the dialog. Setting icon property will overwrite the predefined icon. The default value is "None" which doesn't add any icon to the Dialog control. This property is by now only supported by blue crystal theme.
+					 * Affects the <code>icon</code> and the <code>title</code> color. If other than <code>none</code> is set, a predefined icon will be added to the Dialog. Setting the <code>icon</code> property will overwrite the predefined icon. The default value is <code>none</code> which doesn't add any icon to the Dialog control. This property is by now only supported by the blue crystal theme.
 					 * @since 1.11.2
 					 */
 					state: {type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None},
 
 					/**
-					 * Determines whether the dialog will displayed on full screen on a phone.
+					 * Determines whether the Dialog will be displayed on full screen on a phone.
 					 * @since 1.11.2
 					 * @deprecated Since version 1.13.1.
-					 * Please use the new stretch property instead. This enables a stretched dialog even on tablet and desktop. If you want to achieve the same effect as stretchOnPhone, please set the stretch with jQuery.device.is.phone, then dialog is only stretched when runs on phone.
+					 * Please use the new stretch property instead. This enables a stretched Dialog even on tablet and desktop. If you want to achieve the same effect as <code>stretchOnPhone</code>, please set the stretch with jQuery.device.is.phone, then the Dialog is only stretched when it runs on a phone.
 					 */
 					stretchOnPhone: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
 
 					/**
-					 * Determines  if the dialog will be stretched to full screen on mobile, when on desktop the dialog will be stretched to 93% of the viewport. This property is only applicable to standard dialog and message type dialog ignores this property.
+					 * Determines if the Dialog will be stretched to full screen on mobile. On desktop, the Dialog will be stretched to 93% of the viewport. This property is only applicable to a Standard Dialog. Message-type Dialog ignores it.
 					 * @since 1.13.1
 					 */
 					stretch: {type: "boolean", group: "Appearance", defaultValue: false},
 
 					/**
-					 * Preferred width of content in Dialog. This property affects the width of dialog on phone in landscape mode, tablet or desktop, because the dialog has a fixed width on phone in portrait mode. If the preferred width is less than the minimum width of the dialog or more than the available width of the screen, it will be overwritten by the min or max value. The current mininum value of dialog width on tablet is 400px.
+					 * Preferred width of the content in the Dialog. This property affects the width of the Dialog on a phone in landscape mode, a tablet or a desktop, because the Dialog has a fixed width on a phone in portrait mode. If the preferred width is less than the minimum width of the Dialog or more than the available width of the screen, it will be overwritten by the min or max value. The current mininum value of the Dialog width on tablet is 400px.
 					 * @since 1.12.1
 					 */
 					contentWidth: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null},
 
 					/**
-					 * Preferred height of content in Dialog. If the preferred height is bigger than the available space on screen, it will be overwritten by the maximum available height on screen in order to make sure that dialog isn't cut off.
+					 * Preferred height of the content in the Dialog. If the preferred height is bigger than the available space on a screen, it will be overwritten by the maximum available height on a screen in order to make sure that the Dialog isn't cut off.
 					 * @since 1.12.1
 					 */
 					contentHeight: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null},
 
 					/**
-					 * Indicates if user can scroll horizontally inside dialog when the content is bigger than the content area.
-					 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, sap.m.ScrollContainer or sap.m.SplitContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
+					 * Indicates if the user can scroll horizontally inside the Dialog when the content is bigger than the content area.
+					 * The Dialog detects if there's <code>sap.m.NavContainer</code>, <code>sap.m.Page</code>, <code>sap.m.ScrollContainer</code> or <code>sap.m.SplitContainer</code> as a direct child added to the Dialog. If there is, the Dialog will turn off <code>scrolling</code> by setting this property to <code>false</code>, automatically ignoring the existing value of the property.
 					 * @since 1.15.1
 					 */
 					horizontalScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
 
 					/**
-					 * Indicates if user can scroll vertically inside dialog when the content is bigger than the content area.
-					 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, sap.m.ScrollContainer or sap.m.SplitContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
+					 * Indicates if the user can scroll vertically inside the Dialog when the content is bigger than the content area.
+					 * The Dialog detects if there's <code>sap.m.NavContainer</code>, <code>sap.m.Page</code>, <code>sap.m.ScrollContainer</code> or <code>sap.m.SplitContainer</code> as a direct child added to the Dialog. If there is, the Dialog will turn off <code>scrolling</code> by setting this property to <code>false</code>, automatically ignoring the existing value of this property.
 					 * @since 1.15.1
 					 */
 					verticalScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
 
 					/**
-					 * Indicates whether the dialog is resizable. the dialog is resizable. If this property is set to true, the dialog will have a resize handler in it's bottom right corner. This property has a default value false. The Dialog can be resizable only in desktop mode.
+					 * Indicates whether the Dialog is resizable. If this property is set to <code>true</code>, the Dialog will have a resize handler in its bottom right corner. This property has a default value <code>false</code>. The Dialog can be resizable only in desktop mode.
 					 * @since 1.30
 					 */
 					resizable: {type: "boolean", group: "Behavior", defaultValue: false},
 
 					/**
-					 * Indicates whether the dialog is draggable. If this property is set to true, the dialog will be draggable by it's header. This property has a default value false. The Dialog can be draggable only in desktop mode.
+					 * Indicates whether the Dialog is draggable. If this property is set to <code>true</code>, the Dialog will be draggable by its header. This property has a default value <code>false</code>. The Dialog can be draggable only in desktop mode.
 					 * @since 1.30
 					 */
 					draggable: {type: "boolean", group: "Behavior", defaultValue: false},
 
 					/**
-					 * This property expects a function with one parameter of type <code>Promise</code>. In the function you should call either <code>resolve()</code> or <code>reject()</code> on the <code>Promise</code> object.<br/>
-					 * The function allows you to define custom behaviour which will be executed when the ESCAPE key is pressed. By default when the ESCAPE key is pressed the Dialog is immediately closed.
+					 * This property expects a function with one parameter of type Promise. In the function, you should call either <code>resolve()</code> or <code>reject()</code> on the Promise object.<br/>
+					 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the Dialog is immediately closed.
 					 * @since 1.44
 					 */
 					escapeHandler : {type: "any", group: "Behavior", defaultValue: null}
@@ -210,119 +210,119 @@ function(
 				aggregations: {
 
 					/**
-					 * The content inside the dialog.<br/><b>Note:</b> When the content of the <code>Dialog</code> is comprised of controls that use <code>position: absolute</code>, such as <code>SplitContainer</code>, the dialog has to have either <code>stretch: true</code> or <code>contentHeight</code> set.
+					 * The content inside the Dialog.<br/><b>Note:</b> When the content of the Dialog is comprised of controls that use <code>position: absolute</code>, such as <code>SplitContainer</code>, the Dialog has to have either <code>stretch: true</code> or <code>contentHeight</code> set.
 					 */
 					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
 
 					/**
-					 * When subHeader is assigned to Dialog, it's rendered directly after the main header in Dialog. SubHeader is out of the content area and won't be scrolled when content's size is bigger than the content area's size.
+					 * When a <code>subHeader</code> is assigned to the Dialog, it's rendered directly after the main header in the Dialog. The <code>subHeader</code> is out of the content area and won't be scrolled when the content size is bigger than the content area size.
 					 * @since 1.12.2
 					 */
 					subHeader: {type: "sap.m.IBar", multiple: false},
 
 					/**
-					 * When it is set, <code>icon</code>, <code>title</code> and <code>showHeader</code> properties are ignored. Only the <code>customHeader</code> is shown as the header of the dialog.
+					 * When it is set, the <code>icon</code>, <code>title</code> and <code>showHeader</code> properties are ignored. Only the <code>customHeader</code> is shown as the header of the Dialog.
 					 * @since 1.15.1
 					 */
 					customHeader: {type: "sap.m.IBar", multiple: false},
 
 					/**
-					 * The button which is rendered to the left side (right side in RTL mode) of the endButton in the footer area inside the dialog. From UI5 version 1.21.1, there's a new aggregation "buttons" created with which more than 2 buttons can be added to the footer area of dialog. If the new "buttons" aggregation is set, any change made to this aggregation has no effect anymore. When runs on the phone, this button (and the endButton together when set) is (are) rendered at the center of the footer area. When runs on the other platforms, this button (and the endButton together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
+					 * The button which is rendered to the left side (right side in RTL mode) of the <code>endButton</code> in the footer area inside the Dialog. As of version 1.21.1, there's a new aggregation <code>buttons</code> created with which more than 2 buttons can be added to the footer area of the Dialog. If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore. When running on a phone, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered at the center of the footer area. When running on other platforms, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
 					 * @since 1.15.1
 					 */
 					beginButton: {type: "sap.m.Button", multiple: false},
 
 					/**
-					 * The button which is rendered to the right side (left side in RTL mode) of the beginButton in the footer area inside the dialog. From UI5 version 1.21.1, there's a new aggregation "buttons" created with which more than 2 buttons can be added to the footer area of dialog. If the new "buttons" aggregation is set, any change made to this aggregation has no effect anymore. When runs on the phone, this button (and the beginButton together when set) is (are) rendered at the center of the footer area. When runs on the other platforms, this button (and the beginButton together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
+					 * The button which is rendered to the right side (left side in RTL mode) of the <code>beginButton</code> in the footer area inside the Dialog. As of version 1.21.1, there's a new aggregation <code>buttons<code> created with which more than 2 buttons can be added to the footer area of Dialog. If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore. When running on a phone, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the center of the footer area. When running on other platforms, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
 					 * @since 1.15.1
 					 */
 					endButton: {type: "sap.m.Button", multiple: false},
 
 					/**
-					 * Buttons can be added to the footer area of dialog through this aggregation. When this aggregation is set, any change to beginButton and endButton has no effect anymore. Buttons which are inside this aggregation are aligned at the right side (left side in RTL mode) of the footer instead of in the middle of the footer.
+					 * Buttons can be added to the footer area of the Dialog through this aggregation. When this aggregation is set, any change to the <code>beginButton</code> and <code>endButton</code> has no effect anymore. Buttons which are inside this aggregation are aligned at the right side (left side in RTL mode) of the footer instead of in the middle of the footer.
 					 * @since 1.21.1
 					 */
 					buttons: {type: "sap.m.Button", multiple: true, singularName: "button"},
 
 					/**
-					 * The hidden aggregation for internal maintained header.
+					 * The hidden aggregation for internal maintained <code>header</code>.
 					 */
 					_header: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 					/**
-					 * The hidden aggregation for internal maintained title control.
+					 * The hidden aggregation for internal maintained <code>title</code> control.
 					 */
 					_title: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 					/**
-					 * The hidden aggregation for internal maintained icon control.
+					 * The hidden aggregation for internal maintained <code>icon</code> control.
 					 */
 					_icon: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 					/**
-					 * The hidden aggregation for internal maintained toolbar instance
+					 * The hidden aggregation for internal maintained <code>toolbar</code> instance.
 					 */
 					_toolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"},
 
 					/**
-					 * The hidden aggregation for the Dialog state
+					 * The hidden aggregation for the Dialog state.
 					 */
 					_valueState: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
 				},
 				associations: {
 
 					/**
-					 * LeftButton is shown at the left edge of the bar in iOS, and at the right side of the bar for the other platforms. Please set this to null if you want to remove the left button from the bar. And the button is only removed from the bar, not destroyed. When showHeader is set to false, this property will be ignored. Setting leftButton will also set the beginButton internally.
+					 * <code>LeftButton</code> is shown at the left edge of the bar in iOS, and at the right side of the bar for the other platforms. Please set this to <code>null</code> if you want to remove the Left button from the bar. And the button is only removed from the bar, not destroyed. When <code>showHeader</code> is set to <code>false</code>, this property will be ignored. Setting <code>leftButton</code> will also set the <code>beginButton</code> internally.
 					 * @deprecated Since version 1.15.1.
 					 *
-					 * LeftButton has been deprecated since 1.15.1. Please use the beginButton instead which is more RTL friendly.
+					 * <code>LeftButton</code> has been deprecated since 1.15.1. Please use the <code>beginButton</code> instead which is more RTL friendly.
 					 */
 					leftButton: {type: "sap.m.Button", multiple: false, deprecated: true},
 
 					/**
-					 * RightButton is always shown at the right edge of the bar. Please set this to null if you want to remove the right button from the bar. And the button is only removed from the bar, not destroyed. When showHeader is set to false, this property will be ignored. Setting rightButton will also set the endButton internally.
+					 * <code>RightButton</code> is always shown at the right edge of the bar. Please set this to null if you want to remove the Right button from the bar. And the button is only removed from the bar, not destroyed. When <code>showHeader</code> is set to false, this property will be ignored. Setting <code>rightButton</code> will also set the <code>endButton</code> internally.
 					 * @deprecated Since version 1.15.1.
 					 *
-					 * RightButton has been deprecated since 1.15.1. Please use the endButton instead which is more RTL friendly.
+					 * <code>RightButton</code> has been deprecated since 1.15.1. Please use the <code>endButton</code> instead which is more RTL friendly.
 					 */
 					rightButton: {type: "sap.m.Button", multiple: false, deprecated: true},
 
 					/**
-					 * Focus is set to the dialog in the sequence of leftButton and rightButton when available. But if some other control needs to get the focus other than one of those two buttons, set the initialFocus with the control which should be focused on. Setting initialFocus to input controls doesn't open the on screen keyboard on mobile device, this is due to the browser limitation that the on screen keyboard can't be opened with javascript code. The opening of on screen keyboard must be triggered by real user action.
+					 * In the Dialog focus is set first on the <code>leftButton</code> and then on <code>rightButton</code>, when available. If another control needs to get the focus, set the <code>initialFocus</code> with the control which should be focused on. Setting <code>initialFocus</code> to input controls doesn't open the On-Screen keyboard on mobile device as, due to browser limitation, the On-Screen keyboard can't be opened with JavaScript code. The opening of On-Screen keyboard must be triggered by real user action.
 					 * @since 1.15.0
 					 */
 					initialFocus: {type: "sap.ui.core.Control", multiple: false},
 
 					/**
-					 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+					 * Association to controls/IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 					 */
 					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
 					/**
-					 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+					 * Association to controls/IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 					 */
 					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 				},
 				events: {
 
 					/**
-					 * This event will be fired before the dialog is opened.
+					 * This event will be fired before the Dialog is opened.
 					 */
 					beforeOpen: {},
 
 					/**
-					 * This event will be fired after the dialog is opened.
+					 * This event will be fired after the Dialog is opened.
 					 */
 					afterOpen: {},
 
 					/**
-					 * This event will be fired before the dialog is closed.
+					 * This event will be fired before the Dialog is closed.
 					 */
 					beforeClose: {
 						parameters: {
 
 							/**
-							 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
+							 * This indicates the trigger of closing the Dialog. If the Dialog is closed by either the <code>leftButton</code> or the <code>rightButton</code>, the button that closes the Dialog is set to this parameter. Otherwise, the parameter is set to <code>null</code>.
 							 * @since 1.9.2
 							 */
 							origin: {type: "sap.m.Button"}
@@ -330,13 +330,13 @@ function(
 					},
 
 					/**
-					 * This event will be fired after the dialog is closed.
+					 * This event will be fired after the Dialog is closed.
 					 */
 					afterClose: {
 						parameters: {
 
 							/**
-							 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
+							 * This indicates the trigger of closing the Dialog. If the Dialog is closed by either the <code>leftButton</code> or the <code>rightButton</code>, the button that closes the Dialog is set to this parameter. Otherwise, the parameter is set to <code>null</code>.
 							 * @since 1.9.2
 							 */
 							origin: {type: "sap.m.Button"}
@@ -381,7 +381,7 @@ function(
 			/**
 			 *
 			 * @param {Object} oPosition A new position to move the Dialog to.
-			 * @param {boolean} bFromResize Is the function called from resize event.
+			 * @param {boolean} bFromResize The function called from the <code>resize</code> event.
 			 * @private
 			 */
 			this.oPopup._applyPosition = function (oPosition, bFromResize) {
@@ -600,7 +600,7 @@ function(
 		};
 
 		/**
-		 * The method checks if the Dialog is open. It returns true when the Dialog is currently open (this includes opening and closing animations), otherwise it returns false.
+		 * The method checks if the Dialog is open. It returns <code>true</code> when the Dialog is currently open (this includes opening and closing animations), otherwise it returns <code>false</code>.
 		 *
 		 * @returns boolean
 		 * @public
@@ -660,8 +660,8 @@ function(
 		};
 
 		/**
-		 * Event handler for the focusin event.
-		 * If it occurs on the focus handler elements at the beginning of the dialog, the focus is set to the end, and vice versa.
+		 * Event handler for the <code>focusin</code> event.
+		 * If it occurs on the invisible element at the beginning of the Dialog, the focus is set on the last focusable element of the Dialog, and vice versa.
 		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
@@ -686,7 +686,7 @@ function(
 		};
 
 		/**
-		 * Makes sure app developer will always have access to the last created promise
+		 * Makes sure the app developer will always have access to the last created Promise.
 		 * @returns {{reject: reject, resolve: resolve}}
 		 * @private
 		 */
@@ -706,8 +706,8 @@ function(
 
 		/**
 		 * Event handler for the escape key pressed event.
-		 * If it occurs and the developer hasn't defined the escapeHandler property, the Dialog is immediately closed.
-		 * Else the escapeHandler is executed and the developer may prevent the closing of the Dialog.
+		 * If it occurs and the developer hasn't defined the <code>escapeHandler</code> property, the Dialog is immediately closed.
+		 * Otherwise, the <code>escapeHandler</code> is executed and the developer may prevent the closing of the Dialog.
 		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
@@ -967,10 +967,10 @@ function(
 		};
 
 		/**
-		 * If a scrollable control (sap.m.NavContainer, sap.m.ScrollContainer, sap.m.Page, sap.m.SplitContainer) is added to dialog's content aggregation as a single child or through one or more sap.ui.mvc.View instances,
-		 * the scrolling inside dialog will be disabled in order to avoid wrapped scrolling areas.
+		 * If a scrollable control (<code>sap.m.NavContainer</code>, <code>sap.m.ScrollContainer</code>, <code>sap.m.Page</code>, <code>sap.m.SplitContainer</code>) is added to the Dialog content aggregation as a single child or through one or more <code>sap.ui.mvc.View<c/ode> instances,
+		 * the scrolling inside the Dialog will be disabled in order to avoid wrapped scrolling areas.
 		 *
-		 * If more than one scrollable control is added to dialog, the scrolling needs to be disabled manually.
+		 * If more than one scrollable control is added to the Dialog, the scrolling needs to be disabled manually.
 		 * @private
 		 */
 		Dialog.prototype._hasSingleScrollableContent = function () {
@@ -1092,11 +1092,11 @@ function(
 			return sResult;
 		};
 
-		// The control that needs to be focused after dialog is open is calculated in following sequence:
+		// The control that needs to be focused after the Dialog is open is calculated in the following sequence:
 		// initialFocus, first focusable element in content area, beginButton, endButton
-		// dialog is always modal so the focus doen't need to be on the dialog when there's
+		// the Dialog is always modal so the focus doesn't need to be on the Dialog when there's
 		// no initialFocus, beginButton and endButton available, but to keep the consistency,
-		// the focus will in the end fall back to dialog itself.
+		// the focus will in the end fall back on the Dialog itself.
 		/**
 		 *
 		 * @private
@@ -1107,7 +1107,7 @@ function(
 			var oFocusDomRef;
 
 			if (oControl) {
-				//if someone tries to focus an existing but not visible control, focus the Dialog itself.
+				//if someone tries to focus on an existing but not visible control, focus the Dialog itself.
 				if (oControl.getVisible && !oControl.getVisible()) {
 					this.focus();
 					return;
@@ -1129,21 +1129,21 @@ function(
 				this.setAssociation('initialFocus', oFocusDomRef ? oFocusDomRef.id : this.getId(), true);
 			}
 
-			// Setting focus to DOM Element which can open the on screen keyboard on mobile device doesn't work
-			// consistently across devices. Therefore setting focus to those elements are disabled on mobile devices
-			// and the keyboard should be opened by the User explicitly
+			// Setting focus to DOM Element which can open the On-screen keyboard on mobile device doesn't work
+			// consistently across devices. Therefore setting focus on these elements is disabled on mobile devices
+			// and the keyboard should be opened by the user explicitly
 			if (Device.system.desktop || (oFocusDomRef && !/input|textarea|select/i.test(oFocusDomRef.tagName))) {
 				if (oFocusDomRef){
 					oFocusDomRef.focus();
 				}
 			} else {
-				// Set the focus to the popup itself in order to keep the tab chain
+				// Set the focus on the popup itself in order to keep the tab chain
 				this.focus();
 			}
 		};
 
 		/**
-		 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+		 * Returns the <code>sap.ui.core.ScrollEnablement</code> delegate which is used with this control.
 		 *
 		 * @private
 		 */
@@ -1240,8 +1240,8 @@ function(
 
 
 		/**
-		 * Returns the custom header instance when the customHeader aggregation is set. Otherwise it returns the internal managed
-		 * header instance. This method can be called within composite controls which use sap.m.Dialog inside.
+		 * Returns the custom header instance when the <code>customHeader</code> aggregation is set. Otherwise, it returns the internal managed
+		 * header instance. This method can be called within composite controls which use <code>sap.m.Dialog<code> inside.
 		 *
 		 * @protected
 		 */
@@ -1399,8 +1399,8 @@ function(
 		};
 
 		/**
-		 * Returns the sap.ui.core.ValueState state according to the language settings
-		 * @param {sap.ui.core.ValueState|string} sValueState The dialog's value state
+		 * Returns the <code>sap.ui.core.ValueState</code> state according to the language settings.
+		 * @param {sap.ui.core.ValueState|string} sValueState The Dialog value state
 		 * @returns {string} The translated text
 		 * @private
 		 */
