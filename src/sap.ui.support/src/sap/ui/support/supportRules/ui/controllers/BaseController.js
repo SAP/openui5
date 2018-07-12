@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/support/supportRules/Constants",
-	"sap/ui/support/supportRules/ui/models/SelectionUtils"
-], function (Controller, storage, constants, SelectionUtils) {
+	"sap/ui/support/supportRules/ui/models/SelectionUtils",
+	"sap/ui/support/supportRules/ui/models/PresetsUtils"
+], function (Controller, storage, constants, SelectionUtils, PresetsUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.support.supportRules.ui.controllers.BaseController", {
@@ -27,6 +28,7 @@ sap.ui.define([
 				this.persistExecutionScope();
 				this.persistVisibleColumns();
 				SelectionUtils.persistSelection();
+				PresetsUtils.persistSelectionPresets();
 
 			} else {
 				storage.deletePersistenceCookie(constants.COOKIE_NAME);
