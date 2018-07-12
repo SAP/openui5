@@ -975,6 +975,16 @@
 			assert.equal(this.oTableSelectDialogResetButton._oDialog.getTitle(), "Title", 'Title of Dialog  should be "Title"');
 
 		});
+
+		QUnit.test("After reset is preset the focus should be returned to the search field", function(assert) {
+			this.oTableSelectDialogResetButton.open();
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			this.oTableSelectDialogResetButton._getResetButton().firePress();
+			assert.equal(document.activeElement.getAttribute("id"), this.oTableSelectDialogResetButton._oDialog.getId(), 'After selection is reset the focus should be returned to the TableSelectDialog"');
+
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

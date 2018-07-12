@@ -1001,6 +1001,8 @@ sap.ui.define([
 				press: function() {
 					this._removeSelection();
 					this._updateSelectionIndicator();
+					//when reset is executed focus should stay in sap.mTableSelectDialog
+					this._oDialog.focus();
 				}.bind(this)
 			});
 		}
