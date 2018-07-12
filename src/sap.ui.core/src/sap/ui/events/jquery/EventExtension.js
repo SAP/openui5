@@ -11,12 +11,19 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 
 	var EventExtension = Object.create(null);
 
+	var _bIsApplied = false;
+
 	/*
 	 * Applies the jQuery.Event extensions
 	 *
 	 * @sap-restricted sap.ui.core
 	 */
 	EventExtension.apply = function() {
+
+		if (_bIsApplied) {
+			return;
+		}
+		_bIsApplied = true;
 
 		/*
 		 * Returns an array of names (as strings) identifying {@link sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
