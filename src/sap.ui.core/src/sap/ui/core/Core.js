@@ -1864,10 +1864,6 @@ sap.ui.define([
 				this.initLibrary(sLibrary); // TODO redundant to generated initLibrary call....
 			}
 
-			if ( this.oThemeCheck && this.isInitialized() ) {
-				this.oThemeCheck.fireThemeChangedEvent(true);
-			}
-
 		}
 
 		// Note: return parameter is undocumented by intention! Structure of lib info might change
@@ -1903,8 +1899,7 @@ sap.ui.define([
 		// default values for options
 		mOptions = jQuery.extend({ async : true, preloadOnly : false }, mOptions);
 
-		var that = this,
-			bPreload = this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async',
+		var bPreload = this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async',
 			bAsync = mOptions.async,
 			bRequire = !mOptions.preloadOnly;
 
@@ -1917,16 +1912,9 @@ sap.ui.define([
 			});
 		}
 
-		function triggerThemeCheck() {
-			if ( that.oThemeCheck && that.isInitialized() ) {
-				that.oThemeCheck.fireThemeChangedEvent(true);
-			}
-		}
-
 		function requireLibsAsync() {
 			return new Promise(function(resolve, reject) {
 				sap.ui.require(getLibraryModuleNames(), function() {
-					triggerThemeCheck();
 					resolve();
 				});
 			});
@@ -1934,7 +1922,6 @@ sap.ui.define([
 
 		function requireLibsSync() {
 			getLibraryModuleNames().forEach(sap.ui.requireSync);
-			triggerThemeCheck();
 		}
 
 		if ( bAsync ) {
@@ -2206,6 +2193,10 @@ sap.ui.define([
 				var sQuery = this._getLibraryCssQueryParams(oLibInfo);
 
 				this.includeLibraryTheme(sLibName, undefined, sQuery);
+
+				if (this.oThemeCheck && this.isInitialized()) {
+					this.oThemeCheck.fireThemeChangedEvent(true);
+				}
 			}
 		}
 

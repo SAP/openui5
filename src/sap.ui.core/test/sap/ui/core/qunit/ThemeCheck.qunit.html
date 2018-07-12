@@ -6,7 +6,9 @@
 		<script>
 			window["sap-ui-config"] = {
 				resourceRoots : {
-					"sap.ui.testlib" : "./testdata/uilib/"
+					"sap.ui.testlib" : "./testdata/uilib/",
+					"sap.ui.customthemefallback.testlib" : "./testdata/uilib-custom-theme-fallback/",
+					"sap.ui.failingcssimport.testlib" : "./testdata/uilib-failing-css-import/"
 				},
 				themeRoots: {
 					"legacy": {
@@ -34,6 +36,8 @@
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
+
+		QUnit.config.reorder = false;
 
 		// Wait until the theme is changed
 		function themeChanged() {
@@ -206,6 +210,53 @@
 			sap.ui.getCore().getConfiguration().setRTL(false);
 
 		});
+
+
+		QUnit.module("Library Loading");
+
+		QUnit.test("sap.ui.getCore().loadLibrary()", function(assert) {
+			var done = assert.async();
+
+			themeChanged().then(function() {
+				assert.ok(true, "ThemeChanged event has been fired");
+				done();
+			});
+
+			sap.ui.getCore().loadLibrary("sap.ui.customthemefallback.testlib");
+		});
+
+		QUnit.test("sap.ui.getCore().loadLibraries()", function(assert) {
+			var done = assert.async();
+
+			themeChanged().then(function() {
+				assert.ok(true, "ThemeChanged event has been fired");
+				done();
+			});
+
+			sap.ui.getCore().loadLibraries(["sap.ui.failingcssimport.testlib"], {
+				async: true
+			});
+		});
+
+		QUnit.test("require without loadLibrary/loadLibraries", function(assert) {
+			var done = assert.async();
+
+			themeChanged().then(function() {
+				assert.ok(true, "ThemeChanged event has been fired");
+				done();
+			});
+
+			// Fake direct require to a library.js module by just calling initLibrary
+			sap.ui.getCore().initLibrary({
+				name : "sap.ui.fake.testlib",
+				version: "1.0.0",
+				dependencies : ["sap.ui.core"],
+				types: [],
+				controls: [],
+				elements: []
+			});
+		});
+
 
 		QUnit.module("CORS", {
 			beforeEach: function(assert) {
