@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"./WizardStepRenderer",
 	"./Button",
+	"./TitlePropagationSupport",
 	"sap/base/Log"
 ],
-	function(library, Control, WizardStepRenderer, Button, Log) {
+	function(library, Control, WizardStepRenderer, Button, TitlePropagationSupport, Log) {
 
 	"use strict";
 
@@ -113,6 +114,9 @@ sap.ui.define([
 		}
 	});
 
+	// Add title propagation support
+	TitlePropagationSupport.call(WizardStep.prototype, "content", function () {return this.getId() + "-title";});
+
 	WizardStep.prototype.init = function () {
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oNextButton = new Button({
@@ -142,6 +146,8 @@ sap.ui.define([
 		}, this);
 
 		this.setAggregation("_nextButton", this._oNextButton);
+
+		this._initTitlePropagationSupport();
 	};
 
 	/**
