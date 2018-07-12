@@ -106,9 +106,13 @@ sap.ui.define([
 	"use strict";
 
 	var FL_MAX_LAYER_PARAM = "sap-ui-fl-max-layer";
-	var SERVICE_STARTING = "starting";
-	var SERVICE_STARTED = "started";
-	var SERVICE_FAILED = "failed";
+	var STARTING = "STARTING";
+	var STARTED = "STARTED";
+	var STOPPED = "STOPPED";
+	var FAILED = "FAILED";
+	var SERVICE_STARTING = "SERVICE_STARTING";
+	var SERVICE_STARTED = "SERVICE_STARTED";
+	var SERVICE_FAILED = "SERVICE_FAILED";
 
 	/**
 	 * Constructor for a new sap.ui.rta.RuntimeAuthoring class.
@@ -238,8 +242,9 @@ sap.ui.define([
 				"undoRedoStackModified" : {}
 			}
 		},
-		_sAppTitle : null,
+		_sAppTitle: null,
 		_dependents: null,
+		_sStatus: STOPPED,
 		constructor: function() {
 			// call parent constructor
 			ManagedObject.apply(this, arguments);
@@ -508,6 +513,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RuntimeAuthoring.prototype.start = function () {
+		this._sStatus = STARTING;
 		var oDesignTimePromise;
 
 		// Create DesignTime
@@ -638,12 +644,14 @@ sap.ui.define([
 			})
 			.then(
 				function () {
+					this._sStatus = STARTED;
 					this.fireStart({
 						editablePluginsCount: this.iEditableOverlaysCount
 					});
 				}.bind(this),
 				function (vError) {
 					if (vError !== "Reload triggered") {
+						this._sStatus = FAILED;
 						this.fireFailed(vError);
 					}
 					if (vError) {
@@ -667,7 +675,7 @@ sap.ui.define([
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this._oRootControl, this.getLayer(), this._oSerializer);
 			return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 		}.bind(this))
-		.catch(function(oError) {
+		.catch(function () {
 			return false;
 		});
 	};
@@ -800,7 +808,11 @@ sap.ui.define([
 						}
 					}
 				}.bind(this));
-			}.bind(this))['catch'](fnShowTechnicalError);
+			}.bind(this))
+			.catch(fnShowTechnicalError)
+			.then(function () {
+				this._sStatus = STOPPED;
+			}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype.restore = function() {
@@ -982,7 +994,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	RuntimeAuthoring.prototype.destroy = function() {
+	RuntimeAuthoring.prototype.destroy = function () {
 		jQuery.map(this._dependents, function (oDependent, sName) {
 			this.removeDependent(sName);
 			// Destroy should be called with suppress invalidate = true here to prevent static UI Area invalidation
@@ -1497,13 +1509,34 @@ sap.ui.define([
 	 * @return {Promise} - promise is resolved with service api or rejected in case of any error.
 	 */
 	RuntimeAuthoring.prototype.startService = function (sName) {
+		if (this._sStatus !== STARTED) {
+			return new Promise(function (fnResolve, fnReject) {
+				this.attachEventOnce('start', fnResolve);
+				this.attachEventOnce('failed', fnReject);
+			}.bind(this))
+			.then(
+				function () {
+					return this.startService(sName);
+				}.bind(this),
+				function () {
+					return Promise.reject(
+						DtUtil.createError(
+							"RuntimeAuthoring#startService",
+							DtUtil.printf("Can't start the service '{0}' while RTA has been failed during a startup", sName),
+							"sap.ui.rta"
+						)
+					);
+				}
+			);
+		}
+
 		var sServiceLocation = resolveServiceLocation(sName);
 		var mService;
 
 		if (!sServiceLocation) {
 			return Promise.reject(
 				DtUtil.createError(
-					"RuntimeAuthoring#stopService",
+					"RuntimeAuthoring#startService",
 					DtUtil.printf("Unknown service. Can't find any registered service by name '{0}'", sName),
 					"sap.ui.rta"
 				)
@@ -1512,19 +1545,19 @@ sap.ui.define([
 			mService = this._mServices[sName];
 			if (mService) {
 				switch (mService.status) {
-					case 'started': {
+					case SERVICE_STARTED: {
 						return Promise.resolve(mService.exports);
 					}
-					case 'starting': {
+					case SERVICE_STARTING: {
 						return mService.initPromise;
 					}
-					case 'failed': {
+					case SERVICE_FAILED: {
 						return mService.initPromise;
 					}
 					default: {
 						return Promise.reject(
 							DtUtil.createError(
-								"RuntimeAuthoring#getService",
+								"RuntimeAuthoring#startService",
 								DtUtil.printf("Unknown service status. Service name = '{0}'", sName),
 								"sap.ui.rta"
 							)
@@ -1532,7 +1565,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				mService = {
+				this._mServices[sName] = mService = {
 					status: SERVICE_STARTING,
 					location: sServiceLocation,
 					initPromise: new Promise(function (fnResolve, fnReject) {
@@ -1552,14 +1585,14 @@ sap.ui.define([
 									.then(function (oService) {
 											if (this.bIsDestroyed) {
 												throw DtUtil.createError(
-													"RuntimeAuthoring#getService",
+													"RuntimeAuthoring#startService",
 													DtUtil.printf("RuntimeAuthoring instance is destroyed while initialising the service '{0}'", sName),
 													"sap.ui.rta"
 												);
 											}
 											if (!jQuery.isPlainObject(oService)) {
 												throw DtUtil.createError(
-													"RuntimeAuthoring#getService",
+													"RuntimeAuthoring#startService",
 													DtUtil.printf("Invalid service format. Service should return simple javascript object after initialisation. Service name = '{0}'", sName),
 													"sap.ui.rta"
 												);
@@ -1598,7 +1631,7 @@ sap.ui.define([
 								fnReject(
 									DtUtil.propagateError(
 										vError,
-										"RuntimeAuthoring#getService",
+										"RuntimeAuthoring#startService",
 										DtUtil.printf("Can't load service '{0}' by its name: {1}", sName, sServiceLocation),
 										"sap.ui.rta"
 									)
@@ -1611,15 +1644,13 @@ sap.ui.define([
 							return Promise.reject(
 								DtUtil.propagateError(
 									vError,
-									"RuntimeAuthoring#getService",
+									"RuntimeAuthoring#startService",
 									DtUtil.printf("Error during service '{0}' initialisation.", sName),
 									"sap.ui.rta"
 								)
 							);
 						})
 				};
-
-				this._mServices[sName] = mService;
 
 				return mService.initPromise;
 			}
@@ -1635,7 +1666,7 @@ sap.ui.define([
 
 		if (oService) {
 			if (oService.status === SERVICE_STARTED) {
-				if (jQuery.isFunction(oService.service.destroy)) {
+				if (typeof oService.service.destroy === "function") {
 					oService.service.destroy();
 				}
 			}

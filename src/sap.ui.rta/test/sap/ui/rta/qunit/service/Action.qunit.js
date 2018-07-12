@@ -1,24 +1,19 @@
 /* global QUnit*/
+
 QUnit.config.autostart = false;
 
 sap.ui.require([
-	"sap/ui/rta/service/ControllerExtension",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/fl/Utils",
-	"sap/ui/dt/Util",
 	"sap/ui/core/UIComponent",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function(
-	ControllerExtension,
+function (
 	RuntimeAuthoring,
 	BasePlugin,
-	FlexUtils,
-	DtUtil,
 	UIComponent,
 	Page,
 	Button,
@@ -54,7 +49,7 @@ function(
 
 			sandbox.stub(BasePlugin.prototype, 'hasChangeHandler').returns(true);
 		},
-		beforeEach: function(assert) {
+		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oPage
@@ -79,6 +74,7 @@ function(
 			this.oRta.destroy();
 		},
 		after: function () {
+			this.oComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -91,7 +87,7 @@ function(
 		});
 		QUnit.test("get() with non-existent control/non under RTA control", function (assert) {
 			return this.oActionService.get([this.oButtonOverlay.getId(), 'fakeControl']).then(
-				function (aActions) {
+				function () {
 					assert.ok(false, 'this must never be called');
 				},
 				function () {
@@ -106,7 +102,7 @@ function(
 		});
 		QUnit.test("execute() with non-existent control/non under RTA control", function (assert) {
 			return this.oActionService.execute([this.oButtonOverlay.getId(), 'fakeControl'], 'CTX_REMOVE').then(
-				function (aActions) {
+				function () {
 					assert.ok(false, 'this must never be called');
 				},
 				function () {
@@ -116,7 +112,7 @@ function(
 		});
 		QUnit.test("execute() with non-existent action", function (assert) {
 			return this.oActionService.execute(this.oButtonOverlay.getId(), 'fakeAction').then(
-				function (aActions) {
+				function () {
 					assert.ok(false, 'this must never be called');
 				},
 				function () {
