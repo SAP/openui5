@@ -86,7 +86,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./library", "./Li
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 		rm.write(">");
-		rm.writeEscaped(oLI.getTitle());
+
+		this.renderTitle(rm, oLI);
+
 		rm.write("</div>");
 
 		//info div top when @sapUiInfoTop: true;
@@ -139,6 +141,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./library", "./Li
 			rm.write("</div>");
 		}
 
+	};
+
+	StandardListItemRenderer.renderTitle = function(rm, oLI) {
+		rm.writeEscaped(oLI.getTitle());
 	};
 
 	return StandardListItemRenderer;

@@ -87,7 +87,13 @@ sap.ui.define([
 					/**
 					 * Name of a message group the current item belongs to.
 					 */
-					groupName: { type: "string", group: "Misc", defaultValue: "" }
+					groupName: { type: "string", group: "Misc", defaultValue: "" },
+
+					/**
+					 * Defines whether the title of the item will be interactive.
+					 * @since 1.58
+					 */
+					activeTitle: { type: "boolean", group: "Misc", defaultValue: false }
 				},
 				defaultAggregation: "link",
 				aggregations: {

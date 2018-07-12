@@ -32,7 +32,8 @@
 			messages: [{
 				type: "Error",
 				title: "Error message",
-				description: "First Error message description"
+				description: "First Error message description",
+				active: true
 			}, {
 				type: "Warning",
 				title: "Warning without description",
@@ -54,7 +55,8 @@
 				type: "Information",
 				title: "Information message (Long) 2",
 				description: "Just some text description",
-				longtextUrl: "./SampleHTML.html"
+				longtextUrl: "./SampleHTML.html",
+				active: true
 			}],
 			reducedSet: [{
 				type: "Error",
@@ -85,7 +87,9 @@
 			title: "{title}",
 			description: "{description}",
 			longtextUrl: "{longtextUrl}",
-			markupDescription: "{markupDescription}"
+			markupDescription: "{markupDescription}",
+			activeTitle: "{active}",
+			subtitle: "{title}"
 		});
 
 		var oMessageViewDialog = new sap.m.MessageView("mMView1", {
@@ -111,6 +115,9 @@
 		});
 
 		var oMessageViewPage = new sap.m.MessageView("mMView2", {
+			activeTitlePress: function () {
+				alert('navigate');
+			},
 			items: {
 				path: "/messages",
 				template: oMessageTemplate

@@ -217,7 +217,20 @@ function(
 					/**
 					 * This event will be fired when a validation of a URL from long text description is ready
 					 */
-					urlValidated: {}
+					urlValidated: {},
+
+					/**
+					 * This event will be fired when an active title of a MessageItem is clicked
+					 * @since 1.58
+					 */
+					activeTitlePress: {
+						parameters: {
+							/**
+							 * Refers to the message item that contains the active Title
+							 */
+							item: { type: "sap.m.MessageItem" }
+						}
+					}
 				}
 			}
 		});
@@ -558,6 +571,9 @@ function(
 				oMessageView;
 
 			oMessageView = new MessageView(this.getId() + "-messageView", {
+				activeTitlePress: function (oEvent) {
+					that.fireActiveTitlePress({ item: oEvent.getParameter("item")});
+				},
 				listSelect: function(oEvent) {
 					that.fireListSelect({messageTypeFilter: oEvent.getParameter('messageTypeFilter')});
 				},
