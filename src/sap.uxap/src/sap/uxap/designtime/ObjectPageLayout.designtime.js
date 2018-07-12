@@ -10,10 +10,10 @@ sap.ui.define(["sap/uxap/library"],
 	return {
 		name : {
 			singular : function(){
-				return library.i18nModel.getResourceBundle().getText("LAYOUT_CONTROL_NAME");
+				return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME");
 			},
 			plural : function(){
-				return library.i18nModel.getResourceBundle().getText("LAYOUT_CONTROL__PLURAL");
+				return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL__PLURAL");
 			}
 		},
 		aggregations : {
@@ -23,10 +23,10 @@ sap.ui.define(["sap/uxap/library"],
 				},
 				childNames : {
 					singular : function(){
-						return library.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME");
+						return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 					},
 					plural : function(){
-						return library.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME_PLURAL");
+						return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 					}
 				},
 				actions : {

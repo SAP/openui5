@@ -131,7 +131,7 @@
 	QUnit.test("Arrow left nad arrow right buttons should have correct tooltips", function (assert) {
 		var oArrowLeft = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollLeft"),
 			oArrowRight = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollRight"),
-			oRB = library.i18nModel.getResourceBundle(),
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"),
 			sArrowLeftTooltip = oRB.getText("TOOLTIP_OP_SCROLL_LEFT_ARROW"),
 			sArrowRightTooltip = oRB.getText("TOOLTIP_OP_SCROLL_RIGHT_ARROW");
 
@@ -372,7 +372,7 @@
 	QUnit.test("Tooltip set on HierarchicalSelect", function (assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oSelect = oAnchorBar._getHierarchicalSelect(),
-			oRB = library.i18nModel.getResourceBundle(),
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"),
 			sExpectedTooltip = oRB.getText("ANCHOR_BAR_OVERFLOW");
 
 		assert.strictEqual(oSelect.getTooltip(), sExpectedTooltip, "Tooltip correctly set.");

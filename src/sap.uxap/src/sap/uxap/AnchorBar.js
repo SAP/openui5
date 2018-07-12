@@ -116,7 +116,7 @@ sap.ui.define([
 		//case 2: on a real tablet or a desktop we need both as the size may change
 		this._bHasButtonsBar = Device.system.tablet || Device.system.desktop;
 
-		this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
+		this.oLibraryResourceBundleOP = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"); // get resource translation bundle
 
 		this._oSelect = this._getHierarchicalSelect();
 
