@@ -88,6 +88,8 @@ sap.ui.define([], function () {
 		 * only present if aggregatable properties are given and both "with" and "as" are optional.
 		 * If mQueryOptions.$filter is given the resulting $apply is extended:
 		 * ".../filter(&lt;mQueryOptions.$filter>)".
+		 * If mQueryOptions.$orderby is given the resulting $apply is extended:
+		 * ".../orderby(&lt;mQueryOptions.$orderby>)".
 		 * If at least one aggregatable property requesting minimum or maximum values is contained,
 		 * the resulting $apply is extended: ".../concat(aggregate(&lt;alias> with min as
 		 * UI5min__&lt;alias>,&lt;alias> with max as UI5max__&lt;alias>,...),identity)".
@@ -125,6 +127,9 @@ sap.ui.define([], function () {
 		 * @param {string} [mQueryOptions.$filter]
 		 *   The value for a "$filter" system query option; it is removed from the returned map, but
 		 *   not from <code>mQueryOptions</code> itself
+		 * @param {string} [mQueryOptions.$orderby]
+		 *   The value for a "$orderby" system query option; it is removed from the returned map,
+		 *   but not from <code>mQueryOptions</code> itself
 		 * @param {object} [mAlias2MeasureAndMethod]
 		 *   An optional map which is filled in case an aggregatable property requests minimum or
 		 *   maximum values; the alias (for example "UI5min__&lt;alias>") for that value becomes the
@@ -226,8 +231,13 @@ sap.ui.define([], function () {
 				sApply += "/filter(" + mQueryOptions.$filter + ")";
 				delete mQueryOptions.$filter;
 			}
-			sApply
-				+= (aMinMax.length ? "/concat(aggregate(" + aMinMax.join(",") + "),identity)" : "");
+			if (mQueryOptions.$orderby) {
+				sApply += "/orderby(" + mQueryOptions.$orderby + ")";
+				delete mQueryOptions.$orderby;
+			}
+			if (aMinMax.length) {
+				sApply += "/concat(aggregate(" + aMinMax.join(",") + "),identity)";
+			}
 			mQueryOptions.$apply = sApply;
 
 			return mQueryOptions;

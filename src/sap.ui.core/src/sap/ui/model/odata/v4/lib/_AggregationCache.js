@@ -40,8 +40,8 @@ sap.ui.define([
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @throws {Error}
-	 *   If the system query option "$orderby" is used together with minimum or maximum values; if
-	 *   the system query options "$count" or "$filter" are used together with group levels
+	 *   If the system query options "$count" or "$filter" are used together with group levels, or
+	 *   if group levels are combined with min/max
 	 *
 	 * @private
 	 */
@@ -49,24 +49,23 @@ sap.ui.define([
 			bSortExpandSelect) {
 		var mAlias2MeasureAndMethod = {},
 			oFirstLevelAggregation,
-			fnMeasureRangeResolve,
-			mQueryOptionsFirstRequest;
+			mFirstQueryOptions,
+			fnMeasureRangeResolve;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
 
 		if (_AggregationHelper.hasMinOrMax(oAggregation.aggregate)) {
-			if (mQueryOptions.$orderby) {
-				throw new Error("Unsupported system query option: $orderby");
-			}
 			if (oAggregation.groupLevels.length) {
 				throw new Error("Unsupported group levels together with min/max");
 			}
 			this.oMeasureRangePromise = new Promise(function (resolve, reject) {
 				fnMeasureRangeResolve = resolve;
 			});
-			mQueryOptionsFirstRequest = _AggregationHelper.buildApply(oAggregation, mQueryOptions,
-				mAlias2MeasureAndMethod);
-			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mQueryOptionsFirstRequest,
+			mFirstQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions,
+				mAlias2MeasureAndMethod); // 1st request only
+			mQueryOptions = jQuery.extend({}, mQueryOptions);
+			delete mQueryOptions.$count; // not needed in 2nd request etc.
+			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath, mFirstQueryOptions,
 				bSortExpandSelect);
 			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath.bind(
 				this.oFirstLevel, oAggregation, mQueryOptions, this.oFirstLevel.getResourcePath);
@@ -81,13 +80,13 @@ sap.ui.define([
 				throw new Error("Unsupported system query option: $filter");
 			}
 			oFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(oAggregation);
+			mFirstQueryOptions = jQuery.extend({}, mQueryOptions, {
+					$count : true,
+					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
+						oFirstLevelAggregation)
+				}); // 1st level only
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
-				jQuery.extend(
-					_AggregationHelper.buildApply(oFirstLevelAggregation, mQueryOptions), {
-						$count : true,
-						$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
-							oFirstLevelAggregation)
-					}),
+				_AggregationHelper.buildApply(oFirstLevelAggregation, mFirstQueryOptions),
 				bSortExpandSelect);
 			this.oFirstLevel.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate
 				.bind(null, oFirstLevelAggregation, this.oFirstLevel.sMetaPath,
