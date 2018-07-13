@@ -6,13 +6,14 @@ sap.ui.require([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
-], function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
-		Properties) {
+], function (MessageBox, Filter, FilterOperator, ODataUtils, QUnitUtils, Opa5, EnterText, Press,
+		Interactable, Properties) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -405,6 +406,19 @@ sap.ui.require([
 						viewName : sViewName
 					});
 				},
+				pressBackToMessagesButton : function (sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.Page",
+						id : /-messageView-detailsPage/,
+						success : function (aPages) {
+							var $page = aPages[0].getDomRef();
+
+							QUnitUtils.triggerEvent("tap",
+								$page.getElementsByClassName("sapMMsgViewBackBtn")[0]);
+							Opa5.assert.ok(true, "Back to Messages button pressed");
+						}
+					});
+				},
 				pressCancelSalesOrderChangesButton : function () {
 					return this.waitFor({
 						actions : new Press(),
@@ -618,6 +632,20 @@ sap.ui.require([
 				},
 				selectFirstSalesOrder : function ( bRememberGrossAmount) {
 					return selectSalesOrder(this, 0, bRememberGrossAmount);
+				},
+				selectMessage : function (sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.StandardListItem",
+						matchers : new Properties({title: sMessage}),
+						success : function (aItems) {
+							if (aItems.length === 1) {
+								QUnitUtils.triggerEvent("tap", aItems[0].getDomRef());
+								Opa5.assert.ok(true, "Message selected: " + sMessage);
+							} else {
+								Opa5.assert.ok(false, "Duplicate Message: " + sMessage);
+							}
+						}
+					});
 				},
 				selectSalesOrder : function (iIndex) {
 					return selectSalesOrder(this, iIndex);
@@ -889,6 +917,17 @@ sap.ui.require([
 								"Message count is as expected: " + iExpectedCount);
 						},
 						viewName : sViewName
+					});
+				},
+				checkMessageDetails : function (sMessage, sExpectedDetails) {
+					return this.waitFor({
+						id : /-messageViewMarkupDescription/,
+						success : function (aDetailsHtml) {
+							Opa5.assert.strictEqual(aDetailsHtml.length, 1);
+							Opa5.assert.ok(aDetailsHtml[0].getContent().includes(sExpectedDetails),
+								"Check Message Details: Details for message '" + sMessage
+									+ " as expected: " + sExpectedDetails);
+						}
 					});
 				},
 				/*

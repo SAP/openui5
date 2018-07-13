@@ -10,6 +10,10 @@ sap.ui.define([
 
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {
+			var sPersistentMessage = "Enter customer reference if available",
+				sTransientMessage = "Minimum order quantity is 2",
+				sUnboundMessage = "Example for an unbound message";
+
 			if (TestUtils.isRealOData()) {
 				Opa5.assert.ok(true, "Test runs only with mock data");
 				return;
@@ -23,18 +27,28 @@ sap.ui.define([
 
 			When.onTheMainPage.firstSalesOrderIsVisible();
 			Then.onTheMainPage.checkMessageCount(2);
-			Then.onTheMainPage.checkNoteValueState(1, "Warning",
-				"Enter customer reference if available");
+			Then.onTheMainPage.checkNoteValueState(1, "Warning", sPersistentMessage);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
-				message : "Example for an unbound message",
+				message : sUnboundMessage,
 				type : MessageType.Information
 			}, {
-				message : "Enter customer reference if available",
+				message : sPersistentMessage,
 				type : MessageType.Warning
 			}]);
-			//TODO Navigate to message details and check content
+
+			When.onTheMainPage.selectMessage(sUnboundMessage);
+			Then.onTheMainPage.checkMessageDetails(sUnboundMessage,
+				"Details for \"Example for an unbound message\" (absolute longtext URL).");
+
+			When.onTheMainPage.pressBackToMessagesButton();
+
+			When.onTheMainPage.selectMessage(sPersistentMessage);
+			Then.onTheMainPage.checkMessageDetails(sPersistentMessage,
+				"Details for \"Enter customer reference if available\" (relative longtext URL).");
+
+			When.onTheMainPage.pressBackToMessagesButton();
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
 			Then.onTheMainPage.checkMessageCount(0);
@@ -46,28 +60,32 @@ sap.ui.define([
 			When.onTheMainPage.pressMessagePopoverCloseButton();
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkMessageCount(2);
-			Then.onTheMainPage.checkNoteValueState(1, "Warning",
-				"Enter customer reference if available");
-			Then.onTheMainPage.checkInputValueState("SOD_Note", "Warning",
-				"Enter customer reference if available");
+			Then.onTheMainPage.checkNoteValueState(1, "Warning", sPersistentMessage);
+			Then.onTheMainPage.checkInputValueState("SOD_Note", "Warning", sPersistentMessage);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
-				"Minimum order quantity is 2");
+				sTransientMessage);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
-				message : "Enter customer reference if available",
+				message : sPersistentMessage,
 				type : MessageType.Warning
 			}, {
-				message : "Minimum order quantity is 2",
+				message : sTransientMessage,
 				type : MessageType.Error
 			}]);
+
+			When.onTheMainPage.selectMessage(sTransientMessage);
+			Then.onTheMainPage.checkMessageDetails(sTransientMessage,
+				"Details for \"Minimum order quantity is 2\" (absolute longtext URL).");
+
+			When.onTheMainPage.pressBackToMessagesButton();
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
 			Then.onTheMainPage.checkMessageCount(1);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
-				message : "Minimum order quantity is 2",
+				message : sTransientMessage,
 				type : MessageType.Error
 			}]);
 
@@ -75,7 +93,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkNoteValueState(1, "None", "");
 			Then.onTheMainPage.checkInputValueState("SOD_Note", "None", "");
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
-				"Minimum order quantity is 2");
+				sTransientMessage);
 
 			When.onTheMainPage.selectSalesOrder(0);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "None", "");
@@ -83,12 +101,12 @@ sap.ui.define([
 
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
-				"Minimum order quantity is 2");
+				sTransientMessage);
 			Then.onTheMainPage.checkMessageCount(1);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
-				message : "Minimum order quantity is 2",
+				message : sTransientMessage,
 				type : MessageType.Error
 			}]);
 

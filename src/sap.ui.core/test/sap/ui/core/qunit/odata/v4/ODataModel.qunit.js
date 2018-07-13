@@ -1591,7 +1591,7 @@ sap.ui.require([
 						assert.ok(oMessage instanceof Message);
 						assert.strictEqual(oMessage.getCode(), aMessages[j].code);
 						assert.strictEqual(oMessage.getDescriptionUrl(),
-							"/Team('42')/foo/bar/" + aMessages[j].longtextUrl);
+							getServiceUrl() + aMessages[j].longtextUrl);
 						assert.strictEqual(oMessage.getMessage(), aMessages[j].message);
 						assert.strictEqual(oMessage.getMessageProcessor(), oModel);
 						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transient);

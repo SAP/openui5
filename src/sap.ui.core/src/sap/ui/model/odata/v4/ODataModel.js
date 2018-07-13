@@ -1200,8 +1200,7 @@ sap.ui.define([
 	 *   Maps a resource path with key predicates to an array of messages. The messages have at
 	 *   least following properties:
 	 *   {string} code - The error code
-	 *   {string} longtextUrl - The URL for the message's long text relative to the resource path
-	 *      with key predicates
+	 *   {string} longtextUrl - The URL for the message's long text relative the service URL
 	 *   {string} message - The message text
 	 *   {number} numericSeverity
 	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
@@ -1231,9 +1230,8 @@ sap.ui.define([
 					sDescriptionUrl;
 
 				if (oRawMessage.longtextUrl) {
-					sDescriptionUrl = oRawMessage.longtextUrl[0] === "/"
-						? oRawMessage.longtextUrl
-						: sDataBindingPath + sKeyPredicateTreePath + "/" + oRawMessage.longtextUrl;
+					sDescriptionUrl = _Helper.makeAbsolute(oRawMessage.longtextUrl,
+						that.sServiceUrl);
 				}
 				aNewMessages.push(new Message({
 					code : oRawMessage.code,
