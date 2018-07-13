@@ -197,7 +197,6 @@
 		samples: aSamples,
 		sample: "custom",
 		locale: sLocale,
-		editMode: "false",
 		cldrEntries: []
 	});
 
@@ -276,13 +275,7 @@
 														return oNumberFormat.format(oNumber, sMeasure);
 													}
 												},
-												editable: {
-													path: "/editMode",
-													formatter: function(sEditMode) {
-														return sEditMode == "true"
-													}
-												},
-												liveChange: function(oEvent) {
+												change: function(oEvent) {
 													var sValue = oEvent.getParameter("value");
 													var sLocale = oModel.getProperty("/locale");
 													var oFormatOptions = oModel.getProperty("/formatOptions");
@@ -293,24 +286,21 @@
 													var oNumberFormat = sap.ui.core.format.NumberFormat[sFunctionName](oOptions, oLocale);
 													var aParsed = oNumberFormat.parse(sValue);
 													if (Array.isArray(aParsed)) {
-
-														if (aParsed[0]) {
+														if (aParsed[0] != null) {
 															oModel.setProperty("/number", aParsed[0]);
 														}
-														if (aParsed[1]) {
-															oModel.setProperty("/unit", aParsed[1]);
+														if (aParsed[1] != null) {
+															if (sType == "Currency") {
+																oModel.setProperty("/currency", aParsed[1]);
+															} else if (sType == "Unit") {
+																oModel.setProperty("/unit", aParsed[1]);
+															}
 														}
 													} else if (aParsed) {
 														oModel.setProperty("/number", aParsed);
 													}
 
 												}
-											}).addEventDelegate({
-												onsapfocusleave: function() {
-													oModel.setProperty("/editMode", "false");
-												}
-											}).attachBrowserEvent("click", function() {
-												oModel.setProperty("/editMode", "true");
 											}).addStyleClass("large largeinput"),
 											new sap.ui.core.Title({
 												text: "Input"
