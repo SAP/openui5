@@ -1452,6 +1452,10 @@ sap.ui.define([
 		var sFormat,
 			oFormats = {
 				"short": {
+					"1000-one": "¤0000",
+					"1000-other": "¤0000",
+					"10000-one": "¤00000",
+					"10000-other": "¤00000",
 					"100000-one": "¤0 Lk",
 					"100000-other": "¤0 Lk",
 					"1000000-one": "¤00 Lk",
@@ -1475,7 +1479,7 @@ sap.ui.define([
 				}
 			};
 		sStyle = "short";
-		if (!sPlural) {
+		if (sPlural !== "one") {
 			sPlural = "other";
 		}
 		sFormat = oFormats[sStyle][sKey + "-" + sPlural];
