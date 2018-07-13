@@ -1,10 +1,11 @@
 <mvc:View
 	controllerName="sap.ui.unified.sample.Currency.Controller"
-	xmlns:l="sap.ui.layout"
-	xmlns:u="sap.ui.unified"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout>
+	xmlns:l="sap.ui.layout"
+	xmlns:u="sap.ui.unified">
+	<l:Grid
+		defaultSpan="XL7 L12 M12 S12">
 		<List
 			id="listOneId"
 			headerText="Various currencies with and without decimals"
@@ -40,5 +41,5 @@
 				<u:Currency value="{price}" currency="{currency}" useSymbol="false"/>
 			</CustomListItem>
 		</List>
-	</l:VerticalLayout>
+	</l:Grid>
 </mvc:View>
