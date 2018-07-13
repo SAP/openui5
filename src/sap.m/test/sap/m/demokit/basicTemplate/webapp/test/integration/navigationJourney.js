@@ -1,7 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/App"
 ], function (opaTest) {
 	"use strict";
 
@@ -11,11 +12,10 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
-		When.onTheAppPage.iLookAtTheScreen();
 		// Assertions
-		Then.onTheAppPage.iShouldSeeTheApp()
-			.and.iTeardownMyAppFrame();
+		Then.onTheAppPage.iShouldSeeTheApp();
 
+		//Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 });

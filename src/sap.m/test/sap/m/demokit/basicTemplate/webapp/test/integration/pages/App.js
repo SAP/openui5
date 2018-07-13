@@ -1,12 +1,10 @@
 sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/demo/basicTemplate/test/integration/pages/Common"
-], function(Opa5, Common) {
+	"sap/ui/test/Opa5"
+], function(Opa5) {
 	"use strict";
 	var sViewName = "App";
 	Opa5.createPageObjects({
 		onTheAppPage: {
-			baseClass : Common,
 
 			actions: {},
 

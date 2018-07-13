@@ -17,18 +17,12 @@ sap.ui.define([
 		return sUrl + sUrlParameters + sHash;
 	}
 
-	return Opa5.extend("sap.ui.demo.basicTemplate.test.integration.pages.Common", {
+	return Opa5.extend("sap.ui.demo.basicTemplate.test.integration.arrangements.Arrangement", {
 
 		iStartTheApp : function (oOptions) {
 			oOptions = oOptions || {};
 			// Start the app with a minimal delay to make tests run fast but still async to discover basic timing issues
 			this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash));
-		},
-
-		iLookAtTheScreen : function () {
-			return this;
 		}
-
 	});
-
 });
