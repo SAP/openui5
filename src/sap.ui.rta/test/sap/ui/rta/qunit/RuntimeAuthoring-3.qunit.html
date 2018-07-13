@@ -15,13 +15,12 @@
 			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
 			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
-			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/rta/RuntimeAuthoring.js]");
+			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/rta/RuntimeAuthoring]");
 
 			jQuery.sap.includeScript('./RuntimeAuthoring-3.qunit.js');
 		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
 	</body>
 </html>

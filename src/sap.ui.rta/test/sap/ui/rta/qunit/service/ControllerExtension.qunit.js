@@ -6,6 +6,8 @@ sap.ui.require([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/Util",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/View",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -13,6 +15,8 @@ function(
 	RuntimeAuthoring,
 	FlexUtils,
 	DtUtil,
+	UIComponent,
+	View,
 	sinon
 ) {
 	"use strict";
@@ -20,8 +24,28 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that RuntimeAuthoring and ControllerExtension service are created and add function is called...", {
-		beforeEach: function(assert) {
-			this.oRta = new RuntimeAuthoring();
+		before: function () {
+			this.oView = new View({});
+			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "fixture.application"
+						}
+					}
+				},
+				createContent: function() {
+					return this.oView;
+				}.bind(this)
+			});
+
+			this.oComponent = new FixtureComponent();
+		},
+		beforeEach: function () {
+			this.oRta = new RuntimeAuthoring({
+				showToolbars: false,
+				rootControl: this.oView
+			});
 			this.iCreateBaseChangeCounter = 0;
 			this.iAddPreparedChangeCounter = 0;
 			sandbox.stub(this.oRta, "_getFlexController").returns({
@@ -39,18 +63,19 @@ function(
 				}.bind(this)
 			});
 			sandbox.stub(FlexUtils, "getAppComponentForControl");
-			return this.oRta.getService("controllerExtension").then(function(oService) {
-				this.oControllerExtension = oService;
+			return this.oRta.start().then(function () {
+				return this.oRta.getService("controllerExtension").then(function(oService) {
+					this.oControllerExtension = oService;
+				}.bind(this));
 			}.bind(this));
 		},
 		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
-	}, function() {
+	}, function () {
 		QUnit.test("with correct parameters and developer mode = true", function(assert) {
-			var oView = new sap.ui.core.mvc.View({});
-			sandbox.stub(oView, "getController").returns({
+			sandbox.stub(this.oView, "getController").returns({
 				getMetadata: function() {
 					return {
 						getName: function() {
@@ -60,7 +85,7 @@ function(
 				}
 			});
 
-			return this.oControllerExtension.add("foo.js", oView.getId()).then(function(oDefinition) {
+			return this.oControllerExtension.add("foo.js", this.oView.getId()).then(function (oDefinition) {
 				assert.deepEqual(oDefinition, {definition: "definition"}, "the function returns the definition of the change");
 				assert.equal(this.iCreateBaseChangeCounter, 1, "and FlexController.createBaseChange was called once");
 				assert.equal(this.iAddPreparedChangeCounter, 1, "and FlexController.addPreparedChange was called once");
