@@ -1322,11 +1322,15 @@ function(
 		if (Array.isArray(aTokens)) {
 			for (i = 0; i < aTokens.length; i++) {
 				oValidatedToken = this.validateAggregation("tokens", aTokens[i], true);
-				ManagedObjectMetadata.addAPIParentInfo(aTokens[i], this, "tokens");
+				ManagedObjectMetadata.addAPIParentInfoBegin(aTokens[i], this, "tokens");
 				aValidatedTokens.push(oValidatedToken);
 			}
 
 			this._tokenizer.setTokens(aValidatedTokens);
+
+			for (i = 0; i < aTokens.length; i++) {
+				ManagedObjectMetadata.addAPIParentInfoEnd(aTokens[i]);
+			}
 		} else {
 			throw new Error("\"" + aTokens + "\" is of type " + typeof aTokens + ", expected array for aggregation tokens of " + this);
 		}
