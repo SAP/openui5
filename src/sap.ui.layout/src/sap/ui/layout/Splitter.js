@@ -763,7 +763,7 @@ sap.ui.define([
 				: this.$("splitbar-" + i).innerHeight();
 		}
 
-		return iFullSize - iSplitBarsWidth;
+		return Math.max(0, iFullSize - iSplitBarsWidth);
 	};
 
 	/**
