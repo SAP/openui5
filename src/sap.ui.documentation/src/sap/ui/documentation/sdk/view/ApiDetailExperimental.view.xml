@@ -13,12 +13,7 @@
             <ObjectPageLayout enableLazyLoading="false"
                               showAnchorBarPopover="true"
                               upperCaseAnchorBar="false"
-                              sections="{path : 'experimentalAPIs>/',
-                                         sorter : {
-                                           path : 'name',
-                                           comparator : '.compareVersions'
-                                         }
-                                        }">
+                              sections="{experimentalAPIs>/}">
                 <headerTitle>
                     <ObjectPageHeader id="title" objectTitle="Index of Experimental APIs"/>
                 </headerTitle>
