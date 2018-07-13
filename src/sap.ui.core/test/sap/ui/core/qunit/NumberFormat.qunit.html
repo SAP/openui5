@@ -2273,6 +2273,72 @@
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
+	QUnit.test("parse currency short format",  function(assert) {
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
+		var aResult = oFormat.parse("-12K EUR");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.equal(aResult[0], -12000, "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("USD23M");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.equal(aResult[0], 23000000, "Number is parsed correctly");
+		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("EUR -12 million");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.equal(aResult[0], -12000000, "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("EUR 0.00T");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.equal(aResult[0], 0, "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("EUR 0.2M");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.equal(aResult[0], 200000, "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+	});
+
+	QUnit.test("format/parse indian lakhs/crores",  function(assert) {
+		var oLocale = new sap.ui.core.Locale("en-IN");
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({}, oLocale);
+
+		assert.equal(oFormat.format(100000, "INR"), "INR\xa01,00,000.00", "INR is formatted with correct grouping");
+		assert.equal(oFormat.format(10000000, "INR"), "INR\xa01,00,00,000.00", "INR is formatted with correct grouping");
+		assert.equal(oFormat.format(10000000000, "INR"), "INR\xa01,000,00,00,000.00", "INR is formatted with correct grouping");
+		assert.equal(oFormat.format(1000000000000, "INR"), "INR\xa01,00,000,00,00,000.00", "INR is formatted with correct grouping");
+		assert.equal(oFormat.format(100000000000000, "INR"), "INR\xa01,00,00,000,00,00,000.00", "INR is formatted with correct grouping");
+
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({style: "short"}, oLocale);
+
+		assert.equal(oFormat.format(100000, "INR"), "INR\xa01 Lk", "INR is formatted as Lk/Cr");
+		assert.equal(oFormat.format(10000000, "INR"), "INR\xa01 Cr", "INR is formatted as Lk/Cr");
+		assert.equal(oFormat.format(10000000000, "INR"), "INR\xa01,000 Cr", "INR is formatted as Lk/Cr");
+		assert.equal(oFormat.format(1000000000000, "INR"), "INR\xa01 Lk Cr", "INR is formatted as Lk/Cr");
+		assert.equal(oFormat.format(100000000000000, "INR"), "INR\xa01 Cr Cr", "INR is formatted as Lk/Cr");
+
+		assert.equal(oFormat.format(100000, "USD"), "USD\xa0100K", "USD is formatted as M/B/T");
+		assert.equal(oFormat.format(1000000, "USD"), "USD\xa01M", "USD is formatted as M/B/T");
+		assert.equal(oFormat.format(1000000000, "USD"), "USD\xa01B", "USD is formatted as M/B/T");
+
+		var aResult = oFormat.parse("INR 12 Lk");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.equal(aResult[0], 1200000, "Number is parsed correctly");
+		assert.equal(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("INR 12 Cr");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.equal(aResult[0], 120000000, "Number is parsed correctly");
+		assert.equal(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("EUR 12M");
+		assert.ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		assert.equal(aResult[0], 12000000, "Number is parsed correctly");
+		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+	});
+
 	QUnit.module("Float Format");
 
 	QUnit.test("float precision", function(assert) {
