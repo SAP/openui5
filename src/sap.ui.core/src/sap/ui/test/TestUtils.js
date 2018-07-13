@@ -278,7 +278,10 @@ sap.ui.define([
 									+ "\r\n"
 									+ JSON.stringify(JSON.parse(aResponse[2]))
 									+ "\r\n";
-								jQuery.sap.log.info(sRequestLine, null, "sap.ui.test.TestUtils");
+								jQuery.sap.log.info(sRequestLine,
+									// log what's mocked?
+									sRealOData === "logMock" ? sResponse : null,
+									"sap.ui.test.TestUtils");
 							} catch (e) {
 								sResponse = error(sRequestLine, 500, "Invalid JSON");
 							}
