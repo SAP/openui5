@@ -1,8 +1,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon"
-], function (jQuery, JSONModel, sinon) {
+	"sap/ui/thirdparty/sinon",
+	"sap/base/Log"
+], function (jQuery, JSONModel, sinon, Log) {
 	"use strict";
 
 	var iAutoRespondAfterDefault = 10;
@@ -43,7 +44,7 @@ sap.ui.define([
 				);
 			}.bind(this));
 
-			jQuery.sap.log.info("Running the app with mock data");
+			Log.info("Running the app with mock data");
 		},
 
 		getMockServer: function () {

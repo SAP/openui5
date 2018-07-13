@@ -14,7 +14,6 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 		titleClicked: function(oEvent){
-			jQuery.sap.require("sap.m.MessageBox");
 			MessageBox.alert("Title was clicked!");
 		}
 	});

@@ -1,14 +1,14 @@
 sap.ui.define([
-	'sap/ui/test/Opa5'
-], function (Opa5) {
+	'sap/ui/test/Opa5',
+	'sap/ui/util/Storage'
+], function (Opa5, Storage) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.cart.test.integration.arrangement.iframe.Arrangement", {
 		iStartMyApp : function (bKeepStorage, oAdditionalUrlParameters) {
 			// The cart local storage should be deleted when the app starts except when testing it.
 			if (!bKeepStorage) {
-				jQuery.sap.require("jquery.sap.storage");
-				var oLocalStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
+				var oLocalStorage = Storage.getInstance(Storage.Type.local);
 				oLocalStorage.remove("SHOPPING_CART");
 			}
 			oAdditionalUrlParameters = oAdditionalUrlParameters || {};
