@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
 	"./OverflowToolbarRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "lastFocusableDomRef"
 ], function(
 	library,
 	ToggleButton,

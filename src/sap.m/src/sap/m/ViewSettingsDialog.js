@@ -17,7 +17,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
 	'./ViewSettingsDialogRenderer',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ],
 function(
 	library,

@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'./DateTimeFieldRenderer',
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ], function(
 	SimpleDateType,
 	ODataType,

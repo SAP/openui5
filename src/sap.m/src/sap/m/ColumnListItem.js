@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"./library",
 	"./ListItemBase",
-	"./ColumnListItemRenderer"
+	"./ColumnListItemRenderer",
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapFocusable", ":sapTabbable"
 ],
 	function(Element, coreLibrary, library, ListItemBase, ColumnListItemRenderer) {
 	"use strict";

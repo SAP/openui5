@@ -11,7 +11,8 @@ sap.ui.define([
 	'./Suggest',
 	'sap/ui/Device',
 	'./SearchFieldRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ],
 	function(
 		library,

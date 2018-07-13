@@ -11,7 +11,11 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'./HeaderContainerRenderer',
 	"sap/base/Log",
-	"sap/ui/events/PseudoEvents"
+	"sap/ui/events/PseudoEvents",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
 ],
 function(
 	library,

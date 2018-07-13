@@ -15,7 +15,8 @@ sap.ui.define([
 	"./DatePickerRenderer",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ],
 	function(
 		jQuery,

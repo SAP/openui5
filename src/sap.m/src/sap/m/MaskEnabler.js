@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/library',
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ], function(Control, InputBase, Device, coreLibrary, KeyCodes, Log) {
 	"use strict";
 
