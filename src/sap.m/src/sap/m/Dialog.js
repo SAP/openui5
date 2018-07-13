@@ -19,6 +19,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/library',
+	'./TitlePropagationSupport',
 	'./DialogRenderer',
 	"sap/base/Log"
 	],
@@ -38,6 +39,7 @@ function(
 	Device,
 	ManagedObject,
 	coreLibrary,
+	TitlePropagationSupport,
 	DialogRenderer,
 	Log
 	) {
@@ -347,6 +349,11 @@ function(
 			}
 		});
 
+		// Add title propagation support
+		TitlePropagationSupport.call(Dialog.prototype, "content", function () {
+			return this._headerTitle ? this._headerTitle.getId() : false;
+		});
+
 		Dialog._bPaddingByDefault = (sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
 
 		Dialog._mIcons = {};
@@ -440,6 +447,8 @@ function(
 			if (Dialog._bPaddingByDefault) {
 				this.addStyleClass("sapUiPopupWithPadding");
 			}
+
+			this._initTitlePropagationSupport();
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
