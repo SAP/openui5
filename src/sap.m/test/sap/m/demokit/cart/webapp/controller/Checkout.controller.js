@@ -27,7 +27,7 @@ sap.ui.define([
 		formatter: formatter,
 
 		onInit: function () {
-			var oModel = new sap.ui.model.json.JSONModel(
+			var oModel = new JSONModel(
 				{
 					SelectedPayment: "Credit Card",
 					SelectedDeliveryMethod: "Standard Delivery",

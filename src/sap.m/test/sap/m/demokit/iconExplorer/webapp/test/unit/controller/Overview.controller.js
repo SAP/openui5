@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"test/unit/helper/FakeI18nModel",
 	"sap/ui/demo/iconexplorer/model/formatter",
+	"sap/m/Input",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(OverviewController, BaseController, ManagedObject, JSONModel, FakeI18n, formatter) {
+], function(OverviewController, BaseController, ManagedObject, JSONModel, FakeI18n, formatter, Input) {
 	"use strict";
 
 	QUnit.module("Overview controller tests", {
@@ -183,7 +184,7 @@ sap.ui.define([
 		// Arrange
 		var sTestString = "sap-icon://excel-attachment",
 			sInputId = "previewCopyCode",
-			oInput = new sap.m.Input(sInputId, {
+			oInput = new Input(sInputId, {
 				value: sTestString
 			});
 		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
@@ -210,7 +211,7 @@ sap.ui.define([
 		var sTestString = "sap-icon://excel-attachment",
 			sInputId = "previewCopyCode",
 			sIcon = "icon",
-			oInput = new sap.m.Input(sInputId, {
+			oInput = new Input(sInputId, {
 				value: sTestString
 			});
 
