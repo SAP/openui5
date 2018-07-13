@@ -67,14 +67,7 @@ sap.ui.define(['./OverflowToolbar', './OverflowToolbarRenderer', './Toolbar'],
 					//removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate)
 					return sap.ui.getCore().byId(this.removeAssociation("content", aArguments[0], aArguments[1], aArguments[2])) || null;
 				case 'destroyContent':
-					var content = this.removeAllAssociation("content", aArguments[0]).map(function (controlId) {
-						return sap.ui.getCore().byId(controlId);
-					});
-					content.forEach(function (control) {
-						if (control) {
-							control.destroy();
-						}
-					});
+					this.removeAllAssociation("content", aArguments[0]);
 					return this;
 				case 'removeAllContent':
 					return this.removeAllAssociation("content", aArguments[0]).map(function (controlId) {
