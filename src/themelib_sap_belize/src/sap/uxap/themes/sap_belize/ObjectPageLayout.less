@@ -10,6 +10,18 @@
   background-color: @sapUiGlobalBackgroundColor;
 }
 
+.sapUxAPObjectPageNavigation {
+	background: @sapUiObjectHeaderBackground;
+
+	&.sapUxAPObjectPageNavigationTransparent {
+		background: transparent;
+	}
+
+	&.sapUxAPObjectPageNavigationTranslucent {
+		background: lighten(@sapUiObjectHeaderBackground, 10);
+	}
+}
+
 .sapUxAPObjectPageHeaderDetails {
 	.sapMObjectNumberEmph.sapMObjectNumber {
 		> .sapMObjectNumberText {
@@ -60,10 +72,21 @@
 /* ======================================== */
 .sapUxAPObjectPageLayout {
   &.sapUxAPObjectPageLayoutTitleClickEnabled {
+
     .sapFDynamicPageTitle:hover,
     &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
-      background-color: darken(@sapUiObjectHeaderBackground, 3);
-    }
+      .title-hover(@sapUiObjectHeaderBackground);
+	}
+
+	.sapFDynamicPageTitleTranslucent:hover,
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTranslucent {
+		.title-hover(lighten(@sapUiObjectHeaderBackground, 10));
+	}
+
+	.sapFDynamicPageTitleTransparent:hover,
+	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTransparent {
+		.title-hover(transparent);
+	}
 
     &.sapUxAPObjectPageLayoutTitleForceHovered {
       .sapFDynamicPageToggleHeaderIndicator {
@@ -102,4 +125,8 @@
 	color: @sapUiPageFooterTextColor;
 	box-shadow: @sapUiShadowLevel1;
 	border-color: transparent;
+}
+
+.title-hover(@backgroundColor) {
+	background-color: darken(@backgroundColor, 3);
 }

@@ -18,7 +18,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oDynamicPageTitle An object representation of the control that should be rendered
 	 */
 	DynamicPageTitleRenderer.render = function (oRm, oDynamicPageTitle) {
-		var oDynamicPageTitleState = oDynamicPageTitle._getState();
+		var oDynamicPageTitleState = oDynamicPageTitle._getState(),
+			sSapFDynamicPageTitle = "sapFDynamicPageTitle",
+			sBackgroundDesign = oDynamicPageTitle.getBackgroundDesign();
 
 		// DynamicPageTitle Root DOM Element.
 		oRm.write("<div");
@@ -31,7 +33,12 @@ sap.ui.define([
 			level: 2,
 			labelledBy: oDynamicPageTitleState.ariaLabelledByIDs
 		});
-		oRm.addClass("sapFDynamicPageTitle");
+		oRm.addClass(sSapFDynamicPageTitle);
+
+		if (sBackgroundDesign) {
+			oRm.addClass(sSapFDynamicPageTitle + sBackgroundDesign);
+		}
+
 		oRm.writeClasses();
 		oRm.write(">");
 

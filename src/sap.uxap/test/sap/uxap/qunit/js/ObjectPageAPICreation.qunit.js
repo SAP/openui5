@@ -1708,6 +1708,105 @@
 		oObjectPage.placeAt("qunit-fixture");
 	});
 
+	QUnit.module("ObjectPage API: Header", {
+		beforeEach: function () {
+			this.oObjectPageLayout = new sap.uxap.ObjectPageLayout();
+			this.oObjectPageLayout.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oObjectPageLayout.destroy();
+			this.oObjectPageLayout = null;
+		}
+	});
+
+	QUnit.test("ObjectPageLayout - setHeaderTitle", function (assert) {
+		var oHeaderTitle = new sap.uxap.ObjectPageDynamicHeaderTitle({
+				backgroundDesign: "Solid"
+			});
+
+		// act
+		this.oObjectPageLayout.setHeaderTitle(oHeaderTitle);
+
+		// assert
+		assert.ok(this.oObjectPageLayout._oObserver.isA("sap.ui.base.ManagedObjectObserver"), true, "ManagedObjectObserver is created");
+	});
+
+	QUnit.test("ObjectPageLayout - backgroundDesignAnchorBar", function (assert) {
+		var $oAnchorBarDomRef = this.oObjectPageLayout.$("anchorBar"),
+			oAnchorBarMock = { setBackgroundDesign: function () {} },
+			oStub = this.stub(this.oObjectPageLayout._oABHelper, "_getAnchorBar", function () { return oAnchorBarMock; }),
+			oSpy = this.spy(oAnchorBarMock, "setBackgroundDesign");
+
+		// assert
+		assert.equal(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), null, "Default value of backgroundDesign property = null");
+
+		// act
+		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Solid");
+
+		// assert
+		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationSolid"), "Should have sapUxAPObjectPageNavigationSolid class");
+		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Solid", "Should have backgroundDesign property = 'Solid'");
+		assert.ok(oSpy.calledWith("Solid"), "AnchorBar's backgroundDesign property setter called with 'Solid'");
+
+		// act
+		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Transparent");
+
+		// assert
+		assert.notOk($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationSolid"), "Should not have sapUxAPObjectPageNavigationSolid class");
+		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTransparent"), "Should have sapUxAPObjectPageNavigationTransparent class");
+		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Transparent", "Should have backgroundDesign property = 'Transparent'");
+		assert.ok(oSpy.calledWith("Transparent"), "AnchorBar's backgroundDesign property setter called with 'Transparent'");
+
+		// act
+		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Translucent");
+
+		// assert
+		assert.notOk($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTransparent"), "Should not have sapUxAPObjectPageNavigationTransparent class");
+		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTranslucent"), "Should have sapUxAPObjectPageNavigationTranslucent class");
+		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
+		assert.ok(oSpy.calledWith("Translucent"), "AnchorBar's backgroundDesign property setter called with 'Translucent'");
+
+		oStub.restore();
+	});
+
+	QUnit.module("Object Page Private API", {
+		beforeEach: function () {
+			this.oObjectPageLayout = new sap.uxap.ObjectPageLayout("layout", {
+				headerTitle: new sap.uxap.ObjectPageDynamicHeaderTitle({
+					backgroundDesign: "Solid"
+				}),
+				headerContent: new sap.m.Button({
+					text: "Button"
+				})
+			});
+		},
+		afterEach: function () {
+			this.oObjectPageLayout.destroy();
+			this.oObjectPageLayout = null;
+		}
+	});
+
+	QUnit.test("_onModifyHeaderTitle", function (assert) {
+		var oHeaderContent = this.oObjectPageLayout.getAggregation("_headerContent"),
+			oHeaderTitle = this.oObjectPageLayout.getAggregation("headerTitle"),
+			oSpy = this.spy(oHeaderContent, "setBackgroundDesign"),
+			oParamsMock = {
+				current: "Transparent"
+			};
+
+		// assert
+		assert.strictEqual(oHeaderContent.getBackgroundDesign(), "Solid", "backgroundDesign of HeaderContent is 'Solid'");
+		assert.strictEqual(oHeaderContent.getBackgroundDesign(), oHeaderTitle.getBackgroundDesign(), "backgroundDesign of HeaderTitle and HeaderContent are the same");
+
+		// act
+		this.oObjectPageLayout._onModifyHeaderTitle(oParamsMock);
+
+		// assert
+		assert.strictEqual(oHeaderContent.getBackgroundDesign(), "Transparent", "backgroundDesign of HeaderContent is 'Transparent' after _onModifyHeaderTitle call");
+		assert.ok(oSpy.calledWith("Transparent"), "setBackgroundDesign is called on headerContent with correct param");
+	});
+
 	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 2;
@@ -1863,7 +1962,6 @@
 				done();
 			}, iDelay);
 		});
-
 	});
 
 	QUnit.test("unset selected section when preserveHeaderStateOnScroll enabled", function (assert) {

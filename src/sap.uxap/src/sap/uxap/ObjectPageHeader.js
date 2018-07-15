@@ -1142,6 +1142,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @returns {boolean}
+	 */
+	ObjectPageHeader.prototype.supportsBackgroundDesign = function () {
+		return false;
+	};
+
+
+	/**
 	 * Returns the text that represents the title of the page.
 	 * Required by the {@link sap.uxap.IHeaderTitle} interface
 	 */

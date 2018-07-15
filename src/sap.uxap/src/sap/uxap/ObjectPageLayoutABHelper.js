@@ -63,13 +63,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ABHelper.prototype._getAnchorBar = function () {
-		var oAnchorBar = this.getObjectPageLayout().getAggregation("_anchorBar");
+		var oObjectPageLayout = this.getObjectPageLayout(),
+			oAnchorBar = oObjectPageLayout.getAggregation("_anchorBar");
 
 		if (!oAnchorBar) {
 
 			oAnchorBar = new AnchorBar({
-				id: this.getObjectPageLayout().getId() + "-anchBar",
-				showPopover: this.getObjectPageLayout().getShowAnchorBarPopover()
+				id: oObjectPageLayout.getId() + "-anchBar",
+				showPopover: oObjectPageLayout.getShowAnchorBarPopover(),
+				backgroundDesign: oObjectPageLayout.getBackgroundDesignAnchorBar()
 			});
 
 			this.getObjectPageLayout().setAggregation("_anchorBar", oAnchorBar, true);

@@ -122,7 +122,17 @@ sap.ui.define([
 				 *
 				 * @since 1.54
 				 */
-				areaShrinkRatio : {type: "sap.f.DynamicPageTitleShrinkRatio", group: "Appearance", defaultValue: "1:1.6:1.6"}
+				areaShrinkRatio : {type: "sap.f.DynamicPageTitleShrinkRatio", group: "Appearance", defaultValue: "1:1.6:1.6"},
+
+				/**
+				 * Determines the background color of the <code>DynamicPageTitle</code>.
+				 *
+				 * <b>Note:</b> The default value of <code>backgroundDesign</code> property is null.
+				 * If the property is not set, the color of the background is <code>@sapUiObjectHeaderBackground</code>,
+				 * which depends on the specific theme.
+				 * @since 1.58
+				 */
+				backgroundDesign : {type: "sap.m.BackgroundDesign", group: "Appearance"}
 			},
 			aggregations: {
 
@@ -405,6 +415,33 @@ sap.ui.define([
 		this._setShrinkFactors(oShrinkFactorsInfo.headingAreaShrinkFactor,
 								oShrinkFactorsInfo.contentAreaShrinkFactor,
 								oShrinkFactorsInfo.actionsAreaShrinkFactor);
+
+		return this;
+	};
+
+	/**
+	 * Sets the value of the <code>backgroundDesign</code> property.
+	 *
+	 * @param {sap.m.BackgroundDesign} sBackgroundDesign - new value of the <code>backgroundDesign</code>
+	 * @return {sap.f.DynamicPageTitle} <code>this</code> to allow method chaining
+	 * @public
+	 * @since 1.58
+	 */
+	DynamicPageTitle.prototype.setBackgroundDesign = function (sBackgroundDesign) {
+		var sCurrentBackgroundDesign = this.getBackgroundDesign(),
+			$domRef = this.$(),
+			sCssClassPrefix = "sapFDynamicPageTitle";
+
+		if (sCurrentBackgroundDesign === sBackgroundDesign) {
+			return this;
+		}
+
+		this.setProperty("backgroundDesign", sBackgroundDesign, true);
+
+		if ($domRef.length) {
+			$domRef.removeClass(sCssClassPrefix + sCurrentBackgroundDesign);
+			$domRef.addClass(sCssClassPrefix + sBackgroundDesign);
+		}
 
 		return this;
 	};

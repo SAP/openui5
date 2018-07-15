@@ -179,6 +179,47 @@
 		objectCount: 1
 	});
 
+	QUnit.module("custom setters", {
+		beforeEach: function () {
+			this.oAnchorBar = new sap.uxap.AnchorBar();
+			this.oAnchorBar.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oAnchorBar = null;
+		}
+	});
+
+	QUnit.test("AnchorBar - backgroundDesign", function (assert) {
+		var $oDomRef = this.oAnchorBar.$();
+
+		// assert
+		assert.equal(this.oAnchorBar.getBackgroundDesign(), null, "Default value of backgroundDesign property = null");
+
+		// act
+		this.oAnchorBar.setBackgroundDesign("Solid");
+
+		// assert
+		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarSolid"), "Should have sapUxAPAnchorBarSolid class");
+		assert.strictEqual(this.oAnchorBar.getBackgroundDesign(), "Solid", "Should have backgroundDesign property = 'Solid'");
+
+		// act
+		this.oAnchorBar.setBackgroundDesign("Transparent");
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapUxAPAnchorBarSolid"), "Should not have sapUxAPAnchorBarSolid class");
+		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarTransparent"), "Should have sapUxAPAnchorBarTransparent class");
+		assert.strictEqual(this.oAnchorBar.getBackgroundDesign(), "Transparent", "Should have backgroundDesign property = 'Transparent'");
+
+		// act
+		this.oAnchorBar.setBackgroundDesign("Translucent");
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapUxAPAnchorBarTransparent"), "Should not have sapUxAPAnchorBarTransparent class");
+		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarTranslucent"), "Should have sapUxAPAnchorBarTranslucent class");
+		assert.strictEqual(this.oAnchorBar.getBackgroundDesign(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
+	});
+
 	QUnit.module("simple binding", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
