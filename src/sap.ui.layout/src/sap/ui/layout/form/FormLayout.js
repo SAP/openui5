@@ -3,7 +3,13 @@
  */
 
 // Provides control sap.ui.layout.form.FormLayout.
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormLayoutRenderer'], function(Control, library, FormLayoutRenderer) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'sap/ui/layout/library',
+	'./FormLayoutRenderer',
+	'sap/ui/dom/jquery/Selectors', // jQuery custom selectors ":sapFocusable"
+	'sap/ui/dom/jquery/control' // jQuery Plugin "control"
+], function(Control, library, FormLayoutRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign

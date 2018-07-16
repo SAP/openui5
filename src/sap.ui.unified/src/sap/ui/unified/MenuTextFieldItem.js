@@ -3,7 +3,16 @@
  */
 
 // Provides control sap.ui.unified.MenuTextFieldItem.
-sap.ui.define(['sap/ui/core/ValueStateSupport', './MenuItemBase', './library', 'sap/ui/core/library', 'sap/ui/Device', "sap/base/Log", "sap/ui/events/PseudoEvents"],
+sap.ui.define([
+	'sap/ui/core/ValueStateSupport',
+	'./MenuItemBase',
+	'./library',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'sap/base/Log',
+	'sap/ui/events/PseudoEvents',
+	'sap/ui/dom/jquery/cursorPos' // jQuery Plugin "cursorPos"
+],
 	function(
 		ValueStateSupport,
 		MenuItemBase,

@@ -4,7 +4,14 @@
 
 // Provides helper sap.ui.table.TablePointerExtension.
 sap.ui.define([
-"./library", "./TableExtension", "./TableUtils", "sap/ui/Device", "sap/ui/core/Popup", "sap/base/Log"
+	"./library",
+	"./TableExtension",
+	"./TableUtils",
+	"sap/ui/Device",
+	"sap/ui/core/Popup",
+	"sap/base/Log",
+	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ], function(library, TableExtension, TableUtils, Device, Popup, Log) {
 	"use strict";
 

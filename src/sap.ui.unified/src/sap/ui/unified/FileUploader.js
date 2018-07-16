@@ -9,11 +9,12 @@ sap.ui.define([
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	"./FileUploaderRenderer",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes",
-	"sap/base/Log",
-	"sap/base/security/encodeXML"
+	'./FileUploaderRenderer',
+	'sap/ui/dom/containsOrEquals',
+	'sap/ui/events/KeyCodes',
+	'sap/base/Log',
+	'sap/base/security/encodeXML',
+	'sap/ui/dom/jquery/Aria' // jQuery Plugin "addAriaDescribedBy"
 ], function(
 	Control,
 	library,
