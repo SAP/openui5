@@ -50,7 +50,7 @@
 
 		QUnit.test("incrementButton", function (assert) {
 			//prepare
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton();
 
 			//assert
 			equal(oIncrementButton.getNoTabStop(), true, "the button should not be part of tabchain")
@@ -70,7 +70,7 @@
 
 		QUnit.test("decrementButton", function (assert) {
 			//prepare
-			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
+			var oDecrementButton = this.stepInput._getDecrementButton();
 
 			//assert
 			equal(oDecrementButton.getNoTabStop(), true, "the button should not be part of tabchain")
@@ -94,17 +94,17 @@
 			oSI.placeAt('qunit-fixture');
 			oCore.applyChanges();
 			//Assert
-			equal(oSI.getAggregation("_decrementButton"), null,
+			equal(oSI._getDecrementButton().getVisible(), false,
 				"No decrement button since the StepInput is not editable");
-			equal(oSI.getAggregation("_incrementButton"), null,
+			equal(oSI._getIncrementButton().getVisible(), false,
 				"No increment button since the StepInput is not editable");
 
 			//Act
 			oSI.setEditable(true);
 			//Assert
-			ok(oSI.getAggregation("_decrementButton"),
+			ok(oSI._getDecrementButton().getVisible(),
 				"Decrement button is available once StepInput is editable");
-			ok(oSI.getAggregation("_incrementButton"),
+			ok(oSI._getIncrementButton().getVisible(),
 				"Increment button is available once StepInput is editable");
 
 			//destroy
@@ -145,26 +145,6 @@
 
 			//Assert
 			assert.strictEqual(oRenderSpy.callCount, 1, "closeInputTag is called");
-
-			//destroy
-			oSI.destroy();
-		});
-
-		QUnit.test("renderButton is called", function () {
-			//Prepare and Act
-			var oRenderSpy,
-				oSI = new sap.m.StepInput();
-
-			oSI.placeAt('qunit-fixture');
-			oCore.applyChanges();
-
-			oRenderSpy = this.spy(oSI._getInput().getRenderer(), "renderButton");
-			//act
-			oSI.setDescription("EUR");
-			oCore.applyChanges();
-
-			//Assert
-			assert.strictEqual(oRenderSpy.callCount, 2, "renderButton is called");
 
 			//destroy
 			oSI.destroy();
@@ -357,7 +337,7 @@
 		});
 
 		QUnit.test("description", function (assert) {
-			var sNumericDescSuffix = this.stepInput._getInput().getRenderer()._getDescriptionSuffix();
+			var sNumericDescSuffix = "-descr";
 			// arrange
 			this.stepInput.setDescription("EUR");
 			assert.strictEqual(this.stepInput.$("input" + sNumericDescSuffix).length, 0, "Description element is not yet rendered");
@@ -531,8 +511,8 @@
 
 		QUnit.test("working with floating point", function (assert) {
 			//prepare & act
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton"),
-				oDecrementButton = this.stepInput.getAggregation("_decrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton(),
+				oDecrementButton = this.stepInput._getDecrementButton();
 			oIncrementButton.firePress();
 
 			//assert
@@ -574,8 +554,8 @@
 			this.stepInput.setStep(0.05);
 			oCore.applyChanges();
 
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton"),
-				oDecrementButton = this.stepInput.getAggregation("_decrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton(),
+				oDecrementButton = this.stepInput._getDecrementButton();
 
 			oIncrementButton.firePress();
 			strictEqual(this.stepInput.getValue(), 431.2,
@@ -599,7 +579,7 @@
 			this.stepInput.setValue(0.01);
 			this.stepInput.setStep(0.06);
 			oCore.applyChanges();
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton();
 
 			oIncrementButton.firePress();
 			strictEqual(this.stepInput.getValue(), 0.07, "The value is successfuly incremented");
@@ -611,7 +591,7 @@
 			this.stepInput.setValue(0.01);
 			this.stepInput.setStep(0.02);
 			oCore.applyChanges();
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton();
 
 			oIncrementButton.firePress();
 			strictEqual(this.stepInput.getValue(), 0.03, "The value is successfuly incremented");
@@ -681,7 +661,7 @@
 			this.stepInput.setValue(0.325);
 			oCore.applyChanges();
 
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton();
 
 			oIncrementButton.firePress();
 
@@ -695,7 +675,7 @@
 			this.stepInput.setValue(0.325);
 			oCore.applyChanges();
 
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton();
 
 			oIncrementButton.firePress();
 
@@ -709,7 +689,7 @@
 			this.stepInput.setValue(0.325);
 			oCore.applyChanges();
 
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton();
 
 			oIncrementButton.firePress();
 
@@ -741,13 +721,13 @@
 					step: 0.004999,
 					displayValuePrecision: 3
 				}),
-				oIncBtn = oSI.getAggregation("_incrementButton"),
+				oIncBtn = oSI._getIncrementButton(),
 				oSI2 = new sap.m.StepInput({
 					value: 1.3266999999999999999,
 					step: 0.00499999999999,
 					displayValuePrecision: 3
 				}),
-				oIncBtn2 = oSI2.getAggregation("_incrementButton");
+				oIncBtn2 = oSI2._getIncrementButton();
 
 			oSI.placeAt('qunit-fixture');
 			oSI2.placeAt('qunit-fixture');
@@ -819,7 +799,7 @@
 		QUnit.test("Change event is fired only once when element is focused, changed and then + button is clicked", function (assert) {
 			//prepare
 			var oInput = this.stepInput._getInput(),
-				oIncrementBtn = this.stepInput.getAggregation("_incrementButton");
+				oIncrementBtn = this.stepInput._getIncrementButton();
 
 			//assert
 			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet"); //value not changed
@@ -843,7 +823,7 @@
 		QUnit.test("Change event is fired only once when element is focused, changed and then - button is clicked", function (assert) {
 			//prepare
 			var oInput = this.stepInput._getInput(),
-				oDecrementBtn = this.stepInput.getAggregation("_decrementButton");
+				oDecrementBtn = this.stepInput._getDecrementButton();
 
 			//assert
 			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet"); //value not changed
@@ -866,8 +846,8 @@
 
 		QUnit.test("Change Event is fired when  +/- buttons are clicked", function (assert) {
 			//prepare
-			var oIncrementBtn = this.stepInput.getAggregation("_incrementButton"),
-				oDecrementBtn = this.stepInput.getAggregation("_decrementButton");
+			var oIncrementBtn = this.stepInput._getIncrementButton(),
+				oDecrementBtn = this.stepInput._getDecrementButton();
 
 			//act
 			jQuery(this.stepInput).focus();
@@ -955,8 +935,8 @@
 
 		QUnit.test("if the value is out of min/max range, pressing increase/decrease button the value will be set to min/max", function (assert) {
 			//prepare
-			var oIncrementBtn = this.stepInput.getAggregation("_incrementButton"),
-				oDecrementBtn = this.stepInput.getAggregation("_decrementButton");
+			var oIncrementBtn = this.stepInput._getIncrementButton(),
+				oDecrementBtn = this.stepInput._getDecrementButton();
 
 			//act
 			jQuery(this.stepInput).focus();
@@ -1135,7 +1115,7 @@
 		QUnit.test("Mouse down on incrementButton", function (assert) {
 			// time for which the value will get from 4 to 9
 			var t = calcTime(this.stepInput, 4),
-				incBtn = this.stepInput.getAggregation("_incrementButton");
+				incBtn = this.stepInput._getIncrementButton();
 
 			// Act - mouse down on increment button
 			callIconDelegate("onmousedown", incBtn);
@@ -1152,7 +1132,7 @@
 		QUnit.test("Mouse down on decrementButton", function (assert) {
 			// time for which the value will get from 4 to -1
 			var t = calcTime(this.stepInput, 4),
-				decBtn = this.stepInput.getAggregation("_decrementButton");
+				decBtn = this.stepInput._getDecrementButton();
 
 			// Act - mouse down on decrement button
 			callIconDelegate("onmousedown", decBtn);
@@ -1169,7 +1149,7 @@
 		QUnit.test("Mouse down on incrementButton when having max value set", function (assert) {
 			// time for which the value will get from 4 to 7
 			var t = calcTime(this.stepInput, 2),
-				incBtn = this.stepInput.getAggregation("_incrementButton");
+				incBtn = this.stepInput._getIncrementButton();
 
 			// Act - mouse down on increment button
 			callIconDelegate("onmousedown", incBtn);
@@ -1190,7 +1170,7 @@
 		QUnit.test("Mouse down on decrementButton when having min value set", function (assert) {
 			// time for which the value will get from 4 to 1
 			var t = calcTime(this.stepInput, 2),
-				decBtn = this.stepInput.getAggregation("_decrementButton");
+				decBtn = this.stepInput._getDecrementButton();
 
 			// Act - mouse down on increment button
 			callIconDelegate("onmousedown", decBtn);
@@ -1211,7 +1191,7 @@
 		QUnit.test("Mouse down and mouse out on incrementButton", function (assert) {
 			// time for which the value will get from 4 to 9
 			var t = calcTime(this.stepInput, 4),
-				incBtn = this.stepInput.getAggregation("_incrementButton");
+				incBtn = this.stepInput._getIncrementButton();
 
 			// Act - mouse down on increment button
 			callIconDelegate("onmousedown", incBtn);
@@ -1257,7 +1237,7 @@
 		QUnit.test("Touch start on incrementButton", function (assert) {
 			// time for which the value will get from 4 to 9
 			var t = calcTime(this.stepInput, 4),
-				incBtn = this.stepInput.getAggregation("_incrementButton");
+				incBtn = this.stepInput._getIncrementButton();
 
 			// Act - mouse down on increment button
 			callIconDelegate("onmousedown", incBtn);
@@ -1274,7 +1254,7 @@
 		QUnit.test("Touch start on decrementButton", function (assert) {
 			// time for which the value will get from 4 to -1
 			var t = calcTime(this.stepInput, 4),
-				decBtn = this.stepInput.getAggregation("_decrementButton");
+				decBtn = this.stepInput._getDecrementButton();
 
 			// Act - mouse down on decrement button
 			callIconDelegate("onmousedown", decBtn);
@@ -1291,7 +1271,7 @@
 		QUnit.test("Touch start on incrementButton when having max value set", function (assert) {
 			// time for which the value will get from 4 to 7
 			var t = calcTime(this.stepInput, 2),
-				incBtn = this.stepInput.getAggregation("_incrementButton");
+				incBtn = this.stepInput._getIncrementButton();
 
 			// Act - mouse down on increment button
 			callIconDelegate("onmousedown", incBtn);
@@ -1312,7 +1292,7 @@
 		QUnit.test("Mouse down on decrementButton when having min value set", function (assert) {
 			// time for which the value will get from 4 to 1
 			var t = calcTime(this.stepInput, 2),
-				decBtn = this.stepInput.getAggregation("_decrementButton");
+				decBtn = this.stepInput._getDecrementButton();
 
 			// Act - mouse down on increment button
 			callIconDelegate("onmousedown", decBtn);
@@ -1357,7 +1337,7 @@
 			//act
 			oSUT.placeAt('qunit-fixture');
 			oCore.applyChanges();
-			$Input = oInput.$(oInput.getRenderer().getInnerSuffix());
+			$Input = oInput.$("inner");
 			//assert
 			assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
 			assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
@@ -1397,7 +1377,7 @@
 			//act
 			oSUT.placeAt('qunit-fixture');
 			oCore.applyChanges();
-			$Input = oInput.$(oInput.getRenderer().getInnerSuffix());
+			$Input = oInput.$("inner");
 			//assert
 			assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
 			assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
@@ -1434,7 +1414,7 @@
 		QUnit.test("StepInput correctly alters its internal 'sap.m.Input' ARIA attributes on property changes", function (assert) {
 			//prepare
 			var oInput = this.stepInput._getInput();
-			var sInputSuffix = oInput.getRenderer().getInnerSuffix();
+			var sInputSuffix = "inner";
 			//assert - initial values
 			assert.ok(oInput.$(sInputSuffix).is('[aria-valuenow]'), "'aria-valuenow' attribute is rendered in the DOM");
 			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "4", "'aria-valuenow' attribute has correct initial value");
@@ -2062,7 +2042,7 @@
 
 		QUnit.test("_iRealPrecision is updated on each value change", function () {
 			//Prepare
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+			var oIncrementButton = this.stepInput._getIncrementButton();
 			this.stepInput.setDisplayValuePrecision(2);
 			this.stepInput.setStep(0.05); //make sure the precision is different than the one in the value one
 			this.stepInput.setValue(1.20);
@@ -2090,19 +2070,7 @@
 
 		module("Misc");
 
-		QUnit.test("Description suffix", function (assert) {
-			var oStepInput = new sap.m.StepInput({
-					value: 5,
-					description: "EUR"
-				}),
-				sNumericDescSuffix = oStepInput._getInput().getRenderer()._getDescriptionSuffix();
-
-			assert.strictEqual(sNumericDescSuffix, "-descr", "Description suffix is correct");
-
-			oStepInput.destroy();
-		});
-
-		QUnit.test("_getIsDisabledButton", function (assert) {
+		QUnit.test("increment/decrement buttons enabled state", function (assert) {
 			// arrange
 			var oStepInput = new sap.m.StepInput({
 				value: 5,
@@ -2113,30 +2081,30 @@
 			oCore.applyChanges();
 
 			// assert
-			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnDecrease"), "Decrease button is disabled when the value is less then the min value");
+			assert.ok(!oStepInput._getDecrementButton().getEnabled(), "Decrease button is disabled when the value is less then the min value");
 			// act
 			oStepInput.setValue(7);
 			// assert
-			assert.ok(!oStepInput._getIsDisabledButton("sapMStepInputBtnDecrease"), "Decrease button is not disabled when the value is bigger then the min value and the control is enabled");
+			assert.ok(oStepInput._getDecrementButton().getEnabled(), "Decrease button is not disabled when the value is bigger then the min value and the control is enabled");
 			//act
 			oStepInput.setValue(6);
 			oStepInput.setEnabled(false);
 			// assert
-			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnDecrease"), "Decrease button is disabled when the control is disabled");
+			assert.ok(!oStepInput._getDecrementButton().getEnabled(), "Decrease button is disabled when the control is disabled");
 
 			//act
 			oStepInput.setEnabled(true);
 			// assert
-			assert.ok(!oStepInput._getIsDisabledButton("sapMStepInputBtnIncrease"), "Increase button is not disabled when the value is less then the max value and the control is enabled");
+			assert.ok(oStepInput._getIncrementButton().getEnabled(), "Increase button is not disabled when the value is less then the max value and the control is enabled");
 			// act
 			oStepInput.setValue(9);
 			// assert
-			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnIncrease"), "Increase button is disabled when the value is bigger then the max value");
+			assert.ok(!oStepInput._getIncrementButton().getEnabled(), "Increase button is disabled when the value is bigger then the max value");
 			//act
 			oStepInput.setValue(7);
 			oStepInput.setEnabled(false);
 			// assert
-			assert.ok(oStepInput._getIsDisabledButton("sapMStepInputBtnIncrease"), "Increase button is disabled when the control is disabled");
+			assert.ok(!oStepInput._getIncrementButton().getEnabled(), "Increase button is disabled when the control is disabled");
 
 			// clean up
 			oStepInput.destroy();
