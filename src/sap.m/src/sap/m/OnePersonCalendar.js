@@ -179,7 +179,7 @@ function(
 
 	OnePersonCalendar.prototype.setAppointmentsVisualization = function (oValue) {
 		this.setProperty("appointmentsVisualization", oValue, true);
-		this.getAggregation("grid").setProperty("appointmentsVisualization", oValue, true);
+		this.getAggregation("grid").setProperty("appointmentsVisualization", oValue);
 
 		return this;
 	};

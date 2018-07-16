@@ -3,17 +3,24 @@
 /* Base theme                              */
 /* ======================================= */
 
-.sapMOnePerHead .sapMTB-Transparent-CTX.sapMTB {
-  padding-left: 1rem;
+.sapMOnePerHead .sapMOnePerHeadActionsToolbar,
+.sapMOnePerHead .sapMOnePerHeadNavToolbar{
+	padding-left: 1rem;
 }
 
-.sapMOnePerHead .sapMTB:first-child{
-  min-height: 3rem; // here or in compact?
+.sapMOnePerHead .sapMOnePerHeadNavToolbar {
+	border-bottom: none;
+	flex-wrap: wrap;
+	white-space: normal;
+	min-height: 3rem;
+
+	&.sapMIBar {
+		height: auto;
+	}
 }
 
-.sapMOnePerHead .sapMTB:last-child{
-  border-bottom: none;
-  display: block;
-  white-space: normal;
-  overflow: visible;
+.sapUiSizeCompact {
+	.sapMOnePerHead .sapMOnePerHeadNavToolbar {
+		min-height: 2rem;
+	}
 }
