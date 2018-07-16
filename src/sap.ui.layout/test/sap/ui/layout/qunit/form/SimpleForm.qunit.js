@@ -202,6 +202,22 @@ sap.ui.require([
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "XXX", "aria-labelledby");
 	});
 
+	QUnit.test("_suggestTitleId", function(assert) {
+		oSimpleForm._suggestTitleId("ID1");
+		oSimpleForm.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "ID1", "aria-labelledby points to TitleID");
+
+		var oTitle = new Title("T1", {text: "Test"});
+		oSimpleForm.setTitle(oTitle);
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
+
+		oSimpleForm.addAriaLabelledBy("X");
+		sap.ui.getCore().applyChanges();
+		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "X T1", "aria-labelledby points to AriaLabel and Title");
+	});
+
 	QUnit.module("addContent", {
 		beforeEach: initTestWithoutContent,
 		afterEach: afterTest
