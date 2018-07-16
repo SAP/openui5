@@ -91,6 +91,24 @@
         "type": "FIX",
         "text": " sap.m.SegmentedButton: visual fix of the color in active state on mobile",
         "references": []
+      },
+      {
+        "id": "0f0514fcf72755574c43daed4857271f207d92b3",
+        "type": "FEATURE",
+        "text": " DynamicPage: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "d16a145c80ac1c93da7d78c32a386c4685326610",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      },
+      {
+        "id": "e7300c6187cb12b8e034e0cae7e04e1d4175b2ec",
+        "type": "FIX",
+        "text": "sap.m.themes.sap_belize_hcb.NewsContent: Accessibilty issue with focus of NewsContent in HCB and HCW theme.",
+        "references": []
       }
     ]
   }
