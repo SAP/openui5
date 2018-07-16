@@ -1189,10 +1189,8 @@
 		}
 
 		// Module names should not start with a "/"
-		if ( bLoggable ) {
-			if (sModuleName[0] == "/") {
-				log.error("Module names that start with a slash should not be used, as they are reserved for future use.");
-			}
+		if (sModuleName[0] == "/") {
+			log.error("Module names that start with a slash should not be used, as they are reserved for future use.");
 		}
 
 		oModule = Module.get(sModuleName);

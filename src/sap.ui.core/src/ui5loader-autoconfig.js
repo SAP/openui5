@@ -52,7 +52,7 @@
 	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:.*\/)?resources\/)/ ) ) {
 
 		// only when there's no such script tag, check all script tags
-		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-\w*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
+		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
 		aScripts = document.scripts;
 		for ( i = 0; i < aScripts.length; i++ ) {
 			if ( findBaseUrl(aScripts[i], rBootScripts) ) {
