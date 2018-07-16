@@ -199,5 +199,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "d5a71bdc319644109ca21716e7cccfe8c14b7510",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: CW selection behavior corrected",
+        "references": []
+      }
+    ]
   }
 }

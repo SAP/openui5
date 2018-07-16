@@ -2204,5 +2204,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.33": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "cb51da1e4ea22eacab0cd3c746ffb26d15b409b1",
+        "type": "FIX",
+        "text": " Theming Parameters: Improve inline parameters decoding",
+        "references": []
+      },
+      {
+        "id": "1a9c84097d91a3f31985d2cb61a917526032d8bd",
+        "type": "FIX",
+        "text": " sap.ui.polyfill.computedStyle: polyfill for firefox bug",
+        "references": []
+      },
+      {
+        "id": "4025959fd38009ede1e8a080af72518e6e71aaca",
+        "type": "FIX",
+        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": []
+      }
+    ]
   }
 }
