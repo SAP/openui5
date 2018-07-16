@@ -1122,6 +1122,11 @@ sap.ui.require([
 		}
 	});
 
+	QUnit.test("when calling 'resetMap' of the VariantController", function(assert) {
+		this.oVariantController.resetMap();
+		assert.ok(jQuery.isEmptyObject(this.oVariantController._mVariantManagement), "then variant controller map was reset");
+	});
+
 	QUnit.test("when calling 'addChangeToVariant' of the VariantController", function(assert) {
 		var oChangeToBeAdded1 = new Change(this.oChangeContent2);
 		var oChangeToBeAdded2 = new Change(this.oChangeContent1);

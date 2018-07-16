@@ -55,7 +55,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			status: "success"
 		};
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 		return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
 			assert.equal(oCacheKeyResponse, sChacheKey);
@@ -69,7 +69,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			status: "success"
 		};
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 		return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
 			assert.equal(oCacheKeyResponse, Cache.NOTAG);
@@ -77,11 +77,28 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("when getChangesForComponent is called with no change cacheKey", function (assert) {
-		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+		var oSettingsStoreInstanceStub = sandbox.stub(Settings, "_storeInstance");
 		return this.oChangePersistence.getChangesForComponent({cacheKey : "<NO CHANGES>"}).then(function (aChanges) {
 			assert.equal(aChanges.length, 0, "then empty array is returned");
 			assert.equal(oSettingsStoreInstanceStub.callCount, 0 , "the _storeInstance function of the fl.Settings was not called.");
 		});
+	});
+
+	QUnit.test("when getChangesForComponent is called with _bUserLayerChangesExist set and ignoreMaxLayerParameter is passed as true", function (assert) {
+		this.oChangePersistence._bUserLayerChangesExist = true;
+
+		var oMockedWrappedContent = {
+			changes: {
+				changes: ["mockChange"]
+			}
+		};
+
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+
+		return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter: true}).then(function (sResponse) {
+			assert.strictEqual(sResponse, "userLevelVariantChangesExist", "then the correct response is returned");
+			assert.notOk(this.oChangePersistence._bUserLayerChangesExist, "then _bUserLayerChangesExist is unset");
+		}.bind(this));
 	});
 
 	QUnit.test("when getChangesForComponent is called with a variantSection when changes section is not empty", function (assert) {
@@ -121,9 +138,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		};
 
 		var fnSetChangeFileContentSpy = this.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
-		var fnLoadInitialChangesStub = this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
-		var fnApplyChangesOnVariantManagementStub = this.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		var fnLoadInitialChangesStub = sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		var fnApplyChangesOnVariantManagementStub = sandbox.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 		return this.oChangePersistence.getChangesForComponent().then(function () {
 			assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
@@ -170,9 +187,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		};
 
 		var fnSetChangeFileContentSpy = this.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
-		var fnLoadInitialChangesStub = this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
-		var fnApplyChangesOnVariantManagementStub = this.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		var fnLoadInitialChangesStub = sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		var fnApplyChangesOnVariantManagementStub = sandbox.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 		return this.oChangePersistence.getChangesForComponent().then(function () {
 			assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
@@ -198,9 +215,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
-		var fnSetChangeFileContentStub = this.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
-		this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 		var mPropertyBag = {
 			componentData : {
 				technicalParameters : {
@@ -224,9 +241,9 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
-		var fnSetChangeFileContentStub = this.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
-		this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 		var mPropertyBag = {
 			oComponent : {
 				getComponentData : function() {
@@ -262,7 +279,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				]
 			}
 		};
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(aWrappedContent));
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(aWrappedContent));
 		return this.oChangePersistence.getChangesForComponent().then(function (aChanges) {
 			assert.equal(aChanges[0].getId(), aWrappedContent.changes.changes[0].fileName, "then change with 'ctrl_variant' fileType received");
 			assert.equal(aChanges[1].getId(), aWrappedContent.changes.changes[1].fileName, "then change with 'ctrl_variant_change' fileType received");
@@ -591,6 +608,61 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		assert.deepEqual(mVariantSection, mExpectedParameter, "then the original parameter object filtered out all changes not from the current layer");
 	});
 
+	QUnit.test("when _getAllCtrlVariantChanges is called with a USER layer change, with max layer set to a layer below (e.g. CUSTOMER)", function(assert){
+		var mVariantSection = {
+			"variantManagementId": {
+				"variants": [
+					{
+						"content": {
+							"fileName": "variantManagementId",
+							"content": {
+								"title": "variant 0"
+							},
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [],
+						"variantChanges": []
+					},
+					{
+						"content": {
+							"fileName": "variant0",
+							"content": {
+								"title": "variant 0"
+							},
+							"layer": "CUSTOMER",
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [{
+							"variantReference": "variant0",
+							"fileName": "controlChange0",
+							"fileType": "change",
+							"layer": "USER"
+						}],
+						"variantChanges": {
+							"setTitle": [{
+								"fileName": "variantChange0",
+								"fileType": "ctrl_variant_change",
+								"layer": "USER",
+								"selector": {
+									"id": "variant0"
+								}
+							}]
+						}
+					}
+				],
+				"variantManagementChanges": {
+					"setDefault" : []
+				}
+			}
+		};
+		Utils.setMaxLayerParameter("CUSTOMER");
+		sandbox.spy(this.oChangePersistence, "_filterChangeForMaxLayer");
+		this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, true);
+		assert.strictEqual(this.oChangePersistence._filterChangeForMaxLayer.callCount, 3, "then _filterChangeForMaxLayer() called thrice for three changes");
+		assert.strictEqual(this.oChangePersistence._bUserLayerChangesExist, true, "then the flag _bUserLayerChangesExist is set");
+
+	});
+
 	QUnit.test("when getChangesForComponent is called with includeCtrlVariants and includeVariants set to true", function(assert) {
 		var oMockedWrappedContent = {
 			"changes" : {
@@ -737,7 +809,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			oInvisibleVariant.variantChanges.setVisible[0].fileName
 		];
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 		return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true, includeVariants: true}).then(function(aChanges) {
 			var aFilteredChanges = aChanges.filter( function (oChange) {
 				return aInvisibleChangFileNames.indexOf(oChange.getId()) > -1;
@@ -752,7 +824,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		var fnGetCtrlVariantChangesSpy = sandbox.spy(this.oChangePersistence, "_getAllCtrlVariantChanges");
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
 			{
 				changes: {
 					changes : [
@@ -773,7 +845,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
 			changes: { changes: [] },
 			messagebundle: {"i_123": "translatedKey"}
 		}));
@@ -786,7 +858,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
 			changes: { changes: [{
 				fileType: "change",
 				selector: {
@@ -805,7 +877,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: []}}));
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: []}}));
 
 		return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 			assert.ok(changes);
@@ -813,7 +885,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForComponent shall return the changes for the component when variantSection is empty", function(assert) {
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
 			{
 				changes: {
 					changes: [
@@ -836,7 +908,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 	QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes with the current layer (CUSTOMER)", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName: "change1",
 				layer: "VENDOR",
@@ -871,7 +943,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 	QUnit.test("getChangesForComponent shall return the changes for the component, not filtering changes with the current layer", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName: "change1",
 				layer: "VENDOR",
@@ -905,7 +977,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 	QUnit.test("After run getChangesForComponent without includeVariants parameter", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName: "file1",
 				fileType: "change",
@@ -963,7 +1035,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 	QUnit.test("After run getChangesForComponent with includeVariants parameter", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName: "file1",
 				fileType: "change",
@@ -1044,7 +1116,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 	QUnit.test("getChangesForComponent shall only return flex changes in the max layer or below", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
 			changes: {
 				changes: [
 					{
@@ -1100,12 +1172,13 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			assert.ok(oChanges[1].getId() === "change4", "with correct id");
 			assert.ok(oChanges[2].getId() === "change5", "with correct id");
 			assert.ok(fnGetCtrlVariantChangesStub.calledOnce, "then _getCtrlVariantChanges called when max layer parameter is set");
-		});
+			assert.strictEqual(this.oChangePersistence._bUserLayerChangesExist, true, "then the flag _bUserLayerChangesExist is set");
+		}.bind(this));
 	});
 
 	QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName:"change2",
 				fileType: "change",
@@ -1152,8 +1225,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				}
 			}
 		};
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
-		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
+		var oSettingsStoreInstanceStub = sandbox.stub(Settings, "_storeInstance");
 
 		return this.oChangePersistence.getChangesForComponent().then(function() {
 			assert.ok(oSettingsStoreInstanceStub.calledOnce, "the _storeInstance function of the fl.Settings was called.");
@@ -1164,8 +1237,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 	QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings, but only if the data comes from the back end", function(assert) {
 		var oFileContent = {};
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
-		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
+		var oSettingsStoreInstanceStub = sandbox.stub(Settings, "_storeInstance");
 
 		return this.oChangePersistence.getChangesForComponent().then(function() {
 			assert.ok(oSettingsStoreInstanceStub.notCalled, "the _storeInstance function of the fl.Settings was not called.");
@@ -1174,7 +1247,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 	QUnit.test("getChangesForComponent ignore filtering when ignoreMaxLayerParameter property is available", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName:"change1",
 				fileType: "change",
@@ -1229,7 +1302,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				dependentSelector: []
 			}
 		];
-		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent");
+		var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent");
 		this.oChangePersistence._mVariantsChanges["SmartFilterBar"] = aStubChanges;
 		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
 			assert.deepEqual(aChanges, aStubChanges);
@@ -1238,8 +1311,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForVariant return promise reject when flexibility service is not available", function() {
-		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
-		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(false));
+		var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = sandbox.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(false));
 		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).catch(function() {
 			sinon.assert.calledOnce(oStubGetChangesForComponent);
 			sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
@@ -1247,8 +1320,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForVariant return promise reject when flexibility service availability is not definied", function() {
-		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
-		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(undefined));
+		var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = sandbox.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(undefined));
 		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function() {
 			sinon.assert.calledOnce(oStubGetChangesForComponent);
 			sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
@@ -1256,8 +1329,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForVariant return promise resolve with empty object when flexibility service is available", function(assert) {
-		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
-		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(true));
+		var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = sandbox.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(true));
 		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
 			assert.deepEqual(aChanges, {});
 			sinon.assert.calledOnce(oStubGetChangesForComponent);
@@ -1320,7 +1393,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 						]}});
 			}, 100);
 		});
-		this.stub(Cache, "getChangesFillingCache").returns(oPromise);
+		sandbox.stub(Cache, "getChangesFillingCache").returns(oPromise);
 		var oPromise1 = this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
 		var oPromise2 = this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
 		return Promise.all([oPromise1, oPromise2]).then(function(values){
@@ -1330,7 +1403,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 	QUnit.test("loadChangesMapForComponent shall return a map of changes for the component", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName:"change1",
 				fileType: "change",
@@ -1436,7 +1509,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
-		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
 			oChange1,
 			oChange2,
 			oChange3
@@ -1511,7 +1584,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
-		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
 			oChange0,
 			oChange1,
 			oChange2
@@ -1569,7 +1642,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
-		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
 			oChange1,
 			oChange2
 		]));
@@ -1621,7 +1694,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
-		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
 			oChange1,
 			oChange2
 		]));
@@ -1664,7 +1737,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
-		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
 			oChange1,
 			oChange2
 		]));
@@ -1868,7 +1941,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		var that = this;
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
 				fileName:"change1",
 				fileType: "change",

@@ -2778,12 +2778,21 @@ function (
 
 	QUnit.test("detects application free of personalization", function (assert) {
 		var aChanges = [this.oVendorChange1, this.oVendorChange2];
-		this.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
+		sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve(aChanges));
 
 		return this.oFlexController.isPersonalized().then(function (bIsPersonalized) {
 			assert.notOk(bIsPersonalized, "personalization was determined");
 		});
 	});
+
+	QUnit.test("when called to check for USER level filtered changes", function (assert) {
+		sandbox.stub(this.oFlexController, "getComponentChanges").returns(Promise.resolve("userLevelVariantChangesExist"));
+
+		return this.oFlexController.isPersonalized().then(function (bIsPersonalized) {
+			assert.ok(bIsPersonalized, "personalization was determined");
+		});
+	});
+
 
 	QUnit.module("[XML] checkTargetAndApplyChange with asynchronous changeHandler stub for a label", {
 		beforeEach: function (assert) {

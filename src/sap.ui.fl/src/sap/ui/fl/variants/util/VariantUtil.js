@@ -63,6 +63,8 @@ sap.ui.define([
 					oHashChanger.detachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
 					// detach navigation handler
 					oHashChanger.detachEvent("hashChanged", VariantUtil._navigationHandler, this);
+					// clear variant controller map
+					this.oVariantController.resetMap();
 					// destroy VariantModel
 					this.destroy();
 					fnOriginalDestroy.apply(this.oComponent, arguments);
