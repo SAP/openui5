@@ -91,6 +91,24 @@
         "type": "FIX",
         "text": " Revise message text in case of save error",
         "references": []
+      },
+      {
+        "id": "9dc5f0fc0f8d9ad102b545278fa60c44e6702e0b",
+        "type": "FIX",
+        "text": " sap.ui.rta - AppVariantManager test bugfix",
+        "references": []
+      },
+      {
+        "id": "2b9ccf176e22630692f0fa40f35cf4b63f573724",
+        "type": "FIX",
+        "text": " sap.ui.rta - Improve language compatibility of RTA texts",
+        "references": []
+      },
+      {
+        "id": "a13538a8f845326798356b724a9fe95b00ec7621",
+        "type": "FIX",
+        "text": "sap.ui.rta - Rename plugin handling of overlays as arrays",
+        "references": []
       }
     ]
   }

@@ -103,6 +103,18 @@
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Sample adjusted",
         "references": []
+      },
+      {
+        "id": "0f0514fcf72755574c43daed4857271f207d92b3",
+        "type": "FEATURE",
+        "text": " DynamicPage: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "2e88279730e9b6ea061506c1e64517e6de284b11",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed suspend and resume resize handlers",
+        "references": []
       }
     ]
   }

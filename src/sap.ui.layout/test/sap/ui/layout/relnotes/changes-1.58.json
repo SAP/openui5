@@ -25,6 +25,18 @@
         "type": "FIX",
         "text": " AlignedFlowLayout: maxItemWidth property evaluated for all items",
         "references": []
+      },
+      {
+        "id": "4154788ced73af49cffa19e5334b8b5d3dda9bea",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Uncaught error fixed",
+        "references": []
+      },
+      {
+        "id": "cd8d965626e4efd1967012a99effddc62572c2ad",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Resize tooltips are now correct",
+        "references": []
       }
     ]
   }

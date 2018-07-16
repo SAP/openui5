@@ -667,6 +667,72 @@
         "type": "FIX",
         "text": " sap/ui/dom/getComputedStyleFix: document.body is not there yet",
         "references": []
+      },
+      {
+        "id": "228ce8fda6fb4a3c66d0a74b3af4e1eea4e30708",
+        "type": "FIX",
+        "text": " Core: Trigger ThemeCheck when a library has been initialized",
+        "references": []
+      },
+      {
+        "id": "435071bf663424d0f44bd83f90e718853ecff29d",
+        "type": "FIX",
+        "text": " Fix aggregation forwarding issue with move in hierarchy",
+        "references": []
+      },
+      {
+        "id": "da9c98456d6f3c279884f5e529c6cf467c69d7b6",
+        "type": "FIX",
+        "text": " RangeSlider: Moving edge of a handle fixed",
+        "references": []
+      },
+      {
+        "id": "4326467b977250041b6de6c92c2e87d1b04cab63",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tab filters are now positioned correctly",
+        "references": []
+      },
+      {
+        "id": "8f6a2b7187663b6b32becf42351d6720a5e9019d",
+        "type": "FIX",
+        "text": " sap.m.Input: Exapmle is now correct",
+        "references": []
+      },
+      {
+        "id": "75ea3d5629657110fbb1a0df7e967ab5ead5393a",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Fixed navigation to details by messages with long titles",
+        "references": []
+      },
+      {
+        "id": "3931b45dc9597c8ccadad69688b40ed8d47ba6e6",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: has padding now, when IconTabBar has no data",
+        "references": []
+      },
+      {
+        "id": "d16a145c80ac1c93da7d78c32a386c4685326610",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      },
+      {
+        "id": "9575404dccf5677b306c3fd0a23798e3b089d38c",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: After reseting seelction focus is set to TableSelctDialog",
+        "references": []
+      },
+      {
+        "id": "327036ffde92d82a1278b17fe5a0c49cbf110817",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Demo for single select improved",
+        "references": []
+      },
+      {
+        "id": "c2fb57450ec1acaadbca9b37504d43fdf2a10f5b",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Tokens\u0027 visibility in small containers fixed",
+        "references": []
       }
     ]
   }
