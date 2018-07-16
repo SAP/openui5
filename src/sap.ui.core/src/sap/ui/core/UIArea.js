@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	'sap/ui/events/jquery/EventExtension',
 	"sap/ui/events/ControlEvents",
-	'jquery.sap.ui'
+	'jquery.sap.ui',
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
 		ManagedObject,

@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapFocusable"
 ],
 	function(EventProvider, assert, Log, containsOrEquals, KeyCodes) {
 	"use strict";
