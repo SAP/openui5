@@ -105,6 +105,45 @@
 			}
 		};
 
+	QUnit.module("Section without sub-section");
+
+	QUnit.test("Section without sub-section simulation", function (assert) {
+
+		// Arrange
+		var oMainSection = new sap.uxap.ObjectPageSection({
+					subSections: [
+						new sap.uxap.ObjectPageSubSection({
+							blocks: [new sap.m.Text({text: "test"})]
+						}),
+						new sap.uxap.ObjectPageSubSection({
+							blocks: [new sap.m.Text({text: "text"})]
+						})
+					]
+			}),
+			oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+				sections: oMainSection
+			}),
+			sClosestID, done = assert.async();
+
+		// Assert
+		assert.expect(1); // The test is expected to have one assert
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			oMainSection.removeAllSubSections();
+			sClosestID = oObjectPageLayout._getClosestScrolledSectionId(0, "iPageHeight is not defined", true);
+
+			// Assert
+			assert.strictEqual(sClosestID, oMainSection.sId, "check if _getClosestScrolledSectionId returns the correct value");
+
+			// Cleanup
+			oObjectPageLayout.destroy();
+			done();
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.module("IconTabBar is initially enabled", {
 		beforeEach: function () {
 			this.oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
