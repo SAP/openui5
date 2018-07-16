@@ -485,4 +485,52 @@
 		assert.strictEqual(oSubSectionWithTitle.getTitle(), document.getElementById(sSubSectionWithTitleAriaLabelledBy).innerText, "Subsection title is properly labelled");
 	});
 
+	QUnit.module("Title ID propagation");
+
+	QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(sap.uxap.ObjectPageSubSection.prototype, "_initTitlePropagationSupport"),
+			oControl;
+
+		// Act
+		oControl = new sap.uxap.ObjectPageSubSection();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _initTitlePropagationSupport called on init of control");
+		assert.ok(oSpy.calledOn(oControl), "The spy is called on the tested control instance");
+
+		// Cleanup
+		oSpy.restore();
+		oControl.destroy();
+	});
+
+	QUnit.test("_getTitleDomId and _setBorrowedTitleDomId", function (assert) {
+		// Arrange
+		var oSubSection = new sap.uxap.ObjectPageSubSection("TestSubSection");
+
+		// Assert
+		assert.strictEqual(oSubSection._getTitleDomId(), false, "By default the method should return false");
+
+		// Act - set title
+		oSubSection.setTitle("Test");
+
+		// Assert
+		assert.strictEqual(oSubSection._getTitleDomId(), "TestSubSection-headerTitle",
+			"The internal SubSection title DOM ID should be returned");
+
+		// Act - set internal title visible false
+		oSubSection._setInternalTitleVisible(false);
+
+		// Assert
+		assert.strictEqual(oSubSection._getTitleDomId(), false,
+			"If only internal title set to visible false method should return false");
+
+		// Act - _setBorrowedTitleDomId
+		oSubSection._setBorrowedTitleDomId("TestID");
+
+		// Assert
+		assert.strictEqual(oSubSection._getTitleDomId(), "TestID",
+			"The previously set Borrowed Title DOM ID should be returned");
+	});
+
 }(jQuery, QUnit, sinon, window.testData));

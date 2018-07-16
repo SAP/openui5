@@ -1271,7 +1271,8 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
-			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection;
+			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
+			bFirstSectionTitleHidden, aContent, iFirstVisibleSectionVisibleSubSections;
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
@@ -1333,6 +1334,7 @@ sap.ui.define([
 				oSection._setInternalTitleVisible(true, bInvalidate);
 				if (!oFirstVisibleSection) {
 					oFirstVisibleSection = oSection;
+					iFirstVisibleSectionVisibleSubSections = iVisibleSubSections;
 				}
 
 				//rule TitleOnTop.sectionGetSingleSubSectionTitle: If a section as only 1 subsection and the subsection title is not empty, the section takes the subsection title on titleOnTop layout only
@@ -1341,8 +1343,15 @@ sap.ui.define([
 					Log.info("ObjectPageLayout :: TitleOnTop.sectionGetSingleSubSectionTitle UX rule matched", "section " + oSection.getTitle() + " is taking its single subsection title " + oFirstVisibleSubSection.getTitle());
 					oSection._setInternalTitle(oFirstVisibleSubSection.getTitle(), bInvalidate);
 					oFirstVisibleSubSection._setInternalTitleVisible(false, bInvalidate);
+
+					// Title propagation support - set the borrowed Dom ID to the section title
+					oFirstVisibleSubSection._setBorrowedTitleDomId(oSection.getId() + "-title");
 				} else {
 					oSection._setInternalTitle("", bInvalidate);
+				}
+
+				if (iVisibleSubSections === 1 && !oFirstVisibleSubSection.getTitle().trim()) {
+					oFirstVisibleSubSection._setBorrowedTitleDomId(oSection.getId() + "-title");
 				}
 
 				if (this._shouldApplySectionTitleLevel(oSection)) {
@@ -1364,6 +1373,7 @@ sap.ui.define([
 			Log.info("ObjectPageLayout :: notEnoughVisibleSection UX rule matched", "anchorBar forced to hidden");
 			//rule firstSectionTitleHidden: the first section title is never visible if there is an anchorBar
 		} else if (oFirstVisibleSection && bVisibleAnchorBar) {
+			bFirstSectionTitleHidden = true;
 			oFirstVisibleSection._setInternalTitleVisible(false, bInvalidate);
 			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
@@ -1376,6 +1386,14 @@ sap.ui.define([
 		this._setInternalAnchorBarVisible(bVisibleAnchorBar, bInvalidate);
 		this._oFirstVisibleSection = oFirstVisibleSection;
 		this._oFirstVisibleSubSection = this._getFirstVisibleSubSection(oFirstVisibleSection);
+
+		if (bFirstSectionTitleHidden && (iFirstVisibleSectionVisibleSubSections === 1)) {
+			// Title propagation support - set the borrowed title Dom ID to the first AnchorBar button
+			aContent = this.getAggregation("_anchorBar").getContent();
+			if (aContent.length) {
+				this._oFirstVisibleSubSection._setBorrowedTitleDomId(aContent[0].getId() + "-content");
+			}
+		}
 	};
 
 	/* IconTabBar management */
