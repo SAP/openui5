@@ -12,7 +12,7 @@
 		headerPinnable="true"
 		toggleHeaderOnTitleClick="true"
 		preserveHeaderStateOnScroll="false"
-		titlePrimaryArea="Begin"
+		titleAreaShrinkRatio="1:1.6:1.6"
 		showFooter="{/showFooter}">
 
 		<!-- Title Heading-->
