@@ -773,6 +773,51 @@ sap.ui.require([
 		router.destroy();
 	});
 
+	QUnit.module("test a hash");
+
+	QUnit.test("test whether a hash can be matched by the router", function(assert) {
+		var oRouter = fnCreateRouter([{
+			name: "fixedPattern",
+			pattern: "foo/bar"
+		}, {
+			name: "withParameter",
+			pattern: "bar/{foo}"
+		}, {
+			name: "emptyPattern",
+			pattern: ""
+		}]);
+
+		var aHashAndResults = [{
+			hash: "foo/bar",
+			match: true
+		}, {
+			hash: "foo/bar1",
+			match: false
+		}, {
+			hash: "foo",
+			match: false
+		}, {
+			hash: "bar/foo",
+			match: true
+		}, {
+			hash: "bar",
+			match: false
+		}, {
+			hash: "bar/a",
+			match: true
+		}, {
+			hash: "bar/a/b",
+			match: false
+		},{
+			hash: "",
+			match: true
+		}];
+
+		aHashAndResults.forEach(function (oHashAndResult) {
+			assert.strictEqual(oRouter.match(oHashAndResult.hash), oHashAndResult.match, oHashAndResult + " can" + (oHashAndResult.match ? "" : "'t") + " be matched by the router");
+		});
+	});
+
 	QUnit.module("navTo", {
 		beforeEach: function () {
 			this.oRouter = fnCreateRouter();
@@ -1696,7 +1741,7 @@ sap.ui.require([
 			});
 
 		}).then(function() {
-			
+
 			// Act
 			that.oRouter.navTo("product");
 
@@ -1744,7 +1789,7 @@ sap.ui.require([
 					title: sProductDetailTitle
 				}, "history state is correctly updated");
 			});
-	
+
 		});
 	});
 

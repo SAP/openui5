@@ -191,13 +191,27 @@ sap.ui.define([
 			},
 
 			/**
-			 * Return the pattern of the route. If there are multiple patterns, the first pattern is returned
+			 * Returns the pattern of the route. If there are multiple patterns, the first pattern is returned
 			 *
 			 * @return {string} the routes pattern
 			 * @public
 			 */
 			getPattern : function() {
 				return this._aPattern[0];
+			},
+
+			/**
+			 * Returns whether the given hash can be matched by the Route
+			 *
+			 * @param {string} hash which will be tested by the Route
+			 * @return {boolean} whether the hash can be matched
+			 * @public
+			 * @since 1.58.0
+			 */
+			match : function(sHash) {
+				return this._aRoutes.some(function(oRoute) {
+					return oRoute.match(sHash);
+				});
 			},
 
 			/**
