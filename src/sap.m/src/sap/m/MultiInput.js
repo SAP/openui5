@@ -1642,6 +1642,7 @@ function(
 		});
 		oListItem.data("key", oToken.getKey());
 		oListItem.data("text", oToken.getText());
+		oListItem.data("tokenId", oToken.getId());
 		return oListItem;
 	};
 
@@ -1722,12 +1723,13 @@ function(
 				text: oItemData.data("text"),
 				key: oItemData.data("key")
 			});
+			oItemData.data("tokenId", oToken.getId());
 			this.addToken(oToken);
 		} else {
-			var aTokens = this.getTokens(),
-				sSelectedKey = oItemData.data("key");
-			aTokens.some(function(oToken){
-				if (oToken.getKey() === sSelectedKey) {
+			var sSelectedId = oItemData.data("tokenId");
+
+			this.getTokens().some(function(oToken){
+				if (oToken.getId() === sSelectedId) {
 					this._tokenizer.removeToken(oToken);
 					return true;
 				}

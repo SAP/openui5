@@ -1354,6 +1354,7 @@
 
 		oListItem.data("key", "key123");
 		oListItem.data("text", "text123");
+		oListItem.data("tokenId", "token");
 
 		// assert
 		aTokens = this.multiInput.getTokens();
@@ -1368,6 +1369,7 @@
 		assert.strictEqual(aTokens.length, 1, "One token was added");
 		assert.strictEqual(aTokens[0].getText(), "text123", "The token's text is correct.");
 		assert.strictEqual(aTokens[0].getKey(), "key123", "The token's key is correct.");
+		assert.strictEqual(oListItem.data("tokenId"), aTokens[0].getId(), "The new token id is correctly recorder in the item");
 
 		// clean up
 		oSpy.restore();
@@ -1375,12 +1377,13 @@
 
 	QUnit.test("_syncTokensWithSelection - deselection", function(assert) {
 		var oListItem = new sap.m.StandardListItem(), aTokens,
-			oToken = new sap.m.Token({text: "text123", key: "key123"}),
+			oToken = new sap.m.Token("token", {text: "text123", key: "key123"}),
 			oSpy = this.spy(this.multiInput._tokenizer, "removeToken");
 
 		this.multiInput.addToken(oToken);
 		oListItem.data("key", "key123");
 		oListItem.data("text", "text123");
+		oListItem.data("tokenId", "token");
 
 		// assert
 		aTokens = this.multiInput.getTokens();
