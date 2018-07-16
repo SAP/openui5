@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'./ComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/security/encodeXML"
 ],
 	function(
 		ComboBoxTextField,
@@ -24,7 +25,8 @@ sap.ui.define([
 		Item,
 		ComboBoxRenderer,
 		containsOrEquals,
-		KeyCodes
+		KeyCodes,
+		encodeXML
 	) {
 		"use strict";
 
@@ -356,7 +358,7 @@ sap.ui.define([
 		ComboBox.prototype._boldItemRef = function (sItemText, oRegex, iInitialValueLength) {
 			var sResult;
 
-			var sTextReplacement = "<b>" + jQuery.sap.encodeHTML(sItemText.slice(0, iInitialValueLength)) + "</b>";
+			var sTextReplacement = "<b>" + encodeXML(sItemText.slice(0, iInitialValueLength)) + "</b>";
 
 			// parts should always be max of two because regex is not defined as global
 			// see above method
@@ -364,10 +366,10 @@ sap.ui.define([
 
 			if (aParts.length === 1) {
 				// no match found, return value as it is
-				sResult = jQuery.sap.encodeHTML(sItemText);
+				sResult = encodeXML(sItemText);
 			} else {
 				sResult = aParts.map(function (sPart) {
-					return jQuery.sap.encodeHTML(sPart);
+					return encodeXML(sPart);
 				}).join(sTextReplacement);
 			}
 

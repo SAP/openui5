@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library"],
-	function(library) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
+	function(library, encodeCSS) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileScope
@@ -28,7 +28,7 @@ sap.ui.define(["sap/m/library"],
 		var sTooltipText = oControl._getTooltipText(),
 			bIsScreenLarge = oControl._isScreenLarge(),
 			sAriaText = oControl._getAriaText(),
-			sScopeClass = jQuery.sap.encodeCSS("sapMGTScope" + oControl.getScope()),
+			sScopeClass = encodeCSS("sapMGTScope" + oControl.getScope()),
 			bHasPress = oControl.hasListeners("press");
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 

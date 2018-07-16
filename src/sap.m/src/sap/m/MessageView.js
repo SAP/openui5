@@ -27,7 +27,8 @@ sap.ui.define([
 	"./MessageViewRenderer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/security/URLWhitelist"
 ], function(
 	jQuery,
 	Control,
@@ -53,7 +54,8 @@ sap.ui.define([
 	MessageViewRenderer,
 	jQueryDOM,
 	KeyCodes,
-	Log
+	Log,
+	URLWhitelist
 ) {
 	"use strict";
 
@@ -923,7 +925,7 @@ sap.ui.define([
 	MessageView.prototype._iNextValidationTaskId = 0;
 
 	MessageView.prototype._validateURL = function (sUrl) {
-		if (jQuery.sap.validateUrl(sUrl)) {
+		if (URLWhitelist.validate(sUrl)) {
 			return sUrl;
 		}
 

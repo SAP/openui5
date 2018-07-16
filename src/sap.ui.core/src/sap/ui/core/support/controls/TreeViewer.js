@@ -1,8 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/base/ManagedObject'],
-function(ManagedObject) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject',
+	"sap/base/security/encodeXML"
+],
+function(ManagedObject, encodeXML) {
 	'use strict';
 	var TreeViewer = ManagedObject.extend("sap.ui.core.support.controls.TreeViewer", {
 		constructor: function() {
@@ -94,18 +97,18 @@ function(ManagedObject) {
 				if (!oRenderContext.bIgnoreIds) {
 					oRenderContext.addWithParam(mRenderTemplates.idattribute, {
 						attributeName: oAttribute.name,
-						attributeValue1: jQuery.sap.encodeHTML(String(oAttribute.value || "")),
+						attributeValue1: encodeXML(String(oAttribute.value || "")),
 						attributeValue2: oNode.getAttribute("__id"),
 						modified: bModified,
-						oldValue: jQuery.sap.encodeHTML(sOldValue)
+						oldValue: encodeXML(sOldValue)
 					});
 				}
 			} else {
 				oRenderContext.addWithParam(mRenderTemplates.attribute, {
 					attributeName: oAttribute.name,
-					attributeValue: jQuery.sap.encodeHTML(String(oAttribute.value || "")),
+					attributeValue: encodeXML(String(oAttribute.value || "")),
 					modified: bModified,
-					oldValue: jQuery.sap.encodeHTML(sOldValue)
+					oldValue: encodeXML(sOldValue)
 				});
 			}
 		}
@@ -143,7 +146,7 @@ function(ManagedObject) {
 			pxlevel: (iLevel * 16) + "px",
 			collapsed: iLevel >= (oRenderContext.initialExpandedLevel - 1),
 			localName: oNode.localName,
-			namespaceURI:  oNode.namespaceURI ? jQuery.sap.encodeHTML(String(oNode.namespaceURI)) + ":" : ""
+			namespaceURI:  oNode.namespaceURI ? encodeXML(String(oNode.namespaceURI)) + ":" : ""
 		});
 
 		var aInfos = oRenderContext.fnNodeInfos(oNode);
@@ -154,8 +157,8 @@ function(ManagedObject) {
 					idx: iIdx + "",
 					infoidx: i + "",
 					selected: oInfo.selected || false,
-					color: jQuery.sap.encodeHTML(oInfo.color) || "orange",
-					tooltip: jQuery.sap.encodeHTML(oInfo.tooltip) || ""
+					color: encodeXML(oInfo.color) || "orange",
+					tooltip: encodeXML(oInfo.tooltip) || ""
 				});
 			}
 		}
@@ -172,7 +175,7 @@ function(ManagedObject) {
 				pxlevel: (iLevel * 16) + "px",
 				collapsed: iLevel >= (oRenderContext.initialExpandedLevel - 1),
 				localName: oNode.localName,
-				namespaceURI:  oNode.namespaceURI ? jQuery.sap.encodeHTML(String(oNode.namespaceURI)) + ":" : ""
+				namespaceURI:  oNode.namespaceURI ? encodeXML(String(oNode.namespaceURI)) + ":" : ""
 			});
 
 		} else {
@@ -184,7 +187,7 @@ function(ManagedObject) {
 				pxlevel: (iLevel * 16) + "px",
 				collapsed: iLevel >= (oRenderContext.initialExpandedLevel - 1),
 				localName: oNode.localName,
-				namespaceURI: oNode.namespaceURI ? jQuery.sap.encodeHTML(String(oNode.namespaceURI)) + ":" : ""
+				namespaceURI: oNode.namespaceURI ? encodeXML(String(oNode.namespaceURI)) + ":" : ""
 			});
 		}
 	}

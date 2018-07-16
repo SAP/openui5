@@ -36,7 +36,8 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/security/encodeURL"
 ], function(
 	URI,
 	BindingMode,
@@ -62,7 +63,8 @@ sap.ui.define([
 	uid,
 	UriParameters,
 	deepEqual,
-	merge
+	merge,
+	encodeURL
 ) {
 
 	"use strict";
@@ -2169,7 +2171,7 @@ sap.ui.define([
 		};
 		for (var sName in mParameters) {
 			if (sName in mSupportedParams) {
-				aCustomParams.push("$" + sName + "=" + jQuery.sap.encodeURL(mParameters[sName]));
+				aCustomParams.push("$" + sName + "=" + encodeURL(mParameters[sName]));
 			}
 			if (sName === "custom") {
 				mCustomQueryOptions = mParameters[sName];
@@ -2177,7 +2179,7 @@ sap.ui.define([
 					if (sName.indexOf("$") === 0) {
 						Log.warning(this + " - Trying to set OData parameter '" + sName + "' as custom query option!");
 					} else if (typeof mCustomQueryOptions[sName] === 'string') {
-						aCustomParams.push(sName + "=" + jQuery.sap.encodeURL(mCustomQueryOptions[sName]));
+						aCustomParams.push(sName + "=" + encodeURL(mCustomQueryOptions[sName]));
 					} else {
 						aCustomParams.push(sName);
 					}

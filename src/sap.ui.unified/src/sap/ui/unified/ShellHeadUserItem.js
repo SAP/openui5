@@ -7,9 +7,9 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/IconPool',
 	'./library',
-	'jquery.sap.encoder'
+	"sap/base/security/encodeXML"
 ],
-	function(Element, IconPool, library /*, jQueryEncoder*/) {
+	function(Element, IconPool, library, encodeXML) {
 	"use strict";
 
 
@@ -106,7 +106,7 @@ sap.ui.define([
 		} else {
 			var $Image = this.$("img-inner");
 			if ($Image.length == 0 || $Image.attr("src") != sImage) {
-				$Ico.css("style", "").attr("aria-label", null).html("<img role='presentation' id='" + this.getId() + "-img-inner' src='" + jQuery.sap.encodeHTML(sImage) + "'/>");
+				$Ico.css("style", "").attr("aria-label", null).html("<img role='presentation' id='" + this.getId() + "-img-inner' src='" + encodeXML(sImage) + "'/>");
 			}
 		}
 	};

@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/merge",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/base/security/encodeURL"
 ],
 	function(
 		BindingMode,
@@ -49,7 +50,8 @@ sap.ui.define([
 		uid,
 		merge,
 		Log,
-		assert
+		assert,
+		encodeURL
 	) {
 	"use strict";
 
@@ -1300,7 +1302,7 @@ sap.ui.define([
 			};
 		for (var sName in mParameters) {
 			if (sName in mSupportedParams) {
-				aCustomParams.push("$" + sName + "=" + jQuery.sap.encodeURL(mParameters[sName]));
+				aCustomParams.push("$" + sName + "=" + encodeURL(mParameters[sName]));
 			}
 			if (sName == "custom") {
 				mCustomQueryOptions = mParameters[sName];
@@ -1308,7 +1310,7 @@ sap.ui.define([
 					if (sName.indexOf("$") == 0) {
 						Log.warning("Trying to set OData parameter " + sName + " as custom query option!");
 					} else {
-						aCustomParams.push(sName + "=" + jQuery.sap.encodeURL(mCustomQueryOptions[sName]));
+						aCustomParams.push(sName + "=" + encodeURL(mCustomQueryOptions[sName]));
 					}
 				}
 			}

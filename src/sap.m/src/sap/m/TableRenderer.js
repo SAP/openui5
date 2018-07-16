@@ -6,9 +6,16 @@ sap.ui.define([
 	'sap/ui/core/Renderer',
 	'./ListBaseRenderer',
 	'./ColumnListItemRenderer',
-	'sap/m/library'
+	'sap/m/library',
+	"sap/base/security/encodeXML"
 ],
-	function(Renderer, ListBaseRenderer, ColumnListItemRenderer, library) {
+	function(
+		Renderer,
+		ListBaseRenderer,
+		ColumnListItemRenderer,
+		library,
+		encodeXML
+	) {
 	"use strict";
 
 
@@ -130,7 +137,7 @@ sap.ui.define([
 				align = oColumn.getCssAlign();
 
 			rm.write("<" + cellTag);
-			cls && rm.addClass(jQuery.sap.encodeHTML(cls));
+			cls && rm.addClass(encodeXML(cls));
 
 			if (type == "Head") {
 				rm.writeElementData(oColumn);

@@ -1,8 +1,8 @@
  /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/library'],
-	function(coreLibrary) {
+sap.ui.define(['sap/ui/core/library', "sap/base/security/encodeCSS"],
+	function(coreLibrary, encodeCSS) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
@@ -24,9 +24,9 @@ sap.ui.define(['sap/ui/core/library'],
 		var sTooltip = oControl.getTooltip_AsString();
 		var sOrientationClass = oControl.getOrientation();
 		if (sOrientationClass) {
-			sOrientationClass = jQuery.sap.encodeCSS(sOrientationClass);
+			sOrientationClass = encodeCSS(sOrientationClass);
 		}
-		var sBackgroundClass = jQuery.sap.encodeCSS("sapMHdrCntrBG" + oControl.getBackgroundDesign());
+		var sBackgroundClass = encodeCSS("sapMHdrCntrBG" + oControl.getBackgroundDesign());
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);

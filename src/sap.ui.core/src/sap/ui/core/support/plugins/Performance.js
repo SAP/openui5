@@ -3,8 +3,12 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Performance
-sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/performance/Measurement"],
-	function (Plugin, Measurement) {
+sap.ui.define([
+	'sap/ui/core/support/Plugin',
+	"sap/ui/performance/Measurement",
+	"sap/base/security/encodeXML"
+],
+	function(Plugin, Measurement, encodeXML) {
 		"use strict";
 
 		var _rawdata = [];
@@ -573,7 +577,7 @@ sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/performance/Measurement"],
 		}
 
 		function _getBarTitle(bar) {
-			return jQuery.sap.escapeHTML(bar.info + '\nduration: ' + bar.duration.toFixed(2) + ' ms. \ntime: ' + bar.time.toFixed(2) + ' ms. \nstart: ' + bar.start.toFixed(2) + ' ms.\nend: ' + bar.end.toFixed(2) + ' ms.');
+			return encodeXML(bar.info + '\nduration: ' + bar.duration.toFixed(2) + ' ms. \ntime: ' + bar.time.toFixed(2) + ' ms. \nstart: ' + bar.start.toFixed(2) + ' ms.\nend: ' + bar.end.toFixed(2) + ' ms.');
 		}
 
 		function _formatInfo(bar) {
@@ -583,7 +587,7 @@ sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/performance/Measurement"],
 			barInfo = barInfo.substring(barInfo.lastIndexOf('sap.m.'), barInfo.length);
 			barInfo = barInfo.replace('Rendering of ', '');
 
-			return jQuery.sap.escapeHTML(barInfo);
+			return encodeXML(barInfo);
 		}
 
 		function _getBarClassType(category) {
@@ -600,7 +604,7 @@ sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/performance/Measurement"],
 			}
 
 			//escaping is not needed
-			return jQuery.sap.escapeHTML(className);
+			return encodeXML(className);
 		}
 
 		function _getBarColor(time) {
@@ -807,7 +811,7 @@ sap.ui.define(['sap/ui/core/support/Plugin', "sap/ui/performance/Measurement"],
 			var allCategories = _getBarCategories(_rawdata);
 
 			allCategories.forEach(function (category) {
-				category = jQuery.sap.escapeHTML(category);
+				category = encodeXML(category);
 				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '" />' + category + '</label>';
 			});
 

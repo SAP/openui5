@@ -11,9 +11,10 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'./library',
 	'sap/ui/core/library',
-	'./TitleRenderer'
+	'./TitleRenderer',
+	"sap/base/security/encodeXML"
 ],
-	function(Control, library, coreLibrary, TitleRenderer) {
+	function(Control, library, coreLibrary, TitleRenderer, encodeXML) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -118,7 +119,7 @@ sap.ui.define([
 		var bPatchDom = oRef && !this._getTitle();
 		this.setProperty("text", sText, bPatchDom);
 		if (bPatchDom) {
-			oRef.innerHTML = jQuery.sap.encodeHTML(this.getText() || "");
+			oRef.innerHTML = encodeXML(this.getText() || "");
 		}
 		return this;
 	};

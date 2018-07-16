@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.InvisibleText.
-sap.ui.define(['./Control', './library', "sap/base/Log", 'jquery.sap.encoder'],
-	function(Control, library/*, jQuerySap1 */, Log) {
+sap.ui.define(['./Control', './library', "sap/base/Log", "sap/base/security/encodeXML"],
+	function(Control, library, Log, encodeXML) {
 	"use strict";
 
 
@@ -117,7 +117,7 @@ sap.ui.define(['./Control', './library', "sap/base/Log", 'jquery.sap.encoder'],
 
 	InvisibleText.prototype.setText = function(sText) {
 		this.setProperty("text", sText, true);
-		this.$().html(jQuery.sap.encodeHTML(this.getText() || ""));
+		this.$().html(encodeXML(this.getText() || ""));
 		return this;
 	};
 

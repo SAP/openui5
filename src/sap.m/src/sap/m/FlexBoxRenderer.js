@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['./FlexBoxStylingHelper', 'sap/m/library', "sap/base/Log"],
-	function(FlexBoxStylingHelper, library, Log) {
+sap.ui.define([
+	'./FlexBoxStylingHelper',
+	'sap/m/library',
+	"sap/base/security/encodeXML",
+	"sap/base/Log"
+],
+	function(FlexBoxStylingHelper, library, encodeXML, Log) {
 	"use strict";
 
 	// shortcut for sap.m.FlexDirection
@@ -159,7 +164,7 @@ sap.ui.define(['./FlexBoxStylingHelper', 'sap/m/library', "sap/base/Log"],
 
 			// Add style class set by app
 			if (oLayoutData.getStyleClass()) {
-				FlexBoxRenderer.addItemClass(jQuery.sap.encodeHTML(oLayoutData.getStyleClass()), oItem, sWrapperTag, oRm);
+				FlexBoxRenderer.addItemClass(encodeXML(oLayoutData.getStyleClass()), oItem, sWrapperTag, oRm);
 			}
 
 			// Add classes relevant for flex item

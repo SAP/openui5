@@ -3,7 +3,7 @@
  */
 
 // Provides the basic UI5 support functionality
-sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", "sap/base/Log", 'jquery.sap.encoder'],
+sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", "sap/base/Log", "sap/base/security/encodeURL"],
 	function(
 		EventProvider,
 		Plugin,
@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 		UriParameters,
 		jQueryDOM,
 		Log,
-		jQuery
+		encodeURL
 	) {
 	"use strict";
 
@@ -320,7 +320,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 */
 	Support.prototype.openSupportTool = function() {
 		var sToolUrl = sap.ui.require.toUrl("sap/ui/core/support/support.html");
-		var sParams = "?sap-ui-xx-noless=true&sap-ui-xx-support-origin=" + jQuery.sap.encodeURL(this._sLocalOrigin);
+		var sParams = "?sap-ui-xx-noless=true&sap-ui-xx-support-origin=" + encodeURL(this._sLocalOrigin);
 
 		var sBootstrapScript;
 		if (this._sType === mTypes.APPLICATION) {
@@ -341,7 +341,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 		// sap-ui-core.js is the default. no need for passing it to the support window
 		// also ensure that the bootstrap script is in the root module path
 		if (sBootstrapScript && sBootstrapScript !== 'sap-ui-core.js' && sBootstrapScript.indexOf('/') === -1) {
-			sParams += "&sap-ui-xx-support-bootstrap=" + jQuery.sap.encodeURL(sBootstrapScript);
+			sParams += "&sap-ui-xx-support-bootstrap=" + encodeURL(sBootstrapScript);
 		}
 
 		function checkLocalUrl(sUrl){

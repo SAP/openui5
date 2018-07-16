@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/base/ManagedObjectMetadata',
-	'sap/ui/core/HTML'
+	'sap/ui/core/HTML',
+	"sap/base/security/encodeXML"
 ],
 	function(
 		BaseObject,
@@ -17,7 +18,8 @@ sap.ui.define([
 		library,
 		ChangeReason,
 		ManagedObjectMetadata,
-		HTML
+		HTML,
+		encodeXML
 	) {
 	"use strict";
 
@@ -223,7 +225,7 @@ sap.ui.define([
 				content: new HTML({
 					content:	'<div class="sapMGrowingListTrigger">' +
 									'<div class="sapMSLITitleDiv sapMGrowingListTriggerText">' +
-										'<span class="sapMSLITitle" id="' + sTriggerID + 'Text">' + jQuery.sap.encodeHTML(sTriggerText) + '</span>' +
+										'<span class="sapMSLITitle" id="' + sTriggerID + 'Text">' + encodeXML(sTriggerText) + '</span>' +
 									'</div>' +
 									'<div class="sapMGrowingListDescription sapMSLIDescription" id="' + sTriggerID + 'Info"></div>' +
 								'</div>'

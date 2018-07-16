@@ -17,7 +17,8 @@ sap.ui.define([
 	'sap/ui/model/CompositeBinding',
 	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/security/encodeXML"
 ], function(
 	Plugin,
 	ViewSerializer,
@@ -32,7 +33,8 @@ sap.ui.define([
 	CompositeBinding,
 	ObjectPath,
 	jQueryDOM,
-	KeyCodes
+	KeyCodes,
+	encodeXML
 ) {
 	"use strict";
 
@@ -183,7 +185,7 @@ sap.ui.define([
 		}
 
 		function encode(s) {
-			return s == null ? "" : jQuery.sap.encodeHTML(String(s));
+			return s == null ? "" : encodeXML(String(s));
 		}
 
 		ControlTree.prototype.renderContentAreas = function() {
