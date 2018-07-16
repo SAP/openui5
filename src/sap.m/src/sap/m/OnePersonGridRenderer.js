@@ -100,7 +100,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 				oRm.writeClasses();
 				oRm.write(">");
 				this.renderRows(oRm, oControl);
-				this.renderAppointments(oRm, oControl, oAppointmentsToRender[sDate]);
+				this.renderAppointments(oRm, oControl, oAppointmentsToRender[sDate], oColumnDate);
 				oRm.write("</div>"); // END .sapMOnePersonColumn
 			}
 
@@ -126,7 +126,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			}
 		};
 
-		OnePersonGridRenderer.renderAppointments = function (oRm, oControl, oAppointmentsByDate) {
+		OnePersonGridRenderer.renderAppointments = function (oRm, oControl, oAppointmentsByDate, oColumnDate) {
 			var that = this;
 
 			if (oAppointmentsByDate) {
@@ -145,15 +145,17 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 						iWidth = oAppointmentNode.width,
 						oAppointment = oAppointmentNode.getData();
 
-					that.renderAppointment(oRm, oControl, iMaxLevel, iLevel, iWidth, oAppointment);
+					that.renderAppointment(oRm, oControl, iMaxLevel, iLevel, iWidth, oAppointment, oColumnDate);
 				});
 				oRm.write("</div>");
 			}
 		};
 
-		OnePersonGridRenderer.renderAppointment = function(oRm, oControl, iMaxLevel, iAppointmentLevel, iAppointmentWidth, oAppointment) {
+		OnePersonGridRenderer.renderAppointment = function(oRm, oControl, iMaxLevel, iAppointmentLevel, iAppointmentWidth, oAppointment, oColumnDate) {
 			var bFilled = oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled,
 				iRowHeight = oControl._getRowHeight(),
+				oColumnStartDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleStartHour()),
+				oColumnEndDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleEndHour()),
 				oAppStartDate = oAppointment.getStartDate(),
 				oAppEndDate = oAppointment.getEndDate(),
 				sTooltip = oAppointment.getTooltip_AsString(),
@@ -165,8 +167,10 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 				sId = oAppointment.getId(),
 				mAccProps = {labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true}},
 				aAriaLabels = oControl.getAriaLabelledBy(),
-				iAppTop = oControl._calculateTopPosition(oAppStartDate),
-				iAppBottom = oControl._calculateTopPosition(oAppEndDate),
+				bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime(),
+				bAppEndIsOutsideVisibleEndHour = oColumnEndDateAndHour.getTime() < oAppEndDate.getTime(),
+				iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : oControl._calculateTopPosition(oAppStartDate),
+				iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : oControl._calculateBottomPosition(oAppEndDate),
 				iAppChunkWidth = 100 / (iMaxLevel + 1);
 
 			if (aAriaLabels.length > 0) {
@@ -202,7 +206,8 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 				 oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 			}
 			oRm.addStyle("top", iAppTop + "px");
-			oRm.addStyle("height", Math.max(iRowHeight / 2, iAppBottom - iAppTop) + "px");
+			oRm.addStyle("bottom", iAppBottom + "px");
+			oRm.addStyle("min-height", iRowHeight / 2 + "px");
 			oRm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", iAppChunkWidth * iAppointmentLevel + "%");
 			oRm.addStyle("width", iAppChunkWidth * iAppointmentWidth + "%"); // TODO: take into account the levels
 			oRm.writeClasses();
