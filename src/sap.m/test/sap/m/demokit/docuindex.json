@@ -2354,7 +2354,7 @@
 		{
 		  "id": "sap.m.sample.TableDnD",
 		  "name": "Table - Drag and Drop",
-		  "description": "Shows the different kinds of drag-and-drop capabilities along with custom context menu alternatives to perform these action."
+		  "description": "Shows the different kinds of drag-and-drop capabilities across view boundaries along with custom context menu alternatives to perform these action."
 		},
 		{
 		  "id": "sap.m.sample.TablePerso",
