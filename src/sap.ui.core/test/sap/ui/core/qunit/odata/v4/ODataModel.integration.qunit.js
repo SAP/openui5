@@ -153,9 +153,6 @@ sap.ui.require([
 
 			// Counter for batch requests
 			this.iBatchNo = 0;
-			// {map<string, object[]>}
-			// this.mBatchQueue["sGroupId"] is a list of queued requests for the group "sGroupId"
-			this.mBatchQueue = {};
 			// {map<string, string[]>}
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
@@ -167,6 +164,8 @@ sap.ui.require([
 			// this.mListChanges["id"][i] is a list of expected changes for the property "text" of
 			// the control with ID "id" in row i
 			this.mListChanges = {};
+			// A list of expected messages
+			this.aMessages = [];
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
 		},
@@ -254,10 +253,12 @@ sap.ui.require([
 		},
 
 		/**
-		 * Finishes the test if no pending changes are left and all expected requests have been
-		 * received.
+		 * Checks the messages and finishes the test if no pending changes are left and all
+		 * expected requests have been received.
+		 *
+		 * @param {object} assert The QUnit assert object
 		 */
-		checkFinish : function () {
+		checkFinish : function (assert) {
 			var sControlId, aExpectedValuesPerRow, i;
 
 			if (this.aRequests.length) {
@@ -281,12 +282,44 @@ sap.ui.require([
 				delete this.mListChanges[sControlId];
 			}
 			if (sap.ui.getCore().getUIDirty()) {
-				setTimeout(this.checkFinish.bind(this), 1);
+				setTimeout(this.checkFinish.bind(this, assert), 1);
 				return;
 			}
+			this.checkAndRemoveMessages(assert);
 			if (this.resolve) {
 				this.resolve();
 			}
+		},
+
+		/**
+		 * Checks that exactly the expected messages have been reported and clears the message
+		 * manager.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 */
+		checkAndRemoveMessages : function (assert) {
+			var aMessages, oMessageManager;
+
+			function formatMessage(oMessage) {
+				return oMessage && {
+					code : oMessage.getCode(),
+					message : oMessage.getMessage(),
+					target : oMessage.getTarget(),
+					persistent : oMessage.getPersistent(),
+					type : oMessage.getType()
+				};
+			}
+
+			oMessageManager = sap.ui.getCore().getMessageManager();
+			aMessages = oMessageManager.getMessageModel().getObject("/");
+			oMessageManager.removeAllMessages();
+			while (this.aMessages.length) {
+				assert.deepEqual(formatMessage(aMessages.shift()), this.aMessages.shift(),
+					"expected message");
+			}
+			aMessages.forEach(function (oMessage) {
+				assert.deepEqual(formatMessage(oMessage), undefined, "unexpected message");
+			});
 		},
 
 		/**
@@ -362,7 +395,7 @@ sap.ui.require([
 						sVisibleId + ": " + JSON.stringify(sValue));
 				}
 			}
-			this.checkFinish();
+			this.checkFinish(assert);
 		},
 
 		/**
@@ -503,7 +536,7 @@ sap.ui.require([
 				}
 
 				if (!that.aRequests.length) { // waiting may be over after promise has been handled
-					setTimeout(that.checkFinish.bind(that), 0);
+					setTimeout(that.checkFinish.bind(that, assert), 0);
 				}
 
 				return oResponseBody instanceof Error
@@ -637,6 +670,19 @@ sap.ui.require([
 					aExpectations.push(vValue);
 				}
 			}
+			return this;
+		},
+
+		/**
+		 * The following code (either {@link #createView} or anything before
+		 * {@link #waitForChanges}) is expected to report the given message.
+		 *
+		 * @param {object} oMessage The expected message (with properties code, message, target,
+		 *   persistent and type corresponding to the getters of the Message class)
+		 * @returns {object} The test instance for chaining
+		 */
+		expectMessage : function (oMessage) {
+			this.aMessages.push(oMessage);
 			return this;
 		},
 
@@ -778,7 +824,7 @@ sap.ui.require([
 				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
 				window.setTimeout(resolve, 3000);
-				that.checkFinish();
+				that.checkFinish(assert);
 			}).then(function () {
 				var sControlId, aExpectedValuesPerRow, i, j;
 
@@ -2330,6 +2376,13 @@ sap.ui.require([
 						"TeamID" : ""
 					}
 				}, oError) // simulates failure
+				.expectMessage({
+					"code" : undefined,
+					"message" : "Missing team ID",
+					"persistent" : true,
+					"target" : undefined,
+					"type" : "Error"
+				})
 				.expectChange("teamId", null); // reset to initial state
 
 			return Promise.all([
@@ -6424,6 +6477,8 @@ sap.ui.require([
 		QUnit.test("bound operation: execute resolves with V4 context, " + i, function (assert) {
 			var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 				oOperation,
+				sRequestPath = "Artists(ArtistID='42',IsActiveEntity=true)/special.cases."
+					+ oFixture.operation + (oFixture.method === "GET" ? "()" : ""),
 				sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}" />\
@@ -6454,17 +6509,25 @@ sap.ui.require([
 				return that.waitForChanges(assert);
 			}).then(function () {
 				oOperation = that.oModel.bindContext("special.cases." + oFixture.operation
-					+ "(...)", that.oView.getBindingContext());
+					+ "(...)", that.oView.getBindingContext(), {
+						$select : "ArtistID,IsActiveEntity,Name,Messages"
+					});
 
 				that.expectRequest({
 					method : oFixture.method,
-					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases."
-						+ oFixture.operation + (oFixture.method === "GET" ? "()" : ""),
+					url : sRequestPath + "?$select=ArtistID,IsActiveEntity,Messages,Name",
 					payload : oFixture.method === "GET" ? undefined : {}
 				}, {
 					"ArtistID" : "42",
 					"IsActiveEntity" : false,
-					"Name" : "Hour Frustrated"
+					"Name" : "Hour Frustrated",
+					"Messages" : [{
+						"code" : "23",
+						"message" : "Just A Message",
+						"target" : "Name",
+						"transient" : true,
+						"numericSeverity" : 1
+					}]
 				});
 
 				// code under test
@@ -6475,7 +6538,14 @@ sap.ui.require([
 			}).then(function (aPromiseResults) {
 				var oInactiveArtistContext = aPromiseResults[0];
 
-				that.expectChange("isActive", "No");
+				that.expectMessage({
+						code : "23",
+						message : "Just A Message",
+						target : "/" + sRequestPath + "/Name",
+						persistent : true,
+						type : "Success"
+					})
+					.expectChange("isActive", "No");
 
 				that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
 
@@ -6532,7 +6602,7 @@ sap.ui.require([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?custom=foo"
-				+ "&$select=ArtistID,IsActiveEntity,Name"
+				+ "&$select=ArtistID,IsActiveEntity,Messages,Name"
 				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 					"ArtistID" : "42",
 					"IsActiveEntity" : true,
@@ -6545,7 +6615,7 @@ sap.ui.require([
 
 			that.oView.setBindingContext(
 				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)", null,
-						{"custom" : "foo"})
+						{"custom" : "foo", "$select" : "Messages"})
 					.getBoundContext());
 
 			return that.waitForChanges(assert);
@@ -6556,13 +6626,20 @@ sap.ui.require([
 			that.expectRequest({
 				method : "POST",
 				url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction"
-					+ "?$select=ArtistID,IsActiveEntity,Name"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
 				payload : {}
 			}, {
 				"ArtistID" : "42",
 				"IsActiveEntity" : false,
 				"Name" : "Hour Frustrated",
+				"Messages" : [{
+					"code" : "23",
+					"message" : "Just A Message",
+					"target" : "Name",
+					"transient" : true,
+					"numericSeverity" : 1
+				}],
 				"DraftAdministrativeData" : {
 					"DraftID" : "1",
 					"InProcessByUser" : "JOHNDOE"
@@ -6578,7 +6655,14 @@ sap.ui.require([
 			var oInactiveArtistContext = aPromiseResults[0];
 
 			that.expectChange("isActive", "No")
-				.expectChange("inProcessByUser", "JOHNDOE");
+				.expectChange("inProcessByUser", "JOHNDOE")
+				.expectMessage({
+					code : "23",
+					message : "Just A Message",
+					target : "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
+					persistent : true,
+					type : "Success"
+				});
 
 			that.oView.setBindingContext(oInactiveArtistContext);
 
@@ -6590,7 +6674,7 @@ sap.ui.require([
 			that.expectRequest({
 				method : "POST",
 				url : "Artists(ArtistID='42',IsActiveEntity=false)/special.cases.ActivationAction"
-				+ "?$select=ArtistID,IsActiveEntity,Name"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
 				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
 				payload : {}
 			}, {
@@ -6965,29 +7049,23 @@ sap.ui.require([
 						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}
 					])
 				})
+				.expectMessage({
+					"code": "foo-42",
+					"message": "text0",
+					"persistent": true,
+					"target": undefined,
+					"type": "Warning"
+				})
+				.expectMessage({
+					"code": "foo-77",
+					"message": "text1",
+					"persistent": true,
+					"target": undefined,
+					"type": "Information"
+				})
 				.expectChange("id", "23");
 
-			return this.createView(assert, sView, oModel).then(function () {
-				var aMessages = sap.ui.getCore().getMessageManager().getMessageModel()
-						.getObject("/");
-
-				assert.strictEqual(aMessages.length, 2, "two messages in message model");
-				assert.strictEqual(aMessages[0].getCode(), "foo-42");
-				assert.strictEqual(aMessages[0].getMessage(), "text0");
-				assert.strictEqual(aMessages[0].getMessageProcessor(), oModel);
-				assert.strictEqual(aMessages[0].getPersistent(), true);
-				assert.strictEqual(aMessages[0].getTechnical(), false);
-				assert.strictEqual(aMessages[0].getType(), "Warning");
-				assert.strictEqual(aMessages[0].getDescriptionUrl(), oModel.sServiceUrl
-					+ "TEAMS('42')/Messages(1)/LongText/$value");
-				assert.strictEqual(aMessages[1].getCode(), "foo-77");
-				assert.strictEqual(aMessages[1].getMessage(), "text1");
-				assert.strictEqual(aMessages[1].getMessageProcessor(), oModel);
-				assert.strictEqual(aMessages[1].getPersistent(), true);
-				assert.strictEqual(aMessages[1].getTechnical(), false);
-				assert.strictEqual(aMessages[1].getType(), "Information");
-
-			});
+			return this.createView(assert, sView, oModel);
 		});
 	});
 });
