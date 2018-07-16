@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
-	function(Controller, DateRange) {
+sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange', 'sap/m/MessageToast'],
+	function(Controller, DateRange, MessageToast) {
 	"use strict";
 
 	var CalendarSingleIntervalSelectionController = Controller.extend("sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection", {
@@ -11,22 +11,22 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 
 		handleCalendarSelect: function(oEvent) {
 			var oCalendar = oEvent.oSource;
-			this._updateText(oCalendar);
+
+			this._updateText(oCalendar.getSelectedDates()[0]);
 		},
 
-		_updateText: function(oCalendar) {
+		_updateText: function(oSelectedDates) {
 			var oSelectedDateFrom = this.byId("selectedDateFrom");
 			var oSelectedDateTo = this.byId("selectedDateTo");
-			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
-			if (aSelectedDates.length > 0 ) {
-				oDate = aSelectedDates[0].getStartDate();
+			if (oSelectedDates) {
+				oDate = oSelectedDates.getStartDate();
 				if (oDate) {
 					oSelectedDateFrom.setText(this.oFormatYyyymmdd.format(oDate));
 				} else {
 					oSelectedDateTo.setText("No Date Selected");
 				}
-				oDate = aSelectedDates[0].getEndDate();
+				oDate = oSelectedDates.getEndDate();
 				if (oDate) {
 					oSelectedDateTo.setText(this.oFormatYyyymmdd.format(oDate));
 				} else {
@@ -47,29 +47,15 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 		},
 
 		handleWeekNumberSelect: function(oEvent) {
-			var oDateRange = oEvent.getParameter("weekDays"),
-				oCalendar = oEvent.oSource,
-				aSelectedDates = oCalendar.getSelectedDates(),
-				oSelectedDates,
-				bStartAndEndDateAvailable;
+			var oDateRange = oEvent.getParameter("weekDays");
+			var iWeekNumber = oEvent.getParameter("weekNumber");
 
-			if (aSelectedDates.length) {
-				oSelectedDates = aSelectedDates[0];
-				bStartAndEndDateAvailable = !!oSelectedDates.getStartDate() && !!oSelectedDates.getEndDate();
-
-				//when intervalSelection: true, only one range can be selected at a time, so
-				//destroy the old selected dates and select the new ones except one case -
-				//when again clicked on a same week number - then remove the selections
-				oCalendar.removeAllSelectedDates();
+			if (iWeekNumber % 5 === 0) {
+				oEvent.preventDefault();
+				MessageToast.show("You are not allowed to select this calendar week!");
+			} else {
+				this._updateText(oDateRange);
 			}
-
-			if (!(bStartAndEndDateAvailable &&
-					oSelectedDates.getStartDate().getTime() === oDateRange.getStartDate().getTime() &&
-					oSelectedDates.getEndDate().getTime() === oDateRange.getEndDate().getTime())) {
-				oCalendar.addSelectedDate(oDateRange);
-			}
-
-			this._updateText(oCalendar);
 		},
 
 		_selectWeekInterval: function(iDays) {
@@ -84,7 +70,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 			oCalendar.removeAllSelectedDates();
 			oCalendar.addSelectedDate(new DateRange({startDate: oMonday, endDate: oSunday}));
 
-			this._updateText(oCalendar);
+			this._updateText(oCalendar.getSelectedDates()[0]);
 		}
 	});
 

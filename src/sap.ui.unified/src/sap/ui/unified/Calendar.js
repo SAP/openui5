@@ -250,17 +250,23 @@ sap.ui.define([
 			startDateChange : {},
 
 			/**
-			 * Week selection. Works for Gregorian calendars only and when <code>intervalSelection</code> is set to 'true'.
+			 * Week number selection changed. By default, clicking on the week number will select the corresponding week.
+			 * If the week has already been selected, clicking the week number will deselect it.
+			 *
+			 * The default behavior can be prevented using the <code>preventDefault</code> method.
+			 *
+			 * <b>Note</b> Works for Gregorian calendars only and when <code>intervalSelection</code> is set to 'true'.
 			 * @since 1.56
 			 */
 			weekNumberSelect : {
+				allowPreventDefault: true,
 				parameters : {
 					/**
 					 * The selected week number.
 					 */
 					weekNumber : {type: "int"},
 					/**
-					 * The days of the corresponding week.
+					 * The days of the corresponding week that are selected or deselected.
 					 */
 					weekDays: {type: "sap.ui.unified.DateRange"}
 				}
@@ -2300,10 +2306,28 @@ sap.ui.define([
 			oFormatter = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"}),
 			oStartDate = oFormatter.parse(sStartDate),
 			oEndDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + 6),
-			oDateRange = new DateRange({startDate: oStartDate, endDate: oEndDate});
+			oDateRange = new DateRange({startDate: oStartDate, endDate: oEndDate}),
+			aSelectedDates = this.getSelectedDates();
 
-		this.fireEvent("weekNumberSelect", {weekNumber: oSelectedWeekNumber, weekDays: oDateRange});
-		this.focusDate(oStartDate);
+		if (
+			aSelectedDates.length &&
+			aSelectedDates[0].getStartDate().getTime() === oDateRange.getStartDate().getTime() &&
+			aSelectedDates[0].getEndDate() &&
+			aSelectedDates[0].getEndDate().getTime() === oDateRange.getEndDate().getTime()
+		) {
+			oDateRange = null;
+		}
+
+		if (this.fireWeekNumberSelect({weekNumber: oSelectedWeekNumber, weekDays: oDateRange})) {
+			//when intervalSelection: true, only one range can be selected at a time, so
+			//destroy the old selected dates and select the new ones except one case -
+			//when again clicked on a same week number - then remove the selections
+			this.removeAllSelectedDates();
+
+			this.addSelectedDate(oDateRange);
+
+			this.focusDate(oStartDate);
+		}
 	};
 
 	function _handleResize(oEvent){
