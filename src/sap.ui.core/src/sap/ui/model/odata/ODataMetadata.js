@@ -1009,19 +1009,23 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetadata.prototype._createRequest = function(sUrl) {
+		// The 'sap-cancel-on-close' header marks the OData metadata request as cancelable. This helps to save resources at the back-end.
+		var oDefaultHeaders = {
+				"sap-cancel-on-close": true
+			},
+			oLangHeader = {
+				"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag()
+			};
 
-		var oHeaders = {}, oLangHeader = {"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()};
-
-		jQuery.extend(oHeaders, this.mHeaders, oLangHeader);
-
+		jQuery.extend(oDefaultHeaders, this.mHeaders, oLangHeader);
 
 		var oRequest = {
-				headers : oHeaders,
-				requestUri : sUrl,
-				method : 'GET',
-				user: this.sUser,
-				password: this.sPassword,
-				async: this.bAsync
+			headers: oDefaultHeaders,
+			requestUri: sUrl,
+			method: 'GET',
+			user: this.sUser,
+			password: this.sPassword,
+			async: this.bAsync
 		};
 
 		if (this.bAsync) {

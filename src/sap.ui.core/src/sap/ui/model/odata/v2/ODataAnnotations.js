@@ -144,14 +144,12 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 	};
 
 	/**
-	 * Returns a map of the headers that are sent with every request to an annotation URL
-	 *
-	 * @returns {map} A map of all headers that are sent with requests to annotation source URLs
+	 * Returns a map of custom headers that are sent with every request to an annotation URL.
+	 * @public
+	 * @returns {map} A map of all custom headers.
 	 */
 	ODataAnnotations.prototype.getHeaders = function() {
-		return jQuery.extend({}, this._mCustomHeaders, {
-			"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag() // Always overwrite
-		});
+		return jQuery.extend({}, this._mCustomHeaders);
 	};
 
 	/**
@@ -627,7 +625,7 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 			var mAjaxOptions = {
 				url: mSource.data,
 				async: true,
-				headers: this.getHeaders(),
+				headers: this._getHeaders(),
 				beforeSend: function(oXHR) {
 					// Force text/plain so the XML parser does not run twice
 					oXHR.overrideMimeType("text/plain");
@@ -755,6 +753,18 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 		AnnotationParser.merge(this._mAnnotations, mSource.annotations);
 
 		return mSource;
+	};
+
+	/**
+	 * Returns a map of the public and private headers headers that are sent with every request to an annotation URL.
+	 * @private
+	 * @returns {map} A map of all public and private headers.
+	 */
+	ODataAnnotations.prototype._getHeaders = function() {
+		//The 'sap-cancel-on-close' header marks the OData annotation request as cancelable. This helps to save resources at the back-end.
+		return jQuery.extend({"sap-cancel-on-close": true}, this.getHeaders(), {
+			"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag() // Always overwrite
+		});
 	};
 
 	///////////////////////////////////////////////////// End Class ////////////////////////////////////////////////////

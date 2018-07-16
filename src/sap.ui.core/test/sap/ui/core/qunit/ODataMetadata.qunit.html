@@ -428,6 +428,21 @@
 	QUnit.test("V1: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
 	QUnit.test("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
 
+
+	QUnit.module("sap-cancel-on-close header handling");
+
+	var fnTestHeaderRequest = function(bCancelOnClose, bExpectedValue) {
+		return function(assert){
+			var oMetaData = new sap.ui.model.odata.ODataMetadata("testUri",{"async": true, headers: {"sap-cancel-on-close": bCancelOnClose}});
+			var oRequest = oMetaData._createRequest("testUrl");
+			assert.strictEqual(oRequest.headers["sap-cancel-on-close"], bExpectedValue, "sap-cancel-on-close header was set correctly.");
+		}
+	}
+
+	QUnit.test("Default value", fnTestHeaderRequest(undefined, true));
+	QUnit.test("Set to true via parameter", fnTestHeaderRequest(true, true));
+	QUnit.test("Set to false via parameter", fnTestHeaderRequest(false, false));
+
 	</script>
 
 </head>
