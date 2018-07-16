@@ -896,10 +896,11 @@ sap.ui.define([
 		mPropertyBag = mPropertyBag || {};
 		//Always include smart variants when checking personalization
 		mPropertyBag.includeVariants = true;
-		return this.getComponentChanges(mPropertyBag).then(function (aChanges) {
-			var bIsPersonalized = aChanges.some(function (oChange) {
-				return oChange.isUserDependent();
-			});
+		return this.getComponentChanges(mPropertyBag).then(function (vChanges) {
+			var bIsPersonalized = vChanges === "userLevelVariantChangesExist"
+				|| vChanges.some(function (oChange) {
+					return oChange.isUserDependent();
+				});
 
 			return !!bIsPersonalized;
 		});

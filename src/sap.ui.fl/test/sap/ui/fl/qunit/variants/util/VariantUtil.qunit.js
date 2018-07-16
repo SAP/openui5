@@ -92,7 +92,7 @@ function(
 		});
 
 		QUnit.test("when Component is destroyed after 'attachHashHandlers' was already called", function (assert) {
-			assert.expect(7);
+			assert.expect(8);
 			var iIndex = 0;
 			this._oHashRegister.currentIndex = null;
 			var aHashEvents = [{
@@ -121,6 +121,11 @@ function(
 			};
 			this.oComponent.destroy = function() {
 				assert.ok(true, "then the original Component.destroy() is also called");
+			};
+			this.oVariantController = {
+				resetMap: function() {
+					assert.ok(true, "then resetMap() of the variant controller was called");
+				}
 			};
 			VariantUtil.attachHashHandlers.call(this);
 
