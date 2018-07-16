@@ -392,22 +392,18 @@ sap.ui.require([
 			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
 		});
 
-		// during processing of multiple root elements fragments in XML, in phantomJS the nodes don't get the correct ID
-		// specified in the XML. Therefore we skip this test in phantomJS.
-		if (!sap.ui.Device.browser.phantomJS) {
-			QUnit.test("When applying the change on a xml control tree with multiple root elements", function(assert) {
-				var oHBoxItems = this.oHBox.childNodes[1];
-				assert.equal(oHBoxItems.childNodes.length, 1, "initially there is only one child of the HBox");
+		QUnit.test("When applying the change on a xml control tree with multiple root elements", function(assert) {
+			var oHBoxItems = this.oHBox.childNodes[1];
+			assert.equal(oHBoxItems.childNodes.length, 1, "initially there is only one child of the HBox");
 
-				this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-				addFragmentContentLikeBackend(this.oChange, oFragmentMultiple);
-				this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-				assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
-				assert.equal(oHBoxItems.childNodes[1].getAttribute("id"), "projectId.button1", "then the first button in the fragment has the correct index and ID");
-				assert.equal(oHBoxItems.childNodes[2].getAttribute("id"), "projectId.button2", "then the second button in the fragment has the correct index and ID");
-				assert.equal(oHBoxItems.childNodes[3].getAttribute("id"), "projectId.button3", "then the third button in the fragment has the correct index and ID");
-			});
-		}
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
+			addFragmentContentLikeBackend(this.oChange, oFragmentMultiple);
+			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
+			assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
+			assert.equal(oHBoxItems.childNodes[1].getAttribute("id"), "projectId.button1", "then the first button in the fragment has the correct index and ID");
+			assert.equal(oHBoxItems.childNodes[2].getAttribute("id"), "projectId.button2", "then the second button in the fragment has the correct index and ID");
+			assert.equal(oHBoxItems.childNodes[3].getAttribute("id"), "projectId.button3", "then the third button in the fragment has the correct index and ID");
+		});
 
 		QUnit.test("When applying the change on a xml control tree with multiple root elements and one invalid type inside", function(assert) {
 			var oHBoxItems = this.oHBox.childNodes[1];

@@ -837,14 +837,9 @@ function(
 		QUnit.test("When executing a composite Command with the second command (of four) inside failing", function(assert) {
 			var oStackCommandExecutedSpy = sinon.spy(this.stack, "fireCommandExecuted");
 			var oCommand1ExecuteSpy = sinon.spy(this.command, "execute");
+			var oCommand1UndoSpy = sinon.spy(this.command, "undo");
 			var oCommand3ExecuteSpy = sinon.spy(this.command3, "execute");
 			var oCommand4ExecuteSpy = sinon.spy(this.command4, "execute");
-			// workaround for phantomJS, as the normal spy like for command3 doesn't work..
-			var iCommand1UndoSpyCallCount = 0;
-			sinon.stub(this.command, "undo").returns(new Promise(function(fnResolve) {
-				iCommand1UndoSpyCallCount++;
-				fnResolve();
-			}));
 			var oCommand3UndoSpy = sinon.spy(this.command3, "undo");
 			var oCommand4UndoSpy = sinon.spy(this.command4, "undo");
 			this.compositeCommand.addCommand(this.command);
@@ -858,19 +853,19 @@ function(
 
 			.catch(function() {
 				assert.ok(true, "then the command returns a failing promise");
-				assert.equal(oStackCommandExecutedSpy.callCount, 0, "and the commandExecuted event didn't get thrown");
-				assert.equal(oCommand1ExecuteSpy.callCount, 1, "and the first command got executed");
-				assert.equal(iCommand1UndoSpyCallCount, 1, "and undone");
-				assert.equal(oCommand3ExecuteSpy.callCount, 0, "and the third command didn't get executed");
-				assert.equal(oCommand3UndoSpy.callCount, 1, "but undone");
-				assert.equal(oCommand4ExecuteSpy.callCount, 0, "and the forth command didn't get executed");
-				assert.equal(oCommand4UndoSpy.callCount, 0, "and not undone");
+				assert.ok(oStackCommandExecutedSpy.notCalled, "and the commandExecuted event didn't get thrown");
+				assert.ok(oCommand1ExecuteSpy.calledOnce, "and the first command got executed");
+				assert.ok(oCommand1UndoSpy.calledOnce, "and undone");
+				assert.ok(oCommand3ExecuteSpy.notCalled, "and the third command didn't get executed");
+				assert.ok(oCommand3UndoSpy.calledOnce, "but undone");
+				assert.ok(oCommand4ExecuteSpy.notCalled, "and the forth command didn't get executed");
+				assert.ok(oCommand4UndoSpy.notCalled, "and not undone");
 			});
 		});
 	});
 
 	QUnit.module("Given controls and designTimeMetadata", {
-		beforeEach : function(assert){
+		beforeEach : function () {
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			ChangeRegistry.getInstance().registerControlsForChanges({
 				"sap.m.ObjectHeader": [SimpleChanges.moveControls]

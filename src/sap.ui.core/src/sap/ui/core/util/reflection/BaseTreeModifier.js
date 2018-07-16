@@ -10,12 +10,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"jquery.sap.global"
 ], function(
-    ManagedObject,
+	ManagedObject,
 	ManagedObjectMetadata,
 	ObjectPath,
 	XMLHelper,
-    Log,
-    jQuery
+	Log,
+	jQuery
 ) {
 
 	"use strict";
