@@ -1238,13 +1238,13 @@
 			oAnchorBar =  oObjectPage.getAggregation("_anchorBar"),
 			oSectionButton = oAnchorBar.getContent()[0];
 
-		assert.equal(oSectionButton.getIcon(), "sap-icon://slim-arrow-down", "Drop-down icon in AnchorBar button is shown initially");
+		assert.ok(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is shown initially");
 
 		oObjectPage.setShowAnchorBarPopover(false);
 		sap.ui.getCore().applyChanges();
 		oSectionButton = oAnchorBar.getContent()[0];
 
-		assert.equal(oSectionButton.getIcon(), "", "Drop-down icon in AnchorBar button is not shown");
+		assert.notOk(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is not shown");
 	});
 
 	QUnit.module("ObjectPage API: ObjectPageHeader", {

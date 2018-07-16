@@ -4,8 +4,7 @@
 	"use strict";
 
 	var core = sap.ui.getCore(),
-		sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton",
-		sPopOverAnchorSelector = ".sapMPopoverScroll > .sapUxAPAnchorBarButton";
+		sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
 
 	jQuery.sap.registerModulePath("view", "view");
 
@@ -18,21 +17,8 @@
 		controller: viewController
 	});
 
-	function openAnchorSubMenu(test) {
-		applyKeyOnAnchorSubMenu(test, jQuery.sap.KeyCodes.SPACE);
-	}
-
 	function getAnchorBar() {
 		return sap.ui.getCore().byId("UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar");
-	}
-
-	function applyKeyOnAnchorSubMenu(test, sKeyCode) {
-		var iFirstAnchorThatHasSubItems = $(sAnchorSelector)[8].id;
-		jQuery.sap.byId(iFirstAnchorThatHasSubItems).focus();
-		test.clock.tick(500);
-		sap.ui.test.qunit.triggerKeydown(iFirstAnchorThatHasSubItems, sKeyCode);
-		sap.ui.test.qunit.triggerKeyup(iFirstAnchorThatHasSubItems, sKeyCode);
-		test.clock.tick(500);
 	}
 
 	anchorBarView.placeAt("content");
@@ -80,80 +66,35 @@
 	});
 
 
-	QUnit.test("RIGHT/DOWN", function (assert) {
+	QUnit.test("RIGHT", function (assert) {
 		var aAnchors = $(sAnchorSelector),
 			iFirstAnchorId = aAnchors[0].id,
-			iSecondAnchorId = aAnchors[1].id,
-			iThirdAnchorId = aAnchors[2].id,
-			aPopoverAnchors, iSecondSubAnchor, iThirdSubAnchor, iFourthSubAnchor;
+			iSecondAnchorId = aAnchors[1].id;
 
-		// Main anchors
 		jQuery.sap.byId(iFirstAnchorId).focus();
 		this.clock.tick(500);
 		sap.ui.test.qunit.triggerKeydown(iFirstAnchorId, jQuery.sap.KeyCodes.ARROW_RIGHT);
 		sap.ui.test.qunit.triggerKeyup(iFirstAnchorId, jQuery.sap.KeyCodes.ARROW_RIGHT);
 		assert.ok(jQuery.sap.byId(iSecondAnchorId).is(":focus"), "Next button should be focused after arrow right");
-		sap.ui.test.qunit.triggerKeydown(iSecondAnchorId, jQuery.sap.KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeyup(iSecondAnchorId, jQuery.sap.KeyCodes.ARROW_DOWN);
-		assert.ok(jQuery.sap.byId(iThirdAnchorId).is(":focus"), "Next button should be focused after arrow down");
-
-		// Anchors in popover
-		openAnchorSubMenu(this);
-		aPopoverAnchors = $(sPopOverAnchorSelector);
-		iSecondSubAnchor = aPopoverAnchors[0].id;
-		iThirdSubAnchor = aPopoverAnchors[1].id;
-		iFourthSubAnchor = aPopoverAnchors[2].id;
-
-		sap.ui.test.qunit.triggerKeydown(iSecondSubAnchor, jQuery.sap.KeyCodes.ARROW_RIGHT);
-		sap.ui.test.qunit.triggerKeyup(iSecondSubAnchor, jQuery.sap.KeyCodes.ARROW_RIGHT);
-
-		assert.ok(jQuery.sap.byId(iThirdSubAnchor).is(":focus"), "Next button should be focused after arrow right");
-		sap.ui.test.qunit.triggerKeydown(iThirdSubAnchor, jQuery.sap.KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeyup(iThirdSubAnchor, jQuery.sap.KeyCodes.ARROW_DOWN);
-		assert.ok(jQuery.sap.byId(iFourthSubAnchor).is(":focus"), "Next button should be focused after arrow down");
 	});
 
-	QUnit.test("LEFT/UP", function (assert) {
+	QUnit.test("LEFT", function (assert) {
 		var aAnchors = $(sAnchorSelector),
-			iFirstAnchorId = aAnchors[0].id,
 			iSecondAnchorId = aAnchors[1].id,
-			iThirdAnchorId = aAnchors[2].id,
-			aPopoverAnchors, iFirstSubAnchor, iSecondSubAnchor, iThirdSubAnchor;
+			iThirdAnchorId = aAnchors[2].id;
 
-		// Main anchors
 		jQuery.sap.byId(iThirdAnchorId).focus();
 		this.clock.tick(500);
 		sap.ui.test.qunit.triggerKeydown(iThirdAnchorId, jQuery.sap.KeyCodes.ARROW_LEFT);
 		sap.ui.test.qunit.triggerKeyup(iThirdAnchorId, jQuery.sap.KeyCodes.ARROW_LEFT);
 		assert.ok(jQuery.sap.byId(iSecondAnchorId).is(":focus"), "Previous button should be focused after arrow left");
-		sap.ui.test.qunit.triggerKeydown(iSecondAnchorId, jQuery.sap.KeyCodes.ARROW_UP);
-		sap.ui.test.qunit.triggerKeyup(iSecondAnchorId, jQuery.sap.KeyCodes.ARROW_UP);
-		assert.ok(jQuery.sap.byId(iFirstAnchorId).is(":focus"), "Previous button should be focused after arrow up");
-
-		openAnchorSubMenu(this);
-
-		aPopoverAnchors = $(sPopOverAnchorSelector);
-		iFirstSubAnchor = aPopoverAnchors[0].id;
-		iSecondSubAnchor = aPopoverAnchors[1].id;
-		iThirdSubAnchor = aPopoverAnchors[2].id;
-
-		jQuery.sap.byId(iThirdSubAnchor).focus();
-		this.clock.tick(500);
-		sap.ui.test.qunit.triggerKeydown(iThirdSubAnchor, jQuery.sap.KeyCodes.ARROW_LEFT);
-		sap.ui.test.qunit.triggerKeyup(iThirdSubAnchor, jQuery.sap.KeyCodes.ARROW_LEFT);
-		assert.ok(jQuery.sap.byId(iSecondSubAnchor).is(":focus"), "Previous button should be focused after arrow left");
-		sap.ui.test.qunit.triggerKeydown(iSecondSubAnchor, jQuery.sap.KeyCodes.ARROW_UP);
-		sap.ui.test.qunit.triggerKeyup(iSecondSubAnchor, jQuery.sap.KeyCodes.ARROW_UP);
-		assert.ok(jQuery.sap.byId(iFirstSubAnchor).is(":focus"), "Previous button should be focused after arrow up");
 	});
 
 	QUnit.test("HOME/END", function (assert) {
 		var aAnchors = $(sAnchorSelector),
 			iFirstAnchorId = aAnchors[0].id,
-			iLastAnchorId = aAnchors[aAnchors.length - 1].id,
-			aPopoverAnchors, iFirstSubAnchor, iLastSubAnchor;
+			iLastAnchorId = aAnchors[aAnchors.length - 1].id + "-internalSplitBtn";
 
-		// Main anchors
 		jQuery.sap.byId(iFirstAnchorId).focus();
 		this.clock.tick(500);
 		sap.ui.test.qunit.triggerKeydown(iFirstAnchorId, jQuery.sap.KeyCodes.END);
@@ -162,32 +103,6 @@
 		sap.ui.test.qunit.triggerKeydown(iLastAnchorId, jQuery.sap.KeyCodes.HOME);
 		sap.ui.test.qunit.triggerKeyup(iLastAnchorId, jQuery.sap.KeyCodes.HOME);
 		assert.ok(jQuery.sap.byId(iFirstAnchorId).is(":focus"), "First button should be focused after home key");
-
-		// Anchors in popover
-		openAnchorSubMenu(this);
-		aPopoverAnchors = $(sPopOverAnchorSelector);
-		iFirstSubAnchor = aPopoverAnchors[0].id;
-		iLastSubAnchor = aPopoverAnchors[aPopoverAnchors.length - 1].id;
-
-		sap.ui.test.qunit.triggerKeydown(iFirstSubAnchor, jQuery.sap.KeyCodes.END);
-		sap.ui.test.qunit.triggerKeyup(iFirstSubAnchor, jQuery.sap.KeyCodes.END);
-		assert.ok(jQuery.sap.byId(iLastSubAnchor).is(":focus"), "Last button should be focused after end key");
-		sap.ui.test.qunit.triggerKeydown(iLastSubAnchor, jQuery.sap.KeyCodes.HOME);
-		sap.ui.test.qunit.triggerKeyup(iLastSubAnchor, jQuery.sap.KeyCodes.HOME);
-		assert.ok(jQuery.sap.byId(iFirstSubAnchor).is(":focus"), "First button should be focused after home key");
-	});
-
-	QUnit.test("SPACE", function (assert) {
-		openAnchorSubMenu(this);
-		assert.ok(jQuery.sap.byId($(sPopOverAnchorSelector)[0].id).is(":focus"), "Menu should be opened and first anchor focused");
-	});
-
-	QUnit.test("ENTER", function (assert) {
-		applyKeyOnAnchorSubMenu(this, jQuery.sap.KeyCodes.ENTER);
-		// Anchor with menu
-		var aPopoverAnchors = $(sPopOverAnchorSelector),
-			iFirstSubAnchor = aPopoverAnchors[0].id;
-		assert.ok(jQuery.sap.byId(iFirstSubAnchor).is(":focus"), "Menu should be opened and first anchor focused");
 	});
 
 	QUnit.test("PAGE UP: Anchor level", function (assert) {
@@ -217,47 +132,10 @@
 		);
 	});
 
-	QUnit.test("PAGE UP: Popover level", function (assert) {
-		// Focus an anchor with subanchors and open the popover
-		var oAnchorBar = getAnchorBar(),
-			aAnchors = oAnchorBar.getContent(),
-			oTestAnchor = aAnchors[8].getDomRef();
-
-		jQuery(oTestAnchor).focus();
-
-		sap.ui.test.qunit.triggerKeydown(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
-		this.clock.tick(500);
-
-		// Find the first, second and seventh anchors in the popover
-		var aPopoverAnchors = $(sPopOverAnchorSelector),
-			oFirstAnchor = aPopoverAnchors[0].id,
-			oSecondAnchor = aPopoverAnchors[1].id,
-			oSeventhAnchor = aPopoverAnchors[6].id;
-
-		// Trigger PAGE UP on the first anchor
-		jQuery.sap.byId(oFirstAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId(oFirstAnchor), jQuery.sap.KeyCodes.PAGE_UP);
-		assert.strictEqual(jQuery.sap.byId(oFirstAnchor).is(":focus"),
-			true, "The first anchor shoud remain focused");
-
-		// Focus the second  anchor and trigger PAGE UP
-		jQuery.sap.byId(oSecondAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId(oSecondAnchor), jQuery.sap.KeyCodes.PAGE_UP);
-		assert.strictEqual(jQuery.sap.byId(oFirstAnchor).is(":focus"),
-			true, "The first anchor shoud be focused");
-
-		// Focus the seventh anchor and trigger PAGE UP
-		jQuery.sap.byId(oSeventhAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId(oSeventhAnchor), jQuery.sap.KeyCodes.PAGE_UP);
-		assert.strictEqual(jQuery.sap.byId(oFirstAnchor).is(":focus"),
-			true, "Five anchors should be skipped over and the first anchor shoud be focused");
-	});
-
 	QUnit.test("PAGE DOWN: Anchor level", function (assert) {
 		var oAncorBar = getAnchorBar(),
 			aAnchors = oAncorBar.getContent(),
-			oLastAnchor = aAnchors[aAnchors.length - 1].getDomRef(),
+			oLastAnchor = aAnchors[aAnchors.length - 1].getAggregation("_button").getDomRef(),
 			oSecondLastAnchor = aAnchors[aAnchors.length - 2].getDomRef(),
 			oSeventhLastAnchor = aAnchors[aAnchors.length - 7].getDomRef();
 
@@ -276,43 +154,6 @@
 		sap.ui.test.qunit.triggerKeydown(oSeventhLastAnchor, jQuery.sap.KeyCodes.PAGE_DOWN);
 		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true,
 			"Five anchors should be skipped over and the last anchor should be focused");
-	});
-
-	QUnit.test("PAGE DOWN: Popover level", function (assert) {
-		// Focus an anchor with subanchors and trigger SPACE to open the popover
-		var oAncorBar = getAnchorBar(),
-			aAnchors = oAncorBar.getContent(),
-			oTestAnchor = aAnchors[8].getDomRef();
-
-		jQuery(oTestAnchor).focus();
-
-		sap.ui.test.qunit.triggerKeydown(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
-		this.clock.tick(500);
-
-		// Find the first, second and seventh anchors in the popover
-		var aPopoverAnchors = $(sPopOverAnchorSelector),
-			oLastAnchor = aPopoverAnchors[aPopoverAnchors.length - 1].id,
-			oSecondLastAnchor = aPopoverAnchors[aPopoverAnchors.length - 2].id,
-			oSeventhLastAnchor = aPopoverAnchors[aPopoverAnchors.length - 7].id;
-
-		// Focus the last anchor and trigger PAGE DOWN
-		jQuery.sap.byId(oLastAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId(oLastAnchor), jQuery.sap.KeyCodes.PAGE_DOWN);
-		assert.strictEqual(jQuery.sap.byId(oLastAnchor).is(":focus"),
-			true, "The last anchor shoud remain focused");
-
-		// Focus the second last anchor and trigger PAGE DOWN
-		jQuery.sap.byId(oSecondLastAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId(oSecondLastAnchor), jQuery.sap.KeyCodes.PAGE_DOWN);
-		assert.strictEqual(jQuery.sap.byId(oLastAnchor).is(":focus"),
-			true, "The last anchor shoud be focused");
-
-		// Focus the seventh anchor from the end and trigger PAGE DOWN
-		jQuery.sap.byId(oSeventhLastAnchor).focus();
-		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId(oSeventhLastAnchor), jQuery.sap.KeyCodes.PAGE_DOWN);
-		assert.strictEqual(jQuery.sap.byId(oLastAnchor).is(":focus"),
-			true, "Five anchors should be skipped over and the last anchor shoud be focused");
 	});
 
 	QUnit.test("F6: Anchor level", function (assert) {
