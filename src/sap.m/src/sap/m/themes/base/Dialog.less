@@ -23,8 +23,8 @@
 	-webkit-transition: opacity .15s, transform 0.2s;
 	transition: opacity .15s, transform 0.2s;
 	-ms-transform: translate(-50%, -50%) scale(0.9);
-	-webkit-transform: translate(-50%, -50%) scale(0.9);
 	transform: translate(-50%, -50%) scale(0.9);
+	-webkit-transform: translate(-50%, -50%) scale(0.9) translateZ(0px);
 
 	&:not(.sapMDialogHighPixelDensity) {
 		//prevent blurring when the device pixel ration is 1 (not high density screens)
@@ -120,7 +120,7 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 	box-shadow: 0;
 	transform: none;
 	-ms-transform: none;
-	-webkit-transform: none;
+	-webkit-transform: scale(1) translateZ(0px); // Chrome does not clip children when transform is not applied resulting in non-visible border-radius
 	right: 0 !important;
 	bottom: 0 !important;
 	top: 0 !important;
@@ -253,7 +253,7 @@ html.sap-desktop .sapMDialog {
 	opacity: 1;
 	transform: translate(-50%, -50%) scale(1);
 	-ms-transform: translate(-50%, -50%) scale(1);
-	-webkit-transform: translate(-50%, -50%) scale(1);
+	-webkit-transform: translate(-50%, -50%) scale(1) translateZ(0px);
 }
 
 .sapMDialogBlockLayerAnimation {
@@ -411,7 +411,7 @@ html.sap-desktop .sapMDialog {
 .sapMDialogTouched {
 	transform: scale(1);
 	-ms-transform: scale(1);
-	-webkit-transform: scale(1);
+	-webkit-transform: scale(1) translateZ(0px);
 }
 
 .sapDialogDisableTransition {
