@@ -895,7 +895,12 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
-		return this._oSerializer.saveCommands();
+		return this._oSerializer.saveCommands()
+		.then(this._invalidateCache.bind(this));
+	};
+
+	RuntimeAuthoring.prototype._invalidateCache = function() {
+		return this._getFlexController().getComponentChanges(undefined, true);
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {
@@ -1425,13 +1430,13 @@ sap.ui.define([
 				bIsPersonalized = aArgs[1];
 			if (bChangesNeedRestart || bIsPersonalized){
 				var sRestart = this._RESTART.RELOAD_PAGE;
-				var sRestartReason;
+				var sRestartReason, oUshellContainer;
 				if (bIsPersonalized) {
 					//Loading the app with personalization means the visualization might change,
 					//therefore this message takes precedence
 					sRestartReason = "MSG_RELOAD_WITH_PERSONALIZATION";
-
-					if (!bChangesNeedRestart){
+					oUshellContainer = Utils.getUshellContainer();
+					if (!bChangesNeedRestart && oUshellContainer){
 						//if changes need restart this method has precedence, but in this case
 						//the faster cross app navigation to the same app (restart via hash) is possible
 						sRestart = this._RESTART.VIA_HASH;

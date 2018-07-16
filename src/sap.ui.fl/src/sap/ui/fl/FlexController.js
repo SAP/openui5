@@ -862,13 +862,14 @@ sap.ui.define([
 	/**
 	 * Retrieves the changes for the complete UI5 component
 	 * @param {map} mPropertyBag - (optional) contains additional data that are needed for reading of changes
-	 * - appDescriptor that belongs to actual component
-	 * - siteId that belongs to actual component
+	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
+	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
+	 * @param {boolean} bInvalidateCache - (optional) should the cache be invalidated
 	 * @returns {Promise} Promise resolves with a map of all {sap.ui.fl.Change} having the changeId as key
 	 * @public
 	 */
-	FlexController.prototype.getComponentChanges = function (mPropertyBag) {
-		return this._oChangePersistence.getChangesForComponent(mPropertyBag);
+	FlexController.prototype.getComponentChanges = function (mPropertyBag, bInvalidateCache) {
+		return this._oChangePersistence.getChangesForComponent(mPropertyBag, bInvalidateCache);
 	};
 
 	/**

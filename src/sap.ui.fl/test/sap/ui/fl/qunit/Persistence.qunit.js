@@ -132,6 +132,7 @@ function( Persistence, utils, Change, defaultVariant, LrepConnector, Control, Ca
 			sandbox.stub(utils,"getAppComponentForControl").returns({getManifest : function(){}});
 
 			Cache.setActive(false);
+			Cache._entries = {};
 
 			oGetLayerStub = sandbox.stub(utils, "getCurrentLayer").returns("VENDOR");
 			sandbox.stub(utils, "getComponentClassName").returns("testComponent");
@@ -143,6 +144,7 @@ function( Persistence, utils, Change, defaultVariant, LrepConnector, Control, Ca
 			sandbox.restore();
 
 			Cache.setActive(true);
+			Cache._entries = {};
 
 			if (ui5Control) {
 				ui5Control.destroy();
