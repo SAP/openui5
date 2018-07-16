@@ -958,6 +958,12 @@
         "type": "FIX",
         "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
         "references": []
+      },
+      {
+        "id": "d31d8f629b84db7598764125c116eb3976846e86",
+        "type": "FIX",
+        "text": " ODataAnnotations: restore cached arrays",
+        "references": []
       }
     ]
   }

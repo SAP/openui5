@@ -684,5 +684,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.33": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "db36416f2ae5c3369e44adfc1e67bb2153f11004",
+        "type": "FIX",
+        "text": " sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -5039,5 +5039,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.33": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "5eef2f2846ca5e953f358554172478c5c121db69",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Precision of milliseconds set to the third digit",
+        "references": []
+      },
+      {
+        "id": "53ea5388a5d1f0a91117a623e7819051b1e43edb",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: set min/max date does not modify its time part now.",
+        "references": []
+      },
+      {
+        "id": "e2dda1b4587826a36aeb43d67388e5e260378a79",
+        "type": "FIX",
+        "text": " sap.m.TextArea: fix rendering error",
+        "references": []
+      },
+      {
+        "id": "986926ee8b3e7e3fdf4bdd0bb47a437392f30284",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - press reset then cancel button behavior is fixed.",
+        "references": []
+      }
+    ]
   }
 }
