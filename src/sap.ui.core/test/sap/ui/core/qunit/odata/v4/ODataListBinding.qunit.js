@@ -3867,6 +3867,77 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// "a=b" -> new Filter("a", FilterOperator.EQ, "b")
+	// {and : [a, b]} -> new Filter({filters: [a, b], and : true})
+	// {or : [a, b]} -> new Filter({filters: [a, b]})
+	[{
+		filters : ["p1=v1"],
+		result : "p1 eq 'v1'"
+	}, {
+		filters : ["p1=v1", "p1=v2"],
+		result : "(p1 eq 'v1' or p1 eq 'v2')"
+	}, {
+		filters : ["p1=v1", "p2=v2"],
+		result : "p1 eq 'v1' and p2 eq 'v2'"
+	}, {
+		filters : ["p1=v1", "p2=v2", "p1=v3"],
+		result : "(p1 eq 'v1' or p1 eq 'v3') and p2 eq 'v2'"
+	}, {
+		filters : [{or : ["p1=v1", "p1=v2"]}],
+		result : "(p1 eq 'v1' or p1 eq 'v2')"
+	}, {
+		filters : [{and : ["p1=v1", "p1=v2"]}],
+		result : "(p1 eq 'v1' and p1 eq 'v2')"
+	}, {
+		filters : [{or : ["p1=v1", "p1=v2", "p2=v3"]}],
+		result : "(p1 eq 'v1' or p1 eq 'v2' or p2 eq 'v3')"
+	}, {
+		filters : [{and : ["p1=v1", "p1=v2", "p2=v3"]}],
+		result : "(p1 eq 'v1' and p1 eq 'v2' and p2 eq 'v3')"
+	}, {
+		filters : ["p1=v1", {or: ["p1=v2", "p1=v3"]}],
+		result : "p1 eq 'v1' and (p1 eq 'v2' or p1 eq 'v3')"
+	}, {
+		filters : ["p1=v1", {and : ["p1=v2", "p1=v3"]}],
+		result : "p1 eq 'v1' and (p1 eq 'v2' and p1 eq 'v3')"
+	}, {
+		filters : ["p1=v1", {or : ["p1=v2", "p2=v3"]}],
+		result : "p1 eq 'v1' and (p1 eq 'v2' or p2 eq 'v3')"
+	}, {
+		filters : ["p1=v1", {and : ["p1=v2"]}],
+		result : "p1 eq 'v1' and (p1 eq 'v2')"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("filter #" + i + ": " + JSON.stringify(oFixture.filters), function (assert) {
+			var oBinding = this.bindList("/Set"),
+				oMetaModelMock = this.mock(oBinding.oModel.oMetaModel),
+				oPropertyMetadata = {$Type : "Edm.String"},
+				oPromise = Promise.resolve(oPropertyMetadata);
+
+			function buildFilters(aNodes) {
+				return aNodes.map(function (vNode) {
+					var aParts;
+					if (typeof vNode === "string") {
+						aParts = vNode.split("=");
+						return new Filter(aParts[0], FilterOperator.EQ, aParts[1]);
+					}
+					if (vNode.and) {
+						return new Filter({filters : buildFilters(vNode.and), and : true});
+					}
+					return new Filter({filters : buildFilters(vNode.or)});
+				});
+			}
+
+			oMetaModelMock.expects("fetchObject").atLeast(0).returns(oPromise);
+			oBinding.aApplicationFilters = buildFilters(oFixture.filters);
+
+			// code under test
+			return oBinding.fetchFilter().then(function (sFilterValue) {
+				assert.strictEqual(sFilterValue, oFixture.result);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getOrderby", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			sOrderby = "bar desc";
