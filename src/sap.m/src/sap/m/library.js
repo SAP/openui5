@@ -289,6 +289,7 @@ sap.ui.define([
 			"sap.m.IconTabFilter",
 			"sap.m.IconTabSeparator",
 			"sap.m.LightBoxItem",
+			"sap.m.OnePersonView",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
 			"sap.m.MenuItem",
@@ -675,6 +676,39 @@ sap.ui.define([
 		 * @public
 		 */
 		OneMonth : "One Month"
+
+	};
+
+	/**
+	 * A list of the default built-in views in a {@link sap.m.OnePersonCalendar}, described by their keys.
+	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @since 1.58.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.OnePersonCalendarView = {
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day.
+		 * @private
+		 */
+		Day : "Day",
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day
+		 * where 5 days are displayed, starting with the first working day of the week.
+		 * @private
+		 */
+		WorkWeek : "Work Week",
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day
+		 * where 7 days are displayed, starting with the first day of the week.
+		 * @private
+		 */
+		Week : "Week"
 
 	};
 

@@ -17,6 +17,23 @@
 
 
 	<script>
+
+		var oView1 = new sap.m.OnePersonView('view1',{
+			key: "key1",
+			intervalType: sap.m.OnePersonCalendarView.Day,
+			title: "Day"
+		});
+		var oView2 = new sap.m.OnePersonView('view2',{
+			key: "key2",
+			intervalType: sap.m.OnePersonCalendarView.WorkWeek,
+			title: "Work Week"
+		});
+		var oView3 = new sap.m.OnePersonView('view3',{
+			key: "key3",
+			intervalType: sap.m.OnePersonCalendarView.Week,
+			title: "Week"
+		});
+
 		var oOPH = new sap.m.OnePersonCalendar("OnePersonCalendar", {
 			title: "OnePersonCalendar",
 			startDate: new Date(2018, 6, 8),
@@ -24,20 +41,8 @@
 			endHour: 20,
 			appointmentsVisualization: "Filled",
 			showFullDay: false,
+			views: [oView1],
 			actions: [
-				new sap.m.SegmentedButton('ViewSwitch1', {
-					buttons: [
-						new sap.m.Button({
-							text: "Day"
-						}),
-						new sap.m.Button({
-							text: "Work Week"
-						}),
-						new sap.m.Button({
-							text: "Week"
-						})
-					]}
-				),
 				new sap.m.ToggleButton("showFullDayButton", {
 					text: "Full day",
 					press: function (oEvent) {
@@ -304,6 +309,13 @@
 				})
 			]
 		}).placeAt("body");
+		oOPH.addView(oView2);
+		oOPH.addView(oView3);
+		// oOPH.addView(oView3);
+		// oOPH.insertView(oView2, 0);
+		// oOPH.removeAllViews();
+		// oOPH.removeView(oView1);
+		// oOPH.destroyViews();
 	</script>
 	<style>
 		body {
