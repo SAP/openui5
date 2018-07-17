@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
-	"./FlexibleColumnLayout"
-], function (jQuery, library, FlexibleColumnLayout) {
+	"./FlexibleColumnLayout",
+	"sap/base/assert"
+], function (library, FlexibleColumnLayout, assert) {
 	"use strict";
 
 	// shortcut for sap.f.LayoutType
@@ -154,7 +154,7 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayoutSemanticHelper.getInstanceFor = function (oFlexibleColumnLayout, oSettings) {
 
-		jQuery.sap.assert(oFlexibleColumnLayout instanceof FlexibleColumnLayout, "Passed control is not FlexibleColumnLayout");
+		assert(oFlexibleColumnLayout instanceof FlexibleColumnLayout, "Passed control is not FlexibleColumnLayout");
 
 		var sId = oFlexibleColumnLayout.getId();
 

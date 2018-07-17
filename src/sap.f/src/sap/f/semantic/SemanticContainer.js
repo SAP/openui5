@@ -6,10 +6,10 @@
 * Provides a private class <code>sap.f.semantic.SemanticContainer</code>.
 */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/Metadata",
-	"./SemanticConfiguration"
-], function(jQuery, Metadata, SemanticConfiguration) {
+	"./SemanticConfiguration",
+	"sap/base/Log"
+], function(Metadata, SemanticConfiguration, Log) {
 	"use strict";
 
 	/**
@@ -25,7 +25,7 @@ sap.ui.define([
 	var SemanticContainer = Metadata.createClass("sap.f.semantic.SemanticContainer", {
 		constructor : function(oContainer, oParent) {
 			if (!oContainer) {
-				jQuery.sap.log.error("SemanticContainer :: missing argument - container reference", this);
+				Log.error("SemanticContainer :: missing argument - container reference", this);
 				return;
 			}
 

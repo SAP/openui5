@@ -4,13 +4,13 @@
 
 // Provides control sap.f.Avatar.
 sap.ui.define([
-    "jquery.sap.global",
     "./library",
     "sap/ui/core/Control",
     "sap/ui/core/IconPool",
     "./AvatarRenderer",
-    "jquery.sap.keycodes"
-], function(jQuery, library, Control, IconPool, AvatarRenderer) {
+    "sap/ui/events/KeyCodes",
+    "sap/base/Log"
+], function(library, Control, IconPool, AvatarRenderer, KeyCodes, Log) {
 	"use strict";
 
 	// shortcut for sap.f.AvatarType
@@ -256,7 +256,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Avatar.prototype.onkeyup = function (oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 			this.firePress({/* no parameters */});
 
 			//stop the propagation, it is handled by the control
@@ -275,7 +275,7 @@ sap.ui.define([
 	Avatar.prototype._areInitialsValid = function (sInitials) {
 		var validInitials = /^[a-zA-Z]{1,2}$/;
 		if (!validInitials.test(sInitials)) {
-			jQuery.sap.log.warning("Initials should consist of only 1 or 2 latin letters", this);
+			Log.warning("Initials should consist of only 1 or 2 latin letters", this);
 			this._sActualType = AvatarType.Icon;
 			this._bIsDefaultIcon = true;
 			return false;
@@ -317,7 +317,7 @@ sap.ui.define([
 		} else if (sInitials && this._areInitialsValid(sInitials)) {
 			this._sActualType = AvatarType.Initials;
 		} else {
-			jQuery.sap.log.warning("No src and initials were provided", this);
+			Log.warning("No src and initials were provided", this);
 			this._sActualType = AvatarType.Icon;
 			this._bIsDefaultIcon = true;
 		}
