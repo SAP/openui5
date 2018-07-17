@@ -2747,7 +2747,7 @@
 				assert.strictEqual(document.activeElement, oComboBox.getFocusDomRef(), "The ComboBox should get the focus");
 			}
 
-			assert.ok(oComboBox.hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"));
+			assert.ok(oComboBox.hasStyleClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS));
 
 			if (sap.ui.Device.system.desktop || sap.ui.Device.system.tablet) {
 				assert.strictEqual(oComboBox.$().outerWidth(), oComboBox.getPicker().$().outerWidth(), "The width of the picker pop-up is strictEqual to the width of the input");
@@ -2795,7 +2795,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			assert.ok(oComboBox.hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"));
+			assert.ok(oComboBox.hasStyleClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS));
 
 			// cleanup
 			oComboBox.destroy();
@@ -3637,8 +3637,8 @@
 			oComboBox.setValueState(sap.ui.core.ValueState.Error);
 
 			// assert
-			assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD));
-			assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "Error"));
+			assert.ok(oComboBox.$("content").hasClass("sapMInputBaseContentWrapperState"));
+			assert.ok(oComboBox.$("content").hasClass("sapMInputBaseContentWrapperError"));
 
 			// cleanup
 			oComboBox.destroy();
@@ -5074,22 +5074,20 @@
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-autocomplete"), "both");
-				assert.ok(oComboBox.$("inner").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "InnerWidthExtraPadding"));
 				assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
 				assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
-				assert.ok(oComboBox.$("arrow").length, "The HTML span element for the arrow exists");
-				assert.ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Arrow"), 'The arrow button has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Arrow"');
-				assert.ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
-				assert.strictEqual(oComboBox.getDomRef("arrow").getAttribute("tabindex"), "-1", "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
-				assert.strictEqual(oComboBox.getDomRef("arrow").getAttribute("aria-labelledby"), oComboBox.getAggregation("_buttonLabelText").getId());
-				assert.ok(oComboBox.getAggregation("_buttonLabelText").getDomRef(), "The button label exists");
+				assert.ok(oComboBox.getAggregation("_endIcon").length, "The HTML span element for the arrow exists");
+				assert.ok(oComboBox.getAggregation("_endIcon")[0].getDomRef().classList.contains("sapUiIcon"), 'The arrow button has the CSS class sapUiIcon"');
+				assert.ok(oComboBox.getAggregation("_endIcon")[0].hasStyleClass("sapMInputBaseIcon"), 'The arrow button has the CSS class sapMInputBaseIcon "');
+				assert.strictEqual(oComboBox.getAggregation("_endIcon")[0].getNoTabStop(), true, "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
+				assert.strictEqual(oComboBox.getAggregation("_endIcon")[0].getDomRef().getAttribute("aria-labelledby"), " " + oComboBox.getAggregation("_endIcon")[0].getDomRef().children[0].id);
 
 				// cleanup
 				oComboBox.destroy();
 			});
 		});
 
-		QUnit.test("it should not render the arrow button", function(assert) {
+		QUnit.test("the arrow button should not be visible", function(assert) {
 
 			// system under test
 			var oComboBox = new sap.m.ComboBox({
@@ -5101,271 +5099,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			assert.ok(oComboBox.getDomRef("arrow") === null);
-			assert.ok(!oComboBox.$("inner").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "InnerWidthExtraPadding"));
-
-			// cleanup
-			oComboBox.destroy();
-		});
-
-		QUnit.module("touchstart");
-
-		var touchstartTestCase = function(sTestName, mOptions) {
-
-			QUnit.test("event: touchstart()", function(assert) {
-
-				// system under test
-				var oComboBox = mOptions.control;
-
-				// arrange + act
-				oComboBox.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getDomRef(mOptions.input), {
-					touches: {
-						0: {
-							pageX: 10,
-							length: 1
-						},
-
-						length: 1
-					},
-
-					targetTouches: {
-						0: {
-							pageX: 10,
-							length: 1
-						},
-
-						length: 1
-					}
-				});
-
-				var bHasClass = oComboBox.getDomRef().className.split(" ").some(function(sClass) {
-					return sClass === oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed";
-				});
-
-				// assert
-				assert.strictEqual(bHasClass, mOptions.output);
-
-				// cleanup
-				oComboBox.destroy();
-			});
-		};
-
-		touchstartTestCase("", {
-			input: "arrow",
-			output: true,
-			control: new sap.m.ComboBox({
-				items: [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				]
-			})
-		});
-
-		touchstartTestCase("", {
-			input: "arrow",
-			output: false,
-			control: new sap.m.ComboBox({
-				enabled: false,
-				items: [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				]
-			})
-		});
-
-		touchstartTestCase("", {
-			input: "arrow",
-			output: false,
-			control: new sap.m.ComboBox({
-				editable: false,
-				items: [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					})
-				]
-			})
-		});
-
-		QUnit.module("touchend");
-
-		QUnit.test("touchend", function(assert) {
-
-			// system under test
-			var oComboBox = new sap.m.ComboBox({
-				items: [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				]
-			});
-
-			// arrange
-			oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
-				touches: {
-					0: {
-						pageX: 10,
-						length: 1
-					},
-
-					length: 1
-				},
-
-				targetTouches: {
-					0: {
-						pageX: 10,
-						length: 1
-					},
-
-					length: 1
-				}
-			});
-
-			sap.ui.test.qunit.triggerTouchEvent("touchend", oComboBox.getOpenArea(), {
-				targetTouches: {
-					0: {
-						pageX: 10,
-						length: 1
-					},
-
-					length: 1
-				}
-			});
-
-			// assert
-			assert.ok(!oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The ComboBox must not have the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Pressed"');
-
-			// cleanup
-			oComboBox.destroy();
-		});
-
-		QUnit.module("tap");
-
-		QUnit.test("tap", function(assert) {
-
-			// system under test
-			var oComboBox = new sap.m.ComboBox({
-				items: [
-					new sap.ui.core.Item({
-						key: "GER",
-						text: "Germany"
-					})
-				],
-				selectedKey: "GER"
-			});
-
-			// arrange
-			var fnTapSpy = this.spy(oComboBox, "ontap"),
-				fnPickerCloseSpy,
-				fnPickerIsOpenSpy,
-				fnOpenSpy;
-
-			oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
-			oComboBox.focus();
-			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
-
-			sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
-				srcControl: oComboBox,
-				touches: {
-					0: {
-						pageX: 10,
-						length: 1
-					},
-
-					length: 1
-				},
-
-				targetTouches: {
-					0: {
-						pageX: 10,
-						length: 1
-					},
-
-					length: 1
-				}
-			});
-
-			fnOpenSpy = this.spy(oComboBox.getPicker(), "open");
-			fnPickerCloseSpy = this.spy(oComboBox.getPicker(), "close");
-			fnPickerIsOpenSpy = this.spy(oComboBox.getPicker(), "isOpen");
-
-			sap.ui.test.qunit.triggerTouchEvent("touchend", oComboBox.getOpenArea(), {
-				srcControl: oComboBox,
-				targetTouches: {
-					0: {
-						pageX: 10,
-						length: 1
-					},
-
-					length: 1
-				}
-			});
-
-			sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getOpenArea(), {
-				srcControl: oComboBox,
-				targetTouches: {
-					0: {
-						pageX: 10,
-						length: 1
-					},
-
-					length: 1
-				}
-			});
-
-			// assert
-			assert.ok(fnTapSpy.calledOnce, "ontap() event handler must be called exactly once");
-			assert.strictEqual(fnPickerCloseSpy.callCount, 0, "close() method of the popover must not be called");
-			assert.strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
-			assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The ComboBox must have the css class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Pressed"');
-			this.clock.tick(0);
-
-			if (sap.ui.Device.system.desktop) {
-				assert.strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
-				assert.strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
-			}
+			assert.strictEqual(oComboBox.getIcon().getVisible(), false, "Icons visibility is false");
 
 			// cleanup
 			oComboBox.destroy();
@@ -5448,7 +5182,7 @@
 			oComboBox.destroy();
 		});
 
-		QUnit.test("it should update update the value of the input field when the selected item is pressed", function(assert) {
+				QUnit.test("it should update update the value of the input field when the selected item is pressed", function(assert) {
 
 			// system under test
 			var oItem;
@@ -8924,7 +8658,7 @@
 			// assert
 			assert.strictEqual(oPickerTextField.getValue(), sExpectedValue);
 			assert.ok(oComboBox.isFiltered());
-			this.clock.tick(0);
+			this.clock.tick(300);
 			assert.strictEqual(oPickerTextField.getSelectedText(), "orem ipsum");
 
 			// cleanup
@@ -9202,7 +8936,6 @@
 
 			// assert
 			assert.strictEqual(fnOnBeforeOpenSpy.callCount, 1, "onBeforeOpen() called exactly once");
-			assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"), "The ComboBox's input field must have the CSS class '" + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed'");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-owns"), oComboBox.getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
 
 			// cleanup
@@ -9999,20 +9732,7 @@
 			var oButtonDomRef = oComboBox.getOpenArea();
 			oComboBox.updateDomValue("lorem ipsum");
 
-			// act
-			sap.ui.test.qunit.triggerEvent("mousedown", oButtonDomRef, {
-				target: oButtonDomRef
-			});
-
-			oButtonDomRef.focus();
-
-			sap.ui.test.qunit.triggerEvent("mouseup", oButtonDomRef, {
-				target: oButtonDomRef
-			});
-
-			sap.ui.test.qunit.triggerEvent("click", oButtonDomRef, {
-				target: oButtonDomRef
-			});
+			oComboBox.getIcon().firePress();
 
 			// assert
 			assert.strictEqual(fnFireChangeSpy.callCount, 0);
@@ -10666,13 +10386,13 @@
 			var oComboBox = new sap.m.ComboBox({
 				id: "apa"
 			});
-
+		
 			oLabel.placeAt("content");
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
 			assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "Combobox aria-labelledby attribute is set to label id");
-
+		
 			oLabel.destroy();
 			oComboBox.destroy();
 		});

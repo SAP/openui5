@@ -20,10 +20,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 
 		TimePickerRenderer.CSS_CLASS = "sapMTimePicker";
 
-		var INPUT_WITH_VALUE_HELP_CLASS = "sapMInputVH",
-			VALUE_HELP_ICON_INNER_CLASS = "sapMInputValHelpInner",
-			VALUE_HELP_ICON_CLASS = "sapMInputValHelp";
-
 		/**
 		 * Adds <code>sap.m.TimePicker</code> control specific classes to the input.
 		 *
@@ -33,9 +29,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 */
 		TimePickerRenderer.addOuterClasses = function(oRm, oControl) {
 			oRm.addClass(TimePickerRenderer.CSS_CLASS);
-			if (oControl.getEnabled() && oControl.getEditable()) {
-				oRm.addClass(INPUT_WITH_VALUE_HELP_CLASS); // just reuse styling of value help icon
-			}
 		};
 
 		/**
@@ -47,22 +40,8 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 * @param {sap.m.TimePicker} oControl The control that should be rendered
 		 */
 		TimePickerRenderer.writeDecorations = function(oRm, oControl) {
-			var aClasses,
-				mAttributes,
-				oRb = oControl._oResourceBundle,
+			var oRb = oControl._oResourceBundle,
 				sText = oRb.getText("TIMEPICKER_SCREENREADER_TAG");
-
-			if (oControl.getEnabled() && oControl.getEditable()) {
-				aClasses = [VALUE_HELP_ICON_INNER_CLASS];
-				mAttributes = {};
-				mAttributes.id = oControl.getId() + "-icon";
-				mAttributes.tabindex = "-1"; // to get focus events on it, needed for popup autoclose handling
-				mAttributes.title = null;
-
-				oRm.write('<div class="' + VALUE_HELP_ICON_CLASS + '">');
-				oRm.writeIcon("sap-icon://time-entry-request", aClasses, mAttributes);
-				oRm.write("</div>");
-			}
 
 			// invisible span with custom role
 			oRm.write('<span id="' + oControl.getId() + '-descr" style="visibility: hidden; display: none;">');

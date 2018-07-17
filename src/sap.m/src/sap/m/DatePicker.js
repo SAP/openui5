@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/ui/core/IconPool",
 	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ],
 	function(
@@ -30,7 +31,8 @@ sap.ui.define([
 		DatePickerRenderer,
 		deepEqual,
 		assert,
-		Log
+		Log,
+		IconPool
 	) {
 	"use strict";
 
@@ -261,7 +263,7 @@ sap.ui.define([
 
 	DatePicker.prototype.init = function() {
 
-		InputBase.prototype.init.apply(this, arguments);
+		DateTimeField.prototype.init.apply(this, arguments);
 
 		this._bIntervalSelection = false;
 		this._bOnlyCalendar = true;
@@ -272,6 +274,49 @@ sap.ui.define([
 		this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
 		this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999); // set the date for the maximum possible for that day
 
+		var oIcon = this.addEndIcon({
+			id: this.getId() + "-icon",
+			src: this.getIconSrc(),
+			noTabStop: true,
+			title: ""
+		});
+
+		// idicates whether the picker is still open
+		this._bShouldClosePicker = false;
+
+		oIcon.addEventDelegate({
+			onmousedown: function (oEvent) {
+				// as the popup closes automatically on blur - we need to remember its state
+				this._bShouldClosePicker = !!this.isOpen();
+			}
+		}, this);
+
+		oIcon.attachPress(function () {
+			this.toggleOpen(this._bShouldClosePicker);
+		}, this);
+	};
+
+	/**
+	 * Checks if the picker is open
+	 * @returns {boolean}
+	 * @protected
+	 */
+	DatePicker.prototype.isOpen = function () {
+		return this._oPopup && this._oPopup.isOpen();
+	};
+
+	DatePicker.prototype.toggleOpen = function (bOpened) {
+		if (this.getEditable() && this.getEnabled()) {
+			if (bOpened) {
+				_cancel.call(this);
+			} else {
+				_open.call(this);
+			}
+		}
+	};
+
+	DatePicker.prototype.getIconSrc = function () {
+		return IconPool.getIconURI("appointment-2");
 	};
 
 	DatePicker.prototype.exit = function() {
@@ -359,10 +404,8 @@ sap.ui.define([
 
 	DatePicker.prototype.onsapshow = function(oEvent) {
 
-		_toggleOpen.call(this);
-
+		this.toggleOpen(this.isOpen());
 		oEvent.preventDefault(); // otherwise IE opens the address bar history
-
 	};
 
 	// ALT-UP and ALT-DOWN should behave the same
@@ -428,14 +471,6 @@ sap.ui.define([
 		if (sChar && oFormatter.sAllowedCharacters && oFormatter.sAllowedCharacters.indexOf(sChar) < 0) {
 			oEvent.preventDefault();
 		}
-	};
-
-	DatePicker.prototype.onclick = function(oEvent) {
-
-		if (jQuery(oEvent.target).hasClass("sapUiIcon")) {
-			_toggleOpen.call(this);
-		}
-
 	};
 
 	/**
@@ -809,7 +844,7 @@ sap.ui.define([
 
 			sValue = sNewValue;
 
-			if (this._oPopup && this._oPopup.isOpen()) {
+			if (this.isOpen()) {
 				if (this._bValid) {
 					oDate = this.getDateValue(); // as in databinding a formatter could change the date
 				}
@@ -1067,18 +1102,6 @@ sap.ui.define([
 		return oInfo;
 	};
 
-	function _toggleOpen(){
-
-		if (this.getEditable() && this.getEnabled()) {
-			if (!this._oPopup || !this._oPopup.isOpen()) {
-				_open.call(this);
-			} else {
-				_cancel.call(this);
-			}
-		}
-
-	}
-
 	DatePicker.prototype._selectDate = function(oEvent){
 
 		var oDateOld = this.getDateValue();
@@ -1134,7 +1157,7 @@ sap.ui.define([
 
 	function _cancel(oEvent) {
 
-		if (this._oPopup && this._oPopup.isOpen()) {
+		if (this.isOpen()) {
 			this._oPopup.close();
 			//TODO: global jquery call found
 			if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
@@ -1214,6 +1237,7 @@ sap.ui.define([
 	}
 
 	function _handleOpened(oEvent) {
+		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this._renderedDays = this._oCalendar.$("-Month0-days").find(".sapUiCalItem").length;
 
 		this.$("inner").attr("aria-owns", this.getId() + "-cal");
@@ -1222,6 +1246,7 @@ sap.ui.define([
 	}
 
 	function _handleClosed(oEvent) {
+		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this.$("inner").attr("aria-expanded", false);
 
 		this._restoreInputSelection(this._$input.get(0));
@@ -1253,7 +1278,7 @@ sap.ui.define([
 
 	function _invalidateCalendar() {
 
-		if (this._oPopup && this._oPopup.isOpen()) {
+		if (this.isOpen()) {
 			// calendar is displayed -> update it immediately
 			this._oCalendar._bDateRangeChanged = true;
 			this._oCalendar.invalidate();

@@ -425,7 +425,7 @@ function(
 			// this is the suffix used inside the Input
 			// in case it is changed there it should be changed also here
 			// it's used currently only inside qunit tests to get the description dom elelemnt
-			return "-Descr";
+			return "-descr";
 		};
 
 		var NumericInput = Input.extend("sap.m.internal.NumericInput", {

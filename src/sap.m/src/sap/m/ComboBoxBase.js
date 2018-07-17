@@ -284,10 +284,6 @@ sap.ui.define([
 			// sets the picker popup type
 			this.setPickerType(Device.system.phone ? "Dialog" : "Dropdown");
 
-			if (Device.system.phone) {
-				this.attachEvent("_change", this.onPropertyChange, this);
-			}
-
 			// initialize composites
 			this.createPicker(this.getPickerType());
 
@@ -297,6 +293,9 @@ sap.ui.define([
 			// indicates if the picker is opened by the keyboard or by a click/tap on the downward-facing arrow button
 			this.bOpenedByKeyboardOrButton = false;
 
+			// indicates if the picker should be closed when toggling the opener icon
+			this._bShouldClosePicker = false;
+
 			this._oPickerValueStateText = null;
 			this.bProcessingLoadItemsEvent = false;
 			this.iLoadItemsEventInitialProcessingTimeoutID = -1;
@@ -305,6 +304,37 @@ sap.ui.define([
 			this.iInitialBusyIndicatorDelay = this.getBusyIndicatorDelay();
 			this._bOnItemsLoadedScheduled = false;
 			this._bDoTypeAhead = true;
+
+			this.getIcon().addEventDelegate({
+				onmousedown: function (oEvent) {
+						this._bShouldClosePicker = this.isOpen();
+				}
+			}, this);
+
+			this.getIcon().attachPress(function (oEvent) {
+				var oPicker;
+
+				// in case of a non-editable or disabled combo box, the picker popup cannot be opened
+				if (!this.getEnabled() || !this.getEditable()) {
+					return;
+				}
+
+				if (this._bShouldClosePicker) {
+					this._bShouldClosePicker = false;
+					this.close();
+					return;
+				}
+
+				this.loadItems();
+				this.bOpenedByKeyboardOrButton = true;
+
+				if (this.isPlatformTablet()) {
+					oPicker = this.getPicker();
+					oPicker.setInitialFocus(oPicker);
+				}
+
+				this.open();
+			}, this);
 		};
 
 		ComboBoxBase.prototype.onBeforeRendering = function() {
@@ -330,97 +360,6 @@ sap.ui.define([
 
 			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
 			this.aMessageQueue = null;
-		};
-
-		/* =========================================================== */
-		/* Event handlers                                              */
-		/* =========================================================== */
-
-		/**
-		 * Handles the touch start event on the control.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 */
-		ComboBoxBase.prototype.ontouchstart = function(oEvent) {
-
-			if (!this.getEnabled() || !this.getEditable()) {
-				return;
-			}
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
-			if (this.isOpenArea(oEvent.target)) {
-
-				// add the active state to the control's field
-				this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
-			}
-		};
-
-		/**
-		 * Handles the touch end event on the control.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 */
-		ComboBoxBase.prototype.ontouchend = function(oEvent) {
-
-			if (!this.getEnabled() || !this.getEditable()) {
-				return;
-			}
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
-			if (!this.isOpen() && this.isOpenArea(oEvent.target)) {
-
-				// remove the active state of the control's field
-				this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
-			}
-		};
-
-		/**
-		 * Handles the tap event on the control.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 */
-		ComboBoxBase.prototype.ontap = function(oEvent) {
-			ComboBoxTextField.prototype.ontap.apply(this, arguments);
-
-			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE,
-				oControl = oEvent.srcControl, oPicker;
-
-			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
-			if (!this.getEnabled() || !this.getEditable()) {
-				return;
-			}
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
-			if (oControl.isOpenArea && oControl.isOpenArea(oEvent.target)) {
-
-				if (this.isOpen()) {
-					this.close();
-					this.removeStyleClass(CSS_CLASS + "Pressed");
-					return;
-				}
-
-				this.loadItems();
-				this.bOpenedByKeyboardOrButton = true;
-
-				if (this.isPlatformTablet()) {
-					oPicker = this.getPicker();
-					oPicker.setInitialFocus(oPicker);
-				}
-
-				this.open();
-			}
-
-			if (this.isOpen()) {
-
-				// add the active state to the text field
-				this.addStyleClass(CSS_CLASS + "Pressed");
-			}
 		};
 
 		/* ----------------------------------------------------------- */

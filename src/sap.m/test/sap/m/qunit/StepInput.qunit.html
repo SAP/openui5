@@ -369,19 +369,19 @@
 		});
 
 		QUnit.test("fieldWidth", function (assert) {
-			assert.strictEqual(this.stepInput.$().find(".sapMInputDivWrapper")[0].style.width, "", "field width is not set if the description is not set");
+			assert.strictEqual(this.stepInput.$().find(".sapMInputBaseContentWrapper")[0].style.width, "100%", "field width is set to 100% if the description is not set");
 
 			// arrange
 			this.stepInput.setDescription("EUR");
 			sap.ui.getCore().applyChanges();
 			//assert
-			assert.strictEqual(this.stepInput.$().find(".sapMInputDivWrapper")[0].style.width, "50%", "field width by default is 50%");
+			assert.strictEqual(this.stepInput.$().find(".sapMInputBaseContentWrapper")[0].style.width, "50%", "field width by default is 50%");
 			// arrange
 			this.stepInput.setFieldWidth("70%");
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(this.stepInput._getInput().getFieldWidth(), this.stepInput.getFieldWidth(), "the fieldWidth is passed to the inner input aggregation");
-			assert.strictEqual(this.stepInput.$().find(".sapMInputDivWrapper")[0].style.width, "70%", "field width of 70% is correctly set to the Input wraper");
+			assert.strictEqual(this.stepInput.$().find(".sapMInputBaseContentWrapper")[0].style.width, "70%", "field width of 70% is correctly set to the Input wraper");
 		});
 
 		QUnit.test("validationMode", function (assert) {
@@ -2097,7 +2097,7 @@
 				}),
 				sNumericDescSuffix = oStepInput._getInput().getRenderer()._getDescriptionSuffix();
 
-			assert.strictEqual(sNumericDescSuffix, "-Descr", "Description suffix is correct");
+			assert.strictEqual(sNumericDescSuffix, "-descr", "Description suffix is correct");
 
 			oStepInput.destroy();
 		});

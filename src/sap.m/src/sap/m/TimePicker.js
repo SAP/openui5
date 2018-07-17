@@ -281,6 +281,7 @@ function(
 		 * @public
 		 */
 		TimePicker.prototype.init = function() {
+			DateTimeField.prototype.init.apply(this, arguments);
 
 			MaskEnabler.init.apply(this, arguments);
 
@@ -305,6 +306,27 @@ function(
 
 			this._rPlaceholderRegEx = new RegExp(PLACEHOLDER_SYMBOL, 'g');
 			this._sLastChangeValue = null;
+
+			var oIcon = this.addEndIcon({
+				id: this.getId() + "-icon",
+				src: this.getIconSrc(),
+				noTabStop: true,
+				title: ""
+			});
+
+			// idicates whether the picker is still open
+			this._bShouldClosePicker = false;
+
+			oIcon.addEventDelegate({
+				onmousedown: function (oEvent) {
+					// as the popup closes automatically on blur - we need to remember its state
+					this._bShouldClosePicker = this.isOpen();
+				}
+			}, this);
+
+			oIcon.attachPress(function () {
+				this.toggleOpen(this._bShouldClosePicker);
+			}, this);
 		};
 
 		/**
@@ -331,31 +353,16 @@ function(
 			this._sLastChangeValue = null;
 		};
 
-		/**
-		 * Handles tap inside the input.
-		 *
-		 * @param {jQuery.Event} oEvent Event object
-		 */
-		TimePicker.prototype.ontap = function(oEvent) {
-			var bIconClicked,
-				bPickerOpened;
+		TimePicker.prototype.getIconSrc = function () {
+			return IconPool.getIconURI("time-entry-request");
+		};
 
-			if (!(this.getEditable() && this.getEnabled())) {
-				return;
-			}
+		TimePicker.prototype.isOpen = function () {
+			return this._getPicker() && this._getPicker().isOpen();
+		};
 
-			bIconClicked = jQuery(oEvent.target).hasClass("sapUiIcon");
-			bPickerOpened = this._getPicker() && this._getPicker().isOpen();
-
-			if (!bPickerOpened && bIconClicked) {
-				this._openPicker();
-			} else if (bIconClicked && !Device.system.phone) {
-				//phone check: it wont be possible to click the icon while the dialog is opened
-				//but there is a bug that the event is triggered twice on Nokia Lumia 520 emulated in Chrome
-				//which closes the picker immediately after opening
-				//so check for phone just in case
-				this._closePicker();
-			}
+		TimePicker.prototype.toggleOpen = function (bOpened) {
+			this[bOpened ? "_closePicker" : "_openPicker"]();
 		};
 
 		/**
@@ -399,7 +406,7 @@ function(
 			oSliders.collapseAll();
 
 			/* Mark input as active */
-			this.$().addClass("sapMTPInputActive");
+			this.$().addClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		};
 
 		/**
@@ -426,7 +433,7 @@ function(
 		 * @public
 		 */
 		TimePicker.prototype.onAfterClose = function() {
-			this.$().removeClass("sapMTPInputActive");
+			this.$().removeClass(InputBase.ICON_PRESSED_CSS_CLASS);
 
 			//WAI-ARIA region
 			this._handleAriaOnExpandCollapse();
@@ -1023,7 +1030,8 @@ function(
 				sOKButtonText,
 				sCancelButtonText,
 				sTitle,
-			sLocaleId = this.getLocaleId();
+				oIcon = this.getAggregation("_endIcon")[0],
+				sLocaleId = this.getLocaleId();
 
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
@@ -1058,7 +1066,7 @@ function(
 				oPopover.setShowArrow(false);
 			}
 
-			oPopover.oPopup.setAutoCloseAreas([this.getDomRef("icon")]);
+			oPopover.oPopup.setAutoCloseAreas([oIcon]);
 
 			oPicker.addStyleClass(this.getRenderer().CSS_CLASS + "DropDown")
 				.attachBeforeOpen(this.onBeforeOpen, this)
