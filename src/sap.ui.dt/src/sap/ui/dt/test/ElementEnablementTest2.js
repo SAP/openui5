@@ -4,12 +4,12 @@
 
 // Provides class sap.ui.dt.test.ElementEnablementTest.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/dt/test/Element',
-	'sap/ui/fl/registry/ChangeRegistry'
+	'sap/ui/fl/registry/ChangeRegistry',
+	"sap/base/util/ObjectPath"
 ],
-function(jQuery, ManagedObject, ElementTest, ChangeRegistry) {
+function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
 	"use strict";
 
 
@@ -100,7 +100,7 @@ function(jQuery, ManagedObject, ElementTest, ChangeRegistry) {
 		this._bNotSupported = false;
 		this._bError = false;
 
-		var oElement = jQuery.sap.getObject(this.getType());
+		var oElement = ObjectPath.get(this.getType() || "");
 		return oElement.getMetadata().loadDesignTime().catch(function(oError){
 			this._bError = true;
 		}.bind(this));

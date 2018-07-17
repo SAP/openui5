@@ -21,6 +21,7 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 					aElements = oLibrary.controls.concat(oLibrary.elements);
 				sLibrary = sTestLibrary;
 				sap.ui.require(aElements.map(function(s) {
+					//TODO: global jquery call found
 					return jQuery.sap.getResourceName(s,"");
 				}), function() {
 					//all controls are loaded, now all libs are loaded
@@ -164,8 +165,9 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 					Object.keys(mEntry.icons).forEach(function(sKey) {
 						var sIcon = mEntry.icons[sKey];
 						assert.strictEqual(typeof sIcon, "string", "palette/icons/" + sKey + " entry defines icon path " + sIcon);
+						//TODO: global jquery call found
 						var oResult = jQuery.sap.sjax({
-							url: jQuery.sap.getResourcePath(sIcon, "")
+							url: sap.ui.require.toUrl(sIcon) + ""
 						});
 						assert.ok(oResult.status === "success", "File " + sIcon + " does exist. Check entry palette/icons/" + sKey);
 						if (sIcon.indexOf(".svg") === sIcon.length - 4) {
@@ -181,7 +183,8 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 				if (mEntry.create) { //icons in palette optional
 					var sCreateTemplate = mEntry.create;
 					assert.strictEqual(typeof sCreateTemplate, "string", "templates/create entry defines fragment path to " + sCreateTemplate);
-					var oData = jQuery.sap.sjax({url: jQuery.sap.getResourcePath(sCreateTemplate,"")});
+					//TODO: global jquery call found
+					var oData = jQuery.sap.sjax({url: sap.ui.require.toUrl(sCreateTemplate) + ""});
 					assert.ok(oData.data.documentElement && oData.data.documentElement.localName === "FragmentDefinition", "File " + sCreateTemplate + " exists and starts with a FragmentDefinition node");
 					/*
 					var oControl = sap.ui.xmlfragment({

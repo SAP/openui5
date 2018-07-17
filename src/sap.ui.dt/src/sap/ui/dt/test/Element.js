@@ -4,7 +4,7 @@
 
 // Provides object sap.ui.dt.test.Element.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayRegistry'
 ],

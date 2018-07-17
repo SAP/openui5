@@ -16,6 +16,9 @@ sap.ui.define([
 	'sap/ui/dt/MetadataPropagationUtil',
 	'sap/ui/dt/Util',
 	'sap/ui/dt/TaskManager',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isPlainObject",
 	'./library'
 ],
 function(
@@ -31,7 +34,10 @@ function(
 	OverlayUtil,
 	MetadataPropagationUtil,
 	Util,
-	TaskManager
+	TaskManager,
+	Log,
+	jQuery,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -487,7 +493,7 @@ function(
 
 		if (typeof oElement === 'string') { // backwards compatibility, should be dropped in future releases (>rel-1.54)
 			sClassName = oElement;
-			jQuery.sap.log.error('sap.ui.dt.DesignTime#getDesignTimeMetadataFor / Function getDesignTimeMetadataFor() should be called with element instance');
+			Log.error('sap.ui.dt.DesignTime#getDesignTimeMetadataFor / Function getDesignTimeMetadataFor() should be called with element instance');
 		} else {
 			sClassName = oElement.getMetadata().getName();
 		}
@@ -602,7 +608,7 @@ function(
 	 */
 	DesignTime.prototype.createOverlay = function (vArg) {
 		// Function can receive an element as the only argument or object with parameters
-		var mParams = jQuery.extend({}, jQuery.isPlainObject(vArg) ? vArg : { element: vArg });
+		var mParams = jQuery.extend({}, isPlainObject(vArg) ? vArg : { element: vArg });
 		var iTaskId = this._oTaskManager.add({
 			type: 'createOverlay'
 		});
@@ -1014,7 +1020,7 @@ function(
 						// Omit error message if the element was destroyed during overlay initialisation
 						// (e.g. SimpleForm case when multi-removal takes place)
 						if (!oElement.bIsDestroyed){
-							jQuery.sap.log.error(Util.errorToString(oError));
+							Log.error(Util.errorToString(oError));
 						}
 					}.bind(this, oElement.getId(), oParentAggregationOverlay.getId()));
 			} else {

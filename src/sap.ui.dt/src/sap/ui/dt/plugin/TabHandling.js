@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/dt/Plugin', 'sap/ui/dt/Overlay'
+	"sap/ui/thirdparty/jquery", 'sap/ui/dt/Plugin', 'sap/ui/dt/Overlay'
 ], function(jQuery, Plugin, Overlay) {
 	"use strict";
 

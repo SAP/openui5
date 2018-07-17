@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/Device',
 	'sap/base/util/includes',
 	'sap/base/util/isPlainObject'

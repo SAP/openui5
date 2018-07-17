@@ -4,11 +4,13 @@
 
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/DOMUtil'
+	'sap/ui/dt/DOMUtil',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ManagedObject,
-	DOMUtil
+	DOMUtil,
+	jQuery
 ) {
 	"use strict";
 

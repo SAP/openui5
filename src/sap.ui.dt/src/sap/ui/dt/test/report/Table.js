@@ -4,7 +4,6 @@
 
 // Provides control sap.ui.dt.test.report.Table.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/table/TreeTable',
@@ -21,7 +20,6 @@ sap.ui.define([
 	"./TableRenderer"
 ],
 function(
-	jQuery,
 	Control,
 	JSONModel,
 	TreeTable,
