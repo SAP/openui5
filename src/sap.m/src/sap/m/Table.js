@@ -813,7 +813,7 @@ sap.ui.define([
 			iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
 		}
 
-		var iItemTop = oItemDomRef.getBoundingClientRect().top;
+		var iItemTop = Math.round(oItemDomRef.getBoundingClientRect().top);
 
 		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
