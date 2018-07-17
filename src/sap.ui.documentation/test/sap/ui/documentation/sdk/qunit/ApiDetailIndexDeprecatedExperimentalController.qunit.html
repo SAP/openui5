@@ -33,15 +33,6 @@
 					}
 				});
 
-				QUnit.test("Test compareVersions", function (assert) {
-					assert.strictEqual(this.controller.compareVersions("WITHOUT VERSION", "1.54.3"), -1, "Without version is always first");
-					assert.strictEqual(this.controller.compareVersions("1.54.3", "WITHOUT VERSION"), 1, "Without version is always first");
-					assert.strictEqual(this.controller.compareVersions("1.50", "1.52"), 1, "1.52 is displayed before 1.50");
-					assert.strictEqual(this.controller.compareVersions("1.7", "1.38"), 1, "1.38 is displayed before 1.7");
-					assert.strictEqual(this.controller.compareVersions("1.54", "1.38"), -1, "1.54 is displayed before 1.38");
-					assert.strictEqual(this.controller.compareVersions("1.50.2", "1.50.3"), 0, "1.50.2 is equal to 1.50.3");
-				});
-
 				QUnit.test("Test formatDescription", function (assert) {
 					var sTextWithLinkAndHash = "Please use {@link sap.chart.Chart#setVizProperties} to set related formatStrings instead.";
 
