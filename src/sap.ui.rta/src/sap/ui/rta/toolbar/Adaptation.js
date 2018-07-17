@@ -218,6 +218,7 @@ function(
 				alignItems: "Center"
 			}),
 			new HBox({
+				alignItems: "Center",
 				items: [
 					this._mControls["overflowToolbar"] = new OverflowToolbar({
 						content: [
