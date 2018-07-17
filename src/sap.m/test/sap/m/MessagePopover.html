@@ -51,7 +51,8 @@
 					type: "Error",
 					title: "Error message",
 					description: "First Error message description",
-					subtitle: "Example subtitle"
+					subtitle: "Example subtitle",
+					active: true
 				}, {
 					type: "Warning",
 					title: "Warning without description",
@@ -74,7 +75,8 @@
 					title: "Information message (Long) 2",
 					description: "Just some text description",
 					longtextUrl: "./SampleHTML.html",
-					subtitle: "Just simple subtitle"
+					subtitle: "Just simple subtitle",
+					active: true
 				}]
 			};
 
@@ -86,7 +88,8 @@
 				title: "{title}",
 				description: "{description}",
 				longtextUrl: "{longtextUrl}",
-				subtitle: "{subtitle}"
+				subtitle: "{subtitle}",
+				activeTitle: "{active}"
 			});
 
 			jQuery.sap.require("sap.m.MessagePopover");
@@ -126,6 +129,9 @@
 
 			//list.bindAggregation("items", "/", oMessageTemplate);
 			var oMessagePopover = new sap.m.MessagePopover("mPopover", {
+				activeTitlePress: function () {
+					alert('test');
+				},
 				items: {
 					path: "/messages",
 					template: oMessageTemplate

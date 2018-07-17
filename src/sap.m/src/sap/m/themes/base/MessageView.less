@@ -22,14 +22,13 @@
 
 	.sapMMsgViewTitleText,
 	.sapMMsgViewDescriptionText {
-		display: block;
-		padding: 0 1rem 0 3rem;
-		margin-top: 1rem;
+		margin: 1rem 1rem 0 3rem;
 	}
 
 	.sapMMsgViewDescriptionText {
 		padding-bottom: 1rem;
 		font-size: @sapMFontMediumSize;
+		display: block;
 	}
 
 	.sapMMsgViewDescriptionLink {
@@ -82,6 +81,18 @@
 	font-size: 1.35rem;
 }
 
+.sapMMsgViewItemActive {
+
+	& .sapMLnk {
+		font-size: 1rem;
+	}
+
+	& .sapMSLITitleOnly {
+		display: flex;
+		align-items: center;
+	}
+}
+
 /* Compact size */
 .sapUiSizeCompact .sapMMsgView {
 	&.sapMPopoverArrUp:after,
@@ -94,6 +105,10 @@
 	.sapMMsgViewItem {
 		height: 3.5rem;
 		padding-left: 0;
+	}
+
+	.sapMMsgViewItemActive .sapMLnk {
+		font-size: @sapMFontMediumSize;
 	}
 
 	.sapMMsgViewItem.sapMSLINoDescIcon {
