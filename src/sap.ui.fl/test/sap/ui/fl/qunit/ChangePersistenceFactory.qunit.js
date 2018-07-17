@@ -7,22 +7,8 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oAsyncHints;
 
 	QUnit.module("sap.ui.fl.ChangePersistenceFactory", {
-		beforeEach: function(assert) {
-			var done = assert.async();
-			jQuery.getJSON( "./testResources/asyncHints.json", function( oLoadedAsyncHints ) {
-				oAsyncHints = oLoadedAsyncHints;
-
-				// MOCK find for phantomJS
-				oAsyncHints.requests.find = function () {
-					return oAsyncHints.requests[0];
-				};
-
-				done();
-			});
-		},
 		afterEach: function() {
 			sandbox.restore();
 			sap.ui.core.Component._fnManifestLoadCallback = null;
@@ -241,11 +227,6 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 			}
 		};
 
-		// MOCK find for phantomJS
-		oConfig.asyncHints.requests.find = function () {
-			return oConfig.asyncHints.requests[0];
-		};
-
 		var oChangePersistence = new ChangePersistence(oComponent);
 		var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
 		var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
@@ -291,11 +272,6 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 			}
 		};
 
-		// MOCK find for phantomJS
-		oConfig.asyncHints.requests.find = function () {
-			return oConfig.asyncHints.requests[0];
-		};
-
 		var oChangePersistence = new ChangePersistence(oComponent);
 		var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
 		var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
@@ -339,11 +315,6 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 			getEntry: function (key) {
 				return this[key];
 			}
-		};
-
-		// MOCK find for phantomJS
-		oConfig.asyncHints.requests.find = function () {
-			return oConfig.asyncHints.requests[0];
 		};
 
 		var oChangePersistence = new ChangePersistence(oComponent);

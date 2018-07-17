@@ -112,14 +112,11 @@ sap.ui.require([
 			Math.round(this.oButton.$().offset().top),
 			"overlay has same top position as the control"
 		);
-		//Phantomjs calculates RTL scrolling differently from other browsers
-		if (!Device.browser.phantomJS){
-			assert.equal(
-				Math.round(this.oButtonOverlay.$().offset().left),
-				Math.round(this.oButton.$().offset().left),
-				"overlay has same left position as the control"
-			);
-		}
+		assert.equal(
+			Math.round(this.oButtonOverlay.$().offset().left),
+			Math.round(this.oButton.$().offset().left),
+			"overlay has same left position as the control"
+		);
 	});
 
 	QUnit.done(function() {

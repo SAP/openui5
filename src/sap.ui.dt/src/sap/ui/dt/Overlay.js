@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.Overlay.
+/* global Map */
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Element',
@@ -11,9 +11,7 @@ sap.ui.define([
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/DOMUtil',
 	'sap/ui/dt/ScrollbarSynchronizer',
-	'sap/ui/dt/Util',
-	'sap/ui/dt/Map',
-	'sap/ui/Device'
+	'sap/ui/dt/Util'
 ],
 function(
 	jQuery,
@@ -23,9 +21,7 @@ function(
 	OverlayUtil,
 	DOMUtil,
 	ScrollbarSynchronizer,
-	Util,
-	Map,
-	Device
+	Util
 ) {
 	"use strict";
 
