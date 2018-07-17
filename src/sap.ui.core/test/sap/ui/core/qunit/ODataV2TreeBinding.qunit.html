@@ -2057,6 +2057,27 @@
 		});
 	});
 
+	QUnit.test("getFilterParams: Correct application filter parameter generation", function(assert) {
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[]
+			);
+
+			var aAppFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "Po"),
+							new sap.ui.model.Filter("FinancialStatementItemText", "EndsWith", "ny")];
+
+			var sExpectedFilterParams = "(startswith(FinancialStatementItemText,%27Po%27)%20or%20endswith(FinancialStatementItemText,%27ny%27))";
+
+			oBinding.filter(aAppFilters, "Application");
+
+			var sFilterParams = oBinding.getFilterParams();
+			assert.equal(sFilterParams, sExpectedFilterParams, "Correct filter params returned")
+			done();
+		});
+	});
+
 	QUnit.test("Tried filtering - incomplete Annotations/Navigation Property Definitions", function(assert) {
 		var done = assert.async();
 		var Log = sap.ui.require("sap/base/Log");
