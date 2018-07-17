@@ -3174,5 +3174,70 @@
         "references": []
       }
     ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "9c0dbd4aea94a366931a5477fefab65db0c93c10",
+        "type": "FIX",
+        "text": " m.DateTimePicker: Closing software keyboard leaves correct height",
+        "references": []
+      },
+      {
+        "id": "e60a6fe6f413d899ffd1c7348f1fb6ab74d226d1",
+        "type": "FIX",
+        "text": " m.FacetFilterList: Active state is never set internally",
+        "references": []
+      },
+      {
+        "id": "82d5442e830af593a09dfdaca2b99760cf81b964",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: renew item navigation after page load",
+        "references": []
+      },
+      {
+        "id": "b710d1365c071e03d2af30dd896362ef3e401189",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Segmented buttons now have tooltips",
+        "references": []
+      },
+      {
+        "id": "526fe8b342583924ac677283438f4c8bfbd65cc5",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Press event is fired on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "fc21dcea3c6e0690270a461afeb261ab872dce91",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: has padding now, when IconTabBar has no data",
+        "references": []
+      },
+      {
+        "id": "977299ccc1d5c63fb2af382df084b2383db1d64b",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem:  Attributes get the whole space when alone",
+        "references": []
+      },
+      {
+        "id": "ffeeeaeca474cd4742249d2829f5304170d8162a",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: suppress rerendering of the inner controls onBeforeRendering",
+        "references": []
+      },
+      {
+        "id": "d9daa9818a7bd94e967e85658e1070f386e2d02f",
+        "type": "FIX",
+        "text": " sap.m.Panel: Drawing in IE when animated",
+        "references": []
+      },
+      {
+        "id": "5a393b1439c0cb39547fb45294d28995e084c1c5",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      }
+    ]
   }
 }
