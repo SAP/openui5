@@ -1093,6 +1093,9 @@ sap.ui.define([
 					this._$input.val(sValue);
 					this._lastValue = sValue;
 				}
+				// we have to format the value with the existing format
+				// before setting it and firing the change event
+				sValue = this._formatValue(oDate, true);
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
 			}
