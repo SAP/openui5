@@ -43,6 +43,10 @@ sap.ui.define([
 				openOnHover: {
 					type: "boolean",
 					defaultValue: true
+				},
+				openOnClick: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			events: {
@@ -343,7 +347,7 @@ sap.ui.define([
 
 		if (!Device.os.ios) {
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-			if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected()) {
+			if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected() && this.getOpenOnClick()) {
 
 				if (this.isMenuOpeningLocked() && !this._bTouched) {
 					this.unlockMenuOpening();
