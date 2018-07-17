@@ -233,6 +233,44 @@ sap.ui.define(['./Filter', "sap/base/Log", 'jquery.sap.unicode'],
 			oValue2 = this.normalizeFilterValue(oValue2, oFilter.bCaseSensitive);
 		}
 
+		var fnContains = function(value) {
+			if (value == null) {
+				return false;
+			}
+			if (typeof value != "string") {
+				throw new Error("Only \"String\" values are supported for the FilterOperator: \"Contains\".");
+			}
+			return value.indexOf(oValue1) != -1;
+		};
+
+		var fnStartsWith = function(value) {
+			if (value == null) {
+				return false;
+			}
+			if (typeof value != "string") {
+				throw new Error("Only \"String\" values are supported for the FilterOperator: \"StartsWith\".");
+			}
+			return value.indexOf(oValue1) == 0;
+		};
+
+		var fnEndsWith = function(value) {
+			if (value == null) {
+				return false;
+			}
+			if (typeof value != "string") {
+				throw new Error("Only \"String\" values are supported for the FilterOperator: \"EndsWith\".");
+			}
+			var iPos = value.lastIndexOf(oValue1);
+			if (iPos == -1) {
+				return false;
+			}
+			return iPos == value.length - oValue1.length;
+		};
+
+		var fnBetween = function(value) {
+			return (fnCompare(value, oValue1) >= 0) && (fnCompare(value, oValue2) <= 0);
+		};
+
 		switch (oFilter.sOperator) {
 			case "EQ":
 				oFilter.fnTest = function(value) { return fnCompare(value, oValue1) === 0; }; break;
@@ -247,42 +285,31 @@ sap.ui.define(['./Filter', "sap/base/Log", 'jquery.sap.unicode'],
 			case "GE":
 				oFilter.fnTest = function(value) { return fnCompare(value, oValue1) >= 0; }; break;
 			case "BT":
-				oFilter.fnTest = function(value) { return (fnCompare(value, oValue1) >= 0) && (fnCompare(value, oValue2) <= 0); }; break;
-			case "Contains":
+				oFilter.fnTest = fnBetween; break;
+			case "NB":
 				oFilter.fnTest = function(value) {
-					if (value == null) {
-						return false;
-					}
-					if (typeof value != "string") {
-						throw new Error("Only \"String\" values are supported for the FilterOperator: \"Contains\".");
-					}
-					return value.indexOf(oValue1) != -1;
+					return !fnBetween(value);
+				};
+				break;
+			case "Contains":
+				oFilter.fnTest = fnContains; break;
+			case "NotContains":
+				oFilter.fnTest = function (value) {
+					return !fnContains(value);
 				};
 				break;
 			case "StartsWith":
+				oFilter.fnTest = fnStartsWith; break;
+			case "NotStartsWith":
 				oFilter.fnTest = function(value) {
-					if (value == null) {
-						return false;
-					}
-					if (typeof value != "string") {
-						throw new Error("Only \"String\" values are supported for the FilterOperator: \"StartsWith\".");
-					}
-					return value.indexOf(oValue1) == 0;
+					return !fnStartsWith(value);
 				};
 				break;
 			case "EndsWith":
+				oFilter.fnTest = fnEndsWith; break;
+			case "NotEndsWith":
 				oFilter.fnTest = function(value) {
-					if (value == null) {
-						return false;
-					}
-					if (typeof value != "string") {
-						throw new Error("Only \"String\" values are supported for the FilterOperator: \"EndsWith\".");
-					}
-					var iPos = value.lastIndexOf(oValue1);
-					if (iPos == -1) {
-						return false;
-					}
-					return iPos == value.length - new String(oFilter.oValue1).length;
+					return !fnEndsWith(value);
 				};
 				break;
 			default:
