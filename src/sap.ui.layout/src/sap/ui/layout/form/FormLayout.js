@@ -387,7 +387,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormLayoutRend
 			iCurrentIndex = iCurrentIndex - 1;
 		}
 
-		if (oNewDomRef) {
+		if (oNewDomRef && oNewDomRef !== oControl.getFocusDomRef()) {
 			oNewDomRef.focus();
 			oEvent.preventDefault(); // to avoid moving cursor in next field
 		}
@@ -569,13 +569,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormLayoutRend
 	};
 
 	FormLayout.prototype.findFirstFieldOfForm = function(oForm){
-		var aContainers = oForm.getFormContainers();
-		var oNewDomRef;
-		var oContainer = aContainers[0];
-		if (!oContainer.getExpandable() || oContainer.getExpanded()) {
-			oNewDomRef = this.findFirstFieldOfNextElement(oContainer, 0);
-		}
 
+		var oNewDomRef = this.findFirstFieldOfFirstElementInNextContainer(oForm, 0);
 		return oNewDomRef;
 
 	};
@@ -585,7 +580,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormLayoutRend
 		var aContainers = oForm.getFormContainers();
 		var iCurrentIndex = aContainers.length;
 		// goto previous container
-		while (!oNewDomRef && iCurrentIndex >= 0) {
+		while (!oNewDomRef && iCurrentIndex > 0) {
 			var oPrevContainer = aContainers[iCurrentIndex - 1];
 			if (!oPrevContainer.getExpandable() || oPrevContainer.getExpanded()) {
 				oNewDomRef = this.findFirstFieldOfFirstElementInPrevContainer(oForm, iCurrentIndex - 1);
