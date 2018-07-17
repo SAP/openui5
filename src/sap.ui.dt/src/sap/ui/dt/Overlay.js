@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/dt/Util',
 	'sap/base/Log'
 ],
-function(
+function (
 	jQuery,
 	Element,
 	MutationObserver,

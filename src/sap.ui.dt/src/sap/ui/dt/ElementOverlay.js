@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.ElementOverlay.
 sap.ui.define([
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/ControlObserver',
@@ -19,7 +18,7 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge"
 ],
-function(
+function (
 	Overlay,
 	ControlObserver,
 	ManagedObjectObserver,
@@ -628,21 +627,18 @@ function(
 	/**
 	 * Sets whether the ElementOverlay is selected and toggles corresponding css class
 	 * @param {boolean} bSelected if the ElementOverlay is selected
-	 * @param {boolean} bSuppressEvent (internal use only) suppress firing "selectionChange" event
 	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
-	ElementOverlay.prototype.setSelected = function(bSelected, bSuppressEvent) {
+	ElementOverlay.prototype.setSelected = function (bSelected) {
 		bSelected = !!bSelected;
 		if (this.isSelectable() && bSelected !== this.isSelected()) {
 			this.setProperty("selected", bSelected);
 			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
 
-			if (!bSuppressEvent) {
-				this.fireSelectionChange({
-					selected : bSelected
-				});
-			}
+			this.fireSelectionChange({
+				selected : bSelected
+			});
 		}
 
 		return this;
@@ -764,7 +760,7 @@ function(
 	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
-	ElementOverlay.prototype._onDomChanged = function(oEvent) {
+	ElementOverlay.prototype._onDomChanged = function () {
 		// FIXME: instead of checking isReady subscribe on DOM changes when overlay is ready
 		if (this.isReady() && this.isRoot()) {
 			if (this._iApplyStylesRequest) {
