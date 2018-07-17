@@ -9,8 +9,9 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/Device',
-	"./ResponsiveFlowLayoutRenderer",
-	"sap/ui/thirdparty/jquery"
+	'./ResponsiveFlowLayoutRenderer',
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
 ],
 	function(
 		Control,
