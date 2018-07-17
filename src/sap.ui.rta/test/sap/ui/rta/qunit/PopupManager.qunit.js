@@ -2,8 +2,6 @@
 
 QUnit.config.autostart = false;
 sap.ui.require([
-	"sap/ui/fl/FakeLrepLocalStorage",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/util/PopupManager",
@@ -25,8 +23,6 @@ sap.ui.require([
 	"sap/ui/thirdparty/sinon-qunit"
 ],
 function(
-	FakeLrepLocalStorage,
-	FakeLrepConnectorLocalStorage,
 	DesignTime,
 	RuntimeAuthoring,
 	PopupManager,
@@ -50,7 +46,6 @@ function(
 
 	var sandbox;
 	var oView, oApp;
-	FakeLrepConnectorLocalStorage.enableFakeConnector();
 	var oMockComponent = UIComponent.extend("MockController", {
 		metadata: {
 			manifest: 	{
@@ -90,14 +85,12 @@ function(
 	QUnit.module("Given RTA instance is created without starting", {
 		beforeEach : function(assert) {
 			sandbox = sinon.sandbox.create();
-			FakeLrepLocalStorage.deleteChanges();
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
 			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
 		},
 		afterEach : function() {
-			FakeLrepLocalStorage.deleteChanges();
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -117,7 +110,6 @@ function(
 		beforeEach : function(assert) {
 			var fnDone = assert.async();
 			sandbox = sinon.sandbox.create();
-			FakeLrepLocalStorage.deleteChanges();
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
@@ -181,7 +173,6 @@ function(
 				this.oPopover.destroy();
 			}
 			delete this.oOriginalInstanceManager;
-			FakeLrepLocalStorage.deleteChanges();
 			sandbox.restore();
 		}
 	});
@@ -473,7 +464,6 @@ function(
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach : function(assert) {
 			sandbox = sinon.sandbox.create();
-			FakeLrepLocalStorage.deleteChanges();
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
@@ -502,7 +492,6 @@ function(
 		afterEach : function() {
 			sandbox.restore();
 			this.oRta.destroy();
-			FakeLrepLocalStorage.deleteChanges();
 			if (this.oDialog) {
 				this.oDialog.destroy();
 			}
@@ -566,7 +555,6 @@ function(
 	//Dialog open -> RTA started
 	QUnit.module("Given that a dialog is open and then RTA is started", {
 		beforeEach : function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
 			this.oDialog = new Dialog("testDialog");
 			oView.addDependent(this.oDialog);
 			this.oButton = new Button("testbutton", {
@@ -583,7 +571,6 @@ function(
 			});
 		},
 		afterEach : function() {
-			FakeLrepLocalStorage.deleteChanges();
 			if (this.oDialog) {
 				this.oDialog.destroy();
 			}
@@ -645,7 +632,6 @@ function(
 			}.bind(this));
 		},
 		afterEach: function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
 			if (this.oRta) {
 				this.oRta.destroy();
 			}
@@ -683,7 +669,6 @@ function(
 			}.bind(this));
 		},
 		afterEach: function (assert) {
-			FakeLrepLocalStorage.deleteChanges();
 			if (this.oRta) {
 				this.oRta.destroy();
 			}

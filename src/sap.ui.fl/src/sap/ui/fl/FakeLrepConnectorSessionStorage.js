@@ -4,13 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorStorage",
-	"sap/ui/fl/FakeLrepLocalStorage"
+	"sap/ui/fl/FakeLrepSessionStorage"
 ],
 function(
 	FakeLrepConnectorStorage,
-	FakeLrepLocalStorage
+	FakeLrepSessionStorage
 ) {
 	"use strict";
 
-	return FakeLrepConnectorStorage(FakeLrepLocalStorage);
+	return FakeLrepConnectorStorage(FakeLrepSessionStorage);
 }, /* bExport= */ true);

@@ -7,7 +7,6 @@ sap.ui.require([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	'sap/ui/fl/FlexControllerFactory',
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
@@ -18,7 +17,6 @@ sap.ui.require([
 	VariantModel,
 	ChangeRegistry,
 	Utils,
-	FakeLrepConnectorLocalStorage,
 	FlexControllerFactory,
 	Manifest,
 	UIComponent,
@@ -26,13 +24,12 @@ sap.ui.require([
 	ControlPersonalizationAPI
 ) {
 	"use strict";
-//	sinon.config.useFakeTimers = false;
+
 	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
 	var oView, oApp;
-	FakeLrepConnectorLocalStorage.enableFakeConnector();
 
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach : function(assert) {

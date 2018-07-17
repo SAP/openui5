@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/rta/test/SmartLinkUtil",
 	"sap/ui/rta/util/UrlParser",
 	"sap/ui/core/CustomData"
-], function(
+], function (
 	UIComponent,
 	FakeLrepConnectorLocalStorage,
 	SmartLinkUtil,

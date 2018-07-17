@@ -9,8 +9,8 @@ sap.ui.require([
 	'sap/ui/rta/command/LREPSerializer',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/Settings',
-	'sap/ui/fl/FakeLrepLocalStorage',
-	'sap/ui/fl/FakeLrepConnectorLocalStorage',
+	'sap/ui/fl/FakeLrepSessionStorage',
+	'sap/ui/fl/FakeLrepConnectorSessionStorage',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
@@ -29,8 +29,8 @@ sap.ui.require([
 	CommandSerializer,
 	CommandStack,
 	Settings,
-	FakeLrepLocalStorage,
-	FakeLrepConnectorLocalStorage,
+	FakeLrepSessionStorage,
+	FakeLrepConnectorSessionStorage,
 	ChangeRegistry,
 	RtaQunitUtils,
 	DescriptorInlineChangeFactory,
@@ -84,7 +84,7 @@ sap.ui.require([
 	};
 	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-	FakeLrepConnectorLocalStorage.enableFakeConnector();
+	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 	var oData = {
 		"variantMgmtId1": {
@@ -115,8 +115,8 @@ sap.ui.require([
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		beforeEach : function(assert) {
 			// Prepare fake LRep
-			FakeLrepLocalStorage.deleteChanges();
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+			FakeLrepSessionStorage.deleteChanges();
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
@@ -159,7 +159,7 @@ sap.ui.require([
 				this.oSerializer.destroy();
 				this.oPanel.destroy();
 				this.oInputDesignTimeMetadata.destroy();
-				FakeLrepLocalStorage.deleteChanges();
+				FakeLrepSessionStorage.deleteChanges();
 				sandbox.restore();
 			}.bind(this));
 		}
@@ -822,8 +822,8 @@ sap.ui.require([
 	QUnit.module("Given a command serializer loaded with an RTA command stack and ctrl variant commands", {
 		beforeEach : function(assert) {
 			// Prepare fake LRep
-			FakeLrepLocalStorage.deleteChanges();
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+			FakeLrepSessionStorage.deleteChanges();
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 
 			// Create command stack
 			this.oCommandStack = new CommandStack();
@@ -863,7 +863,7 @@ sap.ui.require([
 			this.oSerializer.destroy();
 			this.oVariantManagement.destroy();
 			this.oDesignTimeMetadata.destroy();
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
 		}
 	});
