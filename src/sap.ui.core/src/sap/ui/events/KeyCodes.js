@@ -11,7 +11,6 @@ sap.ui.define([], function() {
 	/**
 	 * @exports sap/ui/events/KeyCodes
 	 * @enum {Number}
-	 * @public since 1.58
 	 */
 	var mKeyCodes = {
 
