@@ -2161,7 +2161,6 @@ sap.ui.define([
 	/**
 	 * Creates valid odata filter strings for the application filters, given in "this.aApplicationFilters".
 	 * Also sets the created filter-string to "this.sFilterParams".
-	 * Filters will be ANDed and ORed by the ODataUtils.
 	 * @returns {string} the concatenated OData filters
 	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
@@ -2171,7 +2170,8 @@ sap.ui.define([
 			if (this.aApplicationFilters.length > 0 && !this.sFilterParams) {
 				oGroupedFilter = FilterProcessor.groupFilters(this.aApplicationFilters);
 				this.sFilterParams = ODataUtils._createFilterParams(oGroupedFilter, this.oModel.oMetadata, this.oEntityType);
-				this.sFilterParams = this.sFilterParams ? this.sFilterParams : "";
+				// Add a bracket around filter params, as they will be combined with tree specific filters
+				this.sFilterParams = this.sFilterParams ? "(" + this.sFilterParams + ")" : "";
 			}
 		} else {
 			this.sFilterParams = "";
