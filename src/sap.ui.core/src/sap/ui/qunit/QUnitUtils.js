@@ -21,7 +21,8 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	"sap/base/strings/camelize",
 	"sap/base/strings/capitalize",
 	"sap/base/util/UriParameters",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
 		jQuery,

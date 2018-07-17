@@ -21,7 +21,10 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
-	"sap/ui/events/isMouseEventDelayed"
+	"sap/ui/events/isMouseEventDelayed",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
 ], function(
 	Device,
 	ManagedObject,

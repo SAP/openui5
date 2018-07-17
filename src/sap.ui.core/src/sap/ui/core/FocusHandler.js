@@ -7,7 +7,8 @@ sap.ui.define([
 	'../Device',
 	'../base/Object',
 	"sap/ui/dom/containsOrEquals",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(Device, BaseObject, containsOrEquals, Log) {
 	"use strict";

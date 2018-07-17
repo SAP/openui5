@@ -3,7 +3,16 @@
  */
 
 // Provides a (modifiable) list of properties for a given control
-sap.ui.define('sap/ui/debug/PropertyList', ['sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/base/util/ObjectPath', "sap/base/strings/capitalize", "sap/base/security/encodeXML"],
+sap.ui.define('sap/ui/debug/PropertyList', [
+	'sap/ui/base/DataType',
+	'sap/ui/base/EventProvider',
+	'sap/ui/core/Element',
+	'sap/ui/core/ElementMetadata',
+	'sap/base/util/ObjectPath',
+	"sap/base/strings/capitalize",
+	"sap/base/security/encodeXML",
+	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
+],
 	function(
 		DataType,
 		EventProvider,

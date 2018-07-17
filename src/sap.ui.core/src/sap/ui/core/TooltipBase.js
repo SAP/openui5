@@ -3,7 +3,13 @@
  */
 
 // Provides control sap.ui.core.TooltipBase.
-sap.ui.define(['./Control', './Popup', './library', "sap/ui/events/KeyCodes"],
+sap.ui.define([
+	'./Control',
+	'./Popup',
+	'./library',
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+],
 	function(Control, Popup, library, KeyCodes) {
 	"use strict";
 
