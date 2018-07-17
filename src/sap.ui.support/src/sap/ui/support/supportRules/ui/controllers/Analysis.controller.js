@@ -273,17 +273,22 @@ sap.ui.define([
 				this.oJsonModel = new JSONModel();
 				this.treeTable.setModel(this.oJsonModel, "treeModel");
 				this.oJsonModel.setData(oTreeViewModelRules);
+				var bPersistSettings = this.model.getProperty("/persistingSettings"),
+					bLoadingAdditionalRuleSets =  this.model.getProperty("/loadingAdditionalRuleSets");
 
+
+				if (bLoadingAdditionalRuleSets) {
+					//Keep selection when additional rulesets are loaded
+					oTreeViewModelRules = SelectionUtils._syncSelectionAdditionalRuleSetsMainModel(oTreeViewModelRules, this.model.getProperty("/treeModel"));
+					oTreeViewModelRules = SelectionUtils._deselectAdditionalRuleSets(oTreeViewModelRules, this.model.getProperty("/namesOfLoadedAdditionalRuleSets"));
+				}
 				//Keep selection when additional  ruleset are loaded
-				if (this.model.getProperty("/loadingAdditionalRuleSets") && !this.model.getProperty("/persistingSettings")) {
-					 oTreeViewModelRules = this.model.getProperty("/treeModel");
-					this.oJsonModel.setData(oTreeViewModelRules);
-					this.treeTable.updateSelectionFromModel();
-					this.model.setProperty("/loadingAdditionalRuleSets", false);
+				if (bPersistSettings) {
+					//Selection should be applied from local storage
+					oTreeViewModelRules = SelectionUtils.updateSelectedRulesFromLocalStorage(oTreeViewModelRules);
 				}
 
-				if (this.model.getProperty("/persistingSettings")) {
-					oTreeViewModelRules = SelectionUtils.updateSelectedRulesFromLocalStorage(oTreeViewModelRules);
+				if (bPersistSettings || bLoadingAdditionalRuleSets) {
 					this.oJsonModel.setData(oTreeViewModelRules);
 					this.treeTable.updateSelectionFromModel();
 				} else {
@@ -771,6 +776,7 @@ sap.ui.define([
 				});
 				this.model.setProperty("/availableLibrariesSet", aAvailableRulesets);
 
+				this.model.setProperty("/namesOfLoadedAdditionalRuleSets", aLibNames);
 				CommunicationBus.publish(channelNames.LOAD_RULESETS, {
 					aLibNames: { publicRules: aLibNames, internalRules: aLibNames }
 				});
