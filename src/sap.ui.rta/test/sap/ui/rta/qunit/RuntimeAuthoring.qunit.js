@@ -218,17 +218,27 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when RTA is started in the user layer", function(assert) {
+		QUnit.test("when RTA is started and stopped in the user layer", function(assert) {
+			var done = assert.async();
 			var oFlexController = this.oRta._getFlexController();
 			sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([this.oUserChange]));
 			this.oRta.setFlexSettings({layer: "USER"});
+			var oReloadSpy = sandbox.spy(this.oRta, "_handleReloadOnExit");
 
-			return this.oRta.start()
+			this.oRta.attachStop(function() {
+				assert.ok(oReloadSpy.notCalled, "the reload check was skipped");
+				done();
+			});
+
+			this.oRta.start()
 			.then(function() {
 				assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Restore Button is visible");
 				assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
 				assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the Exit Button is visible");
 				assert.equal(this.oRta.getToolbar().getControl('exit').getEnabled(), true, "then the Exit Button is enabled");
+			}.bind(this))
+			.then(function() {
+				this.oRta.getToolbar().getControl("exit").firePress();
 			}.bind(this));
 		});
 

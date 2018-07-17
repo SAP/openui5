@@ -924,7 +924,7 @@ sap.ui.define([
 				this.addDependent(new fnConstructor({
 					textResources: this._getTextResources(),
 					//events
-					exit: this.stop.bind(this, false, false),
+					exit: this.stop.bind(this, false, true),
 					restore: this._onRestore.bind(this)
 				}), 'toolbar');
 			} else {
