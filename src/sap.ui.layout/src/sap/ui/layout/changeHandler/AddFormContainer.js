@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
-], function(FlexUtils, Base, JsControlTreeModifier) {
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/thirdparty/jquery"
+], function(FlexUtils, Base, JsControlTreeModifier, jQuery) {
 		"use strict";
 
 		/*

@@ -18,7 +18,8 @@ sap.ui.define([
 	'./ColumnMenu',
 	'sap/base/util/ObjectPath',
 	"sap/base/util/JSTokenizer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	Element,
@@ -35,7 +36,8 @@ function(
 	ColumnMenu,
 	ObjectPath,
 	JSTokenizer,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -687,7 +689,7 @@ function(
 
 				// reset the sorting status of all columns which are not sorted anymore
 				for (var i = 0, l = aColumns.length; i < l; i++) {
-					if (jQuery.inArray(aColumns[i], aSortedCols) < 0) {
+					if (aSortedCols.indexOf(aColumns[i]) < 0) {
 						// column is not sorted anymore -> reset default and remove sorter
 						aColumns[i].setProperty("sorted", false, true);
 						aColumns[i].setProperty("sortOrder", SortOrder.Ascending, true);

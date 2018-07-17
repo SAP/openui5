@@ -10,9 +10,12 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Popup",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
-], function(library, TableExtension, TableUtils, Device, Popup, Log) {
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
+], function(library, TableExtension, TableUtils, Device, Popup, Log, jQuery) {
 	"use strict";
 
 	// shortcuts

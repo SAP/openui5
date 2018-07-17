@@ -13,7 +13,8 @@ sap.ui.define([
 	'./FormContainer',
 	'./FormElement',
 	'./FormLayout',
-	'./ResponsiveGridLayoutRenderer'
+	'./ResponsiveGridLayoutRenderer',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	ResizeHandler,
@@ -24,7 +25,8 @@ sap.ui.define([
 	FormContainer,
 	FormElement,
 	FormLayout,
-	ResponsiveGridLayoutRenderer
+	ResponsiveGridLayoutRenderer,
+	jQuery
 ) {
 	"use strict";
 

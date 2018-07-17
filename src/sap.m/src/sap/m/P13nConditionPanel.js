@@ -36,11 +36,44 @@ sap.ui.define([
 	'./DatePicker',
 	'./TimePicker',
 	'./DateTimePicker',
-	"sap/base/Log"
-], function(library, coreLibrary, Control, DateFormat, NumberFormat, IconPool, Device, InvisibleText, ResizeHandler, Item,
-	ListItem, BooleanOdataType, StringType, StringOdataType, DateType, TimeType, DateTimeOdataType, DoubleOdataType, Button,
-	OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, Text, SearchField, CheckBox, ComboBox, Select, Label, Input,
-	DatePicker, TimePicker, DateTimePicker, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(
+	library,
+	coreLibrary,
+	Control,
+	DateFormat,
+	NumberFormat,
+	IconPool,
+	Device,
+	InvisibleText,
+	ResizeHandler,
+	Item,
+	ListItem,
+	BooleanOdataType,
+	StringType,
+	StringOdataType,
+	DateType,
+	TimeType,
+	DateTimeOdataType,
+	DoubleOdataType,
+	Button,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	ToolbarSpacer,
+	Text,
+	SearchField,
+	CheckBox,
+	ComboBox,
+	Select,
+	Label,
+	Input,
+	DatePicker,
+	TimePicker,
+	DateTimePicker,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState

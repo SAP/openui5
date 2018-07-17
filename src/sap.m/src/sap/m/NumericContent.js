@@ -8,20 +8,10 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/m/Image',
 	'./NumericContentRenderer',
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual"
 ],
-	function(
-		library,
-		Control,
-		IconPool,
-		Image,
-		NumericContentRenderer,
-		jQueryDOM,
-		KeyCodes,
-		deepEqual
-	) {
+	function(library, Control, IconPool, Image, NumericContentRenderer, KeyCodes, deepEqual) {
 	"use strict";
 
 	/**
@@ -144,7 +134,7 @@ sap.ui.define([
 		this.$().bind("mouseleave", this._removeTooltip.bind(this));
 
 		if (library.LoadState.Loaded == this.getState() || this.getAnimateTextChange()) {
-			jQueryDOM(document.getElementById(this.getId())).animate({
+			jQuery(document.getElementById(this.getId())).animate({
 				opacity : "1"
 			}, 1000);
 		}

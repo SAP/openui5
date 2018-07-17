@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['./InstanceManager', 'sap/ui/core/Popup', 'sap/ui/core/library', 'sap/ui/core/Control', 'sap/ui/Device', "sap/base/Log"],
-	function(InstanceManager, Popup, coreLibrary, Control, Device, Log) {
+sap.ui.define([
+	'./InstanceManager',
+	'sap/ui/core/Popup',
+	'sap/ui/core/library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(InstanceManager, Popup, coreLibrary, Control, Device, Log, jQuery) {
 		"use strict";
 
 		// shortcut for sap.ui.core.Dock

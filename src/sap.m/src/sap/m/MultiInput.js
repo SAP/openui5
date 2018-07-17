@@ -23,8 +23,11 @@ sap.ui.define([
 	'./MultiInputRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
 function(
 	Input,
@@ -45,7 +48,8 @@ function(
 	IconPool,
 	MultiInputRenderer,
 	containsOrEquals,
-	KeyCodes
+	KeyCodes,
+	jQuery
 ) {
 		"use strict";
 

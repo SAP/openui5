@@ -3,8 +3,17 @@
  */
 
 // Provides control sap.ui.table.ColumnMenu.
-sap.ui.define(['./library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/unified/MenuTextFieldItem', 'sap/ui/Device', './TableUtils', "sap/base/assert"],
-	function(library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils, assert) {
+sap.ui.define([
+	'./library',
+	'sap/ui/unified/Menu',
+	'sap/ui/unified/MenuItem',
+	'sap/ui/unified/MenuTextFieldItem',
+	'sap/ui/Device',
+	'./TableUtils',
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
+],
+	function(library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils, assert, jQuery) {
 	"use strict";
 
 	/**

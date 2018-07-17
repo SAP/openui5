@@ -39,7 +39,7 @@ function(
 	Icon,
 	IconTabBarDragAndDropUtil,
 	IconTabHeaderRenderer,
-	jQueryDOM,
+	jQuery,
 	Log
 ) {
 	"use strict";
@@ -994,7 +994,7 @@ function(
 
 		if (oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
 
-			var iIndexOf = jQuery.inArray(oItem, aItems);
+			var iIndexOf = (aItems ? Array.prototype.indexOf.call(aItems, oItem) : -1);
 			aItems = this.getTabFilters();
 
 			iIndexOf = Math.max(0, Math.min(iIndexOf, aItems.length - 1));
@@ -1242,10 +1242,10 @@ function(
 			return;
 		}
 
-		var $sTargetId = jQueryDOM(document.getElementById(sTargetId));
+		var $sTargetId = jQuery(document.getElementById(sTargetId));
 		/*eslint-disable no-empty */
 		// TODO check better implementation
-		if (jQuery.inArray(this.$("content")[0], $sTargetId.parents()) > -1) {
+		if ($sTargetId.parents() && Array.prototype.indexOf.call($sTargetId.parents(), this.$("content")[0]) > -1) {
 		/*eslint-enable no-empty */
 			//do nothing because element is inside content
 		} else {

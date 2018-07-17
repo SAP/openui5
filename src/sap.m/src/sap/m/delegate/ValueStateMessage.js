@@ -17,7 +17,7 @@ sap.ui.define([
 		ValueStateSupport,
 		Popup,
 		coreLibrary,
-		jQueryDOM
+		jQuery
 	) {
 		"use strict";
 
@@ -177,7 +177,7 @@ sap.ui.define([
 
 			this._oPopup = new Popup(document.createElement("span"), false, false, false);
 			this._oPopup.attachClosed(function() {
-				jQueryDOM(document.getElementById(sID)).remove();
+				jQuery(document.getElementById(sID)).remove();
 			});
 
 			return this._oPopup;

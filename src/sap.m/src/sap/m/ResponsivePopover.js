@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/Device',
-	'./ResponsivePopoverRenderer'
+	'./ResponsivePopoverRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Dialog,
@@ -21,7 +22,8 @@ sap.ui.define([
 		IconPool,
 		ManagedObject,
 		Device,
-		ResponsivePopoverRenderer
+		ResponsivePopoverRenderer,
+		jQuery
 	) {
 	"use strict";
 
@@ -564,7 +566,7 @@ sap.ui.define([
 	ResponsivePopover.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate){
 		this._oldSetProperty(sPropertyName, oValue, true);
 		var sSetterName = "set" + this._firstLetterUpperCase(sPropertyName);
-		if (jQuery.inArray(sPropertyName, this._aNotSupportedProperties) === -1 &&
+		if (this._aNotSupportedProperties.indexOf(sPropertyName) === -1 &&
 			sSetterName in this._oControl) {
 			this._oControl[sSetterName](oValue);
 		}

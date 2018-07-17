@@ -3,8 +3,8 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.FormContainer control
-sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
-	function(ChangeHandlerMediator) {
+sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator', "sap/ui/thirdparty/jquery"],
+	function(ChangeHandlerMediator, jQuery) {
 	"use strict";
 
 	function _allFormElementsInvisible(oFormContainer){

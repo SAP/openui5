@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/unified/MenuItem',
 	'sap/ui/Device',
 	'sap/ui/core/EnabledPropagator',
-	'sap/ui/core/CustomData'
+	'sap/ui/core/CustomData',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		library,
@@ -31,7 +32,8 @@ sap.ui.define([
 		UfdMenuItem,
 		Device,
 		EnabledPropagator,
-		CustomData
+		CustomData,
+		jQuery
 	) {
 		"use strict";
 

@@ -2,7 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/semantic/SemanticOverflowToolbarButton'], function(SemanticControl, Button, SemanticOverflowToolbarButton) {
+sap.ui.define([
+	'sap/m/semantic/SemanticControl',
+	'sap/m/Button',
+	'sap/m/semantic/SemanticOverflowToolbarButton',
+	"sap/ui/thirdparty/jquery"
+], function(SemanticControl, Button, SemanticOverflowToolbarButton, jQuery) {
 	"use strict";
 
 	/**

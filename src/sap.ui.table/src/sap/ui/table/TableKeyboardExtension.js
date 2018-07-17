@@ -9,14 +9,16 @@ sap.ui.define([
 	"./TableUtils",
 	"./TableKeyboardDelegate2",
 	"sap/ui/Device",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	TableExtension,
 	ItemNavigation,
 	TableUtils,
 	TableKeyboardDelegate,
 	Device,
-	containsOrEquals
+	containsOrEquals,
+	jQuery
 ) {
 	"use strict";
 

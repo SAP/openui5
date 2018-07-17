@@ -21,8 +21,11 @@ sap.ui.define([
 	'sap/m/SelectListRenderer',
 	'./TabStripRenderer',
 	"sap/base/Log",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
-	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control",
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ],
 function(
 	Control,
@@ -42,8 +45,9 @@ function(
 	SelectRenderer,
 	SelectListRenderer,
 	TabStripRenderer,
-	Log
-	) {
+	Log,
+	jQuery
+) {
 		"use strict";
 
 		// shortcut for sap.m.SelectType

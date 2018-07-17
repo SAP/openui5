@@ -175,7 +175,7 @@ sap.ui.define([
 			if (isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty();
-				if (oBinding && jQuery.inArray(sLeadingProperty, oBinding.getFilterablePropertyNames()) > -1) {
+				if (oBinding && oBinding.getFilterablePropertyNames() && oBinding.getFilterablePropertyNames().indexOf(sLeadingProperty) > -1) {
 					sProperty = sLeadingProperty;
 				}
 			}
@@ -193,7 +193,7 @@ sap.ui.define([
 			if (isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty();
-				if (oBinding && jQuery.inArray(sLeadingProperty, oBinding.getSortablePropertyNames()) > -1) {
+				if (oBinding && oBinding.getSortablePropertyNames() && oBinding.getSortablePropertyNames().indexOf(sLeadingProperty) > -1) {
 					sProperty = sLeadingProperty;
 				}
 			}
@@ -330,7 +330,7 @@ sap.ui.define([
 				// Although the generic OData providers (BW, SADL) do not support filtering measures, there may be specialized implementations that do support it.
 				// Conclusion for a fix therefore is to make sure that the AnalyticalTable solely checks sap:filterable=”false” for providing the filter function.
 				// Check for measure is hence removed. For more details, see BCP: 1770355530
-				if (jQuery.inArray(sFilterProperty, oBinding.getFilterablePropertyNames()) > -1 &&
+				if (oBinding.getFilterablePropertyNames() && oBinding.getFilterablePropertyNames().indexOf(sFilterProperty) > -1 &&
 					oBinding.getProperty(sFilterProperty)) {
 					return true;
 				}
@@ -361,8 +361,8 @@ sap.ui.define([
 			if (oBinding) {
 				var oResultSet = oBinding.getAnalyticalQueryResult();
 				if (oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())
-					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getSortablePropertyNames()) > -1
-					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getFilterablePropertyNames()) > -1) {
+					&& ((oBinding.getSortablePropertyNames() ? Array.prototype.indexOf.call(oBinding.getSortablePropertyNames(), this.getLeadingProperty()) : -1)) > -1
+					&& ((oBinding.getFilterablePropertyNames() ? Array.prototype.indexOf.call(oBinding.getFilterablePropertyNames(), this.getLeadingProperty()) : -1)) > -1) {
 					return true;
 				}
 			}

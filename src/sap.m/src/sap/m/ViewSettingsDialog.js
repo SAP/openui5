@@ -18,7 +18,9 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'./ViewSettingsDialogRenderer',
 	"sap/base/Log",
-	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
 ],
 function(
 	library,
@@ -34,7 +36,8 @@ function(
 	Device,
 	InvisibleText,
 	ViewSettingsDialogRenderer,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

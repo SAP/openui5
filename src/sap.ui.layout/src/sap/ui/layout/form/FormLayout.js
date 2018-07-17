@@ -7,9 +7,12 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/layout/library',
 	'./FormLayoutRenderer',
-	'sap/ui/dom/jquery/Selectors', // jQuery custom selectors ":sapFocusable"
-	'sap/ui/dom/jquery/control' // jQuery Plugin "control"
-], function(Control, library, FormLayoutRenderer) {
+	"sap/ui/thirdparty/jquery",
+	// jQuery custom selectors ":sapFocusable"
+	'sap/ui/dom/jquery/Selectors',
+	// jQuery Plugin "control"
+	'sap/ui/dom/jquery/control'
+], function(Control, library, FormLayoutRenderer, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign

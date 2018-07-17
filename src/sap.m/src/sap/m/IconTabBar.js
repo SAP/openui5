@@ -7,9 +7,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObject',
-	'./IconTabBarRenderer'
+	'./IconTabBarRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, ManagedObject, IconTabBarRenderer) {
+	function(library, Control, ManagedObject, IconTabBarRenderer, jQuery) {
 	"use strict";
 
 

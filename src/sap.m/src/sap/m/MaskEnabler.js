@@ -9,8 +9,10 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
-], function(Control, InputBase, Device, coreLibrary, KeyCodes, Log) {
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
+], function(Control, InputBase, Device, coreLibrary, KeyCodes, Log, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection

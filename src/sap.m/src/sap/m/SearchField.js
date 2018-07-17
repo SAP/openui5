@@ -12,7 +12,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./SearchFieldRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
 		library,
@@ -22,7 +24,8 @@ sap.ui.define([
 		Suggest,
 		Device,
 		SearchFieldRenderer,
-		KeyCodes
+		KeyCodes,
+		jQuery
 	) {
 	"use strict";
 

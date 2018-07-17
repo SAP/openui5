@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./ComboBoxBaseRenderer',
 	"sap/ui/dom/containsOrEquals",
-		"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Dialog,
@@ -36,7 +37,8 @@ sap.ui.define([
 		coreLibrary,
 		ComboBoxBaseRenderer,
 		containsOrEquals,
-		KeyCodes
+		KeyCodes,
+		jQuery
 	) {
 		"use strict";
 

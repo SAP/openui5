@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'sap/ui/Device',
 	'sap/ui/core/Locale',
-	'./TimePickerSlidersRenderer'
+	'./TimePickerSlidersRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		coreLibrary,
@@ -28,7 +29,8 @@ sap.ui.define([
 		LocaleData,
 		Device,
 		Locale,
-		TimePickerSlidersRenderer
+		TimePickerSlidersRenderer,
+		jQuery
 	) {
 		"use strict";
 

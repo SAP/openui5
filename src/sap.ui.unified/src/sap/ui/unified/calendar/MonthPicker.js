@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/unified/library',
 	'sap/ui/core/Locale',
-	"./MonthPickerRenderer"
+	"./MonthPickerRenderer",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	Device,
@@ -18,7 +19,8 @@ sap.ui.define([
 	ItemNavigation,
 	library,
 	Locale,
-	MonthPickerRenderer
+	MonthPickerRenderer,
+	jQuery
 ) {
 	"use strict";
 

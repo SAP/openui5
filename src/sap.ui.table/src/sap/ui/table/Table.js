@@ -48,7 +48,7 @@ sap.ui.define([
 		TableScrollExtension,
 		TableDragAndDropExtension,
 		TableRenderer,
-		jQueryDOM,
+		jQuery,
 		Log
 	) {
 	"use strict";
@@ -1608,7 +1608,7 @@ sap.ui.define([
 	 */
 	Table.prototype.applyFocusInfo = function(mFocusInfo) {
 		if (mFocusInfo && mFocusInfo.customId) {
-			jQueryDOM(document.getElementById(mFocusInfo.customId)).focus();
+			jQuery(document.getElementById(mFocusInfo.customId)).focus();
 		} else {
 			//TBD: should be applyFocusInfo but changing it breaks the unit tests
 			Element.prototype.getFocusInfo.apply(this, arguments);
@@ -1808,7 +1808,7 @@ sap.ui.define([
 			var aFilters = args[3];
 
 			// (sPath, [oSorter], [aFilters])
-			if (oTemplate instanceof Sorter || jQuery.isArray(oSorter) && oSorter[0] instanceof Filter) {
+			if (oTemplate instanceof Sorter || Array.isArray(oSorter) && oSorter[0] instanceof Filter) {
 				aFilters = oSorter;
 				oSorter = oTemplate;
 				oTemplate = undefined;
@@ -2431,7 +2431,7 @@ sap.ui.define([
 			oColumn = this.getColumns()[oColumn];
 		}
 
-		var iIndex = jQuery.inArray(oColumn, this._aSortedColumns);
+		var iIndex = this._aSortedColumns.indexOf(oColumn);
 		if (!this._bReorderInProcess && iIndex >= 0) {
 			this._aSortedColumns.splice(iIndex, 1);
 		}
@@ -2883,7 +2883,7 @@ sap.ui.define([
 			this._aSortedColumns = [];
 		}
 
-		if (jQuery.inArray(oColumn, this.getColumns()) >= 0) {
+		if (this.getColumns().indexOf(oColumn) >= 0) {
 			oColumn.sort(oSortOrder === SortOrder.Descending, bAdd);
 		}
 	};
@@ -2901,7 +2901,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.filter = function(oColumn, sValue) {
-		if (jQuery.inArray(oColumn, this.getColumns()) >= 0) {
+		if (this.getColumns().indexOf(oColumn) >= 0) {
 			oColumn.filter(sValue);
 		}
 	};
@@ -3157,7 +3157,7 @@ sap.ui.define([
 		if (oGroupByColumn instanceof Column && oGroupByColumn !== oOldGroupByColumn) {
 
 			// check for column being part of the columns aggregation
-			if (jQuery.inArray(oGroupByColumn, this.getColumns()) === -1) {
+			if (this.getColumns().indexOf(oGroupByColumn) === -1) {
 				throw new Error("Column has to be part of the columns aggregation!");
 			}
 

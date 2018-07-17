@@ -26,7 +26,7 @@ function(
 	coreLibrary,
 	Device,
 	DateTimeInputRenderer
-	) {
+) {
 	"use strict";
 
 	// shortcut for sap.m.DateTimeInputType
@@ -207,7 +207,7 @@ function(
 
 		var oi18n = library.getLocaleData();
 
-		$.extend(oPrototype, {
+		jQuery.extend(oPrototype, {
 			_types : {
 				Date : {
 					valueFormat : oi18n.getDatePattern("short"),

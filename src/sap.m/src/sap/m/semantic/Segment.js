@@ -59,7 +59,7 @@ sap.ui.define(['sap/ui/base/Metadata', "sap/base/Log"], function(Metadata, Log) 
 
 	Segment.prototype.indexOfContent = function (oControl) {
 
-		return jQuery.inArray( oControl, this._aContent );
+		return this._aContent.indexOf(oControl);
 	};
 
 	Segment.prototype.addContent = function (oControl, bSuppressInvalidate) {
@@ -97,7 +97,7 @@ sap.ui.define(['sap/ui/base/Metadata', "sap/base/Log"], function(Metadata, Log) 
 
 	Segment.prototype.removeContent = function (oControl, bSuppressInvalidate) {
 
-		var iLocalIndex = jQuery.inArray(oControl, this._aContent),
+		var iLocalIndex = this._aContent.indexOf(oControl),
 			sAggregationMethod  = "remove" + fnCapitalize(this._sContainerAggregationName);
 
 		if (iLocalIndex > -1) {

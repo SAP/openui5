@@ -29,7 +29,7 @@ sap.ui.define([
 	coreLibrary,
 	MenuRenderer,
 	containsOrEquals,
-	jQueryDOM,
+	jQuery,
 	KeyCodes,
 	Log,
 	ControlEvents,
@@ -825,7 +825,7 @@ sap.ui.define([
 				var that = this;
 				while (that && !isInMenuHierarchy) {
 					if ((that.oOpenedSubMenu && that.oOpenedSubMenu.getId() == oEvent.relatedControlId)
-							|| containsOrEquals(that.getDomRef(), jQueryDOM(document.getElementById(oEvent.relatedControlId)).get(0))) {
+							|| containsOrEquals(that.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0))) {
 						isInMenuHierarchy = true;
 					}
 					that = that.oOpenedSubMenu;
@@ -1035,7 +1035,7 @@ sap.ui.define([
 	Menu.prototype._bringToFront = function() {
 		// This is a hack. We "simulate" a mouse-down-event on the submenu so that it brings itself
 		// to the front.
-		jQueryDOM(document.getElementById(this.getPopup().getId())).mousedown();
+		jQuery(document.getElementById(this.getPopup().getId())).mousedown();
 	};
 
 	Menu.prototype.checkEnabled = function(oItem){

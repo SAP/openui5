@@ -10,7 +10,7 @@ sap.ui.define([
 	'./library',
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Element, Sorter, Device, library, jQueryDOM) {
+	function(Element, Sorter, Device, library, jQuery) {
 	"use strict";
 
 	/**
@@ -391,7 +391,7 @@ sap.ui.define([
 					.toggleClass("sapUiTableGroupHeader", bChildren)
 					.toggleClass("sapUiTableRowHidden", bChildren && bHidden || oRow._bHidden);
 
-				jQueryDOM(document.getElementById(oRow.getId() + "-groupHeader"))
+				jQuery(document.getElementById(oRow.getId() + "-groupHeader"))
 					.toggleClass("sapUiTableGroupIconOpen", bChildren && bExpanded)
 					.toggleClass("sapUiTableGroupIconClosed", bChildren && !bExpanded)
 					.attr("title", oTable._getShowStandardTooltips() && sGroupHeaderText ? sGroupHeaderText : null)

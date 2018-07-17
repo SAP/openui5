@@ -30,7 +30,7 @@ sap.ui.define([
 	ObjectPath,
 	CoreLibrary,
 	capitalize,
-	jQueryDOM,
+	jQuery,
 	assert,
 	Log,
 	defineLazyProperty,
@@ -3691,7 +3691,7 @@ sap.ui.define([
 		if (vElement instanceof Element) {
 			vElement = jQuery(vElement);
 		} else if (typeof vElement === "string") {
-			vElement = jQueryDOM(document.getElementById(vElement));
+			vElement = jQuery(document.getElementById(vElement));
 		} else if (!(vElement instanceof jQuery)) {
 			assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
 			return 0;

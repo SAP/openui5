@@ -3,9 +3,10 @@
  */
 
 sap.ui.define([
-		"sap/ui/fl/Utils",
-		"sap/ui/fl/changeHandler/ChangeHandlerMediator"
-	], function(Utils, ChangeHandlerMediator) {
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/changeHandler/ChangeHandlerMediator",
+	"sap/ui/thirdparty/jquery"
+], function(Utils, ChangeHandlerMediator, jQuery) {
 		"use strict";
 
 		/**

@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/library',
 	"./YearPickerRenderer",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	Device,
@@ -26,7 +27,8 @@ sap.ui.define([
 	DateFormat,
 	coreLibrary,
 	YearPickerRenderer,
-	KeyCodes
+	KeyCodes,
+	jQuery
 ) {
 	"use strict";
 

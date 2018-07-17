@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.VisibleItem.
-sap.ui.define(['./library', 'sap/ui/core/Item'],
-	function(library, Item) {
+sap.ui.define(['./library', 'sap/ui/core/Item', "sap/ui/thirdparty/jquery"],
+	function(library, Item, jQuery) {
 		"use strict";
 
 

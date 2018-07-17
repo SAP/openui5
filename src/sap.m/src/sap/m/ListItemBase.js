@@ -16,7 +16,9 @@ sap.ui.define([
 	"./RadioButton",
 	"./ListItemBaseRenderer",
 	"sap/base/strings/capitalize",
-	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable", ":sapFocusable"
+	"sap/ui/thirdparty/jquery",
+	// jQuery custom selectors ":sapTabbable", ":sapFocusable"
+	"sap/ui/dom/jquery/Selectors"
 ],
 function(
 	KeyCodes,
@@ -30,7 +32,8 @@ function(
 	CheckBox,
 	RadioButton,
 	ListItemBaseRenderer,
-	capitalize
+	capitalize,
+	jQuery
 ) {
 	"use strict";
 

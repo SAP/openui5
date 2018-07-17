@@ -9,9 +9,11 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/Item',
 	'./SelectListRenderer',
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
-	function(library, Control, ItemNavigation, Item, SelectListRenderer) {
+	function(library, Control, ItemNavigation, Item, SelectListRenderer, jQuery) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -950,7 +952,7 @@ sap.ui.define([
 			return this;
 		};
 
-		SelectList.prototype.setNoDataText = jQuery.noop;
+		SelectList.prototype.setNoDataText = function() {};
 
 		return SelectList;
 	});

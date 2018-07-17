@@ -22,8 +22,11 @@ sap.ui.define([
 	'./TitlePropagationSupport',
 	'./DialogRenderer',
 	"sap/base/Log",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
-	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control",
+	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
 ],
 function(
 	Bar,
@@ -43,8 +46,9 @@ function(
 	coreLibrary,
 	TitlePropagationSupport,
 	DialogRenderer,
-	Log
-	) {
+	Log,
+	jQuery
+) {
 		"use strict";
 
 		// shortcut for sap.ui.core.OpenState

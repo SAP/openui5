@@ -12,10 +12,15 @@ sap.ui.define([
 	'./HeaderContainerRenderer',
 	"sap/base/Log",
 	"sap/ui/events/PseudoEvents",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
-	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
-	"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
-	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control",
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL",
+	// jQuery Plugin "scrollRightRTL"
+	"sap/ui/dom/jquery/scrollRightRTL",
+	// jQuery custom selectors ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ],
 function(
 	library,
@@ -27,7 +32,8 @@ function(
 	Icon,
 	HeaderContainerRenderer,
 	Log,
-	PseudoEvents
+	PseudoEvents,
+	jQuery
 ) {
 		"use strict";
 
@@ -818,7 +824,7 @@ function(
 		HeaderContainer.prototype._unWrapHeaderContainerItemContainer = function (wrapped) {
 			if (wrapped instanceof HeaderContainerItemContainer) {
 				wrapped = wrapped.getItem();
-			} else if (jQuery.isArray(wrapped)) {
+			} else if (Array.isArray(wrapped)) {
 				for (var i = 0; i < wrapped.length; i++) {
 					if (wrapped[i] instanceof HeaderContainerItemContainer) {
 						wrapped[i] = wrapped[i].getItem();
@@ -836,9 +842,9 @@ function(
 				var oContent = args[2];
 				args[1] = "content";
 				if (oContent instanceof Control) {
-					if (jQuery.inArray(sFunctionName, HeaderContainer._AGGREGATION_FUNCTIONS) > -1 && oContent.getParent() instanceof HeaderContainerItemContainer) {
+					if (((HeaderContainer._AGGREGATION_FUNCTIONS ? Array.prototype.indexOf.call(HeaderContainer._AGGREGATION_FUNCTIONS, sFunctionName) : -1)) > -1 && oContent.getParent() instanceof HeaderContainerItemContainer) {
 						args[2] = oContent.getParent();
-					} else if (jQuery.inArray(sFunctionName, HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT) > -1) {
+					} else if (((HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT ? Array.prototype.indexOf.call(HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT, sFunctionName) : -1)) > -1) {
 						args[2] = new HeaderContainerItemContainer({
 							item: oContent
 						});

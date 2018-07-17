@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"./ColorPickerRenderer",
 	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Global"
 ], function(
 	Library,
@@ -35,7 +36,8 @@ sap.ui.define([
 	Device,
 	coreLibrary,
 	ColorPickerRenderer,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -1026,7 +1028,7 @@ sap.ui.define([
 	 * depending on the current control mode.
 	 * @private
 	 */
-	ColorPicker.prototype._processChanges = jQuery.noop;
+	ColorPicker.prototype._processChanges = function() {};
 
 	/**
 	 * Setter for <code>mode</code> property.

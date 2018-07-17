@@ -13,7 +13,9 @@ sap.ui.define([
 	'./ShellLayoutRenderer',
 	'sap/ui/dom/containsOrEquals',
 	'sap/base/Log',
-	'sap/ui/dom/jquery/Focusable' // jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "firstFocusableDomRef"
+	'sap/ui/dom/jquery/Focusable'
 ], function(
 	Device,
 	Control,
@@ -23,7 +25,8 @@ sap.ui.define([
 	library,
 	ShellLayoutRenderer,
 	containsOrEquals,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

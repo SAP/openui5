@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/base/ManagedObject",
 	"./MessageViewRenderer",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/base/security/URLWhitelist"
@@ -52,7 +51,6 @@ sap.ui.define([
 	coreLibrary,
 	ManagedObject,
 	MessageViewRenderer,
-	jQueryDOM,
 	KeyCodes,
 	Log,
 	URLWhitelist
@@ -1066,7 +1064,7 @@ sap.ui.define([
 				oValidation
 					.then(function (result) {
 						// Update link in output
-						var $link = jQueryDOM(document.getElementById("sap-ui-" + that.getId() + "-link-under-validation-" + result.id));
+						var $link = jQuery(document.getElementById("sap-ui-" + that.getId() + "-link-under-validation-" + result.id));
 
 						if (result.allowed) {
 							Log.info("Allow link " + href);

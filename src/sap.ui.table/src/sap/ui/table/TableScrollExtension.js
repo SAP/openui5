@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./library",
 	"sap/ui/performance/trace/Interaction",
-	"sap/base/Log"
-], function(TableExtension, TableUtils, Device, library, Interaction, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(TableExtension, TableUtils, Device, library, Interaction, Log, jQuery) {
 	"use strict";
 
 	// Shortcuts
