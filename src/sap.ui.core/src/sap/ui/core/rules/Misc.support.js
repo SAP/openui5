@@ -4,9 +4,16 @@
 /**
  * Defines miscellaneous support rules.
  */
-sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/base/Log" ],
-	function(SupportLib, CoreHelper, Log) {
+sap.ui.define(["sap/ui/support/library", "./CoreHelper.support"],
+	function(SupportLib, CoreHelper) {
 	"use strict";
+
+	// support rules can get loaded within a ui5 version which does not have module "sap/base/Log" yet
+	// therefore load the jQuery.sap.log fallback if not available
+	var Log = sap.ui.require("sap/base/Log");
+	if (!Log) {
+		Log = jQuery.sap.log;
+	}
 
 	// shortcuts
 	var Categories = SupportLib.Categories; // Accessibility, Performance, Memory, ...
