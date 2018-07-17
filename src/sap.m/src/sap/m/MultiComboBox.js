@@ -876,6 +876,9 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterOpen = function() {
+		var oDomRef = this.getFocusDomRef();
+
+		oDomRef && oDomRef.setAttribute("aria-expanded", "true");
 
 		// reset the initial focus back to the input
 		if (!this.isPlatformTablet()) {
@@ -900,7 +903,11 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterClose = function() {
-		var bUseCollapsed = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog();
+		var bUseCollapsed = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog(),
+			oDomRef = this.getFocusDomRef();
+
+		oDomRef && oDomRef.setAttribute("aria-expanded", "false");
+
 		// remove the active state of the MultiComboBox's field
 		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 

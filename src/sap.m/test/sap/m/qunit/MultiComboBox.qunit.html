@@ -3551,6 +3551,7 @@
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3594,6 +3595,7 @@
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3637,6 +3639,7 @@
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLA);
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3681,6 +3684,7 @@
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3725,6 +3729,7 @@
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 		// cleanup
@@ -3959,6 +3964,7 @@
 
 		// assertions
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 		assert.equal(oMultiComboBox.getFocusDomRef().id, document.activeElement.id, "Input field has focus");
 
 		// cleanup
@@ -4034,6 +4040,7 @@
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4064,6 +4071,7 @@
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		assert.ok(!oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must not have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 
 		// cleanup
 		oMultiComboBox.destroy();
