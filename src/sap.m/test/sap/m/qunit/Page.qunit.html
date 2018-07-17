@@ -575,6 +575,25 @@
 				});
 			});
 
+			QUnit.module("Title ID propagation");
+
+			QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
+				// Arrange
+				var oSpy = sinon.spy(sap.m.Page.prototype, "_initTitlePropagationSupport"),
+					oControl;
+
+				// Act
+				oControl = new sap.m.Page();
+
+				// Assert
+				assert.strictEqual(oSpy.callCount, 1, "Method _initTitlePropagationSupport called on init of control");
+				assert.ok(oSpy.calledOn(oControl), "The spy is called on the tested control instance");
+
+				// Cleanup
+				oSpy.restore();
+				oControl.destroy();
+			});
+
 		</script>
 
 	<style>

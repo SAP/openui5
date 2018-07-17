@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
+	"./TitlePropagationSupport",
 	"./PageRenderer",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -28,6 +29,7 @@ function(
 	coreLibrary,
 	Device,
 	Element,
+	TitlePropagationSupport,
 	PageRenderer,
 	jQueryDOM
 ) {
@@ -255,7 +257,16 @@ function(
 
 		ContextMenuSupport.apply(Page.prototype);
 
+		// Add title propagation support
+		TitlePropagationSupport.call(Page.prototype, "content", function () {
+			return this._headerTitle ? this._headerTitle.getId() : false;
+		});
+
 		Page.FOOTER_ANIMATION_DURATION = 350;
+
+		Page.prototype.init = function () {
+			this._initTitlePropagationSupport();
+		};
 
 		// Return true if scrolling is allowed
 		Page.prototype._hasScrolling = function () {
