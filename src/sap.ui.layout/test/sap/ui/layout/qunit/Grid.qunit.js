@@ -1,6 +1,9 @@
-/* global QUnit*/
+/* global QUnit, sinon */
 
-(function () {
+sap.ui.require([
+	"sap/ui/layout/Grid",
+	"sap/ui/layout/library"
+], function (Grid, Library) {
 	"use strict";
 
 	var oCore = sap.ui.getCore(),
@@ -300,4 +303,48 @@
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, 'Editable');
 		assert.ok(oInfo.children && oInfo.children.length === 7, 'Children'); // Only 7 children are visible, because 4 of them are hidden on L devices
 	});
-})();
+
+	QUnit.module("Overflow hidden library specific support");
+
+	QUnit.test("Library gridHelper is defined", function (assert) {
+		var oGridHelper = Library.GridHelper;
+		assert.ok(oGridHelper, "Grid helper is defined");
+		assert.strictEqual(typeof oGridHelper.getLibrarySpecificClass, "function",
+			"getLibrarySpecificClass function defined");
+		assert.strictEqual(oGridHelper.bFinal, true,
+			"GridHelper definition is final as in this test sap.m library is loaded");
+	});
+
+	QUnit.test("onBeforeRendering applying of class", function (assert) {
+		// Arrange
+		var oSpyMethod = sinon.spy(Library.GridHelper, "getLibrarySpecificClass"),
+			oSpyAddStyleClass = sinon.spy(Grid.prototype, "addStyleClass"),
+			fnOriginalLibrarySpecificClass,
+			oGrid;
+
+		// Act
+		oGrid = new Grid();
+
+		// Assert
+		assert.strictEqual(oSpyMethod.callCount, 1, "Method called once onBeforeRendering");
+		assert.strictEqual(oSpyAddStyleClass.callCount, 0, "AddStyleClass not called in mobile scenario");
+
+		// Arrange - mock getLibrarySpecificClass method for testing
+		fnOriginalLibrarySpecificClass = Library.GridHelper.getLibrarySpecificClass;
+		Library.GridHelper.getLibrarySpecificClass = function () {
+			return "testClassName";
+		};
+		oSpyAddStyleClass.reset();
+
+		// Act
+		oGrid = new Grid();
+
+		// Assert
+		assert.strictEqual(oSpyAddStyleClass.callCount, 1, "AddStyleClass method called - non-mobile scenario");
+		assert.ok(oSpyAddStyleClass.calledWithExactly("testClassName"), "addStyleClass called with returned class name");
+		assert.ok(oSpyAddStyleClass.calledOn(oGrid), "Spy called on the tested instance");
+
+		// Cleanup - restore mocked method
+		Library.GridHelper.getLibrarySpecificClass = fnOriginalLibrarySpecificClass;
+	});
+});
