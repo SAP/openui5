@@ -74,15 +74,21 @@
 
 				// check for an existing test page and check for test suite or page
 				jQuery.get(sTestPage).done(function(sData) {
-					if (/(window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/g.test(sData)) {
+					if (/(window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/g.test(sData) || /(data-sap-ui-qunit-suite)/g.test(sData)) {
 						var $frame = jQuery("<iframe>");
 						var that = this;
 						$frame.css("display", "none");
 						$frame.one("load", function() {
 							that.findTestPages(this, bSequential).then(function(aTestPages) {
+								jQuery(this).remove();
 								resolve(aTestPages);
-							});
-							jQuery(this).remove();
+							}.bind(this), function(oError) {
+								if (window.console && typeof window.console.error === "function") {
+									window.console.error("QUnit: failed to load page '" + sTestPage + "'");
+								}
+								jQuery(this).remove();
+								resolve([]);
+							}.bind(this));
 						});
 						$frame.attr("src", sTestPage);
 						$frame.appendTo(document.body);
@@ -110,62 +116,62 @@
 
 		findTestPages: function(oIFrame, bSequential) {
 
-			var oSuite = oIFrame.contentWindow.suite();
-			var aPages = oSuite.getTestPages() || [];
+			return Promise.resolve(oIFrame.contentWindow.suite()).then(function(oSuite) {
+				var aPages = oSuite && oSuite.getTestPages() || [];
+				return new Promise(function(resolve, reject) {
 
-			return new Promise(function(resolve, reject) {
+					try {
 
-				try {
+						if (aPages.length > 0) {
 
-					if (aPages.length > 0) {
+							var aTestPagePromises = [];
 
-						var aTestPagePromises = [];
+							if (bSequential) {
 
-						if (bSequential) {
+								var aTestPages = [];
+								aTestPagePromises.push(aPages.reduce(function(oPromise, sTestPage) {
+									return oPromise.then(this.checkTestPage.bind(this, sTestPage, bSequential)).then(function(aFoundTestPages) {
+										aTestPages = aTestPages.concat(aFoundTestPages);
+									});
+								}.bind(this), Promise.resolve([])).then(function() {
+									return aTestPages;
+								}));
 
-							var aTestPages = [];
-							aTestPagePromises.push(aPages.reduce(function(oPromise, sTestPage) {
-								return oPromise.then(this.checkTestPage.bind(this, sTestPage, bSequential)).then(function(aFoundTestPages) {
-									aTestPages = aTestPages.concat(aFoundTestPages);
-								});
-							}.bind(this), Promise.resolve([])).then(function() {
-								return aTestPages;
-							}));
+							} else {
 
-						} else {
+								for (var i = 0, l = aPages.length; i < l; i++) {
+									var sTestPage = aPages[i];
+									aTestPagePromises.push(this.checkTestPage(sTestPage, bSequential));
+								}
 
-							for (var i = 0, l = aPages.length; i < l; i++) {
-								var sTestPage = aPages[i];
-								aTestPagePromises.push(this.checkTestPage(sTestPage, bSequential));
 							}
 
-						}
+							if (aTestPagePromises.length > 0) {
+								Promise.all(aTestPagePromises).then(function(aFoundTestPages) {
+									var aTestPages = [];
+									for (var i = 0, l = aFoundTestPages.length; i < l; i++) {
+										aTestPages = aTestPages.concat(aFoundTestPages[i]);
+									}
+									resolve(aTestPages);
+								});
+							}
 
-						if (aTestPagePromises.length > 0) {
-							Promise.all(aTestPagePromises).then(function(aFoundTestPages) {
-								var aTestPages = [];
-								for (var i = 0, l = aFoundTestPages.length; i < l; i++) {
-									aTestPages = aTestPages.concat(aFoundTestPages[i]);
-								}
-								resolve(aTestPages);
-							});
-						}
-
-				} else {
-					resolve([]);
-				}
-
-				} catch (ex) {
-					if (window.console && typeof window.console.error === "function") {
-						window.console.error("QUnit: error while analyzing test page '" + oIFrame.src + "':\n" + ex);
-						if ( ex.stack ) {
-							window.console.error(ex.stack);
-						}
+					} else {
+						resolve([]);
 					}
-					resolve([]);
-				}
 
-			}.bind(this));
+					} catch (ex) {
+						if (window.console && typeof window.console.error === "function") {
+							window.console.error("QUnit: error while analyzing test page '" + oIFrame.src + "':\n" + ex);
+							if ( ex.stack ) {
+								window.console.error(ex.stack);
+							}
+						}
+						resolve([]);
+					}
+
+				}.bind(this));
+			}.bind(this))
 
 		},
 
