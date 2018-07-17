@@ -958,9 +958,12 @@ function(
 				}
 
 				sTranslateY = '-' + Math.floor(iDialogHeight / 2) + "px";
-				$dialog.css('transform', 'translate(' + sTranslateX + ',' + sTranslateY + ') scale(1)');
+				var sCalculatedPosition = 'translate(' + sTranslateX + ',' + sTranslateY + ') scale(1) ';
+				$dialog.css('transform', sCalculatedPosition );
+				$dialog.css('-webkit-transform', sCalculatedPosition + ' translateZ(0px)');
 			} else {
 				$dialog.css('transform', '');
+				$dialog.css('-webkit-transform', '');
 			}
 		};
 
