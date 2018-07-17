@@ -25,6 +25,7 @@ sap.ui.define([
 
 	/**
 	 * Class for connecting to Fake LREP storing changes in localStorage
+	 * @param {object} mSettings - map of FakeLrepConnector settings
 	 *
 	 * @class
 	 *
@@ -222,11 +223,9 @@ sap.ui.define([
 					{}
 				);
 				mResult.changes.variantSection[oVariant.variantManagementReference] = oVariantManagementSection;
-			} else {
-				//if not a duplicate variant
-				if (!fnCheckForDuplicates(oVariantManagementSection.variants, oVariant)) {
-					oVariantManagementSection.variants.push(this._getVariantStructure(oVariant, [], {}));
-				}
+			//if not a duplicate variant
+			} else if (!fnCheckForDuplicates(oVariantManagementSection.variants, oVariant)) {
+				oVariantManagementSection.variants.push(this._getVariantStructure(oVariant, [], {}));
 			}
 		}.bind(this));
 
@@ -348,7 +347,27 @@ sap.ui.define([
 				});
 			}
 		}.bind(this));
+
+		mResult.changes.changes = this._sortNonVariantChangesByLayer(mResult.changes.changes);
+
 		return mResult;
+	};
+
+	FakeLrepConnectorLocalStorage.prototype._sortNonVariantChangesByLayer = function(aChanges) {
+		if (!aChanges || aChanges.length === 0) {
+			return aChanges;
+		}
+		// temporary array holds changes grouped by layer
+		var aGroupedByLayer = aChanges.reduce(function(aGroupedChanges, oChange) {
+			var oChangeIndex = Utils.getLayerIndex(oChange.layer) || 0;
+			aGroupedChanges[oChangeIndex] = aGroupedChanges[oChangeIndex] || [];
+			aGroupedChanges[oChangeIndex].push(oChange);
+			return aGroupedChanges;
+		}, []);
+		// concat grouped changes
+		return aGroupedByLayer.reduce(function(aChanges, oChange) {
+			return aChanges.concat(oChange);
+		});
 	};
 
 	FakeLrepConnectorLocalStorage.prototype._fakeStandardVariant = function(sVariantManagementReference) {
