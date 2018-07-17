@@ -815,7 +815,7 @@ sap.ui.require([
 			assert.equal(fnRequestRetemplatingSpy.callCount, 2, "The check is called for the template and the clone");
 			assert.equal(oClone._iRetemplateCount, 0, "but the retemplating of the clone is not called");
 			assert.equal(oXMLComposite._iRetemplateCount, 1, "whereas the retemplate of the template was called");
-			var oContent = oClone.getAggregation("_content");
+			var oContent = oClone._getCompositeAggregation();
 			//TEMP-CLONE-ISSUE assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
 			//TEMP-CLONE-ISSUE assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
 
@@ -826,6 +826,14 @@ sap.ui.require([
 			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
 			//TEMP-CLONE-ISSUE assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
 			assert.equal(iCount, 1, "Event fired only once");
+			assert.equal(sId, oClone.getId(), "The event is really fired from the clone");
+
+			//To be sure fire from the template
+			oContent = oXMLComposite._getCompositeAggregation();
+			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+			//TEMP-CLONE-ISSUE assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
+			assert.equal(iCount, 2, "Event fired again");
+			assert.equal(sId, oXMLComposite.getId(), "The event is fired from the template");
 
 			oXMLComposite.destroy();
 			oClone.destroy();

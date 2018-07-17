@@ -313,20 +313,24 @@ sap.ui.define([
 
 		//repair the event handler registry
 		function repairListener(oControl, oTemplate, oClone) {
-			var sKey, vAggregation, i, aEvents;
+			var sKey, vAggregation, i, aEvents, mRepairedEventRegistry = {}, oNewEvent;
 
 			if (!oControl) {
 				return;
 			}
 
 			for (var sEvent in oControl.mEventRegistry) {
+				mRepairedEventRegistry[sEvent] = [];
 				aEvents = oControl.mEventRegistry[sEvent];
 				for (i = 0; i < aEvents.length; i++) {
-					if (aEvents[i].oListener == oTemplate) {
-						aEvents[i].oListener = oClone;
+					oNewEvent = jQuery.extend({}, aEvents[i]);//copy the event
+					if (oNewEvent.oListener == oTemplate) {
+						oNewEvent.oListener = oClone;
 					}
+					mRepairedEventRegistry[sEvent].push(oNewEvent);
 				}
 			}
+			oControl.mEventRegistry = mRepairedEventRegistry;
 
 			//dive in the Aggregations
 			for (sKey in oControl.mAggregations) {
