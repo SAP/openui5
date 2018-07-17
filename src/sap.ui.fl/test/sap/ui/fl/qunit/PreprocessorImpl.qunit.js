@@ -12,6 +12,7 @@ sap.ui.require([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -24,6 +25,7 @@ function(
 	ChangePersistenceFactory,
 	ChangePersistence,
 	Utils,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -104,7 +106,7 @@ function(
 			var oExtensionProvider = new PreprocessorImpl();
 
 			//check sync case
-			var spy = sandbox.spy(jQuery.sap.log, "warning");
+			var spy = sandbox.spy(Log, "warning");
 			var aEmptyCodeExtensionSync = oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", false);
 			//should return empty array and log warning
 			assert.ok(Array.isArray(aEmptyCodeExtensionSync), "Calling PreprocessorImpl in sync mode should return an array");

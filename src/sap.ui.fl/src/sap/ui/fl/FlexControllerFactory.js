@@ -3,8 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/fl/FlexController", "sap/ui/fl/Utils", "sap/ui/fl/ChangePersistenceFactory", "sap/ui/fl/variants/VariantModel"
-], function(jQuery, FlexController, Utils, ChangePersistenceFactory, VariantModel) {
+	"sap/ui/fl/FlexController",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/variants/VariantModel"
+], function(FlexController, Utils, ChangePersistenceFactory, VariantModel) {
 	"use strict";
 
 	/**

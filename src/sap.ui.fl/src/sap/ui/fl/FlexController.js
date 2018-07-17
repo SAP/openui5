@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/Persistence",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
@@ -17,8 +17,10 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager",
-	"sap/ui/core/Element"
-], function (
+	"sap/ui/core/Element",
+	"sap/base/strings/formatMessage",
+	"sap/base/Log"
+], function(
 	jQuery,
 	Persistence,
 	ChangeRegistry,
@@ -33,7 +35,9 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	ContextManager,
-	Element
+	Element,
+	formatMessage,
+	Log
 ) {
 	"use strict";
 
@@ -672,12 +676,12 @@ sap.ui.define([
 
 				if (bXmlModifier) {
 					mFailedChangesCustomData = this._getFailedCustomDataXml(oChange, oControl, oModifier);
-					sLogMessage = jQuery.sap.formatMessage(sLogMessage, [oChange.getId(), "XML tree"]);
-					jQuery.sap.log.warning(sLogMessage, ex.stack || "");
+					sLogMessage = formatMessage(sLogMessage, [oChange.getId(), "XML tree"]);
+					Log.warning(sLogMessage, ex.stack || "");
 				} else {
 					mFailedChangesCustomData = this._getFailedCustomDataJs(oChange, oControl, oModifier);
-					sLogMessage = jQuery.sap.formatMessage(sLogMessage, [oChange.getId(), "JS control tree"]);
-					jQuery.sap.log.error(sLogMessage, ex.stack || "");
+					sLogMessage = formatMessage(sLogMessage, [oChange.getId(), "JS control tree"]);
+					Log.error(sLogMessage, ex.stack || "");
 				}
 
 				var oFailedChangeCustomData = mFailedChangesCustomData.customData;

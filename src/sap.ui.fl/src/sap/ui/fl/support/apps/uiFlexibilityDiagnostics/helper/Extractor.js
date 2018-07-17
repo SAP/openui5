@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/util/File",
-	"sap/m/MessageBox"
-], function(JSONModel, ChangePersistenceFactory, File, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/ui/thirdparty/jquery"
+], function(JSONModel, ChangePersistenceFactory, File, MessageBox, jQuery) {
 	"use strict";
 
 	var Extractor = {};

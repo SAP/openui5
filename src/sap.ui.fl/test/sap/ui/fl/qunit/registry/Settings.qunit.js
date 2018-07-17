@@ -182,17 +182,20 @@ jQuery.sap.require("sap.ui.fl.Cache");
 	QUnit.test("_isFlexChangeModeFromUrl", function(assert) {
 		var bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
 		assert.equal(bFlexChangeMode, undefined);
-		var oUriParams = {
-			mParams: {
-				"sap-ui-fl-changeMode": ["true"]
-			}
-		};
-		this.stub(jQuery.sap, "getUriParameters").returns(oUriParams);
+
+		var UriParameters = sap.ui.require("sap/base/util/UriParameters");
+		assert.ok(UriParameters, "UriParameters must be loaded");
+
+		var oStub = this.stub(UriParameters.prototype, "get");
+		oStub.withArgs("sap-ui-fl-changeMode").returns("true");
+
 		bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
 		assert.equal(bFlexChangeMode, true);
-		oUriParams.mParams["sap-ui-fl-changeMode"] = ["false"];
+		oStub.withArgs("sap-ui-fl-changeMode").returns("false");
 		bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
 		assert.equal(bFlexChangeMode, false);
+
+		oStub.restore();
 	});
 
 	QUnit.test("isFlexChangeMode", function(assert) {
@@ -207,14 +210,16 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		bFlexChangeMode = Settings.isFlexChangeMode();
 		assert.equal(bFlexChangeMode, true);
 
-		var oUriParams = {
-			mParams: {
-				"sap-ui-fl-changeMode": ["false"]
-			}
-		};
-		this.stub(jQuery.sap, "getUriParameters").returns(oUriParams);
+		var UriParameters = sap.ui.require("sap/base/util/UriParameters");
+		assert.ok(UriParameters, "UriParameters must be loaded");
+
+		var oStub = this.stub(UriParameters.prototype, "get");
+		oStub.withArgs("sap-ui-fl-changeMode").returns("false");
+
 		bFlexChangeMode = Settings.isFlexChangeMode();
 		assert.equal(bFlexChangeMode, false);
+
+		oStub.restore();
 	});
 
 	QUnit.test("leave flexChangeMode eventing", function(assert) {

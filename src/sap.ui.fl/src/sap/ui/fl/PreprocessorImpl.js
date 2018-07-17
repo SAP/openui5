@@ -4,16 +4,16 @@
 
 // Provides object sap.ui.fl.ProcessorImpl
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Component',
 	'sap/ui/fl/Utils',
-	'sap/ui/fl/ChangePersistenceFactory'
+	'sap/ui/fl/ChangePersistenceFactory',
+	"sap/base/Log"
 ],
 function(
-	jQuery,
 	Component,
 	Utils,
-	ChangePersistenceFactory
+	ChangePersistenceFactory,
+	Log
 ) {
 	'use strict';
 
@@ -45,7 +45,7 @@ function(
 		if (bAsync) {
 
 			if (!sComponentId) {
-				jQuery.sap.log.warning("No component ID for determining the anchor of the code extensions was passed.");
+				Log.warning("No component ID for determining the anchor of the code extensions was passed.");
 				//always return a promise if async
 				return Promise.resolve([]);
 			}
@@ -78,7 +78,7 @@ function(
 				return Promise.all(aExtensionProviders);
 			}.bind(this));
 		} else {
-			jQuery.sap.log.warning("Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl");
+			Log.warning("Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl");
 			return [];
 		}
 	};

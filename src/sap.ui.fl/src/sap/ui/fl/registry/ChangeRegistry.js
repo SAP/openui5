@@ -32,7 +32,7 @@ sap.ui.define([
 	StashControl,
 	UnstashControl,
 	AddXML
-){
+) {
 	"use strict";
 
 	/**
@@ -488,6 +488,7 @@ sap.ui.define([
 				var oChangeHandlerImplementation = oChangeHandlerMetadata.getChangeHandler();
 				if (typeof oChangeHandlerImplementation === "string") {
 					// load the module synchronously
+					//TODO: global jquery call found
 					jQuery.sap.require(oChangeHandlerImplementation);
 					oChangeHandlerImplementation = sap.ui.require(oChangeHandlerImplementation);
 					oChangeHandlerMetadata._changeHandler = oChangeHandlerImplementation;

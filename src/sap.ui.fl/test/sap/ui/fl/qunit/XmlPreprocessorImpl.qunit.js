@@ -234,7 +234,9 @@ jQuery.sap.require("sap.ui.fl.Utils");
             sync: true
         };
 
-        var oLoggerSpy = this.spy(jQuery.sap.log, "warning");
+        var Log = sap.ui.require("sap/base/Log");
+        assert.ok(Log, "Log module should be available");
+        var oLoggerSpy = this.spy(Log, "warning");
 
         var oProcessedView = XmlPreprocessorImpl.process(oView, mProperties);
 

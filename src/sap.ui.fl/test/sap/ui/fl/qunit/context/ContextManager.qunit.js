@@ -1,6 +1,6 @@
 /*global QUnit, sinon*/
 
-sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/fl/Utils"], function(ContextManager, Change, Utils) {
+sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/fl/Utils", "sap/base/Log"], function(ContextManager, Change, Utils, Log) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -385,7 +385,7 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 			"value": sValue
 		};
 
-		var loggerStub = this.stub(jQuery.sap.log, "info");
+		var loggerStub = this.stub(Log, "info");
 		var bContextActive = ContextManager._checkContextParameter(oContext, aRuntimeContext);
 
 		var iNumberOfCalls = loggerStub.getCalls().length;

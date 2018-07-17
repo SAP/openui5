@@ -30,8 +30,11 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 	});
 
 	QUnit.test("constructor - exception on required params missing", function(assert) {
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		//Arrange
-		var errorLogSpy = sinon.spy(jQuery.sap.log, "error");
+		var errorLogSpy = sinon.spy(Log, "error");
 
 		//Act
 		/*eslint-disable no-new*/

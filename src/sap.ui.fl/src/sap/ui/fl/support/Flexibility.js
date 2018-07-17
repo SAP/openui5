@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.fl.support.Flexibility
 sap.ui.define([
-		"jquery.sap.global",
+		"sap/ui/thirdparty/jquery",
 		"sap/ui/core/support/Plugin",
 		"sap/ui/core/support/Support",
 		"sap/ui/model/json/JSONModel",

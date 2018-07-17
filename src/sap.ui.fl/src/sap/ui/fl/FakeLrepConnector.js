@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/ChangePersistenceFactory"
+	"sap/ui/thirdparty/jquery", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/ChangePersistenceFactory"
 ], function(jQuery, uri, FlexUtils, LrepConnector, Cache, ChangePersistenceFactory) {
 	"use strict";
 	var oLrepConnector = Object.create(LrepConnector.prototype);
