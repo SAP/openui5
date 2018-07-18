@@ -11,26 +11,19 @@
 			data-sap-ui-noConflict="true"
 			data-sap-ui-bindingSyntax="complex"
 			data-sap-ui-compatversion="edge"
-			data-sap-ui-language="en-US"
-			data-sap-ui-resourceroots='{
-				"sap/ui/table/qunit": "test-resources/sap/ui/table/qunit/",
-				"sap/ui/core/qunit": "test-resources/sap/ui/core/qunit/",
-				"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
-			}'>
+			data-sap-ui-language="en-US">
 	</script>
 
-	<script src="resources/sap/ui/thirdparty/qunit.js"></script>
-	<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="resources/sap/ui/qunit/qunit-coverage.js"></script>
-	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css">
+	<link rel="stylesheet" href="test-resources/sap/ui/table/qunit/shared-qunit.css"> <!-- Table Lib specific -->
 
-	<link rel="stylesheet" href="test-resources/sap/ui/table/qunit/shared-qunit.css">
-	<script id="sap-ui-qunit-bootstrap" data-sap-ui-lib="sap/ui/table" src="test-resources/sap/ui/table/qunit/teststarter.qunit.js"></script>
+	<script id="sap-ui-qunit-bootstrap"
+			src="test-resources/sap/ui/table/qunit/teststarter.qunit.js"
+			data-sap-ui-qunit-config="test-resources/sap/ui/table/qunit/testconfig.qunit.json">
+	</script>
 </head>
 
-<body class="sapUiBody sapUiSizeCozy" role="application">
-<div id="qunit"></div>
-<div id="qunit-fixture" class="visible"></div>
-<div id="content"></div> <!-- The content, which should exist throughout the entire test run. -->
-<div id="outerelement" tabindex="0"></div>
+<body>
+<div id="qunit-fixture" class="visible"></div> <!-- Table Lib specific CSS class -->
+<div id="content"></div> <!-- Table Lib specific: The content, which should exist throughout the entire test run. -->
+<div id="outerelement" tabindex="0"></div> <!-- Table Lib specific: Well defined element which can get the focus "ouside" of a table. -->
 </body>

@@ -1,0 +1,66 @@
+{
+	"testSetName" : "Library 'sap.ui.table'",	/* Just for a nice title on the pages */
+	"baseLibs" : ["sap.ui.table"],				/* Libraries which should be loaded for any of the tests below (except for tests which set libs to null) */
+	"moduleNameTemplate" : "sap/ui/table/qunit/{0}.qunit",	/* Name template to be used to determine the full qualified module name to load */
+	"defaults" : {
+		"sinonVersion" : "1",			/* Sinon version which should be loaded, possible values currently are "1" or "4" */
+		"qunitVersion" : "1",			/* QUnit version which should be loaded, possible values currently are "1" or "2" */
+		"rtl" : false,					/* Whether to run the tests in RTL mode */
+		"autostart" : true,				/* Whether to call QUnit.start() when the test setup is done */
+		"libs" : [],					/* Libraries to load upfront in addition to the libraries which are defined in baseLibs, if null no libs are loaded */
+		"coverage" : "[sap/ui/table]",	/* Which files to show in the coverage report, if null no files are excluded from coverage */
+		"branchCoverage" : true,		/* Whether to enable branch coverage */
+		"extendedBranchCoverageConfig" : null, /* When given (e.g. {"data-threshold" : "80"} or {}) the extend branch coverage is activated if branchCoverage=true */
+		"waitForTheme" : true,			/* Whether the start of the test should be delayed until the theme is applied */
+		"loaderConfig" : {				/* Config for the UI5 loader */
+			"paths" : {
+				"sap/ui/table/qunit": "test-resources/sap/ui/table/qunit/",
+				"sap/ui/core/qunit": "test-resources/sap/ui/core/qunit/",
+				"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+			}
+		},
+		"group" : "Control"			/* Group name to structure the tests */
+	},
+	"tests" : [
+		/* Binding*/
+		{"name" : "ODataTreeBindingAdapter", "group" : "Binding", "sinon" : false /*uses Mockserver*/, "coverage" : null /*full report*/},
+		{"name" : "ClientTreeBindingAdapter", "group" : "Binding", "coverage" : null /*full report*/},
+
+		/* Library */
+		{"name" : "TableLib", "group" : "Library", "libs" : null},
+		{"name" : "ExploredSamples", "group" : "Library", "libs" : ["sap.m", "sap.ui.layout", "sap.ui.documentation"], "sinon" : false, "autostart" : false},
+
+		/* Control */
+		{"name" : "Table", "libs" : ["sap.m"]},
+		{"name" : "Column", "libs" : ["sap.m"]},
+		{"name" : "RowAction"},
+		{"name" : "RowSettings"},
+		{"name" : "TablePersoController", "libs" : ["sap.m"]},
+		{"name" : "TreeTable", "libs" : ["sap.m"]},
+		{"name" : "TreeTableOData", "libs" : ["sap.m"], "sinon" : false /*uses Mockserver*/, "coverage" : null /*full report*/},
+		{"name" : "AnalyticalTable", "libs" : ["sap.m"]},
+		{"name" : "TableColumnHeaders", "libs" : ["sap.m"]},
+		{"name" : "ControlsUsedInTable", "libs" : ["sap.m"]},
+
+		/* Utils */
+		{"name" : "TableUtils", "group" : "Utils"},
+		{"name" : "TableRendererUtils", "group" : "Utils"},
+		{"name" : "TableColumnUtils", "group" : "Utils"},
+		{"name" : "TableMenuUtils", "group" : "Utils"},
+		{"name" : "TableGrouping", "group" : "Utils"},
+		{"name" : "TableBindingUtils", "group" : "Utils", "sinon" : false /*uses Mockserver*/},
+
+		/* Extensions */
+		{"name" : "TableExtension", "group" : "Extensions"},
+		{"name" : "TableAccExtension", "group" : "Extensions"},
+		{"name" : "TableKeyboardExtension", "group" : "Extensions"},
+		{"name" : "TableKeyboardDelegate", "group" : "Extensions"},
+		{"name" : "TableKeyboardDelegate-RTL", "module" : "TableKeyboardDelegate", "group" : "Extensions", "rtl" : true},
+		{"name" : "TablePointerExtension", "group" : "Extensions"},
+		{"name" : "TableScrollExtension", "group" : "Extensions"},
+		{"name" : "TableDragAndDropExtension", "group" : "Extensions"},
+
+		/* Design Time & RTA Enabling */
+		{"name" : "Library", "group" : "Designtime", "module" : "designtime/Library"}
+	]
+}
