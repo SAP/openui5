@@ -37,6 +37,51 @@
 				<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
 				<Button id="createDeleteButton" text="Create/Delete SmartForm" press=".createOrDeleteContent" />
 				<core:Fragment fragmentName="sap.ui.rta.test.fragment.QUnitTestArea" type="XML"></core:Fragment>
+				<form:SimpleForm title="Another SimpleForm with titles"
+						id="SimpleForm1"
+						maxContainerCols="3"
+						editable="true"
+						layout="ResponsiveGridLayout"
+						labelSpanXL="4"
+						labelSpanL="4"
+						labelSpanM="4"
+						emptySpanXL="0"
+						emptySpanL="0"
+						emptySpanM="0"
+						columnsXL="3"
+						columnsL="2"
+						columnsM="2"
+						class="editableForm">
+					<form:content>
+						<Label id="Label2" text="ZIP Code/City" />
+						<Input id="Input3" value="2345">
+							<layoutData>
+								<sap.ui.layout:GridData span="L3 M3 S4" />
+							</layoutData>
+						</Input>
+						<Input id="Input4" value="Walldorf" />
+						<Label id="Label3" text="Country" />
+						<Select id="Select0" width="100%">
+							<items>
+								<core:Item text="Germany" />
+								<core:Item text="USA" />
+								<core:Item text="England" />
+							</items>
+						</Select>
+						<core:Title id="Title1" text="Online" />
+						<Label id="Label4" text="Web" />
+						<Input id="Input5" value="www.sap.com" />
+						<Label id="Label5" text="Twitter" />
+						<Input id="Input6" value="@me" />
+						<core:Title id="Title2" text="Contact data" />
+						<Label id="Label6" text="Email" />
+						<Input id="Input7" value="foo@bar.com" type="Email" />
+						<Label id="Label7" text="Tel." />
+						<Input id="Input8" value="234123423" type="Tel" />
+						<Label id="Label8" text="SMS" />
+						<Input id="Input9" value="234424333" type="Tel" />
+					</form:content>
+				</form:SimpleForm>
 			</sap.ui.layout:VerticalLayout>
 
 			<sap.ui.layout:VerticalLayout width="100%">
@@ -61,6 +106,9 @@
 						<smartForm:GroupElement label="Hello" id="MainFormExpandable.GeneralLedgerDocument.I18NTest" >
 							<smartField:SmartField value="{i18n>groupElementLabelText}">
 							</smartField:SmartField>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="SmartLink" id="MainFormExpandable.GeneralLedgerDocument.SmartLink">
+							<smartLink:SmartLink id="Smartlink" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
 						</smartForm:GroupElement>
 						<smartForm:GroupElement label="One-Bound-Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton" >
 							<Button text="{i18n>buttonText}"></Button>
@@ -87,12 +135,32 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 					<smartForm:Group label="Dates" id="MainFormExpandable.Dates" expandable="true">
-						<smartForm:GroupElement label="Belegdatum" id="MainFormExpandable.Dates.DocumentDate" >
-							<smartField:SmartField value="{DocumentDate}" />
-						</smartForm:GroupElement>
 						<smartForm:GroupElement label="Two-Bound-Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
 							<Button text="{PostingDate}"></Button>
 							<TextArea value="{CreationDate}"></TextArea>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="With/without stable ID" id="Dates.StableIDField">
+							<Input value="I have an ID" id="InputFieldWithID" />
+							<Input value="I have no ID" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="With horizontal layout inside" id="Dates.HorizontalLayoutInside">
+							<sap.ui.layout:HorizontalLayout id="GroupElementHorizontalLayout">
+								<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
+								<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
+							</sap.ui.layout:HorizontalLayout>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group label="Reversal" id="MainFormExpandable.Reversal">
+						<smartForm:GroupElement label="Storniert mit" id="Reversal.ReversalDocument">
+							<smartField:SmartField value="{ReverseDocument}" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Text" id="Reversal.ReversalReasonName">
+							<smartField:SmartField value="{ReversalReasonName}" />
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group label="Group without stable Id">
+						<smartForm:GroupElement id="FieldInGroupWithoutStableId">
+							<smartField:SmartField value="{FiscalYear}" />
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
