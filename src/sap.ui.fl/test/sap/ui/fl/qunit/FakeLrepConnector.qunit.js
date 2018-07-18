@@ -23,6 +23,44 @@ sap.ui.require([
 		}
 	});
 
+	QUnit.test("when loadSettings with default value", function(assert) {
+		var mSetting = {};
+
+		return oFakeLrepConnector.loadSettings().then(function(result){
+			assert.deepEqual(result, mSetting , "then default value returned.");
+			return LrepConnector.isFlexServiceAvailable().then(function(bAvailability) {
+				assert.ok(bAvailability, "then the flexibility availability status is true.");
+			});
+		});
+	});
+
+	QUnit.test("when setSettings and then loadSettings", function(assert) {
+		var mSetting = {
+			"isKeyUser": true,
+			"isAtoAvailable": false,
+			"isProductiveSystem": false,
+			"isVariantSharingEnable": false
+		};
+		oFakeLrepConnector.setSettings(mSetting);
+		return oFakeLrepConnector.loadSettings().then(function(result){
+			assert.deepEqual(result, mSetting , "then new settings value returned.");
+		});
+	});
+
+	QUnit.test("when setFlexServiceAvailability to false", function(assert) {
+		oFakeLrepConnector.setFlexServiceAvailability(false);
+		return LrepConnector.isFlexServiceAvailable().then(function(bAvailability) {
+			assert.notOk(bAvailability, "then the flexibility availability status is false.");
+		});
+	});
+
+	QUnit.test("when setFlexServiceAvailability back to true", function(assert) {
+		oFakeLrepConnector.setFlexServiceAvailability(true);
+		return LrepConnector.isFlexServiceAvailable().then(function(bAvailability) {
+			assert.ok(bAvailability, "then the flexibility availability status is true.");
+		});
+	});
+
 	QUnit.test("when create change which is not variant", function(assert) {
 		return oFakeLrepConnector.create(oTestData, "testChangeList", false).then(function(result){
 			assert.equal(result, undefined , "then nothing returned.");

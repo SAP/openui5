@@ -24,6 +24,7 @@ sap.ui.define([
 	 */
 	function FakeLrepConnector(sInitialComponentJsonPath){
 		this.sInitialComponentJsonPath = sInitialComponentJsonPath;
+		this.mSettings = {};
 	}
 
 	for (var prop in oLrepConnector){
@@ -37,6 +38,42 @@ sap.ui.define([
 			/*eslint-enable noinspection, no-loop-func */
 		}
 	}
+
+	/**
+	 * Replaces the original {@link sap.ui.fl.LrepConnector.prototype.loadSettings} method.
+	 * This method returns a Promise with a settings map which can be set by {@link sap.ui.fl.FakeLrepConnector.prototype.setSettings} method
+	 * and also sets the flex service availability status to true.
+	 *
+	 * @returns {Promise} Returns a Promise with a settings map
+	 * @public
+	 */
+	FakeLrepConnector.prototype.loadSettings  = function(){
+		this.setFlexServiceAvailability(true);
+		return Promise.resolve(this.mSettings);
+	};
+
+	/**
+	 * Sets the settings map which can be retrieved by {@link sap.ui.fl.FakeLrepConnector.prototype.loadSettings} method.
+	 *
+	 * @param {map} mSettings Contains flexibility settings values
+	 * @param {boolean} [mSettings.isKeyUser] Indicates that current user is a Key User
+	 * @param {boolean} [mSettings.isAtoAvailable] Indicates that ATO is available or not
+	 * @param {boolean} [mSettings.isProductiveSystem] Indicates whether the running system is productive or not
+	 * @param {boolean} [mSettings.isVariantSharingEnabled] Indicates whether smart variant sharing is enable or not
+	 */
+	FakeLrepConnector.prototype.setSettings  = function(mSettings){
+		this.mSettings = mSettings;
+	};
+
+	/**
+	 * Sets the availability status of flexibility service.
+	 * This method allows testing application behavior when flexibility service is not available.
+	 *
+	 * @param {boolean} [bAvailability] - Availability status
+	 */
+	FakeLrepConnector.prototype.setFlexServiceAvailability  = function(bAvailability){
+		LrepConnector._bServiceAvailability = bAvailability;
+	};
 
 	FakeLrepConnector.prototype.loadChanges = function(sComponentClassName){
 		var initialComponentJsonPath = this.sInitialComponentJsonPath;
