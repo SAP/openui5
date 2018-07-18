@@ -18,7 +18,9 @@ sap.ui.define([
 		var CalendarAppointmentVisualization = unifiedLibrary.CalendarAppointmentVisualization;
 
 		var ROW_HEIGHT = 48,
-			HALF_HOUR = 3600000 / 2;
+			BLOCKER_ROW_HEIGHT = 28,
+			HALF_HOUR = 3600000 / 2,
+			ONE_DAY = 86400000;
 
 		/**
 		 * Constructor for a new OnePersonGrid.
@@ -88,9 +90,10 @@ sap.ui.define([
 				oStartDate = this._getUniversalStartDate(),
 				iColumns = this._getColumns();
 
-			this._oVisibleAppointments = this._calculateVisibleAppointments(oAppointmentsMap, oStartDate, iColumns);
-			this._oAppointmentsToRender = this._calculateAppointmentsLevels(this._getVisibleAppointments());
-
+			this._oVisibleAppointments = this._calculateVisibleAppointments(oAppointmentsMap.appointments, oStartDate, iColumns);
+			this._oAppointmentsToRender = this._calculateAppointmentsLevelsAndWidth(this._oVisibleAppointments);
+			this._aVisibleBlockers = this._calculateVisibleBlockers(oAppointmentsMap.blockers, oStartDate, iColumns);
+			this._oBlockersToRender = this._calculateBlockersLevelsAndWidth(this._aVisibleBlockers);
 		};
 
 		OnePersonGrid.prototype.setStartDate = function (oStartDate) {
@@ -248,29 +251,34 @@ sap.ui.define([
 
 			return aAppointments.reduce(function (oMap, oAppointment) {
 				var oAppStartDate = oAppointment.getStartDate(),
-					oAppEndDate = oAppointment.getEndDate();
+					oAppEndDate = oAppointment.getEndDate(),
+					bIsFullDay = oAppointment.getFullDay && oAppointment.getFullDay();
 
 				if (!oAppStartDate || !oAppEndDate) {
 					return oMap;
 				}
 
-				var oCurrentAppStartDate = new UniversalDate(oAppStartDate.getFullYear(), oAppStartDate.getMonth(), oAppStartDate.getDate()),
-					oCurrentAppEndDate = new UniversalDate(oAppEndDate.getFullYear(), oAppEndDate.getMonth(), oAppEndDate.getDate());
+				if (!bIsFullDay) {
+					var oCurrentAppStartDate = new UniversalDate(oAppStartDate.getFullYear(), oAppStartDate.getMonth(), oAppStartDate.getDate()),
+						oCurrentAppEndDate = new UniversalDate(oAppEndDate.getFullYear(), oAppEndDate.getMonth(), oAppEndDate.getDate());
 
-				while (oCurrentAppStartDate.getTime() <= oCurrentAppEndDate.getTime()) {
-					var sDay = that._formatDayAsString(oCurrentAppStartDate);
+					while (oCurrentAppStartDate.getTime() <= oCurrentAppEndDate.getTime()) {
+						var sDay = that._formatDayAsString(oCurrentAppStartDate);
 
-					if (!oMap[sDay]) {
-						oMap[sDay] = [];
+						if (!oMap.appointments[sDay]) {
+							oMap.appointments[sDay] = [];
+						}
+
+						oMap.appointments[sDay].push(oAppointment);
+
+						oCurrentAppStartDate.setDate(oCurrentAppStartDate.getDate() + 1);
 					}
-
-					oMap[sDay].push(oAppointment);
-
-					oCurrentAppStartDate.setDate(oCurrentAppStartDate.getDate() + 1);
+				} else {
+					oMap.blockers.push(oAppointment);
 				}
 
 				return oMap;
-			}, {});
+			}, { appointments: {}, blockers: []});
 		};
 
 		OnePersonGrid.prototype._calculateVisibleAppointments = function (oAppointments, oStartDate, iColumns) {
@@ -306,7 +314,7 @@ sap.ui.define([
 			};
 		};
 
-		OnePersonGrid.prototype._calculateAppointmentsLevels = function (oVisibleAppointments) {
+		OnePersonGrid.prototype._calculateAppointmentsLevelsAndWidth = function (oVisibleAppointments) {
 			var that = this;
 
 			return Object.keys(oVisibleAppointments).reduce(function (oAcc, sDate) {
@@ -412,6 +420,88 @@ sap.ui.define([
 			return oAppointmentsList;
 		};
 
+		OnePersonGrid.prototype._calculateVisibleBlockers = function (aBlockers, oStartDate, iColumns) {
+			oStartDate = this._getDayPart(oStartDate);
+
+			var oEndDate = new UniversalDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + iColumns),
+				fnIsVisiblePredicate = this._isBlockerVisible(oStartDate, oEndDate);
+
+			return aBlockers.filter(fnIsVisiblePredicate)
+					.sort(this._sortAppointmentsByStartHour);
+		};
+
+		OnePersonGrid.prototype._isBlockerVisible = function (oStartDate, oEndDate) {
+			var that = this;
+
+			return function (oAppointment) {
+				var oAppStartDate = oAppointment.getStartDate(),
+					oAppEndDate = oAppointment.getEndDate(),
+					iAppStartTime = that._getDayPart(oAppStartDate).getTime(),
+					iAppEndTime = that._getDayPart(oAppEndDate).getTime(),
+					iViewStartTime = oStartDate.getTime(),
+					iViewEndTime = oEndDate.getTime();
+
+				var bIsBiggerThanView = iAppStartTime < iViewStartTime && iAppEndTime > iViewEndTime,
+					bStartDateBetweenViewStartAndEnd = iAppStartTime >= iViewStartTime && iAppStartTime < iViewEndTime,
+					bEndDateBetweenViewStartAndEnd = iAppEndTime >= iViewStartTime && iAppEndTime <= iViewEndTime;
+
+				return bIsBiggerThanView || bStartDateBetweenViewStartAndEnd || bEndDateBetweenViewStartAndEnd;
+			};
+		};
+
+		OnePersonGrid.prototype._calculateBlockersLevelsAndWidth = function (aVisibleBlockers) {
+			var iMaxLevel = 0,
+				oBlockersList = new AppointmentsList(),
+				that = this;
+
+			aVisibleBlockers.forEach(function (oCurrentBlocker) {
+				var oCurrentBlockerNode = new AppointmentNode(oCurrentBlocker),
+					oCurrentBlockerStartDate = oCurrentBlocker.getStartDate(),
+					oCurrentBlockerEndDate = oCurrentBlocker.getEndDate(),
+					iCurrentBlockerStartTime = that._getDayPart(oCurrentBlockerStartDate).getTime(),
+					iCurrentBlockerEndTime = that._getDayPart(oCurrentBlockerEndDate).getTime();
+
+				oCurrentBlockerNode.width = that._calculateDaysDifference(iCurrentBlockerStartTime, iCurrentBlockerEndTime);
+
+				if (oBlockersList.getSize() === 0) {
+					oBlockersList.add(oCurrentBlockerNode);
+					return;
+				}
+
+				oBlockersList.getIterator().forEach(function (oBlockerNode) {
+					var bShouldBreak = true,
+						oBlocker = oBlockerNode.getData(),
+						oBlockerStartDate = oBlocker.getStartDate(),
+						oBlockerEndDate = oBlocker.getEndDate(),
+						iBlockerStartTime = that._getDayPart(oBlockerStartDate).getTime(),
+						iBlockerEndTime = that._getDayPart(oBlockerEndDate).getTime();
+
+					if (iCurrentBlockerStartTime >= iBlockerStartTime && iCurrentBlockerStartTime < iBlockerEndTime) {
+						oCurrentBlockerNode.level++;
+						iMaxLevel = Math.max(iMaxLevel, oCurrentBlockerNode.level);
+					}
+
+					if (oBlockerNode.next && oBlockerNode.next.level === oCurrentBlockerNode.level) {
+						bShouldBreak = false;
+					}
+
+					if (iCurrentBlockerStartTime >= iBlockerEndTime && bShouldBreak) {
+						this.interrupt();
+					}
+				});
+
+				oBlockersList.insertAfterLevel(oCurrentBlockerNode.level, oCurrentBlockerNode);
+			}, this);
+
+			return { oBlockersList: oBlockersList, iMaxlevel: iMaxLevel };
+		};
+
+		OnePersonGrid.prototype._calculateDaysDifference = function (iStartTime, iEndTime) {
+			var iTimeDifference = iEndTime - iStartTime;
+
+			return Math.round(iTimeDifference / ONE_DAY);
+		};
+
 		OnePersonGrid.prototype._sortAppointmentsByStartHour = function (oApp1, oApp2) {
 			return oApp1.getStartDate().getTime() - oApp2.getStartDate().getTime() || oApp2.getEndDate().getTime() - oApp1.getEndDate().getTime();
 		};
@@ -422,6 +512,14 @@ sap.ui.define([
 
 		OnePersonGrid.prototype._getAppointmentsToRender = function () {
 			return this._oAppointmentsToRender;
+		};
+
+		OnePersonGrid.prototype._getVisibleBlockers = function () {
+			return this._aVisibleBlockers;
+		};
+
+		OnePersonGrid.prototype._getBlockersToRender = function () {
+			return this._oBlockersToRender;
 		};
 
 		OnePersonGrid.prototype._setColumns = function (iColumns) {
@@ -436,6 +534,14 @@ sap.ui.define([
 
 		OnePersonGrid.prototype._getRowHeight = function () {
 			return ROW_HEIGHT;
+		};
+
+		OnePersonGrid.prototype._getBlockerRowHeight = function () {
+			return BLOCKER_ROW_HEIGHT;
+		};
+
+		OnePersonGrid.prototype._getDayPart = function (oDate) {
+			return new UniversalDate(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
 		};
 
 		// Appointments Node
