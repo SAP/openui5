@@ -95,8 +95,7 @@ sap.ui.define([
 		oOverlay._oDeleteButton = new Button(sId, {
 			icon : "sap-icon://decline",
 			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_REMOVE"),
-			enabled: bEnabled,
-			noTabStop: true
+			enabled: bEnabled
 		}).placeAt(oHtmlIconOuter.get(0));
 		oHtmlIconWrapper.append(oHtmlIconOuter);
 		oOverlay.$().append(oHtmlIconWrapper);
