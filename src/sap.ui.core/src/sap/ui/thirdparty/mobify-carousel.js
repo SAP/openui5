@@ -543,6 +543,9 @@ Mobify.UI.Carousel = (function($, Utils) {
 		}
 
         this.hasActiveTransition = false;
+
+		// Trigger afterSlide event
+		this.$element.trigger('afterSlide', [this._prevIndex, this._index]);
     };
     // SAP MODIFICATION ENDS
 
@@ -619,6 +622,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 
         this._offset = transitionOffset;
         this._offsetDrag = 0;
+        this._prevIndex = this._index;
         this._index = newIndex;
         this.update();
 
@@ -627,11 +631,6 @@ Mobify.UI.Carousel = (function($, Utils) {
             // This indicate that transition has started
             this.hasActiveTransition = true;
             $inner.bind(this._sTransitionEvents, jQuery.proxy(this.onTransitionComplete, this));
-        }
-
-        // Trigger afterSlide event
-        if(bTriggerEvents) {
-            $element.trigger('afterSlide', [index, newIndex]);
         }
     };
 
