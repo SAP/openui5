@@ -52,7 +52,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 							"CSP headers are not set by web server as required for this test.\n" +
 							"Please make sure to execute the ContentSecurityPolicy.qunit.html test with\n" +
 							"the following URL parameter to tell the web server to send CSP headers:\n\n" +
-							"sap-ui-xx-csp-policy=almost-default:report-only\n\n" +
+							"sap-ui-xx-csp-policy=sap-target-level-2:report-only\n\n" +
 							"There might be also a server-side problem which leads to not setting headers correctly."
 						);
 

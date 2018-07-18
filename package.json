@@ -23,10 +23,11 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "engines": {
-    "node": ">= 6"
+    "node": ">= 8.5"
   },
   "dependencies": {},
   "devDependencies": {
+    "@ui5/server": "^0.2.1",
     "async": "^0.9.0",
     "cheerio": "^1.0.0-rc.2",
     "coffee-script": "^1.9.1",
