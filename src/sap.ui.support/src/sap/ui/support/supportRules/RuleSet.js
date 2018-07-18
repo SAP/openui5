@@ -197,9 +197,9 @@ function (jQuery, storage, constants) {
 	 * @param {object} oSettings Settings object with rule information
 	 * @returns {string} sRuleVerificationStatus Verification status
 	 */
-	RuleSet.prototype.addRule = function (oSettings) {
+	RuleSet.prototype.addRule = function (oSettings, oVersionInfo) {
 
-		var sCurrentVersion = RuleSet.versionInfo ? RuleSet.versionInfo.version : '';
+		var sCurrentVersion = RuleSet.versionInfo ? RuleSet.versionInfo.version : oVersionInfo.version;
 
 		var sRuleVersion = oSettings.minversion ? oSettings.minversion : '';
 

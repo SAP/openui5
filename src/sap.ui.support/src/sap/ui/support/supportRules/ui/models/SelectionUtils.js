@@ -44,6 +44,10 @@ sap.ui.define([
 				oRuleSets = oModel.getData(),
 				aSelectedRules = [];
 
+			if (!oRuleSets) {
+				return;
+			}
+
 			Object.keys(oRuleSets).forEach(function(iRuleSet) {
 				oRuleSets[iRuleSet].nodes.forEach(function(oRule) {
 						if (oRule.selected) {

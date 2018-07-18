@@ -41,7 +41,13 @@ sap.ui.define([
 
 		CommunicationBus.subscribe(Channels.ON_INIT_ANALYSIS_CTRL, function () {
 			jQuery.getJSON("data/RuleSets.json").done(function (oRuleSets) {
-				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, oRuleSets);
+				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
+					sRuleSet: oRuleSets
+				});
+				CommunicationBus.publish(Channels.POST_APPLICATION_INFORMATION, {
+					// Use deprecated function to ensure this would work for older versions.
+					versionInfo: sap.ui.getVersionInfo()
+				});
 			});
 		});
 
@@ -57,7 +63,9 @@ sap.ui.define([
 
 		CommunicationBus.subscribe(Channels.LOAD_RULESETS, function () {
 			jQuery.getJSON("data/RuleSetAdditional.json").done(function (oRuleSets) {
-				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, oRuleSets);
+				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
+					sRuleSet: oRuleSets
+				});
 			});
 		}, this);
 	};
