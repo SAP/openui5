@@ -5,14 +5,14 @@
 sap.ui.define([
 	'sap/ui/rta/library',
 	'sap/ui/core/Popup',
-	'sap/m/Toolbar',
+	'sap/m/HBox',
 	'sap/ui/core/BusyIndicator',
 	'sap/ui/rta/util/Animation'
 ],
 function(
 	library,
 	Popup,
-	Toolbar,
+	HBox,
 	BusyIndicator,
 	Animation
 ) {
@@ -35,7 +35,7 @@ function(
 	 * @experimental Since 1.48. This class is experimental. The API might be changed in future.
 	 */
 
-	var Base = Toolbar.extend("sap.ui.rta.toolbar.Base", {
+	var Base = HBox.extend("sap.ui.rta.toolbar.Base", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
@@ -56,8 +56,9 @@ function(
 		},
 		constructor: function() {
 			// call parent constructor
-			Toolbar.apply(this, arguments);
+			HBox.apply(this, arguments);
 
+			this.setAlignItems("Center");
 			this.setVisible(false);
 			this.placeToContainer();
 			this.buildContent();
@@ -81,7 +82,7 @@ function(
 	 * @override
 	 */
 	Base.prototype.init = function() {
-		Toolbar.prototype.init.apply(this, arguments);
+		HBox.prototype.init.apply(this, arguments);
 	};
 
 	/**
@@ -89,7 +90,7 @@ function(
 	 * @protected
 	 */
 	Base.prototype.onBeforeRendering = function () {
-		Toolbar.prototype.onBeforeRendering.apply(this, arguments);
+		HBox.prototype.onBeforeRendering.apply(this, arguments);
 	};
 
 	/**
@@ -97,7 +98,7 @@ function(
 	 * @protected
 	 */
 	Base.prototype.onAfterRendering = function () {
-		Toolbar.prototype.onAfterRendering.apply(this, arguments);
+		HBox.prototype.onAfterRendering.apply(this, arguments);
 	};
 
 	/**
@@ -133,7 +134,7 @@ function(
 	 * @protected
 	 */
 	Base.prototype.buildContent = function () {
-		this.buildControls().forEach(this.addContent, this);
+		this.buildControls().forEach(this.addItem, this);
 	};
 
 	/**
@@ -192,7 +193,7 @@ function(
 	 */
 	Base.prototype.getControl = function(sName) {
 		return this
-			.getAggregation('content')
+			.getAggregation('items')
 			.filter(function (oControl) {
 				return oControl.data('name') === sName;
 			})

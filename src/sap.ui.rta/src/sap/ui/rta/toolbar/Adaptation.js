@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/m/OverflowToolbar',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/ui/Device',
+	'sap/m/FlexItemData',
 	'./Base'
 ],
 function(
@@ -28,6 +29,7 @@ function(
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
 	Device,
+	FlexItemData,
 	Base
 ) {
 	"use strict";
@@ -49,7 +51,7 @@ function(
 	 * @experimental Since 1.48. This class is experimental. API might be changed in future.
 	 */
 	var Adaptation = Base.extend("sap.ui.rta.toolbar.Adaptation", {
-		renderer: 'sap.ui.rta.toolbar.BaseRenderer',
+		renderer: 'sap.ui.rta.toolbar.AdaptationRenderer',
 		animation: true,
 		metadata: {
 			events: {
@@ -145,22 +147,19 @@ function(
 	};
 
 	function calculateAndSetWidthOfBothBoxes(bCalculateWidth) {
-		var oContent = this.getContent();
+		var oContent = this.getItems();
 
 		if (bCalculateWidth) {
-			var oDomRef = this.getControl('modeSwitcher').getDomRef();
-			var iHalfWidthOfModeSwitcher = oDomRef && Math.floor(oDomRef.offsetWidth / 2);
+			var iWidth = this.getControl('modeSwitcher').$().outerWidth();
+			var iHalfWidthOfModeSwitcher = iWidth && Math.floor(iWidth / 2);
 
 			if (!iHalfWidthOfModeSwitcher) {
-				oContent[0].setWidth("50%");
 				oContent[1].setWidth("50%");
 			} else {
-				oContent[0].setWidth("calc(50% - " + iHalfWidthOfModeSwitcher + "px)");
 				oContent[1].setWidth("calc(50% + " + iHalfWidthOfModeSwitcher + "px)");
 			}
 		} else {
 			// for TABLET and MOBILE modes width is fixed
-			oContent[0].setWidth("0");
 			oContent[1].setWidth("100%");
 		}
 	}
@@ -201,7 +200,7 @@ function(
 
 	/**
 	 * format of the controls that get added here:
-	 * 	Toolbar (this)
+	 * 	HBox (this)
 	 * 		HBox
 	 * 			place for Icon in Fiori Toolbar
 	 * 		HBox
@@ -215,7 +214,12 @@ function(
 		this._mControls = {};
 		return [
 			new HBox({
-				alignItems: "Center"
+				alignItems: "Center",
+				layoutData: new FlexItemData({
+					baseSize: "0",
+					growFactor: 1,
+					minWidth: "0"
+				})
 			}),
 			new HBox({
 				alignItems: "Center",
@@ -331,7 +335,11 @@ function(
 									priority: "Low"
 								})
 							})
-						]
+						],
+						layoutData: new FlexItemData({
+							growFactor: 1,
+							minWidth: "0"
+						})
 					}),
 					this._mControls["exit"] = new Button({
 						type:"Transparent",
@@ -340,7 +348,10 @@ function(
 						press: this.eventHandler.bind(this, 'Exit'),
 						icon: "sap-icon://decline"
 					})
-				]
+				],
+				layoutData: new FlexItemData({
+					growFactor: 0
+				})
 			})
 		];
 	};

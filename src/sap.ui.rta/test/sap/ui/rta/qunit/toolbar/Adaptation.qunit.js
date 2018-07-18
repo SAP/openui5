@@ -40,14 +40,10 @@ function(
 				assert.ok(this.oToolbar.getControl('exit').getText(), "the exit button has text");
 				assert.equal(this.oToolbar.getControl('restore').getLayoutData().getPriority(), "Low", "the layout data priority is correct");
 
-				this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
-				this.oToolbar.setWidth("899px");
-				sap.ui.getCore().applyChanges();
+				this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
 
-				this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
-				this.oToolbar.setWidth("599px");
-				sap.ui.getCore().applyChanges();
+				this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
 			}.bind(this));
 		});
@@ -98,7 +94,7 @@ function(
 			this.oToolbar.show()
 			.then(function() {
 				this.oToolbar.getDomRef().style.padding = 0;
-				var aContent = this.oToolbar.getContent();
+				var aContent = this.oToolbar.getItems();
 				assert.equal(aContent[0].getDomRef().offsetWidth, 450);
 				assert.equal(aContent[1].getDomRef().offsetWidth, 450);
 

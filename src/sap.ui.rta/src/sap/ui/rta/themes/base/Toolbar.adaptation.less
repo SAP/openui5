@@ -1,0 +1,32 @@
+.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+	.sapMFlexBox {
+		margin-left: 0;
+		margin-right: 0;
+		height: inherit;
+	}
+
+	.sapMHBox.sapMFlexBox:first-child.sapMTBShrinkItem {
+		min-width: 0; /* Overrider '.sapMTBShrinkItem' */
+	}
+
+	.sapMHBox.sapMFlexBox:last-child {
+		.sapMFlexItem:first-child {
+			.sapMTB {
+				border-bottom: none;
+				height: 46px;
+			}
+
+			.sapMSegB {
+				margin-left: 0;
+			}
+		}
+	}
+}
+
+.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet, .sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		.sapMFlexBox:first-child {
+			display: none;
+		}
+	}
+}
