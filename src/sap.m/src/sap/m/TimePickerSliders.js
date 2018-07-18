@@ -193,6 +193,8 @@ sap.ui.define([
 			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			this.$().on(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
 
+			this.$().on('selectstart', fnFalse);
+
 			if (!Device.browser.msie && this._getShouldOpenSliderAfterRendering()) {
 				/* This method is called here prematurely to ensure slider loading on time.
 				 * Make sure _the browser native focus_ is not actually set on the early call (the "true" param)
@@ -1204,6 +1206,10 @@ sap.ui.define([
 			}
 
 			return sResult;
+		}
+
+		function fnFalse() {
+			return false;
 		}
 
 		return TimePickerSliders;
