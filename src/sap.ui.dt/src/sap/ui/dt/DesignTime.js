@@ -593,18 +593,21 @@ function(
 	};
 
 	/**
-	 * Creates overlay and returns a Promise which is resolved when whole hierarchy is created. If creation
-	 * of an overlay is in a process, then same promise object will be returned as after first call.
-	 *
-	 * @typedef {object} CreateOverlayParameters
+	 * @typedef {object} sap.ui.dt.DesignTime.CreateOverlayParameters
 	 * @property {sap.ui.base.ManagedObject} element - Control instance for which overlay is being created
 	 * @property {boolean} [root] - Proxy for "isRoot" property of sap.ui.dt.ElementOverlay constructor
 	 * @property {object} [parentMetadata] - Map with metadata from the parent
 	 * @property {boolean} [visible] - Proxy for "visible" property of sap.ui.dt.ElementOverlay constructor
+	 * @private
+	 */
+
+	/**
+	 * Creates overlay and returns a Promise which is resolved when whole hierarchy is created. If creation
+	 * of an overlay is in a process, then same promise object will be returned as after first call.
 	 *
 	 * @param {sap.ui.base.ManagedObject|CreateOverlayParameters} vArg - Accepts control instance or parameters object
 	 * @return {Promise} - resolves with overlay as the only argument for specified Element
-	 * @public
+	 * @private
 	 */
 	DesignTime.prototype.createOverlay = function (vArg) {
 		// Function can receive an element as the only argument or object with parameters
