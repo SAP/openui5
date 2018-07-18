@@ -1106,6 +1106,7 @@ sap.ui.require([
 			oView.loaded().then(function() {
 				var oTable = oView.byId("table");
 				assert.ok(oTable, "The table is there");
+				//multiple aggegations
 				var aColumns = oTable.getColumns();
 				assert.equal(aColumns.length,4,"The table has 4 columns");
 
@@ -1121,6 +1122,18 @@ sap.ui.require([
 				assert.ok(oColumn2,"The templated column can be accessed");
 				assert.equal(oColumn2.getId(), "comp--table--template2","The corresponding Id is correct");
 				assert.equal(oColumn, oColumn,"The column from byId and from the managed object model are equal");
+
+				//single aggregations
+				var oHeader = oTable.getHeader();//should be the templating header
+				assert.equal(oHeader.getText(), "My header fragment", "The table gets the header from templating");
+
+				var oFooter = oTable.getFooter();//should be the on defined footer in the view
+				assert.equal(oFooter.getText(), "My own footer", "The table gets the header from templating");
+
+				//unknown fragments are not processed robustness
+				var oUnknown = oTable.byId("so_unknown");
+				assert.notOk(oUnknown, "As unknown is no aggregation although there is a fragment this gets never processed");
+
 				oComponentContainer.destroy();
 				done();
 			});
