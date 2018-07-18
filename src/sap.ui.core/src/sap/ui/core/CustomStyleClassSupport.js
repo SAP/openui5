@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.core.CustomStyleClassSupport
-sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log"],
-	function(Element, assert, Log) {
+sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
+	function(Element, assert, Log, jQuery) {
 	"use strict";
 
 	/**

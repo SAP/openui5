@@ -8,14 +8,16 @@ sap.ui.define([
 	'./ClientListBinding',
 	'./ClientPropertyBinding',
 	'./ClientTreeBinding',
-	'./Model'
+	'./Model',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		ClientContextBinding,
 		ClientListBinding,
 		ClientPropertyBinding,
 		ClientTreeBinding,
-		Model
+		Model,
+		jQuery
 	) {
 	"use strict";
 
@@ -106,9 +108,11 @@ sap.ui.define([
 		function wrapHandler(fn) {
 			return function() {
 				// request finished, remove request handle from pending request array
-				var iIndex = jQuery.inArray(oRequestHandle, that.aPendingRequestHandles);
-				if (iIndex > -1) {
-					that.aPendingRequestHandles.splice(iIndex, 1);
+				if (that.aPendingRequestHandles){
+					var iIndex = that.aPendingRequestHandles.indexOf(oRequestHandle);
+					if (iIndex > -1) {
+						that.aPendingRequestHandles.splice(iIndex, 1);
+					}
 				}
 
 				// call original handler method

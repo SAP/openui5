@@ -11,8 +11,8 @@
  */
 
 // Provides the JSON object based model implementation
-sap.ui.define(['sap/ui/model/Model', './ControlPropertyBinding'],
-	function(Model, ControlPropertyBinding) {
+sap.ui.define(['sap/ui/model/Model', './ControlPropertyBinding', "sap/ui/thirdparty/jquery"],
+	function(Model, ControlPropertyBinding, jQuery) {
 	"use strict";
 
 	/**
@@ -46,7 +46,7 @@ sap.ui.define(['sap/ui/model/Model', './ControlPropertyBinding'],
 
 	/**	 */
 	ControlModel.prototype.addFacadeComponent = function(oElement) {
-		var i = jQuery.inArray(oElement, this.oElements);
+		var i = this.oElements.indexOf(oElement);
 		if ( i < 0 ) {
 			this.oElements.push(oElement);
 			oElement.attachEvent("_change", this.checkUpdate, this);
@@ -55,7 +55,7 @@ sap.ui.define(['sap/ui/model/Model', './ControlPropertyBinding'],
 
 	/**	 */
 	ControlModel.prototype.removeFacadeComponent = function(oElement) {
-		var i = jQuery.inArray(oElement, this.oElements);
+		var i = this.oElements.indexOf(oElement);
 		if ( i >= 0 ) {
 			this.oElements.splice(i, 1);
 			oElement.detachEvent("_change", this.checkUpdate, this);

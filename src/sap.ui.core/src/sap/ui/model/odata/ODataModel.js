@@ -30,7 +30,9 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/base/security/encodeURL"
+	"sap/base/security/encodeURL",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isPlainObject"
 ],
 	function(
 		BindingMode,
@@ -51,7 +53,9 @@ sap.ui.define([
 		merge,
 		Log,
 		assert,
-		encodeURL
+		encodeURL,
+		jQuery,
+		isPlainObject
 	) {
 	"use strict";
 
@@ -1486,7 +1490,7 @@ sap.ui.define([
 		}
 
 		// if value is a plain value and not an object we return directly
-		if (!jQuery.isPlainObject(oValue)) {
+		if (!isPlainObject(oValue)) {
 			return oValue;
 		}
 
@@ -2723,7 +2727,7 @@ sap.ui.define([
 			oStoredEntry = this._getObject(sPath);
 			oPayload = oStoredEntry;
 
-			if (jQuery.isPlainObject(oStoredEntry)) {
+			if (isPlainObject(oStoredEntry)) {
 				// do a copy of the payload or the changes will be deleted in the model as well (reference)
 				oPayload = merge({}, oStoredEntry);
 				// remove metadata, navigation properties to reduce payload
@@ -3175,7 +3179,7 @@ sap.ui.define([
 			for (var i = 0; i < oEntityMetadata.property.length; i++) {
 				var oPropertyMetadata = oEntityMetadata.property[i];
 
-				var bPropertyInArray = jQuery.inArray(oPropertyMetadata.name,vProperties) > -1;
+				var bPropertyInArray = vProperties && vProperties.indexOf(oPropertyMetadata.name)  > -1;
 				if (!vProperties || bPropertyInArray)  {
 					oEntity[oPropertyMetadata.name] = this._createPropertyValue(oPropertyMetadata.type);
 					if (bPropertyInArray) {
@@ -3305,9 +3309,11 @@ sap.ui.define([
 		function wrapHandler(fn) {
 			return function() {
 				// request finished, remove request handle from pending request array
-				var iIndex = jQuery.inArray(oRequestHandle, that.aPendingRequestHandles);
-				if (iIndex > -1) {
-					that.aPendingRequestHandles.splice(iIndex, 1);
+				if (that.aPendingRequestHandles){
+					var iIndex = that.aPendingRequestHandles.indexOf(oRequestHandle);
+					if (iIndex > -1) {
+						that.aPendingRequestHandles.splice(iIndex, 1);
+					}
 				}
 
 				// call original handler method

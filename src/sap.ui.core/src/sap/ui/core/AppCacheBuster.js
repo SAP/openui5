@@ -12,9 +12,10 @@ sap.ui.define([
 	'./Core',
 	'sap/ui/thirdparty/URI',
 	"sap/base/Log",
-	"sap/base/strings/escapeRegExp"
+	"sap/base/strings/escapeRegExp",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(ManagedObject, Core, URI, Log, escapeRegExp) {
+	function(ManagedObject, Core, URI, Log, escapeRegExp, jQuery) {
 	"use strict";
 
 	/*

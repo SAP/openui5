@@ -7,9 +7,10 @@ sap.ui.define([
 	'./Control',
 	'./library',
 	'./theming/Parameters',
-	"./LocalBusyIndicatorRenderer"
+	"./LocalBusyIndicatorRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, library, Parameters, LocalBusyIndicatorRenderer) {
+	function(Control, library, Parameters, LocalBusyIndicatorRenderer, jQuery) {
 	"use strict";
 
 

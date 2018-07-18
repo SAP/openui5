@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	ChangeReason,
 	Filter,
@@ -30,7 +31,8 @@ sap.ui.define([
 	deepEqual,
 	merge,
 	Log,
-	assert
+	assert,
+	jQuery
 ) {
 	"use strict";
 

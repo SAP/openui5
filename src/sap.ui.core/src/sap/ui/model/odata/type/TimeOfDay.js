@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	DateFormat,
 	FormatException,
 	ParseException,
 	ValidateException,
 	ODataType,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

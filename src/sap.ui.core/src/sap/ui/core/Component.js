@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
-	'sap/base/util/UriParameters'
+	'sap/base/util/UriParameters',
+	"sap/base/util/isPlainObject"
 ], function(
 	jQuery,
 	Manifest,
@@ -28,7 +29,8 @@ sap.ui.define([
 	assert,
 	Log,
 	ObjectPath,
-	UriParameters
+	UriParameters,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -99,7 +101,7 @@ sap.ui.define([
 		var oData = oManifest.getEntry(sKey);
 
 		// merge / extend should only be done for objects or when entry wasn't found
-		if (oData !== undefined && !jQuery.isPlainObject(oData)) {
+		if (oData !== undefined && !isPlainObject(oData)) {
 			return oData;
 		}
 
@@ -2515,7 +2517,7 @@ sap.ui.define([
 			var aPromises = [];
 			var fnCollect = bAsync ? function(oPromise) {
 				aPromises.push(oPromise);
-			} : jQuery.noop;
+			} : function() {};
 
 			// lookup the resource roots and call the register API
 			oManifest.defineResourceRoots();

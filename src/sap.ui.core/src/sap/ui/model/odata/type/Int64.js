@@ -2,10 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatException',
-               'sap/ui/model/ParseException', 'sap/ui/core/format/NumberFormat',
-               'sap/ui/model/ValidateException', "sap/base/Log"],
-	function(ODataType, FormatException, ParseException, NumberFormat, ValidateException, Log) {
+sap.ui.define([
+	'sap/ui/model/odata/type/ODataType',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/ParseException',
+	'sap/ui/core/format/NumberFormat',
+	'sap/ui/model/ValidateException',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		ODataType,
+		FormatException,
+		ParseException,
+		NumberFormat,
+		ValidateException,
+		Log,
+		jQuery
+	) {
 	"use strict";
 
 	var rInteger = /^[-+]?(\d+)$/, // user input for an Int64 w/o the sign

@@ -11,9 +11,20 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/i18n/ResourceBundle",
-	"sap/base/util/uid"
+	"sap/base/util/uid",
+	"sap/base/util/isPlainObject"
 ],
-	function(jQuery, BaseObject, URI, Version, Log, includeStylesheet, ResourceBundle, uid) {
+	function(
+		jQuery,
+		BaseObject,
+		URI,
+		Version,
+		Log,
+		includeStylesheet,
+		ResourceBundle,
+		uid,
+		isPlainObject
+	) {
 	"use strict";
 
 	/*global Promise */
@@ -301,7 +312,7 @@ sap.ui.define([
 			var oEntry = getObject(oManifest, sPath);
 
 			// top-level manifest section must be an object (e.g. sap.ui5)
-			if (sPath && sPath[0] !== "/" && !jQuery.isPlainObject(oEntry)) {
+			if (sPath && sPath[0] !== "/" && !isPlainObject(oEntry)) {
 				Log.warning("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
 				return null;
 			}

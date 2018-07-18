@@ -3,8 +3,15 @@
  */
 
 // Provides class sap.ui.core.CompositeSupport
-sap.ui.define(['./Control', 'sap/ui/model/control/ControlModel', 'sap/ui/base/EventProvider', "sap/base/assert"],
-	function(Control, ControlModel, EventProvider, assert) {
+sap.ui.define([
+	'./Control',
+	'sap/ui/model/control/ControlModel',
+	'sap/ui/base/EventProvider',
+	"sap/base/assert",
+	"sap/base/util/isPlainObject",
+	"sap/ui/thirdparty/jquery"
+],
+	function(Control, ControlModel, EventProvider, assert, isPlainObject, jQuery) {
 	"use strict";
 
 
@@ -79,7 +86,7 @@ sap.ui.define(['./Control', 'sap/ui/model/control/ControlModel', 'sap/ui/base/Ev
 				if ( mSettings.componentFactory ) {
 
 					// assert a pure object literal
-					assert(jQuery.isPlainObject(mSettings.componentFactory));
+					assert(isPlainObject(mSettings.componentFactory));
 
 					// customize the factory with it
 					oFactory.customize(mSettings.componentFactory);

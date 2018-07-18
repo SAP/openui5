@@ -22,13 +22,11 @@ sap.ui.define([
 		BaseObject,
 		ResizeHandler,
 		Interaction,
-		jQueryDOM,
+		jQuery,
 		KeyCodes
 	) {
 	"use strict";
 
-
-	var $ = jQuery;
 
 		/**
 		 * Creates a ScrollEnablement delegate that can be attached to Controls requiring
@@ -195,7 +193,7 @@ sap.ui.define([
 			 */
 			getChildPosition: function(vElement) {
 				// check if vElement is a DOM element and if yes convert it to jQuery object
-				var $Element = vElement instanceof jQuery ? vElement : $(vElement),
+				var $Element = vElement instanceof jQuery ? vElement : jQuery(vElement),
 					oElementPosition = $Element.position(),
 					$OffsetParent = $Element.offsetParent(),
 					oAddUpPosition;
@@ -228,7 +226,7 @@ sap.ui.define([
 						return this;
 				}
 
-				var $Element = $(oElement),
+				var $Element = jQuery(oElement),
 					oScrollPosition = this.getChildPosition($Element),
 					iLeftScroll = this.getScrollLeft() + oScrollPosition.left + aOffset[0],
 					iTopScroll = this.getScrollTop() + oScrollPosition.top + aOffset[1];
@@ -617,7 +615,7 @@ sap.ui.define([
 			},
 
 			onAfterRendering: function() {
-				var $Container = this._$Container = this._sContainerId ? jQueryDOM(document.getElementById(this._sContainerId)) : jQueryDOM(document.getElementById(this._sContentId)).parent();
+				var $Container = this._$Container = this._sContainerId ? jQuery(document.getElementById(this._sContainerId)) : jQuery(document.getElementById(this._sContentId)).parent();
 				var _fnRefresh = jQuery.proxy(this._refresh, this);
 				var bElementVisible = $Container.is(":visible");
 
@@ -717,11 +715,11 @@ sap.ui.define([
 			var oDelegateMembers = {
 				_init : function(oControl, sScrollContentDom, oConfig) {
 					// default scroll supression threshold of jQuery mobile is too small and prevent native scrolling
-					if ($.event && $.event.special && $.event.special.swipe && $.event.special.swipe.scrollSupressionThreshold < 120) {
-						$.event.special.swipe.scrollSupressionThreshold = 120;
+					if (jQuery.event && jQuery.event.special && jQuery.event.special.swipe && jQuery.event.special.swipe.scrollSupressionThreshold < 120) {
+						jQuery.event.special.swipe.scrollSupressionThreshold = 120;
 					}
 
-					$.extend(this, oNativeScrollDelegate);
+					jQuery.extend(this, oNativeScrollDelegate);
 
 					if (oConfig.nonTouchScrolling === true) {
 						this._bDragScroll = true; // optional drag instead of native scrolling
@@ -740,7 +738,7 @@ sap.ui.define([
 				}
 			};
 			// Copy over members to prototype
-			$.extend(oScrollerInstance, oDelegateMembers);
+			jQuery.extend(oScrollerInstance, oDelegateMembers);
 		}
 
 	return ScrollEnablement;

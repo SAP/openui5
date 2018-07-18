@@ -22,7 +22,7 @@ sap.ui.define([
 	Interaction,
 	uid,
 	ActivityDetection,
-	jQueryDOM,
+	jQuery,
 	encodeXML,
 	assert,
 	Measurement,
@@ -1309,7 +1309,7 @@ sap.ui.define([
 		ATTR_UI_AREA_MARKER = "data-sap-ui-area";
 
 	function getPreserveArea() {
-		var $preserve = jQueryDOM(document.getElementById(ID_PRESERVE_AREA));
+		var $preserve = jQuery(document.getElementById(ID_PRESERVE_AREA));
 		if ($preserve.length === 0) {
 			$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
 				addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Sorter'],
-	function(Sorter) {
+sap.ui.define(['./Sorter', "sap/ui/thirdparty/jquery"],
+	function(Sorter, jQuery) {
 	"use strict";
 
 	/**

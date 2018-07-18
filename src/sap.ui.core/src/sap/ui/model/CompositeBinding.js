@@ -12,7 +12,8 @@ sap.ui.define([
 	'./CompositeDataState',
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		DataType,
@@ -23,7 +24,8 @@ sap.ui.define([
 		CompositeDataState,
 		deepEqual,
 		assert,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 

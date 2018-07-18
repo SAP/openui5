@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/thirdparty/crossroads',
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		library,
@@ -26,7 +27,8 @@ sap.ui.define([
 		crossroads,
 		UriParameters,
 		deepEqual,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 

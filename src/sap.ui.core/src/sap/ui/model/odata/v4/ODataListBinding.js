@@ -19,10 +19,11 @@ sap.ui.define([
 	"./lib/_Cache",
 	"./lib/_GroupLock",
 	"./lib/_Helper",
-	"./ODataParentBinding"
+	"./ODataParentBinding",
+	"sap/ui/thirdparty/jquery"
 ], function (Log, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
 		Sorter, OperationMode, Context, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
-		_Helper, asODataParentBinding) {
+		_Helper, asODataParentBinding, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",

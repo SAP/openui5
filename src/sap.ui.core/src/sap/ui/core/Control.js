@@ -3,8 +3,28 @@
  */
 
 // Provides base class sap.ui.core.Control for all controls
-sap.ui.define(['./CustomStyleClassSupport', './Element', './UIArea', './RenderManager', './ResizeHandler', './BusyIndicatorUtils', './BlockLayerUtils', "sap/base/Log"],
-	function(CustomStyleClassSupport, Element, UIArea, RenderManager, ResizeHandler, BusyIndicatorUtils, BlockLayerUtils, Log) {
+sap.ui.define([
+	'./CustomStyleClassSupport',
+	'./Element',
+	'./UIArea',
+	'./RenderManager',
+	'./ResizeHandler',
+	'./BusyIndicatorUtils',
+	'./BlockLayerUtils',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		CustomStyleClassSupport,
+		Element,
+		UIArea,
+		RenderManager,
+		ResizeHandler,
+		BusyIndicatorUtils,
+		BlockLayerUtils,
+		Log,
+		jQuery
+	) {
 	"use strict";
 
 	/**

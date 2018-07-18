@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(EventProvider, Target, asyncRoute, syncRoute, Component, Log, assert, jQueryDOM) {
+	function(EventProvider, Target, asyncRoute, syncRoute, Component, Log, assert, jQuery) {
 	"use strict";
 
 		/**
@@ -89,7 +89,7 @@ sap.ui.define([
 					this[fn] = RouteStub[fn];
 				}
 
-				if (!jQueryDOM.isArray(vRoute)) {
+				if (!Array.isArray(vRoute)) {
 					vRoute = [vRoute];
 				}
 
@@ -110,11 +110,11 @@ sap.ui.define([
 					}
 				}
 
-				if (jQueryDOM.isArray(oConfig.subroutes)) {
+				if (Array.isArray(oConfig.subroutes)) {
 					//Convert subroutes
 					aSubRoutes = oConfig.subroutes;
 					oConfig.subroutes = {};
-					jQueryDOM.each(aSubRoutes, function(iSubrouteIndex, oSubRoute) {
+					jQuery.each(aSubRoutes, function(iSubrouteIndex, oSubRoute) {
 						oConfig.subroutes[oSubRoute.name] = oSubRoute;
 					});
 				}
@@ -129,7 +129,7 @@ sap.ui.define([
 
 				// recursively add the subroutes to this route
 				if (oConfig.subroutes) {
-					jQueryDOM.each(oConfig.subroutes, function(sRouteName, oSubRouteConfig) {
+					jQuery.each(oConfig.subroutes, function(sRouteName, oSubRouteConfig) {
 						if (oSubRouteConfig.name === undefined) {
 							oSubRouteConfig.name = sRouteName;
 						}
@@ -142,7 +142,7 @@ sap.ui.define([
 					return;
 				}
 
-				jQueryDOM.each(vRoute, function(iIndex, sRoute) {
+				jQuery.each(vRoute, function(iIndex, sRoute) {
 
 					that._aPattern[iIndex] = sRoute;
 
@@ -151,7 +151,7 @@ sap.ui.define([
 
 					that._aRoutes[iIndex].matched.add(function() {
 						var oArguments = {};
-						jQueryDOM.each(arguments, function(iArgumentIndex, sArgument) {
+						jQuery.each(arguments, function(iArgumentIndex, sArgument) {
 							oArguments[that._aRoutes[iIndex]._paramsIds[iArgumentIndex]] = sArgument;
 						});
 						that._routeMatched(oArguments, true);
@@ -377,7 +377,7 @@ sap.ui.define([
 			},
 
 			_convertToTargetOptions: function (oOptions) {
-				return jQueryDOM.extend(true,
+				return jQuery.extend(true,
 					{},
 					oOptions,
 					{

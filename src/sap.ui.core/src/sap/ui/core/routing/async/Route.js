@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/Device', "sap/base/Log"], function(Device, Log) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], function(Device, Log, jQuery) {
 	"use strict";
 
 	/**

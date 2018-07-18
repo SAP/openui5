@@ -3,8 +3,15 @@
  */
 
 // Provides class sap.ui.core.ws.WebSocket for standard WebSocket support
-sap.ui.define(['sap/ui/Device', 'sap/ui/base/EventProvider', './ReadyState', 'sap/ui/thirdparty/URI', "sap/base/Log"],
-	function(Device, EventProvider, ReadyState, URI, Log) {
+sap.ui.define([
+	'sap/ui/Device',
+	'sap/ui/base/EventProvider',
+	'./ReadyState',
+	'sap/ui/thirdparty/URI',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(Device, EventProvider, ReadyState, URI, Log, jQuery) {
 	"use strict";
 
 	/**

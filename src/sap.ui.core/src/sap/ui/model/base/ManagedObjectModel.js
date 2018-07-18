@@ -10,7 +10,8 @@ sap.ui.define([
 	'../Context',
 	'../ChangeReason',
 	"sap/base/util/uid",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/isPlainObject"
 ], function(
 	JSONModel,
 	JSONPropertyBinding,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Context,
 	ChangeReason,
 	uid,
-	Log
+	Log,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -446,7 +448,7 @@ sap.ui.define([
 			return oParentNode.isBound(sParentPart);
 		} else if (sSpecial === "bindingInfo" && oParentNode && sParentPart) {
 			return oParentNode.getBindingInfo(sParentPart);
-		} else if (jQuery.isArray(oNode)) {
+		} else if (Array.isArray(oNode)) {
 			if (sSpecial === "length") {
 				return oNode.length;
 			} else if (sSpecial.indexOf("id=") === 0) {
@@ -549,7 +551,7 @@ sap.ui.define([
 						}
 					}
 				}
-			} else if (jQuery.isArray(oNode) || jQuery.isPlainObject(oNode)) {
+			} else if (Array.isArray(oNode) || isPlainObject(oNode)) {
 				oNode = oNode[sPart];
 			} else {
 				if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {

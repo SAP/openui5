@@ -3,8 +3,15 @@
  */
 
 // Provides class sap.ui.model.odata.v2.ODataAnnotations
-sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/base/EventProvider', 'sap/ui/core/cache/CacheManager', "sap/base/assert"],
-	function(AnnotationParser, Device, EventProvider, CacheManager, assert) {
+sap.ui.define([
+	'sap/ui/model/odata/AnnotationParser',
+	'sap/ui/Device',
+	'sap/ui/base/EventProvider',
+	'sap/ui/core/cache/CacheManager',
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
+],
+	function(AnnotationParser, Device, EventProvider, CacheManager, assert, jQuery) {
 	"use strict";
 
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////

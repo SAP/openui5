@@ -4,14 +4,15 @@
 
 // Provides control sap.ui.core.ScrollBar.
 sap.ui.define([
-    'sap/ui/Device',
-    './Control',
-    './library',
-    "./ScrollBarRenderer",
-    "sap/ui/performance/trace/Interaction",
+	'sap/ui/Device',
+	'./Control',
+	'./library',
+	"./ScrollBarRenderer",
+	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/jquery/EventSimulation"
+	"sap/ui/events/jquery/EventSimulation",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Device,
@@ -21,7 +22,8 @@ sap.ui.define([
 		Interaction,
 		Log,
 		containsOrEquals,
-		EventSimulation
+		EventSimulation,
+		jQuery
 	) {
 	"use strict";
 

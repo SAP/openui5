@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/TreeBindingUtils',
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		TreeBinding,
@@ -17,7 +18,8 @@ sap.ui.define([
 		ChangeReason,
 		TreeBindingUtils,
 		assert,
-		Log
+		Log,
+		jQuery
 	) {
 		"use strict";
 

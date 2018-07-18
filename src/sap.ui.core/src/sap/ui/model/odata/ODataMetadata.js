@@ -12,9 +12,10 @@ sap.ui.define([
 	'./_ODataMetaModelUtils',
 	"sap/base/util/uid",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(EventProvider, OData, CacheManager, Utils, uid, Log, assert) {
+	function(EventProvider, OData, CacheManager, Utils, uid, Log, assert, jQuery) {
 	"use strict";
 
 	/**

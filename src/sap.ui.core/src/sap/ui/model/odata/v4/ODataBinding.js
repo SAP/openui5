@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/OperationMode",
-	"./lib/_Helper"
-], function (SyncPromise, OperationMode, _Helper) {
+	"./lib/_Helper",
+	"sap/ui/thirdparty/jquery"
+], function(SyncPromise, OperationMode, _Helper, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataBinding";

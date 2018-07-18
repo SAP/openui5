@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
 		function(
 			Context,
@@ -39,7 +40,8 @@ sap.ui.define([
 			uid,
 			deepEqual,
 			Log,
-			assert
+			assert,
+			jQuery
 		) {
 	"use strict";
 

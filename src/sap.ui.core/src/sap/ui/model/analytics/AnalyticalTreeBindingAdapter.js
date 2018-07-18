@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/model/TreeBindingAdapter',
 	'sap/ui/model/TreeBindingUtils',
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		TreeBinding,
@@ -23,7 +24,8 @@ sap.ui.define([
 		TreeBindingAdapter,
 		TreeBindingUtils,
 		assert,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 

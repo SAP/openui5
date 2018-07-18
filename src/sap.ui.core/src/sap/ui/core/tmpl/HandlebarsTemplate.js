@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/thirdparty/handlebars',
 	'sap/ui/base/ManagedObject',
 	'sap/base/util/ObjectPath',
-	"sap/base/security/encodeXML"
+	"sap/base/security/encodeXML",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Core,
@@ -18,7 +19,8 @@ sap.ui.define([
 		Handlebars,
 		ManagedObject,
 		ObjectPath,
-		encodeXML
+		encodeXML,
+		jQuery
 	) {
 	"use strict";
 

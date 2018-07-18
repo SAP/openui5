@@ -10,7 +10,8 @@ sap.ui.define([
 	'./ListBinding',
 	'./FilterProcessor',
 	'./Sorter',
-	'./SorterProcessor'
+	'./SorterProcessor',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		ChangeReason,
@@ -19,7 +20,8 @@ sap.ui.define([
 		ListBinding,
 		FilterProcessor,
 		Sorter,
-		SorterProcessor
+		SorterProcessor,
+		jQuery
 	) {
 	"use strict";
 

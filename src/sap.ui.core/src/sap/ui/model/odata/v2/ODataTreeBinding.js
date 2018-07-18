@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/FilterType',
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		TreeBinding,
@@ -31,7 +32,8 @@ sap.ui.define([
 		FilterProcessor,
 		FilterType,
 		Log,
-		assert
+		assert,
+		jQuery
 	) {
 	"use strict";
 
