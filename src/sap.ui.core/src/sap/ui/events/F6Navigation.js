@@ -8,7 +8,7 @@
 sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/dom/jquery/Selectors'
-], function(jQuery /*, sapTabbable */) {
+], function(jQuery/*, sapTabbable */) {
 	"use strict";
 
 
@@ -35,12 +35,12 @@ sap.ui.define([
 	 * @exports sap/ui/events/F6Navigation
 	 * @private
 	 */
-	var oF6Navigation = {};
+	var F6Navigation = {};
 
 	// CustomData attribute name for fast navigation groups (in DOM additional prefix "data-" is needed)
-	oF6Navigation.fastNavigationKey = "sap-ui-fastnavgroup";
+	F6Navigation.fastNavigationKey = "sap-ui-fastnavgroup";
 
-	oF6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
+	F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 
 		// Returns the nearest parent DomRef of the given DomRef with attribute data-sap-ui-customfastnavgroup="true".
 		function findClosestCustomGroup(oRef) {
@@ -56,7 +56,7 @@ sap.ui.define([
 				return oGroup;
 			}
 
-			var $Group = jQuery(oRef).closest('[data-' + oF6Navigation.fastNavigationKey + '="true"]');
+			var $Group = jQuery(oRef).closest('[data-' + F6Navigation.fastNavigationKey + '="true"]');
 			return $Group[0];
 		}
 
@@ -240,11 +240,5 @@ sap.ui.define([
 		navigate(oTarget, aScopes, !oEvent.shiftKey);
 	};
 
-	jQuery(function() {
-		jQuery(document).on("keydown", function(oEvent) {
-			oF6Navigation.handleF6GroupNavigation(oEvent, null);
-		});
-	});
-
-	return oF6Navigation;
+	return F6Navigation;
 });

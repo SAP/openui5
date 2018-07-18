@@ -16,8 +16,10 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	'sap/ui/events/jquery/EventExtension',
 	"sap/ui/events/ControlEvents",
-	'jquery.sap.ui',
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/events/F6Navigation",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	'jquery.sap.ui'
 ],
 	function(
 		ManagedObject,
@@ -32,6 +34,7 @@ sap.ui.define([
 		Measurement,
 		EventExtension,
 		ControlEvents,
+		F6Navigation,
 		jQuery
 		/* jQuerySapUi */
 	) {
@@ -42,6 +45,11 @@ sap.ui.define([
 	var Control;
 
 	EventExtension.apply();
+
+	// Activate F6Navigation
+	jQuery(document).on("keydown", function(oEvent) {
+		F6Navigation.handleF6GroupNavigation(oEvent, null);
+	});
 
 	/**
 	 * A private logger instance used for 'debugRendering' logging.
