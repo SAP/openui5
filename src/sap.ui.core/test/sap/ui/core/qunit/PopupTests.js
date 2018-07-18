@@ -264,7 +264,7 @@ QUnit.test("Initial Focus in non-modal mode, set", function(assert) {
 
 
 QUnit.test("Initial Focus in modal mode, auto", function(assert) {
-	assert.expect(2);
+	assert.expect(3);
 
 	var done = assert.async();
 	var fnOpened = function() {
@@ -284,7 +284,12 @@ QUnit.test("Initial Focus in modal mode, auto", function(assert) {
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.attachClosed(fnClosed, this);
 	this.oPopup.setModal(true);
+
+	jQuery.sap.domById("focusableElement2").focus();
+
 	this.oPopup.open();
+
+	assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
 });
 
 
