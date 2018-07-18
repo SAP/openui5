@@ -32,11 +32,13 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			configurable: true,
 			enumerable: true,
 			get: function() {
+				var ae = null;
 				try {
-					return getActiveElement.call(this);
+					ae = getActiveElement.call(this);
 				} catch (e) {
-					return null;
+					// ignore
 				}
+				return (ae && ae.nodeType) ? ae : document.body;
 			}
 		});
 	};
