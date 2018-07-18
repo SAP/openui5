@@ -505,8 +505,20 @@ sap.ui.define(['sap/ui/Device', './library', "sap/base/Log"],
 				}
 
 				oTable._bReorderInProcess = true;
-				oTable.removeColumn(oColumn);
+
+				/* The AnalyticalBinding does not support calls like:
+				 * oBinding.updateAnalyticalInfo(...);
+				 * oBinding.getContexts(...);
+				 * oBinding.updateAnalyticalInfo(...);
+				 * oBinding.getContexts(...);
+				 * A call chain like above can lead to some problems:
+				 * - A request according to the analytical info passed in line 1 would be sent, but not for the info in line 3.
+				 * - After the change event (updateRows) the binding returns an incorrect length of 0.
+				 * The solution is to only trigger a request at the end of a process.
+				 */
+				oTable.removeColumn(oColumn, true);
 				oTable.insertColumn(oColumn, iNewIndex);
+
 				oTable._bReorderInProcess = false;
 
 				return true;

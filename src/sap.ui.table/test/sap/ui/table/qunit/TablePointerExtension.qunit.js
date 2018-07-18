@@ -802,13 +802,6 @@ sap.ui.define([
 		var oSettings = computeSettingsForReordering(oTable, 2, true);
 		var oColumn = oSettings.column;
 		var iLeft = oSettings.left + oSettings.breakeven;
-		var iCount = 0;
-
-		oTable.updateAnalyticalInfo = function(bFirst, bSecond) {
-			assert.ok(bFirst, "updateAnalyticalInfo with first parameter true");
-			assert.ok(bSecond, "updateAnalyticalInfo with second parameter true");
-			iCount++;
-		};
 
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
@@ -820,7 +813,6 @@ sap.ui.define([
 			setTimeout(function() {
 				sap.ui.getCore().applyChanges();
 				assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed because not dragged enough");
-				assert.equal(iCount, 1, "updateAnalyticalInfo called");
 
 				qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
 				setTimeout(function() {
@@ -830,7 +822,6 @@ sap.ui.define([
 					setTimeout(function() {
 						sap.ui.getCore().applyChanges();
 						assert.equal(oTable.indexOfColumn(oColumn), 3, "Index of column changed");
-						assert.equal(iCount, 2, "updateAnalyticalInfo called");
 						done();
 					}, 100);
 				}, 250);

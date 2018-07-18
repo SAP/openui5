@@ -631,11 +631,6 @@ sap.ui.define([
 				TableUtils.focusItem(that, 0, oEvent);
 				TableUtils.focusItem(that, iOldFocusedIndex, oEvent);
 			}, 0);
-
-			// For AnalyticalTable only
-			if (this.updateAnalyticalInfo) {
-				this.updateAnalyticalInfo(true, true);
-			}
 		},
 
 		/*
