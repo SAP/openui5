@@ -662,7 +662,10 @@
 		  "name": "Message Popover",
 		  "category": "Popup",
 		  "since": "1.28",
-		  "samples": ["sap.m.sample.MessagePopover"]
+		  "samples": [
+			"sap.m.sample.MessagePopover",
+			"sap.m.sample.MessagePopoverMessageHandling"
+		  ]
 		},
 		{
 		  "id": "sap.m.MessageView",
@@ -2500,6 +2503,11 @@
 		  "id": "sap.m.sample.MessagePopover",
 		  "name": "MessagePopover",
 		  "description": "MessagePopover is a control that displays a summarized list of different types of messages (errors, warnings, success and information). It provides a handy and systemized way to navigate and explore details for every message."
+		},
+		{
+		  "id": "sap.m.sample.MessagePopoverMessageHandling",
+		  "name": "Message Popover - Message Handling",
+		  "description": "The message handling concept connects intuitively an error inside the page (such as input validation error) with an error, visualized as an item in a message popover."
 		},
 		{
 		  "id": "sap.m.sample.MessageViewInsideDialog",
