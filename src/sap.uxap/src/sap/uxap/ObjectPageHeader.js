@@ -4,7 +4,7 @@
 
 // Provides control sap.uxap.ObjectPageHeader.
 sap.ui.define([
-    "jquery.sap.global",
+    "sap/ui/thirdparty/jquery",
     "sap/ui/core/Control",
     "sap/ui/core/IconPool",
     "sap/ui/core/CustomData",
@@ -342,7 +342,7 @@ sap.ui.define([
 			this.oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
 		}
 		if (!this.oLibraryResourceBundleOP) {
-			this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
+			this.oLibraryResourceBundleOP = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"); // get resource translation bundle
 		}
 
 		// Overflow button
@@ -872,12 +872,12 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
 		if (this._adaptLayoutTimeout) {
-			jQuery.sap.clearDelayedCall(this._adaptLayoutTimeout);
+			clearTimeout(this._adaptLayoutTimeout);
 		}
-		this._adaptLayoutTimeout = jQuery.sap.delayedCall(0, this, function() {
+		this._adaptLayoutTimeout = setTimeout(function() {
 			this._adaptLayoutTimeout = null;
 			this._adaptLayout();
-		});
+		}.bind(this), 0);
 	};
 
 	/**
@@ -1020,7 +1020,7 @@ sap.ui.define([
 
 		if ($headerDomRef) {
 			sId = this.getId() + '-' + sId;
-			return jQuery.sap.byId(sId, $headerDomRef);
+			return jQuery(document.getElementById(sId));
 		}
 
 		return this.$(sId); //if no dom reference then search within its own id-space (prepended with own id)
@@ -1140,6 +1140,15 @@ sap.ui.define([
 	ObjectPageHeader.prototype.supportsAdaptLayoutForDomElement = function () {
 		return true;
 	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @returns {boolean}
+	 */
+	ObjectPageHeader.prototype.supportsBackgroundDesign = function () {
+		return false;
+	};
+
 
 	/**
 	 * Returns the text that represents the title of the page.

@@ -5,8 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.ui.rta.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/library'],
-	function(jQuery, Core, coreLibrary) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'],
+	function(Core, coreLibrary) {
 	"use strict";
 
 	/**

@@ -9,6 +9,7 @@ sap.ui.define(function () {
 		receiver: 'sap.ui.rta.service.Receiver',
 		selection: 'sap.ui.rta.service.Selection',
 		controllerExtension: 'sap.ui.rta.service.ControllerExtension',
-		outline: 'sap.ui.rta.service.Outline'
+		outline: 'sap.ui.rta.service.Outline',
+		action: 'sap.ui.rta.service.Action'
 	});
 });

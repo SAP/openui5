@@ -1,6 +1,6 @@
 /*global QUnit, sinon, oTable, oTreeTable */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TableUtils",
@@ -1201,6 +1201,7 @@ sap.ui.require([
 		var oSecondLevel = new this.TableUtilsDummyControl({content: [this.oTable]});
 		var oFirstLevel = new this.TableUtilsDummyControl({content: [oSecondLevel]});
 		var $Body = jQuery(document.body);
+		$Body.toggleClass("sapUiSizeCozy", false);
 
 		oFirstLevel.placeAt("__table-outer", 0);
 		oCore.applyChanges();
@@ -1242,13 +1243,14 @@ sap.ui.require([
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed",
 			"sapUiSizeCondensed at table DOM, sapUiSizeCozy at table DOM and sapUiSizeCompact at control level. DOM wins. -> sapUiSizeCondensed");
 
-		$Body.toggleClass("sapUiSizeCozy", false);
+		$Body.toggleClass("sapUiSizeCozy", true);
 	});
 
 	QUnit.test("getContentDensity without DOM", function(assert) {
 		var oSecondLevel = new this.TableUtilsDummyControl({content: [this.oTable]});
 		var oFirstLevel = new this.TableUtilsDummyControl({content: [oSecondLevel]});
 		var $Body = jQuery(document.body);
+		$Body.toggleClass("sapUiSizeCozy", false);
 
 		assert.strictEqual(TableUtils.getContentDensity(this.oTable), undefined, "No content density set to far");
 
@@ -1272,19 +1274,23 @@ sap.ui.require([
 		this.oTable.addStyleClass("sapUiSizeCozy");
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at Table");
 
-		$Body.toggleClass("sapUiSizeCozy", false);
+		$Body.toggleClass("sapUiSizeCozy", true);
 	});
 
 	QUnit.test("getContentDensity table in UI Area", function(assert) {
 		var oCore = sap.ui.getCore();
 		this.oTable.placeAt("__table-outer", 0);
 		oCore.applyChanges();
+		var $Body = jQuery(document.body);
+		$Body.toggleClass("sapUiSizeCozy", false);
 
 		assert.strictEqual(TableUtils.getContentDensity(this.oTable), undefined, "No content density set to far");
 
 		this.oTable.addStyleClass("sapUiSizeCozy");
 		oCore.applyChanges();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
+
+		$Body.toggleClass("sapUiSizeCozy", true);
 	});
 
 	QUnit.module("Cell Content", {

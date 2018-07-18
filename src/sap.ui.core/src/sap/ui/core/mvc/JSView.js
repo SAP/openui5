@@ -9,9 +9,10 @@ sap.ui.define([
 	'./JSViewRenderer',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/core/library'
+	'sap/ui/core/library',
+	"sap/base/Log"
 ],
-	function(jQuery, View, JSViewRenderer, merge, ManagedObject, library) {
+	function(jQuery, View, JSViewRenderer, merge, ManagedObject, library, Log) {
 	"use strict";
 
 
@@ -83,7 +84,7 @@ sap.ui.define([
 		for (var sOption in mParameters) {
 			if (sOption === 'definition' || sOption === 'preprocessors') {
 				delete mParameters[sOption];
-				jQuery.sap.log.warning("JSView.create does not support the options definition or preprocessor!");
+				Log.warning("JSView.create does not support the options definition or preprocessor!");
 			}
 		}
 		mParameters.type = ViewType.JS;
@@ -102,7 +103,7 @@ sap.ui.define([
 	 * Defines a view of the given name with the given implementation. <code>sId</code> must be the view's name,
 	 * <code>vView</code> must be an object and can contain implementations for any of the hooks provided by JSView.
 	 *
-	 * <h3>View Instantiation</h3>
+	 * <h3>View Instantiation (deprecated)</h3>
 	 * <pre>
 	 *   var oView = sap.ui.jsview(vView);
 	 *   var oView = sap.ui.jsview(vView, bASync);
@@ -119,6 +120,10 @@ sap.ui.define([
 	 * When <code>bAsync</code> has a truthy value, the view definition will be read asynchronously, if needed,
 	 * but the (incomplete) view instance will be returned immediately.
 	 *
+	 * <b>Note:</b> Using <code>sap.ui.jsview</code> for creating view instances has been deprecated, use
+	 * {@link sap.ui.core.mvc.JSView.create JSView.create} instead. <code>JSView.create</code> enforces
+	 * asynchronous loading and can be used via an AMD reference, it doesn't rely on a global name.
+	 *
 	 * <b>Note:</b> Any other call signature will lead to a runtime error.
 	 *
 	 * @param {string} [sId] id of the newly created view, only allowed for instance creation
@@ -127,14 +132,15 @@ sap.ui.define([
 	 *   (only relevant for instantiation, ignored for everything else)
 	 * @public
 	 * @static
-	 * @deprecated Since 1.56, use {@link #.create JSView.create} or {@link #.extend JSView.extend} instead.
+	 * @deprecated Since 1.56, use {@link #.create JSView.create} to create view instances;
+	 *   for defining JavaScript views, there's no substitute yet and <code>sap.ui.jsview</code> still has to be used
 	 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {
 		if (vView && vView.async) {
-			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.jsview' for view instance creation. Use 'JSView.create' instead.");
+			Log.info("Do not use deprecated factory function 'sap.ui.jsview' for view instance creation. Use 'JSView.create' instead.");
 		} else {
-			jQuery.sap.log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'JSView.create' for view instance creation instead.");
+			Log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'JSView.create' for view instance creation instead.");
 		}
 		return viewFactory.apply(this, arguments);
 	};
@@ -159,8 +165,9 @@ sap.ui.define([
 		} else if (vView && typeof (vView) == "object") { // definition sap.ui.jsview("name",definitionObject)
 			// sId is not given, but contains the desired value of sViewName
 			mRegistry[sId] = vView;
+			//TODO: global jquery call found
 			jQuery.sap.declare({modName:sId,type:"view"}, false);
-			jQuery.sap.log.info("For defining views use JSView.extend instead.");
+			Log.info("For defining views use JSView.extend instead.");
 		} else if (arguments.length == 1 && typeof sId == "string" ||
 			arguments.length == 2 && typeof arguments[0] == "string" && typeof arguments[1] == "boolean") { // instantiation sap.ui.jsview("name", [async])
 			mSettings.viewName = arguments[0];
@@ -180,6 +187,7 @@ sap.ui.define([
 
 		// require view definition if not yet done...
 		if (!mRegistry[mSettings.viewName]) {
+			//TODO: global jquery call found
 			var sModuleName = jQuery.sap.getResourceName(mSettings.viewName, ".view");
 			if ( mSettings.async ) {
 				oPromise = new Promise(function(resolve) {

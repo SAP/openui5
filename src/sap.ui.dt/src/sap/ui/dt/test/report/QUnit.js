@@ -6,10 +6,9 @@
 
 // Provides class sap.ui.dt.test.qunit.QUnit.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject'
 ],
-function(jQuery, ManagedObject) {
+function(ManagedObject) {
 	"use strict";
 
 

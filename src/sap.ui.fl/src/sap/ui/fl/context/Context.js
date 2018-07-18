@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
+sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObject, Log) {
 	"use strict";
 
 	/**
@@ -153,7 +153,7 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 						});
 					});
 				} catch (oError) {
-					jQuery.sap.log.error(oError);
+					Log.error(oError);
 					resolve(); // recover from error, but deliver no information
 					return;
 				}

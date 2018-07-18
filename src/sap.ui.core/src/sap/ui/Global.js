@@ -24,8 +24,14 @@
 /*global OpenAjax */// declare unusual global vars for JSLint/SAPUI5 validation
 
 // Register to the OpenAjax Hub if it exists
-sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.global'],
-	function(VersionInfo, ObjectPath, jQuery) {
+sap.ui.define([
+	'sap/ui/VersionInfo',
+	'jquery.sap.global',
+	"sap/base/Log",
+	"sap/base/assert",
+	"sap/base/util/ObjectPath"
+],
+	function(VersionInfo, jQuery, Log, assert, ObjectPath) {
 	"use strict";
 
 	if (window.OpenAjax && window.OpenAjax.hub) {
@@ -100,9 +106,9 @@ sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.glo
 	 */
 	sap.ui.getVersionInfo = function(mOptions) {
 		if (mOptions && mOptions.async) {
-			jQuery.sap.log.info("Do not use deprecated function 'sap.ui.getVersionInfo'. Use 'sap.ui.VersionInfo.load' instead");
+			Log.info("Do not use deprecated function 'sap.ui.getVersionInfo'. Use 'sap.ui.VersionInfo.load' instead");
 		} else {
-			jQuery.sap.log.warning("Do not use deprecated function 'sap.ui.getVersionInfo' synchronously! Use asynchronous 'sap.ui.VersionInfo.load' instead");
+			Log.warning("Do not use deprecated function 'sap.ui.getVersionInfo' synchronously! Use asynchronous 'sap.ui.VersionInfo.load' instead");
 		}
 
 		return VersionInfo._load(mOptions); // .load() is async only!
@@ -120,7 +126,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.glo
 	 */
 	sap.ui.namespace = function(sNamespace){
 
-		jQuery.sap.assert(false, "sap.ui.namespace is long time deprecated and shouldn't be used");
+		assert(false, "sap.ui.namespace is long time deprecated and shouldn't be used");
 
 		return ObjectPath.create(sNamespace);
 	};
@@ -156,11 +162,11 @@ sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.glo
 	 */
 	sap.ui.lazyRequire = function(sClassName, sMethods, sModuleName) {
 
-		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "lazyRequire: sClassName must be a non-empty string");
-		jQuery.sap.assert(!sMethods || typeof sMethods === "string", "lazyRequire: sMethods must be empty or a string");
+		assert(typeof sClassName === "string" && sClassName, "lazyRequire: sClassName must be a non-empty string");
+		assert(!sMethods || typeof sMethods === "string", "lazyRequire: sMethods must be empty or a string");
 
 		if ( syncCallBehavior === 2 ) {
-			jQuery.sap.log.error("[nosync] lazy stub creation ignored for '" + sClassName + "'");
+			Log.error("[nosync] lazy stub creation ignored for '" + sClassName + "'");
 			return;
 		}
 
@@ -183,14 +189,15 @@ sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.glo
 				oClass = function() {
 					if ( syncCallBehavior ) {
 						if ( syncCallBehavior === 1 ) {
-							jQuery.sap.log.error("[nosync] lazy stub for constructor '" + sFullClass + "' called");
+							Log.error("[nosync] lazy stub for constructor '" + sFullClass + "' called");
 						}
 					} else {
-						jQuery.sap.log.debug("lazy stub for constructor '" + sFullClass + "' called.");
+						Log.debug("lazy stub for constructor '" + sFullClass + "' called.");
 					}
+					//TODO: global jquery call found
 					jQuery.sap.require(sModuleName);
 					var oRealClass = oPackage[sClass];
-					jQuery.sap.assert(typeof oRealClass === "function", "lazyRequire: oRealClass must be a function after loading");
+					assert(typeof oRealClass === "function", "lazyRequire: oRealClass must be a function after loading");
 					if ( oRealClass._sapUiLazyLoader ) {
 						throw new Error("lazyRequire: stub '" + sFullClass + "'has not been replaced by module '" + sModuleName + "'");
 					}
@@ -228,15 +235,16 @@ sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.glo
 				oClass[sMethod] = function() {
 					if ( syncCallBehavior ) {
 						if ( syncCallBehavior === 1 ) {
-							jQuery.sap.log.error("[no-sync] lazy stub for method '" + sFullClass + "." + sMethod + "' called");
+							Log.error("[no-sync] lazy stub for method '" + sFullClass + "." + sMethod + "' called");
 						}
 					} else {
-						jQuery.sap.log.debug("lazy stub for method '" + sFullClass + "." + sMethod + "' called.");
+						Log.debug("lazy stub for method '" + sFullClass + "." + sMethod + "' called.");
 					}
+					//TODO: global jquery call found
 					jQuery.sap.require(sModuleName);
 					var oRealClass = oPackage[sClass];
-					jQuery.sap.assert(typeof oRealClass === "function" || typeof oRealClass === "object", "lazyRequire: oRealClass must be a function or object after loading");
-					jQuery.sap.assert(typeof oRealClass[sMethod] === "function", "lazyRequire: method must be a function");
+					assert(typeof oRealClass === "function" || typeof oRealClass === "object", "lazyRequire: oRealClass must be a function or object after loading");
+					assert(typeof oRealClass[sMethod] === "function", "lazyRequire: method must be a function");
 					if (oRealClass[sMethod]._sapUiLazyLoader ) {
 						throw new Error("lazyRequire: stub '" + sFullClass + "." + sMethod + "' has not been replaced by loaded module '" + sModuleName + "'");
 					}
@@ -257,7 +265,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.glo
 	 * @deprecated since 1.56
 	 */
 	sap.ui.lazyRequire._isStub = function(sClassName) {
-		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "lazyRequire._isStub: sClassName must be a non-empty string");
+		assert(typeof sClassName === "string" && sClassName, "lazyRequire._isStub: sClassName must be a non-empty string");
 
 		var iLastDotPos = sClassName.lastIndexOf("."),
 			sContext = sClassName.slice(0, iLastDotPos),
@@ -285,8 +293,8 @@ sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.glo
 	 * @deprecated since 1.56.0, use <code>sap.ui.require.toUrl</code> instead.
 	 */
 	sap.ui.resource = function(sLibraryName, sResourcePath) {
-		jQuery.sap.assert(typeof sLibraryName === "string", "sLibraryName must be a string");
-		jQuery.sap.assert(typeof sResourcePath === "string", "sResourcePath must be a string");
+		assert(typeof sLibraryName === "string", "sLibraryName must be a string");
+		assert(typeof sResourcePath === "string", "sResourcePath must be a string");
 
 		return sap.ui.require.toUrl((String(sLibraryName).replace(/\./g, "/") + '/' + sResourcePath).replace(/^\/*/, ""));
 	};
@@ -330,7 +338,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'sap/base/util/ObjectPath', 'jquery.sap.glo
 	 * @deprecated since 1.56, use <code>sap.ui.loader.config</code> instead.
 	 */
 	sap.ui.localResources = function(sNamespace) {
-		jQuery.sap.assert(sNamespace, "sNamespace must not be empty");
+		assert(sNamespace, "sNamespace must not be empty");
 		var mPaths = {};
 		mPaths[sNamespace.replace(/\./g, "/")] = "./" + sNamespace.replace(/\./g, "/");
 		sap.ui.loader.config({paths:mPaths});

@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/ODataUtils"
-], function (jQuery, BaseODataUtils, _Helper, ODataUtils) {
+    "jquery.sap.global",
+    "sap/ui/model/odata/ODataUtils",
+    "sap/ui/model/odata/v4/lib/_Helper",
+    "sap/ui/model/odata/v4/ODataUtils",
+    "sap/base/Log"
+], function(jQuery, BaseODataUtils, _Helper, ODataUtils, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -14,7 +15,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataUtils", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}

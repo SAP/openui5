@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(jQuery, FlexCommand) {
+sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 	"use strict";
 
 	/**

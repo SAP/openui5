@@ -2,18 +2,30 @@
  *{copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/core/Control",
-	"sap/ui/core/LocaleData",
-	"sap/ui/core/format/NumberFormat",
-	"sap/ui/model/FormatException",
-	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/model/odata/type/Single",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Control, LocaleData, NumberFormat, FormatException, ParseException,
-		ValidateException, ODataType, Single, TestUtils) {
+    "jquery.sap.global",
+    "sap/ui/core/Control",
+    "sap/ui/core/LocaleData",
+    "sap/ui/core/format/NumberFormat",
+    "sap/ui/model/FormatException",
+    "sap/ui/model/ParseException",
+    "sap/ui/model/ValidateException",
+    "sap/ui/model/odata/type/ODataType",
+    "sap/ui/model/odata/type/Single",
+    "sap/ui/test/TestUtils",
+    "sap/base/Log"
+], function(
+    jQuery,
+	Control,
+	LocaleData,
+	NumberFormat,
+	FormatException,
+	ParseException,
+	ValidateException,
+	ODataType,
+	Single,
+	TestUtils,
+	Log
+) {
 	/*global QUnit, sinon */
 	"use strict";
 	/*eslint no-warning-comments: 0 */
@@ -23,7 +35,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Single", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");

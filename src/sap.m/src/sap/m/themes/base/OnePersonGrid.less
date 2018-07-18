@@ -1,40 +1,71 @@
-@sapMOnePersonGridRowHeadersWidth: 2.25rem;
-@sapMOnePersonGridRowHeadersFontSize: 0.8rem;
+@sapMOnePersonGridRowHeadersWidth: 4rem;
+@sapMOnePersonGridRowHeight: 4rem;
+@sapMOnePersonGridCompactRowHeight: 3rem;
 
+/*****************
+	COLUMN HEADERS
+*****************/
 .sapMOnePersonColumnHeader {
-	margin-left: @sapMOnePersonGridRowHeadersWidth;
+	padding-left: @sapMOnePersonGridRowHeadersWidth;
 
 	.sapUiCalItems {
 		display: block;
 		overflow: hidden;
+
+		// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
+		// for sapUiCalItems
+		.sapUiCalItem:focus {
+			outline: 0.0625rem dotted;
+			outline-offset: -3px;
+
+			.sapUiCalItemText {
+				outline: none;
+			}
+		}
+	}
+
+	.sapUiCalItem.sapUiCalItemNow {
+		border: 0.125rem solid;
+
+		&.sapUiCalItemSel:not(:focus) {
+			outline: 0.0625rem solid;
+			outline-offset: -3px;
+		}
+
+		.sapUiCalItemText,
+		.sapUiCalItemSel.sapUiItemText {
+			border: none;
+			box-shadow: none;
+		}
 	}
 }
 
-/** GRID CONTENT **/
+
+/*****************
+	GRID CONTENT
+*****************/
+/* ROW HEADERS */
 .sapMOnePersonGridContent {
 	display: flex;
 	position: relative;
-	align-items: flex-start;
 }
 
 .sapMOnePersonRowHeaders {
-	box-sizing: border-box;
-	font-size: 0.8rem;
-	margin-top: -0.5rem;
-	padding-right: 0.25rem;
-	text-align: right;
-	width: @sapMOnePersonGridRowHeadersWidth;
+	display: flex;
+	flex-direction: column;
+	font-size: 0.875rem;
 }
 
 .sapMOnePersonRowHeader {
-	display: block;
-	height: 3rem;
+	flex: 1;
+	transform: translateY(-0.5rem);
 }
 
 .sapMOnePersonRowHeaderHidden {
 	visibility: hidden;
 }
 
+/* GRID COLUMNS */
 .sapMOnePersonColumns {
 	flex: 1;
 	display: flex;
@@ -45,47 +76,126 @@
 	flex: 1;
 }
 
-.sapMOnePersonAppointments {
-	position: absolute;
-	top: 0;
-	right: 0.5rem;
-	bottom: 0;
-	left: 0.5rem;
-}
-
 .sapMOnePersonRow {
 	box-sizing: border-box;
-	border-bottom: 0.0625rem solid @sapUiListBorderColor;
-	border-left: 0.0625rem solid @sapUiListBorderColor;
-	min-height: 3rem;
-
-	.sapMOnePersonColumn:last-child & {
-		border-right: 0.0625rem solid @sapUiListBorderColor;
-	}
+	border: 0.0625rem solid;
+	border-top: none;
+	height: @sapMOnePersonGridRowHeight;
+	position: relative;
 }
 
-.sapMOnePersonNonWorkingRow {
-	background-color: darken(@sapUiListBackground, 3);
-}
-
+/* NOW MARKER */
 .sapMOnePersonNowMarker {
-	color: @sapUiCalendarColorToday;
 	display: flex;
-	font-size: @sapMOnePersonGridRowHeadersFontSize;
+	align-items: center;
+	font-size: 0.75rem;
 	margin-top: -0.5rem;
 	position: absolute;
+	z-index: 1;
 	right: 0;
 	left: 0;
 }
 
-.sapMOnePersonNowMarker::after {
-	content: "";
-	border-top: 0.125rem solid currentColor;
-	flex: 1;
-	margin-top: 0.5rem;
-	margin-left: 0.25rem;
-}
-
 .sapMOnePersonNowMarkerHidden {
 	display: none;
+}
+
+.sapMOnePersonRowHeader,
+.sapMOnePersonNowMarkerText {
+	box-sizing: border-box;
+	display: block;
+	padding-right: 0.5rem;
+	text-align: end;
+	width: @sapMOnePersonGridRowHeadersWidth;
+}
+
+.sapMOnePersonNowMarker::after {
+	content: "";
+	border-top: 0.125rem solid;
+	flex: 1;
+}
+
+.sapMOnePersonColumnToday .sapMOnePersonRow::before {
+	content: "";
+	box-sizing: border-box;
+	border: 0.125rem solid;
+	border-bottom: none;
+	border-top: none;
+	position: absolute;
+	height: calc(~"100% + 0.0625rem");
+	width: 100%;
+}
+
+/* APPOINTMENTS */
+.sapMOnePersonAppointments {
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	right: 0.125rem;
+	left: 0.125rem;
+	bottom: 0;
+}
+
+.sapMOnePersonAppointmentWrap {
+	// TODO: this styles will be removed when Appointments refactoring occured
+	box-sizing: border-box;
+	padding: 0.0625rem;
+	position: absolute;
+
+	.sapUiCalendarApp {
+		border-radius: 0.125rem;
+		position: relative;
+		width: 100%;
+		height: calc(~"100% - 0.0625rem");
+
+		.sapUiCalendarAppTitle {
+			padding-top: 0.2rem;
+		}
+	}
+}
+
+.sapMOnePersonAppointments .sapUiCalendarRowApps {
+	// TODO: this styles will be removed when Appointments refactoring occured
+	position: absolute;
+	min-height: auto;
+	height: auto;
+	overflow: visible;
+}
+
+.sapUiCalendarRowVisFilled .sapMOnePersonAppointmentWrap {
+	// TODO: this styles will be removed when Appointments refactoring occured
+	.sapUiCalendarApp,
+	.sapUiCalendarApp:hover:not(:active) {
+		background-color: transparent;
+	}
+}
+
+.sapUiSizeCompact {
+	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
+	// for sapUiCalItems
+	.sapMOnePersonColumnHeader .sapUiCalItems {
+		.sapUiCalItem {
+			display: flex;
+			flex-direction: row-reverse;
+			align-items: center;
+			text-align: left;
+
+			.sapUiCalItemText,
+			.sapUiCalDayName {
+				padding: 0;
+				line-height: 2rem;
+				height: auto;
+				position: static;
+			}
+
+			.sapUiCalDayName {
+				text-align: right;
+				padding-right: 0.5rem;
+			}
+		}
+	}
+
+	.sapMOnePersonRow {
+		height: @sapMOnePersonGridCompactRowHeight;
+	}
 }

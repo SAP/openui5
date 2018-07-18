@@ -149,7 +149,7 @@ sap.ui.define(["sap/ui/core/library"],
 		 */
 		Usage: "Usage",
 		/**
-		 * Accessibility issue category.
+		 * Other issue category.
 		 * @public
 		 */
 		Other: "Other"

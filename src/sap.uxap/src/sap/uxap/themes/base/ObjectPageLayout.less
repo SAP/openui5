@@ -120,10 +120,6 @@ body > .sapUxAPObjectPageLayout,
 	background: @sapUiObjectHeaderBorderColor;
 }
 
-.sapUxAPObjectPageNavigation {
-	background: @sapUiObjectHeaderBackground;
-}
-
 .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled {
 	// title hover
 	.sapFDynamicPageTitle:hover,
@@ -198,8 +194,8 @@ body > .sapUxAPObjectPageLayout,
 		height: 2.5rem;
 
 		&.sapMBar-CTX {
-			// BCP: 1870106645 
-			// When sap.m.Bar is used as footer (in compact) setting 2.5rem height 
+			// BCP: 1870106645
+			// When sap.m.Bar is used as footer (in compact) setting 2.5rem height
 			// breaks the Bar`s content vertical alignment.
 			// Fixing this internally in the sap.m.Bar (in the context of flaoting footer)
 			// will require significant effort, so we set height of 2rem (the expected Bar height by the visual spec).
@@ -265,6 +261,7 @@ html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
  in the sapMShell and the one in the objectPageWrapper.
  Also the z-index causes the scroll bars of the table to show in the headerTitle.
  For more information see internal incident 1670194272. */
+ /* TODO remove after 1.62 version */
 html[data-sap-ui-browser^="ie"][data-sap-ui-os^="win8"] .sapMShell {
 
   .sapUxAPObjectPageWrapperTransform {

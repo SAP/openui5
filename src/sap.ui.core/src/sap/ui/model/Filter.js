@@ -3,8 +3,8 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
-	function(jQuery, BaseObject, FilterOperator) {
+sap.ui.define(['sap/ui/base/Object', './FilterOperator', "sap/base/Log"],
+	function(BaseObject, FilterOperator, Log) {
 	"use strict";
 
 	/**
@@ -173,12 +173,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 				if (Array.isArray(this.aFilters) && !this.sPath && !this.sOperator && !this.oValue1 && !this.oValue2) {
 					this._bMultiFilter = true;
 					if ( !this.aFilters.every(isFilter) ) {
-						jQuery.sap.log.error("Filter in Aggregation of Multi filter has to be instance of sap.ui.model.Filter");
+						Log.error("Filter in Aggregation of Multi filter has to be instance of sap.ui.model.Filter");
 					}
 				} else if (!this.aFilters && this.sPath !== undefined && ((this.sOperator && this.oValue1 !== undefined) || this.fnTest)) {
 					this._bMultiFilter = false;
 				} else {
-					jQuery.sap.log.error("Wrong parameters defined for filter.");
+					Log.error("Wrong parameters defined for filter.");
 				}
 			}
 		}

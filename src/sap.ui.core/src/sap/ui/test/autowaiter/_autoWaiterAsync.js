@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_ParameterValidator",
 	"sap/ui/test/autowaiter/_autoWaiter",
-	"sap/ui/test/autowaiter/_autoWaiterLogCollector"
-], function ($, _OpaLogger, _ParameterValidator, _autoWaiter, _autoWaiterLogCollector) {
+	"sap/ui/test/autowaiter/_autoWaiterLogCollector",
+	"sap/ui/thirdparty/jquery"
+], function(_OpaLogger, _ParameterValidator, _autoWaiter, _autoWaiterLogCollector, jQueryDOM) {
 	"use strict";
 
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._autoWaiterAsync");
@@ -24,7 +24,7 @@ sap.ui.define([
 
 	function extendConfig(oConfig) {
 		validateConfig(oConfig);
-		$.extend(config, oConfig);
+		jQueryDOM.extend(config, oConfig);
 		_autoWaiter.extendConfig(config);
 	}
 

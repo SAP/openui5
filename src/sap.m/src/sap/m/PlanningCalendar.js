@@ -37,7 +37,8 @@ sap.ui.define([
 	'sap/m/PlanningCalendarRenderer',
 	'sap/m/library',
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ], function(
 	Control,
 	ManagedObjectObserver,

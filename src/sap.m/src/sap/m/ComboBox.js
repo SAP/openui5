@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	'./InputBase',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./Popover',
@@ -12,9 +13,11 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'./ComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/security/encodeXML"
 ],
 	function(
+		InputBase,
 		ComboBoxTextField,
 		ComboBoxBase,
 		Popover,
@@ -24,7 +27,8 @@ sap.ui.define([
 		Item,
 		ComboBoxRenderer,
 		containsOrEquals,
-		KeyCodes
+		KeyCodes,
+		encodeXML
 	) {
 		"use strict";
 
@@ -356,7 +360,7 @@ sap.ui.define([
 		ComboBox.prototype._boldItemRef = function (sItemText, oRegex, iInitialValueLength) {
 			var sResult;
 
-			var sTextReplacement = "<b>" + jQuery.sap.encodeHTML(sItemText.slice(0, iInitialValueLength)) + "</b>";
+			var sTextReplacement = "<b>" + encodeXML(sItemText.slice(0, iInitialValueLength)) + "</b>";
 
 			// parts should always be max of two because regex is not defined as global
 			// see above method
@@ -364,10 +368,10 @@ sap.ui.define([
 
 			if (aParts.length === 1) {
 				// no match found, return value as it is
-				sResult = jQuery.sap.encodeHTML(sItemText);
+				sResult = encodeXML(sItemText);
 			} else {
 				sResult = aParts.map(function (sPart) {
-					return jQuery.sap.encodeHTML(sPart);
+					return encodeXML(sPart);
 				}).join(sTextReplacement);
 			}
 
@@ -407,7 +411,7 @@ sap.ui.define([
 			oDropdown.setInitialFocus(this);
 
 			oDropdown.open = function() {
-				return this.openBy(that);
+				return this.openBy(that.getDomRef("content"));
 			};
 
 			return oDropdown;
@@ -520,6 +524,10 @@ sap.ui.define([
 
 			// indicated if the ComboBox is already focused
 			this.bIsFocused = false;
+
+			if (Device.system.phone) {
+				this.attachEvent("_change", this.onPropertyChange, this);
+			}
 		};
 
 		ComboBox.prototype.onBeforeRendering = function() {
@@ -781,7 +789,7 @@ sap.ui.define([
 			}
 
 			// add the active state to the control field
-			this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+			this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 
 			if (oDomRef) {
 
@@ -855,7 +863,7 @@ sap.ui.define([
 			}
 
 			// remove the active state of the control's field
-			this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+			this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		};
 
 		/**
@@ -1187,6 +1195,13 @@ sap.ui.define([
 		ComboBox.prototype.onfocusin = function(oEvent) {
 			var bDropdownPickerType = this.getPickerType() === "Dropdown";
 
+			// when having an open dialog and destroy is called
+			// the popup is destroyed and the focus is return back to the combobox
+			// which checks for the presence of an icon which is already destroyed
+			if (this._bIsBeingDestroyed) {
+				return;
+			}
+
 			// the downward-facing arrow button is receiving focus
 			if (oEvent.target === this.getOpenArea()) {
 
@@ -1240,7 +1255,6 @@ sap.ui.define([
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 
 			this.bIsFocused = false;
-
 			var bTablet, oPicker,
 				oRelatedControl, oFocusDomRef,
 				oControl = oEvent.srcControl,

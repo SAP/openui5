@@ -21,6 +21,7 @@ function() {
 		oRm.write("<div");
 		oRm.writeControlData(oCalendar);
 		oRm.addClass("sapMOnePerCal");
+		oRm.addClass("sapUiSizeCompact"); // TODO: for now force Compact mode
 		oRm.writeClasses();
 		oRm.write(">");
 

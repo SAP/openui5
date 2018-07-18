@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
         "references": []
+      },
+      {
+        "id": "44e9000fa60d010148f02fefdf71f34ef7b6007b",
+        "type": "FEATURE",
+        "text": " adding sap.ui.core.IconColor.Contrast",
+        "references": []
       }
     ]
   }

@@ -67,6 +67,30 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: ScrollBar flickering fixed",
         "references": []
+      },
+      {
+        "id": "c6f013162278253bb7f3f84f94c71e9087666d2b",
+        "type": "FIX",
+        "text": " ObjectPageHeaderActionButton: RTA \"Rename\" action is fixed",
+        "references": []
+      },
+      {
+        "id": "b62a26d044e50e0fed01b16527cec57c8c32f98a",
+        "type": "FIX",
+        "text": " ObjectPageLayout: test failures fixed",
+        "references": []
+      },
+      {
+        "id": "0f0514fcf72755574c43daed4857271f207d92b3",
+        "type": "FEATURE",
+        "text": " DynamicPage: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "6e4351e40a2c3487ad52f138e61cacceeb13bca9",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": []
       }
     ]
   }

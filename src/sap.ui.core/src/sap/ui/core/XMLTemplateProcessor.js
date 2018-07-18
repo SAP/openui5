@@ -14,8 +14,26 @@ sap.ui.define([
 	'./ExtensionPoint',
 	'./StashedControlSupport',
 	'sap/ui/base/SyncPromise',
-	'sap/base/util/ObjectPath'],
-function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver, ExtensionPoint, StashedControlSupport, SyncPromise, ObjectPath) {
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
+	"sap/base/assert",
+	"sap/base/security/encodeXML"
+],
+function(
+	jQuery,
+	DataType,
+	ManagedObject,
+	CustomData,
+	View,
+	EventHandlerResolver,
+	ExtensionPoint,
+	StashedControlSupport,
+	SyncPromise,
+	Log,
+	ObjectPath,
+	assert,
+	encodeXML
+) {
 	"use strict";
 
 
@@ -123,7 +141,9 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 	 * @return {Element} an XML document root element
 	 */
 	XMLTemplateProcessor.loadTemplate = function(sTemplateName, sExtension) {
+		//TODO: global jquery call found
 		var sResourceName = jQuery.sap.getResourceName(sTemplateName, "." + (sExtension || "view") + ".xml");
+		//TODO: global jquery call found
 		return jQuery.sap.loadResource(sResourceName).documentElement;
 	};
 
@@ -137,7 +157,9 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 	 * @private
 	 */
 	XMLTemplateProcessor.loadTemplatePromise = function(sTemplateName, sExtension) {
+		//TODO: global jquery call found
 		var sResourceName = jQuery.sap.getResourceName(sTemplateName, "." + (sExtension || "view") + ".xml");
+		//TODO: global jquery call found
 		return jQuery.sap.loadResource(sResourceName, {async: true}).then(function (oResult) {
 			return oResult.documentElement;
 		}); // result is the document node
@@ -251,7 +273,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 			sProcessingMode = oView._sProcessingMode || sap.ui.getCore().getConfiguration().getXMLProcessingMode();
 
 		bAsync = bAsync && sProcessingMode === "sequential";
-		jQuery.sap.log.debug("XML processing mode is " + (bAsync ? "sequential" : "default"), "", "XMLTemplateProcessor");
+		Log.debug("XML processing mode is " + (bAsync ? "sequential" : "default"), "", "XMLTemplateProcessor");
 
 		var bDesignMode = sap.ui.getCore().getConfiguration().getDesignMode();
 		if (bDesignMode) {
@@ -278,7 +300,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 		} else {
 			if (xmlNode.localName === "View" && xmlNode.namespaceURI !== "sap.ui.core.mvc") {
 				// it's not <core:View>, it's <mvc:View> !!!
-				jQuery.sap.log.warning("XMLView root node must have the 'sap.ui.core.mvc' namespace, not '" + xmlNode.namespaceURI + "'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
+				Log.warning("XMLView root node must have the 'sap.ui.core.mvc' namespace, not '" + xmlNode.namespaceURI + "'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
 			}
 			parseChildren(xmlNode);
 		}
@@ -351,7 +373,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 							bHasId = true;
 							value = getId(oView, xmlNode);
 						}
-						aResult.push(attr.name + "=\"" + jQuery.sap.encodeHTML(value) + "\" ");
+						aResult.push(attr.name + "=\"" + encodeXML(value) + "\" ");
 					}
 					if ( bRoot === true ) {
 						aResult.push("data-sap-ui-preserve" + "=\"" + oView.getId() + "\" ");
@@ -406,7 +428,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 					parentName = localName(xmlNode.parentNode);
 				if (text) {
 					if (parentName != "style") {
-						text = jQuery.sap.encodeHTML(text);
+						text = encodeXML(text);
 					}
 					aResult.push(text);
 				}
@@ -453,15 +475,16 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 				// some modules might not return a class definition, so we fallback to the global
 				// this is against the AMD definition, but is required for backward compatibility
 				if (!oClassObject) {
-					jQuery.sap.log.error("Control '" + sClassName + "' did not return a class definition from sap.ui.define.", "", "XMLTemplateProcessor");
+					Log.error("Control '" + sClassName + "' did not return a class definition from sap.ui.define.", "", "XMLTemplateProcessor");
 					oClassObject = ObjectPath.get(sClassName);
 				}
 				if (!oClassObject) {
-					jQuery.sap.log.error("Can't find object class '" + sClassName + "' for XML-view", "", "XMLTemplateProcessor");
+					Log.error("Can't find object class '" + sClassName + "' for XML-view", "", "XMLTemplateProcessor");
 				}
 				return oClassObject;
 			}
 
+			//TODO: global jquery call found
 			var sResourceName = jQuery.sap.getResourceName(sClassName, "");
 			var oClassObject = sap.ui.require(sResourceName);
 			if (!oClassObject) {
@@ -660,7 +683,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 						try {
 							mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue,oView._oContainingView.oController,true);
 						} catch (e) {
-							jQuery.sap.log.error(oView + ":" + e.message);
+							Log.error(oView + ":" + e.message);
 						}
 
 						if (mMetaContextsInfo) {
@@ -687,7 +710,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 								mCustomSettings[attr.namespaceURI] = {};
 							}
 							mCustomSettings[attr.namespaceURI][localName(attr)] = attr.nodeValue;
-							jQuery.sap.log.debug(oView + ": XMLView parser encountered unknown attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace, stored as sap-ui-custom-settings of customData");
+							Log.debug(oView + ": XMLView parser encountered unknown attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace, stored as sap-ui-custom-settings of customData");
 							// TODO: here XMLView could check for namespace handlers registered by the application for this namespace which could modify mSettings according to their interpretation of the attribute
 						}
 
@@ -706,7 +729,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 							mSettings[sName] = oBindingInfo;
 						} else {
 							// TODO we now in theory allow more than just a binding path. Update message?
-							jQuery.sap.log.error(oView + ": aggregations with cardinality 0..n only allow binding paths as attribute value (wrong value: " + sName + "='" + sValue + "')");
+							Log.error(oView + ": aggregations with cardinality 0..n only allow binding paths as attribute value (wrong value: " + sName + "='" + sValue + "')");
 						}
 
 					} else if (oInfo && oInfo._iKind === 3 /* SINGLE_ASSOCIATION */ ) {
@@ -723,17 +746,17 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 						if ( vEventHandler ) {
 							mSettings[sName] = vEventHandler;
 						} else {
-							jQuery.sap.log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
+							Log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
 						}
 					} else if (oInfo && oInfo._iKind === -1) {
 						// SPECIAL SETTING - currently only allowed for View's async setting
 						if (View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
 							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController);
 						} else {
-							jQuery.sap.log.warning(oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
+							Log.warning(oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
 						}
 					} else {
-						jQuery.sap.assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
+						assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
 						if (XMLTemplateProcessor._supportInfo) {
 							XMLTemplateProcessor._supportInfo({
 								context : node,
@@ -826,14 +849,14 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 										mSettings[name] = [];
 									}
 									if (typeof mSettings[name].path === "string") {
-										jQuery.sap.assert(!mSettings[name].template, "list bindings support only a single template object");
+										assert(!mSettings[name].template, "list bindings support only a single template object");
 										mSettings[name].template = oControl;
 									} else {
 										mSettings[name].push(oControl);
 									}
 								} else {
 									// 1..1 AGGREGATION
-									jQuery.sap.assert(!mSettings[name], "multiple aggregates defined for aggregation with cardinality 0..1");
+									assert(!mSettings[name], "multiple aggregates defined for aggregation with cardinality 0..1");
 									mSettings[name] = oControl;
 								}
 							}

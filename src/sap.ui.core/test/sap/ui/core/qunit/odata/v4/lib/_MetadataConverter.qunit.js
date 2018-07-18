@@ -2,12 +2,20 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/model/odata/v4/lib/_MetadataConverter",
-	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
-	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
-	"jquery.sap.xml" // unused, needed to have jQuery.sap.parseXML
-], function (jQuery, _MetadataConverter, _V2MetadataConverter, _V4MetadataConverter) {
+    "jquery.sap.global",
+    "sap/ui/model/odata/v4/lib/_MetadataConverter",
+    "sap/ui/model/odata/v4/lib/_V2MetadataConverter",
+    "sap/ui/model/odata/v4/lib/_V4MetadataConverter",
+    "sap/base/Log",
+    // unused, needed to have jQuery.sap.parseXML
+	"jquery.sap.xml"
+], function(
+    jQuery,
+	_MetadataConverter,
+	_V2MetadataConverter,
+	_V4MetadataConverter,
+	Log
+) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -96,7 +104,7 @@ sap.ui.require([
 		},
 
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}

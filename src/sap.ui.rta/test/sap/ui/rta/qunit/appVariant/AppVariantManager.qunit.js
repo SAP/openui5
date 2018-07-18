@@ -5,22 +5,22 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/ui/rta/appVariant/AppVariantManager",
 	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/rta/appVariant/S4HanaCloudBackend",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/rta/command/LREPSerializer"
+	"sap/ui/rta/command/LREPSerializer",
+	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/core/Control",
+	"sap/ui/thirdparty/sinon"
 ],
 function(
 	AppVariantManager,
 	RtaAppVariantFeature,
-	DescriptorVariantFactory,
-	sinon,
-	Settings,
-	S4HanaCloudBackend,
 	Stack,
-	LREPSerializer
+	LREPSerializer,
+	DescriptorVariantFactory,
+	Settings,
+	Control,
+	sinon
 ) {
 
 	"use strict";
@@ -30,7 +30,7 @@ function(
 
 	QUnit.module("Given an AppVariantManager is instantiated", {
 		beforeEach: function () {
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
 			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
@@ -117,7 +117,7 @@ function(
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
 			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
@@ -293,7 +293,7 @@ function(
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
 			sandbox.stub(oRtaCommandStack, "getAllExecutedCommands").returns(["testCommand"]);

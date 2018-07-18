@@ -430,6 +430,10 @@ function runODataMessagesTests() {
 
 	QUnit.test("ODataMessageParser reads headers case-insensitive", function(assert) {
 		var done = assert.async();
+
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
@@ -439,10 +443,10 @@ function runODataMessagesTests() {
 		oMetadata.loaded().then(function() {
 
 			// Get Messages sent to console
-			var fnError = jQuery.sap.log.error;
-			var fnWarn = jQuery.sap.log.warning;
-			var fnDebug = jQuery.sap.log.debug;
-			var fnInfo = jQuery.sap.log.info;
+			var fnError = Log.error;
+			var fnWarn = Log.warning;
+			var fnDebug = Log.debug;
+			var fnInfo = Log.info;
 
 			var iCounter = 0;
 			var fnCount = function(sMessage) {
@@ -451,7 +455,7 @@ function runODataMessagesTests() {
 				}
 			}
 
-			jQuery.sap.log.error = jQuery.sap.log.warning = jQuery.sap.log.debug = jQuery.sap.log.info = fnCount;
+			Log.error = Log.warning = Log.debug = Log.info = fnCount;
 
 			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
 
@@ -516,6 +520,7 @@ function runODataMessagesTests() {
 
 	QUnit.test("ODataMessageParser: target key for created entities", function(assert) {
 		var done = assert.async();
+
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
@@ -622,6 +627,7 @@ function runODataMessagesTests() {
 
 	QUnit.test("ODataMessageParser: error for newly created resource with relative target", function(assert) {
 		var done = assert.async();
+
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
@@ -696,6 +702,10 @@ function runODataMessagesTests() {
 
 	QUnit.test("ODataMessageParser without ODataModel", function(assert) {
 		var done = assert.async();
+
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
@@ -705,19 +715,19 @@ function runODataMessagesTests() {
 		oMetadata.loaded().then(function() {
 
 			// Get Messages sent to console
-			var fnError = jQuery.sap.log.error;
-			var fnWarn = jQuery.sap.log.warning;
-			var fnDebug = jQuery.sap.log.debug;
-			var fnInfo = jQuery.sap.log.info;
+			var fnError = Log.error;
+			var fnWarn = Log.warning;
+			var fnDebug = Log.debug;
+			var fnInfo = Log.info;
 
 			var iCounter = 0;
 			var fnCount = function(sMessage) {
 				if (sMessage.indexOf("[OData Message] ") > -1) {
 					iCounter++;
 				}
-			}
+			};
 
-			jQuery.sap.log.error = jQuery.sap.log.warning = jQuery.sap.log.debug = jQuery.sap.log.info = fnCount;
+			Log.error = Log.warning = Log.debug = Log.info = fnCount;
 
 			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
 
@@ -791,10 +801,10 @@ function runODataMessagesTests() {
 
 
 			// Clean up
-			jQuery.sap.log.error = fnError;
-			jQuery.sap.log.warning = fnWarn;
-			jQuery.sap.log.debug = fnDebug;
-			jQuery.sap.log.info = fnInfo;
+			Log.error = fnError;
+			Log.warning = fnWarn;
+			Log.debug = fnDebug;
+			Log.info = fnInfo;
 
 			oMetadata.destroy();
 			oParser.destroy();
@@ -1462,7 +1472,7 @@ function runODataMessagesTests() {
 
 	QUnit.test("Message target normalization", fnTestNormalization);
 
-	var fnTestNavProp = function() {
+	var fnTestNavProp = function(assert) {
 		var done = assert.async();
 
 		assert.expect(8);
@@ -1502,5 +1512,5 @@ function runODataMessagesTests() {
 		});
 	};
 
-	QUnit.test("Propagate Message: Binding to NavProp",fnTestNavProp);
+	QUnit.test("Propagate Message: Binding to NavProp", fnTestNavProp);
 }

@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
-		"sap/m/library",
-		"sap/m/ListBase",
-		"sap/tnt/Box",
-		"sap/ui/Device",
-		"sap/ui/core/ResizeHandler"
-	], function (library, ListBase, Box, Device, ResizeHandler) {
+	"sap/m/library",
+	"sap/m/ListBase",
+	"sap/tnt/Box",
+	"sap/ui/Device",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/thirdparty/jquery"
+], function(library, ListBase, Box, Device, ResizeHandler, jQuery0) {
 	"use strict";
 
 	// shortcut for sap.m.ListGrowingDirection
@@ -46,6 +47,11 @@ sap.ui.define([
 		properties: {
 
 			/**
+			 * Defines the minimum width of the Boxes
+			 */
+			boxMinWidth: { type: "sap.ui.core.CSSSize", defaultValue: "" },
+
+			/**
 			 * Defines the width of the Boxes
 			 */
 			boxWidth: { type: "sap.ui.core.CSSSize", defaultValue: "" },
@@ -70,8 +76,8 @@ sap.ui.define([
 	BoxContainerList.prototype.onAfterRendering = function () {
 		this._registerResizeListener();
 
-		// Size class is used when no boxWidth is being set.
-		if (!this.getBoxWidth()) {
+		// Size class is used when no boxWidth or boxMinWidth is being set.
+		if (!this._hasBoxWidth()) {
 			this._applySizeClass(this.$().width());
 		}
 
@@ -88,6 +94,14 @@ sap.ui.define([
 	 */
 	BoxContainerList.prototype._registerResizeListener = function () {
 		this._sResizeListenerId = ResizeHandler.register(this, this._onResize.bind(this));
+	};
+
+	/**
+	 * Checks if boxWidth or boxMinWidth is set
+	 * @private
+	 */
+	BoxContainerList.prototype._hasBoxWidth = function () {
+		return this.getBoxWidth() || this.getBoxMinWidth();
 	};
 
 	/**
@@ -112,8 +126,8 @@ sap.ui.define([
 	 */
 	BoxContainerList.prototype._onResize = function (oEvent) {
 		if (oEvent) {
-			// Size class is used when no boxWidth is being set.
-			if (!this.getBoxWidth()) {
+			// Size class is used when no boxWidth or boxMinWidth is being set.
+			if (!this._hasBoxWidth()) {
 				this._applySizeClass(oEvent.size.width);
 			}
 
@@ -238,9 +252,9 @@ sap.ui.define([
 
 		// Ensure high specificity selectors in order not to mess with dom refs of lists created as content inside Boxes.
 		if (this.isGrouped()) {
-			aNavigationItems = jQuery(oNavigationRoot).find(".sapTntBoxContainerGrid > .sapMLIB").get();
+			aNavigationItems = jQuery0(oNavigationRoot).find(".sapTntBoxContainerGrid > .sapMLIB").get();
 		} else {
-			aNavigationItems = jQuery(oNavigationRoot).children(".sapMLIB").get();
+			aNavigationItems = jQuery0(oNavigationRoot).children(".sapMLIB").get();
 		}
 
 		oItemNavigation.setItemDomRefs(aNavigationItems);

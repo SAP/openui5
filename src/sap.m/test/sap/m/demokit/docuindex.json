@@ -1026,8 +1026,7 @@
 		  "since": "1.26",
 		  "samples": [
 			"sap.m.sample.P13nDialog",
-			"sap.m.sample.P13nDialogWithDimMeasurePanel",
-			"sap.m.sample.P13nDialogWithCustomPanel"
+			"sap.m.sample.P13nDialogWithDimMeasurePanel"
 		  ]
 		},
 		{
@@ -2026,17 +2025,12 @@
 		{
 		  "id": "sap.m.sample.P13nDialog",
 		  "name": "P13nDialog stand-alone",
-		  "description": "Dialog for personalization of column order and their visibility, sorting and filtering conditions of columns."
+		  "description": "Dialog for personalization of column order and their visibility."
 		},
 		{
 		  "id": "sap.m.sample.P13nDialogWithDimMeasurePanel",
 		  "name": "P13nDialog stand-alone",
-		  "description": "Dialog for personalization of dimension/measure order and their visibility, sorting and filtering conditions of dimensions/measures."
-		},
-		{
-		  "id": "sap.m.sample.P13nDialogWithCustomPanel",
-		  "name": "P13nDialog stand-alone with custom panel",
-		  "description": "Dialog for personalization of column order and their visibility and custom panel."
+		  "description": "Dialog for personalization of dimension/measure order and their visibility."
 		},
 		{
 		  "id": "sap.m.sample.MultiInput",
@@ -2360,7 +2354,7 @@
 		{
 		  "id": "sap.m.sample.TableDnD",
 		  "name": "Table - Drag and Drop",
-		  "description": "Shows the different kinds of drag-and-drop capabilities along with custom context menu alternatives to perform these action."
+		  "description": "Shows the different kinds of drag-and-drop capabilities across view boundaries along with custom context menu alternatives to perform these action."
 		},
 		{
 		  "id": "sap.m.sample.TablePerso",

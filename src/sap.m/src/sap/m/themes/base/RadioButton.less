@@ -77,6 +77,7 @@
 .sapMRbBInn {
 	background-color: transparent;
 	-webkit-user-select: none;
+	align-self: center;
 }
 
 .sapMRbB .sapMRbBInn {
@@ -200,5 +201,33 @@
 	.sapMRbBLabel {
 		line-height: 1.5rem;
 		height: 1.5rem;
+	}
+}
+
+/* When printing border is needed for the selection */
+@media only print {
+	.sapMRbBInn {
+		box-sizing: border-box;
+	}
+
+	.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiSelected;
+		border-style: solid;
+		border-width: 5px;
+	}
+
+	.sapMRbRo.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiContentNonInteractiveIconColor;
+	}
+
+	.sapMLIBActive .sapMRbSel .sapMRbBInn {
+		border-color: @sapUiListActiveTextColor;
+	}
+
+	/* Compact size */
+	.sapUiSizeCompact{
+		.sapMRbSel .sapMRbBInn {
+			border-width: 3px;
+		}
 	}
 }

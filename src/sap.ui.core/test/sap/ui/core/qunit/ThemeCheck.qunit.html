@@ -6,7 +6,9 @@
 		<script>
 			window["sap-ui-config"] = {
 				resourceRoots : {
-					"sap.ui.testlib" : "./testdata/uilib/"
+					"sap.ui.testlib" : "./testdata/uilib/",
+					"sap.ui.customthemefallback.testlib" : "./testdata/uilib-custom-theme-fallback/",
+					"sap.ui.failingcssimport.testlib" : "./testdata/uilib-failing-css-import/"
 				},
 				themeRoots: {
 					"legacy": {
@@ -34,6 +36,8 @@
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
+
+		QUnit.config.reorder = false;
 
 		// Wait until the theme is changed
 		function themeChanged() {
@@ -207,8 +211,55 @@
 
 		});
 
+
+		QUnit.module("Library Loading");
+
+		QUnit.test("sap.ui.getCore().loadLibrary()", function(assert) {
+			var done = assert.async();
+
+			themeChanged().then(function() {
+				assert.ok(true, "ThemeChanged event has been fired");
+				done();
+			});
+
+			sap.ui.getCore().loadLibrary("sap.ui.customthemefallback.testlib");
+		});
+
+		QUnit.test("sap.ui.getCore().loadLibraries()", function(assert) {
+			var done = assert.async();
+
+			themeChanged().then(function() {
+				assert.ok(true, "ThemeChanged event has been fired");
+				done();
+			});
+
+			sap.ui.getCore().loadLibraries(["sap.ui.failingcssimport.testlib"], {
+				async: true
+			});
+		});
+
+		QUnit.test("require without loadLibrary/loadLibraries", function(assert) {
+			var done = assert.async();
+
+			themeChanged().then(function() {
+				assert.ok(true, "ThemeChanged event has been fired");
+				done();
+			});
+
+			// Fake direct require to a library.js module by just calling initLibrary
+			sap.ui.getCore().initLibrary({
+				name : "sap.ui.fake.testlib",
+				version: "1.0.0",
+				dependencies : ["sap.ui.core"],
+				types: [],
+				controls: [],
+				elements: []
+			});
+		});
+
+
 		QUnit.module("CORS", {
-			beforeEach: function() {
+			beforeEach: function(assert) {
 
 				// Apply Object.getOwnPropertyDescriptor fix for PhantomJS
 				if (sap.ui.Device.browser.phantomJS) {
@@ -250,8 +301,9 @@
 					set: function() {},
 					configurable: true
 				});
-
-				sinon.spy(jQuery.sap.log, "error");
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
+				sinon.spy(Log, "error");
 			},
 			afterEach: function() {
 
@@ -261,13 +313,17 @@
 				}
 
 				Object.defineProperty(HTMLLinkElement.prototype, "sheet", this.descLinkSheet);
-
-				jQuery.sap.log.error.restore();
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
+				Log.error.restore();
 			}
-		})
+		});
 
 		QUnit.test("Accessing HTMLLinkElement#sheet.cssRules throws exception", function(assert) {
 			var done = assert.async();
+
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
 
 			themeChanged().then(function() {
 
@@ -277,7 +333,7 @@
 				// Check if the old stylesheets have been removed again
 				testThemeCheckCleanup(assert);
 
-				sinon.assert.neverCalledWithMatch(jQuery.sap.log.error, sinon.match("Error during check styles"));
+				sinon.assert.neverCalledWithMatch(Log.error, sinon.match("Error during check styles"));
 
 				done();
 			});

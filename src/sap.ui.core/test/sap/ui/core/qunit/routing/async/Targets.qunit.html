@@ -24,8 +24,8 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 		sinon.config.useFakeTimers = false;
 
-		sap.ui.require(["sap/ui/core/routing/Targets", "sap/ui/core/routing/Views", "qunit/routing/AsyncViewModuleHook"],
-			function(Targets, Views, ModuleHook){
+		sap.ui.require(["sap/ui/core/routing/Targets", "sap/ui/core/routing/Views", "sap/base/Log", "qunit/routing/AsyncViewModuleHook"],
+			function(Targets, Views, Log, ModuleHook){
 
 				QUnit.module("getTarget and target names", {
 					beforeEach: function () {
@@ -80,7 +80,7 @@
 
 				QUnit.test("Should be able to get multiple targets", function (assert) {
 					// Arrange
-					var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+					var oStub = this.stub(Log, "error", jQuery.noop);
 
 					// Act
 					var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
@@ -107,7 +107,7 @@
 
 				QUnit.test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function (assert) {
 					// Arrange
-					var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+					var oStub = this.stub(Log, "error", jQuery.noop);
 
 					// Act
 					this.oTargets.addTarget("myParent", {
@@ -179,7 +179,7 @@
 								}
 							}
 						},
-						oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+						oErrorStub = this.stub(Log, "error", jQuery.noop);
 
 					// System under test + Act
 					this.oTargets = new Targets(oIncorrectConfig);
@@ -268,7 +268,7 @@
 
 				QUnit.test("Should log an error if user tries to display a non existing Target", function (assert) {
 					// Assert
-					var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+					var oErrorStub = this.stub(Log, "error", jQuery.noop);
 
 					// Act
 					return this.oTargets.display("foo").then(function(aViewInfos) {
@@ -281,7 +281,7 @@
 
 				QUnit.test("Should log an error if user tries to display a non existing Target, but should display existing ones", function (assert) {
 					// Assert
-					var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+					var oErrorStub = this.stub(Log, "error", jQuery.noop);
 					// Replace display with an empty fn
 					var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display", function() {
 						return Promise.resolve({name:"firstTarget"});
@@ -657,8 +657,7 @@
 					var oStub = this.stub(this.oViews, "_getView", function () {
 						return that.oView;
 					});
-
-					var oLogSpy = this.spy(jQuery.sap.log, "error");
+					var oLogSpy = this.spy(Log, "error");
 
 					this.oTargets.attachTitleChanged(fnEventSpy);
 

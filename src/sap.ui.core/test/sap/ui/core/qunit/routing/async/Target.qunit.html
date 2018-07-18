@@ -247,7 +247,9 @@
 			// Arrange
 
 			// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
-			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			var oSpy = sinon.spy(Log, "error");
 			var oView = this.oView;
 			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
 				return oView;
@@ -270,7 +272,9 @@
 			// Arrange
 
 			// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
-			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			var oSpy = sinon.spy(Log, "error");
 			var oView = this.oView;
 			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
 				return oView;
@@ -294,7 +298,9 @@
 			// Arrange
 
 			// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
-			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			var oSpy = sinon.spy(Log, "error");
 			var oView = this.oView;
 			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
 				return oView;
@@ -317,7 +323,9 @@
 			// Arrange
 
 			// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
-			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			var oSpy = sinon.spy(Log, "error");
 			var oView = this.oView;
 			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
 				return oView;

@@ -3,8 +3,8 @@
  */
 
 // Provides the XML model implementation of a list binding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
-	function(jQuery, ClientTreeBinding) {
+sap.ui.define(['sap/ui/model/ClientTreeBinding'],
+	function(ClientTreeBinding) {
 	"use strict";
 
 
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 				sChildPath = sContextPath + oChild.nodeName + "/" + mNodeIndices[oChild.nodeName];
 				oChildContext = that.oModel.getContext(sChildPath);
 				// check if there is a filter on this level applied
-				if (that.aAllFilters && !that.bIsFiltering) {
+				if (that.oCombinedFilter && !that.bIsFiltering) {
 					if (jQuery.inArray(oChildContext, that.filterInfo.aFilteredContexts) != -1) {
 						aContexts.push(oChildContext);
 					}

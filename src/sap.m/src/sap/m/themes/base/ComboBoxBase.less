@@ -7,23 +7,11 @@
 /* arrow                          */
 /* ------------------------------ */
 
-/* hover */
-html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	background: @sapUiButtonLiteHoverBackground;
+.sapMComboBoxBase.sapMInputBaseReadonly .sapMInputBaseIcon {
+	display: none;
 }
 
-/* pressed */
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
-html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
-	background: @sapUiToggleButtonPressedBackground;
-}
-
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
-	color: @sapUiToggleButtonPressedTextColor;
-}
-	/* ------------------------------ */
+/* ------------------------------ */
 /* dialog                         */
 /* ------------------------------ */
 

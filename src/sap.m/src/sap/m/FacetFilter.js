@@ -17,7 +17,11 @@ sap.ui.define([
 	'./FacetFilterRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/events/jquery/EventSimulation",
+	"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
 ],
 	function(
 		NavContainer,
@@ -33,7 +37,8 @@ sap.ui.define([
 		FacetFilterRenderer,
 		KeyCodes,
 		assert,
-		Log
+		Log,
+		EventSimulation
 	) {
 	"use strict";
 
@@ -467,7 +472,7 @@ sap.ui.define([
 		this.setAggregation("resetButton", this._createResetButton());
 
 		// Enable touch support for the carousel
-		if (jQuery.sap.touchEventMode === "ON" && !Device.system.phone) {
+		if (EventSimulation.touchEventMode === "ON" && !Device.system.phone) {
 			this._enableTouchSupport();
 		}
 

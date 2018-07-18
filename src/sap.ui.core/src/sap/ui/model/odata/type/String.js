@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ValidateException', 'sap/ui/model/type/String'],
-	function(jQuery, ODataType, ValidateException, StringType) {
+sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/ValidateException',
+		'sap/ui/model/type/String', "sap/base/Log"],
+	function(ODataType, ValidateException, StringType, Log) {
 	"use strict";
 
 	var rDigitsOnly = /^\d+$/,
@@ -45,8 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
 				oType.oConstraints = {maxLength : vMaxLength };
 			} else if (vMaxLength !== undefined) {
-				jQuery.sap.log.warning("Illegal maxLength: " + oConstraints.maxLength,
-					null, oType.getName());
+				Log.warning("Illegal maxLength: " + oConstraints.maxLength, null, oType.getName());
 			}
 			vIsDigitSequence = oConstraints.isDigitSequence;
 			if (vIsDigitSequence === true || vIsDigitSequence === "true") {
@@ -54,8 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 				oType.oConstraints.isDigitSequence = true;
 			} else if (vIsDigitSequence !== undefined && vIsDigitSequence !== false
 					&& vIsDigitSequence !== "false") {
-				jQuery.sap.log.warning("Illegal isDigitSequence: " + vIsDigitSequence, null,
-					oType.getName());
+				Log.warning("Illegal isDigitSequence: " + vIsDigitSequence, null, oType.getName());
 			}
 
 			vNullable = oConstraints.nullable;
@@ -63,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 				oType.oConstraints = oType.oConstraints || {};
 				oType.oConstraints.nullable = false;
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+				Log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 		}
 	}

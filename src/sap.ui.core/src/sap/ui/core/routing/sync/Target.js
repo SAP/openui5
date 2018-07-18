@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oViewContainingTheControl = sap.ui.getCore().byId(oOptions.rootView);
 
 				if (!oViewContainingTheControl) {
-					jQuery.sap.log.error("Did not find the root view with the id " + oOptions.rootView, this);
+					Log.error("Did not find the root view with the id " + oOptions.rootView, this);
 					return;
 				}
 			}
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				}
 
 				if (!oControl) {
-					jQuery.sap.log.error("Control with ID " + oOptions.controlId + " could not be found", this);
+					Log.error("Control with ID " + oOptions.controlId + " could not be found", this);
 					return;
 				}
 
@@ -77,7 +77,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			var oAggregationInfo = oControl.getMetadata().getJSONKeys()[oOptions.controlAggregation];
 
 			if (!oAggregationInfo) {
-				jQuery.sap.log.error("Control " + oOptions.controlId + " does not have an aggregation called " + oOptions.controlAggregation, this);
+				Log.error("Control " + oOptions.controlId + " does not have an aggregation called " + oOptions.controlAggregation, this);
 				return;
 			}
 
@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oControl[oAggregationInfo._sRemoveAllMutator]();
 			}
 
-			jQuery.sap.log.info("Did place the view '" + sViewName + "' with the id '" + oView.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oControl.getId() + "'", this);
+			Log.info("Did place the view '" + sViewName + "' with the id '" + oView.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oControl.getId() + "'", this);
 			oControl[oAggregationInfo._sMutator](oView);
 
 			this.fireDisplay({
@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			}
 
 			if (bLog && sLogMessage) {
-				jQuery.sap.log.error(sLogMessage, this);
+				Log.error(sLogMessage, this);
 			}
 
 			return bIsValid;

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery, IconPool, library) {
+sap.ui.define(['./IconPool', './library', "sap/base/security/encodeXML"], function(IconPool, library, encodeXML) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery,
 
 		if (bIconInfo) {
 			oRm.writeAttributeEscaped("data-sap-ui-icon-content", vIconInfo.content);
-			oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(vIconInfo.fontFamily) + "'");
+			oRm.addStyle("font-family", "'" + encodeXML(vIconInfo.fontFamily) + "'");
 		}
 
 		if (sWidth) {
@@ -80,11 +80,11 @@ sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery,
 		}
 
 		if (sColor && !(sColor in IconColor)) {
-			oRm.addStyle("color", jQuery.sap.encodeHTML(sColor));
+			oRm.addStyle("color", encodeXML(sColor));
 		}
 
 		if (sBackgroundColor && !(sBackgroundColor in IconColor)) {
-			oRm.addStyle("background-color", jQuery.sap.encodeHTML(sBackgroundColor));
+			oRm.addStyle("background-color", encodeXML(sBackgroundColor));
 		}
 
 		if (sSize) {

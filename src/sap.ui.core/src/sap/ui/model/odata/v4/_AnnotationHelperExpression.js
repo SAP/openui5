@@ -5,9 +5,12 @@
 // This module provides internal functions for dynamic expressions in OData V4 annotations. It is a
 // helper module for sap.ui.model.odata.v4.AnnotationHelper.
 sap.ui.define([
-	'jquery.sap.global', '../_AnnotationHelperBasics', 'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject'
-], function(jQuery, Basics, BindingParser, ManagedObject) {
+	'../_AnnotationHelperBasics',
+	'sap/ui/base/BindingParser',
+	'sap/ui/base/ManagedObject',
+	"sap/ui/performance/Measurement",
+	"sap/base/Log"
+], function(Basics, BindingParser, ManagedObject, Measurement, Log) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
@@ -409,21 +412,20 @@ sap.ui.define([
 				return undefined;
 			}
 
-			jQuery.sap.measure.average(sPerformanceGetExpression, "", aPerformanceCategories);
+			Measurement.average(sPerformanceGetExpression, "", aPerformanceCategories);
 
 			if (!bSimpleParserWarningLogged
 					&& ManagedObject.bindingParser === BindingParser.simpleParser) {
-				jQuery.sap.log.warning("Complex binding syntax not active", null,
-					sAnnotationHelper);
+				Log.warning("Complex binding syntax not active", null, sAnnotationHelper);
 				bSimpleParserWarningLogged = true;
 			}
 
 			try {
 				oResult = Expression.expression(oPathValue);
-				jQuery.sap.measure.end(sPerformanceGetExpression);
+				Measurement.end(sPerformanceGetExpression);
 				return Basics.resultToString(oResult, false);
 			} catch (e) {
-				jQuery.sap.measure.end(sPerformanceGetExpression);
+				Measurement.end(sPerformanceGetExpression);
 				if (e instanceof SyntaxError) {
 					return "Unsupported: " + BindingParser.complexParser.escape(
 						Basics.toErrorString(oPathValue.value));

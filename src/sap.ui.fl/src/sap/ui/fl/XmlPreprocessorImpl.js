@@ -3,14 +3,14 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Component",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/ChangePersistence"
-], function(jQuery, Component, FlexControllerFactory, Utils, LrepConnector, ChangePersistenceFactory, ChangePersistence) {
+	"sap/ui/fl/ChangePersistence",
+	"sap/base/Log"
+], function(Component, FlexControllerFactory, Utils, LrepConnector, ChangePersistenceFactory, ChangePersistence, Log) {
 	"use strict";
 
 	/**
@@ -41,7 +41,7 @@ sap.ui.define([
 	XmlPreprocessorImpl.process = function(oView, mProperties){
 		try {
 			if (!mProperties || mProperties.sync) {
-				jQuery.sap.log.warning("Flexibility feature for applying changes on an XML view is only available for " +
+				Log.warning("Flexibility feature for applying changes on an XML view is only available for " +
 					"asynchronous views; merge is be done later on the JS controls.");
 				return (oView);
 			}
@@ -79,7 +79,7 @@ sap.ui.define([
 			});
 		} catch (error) {
 			var sError = "view " + mProperties.id + ": " + error;
-			jQuery.sap.log.info(sError); //to allow control usage in applications that do not work with UI flex and components
+			Log.info(sError); //to allow control usage in applications that do not work with UI flex and components
 			// throw new Error(sError); // throw again, when caller handles the promise
 			return Promise.resolve(oView);
 		}

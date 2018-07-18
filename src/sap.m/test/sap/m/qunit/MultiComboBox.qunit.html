@@ -2618,11 +2618,11 @@
 				"Input value is returned to the inital value after wrong character was typed");
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
 				"Dom value and value property are same after wrong character was typed");
-		assert.ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must have the css class sapMInputBaseError');
+		assert.ok(oMultiComboBox.$("content").hasClass("sapMInputBaseContentWrapperError"),
+				'The MultiComboBox must have the css class sapMInputBaseContentWrapperError');
 		this.clock.tick(1100);
-		assert.ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
+		assert.ok(!oMultiComboBox.$("content").hasClass("sapMInputBaseContentWrapperError"),
+				'The MultiComboBox must not have the css class sapMComboBoxTextFieldError after 1000 msec');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2661,11 +2661,11 @@
 				"Input value is returned to the inital value after wrong character was typed");
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().value, oMultiComboBox.getValue(),
 				"Dom value and value property are same after wrong character was typed");
-		assert.ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must have the css class sapMInputBaseError');
+		assert.ok(oMultiComboBox.$("content").hasClass("sapMInputBaseContentWrapperError"),
+				'The MultiComboBox must have the css class sapMInputBaseContentWrapperError');
 		this.clock.tick(1100);
-		assert.ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
+		assert.ok(!oMultiComboBox.$("content").hasClass("sapMInputBaseContentWrapperError"),
+				'The MultiComboBox must not have the css class sapMInputBaseContentWrapperError after 1000 msec');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2964,7 +2964,9 @@
 
 		// act
 		oMultiComboBox.getFocusDomRef().focus();
+		this.clock.tick(500);
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
+		this.clock.tick(500);
 		oMultiComboBox.getFocusDomRef().blur();
 		this.clock.tick(500);
 
@@ -3431,8 +3433,8 @@
 		assert.strictEqual(fnOpenSpy.callCount, 0, "open was not called");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		assert.ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(!oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must not have the css class “' + sap.m.InputBase.ICON_PRESSED_CSS_CLASS);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3442,8 +3444,19 @@
 	QUnit.test("setSelection should trigger Tokenizer's scrollToEnd", function (assert) {
 
 		var oFakeEvent = new sap.ui.base.Event;
-		var oItem = new sap.ui.core.Item();
-		var oMultiComboBox = new sap.m.MultiComboBox().placeAt("MultiComboBox-content");
+
+		// system under test
+		var oItem = new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			}),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items : [oItem]
+			}), oToken;
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		oMultiComboBox.setSelectedItems([oItem])
 
 		var oSpy = this.spy(oMultiComboBox._oTokenizer, "scrollToEnd");
 		var oStubSetSelection = sinon.stub(sap.ui.base.Event.prototype, "getParameters");
@@ -3536,8 +3549,8 @@
 		assert.strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3579,8 +3592,8 @@
 		assert.strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3622,8 +3635,8 @@
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLA);
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3652,23 +3665,22 @@
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
-		var fnTapSpy = this.spy(oMultiComboBox, "ontap");
+		var fnClickSpy = this.spy(oMultiComboBox.getDomRef("arrow"), "click");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
 		// act - clicking on arrow
-		sap.ui.test.qunit.triggerTouchEvent("tap", oMultiComboBox.getDomRef("arrow"), {
+		sap.ui.test.qunit.triggerTouchEvent("click", oMultiComboBox.getDomRef("arrow"), {
 			srcControl: oMultiComboBox,
 			target: oMultiComboBox.getDomRef("arrow")
 		});
 		this.clock.tick(500);
 
 		// assertions
-		assert.strictEqual(fnTapSpy.callCount, 1, "ontap event was called exactly once on Arrow");
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3711,8 +3723,8 @@
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 		// cleanup
@@ -3846,8 +3858,8 @@
 				assert.strictEqual(fnOpenSpy.callCount, 2, "open was called exactly once");
 				assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 				assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-				assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+				assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+						'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 
 				// cleanup
 				oMultiComboBox.destroy();
@@ -3902,8 +3914,8 @@
 				assert.strictEqual(fnOpenSpy.callCount, 2, "open was called exactly twice");
 				assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 				assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-				assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+				assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+						'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 				assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 				// cleanup
@@ -3986,8 +3998,8 @@
 	      assert.strictEqual(fnCloseSpy.callCount, 1, "close was called exactly once");
 	      assert.strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
 	      assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-	      assert.ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The MultiComboBox must not have the css class “'
-	                    + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+	      assert.ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE), 'The MultiComboBox must not have the css class “'
+	                    + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBAS);
 
 	      // cleanup
 	      oMultiComboBox.destroy();
@@ -4014,13 +4026,14 @@
 
 		// act
 		var oDomRefArrow = oMultiComboBox.getDomRef("arrow");
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oDomRefArrow, {
+		sap.ui.test.qunit.triggerTouchEvent("click", oDomRefArrow, {
 			target : oDomRefArrow
 		});
 
 		// assertions
-		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4049,8 +4062,8 @@
 
 		// assertions
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		assert.ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(!oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must not have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4096,8 +4109,8 @@
 		// assertions
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
-		assert.ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
+		assert.ok(oMultiComboBox.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS),
+				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4128,7 +4141,7 @@
 		});
 
 		// assertions
-		assert.ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), 'The MultiComboBox has the CSS class "sapMMultiComboBoxFocus"');
+		assert.ok(oMultiComboBox.$().hasClass("sapMFocus"), 'The MultiComboBox has the CSS class "sapMFocus"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4156,7 +4169,7 @@
 		});
 
 		// assertions
-		assert.ok(oMultiComboBox.$().hasClass("sapMMultiComboBoxFocus"), 'The MultiComboBox has the CSS class "sapMMultiComboBoxFocus"');
+		assert.ok(oMultiComboBox.$().hasClass("sapMFocus"), 'The MultiComboBox has the CSS class "sapMFocus"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4426,9 +4439,8 @@
 		this.clock.tick(1000);
 
 		// assertions
-		assert.ok(oMultiComboBox.getDomRef().clientWidth >= jQuery.find(".sapMMultiComboBoxInputContainer")[0].clientWidth,
+		assert.ok(oMultiComboBox.getDomRef().clientWidth >= oMultiComboBox.$().find(".sapMInputBaseInner")[0].clientWidth,
 			"Check if the size of the container is calculated correctly.");
-
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4738,6 +4750,9 @@
 		this.clock.tick(500);
 
 		assert.ok(!oStub.called, "onfocusin of the MCB should not be triggered after dialog is opened");
+
+		oMultiComboBox.close();
+		this.clock.tick(500);
 
 		oStub.restore();
 		oMultiComboBox.destroy();
@@ -5105,10 +5120,11 @@
 		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.open();
-		this.clock.tick(100);
+		this.clock.tick(300);
 		oSelectedButton.setPressed(true);
 		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
-		this.clock.tick(100);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
 
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 1, "Only one item should be visible");
 		assert.strictEqual(oSelectedButton.getPressed(),true,"the SelectedButton is pressed");
@@ -5119,6 +5135,10 @@
 
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 3, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
+		this.clock.tick(300);
+
+		oMultiComboBox.close();
+		this.clock.tick(300);
 
 		oMultiComboBox.destroy();
 	});
@@ -5362,7 +5382,7 @@
 		var oMultiComboBox = new sap.m.MultiComboBox(),
 			output;
 
-		oMultiComboBox.placeAt("qunit-fixture");
+		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
@@ -5371,15 +5391,17 @@
 		output = oMultiComboBox._calculateSpaceForTokenizer();
 
 		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
+
+		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
+	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function (assert) {
 		//arrange
-		var oTokenizerSpy = sinon.spy(sap.m.Tokenizer.prototype, "_adjustTokensVisibility"),
-			oMCB = new sap.m.MultiComboBox();
+		var oMCB = new sap.m.MultiComboBox();
+		var oTokenizerSpy = this.spy(oMCB._oTokenizer, "_adjustTokensVisibility");
 
 		// act
-		oMCB.placeAt("qunit-fixture");
+		oMCB.placeAt("MultiComboBox-content");
 		this.clock.tick(100);
 
 		// assert
@@ -5387,10 +5409,8 @@
 		assert.ok(oTokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
 
 		// clean up
-		oTokenizerSpy.restore();
 		oMCB.destroy();
 	});
-
 
 </script>
 </head>

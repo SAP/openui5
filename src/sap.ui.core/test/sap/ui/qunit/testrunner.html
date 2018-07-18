@@ -4,10 +4,36 @@
 
 	<title>SAPUI5 QUnit TestRunner</title>
 
+	<script src="../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/jquery.js"></script>
 
 	<script src="../../../../resources/sap/ui/thirdparty/handlebars.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/blanket.js"></script>
+	
+	<script>
+
+		// **************************************************************************
+		// copy of ES6 Promise polyfill bootstrap logic from sap.ui.core/ui5loader.js
+		// **************************************************************************
+
+		// The native Promise in MS Edge and Apple Safari is not fully compliant with the ES6 spec for promises.
+		// MS Edge executes callbacks as tasks, not as micro tasks (see https://connect.microsoft.com/IE/feedback/details/1658365).
+		// We therefore enforce the use of the es6-promise polyfill also in MS Edge and Safari, which works properly.
+		(function(ua) {
+			// @evo-todo this is only a rough copy of the sap/ui/Device browser recognition code
+			var match = /(edge)[ \/]([\w.]+)/.exec( ua ) || /(webkit)[ \/]([\w.]+)/ || [];
+			if ( match[1] === 'edge' ||
+				 match[1] === 'webkit' && ( /(Version|PhantomJS)\/(\d+\.\d+).*Safari/.test(ua) || /iPhone|iPad|iPod/.test(ua) ) ) {
+				window.Promise = undefined; // if not unset, the polyfill assumes that the native Promise is fine
+			}
+			// Enable promise polyfill if native promise is not available
+			if (!window.Promise) {
+				ES6Promise.polyfill();
+			}
+		}(navigator.userAgent.toLowerCase()));
+
+	</script>
+
 	<script src="TestRunner.js"></script>
 	<link rel="stylesheet" href="testrunner.css">
 
@@ -81,8 +107,7 @@
 		function find() {
 			prepareNewRun();
 			var oContext = { pages:[] };
-			var oDeferred = jQuery.Deferred();
-			sap.ui.qunit.TestRunner.checkTestPage(jQuery("#testPage").val()).done(function(aTestPages) {
+			return sap.ui.qunit.TestRunner.checkTestPage(jQuery("#testPage").val(), document.getElementById("sequential").checked).then(function(aTestPages) {
 				window.aTestPages = aTestPages;
 				for (var i = 0; i < aTestPages.length; i++) {
 					oContext.pages.push({page: aTestPages[i]});
@@ -99,9 +124,7 @@
 				jQuery("#testPageSelect").filterByText(jQuery("#filter"));
 				jQuery("#filter").show();
 				jQuery("#console").val(aTestPages.join("\n"));
-				oDeferred.resolve();
 			});
-			return oDeferred.promise();
 		}
 		jQuery("#find").click(find);
 
@@ -151,7 +174,7 @@
 						window.blanket.report({});
 						jQuery("div.test-coverage").toggle();
 					}
-				}).always(function() {
+				}).then(function() {
 					$this.val("Run");
 				});
 
@@ -225,7 +248,7 @@
 		}, 500);
 
 		if (sap.ui.qunit.TestRunner.getAutoStart()) {
-			find().done(function() {
+			find().then(function() {
 				copyAll();
 				run();
 			})
@@ -258,6 +281,7 @@
 				<!-- test-resources/qunit/testsuite.qunit.html -->
 				<label id="testPageLabel" for="testPage"></label>
 				<input id="testPage" type="text" size="50">
+				<input id="sequential" type="checkbox" title="Sequential?">
 				<input id="find" type="button" value="Find">
 				<input id="run" type="button" value="Run" style="display: none;">
 				<br>

@@ -4,7 +4,7 @@
 
 /*global location */
 sap.ui.define([
-		"jquery.sap.global",
+		"sap/ui/thirdparty/jquery",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
@@ -58,7 +58,7 @@ sap.ui.define([
 
 				APIInfo.getDeprecatedPromise().then(function (oData) {
 					this.getModel("deprecatedAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
+					setTimeout(this._prettify.bind(this), 0);
 				}.bind(this));
 			},
 
@@ -73,7 +73,7 @@ sap.ui.define([
 
 				APIInfo.getExperimentalPromise().then(function (oData) {
 					this.getModel("experimentalAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
+					setTimeout(this._prettify.bind(this), 0);
 				}.bind(this));
 			},
 
@@ -84,14 +84,8 @@ sap.ui.define([
 
 				this._hasMatched = true;
 
-				this.getView().byId("sinceList").attachUpdateFinished(this._modifyLinks, this);
-
 				APIInfo.getSincePromise().then(function (oData) {
-					if (!oData['noVersion'].apis.length) {
-						delete oData['noVersion'];
-					}
 					this.getModel("sinceAPIs").setData(oData);
-					jQuery.sap.delayedCall(0, this, this._prettify);
 				}.bind(this));
 			},
 
@@ -100,36 +94,6 @@ sap.ui.define([
 				jQuery('pre').addClass('prettyprint');
 
 				window.prettyPrint();
-			},
-
-			compareVersions: function (version1, version2) {
-				var sWithoutVersion = "WITHOUT VERSION";
-				if (version1 === sWithoutVersion || !version1) {
-					return -1;
-				}
-
-				if (version2 === sWithoutVersion || !version2) {
-					return 1;
-				}
-
-				var version1Arr = version1.split(".");
-				var version2Arr = version2.split(".");
-				var version1Major = parseInt(version1Arr[0], 10);
-				var version1Minor = parseInt(version1Arr[1], 10);
-				var version2Major = parseInt(version2Arr[0], 10);
-				var version2Minor = parseInt(version2Arr[1], 10);
-
-				if (version1Major > version2Major ||
-					(version1Major === version2Major && version1Minor > version2Minor)) {
-					return -1;
-				}
-
-				if (version2Major > version1Major ||
-					(version2Major === version1Major && version2Minor > version1Minor)) {
-					return 1;
-				}
-
-				return 0;
 			},
 
 			formatTitle: function (sTitle) {

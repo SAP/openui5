@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/core/library", "sap/base/Log"],
-	function(library, Item, coreLibrary, Log) {
+sap.ui.define([
+	"./library",
+	"sap/ui/core/Item",
+	"sap/ui/core/library",
+	"sap/base/Log",
+	"sap/base/security/sanitizeHTML"
+],
+	function(library, Item, coreLibrary, Log, sanitizeHTML) {
 		"use strict";
 
 		// shortcut for sap.ui.core.MessageType
@@ -81,7 +87,13 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/core/library", "sap/base
 					/**
 					 * Name of a message group the current item belongs to.
 					 */
-					groupName: { type: "string", group: "Misc", defaultValue: "" }
+					groupName: { type: "string", group: "Misc", defaultValue: "" },
+
+					/**
+					 * Defines whether the title of the item will be interactive.
+					 * @since 1.58
+					 */
+					activeTitle: { type: "boolean", group: "Misc", defaultValue: false }
 				},
 				defaultAggregation: "link",
 				aggregations: {
@@ -139,7 +151,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/core/library", "sap/base
 			}
 
 			if (this.getMarkupDescription()) {
-				sDescription = jQuery.sap._sanitizeHTML(sDescription);
+				sDescription = sanitizeHTML(sDescription);
 			}
 
 			this.setProperty("description", sDescription, true);

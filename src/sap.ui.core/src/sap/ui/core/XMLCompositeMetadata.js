@@ -12,15 +12,12 @@
  *
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/ElementMetadata', 'sap/ui/core/XMLTemplateProcessor'
-], function (jQuery, ElementMetadata, XMLTemplateProcessor) {
+	'jquery.sap.global',
+	'sap/ui/core/ElementMetadata',
+	'sap/ui/core/XMLTemplateProcessor',
+	"sap/base/Log"
+], function(jQuery, ElementMetadata, XMLTemplateProcessor, Log) {
 	"use strict";
-
-	var InvalidationMode = {
-		Render: true,
-		Template: "template",
-		None: false
-	};
 
 	var mFragmentCache = {};
 
@@ -40,6 +37,12 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var XMLCompositeMetadata = function (sClassName, oClassInfo) {
+		this.InvalidationMode = {
+				Render: true,
+				Template: "template",
+				None: false
+			};
+
 		if (!oClassInfo.hasOwnProperty("renderer")) {
 			oClassInfo.renderer = "sap.ui.core.XMLCompositeRenderer";
 		}
@@ -59,7 +62,15 @@ sap.ui.define([
 			if (!this._fragment && oClassInfo.fragment) {
 				try {
 					if (!this._fragment) {
-						this._fragment = this._loadFragment(oClassInfo.fragment, "control");
+						if (oClassInfo.fragmentContent) { // content provided directly, do NOT load XML from file
+							if (typeof oClassInfo.fragmentContent === "string") { // parse if not already an XML document
+								var oParser = new DOMParser();
+								oClassInfo.fragmentContent = oParser.parseFromString(oClassInfo.fragmentContent, "text/xml").documentElement;
+							}
+							this._fragment = oClassInfo.fragmentContent; // otherwise assume XML
+						} else {
+							this._fragment = this._loadFragment(oClassInfo.fragment, "control");
+						}
 					}
 					if (oClassInfo.aggregationFragments) {
 						this._aggregationFragments = {};
@@ -73,7 +84,7 @@ sap.ui.define([
 						throw (e);
 					} else {
 						// should the class perhaps have been abstract ...
-						jQuery.sap.log.warning("Implicitly inferred fragment xml " + oClassInfo.fragment + " not found. " + sClassName + " is not abstract!");
+						Log.warning("Implicitly inferred fragment xml " + oClassInfo.fragment + " not found. " + sClassName + " is not abstract!");
 					}
 				}
 			}
@@ -153,29 +164,12 @@ sap.ui.define([
 		}
 		if (!oMember.appData) {
 			oMember.appData = {};
-			oMember.appData.invalidate = InvalidationMode.None;
+			oMember.appData.invalidate = this.InvalidationMode.None;
 		}
-		if (oMember && oMember.appData && oMember.appData.invalidate === InvalidationMode.Render) {
+		if (oMember && oMember.appData && oMember.appData.invalidate === this.InvalidationMode.Render) {
 			return false;
 		}
 		return true; // i.e. invalidate = InvalidationMode.None || InvalidationMode.Template
-	};
-
-	XMLCompositeMetadata.prototype._requestFragmentRetemplatingCheck = function (oControl, oMember, bForce) {
-		if (!oControl._bIsCreating && !oControl._bIsBeingDestroyed && oMember && oMember.appData && oMember.appData.invalidate === InvalidationMode.Template &&
-			!oControl._requestFragmentRetemplatingPending) {
-			if (oControl.requestFragmentRetemplating) {
-				oControl._requestFragmentRetemplatingPending = true;
-				// to avoid several separate re-templating requests we collect them
-				// in a timeout
-				setTimeout(function () {
-					oControl.requestFragmentRetemplating(bForce);
-					oControl._requestFragmentRetemplatingPending = false;
-				}, 0);
-			} else {
-				throw new Error("Function requestFragmentRetemplating not available although invalidationMode was set to template");
-			}
-		}
 	};
 
 	XMLCompositeMetadata.prototype.getMandatoryAggregations = function () {
@@ -195,6 +189,7 @@ sap.ui.define([
 	XMLCompositeMetadata.prototype.requireFor = function (oElement) {
 		var sModuleNames = oElement.getAttribute("template:require");
 		if (sModuleNames) {
+			//TODO: global jquery call found
 			jQuery.sap.require.apply(jQuery.sap, sModuleNames.split(" "));
 		}
 	};

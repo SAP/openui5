@@ -2,15 +2,24 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/model/FormatException",
-	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/model/odata/type/String",
-	"sap/ui/test/TestUtils"
-], function (jQuery, FormatException, ParseException, ValidateException, ODataType, StringType,
-		TestUtils) {
+    "jquery.sap.global",
+    "sap/ui/model/FormatException",
+    "sap/ui/model/ParseException",
+    "sap/ui/model/ValidateException",
+    "sap/ui/model/odata/type/ODataType",
+    "sap/ui/model/odata/type/String",
+    "sap/ui/test/TestUtils",
+    "sap/base/Log"
+], function(
+    jQuery,
+	FormatException,
+	ParseException,
+	ValidateException,
+	ODataType,
+	StringType,
+	TestUtils,
+	Log
+) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -18,7 +27,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.String", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}

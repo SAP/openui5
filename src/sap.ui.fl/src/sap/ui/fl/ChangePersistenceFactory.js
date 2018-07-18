@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/core/Component", "sap/ui/fl/ChangePersistence", "sap/ui/fl/Utils"
+	"sap/ui/thirdparty/jquery", "sap/ui/core/Component", "sap/ui/fl/ChangePersistence", "sap/ui/fl/Utils"
 ], function(jQuery, Component, ChangePersistence, Utils) {
 	"use strict";
 

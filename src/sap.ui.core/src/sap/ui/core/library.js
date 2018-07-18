@@ -1074,7 +1074,13 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 		 * Neutral color.
 		 * @public
 		 */
-		Neutral : "Neutral"
+		Neutral : "Neutral",
+
+		/**
+		 * Contrast color.
+		 * @public
+		 */
+		Contrast : "Contrast"
 
 	};
 

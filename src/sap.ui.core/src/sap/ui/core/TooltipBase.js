@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.core.TooltipBase.
-sap.ui.define(['jquery.sap.global', './Control', './Popup', './library', "sap/ui/events/KeyCodes"],
-	function(jQuery, Control, Popup, library /*, jQuerySapKeycodes */, KeyCodes) {
+sap.ui.define([
+	'./Control',
+	'./Popup',
+	'./library',
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+],
+	function(Control, Popup, library, KeyCodes) {
 	"use strict";
 
 
@@ -96,12 +102,14 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library', "sap/ui
 	 * @return The popup to use
 	 * @private
 	 */
-	TooltipBase.prototype._getPopup = jQuery.sap.getter((function() {
-			var oPopup = new Popup();
-				oPopup.setShadow(true);
-				return oPopup;
-			}())
-	);
+	TooltipBase.prototype._getPopup = function() {
+		var oPopup = new Popup();
+		oPopup.setShadow(true);
+		TooltipBase.prototype._getPopup = function() {
+			return oPopup;
+		};
+		return oPopup;
+	};
 
 	/**
 	 * When a control that has a Tooltip gets the focus, this method is called.

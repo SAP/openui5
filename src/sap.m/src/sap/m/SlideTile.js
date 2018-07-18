@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'./SlideTileRenderer',
 	"sap/ui/events/KeyCodes",
-	'jquery.sap.events'
+	"sap/ui/events/PseudoEvents"
 ],
 	function(
 		library,
@@ -19,7 +19,8 @@ sap.ui.define([
 		Device,
 		Icon,
 		SlideTileRenderer,
-		KeyCodes
+		KeyCodes,
+		PseudoEvents
 	) {
 	"use strict";
 
@@ -247,7 +248,7 @@ sap.ui.define([
 	 */
 	SlideTile.prototype.onkeydown = function (oEvent) {
 		if (this.getScope() === library.GenericTileScope.Display) {
-			if (jQuery.sap.PseudoEvents.sapenter.fnCheck(oEvent)) {
+			if (PseudoEvents.events.sapenter.fnCheck(oEvent)) {
 				var oGenericTile = this.getTiles()[this._iCurrentTile];
 				oGenericTile.onkeydown(oEvent);
 			}
@@ -262,12 +263,12 @@ sap.ui.define([
 	SlideTile.prototype.onkeyup = function (oEvent) {
 		var oParams;
 		if (this.getScope() === library.GenericTileScope.Display) {
-			if (jQuery.sap.PseudoEvents.sapenter.fnCheck(oEvent)) {
+			if (PseudoEvents.events.sapenter.fnCheck(oEvent)) {
 				var oGenericTile = this.getTiles()[this._iCurrentTile];
 				oGenericTile.onkeyup(oEvent);
 				return;
 			}
-			if (jQuery.sap.PseudoEvents.sapspace.fnCheck(oEvent)) {
+			if (PseudoEvents.events.sapspace.fnCheck(oEvent)) {
 				this._toggleAnimation();
 			}
 			if (oEvent.which === KeyCodes.B && this._bAnimationPause) {
@@ -277,10 +278,10 @@ sap.ui.define([
 				this._scrollToNextTile(true, false);
 			}
 		} else if (this.getScope() === library.GenericTileScope.Actions) {
-			if (jQuery.sap.PseudoEvents.sapselect.fnCheck(oEvent)) {
+			if (PseudoEvents.events.sapselect.fnCheck(oEvent)) {
 				this.firePress(this._getEventParams(oEvent));
 				oEvent.preventDefault();
-			} else if (jQuery.sap.PseudoEvents.sapdelete.fnCheck(oEvent) || jQuery.sap.PseudoEvents.sapbackspace.fnCheck(oEvent)) {
+			} else if (PseudoEvents.events.sapdelete.fnCheck(oEvent) || PseudoEvents.events.sapbackspace.fnCheck(oEvent)) {
 				oParams = {
 					scope: this.getScope(),
 					action: GenericTile._Action.Remove,

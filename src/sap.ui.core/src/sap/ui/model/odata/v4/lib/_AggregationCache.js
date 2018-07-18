@@ -4,13 +4,13 @@
 
 //Provides class sap.ui.model.odata.v4.lib._AggregationCache
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
+	"sap/base/Log",
 	"./_AggregationHelper",
 	"./_Cache",
 	"./_Helper",
 	"./_Parser"
-], function (jQuery, SyncPromise, _AggregationHelper, _Cache, _Helper, _Parser) {
+], function (SyncPromise, Log, _AggregationHelper, _Cache, _Helper, _Parser) {
 	"use strict";
 
 	var rComma = /,|%2C|%2c/,
@@ -123,7 +123,7 @@ sap.ui.define([
 	_AggregationCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested,
 			oListener) {
 		if (!this.oMeasureRangePromise && sPath === "$count") {
-			jQuery.sap.log.error("Failed to drill-down into $count, invalid segment: $count",
+			Log.error("Failed to drill-down into $count, invalid segment: $count",
 				this.oFirstLevel.toString(), "sap.ui.model.odata.v4.lib._Cache");
 			return SyncPromise.resolve();
 		}

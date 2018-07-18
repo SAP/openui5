@@ -2,9 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"jquery.sap.global", "sap/ui/fl/Change"
-], function($, Change) {
+sap.ui.define(["sap/ui/fl/Change"], function(Change) {
 	"use strict";
 
 	/**

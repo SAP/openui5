@@ -2,29 +2,47 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/Device",
-	"sap/ui/base/BindingParser",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/core/CustomizingConfiguration",
-	"sap/ui/core/XMLTemplateProcessor",
-	"sap/ui/core/util/XMLPreprocessor",
-	"sap/ui/model/BindingMode",
+    "jquery.sap.global",
+    "sap/base/Log",
+    "sap/base/util/ObjectPath",
+    "sap/ui/Device",
+    "sap/ui/base/BindingParser",
+    "sap/ui/base/ManagedObject",
+    "sap/ui/base/SyncPromise",
+    "sap/ui/core/CustomizingConfiguration",
+    "sap/ui/core/XMLTemplateProcessor",
+    "sap/ui/core/util/XMLPreprocessor",
+    "sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/model/Context",
-	"sap/ui/model/json/JSONModel",
-	"sap/base/util/ObjectPath",
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
-], function (jQuery, Device, BindingParser, ManagedObject, SyncPromise, CustomizingConfiguration,
-		XMLTemplateProcessor, XMLPreprocessor, BindingMode, ChangeReason, Context, JSONModel,
-		ObjectPath/*, jQuerySapXml*/) {
+    "sap/ui/model/Context",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/performance/Measurement",
+    // needed to have jQuery.sap.parseXML
+	"jquery.sap.xml"
+], function(
+    jQuery,
+	Log,
+	ObjectPath,
+	Device,
+	BindingParser,
+	ManagedObject,
+	SyncPromise,
+	CustomizingConfiguration,
+	XMLTemplateProcessor,
+	XMLPreprocessor,
+	BindingMode,
+    ChangeReason,
+	Context,
+	JSONModel,
+	Measurement
+    /*, jQuerySapXml*/
+) {
 	/*global QUnit, sinon, window */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
 
 	var sComponent = "sap.ui.core.util.XMLPreprocessor",
-		iOldLogLevel = jQuery.sap.log.getLevel(sComponent);
+		iOldLogLevel = Log.getLevel(sComponent);
 
 	//---------------------------------------------------------------------------------------------
 	// "public" methods to be used directly in test functions
@@ -160,7 +178,7 @@ sap.ui.require([
 	function warn(oLogMock, sExpectedWarning, vDetails) {
 		return oLogMock.expects("warning")
 			// do not construct arguments in vain!
-			.exactly(jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING, sComponent) ? 1 : 0)
+			.exactly(Log.isLoggable(Log.Level.WARNING, sComponent) ? 1 : 0)
 			.withExactArgs(_matchArg(sExpectedWarning), _matchArg(vDetails), sComponent);
 	}
 
@@ -305,7 +323,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.util.XMLPreprocessor", {
 		afterEach : function () {
-			jQuery.sap.log.setLevel(iOldLogLevel, sComponent);
+			Log.setLevel(iOldLogLevel, sComponent);
 			delete window.foo;
 			this.oLogMock.expects("debug")
 				.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'", null,
@@ -315,12 +333,12 @@ sap.ui.require([
 
 		beforeEach : function () {
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG, sComponent);
+			Log.setLevel(Log.Level.DEBUG, sComponent);
 
 			this.oJQuerySapMock = this.mock(jQuery.sap);
 			this.oObjectPathMock = this.mock(ObjectPath);
 
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			// do not flood the console ;-)
@@ -496,7 +514,7 @@ sap.ui.require([
 
 			this.oDebugExpectation.never();
 			if (!bDebug) {
-				jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING, sComponent);
+				Log.setLevel(Log.Level.WARNING, sComponent);
 			} else {
 				aExpectedMessages.forEach(function (oExpectedMessage, i) {
 					var vExpectedDetail = oExpectedMessage.d;
@@ -625,7 +643,7 @@ sap.ui.require([
 
 			QUnit.test(aViewContent[1] + ", warn = " + bWarn, function (assert) {
 				if (!bWarn) {
-					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
+					Log.setLevel(Log.Level.ERROR, sComponent);
 				}
 
 				this.check(assert, aViewContent);
@@ -651,10 +669,7 @@ sap.ui.require([
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("Warnings w/o debug output log caller, warn = " + bWarn, function (assert) {
 			// no debug output --> caller information should be logged once
-			jQuery.sap.log.setLevel(bWarn
-				? jQuery.sap.log.Level.WARNING
-				: jQuery.sap.log.Level.ERROR,
-				sComponent);
+			Log.setLevel(bWarn ? Log.Level.WARNING : Log.Level.ERROR, sComponent);
 			warn(this.oLogMock, "Warning(s) during processing of qux", null)
 				.exactly(bWarn ? 1 : 0);
 
@@ -827,7 +842,7 @@ sap.ui.require([
 
 					this.mock(CustomizingConfiguration).expects("getViewExtension").never();
 					if (!bWarn) {
-						jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
+						Log.setLevel(Log.Level.ERROR, sComponent);
 					}
 					warn(this.oLogMock,
 							sinon.match(/\[ \d\] Error in formatter: Error: deliberate failure/),
@@ -917,7 +932,7 @@ sap.ui.require([
 			QUnit.test(aViewContent[1] + ", warn = " + bWarn, function (assert) {
 				this.mock(CustomizingConfiguration).expects("getViewExtension").never();
 				if (!bWarn) {
-					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
+					Log.setLevel(Log.Level.ERROR, sComponent);
 				}
 				warn(this.oLogMock,
 						oFixture.sMessage || sinon.match(/\[ \d\] Binding not ready/),
@@ -2820,8 +2835,8 @@ sap.ui.require([
 				'<Text text="{CustomerName}"/>',
 				'</mvc:View>'
 			],
-			oAverageSpy = this.spy(jQuery.sap.measure, "average"),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oAverageSpy = this.spy(Measurement, "average"),
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.core.util.XMLPreprocessor.process"),
 			oCountSpy = oAverageSpy.withArgs("sap.ui.core.util.XMLPreprocessor.process", "",
 				["sap.ui.core.util.XMLPreprocessor"]),
@@ -2853,8 +2868,8 @@ sap.ui.require([
 				'<Text text="{unrelated>/some/path}"/>',
 				'</mvc:View>'
 			],
-			oAverageSpy = this.spy(jQuery.sap.measure, "average"),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oAverageSpy = this.spy(Measurement, "average"),
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.core.util.XMLPreprocessor.process"),
 			oResolvedSpy = oAverageSpy.withArgs(
 				"sap.ui.core.util.XMLPreprocessor/getResolvedBinding",
@@ -3016,7 +3031,7 @@ sap.ui.require([
 
 			XMLPreprocessor.plugIn(function () {
 				if (bDebug) {
-					jQuery.sap.log.debug("I am your visitor!", undefined, sComponent);
+					Log.debug("I am your visitor!", undefined, sComponent);
 				}
 				return SyncPromise.resolve();
 			}, "foo", "Bar");

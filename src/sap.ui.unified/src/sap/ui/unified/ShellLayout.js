@@ -11,8 +11,9 @@ sap.ui.define([
 	'./SplitContainer',
 	'./library',
 	'./ShellLayoutRenderer',
-	"sap/ui/dom/containsOrEquals",
-	"sap/base/Log"
+	'sap/ui/dom/containsOrEquals',
+	'sap/base/Log',
+	'sap/ui/dom/jquery/Focusable' // jQuery Plugin "firstFocusableDomRef"
 ], function(
 	Device,
 	Control,

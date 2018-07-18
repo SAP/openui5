@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/util/Storage",
 	"sap/ui/core/syncStyleClass",
-	"jquery.sap.global"
+	"sap/base/Log"
 ], function(
 	moduleTreeHelper,
 	Device,
@@ -35,7 +35,7 @@ sap.ui.define([
 	mobileLibrary,
 	Storage,
 	syncStyleClass,
-	jQuery
+	Log
 ) {
 	"use strict";
 
@@ -358,7 +358,7 @@ sap.ui.define([
 				}, function error() {
 					var sMessage = this._getText("TechInfo.SupportAssistantConfigPopup.NotAvailableAtTheMoment");
 					this._showError(oControl, sMessage);
-					jQuery.sap.log.error("Support Assistant could not be loaded from the URL you entered");
+					Log.error("Support Assistant could not be loaded from the URL you entered");
 				});
 		},
 
@@ -563,7 +563,7 @@ sap.ui.define([
 					}
 					this._sErrorMessage = msg;
 					this.onConfigureAssistantBootstrap();
-					jQuery.sap.log.error("Support Assistant could not be loaded from the URL you entered");
+					Log.error("Support Assistant could not be loaded from the URL you entered");
 				});
 		},
 
@@ -616,13 +616,13 @@ sap.ui.define([
 				oViewModel.setProperty("/ProductVersion", oVersionInfo.version);
 			} catch (oException) {
 				oVersionInfo.version = "";
-				jQuery.sap.log.error("failed to load global version info");
+				Log.error("failed to load global version info");
 			}
 
 			try {
 				oViewModel.setProperty("/ProductTimestamp", this._generateLocalizedBuildDate(oVersionInfo.buildTimestamp));
 			} catch (oException) {
-				jQuery.sap.log.error("failed to parse build timestamp from global version info");
+				Log.error("failed to parse build timestamp from global version info");
 			}
 
 			if (!/openui5/i.test(oVersionInfo.name)) {
@@ -631,7 +631,7 @@ sap.ui.define([
 				try {
 					oViewModel.setProperty("/OpenUI5ProductTimestamp", this._generateLocalizedBuildDate(Global.buildinfo.buildtime));
 				} catch (oException) {
-					jQuery.sap.log.error("failed to parse OpenUI5 build timestamp from global version info");
+					Log.error("failed to parse OpenUI5 build timestamp from global version info");
 				}
 			}
 

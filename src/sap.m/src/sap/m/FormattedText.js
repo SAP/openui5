@@ -8,14 +8,18 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'./FormattedTextAnchorGenerator',
 	'./FormattedTextRenderer',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/security/URLWhitelist",
+	"sap/base/security/sanitizeHTML"
 ],
 function(
 	library,
 	Control,
 	FormattedTextAnchorGenerator,
 	FormattedTextRenderer,
-	Log
+	Log,
+	URLWhitelist,
+	sanitizeHTML0
 	) {
 		"use strict";
 
@@ -215,7 +219,7 @@ function(
 
 				// sanitize hrefs
 				if (attr == "href") { // a::href
-					if (!jQuery.sap.validateUrl(value)) {
+					if (!URLWhitelist.validate(value)) {
 						Log.warning("FormattedText: incorrect href attribute:" + value, this);
 						attribs[i + 1] = "#";
 						addTarget = false;
@@ -263,11 +267,11 @@ function(
 		 * @private
 		 */
 		function sanitizeHTML(sText) {
-			return jQuery.sap._sanitizeHTML(sText, {
+			return sanitizeHTML0(sText, {
 				tagPolicy: fnPolicy.bind(this),
 				uriRewriter: function (sUrl) {
 					// by default we use the URL whitelist to check the URLs
-					if (jQuery.sap.validateUrl(sUrl)) {
+					if (URLWhitelist.validate(sUrl)) {
 						return sUrl;
 					}
 				}

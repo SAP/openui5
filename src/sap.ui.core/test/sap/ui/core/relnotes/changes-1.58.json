@@ -337,6 +337,120 @@
         "type": "FIX",
         "text": " test/launchers/iFrameLauncher: fixed loader config access",
         "references": []
+      },
+      {
+        "id": "09434ce403775258e8f752699479292fcb531fe6",
+        "type": "FEATURE",
+        "text": " ODataAnnotations: expose eTag header",
+        "references": []
+      },
+      {
+        "id": "763c200157791337bc0d6dab99556d2ac5f3e279",
+        "type": "FEATURE",
+        "text": " OverflowToolbar: shrinking of controls is enabled",
+        "references": []
+      },
+      {
+        "id": "44e9000fa60d010148f02fefdf71f34ef7b6007b",
+        "type": "FEATURE",
+        "text": " adding sap.ui.core.IconColor.Contrast",
+        "references": []
+      },
+      {
+        "id": "8958b6baf77e9f91cfadca4e7942df140be49ab2",
+        "type": "FIX",
+        "text": " Component.getService(): Promise not rejecting",
+        "references": []
+      },
+      {
+        "id": "690b94d22ebcc83bb27ed421b378a91b2ab60819",
+        "type": "FIX",
+        "text": " QUnit: EnterText for number input was improved",
+        "references": []
+      },
+      {
+        "id": "b2f62abe5c6663bd4c56901efc330b1db2c9ff4c",
+        "type": "FIX",
+        "text": " XMLComposite: Event propagation in cloning",
+        "references": []
+      },
+      {
+        "id": "7c121b646cc55b5b809e1d7db55f6ad19d2aaa46",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: ignore URL params",
+        "references": []
+      },
+      {
+        "id": "ec9d5d3b732518b6b2b9392ec17e2f02c9f3256c",
+        "type": "FIX",
+        "text": " model.ODataUtils: Complement toupper on all filter operators",
+        "references": []
+      },
+      {
+        "id": "afe894e1db2a172b1828481465f67009c28c93e2",
+        "type": "FIX",
+        "text": " sap/ui/dom/getComputedStyleFix: document.body is not there yet",
+        "references": []
+      },
+      {
+        "id": "7f880b3805a40813ba4c4c3abf4385098c18f68f",
+        "type": "FIX",
+        "text": " sap/ui/model/Model: Force update refresh fix",
+        "references": []
+      },
+      {
+        "id": "8cfd719562ae7b32909341597991fc0e2aaf574b",
+        "type": "FEATURE",
+        "text": " XMLComposite: provide fragment content directly (string/xml)",
+        "references": []
+      },
+      {
+        "id": "228ce8fda6fb4a3c66d0a74b3af4e1eea4e30708",
+        "type": "FIX",
+        "text": " Core: Trigger ThemeCheck when a library has been initialized",
+        "references": []
+      },
+      {
+        "id": "435071bf663424d0f44bd83f90e718853ecff29d",
+        "type": "FIX",
+        "text": " Fix aggregation forwarding issue with move in hierarchy",
+        "references": []
+      },
+      {
+        "id": "9f7735d15aabbbd8c8f413758ded46358ebfd96c",
+        "type": "FIX",
+        "text": " List/TreeBinding: Application filter vs control filter",
+        "references": []
+      },
+      {
+        "id": "1d957d861cac2b914f27b237b494799417572093",
+        "type": "FIX",
+        "text": " List/TreeBinding: Application filter vs control filter",
+        "references": []
+      },
+      {
+        "id": "a14a139c5bb8638e26a1ffe477b68366d9c5186d",
+        "type": "FIX",
+        "text": " List/TreeBinding: Application filter vs control filter",
+        "references": []
+      },
+      {
+        "id": "b7d9298346554026e8d613b8f79896496119a02b",
+        "type": "FIX",
+        "text": " NumberFormat: Several fixes for short currency formatting",
+        "references": []
+      },
+      {
+        "id": "533678d7eb0d6b673ed0e02399b02ad98fad565c",
+        "type": "FIX",
+        "text": " ODataAnnotations: restore cached arrays",
+        "references": []
+      },
+      {
+        "id": "53f7bbc2ba1c81adbaf656c3d5730994b295555e",
+        "type": "FIX",
+        "text": " Opa: parse boolean URL parameters",
+        "references": []
       }
     ]
   }

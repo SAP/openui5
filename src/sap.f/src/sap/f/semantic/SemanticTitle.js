@@ -5,13 +5,7 @@
 /**
  * Provides a private class <code>sap.f.semantic.SemanticTitle</code>.
  */
-sap.ui.define([
-	"jquery.sap.global",
-	"sap/m/library",
-	"./SemanticContainer"
-], function(jQuery,
-			mobileLibrary,
-			SemanticContainer) {
+sap.ui.define(["sap/m/library", "./SemanticContainer"], function(mobileLibrary, SemanticContainer) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType

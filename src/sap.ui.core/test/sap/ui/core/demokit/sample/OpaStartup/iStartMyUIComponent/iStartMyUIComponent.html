@@ -6,11 +6,20 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>OPA sample for starting an app with a component</title>
 
+		<script>
+			["CSS_PROP_BIT_QUANTITY", "CSS_PROP_BIT_HASH_VALUE", "CSS_PROP_BIT_NEGATIVE_QUANTITY", "CSS_PROP_BIT_QSTRING_CONTENT", "CSS_PROP_BIT_QSTRING_URL", "CSS_PROP_BIT_HISTORY_INSENSITIVE",
+			"CSS_PROP_BIT_Z_INDEX", "CSS_PROP_BIT_ALLOWED_IN_LINK", "cssSchema", "lexCss", "decodeCss", "sanitizeCssProperty",
+			"sanitizeCssSelectors", "sanitizeStylesheet", "parseCssStylesheet", "parseCssDeclarations", "html4", "html",
+			"html_sanitize"].forEach(function(s) {
+				window[s] = undefined;
+			});
+		</script>
+
 		<script id="sap-ui-bootstrap"
-		        src="../../../../../../../../resources/sap-ui-core.js"
-		        data-sap-ui-libs="sap.m"
-		        data-sap-ui-theme='sap_belize'
-		        data-sap-ui-resourceroots='{
+				src="../../../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme='sap_belize'
+				data-sap-ui-resourceroots='{
 				"sap.ui.sample.appUnderTest" : "./applicationUnderTest",
 				"sap.ui.sample.appUnderTest.view" : "./applicationUnderTest/view",
 				"sap.ui.demo.mock" : "../../../../../../../sap/ui/documentation/sdk/"

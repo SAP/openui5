@@ -4,8 +4,8 @@
 /*global Error */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/Utils", "sap/ui/base/EventProvider"
-], function(jQuery, LrepConnector, Cache, Utils, EventProvider) {
+	"sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/Utils", "sap/ui/base/EventProvider", "sap/base/util/UriParameters"
+], function(LrepConnector, Cache, Utils, EventProvider, UriParameters) {
 	"use strict";
 
 	/**
@@ -52,7 +52,7 @@ sap.ui.define([
 		this._hasMergeErrorOccured = false;
 	};
 
-	Settings.prototype = jQuery.sap.newObject(EventProvider.prototype);
+	Settings.prototype = Object.create(EventProvider.prototype || null);
 
 	Settings.events = {
 		flexibilityAdaptationButtonAllowedChanged: "flexibilityAdaptationButtonAllowedChanged",
@@ -195,13 +195,11 @@ sap.ui.define([
 	 */
 	Settings._isFlexChangeModeFromUrl = function() {
 		var bFlexChangeMode;
-		var oUriParams = jQuery.sap.getUriParameters();
-		if (oUriParams && oUriParams.mParams && oUriParams.mParams['sap-ui-fl-changeMode'] && oUriParams.mParams['sap-ui-fl-changeMode'][0]) {
-			if (oUriParams.mParams['sap-ui-fl-changeMode'][0] === 'true') {
-				bFlexChangeMode = true;
-			} else if (oUriParams.mParams['sap-ui-fl-changeMode'][0] === 'false') {
-				bFlexChangeMode = false;
-			}
+		var oUriParams = new UriParameters(window.location.href);
+		if (oUriParams.get('sap-ui-fl-changeMode') === 'true') {
+			bFlexChangeMode = true;
+		} else if (oUriParams.get('sap-ui-fl-changeMode') === 'false') {
+			bFlexChangeMode = false;
 		}
 		return bFlexChangeMode;
 	};

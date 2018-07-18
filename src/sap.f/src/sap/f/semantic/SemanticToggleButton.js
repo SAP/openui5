@@ -5,8 +5,8 @@
 sap.ui.define([
 	'./SemanticButton',
 	'sap/m/library',
-	'jquery.sap.keycodes'
-], function(SemanticButton, mobileLibrary, jQuery) {
+	"sap/ui/events/KeyCodes"
+], function(SemanticButton, mobileLibrary, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -74,7 +74,7 @@ sap.ui.define([
 	*/
 	SemanticToggleButton.prototype._onKeydown = function(oEvent) {
 
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 			this._onTap(oEvent);
 		}
 	};

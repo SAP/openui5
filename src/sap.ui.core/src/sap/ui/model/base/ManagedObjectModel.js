@@ -2,7 +2,6 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'../json/JSONModel',
 	'../json/JSONPropertyBinding',
 	'../json/JSONListBinding',
@@ -10,9 +9,9 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'../Context',
 	'../ChangeReason',
-	"sap/base/util/uid"
+	"sap/base/util/uid",
+	"sap/base/Log"
 ], function(
-	jQuery,
 	JSONModel,
 	JSONPropertyBinding,
 	JSONListBinding,
@@ -20,7 +19,8 @@ sap.ui.define([
 	ManagedObjectObserver,
 	Context,
 	ChangeReason,
-	uid
+	uid,
+	Log
 ) {
 	"use strict";
 
@@ -171,7 +171,7 @@ sap.ui.define([
 						return true;
 					}
 				} else {
-					jQuery.sap.log.warning("The setProperty method only supports properties, the path " + sResolvedPath + " does not point to a property", null, "sap.ui.model.base.ManagedObjectModel");
+					Log.warning("The setProperty method only supports properties, the path " + sResolvedPath + " does not point to a property", null, "sap.ui.model.base.ManagedObjectModel");
 				}
 			} else if (oObject[sProperty] !== oValue) {
 				// get get an update of a property that was bound on a target

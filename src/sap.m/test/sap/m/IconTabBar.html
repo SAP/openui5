@@ -1006,6 +1006,13 @@
 						expandable: true,
 						selectedKey: "key3",
 						items: [
+							new sap.m.IconTabFilter({
+								showAll: true,
+								design: sap.m.IconTabFilterDesign.Horizontal,
+								count: "30",
+								text: "products"
+							}),
+							new sap.m.IconTabSeparator(),
 							new sap.m.IconTabFilter("itf7", {
 								icon: "sap-icon://hint",
 								iconColor: sap.ui.core.IconColor.Neutral,

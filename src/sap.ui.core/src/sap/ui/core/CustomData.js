@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.core.CustomData.
-sap.ui.define(['jquery.sap.global', './Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define([
+	'./Element',
+	'./library',
+	"sap/ui/events/F6Navigation",
+	"sap/base/Log"
+],
+	function(Element, library, F6Navigation, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ID
@@ -81,19 +86,19 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		var value = this.getValue();
 
 		if (typeof value != "string") {
-			jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but the value is not a string.");
+			Log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but the value is not a string.");
 			return null;
 		}
 
 		if (!(ID.isValid(key)) || (key.indexOf(":") != -1)) {
-			jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but the key is not valid (must be a valid sap.ui.core.ID without any colon).");
+			Log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but the key is not valid (must be a valid sap.ui.core.ID without any colon).");
 			return null;
 		}
 
-		if (key == jQuery.sap._FASTNAVIGATIONKEY) {
+		if (key == F6Navigation.fastNavigationKey) {
 			value = /^\s*(x|true)\s*$/i.test(value) ? "true" : "false"; // normalize values
 		} else if (key.indexOf("sap-ui") == 0) {
-			jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but the key is not valid (may not start with 'sap-ui').");
+			Log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but the key is not valid (may not start with 'sap-ui').");
 			return null;
 		}
 

@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 		metadata : {
 			rootView : {
-				"viewName": "sap.m.sample.TableViewSettingsDialog.V",
+				"viewName": "sap.m.sample.TableViewSettingsDialog.SettingsDialogView",
 				"type": "XML",
 				"async": true
 			},
@@ -19,9 +19,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			config : {
 				sample : {
 					files : [
-						"V.view.xml",
-						"C.controller.js",
-						"Dialog.fragment.xml",
+						"SettingsDialogView.view.xml",
+						"SettingsDialogController.controller.js",
+						"SortDialog.fragment.xml",
+						"FilterDialog.fragment.xml",
+						"GroupDialog.fragment.xml",
 						"Formatter.js"
 					]
 				}

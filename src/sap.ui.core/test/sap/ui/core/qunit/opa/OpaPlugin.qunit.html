@@ -554,8 +554,10 @@ sap.ui.require([
 	});
 
 	QUnit.module("initialization", {
-		beforeEach: function () {
-			this.fnLoggerSpy = sinon.spy(jQuery.sap.log, "getLogger");
+		beforeEach: function (assert) {
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			this.fnLoggerSpy = sinon.spy(Log, "getLogger");
 			this.oPlugin =  new OpaPlugin();
 		},
 		afterEach: function () {

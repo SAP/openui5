@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			if (oTarget !== undefined) {
 				oTarget.display(vData);
 			} else {
-				jQuery.sap.log.error("The target with the name \"" + sName + "\" does not exist!", this);
+				Log.error("The target with the name \"" + sName + "\" does not exist!", this);
 			}
 		}
 	};

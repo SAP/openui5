@@ -652,8 +652,10 @@
 		});
 
 		QUnit.module("Legacy", {
-			beforeEach: function() {
-				this.oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			beforeEach: function(assert) {
+				var Log = sap.ui.require("sap/base/Log");
+				assert.ok(Log, "Log module should be available");
+				this.oLogSpy = sinon.spy(Log, "error");
 			},
 			afterEach: function() {
 				this.oLogSpy.restore();

@@ -2,12 +2,13 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/URI"
-], function (jQuery, SyncPromise, _Helper, TestUtils, URI) {
+    "jquery.sap.global",
+    "sap/ui/base/SyncPromise",
+    "sap/ui/model/odata/v4/lib/_Helper",
+    "sap/ui/test/TestUtils",
+    "sap/ui/thirdparty/URI",
+    "sap/base/Log"
+], function(jQuery, SyncPromise, _Helper, TestUtils, URI, Log) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -15,7 +16,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Helper", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}

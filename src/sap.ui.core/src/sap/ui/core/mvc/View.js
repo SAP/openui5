@@ -4,15 +4,25 @@
 
 // Provides control sap.ui.core.mvc.View.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/Control',
 	'sap/ui/core/mvc/Controller',
 	'sap/base/util/merge',
 	'sap/ui/core/library',
-	"./ViewRenderer"
+	"./ViewRenderer",
+	"sap/base/assert",
+	"sap/base/Log"
 ],
-	function(jQuery, ManagedObject, Control, Controller, merge, library, ViewRenderer) {
+	function(
+		ManagedObject,
+		Control,
+		Controller,
+		merge,
+		library,
+		ViewRenderer,
+		assert,
+		Log
+	) {
 	"use strict";
 
 
@@ -396,7 +406,7 @@ sap.ui.define([
 	*/
 	View.prototype._initCompositeSupport = function(mSettings) {
 		// if preprocessors available and this != XMLView
-		jQuery.sap.assert(!mSettings.preprocessors || this.getMetadata().getName().indexOf("XMLView"), "Preprocessors only available for XMLView");
+		assert(!mSettings.preprocessors || this.getMetadata().getName().indexOf("XMLView"), "Preprocessors only available for XMLView");
 
 		// init View with constructor settings
 		// (e.g. parse XML or identify default controller)
@@ -432,7 +442,7 @@ sap.ui.define([
 		}
 
 		var fnPropagateOwner = function(fnCallback, bAsync) {
-			jQuery.sap.assert(typeof fnCallback === "function", "fn must be a function");
+			assert(typeof fnCallback === "function", "fn must be a function");
 
 			var Component = sap.ui.require("sap/ui/core/Component");
 			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
@@ -733,7 +743,7 @@ sap.ui.define([
 				// append future preprocessor run to promise chain
 				pChain = pChain.then(fnAppendPreprocessor(oViewInfo, aPreprocessors[i]));
 			} else {
-				jQuery.sap.log.debug("Async \"" + sType + "\"-preprocessor was skipped in sync view execution for " +
+				Log.debug("Async \"" + sType + "\"-preprocessor was skipped in sync view execution for " +
 					this.getMetadata().getClass()._sType + "View", this.getId());
 			}
 		}
@@ -752,7 +762,7 @@ sap.ui.define([
 	function onDemandPreprocessorExists(oView, sViewType, sType) {
 		 View._mPreprocessors[sViewType][sType].forEach(function(oPreprocessor) {
 			if (oPreprocessor._onDemand) {
-				jQuery.sap.log.error("Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", oView.getMetadata().getName());
+				Log.error("Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", oView.getMetadata().getName());
 				return false;
 			}
 		});
@@ -811,10 +821,10 @@ sap.ui.define([
 				_syncSupport: bSyncSupport,
 				_settings: mSettings
 			});
-			jQuery.sap.log.debug("Registered " + (bOnDemand ? "on-demand-" : "") + "preprocessor for \"" + sType + "\"" +
+			Log.debug("Registered " + (bOnDemand ? "on-demand-" : "") + "preprocessor for \"" + sType + "\"" +
 			(bSyncSupport ? " with syncSupport" : ""), this.getMetadata().getName());
 		} else {
-			jQuery.sap.log.error("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
+			Log.error("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
 		}
 	};
 
@@ -952,9 +962,9 @@ sap.ui.define([
 	 */
 	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
 		if (vView && vView.async) {
-			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.view'. Use 'sap.ui.mvc.View.create' instead");
+			Log.info("Do not use deprecated factory function 'sap.ui.view'. Use 'sap.ui.mvc.View.create' instead");
 		} else {
-			jQuery.sap.log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'sap.ui.mvc.View.create' instead");
+			Log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'sap.ui.mvc.View.create' instead");
 		}
 		return viewFactory(sId, vView, sType);
 	};
@@ -985,7 +995,7 @@ sap.ui.define([
 		}
 
 		// can be removed when generic type checking for special settings is introduced
-		jQuery.sap.assert(!oView.async || typeof oView.async === "boolean", "sap.ui.view factory: Special setting async has to be of the type 'boolean'!");
+		assert(!oView.async || typeof oView.async === "boolean", "sap.ui.view factory: Special setting async has to be of the type 'boolean'!");
 
 		// apply the id if defined
 		if (sId) {
@@ -1002,10 +1012,10 @@ sap.ui.define([
 		if (CustomizingConfiguration) {
 			var customViewConfig = CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
 			if (customViewConfig) {
-				jQuery.sap.log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
+				Log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
 				jQuery.extend(oView, customViewConfig);
 			} else {
-				jQuery.sap.log.debug("Customizing: no View replacement found for view '" + oView.viewName + "'.");
+				Log.debug("Customizing: no View replacement found for view '" + oView.viewName + "'.");
 			}
 		}
 
@@ -1043,7 +1053,7 @@ sap.ui.define([
 			ViewClass = sap.ui.requireSync(sViewClass);
 			if (oViewSettings.async) {
 				//not supported
-				jQuery.sap.log.warning("sap.ui.view was called without requiring the according view class.");
+				Log.warning("sap.ui.view was called without requiring the according view class.");
 			}
 		}
 		return new ViewClass(oViewSettings);

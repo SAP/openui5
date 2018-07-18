@@ -7,8 +7,14 @@
 /*eslint-disable camelcase, valid-jsdoc, no-warning-comments */
 
 // Provides API for analytical extensions in OData service metadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/Sorter', './AnalyticalVersionInfo'],
-	function(jQuery, Filter, FilterOperator, Sorter, AnalyticalVersionInfo) {
+sap.ui.define([
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/Sorter',
+	'./AnalyticalVersionInfo',
+	"sap/base/security/encodeURL"
+],
+	function(Filter, FilterOperator, Sorter, AnalyticalVersionInfo, encodeURL) {
 	"use strict";
 
 	/**
@@ -3039,7 +3045,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		_renderPropertyFilterValue : function(sFilterValue, sPropertyEDMTypeName) {
 			// initial implementation called odata4analytics.helper.renderPropertyFilterValue, which had problems with locale-specific input values
 			// this is handled in the ODataModel
-			return  jQuery.sap.encodeURL(
+			return encodeURL(
 					this._oModel.getODataModel().formatValue(sFilterValue, sPropertyEDMTypeName));
 		},
 
@@ -3798,7 +3804,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 			// this is handled in the ODataModel
 
 			// TODO refactor with corresponding method FilterExpression._renderPropertyFilterValue
-			return  jQuery.sap.encodeURL(
+			return encodeURL(
 					this._oParameterization.getTargetQueryResult().getModel().getODataModel().formatValue(sKeyValue, sPropertyEDMTypeName));
 		},
 

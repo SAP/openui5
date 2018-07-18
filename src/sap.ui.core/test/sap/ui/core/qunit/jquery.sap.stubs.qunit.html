@@ -10,42 +10,23 @@
 		<meta charset="utf-8">
 		<title>QUnit Page for jquery.sap.stubs</title>
 
-		<script src="../shared-config.js"></script>
-
 		<!-- polyfills required for older browsers -->
 		<script src="../../../../../resources/sap/ui/thirdparty/baseuri.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/es6-object-assign.js"></script>
 
-		<!-- ui5loader without requiring Core.js to be able to require stubs individually -->
-		<script src="../../../../../resources/ui5loader.js" id="sap-ui-bootstrap"></script>
-		<script src="../../../../../resources/ui5loader-autoconfig.js"></script>
-
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<link href="../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen" />
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit-reporter-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-		<script>
-			sap.ui.loader._.logger = {
-				debug: function() {
-					console.log.apply(console, arguments);
-				},
-				info: function() {
-					console.log.apply(console, arguments);
-				},
-				warning: function() {
-					console.warn.apply(console, arguments);
-				},
-				error: function() {
-					console.error.apply(console, arguments);
-				},
-				isLoggable: function() { return true; }
-			};
-		</script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-4.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
 
 		<!-- unit test execution -->
-		<script type="text/javascript" src="jquery.sap.stubs.qunit.js"></script>
+		<script src="jquery.sap.stubs.qunit.js"></script>
+
 	</head>
 	<body>
 		<div id="qunit"></div>

@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/m/ObjectAttribute",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/rta/ControlTreeModifier"
+	"sap/ui/rta/ControlTreeModifier",
+	"sap/base/Log"
 ], function (
 	CommandFactory,
 	Move,
@@ -36,7 +37,8 @@ sap.ui.define([
 	ObjectAttribute,
 	ChangeRegistry,
 	FlexControllerFactory,
-	ControlTreeModifier
+	ControlTreeModifier,
+	Log
 ) {
 	"use strict";
 
@@ -133,7 +135,7 @@ sap.ui.define([
 
 	QUnit.test("when getting a move command with _createChange returning an error", function(assert) {
 		sandbox.stub(FlexCommand.prototype, "_createChange").throws("MyError");
-		var oErrorLogSpy = sandbox.spy(jQuery.sap.log, "error");
+		var oErrorLogSpy = sandbox.spy(Log, "error");
 
 		var oCommand = CommandFactory.getCommandFor(this.oButton, "move", {
 			movedElements : [this.oButton],

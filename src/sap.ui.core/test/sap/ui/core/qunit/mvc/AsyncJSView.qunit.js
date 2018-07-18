@@ -1,7 +1,4 @@
-sap.ui.define([
-	"./AnyViewAsync.qunit",
-	"sap/ui/core/mvc/JSView"
-], function(asyncTestsuite, JSView) {
+sap.ui.define(["./AnyViewAsync.qunit", "sap/ui/core/mvc/JSView", "sap/base/Log"], function(asyncTestsuite, JSView, Log) {
 
 	"use strict";
 	// setup test config with generic factory
@@ -30,7 +27,7 @@ sap.ui.define([
 		assert.expect(3);
 		var done = assert.async();
 		var that = this;
-		this.oLogMock = this.mock(jQuery.sap.log);
+		this.oLogMock = this.mock(Log);
 		this.oLogMock.expects("warning").never();
 
 		JSView.create({

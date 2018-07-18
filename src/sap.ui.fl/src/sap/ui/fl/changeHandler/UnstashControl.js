@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
+	"sap/base/Log"
 ], function(
-	jQuery
+	Log
 ) {
 	"use strict";
 
@@ -73,7 +73,7 @@ sap.ui.define([
 			mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue);
 			oChange.resetRevertData();
 		} else {
-			jQuery.sap.log.error("Attempt to revert an unapplied change.");
+			Log.error("Attempt to revert an unapplied change.");
 			return false;
 		}
 

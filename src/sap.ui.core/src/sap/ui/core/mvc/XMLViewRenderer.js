@@ -4,12 +4,11 @@
 
 // Provides default renderer for XMLView
 sap.ui.define([
-	'jquery.sap.global',
 	'./ViewRenderer',
 	'../RenderManager',
 	"sap/ui/thirdparty/jquery"
 ],
-	function(jQuery, ViewRenderer, RenderManager, jQueryDOM) {
+	function(ViewRenderer, RenderManager, jQueryDOM) {
 	"use strict";
 
 	// shortcut

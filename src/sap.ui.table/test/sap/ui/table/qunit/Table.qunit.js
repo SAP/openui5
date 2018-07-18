@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
@@ -506,6 +506,11 @@ sap.ui.require([
 		var iAssertionDelay = Device.browser.msie ? 50 : 0;
 		var done = assert.async();
 
+		/* BCP: 1880420532 */
+		if (Device.browser.msie) {
+			document.getElementById("qunit-fixture").classList.remove("visible");
+		}
+
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({template: new DummyControl({height: "1px"})}));
 		oTable.addColumn(new Column({template: new DummyControl({height: "1px"})}));
@@ -625,6 +630,9 @@ sap.ui.require([
 
 		sequence.then(function() {
 			oBody.classList.add("sapUiSizeCozy");
+			if (Device.browser.msie) {
+				document.getElementById("qunit-fixture").classList.add("visible");
+			}
 			done();
 		});
 	});

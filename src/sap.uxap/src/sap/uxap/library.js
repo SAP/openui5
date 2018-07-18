@@ -6,18 +6,12 @@
  * Initialization Code and shared classes of library sap.uxap.
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Core",
 	"sap/ui/base/DataType",
 	"sap/ui/Device",
 	"sap/m/library",
 	"sap/ui/layout/library"
-], function(
-	jQuery,
-	Core,
-	DataType,
-	Device
-) {
+], function(Core, DataType, Device) {
 	"use strict";
 
 	/**
@@ -280,12 +274,6 @@ sap.ui.define([
 		 */
 		High: "High"
 	};
-
-	sap.uxap.i18nModel = (function () {
-		return new sap.ui.model.resource.ResourceModel({
-			bundleUrl: jQuery.sap.getModulePath("sap.uxap.i18n.i18n", ".properties")
-		});
-	}());
 
 	/**
 	 *

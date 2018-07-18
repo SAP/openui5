@@ -4,18 +4,20 @@
 
 // Provides object sap.ui.dt.ElementUtil.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/Element',
-	'sap/ui/dt/Util'
+	'sap/ui/dt/Util',
+	"sap/base/Log"
 ],
 function(
 	jQuery,
 	BaseObject,
 	ManagedObject,
 	Element,
-	Util
+	Util,
+	Log
 ) {
 	"use strict";
 
@@ -343,7 +345,7 @@ function(
 	ElementUtil.isElementValid = function (oElement, sElementType, sAggregationName) {
 		var bIsManagedObject = oElement instanceof ManagedObject && !oElement.bIsDestroyed;
 		if (!bIsManagedObject && sElementType && sAggregationName) {
-			jQuery.sap.log.error([
+			Log.error([
 				"sap.ui.dt.DesignTime: child element in aggregation " + sAggregationName + " of '" + sElementType,
 				"' should be a descendant of 'sap.ui.base.ManagedObject' and it is a '" + typeof oElement + "'. ",
 				"Please ignore the aggregation '" + sAggregationName + "' in the .designtime configuration"

@@ -3,8 +3,8 @@
  */
 
 // Provides the concept of a sorter for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['sap/ui/base/Object', "sap/base/Log"],
+	function(BaseObject, Log) {
 	"use strict";
 
 
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			if (iSeparatorPos > 0) {
 				// Model names are ignored, this must be kept for compatibility reasons. But using model names in the
 				// sorter path make no technical sense as the binding cannot access any other models.
-				jQuery.sap.log.error("Model names are not allowed in sorter-paths: \"" + this.sPath + "\"");
+				Log.error("Model names are not allowed in sorter-paths: \"" + this.sPath + "\"");
 				this.sPath = this.sPath.substr(iSeparatorPos + 1);
 			}
 

@@ -3,15 +3,8 @@
  */
 
 // Provides a tree of controls for the testsuite
-sap.ui.define('sap/ui/debug/ControlTree', [
-	'jquery.sap.global',
-	'sap/ui/base/EventProvider',
-	'sap/ui/core/Element',
-	'sap/ui/core/UIArea',
-	'./Highlighter',
-	"sap/ui/dom/getOwnerWindow"
-],
-	function(jQuery, EventProvider, Element, UIArea, Highlighter, getOwnerWindow) {
+sap.ui.define('sap/ui/debug/ControlTree', ['sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/UIArea', './Highlighter', "sap/ui/dom/getOwnerWindow", "sap/base/Log"],
+	function(EventProvider, Element, UIArea, Highlighter, getOwnerWindow, Log) {
 	"use strict";
 
 
@@ -312,7 +305,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 		}
 		var oDomRef = (getOwnerWindow(this.oParentDomRef) || window).document.getElementById(sId);
 		if ( !oDomRef ) {
-			jQuery.sap.log.warning("Control with Id '" + sId.substring(22) + "' not found in tree");
+			Log.warning("Control with Id '" + sId.substring(22) + "' not found in tree");
 			return;
 		}
 		var	sControlId = oDomRef.getAttribute("sap-id");

@@ -14,8 +14,7 @@ sap.ui.define([
 	'sap/ui/events/TouchToMouseMapping',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/thirdparty/jquery-mobile-custom',
-	'sap/ui/dom/jquery/control',
-	'sap/ui/events/jquery/EventExtension'
+	'sap/ui/dom/jquery/control'
 ], function(Version, PseudoEvents, checkMouseEnterOrLeave, ControlEvents, Device, TouchToMouseMapping, jQuery /*, jQueryMobile, control, EventExtension*/) {
 	"use strict";
 

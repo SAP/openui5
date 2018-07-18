@@ -4,12 +4,12 @@
 
 // Provides control sap.ui.core.mvc.TemplateView.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/library',
 	'./View',
-	"./TemplateViewRenderer"
+	"./TemplateViewRenderer",
+	"sap/base/Log"
 ],
-function(jQuery, library, View, TemplateViewRenderer) {
+function(library, View, TemplateViewRenderer, Log) {
 "use strict";
 
 
@@ -63,7 +63,7 @@ function(jQuery, library, View, TemplateViewRenderer) {
 		 * @return {sap.ui.core.mvc.TemplateView | undefined} the created TemplateView instance in the creation case, otherwise undefined
 		 */
 		sap.ui.templateview = function(sId, vView) {
-			jQuery.sap.log.warning("sap.ui.core.mvc.TemplateView is deprecated. Use XMLView or JSView instead.");
+			Log.warning("sap.ui.core.mvc.TemplateView is deprecated. Use XMLView or JSView instead.");
 			return sap.ui.view(sId, vView, ViewType.Template);
 		};
 

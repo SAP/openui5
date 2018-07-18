@@ -4,12 +4,11 @@
 
 // Provides the JSON model implementation of a property binding
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/ClientPropertyBinding',
 	"sap/base/util/deepEqual"
 ],
-	function(jQuery, ChangeReason, ClientPropertyBinding, deepEqual) {
+	function(ChangeReason, ClientPropertyBinding, deepEqual) {
 	"use strict";
 
 

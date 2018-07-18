@@ -10,6 +10,14 @@ Common compact/cozy
 .sapUxAPAnchorBar.sapMTB {
 	border: none;
 	background: @sapUiObjectHeaderBackground;
+
+	&.sapUxAPAnchorBarTransparent {
+		background: transparent;
+	}
+
+	&.sapUxAPAnchorBarTranslucent {
+		background: lighten(@sapUiObjectHeaderBackground, 10);
+	}
 }
 
 /* L fullscreen paddings */
@@ -23,6 +31,21 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 
 .sapUxAPAnchorBarButton {
 	padding-bottom: 0;
+
+	&.sapMMenuBtn .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon,
+	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnIcon,
+	&.sapMMenuBtn.sapMMenuBtnSplit .sapMSBText:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnContent {
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	&.sapMMenuBtn .sapMSBArrow:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive {
+		outline: none;
+	}
+
+	&.sapMBtn .sapMBtnInner.sapMBtnActive > .sapMBtnFocusDiv,
+	&.sapMMenuBtn .sapMBtnInner.sapMBtnActive > .sapMBtnFocusDiv {
+		border: none;
+	}
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnContent {
@@ -54,13 +77,13 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 	background: @sapUiButtonLiteHoverBackground;
 }
 
-.sapMTB-Transparent-CTX .sapUxAPAnchorBarButton.sapMBtn > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnGhost):not(.sapMBtnActive):hover {
+.sapMTB-Transparent-CTX .sapUxAPAnchorBarButton.sapMBtn > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnGhost):not(.sapMBtnActive):hover,
+.sapMTB-Transparent-CTX .sapUxAPAnchorBarButton.sapMMenuBtn .sapMSBText > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnGhost):not(.sapMBtnActive):hover,
+.sapMTB-Transparent-CTX .sapUxAPAnchorBarButton.sapMMenuBtn .sapMSBArrow > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnGhost):not(.sapMBtnActive):hover,
+.sapUxAPAnchorBarButton.sapMMenuBtn.sapMMenuBtnSplit:not(.sapMBtnDisabled) .sapMSBActive > .sapMBtnInner,
+.sapUxAPAnchorBarButton.sapMMenuBtn .sapMSBText:hover > .sapMBtnInner,
+.sapUxAPAnchorBarButton.sapMMenuBtn .sapMSBArrow:hover > .sapMBtnInner {
 	background: none;
-}
-
-// overriding to center the text of the popover buttons in compact mode
-.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
-	line-height: 1.9rem;
 }
 
 /***********************/
@@ -132,25 +155,12 @@ html[data-sap-ui-animation="off"] {
 	color: darken(@sapUiGroupTitleTextColor, 20);
 }
 
-.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:hover {
-	background-color: @sapUiListHoverBackground;
-}
-
-.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:hover > .sapMBtnActive:hover {
-	background-color: @sapUiListActiveBackground;
-}
-
-.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton > .sapMBtnText:not(.sapMBtnActive) {
-	color: @sapUiContentLabelColor;
-}
-
-.sapMPopover.sapUxAPAnchorBarPopover {
-	background-color: @sapUiListBackground;
-	color: @sapUiListTextColor;
-	box-shadow: @sapUiShadowLevel1;
-}
-
 /* override active button */
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnActive {
 	background-color: @sapUiObjectHeaderBackground;
+}
+
+.sapUxAPAnchorBarButton .sapMIE .sapMBtnFocusDiv {
+	top: 2px;
+	bottom: 1px;
 }

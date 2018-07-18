@@ -3,8 +3,8 @@
  */
 
  /*global Promise*/
-sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/base/Object', 'sap/ui/core/routing/History'],
-	function($, InstanceManager, FlexibleColumnLayout, BaseObject, History) {
+sap.ui.define(['sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/base/Object', 'sap/ui/core/routing/History', "sap/base/Log"],
+	function(InstanceManager, FlexibleColumnLayout, BaseObject, History, Log) {
 		"use strict";
 
 
@@ -191,11 +191,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/f/FlexibleColu
 			// If the page we are going to navigate is already displayed,
 			// we are skipping the navigation.
 			if (bSkipNavigation) {
-				$.sap.log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.f.routing.TargetHandler");
+				Log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.f.routing.TargetHandler");
 				return false;
 			}
 
-			$.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
+			Log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
 
 			if (bBack) {
 				oTargetControl._safeBackToPage(sViewId, sTransition, oArguments, oTransitionParameters);

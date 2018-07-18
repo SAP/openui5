@@ -3,9 +3,13 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
+	"sap/base/strings/capitalize"
 ], function(
-	jQuery
+	jQuery,
+	Log,
+	capitalize
 ) {
 	"use strict";
 
@@ -143,7 +147,7 @@ sap.ui.define([
 				this._aChangeHandlerSettings[iIndex].scenarioInitialized = true;
 				return true;
 			} catch (e){
-				jQuery.sap.log.warning("Required library not available: " + sLibraryName + " - "
+				Log.warning("Required library not available: " + sLibraryName + " - "
 					+ mFoundChangeHandlerSettings.key.scenario + " could not be initialized");
 				return false;
 			}
@@ -151,7 +155,7 @@ sap.ui.define([
 	};
 
 	ChangeHandlerMediator._createChangeHandlerSettingsGetter = function(mChangeHandlerSettings){
-		var sGetterName = 'get' + jQuery.sap.charToUpperCase(mChangeHandlerSettings.key.scenario) + 'Settings';
+		var sGetterName = 'get' + capitalize(mChangeHandlerSettings.key.scenario) + 'Settings';
 		if (!ChangeHandlerMediator[sGetterName]) {
 			/**
 			 * Retrieves the settings for the specified scenario, getting the oData
@@ -167,7 +171,7 @@ sap.ui.define([
 				try {
 					sODataServiceVersion = oControl.getModel().getMetaModel().getProperty("/dataServices/dataServiceVersion");
 				} catch (e) {
-					jQuery.sap.log.warning("Data service version could not be retrieved");
+					Log.warning("Data service version could not be retrieved");
 				}
 
 				mFoundChangeHandlerSettings = this.getChangeHandlerSettings({

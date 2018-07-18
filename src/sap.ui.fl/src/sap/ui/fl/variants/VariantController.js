@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Cache"
 ], function (
-	jQuery,
 	Utils,
 	Change,
 	Variant,
@@ -191,7 +189,7 @@ sap.ui.define([
 	};
 
 	VariantController.prototype.setVariantChanges = function(sVariantManagementReference, sVariantReference, aChanges) {
-		if (!sVariantManagementReference || !sVariantReference || !jQuery.isArray(aChanges)) {
+		if (!sVariantManagementReference || !sVariantReference || !Array.isArray(aChanges)) {
 			Utils.log.error("Cannot set variant changes without Variant reference");
 			return;
 		}

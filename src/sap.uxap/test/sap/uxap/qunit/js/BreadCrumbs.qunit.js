@@ -33,7 +33,7 @@
 				});
 			},
 			getResourceBundle: function () {
-				return sap.uxap.i18nModel.getResourceBundle();
+				return sap.ui.getCore().getLibraryResourceBundle("sap.uxap");
 			}
 		},
 		helpers = {

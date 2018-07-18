@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library'],
-	function(library) {
+sap.ui.define(['./library', "sap/base/security/encodeCSS"],
+	function(library, encodeCSS) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileScope
@@ -24,7 +24,7 @@ sap.ui.define(['./library'],
 	SlideTileRenderer.render = function(oRm, oControl) {
 		var sTooltip = oControl.getTooltip_AsString(),
 			sScope = oControl.getScope(),
-			sScopeClass = jQuery.sap.encodeCSS("sapMSTScope" + sScope),
+			sScopeClass = encodeCSS("sapMSTScope" + sScope),
 			iLength;
 
 		oRm.write("<div");

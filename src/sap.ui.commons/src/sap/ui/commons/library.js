@@ -1289,6 +1289,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		});
 	}
 
+	if (!sap.ui.layout.GridHelper || !sap.ui.layout.GridHelper.bFinal) {
+		sap.ui.layout.GridHelper = {
+			getLibrarySpecificClass: function () {
+				return "sapUiRespGridOverflowHidden";
+			},
+			bFinal: false /* to allow mobile to overwrite  */
+		};
+	}
+
 	return sap.ui.commons;
 
 });

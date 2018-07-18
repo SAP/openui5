@@ -4,9 +4,16 @@
 /**
  * Defines miscellaneous support rules.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.support" ],
-	function(jQuery, SupportLib, CoreHelper) {
+sap.ui.define(["sap/ui/support/library", "./CoreHelper.support"],
+	function(SupportLib, CoreHelper) {
 	"use strict";
+
+	// support rules can get loaded within a ui5 version which does not have module "sap/base/Log" yet
+	// therefore load the jQuery.sap.log fallback if not available
+	var Log = sap.ui.require("sap/base/Log");
+	if (!Log) {
+		Log = jQuery.sap.log;
+	}
 
 	// shortcuts
 	var Categories = SupportLib.Categories; // Accessibility, Performance, Memory, ...
@@ -34,9 +41,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 			var count = 0,
 				message = "";
 
-			var log = jQuery.sap.log.getLogEntries();
+			var log = Log.getLog();
 			log.forEach(function(logEntry) {
-				if (logEntry.level === jQuery.sap.log.Level.ERROR) {
+				if (logEntry.level === Log.Level.ERROR) {
 					count++;
 					if (count <= 20) {
 						message += "- " + logEntry.message + "\n";
@@ -188,7 +195,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "./CoreHelper.supp
 		resolutionurls: [],
 		check: function(oIssueManager, oCoreFacade) {
 
-			var aLogEntries = jQuery.sap.log.getLog();
+			var aLogEntries = Log.getLog();
 			var aMessages = [];
 			aLogEntries.forEach(function(oLogEntry) {
 				if (oLogEntry.component === "sap.ui.core.EventBus") {

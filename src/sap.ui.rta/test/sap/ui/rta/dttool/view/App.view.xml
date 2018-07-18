@@ -1,6 +1,6 @@
 <mvc:View
 	controllerName="sap.ui.rta.dttool.controller.App"
-	class="sapUiSizeCompact"
+	class="sapUiSizeCozy"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
@@ -8,83 +8,84 @@
 	xmlns:dt="sap.ui.rta.dttool"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-	displayBlock="true">
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 
 	<App id="app">
 		<pages>
 			<Page id="page">
 				<customHeader>
-					<Toolbar id="theBar">
+					<OverflowToolbar  class="sapMListHdrText" id="theBar">
 						<ToolbarSpacer />
-						<Title text="{i18n>pageTitle}" />
+						<ObjectHeader class="sapUiResponsivePadding" title="{i18n>pageTitle}" />
 						<ToolbarSpacer />
-						<SegmentedButton selectionChange="onToggleRTA" class="sapUiTinyMarginEnd">
-							<items>
-								<SegmentedButtonItem id="startRTA" text="{i18n>startRTA}" />
-								<SegmentedButtonItem id="stopRTA" text="{i18n>stopRTA}" />
-							</items>
-						</SegmentedButton>
-					</Toolbar>
+					</OverflowToolbar>
 				</customHeader>
 				<content>
 					<l:Splitter class="sapUiDtToolSplitter" resize="onSplitterResize">
 						<l:Splitter orientation="Vertical">
-							<dt:OutlineTree
+							<Page>
+							<customHeader>
+								<OverflowToolbar class="sapUiResponsivePadding">
+									<Title class="sapMListHdrText" text="{i18n>outline}"></Title>
+								</OverflowToolbar>
+							</customHeader>
+								<dt:OutlineTree
 								id="Tree"
+								noDataText="loading..."
 								mode="SingleSelectMaster"
 								selectionChange="onSelectionChange"
-								items="{path:'outline>/', parameters: {arrayNames:['children']}}"
-								headerText="{i18n>outline}">
-								<CustomTreeItem app:id="{outline>id}" tooltip="{outline>type}">
-									<content>
-										<HBox>
-											<Image
-												src="{
+								items="{path:'outline>/', parameters: {arrayNames:['elements']}}">
+									<CustomTreeItem app:id="{outline>id}" tooltip="{outline>type}">
+										<content>
+											<HBox>
+												<Image
+														src="{
 													path: 'outline>icon',
 													formatter: '.formatter'
 												}"
-												width="1.2rem"
-												height="1.2rem"
-												class="sapUiTinyMarginEnd" />
-											<Title text="{outline>displayName}" />
-										</HBox>
-									</content>
-								</CustomTreeItem>
-								<dt:layoutData><l:SplitterLayoutData size="50%" minSize="200px" /></dt:layoutData>
-							</dt:OutlineTree>
+														width="1.2rem"
+														height="1.2rem"
+														class="sapUiTinyMarginEnd" />
+												<Title text="{outline>technicalName}" />
+											</HBox>
+										</content>
+									</CustomTreeItem>
+								<dt:layoutData>
+									<l:SplitterLayoutData size="50%" minSize="200px" /></dt:layoutData>
+								</dt:OutlineTree>
+							</Page>
+							<Page>
+								<customHeader>
+									<OverflowToolbar class="sapUiResponsivePadding">
+										<Title class="sapMListHdrText" text="{i18n>palette}"></Title>
+										<ToolbarSpacer />
+										<SearchField width="30%" liveChange="onPaletteSearch"/>
+										<Button id="addControlButton" icon="sap-icon://add" press="onAddControlToPalette" />
+									</OverflowToolbar>
+								</customHeader>
 							<List
 								id="palette"
-								width="100%"
+								noDataText="loading..."
 								items="{
 									path : 'palette>/groups',
 									sorter : {
 										path : 'groupName'
 									}
 								}">
-								<headerToolbar>
-									<Toolbar height="3rem" design="Transparent">
-										<Title text="{i18n>palette}"/>
-										<ToolbarSpacer />
-										<SearchField width="60%" liveChange="onPaletteSearch"/>
-										<Button id="addControlButton" icon="sap-icon://add" press="onAddControlToPalette" />
-									</Toolbar>
-								</headerToolbar>
 								<CustomListItem visible="{= ${palette>number} ? true : false}">
 									<Panel
 										expandable="true"
-										expandAnimation="false"
+										expandAnimation="true"
 										expand="onPanelExpand"
 										class="sapUiDtToolPanel">
 										<headerToolbar>
-											<Toolbar active="true">
-												<Title text="{palette>groupName}" />
+											<OverflowToolbar class="" active="true" press="expandPallete">
+												<Title text="{palette>groupName}"/>
 												<ToolbarSpacer />
 												<ObjectNumber number="{palette>number}" />
-											</Toolbar>
+											</OverflowToolbar>
 										</headerToolbar>
-										<Table
-											app:group="{palette>groupName}"
+										<Table app:group="{palette>groupName}"
 											items="{
 												path : 'palette>controls',
 												templateShareable : false,
@@ -92,6 +93,7 @@
 													path : 'name'
 												}
 											}">
+
 											<columns>
 												<Column width="2.5rem" />
 												<Column />
@@ -111,32 +113,67 @@
 								</CustomListItem>
 								<layoutData><l:SplitterLayoutData size="50%" minSize="200px" /></layoutData>
 							</List>
+							</Page>
+
 							<l:layoutData><l:SplitterLayoutData size="20%" minSize="200px" /></l:layoutData>
 						</l:Splitter>
 						<l:Splitter orientation="Vertical">
-							<html:IFrame
-								id="theIFrame"
-								frameborder="none"
-								border="0"
-								src="./preview.html?sap-ui-rta-minimenu=false"
-								style="width:100%; height:100%; z-index:20;" />
+							<Page>
+								<customHeader>
+									<OverflowToolbar class="sapUiResponsivePadding">
+										<Select id="sampleSelect" change="goToPage">
+											<items>
+												<core:Item key="Button" text="sap.m.sample.Switch"></core:Item>
+												<core:Item key="Button" text="sap.m.sample.Button"></core:Item>
+												<core:Item key="Button" text="sap.m.sample.Label"></core:Item>
+												<core:Item key="Button" text="sap.m.sample.IconTabBar"></core:Item>
+											</items>
+										</Select>
+										<ToolbarSpacer />
+										<Title class="sapMListHdrText" text="{i18n>iframe}"></Title>
+										<ToolbarSpacer />
+										<SegmentedButton selectionChange="onToggleRTA" class="sapUiTinyMarginEnd">
+											<items>
+												<SegmentedButtonItem id="startRTA" text="{i18n>startRTA}" />
+												<SegmentedButtonItem id="stopRTA" text="{i18n>stopRTA}" />
+											</items>
+										</SegmentedButton>
+									</OverflowToolbar>
+								</customHeader>
+								<!--
+								TODO make iFrame height responsive
+								-->
+								<html:IFrame
+										title="tester"
+										id="theIFrame"
+										frameborder="none"
+										border="0"
+										src="./preview.html?sap-ui-rta-minimenu=false"
+										height="100%" width="100%" style=""/>
+								<layoutData><l:SplitterLayoutData size="50%" minSize="500px" /></layoutData>
+							</Page>
+
 							<App id="codeApp">
-								<layoutData><l:SplitterLayoutData size="50%" minSize="300px" /></layoutData>
+								<layoutData><l:SplitterLayoutData size="50%" minSize="500px" /></layoutData>
 							</App>
+
 						</l:Splitter>
-						<List id="PropertyPanel"
-							items="{properties>/propertiesList}">
-							<headerToolbar>
-								<Toolbar>
+						<Page>
+							<customHeader>
+								<OverflowToolbar id="PropertyToolbar" class="sapUiResponsivePadding">
 									<content>
 										<Image src="{
 												path: 'properties>/palette/icons/svg',
 												formatter: '.formatter'
 											}" />
-										<Title text="{= ${properties>/displayName/singular} ? ${properties>/displayName/singular} + ' ' + ${i18n>properties} : ${i18n>propertyPanel}}" />
+										<Title text="{= ${properties>/displayName/singular} ? ${properties>/displayName/singular} + ' ' + ${i18n>properties} : ${i18n>propertyPanel}} "/>
 									</content>
-								</Toolbar>
-							</headerToolbar>
+								</OverflowToolbar>
+							</customHeader>
+
+							<List id="PropertyPanel"
+							  noDataText="loading..."
+							  items="{properties>/propertiesList}">
 							<items>
 								<dt:DTToolListItem
 									propertyName="{properties>name}"
@@ -146,8 +183,10 @@
 									change="onPropertyChange"
 									visible="{= ${properties>ignore} ? false : true}"/>
 							</items>
-							<layoutData><l:SplitterLayoutData size="20%" minSize="150px" /></layoutData>
+
 						</List>
+							<layoutData><l:SplitterLayoutData size="20%" minSize="200px" /></layoutData>
+						</Page>
 					</l:Splitter>
 				</content>
 			</Page>

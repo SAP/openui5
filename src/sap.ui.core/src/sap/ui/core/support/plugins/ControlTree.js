@@ -4,7 +4,6 @@
 
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/support/Plugin',
 	'sap/ui/core/util/serializer/ViewSerializer',
 	'sap/ui/thirdparty/jszip',
@@ -18,9 +17,9 @@ sap.ui.define([
 	'sap/ui/model/CompositeBinding',
 	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/security/encodeXML"
 ], function(
-	jQuery,
 	Plugin,
 	ViewSerializer,
 	JSZip,
@@ -34,7 +33,8 @@ sap.ui.define([
 	CompositeBinding,
 	ObjectPath,
 	jQueryDOM,
-	KeyCodes
+	KeyCodes,
+	encodeXML
 ) {
 	"use strict";
 
@@ -185,7 +185,7 @@ sap.ui.define([
 		}
 
 		function encode(s) {
-			return s == null ? "" : jQuery.sap.encodeHTML(String(s));
+			return s == null ? "" : encodeXML(String(s));
 		}
 
 		ControlTree.prototype.renderContentAreas = function() {

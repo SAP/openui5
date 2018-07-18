@@ -2,8 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject'],
-function (jQuery, ManagedObject) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject',
+	"sap/base/security/encodeXML"
+],
+function(ManagedObject, encodeXML) {
 	'use strict';
 	var ObjectViewer = ManagedObject.extend("sap.ui.core.support.controls.ObjectViewer", {
 		constructor: function() {
@@ -77,13 +80,13 @@ function (jQuery, ManagedObject) {
 				});
 				oRenderContext.addWithParam(mRenderTemplates.separator, {});
 				oRenderContext.addWithParam(mRenderTemplates.valuestart, {
-					value: jQuery.sap.encodeHTML(String(oContent[m].value)),
+					value: encodeXML(String(oContent[m].value)),
 					readonly: oContent[m].__change ? "" : "readonly",
 					sectionkey: n,
 					key: m
 				});
 				oRenderContext.addWithParam(mRenderTemplates.valueend, {
-					value: jQuery.sap.encodeHTML(String(oContent[m].value))
+					value: encodeXML(String(oContent[m].value))
 				});
 				oRenderContext.addWithParam(mRenderTemplates.rowend, {});
 
@@ -113,7 +116,7 @@ function (jQuery, ManagedObject) {
 								pxlevel: (((oContent[m].__level || 0) * 16) + 3) + "px",
 								selected: oInfo.selected || false,
 								color: oInfo.color || "orange",
-								tooltip: jQuery.sap.encodeHTML(String(oInfo.tooltip) || "")
+								tooltip: encodeXML(String(oInfo.tooltip) || "")
 							});
 						}
 					}
@@ -123,13 +126,13 @@ function (jQuery, ManagedObject) {
 					});
 					oRenderContext.addWithParam(mRenderTemplates.separator, {});
 					oRenderContext.addWithParam(mRenderTemplates.valuestart, {
-						value: jQuery.sap.encodeHTML(String(oContent[m].value2)),
+						value: encodeXML(String(oContent[m].value2)),
 						readonly: "readonly",
 						sectionkey: n,
 						key: m
 					});
 					oRenderContext.addWithParam(mRenderTemplates.valueend, {
-						value: jQuery.sap.encodeHTML(String(oContent[m].value2))
+						value: encodeXML(String(oContent[m].value2))
 					});
 					oRenderContext.addWithParam(mRenderTemplates.rowend, {});
 

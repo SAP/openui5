@@ -3,11 +3,10 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/tnt/BoxContainerList",
 	"./BoxContainerRenderer"
-], function (jQuery, Control, BoxContainerList, BoxContainerRenderer) {
+], function(Control, BoxContainerList, BoxContainerRenderer) {
 	"use strict";
 
 	/**
@@ -32,6 +31,11 @@ sap.ui.define([
 	var BoxContainer = Control.extend("sap.tnt.BoxContainer", { metadata: {
 		library: "sap.tnt",
 		properties: {
+
+			/**
+			 * Defines the minimum width of each Box
+			 */
+			boxMinWidth: { type: "sap.ui.core.CSSSize", defaultValue: "" },
 
 			/**
 			 * Defines the width of each Box
@@ -155,6 +159,7 @@ sap.ui.define([
 	 */
 	["setHeaderText", "getHeaderText", "setGrowing", "getGrowing",
 	"setGrowingThreshold", "getGrowingThreshold", "setBoxWidth", "getBoxWidth",
+	"setBoxMinWidth", "getBoxMinWidth",
 	"setBoxesPerRowConfig", "getBoxesPerRowConfig"].forEach(function (sName) {
 		BoxContainer.prototype[sName] = function() {
 			var oList = this.getAggregation("_list");

@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.core.CustomStyleClassSupport
-sap.ui.define(['jquery.sap.global', './Element'],
-	function(jQuery, Element) {
+sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log"],
+	function(Element, assert, Log) {
 	"use strict";
 
 	/**
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		var rNonWhiteSpace = /\S+/g;
 
 		this.addStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
-			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
+			assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
 			var aClasses,
 				bModified = false;
@@ -140,7 +140,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 
 
 		this.removeStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
-			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
+			assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
 			var aClasses,
 				bExist = false,
@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 
 
 		this.toggleStyleClass = function(sStyleClass, bAdd) {
-			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
+			assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
 			if (sStyleClass && typeof sStyleClass === "string") {
 				if (bAdd === true) {
@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				} else if (bAdd === undefined) {
 					this.hasStyleClass(sStyleClass) ? this.removeStyleClass(sStyleClass) : this.addStyleClass(sStyleClass);
 				} else {
-					jQuery.sap.log.warning(this.toString() + "- toggleStyleClass(): bAdd should be a boolean or undefined, but is '" + bAdd + "'");
+					Log.warning(this.toString() + "- toggleStyleClass(): bAdd should be a boolean or undefined, but is '" + bAdd + "'");
 				}
 			}
 
@@ -202,7 +202,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		};
 
 		this.hasStyleClass = function(sStyleClass) {
-			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
+			assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
 			var aClasses;
 			if (sStyleClass && typeof sStyleClass === "string" && this.mCustomStyleClassMap) {

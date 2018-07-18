@@ -7,7 +7,9 @@ sap.ui.require([
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Button',
+	'sap/ui/Device',
 	'sap/ui/thirdparty/hasher',
+	"sap/base/Log",
 	// should be last:
 	'sap/ui/thirdparty/sinon'
 ],
@@ -16,7 +18,9 @@ function(
 	VerticalLayout,
 	HorizontalLayout,
 	Button,
+	Device,
 	hasher,
+	Log,
 	sinon
 ){
 	"use strict";
@@ -477,9 +481,9 @@ function(
 		getUriParametersStub.restore();
 	});
 
-	QUnit.test("Utils.log shall call jQuery.sap.log.warning once", function (assert) {
+	QUnit.test("Utils.log shall call Log.warning once", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(jQuery.sap.log, "warning");
+		var spyLog = sinon.spy(Log, "warning");
 
 		// CUT
 		Utils.log.warning("");
@@ -491,9 +495,9 @@ function(
 		spyLog.restore();
 	});
 
-	QUnit.test("log shall call jQuery.sap.log.error once", function (assert) {
+	QUnit.test("log shall call Log.error once", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(jQuery.sap.log, "error");
+		var spyLog = sinon.spy(Log, "error");
 
 		// CUT
 		Utils.log.error("");
@@ -505,9 +509,9 @@ function(
 		spyLog.restore();
 	});
 
-	QUnit.test("log shall call jQuery.sap.log.debug once", function (assert) {
+	QUnit.test("log shall call Log.debug once", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(jQuery.sap.log, "debug");
+		var spyLog = sinon.spy(Log, "debug");
 
 		// CUT
 		Utils.log.debug("");
@@ -1388,7 +1392,7 @@ function(
 			this.aPromisesResolveAfterReject = [this.fnPromise4, this.fnPromise1];
 
 			this.fnExecPromiseQueueSpy = sandbox.spy(Utils, "execPromiseQueueSequentially");
-			sandbox.spyLog = sandbox.spy(jQuery.sap.log, "error");
+			sandbox.spyLog = sandbox.spy(Log, "error");
 		},
 
 		afterEach: function () {
@@ -1626,4 +1630,35 @@ function(
 			);
 		});
 	});
+
+	QUnit.module("Utils.isCorrectAppVersionFormat", function () {
+		QUnit.test("when called with an empty appversion", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat(""), "then the format of the app version is not correct");
+		});
+
+		QUnit.test("when called with a number after the version", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("1.2.333336"), "then the format of the app version is not correct");
+		});
+
+		QUnit.test("when called with a dot after the version", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("1.2.33333.678"), "then the format of the app version is not correct");
+		});
+
+		QUnit.test("when called with more than 5 digits", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("1.222222.3"), "then the format of the app version is not correct");
+		});
+
+		QUnit.test("when called with a version without snapshot", function(assert) {
+			assert.ok(Utils.isCorrectAppVersionFormat("1.2.3"), "then the format of the app version is correct");
+		});
+
+		QUnit.test("when called with a version with snapshot", function(assert) {
+			assert.ok(Utils.isCorrectAppVersionFormat("1.2.3-SNAPSHOT"), "then the format of the app version is correct");
+		});
+
+		QUnit.test("when called with placeholder without a scenario", function(assert) {
+			assert.notOk(Utils.isCorrectAppVersionFormat("${project.version}"), "then the format of the app version is not valid");
+		});
+	});
+
 });

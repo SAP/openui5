@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./LinkRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+		"sap/base/security/URLWhitelist"
 ],
 function(
 	library,
@@ -23,7 +24,8 @@ function(
 	Device,
 	LinkRenderer,
 	KeyCodes,
-	Log
+	Log,
+	URLWhitelist
 ) {
 	"use strict";
 
@@ -438,7 +440,7 @@ function(
 	 * @private
 	 */
 	Link.prototype._isHrefValid = function (sUri) {
-		return this.getValidateUrl() ? jQuery.sap.validateUrl(sUri) : true;
+		return this.getValidateUrl() ? URLWhitelist.validate(sUri) : true;
 	};
 
 	/**

@@ -79,6 +79,36 @@
         "type": "FIX",
         "text": " sap.m.IconTabBar: DnD added tab background",
         "references": []
+      },
+      {
+        "id": "44e9000fa60d010148f02fefdf71f34ef7b6007b",
+        "type": "FEATURE",
+        "text": " adding sap.ui.core.IconColor.Contrast",
+        "references": []
+      },
+      {
+        "id": "6b7e98c63c5db7e6218dd4e05bc71fbd10b0aa39",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: visual fix of the color in active state on mobile",
+        "references": []
+      },
+      {
+        "id": "0f0514fcf72755574c43daed4857271f207d92b3",
+        "type": "FEATURE",
+        "text": " DynamicPage: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "d16a145c80ac1c93da7d78c32a386c4685326610",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      },
+      {
+        "id": "e7300c6187cb12b8e034e0cae7e04e1d4175b2ec",
+        "type": "FIX",
+        "text": "sap.m.themes.sap_belize_hcb.NewsContent: Accessibilty issue with focus of NewsContent in HCB and HCW theme.",
+        "references": []
       }
     ]
   }

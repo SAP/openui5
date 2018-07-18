@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Utils"
 ], function(
-	jQuery,
 	Base,
 	FlexUtils
 ) {

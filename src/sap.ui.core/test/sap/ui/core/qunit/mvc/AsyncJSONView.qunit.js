@@ -1,8 +1,9 @@
 sap.ui.define([
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/JSONView",
-	"./AnyViewAsync.qunit"
-], function(View, JSONView, asyncTestsuite) {
+    "sap/ui/core/mvc/View",
+    "sap/ui/core/mvc/JSONView",
+    "./AnyViewAsync.qunit",
+    "sap/base/Log"
+], function(View, JSONView, asyncTestsuite, Log) {
 
 	// setup test config with generic factory
 	var oConfig = {
@@ -33,7 +34,7 @@ sap.ui.define([
 		assert.expect(3);
 		var done = assert.async();
 		var that = this;
-		this.oLogMock = this.mock(jQuery.sap.log);
+		this.oLogMock = this.mock(Log);
 		this.oLogMock.expects("warning").never();
 
 		JSONView.create({

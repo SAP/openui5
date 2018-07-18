@@ -25,7 +25,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'./InputRenderer',
 	"sap/ui/dom/containsOrEquals",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/base/security/encodeXML",
+	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
 ],
 function(
 	Bar,
@@ -49,7 +51,8 @@ function(
 	Control,
 	InputRenderer,
 	containsOrEquals,
-	assert
+	assert,
+	encodeXML
 ) {
 	"use strict";
 
@@ -211,12 +214,12 @@ function(
 			/**
 			 * The description is a text after the input field, e.g. units of measurement, currencies.
 			 */
-			description : {type : "string", group : "Misc", defaultValue : null},
+			description: { type: "string", group: "Misc", defaultValue: null },
 
 			/**
 			 * This property only takes effect if the description property is set. It controls the distribution of space between the input field and the description text. The default value is 50% leaving the other 50% for the description.
 			 */
-			fieldWidth : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '50%'},
+			fieldWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: '50%' },
 
 			/**
 			 * Indicates when the value gets updated with the user changes: At each keystroke (true) or first when the user presses enter or tabs out (false).
@@ -510,7 +513,6 @@ function(
 		this._iSetCount = 0;
 
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 	};
 
 	/**
@@ -588,7 +590,11 @@ function(
 	 * @public
 	 */
 	Input.prototype.onBeforeRendering = function() {
-		var sSelectedKey = this.getSelectedKey();
+		var sSelectedKey = this.getSelectedKey(),
+			bShowIcon = this.getShowValueHelp() && this.getEnabled() && this.getEditable(),
+			aEndIcons = this.getAggregation("_endIcon") || [],
+			oIcon = aEndIcons[0];
+
 		InputBase.prototype.onBeforeRendering.call(this);
 
 		this._deregisterEvents();
@@ -602,6 +608,19 @@ function(
 				this._addShowMoreButton();
 			} else {
 				this._removeShowMoreButton();
+			}
+		}
+
+		if (bShowIcon) {
+
+			// ensure the creation of an icon
+			oIcon = this._getValueHelpIcon();
+			oIcon.setProperty("visible", true, true);
+		} else {
+
+			// if the icon should not be shown and has never be initialized - do nothing
+			if (oIcon) {
+				oIcon.setProperty("visible", false, true);
 			}
 		}
 	};
@@ -968,34 +987,28 @@ function(
 	 */
 	Input.prototype._getValueHelpIcon = function () {
 		var that = this,
-			valueHelpIcon = this.getAggregation("_valueHelpIcon"),
-			sURI;
+			aEndIcons = this.getAggregation("_endIcon") || [],
+			oValueStateIcon = aEndIcons[0];
 
-		if (valueHelpIcon) {
-			return valueHelpIcon;
+		// for backward compatibility - leave this method to return the instance
+		if (!oValueStateIcon) {
+			oValueStateIcon = this.addEndIcon({
+				id: this.getId() + "-vhi",
+				src: IconPool.getIconURI("value-help"),
+				useIconTooltip: false,
+				noTabStop: true,
+				press: function (oEvent) {
+					// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
+					if (!that.getValueHelpOnly()) {
+						this.getParent().focus();
+						that.bValueHelpRequested = true;
+						that.fireValueHelpRequest({ fromSuggestions: false });
+					}
+				}
+			});
 		}
 
-		sURI = IconPool.getIconURI("value-help");
-		valueHelpIcon = IconPool.createControlByURI({
-			id: this.getId() + "-vhi",
-			src: sURI,
-			useIconTooltip: false,
-			noTabStop: true
-		});
-
-		valueHelpIcon.addStyleClass("sapMInputValHelpInner");
-		valueHelpIcon.attachPress(function (evt) {
-			// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
-			if (!that.getValueHelpOnly()) {
-				this.getParent().focus();
-				that.bValueHelpRequested = true;
-				that.fireValueHelpRequest({fromSuggestions: false});
-			}
-		});
-
-		this.setAggregation("_valueHelpIcon", valueHelpIcon);
-
-		return valueHelpIcon;
+		return oValueStateIcon;
 	};
 
 	/**
@@ -2442,7 +2455,7 @@ function(
 			newText = '';
 
 		if (!Input._wordStartsWithValue(text, value)) {
-			return jQuery.sap.encodeHTML(text);
+			return encodeXML(text);
 		}
 
 		var index = lowerText.indexOf(value);
@@ -2453,12 +2466,12 @@ function(
 		}
 
 		if (index > -1) {
-			newText += jQuery.sap.encodeHTML(text.substring(0, index));
+			newText += encodeXML(text.substring(0, index));
 			subString = text.substring(index, index + count);
-			newText += '<span class="sapMInputHighlight">' + jQuery.sap.encodeHTML(subString) + '</span>';
-			newText += jQuery.sap.encodeHTML(text.substring(index + count));
+			newText += '<span class="sapMInputHighlight">' + encodeXML(subString) + '</span>';
+			newText += encodeXML(text.substring(index + count));
 		} else {
-			newText = jQuery.sap.encodeHTML(text);
+			newText = encodeXML(text);
 		}
 
 		return newText;

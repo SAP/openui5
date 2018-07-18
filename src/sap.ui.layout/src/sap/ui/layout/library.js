@@ -710,6 +710,15 @@ sap.ui.define([
 		};
 	}
 
+	if (!sap.ui.layout.GridHelper) {
+		sap.ui.layout.GridHelper = {
+			getLibrarySpecificClass: function () {
+				return "";
+			},
+			bFinal: false /* if true, the helper must not be overwritten by an other library */
+		};
+	}
+
 	return sap.ui.layout;
 
 });

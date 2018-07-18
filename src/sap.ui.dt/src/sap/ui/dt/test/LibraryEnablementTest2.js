@@ -4,11 +4,9 @@
 
 // Provides class sap.ui.dt.test.LibraryEnablementTest.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/test/ElementEnablementTest2'
-],
-function(jQuery, ManagedObject, ElementEnablementTest2) {
+	'sap/ui/dt/test/ElementEnablementTest2'],
+function(ManagedObject, ElementEnablementTest2) {
 	"use strict";
 
 

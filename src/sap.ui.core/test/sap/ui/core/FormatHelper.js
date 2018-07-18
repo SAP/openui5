@@ -63,7 +63,7 @@ function indent(iDepth) {
 	}
 	return sResult;
 }
-function formatValue(oValue, sResult) {
+function formatValue(oValue) {
 	switch(typeof oValue) {
 		case "string":
 			return "\"" + oValue + "\"";
@@ -186,7 +186,7 @@ sap.ui.model.CompositeType.extend("HashParams", {
 	},
 	parseValue: function(sValue) {
 		var aParts = sValue.substr(1).split("&"),
-			oParams = {}, aParams;
+			oParams = {}, aParams, vValue;
 		aParts.forEach(function(oParam) {
 			var aSplit = oParam.split("="),
 				sName = aSplit[0],
@@ -203,7 +203,8 @@ sap.ui.model.CompositeType.extend("HashParams", {
 			oParams[sName] = vValue;
 		})
 		aParams = this.aParams.map(function(oParam) {
-			return oParams[oParam.name] || oParam.default;
+			vValue = oParams[oParam.name];
+			return vValue === undefined ? oParam.default : vValue;
 		})
 		return aParams;
 	},

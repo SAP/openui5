@@ -3,8 +3,8 @@
  */
 
 // A renderer for the DOM element control
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/base/security/encodeXML"],
+	function(encodeXML) {
 	"use strict";
 
 
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global'],
 				aClasses.forEach(function(sClass) {
 					var sClass = sClass.trim();
 					if (sClass) {
-						oRM.addClass(jQuery.sap.encodeHTML(sClass));
+						oRM.addClass(encodeXML(sClass));
 					}
 				});
 			} else if (sName === "style") {
@@ -54,11 +54,11 @@ sap.ui.define(['jquery.sap.global'],
 					if (iIndex != -1) {
 						var sKey = sStyle.substring(0, iIndex).trim();
 						var sValue = sStyle.substring(iIndex + 1).trim();
-						oRM.addStyle(jQuery.sap.encodeHTML(sKey), jQuery.sap.encodeHTML(sValue));
+						oRM.addStyle(encodeXML(sKey), encodeXML(sValue));
 					}
 				});
 			} else {
-				oRM.writeAttributeEscaped(jQuery.sap.encodeHTML(oAttribute.getName()), oAttribute.getValue());
+				oRM.writeAttributeEscaped(encodeXML(oAttribute.getName()), oAttribute.getValue());
 			}
 		});
 

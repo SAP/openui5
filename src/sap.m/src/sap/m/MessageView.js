@@ -13,7 +13,7 @@ sap.ui.define([
 	"./Toolbar",
 	"./ToolbarSpacer",
 	"./List",
-	"./StandardListItem",
+	"./MessageListItem",
 	"./library",
 	"./Text",
 	"./SegmentedButton",
@@ -27,7 +27,8 @@ sap.ui.define([
 	"./MessageViewRenderer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/security/URLWhitelist"
 ], function(
 	jQuery,
 	Control,
@@ -39,7 +40,7 @@ sap.ui.define([
 	Toolbar,
 	ToolbarSpacer,
 	List,
-	StandardListItem,
+	MessageListItem,
 	library,
 	Text,
 	SegmentedButton,
@@ -53,7 +54,8 @@ sap.ui.define([
 	MessageViewRenderer,
 	jQueryDOM,
 	KeyCodes,
-	Log
+	Log,
+	URLWhitelist
 ) {
 	"use strict";
 
@@ -214,7 +216,20 @@ sap.ui.define([
 				/**
 				 * This event will be fired when a validation of a URL from long text description is ready
 				 */
-				urlValidated: {}
+				urlValidated: {},
+
+				/**
+				 * This event will be fired when an active title of a MessageItem is pressed
+				 * @since 1.58
+				 */
+				activeTitlePress: {
+					parameters: {
+						/**
+						 * Refers to the message item that contains the active Title
+						 */
+						item: { type: "sap.m.MessageItem" }
+					}
+				}
 			}
 		}
 	});
@@ -321,7 +336,8 @@ sap.ui.define([
 	};
 
 	MessageView.prototype.onBeforeRendering = function () {
-		var oGroupedItems, aItems = this.getItems();
+		var oGroupedItems,
+			aItems = this.getItems();
 
 		this._clearLists();
 		this._detailsPage.setShowHeader(this.getShowDetailsPageHeader());
@@ -684,10 +700,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Map a MessageItem to StandardListItem
+	 * Map a MessageItem to MessageListItem
 	 *
 	 * @param {sap.m.MessageItem} oMessageItem Base information to generate the list items
-	 * @returns {sap.m.StandardListItem | null} oListItem List item which will be displayed
+	 * @returns {sap.m.MessageListItem | null} oListItem List item which will be displayed
 	 * @private
 	 */
 	MessageView.prototype._mapItemToListItem = function (oMessageItem) {
@@ -696,26 +712,36 @@ sap.ui.define([
 		}
 
 		var sType = oMessageItem.getType(),
+			that = this,
 			listItemType = this._getItemType(oMessageItem),
-			oListItem = new StandardListItem({
+			oListItem = new MessageListItem({
 				title: ManagedObject.escapeSettingsValue(oMessageItem.getTitle()),
 				description: ManagedObject.escapeSettingsValue(oMessageItem.getSubtitle()),
 				counter: oMessageItem.getCounter(),
 				icon: this._mapIcon(sType),
 				infoState: this._mapInfoState(sType),
 				info: "\r", // There should be a content in the info property in order to use the info states
-				type: listItemType
-			}).addStyleClass(CSS_CLASS + "Item").addStyleClass(CSS_CLASS + "Item" + sType);
+				type: listItemType,
+				activeTitle: oMessageItem.getActiveTitle(),
+				activeTitlePress: function () {
+					that.fireActiveTitlePress({ item: oMessageItem });
+				}
+			}).addStyleClass(CSS_CLASS + "Item")
+				.addStyleClass(CSS_CLASS + "Item" + sType)
+				.toggleStyleClass(CSS_CLASS + "ItemActive", oMessageItem.getActiveTitle());
 
 		if (listItemType !== ListType.Navigation) {
 			oListItem.addEventDelegate({
 				onAfterRendering: function () {
-					var oItemDomRef = this.getDomRef().querySelector(".sapMSLITitleDiv > div");
+					var oItemDomRef = oListItem.getDomRef().querySelector(".sapMSLITitleDiv > div");
 					if (oItemDomRef.offsetWidth < oItemDomRef.scrollWidth) {
-						this.setType(ListType.Navigation);
+						oListItem.setType(ListType.Navigation);
+						if (this.getItems().length === 1) {
+							this._fnHandleForwardNavigation(oListItem, "show");
+						}
 					}
 				}
-			}, oListItem);
+			}, this);
 		}
 
 		oListItem._oMessageItem = oMessageItem;
@@ -803,7 +829,7 @@ sap.ui.define([
 			var oList = this._oLists[sListName],
 				sBundleText = sListName == "all" ? "MESSAGEPOPOVER_ALL" : "MESSAGEVIEW_BUTTON_TOOLTIP_" + sListName.toUpperCase(),
 				iCount = oList.getItems().filter(function(oItem) {
-					return (oItem instanceof StandardListItem);
+					return (oItem instanceof MessageListItem);
 				}).length, oButton;
 
 			if (iCount > 0) {
@@ -835,7 +861,7 @@ sap.ui.define([
 	/**
 	 * Sets icon in details page
 	 * @param {sap.m.MessageItem} oMessageItem The message item
-	 * @param {sap.m.StandardListItem} oListItem The list item
+	 * @param {sap.m.MessageListItem} oListItem The list item
 	 * @private
 	 */
 	MessageView.prototype._setIcon = function (oMessageItem, oListItem) {
@@ -855,10 +881,24 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._setTitle = function (oMessageItem) {
-		this._oMessageTitleText = new Text(this.getId() + "MessageTitleText", {
-			text: ManagedObject.escapeSettingsValue(oMessageItem.getTitle())
-		}).addStyleClass("sapMMsgViewTitleText");
-		this._detailsPage.addAggregation("content", this._oMessageTitleText);
+		var bActive = oMessageItem.getActiveTitle(),
+			oDetailsContent, that = this,
+			sText = ManagedObject.escapeSettingsValue(oMessageItem.getTitle()),
+			sId = this.getId() + "MessageTitleText";
+
+		if (bActive) {
+			oDetailsContent = new Link(sId, {
+				text: sText,
+				press: [that.fireActiveTitlePress, that]
+			});
+		} else {
+			oDetailsContent = new Text(sId, {
+				text: sText
+			});
+		}
+
+		oDetailsContent.addStyleClass("sapMMsgViewTitleText");
+		this._detailsPage.addAggregation("content", oDetailsContent);
 	};
 
 	/**
@@ -919,7 +959,7 @@ sap.ui.define([
 	MessageView.prototype._iNextValidationTaskId = 0;
 
 	MessageView.prototype._validateURL = function (sUrl) {
-		if (jQuery.sap.validateUrl(sUrl)) {
+		if (URLWhitelist.validate(sUrl)) {
 			return sUrl;
 		}
 
@@ -1074,7 +1114,7 @@ sap.ui.define([
 	/**
 	 * Handles click on a list item
 	 *
-	 * @param {sap.m.StandardListItem} oListItem ListItem that is pressed
+	 * @param {sap.m.MessageListItem} oListItem ListItem that is pressed
 	 * @param {String} sTransiotionName name of transition could be slide, show, flip or fade
 	 * @private
 	 */

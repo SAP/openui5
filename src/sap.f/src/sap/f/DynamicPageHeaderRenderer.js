@@ -19,7 +19,9 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oDynamicPageHeader An object representation of the control that should be rendered
 	 */
 	DynamicPageHeaderRenderer.render = function (oRm, oDynamicPageHeader) {
-		var oDynamicPageHeaderState = oDynamicPageHeader._getState();
+		var oDynamicPageHeaderState = oDynamicPageHeader._getState(),
+			sSapFDynamicPageHeader = "sapFDynamicPageHeader",
+			sBackgroundDesign = oDynamicPageHeader.getBackgroundDesign();
 
 		// Dynamic Page Layout Header Root DOM Element.
 		oRm.write("<header");
@@ -28,13 +30,18 @@ sap.ui.define([], function () {
 			role: "region"
 		});
 		oRm.addClass("sapContrastPlus");
-		oRm.addClass("sapFDynamicPageHeader");
+		oRm.addClass(sSapFDynamicPageHeader);
 		if (oDynamicPageHeaderState.headerHasContent) {
 			oRm.addClass("sapFDynamicPageHeaderWithContent");
 		}
 		if (oDynamicPageHeaderState.headerPinnable) {
 			oRm.addClass("sapFDynamicPageHeaderPinnable");
 		}
+
+		if (sBackgroundDesign) {
+			oRm.addClass(sSapFDynamicPageHeader + sBackgroundDesign);
+		}
+
 		oRm.writeClasses();
 		oRm.write(">");
 

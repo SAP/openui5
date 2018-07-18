@@ -7,10 +7,11 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/IconPool',
 	'sap/m/library',
-	'sap/ui/core/InvisibleText'
+	'sap/ui/core/InvisibleText',
+	"sap/base/security/encodeXML"
 ],
 
-	function(Device, coreLibrary, IconPool, library, InvisibleText) {
+	function(Device, coreLibrary, IconPool, library, InvisibleText, encodeXML) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -168,7 +169,7 @@ sap.ui.define([
 		// set button specific styles
 		if (!oButton._isUnstyled() && sType !== "") {
 			// set button specific styles
-			oRm.addClass("sapMBtn" + jQuery.sap.encodeHTML(sType));
+			oRm.addClass("sapMBtn" + encodeXML(sType));
 		}
 
 		// add all classes to inner button tag

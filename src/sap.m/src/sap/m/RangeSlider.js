@@ -635,8 +635,9 @@ sap.ui.define([
         RangeSlider.prototype.ontouchstart = function (oEvent) {
             var oTouch = oEvent.targetTouches[0],
                 CSS_CLASS = this.getRenderer().CSS_CLASS,
-                sEventNamespace = "." + CSS_CLASS,
-                fValue, aHandles, aRange, iHandleIndex, fHandlesDistance, oFocusItem;
+                sEventNamespace = "." + CSS_CLASS, fMinValue, fMaxValue,
+                fValue, aHandles, aRange, iHandleIndex, fHandlesDistance, oFocusItem,
+                fTotalNumberOfValues, fPercentOfHandle, fHandleValue, fHandleHalfWidth;
 
             if (!this.getEnabled()) {
                 return;
@@ -667,8 +668,24 @@ sap.ui.define([
                 return Math.abs(fAccumulation - oHandle.offsetLeft);
             }, 0);
 
+            fMinValue = Math.min.apply(Math, aRange);
+            fMaxValue = Math.max.apply(Math, aRange);
+
+            // half width of a handle (both are equal)
+            fHandleHalfWidth = this.$("handle1").outerWidth() / 2;
+            // total number of possible values
+            fTotalNumberOfValues = Math.abs(this.getMin()) + Math.abs(this.getMax());
+            // percents that half a handle takes from the width of the scale
+            fPercentOfHandle = ((fHandleHalfWidth * 100) / this.$("inner").outerWidth());
+            // number of values that takes half a handle
+            fHandleValue = (fPercentOfHandle / 100) * fTotalNumberOfValues;
+
             // if the click is outside the range or distance between handles is below the threshold - update the closest slider handle
-            if (fValue < Math.min.apply(Math, aRange) || fValue > Math.max.apply(Math, aRange) || fHandlesDistance <= SliderUtilities.CONSTANTS.RANGE_MOVEMENT_THRESHOLD) {
+            if (fValue < fMinValue ||
+                fValue < fMinValue + fHandleValue ||
+                fValue > fMaxValue ||
+                fValue > (fMaxValue - fHandleValue) ||
+                fHandlesDistance <= SliderUtilities.CONSTANTS.RANGE_MOVEMENT_THRESHOLD) {
                 aHandles = [this.getClosestHandleDomRef(oTouch)];
                 this._updateHandle(aHandles[0], fValue);
                 // _updateHandle would update the range and the check for change event fire would fail in _ontouchend

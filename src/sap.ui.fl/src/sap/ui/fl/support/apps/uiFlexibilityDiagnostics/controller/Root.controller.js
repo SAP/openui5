@@ -6,8 +6,9 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-	], function(Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/jquery"
+], function(Controller, JSONModel, jQuery) {
 	"use strict";
 	return Controller.extend("sap.ui.fl.support.apps.uiFlexibilityDiagnostics.controller.Root", {
 		onInit: function() {

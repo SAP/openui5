@@ -3,8 +3,14 @@
  */
 
 // Provides class sap.ui.base.Metadata
-sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device', "sap/base/util/array/uniqueSort"],
-	function(jQuery, ObjectPath, Device, uniqueSort) {
+sap.ui.define([
+	'sap/base/util/ObjectPath',
+	'sap/ui/Device',
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/array/uniqueSort"
+],
+	function(ObjectPath, Device, assert, Log, uniqueSort) {
 	"use strict";
 
 
@@ -26,8 +32,8 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 	 */
 	var Metadata = function(sClassName, oClassInfo) {
 
-		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "Metadata: sClassName must be a non-empty string");
-		jQuery.sap.assert(typeof oClassInfo === "object", "Metadata: oClassInfo must be empty or an object");
+		assert(typeof sClassName === "string" && sClassName, "Metadata: sClassName must be a non-empty string");
+		assert(typeof oClassInfo === "object", "Metadata: oClassInfo must be empty or an object");
 
 		// support for old usage of Metadata
 		if ( !oClassInfo || typeof oClassInfo.metadata !== "object" ) {
@@ -72,12 +78,12 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 			// lookup base class by its name - same reasoning as above
 			var oParentClass = ObjectPath.get(oStaticInfo.baseType);
 			if ( typeof oParentClass !== "function" ) {
-				jQuery.sap.log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
+				Log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
 			}
 			// link metadata with base metadata
 			if ( oParentClass.getMetadata ) {
 				this._oParent = oParentClass.getMetadata();
-				jQuery.sap.assert(oParentClass === oParentClass.getMetadata().getClass(), "Metadata: oParentClass must match the class in the parent metadata");
+				assert(oParentClass === oParentClass.getMetadata().getClass(), "Metadata: oParentClass must match the class in the parent metadata");
 			} else {
 				// fallback, if base class has no metadata
 				this._oParent = new Metadata(oStaticInfo.baseType, {});
@@ -401,10 +407,10 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 			fnBaseClass = null;
 		}
 
-		jQuery.sap.assert(!fnBaseClass || typeof fnBaseClass === "function");
-		jQuery.sap.assert(typeof sClassName === "string" && !!sClassName);
-		jQuery.sap.assert(!oClassInfo || typeof oClassInfo === "object");
-		jQuery.sap.assert(!FNMetaImpl || typeof FNMetaImpl === "function");
+		assert(!fnBaseClass || typeof fnBaseClass === "function");
+		assert(typeof sClassName === "string" && !!sClassName);
+		assert(!oClassInfo || typeof oClassInfo === "object");
+		assert(!FNMetaImpl || typeof FNMetaImpl === "function");
 
 		// allow metadata class to preprocess
 		FNMetaImpl = FNMetaImpl || Metadata;
@@ -420,7 +426,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 		}
 
 		var fnClass = oClassInfo.constructor;
-		jQuery.sap.assert(!fnClass || typeof fnClass === "function");
+		assert(!fnClass || typeof fnClass === "function");
 
 		// ensure defaults
 		if ( fnBaseClass ) {
@@ -429,7 +435,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 				if ( oClassInfo.metadata.deprecated ) {
 				  // create default factory with deprecation warning
 					fnClass = function() {
-						jQuery.sap.log.warning("Usage of deprecated class: " + sClassName);
+						Log.warning("Usage of deprecated class: " + sClassName);
 						fnBaseClass.apply(this, arguments);
 					};
 				} else {
@@ -457,7 +463,9 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/Device',
 
 		// add metadata
 		var oMetadata = new FNMetaImpl(sClassName, oClassInfo);
-		fnClass.getMetadata = fnClass.prototype.getMetadata = jQuery.sap.getter(oMetadata);
+		fnClass.getMetadata = fnClass.prototype.getMetadata = function() {
+			return oMetadata;
+		};
 
 		// enrich function
 		if ( !fnClass.getMetadata().isFinal() ) {

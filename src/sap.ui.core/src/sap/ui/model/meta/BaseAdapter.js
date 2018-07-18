@@ -17,8 +17,11 @@
  * @abstract
  */
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/base/Object", "./AdapterConstants", "sap/ui/model/json/JSONModel", "sap/ui/base/SyncPromise"
-], function(jQuery, BaseObject, AdapterConstants, JSONModel, SyncPromise) {
+	"sap/ui/base/Object",
+	"./AdapterConstants",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/base/SyncPromise"
+], function(BaseObject, AdapterConstants, JSONModel, SyncPromise) {
 	"use strict";
 
 	var BaseAdapter = BaseObject.extend("sap.ui.model.meta.BaseAdapter", {

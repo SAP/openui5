@@ -4,10 +4,9 @@
 
 // Provides class sap.ui.dt.ControlObserver.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/dt/ManagedObjectObserver'
 ],
-function(jQuery, ManagedObjectObserver) {
+function(ManagedObjectObserver) {
 	"use strict";
 
 

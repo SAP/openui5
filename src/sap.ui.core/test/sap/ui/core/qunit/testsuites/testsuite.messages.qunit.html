@@ -11,8 +11,9 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/messages/messages.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/messages/messages2.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/messages/messagesGeneral.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/messages/messagesUsage.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/messages/Message.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DataBindingMessages.qunit.html");
 			return suite;
 		}

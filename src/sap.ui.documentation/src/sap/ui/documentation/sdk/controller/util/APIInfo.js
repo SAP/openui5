@@ -3,8 +3,8 @@
  */
 
 // Provides reuse functionality for reading documentation from api.json files (as created by the UI5 JSDoc3 template/plugin)
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
+	function(jQuery, Log) {
 		"use strict";
 
 		/**
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global'],
 						resolve(aResult);
 					},
 					error : function () {
-						jQuery.sap.log.error("failed to load api-index.json");
+						Log.error("failed to load api-index.json");
 						oLibraryDataCache["index"] = [];
 						resolve([]);
 					}
@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global'],
 				},
 				error : function () {
 					oResponse = [];
-					jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);
+					Log.error("failed to load api.json for: " + sLibraryName);
 				}
 			});
 
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global'],
 						resolve(aResult);
 					},
 					error : function (err) {
-						jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);
+						Log.error("failed to load api.json for: " + sLibraryName);
 						oLibraryDataCache[sLibraryName] = [];
 						resolve([]);
 					}
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		function setRoot(sRoot) {
-			sRoot = sRoot == null ? jQuery.sap.getModulePath('', '/') + '../test-resources/' : sRoot;
+			sRoot = sRoot == null ? sap.ui.require.toUrl("") + "/" + '../test-resources/' : sRoot;
 			if ( sRoot.slice(-1) != '/' ) {
 				sRoot += '/';
 			}

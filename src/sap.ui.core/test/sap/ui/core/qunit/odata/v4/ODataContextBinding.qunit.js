@@ -15,10 +15,11 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/TestUtils",
+	"sap/base/Log"
 ], function (jQuery, ManagedObject, SyncPromise, Binding, ChangeReason, ContextBinding, Context,
 		_Cache, _GroupLock, _Helper, ODataContextBinding, ODataModel, asODataParentBinding,
-		TestUtils) {
+		TestUtils, Log) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -30,7 +31,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataContextBinding", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 

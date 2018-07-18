@@ -78,13 +78,13 @@ sap.ui.define([
 	 * <li>You need to select items within a query-based range. Use the {@link https://experience.sap.com/fiori-design-web/value-help-dialog/ Value Help Dialog} control instead.</li>
 	 * <li>You need to filter a set of items without any selection. Use the {@link https://experience.sap.com/fiori-design-web/filter-bar/ Filter Bar} control instead.</li>
 	 * </ul>
-	 * <h4>Limitations:</h4>
+	 * <h4>Notes:</h4>
 	 * <ul>
 	 * <li>The property <code>growing</code> must not be used together with two-way binding.
 	 * <li>When the property <code>growing</code> is set to <code>true</code> (default value), the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, work only for the currently loaded items.
 	 * To make sure that all items in the table are loaded at once and the above features work properly, set the property to <code>false</code>.
 	 * <li>Since version 1.58, the columns headers and the info toolbar are sticky (remain fixed on top when scrolling). This feature is not supported in all browsers.
-	 * For more information on browser support limitations, you can refer to the {@link sap.m.Table sap.m.Table} <code>sticky</code> property.
+	 * For more information on browser support limitations, you can refer to the {@link sap.m.ListBase sap.m.ListBase} <code>sticky</code> property.
 	 * </ul>
 	 * <h3>Responsive Behavior</h3>
 	 * <ul>
@@ -1001,6 +1001,8 @@ sap.ui.define([
 				press: function() {
 					this._removeSelection();
 					this._updateSelectionIndicator();
+					//when reset is executed focus should stay in sap.mTableSelectDialog
+					this._oDialog.focus();
 				}.bind(this)
 			});
 		}

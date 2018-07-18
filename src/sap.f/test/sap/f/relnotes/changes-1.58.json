@@ -67,6 +67,54 @@
         "type": "FIX",
         "text": " f.FlexibleColumnLayout: suspending/resuming of ResizeHander fixed",
         "references": []
+      },
+      {
+        "id": "e9f5503fc817c53655fa357e304ae61c9c394c5d",
+        "type": "FEATURE",
+        "text": " SemanticPage: Added sapFSemanticPageAlignContent CSS class",
+        "references": []
+      },
+      {
+        "id": "d7400365e5ba40288419703312251a8603a11d3e",
+        "type": "FIX",
+        "text": " DynamicPage: Missing Expand Header icon is fixed",
+        "references": []
+      },
+      {
+        "id": "539ebc3b7ab19643c2dc3c7ccb455852b69d802c",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Not showing arrows in Demo App is fixed",
+        "references": []
+      },
+      {
+        "id": "c0f9749e701dd811be7e895c23373023a36c39d5",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Bounce scrolling on iOS Safari prevented",
+        "references": []
+      },
+      {
+        "id": "18b53c9de2a951bf433713bb0772c722a2ff38e5",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed responsiveness of sample",
+        "references": []
+      },
+      {
+        "id": "859f983071e3e3255d74bdb5fd1b8b838b9c422a",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Sample adjusted",
+        "references": []
+      },
+      {
+        "id": "0f0514fcf72755574c43daed4857271f207d92b3",
+        "type": "FEATURE",
+        "text": " DynamicPage: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "2e88279730e9b6ea061506c1e64517e6de284b11",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed suspend and resume resize handlers",
+        "references": []
       }
     ]
   }

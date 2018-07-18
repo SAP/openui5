@@ -126,9 +126,13 @@
 				return {
 					"newKey": "value",		// should parse unprefixed params
 					"opaSpecific": "value",	// should exclude opa params
+					"notopaSpecific": "value", // should not exclude params that contain but don't start with 'opa'
+					"notopaFrameKey": "value", // should not exclude params that contain but don't start with 'opaFrame'
 					"opaFrameKey": "value", // should not exclude opaFrame params
 					"opaKeyFrameKey": "value", // should exclude opa params
-					"existingKey": "value"	// uri params should override defaults
+					"existingKey": "value",	// uri params should override defaults
+					"someTruthyValue": "True", // should parse boolean values
+					"someFalsyValue": "false" // should parse boolean values
 				};
 			}
 			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
@@ -138,8 +142,12 @@
 		sap.ui.require(["sap/ui/test/Opa5","sap/ui/test/Opa"], function (Opa5,Opa) {
 			assert.strictEqual(Opa.config.appParams.newKey, "value");
 			assert.strictEqual(Opa.config.appParams.specific, undefined);
+			assert.strictEqual(Opa.config.appParams.notopaSpecific, "value");
+			assert.strictEqual(Opa.config.appParams.notopaFrameKey, "value");
 			assert.strictEqual(Opa.config.appParams.opaFrameKey, "value");
 			assert.strictEqual(Opa.config.appParams.opaKeyFrameKey, undefined);
+			assert.strictEqual(Opa.config.appParams.someTruthyValue, true);
+			assert.strictEqual(Opa.config.appParams.someFalsyValue, false);
 			Opa5.extendConfig({
 				appParams: {
 					existingKey: "oldValue"

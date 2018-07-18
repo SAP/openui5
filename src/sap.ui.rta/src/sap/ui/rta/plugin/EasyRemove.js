@@ -2,15 +2,16 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.EasyRemove.
 sap.ui.define([
 	'sap/ui/rta/plugin/Remove',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/m/Button'
+	'sap/m/Button',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Remove,
 	OverlayRegistry,
-    Button
+	Button,
+	jQuery
 ) {
 	"use strict";
 
@@ -80,13 +81,13 @@ sap.ui.define([
 	 */
 	EasyRemove.prototype._isEditable = function(oOverlay) {
 		if (oOverlay._oDeleteButton) {
-			oOverlay._oDeleteButton.setEnabled(this.isEnabled(oOverlay));
+			oOverlay._oDeleteButton.setEnabled(this.isEnabled([oOverlay]));
 		}
 		return Remove.prototype._isEditable.apply(this, arguments);
 	};
 
 	EasyRemove.prototype._addButton = function(oOverlay) {
-		var bEnabled = this.isEnabled(oOverlay);
+		var bEnabled = this.isEnabled([oOverlay]);
 		var sId = oOverlay.getId() + "-DeleteIcon";
 		var oHtmlIconWrapper = jQuery("<div class='sapUiRtaPersDeleteClick' draggable='true'> </div>");
 		var oHtmlIconOuter = jQuery("<div class='sapUiRtaPersDeleteIconOuter'> </div>");

@@ -4,13 +4,13 @@
 
 //Provides class sap.ui.model.odata.v4.ODataPropertyBinding
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
 	"./lib/_Cache",
-	"./ODataBinding"
-], function (jQuery, SyncPromise, ChangeReason, PropertyBinding, _Cache, asODataBinding) {
+	"./ODataBinding",
+	"sap/base/Log"
+], function (SyncPromise, ChangeReason, PropertyBinding, _Cache, asODataBinding, Log) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -242,7 +242,7 @@ sap.ui.define([
 						&& that.sPath[that.sPath.lastIndexOf("/") + 1] === "#")) {
 					return vValue;
 				}
-				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
+				Log.error("Accessed value is not primitive", sResolvedPath, sClassName);
 			}, function (oError) {
 				// do not rethrow, ManagedObject doesn't react on this either
 				// throwing an exception would cause "Uncaught (in promise)" in Chrome

@@ -3,7 +3,14 @@
  */
 
 // Provides control sap.uxap.ObjectPageSectionBase.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library", "./library", "jquery.sap.keycodes"], function (jQuery, Control, coreLibrary, library) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Control",
+	"sap/ui/core/library",
+	"./library",
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"
+], function(jQuery, Control, coreLibrary, library, Log, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -104,7 +111,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {
 		if (this._getObjectPageLayout()) {
 			this._getObjectPageLayout()._requestAdjustLayout().catch(function () {
-				jQuery.sap.log.debug("ObjectPageSectionBase :: cannot adjustLayout", this);
+				Log.debug("ObjectPageSectionBase :: cannot adjustLayout", this);
 			});
 			this._getObjectPageLayout()._setSectionsFocusValues();
 		}
@@ -358,7 +365,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 
 	ObjectPageSectionBase.prototype.onkeydown = function (oEvent) {
 		// Filter F7 key down
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.F7) {
+		if (oEvent.keyCode === KeyCodes.F7) {
 			var aSubSections = this.getSubSections(),
 				oFirstSubSection = aSubSections[0],
 				oLastFocusedEl;

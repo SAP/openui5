@@ -4,18 +4,16 @@
 
 // Provides control sap.ui.core.Icon.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/base/assert',
-    '../Device',
-    './Control',
-    './IconPool',
-    './InvisibleText',
-    './library',
-    "./IconRenderer",
-    "sap/ui/events/KeyCodes"
+	'sap/base/assert',
+	'../Device',
+	'./Control',
+	'./IconPool',
+	'./InvisibleText',
+	'./library',
+	"./IconRenderer",
+	"sap/ui/events/KeyCodes"
 ],
 	function(
-		jQuery,
 		assert,
 		Device,
 		Control,
@@ -328,7 +326,7 @@ sap.ui.define([
 	/* =========================================================== */
 
 	Icon.prototype.setSrc = function(sSrc) {
-		assert(IconPool.isIconURI(sSrc), this + ": Property 'src' (value: '" + sSrc + "') should be a valid Icon URI (sap-icon://...)");
+		assert(sSrc == null || IconPool.isIconURI(sSrc), this + ": Property 'src' (value: '" + sSrc + "') should be a valid Icon URI (sap-icon://...)");
 
 		var vIconInfo = IconPool.getIconInfo(sSrc, undefined, "mixed"),
 			$Icon = this.$(),

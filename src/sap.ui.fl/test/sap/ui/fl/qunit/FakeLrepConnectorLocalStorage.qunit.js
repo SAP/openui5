@@ -1,28 +1,25 @@
-/*global sinon QUnit */
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/*global QUnit */
 
 QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/fl/LrepConnector",
-	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/FakeLrepLocalStorage",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	LrepConnector,
-	FakeLrepConnector,
 	FakeLrepConnectorLocalStorage,
 	FakeLrepLocalStorage,
 	Cache,
 	ChangePersistenceFactory,
-	Utils
+	Utils,
+	sinon
 ) {
 	"use strict";
-	sinon.config.useFakeTimers = false;
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -44,95 +41,135 @@ sap.ui.require([
 			oFakeLrepConnectorLocalStorage.deleteChanges();
 			sandbox.restore();
 		}
-	});
+	}, function() {
 
-	QUnit.test("when in INITAL status", function(assert) {
-		return oFakeLrepConnectorLocalStorage.loadChanges("sap.ui.fl.qunit.FakeLrepConnector")
-		.then(function (oChanges) {
-			assert.equal(oChanges.changes.changes.length, 0, "then no changes are available");
+		QUnit.test("when in INITAL status", function(assert) {
+			return oFakeLrepConnectorLocalStorage.loadChanges("sap.ui.fl.qunit.FakeLrepConnector")
+			.then(function (oChanges) {
+				assert.equal(oChanges.changes.changes.length, 0, "then no changes are available");
+			});
 		});
-	});
 
 
-	QUnit.test("when settings are requested", function(assert) {
-		return oFakeLrepConnectorLocalStorage.loadSettings("sap.ui.fl.qunit.FakeLrepConnector")
-		.then(function (oSettings) {
-			assert.ok(oSettings);
+		QUnit.test("when settings are requested", function(assert) {
+			return oFakeLrepConnectorLocalStorage.loadSettings("sap.ui.fl.qunit.FakeLrepConnector")
+			.then(function (oSettings) {
+				assert.ok(oSettings);
+			});
 		});
-	});
 
-	QUnit.test("when calling send function with DELETE flag", function(assert) {
-		var sUri = "/sap/bc/lrep/changes/" +
-			"?reference=" + aTestData[0].reference +
-			"&appVersion=" + "1.0.0" +
-			"&layer=" + aTestData[0].layer +
-			"&generator=Change.createInitialFileContent";
-		var oForeignTestData = {"fileName":"id_1445501120486_45","fileType":"change","changeType":"hideControl","reference":"sap.ui.rta.test.ForeignDemo.md.Component","packageName":"$TMP","content":{},"selector":{"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.ForeignDemo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}, "validAppVersions": {"creation": "1.0.0", "from": "1.0.0"}};
-		var aMixedTestData = aTestData.concat([oForeignTestData]);
+		QUnit.test("when calling send function with DELETE flag", function(assert) {
+			var sUri = "/sap/bc/lrep/changes/" +
+				"?reference=" + aTestData[0].reference +
+				"&appVersion=" + "1.0.0" +
+				"&layer=" + aTestData[0].layer +
+				"&generator=Change.createInitialFileContent";
+			var oForeignTestData = {"fileName":"id_1445501120486_45","fileType":"change","changeType":"hideControl","reference":"sap.ui.rta.test.ForeignDemo.md.Component","packageName":"$TMP","content":{},"selector":{"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.ForeignDemo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}, "validAppVersions": {"creation": "1.0.0", "from": "1.0.0"}};
+			var aMixedTestData = aTestData.concat([oForeignTestData]);
 
-		var fnDeleteChangeSpy = sandbox.spy(FakeLrepLocalStorage, "deleteChange");
+			var fnDeleteChangeSpy = sandbox.spy(FakeLrepLocalStorage, "deleteChange");
 
-		return oFakeLrepConnectorLocalStorage.create(aMixedTestData)
-		.then(function() {
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 4, "Local Storage contains four changes in the beginning");
-		})
-		.then(oFakeLrepConnectorLocalStorage.send(sUri, "DELETE"))
-		.then(function() {
-			assert.equal(fnDeleteChangeSpy.callCount, 3, "deleteChange of FakeLrepLocalStorage has been called three times");
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
-			assert.equal(FakeLrepLocalStorage.getChanges()[0].reference, "sap.ui.rta.test.ForeignDemo.md.Component", "and it is the one with a different reference");
+			return oFakeLrepConnectorLocalStorage.create(aMixedTestData)
+			.then(function() {
+				assert.equal(FakeLrepLocalStorage.getNumChanges(), 4, "Local Storage contains four changes in the beginning");
+			})
+			.then(oFakeLrepConnectorLocalStorage.send(sUri, "DELETE"))
+			.then(function() {
+				assert.equal(fnDeleteChangeSpy.callCount, 3, "deleteChange of FakeLrepLocalStorage has been called three times");
+				assert.equal(FakeLrepLocalStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
+				assert.equal(FakeLrepLocalStorage.getChanges()[0].reference, "sap.ui.rta.test.ForeignDemo.md.Component", "and it is the one with a different reference");
+			});
 		});
-	});
 
-	QUnit.test("when calling send function with DELETE flag in CUSTOMER layer and a USER layer change available", function(assert) {
-		var sUri = "/sap/bc/lrep/changes/" +
-			"?reference=" + aTestData[0].reference +
-			"&appVersion=" + "1.0.0" +
-			"&layer=" + aTestData[0].layer +
-			"&generator=Change.createInitialFileContent";
-		var oUserLayerChange = jQuery.extend({}, aTestData[0]);
-		oUserLayerChange.layer = "USER";
-		oUserLayerChange.fileName = "id_1445501120486_45";
-		var aMixedTestData = aTestData.concat([oUserLayerChange]);
+		QUnit.test("when calling send function with DELETE flag in CUSTOMER layer and a USER layer change available", function(assert) {
+			var sUri = "/sap/bc/lrep/changes/" +
+				"?reference=" + aTestData[0].reference +
+				"&appVersion=" + "1.0.0" +
+				"&layer=" + aTestData[0].layer +
+				"&generator=Change.createInitialFileContent";
+			var oUserLayerChange = jQuery.extend({}, aTestData[0]);
+			oUserLayerChange.layer = "USER";
+			oUserLayerChange.fileName = "id_1445501120486_45";
+			var aMixedTestData = aTestData.concat([oUserLayerChange]);
 
-		var fnDeleteChangeSpy = sandbox.spy(FakeLrepLocalStorage, "deleteChange");
+			var fnDeleteChangeSpy = sandbox.spy(FakeLrepLocalStorage, "deleteChange");
 
-		return oFakeLrepConnectorLocalStorage.create(aMixedTestData)
-		.then(function() {
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 4, "Local Storage contains four changes in the beginning");
-		})
-		.then(oFakeLrepConnectorLocalStorage.send(sUri, "DELETE"))
-		.then(function() {
-			assert.equal(fnDeleteChangeSpy.callCount, 3, "deleteChange of FakeLrepLocalStorage has been called three times");
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
-			assert.equal(FakeLrepLocalStorage.getChanges()[0].layer, "USER", "and it is the one with a different layer");
+			return oFakeLrepConnectorLocalStorage.create(aMixedTestData)
+			.then(function() {
+				assert.equal(FakeLrepLocalStorage.getNumChanges(), 4, "Local Storage contains four changes in the beginning");
+			})
+			.then(oFakeLrepConnectorLocalStorage.send(sUri, "DELETE"))
+			.then(function() {
+				assert.equal(fnDeleteChangeSpy.callCount, 3, "deleteChange of FakeLrepLocalStorage has been called three times");
+				assert.equal(FakeLrepLocalStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
+				assert.equal(FakeLrepLocalStorage.getChanges()[0].layer, "USER", "and it is the one with a different layer");
+			});
 		});
-	});
 
-	QUnit.test("when calling send function with DELETE flag in USER layer and a USER layer change available", function(assert) {
-		var sUri = "/sap/bc/lrep/changes/" +
-			"?reference=" + aTestData[0].reference +
-			"&appVersion=" + "1.0.0" +
-			"&layer=USER" +
-			"&generator=Change.createInitialFileContent";
-		var oUserLayerChange = jQuery.extend({}, aTestData[0]);
-		oUserLayerChange.layer = "USER";
-		oUserLayerChange.fileName = "id_1445501120486_45";
-		var aMixedTestData = aTestData.concat([oUserLayerChange]);
+		QUnit.test("when calling send function with DELETE flag in USER layer and a USER layer change available", function(assert) {
+			var sUri = "/sap/bc/lrep/changes/" +
+				"?reference=" + aTestData[0].reference +
+				"&appVersion=" + "1.0.0" +
+				"&layer=USER" +
+				"&generator=Change.createInitialFileContent";
+			var oUserLayerChange = jQuery.extend({}, aTestData[0]);
+			oUserLayerChange.layer = "USER";
+			oUserLayerChange.fileName = "id_1445501120486_45";
+			var aMixedTestData = aTestData.concat([oUserLayerChange]);
 
-		var fnDeleteChangeSpy = sandbox.spy(FakeLrepLocalStorage, "deleteChange");
+			var fnDeleteChangeSpy = sandbox.spy(FakeLrepLocalStorage, "deleteChange");
 
-		return oFakeLrepConnectorLocalStorage.create(aMixedTestData)
-		.then(function() {
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 4, "Local Storage contains four changes in the beginning");
-		})
-		.then(oFakeLrepConnectorLocalStorage.send(sUri, "DELETE"))
-		.then(function() {
-			assert.equal(fnDeleteChangeSpy.callCount, 1, "deleteChange of FakeLrepLocalStorage has been called three times");
-			assert.equal(FakeLrepLocalStorage.getNumChanges(), 3, "Finally three changes are in the Local Storage");
-			assert.equal(FakeLrepLocalStorage.getChanges()[0].layer, "CUSTOMER", "and it is in a different layer");
-			assert.equal(FakeLrepLocalStorage.getChanges()[1].layer, "CUSTOMER", "and it is in a different layer");
-			assert.equal(FakeLrepLocalStorage.getChanges()[2].layer, "CUSTOMER", "and it is in a different layer");
+			return oFakeLrepConnectorLocalStorage.create(aMixedTestData)
+			.then(function() {
+				assert.equal(FakeLrepLocalStorage.getNumChanges(), 4, "Local Storage contains four changes in the beginning");
+			})
+			.then(oFakeLrepConnectorLocalStorage.send(sUri, "DELETE"))
+			.then(function() {
+				assert.equal(fnDeleteChangeSpy.callCount, 1, "deleteChange of FakeLrepLocalStorage has been called three times");
+				assert.equal(FakeLrepLocalStorage.getNumChanges(), 3, "Finally three changes are in the Local Storage");
+				assert.equal(FakeLrepLocalStorage.getChanges()[0].layer, "CUSTOMER", "and it is in a different layer");
+				assert.equal(FakeLrepLocalStorage.getChanges()[1].layer, "CUSTOMER", "and it is in a different layer");
+				assert.equal(FakeLrepLocalStorage.getChanges()[2].layer, "CUSTOMER", "and it is in a different layer");
+			});
+		});
+
+		QUnit.test("when calling _sortNonVariantChangesByLayer function with undefined value as prameter", function(assert) {
+			var aChanges = oFakeLrepConnectorLocalStorage._sortNonVariantChangesByLayer(undefined);
+			assert.equal(aChanges, undefined, "then undefined should be returned");
+		});
+
+		QUnit.test("when calling _sortNonVariantChangesByLayer function with empty array as parameter", function(assert) {
+			var aChanges = oFakeLrepConnectorLocalStorage._sortNonVariantChangesByLayer([]);
+			assert.ok(Array.isArray(aChanges), "then an array should be returned");
+			assert.equal(aChanges.length, 0, "then returned array should be empty");
+		});
+
+		QUnit.test("when calling _sortNonVariantChangesByLayer function with array of changes with diffrent layer attributes", function(assert) {
+			var aChanges = [
+				{
+					fileName: "Change1",
+					layer: "USER"
+				},
+				{
+					fileName: "Change2",
+					layer: "CUSTOMER"
+				},
+				{
+					fileName: "Change3",
+					layer: "VENDOR"
+				},
+				{
+					fileName: "Change4",
+					layer: "CUSTOMER"
+				}
+			];
+			var aSortedChanges = oFakeLrepConnectorLocalStorage._sortNonVariantChangesByLayer(aChanges);
+			assert.ok(Array.isArray(aSortedChanges), "then an array should be returned");
+			assert.equal(aSortedChanges.length, 4, "then returned array should contain 4 items");
+			assert.equal(aSortedChanges[0].layer, aChanges[2].layer, "then the first item should be a change from VENDOR layer");
+			assert.equal(aSortedChanges[1].layer, aChanges[1].layer, "then the second item should be a change from CUSTOMER layer");
+			assert.equal(aSortedChanges[2].layer, aChanges[3].layer, "then the third item should be a change from CUSTOMER layer");
+			assert.equal(aSortedChanges[3].layer, aChanges[0].layer, "then the fourth item should be a change from USER layer");
 		});
 	});
 
@@ -345,7 +382,7 @@ sap.ui.require([
 				variantReference: "varMgmt"
 			}
 		];
-		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aControlChanges, [], []);
+		mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aControlChanges, [], []);
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aControlChanges[0].variantReference, "then standard variant created with variant reference of control change");
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].controlChanges[0], aControlChanges[0], "then control change added to standard variant");
@@ -366,7 +403,7 @@ sap.ui.require([
 			changeType: "setTitle",
 			selector: {id: "varMgmt"}
 		}];
-		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, [], aVariantChanges, []);
+		mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, [], aVariantChanges, []);
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aVariantChanges[0].selector.id, "then standard variant created with variant reference of variant change");
 		assert.deepEqual(mResult.changes.variantSection["varMgmt"].variants[0].variantChanges.setTitle, aVariantChanges, "then variant change added to standard variant");
@@ -387,7 +424,7 @@ sap.ui.require([
 			changeType: "setDefault",
 			selector: {id: "varMgmt"}
 		}];
-		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, [], [], aVariantManagementChanges);
+		mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, [], [], aVariantManagementChanges);
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
 		assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aVariantManagementChanges[0].selector.id, "then standard variant created with selector of variant management change");
 		assert.deepEqual(mResult.changes.variantSection["varMgmt"].variantManagementChanges.setDefault, aVariantManagementChanges, "then variant management change added to standard variant");
@@ -444,14 +481,19 @@ sap.ui.require([
 		return this.oFakeLrepConnectorLocalStorage.loadChanges("test.json.component")
 			.then(function (mResult) {
 				assert.equal(mResult.changes.changes.length, 4, "then four changes available, 3 from JSON and 1 from local storage");
-				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants.length, 4, "then 4 variants available, 3 from JSON and 1 from local storage");assert.ok(this.createChangesMapsSpy.calledOnce, "then _createChangesMaps called once");
+				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants.length, 4, "then 4 variants available, 3 from JSON and 1 from local storage");
+				assert.ok(this.createChangesMapsSpy.calledOnce, "then _createChangesMaps called once");
 				assert.equal(mResult.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].variantChanges["setTitle"].length, 2, "then 2 variant changes available, one from JSON and one from local storage");
 				assert.ok(this.sortChangesSpy.calledOnce, "then _sortChanges called once");
 			}.bind(this));
 	});
 
 	QUnit.test("when a variant change with undefined variantManagement is loaded from local storage", function(assert) {
-		var aTestChangeWithoutVMRef = [{"fileName":"id_1449484290389_36","fileType":"ctrl_variant"}];
+		var aTestChangeWithoutVMRef = [{
+			"fileName" : "id_1449484290389_36",
+			"fileType" : "ctrl_variant",
+			"layer" : "CUSTOMER"
+		}];
 		return this.oFakeLrepConnectorLocalStorage.create(aTestChangeWithoutVMRef).then(function () {
 			return this.oFakeLrepConnectorLocalStorage.loadChanges("test.json.component")
 				.then(function (mResult) {
@@ -477,7 +519,7 @@ sap.ui.require([
 			fileName: "fileName3"}
 		];
 		assert.notOk(mResult.changes.variantSection["varMgmt3"], "then no variantManagement exists");
-		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap({}, aVariants);
+		mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap({}, aVariants);
 		assert.ok(mResult.changes.variantSection["varMgmt3"], "then the variantManagement exists");
 	});
 
@@ -507,7 +549,7 @@ sap.ui.require([
 			}
 		];
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 1, "then one variant already exists");
-		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap(mResult, aVariants);
+		mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap(mResult, aVariants);
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 1, "then variant not added since a duplicate variant already exists");
 	});
 
@@ -537,7 +579,7 @@ sap.ui.require([
 			}
 		];
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 1, "then one variant already exists");
-		var mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap(mResult, aVariants);
+		mResult = this.oFakeLrepConnectorLocalStorage._createChangesMap(mResult, aVariants);
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants.length, 2, "then variant not added since a duplicate variant already exists");
 		assert.ok(Array.isArray(mResult.changes.variantSection["varMgmt1"].variants[1].controlChanges), "then the newly added variant contains changes array");
 		assert.ok(typeof mResult.changes.variantSection["varMgmt1"].variants[1].variantChanges === 'object', "then the newly added variant contains variant changes object");
@@ -612,7 +654,7 @@ sap.ui.require([
 
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 1, "then only one change in variant ExistingVariant1");
 		assert.equal(mResult.changes.changes.length, 1, "then one global change exists");
-		var mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aChanges, aVariantChanges, aVariantManagementChanges);
+		mResult = this.oFakeLrepConnectorLocalStorage._sortChanges(mResult, aChanges, aVariantChanges, aVariantManagementChanges);
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 2, "then two changes exist for variant ExistingVariant1");
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"].length, 2, "then two variant changes exist for variant ExistingVariant1");
 		assert.ok( mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][0].fileName === "Change5" &&
@@ -669,9 +711,9 @@ sap.ui.require([
 				}
 			}
 		};
-		var fnGetReferencedChangesSpy = sandbox.spy(this.oFakeLrepConnectorLocalStorage, "_getReferencedChanges")  ;
+		var fnGetReferencedChangesSpy = sandbox.spy(this.oFakeLrepConnectorLocalStorage, "_getReferencedChanges");
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 1, "then initially one change available in ExistingVariant1");
-		var mResult = this.oFakeLrepConnectorLocalStorage._assignVariantReferenceChanges(mResult);
+		mResult = this.oFakeLrepConnectorLocalStorage._assignVariantReferenceChanges(mResult);
 		assert.strictEqual(fnGetReferencedChangesSpy.returnValues[0][0], mResult.changes.variantSection["varMgmt1"].variants[1].controlChanges[0], "then _getReferencedChanges returned the VENDOR layer referenced change");
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 2, "then two changes available in ExistingVariant1");
 		assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges[0].fileName, "Change3", "then referenced change from ExistingVariant1 in the VENDOR layer is inserted before actual variant changes");
@@ -679,4 +721,6 @@ sap.ui.require([
 			return oChange.fileName === "Change4";
 		}), "then referenced change from ExistingVariant1 in the CUSTOMER layer is not references");
 	});
+
+	QUnit.start();
 });

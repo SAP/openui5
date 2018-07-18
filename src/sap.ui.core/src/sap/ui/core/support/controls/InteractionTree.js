@@ -2,12 +2,32 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/IconPool',
-    'sap/m/library', 'sap/m/Popover', 'sap/m/Text', 'sap/ui/layout/form/SimpleForm', 'sap/m/Button', 'sap/m/Label', 'sap/m/Link',
-    'sap/ui/core/HTML', 'sap/ui/core/Title'],
-    function (jQuery, ManagedObject, IconPool,
-              mobileLibrary, Popover, Text, SimpleForm, Button, Label, Link,
-              HTML, Title) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/IconPool',
+	'sap/m/library',
+	'sap/m/Popover',
+	'sap/m/Text',
+	'sap/ui/layout/form/SimpleForm',
+	'sap/m/Button',
+	'sap/m/Label',
+	'sap/m/Link',
+	'sap/ui/core/HTML',
+	'sap/ui/core/Title'
+],
+    function(
+		ManagedObject,
+	   IconPool,
+	   mobileLibrary,
+	   Popover,
+	   Text,
+	   SimpleForm,
+	   Button,
+	   Label,
+	   Link,
+	   HTML,
+	   Title
+	) {
        'use strict';
 
        var PlacementType = mobileLibrary.PlacementType;

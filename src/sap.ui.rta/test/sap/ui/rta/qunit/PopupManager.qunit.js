@@ -2,8 +2,6 @@
 
 QUnit.config.autostart = false;
 sap.ui.require([
-	"sap/ui/fl/FakeLrepLocalStorage",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/util/PopupManager",
@@ -25,8 +23,6 @@ sap.ui.require([
 	"sap/ui/thirdparty/sinon-qunit"
 ],
 function(
-	FakeLrepLocalStorage,
-	FakeLrepConnectorLocalStorage,
 	DesignTime,
 	RuntimeAuthoring,
 	PopupManager,
@@ -50,7 +46,6 @@ function(
 
 	var sandbox;
 	var oView, oApp;
-	FakeLrepConnectorLocalStorage.enableFakeConnector();
 	var oMockComponent = UIComponent.extend("MockController", {
 		metadata: {
 			manifest: 	{
@@ -90,14 +85,12 @@ function(
 	QUnit.module("Given RTA instance is created without starting", {
 		beforeEach : function(assert) {
 			sandbox = sinon.sandbox.create();
-			FakeLrepLocalStorage.deleteChanges();
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
 			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
 		},
 		afterEach : function() {
-			FakeLrepLocalStorage.deleteChanges();
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -117,7 +110,6 @@ function(
 		beforeEach : function(assert) {
 			var fnDone = assert.async();
 			sandbox = sinon.sandbox.create();
-			FakeLrepLocalStorage.deleteChanges();
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
@@ -181,7 +173,6 @@ function(
 				this.oPopover.destroy();
 			}
 			delete this.oOriginalInstanceManager;
-			FakeLrepLocalStorage.deleteChanges();
 			sandbox.restore();
 		}
 	});
@@ -220,17 +211,17 @@ function(
 	});
 	//_overrideAddFunctions
 	QUnit.test("when _overrideAddFunctions for dialog is called", function(assert) {
-		assert.expect(10);
+		assert.expect(11);
 		var done = assert.async();
 		fnSetRta(this.oRta);
-		this.oDialog.open();
 		this.oDialog.attachAfterOpen(function() {
+			assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oDialog), "the isPopupAdaptable is called with the in-app Dialog");
 			this.oNonRtaDialog.attachAfterOpen(function() {
 				assert.notEqual(InstanceManager.addDialogInstance, this.oOriginalInstanceManager.addDialogInstance, "InstanceManager.addDialogInstance overridden");
 				assert.notEqual(InstanceManager.addPopoverInstance, this.oOriginalInstanceManager.addPopoverInstance, "InstanceManager.addPopoverInstance overridden");
 				assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[0], "function", "then function is returned on the first call");
 				assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[1], "function", "then function is returned on the second call");
-				assert.ok(this.fnIsPopupAdaptableSpy.calledTwice, "then _isPopupAdaptable called twice for the 2 dialogs");
+				assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oNonRtaDialog), "the isPopupAdaptable is called with the non in-app Dialog");
 				//when dialog is opened, PopupManager.open() triggers bringToFront
 				assert.notStrictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 0, "then 'bringToFront' is called at least once");
 				assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then _createPopupOverlays called once for the relevant dialog");
@@ -242,6 +233,7 @@ function(
 			}.bind(this));
 			this.oNonRtaDialog.open();
 		}.bind(this));
+		this.oDialog.open();
 	});
 	//_isPopupAdaptable
 	QUnit.test("when _isPopupAdaptable is called with a dialog with a valid component", function(assert) {
@@ -283,13 +275,16 @@ function(
 	QUnit.test("when _overrideRemovePopupInstance for dialog is called and dialog is closed", function(assert) {
 		var done = assert.async();
 		fnSetRta(this.oRta);
+		this.oDialog.attachAfterOpen(function() {
+			assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oDialog), "the isPopupAdaptable is called with the in-app Dialog for open");
+		});
 		this.oDialog.open();
 		assert.notEqual(InstanceManager.removeDialogInstance, this.oOriginalInstanceManager.removeDialogInstance, "InstanceManager.removeDialogInstance overridden");
 		assert.notEqual(InstanceManager.removePopoverInstance, this.oOriginalInstanceManager.removePopoverInstance, "InstanceManager.removePopoverInstance overridden");
 		assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[0], "function", "then function is returned on the first call");
 		assert.strictEqual(typeof this.fnOverrideAddFunctionsSpy.returnValues[1], "function", "then function is returned on the second call");
 		this.oDialog.attachAfterClose(function() {
-			assert.ok(this.fnIsPopupAdaptableSpy.calledTwice, "then _isPopupAdaptable called twice for opening and closing of the dialog");
+			assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oDialog), "the isPopupAdaptable is called with the in-app Dialog for close");
 			assert.strictEqual(this.fnRemoveRootElementSpy.callCount, 1, "then 'removeRootElement' is called once since RTA is set");
 			assert.ok(this.fnRemoveRootElementSpy.calledWith(this.oDialog), "then 'removeRootElement' called with the same app component dialog");
 			assert.strictEqual(this.oRta._oDesignTime.getRootElements().indexOf(this.oDialog.getId()), -1, "then the opened dialog was removed from root elements");
@@ -469,7 +464,6 @@ function(
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach : function(assert) {
 			sandbox = sinon.sandbox.create();
-			FakeLrepLocalStorage.deleteChanges();
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
@@ -498,7 +492,6 @@ function(
 		afterEach : function() {
 			sandbox.restore();
 			this.oRta.destroy();
-			FakeLrepLocalStorage.deleteChanges();
 			if (this.oDialog) {
 				this.oDialog.destroy();
 			}
@@ -562,7 +555,6 @@ function(
 	//Dialog open -> RTA started
 	QUnit.module("Given that a dialog is open and then RTA is started", {
 		beforeEach : function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
 			this.oDialog = new Dialog("testDialog");
 			oView.addDependent(this.oDialog);
 			this.oButton = new Button("testbutton", {
@@ -579,7 +571,6 @@ function(
 			});
 		},
 		afterEach : function() {
-			FakeLrepLocalStorage.deleteChanges();
 			if (this.oDialog) {
 				this.oDialog.destroy();
 			}
@@ -641,7 +632,6 @@ function(
 			}.bind(this));
 		},
 		afterEach: function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
 			if (this.oRta) {
 				this.oRta.destroy();
 			}
@@ -679,7 +669,6 @@ function(
 			}.bind(this));
 		},
 		afterEach: function (assert) {
-			FakeLrepLocalStorage.deleteChanges();
 			if (this.oRta) {
 				this.oRta.destroy();
 			}

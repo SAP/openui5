@@ -10,6 +10,8 @@
 		}
 	},
 
+
+
 	"sap.ui": {
 		"technology": "UI5",
 		"deviceTypes": {
@@ -56,8 +58,9 @@
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
 					"bundleName": "sap.ui.rta.dttool.i18n.i18n"
-				}
-			}
+				},
+              "preload": true
+            }
 		},
 		"resources": {
 			"css": [{

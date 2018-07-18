@@ -21,7 +21,8 @@
 						minLength: 1,
 						maxLength: 10
 					}
-				}"/>
+				}"
+				change= "onChange"/>
 
 			<Label text="EMail" labelFor="emailInput"/>
 			<Input

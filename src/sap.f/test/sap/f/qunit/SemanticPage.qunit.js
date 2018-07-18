@@ -180,6 +180,26 @@
 		this.oSemanticPage2 = null;
 	});
 
+	QUnit.test("test SemanticPage titleAreaShrinkRatio setter and getter", function (assert) {
+		var sDefaultRatio = "1:1.6:1.6",
+			sNewRatio = "3:5:8";
+
+		// Assert default
+		assert.strictEqual(this.oSemanticPage.getTitleAreaShrinkRatio(), sDefaultRatio,
+			"SemanticPage titleAreaShrinkRatio is " + sDefaultRatio + " in by default.");
+		assert.strictEqual(this.oSemanticPage._getTitle().getAreaShrinkRatio(), sDefaultRatio,
+			"DynamicPageTitle areaShrinkRatio is " + sDefaultRatio + " in by default.");
+
+		// Act
+		this.oSemanticPage.setTitleAreaShrinkRatio(sNewRatio);
+
+		// Assert
+		assert.strictEqual(this.oSemanticPage.getTitleAreaShrinkRatio(), sNewRatio,
+			"SemanticPage titleAreaShrinkRatio is " + sNewRatio + ".");
+		assert.strictEqual(this.oSemanticPage._getTitle().getAreaShrinkRatio(), sNewRatio,
+			"DynamicPageTitle areaShrinkRatio is " + sNewRatio + ".");
+	});
+
 	QUnit.test("test SemanticPage titleHeading aggregation methods", function (assert) {
 		var oTitle = oFactory.getTitle(),
 			vResult;
@@ -204,6 +224,60 @@
 		assert.equal(this.oSemanticPage, vResult,
 			"SemanticPage destroyTitleHeading returns the SemanticPage instance.");
 		assert.equal(this.oSemanticPage.getTitleHeading(), null,
+			"SemanticPage content is destroyed successfully.");
+	});
+
+	QUnit.test("test SemanticPage titleExpandedHeading aggregation methods", function (assert) {
+		var oTitle = oFactory.getTitle(),
+			vResult;
+
+		// Assert default
+		assert.equal(this.oSemanticPage.getTitleExpandedHeading(), null,
+			"SemanticPage titleExpandedHeading is null by default.");
+
+		// Аct: set titleExpandedHeading
+		vResult = this.oSemanticPage.setTitleExpandedHeading(oTitle);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleExpandedHeading(), oTitle,
+			"SemanticPage titleExpandedHeading is set and retrieved successfully.");
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage setTitleExpandedHeading returns the SemanticPage instance.");
+
+		// Аct: destroy titleExpandedHeading
+		vResult = this.oSemanticPage.destroyTitleExpandedHeading();
+
+		// Assert
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage destroyTitleExpandedHeading returns the SemanticPage instance.");
+		assert.equal(this.oSemanticPage.getTitleExpandedHeading(), null,
+			"SemanticPage content is destroyed successfully.");
+	});
+
+	QUnit.test("test SemanticPage titleSnappedHeading aggregation methods", function (assert) {
+		var oTitle = oFactory.getTitle(),
+			vResult;
+
+		// Assert default
+		assert.equal(this.oSemanticPage.getTitleSnappedHeading(), null,
+			"SemanticPage titleSnappedHeading is null by default.");
+
+		// Аct: set titleSnappedHeading
+		vResult = this.oSemanticPage.setTitleSnappedHeading(oTitle);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleSnappedHeading(), oTitle,
+			"SemanticPage titleSnappedHeading is set and retrieved successfully.");
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage setTitleSnappedHeading returns the SemanticPage instance.");
+
+		// Аct: destroy titleSnappedHeading
+		vResult = this.oSemanticPage.destroyTitleSnappedHeading();
+
+		// Assert
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage destroyTitleSnappedHeading returns the SemanticPage instance.");
+		assert.equal(this.oSemanticPage.getTitleSnappedHeading(), null,
 			"SemanticPage content is destroyed successfully.");
 	});
 

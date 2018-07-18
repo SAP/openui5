@@ -4,50 +4,55 @@
 
 // Provides class sap.ui.rta.Main.
 sap.ui.define([
-		"jquery.sap.global",
-		"sap/ui/base/ManagedObject",
-		"sap/ui/rta/toolbar/Fiori",
-		"sap/ui/rta/toolbar/Standalone",
-		"sap/ui/rta/toolbar/Personalization",
-		"sap/ui/dt/DesignTime",
-		"sap/ui/dt/Overlay",
-		"sap/ui/rta/command/Stack",
-		"sap/ui/rta/command/CommandFactory",
-		"sap/ui/rta/command/LREPSerializer",
-		"sap/ui/rta/plugin/Rename",
-		"sap/ui/rta/plugin/DragDrop",
-		"sap/ui/rta/plugin/RTAElementMover",
-		"sap/ui/rta/plugin/CutPaste",
-		"sap/ui/rta/plugin/Remove",
-		"sap/ui/rta/plugin/CreateContainer",
-		"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-		"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
-		"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-		"sap/ui/rta/plugin/Combine",
-		"sap/ui/rta/plugin/Split",
-		"sap/ui/rta/plugin/Selection",
-		"sap/ui/rta/plugin/Settings",
-		"sap/ui/rta/plugin/ControlVariant",
-		"sap/ui/dt/plugin/ContextMenu",
-		"sap/ui/dt/plugin/TabHandling",
-		"sap/ui/fl/FlexControllerFactory",
-		"sap/ui/rta/Utils",
-		"sap/ui/dt/Util",
-		"sap/ui/fl/Utils",
-		"sap/ui/fl/registry/Settings",
-		"sap/m/MessageBox",
-		"sap/m/MessageToast",
-		"sap/ui/rta/util/PopupManager",
-		"sap/ui/core/BusyIndicator",
-		"sap/ui/dt/DOMUtil",
-		"sap/ui/rta/util/StylesLoader",
-		"sap/ui/rta/util/UrlParser",
-		"sap/ui/rta/appVariant/Feature",
-		"sap/ui/Device",
-		"sap/ui/rta/service/index",
-		"sap/ui/rta/util/ServiceEventBus",
-		"sap/ui/dt/OverlayRegistry"
-	],
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/rta/toolbar/Fiori",
+	"sap/ui/rta/toolbar/Standalone",
+	"sap/ui/rta/toolbar/Personalization",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/Overlay",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/LREPSerializer",
+	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/DragDrop",
+	"sap/ui/rta/plugin/RTAElementMover",
+	"sap/ui/rta/plugin/CutPaste",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/plugin/CreateContainer",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
+	"sap/ui/rta/plugin/Combine",
+	"sap/ui/rta/plugin/Split",
+	"sap/ui/rta/plugin/Selection",
+	"sap/ui/rta/plugin/Settings",
+	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/dt/plugin/ContextMenu",
+	"sap/ui/dt/plugin/TabHandling",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast",
+	"sap/ui/rta/util/PopupManager",
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/rta/util/StylesLoader",
+	"sap/ui/rta/util/UrlParser",
+	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/Device",
+	"sap/ui/rta/service/index",
+	"sap/ui/rta/util/ServiceEventBus",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/base/strings/capitalize",
+	"sap/base/util/UriParameters",
+	"sap/ui/performance/Measurement",
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"
+],
 	function(
 		jQuery,
 		ManagedObject,
@@ -91,14 +96,23 @@ sap.ui.define([
 		Device,
 		ServicesIndex,
 		ServiceEventBus,
-		OverlayRegistry
+		OverlayRegistry,
+		capitalize,
+		UriParameters,
+		Measurement,
+		Log,
+		KeyCodes
 	) {
 	"use strict";
 
 	var FL_MAX_LAYER_PARAM = "sap-ui-fl-max-layer";
-	var SERVICE_STARTING = "starting";
-	var SERVICE_STARTED = "started";
-	var SERVICE_FAILED = "failed";
+	var STARTING = "STARTING";
+	var STARTED = "STARTED";
+	var STOPPED = "STOPPED";
+	var FAILED = "FAILED";
+	var SERVICE_STARTING = "SERVICE_STARTING";
+	var SERVICE_STARTED = "SERVICE_STARTED";
+	var SERVICE_FAILED = "SERVICE_FAILED";
 
 	/**
 	 * Constructor for a new sap.ui.rta.RuntimeAuthoring class.
@@ -185,6 +199,14 @@ sap.ui.define([
 				"metadataScope": {
 					type: "string",
 					defaultValue: "default"
+				},
+
+				/**
+				 * Whether app version must be validated on start
+				 */
+				"validateAppVersion": {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			events : {
@@ -220,8 +242,9 @@ sap.ui.define([
 				"undoRedoStackModified" : {}
 			}
 		},
-		_sAppTitle : null,
+		_sAppTitle: null,
 		_dependents: null,
+		_sStatus: STOPPED,
 		constructor: function() {
 			// call parent constructor
 			ManagedObject.apply(this, arguments);
@@ -357,7 +380,7 @@ sap.ui.define([
 		bCreateGetter = typeof bCreateGetter === 'undefined' ? true : !!bCreateGetter;
 		if (!(sName in this._dependents)) {
 			if (sName && bCreateGetter) {
-				this['get' + jQuery.sap.charToUpperCase(sName, 0)] = this.getDependent.bind(this, sName);
+				this['get' + capitalize(sName, 0)] = this.getDependent.bind(this, sName);
 			}
 			this._dependents[sName || oObject.getId()] = oObject;
 		} else {
@@ -444,13 +467,13 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
-		var oUriParams = jQuery.sap.getUriParameters();
-		var aUriLayer = oUriParams.mParams["sap-ui-layer"];
+		var oUriParams = new UriParameters(window.location.href);
+		var oUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
 
-		if (aUriLayer && aUriLayer.length > 0) {
-			mFlexSettings.layer = aUriLayer[0];
+		if (oUriLayer) {
+			mFlexSettings.layer = oUriLayer;
 		}
 
 		// TODO: this will lead to incorrect information if this function is first called with scenario or baseId and then called again without.
@@ -489,17 +512,29 @@ sap.ui.define([
 	 * @return {Promise} Returns a Promise with the initialization of RTA
 	 * @public
 	 */
-	RuntimeAuthoring.prototype.start = function() {
+	RuntimeAuthoring.prototype.start = function () {
+		this._sStatus = STARTING;
 		var oDesignTimePromise;
 
 		// Create DesignTime
 		if (!this._oDesignTime) {
 			this._oRootControl = sap.ui.getCore().byId(this.getRootControl());
-			if (!this._oRootControl){
-				var vError = "Could not start Runtime Adaptation: Root control not found";
+			if (!this._oRootControl) {
+				var vError = new Error("Root control not found");
 				FlexUtils.log.error(vError);
 				return Promise.reject(vError);
 			}
+
+			// Check if the App Variant has the correct Format
+			if (
+				this.getValidateAppVersion()
+				&& !FlexUtils.isCorrectAppVersionFormat(this._getFlexController().getAppVersion())
+			) {
+				var vError = this._getTextResources().getText("MSG_INCORRECT_APP_VERSION_ERROR");
+				FlexUtils.log.error(vError);
+				return Promise.reject(vError);
+			}
+
 			//Check if the application has personalized changes and reload without them
 			return this._handlePersonalizationChangesOnStart()
 			.then(function(bReloadTriggered){
@@ -536,7 +571,7 @@ sap.ui.define([
 				}, this);
 
 				oDesignTimePromise = new Promise(function (fnResolve, fnReject) {
-					jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
+					Measurement.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
 					this._oDesignTime = new DesignTime({
 						scope: this.getMetadataScope(),
 						plugins: aPlugins
@@ -557,7 +592,7 @@ sap.ui.define([
 
 					this._oDesignTime.attachEventOnce("synced", function() {
 						fnResolve();
-						jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
+						Measurement.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
 					}, this);
 
 					this._oDesignTime.attachEventOnce("syncFailed", function(oEvent) {
@@ -609,12 +644,14 @@ sap.ui.define([
 			})
 			.then(
 				function () {
+					this._sStatus = STARTED;
 					this.fireStart({
 						editablePluginsCount: this.iEditableOverlaysCount
 					});
 				}.bind(this),
 				function (vError) {
 					if (vError !== "Reload triggered") {
+						this._sStatus = FAILED;
 						this.fireFailed(vError);
 					}
 					if (vError) {
@@ -638,7 +675,7 @@ sap.ui.define([
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this._oRootControl, this.getLayer(), this._oSerializer);
 			return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 		}.bind(this))
-		.catch(function(oError) {
+		.catch(function () {
 			return false;
 		});
 	};
@@ -654,7 +691,7 @@ sap.ui.define([
 			sErrorMessage = vError.stack || vError.message || vError.status || vError;
 		}
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		jQuery.sap.log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
+		Log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
 		MessageBox.error(sMsg, {
@@ -771,7 +808,11 @@ sap.ui.define([
 						}
 					}
 				}.bind(this));
-			}.bind(this))['catch'](fnShowTechnicalError);
+			}.bind(this))
+			.catch(fnShowTechnicalError)
+			.then(function () {
+				this._sStatus = STOPPED;
+			}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype.restore = function() {
@@ -812,7 +853,7 @@ sap.ui.define([
 			// OSX: replace CTRL with CMD
 			var bCtrlKey = bMacintosh ? oEvent.metaKey : oEvent.ctrlKey;
 			if (
-				oEvent.keyCode === jQuery.sap.KeyCodes.Z
+				oEvent.keyCode === KeyCodes.Z
 				&& oEvent.shiftKey === false
 				&& oEvent.altKey === false
 				&& bCtrlKey === true
@@ -821,11 +862,11 @@ sap.ui.define([
 			} else if (
 				(( // OSX: CMD+SHIFT+Z
 					bMacintosh
-					&& oEvent.keyCode === jQuery.sap.KeyCodes.Z
+					&& oEvent.keyCode === KeyCodes.Z
 					&& oEvent.shiftKey === true
 				) || ( // Others: CTRL+Y
 					!bMacintosh
-					&& oEvent.keyCode === jQuery.sap.KeyCodes.Y
+					&& oEvent.keyCode === KeyCodes.Y
 					&& oEvent.shiftKey === false
 				))
 				&& oEvent.altKey === false
@@ -883,7 +924,7 @@ sap.ui.define([
 				this.addDependent(new fnConstructor({
 					textResources: this._getTextResources(),
 					//events
-					exit: this.stop.bind(this, false, false),
+					exit: this.stop.bind(this, false, true),
 					restore: this._onRestore.bind(this)
 				}), 'toolbar');
 			} else {
@@ -953,7 +994,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	RuntimeAuthoring.prototype.destroy = function() {
+	RuntimeAuthoring.prototype.destroy = function () {
 		jQuery.map(this._dependents, function (oDependent, sName) {
 			this.removeDependent(sName);
 			// Destroy should be called with suppress invalidate = true here to prevent static UI Area invalidation
@@ -1061,7 +1102,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.needsRestart = function(sLayer) {
 
-		var bRestart = !!window.localStorage.getItem("sap.ui.rta.restart." + sLayer);
+		var bRestart = !!window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
 		return bRestart;
 	};
 
@@ -1074,7 +1115,7 @@ sap.ui.define([
 	 * @param {string} sLayer The active layer
 	 */
 	RuntimeAuthoring.enableRestart = function(sLayer) {
-		window.localStorage.setItem("sap.ui.rta.restart." + sLayer, true);
+		window.sessionStorage.setItem("sap.ui.rta.restart." + sLayer, true);
 	};
 
 	/**
@@ -1085,7 +1126,7 @@ sap.ui.define([
 	 * @param {string} sLayer The active layer
 	 */
 	RuntimeAuthoring.disableRestart = function(sLayer) {
-		window.localStorage.removeItem("sap.ui.rta.restart." + sLayer);
+		window.sessionStorage.removeItem("sap.ui.rta.restart." + sLayer);
 	};
 
 	/**
@@ -1410,7 +1451,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._onModeChange = function(oEvent) {
-		this.setMode(oEvent.getParameter('key'));
+		this.setMode(oEvent.getParameter("item").getKey());
 	};
 
 	/**
@@ -1449,7 +1490,7 @@ sap.ui.define([
 		// We do not support scope change after creation of DesignTime instance
 		// as this requires reinitialization of all overlays
 		if (this._oDesignTime) {
-			jQuery.sap.log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
+			Log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
 			return;
 		}
 
@@ -1468,13 +1509,34 @@ sap.ui.define([
 	 * @return {Promise} - promise is resolved with service api or rejected in case of any error.
 	 */
 	RuntimeAuthoring.prototype.startService = function (sName) {
+		if (this._sStatus !== STARTED) {
+			return new Promise(function (fnResolve, fnReject) {
+				this.attachEventOnce('start', fnResolve);
+				this.attachEventOnce('failed', fnReject);
+			}.bind(this))
+			.then(
+				function () {
+					return this.startService(sName);
+				}.bind(this),
+				function () {
+					return Promise.reject(
+						DtUtil.createError(
+							"RuntimeAuthoring#startService",
+							DtUtil.printf("Can't start the service '{0}' while RTA has been failed during a startup", sName),
+							"sap.ui.rta"
+						)
+					);
+				}
+			);
+		}
+
 		var sServiceLocation = resolveServiceLocation(sName);
 		var mService;
 
 		if (!sServiceLocation) {
 			return Promise.reject(
 				DtUtil.createError(
-					"RuntimeAuthoring#stopService",
+					"RuntimeAuthoring#startService",
 					DtUtil.printf("Unknown service. Can't find any registered service by name '{0}'", sName),
 					"sap.ui.rta"
 				)
@@ -1483,19 +1545,19 @@ sap.ui.define([
 			mService = this._mServices[sName];
 			if (mService) {
 				switch (mService.status) {
-					case 'started': {
+					case SERVICE_STARTED: {
 						return Promise.resolve(mService.exports);
 					}
-					case 'starting': {
+					case SERVICE_STARTING: {
 						return mService.initPromise;
 					}
-					case 'failed': {
+					case SERVICE_FAILED: {
 						return mService.initPromise;
 					}
 					default: {
 						return Promise.reject(
 							DtUtil.createError(
-								"RuntimeAuthoring#getService",
+								"RuntimeAuthoring#startService",
 								DtUtil.printf("Unknown service status. Service name = '{0}'", sName),
 								"sap.ui.rta"
 							)
@@ -1503,7 +1565,7 @@ sap.ui.define([
 					}
 				}
 			} else {
-				mService = {
+				this._mServices[sName] = mService = {
 					status: SERVICE_STARTING,
 					location: sServiceLocation,
 					initPromise: new Promise(function (fnResolve, fnReject) {
@@ -1523,14 +1585,14 @@ sap.ui.define([
 									.then(function (oService) {
 											if (this.bIsDestroyed) {
 												throw DtUtil.createError(
-													"RuntimeAuthoring#getService",
+													"RuntimeAuthoring#startService",
 													DtUtil.printf("RuntimeAuthoring instance is destroyed while initialising the service '{0}'", sName),
 													"sap.ui.rta"
 												);
 											}
 											if (!jQuery.isPlainObject(oService)) {
 												throw DtUtil.createError(
-													"RuntimeAuthoring#getService",
+													"RuntimeAuthoring#startService",
 													DtUtil.printf("Invalid service format. Service should return simple javascript object after initialisation. Service name = '{0}'", sName),
 													"sap.ui.rta"
 												);
@@ -1569,7 +1631,7 @@ sap.ui.define([
 								fnReject(
 									DtUtil.propagateError(
 										vError,
-										"RuntimeAuthoring#getService",
+										"RuntimeAuthoring#startService",
 										DtUtil.printf("Can't load service '{0}' by its name: {1}", sName, sServiceLocation),
 										"sap.ui.rta"
 									)
@@ -1582,15 +1644,13 @@ sap.ui.define([
 							return Promise.reject(
 								DtUtil.propagateError(
 									vError,
-									"RuntimeAuthoring#getService",
+									"RuntimeAuthoring#startService",
 									DtUtil.printf("Error during service '{0}' initialisation.", sName),
 									"sap.ui.rta"
 								)
 							);
 						})
 				};
-
-				this._mServices[sName] = mService;
 
 				return mService.initPromise;
 			}
@@ -1606,7 +1666,7 @@ sap.ui.define([
 
 		if (oService) {
 			if (oService.status === SERVICE_STARTED) {
-				if (jQuery.isFunction(oService.service.destroy)) {
+				if (typeof oService.service.destroy === "function") {
 					oService.service.destroy();
 				}
 			}

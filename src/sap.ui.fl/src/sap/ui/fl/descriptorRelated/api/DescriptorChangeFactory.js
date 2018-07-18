@@ -7,8 +7,17 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Utils"
-], function(ChangePersistenceFactory, ChangePersistence, Change, Utils, Settings, FlexUtils) {
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/jquery"
+], function(
+	ChangePersistenceFactory,
+	ChangePersistence,
+	Change,
+	Utils,
+	Settings,
+	FlexUtils,
+	jQuery
+) {
 	"use strict";
 
 	/**

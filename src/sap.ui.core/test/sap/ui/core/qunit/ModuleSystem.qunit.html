@@ -754,6 +754,52 @@
 			jQuery.sap.unloadResources("test.moduleSystem.loadResource-preload", true, true);
 		});
 
+		QUnit.test("synchronous - from module preload (different domain, url params)", function(assert) {
+			// Register cross-domain resource path and a preload bundle to test the URL to module name guessing.
+			// Only if the resource name can be guessed, the file is taken from the preload.
+			jQuery.sap.registerResourcePath("preload/testdata", "http://preload.example.com/testdata/");
+			jQuery.sap.registerPreloadedModules({
+				"name": "test.moduleSystem.loadResource-preload",
+				"version": "2.0",
+				"modules": {
+					"preload/testdata/test.properties": "KEY=VALUE"
+				}
+			});
+
+			var sText = jQuery.sap.loadResource({
+				url: "http://preload.example.com/testdata/test.properties?sap-language=en&sap-client=123",
+				dataType: 'text',
+				failOnError: false
+			});
+			assert.equal(sText, "KEY=VALUE", "Resource successfully taken from module preload");
+
+			jQuery.sap.registerResourcePath("preload/testdata");
+			jQuery.sap.unloadResources("test.moduleSystem.loadResource-preload", true, true);
+		});
+
+		QUnit.test("synchronous - from module preload (different domain, url fragment)", function(assert) {
+			// Register cross-domain resource path and a preload bundle to test the URL to module name guessing.
+			// Only if the resource name can be guessed, the file is taken from the preload.
+			jQuery.sap.registerResourcePath("preload/testdata", "http://preload.example.com/testdata/");
+			jQuery.sap.registerPreloadedModules({
+				"name": "test.moduleSystem.loadResource-preload",
+				"version": "2.0",
+				"modules": {
+					"preload/testdata/test.properties": "KEY=VALUE"
+				}
+			});
+
+			var sText = jQuery.sap.loadResource({
+				url: "http://preload.example.com/testdata/test.properties#head",
+				dataType: 'text',
+				failOnError: false
+			});
+			assert.equal(sText, "KEY=VALUE", "Resource successfully taken from module preload");
+
+			jQuery.sap.registerResourcePath("preload/testdata");
+			jQuery.sap.unloadResources("test.moduleSystem.loadResource-preload", true, true);
+		});
+
 		QUnit.test("asynchronous - basic", function(assert) {
 			return jQuery.sap.loadResource({
 				url: "testdata/test.properties",
@@ -1233,8 +1279,9 @@
 			sap.ui.lazyRequire('sap.test', 'noSuchFactory', 'sap.test.lazy.MyUtility');
 
 			assert.ok(this.isLazyStub(sap.test, 'noSuchFactory'), "lazy loader created a stub for the namespace");
-
-			var oLogSpy = this.spy(jQuery.sap.log, 'error');
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			var oLogSpy = this.spy(Log, 'error');
 			var raised = false;
 			try {
 				sap.test.noSuchFactory();

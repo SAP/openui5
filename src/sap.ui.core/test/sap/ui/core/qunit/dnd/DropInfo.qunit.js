@@ -1,13 +1,14 @@
-sap.ui.define([
+/*global QUnit,sinon*/
+
+sap.ui.require([
 	"jquery.sap.global",
 	"test/TestControl",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/ElementMetadata"
-], function(jQuery, TestControl, DropInfo, ManagedObject, ElementMetadata) {
+	"sap/ui/core/ElementMetadata",
+	"sap/base/Log"
+], function(jQuery, TestControl, DropInfo, ManagedObject, ElementMetadata, Log) {
 	"use strict";
-
-	/*global QUnit,sinon*/
 
 	QUnit.test("Default values", function(assert) {
 		var oDropInfo = new DropInfo();
@@ -179,7 +180,7 @@ sap.ui.define([
 			children: oChild
 		});
 
-		var fnLogSpy = this.spy(jQuery.sap.log, "warning");
+		var fnLogSpy = this.spy(Log, "warning");
 		this.stub(ElementMetadata.prototype, "getDragDropInfo").returns({droppable: false});
 		assert.notOk(oDropInfo.isDroppable(oParent), "Not droppable: Element metadata does not allow droppping");
 		assert.strictEqual(fnLogSpy.callCount, 1, "Not droppable is logged");

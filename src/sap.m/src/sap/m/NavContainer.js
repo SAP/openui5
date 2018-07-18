@@ -11,7 +11,7 @@ sap.ui.define([
 	'./NavContainerRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	'jquery.sap.events'
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ], function(
 	library,
 	Control,

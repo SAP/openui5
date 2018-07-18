@@ -4,12 +4,12 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Cache
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
 	"./_GroupLock",
 	"./_Helper",
-	"./_Requestor"
-], function (jQuery, SyncPromise, _GroupLock, _Helper, _Requestor) {
+	"./_Requestor",
+	"sap/base/Log"
+], function (SyncPromise, _GroupLock, _Helper, _Requestor, Log) {
 	"use strict";
 
 		// Matches two cases:  segment with predicate or simply predicate:
@@ -378,8 +378,8 @@ sap.ui.define([
 		var that = this;
 
 		function invalidSegment(sSegment) {
-			jQuery.sap.log.error("Failed to drill-down into " + sPath + ", invalid segment: "
-				+ sSegment, that.toString(), "sap.ui.model.odata.v4.lib._Cache");
+			Log.error("Failed to drill-down into " + sPath + ", invalid segment: " + sSegment,
+				that.toString(), "sap.ui.model.odata.v4.lib._Cache");
 			return undefined;
 		}
 
@@ -773,7 +773,7 @@ sap.ui.define([
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
 				vUnitOrCurrencyValue = _Helper.drillDown(oEntity, aUnitOrCurrencyPath);
 				if (vUnitOrCurrencyValue === undefined) {
-					jQuery.sap.log.debug("Missing value for unit of measure "
+					Log.debug("Missing value for unit of measure "
 							+ _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath)
 							+ " when updating "
 							+ sFullPath,

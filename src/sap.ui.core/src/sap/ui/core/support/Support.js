@@ -3,14 +3,15 @@
  */
 
 // Provides the basic UI5 support functionality
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", 'jquery.sap.encoder'],
+sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", "sap/base/Log", "sap/base/security/encodeURL"],
 	function(
-		jQuery,
 		EventProvider,
 		Plugin,
 		Device,
 		UriParameters,
-		jQueryDOM
+		jQueryDOM,
+		Log,
+		encodeURL
 	) {
 	"use strict";
 
@@ -319,7 +320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 */
 	Support.prototype.openSupportTool = function() {
 		var sToolUrl = sap.ui.require.toUrl("sap/ui/core/support/support.html");
-		var sParams = "?sap-ui-xx-noless=true&sap-ui-xx-support-origin=" + jQuery.sap.encodeURL(this._sLocalOrigin);
+		var sParams = "?sap-ui-xx-noless=true&sap-ui-xx-support-origin=" + encodeURL(this._sLocalOrigin);
 
 		var sBootstrapScript;
 		if (this._sType === mTypes.APPLICATION) {
@@ -340,7 +341,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 		// sap-ui-core.js is the default. no need for passing it to the support window
 		// also ensure that the bootstrap script is in the root module path
 		if (sBootstrapScript && sBootstrapScript !== 'sap-ui-core.js' && sBootstrapScript.indexOf('/') === -1) {
-			sParams += "&sap-ui-xx-support-bootstrap=" + jQuery.sap.encodeURL(sBootstrapScript);
+			sParams += "&sap-ui-xx-support-bootstrap=" + encodeURL(sBootstrapScript);
 		}
 
 		function checkLocalUrl(sUrl){
@@ -680,7 +681,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 				oInfo.context = aSupportInfos[aSupportInfos.length - 1].context;
 			}
 			if (!oInfo.context) {
-				jQuery.sap.log.debug("Support Info does not have a context and is ignored");
+				Log.debug("Support Info does not have a context and is ignored");
 				return oInfo;
 			}
 			if (oInfo.context && oInfo.context.ownerDocument && oInfo.context.nodeType === 1) {
@@ -695,8 +696,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			aSupportInfos.push(oInfo);
 
 			if (aSupportInfosBreakpoints.indexOf(oInfo._idx) > -1) {
-				jQuery.sap.log.info(oInfo);
-				jQuery.sap.log.info("To remove this breakpoint execute:","\nsap.ui.core.support.Support.info.removeBreakpointAt(" + oInfo._idx + ")");
+				Log.info(oInfo);
+				Log.info("To remove this breakpoint execute:","\nsap.ui.core.support.Support.info.removeBreakpointAt(" + oInfo._idx + ")");
 				/*eslint-disable no-debugger */
 				debugger;
 				/*eslint-enable no-debugger */
@@ -1010,7 +1011,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 				};
 			}
 
-			jQuery.sap.log.info("sap.ui.core.support.Support.info initialized.");
+			Log.info("sap.ui.core.support.Support.info initialized.");
 		}
 
 		if ( bAsync ) {

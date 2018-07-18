@@ -3,9 +3,9 @@
  */
 
 // Provides implementation of sap.ui.documentation.sdk.thirdparty.jsanalyzer.EntityParser
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTUtils', './Doclet',
-	'sap/ui/documentation/sdk/thirdparty/esprima'],
-	function (jQuery, MOMetadata, ASTUtils, Doclet, esprima_) {
+sap.ui.define(['sap/ui/base/ManagedObjectMetadata', './ASTUtils', './Doclet', 'sap/ui/documentation/sdk/thirdparty/esprima',
+	"sap/base/Log"],
+	function (MOMetadata, ASTUtils, Doclet, esprima_, Log) {
 
 		"use strict";
 
@@ -67,9 +67,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 		var unlend = ASTUtils.unlend;
 		var guessSingularName = MOMetadata._guessSingularName;
 		var getLeadingDoclet = Doclet.get;
-		var error = jQuery.sap.log.error;
-		var warning = jQuery.sap.log.warning;
-		var verbose = jQuery.sap.log.debug;
+		var error = Log.error;
+		var warning = Log.warning;
+		var verbose = Log.debug;
 
 		function isExtendCall(node) {
 

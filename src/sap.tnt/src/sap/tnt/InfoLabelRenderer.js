@@ -3,8 +3,8 @@
  */
 
 // Provides the default renderer for control sap.tnt.InfoLabel
-sap.ui.define(["jquery.sap.global","./library", "sap/ui/core/Renderer", "sap/ui/core/library"],
-	function(jQuery, library, Renderer, coreLibrary) {
+sap.ui.define(["./library", "sap/ui/core/Renderer", "sap/ui/core/library"],
+	function(library, Renderer, coreLibrary) {
 		"use strict";
 
 		var RenderMode = library.RenderMode;

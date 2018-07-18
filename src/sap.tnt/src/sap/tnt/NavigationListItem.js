@@ -1,8 +1,8 @@
 // Provides control sap.tnt.NavigationListItem.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
-		'sap/ui/core/Icon', './NavigationList', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Item,
-	         Icon, NavigationList, Renderer, IconPool) {
+sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
+		'./NavigationList', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes"],
+	function(library, Item, Icon,
+	         NavigationList, Renderer, IconPool, KeyCodes) {
 		"use strict";
 
 		/**
@@ -258,17 +258,17 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			//  jQuery.sap.KeyCodes.MINUS is not returning 189
 			if ((event.shiftKey && event.which == 189) ||
-				event.which == jQuery.sap.KeyCodes.NUMPAD_MINUS ||
-				(event.which == jQuery.sap.KeyCodes.ARROW_RIGHT && isRtl) ||
-				(event.which == jQuery.sap.KeyCodes.ARROW_LEFT && !isRtl)) {
+				event.which == KeyCodes.NUMPAD_MINUS ||
+				(event.which == KeyCodes.ARROW_RIGHT && isRtl) ||
+				(event.which == KeyCodes.ARROW_LEFT && !isRtl)) {
 				if (this.collapse()) {
 					event.preventDefault();
 					event.target = null;
 				}
-			} else if (event.which == jQuery.sap.KeyCodes.NUMPAD_PLUS ||
-				(event.shiftKey && event.which == jQuery.sap.KeyCodes.PLUS) ||
-				event.which == jQuery.sap.KeyCodes.ARROW_LEFT && isRtl ||
-				event.which == jQuery.sap.KeyCodes.ARROW_RIGHT && !isRtl) {
+			} else if (event.which == KeyCodes.NUMPAD_PLUS ||
+				(event.shiftKey && event.which == KeyCodes.PLUS) ||
+				event.which == KeyCodes.ARROW_LEFT && isRtl ||
+				event.which == KeyCodes.ARROW_RIGHT && !isRtl) {
 				if (this.expand()) {
 					event.preventDefault();
 					event.target = null;

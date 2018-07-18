@@ -4,14 +4,15 @@
 
 // Provides class sap.ui.rta.plugin.RenameHandler.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
-	'sap/ui/dt/DOMUtil'
+	'sap/ui/dt/DOMUtil',
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	Plugin,
@@ -20,7 +21,8 @@ sap.ui.define([
 	OverlayUtil,
 	OverlayRegistry,
 	Utils,
-	DOMUtil
+	DOMUtil,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -43,7 +45,7 @@ sap.ui.define([
 		 */
 		_manageClickEvent : function (vEventOrElement) {
 			var oOverlay = vEventOrElement.getSource ? vEventOrElement.getSource() : vEventOrElement;
-			if (oOverlay.isSelected() && this.isRenameAvailable(oOverlay) && this.isRenameEnabled(oOverlay)) {
+			if (oOverlay.isSelected() && this.isRenameAvailable(oOverlay) && this.isRenameEnabled([oOverlay])) {
 				oOverlay.attachBrowserEvent("click", RenameHandler._onClick, this);
 			} else {
 				oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
@@ -271,16 +273,16 @@ sap.ui.define([
 		 */
 		_onEditableFieldKeydown : function (oEvent) {
 			switch (oEvent.keyCode) {
-				case jQuery.sap.KeyCodes.ENTER:
+				case KeyCodes.ENTER:
 					this._emitLabelChangeEvent();
 					this.stopEdit(true);
 					oEvent.preventDefault();
 					break;
-				case jQuery.sap.KeyCodes.ESCAPE:
+				case KeyCodes.ESCAPE:
 					this.stopEdit(true);
 					oEvent.preventDefault();
 					break;
-				case jQuery.sap.KeyCodes.DELETE:
+				case KeyCodes.DELETE:
 					//Incident ID: #1680315103
 					oEvent.stopPropagation();
 					break;
@@ -306,7 +308,7 @@ sap.ui.define([
 		 */
 		_onClick : function(oEvent) {
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-			if (this.isRenameEnabled(oOverlay) && !oEvent.metaKey && !oEvent.ctrlKey) {
+			if (this.isRenameEnabled([oOverlay]) && !oEvent.metaKey && !oEvent.ctrlKey) {
 				this.startEdit(oOverlay);
 				oEvent.preventDefault();
 			}

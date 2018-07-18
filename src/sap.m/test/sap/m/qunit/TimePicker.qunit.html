@@ -416,28 +416,6 @@
 			assert.strictEqual(parseInt(aList[aList.length-1].getKey()), iEnd, "the key property of the last element of the array is correct");
 			assert.strictEqual(parseInt(aList[aList.length-1].getText()), iEnd, "the text property of the last element of the array is correct");
 		});
-
-		QUnit.test("Value help CSS class is applied only when both properties 'Enabled' and 'Editable' are true", function (assert) {
-			//assert
-			assert.ok(this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is applied by default ('Enabled' = true 'Editable' = true)");
-			//arrange
-			this.oTimePicker.setEnabled(false);
-			this.clock.tick(1000);
-			//assert
-			assert.ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = false 'Editable' = true)");
-			//arrange
-			this.oTimePicker.setEnabled(true);
-			this.oTimePicker.setEditable(false);
-			this.clock.tick(1000);
-			//assert
-			assert.ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
-			//arrange
-			this.oTimePicker.setEnabled(false);
-			this.oTimePicker.setEditable(false);
-			this.clock.tick(1000);
-			assert.ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
-		});
-
 		QUnit.module("Placeholder", {
 			beforeEach: function () {
 				// SUT
@@ -1878,12 +1856,14 @@
 			sap.ui.getCore().applyChanges();
 
 			var icon = tp.$().find(".sapUiIcon");
-			icon.tap();
+			qutils.triggerEvent("mousedown", icon[0]);
+			qutils.triggerEvent("click", icon[0]);
 			this.clock.tick(1000);
 
 			assert.strictEqual(jQuery(".sapMPopover").is(":visible"), true, "the picker is opened");
 
-			icon.tap();
+			qutils.triggerEvent("mousedown", icon[0]);
+			qutils.triggerEvent("click", icon[0]);
 			this.clock.tick(1000);
 
 			assert.strictEqual(jQuery(".sapMPopover").is(":visible"), false, "the picker is closed");
@@ -1939,15 +1919,15 @@
 			tp._openPicker();
 			this.clock.tick(1000);
 
-			assert.strictEqual(jQuery(".sapMTPInputActive").is(":visible"), true, "the picker is opened and focussed");
+			assert.strictEqual(jQuery("." + sap.m.InputBase.ICON_PRESSED_CSS_CLASS).is(":visible"), true, "the picker is opened and focussed");
 
 			tp._closePicker();
 			this.clock.tick(1000);
 
-			assert.strictEqual(jQuery(".sapMTPInputActive").is(":visible"), false, "the picker is closed and not focussed");
+			assert.strictEqual(jQuery("." + sap.m.InputBase.ICON_PRESSED_CSS_CLASS).is(":visible"), false, "the picker is closed and not focussed");
 
 			qutils.triggerEvent("focusout", tp.getDomRef());
-			assert.ok(!tp.$().hasClass("sapMTPInputActive"), "the picker is closed and not focussed");
+			assert.ok(!tp.$().hasClass(sap.m.InputBase.ICON_PRESSED_CSS_CLASS), "the picker is closed and not focussed");
 
 
 			tp.destroy();

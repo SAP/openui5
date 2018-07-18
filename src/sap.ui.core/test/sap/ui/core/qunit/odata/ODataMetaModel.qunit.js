@@ -7,10 +7,11 @@ sap.ui.require([
 	"sap/ui/model/json/JSONListBinding", "sap/ui/model/json/JSONPropertyBinding",
 	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/Model",
 	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
-	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils"
+	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils",
+	"sap/base/Log", "sap/ui/performance/Measurement"
 ], function (BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
 	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Model, Utils, ODataMetaModel,
-	ODataModel1, ODataModel, TestUtils) {
+	ODataModel1, ODataModel, TestUtils, Log, Measurement) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
@@ -713,17 +714,17 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.ODataMetaModel", {
 		beforeEach : function () {
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
-			this.iOldLogLevel = jQuery.sap.log.getLevel(sComponent);
+			this.iOldLogLevel = Log.getLevel(sComponent);
 			// do not rely on ERROR vs. DEBUG due to minified sources
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			Log.setLevel(Log.Level.ERROR, sComponent);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			// avoid caching of metadata across tests
 			this.stub(ODataModel, "_getSharedData").returns({});
 		},
 		afterEach : function () {
-			jQuery.sap.log.setLevel(this.iOldLogLevel, sComponent);
+			Log.setLevel(this.iOldLogLevel, sComponent);
 		}
 	});
 
@@ -1054,7 +1055,7 @@ sap.ui.require([
 				sPath = "dataServices",
 				aSorters = [];
 
-			fnApply.withArgs(["dataServiceVersion", "schema"], aFilters).returns(aIndices);
+			fnApply.withArgs(["dataServiceVersion", "schema"], undefined).returns(aIndices);
 
 			// code under test
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
@@ -1117,10 +1118,7 @@ sap.ui.require([
 		QUnit.test("_getObject: queries instead of indexes, log = " + bIsLoggable, function (assert) {
 			var oLogMock = this.oLogMock;
 
-			jQuery.sap.log.setLevel(bIsLoggable
-				? jQuery.sap.log.Level.WARNING
-				: jQuery.sap.log.Level.ERROR,
-				sComponent);
+			Log.setLevel(bIsLoggable ? Log.Level.WARNING : Log.Level.ERROR, sComponent);
 
 			oLogMock.expects("error")
 				.withExactArgs("A query is not allowed when an object context has been given",
@@ -1304,7 +1302,7 @@ sap.ui.require([
 			var oLogMock = this.oLogMock;
 
 			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+				.withExactArgs(Log.Level.WARNING, sComponent)
 				.returns(bWarn);
 			oLogMock.expects("warning")
 				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
@@ -1321,7 +1319,7 @@ sap.ui.require([
 				var oLogMock = this.oLogMock;
 
 				oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+					.withExactArgs(Log.Level.WARNING, sComponent)
 					.returns(bWarn);
 				oLogMock.expects("warning")
 					.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
@@ -1340,7 +1338,7 @@ sap.ui.require([
 			var oLogMock = this.oLogMock;
 
 			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+				.withExactArgs(Log.Level.WARNING, sComponent)
 				.returns(bWarn);
 			oLogMock.expects("warning")
 				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
@@ -3055,9 +3053,9 @@ sap.ui.require([
 
 		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
 
-		oAverageSpy = this.spy(jQuery.sap.measure, "average")
+		oAverageSpy = this.spy(Measurement, "average")
 			.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]);
-		oEndSpy = this.spy(jQuery.sap.measure, "end")
+		oEndSpy = this.spy(Measurement, "end")
 			.withArgs("sap.ui.model.odata.ODataMetaModel/load");
 		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
 			annotationURI : "/GWSAMPLE_BASIC/annotations",
@@ -3102,7 +3100,7 @@ sap.ui.require([
 			var oMetaModel, oModel;
 
 			this.oLogMock.expects("isLoggable").twice()
-				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+				.withExactArgs(Log.Level.WARNING, sComponent)
 				.returns(bWarn);
 			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
 				.withExactArgs("Path 'Code' for sap:unit cannot be resolved",

@@ -12,6 +12,7 @@ sap.ui.define([
 	'./CarouselRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
+	"sap/ui/events/F6Navigation",
 	'sap/ui/thirdparty/mobify-carousel',
 	'sap/ui/core/IconPool'
 ],
@@ -23,7 +24,8 @@ function(
 	coreLibrary,
 	CarouselRenderer,
 	KeyCodes,
-	Log
+	Log,
+	F6Navigation
 	/*, mobifycarousel, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */
 ) {
 	"use strict";
@@ -1041,7 +1043,7 @@ function(
 		oEventF6.keyCode = KeyCodes.F6;
 		oEventF6.shiftKey = bShiftKey;
 
-		jQuery.sap.handleF6GroupNavigation(oEventF6);
+		F6Navigation.handleF6GroupNavigation(oEventF6);
 	};
 
 	/**

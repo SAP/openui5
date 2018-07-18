@@ -305,13 +305,15 @@ jQuery.sap.require("sap.ui.fl.context.Context");
 	var oContextWithDefectConfiguration;
 	var fnjQueryLogStub;
 	QUnit.module("Given a context with defect configuration", {
-		beforeEach : function() {
+		beforeEach : function(assert) {
 			oContextWithDefectConfiguration = new Context({
 				configuration : {
 					"device" : "path/to/module/forDeviceInformation"
 				}
 			});
-			fnjQueryLogStub = sinon.spy(jQuery.sap.log, "error");
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
+			fnjQueryLogStub = sinon.spy(Log, "error");
 		},
 		afterEach : function() {
 			fnjQueryLogStub.restore();

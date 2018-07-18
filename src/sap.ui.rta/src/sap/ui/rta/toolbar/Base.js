@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/rta/library',
 	'sap/ui/core/Popup',
 	'sap/m/Toolbar',
@@ -11,7 +10,6 @@ sap.ui.define([
 	'sap/ui/rta/util/Animation'
 ],
 function(
-	jQuery,
 	library,
 	Popup,
 	Toolbar,

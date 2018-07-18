@@ -1,19 +1,21 @@
 /*global QUnit,sinon*/
 
-(function () {
+sap.ui.require([
+	"sap/m/WizardStep"
+], function (WizardStep) {
 	"use strict";
 
 	QUnit.module("WizardStep API", {
 		beforeEach: function () {
-			this.wizardStep = new sap.m.WizardStep();
+			this.wizardStep = new WizardStep();
 		},
 		afterEach: function () {
 			this.wizardStep.destroy();
 			this.wizardStep = null;
 		},
 		addSubSteps: function () {
-			this.wizardStep.addSubsequentStep(new sap.m.WizardStep());
-			this.wizardStep.addSubsequentStep(new sap.m.WizardStep());
+			this.wizardStep.addSubsequentStep(new WizardStep());
+			this.wizardStep.addSubsequentStep(new WizardStep());
 		}
 	});
 
@@ -63,7 +65,7 @@
 
 	QUnit.module("WizardStep Events", {
 		beforeEach: function () {
-			this.wizardStep = new sap.m.WizardStep();
+			this.wizardStep = new WizardStep();
 		},
 		afterEach: function () {
 			this.wizardStep.destroy();
@@ -88,4 +90,24 @@
 
 		assert.strictEqual(spy.calledOnce, true, "complete event is fired once");
 	});
-}());
+
+	QUnit.module("Title ID propagation");
+
+	QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(WizardStep.prototype, "_initTitlePropagationSupport"),
+			oControl;
+
+		// Act
+		oControl = new WizardStep();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _initTitlePropagationSupport called on init of control");
+		assert.ok(oSpy.calledOn(oControl), "The spy is called on the tested control instance");
+
+		// Cleanup
+		oSpy.restore();
+		oControl.destroy();
+	});
+
+});

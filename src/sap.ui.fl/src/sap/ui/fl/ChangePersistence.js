@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/core/BusyIndicator",
 	"sap/m/MessageBox",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Change,
 	Variant,
@@ -27,7 +28,8 @@ sap.ui.define([
 	VariantController,
 	BusyIndicator,
 	MessageBox,
-	JSONModel
+	JSONModel,
+	jQuery
 ) {
 	"use strict";
 
@@ -1079,7 +1081,7 @@ sap.ui.define([
 			if (key === sChangeKey) {
 				delete mDependencies[key];
 			} else if ( mDependencies[key].dependencies
-				&& jQuery.isArray(mDependencies[key].dependencies)
+				&& Array.isArray(mDependencies[key].dependencies)
 				&& mDependencies[key].dependencies.indexOf(sChangeKey) !== -1 ) {
 				mDependencies[key].dependencies.splice(mDependencies[key].dependencies.indexOf(sChangeKey), 1);
 				if (mDependencies[key].dependencies.length === 0) {
@@ -1092,7 +1094,7 @@ sap.ui.define([
 		Object.keys(mDependentChangesOnMe).forEach( function(key) {
 			if (key === sChangeKey) {
 				delete mDependentChangesOnMe[key];
-			} else if ( jQuery.isArray(mDependentChangesOnMe[key])
+			} else if ( Array.isArray(mDependentChangesOnMe[key])
 				&& mDependentChangesOnMe[key].indexOf(sChangeKey) !== -1 ) {
 				mDependentChangesOnMe[key].splice(mDependentChangesOnMe[key].indexOf(sChangeKey), 1);
 				if (mDependentChangesOnMe[key].length === 0) {

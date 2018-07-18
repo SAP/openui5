@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/PDFViewerRenderer",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/base/security/URLWhitelist"
 ],
 	function(
 		library,
@@ -21,7 +22,8 @@ sap.ui.define([
 		MessageBox,
 		PDFViewerRenderer,
 		Log,
-		assert
+		assert,
+		URLWhitelist
 	) {
 		"use strict";
 
@@ -236,11 +238,11 @@ sap.ui.define([
 					sParametrizedSource = sParametrizedSource.substr(0, iCrossPosition);
 				}
 				sParametrizedSource += "#view=FitH";
-				if (!jQuery.sap.validateUrl(sParametrizedSource)) {
+				if (!URLWhitelist.validate(sParametrizedSource)) {
 					sParametrizedSource = encodeURI(sParametrizedSource);
 				}
 
-				if (jQuery.sap.validateUrl(sParametrizedSource)) {
+				if (URLWhitelist.validate(sParametrizedSource)) {
 					oIframeElement.attr("src", sParametrizedSource);
 				} else {
 					this._fireErrorEvent();

@@ -1,26 +1,31 @@
 #content { /* Same as #qunit-fixture */
-    position: absolute;
-    top: -10000px;
-    left: -10000px;
-    width: 1000px;
-    height: 1000px;
+	position: absolute;
+	top: -10000px;
+	left: -10000px;
+	width: 1000px;
+	height: 1000px;
 }
 
 #content.visible { /* Dock it to the top right corner */
-    top: 0;
-    left: auto;
-    right: 0;
-    background-color: white;
+	top: 0;
+	left: auto;
+	right: 0;
+	background-color: white;
 }
 
 #qunit-fixture.visible { /* Dock it to the bottom left corner */
-    top: auto;
-    left: 0;
-    bottom: 0;
-    background-color: white;
+	top: auto;
+	left: 0;
+	bottom: 0;
+	background-color: white;
 }
 
 #content.visible:empty,
 #qunit-fixture.visible:empty {
 	visibility: hidden;
+}
+
+/* BCP: 1780353075 */
+[data-sap-ui-browser=ie11] #qunit-tests.hidepass li.running {
+	display: none;
 }

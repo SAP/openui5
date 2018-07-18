@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.service.ServiceFactory
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/service/Service'],
-	function(jQuery, BaseObject, Service) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/service/Service', "sap/base/assert"],
+	function(BaseObject, Service, assert) {
 	"use strict";
 
 
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/service/S
 
 			var fnService = typeof vService === "object" ? Service.create(vService) : vService;
 
-			jQuery.sap.assert(!fnService || fnService && typeof fnService === "function", "The service constructor either should be undefined or a constructor function!");
+			assert(!fnService || fnService && typeof fnService === "function", "The service constructor either should be undefined or a constructor function!");
 
 			this._fnService = fnService;
 

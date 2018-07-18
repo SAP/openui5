@@ -3,8 +3,13 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, SimpleType, FormatException, ParseException, ValidateException) {
+sap.ui.define([
+	'sap/ui/model/SimpleType',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException'
+],
+	function(SimpleType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 

@@ -498,10 +498,13 @@
 
 	QUnit.test("No navigation object specified", function(assert) {
 
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		var iErrorCount = 0,
 			sErrorMessage = "";
 
-		this.stub(jQuery.sap.log, "error", function(sMsg) {
+		this.stub(Log, "error", function(sMsg) {
 			iErrorCount++;
 			sErrorMessage = sMsg;
 		});
@@ -514,10 +517,13 @@
 
 	QUnit.test("Tried filtering", function(assert) {
 
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		var iWarningCount = 0,
 			sMessage = "";
 
-		this.stub(jQuery.sap.log, "warning", function(sMsg) {
+		this.stub(Log, "warning", function(sMsg) {
 			iWarningCount++;
 			sMessage = sMsg;
 		});
@@ -874,10 +880,13 @@
 
 	QUnit.test("Tried filtering", function(assert) {
 
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		var iWarningCount = 0,
 			sMessage = "";
 
-		this.stub(jQuery.sap.log, "warning", function(sMsg) {
+		this.stub(Log, "warning", function(sMsg) {
 			iWarningCount++;
 			sMessage = sMsg;
 		});

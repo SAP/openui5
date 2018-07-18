@@ -11,12 +11,6 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 	 */
 	var DateTimePickerRenderer = Renderer.extend(DatePickerRenderer);
 
-	DateTimePickerRenderer._getIcon = function() {
-
-		return "sap-icon://date-time";
-
-	};
-
 	DateTimePickerRenderer.getDescribedByAnnouncement = function(oDP) {
 
 		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);

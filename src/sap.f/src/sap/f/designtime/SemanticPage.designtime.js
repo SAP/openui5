@@ -35,6 +35,22 @@ sap.ui.define([],
 						return fnShouldIgnoreSingleAggregation(oControl, "getTitleHeading");
 					}
 				},
+				titleSnappedHeading : {
+					domRef : function (oControl) {
+						return oControl.getTitleHeading().getDomRef();
+					},
+					ignore : function (oControl) {
+						return fnShouldIgnoreSingleAggregation(oControl, "getTitleSnappedHeading");
+					}
+				},
+				titleExpandedHeading : {
+					domRef : function (oControl) {
+						return oControl.getTitleHeading().getDomRef();
+					},
+					ignore : function (oControl) {
+						return fnShouldIgnoreSingleAggregation(oControl, "getTitleExpandedHeading");
+					}
+				},
 				titleBreadcrumbs : {
 					domRef : function (oControl) {
 						return oControl.getTitleBreadcrumbs().getDomRef();

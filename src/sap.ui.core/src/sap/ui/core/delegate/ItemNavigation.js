@@ -10,12 +10,14 @@
 
 // Provides class sap.ui.core.delegate.ItemNavigation
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/EventProvider',
+	"sap/base/assert",
+	"sap/base/Log",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapFocusable"
 ],
-	function(jQuery, EventProvider, containsOrEquals, KeyCodes) {
+	function(EventProvider, assert, Log, containsOrEquals, KeyCodes) {
 	"use strict";
 	/* eslint-disable no-lonely-if */
 
@@ -301,7 +303,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ItemNavigation.prototype.setItemDomRefs = function(aItemDomRefs) {
-		jQuery.sap.assert(typeof aItemDomRefs === "object" && typeof aItemDomRefs.length === "number", "aItemDomRefs must be an array of DOM elements");
+		assert(typeof aItemDomRefs === "object" && typeof aItemDomRefs.length === "number", "aItemDomRefs must be an array of DOM elements");
 		this.aItemDomRefs = aItemDomRefs;
 
 		if (this.iFocusedIndex > aItemDomRefs.length - 1) {
@@ -520,7 +522,7 @@ sap.ui.define([
 	 */
 	ItemNavigation.prototype.focusItem = function(iIndex, oEvent) {
 
-		jQuery.sap.log.info("FocusItem: " + iIndex + " iFocusedIndex: " + this.iFocusedIndex, "focusItem", "ItemNavigation");
+		Log.info("FocusItem: " + iIndex + " iFocusedIndex: " + this.iFocusedIndex, "focusItem", "ItemNavigation");
 
 		if (iIndex == this.iFocusedIndex && this.aItemDomRefs[this.iFocusedIndex] == document.activeElement) {
 			this.fireEvent(ItemNavigation.Events.FocusAgain, {
@@ -570,8 +572,8 @@ sap.ui.define([
 			oItemItemNavigation._sFocusEvent = oEvent.type;
 		}
 
-		jQuery.sap.log.info("Set Focus on ID: " + this.aItemDomRefs[this.iFocusedIndex].id, "focusItem", "ItemNavigation");
-		jQuery.sap.focus(this.aItemDomRefs[this.iFocusedIndex]);
+		Log.info("Set Focus on ID: " + this.aItemDomRefs[this.iFocusedIndex].id, "focusItem", "ItemNavigation");
+		this.aItemDomRefs[this.iFocusedIndex].focus();
 
 		this.fireEvent(ItemNavigation.Events.AfterFocus, {
 			index: iIndex,

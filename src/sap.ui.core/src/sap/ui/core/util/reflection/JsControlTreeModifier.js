@@ -53,7 +53,7 @@ sap.ui.define([
 		setStashed: function (oControl, bStashed) {
 			if (oControl.setStashed) {
 				if (oControl.setVisible) {
-					oControl.setVisible(!bStashed);
+					this.setVisible(oControl, !bStashed);
 				}
 				// check if the control is stashed and bStashed is false
 				if (oControl.getStashed() === true && bStashed === false) {
@@ -128,6 +128,7 @@ sap.ui.define([
 				throw new Error("Can't create a control with duplicated id " + oSelector);
 			}
 
+			//TODO: global jquery call found
 			jQuery.sap.require(sClassName); //ensure class is there
 			var ClassObject = ObjectPath.get(sClassName);
 			var sId = this.getControlIdBySelector(oSelector, oAppComponent);

@@ -4,13 +4,13 @@
 
 // Provides class sap.ui.core.format.NumberFormat
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/Object',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	"sap/base/strings/escapeRegExp"
+	"sap/base/strings/escapeRegExp",
+	"sap/base/assert"
 ],
-	function(jQuery, BaseObject, Locale, LocaleData, escapeRegExp) {
+	function(BaseObject, Locale, LocaleData, escapeRegExp, assert) {
 	"use strict";
 
 
@@ -471,8 +471,8 @@ sap.ui.define([
 				});
 			}
 			if (oFormatOptions.emptyString !== undefined) {
-				jQuery.sap.assert(typeof oFormatOptions.emptyString !== "string", "The format option 'emptyString' can not be with type 'string'");
-				jQuery.sap.assert(oFormatOptions.emptyString === 0 || oFormatOptions.emptyString === null || /* check if it's NaN (only NaN doesn't equal to itself) */ oFormatOptions.emptyString !== oFormatOptions.emptyString, "The format option 'emptyString' must be either 0, null or NaN");
+				assert(typeof oFormatOptions.emptyString !== "string", "The format option 'emptyString' can not be with type 'string'");
+				assert(oFormatOptions.emptyString === 0 || oFormatOptions.emptyString === null || /* check if it's NaN (only NaN doesn't equal to itself) */ oFormatOptions.emptyString !== oFormatOptions.emptyString, "The format option 'emptyString' must be either 0, null or NaN");
 			}
 		}
 
@@ -641,6 +641,8 @@ sap.ui.define([
 			iDotPos = -1,
 			oOptions = jQuery.extend({}, this.oFormatOptions),
 			oOrigOptions = this.oOriginalFormatOptions,
+			bIndianCurrency = oOptions.type === mNumberType.CURRENCY && sMeasure === "INR" &&
+				this.oLocale.getLanguage() === "en" && this.oLocale.getRegion() === "IN",
 			aPatternParts,
 			oShortFormat,
 			nShortRefNumber,
@@ -676,7 +678,7 @@ sap.ui.define([
 
 		if (oOptions.shortLimit === undefined || Math.abs(vValue) >= oOptions.shortLimit) {
 			nShortRefNumber = oOptions.shortRefNumber === undefined ? vValue : oOptions.shortRefNumber;
-			oShortFormat = getShortenedFormat(nShortRefNumber, oOptions, this.oLocaleData);
+			oShortFormat = getShortenedFormat(nShortRefNumber, oOptions, this.oLocaleData, bIndianCurrency);
 			if (oShortFormat && oShortFormat.formatString != "0") {
 				vValue = vValue / oShortFormat.magnitude;
 				// If shortDecimals is defined, override the fractionDigits
@@ -783,16 +785,35 @@ sap.ui.define([
 		iLength = sIntegerPart.length;
 
 		if (oOptions.groupingEnabled) {
-			iGroupSize = oOptions.groupingSize;
-			iBaseGroupSize = oOptions.groupingBaseSize || iGroupSize;
-			iPosition = Math.max(iLength - iBaseGroupSize, 0) % iGroupSize || iGroupSize;
-			sGroupedIntegerPart = sIntegerPart.substr(0, iPosition);
-			while (iLength - iPosition >= iBaseGroupSize) {
-				sGroupedIntegerPart += oOptions.groupingSeparator;
-				sGroupedIntegerPart += sIntegerPart.substr(iPosition, iGroupSize);
-				iPosition += iGroupSize;
+			// Speical grouping for lakh crore/crore crore in India
+			if (bIndianCurrency) {
+				var aGroups = [3, 2, 2], iCurGroupSize, iIndex = 0;
+				iPosition = sIntegerPart.length;
+				while (iPosition > 0) {
+					iCurGroupSize = aGroups[iIndex % 3];
+					iPosition -= iCurGroupSize;
+					if (iIndex > 0) {
+						sGroupedIntegerPart = oOptions.groupingSeparator + sGroupedIntegerPart;
+					}
+					if (iPosition < 0) {
+						iCurGroupSize += iPosition;
+						iPosition = 0;
+					}
+					sGroupedIntegerPart = sIntegerPart.substr(iPosition, iCurGroupSize) + sGroupedIntegerPart;
+					iIndex++;
+				}
+			} else {
+				iGroupSize = oOptions.groupingSize;
+				iBaseGroupSize = oOptions.groupingBaseSize || iGroupSize;
+				iPosition = Math.max(iLength - iBaseGroupSize, 0) % iGroupSize || iGroupSize;
+				sGroupedIntegerPart = sIntegerPart.substr(0, iPosition);
+				while (iLength - iPosition >= iBaseGroupSize) {
+					sGroupedIntegerPart += oOptions.groupingSeparator;
+					sGroupedIntegerPart += sIntegerPart.substr(iPosition, iGroupSize);
+					iPosition += iGroupSize;
+				}
+				sGroupedIntegerPart += sIntegerPart.substr(iPosition);
 			}
-			sGroupedIntegerPart += sIntegerPart.substr(iPosition);
 		} else {
 			sGroupedIntegerPart = sIntegerPart;
 		}
@@ -823,7 +844,11 @@ sap.ui.define([
 			if (oShortFormat && oShortFormat.formatString && oOptions.showScale) {
 				// Get correct format string based on actual decimal/fraction digits
 				sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
-				sPattern = this.oLocaleData.getCurrencyFormat("short", oShortFormat.key, sPluralCategory);
+				if (bIndianCurrency) {
+					sPattern = getIndianCurrencyFormat("short", oShortFormat.key, sPluralCategory);
+				} else {
+					sPattern = this.oLocaleData.getCurrencyFormat("short", oShortFormat.key, sPluralCategory);
+				}
 				//formatString may contain '.' (quoted to differentiate them decimal separator)
 				//which must be replaced with .
 				sPattern = sPattern.replace(/'.'/g, ".");
@@ -862,12 +887,12 @@ sap.ui.define([
 		if (oOptions.showMeasure && oOptions.type === mNumberType.UNIT) {
 
 			sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
-			jQuery.sap.assert(sPluralCategory, "Cannot find plural category for " + (sIntegerPart + "." + sFractionPart));
+			assert(sPluralCategory, "Cannot find plural category for " + (sIntegerPart + "." + sFractionPart));
 
 			// a list of allowed unit types is given, so we check if the given measure is ok
 			var bUnitTypeAllowed = !oOptions.allowedUnits || oOptions.allowedUnits.indexOf(sMeasure) >= 0;
 			if (!bUnitTypeAllowed) {
-				jQuery.sap.assert(bUnitTypeAllowed, "The given unit '" + sMeasure + "' is not part of the allowed unit types: [" + oOptions.allowedUnits.join(",") + "].");
+				assert(bUnitTypeAllowed, "The given unit '" + sMeasure + "' is not part of the allowed unit types: [" + oOptions.allowedUnits.join(",") + "].");
 				return "";
 			}
 
@@ -877,13 +902,13 @@ sap.ui.define([
 				if (!sPattern) {
 					sPattern = mUnitPatterns["unitPattern-count-other"];
 				}
-				jQuery.sap.assert(sPattern, "Cannot find pattern 'unitPattern-count-" + sPluralCategory + "' in '" + sMeasure + "'");
+				assert(sPattern, "Cannot find pattern 'unitPattern-count-" + sPluralCategory + "' in '" + sMeasure + "'");
 				if (!sPattern) {
 					return "";
 				}
 				sResult = sPattern.replace("{0}", sResult);
 			} else {
-				jQuery.sap.assert(mUnitPatterns, "Unit '" + sMeasure + "' is unknown");
+				assert(mUnitPatterns, "Unit '" + sMeasure + "' is unknown");
 				return "";
 			}
 		}
@@ -975,6 +1000,7 @@ sap.ui.define([
 			oGroupingRegExp = new RegExp(sGroupingSeparator, "g"),
 			oDecimalRegExp = new RegExp(sDecimalSeparator, "g"),
 			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
+			bIndianCurrency = oOptions.type === mNumberType.CURRENCY && this.oLocale.getLanguage() === "en" && this.oLocale.getRegion() === "IN",
 			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sMeasure, sPercentPattern,
 			vResult = 0,
 			oShort, vEmptyParseValue;
@@ -1010,7 +1036,7 @@ sap.ui.define([
 			} else {
 				mUnitPatterns = this.oLocaleData.getUnitFormats();
 			}
-			jQuery.sap.assert(mUnitPatterns, "Unit patterns cannot be loaded");
+			assert(mUnitPatterns, "Unit patterns cannot be loaded");
 
 			// filter using allowedUnits option
 			if (oOptions.allowedUnits) {
@@ -1029,11 +1055,11 @@ sap.ui.define([
 				sMeasure = aUnitCode[0];
 			} else if (aUnitCode.length === 0) {
 				//unit not found
-				jQuery.sap.assert(aUnitCode.length === 1, "Cannot find unit for input: '" + (sValue) + "'");
+				assert(aUnitCode.length === 1, "Cannot find unit for input: '" + (sValue) + "'");
 				return null;
 			} else {
 				//ambiguous unit
-				jQuery.sap.assert(aUnitCode.length === 1, "Ambiguous unit [" + aUnitCode.join(", ") + "] for input: '" + (sValue) + "'");
+				assert(aUnitCode.length === 1, "Ambiguous unit [" + aUnitCode.join(", ") + "] for input: '" + (sValue) + "'");
 				sMeasure = undefined;
 			}
 
@@ -1045,13 +1071,13 @@ sap.ui.define([
 		// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
 		sValue = sValue.replace(/\s/g, "");
 
-		oShort = getNumberFromShortened(sValue, this.oFormatOptions.style, this.oLocaleData);
-
-		// Check for valid syntax
+		oShort = getNumberFromShortened(sValue, this.oLocaleData, bIndianCurrency);
 		if (oShort) {
 			sValue = oShort.number;
-			oRegExp = new RegExp(sRegExpFloat);
-		} else if (oOptions.isInteger) {
+		}
+
+		// Check for valid syntax
+		if (oOptions.isInteger && !oShort) {
 			oRegExp = new RegExp(sRegExpInt);
 		} else if (oOptions.type === mNumberType.CURRENCY) {
 			sRegExpCurrencyMeasure = "[^\\d\\s+-]*";
@@ -1224,7 +1250,7 @@ sap.ui.define([
 
 			return +(aExpParts[0] + "e" + iStep);
 		} else if (typeof vValue === "string") {
-			if (parseInt(vValue, 10) === 0 && iStep >= 0) {
+			if (parseFloat(vValue) === 0 && iStep >= 0) {
 				return vValue;
 			}
 
@@ -1274,8 +1300,8 @@ sap.ui.define([
 		}
 	};
 
-	function getShortenedFormat(fValue, oOptions, oLocaleData) {
-		var oShortFormat, iKey, sKey,
+	function getShortenedFormat(fValue, oOptions, oLocaleData, bIndianCurrency) {
+		var oShortFormat, iKey, sKey, sCldrFormat,
 			sStyle = oOptions.style,
 			iPrecision = oOptions.precision !== undefined ? oOptions.precision : 2;
 
@@ -1283,7 +1309,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		for (var i = 0; i < 14; i++) {
+		for (var i = 0; i < 15; i++) {
 			iKey = Math.pow(10, i);
 			if (rounding(Math.abs(fValue) / iKey, iPrecision - 1) < 10) {
 				break;
@@ -1293,7 +1319,11 @@ sap.ui.define([
 
 		// Use "other" format to find the right magnitude, the actual format will be retrieved later
 		// after the value has been calculated
-		var sCldrFormat = oLocaleData.getDecimalFormat(sStyle, sKey, "other");
+		if (bIndianCurrency) {
+			sCldrFormat = getIndianCurrencyFormat(sStyle, sKey, "other", true);
+		} else {
+			sCldrFormat = oLocaleData.getDecimalFormat(sStyle, sKey, "other");
+		}
 
 		if (!sCldrFormat || sCldrFormat == "0") {
 			//no format or special "0" format => number doesn't need to be shortified
@@ -1329,10 +1359,7 @@ sap.ui.define([
 
 	}
 
-	function getNumberFromShortened(sValue, sStyle, oLocaleData) {
-		if (sStyle != "short" && sStyle != "long") {
-			return;
-		}
+	function getNumberFromShortened(sValue, oLocaleData, bIndianCurrency) {
 		var sNumber,
 			iFactor = 1,
 			iKey = 10,
@@ -1340,8 +1367,12 @@ sap.ui.define([
 			sCldrFormat,
 			bestResult = {number: undefined,
 				factor: iFactor},
-			fnGetFactor = function(sPlural, iKey) {
-				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
+			fnGetFactor = function(sPlural, iKey, sStyle, bIndian) {
+				if (bIndian) {
+					sCldrFormat = getIndianCurrencyFormat(sStyle, iKey.toString(), sPlural, true);
+				} else {
+					sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
+				}
 
 				if (sCldrFormat) {
 					// Note: CLDR uses a non-breaking space in the format string
@@ -1386,13 +1417,27 @@ sap.ui.define([
 		// find best result as format can have multiple matches:
 		// * value can be contained one in another (de-DE): "Million" and "Millionen"
 		// * end with each other (es-ES): "mil millones" and "millones"
-		while (iKey < 1e14) {
-			for (var i = 0; i < aPluralCategories.length; i++) {
-				var sPluralCategory = aPluralCategories[i];
-				fnGetFactor(sPluralCategory, iKey);
+		["long", "short"].forEach(function(sStyle) {
+			iKey = 10;
+			while (iKey < 1e15) {
+				for (var i = 0; i < aPluralCategories.length; i++) {
+					var sPluralCategory = aPluralCategories[i];
+					fnGetFactor(sPluralCategory, iKey, sStyle);
+				}
+				iKey = iKey * 10;
 			}
+		});
 
-			iKey = iKey * 10;
+		// For india currencies try lakhs/crores
+		if (bIndianCurrency && !sNumber) {
+			iKey = 10;
+			while (iKey < 1e15) {
+				for (var i = 0; i < aPluralCategories.length; i++) {
+					var sPluralCategory = aPluralCategories[i];
+					fnGetFactor(sPluralCategory, iKey, "short", true);
+				}
+				iKey = iKey * 10;
+			}
 		}
 
 		if (!sNumber) {
@@ -1401,6 +1446,47 @@ sap.ui.define([
 
 		return bestResult;
 
+	}
+
+	function getIndianCurrencyFormat(sStyle, sKey, sPlural, bDecimal) {
+		var sFormat,
+			oFormats = {
+				"short": {
+					"1000-one": "¤0000",
+					"1000-other": "¤0000",
+					"10000-one": "¤00000",
+					"10000-other": "¤00000",
+					"100000-one": "¤0 Lk",
+					"100000-other": "¤0 Lk",
+					"1000000-one": "¤00 Lk",
+					"1000000-other": "¤00 Lk",
+					"10000000-one": "¤0 Cr",
+					"10000000-other": "¤0 Cr",
+					"100000000-one": "¤00 Cr",
+					"100000000-other": "¤00 Cr",
+					"1000000000-one": "¤000 Cr",
+					"1000000000-other": "¤000 Cr",
+					"10000000000-one": "¤0000 Cr",
+					"10000000000-other": "¤0000 Cr",
+					"100000000000-one": "¤00000 Cr",
+					"100000000000-other": "¤00000 Cr",
+					"1000000000000-one": "¤0 Lk Cr",
+					"1000000000000-other": "¤0 Lk Cr",
+					"10000000000000-one": "¤00 Lk Cr",
+					"10000000000000-other": "¤00 Lk Cr",
+					"100000000000000-one": "¤0 Cr Cr",
+					"100000000000000-other": "¤0 Cr Cr"
+				}
+			};
+		sStyle = "short";
+		if (sPlural !== "one") {
+			sPlural = "other";
+		}
+		sFormat = oFormats[sStyle][sKey + "-" + sPlural];
+		if (sFormat && bDecimal) {
+			sFormat = sFormat.substr(1);
+		}
+		return sFormat;
 	}
 
 	function rounding(fValue, iMaxFractionDigits, sRoundingMode) {

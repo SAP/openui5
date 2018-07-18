@@ -13,9 +13,7 @@
             <ObjectPageLayout enableLazyLoading="false"
                               showAnchorBarPopover="true"
                               upperCaseAnchorBar="false"
-                              sections="{path : 'deprecatedAPIs>/',
-                                         sorter : {path : 'name',
-                                                   comparator : '.compareVersions'} }">
+                              sections="{deprecatedAPIs>/}">
                 <headerTitle>
                     <ObjectPageHeader id="title" objectTitle="Index of Deprecated APIs"/>
                 </headerTitle>

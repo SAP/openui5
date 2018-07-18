@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/library',
 	'sap/ui/base/EventProvider',
 	'./HashChanger',
@@ -13,10 +12,10 @@ sap.ui.define([
 	'./History',
 	'sap/ui/thirdparty/crossroads',
 	"sap/base/util/UriParameters",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/Log"
 ],
 	function(
-		jQuery,
 		library,
 		EventProvider,
 		HashChanger,
@@ -26,7 +25,8 @@ sap.ui.define([
 		History,
 		crossroads,
 		UriParameters,
-		deepEqual
+		deepEqual,
+		Log
 	) {
 	"use strict";
 
@@ -200,7 +200,7 @@ sap.ui.define([
 				// temporarily: for checking the url param
 				function checkUrl() {
 					if (new UriParameters(window.location.href).get("sap-ui-xx-asyncRouting") === "true") {
-						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Router");
+						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Router");
 						return true;
 					}
 					return false;
@@ -257,11 +257,11 @@ sap.ui.define([
 			 */
 			addRoute : function (oConfig, oParent) {
 				if (!oConfig.name) {
-					jQuery.sap.log.error("A name has to be specified for every route", this);
+					Log.error("A name has to be specified for every route", this);
 				}
 
 				if (this._oRoutes[oConfig.name]) {
-					jQuery.sap.log.error("Route with name " + oConfig.name + " already exists", this);
+					Log.error("Route with name " + oConfig.name + " already exists", this);
 				}
 				this._oRoutes[oConfig.name] = this._createRoute(this, oConfig, oParent);
 			},
@@ -276,7 +276,7 @@ sap.ui.define([
 				if (this._oRouter) {
 					this._oRouter.parse(sNewHash);
 				} else {
-					jQuery.sap.log.warning("This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.", this);
+					Log.warning("This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.", this);
 				}
 			},
 
@@ -292,7 +292,7 @@ sap.ui.define([
 					oHashChanger = this.oHashChanger = HashChanger.getInstance();
 
 				if (this._bIsInitialized) {
-					jQuery.sap.log.warning("Router is already initialized.", this);
+					Log.warning("Router is already initialized.", this);
 					return this;
 				}
 
@@ -307,7 +307,7 @@ sap.ui.define([
 				};
 
 				if (!oHashChanger) {
-					jQuery.sap.log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.", this);
+					Log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.", this);
 					return;
 				}
 
@@ -366,7 +366,7 @@ sap.ui.define([
 			 */
 			stop : function () {
 				if (!this._bIsInitialized) {
-					jQuery.sap.log.warning("Router is not initialized. But it got stopped", this);
+					Log.warning("Router is not initialized. But it got stopped", this);
 				}
 
 				if (this.fnHashChanged) {
@@ -394,7 +394,7 @@ sap.ui.define([
 				EventProvider.prototype.destroy.apply(this);
 
 				if (!this._bIsInitialized) {
-					jQuery.sap.log.info("Router is not initialized, but got destroyed.", this);
+					Log.info("Router is not initialized, but got destroyed.", this);
 				}
 
 				if (this.fnHashChanged) {
@@ -441,7 +441,7 @@ sap.ui.define([
 
 				var oRoute = this.getRoute(sName);
 				if (!oRoute) {
-					jQuery.sap.log.warning("Route with name " + sName + " does not exist", this);
+					Log.warning("Route with name " + sName + " does not exist", this);
 					return;
 				}
 				return oRoute.getURL(oParameters);
@@ -539,7 +539,7 @@ sap.ui.define([
 				var sURL = this.getURL(sName, oParameters);
 
 				if (sURL === undefined) {
-					jQuery.sap.log.error("Can not navigate to route with name " + sName + " because the route does not exist");
+					Log.error("Can not navigate to route with name " + sName + " because the route does not exist");
 				}
 
 				if (bReplace) {
@@ -1069,7 +1069,7 @@ sap.ui.define([
 					title: sAppTitle
 				};
 			} else {
-				jQuery.sap.log.error("Routes with dynamic parts cannot be resolved as home route.");
+				Log.error("Routes with dynamic parts cannot be resolved as home route.");
 			}
 		}
 

@@ -27,16 +27,8 @@ function(
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0));
 			//TODO: Remove when bug in Chrome and Safari is fixed
 			var iExpectedOffsetLeft = (Device.browser.webkit || Device.browser.blink) ? -47 : -35;
-			if (!Device.browser.phantomJS){
-				assert.strictEqual(
-					mOffset.left,
-					iExpectedOffsetLeft,
-					"the left offset is correct");
-			}
-			assert.strictEqual(
-				mOffset.top,
-				40,
-				"the top offset is correct");
+			assert.strictEqual(mOffset.left, iExpectedOffsetLeft, "the left offset is correct");
+			assert.strictEqual(mOffset.top, 40, "the top offset is correct");
 		});
 
 		QUnit.test("when getOffsetFromParent is called for the content after scrolling on the container", function(assert) {
@@ -57,16 +49,8 @@ function(
 			this.oContainer.scrollLeft(iScrollValue);
 			this.oContainer.scrollTop(60);
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, oContainerDomRef);
-			if (!Device.browser.phantomJS){
-				assert.strictEqual(
-					mOffset.left,
-					iExpectedOffsetLeft,
-					"the left offset is correct");
-			}
-			assert.strictEqual(
-				mOffset.top,
-				100,
-				"the top offset is correct");
+			assert.strictEqual(mOffset.left, iExpectedOffsetLeft, "the left offset is correct");
+			assert.strictEqual(mOffset.top, 100, "the top offset is correct");
 		});
 	});
 
@@ -88,17 +72,13 @@ function(
 		}
 	}, function(){
 		QUnit.test("initial position", function (assert) {
-			if (!Device.browser.phantomJS){
-				assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), 0);
-			} else {
-				assert.ok(true, "PhantomJS ignored on this test");
-			}
+			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), 0);
 		});
 		QUnit.test("scrolled to the most left position", function (assert) {
 			var iMaxScrollLeftValue = this.$Panel.get(0).scrollWidth - this.$Panel.get(0).clientWidth;
 			var iScrollValue;
 
-			if (Device.browser.blink || Device.browser.phantomJS) {
+			if (Device.browser.blink) {
 				iScrollValue = 0;
 			} else if (Device.browser.msie || Device.browser.edge) {
 				iScrollValue = iMaxScrollLeftValue;
@@ -107,11 +87,7 @@ function(
 			}
 
 			this.$Panel.scrollLeft(iScrollValue);
-			if (!Device.browser.phantomJS){
-				assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), -iMaxScrollLeftValue);
-			} else {
-				assert.ok(true, "PhantomJS ignored on this test");
-			}
+			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), -iMaxScrollLeftValue);
 		});
 	});
 

@@ -3,16 +3,14 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
-	"sap/ui/thirdparty/hasher"
-], function(
-	jQuery,
-	Component,
-	BaseTreeModifier,
-	hasher
-) {
+	"sap/ui/thirdparty/hasher",
+	"sap/base/Log",
+	"sap/base/util/UriParameters",
+	"sap/base/util/uid"
+], function(jQuery, Component, BaseTreeModifier, hasher, Log, UriParameters, uid) {
 	"use strict";
 	//Stack of layers in the layered repository
 	var aLayers = [
@@ -53,13 +51,13 @@ sap.ui.define([
 		 */
 		log: {
 			error: function (sMessage, sDetails, sComponent) {
-				jQuery.sap.log.error(sMessage, sDetails, sComponent);
+				Log.error(sMessage, sDetails, sComponent);
 			},
 			warning: function (sMessage, sDetails, sComponent) {
-				jQuery.sap.log.warning(sMessage, sDetails, sComponent);
+				Log.warning(sMessage, sDetails, sComponent);
 			},
 			debug: function (sMessage, sDetails, sComponent) {
-				jQuery.sap.log.debug(sMessage, sDetails, sComponent);
+				Log.debug(sMessage, sDetails, sComponent);
 			}
 		},
 
@@ -400,7 +398,7 @@ sap.ui.define([
 
 		_getStartUpParameter: function (oComponentData, sParameterName) {
 			if (oComponentData && oComponentData.startupParameters && sParameterName) {
-				if (jQuery.isArray(oComponentData.startupParameters[sParameterName])) {
+				if (Array.isArray(oComponentData.startupParameters[sParameterName])) {
 					return oComponentData.startupParameters[sParameterName][0];
 				}
 			}
@@ -692,7 +690,7 @@ sap.ui.define([
 		},
 
 		_getUriParameters: function () {
-			return jQuery.sap.getUriParameters();
+			return new UriParameters(window.location.href);
 		},
 		/**
 		 * Returns whether the hot fix mode is active (url parameter hotfix=true)
@@ -912,7 +910,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getUrlParameter: function (sParameterName) {
-			return jQuery.sap.getUriParameters().get(sParameterName);
+			return new UriParameters(window.location.href).get(sParameterName);
 		},
 
 		/**
@@ -925,7 +923,7 @@ sap.ui.define([
 		},
 
 		createDefaultFileName: function (sNameAddition) {
-			var sFileName = jQuery.sap.uid().replace(/-/g, "_");
+			var sFileName = uid().replace(/-/g, "_");
 			if (sNameAddition) {
 				sFileName += '_' + sNameAddition;
 			}
@@ -1052,6 +1050,50 @@ sap.ui.define([
 				this.log.warning("No Manifest received.");
 			}
 			return sUri;
+		},
+
+		/**
+		 * Checks if the application version has the correct format: "major.minor.patch".
+		 *
+		 * @param {string} sVersion - Version of application
+		 * @returns {boolean} true if the format is correct, otherwise false
+		 * @public
+		 */
+		isCorrectAppVersionFormat: function (sVersion) {
+			// remove all whitespaces
+			sVersion = sVersion.replace(/\s/g, "");
+
+			// get version without snapshot
+			// we need to run the regex twice to avoid that version 1-2-3-SNAPSHOT will result in version 1.
+			var oRegexp1 = /\b\d{1,5}(.\d{1,5}){0,2}/g;
+			var oRegexp2 = /\b\d{1,5}(\.\d{1,5}){0,2}/g;
+			var nLength = sVersion.match(oRegexp1) ? sVersion.match(oRegexp1)[0].length : 0;
+			var nLenghtWithDot = sVersion.match(oRegexp2) ? sVersion.match(oRegexp2)[0].length : 0;
+
+			if (nLenghtWithDot < 1 || nLenghtWithDot != nLength){
+				return false;
+			}
+
+			//if the character after the version is also a number or a dot, it should also be a format error
+			if (nLenghtWithDot && sVersion != sVersion.substr(0,nLenghtWithDot)){
+				var cNextCharacter = sVersion.substr(nLenghtWithDot, 1);
+				var oRegexp = /^[0-9.]$/;
+				if (oRegexp.test(cNextCharacter)){
+					return false;
+				}
+			}
+
+			// split into number-parts and check if there are max. three parts
+			var aVersionParts = sVersion.substr(0,nLenghtWithDot).split(".");
+			if (aVersionParts.length > 3){
+				return false;
+			}
+
+			// 5 digits maximum per part
+			if (!aVersionParts.every(function(sPart){return sPart.length <= 5;})){
+				return false;
+			}
+			return true;
 		},
 
 		/**

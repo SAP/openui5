@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-		"jquery.sap.global",
 		"sap/ui/core/Core",
 		"sap/ui/thirdparty/URI",
 		"sap/base/util/UriParameters",
+		"sap/base/Log",
 		"jquery.sap.sjax"
-], function(jQuery, Core, URI, UriParameters) {
+], function(Core, URI, UriParameters, Log, jQuery) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.JS has been omitted deliberately. Most test files load it via
@@ -278,7 +278,7 @@ sap.ui.define([
 									+ "\r\n"
 									+ JSON.stringify(JSON.parse(aResponse[2]))
 									+ "\r\n";
-								jQuery.sap.log.info(sRequestLine,
+								Log.info(sRequestLine,
 									// log what's mocked?
 									sRealOData === "logMock" ? sResponse : null,
 									"sap.ui.test.TestUtils");
@@ -298,7 +298,7 @@ sap.ui.define([
 			}
 
 			function error(sRequestLine, iCode, sMessage) {
-				jQuery.sap.log.error(sRequestLine, sMessage, "sap.ui.test.TestUtils");
+				Log.error(sRequestLine, sMessage, "sap.ui.test.TestUtils");
 				return iCode + "\r\nContent-Type: text/plain\r\n\r\n" + sMessage + "\r\n";
 			}
 

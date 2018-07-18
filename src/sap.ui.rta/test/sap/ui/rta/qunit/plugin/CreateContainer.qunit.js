@@ -32,467 +32,472 @@ function(
 	Title,
 	sinon
 ) {
+	"use strict";
 
-		"use strict";
+	var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
 
-		QUnit.start();
+	var oMockedViewWithStableId = sap.ui.xmlview({
+		id: "mockview",
+		viewContent: viewContent
+	});
 
-		var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
-
-
-		var oMockedViewWithStableId = sap.ui.xmlview({
-			id: "mockview",
-			viewContent: viewContent
-		});
-
-		var oMockedComponent = {
-			getLocalId: function () {
-				return undefined;
-			},
-			getManifestEntry: function () {
-				return {};
-			},
-			getMetadata: function () {
-				return {
-					getName: function () {
-						return "someName";
+	var oMockedComponent = {
+		getLocalId: function () {
+			return undefined;
+		},
+		getManifestEntry: function () {
+			return {};
+		},
+		getMetadata: function () {
+			return {
+				getName: function () {
+					return "someName";
+				}
+			};
+		},
+		getManifest: function () {
+			return {
+				"sap.app" : {
+					applicationVersion : {
+						version : "1.2.3"
 					}
-				};
-			},
-			getManifest: function () {
-				return {
-					"sap.app" : {
-						applicationVersion : {
-							version : "1.2.3"
-						}
-					}
-				};
-			},
-			getModel: function () {}
-		};
+				}
+			};
+		},
+		getModel: function () {}
+	};
 
+	var sandbox = sinon.sandbox.create();
 
-		var sandbox = sinon.sandbox.create();
+	QUnit.module("Given a designTime and createContainer plugin are instantiated for a Form", {
+		beforeEach : function(assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
+			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 
-		QUnit.module("Given a designTime and createContainer plugin are instantiated for a Form", {
-			beforeEach : function(assert) {
-				sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
-				sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
-
-				var oChangeRegistry = ChangeRegistry.getInstance();
-				oChangeRegistry.registerControlsForChanges({
-					"sap.ui.layout.form.Form" : {
-						"addGroup": { completeChangeContent: function () {} }
-					}
-				});
-
-				this.oCreateContainer = new CreateContainerPlugin({
-					commandFactory : new CommandFactory()
-				});
-
-				this.oFormContainer = new FormContainer(oMockedViewWithStableId.createId("formContainer"), {
-					title: new Title({
-						text: "title"
-					})
-				});
-
-				this.oForm = new Form(oMockedViewWithStableId.createId("form"), {
-					formContainers: [this.oFormContainer],
-					layout: new FormLayout({
-					})
-				});
-
-				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content : [this.oForm]
-				}).placeAt("test-view");
-
-				sap.ui.getCore().applyChanges();
-
-				this.sNewControlID = oMockedViewWithStableId.createId(jQuery.sap.uid());
-				this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
-				this.oForm.addFormContainer(this.oNewFormContainerStub);
-
-				this.oDesignTime = new DesignTime({
-					rootElements : [this.oVerticalLayout],
-					plugins : [this.oCreateContainer]
-				});
-
-				var done = assert.async();
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-
-					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-					this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
-					this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-					this.oNewFormContainerOverlay = OverlayRegistry.getOverlay(this.oNewFormContainerStub);
-
-					done();
-				}.bind(this));
-
-			},
-			afterEach : function(assert) {
-				sandbox.restore();
-				this.oVerticalLayout.destroy();
-				this.oDesignTime.destroy();
-			}
-		}, function(){
-			QUnit.test("when an overlay has no createContainer action designTime metadata", function(assert) {
-				this.oFormOverlay.setDesignTimeMetadata({});
-				this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), false, "then isAvailable is called and it returns false");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), false, "then isEnabled is called and it returns false");
-				assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.registerControlsForChanges({
+				"sap.ui.layout.form.Form" : {
+					"addGroup": { completeChangeContent: function () {} }
+				}
 			});
 
-			QUnit.test("when an overlay has createContainer action designTime metadata, but has no isEnabled property defined", function(assert) {
-				this.oFormOverlay.setDesignTimeMetadata({
-					aggregations : {
-						formContainers : {
-							actions : {
-								createContainer : {
-									changeType : "addGroup"
-								}
-							}
-						}
-					}
-				});
-				this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), true, "then isAvailable is called and it returns true");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called and it returns true");
-				assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), true, "then the overlay is editable");
+			this.oCreateContainer = new CreateContainerPlugin({
+				commandFactory : new CommandFactory()
 			});
 
-			QUnit.test("when an overlay has createContainer action designTime metadata, has no changeType and isEnabled property is true", function(assert) {
-				this.oFormOverlay.setDesignTimeMetadata({
-					aggregations : {
-						formContainers : {
-							actions : {
-								createContainer : {
-									isEnabled : true
-								}
-							}
-						}
-					}
-				});
-				this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), false, "then isAvailable is called and then it returns false");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called and then it returns correct value");
-				assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
+			this.oFormContainer = new FormContainer(oMockedViewWithStableId.createId("formContainer"), {
+				title: new Title({
+					text: "title"
+				})
 			});
 
-			QUnit.test("when an overlay has createContainer action designTime metadata, and isEnabled property is function", function(assert) {
-				this.oFormOverlay.setDesignTimeMetadata({
-					aggregations : {
-						formContainers : {
-							actions : {
-								createContainer : {
-									changeType : "addGroup",
-									isEnabled : function (oElement) {
-										return oElement.getMetadata().getName() === "sap.ui.layout.form.Form";
-									}
-								}
-							}
-						}
-					}
-				});
-				this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), true, "then isAvailable is called and it returns true");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called and it returns correct value from function call");
-				assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), true, "then the overlay is editable");
-
-				var bCheckValue = true;
-				var bFirstCall = true;
-				var bIsAvailable = true;
-				sandbox.stub(this.oCreateContainer, "isAvailable").callsFake(function(bOverlayIsSibling, oOverlay){
-					assert.equal(bOverlayIsSibling, bFirstCall, "the 'available' function calls isAvailable with bOverlayIsSibling = " + bFirstCall);
-					assert.deepEqual(oOverlay, this.oFormOverlay, "the 'available' function calls isAvailable with the correct overlay");
-					bFirstCall = false;
-					return bIsAvailable;
-				}.bind(this));
-				sandbox.stub(this.oCreateContainer, "handleCreate").callsFake(function(bOverlayIsSibling, oOverlay){
-					assert.equal(bOverlayIsSibling, bCheckValue, "the 'handleCreate' function is called with bOverlayIsSibling = " + bCheckValue);
-					assert.deepEqual(oOverlay, this.oFormOverlay, "the 'handleCreate' function is called with the correct overlay");
-				}.bind(this));
-				sandbox.stub(this.oCreateContainer, "isEnabled").callsFake(function(bOverlayIsSibling, oOverlay){
-					assert.equal(bOverlayIsSibling, bCheckValue, "the 'enabled' function calls isEnabled with bOverlayIsSibling = " + bCheckValue);
-					assert.deepEqual(oOverlay, this.oFormOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
-				}.bind(this));
-
-				var aMenuItems = this.oCreateContainer.getMenuItems(this.oFormOverlay);
-
-				assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_CONTAINER", "there is an entry for create sibling container");
-				aMenuItems[0].handler([this.oFormOverlay]);
-				aMenuItems[0].enabled(this.oFormOverlay);
-				bCheckValue = false;
-				assert.equal(aMenuItems[1].id, "CTX_CREATE_CHILD_CONTAINER", "there is an entry for create child container");
-				aMenuItems[1].handler([this.oFormOverlay]);
-				aMenuItems[1].enabled(this.oFormOverlay);
-
-				bIsAvailable = false;
-				bFirstCall = true;
-				assert.equal(this.oCreateContainer.getMenuItems(this.oFormOverlay).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
+			this.oForm = new Form(oMockedViewWithStableId.createId("form"), {
+				formContainers: [this.oFormContainer],
+				layout: new FormLayout({
+				})
 			});
 
-			QUnit.test("when an overlay has createContainer action, but its view has no stable id", function(assert) {
-				var oViewWithUnstableId = sap.ui.xmlview({
-					viewContent: viewContent
-				});
-				Utils.getViewForControl.restore();
-				sandbox.stub(Utils, "getViewForControl").returns(oViewWithUnstableId);
+			this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
+				content : [this.oForm]
+			}).placeAt("qunit-fixture");
 
-				this.oFormOverlay.setDesignTimeMetadata({
-					aggregations : {
-						formContainers : {
-							actions : {
-								createContainer : {
-									changeType : "addGroup"
-								}
-							}
-						}
-					}
-				});
-				this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+			sap.ui.getCore().applyChanges();
 
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), false, "then isAvailable is called and it returns false");
-				assert.strictEqual(this.oCreateContainer.isEnabled(true, this.oFormOverlay), false, "then isEnabled is called and it returns true");
-				assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
+			this.sNewControlID = oMockedViewWithStableId.createId(jQuery.sap.uid());
+			this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
+			this.oForm.addFormContainer(this.oNewFormContainerStub);
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oVerticalLayout],
+				plugins : [this.oCreateContainer]
 			});
 
-			QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
-				assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create Group", "then the correct message key is returned");
-			});
+			var done = assert.async();
 
-			QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
-				var vAction = {
-					getIndex : function(oForm, oFormContainer) {
-						var sAggregationName = vAction.aggregationName;
-						var oMetadata = oForm.getMetadata();
-						var oAggregation = oMetadata.getAggregation(sAggregationName);
-						var sGetter = oAggregation._sGetter;
-						var aContainers = oForm[sGetter]();
-						var iIndex;
-						if (oFormContainer) {
-							iIndex = aContainers.indexOf(oFormContainer) + 1;
-						} else {
-							iIndex = aContainers.length;
-						}
-						return iIndex;
-					}
-				};
+			this.oDesignTime.attachEventOnce("synced", function() {
 
-				assert.deepEqual(this.oCreateContainer._determineIndex(this.oForm, undefined, vAction.aggregationName, vAction.getIndex), 2, "then the correct index of the new added group is returned from the function call");
-			});
-
-			QUnit.test("when the designTimeMetadata has no getContainerIndex property given and a function _determineIndex() is called", function(assert) {
-				var vAction = {
-					changeType : "addGroup"
-				};
-
-				assert.deepEqual(this.oCreateContainer._determineIndex(this.oForm, undefined, vAction.aggregationName, undefined), 2, "then the default index calculation would start and returns the right index");
-			});
-
-			QUnit.test("when the designTimeMetadata has a getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
-				var vAction = {
-					getCreatedContainerId : function(sNewControlID) {
-						return sNewControlID;
-					}
-				};
-
-				assert.deepEqual(this.oCreateContainer.getCreatedContainerId(vAction, this.sNewControlID),
-					this.oNewFormContainerOverlay.getElement().getId(),
-					"then the correct id is returned");
-			});
-
-			QUnit.test("when the designTimeMetadata has no getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
-				var vAction = {
-					changeType : "addGroup"
-				};
-
-				assert.deepEqual(this.oCreateContainer.getCreatedContainerId(vAction, this.sNewControlID),
-					this.oNewFormContainerOverlay.getElement().getId(),
-					"then the correct id is returned");
-			});
-
-			QUnit.test("when a child overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
-				var fnDone = assert.async();
-
-				this.oFormOverlay.setDesignTimeMetadata({
-					aggregations : {
-						formContainers : {
-							childNames : {
-								singular : "GROUP_CONTROL_NAME",
-								plural : "GROUP_CONTROL_NAME_PLURAL"
-							},
-							actions : {
-								createContainer :  {
-									changeType : "addGroup",
-									isEnabled : true
-								}
-							}
-						}
-					}
-				});
-				this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), true, "then isAvailable is called, then it returns true");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called, then it returns true");
-
-				this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
-					var oCommand = oEvent.getParameter("command");
-					assert.ok(oCommand, "then command is available");
-					assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
-					assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event" );
-					fnDone();
-				});
-				assert.ok(true, "then plugin createContainer is called with this overlay");
-
-				this.oCreateContainer.handleCreate(false, this.oFormOverlay);
-			});
-
-			QUnit.test("when a sibling overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
-				var fnDone = assert.async();
-
-				this.oCreateContainer.attachEventOnce("elementModified", function (oEvent) {
-					var oCommand = oEvent.getParameter("command");
-					assert.ok(oCommand, "then command is available");
-					assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
-					assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event" );
-					assert.ok(oCommand.getLabel(), "then the label is in the command");
-					assert.deepEqual(oCommand.getIndex(), 1, "then the correct index is in the command");
-					assert.deepEqual(oCommand.getParentId(), this.oForm.getId(), "then the correct parentId is in the command");
-
-					fnDone();
-				}.bind(this));
-
-				this.oFormOverlay.setDesignTimeMetadata({
-					aggregations : {
-						formContainers : {
-							childNames : {
-								singular : "GROUP_CONTROL_NAME",
-								plural : "GROUP_CONTROL_NAME_PLURAL"
-							},
-							actions : {
-								createContainer :  {
-									changeType : "addGroup"
-								}
-							}
-						}
-					}
-				});
-
-				this.oCreateContainer.deregisterElementOverlay(this.oFormContainerOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormContainerOverlay);
-
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
 				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-				assert.strictEqual(this.oCreateContainer.isAvailable(true, this.oFormContainerOverlay), true, "then isAvailable is called, then it returns true");
-				assert.strictEqual(this.oCreateContainer.isEnabled(true, this.oFormContainerOverlay), true, "then isEnabled is called, then it returns true");
+				this.oNewFormContainerOverlay = OverlayRegistry.getOverlay(this.oNewFormContainerStub);
 
-				this.oCreateContainer.handleCreate(true, this.oFormContainerOverlay);
-			});
+				done();
+			}.bind(this));
+
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oVerticalLayout.destroy();
+			this.oDesignTime.destroy();
+		}
+
+	}, function(){
+		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
+			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create: Group", "then the correct message key is returned");
 		});
 
-		QUnit.module("Given a designTime and createContainer plugin are instantiated for a SimpleForm", {
-			beforeEach : function(assert) {
-				sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
-				sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
+		QUnit.test("when an overlay has no createContainer action designTime metadata", function(assert) {
+			this.oFormOverlay.setDesignTimeMetadata({});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-				var oChangeRegistry = ChangeRegistry.getInstance();
-				oChangeRegistry.registerControlsForChanges({
-					"sap.ui.layout.form.SimpleForm" : {
-						"addSimpleFormGroup": { completeChangeContent: function () {} }
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), false, "then isAvailable is called and it returns false");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), false, "then isEnabled is called and it returns false");
+			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
+		});
+
+		QUnit.test("when an overlay has createContainer action designTime metadata, but has no isEnabled property defined", function(assert) {
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					formContainers : {
+						actions : {
+							createContainer : {
+								changeType : "addGroup"
+							}
+						}
 					}
-				});
-
-				this.oCreateContainer = new CreateContainerPlugin({
-					commandFactory : new CommandFactory()
-				});
-
-				this.oTitle = new Title(oMockedViewWithStableId.createId("title"), { text: "title" });
-
-				this.oSimpleForm = new SimpleForm(oMockedViewWithStableId.createId("form"), {
-					content: [this.oTitle]
-				});
-
-				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content : [this.oSimpleForm]
-				}).placeAt("test-view");
-
-				sap.ui.getCore().applyChanges();
-
-
-				this.oDesignTime = new DesignTime({
-					rootElements : [this.oVerticalLayout],
-					plugins : [this.oCreateContainer]
-				});
-
-				var done = assert.async();
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form"));
-					this.oGroupOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form").getFormContainers()[0]);
-					done();
-				}.bind(this));
-
-			},
-			afterEach : function(assert) {
-				sandbox.restore();
-				this.oVerticalLayout.destroy();
-				this.oDesignTime.destroy();
-			}
-		}, function(){
-			QUnit.test("when a child overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
-				var fnDone = assert.async();
-
-				this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, this.oFormOverlay), true, "then isAvailable is called, then it returns true");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, this.oFormOverlay), true, "then isEnabled is called, then it returns true");
-
-				this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
-					var oCommand = oEvent.getParameter("command");
-					assert.ok(oCommand, "then command is available");
-					assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
-					assert.strictEqual(oEvent.getParameter("action").changeType, "addSimpleFormGroup", "then the correct action is passed to the event" );
-					assert.deepEqual(oCommand.getParentId(), this.oSimpleForm.getAggregation("form").getId(), "then the correct parentId is in the command");
-					fnDone();
-				}.bind(this));
-				assert.ok(true, "then plugin createContainer is called with this overlay");
-
-				this.oCreateContainer.handleCreate(false, this.oFormOverlay);
+				}
 			});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			QUnit.test("when a sibling overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
-				var fnDone = assert.async();
-
-				this.oCreateContainer.deregisterElementOverlay(this.oGroupOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oGroupOverlay);
-
-				assert.strictEqual(this.oCreateContainer.isAvailable(true, this.oGroupOverlay), true, "then isAvailable is called, then it returns true");
-				assert.strictEqual(this.oCreateContainer.isEnabled(true, this.oGroupOverlay), true, "then isEnabled is called, then it returns true");
-
-				this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
-					var oCommand = oEvent.getParameter("command");
-					assert.ok(oCommand, "then command is available");
-					assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
-					assert.strictEqual(oEvent.getParameter("action").changeType, "addSimpleFormGroup", "then the correct action is passed to the event" );
-					assert.deepEqual(oCommand.getParentId(), this.oSimpleForm.getAggregation("form").getId(), "then the correct parentId is in the command");
-					fnDone();
-				}.bind(this));
-				assert.ok(true, "then plugin createContainer is called with this overlay");
-
-				this.oCreateContainer.handleCreate(true, this.oGroupOverlay);
-			});
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), true, "then isAvailable is called and it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called and it returns true");
+			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), true, "then the overlay is editable");
 		});
 
+		QUnit.test("when an overlay has createContainer action designTime metadata, has no changeType and isEnabled property is true", function(assert) {
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					formContainers : {
+						actions : {
+							createContainer : {
+								isEnabled : true
+							}
+						}
+					}
+				}
+			});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), false, "then isAvailable is called and then it returns false");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called and then it returns correct value");
+			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
+		});
+
+		QUnit.test("when an overlay has createContainer action designTime metadata, and isEnabled property is function", function(assert) {
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					formContainers : {
+						actions : {
+							createContainer : {
+								changeType : "addGroup",
+								isEnabled : function (oElement) {
+									return oElement.getMetadata().getName() === "sap.ui.layout.form.Form";
+								}
+							}
+						}
+					}
+				}
+			});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), true, "then isAvailable is called and it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called and it returns correct value from function call");
+			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), true, "then the overlay is editable");
+
+			var bCheckValue = true;
+			var bFirstCall = true;
+			var bIsAvailable = true;
+			sandbox.stub(this.oCreateContainer, "isAvailable").callsFake(function(bOverlayIsSibling, aElementOverlays) {
+				assert.equal(bOverlayIsSibling, bFirstCall, "the 'available' function calls isAvailable with bOverlayIsSibling = " + bFirstCall);
+				assert.deepEqual(aElementOverlays[0].getId(), this.oFormOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
+				bFirstCall = false;
+				return bIsAvailable;
+			}.bind(this));
+			sandbox.stub(this.oCreateContainer, "handleCreate").callsFake(function(bOverlayIsSibling, oElementOverlay){
+				assert.equal(bOverlayIsSibling, bCheckValue, "the 'handleCreate' function is called with bOverlayIsSibling = " + bCheckValue);
+				assert.deepEqual(oElementOverlay.getId(), this.oFormOverlay.getId(), "the 'handleCreate' function is called with the correct overlay");
+			}.bind(this));
+			sandbox.stub(this.oCreateContainer, "isEnabled").callsFake(function(bOverlayIsSibling, aElementOverlays) {
+				assert.equal(bOverlayIsSibling, bCheckValue, "the 'enabled' function calls isEnabled with bOverlayIsSibling = " + bCheckValue);
+				assert.deepEqual(aElementOverlays[0].getId(), this.oFormOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
+			}.bind(this));
+
+			var aMenuItems = this.oCreateContainer.getMenuItems([this.oFormOverlay]);
+
+			assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_CONTAINER", "there is an entry for create sibling container");
+			aMenuItems[0].handler([this.oFormOverlay]);
+			aMenuItems[0].enabled([this.oFormOverlay]);
+			bCheckValue = false;
+			assert.equal(aMenuItems[1].id, "CTX_CREATE_CHILD_CONTAINER", "there is an entry for create child container");
+			aMenuItems[1].handler([this.oFormOverlay]);
+			aMenuItems[1].enabled([this.oFormOverlay]);
+
+			bIsAvailable = false;
+			bFirstCall = true;
+			assert.equal(this.oCreateContainer.getMenuItems([this.oFormOverlay]).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
+		});
+
+		QUnit.test("when an overlay has createContainer action, but its view has no stable id", function(assert) {
+			var oViewWithUnstableId = sap.ui.xmlview({
+				viewContent: viewContent
+			});
+			Utils.getViewForControl.restore();
+			sandbox.stub(Utils, "getViewForControl").returns(oViewWithUnstableId);
+
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					formContainers : {
+						actions : {
+							createContainer : {
+								changeType : "addGroup"
+							}
+						}
+					}
+				}
+			});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), false, "then isAvailable is called and it returns false");
+			assert.strictEqual(this.oCreateContainer.isEnabled(true, [this.oFormOverlay]), false, "then isEnabled is called and it returns true");
+			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
+		});
+
+		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
+			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create: Group", "then the correct message key is returned");
+		});
+
+		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
+			var vAction = {
+				getIndex : function(oForm, oFormContainer) {
+					var sAggregationName = vAction.aggregationName;
+					var oMetadata = oForm.getMetadata();
+					var oAggregation = oMetadata.getAggregation(sAggregationName);
+					var sGetter = oAggregation._sGetter;
+					var aContainers = oForm[sGetter]();
+					var iIndex;
+					if (oFormContainer) {
+						iIndex = aContainers.indexOf(oFormContainer) + 1;
+					} else {
+						iIndex = aContainers.length;
+					}
+					return iIndex;
+				}
+			};
+
+			assert.deepEqual(this.oCreateContainer._determineIndex(this.oForm, undefined, vAction.aggregationName, vAction.getIndex), 2, "then the correct index of the new added group is returned from the function call");
+		});
+
+		QUnit.test("when the designTimeMetadata has no getContainerIndex property given and a function _determineIndex() is called", function(assert) {
+			var vAction = {
+				changeType : "addGroup"
+			};
+
+			assert.deepEqual(this.oCreateContainer._determineIndex(this.oForm, undefined, vAction.aggregationName, undefined), 2, "then the default index calculation would start and returns the right index");
+		});
+
+		QUnit.test("when the designTimeMetadata has a getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
+			var vAction = {
+				getCreatedContainerId : function(sNewControlID) {
+					return sNewControlID;
+				}
+			};
+
+			assert.deepEqual(this.oCreateContainer.getCreatedContainerId(vAction, this.sNewControlID),
+				this.oNewFormContainerOverlay.getElement().getId(),
+				"then the correct id is returned");
+		});
+
+		QUnit.test("when the designTimeMetadata has no getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
+			var vAction = {
+				changeType : "addGroup"
+			};
+
+			assert.deepEqual(this.oCreateContainer.getCreatedContainerId(vAction, this.sNewControlID),
+				this.oNewFormContainerOverlay.getElement().getId(),
+				"then the correct id is returned");
+		});
+
+		QUnit.test("when a child overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
+			var fnDone = assert.async();
+
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					formContainers : {
+						childNames : {
+							singular : "GROUP_CONTROL_NAME",
+							plural : "GROUP_CONTROL_NAME_PLURAL"
+						},
+						actions : {
+							createContainer :  {
+								changeType : "addGroup",
+								isEnabled : true
+							}
+						}
+					}
+				}
+			});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), true, "then isAvailable is called, then it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called, then it returns true");
+
+			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
+				var oCommand = oEvent.getParameter("command");
+				assert.ok(oCommand, "then command is available");
+				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
+				assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event" );
+				fnDone();
+			});
+			assert.ok(true, "then plugin createContainer is called with this overlay");
+
+			this.oCreateContainer.handleCreate(false, this.oFormOverlay);
+		});
+
+		QUnit.test("when a sibling overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
+			var fnDone = assert.async();
+
+			this.oCreateContainer.attachEventOnce("elementModified", function (oEvent) {
+				var oCommand = oEvent.getParameter("command");
+				assert.ok(oCommand, "then command is available");
+				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
+				assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event" );
+				assert.ok(oCommand.getLabel(), "then the label is in the command");
+				assert.deepEqual(oCommand.getIndex(), 1, "then the correct index is in the command");
+				assert.deepEqual(oCommand.getParentId(), this.oForm.getId(), "then the correct parentId is in the command");
+
+				fnDone();
+			}.bind(this));
+
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					formContainers : {
+						childNames : {
+							singular : "GROUP_CONTROL_NAME",
+							plural : "GROUP_CONTROL_NAME_PLURAL"
+						},
+						actions : {
+							createContainer :  {
+								changeType : "addGroup"
+							}
+						}
+					}
+				}
+			});
+
+			this.oCreateContainer.deregisterElementOverlay(this.oFormContainerOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormContainerOverlay);
+
+			this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+			assert.strictEqual(this.oCreateContainer.isAvailable(true, [this.oFormContainerOverlay]), true, "then isAvailable is called, then it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(true, [this.oFormContainerOverlay]), true, "then isEnabled is called, then it returns true");
+
+			this.oCreateContainer.handleCreate(true, this.oFormContainerOverlay);
+		});
+	});
+
+	QUnit.module("Given a designTime and createContainer plugin are instantiated for a SimpleForm", {
+		beforeEach : function(assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
+			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
+
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.registerControlsForChanges({
+				"sap.ui.layout.form.SimpleForm": {
+					"addSimpleFormGroup": { completeChangeContent: function () {} }
+				}
+			});
+
+			this.oCreateContainer = new CreateContainerPlugin({
+				commandFactory : new CommandFactory()
+			});
+
+			this.oTitle = new Title(oMockedViewWithStableId.createId("title"), { text: "title" });
+
+			this.oSimpleForm = new SimpleForm(oMockedViewWithStableId.createId("form"), {
+				content: [this.oTitle]
+			});
+
+			this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
+				content : [this.oSimpleForm]
+			}).placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oVerticalLayout],
+				plugins : [this.oCreateContainer]
+			});
+
+			var done = assert.async();
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form"));
+				this.oGroupOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form").getFormContainers()[0]);
+				done();
+			}.bind(this));
+
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oVerticalLayout.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function () {
+		QUnit.test("when a child overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
+			var fnDone = assert.async();
+
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+
+			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), true, "then isAvailable is called, then it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called, then it returns true");
+
+			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
+				var oCommand = oEvent.getParameter("command");
+				assert.ok(oCommand, "then command is available");
+				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
+				assert.strictEqual(oEvent.getParameter("action").changeType, "addSimpleFormGroup", "then the correct action is passed to the event" );
+				assert.deepEqual(oCommand.getParentId(), this.oSimpleForm.getAggregation("form").getId(), "then the correct parentId is in the command");
+				fnDone();
+			}.bind(this));
+			assert.ok(true, "then plugin createContainer is called with this overlay");
+
+			this.oCreateContainer.handleCreate(false, this.oFormOverlay);
+		});
+
+		QUnit.test("when a sibling overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
+			var fnDone = assert.async();
+
+			this.oCreateContainer.deregisterElementOverlay(this.oGroupOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oGroupOverlay);
+
+			assert.strictEqual(this.oCreateContainer.isAvailable(true, [this.oGroupOverlay]), true, "then isAvailable is called, then it returns true");
+			assert.strictEqual(this.oCreateContainer.isEnabled(true, [this.oGroupOverlay]), true, "then isEnabled is called, then it returns true");
+
+			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
+				var oCommand = oEvent.getParameter("command");
+				assert.ok(oCommand, "then command is available");
+				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
+				assert.strictEqual(oEvent.getParameter("action").changeType, "addSimpleFormGroup", "then the correct action is passed to the event" );
+				assert.deepEqual(oCommand.getParentId(), this.oSimpleForm.getAggregation("form").getId(), "then the correct parentId is in the command");
+				fnDone();
+			}.bind(this));
+			assert.ok(true, "then plugin createContainer is called with this overlay");
+
+			this.oCreateContainer.handleCreate(true, this.oGroupOverlay);
+		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
+
+	QUnit.start();
 });

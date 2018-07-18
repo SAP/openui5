@@ -3,10 +3,14 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject'
+	'sap/ui/base/ManagedObject',
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isPlainObject"
 ],
 function(
-	ManagedObject
+	ManagedObject,
+	jQuery,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -69,7 +73,7 @@ function(
 	 * @return {number} - returns task ID
 	 */
 	TaskManager.prototype.add = function (mTask) {
-		if (!jQuery.isPlainObject(mTask) || !mTask.type) {
+		if (!isPlainObject(mTask) || !mTask.type) {
 			throw new Error('Invalid task specified');
 		}
 

@@ -84,8 +84,8 @@
 
 			// check that text has been automatically updated by language switch
 			assert.equal(oText.$().text(), sExpectedTextDE, "Text rendered correctly");
-			
-			// the following assertions don't describe the contract of getStaticId, 
+
+			// the following assertions don't describe the contract of getStaticId,
 			// but rather reflect the behavior of the current implementation
 
 			var textId3 = InvisibleText.getStaticId("not.a.library", "TEXT_FROM_A_NON_EXISTING_LIBRARY");
@@ -96,16 +96,18 @@
 		});
 
 		QUnit.test("Deactivated Control APIs", function(assert) {
+			var Log = sap.ui.require("sap/base/Log");
+			assert.ok(Log, "Log module should be available");
 			var oCtrl = new InvisibleText();
-			this.spy(jQuery.sap.log, 'warning');
+			this.spy(Log, 'warning');
 			['tooltip', 'busy', 'busyIndicatorDelay', 'busyIndicatorSize', 'visible'].forEach(function(settingName) {
-				jQuery.sap.log.warning.reset();
+				Log.warning.reset();
 				var getter = 'get' + settingName.charAt(0).toUpperCase() + settingName.slice(1);
 				var setter = 'set' + settingName.charAt(0).toUpperCase() + settingName.slice(1);
 				oCtrl[getter]();
-				assert.equal(jQuery.sap.log.warning.callCount, 0, "no warning should have been issues when calling the getter");
+				assert.equal(Log.warning.callCount, 0, "no warning should have been issues when calling the getter");
 				assert.strictEqual(oCtrl[setter](null), oCtrl, "overridden setters should return this");
-				assert.ok(jQuery.sap.log.warning.calledWith(sinon.match(/not supported.*InvisibleText/)), "calling the setter should have issued a warning");
+				assert.ok(Log.warning.calledWith(sinon.match(/not supported.*InvisibleText/)), "calling the setter should have issued a warning");
 			}, this);
 		});
 

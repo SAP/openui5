@@ -4,13 +4,12 @@
 
 // Provides class sap.ui.core.support.plugins.TechInfo (TechInfo support plugin)
 sap.ui.define([
-	'jquery.sap.global',
 	'../Plugin',
 	'../Support',
 	'../ToolsAPI',
-	'jquery.sap.encoder'
+	"sap/base/security/encodeXML"
 ],
-	function(jQuery, Plugin, Support, ToolsAPI) {
+	function(Plugin, Support, ToolsAPI, encodeXML) {
 	"use strict";
 
 
@@ -289,7 +288,7 @@ sap.ui.define([
 
 
 		function encode(any) {
-			return any == null ? "" : jQuery.sap.encodeHTML(String(any));
+			return any == null ? "" : encodeXML(String(any));
 		}
 
 		function line(buffer, right, border, label, content){

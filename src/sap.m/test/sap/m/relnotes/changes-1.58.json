@@ -595,6 +595,144 @@
         "type": "FIX",
         "text": " sap.m.Tokenizer: Setting max-width doesn\u0027t rerender the control",
         "references": []
+      },
+      {
+        "id": "763c200157791337bc0d6dab99556d2ac5f3e279",
+        "type": "FEATURE",
+        "text": " OverflowToolbar: shrinking of controls is enabled",
+        "references": []
+      },
+      {
+        "id": "539ebc3b7ab19643c2dc3c7ccb455852b69d802c",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Not showing arrows in Demo App is fixed",
+        "references": []
+      },
+      {
+        "id": "755a58f73ab76a377accf0bbe94e7dfed663fdc6",
+        "type": "FIX",
+        "text": " OverflowToolbar: Additional LayoutData check is implemented",
+        "references": []
+      },
+      {
+        "id": "392ac93d1d4d9a0dfc355e12f2e85265dab5342a",
+        "type": "FIX",
+        "text": " TextArea: Counter overflowing fixed",
+        "references": []
+      },
+      {
+        "id": "6236bceb8bb5b68b345673df892d5016cbf3c1f3",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: no rounded borders between content and footer",
+        "references": []
+      },
+      {
+        "id": "fd13989db232fdda29d3ffa4437e84939b5a6d10",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: DnD cursor over overflow button was changed",
+        "references": []
+      },
+      {
+        "id": "cccad9524ff237f8351f24c526c638a4a92466ac",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Focus outline corrected in IE",
+        "references": []
+      },
+      {
+        "id": "09cc60bdb6ad8cfeaedf27846150edd19c30beb5",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: suppress rerendering of the inner controls onBeforeRendering",
+        "references": []
+      },
+      {
+        "id": "9a9ac74e355390f1c368c39fef41e33eb5bda5ac",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Support for invalidation events added",
+        "references": []
+      },
+      {
+        "id": "6b7e98c63c5db7e6218dd4e05bc71fbd10b0aa39",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: visual fix of the color in active state on mobile",
+        "references": []
+      },
+      {
+        "id": "760f7bf0e28651504bd7abbba3d45330638175aa",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Start token selection with arrow right",
+        "references": []
+      },
+      {
+        "id": "afe894e1db2a172b1828481465f67009c28c93e2",
+        "type": "FIX",
+        "text": " sap/ui/dom/getComputedStyleFix: document.body is not there yet",
+        "references": []
+      },
+      {
+        "id": "228ce8fda6fb4a3c66d0a74b3af4e1eea4e30708",
+        "type": "FIX",
+        "text": " Core: Trigger ThemeCheck when a library has been initialized",
+        "references": []
+      },
+      {
+        "id": "435071bf663424d0f44bd83f90e718853ecff29d",
+        "type": "FIX",
+        "text": " Fix aggregation forwarding issue with move in hierarchy",
+        "references": []
+      },
+      {
+        "id": "da9c98456d6f3c279884f5e529c6cf467c69d7b6",
+        "type": "FIX",
+        "text": " RangeSlider: Moving edge of a handle fixed",
+        "references": []
+      },
+      {
+        "id": "4326467b977250041b6de6c92c2e87d1b04cab63",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tab filters are now positioned correctly",
+        "references": []
+      },
+      {
+        "id": "8f6a2b7187663b6b32becf42351d6720a5e9019d",
+        "type": "FIX",
+        "text": " sap.m.Input: Exapmle is now correct",
+        "references": []
+      },
+      {
+        "id": "75ea3d5629657110fbb1a0df7e967ab5ead5393a",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Fixed navigation to details by messages with long titles",
+        "references": []
+      },
+      {
+        "id": "3931b45dc9597c8ccadad69688b40ed8d47ba6e6",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: has padding now, when IconTabBar has no data",
+        "references": []
+      },
+      {
+        "id": "d16a145c80ac1c93da7d78c32a386c4685326610",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      },
+      {
+        "id": "9575404dccf5677b306c3fd0a23798e3b089d38c",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: After reseting seelction focus is set to TableSelctDialog",
+        "references": []
+      },
+      {
+        "id": "327036ffde92d82a1278b17fe5a0c49cbf110817",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Demo for single select improved",
+        "references": []
+      },
+      {
+        "id": "c2fb57450ec1acaadbca9b37504d43fdf2a10f5b",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Tokens\u0027 visibility in small containers fixed",
+        "references": []
       }
     ]
   }

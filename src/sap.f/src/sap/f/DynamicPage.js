@@ -4,7 +4,6 @@
 
 // Provides control sap.f.DynamicPage.
 sap.ui.define([
-	"jquery.sap.global",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/ScrollBar",
@@ -12,9 +11,10 @@ sap.ui.define([
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
 	"sap/f/DynamicPageTitle",
-	"./DynamicPageRenderer"
+	"./DynamicPageRenderer",
+	"sap/base/Log",
+	"sap/ui/dom/getScrollbarSize"
 ], function(
-	jQuery,
 	library,
 	Control,
 	ScrollBar,
@@ -22,7 +22,9 @@ sap.ui.define([
 	ScrollEnablement,
 	Device,
 	DynamicPageTitle,
-	DynamicPageRenderer
+	DynamicPageRenderer,
+	Log,
+	getScrollbarSize
 ) {
 	"use strict";
 
@@ -293,6 +295,7 @@ sap.ui.define([
 		this._bExpandingWithAClick = false;
 		this._bSuppressToggleHeaderOnce = false;
 		this._headerBiggerThanAllowedHeight = false;
+		/* TODO remove after 1.62 version */
 		this._bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false;
 		this._oScrollHelper = new ScrollEnablement(this, this.getId() + "-content", {
 			horizontal: false,
@@ -324,7 +327,7 @@ sap.ui.define([
 
 		if (this._preserveHeaderStateOnScroll()) {
 			// Ensure that in this tick DP and it's aggregations are rendered
-			jQuery.sap.delayedCall(0, this, this._overridePreserveHeaderStateOnScroll);
+			setTimeout(this._overridePreserveHeaderStateOnScroll.bind(this), 0);
 		}
 
 		this._bPinned = false;
@@ -476,22 +479,22 @@ sap.ui.define([
 		if (bUseAnimations) {
 
 			if (!bShow) {
-				this._iFooterAnimationTimeout = jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
+				this._iFooterAnimationTimeout = setTimeout(function () {
 					this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
-				});
+				}.bind(this), DynamicPage.FOOTER_ANIMATION_DURATION);
 			} else {
 
 				if (this._iFooterAnimationTimeout) {
-					jQuery.sap.clearDelayedCall(this._iFooterAnimationTimeout);
+					clearTimeout(this._iFooterAnimationTimeout);
 					this._iFooterAnimationTimeout = null;
 				}
 
 				this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
 			}
 
-			jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
+			setTimeout(function () {
 				oFooter.removeStyleClass("sapFDynamicPageActualFooterControlShow");
-			});
+			}, DynamicPage.FOOTER_ANIMATION_DURATION);
 		}
 
 		this._updateScrollBar();
@@ -542,11 +545,11 @@ sap.ui.define([
 		var oDynamicPageTitle = this.getTitle();
 
 		if (this._bPinned && !bUserInteraction) {
-		   jQuery.sap.log.debug("DynamicPage :: aborted snapping, header is pinned", this);
+		   Log.debug("DynamicPage :: aborted snapping, header is pinned", this);
 		   return;
 		}
 
-		jQuery.sap.log.debug("DynamicPage :: snapped header", this);
+		Log.debug("DynamicPage :: snapped header", this);
 
 		if (this._bPinned && bUserInteraction) {
 			this._unPin();
@@ -563,7 +566,7 @@ sap.ui.define([
 		}
 
 		if (!exists(this.$titleArea)) {
-			jQuery.sap.log.warning("DynamicPage :: couldn't snap header. There's no title.", this);
+			Log.warning("DynamicPage :: couldn't snap header. There's no title.", this);
 			return;
 		}
 
@@ -587,7 +590,7 @@ sap.ui.define([
 	DynamicPage.prototype._expandHeader = function (bAppendHeaderToTitle, bUserInteraction) {
 		var oDynamicPageTitle = this.getTitle();
 
-		jQuery.sap.log.debug("DynamicPage :: expand header", this);
+		Log.debug("DynamicPage :: expand header", this);
 
 		if (exists(oDynamicPageTitle)) {
 
@@ -599,7 +602,7 @@ sap.ui.define([
 		}
 
 		if (!exists(this.$titleArea)) {
-			jQuery.sap.log.warning("DynamicPage :: couldn't expand header. There's no title.", this);
+			Log.warning("DynamicPage :: couldn't expand header. There's no title.", this);
 			return;
 		}
 
@@ -628,7 +631,7 @@ sap.ui.define([
 			oDynamicPageHeader = this.getHeader();
 
 		if (this._bPinned && !bUserInteraction) {
-			jQuery.sap.log.debug("DynamicPage :: header toggle aborted, header is pinned", this);
+			Log.debug("DynamicPage :: header toggle aborted, header is pinned", this);
 			return;
 		}
 
@@ -1038,13 +1041,13 @@ sap.ui.define([
 
 		if (this._preserveHeaderStateOnScroll() || this._bPinned || (!bSnapped && this._bHeaderInTitleArea)) {
 			iHeight = this._getTitleAreaHeight();
-			jQuery.sap.log.debug("DynamicPage :: preserveHeaderState is enabled or header pinned :: title area height" + iHeight, this);
+			Log.debug("DynamicPage :: preserveHeaderState is enabled or header pinned :: title area height" + iHeight, this);
 			return iHeight;
 		}
 
 		if (bSnapped || !exists(this.getTitle()) || !this._canSnapHeaderOnScroll()) {
 			iHeight = this._getTitleHeight();
-			jQuery.sap.log.debug("DynamicPage :: header snapped :: title height " + iHeight, this);
+			Log.debug("DynamicPage :: header snapped :: title height " + iHeight, this);
 			return iHeight;
 		}
 
@@ -1056,7 +1059,7 @@ sap.ui.define([
 			this._expandHeader(bHeaderInTitle); // restore header position
 		}
 
-		jQuery.sap.log.debug("DynamicPage :: snapped mode :: title height " + iHeight, this);
+		Log.debug("DynamicPage :: snapped mode :: title height " + iHeight, this);
 		return iHeight;
 	};
 
@@ -1083,8 +1086,8 @@ sap.ui.define([
 			this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
 			this.bHasScrollbar = bScrollBarNeeded;
 		}
-		jQuery.sap.delayedCall(0, this, this._updateFitContainer);
-		jQuery.sap.delayedCall(0, this, this._updateScrollBarOffset);
+		setTimeout(this._updateFitContainer.bind(this), 0);
+		setTimeout(this._updateScrollBarOffset.bind(this), 0);
 
 	};
 
@@ -1104,7 +1107,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._updateScrollBarOffset = function () {
 		var sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
-			iOffsetWidth = this._needsVerticalScrollBar() ? jQuery.sap.scrollbarSize().width + "px" : 0,
+			iOffsetWidth = this._needsVerticalScrollBar() ? getScrollbarSize().width + "px" : 0,
 			oFooter = this.getFooter();
 
 		this.$titleArea.css("padding-" + sStyleAttribute, iOffsetWidth);
@@ -1473,7 +1476,7 @@ sap.ui.define([
 			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE, this.$title[0], this._onChildControlsHeightChange.bind(this));
 		}
 
-		jQuery.sap.delayedCall(0, this, this._updateScrollBar);
+		setTimeout(this._updateScrollBar.bind(this), 0);
 	};
 
 	/**

@@ -18,7 +18,10 @@ sap.ui.define([
 	"./ListBaseRenderer",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	"sap/ui/dom/jquery/Selectors", // jQuery custom selectors ":sapTabbable"
+	"sap/ui/dom/jquery/Aria" // jQuery Plugin "addAriaLabelledBy", "removeAriaLabelledBy"
 ],
 function(
 	KeyCodes,
@@ -2260,7 +2263,7 @@ function(
 			iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
 		}
 
-		var iItemTop = oItemDomRef.getBoundingClientRect().top;
+		var iItemTop = Math.round(oItemDomRef.getBoundingClientRect().top);
 
 		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {

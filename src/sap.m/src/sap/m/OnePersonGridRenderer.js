@@ -29,6 +29,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapMOnePersonGrid");
+			oRm.addClass("sapUiSizeCompact"); // TODO: for now force Compact mode
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.renderControl(oControl.getAggregation("_columnHeaders"));
@@ -37,8 +38,8 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			oRm.writeClasses();
 			oRm.write(">");
 			this.renderRowHeaders(oRm, oControl);
-			this.renderColumns(oRm, oControl);
 			this.renderNowMarker(oRm, oControl);
+			this.renderColumns(oRm, oControl);
 			oRm.write("</div>"); // END .sapMOnePersonGridContent
 			oRm.write("</div>"); // END .sapMOnePersonGrid
 		};
@@ -52,11 +53,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			oRm.writeClasses();
 			oRm.write(">");
 
-			for (var i = iStartHour; i <= iEndHour + 1; i++) {
-				if (i > 24) {
-					break;
-				}
-
+			for (var i = iStartHour; i <= iEndHour; i++) {
 				oRm.write("<span");
 				oRm.addClass("sapMOnePersonRowHeader");
 				oRm.addClass("sapMOnePersonRowHeader" + i);
@@ -91,11 +88,19 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 				oRm.write("<div");
 				oRm.writeAttribute("data-sap-day", sDate);
 				oRm.addClass("sapMOnePersonColumn");
-				oRm.addClass("sapUiCalendarRowVisFilled"); // TODO: make appointments CSS more generic
+
+				if (oControl._areDatesInSameDay(oColumnDate, oControl._getUniversalCurrentDate())) {
+					oRm.addClass("sapMOnePersonColumnToday");
+				}
+
+				if (oControl._isWeekend(oColumnDate)) {
+					oRm.addClass("sapMOnePersonColumnWeekend");
+				}
+
 				oRm.writeClasses();
 				oRm.write(">");
 				this.renderRows(oRm, oControl);
-				this.renderAppointments(oRm, oControl, oAppointmentsToRender[sDate]);
+				this.renderAppointments(oRm, oControl, oAppointmentsToRender[sDate], oColumnDate);
 				oRm.write("</div>"); // END .sapMOnePersonColumn
 			}
 
@@ -121,12 +126,17 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			}
 		};
 
-		OnePersonGridRenderer.renderAppointments = function (oRm, oControl, oAppointmentsByDate) {
+		OnePersonGridRenderer.renderAppointments = function (oRm, oControl, oAppointmentsByDate, oColumnDate) {
 			var that = this;
 
 			if (oAppointmentsByDate) {
 				oRm.write("<div");
 				oRm.addClass("sapMOnePersonAppointments");
+
+				if (oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
+					oRm.addClass("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
+				}
+
 				oRm.writeClasses();
 				oRm.write(">");
 				oAppointmentsByDate.oAppointmentsList.getIterator().forEach(function (oAppointmentNode) {
@@ -135,14 +145,17 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 						iWidth = oAppointmentNode.width,
 						oAppointment = oAppointmentNode.getData();
 
-					that.renderAppointment(oRm, oControl, iMaxLevel, iLevel, iWidth, oAppointment);
+					that.renderAppointment(oRm, oControl, iMaxLevel, iLevel, iWidth, oAppointment, oColumnDate);
 				});
 				oRm.write("</div>");
 			}
 		};
 
-		OnePersonGridRenderer.renderAppointment = function(oRm, oControl, iMaxLevel, iAppointmentLevel, iAppointmentWidth, oAppointment) {
-			var iRowHeight = oControl._getRowHeight(),
+		OnePersonGridRenderer.renderAppointment = function(oRm, oControl, iMaxLevel, iAppointmentLevel, iAppointmentWidth, oAppointment, oColumnDate) {
+			var bFilled = oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled,
+				iRowHeight = oControl._getRowHeight(),
+				oColumnStartDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleStartHour()),
+				oColumnEndDateAndHour = new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleEndHour()),
 				oAppStartDate = oAppointment.getStartDate(),
 				oAppEndDate = oAppointment.getEndDate(),
 				sTooltip = oAppointment.getTooltip_AsString(),
@@ -153,7 +166,12 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 				sIcon = oAppointment.getIcon(),
 				sId = oAppointment.getId(),
 				mAccProps = {labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true}},
-				aAriaLabels = oControl.getAriaLabelledBy();
+				aAriaLabels = oControl.getAriaLabelledBy(),
+				bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime(),
+				bAppEndIsOutsideVisibleEndHour = oColumnEndDateAndHour.getTime() < oAppEndDate.getTime(),
+				iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : oControl._calculateTopPosition(oAppStartDate),
+				iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : oControl._calculateBottomPosition(oAppEndDate),
+				iAppChunkWidth = 100 / (iMaxLevel + 1);
 
 			if (aAriaLabels.length > 0) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + aAriaLabels.join(" ");
@@ -167,23 +185,49 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
 			}
 
-			oRm.write("<div");
-			oRm.writeElementData(oAppointment);
-			oRm.addClass("sapUiCalendarApp");
-
 			if (oAppointment.getSelected()) {
-				oRm.addClass("sapUiCalendarAppSel");
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 			}
 
 			if (oAppointment.getTentative()) {
-				oRm.addClass("sapUiCalendarAppTent");
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE");
 			}
 
-			if (!sText) {
-				oRm.addClass("sapUiCalendarAppTitleOnly");
+			oRm.write("<div");
+			oRm.writeElementData(oAppointment);
+			oRm.writeAttribute("data-sap-level", iAppointmentLevel);
+			oRm.writeAttribute("data-sap-width", iAppointmentWidth);
+			if (sTooltip) {
+				oRm.writeAttributeEscaped("title", sTooltip);
 			}
+			oRm.writeAccessibilityState(oAppointment, mAccProps);
+			oRm.addClass("sapMOnePersonAppointmentWrap");
+			if (bFilled) {
+				 oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
+			}
+			oRm.addStyle("top", iAppTop + "px");
+			oRm.addStyle("bottom", iAppBottom + "px");
+			oRm.addStyle("min-height", iRowHeight / 2 + "px");
+			oRm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", iAppChunkWidth * iAppointmentLevel + "%");
+			oRm.addStyle("width", iAppChunkWidth * iAppointmentWidth + "%"); // TODO: take into account the levels
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write(">");
+
+			oRm.write("<div");
+			oRm.addClass("sapUiCalendarApp");
+
+			if (oAppointment.getSelected()) {
+				oRm.addClass("sapUiCalendarAppSel");
+			}
+
+			if (oAppointment.getTentative()) {
+				oRm.addClass("sapUiCalendarAppTent");
+			}
+
+			// if (!sText) {
+			// 	oRm.addClass("sapUiCalendarAppTitleOnly");
+			// }
 
 			if (sIcon) {
 				oRm.addClass("sapUiCalendarAppWithIcon");
@@ -200,19 +244,12 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			// 	}
 			// }
 
-			oRm.writeAttribute("data-sap-level", iAppointmentLevel);
-			oRm.writeAttribute("data-sap-width", iAppointmentWidth);
-
 			// This makes the appointment focusable
 			// if (oRow._sFocusedAppointmentId == sId) {
 			// 	oRm.writeAttribute("tabindex", "0");
 			// } else {
 			// 	oRm.writeAttribute("tabindex", "-1");
 			// }
-
-			if (sTooltip) {
-				oRm.writeAttributeEscaped("title", sTooltip);
-			}
 
 			if (!sColor && sType && sType != CalendarDayType.None) {
 				oRm.addClass("sapUiCalendarApp" + sType);
@@ -226,18 +263,6 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			// 	}
 			// }
 
-			oRm.writeAccessibilityState(oAppointment, mAccProps);
-
-			var iAppTop = oControl._calculateTopPosition(oAppStartDate);
-			var iAppBottom = oControl._calculateTopPosition(oAppEndDate);
-
-			var iChunkWidth = 100 / (iMaxLevel + 1);
-
-			oRm.addStyle("top", iAppTop + "px");
-			oRm.addStyle("height", Math.max(iRowHeight, iAppBottom - iAppTop) + "px");
-			oRm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", iChunkWidth * iAppointmentLevel + "%");
-			oRm.addStyle("width", iChunkWidth * iAppointmentWidth + "%"); // TODO: take into account the levels
-
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">"); // div element
@@ -246,7 +271,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			oRm.write("<div");
 			oRm.addClass("sapUiCalendarAppCont");
 
-			if (sColor && oControl.getAppointmentsVisualization() === CalendarAppointmentVisualization.Filled) {
+			if (sColor && bFilled) {
 				oRm.addStyle("background-color", oAppointment._getCSSColorForBackground(sColor));
 				oRm.writeStyles();
 			}
@@ -302,12 +327,13 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			// this.renderResizeHandle(oRm, oRow, oAppointment);
 
 			oRm.write("</div>");
+			oRm.write("</div>");
 		};
 
 		OnePersonGridRenderer.renderNowMarker = function (oRm, oControl) {
 			var oDate = oControl._getUniversalCurrentDate();
 
-			oRm.write("<span");
+			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-nowMarker");
 			oRm.addStyle("top", oControl._calculateTopPosition(oDate) + "px");
 			oRm.addClass("sapMOnePersonNowMarker");
@@ -319,8 +345,14 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
+			oRm.write("<span");
+			oRm.writeAttribute("id", oControl.getId() + "-nowMarkerText");
+			oRm.addClass("sapMOnePersonNowMarkerText");
+			oRm.writeClasses();
+			oRm.write(">");
 			oRm.write(oControl._formatTimeAsString(oDate));
-			oRm.write("</span>"); // END .sapMOnePersonNowMarker
+			oRm.write("</span>"); // END .sapMOnePersonNowMarkerText
+			oRm.write("</div>"); // END .sapMOnePersonNowMarker
 		};
 
 		return OnePersonGridRenderer;

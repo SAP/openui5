@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.tnt.InfoLabel
-sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./InfoLabelRenderer"],
-	function (library, Control, CoreLibrary, InfoLabelRenderer) {
+sap.ui.define([
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/library",
+	"./InfoLabelRenderer",
+	"sap/base/Log"
+],
+	function(library, Control, CoreLibrary, InfoLabelRenderer, Log) {
 		"use strict";
 
 		// shortcut for library.RenderMode
@@ -139,7 +145,7 @@ sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./Inf
 						$Control.addClass("backgroundColor" + iColorScheme);
 					}
 				} else {
-					jQuery.sap.log.warning("colorScheme value was not set. It should be between 1 and 9");
+					Log.warning("colorScheme value was not set. It should be between 1 and 9");
 				}
 			}
 

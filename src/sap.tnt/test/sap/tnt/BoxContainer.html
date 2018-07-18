@@ -208,6 +208,20 @@
 										</t:Box>
 									</t:BoxContainer>
 
+									<t:BoxContainer boxMinWidth="10rem" headerText="BoxContainer with boxMinWidth 10rem" boxes="{ path: '/' }">
+										<t:Box>
+											<VBox height="100%">
+												<VBox class="sapUiSmallMargin">
+													<layoutData>
+														<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+													</layoutData>
+													<Title text="{title}" wrapping="true" />
+													<Label text="{subtitle}" wrapping="true" />
+												</VBox>
+											</VBox>
+										</t:Box>
+									</t:BoxContainer>
+
 									<Panel width="600px">
 										<t:BoxContainer headerText="BoxContainer with Panel wrapper with width 600px" boxes="{ path: '/' }">
 											<t:Box>

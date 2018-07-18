@@ -5,12 +5,14 @@
 sap.ui.define([
 	'sap/m/Image',
 	'./Adaptation',
-	'../Utils'
+	'../Utils',
+	"sap/base/Log"
 ],
 function(
 	Image,
 	Adaptation,
-	Utils
+	Utils,
+	Log
 ) {
 	"use strict";
 
@@ -69,24 +71,23 @@ function(
 				this._checkLogoSize($logo, iWidth, iHeight);
 			}
 
-			aControls.unshift(
-				new Image({
+			// first control is the left HBox
+			aControls[0].addItem(
+				this._mControls["logo"] = new Image({
 					src: sLogoPath,
 					width: iWidth ? iWidth + 'px' : iWidth,
 					height: iHeight ? iHeight + 'px' : iHeight
-				}).data('name', 'logo')
+				})
 			);
 		}
-
 		return aControls;
 	};
 
 	Fiori.prototype.hide = function () {
-		return Adaptation.prototype
-			.hide.apply(this, arguments)
-			.then(function () {
-				this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
-			}.bind(this));
+		return Adaptation.prototype.hide.apply(this, arguments)
+		.then(function () {
+			this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
+		}.bind(this));
 	};
 
 	Fiori.prototype._checkLogoSize = function($logo, iWidth, iHeight) {
@@ -94,7 +95,7 @@ function(
 		var iNaturalHeight = $logo.get(0).naturalHeight;
 
 		if (iWidth !== iNaturalWidth || iHeight !== iNaturalHeight) {
-			jQuery.sap.log.error([
+			Log.error([
 				"sap.ui.rta: please check Fiori Launchpad logo, expected size is",
 				iWidth + "x" + iHeight + ",",
 				"but actual is " + iNaturalWidth + "x" + iNaturalHeight

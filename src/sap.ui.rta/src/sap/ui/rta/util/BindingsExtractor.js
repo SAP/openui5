@@ -4,11 +4,13 @@
 
 sap.ui.define([
 	'sap/ui/dt/ElementUtil',
-	'sap/ui/rta/Utils'
+	'sap/ui/rta/Utils',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ElementUtil,
-	RtaUtils
+	RtaUtils,
+	jQuery
 ) {
 	"use strict";
 

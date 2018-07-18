@@ -4,18 +4,19 @@
 
 // Provides control sap.f.DynamicPageTitle.
 sap.ui.define([
-    "./library",
-    "sap/ui/core/Control",
-    "sap/ui/base/ManagedObjectObserver",
-    "sap/m/library",
-    "sap/m/Toolbar",
-    "sap/m/ToolbarSeparator",
-    "sap/m/OverflowToolbar",
-    "sap/m/Button",
-    "sap/ui/core/InvisibleText",
-    "./DynamicPageTitleRenderer"
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/m/library",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSeparator",
+	"sap/m/OverflowToolbar",
+	"sap/m/Button",
+	"sap/ui/core/InvisibleText",
+	"./DynamicPageTitleRenderer",
+	"sap/base/Log"
 ], function(
-    library,
+	library,
 	Control,
 	ManagedObjectObserver,
 	mobileLibrary,
@@ -24,7 +25,8 @@ sap.ui.define([
 	OverflowToolbar,
 	Button,
 	InvisibleText,
-	DynamicPageTitleRenderer
+	DynamicPageTitleRenderer,
+	Log
 ) {
 	"use strict";
 
@@ -122,7 +124,17 @@ sap.ui.define([
 				 *
 				 * @since 1.54
 				 */
-				areaShrinkRatio : {type: "sap.f.DynamicPageTitleShrinkRatio", group: "Appearance", defaultValue: "1:1.6:1.6"}
+				areaShrinkRatio : {type: "sap.f.DynamicPageTitleShrinkRatio", group: "Appearance", defaultValue: "1:1.6:1.6"},
+
+				/**
+				 * Determines the background color of the <code>DynamicPageTitle</code>.
+				 *
+				 * <b>Note:</b> The default value of <code>backgroundDesign</code> property is null.
+				 * If the property is not set, the color of the background is <code>@sapUiObjectHeaderBackground</code>,
+				 * which depends on the specific theme.
+				 * @since 1.58
+				 */
+				backgroundDesign : {type: "sap.m.BackgroundDesign", group: "Appearance"}
 			},
 			aggregations: {
 
@@ -394,17 +406,44 @@ sap.ui.define([
 		var oShrinkFactorsInfo = this._getShrinkFactorsObject();
 
 		if (this.getPrimaryArea() === DynamicPageTitleArea.Middle) {
-			jQuery.sap.log.warning("DynamicPageTitle :: Property primaryArea is disregarded when areaShrinkRatio is set.", this);
+			Log.warning("DynamicPageTitle :: Property primaryArea is disregarded when areaShrinkRatio is set.", this);
 		}
 
 		// scale priority factors
 		if (oShrinkFactorsInfo.headingAreaShrinkFactor > 1 && oShrinkFactorsInfo.contentAreaShrinkFactor > 1 && oShrinkFactorsInfo.actionsAreaShrinkFactor > 1) {
-			jQuery.sap.log.warning("DynamicPageTitle :: One of the shrink factors should be set to 1.", this);
+			Log.warning("DynamicPageTitle :: One of the shrink factors should be set to 1.", this);
 		}
 
 		this._setShrinkFactors(oShrinkFactorsInfo.headingAreaShrinkFactor,
 								oShrinkFactorsInfo.contentAreaShrinkFactor,
 								oShrinkFactorsInfo.actionsAreaShrinkFactor);
+
+		return this;
+	};
+
+	/**
+	 * Sets the value of the <code>backgroundDesign</code> property.
+	 *
+	 * @param {sap.m.BackgroundDesign} sBackgroundDesign - new value of the <code>backgroundDesign</code>
+	 * @return {sap.f.DynamicPageTitle} <code>this</code> to allow method chaining
+	 * @public
+	 * @since 1.58
+	 */
+	DynamicPageTitle.prototype.setBackgroundDesign = function (sBackgroundDesign) {
+		var sCurrentBackgroundDesign = this.getBackgroundDesign(),
+			$domRef = this.$(),
+			sCssClassPrefix = "sapFDynamicPageTitle";
+
+		if (sCurrentBackgroundDesign === sBackgroundDesign) {
+			return this;
+		}
+
+		this.setProperty("backgroundDesign", sBackgroundDesign, true);
+
+		if ($domRef.length) {
+			$domRef.removeClass(sCssClassPrefix + sCurrentBackgroundDesign);
+			$domRef.addClass(sCssClassPrefix + sBackgroundDesign);
+		}
 
 		return this;
 	};

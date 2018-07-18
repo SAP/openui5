@@ -3,8 +3,8 @@
  */
 
 // provides default renderer for sap.ui.suite.TaskCircle
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './library'],
-	function(jQuery, Core, library) {
+sap.ui.define(['sap/ui/core/Core', './library'],
+	function(Core, library) {
 	"use strict";
 
 

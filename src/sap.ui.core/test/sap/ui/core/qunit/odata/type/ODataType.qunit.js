@@ -2,17 +2,18 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/model/SimpleType",
-	"sap/ui/model/odata/type/ODataType"
-], function (jQuery, SimpleType, ODataType) {
+    "jquery.sap.global",
+    "sap/ui/model/SimpleType",
+    "sap/ui/model/odata/type/ODataType",
+    "sap/base/Log"
+], function(jQuery, SimpleType, ODataType, Log) {
 	/*global QUnit */
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.ODataType", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}

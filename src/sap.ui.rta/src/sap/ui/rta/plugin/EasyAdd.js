@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	'sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin',
-	'sap/ui/dt/OverlayRegistry'
+	'sap/ui/dt/OverlayRegistry',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	AdditionalElementsPlugin,
-	OverlayRegistry
+	OverlayRegistry,
+	jQuery
 ) {
 	"use strict";
 
@@ -142,7 +144,7 @@ sap.ui.define([
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 		var sId = oOverlay.getId() + "-AddButton";
-		var oHtmlButtonOuter = jQuery("<div class='sapUiRtaPersAddIconOuter' draggable='true'> </div>");
+		var oHtmlButtonOuter = jQuery("<div class='sapUiRtaPersAddIconOuter' draggable='true' tabIndex='-1'> </div>");
 		oOverlay._oAddButton = new sap.m.Button(sId, {
 			text: oTextResources.getText("CTX_ADD_ELEMENTS", sControlName),
 			icon: "sap-icon://add",
@@ -169,6 +171,15 @@ sap.ui.define([
 					oParentContainer.addStyleClass("sapUiRtaOverlayHover");
 				}
 			}
+		});
+
+		oHtmlButtonOuter[0].addEventListener("click", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		oHtmlButtonOuter[0].addEventListener("contextmenu", function(oEvent) {
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
 		});
 
 		oHtmlButtonOuter[0].addEventListener("dragstart", function(oEvent) {

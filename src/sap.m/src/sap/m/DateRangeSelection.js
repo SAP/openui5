@@ -12,7 +12,8 @@ sap.ui.define([
 	'./DateRangeSelectionRenderer',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ],
 	function(
 		Device,
@@ -289,7 +290,6 @@ sap.ui.define([
 
 			if (this._$input.val() !== sOutputValue) {
 				this._$input.val(sOutputValue);
-				this._setLabelVisibility();
 				this._curpos = this._$input.cursorPos();
 			}
 		}
@@ -652,7 +652,6 @@ sap.ui.define([
 				this.setProperty("dateValue", _normalizeDateValue(aDates[0]), true);
 				this.setProperty("secondDateValue", _normalizeDateValue(aDates[1]), true);
 			}
-			this._setLabelVisibility();
 
 			if (this._oPopup && this._oPopup.isOpen()) {
 
@@ -717,9 +716,6 @@ sap.ui.define([
 			this._$input.val(sValue);
 			this._$input.cursorPos(this._curpos);
 		}
-
-		// update synthetic placeholder visibility
-		this._setLabelVisibility();
 
 		return this;
 	};
@@ -838,7 +834,6 @@ sap.ui.define([
 
 			if (this._$input.val() !== sOutputValue) {
 				this._$input.val(sOutputValue);
-				this._setLabelVisibility();
 				this._curpos = this._$input.cursorPos();
 			}
 		}

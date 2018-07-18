@@ -4,14 +4,13 @@
 
 // Provides the XML model implementation of a list binding
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/ClientListBinding',
 	"sap/ui/util/XMLHelper",
 	"sap/base/util/array/diff",
 	"sap/base/util/deepEqual"
 ],
-	function(jQuery, ChangeReason, ClientListBinding, XMLHelper, diff, deepEqual) {
+	function(ChangeReason, ClientListBinding, XMLHelper, diff, deepEqual) {
 	"use strict";
 
 

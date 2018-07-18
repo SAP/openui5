@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.Overlay.
+/* global Map */
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/Element',
 	'sap/ui/dt/MutationObserver',
 	'sap/ui/dt/ElementUtil',
@@ -12,8 +12,7 @@ sap.ui.define([
 	'sap/ui/dt/DOMUtil',
 	'sap/ui/dt/ScrollbarSynchronizer',
 	'sap/ui/dt/Util',
-	'sap/ui/dt/Map',
-	'sap/ui/Device'
+	'sap/base/Log'
 ],
 function(
 	jQuery,
@@ -24,8 +23,7 @@ function(
 	DOMUtil,
 	ScrollbarSynchronizer,
 	Util,
-	Map,
-	Device
+	Log
 ) {
 	"use strict";
 
@@ -404,7 +402,7 @@ function(
 
 	Overlay.prototype.destroy = function () {
 		if (this.bIsDestroyed) {
-			jQuery.sap.log.error('FIXME: Do not destroy overlay twice (overlayId = ' + this.getId() + ')!');
+			Log.error('FIXME: Do not destroy overlay twice (overlayId = ' + this.getId() + ')!');
 			return;
 		}
 

@@ -17,6 +17,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/util/defineLazyProperty",
+	"sap/base/security/encodeXML",
 	// referenced here to enable the Support feature
 	'./Support'
 ],
@@ -30,7 +32,9 @@ sap.ui.define([
 	capitalize,
 	jQueryDOM,
 	assert,
-	Log
+	Log,
+	defineLazyProperty,
+	encodeXML
 ) {
 
 	"use strict";
@@ -720,15 +724,15 @@ sap.ui.define([
 		/**
 		 * This is the default value for Dialog type.
 		 *
-		 * Standard dialog in iOS has a header on the top and the left, right buttons are put inside the header.
-		 * In android, the left, right buttons are put to the bottom of the Dialog.
+		 * The Standard Dialog in iOS has a header on the top. The Left and the Right buttons are put inside the header.
+		 * In Android, the Left and the Right buttons are put at the bottom of the Dialog.
 		 * @public
 		 */
 		Standard : "Standard",
 
 		/**
 		 * Dialog with type Message looks the same as the Standard Dialog in Android.
-		 * And it puts the left, right buttons to the bottom of the Dialog in iOS.
+		 * It puts the Left and the Right buttons at the bottom of the Dialog in iOS.
 		 * @public
 		 */
 		Message : "Message"
@@ -3565,7 +3569,13 @@ sap.ui.define([
 	 * @private
 	 * @since 1.12
 	 */
-	thisLib.BaseFontSize = jQuery(document.documentElement).css("font-size") || "16px";
+	defineLazyProperty(thisLib, "BaseFontSize", function () {
+		// jQuery(...).css() is executed only on "BaseFontSize" property access.
+		// This avoids accessing the DOM during library evaluation
+		// which might be too early, e.g. when the library is loaded within the head element.
+		thisLib.BaseFontSize = jQuery(document.documentElement).css("font-size") || "16px";
+		return thisLib.BaseFontSize;
+	});
 
 	/**
 	 * Hide the soft keyboard.
@@ -3893,7 +3903,7 @@ sap.ui.define([
 				rm.addStyle("filter", "none");
 			}
 			if (sBgColor) {
-				rm.addStyle("background-color", jQuery.sap.encodeHTML(sBgColor));
+				rm.addStyle("background-color", encodeXML(sBgColor));
 			}
 		},
 
@@ -3944,7 +3954,7 @@ sap.ui.define([
 
 			if (sBgImgUrl) { // use the settings only if a background image is configured
 				rm.addStyle("display", "block"); // enforce visibility even if a parent has also a background image
-				rm.addStyle("background-image", "url(" + jQuery.sap.encodeHTML(sBgImgUrl) + ")");
+				rm.addStyle("background-image", "url(" + encodeXML(sBgImgUrl) + ")");
 
 				rm.addStyle("background-repeat", bRepeat ? "repeat" : "no-repeat");
 				if (!bRepeat) {
@@ -3999,8 +4009,8 @@ sap.ui.define([
 			}
 			return false;
 		}
-
-		return /** @lends sap.m.ImageHelper */ {
+		/** @lends sap.m.ImageHelper */
+		var oImageHelper = {
 			/**
 			 * Creates or updates an image control.
 			 *
@@ -4057,6 +4067,7 @@ sap.ui.define([
 				return oImage;
 			}
 		};
+		return oImageHelper;
 	}());
 
 	/**
@@ -4225,7 +4236,8 @@ sap.ui.define([
 				oCtrl.attachSuggestionItemSelected(_fnSuggestionItemSelected);
 			}
 		};
-		return /** @lends sap.m.InputODataSuggestProvider */ {
+		/** @lends sap.m.InputODataSuggestProvider */
+		var oInputODataSuggestProvider = {
 
 			/**
 			 * @param {sap.ui.base.Event} oEvent
@@ -4323,6 +4335,7 @@ sap.ui.define([
 				}
 			}
 		};
+		return oInputODataSuggestProvider;
 	}());
 
 	// implement Form helper factory with m controls
@@ -4423,6 +4436,12 @@ sap.ui.define([
 		bFinal: true /* This table helper wins, even when commons helper was set before */
 	});
 
+	ObjectPath.set("sap.ui.layout.GridHelper", {
+		getLibrarySpecificClass: function () {
+			return "";
+		},
+		bFinal: true
+	});
 
 	/* Android and Blackberry browsers do not scroll a focused input into the view correctly after resize */
 	if (Device.os.blackberry || Device.os.android && Device.os.version >= 4) {

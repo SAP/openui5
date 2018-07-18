@@ -3,8 +3,8 @@
  */
 
 // Provides (optional) base class for all renderers
-sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
-	function(jQuery, ObjectPath) {
+sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/base/util/ObjectPath', "sap/base/assert"],
+	function(jQuery, ObjectPath, assert) {
 	"use strict";
 
 	/**
@@ -31,8 +31,8 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath'],
 	function createExtendFunction(oBaseRenderer) {
 
 		return function(sName, oRendererInfo) {
-			jQuery.sap.assert(typeof sName === 'string' && sName, 'Renderer.extend must be called with a non-empty name for the new renderer');
-			jQuery.sap.assert(oRendererInfo == null || typeof oRendererInfo === 'object', 'oRendererInfo must be an object or can be omitted');
+			assert(typeof sName === 'string' && sName, 'Renderer.extend must be called with a non-empty name for the new renderer');
+			assert(oRendererInfo == null || typeof oRendererInfo === 'object', 'oRendererInfo must be an object or can be omitted');
 
 			var oChildRenderer = Object.create(oBaseRenderer);
 			oChildRenderer.extend = createExtendFunction(oChildRenderer);

@@ -23,11 +23,12 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/TestUtils",
+	"sap/base/Log"
 ], function (jQuery, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
 		FilterType, ListBinding, Model, Sorter, OperationMode, Context, _AggregationCache,
 		_AggregationHelper, _Cache, _GroupLock, _Helper, ODataListBinding, ODataModel,
-		asODataParentBinding, TestUtils) {
+		asODataParentBinding, TestUtils, Log) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
@@ -170,7 +171,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataListBinding", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
 

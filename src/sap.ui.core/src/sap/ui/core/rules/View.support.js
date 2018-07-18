@@ -4,8 +4,8 @@
 /**
  * Defines support rules related to the view.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
-	function(jQuery, SupportLib) {
+sap.ui.define(["sap/ui/support/library"],
+	function(SupportLib) {
 	"use strict";
 
 	// shortcuts
@@ -174,7 +174,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 					// and the mvc, because the use of mvc is checked in other rule
 					if (sName.match("xmlns:")
 						&& sLocalName !== "xmlns:support"
-						&& sLocalName !== "mvc") {
+						&& sLocalName !== "mvc"
+						&& sFullName.indexOf("schemas.sap.com") < 0) {
 							var oContent = jQuery(oXMLView._xContent)[0];
 							// get the xml code of the view as a string
 							// The outerHTML doesn't work with IE, so we used
@@ -375,4 +376,3 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		oDeprecatedEventRule
 	];
 }, true);
-

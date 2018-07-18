@@ -11,6 +11,8 @@ sap.ui.define([
 	'sap/ui/core/RenderManager',
 	'sap/base/util/ObjectPath',
 	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
+	"sap/base/assert",
 	'jquery.sap.sjax'
 ],
 	function(
@@ -20,7 +22,9 @@ sap.ui.define([
 		Control,
 		RenderManager,
 		ObjectPath,
-		jQueryDOM
+		jQueryDOM,
+		Log,
+		assert
 	) {
 	"use strict";
 
@@ -92,7 +96,7 @@ sap.ui.define([
 
 		if ( oOldTemplate && this !== oOldTemplate ) {
 			sMsg = "adding template with duplicate id '" + sId + "'";
-			jQuery.sap.log.error(sMsg);
+			Log.error(sMsg);
 			throw new Error("Error: " + sMsg);
 		}
 
@@ -226,7 +230,7 @@ sap.ui.define([
 	 */
 	Template.prototype.declareControl = function(sControl) {
 
-		jQuery.sap.assert(!!sControl, "A fully qualified name must be specified!");
+		assert(!!sControl, "A fully qualified name must be specified!");
 
 		if (sControl) {
 
@@ -360,7 +364,7 @@ sap.ui.define([
 	 * @abstract
 	 */
 	Template.prototype.createMetadata = function() {
-		jQuery.sap.log.error("The function createMetadata is an abstract function which needs to be implemented by subclasses.");
+		Log.error("The function createMetadata is an abstract function which needs to be implemented by subclasses.");
 	};
 
 
@@ -372,7 +376,7 @@ sap.ui.define([
 	 * @abstract
 	 */
 	Template.prototype.createRenderer = function() {
-		jQuery.sap.log.error("The function createRenderer is an abstract function which needs to be implemented by subclasses.");
+		Log.error("The function createRenderer is an abstract function which needs to be implemented by subclasses.");
 	};
 
 
@@ -577,6 +581,7 @@ sap.ui.define([
 			}
 
 			// require and instantiate the proper template
+			//TODO: global jquery call found
 			jQuery.sap.require(sClass);
 			var oClass = ObjectPath.get(sClass || "");
 

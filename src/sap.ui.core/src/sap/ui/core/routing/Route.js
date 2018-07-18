@@ -3,8 +3,17 @@
  */
 
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/Target', 'sap/ui/core/routing/async/Route', 'sap/ui/core/routing/sync/Route', 'sap/ui/core/Component'],
-	function($, EventProvider, Target, asyncRoute, syncRoute, Component) {
+sap.ui.define([
+	'sap/ui/base/EventProvider',
+	'sap/ui/core/routing/Target',
+	'sap/ui/core/routing/async/Route',
+	'sap/ui/core/routing/sync/Route',
+	'sap/ui/core/Component',
+	"sap/base/Log",
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
+],
+	function(EventProvider, Target, asyncRoute, syncRoute, Component, Log, assert, jQueryDOM) {
 	"use strict";
 
 		/**
@@ -60,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				EventProvider.apply(this, arguments);
 
 				if (!oConfig.name) {
-					$.sap.log.error("A name has to be specified for every route", this);
+					Log.error("A name has to be specified for every route", this);
 				}
 
 				this._aPattern = [];
@@ -80,16 +89,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					this[fn] = RouteStub[fn];
 				}
 
-				if (!$.isArray(vRoute)) {
+				if (!jQueryDOM.isArray(vRoute)) {
 					vRoute = [vRoute];
 				}
 
 				if (oConfig.parent) {
 					var oRoute = this._getParentRoute(oConfig.parent);
 					if (!oRoute) {
-						$.sap.log.error("No parent route with '" + oConfig.parent + "' could be found", this);
+						Log.error("No parent route with '" + oConfig.parent + "' could be found", this);
 					} else if (oRoute._aPattern.length > 1) {
-						$.sap.log.error("Routes with multiple patterns cannot be used as parent for nested routes", this);
+						Log.error("Routes with multiple patterns cannot be used as parent for nested routes", this);
 						return;
 					} else {
 						this._oNestingParent = oRoute;
@@ -101,11 +110,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					}
 				}
 
-				if ($.isArray(oConfig.subroutes)) {
+				if (jQueryDOM.isArray(oConfig.subroutes)) {
 					//Convert subroutes
 					aSubRoutes = oConfig.subroutes;
 					oConfig.subroutes = {};
-					$.each(aSubRoutes, function(iSubrouteIndex, oSubRoute) {
+					jQueryDOM.each(aSubRoutes, function(iSubrouteIndex, oSubRoute) {
 						oConfig.subroutes[oSubRoute.name] = oSubRoute;
 					});
 				}
@@ -120,7 +129,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 
 				// recursively add the subroutes to this route
 				if (oConfig.subroutes) {
-					$.each(oConfig.subroutes, function(sRouteName, oSubRouteConfig) {
+					jQueryDOM.each(oConfig.subroutes, function(sRouteName, oSubRouteConfig) {
 						if (oSubRouteConfig.name === undefined) {
 							oSubRouteConfig.name = sRouteName;
 						}
@@ -133,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					return;
 				}
 
-				$.each(vRoute, function(iIndex, sRoute) {
+				jQueryDOM.each(vRoute, function(iIndex, sRoute) {
 
 					that._aPattern[iIndex] = sRoute;
 
@@ -142,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 
 					that._aRoutes[iIndex].matched.add(function() {
 						var oArguments = {};
-						$.each(arguments, function(iArgumentIndex, sArgument) {
+						jQueryDOM.each(arguments, function(iArgumentIndex, sArgument) {
 							oArguments[that._aRoutes[iIndex]._paramsIds[iArgumentIndex]] = sArgument;
 						});
 						that._routeMatched(oArguments, true);
@@ -368,7 +377,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			},
 
 			_convertToTargetOptions: function (oOptions) {
-				return $.extend(true,
+				return jQueryDOM.extend(true,
 					{},
 					oOptions,
 					{
@@ -388,7 +397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				if (aParts.length === 1 || (aParts.length === 2 && !aParts[0]))  {
 					return this._oRouter.getRoute(aParts[aParts.length - 1]);
 				} else {
-					$.sap.assert(this._oRouter._oOwner, "No owner component for " + this._oRouter._oOwner.getId());
+					assert(this._oRouter._oOwner, "No owner component for " + this._oRouter._oOwner.getId());
 					var oOwnerComponent = Component.getOwnerComponentFor(this._oRouter._oOwner);
 					while (oOwnerComponent) {
 						if (oOwnerComponent.getMetadata().getName() === aParts[0]) {

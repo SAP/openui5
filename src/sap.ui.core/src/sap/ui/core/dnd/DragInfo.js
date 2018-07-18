@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "./DragDropBase"],
-	function(jQuery, DragDropBase) {
+sap.ui.define(["./DragDropBase", "sap/base/Log"],
+	function(DragDropBase, Log) {
 	"use strict";
 
 	/**
@@ -90,7 +90,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 		var sSourceAggregation = this.getSourceAggregation();
 		var oMetadata = oDragSource.getMetadata().getDragDropInfo(sSourceAggregation);
 		if (!oMetadata.draggable) {
-			jQuery.sap.log.warning((sSourceAggregation ? sSourceAggregation + " aggregation of " : "") + oDragSource + " is not configured to be draggable");
+			Log.warning((sSourceAggregation ? sSourceAggregation + " aggregation of " : "") + oDragSource + " is not configured to be draggable");
 			return false;
 		}
 

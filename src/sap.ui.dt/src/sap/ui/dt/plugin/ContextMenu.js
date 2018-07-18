@@ -2,17 +2,21 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/Plugin',
 	'sap/ui/dt/ContextMenuControl',
 	'sap/ui/dt/Util',
-	'sap/ui/Device'
-], function (
+	'sap/ui/Device',
+	"sap/base/assert",
+	"sap/ui/events/KeyCodes"
+], function(
 	jQuery,
 	Plugin,
 	ContextMenuControl,
 	Utils,
-	Device
+	Device,
+	assert,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -43,6 +47,10 @@ sap.ui.define([
 				openOnHover: {
 					type: "boolean",
 					defaultValue: true
+				},
+				openOnClick: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			events: {
@@ -59,7 +67,7 @@ sap.ui.define([
 		this.iMenuHoverOpeningDelay = 500;
 		this.iMenuHoverClosingDelay = 250; //Should be lower than iMenuHoverOpeningDelay, otherwise ContextMenu is instantly closed
 
-		this.oContextMenuControl = new sap.ui.dt.ContextMenuControl({
+		this.oContextMenuControl = new ContextMenuControl({
 			maxButtonsDisplayed: 4 //The maximum number of buttons which should be displayed in the collapsed version of the ContextMenu (including overflow-button)
 		});
 
@@ -78,7 +86,7 @@ sap.ui.define([
 		if (this.oContextMenuControl) {
 			this.oContextMenuControl.detachClosed(this._contextMenuClosed, this);
 			this.oContextMenuControl.detachOverflowButtonPressed(this._pressedOverflowButton, this);
-			this.oContextMenuControl.destroy(true); // "true" to suppress UI static area invalidation, see BCP#1880339211
+			this.oContextMenuControl.destroy();
 			delete this.oContextMenuControl;
 		}
 	};
@@ -159,6 +167,11 @@ sap.ui.define([
 			}
 		}.bind(this));
 
+		var aSelectedOverlays = this.getSelectedOverlays().filter(function (oElementOverlay) {
+			return oElementOverlay !== oOverlay;
+		});
+		aSelectedOverlays.unshift(oOverlay);
+
 		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
 		this._aMenuItems = this._aMenuItems.filter(function (mMenuItemEntry) {
 			if (mMenuItemEntry.bPersistOneTime) {
@@ -175,7 +188,7 @@ sap.ui.define([
 			this._aSubMenus = [];
 
 			aPlugins.forEach(function (oPlugin) {
-				var aPluginMenuItems = oPlugin.getMenuItems(oOverlay) || [];
+				var aPluginMenuItems = oPlugin.getMenuItems(aSelectedOverlays) || [];
 				aPluginMenuItems.forEach(function (mMenuItem) {
 					if (mMenuItem.group != undefined && !bContextMenu) {
 						this._addMenuItemToGroup(mMenuItem);
@@ -199,7 +212,8 @@ sap.ui.define([
 			this.oContextMenuControl._bUseExpPop = !!bContextMenu;
 
 			aMenuItems = this._sortMenuItems(aMenuItems);
-			this.oContextMenuControl.setButtons(aMenuItems, this._onItemSelected.bind(this), oOverlay);
+
+			this.oContextMenuControl.setButtons(aMenuItems, this._onItemSelected.bind(this), aSelectedOverlays);
 
 			this.oContextMenuControl.setStyleClass(this.getStyleClass());
 			if (bIsSubMenu) {
@@ -292,7 +306,7 @@ sap.ui.define([
 			if (sSelectedButtonId === mMenuItemEntry.menuItem.id) {
 				var oItem = mMenuItemEntry.menuItem;
 				aSelection = this.getSelectedOverlays();
-				jQuery.sap.assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
+				assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 				var mPropertiesBag = {};
 				mPropertiesBag.eventItem = oEventItem;
 				mPropertiesBag.contextElement = oContextElement;
@@ -337,7 +351,7 @@ sap.ui.define([
 
 		if (!Device.os.ios) {
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-			if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected()) {
+			if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected() && this.getOpenOnClick()) {
 
 				if (this.isMenuOpeningLocked() && !this._bTouched) {
 					this.unlockMenuOpening();
@@ -453,7 +467,7 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._onKeyDown = function (oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		if ((oEvent.keyCode === jQuery.sap.KeyCodes.SPACE || oEvent.keyCode === jQuery.sap.KeyCodes.ENTER) &&
+		if ((oEvent.keyCode === KeyCodes.SPACE || oEvent.keyCode === KeyCodes.ENTER) &&
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
 			(oEvent.ctrlKey === false)) {
@@ -463,7 +477,7 @@ sap.ui.define([
 				oEvent.stopPropagation();
 			}
 		}
-		if ((oEvent.keyCode === jQuery.sap.KeyCodes.F10) &&
+		if ((oEvent.keyCode === KeyCodes.F10) &&
 			(oEvent.shiftKey === true) &&
 			(oEvent.altKey === false) &&
 			(oEvent.ctrlKey === false)) {

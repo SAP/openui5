@@ -25,11 +25,12 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/URI"
+	"sap/ui/thirdparty/URI",
+	"sap/base/Log"
 ], function (jQuery, MessageType, Message, Binding, BindingMode, BaseContext, Model, TypeString,
 		ODataUtils, OperationMode, Context, _MetadataRequestor, _GroupLock, _Helper, _Parser,
 		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
-		ODataPropertyBinding, SubmitMode, TestUtils, URI) {
+		ODataPropertyBinding, SubmitMode, TestUtils, URI, Log) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -95,7 +96,7 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
 			TestUtils.setupODataV4Server(this._oSandbox, mFixture, undefined, sServiceUrl);
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			this.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag").atLeast(0)

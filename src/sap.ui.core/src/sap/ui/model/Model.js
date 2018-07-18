@@ -4,14 +4,13 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/message/MessageProcessor',
 	'./BindingMode',
 	'./Context',
 	'./Filter',
 	"sap/base/util/deepEqual"
 ],
-	function(jQuery, MessageProcessor, BindingMode, Context, Filter, deepEqual) {
+	function(MessageProcessor, BindingMode, Context, Filter, deepEqual) {
 	"use strict";
 
 
@@ -832,7 +831,13 @@ sap.ui.define([
 	Model.prototype.refresh = function(bForceUpdate) {
 		this.checkUpdate(bForceUpdate);
 		if (bForceUpdate) {
-			this.fireMessageChange({oldMessages: this.mMessages});
+			var aMessages = [];
+			for (var sKey in this.mMessages) {
+				aMessages = aMessages.concat(this.mMessages[sKey]);
+			}
+			this.fireMessageChange({
+				oldMessages: aMessages
+			});
 		}
 	};
 

@@ -1,2055 +1,1932 @@
 /*global QUnit, sinon */
-
-sap.ui.require([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/m/ListBaseRenderer",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Sorter",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/ui/Device",
-	"sap/ui/core/library",
-	"sap/m/library",
-	"sap/m/StandardListItem",
-	"sap/m/App",
-	"sap/m/Page",
-	"sap/m/ListBase",
-	"sap/m/List",
-	"sap/m/Toolbar",
-	"sap/m/ToolbarSpacer",
-	"sap/m/GrowingEnablement",
-	"sap/m/Input",
-	"sap/m/CustomListItem",
-	"sap/m/InputListItem",
-	"sap/m/GroupHeaderListItem",
-	"sap/m/Button",
-	"sap/m/VBox",
-	"sap/m/Text",
-	"sap/m/Menu",
-	"sap/m/MenuItem",
-	"sap/m/MessageToast",
-	"sap/m/ScrollContainer",
-	"sap/m/Title"
-], function(qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, library, StandardListItem, App, Page, ListBase, List, Toolbar,
-			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title) {
+(function() {
 	"use strict";
 
-	sinon.config.useFakeTimers = true;
-
-	/*******************************************************************************
-	 * Helper variables & functions
-	 *******************************************************************************/
-
-	// helper variables
-	var iItemCount = 0,
-		data1 = { // 0 items
-			items : [ ]
-		},
-		data2 = { // 3 items
-				items : [ {
-					Title : "Title1",
-					Description: "Description1"
-				}, {
-					Title : "Title2",
-					Description: "Description2"
-				}, {
-					Title : "Title3",
-					Description: "Description3"
-				} ]
-		},
-		data3 = { // 10 items
-				items : [ {
-					Title : "Title1",
-					Description: "Description1"
-				}, {
-					Title : "Title2",
-					Description: "Description2"
-				}, {
-					Title : "Title3",
-					Description: "Description3"
-				}, {
-					Title : "Title4",
-					Description: "Description4"
-				}, {
-					Title : "Title5",
-					Description: "Description5"
-				}, {
-					Title : "Title6",
-					Description: "Description6"
-				}, {
-					Title : "Title7",
-					Description: "Description7"
-				}, {
-					Title : "Title8",
-					Description: "Description8"
-				}, {
-					Title : "Title9",
-					Description: "Description9"
-				}, {
-					Title : "Title10",
-					Description: "Description10"
-				} ]
-		},
-		data4 = {
-				items : [ {
-					Title : "Table",
-					Description: "This is a table"
-				}, {
-					Title : "Window",
-					Description: "This is a window"
-				}, {
-					Title : "Room",
-					Description: "This is a room"
-				}, {
-					Title : "Lamp",
-					Description: "This is a lamp"
-				}, {
-					Title : "Attic",
-					Description: "This is an attic"
-				}, {
-					Title : "House",
-					Description: "This is a house"
-				}, {
-					Title : "Ceiling",
-					Description: "This is a ceiling"
-				}, {
-					Title : "Wall",
-					Description: "This is a wall"
-				}, {
-					Title : "Door",
-					Description: "This is a door"
-				}, {
-					Title : "Flower",
-					Description: "This is a flower"
-				} ]
-		};
-
-
-	// create a static list item
-	function createListItem() {
-		iItemCount++;
-		return new StandardListItem({
-			title : "Title" + iItemCount,
-			description: "Description" + iItemCount
-		});
-	}
-
-	function createTemplateListItem() {
-		return new StandardListItem({
-			title: "{Title}",
-			description: "{Description}"
-		});
-	}
-
-	// bind list with data
-	function bindListData(oList, oData, sPath, oItemTemplate) {
-		var oModel = new JSONModel();
-		// set the data for the model
-		oModel.setData(oData);
-		// set the model to the list
-		oList.setModel(oModel);
-		// bind Aggregation
-		oList.bindAggregation("items", sPath, oItemTemplate);
-	}
-
-	function testRemeberSelections(oList, oRenderSpy, assert) {
-		var oSorterAsc = new Sorter("Title", false, function(oContext){
-			return oContext.getProperty("Title").charAt(0); // sort ascending by first letter of title
-		}),
-		oSorterDesc = new Sorter("Title", true, function(oContext){
-			return oContext.getProperty("Title").charAt(0); // sort descending by first letter of title
-		}),
-		vSelectionMode,
-		vSelectedItemsNumber;
-
-		bindListData(oList, data3, "/items", createTemplateListItem());
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		vSelectionMode = oList.getMode();
-		// call method & do tests
-		if (vSelectionMode == "SingleSelect") {
-			oList.getItems()[0].setSelected(true);
-			vSelectedItemsNumber = 1;
-		} else if (vSelectionMode == "MultiSelect") {
-			oList.getItems()[0].setSelected(true);
-			oList.getItems()[1].setSelected(true);
-			oList.getItems()[5].setSelected(true);
-			vSelectedItemsNumber = 3;
-		}
-
-		oList.setRememberSelections(true);
-		assert.strictEqual(oList.getRememberSelections(), true, 'The property "rememberSelections" is "true" on ' + oList);
-
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of ' + vSelectedItemsNumber + ' on ' + oList);
-		assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + ' item ' + oList);
-
-		// filter 2 items ("Title1" and "Title10")
-		oList.getBinding("items").filter([new Filter("Title", FilterOperator.Contains , "Title1")]);
-		assert.strictEqual(oList.getSelectedItems().length, 1, 'The selection contains 1 item ' + oList);
-
-		// reset filter
-		oList.getBinding("items").filter([]);
-		assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + 'item ' + oList);
-
-		oList.setRememberSelections(false).removeSelections(true);
-		assert.strictEqual(oList.getRememberSelections(), false, 'The property "rememberSelections" is "false" on ' + oList);
-
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
-
-		// filter 2 items ("Title1" and "Title10")
-		oList.getBinding("items").filter([new Filter("Title", FilterOperator.Contains , "Title1")]);
-		assert.strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
-
-		// reset filter
-		oList.getBinding("items").filter([]);
-		assert.strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setRememberSelections(), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
-
-		oList.setGrowing(true);
-		assert.strictEqual(oList.getGrowing(), true, 'The property "growing" is "true" on ' + oList);
-
-		oList.setRememberSelections(true);
-
-		bindListData(oList, data4, "/items", createTemplateListItem());
-		// remember the selected items in oListSelected
-		var oListSelected;
-		if (vSelectionMode == "SingleSelect") {
-			oList.getItems()[5].setSelected(true);
-			oListSelected = oList.getItems()[5].getTitle();
-		} else if (vSelectionMode == "MultiSelect") {
-			oList.getItems()[0].setSelected(true);
-			oList.getItems()[1].setSelected(true);
-			oList.getItems()[5].setSelected(true);
-			oListSelected = [];
-			oListSelected[0] = oList.getItems()[0].getTitle();
-			oListSelected[1] = oList.getItems()[1].getTitle();
-			oListSelected[2] = oList.getItems()[5].getTitle();
-			oListSelected.sort();
-		}
-
-		var aSelectedContextPaths = oList.getSelectedContextPaths();
-
-		assert.strictEqual(aSelectedContextPaths.length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber + ' on ' + oList);
-		assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + ' items ' + oList);
-
-		oList.setGrowing(false);
-		assert.strictEqual(oList.getGrowing(), false, 'The property "growing" is "false" on ' + oList);
-
-		// sort ascending
-		oList.getBinding("items").sort([new Sorter("Title", false, oSorterAsc) ] );
-
-		var oListSelectedAfterSorting;
-		if (vSelectionMode == "SingleSelect") {
-			oListSelectedAfterSorting = oList.getSelectedItems()[0].getTitle();
-			assert.strictEqual(oListSelected, oListSelectedAfterSorting, "the same item should be selected after sorting" );
-		} else if (vSelectionMode == "MultiSelect") {
-			oListSelectedAfterSorting = [];
-			oListSelectedAfterSorting[0] = oList.getSelectedItems()[0].getTitle();
-			oListSelectedAfterSorting[1] = oList.getSelectedItems()[1].getTitle();
-			oListSelectedAfterSorting[2] = oList.getSelectedItems()[2].getTitle();
-			oListSelectedAfterSorting.sort();
-			assert.strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
-		}
-
-		assert.strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber + ' on ' + oList);
-		assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
-
-		oList.setRememberSelections(false);
-		if (vSelectionMode == "MultiSelect") {
-			assert.strictEqual(oList.getRememberSelections(), false, 'rememberSelections is set to false on ' + oList);
-			assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'Empty array returned as bAll is undefined on ' + oList);
-			assert.strictEqual(oList.getSelectedContextPaths(true).length, 3, 'Selected context paths return via binding context paths as bAll=true on ' + oList);
-		}
-
-		oList.removeSelections(true);
-		assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
-		assert.strictEqual(oList.getSelectedContextPaths(true).length, 0, 'Empty array returned via binding context on ' + oList);
-
-		// sort descending
-		oList.getBinding("items").sort([new Sorter("Title", true, oSorterDesc) ] );
-		assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array has length of 0 on ' + oList);
-		assert.strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
-
-		//rebinding
-		bindListData(oList, data4, "/items", createTemplateListItem());
-		assert.strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
-
-		// retain selection after binding
-		oList.setRememberSelections(true);
-		oList.setSelectedContextPaths(aSelectedContextPaths);
-
-		// sort ascending
-		oList.getBinding("items").sort([new Sorter("Title", false, oSorterAsc) ] );
-
-		// retest after sorting
-		if (vSelectionMode == "SingleSelect") {
-			oListSelectedAfterSorting = oList.getSelectedItems()[0].getTitle();
-			assert.strictEqual(oListSelected, oListSelectedAfterSorting, "the same item should be selected after sorting" );
-		} else if (vSelectionMode == "MultiSelect") {
-			oListSelectedAfterSorting = [];
-			oListSelectedAfterSorting[0] = oList.getSelectedItems()[0].getTitle();
-			oListSelectedAfterSorting[1] = oList.getSelectedItems()[1].getTitle();
-			oListSelectedAfterSorting[2] = oList.getSelectedItems()[2].getTitle();
-			oListSelectedAfterSorting.sort();
-			assert.strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
-		}
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	}
-
-	// app
-	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-		oApp = new App("myApp", { initialPage: "myFirstPage" }),
-		oPage = new Page("myFirstPage", {
-			title : "ListBase Test Page"
-		});
-
-	// init app
-	oApp.addPage(oPage).placeAt("content");
-
-	/********************************************************************************/
-	QUnit.module("Basic Control API checks");
-	/********************************************************************************/
-
-
-
-	QUnit.test("Properties", function(assert) {
-		var oList = new List({}),
-			oProperties = oList.getMetadata().getAllProperties();
-
-		assert.ok(oProperties.inset, 'Property "inset" exists');
-		assert.ok(oProperties.visible, 'Property "visible" exists');
-		assert.ok(oProperties.headerText, 'Property "headerText" exists');
-		assert.ok(oProperties.headerDesign, 'Property "headerDesign" exists');
-		assert.ok(oProperties.footerText, 'Property "footerText" exists');
-		assert.ok(oProperties.mode, 'Property "mode" exists');
-		assert.ok(oProperties.width, 'Property "width" exists');
-		assert.ok(oProperties.includeItemInSelection, 'Property "includeItemInSelection" exists');
-		assert.ok(oProperties.showUnread, 'Property "showUnread" exists');
-		assert.ok(oProperties.showNoData, 'Property "showNoData" exists');
-		assert.ok(oProperties.noDataText, 'Property "noDataText" exists');
-		assert.ok(oProperties.modeAnimationOn, 'Property "modeAnimationOn" exists');
-		assert.ok(oProperties.showSeparators, 'Property "showSeparators" exists');
-		assert.ok(oProperties.swipeDirection, 'Property "swipeDirection" exists');
-		assert.ok(oProperties.growing, 'Property "growing" exists');
-		assert.ok(oProperties.growingThreshold, 'Property "growingThreshold" exists');
-		assert.ok(oProperties.growingTriggerText, 'Property "growingTriggerText" exists');
-		assert.ok(oProperties.growingScrollToLoad, 'Property "growingScrollToLoad" exists');
-
-		// cleanup
-		oList.destroy();
-	});
-
-	QUnit.test("Events", function(assert) {
-		var oList = new List({}),
-			oEvents = oList.getMetadata().getAllEvents();
-		bindListData(oList, data2, "/items", createTemplateListItem());
-
-		assert.ok(oEvents.select, 'Event "select" exists');
-		assert.ok(oEvents.selectionChange, 'Event "selectionChange" exists');
-		assert.ok(oEvents["delete"], 'Event "delete" exists');
-		assert.ok(oEvents.swipe, 'Event "swipe" exists');
-		assert.ok(oEvents.growingStarted, 'Event "growingStarted" exists');
-		assert.ok(oEvents.growingFinished, 'Event "growingFinished" exists');
-		assert.ok(oEvents.updateStarted, 'Event "updateStarted" exists');
-		assert.ok(oEvents.updateFinished, 'Event "updateFinished" exists');
-		assert.ok(oEvents.beforeOpenContextMenu, 'Event "beforeOpenContextMenu" exists');
-
-		oList.setMode("MultiSelect");
-		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(oList.getItems().length, 3, "List has exactly 3 items");
-
-		oList.attachEventOnce("selectionChange", function(e) {
-			assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 1st item is selected");
-		});
-		oList.getItems()[0].getModeControl().$().trigger("tap");
-
-		oList.attachEventOnce("selectionChange", function(e) {
-			assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'ctrl+A' is pressed");
-		});
-		oList.getItems()[0].focus();
-		qutils.triggerKeydown(oList.getItems()[0].$(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
-
-		oList.attachEventOnce("selectionChange", function(e) {
-			assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 'ctrl+A' is pressed again");
-		});
-		oList.getItems()[0].focus();
-		qutils.triggerKeydown(oList.getItems()[0].$(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
-
-		var oSelectionChangeSpy = this.spy();
-		oList.attachSelectionChange(oSelectionChangeSpy);
-		oList.selectAll();
-		assert.strictEqual(oSelectionChangeSpy.callCount, 0, "selectAll is not fired via public API call");
-
-		oList.removeSelections();
-		oList.selectAll(true);
-		assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll is fired via true parameter call");
-
-		// cleanup
-		oList.destroy();
-	});
-
-	QUnit.test("Aggregations", function(assert) {
-		var oList = new List({}),
-			oAggregations = oList.getMetadata().getAllAggregations();
-
-		assert.ok(oAggregations.items, 'Aggregation "items" exists');
-		assert.ok(oAggregations.swipeContent, 'Aggregation "swipeContent" exists');
-		assert.ok(oAggregations.headerToolbar, 'Aggregation "headerToolbar" exists');
-		assert.ok(oAggregations.infoToolbar, 'Aggregation "infoToolbar" exists');
-		assert.ok(oAggregations.contextMenu, 'Aggregation "contextMenu" exists');
-
-		// cleanup
-		oList.destroy();
-	});
-
-	QUnit.test("Methods", function(assert) {
-		var oList = new List({});
-
-		assert.ok(oList.getSelectedItem, 'Method "getSelectedItem" exists');
-		assert.ok(oList.setSelectedItem, 'Method "setSelectedItem" exists');
-		assert.ok(oList.getSelectedItems, 'Method "getSelectedItems" exists');
-		assert.ok(oList.setSelectedItemById, 'Method "setSelectedItemById" exists');
-		assert.ok(oList.removeSelections, 'Method "removeSelections" exists');
-		assert.ok(oList.selectAll, 'Method "selectAll" exists');
-		assert.ok(oList.getSwipedItem, 'Method "getSwipedItem" exists');
-		assert.ok(oList.swipeOut, 'Method "swipeOut" exists');
-		assert.ok(oList.getGrowingInfo, 'Method "getGrowingInfo" exists');
-
-		// cleanup
-		oList.destroy();
-	});
-
-	/********************************************************************************/
-	QUnit.module("Initialization");
-	/********************************************************************************/
-
-	QUnit.test("Constructor behaviour", function(assert) {
-		var oList = new List({});
-
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after initialization of " + oList);
-		assert.strictEqual(oList._oGrowingDelegate, undefined, "Internal growingDelegate is null after initialization of " + oList);
-
-		oList.destroy();
-	});
-
-	QUnit.test("Default values", function(assert) {
-		var sAddText = " (state: before rendering)",
-			oList = new List({}),
-			fAssertions = function(sAddText) {
-				assert.strictEqual(oList.getInset(), false, 'The default value of property "inset" should be "false" on ' + oList + sAddText);
-				assert.strictEqual(oList.getVisible(), true, 'The default value of property "visible" should be "true" on ' + oList + sAddText);
-				assert.strictEqual(oList.getHeaderText(), "", 'The default value of property "headerText" should be "" on ' + oList + sAddText);
-				assert.strictEqual(oList.getHeaderDesign(), library.ListHeaderDesign.Standard, 'The default value of property "headerDesign" should be "' + library.ListHeaderDesign.Standard + '" on ' + oList + sAddText);
-				assert.strictEqual(oList.getFooterText(), "", 'The default value of property "footerText" should be "" on ' + oList + sAddText);
-				assert.strictEqual(oList.getMode(), library.ListMode.None, 'The default value of property "mode" should be "' + library.ListMode.None + '" on ' + oList + sAddText);
-				assert.strictEqual(oList.getWidth(), "100%", 'The default value of property "width" should be "100%" on ' + oList + sAddText);
-				assert.strictEqual(oList.getIncludeItemInSelection(), false, 'The default value of property "includeItemInSelection" should be "false" on ' + oList + sAddText);
-				assert.strictEqual(oList.getShowUnread(), false, 'The default value of property "showUnread" should be "false" on ' + oList + sAddText);
-				assert.strictEqual(oList.getShowNoData(), true, 'The default value of property "showNoData" should be "true" on ' + oList + sAddText);
-				assert.strictEqual(oList.getModeAnimationOn(), true, 'The default value of property "modeAnimationOn" should be "true" on ' + oList + sAddText);
-				assert.strictEqual(oList.getShowSeparators(), library.ListSeparators.All, 'The default value of property "showSeparators" should be "' + library.ListSeparators.All + '" on ' + oList + sAddText);
-				assert.strictEqual(oList.getSwipeDirection(), library.SwipeDirection.Both, 'The default value of property "swipeDirection" should be "' + library.SwipeDirection.Both + '" on ' + oList + sAddText);
-				assert.strictEqual(oList.getGrowing(), false, 'The default value of property "growing" should be "false" on ' + oList + sAddText);
-				assert.strictEqual(oList.getGrowingThreshold(), 20, 'The default value of property "growingThreshold" should be "20" on ' + oList + sAddText);
-				assert.strictEqual(oList.getGrowingTriggerText(), "", 'The default value of property "growingTriggerText" should be "" on ' + oList + sAddText);
-				assert.strictEqual(oList.getGrowingScrollToLoad(), false, 'The default value of property "growingScrollToLoad" should be "false" on ' + oList + sAddText);
-				assert.strictEqual(oList.getNoDataText(), oRB.getText("LIST_NO_DATA"), 'The update value of property "noDataText" should be "' + oRB.getText("LIST_NO_DATA") + '"  on ' + oList + sAddText);
+	QUnit.config.autostart = false;
+
+	sap.ui.require([
+		"sap/ui/qunit/QUnitUtils",
+		"sap/m/ListBaseRenderer",
+		"sap/ui/events/KeyCodes",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/model/Sorter",
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator",
+		"sap/ui/Device",
+		"sap/ui/core/library",
+		"sap/m/library",
+		"sap/m/StandardListItem",
+		"sap/m/App",
+		"sap/m/Page",
+		"sap/m/ListBase",
+		"sap/m/List",
+		"sap/m/Toolbar",
+		"sap/m/ToolbarSpacer",
+		"sap/m/GrowingEnablement",
+		"sap/m/Input",
+		"sap/m/CustomListItem",
+		"sap/m/InputListItem",
+		"sap/m/GroupHeaderListItem",
+		"sap/m/Button",
+		"sap/m/VBox",
+		"sap/m/Text",
+		"sap/m/Menu",
+		"sap/m/MenuItem",
+		"sap/m/MessageToast",
+		"sap/m/ScrollContainer",
+		"sap/m/Title"
+	], function(qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, library, StandardListItem, App, Page, ListBase, List, Toolbar,
+				ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title) {
+
+		sinon.config.useFakeTimers = true;
+
+		/*******************************************************************************
+		 * Helper variables & functions
+		 *******************************************************************************/
+
+		// helper variables
+		var iItemCount = 0,
+			data1 = { // 0 items
+				items : [ ]
+			},
+			data2 = { // 3 items
+					items : [ {
+						Title : "Title1",
+						Description: "Description1"
+					}, {
+						Title : "Title2",
+						Description: "Description2"
+					}, {
+						Title : "Title3",
+						Description: "Description3"
+					} ]
+			},
+			data3 = { // 10 items
+					items : [ {
+						Title : "Title1",
+						Description: "Description1"
+					}, {
+						Title : "Title2",
+						Description: "Description2"
+					}, {
+						Title : "Title3",
+						Description: "Description3"
+					}, {
+						Title : "Title4",
+						Description: "Description4"
+					}, {
+						Title : "Title5",
+						Description: "Description5"
+					}, {
+						Title : "Title6",
+						Description: "Description6"
+					}, {
+						Title : "Title7",
+						Description: "Description7"
+					}, {
+						Title : "Title8",
+						Description: "Description8"
+					}, {
+						Title : "Title9",
+						Description: "Description9"
+					}, {
+						Title : "Title10",
+						Description: "Description10"
+					} ]
+			},
+			data4 = {
+					items : [ {
+						Title : "Table",
+						Description: "This is a table"
+					}, {
+						Title : "Window",
+						Description: "This is a window"
+					}, {
+						Title : "Room",
+						Description: "This is a room"
+					}, {
+						Title : "Lamp",
+						Description: "This is a lamp"
+					}, {
+						Title : "Attic",
+						Description: "This is an attic"
+					}, {
+						Title : "House",
+						Description: "This is a house"
+					}, {
+						Title : "Ceiling",
+						Description: "This is a ceiling"
+					}, {
+						Title : "Wall",
+						Description: "This is a wall"
+					}, {
+						Title : "Door",
+						Description: "This is a door"
+					}, {
+						Title : "Flower",
+						Description: "This is a flower"
+					} ]
 			};
 
-		// check before rendering
-		fAssertions(sAddText);
 
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// check again after rendering
-		sAddText = " (state: after rendering)";
-		fAssertions(sAddText);
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	/********************************************************************************/
-	QUnit.module("Destruction");
-	/********************************************************************************/
-
-	QUnit.test("Destructor behaviour", function(assert) {
-		var oList = new List({});
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// call destructor
-		oList.destroy();
-		sap.ui.getCore().applyChanges();
-
-		// assertions
-		assert.strictEqual(oList.getItems().length, 0, "Items aggregation is empty after destroying " + oList.getId());
-		if (oList.getSwipeContent()) {
-			assert.strictEqual(oList.getSwipeContent().length, 0, "SwipeContent aggregation is empty after destroying " + oList.getId());
-		}
-		if (oList.getHeaderToolbar()) {
-			assert.strictEqual(oList.getHeaderToolbar().length, 0, "HeaderTooblar aggregation is empty after destroying " + oList.getId());
-		}
-		if (oList.getInfoToolbar()) {
-			assert.strictEqual(oList.getInfoToolbar().length, 0, "InfoToolbar aggregation is empty after destroying " + oList.getId());
-		}
-		assert.strictEqual(oList.getDomRef(), null, "Domref does not exist anymore after destroying " + oList.getId());
-
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after destroying " + oList.getId());
-		assert.strictEqual(oList._oGrowingDelegate, undefined, "Internal growingDelegate is null after destroying " + oList.getId());
-	});
-
-	/********************************************************************************/
-	QUnit.module("Rendering");
-	/********************************************************************************/
-
-	QUnit.test("HTML Tags & CSS Classes for a list with default values and no items", function(assert) {
-		var oList = new List({}),
-			$list,
-			$listUl,
-			$listLi;
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		$listUl = $list.children("ul");
-		$listLi = $list.children("ul").children("li");
-
-		// HTML & DOM checks
-		assert.ok($list.length, "The HTML div container element exists on " + oList.getId());
-		assert.ok($listUl.length, "The HTML ul element exists on " + oList.getId());
-		assert.strictEqual($listUl[0].getAttribute("id"), oList.getId() + "-listUl", 'The id of the HTML ul element is "' + oList.getId() + '"-listUl" on ' + oList);
-		assert.strictEqual($listUl[0].getAttribute("tabindex"), "0", 'The tabindex is "-1" for the HTML ul element on ' + oList);
-		assert.strictEqual($listLi[0].getAttribute("id"), oList.getId() + "-nodata", 'The id of the HTML li no data element is "' + oList.getId() + '"-nodat" on ' + oList);
-
-		// CSS checks
-		assert.ok($list.hasClass("sapMList"), 'The HTML div container for the list has class "sapMList" on ' + oList);
-		assert.ok($list.hasClass("sapMListBGSolid"), 'The HTML div container for the list has class "sapMListBGSolid" on ' + oList);
-		assert.ok($listUl.hasClass("sapMListUl"), 'The HTML ul element has class "sapMListUl" on ' + oList);
-		assert.ok($listUl.hasClass("sapMListModeNone"), 'The HTML ul element has class "sapMListModeNone" on ' + oList);
-		assert.ok($listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML ul element has class "sapMListShowSeparatorsAll" on ' + oList);
-		assert.ok($listLi.hasClass("sapMLIB"), 'The HTML no data li element has class "sapMLIB" on ' + oList);
-		assert.ok($listLi.hasClass("sapMListNoData"), 'The HTML no data li element has class "sapMListNoData" on ' + oList);
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("Toolbar has style classes sapMTBHeader-CTX and sapMListHdrTBar", function(assert) {
-		var oToolbar = new Toolbar();
-		var oList = new List({
-			headerToolbar: oToolbar
-		});
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
-		assert.ok(oToolbar.hasStyleClass("sapMListHdrTBar"), "Toolbar has style class sapMListHdrTBar");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	/********************************************************************************/
-	QUnit.module("Getter/Setter methods");
-	/********************************************************************************/
-
-	/* setter */
-
-	QUnit.test("setInset", function(assert) {
-		var sAddText = " (state: before rendering)",
-			oList = new List({ inset: false}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			$list;
-
-		// check before rendering
-		oList.setInset(); // default
-		assert.strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
-
-		oList.setInset(true);
-		assert.strictEqual(oList.getInset(), true, 'The property "inset" is "true" on ' + oList + sAddText);
-
-		oList.setInset(false);
-		assert.strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// check again after rendering
-		sAddText = " (state: after rendering)";
-		oList.setInset(true);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getInset(), true, 'The property "inset" is "true" on ' + oList + sAddText);
-		assert.ok($list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has class "sapMListInsetBG" on ' + oList + sAddText);
-
-		oList.setInset(false);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
-		assert.ok(!$list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has no class "sapMListInsetBG" on ' + oList + sAddText);
-
-		// standard setter tests
-		assert.strictEqual(oList.setInset(false), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setMode", function(assert) {
-		var oListItem = createListItem().setSelected(true),
-			oList = new List({
-				mode: library.ListMode.None,
-
-				items: [
-					oListItem
-				]
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render");
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// call method & do tests
-		assert.strictEqual(oList.setMode(library.ListMode.None).getMode(), library.ListMode.None, 'The property "mode" is "None" on ' + oList);
-		assert.strictEqual(oList.getSelectedItem(), null, 'The selection is not available after setting mode "None" on ' + oList);
-		oListItem.setSelected(true);
-		assert.strictEqual(oList.getSelectedItem(), null, 'While mode is "None" we cannot select an item even via API call on ' + oListItem);
-		assert.strictEqual(oList.setMode(library.ListMode.SingleSelect).getMode(), library.ListMode.SingleSelect, 'The property "mode" is "None" on ' + oList);
-		oListItem.setSelected(true);
-		assert.strictEqual(oList.getSelectedItem(), oListItem, 'The selection is still there after switching the mode to "SingleSelect" on ' + oList);
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelect" on ' + oList);
-		assert.strictEqual(oList.setMode(library.ListMode.MultiSelect).getMode(), library.ListMode.MultiSelect, 'The property "mode" is "None" on ' + oList);
-		assert.strictEqual(oList.getSelectedItems().length, 1, 'One selection should be keepts after switching the mode to "MultiSelect" on ' + oList);
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "MultiSelect" on ' + oList);
-		assert.strictEqual(oList.setMode(library.ListMode.Delete).getMode(), library.ListMode.Delete, 'The property "mode" is "None" on ' + oList);
-		assert.strictEqual(oList.setMode(library.ListMode.SingleSelectMaster).getMode(), library.ListMode.SingleSelectMaster, 'The property "mode" is "None" on ' + oList);
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelectMaster" on ' + oList);
-		assert.strictEqual(oList.setMode(library.ListMode.SingleSelectLeft).getMode(), library.ListMode.SingleSelectLeft, 'The property "mode" is "None" on ' + oList);
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelectLeft" on ' + oList);
-
-		assert.throws(function () {
-			oList.setMode("DoesNotExist");
-		}, "Throws a type exception");
-		assert.strictEqual(oList.getMode(), library.ListMode.SingleSelectLeft, 'The property "mode" is still "SingleSelectLeft" after setting mode "DoesNotExist" on ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setMode(library.ListMode.None), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setWidth", function(assert) {
-		var oList = new List(),
-			$list,
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			sWidth,
-			sWidthPx,
-			iWidth100Percent;
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		iWidth100Percent = $list.width();
-
-		// call method & do tests
-		sWidth = "0px";
-		sWidthPx = 0;
-		oList.setWidth(sWidth);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
-		assert.strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
-		assert.strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
-
-		sWidth = "500px";
-		sWidthPx = 500;
-		oList.setWidth(sWidth);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
-		assert.strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
-		assert.strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
-
-		assert.throws(function () {
-			oList.setWidth("NotaCSSSize");
-		}, "Throws a type exception");
-		assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "NotACSSSize"  on ' + oList);
-
-		assert.throws(function () {
-			oList.setWidth(-666);
-		}, "Throws a type exception");
-		assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "-666"  on ' + oList);
-
-		assert.throws(function () {
-			oList.setWidth(false);
-		}, "Throws a type exception");
-		assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "false" on ' + oList);
-
-		oList.setWidth("");
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getWidth(), "", 'The control property "width" is now "" after setting value "" on ' + oList);
-		assert.strictEqual($list.width(), iWidth100Percent, 'The CSS property "width" is now 100% after setting value "" on ' + oList);
-
-		sWidth = "20rem";
-		sWidthPx = "320px";
-		oList.setWidth(sWidth);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
-		assert.strictEqual($list.css("width"), sWidthPx, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
-		assert.strictEqual($list.width(), parseInt(sWidthPx.replace("px", ""), 10), 'The px width is now "' + parseInt(sWidthPx.replace("px", ""), 10) + '" on ' + oList);
-
-		sWidth = "50%";
-		sWidthPx = Math.ceil(parseInt($list.parent().css("width"), 10) / 2.0) + "px";
-		oList.setWidth(sWidth);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getWidth(), sWidth, 'The property "width" is now "' + sWidth + '" on ' + oList);
-
-		sWidth = "auto";
-		oList.setWidth(sWidth);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
-		assert.strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
-
-		sWidth = "inherit";
-		oList.setWidth(sWidth);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
-		assert.strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setWidth(""), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 8, "The list should be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setNoDataText", function(assert) {
-		var oList = new List(),
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			sText;
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// call method & do tests
-		sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
-		assert.strictEqual(oList.setNoDataText(sText).getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" on ' + oList);
-		assert.strictEqual(jQuery.sap.byId(oList.getId() + "-nodata").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
-
-		sText = "";
-		assert.strictEqual(oList.setNoDataText(sText).getNoDataText(), oRB.getText("LIST_NO_DATA"), 'The control property "noDataText" is "' + sText + '" on ' + oList);
-		assert.strictEqual(jQuery.sap.byId(oList.getId() + "-nodata-text").text(), oRB.getText("LIST_NO_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setNoDataText(""), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setGrowing", function(assert) {
-		var oList = new List({
-				growing: true,
-				growingThreshold: 5
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			bGrowing;
-
-		bindListData(oList, data3, "/items", createTemplateListItem());
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// call method & do tests
-		bGrowing = true;
-		assert.strictEqual(oList.setGrowing(bGrowing).getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
-		assert.strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" on ' + oList);
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList._oGrowingDelegate instanceof GrowingEnablement, true, 'The growing delegate is initialized');
-
-		bGrowing = false;
-		assert.strictEqual(oList.setGrowing(bGrowing).getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
-		assert.strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" on ' + oList);
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList._oGrowingDelegate, null, 'The growing delegate is null');
-		assert.strictEqual(oRenderSpy.callCount, 1, 'The list should not be rerendered until now');
-
-		bGrowing = true;
-		oList.setGrowing(bGrowing);
-		this.clock.tick(5); // wait for rerendering
-		assert.strictEqual(oList.getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
-		assert.strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" after setting property "growing" to "true" again ' + oList.getId());
-		// TODO: decide if check on internal variables is needed (Cahit)
-		assert.strictEqual(oList._oGrowingDelegate instanceof GrowingEnablement, true, 'The growing delegate is initialized');
-		assert.strictEqual(oRenderSpy.callCount, 2, 'The list should be rerendered after setting growing to "true"');
-
-		// TODO: this should fire an exception because type is boolean
-		//assert.throws(function () {
-			oList.setGrowing("WrongType");
-		//}, "Throws a type exception");
-		assert.strictEqual(oList.getGrowing(), true, 'The control property "growing" is now "true" after setting value "WrongType" on ' + oList);
-		assert.strictEqual(oList.setGrowing("").getGrowing(), false, 'The control property "growing" is now "false" after setting value "" on ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setGrowing(""), oList, 'Method returns this pointer on ' + oList);
-
-		assert.strictEqual(oRenderSpy.callCount, 2, "The list should be rerendered twice in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setGrowingThreshold", function(assert) {
-		var oList = new List({
-				growing: true,
-				growingThreshold: 5
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			iThreshold;
-
-		bindListData(oList, data3, "/items", createTemplateListItem());
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// call method & do tests
-		iThreshold = 5;
-			assert.strictEqual(oList.getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is "' + iThreshold + '" on ' + oList);
-			assert.strictEqual(oList.getItems().length, iThreshold, 'The displayed item size is "' + iThreshold + '" on ' + oList);
-
-		iThreshold = 10;
-		assert.strictEqual(oList.setGrowingThreshold(iThreshold).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is "' + iThreshold + '" on ' + oList);
-		assert.strictEqual(oList.getItems().length, 5, 'The displayed item size is still "5" on ' + oList);
-
-		// TODO: this should not fail (check if it is a bug)
-		//assert.strictEqual(oList.setGrowingThreshold(0).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "0" on ' + oList);
-		//assert.strictEqual(oList.setGrowingThreshold(-99).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "-99" on ' + oList);
-
-		assert.throws(function () {
-			oList.setGrowingThreshold("WrongType");
-		}, "Throws a type exception");
-		assert.strictEqual(oList.getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "wrongType" on ' + oList);
-		// standard setter tests
-		assert.strictEqual(oList.setGrowingThreshold(), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setGrowingTriggerText", function(assert) {
-		var oList = new List({
-				growing: true,
-				growingThreshold: 5
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			sText;
-
-		bindListData(oList, data3, "/items", createTemplateListItem());
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// call method & do tests
-		sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
-		assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
-
-		sText = "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>";
-		assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'Javascript code injection is not possible on ' + oList);
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
-
-		sText = "";
-		assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), oRB.getText("LOAD_MORE_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setGrowingTriggerText(""), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 4, "The list should be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setEnableBusyIndicator", function(assert) {
-		var oList = new List();
-		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		var oRenderSpy = this.spy(oList.getRenderer(), "render");
-
-		oList.setEnableBusyIndicator(false);
-		oList.setEnableBusyIndicator(true);
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered when enableBusyIndicator is changed");
-
-		// cleanup
-		oList.destroy();
-	});
-
-	QUnit.test("setBackgroundDesign", function(assert) {
-		var oListItem = createListItem(),
-			oList = new List({
-				backgroundDesign: library.BackgroundDesign.Solid,
-				items: [
-					oListItem
-				]
-			}),
-			$list,
-			oRenderSpy = this.spy(oList.getRenderer(), "render");
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-
-		// call method & do tests
-		assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Solid, 'The property "backgroundDesign" is "Solid" on ' + oList);
-		assert.ok($list.hasClass("sapMListBGSolid"), 'The HTML div container for the list has class "sapMListBGSolid" on ' + oList);
-		assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
-		assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
-
-		assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Transparent).getBackgroundDesign(), library.BackgroundDesign.Transparent, 'The property "backgroundDesign" is "Transparent" on ' + oList);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
-		assert.ok($list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list has class "sapMListBGTransparent" on ' + oList);
-		assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
-
-		assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Translucent).getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is "Translucent" on ' + oList);
-		sap.ui.getCore().applyChanges();
-		$list = oList.$();
-		assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
-		assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
-		assert.ok($list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list has class "sapMListBGTranslucent" on ' + oList);
-
-		assert.throws(function () {
-			oList.setBackgroundDesign("DoesNotExist");
-		}, "Throws a type exception");
-		assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is still "sap.m.BackgroundDesign.Translucent" after setting mode "DoesNotExist" on ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setBackgroundDesign(), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setShowSeparators", function(assert) {
-		var oListItem = createListItem().setSelected(true),
-			oList = new List({
-				showSeparators: library.ListSeparators.All,
-				items: [
-					oListItem
-				]
-			}),
-			$listUl,
-			oRenderSpy = this.spy(oList.getRenderer(), "render");
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-		$listUl = jQuery(oList.$().children("ul")[0]);
-
-		// call method & do tests
-		assert.strictEqual(oList.getShowSeparators(), library.ListSeparators.All, 'The property "showSeparators" is "All" on ' + oList);
-		assert.ok($listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list has class "sapMListShowSeparatorsAll" on ' + oList);
-		assert.ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
-		assert.ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
-
-		assert.strictEqual(oList.setShowSeparators(library.ListSeparators.Inner).getShowSeparators(), library.ListSeparators.Inner, 'The property "showSeparators" is "Inner" on ' + oList);
-		sap.ui.getCore().applyChanges();
-		$listUl = jQuery(oList.$().children("ul")[0]);
-		assert.ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
-		assert.ok($listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list has class "sapMListShowSeparatorsInner" on ' + oList);
-		assert.ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
-
-		assert.strictEqual(oList.setShowSeparators(library.ListSeparators.None).getShowSeparators(), library.ListSeparators.None, 'The property "showSeparators" is "None" on ' + oList);
-		sap.ui.getCore().applyChanges();
-		$listUl = jQuery(oList.$().children("ul")[0]);
-		assert.ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
-		assert.ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
-		assert.ok($listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list has class "sapMListShowSeparatorsNone" on ' + oList);
-
-		assert.throws(function () {
-			oList.setshowSeparators("DoesNotExist");
-		}, "Throws a type exception");
-		assert.strictEqual(oList.getShowSeparators(), library.ListSeparators.None, 'The property "showSeparators" is still "sap.m.showSeparators.None" after setting mode "DoesNotExist" on ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setShowSeparators(), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("setIncludeItemInSelection", function(assert) {
-		var oListItemTemplate = createListItem(),
-			oList = new List({
-				includeItemInSelection: false,
-				mode: library.ListMode.MultiSelect,
-				items: [
-					oListItemTemplate
-				]
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			oSelectionItem,
-			bIncludeItemInSelection;
-
-		// let the item navigation run for testing
-		this.stub(Device.system, "desktop", true);
-
-		bindListData(oList, data3, "/items", createTemplateListItem());
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-		oSelectionItem = oList.getItems()[3];
-
-		// call method & do tests
-		bIncludeItemInSelection = true;
-		assert.strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
-		sap.ui.getCore().applyChanges();
-		oList.getItems().forEach(function (oItem) {
-			assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), true, 'Each item has css class "sapMLIBActionable" on ' + oList);
-		});
-
-		// simulate tap & check result
-		oSelectionItem.ontap({ srcControl: oSelectionItem });
-		assert.strictEqual(oList.getSelectedItem(), oSelectionItem, 'Item "' + oSelectionItem + '" should be selected');
-		oSelectionItem.setSelected(false);
-
-		bIncludeItemInSelection = false;
-		assert.strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
-		sap.ui.getCore().applyChanges();
-		oList.getItems().forEach(function (oItem) {
-			assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), false, 'Each item does not have has css class "sapMLIBCursor" on ' + oList);
-		});
-
-		// simulate tap & check result
-		oSelectionItem.ontap({ srcControl: oSelectionItem });
-		assert.strictEqual(oList.getSelectedItem(), null, 'Item "' + oSelectionItem + '" should not be selected / selection should be empty');
-		oSelectionItem.setSelected(false);
-
-		// TODO: this should fire an exception because type is boolean
-		assert.throws(function () {
-			oList.setIncludeItemInSelection("WrongType");
-		}, "Throws a type exception");
-		assert.strictEqual(oList.getIncludeItemInSelection(), false, 'The control property "includeItemInSelection" is still "false" after setting value "WrongType" on ' + oList);
-
-		// standard setter tests
-		assert.strictEqual(oList.setIncludeItemInSelection(), oList, 'Method returns this pointer on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-
-
-	QUnit.test("setRememberSelectionsForMultiSelect", function(assert) {
-		var oListItemTemplate = createListItem().setSelected(true),
-			oList = new List({
-				includeItemInSelection: false,
-				mode: library.ListMode.MultiSelect,
-				items: [
-					oListItemTemplate
-				]
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render");
-
-		testRemeberSelections(oList, oRenderSpy, assert);
-	});
-
-	QUnit.test("setRememberSelectionsForSingleSelect", function(assert) {
-		var oListItemTemplate = createListItem().setSelected(true),
-			oList = new List({
-				includeItemInSelection: false,
-				mode: library.ListMode.SingleSelect,
-				items: [
-					oListItemTemplate
-				]
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render");
-
-		testRemeberSelections(oList, oRenderSpy, assert);
-
-	});
-
-
-	/* getter */
-
-	QUnit.test("getId", function(assert) {
-		var id = "testId",
-			suffix = "testSuffix",
-			oList = new List(id, {}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render");
-
-		// call method & do tests
-		assert.strictEqual(oList.getId(), id, 'The id returned by method getId is "' + id + '" on ' + oList);
-		assert.strictEqual(oList.getId(suffix), id + '-' + suffix, 'The id returned by method getId is "' + (id + '-' + suffix) + '" on ' + oList);
-
-		// standard getter tests
-		assert.strictEqual(typeof oList.getId(), "string", 'Method returns a string type on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered in this method");
-	});
-
-	QUnit.test("getNoDataText", function(assert) {
-		var oList = new List({
-				noDataText: ""
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			sText = oRB.getText("LIST_NO_DATA");
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// call method & do tests
-		assert.strictEqual(oList.getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" when the property value is empty on ' + oList);
-
-		sText = "Text";
-		assert.strictEqual(oList.setNoDataText(sText).getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" on ' + oList);
-
-		// standard getter tests
-		assert.strictEqual(typeof oList.getNoDataText(), "string", 'Method returns a string type on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	QUnit.test("getMaxItemsCount", function(assert) {
-		var oList = new List({
-				mode: library.ListMode.None
-			}),
-			oRenderSpy = this.spy(oList.getRenderer(), "render"),
-			iCounter;
-
-		// add item to page & render
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-
-		// no binding
-		iCounter = 0;
-		assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
-
-		oList.addItem(createListItem());
-		iCounter++;
-		assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
-
-		oList.addItem(createListItem());
-		iCounter++;
-		assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
-
-		oList.removeAllItems();
-		iCounter = 0;
-		assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
-
-		bindListData(oList, data1, "/items", createTemplateListItem());
-		iCounter = data1.items.length;
-		assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
-
-		bindListData(oList, data2, "/items", createTemplateListItem());
-		iCounter = data2.items.length;
-		assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
-
-		bindListData(oList, data3, "/items", createTemplateListItem());
-		iCounter = data3.items.length;
-		assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
-
-		// standard getter tests
-		assert.strictEqual(typeof oList.getMaxItemsCount(), "number", 'Method returns a number type on ' + oList);
-		assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
-
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
-
-	/********************************************************************************/
-	QUnit.module("Other API methods");
-	/********************************************************************************/
-
-	/********************************************************************************/
-	QUnit.module("Internal methods");
-	/********************************************************************************/
-
-	QUnit.module("KeyboardHandling");
-	QUnit.test("Basics", function (assert) {
-		var fnDetailPressSpy = this.spy(),
-			fnItemPressSpy = this.spy(),
-			fnDeleteSpy = this.spy(),
-			fnPressSpy = this.spy(),
-			fnSelectionChangeSpy = this.spy(),
-			oInput = new Input(),
-			oListItem1 = new CustomListItem({
-				content: oInput,
-				type: "Navigation",
-				press: fnPressSpy
-			}),
-			oListItem2 = new StandardListItem({
-				type: "Detail",
-				detailPress: fnDetailPressSpy
-			}),
-			oList = new List({
-				mode: "MultiSelect",
-				"delete": fnDeleteSpy,
-				itemPress: fnItemPressSpy,
-				selectionChange: fnSelectionChangeSpy
-			}).addItem(oListItem1).addItem(oListItem2);
-
-		// let the item navigation run for testing
-		this.stub(Device.system, "desktop", true);
-
-		oList.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		oList.focus();
-
-		assert.strictEqual(oList.getDomRef("before").getAttribute("tabindex"), "-1", "Before dummy element is not at the tab chain");
-		assert.strictEqual(oList.getNavigationRoot().getAttribute("tabindex"), "0", "Navigation root is at the tab chain");
-		assert.strictEqual(oList.getDomRef("after").getAttribute("tabindex"), "0", "After dummy element is at the tab chain");
-
-		if (!document.hasFocus()) {
-			return;
+		// create a static list item
+		function createListItem() {
+			iItemCount++;
+			return new StandardListItem({
+				title : "Title" + iItemCount,
+				description: "Description" + iItemCount
+			});
 		}
 
-		assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Initial focus is at the first list item");
+		function createTemplateListItem() {
+			return new StandardListItem({
+				title: "{Title}",
+				description: "{Description}"
+			});
+		}
 
-		qutils.triggerKeydown(document.activeElement, "ARROW_LEFT");
-		assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Left arrow has no effect on focus");
+		// bind list with data
+		function bindListData(oList, oData, sPath, oItemTemplate) {
+			var oModel = new JSONModel();
+			// set the data for the model
+			oModel.setData(oData);
+			// set the model to the list
+			oList.setModel(oModel);
+			// bind Aggregation
+			oList.bindAggregation("items", sPath, oItemTemplate);
+		}
 
-		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
-		assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Right arrow has no effect on focus");
+		function testRemeberSelections(oList, oRenderSpy, assert) {
+			var oSorterAsc = new Sorter("Title", false, function(oContext){
+				return oContext.getProperty("Title").charAt(0); // sort ascending by first letter of title
+			}),
+			oSorterDesc = new Sorter("Title", true, function(oContext){
+				return oContext.getProperty("Title").charAt(0); // sort descending by first letter of title
+			}),
+			vSelectionMode,
+			vSelectedItemsNumber;
 
-		qutils.triggerKeydown(document.activeElement, "ARROW_UP");
-		assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is still at the first list item");
+			bindListData(oList, data3, "/items", createTemplateListItem());
 
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-		assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved down to the second list item");
-
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-		assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is still at the second list item");
-
-		qutils.triggerKeydown(document.activeElement, "ARROW_UP");
-		assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is now again at the first list item");
-
-		qutils.triggerKeydown(document.activeElement, "END");
-		assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is at the second list item");
-
-		qutils.triggerKeydown(document.activeElement, "HOME");
-		assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is at the first list item");
-
-		qutils.triggerKeydown(document.activeElement, "PAGE_DOWN");
-		assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is at the second list item");
-
-		qutils.triggerKeydown(document.activeElement, "PAGE_UP");
-		assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is at the first list item");
-
-		qutils.triggerKeydown(document.activeElement, "SPACE");
-		assert.strictEqual(fnSelectionChangeSpy.callCount, 1, "SelectionChange event is fired when space is pressed while focus is at the item");
-		fnSelectionChangeSpy.reset();
-
-		qutils.triggerKeydown(document.activeElement, "ENTER");
-		this.clock.tick(0);
-		assert.strictEqual(fnItemPressSpy.callCount, 1, "ItemPress event is fired async when enter is pressed while focus is at the item");
-		assert.strictEqual(fnPressSpy.callCount, 1, "Press event is fired async when enter is pressed while focus is at the item");
-		fnItemPressSpy.reset();
-		fnPressSpy.reset();
-
-		qutils.triggerKeydown(document.activeElement, "F2");
-		assert.strictEqual(fnDetailPressSpy.callCount, 0, "DetailPress event is not called since first item has not Edit type");
-
-		qutils.triggerKeydown(document.activeElement, "DELETE");
-		assert.strictEqual(fnDeleteSpy.callCount, 0, "Delete event is not called since List is not in Delete mode");
-
-		oList.setMode("Delete");
-		sap.ui.getCore().applyChanges();
-		oList.focus();
-
-		qutils.triggerKeydown(document.activeElement, "DELETE");
-		assert.strictEqual(fnDeleteSpy.callCount, 1, "Delete event is now called because List is in Delete mode");
-
-		oInput.focus();
-		qutils.triggerKeydown(document.activeElement, "SPACE");
-		assert.strictEqual(fnSelectionChangeSpy.callCount, 0, "SelectionChange event is not fired when space is pressed while focus is not at the item");
-
-		qutils.triggerKeydown(document.activeElement, "ENTER");
-		this.clock.tick(0);
-		assert.strictEqual(fnItemPressSpy.callCount, 0, "ItemPress event is not fired when enter is pressed while focus is not at the item");
-		assert.strictEqual(fnPressSpy.callCount, 0, "Press event is not fired when enter is pressed while focus is not at the item");
-
-		oListItem2.focus();
-		qutils.triggerKeydown(document.activeElement, "F2");
-		assert.strictEqual(fnDetailPressSpy.callCount, 1, "DetailPress event is called since second item has type Edit");
-
-		oList.destroy();
-	});
-
-	QUnit.test("Test Tab/ShiftTab/F6/ShiftF6 handling", function(assert) {
-		var fnSpy = this.spy();
-		var oPage = new Page();
-		var oBeforeList = new Input();
-		var oAfterList = new Input();
-		var oInput = new Input();
-		var oListItem = new InputListItem({
-			label: "Input",
-			content : oInput,
-			type: "Navigation"
-		});
-		var oList = new List({
-			mode: "MultiSelect",
-			items : [oListItem]
-		});
-
-		oPage.addContent(oBeforeList);
-		oPage.addContent(oList);
-		oPage.addContent(oAfterList);
-		oPage.placeAt("content");
+			// add item to page & render
+			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
-			oList.forwardTab = fnSpy;
 
-			// tab key
-		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "TAB", false, false, false);
-		assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on last tabbable item");
-		assert.strictEqual(fnSpy.args[0][0], true, "Tab Forward is informed");
-		fnSpy.reset();
+			vSelectionMode = oList.getMode();
+			// call method & do tests
+			if (vSelectionMode == "SingleSelect") {
+				oList.getItems()[0].setSelected(true);
+				vSelectedItemsNumber = 1;
+			} else if (vSelectionMode == "MultiSelect") {
+				oList.getItems()[0].setSelected(true);
+				oList.getItems()[1].setSelected(true);
+				oList.getItems()[5].setSelected(true);
+				vSelectedItemsNumber = 3;
+			}
 
-		// shift-tab key
-		qutils.triggerKeyboardEvent(oListItem.getFocusDomRef(), "TAB", true, false, false);
-		assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab backwards when tab is pressed while focus is on the row");
-		assert.strictEqual(fnSpy.args[0][0], false, "Backwards tab is informed");
-		fnSpy.reset();
+			oList.setRememberSelections(true);
+			assert.strictEqual(oList.getRememberSelections(), true, 'The property "rememberSelections" is "true" on ' + oList);
 
-		// shift-F6 key
-		oInput.getFocusDomRef().focus();
-		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", true, false, false);
-		assert.strictEqual(document.activeElement.id, oBeforeList.getFocusDomRef().id, "Focus is moved correctly after Shift-F6");
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of ' + vSelectedItemsNumber + ' on ' + oList);
+			assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + ' item ' + oList);
 
-		// F6
-		oInput.getFocusDomRef().focus();
-		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", false, false, false);
-		assert.strictEqual(document.activeElement.id, oAfterList.getFocusDomRef().id, "Focus is moved correctly after F6");
+			// filter 2 items ("Title1" and "Title10")
+			oList.getBinding("items").filter([new Filter("Title", FilterOperator.Contains , "Title1")]);
+			assert.strictEqual(oList.getSelectedItems().length, 1, 'The selection contains 1 item ' + oList);
 
-		// cleanup
-		oPage.destroy();
-	});
+			// reset filter
+			oList.getBinding("items").filter([]);
+			assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + 'item ' + oList);
 
-	// in case of testrunner does not put the focus to the document it is not neccessary to make this test
-	document.hasFocus() && QUnit.test("Focusing an item in the ListItemBase should change the focus index of item navigation", function(assert) {
-		var oInput = new Input();
-		var oListItem0 = new InputListItem({
-			label: "Input",
-			content : oInput,
-			type: "Navigation"
-		});
-		var oListItem1 = oListItem0.clone();
-		var oListItem2 = oListItem0.clone();
-		var oList = new List({
-			items : [oListItem0, oListItem1, oListItem2]
-		});
+			oList.setRememberSelections(false).removeSelections(true);
+			assert.strictEqual(oList.getRememberSelections(), false, 'The property "rememberSelections" is "false" on ' + oList);
 
-		// let the item navigation run for testing
-		this.stub(Device.system, "desktop", true);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
 
-		oList.placeAt("content");
-		sap.ui.getCore().applyChanges();
+			// filter 2 items ("Title1" and "Title10")
+			oList.getBinding("items").filter([new Filter("Title", FilterOperator.Contains , "Title1")]);
+			assert.strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
 
-		var oFocusedInput = oListItem1.getTabbables()[0];
-		oFocusedInput.focus();
-		this.clock.tick(1);
-		assert.strictEqual(oList.getItemNavigation().getFocusedIndex(), 1, "Focus index is set correctly");
+			// reset filter
+			oList.getBinding("items").filter([]);
+			assert.strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
 
-		// cleanup
-		oList.destroy();
-	});
+			// standard setter tests
+			assert.strictEqual(oList.setRememberSelections(), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
 
-	QUnit.test("Item visible changes should inform the List", function(assert) {
-		var fnSpy = this.spy();
-		var oListItem = new StandardListItem({
-			title: "Title"
-		});
-		var oList = new List({
-			items : oListItem
-		});
+			oList.setGrowing(true);
+			assert.strictEqual(oList.getGrowing(), true, 'The property "growing" is "true" on ' + oList);
 
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
+			oList.setRememberSelections(true);
 
-		// act
-		oList.onItemDOMUpdate = fnSpy;
+			bindListData(oList, data4, "/items", createTemplateListItem());
+			// remember the selected items in oListSelected
+			var oListSelected;
+			if (vSelectionMode == "SingleSelect") {
+				oList.getItems()[5].setSelected(true);
+				oListSelected = oList.getItems()[5].getTitle();
+			} else if (vSelectionMode == "MultiSelect") {
+				oList.getItems()[0].setSelected(true);
+				oList.getItems()[1].setSelected(true);
+				oList.getItems()[5].setSelected(true);
+				oListSelected = [];
+				oListSelected[0] = oList.getItems()[0].getTitle();
+				oListSelected[1] = oList.getItems()[1].getTitle();
+				oListSelected[2] = oList.getItems()[5].getTitle();
+				oListSelected.sort();
+			}
 
-		oListItem.setVisible(false);
-		sap.ui.getCore().applyChanges();
+			var aSelectedContextPaths = oList.getSelectedContextPaths();
 
-		assert.strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from visible to invisible");
-		assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
-		fnSpy.reset();
+			assert.strictEqual(aSelectedContextPaths.length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber + ' on ' + oList);
+			assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + ' items ' + oList);
 
-		oListItem.setVisible(false);
-		sap.ui.getCore().applyChanges();
+			oList.setGrowing(false);
+			assert.strictEqual(oList.getGrowing(), false, 'The property "growing" is "false" on ' + oList);
 
-		assert.strictEqual(fnSpy.callCount, 0, "Visibility did not changed and list is not informed");
-		fnSpy.reset();
+			// sort ascending
+			oList.getBinding("items").sort([new Sorter("Title", false, oSorterAsc) ] );
 
-		oListItem.setVisible(true);
-		sap.ui.getCore().applyChanges();
+			var oListSelectedAfterSorting;
+			if (vSelectionMode == "SingleSelect") {
+				oListSelectedAfterSorting = oList.getSelectedItems()[0].getTitle();
+				assert.strictEqual(oListSelected, oListSelectedAfterSorting, "the same item should be selected after sorting" );
+			} else if (vSelectionMode == "MultiSelect") {
+				oListSelectedAfterSorting = [];
+				oListSelectedAfterSorting[0] = oList.getSelectedItems()[0].getTitle();
+				oListSelectedAfterSorting[1] = oList.getSelectedItems()[1].getTitle();
+				oListSelectedAfterSorting[2] = oList.getSelectedItems()[2].getTitle();
+				oListSelectedAfterSorting.sort();
+				assert.strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
+			}
 
-		assert.strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from invisible to visible");
-		assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
-		assert.strictEqual(fnSpy.args[0][1], true, "Correct visible parameter item is informed");
-		fnSpy.reset();
+			assert.strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber + ' on ' + oList);
+			assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
 
-		// cleanup
-		oPage.removeAllContent();
-		oList.destroy();
-	});
+			oList.setRememberSelections(false);
+			if (vSelectionMode == "MultiSelect") {
+				assert.strictEqual(oList.getRememberSelections(), false, 'rememberSelections is set to false on ' + oList);
+				assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'Empty array returned as bAll is undefined on ' + oList);
+				assert.strictEqual(oList.getSelectedContextPaths(true).length, 3, 'Selected context paths return via binding context paths as bAll=true on ' + oList);
+			}
 
-	QUnit.test("ListItem visibility change should not rerender the list", function(assert) {
-		var oListItem1 = new StandardListItem({
-				title: "Title1"
-			}),
-			oListItem2 = new StandardListItem({
-				title: "Title2"
-			}),
-			oList = new List({
-				items : [oListItem1, oListItem2]
+			oList.removeSelections(true);
+			assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
+			assert.strictEqual(oList.getSelectedContextPaths(true).length, 0, 'Empty array returned via binding context on ' + oList);
+
+			// sort descending
+			oList.getBinding("items").sort([new Sorter("Title", true, oSorterDesc) ] );
+			assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array has length of 0 on ' + oList);
+			assert.strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
+
+			//rebinding
+			bindListData(oList, data4, "/items", createTemplateListItem());
+			assert.strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
+
+			// retain selection after binding
+			oList.setRememberSelections(true);
+			oList.setSelectedContextPaths(aSelectedContextPaths);
+
+			// sort ascending
+			oList.getBinding("items").sort([new Sorter("Title", false, oSorterAsc) ] );
+
+			// retest after sorting
+			if (vSelectionMode == "SingleSelect") {
+				oListSelectedAfterSorting = oList.getSelectedItems()[0].getTitle();
+				assert.strictEqual(oListSelected, oListSelectedAfterSorting, "the same item should be selected after sorting" );
+			} else if (vSelectionMode == "MultiSelect") {
+				oListSelectedAfterSorting = [];
+				oListSelectedAfterSorting[0] = oList.getSelectedItems()[0].getTitle();
+				oListSelectedAfterSorting[1] = oList.getSelectedItems()[1].getTitle();
+				oListSelectedAfterSorting[2] = oList.getSelectedItems()[2].getTitle();
+				oListSelectedAfterSorting.sort();
+				assert.strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
+			}
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		}
+
+		// app
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oApp = new App("myApp", { initialPage: "myFirstPage" }),
+			oPage = new Page("myFirstPage", {
+				title : "ListBase Test Page"
 			});
 
-		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		// init app
+		oApp.addPage(oPage).placeAt("content");
 
-		// let the item navigation run for testing
-		this.stub(Device.system, "desktop", true);
+		/********************************************************************************/
+		QUnit.module("Basic Control API checks");
+		/********************************************************************************/
 
-		var fnRenderSpy = this.spy(oList.getRenderer(), "render");
 
-		oListItem1.setVisible(false);
-		sap.ui.getCore().applyChanges();
 
-		oListItem2.focus();
-		this.clock.tick(1);
+		QUnit.test("Properties", function(assert) {
+			var oList = new List({}),
+				oProperties = oList.getMetadata().getAllProperties();
 
-		/* make it sure document has focus in case of testrunner */
-		if (document.hasFocus()) {
-			assert.strictEqual(oList.getItemNavigation().getItemDomRefs().length, 1, "Invisible items are not in the item navigation.");
-		}
+			assert.ok(oProperties.inset, 'Property "inset" exists');
+			assert.ok(oProperties.visible, 'Property "visible" exists');
+			assert.ok(oProperties.headerText, 'Property "headerText" exists');
+			assert.ok(oProperties.headerDesign, 'Property "headerDesign" exists');
+			assert.ok(oProperties.footerText, 'Property "footerText" exists');
+			assert.ok(oProperties.mode, 'Property "mode" exists');
+			assert.ok(oProperties.width, 'Property "width" exists');
+			assert.ok(oProperties.includeItemInSelection, 'Property "includeItemInSelection" exists');
+			assert.ok(oProperties.showUnread, 'Property "showUnread" exists');
+			assert.ok(oProperties.showNoData, 'Property "showNoData" exists');
+			assert.ok(oProperties.noDataText, 'Property "noDataText" exists');
+			assert.ok(oProperties.modeAnimationOn, 'Property "modeAnimationOn" exists');
+			assert.ok(oProperties.showSeparators, 'Property "showSeparators" exists');
+			assert.ok(oProperties.swipeDirection, 'Property "swipeDirection" exists');
+			assert.ok(oProperties.growing, 'Property "growing" exists');
+			assert.ok(oProperties.growingThreshold, 'Property "growingThreshold" exists');
+			assert.ok(oProperties.growingTriggerText, 'Property "growingTriggerText" exists');
+			assert.ok(oProperties.growingScrollToLoad, 'Property "growingScrollToLoad" exists');
 
-		oListItem1.setVisible(true);
-		sap.ui.getCore().applyChanges();
+			// cleanup
+			oList.destroy();
+		});
 
-		oListItem1.focus();
-		this.clock.tick(1);
+		QUnit.test("Events", function(assert) {
+			var oList = new List({}),
+				oEvents = oList.getMetadata().getAllEvents();
+			bindListData(oList, data2, "/items", createTemplateListItem());
 
-		/* make it sure document has focus in case of testrunner */
-		if (document.hasFocus()) {
-			assert.strictEqual(oList.getItemNavigation().getItemDomRefs().length, 2, "Only visible items are in the item navigation.");
-		}
+			assert.ok(oEvents.select, 'Event "select" exists');
+			assert.ok(oEvents.selectionChange, 'Event "selectionChange" exists');
+			assert.ok(oEvents["delete"], 'Event "delete" exists');
+			assert.ok(oEvents.swipe, 'Event "swipe" exists');
+			assert.ok(oEvents.growingStarted, 'Event "growingStarted" exists');
+			assert.ok(oEvents.growingFinished, 'Event "growingFinished" exists');
+			assert.ok(oEvents.updateStarted, 'Event "updateStarted" exists');
+			assert.ok(oEvents.updateFinished, 'Event "updateFinished" exists');
+			assert.ok(oEvents.beforeOpenContextMenu, 'Event "beforeOpenContextMenu" exists');
 
-		oListItem1.setVisible(false);
-		sap.ui.getCore().applyChanges();
+			oList.setMode("MultiSelect");
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(fnRenderSpy.callCount, 0, "The list should not be rerendered with item visibility changes");
+			assert.strictEqual(oList.getItems().length, 3, "List has exactly 3 items");
 
-		oList.destroy();
-	});
+			oList.attachEventOnce("selectionChange", function(e) {
+				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 1st item is selected");
+			});
+			oList.getItems()[0].getModeControl().$().trigger("tap");
 
-	QUnit.test("Container Padding Classes", function (assert) {
-		// System under Test + Act
-		var oContainer = new List(),
-			sResponsiveSize,
-			$containerContent;
+			oList.attachEventOnce("selectionChange", function(e) {
+				assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'ctrl+A' is pressed");
+			});
+			oList.getItems()[0].focus();
+			qutils.triggerKeydown(oList.getItems()[0].$(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
 
-		if (Device.resize.width <= 599) {
-			sResponsiveSize = "0px";
-		} else if (Device.resize.width <= 1023) {
-			sResponsiveSize = "16px";
-		} else {
-			sResponsiveSize = "16px 32px";
-		}
-		var aResponsiveSize = sResponsiveSize.split(" ");
+			oList.attachEventOnce("selectionChange", function(e) {
+				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 'ctrl+A' is pressed again");
+			});
+			oList.getItems()[0].focus();
+			qutils.triggerKeydown(oList.getItems()[0].$(), KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
 
-		// Act
-		oContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		oContainer.addStyleClass("sapUiNoContentPadding");
-		$containerContent = oContainer.$();
+			var oSelectionChangeSpy = this.spy();
+			oList.attachSelectionChange(oSelectionChangeSpy);
+			oList.selectAll();
+			assert.strictEqual(oSelectionChangeSpy.callCount, 0, "selectAll is not fired via public API call");
 
-		// Assert
-		assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
+			oList.removeSelections();
+			oList.selectAll(true);
+			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll is fired via true parameter call");
 
-		// Act
-		oContainer.removeStyleClass("sapUiNoContentPadding");
-		oContainer.addStyleClass("sapUiContentPadding");
+			// cleanup
+			oList.destroy();
+		});
 
-		// Assert
-		assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+		QUnit.test("Aggregations", function(assert) {
+			var oList = new List({}),
+				oAggregations = oList.getMetadata().getAllAggregations();
 
-		// Act
-		oContainer.removeStyleClass("sapUiContentPadding");
-		oContainer.addStyleClass("sapUiResponsiveContentPadding");
+			assert.ok(oAggregations.items, 'Aggregation "items" exists');
+			assert.ok(oAggregations.swipeContent, 'Aggregation "swipeContent" exists');
+			assert.ok(oAggregations.headerToolbar, 'Aggregation "headerToolbar" exists');
+			assert.ok(oAggregations.infoToolbar, 'Aggregation "infoToolbar" exists');
+			assert.ok(oAggregations.contextMenu, 'Aggregation "contextMenu" exists');
 
-		// Assert
-		assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			// cleanup
+			oList.destroy();
+		});
 
-		// Cleanup
-		oContainer.destroy();
-	});
+		QUnit.test("Methods", function(assert) {
+			var oList = new List({});
 
-	document.hasFocus() && QUnit.test("KeybordMode", function (assert) {
-		var fnDetailPressSpy = this.spy(),
-			fnItemPressSpy = this.spy(),
-			fnPressSpy = this.spy(),
-			fnOnAfterRenderingSpy = this.spy(),
-			oInput1 = new Input(),
-			oInput2 = new Input(),
-			oButton1 = new Button(),
-			oButton2 = new Button(),
-			oListItem1 = new CustomListItem({
-				content: oInput1,
-				type: "Detail",
-				detailPress: fnDetailPressSpy
-			}),
-			oListItem2 = new CustomListItem({
-				content: oInput2,
-				type: "Navigation",
-				press: fnPressSpy
-			}),
-			oList = new List({
+			assert.ok(oList.getSelectedItem, 'Method "getSelectedItem" exists');
+			assert.ok(oList.setSelectedItem, 'Method "setSelectedItem" exists');
+			assert.ok(oList.getSelectedItems, 'Method "getSelectedItems" exists');
+			assert.ok(oList.setSelectedItemById, 'Method "setSelectedItemById" exists');
+			assert.ok(oList.removeSelections, 'Method "removeSelections" exists');
+			assert.ok(oList.selectAll, 'Method "selectAll" exists');
+			assert.ok(oList.getSwipedItem, 'Method "getSwipedItem" exists');
+			assert.ok(oList.swipeOut, 'Method "swipeOut" exists');
+			assert.ok(oList.getGrowingInfo, 'Method "getGrowingInfo" exists');
+
+			// cleanup
+			oList.destroy();
+		});
+
+		/********************************************************************************/
+		QUnit.module("Initialization");
+		/********************************************************************************/
+
+		QUnit.test("Constructor behaviour", function(assert) {
+			var oList = new List({});
+
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after initialization of " + oList);
+			assert.strictEqual(oList._oGrowingDelegate, undefined, "Internal growingDelegate is null after initialization of " + oList);
+
+			oList.destroy();
+		});
+
+		QUnit.test("Default values", function(assert) {
+			var sAddText = " (state: before rendering)",
+				oList = new List({}),
+				fAssertions = function(sAddText) {
+					assert.strictEqual(oList.getInset(), false, 'The default value of property "inset" should be "false" on ' + oList + sAddText);
+					assert.strictEqual(oList.getVisible(), true, 'The default value of property "visible" should be "true" on ' + oList + sAddText);
+					assert.strictEqual(oList.getHeaderText(), "", 'The default value of property "headerText" should be "" on ' + oList + sAddText);
+					assert.strictEqual(oList.getHeaderDesign(), library.ListHeaderDesign.Standard, 'The default value of property "headerDesign" should be "' + library.ListHeaderDesign.Standard + '" on ' + oList + sAddText);
+					assert.strictEqual(oList.getFooterText(), "", 'The default value of property "footerText" should be "" on ' + oList + sAddText);
+					assert.strictEqual(oList.getMode(), library.ListMode.None, 'The default value of property "mode" should be "' + library.ListMode.None + '" on ' + oList + sAddText);
+					assert.strictEqual(oList.getWidth(), "100%", 'The default value of property "width" should be "100%" on ' + oList + sAddText);
+					assert.strictEqual(oList.getIncludeItemInSelection(), false, 'The default value of property "includeItemInSelection" should be "false" on ' + oList + sAddText);
+					assert.strictEqual(oList.getShowUnread(), false, 'The default value of property "showUnread" should be "false" on ' + oList + sAddText);
+					assert.strictEqual(oList.getShowNoData(), true, 'The default value of property "showNoData" should be "true" on ' + oList + sAddText);
+					assert.strictEqual(oList.getModeAnimationOn(), true, 'The default value of property "modeAnimationOn" should be "true" on ' + oList + sAddText);
+					assert.strictEqual(oList.getShowSeparators(), library.ListSeparators.All, 'The default value of property "showSeparators" should be "' + library.ListSeparators.All + '" on ' + oList + sAddText);
+					assert.strictEqual(oList.getSwipeDirection(), library.SwipeDirection.Both, 'The default value of property "swipeDirection" should be "' + library.SwipeDirection.Both + '" on ' + oList + sAddText);
+					assert.strictEqual(oList.getGrowing(), false, 'The default value of property "growing" should be "false" on ' + oList + sAddText);
+					assert.strictEqual(oList.getGrowingThreshold(), 20, 'The default value of property "growingThreshold" should be "20" on ' + oList + sAddText);
+					assert.strictEqual(oList.getGrowingTriggerText(), "", 'The default value of property "growingTriggerText" should be "" on ' + oList + sAddText);
+					assert.strictEqual(oList.getGrowingScrollToLoad(), false, 'The default value of property "growingScrollToLoad" should be "false" on ' + oList + sAddText);
+					assert.strictEqual(oList.getNoDataText(), oRB.getText("LIST_NO_DATA"), 'The update value of property "noDataText" should be "' + oRB.getText("LIST_NO_DATA") + '"  on ' + oList + sAddText);
+				};
+
+			// check before rendering
+			fAssertions(sAddText);
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// check again after rendering
+			sAddText = " (state: after rendering)";
+			fAssertions(sAddText);
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		/********************************************************************************/
+		QUnit.module("Destruction");
+		/********************************************************************************/
+
+		QUnit.test("Destructor behaviour", function(assert) {
+			var oList = new List({});
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call destructor
+			oList.destroy();
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			assert.strictEqual(oList.getItems().length, 0, "Items aggregation is empty after destroying " + oList.getId());
+			if (oList.getSwipeContent()) {
+				assert.strictEqual(oList.getSwipeContent().length, 0, "SwipeContent aggregation is empty after destroying " + oList.getId());
+			}
+			if (oList.getHeaderToolbar()) {
+				assert.strictEqual(oList.getHeaderToolbar().length, 0, "HeaderTooblar aggregation is empty after destroying " + oList.getId());
+			}
+			if (oList.getInfoToolbar()) {
+				assert.strictEqual(oList.getInfoToolbar().length, 0, "InfoToolbar aggregation is empty after destroying " + oList.getId());
+			}
+			assert.strictEqual(oList.getDomRef(), null, "Domref does not exist anymore after destroying " + oList.getId());
+
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after destroying " + oList.getId());
+			assert.strictEqual(oList._oGrowingDelegate, undefined, "Internal growingDelegate is null after destroying " + oList.getId());
+		});
+
+		/********************************************************************************/
+		QUnit.module("Rendering");
+		/********************************************************************************/
+
+		QUnit.test("HTML Tags & CSS Classes for a list with default values and no items", function(assert) {
+			var oList = new List({}),
+				$list,
+				$listUl,
+				$listLi;
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			$listUl = $list.children("ul");
+			$listLi = $list.children("ul").children("li");
+
+			// HTML & DOM checks
+			assert.ok($list.length, "The HTML div container element exists on " + oList.getId());
+			assert.ok($listUl.length, "The HTML ul element exists on " + oList.getId());
+			assert.strictEqual($listUl[0].getAttribute("id"), oList.getId() + "-listUl", 'The id of the HTML ul element is "' + oList.getId() + '"-listUl" on ' + oList);
+			assert.strictEqual($listUl[0].getAttribute("tabindex"), "0", 'The tabindex is "-1" for the HTML ul element on ' + oList);
+			assert.strictEqual($listLi[0].getAttribute("id"), oList.getId() + "-nodata", 'The id of the HTML li no data element is "' + oList.getId() + '"-nodat" on ' + oList);
+
+			// CSS checks
+			assert.ok($list.hasClass("sapMList"), 'The HTML div container for the list has class "sapMList" on ' + oList);
+			assert.ok($list.hasClass("sapMListBGSolid"), 'The HTML div container for the list has class "sapMListBGSolid" on ' + oList);
+			assert.ok($listUl.hasClass("sapMListUl"), 'The HTML ul element has class "sapMListUl" on ' + oList);
+			assert.ok($listUl.hasClass("sapMListModeNone"), 'The HTML ul element has class "sapMListModeNone" on ' + oList);
+			assert.ok($listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML ul element has class "sapMListShowSeparatorsAll" on ' + oList);
+			assert.ok($listLi.hasClass("sapMLIB"), 'The HTML no data li element has class "sapMLIB" on ' + oList);
+			assert.ok($listLi.hasClass("sapMListNoData"), 'The HTML no data li element has class "sapMListNoData" on ' + oList);
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("Toolbar has style classes sapMTBHeader-CTX and sapMListHdrTBar", function(assert) {
+			var oToolbar = new Toolbar();
+			var oList = new List({
+				headerToolbar: oToolbar
+			});
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
+			assert.ok(oToolbar.hasStyleClass("sapMListHdrTBar"), "Toolbar has style class sapMListHdrTBar");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		/********************************************************************************/
+		QUnit.module("Getter/Setter methods");
+		/********************************************************************************/
+
+		/* setter */
+
+		QUnit.test("setInset", function(assert) {
+			var sAddText = " (state: before rendering)",
+				oList = new List({ inset: false}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				$list;
+
+			// check before rendering
+			oList.setInset(); // default
+			assert.strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
+
+			oList.setInset(true);
+			assert.strictEqual(oList.getInset(), true, 'The property "inset" is "true" on ' + oList + sAddText);
+
+			oList.setInset(false);
+			assert.strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// check again after rendering
+			sAddText = " (state: after rendering)";
+			oList.setInset(true);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getInset(), true, 'The property "inset" is "true" on ' + oList + sAddText);
+			assert.ok($list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has class "sapMListInsetBG" on ' + oList + sAddText);
+
+			oList.setInset(false);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
+			assert.ok(!$list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has no class "sapMListInsetBG" on ' + oList + sAddText);
+
+			// standard setter tests
+			assert.strictEqual(oList.setInset(false), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setMode", function(assert) {
+			var oListItem = createListItem().setSelected(true),
+				oList = new List({
+					mode: library.ListMode.None,
+
+					items: [
+						oListItem
+					]
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			assert.strictEqual(oList.setMode(library.ListMode.None).getMode(), library.ListMode.None, 'The property "mode" is "None" on ' + oList);
+			assert.strictEqual(oList.getSelectedItem(), null, 'The selection is not available after setting mode "None" on ' + oList);
+			oListItem.setSelected(true);
+			assert.strictEqual(oList.getSelectedItem(), null, 'While mode is "None" we cannot select an item even via API call on ' + oListItem);
+			assert.strictEqual(oList.setMode(library.ListMode.SingleSelect).getMode(), library.ListMode.SingleSelect, 'The property "mode" is "None" on ' + oList);
+			oListItem.setSelected(true);
+			assert.strictEqual(oList.getSelectedItem(), oListItem, 'The selection is still there after switching the mode to "SingleSelect" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelect" on ' + oList);
+			assert.strictEqual(oList.setMode(library.ListMode.MultiSelect).getMode(), library.ListMode.MultiSelect, 'The property "mode" is "None" on ' + oList);
+			assert.strictEqual(oList.getSelectedItems().length, 1, 'One selection should be keepts after switching the mode to "MultiSelect" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "MultiSelect" on ' + oList);
+			assert.strictEqual(oList.setMode(library.ListMode.Delete).getMode(), library.ListMode.Delete, 'The property "mode" is "None" on ' + oList);
+			assert.strictEqual(oList.setMode(library.ListMode.SingleSelectMaster).getMode(), library.ListMode.SingleSelectMaster, 'The property "mode" is "None" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelectMaster" on ' + oList);
+			assert.strictEqual(oList.setMode(library.ListMode.SingleSelectLeft).getMode(), library.ListMode.SingleSelectLeft, 'The property "mode" is "None" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelectLeft" on ' + oList);
+
+			assert.throws(function () {
+				oList.setMode("DoesNotExist");
+			}, "Throws a type exception");
+			assert.strictEqual(oList.getMode(), library.ListMode.SingleSelectLeft, 'The property "mode" is still "SingleSelectLeft" after setting mode "DoesNotExist" on ' + oList);
+
+			// standard setter tests
+			assert.strictEqual(oList.setMode(library.ListMode.None), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setWidth", function(assert) {
+			var oList = new List(),
+				$list,
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				sWidth,
+				sWidthPx,
+				iWidth100Percent;
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			iWidth100Percent = $list.width();
+
+			// call method & do tests
+			sWidth = "0px";
+			sWidthPx = 0;
+			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			assert.strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
+			assert.strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
+
+			sWidth = "500px";
+			sWidthPx = 500;
+			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			assert.strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
+			assert.strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
+
+			assert.throws(function () {
+				oList.setWidth("NotaCSSSize");
+			}, "Throws a type exception");
+			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "NotACSSSize"  on ' + oList);
+
+			assert.throws(function () {
+				oList.setWidth(-666);
+			}, "Throws a type exception");
+			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "-666"  on ' + oList);
+
+			assert.throws(function () {
+				oList.setWidth(false);
+			}, "Throws a type exception");
+			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "false" on ' + oList);
+
+			oList.setWidth("");
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getWidth(), "", 'The control property "width" is now "" after setting value "" on ' + oList);
+			assert.strictEqual($list.width(), iWidth100Percent, 'The CSS property "width" is now 100% after setting value "" on ' + oList);
+
+			sWidth = "20rem";
+			sWidthPx = "320px";
+			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			assert.strictEqual($list.css("width"), sWidthPx, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
+			assert.strictEqual($list.width(), parseInt(sWidthPx.replace("px", ""), 10), 'The px width is now "' + parseInt(sWidthPx.replace("px", ""), 10) + '" on ' + oList);
+
+			sWidth = "50%";
+			sWidthPx = Math.ceil(parseInt($list.parent().css("width"), 10) / 2.0) + "px";
+			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getWidth(), sWidth, 'The property "width" is now "' + sWidth + '" on ' + oList);
+
+			sWidth = "auto";
+			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			assert.strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
+
+			sWidth = "inherit";
+			oList.setWidth(sWidth);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			assert.strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
+
+			// standard setter tests
+			assert.strictEqual(oList.setWidth(""), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 8, "The list should be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setNoDataText", function(assert) {
+			var oList = new List(),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				sText;
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
+			assert.strictEqual(oList.setNoDataText(sText).getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" on ' + oList);
+			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-nodata").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+
+			sText = "";
+			assert.strictEqual(oList.setNoDataText(sText).getNoDataText(), oRB.getText("LIST_NO_DATA"), 'The control property "noDataText" is "' + sText + '" on ' + oList);
+			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-nodata-text").text(), oRB.getText("LIST_NO_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
+
+			// standard setter tests
+			assert.strictEqual(oList.setNoDataText(""), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setGrowing", function(assert) {
+			var oList = new List({
+					growing: true,
+					growingThreshold: 5
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				bGrowing;
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			bGrowing = true;
+			assert.strictEqual(oList.setGrowing(bGrowing).getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
+			assert.strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList._oGrowingDelegate instanceof GrowingEnablement, true, 'The growing delegate is initialized');
+
+			bGrowing = false;
+			assert.strictEqual(oList.setGrowing(bGrowing).getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
+			assert.strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList._oGrowingDelegate, null, 'The growing delegate is null');
+			assert.strictEqual(oRenderSpy.callCount, 1, 'The list should not be rerendered until now');
+
+			bGrowing = true;
+			oList.setGrowing(bGrowing);
+			this.clock.tick(5); // wait for rerendering
+			assert.strictEqual(oList.getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
+			assert.strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" after setting property "growing" to "true" again ' + oList.getId());
+			// TODO: decide if check on internal variables is needed (Cahit)
+			assert.strictEqual(oList._oGrowingDelegate instanceof GrowingEnablement, true, 'The growing delegate is initialized');
+			assert.strictEqual(oRenderSpy.callCount, 2, 'The list should be rerendered after setting growing to "true"');
+
+			// TODO: this should fire an exception because type is boolean
+			//assert.throws(function () {
+				oList.setGrowing("WrongType");
+			//}, "Throws a type exception");
+			assert.strictEqual(oList.getGrowing(), true, 'The control property "growing" is now "true" after setting value "WrongType" on ' + oList);
+			assert.strictEqual(oList.setGrowing("").getGrowing(), false, 'The control property "growing" is now "false" after setting value "" on ' + oList);
+
+			// standard setter tests
+			assert.strictEqual(oList.setGrowing(""), oList, 'Method returns this pointer on ' + oList);
+
+			assert.strictEqual(oRenderSpy.callCount, 2, "The list should be rerendered twice in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setGrowingThreshold", function(assert) {
+			var oList = new List({
+					growing: true,
+					growingThreshold: 5
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				iThreshold;
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			iThreshold = 5;
+				assert.strictEqual(oList.getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is "' + iThreshold + '" on ' + oList);
+				assert.strictEqual(oList.getItems().length, iThreshold, 'The displayed item size is "' + iThreshold + '" on ' + oList);
+
+			iThreshold = 10;
+			assert.strictEqual(oList.setGrowingThreshold(iThreshold).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is "' + iThreshold + '" on ' + oList);
+			assert.strictEqual(oList.getItems().length, 5, 'The displayed item size is still "5" on ' + oList);
+
+			// TODO: this should not fail (check if it is a bug)
+			//assert.strictEqual(oList.setGrowingThreshold(0).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "0" on ' + oList);
+			//assert.strictEqual(oList.setGrowingThreshold(-99).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "-99" on ' + oList);
+
+			assert.throws(function () {
+				oList.setGrowingThreshold("WrongType");
+			}, "Throws a type exception");
+			assert.strictEqual(oList.getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "wrongType" on ' + oList);
+			// standard setter tests
+			assert.strictEqual(oList.setGrowingThreshold(), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setGrowingTriggerText", function(assert) {
+			var oList = new List({
+					growing: true,
+					growingThreshold: 5
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				sText;
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
+			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+
+			sText = "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>";
+			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'Javascript code injection is not possible on ' + oList);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+
+			sText = "";
+			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), oRB.getText("LOAD_MORE_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
+
+			// standard setter tests
+			assert.strictEqual(oList.setGrowingTriggerText(""), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 4, "The list should be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setEnableBusyIndicator", function(assert) {
+			var oList = new List();
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			oList.setEnableBusyIndicator(false);
+			oList.setEnableBusyIndicator(true);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered when enableBusyIndicator is changed");
+
+			// cleanup
+			oList.destroy();
+		});
+
+		QUnit.test("setBackgroundDesign", function(assert) {
+			var oListItem = createListItem(),
+				oList = new List({
+					backgroundDesign: library.BackgroundDesign.Solid,
+					items: [
+						oListItem
+					]
+				}),
+				$list,
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+
+			// call method & do tests
+			assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Solid, 'The property "backgroundDesign" is "Solid" on ' + oList);
+			assert.ok($list.hasClass("sapMListBGSolid"), 'The HTML div container for the list has class "sapMListBGSolid" on ' + oList);
+			assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
+			assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
+
+			assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Transparent).getBackgroundDesign(), library.BackgroundDesign.Transparent, 'The property "backgroundDesign" is "Transparent" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
+			assert.ok($list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list has class "sapMListBGTransparent" on ' + oList);
+			assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
+
+			assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Translucent).getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is "Translucent" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
+			assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
+			assert.ok($list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list has class "sapMListBGTranslucent" on ' + oList);
+
+			assert.throws(function () {
+				oList.setBackgroundDesign("DoesNotExist");
+			}, "Throws a type exception");
+			assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is still "sap.m.BackgroundDesign.Translucent" after setting mode "DoesNotExist" on ' + oList);
+
+			// standard setter tests
+			assert.strictEqual(oList.setBackgroundDesign(), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setShowSeparators", function(assert) {
+			var oListItem = createListItem().setSelected(true),
+				oList = new List({
+					showSeparators: library.ListSeparators.All,
+					items: [
+						oListItem
+					]
+				}),
+				$listUl,
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$listUl = jQuery(oList.$().children("ul")[0]);
+
+			// call method & do tests
+			assert.strictEqual(oList.getShowSeparators(), library.ListSeparators.All, 'The property "showSeparators" is "All" on ' + oList);
+			assert.ok($listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list has class "sapMListShowSeparatorsAll" on ' + oList);
+			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
+			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
+
+			assert.strictEqual(oList.setShowSeparators(library.ListSeparators.Inner).getShowSeparators(), library.ListSeparators.Inner, 'The property "showSeparators" is "Inner" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			$listUl = jQuery(oList.$().children("ul")[0]);
+			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
+			assert.ok($listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list has class "sapMListShowSeparatorsInner" on ' + oList);
+			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
+
+			assert.strictEqual(oList.setShowSeparators(library.ListSeparators.None).getShowSeparators(), library.ListSeparators.None, 'The property "showSeparators" is "None" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			$listUl = jQuery(oList.$().children("ul")[0]);
+			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
+			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
+			assert.ok($listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list has class "sapMListShowSeparatorsNone" on ' + oList);
+
+			assert.throws(function () {
+				oList.setshowSeparators("DoesNotExist");
+			}, "Throws a type exception");
+			assert.strictEqual(oList.getShowSeparators(), library.ListSeparators.None, 'The property "showSeparators" is still "sap.m.showSeparators.None" after setting mode "DoesNotExist" on ' + oList);
+
+			// standard setter tests
+			assert.strictEqual(oList.setShowSeparators(), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("setIncludeItemInSelection", function(assert) {
+			var oListItemTemplate = createListItem(),
+				oList = new List({
+					includeItemInSelection: false,
+					mode: library.ListMode.MultiSelect,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				oSelectionItem,
+				bIncludeItemInSelection;
+
+			// let the item navigation run for testing
+			this.stub(Device.system, "desktop", true);
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			oSelectionItem = oList.getItems()[3];
+
+			// call method & do tests
+			bIncludeItemInSelection = true;
+			assert.strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			oList.getItems().forEach(function (oItem) {
+				assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), true, 'Each item has css class "sapMLIBActionable" on ' + oList);
+			});
+
+			// simulate tap & check result
+			oSelectionItem.ontap({ srcControl: oSelectionItem });
+			assert.strictEqual(oList.getSelectedItem(), oSelectionItem, 'Item "' + oSelectionItem + '" should be selected');
+			oSelectionItem.setSelected(false);
+
+			bIncludeItemInSelection = false;
+			assert.strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
+			sap.ui.getCore().applyChanges();
+			oList.getItems().forEach(function (oItem) {
+				assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), false, 'Each item does not have has css class "sapMLIBCursor" on ' + oList);
+			});
+
+			// simulate tap & check result
+			oSelectionItem.ontap({ srcControl: oSelectionItem });
+			assert.strictEqual(oList.getSelectedItem(), null, 'Item "' + oSelectionItem + '" should not be selected / selection should be empty');
+			oSelectionItem.setSelected(false);
+
+			// TODO: this should fire an exception because type is boolean
+			assert.throws(function () {
+				oList.setIncludeItemInSelection("WrongType");
+			}, "Throws a type exception");
+			assert.strictEqual(oList.getIncludeItemInSelection(), false, 'The control property "includeItemInSelection" is still "false" after setting value "WrongType" on ' + oList);
+
+			// standard setter tests
+			assert.strictEqual(oList.setIncludeItemInSelection(), oList, 'Method returns this pointer on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+
+
+		QUnit.test("setRememberSelectionsForMultiSelect", function(assert) {
+			var oListItemTemplate = createListItem().setSelected(true),
+				oList = new List({
+					includeItemInSelection: false,
+					mode: library.ListMode.MultiSelect,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			testRemeberSelections(oList, oRenderSpy, assert);
+		});
+
+		QUnit.test("setRememberSelectionsForSingleSelect", function(assert) {
+			var oListItemTemplate = createListItem().setSelected(true),
+				oList = new List({
+					includeItemInSelection: false,
+					mode: library.ListMode.SingleSelect,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			testRemeberSelections(oList, oRenderSpy, assert);
+
+		});
+
+
+		/* getter */
+
+		QUnit.test("getId", function(assert) {
+			var id = "testId",
+				suffix = "testSuffix",
+				oList = new List(id, {}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			// call method & do tests
+			assert.strictEqual(oList.getId(), id, 'The id returned by method getId is "' + id + '" on ' + oList);
+			assert.strictEqual(oList.getId(suffix), id + '-' + suffix, 'The id returned by method getId is "' + (id + '-' + suffix) + '" on ' + oList);
+
+			// standard getter tests
+			assert.strictEqual(typeof oList.getId(), "string", 'Method returns a string type on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered in this method");
+		});
+
+		QUnit.test("getNoDataText", function(assert) {
+			var oList = new List({
+					noDataText: ""
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				sText = oRB.getText("LIST_NO_DATA");
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			assert.strictEqual(oList.getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" when the property value is empty on ' + oList);
+
+			sText = "Text";
+			assert.strictEqual(oList.setNoDataText(sText).getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" on ' + oList);
+
+			// standard getter tests
+			assert.strictEqual(typeof oList.getNoDataText(), "string", 'Method returns a string type on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("getMaxItemsCount", function(assert) {
+			var oList = new List({
+					mode: library.ListMode.None
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				iCounter;
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// no binding
+			iCounter = 0;
+			assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
+
+			oList.addItem(createListItem());
+			iCounter++;
+			assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
+
+			oList.addItem(createListItem());
+			iCounter++;
+			assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
+
+			oList.removeAllItems();
+			iCounter = 0;
+			assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
+
+			bindListData(oList, data1, "/items", createTemplateListItem());
+			iCounter = data1.items.length;
+			assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
+
+			bindListData(oList, data2, "/items", createTemplateListItem());
+			iCounter = data2.items.length;
+			assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+			iCounter = data3.items.length;
+			assert.strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
+
+			// standard getter tests
+			assert.strictEqual(typeof oList.getMaxItemsCount(), "number", 'Method returns a number type on ' + oList);
+			assert.strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		/********************************************************************************/
+		QUnit.module("Other API methods");
+		/********************************************************************************/
+
+		/********************************************************************************/
+		QUnit.module("Internal methods");
+		/********************************************************************************/
+
+		QUnit.module("KeyboardHandling");
+		QUnit.test("Basics", function (assert) {
+			var fnDetailPressSpy = this.spy(),
+				fnItemPressSpy = this.spy(),
+				fnDeleteSpy = this.spy(),
+				fnPressSpy = this.spy(),
+				fnSelectionChangeSpy = this.spy(),
+				oInput = new Input(),
+				oListItem1 = new CustomListItem({
+					content: oInput,
+					type: "Navigation",
+					press: fnPressSpy
+				}),
+				oListItem2 = new StandardListItem({
+					type: "Detail",
+					detailPress: fnDetailPressSpy
+				}),
+				oList = new List({
+					mode: "MultiSelect",
+					"delete": fnDeleteSpy,
+					itemPress: fnItemPressSpy,
+					selectionChange: fnSelectionChangeSpy
+				}).addItem(oListItem1).addItem(oListItem2);
+
+			// let the item navigation run for testing
+			this.stub(Device.system, "desktop", true);
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oList.focus();
+
+			assert.strictEqual(oList.getDomRef("before").getAttribute("tabindex"), "-1", "Before dummy element is not at the tab chain");
+			assert.strictEqual(oList.getNavigationRoot().getAttribute("tabindex"), "0", "Navigation root is at the tab chain");
+			assert.strictEqual(oList.getDomRef("after").getAttribute("tabindex"), "0", "After dummy element is at the tab chain");
+
+			if (!document.hasFocus()) {
+				return;
+			}
+
+			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Initial focus is at the first list item");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_LEFT");
+			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Left arrow has no effect on focus");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Right arrow has no effect on focus");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP");
+			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is still at the first list item");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved down to the second list item");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is still at the second list item");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP");
+			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is now again at the first list item");
+
+			qutils.triggerKeydown(document.activeElement, "END");
+			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is at the second list item");
+
+			qutils.triggerKeydown(document.activeElement, "HOME");
+			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is at the first list item");
+
+			qutils.triggerKeydown(document.activeElement, "PAGE_DOWN");
+			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is at the second list item");
+
+			qutils.triggerKeydown(document.activeElement, "PAGE_UP");
+			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is at the first list item");
+
+			qutils.triggerKeydown(document.activeElement, "SPACE");
+			assert.strictEqual(fnSelectionChangeSpy.callCount, 1, "SelectionChange event is fired when space is pressed while focus is at the item");
+			fnSelectionChangeSpy.reset();
+
+			qutils.triggerKeydown(document.activeElement, "ENTER");
+			this.clock.tick(0);
+			assert.strictEqual(fnItemPressSpy.callCount, 1, "ItemPress event is fired async when enter is pressed while focus is at the item");
+			assert.strictEqual(fnPressSpy.callCount, 1, "Press event is fired async when enter is pressed while focus is at the item");
+			fnItemPressSpy.reset();
+			fnPressSpy.reset();
+
+			qutils.triggerKeydown(document.activeElement, "F2");
+			assert.strictEqual(fnDetailPressSpy.callCount, 0, "DetailPress event is not called since first item has not Edit type");
+
+			qutils.triggerKeydown(document.activeElement, "DELETE");
+			assert.strictEqual(fnDeleteSpy.callCount, 0, "Delete event is not called since List is not in Delete mode");
+
+			oList.setMode("Delete");
+			sap.ui.getCore().applyChanges();
+			oList.focus();
+
+			qutils.triggerKeydown(document.activeElement, "DELETE");
+			assert.strictEqual(fnDeleteSpy.callCount, 1, "Delete event is now called because List is in Delete mode");
+
+			oInput.focus();
+			qutils.triggerKeydown(document.activeElement, "SPACE");
+			assert.strictEqual(fnSelectionChangeSpy.callCount, 0, "SelectionChange event is not fired when space is pressed while focus is not at the item");
+
+			qutils.triggerKeydown(document.activeElement, "ENTER");
+			this.clock.tick(0);
+			assert.strictEqual(fnItemPressSpy.callCount, 0, "ItemPress event is not fired when enter is pressed while focus is not at the item");
+			assert.strictEqual(fnPressSpy.callCount, 0, "Press event is not fired when enter is pressed while focus is not at the item");
+
+			oListItem2.focus();
+			qutils.triggerKeydown(document.activeElement, "F2");
+			assert.strictEqual(fnDetailPressSpy.callCount, 1, "DetailPress event is called since second item has type Edit");
+
+			oList.destroy();
+		});
+
+		QUnit.test("Test Tab/ShiftTab/F6/ShiftF6 handling", function(assert) {
+			var fnSpy = this.spy();
+			var oPage = new Page();
+			var oBeforeList = new Input();
+			var oAfterList = new Input();
+			var oInput = new Input();
+			var oListItem = new InputListItem({
+				label: "Input",
+				content : oInput,
+				type: "Navigation"
+			});
+			var oList = new List({
 				mode: "MultiSelect",
-				keyboardMode: "Navigation",
-				itemPress: fnItemPressSpy
-			}).addItem(oListItem1).addItem(oListItem2),
-			oContainer = new VBox({
-				items: [oButton1, oList, oButton2]
+				items : [oListItem]
 			});
 
-		oContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		oList.focus();
+			oPage.addContent(oBeforeList);
+			oPage.addContent(oList);
+			oPage.addContent(oAfterList);
+			oPage.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oList.forwardTab = fnSpy;
 
-		qutils.triggerKeydown(oListItem1.getFocusDomRef(), "TAB", true, false, false);
-		assert.strictEqual(document.activeElement, oList.getDomRef('before'), "Focus is forwarded before the table");
+				// tab key
+			qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "TAB", false, false, false);
+			assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on last tabbable item");
+			assert.strictEqual(fnSpy.args[0][0], true, "Tab Forward is informed");
+			fnSpy.reset();
 
-		oInput1.focus();
-		qutils.triggerKeydown(document.activeElement, "TAB");
-		assert.strictEqual(document.activeElement, oList.getDomRef("after"), "Focus is forwarded after the table");
+			// shift-tab key
+			qutils.triggerKeyboardEvent(oListItem.getFocusDomRef(), "TAB", true, false, false);
+			assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab backwards when tab is pressed while focus is on the row");
+			assert.strictEqual(fnSpy.args[0][0], false, "Backwards tab is informed");
+			fnSpy.reset();
 
-		oInput1.focus();
-		qutils.triggerKeydown(document.activeElement, "ARROW_UP");
-		assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Arrow up has no effect");
+			// shift-F6 key
+			oInput.getFocusDomRef().focus();
+			qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", true, false, false);
+			assert.strictEqual(document.activeElement.id, oBeforeList.getFocusDomRef().id, "Focus is moved correctly after Shift-F6");
 
-		oInput1.focus();
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-		assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Arrow up has no effect");
+			// F6
+			oInput.getFocusDomRef().focus();
+			qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", false, false, false);
+			assert.strictEqual(document.activeElement.id, oAfterList.getFocusDomRef().id, "Focus is moved correctly after F6");
 
-		oInput1.focus();
-		qutils.triggerKeydown(document.activeElement, "ENTER");
-		assert.strictEqual(fnPressSpy.callCount, 0, "Enter has no effect");
-
-		oList.addEventDelegate({
-			onAfterRendering: fnOnAfterRenderingSpy
+			// cleanup
+			oPage.destroy();
 		});
-		oList.setKeyboardMode("Edit");
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(fnPressSpy.callCount, 0, "Mode change did not rerender!");
 
-		oListItem1.focus();
-		qutils.triggerKeydown(document.activeElement, "F2");
-		assert.strictEqual(fnDetailPressSpy.callCount, 1, "Keyboard mode did not change Detail press event is fired while focus is on the row");
-		assert.strictEqual(oList.getKeyboardMode(), "Edit", "Keyboard mode is still in Edit");
-		fnDetailPressSpy.reset();
-
-		oInput1.focus();
-		qutils.triggerKeydown(document.activeElement, "TAB");
-		assert.notStrictEqual(document.activeElement, oList.getDomRef("after"), "Focus is not forwarded after the table");
-
-		oInput1.focus();
-		qutils.triggerKeydown(document.activeElement, "F2");
-		assert.strictEqual(fnDetailPressSpy.callCount, 0, "F2 switch keyboard mode and did not fire the detail event");
-		assert.strictEqual(oList.getKeyboardMode(), "Navigation", "Now keyboard mode is navigation");
-		assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is moved to the row");
-
-		oListItem1.detachDetailPress(fnDetailPressSpy);
-		qutils.triggerKeydown(document.activeElement, "F2");
-		assert.strictEqual(oList.getKeyboardMode(), "Edit", "Now keyboard mode is Edit");
-		assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the Input again");
-
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-		assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is moved to the second input");
-
-		qutils.triggerKeydown(document.activeElement, "ARROW_UP");
-		assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the first input");
-
-		oInput2.setEnabled(false);
-		sap.ui.getCore().applyChanges();
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-		assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved to the item since second input is disabled");
-
-		qutils.triggerKeydown(document.activeElement, "TAB", true, false, false);
-		assert.notStrictEqual(document.activeElement, oList.getItemsContainerDomRef(), "Focus is not forwarded before the table");
-
-		oInput2.setEnabled(true);
-		sap.ui.getCore().applyChanges();
-		oListItem2.focus();
-		qutils.triggerKeydown(document.activeElement, "F7");
-		assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is moved to input but keyboard mode did not change with F7");
-		assert.strictEqual(oList.getKeyboardMode(), "Edit", "keyboard mode is still Edit");
-
-		qutils.triggerKeydown(document.activeElement, "ENTER");
-		assert.strictEqual(oList.getKeyboardMode(), "Navigation", "Now keyboard mode is change to Navigation. Exit from edit mode.");
-		assert.strictEqual(fnItemPressSpy.callCount, 0, "Item press event is not called");
-		assert.strictEqual(fnPressSpy.callCount, 0, "Press event is not called");
-
-		oContainer.destroy();
-
-	});
-
-	QUnit.module("Highlight");
-	QUnit.test("Highlight should be rendered", function (assert) {
-		var oLI = new StandardListItem({
-			highlight: "Error",
-			title: "Error"
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-		assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), true, "Highlight is rendered");
-		assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlightError"), true, "Error Highlight is rendered");
-
-		// clean up
-		oLI.destroy();
-	});
-
-	QUnit.test("List should respect highlight changes", function (assert) {
-
-		var oListItem1 = new StandardListItem({
-				title: "oListItem1"
-			}),
-			oListItem2 = new CustomListItem({
-				title: "oListItem1",
-				highlight: "Warning"
-			}),
-			oList = new List({
-				items: [oListItem1, oListItem2]
+		// in case of testrunner does not put the focus to the document it is not neccessary to make this test
+		document.hasFocus() && QUnit.test("Focusing an item in the ListItemBase should change the focus index of item navigation", function(assert) {
+			var oInput = new Input();
+			var oListItem0 = new InputListItem({
+				label: "Input",
+				content : oInput,
+				type: "Navigation"
+			});
+			var oListItem1 = oListItem0.clone();
+			var oListItem2 = oListItem0.clone();
+			var oList = new List({
+				items : [oListItem0, oListItem1, oListItem2]
 			});
 
-		oList.placeAt("content");
-		sap.ui.getCore().applyChanges();
+			// let the item navigation run for testing
+			this.stub(Device.system, "desktop", true);
 
-		assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-		oListItem2.setHighlight("None");
-		sap.ui.getCore().applyChanges();
-		assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+			var oFocusedInput = oListItem1.getTabbables()[0];
+			oFocusedInput.focus();
+			this.clock.tick(1);
+			assert.strictEqual(oList.getItemNavigation().getFocusedIndex(), 1, "Focus index is set correctly");
 
-		oListItem1.setHighlight("Information");
-		sap.ui.getCore().applyChanges();
-		assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
+			// cleanup
+			oList.destroy();
+		});
 
-		oListItem1.setVisible(false);
-		sap.ui.getCore().applyChanges();
-		assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+		QUnit.test("Item visible changes should inform the List", function(assert) {
+			var fnSpy = this.spy();
+			var oListItem = new StandardListItem({
+				title: "Title"
+			});
+			var oList = new List({
+				items : oListItem
+			});
 
-		oListItem1.setVisible(true);
-		sap.ui.getCore().applyChanges();
-		assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
 
-		oListItem1.destroy();
-		sap.ui.getCore().applyChanges();
-		assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+			// act
+			oList.onItemDOMUpdate = fnSpy;
 
-		oList.destroy();
-	});
+			oListItem.setVisible(false);
+			sap.ui.getCore().applyChanges();
 
-	QUnit.module("Accessibility");
+			assert.strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from visible to invisible");
+			assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
+			fnSpy.reset();
 
-	QUnit.test("aria-labelledby association should be accessibility description", function(assert) {
-		var oList = new List().placeAt("content");
-		var oText1 = new Text({
-			text: "text1"
-		}).placeAt("content");
-		var oText2 = new Text({
-			text: "text2"
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+			oListItem.setVisible(false);
+			sap.ui.getCore().applyChanges();
 
-		oList.addAriaLabelledBy(oText1);
-		assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) > -1, "Accessibility info of text1 added to list.");
+			assert.strictEqual(fnSpy.callCount, 0, "Visibility did not changed and list is not informed");
+			fnSpy.reset();
 
-		oList.addAriaLabelledBy(oText2.getId());
-		assert.ok(oList.getAccessibilityDescription().indexOf(oText2.getText()) > -1, "Accessibility info of text2 added to list.");
+			oListItem.setVisible(true);
+			sap.ui.getCore().applyChanges();
 
-		assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText() + " " + oText2.getText()) > -1, "both accessibility text found.");
+			assert.strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from invisible to visible");
+			assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
+			assert.strictEqual(fnSpy.args[0][1], true, "Correct visible parameter item is informed");
+			fnSpy.reset();
 
-		oList.removeAriaLabelledBy(oText1);
-		assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) == -1, "Accessibility info of text1 removed from list.");
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
 
-		oList.removeAriaLabelledBy(oText2.getId());
-		assert.ok(oList.getAccessibilityDescription().indexOf(oText2.getText()) == -1, "Accessibility info of text2 removed from list.");
+		QUnit.test("ListItem visibility change should not rerender the list", function(assert) {
+			var oListItem1 = new StandardListItem({
+					title: "Title1"
+				}),
+				oListItem2 = new StandardListItem({
+					title: "Title2"
+				}),
+				oList = new List({
+					items : [oListItem1, oListItem2]
+				});
 
-		oList.destroy();
-		oText1.destroy();
-		oText2.destroy();
-	});
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-	QUnit.test("group headers info of the item", function(assert) {
-		var oGroupHeader1 = new GroupHeaderListItem({
-				title: "Group Header 1"
-			}),
-			oListItem1 = new StandardListItem({
-				title: "List Item 1"
-			}),
-			oGroupHeader2 = new GroupHeaderListItem({
-				title: "Group Header 2"
-			}),
-			oListItem2 = new StandardListItem({
-				title: "List Item 2"
-			}),
-			oList = new List({
-				items: [oGroupHeader1, oListItem1, oGroupHeader2, oListItem2]
+			// let the item navigation run for testing
+			this.stub(Device.system, "desktop", true);
+
+			var fnRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			oListItem1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+
+			oListItem2.focus();
+			this.clock.tick(1);
+
+			/* make it sure document has focus in case of testrunner */
+			if (document.hasFocus()) {
+				assert.strictEqual(oList.getItemNavigation().getItemDomRefs().length, 1, "Invisible items are not in the item navigation.");
+			}
+
+			oListItem1.setVisible(true);
+			sap.ui.getCore().applyChanges();
+
+			oListItem1.focus();
+			this.clock.tick(1);
+
+			/* make it sure document has focus in case of testrunner */
+			if (document.hasFocus()) {
+				assert.strictEqual(oList.getItemNavigation().getItemDomRefs().length, 2, "Only visible items are in the item navigation.");
+			}
+
+			oListItem1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(fnRenderSpy.callCount, 0, "The list should not be rerendered with item visibility changes");
+
+			oList.destroy();
+		});
+
+		QUnit.test("Container Padding Classes", function (assert) {
+			// System under Test + Act
+			var oContainer = new List(),
+				sResponsiveSize,
+				$containerContent;
+
+			if (Device.resize.width <= 599) {
+				sResponsiveSize = "0px";
+			} else if (Device.resize.width <= 1023) {
+				sResponsiveSize = "16px";
+			} else {
+				sResponsiveSize = "16px 32px";
+			}
+			var aResponsiveSize = sResponsiveSize.split(" ");
+
+			// Act
+			oContainer.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oContainer.addStyleClass("sapUiNoContentPadding");
+			$containerContent = oContainer.$();
+
+			// Assert
+			assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
+
+			// Act
+			oContainer.removeStyleClass("sapUiNoContentPadding");
+			oContainer.addStyleClass("sapUiContentPadding");
+
+			// Assert
+			assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
+			assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+
+			// Act
+			oContainer.removeStyleClass("sapUiContentPadding");
+			oContainer.addStyleClass("sapUiResponsiveContentPadding");
+
+			// Assert
+			assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+
+			// Cleanup
+			oContainer.destroy();
+		});
+
+		document.hasFocus() && QUnit.test("KeybordMode", function (assert) {
+			var fnDetailPressSpy = this.spy(),
+				fnItemPressSpy = this.spy(),
+				fnPressSpy = this.spy(),
+				fnOnAfterRenderingSpy = this.spy(),
+				oInput1 = new Input(),
+				oInput2 = new Input(),
+				oButton1 = new Button(),
+				oButton2 = new Button(),
+				oListItem1 = new CustomListItem({
+					content: oInput1,
+					type: "Detail",
+					detailPress: fnDetailPressSpy
+				}),
+				oListItem2 = new CustomListItem({
+					content: oInput2,
+					type: "Navigation",
+					press: fnPressSpy
+				}),
+				oList = new List({
+					mode: "MultiSelect",
+					keyboardMode: "Navigation",
+					itemPress: fnItemPressSpy
+				}).addItem(oListItem1).addItem(oListItem2),
+				oContainer = new VBox({
+					items: [oButton1, oList, oButton2]
+				});
+
+			oContainer.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oList.focus();
+
+			qutils.triggerKeydown(oListItem1.getFocusDomRef(), "TAB", true, false, false);
+			assert.strictEqual(document.activeElement, oList.getDomRef('before'), "Focus is forwarded before the table");
+
+			oInput1.focus();
+			qutils.triggerKeydown(document.activeElement, "TAB");
+			assert.strictEqual(document.activeElement, oList.getDomRef("after"), "Focus is forwarded after the table");
+
+			oInput1.focus();
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP");
+			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Arrow up has no effect");
+
+			oInput1.focus();
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Arrow up has no effect");
+
+			oInput1.focus();
+			qutils.triggerKeydown(document.activeElement, "ENTER");
+			assert.strictEqual(fnPressSpy.callCount, 0, "Enter has no effect");
+
+			oList.addEventDelegate({
+				onAfterRendering: fnOnAfterRenderingSpy
+			});
+			oList.setKeyboardMode("Edit");
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(fnPressSpy.callCount, 0, "Mode change did not rerender!");
+
+			oListItem1.focus();
+			qutils.triggerKeydown(document.activeElement, "F2");
+			assert.strictEqual(fnDetailPressSpy.callCount, 1, "Keyboard mode did not change Detail press event is fired while focus is on the row");
+			assert.strictEqual(oList.getKeyboardMode(), "Edit", "Keyboard mode is still in Edit");
+			fnDetailPressSpy.reset();
+
+			oInput1.focus();
+			qutils.triggerKeydown(document.activeElement, "TAB");
+			assert.notStrictEqual(document.activeElement, oList.getDomRef("after"), "Focus is not forwarded after the table");
+
+			oInput1.focus();
+			qutils.triggerKeydown(document.activeElement, "F2");
+			assert.strictEqual(fnDetailPressSpy.callCount, 0, "F2 switch keyboard mode and did not fire the detail event");
+			assert.strictEqual(oList.getKeyboardMode(), "Navigation", "Now keyboard mode is navigation");
+			assert.strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is moved to the row");
+
+			oListItem1.detachDetailPress(fnDetailPressSpy);
+			qutils.triggerKeydown(document.activeElement, "F2");
+			assert.strictEqual(oList.getKeyboardMode(), "Edit", "Now keyboard mode is Edit");
+			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the Input again");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+			assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is moved to the second input");
+
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP");
+			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the first input");
+
+			oInput2.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved to the item since second input is disabled");
+
+			qutils.triggerKeydown(document.activeElement, "TAB", true, false, false);
+			assert.notStrictEqual(document.activeElement, oList.getItemsContainerDomRef(), "Focus is not forwarded before the table");
+
+			oInput2.setEnabled(true);
+			sap.ui.getCore().applyChanges();
+			oListItem2.focus();
+			qutils.triggerKeydown(document.activeElement, "F7");
+			assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is moved to input but keyboard mode did not change with F7");
+			assert.strictEqual(oList.getKeyboardMode(), "Edit", "keyboard mode is still Edit");
+
+			qutils.triggerKeydown(document.activeElement, "ENTER");
+			assert.strictEqual(oList.getKeyboardMode(), "Navigation", "Now keyboard mode is change to Navigation. Exit from edit mode.");
+			assert.strictEqual(fnItemPressSpy.callCount, 0, "Item press event is not called");
+			assert.strictEqual(fnPressSpy.callCount, 0, "Press event is not called");
+
+			oContainer.destroy();
+
+		});
+
+		QUnit.module("Highlight");
+		QUnit.test("Highlight should be rendered", function (assert) {
+			var oLI = new StandardListItem({
+				highlight: "Error",
+				title: "Error"
 			}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+			sap.ui.getCore().applyChanges();
+			assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), true, "Highlight is rendered");
+			assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlightError"), true, "Error Highlight is rendered");
 
-		oListItem1.focus();
-		assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(oGroupHeader1.getTitle()) > -1, "group headers info exist in the accessibility info of the item");
-
-		oListItem2.focus();
-		assert.ok(oListItem2.getAccessibilityInfo().description.indexOf(oGroupHeader2.getTitle()) > -1, "group headers info of the item matches with the correct group header");
-
-		oList.destroy();
-	});
-
-	QUnit.module("Context Menu");
-
-	QUnit.test("Context Menu", function(assert) {
-		var oList = new List();
-
-		var fnInvalidate = this.spy(oList, "invalidate");
-
-		// list should not be invalidated for setContextMenu
-		fnInvalidate.reset();
-		oList.setContextMenu(new Menu({
-		items: [
-			new MenuItem({text: "{Title}"})
-		]}));
-		assert.ok(!fnInvalidate.called, "List is not invalidated when the contextMenu aggregation is set");
-
-		var oMenu = oList.getContextMenu();
-		var fnOpenAsContextMenu = this.spy(oMenu, "openAsContextMenu");
-
-
-		bindListData(oList, data4, "/items", createTemplateListItem());
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
-		assert.ok(oList.getContextMenu(), "ContextMenu was set correctly");
-
-		var oItem = oList.getItems()[0];
-		oItem.focus();
-		oItem.$().trigger("contextmenu");
-		assert.equal(fnOpenAsContextMenu.callCount, 1, "Menu#OpenAsContextMenu is called");
-		oMenu.close();
-
-		// list should not be invalidated for destroyContextmenu
-		fnInvalidate.reset();
-		oList.destroyContextMenu();
-		assert.ok(!fnInvalidate.called, "List is not invalidated when the contextMenu aggregation is destroyed");
-
-		//clean up
-		oMenu.destroy();
-		oList.destroy();
-	});
-
-	QUnit.test("Test context menu on interactive control", function(assert) {
-		var oInput = new Input();
-		var oListItem = new InputListItem({
-			label: "Input",
-			content : oInput,
-			type: "Navigation"
-		});
-		var oList = new List({
-			mode: "MultiSelect",
-			items : [oListItem],
-			contextMenu : new Menu({
-				items: [
-					new MenuItem({text: "ContextMenu"})
-				]
-			})
+			// clean up
+			oLI.destroy();
 		});
 
-		var oMenu = oList.getContextMenu();
-		var fnOpenAsContextMenu = this.spy(oMenu, "openAsContextMenu");
+		QUnit.test("List should respect highlight changes", function (assert) {
 
-		oPage.addContent(oList);
-		sap.ui.getCore().applyChanges();
+			var oListItem1 = new StandardListItem({
+					title: "oListItem1"
+				}),
+				oListItem2 = new CustomListItem({
+					title: "oListItem1",
+					highlight: "Warning"
+				}),
+				oList = new List({
+					items: [oListItem1, oListItem2]
+				});
 
-		var $input = oInput.$("inner").focus();
-		$input.trigger("contextmenu");
-		assert.equal(fnOpenAsContextMenu.callCount, 0, "Menu#OpenAsContextMenu is not called");
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-		oListItem.getMultiSelectControl().focus();
-		oListItem.getMultiSelectControl().$().trigger("contextmenu");
-		assert.equal(fnOpenAsContextMenu.callCount, 1, "Menu#OpenAsContextMenu is called");
-		oMenu.close();
+			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
 
-		oList.setMode("SingleSelectLeft");
-		sap.ui.getCore().applyChanges();
+			oListItem2.setHighlight("None");
+			sap.ui.getCore().applyChanges();
+			assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
 
-		oListItem.getSingleSelectControl().focus();
-		oListItem.getSingleSelectControl().$().trigger("contextmenu");
-		assert.equal(fnOpenAsContextMenu.callCount, 2, "Menu#OpenAsContextMenu is called again");
-		oMenu.close();
+			oListItem1.setHighlight("Information");
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
 
-		// clean up
-		oMenu.destroy();
-		oList.destroy();
-	});
+			oListItem1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
 
-	QUnit.module("Text Selection");
+			oListItem1.setVisible(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
 
-	QUnit.test("No press event on text selection", function(assert) {
-		var oList = new List();
-		var oListItem = new StandardListItem({
-			type: "Active",
-			title: "Hello World",
-			press: function(e) {
-				MessageToast.show("Item Pressed");
-			}
+			oListItem1.destroy();
+			sap.ui.getCore().applyChanges();
+			assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
+
+			oList.destroy();
 		});
 
-		oList.addItem(oListItem);
-		oList.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		QUnit.module("Accessibility");
 
-		var fnPress = this.spy(oListItem, "firePress");
-		oListItem.focus();
-		var bHasSelection;
-		this.stub(window, "getSelection", function() {
-			return {
-				toString: function() {
-					return bHasSelection ? "Hello World" : "";
+		QUnit.test("aria-labelledby association should be accessibility description", function(assert) {
+			var oList = new List().placeAt("content");
+			var oText1 = new Text({
+				text: "text1"
+			}).placeAt("content");
+			var oText2 = new Text({
+				text: "text2"
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oList.addAriaLabelledBy(oText1);
+			assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) > -1, "Accessibility info of text1 added to list.");
+
+			oList.addAriaLabelledBy(oText2.getId());
+			assert.ok(oList.getAccessibilityDescription().indexOf(oText2.getText()) > -1, "Accessibility info of text2 added to list.");
+
+			assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText() + " " + oText2.getText()) > -1, "both accessibility text found.");
+
+			oList.removeAriaLabelledBy(oText1);
+			assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) == -1, "Accessibility info of text1 removed from list.");
+
+			oList.removeAriaLabelledBy(oText2.getId());
+			assert.ok(oList.getAccessibilityDescription().indexOf(oText2.getText()) == -1, "Accessibility info of text2 removed from list.");
+
+			oList.destroy();
+			oText1.destroy();
+			oText2.destroy();
+		});
+
+		QUnit.test("group headers info of the item", function(assert) {
+			var oGroupHeader1 = new GroupHeaderListItem({
+					title: "Group Header 1"
+				}),
+				oListItem1 = new StandardListItem({
+					title: "List Item 1"
+				}),
+				oGroupHeader2 = new GroupHeaderListItem({
+					title: "Group Header 2"
+				}),
+				oListItem2 = new StandardListItem({
+					title: "List Item 2"
+				}),
+				oList = new List({
+					items: [oGroupHeader1, oListItem1, oGroupHeader2, oListItem2]
+				}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			oListItem1.focus();
+			assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(oGroupHeader1.getTitle()) > -1, "group headers info exist in the accessibility info of the item");
+
+			oListItem2.focus();
+			assert.ok(oListItem2.getAccessibilityInfo().description.indexOf(oGroupHeader2.getTitle()) > -1, "group headers info of the item matches with the correct group header");
+
+			oList.destroy();
+		});
+
+		QUnit.module("Context Menu");
+
+		QUnit.test("Context Menu", function(assert) {
+			var oList = new List();
+
+			var fnInvalidate = this.spy(oList, "invalidate");
+
+			// list should not be invalidated for setContextMenu
+			fnInvalidate.reset();
+			oList.setContextMenu(new Menu({
+			items: [
+				new MenuItem({text: "{Title}"})
+			]}));
+			assert.ok(!fnInvalidate.called, "List is not invalidated when the contextMenu aggregation is set");
+
+			var oMenu = oList.getContextMenu();
+			var fnOpenAsContextMenu = this.spy(oMenu, "openAsContextMenu");
+
+
+			bindListData(oList, data4, "/items", createTemplateListItem());
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getContextMenu(), "ContextMenu was set correctly");
+
+			var oItem = oList.getItems()[0];
+			oItem.focus();
+			oItem.$().trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 1, "Menu#OpenAsContextMenu is called");
+			oMenu.close();
+
+			// list should not be invalidated for destroyContextmenu
+			fnInvalidate.reset();
+			oList.destroyContextMenu();
+			assert.ok(!fnInvalidate.called, "List is not invalidated when the contextMenu aggregation is destroyed");
+
+			//clean up
+			oMenu.destroy();
+			oList.destroy();
+		});
+
+		QUnit.test("Test context menu on interactive control", function(assert) {
+			var oInput = new Input();
+			var oListItem = new InputListItem({
+				label: "Input",
+				content : oInput,
+				type: "Navigation"
+			});
+			var oList = new List({
+				mode: "MultiSelect",
+				items : [oListItem],
+				contextMenu : new Menu({
+					items: [
+						new MenuItem({text: "ContextMenu"})
+					]
+				})
+			});
+
+			var oMenu = oList.getContextMenu();
+			var fnOpenAsContextMenu = this.spy(oMenu, "openAsContextMenu");
+
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			var $input = oInput.$("inner").focus();
+			$input.trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 0, "Menu#OpenAsContextMenu is not called");
+
+			oListItem.getMultiSelectControl().focus();
+			oListItem.getMultiSelectControl().$().trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 1, "Menu#OpenAsContextMenu is called");
+			oMenu.close();
+
+			oList.setMode("SingleSelectLeft");
+			sap.ui.getCore().applyChanges();
+
+			oListItem.getSingleSelectControl().focus();
+			oListItem.getSingleSelectControl().$().trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 2, "Menu#OpenAsContextMenu is called again");
+			oMenu.close();
+
+			// clean up
+			oMenu.destroy();
+			oList.destroy();
+		});
+
+		QUnit.module("Text Selection");
+
+		QUnit.test("No press event on text selection", function(assert) {
+			var oList = new List();
+			var oListItem = new StandardListItem({
+				type: "Active",
+				title: "Hello World",
+				press: function(e) {
+					MessageToast.show("Item Pressed");
 				}
-			};
+			});
+
+			oList.addItem(oListItem);
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var fnPress = this.spy(oListItem, "firePress");
+			oListItem.focus();
+			var bHasSelection;
+			this.stub(window, "getSelection", function() {
+				return {
+					toString: function() {
+						return bHasSelection ? "Hello World" : "";
+					}
+				};
+			});
+
+			bHasSelection = true;
+			assert.equal(window.getSelection().toString(), "Hello World");
+			oListItem.$().trigger("tap");
+			assert.ok(!fnPress.called, "Press event not fired");
+
+			bHasSelection = false;
+			assert.equal(window.getSelection().toString(), "");
+			oListItem.$().trigger("tap");
+			this.clock.tick(0);
+			assert.ok(fnPress.called, "Press event not fired");
+
+			// clean up
+			oList.destroy();
 		});
 
-		bHasSelection = true;
-		assert.equal(window.getSelection().toString(), "Hello World");
-		oListItem.$().trigger("tap");
-		assert.ok(!fnPress.called, "Press event not fired");
+		QUnit.module("ListBase sticky feature");
 
-		bHasSelection = false;
-		assert.equal(window.getSelection().toString(), "");
-		oListItem.$().trigger("tap");
-		this.clock.tick(0);
-		assert.ok(fnPress.called, "Press event not fired");
-
-		// clean up
-		oList.destroy();
-	});
-
-	QUnit.module("ListBase sticky feature");
-
-	QUnit.test("Sticky chrome browser support", function(assert) {
-		// stub for Chrome
-		var oChromeStub = this.stub(Device, "browser", {"chrome": true});
-		var oStdLI = new StandardListItem({
-			title : "Title",
-			info : "+359 1234 567",
-			infoTextDirection: coreLibrary.TextDirection.LTR
-		});
-		var oList = new List({
-			headerText: "List Header",
-			sticky: ["HeaderToolbar"],
-			items: [oStdLI]
-		});
-		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
-		assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
-		assert.ok(oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class added");
-
-		oList.destroy();
-		// reset stub
-		oChromeStub.restore();
-	});
-
-	QUnit.test("Sticky edge 16 browser support", function(assert) {
-		// stub for Edge version 16
-		var oEdgeStub = this.stub(Device, "browser", {"edge": true, "version": 16});
-		var oStdLI = new StandardListItem({
-			title : "Title",
-			info : "+359 1234 567",
-			infoTextDirection: coreLibrary.TextDirection.LTR
-		});
-		var oList = new List({
-			headerText: "List Header",
-			sticky: ["HeaderToolbar"],
-			items: [oStdLI]
-		});
-		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
-		assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
-		assert.ok(oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class added");
-
-		oList.destroy();
-		// reset stub
-		oEdgeStub.restore();
-	});
-
-	QUnit.test("Sticky safari browser support", function(assert) {
-		// stub for Safari
-		var oSafariStub = this.stub(Device, "browser", {"safari": true});
-		var oStdLI = new StandardListItem({
-			title : "Title",
-			info : "+359 1234 567",
-			infoTextDirection: coreLibrary.TextDirection.LTR
-		});
-		var oList = new List({
-			headerText: "List Header",
-			sticky: ["HeaderToolbar"],
-			items: [oStdLI]
-		});
-		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
-		assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
-		assert.ok(oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class added");
-
-		oList.destroy();
-		// reset stub
-		oSafariStub.restore();
-	});
-
-	QUnit.test("Sticky firefox browser support", function(assert) {
-		// stub for Firefox version 59
-		var oFirefoxStub = this.stub(Device, "browser", {"firefox": true, "version": 59});
-		var oStdLI = new StandardListItem({
-			title : "Title",
-			info : "+359 1234 567",
-			infoTextDirection: coreLibrary.TextDirection.LTR
-		});
-		var oList = new List({
-			headerText: "List Header",
-			sticky: ["HeaderToolbar"],
-			items: [oStdLI]
-		});
-		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
-		assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
-		assert.ok(oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class added");
-
-		oList.destroy();
-		// reset stub
-		oFirefoxStub.restore();
-	});
-
-	QUnit.test("Sticky IE browser support", function(assert) {
-		// stub for Internet Explorer
-		var oIEStub = this.stub(Device, "browser", {"msie": true});
-		var oStdLI = new StandardListItem({
-			title : "Title",
-			info : "+359 1234 567",
-			infoTextDirection: coreLibrary.TextDirection.LTR
-		});
-		var oList = new List({
-			headerText: "List Header",
-			sticky: ["HeaderToolbar"],
-			items: [oStdLI]
-		});
-		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(!ListBase.getStickyBrowserSupport(), "sticky css not supported");
-		assert.ok(!oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class not added");
-		assert.ok(!oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class not added");
-
-		oList.destroy();
-		// reset stub
-		oIEStub.restore();
-	});
-
-	QUnit.test("Sticky ColumnHeaders should not be possible with List", function(assert) {
-		if (Device.browser.msie) {
-			assert.ok(true, "Feature is not supported in IE");
-		} else {
+		QUnit.test("Sticky chrome browser support", function(assert) {
+			// stub for Chrome
+			var oChromeStub = this.stub(Device, "browser", {"chrome": true});
 			var oStdLI = new StandardListItem({
 				title : "Title",
 				info : "+359 1234 567",
@@ -2057,322 +1934,451 @@ sap.ui.require([
 			});
 			var oList = new List({
 				headerText: "List Header",
-				sticky: ["ColumnHeaders"],
+				sticky: ["HeaderToolbar"],
 				items: [oStdLI]
 			});
 			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var aClassList = oList.getDomRef().classList;
-			assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky4"), "Sticky column headers is not supported with List");
+			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
+			assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
+			assert.ok(oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class added");
 
 			oList.destroy();
-		}
-	});
+			// reset stub
+			oChromeStub.restore();
+		});
 
-	QUnit.test("Focus and scroll handling with sticky infoToolbar", function(assert) {
-		if (Device.browser.msie) {
-			assert.ok(true, "Feature is not supported in IE");
-		} else {
-			this.stub(Device.system, "desktop", false);
-			this.clock = sinon.useFakeTimers();
-
+		QUnit.test("Sticky edge 16 browser support", function(assert) {
+			// stub for Edge version 16
+			var oEdgeStub = this.stub(Device, "browser", {"edge": true, "version": 16});
 			var oStdLI = new StandardListItem({
 				title : "Title",
 				info : "+359 1234 567",
 				infoTextDirection: coreLibrary.TextDirection.LTR
 			});
-
-			var oStdLI2 = new StandardListItem({
-				title : "Title",
-				info : "+359 1234 567",
-				infoTextDirection: coreLibrary.TextDirection.LTR
-			});
-
-			var sut = new List({
+			var oList = new List({
 				headerText: "List Header",
-				items: [oStdLI, oStdLI2]
+				sticky: ["HeaderToolbar"],
+				items: [oStdLI]
 			});
-
-			var oInfoToolbar = new Toolbar({
-				active: true,
-				content: [
-					new Text({
-						text : "The quick brown fox jumps over the lazy dog.",
-						wrapping : false
-					})
-				]
-			});
-
-			sut.setInfoToolbar(oInfoToolbar);
-			var oScrollContainer = new ScrollContainer({
-				vertical: true,
-				content: sut
-			});
-			sut.setSticky(["InfoToolbar"]);
-			oScrollContainer.placeAt("qunit-fixture");
+			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class added for sticky infoToolbar only");
+			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
+			assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
+			assert.ok(oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class added");
 
-			sut.getInfoToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky2"), "Sticky classes removed");
-
-			sut.getInfoToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
-
-			var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
-
-			assert.ok(oInfoToolbarContainer.classList.contains("sapMListInfoTBarContainer"), "infoToolbar container div rendered");
-
-			this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
-				return {
-					bottom: 72,
-					height: 32
-				};
-			});
-
-			var oFocusedItem = sut.getItems()[1];
-			var oFocusedItemDomRef = oFocusedItem.getDomRef();
-			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
-
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
-				return {
-					top: 70
-				};
-			});
-
-			oFocusedItemDomRef.focus();
-			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
-
-			oScrollContainer.destroy();
+			oList.destroy();
 			// reset stub
-			this.stub().reset();
-		}
-	});
+			oEdgeStub.restore();
+		});
 
-	QUnit.test("Focus and scroll handling with sticky headerToolbar", function(assert) {
-		if (Device.browser.msie) {
-			assert.ok(true, "Feature is not supported in IE");
-		} else {
-			this.stub(Device.system, "desktop", false);
-			this.clock = sinon.useFakeTimers();
-
+		QUnit.test("Sticky safari browser support", function(assert) {
+			// stub for Safari
+			var oSafariStub = this.stub(Device, "browser", {"safari": true});
 			var oStdLI = new StandardListItem({
 				title : "Title",
 				info : "+359 1234 567",
 				infoTextDirection: coreLibrary.TextDirection.LTR
 			});
-
-			var oStdLI2 = new StandardListItem({
-				title : "Title",
-				info : "+359 1234 567",
-				infoTextDirection: coreLibrary.TextDirection.LTR
+			var oList = new List({
+				headerText: "List Header",
+				sticky: ["HeaderToolbar"],
+				items: [oStdLI]
 			});
-
-			var sut = new List({
-				items: [oStdLI, oStdLI2]
-			});
-
-			var oHeaderToolbar = new Toolbar({
-				content: [
-					new Title({
-						text : "Keyboard Handling Test Page"
-					}),
-					new ToolbarSpacer(),
-					new Button({
-						tooltip: "View Settings",
-						icon: "sap-icon://drop-down-list"
-					})
-				]
-			});
-
-			sut.setHeaderToolbar(oHeaderToolbar);
-			var oScrollContainer = new ScrollContainer({
-				vertical: true,
-				content: sut
-			});
-			sut.setSticky(["HeaderToolbar"]);
-			oScrollContainer.placeAt("qunit-fixture");
+			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky class added for sticky headerToolbar only");
+			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
+			assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
+			assert.ok(oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class added");
 
-			sut.getHeaderToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1"), "Sticky classes removed as no element is sticky");
-
-			sut.getHeaderToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky classes added");
-
-			var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
-			var fnGetDomRef = sut.getDomRef;
-			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
-				return {
-					bottom: 88,
-					height: 48
-				};
-			});
-
-			this.stub(sut, "getDomRef", function() {
-				return {
-					querySelector: function() {
-						return oHeaderDomRef;
-					}
-				};
-			});
-
-			var oFocusedItem = sut.getItems()[1];
-			var oFocusedItemDomRef = oFocusedItem.getDomRef();
-			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
-
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
-				return {
-					top: 80
-				};
-			});
-
-			oFocusedItemDomRef.focus();
-			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
-
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
-
-			oScrollContainer.destroy();
+			oList.destroy();
 			// reset stub
-			this.stub().reset();
-		}
-	});
+			oSafariStub.restore();
+		});
 
-	QUnit.test("Focus and scroll handling with sticky headerToolbar and infoToolbar", function(assert) {
-		if (Device.browser.msie) {
-			assert.ok(true, "Feature is not supported in IE");
-		} else {
-			this.stub(Device.system, "desktop", false);
-			this.clock = sinon.useFakeTimers();
-
+		QUnit.test("Sticky firefox browser support", function(assert) {
+			// stub for Firefox version 59
+			var oFirefoxStub = this.stub(Device, "browser", {"firefox": true, "version": 59});
 			var oStdLI = new StandardListItem({
 				title : "Title",
 				info : "+359 1234 567",
 				infoTextDirection: coreLibrary.TextDirection.LTR
 			});
+			var oList = new List({
+				headerText: "List Header",
+				sticky: ["HeaderToolbar"],
+				items: [oStdLI]
+			});
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-			var oStdLI2 = new StandardListItem({
+			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
+			assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
+			assert.ok(oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class added");
+
+			oList.destroy();
+			// reset stub
+			oFirefoxStub.restore();
+		});
+
+		QUnit.test("Sticky IE browser support", function(assert) {
+			// stub for Internet Explorer
+			var oIEStub = this.stub(Device, "browser", {"msie": true});
+			var oStdLI = new StandardListItem({
 				title : "Title",
 				info : "+359 1234 567",
 				infoTextDirection: coreLibrary.TextDirection.LTR
 			});
-
-			var sut = new List({
-				items: [oStdLI, oStdLI2]
+			var oList = new List({
+				headerText: "List Header",
+				sticky: ["HeaderToolbar"],
+				items: [oStdLI]
 			});
-
-			var oHeaderToolbar = new Toolbar({
-				content: [
-					new Title({
-						text : "Keyboard Handling Test Page"
-					}),
-					new ToolbarSpacer(),
-					new Button({
-						tooltip: "View Settings",
-						icon: "sap-icon://drop-down-list"
-					})
-				]
-			});
-
-			sut.setHeaderToolbar(oHeaderToolbar);
-
-			var oInfoToolbar = new Toolbar({
-				active: true,
-				content: [
-					new Text({
-						text : "The quick brown fox jumps over the lazy dog.",
-						wrapping : false
-					})
-				]
-			});
-
-			sut.setInfoToolbar(oInfoToolbar);
-
-			var oScrollContainer = new ScrollContainer({
-				vertical: true,
-				content: sut
-			});
-			sut.setSticky(["HeaderToolbar", "InfoToolbar"]);
-			oScrollContainer.placeAt("qunit-fixture");
+			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky3"), "Sticky class added for sticky headerToolbar and infoToolbar");
+			assert.ok(!ListBase.getStickyBrowserSupport(), "sticky css not supported");
+			assert.ok(!oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class not added");
+			assert.ok(!oList.getDomRef().classList.contains("sapMSticky1"), "Sticky style class not added");
 
-			sut.getHeaderToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class updated for sticky infoToolbar");
-
-			sut.getInfoToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1") && !aClassList.contains("sapMSticky2"), "No sticky classes present");
-
-			sut.getHeaderToolbar().setVisible(true);
-			sut.getInfoToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky3"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
-
-			var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
-			var fnGetDomRef = sut.getDomRef;
-			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
-				return {
-					bottom: 48,
-					height: 48
-				};
-			});
-
-			var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
-			this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
-				return {
-					bottom: 80,
-					height: 32
-				};
-			});
-
-			var oFocusedItem = sut.getItems()[1];
-			var oFocusedItemDomRef = oFocusedItem.getDomRef();
-			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
-
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
-				return {
-					top: 40
-				};
-			});
-
-			oFocusedItemDomRef.focus();
-			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -80]), "scrollToElement function called");
-
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
-
-			oScrollContainer.destroy();
+			oList.destroy();
 			// reset stub
-			this.stub().reset();
-		}
+			oIEStub.restore();
+		});
+
+		QUnit.test("Sticky ColumnHeaders should not be possible with List", function(assert) {
+			if (Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				var oStdLI = new StandardListItem({
+					title : "Title",
+					info : "+359 1234 567",
+					infoTextDirection: coreLibrary.TextDirection.LTR
+				});
+				var oList = new List({
+					headerText: "List Header",
+					sticky: ["ColumnHeaders"],
+					items: [oStdLI]
+				});
+				oList.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var aClassList = oList.getDomRef().classList;
+				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky4"), "Sticky column headers is not supported with List");
+
+				oList.destroy();
+			}
+		});
+
+		QUnit.test("Focus and scroll handling with sticky infoToolbar", function(assert) {
+			if (Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				this.stub(Device.system, "desktop", false);
+				this.clock = sinon.useFakeTimers();
+
+				var oStdLI = new StandardListItem({
+					title : "Title",
+					info : "+359 1234 567",
+					infoTextDirection: coreLibrary.TextDirection.LTR
+				});
+
+				var oStdLI2 = new StandardListItem({
+					title : "Title",
+					info : "+359 1234 567",
+					infoTextDirection: coreLibrary.TextDirection.LTR
+				});
+
+				var sut = new List({
+					headerText: "List Header",
+					items: [oStdLI, oStdLI2]
+				});
+
+				var oInfoToolbar = new Toolbar({
+					active: true,
+					content: [
+						new Text({
+							text : "The quick brown fox jumps over the lazy dog.",
+							wrapping : false
+						})
+					]
+				});
+
+				sut.setInfoToolbar(oInfoToolbar);
+				var oScrollContainer = new ScrollContainer({
+					vertical: true,
+					content: sut
+				});
+				sut.setSticky(["InfoToolbar"]);
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class added for sticky infoToolbar only");
+
+				sut.getInfoToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky2"), "Sticky classes removed");
+
+				sut.getInfoToolbar().setVisible(true);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
+
+				var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
+
+				assert.ok(oInfoToolbarContainer.classList.contains("sapMListInfoTBarContainer"), "infoToolbar container div rendered");
+
+				this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
+					return {
+						bottom: 72,
+						height: 32
+					};
+				});
+
+				var oFocusedItem = sut.getItems()[1];
+				var oFocusedItemDomRef = oFocusedItem.getDomRef();
+				var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
+
+				this.stub(window, "requestAnimationFrame", window.setTimeout);
+				this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+					return {
+						top: 70
+					};
+				});
+
+				oFocusedItemDomRef.focus();
+				this.clock.tick(0);
+				assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
+
+				oScrollContainer.destroy();
+				// reset stub
+				this.stub().reset();
+			}
+		});
+
+		QUnit.test("Focus and scroll handling with sticky headerToolbar", function(assert) {
+			if (Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				this.stub(Device.system, "desktop", false);
+				this.clock = sinon.useFakeTimers();
+
+				var oStdLI = new StandardListItem({
+					title : "Title",
+					info : "+359 1234 567",
+					infoTextDirection: coreLibrary.TextDirection.LTR
+				});
+
+				var oStdLI2 = new StandardListItem({
+					title : "Title",
+					info : "+359 1234 567",
+					infoTextDirection: coreLibrary.TextDirection.LTR
+				});
+
+				var sut = new List({
+					items: [oStdLI, oStdLI2]
+				});
+
+				var oHeaderToolbar = new Toolbar({
+					content: [
+						new Title({
+							text : "Keyboard Handling Test Page"
+						}),
+						new ToolbarSpacer(),
+						new Button({
+							tooltip: "View Settings",
+							icon: "sap-icon://drop-down-list"
+						})
+					]
+				});
+
+				sut.setHeaderToolbar(oHeaderToolbar);
+				var oScrollContainer = new ScrollContainer({
+					vertical: true,
+					content: sut
+				});
+				sut.setSticky(["HeaderToolbar"]);
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky class added for sticky headerToolbar only");
+
+				sut.getHeaderToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1"), "Sticky classes removed as no element is sticky");
+
+				sut.getHeaderToolbar().setVisible(true);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky classes added");
+
+				var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
+				var fnGetDomRef = sut.getDomRef;
+				this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
+					return {
+						bottom: 88,
+						height: 48
+					};
+				});
+
+				this.stub(sut, "getDomRef", function() {
+					return {
+						querySelector: function() {
+							return oHeaderDomRef;
+						}
+					};
+				});
+
+				var oFocusedItem = sut.getItems()[1];
+				var oFocusedItemDomRef = oFocusedItem.getDomRef();
+				var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
+
+				this.stub(window, "requestAnimationFrame", window.setTimeout);
+				this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+					return {
+						top: 80
+					};
+				});
+
+				oFocusedItemDomRef.focus();
+				this.clock.tick(0);
+				assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
+
+				// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
+				sut.getDomRef = fnGetDomRef;
+
+				oScrollContainer.destroy();
+				// reset stub
+				this.stub().reset();
+			}
+		});
+
+		QUnit.test("Focus and scroll handling with sticky headerToolbar and infoToolbar", function(assert) {
+			if (Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				this.stub(Device.system, "desktop", false);
+				this.clock = sinon.useFakeTimers();
+
+				var oStdLI = new StandardListItem({
+					title : "Title",
+					info : "+359 1234 567",
+					infoTextDirection: coreLibrary.TextDirection.LTR
+				});
+
+				var oStdLI2 = new StandardListItem({
+					title : "Title",
+					info : "+359 1234 567",
+					infoTextDirection: coreLibrary.TextDirection.LTR
+				});
+
+				var sut = new List({
+					items: [oStdLI, oStdLI2]
+				});
+
+				var oHeaderToolbar = new Toolbar({
+					content: [
+						new Title({
+							text : "Keyboard Handling Test Page"
+						}),
+						new ToolbarSpacer(),
+						new Button({
+							tooltip: "View Settings",
+							icon: "sap-icon://drop-down-list"
+						})
+					]
+				});
+
+				sut.setHeaderToolbar(oHeaderToolbar);
+
+				var oInfoToolbar = new Toolbar({
+					active: true,
+					content: [
+						new Text({
+							text : "The quick brown fox jumps over the lazy dog.",
+							wrapping : false
+						})
+					]
+				});
+
+				sut.setInfoToolbar(oInfoToolbar);
+
+				var oScrollContainer = new ScrollContainer({
+					vertical: true,
+					content: sut
+				});
+				sut.setSticky(["HeaderToolbar", "InfoToolbar"]);
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky3"), "Sticky class added for sticky headerToolbar and infoToolbar");
+
+				sut.getHeaderToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class updated for sticky infoToolbar");
+
+				sut.getInfoToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1") && !aClassList.contains("sapMSticky2"), "No sticky classes present");
+
+				sut.getHeaderToolbar().setVisible(true);
+				sut.getInfoToolbar().setVisible(true);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky3"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
+
+				var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
+				var fnGetDomRef = sut.getDomRef;
+				this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
+					return {
+						bottom: 48,
+						height: 48
+					};
+				});
+
+				var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
+				this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
+					return {
+						bottom: 80,
+						height: 32
+					};
+				});
+
+				var oFocusedItem = sut.getItems()[1];
+				var oFocusedItemDomRef = oFocusedItem.getDomRef();
+				var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
+
+				this.stub(window, "requestAnimationFrame", window.setTimeout);
+				this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+					return {
+						top: 40
+					};
+				});
+
+				oFocusedItemDomRef.focus();
+				this.clock.tick(0);
+				assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -80]), "scrollToElement function called");
+
+				// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
+				sut.getDomRef = fnGetDomRef;
+
+				oScrollContainer.destroy();
+				// reset stub
+				this.stub().reset();
+			}
+		});
+
+		QUnit.start();
 	});
 
-});
+})();

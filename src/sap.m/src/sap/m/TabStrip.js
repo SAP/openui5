@@ -20,7 +20,9 @@ sap.ui.define([
 	'sap/m/SelectRenderer',
 	'sap/m/SelectListRenderer',
 	'./TabStripRenderer',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
 ],
 function(
 	Control,

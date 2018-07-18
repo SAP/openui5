@@ -1,16 +1,9 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/ui/model/json/JSONModel"
-], function (UIComponent, JSONModel) {
+	"sap/ui/core/UIComponent"
+], function (UIComponent) {
 	"use strict";
 	return UIComponent.extend("sap.ui.rta.dttool.Component", {
 		metadata : {
-			rootView: {
-				"viewName": "sap.ui.rta.dttool.view.App",
-				"type": "XML",
-				"async": true,
-				"id": "app"
-			},
 			manifest: "json"
 		},
 

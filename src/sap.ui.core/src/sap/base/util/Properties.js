@@ -289,6 +289,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 		if ( typeof mParams.url === "string" ) {
 			// @evo-todo: dependency on loadResource implementation in compat layer
+			//TODO: global jquery call found
 			vResource = jQuery.sap.loadResource({
 				url: mParams.url,
 				dataType: 'text',

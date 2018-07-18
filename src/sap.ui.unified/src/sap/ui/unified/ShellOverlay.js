@@ -10,7 +10,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/theming/Parameters',
 	'./ShellOverlayRenderer',
-	"sap/ui/thirdparty/jquery"],
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/dom/jquery/rect', // jQuery Plugin "rect"
+	'sap/ui/dom/jquery/Selectors' // jQuery custom selectors ":sapTabbable"
+],
 	function(
 		Device,
 		Control,

@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	'sap/ui/base/BindingParser',
-	'sap/ui/model/odata/_AnnotationHelperBasics'
-], function (jQuery, BindingParser, Basics) {
+    "jquery.sap.global",
+    'sap/ui/base/BindingParser',
+    'sap/ui/model/odata/_AnnotationHelperBasics',
+    "sap/base/Log",
+    "sap/ui/performance/Measurement"
+], function(jQuery, BindingParser, Basics, Log, Measurement) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -17,7 +19,7 @@ sap.ui.require([
 		},
 
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		}
@@ -364,10 +366,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("followPath: Performance measurement points", function (assert) {
-		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
+		var oAverageSpy = this.spy(Measurement, "average")
 				.withArgs("sap.ui.model.odata.AnnotationHelper/followPath", "",
 					["sap.ui.model.odata.AnnotationHelper"]),
-			oEndSpy = this.spy(jQuery.sap.measure, "end")
+			oEndSpy = this.spy(Measurement, "end")
 				.withArgs("sap.ui.model.odata.AnnotationHelper/followPath"),
 			oMockedInterface = {
 				getModel : function () {

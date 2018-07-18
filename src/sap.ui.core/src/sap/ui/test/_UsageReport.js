@@ -3,11 +3,7 @@
  */
 
 // private
-sap.ui.define([
-	"jquery.sap.global",
-    "sap/ui/base/Object",
-    "./_OpaLogger"
-], function ($, Ui5Object, _OpaLogger) {
+sap.ui.define(["sap/ui/base/Object", "./_OpaLogger", "sap/ui/thirdparty/jquery"], function(Ui5Object, _OpaLogger, jQueryDOM) {
     "use strict";
 
     var DEFAULT_URL = "http://localhost:8090";
@@ -15,7 +11,7 @@ sap.ui.define([
 
     var _UsageReport = Ui5Object.extend("sap.ui.test._UsageReport", {
         constructor: function (oConfig) {
-            this.enabled = oConfig && oConfig.enableUsageReport === "true";
+            this.enabled = oConfig && oConfig.enableUsageReport;
             this.baseUrl = (oConfig && oConfig.usageReportUrl || DEFAULT_URL) + "/api/opa/suites/";
             if (this.enabled) {
                 oLogger.info("Enabled OPA usage report");
@@ -25,7 +21,7 @@ sap.ui.define([
             var oPrototype = sap.ui.test._UsageReport.prototype;
             Object.keys(oPrototype).forEach(function (sKey) {
                 var bIsSpecialFunction = ["constructor", "getMetadata"].indexOf(sKey) > -1;
-                if (oPrototype.hasOwnProperty(sKey) && $.isFunction(oPrototype[sKey]) && !bIsSpecialFunction) {
+                if (oPrototype.hasOwnProperty(sKey) && jQueryDOM.isFunction(oPrototype[sKey]) && !bIsSpecialFunction) {
                     var fnOriginal = oPrototype[sKey];
                     oPrototype[sKey] = function () {
                         if (this.enabled) {
@@ -93,7 +89,7 @@ sap.ui.define([
                 });
         },
         _postSuiteJson: function (sUrlSuffix, oData) {
-            var oPromise = this._suiteBeginPromise || $.Deferred().resolve().promise();
+            var oPromise = this._suiteBeginPromise || jQueryDOM.Deferred().resolve().promise();
             return oPromise.done(function () {
                 return postJson.call(this, this.baseUrl + this._id + sUrlSuffix, oData);
             }.bind(this));
@@ -101,7 +97,7 @@ sap.ui.define([
     });
 
     function postJson(sUrl, oData) {
-        return $.ajax({
+        return jQueryDOM.ajax({
             url: sUrl,
             type: "POST",
             data: oData,

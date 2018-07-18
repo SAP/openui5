@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/base/ManagedObject',
 	'sap/m/Dialog',
 	'sap/m/Popover',
@@ -281,7 +281,9 @@ function (
 		Object.keys(oRelevantPopups).forEach(function(sKey) {
 			if (oRelevantPopups[sKey]) {
 				if (bFocus) {
-					jQuery.sap.focus(oRelevantPopups[sKey][0].oPopup.oContent);
+					if (oRelevantPopups[sKey][0].oPopup.oContent) {
+						oRelevantPopups[sKey][0].oPopup.oContent.focus();
+					}
 				}
 				oRelevantPopups[sKey].forEach(function(oPopupElement) {
 					fnPopupMethod.call(this, oPopupElement);

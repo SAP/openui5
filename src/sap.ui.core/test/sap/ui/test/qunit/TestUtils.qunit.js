@@ -1,10 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/test/TestUtils"
-], function (jQuery, TestUtils) {
+sap.ui.require(["jquery.sap.global", "sap/ui/test/TestUtils", "sap/base/Log"], function(jQuery, TestUtils, Log) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -12,7 +9,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.test.TestUtils", {
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 

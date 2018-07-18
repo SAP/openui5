@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.search.OpenSearchProvider.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', 'jquery.sap.encoder'],
-	function(jQuery, library, SearchProvider/* , jQuerySap */) {
+sap.ui.define(['sap/ui/core/library', './SearchProvider', "sap/base/Log", "sap/base/security/encodeURL"],
+	function(library, SearchProvider, Log, encodeURL) {
 	"use strict";
 
 
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 		if (!sUrl) {
 			return;
 		}
-		sUrl = sUrl.replace("{searchTerms}", jQuery.sap.encodeURL(sValue));
+		sUrl = sUrl.replace("{searchTerms}", encodeURL(sValue));
 
 		var sType = this.getSuggestType();
 		var fSuccess;
@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 			dataType: sType,
 			success: fSuccess,
 			error: function(XMLHttpRequest, textStatus, errorThrown) {
-				jQuery.sap.log.fatal("The following problem occurred: " + textStatus, XMLHttpRequest.responseText + ","
+				Log.fatal("The following problem occurred: " + textStatus, XMLHttpRequest.responseText + ","
 						+ XMLHttpRequest.status);
 			}
 		});

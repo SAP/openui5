@@ -1,13 +1,14 @@
-sap.ui.define([
+/*global QUnit,sinon*/
+
+sap.ui.require([
 	"jquery.sap.global",
 	'test/TestControl',
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/ElementMetadata"
-], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata) {
+	"sap/ui/core/ElementMetadata",
+	"sap/base/Log"
+], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata, Log) {
 	"use strict";
-
-	/*global QUnit,sinon*/
 
 	QUnit.test("Default values", function(assert) {
 		var oDragInfo = new DragInfo();
@@ -108,7 +109,7 @@ sap.ui.define([
 			children: oChild
 		});
 
-		var fnLogSpy = this.spy(jQuery.sap.log, "warning");
+		var fnLogSpy = this.spy(Log, "warning");
 		this.stub(ElementMetadata.prototype, "getDragDropInfo").returns({draggable: false});
 		assert.notOk(oDragInfo.isDraggable(oParent), "Not draggable: Element metadata does not allow dragging");
 		assert.strictEqual(fnLogSpy.callCount, 1, "Not draggable is logged");

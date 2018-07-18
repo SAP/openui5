@@ -127,7 +127,7 @@ sap.ui.define([
 		ObjectPageHeaderContent.prototype._getInternalBtnAggregation = function (sAggregationName, sBtnText, sBtnIdText, sBtnType) {
 			if (!this.getAggregation(sAggregationName)) {
 				var oBtn = new Button({
-					text: library.i18nModel.getResourceBundle().getText(sBtnText),
+					text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText(sBtnText),
 					type: sBtnType,
 					id: this.getId() + sBtnIdText
 				});

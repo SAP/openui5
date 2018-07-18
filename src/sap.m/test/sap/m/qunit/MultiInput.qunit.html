@@ -774,22 +774,6 @@
 		oSpy.restore();
 	});
 
-
-	QUnit.module("MultiLineMode", {
-		beforeEach: function() {
-			this.multiInput1 = new sap.m.MultiInput({
-				enableMultiLineMode : true
-			});
-
-			this.multiInput1.placeAt("qunit-fixture");
-
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			this.multiInput1.destroy();
-		}
-	});
-
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.multiInput1 = new sap.m.MultiInput();
@@ -1112,7 +1096,7 @@
 
 	QUnit.test("Placeholder opacity", function(assert) {
 		// assert
-		assert.ok(!this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder shows placeholder");
+		assert.ok(!this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder shows placeholder");
 
 		// act
 		this.multiInput1.addToken(new sap.m.Token({text: "Token2"}));
@@ -1120,7 +1104,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputNoPlaceholder"), "MultiInput placeholder doesn't show placeholder");
+		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder doesn't show placeholder");
 	});
 
 	QUnit.module("Copy/Cut Functionality", {
@@ -1307,7 +1291,7 @@
 	});
 
 	QUnit.test("onfocusin", function(assert) {
-		var oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator"),
+		var oIndicator,
 			oEventMock = {
 				target : {
 					classList: {
@@ -1326,6 +1310,8 @@
 		]);
 
 		sap.ui.getCore().applyChanges();
+
+		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 
 		//assert
 		assert.ok(oIndicator[0], "A n-more label is rendered");
@@ -1354,6 +1340,7 @@
 
 		oListItem.data("key", "key123");
 		oListItem.data("text", "text123");
+		oListItem.data("tokenId", "token");
 
 		// assert
 		aTokens = this.multiInput.getTokens();
@@ -1368,6 +1355,7 @@
 		assert.strictEqual(aTokens.length, 1, "One token was added");
 		assert.strictEqual(aTokens[0].getText(), "text123", "The token's text is correct.");
 		assert.strictEqual(aTokens[0].getKey(), "key123", "The token's key is correct.");
+		assert.strictEqual(oListItem.data("tokenId"), aTokens[0].getId(), "The new token id is correctly recorder in the item");
 
 		// clean up
 		oSpy.restore();
@@ -1375,12 +1363,13 @@
 
 	QUnit.test("_syncTokensWithSelection - deselection", function(assert) {
 		var oListItem = new sap.m.StandardListItem(), aTokens,
-			oToken = new sap.m.Token({text: "text123", key: "key123"}),
+			oToken = new sap.m.Token("token", {text: "text123", key: "key123"}),
 			oSpy = this.spy(this.multiInput._tokenizer, "removeToken");
 
 		this.multiInput.addToken(oToken);
 		oListItem.data("key", "key123");
 		oListItem.data("text", "text123");
+		oListItem.data("tokenId", "token");
 
 		// assert
 		aTokens = this.multiInput.getTokens();
@@ -1490,19 +1479,39 @@
 
 	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
 		//arrange
-		var tokenizerSpy = sinon.spy(sap.m.Tokenizer.prototype, "_adjustTokensVisibility"),
-			multiInput = new sap.m.MultiInput();
+		var oMultiInput = new sap.m.MultiInput(),
+			tokenizerSpy = this.spy(oMultiInput._tokenizer, "_adjustTokensVisibility");
+
+		// act
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
+
+		// assert
+		assert.ok(oMultiInput._tokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.ok(tokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
+
+		// clean up
+		oMultiInput.destroy();
+	});
+
+	QUnit.test("Input visibility", function(assert) {
+		//arrange
+		var multiInput = new sap.m.MultiInput();
 
 		// act
 		multiInput.placeAt("qunit-fixture");
 		this.clock.tick(100);
 
+		multiInput.updateDomValue("123");
+		sap.ui.test.qunit.triggerEvent("input", multiInput.getFocusDomRef());
+
+		multiInput.onsapfocusleave({});
+
 		// assert
-		assert.ok(multiInput._tokenizer._getAdjustable(), "the tokenizer is adjustable");
-		assert.ok(tokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
+		assert.strictEqual(multiInput.$("inner").css("opacity"), "1", "The input value remains visible, if the n-more label is hidden");
 
 		// clean up
-		tokenizerSpy.restore();
 		multiInput.destroy();
 	});
 

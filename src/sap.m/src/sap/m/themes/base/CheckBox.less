@@ -20,6 +20,13 @@
 	}
 }
 
+/* Only on IE 11 there is an unwanted scrollbar when sap.m.CheckBox is within an element with overflow set to auto.
+ For more information see internal incident 1880283393. */
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"] .sapMCb {
+	display: inline-table;
+}
+
 .sapUiForm .sapMCb {
 	display: table-cell;
 }

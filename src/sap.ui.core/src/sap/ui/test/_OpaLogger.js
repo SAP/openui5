@@ -4,32 +4,32 @@
 
 // intended to be used by all OPA modules that need to create a logger
 sap.ui.define([
-	"jquery.sap.global"
-], function ($) {
+	"sap/base/Log"
+], function (Log) {
 	"use strict";
 
 	// component names of all loggers created by OPA components
 	var aLoggerComponents = [];
 	// DEBUG is the default maximum log level for OPA
-	var iLogLevel = $.sap.log.Level.DEBUG;
+	var iLogLevel = Log.Level.DEBUG;
 
 	return {
 		// _OpaLogger might also be loaded in an iFrame. setLevel should be called for each iFrame
 		// $.sap.log reference changes depending on the contentWindow
 		setLevel: function (sNewLogLevel) {
 			var sLogLevel = sNewLogLevel && sNewLogLevel.toUpperCase();
-			var iNewLogLevel = sLogLevel && $.sap.log.Level[sLogLevel];
+			var iNewLogLevel = sLogLevel && Log.Level[sLogLevel];
 			iLogLevel = iNewLogLevel || iLogLevel;
 			aLoggerComponents.forEach(function (sComponent) {
-				$.sap.log.setLevel(iLogLevel, sComponent);
+				Log.setLevel(iLogLevel, sComponent);
 			});
 		},
 		getLogger: function (sComponent) {
 			aLoggerComponents.push(sComponent);
-			var logger = $.sap.log.getLogger(sComponent, iLogLevel);
+			var logger = Log.getLogger(sComponent, iLogLevel);
 			logger.timestamp = function (marker) {
 				/* eslint-disable no-console */
-				if (console.timeStamp && this.getLevel() >= $.sap.log.Level.DEBUG) {
+				if (console.timeStamp && this.getLevel() >= Log.Level.DEBUG) {
 					console.timeStamp(marker);
 				}
 				/* eslint-enable no-console */

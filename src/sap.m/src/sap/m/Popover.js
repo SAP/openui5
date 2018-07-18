@@ -22,7 +22,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", lastFocusableDomRef
+	"sap/ui/dom/jquery/rect", // jQuery Plugin "rect"
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
 		Bar,

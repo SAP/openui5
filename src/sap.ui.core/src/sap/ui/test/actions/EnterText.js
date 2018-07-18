@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/test/_OpaLogger",
 	"./Action",
-	"sap/ui/events/KeyCodes"
-], function($, _OpaLogger, Action, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
+], function(_OpaLogger, Action, KeyCodes, Log) {
 	"use strict";
 
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.actions.EnterText");
@@ -67,7 +67,7 @@ sap.ui.define([
 				return;
 			}
 			if (this.getText() === undefined || (!this.getClearTextFirst() && !this.getText())) {
-				$.sap.log.error("Please provide a text for this EnterText action", this._sLogPrefix);
+				Log.error("Please provide a text for this EnterText action", this._sLogPrefix);
 				return;
 			}
 

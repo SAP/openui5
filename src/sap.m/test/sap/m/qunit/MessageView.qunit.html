@@ -55,7 +55,7 @@
 							groupName: "Group 1",
 							title: "Error message",
 							subtitle: "Subtitle",
-							description: "<p>First Error message description</p>"
+							description: "<p>First Error message description</p>",
 						}, {
 							type: "Warning",
 							groupName: "Group 2",
@@ -69,7 +69,7 @@
 							type: "Error",
 							groupName: "Group 1",
 							title: "Error",
-							description: "<p>Second Error message description</p>"
+							description: "<p>Second Error message description</p>",
 						}, {
 							type: "Information",
 							groupName: "Group 1",
@@ -110,7 +110,7 @@
 						counter: 1,
 						groupName: "{groupName}",
 						description: "{description}",
-						longtextUrl: "{longtextUrl}"
+						longtextUrl: "{longtextUrl}",
 					});
 
 					var oModel = new sap.ui.model.json.JSONModel();
@@ -386,6 +386,35 @@
 				assert.notOk(this.oMessageView._detailsPage.getShowHeader(), "Header show not be shown");
 			});
 
+			QUnit.test("Active Items: Link is created", function (assert) {
+				var oFirstItem = this.oMessageView.getItems()[0];
+				var oLinkInitSpy = this.spy(sap.m.Link.prototype, "init");
+
+				oFirstItem.setActiveTitle(true);
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(oLinkInitSpy.called, "link should be initialized");
+			});
+
+			QUnit.test("Active Items: Press is propagated from Link to MessageItem", function (assert) {
+				var oFirstItem = this.oMessageView.getItems()[0];
+				var oActiveTitlePressStub = this.stub(this.oMessageView, "fireActiveTitlePress");
+
+				oFirstItem.setActiveTitle(true);
+				sap.ui.getCore().applyChanges();
+
+				// fire press of the link of a MessageListItem
+				this.oMessageView._oLists.all.getItems()[0].getLink().firePress();
+				this.clock.tick(300);
+
+				assert.ok(oActiveTitlePressStub.called, "event should be called");
+				assert.ok(oActiveTitlePressStub.calledWithExactly({ item: oFirstItem }), "event should be called with the message item");
+			});
+
+			QUnit.test("Active Items: Inactive item should not have a link", function (assert) {
+				assert.notOk(this.oMessageView._oLists.all.getItems()[0].getLink(), "Inactive Item should not have a link");
+			});
+
 			QUnit.module("Core integration", {
 				beforeEach: function () {
 					var that = this;
@@ -455,6 +484,50 @@
 
 			QUnit.test("NavContainer should be child of the MessageView", function(assert) {
 				assert.equal(this.oMessageView._navContainer.getParent(), this.oMessageView, "Parent child relation is correct");
+			});
+
+			QUnit.module("MessageView behaviour with one message with different title length and without description", {
+
+				beforeEach: function () {
+					var that = this;
+					this.oMessageView = new sap.m.MessageView();
+
+					this.oDialog = new sap.m.Dialog({
+						title: "Dialog with MessageView",
+						content: that.oMessageView,
+						contentHeight: "440px",
+						contentWidth: "640px",
+						verticalScrolling: false
+					});
+				},
+				afterEach: function () {
+					this.oDialog.close();
+					this.oDialog.destroy();
+					this.oMessageView.destroy();
+				}
+			});
+
+			QUnit.test("Contains only one message with short title should stay in list view", function (assert) {
+				var oNavigateStub = this.stub(this.oMessageView, "_navigateToDetails");
+
+				this.oMessageView.addItem(new sap.m.MessageItem({
+					title: "Short title."
+				}));
+				sap.ui.getCore().applyChanges();
+				this.oDialog.open();
+
+				assert.notOk(oNavigateStub.called, "Navigation to details has not been triggered");
+			});
+
+			QUnit.test("Contains only one message with long title should stay go details view", function (assert) {
+				var oNavigateStub = this.stub(this.oMessageView, "_navigateToDetails");
+				this.oMessageView.addItem(new sap.m.MessageItem({
+					title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+				}));
+				this.oDialog.open();
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(oNavigateStub.called, "Navigation to details had been triggered");
 			});
 
 			QUnit.module("HTML representation", {

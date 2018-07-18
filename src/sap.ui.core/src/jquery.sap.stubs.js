@@ -42,7 +42,8 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 					"addUrlWhitelist",
 					"removeUrlWhitelist",
 					"getUrlWhitelist",
-					"validateUrl"
+					"validateUrl",
+					"_sanitizeHTML"
 				],
 				"jquery.sap.events": [
 					"PseudoEvents",
@@ -72,7 +73,6 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 					"getObject",
 					"setObject",
 					"measure",
-					"syncPoint",
 					"getModulePath",
 					"getResourcePath",
 					"registerModulePath",
@@ -200,23 +200,6 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 				]
 			}
 		},
-		"jQuery Event method ": {
-			target: jQuery.Event.prototype,
-			stubs: {
-				"sap/ui/events/jquery/EventExtension": [
-					"getPseudoTypes",
-					"isPseudoType",
-					"getOffsetX",
-					"getOffsetY",
-					"stopImmediatePropagation",
-					"isImmediateHandlerPropagationStopped",
-					"setMark",
-					"isMarked",
-					"getMark",
-					"setMarked"
-				]
-			}
-		},
 		"jQuery Selector :": {
 			target: jQuery.expr[":"],
 			stubs: {
@@ -247,7 +230,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 			aProperties.forEach(function(sProperty) {
 				// Do not stub already defined properties
 				if (oTarget && !oTarget[sProperty]) {
-					defineLazyProperty(oTarget, sProperty, lazyLoad(sModule, oTarget, sProperty, sTargetName));
+					defineLazyProperty(oTarget, sProperty, lazyLoad(sModule, oTarget, sProperty, sTargetName), "jquery.sap.stubs");
 				}
 			});
 		});
@@ -258,6 +241,11 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 		var oStub = mStubs[sStubName];
 		applyLazyProperties(sStubName, oStub.target, oStub.stubs);
 	});
+
+	// Export stubbing config for testing
+	if (typeof window === "object" && window["jquery.sap.stubs-test"]) {
+		window["jquery.sap.stubs-test"] = mStubs;
+	}
 
 	return jQuery;
 });

@@ -3,7 +3,7 @@
  */
 
 // sap.ui.core.message.MessageMixin
-sap.ui.define(["jquery.sap.global", "sap/ui/core/library"], function(jQuery, library) {
+sap.ui.define(["sap/ui/core/library", "sap/base/Log"], function(library, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -45,7 +45,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/library"], function(jQuery, lib
 						oMessage.setAdditionalText(oLabel.getText());
 						bForceUpdate = true;
 					} else {
-						jQuery.sap.log.warning(
+						Log.warning(
 							"sap.ui.core.message.Message: Can't create labelText." +
 							"Label with id " + sLabelId + " is no valid sap.ui.core.Label.",
 							this

@@ -3,8 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/DefaultVariant",  "sap/ui/fl/StandardVariant", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/ChangePersistenceFactory"
-], function(Change, defaultVariant, standardVariant, Utils, $, ChangePersistenceFactory) {
+	"sap/ui/fl/Change",
+	"sap/ui/fl/DefaultVariant",
+	"sap/ui/fl/StandardVariant",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/ChangePersistenceFactory"
+], function(Change, defaultVariant, standardVariant, Utils, ChangePersistenceFactory) {
 
 	"use strict";
 	/**

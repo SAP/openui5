@@ -1,6 +1,6 @@
 /*global QUnit, oTable */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/TableUtils",
@@ -290,4 +290,5 @@ sap.ui.require([
 		assert.strictEqual(oTable.getRows()[0].getAggregation("_settings")._getRow().getIndex(), 0, "The correct row was returned");
 		assert.strictEqual(oTable.getRowSettingsTemplate()._getRow(), null, "Null is returned when called on the template");
 	});
+
 });

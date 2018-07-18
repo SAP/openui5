@@ -9,7 +9,7 @@
 		contentHeight="250px">
 		<f:SimpleForm
 			editable="true"
-			binding="{/selectionPresetsCurrent}"
+			binding="{/currentExportData}"
 			layout="ResponsiveGridLayout"
 			labelSpanXL="3"
 			labelSpanL="3"
@@ -19,12 +19,12 @@
 				<Label text="Title" labelFor="title" class="sapUiTinyMarginBottom" />
 				<Input id="title" value="{= ${isMySelection} ? '' : ${title}}" maxLength="80" class="sapUiTinyMarginBottom" />
 				<Label text="Description" labelFor="description" class="sapUiTinyMarginBottom" />
-				<TextArea id="description" width="100%" value="{= ${isMySelection} ? '' : ${description}}" class="sapUiTinyMarginBottom" />
+				<TextArea id="description" width="100%" value="{= ${isMySelection} ? '' : ${descriptionValue}}" class="sapUiTinyMarginBottom" />
 				<Label text="Date" labelFor="dateExportedForDisplay" class="sapUiTinyMarginBottom" />
 				<Text
 					id="dateExportedForDisplay"
 					text="{
-						path: '/dateExportedForDisplay',
+						path: 'dateExportedForDisplay',
 						type: 'sap.ui.model.type.DateTime',
 						formatOptions: {
 							style: 'medium'

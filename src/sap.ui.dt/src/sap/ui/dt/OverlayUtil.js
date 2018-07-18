@@ -4,12 +4,10 @@
 
 // Provides object sap.ui.dt.OverlayUtil.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementUtil'
 ],
 function(
-	jQuery,
 	OverlayRegistry,
 	ElementUtil
 ) {

@@ -8,16 +8,24 @@
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
+			data-sap-ui-resourceroots='{"local": "./"}'
 			data-sap-ui-libs="" >
 		</script>
 
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<link href="../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-		<script src="PopupTests.js"></script>
-
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+			QUnit.config.autostart = false;
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require(["local/PopupTests"], function() {
+					QUnit.start();
+				});
+			});
+		</script>
 		<style>
 			#popup {
 				background-color: yellow;

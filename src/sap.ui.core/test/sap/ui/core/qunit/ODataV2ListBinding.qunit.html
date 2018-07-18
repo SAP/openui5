@@ -1201,6 +1201,16 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		});
 	});
 
+	QUnit.module("Clientmode Filtering", {
+		beforeEach : function() {
+			oModel = initModel(false);
+		},
+		afterEach : function() {
+			oModel = undefined;
+			removeSharedMetadata();
+		}
+	});
+
 	QUnit.test("ListBinding clientside filter", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
@@ -1219,7 +1229,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
 			oBinding.filter([oFilter, oFilter2]);
 
-			var aFilteredContexts = oBinding.getContexts();
+			aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
@@ -1228,26 +1238,68 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.BT, "Beverages","D");
 			oBinding.filter([oFilter]);
 
-			var aFilteredContexts = oBinding.getContexts();
+			aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 3, "between filtered content length");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
+
+			// not between
+			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.NB, "Beverages","D");
+			oBinding.filter([oFilter]);
+
+			aFilteredContexts = oBinding.getContexts();
+			assert.equal(aFilteredContexts.length, 5, "not between filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Dairy Products", "not between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Grains/Cereals", "not between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Meat/Poultry", "not between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[3]), "Produce", "not between filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[4]), "Seafood", "not between filtered content");
 
 			// startsWith, endsWith
 			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.StartsWith, "C");
 			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ngs");
 			oBinding.filter([oFilter, oFilter2]);
 
-			var aFilteredContexts = oBinding.getContexts();
+			aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
+
+
+			// not startsWith, endsWith
+			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.NotStartsWith, "C");
+			oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.NotEndsWith, "ts");
+			oBinding.filter([oFilter, oFilter2]);
+
+			aFilteredContexts = oBinding.getContexts();
+			assert.equal(aFilteredContexts.length, 7, "not startsWith, endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "not startsWith, endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "not startsWith, endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Dairy Products", "not startsWith, endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[3]), "Grains/Cereals", "not startsWith, endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[4]), "Meat/Poultry", "not startsWith, endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[5]), "Produce", "not startsWith, endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[6]), "Seafood", "not startsWith, endsWith filtered content");
+
+
+			// not startsWith AND not endsWith
+			var oAndFilter1 = new sap.ui.model.Filter([oFilter, oFilter2], true);
+			oBinding.filter(oAndFilter1);
+
+			aFilteredContexts = oBinding.getContexts();
+			assert.equal(aFilteredContexts.length, 5, "not startsWith and not endsWith filtered content length");
+			assert.equal(oModel.getProperty("CategoryName", aFilteredContexts[0]), "Beverages", "not startsWith and not endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName", aFilteredContexts[1]), "Grains/Cereals", "not startsWith and not endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName", aFilteredContexts[2]), "Meat/Poultry", "not startsWith and not endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName", aFilteredContexts[3]), "Produce", "not startsWith and not endsWith filtered content");
+			assert.equal(oModel.getProperty("CategoryName", aFilteredContexts[4]), "Seafood", "not startsWith and not endsWith filtered content");
+
 
 			// ANDed filters
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
 			oBinding.filter([oFilter]);
 
-			var aFilteredContexts = oBinding.getContexts();
+			aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
 			assert.ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
 
@@ -1255,7 +1307,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
 			oBinding.filter([oFilter]);
 
-			var aFilteredContexts = oBinding.getContexts();
+			aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
@@ -1265,13 +1317,13 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ings");
 			oBinding.filter([oFilter, oFilter2]);
 
-			var aFilteredContexts = oBinding.getContexts();
+			aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
 			assert.equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
 			var oFilter1 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
-			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Dairy Products");
+			oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Dairy Products");
 			var oFilter3 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Grains/Cereals");
 			var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false);
 			var oFilter4 = new sap.ui.model.Filter("CategoryID", sap.ui.model.FilterOperator.EQ, 3);
@@ -1280,7 +1332,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
 			oBinding.filter(oMultiFilter3);
 
-			var aFilteredContexts = oBinding.getContexts();
+			aFilteredContexts = oBinding.getContexts();
 			assert.equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
 
 			done();
@@ -1695,9 +1747,134 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	});
 
+	QUnit.module("Servermode Filtering JSON", {
+		beforeEach : function() {
+			oModel = initModel(true);
+		},
+		afterEach : function() {
+			oModel = undefined;
+			removeSharedMetadata();
+		}
+	});
+
+	QUnit.test("ListBinding serverside filter - NotStartsWith", function(assert){
+		var done = assert.async();
+		var oListBinding = oModel.bindList("/Categories", null, null, new sap.ui.model.Filter("CategoryName", "NotStartsWith", "C"), {
+			select: "CategoryName"
+		});
+		oListBinding.attachRefresh(function() {
+			var listhandler = function() {
+				oListBinding.detachChange(listhandler);
+				var aContexts = oListBinding.getContexts();
+
+				var iIndex = 0;
+				assert.equal(aContexts.length, 6, "6 entry contained");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Beverages");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Dairy Products");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Grains/Cereals");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Meat/Poultry");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Produce");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Seafood");
+				assert.equal(aContexts.length, iIndex, "6 entry contained");
+				done();
+			};
+			oListBinding.attachChange(listhandler);
+			oListBinding.getContexts();
+		});
+		oListBinding.initialize();
+	});
+
+
+	QUnit.test("ListBinding serverside filter - NotEndsWith", function(assert){
+		var done = assert.async();
+		var oListBinding = oModel.bindList("/Categories", null, null, new sap.ui.model.Filter("CategoryName", "NotEndsWith", "s"), {
+			select: "CategoryName"
+		});
+		oListBinding.attachRefresh(function() {
+			var listhandler = function() {
+				oListBinding.detachChange(listhandler);
+				var aContexts = oListBinding.getContexts();
+
+				var iIndex = 0;
+				assert.equal(aContexts.length, 3, "3 entry contained");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Meat/Poultry");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Produce");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Seafood");
+				assert.equal(aContexts.length, iIndex, "3 entry contained");
+				done();
+			};
+			oListBinding.attachChange(listhandler);
+			oListBinding.getContexts();
+		});
+		oListBinding.initialize();
+	});
+
+
+	QUnit.test("ListBinding serverside filter - NotContains", function(assert){
+		var done = assert.async();
+		var oListBinding = oModel.bindList("/Categories", null, null, new sap.ui.model.Filter("CategoryName", "NotContains", "ry"), {
+			select: "CategoryName"
+		});
+		oListBinding.attachRefresh(function() {
+			var listhandler = function() {
+				oListBinding.detachChange(listhandler);
+				var aContexts = oListBinding.getContexts();
+
+				var iIndex = 0;
+				assert.equal(aContexts.length, 6, "6 entry contained");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Beverages");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Condiments");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Confections");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Grains/Cereals");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Produce");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Seafood");
+				assert.equal(aContexts.length, iIndex, "6 entry contained");
+				done();
+			};
+			oListBinding.attachChange(listhandler);
+			oListBinding.getContexts();
+		});
+		oListBinding.initialize();
+	});
+
+	QUnit.test("ListBinding serverside filter - NotBetween", function(assert){
+		var done = assert.async();
+		var oListBinding = oModel.bindList("/Categories", null, null, new sap.ui.model.Filter("CategoryName", "NB", "C", "M"), {
+			select: "CategoryName"
+		});
+		oListBinding.attachRefresh(function() {
+			var listhandler = function() {
+				oListBinding.detachChange(listhandler);
+				var aContexts = oListBinding.getContexts();
+
+				var iIndex = 0;
+				assert.equal(aContexts.length, 4, "4 entry contained");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Beverages");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Meat/Poultry");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Produce");
+				assert.equal(aContexts[iIndex++].getProperty("CategoryName"), "Seafood");
+				assert.equal(aContexts.length, iIndex, "4 entry contained");
+				done();
+			};
+			oListBinding.attachChange(listhandler);
+			oListBinding.getContexts();
+		});
+		oListBinding.initialize();
+	});
+
+	QUnit.module("Servermode Filtering XML", {
+		beforeEach : function() {
+			oModel = initModel(false);
+		},
+		afterEach : function() {
+			oModel = undefined;
+			removeSharedMetadata();
+		}
+	});
+
 	QUnit.test("ListBinding on expanded data, operationmode Default, initial filter", function(assert){
 		var done = assert.async();
-		var oSpy = sinon.spy(oModel, "_request");;
+		var oSpy = sinon.spy(oModel, "_request");
 		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
 		var oListBinding = oModel.bindList("Products", null, null,  new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
 		var handler = function() {

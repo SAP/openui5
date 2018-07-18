@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.base.Event
-sap.ui.define(['jquery.sap.global', './Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['./Object', "sap/base/assert"],
+	function(BaseObject, assert) {
 	"use strict";
 
 
@@ -54,8 +54,8 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 * @see sap.ui.base.Poolable.prototype#init
 	 */
 	Event.prototype.init = function(sId, oSource, mParameters) {
-		jQuery.sap.assert(typeof sId === "string", "Event.init: sId must be a string");
-		jQuery.sap.assert(sap.ui.require('sap/ui/base/EventProvider') && oSource instanceof sap.ui.require('sap/ui/base/EventProvider'), "Event.init: oSource must be an EventProvider");
+		assert(typeof sId === "string", "Event.init: sId must be a string");
+		assert(sap.ui.require('sap/ui/base/EventProvider') && oSource instanceof sap.ui.require('sap/ui/base/EventProvider'), "Event.init: oSource must be an EventProvider");
 
 		this.sId = sId;
 		this.oSource = oSource;
@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 */
 	Event.prototype.getParameter = function(sName) {
 
-		jQuery.sap.assert(typeof sName === "string" && sName, "Event.getParameter: sName must be a non-empty string");
+		assert(typeof sName === "string" && sName, "Event.getParameter: sName must be a non-empty string");
 
 		return this.mParameters[sName];
 

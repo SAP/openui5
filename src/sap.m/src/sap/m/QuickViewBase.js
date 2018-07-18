@@ -7,7 +7,8 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ],
 	function(library, Control, jQueryDOM, KeyCodes) {
 	"use strict";

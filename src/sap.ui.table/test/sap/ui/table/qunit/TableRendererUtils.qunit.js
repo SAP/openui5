@@ -1,6 +1,6 @@
 /*global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/table/TableRendererUtils",
 	"sap/ui/core/Element",
 	"sap/ui/core/Control"

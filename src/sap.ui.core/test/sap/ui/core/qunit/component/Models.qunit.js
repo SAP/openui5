@@ -1,15 +1,16 @@
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/base/i18n/ResourceBundle",
-	"sap/ui/core/UIComponent",
-	"sap/ui/model/odata/ODataModel",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/xml/XMLModel",
-	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery, ResourceBundle) {
+    "jquery.sap.global",
+    "sap/base/i18n/ResourceBundle",
+    "sap/base/Log",
+    "sap/ui/core/UIComponent",
+    "sap/ui/model/odata/ODataModel",
+    "sap/ui/model/odata/v2/ODataModel",
+    "sap/ui/model/odata/v4/ODataModel",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/model/xml/XMLModel",
+    "sap/ui/model/resource/ResourceModel",
+    "sap/ui/test/v2models/parent/CustomModel"
+], function(jQuery, ResourceBundle, Log) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -133,7 +134,7 @@ sap.ui.define([
 			bindHelper.call(this);
 
 			this.spyModels();
-			this.oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			this.oLogSpy = sinon.spy(Log, "error");
 		},
 		afterEach: function() {
 			this.restoreModels();
@@ -1060,7 +1061,7 @@ sap.ui.define([
 
 			this.spyModels();
 			this.stubGetUriParameters();
-			this.oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			this.oLogSpy = sinon.spy(Log, "error");
 		},
 		afterEach: function() {
 			this.restoreModels();
@@ -1273,8 +1274,8 @@ sap.ui.define([
 
 			this.spyModels();
 
-			this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
-			this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			this.oLogErrorSpy = sinon.spy(Log, "error");
+			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			sap.ui.loader.config({paths:{"samples/components":"../../samples/components/"}});
 
@@ -1861,8 +1862,8 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
-			this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
-			this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			this.oLogErrorSpy = sinon.spy(Log, "error");
+			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 		},
 		afterEach: function() {
@@ -1942,8 +1943,8 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
-			this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
-			this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			this.oLogErrorSpy = sinon.spy(Log, "error");
+			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 		},
 		afterEach: function() {
@@ -2200,8 +2201,8 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
-			this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
-			this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			this.oLogErrorSpy = sinon.spy(Log, "error");
+			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			this.stubGetUriParameters();
 		},
@@ -2422,8 +2423,8 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
-			this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
-			this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			this.oLogErrorSpy = sinon.spy(Log, "error");
+			this.oLogWarningSpy = sinon.spy(Log, "warning");
 		},
 		afterEach: function() {
 			this.oLogErrorSpy.restore();
@@ -2594,8 +2595,8 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
-			this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
-			this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+			this.oLogErrorSpy = sinon.spy(Log, "error");
+			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			this.stubGetUriParameters();
 		},

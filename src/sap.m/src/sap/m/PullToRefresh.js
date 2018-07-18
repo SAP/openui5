@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'./PullToRefreshRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/security/encodeXML"
 ],
-	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes) {
+	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes, encodeXML) {
 	"use strict";
 
 
@@ -221,7 +222,7 @@ sap.ui.define([
 				$this.toggleClass("sapMFlip", false).toggleClass("sapMLoading", false);
 				$text.html(oResourceBundle.getText(this._bTouchMode ? "PULL2REFRESH_PULLDOWN" : "PULL2REFRESH_REFRESH"));
 				$this.removeAttr("aria-live");
-				$this.find(".sapMPullDownInfo").html(jQuery.sap.encodeHTML(this.getDescription()));
+				$this.find(".sapMPullDownInfo").html(encodeXML(this.getDescription()));
 				break;
 			case 1:
 				$this.toggleClass("sapMFlip", true);
@@ -244,7 +245,7 @@ sap.ui.define([
 	*/
 	PullToRefresh.prototype.setDescription = function(sDescription){
 		if (this._oDomRef) {
-			this.$().find(".sapMPullDownInfo").html(jQuery.sap.encodeHTML(sDescription));
+			this.$().find(".sapMPullDownInfo").html(encodeXML(sDescription));
 		}
 		return this.setProperty("description", sDescription, true);
 	};

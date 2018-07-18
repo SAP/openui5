@@ -7,8 +7,8 @@
 // this includes only the final pending result logs without any intermediate advanced logs
 // final result logs are recognized by a component name suffix "#hasPending"
 sap.ui.define([
-	"jquery.sap.global"
-], function ($) {
+	"sap/base/Log"
+], function (Log) {
 	"use strict";
 
 	var aLogs = [];
@@ -22,7 +22,7 @@ sap.ui.define([
 
 	return {
 		start: function () {
-			$.sap.log.addLogListener(oListener);
+			Log.addLogListener(oListener);
 		},
 		getAndClearLog: function () {
 			var sLogs = aLogs.join("\n");
@@ -31,7 +31,7 @@ sap.ui.define([
 		},
 		stop: function () {
 			aLogs.length = 0;
-			$.sap.log.removeLogListener(oListener);
+			Log.removeLogListener(oListener);
 		}
 	};
 }, true);

@@ -4,22 +4,24 @@
 
 // Provides control sap.ui.core.ScrollBar.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/Device',
-	'./Control',
-	'./library',
-	"./ScrollBarRenderer",
+    'sap/ui/Device',
+    './Control',
+    './library',
+    "./ScrollBarRenderer",
+    "sap/ui/performance/trace/Interaction",
+	"sap/base/Log",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/performance/trace/Interaction"
+	"sap/ui/events/jquery/EventSimulation"
 ],
 	function(
-		jQuery,
 		Device,
 		Control,
 		library,
 		ScrollBarRenderer,
+		Interaction,
+		Log,
 		containsOrEquals,
-		Interaction
+		EventSimulation
 	) {
 	"use strict";
 
@@ -138,7 +140,7 @@ sap.ui.define([
 
 		this._iMaxContentDivSize = 1000000;  // small value that all browsers still can render without any problems
 
-		if (jQuery.sap.touchEventMode === "ON") {
+		if (EventSimulation.touchEventMode === "ON") {
 			sap.ui.requireSync("sap/ui/thirdparty/zyngascroll");
 
 			// Remember last touch scroller position to prevent unneeded rendering
@@ -264,7 +266,7 @@ sap.ui.define([
 
 		this._$ScrollDomRef.bind("scroll", jQuery.proxy(this.onscroll, this));
 
-		if (jQuery.sap.touchEventMode === "ON") {
+		if (EventSimulation.touchEventMode === "ON") {
 			this._bSkipTouchHandling = true;
 
 			var oContent = {
@@ -525,7 +527,7 @@ sap.ui.define([
 				this._$OwnerDomRef.unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this.onmousewheel);
 			}
 
-			if (jQuery.sap.touchEventMode === "ON") {
+			if (EventSimulation.touchEventMode === "ON") {
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchstart"), jQuery.proxy(this.ontouchstart, this));
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchmove"), jQuery.proxy(this.ontouchmove, this));
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchend"), jQuery.proxy(this.ontouchend, this));
@@ -549,7 +551,7 @@ sap.ui.define([
 				this._$OwnerDomRef.bind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this.onmousewheel, this));
 			}
 
-			if (jQuery.sap.touchEventMode === "ON") {
+			if (EventSimulation.touchEventMode === "ON") {
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchstart"), jQuery.proxy(this.ontouchstart, this));
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchmove"), jQuery.proxy(this.ontouchmove, this));
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchend"), jQuery.proxy(this.ontouchend, this));
@@ -566,7 +568,7 @@ sap.ui.define([
 	* @private
 	*/
 	ScrollBar.prototype._getTouchEventType = function (sType) {
-		return jQuery.sap.touchEventMode === "SIM" ? ("sap" + sType) : sType;
+		return EventSimulation.touchEventMode === "SIM" ? ("sap" + sType) : sType;
 	};
 
 	/**
@@ -646,7 +648,7 @@ sap.ui.define([
 			}
 		}
 
-		if (jQuery.sap.touchEventMode === "ON") {
+		if (EventSimulation.touchEventMode === "ON") {
 			var value = iCheckedSP;
 			if (this._bStepMode) {
 				value = Math.round(iCheckedSP * this._iTouchStepTreshold);
@@ -715,7 +717,7 @@ sap.ui.define([
 				// Set new scrollposition without the rerendering
 				this.setCheckedScrollPosition(iStep, false);
 
-				jQuery.sap.log.debug("-----STEPMODE-----: New Step: " + iStep + " --- Old Step: " +  iOldStep  + " --- Scroll Pos in px: " + iScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
+				Log.debug("-----STEPMODE-----: New Step: " + iStep + " --- Old Step: " +  iOldStep  + " --- Scroll Pos in px: " + iScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
 				this.fireScroll({ action: sAction, forward: bForward, newScrollPos: iStep, oldScrollPos: iOldStep});
 				this._iOldStep = iStep;
 
@@ -726,7 +728,7 @@ sap.ui.define([
 			iScrollPos = Math.round(iScrollPos);
 			this.setProperty("scrollPosition", iScrollPos, true);
 
-			jQuery.sap.log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
+			Log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
 			this.fireScroll({ action: sAction, forward: bForward, newScrollPos: iScrollPos, oldScrollPos: this._iOldScrollPos});
 		}
 		// rounding errors in IE lead to infinite scrolling

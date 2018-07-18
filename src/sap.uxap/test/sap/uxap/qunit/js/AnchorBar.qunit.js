@@ -52,14 +52,20 @@
 	});
 
 	QUnit.test("Show/Hide popover", function (assert) {
+		var oAnchorBarButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1];
+
+		// initial assert
+		assert.ok(oAnchorBarButton instanceof sap.m.MenuButton, "MenuButton is correctly used when showAnchorBarPopover=true");
+
 		//no longer show the popover
 		this.oObjectPage.setShowAnchorBarPopover(false);
-		this.oObjectPage.getAggregation("_anchorBar").getContent()[1].firePress();
 
 		// allow for re-render
-		this.clock.tick(iRenderingDelay);
+		sap.ui.getCore().applyChanges();
+		oAnchorBarButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1];
 
-		assert.strictEqual(jQuery(".sapUxAPAnchorBarPopover").length, 0, "don't show popover");
+		// assert
+		assert.ok(oAnchorBarButton instanceof sap.m.Button, "Button is correctly used when showAnchorBarPopover=false");
 	});
 
 	QUnit.test("Selected button", function (assert) {
@@ -67,7 +73,8 @@
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			aAnchorBarContent = oAnchorBar.getContent(),
 			oFirstSectionButton = aAnchorBarContent[0],
-			oLastSectionButton = aAnchorBarContent[aAnchorBarContent.length - 1];
+			oLastSectionButton = aAnchorBarContent[aAnchorBarContent.length - 1],
+			oMenuButton = aAnchorBarContent[1];
 
 		oAnchorBar.setSelectedButton(oLastSectionButton);
 
@@ -77,6 +84,15 @@
 		assert.strictEqual(oLastSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "select button programmatically");
 		assert.strictEqual(oLastSectionButton.$().attr("aria-checked"), "true", "ARIA checked state should be true for the selected button");
 		assert.strictEqual(oFirstSectionButton.$().attr("aria-checked"), "false", "ARIA checked state should be false for the unselected button");
+
+		assert.strictEqual(oMenuButton._getButtonControl().$().attr("aria-checked"), "false", "ARIA checked state should be false for the unselected split button");
+
+		oAnchorBar.setSelectedButton(oMenuButton);
+
+		// allow for scroling
+		this.clock.tick(iRenderingDelay);
+
+		assert.strictEqual(oMenuButton._getButtonControl().$().attr("aria-checked"), "true", "ARIA checked state should be true for the selected split button");
 	});
 
 	QUnit.test("Custom button", function (assert) {
@@ -93,19 +109,6 @@
 
 		assert.strictEqual(oFirstSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "selection is preserved");
 		assert.strictEqual(oFirstSectionButton.getEnabled(), false, "property change is propagated");
-	});
-
-	QUnit.test("Submenu button accessibility", function (assert) {
-		var	oButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1],
-			sSubSectionId = this.oObjectPage.getSections()[1].getSubSections()[0].getId();
-
-		oButton.firePress();
-
-		// allow for re-render
-		this.clock.tick(iRenderingDelay);
-
-		assert.strictEqual(jQuery(".sapUxAPAnchorBarPopover").find(".sapUxAPAnchorBarButton").first().attr("aria-controls"), sSubSectionId,
-				"ARIA controls attribute should match the corresponding SubSection ID");
 	});
 
 	QUnit.test("Phone view", function (assert) {
@@ -131,7 +134,7 @@
 	QUnit.test("Arrow left nad arrow right buttons should have correct tooltips", function (assert) {
 		var oArrowLeft = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollLeft"),
 			oArrowRight = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollRight"),
-			oRB = library.i18nModel.getResourceBundle(),
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"),
 			sArrowLeftTooltip = oRB.getText("TOOLTIP_OP_SCROLL_LEFT_ARROW"),
 			sArrowRightTooltip = oRB.getText("TOOLTIP_OP_SCROLL_RIGHT_ARROW");
 
@@ -160,9 +163,9 @@
 		this.oObjectPage.setShowAnchorBarPopover(false);
 		sap.ui.getCore().applyChanges();
 
-		oExpectedSection = this.oObjectPage.getSections()[0];
+		oExpectedSection = this.oObjectPage.getSections()[1];
 		oExpectedSubSection = oExpectedSection.getSubSections()[0];
-		oAnchorBar.getContent()[0].firePress();
+		oAnchorBar.getContent()[1].firePress();
 
 		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("section", oExpectedSection)), "Event fired has the correct section parameter attached");
 		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("subSection", oExpectedSubSection)), "Event fired has the correct subSection parameter attached");
@@ -177,6 +180,47 @@
 		],
 		compositeTitle: "Title({0})",
 		objectCount: 1
+	});
+
+	QUnit.module("custom setters", {
+		beforeEach: function () {
+			this.oAnchorBar = new sap.uxap.AnchorBar();
+			this.oAnchorBar.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oAnchorBar = null;
+		}
+	});
+
+	QUnit.test("AnchorBar - backgroundDesign", function (assert) {
+		var $oDomRef = this.oAnchorBar.$();
+
+		// assert
+		assert.equal(this.oAnchorBar.getBackgroundDesign(), null, "Default value of backgroundDesign property = null");
+
+		// act
+		this.oAnchorBar.setBackgroundDesign("Solid");
+
+		// assert
+		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarSolid"), "Should have sapUxAPAnchorBarSolid class");
+		assert.strictEqual(this.oAnchorBar.getBackgroundDesign(), "Solid", "Should have backgroundDesign property = 'Solid'");
+
+		// act
+		this.oAnchorBar.setBackgroundDesign("Transparent");
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapUxAPAnchorBarSolid"), "Should not have sapUxAPAnchorBarSolid class");
+		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarTransparent"), "Should have sapUxAPAnchorBarTransparent class");
+		assert.strictEqual(this.oAnchorBar.getBackgroundDesign(), "Transparent", "Should have backgroundDesign property = 'Transparent'");
+
+		// act
+		this.oAnchorBar.setBackgroundDesign("Translucent");
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapUxAPAnchorBarTransparent"), "Should not have sapUxAPAnchorBarTransparent class");
+		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarTranslucent"), "Should have sapUxAPAnchorBarTranslucent class");
+		assert.strictEqual(this.oAnchorBar.getBackgroundDesign(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
 	});
 
 	QUnit.module("simple binding", {
@@ -372,7 +416,7 @@
 	QUnit.test("Tooltip set on HierarchicalSelect", function (assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oSelect = oAnchorBar._getHierarchicalSelect(),
-			oRB = library.i18nModel.getResourceBundle(),
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"),
 			sExpectedTooltip = oRB.getText("ANCHOR_BAR_OVERFLOW");
 
 		assert.strictEqual(oSelect.getTooltip(), sExpectedTooltip, "Tooltip correctly set.");
@@ -382,6 +426,7 @@
 		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
 			iAnchorBarContentLength = aAnchorBarContent.length,
 			$oCurrentButtonDomRef,
+			$oCurrentButtonChildDomRef,
 			iIndex;
 
 		for (iIndex = 0; iIndex < iAnchorBarContentLength; iIndex++) {
@@ -390,7 +435,26 @@
 			// We need to add '+ 1' to the index for posinset, since posinset starts from 1, rather than 0
 			assert.strictEqual($oCurrentButtonDomRef.attr("aria-setsize"), iAnchorBarContentLength.toString(), "aria-setsize indicates anchorBar's length correctly");
 			assert.strictEqual($oCurrentButtonDomRef.attr("aria-posinset"), (iIndex + 1).toString(), "aria-posinset indicates the correct position of the button");
+
+			if (aAnchorBarContent[iIndex] instanceof sap.m.MenuButton) {
+				$oCurrentButtonChildDomRef = aAnchorBarContent[iIndex]._getButtonControl().$();
+				assert.strictEqual($oCurrentButtonChildDomRef.attr("aria-setsize"), iAnchorBarContentLength.toString(), "aria-setsize of the split button indicates anchorBar's length correctly");
+				assert.strictEqual($oCurrentButtonChildDomRef.attr("aria-posinset"), (iIndex + 1).toString(), "aria-posinset indicates the correct position of the split button");
+			}
 		}
+	});
+
+	QUnit.test("Enhance accessibility for submenu buttons is called", function (assert) {
+		var	oAnchorBarButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[0],
+			oSplitButton = oAnchorBarButton._getButtonControl(),
+			oMenu = oAnchorBarButton.getMenu(),
+			accEnhanceSpy = this.spy(oMenu, "_fnEnhanceUnifiedMenuAccState");
+
+		// act
+		oSplitButton.fireArrowPress();
+
+		// assert
+		assert.ok(accEnhanceSpy.calledTwice, "Enhance accessibility function of the menu is called for 2 buttons");
 	});
 
 

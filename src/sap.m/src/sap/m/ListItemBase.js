@@ -15,7 +15,8 @@ sap.ui.define([
 	"./CheckBox",
 	"./RadioButton",
 	"./ListItemBaseRenderer",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable", ":sapFocusable"
 ],
 function(
 	KeyCodes,

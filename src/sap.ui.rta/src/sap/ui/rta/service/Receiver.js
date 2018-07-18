@@ -157,18 +157,16 @@ sap.ui.define([
 			}
 		};
 
-		oRta.attachEventOnce("start", function () {
-			oPostMessageBus = PostMessageBus.getInstance();
-			oPostMessageBus.publish({
-				channelId: CHANNEL_ID,
-				eventId: PostMessageBus.event.READY
-			});
-
-			oPostMessageBus.subscribe(CHANNEL_ID, "getService", fnReceiver);
-			oPostMessageBus.subscribe(CHANNEL_ID, "callMethod", fnReceiver);
-			oPostMessageBus.subscribe(CHANNEL_ID, "subscribe", fnReceiver);
-			oPostMessageBus.subscribe(CHANNEL_ID, "unsubscribe", fnReceiver);
+		oPostMessageBus = PostMessageBus.getInstance();
+		oPostMessageBus.publish({
+			channelId: CHANNEL_ID,
+			eventId: PostMessageBus.event.READY
 		});
+
+		oPostMessageBus.subscribe(CHANNEL_ID, "getService", fnReceiver);
+		oPostMessageBus.subscribe(CHANNEL_ID, "callMethod", fnReceiver);
+		oPostMessageBus.subscribe(CHANNEL_ID, "subscribe", fnReceiver);
+		oPostMessageBus.subscribe(CHANNEL_ID, "unsubscribe", fnReceiver);
 
 		return {
 			destroy: function () {

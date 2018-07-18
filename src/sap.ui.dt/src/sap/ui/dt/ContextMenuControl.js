@@ -4,10 +4,10 @@
 // Provides control sap.ui.dt.ContextMenu.
 /* globals sap */
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'./library',
 	'sap/ui/unified/Menu',
-	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObject',
 	'sap/m/Popover',
 	'sap/m/VBox',
 	'sap/m/HBox',
@@ -17,7 +17,7 @@ sap.ui.define([
 	jQuery,
 	library,
 	Menu,
-	Control,
+	ManagedObject,
 	Popover,
 	VBox,
 	HBox,
@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @experimental
 	 * @alias sap.ui.dt.ContextMenu
 	 */
-	var ContextMenu = Control.extend('sap.ui.dt.ContextMenuControl', {
+	var ContextMenu = ManagedObject.extend('sap.ui.dt.ContextMenuControl', {
 
 		metadata: {
 			properties: {
@@ -89,7 +89,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * initializes the ContextMenu by adding a sap.m.Popover (with a sap.m.Flexbox as a content aggregation) as a Dependent of the ContextMenu
+		 * initializes the ContextMenu by creating the internal a sap.m.Popover (with a sap.m.Flexbox as a content aggregation) in internal _popovers aggregation of the ContextMenu
 		 */
 		init: function () {
 
@@ -112,7 +112,7 @@ sap.ui.define([
 
 			oPopover.attachBrowserEvent("keydown", this._changeFocusOnKeyStroke, this);
 			oPopover.oPopup.attachClosed(this._popupClosed, this);
-			this.addDependent(oPopover);
+			this._oPopover = oPopover;
 			oPopover.addStyleClass("sapUiDtContextMenu");
 
 			var sPopExpId = this.getId() + "-popoverExp";
@@ -134,23 +134,12 @@ sap.ui.define([
 
 			oPopoverExpanded.attachBrowserEvent("keydown", this._changeFocusOnKeyStroke, this);
 			oPopoverExpanded.oPopup.attachClosed(this._popupClosed, this);
-			this.addDependent(oPopoverExpanded);
+			this._oExpandedPopover = oPopoverExpanded;
 			oPopoverExpanded.addStyleClass("sapUiDtContextMenu");
 
 			oPopover.attachBrowserEvent("contextmenu", this._onContextMenu, this);
 			oPopoverExpanded.attachBrowserEvent("contextmenu", this._onContextMenu, this);
 			this.bOnInit = true;
-
-			var oStatic;
-			try {
-				oStatic = sap.ui.getCore().getStaticAreaRef();
-				oStatic = sap.ui.getCore().getUIArea(oStatic);
-			} catch (e) {
-				jQuery.sap.log.error(e);
-				throw new Error("Popup cannot be opened because static UIArea cannot be determined.");
-			}
-
-			oStatic.addContent(this, true);
 
 		},
 
@@ -159,6 +148,8 @@ sap.ui.define([
 			this.getPopover(false).oPopup.detachClosed(this._popupClosed, this);
 			this.getPopover(true).detachBrowserEvent("contextmenu", this._onContextMenu, this);
 			this.getPopover(false).detachBrowserEvent("contextmenu", this._onContextMenu, this);
+			this.getPopover(true).destroy();
+			this.getPopover(false).destroy();
 		},
 
 		/**
@@ -758,19 +749,19 @@ sap.ui.define([
 		 * Adds a menu action button to the contextMenu
 		 * @param {Object} oButtonItem the button configuration item
 		 * @param {function} fnContextMenuHandler the handler function for button press event
-		 * @param {object} oOverlay the target overlay
+		 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
 		 * @public
 		 */
-		addMenuButton: function(oButtonItem, fnContextMenuHandler, oOverlay) {
+		addMenuButton: function(oButtonItem, fnContextMenuHandler, aElementOverlays) {
 			var fnHandler = function(oEvent) {
 				this.bOpen = false;
 				this.bOpenNew = false;
 				fnContextMenuHandler(this);
 			};
 
-			var sText = typeof oButtonItem.text === "function" ? oButtonItem.text(oOverlay) : oButtonItem.text;
-			var bEnabled = typeof oButtonItem.enabled === "function" ? oButtonItem.enabled(oOverlay) : oButtonItem.enabled;
+			var sText = typeof oButtonItem.text === "function" ? oButtonItem.text(aElementOverlays[0]) : oButtonItem.text;
+			var bEnabled = typeof oButtonItem.enabled === "function" ? oButtonItem.enabled(aElementOverlays) : oButtonItem.enabled;
 			var oButtonOptions = {
 				icon: this._getIcon(oButtonItem.icon),
 				text: sText,
@@ -783,7 +774,7 @@ sap.ui.define([
 		},
 
 		_addButton: function (sButtonItemId, oButtonOptions) {
-			this.setProperty("buttons", this.getProperty("buttons").concat(oButtonOptions), true);
+			this.setProperty("buttons", this.getProperty("buttons").concat(oButtonOptions));
 
 			var oButtonCustomData = { id: sButtonItemId, key: sButtonItemId };
 			var oExpandedMenuButton = new Button(oButtonOptions);
@@ -816,7 +807,7 @@ sap.ui.define([
 
 				// deletes the overflow button if there is one
 				if (this.getProperty("buttons").length > this.getProperty("maxButtonsDisplayed")) {
-					this.setProperty("buttons", this.getProperty("buttons").splice(0, this.getProperty("buttons").length - 1), true);
+					this.setProperty("buttons", this.getProperty("buttons").splice(0, this.getProperty("buttons").length - 1));
 
 					this.getFlexbox().removeItem(this.getButtons().length - 1);
 				}
@@ -832,7 +823,7 @@ sap.ui.define([
 		 * @public
 		 */
 		removeButton: function (iIndex) {
-			this.setProperty("buttons", this.getProperty("buttons").splice(iIndex, 1), true);
+			this.setProperty("buttons", this.getProperty("buttons").splice(iIndex, 1));
 
 			this.getFlexbox(true).removeItem(iIndex);
 			return this.getFlexbox(false).removeItem(iIndex);
@@ -844,7 +835,7 @@ sap.ui.define([
 		 * @public
 		 */
 		removeAllButtons: function () {
-			this.setProperty("buttons", [], true);
+			this.setProperty("buttons", []);
 			this.getFlexbox(true).removeAllItems();
 			return this.getFlexbox(false).removeAllItems();
 		},
@@ -874,14 +865,14 @@ sap.ui.define([
 		 * Sets the Buttons of the ContextMenu
 		 * @param {Array} _aButtons the Buttons to insert
 		 * @param {function} fnContextMenuHandler - the source
-		 * @param {object} oOverlay - the target overlay
+		 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 		 * @public
 		 */
-		setButtons: function (_aButtons, fnContextMenuHandler, oOverlay) {
+		setButtons: function (_aButtons, fnContextMenuHandler, aElementOverlays) {
 			this.removeAllButtons();
 
 			_aButtons.forEach(function (oButton) {
-				this.addMenuButton(oButton, fnContextMenuHandler, oOverlay);
+				this.addMenuButton(oButton, fnContextMenuHandler, aElementOverlays);
 			}.bind(this));
 		},
 
@@ -894,7 +885,7 @@ sap.ui.define([
 			if (iMBD < 2) {
 				throw Error("maxButtonsDisplayed can't be less than two!");
 			}
-			this.setProperty("maxButtonsDisplayed", iMBD, true);
+			this.setProperty("maxButtonsDisplayed", iMBD);
 		},
 
 		/**
@@ -907,14 +898,14 @@ sap.ui.define([
 
 			if (bExpanded === undefined) {
 				if (this._bUseExpPop) {
-					return this.getDependents()[1];
+					return this._oExpandedPopover;
 				} else {
-					return this.getDependents()[0];
+					return this._oPopover;
 				}
 			} else if (bExpanded) {
-				return this.getDependents()[1];
+				return  this._oExpandedPopover;
 			} else {
-				return this.getDependents()[0];
+				return this._oPopover;
 			}
 		},
 
@@ -1104,10 +1095,8 @@ sap.ui.define([
 			this.fireOpened();
 		},
 
-		renderer: function () {},
-
 		setStyleClass: function (sStyleClass) {
-			this.setProperty('styleClass', sStyleClass, true);
+			this.setProperty('styleClass', sStyleClass);
 		}
 	});
 

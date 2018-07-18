@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
         "references": []
+      },
+      {
+        "id": "0677dc024bdfb8d25bdb35ee258a34586a2c0928",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: CW selection behavior corrected",
+        "references": []
       }
     ]
   }

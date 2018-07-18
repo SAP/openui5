@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'./DateTimeFieldRenderer',
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ], function(
 	SimpleDateType,
 	ODataType,
@@ -170,7 +171,6 @@ sap.ui.define([
 
 			if (this._$input.val() !== sOutputValue) {
 				this._$input.val(sOutputValue);
-				this._setLabelVisibility();
 				this._curpos = this._$input.cursorPos();
 			}
 		}
@@ -243,7 +243,6 @@ sap.ui.define([
 			sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
 		).getDatePattern(sPlaceholder);
 	};
-
 
 	DateTimeField.prototype._parseValue = function (sValue, bDisplayFormat) {
 		return this._getFormatter(bDisplayFormat).parse(sValue);

@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(['sap/ui/thirdparty/jquery', 'jquery.sap.global', 'sap/ui/Global'],
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Global'],
 	function(jQuery) {
 	"use strict";
 

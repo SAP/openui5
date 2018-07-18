@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/core/Component"
+	"sap/ui/core/Component",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Utils,
 	ChangeRegistry,
 	JsControlTreeModifier,
 	Element,
 	VariantManagement,
-	Component
+	Component,
+	jQuery
 ) {
 	"use strict";
 

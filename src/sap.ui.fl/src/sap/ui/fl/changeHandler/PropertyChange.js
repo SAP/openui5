@@ -3,13 +3,15 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/Log"
 ], function(
 	jQuery,
 	Base,
-	FlexUtils
+	FlexUtils,
+	Log
 ) {
 	"use strict";
 
@@ -82,7 +84,7 @@ sap.ui.define([
 			changeProperty(oControl, sPropertyName, vPropertyValue, oModifier);
 			oChange.resetRevertData();
 		} else {
-			jQuery.sap.log.error("Attempt to revert an unapplied change.");
+			Log.error("Attempt to revert an unapplied change.");
 			return false;
 		}
 

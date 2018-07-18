@@ -4,19 +4,19 @@
 
 // Provides control sap.f.FlexibleColumnLayout.
 sap.ui.define([
-    "jquery.sap.global",
-    "./library",
-    "sap/ui/Device",
-    "sap/ui/core/ResizeHandler",
-    "sap/ui/core/Control",
-    "sap/m/library",
-    "sap/m/Button",
-    "sap/m/NavContainer",
-    "sap/ui/core/Configuration",
-    "./FlexibleColumnLayoutRenderer",
-    "jquery.sap.events"
+	"sap/ui/thirdparty/jquery",
+	"./library",
+	"sap/ui/Device",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Control",
+	"sap/m/library",
+	"sap/m/Button",
+	"sap/m/NavContainer",
+	"sap/ui/core/Configuration",
+	"./FlexibleColumnLayoutRenderer",
+	"sap/base/assert"
 ], function(
-    jQuery,
+	jQuery,
 	library,
 	Device,
 	ResizeHandler,
@@ -25,7 +25,8 @@ sap.ui.define([
 	Button,
 	NavContainer,
 	Configuration,
-	FlexibleColumnLayoutRenderer
+	FlexibleColumnLayoutRenderer,
+	assert
 ) {
 	"use strict";
 
@@ -774,7 +775,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._registerResizeHandler = function () {
-		jQuery.sap.assert(!this._iResizeHandlerId, "Resize handler already registered");
+		assert(!this._iResizeHandlerId, "Resize handler already registered");
 		this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
 	};
 
@@ -902,18 +903,20 @@ sap.ui.define([
 		iAvailableWidth = this._getControlWidth() - iTotalMargin;
 
 		aColumns.forEach(function (sColumn) {
+			var oColumn = this._$columns[sColumn];
+
 			iPercentWidth = this._getColumnSize(sColumn);
 
 			// Add the left margin if the column has width and there was already a non-zero width column before it (bNeedsMargin = true)
-			this._$columns[sColumn].toggleClass("sapFFCLColumnMargin", bNeedsMargin && iPercentWidth > 0);
+			oColumn.toggleClass("sapFFCLColumnMargin", bNeedsMargin && iPercentWidth > 0);
 
 			// Add the active class to the column if it shows something
-			this._$columns[sColumn].toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
+			oColumn.toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
 
 			// Remove all the classes that are used for HCB theme borders, they will be set again later
-			this._$columns[sColumn].removeClass("sapFFCLColumnOnlyActive");
-			this._$columns[sColumn].removeClass("sapFFCLColumnLastActive");
-			this._$columns[sColumn].removeClass("sapFFCLColumnFirstActive");
+			oColumn.removeClass("sapFFCLColumnOnlyActive");
+			oColumn.removeClass("sapFFCLColumnLastActive");
+			oColumn.removeClass("sapFFCLColumnFirstActive");
 
 			// Change the width of the column
 			iNewWidth = Math.round(iAvailableWidth * (iPercentWidth / 100));
@@ -926,24 +929,24 @@ sap.ui.define([
 			// Animations on - suspend ResizeHandler while animation is running
 			if (sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none) {
 
-				var oColumnDomRef = this._$columns[sColumn].get(0);
+				var oColumnDomRef = oColumn.get(0);
 
 				// Suspending ResizeHandler temporarily
 				ResizeHandler.suspend(oColumnDomRef);
 
 				// Clear previous timeouts if present
-				if (this._iResumeResizeHandlerTimeout) {
-					clearTimeout(this._iResumeResizeHandlerTimeout);
+				if (oColumn._iResumeResizeHandlerTimeout) {
+					clearTimeout(oColumn._iResumeResizeHandlerTimeout);
 				}
 
 				// Schedule resume of ResizeHandler
-				this._iResumeResizeHandlerTimeout = setTimeout(function() {
+				oColumn._iResumeResizeHandlerTimeout = setTimeout(function() {
 					ResizeHandler.resume(oColumnDomRef);
-					this._iResumeResizeHandlerTimeout = null;
-				}.bind(this), FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
+					oColumn._iResumeResizeHandlerTimeout = null;
+				}, FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
 			}
 
-			this._$columns[sColumn].width(sNewWidth);
+			oColumn.width(sNewWidth);
 
 			// For tablet and desktop - notify child controls to render with reduced container size, if they need to
 			if (!Device.system.phone) {
@@ -1105,7 +1108,7 @@ sap.ui.define([
 			bIsLayoutValid = typeof FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout] !== "undefined" && typeof FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout][sShiftDirection] !== "undefined",
 			sNewLayout;
 
-		jQuery.sap.assert(bIsLayoutValid, "An invalid layout was used for determining arrow behavior");
+		assert(bIsLayoutValid, "An invalid layout was used for determining arrow behavior");
 		sNewLayout = bIsLayoutValid ? FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout][sShiftDirection] : LT.OneColumn;
 
 		this.setLayout(sNewLayout);

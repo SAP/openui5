@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/test/TestUtils"
-], function (jQuery, SyncPromise, TestUtils) {
+    "sap/ui/base/SyncPromise",
+    "sap/ui/test/TestUtils",
+    "sap/base/Log"
+], function(SyncPromise, TestUtils, Log) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";
@@ -63,7 +63,7 @@ sap.ui.require([
 		},
 
 		beforeEach : function () {
-			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},

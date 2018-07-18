@@ -2,19 +2,20 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.Selection.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils',
-	'sap/ui/dt/OverlayRegistry'
+	'sap/ui/dt/OverlayRegistry',
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	Plugin,
 	Utils,
 	FlexUtils,
-	OverlayRegistry
-){
+	OverlayRegistry,
+	KeyCodes
+) {
 	"use strict";
 
 	/**
@@ -144,27 +145,27 @@ function(
 	 */
 	Selection.prototype._onKeyDown = function(oEvent) {
 		var oOverlay = Utils.getFocusedOverlay();
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.ENTER) {
+		if (oEvent.keyCode === KeyCodes.ENTER) {
 			this._selectOverlay(oEvent);
-		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.ARROW_UP && oEvent.shiftKey === false && oEvent.altKey === false) {
+		} else if (oEvent.keyCode === KeyCodes.ARROW_UP && oEvent.shiftKey === false && oEvent.altKey === false) {
 			if (oOverlay) {
 				var oParentOverlay = Utils.getFocusableParentOverlay(oOverlay);
 				this._setFocusOnOverlay(oParentOverlay, oEvent);
 				oEvent.preventDefault();
 			}
-		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.ARROW_DOWN && oEvent.shiftKey === false && oEvent.altKey === false) {
+		} else if (oEvent.keyCode === KeyCodes.ARROW_DOWN && oEvent.shiftKey === false && oEvent.altKey === false) {
 			if (oOverlay) {
 				var oFirstChildOverlay = Utils.getFirstFocusableDescendantOverlay(oOverlay);
 				this._setFocusOnOverlay(oFirstChildOverlay, oEvent);
 				oEvent.preventDefault();
 			}
-		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.ARROW_LEFT && oEvent.shiftKey === false && oEvent.altKey === false) {
+		} else if (oEvent.keyCode === KeyCodes.ARROW_LEFT && oEvent.shiftKey === false && oEvent.altKey === false) {
 			if (oOverlay) {
 				var oPrevSiblingOverlay = Utils.getPreviousFocusableSiblingOverlay(oOverlay);
 				this._setFocusOnOverlay(oPrevSiblingOverlay, oEvent);
 				oEvent.preventDefault();
 			}
-		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.ARROW_RIGHT && oEvent.shiftKey === false && oEvent.altKey === false) {
+		} else if (oEvent.keyCode === KeyCodes.ARROW_RIGHT && oEvent.shiftKey === false && oEvent.altKey === false) {
 			if (oOverlay) {
 				var oNextSiblingOverlay = Utils.getNextFocusableSiblingOverlay(oOverlay);
 				this._setFocusOnOverlay(oNextSiblingOverlay, oEvent);

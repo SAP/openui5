@@ -172,14 +172,14 @@ function(
 
 	OnePersonCalendar.prototype.setShowFullDay = function (bValue) {
 		this.setProperty("showFullDay", bValue, true);
-		this.getAggregation("grid").setProperty("showFullDay", bValue, true);
+		this.getAggregation("grid").setProperty("showFullDay", bValue);
 
 		return this;
 	};
 
 	OnePersonCalendar.prototype.setAppointmentsVisualization = function (oValue) {
 		this.setProperty("appointmentsVisualization", oValue, true);
-		this.getAggregation("grid").setProperty("appointmentsVisualization", oValue, true);
+		this.getAggregation("grid").setProperty("appointmentsVisualization", oValue);
 
 		return this;
 	};

@@ -2,7 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/util/reflection/JsControlTreeModifier"], function (JsControlTreeModifier) {
+sap.ui.define([
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/util/merge"
+], function(JsControlTreeModifier, merge) {
 
 	"use strict";
 
@@ -325,8 +328,7 @@ sap.ui.define(["sap/ui/core/util/reflection/JsControlTreeModifier"], function (J
 		}
 	};
 
-	return jQuery.sap.extend(
-		true /* deep extend */,
+	return merge(
 		{} /* target object, to avoid changing of original modifier */,
 		JsControlTreeModifier,
 		RtaControlTreeModifier

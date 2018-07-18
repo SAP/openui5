@@ -5,13 +5,13 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon"
 ], function(
 	jQuery,
 	AppVariantUtils,
-	FakeLrepConnectorLocalStorage,
+	FakeLrepConnectorSessionStorage,
 	Settings,
 	sinon) {
 	"use strict";
@@ -19,7 +19,7 @@ sap.ui.require([
 	var sandbox = sinon.sandbox.create();
 	QUnit.start();
 
-	FakeLrepConnectorLocalStorage.enableFakeConnector();
+	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 	QUnit.module("Given an AppVariantUtils is instantiated", {
 		beforeEach: function () {

@@ -17,7 +17,9 @@ sap.ui.define([
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/registry/Settings',
 	'sap/ui/rta/ControlTreeModifier',
-	"sap/ui/fl/library", //we have to ensure to load fl, so that change handler gets registered,
+	"sap/ui/thirdparty/jquery",
+	//we have to ensure to load fl, so that change handler gets registered,
+	"sap/ui/fl/library",
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-qunit'
 ],
@@ -34,8 +36,9 @@ function(
 	Model,
 	FlexControllerFactory,
 	Settings,
-	ControlTreeModifier
-){
+	ControlTreeModifier,
+	jQuery
+) {
 
 	"use strict";
 

@@ -115,7 +115,7 @@ sap.ui.define([
 	 */
 	function releaseTriggeredEvent(oHandler) {
 		if (!oHandler) {
-			jQuery.sap.log.error("Release trigger events must not be called without passing a valid handler!");
+			Log.error("Release trigger events must not be called without passing a valid handler!");
 			return;
 		}
 

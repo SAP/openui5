@@ -9,10 +9,12 @@ sap.ui.define([
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	"./FileUploaderRenderer",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	'./FileUploaderRenderer',
+	'sap/ui/dom/containsOrEquals',
+	'sap/ui/events/KeyCodes',
+	'sap/base/Log',
+	'sap/base/security/encodeXML',
+	'sap/ui/dom/jquery/Aria' // jQuery Plugin "addAriaDescribedBy"
 ], function(
 	Control,
 	library,
@@ -22,7 +24,8 @@ sap.ui.define([
 	FileUploaderRenderer,
 	containsOrEquals,
 	KeyCodes,
-	Log
+	Log,
+	encodeXML
 ) {
 	"use strict";
 
@@ -1613,12 +1616,12 @@ sap.ui.define([
 			}
 			aFileUpload.push('size="1" ');
 			if (this.getTooltip_AsString() ) {
-				aFileUpload.push('title="' + jQuery.sap.encodeHTML(this.getTooltip_AsString()) + '" ');
+				aFileUpload.push('title="' + encodeXML(this.getTooltip_AsString()) + '" ');
 			//} else if (this.getTooltip() ) {
 				// object tooltip, do nothing - tooltip will be displayed
 			} else if (this.getValue() !== "") {
 				// only if there is no tooltip, then set value as fallback
-				aFileUpload.push('title="' + jQuery.sap.encodeHTML(this.getValue()) + '" ');
+				aFileUpload.push('title="' + encodeXML(this.getValue()) + '" ');
 			}
 			if (!this.getEnabled()) {
 				aFileUpload.push('disabled="disabled" ');

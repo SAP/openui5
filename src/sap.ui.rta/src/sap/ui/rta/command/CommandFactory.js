@@ -6,14 +6,18 @@ sap.ui.define([
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/Utils'
+	'sap/ui/fl/Utils',
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/ObjectPath"
 ],
 function(
 	ManagedObject,
 	ElementUtil,
 	OverlayRegistry,
 	ChangeRegistry,
-	FlexUtils
+	FlexUtils,
+	jQuery,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -184,8 +188,9 @@ function(
 
 		var sClassName = mCommand.clazz;
 
+		//TODO: global jquery call found
 		jQuery.sap.require(sClassName);
-		var Command = jQuery.sap.getObject(sClassName);
+		var Command = ObjectPath.get(sClassName || "");
 
 		var bIsUiElement = vElement instanceof sap.ui.base.ManagedObject;
 		mSettings = jQuery.extend(mSettings, {

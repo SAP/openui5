@@ -3,19 +3,36 @@
  */
 
 // Provides the OData model implementation of a tree binding
-sap.ui.define(['jquery.sap.global',
-				'sap/ui/model/TreeBinding',
-				'sap/ui/model/odata/CountMode',
-				'sap/ui/model/ChangeReason',
-				'sap/ui/model/Filter',
-				'sap/ui/model/Sorter',
-				'sap/ui/model/odata/ODataUtils',
-				'sap/ui/model/TreeBindingUtils',
-				'sap/ui/model/odata/OperationMode',
-				'sap/ui/model/SorterProcessor',
-				'sap/ui/model/FilterProcessor',
-				'sap/ui/model/FilterType'],
-	function(jQuery, TreeBinding, CountMode, ChangeReason, Filter, Sorter, ODataUtils, TreeBindingUtils, OperationMode, SorterProcessor, FilterProcessor, FilterType) {
+sap.ui.define([
+	'sap/ui/model/TreeBinding',
+	'sap/ui/model/odata/CountMode',
+	'sap/ui/model/ChangeReason',
+	'sap/ui/model/Filter',
+	'sap/ui/model/Sorter',
+	'sap/ui/model/odata/ODataUtils',
+	'sap/ui/model/TreeBindingUtils',
+	'sap/ui/model/odata/OperationMode',
+	'sap/ui/model/SorterProcessor',
+	'sap/ui/model/FilterProcessor',
+	'sap/ui/model/FilterType',
+	"sap/base/Log",
+	"sap/base/assert"
+],
+	function(
+		TreeBinding,
+		CountMode,
+		ChangeReason,
+		Filter,
+		Sorter,
+		ODataUtils,
+		TreeBindingUtils,
+		OperationMode,
+		SorterProcessor,
+		FilterProcessor,
+		FilterType,
+		Log,
+		assert
+	) {
 	"use strict";
 
 
@@ -149,7 +166,7 @@ sap.ui.define(['jquery.sap.global',
 
 			this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
 			if (this.sCountMode == CountMode.None) {
-				jQuery.sap.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
+				Log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
 			}
 
 			if (mParameters) {
@@ -217,7 +234,7 @@ sap.ui.define(['jquery.sap.global',
 	ODataTreeBinding.prototype._getNodeFilterParams = function (mParams) {
 		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"] : this.oTreeProperties["hierarchy-parent-node-for"];
 		var oEntityType = this._getEntityType();
-		return ODataUtils._createFilterParams([new Filter(sPropName, "EQ", mParams.id)], this.oModel.oMetadata, oEntityType);
+		return ODataUtils._createFilterParams(new Filter(sPropName, "EQ", mParams.id), this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
@@ -225,7 +242,7 @@ sap.ui.define(['jquery.sap.global',
 	 */
 	ODataTreeBinding.prototype._getLevelFilterParams = function (sOperator, iLevel) {
 		var oEntityType = this._getEntityType();
-		return ODataUtils._createFilterParams([new Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel)], this.oModel.oMetadata, oEntityType);
+		return ODataUtils._createFilterParams(new Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel), this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
@@ -430,7 +447,7 @@ sap.ui.define(['jquery.sap.global',
 			} else if (sDrilldownState === "leaf"){
 				return false;
 			} else {
-				jQuery.sap.log.warning("The entity '" + oContext.getPath() + "' has not specified Drilldown State property value.");
+				Log.warning("The entity '" + oContext.getPath() + "' has not specified Drilldown State property value.");
 				//fault tolerance for empty property values (we optimistically say that those nodes can be expanded/collapsed)
 				if (sDrilldownState === undefined || sDrilldownState === "") {
 					return true;
@@ -714,7 +731,7 @@ sap.ui.define(['jquery.sap.global',
 	ODataTreeBinding.prototype._getCountForCollection = function () {
 
 		if (!this.bHasTreeAnnotations || this.sOperationMode != OperationMode.Auto) {
-			jQuery.sap.log.error("The Count for the collection can only be retrieved with Hierarchy Annotations and in OperationMode.Auto.");
+			Log.error("The Count for the collection can only be retrieved with Hierarchy Annotations and in OperationMode.Auto.");
 			return;
 		}
 
@@ -750,7 +767,7 @@ sap.ui.define(['jquery.sap.global',
 			if (oError.response){
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
 			}
-			jQuery.sap.log.warning(sErrorMsg);
+			Log.warning(sErrorMsg);
 		}
 
 		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
@@ -822,7 +839,7 @@ sap.ui.define(['jquery.sap.global',
 			if (oError.response){
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
 			}
-			jQuery.sap.log.warning(sErrorMsg);
+			Log.warning(sErrorMsg);
 		}
 
 		var sAbsolutePath;
@@ -1052,7 +1069,7 @@ sap.ui.define(['jquery.sap.global',
 					var sDataKey = oDataObj[that.oTreeProperties["hierarchy-node-for"]];
 					// sanity check: if we have duplicate keys, the data is messed up. Has already happend...
 					if (mParentIds[sDataKey]) {
-						jQuery.sap.log.warning("ODataTreeBinding - Duplicate data entry for key: " + sDataKey + "!");
+						Log.warning("ODataTreeBinding - Duplicate data entry for key: " + sDataKey + "!");
 					}
 					mParentIds[sDataKey] = that.oModel._getKey(oDataObj);
 				}
@@ -1312,7 +1329,7 @@ sap.ui.define(['jquery.sap.global',
 
 		// check if filtering is supported for the current binding configuration
 		if (sFilterType == FilterType.Control && (!this.bClientOperation || this.sOperationMode == OperationMode.Server)) {
-			jQuery.sap.log.warning("Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
+			Log.warning("Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
 			"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.");
 			return;
 		}
@@ -1378,20 +1395,19 @@ sap.ui.define(['jquery.sap.global',
 	 */
 	ODataTreeBinding.prototype._applyFilter = function () {
 		var that = this;
-
-		//collect application and control filters
-		var aApplicationFilters = this.aApplicationFilters || [];
-		var aAllFilters = this.aFilters || [];
+		var oCombinedFilter;
 
 		// if we do not use serverside application filters, we have to include them for the FilterProcessor
-		if (!this.bUseServersideApplicationFilters) {
-			aAllFilters = aAllFilters.concat(aApplicationFilters);
+		if (this.bUseServersideApplicationFilters) {
+			oCombinedFilter = FilterProcessor.groupFilters(this.aFilters);
+		} else {
+			oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 		}
 
 		// filter function for recursive filtering,
 		// checks if a single key matches the filters
 		var fnFilterKey = function (sKey) {
-			var aFiltered = FilterProcessor.apply([sKey], aAllFilters, function(vRef, sPath) {
+			var aFiltered = FilterProcessor.apply([sKey], oCombinedFilter, function(vRef, sPath) {
 				var oContext = that.oModel.getContext('/' + vRef);
 				return that.oModel.getProperty(sPath, oContext);
 			});
@@ -1406,7 +1422,7 @@ sap.ui.define(['jquery.sap.global',
 
 		// set the lengths for the root node
 		if (!this.oKeys["null"]) {
-			jQuery.sap.log.warning("Clientside filter did not match on any node!");
+			Log.warning("Clientside filter did not match on any node!");
 		} else {
 			this.oLengths["null"] = this.oKeys["null"].length;
 			this.oFinalLengths["null"] = true;
@@ -1516,14 +1532,14 @@ sap.ui.define(['jquery.sap.global',
 		var oPropertyMetadata, sType;
 
 		if (!oEntityType) {
-			jQuery.sap.log.warning("Cannot determine sort comparators, as entitytype of the collection is unkown!");
+			Log.warning("Cannot determine sort comparators, as entitytype of the collection is unkown!");
 			return;
 		}
 		jQuery.each(aSorters, function(i, oSorter) {
 			if (!oSorter.fnCompare) {
 				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oSorter.sPath);
 				sType = oPropertyMetadata && oPropertyMetadata.type;
-				jQuery.sap.assert(oPropertyMetadata, "PropertyType for property " + oSorter.sPath + " of EntityType " + oEntityType.name + " not found!");
+				assert(oPropertyMetadata, "PropertyType for property " + oSorter.sPath + " of EntityType " + oEntityType.name + " not found!");
 				oSorter.fnCompare = ODataUtils.getComparator(sType);
 			}
 		}.bind(this));
@@ -1699,7 +1715,7 @@ sap.ui.define(['jquery.sap.global',
 			if (iFoundAnnotations === iMaxAnnotationLength){
 				return true;
 			} else if (iFoundAnnotations > 0 && iFoundAnnotations < iMaxAnnotationLength) {
-				jQuery.sap.log.warning("Incomplete hierarchy tree annotations. Please check your service metadata definition!");
+				Log.warning("Incomplete hierarchy tree annotations. Please check your service metadata definition!");
 			}
 			//if no annotations where found -> we are in the navigtion property mode
 			return false;
@@ -1723,7 +1739,7 @@ sap.ui.define(['jquery.sap.global',
 		oEntityType = oMetadata._getEntityTypeByPath(sAbsolutePath);
 
 		if (!oEntityType) {
-			jQuery.sap.log.fatal("EntityType for path " + sAbsolutePath + " could not be found.");
+			Log.fatal("EntityType for path " + sAbsolutePath + " could not be found.");
 			return false;
 		}
 
@@ -1920,7 +1936,7 @@ sap.ui.define(['jquery.sap.global',
 							this._aTreeKeyProperties.push(oEntityType.key.propertyRef[i].name);
 						}
 					} else {
-						jQuery.sap.log.warning("Tree state restoration not possible: Missing annotation \"hierarchy-sibling-rank-for\" and/or \"hierarchy-preorder-rank-for\"");
+						Log.warning("Tree state restoration not possible: Missing annotation \"hierarchy-sibling-rank-for\" and/or \"hierarchy-preorder-rank-for\"");
 						this._bRestoreTreeStateAfterChange = false;
 					}
 				} else {
@@ -1957,7 +1973,7 @@ sap.ui.define(['jquery.sap.global',
 			var ODataTreeBindingAdapter = sap.ui.requireSync("sap/ui/model/odata/ODataTreeBindingAdapter");
 			ODataTreeBindingAdapter.apply(this);
 		} else {
-			jQuery.sap.log.error("Neither hierarchy annotations, nor navigation properties are specified to build the tree.", this);
+			Log.error("Neither hierarchy annotations, nor navigation properties are specified to build the tree.", this);
 		}
 	};
 
@@ -2009,7 +2025,7 @@ sap.ui.define(['jquery.sap.global',
 		//after parameter processing:
 		//check if we have navigation parameters
 		if (!this.bHasTreeAnnotations && !this.oNavigationPaths) {
-			jQuery.sap.log.error("Neither navigation paths parameters, nor (complete/valid) tree hierarchy annotations where provided to the TreeBinding.");
+			Log.error("Neither navigation paths parameters, nor (complete/valid) tree hierarchy annotations where provided to the TreeBinding.");
 			this.oNavigationPaths = {};
 		}
 	};
@@ -2076,7 +2092,7 @@ sap.ui.define(['jquery.sap.global',
 	ODataTreeBinding.prototype.setNumberOfExpandedLevels = function(iLevels) {
 		iLevels = iLevels || 0;
 		if (iLevels < 0) {
-			jQuery.sap.log.warning("ODataTreeBinding: numberOfExpandedLevels was set to 0. Negative values are prohibited.");
+			Log.warning("ODataTreeBinding: numberOfExpandedLevels was set to 0. Negative values are prohibited.");
 			iLevels = 0;
 		}
 		// set the numberOfExpandedLevels on the binding directly
@@ -2108,7 +2124,7 @@ sap.ui.define(['jquery.sap.global',
 	ODataTreeBinding.prototype.setRootLevel = function(iRootLevel) {
 		iRootLevel = parseInt(iRootLevel || 0, 10);
 		if (iRootLevel < 0) {
-			jQuery.sap.log.warning("ODataTreeBinding: rootLevels was set to 0. Negative values are prohibited.");
+			Log.warning("ODataTreeBinding: rootLevels was set to 0. Negative values are prohibited.");
 			iRootLevel = 0;
 		}
 		// set the rootLevel on the binding directly
@@ -2135,7 +2151,7 @@ sap.ui.define(['jquery.sap.global',
 
 		if (sResolvedPath) {
 			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
-			jQuery.sap.assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
+			assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
 			return oEntityType;
 		}
 
@@ -2145,15 +2161,17 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Creates valid odata filter strings for the application filters, given in "this.aApplicationFilters".
 	 * Also sets the created filter-string to "this.sFilterParams".
-	 * Filters will be ANDed and ORed by the ODataUtils.
 	 * @returns {string} the concatenated OData filters
 	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
+		var oGroupedFilter;
 		if (this.aApplicationFilters) {
 			this.aApplicationFilters = Array.isArray(this.aApplicationFilters) ? this.aApplicationFilters : [this.aApplicationFilters];
 			if (this.aApplicationFilters.length > 0 && !this.sFilterParams) {
-				this.sFilterParams = ODataUtils._createFilterParams(this.aApplicationFilters, this.oModel.oMetadata, this.oEntityType);
-				this.sFilterParams = this.sFilterParams ? this.sFilterParams : "";
+				oGroupedFilter = FilterProcessor.groupFilters(this.aApplicationFilters);
+				this.sFilterParams = ODataUtils._createFilterParams(oGroupedFilter, this.oModel.oMetadata, this.oEntityType);
+				// Add a bracket around filter params, as they will be combined with tree specific filters
+				this.sFilterParams = this.sFilterParams ? "(" + this.sFilterParams + ")" : "";
 			}
 		} else {
 			this.sFilterParams = "";

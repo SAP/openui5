@@ -297,18 +297,17 @@ sap.ui.define([],
 		}
 
 		function createLists(oData) {
-			oData.propertiesList = Object.keys(oData.properties).map(function(key) {
-				return oData.properties[key];
-			});
-			oData.aggregationsList = Object.keys(oData.aggregations).map(function(key) {
-				return oData.aggregations[key];
-			});
-			oData.associationsList = Object.keys(oData.associations).map(function(key) {
-				return oData.associations[key];
-			});
-			oData.eventsList = Object.keys(oData.events).map(function(key) {
-				return oData.events[key];
-			});
+		    if (!oData) {
+		        return;
+            }
+            ["properties", "aggregations", "associations", "events"].forEach(function(sPropertyName){
+                oData[sPropertyName + "List"] = (
+                    oData[sPropertyName]
+                    && Object.keys(oData[sPropertyName]).map(function(sKey) {
+                        return oData[sPropertyName][sKey];
+                    })
+                    ) || [];
+            });
 		}
 		DTMetadata.createLists = createLists;
 

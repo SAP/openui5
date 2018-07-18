@@ -25,7 +25,7 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 				rm.write("<div");
 				rm.writeAttributeEscaped("id", oToolbar.getId() + "-scrollContainer");
 				// ARIA attributes
-				rm.writeAttributeEscaped("aria-label", library.i18nModel.getResourceBundle().getText("ANCHOR_BAR_LABEL"));
+				rm.writeAttributeEscaped("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_LABEL"));
 				//
 				rm.addClass("sapUxAPAnchorBarScrollContainer");
 				rm.writeClasses();

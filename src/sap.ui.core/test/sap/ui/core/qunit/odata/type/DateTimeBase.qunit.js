@@ -2,20 +2,34 @@
  *{copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
-	"sap/ui/core/Control",
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/model/FormatException",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/DateTime",
-	"sap/ui/model/odata/type/DateTimeBase",
-	"sap/ui/model/odata/type/DateTimeOffset",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Control, DateFormat, FormatException, JSONModel, ParseException,
-		ValidateException, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
+    "jquery.sap.global",
+    "sap/ui/core/Control",
+    "sap/ui/core/format/DateFormat",
+    "sap/ui/model/FormatException",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/model/ParseException",
+    "sap/ui/model/ValidateException",
+    "sap/ui/model/odata/type/DateTime",
+    "sap/ui/model/odata/type/DateTimeBase",
+    "sap/ui/model/odata/type/DateTimeOffset",
+    "sap/ui/model/odata/type/ODataType",
+    "sap/ui/test/TestUtils",
+    "sap/base/Log"
+], function(
+    jQuery,
+	Control,
+	DateFormat,
+	FormatException,
+	JSONModel,
+	ParseException,
+	ValidateException,
+	DateTime,
+	DateTimeBase,
+	DateTimeOffset,
+	ODataType,
+	TestUtils,
+	Log
+) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -75,7 +89,7 @@ sap.ui.require([
 	function module(sTitle) {
 		QUnit.module(sTitle, {
 			beforeEach : function () {
-				this.oLogMock = this.mock(jQuery.sap.log);
+				this.oLogMock = this.mock(Log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");

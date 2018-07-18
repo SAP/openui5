@@ -3,8 +3,12 @@
  */
 
 // Provides implementation of sap.ui.documentation.sdk.thirdparty.jsanalyzer.ASTUtils
-sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/esprima'],
-	function(jQuery, esprima_) {
+sap.ui.define([
+    "sap/ui/thirdparty/jquery",
+    'sap/ui/documentation/sdk/thirdparty/esprima',
+    "sap/base/Log"
+],
+	function(jQuery, esprima_, Log) {
 	"use strict";
 
 	/*global esprima */
@@ -64,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/esprima
 
 			if ( node.type != Syntax.ObjectExpression ) {
 				// something went wrong, it's not an object literal
-				jQuery.sap.log.error("not an object literal:" + node.type + ":" + node.value);
+				Log.error("not an object literal:" + node.type + ":" + node.value);
 				// console.log(node.toSource());
 				return;
 			}
@@ -160,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/esprima
 					}
 				}
 			} else {
-				jQuery.sap.log.warning("don't know how to handle " + node.type);
+				Log.warning("don't know how to handle " + node.type);
 			}
 
 			// call the delegate
@@ -183,4 +187,3 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/esprima
 	};
 
 }, /* export= */ true);
-

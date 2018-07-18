@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher', "sap/base/strings/capitalize"], function(jQuery, Matcher, capitalize) {
+sap.ui.define(['./Matcher', "sap/base/strings/capitalize"], function(Matcher, capitalize) {
 	"use strict";
 
 	/**

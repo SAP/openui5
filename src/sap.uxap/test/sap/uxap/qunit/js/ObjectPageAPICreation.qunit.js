@@ -105,6 +105,45 @@
 			}
 		};
 
+	QUnit.module("Section without sub-section");
+
+	QUnit.test("Section without sub-section simulation", function (assert) {
+
+		// Arrange
+		var oMainSection = new sap.uxap.ObjectPageSection({
+					subSections: [
+						new sap.uxap.ObjectPageSubSection({
+							blocks: [new sap.m.Text({text: "test"})]
+						}),
+						new sap.uxap.ObjectPageSubSection({
+							blocks: [new sap.m.Text({text: "text"})]
+						})
+					]
+			}),
+			oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+				sections: oMainSection
+			}),
+			sClosestID, done = assert.async();
+
+		// Assert
+		assert.expect(1); // The test is expected to have one assert
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			oMainSection.removeAllSubSections();
+			sClosestID = oObjectPageLayout._getClosestScrolledSectionId(0, "iPageHeight is not defined", true);
+
+			// Assert
+			assert.strictEqual(sClosestID, oMainSection.sId, "check if _getClosestScrolledSectionId returns the correct value");
+
+			// Cleanup
+			oObjectPageLayout.destroy();
+			done();
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.module("IconTabBar is initially enabled", {
 		beforeEach: function () {
 			this.oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
@@ -147,9 +186,12 @@
 	QUnit.module("test scrollToSection API");
 
 	QUnit.test("Calling scrollToSection when OPL is not rendered should do nothing", function (assert) {
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5),
 			oFirstSection = oObjectPage.getSections()[0],
-			oLoggerSpy = this.spy(jQuery.sap.log, "warning"),
+			oLoggerSpy = this.spy(Log, "warning"),
 			oComputeScrollPositionSpy = this.spy(oObjectPage, "_computeScrollPosition");
 
 		assert.ok(!oObjectPage.getDomRef(), "ObjectPage is not rendered");
@@ -508,6 +550,60 @@
 			}
 		};
 
+		oObjectPage.addEventDelegate(oDelegate);
+
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("scroll to selected section on rerender", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSecondSection = this.oObjectPage.getSections()[1],
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		assert.expect(2);
+
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setSelectedSection(oSecondSection);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// assert state before second rendering
+			assert.ok(oObjectPage._$opWrapper.get(0).scrollTop > 0, "selected section is bellow scrollTop");
+
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				// assert state after second rendering
+				assert.ok(oObjectPage._$opWrapper.get(0).scrollTop > 0, "selected section is bellow scrollTop");
+				done();
+			});
+
+			// act: rerender
+			oObjectPage.rerender();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("scrollEnablement obtains container ref onAfterRendering", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		// ensure page can be scrolled
+		jQuery("#qunit-fixture").height("200"); // container small enough
+		oObjectPage.setUseIconTabBar(false); // content can be scrolled across sections
+
+		assert.expect(3);
+
+		var oDelegate = {
+			onAfterRendering: function () {
+				assert.ok(oObjectPage._oScroller._$Container, "scroller has container referefnce");
+				assert.strictEqual(oObjectPage._oScroller._$Container.get(0), oObjectPage._$opWrapper.get(0), "scroller has correct container reference");
+
+				oObjectPage._oScroller.scrollTo(0, 10);
+				assert.strictEqual(oObjectPage._$opWrapper.get(0).scrollTop, 10, "scroller can correctly scroll after we have externally provided the container reference");
+
+				oObjectPage.removeEventDelegate(oDelegate);
+				done();
+			}
+		};
 		oObjectPage.addEventDelegate(oDelegate);
 
 		helpers.renderObject(oObjectPage);
@@ -1184,13 +1280,13 @@
 			oAnchorBar =  oObjectPage.getAggregation("_anchorBar"),
 			oSectionButton = oAnchorBar.getContent()[0];
 
-		assert.equal(oSectionButton.getIcon(), "sap-icon://slim-arrow-down", "Drop-down icon in AnchorBar button is shown initially");
+		assert.ok(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is shown initially");
 
 		oObjectPage.setShowAnchorBarPopover(false);
 		sap.ui.getCore().applyChanges();
 		oSectionButton = oAnchorBar.getContent()[0];
 
-		assert.equal(oSectionButton.getIcon(), "", "Drop-down icon in AnchorBar button is not shown");
+		assert.notOk(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is not shown");
 	});
 
 	QUnit.module("ObjectPage API: ObjectPageHeader", {
@@ -1654,6 +1750,105 @@
 		oObjectPage.placeAt("qunit-fixture");
 	});
 
+	QUnit.module("ObjectPage API: Header", {
+		beforeEach: function () {
+			this.oObjectPageLayout = new sap.uxap.ObjectPageLayout();
+			this.oObjectPageLayout.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oObjectPageLayout.destroy();
+			this.oObjectPageLayout = null;
+		}
+	});
+
+	QUnit.test("ObjectPageLayout - setHeaderTitle", function (assert) {
+		var oHeaderTitle = new sap.uxap.ObjectPageDynamicHeaderTitle({
+				backgroundDesign: "Solid"
+			});
+
+		// act
+		this.oObjectPageLayout.setHeaderTitle(oHeaderTitle);
+
+		// assert
+		assert.ok(this.oObjectPageLayout._oObserver.isA("sap.ui.base.ManagedObjectObserver"), true, "ManagedObjectObserver is created");
+	});
+
+	QUnit.test("ObjectPageLayout - backgroundDesignAnchorBar", function (assert) {
+		var $oAnchorBarDomRef = this.oObjectPageLayout.$("anchorBar"),
+			oAnchorBarMock = { setBackgroundDesign: function () {} },
+			oStub = this.stub(this.oObjectPageLayout._oABHelper, "_getAnchorBar", function () { return oAnchorBarMock; }),
+			oSpy = this.spy(oAnchorBarMock, "setBackgroundDesign");
+
+		// assert
+		assert.equal(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), null, "Default value of backgroundDesign property = null");
+
+		// act
+		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Solid");
+
+		// assert
+		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationSolid"), "Should have sapUxAPObjectPageNavigationSolid class");
+		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Solid", "Should have backgroundDesign property = 'Solid'");
+		assert.ok(oSpy.calledWith("Solid"), "AnchorBar's backgroundDesign property setter called with 'Solid'");
+
+		// act
+		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Transparent");
+
+		// assert
+		assert.notOk($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationSolid"), "Should not have sapUxAPObjectPageNavigationSolid class");
+		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTransparent"), "Should have sapUxAPObjectPageNavigationTransparent class");
+		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Transparent", "Should have backgroundDesign property = 'Transparent'");
+		assert.ok(oSpy.calledWith("Transparent"), "AnchorBar's backgroundDesign property setter called with 'Transparent'");
+
+		// act
+		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Translucent");
+
+		// assert
+		assert.notOk($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTransparent"), "Should not have sapUxAPObjectPageNavigationTransparent class");
+		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTranslucent"), "Should have sapUxAPObjectPageNavigationTranslucent class");
+		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
+		assert.ok(oSpy.calledWith("Translucent"), "AnchorBar's backgroundDesign property setter called with 'Translucent'");
+
+		oStub.restore();
+	});
+
+	QUnit.module("Object Page Private API", {
+		beforeEach: function () {
+			this.oObjectPageLayout = new sap.uxap.ObjectPageLayout("layout", {
+				headerTitle: new sap.uxap.ObjectPageDynamicHeaderTitle({
+					backgroundDesign: "Solid"
+				}),
+				headerContent: new sap.m.Button({
+					text: "Button"
+				})
+			});
+		},
+		afterEach: function () {
+			this.oObjectPageLayout.destroy();
+			this.oObjectPageLayout = null;
+		}
+	});
+
+	QUnit.test("_onModifyHeaderTitle", function (assert) {
+		var oHeaderContent = this.oObjectPageLayout.getAggregation("_headerContent"),
+			oHeaderTitle = this.oObjectPageLayout.getAggregation("headerTitle"),
+			oSpy = this.spy(oHeaderContent, "setBackgroundDesign"),
+			oParamsMock = {
+				current: "Transparent"
+			};
+
+		// assert
+		assert.strictEqual(oHeaderContent.getBackgroundDesign(), "Solid", "backgroundDesign of HeaderContent is 'Solid'");
+		assert.strictEqual(oHeaderContent.getBackgroundDesign(), oHeaderTitle.getBackgroundDesign(), "backgroundDesign of HeaderTitle and HeaderContent are the same");
+
+		// act
+		this.oObjectPageLayout._onModifyHeaderTitle(oParamsMock);
+
+		// assert
+		assert.strictEqual(oHeaderContent.getBackgroundDesign(), "Transparent", "backgroundDesign of HeaderContent is 'Transparent' after _onModifyHeaderTitle call");
+		assert.ok(oSpy.calledWith("Transparent"), "setBackgroundDesign is called on headerContent with correct param");
+	});
+
 	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 2;
@@ -1809,7 +2004,6 @@
 				done();
 			}, iDelay);
 		});
-
 	});
 
 	QUnit.test("unset selected section when preserveHeaderStateOnScroll enabled", function (assert) {

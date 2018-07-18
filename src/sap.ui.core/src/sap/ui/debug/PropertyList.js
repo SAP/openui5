@@ -3,8 +3,25 @@
  */
 
 // Provides a (modifiable) list of properties for a given control
-sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/base/util/ObjectPath', "sap/base/strings/capitalize", 'jquery.sap.encoder'],
-	function(jQuery, DataType, EventProvider, Element, ElementMetadata, ObjectPath, capitalize/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/PropertyList', [
+	'sap/ui/base/DataType',
+	'sap/ui/base/EventProvider',
+	'sap/ui/core/Element',
+	'sap/ui/core/ElementMetadata',
+	'sap/base/util/ObjectPath',
+	"sap/base/strings/capitalize",
+	"sap/base/security/encodeXML",
+	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
+],
+	function(
+		DataType,
+		EventProvider,
+		Element,
+		ElementMetadata,
+		ObjectPath,
+		capitalize,
+		encodeXML
+	) {
 	"use strict";
 
 
@@ -196,7 +213,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					}
 					sTitle = ' title="This aggregation currently references an Element. You can set a ' + sType +  ' value instead"';
 				}
-				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
+				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + encodeXML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 			} else if (sType == "boolean") {
 				aHTML.push("<input type='checkbox' sap-name='" + sName + "' ");
 				if (oValue == true) {
@@ -207,7 +224,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 				//Enum or Custom Type
 				var oEnum = ObjectPath.get(sType || "");
 				if (!oEnum || oEnum instanceof DataType) {
-					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
+					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + encodeXML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 				} else {
 					aHTML.push("<select style='width:100%;font-size:8pt;background-color:#f5f5f5;' sap-name='" + sName + "'>");
 					sType = sType.replace("/",".");

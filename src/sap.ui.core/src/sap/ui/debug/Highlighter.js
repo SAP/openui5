@@ -3,7 +3,11 @@
  */
 
 // Provides a helper that can highlight a given control
-sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', "sap/base/util/uid"],
+sap.ui.define('sap/ui/debug/Highlighter', [
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/uid",
+	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
+	],
 	function(jQuery, uid) {
 	"use strict";
 

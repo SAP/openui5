@@ -4,7 +4,7 @@
 
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
@@ -20,7 +20,7 @@ sap.ui.define([
 	"./lib/_GroupLock",
 	"./lib/_Helper",
 	"./ODataParentBinding"
-], function (jQuery, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
+], function (Log, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
 		Sorter, OperationMode, Context, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
 		_Helper, asODataParentBinding) {
 	"use strict";
@@ -982,7 +982,7 @@ sap.ui.define([
 			oVirtualContext,
 			that = this;
 
-		jQuery.sap.log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
+		Log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
 				+ iMaximumPrefetchSize + ")",
 			undefined, sClassName);
 

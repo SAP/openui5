@@ -5,7 +5,6 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/ui/core/UIComponent",
 	"sap/m/Page",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/service/index",
 	"sap/ui/thirdparty/sinon-4",
@@ -14,7 +13,6 @@ sap.ui.require([
 function (
 	UIComponent,
 	Page,
-	FakeLrepConnectorLocalStorage,
 	RuntimeAuthoring,
 	mServicesDictionary,
 	sinon,
@@ -26,7 +24,64 @@ function (
 
 	QUnit.module("startService()", {
 		before: function () {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
+			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "fixture.application"
+						}
+					}
+				},
+				createContent: function() {
+					return new Page();
+				}
+			});
+
+			this.oComponent = new FixtureComponent();
+		},
+		beforeEach: function () {
+			this.oRta = new RuntimeAuthoring({
+				showToolbars: false,
+				rootControl: this.oComponent.getRootControl()
+			});
+		},
+		afterEach: function () {
+			this.oRta.destroy();
+			sandbox.restore();
+		},
+		after: function () {
+			this.oComponent.destroy();
+		}
+	}, function () {
+		QUnit.test("service initialisation must always wait until RTA is started", function (assert) {
+			var bRtaIsStarted = false;
+			var sServiceName = Object.keys(mServicesDictionary).shift();
+			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, '/');
+			var oServiceSpy = sandbox.spy(function () {
+				assert.strictEqual(bRtaIsStarted, true);
+				return {};
+			});
+
+			this.oRta.attachStart(function () {
+				bRtaIsStarted = true;
+			});
+
+			sandbox.stub(sap.ui, "require")
+				.callThrough()
+				.withArgs([sServiceLocation])
+				.callsArgWithAsync(1, oServiceSpy);
+
+			// setTimeout() is just to postpone start a little bit
+			setTimeout(function () {
+				this.oRta.start();
+			}.bind(this));
+
+			return this.oRta.startService(sServiceName);
+		});
+	});
+
+	QUnit.module("startService() - RTA is pre-started", {
+		before: function () {
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -56,7 +111,6 @@ function (
 		},
 		after: function () {
 			this.oComponent.destroy();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	}, function () {
 		QUnit.test("starting a service", function (assert) {
@@ -103,7 +157,7 @@ function (
 				.then(function () {
 					assert.ok(oServiceStub.calledOnce);
 					assert.ok(oServiceSpy.calledOnce);
-					this.oRta.startService(sServiceName).then(function (oService) {
+					this.oRta.startService(sServiceName).then(function () {
 						assert.ok(oServiceStub.calledOnce);
 						assert.ok(oServiceSpy.calledOnce);
 					});
@@ -219,7 +273,7 @@ function (
 			return this.oRta
 				.startService("unknownServiceName")
 				.then(
-					function (oService) {
+					function () {
 						assert.ok(false, "this should never be called");
 					},
 					function () {
@@ -240,7 +294,7 @@ function (
 			return this.oRta
 				.startService(sServiceName)
 				.then(
-					function (oService) {
+					function () {
 						assert.ok(false, "this should never be called");
 					},
 					function (oError) {
@@ -263,7 +317,7 @@ function (
 
 			return this.oRta
 				.startService(sServiceName)
-				.then(function (oService) {
+				.then(function () {
 						assert.ok(oServiceSpy.withArgs(this.oRta).calledOnce);
 				}.bind(this));
 		});
@@ -369,7 +423,7 @@ function (
 					function () {
 						assert.ok(false, "this should never be called");
 					},
-					function (oError) {
+					function () {
 						assert.ok(true, "rejected successfully");
 					}
 				);
@@ -439,7 +493,6 @@ function (
 
 	QUnit.module("stopService()", {
 		before: function () {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -469,7 +522,6 @@ function (
 		},
 		after: function () {
 			this.oComponent.destroy();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	}, function () {
 		QUnit.test("stopping running service", function (assert) {
@@ -502,7 +554,6 @@ function (
 
 	QUnit.module("getService()", {
 		before: function () {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
@@ -532,7 +583,6 @@ function (
 		},
 		after: function () {
 			this.oComponent.destroy();
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	}, function () {
 		QUnit.test("check alias to startService()", function (assert) {
@@ -549,10 +599,5 @@ function (
 		});
 	});
 
-
 	QUnit.start();
-
-	QUnit.done(function( details ) {
-		jQuery("#qunit-fixture").hide();
-	});
 });

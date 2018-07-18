@@ -28,8 +28,11 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 	});
 
 	QUnit.test("constructor - shall log error messages for missing mandatory parameters", function(assert) {
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		//Arrange
-		var errorLogStub = sinon.stub(jQuery.sap.log, "error");
+		var errorLogStub = sinon.stub(Log, "error");
 
 		//Act
 		/*eslint-disable no-new*/

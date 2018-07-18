@@ -1,130 +1,223 @@
-/* global QUnit */
+/* global QUnit, sinon, ES6Promise */
 (function() {
-
 	"use strict";
 
-	// It is not possible to reset already loaded modules in each test
-	// so they have to be executed in a stable order.
-	// Each test can be executed individually, which proves that there
-	// is no actually dependency between them.
-	QUnit.config.reorder = false;
+	// Promise polyfill needs to be applied manually before
+	// the loader is executed, as the test itself uses promises
+	if (typeof Promise === "undefined") {
+		ES6Promise.polyfill();
+	}
 
-	/*
-	 * Currently known set of jQuery.sap.* scripts except .stubs itself
-	 */
-	var aAllScriptNames = ["act", "dom", "encoder", "events", "global", "history", "keycodes",
-		"mobile", "promise", "properties", "resources", "script", "sjax", "storage", "strings",
-		"trace", "ui", "unicode", "xml"];
+	QUnit.config.autostart = false;
 
-	/*
-	 * @param {boolean} [bOk=true] Determines whether scripts should be loaded
-	 */
-	function scriptsLoaded(assert, aScriptNames, bOk) {
-		aScriptNames.forEach(function(sScriptName) {
-			assert[bOk !== false ? "ok" : "notOk"](sap.ui.require(sScriptName), sScriptName + " loaded");
+	var aScripts = [];
+
+	function appendScript(sSrc, fnOnload, sId) {
+		var oScript = document.createElement("script");
+		oScript.src = sSrc;
+		oScript.id = sId;
+		oScript.addEventListener("load", fnOnload);
+		document.head.appendChild(oScript);
+		aScripts.push(oScript);
+	}
+
+	function startup() {
+		return new Promise(function(resolve, reject) {
+
+			function includeLoaderScripts(callback) {
+				// Load ui5loader without requiring Core.js to be able to require stubs individually
+				appendScript("../../../../../resources/ui5loader.js", function() {
+
+					sap.ui.loader._.logger = {
+						debug: function() {
+							// Prevent spamming the conosle with unnecessary info
+							//console.log.apply(console, arguments); // eslint-disable-line no-console
+						},
+						info: function() {
+							// Prevent spamming the conosle with unnecessary info
+							//console.log.apply(console, arguments); // eslint-disable-line no-console
+						},
+						warning: function() {
+							console.warn.apply(console, arguments); // eslint-disable-line no-console
+						},
+						error: function() {
+							console.error.apply(console, arguments); // eslint-disable-line no-console
+						},
+						isLoggable: function() { return true; }
+					};
+
+					appendScript("../../../../../resources/ui5loader-autoconfig.js", callback, "sap-ui-bootstrap");
+				});
+			}
+
+			includeLoaderScripts(function() {
+
+				// Loading of jquery.sap.stubs needs to be delayed so that the define calls within
+				// ui5loader-autoconfig.js are executed first. This might happen in PhantomJS or
+				// Chrome when the tab is inactive.
+				// See @evo-todo in ui5loader-autoconfig.js
+				setTimeout(function() {
+
+					// Enable exporting stubbing config
+					window["jquery.sap.stubs-test"] = true;
+
+					// Load stubbing layer and resolve/reject promise
+					sap.ui.require(["jquery.sap.stubs"], function() {
+
+						// Read exported stubbing config and remove globals
+						var mStubs = window["jquery.sap.stubs-test"];
+						delete window["jquery.sap.stubs-test"];
+
+						resolve(mStubs);
+					}, reject);
+
+				});
+
+			});
+
 		});
 	}
 
-	function jquerySapScriptsNotLoaded(assert) {
-		scriptsLoaded(assert, aAllScriptNames.map(function(s){return "jquery.sap." + s;}), false);
+	function shutdown() {
+		// Remove previously appended scripts
+		aScripts.forEach(function(oScript) {
+			document.head.removeChild(oScript);
+		});
+
+		// finally remove the global namespaces
+		delete window.sap;
+		delete window.jQuery;
+		aScripts = [];
 	}
 
-	QUnit.module("jquery.sap.stubs");
+	function isStubbed(oTarget, sProperty) {
+		var oDescriptor = Object.getOwnPropertyDescriptor(oTarget, sProperty);
+		return !!(oDescriptor && oDescriptor.get && oDescriptor.get["jquery.sap.stubs"]);
+	}
 
-	QUnit.test("Initial check", function(assert) {
-		assert.notOk(window.jQuery && jQuery.sap, "jQuery.sap must not be defined");
-		jquerySapScriptsNotLoaded(assert);
-	});
+	function defineModule(sName) {
+		QUnit.module(sName, {
+			startup: function() {
+				return startup().then(function(mStubs) {
+					// Note: Log is used within jquery.sap.stubs, so it should be loaded already
+					var Log = sap.ui.require("sap/base/Log");
+					this.oDebugLogSpy = this.spy(Log, "debug");
 
-	QUnit.test("AMD module definition", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["jquery.sap.stubs", "sap/ui/thirdparty/jquery"], function(_jQuery, realjQuery) {
-			assert.ok(true, "module required");
-			assert.strictEqual(_jQuery, realjQuery, "exports the real jquery");
-			jquerySapScriptsNotLoaded(assert);
-			done();
+					return mStubs;
+				}.bind(this));
+			},
+			afterEach: function() {
+				shutdown();
+			}
 		});
-	});
+	}
 
-	QUnit.test("stub application", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-			assert.ok(jQuery.sap, "jQuery.sap must be defined");
-			assert.ok(jQuery.fn, "jQuery.fn must be defined");
-			assert.ok(jQuery.Event.prototype, "jQuery.Event.prototype must be defined");
-			assert.ok(jQuery.expr[":"], "jQuery.expr[\":\"] must be defined");
-			jquerySapScriptsNotLoaded(assert);
-			done();
+	function defineLazyLoadingTest(sStubName, sProperty, sModule) {
+		QUnit.test(sStubName + sProperty, function(assert) {
+			return this.startup().then(function(mStubs) {
+
+				// Make sure to get correct target reference as the stubbing layer is loaded for each test
+				var oTarget = mStubs[sStubName].target;
+
+				assert.ok(isStubbed(oTarget, sProperty), "Property '" + sProperty + "' should be stubbed.");
+
+				// Trigger stubbing layer by accessing the property
+				var vValue = oTarget[sProperty];
+
+				// Stub should lazy load the module
+				sinon.assert.calledWith(this.oDebugLogSpy,
+					sinon.match("Lazy loading module"),
+					"jquery.sap.stubs"
+				);
+
+				assert.ok(!isStubbed(oTarget, sProperty), "Property '" + sProperty + "' should not be stubbed anymore.");
+
+				assert.ok(typeof vValue !== "undefined", "Property  '" + sProperty + "' should have a value");
+				assert.ok(sap.ui.require(sModule), "Underlaying module should have been loaded");
+
+			}.bind(this));
 		});
-	});
+	}
 
-	QUnit.test("jQuery.sap.* function stub", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-			scriptsLoaded(assert, ["jquery.sap.global"], false);
-			assert.ok(typeof jQuery.sap.log.error === "function", "jquery.sap.global stub works");
-			scriptsLoaded(assert, ["jquery.sap.global"]);
-			done();
+	function defineStubReplacementTest(sStubName, sProperty, sModule) {
+		QUnit.test(sStubName + sProperty, function(assert) {
+			return this.startup().then(function(mStubs) {
+
+				// Make sure to get correct target reference as the stubbing layer is loaded for each test
+				var oTarget = mStubs[sStubName].target;
+
+				assert.ok(isStubbed(oTarget, sProperty), "Property '" + sProperty + "' should be stubbed.");
+
+				// Load underlaying module
+				return new Promise(function(resolve, reject) {
+					sap.ui.require([sModule], resolve, reject);
+				}).then(function() {
+
+					// Stub should not lazy load the module
+					sinon.assert.neverCalledWith(this.oDebugLogSpy,
+						sinon.match("Lazy loading module"),
+						"jquery.sap.stubs"
+					);
+
+					assert.ok(!isStubbed(oTarget, sProperty), "Property '" + sProperty + "' should not be stubbed anymore.");
+
+					// Access previously stubbed property
+					var vValue = oTarget[sProperty];
+
+					assert.ok(typeof vValue !== "undefined", "Property  '" + sProperty + "' should have a value");
+
+				}.bind(this));
+			}.bind(this));
 		});
-	});
+	}
 
-	QUnit.test("jQuery.expr[\":\"] function stub", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-			scriptsLoaded(assert, ["sap/ui/dom/jquery/Selectors"], false);
-			jQuery(":focusable"); // should not raise an exception
-			assert.ok(typeof jQuery.expr[":"].focusable === "function", "jQuery selector stub works");
-			scriptsLoaded(assert, ["sap/ui/dom/jquery/Selectors"]);
-			done();
+	function getTestMode() {
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(["sap/base/util/UriParameters"], resolve, reject);
+		}).then(function (UriParameters) {
+			return new UriParameters(document.location.href).get("test-mode") || "all";
 		});
-	});
+	}
 
-	QUnit.test("concurrent usage of require and stub", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-			scriptsLoaded(assert, ["sap/ui/dom/jquery/zIndex"], false);
-			sap.ui.require(["sap/ui/dom/jquery/zIndex"], function() {
-				assert.ok(_jQuery.fn.zIndex, "module loaded");
-				done();
+	// Running startup once to define tests
+	startup().then(function(mStubs) {
+		return getTestMode().then(function(sTestMode) {
+			Object.keys(mStubs).forEach(function(sStubName) {
+				var oStub = mStubs[sStubName];
+				var oStubs = oStub.stubs;
+
+				Object.keys(oStubs).forEach(function(sModule) {
+					var aProperties = oStubs[sModule].map(function(vProperty) {
+						return typeof vProperty === "object" ? vProperty : { name: vProperty };
+					});
+
+					if (sTestMode === "all" || sTestMode === "lazy-loading") {
+						defineModule(sModule + ": Lazy loading");
+						aProperties.forEach(function(oProperty) {
+							defineLazyLoadingTest(sStubName, oProperty.name, sModule);
+						});
+					}
+
+					if (sTestMode === "all" || sTestMode === "stub-replacement") {
+						defineModule(sModule + ": Stub replacement");
+						aProperties.forEach(function(oProperty) {
+							defineStubReplacementTest(sStubName, oProperty.name, sModule);
+						});
+					}
+
+				});
+
 			});
-			assert.ok(_jQuery().zIndex, "property is available");
 		});
-	});
-
-	QUnit.test("jQuery.fn function stub", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-			scriptsLoaded(assert, ["sap/ui/dom/jquery/control"], false);
-			assert.ok(typeof jQuery().control === "function", "jQuery.fn stub works");
-			scriptsLoaded(assert, ["sap/ui/dom/jquery/control"]);
-			done();
+	}).then(function() {
+		shutdown();
+		QUnit.start();
+	}, function(err) {
+		// No shutdown here, to enable easier investiation into the error
+		QUnit.test("Error during test setup", function(assert) {
+			assert.ok(false, err + "\n" + err.stack);
 		});
-	});
-
-	QUnit.test("jQuery.Event.prototype function stub", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-			scriptsLoaded(assert, ["sap/ui/events/jquery/EventExtension"], false);
-			assert.ok(typeof new jQuery.Event().getPseudoTypes === "function", "jqQuery.Event.prototype stub works");
-			scriptsLoaded(assert, ["sap/ui/events/jquery/EventExtension"]);
-			done();
-		});
-	});
-
-	QUnit.test("coupled property", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["sap/ui/events/jquery/EventSimulation"], function(EventSimulation) {
-			assert.strictEqual(EventSimulation.touchEventMode, "SIM", "EventSimulation.touchEventMode property should be false");
-			scriptsLoaded(assert, ["jquery.sap.events"], false);
-			sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-				assert.strictEqual(jQuery.sap.touchEventMode, "SIM", "jQuery.sap.touchEventMode property should be false");
-				EventSimulation.touchEventMode = "ON";
-				assert.strictEqual(jQuery.sap.touchEventMode, EventSimulation.touchEventMode, "properties should update x->y");
-				jQuery.sap.touchEventMode = "SIM";
-				assert.strictEqual(jQuery.sap.touchEventMode, EventSimulation.touchEventMode, "properties should update x<-y");
-				done();
-			});
-		});
+		QUnit.start();
 	});
 
 })();

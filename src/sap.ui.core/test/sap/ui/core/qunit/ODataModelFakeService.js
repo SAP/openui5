@@ -173,6 +173,22 @@ xhr.onCreate = function(request) {
 				[200, oCountHeaders, "1"],
 			"Categories?$filter=toupper(CategoryName)%20eq%20%27BEVERAGES%27":
 				[200, oXMLHeaders, sCategoriesFilter1XML],
+			"Categories/$count?$filter=not%20startswith(CategoryName,%27C%27)":
+				[200, oCountHeaders, "6"],
+			"Categories?$skip=0&$top=100&$filter=not%20startswith(CategoryName,%27C%27)&$select=CategoryName":
+				[200, oJSONHeaders, sCategoriesNotFilter1JSON],
+			"Categories/$count?$filter=not%20endswith(CategoryName,%27s%27)":
+				[200, oCountHeaders, "3"],
+			"Categories?$skip=0&$top=100&$filter=not%20endswith(CategoryName,%27s%27)&$select=CategoryName":
+				[200, oJSONHeaders, sCategoriesNotFilter2JSON],
+			"Categories/$count?$filter=not%20substringof(%27ry%27,CategoryName)":
+				[200, oCountHeaders, "6"],
+			"Categories?$skip=0&$top=100&$filter=not%20substringof(%27ry%27,CategoryName)&$select=CategoryName":
+				[200, oJSONHeaders, sCategoriesNotFilter3JSON],
+			"Categories/$count?$filter=(CategoryName%20lt%20%27C%27%20or%20CategoryName%20gt%20%27M%27)":
+				[200, oCountHeaders, "6"],
+			"Categories?$skip=0&$top=100&$filter=not%20(CategoryName%20ge%20%27C%27%20and%20CategoryName%20le%20%27M%27)&$select=CategoryName":
+				[200, oJSONHeaders, sCategoriesNotFilter4JSON],
 			"Categories/$count?$filter=CategoryName%20eq%20%27Beverages%27":
 				[200, oCountHeaders, "1"],
 			"Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27":
@@ -181,11 +197,11 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sCategoriesXML],
 			"Categories?$skip=0&$top=100&$filter=CategoryName%20eq%20%27Beverages%27":
 				[200, oXMLHeaders, sCategoriesFilter1XML],
-			"Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName))":
+			"Categories/$count?$filter=CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName)":
 				[200, oCountHeaders, "2"],
-			"Categories?$skip=0&$top=2&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName))":
+			"Categories?$skip=0&$top=2&$filter=CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName)":
 				[200, oXMLHeaders, sCategoriesFilter2XML],
-			"Categories?$skip=0&$top=100&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName))":
+			"Categories?$skip=0&$top=100&$filter=CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName)":
 				[200, oXMLHeaders, sCategoriesFilter2XML],
 			"Categories/$count?$filter=(CategoryName%20ge%20%27Beverages%27%20and%20CategoryName%20le%20%27D%27)":
 				[200, oCountHeaders, "3"],
@@ -203,17 +219,17 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sCategoriesFilter4XML],
 			"Categories?$skip=0&$top=100&$filter=startswith(CategoryName,%27C%27)%20and%20endswith(Description,%27ngs%27)":
 				[200, oXMLHeaders, sCategoriesFilter4XML],
-			"Categories/$count?$filter=(CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27)":
+			"Categories/$count?$filter=CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27":
 				[200, oCountHeaders, "7"],
-			"Categories?$skip=0&$top=7&$filter=(CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27)":
+			"Categories?$skip=0&$top=7&$filter=CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27":
 				[200, oXMLHeaders, sCategoriesFilter5XML],
-			"Categories?$skip=0&$top=100&$filter=(CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27)":
+			"Categories?$skip=0&$top=100&$filter=CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27":
 				[200, oXMLHeaders, sCategoriesFilter5XML],
-			"Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)":
+			"Categories/$count?$filter=CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27":
 				[200, oCountHeaders, "2"],
-			"Categories?$skip=0&$top=2&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)":
+			"Categories?$skip=0&$top=2&$filter=CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27":
 				[200, oXMLHeaders, sCategoriesFilter6XML],
-			"Categories?$skip=0&$top=100&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)":
+			"Categories?$skip=0&$top=100&$filter=CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27":
 				[200, oXMLHeaders, sCategoriesFilter6XML],
 			"Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)%20and%20endswith(Description,%27ings%27)":
 				[200, oCountHeaders, "1"],
@@ -221,11 +237,11 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sCategoriesFilter7XML],
 			"Categories?$skip=0&$top=100&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)%20and%20endswith(Description,%27ings%27)":
 				[200, oXMLHeaders, sCategoriesFilter7XML],
-			"Categories/$count?$filter=(((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27))":
+			"Categories/$count?$filter=((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27)":
 				[200, oCountHeaders, "3"],
-			"Categories?$skip=0&$top=3&$filter=(((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27))":
+			"Categories?$skip=0&$top=3&$filter=((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27)":
 				[200, oXMLHeaders, sCategoriesFilter8XML],
-			"Categories?$skip=0&$top=100&$filter=(((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27))":
+			"Categories?$skip=0&$top=100&$filter=((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27)":
 				[200, oXMLHeaders, sCategoriesFilter8XML],
 			"Categories(7)/Products?$skip=0&$top=5":
 				[200, oXMLHeaders, sProductsXML],
@@ -309,13 +325,13 @@ xhr.onCreate = function(request) {
 				[200, oCountHeaders, "9"],
 			"Products?$skip=0&$top=9&$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m":
 				[200, oXMLHeaders, sProductsForFilterANDing1],
-			"Products/$count?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
+			"Products/$count?$filter=substringof(%27o%27,ProductName)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oCountHeaders, "5"],
-			"Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
+			"Products?$skip=0&$top=5&$filter=substringof(%27o%27,ProductName)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oXMLHeaders, sProductsForFilterANDing2],
-			"Products/$count?$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
+			"Products/$count?$filter=UnitPrice%20le%2030.000m%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oCountHeaders, "6"],
-			"Products?$skip=0&$top=6&$filter=(UnitPrice%20le%2030.000m)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
+			"Products?$skip=0&$top=6&$filter=UnitPrice%20le%2030.000m%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000m)":
 				[200, oXMLHeaders, sProductsForFilterANDing3],
 					"Regions?$skip=0&$top=100&$expand=Territories&$inlinecount=allpages":
 				[200, oJSONHeaders, sRegionsJSON],
@@ -4859,6 +4875,174 @@ var sProducts1XML = '\
   </content>\
 </entry>\
 ';
+
+var sCategoriesNotFilter1JSON = '' +
+	'{' +
+	'	"d": {' +
+	'		"results": [' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(1)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Beverages"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(4)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Dairy Products"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(5)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Grains/Cereals"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(6)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Meat/Poultry"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Produce"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(8)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Seafood"' +
+	'			}' +
+	'		]' +
+	'	}' +
+	'}';
+
+
+var sCategoriesNotFilter2JSON = '' +
+	'{' +
+	'	"d": {' +
+	'		"results": [' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(6)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Meat/Poultry"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Produce"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(8)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Seafood"' +
+	'			}' +
+	'		]' +
+	'	}' +
+	'}';
+
+
+var sCategoriesNotFilter3JSON = '' +
+	'{' +
+	'	"d": {' +
+	'		"results": [' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Beverages"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Condiments"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(3)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Confections"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(5)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Grains/Cereals"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Produce"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(8)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Seafood"' +
+	'			}' +
+	'		]' +
+	'	}' +
+	'}';
+
+var sCategoriesNotFilter4JSON = '' +
+	'{' +
+	'	"d": {' +
+	'		"results": [' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Beverages"' +
+	'			},' +
+	'           {' +
+	'				"__metadata": {' +
+	'					"uri": "http: //services.odata.org/V2/Northwind/Northwind.svc/Categories(6)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Meat/Poultry"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Produce"' +
+	'			},' +
+	'			{' +
+	'				"__metadata": {' +
+	'					"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(8)",' +
+	'					"type": "NorthwindModel.Category"' +
+	'				},' +
+	'				"CategoryName": "Seafood"' +
+	'			}' +
+	'		]' +
+	'	}' +
+	'}';
+
 
 var sCategoriesFilter1XML = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\

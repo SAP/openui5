@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.f.Avatar
-sap.ui.define(["sap/f/library", "jquery.sap.global"],
-	function (library, jQuery) {
+sap.ui.define(["sap/f/library", "sap/base/security/encodeXML"],
+	function (library, encodeXML) {
 		"use strict";
 
 		// shortcut for sap.f.AvatarSize
@@ -54,7 +54,7 @@ sap.ui.define(["sap/f/library", "jquery.sap.global"],
 			}
 			if (sActualDisplayType === AvatarType.Image) {
 				oRm.addClass(sAvatarClass + sActualDisplayType + sImageFitType);
-				oRm.addStyle("background-image", "url('" + jQuery.sap.encodeHTML(sSrc) + "')");
+				oRm.addStyle("background-image", "url('" + encodeXML(sSrc) + "')");
 			}
 			if (sDisplaySize === AvatarSize.Custom) {
 				oRm.addStyle("width", sCustomDisplaySize);

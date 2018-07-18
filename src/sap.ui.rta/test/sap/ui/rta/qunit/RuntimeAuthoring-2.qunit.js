@@ -13,7 +13,7 @@ sap.ui.require([
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
-	'sap/ui/fl/FakeLrepLocalStorage',
+	'sap/ui/fl/FakeLrepSessionStorage',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
@@ -33,7 +33,7 @@ sap.ui.require([
 	Change,
 	Utils,
 	RtaUtils,
-	FakeLrepLocalStorage,
+	FakeLrepSessionStorage,
 	RuntimeAuthoring,
 	Stack,
 	CommandFactory,
@@ -76,7 +76,7 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is created and started with non-default plugin sets only...", {
 		beforeEach : function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			var oCommandFactory = new CommandFactory();
 
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
@@ -100,7 +100,7 @@ sap.ui.require([
 		},
 		afterEach : function(assert) {
 			this.oContextMenuPlugin.destroy();
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			this.oRemovePlugin.destroy();
 			this.oRta.destroy();
 			sandbox.restore();
@@ -123,7 +123,7 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is started with one different (non-default) plugin (using setPlugins method)...", {
 		beforeEach : function(assert) {
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
 
@@ -152,7 +152,7 @@ sap.ui.require([
 		},
 		afterEach : function(assert) {
 			this.oContextMenuPlugin.destroy();
-			FakeLrepLocalStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChanges();
 			this.oRta.destroy();
 		}
 	}, function() {
@@ -293,12 +293,24 @@ sap.ui.require([
 		});
 
 		QUnit.test("when RTA gets started without root control", function(assert) {
-			assert.expect(2);
+			assert.expect(3);
 			this.oRta.setRootControl(undefined);
 			return this.oRta.start()
 			.catch(function(oError) {
 				assert.ok(true, "the start function rejects the promise");
-				assert.equal(oError, "Could not start Runtime Adaptation: Root control not found", "with the correct Error");
+				assert.ok(oError instanceof Error, "the Error object has been returned");
+				assert.strictEqual(oError.message, "Root control not found", "with the correct Error");
+			});
+		});
+
+		QUnit.test("when RTA gets started with an app version validation", function(assert) {
+			assert.expect(3);
+			this.oRta.setValidateAppVersion(true);
+			return this.oRta.start()
+			.catch(function(vError) {
+				assert.ok(true, "the start function rejects the promise");
+				assert.ok(typeof vError === 'string', "the a string error has been returned");
+				assert.ok(vError.includes('version'));
 			});
 		});
 

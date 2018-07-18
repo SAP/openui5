@@ -795,22 +795,6 @@ code {
 	display: none;
 }
 
-/* text shadow and animation do not work in IE9 */
-html[data-sap-ui-browser="ie9"] .titlesHeader {
-	top: 10%;
-	opacity: 1;
-	color: #ff6;
-	font-size: 6em;
-}
-html[data-sap-ui-browser="ie9"] .titlesHeader sub {
-	margin-top: 1.2em;
-}
-html[data-sap-ui-browser="ie9"] .titlesHeader p {
-	display: block;
-	font-weight: normal;
-	font-size: 0.12em;
-}
-
 .titlesText {
 	position: absolute;
 	margin: 0 7em 0 7em;

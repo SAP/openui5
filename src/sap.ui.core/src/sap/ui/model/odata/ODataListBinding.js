@@ -4,27 +4,33 @@
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
+	'sap/ui/model/odata/Filter',
 	'sap/ui/model/FilterType',
+	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/ListBinding',
 	'sap/ui/model/Sorter',
 	'./ODataUtils',
 	'./CountMode',
 	"sap/base/util/deepEqual",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/Log",
+	"sap/base/assert"
 ], function(
-	jQuery,
 	ChangeReason,
 	Filter,
+	ODataFilter,
 	FilterType,
+	FilterProcessor,
 	ListBinding,
 	Sorter,
 	ODataUtils,
 	CountMode,
 	deepEqual,
-	merge
+	merge,
+	Log,
+	assert
 ) {
 	"use strict";
 
@@ -65,6 +71,7 @@ sap.ui.define([
 			this.bNeedsUpdate = false;
 			this.bDataAvailable = false;
 			this.bIgnoreSuspend = false;
+			this.oCombinedFilter = null;
 
 			// check filter integrity
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
@@ -570,7 +577,7 @@ sap.ui.define([
 			if (oError.response) {
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
 			}
-			jQuery.sap.log.warning(sErrorMsg);
+			Log.warning(sErrorMsg);
 		}
 
 		// Use context and check for relative binding
@@ -856,7 +863,9 @@ sap.ui.define([
 		}
 
 		//if we have some Application Filters, they will ANDed to the Control-Filters
-		this.createFilterParams(this.aFilters, this.aApplicationFilters);
+		this.convertFilters();
+		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
+		this.createFilterParams(this.oCombinedFilter);
 
 		if (!this.bInitial) {
 			this.resetData();
@@ -880,45 +889,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a $filter query option string, which will be used
-	 * as part of URL for OData-Requests. If an Array of Application Filters is given as the second
-	 * If an array of application filters is given as second argument, the control filters and application filters are combined with AND.
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} aControlFilters An Array of control filters
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} [aApplicationFilters] An Array of application filters
+	 * Convert sap.ui.model.odata.Filter to sap.ui.model.Filter
+	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.createFilterParams = function(aControlFilters, aApplicationFilters) {
-		// create URL Parameters for the Control- and Application-Filters
-		// either one or both may return undefined if the arrays given are wrong somehow
-		var sFilterParams,
-			sControlParams = ODataUtils._createFilterParams(aControlFilters, this.oModel.oMetadata, this.oEntityType),
-			sApplicationParams = ODataUtils._createFilterParams(aApplicationFilters, this.oModel.oMetadata, this.oEntityType);
-
-		if (sControlParams) {
-			sFilterParams = sControlParams;
-		}
-
-		if (sApplicationParams) {
-			//if there are control-filtes, AND the application filters
-			if (sControlParams) {
-				//Apply braces to the ANDed parts
-				sFilterParams = "(" + sFilterParams + ")" + "%20and%20" + "(" + sApplicationParams + ")";
-			} else {
-				//if the control-filters are undefined, we just use the application filter as a fallback
-				sFilterParams = sApplicationParams;
-			}
-		}
-
-		//prepend the system query option "$filter=" to the parameters (if parameters are given...)
-		if (sFilterParams) {
-			this.sFilterParams = "$filter=" + sFilterParams;
-		} else {
-			// no filter params could be constructed, since no control/application filter are given
-			// reset the filter params to 'undefined', so following requests exclude the filter query
-			this.sFilterParams = undefined;
-		}
+	ODataListBinding.prototype.convertFilters = function() {
+		this.aFilters = this.aFilters.map(function(oFilter) {
+			return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
+		});
+		this.aApplicationFilters = this.aApplicationFilters.map(function(oFilter) {
+			return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
+		});
 	};
 
+	/**
+	 * Creates a $filter query option string, which will be used
+	 * as part of URL for OData-Requests.
+	 * @param {sap.ui.model.Filter} oFilter The root filter object of the filter tree
+	 * @private
+	 */
+	ODataListBinding.prototype.createFilterParams = function(oFilter) {
+		this.sFilterParams = ODataUtils.createFilterParams(oFilter, this.oModel.oMetadata, this.oEntityType);
+	};
 
 	ODataListBinding.prototype._initSortersFilters = function() {
 		// if path could not be resolved entity type cannot be retrieved and
@@ -928,8 +920,10 @@ sap.ui.define([
 			return;
 		}
 		this.oEntityType = this._getEntityType();
+		this.convertFilters();
+		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 		this.createSortParams(this.aSorters);
-		this.createFilterParams(this.aFilters.concat(this.aApplicationFilters));
+		this.createFilterParams(this.oCombinedFilter);
 	};
 
 	ODataListBinding.prototype._getEntityType = function(){
@@ -937,7 +931,7 @@ sap.ui.define([
 
 		if (sResolvedPath) {
 			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
-			jQuery.sap.assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
+			assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
 			return oEntityType;
 
 		}

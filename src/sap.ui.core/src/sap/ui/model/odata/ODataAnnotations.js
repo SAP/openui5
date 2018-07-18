@@ -3,8 +3,14 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'],
-	function(AnnotationParser, jQuery, Device, EventProvider) {
+sap.ui.define([
+	'./AnnotationParser',
+	'sap/ui/Device',
+	'sap/ui/base/EventProvider',
+	"sap/base/assert",
+	"sap/base/Log"
+],
+	function(AnnotationParser, Device, EventProvider, assert, Log) {
 	"use strict";
 
 	/*global ActiveXObject */
@@ -60,12 +66,12 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 
 				if (!this.bAsync) {
 					// Synchronous loading, we can directly check for errors
-					jQuery.sap.assert(
+					assert(
 						!jQuery.isEmptyObject(this.oMetadata),
 						"Metadata must be available for synchronous annotation loading"
 					);
 					if (this.oError) {
-						jQuery.sap.log.error(
+						Log.error(
 							"OData annotations could not be loaded: " + this.oError.message
 						);
 					}
@@ -269,7 +275,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 		} else if (window.DOMParser) {
 			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
 		} else {
-			jQuery.sap.log.fatal("The browser does not support XML parsing. Annotations are not available.");
+			Log.fatal("The browser does not support XML parsing. Annotations are not available.");
 		}
 
 

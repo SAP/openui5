@@ -282,9 +282,9 @@ sap.ui.define([
 			 * @private
 			 */
 			_showDetail : function (oItem) {
-				var bReplace = !Device.system.phone;
 				// set the layout property of FCL control to show two columns
 				this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+				var bReplace = !Device.system.phone;
 				this.getRouter().navTo("object", {
 					objectId : oItem.getBindingContext().getProperty("OrderID")
 				}, bReplace);

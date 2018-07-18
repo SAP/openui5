@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.v2.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/base/EventProvider', 'sap/ui/core/cache/CacheManager'],
-	function(jQuery, AnnotationParser, Device, EventProvider, CacheManager) {
+sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/base/EventProvider', 'sap/ui/core/cache/CacheManager', "sap/base/assert"],
+	function(AnnotationParser, Device, EventProvider, CacheManager, assert) {
 	"use strict";
 
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
@@ -46,12 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 			function writeCache(aResults) {
 				// write annotations to cache
-				// as aResults is an Array with additional properties we cannot stringify directly
-				var cacheObject = {
-					results: aResults,
-					annotations: aResults.annotations
-				};
-				CacheManager.set(that.sCacheKey, JSON.stringify(cacheObject));
+				CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
 			}
 
 			if (!mOptions || !mOptions.skipMetadata) {
@@ -83,16 +78,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 				this.setHeaders(mOptions.headers);
 				if (this.sCacheKey) {
 					//check cache
-					this._pLoaded =	CacheManager.get(that.sCacheKey)
+					this._pLoaded = CacheManager.get(that.sCacheKey)
 						.then(function(sAnnotations){
+							var aResults;
 							if (sAnnotations) {
+								aResults = JSON.parse(sAnnotations);
+							}
+							//old cache entries are an object; invalidate the cache in this case
+							if (Array.isArray(aResults)) {
 								// restore return array structure
-								var oAnnotations = JSON.parse(sAnnotations);
-								that._mAnnotations = oAnnotations.annotations;
-								var aResults = oAnnotations.results;
-								// Add for Promise compatibility with v1 version:
-								aResults.annotations = that._mAnnotations;
-
+								aResults.annotations = {};
+								aResults.forEach(function(oAnnotation) {
+									AnnotationParser.restoreAnnotationsAtArrays(oAnnotation.annotations);
+									AnnotationParser.merge(aResults.annotations, oAnnotation.annotations);
+								});
+								that._mAnnotations = aResults.annotations;
 								// only valid loading was cached - fire loaded event in this case
 								that._fireSomeLoaded(aResults);
 								that._fireLoaded(aResults);
@@ -621,7 +621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._loadUrl = function(mSource) {
-		jQuery.sap.assert(mSource.type === "url", "Source type must be \"url\" in order to be loaded");
+		assert(mSource.type === "url", "Source type must be \"url\" in order to be loaded");
 
 		return new Promise(function(fnResolve, fnReject) {
 			var mAjaxOptions = {
@@ -667,7 +667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._parseSourceXML = function(mSource) {
-		jQuery.sap.assert(typeof mSource.xml === "string", "Source must contain XML string in order to be parsed");
+		assert(typeof mSource.xml === "string", "Source must contain XML string in order to be parsed");
 
 		return new Promise(function(fnResolve, fnReject) {
 			var oXMLDocument;
@@ -729,7 +729,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 */
 	ODataAnnotations.prototype._parseSource = function(mSource) {
 		// On IE we have a special format for the XML documents on every other browser it must be a "Document" object.
-		jQuery.sap.assert(mSource.document instanceof window.Document || Device.browser.msie, "Source must contain a parsed XML document converted to an annotation object");
+		assert(mSource.document instanceof window.Document || Device.browser.msie, "Source must contain a parsed XML document converted to an annotation object");
 
 		return this._oMetadata.loaded()
 			.then(function() {
@@ -750,7 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @private
 	 */
 	ODataAnnotations.prototype._mergeSource = function(mSource) {
-		jQuery.sap.assert(typeof mSource.annotations === "object", "Source must contain an annotation object to be merged");
+		assert(typeof mSource.annotations === "object", "Source must contain an annotation object to be merged");
 
 		AnnotationParser.merge(this._mAnnotations, mSource.annotations);
 

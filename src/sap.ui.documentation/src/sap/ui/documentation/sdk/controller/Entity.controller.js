@@ -147,9 +147,9 @@ sap.ui.define([
 
 					this._switchPageTab();
 
-					jQuery.sap.delayedCall(0, this, function () {
+					setTimeout(function () {
 						this._oObjectPage.setBusy(false);
-					});
+					}.bind(this), 0);
 				}
 
 				// set data model
@@ -219,6 +219,8 @@ sap.ui.define([
 					bShouldShowSamplesSection = false,
 					iSamplesCount = 0;
 
+				oData.show.introLink = false;
+
 				if (oEntity) {
 
 					// show the description as intro text if the entity is not deprecated
@@ -230,13 +232,19 @@ sap.ui.define([
 						oData.baseName = oEntity.name;
 					}
 
+					// make intro text active if a documentation link is set
+					if (oEntity.docuLink) {
+						oData.show.introLink = true;
+						oData.docuLink = oEntity.docuLink.replace("docs/guide", "topic").replace(/\.html$/, "");
+						oData.docuLinkText = oData.baseName;
+					}
+
 					bShouldShowSamplesSection = oEntity.samples.length > 0;
 					iSamplesCount = oEntity.samples.length;
 				}
 
 				// apply entity related stuff
 				oData.show.samples = bShouldShowSamplesSection;
-				oData.show.introLink = false;
 				oData.count.samples = iSamplesCount;
 				oData.entity = oEntity;
 

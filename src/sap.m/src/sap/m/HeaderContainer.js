@@ -11,7 +11,11 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'./HeaderContainerRenderer',
 	"sap/base/Log",
-	'jquery.sap.events'
+	"sap/ui/events/PseudoEvents",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
 ],
 function(
 	library,
@@ -22,8 +26,9 @@ function(
 	ManagedObject,
 	Icon,
 	HeaderContainerRenderer,
-	Log
-	) {
+	Log,
+	PseudoEvents
+) {
 		"use strict";
 
 		// shortcut for sap.ui.core.Orientation
@@ -792,8 +797,8 @@ function(
 			var oOriginalEvent = oEvt.getParameter("event");
 			if (jQuery(oOriginalEvent.target).hasClass("sapMHdrCntrItemCntr") ||
 				jQuery(oOriginalEvent.target).hasClass("sapMScrollContScroll") ||
-				jQuery.sap.PseudoEvents.sapprevious.fnCheck(oOriginalEvent) ||
-				jQuery.sap.PseudoEvents.sapnext.fnCheck(oOriginalEvent)) {
+				PseudoEvents.events.sapprevious.fnCheck(oOriginalEvent) ||
+				PseudoEvents.events.sapnext.fnCheck(oOriginalEvent)) {
 				this.$().find(".sapMHdrCntrItemCntr").css("border-color", "");
 			} else {
 				this.$().find(".sapMHdrCntrItemCntr").css("border-color", "transparent");

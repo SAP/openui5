@@ -7,15 +7,19 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
-	"sap/ui/rta/Utils"
-	],
+	"sap/ui/rta/Utils",
+	"sap/base/util/uid",
+	"sap/base/Log"
+],
 	function(
 		DescriptorVariantFactory,
 		DescriptorInlineChangeFactory,
 		LrepConnector,
 		FlexUtils,
 		MessageBox,
-		RtaUtils
+		RtaUtils,
+		uid,
+		Log
 	) {
 
 		"use strict";
@@ -65,7 +69,7 @@ sap.ui.define([
 
 			aIdStrings.forEach(function(sString, index, array) {
 				if (sString.match(regex)) {
-					sString = sString.replace(regex, jQuery.sap.uid().replace(/-/g, "_"));
+					sString = sString.replace(regex, uid().replace(/-/g, "_"));
 					array[index] = sString;
 					bRegFound = true;
 				}
@@ -73,7 +77,7 @@ sap.ui.define([
 
 			sChangedId = aIdStrings.join(".");
 			if (!bRegFound) {
-				sChangedId = sChangedId + "." + jQuery.sap.uid().replace(/-/g, "_");
+				sChangedId = sChangedId + "." + uid().replace(/-/g, "_");
 			}
 
 			sChangedId = this.trimIdIfRequired(sChangedId);
@@ -322,7 +326,7 @@ sap.ui.define([
 			}
 
 			sMessage += AppVariantUtils.getText("MSG_TECHNICAL_ERROR", sErrorMessage);
-			jQuery.sap.log.error("App variant error: ", sErrorMessage);
+			Log.error("App variant error: ", sErrorMessage);
 
 			return {
 				text: sMessage,

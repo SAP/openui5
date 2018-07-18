@@ -713,7 +713,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					assert.ok(oInput.$().hasClass(mSettings.output));
+					assert.ok(oInput.$("content").hasClass(mSettings.output));
 
 					// cleanup
 					oInput.destroy();
@@ -724,28 +724,28 @@
 				control: new sap.m.InputBase({
 					valueState: sap.ui.core.ValueState.Error
 				}),
-				output: "sapMInputBaseError"
+				output: "sapMInputBaseContentWrapperError"
 			});
 
 			fnSetValueStateTestCase1({
 				control: new sap.m.InputBase({
 					valueState: sap.ui.core.ValueState.Warning
 				}),
-				output: "sapMInputBaseWarning"
+				output: "sapMInputBaseContentWrapperWarning"
 			});
 
 			fnSetValueStateTestCase1({
 				control: new sap.m.InputBase({
 					valueState: sap.ui.core.ValueState.Success
 				}),
-				output: "sapMInputBaseSuccess"
+				output: "sapMInputBaseContentWrapperSuccess"
 			});
 
 			fnSetValueStateTestCase1({
 				control: new sap.m.InputBase({
 					valueState: sap.ui.core.ValueState.Error
 				}),
-				output: "sapMInputBaseState"
+				output: "sapMInputBaseContentWrapperState"
 			});
 
 			var fnSetValueStateTestCase2 = function(mSettings) {
@@ -763,7 +763,7 @@
 					oInput.setValueState(mSettings.input);
 
 					// assertions
-					assert.ok(oInput.$().hasClass(mSettings.output), "Input should have the class " + mSettings.output);
+					assert.ok(oInput.$("content").hasClass(mSettings.output), "Input should have the class " + mSettings.output);
 					assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValueState calls");
 
 					// cleanup
@@ -774,19 +774,19 @@
 			fnSetValueStateTestCase2({
 				control: new sap.m.InputBase(),
 				input: sap.ui.core.ValueState.Error,
-				output: "sapMInputBaseError"
+				output: "sapMInputBaseContentWrapperError"
 			});
 
 			fnSetValueStateTestCase2({
 				control: new sap.m.InputBase(),
 				input: sap.ui.core.ValueState.Warning,
-				output: "sapMInputBaseWarning"
+				output: "sapMInputBaseContentWrapperWarning"
 			});
 
 			fnSetValueStateTestCase2({
 				control: new sap.m.InputBase(),
 				input: sap.ui.core.ValueState.Success,
-				output: "sapMInputBaseSuccess"
+				output: "sapMInputBaseContentWrapperSuccess"
 			});
 
 			QUnit.test("method: setValueState() invalid values", function(assert) {
@@ -798,7 +798,7 @@
 				assert.strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state before rendering is converted to default value.");
 
 				oInput.setValueState(sap.ui.core.ValueState.Error);
-				assert.ok(oInput.$().hasClass("sapMInputBaseState"), "Input has the state class before testing the invalid value.");
+				assert.ok(oInput.$("content").hasClass("sapMInputBaseContentWrapperError"), "Input has the state class before testing the invalid value.");
 
 				oInput.setValueState(undefined);
 				assert.strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state is converted to default value.");
@@ -853,58 +853,6 @@
 			/* setPlaceholder()               */
 			/* ------------------------------ */
 
-			var fnSetPlaceholderTestCase1 = function(mSettings) {
-				QUnit.test("method: setPlaceholder() initial rendering", function(assert) {
-
-					// system under test
-					var oInput = mSettings.control;
-
-					// arrange
-					oInput.placeAt("content");
-					sap.ui.getCore().applyChanges();
-
-					// assertions
-					if (!oInput.bShowLabelAsPlaceholder) {
-						assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder"), mSettings.output);
-					}
-
-					// force to show synthetic placeholder
-					this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
-
-					// rerender for synthetic placeholder
-					oInput.rerender();
-					sap.ui.getCore().applyChanges();
-
-					// assertions
-					assert.strictEqual(oInput.$().find(".sapMInputBasePlaceholder").text(), mSettings.output || "");
-
-					// cleanup
-					oInput.destroy();
-
-				});
-			};
-
-			fnSetPlaceholderTestCase1({
-				control: new sap.m.InputBase({
-					placeholder: "Input placeholder"
-				}),
-				output: "Input placeholder"
-			});
-
-			fnSetPlaceholderTestCase1({
-				control: new sap.m.InputBase({
-					placeholder: ""
-				}),
-				output: (!sap.ui.Device.support.input.placeholder) ? "" : undefined
-			});
-
-			fnSetPlaceholderTestCase1({
-				control: new sap.m.InputBase({
-					placeholder: XSS
-				}),
-				output: XSS
-			});
-
 			var fnSetPlaceholderTestCase2 = function(mSettings) {
 				QUnit.test("method: setPlaceholder() after initial rendering", function(assert) {
 
@@ -920,23 +868,7 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					if (!oInput.bShowLabelAsPlaceholder) {
-						assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
-					}
-
-					// force to show synthetic placeholder
-					this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
-
-					// rerender for synthetic placeholder
-					oInput.rerender();
-					sap.ui.getCore().applyChanges();
-
-					// act
-					oInput.setPlaceholder(mSettings.input);
-					sap.ui.getCore().applyChanges();
-
-					// assertions
-					assert.strictEqual(oInput.$().find(".sapMInputBasePlaceholder").text(), mSettings.output);
+					assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
 
 					// cleanup
 					oInput.destroy();
@@ -2137,28 +2069,6 @@
 
 				oInput.destroy();
 				oText.destroy();
-			});
-
-			QUnit.test("Label for should not be used for synthetic placeholder to support labelledby", function(assert) {
-				this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
-				var fnOnTapSpy = this.spy(sap.m.InputBase.prototype, "ontap");
-				var fnFocusSpy = this.spy(sap.m.InputBase.prototype, "focus");
-
-				var oInput = new sap.m.InputBase({
-					placeholder : "Test"
-				}).placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				var oPlaceholder = oInput.getDomRef("placeholder");
-				assert.strictEqual(oPlaceholder.hasAttribute("for"), false, "synthetic placeholder does not have for attribute.");
-
-				sap.ui.test.qunit.triggerEvent("tap", oPlaceholder);
-				assert.strictEqual(fnOnTapSpy.callCount, 1, "tap event is catched from placeholder");
-				assert.strictEqual(fnFocusSpy.callCount, 1, "focus is called when placeholder is tapped ");
-
-				assert.ok(document.activeElement === oInput.getFocusDomRef(), "input is focused when placeholder is tapped");
-
-				oInput.destroy();
 			});
 
 			QUnit.test("getAccessibilityInfo", function(assert) {

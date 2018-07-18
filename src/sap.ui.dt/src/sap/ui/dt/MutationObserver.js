@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.dt.MutationObserver.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/base/ManagedObject',
@@ -116,7 +116,7 @@ sap.ui.define([
 	MutationObserver.prototype._isRelevantNode = function (oNode) {
 		return (
 			// 1. Mutation happened in Node which is still in actual DOM Tree
-			// Must be always on the first place since sometimes mutations for detached nodes may come (PhantomJS use case)
+			// Must be always on the first place since sometimes mutations for detached nodes may come
 			document.body.contains(oNode)
 
 			// 2. Ignore direct mutation on static area Node

@@ -2,15 +2,16 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.rta.plugin.Combine.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/Utils'
+	'sap/ui/rta/Utils',
+	'sap/ui/dt/Util'
 ], function(
 	Plugin,
 	OverlayRegistry,
-	Utils
+	Utils,
+	DtUtil
 ) {
 	"use strict";
 
@@ -46,7 +47,7 @@ sap.ui.define([
 	 * @returns {boolean} whether it is editable or not
 	 * @private
 	 */
-	Combine.prototype._isEditable = function(oOverlay) {
+	Combine.prototype._isEditable = function (oOverlay) {
 		var oCombineAction = this.getAction(oOverlay);
 		if (oCombineAction && oCombineAction.changeType && oCombineAction.changeOnRelevantContainer) {
 			return this.hasChangeHandler(oCombineAction.changeType, oOverlay.getRelevantContainer()) && this.hasStableId(oOverlay);
@@ -55,17 +56,17 @@ sap.ui.define([
 		}
 	};
 
-	Combine.prototype._checkForSameRelevantContainer = function(aSelectedOverlays) {
+	Combine.prototype._checkForSameRelevantContainer = function(aElementOverlays) {
 		var aRelevantContainer = [];
-		for (var i = 0, n = aSelectedOverlays.length; i < n; i++) {
-			aRelevantContainer[i] = aSelectedOverlays[i].getRelevantContainer();
-			var oCombineAction = this.getAction(aSelectedOverlays[i]);
+		for (var i = 0, n = aElementOverlays.length; i < n; i++) {
+			aRelevantContainer[i] = aElementOverlays[i].getRelevantContainer();
+			var oCombineAction = this.getAction(aElementOverlays[i]);
 			if (!oCombineAction || !oCombineAction.changeType){
 				return false;
 			}
 			if (i > 0) {
 				if ((aRelevantContainer[0] !== aRelevantContainer[i])
-					|| (this.getAction(aSelectedOverlays[0]).changeType !== oCombineAction.changeType)) {
+					|| (this.getAction(aElementOverlays[0]).changeType !== oCombineAction.changeType)) {
 					return false;
 				}
 			}
@@ -75,42 +76,42 @@ sap.ui.define([
 
 	/**
 	 * Checks if Combine is available for oOverlay
-	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if available
 	 * @public
 	 */
-	Combine.prototype.isAvailable = function(oOverlay) {
-		var aSelectedOverlays = this.getSelectedOverlays();
-
-		if (aSelectedOverlays.length <= 1) {
+	Combine.prototype.isAvailable = function (aElementOverlays) {
+		if (aElementOverlays.length <= 1) {
 			return false;
 		}
-		return (this._isEditableByPlugin(oOverlay) && this._checkForSameRelevantContainer(aSelectedOverlays));
+
+		return (
+			aElementOverlays.every(function (oElementOverlay) {
+				return this._isEditableByPlugin(oElementOverlay);
+			}, this)
+			&& this._checkForSameRelevantContainer(aElementOverlays)
+		);
 	};
 
 	/**
 	 * Checks if Combine is enabled for oOverlay
-	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if enabled
 	 * @public
 	 */
-	Combine.prototype.isEnabled = function(oOverlay) {
-		var aSelectedOverlays = this.getSelectedOverlays();
-
+	Combine.prototype.isEnabled = function (aElementOverlays) {
 		// check that at least 2 fields can be combined
-		if (!this.isAvailable(oOverlay) || aSelectedOverlays.length <= 1) {
+		if (!this.isAvailable(aElementOverlays) || aElementOverlays.length <= 1) {
 			return false;
 		}
 
-		var aSelectedControls = aSelectedOverlays.map(function (oSelectedOverlay) {
-			return oSelectedOverlay.getElement();
+		var aControls = aElementOverlays.map(function (oElementOverlay) {
+			return oElementOverlay.getElement();
 		});
 
-		// check that each selected element has an enabled action
-		var bActionCheck = aSelectedOverlays.every(function(oSelectedOverlay) {
-			var oAction = this.getAction(oSelectedOverlay);
+		// check that each specified element has an enabled action
+		var bActionCheck = aElementOverlays.every(function(oElementOverlay) {
+			var oAction = this.getAction(oElementOverlay);
 			if (!oAction) {
 				return false;
 			}
@@ -118,7 +119,7 @@ sap.ui.define([
 			// when isEnabled is not defined the default is true
 			if (typeof oAction.isEnabled !== "undefined") {
 				if (typeof oAction.isEnabled === "function") {
-					return oAction.isEnabled(aSelectedControls);
+					return oAction.isEnabled(aControls);
 				} else {
 					return oAction.isEnabled;
 				}
@@ -131,39 +132,47 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param  {any} oCombineElement selected element
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - specified overlays
 	 */
-	Combine.prototype.handleCombine = function(oCombineElement) {
-		var oElementOverlay = OverlayRegistry.getOverlay(oCombineElement);
+	Combine.prototype.handleCombine = function(aElementOverlays) {
+		var oElementOverlay = aElementOverlays[0];
+		var oCombineElement = oElementOverlay.getElement();
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
-
-		var aToCombineElements = [];
-		var aSelectedOverlays = this.getSelectedOverlays();
-
-		for (var i = 0; i < aSelectedOverlays.length; i++) {
-			var oSelectedElement = aSelectedOverlays[i].getElement();
-			aToCombineElements.push(oSelectedElement);
-		}
-
+		var aElements = aElementOverlays.map(function (oElementOverlay) {
+			return oElementOverlay.getElement();
+		});
 		var oCombineAction = this.getAction(oElementOverlay);
 		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oCombineAction);
 
-		var oCombineCommand = this.getCommandFactory().getCommandFor(oCombineElement, "combine", {
-			source : oCombineElement,
-			combineFields : aToCombineElements
-		}, oDesignTimeMetadata, sVariantManagementReference);
+		var oCombineCommand = this.getCommandFactory().getCommandFor(
+			oCombineElement,
+			"combine",
+			{
+				source: oCombineElement,
+				combineFields: aElements
+			},
+			oDesignTimeMetadata,
+			sVariantManagementReference
+		);
 		this.fireElementModified({
-			"command" : oCombineCommand
+			"command": oCombineCommand
 		});
 	};
 
 	/**
 	 * Retrieve the context menu item for the action.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
-	 * @return {object[]}          Returns array containing the items with required data
+	 * @param  {sap.ui.dt.ElementOverlay[]} aElementOverlays - Overlays for which actions are requested
+	 * @return {object[]} - returns array containing the items with required data
 	 */
-	Combine.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_GROUP_FIELDS", rank : 90, icon : "sap-icon://border"});
+	Combine.prototype.getMenuItems = function (aElementOverlays) {
+		return this._getMenuItems(
+			aElementOverlays,
+			{
+				pluginId: "CTX_GROUP_FIELDS",
+				rank: 90,
+				icon: "sap-icon://border"
+			}
+		);
 	};
 
 	/**
@@ -176,13 +185,10 @@ sap.ui.define([
 
 	/**
 	 * Trigger the plugin execution.
-	 * @param  {sap.ui.dt.ElementOverlay[]} aOverlays Selected overlays; targets of the action
-	 * @param  {any} oEventItem ContextMenu item which triggers the event
-	 * @param  {any} oContextElement Element where the action is triggered
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 */
-	Combine.prototype.handler = function(aOverlays, mPropertyBag){
-		//TODO: Handle "Stop Cut & Paste" depending on alignment with Dietrich!
-		this.handleCombine(mPropertyBag.contextElement);
+	Combine.prototype.handler = function (aElementOverlays) {
+		this.handleCombine(aElementOverlays);
 	};
 
 	return Combine;

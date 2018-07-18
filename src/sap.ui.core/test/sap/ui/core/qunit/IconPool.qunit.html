@@ -26,8 +26,9 @@
 			sap.ui.require([
 				"sap/ui/core/IconPool",
 				"sap/ui/core/Icon",
-				"sap/m/Image"
-			], function(IconPool, Icon, Image) {
+				"sap/m/Image",
+				"sap/base/Log"
+			], function(IconPool, Icon, Image, Log) {
 
 				QUnit.module("Basic");
 
@@ -230,7 +231,7 @@
 					var iCountStyles = jQuery("head > style[type='text/css']").length;
 
 					// inserting a font that is not registered must fail
-					var oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var oErrorSpy = sinon.spy(Log, "error");
 
 					IconPool.insertFontFaceStyle("unRegisteredFont", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"));
 					assert.strictEqual(jQuery("head > style[type='text/css']").length, iCountStyles, "Inserting a unregistered font does not insert a new style tag");
@@ -242,7 +243,7 @@
 				QUnit.test("insertFontFaceStyle: the default font must not be overwritten", function(assert) {
 					var iCountStyles = jQuery("head > style[type='text/css']").length;
 
-					var oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var oErrorSpy = sinon.spy(Log, "error");
 
 					IconPool.registerFont({
 						fontFamily: "SAP-icons-TNT",
@@ -259,7 +260,7 @@
 				});
 
 				QUnit.test("registerFont without fontURI", function (assert) {
-					var oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var oErrorSpy = sinon.spy(Log, "error");
 
 					var oResult = IconPool.registerFont({});
 					assert.strictEqual(oErrorSpy.callCount, 1, "Registering a font without the configuration parameter fontURI throws an error");
@@ -268,7 +269,7 @@
 				});
 
 				QUnit.test("registerFont: trying to overwrite the default font family logs an error", function (assert) {
-					var oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var oErrorSpy = sinon.spy(Log, "error");
 
 					var oResult = IconPool.registerFont({
 						fontFamily: "SAP-icons",
@@ -281,7 +282,7 @@
 				});
 
 				QUnit.test("registerFont two times throws a warning", function (assert) {
-					var oWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+					var oWarningSpy = sinon.spy(Log, "warning");
 
 					var oResult = IconPool.registerFont({
 						fontFamily: "TwoTimes",
@@ -299,7 +300,7 @@
 				});
 
 				QUnit.test("registerFont does not throw an error when an icon has been manually registered with the same collection name", function (assert) {
-					var oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var oErrorSpy = sinon.spy(Log, "error");
 
 					// single char
 					var oIcon = sap.ui.core.IconPool.addIcon("someIcon", "testAddIcon", {
@@ -352,7 +353,7 @@
 					var done = assert.async();
 
 					// stub the ajax method
-					var oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+					var oErrorSpy = sinon.spy(Log, "error");
 					var stub = sinon.stub(jQuery, 'ajax');
 					stub.yieldsTo('error', {});
 

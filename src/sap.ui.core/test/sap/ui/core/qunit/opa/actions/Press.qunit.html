@@ -59,7 +59,8 @@
 			"sap/ui/thirdparty/hasher",
 			"sap/ui/test/matchers/AggregationLengthEquals",
 			"sap/ui/test/matchers/PropertyStrictEquals",
-			"sap/ui/test/matchers/Ancestor"
+			"sap/ui/test/matchers/Ancestor",
+			"sap/base/Log"
 		],
 		function(Press,
 				 Button,
@@ -96,14 +97,16 @@
 				 hasher,
 				 AggregationLengthEquals,
 				 PropertyStrictEquals,
-				 Ancestor){
+				 Ancestor,
+		         Log
+		){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
 
 			QUnit.module("positive tests",{
 				beforeEach: function() {
-					this.oSpy = sinon.spy($.sap.log, "debug");
+					this.oSpy = sinon.spy(Log, "debug");
 				},
 				afterEach: function() {
 					while(aControlsToClean.length) {
@@ -658,7 +661,7 @@
                     oOpa.extendConfig({autoWait: true});
 
                     // cause overflow re-rendering
-                    oOpa.waitFor({                        
+                    oOpa.waitFor({
                         success: function() {
 							oOverflowToolbar.setWidth("140px");
 							console.debug("Set smaller width to cause overflow");

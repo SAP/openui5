@@ -4,9 +4,13 @@
 
 // Provides class sap.ui.dt.Plugin.
 sap.ui.define([
-	'sap/ui/base/ManagedObject'
+	'sap/ui/base/ManagedObject',
+	'sap/ui/dt/Util'
 ],
-function(ManagedObject) {
+function(
+	ManagedObject,
+	Util
+) {
 	"use strict";
 
 	/**
@@ -199,7 +203,7 @@ function(ManagedObject) {
 	 * Called to retrieve a context menu item for the plugin
 	 * @protected
 	 */
-	Plugin.prototype.getMenuItems = function(){};
+	Plugin.prototype.getMenuItems = function () {};
 
 	/**
 	 * Retrieve the action name related to the plugin
@@ -223,24 +227,6 @@ function(ManagedObject) {
 	};
 
 	/**
-	 * Asks the Design Time if multiple overlays are selected
-	 * Used by plugins which do not support multiple selection
-	 * @return {Boolean} Returns true if there is no multiple selection active
-	 */
-	Plugin.prototype.isMultiSelectionInactive = function() {
-		return this.getNumberOfSelectedOverlays() < 2;
-	};
-
-	/**
-	 * Asks the DesignTime for the number of currently selected overlays.
-	 *
-	 * @return {integer} Returns the number of selected overlays as integer
-	 */
-	Plugin.prototype.getNumberOfSelectedOverlays = function() {
-		return this.getSelectedOverlays().length;
-	};
-
-	/**
 	 * Asks the Design Time which overlays are selected
 	 *
 	 * @return {sap.ui.dt.ElementOverlay[]} selected overlays
@@ -256,7 +242,7 @@ function(ManagedObject) {
 	 * @param  {string} sPluginId The ID of the plugin
 	 * @return {string}         Returns the text for the menu item
 	 */
-	Plugin.prototype.getActionText = function(oOverlay, mAction, sPluginId){
+	Plugin.prototype.getActionText = function (oOverlay, mAction, sPluginId) {
 		var vName = mAction.name;
 		var oElement = oOverlay.getElement();
 		if (vName){
@@ -272,54 +258,54 @@ function(ManagedObject) {
 
 	/**
 	 * Checks if the plugin is available for an overlay
-	 * @param  {sap.ui.dt.ElementOverlay}  oOverlay Overlay to be checked
-	 * @return {Boolean}          Returns true if the plugin is available
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Overlays to be checked
+	 * @return {Boolean} - true if the plugin is available
 	 */
-	Plugin.prototype.isAvailable = function(oOverlay){
-		return this._isEditableByPlugin(oOverlay);
+	Plugin.prototype.isAvailable = function (aElementOverlays) {
+		return aElementOverlays.every(function (oElementOverlay) {
+			return this._isEditableByPlugin(oElementOverlay);
+		}, this);
 	};
 
 	/**
 	 * Executes the plugin action
 	 * Method to be overwritten by the different plugins
-	 * @param  {sap.ui.dt.ElementOverlay[]} aOverlays Target overlays for the action
-	 *
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @override
 	 * @public
 	 */
-	Plugin.prototype.handler = function(aOverlays){};
+	Plugin.prototype.handler = function (aElementOverlays) {};
 
 	/**
-	 * Checks if the plugin is enabled for an overlay
+	 * Checks if the plugin is enabled for a set of overlays
 	 * Method to be overwritten by the different plugins
-	 * @param  {sap.ui.dt.ElementOverlay}  oOverlay Overlay to be checked
+	 * @param {sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlays
 	 */
-	Plugin.prototype.isEnabled = function(oOverlay){};
+	Plugin.prototype.isEnabled = function (aElementOverlays) {};
 
 	/**
 	 * Generic function to return the menu items for a context menu.
 	 * The text for the item can be defined in the control Designtime Metadata;
 	 * otherwise the default text is used.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay  The selected overlay
-	 * @param  {object} mPropertyBag Additional properties for the menu item
-	 * @param  {string} mPropertyBag.pluginId The ID of the plugin
-	 * @param  {number} mPropertyBag.rank The rank deciding the position of the action in the context menu
-	 * @param  {string} mPropertyBag.icon an icon for the Button inside the context menu
-	 * @param  {string} mPropertyBag.group A group for buttons which should be grouped together in the MiniMenu
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @param {object} mPropertyBag Additional properties for the menu item
+	 * @param {string} mPropertyBag.pluginId The ID of the plugin
+	 * @param {number} mPropertyBag.rank The rank deciding the position of the action in the context menu
+	 * @param {string} mPropertyBag.icon an icon for the Button inside the context menu
+	 * @param {string} mPropertyBag.group A group for buttons which should be grouped together in the MiniMenu
 	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
 	 */
-	Plugin.prototype._getMenuItems = function(oOverlay, mPropertyBag){
-		var mAction = this.getAction(oOverlay);
-		if (!mAction || !this.isAvailable(oOverlay)){
+	Plugin.prototype._getMenuItems = function (aElementOverlays, mPropertyBag) {
+		var oElementOverlay = aElementOverlays[0]; // by default we get menu items only for the first overlay
+		var mAction = this.getAction(oElementOverlay);
+		if (!mAction || !this.isAvailable(aElementOverlays)){
 			return [];
 		}
 
 		return [{
 			id: mPropertyBag.pluginId,
-			text: this.getActionText(oOverlay, mAction, mPropertyBag.pluginId),
-			handler: function(aOverlays, mPropertyBag){
-				return this.handler(aOverlays, mPropertyBag);
-			}.bind(this),
+			text: this.getActionText(oElementOverlay, mAction, mPropertyBag.pluginId),
+			handler: this.handler.bind(this),
 			enabled: this.isEnabled.bind(this),
 			rank: mPropertyBag.rank,
 			icon: mPropertyBag.icon,

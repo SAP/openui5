@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-    "jquery.sap.global",
-    "sap/ui/base/Object",
-    "sap/ui/test/Opa5",
-    "sap/ui/test/OpaPlugin",
-    "sap/ui/test/actions/Press"
-], function ($, UI5Object, Opa5, OpaPlugin, Press) {
+	"sap/ui/base/Object",
+	"sap/ui/test/Opa5",
+	"sap/ui/test/OpaPlugin",
+	"sap/ui/test/actions/Press",
+    "sap/ui/thirdparty/jquery"
+], function(UI5Object, Opa5, OpaPlugin, Press, jQueryDOM) {
     "use strict";
 
     var oPlugin = new OpaPlugin();
@@ -29,7 +29,7 @@ sap.ui.define([
         if (vControls === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
             aResult = [];
         } else {
-            aResult = $.isArray(vControls) ? vControls : [vControls];
+            aResult = jQueryDOM.isArray(vControls) ? vControls : [vControls];
         }
 
         return aResult;

@@ -4,22 +4,23 @@
 /**
  * Defines support rules related to the model.
  */
-sap.ui.define(["jquery.sap.global",
-		"sap/ui/support/library",
-		"sap/ui/support/supportRules/util/StringAnalyzer",
-		"sap/ui/model/ListBinding",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/odata/ODataMetadata",
-		"sap/ui/model/CompositeBinding",
-		"sap/ui/model/PropertyBinding"],
+sap.ui.define([
+	"sap/ui/support/library",
+	"sap/ui/support/supportRules/util/StringAnalyzer",
+	"sap/ui/model/ListBinding",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/ODataMetadata",
+	"sap/ui/model/CompositeBinding",
+	"sap/ui/model/PropertyBinding"
+],
 	function(
-		jQuery,
 		SupportLib,
 		StringAnalyzer,
 		ListBinding,
 		JSONModel,
 		ODataMetadata,
-		CompositeBinding) {
+		CompositeBinding
+	) {
 	"use strict";
 
 	// shortcuts

@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/library',
 	'./LabelRenderer',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/security/encodeXML"
 ],
 function(
 	library,
@@ -17,8 +18,9 @@ function(
 	LabelEnablement,
 	coreLibrary,
 	LabelRenderer,
-	Log
-	) {
+	Log,
+	encodeXML
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -153,7 +155,7 @@ function(
 
 			this.setProperty("text", sText, true);
 
-			this.$("bdi").html(jQuery.sap.encodeHTML(this.getProperty("text")));
+			this.$("bdi").html(encodeXML(this.getProperty("text")));
 
 
 			if (sText) {

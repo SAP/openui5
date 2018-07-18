@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function(jQuery, Device) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log"], function(Device, Log) {
 	"use strict";
 
 	/**
@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function(jQuery, Device) {
 				oRouter.fireRouteMatched(oEventData);
 				// skip this event in the recursion
 				if (bInitial) {
-					jQuery.sap.log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
+					Log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
 					this.fireEvent("patternMatched", oEventData);
 					oRouter.fireRoutePatternMatched(oEventData);
 				}

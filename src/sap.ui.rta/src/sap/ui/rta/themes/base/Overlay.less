@@ -41,7 +41,7 @@
 								color: @sapUiWhite;
 								font-size: 0.69rem;
 								line-height: 1.25rem;
-								width: 1.35rem;
+								width: 20px;
 								text-shadow: none;
 								margin: 0;
 							}
@@ -63,6 +63,10 @@
 				width: 100%;
 				height: 40px;
 				cursor: default;
+
+				&:focus {
+					outline: none;
+				}
 
 				.sapMBtn {
 					color: @_sap_ui_rta_Overlay_Border;

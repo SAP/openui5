@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global',
 		'sap/base/security/URLWhitelist',
 		'sap/base/security/sanitizeHTML'
 	],
-	function(jQuery, encodeXML, encodeJS, encodeURL, encodeURLParameters, encodeCSS, URLWhitelist /*, sanitizeHTML*/) {
+	function(jQuery, encodeXML, encodeJS, encodeURL, encodeURLParameters, encodeCSS, URLWhitelist, sanitizeHTML) {
 	"use strict";
 
 	/**
@@ -284,20 +284,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @name jQuery.sap._sanitizeHTML
 	 * @function
 	 */
-	Object.defineProperty(jQuery.sap, "_sanitizeHTML", {
-		get: function() {
-			var _sanitizeHTML = sap.ui.requireSync('sap/base/security/sanitizeHTML');
-
-			Object.defineProperty(this, "_sanitizeHTML", {
-				value: _sanitizeHTML,
-				writable: true, // TODO re-evaluate
-				configurable: false
-			});
-
-			return _sanitizeHTML;
-		},
-		configurable: true
-	});
+	jQuery.sap._sanitizeHTML = sanitizeHTML;
 
 	return jQuery;
 
