@@ -1,9 +1,11 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/UIComponentMetadata"
-], function(jQuery, Component, UIComponent, UIComponentMetadata) {
+	"sap/ui/core/UIComponentMetadata",
+	"sap/ui/core/Manifest"
+], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -479,16 +481,22 @@ sap.ui.define([
 			sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
 
 			// Create spies
+			this.oLogWarningSpy = sinon.spy(Log, "warning");
 			this.oLoadLibrariesSpy = sinon.spy(sap.ui.getCore(), "loadLibraries");
+			this.oLoadLibrarySpy = sinon.spy(sap.ui.getCore(), "loadLibrary");
 			this.oRegisterPreloadedModulesSpy = sinon.spy(jQuery.sap, "registerPreloadedModules");
+			this.oManifestLoad = sinon.spy(Manifest, "load");
 		},
 		afterEach: function() {
 			oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			unloadResources();
 
 			// Restore spies
+			this.oLogWarningSpy.restore();
 			this.oLoadLibrariesSpy.restore();
+			this.oLoadLibrarySpy.restore();
 			this.oRegisterPreloadedModulesSpy.restore();
+			this.oManifestLoad.restore();
 
 			// remove registered callbacks
 			Component._fnLoadComponentCallback = undefined;
@@ -506,6 +514,9 @@ sap.ui.define([
 			async: true
 		}).then(function(oComponent) {
 			assert.ok(oComponent instanceof Component, "Component has been created.");
+
+			// As manifest first is used, one manifest.json should have been loaded
+			sinon.assert.calledOnce(this.oManifestLoad);
 
 			// Verify that all expected libraries have been prelaoded
 			// "sap.test.lib3" is declared as "lazy" and shouldn't get preloaded initially
@@ -529,6 +540,66 @@ sap.ui.define([
 			sinon.assert.neverCalledWithMatch(this.oRegisterPreloadedModulesSpy, {
 				name: "sap/test/mysubcomp/Component-preload"
 			});
+
+			// Make sure that the component dependencies are available after creating the instance
+			assert.ok(sap.ui.require("sap/test/mycomp/Component"), "mycomp Component class should be loaded");
+			assert.ok(!sap.ui.require("sap/test/mysubcomp/Component"), "mysubcomp Component class should not be loaded");
+
+			// No deprecation warnings should be logged
+			sinon.assert.neverCalledWithMatch(this.oLogWarningSpy, "Do not use deprecated function 'sap.ui.component.load'");
+
+			done();
+		}.bind(this), function(oError) {
+			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
+			done();
+		});
+	});
+
+	QUnit.test("dependencies with component (no manifest first)", function(assert) {
+		oRealCore.oConfiguration.preload = 'async'; // sync or async both activate the preload
+
+		var done = assert.async();
+
+		// start test
+		sap.ui.component({
+			name: "sap.test.manifestcomp",
+			async: true
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof Component, "Component has been created.");
+
+			// Note that although the component is created "async", the dependencies are all
+			// loaded sync via the Component constructor (Manifest#loadDependencies).
+			// This *could* be improved in future to also load those within the factory, but
+			// is currently only supported in the "manifest first" use case.
+
+			// Verify that all expected libraries have been prelaoded
+			// "sap.test.lib3" is declared as "lazy" and shouldn't get preloaded initially
+			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib2");
+			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib4");
+
+			// Verify that all expected components have been preloaded
+			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
+				name: "sap/test/manifestcomp/Component-preload"
+			});
+			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
+				name: "sap/test/mycomp/Component-preload"
+			});
+
+			// "lazy" component should not get preloaded automatically
+			sinon.assert.neverCalledWithMatch(this.oRegisterPreloadedModulesSpy, {
+				name: "sap/test/mysubcomp/Component-preload"
+			});
+
+			// Make sure that the component dependencies are available after creating the instance
+			assert.ok(sap.ui.require("sap/test/mycomp/Component"), "mycomp Component class should be loaded");
+			assert.ok(!sap.ui.require("sap/test/mysubcomp/Component"), "mysubcomp Component class should not be loaded");
+
+			// As manifest first is not used, no manifest.json should have been loaded
+			sinon.assert.notCalled(this.oManifestLoad);
+
+			// Deprecated sap.ui.component.load should be called once
+			sinon.assert.calledOnce(this.oLogWarningSpy);
+			sinon.assert.calledWithMatch(this.oLogWarningSpy, "Do not use deprecated function 'sap.ui.component.load'");
 
 			done();
 		}.bind(this), function(oError) {

@@ -468,10 +468,22 @@ sap.ui.define([
 				if (mComponents) {
 					for (var sName in mComponents) {
 						if (!mComponents[sName].lazy) {
-							Log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
-							sap.ui.requireSync("sap/ui/core/Component").load({
-								name: sName
-							});
+							// TODO: refactor component/library loading code within Manifest / Component
+							// Only load component if not (pre-)loaded already
+							// Usually the dependencies are already loaded beforehand within Component.create
+							var sControllerModule = sName.replace(/\./g, "/") + "/Component";
+							var iModuleState = sap.ui.loader._.getModuleState(sControllerModule + ".js");
+							if (iModuleState === -1 /* PRELOADED */) {
+								// Execute preloaded component controller module
+								sap.ui.requireSync(sControllerModule);
+							} else if (iModuleState === 0 /* INITIAL */) {
+								Log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
+								// This can't be migrated to "Component.load" as the contract is sync
+								sap.ui.requireSync("sap/ui/core/Component");
+								sap.ui.component.load({
+									name: sName
+								});
+							}
 						}
 					}
 				}
