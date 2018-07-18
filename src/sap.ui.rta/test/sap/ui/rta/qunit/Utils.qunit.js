@@ -87,11 +87,11 @@ function(
 		//ensure core init with its first rendering is done
 		var done = assert.async();
 		var fnExecuteTests = function () {
-			var oGroupElementWithBinding = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
-			var oGroupElementWithOneUnboundField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton");
-			var oGroupElementWithNoBinding = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton34");
-			var oGroupWithBindingElements = sap.ui.getCore().byId("Comp1---idMain1--Reversal");
-			var oGroupWithNoBindingElements = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
+			var oGroupElementWithBinding = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			var oGroupElementWithOneUnboundField = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.BoundButton");
+			var oGroupElementWithNoBinding = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.BoundButton34");
+			var oGroupWithBindingElements = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.Reversal");
+			var oGroupWithNoBindingElements = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument");
 
 			assert.equal(Utils.getBoundEntityType(oGroupElementWithBinding).name, "Header", "a field with binding then finds the entity type");
 			assert.equal(Utils.getBoundEntityType(oGroupElementWithOneUnboundField).name, "Header", "a field with partial binding then finds the entity type");
@@ -150,7 +150,7 @@ function(
 		var isServiceOutdatedStub = this.sandbox.stub(Access, "isServiceOutdated").returns(false);
 		var setServiceValidStub = this.sandbox.stub(Access, "setServiceValid");
 
-		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 		return Utils.isServiceUpToDate(oBoundControl).then(function(){
 			assert.ok(true, "then the service is recognized as up to date");
@@ -165,7 +165,7 @@ function(
 		this.sandbox.stub(Access, "isServiceOutdated").returns(true);
 		var setServiceValidStub = this.sandbox.stub(Access, "setServiceValid");
 
-		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 		sap.ui.getCore().getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption","RequestReload", function(){
 			assert.ok(true, "then the UI refresh is requested");
@@ -181,7 +181,7 @@ function(
 	QUnit.test("Given extensibility disabled when isCustomFieldAvailable is called", function(assert) {
 		this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(false));
 
-		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 		return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
 			assert.strictEqual(vResult, false, "then custom fields is disabled");
@@ -192,7 +192,7 @@ function(
 		this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
 		this.sandbox.stub(Access, "getBusinessContexts").returns(
 				Promise.resolve(JSON.parse(JSON.stringify(this.STUB_EXTENSIBILITY_BUSINESS_CTXT))));
-		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 		var that = this;
 		return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
@@ -213,7 +213,7 @@ function(
 	QUnit.test("Given extensibility enabled and non custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
 		this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
 		this.sandbox.stub(Access, "getBusinessContexts").returns(Promise.resolve());
-		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 		return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
 			assert.strictEqual(vResult, false, "then custom fields is disabled");
@@ -225,7 +225,7 @@ function(
 		this.sandbox.stub(Access, "getBusinessContexts").returns(
 				Promise.reject(new Error("some simulated error"))
 		);
-		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 		return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
 			assert.strictEqual(vResult, false, "then custom fields is disabled");
@@ -235,7 +235,7 @@ function(
 	QUnit.test("Given extensibility enabled and custom field logic throws error when isCustomFieldAvailable is called", function(assert) {
 		this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").returns(Promise.resolve(true));
 		this.sandbox.stub(Access, "getBusinessContexts").throws(new Error("some simulated error"));
-		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 		return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
 			assert.strictEqual(vResult, false, "then custom fields is disabled");

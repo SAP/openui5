@@ -2,32 +2,28 @@
 
 QUnit.config.autostart = false;
 sap.ui.require([
-	// Controls
-	// internal
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
+	'sap/ui/rta/command/CommandFactory',
+	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/fl/FakeLrepConnectorSessionStorage',
 	'sap/ui/fl/FakeLrepSessionStorage',
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/Device',
-	// should be last
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon'
 ], function(
 	RuntimeAuthoring,
 	Stack,
+	CommandFactory,
+	RtaQunitUtils,
 	FakeLrepConnectorSessionStorage,
 	FakeLrepSessionStorage,
 	Utils,
 	OverlayRegistry,
-	CommandFactory,
-	RtaQunitUtils,
 	Device,
-	sinon) {
+	sinon
+) {
 	"use strict";
 
 	QUnit.start();
