@@ -129,7 +129,9 @@ sap.ui.define([
 			this._applyPreset(aPresets[0]);
 		}
 
-		PresetsUtils.persistSelectionPresets();
+		if (PresetsUtils.isPersistingAllowed()) {
+			PresetsUtils.persistSelectionPresets();
+		}
 
 		this.oModel.setProperty("/selectionPresets", aPresets);
 	};
@@ -221,11 +223,11 @@ sap.ui.define([
 	 * Handles the import of the current file
 	 */
 	PresetsController.prototype.onImportFinalizePress = function () {
-		var oPresetOptions = this.oModel.getProperty("/currentImportData");
+		var oImportData = this.oModel.getProperty("/currentImportData");
 
-		this._importPreset(oPresetOptions);
+		this._importPreset(oImportData);
 
-		var successMessage = "The Rule Preset \"" + oPresetOptions.title + "\" was successfully imported.";
+		var successMessage = "The Rule Preset \"" + oImportData.title + "\" was successfully imported.";
 		if (!PresetsUtils.isPersistingAllowed()) {
 			successMessage += " This import can be stored for your next visit if you check "
 				+ "\"I agree to use local storage persistency\" from Support Assistant settings.";
@@ -375,10 +377,19 @@ sap.ui.define([
 	/**
 	 * Makes an import of a preset. Selects the newly imported preset
 	 * @private
-	 * @param {Object} oPresetOptions A valid preset options object
+	 * @param {Object} oImportData A valid preset import data
 	 */
-	PresetsController.prototype._importPreset = function (oPresetOptions) {
+	PresetsController.prototype._importPreset = function (oImportData) {
 		var aPresets = this.oModel.getProperty("/selectionPresets");
+
+		// do not import all data, only import what is expected to stay in the model
+		var oPresetOptions = {
+			"title": oImportData.title,
+			"description": oImportData.description,
+			"dateExported": oImportData.dateExported,
+			"version": oImportData.version,
+			"selections": oImportData.selections
+		};
 
 		aPresets.forEach(function (oDeselectPreset) {
 			oDeselectPreset.selected = false;
@@ -388,10 +399,6 @@ sap.ui.define([
 		aPresets.push(oPresetOptions);
 
 		this._applyPreset(oPresetOptions);
-
-		if (PresetsUtils.isPersistingAllowed) {
-			PresetsUtils.persistSelectionPresets();
-		}
 	};
 
 	/**
@@ -403,6 +410,10 @@ sap.ui.define([
 		this.oModel.setProperty("/selectionPresetsCurrent", oPresetOptions);
 
 		SelectionUtils.setSelectedRules(oPresetOptions.selections);
+
+		if (PresetsUtils.isPersistingAllowed()) {
+			PresetsUtils.persistSelectionPresets();
+		}
 	};
 
 	return PresetsController;

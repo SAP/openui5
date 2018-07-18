@@ -61,7 +61,7 @@ sap.ui.define([
 
 			this.model.setProperty("/selectionPresetsCurrent", oPreset);
 
-			if (PresetsUtils.isPersistingAllowed) {
+			if (PresetsUtils.isPersistingAllowed()) {
 				PresetsUtils.persistSelectionPresets();
 			}
 		},
@@ -89,6 +89,7 @@ sap.ui.define([
 		/**
 		 * Validates if the given import is in the correct format.
 		 * @param {Object} oImport The preset object to import
+		 * @return {boolean} Is the import data a valid rule preset file
 		 */
 		isValidSelectionImport: function (oImport) {
 			var bIsFileValid = true;
