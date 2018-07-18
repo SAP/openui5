@@ -2,11 +2,7 @@
 	* ${copyright}
 	*/
 
-sap.ui.define([
-	"sap/ui/fl/changeHandler/MoveControls"
-], function (
-	MoveControls
-) {
+sap.ui.define(["sap/ui/fl/changeHandler/MoveControls", "sap/ui/thirdparty/jquery"], function(MoveControls, jQuery) {
 	"use strict";
 
 	/**

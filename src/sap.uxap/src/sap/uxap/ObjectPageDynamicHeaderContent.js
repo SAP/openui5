@@ -4,17 +4,17 @@
 
 // Provides control sap.uxap.ObjectPageDynamicHeaderContent.
 sap.ui.define([
-    'jquery.sap.global',
-    './library',
-    "./ObjectPageDynamicHeaderContentRenderer"
+	'./library',
+	"./ObjectPageDynamicHeaderContentRenderer",
+	"sap/base/Log"
 ],
-	function(jQuery, library, ObjectPageDynamicHeaderContentRenderer) {
+	function(library, ObjectPageDynamicHeaderContentRenderer, Log) {
 		"use strict";
 
 		try {
 			sap.ui.getCore().loadLibrary("sap.f");
 		} catch (e) {
-			jQuery.sap.log.error("The control 'sap.uxap.ObjectPageDynamicHeaderContent' needs library 'sap.f'.");
+			Log.error("The control 'sap.uxap.ObjectPageDynamicHeaderContent' needs library 'sap.f'.");
 			throw (e);
 		}
 

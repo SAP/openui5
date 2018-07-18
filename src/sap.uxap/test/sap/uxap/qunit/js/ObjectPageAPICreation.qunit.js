@@ -186,9 +186,12 @@
 	QUnit.module("test scrollToSection API");
 
 	QUnit.test("Calling scrollToSection when OPL is not rendered should do nothing", function (assert) {
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+
 		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5),
 			oFirstSection = oObjectPage.getSections()[0],
-			oLoggerSpy = this.spy(jQuery.sap.log, "warning"),
+			oLoggerSpy = this.spy(Log, "warning"),
 			oComputeScrollPositionSpy = this.spy(oObjectPage, "_computeScrollPosition");
 
 		assert.ok(!oObjectPage.getDomRef(), "ObjectPage is not rendered");
