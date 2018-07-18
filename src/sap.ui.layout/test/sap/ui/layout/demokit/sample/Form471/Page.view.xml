@@ -7,8 +7,8 @@
 		<detailPages>
 			<Page
 				id="page"
-				showHeader="false" >
-				<footer>
+				showHeader="true" >
+				<customHeader>
 					<Bar>
 						<contentRight>
 							<Button id="edit" text="Edit" press="handleEditPress" />
@@ -16,7 +16,7 @@
 							<Button id="cancel" text="Cancel" visible="false" press="handleCancelPress" />
 						</contentRight>
 					</Bar>
-				</footer>
+				</customHeader>
 			</Page>
 		</detailPages>
 		<masterPages>
