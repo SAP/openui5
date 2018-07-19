@@ -46,18 +46,19 @@ sap.ui.define([
 								//activate press only for the icon, not for the whole input field
 								oEvent.cancelBubble();
 							}.bind(this)
-						}).addStyleClass("sapMInputValHelpInner sapMSFB sapMSFR");
+						}).addStyleClass("sapMInputValHelpInner sapMSFB sapMSFR sapMInputBaseIcon");
 						//add Icon to control tree
 						this.addDependent(this.__clearIcon);
 					}
 					// Create new div container
-					this.$().append('<div class="sapMInputValHelp inputClear" tabindex="-1"></div>');
+					this.$("vhi").before('<div class="sapMInputValHelp inputClear" tabindex="-1"></div>');
 					var oNode = this.$().find(".inputClear")[0];
 					// render icon into created div
 					var oRenderManager = sap.ui.getCore().createRenderManager();
 					oRenderManager.renderControl(this.__clearIcon);
 					oRenderManager.flush(oNode);
 					oRenderManager.destroy();
+					this.__clearIcon.$().attr("tabindex", "-1");
 				//this pointer needs to point to the searchField
 				}.bind(oSearchField),
 
