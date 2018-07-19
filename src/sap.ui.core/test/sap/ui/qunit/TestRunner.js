@@ -74,7 +74,9 @@
 
 				// check for an existing test page and check for test suite or page
 				jQuery.get(sTestPage).done(function(sData) {
-					if (/(window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/g.test(sData) || /(data-sap-ui-qunit-suite)/g.test(sData)) {
+					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
+							|| /data-sap-ui-qunit-suite/.test(sData)
+							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData)) ) {
 						var $frame = jQuery("<iframe>");
 						var that = this;
 						$frame.css("display", "none");
