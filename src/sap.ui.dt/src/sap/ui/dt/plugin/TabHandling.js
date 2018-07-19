@@ -3,7 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery", 'sap/ui/dt/Plugin', 'sap/ui/dt/Overlay'
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/dt/Plugin',
+	'sap/ui/dt/Overlay',
+	// jQuery custom selectors ":focusable"
+	"sap/ui/dom/jquery/Selectors"
 ], function(jQuery, Plugin, Overlay) {
 	"use strict";
 

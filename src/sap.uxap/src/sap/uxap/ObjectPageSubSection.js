@@ -19,7 +19,9 @@ sap.ui.define([
 	"sap/m/library",
 	"./ObjectPageSubSectionRenderer",
 	"sap/base/Log",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
 ], function(
 	jQuery,
 	Grid,

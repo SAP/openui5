@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/isPlainObject",
+	"sap/base/util/merge",
 	'./library'
 ],
 function(
@@ -37,7 +38,8 @@ function(
 	TaskManager,
 	Log,
 	jQuery,
-	isPlainObject
+	isPlainObject,
+	merge
 ) {
 	"use strict";
 
@@ -733,7 +735,7 @@ function(
 					this.getDesignTimeMetadataFor(oElement) instanceof ElementDesignTimeMetadata
 					? this.getDesignTimeMetadataFor(oElement)
 					: Util.curry(function (mMetadataExtension, mParentMetadata, oElement, mMetadata) {
-						mMetadata = jQuery.sap.extend(true, {}, mMetadata, mMetadataExtension);
+						mMetadata = merge({}, mMetadata, mMetadataExtension);
 
 						this._mMetadataOriginal = mMetadata;
 

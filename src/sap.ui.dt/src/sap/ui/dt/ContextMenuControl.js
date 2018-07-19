@@ -12,7 +12,9 @@ sap.ui.define([
 	'sap/m/VBox',
 	'sap/m/HBox',
 	'sap/m/Button',
-	'sap/m/FlexItemData'
+	'sap/m/FlexItemData',
+	// jQuery Plugin "rect"
+	"sap/ui/dom/jquery/rect"
 ], function (
 	jQuery,
 	library,
