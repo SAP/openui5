@@ -6,7 +6,9 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/Device',
-	'sap/ui/dt/Util'
+	'sap/ui/dt/Util',
+	// jQuery Plugin "zIndex"
+	"sap/ui/dom/jquery/zIndex"
 ],
 function(
 	jQuery,
