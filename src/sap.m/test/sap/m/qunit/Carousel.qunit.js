@@ -82,11 +82,16 @@
 	});
 
 	QUnit.test("#next()", function (assert) {
+		var done = assert.async();
 		// Act
 		this.oCarousel.next();
 
-		// Assert
-		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "The active page should be 'keyTestPage_2'");
+		// Wait for CSS animation to complete
+		setTimeout(function () {
+			// Assert
+			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "The active page should be 'keyTestPage_2'");
+			done();
+		}.bind(this), sinonClockTickValue);
 	});
 
 	QUnit.test("#previous()", function (assert) {
@@ -99,9 +104,12 @@
 			// Act
 			this.oCarousel.previous();
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_5", "The active page should be 'keyTestPage_5'");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_5", "The active page should be 'keyTestPage_5'");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -117,9 +125,12 @@
 			// Act
 			this.oCarousel.next();
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_1", "The active page should be 'keyTestPage_1'");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_1", "The active page should be 'keyTestPage_1'");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -135,9 +146,12 @@
 			// Act
 			this.oCarousel.previous();
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "The active page should be 'keyTestPage_6'");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "The active page should be 'keyTestPage_6'");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -298,10 +312,14 @@
 		setTimeout(function () {
 			// Act
 			this.oCarousel.next();
-			// Assert
-			assert.ok(bPageNewOK, "Old active page should be 'keyTestPage_2'");
-			assert.ok(bPageOldOK, "New active page should be 'keyTestPage_3'");
-			done();
+
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.ok(bPageNewOK, "Old active page should be 'keyTestPage_2'");
+				assert.ok(bPageOldOK, "New active page should be 'keyTestPage_3'");
+				done();
+			}, sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -319,12 +337,14 @@
 			// Act
 			this.oCarousel.setActivePage('keyTestPage_3');
 
-			// Assert
-			assert.ok(oChangePageSpy.calledOnce, "PageChanged fired once");
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				assert.ok(oChangePageSpy.calledOnce, "PageChanged fired once");
 
-			// Reset sinon spy
-			this.oCarousel._changePage.restore();
-			done();
+				// Reset sinon spy
+				this.oCarousel._changePage.restore();
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -347,11 +367,13 @@
 			// Act
 			this.oCarousel.next();
 
-			sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [3, 9]);
-
-			// Assert
-			assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, sTextBetweenNumbers, "Page indicator should show '3 " + sTextBetweenNumbers + " 9'");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [3, 9]);
+				assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, sTextBetweenNumbers, "Page indicator should show '3 " + sTextBetweenNumbers + " 9'");
+				done();
+			}, sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -385,7 +407,8 @@
 	QUnit.test("Should fire pageChanged only once even if it is invalidated meanwhile", function (assert) {
 		// Arrange
 		var callCount = 0,
-			that = this;
+			that = this,
+			done = assert.async();
 
 		// Act
 		this.oCarousel.attachPageChanged(shouldOnlyBeCalledOnce);
@@ -406,6 +429,8 @@
 
 			//Cleanup
 			that.oCarousel.destroy();
+
+			done();
 		}
 	});
 
@@ -494,9 +519,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage3", "active page is keyTestPage3");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage3", "active page is keyTestPage3");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -511,9 +539,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage3");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage3");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -528,9 +559,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -561,9 +595,13 @@
 		setTimeout(function () {
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT);
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-			done();
+
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -595,9 +633,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage3", "active page is keyTestPage3");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage3", "active page is keyTestPage3");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -629,9 +670,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.HOME);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -646,9 +690,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.END);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -663,9 +710,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, true);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -680,9 +730,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, true);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -697,9 +750,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -714,9 +770,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -731,9 +790,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.PAGE_UP);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -748,9 +810,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.PAGE_UP);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -765,9 +830,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, true);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -782,9 +850,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, true);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -799,9 +870,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -816,9 +890,13 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+				done();
+			}.bind(this), sinonClockTickValue);
+
 		}.bind(this), sinonClockTickValue);
 	});
 
@@ -832,9 +910,12 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.PAGE_DOWN);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
@@ -849,10 +930,13 @@
 			// Act
 			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.PAGE_DOWN);
 
-			// Assert
-			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-			this.oCarousel.destroy();
-			done();
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+				this.oCarousel.destroy();
+				done();
+			}.bind(this), sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});
