@@ -32,14 +32,19 @@ sap.ui.define([
 			"BusinessPartnerList('0100000000')?custom-option=value" : {
 				source : "BusinessPartnerList_0.json"
 			},
+			"Messages(0)" : {
+				source : "UnboundMessage_0.txt"
+			},
+			"Messages(2)" : {
+				source : "MessageLongtextAbsolute_2.txt"
+			},
 			"ProductList('HT-1000')/Name?custom-option=value" : {
 				headers : {
-					"sap-message" : JSON.stringify([{
+					"sap-messages" : JSON.stringify([{
 						"code" : "42",
 						"message" : "Example for an unbound message",
-						"severity" : "info",
-						"@Common.NumericMessageSeverity" : 3,
-						"@Common.LongtextUrl" : "//raw.githubusercontent.com/SAP/openui5/master/NOTICE.txt"}])
+						"numericSeverity" : 2,
+						"longtextUrl" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/Messages(0)"}])
 				},
 				source : "ProductList.json"
 			},
@@ -78,6 +83,9 @@ sap.ui.define([
 			},
 			"SalesOrderList('0500000001')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$filter=ItemPosition%20gt%20'0000000000'&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_1.json"
+			},
+			"SalesOrderList('0500000001')/Messages(1)" : {
+				source : "MessageLongtext_1.txt"
 			},
 			"SalesOrderList('0500000002')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 				source : "SalesOrderList_2.json"
@@ -148,7 +156,7 @@ sap.ui.define([
 			"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY%27/$metadata" : {
 				source : "VH_ProductCategory.xml"
 			},
-			"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY%27/H_EPM_PD_CATS_SH_SET?$skip=0&$top=20" : {
+			"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY%27/H_EPM_PD_CATS_SH_Set?$skip=0&$top=20" : {
 				source : "VH_ProductCategory.json"
 			},
 			"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata" : {

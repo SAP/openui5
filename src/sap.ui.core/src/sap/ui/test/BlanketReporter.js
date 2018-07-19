@@ -411,13 +411,16 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates the view.
+	 * Creates the view and places it at the given DIV.
 	 *
 	 * @param {sap.ui.model.json.JSONModel} oModel The model
-	 * @returns {sap.ui.core.mvc.XMLView} The view
+	 * @param {object} oDiv Some <div>
 	 */
-	function createView(oModel) {
-		return sap.ui.xmlview({viewName: "sap.ui.test.BlanketReporterUI", models: oModel});
+	function createViewAndPlaceAt(oModel, oDiv) {
+		XMLView.create({viewName: "sap.ui.test.BlanketReporterUI", models: oModel})
+			.then(function (oView) {
+				oView.placeAt(oDiv);
+			});
 	}
 
 	function convertToFile(sModule) {
@@ -473,18 +476,18 @@ sap.ui.define([
 			if (new UriParameters(window.location.href).get("testId")
 				|| aTestedModules && !aTestedModules.every(isSingleClass)) {
 				// do not fail due to coverage
-				createView(oModel).placeAt(oDiv);
+				createViewAndPlaceAt(oModel, oDiv);
 				return;
 			}
 
 			// make QUnit fail (indirectly) and show UI
 			if (oModel.getProperty("/lines/coverage") < iThreshold) {
-				createView(oModel).placeAt(oDiv);
+				createViewAndPlaceAt(oModel, oDiv);
 				throw new Error("Line coverage too low! "
 					+ oModel.getProperty("/lines/coverage") + " < " + iThreshold);
 			}
 			if (oModel.getProperty("/branches/coverage") < iThreshold) {
-				createView(oModel).placeAt(oDiv);
+				createViewAndPlaceAt(oModel, oDiv);
 				throw new Error("Branch coverage too low! "
 					+ oModel.getProperty("/branches/coverage") + " < " + iThreshold);
 			}
@@ -493,7 +496,7 @@ sap.ui.define([
 			oDiv.innerHTML = '<a href="#coverage" id="coverage">Blanket Code Coverage: OK</a>';
 			jQuery(oDiv).one("click", function (oMouseEvent) {
 				jQuery(oDiv).fadeOut(function () {
-					createView(oModel).placeAt(getDiv());
+					createViewAndPlaceAt(oModel, getDiv());
 				});
 			});
 		}

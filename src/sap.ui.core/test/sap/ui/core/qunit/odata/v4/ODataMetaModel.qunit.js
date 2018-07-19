@@ -4198,7 +4198,9 @@ sap.ui.require([
 				oValueListMappings2 = {
 					"foo" : {CollectionPath : "foo"}
 				},
-				oValueListMappingsBar = {},
+				oValueListMappingsBar = {
+					"bar" : {CollectionPath : "bar"}
+				},
 				oValueListModel1 = {sServiceUrl : sMappingUrl1},
 				oValueListModel2 = {sServiceUrl : sMappingUrl2},
 				oValueListModelBar = {sServiceUrl : sMappingUrlBar};
@@ -4343,7 +4345,9 @@ sap.ui.require([
 				sPropertyPath = "/VH_BusinessPartnerSet('42')/Country";
 
 			if (bDuplicate) {
-				oAnnotations["@com.sap.vocabularies.Common.v1.ValueListMapping#bar"] = {};
+				oAnnotations["@com.sap.vocabularies.Common.v1.ValueListMapping#bar"] = {
+					"CollectionPath" : "bar"
+				};
 			}
 			this.mock(oModel.getMetaModel()).expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
@@ -4446,57 +4450,164 @@ sap.ui.require([
 	});
 
 	// *********************************************************************************************
-	QUnit.test("requestValueListInfo: same qualifier in reference and local", function (assert) {
-		var sMappingUrl = "../ValueListService/$metadata",
-			oProperty = {
-				"$kind" : "Property"
-			},
-			oMetadata = {
-				"$EntityContainer" : "zui5_epm_sample.Container",
-				"zui5_epm_sample.Container" : {
-					"$kind" : "EntityContainer",
-					"ProductList" : {
-						"$kind" : "EntitySet",
-						"$Type" : "zui5_epm_sample.Product"
+	[undefined, "Bar", "value.list.Container/Bar"].forEach(function (sCollectionPath) {
+		QUnit.test("requestValueListInfo: same qualifier in reference and local, CollectionPath="
+				+ sCollectionPath, function (assert) {
+			var sMappingUrl = "../ValueListService/$metadata",
+				oProperty = {
+					"$kind" : "Property"
+				},
+				oMetadata = {
+					"$EntityContainer" : "zui5_epm_sample.Container",
+					"zui5_epm_sample.Container" : {
+						"$kind" : "EntityContainer",
+						"ProductList" : {
+							"$kind" : "EntitySet",
+							"$Type" : "zui5_epm_sample.Product"
+						}
+					},
+					"zui5_epm_sample.Product" : {
+						"$kind" : "Entity",
+						"Category" : oProperty
+					},
+					"$Annotations" : {
+						"zui5_epm_sample.Product/Category" : {
+							"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl],
+							"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : {
+								"CollectionPath" : sCollectionPath
+							}
+						}
 					}
 				},
-				"zui5_epm_sample.Product" : {
-					"$kind" : "Entity",
-					"Category" : oProperty
+				oModel = new ODataModel({
+					serviceUrl : "/Foo/ValueListService/",
+					synchronizationMode : "None"
+				}),
+				oMetaModelMock = this.mock(oModel.getMetaModel()),
+				sPropertyPath = "/ProductList('HT-1000')/Category",
+				oValueListMetaModel = {
+					fetchObject : function () {}
 				},
-				"$Annotations" : {
-					"zui5_epm_sample.Product/Category" : {
-						"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl],
-						"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : {}
+				oValueListModel = {
+					getMetaModel : function () { return oValueListMetaModel; },
+					sServiceUrl : sMappingUrl
+				};
+
+			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+				.returns(SyncPromise.resolve(oMetadata));
+			oMetaModelMock.expects("getOrCreateValueListModel")
+				.withExactArgs(sMappingUrl)
+				.returns(oValueListModel);
+			oMetaModelMock.expects("fetchValueListMappings")
+				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample",
+					sinon.match.same(oProperty))
+				.returns(Promise.resolve({"foo" : {
+					"CollectionPath" : "Bar"
+				}}));
+			this.mock(oValueListModel.getMetaModel()).expects("fetchObject")
+				.exactly(sCollectionPath === "value.list.Container/Bar" ? 1 : 0)
+				.withExactArgs("/$EntityContainer")
+				.returns(SyncPromise.resolve("value.list.Container"));
+
+			// code under test
+			return oModel.getMetaModel().requestValueListInfo(sPropertyPath)
+				.then(function (oValueListInfo) {
+					assert.strictEqual(sCollectionPath, "value.list.Container/Bar");
+					assert.strictEqual(oValueListInfo.foo.$model, oValueListModel);
+					assert.strictEqual(oValueListInfo.foo.CollectionPath, "Bar");
+				}, function (oError) {
+					assert.notStrictEqual(sCollectionPath, "value.list.Container/Bar");
+					assert.strictEqual(oError.message,
+						"Annotations 'com.sap.vocabularies.Common.v1.ValueListMapping' with "
+						+ "identical qualifier 'foo' for property " + sPropertyPath + " in "
+						+ sMappingUrl + " and " + oModel.sServiceUrl + "$metadata");
+				});
+		});
+	});
+
+	// *********************************************************************************************
+	[false, true].forEach(function (bFound) {
+		QUnit.test("requestValueListInfo: qualified mapping in data service, found=" + bFound,
+				function (assert) {
+			var sEntityContainer = bFound ? "value.list.Container" : "unknown.Container",
+				sCollectionPath = sEntityContainer + "/VH_CountrySet",
+				sMappingUrl = "../ValueListService1/$metadata",
+				oModel = new ODataModel({
+					serviceUrl : "/Foo/DataService/",
+					synchronizationMode : "None"
+				}),
+				oMetaModelMock = this.mock(oModel.getMetaModel()),
+				oProperty = {
+					"$kind" : "Property"
+				},
+				sPropertyPath = "/ProductList('HT-1000')/Category",
+				oMetadata = {
+					"$EntityContainer" : "zui5_epm_sample.Container",
+					"zui5_epm_sample.Product" : {
+						"$kind" : "Entity",
+						"Category" : oProperty
+					},
+					"$Annotations" : {
+						"zui5_epm_sample.Product/Category" : {
+							"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl],
+							"@com.sap.vocabularies.Common.v1.ValueListMapping#foo" : {
+								"CollectionPath" : sCollectionPath
+							}
+						}
+					},
+					"zui5_epm_sample.Container" : {
+						"ProductList" : {
+							"$kind" : "EntitySet",
+							"$Type" : "zui5_epm_sample.Product"
+						}
 					}
-				}
-			},
-			oModel = new ODataModel({
-				serviceUrl : "/Foo/ValueListService/",
-				synchronizationMode : "None"
-			}),
-			oMetaModelMock = this.mock(oModel.getMetaModel()),
-			sPropertyPath = "/ProductList('HT-1000')/Category",
-			oValueListModel = {};
+				},
+				oValueListMappings = {
+					"" : {CollectionPath : ""}
+				},
+				oValueListMetaModel = {
+					fetchObject : function () {}
+				},
+				oValueListModel = {
+					getMetaModel : function () { return oValueListMetaModel; },
+					sServiceUrl : sMappingUrl
+				};
 
-		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
-			.returns(SyncPromise.resolve(oMetadata));
-		oMetaModelMock.expects("getOrCreateValueListModel")
-			.withExactArgs(sMappingUrl)
-			.returns(oValueListModel);
-		oMetaModelMock.expects("fetchValueListMappings")
-			.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample",
-				sinon.match.same(oProperty))
-			.returns(Promise.resolve({"foo" : {}}));
+			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+				.returns(SyncPromise.resolve(oMetadata));
+			oMetaModelMock.expects("getOrCreateValueListModel")
+				.withExactArgs(sMappingUrl)
+				.returns(oValueListModel);
+			oMetaModelMock.expects("fetchValueListMappings")
+				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample",
+					sinon.match.same(oProperty))
+				.returns(Promise.resolve(oValueListMappings));
+			this.mock(oValueListModel.getMetaModel()).expects("fetchObject")
+				.withExactArgs("/$EntityContainer")
+				.returns(SyncPromise.resolve("value.list.Container"));
 
-		// code under test
-		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError.message,
-				"Annotations 'com.sap.vocabularies.Common.v1.ValueListMapping' with identical "
-				+ "qualifier 'foo' for property " + sPropertyPath + " in "
-				+ oModel.sServiceUrl + "$metadata and " + sMappingUrl);
+			// code under test
+			return oModel.getMetaModel().requestValueListInfo(sPropertyPath)
+				.then(function (oResult) {
+					assert.ok(bFound);
+					assert.deepEqual(oResult, {
+						"" : {
+							$model : oValueListModel,
+							CollectionPath : ""
+						},
+						"foo" : {
+							$model : oValueListModel,
+							CollectionPath : "VH_CountrySet"
+						}
+					});
+					assert.strictEqual(oMetadata.$Annotations["zui5_epm_sample.Product/Category"]
+							["@com.sap.vocabularies.Common.v1.ValueListMapping#foo"].CollectionPath,
+						"value.list.Container/VH_CountrySet");
+				}, function (oError) {
+					assert.notOk(bFound);
+					assert.strictEqual(oError.message, "No model found for CollectionPath "
+						+ sCollectionPath);
+				});
 		});
 	});
 

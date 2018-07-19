@@ -1219,6 +1219,7 @@ sap.ui.define([
 	 *   Maps a resource path with key predicates to an array of messages. The messages have at
 	 *   least following properties:
 	 *   {string} code - The error code
+	 *   {string} longtextUrl - The URL for the message's long text relative the service URL
 	 *   {string} message - The message text
 	 *   {number} numericSeverity
 	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
@@ -1244,10 +1245,16 @@ sap.ui.define([
 			mPathToODataMessages[sKeyPredicateTreePath].forEach(function (oRawMessage) {
 				var sTarget = sDataBindingPath
 						+ sKeyPredicateTreePath
-						+ (oRawMessage.target ? "/" + oRawMessage.target : "");
+						+ (oRawMessage.target ? "/" + oRawMessage.target : ""),
+					sDescriptionUrl;
 
+				if (oRawMessage.longtextUrl) {
+					sDescriptionUrl = _Helper.makeAbsolute(oRawMessage.longtextUrl,
+						that.sServiceUrl);
+				}
 				aNewMessages.push(new Message({
 					code : oRawMessage.code,
+					descriptionUrl : sDescriptionUrl,
 					message : oRawMessage.message,
 					persistent : oRawMessage.transient,
 					processor : that,
@@ -1335,7 +1342,7 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the request whose response contained the messages
 	 * @param {object[]} [aMessages]
-	 *   The array of messages as contained in the <code>sap-message</code> response header
+	 *   The array of messages as contained in the <code>sap-messages</code> response header
 	 *
 	 * @private
 	 */

@@ -4,6 +4,7 @@
 
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
@@ -14,14 +15,14 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"./Context",
 	"./lib/_AggregationCache",
+	"./lib/_AggregationHelper",
 	"./lib/_Cache",
 	"./lib/_GroupLock",
 	"./lib/_Helper",
-	"./ODataParentBinding",
-	"sap/base/Log"
-], function (SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding, Sorter,
-		OperationMode, Context, _AggregationCache, _Cache, _GroupLock, _Helper, asODataParentBinding,
-		Log) {
+	"./ODataParentBinding"
+], function (Log, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
+		Sorter, OperationMode, Context, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
+		_Helper, asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -61,6 +62,7 @@ sap.ui.define([
 	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested', 'DataStateChange'
 	 *   and 'refresh'. For other events, an error is thrown.
 	 * @extends sap.ui.model.ListBinding
+	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
@@ -249,11 +251,11 @@ sap.ui.define([
 				throw new Error("Cannot combine $$aggregation and $apply");
 			}
 			oAggregation = _Helper.clone(mParameters.$$aggregation);
-			this.mQueryOptions.$apply = _Helper.buildApply(oAggregation);
+			this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation).$apply;
 			this.oAggregation = oAggregation;
 		}
 
-		this.mCacheByContext = undefined;
+		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(sChangeReason);
 	};
@@ -543,10 +545,18 @@ sap.ui.define([
 			this.aContexts[-1].destroy();
 		}
 		this.oModel.bindingDestroyed(this);
+		this.removeReadGroupLock();
+		this.mAggregatedQueryOptions = undefined;
+		this.oAggregation = undefined;
+		this.aApplicationFilters = undefined;
 		this.oCachePromise = undefined;
 		this.oContext = undefined;
 		this.aContexts = undefined;
+		this.aFilters = undefined;
 		this.oHeaderContext = undefined;
+		this.mPreviousContextsByPath = undefined;
+		this.aPreviousData = undefined;
+		this.aSorters = undefined;
 		ListBinding.prototype.destroy.apply(this);
 	};
 
@@ -567,7 +577,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
 		var bAggregate = this.oAggregation && (this.oAggregation.groupLevels.length
-				|| _Helper.hasMinOrMax(this.oAggregation.aggregate));
+				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate));
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
@@ -631,8 +641,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchFilter = function (oContext, sStaticFilter) {
-		var aNonEmptyFilters = [],
-			that = this;
+		var that = this;
 
 		/**
 		 * Concatenates the given $filter values using the given separator; the resulting
@@ -693,37 +702,43 @@ sap.ui.define([
 		 * grouped with a logical 'or'.
 		 *
 		 * @param {sap.ui.model.Filter[]} aFilters The non-empty array of filters
-		 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
+		 * @param {boolean} bAnd Whether the filters are combined with 'and'; combined with
 		 *   'or' if not given
+		 * @param {boolean} bGroup Whether filters for the same path are grouped (combined with
+		 *   'or')
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
 		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value
 		 */
-		function fetchArrayFilter(aFilters, bAnd, mLambdaVariableToPath) {
+		function fetchArrayFilter(aFilters, bAnd, bGroup, mLambdaVariableToPath) {
 			var aFilterPromises = [],
 				mFiltersByPath = {};
 
-			aFilters.forEach(function (oFilter) {
-				mFiltersByPath[oFilter.sPath] = mFiltersByPath[oFilter.sPath] || [];
-				mFiltersByPath[oFilter.sPath].push(oFilter);
-			});
+			if (bGroup) {
+				aFilters.forEach(function (oFilter) {
+					if (oFilter.sPath) {
+						mFiltersByPath[oFilter.sPath] = mFiltersByPath[oFilter.sPath] || [];
+						mFiltersByPath[oFilter.sPath].push(oFilter);
+					}
+				});
+			}
 			aFilters.forEach(function (oFilter) {
 				var aFiltersForPath;
-
 				if (oFilter.aFilters) { // array filter
-					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd,
+					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd, false,
 						mLambdaVariableToPath).then(function (sArrayFilter) {
 							return "(" + sArrayFilter + ")";
 						})
 					);
-					return;
+				} else if (bGroup) {
+					aFiltersForPath = mFiltersByPath[oFilter.sPath];
+					if (aFiltersForPath) { // filter group for path of oFilter not processed yet
+						delete mFiltersByPath[oFilter.sPath];
+						aFilterPromises.push(
+							fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
+					}
+				} else {
+					aFilterPromises.push(fetchGroupFilter([oFilter], mLambdaVariableToPath));
 				}
-				// single filter
-				aFiltersForPath = mFiltersByPath[oFilter.sPath];
-				if (!aFiltersForPath) { // filter group for path of oFilter already processed
-					return;
-				}
-				delete mFiltersByPath[oFilter.sPath];
-				aFilterPromises.push(fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
 			});
 
 			return SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
@@ -775,7 +790,7 @@ sap.ui.define([
 							= replaceLambdaVariables(oGroupFilter.sPath, mLambdaVariableToPath);
 
 						return (oCondition.aFilters
-								? fetchArrayFilter(oCondition.aFilters, oCondition.bAnd,
+								? fetchArrayFilter(oCondition.aFilters, oCondition.bAnd, false,
 									mLambdaVariableToPath)
 								: fetchGroupFilter([oCondition], mLambdaVariableToPath)
 							).then(function (sFilterValue) {
@@ -810,9 +825,11 @@ sap.ui.define([
 		}
 
 		return SyncPromise.all([
-			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, {}),
-			fetchArrayFilter(this.aFilters, /*bAnd*/true, {})
+			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, /*bGroup*/true, {}),
+			fetchArrayFilter(this.aFilters, /*bAnd*/true, /*bGroup*/true, {})
 		]).then(function (aFilterValues) {
+			var aNonEmptyFilters = [];
+
 			if (aFilterValues[0]) {
 				aNonEmptyFilters.push(aFilterValues[0]);
 			}
@@ -914,7 +931,7 @@ sap.ui.define([
 		} else {
 			this.aApplicationFilters = aFilters;
 		}
-		this.mCacheByContext = undefined;
+		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Filter);
 
@@ -1385,7 +1402,7 @@ sap.ui.define([
 		this.createReadGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
 			if (oCache) {
-				that.mCacheByContext = undefined;
+				that.removeCachesAndMessages();
 				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
@@ -1633,9 +1650,9 @@ sap.ui.define([
 				+ "'");
 		}
 		oAggregation = _Helper.clone(oAggregation);
-		this.mQueryOptions.$apply = _Helper.buildApply(oAggregation);
+		this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation).$apply;
 		this.oAggregation = oAggregation;
-		this.mCacheByContext = undefined;
+		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Change);
 	};
@@ -1724,7 +1741,7 @@ sap.ui.define([
 		}
 
 		this.aSorters = _Helper.toArray(vSorters);
-		this.mCacheByContext = undefined;
+		this.removeCachesAndMessages();
 		this.createReadGroupLock(this.getGroupId(), true);
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
@@ -1821,7 +1838,7 @@ sap.ui.define([
 			}
 		});
 		this.oAggregation = oAggregation; // Note: needed by #doCreateCache!
-		this.changeParameters({$apply : _Helper.buildApply(oAggregation)});
+		this.changeParameters(_AggregationHelper.buildApply(oAggregation));
 		this.bHasAnalyticalInfo = true;
 		if (bHasMinMax) {
 			return {

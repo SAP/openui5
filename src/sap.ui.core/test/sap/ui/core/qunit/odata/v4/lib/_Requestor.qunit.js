@@ -38,7 +38,7 @@ sap.ui.require([
 	 *   the XHR's status as text
 	 * @param {object} mResponseHeaders
 	 *   the header attributes of the response; supported header attributes are "Content-Type",
-	 *   "DataServiceVersion", "OData-Version", "sap-message" and "X-CSRF-Token" all with default
+	 *   "DataServiceVersion", "OData-Version", "sap-messages" and "X-CSRF-Token" all with default
 	 *   value <code>null</code>; if no response headers are given at all the default value for
 	 *   "OData-Version" is "4.0";
 	 * @returns {object}
@@ -61,8 +61,8 @@ sap.ui.require([
 						return mResponseHeaders["DataServiceVersion"] || null;
 					case "OData-Version":
 						return mResponseHeaders["OData-Version"] || null;
-					case "sap-message":
-						return mResponseHeaders["sap-message"] || null;
+					case "sap-messages":
+						return mResponseHeaders["sap-messages"] || null;
 					case "X-CSRF-Token":
 						return mResponseHeaders["X-CSRF-Token"] || null;
 					default:
@@ -305,7 +305,7 @@ sap.ui.require([
 						jqXHR = createMock(assert, oResponsePayload, "OK", {
 							"Content-Type" : "application/json",
 							"OData-Version" : "4.0",
-							"sap-message" : "[{code : 42}]"
+							"sap-messages" : "[{code : 42}]"
 						});
 					} else {
 						jqXHR = new jQuery.Deferred();
@@ -1240,14 +1240,14 @@ sap.ui.require([
 		response : undefined, method : "DELETE"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("submitBatch: report unbound messages, " + i, function (assert) {
-			var mHeaders = {"sap-message" : {}},
+			var mHeaders = {"sap-messages" : {}},
 				oRequestor = _Requestor.create("/Service/", oModelInterface),
 				oRequestorMock = this.mock(oRequestor),
 				oRequestPromise = oRequestor.request(oFixture.method, "Products(42)",
 					new _GroupLock("group1"));
 
 			oRequestorMock.expects("reportUnboundMessages")
-				.withExactArgs("Products(42)", sinon.match.same(mHeaders["sap-message"]));
+				.withExactArgs("Products(42)", sinon.match.same(mHeaders["sap-messages"]));
 			oRequestorMock.expects("sendBatch") // arguments don't matter
 				.resolves([createResponse(oFixture.response, mHeaders)]);
 
@@ -1441,7 +1441,7 @@ sap.ui.require([
 					assert.ok(sMessage !== null ? true : false, "unexpected error");
 					assert.ok(oError instanceof Error);
 					assert.strictEqual(oError.message,
-						"Unexpected 'sap-message' response header for batch request");
+						"Unexpected 'sap-messages' response header for batch request");
 				});
 		});
 	});

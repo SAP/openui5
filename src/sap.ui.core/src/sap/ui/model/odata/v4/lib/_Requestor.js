@@ -773,6 +773,7 @@ sap.ui.define([
 	 *   The path is relative to the given <code>sResourcePath</code>.
 	 *   The messages have at least the following properties:
 	 *   {string} code - The error code
+	 *   {string} longtextUrl - The URL for the message's long text relative the service URL
 	 *   {string} message - The message text
 	 *   {number} numericSeverity - The numeric message severity (1 for "success", 2 for "info",
 	 *      3 for "warning" and 4 for "error")
@@ -799,7 +800,7 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the request whose response contained the messages
 	 * @param {string} [sMessages]
-	 *   The messages in the serialized form as contained in the sap-message response header
+	 *   The messages in the serialized form as contained in the sap-messages response header
 	 */
 	Requestor.prototype.reportUnboundMessages = function (sResourcePath, sMessages) {
 		this.oModelInterface.fnReportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
@@ -925,7 +926,7 @@ sap.ui.define([
 			jQuery.extend(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
 		).then(function (oResponse) {
 			if (oResponse.messages !== null) {
-				throw new Error("Unexpected 'sap-message' response header for batch request");
+				throw new Error("Unexpected 'sap-messages' response header for batch request");
 			}
 			return _Batch.deserializeBatchResponse(oResponse.contentType, oResponse.body);
 		});
@@ -979,7 +980,7 @@ sap.ui.define([
 					fnResolve({
 						body : oResponse,
 						contentType : jqXHR.getResponseHeader("Content-Type"),
-						messages : jqXHR.getResponseHeader("sap-message"),
+						messages : jqXHR.getResponseHeader("sap-messages"),
 						resourcePath : sResourcePath
 					});
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
@@ -1080,13 +1081,13 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
-						that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-message"]);
+						that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-messages"]);
 						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}
 				} else {
-					that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-message"]);
+					that.reportUnboundMessages(vRequest.url, vResponse.headers["sap-messages"]);
 					vRequest.$resolve();
 				}
 			});
@@ -1257,7 +1258,7 @@ sap.ui.define([
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
 		 * @param {function (object[])} oModelInterface.fnReportUnboundMessages
-		 *   A function to report unbound OData messages contained in the <code>sap-message</code>
+		 *   A function to report unbound OData messages contained in the <code>sap-messages</code>
 		 *   response header
 		 * @param {object} [mHeaders={}]
 		 *   Map of default headers; may be overridden with request-specific headers; certain
