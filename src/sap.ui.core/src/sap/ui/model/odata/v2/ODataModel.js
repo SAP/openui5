@@ -2751,7 +2751,7 @@ sap.ui.define([
 
 		function requestToken(sRequestType, fnError) {
 			// trigger a read to the service url to fetch the token
-			var oRequest = that._createRequest(sUrl, sRequestType, that._getHeaders(false, true), null, null, !!bAsync);
+			var oRequest = that._createRequest(sUrl, sRequestType, that._getHeaders(undefined, true), null, null, !!bAsync);
 			oRequest.headers["x-csrf-token"] = "Fetch";
 			return that._request(oRequest, handleSuccess, fnError, undefined, undefined, that.getServiceMetadata());
 		}
@@ -5183,6 +5183,7 @@ sap.ui.define([
 				}
 			});
 		}
+		//The 'sap-cancel-on-close' header marks the OData request as cancelable. This helps to save resources at the back-end.
 		return jQuery.extend({'sap-cancel-on-close': !!bCancelOnClose}, this.mCustomHeaders, mCheckedHeaders, this.oHeaders);
 	};
 

@@ -923,4 +923,33 @@ function runODataAnnotationsV2Tests() {
 	};
 
 	QUnit.test("Access to ETag header which is not set", fnTestNoETag);
+
+	QUnit.module("sap-cancel-on-close header handling");
+
+	var fnCheckHeader = function(bCancelOnClose, bExpectedValue){
+		return function(assert){
+			var done = assert.async();
+			var mService = aServices[0];
+
+			var oModel = new sap.ui.model.odata.v2.ODataModel(mService.service, {
+				headers: {"sap-cancel-on-close": bCancelOnClose},
+				annotationURI: mService.annotations,
+				skipMetadataAnnotationParsing: false
+			});
+
+			var check = function(event, jqXHR, ajaxOptions){
+				jQuery(document).unbind("ajaxSuccess", check);
+				assert.strictEqual(ajaxOptions.headers["sap-cancel-on-close"], bExpectedValue, "Header was set correctly.");
+				done();
+			};
+			jQuery(document).bind("ajaxSuccess", check);
+		};
+	};
+
+	QUnit.test("Default true value", fnCheckHeader(undefined, true));
+	QUnit.test("Set to false via model header parameter", fnCheckHeader(false, false));
+	QUnit.test("Set to true via model header parameter", fnCheckHeader(true, true));
+
 }
+
+

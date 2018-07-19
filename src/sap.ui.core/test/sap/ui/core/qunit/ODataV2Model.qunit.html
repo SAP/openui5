@@ -6500,7 +6500,6 @@
 		this.oModel.attachRequestCompleted(function(oRequest){
 				assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], false, "sap-cancel-on-close header was set correctly on single request.");
 				this.oModel.refreshSecurityToken(function(){
-					debugger;
 					assert.strictEqual(this.spy.getCalls()[2].args[0].method, "HEAD", "Security token request found.");
 					assert.equal(this.spy.getCalls()[2].args[0].headers["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on security token request.");
 					done();
