@@ -530,5 +530,14 @@ sap.ui.define([
 		return iIndex;
 	};
 
+	/**
+	 * Clears variant controller map
+	 *
+	 * @public
+	 */
+	VariantController.prototype.resetMap = function () {
+		this._mVariantManagement = {};
+	};
+
 	return VariantController;
 }, true);

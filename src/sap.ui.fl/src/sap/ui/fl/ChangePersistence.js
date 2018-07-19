@@ -195,6 +195,7 @@ sap.ui.define([
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
 		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
 			var oComponent = mPropertyBag && mPropertyBag.oComponent;
+
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
 			}
@@ -237,10 +238,14 @@ sap.ui.define([
 				}
 			} else if (Utils.isLayerFilteringRequired() && !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter)) {
 				//If layer filtering required, excludes changes in higher layer than the max layer
-				aChanges = aChanges.filter(this._filterChangeForMaxLayer);
+				aChanges = aChanges.filter(this._filterChangeForMaxLayer.bind(this));
 				if (!bIncludeControlVariants && bVariantChangesExist) {
 					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, true);
 				}
+			} else if (this._bUserLayerChangesExist && mPropertyBag && mPropertyBag.ignoreMaxLayerParameter) {
+				// ignoreMaxLayerParameter = true is set from rta.stop(), to check if reload neeeds to be performed
+				delete this._bUserLayerChangesExist;
+				return "userLevelVariantChangesExist";
 			}
 
 			if (bIncludeControlVariants) {
@@ -285,7 +290,13 @@ sap.ui.define([
 	};
 
 	ChangePersistence.prototype._filterChangeForMaxLayer = function(oChangeContent) {
-		return !Utils.isOverMaxLayer(oChangeContent.layer);
+		if (Utils.isOverMaxLayer(oChangeContent.layer)) {
+			if (oChangeContent.layer === "USER" && !this._bUserLayerChangesExist) {
+				this._bUserLayerChangesExist = true;
+			}
+			return false;
+		}
+		return true;
 	};
 
 	ChangePersistence.prototype._filterChangeForCurrentLayer = function(sLayer, oChangeContent) {
@@ -298,7 +309,7 @@ sap.ui.define([
 		var fnFilterFunction = function () { return true; };
 		if (bFilterMaxLayer) {
 			// filter variants for max layer / current layer
-			fnFilterFunction = this._filterChangeForMaxLayer;
+			fnFilterFunction = this._filterChangeForMaxLayer.bind(this);
 		} else if (typeof sCurrentLayer === "string" && sCurrentLayer !== "") {
 			// filter variants for current layer
 			fnFilterFunction = this._filterChangeForCurrentLayer.bind(this, sCurrentLayer);
