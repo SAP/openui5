@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/base/util/array/uniqueSort",
 	"sap/base/util/uid",
+	'sap/ui/performance/trace/initTraces',
 	'sap/ui/events/jquery/EventSimulation',
 	'jquery.sap.sjax'
 ],
@@ -71,13 +72,17 @@ sap.ui.define([
 		ObjectPath,
 		Version,
 		uniqueSort,
-		uid
+		uid,
+		initTraces
 		/* ,EventSimulation, jQuerySapSjax */
 	) {
 
 	"use strict";
 
 	/*global Promise */
+
+	// Initialize SAP Passport or FESR
+	initTraces();
 
 	// share the rendering log with the UIArea
 	var oRenderLog = UIArea._oRenderLog;
