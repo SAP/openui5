@@ -849,6 +849,127 @@
 					this.clock.tick(350);
 				});
 
+				QUnit.module("Clear functionality", {
+					beforeEach : function () {
+
+						//arrange
+						sinon.config.useFakeTimers = true;
+						this.oSelectDialog = new sap.m.SelectDialog("clearButtonSelectDialog", {
+						title: "Very very very very very very very very long title",
+						multiSelect : true,
+						rememberSelections: true,
+						contentWidth: "200px",
+						growing: false
+						});
+
+						this.mockupData = generateData();
+						bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
+
+						this.oSelectDialog1 = new sap.m.SelectDialog("clearButtonSelectDialog1", {
+						title: "Very very very very very very very very long title",
+						multiSelect : true,
+						rememberSelections: true,
+						contentWidth: "200px",
+						growing: false
+						});
+
+						bindItems(this.oSelectDialog1, { oData: {
+							items : [
+								{
+									Title : "Title1",
+									Description: "Description1",
+									Selected: false
+								}, {
+									Title : "Title2",
+									Description: "Description2",
+									Selected: false
+								}, {
+									Title : "Title3",
+									Description: "Description3",
+									Selected: false
+								}
+							]
+						}, path: "/items", template: createTemplateListItem() });
+					},
+					afterEach : function () {
+
+						//cleanup
+						sinon.config.useFakeTimers = false;
+						this.oSelectDialog.destroy();
+						delete this.mockupData;
+						this.oSelectDialog1.destroy();
+					}
+				});
+
+			QUnit.test("Initial loading with selected items from previous selection", function(assert) {
+				this.oSelectDialog.open();
+
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(500);
+
+				//assert
+				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), true, 'Clear button should be enabled');
+			});
+
+			QUnit.test("Initial loading without selected items from previous selection", function(assert) {
+				this.oSelectDialog1.open();
+
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(500);
+
+				//assert
+				assert.equal(this.oSelectDialog1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
+			});
+
+			QUnit.test("Removing selection should disable button", function(assert) {
+				this.oSelectDialog.open();
+
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(500);
+
+				//assert
+				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), true, 'Clear button should be enabled');
+
+				//arrange
+				this.oSelectDialog._removeSelection();
+				this.oSelectDialog._updateSelectionIndicator();
+
+				//assert
+				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), false, 'Clear button should be disabled');
+			});
+
+			QUnit.test("Adding selection should enable button", function(assert) {
+				this.oSelectDialog1.open();
+
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(500);
+
+				//assert
+				assert.equal(this.oSelectDialog1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
+
+				//arrange
+				this.oSelectDialog1._oList.getItems()[1].setSelected(true);
+				this.oSelectDialog1._updateSelectionIndicator();
+
+				assert.equal(this.oSelectDialog1._getClearButton().getEnabled(), true, 'Clear button should be enabled');
+			});
+
+			QUnit.test("Clicking on enabled 'Clear' button should clear selection", function(assert) {
+				this.oSelectDialog.open();
+
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(500);
+
+				//assert
+				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), true, 'Clear button should be enabled');
+
+				//arrange
+				this.oSelectDialog._getClearButton().firePress();
+
+				//assert
+				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), false, 'Clear button should be disabled');
+				assert.equal(this.oSelectDialog._oList.getSelectedItems().length, 0, 'There should be no selected items');
+			});
 			})();
 		</script>
 	</head>

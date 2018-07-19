@@ -348,9 +348,21 @@ function(
 			]
 		});
 
+		//store a reference to the dialog header
+		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
+			contentMiddle: [
+				new sap.m.Title(this.getId()  + "-dialog-title", {
+					level: "H2"
+				})
+			],
+			contentRight: [
+				this._getClearButton()
+			]
+		});
+
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
-			title: this.getTitle(),
+			customHeader: oCustomHeader,
 			stretch: Device.system.phone,
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
@@ -576,8 +588,8 @@ function(
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setTitle = function (sTitle) {
-		this._oDialog.setTitle(sTitle);
 		this.setProperty("title", sTitle, true);
+		this._oDialog.getCustomHeader().getAggregation("contentMiddle")[0].setText(sTitle);
 
 		return this;
 	};
@@ -948,6 +960,26 @@ function(
 	};
 
 	/**
+	 * Lazy load the Clear button
+	 * @private
+	 * @return {sap.m.Button} The button
+	 */
+	SelectDialog.prototype._getClearButton = function () {
+
+		if (!this._oClearButton) {
+			this._oClearButton = new Button(this.getId() + "-clear", {
+				text: this._oRb.getText("SELECTDIALOG_CLEARBUTTON"),
+				press: function() {
+					this._removeSelection();
+					this._updateSelectionIndicator();
+				}.bind(this)
+			});
+		}
+		return this._oClearButton;
+	};
+
+
+	/**
 	 * Internal event handler for the cancel button and ESC key
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
@@ -986,6 +1018,7 @@ function(
 		var iSelectedContexts = this._oList.getSelectedContextPaths(true).length,
 			oInfoBar = this._oList.getInfoToolbar();
 
+		this._getClearButton().setEnabled(iSelectedContexts > 0);
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts && this.getMultiSelect());
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
@@ -1019,10 +1052,18 @@ function(
 		// cleanup old selection on close to allow reuse of dialog
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.getRememberSelections() && !this.bIsDestroyed) {
+			this._removeSelection();
+		}
+	};
+
+	/**
+	 * Removes selection from <code> sap.m.SelectDialog</code>
+	 * @private
+	 */
+	SelectDialog.prototype._removeSelection = function () {
 			this._oList.removeSelections(true);
 			delete this._oSelectedItem;
 			delete this._aSelectedItems;
-		}
 	};
 
 	/**
