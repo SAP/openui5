@@ -407,6 +407,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 			archiver.add('issues.json', issues, 'json');
 			archiver.add('appInfos.json', appInfos, 'json');
 			archiver.add('report.html', report);
+			archiver.add('abap.json', oData.abap, 'json');
 			archiver.download("SupportAssistantReport");
 			archiver.clear();
 		});
