@@ -315,33 +315,32 @@ sap.ui.define([
 		function repairListener(oControl, oTemplate, oClone) {
 			var sKey, vAggregation, i, aEvents, mRepairedEventRegistry = {}, oNewEvent;
 
-			if (!oControl) {
-				return;
-			}
+			if (oControl && oControl instanceof ManagedObject) {
 
-			for (var sEvent in oControl.mEventRegistry) {
-				mRepairedEventRegistry[sEvent] = [];
-				aEvents = oControl.mEventRegistry[sEvent];
-				for (i = 0; i < aEvents.length; i++) {
-					oNewEvent = jQuery.extend({}, aEvents[i]);//copy the event
-					if (oNewEvent.oListener == oTemplate) {
-						oNewEvent.oListener = oClone;
+				for (var sEvent in oControl.mEventRegistry) {
+					mRepairedEventRegistry[sEvent] = [];
+					aEvents = oControl.mEventRegistry[sEvent];
+					for (i = 0; i < aEvents.length; i++) {
+						oNewEvent = jQuery.extend({}, aEvents[i]);//copy the event
+						if (oNewEvent.oListener == oTemplate) {
+							oNewEvent.oListener = oClone;
+						}
+						mRepairedEventRegistry[sEvent].push(oNewEvent);
 					}
-					mRepairedEventRegistry[sEvent].push(oNewEvent);
 				}
-			}
-			oControl.mEventRegistry = mRepairedEventRegistry;
+				oControl.mEventRegistry = mRepairedEventRegistry;
 
-			//dive in the Aggregations
-			for (sKey in oControl.mAggregations) {
-				vAggregation = oControl.mAggregations[sKey];
+				//dive in the Aggregations
+				for (sKey in oControl.mAggregations) {
+					vAggregation = oControl.mAggregations[sKey];
 
-				if (!Array.isArray(vAggregation)) {
-					vAggregation = [vAggregation];
-				}
+					if (!Array.isArray(vAggregation)) {
+						vAggregation = [vAggregation];
+					}
 
-				for (i = 0; i < vAggregation.length; i++) {
-					repairListener(vAggregation[i], oTemplate, oClone);
+					for (i = 0; i < vAggregation.length; i++) {
+						repairListener(vAggregation[i], oTemplate, oClone);
+					}
 				}
 			}
 		}
