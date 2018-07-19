@@ -3376,6 +3376,7 @@ sap.ui.require([
 
 		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture",
 			{
+				"@odata.context": "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
 				"ID" : "42",
 				"ProductPicture" : {
 					"Picture@odata.mediaReadLink" : "ProductPicture('42')"

@@ -735,19 +735,16 @@ sap.ui.require([
 		var oCache = new _Cache(this.oRequestor, "Products('42')"),
 			oData = {
 				productPicture : {
-					"picture@odata.mediaReadLink" : "my/Picture"
+					"picture@odata.mediaReadLink" : "/~/my/Picture"
 				}
 			};
 
 		this.oRequestorMock.expects("fetchTypeForPath")
 			.withExactArgs("/Products/productPicture/picture", true)
 			.returns(SyncPromise.resolve("Edm.Stream"));
-		this.mock(_Helper).expects("makeAbsolute")
-			.withExactArgs("my/Picture", this.oRequestor.getServiceUrl())
-			.returns("/~~~/");
 
 		// code under test
-		assert.strictEqual(oCache.drillDown(oData, "productPicture/picture"), "/~~~/");
+		assert.strictEqual(oCache.drillDown(oData, "productPicture/picture"), "/~/my/Picture");
 	});
 
 	//*********************************************************************************************
@@ -1489,10 +1486,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#visitResponse: longtextUrl, no context", function (assert) {
+	QUnit.test("_Cache#visitResponse: longtextUrl/media link, no context", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
 			oData = {
 				"id" : "1",
+				"picture@odata.mediaReadLink" : "img_42.jpg",
 				"messages" : [{
 					"longtextUrl" : "Longtext(1)"
 				}]
@@ -1517,25 +1515,30 @@ sap.ui.require([
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
+
+		assert.strictEqual(oData["picture@odata.mediaReadLink"], "/~/EntitySet('42')/img_42.jpg");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#visitResponse: longtextUrl, single response", function (assert) {
+	QUnit.test("_Cache#visitResponse: longtextUrl/media link, single response", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
 			oData = {
 				"@odata.context" : "../$metadata#foo",
 				"id" : "1",
+				"picture@odata.mediaReadLink" : "img_42.jpg",
 				"messages" : [{
 					"longtextUrl" : "Longtext(1)"
 				}],
 				foo : {
 					"@odata.context" : "/foo/context",
 					"id" : "2",
+					"picture@odata.mediaReadLink" : "img_43.jpg",
 					"messages" : [{
 						"longtextUrl" : "Longtext(2)"
 					}],
 					bar : {
 						id : "3",
+						"picture@odata.mediaReadLink" : "img_44.jpg",
 						"messages" : [{
 							"longtextUrl" : "Longtext(3)"
 						}]
@@ -1543,6 +1546,7 @@ sap.ui.require([
 					baz : {
 						"@odata.context" : "baz/context",
 						id : "4",
+						"picture@odata.mediaReadLink" : "img_45.jpg",
 						"messages" : [{
 							"longtextUrl" : "Longtext(4)"
 						}]
@@ -1580,31 +1584,38 @@ sap.ui.require([
 		oCache.visitResponse(oData, mTypeForMetaPath);
 
 		// check adjusted cache
+		assert.strictEqual(oData["picture@odata.mediaReadLink"], "/~/img_42.jpg");
 		assert.strictEqual(oData.messages[0].longtextUrl, "/~/Longtext(1)");
+		assert.strictEqual(oData.foo["picture@odata.mediaReadLink"], "/foo/img_43.jpg");
 		assert.strictEqual(oData.foo.messages[0].longtextUrl, "/foo/Longtext(2)");
+		assert.strictEqual(oData.foo.bar["picture@odata.mediaReadLink"], "/foo/img_44.jpg");
 		assert.strictEqual(oData.foo.bar.messages[0].longtextUrl, "/foo/Longtext(3)");
+		assert.strictEqual(oData.foo.baz["picture@odata.mediaReadLink"], "/foo/baz/img_45.jpg");
 		assert.strictEqual(oData.foo.baz.messages[0].longtextUrl, "/foo/baz/Longtext(4)");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#visitResponse: longtextUrl, collection response", function (assert) {
+	QUnit.test("_Cache#visitResponse: longtextUrl/media, collection response", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
 			oData = {
 				"@odata.context" : "../$metadata#foo",
 				value : [{
 					"id" : "1",
+					"picture@odata.mediaReadLink" : "img_1.jpg",
 					"messages" : [{
 						"longtextUrl" : "Longtext(1)"
 					}],
 					"foo@odata.context" : "/foo/context",
 					"foo" : [{
 						"id" : "2",
+						"picture@odata.mediaReadLink" : "img_2.jpg",
 						"messages" : [{
 							"longtextUrl" : "Longtext(2)"
 						}],
 						"bar@odata.context" : "bar/context",
 						"bar" : [{
 							"id" : "3",
+							"picture@odata.mediaReadLink" : "img_3.jpg",
 							"messages" : [{
 								"longtextUrl" : "Longtext(3)"
 							}]
@@ -1640,8 +1651,12 @@ sap.ui.require([
 		oCache.visitResponse(oData, mTypeForMetaPath, true);
 
 		// check adjusted cache
+		assert.strictEqual(oData.value[0]["picture@odata.mediaReadLink"], "/~/img_1.jpg");
 		assert.strictEqual(oData.value[0].messages[0].longtextUrl, "/~/Longtext(1)");
+		assert.strictEqual(oData.value[0].foo[0]["picture@odata.mediaReadLink"], "/foo/img_2.jpg");
 		assert.strictEqual(oData.value[0].foo[0].messages[0].longtextUrl, "/foo/Longtext(2)");
+		assert.strictEqual(oData.value[0].foo[0].bar[0]["picture@odata.mediaReadLink"],
+			"/foo/bar/img_3.jpg");
 		assert.strictEqual(oData.value[0].foo[0].bar[0].messages[0].longtextUrl,
 			"/foo/bar/Longtext(3)");
 	});
