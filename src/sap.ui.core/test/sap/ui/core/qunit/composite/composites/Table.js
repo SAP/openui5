@@ -19,11 +19,19 @@ sap.ui.define([
 				actions: {
 					type: "sap.ui.core.Control",
 					multiple: true
+				},
+				header: {
+					type: "sap.ui.core.Control",
+					multiple: false
+				},
+				footer: {
+					type: "sap.ui.core.Control",
+					multiple: false
 				}
 			}
 		},
 		fragment: "composites.Table",
-		aggregationFragments: ["actions", "columns"],
+		aggregationFragments: ["actions", "columns", "header", "footer", "unknown"],
 		handler: function(oEvent) {
 			var oAction = oEvent.getSource();
 			oAction.setText("composite");
