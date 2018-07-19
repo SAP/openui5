@@ -572,6 +572,34 @@
 		assert.equal(sFlexBasis, "auto", "No flex-basis set");
 	});
 
+	QUnit.test("title clone includes actions", function (assert) {
+		var oLink = new sap.m.Link(),
+			oTitleClone,
+			iExpectedActionsCount = 1;
+		this.oDynamicPageTitle.addAction(oLink);
+		assert.strictEqual(this.oDynamicPageTitle.getActions().length, iExpectedActionsCount, "title has expected actions count"); // assert state before act
+
+		// Act
+		oTitleClone = this.oDynamicPageTitle.clone();
+
+		// Check
+		assert.strictEqual(oTitleClone.getActions().length, iExpectedActionsCount, "title clone also has the same actions count");
+	});
+
+	QUnit.test("title clone includes navigation actions", function (assert) {
+		var oLink = new sap.m.Link(),
+			oTitleClone,
+			iExpectedNavActionsCount = 1;
+		this.oDynamicPageTitle.addNavigationAction(oLink);
+		assert.strictEqual(this.oDynamicPageTitle.getNavigationActions().length, iExpectedNavActionsCount, "title has expected nav actions count"); // assert state before act
+
+		// Act
+		oTitleClone = this.oDynamicPageTitle.clone();
+
+		// Check
+		assert.strictEqual(oTitleClone.getNavigationActions().length, iExpectedNavActionsCount, "title clone also has the same nav actions count");
+	});
+
 
 	/* --------------------------- DynamicPage Header API ---------------------------------- */
 	QUnit.module("DynamicPage Header - API ", {
