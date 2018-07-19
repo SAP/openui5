@@ -493,6 +493,8 @@ sap.ui.define([
 					this.setSelectedIndex(-1);
 				}
 
+				this.aRBs = [];
+
 				return this.removeAllAggregation("buttons");
 			};
 

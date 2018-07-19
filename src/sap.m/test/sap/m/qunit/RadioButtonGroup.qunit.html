@@ -400,6 +400,15 @@
 			assert.equal(this.rbg.$().find('.sapMRb').length, 3, "Buttons are rendered correctly");
 		});
 
+		QUnit.test("RemoveAllButtons", function(assert) {
+
+			this.rbg.removeAllButtons();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.equal(this.rbg.$().find('.sapMRb').length, 0, "All buttons are removed");
+		});
+
 		</script>
 	</head>
 	<body id="body">
