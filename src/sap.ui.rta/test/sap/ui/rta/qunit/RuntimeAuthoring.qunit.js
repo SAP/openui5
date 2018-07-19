@@ -3,7 +3,6 @@
 QUnit.config.autostart = false;
 sap.ui.require([
 	// Controls
-	'sap/m/Button',
 	'sap/m/MessageBox',
 	'sap/ui/comp/smartform/Group',
 	'sap/ui/comp/smartform/GroupElement',
@@ -15,27 +14,23 @@ sap.ui.require([
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Overlay',
-	'sap/ui/fl/registry/Settings',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/FakeLrepLocalStorage',
-	'sap/ui/fl/ChangePersistence',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/plugin/Remove',
 	'sap/ui/base/Event',
 	'sap/ui/base/EventProvider',
-	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/rta/appVariant/Feature',
 	// should be last
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
-	Button,
 	MessageBox,
 	Group,
 	GroupElement,
@@ -46,20 +41,17 @@ function(
 	DesignTimeMetadata,
 	OverlayRegistry,
 	Overlay,
-	Settings,
 	ChangeRegistry,
 	Change,
 	Utils,
 	RtaUtils,
 	FakeLrepLocalStorage,
-	ChangePersistence,
 	RuntimeAuthoring,
 	Stack,
 	CommandFactory,
 	Remove,
 	Event,
 	EventProvider,
-	RTABaseCommand,
 	RtaQunitUtils,
 	RtaAppVariantFeature,
 	sinon
@@ -236,22 +228,29 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("when RTA is started in the user layer", function(assert) {
+	QUnit.test("when RTA is started and stopped in the user layer", function(assert) {
 		var done = assert.async();
 		var oFlexController = this.oRta._getFlexController();
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([this.oUserChange]));
-
 		this.oRta.setFlexSettings({layer: "USER"});
-		Promise.all([
-			new Promise(function (fnResolve) {
-				this.oRta.attachStart(fnResolve);
-			}.bind(this)),
-			this.oRta.start()
-		]).then(function() {
-			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
+		var oReloadSpy = sandbox.spy(this.oRta, "_handleReloadOnExit");
+
+		this.oRta.attachStop(function() {
+			assert.ok(oReloadSpy.notCalled, "the reload check was skipped");
 			done();
+		});
+
+		this.oRta.start()
+		.then(function() {
+			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Restore Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
+			assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the Exit Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('exit').getEnabled(), true, "then the Exit Button is enabled");
+		}.bind(this))
+		.then(function() {
+			this.oRta.getToolbar().getControl("exit").firePress();
 		}.bind(this));
-	});
+});
 
 	QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
 		var done = assert.async();
