@@ -1,0 +1,63 @@
+{
+  "_version": "1.8.0",
+  "sap.ui5": {
+	"rootView": {
+	  "viewName": "sap.ui.demo.fiori2.view.App",
+	  "type": "XML",
+	  "async": true,
+	  "id": "fcl"
+	},
+	"dependencies": {
+	  "minUI5Version": "1.56.0",
+	  "libs": {
+		"sap.m": {},
+		"sap.f": {},
+		"sap.uxap": {},
+		"sap.ui.layout": {}
+	  }
+	},
+	"config": {
+	  "fullWidth": true
+	},
+	"routing": {
+	  "config": {
+		"routerClass": "sap.f.routing.Router",
+		"viewType": "XML",
+		"viewPath": "sap.ui.demo.fiori2.view",
+		"controlId": "flexibleColumnLayout",
+		"transition": "slide",
+		"bypassed": {
+		},
+		"async": true
+	  },
+	  "routes": [
+		{
+		  "pattern": ":layout:",
+		  "name": "master",
+		  "target": [
+			"master",
+			"detail"
+		  ]
+		},
+		{
+		  "pattern": "detail/{product}/{layout}",
+		  "name": "detail",
+		  "target": [
+			"master",
+			"detail"
+		  ]
+		}
+	  ],
+	  "targets": {
+		"master": {
+		  "viewName": "Master",
+		  "controlAggregation": "beginColumnPages"
+		},
+		"detail": {
+		  "viewName": "Detail",
+		  "controlAggregation": "midColumnPages"
+		}
+	  }
+	}
+  }
+}

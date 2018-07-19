@@ -1,0 +1,20 @@
+{
+  "_version": "1.8.0",
+  "sap.ui5": {
+	"rootView": {
+	  "viewName": "sap.ui.demo.fiori2.view.App",
+	  "type": "XML",
+	  "async": true,
+	  "id": "fcl"
+	},
+	"dependencies": {
+	  "minUI5Version": "1.56.0",
+	  "libs": {
+		"sap.f": {}
+	  }
+	},
+	"config": {
+	  "fullWidth": true
+	}
+  }
+}
