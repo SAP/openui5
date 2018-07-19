@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/base/ManagedObjectObserver",
+	"sap/m/TitlePropagationSupport",
 	"./library",
 	"sap/m/library",
 	"./ObjectPageSubSectionRenderer",
@@ -30,6 +31,7 @@ sap.ui.define([
 	Device,
 	StashedControlSupport,
 	ManagedObjectObserver,
+	TitlePropagationSupport,
 	library,
 	mobileLibrary,
 	ObjectPageSubSectionRenderer,
@@ -119,6 +121,11 @@ sap.ui.define([
 		}
 	});
 
+	// Add Title Propagation Support
+	TitlePropagationSupport.call(ObjectPageSubSection.prototype, "blocks", function () {
+		return this._getTitleDomId();
+	});
+
 	ObjectPageSubSection.MEDIA_RANGE = Device.media.RANGESETS.SAP_STANDARD;
 
 	/**
@@ -155,6 +162,38 @@ sap.ui.define([
 
 		//switch logic for the default mode
 		this._switchSubSectionMode(this.getMode());
+
+		// Title Propagation Support
+		this._initTitlePropagationSupport();
+		this._sBorrowedTitleDomId = false;
+	};
+
+	/**
+	 * Returns Title DOM ID of the Title of this SubSection
+	 * @returns {string|boolean} DOM ID
+	 * @private
+	 */
+	ObjectPageSubSection.prototype._getTitleDomId = function () {
+		if (this._sBorrowedTitleDomId) {
+			return this._sBorrowedTitleDomId;
+		}
+		if (!this.getTitle().trim()) {
+			return false;
+		}
+		if (this._getInternalTitleVisible()) {
+			return this.getId() + "-headerTitle";
+		}
+		return false;
+	};
+
+	/**
+	 * Sets DOM ID of the Title borrowed from this SubSection
+	 * @param {string} sId the ID of the DOM Element
+	 * @private
+	 * @ui5-restricted sap.uxap.ObjectPageLayout
+	 */
+	ObjectPageSubSection.prototype._setBorrowedTitleDomId = function (sId) {
+		this._sBorrowedTitleDomId = sId;
 	};
 
 	ObjectPageSubSection.prototype._expandSection = function () {

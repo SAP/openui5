@@ -189,4 +189,63 @@
 		assert.notOk($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is removed");
 	});
 
+	QUnit.module("Title Propagation Support based on UX Rules", {
+		beforeEach: function () {
+			this.oOPView = sap.ui.xmlview("UxAP-ObjectPageTitlePropagationSupport", {
+				viewName: "view.UxAP-ObjectPageTitlePropagationSupport"
+			});
+			this.oOPView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			this.oSection3 = this.oOPView.byId("section_3");
+			this.oSection4 = this.oOPView.byId("section_4");
+			this.oSubSection11 = this.oOPView.byId("sub_section_1_1");
+			this.oSubSection21 = this.oOPView.byId("sub_section_2_1");
+			this.oSubSection22 = this.oOPView.byId("sub_section_2_2");
+			this.oSubSection31 = this.oOPView.byId("sub_section_3_1");
+			this.oSubSection41 = this.oOPView.byId("sub_section_4_1");
+		},
+		afterEach: function () {
+			this.oOPView.destroy();
+			this.oSection3 = null;
+			this.oSection4 = null;
+			this.oSubSection11 = null;
+			this.oSubSection21 = null;
+			this.oSubSection22 = null;
+			this.oSubSection31 = null;
+			this.oSubSection41 = null;
+		}
+	});
+
+	QUnit.test("SubSection configured properly", function (assert) {
+		assert.strictEqual(this.oSubSection11._getTitleDomId(),
+			"UxAP-ObjectPageTitlePropagationSupport--objectPageLayout-anchBar-UxAP-ObjectPageTitlePropagationSupport--section_1-anchor-content",
+			"Title DOM ID of the Anchor Bar first button text containing element");
+
+		assert.strictEqual(this.oSubSection21._getTitleDomId(),
+			"UxAP-ObjectPageTitlePropagationSupport--sub_section_2_1-headerTitle",
+			"Own Title DOM ID is returned");
+
+		assert.strictEqual(this.oSubSection22._getTitleDomId(),
+			"UxAP-ObjectPageTitlePropagationSupport--sub_section_2_2-headerTitle",
+			"Own Title DOM ID is returned");
+
+		assert.strictEqual(this.oSubSection31._getTitleDomId(),
+			this.oSection3.getId() + "-title",
+			"Title DOM ID of parent Section is returned");
+
+		assert.strictEqual(this.oSubSection41._getTitleDomId(),
+			this.oSection4.getId() + "-title",
+			"Title DOM ID of parent Section is returned");
+	});
+
+	QUnit.test("First Section with two SubSections - configured properly", function (assert) {
+		// Arrange
+		var oSubSection = this.oOPView.byId("op2_sub_section_1_1");
+
+		// Asssert
+		assert.strictEqual(oSubSection._getTitleDomId(),
+			"UxAP-ObjectPageTitlePropagationSupport--op2_sub_section_1_1-headerTitle", "Own Title DOM ID is returned");
+	});
+
 }(jQuery, QUnit));
