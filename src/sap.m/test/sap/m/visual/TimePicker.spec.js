@@ -4,7 +4,7 @@ describe("sap.m.TimePicker", function() {
 	"use strict";
 
 	var sSutId = "TP1",
-		sSutIconClass = ".sapMInputValHelpInner",
+		sSutIconId = sSutId + "-icon",
 		sSutPickerId,
 		sSutPickerSliderId = sSutId + "-sliders-listSecs";
 
@@ -33,7 +33,7 @@ describe("sap.m.TimePicker", function() {
 	});
 
 	it("correct margins", function () {
-		var oTPValueHelp = element(by.css('#' + sSutId + ' ' + sSutIconClass)),
+		var oTPValueHelp = element(by.id(sSutIconId)),
 			oPicker,
 			oSecondsSlider;
 
