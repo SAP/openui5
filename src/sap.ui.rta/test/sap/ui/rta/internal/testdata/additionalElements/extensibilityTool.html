@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
 
-		<script src="../../../../../../resources/sap-ui-core.js"
+		<script src="../../../../../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-xx-bindingSyntax="complex"
@@ -22,22 +22,25 @@
 			document.getElementById("content").textContent  = decodeURIComponent(window.location.search.substring(1));
 
 			function markInvalid(){
-				jQuery.sap.require("sap.ui.fl.fieldExt.Access");
-				sap.ushell = jQuery.extend(sap.ushell, {
-					Container : {
-						getLogonSystem : function(){
-							return {
-								getName: function() {
-									return "ABC";
-								},
-								getClient: function() {
-									return "123";
-								}
-							};
+				sap.ui.require([
+					"sap/ui/fl/fieldExt/Access"
+				], function(Access) {
+					sap.ushell = jQuery.extend(sap.ushell, {
+						Container : {
+							getLogonSystem : function(){
+								return {
+									getName: function() {
+										return "ABC";
+									},
+									getClient: function() {
+										return "123";
+									}
+								};
+							}
 						}
-					}
+					});
+					Access.setServiceInvalid("/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/");
 				});
-				sap.ui.fl.fieldExt.Access.setServiceInvalid("/here/goes/your/serviceurl/");
 			}
 		</script>
 	</body>
