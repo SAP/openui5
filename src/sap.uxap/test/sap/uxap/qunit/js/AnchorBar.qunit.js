@@ -100,7 +100,12 @@
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oCustomButton = this.oObjectPage.getSections()[0].getCustomAnchorBarButton(),
 			aAnchorBarContent = oAnchorBar.getContent(),
-			oFirstSectionButton = aAnchorBarContent[0];
+			oFirstSectionButton = aAnchorBarContent[0],
+			pressSpy = this.spy(oAnchorBar, "_requestScrollToSection");
+
+		oFirstSectionButton.firePress();
+
+		assert.ok(pressSpy.calledOnce, "firePress of custom AnchorBar button calls the scroll to section function");
 
 		oCustomButton.setEnabled(false);
 
