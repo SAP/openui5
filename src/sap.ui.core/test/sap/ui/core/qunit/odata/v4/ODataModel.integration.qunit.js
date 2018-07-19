@@ -301,41 +301,32 @@ sap.ui.require([
 				setTimeout(this.checkFinish.bind(this, assert), 1);
 				return;
 			}
-			this.checkAndRemoveMessages(assert);
 			if (this.resolve) {
+				this.checkMessages(assert);
 				this.resolve();
+				this.resolve = null;
 			}
 		},
 
 		/**
-		 * Checks that exactly the expected messages have been reported and clears the message
-		 * manager.
+		 * Checks that exactly the expected messages have been reported.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 */
-		checkAndRemoveMessages : function (assert) {
-			var aMessages, oMessageManager;
-
-			function formatMessage(oMessage) {
-				return oMessage && {
-					code : oMessage.getCode(),
-					message : oMessage.getMessage(),
-					target : oMessage.getTarget(),
-					persistent : oMessage.getPersistent(),
-					type : oMessage.getType()
-				};
-			}
-
-			oMessageManager = sap.ui.getCore().getMessageManager();
-			aMessages = oMessageManager.getMessageModel().getObject("/");
-			oMessageManager.removeAllMessages();
-			while (this.aMessages.length) {
-				assert.deepEqual(formatMessage(aMessages.shift()), this.aMessages.shift(),
-					"expected message");
-			}
-			aMessages.forEach(function (oMessage) {
-				assert.deepEqual(formatMessage(oMessage), undefined, "unexpected message");
-			});
+		checkMessages : function (assert) {
+			assert.deepEqual(
+				sap.ui.getCore().getMessageManager().getMessageModel().getObject("/")
+					.map(function (oMessage) {
+						return {
+							code : oMessage.getCode(),
+							message : oMessage.getMessage(),
+							target : oMessage.getTarget(),
+							persistent : oMessage.getPersistent(),
+							type : oMessage.getType()
+						};
+					}),
+				this.aMessages,
+				this.aMessages.length + " messages in message manager");
 		},
 
 		/**
@@ -691,14 +682,14 @@ sap.ui.require([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to report the given message.
+		 * {@link #waitForChanges}) is expected to report exactly the given messages.
 		 *
-		 * @param {object} oMessage The expected message (with properties code, message, target,
-		 *   persistent and type corresponding to the getters of the Message class)
+		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
+		 *   target, persistent and type corresponding the getters of sap.ui.core.message.Message)
 		 * @returns {object} The test instance for chaining
 		 */
-		expectMessage : function (oMessage) {
-			this.aMessages.push(oMessage);
+		expectMessages : function (aExpectedMessages) {
+			this.aMessages = aExpectedMessages;
 			return this;
 		},
 
@@ -1280,8 +1271,9 @@ sap.ui.require([
 	// * Click on "Refresh sales orders" button
 	// This test is a simplification of that scenario with a different service.
 	QUnit.test("Absolute ODLB refresh", function (assert) {
-		var sView = '\
-<Table id="table" items="{/EMPLOYEES}">\
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
@@ -1289,25 +1281,99 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$skip=0&$top=100", {
+		this.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
 				"value" : [
-					{"Name" : "Jonathan Smith"},
-					{"Name" : "Frederic Fall"}
+					{
+						"ID": "1",
+						"Name" : "Jonathan Smith",
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Text",
+							"transient" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					},
+					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
 				]
 			})
-			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
+			.expectMessages([{
+				"code": "1",
+				"message": "Text",
+				"persistent": false,
+				"target": "/EMPLOYEES('1')/Name",
+				"type": "Warning"
+			}]);
 
-		return this.createView(assert, sView).then(function () {
-			that.expectRequest("EMPLOYEES?$skip=0&$top=100", {
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
 					"value" : [
-						{"Name" : "Frederic Fall"},
-						{"Name" : "Peter Burke"}
+						{"Name" : "Frederic Fall", "__FAKE__Messages" : []},
+						{"Name" : "Peter Burke", "__FAKE__Messages" : []}
 					]
 				})
-				.expectChange("name", ["Frederic Fall", "Peter Burke"]);
+				.expectChange("name", ["Frederic Fall", "Peter Burke"])
+				.expectMessages([]);
 
 			// code under test
 			that.oView.byId("table").getBinding("items").refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Refresh an ODataContextBinding with a message, the entity is deleted in between
+	QUnit.test("Absolute ODCB refresh & message", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
+	parameters : {$select : \'__FAKE__Messages\'}}">\
+	<Text id="text" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", {
+				"ID" : "1",
+				"Name" : "Jonathan Smith",
+				"__FAKE__Messages" : [
+					{
+						"code" : "1",
+						"message" : "Text",
+						"transient" : false,
+						"target" : "Name",
+						"numericSeverity" : 3
+					}]
+			})
+			.expectChange("text", "Jonathan Smith")
+			.expectMessages([{
+				"code": "1",
+				"message": "Text",
+				"persistent": false,
+				"target": "/EMPLOYEES('2')/Name",
+				"type": "Warning"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oError = new Error("Employee does not exist");
+
+			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')",
+				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
+			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')/Name",
+				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", oError)
+				.expectChange("text", null)
+				.expectMessages([{
+					"code": undefined,
+					"message": "Employee does not exist",
+					"persistent": true,
+					"target": undefined,
+					"type": "Error"
+				}]);
+
+			// code under test
+			that.oView.byId("form").getObjectBinding().refresh();
 
 			return that.waitForChanges(assert);
 		});
@@ -2392,13 +2458,13 @@ sap.ui.require([
 						"TeamID" : ""
 					}
 				}, oError) // simulates failure
-				.expectMessage({
+				.expectMessages([{
 					"code" : undefined,
 					"message" : "Missing team ID",
 					"persistent" : true,
 					"target" : undefined,
 					"type" : "Error"
-				})
+				}])
 				.expectChange("teamId", null); // reset to initial state
 
 			return Promise.all([
@@ -6554,13 +6620,13 @@ sap.ui.require([
 			}).then(function (aPromiseResults) {
 				var oInactiveArtistContext = aPromiseResults[0];
 
-				that.expectMessage({
+				that.expectMessages([{
 						code : "23",
 						message : "Just A Message",
 						target : "/" + sRequestPath + "/Name",
 						persistent : true,
 						type : "Success"
-					})
+					}])
 					.expectChange("isActive", "No");
 
 				that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
@@ -6672,13 +6738,13 @@ sap.ui.require([
 
 			that.expectChange("isActive", "No")
 				.expectChange("inProcessByUser", "JOHNDOE")
-				.expectMessage({
+				.expectMessages([{
 					code : "23",
 					message : "Just A Message",
 					target : "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
 					persistent : true,
 					type : "Success"
-				});
+				}]);
 
 			that.oView.setBindingContext(oInactiveArtistContext);
 
@@ -7065,23 +7131,100 @@ sap.ui.require([
 						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}
 					])
 				})
-				.expectMessage({
+				.expectMessages([{
 					"code": "foo-42",
 					"message": "text0",
 					"persistent": true,
 					"target": undefined,
 					"type": "Warning"
-				})
-				.expectMessage({
+				}, {
 					"code": "foo-77",
 					"message": "text1",
 					"persistent": true,
 					"target": undefined,
 					"type": "Information"
-				})
+				}])
 				.expectChange("id", "23");
 
 			return this.createView(assert, sView, oModel);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Master/detail. Select the first row in the master table, the detail list returns
+	// an item with a message. Select the second row in the master table, the message remains
+	// although the item is no longer displayed. Now sort the detail table (which refreshes it) and
+	// the message is gone.
+	QUnit.test("Master/Detail & messages", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/TEAMS\', templateShareable : false}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
+</Table>\
+<Table id="detailTable" items="{path : \'TEAM_2_EMPLOYEES\', \
+		parameters : {$select : \'__FAKE__Messages\'}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="Name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{"Team_Id" : "Team_01", "Name" : "Team 01"},
+					{"Team_Id" : "Team_02", "Name" : "Team 02"}
+				]
+			})
+			.expectChange("text", ["Team 01", "Team 02"])
+			.expectChange("Name", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('Team_01')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						"ID" : "1",
+						"Name" : "Peter Burke",
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Text",
+							"transient" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}]
+				})
+				.expectChange("Name", ["Peter Burke"])
+				.expectMessages([{
+					"code" : "1",
+					"message" : "Text",
+					"persistent" : false,
+					"target" : "/TEAMS('Team_01')/TEAM_2_EMPLOYEES('1')/Name",
+					"type" : "Warning"
+				}]);
+
+			that.oView.byId("detailTable").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
+					+ "&$skip=0&$top=100", {value : []})
+				.expectChange("Name", []);
+				// no change in messages
+
+			that.oView.byId("detailTable").setBindingContext(
+				that.oView.byId("table").getItems()[1].getBindingContext());
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
+					+ "&$orderby=Name&$skip=0&$top=100", {value : []})
+				.expectMessages([]); // message is gone
+
+			that.oView.byId("detailTable").getBinding("items").sort(new Sorter("Name"));
+			return that.waitForChanges(assert);
 		});
 	});
 });

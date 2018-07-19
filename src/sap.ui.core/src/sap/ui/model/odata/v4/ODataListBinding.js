@@ -255,7 +255,7 @@ sap.ui.define([
 			this.oAggregation = oAggregation;
 		}
 
-		this.mCacheByContext = undefined;
+		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(sChangeReason);
 	};
@@ -931,7 +931,7 @@ sap.ui.define([
 		} else {
 			this.aApplicationFilters = aFilters;
 		}
-		this.mCacheByContext = undefined;
+		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Filter);
 
@@ -1402,7 +1402,7 @@ sap.ui.define([
 		this.createReadGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
 			if (oCache) {
-				that.mCacheByContext = undefined;
+				that.removeCachesAndMessages();
 				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
@@ -1652,7 +1652,7 @@ sap.ui.define([
 		oAggregation = _Helper.clone(oAggregation);
 		this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation).$apply;
 		this.oAggregation = oAggregation;
-		this.mCacheByContext = undefined;
+		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Change);
 	};
@@ -1741,7 +1741,7 @@ sap.ui.define([
 		}
 
 		this.aSorters = _Helper.toArray(vSorters);
-		this.mCacheByContext = undefined;
+		this.removeCachesAndMessages();
 		this.createReadGroupLock(this.getGroupId(), true);
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);

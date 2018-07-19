@@ -1891,10 +1891,10 @@ sap.ui.require([
 				this.oCachePromise = SyncPromise.resolve(oCache);
 			});
 		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
-		oBinding.mCacheByContext = {};
 
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false)
 			.returns(oGroupLock);
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs();
 		this.mock(oBinding).expects("getDependentBindings")
 			.withExactArgs()
 			.returns([oChild0, oChild1]);
@@ -1905,8 +1905,6 @@ sap.ui.require([
 
 		//code under test
 		oBinding.refreshInternal("myGroup", bCheckUpdate);
-
-		assert.deepEqual(oBinding.mCacheByContext, undefined);
 	});
 
 	//*********************************************************************************************
@@ -2066,13 +2064,13 @@ sap.ui.require([
 			oResumeInternalExpectation0,
 			oResumeInternalExpectation1;
 
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs();
 		oFetchCacheExpectation = oBindingMock.expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext))
 			// check correct sequence: on fetchCache call, aggregated query options must be reset
 			.callsFake(function () {
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 				assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
-				assert.strictEqual(oBinding.mCacheByContext, undefined);
 			});
 		this.mock(oBinding).expects("getDependentBindings")
 			.withExactArgs()
@@ -2085,7 +2083,6 @@ sap.ui.require([
 			.withExactArgs({reason : ChangeReason.Change});
 		oBinding.mAggregatedQueryOptions = {$select : ["Team_Id"]};
 		oBinding.bAggregatedQueryOptionsInitial = false;
-		oBinding.mCacheByContext = {};
 
 		// code under test
 		oBinding.resumeInternal(bCheckUpdate);

@@ -753,7 +753,7 @@ sap.ui.define([
 			if (!that.oOperation) {
 				if (oCache) {
 					// remove all cached Caches before fetching a new one
-					that.mCacheByContext = undefined;
+					that.removeCachesAndMessages();
 					that.fetchCache(that.oContext);
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
@@ -781,7 +781,7 @@ sap.ui.define([
 		if (!this.oOperation) {
 			this.mAggregatedQueryOptions = {};
 			this.bAggregatedQueryOptionsInitial = true;
-			this.mCacheByContext = undefined;
+			this.removeCachesAndMessages();
 			this.fetchCache(this.oContext);
 			this.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.resumeInternal(bCheckUpdate);
