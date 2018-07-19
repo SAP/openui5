@@ -966,7 +966,7 @@ sap.ui.define([
 				break;
 
 			default:
-				jQuery.sap.log.warn("[Splitter] Invalid keyboard resize type");
+				Log.warn("[Splitter] Invalid keyboard resize type");
 				break;
 		}
 
