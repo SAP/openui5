@@ -186,7 +186,7 @@ sap.ui.define([
 				//Check diff
 				if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
 					var that = this;
-					//TODO: global jquery call found
+					//global jQuery call is left in place to be backward compatible for deprecated V1 model
 					var aDiff = jQuery.sap.arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
 						return deepEqual(
 								oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],

@@ -420,7 +420,7 @@ sap.ui.define([
 			case "NotEndsWith":
 				return "not%20endswith(" + sPath + "," + oValue1 + ")";
 			default:
-				jQuery.sap.log.error("ODataUtils :: Unknown filter operator " + sOperator);
+				Log.error("ODataUtils :: Unknown filter operator " + sOperator);
 				return "true";
 		}
 	};
