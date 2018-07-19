@@ -5645,7 +5645,7 @@ sap.ui.define([
 		this.testCollapseExpandAndFocus(assert, oTable, getRowAction(0));
 	});
 
-	QUnit.module("TreeTable", function(assert) {
+	QUnit.test("TreeTable", function(assert) {
 		this.testCollapseExpandAndFocus(assert, oTreeTable, getCell(0, 0, null, null, oTreeTable));
 		this.testCollapseExpandAndFocus(assert, oTreeTable, getCell(0, 0, null, null, oTreeTable).find(".sapUiTableTreeIcon"));
 		this.testNoCollapseExpand(assert, oTreeTable, getCell(0, 1, null, null, oTreeTable));

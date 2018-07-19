@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit,ES6Promise */
 
 (function(){
 	"use strict";
@@ -176,6 +176,10 @@
 
 		var sContextPath = "/" + window.location.pathname.split("/")[1];
 
+		if (!window.Promise) {
+			ES6Promise.polyfill();
+		}
+
 		window.suite = function () {
 			return new Promise(function(resolve, reject) {
 				loadTestConfig(sConfigSrc).then(function(oConfig){
@@ -195,6 +199,14 @@
 
 	} else {
 		// Starter Script is used to show an test overview or run a single test
+
+		if (!window.QUnit) {
+			window.QUnit = {config: {}};
+		}
+		if (!window.QUnit.config) {
+			window.QUnit.config = {};
+		}
+		window.QUnit.config.autostart = false;
 
 		Promise.all([loadTestConfig(sConfigSrc), getTestModuleNameFromURL()]).then(function(aResult) {
 			var oConfig = normalizeConfig(aResult[0]),
@@ -241,9 +253,9 @@
 			});
 
 			sap.ui.require(aRequires, function() {
+				window.QUnit.config.autostart = false;
 
 				if (oTestModule) {
-					window.QUnit.config.autostart = false;
 
 					if (window.blanket) {
 						if (oTestModule.coverage && window.blanket) {

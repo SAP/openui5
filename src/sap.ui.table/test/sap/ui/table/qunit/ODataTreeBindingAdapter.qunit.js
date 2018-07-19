@@ -1520,7 +1520,8 @@ sap.ui.define([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with selectAll", 3, function(assert) {
+	QUnit.test("selectionChanged event with selectAll", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		prebuildTree(function() {
 			var fnSelectionChangeHandler1 = function(oEvent) {
@@ -1540,7 +1541,8 @@ sap.ui.define([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with collapse", 4, function(assert) {
+	QUnit.test("selectionChanged event with collapse", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
 		prebuildTree(function() {
 			oBinding.selectAll();
@@ -1564,7 +1566,8 @@ sap.ui.define([
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
-	QUnit.test("selectionChanged event with collapse: deselect of lead selection", 4, function(assert) {
+	QUnit.test("selectionChanged event with collapse: deselect of lead selection", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
 		prebuildTree(function() {
 			oBinding.setSelectedIndex(2);
