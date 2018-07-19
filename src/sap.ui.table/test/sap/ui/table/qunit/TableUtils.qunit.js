@@ -1092,7 +1092,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Register/Deregister", 17, function(assert) {
+	QUnit.test("Register/Deregister", function(assert) {
+		assert.expect(17);
 		var done = assert.async();
 		var sResizeHandlerId;
 		var fnTestOuter = function(oEvent) {

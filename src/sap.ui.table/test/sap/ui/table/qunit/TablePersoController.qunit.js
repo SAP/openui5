@@ -181,7 +181,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Column visibility (autoSave)", 16, function(assert) {
+	QUnit.test("Column visibility (autoSave)", function(assert) {
+		assert.expect(16);
 		var done = assert.async();
 		var getPersDataCalls = 0;
 
@@ -285,7 +286,8 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("Column visibility (no autoSave)", 19, function(assert) {
+	QUnit.test("Column visibility (no autoSave)", function(assert) {
+		assert.expect(19);
 		var done = assert.async();
 		var getPersDataCalls = 0;
 

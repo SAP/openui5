@@ -4,7 +4,7 @@
 	"moduleNameTemplate" : "sap/ui/table/qunit/{0}.qunit",	/* Name template to be used to determine the full qualified module name to load */
 	"defaults" : {
 		"sinonVersion" : "1",			/* Sinon version which should be loaded, possible values currently are "1" or "4" */
-		"qunitVersion" : "1",			/* QUnit version which should be loaded, possible values currently are "1" or "2" */
+		"qunitVersion" : "2",			/* QUnit version which should be loaded, possible values currently are "1" or "2" */
 		"rtl" : false,					/* Whether to run the tests in RTL mode */
 		"autostart" : true,				/* Whether to call QUnit.start() when the test setup is done */
 		"libs" : [],					/* Libraries to load upfront in addition to the libraries which are defined in baseLibs, if null no libs are loaded */
