@@ -238,7 +238,11 @@ sap.ui.define([
 
 			var oTextDomRef = document.createElement("span");
 			oTextDomRef.id = sID + "-text";
-			oTextDomRef.setAttribute("aria-hidden", "true");
+
+			if (!oControl.isA('sap.m.Select')) {
+				oTextDomRef.setAttribute("aria-hidden", "true");
+			}
+
 			oTextDomRef.appendChild(document.createTextNode(sText));
 
 			oMessageDomRef.appendChild(oAccDomRef);
