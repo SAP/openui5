@@ -286,7 +286,7 @@ sap.ui.define([
 		return this.getProperty("width") || "100%";
 	};
 
-	SearchField.prototype._hasPlacehoder = (function () {
+	SearchField.prototype._hasPlaceholder = (function () {
 		return "placeholder" in document.createElement("input");
 	}());
 
