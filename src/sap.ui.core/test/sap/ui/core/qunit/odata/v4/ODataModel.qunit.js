@@ -1561,17 +1561,17 @@ sap.ui.require([
 		{numericSeverity : null, type : MessageType.None},
 		{numericSeverity : undefined, type : MessageType.None}
 	].forEach(function (oFixture, i) {
-		QUnit.test("reportBoundMessages, " + i, function (assert) {
+		QUnit.test("reportBoundMessages #" + i, function (assert) {
 			var aMessages = [{
 					"code" : "F42",
-					"longtextUrl" : "Messages(3)/LongText/$value",
+					"longtextUrl" : "/service/Messages(3)/LongText/$value",
 					"message" : "foo0",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "Name",
 					"transient" : false
 				}, {
 					"code" : "UF1",
-					"longtextUrl" : "baz",
+					"longtextUrl" : "/service/baz",
 					"message" : "foo1",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "",
@@ -1591,8 +1591,7 @@ sap.ui.require([
 					aNewMessages.forEach(function (oMessage, j) {
 						assert.ok(oMessage instanceof Message);
 						assert.strictEqual(oMessage.getCode(), aMessages[j].code);
-						assert.strictEqual(oMessage.getDescriptionUrl(),
-							getServiceUrl() + aMessages[j].longtextUrl);
+						assert.strictEqual(oMessage.getDescriptionUrl(), aMessages[j].longtextUrl);
 						assert.strictEqual(oMessage.getMessage(), aMessages[j].message);
 						assert.strictEqual(oMessage.getMessageProcessor(), oModel);
 						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transient);
@@ -1615,15 +1614,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("reportBoundMessages: longtextUrl special cases ", function (assert) {
-		var aMessages = [{"longtextUrl" : "/foo/bar"}, {"longtextUrl" : ""}, {}],
+		var aMessages = [{"longtextUrl" : ""}, {}],
 			oModel = createModel();
 
 		this.mock(oModel).expects("fireMessageChange")
 			.withExactArgs(sinon.match.object)
 			.callsFake(function (mArguments) {
-				assert.strictEqual(mArguments.newMessages[0].getDescriptionUrl(), "/foo/bar");
+				assert.strictEqual(mArguments.newMessages[0].getDescriptionUrl(), undefined);
 				assert.strictEqual(mArguments.newMessages[1].getDescriptionUrl(), undefined);
-				assert.strictEqual(mArguments.newMessages[2].getDescriptionUrl(), undefined);
 			});
 
 		// code under test
