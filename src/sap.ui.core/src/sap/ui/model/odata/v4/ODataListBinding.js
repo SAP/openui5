@@ -676,6 +676,11 @@ sap.ui.define([
 						+ sFilterPath + " le "
 						+ _Helper.formatLiteral(oFilter.oValue2, sEdmType);
 					break;
+				case FilterOperator.NB :
+					sFilter = "(" + sFilterPath + " lt " + sValue + " or "
+						+ sFilterPath + " gt "
+						+ _Helper.formatLiteral(oFilter.oValue2, sEdmType) + ")";
+					break;
 				case FilterOperator.EQ :
 				case FilterOperator.GE :
 				case FilterOperator.GT :
@@ -689,6 +694,13 @@ sap.ui.define([
 				case FilterOperator.EndsWith :
 				case FilterOperator.StartsWith :
 					sFilter = oFilter.sOperator.toLowerCase() + "(" + sFilterPath + ","
+						+ sValue + ")";
+					break;
+				case FilterOperator.NotStartsWith :
+				case FilterOperator.NotContains :
+				case FilterOperator.NotEndsWith :
+					sFilter = oFilter.sOperator.toLowerCase().replace("not", "not ")
+						+ "(" + sFilterPath + ","
 						+ sValue + ")";
 					break;
 				default :
