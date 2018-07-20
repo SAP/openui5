@@ -8,10 +8,10 @@ sap.ui.require([
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Button',
 	'sap/ui/Device',
+	'sap/ui/core/Component',
 	'sap/ui/thirdparty/hasher',
 	"sap/base/Log",
-	// should be last:
-	'sap/ui/thirdparty/sinon'
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	Utils,
@@ -19,6 +19,7 @@ function(
 	HorizontalLayout,
 	Button,
 	Device,
+	Component,
 	hasher,
 	Log,
 	sinon
@@ -481,46 +482,56 @@ function(
 		getUriParametersStub.restore();
 	});
 
-	QUnit.test("Utils.log shall call Log.warning once", function (assert) {
+	QUnit.test("when calling Utils.log.warning", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(Log, "warning");
+		var spyLog = sandbox.spy(Log, "warning");
+		var aArguments = ["mockMessage", "mockDetails", "mockComponent"];
 
 		// CUT
-		Utils.log.warning("");
+		Utils.log.warning.apply(undefined, aArguments);
 
 		// ASSERTIONS
-		assert.equal(spyLog.callCount, 1);
-
-		// RESTORE
-		spyLog.restore();
+		assert.equal(spyLog.callCount, 1, "then sap.base.Log.warning called once");
+		assert.deepEqual(spyLog.getCall(0).args, aArguments, "then sap.base.Log.warning called with the correct arguments");
 	});
 
-	QUnit.test("log shall call Log.error once", function (assert) {
+	QUnit.test("when calling Utils.log.error", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(Log, "error");
+		var spyLog = sandbox.spy(Log, "error");
+		var aArguments = ["mockMessage", "mockDetails", "mockComponent"];
 
 		// CUT
-		Utils.log.error("");
+		Utils.log.error.apply(undefined, aArguments);
 
 		// ASSERTIONS
-		assert.equal(spyLog.callCount, 1);
-
-		// RESTORE
-		spyLog.restore();
+		assert.equal(spyLog.callCount, 1, "then sap.base.Log.error called once");
+		assert.deepEqual(spyLog.getCall(0).args, aArguments, "then sap.base.Log.error called with the correct arguments");
 	});
 
-	QUnit.test("log shall call Log.debug once", function (assert) {
+	QUnit.test("when calling Utils.log.debug", function (assert) {
 		// PREPARE
-		var spyLog = sinon.spy(Log, "debug");
+		var spyLog = sandbox.spy(Log, "debug");
+		var aArguments = ["mockMessage", "mockDetails", "mockComponent"];
 
 		// CUT
-		Utils.log.debug("");
+		Utils.log.debug.apply(undefined, aArguments);
 
 		// ASSERTIONS
-		assert.equal(spyLog.callCount, 1);
+		assert.equal(spyLog.callCount, 1, "then sap.base.Log.debug called once");
+		assert.deepEqual(spyLog.getCall(0).args, aArguments, "then sap.base.Log.debug called with the correct arguments");
+	});
 
-		// RESTORE
-		spyLog.restore();
+	QUnit.test("when calling Utils.log.info", function (assert) {
+		// PREPARE
+		var spyLog = sandbox.spy(Log, "info");
+		var aArguments = ["mockMessage", "mockDetails", "mockComponent"];
+
+		// CUT
+		Utils.log.info.apply(undefined, aArguments);
+
+		// ASSERTIONS
+		assert.equal(spyLog.callCount, 1, "then sap.base.Log.info called once");
+		assert.deepEqual(spyLog.getCall(0).args, aArguments, "then sap.base.Log.info called with the correct arguments");
 	});
 
 	QUnit.test('getFirstAncestorOfControlWithControlType', function (assert) {
@@ -745,6 +756,48 @@ function(
 		assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
 	});
 
+	QUnit.test("getAppComponentForControl will not search further for the app component if the passed component is of type component and parameter for outer component is not set", function (assert) {
+		var oOuterAppComponent = new Component("outerAppComponent");
+		var oComponent;
+		var oSapAppEntry = {
+			type: "component"
+		};
+		oOuterAppComponent.runAsOwner(function() {
+			oComponent = new Component("innerComponent");
+			sandbox.stub(oComponent, "getManifestEntry")
+				.callsFake(function (sParameter) {
+					return sParameter === "sap.app" ? oSapAppEntry : undefined;
+				});
+		});
+
+		var oReturnedComponent = Utils.getAppComponentForControl(oComponent);
+
+		assert.deepEqual(oReturnedComponent, oComponent, "then the parent app component is not returned");
+		oOuterAppComponent.destroy();
+		oComponent.destroy();
+	});
+
+	QUnit.test("getAppComponentForControl will search further for the app component if the passed component is of type component and parameter for outer component is set", function (assert) {
+		var oOuterAppComponent = new Component("outerAppComponent");
+		var oComponent;
+		var oSapAppEntry = {
+			type: "component"
+		};
+		oOuterAppComponent.runAsOwner(function() {
+			oComponent = new Component("innerComponent");
+			sandbox.stub(oComponent, "getManifestEntry")
+				.callsFake(function (sParameter) {
+					return sParameter === "sap.app" ? oSapAppEntry : undefined;
+				});
+		});
+
+		var oReturnedComponent = Utils.getAppComponentForControl(oComponent, true);
+
+		assert.deepEqual(oReturnedComponent, oOuterAppComponent, "then the parent app component is not returned");
+		oOuterAppComponent.destroy();
+		oComponent.destroy();
+	});
+
 	QUnit.test("getAppComponentForControl returns the component if the passed component is of the type application", function (assert) {
 		var oComponent = new sap.ui.core.UIComponent();
 		var oSapAppEntry = {
@@ -801,11 +854,9 @@ function(
 			}
 		};
 
-			var oGetComponentForControlStub = sandbox.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(oComponentMockApp);
+		sandbox.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(oComponentMockApp);
 
-		assert.equal(Utils.getComponentClassName(oControl), sComponentNameApp, "Check that the type of the component is 'application'");
-
-		oGetComponentForControlStub.stub.restore();
+		assert.equal(Utils.getComponentClassName(oControl, true), sComponentNameApp, "Check that the type of the component is 'application'");
 	});
 
 	QUnit.test("getComponentClassName does not find component of type 'application' in the hierarchy", function (assert) {
@@ -827,11 +878,9 @@ function(
 			}
 		};
 
-		var oGetComponentForControlStub = sandbox.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(null);
+		sandbox.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(null);
 
-		assert.equal(Utils.getComponentClassName(oControl), "", "Check that empty string is returned.");
-
-		oGetComponentForControlStub.stub.restore();
+		assert.equal(Utils.getComponentClassName(oControl, true), "", "Check that empty string is returned.");
 	});
 
 	QUnit.module("get/set URL Technical Parameter values", {
@@ -891,7 +940,7 @@ function(
 				"sap-ui-fl-max-layer": ["CUSTOMER"]
 			}
 		};
-		sandbox.stub(Utils, "getUshellContainer", function() {
+		sandbox.stub(Utils, "getUshellContainer").callsFake(function() {
 			return {
 				getService: function () {
 					return {
@@ -910,7 +959,7 @@ function(
 	});
 
 	QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert){
-		sandbox.stub(Utils, "getUshellContainer", function() {
+		sandbox.stub(Utils, "getUshellContainer").callsFake(function() {
 			return {
 				getService: function () {
 					return {

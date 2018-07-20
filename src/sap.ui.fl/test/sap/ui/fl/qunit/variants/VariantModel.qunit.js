@@ -10,6 +10,7 @@ sap.ui.require([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/ui/fl/variants/util/VariantUtil",
+	"sap/ui/core/BusyIndicator",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -20,12 +21,15 @@ function(
 	FlexControllerFactory,
 	BaseTreeModifier,
 	VariantUtil,
+	BusyIndicator,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+	sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+	sinon.stub(BusyIndicator, "show");
+	sinon.stub(BusyIndicator, "hide");
 	var oDummyControl = {
 		attachManage: sandbox.stub(),
 		detachManage: sandbox.stub(),
@@ -81,11 +85,12 @@ function(
 				getId: function() {
 					return "RTADemoAppMD";
 				},
-				getManifestObject: function() {
+				getManifest: function() {
 					return oManifest;
 				}
 			};
-			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
+			sandbox.stub(Utils, "getComponentClassName").returns(this.oComponent.name);
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
@@ -190,7 +195,7 @@ function(
 	});
 
 	QUnit.test("when calling 'switchToDefaultVariant' for a variant reference which is not the current variant", function(assert) {
-		sandbox.stub(this.oModel, "updateCurrentVariant");
+		sandbox.stub(this.oModel, "updateCurrentVariant").returns(Promise.resolve());
 		this.oModel.switchToDefaultVariant("variant0");
 		assert.strictEqual(this.oModel.updateCurrentVariant.callCount, 0, "then VariantModel.updateCurrentVariant not called");
 	});
@@ -412,13 +417,21 @@ function(
 		assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then '_updateChangesForVariantManagementInMap' of VariantController called");
 	});
 
-	QUnit.test("when calling 'updateCurrentVariant'", function(assert) {
+	QUnit.test("when calling 'updateCurrentVariant' with root app component", function(assert) {
 		var fnUpdateCurrentVariantInMapStub = sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
+
 		assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
 		assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
+
 		this.oModel.oData["variantMgmtId1"].updateVariantInURL = true;
-		return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
+		return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oComponent)
 		.then(function() {
+			assert.ok(this.fnLoadSwitchChangesStub.calledWith({
+				variantManagementReference: "variantMgmtId1",
+				currentVariantReference: "variant1",
+				newVariantReference: "variant0",
+				component: this.oModel.oComponent
+			}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
 			assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
 			assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
 			assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
@@ -426,6 +439,28 @@ function(
 			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
 		}.bind(this));
+	});
+
+	QUnit.test("when calling 'updateCurrentVariant' without a root app component", function(assert) {
+		var fnUpdateCurrentVariantInMapStub = sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
+		var oMockComponentObject = {id: "embeddedComponent"};
+		var oReturnObject = {component: oMockComponentObject};
+
+		this.oModel._oEmbeddedComponents = [oMockComponentObject];
+		this.oModel.oData["variantMgmtId1"].updateVariantInURL = true;
+		this.fnLoadSwitchChangesStub.returns(oReturnObject);
+		return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
+			.then(function() {
+				assert.ok(this.fnLoadSwitchChangesStub.calledWith({
+					variantManagementReference: "variantMgmtId1",
+					currentVariantReference: "variant1",
+					newVariantReference: "variant0",
+					component: this.oModel._oEmbeddedComponents.concat([this.oModel.oComponent])
+				}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
+				assert.deepEqual(this.fnRevertChangesStub.getCall(0).args[1], oMockComponentObject, "then revertChangesOnControl called in FlexController with the correct component");
+				assert.deepEqual(this.fnApplyChangesStub.getCall(0).args[1], oMockComponentObject, "then applyVariantChanges called in FlexController with the correct component");
+				assert.ok(fnUpdateCurrentVariantInMapStub.calledWith("variantMgmtId1", "variant0"), "then variantController.updateCurrentVariantInMap called with the right parameters");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling 'updateCurrentVariant' with dirty changes in current variant", function(assert) {
@@ -568,21 +603,35 @@ function(
 	});
 
 	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
-		sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
-		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns(
-				[{getDefinition: function() {return {fileName: "change2"};}},
-				 {getDefinition: function() {return {fileName: "change3"};}},
-				 {getDefinition: function() {return {fileName: "change4"};}}]
-		);
+		var aDirtyChanges = [
+			{
+				getDefinition: function () {
+					return {fileName: "change2"};
+				}
+			},
+			{
+				getDefinition: function () {
+					return {fileName: "change3"};
+				}
+			},
+			{
+				getDefinition: function () {
+					return {fileName: "change4"};
+				}
+			}
+		];
+		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns(aDirtyChanges);
 		sandbox.stub(this.oModel.oVariantController, "removeChangeFromVariant");
 		var aChanges = [{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}];
+		var oMockControlComponent = {id: "mockControlComponent"};
 
-		this.oModel._removeDirtyChanges(aChanges, "variantMgmtId1", this.oModel.oData["variantMgmtId1"].currentVariant);
+		this.oModel._removeDirtyChanges(aChanges, "variantMgmtId1", this.oModel.oData["variantMgmtId1"].currentVariant, oMockControlComponent);
 		assert.ok(this.fnRevertChangesStub.calledOnce, "then 'revertChangesOnControl' called once");
 		assert.equal(this.fnRevertChangesStub.args[0][0].length, 2, "and two changes are dirty and in Variant");
 		assert.propEqual(this.fnRevertChangesStub.args[0][0][0].getDefinition(), aChanges[2], "the first change was applied before the second change");
 		assert.propEqual(this.fnRevertChangesStub.args[0][0][1].getDefinition(), aChanges[1], "the second change was applied before the first change");
-		assert.equal(this.fnDeleteChangeStub.callCount, 2, "and 'deleteChange' called twice (due to 2 changes)");
+		assert.ok(this.fnDeleteChangeStub.firstCall.calledWith(aDirtyChanges[0], oMockControlComponent), "and 'deleteChange' once with the first matching dirty change and the passed component");
+		assert.ok(this.fnDeleteChangeStub.secondCall.calledWith(aDirtyChanges[1], oMockControlComponent), "and 'deleteChange' once with the second matching dirty change and the passed component");
 	});
 
 	QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
@@ -872,7 +921,8 @@ function(
 		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange").returnsArg(0);
 
 		var mPropertyBag = {
-			variantManagementReference: "variantMgmtId1"
+			variantManagementReference: "variantMgmtId1",
+			appComponent: this.oComponent
 		};
 		return this.oModel._copyVariant(mPropertyBag).then( function (aChanges) {
 			assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
@@ -888,7 +938,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("when calling 'removeVariant'", function(assert) {
+	QUnit.test("when calling 'removeVariant' with a component", function(assert) {
 		var fnDeleteChangeStub = sandbox.stub(this.oModel.oFlexController._oChangePersistence, "deleteChange");
 		var oChangeInVariant = {
 			"fileName": "change0",
@@ -914,15 +964,23 @@ function(
 		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "getDirtyChanges").returns(aDummyDirtyChanges);
 
 		assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 3, "then initial length is 3");
-
-		return this.oModel.removeVariant(oVariant, "", "variantMgmtId1").then( function () {
-			assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 2, "then one variant removed from VariantModel");
-			assert.ok(fnRemoveVariantToControllerStub.calledOnce, "then function to remove variant from VariantController called");
-			assert.ok(fnDeleteChangeStub.calledTwice, "then ChangePersistence.deleteChange called twice");
-			assert.ok(fnDeleteChangeStub.calledWith(oChangeInVariant), "then ChangePersistence.deleteChange called for change in variant");
-			assert.ok(fnDeleteChangeStub.calledWith(oVariant), "then ChangePersistence.deleteChange called for variant");
-			assert.ok(fnUpdateCurrentVariantSpy.calledBefore(fnRemoveVariantToControllerStub), "then previous variant is reverted before removing the current variant");
-		}.bind(this));
+		var mPropertyBag = {
+			variant: oVariant,
+			sourceVariantReference: "sourceVariant",
+			variantManagementReference: "variantMgmtId1",
+			component: this.oModel.oComponent
+		};
+		return this.oModel.removeVariant(mPropertyBag)
+			.then(function () {
+				assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 2, "then one variant removed from VariantModel");
+				assert.ok(fnRemoveVariantToControllerStub.calledOnce, "then function to remove variant from VariantController called");
+				assert.ok(fnUpdateCurrentVariantSpy.calledWith(mPropertyBag.variantManagementReference, mPropertyBag.sourceVariantReference, mPropertyBag.component),
+					"then updateCurrentVariant() called with the correct parameters");
+				assert.ok(fnDeleteChangeStub.calledTwice, "then ChangePersistence.deleteChange called twice");
+				assert.ok(fnDeleteChangeStub.calledWith(oChangeInVariant), "then ChangePersistence.deleteChange called for change in variant");
+				assert.ok(fnDeleteChangeStub.calledWith(oVariant), "then ChangePersistence.deleteChange called for variant");
+				assert.ok(fnUpdateCurrentVariantSpy.calledBefore(fnRemoveVariantToControllerStub), "then previous variant is reverted before removing the current variant");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling '_addChange'", function(assert) {
@@ -1165,10 +1223,11 @@ function(
 				getId: function() {
 					return "RTADemoAppMD";
 				},
-				getManifestObject: function() {
+				getManifest: function() {
 					return oManifest;
 				}
 			};
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
 
 			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
@@ -1197,5 +1256,19 @@ function(
 		assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
 	});
 
+	QUnit.test("when calling 'addEmbeddedComponent' for the first time", function(assert) {
+		var oMockEmbeddedComponent = {id: "mockEmbeddedComponent"};
+		this.oModel.addEmbeddedComponent(oMockEmbeddedComponent);
+		assert.ok(this.oModel._oEmbeddedComponents[0], oMockEmbeddedComponent, "then embedded component is added to VariantModel._oEmbeddedComponent");
+	});
+
+	QUnit.test("when calling 'addEmbeddedComponent' when VariantModel._oEmbeddedComponent already exists", function(assert) {
+		var oMockEmbeddedComponent = {id: "mockEmbeddedComponent"};
+		this.oModel._oEmbeddedComponents = [{id:"alreadyExistingEmbeddedComponent"}];
+		this.oModel.addEmbeddedComponent(oMockEmbeddedComponent);
+		assert.ok(this.oModel._oEmbeddedComponents[1], oMockEmbeddedComponent, "then embedded component is added to VariantModel._oEmbeddedComponent");
+	});
+
 	QUnit.start();
+
 });

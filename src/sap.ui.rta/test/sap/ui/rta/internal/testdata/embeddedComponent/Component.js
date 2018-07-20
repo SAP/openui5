@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/rta/util/UrlParser",
+	"sap/base/util/UriParameters",
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/resource/ResourceModel",
@@ -11,7 +11,7 @@ sap.ui.define([
 ], function(
 	UIComponent,
 	FakeLrepConnectorLocalStorage,
-	UrlParser,
+	UriParameters,
 	FakeLrepConnector,
 	MockServer,
 	ResourceModel,
@@ -22,7 +22,7 @@ sap.ui.define([
 
 	"use strict";
 
-	return UIComponent.extend("sap.ui.rta.test.variantManagement.Component", {
+	return UIComponent.extend("sap.ui.rta.test.embeddedComponent.Component", {
 
 		metadata: {
 			manifest: "json"
@@ -30,6 +30,7 @@ sap.ui.define([
 
 		constructor: function () {
 			UIComponent.prototype.constructor.apply(this, arguments);
+			this.oUriParametersUtil = new UriParameters(window.location.href);
 			this._createFakeLrep();
 		},
 
@@ -42,11 +43,11 @@ sap.ui.define([
 		},
 
 		_startMockServer: function () {
-			var sURL = "/destinations/E91/sap/opu/odata/SAP/VariantManagementTest/";
+			var sURL = "/destinations/E91/sap/opu/odata/SAP/EmbeddedComponentTest/";
 			var oMockServer = new MockServer({
 				rootUri: sURL
 			});
-			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test/variantManagement");
+			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/variantManagement");
 
 			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", this._sResourcePath + "/mockserver");
 
@@ -80,15 +81,15 @@ sap.ui.define([
 
 		_adaptButtonConfiguration: function(){
 			this.setModel(new JSONModel({
-				showAdaptButton: !Utils.getUshellContainer()
+				showOuterAdaptButton: !Utils.getUshellContainer(),
+				showAdaptButton: false // for embedded app
 			}), "app");
 		},
 
 		_createFakeLrep: function () {
-			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
+			if (this.oUriParametersUtil.get('sap-rta-mock-lrep') !== false) {
 				var mAppManifest = this.getManifestEntry("sap.app");
 				var mSettings = {};
-//				mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.fl.qunit.testResources").replace('resources', 'test-resources') + "/FakeVariantLrepResponse.json";
 				FakeLrepConnectorLocalStorage.enableFakeConnector(
 					mSettings,
 					mAppManifest.id + '.Component',
@@ -97,7 +98,7 @@ sap.ui.define([
 		},
 
 		destroy: function() {
-			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
+			if (this.oUriParametersUtil.get('sap-rta-mock-lrep') !== false) {
 				var mAppManifest = this.getManifestEntry("sap.app");
 				FakeLrepConnector.disableFakeConnector(
 					mAppManifest.id + '.Component',

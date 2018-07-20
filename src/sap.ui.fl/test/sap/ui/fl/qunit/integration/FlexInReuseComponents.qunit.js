@@ -14,7 +14,8 @@ sap.ui.require([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager",
-	"sap/ui/core/Component"
+	"sap/ui/core/Component",
+	"sap/ui/fl/LrepConnector"
 ],
 function (
 	FlexController,
@@ -28,16 +29,21 @@ function (
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	ContextManager,
-	Component
+	Component,
+	LrepConnector
 ) {
 	'use strict';
 	QUnit.start();
 
 	sinon.config.useFakeTimers = false;
 
-	jQuery.sap.registerModulePath("sap.ui.fl.qunit.integration", "./");
+	sap.ui.loader.config({
+		paths: {
+			'sap/ui/fl/qunit/integration': './'
+		}
+	});
 
-	sinon.stub(sap.ui.fl.LrepConnector.prototype, "loadChanges").returns(
+	sinon.stub(LrepConnector.prototype, "loadChanges").returns(
 		Promise.resolve({
 			"changes": [],
 			"contexts": [],
@@ -53,17 +59,19 @@ function (
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
 		beforeEach: function () {
-			this.oComponent = sap.ui.component({
+			return Component.create({
 				name: "sap.ui.fl.qunit.integration.testComponentComplex",
 				id: "sap.ui.fl.qunit.integration.testComponentComplex",
 				manifestFirst: true,
 				"metadata": {
 					"manifest": "json"
 				}
-			});
-
-			// simulate a to late loaded fl library... resulting in a not registered propagationListener
-			this.oComponent.aPropagationListeners = [];
+			})
+			.then(function (oComponent) {
+				this.oComponent = oComponent;
+				// simulate a to late loaded fl library... resulting in a not registered propagationListener
+				this.oComponent.aPropagationListeners = [];
+			}.bind(this));
 		},
 
 		afterEach: function (assert) {

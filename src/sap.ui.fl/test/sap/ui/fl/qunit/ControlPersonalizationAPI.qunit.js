@@ -9,14 +9,16 @@ sap.ui.require([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Manifest",
-	"sap/ui/fl/ControlPersonalizationAPI"
+	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/core/Component"
 ], function(
 	VariantController,
 	VariantModel,
 	VariantManagement,
 	Utils,
 	Manifest,
-	ControlPersonalizationAPI
+	ControlPersonalizationAPI,
+	Component
 ) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
@@ -25,7 +27,7 @@ sap.ui.require([
 	var sandbox = sinon.sandbox.create();
 
 	var fnStubTechnicalParameterValues = function (aUrlTechnicalParameters) {
-		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+		sandbox.stub(this.oModel, "_getLocalId").withArgs(this.oDummyControl.getId(), this.oComponent).returns("variantMgmtId1");
 		sandbox.spy(this.oModel, "updateHasherEntry");
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant1").returns(true);
 		sandbox.stub(Utils, "getUshellContainer").returns(true);
@@ -43,7 +45,7 @@ sap.ui.require([
 
 	var fnCheckUpdateCurrentVariantCalled = function (assert, sVariantManagement, sVariant) {
 		assert.ok(this.oModel.updateCurrentVariant.calledOnce, "then variantModel.updateCurrentVariant called once");
-		assert.ok(this.oModel.updateCurrentVariant.calledWithExactly(sVariantManagement, sVariant), "then variantModel.updateCurrentVariant called to activate the target variant");
+		assert.ok(this.oModel.updateCurrentVariant.calledWithExactly(sVariantManagement, sVariant, this.oComponent), "then variantModel.updateCurrentVariant called to activate the target variant");
 	};
 
 	var fnCheckActivateVariantErrorResponse = function (assert, sExpectedError, sReceivedError) {
@@ -87,19 +89,22 @@ sap.ui.require([
 				}
 			};
 
-			this.oModel = new VariantModel(this.oData, oMockFlexController, this.oComponent);
-
 			this.oDummyControl = new VariantManagement("dummyControl");
-			this.oComponent = new sap.ui.core.Component("RTADemoAppMD");
-			this.oComponent.setModel(this.oModel, "$FlexVariants");
+
+			this.oModel = new VariantModel(this.oData, oMockFlexController);
+			this.oOuterAppComponent = new Component("AppComponent");
+			this.oOuterAppComponent.setModel(this.oModel, "$FlexVariants");
+			this.oComponent = new Component("EmbeddedComponent");
 			var fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl");
+			fnGetAppComponentForControlStub.withArgs(this.oDummyControl, true).returns(this.oOuterAppComponent);
+			fnGetAppComponentForControlStub.withArgs(this.oComponent, true).returns(this.oOuterAppComponent);
 			fnGetAppComponentForControlStub.withArgs(this.oDummyControl).returns(this.oComponent);
 			fnGetAppComponentForControlStub.withArgs(this.oComponent).returns(this.oComponent);
-
 		},
 		afterEach: function(assert) {
 			sandbox.restore();
 			this.oModel.destroy();
+			this.oOuterAppComponent.destroy();
 			this.oComponent.destroy();
 			this.oDummyControl.destroy();
 		}
@@ -112,11 +117,11 @@ sap.ui.require([
 		ControlPersonalizationAPI.clearVariantParameterInURL(this.oDummyControl);
 
 		assert.ok(Utils.getParsedURLHash.calledOnce, "then hash parameter values are requested");
-		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
+		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oOuterAppComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
 		assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {
 			parameters: [aUrlTechnicalParameters[0]],
 			updateURL: true,
-			component: this.oComponent
+			component: this.oOuterAppComponent
 		}, "then VariantModel.updateHasherEntry called with the desired arguments");
 	});
 
@@ -199,7 +204,7 @@ sap.ui.require([
 
 	QUnit.test("when calling 'activateVariant' with a control with an invalid variantModel", function(assert) {
 		fnStubUpdateCurrentVariant.call(this);
-		this.oComponent.setModel(null, "$FlexVariants");
+		this.oOuterAppComponent.setModel(null, "$FlexVariants");
 
 		return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
 			.then( function() {},

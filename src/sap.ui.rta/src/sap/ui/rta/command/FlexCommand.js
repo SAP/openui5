@@ -206,8 +206,7 @@ sap.ui.define([
 						Log.error("No revert change function available to handle revert data for " + oControl);
 						return;
 					}
-					var oAppComponent = this.getAppComponent();
-					return oFlexController.revertChangesOnControl([oChange], oAppComponent);
+					return oFlexController.revertChangesOnControl([oChange], this.getAppComponent());
 				} else if (this._aRecordedUndo) {
 					RtaControlTreeModifier.performUndo(this._aRecordedUndo);
 				} else {

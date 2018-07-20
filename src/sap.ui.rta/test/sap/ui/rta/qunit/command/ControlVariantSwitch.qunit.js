@@ -60,10 +60,10 @@ sap.ui.require([
 			this.sVariantManagementReference = "variantManagementReference-1";
 			this.oVariantManagement = new VariantManagement(this.sVariantManagementReference, {});
 
-			var oModel = new VariantModel({}, {}),
-				oMockedAppComponent = fnGetMockedAppComponent(oModel);
+			var oModel = new VariantModel({}, {});
+			this.oMockedAppComponent = fnGetMockedAppComponent(oModel);
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.fnUpdateCurrentVariantStub = sandbox.stub(oModel, "updateCurrentVariant");
 
 		},
@@ -86,7 +86,7 @@ sap.ui.require([
 
 		.then(function() {
 			assert.equal(this.fnUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
-			assert.equal(this.fnUpdateCurrentVariantStub.calledWithExactly(this.sVariantManagementReference, oSwitchCommandData.targetVariantReference), true,
+			assert.equal(this.fnUpdateCurrentVariantStub.calledWithExactly(this.sVariantManagementReference, oSwitchCommandData.targetVariantReference, this.oMockedAppComponent), true,
 				"then updateCurrentVariant after execute command is called with the correct parameters");
 		}.bind(this))
 
@@ -94,7 +94,7 @@ sap.ui.require([
 
 		.then(function() {
 			assert.equal(this.fnUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
-			assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(1).args, [this.sVariantManagementReference, oSwitchCommandData.sourceVariantReference],
+			assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(1).args, [this.sVariantManagementReference, oSwitchCommandData.sourceVariantReference, this.oMockedAppComponent],
 				"then updateCurrentVariant after undo command is called with the correct parameters");
 		}.bind(this));
 	});

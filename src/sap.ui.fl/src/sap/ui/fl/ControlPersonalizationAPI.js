@@ -34,13 +34,15 @@ sap.ui.define([
 		 * @restricted sap.ui.fl
 		 */
 		_determineParameters : function(oControl) {
+			var oOuterAppComponent = Utils.getAppComponentForControl(oControl, true);
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var oRootControl = oAppComponent.getRootControl();
 			var oView = Utils.getViewForControl(oControl);
 			var oVariantModel = oAppComponent.getModel("$FlexVariants");
 
 			var mParams = {
-				appComponent : oAppComponent,
+				outerAppComponent : oOuterAppComponent,
+				appComponent: oAppComponent,
 				rootControl : oRootControl,
 				view : oView,
 				variantModel : oVariantModel,
@@ -93,8 +95,9 @@ sap.ui.define([
 		 */
 		clearVariantParameterInURL : function (oControl) {
 			var aUrlParameters = [];
+			var oOuterAppComponent = Utils.getAppComponentForControl(oControl, true);
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var oVariantModel = oAppComponent instanceof Component ? oAppComponent.getModel("$FlexVariants") : undefined;
+			var oVariantModel = oOuterAppComponent instanceof Component ? oOuterAppComponent.getModel("$FlexVariants") : undefined;
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
 				Utils.setTechnicalURLParameterValues(undefined, VARIANT_TECHNICAL_PARAMETER_NAME, aUrlParameters);
@@ -116,7 +119,7 @@ sap.ui.define([
 			oVariantModel.updateHasherEntry({
 				parameters: aUrlParameters,
 				updateURL: true,
-				component: oAppComponent
+				component: oOuterAppComponent
 			});
 
 		},
@@ -147,11 +150,12 @@ sap.ui.define([
 						}
 
 						var oAppComponent = Utils.getAppComponentForControl(oElement);
-						if (!oAppComponent) {
+						var oOuterAppComponent = Utils.getAppComponentForControl(oElement, true);
+						if (!oOuterAppComponent) {
 							throw new Error("A valid variant management control or component (instance or id) should be passed as parameter");
 						}
 
-						var oVariantModel = oAppComponent.getModel("$FlexVariants");
+						var oVariantModel = oOuterAppComponent.getModel("$FlexVariants");
 						if (!oVariantModel) {
 							throw new Error("No variant management model found for the passed control or component");
 						}
@@ -160,7 +164,7 @@ sap.ui.define([
 							throw new Error("A valid control or component, and variant id combination is required");
 						}
 
-					return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference);
+					return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
 				})
 				["catch"](function (oError) {
 							Utils.log.error(oError);
@@ -245,7 +249,7 @@ sap.ui.define([
 			for (var i = 0; i < aControlChanges.length; i++) {
 				mChange = aControlChanges[i];
 				mChangeSpecificData = {};
-				jQuery.extend(mChangeSpecificData, {
+				Object.assign(mChangeSpecificData, {
 					developerMode: false,
 					layer: sLayer
 				});
@@ -272,9 +276,8 @@ sap.ui.define([
 						sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
 
 						oChange = mParams.variantModel.oFlexController.createChange(
-							jQuery.extend(mChangeSpecificData, mControlChangeSpecificData),
-							oSelectorControl,
-							mParams.appComponent
+							Object.assign(mChangeSpecificData, mControlChangeSpecificData),
+							oSelectorControl
 						);
 						oChange.setVariantReference(sCurrentVariantReference);
 

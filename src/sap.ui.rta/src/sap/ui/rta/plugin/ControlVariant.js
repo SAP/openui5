@@ -187,7 +187,7 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype._getVariantModel = function(oElement) {
-		var oAppComponent = flUtils.getAppComponentForControl(oElement);
+		var oAppComponent = flUtils.getAppComponentForControl(oElement, true);
 		return oAppComponent ? oAppComponent.getModel(ControlVariant.MODEL_NAME) : undefined;
 	};
 

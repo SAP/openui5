@@ -193,9 +193,9 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag, bInvalidateCache) {
-		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag, bInvalidateCache).then(function(oWrappedChangeFileContent) {
-			var oComponent = mPropertyBag && mPropertyBag.oComponent;
+	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
+		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
+			var oComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component, true);
 
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
@@ -672,7 +672,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
 
-		mPropertyBag.oComponent = !jQuery.isEmptyObject(oComponent) && oComponent;
+		mPropertyBag.component = !jQuery.isEmptyObject(oComponent) && oComponent;
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
@@ -830,18 +830,16 @@ sap.ui.define([
 	/**
 	 * Adds a new change (could be variant as well) and returns the id of the new change.
 	 *
-	 * @param {object} vChange The complete and finalized JSON object representation the file content of the change or a Change instance
-	 * @param {object} oComponent Component instance
+	 * @param {object} vChange - The complete and finalized JSON object representation the file content of the change or a Change instance
+	 * @param {sap.ui.core.Component} - oAppComponent Component instance
+	 * @param {sap.ui.core.Component} [oOuterAppComponent] - Root App Component instance
 	 * @returns {sap.ui.fl.Change|sap.ui.fl.variant} the newly created change or variant
 	 * @public
 	 */
-	ChangePersistence.prototype.addChange = function(vChange, oComponent) {
+	ChangePersistence.prototype.addChange = function(vChange, oAppComponent, oOuterAppComponent) {
 		var oChange = this.addDirtyChange(vChange);
-		//control variants are not needed in map
-		//if (oChange.getFileType() !== "ctrl_variant") {
-		this._addChangeIntoMap(oComponent, oChange);
-		//}
-		this._addPropagationListener(oComponent);
+		this._addChangeIntoMap(oAppComponent, oChange);
+		this._addPropagationListener(oOuterAppComponent || oAppComponent);
 		return oChange;
 	};
 
@@ -1117,12 +1115,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * TODO!!!
+	 * Returns changes that need to be applied and reverted along with the component to which they belong for a control variant
 	 *
-	 * @param {sap.ui.fl.Change} oChange the change to be deleted
+	 * @param {object} mPropertyBag - additional properties required to calculate changes to be switched
+	 * @param {string} mPropertyBag.variantManagementReference - variant management reference
+	 * @param {string} mPropertyBag.currentVariantReference - current variant reference
+	 * @param {string} mPropertyBag.newVariantReference - new variant reference
+	 * @param {sap.ui.core.Component|sap.ui.core.Component[]} mPropertyBag.component - control component or array of potential components
+	 *
+	 * @typedef {object} SwitchChanges
+	 * @property {array} aRevert - an array of changes to be reverted
+	 * @property {array} aNew - an array of changes to be applied
+	 * @property {sap.ui.core.Component} component - the component responsible
+	 *
+	 * @returns {SwitchChanges} an object containing all changes to be applied and reverted, along with the component, for a control variant
 	 */
-	ChangePersistence.prototype.loadSwitchChangesMapForComponent = function(sVariantManagementId, sCurrentVariant, sNewVariant) {
-		return this._oVariantController.getChangesForVariantSwitch(sVariantManagementId, sCurrentVariant, sNewVariant, this._mChanges.mChanges);
+	ChangePersistence.prototype.loadSwitchChangesMapForComponent = function(mPropertyBag) {
+		mPropertyBag.changesMap = this._mChanges.mChanges;
+		return this._oVariantController.getChangesForVariantSwitch(mPropertyBag);
 	};
 
 	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer) {

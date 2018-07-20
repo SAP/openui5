@@ -1298,7 +1298,7 @@ sap.ui.define([
 	 * Build the navigation arguments object required to trigger the navigation
 	 * using the CrossApplicationNavigation ushell service.
 	 * @param  {Object} mParsedHash Parsed URL hash
-	 * @return {Object}             Returns argument map ("oArg" parameter of the "toExternal" function)
+	 * @return {Object} Returns argument map ("oArg" parameter of the "toExternal" function)
 	 */
 	RuntimeAuthoring.prototype._buildNavigationArguments = function(mParsedHash){
 		return {

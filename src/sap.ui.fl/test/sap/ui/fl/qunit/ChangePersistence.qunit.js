@@ -85,6 +85,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
+
 	QUnit.test("when getChangesForComponent is called with _bUserLayerChangesExist set and ignoreMaxLayerParameter is passed as true", function (assert) {
 		this.oChangePersistence._bUserLayerChangesExist = true;
 
@@ -100,6 +101,43 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			assert.strictEqual(sResponse, "userLevelVariantChangesExist", "then the correct response is returned");
 			assert.notOk(this.oChangePersistence._bUserLayerChangesExist, "then _bUserLayerChangesExist is unset");
 		}.bind(this));
+	});
+
+	QUnit.test("when getChangesForComponent is called with an embedded component as a parameter", function (assert) {
+		assert.expect(2);
+		var oOuterAppComponent = {
+			getModel: function(sModelName) {
+				if (sModelName === "i18nFlexVendor") {
+					assert.ok(true, "then getModel() was called on the app component");
+				}
+			},
+			getComponentData: function() {
+				return {
+					technicalParameters: ["mockTechnicalParameter"]
+				};
+			}
+		};
+
+		var oWrappedFileContent = {
+			messagebundle: "mockMessageBundle",
+			changes: {
+				changes: [],
+				variantSection: { "mockVariantManagement":{} }
+			}
+		};
+
+		var oComponent = {
+			id: "mockComponent"
+		};
+
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oWrappedFileContent));
+		sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent, true).returns(oOuterAppComponent);
+		var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+
+		return this.oChangePersistence.getChangesForComponent({ component: oComponent })
+			.then(function (aChanges) {
+				assert.ok(fnSetChangeFileContentStub.calledWith(oWrappedFileContent, oOuterAppComponent.getComponentData().technicalParameters), "then the technical parameters from the app component were passed to the variant controller");
+			});
 	});
 
 	QUnit.test("when getChangesForComponent is called with a variantSection when changes section is not empty", function (assert) {
@@ -246,7 +284,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 		var mPropertyBag = {
-			oComponent : {
+			component : {
 				getComponentData : function() {
 					return {
 						technicalParameters: {
@@ -256,9 +294,10 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				}
 			}
 		};
+		this.stub(Utils, "getAppComponentForControl").returns(mPropertyBag.component);
 
 		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function () {
-			assert.deepEqual(fnSetChangeFileContentStub.getCall(0).args[1], mPropertyBag.oComponent.getComponentData().technicalParameters, "then technical parameters were passed if present");
+			assert.deepEqual(fnSetChangeFileContentStub.getCall(0).args[1], mPropertyBag.component.getComponentData().technicalParameters, "then technical parameters were passed if present");
 		});
 	});
 
@@ -851,7 +890,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			messagebundle: {"i_123": "translatedKey"}
 		}));
 		var mPropertyBag = {};
-		mPropertyBag.oComponent = this._oComponentInstance;
+		mPropertyBag.component = this._oComponentInstance;
 		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function(changes) {
 			var oModel = this._oComponentInstance.getModel("i18nFlexVendor");
 			assert.equal(oModel, undefined);
@@ -870,7 +909,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			messagebundle: {"i_123": "translatedKey"}
 		}));
 		var mPropertyBag = {};
-		mPropertyBag.oComponent = this._oComponentInstance;
+		mPropertyBag.component = this._oComponentInstance;
 		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function(changes) {
 			var oModel = this._oComponentInstance.getModel("i18nFlexVendor");
 			assert.notEqual(oModel, undefined);
@@ -1427,7 +1466,6 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				dependentSelector: []
 			}
 			]}}));
-
 		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
 
 			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
@@ -2188,11 +2226,51 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			this._oComponentInstance = sap.ui.component({
 				name: "sap/ui/fl/qunit/integration/testComponentComplex"
 			});
+			this._oAppComponentInstance = sap.ui.component({
+				name: "sap/ui/fl/qunit/integration/testComponentReuse"
+			});
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 		},
 		afterEach: function () {
 			sandbox.restore();
 		}
+	});
+
+	QUnit.test("Shall add a new change and return it", function (assert) {
+		var oChangeContent, aChanges;
+
+		oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		var fnAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
+
+		//Call CUT
+		var newChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		assert.ok(fnAddDirtyChangeSpy.calledWith(oChangeContent), "then addDirtyChange called with the change content");
+		aChanges = this.oChangePersistence._aDirtyChanges;
+		assert.ok(aChanges);
+		assert.strictEqual(aChanges.length, 1);
+		assert.strictEqual(aChanges[0].getId(), oChangeContent.fileName);
+		assert.strictEqual(aChanges[0], newChange);
+	});
+
+	QUnit.test("Shall add propagation listener on the outer app component if passed", function (assert) {
+		var oChangeContent = { };
+
+		sandbox.stub(this.oChangePersistence, "addDirtyChange");
+		sandbox.stub(this.oChangePersistence, "_addChangeIntoMap");
+		var fnAddPropagationListenerStub = sandbox.spy(this.oChangePersistence, "_addPropagationListener");
+
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance, this._oAppComponentInstance);
+		assert.ok(fnAddPropagationListenerStub.calledWith(this._oAppComponentInstance), "then _addPropagationListener called with outer app component");
 	});
 
 	QUnit.test("Shall add a new change and return it", function (assert) {

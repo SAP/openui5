@@ -41,7 +41,7 @@ sap.ui.define([
 	XmlPreprocessorImpl.process = function(oView, mProperties){
 		try {
 			if (!mProperties || mProperties.sync) {
-				Log.warning("Flexibility feature for applying changes on an XML view is only available for " +
+				Utils.log.warning("Flexibility feature for applying changes on an XML view is only available for " +
 					"asynchronous views; merge is be done later on the JS controls.");
 				return (oView);
 			}
@@ -56,9 +56,9 @@ sap.ui.define([
 				return Promise.resolve(oView);
 			}
 
-			var oAppComponent = Utils.getAppComponentForControl(oComponent);
-			var sFlexReference = Utils.getComponentClassName(oAppComponent);
-			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
+			var oOuterAppComponent = Utils.getAppComponentForControl(oComponent, true);
+			var sFlexReference = Utils.getComponentClassName(oOuterAppComponent);
+			var sAppVersion = Utils.getAppVersionFromManifest(oOuterAppComponent.getManifest());
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 			return oChangePersistence.getCacheKey().then(function(sCacheKey){
 				if (!sCacheKey || sCacheKey === ChangePersistence.NOTAG) {
@@ -79,7 +79,7 @@ sap.ui.define([
 			});
 		} catch (error) {
 			var sError = "view " + mProperties.id + ": " + error;
-			Log.info(sError); //to allow control usage in applications that do not work with UI flex and components
+			Utils.log.info(sError); //to allow control usage in applications that do not work with UI flex and components
 			// throw new Error(sError); // throw again, when caller handles the promise
 			return Promise.resolve(oView);
 		}
@@ -95,15 +95,15 @@ sap.ui.define([
 	 */
 	XmlPreprocessorImpl.getCacheKey = function(mProperties) {
 		var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
-		var oAppComponent = Utils.getAppComponentForControl(oComponent);
+		var oOuterAppComponent = Utils.getAppComponentForControl(oComponent, true);
 
 		// no caching possible with startup parameter based variants
-		if (Utils.isVariantByStartupParameter(oAppComponent)) {
+		if (Utils.isVariantByStartupParameter(oOuterAppComponent)) {
 			return Promise.resolve();
 		}
 
-		var sFlexReference = Utils.getComponentClassName(oAppComponent);
-		var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
+		var sFlexReference = Utils.getComponentClassName(oOuterAppComponent);
+		var sAppVersion = Utils.getAppVersionFromManifest(oOuterAppComponent.getManifest());
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 		return oChangePersistence.getCacheKey();
 	};

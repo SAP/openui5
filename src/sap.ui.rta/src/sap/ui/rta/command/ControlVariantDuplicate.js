@@ -65,6 +65,7 @@ sap.ui.define([
 		sSourceVariantReference = this.getSourceVariantReference(),
 		sNewVariantReference = this.getNewVariantReference();
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
+		this.oOuterAppComponent = flUtils.getAppComponentForControl(this.oAppComponent, true);
 
 		if (!sNewVariantReference) {
 			sNewVariantReference = flUtils.createDefaultFileName("Copy");
@@ -72,7 +73,7 @@ sap.ui.define([
 		}
 
 		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
-		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
+		this.oModel = this.oOuterAppComponent.getModel(this.MODEL_NAME);
 
 		var mPropertyBag = {
 				variantManagementReference : this.sVariantManagementReference,
@@ -96,7 +97,13 @@ sap.ui.define([
 	 */
 	ControlVariantDuplicate.prototype.undo = function() {
 		if (this._oVariantChange) {
-			return this.oModel.removeVariant(this._oVariantChange, this.getSourceVariantReference(), this.sVariantManagementReference)
+			var mPropertyBag = {
+				variant: this._oVariantChange,
+				sourceVariantReference: this.getSourceVariantReference(),
+				variantManagementReference: this.sVariantManagementReference,
+				component: this.oAppComponent
+			};
+			return this.oModel.removeVariant(mPropertyBag)
 				.then(function() {
 					this._oVariantChange = null;
 					this._aPreparedChanges = null;

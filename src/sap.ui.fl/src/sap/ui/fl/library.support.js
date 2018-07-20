@@ -61,7 +61,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTim
 				}
 
 				var oDesignTime = new DesignTime({
-					rootElements: [oAppComponent]
+					rootElements: [Utils.getAppComponentForControl(oAppComponent, true)] // root app component
 				});
 
 				oDesignTime.attachEventOnce("synced", function () {
