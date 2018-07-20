@@ -138,7 +138,7 @@ sap.ui.define([
 		};
 
 		OnePersonGrid.prototype._getVisibleEndHour = function () {
-			return this.getShowFullDay() ? 24 : this._getEndHour();
+			return (this.getShowFullDay() ? 24 : this._getEndHour()) - 1;
 		};
 
 		OnePersonGrid.prototype._isWorkingHour = function (iHour) {
@@ -278,11 +278,12 @@ sap.ui.define([
 
 			for (var i = 0; i < iColumns; i++) {
 				var oDate = new UniversalDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i),
-					sDate = this._formatDayAsString(oDate);
+					sDate = this._formatDayAsString(oDate),
+					fnIsVisiblePredicate = this._isAppointmentFitInVisibleHours(oDate);
 
 				if (oAppointments[sDate]) {
 					oVisibleAppointments[sDate] = oAppointments[sDate]
-						.filter(this._isAppointmentFitInVisibleHours, this)
+						.filter(fnIsVisiblePredicate, this)
 						.sort(this._sortAppointmentsByStartHour);
 				}
 			}
@@ -290,22 +291,19 @@ sap.ui.define([
 			return oVisibleAppointments;
 		};
 
-		OnePersonGrid.prototype._isAppointmentFitInVisibleHours = function (oAppointment) {
-			var oAppStartDate = oAppointment.getStartDate(),
-				oAppEndDate = oAppointment.getEndDate(),
-				iAppStartHour = oAppStartDate.getHours(),
-				iAppEndHour = oAppEndDate.getHours(),
-				iAppEndMinutes = oAppEndDate.getMinutes(),
-				iCalendarStartHour = this._getVisibleStartHour(),
-				iCalendarEndHour = this._getVisibleEndHour();
+		OnePersonGrid.prototype._isAppointmentFitInVisibleHours = function (oColumnDate) {
+			return function (oAppointment) {
+				var iAppStartTime = oAppointment.getStartDate().getTime(),
+					iAppEndTime = oAppointment.getEndDate().getTime(),
+					iColumnStartTime = (new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), this._getVisibleStartHour())).getTime(),
+					iColumnEndTime = (new UniversalDate(oColumnDate.getFullYear(), oColumnDate.getMonth(), oColumnDate.getDate(), this._getVisibleEndHour(), 59, 59)).getTime();
 
-			var bAppStartIsBetweenCalendarStartAndEnd = iAppStartHour >= iCalendarStartHour && iAppStartHour < iCalendarEndHour,
-				bAppEndIsBetweenCalendarStartAndEnd = iAppEndHour > iCalendarStartHour && iAppEndHour <= iCalendarEndHour,
-				bAppEndIsSameAsCalendarStart = iAppEndHour === iCalendarStartHour && iAppEndMinutes > 0,
-				bAppEndIsSameAsCalendarEnd = iAppEndHour - 1 === iCalendarEndHour && iAppEndMinutes === 0,
-				bAppIsBiggerThanVisibleHours = iAppStartHour < iCalendarStartHour && iAppEndHour > iCalendarEndHour;
+				var bBiggerThanVisibleHours = iAppStartTime < iColumnStartTime && iAppEndTime > iColumnEndTime,
+					bStartHourBetweenColumnStartAndEnd = iAppStartTime >= iColumnStartTime && iAppStartTime < iColumnEndTime,
+					bEndHourBetweenColumnStartAndEnd = iAppEndTime > iColumnStartTime && iAppEndTime <= iColumnEndTime;
 
-			return bAppStartIsBetweenCalendarStartAndEnd || bAppEndIsBetweenCalendarStartAndEnd || bAppEndIsSameAsCalendarStart || bAppEndIsSameAsCalendarEnd || bAppIsBiggerThanVisibleHours;
+				return bBiggerThanVisibleHours || bStartHourBetweenColumnStartAndEnd || bEndHourBetweenColumnStartAndEnd;
+			};
 		};
 
 		OnePersonGrid.prototype._calculateAppointmentsLevels = function (oVisibleAppointments) {
