@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -82,12 +82,19 @@ sap.ui.define([
 
 	QUnit.module("Basic checks", {
 		beforeEach: function() {
-			this.clock = sinon.useFakeTimers();
 			this.table = createTable();
 		},
 		afterEach: function() {
-			this.clock.restore();
 			destroyTable(this.table);
+		},
+		testAsync: function(mTestConfig) {
+			return new Promise(function(resolve) {
+				this.table.attachEventOnce("_rowsUpdated", function() {
+					mTestConfig.test();
+					resolve();
+				});
+				mTestConfig.act();
+			}.bind(this));
 		}
 	});
 
@@ -96,123 +103,227 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExpandFirstLevel", function(assert) {
-		// check the behavior of the expand first level property (only used initially)
-		this.table.setExpandFirstLevel(true);
-		this.table.unbindRows().bindRows("/root");
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 6, "ExpandFirstLevel=true: Row count is correct");
+		var done = assert.async();
+		var that = this;
 
-		this.table.setExpandFirstLevel(false);
-		this.table.unbindRows().bindRows("/root");
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 3, "ExpandFirstLevel=false: Row count is correct");
+		// check the behavior of the expand first level property (only used initially)
+		this.testAsync({
+			act: function() {
+				that.table.setExpandFirstLevel(true);
+				that.table.unbindRows().bindRows("/root");
+			},
+			test: function() {
+				assert.equal(that.table._getTotalRowCount(), 6, "ExpandFirstLevel=true: Row count is correct");
+			}
+		}).then(function() {
+			that.testAsync({
+				act: function() {
+					that.table.setExpandFirstLevel(false);
+					that.table.unbindRows().bindRows("/root");
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 3, "ExpandFirstLevel=false: Row count is correct");
+					done();
+				}
+			});
+		});
 	});
 
 	QUnit.test("Expand and collapse a row", function(assert) {
-		this.table.expand(0);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 5, "Expanded: Row count is correct");
-		assert.equal(this.table.isExpanded(0), true, "Expanded state is correct");
+		var done = assert.async();
+		var that = this;
 
-		this.table.collapse(0);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 3, "Collapsed: Row count is correct");
-		assert.equal(this.table.isExpanded(0), false, "Expanded state is correct");
+		this.testAsync({
+			act: function() {
+				that.table.expand(0);
+			},
+			test: function() {
+				assert.equal(that.table._getTotalRowCount(), 5, "Expanded: Row count is correct");
+				assert.equal(that.table.isExpanded(0), true, "Expanded state is correct");
+			}
+		}).then(function() {
+			that.testAsync({
+				act: function() {
+					that.table.collapse(0);
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 3, "Collapsed: Row count is correct");
+					assert.equal(that.table.isExpanded(0), false, "Expanded state is correct");
+					done();
+				}
+			});
+		});
 	});
 
 	QUnit.test("Expand and collapse a row synchronously", function(assert) {
-		this.table.setModel(new JSONModel(getData()));
-		this.table.bindRows("/root");
+		var done = assert.async();
+		var that = this;
 
-		this.table.expand(0);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 5, "Expanded: Row count is correct");
-		assert.equal(this.table.isExpanded(0), true, "Expanded state is correct");
-
-		this.table.setModel(new JSONModel(getData()));
-		this.table.bindRows({
-			path: "/root",
-			parameters: {
-				numberOfExpandedLevels: 1
+		this.testAsync({
+			act: function() {
+				that.table.setModel(new JSONModel(getData()));
+				that.table.bindRows("/root");
+				that.table.expand(0);
+			},
+			test: function() {
+				assert.equal(that.table._getTotalRowCount(), 5, "Expanded: Row count is correct");
+				assert.equal(that.table.isExpanded(0), true, "Expanded state is correct");
 			}
+		}).then(function() {
+			that.testAsync({
+				act: function() {
+					that.table.setModel(new JSONModel(getData()));
+					that.table.bindRows({
+						path: "/root",
+						parameters: {
+							numberOfExpandedLevels: 1
+						}
+					});
+					that.table.collapse(0);
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 4, "Collapsed: Row count is correct");
+					assert.equal(that.table.isExpanded(0), false, "Expanded state is correct");
+					done();
+				}
+			});
 		});
-
-		this.table.collapse(0);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 4, "Collapsed: Row count is correct");
-		assert.equal(this.table.isExpanded(0), false, "Expanded state is correct");
 	});
 
 	QUnit.test("Expand and collapse multiple rows", function(assert) {
-		this.table.expand([0, 1]);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 6, "Expanded: Row count is correct");
-		assert.equal(this.table.isExpanded(0), true, "Expanded state of the first expanded row is correct");
-		assert.equal(this.table.isExpanded(3), true, "Expanded state of the first expanded row is correct");
+		var done = assert.async();
+		var that = this;
 
-		this.table.collapse([0, 3]);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 3, "Collapsed: Row count is correct");
-		assert.equal(this.table.isExpanded(0), false, "Expanded state of the first collapsed row is correct");
-		assert.equal(this.table.isExpanded(1), false, "Expanded state of the first collapsed row is correct");
+		this.testAsync({
+			act: function() {
+				that.table.expand([0, 1]);
+			},
+			test: function() {
+				assert.equal(that.table._getTotalRowCount(), 6, "Expanded: Row count is correct");
+				assert.equal(that.table.isExpanded(0), true, "Expanded state of the first expanded row is correct");
+				assert.equal(that.table.isExpanded(3), true, "Expanded state of the first expanded row is correct");
+			}
+		}).then(function() {
+			that.testAsync({
+				act: function() {
+					that.table.collapse([0, 3]);
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 3, "Collapsed: Row count is correct");
+					assert.equal(that.table.isExpanded(0), false, "Expanded state of the first collapsed row is correct");
+					assert.equal(that.table.isExpanded(1), false, "Expanded state of the first collapsed row is correct");
+					done();
+				}
+			});
+		});
 	});
 
 	QUnit.test("Insert and remove a row", function(assert) {
-		var oData = this.table.getModel().getData();
+		var done = assert.async();
+		var that = this;
+		var oData = that.table.getModel().getData();
 
-		oData.root[3] = {
-			name: "new item",
-			description: "new item description"
-		};
-		this.table.getModel().setData(oData);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 4, "Row inserted: Row count is correct");
-
-		delete oData.root[3];
-		this.table.getModel().setData(oData);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 3, "Row removed: Row count is correct");
+		this.testAsync({
+			act: function() {
+				oData.root[3] = {
+					name: "new item",
+					description: "new item description"
+				};
+				that.table.getModel().setData(oData);
+			},
+			test: function() {
+				assert.equal(that.table._getTotalRowCount(), 4, "Row inserted: Row count is correct");
+			}
+		}).then(function() {
+			that.testAsync({
+				act: function() {
+					delete oData.root[3];
+					that.table.getModel().setData(oData);
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 3, "Row removed: Row count is correct");
+					done();
+				}
+			});
+		});
 	});
 
 	QUnit.test("Insert a child row", function(assert) {
+		var done = assert.async();
+		var that = this;
 		var oData = this.table.getModel().getData();
 
-		oData.root[2] = {
-			0: {
-				name: "new child item",
-				description: "new child item description"
+		this.testAsync({
+			act: function() {
+				oData.root[2] = {
+					0: {
+						name: "new child item",
+						description: "new child item description"
+					}
+				};
+				that.table.getModel().setData(oData);
+				that.table.expand(2);
+			},
+			test: function() {
+				assert.equal(that.table._getTotalRowCount(), 4, "Child row inserted and parent row expanded: Row count is correct");
+				assert.equal(that.table.isExpanded(2), true, "Expanded state is correct!");
+				done();
 			}
-		};
-		this.table.getModel().setData(oData);
-		this.table.expand(2);
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 4, "Child row inserted and parent row expanded: Row count is correct");
-		assert.equal(this.table.isExpanded(2), true, "Expanded state is correct!");
+		});
 	});
 
 	QUnit.test("Add and remove a filter", function(assert) {
-		this.table.filter(this.table.getColumns()[0], "subitem1-1");
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 1, "Filter added: Row count is correct");
+		var done = assert.async();
+		var that = this;
 
-		this.table.filter(this.table.getColumns()[0], "");
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 3, "Filter removed: Row count is correct");
-
-		this.table.expand(0);
-		this.table.expand(1);
-		this.table.filter(this.table.getColumns()[0], "subsubitem1-1-1");
-		this.table.filter(this.table.getColumns()[0], "");
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 7, "Expanded first node and its first child node: Row count is correct");
-
-		this.table.filter(this.table.getColumns()[0], "subsubitem1-1-1");
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 3, "Filter added: Row count is correct");
-
-		this.table.filter(this.table.getColumns()[0], "");
-		this.clock.tick(50);
-		assert.equal(this.table._getTotalRowCount(), 7, "Filter removed: Row count is correct");
+		this.testAsync({
+			act: function() {
+				that.table.filter(that.table.getColumns()[0], "subitem1-1");
+			},
+			test: function() {
+				assert.equal(that.table._getTotalRowCount(), 1, "Filter added: Row count is correct");
+			}
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					that.table.filter(that.table.getColumns()[0], "");
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 3, "Filter removed: Row count is correct");
+				}
+			});
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					that.table.expand(0);
+					that.table.expand(1);
+					that.table.filter(that.table.getColumns()[0], "subsubitem1-1-1");
+					that.table.filter(that.table.getColumns()[0], "");
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 7, "Expanded first node and its first child node: Row count is correct");
+				}
+			});
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					that.table.filter(that.table.getColumns()[0], "subsubitem1-1-1");
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 3, "Filter added: Row count is correct");
+				}
+			});
+		}).then(function() {
+			that.testAsync({
+				act: function() {
+					that.table.filter(that.table.getColumns()[0], "");
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 7, "Filter removed: Row count is correct");
+					done();
+				}
+			});
+		});
 	});
 
 	QUnit.test("Bind rows", function(assert) {

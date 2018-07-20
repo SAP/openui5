@@ -441,12 +441,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.addClass("sapUiTableColLastFixed");
 		}
 
+		if (bInvisible) {
+			rm.addClass("sapUiTableColInvisible");
+		}
+
 		rm.writeClasses();
 		if (oTable.getColumnHeaderHeight() > 0) {
 			rm.addStyle("height", oTable.getColumnHeaderHeight() + "px");
-		}
-		if (bInvisible) {
-			rm.addStyle("display", "none");
 		}
 		rm.writeStyles();
 		var sTooltip = oColumn.getTooltip_AsString();
@@ -617,14 +618,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.writeAttribute("id", oTable.getId() + "-tableCtrlCnt");
 		rm.addClass("sapUiTableCtrlCnt");
 		rm.writeClasses();
-		var sVisibleRowCountMode = oTable.getVisibleRowCountMode();
-		if (oTable._iTableRowContentHeight && (sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive)) {
-			var sStyle = "height";
-			if (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Fixed) {
-				sStyle = "min-height";
+		if (!TableUtils.isVariableRowHeightEnabled(oTable)) {
+			var sVisibleRowCountMode = oTable.getVisibleRowCountMode();
+			if (oTable._iTableRowContentHeight && (sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive)) {
+				var sStyle = "height";
+				if (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Fixed) {
+					sStyle = "min-height";
+				}
+				rm.addStyle(sStyle, oTable._iTableRowContentHeight + "px");
+				rm.writeStyles();
 			}
-			rm.addStyle(sStyle, oTable._iTableRowContentHeight + "px");
-			rm.writeStyles();
 		}
 		rm.write(">");
 

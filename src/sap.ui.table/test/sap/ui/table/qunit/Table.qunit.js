@@ -915,7 +915,6 @@ sap.ui.define([
 		sinon.stub(TableUtils.Grouping, "isTreeMode").returns(false);
 		oTable.rerender();
 		assert.equal(oTable.$().find("sapUiTableRowAlternate").length, 0, "No alternating rows for tree mode");
-
 	});
 
 	QUnit.module("Column operations", {
@@ -2329,14 +2328,12 @@ sap.ui.define([
 		destroyTable();
 		_createTable(VisibleRowCountMode.Fixed);
 		this.checkRowsUpdated(assert, aFiredReasons, [
-			TableUtils.RowsUpdateReason.Change,
 			TableUtils.RowsUpdateReason.Render
 		]).then(function() {
 			destroyTable();
 			_createTable(VisibleRowCountMode.Interactive);
 			aFiredReasons = [];
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Change,
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
@@ -2344,7 +2341,6 @@ sap.ui.define([
 			_createTable(VisibleRowCountMode.Auto);
 			aFiredReasons = [];
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Change,
 				TableUtils.RowsUpdateReason.Render,
 				TableUtils.RowsUpdateReason.Render
 			], 250);
@@ -2814,8 +2810,8 @@ sap.ui.define([
 		assert.ok(fnUpdateTableContent.called);
 		oTable.unbindRows();
 		oTable.onAfterRendering(oEvent);
-		assert.ok(fnCleanupTableRowForGrouping.called,
-			"Row binding was destroyed, hence _updateTableContent executed cleanupTableRowForGrouping() from TableUtils");
+		assert.ok(fnCleanupTableRowForGrouping.notCalled,
+			"Row binding was destroyed, hence no rows exist for which cleanupTableRowForGrouping needs to be called");
 	});
 
 	QUnit.test("test _enableTextSelection function", function(assert) {
@@ -3352,26 +3348,30 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Column Object Pool", function(assert) {
+	QUnit.test("Row And Cell Pools", function(assert) {
 		var aRows = oTable.getRows();
-		var oLastRowFirstColumnCell = aRows[aRows.length - 1].getCells()[0];
-		var iVisibleRowCount = oTable.getVisibleRowCount();
-		oTable.setVisibleRowCount(iVisibleRowCount - 1);
+		var oLastRow = aRows[aRows.length - 1];
+		var oLastRowFirstCell = oLastRow.getCells()[0];
+		var iInitialVisibleRowCount = oTable.getVisibleRowCount();
+
+		oTable.setVisibleRowCount(iInitialVisibleRowCount - 1);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oLastRowFirstColumnCell, "Control of removed row still exists");
-		assert.equal(oTable.getRows().length, iVisibleRowCount - 1, "Row removed");
+		assert.ok(oTable.getRows()[iInitialVisibleRowCount - 1] === undefined, "Row should be removed from aggregation");
+		assert.ok(!oLastRow.bIsDestroyed, "Removed row should not be destroyed");
+		assert.ok(!oLastRowFirstCell.bIsDestroyed, "Cells of the removed row should not be destroyed");
+		assert.ok(oLastRow.getParent() === null, "Removed row should have no parent");
 
-		assert.ok(oLastRowFirstColumnCell.getParent() === null, "Removed cell control has no parent");
-
-		oTable.setVisibleRowCount(iVisibleRowCount);
+		oTable.setVisibleRowCount(iInitialVisibleRowCount);
 		sap.ui.getCore().applyChanges();
 
 		aRows = oTable.getRows();
-		var oLastRowFirstColumnCellAfterCreate = aRows[aRows.length - 1].getCells()[0];
-		assert.ok(oLastRowFirstColumnCell === oLastRowFirstColumnCellAfterCreate, "Old control recycled");
-		assert.ok(oTable.getRows()[iVisibleRowCount - 1] !== undefined, "Row created");
-		assert.ok(oLastRowFirstColumnCell.getParent() === aRows[aRows.length - 1], "Recycled cell control has last row as parent");
+		var oLastRowAfterRowsUpdate = aRows[aRows.length - 1];
+		var oLastRowFirstCellAfterRowsUpdate = oLastRowAfterRowsUpdate.getCells()[0];
+		assert.ok(oTable.getRows()[iInitialVisibleRowCount - 1] !== undefined, "Row should be added to the aggregation");
+		assert.ok(oLastRow === oLastRowAfterRowsUpdate, "Old row should be recycled");
+		assert.ok(oLastRowFirstCell === oLastRowFirstCellAfterRowsUpdate, "Old cells should be recycled");
+		assert.ok(oLastRowFirstCell.getParent() === oLastRowAfterRowsUpdate, "Recycled cells should have the last row as parent");
 
 		var fnInvalidateRowsAggregation = sinon.spy(oTable, "invalidateRowsAggregation");
 		oTable.getColumns()[0].setFlexible(false);
@@ -3400,6 +3400,217 @@ sap.ui.define([
 
 		oTable.getColumns()[0].setTemplate(new Control());
 		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
+	});
+
+	QUnit.test("Destruction of the table", function(assert) {
+		var oFakeRow = {
+			destroy: function() {},
+			getIndex: function() {return -1;}
+		};
+		var oFakeRowDestroySpy = sinon.spy(oFakeRow, "destroy");
+
+		oTable._aRowClones.push(oFakeRow);
+		oTable.destroy();
+		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation should be destroyed");
+		assert.deepEqual(oTable._aRowClones, [], "The row pool has been cleared");
+	});
+
+	QUnit.test("Lazy row creation - VisibleRowCountMode = Fixed|Interactive", function(assert) {
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var oModel = oTable.getModel();
+
+		destroyTable();
+
+		function test(sVisibleRowCountMode) {
+			oTable = new Table({
+				visibleRowCountMode: sVisibleRowCountMode,
+				visibleRowCount: 5,
+				rows: oBindingInfo,
+				models: oModel
+			});
+			assert.strictEqual(oTable.getRows().length, 5, "Before rendering with binding: The table has the correct amount of rows");
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oTable.getRows().length, 5, "After rendering with binding: The table has the correct amount of rows");
+
+			oTable.unbindRows();
+			assert.strictEqual(oTable.getRows().length, 0, "After unbind: The table has no rows");
+
+			oTable.bindRows(oBindingInfo);
+			assert.strictEqual(oTable.getRows().length, 5, "After binding: The table has the correct amount of rows");
+
+			oTable.destroy();
+
+			oTable = new Table({
+				visibleRowCountMode: sVisibleRowCountMode,
+				visibleRowCount: 5
+			});
+			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
+
+			oTable.destroy();
+		}
+
+		test(VisibleRowCountMode.Fixed);
+		test(VisibleRowCountMode.Interactive);
+	});
+
+	QUnit.test("Lazy row creation - VisibleRowCountMode = Auto", function(assert) {
+		var done = assert.async();
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var oModel = oTable.getModel();
+
+		destroyTable();
+
+		oTable = new Table({
+			visibleRowCountMode: VisibleRowCountMode.Auto,
+			rows: oBindingInfo,
+			models: oModel
+		});
+		assert.strictEqual(oTable.getRows().length, 0, "Before rendering with binding: The table has no rows");
+
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getRows().length, 0, "After rendering with binding: The table has no rows");
+
+		oTable.attachEventOnce("_rowsUpdated", function() {
+			assert.ok(oTable.getRows().length > 0, "After asynchronous row update: The table has rows");
+
+			oTable.unbindRows();
+			assert.strictEqual(oTable.getRows().length, 0, "After unbind: The table has no rows");
+
+			oTable.bindRows(oBindingInfo);
+			assert.ok(oTable.getRows().length > 0, "After binding: The table has rows");
+
+			oTable.destroy();
+
+			oTable = new Table({
+				visibleRowCountMode: VisibleRowCountMode.Auto
+			});
+			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
+
+			setTimeout(function() {
+				assert.strictEqual(oTable.getRows().length, 0, "After 200ms: The table has no rows");
+
+				oTable.destroy();
+				done();
+			}, 200);
+		});
+	});
+
+	QUnit.test("Instant row creation - VisibleRowCountMode = Fixed|Interactive", function(assert) {
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var oModel = oTable.getModel();
+
+		var fnOriginalInit = Table.prototype.init;
+		Table.prototype.init = function() {
+			fnOriginalInit.apply(this, arguments);
+			this._bLazyRowCreationEnabled = false;
+		};
+
+		destroyTable();
+
+		function test(sVisibleRowCountMode) {
+			oTable = new Table({
+				visibleRowCountMode: sVisibleRowCountMode,
+				visibleRowCount: 5,
+				rows: oBindingInfo,
+				models: oModel
+			});
+			assert.strictEqual(oTable.getRows().length, 5, "Before rendering with binding: The table has the correct amount of rows");
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oTable.getRows().length, 5, "After rendering with binding: The table has the correct amount of rows");
+
+			oTable.unbindRows();
+			assert.strictEqual(oTable.getRows().length, 5, "After unbind: The table has the correct amount of rows");
+
+			oTable.bindRows(oBindingInfo);
+			assert.strictEqual(oTable.getRows().length, 5, "After binding: The table has the correct amount of rows");
+
+			oTable.destroy();
+
+			oTable = new Table({
+				visibleRowCountMode: sVisibleRowCountMode,
+				visibleRowCount: 5
+			});
+			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oTable.getRows().length, 5, "After rendering without binding: The table has the correct amount of rows");
+
+			oTable.destroy();
+		}
+
+		test(VisibleRowCountMode.Fixed);
+		test(VisibleRowCountMode.Interactive);
+
+		Table.prototype.init = fnOriginalInit;
+	});
+
+	QUnit.test("Instant row creation - VisibleRowCountMode = Auto", function(assert) {
+		var done = assert.async();
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var oModel = oTable.getModel();
+
+		var fnOriginalInit = Table.prototype.init;
+		Table.prototype.init = function() {
+			fnOriginalInit.apply(this, arguments);
+			this._bLazyRowCreationEnabled = false;
+		};
+
+		destroyTable();
+
+		oTable = new Table({
+			visibleRowCountMode: VisibleRowCountMode.Auto,
+			rows: oBindingInfo,
+			models: oModel
+		});
+		assert.strictEqual(oTable.getRows().length, 0, "Before rendering with binding: The table has no rows");
+
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getRows().length, 0, "After rendering with binding: The table has no rows");
+
+		oTable.attachEventOnce("_rowsUpdated", function() {
+			assert.ok(oTable.getRows().length > 0, "After asynchronous row update: The table has rows");
+
+			oTable.unbindRows();
+			assert.ok(oTable.getRows().length > 0, "After unbind: The table has rows");
+
+			oTable.bindRows(oBindingInfo);
+			assert.ok(oTable.getRows().length > 0, "After binding: The table has rows");
+
+			oTable.destroy();
+
+			oTable = new Table({
+				visibleRowCountMode: VisibleRowCountMode.Auto
+			});
+			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
+
+			// _rowsUpdated is not fired, because there are no contexts. Therefore, use a timeout.
+			setTimeout(function() {
+				assert.ok(oTable.getRows().length > 0, "After 200ms: The table has rows");
+
+				oTable.destroy();
+				Table.prototype.init = fnOriginalInit;
+				done();
+			}, 200);
+		});
 	});
 
 	QUnit.module("Extensions", {
