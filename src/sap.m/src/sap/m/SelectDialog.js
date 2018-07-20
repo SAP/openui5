@@ -972,6 +972,8 @@ function(
 				press: function() {
 					this._removeSelection();
 					this._updateSelectionIndicator();
+					//when clear is executed, focus should stay in sap.m.SelectDialog
+					this._oDialog.focus();
 				}.bind(this)
 			});
 		}

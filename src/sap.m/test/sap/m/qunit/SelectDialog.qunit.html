@@ -970,6 +970,16 @@
 				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), false, 'Clear button should be disabled');
 				assert.equal(this.oSelectDialog._oList.getSelectedItems().length, 0, 'There should be no selected items');
 			});
+
+			QUnit.test("After reset is preset, the focus should be returned to the dialog", function(assert) {
+				this.oSelectDialog.open();
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(500);
+
+				this.oSelectDialog._getClearButton().firePress();
+				assert.equal(document.activeElement.getAttribute("id"), this.oSelectDialog._oDialog.getId(), 'After selection is cleared, the focus should be set on the SelectDialog"');
+			});
+
 			})();
 		</script>
 	</head>
