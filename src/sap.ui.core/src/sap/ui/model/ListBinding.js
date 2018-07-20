@@ -39,6 +39,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 			this.aSorters = makeArray(aSorters, Sorter);
 			this.aFilters = [];
 			this.aApplicationFilters = makeArray(aFilters, Filter);
+			this.oCombinedFilter = null;
 			this.bUseExtendedChangeDetection = false;
 			this.bDetectUpdates = true;
 		},
@@ -342,6 +343,24 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 */
 	ListBinding.prototype.getEntryData = function(oContext) {
 		return JSON.stringify(oContext.getObject());
+	};
+
+	/**
+	 * Return the filter information as an AST. The default implementation checks for this.oCombinedFilter,
+	 * models not using this member may override the method.
+	 * Consumers must not rely on the origin information to be available, future filter implementations will
+	 * not provide this information.
+	 *
+	 * @param {boolean} bIncludeOrigin include information about the filter objects the tree has been created from
+	 * @returns {object} The AST of the filter tree
+	 * @private
+	 * @ui5-restricted sap.ui.table
+	 */
+	ListBinding.prototype.getFilterInfo = function(bIncludeOrigin) {
+		if (this.oCombinedFilter) {
+			return this.oCombinedFilter.getAST(bIncludeOrigin);
+		}
+		return null;
 	};
 
 	/**
