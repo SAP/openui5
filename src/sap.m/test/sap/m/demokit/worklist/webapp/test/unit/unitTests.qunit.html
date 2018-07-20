@@ -10,23 +10,28 @@
 			data-sap-ui-resourceroots='{
 				"sap.ui.demo.worklist": "../../",
 				"test.unit": "./"
-			}'>
+			}'
+			data-sap-ui-preload="async">
 		</script>
 
-		<script>
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
-			jQuery.sap.require("sap.ui.qunit.qunit-junit");
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
+
+		<script>
+			/* global QUnit */
 			QUnit.config.autostart = false;
 
-			sap.ui.require(
-				["test/unit/allTests"],
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require(
+					["test/unit/allTests"],
 					function () {
 						QUnit.start();
-					}
-			);
+					});
+			});
+
 		</script>
 
 	</head>
