@@ -263,6 +263,8 @@ sap.ui.define([
 				oButtonClone.setText(sTitle);
 			} else {
 				oButtonClone = oButton.clone(); //keep original button parent control hierarchy
+				oButtonClone.attachPress(fnPressHandler);
+				oButtonClone.addEventDelegate(oEventDelegatesForkeyBoardHandler);
 				this._oObserver.observe(oButton, {
 					properties: true
 				});
