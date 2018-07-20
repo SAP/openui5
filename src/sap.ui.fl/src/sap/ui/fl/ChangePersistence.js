@@ -180,20 +180,21 @@ sap.ui.define([
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
 	 * @param {map} mPropertyBag Contains additional data needed for reading changes
-	 * @param {object} mPropertyBag.appDescriptor Manifest that belongs to the current running component
-	 * @param {string} mPropertyBag.siteId ID of the site belonging to the current running component
+	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
+	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
 	 * @param {string} [mPropertyBag.sCurrentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] Indicates that changes shall be loaded without layer filtering
 	 * @param {boolean} [mPropertyBag.includeVariants] Indicates that smart variants shall be included
 	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
 	 * @param {string} [mPropertyBag.url] Address to which the request for change should be sent in case the data is not cached
 	 * @param {sap.ui.core.Component} [mPropertyBag.oComponent] App component instance of component
+	 * @param {boolean} bInvalidateCache - should the cache be invalidated
 	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
-		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
+	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag, bInvalidateCache) {
+		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag, bInvalidateCache).then(function(oWrappedChangeFileContent) {
 			var oComponent = mPropertyBag && mPropertyBag.oComponent;
 
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){

@@ -278,6 +278,9 @@ sap.ui.require([
 			var stubFlexController = {
 				isPersonalized : function(){
 					return Promise.resolve(false);
+				},
+				getComponentChanges : function() {
+					return Promise.resolve();
 				}
 			};
 
@@ -448,7 +451,7 @@ sap.ui.require([
 			}.bind(this));
 		});
 
-		QUnit.test("when personalized changes exist and user exits reloading the personalization...", function(assert) {
+		QUnit.test("when personalized changes exist and user exits and started in FLP reloading the personalization...", function(assert) {
 			whenPersonalizationChangesExist(this.oRta);
 
 			whenUserConfirmsMessage.call(this);
@@ -555,6 +558,18 @@ sap.ui.require([
 				assert.strictEqual(this.fnReloadWithoutPersonalizationChangesSpy.callCount,
 					0,
 					"then reloadWithoutPersonalizationChanges() is not called");
+			}.bind(this));
+		});
+
+		QUnit.test("when _handleReloadOnExit() is called and personalized changes and user exits reloading the personalization...", function(assert) {
+			whenPersonalizationChangesExist(this.oRta);
+			whenUserConfirmsMessage.call(this);
+
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+					"then the page is reloaded");
 			}.bind(this));
 		});
 	});
