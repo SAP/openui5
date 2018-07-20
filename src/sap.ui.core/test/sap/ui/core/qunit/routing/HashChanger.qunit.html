@@ -12,42 +12,51 @@
 
 		<script>
 		(function () {
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit-2");
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			sinon.config.useFakeTimers = false;
-
-			jQuery.sap.require("sap.ui.thirdparty.signals");
-			jQuery.sap.require("sap.ui.core.routing.HashChanger");
+			QUnit.config.autostart = false;
+		}());
+		</script>
+		<script>
+		/*global QUnit, hasher */
+		sap.ui.require([
+			"sap/base/Log",
+			"sap/ui/core/routing/HashChanger",
+			"sap/ui/core/routing/History",
+			"sap/ui/thirdparty/signals"
+		], function (Log, HashChanger, History) {
+			"use strict";
 
 
 			// NEEDS TO BE THE FIRST TEST - tests the initial state of a global singleton in a closure
 			QUnit.test("Should always overwrite the hashchanger", function (assert) {
 				// this function must not be called before this test is executed so it acutally tests something
-				// sap.ui.core.routing.HashChanger.getInstance()
+				// HashChanger.getInstance()
 
 				// System under Test
-				var oHashChanger = new sap.ui.core.routing.HashChanger();
+				var oHashChanger = new HashChanger();
 
 				// Act
-				sap.ui.core.routing.HashChanger.replaceHashChanger(oHashChanger);
+				HashChanger.replaceHashChanger(oHashChanger);
 
 				// Assert
-				assert.strictEqual(oHashChanger, sap.ui.core.routing.HashChanger.getInstance(), "did change the hashCHanger");
+				assert.strictEqual(oHashChanger, HashChanger.getInstance(), "did change the hashCHanger");
 			});
 
 			QUnit.test("ShouldInitAndDestroyCorrectly", function (assert) {
 				//Arrange
 				var calls = [],
-						hashChanged = function (evt) {
-							calls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
-						};
+					hashChanged = function (evt) {
+						calls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
+					};
 
 				//System under Test
-				var sut = new sap.ui.core.routing.HashChanger();
+				var sut = new HashChanger();
 
 				sut.attachEvent("hashChanged", hashChanged);
 				sut.init();
@@ -63,18 +72,16 @@
 			});
 
 			QUnit.test("Should not init hasher twice", function (assert) {
-				var Log = sap.ui.require("sap/base/Log");
-				assert.ok(Log, "Log module should be available");
 				//Arrange
 				var calls = [],
-						initSpy = this.spy(hasher, "init"),
-						warningSpy = this.spy(Log, "info"),
-						hashChanged = function (evt) {
-							calls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
-						};
+					initSpy = this.spy(hasher, "init"),
+					warningSpy = this.spy(Log, "info"),
+					hashChanged = function (evt) {
+						calls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
+					};
 
 				//System under Test
-				var sut = new sap.ui.core.routing.HashChanger();
+				var sut = new HashChanger();
 				sut.attachEvent("hashChanged", hashChanged);
 
 				//Act
@@ -92,7 +99,7 @@
 
 			QUnit.test("Should not init hasher twice when init is called in hashChange event", function(assert) {
 				// System under test
-				var sut = new sap.ui.core.routing.HashChanger();
+				var sut = new HashChanger();
 
 				// Arrange
 				var initSpy = this.spy(sut, "init"),
@@ -116,13 +123,13 @@
 			QUnit.test("Should set the Hash", function (assert) {
 				//Arrange
 				var aCalls = [],
-						fmHashChanged = function (evt) {
-							aCalls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
-						};
+					fmHashChanged = function (evt) {
+						aCalls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
+					};
 
 
 				//System under Test
-				var oHashChanger = new sap.ui.core.routing.HashChanger();
+				var oHashChanger = new HashChanger();
 				oHashChanger.init();
 				oHashChanger.attachEvent("hashChanged", fmHashChanged);
 
@@ -145,13 +152,13 @@
 			QUnit.test("Should replace the Hash", function (assert) {
 				//Arrange
 				var aCalls = [],
-						fnHashChanged = function (evt) {
-							aCalls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
-						};
+					fnHashChanged = function (evt) {
+						aCalls.push({ newHash: evt.getParameter("newHash"), oldHash: evt.getParameter("oldHash") });
+					};
 
 
 				//System under Test
-				var oHashChanger = new sap.ui.core.routing.HashChanger();
+				var oHashChanger = new HashChanger();
 				oHashChanger.init();
 				oHashChanger.attachEvent("hashChanged", fnHashChanged);
 
@@ -175,31 +182,31 @@
 				//System under Test + Act
 
 				//Since this is the first call it should work
-				sap.ui.core.routing.HashChanger.replaceHashChanger(undefined);
+				HashChanger.replaceHashChanger(undefined);
 
-				var sut = sap.ui.core.routing.HashChanger.getInstance();
+				var sut = HashChanger.getInstance();
 
 
 				//Assert
-				assert.strictEqual(sut, sap.ui.core.routing.HashChanger.getInstance(), "did return the same instance");
+				assert.strictEqual(sut, HashChanger.getInstance(), "did return the same instance");
 			});
 
 
 			QUnit.test("Should replace the Singleton and add all events to the new one", function (assert) {
 				//System under Test + Act
-				var firstInstance = sap.ui.core.routing.HashChanger.getInstance(),
-						hashChanged = this.spy();
+				var firstInstance = HashChanger.getInstance(),
+					hashChanged = this.spy();
 
 				firstInstance.attachEvent("hashChanged", hashChanged);
 
 
 				//System under Test
-				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+				var oSecondHashChanger = new HashChanger();
 				oSecondHashChanger.attachEvent("hashChanged", hashChanged);
 
-				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
+				HashChanger.replaceHashChanger(oSecondHashChanger);
 
-				var retrievedInstance = sap.ui.core.routing.HashChanger.getInstance();
+				var retrievedInstance = HashChanger.getInstance();
 
 				retrievedInstance.fireHashChanged("one");
 				assert.strictEqual(hashChanged.callCount, 2, "did call all the listener");
@@ -213,17 +220,17 @@
 
 			QUnit.test("Should copy events correctly", function (assert) {
 				// System under Test
-				var oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
+				var oFirstHashCHanger = HashChanger.getInstance(),
 					fnHashChanged = this.spy();
 
 				// only add this event to the original hashchanger
 				oFirstHashCHanger.attachEvent("hashChanged", fnHashChanged);
 
 				// System under Test
-				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+				var oSecondHashChanger = new HashChanger();
 
 				// Act
-				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
+				HashChanger.replaceHashChanger(oSecondHashChanger);
 				// no event listener was added to the second hashchanger
 				oSecondHashChanger.fireHashChanged("one");
 
@@ -234,8 +241,8 @@
 
 			QUnit.test("Should not overwrite deleted events", function (assert) {
 				// System under Test
-				var oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
-						fnHashChanged = this.spy();
+				var oFirstHashCHanger = HashChanger.getInstance(),
+					fnHashChanged = this.spy();
 
 				// only add this event to the original hashchanger
 				oFirstHashCHanger.attachEvent("hashChanged", fnHashChanged);
@@ -243,12 +250,12 @@
 				oFirstHashCHanger.detachEvent("hashChanged", fnHashChanged);
 
 				// System under Test
-				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+				var oSecondHashChanger = new HashChanger();
 				// add an event handler again
 				oSecondHashChanger.attachEvent("hashChanged", fnHashChanged);
 
 				// Act - see if the event handler is overwritten
-				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
+				HashChanger.replaceHashChanger(oSecondHashChanger);
 
 				// spy should not be informed since the event is deregisterwd
 				oFirstHashCHanger.fireHashChanged("one");
@@ -262,10 +269,9 @@
 			});
 
 			QUnit.test("Should not duplicate History events", function (assert) {
-				jQuery.sap.require("sap.ui.core.routing.History");
 				// Arrange
-				var oHistory = sap.ui.core.routing.History.getInstance(),
-					oFirstHashCHanger = sap.ui.core.routing.HashChanger.getInstance(),
+				var oHistory = History.getInstance(),
+					oFirstHashCHanger = HashChanger.getInstance(),
 					fnHashChanged = this.spy(),
 					oHistoryChangeStub = this.stub(oHistory, "_hashChange");
 
@@ -274,10 +280,10 @@
 				assert.strictEqual(oHistoryChangeStub.callCount, 1, "History is connected to the first hashchanger");
 
 				// System under Test
-				var oSecondHashChanger = new sap.ui.core.routing.HashChanger();
+				var oSecondHashChanger = new HashChanger();
 
 				// Act
-				sap.ui.core.routing.HashChanger.replaceHashChanger(oSecondHashChanger);
+				HashChanger.replaceHashChanger(oSecondHashChanger);
 
 				// the stub should be called a second time
 				oSecondHashChanger.fireHashChanged("two");
@@ -294,45 +300,47 @@
 				var done = assert.async();
 				//Arrange
 				var aCalls = [],
-						fnHashChanged = function (oEvt) {
-							var sNewHash = oEvt.getParameter("newHash");
-							aCalls.push({ sNewHash: sNewHash });
+					fnHashChanged = function (oEvt) {
+						var sNewHash = oEvt.getParameter("newHash");
+						aCalls.push({ sNewHash: sNewHash });
 
-							if (sNewHash === "initial") {
-								oHashChanger.setHash("firstChange");
-							}
+						if (sNewHash === "initial") {
+							oHashChanger.setHash("firstChange");
+						}
 
-							if (sNewHash === "firstChange") {
-								oHashChanger.setHash("secondChange");
-							}
+						if (sNewHash === "firstChange") {
+							oHashChanger.setHash("secondChange");
+						}
 
-							if (sNewHash === "secondChange") {
-								oHashChanger.detachEvent("hashChanged", fnHashChanged);
-								window.history.back();
-								oHashChanger.attachEvent("hashChanged", fnAssert);
-							}
+						if (sNewHash === "secondChange") {
+							oHashChanger.detachEvent("hashChanged", fnHashChanged);
+							window.history.back();
+							oHashChanger.attachEvent("hashChanged", fnAssert);
+						}
 
-						},
-						fnAssert = function (oEvt) {
-							var sNewHash = oEvt.getParameter("newHash");
+					},
+					fnAssert = function (oEvt) {
+						var sNewHash = oEvt.getParameter("newHash");
 
-							assert.strictEqual(sNewHash, "firstChange", "The hash got set to the firstChange and did not get ommited by hasher");
-							assert.strictEqual(aCalls.length, 3, "initial , first second where executed");
+						assert.strictEqual(sNewHash, "firstChange", "The hash got set to the firstChange and did not get ommited by hasher");
+						assert.strictEqual(aCalls.length, 3, "initial , first second where executed");
 
-							//Cleanup
-							oHashChanger.destroy();
-							done();
-						};
+						//Cleanup
+						oHashChanger.destroy();
+						done();
+					};
 
 				//System under Test
-				var oHashChanger = new sap.ui.core.routing.HashChanger();
+				var oHashChanger = new HashChanger();
 				oHashChanger.setHash("initial");
 				oHashChanger.attachEvent("hashChanged", fnHashChanged);
 
 				//Act
 				oHashChanger.init();
 			});
-		})();
+
+			QUnit.start();
+		});
 		</script>
 	</head>
 	<body>
