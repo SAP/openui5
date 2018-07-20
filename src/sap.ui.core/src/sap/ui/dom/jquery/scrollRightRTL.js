@@ -1,29 +1,18 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQuery) {
 	"use strict";
 
 	/**
-	 * Returns the MIRRORED scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
-	 * Precondition: The element is rendered in RTL mode.
+	 * Applies the jQuery function extension:
+	 * @see jQuery#scrollRightRTL
 	 *
-	 * Reason for this method is that the major browsers return three different values for the same scroll position when in RTL mode.
-	 * This method hides those differences and returns the value that would be returned in LTR mode if the UI would be mirrored horizontally:
-	 * The distance in px how far the given container is scrolled away from the rightmost scroll position.
-	 *
-	 * Returns "undefined" if no element is given.
-	 *
-	 * @return {int} The scroll position, counted from the rightmost position
-	 * @private
-	 * @author SAP SE
-	 * @function
-	 * @exports sap/ui/dom/jquery/scrollRightRTL
+	 * @namespace
+	 * @alias module:sap/ui/dom/jquery/scrollRightRTL
+	 * @public
 	 */
+
 	var fnScrollRightRTL = function() {
 		var oDomRef = this.get(0);
 		if (oDomRef) {
@@ -46,8 +35,24 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 		}
 	};
 
+	/**
+	 * Returns the MIRRORED scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
+	 * Precondition: The element is rendered in RTL mode.
+	 *
+	 * Reason for this method is that the major browsers return three different values for the same scroll position when in RTL mode.
+	 * This method hides those differences and returns the value that would be returned in LTR mode if the UI would be mirrored horizontally:
+	 * The distance in px how far the given container is scrolled away from the rightmost scroll position.
+	 *
+	 * Returns "undefined" if no element is given.
+	 *
+	 * @return {int} The scroll position, counted from the rightmost position
+	 * @public
+	 * @name jQuery#scrollRightRTL
+	 * @author SAP SE
+	 * @since 0.20.0
+	 * @function
+	 */
 	jQuery.fn.scrollRightRTL = fnScrollRightRTL;
-
 
 	return jQuery;
 });

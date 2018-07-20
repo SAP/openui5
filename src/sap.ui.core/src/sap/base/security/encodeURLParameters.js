@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(
 	["./encodeURL"],
 	function(encodeURL) {
@@ -15,8 +11,7 @@ sap.ui.define(
 	 * Encode a map of parameters into a combined URL parameter string.
 	 *
 	 * @function
-	 * @private
-	 * @exports sap/base/security/encodeURLParameters
+	 * @alias module:sap/base/security/encodeURLParameters
 	 * @param {Object} mParams The map of parameters to encode
 	 * @returns {string} The URL encoded parameter string
 	 * @SecValidate {0|return|XSS} validates the given string for a URL context
@@ -24,6 +19,7 @@ sap.ui.define(
 	 * sap.ui.require(["sap/base/security/encodeURLParameters"]), function(encodeURLParameters) {
 	 *  encodeURLParameters({{a:true, b:"d e"}}) === "a=true&b=d%20e";
 	 * });
+	 * @public
 	 */
 	var fnEncodeURLParameters = function(mParams) {
 		if (!mParams) {

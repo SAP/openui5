@@ -22,12 +22,15 @@ sap.ui.define([], function() {
 	 *		console.log(oTarget["sProp"]); // should be 7
 	 * });
 	 *
+	 * @function
+	 * @alias module:sap/base/util/defineLazyProperty
 	 * @param {object} oTarget Target object of the property stub
 	 * @param {string} sProperty Name of the stubbed property
 	 * @param {function} fnCallback Function callback which returns the property value
 	 * @param {function} [sMarker] Marker to allow identification of the according property descriptor
 	 *	like <code>Object.getOwnPropertyDescriptor(oTarget, sProperty).get[sMarker]</code>
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	var lazyProperty = function(oTarget, sProperty, fnCallback, sMarker) {
 

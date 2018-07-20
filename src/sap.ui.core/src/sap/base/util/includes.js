@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 	"sap/base/util/values"
 ], function(
@@ -27,44 +23,44 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks if value is included in collection
-	 *
-	* <pre>
-	*     sap.ui.require([sap/base/util/includes], function(includes){
-	*         // arrays
-	*         includes(["1", "8", "7"], "8");         // true
-	*         includes(["1", "8", "7"], "8", 0);      // true
+	* Checks if value is included in collection
 	*
-	*         includes(["1", "8", "7"], "8", 1);      // true
-	*         includes(["1", "8", "7"], "8", 2);      // false
-	*         includes(["1", "8", "7"], "8", 3);      // false
+	* @example
+	* sap.ui.require([sap/base/util/includes], function(includes){
+	*   // arrays
+	*   includes(["1", "8", "7"], "8");         // true
+	*   includes(["1", "8", "7"], "8", 0);      // true
 	*
-	*         includes(["1", "8", "7"], "8", -1);     // false
-	*         includes(["1", "8", "7"], "8", -2);     // true
-	*         includes(["1", "8", "7"], "8", -3);     // true
+	*   includes(["1", "8", "7"], "8", 1);      // true
+	*   includes(["1", "8", "7"], "8", 2);      // false
+	*   includes(["1", "8", "7"], "8", 3);      // false
 	*
-	*         // strings
-	*         includes("187", "8");                   // true
-	*         includes("187", "8", 0);                // true
+	*   includes(["1", "8", "7"], "8", -1);     // false
+	*   includes(["1", "8", "7"], "8", -2);     // true
+	*   includes(["1", "8", "7"], "8", -3);     // true
 	*
-	*         includes("187", "8", 1);                // true
-	*         includes("187", "8", 2);                // false
-	*         includes("187", "8", 3);                // false
+	*   // strings
+	*   includes("187", "8");                   // true
+	*   includes("187", "8", 0);                // true
 	*
-	*         includes("187", "8", -1);               // false
-	*         includes("187", "8", -2);               // true
-	*         includes("187", "8", -3);               // true
-	*     });
-	* </pre>
-	 *
-	 * @function
-	 * @exports sap/base/util/includes
-	 * @param {Array|object|string} vCollection - Collection to be checked
-	 * @param {*} vValue - The value to be checked
-	 * @param {int} [iFromIndex=0] - optional start index, negative start index will start from the end
-	 * @returns {boolean} - true if value is in the collection, false otherwise
-	 * @private
-	 */
+	*   includes("187", "8", 1);                // true
+	*   includes("187", "8", 2);                // false
+	*   includes("187", "8", 3);                // false
+	*
+	*   includes("187", "8", -1);               // false
+	*   includes("187", "8", -2);               // true
+	*   includes("187", "8", -3);               // true
+	* });
+	*
+	*
+	* @function
+	* @alias module:sap/base/util/includes
+	* @param {Array|object|string} vCollection - Collection to be checked
+	* @param {*} vValue - The value to be checked
+	* @param {int} [iFromIndex=0] - optional start index, negative start index will start from the end
+	* @returns {boolean} - true if value is in the collection, false otherwise
+	* @public
+	*/
 	var fnIncludes = function (vCollection, vValue, iFromIndex) {
 		if (typeof iFromIndex !== 'number') {
 			iFromIndex = 0;

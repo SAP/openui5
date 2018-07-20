@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 /*global Promise, document */
 sap.ui.define(["sap/ui/Device", "sap/base/assert"],
 	function(Device, assert) {
@@ -104,6 +100,40 @@ sap.ui.define(["sap/ui/Device", "sap/base/assert"],
 
 	}
 
+	/**
+	 * Includes the specified stylesheet via a &lt;link&gt;-tag in the head of the current document. If there is call to
+	 * <code>includeStylesheet</code> providing the sId of an already included stylesheet, the existing element will be
+	 * replaced.
+	 *
+	 * @param {string|object}
+	 *          vUrl the URL of the stylesheet to load or a configuration object
+	 * @param {string}
+	 *          vUrl.url the URL of the stylesheet to load
+	 * @param {string}
+	 *          [vUrl.id] id that should be used for the link tag
+	 * @param {object}
+	 *          [vUrl.attributes] map of attributes that should be used for the script tag
+	 * @param {string|object}
+	 *          [vId] id that should be used for the link tag or map of attributes
+	 * @param {function}
+	 *          [fnLoadCallback] callback function to get notified once the stylesheet has been loaded
+	 * @param {function}
+	 *          [fnErrorCallback] callback function to get notified once the stylesheet loading failed.
+	 *            In case of usage in IE the error callback will also be executed if an empty stylesheet
+	 *            is loaded. This is the only option how to determine in IE if the load was successful
+	 *            or not since the native onerror callback for link elements doesn't work in IE. The IE
+	 *            always calls the onload callback of the link element.
+	 * @return {void|Promise}
+	 *            When using the configuration object a <code>Promise</code> will be returned. The
+	 *            documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
+	 *            handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>
+	 *            applies to the <code>reject</code> handler of the <code>Promise</code>.
+	 *
+	 * @public
+	 * @alias module:sap/ui/dom/includeStylesheet
+	 * @function
+	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 */
 	return function includeStyleSheet(vUrl, vId, fnLoadCallback, fnErrorCallback) {
 		var mAttributes;
 		if (typeof vUrl === "string") {

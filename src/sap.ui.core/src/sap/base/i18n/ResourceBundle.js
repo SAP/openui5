@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 		'sap/base/assert',
 		'sap/base/Log',
@@ -236,8 +232,9 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap/base/i18n/ResourceBundle
-	 * @private
+	 * @function
+	 * @alias module:sap/base/i18n/ResourceBundle
+	 * @public
 	 */
 	function ResourceBundle(sUrl, sLocale, bIncludeInfo, bAsync){
 		this.sLocale = this._sNextLocale = normalize(sLocale) || defaultLocale();
@@ -296,8 +293,7 @@ sap.ui.define([
 	 * @returns {string} The value belonging to the key, if found; otherwise the key itself.
 	 *
 	 * @function
-	 * @name sap/base/i18n/ResourceBundle.prototype.getText
-	 * @private
+	 * @public
 	 */
 	ResourceBundle.prototype.getText = function(sKey, aArgs){
 
@@ -435,8 +431,7 @@ sap.ui.define([
 	 * @returns {boolean} true if the text has been found in the concrete bundle
 	 *
 	 * @function
-	 * @name sap/base/i18n/ResourceBundle.prototype.hasText
-	 * @private
+	 * @public
 	 */
 	ResourceBundle.prototype.hasText = function(sKey) {
 		return this.aPropertyFiles.length > 0 && typeof this.aPropertyFiles[0].getProperty(sKey) === "string";
@@ -549,7 +544,7 @@ sap.ui.define([
 	 * Creates and returns a new instance of {@link sap/base/i18n/ResourceBundle}
 	 * using the given URL and locale to determine what to load.
 	 *
-	 * @private
+	 * @public
 	 * @function
 	 * @param {object} [mParams] Parameters used to initialize the resource bundle
 	 * @param {string} [mParams.url=''] URL pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
@@ -559,7 +554,7 @@ sap.ui.define([
 	 * @param {boolean} [mParams.includeInfo=false] Whether to include origin information into the returned property values
 	 * @param {boolean} [mParams.async=false] Whether the first bundle should be loaded asynchronously
 	 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
-	 * @returns {sap/base/i18n/ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
+	 * @returns {module:sap/base/i18n/ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	ResourceBundle.create = function(mParams) {

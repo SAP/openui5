@@ -21,8 +21,15 @@ sap.ui.define([], function() {
 	 * Tokenizer for JS values.
 	 *
 	 * Contains functions to consume tokens on an input string.
-	 * @exports sap/base/util/JSTokenizer
+	 *
+	 * @example
+	 * sap.ui.require(["sap/base/util/JSTokenizer"], function(JSTokenizer){
+	 *      JSTokenizer().parseJS("{test:'123'}"); // {test:'123'}
+	 * });
+	 *
+	 * @alias module:sap/base/util/JSTokenizer
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	var JSTokenizer = function() {
 

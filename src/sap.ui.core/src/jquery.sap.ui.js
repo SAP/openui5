@@ -26,16 +26,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Extension function to the jQuery.fn which identifies SAPUI5 controls in the given jQuery context.
-	 *
-	 * @param {int} [iIndex] Optional parameter to return the control instance at the given index in the array.
-	 * @returns {sap.ui.core.Control[] | sap.ui.core.Control | null} Depending on the given context and index parameter an array of controls, an instance or null.
-	 * @name jQuery#control
-	 * @function
-	 * @public
-	 */
-
-	/**
 	 * @param {object} oRootControl The root control
 	 * @returns {jQuery} Returns itself
 	 * @name jQuery#root

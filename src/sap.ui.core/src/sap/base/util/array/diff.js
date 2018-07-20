@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(deepEqual, hash) {
 	"use strict";
 
@@ -35,20 +31,18 @@ sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(dee
 	 * By applying the operations one after the other to the old array, it can be transformed to an
 	 * array whose items are equal to the new array.
 	 *
-	 * Sample implementation of the update
-	 * <pre>
+	 * @example <caption>Sample implementation of the update</caption>
+	 * function update(aOldArray, aNewArray) {
 	 *
-	 *  function update(aOldArray, aNewArray) {
+	 *   // calculate the diff
+	 *   var aDiff = diff(aOldArray, aNewArray, __provide_your_symbol_function_here__);
 	 *
-	 *    // calculate the diff
-	 *    var aDiff = diff(aOldArray, aNewArray, __provide_your_symbol_function_here__);
+	 *   // apply update operations
+	 *   aDiff.forEach( function(op) {
 	 *
-	 *    // apply update operations
-	 *    aDiff.forEach( function(op) {
+	 *     // invariant: aOldArray and aNewArray now are equal up to (excluding) op.index
 	 *
-	 *      // invariant: aOldArray and aNewArray now are equal up to (excluding) op.index
-	 *
-	 *      switch ( op.type ) {
+	 *     switch ( op.type ) {
 	 *      case 'insert':
 	 *        // new array contains a new (or otherwise unmapped) item, add it here
 	 *        aOldArray.splice(op.index, 0, aNewArray[op.index]);
@@ -61,18 +55,17 @@ sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(dee
 	 *        throw new Error('unexpected diff operation type');
 	 *      }
 	 *
-	 *    });
-	 *  }
+	 *   });
+	 * }
 	 *
-	 * </pre>
 	 *
 	 * @function
 	 * @param {Array} aOld Old Array
 	 * @param {Array} aNew New Array
 	 * @param {function} [fnSymbol] Function to calculate substitute symbols for array items
-	 * @exports sap/base/util/array/diff
+	 * @alias module:sap/base/util/array/diff
 	 * @return {Array.<{type:string,index:int}>} List of update operations
-	 * @private
+	 * @public
 	 */
 	var fnDiff = function(aOld, aNew, fnSymbol){
 		var mSymbols = {},

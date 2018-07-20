@@ -18,7 +18,7 @@ sap.ui.define([
 	 * Strips unsafe tags and attributes from HTML.
 	 *
 	 * @function
-	 * @exports sap/base/security/sanitizeHTML
+	 * @alias module:sap/base/security/sanitizeHTML
 	 * @param {string} sHTML the HTML to be sanitized.
 	 * @param {object} [mOptions={}] options for the sanitizer
 	 * @return {string} sanitized HTML

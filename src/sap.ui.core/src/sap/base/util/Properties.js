@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 
 // Provides access to Java-like properties files
 /*global chrome, v8 */
@@ -17,7 +13,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 *
 	 * Each key and its corresponding value in the collection is a string, keys are case-sensitive.
 	 *
-	 * Use {@link sap.base.util.Properties} to create an instance of <code>sap.base.util.Properties</code>.
+	 * Use {@link module:sap/base/util/Properties.create} to create an instance of {@link module:sap/base/util/Properties}.
 	 *
 	 * The {@link #getProperty} method can be used to retrieve a value from the collection,
 	 * {@link #setProperty} to store or change a value for a key and {@link #getKeys}
@@ -25,7 +21,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.base.util.Properties
+	 * @alias module:sap/base/util/Properties
 	 * @private
 	 */
 	var Properties = function() {
@@ -39,15 +35,13 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * Optionally, a default value can be given which will be returned if the collection does not contain
 	 * a value for the key; only non-empty default values are supported.
 	 *
+	 * @function
 	 * @param {string} sKey Key to return the value for
 	 * @param {string} [sDefaultValue=null] Optional, a default value that will be returned
 	 *    if the requested key is not in the collection
 	 * @returns {string} Value for the given key or the default value or <code>null</code>
 	 *    if no default value or a falsy default value was given
-	 * @private
-	 *
-	 * @function
-	 * @name sap.base.util.Properties.prototype.getProperty
+	 * @public
 	 */
 	Properties.prototype.getProperty = function(sKey, sDefaultValue) {
 		var sValue = this.mProperties[sKey];
@@ -61,11 +55,10 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 
 	/**
 	 * Returns an array of all keys in the property collection.
-	 * @returns {string[]} All keys in the property collection
-	 * @private
 	 *
 	 * @function
-	 * @name sap.base.util.Properties.prototype.getKeys
+	 * @returns {string[]} All keys in the property collection
+	 * @public
 	 */
 	Properties.prototype.getKeys = function() {
 		return this.aKeys || (this.aKeys = Object.keys(this.mProperties));
@@ -77,12 +70,10 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * If the given value is not a string, the collection won't be modified.
 	 * The key is always cast to a string.
 	 *
+	 * @function
 	 * @param {string} sKey Key of the property
 	 * @param {string} sValue String value for the key
-	 * @private
-	 *
-	 * @function
-	 * @name sap.base.util.Properties.prototype.setProperty
+	 * @public
 	 */
 	Properties.prototype.setProperty = function(sKey, sValue) {
 		if (typeof (sValue) != "string") {
@@ -96,11 +87,10 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 
 	/**
 	 * Creates and returns a clone of the property collection.
-	 * @returns {sap.base.util.Properties} A clone of the property collection
-	 * @private
 	 *
 	 * @function
-	 * @name sap.base.util.Properties.prototype.clone
+	 * @returns {module:sap/base/util/Properties} A clone of the property collection
+	 * @public
 	 */
 	Properties.prototype.clone = function() {
 		var oClone = new Properties();
@@ -229,31 +219,25 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * A property file that is loaded can contain comments with a leading ! or #.
 	 * The loaded property list does not contain any comments.
 	 *
-	 * <b>Example for loading a property file:</b>
-	 * <pre>
-	 *  sap.ui.require(["sap/base/util/Properties"], function (Properties) {
-	 *     var p = Properties.create({url : "../myProperty.properties"});
-	 *  });
-	 * </pre>
+	 * @example <caption>Loading a property file</caption>
+	 * sap.ui.require(["sap/base/util/Properties"], function (Properties) {
+	 *    var p = Properties.create({url : "../myProperty.properties"});
+	 * });
 	 *
-	 * <b>Examples for getting and setting properties:</b>
-	 * <pre>
-	 *  sap.ui.require(["sap/base/util/Properties"], function (Properties) {
-	 *    var oProperties = Properties.create();
-	 *    oProperties.setProperty("KEY_1","Test Key");
-	 *    var sValue1 = oProperties.getProperty("KEY_1");
-	 *    var sValue2 = oProperties.getProperty("KEY_2","Default");
-	 *   });
-	 * </pre>
-	 *
-	 * <b>Example for loading a property file asynchronously (returns a Promise):</b>
-	 * <pre>
-	 *  sap.ui.require(["sap/base/util/Properties"], function (Properties) {
-	 *     Properties.create({url : "../myProperty.properties", async: true}).then(function(oProperties){
-	 *         ...
-	 *     });
+	 * @example <caption>getting and setting properties</caption>
+	 * sap.ui.require(["sap/base/util/Properties"], function (Properties) {
+	 *   var oProperties = Properties.create();
+	 *   oProperties.setProperty("KEY_1","Test Key");
+	 *   var sValue1 = oProperties.getProperty("KEY_1");
+	 *   var sValue2 = oProperties.getProperty("KEY_2","Default");
 	 *  });
-	 * </pre>
+	 *
+	 * @example <caption>Loading a property file asynchronously (returns a Promise)</caption>
+	 * sap.ui.require(["sap/base/util/Properties"], function (Properties) {
+	 *    Properties.create({url : "../myProperty.properties", async: true}).then(function(oProperties){
+	 *        ...
+	 *    });
+	 * });
 	 *
 	 * @param {object} [mParams] Parameters used to initialize the property list
 	 * @param {string} [mParams.url] The URL to the .properties file which should be loaded
@@ -262,7 +246,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 *    the request (see <code>headers</code> option of <code>jQuery.ajax</code>)
 	 * @param {object} [mParams.returnNullIfMissing=false] Whether <code>null</code> should be returned
 	 *    for a missing properties file; by default an empty collection is returned
-	 * @return {sap.base.util.Properties|null|Promise} A new property collection (synchronous case)
+	 * @return {module:sap/base/util/Properties|null|Promise} A new property collection (synchronous case)
 	 *    or <code>null</code> if the file could not be loaded and <code>returnNullIfMissing</code>
 	 *    was set; in case of asynchronous loading, always a Promise is returned, which resolves with
 	 *    the property collection or with <code>null</code> if the file could not be loaded and
@@ -270,7 +254,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * @throws {Error} When the file has syntax issues (e.g. incomplete unicode escapes);
 	 *    in async mode, the error is not thrown but the returned Promise will be rejected
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
-	 * @private
+	 * @public
 	 */
 	Properties.create = function (mParams) {
 		mParams = Object.assign({url: undefined, headers: {}}, mParams);

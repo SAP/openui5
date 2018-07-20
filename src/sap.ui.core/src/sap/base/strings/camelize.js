@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 
@@ -13,13 +9,17 @@ sap.ui.define([], function() {
 	/**
 	 * Transforms a hyphen separated string to a camel case string.
 	 *
+	 * @example
+	 * sap.ui.require(["sap/base/strings/camelize"], function(camelize){
+	 *      camelize("foo-bar"); // "fooBar"
+	 * });
+	 *
 	 * @function
-	 * @exports sap/base/strings/camelize
+	 * @alias module:sap/base/strings/camelize
 	 * @param {string} sString Hyphen separated string
 	 * @returns {string} The transformed string
-	 * @private
+	 * @public
 	 * @SecPassthrough {0|return}
-	 * @example "foo-bar" -> "fooBar"
 	 */
 	var fnCamelize = function (sString) {
 		return sString.replace( rCamelCase, function( sMatch, sChar ) {

@@ -44,7 +44,8 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 	 * functionality of EppLib.js remained in the original file.
 	 *
 	 * @name sap.ui.performance.E2ETrace.Passport
-	 * @static
+	 * @namespace
+	 * @alias module:sap/ui/performance/trace/Passport
 	 * @private
 	 */
 	var Passport = {};

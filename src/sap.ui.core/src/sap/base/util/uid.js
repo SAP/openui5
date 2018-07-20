@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 
@@ -21,9 +17,9 @@ sap.ui.define([], function() {
 	 * No means for detection of overlap with already present or future UIDs.
 	 *
 	 * @function
-	 * @exports sap/base/util/uid
+	 * @alias module:sap/base/util/uid
 	 * @return {string} A pseudo-unique id.
-	 * @private
+	 * @public
 	 */
 	var fnUid = function uid() {
 		return "id-" + new Date().valueOf() + "-" + iIdCounter++;
