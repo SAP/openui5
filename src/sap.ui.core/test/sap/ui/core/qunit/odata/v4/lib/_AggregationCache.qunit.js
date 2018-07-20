@@ -2,13 +2,14 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/model/odata/v4/lib/_AggregationCache",
-    "sap/ui/model/odata/v4/lib/_Cache",
-    "sap/ui/model/odata/v4/lib/_Helper",
-    "sap/base/Log"
-], function(jQuery, SyncPromise, _AggregationCache, _Cache, _Helper, Log) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/odata/v4/lib/_AggregationCache",
+	"sap/ui/model/odata/v4/lib/_AggregationHelper",
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (jQuery, Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -95,7 +96,7 @@ sap.ui.require([
 				group : {
 					Dimension : {}
 				},
-				groupLevels : [] // Note: added by _Helper.buildApply before
+				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 			},
 			oAggregationWithLevels = {
 				aggregate : {},
@@ -185,7 +186,8 @@ sap.ui.require([
 			oAggregation = {
 				aggregate : {},
 				group : {},
-				groupLevels : [] // Note: ODLB#updateAnalyticalInfo called _Helper.buildApply
+				// Note: ODLB#updateAnalyticalInfo called _AggregationHelper.buildApply
+				groupLevels : []
 			},
 			sAggregation = JSON.stringify(oAggregation),
 			oAggregationCacheMock = this.mock(_AggregationCache),
@@ -200,33 +202,46 @@ sap.ui.require([
 			},
 			mMeasureRange,
 			bMeasureRangePromiseResolved = false,
-			mQueryOptions = {$apply : "bar", "sap-client" : "123"},
+			mQueryOptions = {
+				$apply : "bar",
+				$count : true,
+				$filter : "baz",
+				$orderby : "X desc",
+				"sap-client" : "123"
+			},
 			sQueryOptions = JSON.stringify(mQueryOptions),
 			sResourcePath = "Foo",
 			aResult = [],
 			bSortExpandSelect = {/*true or false*/},
 			iStart = 0;
 
-		this.mock(_Helper).expects("hasMinOrMax")
+		this.mock(_AggregationHelper).expects("hasMinOrMax")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
-		this.mock(_Helper).expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregation),
-				sinon.match(function (mAlias2MeasureAndMethod0) {
-					mAlias2MeasureAndMethod = mAlias2MeasureAndMethod0;
-					assert.deepEqual(mAlias2MeasureAndMethod0, {});
-					return true;
-				}))
-			.returns(sApply);
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions), {})
+			.callsFake(function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod0) {
+				mAlias2MeasureAndMethod = mAlias2MeasureAndMethod0;
+				mQueryOptions = jQuery.extend({}, mQueryOptions);
+				delete mQueryOptions.$filter;
+				delete mQueryOptions.$orderby;
+				mQueryOptions.$apply = sApply;
+				return mQueryOptions;
+			});
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
-				{$apply : sApply, "sap-client" : "123"},
+				{$apply : sApply, $count : true, "sap-client" : "123"},
 				sinon.match.same(bSortExpandSelect))
 			.returns(oFirstLevelCache);
 		// getResourcePath and handleResponse need to be mocked before an _AggregationCache
 		// instance is created
 		oAggregationCacheMock.expects("getResourcePath")
-			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(fnGetResourcePath),
-				iStart, iEnd)
+			.withExactArgs(sinon.match.same(oAggregation), {
+					$apply : "bar",
+					// no $count
+					$filter : "baz",
+					$orderby : "X desc",
+					"sap-client" : "123"
+				}, sinon.match.same(fnGetResourcePath), iStart, iEnd)
 			.on(oFirstLevelCache);
 		oAggregationCacheMock.expects("handleResponse")
 			.withExactArgs(sinon.match(function (mAlias2MeasureAndMethod0) {
@@ -286,8 +301,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: $filter not allowed", function (assert) {
-		var oAggregation = {/*does not matter*/},
+	QUnit.test("create: $filter not allowed without min/max", function (assert) {
+		var oAggregation = {/*no min/max*/},
 			mQueryOptions = {$filter : "answer eq 42"};
 
 		assert.throws(function() {
@@ -295,23 +310,7 @@ sap.ui.require([
 			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
 		}, new Error("Unsupported system query option: $filter"));
 	});
-
-	//*********************************************************************************************
-	QUnit.test("create: $orderby not allowed with min/max", function (assert) {
-		var oAggregation = {
-				aggregate : {},
-				group : {}
-			},
-			mQueryOptions = {"$orderby" : "foo desc"};
-
-		this.mock(_Helper).expects("hasMinOrMax")
-			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
-
-		assert.throws(function () {
-			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
-		}, new Error("Unsupported system query option: $orderby"));
-	});
+	//TODO if we allow filtering, do we need to filter $filter by current level, like $orderby?
 
 	//*********************************************************************************************
 	QUnit.test("create: groupLevels not allowed with min/max", function (assert) {
@@ -321,7 +320,7 @@ sap.ui.require([
 				groupLevels : ["BillToParty"]
 			};
 
-		this.mock(_Helper).expects("hasMinOrMax")
+		this.mock(_AggregationHelper).expects("hasMinOrMax")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
 
 		assert.throws(function () {
@@ -361,13 +360,15 @@ sap.ui.require([
 				bSortExpandSelect : {/*true or false*/}
 			},
 			fnGetResourcePath = sinon.stub(),
-			oHelperMock = this.mock(_Helper),
+			mQueryOptions = {},
 			sQueryStringAfter = {/*sQueryString after*/},
 			sResourcePath = "Foo",
 			iStart = 0;
 
 		fnGetResourcePath.returns(sResourcePath);
-		oHelperMock.expects("buildApply").withExactArgs(oAggregationNoMinMax).returns(sApply);
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(oAggregationNoMinMax, sinon.match.same(mQueryOptions))
+			.returns({$apply : sApply});
 		this.mock(oFirstLevelCache.oRequestor).expects("buildQueryString")
 			.withExactArgs(sinon.match.same(oFirstLevelCache.sMetaPath),
 				sinon.match(function (mQueryOptions0) {
@@ -378,7 +379,7 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(_AggregationCache.getResourcePath.call(oFirstLevelCache, oAggregation,
-			fnGetResourcePath, iStart, iEnd), sResourcePath);
+			mQueryOptions, fnGetResourcePath, iStart, iEnd), sResourcePath);
 
 		assert.strictEqual(fnGetResourcePath.callCount, 1);
 		assert.ok(fnGetResourcePath.calledWith(iStart, iEnd + 1), "fnGetResourcePath parameters");
@@ -531,7 +532,6 @@ sap.ui.require([
 				groupLevels : ["BillToParty"]
 			},
 			oAggregationForFirstLevel = {},
-			sApply = "A.P.P.L.E.",
 			mByPredicate = {},
 			oCache,
 			fnDataRequested = {},
@@ -548,6 +548,7 @@ sap.ui.require([
 			sOrderby = "~orderby~",
 			iPrefetchLength = 42,
 			mQueryOptions = {$count : false, $orderby : "FirstDimension", "sap-client" : "123"},
+			mQueryOptionsWithApply = {},
 			sResourcePath = "Foo",
 			oResult = {
 				value : [{}, {}]
@@ -560,16 +561,16 @@ sap.ui.require([
 		this.mock(_AggregationCache).expects("filterAggregationForFirstLevel")
 			.withExactArgs(sinon.match.same(oAggregation))
 			.returns(oAggregationForFirstLevel);
-		this.mock(_Helper).expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregationForFirstLevel))
-			.returns(sApply);
 		this.mock(_AggregationCache).expects("filterOrderby")
 			.withExactArgs(mQueryOptions.$orderby, sinon.match.same(oAggregationForFirstLevel))
 			.returns(sOrderby);
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregationForFirstLevel),
+				{$count : true, $orderby : sOrderby, "sap-client" : "123"})
+			.returns(mQueryOptionsWithApply);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
-				{$apply : sApply, $count : true, $orderby : sOrderby, "sap-client" : "123"},
-				sinon.match.same(bSortExpandSelect))
+				sinon.match.same(mQueryOptionsWithApply), sinon.match.same(bSortExpandSelect))
 			.returns(oFirstLevelCache);
 		this.mock(_AggregationCache).expects("calculateKeyPredicate").on(null)
 			.withExactArgs(sinon.match.same(oAggregationForFirstLevel),
@@ -631,7 +632,7 @@ sap.ui.require([
 		var oAggregation = {
 				aggregate : {},
 				group : {},
-				groupLevels : [] // Note: added by _Helper.buildApply before
+				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, {}),
 			fnDataRequested = this.spy(),
@@ -658,7 +659,8 @@ sap.ui.require([
 		var oAggregation = {
 				aggregate : {},
 				group : {},
-				groupLevels : [] // Note: ODLB#updateAnalyticalInfo called _Helper.buildApply
+				// Note: ODLB#updateAnalyticalInfo called _AggregationHelper.buildApply
+				groupLevels : []
 			},
 			oCache,
 			oElement = {},
@@ -669,7 +671,7 @@ sap.ui.require([
 			oReadPromise = Promise.resolve(oResult),
 			that = this;
 
-		this.mock(_Helper).expects("hasMinOrMax")
+		this.mock(_AggregationHelper).expects("hasMinOrMax")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
 		oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {/*mQueryOptions*/});
 		this.mock(oCache.oFirstLevel).expects("read").on(oCache.oFirstLevel)

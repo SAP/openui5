@@ -813,7 +813,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.visitResponse = function (vRoot, mTypeForMetaPath, sRootMetaPath) {
-		var aKeyPredicates,
+		var bHasMessages = false,
+			aKeyPredicates,
 			mPathToODataMessages = {},
 			that = this;
 
@@ -861,14 +862,19 @@ sap.ui.define([
 		function visitInstance(oInstance, sMetaPath, sPathWithKeyPredicates, bAddPredicateToPath) {
 			var oType = mTypeForMetaPath[sMetaPath],
 				sMessageProperty = oType && oType["@Org.OData.Core.V1.Messages"]
-					&& oType["@Org.OData.Core.V1.Messages"].$Path;
+					&& oType["@Org.OData.Core.V1.Messages"].$Path,
+				aMessages;
 
 			that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
 			if (bAddPredicateToPath) {
 				sPathWithKeyPredicates += _Helper.getPrivateAnnotation(oInstance, "predicate");
 			}
-			if (sMessageProperty) { // collect messages
-				mPathToODataMessages[sPathWithKeyPredicates] = oInstance[sMessageProperty];
+			if (sMessageProperty && sMessageProperty in oInstance) { // collect messages
+				bHasMessages = true;
+				aMessages = oInstance[sMessageProperty];
+				if (aMessages && aMessages.length !== 0) {
+					mPathToODataMessages[sPathWithKeyPredicates] = aMessages;
+				}
 			}
 
 			Object.keys(oInstance).forEach(function (sProperty) {
@@ -905,7 +911,7 @@ sap.ui.define([
 		} else if (vRoot && typeof vRoot === "object") {
 			visitInstance(vRoot, sRootMetaPath || this.sMetaPath, "");
 		}
-		if (Object.keys(mPathToODataMessages).length) {
+		if (bHasMessages) {
 			this.oRequestor.reportBoundMessages(this.sResourcePath, mPathToODataMessages,
 				aKeyPredicates);
 		}

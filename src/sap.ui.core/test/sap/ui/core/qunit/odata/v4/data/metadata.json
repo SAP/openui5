@@ -244,6 +244,11 @@
 			"$kind" : "NavigationProperty",
 			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
 			"$Nullable" : false
+		},
+		"__FAKE__Messages" : {
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__Message",
+			"$isCollection" : true,
+			"$kind" : "Property"
 		}
 	},
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_City" : {
@@ -667,9 +672,45 @@
 			"$IncludeInServiceDocument" : true
 		}
 	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__Message" : {
+		"$kind" : "ComplexType",
+		"code" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.String",
+			"$kind" : "Property"
+		},
+		"longtextUrl" : {
+			"$Type" : "Edm.String",
+			"$kind" : "Property"
+		},
+		"message" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.String",
+			"$kind" : "Property"
+		},
+		"numericSeverity" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.Byte",
+			"$kind" : "Property"
+		},
+		"target" : {
+			"$Type" : "Edm.String",
+			"$kind" : "Property"
+		},
+		"transient" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.Boolean",
+			"$kind" : "Property"
+		}
+	},
 	"com.sap.gateway.default.iwbep.tea_busi.v0001." : {
 		"$kind" : "Schema",
 		"$Annotations" : {
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" : {
+				"@Org.OData.Core.V1.Messages" : {
+					"$Path" : "__FAKE__Messages"
+				}
+			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/LOCATION/COUNTRY" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "char 255"
 			},

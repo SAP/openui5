@@ -80,6 +80,7 @@ sap.ui.define([
 	 *   parent.
 	 *
 	 * @extends sap.ui.model.ContextBinding
+	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
@@ -459,15 +460,25 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.destroy = function () {
+		this.oModel.bindingDestroyed(this);
+		this.mAggregatedQueryOptions = undefined;
+		this.mCacheByContext = undefined;
+		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
+		this.mCacheQueryOptions = undefined;
+		this.aChildCanUseCachePromises = undefined;
+		this.oContext = undefined;
+		this.oOperation = undefined;
+		this.mParameters = undefined;
+		this.mQueryOptions = undefined;
+		this.removeReadGroupLock();
 		if (this.oElementContext) {
 			this.oElementContext.destroy();
+			this.oElementContext = undefined;
 		}
 		if (this.oReturnValueContext) {
 			this.oReturnValueContext.destroy();
+			this.oReturnValueContext = undefined;
 		}
-		this.oModel.bindingDestroyed(this);
-		this.oCachePromise = undefined;
-		this.oContext = undefined;
 		ContextBinding.prototype.destroy.apply(this);
 	};
 
@@ -742,7 +753,7 @@ sap.ui.define([
 			if (!that.oOperation) {
 				if (oCache) {
 					// remove all cached Caches before fetching a new one
-					that.mCacheByContext = undefined;
+					that.removeCachesAndMessages();
 					that.fetchCache(that.oContext);
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
@@ -770,7 +781,7 @@ sap.ui.define([
 		if (!this.oOperation) {
 			this.mAggregatedQueryOptions = {};
 			this.bAggregatedQueryOptionsInitial = true;
-			this.mCacheByContext = undefined;
+			this.removeCachesAndMessages();
 			this.fetchCache(this.oContext);
 			this.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.resumeInternal(bCheckUpdate);

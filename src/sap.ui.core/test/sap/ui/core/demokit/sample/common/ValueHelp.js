@@ -25,6 +25,7 @@ sap.ui.define([
 			interfaces : ["sap.ui.core.IFormContent"],
 			properties : {
 				enabled : {type: "boolean", defaultValue: true, bindable: "bindable"},
+				qualifier : {type: "string", defaultValue: "", bindable: "bindable"},
 				value: {type: "string", group: "Data", defaultValue: null, bindable: "bindable"}
 			},
 			aggregations : {
@@ -191,7 +192,7 @@ sap.ui.define([
 						growing : true,
 						mode : "SingleSelectMaster"
 					}),
-					oValueListMapping = mValueListInfo[""]; // TODO not necessarily correct
+					oValueListMapping = mValueListInfo[that.getQualifier()];
 
 				function onClose() {
 					oPopover.close();
@@ -204,8 +205,8 @@ sap.ui.define([
 					oPopover.close();
 				}
 
-				// TODO use Label annotation
-				oPopover.setTitle("Value Help: " + oValueListMapping.CollectionPath);
+				oPopover.setTitle("Value Help: "
+					+ (oValueListMapping.Label || oValueListMapping.CollectionPath));
 				oTable.setModel(oValueListMapping.$model);
 				oTable.bindItems({
 					path : "/" + oValueListMapping.CollectionPath,
@@ -214,7 +215,7 @@ sap.ui.define([
 				oValueListMapping.Parameters.forEach(function (oParameter) {
 					var sParameterPath = oParameter.ValueListProperty;
 
-					// TODO use Label annotation
+					// TODO label from the property
 					oTable.addColumn(new Column({
 						header : new Text({
 							text : sParameterPath,

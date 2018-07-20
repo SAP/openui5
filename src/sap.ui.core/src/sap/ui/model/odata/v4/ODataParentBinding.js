@@ -261,9 +261,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this.oReadGroupLock) {
-			this.oReadGroupLock.unlock(true);
-		}
+		this.removeReadGroupLock();
 		this.oReadGroupLock = oGroupLock = this.lockGroup(sGroupId, bLocked);
 		if (bLocked) {
 			iCount = 2 + (iCount || 0);
@@ -383,6 +381,18 @@ sap.ui.define([
 		}
 		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
 			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
+	};
+
+	/**
+	 * Unlocks a ReadGroupLock and removes it from the binding.
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.removeReadGroupLock = function () {
+		if (this.oReadGroupLock) {
+			this.oReadGroupLock.unlock(true);
+			this.oReadGroupLock = undefined;
+		}
 	};
 
 	/**
@@ -795,20 +805,22 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.updateAggregatedQueryOptions = function (mNewQueryOptions) {
-		var aAllKeys = Object.keys(mNewQueryOptions)
-				.concat(Object.keys(this.mAggregatedQueryOptions)),
+		var aAllKeys = Object.keys(mNewQueryOptions),
 			that = this;
 
-		aAllKeys.forEach(function (sName) {
-			if (sName === "$select" || sName === "$expand") {
-				return;
-			}
-			if (mNewQueryOptions[sName] === undefined) {
-				delete that.mAggregatedQueryOptions[sName];
-			} else {
-				that.mAggregatedQueryOptions[sName] = mNewQueryOptions[sName];
-			}
-		});
+		if (this.mAggregatedQueryOptions) {
+			aAllKeys = aAllKeys.concat(Object.keys(this.mAggregatedQueryOptions));
+			aAllKeys.forEach(function (sName) {
+				if (sName === "$select" || sName === "$expand") {
+					return;
+				}
+				if (mNewQueryOptions[sName] === undefined) {
+					delete that.mAggregatedQueryOptions[sName];
+				} else {
+					that.mAggregatedQueryOptions[sName] = mNewQueryOptions[sName];
+				}
+			});
+		}
 	};
 
 	return function (oPrototype) {

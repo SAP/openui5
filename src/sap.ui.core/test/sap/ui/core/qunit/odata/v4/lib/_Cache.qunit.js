@@ -1394,6 +1394,7 @@ sap.ui.require([
 			aMessagesSalesOrder = [{/* any message object */}],
 			aMessagesSalesOrderSchedules0 = [{/* any message object */}],
 			aMessagesSalesOrderSchedules1 = [{/* any message object */}],
+			aMessagesEmpty = [],
 			oData = {
 				messagesInSalesOrder : aMessagesSalesOrder,
 				SO_2_BP : {
@@ -1403,15 +1404,23 @@ sap.ui.require([
 					messagesInSalesOrderSchedule : aMessagesSalesOrderSchedules0,
 					ScheduleKey : "42"
 				}, {
-					messagesInSalesOrderSchedule : aMessagesSalesOrderSchedules1,
 					ScheduleKey : "43"
+				}, {
+					messagesInSalesOrderSchedule : aMessagesSalesOrderSchedules1,
+					ScheduleKey : "44"
+				}, {
+					messagesInSalesOrderSchedule : null,
+					ScheduleKey : "45"
+				}, {
+					messagesInSalesOrderSchedule : aMessagesEmpty,
+					ScheduleKey : "46"
 				}]
 			},
 			mExpectedMessages = {
 				"" : aMessagesSalesOrder,
 				"/SO_2_BP" : aMessagesInBusinessPartner,
 				"/SO_2_SCHDL('42')" : aMessagesSalesOrderSchedules0,
-				"/SO_2_SCHDL('43')" : aMessagesSalesOrderSchedules1
+				"/SO_2_SCHDL('44')" : aMessagesSalesOrderSchedules1
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList" : {
@@ -1439,17 +1448,21 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: reportBoundMessages; collection", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
-			aMessagesSalesOrder = [{/* any message object */}],
+			aMessagesSalesOrder0 = [{/* any message object */}],
+			aMessagesSalesOrder1 = [{/* any message object */}],
 			aData = [{
-				messagesInSalesOrder : aMessagesSalesOrder,
+				messagesInSalesOrder : aMessagesSalesOrder0,
 				SalesOrderID : "42"
 			}, {
-				messagesInSalesOrder : [],
+				messagesInSalesOrder : aMessagesSalesOrder1,
 				SalesOrderID : "43"
+			}, {
+				messagesInSalesOrder : [],
+				SalesOrderID : "44"
 			}],
 			mExpectedMessages = {
-				"('42')" : aMessagesSalesOrder,
-				"('43')" : []
+				"('42')" : aMessagesSalesOrder0,
+				"('43')" : aMessagesSalesOrder1
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList" : {
@@ -1467,7 +1480,7 @@ sap.ui.require([
 		mExpectedMessages["('43')"].$count = 0;
 		mExpectedMessages["('43')"].$byPredicate = {}; // no key predicates
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('42')", "('43')"]);
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('42')", "('43')", "('44')"]);
 
 		// code under test
 		oCache.visitResponse(aData, mTypeForMetaPath);
