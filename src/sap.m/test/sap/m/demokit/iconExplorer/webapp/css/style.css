@@ -29,7 +29,12 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_beliz
 
 /* margin for clear icon in search field*/
 .sapUiDemoIconExplorer .inputClear{
-    margin-right: 2rem;
+	position: relative;
+}
+
+/* remove focus for this icon */
+.sapUiDemoIconExplorer .inputClear .sapUiIcon:focus {
+	outline-width: 0 !important;
 }
 
 .sapUiDemoIconExplorer .HomeHeaderText {
