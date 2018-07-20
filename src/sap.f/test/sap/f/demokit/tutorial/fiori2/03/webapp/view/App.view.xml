@@ -1,0 +1,7 @@
+<View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" height="100%">
+	<FlexibleColumnLayout id="flexibleColumnLayout" backgroundDesign="Solid">
+		<beginColumnPages>
+			<mvc:XMLView id="beginView" viewName="sap.ui.demo.fiori2.view.Master" />
+		</beginColumnPages>
+	</FlexibleColumnLayout>
+</View>
