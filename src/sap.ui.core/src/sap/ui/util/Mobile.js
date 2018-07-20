@@ -8,6 +8,12 @@
 sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], function(Device, Log, jQuery) {
 	"use strict";
 
+	/**
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/util/Mobile
+	 * @public
+	 */
 	var Mobile = {};
 
 	// Windows Phone specific handling
@@ -79,7 +85,8 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 	 *     full screen mode when runs on iOS device.
 	 *
 	 * @function
-	 * @private
+	 * @static
+	 * @public
 	 */
 	Mobile.init = function(options) {
 		var $head = jQuery("head");
@@ -233,7 +240,8 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 	 *
 	 * @param {object} oIcons
 	 * @function
-	 * @private
+	 * @static
+	 * @public
 	 */
 	Mobile.setIcons = function(oIcons) {
 
@@ -303,7 +311,8 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 	 * @param {boolean} bValue whether the Application will be loaded in full screen mode after added to home
 	 *     screen from iOS Safari or mobile Chrome from version 31.
 	 * @function
-	 * @private
+	 * @static
+	 * @public
 	 */
 	Mobile.setWebAppCapable = function(bValue) {
 		if (!Device.system.tablet && !Device.system.phone) {

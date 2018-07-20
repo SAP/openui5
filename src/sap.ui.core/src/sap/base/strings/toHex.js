@@ -10,10 +10,16 @@ sap.ui.define([], function() {
 
 	/**
 	 * Create hex string and pad to length with zeros.
+	 * @example
+	 * sap.ui.require(["sap/base/strings/toHex"], function(toHex){
+	 *      toHex(10, 2); // "0a"
+	 *      toHex(16, 2); // "10"
+	 * });
 	 *
 	 * @function
+	 * @since 1.58
 	 * @private
-	 * @exports sap/strings/toHex
+	 * @alias module:sap/strings/toHex
 	 * @param {int} iChar UTF-16 character code
 	 * @param {int} [iLength=0] number of padded zeros
 	 * @returns {string} padded hex representation of the given character code

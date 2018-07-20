@@ -8,44 +8,45 @@
 sap.ui.define([], function() {
 	"use strict";
 
-	//TODO-evo: check if we should polyfill URL() and URLSearchParams insted....
+	//TODO-evo: check if we should polyfill URL() and URLSearchParams instead....
 
 	/**
-	 * @interface Encapsulates all URI parameters of a given URL.
+	 * @class Encapsulates all URI parameters of a given URL.
 	 *
-	 * Use {@link getUriParameters} to create an instance of sab.base.util.UriParameters.
-	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 * @exports sap/base/util/UriParameters
+	 * @since 1.58
+	 * @alias module:sap/base/util/UriParameters
 	 * @param {string} sUri URL with parameters
 	 * @private
 	 */
 	var UriParameters = function(sUri) {
 		this.mParams = {};
-		var sQueryString = sUri || "";
-		if ( sQueryString.indexOf('#') >= 0 ) {
-			sQueryString = sQueryString.slice(0, sQueryString.indexOf('#'));
-		}
-		if (sQueryString.indexOf("?") >= 0) {
-			sQueryString = sQueryString.slice(sQueryString.indexOf("?") + 1);
-			var aParameters = sQueryString.split("&"),
-				mParameters = {},
-				aParameter,
-				sName,
-				sValue;
-			for (var i = 0; i < aParameters.length; i++) {
-				aParameter = aParameters[i].split("=");
-				sName = decodeURIComponent(aParameter[0]);
-				sValue = aParameter.length > 1 ? decodeURIComponent(aParameter[1].replace(/\+/g,' ')) : "";
-				if (sName) {
-					if (!Object.prototype.hasOwnProperty.call(mParameters, sName)) {
-						mParameters[sName] = [];
-					}
-					mParameters[sName].push(sValue);
-				}
+		var sQueryString = sUri;
+
+		if (sQueryString) {
+			if (sQueryString.indexOf('#') >= 0 ) {
+				sQueryString = sQueryString.slice(0, sQueryString.indexOf('#'));
 			}
-			this.mParams = mParameters;
+			if (sQueryString.indexOf("?") >= 0) {
+				sQueryString = sQueryString.slice(sQueryString.indexOf("?") + 1);
+				var aParameters = sQueryString.split("&"),
+					mParameters = {},
+					aParameter,
+					sName,
+					sValue;
+				for (var i = 0; i < aParameters.length; i++) {
+					aParameter = aParameters[i].split("=");
+					sName = decodeURIComponent(aParameter[0]);
+					sValue = aParameter.length > 1 ? decodeURIComponent(aParameter[1].replace(/\+/g,' ')) : "";
+					if (sName) {
+						if (!Object.prototype.hasOwnProperty.call(mParameters, sName)) {
+							mParameters[sName] = [];
+						}
+						mParameters[sName].push(sValue);
+					}
+				}
+				this.mParams = mParameters;
+			}
+
 		}
 	};
 
@@ -66,8 +67,7 @@ sap.ui.define([], function() {
 	 * @param {boolean} [bAll=false] Optional, specifies whether all or only the first parameter value should be returned.
 	 * @return {string|array} The value(s) of the URI parameter with the given name
 	 * @SecSource {return|XSS} Return value contains URL parameters
-	 * @function
-	 * @name sap.base.util.UriParameters.prototype.get
+	 * @public
 	 */
 	UriParameters.prototype.get = function(sName, bAll) {
 		var aValues = Object.prototype.hasOwnProperty.call(this.mParams, sName) ? this.mParams[sName] : [];

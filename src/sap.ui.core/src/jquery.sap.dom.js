@@ -73,7 +73,6 @@ sap.ui.define([
 		return jQuery(escapedId, oContext);
 	};
 
-
 	/**
 	 * Calls focus() on the given DOM element.
 	 *
@@ -110,46 +109,6 @@ sap.ui.define([
 	 * @since 1.48
 	 */
 	jQuery.sap.remToPx = domUnitsRem.toPx;
-
-	/**
-	 * Sets or gets the position of the cursor in an element that supports cursor positioning.
-	 *
-	 * @param {int} iPos The cursor position to set (or no parameter to retrieve the cursor position)
-	 * @return {int | jQuery} The cursor position (or the jQuery collection if the position has been set)
-	 * @public
-	 * @name jQuery#cursorPos
-	 * @author SAP SE
-	 * @since 0.9.0
-	 * @function
-	 */
-
-	/**
-	 * Sets the text selection in the first element of the collection.
-	 *
-	 * <b>Note</b>: This feature is only supported for input element’s type of text, search, url, tel and password.
-	 *
-	 * @param {int} iStart Start position of the selection (inclusive)
-	 * @param {int} iEnd End position of the selection (exclusive)
-	 * @return {jQuery} The jQuery collection
-	 * @public
-	 * @name jQuery#selectText
-	 * @author SAP SE
-	 * @since 0.9.0
-	 * @function
-	 */
-
-	/**
-	 * Retrieve the selected text in the first element of the collection.
-	 *
-	 * <b>Note</b>: This feature is only supported for input element’s type of text, search, url, tel and password.
-	 *
-	 * @return {string} The selected text.
-	 * @public
-	 * @name jQuery#getSelectedText
-	 * @author SAP SE
-	 * @since 1.26.0
-	 * @function
-	 */
 
 	/**
 	 * Returns the outer HTML of the given HTML element.
@@ -196,101 +155,6 @@ sap.ui.define([
 	jQuery.sap.containsOrEquals = domContainsOrEquals;
 
 	/**
-	 * Returns a rectangle describing the current visual positioning of the first DOM object in the collection
-	 * (or <code>null</code> if no element was given).
-	 *
-	 * @return {object} An object with left, top, width and height
-	 * @public
-	 * @name jQuery#rect
-	 * @author SAP SE
-	 * @since 0.9.0
-	 * @function
-	 */
-
-	/**
-	 * Returns whether a point described by X and Y is inside this Rectangle's boundaries.
-	 *
-	 * @param {int} iPosX The X coordinate
-	 * @param {int} iPosY The Y coordinate
-	 * @return {boolean} Whether X and Y are inside this Rectangle's boundaries
-	 * @public
-	 * @name jQuery#rectContains
-	 * @author SAP SE
-	 * @since 0.18.0
-	 * @function
-	 */
-
-	/**
-	 * Returns <code>true</code> if the first element has a set tabindex.
-	 *
-	 * @return {boolean} If the first element has a set tabindex
-	 * @public
-	 * @name jQuery#hasTabIndex
-	 * @author SAP SE
-	 * @since 0.9.0
-	 * @function
-	 */
-
-	/**
-	 * Returns the first focusable domRef in a given container (the first element of the collection)
-	 *
-	 * @return {Element} The domRef
-	 * @public
-	 * @author SAP SE
-	 * @since 0.9.0
-	 * @function
-	 * @name jQuery#firstFocusableDomRef
-	 */
-
-	/**
-	 * Returns the last focusable domRef in a given container
-	 *
-	 * @return {Element} The last domRef
-	 * @public
-	 * @name jQuery#lastFocusableDomRef
-	 * @author SAP SE
-	 * @since 0.9.0
-	 * @function
-	 */
-
-	/**
-	 * Sets or returns the scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
-	 * Precondition: The element is rendered in RTL mode.
-	 *
-	 * Reason for this method is that the major browsers use three different values for the same scroll position when in RTL mode.
-	 * This method hides those differences and returns/applies the same value that would be returned in LTR mode: The distance in px
-	 * how far the given container is scrolled away from the leftmost scroll position.
-	 *
-	 * Returns "undefined" if no element and no iPos is given.
-	 *
-	 * @param {int} iPos The desired scroll position
-	 * @return {jQuery | int} The jQuery collection if iPos is given, otherwise the scroll position, counted from the leftmost position
-	 * @public
-	 * @name jQuery#scrollLeftRTL
-	 * @author SAP SE
-	 * @since 0.20.0
-	 * @function
-	 */
-
-	/**
-	 * Returns the MIRRORED scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
-	 * Precondition: The element is rendered in RTL mode.
-	 *
-	 * Reason for this method is that the major browsers return three different values for the same scroll position when in RTL mode.
-	 * This method hides those differences and returns the value that would be returned in LTR mode if the UI would be mirrored horizontally:
-	 * The distance in px how far the given container is scrolled away from the rightmost scroll position.
-	 *
-	 * Returns "undefined" if no element is given.
-	 *
-	 * @return {int} The scroll position, counted from the rightmost position
-	 * @public
-	 * @name jQuery#scrollRightRTL
-	 * @author SAP SE
-	 * @since 0.20.0
-	 * @function
-	 */
-
-	/**
 	 * For the given scrollLeft value this method returns the scrollLeft value as understood by the current browser in RTL mode.
 	 * This value is specific to the given DOM element, as the computation may involve its dimensions.
 	 *
@@ -309,7 +173,6 @@ sap.ui.define([
 	 * @function
 	 */
 	jQuery.sap.denormalizeScrollLeftRTL = domDenormalizeScrollLeftRTL;
-
 
 	/**
 	 * For the given scroll position measured from the "beginning" of a container (the right edge in RTL mode)
@@ -335,7 +198,6 @@ sap.ui.define([
 	 */
 	jQuery.sap.denormalizeScrollBeginRTL = domDenormalizeScrollBeginRTL;
 
-
 	/*
 	 * The following methods are taken from jQuery UI core but modified.
 	 *
@@ -356,49 +218,6 @@ sap.ui.define([
 	 * @type {boolean}
 	 */
 	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
-
-	/**
-	 * Disable HTML elements selection.
-	 *
-	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @protected
-	 * @since 1.24.0
-	 * @name jQuery#disableSelection
-	 * @function
-	 */
-
-	/**
-	 * Enable HTML elements to get selected.
-	 *
-	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @protected
-	 * @since 1.24.0
-	 * @name jQuery#enableSelection
-	 * @function
-	 */
-
-	/**
-	 * Get the z-index for an element.
-	 *
-	 * @param {int} zIndex The z-index to set
-	 * @returns {number} The z-index
-	 * @public
-	 * @name jQuery#zIndex
-	 * @function
-	 */
-
-	/**
-	 * Gets the next parent DOM element with a given attribute and attribute value starting above the first given element
-	 *
-	 * @param {string} sAttribute Name of the attribute
-	 * @param {string} sValue Value of the attribute (optional)
-	 * @return {Element} null or the DOM reference
-	 * @public
-	 * @name jQuery#parentByAttribute
-	 * @author SAP SE
-	 * @since 0.9.0
-	 * @function
-	 */
 
 	/**
 	 * Returns the window reference for a DomRef.
@@ -439,56 +258,6 @@ sap.ui.define([
 	 * @function
 	 */
 	jQuery.sap.syncStyleClass = fnSyncStyleClass;
-
-	/**
-	 * Adds the given ID reference to the the aria-labelledby attribute.
-	 *
-	 * @param {string} sId The ID reference of an element
-	 * @param {boolean} [bPrepend=false] Whether prepend or not
-	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @name jQuery#addAriaLabelledBy
-	 * @public
-	 * @author SAP SE
-	 * @since 1.30.0
-	 * @function
-	 */
-
-	/**
-	 * Removes the given ID reference from the aria-labelledby attribute.
-	 *
-	 * @param {string} sId The ID reference of an element
-	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @name jQuery#removeAriaLabelledBy
-	 * @public
-	 * @author SAP SE
-	 * @since 1.30.0
-	 * @function
-	 */
-
-	/**
-	 * Adds the given ID reference to the aria-describedby attribute.
-	 *
-	 * @param {string} sId The ID reference of an element
-	 * @param {boolean} [bPrepend=false] whether prepend or not
-	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @name jQuery#addAriaDescribedBy
-	 * @public
-	 * @author SAP SE
-	 * @since 1.30.0
-	 * @function
-	 */
-
-	/**
-	 * Removes the given ID reference from the aria-describedby attribute.
-	 *
-	 * @param {string} sId The ID reference of an element
-	 * @return {jQuery} <code>this</code> to allow method chaining.
-	 * @name jQuery#removeAriaDescribedBy
-	 * @public
-	 * @author SAP SE
-	 * @since 1.30.0
-	 * @function
-	 */
 
 	/**
 	 * This method try to replace two HTML elements according to changed attributes.

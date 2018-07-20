@@ -19,8 +19,11 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 	}
 
 	/**
-	 * @exports sap/ui/dom/units/Rem
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/dom/units/Rem
 	 * @private
+	 * @ui5-restricted sap.m
 	 */
 	var Rem = {
 
@@ -30,6 +33,7 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 		 * @param {string|float} vPx The value in <code>px</code> units. E.g.: <code>"16px"</code> or <code>16</code>
 		 * @returns {float} The converted value in <code>rem</code> units. E.g.: <code>1</code>
 		 * @private
+		 * @ui5-restricted sap.m
 		 */
 		fromPx: function(vPx) {
 			assert(((typeof vPx === "string") && (vPx !== "") && !isNaN(parseFloat(vPx)) && (typeof parseFloat(vPx) === "number")) || ((typeof vPx === "number") && !isNaN(vPx)), 'Rem.fromPx: either the "vPx" parameter must be an integer, or a string e.g.: "16px"');
@@ -42,6 +46,7 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 		 * @param {string|float} vRem The value in <code>rem</code>. E.g.: <code>"1rem"</code> or <code>1</code>
 		 * @returns {float} The converted value in <code>px</code> units. E.g.: <code>16</code>
 		 * @private
+		 * @ui5-restricted sap.m
 		 */
 		toPx: function(vRem) {
 			assert(((typeof vRem === "string") && (vRem !== "") && !isNaN(parseFloat(vRem)) && (typeof parseFloat(vRem) === "number")) || ((typeof vRem === "number") && !isNaN(vRem)), 'Rem.toPx: either the "vRem" parameter must be an integer, or a string e.g.: "1rem"');

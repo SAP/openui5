@@ -13,7 +13,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 
 		/**
 		 * Check whether the current environment supports JSON.parse and JSON stringify.
-		 * @private
+		 * @public
 		 */
 		var bSupportJSON = !!(JSON && JSON.parse && JSON.stringify);
 
@@ -27,7 +27,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		var sStateStorageKeyPrefix = "state.key_";
 
 		/**
-		 * @interface A Storage API for JavaScript.
+		 * @class A Storage API for JavaScript.
 		 *
 		 * Provides methods to store data on the client using Web Storage API support by the browser. The data
 		 * received by this API must be already serialized, in string format. Similarly, the API returns the retrieved
@@ -35,7 +35,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		 *
 		 * <b>Note:</b> The Web Storage API stores the data on the client. Therefore do not use this API for confidential information.
 		 *
-		 * You can get access to the 'default' storage by using {@link sap/ui/util/Storage} directly
+		 * You can get access to the 'default' storage by using {@link module:sap/ui/util/Storage} directly
 		 * or alternatively via factory functionality available as <code>sap.ui.require(["sap/ui/util/Storage"],function(storage){storage(storage.Type.session);});</code>
 		 * returning an object implementing this interface.
 		 *
@@ -49,18 +49,12 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		 * when a global erasing of data is required. If only keys with certain prefix
 		 * should be deleted the method {@link #removeAll} should be used.
 		 *
-		 * @author SAP SE
-		 * @version ${version}
-		 * @private
-		 * @name sap/ui/util/Storage.Storage
-		 */
-
-		/**
-		 * Constructor for an instance of sap/ui/util/Storage.Storage.
-		 *
-		 * @param {sap/ui/util/Storage.Type | Storage} [pStorage=sap/ui/util/Storage.Type.session] The type this storage should be of or an Object implementing the typical Storage API for direct usage.
+		 * @since 1.58
+		 * @alias module:sap/ui/util/Storage
+		 * @param {module:sap/ui/util/Storage.Type | Storage} [pStorage=sap/ui/util/Storage.Type.session] The type this storage should be of or an Object implementing the typical Storage API for direct usage.
 		 * @param {string} [sStorageKeyPrefix='state.key_'] The prefix to use in this storage.
 		 * @private
+		 * @hideconstructor
 		 */
 		var fnCreateStorage = function(pStorage, sStorageKeyPrefix) {
 
@@ -96,8 +90,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * Returns whether the given storage is suppported.
 			 *
 			 * @return {boolean} true if storage is supported, false otherwise (e.g. due to browser security settings)
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#isSupported
+			 * @public
 			 * @function
 			 */
 			this.isSupported = function() {
@@ -118,8 +111,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @param {string} sId ID for the state to store
 			 * @param {string} sStateToStore Content to store
 			 * @return {boolean} true if the data were successfully stored, false otherwise
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#put
+			 * @public
 			 * @function
 			 */
 			this.put = function(sId, sStateToStore) {
@@ -145,8 +137,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 *
 			 * @param {string} sId ID for the state to retrieve
 			 * @return {string} The string from the storage, if the retrieval was successful, and null otherwise
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#get
+			 * @public
 			 * @function
 			 */
 			this.get = function(sId) {
@@ -173,8 +164,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @return {boolean} true if the deletion
 			 * was successful or the data doesn't exist under the specified key,
 			 * and false if the feature is unavailable or a problem occurred
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#remove
+			 * @public
 			 * @function
 			 */
 			this.remove = function(sId) {
@@ -201,8 +191,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @return {boolean} true if the deletion
 			 * was successful or the data doesn't exist under the specified key,
 			 * and false if the feature is unavailable or a problem occurred
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#removeAll
+			 * @public
 			 * @function
 			 */
 			this.removeAll = function(sIdPrefix) {
@@ -244,8 +233,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * @return {boolean} true if execution of removal
 			 * was successful or the data to remove doesn't exist,
 			 * and false if the feature is unavailable or a problem occurred
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#clear
+			 * @public
 			 * @function
 			 */
 			this.clear = function() {
@@ -265,9 +253,8 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			/**
 			 * Returns the type of the storage.
 			 *
-			 * @returns {sap/ui/util/Storage.Type | string} The type of the storage or "unknown"
-			 * @private
-			 * @name sap/ui/util/Storage.Storage#getType
+			 * @returns {module:sap/ui/util/Storage.Type | string} The type of the storage or "unknown"
+			 * @public
 			 * @function
 			 */
 			this.getType = function(){
@@ -285,24 +272,24 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		var oExportStorage = {
 
 			/**
-			 * Returns a {@link sap/ui/util/Storage.Storage Storage} object for a given HTML5 storage (type) and,
+			 * Returns a {@link module:sap/ui/util/Storage} object for a given HTML5 storage (type) and,
 			 * as a convenience, provides static functions to access the default (session) storage.
 			 *
-			 * When called as a function, it returns an instance of {@link sap/ui/util/Storage.Storage}, providing access
-			 * to the storage of the given {@link sap/ui/util/Storage.Type} or to the given HTML5 Storage object.
+			 * When called as a function, it returns an instance of {@link module:sap/ui/util/Storage.Storage}, providing access
+			 * to the storage of the given {@link module:sap/ui/util/Storage.Type} or to the given HTML5 Storage object.
 			 *
-			 * The default session storage can be easily accessed with methods {@link sap/ui/util/Storage.get},
-			 * {@link sap/ui/util/Storage.put}, {@link sap/ui/util/Storage.remove}, {@link sap/ui/util/Storage.clear},
-			 * {@link sap/ui/util/Storage.getType} and {@link sap/ui/util/Storage.removeAll}
+			 * The default session storage can be easily accessed with methods {@link module:sap/ui/util/Storage.get},
+			 * {@link module:sap/ui/util/Storage.put}, {@link module:sap/ui/util/Storage.remove}, {@link module:sap/ui/util/Storage.clear},
+			 * {@link module:sap/ui/util/Storage.getType} and {@link module:sap/ui/util/Storage.removeAll}
 			 *
-			 * @param {sap/ui/util/Storage.Type | Storage} oStorage The type specifying the storage to use or
+			 * @param {module:sap/ui/util/Storage.Type | Storage} oStorage The type specifying the storage to use or
 			 * an object implementing the browser's Storage API.
 			 * @param {string} [sIdPrefix] Prefix used for the IDs. If not set a default prefix is used.
 			 * @returns {module:sap/ui/util/Storage.Storage} A storage instance
 			 * @version ${version}
 			 * @namespace
 			 * @function
-			 * @private
+			 * @public
 			 *
 			 * @borrows sap/ui/util/Storage.Storage#get as get
 			 * @borrows sap/ui/util/Storage.Storage#put as put
@@ -343,30 +330,25 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	};
 
 	/**
-	 * Enumeration of the storage types supported by {@link sap/ui/util/Storage.Storage}.
+	 * Enumeration of the storage types supported by {@link module:sap/ui/util/Storage.Storage}.
 	 *
 	 * @enum {string}
-	 * @private
+	 * @public
 	 * @version ${version}
 	 */
 	fnStorage.Type = {
 		/**
 		 * Indicates usage of the browser's localStorage feature
-		 * @private
+		 * @public
 		 */
 		local: "local",
 		/**
 		 * Indicates usage of the browser's sessionStorage feature
-		 * @private
+		 * @public
 		 */
 		session: "session"
 	};
 
-	/**
-	 * @static
-	 * @exports sap/ui/util/Storage
-	 * @private
-	 */
 	var oStorage = fnStorage();
 	oStorage.Type = fnStorage.Type;
 	return oStorage;

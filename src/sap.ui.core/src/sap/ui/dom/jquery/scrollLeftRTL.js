@@ -1,13 +1,18 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/ui/Device", "sap/ui/dom/denormalizeScrollLeftRTL", "sap/ui/thirdparty/jquery"
 ], function(Device, denormalizeScrollLeftRTL, jQuery) {
 	"use strict";
+
+	/**
+	 * This module provides the {@link jQuery#scrollLeftRTL} API.
+	 *
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/scrollLeftRTL
+	 * @public
+	 * @since 1.58
+	 */
 
 	/**
 	 * Sets or returns the scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
@@ -21,10 +26,12 @@ sap.ui.define(["sap/ui/Device", "sap/ui/dom/denormalizeScrollLeftRTL", "sap/ui/t
 	 *
 	 * @param {int} iPos The desired scroll position
 	 * @return {jQuery | int} The jQuery collection if iPos is given, otherwise the scroll position, counted from the leftmost position
-	 * @private
+	 * @public
+	 * @name jQuery#scrollLeftRTL
 	 * @author SAP SE
+	 * @since 0.20.0
 	 * @function
-	 * @exports sap/ui/dom/jquery/scrollLeftRTL
+	 * @requires module:sap/ui/dom/jquery/scrollLeftRTL
 	 */
 	var fnScrollLeftRTL = function(iPos) {
 		var oDomRef = this.get(0);

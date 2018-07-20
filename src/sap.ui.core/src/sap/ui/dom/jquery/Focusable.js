@@ -1,17 +1,20 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], function(jQuery, domHasTabIndex) {
 	"use strict";
 
 	/**
-	 * @exports sap/ui/dom/Focusable
+	 * This module provides the following API:
+	 * <ul>
+	 * <li>{@link jQuery#firstFocusableDomRef}</li>
+	 * <li>{@link jQuery#lastFocusableDomRef}</li>
+	 * <ul>
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/Focusable
+	 * @public
+	 * @since 1.58
 	 */
-	var Focusable = Object.create(null);
 
 	/**
 	 * Checks whether an Element is invisible for the end user.
@@ -70,16 +73,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 		return null;
 	}
 
-
 	/**
 	 * Returns the first focusable domRef in a given container (the first element of the collection)
 	 *
 	 * @return {Element} The domRef
-	 * @private
+	 * @public
 	 * @author SAP SE
+	 * @since 0.9.0
 	 * @function
+	 * @name jQuery#firstFocusableDomRef
+	 * @requires module:sap/ui/dom/jquery/Focusable
 	 */
-	Focusable.firstDomRef = function() {
+	jQuery.fn.firstFocusableDomRef = function() {
 		var oContainerDomRef = this.get(0);
 
 		if ( !oContainerDomRef || isHidden(oContainerDomRef) ) {
@@ -89,16 +94,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 		return findFocusableDomRef(oContainerDomRef, /* search forward */ true);
 	};
 
-
 	/**
 	 * Returns the last focusable domRef in a given container
 	 *
 	 * @return {Element} The last domRef
-	 * @private
+	 * @public
+	 * @name jQuery#lastFocusableDomRef
 	 * @author SAP SE
+	 * @since 0.9.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Focusable
 	 */
-	Focusable.lastDomRef = function() {
+	jQuery.fn.lastFocusableDomRef = function() {
 		var oContainerDomRef = this.get(0);
 
 		if ( !oContainerDomRef || isHidden(oContainerDomRef) ) {
@@ -107,10 +114,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 
 		return findFocusableDomRef(oContainerDomRef, /* search backwards */ false);
 	};
-
-
-	jQuery.fn.firstFocusableDomRef = Focusable.firstDomRef;
-	jQuery.fn.lastFocusableDomRef = Focusable.lastDomRef;
 
 	return jQuery;
 

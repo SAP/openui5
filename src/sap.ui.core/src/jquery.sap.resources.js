@@ -26,7 +26,7 @@ sap.ui.define([
 	 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
 	 * @returns {jQuery.sap.util.ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
-	 * @deprecated since 1.58. Use {@link sap/base/i18n/ResourceBundle} instead.
+	 * @deprecated since 1.58. Use {@link module:sap/base/i18n/ResourceBundle} instead.
 	 */
 	jQuery.sap.resources = function() {
 		// Do not directly assign new API to jQuery.sap.resources
@@ -43,7 +43,7 @@ sap.ui.define([
 	 * @public
 	 * @function
 	 * @name jQuery.sap.resources.isBundle
-	 * @deprecated since 1.58. Use the instanceof operator together with the class {@link sap/base/i18n/ResourceBundle} instead.
+	 * @deprecated since 1.58. Use the instanceof operator together with the class {@link module:sap/base/i18n/ResourceBundle} instead.
 	 */
 	jQuery.sap.resources.isBundle = function (oBundle) {
 		return oBundle instanceof ResourceBundle;
@@ -60,8 +60,8 @@ sap.ui.define([
 	 * @returns {string[]} Sequence of fallback locales in JDK legacy syntax, decreasing priority
 	 *
 	 * @private
-	 * @deprecated since 1.58. Use {@link sap/base/i18n/ResourceBundle._getFallbackLocales} instead.
 	 * @ui5-restricted sap.fiori, sap.support launchpad
+	 * @deprecated since 1.58. Use {@link module:sap/base/i18n/ResourceBundle._getFallbackLocales} instead.
 	 */
 	jQuery.sap.resources._getFallbackLocales = ResourceBundle._getFallbackLocales;
 

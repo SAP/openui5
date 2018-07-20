@@ -8,8 +8,11 @@
 sap.ui.define([], function() {
 	"use strict";
 	/**
-	 * @exports sap/ui/events/TouchToMouseMapping
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/events/TouchToMouseMapping
 	 * @private
+	 * @ui5-restricted module:sap/ui/events/jquery/EventSimulation
 	 */
 	var TouchToMouseMapping = {};
 	TouchToMouseMapping.init = function(oContext) {
@@ -167,6 +170,7 @@ sap.ui.define([], function() {
 		 * Disable touch to mouse handling
 		 *
 		 * @private
+	 	 * @ui5-restricted module:sap/ui/events/jquery/EventSimulation
 		 */
 		TouchToMouseMapping.disableTouchToMouseHandling = function() {
 			var i = 0;

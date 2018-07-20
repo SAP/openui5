@@ -11,7 +11,12 @@ sap.ui.define(['sap/base/Log'], function(Log) {
 	"use strict";
 
 	/**
-	 * FrameOptions class
+	 * @class FrameOptions for Clickjacking protection.
+	 * @alias module:sap/ui/security/FrameOptions
+	 * @param {Object} mSettings Frame options configuration
+	 * @since 1.58
+	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	var FrameOptions = function(mSettings) {
 		/* mSettings: mode, callback, whitelist, whitelistService, timeout, blockEvents, showBlockLayer, allowSameOrigin */
