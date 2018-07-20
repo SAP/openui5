@@ -908,7 +908,7 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), true, 'Clear button should be enabled');
+				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), true, 'Clear button should be enabled');
 			});
 
 			QUnit.test("Initial loading without selected items from previous selection", function(assert) {
@@ -918,7 +918,7 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
+				assert.equal(this.oSelectDialog1._oClearButton.getEnabled(), false, 'Clear button should be disabled');
 			});
 
 			QUnit.test("Removing selection should disable button", function(assert) {
@@ -928,14 +928,14 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), true, 'Clear button should be enabled');
+				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), true, 'Clear button should be enabled');
 
 				//arrange
 				this.oSelectDialog._removeSelection();
 				this.oSelectDialog._updateSelectionIndicator();
 
 				//assert
-				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), false, 'Clear button should be disabled');
+				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), false, 'Clear button should be disabled');
 			});
 
 			QUnit.test("Adding selection should enable button", function(assert) {
@@ -945,13 +945,13 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
+				assert.equal(this.oSelectDialog1._oClearButton.getEnabled(), false, 'Clear button should be disabled');
 
 				//arrange
 				this.oSelectDialog1._oList.getItems()[1].setSelected(true);
 				this.oSelectDialog1._updateSelectionIndicator();
 
-				assert.equal(this.oSelectDialog1._getClearButton().getEnabled(), true, 'Clear button should be enabled');
+				assert.equal(this.oSelectDialog1._oClearButton.getEnabled(), true, 'Clear button should be enabled');
 			});
 
 			QUnit.test("Clicking on enabled 'Clear' button should clear selection", function(assert) {
@@ -961,13 +961,13 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), true, 'Clear button should be enabled');
+				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), true, 'Clear button should be enabled');
 
 				//arrange
-				this.oSelectDialog._getClearButton().firePress();
+				this.oSelectDialog._oClearButton.firePress();
 
 				//assert
-				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), false, 'Clear button should be disabled');
+				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), false, 'Clear button should be disabled');
 				assert.equal(this.oSelectDialog._oList.getSelectedItems().length, 0, 'There should be no selected items');
 			});
 			})();
