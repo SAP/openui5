@@ -1090,6 +1090,10 @@ sap.ui.define([
 		this._$contentContainer = jQuery.sap.byId(this.getId() + "-scroll");
 		this._$sectionsContainer = jQuery.sap.byId(this.getId() + "-sectionsContainer");
 
+		// BCP 1870201875: explicitly set the latest scrollContainer dom ref
+		// (as the scroller obtains the latest scrollContainer dom ref in a LATER hook, which fails in conditions detailed in BCP 1870201875)
+		this._oScroller._$Container = this._$opWrapper;
+
 		this._bDomElementsCached = true;
 	};
 
