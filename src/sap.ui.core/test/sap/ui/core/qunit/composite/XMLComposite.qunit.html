@@ -35,27 +35,12 @@
     <script src="resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
     <script src="resources/sap/ui/qunit/qunit-coverage.js" data-cover-flags="branchTracking"
     data-sap-ui-cover-only="sap/ui/core/XMLComposite"></script>
-    <script src="resources/sap/ui/test/BranchTracking.js" data-threshold="45"></script>
+    <script src="resources/sap/ui/test/BranchTracking.js" data-threshold="30"></script>
 
     <script src="test-resources/sap/ui/core/qunit/composite/XMLComposite.qunit.js"></script>
 
 </head>
 
-    <script id="view" type="application/xml">
-        <mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:t="composites" xmlns="sap.m">
-            <t:Table id="table">
-                <t:actions>
-                    <t:Action call=".handler" text="Outer" id="outer" />
-                </t:actions>
-                <t:columns>
-                    <t:Column id="OWN" label="Own" path="any" key="own" />
-                </t:columns>
-                <t:footer> 
-                    <Text text="My own footer" />
-                </t:footer>
-            </t:Table>
-        </mvc:View>
-    </script>
 <body>
 <div id="qunit"></div>
 <div id="content"></div>

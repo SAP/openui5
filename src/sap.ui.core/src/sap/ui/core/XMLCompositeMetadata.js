@@ -12,11 +12,10 @@
  *
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/ElementMetadata',
 	'sap/ui/core/XMLTemplateProcessor',
 	"sap/base/Log"
-], function(jQuery, ElementMetadata, XMLTemplateProcessor, Log) {
+], function(ElementMetadata, XMLTemplateProcessor, Log) {
 	"use strict";
 
 	var mFragmentCache = {};
@@ -39,7 +38,6 @@ sap.ui.define([
 	var XMLCompositeMetadata = function (sClassName, oClassInfo) {
 		this.InvalidationMode = {
 				Render: true,
-				Template: "template",
 				None: false
 			};
 
@@ -72,12 +70,6 @@ sap.ui.define([
 							this._fragment = this._loadFragment(oClassInfo.fragment, "control");
 						}
 					}
-					if (oClassInfo.aggregationFragments) {
-						this._aggregationFragments = {};
-						oClassInfo.aggregationFragments.forEach(function(sAggregationFragment) {
-							this._aggregationFragments[sAggregationFragment] = this._loadFragment(oClassInfo.fragment + "_" + sAggregationFragment, "aggregation");
-						}.bind(this));
-					}
 				} catch (e) {
 					if (!oClassInfo.fragmentUnspecified) {
 						// fragment xml was explicitly specified so we expect to find something !
@@ -99,6 +91,13 @@ sap.ui.define([
 	XMLCompositeMetadata.prototype = Object.create(ElementMetadata.prototype);
 	XMLCompositeMetadata.uid = ElementMetadata.uid;
 
+	XMLCompositeMetadata.extend = function(mSettings) {
+		for (var key in mSettings) {
+			XMLCompositeMetadata[key] = mSettings[key];
+		}
+		return XMLCompositeMetadata;
+	};
+
 	XMLCompositeMetadata.prototype.getCompositeAggregationName = function () {
 		return this._sCompositeAggregation || "_content";
 	};
@@ -107,32 +106,6 @@ sap.ui.define([
 		if (this._fragment) {
 			return this._fragment.cloneNode(true);
 		}
-	};
-
-	XMLCompositeMetadata.prototype.usesTemplating = function () {
-		var that = this;
-		var fnTemplatingInFragment = function(oFragment) {
-			var aTemplateNodes = oFragment.getElementsByTagNameNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1", "*");
-			if (aTemplateNodes.length > 0) {
-				return true;
-			}
-			var oEmbeddedFragment, aEmbeddedFragments = oFragment.getElementsByTagNameNS("sap.ui.core", "Fragment");
-			for (var i = 0; i < aEmbeddedFragments.length; i++) {
-				oEmbeddedFragment = that._loadFragment(aEmbeddedFragments[i].getAttribute("fragmentName"), "fragment");
-				if (fnTemplatingInFragment(oEmbeddedFragment)) {
-					return true;
-				}
-			}
-			return false;
-		};
-
-		if (this._fragment) {
-			if (this._bUsesTemplating === undefined) {
-				this._bUsesTemplating = fnTemplatingInFragment(this._fragment);
-			}
-			return this._bUsesTemplating;
-		}
-		return false;
 	};
 
 	XMLCompositeMetadata.prototype._applyAggregationSettings = function () {
@@ -169,7 +142,7 @@ sap.ui.define([
 		if (oMember && oMember.appData && oMember.appData.invalidate === this.InvalidationMode.Render) {
 			return false;
 		}
-		return true; // i.e. invalidate = InvalidationMode.None || InvalidationMode.Template
+		return true;
 	};
 
 	XMLCompositeMetadata.prototype.getMandatoryAggregations = function () {
@@ -186,19 +159,10 @@ sap.ui.define([
 		return this._mMandatoryAggregations;
 	};
 
-	XMLCompositeMetadata.prototype.requireFor = function (oElement) {
-		var sModuleNames = oElement.getAttribute("template:require");
-		if (sModuleNames) {
-			//TODO: global jquery call found
-			jQuery.sap.require.apply(jQuery.sap, sModuleNames.split(" "));
-		}
-	};
-
 	XMLCompositeMetadata.prototype._loadFragment = function (sFragmentName, sExtension) {
 		var sFragmentKey = sExtension + "$" + sFragmentName;
 		if (!mFragmentCache[sFragmentKey]) {
 			mFragmentCache[sFragmentKey] = XMLTemplateProcessor.loadTemplate(sFragmentName, sExtension);
-			this.requireFor(mFragmentCache[sFragmentKey]);
 		}
 
 		return mFragmentCache[sFragmentKey];
