@@ -30,6 +30,7 @@
 		"aro": "Araona",
 		"arp": "Arapaho",
 		"arq": "Algerisches Arabisch",
+		"ars": "Nadschd-Arabisch",
 		"arw": "Arawak",
 		"ary": "Marokkanisches Arabisch",
 		"arz": "Ägyptisches Arabisch",
@@ -1507,16 +1508,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				]
 			},
 			"stand-alone": {
@@ -1933,16 +1934,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				]
 			},
 			"stand-alone": {
@@ -2356,16 +2357,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				]
 			},
 			"stand-alone": {
@@ -2788,16 +2789,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				]
 			},
 			"stand-alone": {
@@ -3211,16 +3212,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				],
 				"narrow": [
 					"vm.",
 					"nm."
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"vorm.",
+					"nachm."
 				]
 			},
 			"stand-alone": {
@@ -3616,12 +3617,12 @@
 		"100000000000000-other": "000 Billionen"
 	},
 	"decimalFormat-short": {
-		"1000-one": "0 Tsd'.'",
-		"1000-other": "0 Tsd'.'",
-		"10000-one": "00 Tsd'.'",
-		"10000-other": "00 Tsd'.'",
-		"100000-one": "000 Tsd'.'",
-		"100000-other": "000 Tsd'.'",
+		"1000-one": "0",
+		"1000-other": "0",
+		"10000-one": "0",
+		"10000-other": "0",
+		"100000-one": "0",
+		"100000-other": "0",
 		"1000000-one": "0 Mio'.'",
 		"1000000-other": "0 Mio'.'",
 		"10000000-one": "00 Mio'.'",
@@ -3664,12 +3665,12 @@
 		}
 	},
 	"currencyFormat-short": {
-		"1000-one": "0 Tsd'.' ¤",
-		"1000-other": "0 Tsd'.' ¤",
-		"10000-one": "00 Tsd'.' ¤",
-		"10000-other": "00 Tsd'.' ¤",
-		"100000-one": "000 Tsd'.' ¤",
-		"100000-other": "000 Tsd'.' ¤",
+		"1000-one": "0",
+		"1000-other": "0",
+		"10000-one": "0",
+		"10000-other": "0",
+		"100000-one": "0",
+		"100000-other": "0",
 		"1000000-one": "0 Mio'.' ¤",
 		"1000000-other": "0 Mio'.' ¤",
 		"10000000-one": "00 Mio'.' ¤",

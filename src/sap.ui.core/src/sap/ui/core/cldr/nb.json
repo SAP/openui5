@@ -30,6 +30,7 @@
 		"aro": "araona",
 		"arp": "arapaho",
 		"arq": "algerisk arabisk",
+		"ars": "najdi-arabisk",
 		"arw": "arawak",
 		"ary": "marokkansk-arabisk",
 		"arz": "egyptisk arabisk",
@@ -860,7 +861,7 @@
 		"151": "Øst-Europa",
 		"154": "Nord-Europa",
 		"155": "Vest-Europa",
-		"202": "202",
+		"202": "Afrika sør for Sahara",
 		"419": "Latin-Amerika",
 		"001": "verden",
 		"002": "Afrika",
@@ -3516,11 +3517,11 @@
 		},
 		"day-narrow": {
 			"displayName": "d.",
-			"relative-type--2": "i forgårs",
+			"relative-type--2": "-2 d.",
 			"relative-type--1": "i går",
 			"relative-type-0": "i dag",
 			"relative-type-1": "i morgen",
-			"relative-type-2": "i overmorgen",
+			"relative-type-2": "+2 d.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} d.",
 				"relativeTimePattern-count-other": "+{0} d."

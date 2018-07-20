@@ -313,16 +313,16 @@ module.exports = function(grunt, config) {
 		    'cldr-generate'
 		],
 		'cldr-download': [
-		    'npm-install:cldr-core@32.0.0',
-		    'npm-install:cldr-numbers-modern@32.0.0',
-		    'npm-install:cldr-dates-modern@32.0.0',
-		    'npm-install:cldr-misc-modern@32.0.0',
-		    'npm-install:cldr-units-modern@32.0.0',
-		    'npm-install:cldr-localenames-modern@32.0.0',
-		    'npm-install:cldr-cal-islamic-modern@32.0.0',
-		    'npm-install:cldr-cal-japanese-modern@32.0.0',
-		    'npm-install:cldr-cal-persian-modern@32.0.0',
-		    'npm-install:cldr-cal-buddhist-modern@32.0.0'
+		    'npm-install:cldr-core@33.0.0',
+		    'npm-install:cldr-numbers-modern@33.0.0',
+		    'npm-install:cldr-dates-modern@33.0.0',
+		    'npm-install:cldr-misc-modern@33.0.0',
+		    'npm-install:cldr-units-modern@33.0.0',
+		    'npm-install:cldr-localenames-modern@33.0.0',
+		    'npm-install:cldr-cal-islamic-modern@33.0.0',
+		    'npm-install:cldr-cal-japanese-modern@33.0.0',
+		    'npm-install:cldr-cal-persian-modern@33.0.0',
+		    'npm-install:cldr-cal-buddhist-modern@33.0.0'
 		],
 		'cldr-generate': function() {
 			var done = this.async();
