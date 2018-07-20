@@ -1,13 +1,16 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Master",
+	"./pages/NotFound",
+	"./pages/Browser"
 ], function (opaTest) {
 	"use strict";
 
 	QUnit.module("Desktop not found");
 
-	opaTest("Should see the resource not found page and no selection in the master list when navigating to an invalid hash", function (Given, When, Then) {
+	opaTest("Should see the resource not found page when navigating to an invalid hash", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartTheApp();
 
@@ -18,18 +21,13 @@ sap.ui.define([
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
 			and.theNotFoundPageShouldSayResourceNotFound();
-		Then.onTheMasterPage.theListShouldHaveNoSelection();
 
-		// Cleanup
 		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the not found page if the hash is something that matches no route", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp({ hash : "somethingThatDoesNotExist" });
-
-		// Actions
-		When.onTheNotFoundPage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
@@ -42,9 +40,6 @@ sap.ui.define([
 	opaTest("Should see the not found master and detail page if an invalid object id has been called", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp({ hash : "/Objects/SomeInvalidObjectId" });
-
-		//Actions
-		When.onTheNotFoundPage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheObjectNotFoundPage().

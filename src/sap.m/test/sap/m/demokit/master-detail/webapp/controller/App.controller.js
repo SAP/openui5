@@ -1,8 +1,7 @@
 sap.ui.define([
 		"sap/ui/demo/masterdetail/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/Device"
-	], function (BaseController, JSONModel, Device) {
+		"sap/ui/model/json/JSONModel"
+	], function (BaseController, JSONModel) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.masterdetail.controller.App", {
@@ -31,16 +30,13 @@ sap.ui.define([
 				};
 
 				// since then() has no "reject"-path attach to the MetadataFailed-Event to disable the busy indicator in case of an error
-				this.getOwnerComponent().getModel().metadataLoaded().
-						then(fnSetAppNotBusy);
+				this.getOwnerComponent().getModel().metadataLoaded().then(fnSetAppNotBusy);
 				this.getOwnerComponent().getModel().attachMetadataFailed(fnSetAppNotBusy);
-
 
 				// apply content density mode to root view
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 			}
 
 		});
-
 	}
 );

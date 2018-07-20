@@ -133,6 +133,7 @@ sap.ui.define([
 					this.getOwnerComponent().oListSelector.clearMasterListSelection();
 					return;
 				}
+
 				var sPath = oElementBinding.getPath(),
 					oResourceBundle = this.getResourceBundle(),
 					oObject = oView.getModel().getObject(sPath),
