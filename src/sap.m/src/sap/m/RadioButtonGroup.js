@@ -502,6 +502,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this.setSelectedIndex(-1);
 				}
 
+				this.aRBs = [];
+
 				return this.removeAllAggregation("buttons");
 			};
 
