@@ -1402,5 +1402,40 @@
         "references": []
       }
     ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "95679b79ab653c883b13160a2d11cb1ddea81ac2",
+        "type": "FIX",
+        "text": " Component.getService(): Promise not rejecting",
+        "references": []
+      },
+      {
+        "id": "4a70bab583d41ae576e680fce8b0f4c4b7289b66",
+        "type": "FIX",
+        "text": " NumberFormat: Fix currency short format for RTL languages",
+        "references": []
+      },
+      {
+        "id": "93b7509742e5656c167ac4fb439d1dcc3e0d4a58",
+        "type": "FIX",
+        "text": " Theming Parameters: Improve inline parameters decoding",
+        "references": []
+      },
+      {
+        "id": "2781614ea2f1cff10e134a88c9990577c4f42d81",
+        "type": "FIX",
+        "text": " model.ODataUtils: Complement toupper on all filter operators",
+        "references": []
+      },
+      {
+        "id": "da500e59febed1e2be1ccb01a345e8303eaa82d1",
+        "type": "FIX",
+        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": []
+      }
+    ]
   }
 }

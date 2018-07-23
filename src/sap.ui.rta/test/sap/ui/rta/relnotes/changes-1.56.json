@@ -227,5 +227,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "4bdac22a35f12434b51db38416c3cd6ed869f243",
+        "type": "FIX",
+        "text": " sap.ui.rta - AppVariantManager test bugfix",
+        "references": []
+      },
+      {
+        "id": "bb5e11bf10aef8bdb7943233ef8fd5a6bd799b4c",
+        "type": "FIX",
+        "text": " sap.ui.rta: Fixed the text for failing catalog assignment",
+        "references": []
+      }
+    ]
   }
 }

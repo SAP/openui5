@@ -353,5 +353,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "e2512bad158dec480895be4f92e9ce842c61b37b",
+        "type": "FIX",
+        "text": " FileUploader: Accessing upload iframe adjusted",
+        "references": []
+      },
+      {
+        "id": "bf91962a6c50950e07e7a46f6fe69feb8ba60b17",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": []
+      }
+    ]
   }
 }

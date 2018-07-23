@@ -1404,5 +1404,46 @@
         "references": []
       }
     ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "40d7ad0c71aacf5741a40b05f5e0c3040e44d45d",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Problem with z-index on Safari is now fixed",
+        "references": []
+      },
+      {
+        "id": "c6011b1aaa8bbf1721b8770c0534e23e317a2d95",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Focus outline corrected in IE",
+        "references": []
+      },
+      {
+        "id": "e05563458d5af21d15b4a9d966632ba689b7b797",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: has padding now, when IconTabBar has no data",
+        "references": []
+      },
+      {
+        "id": "c806790c2ecd1324810dfbeea07b53e640e4678e",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Control height is now correct",
+        "references": []
+      },
+      {
+        "id": "29208eb6d06827e7debe4dde201e888948377dcc",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      },
+      {
+        "id": "02c54f125ee14435402850554700256645b05324",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: removeAllButtons now works well",
+        "references": []
+      }
+    ]
   }
 }

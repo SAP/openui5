@@ -188,5 +188,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "67cef686b8ce695912684cf4ab3aa32f9a062360",
+        "type": "FIX",
+        "text": " ObjectPageLayout: test failures fixed",
+        "references": []
+      },
+      {
+        "id": "847d52f820fc46e17e8071518a2d5ef781f80028",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": []
+      }
+    ]
   }
 }

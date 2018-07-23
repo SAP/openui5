@@ -358,5 +358,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "050bd9183c3ada0d22d62f47606e76b0cd1a5ed9",
+        "type": "FIX",
+        "text": " Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": []
+      },
+      {
+        "id": "2e441c8aa7897c8dbf78105717d5f741df0fffa1",
+        "type": "FIX",
+        "text": " Table: Avoid layout and row updates if the table is invisible",
+        "references": []
+      }
+    ]
   }
 }

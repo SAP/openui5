@@ -966,5 +966,28 @@
         "references": []
       }
     ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "346a986ef2b6a3e4382b9e8cf0e74e6e6dfb190d",
+        "type": "FIX",
+        "text": " core.Popup: modal popup should blur the previous DOM after open",
+        "references": []
+      },
+      {
+        "id": "30c2efbfeab19a5861fd8b424eb926236f31ffeb",
+        "type": "FIX",
+        "text": " model.ODataUtils: Complement toupper on all filter operators",
+        "references": []
+      },
+      {
+        "id": "66276c959364d7714916bfc1981e907bc1c8576c",
+        "type": "FIX",
+        "text": " sap/ui/dom/ActiveElementFix: empty object document.activeElement",
+        "references": []
+      }
+    ]
   }
 }

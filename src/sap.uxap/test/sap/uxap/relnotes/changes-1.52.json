@@ -165,5 +165,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "1e2a084f2609c91a7aa9bec1b724374e66c89f12",
+        "type": "FIX",
+        "text": " ObjectPageHeader: Action Buttons behavior with resizing is fixed",
+        "references": []
+      }
+    ]
   }
 }

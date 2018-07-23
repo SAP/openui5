@@ -133,5 +133,28 @@
         "references": []
       }
     ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "0d02a157134d65120bbc0b89a5005a5ce8a17fb3",
+        "type": "FIX",
+        "text": " DynamicPage: Missing Expand Header icon is fixed",
+        "references": []
+      },
+      {
+        "id": "b0ce3ff4f7ea6aac26d0c38709b11a9d50e41048",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed suspend and resume resize handlers",
+        "references": []
+      },
+      {
+        "id": "ff1a03513c62e3a7b15e51ce232a5fb8d212fdd0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Clone now includes actions",
+        "references": []
+      }
+    ]
   }
 }
