@@ -53,6 +53,7 @@ function(
 		 */
 		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata: {
 
+			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.m",
 			properties: {
 
