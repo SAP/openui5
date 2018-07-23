@@ -1317,12 +1317,12 @@ function(
 			if (oItem === oList.getSelectedItem()) {
 				oRm.addClass(SelectListRenderer.CSS_CLASS + "ItemBaseSelected");
 			}
+			oRm.writeAttribute("tabindex", 0);
 			oRm.writeClasses();
 			this.writeItemAccessibilityState.apply(this, arguments);
 			oRm.write(">");
 
 			oRm.write('<p class=\"sapMSelectListItemText\">');
-			// oRm.write('<p class=\"sapMSelectListItemText\">');
 			// always show the full text on phone
 			oRm.writeEscaped(oItem.getText().slice(0, (Device.system.phone ? oItem.getText().length : TabStripItem.DISPLAY_TEXT_MAX_LENGTH)));
 			// add three dots "..." at the end if not the whole text is shown
