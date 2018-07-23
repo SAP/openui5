@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Filter', "sap/base/Log", 'jquery.sap.unicode'],
-	function(Filter, Log ) {
+sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
+	function(Filter, Log, Device) {
 	"use strict";
+
+	// only use unorm and apply polyfill if needed and when not in a mobile browser
+	if (!String.prototype.normalize && !Device.browser.mobile) {
+		var NormalizePolyfill = sap.ui.requireSync('sap/base/strings/NormalizePolyfill');
+		NormalizePolyfill.apply();
+	}
 
 	/**
 	 * Helper class for processing of filter objects
