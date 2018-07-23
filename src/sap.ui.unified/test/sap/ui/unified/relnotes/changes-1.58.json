@@ -55,6 +55,24 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: CW selection behavior corrected",
         "references": []
+      },
+      {
+        "id": "9ea8dbf284294e88adbfb50853c4c04aec233273",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: Sample now displays correctly on mobile",
+        "references": []
+      },
+      {
+        "id": "581bc354b0f9ccc436f86cf21f9caef654f0407b",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
+        "references": []
+      },
+      {
+        "id": "1405add78ffbb6602cd42de8f058ee9c05973895",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
+        "references": []
       }
     ]
   }

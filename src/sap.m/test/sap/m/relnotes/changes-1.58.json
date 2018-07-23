@@ -733,6 +733,78 @@
         "type": "FIX",
         "text": " sap.m.Tokenizer: Tokens\u0027 visibility in small containers fixed",
         "references": []
+      },
+      {
+        "id": "cd43a71560a273b3809433197b18c3d2aac78c74",
+        "type": "FEATURE",
+        "text": " CLDR: Upgrade to version 33.0.0",
+        "references": []
+      },
+      {
+        "id": "bb1b8b191404ed8c5b344c9f7ebb918682357b1a",
+        "type": "FEATURE",
+        "text": " MessageItem: Title now can be interactive",
+        "references": []
+      },
+      {
+        "id": "2820bbf5aacd7891b974a2d71f7dbb83b0cbc2e6",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog: Clear button added",
+        "references": []
+      },
+      {
+        "id": "3f29c79cb73acd5af890024a03edebd01ca5d6bb",
+        "type": "FIX",
+        "text": " sap.m.Carousel: pageChange event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "aacaf4b72127b4e905c29fb8f6221299654e2aee",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: valueFormat in case of invalid entry works now",
+        "references": []
+      },
+      {
+        "id": "76c7600eb846c15f0f2050920f419e6bfe391c47",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Problem with z-index on Safari is now fixed",
+        "references": []
+      },
+      {
+        "id": "ec8723d09839d0e460a7ad764a6a92d842e53de3",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Correct n-more list and tokens sync",
+        "references": []
+      },
+      {
+        "id": "b9f939120068463d722af85e0e4209ea2c125098",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: qunit tests on combi device are fixed",
+        "references": []
+      },
+      {
+        "id": "d1963ea27f5d1a672aa168cad086a590b72cb160",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Control height is now correct",
+        "references": []
+      },
+      {
+        "id": "2e8ec66f8903eb6ac8ebce20c766b9a371df8651",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: removeAllButtons now works well",
+        "references": []
+      },
+      {
+        "id": "471797da49821bd6c70f89fea2acc08cda49b2d1",
+        "type": "FIX",
+        "text": " sap.m.Select: Value state msg is now read correctly",
+        "references": []
+      },
+      {
+        "id": "b96e2f9ff1e0cb49d9c4dc71aa4affc69710e2b2",
+        "type": "FIX",
+        "text": "sap.m.themes.base.SlideTile: Allignmnet issue of play-pause Icon in all themes and TileIndicator issue in HCW and HCB themes.",
+        "references": []
       }
     ]
   }

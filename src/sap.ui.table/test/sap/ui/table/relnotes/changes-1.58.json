@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": " Table: Edit mode navigation with sap.m.Select repaired",
         "references": []
+      },
+      {
+        "id": "40a943f14426982cfcc5f9bf89d33cdea7bd8fd1",
+        "type": "FEATURE",
+        "text": " ODataTreeBinding: Add expand node to level API",
+        "references": []
       }
     ]
   }
