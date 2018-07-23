@@ -140,6 +140,7 @@
 					"sap.ui.core.sample.OpaWithSupportAssistant",
 					"sap.ui.core.sample.OpaTestLibrary",
 					"sap.ui.core.sample.OpaMessageToast",
+					"sap.ui.core.sample.OpaBusyIndicator",
 					"sap.ui.core.sample.OpaAutoWaitParams",
 					"sap.ushell.sample.OpaFLPSandbox"
 				]
@@ -730,6 +731,11 @@
 				"id": "sap.ui.core.sample.OpaMessageToast",
 				"name": "Retrieving message toast elements with OPA5",
 				"description": "This sample demonstrates how to locate message toast elements with OPA5"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaBusyIndicator",
+				"name": "Testing busy controls with OPA5",
+				"description": "This sample demonstrates how to test busy controls with OPA5"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaAutoWaitParams",
