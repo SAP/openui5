@@ -22,7 +22,7 @@ sap.ui.define([
 		FakeLrepConnectorStorage._oBackendInstances = {};
 
 		/**
-		 * Class for connecting to Fake LREP storing changes in localStorage
+		 * Class for connecting to Fake LREP storing changes in different storages
 		 * @param {object} mSettings - map of FakeLrepConnector settings
 		 *
 		 * @class
@@ -32,7 +32,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @static
-		 * @since 1.48
+		 * @since 1.58
 		 * @alias sap.ui.fl.FakeLrepConnectorStorage
 		 */
 		function FakeLrepConnectorStorage(mSettings) {
