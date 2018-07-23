@@ -5,80 +5,41 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	'jquery.sap.global',
 	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/rta/Utils',
+	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/fl/fieldExt/Access',
-	'sap/ui/core/ComponentContainer',
 	'sap/m/Label',
 	'sap/m/Button',
-	'sap/m/Input',
-	'sap/ui/layout/form/FormElement',
-	'sap/ui/layout/form/SimpleForm',
-	'sap/ui/layout/VerticalLayout',
 	'sap/uxap/ObjectPageSection',
 	'sap/uxap/ObjectPageSubSection',
 	'sap/uxap/ObjectPageLayout',
 	'sap/uxap/ObjectPageSubSectionLayout',
-	'sap/ui/core/Title',
-	'sap/ui/comp/smartform/Group',
-	'sap/ui/comp/smartform/GroupElement',
-	'sap/ui/comp/smartform/SmartForm',
 	'sap/ui/thirdparty/sinon'
 ],
 function(
 	jQuery,
 	DesignTime,
-	ElementOverlay,
-	ElementDesignTimeMetadata,
 	OverlayRegistry,
 	OverlayUtil,
 	Utils,
+	RtaQunitUtils,
 	Access,
-	ComponentContainer,
 	Label,
 	Button,
-	Input,
-	FormElement,
-	SimpleForm,
-	VerticalLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageLayout,
 	ObjectPageSubSectionLayout,
-	Title,
-	Group,
-	GroupElement,
-	SmartForm,
 	sinon
 ) {
 	'use strict';
 	QUnit.start();
 
-	var oCompCont = new ComponentContainer().placeAt("test-view");
-	var oComp;
-	//Create component in init method so that the mockserver is already up. Otherwise the
-	//binding does not work.
-	sap.ui.getCore().attachInit(function(){
-		oComp = sap.ui.getCore().createComponent({
-			name : "sap.ui.rta.test",
-			id : "Comp1",
-			settings : {
-				componentData : {
-					"showAdaptButton" : true
-				}
-			}
-		});
-
-		oCompCont.setComponent(oComp);
-		var oView = sap.ui.getCore().byId("Comp1---idMain1");
-		oView.getModel().refresh(true);
-	});
-
-	// will render only if SAPUI5 core init is done.
-	sap.ui.getCore().applyChanges();
+	var oCompCont = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
+	var oView = sap.ui.getCore().byId("Comp1---idMain1");
+	oView.getModel().refresh(true);
 
 	QUnit.module("Given that a SmartForm with OData Binding is given...", {
 	});
@@ -283,7 +244,7 @@ function(
 				subSectionLayout: ObjectPageSubSectionLayout.TitleOnLeft,
 				sections: [this.oObjectPageSection1]
 			});
-			this.oObjectPageLayout.placeAt('test-view');
+			this.oObjectPageLayout.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -412,7 +373,7 @@ function(
 			});
 			this.oLayout0 = new ObjectPageLayout("layout0", {
 				sections : [this.oSection0, this.oSection1]
-			}).placeAt('test-view2');
+			}).placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -467,19 +428,19 @@ function(
 	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 
 	QUnit.module("Given some dom elements in and out of viewport...", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			if (oCompCont) {
 				oCompCont.destroy();
 			}
 
-			this.$insideDom = jQuery('<input/>').appendTo('#test-view');
-			this.$outsideDom = jQuery('<button/>').appendTo('#test-view');
+			this.$insideDom = jQuery('<input/>').appendTo('#qunit-fixture');
+			this.$outsideDom = jQuery('<button/>').appendTo('#qunit-fixture');
 
-			this.$insideDom.css("margin-bottom", jQuery("#test-view").get(0).clientHeight);
-			this.$insideDom.css("margin-right", jQuery("#test-view").get(0).clientWidth);
+			this.$insideDom.css("margin-bottom", jQuery("#qunit-fixture").get(0).clientHeight);
+			this.$insideDom.css("margin-right", jQuery("#qunit-fixture").get(0).clientWidth);
 			this.$insideDom.css("margin-top", "10px");
 		},
-		afterEach: function(assert) {
+		afterEach: function() {
 			this.$insideDom.remove();
 			this.$outsideDom.remove();
 		}
@@ -496,10 +457,10 @@ function(
 	});
 
 	QUnit.module("Given a sinon sandbox...", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.sandbox = sinon.sandbox.create();
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.sandbox.restore();
 		}
 	});
@@ -590,7 +551,6 @@ function(
 	});
 
 	QUnit.done(function() {
-		jQuery("#test-view").hide();
-		jQuery("#test-view2").hide();
+		jQuery("#qunit-fixture").hide();
 	});
 });

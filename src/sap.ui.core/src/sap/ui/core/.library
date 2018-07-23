@@ -326,8 +326,8 @@
         <lib name="tdop" displayName="Top Down Operator Precedence" homepage="https://github.com/douglascrockford/TDOP">
         	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/TDOP-Apache-LICENSE.txt" />
         </lib>
-        <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/jakearchibald/es6-promise/">
-        	<license url="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
+        <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/stefanpenner/es6-promise/">
+        	<license url="https://github.com/stefanpenner/es6-promise/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
         </lib>
         <lib name="es6-string-method-startsWith" displayName="String.prototype Polyfill (startsWith)" homepage="https://github.com/mathiasbynens/String.prototype.startsWith">
             <license url="https://github.com/mathiasbynens/String.prototype.startsWith/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />

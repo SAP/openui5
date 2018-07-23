@@ -91,6 +91,18 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
         "references": []
+      },
+      {
+        "id": "cf521198540a50391a215a5f2f827e693c422fdb",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPage: Navigation improvement",
+        "references": []
+      },
+      {
+        "id": "99512e2d88f38d50b9dfd07ccaeaec86f406b4b2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Non existing sub-section is now handled",
+        "references": []
       }
     ]
   }

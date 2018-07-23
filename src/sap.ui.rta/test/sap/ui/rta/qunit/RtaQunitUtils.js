@@ -52,6 +52,26 @@ sap.ui.define([
 		return oCompCont;
 	};
 
+	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId){
+		var oComp = sap.ui.getCore().createComponent({
+			name : "sap.ui.rta.test",
+			id : "Comp1",
+			settings : {
+				componentData : {
+					"showAdaptButton" : true,
+					"useSessionStorage": true
+				}
+			}
+		});
+
+		var oCompCont = new ComponentContainer({
+			component: oComp
+		}).placeAt(sDomId);
+		sap.ui.getCore().applyChanges();
+
+		return oCompCont;
+	};
+
 	RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd = function(iNumberOfChanges, assert) {
 		var done = [];
 		for (var i = 0; i < iNumberOfChanges; i++) {

@@ -70,27 +70,21 @@
 			return null;
 		}
 
-		function asyncAction(bFail, oObj, iDelay, bStart){
+		function asyncAction(bFail, oObj, iDelay){
 			return new P(function(fResolve, fReject) {
 				var f = bFail ? fReject : fResolve;
 				setTimeout(function(){
 					f(oObj);
-					if(bStart){
-						done();
-					}
 				}, iDelay || 10);
 			});
 		}
 
-		function asyncAction_Deferred(bFail, oObj, iDelay, bStart){
+		function asyncAction_Deferred(bFail, oObj, iDelay){
 			var d = new jQuery.Deferred();
 			(function(fResolve, fReject) {
 				var f = bFail ? fReject : fResolve;
 				setTimeout(function(){
 					f(oObj);
-					if(bStart){
-						done();
-					}
 				}, iDelay || 10);
 			})(function(o){d.resolve(o);}, function(o){d.reject(o);});
 			return d.promise();
@@ -125,7 +119,7 @@
 			assert.ok(!p._subscribers && bNative || p._subscribers && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
 		});
 
-		QUnit.test(sTestPrefix + "Native Support", function(assert) {
+		QUnit.test("Native Support", function(assert) {
 			doOnNativeSupport(function(){
 				assert.ok(window.Promise.toString().indexOf("[native code]") > -1, "All browsers except IE11 / PhantomJS support Promises natively.");
 			}, function(){
@@ -136,21 +130,21 @@
 
 		QUnit.module(sTestPrefix + "promise.then");
 
-		QUnit.test(sTestPrefix + "API available", function(assert) {
+		QUnit.test("API available", function(assert) {
 			var p = new P(function(res, rej){rej();});
 			assert.ok(typeof(p.then) == "function", "promise.then is a function");
 		});
 
-		QUnit.test(sTestPrefix + "promise.then", function(assert) {
+		QUnit.test("promise.then", function(assert) {
 			var done = assert.async();
-			var p1 = asyncAction(false, "X", 10, false);
+			var p1 = asyncAction(false, "X", 10);
 			p1.then(function(oVal){
 				assert.equal(oVal, "X", "Success Case - promise.then");
 			}, function(oVal){
 				assert.ok(false, "Success Case - promise.then, Fail should not be called");
 			});
 
-			var p2 = asyncAction(true, "Y", 10, false);
+			var p2 = asyncAction(true, "Y", 10);
 			p2.then(function(oVal){
 				assert.ok(false, "Fail Case - promise.then, Success should not be called");
 				done();
@@ -160,9 +154,9 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "promise.then after resolve/reject", function(assert) {
+		QUnit.test("promise.then after resolve/reject", function(assert) {
 			var done = assert.async();
-			var p1 = asyncAction(false, "X", 10, false);
+			var p1 = asyncAction(false, "X", 10);
 			setTimeout(function(){
 				p1.then(function(oVal){
 					assert.equal(oVal, "X", "Success Case - promise.then");
@@ -171,7 +165,7 @@
 				});
 			}, 30);
 
-			var p2 = asyncAction(true, "Y", 10, false);
+			var p2 = asyncAction(true, "Y", 10);
 			setTimeout(function(){
 				p2.then(function(oVal){
 					assert.ok(false, "Fail Case - promise.then, Success should not be called");
@@ -183,7 +177,7 @@
 			}, 40);
 		});
 
-		QUnit.test(sTestPrefix + "Promise then always asynchronous", function(assert) {
+		QUnit.test("Promise then always asynchronous", function(assert) {
 			var done = assert.async();
 			assert.expect(4);
 
@@ -214,35 +208,35 @@
 
 		QUnit.module(sTestPrefix + "promise.catch");
 
-		QUnit.test(sTestPrefix + "API available", function(assert) {
+		QUnit.test("API available", function(assert) {
 			var p = new P(function(res, rej){rej();});
 			assert.ok(typeof(p["catch"]) == "function", "promise.catch is a function");
 		});
 
-		QUnit.test(sTestPrefix + "promise.catch", function(assert) {
+		QUnit.test("promise.catch", function(assert) {
 			var done = assert.async();
-			var p1 = asyncAction(false, "X", 10, false);
+			var p1 = asyncAction(false, "X", 10);
 			p1["catch"](function(oVal){
 				assert.ok(false, "Success Case - promise.catch, Fail should not be called");
 			});
 
-			var p2 = asyncAction(true, "Y", 10, false);
+			var p2 = asyncAction(true, "Y", 10);
 			p2["catch"](function(oVal){
 				assert.equal(oVal, "Y", "Fail Case - Promise.catch");
 				done();
 			});
 		});
 
-		QUnit.test(sTestPrefix + "promise.catch after resolve/reject", function(assert) {
+		QUnit.test("promise.catch after resolve/reject", function(assert) {
 			var done = assert.async();
-			var p1 = asyncAction(false, "X", 10, false);
+			var p1 = asyncAction(false, "X", 10);
 			setTimeout(function(){
 				p1["catch"](function(oVal){
 					assert.ok(false, "Success Case - promise.catch, Fail should not be called");
 				});
 			}, 30);
 
-			var p2 = asyncAction(true, "Y", 10, false);
+			var p2 = asyncAction(true, "Y", 10);
 			setTimeout(function(){
 				p2["catch"](function(oVal){
 					assert.equal(oVal, "Y", "Fail Case - Promise.catch");
@@ -252,15 +246,57 @@
 		});
 
 
+		QUnit.module(sTestPrefix + "promise.finally");
+
+		QUnit.test("API available", function(assert) {
+			var p = new P(function(res, rej){rej();});
+			assert.ok(typeof(p["finally"]) == "function", "promise.finally is a function");
+		});
+
+		QUnit.test("promise.finally on resolved promise", function(assert) {
+			var done = assert.async();
+			var p = asyncAction(false, "X", 10);
+			assert.expect(3);
+			var r = p.finally(function(oVal){
+				assert.ok(true, "finally callback should be called on resolution");
+			});
+			assert.ok(r instanceof P, "finally should return a new promise");
+			r.then(function(v) {
+				assert.equal(v, "X", "finally callback did not modify fulfillment");
+				done();
+			}, function(v) {
+				assert.ok(false, "promise returned by finally on a resolved promise shouldn't fail");
+				done();
+			});
+		});
+
+		QUnit.test("promise.finally on resolved promise", function(assert) {
+			var done = assert.async();
+			assert.expect(3);
+			var p = asyncAction(true, "Y", 10);
+			var r = p.finally(function(oVal){
+				assert.ok(true, "finally callback should be called on rejection");
+			});
+			assert.ok(r instanceof P, "finally should return a new promise");
+			r.then(function(v) {
+				assert.ok(false, "promise returned by finally on a rejected promise shouldn't succeed");
+				done();
+			}, function(v) {
+				assert.equal(v, "Y", "finally callback did not modify rejection reason");
+				done();
+			});
+		});
+
+
 		QUnit.module(sTestPrefix + "Promise.resolve");
 
-		QUnit.test(sTestPrefix + "API available", function(assert) {
+		QUnit.test("API available", function(assert) {
 			assert.ok(typeof(P.resolve) == "function", "Promise.resolve is a function");
 		});
 
-		QUnit.test(sTestPrefix + "Promise.resolve(promise)", function(assert) {
+		QUnit.test("Promise.resolve(promise)", function(assert) {
 			var done = assert.async();
-			var p1 = asyncAction(false, "X", 10, false);
+			var p1 = asyncAction(false, "X", 10);
 			var p2 = P.resolve(p1);
 			if (!bNative || !sap.ui.Device.browser.safari) {
 				assert.ok(p1 == p2, "Promise.resolve(promise) == promise");
@@ -272,7 +308,7 @@
 				assert.ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
 			});
 
-			var p3 = asyncAction_Deferred(true, "Y", 10, false);
+			var p3 = asyncAction_Deferred(true, "Y", 10);
 			var p4 = P.resolve(p3);
 			p4.then(function(oVal){
 				assert.ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
@@ -283,9 +319,9 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.resolve(thenable)", function(assert) {
+		QUnit.test("Promise.resolve(thenable)", function(assert) {
 			var done = assert.async();
-			var d1 = asyncAction_Deferred(false, "X", 10, false);
+			var d1 = asyncAction_Deferred(false, "X", 10);
 			var p1 = P.resolve(d1);
 			p1.then(function(oVal){
 				assert.equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
@@ -293,7 +329,7 @@
 				assert.ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
 			});
 
-			var d2 = asyncAction_Deferred(true, "Y", 10, false);
+			var d2 = asyncAction_Deferred(true, "Y", 10);
 			var p2 = P.resolve(d2);
 			p2.then(function(oVal){
 				assert.ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
@@ -304,7 +340,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.resolve(obj)", function(assert) {
+		QUnit.test("Promise.resolve(obj)", function(assert) {
 			var done = assert.async();
 			function check(oValue, bStart){
 				var p = P.resolve(oValue);
@@ -331,7 +367,7 @@
 			check({}, true);
 		});
 
-		QUnit.test(sTestPrefix + "then: resolve/reject called multiple times - 1", function(assert){
+		QUnit.test("then: resolve/reject called multiple times - 1", function(assert){
 			var done = assert.async();
 			var oError = new Error("error"),
 				iSuccessCount = 0,
@@ -358,7 +394,7 @@
             }, 10);
 		});
 
-		QUnit.test(sTestPrefix + "then: resolve/reject called multiple times - 2", function(assert){
+		QUnit.test("then: resolve/reject called multiple times - 2", function(assert){
 			var done = assert.async();
 			var iSuccessCount = 0,
 				iFailCount = 0,
@@ -384,7 +420,7 @@
             }, 10);
 		});
 
-		QUnit.test(sTestPrefix + "then: resolve/reject called multiple times - 3", function(assert){
+		QUnit.test("then: resolve/reject called multiple times - 3", function(assert){
 			var done = assert.async();
 			var oError = new Error("error"),
 				iSuccessCount = 0,
@@ -411,7 +447,7 @@
             }, 10);
 		});
 
-		QUnit.test(sTestPrefix + "then: resolve/reject called multiple times - 4", function(assert){
+		QUnit.test("then: resolve/reject called multiple times - 4", function(assert){
 			var done = assert.async();
 			var oError = new Error("error"),
 				iSuccessCount = 0,
@@ -441,11 +477,11 @@
 
 		QUnit.module(sTestPrefix + "Promise.reject");
 
-		QUnit.test(sTestPrefix + "API available", function(assert) {
+		QUnit.test("API available", function(assert) {
 			assert.ok(typeof(P.reject) == "function", "Promise.reject is a function");
 		});
 
-		QUnit.test(sTestPrefix + "Promise.reject(obj)", function(assert) {
+		QUnit.test("Promise.reject(obj)", function(assert) {
 			var done = assert.async();
 			function check(oValue, bStart){
 				var p = P.reject(oValue);
@@ -477,11 +513,11 @@
 
 		QUnit.module(sTestPrefix + "Promise.all");
 
-		QUnit.test(sTestPrefix + "API available", function(assert) {
+		QUnit.test("API available", function(assert) {
 			assert.ok(typeof(P.all) == "function", "Promise.all is a function");
 		});
 
-		QUnit.test(sTestPrefix + "Promise.all - Success Case", function(assert) {
+		QUnit.test("Promise.all - Success Case", function(assert) {
 			var done = assert.async();
 			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
@@ -496,7 +532,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.all - Fail Case 1", function(assert) {
+		QUnit.test("Promise.all - Fail Case 1", function(assert) {
 			var done = assert.async();
 			var p = P.all([asyncAction(true, "X", 10, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
@@ -508,7 +544,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.all - Fail Case 2", function(assert) {
+		QUnit.test("Promise.all - Fail Case 2", function(assert) {
 			var done = assert.async();
 			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
@@ -520,7 +556,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.all - Fail Case 3", function(assert) {
+		QUnit.test("Promise.all - Fail Case 3", function(assert) {
 			var done = assert.async();
 			var p = P.all([asyncAction(true, "X", 10, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
@@ -532,7 +568,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.all - empty array", function (assert) {
+		QUnit.test("Promise.all - empty array", function (assert) {
 			var done = assert.async();
 	        var p = P.all([]);
 	        assert.ok(p instanceof P);
@@ -546,7 +582,7 @@
 	        });
 	    });
 
-		QUnit.test(sTestPrefix + "Promise.all - no array parameter", function(assert){
+		QUnit.test("Promise.all - no array parameter", function(assert){
 			var done = assert.async();
 			P.all({}).then(function(oVal){
 				assert.ok(false, "Success should not be called");
@@ -557,7 +593,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.all - non-promise array content", function(assert){
+		QUnit.test("Promise.all - non-promise array content", function(assert){
 			var done = assert.async();
 			P.all(["X", new P(function(resolve, reject){resolve("Y");})]).then(function(oVal){
 				assert.ok(jQuery.isArray(oVal), "Result is array");
@@ -574,11 +610,11 @@
 
 		QUnit.module(sTestPrefix + "Promise.race");
 
-		QUnit.test(sTestPrefix + "API available", function(assert) {
+		QUnit.test("API available", function(assert) {
 			assert.ok(typeof(P.race) == "function", "Promise.race is a function");
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - Fail Case 1", function(assert) {
+		QUnit.test("Promise.race - Fail Case 1", function(assert) {
 			var done = assert.async();
 			var p = P.race([asyncAction(true, "X", 10, false), asyncAction(true, "Y", 20, false)]);
 			p.then(function(oVal){
@@ -590,7 +626,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - Fail Case 2", function(assert) {
+		QUnit.test("Promise.race - Fail Case 2", function(assert) {
 			var done = assert.async();
 			var p = P.race([asyncAction(true, "X", 20, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
@@ -602,7 +638,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - Fail Case 3", function(assert) {
+		QUnit.test("Promise.race - Fail Case 3", function(assert) {
 			var done = assert.async();
 			var p = P.race([asyncAction(false, "X", 20, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
@@ -614,7 +650,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - Success Case 1", function(assert) {
+		QUnit.test("Promise.race - Success Case 1", function(assert) {
 			var done = assert.async();
 			var p = P.race([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 20, false)]);
 			p.then(function(oVal){
@@ -626,7 +662,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - Success Case 2", function(assert) {
+		QUnit.test("Promise.race - Success Case 2", function(assert) {
 			var done = assert.async();
 			var p = P.race([asyncAction(false, "X", 20, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
@@ -638,7 +674,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - Success Case 3", function(assert) {
+		QUnit.test("Promise.race - Success Case 3", function(assert) {
 			var done = assert.async();
 			var p = P.race([asyncAction(false, "X", 10, false), asyncAction(true, "Y", 20, false)]);
 			p.then(function(oVal){
@@ -650,7 +686,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - Success Case 4", function(assert) {
+		QUnit.test("Promise.race - Success Case 4", function(assert) {
 			var done = assert.async();
 			var p = P.race([asyncAction(true, "X", 20, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
@@ -662,7 +698,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - empty array", function(assert){
+		QUnit.test("Promise.race - empty array", function(assert){
 			var done = assert.async();
 			P.race([]).then(function(oVal){
 				sCallbackCalled = "Success";
@@ -678,7 +714,7 @@
 			}, 30);
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - no array parameter", function(assert){
+		QUnit.test("Promise.race - no array parameter", function(assert){
 			var done = assert.async();
 			P.race({}).then(function(oVal){
 				assert.ok(false, "Success should not be called");
@@ -689,7 +725,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.race - non-promise array content", function(assert){
+		QUnit.test("Promise.race - non-promise array content", function(assert){
 			var done = assert.async();
 			var p = P.race(["X", new P(function(resolve, reject){
 					setTimeout(function(){reject("Y");}, 10);
@@ -706,7 +742,7 @@
 
 		QUnit.module(sTestPrefix + "then chaining");
 
-		QUnit.test(sTestPrefix + "Chain Test 1", function(assert) {
+		QUnit.test("Chain Test 1", function(assert) {
 			var done = assert.async();
 			var log = createLog();
 			asyncAction(false, "1", 10, false).then(function(oVal){
@@ -714,7 +750,7 @@
 				return "X";
 			}).then(function(oVal){
 				log("B: "+oVal);
-				return asyncAction(false, "2", 10, false);
+				return asyncAction(false, "2", 10);
 			}).then(function(oVal){
 				var sRes = log("C: "+oVal, true);
 				assert.equal(sRes, "A: 1 -> B: X -> C: 2", "Result is: " + sRes);
@@ -741,19 +777,19 @@
 			var log = createLog();
 			asyncAction(aResults[0], "1", 10, false).then(function(oVal) {
 				log("A: "+oVal);
-				return asyncAction(aResults[1], "2", 10, false);
+				return asyncAction(aResults[1], "2", 10);
 			}).then(function(oVal) {
 				log("B: "+oVal);
-				return asyncAction(aResults[2], "3", 10, false);
+				return asyncAction(aResults[2], "3", 10);
 			})["catch"](function(oVal) {
 				log("C: "+oVal);
-				return asyncAction(aResults[3], "4", 10, false);
+				return asyncAction(aResults[3], "4", 10);
 			}).then(function(oVal) {
 				log("D: "+oVal);
-				return asyncAction(aResults[4], "5", 10, false);
+				return asyncAction(aResults[4], "5", 10);
 			}, function(oVal) {
 				log("E: "+oVal);
-				return asyncAction(aResults[5], "6", 10, false);
+				return asyncAction(aResults[5], "6", 10);
 			})["catch"](function(oVal) {
 				var sRes = log("FAIL: "+oVal, true);
 				fFailCallback(sRes);
@@ -767,7 +803,7 @@
 			});
 		};
 
-		QUnit.test(sTestPrefix + "Chain Test 2", function(assert) {
+		QUnit.test("Chain Test 2", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, false, false, false, false], function(sResult){
 				assert.equal(sResult, "A: 1 -> B: 2 -> D: 3 -> SUCCESS: 5", "Result is: " + sResult);
@@ -777,7 +813,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Chain Test 3", function(assert) {
+		QUnit.test("Chain Test 3", function(assert) {
 			var done = assert.async();
 			checkChain([true, false, false, false, false, false], function(sResult){
 				assert.equal(sResult, "C: 1 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
@@ -787,7 +823,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Chain Test 4", function(assert) {
+		QUnit.test("Chain Test 4", function(assert) {
 			var done = assert.async();
 			checkChain([false, true, false, false, false, false], function(sResult){
 				assert.equal(sResult, "A: 1 -> C: 2 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
@@ -797,7 +833,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Chain Test 5", function(assert) {
+		QUnit.test("Chain Test 5", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, true, false, false, false], function(sResult){
 				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
@@ -807,7 +843,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Chain Test 6", function(assert) {
+		QUnit.test("Chain Test 6", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, true, true, false, false], function(sResult){
 				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> SUCCESS: 6", "Result is: " + sResult);
@@ -817,7 +853,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Chain Test 7", function(assert) {
+		QUnit.test("Chain Test 7", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, true, true, false, true], function(sResult){
 				assert.equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> FAIL: 6 -> SUCCESS: undefined", "Success-Result is: " + sResult);
@@ -827,7 +863,7 @@
 			}, true);
 		});
 
-		QUnit.test(sTestPrefix + "Chain Test 8", function(assert) {
+		QUnit.test("Chain Test 8", function(assert) {
 			var done = assert.async();
 			checkChain([false, false, false, false, true, false], function(sResult){
 				assert.equal(sResult, "A: 1 -> B: 2 -> D: 3 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
@@ -837,7 +873,7 @@
 			}, true);
 		});
 
-		QUnit.test(sTestPrefix + "Chain Test 9", function(assert) {
+		QUnit.test("Chain Test 9", function(assert) {
 			var done = assert.async();
 			checkChain([false, true, false, false, true, false], function(sResult){
 				assert.equal(sResult, "A: 1 -> C: 2 -> D: 4 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
@@ -847,7 +883,7 @@
 			}, true);
 		});
 
-		QUnit.test(sTestPrefix + "Chain Test 10", function (assert){
+		QUnit.test("Chain Test 10", function (assert){
 			var done = assert.async();
 	        var resolveP1, rejectP2;
 	        var log = createLog();
@@ -883,9 +919,9 @@
 
 		QUnit.module(sTestPrefix + "error handling");
 
-		QUnit.test(sTestPrefix + "throw error in promise.then", function(assert) {
+		QUnit.test("throw error in promise.then", function(assert) {
 			var done = assert.async();
-			var p = asyncAction(false, "1", 10, false);
+			var p = asyncAction(false, "1", 10);
 			p.then(function(oVal){
 				throw new Error("error");
 			}).then(function(oVal){
@@ -898,9 +934,9 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "throw error in promise.catch", function(assert) {
+		QUnit.test("throw error in promise.catch", function(assert) {
 			var done = assert.async();
-			var p = asyncAction(true, "1", 10, false);
+			var p = asyncAction(true, "1", 10);
 			p["catch"](function(oVal){
 				throw new Error("error");
 			}).then(function(oVal){
@@ -913,7 +949,7 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "throw error in action (sync)", function(assert) {
+		QUnit.test("throw error in action (sync)", function(assert) {
 			var done = assert.async();
 			var log = createLog();
 			log("A");
@@ -937,7 +973,7 @@
 			log("C");
 		});
 
-		QUnit.test(sTestPrefix + "throw error in action (async)", function(assert) {
+		QUnit.test("throw error in action (async)", function(assert) {
 			var done = assert.async();
 			var log = createLog();
 			log("A");
@@ -969,13 +1005,13 @@
 			}, 30);
 		});
 
-		QUnit.test(sTestPrefix + "Wrong argument in constructor", function(assert) {
+		QUnit.test("Wrong argument in constructor", function(assert) {
 			assert.throws(function(){
 	            new P("not callable");
 	        }, Error);
 		});
 
-		QUnit.test(sTestPrefix + "Error in then: resolve/reject already called", function(assert){
+		QUnit.test("Error in then: resolve/reject already called", function(assert){
 			var done = assert.async();
             var thenable = {
 				then: function(resolve, reject){
@@ -995,7 +1031,7 @@
 
 		// This test was broken in Chrome 66 and has been fixed with Chrome 66.0.3359.181
 		// https://bugs.chromium.org/p/chromium/issues/detail?id=830565
-		QUnit.test(sTestPrefix + "Error in then: resolve/reject not yet called", function(assert){
+		QUnit.test("Error in then: resolve/reject not yet called", function(assert){
 			var done = assert.async();
 			var oError = new Error("error");
 			var thenable = {
@@ -1013,9 +1049,9 @@
 			});
 		});
 
-		QUnit.module(sTestPrefix + "snyc");
+		QUnit.module(sTestPrefix + "sync");
 
-		QUnit.test(sTestPrefix + "sync resolve", function(assert) {
+		QUnit.test("sync resolve inside executor", function(assert) {
 			var done = assert.async();
 			var log = createLog();
 			log("A");
@@ -1037,7 +1073,7 @@
 			log("C");
 		});
 
-		QUnit.test(sTestPrefix + "sync reject", function(assert) {
+		QUnit.test("sync reject inside executor", function(assert) {
 			var done = assert.async();
 			var log = createLog();
 			log("A");
@@ -1062,10 +1098,10 @@
 
 		QUnit.module(sTestPrefix + "Assimilation");
 
-		QUnit.test(sTestPrefix + "resolve called with a successful promise", function(assert) {
+		QUnit.test("resolve called with a successful promise", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction(false, "X", 10, false);
-	        var p2 = asyncAction(false, p1, 10, false);
+	        var p1 = asyncAction(false, "X", 10);
+	        var p2 = asyncAction(false, p1, 10);
 
 	        p2.then(function(oVal) {
 				assert.equal(oVal, "X", "Success called with the correct value");
@@ -1076,10 +1112,10 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "resolve called with a rejected promise", function(assert) {
+		QUnit.test("resolve called with a rejected promise", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction(true, "X", 10, false);
-	        var p2 = asyncAction(false, p1, 10, false);
+	        var p1 = asyncAction(true, "X", 10);
+	        var p2 = asyncAction(false, p1, 10);
 
 	        p2.then(function(oVal) {
 	        	assert.ok(false, "Success should not be called");
@@ -1090,10 +1126,10 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "resolve called with a successful thenable", function(assert) {
+		QUnit.test("resolve called with a successful thenable", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction_Deferred(false, "X", 10, false);
-	        var p2 = asyncAction(false, p1, 10, false);
+	        var p1 = asyncAction_Deferred(false, "X", 10);
+	        var p2 = asyncAction(false, p1, 10);
 
 	        p2.then(function(oVal) {
 				assert.equal(oVal, "X", "Success called with the correct value");
@@ -1104,10 +1140,10 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "resolve called with a rejected thenable", function(assert) {
+		QUnit.test("resolve called with a rejected thenable", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction_Deferred(true, "X", 10, false);
-	        var p2 = asyncAction(false, p1, 10, false);
+	        var p1 = asyncAction_Deferred(true, "X", 10);
+	        var p2 = asyncAction(false, p1, 10);
 
 	        p2.then(function(oVal) {
 	        	assert.ok(false, "Success should not be called");
@@ -1118,11 +1154,11 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "resolve called with a successful promise (multi-level)", function(assert) {
+		QUnit.test("resolve called with a successful promise (multi-level)", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction(false, "X", 10, false);
-	        var p2 = asyncAction(false, p1, 10, false);
-	        var p3 = asyncAction(false, p2, 10, false);
+	        var p1 = asyncAction(false, "X", 10);
+	        var p2 = asyncAction(false, p1, 10);
+	        var p3 = asyncAction(false, p2, 10);
 
 	        p3.then(function(oVal) {
 				assert.equal(oVal, "X", "Success called with the correct value");
@@ -1133,11 +1169,11 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "resolve called with a rejected promise (multi-level)", function(assert) {
+		QUnit.test("resolve called with a rejected promise (multi-level)", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction(true, "X", 10, false);
-	        var p2 = asyncAction(false, p1, 10, false);
-	        var p3 = asyncAction(false, p2, 10, false);
+	        var p1 = asyncAction(true, "X", 10);
+	        var p2 = asyncAction(false, p1, 10);
+	        var p3 = asyncAction(false, p2, 10);
 
 	        p3.then(function(oVal) {
 	        	assert.ok(false, "Success should not be called");
@@ -1148,11 +1184,11 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "resolve called with a successful promise (multi-level, mix with thenables)", function(assert) {
+		QUnit.test("resolve called with a successful promise (multi-level, mix with thenables)", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction(false, "X", 10, false);
-	        var p2 = asyncAction(false, p1, 10, false);
-	        var p3 = asyncAction(false, p2, 10, false);
+	        var p1 = asyncAction(false, "X", 10);
+	        var p2 = asyncAction(false, p1, 10);
+	        var p3 = asyncAction(false, p2, 10);
 
 	        p3.then(function(oVal) {
 				assert.equal(oVal, "X", "Success called with the correct value");
@@ -1163,11 +1199,11 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "resolve called with a rejected promise (multi-level, mix with thenables)", function(assert) {
+		QUnit.test("resolve called with a rejected promise (multi-level, mix with thenables)", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction(true, "X", 10, false);
-	        var p2 = asyncAction_Deferred(false, p1, 10, false);
-	        var p3 = asyncAction(false, p2, 10, false);
+	        var p1 = asyncAction(true, "X", 10);
+	        var p2 = asyncAction_Deferred(false, p1, 10);
+	        var p3 = asyncAction(false, p2, 10);
 
 	        p3.then(function(oVal) {
 	        	assert.ok(false, "Success should not be called");
@@ -1178,10 +1214,10 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "reject called with a successful promise", function(assert) {
+		QUnit.test("reject called with a successful promise", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction(false, "X", 10, false);
-	        var p2 = asyncAction(true, p1, 0, false);
+	        var p1 = asyncAction(false, "X", 10);
+	        var p2 = asyncAction(true, p1, 0);
 
 	        p2.then(function(oVal) {
 	        	assert.ok(false, "Success should not be called");
@@ -1192,10 +1228,10 @@
 			});
 		});
 
-		QUnit.test(sTestPrefix + "Promise.all", function(assert) {
+		QUnit.test("Promise.all", function(assert) {
 			var done = assert.async();
-	        var p1 = asyncAction(false, "Y", 10, false);
-	        var p2 = asyncAction(false, p1, 10, false);
+	        var p1 = asyncAction(false, "Y", 10);
+	        var p2 = asyncAction(false, p1, 10);
 
 	        var p = P.all([asyncAction(false, "X", 10, false), p2]);
 			p.then(function(oVal){

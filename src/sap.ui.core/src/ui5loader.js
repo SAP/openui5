@@ -16,11 +16,6 @@
 (function(__global) {
 	"use strict";
 
-	// Enable promise polyfill if native promise is not available
-	if (!__global.Promise) {
-		ES6Promise.polyfill();
-	}
-
 	/*
 	 * Helper function that removes any query and/or hash parts from the given URL.
 	 *

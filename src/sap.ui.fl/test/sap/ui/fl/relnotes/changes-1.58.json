@@ -55,6 +55,24 @@
         "type": "FIX",
         "text": " Issues with displaying error messages in case of failed save",
         "references": []
+      },
+      {
+        "id": "c2598768ee67da3087835a99399eeaa63cae7011",
+        "type": "FIX",
+        "text": " : Support UI Adaptation embedded components scenario",
+        "references": []
+      },
+      {
+        "id": "faf8487f38b6fc648efde1d2eb176aca78f37858",
+        "type": "FIX",
+        "text": " sap.ui.fl - FakeLrep returns changes sorted by layer",
+        "references": []
+      },
+      {
+        "id": "4f6142d15c07b404b51899c9c8eaee11f71b0756",
+        "type": "FIX",
+        "text": " sap.ui.fl - invalidate cache on exit rta",
+        "references": []
       }
     ]
   }
