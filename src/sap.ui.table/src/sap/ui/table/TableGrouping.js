@@ -84,10 +84,14 @@ sap.ui.define([
 		 * @private
 		 */
 		getModeCssClass : function(oTable) {
-			if (oTable._mode) {
-				return "sapUiTable" + oTable._mode + "Mode";
+			switch (oTable._mode) {
+				case "Group":
+					return "sapUiTableGroupMode";
+				case "Tree":
+					return "sapUiTableTreeMode";
+				default:
+					return null;
 			}
-			return null;
 		},
 
 		/*
