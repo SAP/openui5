@@ -213,16 +213,31 @@ sap.ui.define([
 
 		// sets the text for the month and the year button to the header
 		var oTexts = Calendar.prototype._setHeaderText.apply(this, arguments);
-		var sText, sAriaLabel, oHeader = this.getAggregation("header");
+		var sText,
+			sAriaLabel = oTexts.sAriaLabel,
+			oHeader = this.getAggregation("header");
 		var oLocaleData = this._getLocaleData();
+		var oEndDate = CalendarDate.fromLocalJSDate(new Date(oDate.toLocalJSDate().getTime() + (this._getDays() - 1) * 24 * 60 * 60 * 1000), this.getPrimaryCalendarType());
+		oEndDate.setDate(1); // always use the first of the month to have stable year in Japanese calendar
+		var sDelimiter = oLocaleData.getIntervalPattern().replace("{0}", "").replace("{1}", "");
+		var sEndYear = this._oYearFormat.format(oEndDate.toUTCJSDate(), true);
+		var sMonth = oTexts.sMonth;
 
 		if (this.getPickerPopup()) {
 			if (oLocaleData.oLocale.sLanguage.toLowerCase() === "ja" || oLocaleData.oLocale.sLanguage.toLowerCase() === "zh") {
-				sText = oTexts.sYear + " " + oTexts.sMonth;
-				sAriaLabel = oTexts.sYear + oTexts.sAriaLabel;
+				if (sEndYear != oTexts.sYear) {
+					sMonth = sMonth.replace(sDelimiter, sDelimiter + sEndYear + " ");
+					sAriaLabel = sAriaLabel.replace(sDelimiter, sDelimiter + sEndYear + " ");
+				}
+				sText = oTexts.sYear + " " + sMonth;
+				sAriaLabel = oTexts.sYear + " " + sAriaLabel;
 			} else {
-				sText = oTexts.sMonth + " " + oTexts.sYear;
-				sAriaLabel = oTexts.sAriaLabel + oTexts.sYear;
+				if (sEndYear != oTexts.sYear) {
+					sMonth = sMonth.replace(sDelimiter, " " + oTexts.sYear + sDelimiter);
+					sAriaLabel = sAriaLabel.replace(sDelimiter, " " + oTexts.sYear + sDelimiter);
+				}
+				sText = sMonth + " " + sEndYear;
+				sAriaLabel = sAriaLabel + " " + sEndYear;
 			}
 			oHeader.setTextButton1(sText, true);
 			if (oTexts.bShort) {
