@@ -916,6 +916,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @sap-restricted sap.ui.core
+	 * @private
+	 * @see {sap.ui.view}
+	 */
+	View._legacyCreate = viewFactory;
+
+	/**
 	 * Creates a view of the given type, name and with the given id.
 	 *
 	 * The <code>vView</code> configuration object can have the following properties for the view

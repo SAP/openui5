@@ -64,7 +64,7 @@ sap.ui.define([
 			oReturnValue,
 			fnStub = this.stub(sap.ui, "view", function () {
 				return this.oView;
-			});
+			}.bind(this));
 
 		//Act
 		oReturnValue = this.oViews.setView("foo.bar", this.oView);
@@ -119,8 +119,8 @@ sap.ui.define([
 		var sViewId = "ViewId",
 			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			fnViewStub = this.stub(sap.ui, "view", function () {
-				return this.oView;
-			}.bind(this)),
+				return oView;
+			}),
 			oOptions = {
 				id : sViewId,
 				viewType : "XML",

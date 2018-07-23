@@ -28,9 +28,10 @@ sap.ui.define([
 						oOptions.viewName = oOptions.name;
 						delete oOptions.name;
 						if (bNoPromise) {
+							// deprecated legacy branch via Router#getView - keep!
 							return sap.ui.view(oOptions);
 						} else {
-							return sap.ui.view(oOptions).loaded();
+							return View.create(oOptions);
 						}
 						break;
 					case "Component":
