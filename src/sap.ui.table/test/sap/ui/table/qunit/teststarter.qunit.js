@@ -1,4 +1,4 @@
-/*global QUnit,ES6Promise */
+/*global QUnit */
 
 (function(){
 	"use strict";
@@ -175,10 +175,6 @@
 		// Starter Script is used to initialize a testsuite
 
 		var sContextPath = "/" + window.location.pathname.split("/")[1];
-
-		if (!window.Promise) {
-			ES6Promise.polyfill();
-		}
 
 		window.suite = function () {
 			return new Promise(function(resolve, reject) {

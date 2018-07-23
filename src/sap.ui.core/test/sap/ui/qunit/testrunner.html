@@ -10,30 +10,6 @@
 	<script src="../../../../resources/sap/ui/thirdparty/handlebars.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/blanket.js"></script>
 	
-	<script>
-
-		// **************************************************************************
-		// copy of ES6 Promise polyfill bootstrap logic from sap.ui.core/ui5loader.js
-		// **************************************************************************
-
-		// The native Promise in MS Edge and Apple Safari is not fully compliant with the ES6 spec for promises.
-		// MS Edge executes callbacks as tasks, not as micro tasks (see https://connect.microsoft.com/IE/feedback/details/1658365).
-		// We therefore enforce the use of the es6-promise polyfill also in MS Edge and Safari, which works properly.
-		(function(ua) {
-			// @evo-todo this is only a rough copy of the sap/ui/Device browser recognition code
-			var match = /(edge)[ \/]([\w.]+)/.exec( ua ) || /(webkit)[ \/]([\w.]+)/ || [];
-			if ( match[1] === 'edge' ||
-				 match[1] === 'webkit' && ( /(Version|PhantomJS)\/(\d+\.\d+).*Safari/.test(ua) || /iPhone|iPad|iPod/.test(ua) ) ) {
-				window.Promise = undefined; // if not unset, the polyfill assumes that the native Promise is fine
-			}
-			// Enable promise polyfill if native promise is not available
-			if (!window.Promise) {
-				ES6Promise.polyfill();
-			}
-		}(navigator.userAgent.toLowerCase()));
-
-	</script>
-
 	<script src="TestRunner.js"></script>
 	<link rel="stylesheet" href="testrunner.css">
 
