@@ -4,14 +4,12 @@
 
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
-	'sap/ui/dt/Util'
+	'sap/ui/rta/util/BindingsExtractor'
 ], function(
 	Plugin,
-	OverlayRegistry,
 	Utils,
-	DtUtil
+	BindingsExtractor
 ) {
 	"use strict";
 
@@ -127,6 +125,30 @@ sap.ui.define([
 
 			return true;
 		}, this);
+
+		// check if all the target elements have the same binding context
+		if (bActionCheck) {
+			var oFirstControl = aControls.shift();
+			var aBindings = BindingsExtractor.getBindings(oFirstControl, oFirstControl.getModel());
+			if (aBindings.length > 0 && oFirstControl.getBindingContext()) {
+				var sFirstElementBindingContext = Utils.getEntityTypeByPath(
+					oFirstControl.getModel(),
+					oFirstControl.getBindingContext().getPath()
+				);
+
+				bActionCheck = aControls.some(function(oControl) {
+					if (oControl.getBindingContext()) {
+						var sBindingContext = Utils.getEntityTypeByPath(
+							oControl.getModel(),
+							oControl.getBindingContext().getPath()
+						);
+						return sFirstElementBindingContext === sBindingContext;
+					} else {
+						return false;
+					}
+				});
+			}
+		}
 
 		return bActionCheck;
 	};
