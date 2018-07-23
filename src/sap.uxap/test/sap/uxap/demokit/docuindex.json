@@ -122,7 +122,7 @@
 	  {
 		"id": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign",
 		"name": "Object Page with Translucent backgroundDesign",
-		"description": "This example demonstrates ObjectPage with backgroundDesign property set to Translucent."
+		"description": "This example demonstrates ObjectPage with ObjectPageDynamicHeaderTitle with Solid backgroundDesign and Translucent backgroundDesignAnchorBar."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageDynamicHeader",

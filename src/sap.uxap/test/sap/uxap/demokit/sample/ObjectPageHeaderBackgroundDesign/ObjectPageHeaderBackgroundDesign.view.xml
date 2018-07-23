@@ -19,7 +19,7 @@
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle 
 				primaryArea="Left" 
-				backgroundDesign="Translucent">
+				backgroundDesign="Solid">
 				<breadcrumbs>
 					<m:Breadcrumbs>
 						<m:Link text='Page 1'/>
