@@ -1,7 +1,4 @@
 <!DOCTYPE HTML>
-<!--
-  Tested class: sap.ui.core.Core
--->
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,29 +8,12 @@
 		<meta name="sap-ui-fesr" content="true">
 
 		<title>Test Page for the activation of FESR via meta-tag</title>
-		<script src="../../../shared-config.js"></script>
-		<script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js">
-		</script>
-		<link  href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" rel="stylesheet" media="screen">
-		<script src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<!--[if IE]>
-			<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-		<![endif]-->
-		<script src="../../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-		<script>
-			QUnit.module("FESR");
-
-			QUnit.test("meta tag", function(assert) {
-				var FESR = sap.ui.require("sap/ui/performance/trace/FESR");
-				assert.ok(FESR, "FESR module has been loaded");
-				assert.ok(FESR.getActive(), "FESR is active");
-			});
-		</script>
+		<base  href="../../../../../../../">
+		<script src="resources/sap/ui/test/starter/runTest.js"
+			data-sap-ui-testsuite="test-resources/sap/ui/core/qunit/testsuite.core.qunit"
+			data-sap-ui-test="performance/trace/InitFESR_metatag"></script>
 	</head>
 	<body>
-		<div id="qunit"></div>
+
 	</body>
 </html>

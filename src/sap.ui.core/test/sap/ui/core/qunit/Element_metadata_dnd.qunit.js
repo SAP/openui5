@@ -1,9 +1,9 @@
+/*global QUnit*/
 sap.ui.define([
 	'sap/ui/core/Element'
 ], function(Element) {
 
 	"use strict";
-	/*global QUnit*/
 
 	QUnit.module("DragAndDrop");
 
