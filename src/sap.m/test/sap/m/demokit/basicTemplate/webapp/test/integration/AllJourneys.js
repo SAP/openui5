@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/basicTemplate/test/integration/arrangements/Arrangement",
-	"sap/ui/demo/basicTemplate/test/integration/navigationJourney"
+	"./arrangements/Arrangement",
+	"./navigationJourney"
 ], function (Opa5, Arrangement) {
 	"use strict";
 
