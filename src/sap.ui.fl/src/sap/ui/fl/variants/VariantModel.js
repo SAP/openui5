@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/fl/variants/util/VariantUtil"
+	"sap/ui/fl/variants/util/VariantUtil",
+	"sap/base/util/merge"
 ], function(
 	jQuery,
 	JSONModel,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Change,
 	BaseChangeHandler,
 	BusyIndicator,
-	VariantUtil
+	VariantUtil,
+	fnBaseMerge
 ) {
 	"use strict";
 
@@ -317,7 +319,7 @@ sap.ui.define([
 		var oDuplicateChange = {};
 		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
 			if (Utils.isLayerAboveCurrentLayer(oChange.layer) === 0) {
-				oDuplicateChange = jQuery.extend(true, {}, oChange);
+				oDuplicateChange = fnBaseMerge({}, oChange);
 				oDuplicateChange.fileName = Utils.createDefaultFileName(oChange.changeType);
 				oDuplicateChange.variantReference = oDuplicateVariant.content.fileName;
 				if (!oDuplicateChange.support) {

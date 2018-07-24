@@ -403,7 +403,7 @@ sap.ui.define([
 	FlexController.prototype.waitForChangesToBeApplied = function(oControl) {
 		var mChangesMap = this._oChangePersistence.getChangesMapForComponent();
 		var aPromises = [];
-		var mDependencies = jQuery.extend({}, mChangesMap.mDependencies);
+		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
 		var mChanges = mChangesMap.mChanges;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
 		var aAppliedChanges = this._getAppliedCustomData(undefined, oControl, JsControlTreeModifier).customDataEntries;

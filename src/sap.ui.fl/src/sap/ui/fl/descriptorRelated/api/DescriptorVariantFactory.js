@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/merge"
 ], function(
 	DescriptorInlineChangeFactory,
 	FlexUtils,
 	LrepConnector,
 	Utils,
 	Settings,
-	jQuery
+	jQuery,
+	fnBaseMerge
 ) {
 	"use strict";
 
@@ -51,10 +53,10 @@ sap.ui.define([
 			this._id = mParameters.id;
 			this._reference = mParameters.reference;
 			this._layer = mParameters.layer;
-			if ( typeof mParameters.isAppVariantRoot != undefined){
+			if ( typeof mParameters.isAppVariantRoot != "undefined"){
 				this._isAppVariantRoot = mParameters.isAppVariantRoot;
 			}
-			if ( typeof mParameters.referenceVersion != undefined){
+			if ( typeof mParameters.referenceVersion != "undefined"){
 				this._referenceVersion = mParameters.referenceVersion;
 			}
 			this._mode = 'NEW';
@@ -63,7 +65,6 @@ sap.ui.define([
 		} else if (mFileContent) {
 			this._mMap = mFileContent;
 			this._mode = 'FROM_EXISTING';
-
 		}
 
 		this._oSettings = oSettings;
@@ -237,7 +238,7 @@ sap.ui.define([
 	 * @sap-restricted
 	 */
 	DescriptorVariant.prototype.getJson = function() {
-		return jQuery.extend(true, {}, this._getMap());
+		return fnBaseMerge({}, this._getMap());
 	};
 
 	DescriptorVariant.prototype._getMap = function() {
@@ -255,13 +256,13 @@ sap.ui.define([
 
 					"content": this._content
 				};
-				if ( typeof this._isAppVariantRoot != undefined ) {
+				if ( typeof this._isAppVariantRoot != "undefined" ) {
 					mResult.isAppVariantRoot = this._isAppVariantRoot;
 				}
 				if (mResult.isAppVariantRoot != undefined && !mResult.isAppVariantRoot) {
 					mResult.fileType = "cdmapp_config";
 				}
-				if ( typeof this._referenceVersion != undefined ) {
+				if ( typeof this._referenceVersion != "undefined" ) {
 					mResult.referenceVersion = this._referenceVersion;
 				}
 				return mResult;
