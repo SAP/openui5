@@ -561,7 +561,7 @@ function(
 	/**
 	 * The AggregationBindingStack contains element id and aggregation name of the bound control together with a stack containing
 	 * information about the traversed elements for an Overlay which is part of an aggregation binding.
-	 * @typedef {Object} AggregationBindingStack
+	 * @typedef {Object} sap.ui.dt.OverlayUtil.AggregationBindingStack
 	 * @property {string} elementId - id of the bound control.
 	 * @property {string} aggregation - name of the bound aggregation.
 	 * @property {Object[]} stack - array of objects containing element, element type, aggregation name and index of the element in
@@ -577,7 +577,7 @@ function(
 	 * The check is done recursively
 	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay Overlay being checked
 	 * @param  {string}  sAggregationName The name of the aggregation being checked
-	 * @return {AggregationBindingStack}  Returns the {@link AggregationBindingStack} object
+	 * @return {AggregationBindingStack}  Returns the {@link sap.ui.dt.OverlayUtil.AggregationBindingStack} object
 	 */
 	OverlayUtil.getAggregationInformation = function(oElementOverlay, sAggregationName) {
 		var aStack = [];

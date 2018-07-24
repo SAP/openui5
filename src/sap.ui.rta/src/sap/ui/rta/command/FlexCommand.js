@@ -194,7 +194,7 @@ sap.ui.define([
 		var oChange = oFlexController.createChange(mChangeSpecificData, this._validateControlForChange(mFlexSettings));
 		if (mFlexSettings && mFlexSettings.originalSelector) {
 			oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
-			oChange.getDefinition().selector = this.getSelector();
+			oChange.getDefinition().selector = JsControlTreeModifier.getSelector(this.getSelector().id, this.getSelector().appComponent);
 			oChange.setContent(jQuery.extend(oChange.getContent(), mFlexSettings.content));
 		}
 		return oChange;
