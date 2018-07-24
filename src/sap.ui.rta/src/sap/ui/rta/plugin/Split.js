@@ -50,7 +50,9 @@ sap.ui.define([
 	Split.prototype._isEditable = function(oOverlay) {
 		var oSplitAction = this.getAction(oOverlay);
 		if (oSplitAction && oSplitAction.changeType && oSplitAction.changeOnRelevantContainer) {
-			return this.hasStableId(oOverlay) && this.hasChangeHandler(oSplitAction.changeType, oOverlay.getRelevantContainer());
+			return this.hasChangeHandler(oSplitAction.changeType, oOverlay.getRelevantContainer()) &&
+					this.hasStableId(oOverlay) &&
+					this._checkRelevantContainerStableID(oSplitAction, oOverlay);
 		} else {
 			return false;
 		}

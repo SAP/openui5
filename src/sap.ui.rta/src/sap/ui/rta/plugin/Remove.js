@@ -62,20 +62,21 @@ sap.ui.define([
 	 * @returns {boolean} editable or not
 	 * @private
 	 */
-	Remove.prototype._isEditable = function(oOverlay) {
+	Remove.prototype._isEditable = function (oElementOverlay) {
 		var bEditable = false;
-		var oElement = oOverlay.getElement();
+		var oElement = oElementOverlay.getElement();
 
-		var oRemoveAction = this.getAction(oOverlay);
+		var oRemoveAction = this.getAction(oElementOverlay);
 		if (oRemoveAction && oRemoveAction.changeType) {
 			if (oRemoveAction.changeOnRelevantContainer) {
-				oElement = oOverlay.getRelevantContainer();
+				oElement = oElementOverlay.getRelevantContainer();
 			}
-			bEditable = this.hasChangeHandler(oRemoveAction.changeType, oElement);
+			bEditable = this.hasChangeHandler(oRemoveAction.changeType, oElement) &&
+						this._checkRelevantContainerStableID(oRemoveAction, oElementOverlay);
 		}
 
 		if (bEditable) {
-			return this.hasStableId(oOverlay);
+			return this.hasStableId(oElementOverlay);
 		}
 
 		return bEditable;

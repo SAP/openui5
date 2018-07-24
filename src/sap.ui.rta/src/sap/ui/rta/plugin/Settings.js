@@ -10,7 +10,8 @@ sap.ui.define([
 ], function(
 	Plugin,
 	Utils,
-	BaseLog) {
+	BaseLog
+) {
 	"use strict";
 
 	/**
@@ -57,10 +58,11 @@ sap.ui.define([
 			if (vSettingsAction.handler) {
 				return this.hasStableId(oOverlay);
 			} else {
-				var bHandlerFound = Object.keys(vSettingsAction).some(function(sSettingsAction) {
-					return vSettingsAction[sSettingsAction].handler;
-				});
-				if (bHandlerFound) {
+				var bHandlerAndStableIdFound = Object.keys(vSettingsAction).some(function(sSettingsAction) {
+					var oSettingsAction = vSettingsAction[sSettingsAction];
+					return oSettingsAction.handler && this._checkRelevantContainerStableID(oSettingsAction, oOverlay);
+				}.bind(this));
+				if (bHandlerAndStableIdFound) {
 					return this.hasStableId(oOverlay);
 				}
 			}
@@ -202,21 +204,21 @@ sap.ui.define([
 
 		if (vSettingsActions) {
 			// Only one action: simply return settings entry as usual
-			if (vSettingsActions.handler) {
+			if (vSettingsActions.handler && this._checkRelevantContainerStableID(vSettingsActions, oOverlay)) {
 				return this._getMenuItems(oOverlay, {
-					pluginId : sPluginId,
-					rank : iRank,
-					icon : this._getActionIcon(vSettingsActions)
+					pluginId: sPluginId,
+					rank: iRank,
+					icon: this._getActionIcon(vSettingsActions)
 				});
 			// Multiple actions: return one menu item for each action
 			} else {
 				var aMenuItems = [];
 				var aSettingsActions = Object.keys(vSettingsActions);
 				var iActionCounter = 0;
-				aSettingsActions.forEach(function(sSettingsAction){
-					var oSettingsAction = vSettingsActions[sSettingsAction],
-						sActionText = this.getActionText(oOverlay, oSettingsAction, oSettingsAction.name);
-					if (oSettingsAction.handler){
+				aSettingsActions.forEach(function (sSettingsAction) {
+					var oSettingsAction = vSettingsActions[sSettingsAction];
+					var sActionText = this.getActionText(oOverlay, oSettingsAction, oSettingsAction.name);
+					if (oSettingsAction.handler && this._checkRelevantContainerStableID(oSettingsAction, oOverlay)) {
 						aMenuItems.push({
 							id : sPluginId + iActionCounter,
 							text : sActionText,
@@ -231,7 +233,7 @@ sap.ui.define([
 						});
 						iActionCounter++;
 					} else {
-						jQuery.sap.log.warning("Handler not found for settings action '" + sActionText + "'");
+						BaseLog.warning("Handler not found for settings action '" + sActionText + "' or relevant container has no stable id");
 					}
 				}.bind(this));
 				return aMenuItems;

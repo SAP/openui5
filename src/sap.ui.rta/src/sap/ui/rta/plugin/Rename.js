@@ -173,7 +173,8 @@ sap.ui.define([
 			if (oRenameAction.changeOnRelevantContainer) {
 				oElement = oOverlay.getRelevantContainer();
 			}
-			bEditable = this.hasChangeHandler(oRenameAction.changeType, oElement);
+			bEditable = this.hasChangeHandler(oRenameAction.changeType, oElement) &&
+						this._checkRelevantContainerStableID(oRenameAction, oOverlay);
 		}
 
 		if (bEditable) {

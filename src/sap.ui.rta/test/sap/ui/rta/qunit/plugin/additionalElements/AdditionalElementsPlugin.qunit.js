@@ -21,8 +21,9 @@ sap.ui.require([
 	"sap/ui/fl/fieldExt/Access",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
-	"sap/ui/fl/registry/Settings"
-], function(
+	"sap/ui/fl/registry/Settings",
+	"sap/base/Log"
+], function (
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
 	AddElementsDialog,
@@ -41,7 +42,8 @@ sap.ui.require([
 	FieldExtAccess,
 	ChangeRegistry,
 	SimpleChanges,
-	Settings
+	Settings,
+	Log
 ){
 	"use strict";
 
@@ -560,14 +562,45 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("when the control has unsupported designtime Metadata", function(assert) {
-		this.oOverlay = createUnsupportedOverlayWithAggregationActions();
-		return oPlugin.showAvailableElements(false, [this.oOverlay]).then(function() {
-			assert.ok(false, "then the plugin should complain about it");
-		})["catch"](function(oError) {
-			assert.ok(oError, "then the plugin complains about it");
+	QUnit.test("when the control's dt metadata has a reveal action with changeOnRelevantContainer true but the relevant container does not have stable ID", function(assert) {
+		sandbox.stub(oPlugin, "hasStableId", function(oOverlay){
+			if (oOverlay === oParentOverlay){
+				return false;
+			} else {
+				return true;
+			}
 		});
 
+		return createOverlayWithAggregationActions({
+				"reveal" : {
+					changeType : "unhideControl",
+					changeOnRelevantContainer: true
+				}
+			},
+			ON_CHILD
+		)
+
+		.then(function(oOverlay) {
+			assert.equal(oPlugin._isEditableCheck(oOverlay, false), false, "then _isEditableCheck returns false");
+		});
+	});
+
+	QUnit.test("when the control has addODataProperty and Reveal in different aggregations from DesignTimeMetadata", function(assert) {
+		var fnLogErrorSpy = sandbox.spy(Log, "error");
+		sandbox.stub(oPlugin, "_getRevealActions").returns({
+			aggregation1: {
+				dummy: "value"
+			}
+		});
+		sandbox.stub(oPlugin, "_getAddODataPropertyActions").returns({
+			aggregation2: {
+				dummy: "value"
+			}
+		});
+
+		oPlugin._getActions();
+
+		assert.equal(fnLogErrorSpy.args[0][0].indexOf("action defined for more than 1 aggregation") > -1, true, "then the correct error is thrown");
 	});
 
 	QUnit.test("when the Child-controls have no designtime Metadata", function(assert) {
@@ -1056,45 +1089,6 @@ sap.ui.require([
 				case ON_CHILD : return oParentOverlay;
 				case ON_IRRELEVANT : return oIrrelevantOverlay;
 			}
-		});
-	}
-
-	function createUnsupportedOverlayWithAggregationActions(){
-		return new ElementOverlay({
-			element : oControl,
-			designTimeMetadata : new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
-					aggregations : {
-						name : {
-							singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME1",
-							plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL1"
-						},
-						aggregation1 : {
-							actions : {
-								"addODataProperty" : {
-									changeType : "addFields"
-								}
-							},
-							childNames : {
-								singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME1",
-								plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL1"
-							}
-						},
-						aggregation2 : {
-							actions: {
-								"reveal" : {
-									changeType : "unhideControl"
-								}
-							},
-							childNames : {
-								singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME2",
-								plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL2"
-							}
-						}
-					}
-				}
-			})
 		});
 	}
 

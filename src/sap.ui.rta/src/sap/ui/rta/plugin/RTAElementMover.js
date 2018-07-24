@@ -224,7 +224,7 @@ function(
 		if (
 			!oMovedRelevantContainer
 			|| !vTargetRelevantContainerAfterMove
-			|| !Plugin.prototype.hasStableId(oTargetOverlay)
+			|| !this.oBasePlugin.hasStableId(oTargetOverlay)
 			|| oMovedRelevantContainer !== vTargetRelevantContainerAfterMove
 		) {
 			return false;
@@ -265,6 +265,10 @@ function(
 		if (oMoveAction && oMoveAction.changeType) {
 			// moveChangeHandler information is always located on the relevant container
 			oChangeHandlerRelevantElement = oOverlay.getRelevantContainer();
+			var oRelevantOverlay = OverlayRegistry.getOverlay(oChangeHandlerRelevantElement);
+			if (!this.oBasePlugin.hasStableId(oRelevantOverlay)){
+				return false;
+			}
 			return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oChangeHandlerRelevantElement);
 		}
 		return false;

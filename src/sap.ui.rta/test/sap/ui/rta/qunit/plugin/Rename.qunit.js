@@ -45,7 +45,6 @@ function(
 
 	QUnit.module("Given a designTime and rename plugin are instantiated", {
 		beforeEach : function(assert) {
-			var that = this;
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -83,11 +82,11 @@ function(
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oFormOverlay = OverlayRegistry.getOverlay(that.oForm);
-				that.oFormContainerOverlay = OverlayRegistry.getOverlay(that.oFormContainer);
-				that.oFormContainerOverlay.setSelectable(true);
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+				this.oFormContainerOverlay.setSelectable(true);
 				done();
-			});
+			}, this);
 
 		},
 		afterEach : function(assert) {
@@ -127,6 +126,31 @@ function(
 
 		assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), true, "then the overlay is editable");
 		assert.strictEqual(this.oRenamePlugin.isAvailable(this.oFormContainerOverlay), true, "then rename is available for the overlay");
+	});
+
+	QUnit.test("when _isEditable is called, rename has changeOnRelevantContainer true and the Form does not have a stable id", function(assert) {
+		this.oFormContainerOverlay.setDesignTimeMetadata({
+			actions: {
+				rename: {
+					changeType: "renameGroup",
+					changeOnRelevantContainer: true
+				}
+			}
+		});
+		this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
+		this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
+
+		sandbox.stub(this.oRenamePlugin, "hasStableId", function(oOverlay){
+			if (oOverlay === this.oFormOverlay){
+				return false;
+			} else {
+				return true;
+			}
+		}.bind(this));
+
+		sandbox.stub(this.oFormContainerOverlay, "getRelevantContainer").returns(this.oForm);
+
+		assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), false, "then the overlay is not editable");
 	});
 
 	QUnit.test("when isAvailable and isEnabled are called", function(assert) {

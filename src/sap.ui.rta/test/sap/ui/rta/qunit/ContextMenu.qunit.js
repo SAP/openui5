@@ -234,14 +234,11 @@ function(
 
 		var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 		assert.ok(oContextMenuControl.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenuControl.getButtons().length, 3, " and 3 Menu Buttons are available");
+		assert.equal(oContextMenuControl.getButtons().length, 2, " and 2 Menu Buttons are available");
 		assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename is available");
 		assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "and rename is enabled");
-		assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add field is available");
-		assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "but add field is disabled");
-		assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "remove field is available");
-		// TODO: reactivate after Add action will be implemented
-		// // assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), false, "we cannot remove the field");
+		assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_REMOVE", "remove field is available");
+		assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "we cannot remove the field");
 	});
 
 	QUnit.test("when context menu (context menu) is opened on a Control with a defined settings action,", function(assert) {
@@ -430,21 +427,15 @@ function(
 	});
 
 	QUnit.test("when context menu (context menu) is opened on ObjectPageSection", function(assert) {
-		var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection1);
-
-		sap.ui.test.qunit.triggerMouseEvent(oOverlay.getDomRef(), "contextmenu");
-
 		var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 		assert.ok(oContextMenuControl.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenuControl.getButtons().length, 4, " and 4 Menu Buttons are available");
+		assert.equal(oContextMenuControl.getButtons().length, 3, " and 3 Menu Buttons are available");
 		assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename section is available");
 		assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "add section is enabled");
 		assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
-		assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "add section is disabled");
+		assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add section is enabled (reveal is not dependent on parent)");
 		assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "remove section is available");
 		assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), true, "we cannot remove a section");
-		assert.equal(oContextMenuControl.getButtons()[3].data("id") , "CTX_PASTE", "paste section is available");
-		assert.equal(oContextMenuControl.getButtons()[3].getEnabled(), false, "we cannot paste a section, as no cut has been triggered");
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {

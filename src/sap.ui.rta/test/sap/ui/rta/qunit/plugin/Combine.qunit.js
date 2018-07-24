@@ -88,62 +88,62 @@ function(
 
 	//Designtime Metadata with fake isEnabled function (returns false)
 	var oDesignTimeMetadata1 = {
-			actions : {
-				combine : {
-					changeType: "combineStuff",
-					changeOnRelevantContainer : true,
-					isEnabled : function() {
-						return false;
-					}
+		actions : {
+			combine : {
+				changeType: "combineStuff",
+				changeOnRelevantContainer : true,
+				isEnabled : function() {
+					return false;
 				}
 			}
-		};
+		}
+	};
 
 	//Designtime Metadata with fake isEnabled function (returns true)
 	var oDesignTimeMetadata2 = {
-			actions : {
-				combine : {
-					changeType: "combineStuff",
-					changeOnRelevantContainer : true,
-					isEnabled : function() {
-						return true;
-					}
+		actions : {
+			combine : {
+				changeType: "combineStuff",
+				changeOnRelevantContainer : true,
+				isEnabled : function() {
+					return true;
 				}
 			}
-		};
+		}
+	};
 
 	// DesignTime Metadata without changeType
 	var oDesignTimeMetadata3 = {
-			actions : {
-				combine : {
-					changeOnRelevantContainer : true,
-					isEnabled : true
-				}
+		actions : {
+			combine : {
+				changeOnRelevantContainer : true,
+				isEnabled : true
 			}
-		};
+		}
+	};
 
 	// DesignTime Metadata without changeOnRelevantContainer
 	var oDesigntimeMetadata4 = {
-			actions : {
-				combine : {
-					changeType: "combineStuff",
-					isEnabled : function() {
-						return true;
-					}
+		actions : {
+			combine : {
+				changeType: "combineStuff",
+				isEnabled : function() {
+					return true;
 				}
 			}
-		};
+		}
+	};
 
 	//DesignTime Metadata with different changeType
 	var oDesignTimeMetadata5 = {
-			actions : {
-				combine : {
-					changeType: "combineOtherStuff",
-					changeOnRelevantContainer : true,
-					isEnabled : true
-				}
+		actions : {
+			combine : {
+				changeType: "combineOtherStuff",
+				changeOnRelevantContainer : true,
+				isEnabled : true
 			}
-		};
+		}
+	};
 
 
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
@@ -425,4 +425,22 @@ function(
 			"isEnabled is called and returns false");
 	});
 
+	QUnit.test("when the relevant container does not have a stable id", function(assert) {
+		fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
+
+		sandbox.stub(this.oCombinePlugin, "hasStableId", function(oOverlay){
+			if (oOverlay === this.OverflowToolbarOverlay){
+				return false;
+			} else {
+				return true;
+			}
+		}.bind(this));
+
+		assert.strictEqual(
+			this.oCombinePlugin._isEditable(this.oOverflowToolbarButton1Overlay),
+			false,
+			"_isEditable returns false"
+		);
+
+	});
 });
