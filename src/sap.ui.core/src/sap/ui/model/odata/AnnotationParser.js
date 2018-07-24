@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/assert"], function(Device, Log, assert) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/assert", "sap/ui/thirdparty/jquery"], function(Device, Log, assert, jQuery) {
 "use strict";
 
 /**

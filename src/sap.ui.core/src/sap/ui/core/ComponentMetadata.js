@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/Manifest',
 	'sap/ui/thirdparty/URI',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/isPlainObject"
 ],
-	function(jQuery, ManagedObjectMetadata, Manifest, URI, Log) {
+	function(jQuery, ManagedObjectMetadata, Manifest, URI, Log, isPlainObject) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -412,7 +413,7 @@ sap.ui.define([
 		var oData = this.getManifestObject().getEntry(sKey);
 
 		// merge / extend should only be done for objects or when entry wasn't found
-		if (oData !== undefined && !jQuery.isPlainObject(oData)) {
+		if (oData !== undefined && !isPlainObject(oData)) {
 			return oData;
 		}
 
@@ -465,7 +466,7 @@ sap.ui.define([
 		var oParent,
 		    oData = this._oStaticInfo[sKey] || {};
 
-		if (!jQuery.isPlainObject(oData)) {
+		if (!isPlainObject(oData)) {
 			Log.warning("Custom Component Metadata entry with key '" + sKey + "' must be an object. Component: " + this.getName());
 			return null;
 		}

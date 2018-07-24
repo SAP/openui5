@@ -4,13 +4,14 @@
 
 // Provides control sap.ui.core.tmpl.DOMElement.
 sap.ui.define([
-    'sap/ui/core/Control',
-    'sap/ui/core/library',
-    './DOMAttribute',
-    "./DOMElementRenderer",
-    "sap/base/Log"
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	'./DOMAttribute',
+	"./DOMElementRenderer",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, library, DOMAttribute, DOMElementRenderer, Log) {
+	function(Control, library, DOMAttribute, DOMElementRenderer, Log, jQuery) {
 	"use strict";
 
 

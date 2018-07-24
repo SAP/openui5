@@ -8,9 +8,19 @@ sap.ui.define([
 	'sap/ui/core/routing/sync/Views',
 	"sap/base/util/UriParameters",
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(EventProvider, UIComponent, asyncViews, syncViews, UriParameters, assert, Log) {
+	function(
+		EventProvider,
+		UIComponent,
+		asyncViews,
+		syncViews,
+		UriParameters,
+		assert,
+		Log,
+		jQuery
+	) {
 		"use strict";
 
 		/**

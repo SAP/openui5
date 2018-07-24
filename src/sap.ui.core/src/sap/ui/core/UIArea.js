@@ -68,8 +68,8 @@ sap.ui.define([
 		fnDbgWrap = function(oControl) {
 			return oControl;
 		},
-		fnDbgReport = jQuery.noop,
-		fnDbgAnalyzeDelta = jQuery.noop;
+		fnDbgReport = function() {},
+		fnDbgAnalyzeDelta = function() {};
 
 	if ( oRenderLog.isLoggable() ) {
 

@@ -32,7 +32,8 @@ sap.ui.define([
 	"./ODataPropertyBinding",
 	"./SubmitMode",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	SyncPromise,
 	MessageType,
@@ -53,7 +54,8 @@ sap.ui.define([
 	ODataPropertyBinding,
 	SubmitMode,
 	Log,
-	assert
+	assert,
+	jQuery
 ) {
 
 	"use strict";

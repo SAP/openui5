@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/model/TreeBindingUtils',
 	"sap/base/util/uid",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Filter,
@@ -21,7 +22,8 @@ sap.ui.define([
 		TreeBindingUtils,
 		uid,
 		Log,
-		assert
+		assert,
+		jQuery
 	) {
 	"use strict";
 
@@ -2402,8 +2404,8 @@ sap.ui.define([
 		mParameters.groupId = this._getCorrectChangeGroup(sAbsolutePath);
 
 		// make sure not to lose the original success/error handlers
-		var fnOrgSuccess = mParameters.success || jQuery.noop;
-		var fnOrgError = mParameters.error || jQuery.noop;
+		var fnOrgSuccess = mParameters.success || function() {};
+		var fnOrgError = mParameters.error || function() {};
 		var bRestoreRequestFailed = false;
 
 		// handlers used by the binding itself
@@ -3373,7 +3375,7 @@ sap.ui.define([
 			}
 
 			// check if we have a single context or an array of contexts
-			if (!jQuery.isArray(vContextHandles)) {
+			if (!Array.isArray(vContextHandles)) {
 				if (vContextHandles instanceof sap.ui.model.Context) {
 					vContextHandles = [vContextHandles];
 				} else {

@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/model/CompositeType',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
-	'sap/ui/model/ValidateException'
+	'sap/ui/model/ValidateException',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		NumberFormat,
 		CompositeType,
 		FormatException,
 		ParseException,
-		ValidateException
+		ValidateException,
+		jQuery
 	) {
 	"use strict";
 

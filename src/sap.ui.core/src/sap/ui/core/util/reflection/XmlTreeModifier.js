@@ -16,7 +16,7 @@ sap.ui.define([
 	DataType,
 	XMLTemplateProcessor,
 	merge,
-	jQueryDOM,
+	jQuery,
 	XMLHelper
 ) {
 
@@ -165,7 +165,7 @@ sap.ui.define([
 				}
 
 				// Use jQuery.find function to access control if getElementById(..) failed
-				var oNodes = jQueryDOM(document.getElementById(sId));
+				var oNodes = jQuery(document.getElementById(sId));
 				if (oNodes.length === 1) {
 					return oNodes[0];
 				}

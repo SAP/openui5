@@ -8,9 +8,10 @@ sap.ui.define([
 	'./BindingMode',
 	'./Context',
 	'./Filter',
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(MessageProcessor, BindingMode, Context, Filter, deepEqual) {
+	function(MessageProcessor, BindingMode, Context, Filter, deepEqual, jQuery) {
 	"use strict";
 
 

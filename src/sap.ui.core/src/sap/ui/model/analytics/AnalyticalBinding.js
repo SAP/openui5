@@ -721,7 +721,7 @@ sap.ui.define([
 			return false;
 		}
 		// children exist if it is not the rightmost grouped column or there is at least one further level with an ungrouped groupable column.
-		return jQuery.inArray(this.aAggregationLevel[iContextLevel - 1], this.aMaxAggregationLevel) < this.aMaxAggregationLevel.length - 1;
+		return this.aMaxAggregationLevel.indexOf(this.aAggregationLevel[iContextLevel - 1]) < this.aMaxAggregationLevel.length - 1;
 	};
 
 	/**
@@ -916,7 +916,7 @@ sap.ui.define([
 	 * @public
 	 */
 	AnalyticalBinding.prototype.isMeasure = function(sPropertyName) {
-		return jQuery.inArray(sPropertyName, this.aMeasureName) !== -1;
+		return this.aMeasureName && this.aMeasureName.indexOf(sPropertyName) !== -1;
 	};
 
 	/**
@@ -1257,7 +1257,7 @@ sap.ui.define([
 					}
 				}
 				if (aColumns[i].grouped == true) {
-					if (jQuery.inArray(oDimension.getName(), this.getSortablePropertyNames()) == -1) {
+					if (!this.getSortablePropertyNames() || this.getSortablePropertyNames().indexOf(oDimension.getName()) == -1) {
 						Log.fatal("property " + oDimension.getName() + " must be sortable in order to be used as grouped dimension");
 					}
 					oDimensionDetails.grouped = true;
@@ -1918,7 +1918,7 @@ sap.ui.define([
 					bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 					if (bIncludeUnitProperty) {
 						// remember unit property together with using measure raw value property for response analysis in success handler
-						if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
+						if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
 							aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 						}
 					}
@@ -1929,7 +1929,7 @@ sap.ui.define([
 			// exclude those unit properties from the selected that are included in the current aggregation level
 			for (var n in aAggregationLevelNoHierarchy) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = jQuery.inArray(aAggregationLevelNoHierarchy[n], aSelectedUnitPropertyName)) != -1) {
+				if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevelNoHierarchy[n])) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
@@ -2235,7 +2235,7 @@ sap.ui.define([
 					bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 					if (bIncludeUnitProperty) {
 						// remember unit property together with using measure raw value property for response analysis in success handler
-						if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
+						if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
 							aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 						}
 					}
@@ -2246,7 +2246,7 @@ sap.ui.define([
 			// exclude those unit properties from the selected that are included in the current aggregation level
 			for ( var j in aAggregationLevel) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[j], aSelectedUnitPropertyName)) != -1) {
+				if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevel[j])) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
@@ -2426,7 +2426,7 @@ sap.ui.define([
 
 		for ( var sMeasureName in this.oMeasureDetailsSet) {
 			oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
-			if (jQuery.inArray(oMeasureDetails.name, oMultiUnitRepresentative.aReloadMeasurePropertyName) == -1) {
+			if (!oMultiUnitRepresentative.aReloadMeasurePropertyName || oMultiUnitRepresentative.aReloadMeasurePropertyName.indexOf(oMeasureDetails.name) == -1) {
 				continue;
 			}
 			if (!bIsLeafGroupsRequest && this.mAnalyticalInfoByProperty[sMeasureName].total == false) {
@@ -2439,7 +2439,7 @@ sap.ui.define([
 				bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 				if (bIncludeUnitProperty) {
 					// remember unit property together with using measure raw value property for response analysis in success handler
-					if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
+					if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
 						aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 					}
 				}
@@ -2450,7 +2450,7 @@ sap.ui.define([
 		// exclude those unit properties from the selected that are included in the current aggregation level
 		for ( var j in aAggregationLevel) {
 			var iMatchingIndex;
-			if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[j], aSelectedUnitPropertyName)) != -1) {
+			if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevel[j])) != -1) {
 				aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 			}
 		}
@@ -4576,13 +4576,13 @@ sap.ui.define([
 			}
 			// determine if this measure that can be reloaded, because their unit properties do not have deviating values
 			if (aDeviatingUnitPropertyName) {
-				if (!oMeasureDetails.unitPropertyName || jQuery.inArray(oMeasureDetails.unitPropertyName, aDeviatingUnitPropertyName) == -1) {
+				if (!oMeasureDetails.unitPropertyName || aDeviatingUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
 					aReloadMeasurePropertyName.push(oMeasureDetails.rawValuePropertyName);
 				}
 			}
 		}
 		for (var k = 0; k < aSelectedUnitPropertyName.length; k++) {
-			if (jQuery.inArray(aSelectedUnitPropertyName[k], aDeviatingUnitPropertyName) != -1) {
+			if (aDeviatingUnitPropertyName.indexOf(aSelectedUnitPropertyName[k]) != -1) {
 				oMultiUnitEntry[aSelectedUnitPropertyName[k]] = "*";
 			}
 		}
@@ -4605,7 +4605,7 @@ sap.ui.define([
 
 		// check if an entry already exists; if so, dont proceed, but return it
 		var iMultiUnitEntryIndex;
-		if (this.mMultiUnitKey[sGroupId] && (iMultiUnitEntryIndex = jQuery.inArray(sMultiUnitEntryKey, this.mMultiUnitKey[sGroupId])) != -1) {
+		if (this.mMultiUnitKey[sGroupId] && (iMultiUnitEntryIndex = this.mMultiUnitKey[sGroupId].indexOf(sMultiUnitEntryKey)) != -1) {
 			return { oEntry: this.oModel.getObject("/" + sMultiUnitEntryKey), bIsNewEntry : false, iIndex: iMultiUnitEntryIndex, aReloadMeasurePropertyName: aReloadMeasurePropertyName }; // already created
 		}
 

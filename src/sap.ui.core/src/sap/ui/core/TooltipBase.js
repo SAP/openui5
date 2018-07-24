@@ -8,9 +8,11 @@ sap.ui.define([
 	'./Popup',
 	'./library',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
-	function(Control, Popup, library, KeyCodes) {
+	function(Control, Popup, library, KeyCodes, jQuery) {
 	"use strict";
 
 

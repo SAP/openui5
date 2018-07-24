@@ -11,7 +11,9 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	'sap/base/util/ObjectPath',
 	"sap/base/strings/capitalize",
 	"sap/base/security/encodeXML",
-	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "rect"
+	"sap/ui/dom/jquery/rect"
 ],
 	function(
 		DataType,
@@ -20,7 +22,8 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 		ElementMetadata,
 		ObjectPath,
 		capitalize,
-		encodeXML
+		encodeXML,
+		jQuery
 	) {
 	"use strict";
 

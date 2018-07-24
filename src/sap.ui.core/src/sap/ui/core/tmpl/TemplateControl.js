@@ -13,7 +13,8 @@ sap.ui.define([
 	"./TemplateControlRenderer",
 	"sap/base/strings/capitalize",
 	"sap/base/strings/hyphenate",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Control,
@@ -25,7 +26,8 @@ sap.ui.define([
 		TemplateControlRenderer,
 		capitalize,
 		hyphenate,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 

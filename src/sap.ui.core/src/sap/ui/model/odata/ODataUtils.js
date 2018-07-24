@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeURL"
 ],
-	function(Sorter, FilterProcessor, DateFormat, Log, assert, jquery, encodeURL ) {
+	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL ) {
 	"use strict";
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,

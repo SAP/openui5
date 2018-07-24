@@ -5,9 +5,10 @@ sap.ui.define([
 	'./Core',
 	'sap/ui/thirdparty/URI',
 	"sap/base/i18n/ResourceBundle",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(core, URI, ResourceBundle, Log) {
+	function(core, URI, ResourceBundle, Log, jQuery) {
 		"use strict";
 
 		/**

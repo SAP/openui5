@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/EventProvider',
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(AnnotationParser, Device, EventProvider, assert, Log) {
+	function(AnnotationParser, Device, EventProvider, assert, Log, jQuery) {
 	"use strict";
 
 	/*global ActiveXObject */

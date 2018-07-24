@@ -10,7 +10,8 @@ sap.ui.define([
 	'../Device',
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		BaseObject,
@@ -19,7 +20,8 @@ sap.ui.define([
 		Device,
 		Interaction,
 		Log,
-		assert
+		assert,
+		jQuery
 	) {
 	"use strict";
 

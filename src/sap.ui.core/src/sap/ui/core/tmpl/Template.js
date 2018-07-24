@@ -10,7 +10,6 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
 	'sap/base/util/ObjectPath',
-	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/base/assert",
 	'jquery.sap.sjax'
@@ -22,7 +21,6 @@ sap.ui.define([
 		Control,
 		RenderManager,
 		ObjectPath,
-		jQueryDOM,
 		Log,
 		assert
 	) {
@@ -321,7 +319,7 @@ sap.ui.define([
 		if (!(oRef instanceof Control) && bInline) {
 
 			// lookup the DOM element in which to place the template
-			var $this = typeof oRef === "string" ? jQueryDOM(document.getElementById(oRef)) : jQuery(oRef);
+			var $this = typeof oRef === "string" ? jQuery(document.getElementById(oRef)) : jQuery(oRef);
 
 			// the DOM element must exist
 			if ($this.length > 0) {

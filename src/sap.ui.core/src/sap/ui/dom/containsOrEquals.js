@@ -35,4 +35,3 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	return fnContainsOrEquals;
 
 });
-

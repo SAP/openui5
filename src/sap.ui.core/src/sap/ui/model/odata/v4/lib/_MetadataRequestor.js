@@ -7,8 +7,9 @@ sap.ui.define([
 	"./_Helper",
 	"./_V2MetadataConverter",
 	"./_V4MetadataConverter",
-	"sap/base/Log"
-], function (_Helper, _V2MetadataConverter, _V4MetadataConverter, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(_Helper, _V2MetadataConverter, _V4MetadataConverter, Log, jQuery) {
 	"use strict";
 
 	return {

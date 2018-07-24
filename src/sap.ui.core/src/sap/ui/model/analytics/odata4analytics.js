@@ -3109,7 +3109,7 @@ sap.ui.define([
 				throw "Cannot add filter condition for unknown property name " + sPropertyName; // TODO
 			}
 			var aFilterablePropertyNames = this._oEntityType.getFilterablePropertyNames();
-			if (jQuery.inArray(sPropertyName,aFilterablePropertyNames) === -1) {
+			if (((aFilterablePropertyNames ? Array.prototype.indexOf.call(aFilterablePropertyNames, sPropertyName) : -1)) === -1) {
 				throw "Cannot add filter condition for not filterable property name " + sPropertyName; // TODO
 			}
 			this._addCondition(sPropertyName, sOperator, oValue, oValue2);
@@ -3167,7 +3167,7 @@ sap.ui.define([
 				throw "Cannot add filter condition for unknown property name " + sPropertyName; // TODO
 			}
 			var aFilterablePropertyNames = this._oEntityType.getFilterablePropertyNames();
-			if (jQuery.inArray(sPropertyName, aFilterablePropertyNames) === -1) {
+			if (((aFilterablePropertyNames ? Array.prototype.indexOf.call(aFilterablePropertyNames, sPropertyName) : -1)) === -1) {
 				throw "Cannot add filter condition for not filterable property name " + sPropertyName; // TODO
 			}
 			for ( var i = -1, oValue; (oValue = aValues[++i]) !== undefined;) {
@@ -3638,7 +3638,7 @@ sap.ui.define([
 				return this;
 			}
 			var aSortablePropertyNames = this._oEntityType.getSortablePropertyNames();
-			if (jQuery.inArray(sPropertyName, aSortablePropertyNames) === -1) {
+			if (((aSortablePropertyNames ? Array.prototype.indexOf.call(aSortablePropertyNames, sPropertyName) : -1)) === -1) {
 				throw "Cannot add sort condition for not sortable property name " + sPropertyName; // TODO
 			}
 

@@ -11,7 +11,8 @@ sap.ui.define([
 	'./InvisibleText',
 	'./library',
 	"./IconRenderer",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		assert,
@@ -21,7 +22,8 @@ sap.ui.define([
 		InvisibleText,
 		library,
 		IconRenderer,
-		KeyCodes
+		KeyCodes,
+		jQuery
 	) {
 	"use strict";
 

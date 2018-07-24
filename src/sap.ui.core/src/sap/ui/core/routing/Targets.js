@@ -7,9 +7,10 @@ sap.ui.define([
 	'./async/Targets',
 	'./sync/Targets',
 	"sap/base/util/UriParameters",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(EventProvider, Target, asyncTargets, syncTargets, UriParameters, Log) {
+	function(EventProvider, Target, asyncTargets, syncTargets, UriParameters, Log, jQuery) {
 		"use strict";
 
 		/**

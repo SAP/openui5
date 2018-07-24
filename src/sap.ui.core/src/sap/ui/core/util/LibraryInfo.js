@@ -6,9 +6,10 @@
 sap.ui.define([
 	'sap/ui/base/Object',
 	"sap/base/Log",
-	"sap/base/util/Version"
+	"sap/base/util/Version",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(BaseObject, Log, Version) {
+	function(BaseObject, Log, Version, jQuery) {
 	"use strict";
 
 	/**

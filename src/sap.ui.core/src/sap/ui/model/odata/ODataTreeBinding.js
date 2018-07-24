@@ -3,8 +3,13 @@
  */
 
 // Provides the OData model implementation of a tree binding
-sap.ui.define(['sap/ui/model/TreeBinding', './CountMode', "sap/base/Log"],
-	function(TreeBinding, CountMode, Log) {
+sap.ui.define([
+	'sap/ui/model/TreeBinding',
+	'./CountMode',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(TreeBinding, CountMode, Log, jQuery) {
 	"use strict";
 
 

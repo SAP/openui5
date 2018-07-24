@@ -737,7 +737,7 @@ sap.ui.define([
 			if (!this._oManagedObjectModel) {
 				this._getManagedObjectModel();
 			}
-			if (jQuery.isArray(oNewContent)) {
+			if (Array.isArray(oNewContent)) {
 				this.setAggregation(sCompositeName, null);
 				return;
 			}

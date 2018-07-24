@@ -2,10 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException',
-		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
-		'sap/ui/model/ValidateException', "sap/base/Log"],
-	function(NumberFormat, FormatException, ODataType, ParseException, ValidateException, Log) {
+sap.ui.define([
+	'sap/ui/core/format/NumberFormat',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/odata/type/ODataType',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		NumberFormat,
+		FormatException,
+		ODataType,
+		ParseException,
+		ValidateException,
+		Log,
+		jQuery
+	) {
 	"use strict";
 
 	/**

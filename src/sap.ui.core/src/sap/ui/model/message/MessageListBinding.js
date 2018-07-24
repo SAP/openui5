@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/model/ClientListBinding',
 	"sap/base/strings/hash",
 	"sap/base/util/array/diff",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(ChangeReason, ClientListBinding, hash, diff, deepEqual) {
+	function(ChangeReason, ClientListBinding, hash, diff, deepEqual, jQuery) {
 	"use strict";
 
 

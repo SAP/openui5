@@ -3,8 +3,13 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['sap/ui/base/Object', './FilterOperator', "sap/base/Log"],
-	function(BaseObject, FilterOperator, Log) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'./FilterOperator',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(BaseObject, FilterOperator, Log, jQuery) {
 	"use strict";
 
 	/**

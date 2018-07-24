@@ -9,8 +9,9 @@ sap.ui.define([
 	"./_AggregationHelper",
 	"./_Cache",
 	"./_Helper",
-	"./_Parser"
-], function (SyncPromise, Log, _AggregationHelper, _Cache, _Helper, _Parser) {
+	"./_Parser",
+	"sap/ui/thirdparty/jquery"
+], function (SyncPromise, Log, _AggregationHelper, _Cache, _Helper, _Parser, jQuery) {
 	"use strict";
 
 	var rComma = /,|%2C|%2c/,

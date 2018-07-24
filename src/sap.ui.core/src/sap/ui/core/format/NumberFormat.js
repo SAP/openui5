@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	"sap/base/strings/escapeRegExp",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(BaseObject, Locale, LocaleData, escapeRegExp, assert) {
+	function(BaseObject, Locale, LocaleData, escapeRegExp, assert, jQuery) {
 	"use strict";
 
 

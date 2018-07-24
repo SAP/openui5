@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"./ViewRenderer",
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		ManagedObject,
@@ -21,7 +22,8 @@ sap.ui.define([
 		library,
 		ViewRenderer,
 		assert,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 
