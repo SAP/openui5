@@ -799,9 +799,6 @@ sap.ui.define([
 					that._getAccExtension().updateAccForCurrentCell(false);
 					that._updateSelection();
 
-					// TODO: check if this can be removed:
-					that._collectTableSizes();
-
 					// row heights
 					that._aRowHeights = that._collectRowHeights(false);
 					that._updateRowHeights(that._collectRowHeights(true), true); // column header rows
@@ -823,12 +820,6 @@ sap.ui.define([
 		this._initSelectionModel(SelectionModel.MULTI_SELECTION);
 
 		this._aTableHeaders = [];
-
-		// columns to cells map
-		this._aIdxCols2Cells = [];
-
-		// flag whether the editable property should be inherited or not
-		this._bInheritEditableToControls = false;
 
 		// text selection for column headers?
 		this._bAllowColumnHeaderTextSelection = false;
@@ -2056,7 +2047,6 @@ sap.ui.define([
 		var iFirstVisibleRow = this._getFirstRenderedRowIndex();
 		var iFixedRowCount = this.getFixedRowCount();
 		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		var iReceivedLength = 0;
 		var bReceivedLessThanRequested;
 		var aContexts = [];
 		var aTmpContexts;
@@ -2091,7 +2081,6 @@ sap.ui.define([
 			iMergeOffsetScrollRows = iFixedRowCount;
 			// retrieve fixed rows separately
 			aTmpContexts = this._getFixedRowContexts(iFixedRowCount);
-			iReceivedLength += aTmpContexts.length;
 			aContexts = aContexts.concat(aTmpContexts);
 		}
 
@@ -2110,7 +2099,6 @@ sap.ui.define([
 
 		// get the binding length after getContext call to make sure that for TreeBindings the client tree was correctly rebuilt
 		// this step can be moved to an earlier point when the TreeBindingAdapters all implement tree invalidation in case of getLength calls
-		iReceivedLength += aTmpContexts.length;
 		fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetScrollRows);
 
 		// request binding length after getContexts call to make sure that in case of tree binding and analytical binding
@@ -2122,7 +2110,6 @@ sap.ui.define([
 			// to the correct row index otherwise they would flip into the scroll area in case data gets requested for
 			// the scroll part.
 			aTmpContexts = this._getFixedBottomRowContexts(iFixedBottomRowCount, iBindingLength);
-			iReceivedLength += aTmpContexts.length;
 			fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetBottomRow);
 		}
 
