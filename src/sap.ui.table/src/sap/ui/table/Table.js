@@ -1277,16 +1277,16 @@ sap.ui.define([
 		this._detachEvents();
 
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
-
 		var aRows = this.getRows();
+
+		this.getBinding("rows"); // Initializes the experimental grouping functionality (just in case it is required).
+
 		if (sVisibleRowCountMode == VisibleRowCountMode.Interactive ||
 			sVisibleRowCountMode == VisibleRowCountMode.Fixed ||
 			(sVisibleRowCountMode == VisibleRowCountMode.Auto && this._iTableRowContentHeight && aRows.length == 0)) {
 
-			// Necessary due to the fact that getBinding initializes the grouping functionality
-			this.getBinding("rows");
-
 			this._updateRows(this._calculateRowsToDisplay(), TableUtils.RowsUpdateReason.Render);
+
 		} else if (this._bRowAggregationInvalid && aRows.length > 0) {
 			// Rows got invalidated, recreate rows with new template
 			this._updateRows(aRows.length, TableUtils.RowsUpdateReason.Render);
