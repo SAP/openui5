@@ -32,7 +32,7 @@
  * {@link sap.base.log.Logger#getLevel} allows to retrieve the currently effective log level for a given
  * component.
  *
- * {@link sap.base.log.getLogEntries} returns an array of the currently collected log entries.
+ * {@link sap.base.log.getLog} returns an array of the currently collected log entries.
  *
  * Furthermore, a listener can be registered to the log. It will be notified whenever a new entry
  * is added to the log. The listener can be used for displaying log entries in a separate page area,
