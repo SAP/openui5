@@ -290,6 +290,26 @@
 			oTabStrip.destroy();
 		});
 
+		QUnit.test("TabStripSelectList rendering", function (assert) {
+			var oItem,
+				oCSList = new sap.m.internal.TabStripSelectList({
+					items: [
+						oItem = new sap.m.TabStripItem("tab1", {text: "Tab 1"})
+					]
+				});
+
+			oCSList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oItem.$().focus();
+
+			//assert
+			assert.strictEqual(oItem.$().attr("tabindex"), "0", "TabStripSelectList has tabindex 0 set");
+
+			// clean up
+			oCSList.destroy();
+		});
 
 		QUnit.module("Keyboard Handling", {
 			beforeEach: function () {
