@@ -4,22 +4,132 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/Utils',
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/ObjectPath"
 ],
 function(
 	ManagedObject,
 	ElementUtil,
+	OverlayUtil,
 	OverlayRegistry,
 	ChangeRegistry,
 	FlexUtils,
+	JsControlTreeModifier,
 	jQuery,
 	ObjectPath
 ) {
 	"use strict";
+
+	function evaluateTemplateBinding(oElementOverlay, vElement, sAggregationName, mFlexSettings){
+		var bTemplateBinding = false;
+
+		var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay, sAggregationName);
+		if (mBoundControl.elementId) {
+			//check for additional binding
+			var oBoundControlOverlay = OverlayRegistry.getOverlay(mBoundControl.elementId);
+			var oParentElementOverlay = oBoundControlOverlay.getParentElementOverlay();
+			var bAdditionalBinding = oParentElementOverlay ?
+				OverlayUtil.isInAggregationBinding(oParentElementOverlay, oParentElementOverlay.sParentAggregationName) : false;
+
+			if (bAdditionalBinding) {
+				throw new Error("Multiple template bindings are not supported");
+			}
+
+			var sOriginalId = vElement.id || vElement.getId();
+			var sTemplateId = ElementUtil.extractTemplateId(sOriginalId, mBoundControl);
+			if (sTemplateId) {
+				Object.assign(mFlexSettings, {
+					templateSelector : mBoundControl.elementId,
+					originalSelector : sTemplateId,
+					content : {
+						boundAggregation : mBoundControl.aggregation
+					}
+				});
+				bTemplateBinding = true;
+			}
+		}
+		return bTemplateBinding;
+	}
+
+	function adjustSettingsMap(mSettings){
+		var fnGetTemplateElementId = function(vElementOrId) {
+			var oElement = (typeof vElementOrId === "string") ? sap.ui.getCore().byId(vElementOrId) : vElementOrId;
+			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+			if (oElementOverlay) {
+				var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay, oElementOverlay.sParentAggregationName);
+				return ElementUtil.extractTemplateId(oElement.getId(), mBoundControl);
+			} else {
+				return oElement.getId();
+			}
+		};
+		var fnEvaluateResult = function(vElementOrId) {
+			if (!vElementOrId) {
+				throw new Error("adjustment for template failed");
+			}
+		};
+
+		switch (mSettings.name) {
+			case "move":
+				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
+				fnEvaluateResult(mSettings.element);
+				mSettings.source.parent = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.source.parent));
+				fnEvaluateResult(mSettings.source.parent);
+				mSettings.target.parent = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.target.parent));
+				fnEvaluateResult(mSettings.target.parent);
+				mSettings.movedElements.forEach(function(oMovedElement){
+					oMovedElement.element = sap.ui.getCore().byId(fnGetTemplateElementId(oMovedElement.element));
+					fnEvaluateResult(oMovedElement.element);
+				});
+				break;
+			case "combine":
+				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
+				fnEvaluateResult(mSettings.element);
+				mSettings.source = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.source));
+				fnEvaluateResult(mSettings.source);
+				mSettings.combineFields.forEach(function(oCombineField){
+					oCombineField = sap.ui.getCore().byId(fnGetTemplateElementId(oCombineField));
+					fnEvaluateResult(oCombineField);
+				});
+				break;
+			case "split":
+				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
+				fnEvaluateResult(mSettings.element);
+				mSettings.parentElement = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.parentElement));
+				fnEvaluateResult(mSettings.parentElement);
+				mSettings.source = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.source));
+				fnEvaluateResult(mSettings.source);
+				break;
+			case "createContainer":
+				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
+				fnEvaluateResult(mSettings.element);
+				mSettings.parentId = fnGetTemplateElementId(mSettings.parentId);
+				fnEvaluateResult(mSettings.parentId);
+				break;
+			case "remove":
+				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
+				fnEvaluateResult(mSettings.element);
+				mSettings.removedElement = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.removedElement));
+				fnEvaluateResult(mSettings.removedElement);
+				break;
+			case "rename":
+				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
+				fnEvaluateResult(mSettings.element);
+				mSettings.renamedElement = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.renamedElement));
+				fnEvaluateResult(mSettings.renamedElement);
+				break;
+			case "addXML":
+				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
+				fnEvaluateResult(mSettings.element);
+				break;
+			default:
+				// do nothing
+		}
+	}
 
 	function configureActionCommand(oElement, oCommand, vAction){
 		var sChangeType;
@@ -204,15 +314,23 @@ function(
 			oAction = mCommand.configure(vElement, mSettings, oDesignTimeMetadata);
 		}
 
-		var oElementOverlay;
+		if (bIsUiElement) {
+			var oElementOverlay = OverlayRegistry.getOverlay(vElement);
+		}
 		if (oAction && oAction.changeOnRelevantContainer) {
-			oElementOverlay = OverlayRegistry.getOverlay(vElement);
 			mSettings = jQuery.extend(mSettings, {
 				element : oElementOverlay.getRelevantContainer()
 			});
 			vElement = mSettings.element;
 		}
 
+		if (oElementOverlay && vElement.sParentAggregationName) {
+			var bTemplateBinding = evaluateTemplateBinding(oElementOverlay, vElement, vElement.sParentAggregationName, mFlexSettings);
+		}
+
+		if (bTemplateBinding) {
+			adjustSettingsMap(mSettings);
+		}
 		var oCommand = new Command(mSettings);
 
 		var bSuccessfullConfigured = true; //configuration is optional

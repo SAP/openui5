@@ -600,7 +600,8 @@ sap.ui.define([
 		var bXmlModifier = mPropertyBag.modifier.targets === "xmlTree";
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, oModifier);
+		var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
+		var oChangeHandler = this._getChangeHandler(oChange, mControl.controlType, mControl.control, oModifier);
 		var oSettings;
 		var oRtaControlTreeModifier;
 
@@ -619,7 +620,7 @@ sap.ui.define([
 		var oAppliedChangeCustomData = mAppliedChangesCustomData.customData;
 
 		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier, mAppliedChangesCustomData)) {
-			var bRevertible = this.isChangeHandlerRevertible(oChange, oControl, oChangeHandler);
+			var bRevertible = this.isChangeHandlerRevertible(oChange, mControl.control, oChangeHandler);
 
 			return new Utils.FakePromise()
 			.then(function() {
@@ -647,7 +648,11 @@ sap.ui.define([
 			})
 			.then(function() {
 				oChange.PROCESSING = oChange.PROCESSING ? oChange.PROCESSING : true;
-				return oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
+				var oInitializedControl = oChangeHandler.applyChange(oChange, mControl.control, mPropertyBag);
+				if (mControl.bTemplateAffected) {
+					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
+				}
+				return oInitializedControl;
 			})
 			.then(function(oInitializedControl) {
 				// changeHandler can return a different control, e.g. case where a visible UI control replaces the stashed control
@@ -713,7 +718,8 @@ sap.ui.define([
 		var aAppliedChanges, oAppliedChangeCustomData, iIndex;
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, oModifier);
+		var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
+		var oChangeHandler = this._getChangeHandler(oChange, mControl.controlType, mControl.control, oModifier);
 		var vResult;
 
 		if (bRevert && !oChangeHandler) {
@@ -744,7 +750,11 @@ sap.ui.define([
 
 		return vResult.then(function(bPending) {
 			if (bRevert && (bPending || (!bPending && iIndex > -1))) {
-				return oChangeHandler.revertChange(oChange, oControl, mPropertyBag);
+				var oResponse = oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
+				if (mControl.bTemplateAffected) {
+					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
+				}
+				return oResponse;
 			}
 		})
 
@@ -860,6 +870,35 @@ sap.ui.define([
 		// make sure to use the most current flex settings that have been retrieved during processView
 		oInstance.initSettings();
 		return oInstance;
+	};
+
+	/**
+	 * Returns the control map containing control and control type
+	 *
+	 * @param {sap.ui.fl.Change} oChange - change to be evaluated if template is affected
+	 * @param {sap.ui.core.Control} oControl - control which is the target of the passed change
+	 * @param {string} sControlType - control type of the given control
+	 * @param {map} mPropertyBag - contains additional data that are needed for reading of changes
+	 * - {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - The control tree modifier
+	 * - {sap.ui.core.Component} oAppComponent - component instance that is currently loading
+	 * @returns {map} mControl contains the original selector control of the template and its control type
+	 * - control {object}
+	 * - controlType {string}
+	 * @private
+	 */
+	FlexController.prototype._getControlIfTemplateAffected = function (oChange, oControl, sControlType, mPropertyBag) {
+		var oChangeDefinition = oChange.getDefinition();
+		var mControl = {};
+		if (oChange.getContent().boundAggregation && oChangeDefinition.dependentSelector.originalSelector) {
+			mControl.control = mPropertyBag.modifier.bySelector(oChangeDefinition.dependentSelector.originalSelector, mPropertyBag.appComponent, mPropertyBag.view);
+			mControl.controlType = mControl.control.getMetadata().getName();
+			mControl.bTemplateAffected = true;
+		} else {
+			mControl.control = oControl;
+			mControl.controlType = sControlType;
+			mControl.bTemplateAffected = false;
+		}
+		return mControl;
 	};
 
 	/**

@@ -398,5 +398,39 @@ function(
 		}
 	};
 
+	/**
+	 * Returns for a given element the corresponding element id of the element inside of a binding template
+	 * This function uses the information gathered in the output of OverlayUtil.getAggregationInformation
+	 * The check is done recursively
+	 * @param  {string} sElementId    The element id of a rendered element
+	 * @param  {map}    mBoundControl The name of the aggregation being checked
+	 * @return {string}               Returns the element id of the corresponding element inside of a template
+	 */
+	ElementUtil.extractTemplateId = function(sElementId, mBoundControl) {
+		if (mBoundControl.stack.length > 1) {
+			var oBoundControl = sap.ui.getCore().byId(mBoundControl.elementId);
+			var sTemplateAggregation = mBoundControl.stack[mBoundControl.stack.length - 1].aggregation;
+			var oTemplate = oBoundControl.getBindingInfo(sTemplateAggregation).template;
+
+			if (mBoundControl.stack.length > 2) {
+				var oResultControl;
+				var oAggregatedControl = oTemplate;
+				var sAggregation;
+				var iIndex;
+				for (var i = mBoundControl.stack.length - 2; i > 0; i--) {
+					sAggregation = mBoundControl.stack[i].aggregation;
+					iIndex = mBoundControl.stack[i - 1].index;
+					oResultControl = ElementUtil.getAggregation(oAggregatedControl, sAggregation)[iIndex];
+					oAggregatedControl = oResultControl;
+				}
+				return oAggregatedControl.getId();
+			} else {
+				return oTemplate.getId();
+			}
+		} else {
+			return mBoundControl.elementId;
+		}
+	};
+
 	return ElementUtil;
 }, /* bExport= */true);

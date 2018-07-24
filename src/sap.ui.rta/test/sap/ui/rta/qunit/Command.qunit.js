@@ -3,10 +3,16 @@
 sap.ui.require([
 	'sap/m/Button',
 	'sap/m/Input',
+	'sap/m/Text',
+	'sap/m/VBox',
+	'sap/m/List',
+	'sap/m/CustomListItem',
 	'sap/m/ObjectHeader',
 	'sap/m/ObjectAttribute',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/table/Column',
+	'sap/ui/dt/DesignTime',
+	"sap/ui/dt/OverlayRegistry",
 	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/command/FlexCommand',
@@ -30,10 +36,16 @@ sap.ui.require([
 function(
 	Button,
 	Input,
+	Text,
+	VBox,
+	List,
+	CustomListItem,
 	ObjectHeader,
 	ObjectAttribute,
 	VerticalLayout,
 	Column,
+	DesignTime,
+	OverlayRegistry,
 	ElementDesignTimeMetadata,
 	CommandFactory,
 	FlexCommand,
@@ -1038,4 +1050,253 @@ function(
 					});
 		});
 	});
+
+	QUnit.module("Given a command factory and a bound control containing a template binding", {
+		beforeEach : function(assert) {
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+			var done = assert.async();
+
+			var aTexts = [{text1: "Text 1", text2: "More Text 1"}, {text1: "Text 2", text2: "More Text 2"}, {text1: "Text 3", text2: "More Text 3"}];
+			var oModel = new JSONModel({
+				texts : aTexts
+			});
+
+			this.oItemTemplate = new CustomListItem("item", {
+				content : new VBox("vbox1", {
+					items : [
+						new VBox("vbox2", {
+							items : [
+								new VBox("vbox3", {
+									items : [
+										new Text("text1", {text : "{text1}"}),
+										new Text("text2", {text : "{text2}"})
+									]
+								})
+							]
+						})
+					]
+				})
+			});
+			this.oList = new List("list", {
+				items : {
+					path : "/texts",
+					template : this.oItemTemplate,
+					templateShareable : true
+				}
+			}).setModel(oModel);
+			this.oVBox31 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0];
+			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
+			this.oText2 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[1];
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oList]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
+				this.oVbox31Overlay = OverlayRegistry.getOverlay(this.oVBox31);
+				this.oText1Overlay = OverlayRegistry.getOverlay(this.oText1);
+				this.oText2Overlay = OverlayRegistry.getOverlay(this.oText2);
+				done();
+			}.bind(this));
+
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
+			oChangeRegistry.registerControlsForChanges({
+				"sap.m.VBox" : {
+					"moveControls": "default"
+				},
+				"sap.m.Text" : {
+					"hideControl" : "default",
+					"rename" : sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
+						propertyName: "text",
+						translationTextType: "XTXT"
+					})
+				}
+			});
+		},
+		afterEach : function(assert) {
+			sandbox.restore();
+			this.oList.destroy();
+			this.oItemTemplate.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function() {
+		QUnit.test("when getting a move change command for a bound control deep inside a bound list control,", function(assert) {
+			var oCreateChangeFromDataSpy = sandbox.spy(FlexCommand.prototype, "_createChangeFromData");
+			var oCompleteChangeContentSpy = sandbox.spy(MoveControls, "completeChangeContent");
+			var oApplyChangeSpy = sandbox.spy(MoveControls, "applyChange");
+
+			var oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: "CUSTOMER",
+					developerMode: false
+				}
+			});
+
+			// select the second text in the inner vbox of the third list item
+			var oMovedElement = this.oText1;
+			var oRelevantContainer = oMovedElement.getParent();
+			var oSource = {
+				parent : oRelevantContainer,
+				aggregation: "items"
+			};
+			var oTarget = oSource;
+			var oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data : {
+					actions : {
+						move : "moveControls"
+					}
+				}
+			});
+
+			var oExpectedFlexSettings = {
+				layer: "CUSTOMER",
+				developerMode: false,
+				originalSelector : "vbox3",
+				templateSelector : "list",
+				content : {
+					boundAggregation : "items"
+				}
+			};
+			var oCommand = oCommandFactory.getCommandFor(oRelevantContainer, "move", {
+				movedElements : [{
+					element : oMovedElement,
+					sourceIndex : 0,
+					targetIndex : 1
+				}],
+				source : oSource,
+				target : oTarget
+			}, oSourceParentDesignTimeMetadata);
+
+			assert.ok(oCommand, "then command is available");
+			assert.equal(oCreateChangeFromDataSpy.callCount, 2, "and '_createChangeFromData' is called twice (once for prepare change and once for undo change");
+			assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
+			assert.deepEqual(oCreateChangeFromDataSpy.args[1][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
+			assert.strictEqual(oCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
+			assert.strictEqual(oCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
+			assert.strictEqual(oCommand.getPreparedChange().getContent().source.selector.id, oCommand.getPreparedChange().getDefinition().dependentSelector.source.id, "and the content of the change is also adjusted");
+			assert.strictEqual(oCommand.getPreparedChange().getContent().target.selector.id, oCommand.getPreparedChange().getDefinition().dependentSelector.target.id, "and the content of the change is also adjusted");
+			assert.strictEqual(oCommand.getPreparedChange().getContent().movedElements[0].selector.id, oCommand.getPreparedChange().getDefinition().dependentSelector.movedElements[0].id, "and the content of the change is also adjusted");
+
+			return oCommand.execute().then(function() {
+				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (once for prepare change and once for undo change)");
+				assert.equal(oApplyChangeSpy.callCount, 1, "then applyChange is called once");
+				assert.equal(this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getText(), "More Text 1", "and text control in first item has been moved");
+				assert.equal(this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[1].getText(), "Text 1", "and text control in first item has been moved");
+				assert.equal(this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getText(), "More Text 2", "and text control in second item has been moved");
+				assert.equal(this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[1].getText(), "Text 2", "and text control in second item has been moved");
+				assert.equal(this.oList.getItems()[2].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getText(), "More Text 3", "and text control in third item has been moved");
+				assert.equal(this.oList.getItems()[2].getContent()[0].getItems()[0].getItems()[0].getItems()[1].getText(), "Text 3", "and text control in third item has been moved");
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Given a command factory and a bound control containing multiple template bindings", {
+		beforeEach : function(assert) {
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+			var done = assert.async();
+
+			var aInnerTexts = [{text: "More Text 1"}, {text: "More Text 2"}, {text: "More Text 3"}];
+			var aTexts1 = [{text: "Text 1", inner: aInnerTexts}, {text: "Text 2", inner: aInnerTexts}, {text: "Text 3", inner: aInnerTexts}];
+			var oModel = new JSONModel({
+				texts1 : aTexts1
+			});
+
+			this.oItemTemplate = new CustomListItem("item", { //binding context /texts1
+				content : new VBox(oMockedAppComponent.createId("vbox1"), {
+					items : [
+						new Text({id: oMockedAppComponent.createId("text"), text: "{text}"}), //binding context /texts1
+						new VBox(oMockedAppComponent.createId("vbox2"), {
+							items : {
+								path : "inner",
+								template : new Text({id: oMockedAppComponent.createId("inner-text"), text:"{text}"}), //binding context /texts1/inner
+								templateShareable : false
+							}
+						})
+					]
+				})
+			});
+			this.oList = new List(oMockedAppComponent.createId("list"), {
+				items : {
+					path : "/texts1",
+					template : this.oItemTemplate,
+					templateShareable : true
+				}
+			}).setModel(oModel);
+
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
+			oChangeRegistry.registerControlsForChanges({
+				"sap.m.VBox" : {
+					"moveControls": "default"
+				},
+				"sap.m.Text" : {
+					"hideControl" : "default",
+					"rename" : sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
+						propertyName: "text",
+						translationTextType: "XTXT"
+					})
+				}
+			});
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oList]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
+				done();
+			}.bind(this));
+
+		},
+		afterEach : function(assert) {
+			sandbox.restore();
+			this.oList.destroy();
+			this.oItemTemplate.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function() {
+		QUnit.test("when getting a move change command for a bound control deep inside a bound list control,", function(assert) {
+			var oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: "CUSTOMER",
+					developerMode: false
+				}
+			});
+
+			// select the second text in the inner vbox of the third list item
+			var oMovedElement = this.oList.getItems()[2].getContent()[0].getItems()[1].getItems()[1];
+			var oRelevantContainer = oMovedElement.getParent();
+			var oSource = {
+				parent : oRelevantContainer,
+				aggregation: "items"
+			};
+			var oTarget = oSource;
+			var oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data : {
+					actions : {
+						move : "moveControls"
+					}
+				}
+			});
+
+			assert.throws(function() {
+					oCommandFactory.getCommandFor(oRelevantContainer, "move", {
+						movedElements : [{
+							element : oMovedElement,
+							sourceIndex : 1,
+							targetIndex : 2
+						}],
+						source : oSource,
+						target : oTarget
+					}, oSourceParentDesignTimeMetadata);
+				},
+				new Error("Multiple template bindings are not supported"),
+				"an error message is raised that multiple bindings are not supported"
+			);
+		});
+	});
+
 });
