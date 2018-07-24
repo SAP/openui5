@@ -402,9 +402,9 @@ function(
 	 * Returns for a given element the corresponding element id of the element inside of a binding template
 	 * This function uses the information gathered in the output of OverlayUtil.getAggregationInformation
 	 * The check is done recursively
-	 * @param  {string} sElementId    The element id of a rendered element
-	 * @param  {map}    mBoundControl The name of the aggregation being checked
-	 * @return {string}               Returns the element id of the corresponding element inside of a template
+	 * @param  {string} sElementId                              The element id of a rendered element
+	 * @param  {sap.ui.dt.OverlayUtil.AggregationBindingStack}  mBoundControl {@link sap.ui.dt.OverlayUtil.AggregationBindingStack}
+	 * @return {string}                                         Returns the element id of the corresponding element inside of a template
 	 */
 	ElementUtil.extractTemplateId = function(sElementId, mBoundControl) {
 		if (mBoundControl.stack.length > 1) {
