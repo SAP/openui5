@@ -56,78 +56,20 @@ function(
 		return bTemplateBinding;
 	}
 
-	function adjustSettingsMap(mSettings){
-		var fnGetTemplateElementId = function(vElementOrId) {
-			var oElement = (typeof vElementOrId === "string") ? sap.ui.getCore().byId(vElementOrId) : vElementOrId;
-			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
-			if (oElementOverlay) {
-				var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay, oElementOverlay.sParentAggregationName);
-				return ElementUtil.extractTemplateId(oElement.getId(), mBoundControl);
-			} else {
-				return oElement.getId();
-			}
-		};
-		var fnEvaluateResult = function(vElementOrId) {
-			if (!vElementOrId) {
-				throw new Error("adjustment for template failed");
-			}
-		};
+	function getTemplateElementId(vElementOrId) {
+		var oElement = (typeof vElementOrId === "string") ? sap.ui.getCore().byId(vElementOrId) : vElementOrId;
+		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+		if (oElementOverlay) {
+			var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay, oElementOverlay.sParentAggregationName);
+			return ElementUtil.extractTemplateId(oElement.getId(), mBoundControl);
+		} else {
+			return oElement.getId();
+		}
+	}
 
-		switch (mSettings.name) {
-			case "move":
-				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
-				fnEvaluateResult(mSettings.element);
-				mSettings.source.parent = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.source.parent));
-				fnEvaluateResult(mSettings.source.parent);
-				mSettings.target.parent = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.target.parent));
-				fnEvaluateResult(mSettings.target.parent);
-				mSettings.movedElements.forEach(function(oMovedElement){
-					oMovedElement.element = sap.ui.getCore().byId(fnGetTemplateElementId(oMovedElement.element));
-					fnEvaluateResult(oMovedElement.element);
-				});
-				break;
-			case "combine":
-				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
-				fnEvaluateResult(mSettings.element);
-				mSettings.source = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.source));
-				fnEvaluateResult(mSettings.source);
-				mSettings.combineFields.forEach(function(oCombineField){
-					oCombineField = sap.ui.getCore().byId(fnGetTemplateElementId(oCombineField));
-					fnEvaluateResult(oCombineField);
-				});
-				break;
-			case "split":
-				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
-				fnEvaluateResult(mSettings.element);
-				mSettings.parentElement = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.parentElement));
-				fnEvaluateResult(mSettings.parentElement);
-				mSettings.source = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.source));
-				fnEvaluateResult(mSettings.source);
-				break;
-			case "createContainer":
-				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
-				fnEvaluateResult(mSettings.element);
-				mSettings.parentId = fnGetTemplateElementId(mSettings.parentId);
-				fnEvaluateResult(mSettings.parentId);
-				break;
-			case "remove":
-				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
-				fnEvaluateResult(mSettings.element);
-				mSettings.removedElement = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.removedElement));
-				fnEvaluateResult(mSettings.removedElement);
-				break;
-			case "rename":
-				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
-				fnEvaluateResult(mSettings.element);
-				mSettings.renamedElement = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.renamedElement));
-				fnEvaluateResult(mSettings.renamedElement);
-				break;
-			case "addXML":
-				mSettings.element = sap.ui.getCore().byId(fnGetTemplateElementId(mSettings.element));
-				fnEvaluateResult(mSettings.element);
-				break;
-			default:
-				// do nothing
+	function evaluateResult(vElementOrId) {
+		if (!vElementOrId) {
+			throw new Error("adjustment for template failed");
 		}
 	}
 
@@ -160,10 +102,22 @@ function(
 		return oAction;
 	}
 
+	function adjustAddXmlCommand(mSettings){
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
+		evaluateResult(mSettings.element);
+	}
+
 	function configureCreateContainerCommand(oElement, mSettings, oDesignTimeMetadata){
 		var oNewAddedElement = mSettings.element || sap.ui.getCore().byId(mSettings.element.id);
 		var oAction = oDesignTimeMetadata.getActionDataFromAggregations("createContainer", oNewAddedElement)[0];
 		return oAction;
+	}
+
+	function adjustCreateContainerCommand(mSettings){
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
+		evaluateResult(mSettings.element);
+		mSettings.parentId = getTemplateElementId(mSettings.parentId);
+		evaluateResult(mSettings.parentId);
 	}
 
 	function configureMoveCommand(oElement, mSettings, oDesignTimeMetadata){
@@ -178,10 +132,30 @@ function(
 		return oAction;
 	}
 
+	function adjustMoveCommand(mSettings){
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
+		evaluateResult(mSettings.element);
+		mSettings.source.parent = sap.ui.getCore().byId(getTemplateElementId(mSettings.source.parent));
+		evaluateResult(mSettings.source.parent);
+		mSettings.target.parent = sap.ui.getCore().byId(getTemplateElementId(mSettings.target.parent));
+		evaluateResult(mSettings.target.parent);
+		mSettings.movedElements.forEach(function(oMovedElement){
+			oMovedElement.element = sap.ui.getCore().byId(getTemplateElementId(oMovedElement.element));
+			evaluateResult(oMovedElement.element);
+		});
+	}
+
 	function configureRenameCommand(oElement, mSettings, oDesignTimeMetadata){
 		var oRenamedElement = mSettings.renamedElement;
 		var oAction = oDesignTimeMetadata.getAction("rename", oRenamedElement);
 		return oAction;
+	}
+
+	function adjustRenameCommand(mSettings){
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
+		evaluateResult(mSettings.element);
+		mSettings.renamedElement = sap.ui.getCore().byId(getTemplateElementId(mSettings.renamedElement));
+		evaluateResult(mSettings.renamedElement);
 	}
 
 	function configureRemoveCommand(oElement, mSettings, oDesignTimeMetadata){
@@ -195,16 +169,43 @@ function(
 		return oAction;
 	}
 
+	function adjustRemoveCommand(mSettings){
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
+		evaluateResult(mSettings.element);
+		mSettings.removedElement = sap.ui.getCore().byId(getTemplateElementId(mSettings.removedElement));
+		evaluateResult(mSettings.removedElement);
+	}
+
 	function configureCombineCommand(oElement, mSettings, oDesignTimeMetadata){
 		var oCombineElement = mSettings.source;
 		var oAction = oDesignTimeMetadata.getAction("combine", oCombineElement);
 		return oAction;
 	}
 
+	function adjustCombineCommand(mSettings){
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
+		evaluateResult(mSettings.element);
+		mSettings.source = sap.ui.getCore().byId(getTemplateElementId(mSettings.source));
+		evaluateResult(mSettings.source);
+		mSettings.combineFields.forEach(function(oCombineField){
+			oCombineField = sap.ui.getCore().byId(getTemplateElementId(oCombineField));
+			evaluateResult(oCombineField);
+		});
+	}
+
 	function configureSplitCommand(oElement, mSettings, oDesignTimeMetadata){
 		var oSplitElement = mSettings.source;
 		var oAction = oDesignTimeMetadata.getAction("split", oSplitElement);
 		return oAction;
+	}
+
+	function adjustSplitCommand(mSettings){
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
+		evaluateResult(mSettings.element);
+		mSettings.parentElement = sap.ui.getCore().byId(getTemplateElementId(mSettings.parentElement));
+		evaluateResult(mSettings.parentElement);
+		mSettings.source = sap.ui.getCore().byId(getTemplateElementId(mSettings.source));
+		evaluateResult(mSettings.source);
 	}
 
 	function configureAddODataPropertyCommand(oElement, mSettings, oDesignTimeMetadata){
@@ -231,23 +232,28 @@ function(
 		},
 		"addXML" : {
 			clazz : 'sap.ui.rta.command.AddXML',
-			configure : configureAddXmlCommand
+			configure : configureAddXmlCommand,
+			adjustForBinding : adjustAddXmlCommand
 		},
 		"createContainer" : {
 			clazz : 'sap.ui.rta.command.CreateContainer',
-			configure : configureCreateContainerCommand
+			configure : configureCreateContainerCommand,
+			adjustForBinding : adjustCreateContainerCommand
 		},
 		"move" : {
 			clazz : 'sap.ui.rta.command.Move',
-			configure : configureMoveCommand
+			configure : configureMoveCommand,
+			adjustForBinding : adjustMoveCommand
 		},
 		"remove" : {
 			clazz : 'sap.ui.rta.command.Remove',
-			configure : configureRemoveCommand
+			configure : configureRemoveCommand,
+			adjustForBinding : adjustRemoveCommand
 		},
 		"rename" : {
 			clazz : 'sap.ui.rta.command.Rename',
-			configure : configureRenameCommand
+			configure : configureRenameCommand,
+			adjustForBinding : adjustRenameCommand
 		},
 		"addODataProperty" : {
 			clazz : 'sap.ui.rta.command.AddODataProperty',
@@ -259,11 +265,13 @@ function(
 		},
 		"combine" : {
 			clazz : 'sap.ui.rta.command.Combine',
-			configure : configureCombineCommand
+			configure : configureCombineCommand,
+			adjustForBinding : adjustCombineCommand
 		},
 		"split" : {
 			clazz : 'sap.ui.rta.command.Split',
-			configure : configureSplitCommand
+			configure : configureSplitCommand,
+			adjustForBinding : adjustSplitCommand
 		},
 		"switch" : {
 			clazz : 'sap.ui.rta.command.ControlVariantSwitch'
@@ -328,8 +336,8 @@ function(
 			var bTemplateBinding = evaluateTemplateBinding(oElementOverlay, vElement, vElement.sParentAggregationName, mFlexSettings);
 		}
 
-		if (bTemplateBinding) {
-			adjustSettingsMap(mSettings);
+		if (bTemplateBinding && mCommand.adjustForBinding) {
+			mCommand.adjustForBinding(mSettings);
 		}
 		var oCommand = new Command(mSettings);
 

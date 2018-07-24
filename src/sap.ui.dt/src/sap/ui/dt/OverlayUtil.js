@@ -559,55 +559,65 @@ function(
 	};
 
 	/**
+	 * The AggregationBindingStack contains element id and aggregation name of the bound control together with a stack containing
+	 * information about the traversed elements for an Overlay which is part of an aggregation binding.
+	 * @typedef {Object} AggregationBindingStack
+	 * @property {string} elementId - id of the bound control.
+	 * @property {string} aggregation - name of the bound aggregation.
+	 * @property {Object[]} stack - array of objects containing element, element type, aggregation name and index of the element in
+	 *                              the aggregation for each traversed aggregation.
+	 * @property {string} stack.element - element id
+	 * @property {string} stack.type - element type
+	 * @property {string} stack.aggregation - aggregation name
+	 * @property {number} stack.index - index of the element in parent aggregation
+	 */
+
+	/**
 	 * Returns the element id and the aggregation name of the bound control for an Overlay which is part of an aggregation binding
 	 * The check is done recursively
 	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay Overlay being checked
 	 * @param  {string}  sAggregationName The name of the aggregation being checked
-	 * @return {map}                      Returns the element id and the aggregation name of the bound control together with the stack
-	 *                                    containing traversed element/aggregation information
-	 * - elementId {string}               id of the bound control
-	 * - aggregation {string}             name of the bound aggregation
-	 * - stack {Object[]}                 array of objects containing element, element type, aggregation name and index of the element in
-	 *                                    the aggregation for each traversed aggregation
+	 * @return {AggregationBindingStack}  Returns the {@link AggregationBindingStack} object
 	 */
 	OverlayUtil.getAggregationInformation = function(oElementOverlay, sAggregationName) {
 		var aStack = [];
-		var fnEvaluateBinding = function(oElementOverlay, sAggregationName, aStack) {
-			var oElement = oElementOverlay.getElement();
-			var iIndex;
-			if (oElementOverlay.getParentAggregationOverlay()) {
-				iIndex = oElementOverlay.getParentAggregationOverlay().getChildren().indexOf(oElementOverlay);
-			} else {
-				iIndex = -1;
-			}
-			aStack.push({
-				element: oElement.getId(),
-				type: oElement.getMetadata().getName(),
+		return this._evaluateBinding(oElementOverlay, sAggregationName, aStack);
+	};
+
+	OverlayUtil._evaluateBinding = function(oElementOverlay, sAggregationName, aStack) {
+		var oElement = oElementOverlay.getElement();
+		var iIndex;
+		if (oElementOverlay.getParentAggregationOverlay()) {
+			iIndex = oElementOverlay.getParentAggregationOverlay().getChildren().indexOf(oElementOverlay);
+		} else {
+			iIndex = -1;
+		}
+		aStack.push({
+			element: oElement.getId(),
+			type: oElement.getMetadata().getName(),
+			aggregation: sAggregationName,
+			index: iIndex
+		});
+		if (sAggregationName && oElement.getBinding(sAggregationName)) {
+			return {
+				elementId: oElement.getId(),
 				aggregation: sAggregationName,
-				index: iIndex
-			});
-			if (sAggregationName && oElement.getBinding(sAggregationName)) {
-				return {
-					elementId: oElement.getId(),
-					aggregation: sAggregationName,
+				stack: aStack
+			};
+		}
+		return oElementOverlay.isRoot()
+			? {
+					elementId: undefined,
+					aggregation: undefined,
 					stack: aStack
-				};
-			}
-			return oElementOverlay.isRoot()
-				? {
-						elementId: undefined,
-						aggregation: undefined,
-						stack: aStack
-					}
-				: (
-					fnEvaluateBinding(
-						oElementOverlay.getParentElementOverlay(),
-						oElementOverlay.getElement().sParentAggregationName,
-						aStack
-					)
-				);
-		};
-		return fnEvaluateBinding(oElementOverlay, sAggregationName, aStack);
+				}
+			: (
+				this._evaluateBinding(
+					oElementOverlay.getParentElementOverlay(),
+					oElementOverlay.getElement().sParentAggregationName,
+					aStack
+				)
+			);
 	};
 
 	return OverlayUtil;
