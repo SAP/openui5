@@ -23,7 +23,7 @@ sap.ui.define([
 		COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_ID = "Complex_ControlDefaults-palette-moreColorsDialog",
 		COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_OKBUTTON_ID = "__button0",
 		COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_CANCELBUTTON_ID = "__button1",
-		COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_REDCOLORINPUT_ID =  "__picker0-rF",
+		COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_SLIDERHANDLE_ID =  "__picker0-hSLD",
 		COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_HEXADECIMALINPUT_ID = "__picker0-hxF";
 
 	var colorSelectEventParamsShouldMatch = function (oExpected) {
@@ -220,7 +220,7 @@ sap.ui.define([
 					success: function () {
 						Opa5.assert.ok(true, "The ColorPicker of the ColorPalettePopover is opened");
 						this.complexControlDefaultsColorPalettePopoverShouldRenderAllChildControls();
-						this.documentActiveElementShouldBe(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_REDCOLORINPUT_ID + "-inner");
+						this.documentActiveElementShouldBe(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_SLIDERHANDLE_ID + "-handle");
 					},
 					errorMessage: "ColorPalettePopover couldn't open its ColorPicker."
 				});
