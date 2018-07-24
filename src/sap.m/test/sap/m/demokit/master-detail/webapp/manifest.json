@@ -83,13 +83,10 @@
 				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.masterdetail.view",
-				"controlId": "app",
+				"controlId": "layout",
 				"controlAggregation": "beginColumnPages",
 				"bypassed": {
-					"target": [
-						"master",
-						"notFound"
-					]
+					"target": "notFound"
 				},
 				"async": true
 			},
@@ -127,15 +124,9 @@
 					"viewId": "detailObjectNotFound",
 					"controlAggregation": "midColumnPages"
 				},
-				"detailNoObjectsAvailable": {
-					"viewName": "DetailNoObjectsAvailable",
-					"viewId": "detailNoObjectsAvailable",
-					"controlAggregation": "midColumnPages"
-				},
 				"notFound": {
 					"viewName": "NotFound",
-					"viewId": "notFound",
-					"controlAggregation": "midColumnPages"
+					"viewId": "notFound"
 				}
 			}
 		}

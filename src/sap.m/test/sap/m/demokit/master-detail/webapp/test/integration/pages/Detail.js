@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
-	"sap/ui/demo/masterdetail/test/integration/pages/Common",
+	"./Common",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/PropertyStrictEquals"
@@ -12,18 +12,10 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheDetailPage : {
+
 			baseClass : Common,
 
 			actions : {
-
-				iPressTheBackButton : function () {
-					return this.waitFor({
-						id : "page",
-						viewName : sViewName,
-						actions: new Press(),
-						errorMessage : "Did not find the nav button on detail page"
-					});
-				},
 
 				iPressTheHeaderActionButton: function (sId) {
 					return this.waitFor({
@@ -33,10 +25,10 @@ sap.ui.define([
 						errorMessage : "Did not find the button with id" + sId + " on detail page"
 					});
 				}
-
 			},
 
 			assertions : {
+
 
 				iShouldSeeNoBusyIndicator : function () {
 					return this.waitFor({
@@ -131,24 +123,22 @@ sap.ui.define([
 								success : function () {
 									Opa5.assert.ok(true, "The list has the correct number of items");
 								},
-								errorMessage : "The list does not have the correct number of items."
+								errorMessage : "The list does not have the correct number of items.\nHint: This test needs suitable mock data in localService directory which can be generated via SAP Web IDE"
 							});
 						}
 					}));
 				},
 
 				theDetailViewShouldContainOnlyFormattedUnitNumbers : function () {
-					return this.theUnitNumbersShouldHaveTwoDecimals("sap.m.ObjectNumber",
-						sViewName,
-						"Object number are properly formatted",
-						"Object view has no entries which can be checked for their formatting");
-				},
-
-				theLineItemsTableShouldContainOnlyFormattedUnitNumbers : function () {
-					return this.theUnitNumbersShouldHaveTwoDecimals("sap.m.ObjectNumber",
-						sViewName,
-						"Object numbers are properly formatted",
-						"LineItmes Table has no entries which can be checked for their formatting");
+					var rTwoDecimalPlaces =  /^-?\d+\.\d{2}$/;
+					return this.waitFor({
+						id : "objectHeaderNumber",
+						viewName : sViewName,
+						success : function (oNumberControl) {
+							Opa5.assert.ok(rTwoDecimalPlaces.test(oNumberControl.getNumber()), "Object numbers are properly formatted");
+						},
+						errorMessage : "Object view has no entries which can be checked for their formatting"
+					});
 				},
 
 				theLineItemsHeaderShouldDisplayTheAmountOfEntries : function () {
@@ -170,7 +160,6 @@ sap.ui.define([
 						}
 					});
 				},
-
 				iShouldSeeHeaderActionButtons: function () {
 					return this.waitFor({
 						id : ["closeColumn", "enterFullScreen"],
@@ -184,13 +173,13 @@ sap.ui.define([
 
 				theAppShowsFCLDesign: function (sLayout) {
 					return this.waitFor({
-						id : "app",
+						id : "layout",
 						viewName : "App",
 						matchers : new PropertyStrictEquals({name: "layout", value: sLayout}),
 						success : function () {
 							Opa5.assert.ok(true, "the app shows " + sLayout + " layout");
 						},
-						errorMessage : "The app doesn't show " + sLayout + " layout"
+						errorMessage : "The app does not show " + sLayout + " layout"
 					});
 				},
 
