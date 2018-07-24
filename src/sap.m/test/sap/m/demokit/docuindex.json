@@ -1040,7 +1040,8 @@
 		  "samples": [
 			"sap.m.sample.MultiInput",
 			"sap.m.sample.MultiInputValidators",
-			"sap.m.sample.MultiInputMultiLine",
+			"sap.m.sample.MultiInputFilteringSuggestions",
+			"sap.m.sample.MultiInputCustomFiltering",
 			"sap.m.sample.MultiInputDatabinding",
 			"sap.m.sample.MultiInputMaxTokens",
 			"sap.m.sample.MultiInputTokenUpdate"
@@ -2046,9 +2047,14 @@
 		  "description": "MultiInput uses validators to accept, decline and change tokens."
 		},
 		{
-		  "id": "sap.m.sample.MultiInputMultiLine",
-		  "name": "MultiInput Multi-line Mode",
-		  "description": "Multi-line display mode allows you to fully view all tokens and easily edit tokens in the MultiInput. This display mode should be used if you need an overview of all content in the MultiInput."
+		  "id": "sap.m.sample.MultiInputFilteringSuggestions",
+		  "name": "MultiInput Filtering and Suggestions",
+		  "description": "The default filtering is 'starts with per term', which filters by the beginning of every word in every column."
+		},
+		{
+		  "id": "sap.m.sample.MultiInputCustomFiltering",
+		  "name": "MultiInput Custom Filtering",
+		  "description": "The default filtering for the suggestionItems aggregation uses is a 'starts with per term' style operator. You can overwrite this with your own custom filter function using the Input control's setFilterFunction method."
 		},
 		{
 			"id": "sap.m.sample.MultiInputDatabinding",
@@ -2063,7 +2069,7 @@
 		{
 			"id": "sap.m.sample.MultiInputTokenUpdate",
 			"name": "MultiInput tokenUpdate event example",
-			"description": "MultiInput fires several tokenUpdate events depending on when the tokens were validated"
+			"description": "MultiInput fires several tokenUpdate events depending on when the tokens were validated."
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifColors",

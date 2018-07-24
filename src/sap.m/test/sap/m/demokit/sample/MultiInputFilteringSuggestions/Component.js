@@ -2,11 +2,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.MultiInputMultiLine.Component", {
+	var Component = UIComponent.extend("sap.m.sample.MultiInputFilteringSuggestions.Component", {
 
 		metadata : {
 			rootView : {
-				"viewName": "sap.m.sample.MultiInputMultiLine.Page",
+				"viewName": "sap.m.sample.MultiInputFilteringSuggestions.Page",
 				"type": "XML",
 				"async": true
 			},

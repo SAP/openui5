@@ -13,6 +13,9 @@
 			</HBox>
 			<Label text="MultiInput using asynchronous validator: add token by callback validation" width="100%" labelFor="multiInput2" class="sapUiSmallMarginTop"/>
 			<MultiInput id="multiInput2" width="500px"/>
+
+			<Label text="MultiInput with asynchronously validation" labelFor="multiInput3" class="sapUiSmallMarginTop"/>
+			<MultiInput id="multiInput3" width="100%"  placeholder= "tokens get validated asynchronously after 500ms" showValueHelp="false"/>
 		</items>
 	</VBox>
 </mvc:View>
