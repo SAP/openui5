@@ -7,7 +7,7 @@
 		width="2">
 		<l:VerticalLayout width="100%">
 			<core:Icon
-				src="{icon}"
+				src="sap-icon://{icon}"
 				size="2rem"
 				color="Default">
 			</core:Icon>
