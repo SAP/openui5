@@ -831,7 +831,7 @@
 				sap.ui.getCore().applyChanges();
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				assert.ok(!jQuery("#DP3-cal").is(":visible"), "Radonly DatePicker: calendar is not visible");
+				assert.ok(!jQuery("#DP3-cal").is(":visible"), "Readonly DatePicker: calendar is not visible");
 
 				oDP3.setEditable(true);
 				sap.ui.getCore().applyChanges();
@@ -876,9 +876,11 @@
 				qutils.triggerKeyboardEvent("DP3-cal--Month0-20140410", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				assert.ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 				assert.equal(sId, "DP3", "Change event fired");
-				assert.equal(sValue, "April 10, 2014", "Value in internal format priovided");
+				// Ssince no format is set, the date picker uses the default short format which for setted local "en-US" is "M/d/yy"
+				assert.equal(sValue, "4/10/14", "Value in internal format provided");
 				assert.ok(bValid, "Value is valid");
-				assert.equal(oDP3.getValue(), "April 10, 2014", "Value in internal format set");
+				assert.equal(oDP3.getValue(), "4/10/14", "Value in internal format set");
+				assert.equal(oDP3._$input.val(), "April 10, 2014", "Value in display format set");
 				assert.equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue set");
 			});
 
