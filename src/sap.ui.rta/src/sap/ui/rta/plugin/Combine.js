@@ -50,7 +50,10 @@ sap.ui.define([
 	Combine.prototype._isEditable = function (oOverlay) {
 		var oCombineAction = this.getAction(oOverlay);
 		if (oCombineAction && oCombineAction.changeType && oCombineAction.changeOnRelevantContainer) {
-			return this.hasChangeHandler(oCombineAction.changeType, oOverlay.getRelevantContainer()) && this.hasStableId(oOverlay);
+			var oRelevantContainer = oOverlay.getRelevantContainer();
+			return this.hasChangeHandler(oCombineAction.changeType, oRelevantContainer) &&
+				this.hasStableId(oOverlay) &&
+				this._checkRelevantContainerStableID(oCombineAction, oOverlay);
 		} else {
 			return false;
 		}

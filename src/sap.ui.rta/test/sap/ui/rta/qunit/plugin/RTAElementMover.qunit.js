@@ -580,6 +580,7 @@ sap.ui.require([
 			this.oDesignTime.attachEventOnce("synced", function() {
 
 				this.oMovedButton1Overlay = OverlayRegistry.getOverlay(this.oMovedButton1);
+				this.oBarOverlay = OverlayRegistry.getOverlay(this.oBar);
 				this.oBarRightAggregationOverlay = OverlayRegistry.getOverlay(this.oBar).getAggregationOverlay("contentRight");
 				this.oBarMiddleAggregationOverlay = OverlayRegistry.getOverlay(this.oBar).getAggregationOverlay("contentMiddle");
 				this.oElementMover = this.oDragDropPlugin.getElementMover();
@@ -593,6 +594,7 @@ sap.ui.require([
 			this.oMovedButton1Overlay.destroy();
 			this.oBarRightAggregationOverlay.destroy();
 			this.oBarMiddleAggregationOverlay.destroy();
+			this.oBarOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oBar.destroy();
 		}
@@ -605,6 +607,18 @@ sap.ui.require([
 		QUnit.test("when DT is loaded and moving the movedButton to the middle bar aggregation without move action...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			assert.notOk(this.oElementMover.checkTargetZone(this.oBarMiddleAggregationOverlay), "then the middle bar aggregation is not a possible target zone");
+		});
+
+		QUnit.test("when the bar has no stable id...", function(assert) {
+			sandbox.stub(this.oElementMover.oBasePlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === this.oBarOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			}.bind(this));
+
+			assert.equal(this.oElementMover._isMoveAvailableOnRelevantContainer(this.oMovedButton1Overlay), false, "then the move is not available");
 		});
 	});
 

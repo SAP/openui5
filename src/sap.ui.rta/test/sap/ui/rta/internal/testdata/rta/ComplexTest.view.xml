@@ -323,6 +323,15 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
+				<form:SimpleForm
+					editable="true"
+					title="SimpleForm without stable id">
+					<form:content>
+						<core:Title id="SFWithoutStableIdTitle0" text="Address" />
+						<Label id="SFWithoutStableIdLabel0" text="Name" />
+						<Input id="SFWithoutStableIdInput0" value="" />
+					</form:content>
+				</form:SimpleForm>
 			</sap.ui.layout:VerticalLayout>
 
 			<sap.ui.layout:VerticalLayout id = "smartFilterLayout" width="100%">

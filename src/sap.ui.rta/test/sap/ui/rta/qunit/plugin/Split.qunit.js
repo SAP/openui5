@@ -172,6 +172,39 @@ function (
 		);
 	});
 
+	QUnit.test("when an overlay has a split action in designTime metadata relevant container has no stable id", function (assert) {
+		var oDesignTimeMetadata1 = {
+			actions : {
+				split : {
+					changeType: "splitStuff",
+					changeOnRelevantContainer : true,
+					isEnabled : true,
+					getControlsCount: function() {
+						return 2;
+					}
+				}
+			}
+		};
+		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
+
+		this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
+		this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
+
+		sandbox.stub(this.oSplitPlugin, "hasStableId").callsFake(function(oOverlay){
+			if (oOverlay === this.oPanelOverlay){
+				return false;
+			} else {
+				return true;
+			}
+		}.bind(this));
+
+		assert.strictEqual(
+			this.oSplitPlugin._isEditable(this.oButton1Overlay),
+			false,
+			"_isEditable returns false"
+		);
+	});
+
 	QUnit.test("when isEnabled() is a function in designTime metadata and the specified element contains only one control", function (assert) {
 		var oDesignTimeMetadata2 = {
 				actions : {

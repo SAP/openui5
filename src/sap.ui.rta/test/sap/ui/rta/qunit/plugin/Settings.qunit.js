@@ -745,6 +745,99 @@ function (
 			assert.equal(spyLog.callCount, 1, "then there is a warning in the log saying the handler was not found for action 2");
 		});
 
+		QUnit.test(
+			"when retrieving the menu items for two 'settings', but one has changeOnRelevantContainer true and the relevant container doesn't have a stable id",
+			function(assert) {
+
+			var oButtonOverlay = new ElementOverlay({
+				element : this.oButton,
+				designTimeMetadata : new ElementDesignTimeMetadata({
+					libraryName : "sap.m",
+					data : {
+						actions : {
+							settings : function() {
+								return {
+									"Action1" : {
+										name : "CTX_ACTION1",
+										handler: function() {}
+									},
+									"Action2" : {
+										name : "CTX_ACTION2",
+										changeOnRelevantContainer: true,
+										handler: function() {}
+									}
+								};
+							}
+						}
+					}
+				})
+			});
+
+			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+
+			sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === oVerticalLayoutOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			});
+
+			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
+
+			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
+			assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
+			assert.equal(aMenuItems.length, 1, "'getMenuItems' doesn't return the action where the relevant container has no stable id");
+			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "and _isEditable() returns true because one action is valid");
+		});
+
+		QUnit.test(
+			"when retrieving the menu items for two 'settings', but both have changeOnRelevantContainer true and the relevant container doesn't have a stable id",
+			function(assert) {
+
+			var oButtonOverlay = new ElementOverlay({
+				element : this.oButton,
+				designTimeMetadata : new ElementDesignTimeMetadata({
+					libraryName : "sap.m",
+					data : {
+						actions : {
+							settings : function() {
+								return {
+									"Action1" : {
+										name : "CTX_ACTION1",
+										changeOnRelevantContainer: true,
+										handler: function() {}
+									},
+									"Action2" : {
+										name : "CTX_ACTION2",
+										changeOnRelevantContainer: true,
+										handler: function() {}
+									}
+								};
+							}
+						}
+					}
+				})
+			});
+
+			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+
+			sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === oVerticalLayoutOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			});
+
+			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
+
+			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			assert.equal(aMenuItems.length, 0, "then no menu items are returned");
+			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "and _isEditable() returns false because no actions are valid");
+		});
+
 		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", function (assert) {
 			var oButton = this.oButton;
 

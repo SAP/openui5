@@ -193,6 +193,32 @@ function(
 			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled returns false");
 		});
 
+		QUnit.test("when an overlay has remove action with changeOnRelevantContainer true, but the control's relevant container doesn't have stable ID", function(assert) {
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions : {
+					remove : {
+						changeType: "hideControl",
+						changeOnRelevantContainer: true
+					}
+				}
+			});
+
+			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+
+			sandbox.stub(this.oRemovePlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === this.oLayoutOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			}.bind(this));
+
+			sandbox.stub(this.oButtonOverlay, "getRelevantContainer").returns(this.oVerticalLayout);
+
+			assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), false, "... then _isEditable returns false");
+		});
+
 		QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected", function (assert) {
 			var done = assert.async();
 
