@@ -3284,34 +3284,45 @@ sap.ui.define([
 		 * @private
 		 */
 		renderUI5Filter : function(oUI5Filter) {
-			var oProperty = this._oEntityType.findPropertyByName(oUI5Filter.sPath);
+			var sFilterExpression = null,
+				oProperty = this._oEntityType.findPropertyByName(oUI5Filter.sPath);
+
 			if (oProperty == null) {
 				throw "Cannot add filter condition for unknown property name " + oUI5Filter.sPath; // TODO
 			}
 
-			var sFilterExpression = null;
 			switch (oUI5Filter.sOperator) {
 			case FilterOperator.BT:
-				sFilterExpression = "(" + oUI5Filter.sPath + " "
-						+ FilterOperator.GE.toLowerCase() + " "
-						+ this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type)
-						+ " and " + oUI5Filter.sPath + " " + FilterOperator.LE.toLowerCase() + " "
-						+ this._renderPropertyFilterValue(oUI5Filter.oValue2, oProperty.type)
-						+ ")";
+				sFilterExpression = "(" + oUI5Filter.sPath + " ge "
+					+ this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type)
+					+ " and " + oUI5Filter.sPath + " le "
+					+ this._renderPropertyFilterValue(oUI5Filter.oValue2, oProperty.type)
+					+ ")";
+				break;
+			case FilterOperator.NB:
+				sFilterExpression = "(" + oUI5Filter.sPath + " lt "
+					+ this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type)
+					+ " or " + oUI5Filter.sPath + " gt "
+					+ this._renderPropertyFilterValue(oUI5Filter.oValue2, oProperty.type)
+					+ ")";
 				break;
 			case FilterOperator.Contains:
-				sFilterExpression = "substringof("
-								+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String") + "," +  oUI5Filter.sPath + ")";
+			case FilterOperator.NotContains:
+				sFilterExpression = (oUI5Filter.sOperator[0] === "N" ? "not " : "") + "substringof("
+					+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String")
+					+ "," +  oUI5Filter.sPath + ")";
 				break;
 			case FilterOperator.StartsWith:
 			case FilterOperator.EndsWith:
-				sFilterExpression = oUI5Filter.sOperator.toLowerCase() + "("
-						+ oUI5Filter.sPath + ","
-						+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String") + ")";
+			case FilterOperator.NotStartsWith:
+			case FilterOperator.NotEndsWith:
+				sFilterExpression = oUI5Filter.sOperator.toLowerCase().replace("not", "not ") + "("
+					+ oUI5Filter.sPath + ","
+					+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String") + ")";
 				break;
 			default:
-				sFilterExpression = oUI5Filter.sPath + " " + oUI5Filter.sOperator.toLowerCase() + " "
-						+ this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type);
+				sFilterExpression = oUI5Filter.sPath + " " + oUI5Filter.sOperator.toLowerCase()
+					+ " " + this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type);
 			}
 
 			return sFilterExpression;

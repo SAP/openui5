@@ -693,6 +693,115 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		expectedFilter : "((CostCenter%20lt%20%271%27%20or%20CostCenter%20gt%20%274%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NB, path : "CostCenter", value1 : "1", value2 : "4"
+		})]
+	}, {
+		expectedFilter : "((CostCenter%20ge%20%271%27%20and%20CostCenter%20le%20%274%27))",
+		filters: [new Filter({
+			operator : FilterOperator.BT, path : "CostCenter", value1 : "1", value2 : "4"
+		})]
+	}, {
+		expectedFilter : "(not%20substringof(%271%27,CostCenter))",
+		filters: [new Filter({
+			operator : FilterOperator.NotContains, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(substringof(%271%27,CostCenter))",
+		filters: [new Filter({
+			operator : FilterOperator.Contains, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(not%20startswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NotStartsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(startswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(not%20endswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NotEndsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(endswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"
+		})]
+	}].forEach(function (oFixture) {
+		QUnit.test("filter operators: " + oFixture.filters[0].sOperator, function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+					var sURL = oBinding.getDownloadUrl(),
+						sFilterPart = sURL.slice(sURL.lastIndexOf("=") + 1);
+
+					assert.strictEqual(sFilterPart, oFixture.expectedFilter, sFilterPart);
+
+					done();
+				}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+				[/*aSorters*/],
+				oFixture.filters
+			);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter operators: combine all", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+				var sExpectedFilterPart = "("
+						+ "endswith(CostCenter,%271%27)%20"
+						+ "or%20not%20endswith(CostCenter,%271%27)%20"
+						+ "or%20startswith(CostCenter,%271%27)%20"
+						+ "or%20not%20startswith(CostCenter,%271%27)%20"
+						+ "or%20substringof(%271%27,CostCenter)%20"
+						+ "or%20not%20substringof(%271%27,CostCenter)%20"
+						+ "or%20(CostCenter%20ge%20%271%27%20and%20CostCenter%20le%20%274%27)%20"
+						+ "or%20(CostCenter%20lt%20%271%27%20or%20CostCenter%20gt%20%274%27)"
+						+ ")",
+					sURL = oBinding.getDownloadUrl(),
+					sFilterPart = sURL.slice(sURL.lastIndexOf("=") + 1);
+
+				assert.strictEqual(sFilterPart, sExpectedFilterPart, sFilterPart);
+
+				done();
+			}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+			[/*aSorters*/],
+			[new Filter({
+				operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotEndsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotStartsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.Contains, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotContains, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.BT, path : "CostCenter", value1 : "1", value2 : "4"
+			}),
+			new Filter({
+				operator : FilterOperator.NB, path : "CostCenter", value1 : "1", value2 : "4"
+			})]
+		);
+	});
+
+	//*********************************************************************************************
+	[{
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oActualCostsTotal,
 			oCurrencyGrouped, oPlannedCostsTotal, oCurrencyGrouped],
 		expectedSelect : "CostCenter,CostElement,ActualCosts,Currency,PlannedCosts,Currency"
