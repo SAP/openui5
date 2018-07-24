@@ -512,7 +512,7 @@ var AnnotationParser =  {
 				oParent[sProperty][sAnnotation] = oParent[sSiblingName];
 			}
 		} else if (bWarn) {
-			jQuery.sap.log.warning("Wrong path to annotation at array", aSegments,
+			Log.warning("Wrong path to annotation at array", aSegments,
 				"sap.ui.model.odata.AnnotationParser");
 		}
 	},
