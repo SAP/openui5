@@ -510,6 +510,7 @@ sap.ui.define([
 							var sUrlPath;
 							if (sBaseUrl && sNormalizedUrl.length >= sBaseUrl.length && sNormalizedUrl.slice(0, sBaseUrl.length) === sBaseUrl ) {
 								sUrlPath = sNormalizedUrl.slice(sBaseUrl.length);
+								sUrlPath = sUrlPath.match(/([^?#]*)/)[1];
 								if (mBaseUrlIndex[sUrlPath]) {
 									// return the normalized URL only if found in the index
 									sUrl = sBaseUrl + "~" + mBaseUrlIndex[sUrlPath] + "~/" + sUrlPath;
