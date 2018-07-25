@@ -80,7 +80,8 @@ sap.ui.define([
 			this.setStartDate(oStartDate);
 			this._setColumns(7);
 
-			jQuery.sap.delayedCall(iDelay, this, this._updateRowHeaderAndNowMarker);
+
+			setTimeout(this._updateRowHeaderAndNowMarker.bind(this), iDelay);
 		};
 
 		OnePersonGrid.prototype.onBeforeRendering = function () {
@@ -216,7 +217,7 @@ sap.ui.define([
 			this._updateNowMarker(oCurrentDate);
 			this._updateRowHeaders(oCurrentDate);
 
-			jQuery.sap.delayedCall(60 * 1000, this, this._updateRowHeaderAndNowMarker);
+			setTimeout(this._updateRowHeaderAndNowMarker.bind(this), 60 * 1000);
 		};
 
 		OnePersonGrid.prototype._updateNowMarker = function (oDate) {

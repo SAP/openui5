@@ -298,7 +298,9 @@ function(
 	OnePersonHeader.prototype.onsapescape = function(){
 		if (this._oPopup) {
 			this._closeCalendarPicker.call(this);
-			jQuery.sap.focus(this.oPickerBtn.getDomRef());
+			if (this.oPickerBtn.getDomRef()) {
+				this.oPickerBtn.getDomRef().focus();
+			}
 		}
 	};
 
