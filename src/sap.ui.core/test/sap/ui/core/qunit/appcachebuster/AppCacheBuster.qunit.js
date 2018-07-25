@@ -163,7 +163,8 @@ sap.ui.require([
 							"my/view/MyView.controller.js":  sTimestamp,
 							"js/script.js": sTimestamp,
 							"css/style.css": sTimestamp,
-							"img/image.png": sTimestamp
+							"img/image.png": sTimestamp,
+							"manifest.json": sTimestamp
 						};
 	 				}
 					xhr.respond(200, { "Content-Type": "application/json" }, JSON.stringify(index));
@@ -201,7 +202,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("check basic URL handling", function(assert) {
-			assert.expect(15);
+			assert.expect(18);
 
 			// check normal URLs
 			assert.ok(AppCacheBuster.convertURL("my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
@@ -225,6 +226,11 @@ sap.ui.require([
 			// check relative ab-normal URLs
 			assert.ok(AppCacheBuster.convertURL("./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
 			assert.ok(AppCacheBuster.convertURL("./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+
+			// ignore query parameters
+			assert.ok(AppCacheBuster.convertURL("./manifest.json").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+			assert.ok(AppCacheBuster.convertURL("./manifest.json?sap-language=EN").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+			assert.ok(AppCacheBuster.convertURL("./manifest.json#anyhash").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
 
 		});
 
