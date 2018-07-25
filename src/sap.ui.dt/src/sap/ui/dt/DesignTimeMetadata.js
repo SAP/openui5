@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/base/ManagedObject',
 	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/DOMUtil'
+	'sap/ui/dt/DOMUtil',
+	'sap/base/util/merge'
 ],
 function(
 	jQuery,
 	ManagedObject,
 	ElementUtil,
-	DOMUtil
+	DOMUtil,
+	merge
 ) {
 	"use strict";
 
@@ -57,7 +59,7 @@ function(
 	 * @protected
 	 */
 	DesignTimeMetadata.prototype.setData = function(oData) {
-		this.setProperty("data", jQuery.extend(true, {}, this.getDefaultData(), oData));
+		this.setProperty("data", merge({}, this.getDefaultData(), oData));
 		return this;
 	};
 

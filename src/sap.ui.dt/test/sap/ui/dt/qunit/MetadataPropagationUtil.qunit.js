@@ -399,8 +399,8 @@ sap.ui.require([
 
 			this.oMetadataForToolbar = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Toolbar");
 			this.oMetadataForButton = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForToolbar, MetadataTestUtil.createPropagateMetadataObject("sap.m.Toolbar"));
-			jQuery.extend(this.oMetadataForButton, MetadataTestUtil.createPropagateMetadataObject("sap.m.Button"));
+			Object.assign(this.oMetadataForToolbar, MetadataTestUtil.createPropagateMetadataObject("sap.m.Toolbar"));
+			Object.assign(this.oMetadataForButton, MetadataTestUtil.createPropagateMetadataObject("sap.m.Button"));
 
 			var oPageMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForToolbar);
 			var oVerticalLayoutMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButton);
@@ -538,13 +538,13 @@ sap.ui.require([
 			//			button1
 
 			this.oMetadataForButtonInPage = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInPage,
+			Object.assign(this.oMetadataForButtonInPage,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForPage", undefined, "propertyFromPage"));
 			this.oMetadataForButtonInLayout = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInLayout,
+			Object.assign(this.oMetadataForButtonInLayout,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForLayout", undefined, "propertyFromLayout"));
 			this.oMetadataForButtonInToolbar = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInToolbar,
+			Object.assign(this.oMetadataForButtonInToolbar,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForToolbar", undefined, "propertyFromToolbar"));
 
 			var oPageMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButtonInPage);

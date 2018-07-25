@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/Util'
+	'sap/ui/dt/Util',
+	'sap/base/util/merge'
 ],
 function(
 	jQuery,
 	Overlay,
 	OverlayRegistry,
 	ElementUtil,
-	Util
+	Util,
+	merge
 ) {
 	"use strict";
 
@@ -77,8 +79,7 @@ function(
 	 * @override
 	 */
 	AggregationOverlay.prototype._getAttributes = function () {
-		return jQuery.extend(
-			true,
+		return merge(
 			{},
 			Overlay.prototype._getAttributes.apply(this, arguments),
 			{

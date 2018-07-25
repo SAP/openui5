@@ -17,8 +17,6 @@ function(
 	'use strict';
 	QUnit.start();
 
-	jQuery.sap.require("sap.m.Button");
-
 	QUnit.module("Basic functionality", {
 		beforeEach : function() {
 			this.oButton = new Button();

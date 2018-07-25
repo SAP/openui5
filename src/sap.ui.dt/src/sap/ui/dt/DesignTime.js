@@ -571,7 +571,7 @@ function(
 	 */
 	DesignTime.prototype.createOverlay = function (vArg) {
 		// Function can receive an element as the only argument or object with parameters
-		var mParams = jQuery.extend({}, isPlainObject(vArg) ? vArg : { element: vArg });
+		var mParams = Object.assign({}, isPlainObject(vArg) ? vArg : { element: vArg });
 		var iTaskId = this._oTaskManager.add({
 			type: 'createOverlay'
 		});
@@ -900,7 +900,7 @@ function(
 	 * @private
 	 */
 	DesignTime.prototype._onElementModified = function(oEvent) {
-		var oParams = jQuery.extend(true, {}, oEvent.getParameters());
+		var oParams = merge({}, oEvent.getParameters());
 		oParams.type = !oParams.type ? oEvent.getId() : oParams.type;
 		switch (oParams.type) {
 			case "addOrSetAggregation":
@@ -930,7 +930,7 @@ function(
 	 * @private
 	 */
 	DesignTime.prototype._onEditableChanged = function(oEvent) {
-		var oParams = jQuery.extend(true, {}, oEvent.getParameters());
+		var oParams = merge({}, oEvent.getParameters());
 		oParams.id = oEvent.getSource().getId();
 		this.fireElementOverlayEditableChanged(oParams);
 	};

@@ -239,8 +239,7 @@ function (
 	};
 
 	ElementOverlay.prototype._getAttributes = function () {
-		return jQuery.extend(
-			true,
+		return merge(
 			{},
 			Overlay.prototype._getAttributes.apply(this, arguments),
 			{
