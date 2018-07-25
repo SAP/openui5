@@ -205,16 +205,25 @@ sap.ui.define([
 		 * Record destroy as undo operation
 		 * @override
 		 */
-		createControl: function (sClassName, oAppComponent, oView, oSelector) {
+		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {
 			var oExistingControl = this.bySelector(oSelector, oAppComponent);
+			var fnCreateUndoOperation = function() {
+				if (!oExistingControl) {
+					var oCreatedControl = this.bySelector(oSelector, oAppComponent);
+					RtaControlTreeModifier._saveUndoOperation("destroy", [oCreatedControl]);
+				}
+			}.bind(this);
 
 			var vReturnValue = JsControlTreeModifier.createControl.apply(this, arguments);
 
-			if (!oExistingControl) {
-				var oCreatedControl = this.bySelector(oSelector, oAppComponent);
-				this._saveUndoOperation("destroy", [oCreatedControl]);
+			if (bAsync) {
+				return vReturnValue.then(function(oReturnedControl) {
+					fnCreateUndoOperation();
+					return oReturnedControl;
+				});
 			}
 
+			fnCreateUndoOperation();
 			return vReturnValue;
 		},
 
