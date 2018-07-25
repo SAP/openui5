@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Test Page for sap.ui.dt.SelectionManager</title>
 		<script src="../shared-config.js"></script>
 		<script>
@@ -15,8 +14,7 @@
 			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-			// code coverage report only for sap.ui.rta namespace
-			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/SelectionManager.js]');
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/SelectionManager]');
 
 			jQuery.sap.includeScript('./SelectionManager.qunit.js');
 		</script>

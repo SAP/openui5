@@ -180,12 +180,12 @@ sap.ui.define([
 			var oOldDesignTime = this.getDesignTime();
 
 			if (oOldDesignTime) {
-				oOldDesignTime.detachSelectionChange(RenameHandler._onDesignTimeSelectionChange, this);
+				oOldDesignTime.getSelectionManager().detachChange(RenameHandler._onDesignTimeSelectionChange, this);
 			}
 			Plugin.prototype.setDesignTime.apply(this, arguments);
 
 			if (oDesignTime) {
-				oDesignTime.attachSelectionChange(RenameHandler._onDesignTimeSelectionChange, this);
+				oDesignTime.getSelectionManager().attachChange(RenameHandler._onDesignTimeSelectionChange, this);
 				this._aSelection = this.getSelectedOverlays();
 			}
 		},

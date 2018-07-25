@@ -23,6 +23,7 @@ sap.ui.require([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/Util",
 	"qunit/MetadataTestUtil",
+	"sap/base/util/includes",
 	'sap/ui/thirdparty/sinon'
 ],
 function(
@@ -46,6 +47,7 @@ function(
 	ElementDesignTimeMetadata,
 	Util,
 	MetadataTestUtil,
+	includes,
 	sinon
 ) {
 	"use strict";
@@ -55,10 +57,10 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that the DesignTime is created", {
-		beforeEach : function(assert) {
+		beforeEach : function () {
 			this.oDesignTime = new DesignTime();
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oDesignTime.destroy();
 		}
 	}, function() {
@@ -148,13 +150,12 @@ function(
 				fnDone();
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oOuterLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
 	}, function(){
-
 		QUnit.test("when the DesignTime is initialized ", function (assert) {
 			var aOverlays = OverlayRegistry.getOverlays();
 
@@ -166,6 +167,20 @@ function(
 			assert.ok(OverlayRegistry.getOverlay(this.oButton2), "overlay for button2 exists");
 
 			assert.strictEqual(this.oDesignTime.getSelection().length, 0, "and a new selection is created and initially empty");
+		});
+
+		QUnit.test("when an Overlay is selected via overlay API and SelectionManager declines this selection", function (assert) {
+			assert.strictEqual(this.oDesignTime.getSelection().length, 0, "and a new selection is created and initially empty");
+			var oElementOverlay = OverlayRegistry.getOverlay(this.oButton1);
+			oElementOverlay.setSelectable(true);
+			this.oDesignTime.getSelectionManager().addValidator(function (aElementOverlays) {
+				return !includes(aElementOverlays.map(function (oElementOverlay) {
+					return oElementOverlay.getId();
+				}), oElementOverlay.getId());
+			});
+			oElementOverlay.setSelected(true);
+			assert.notOk(oElementOverlay.isSelected());
+			assert.strictEqual(this.oDesignTime.getSelectionManager().get().length, 0);
 		});
 
 		QUnit.test("when '_onAddAggregation' is called and a foreign error occurs during overlay creation", function (assert) {
@@ -520,7 +535,7 @@ function(
 			var fnDone = assert.async();
 			var oOverlay = OverlayRegistry.getOverlay(this.oButton1);
 
-			this.oDesignTime.attachEventOnce("selectionChange", function(oEvent) {
+			this.oDesignTime.getSelectionManager().attachEventOnce("change", function(oEvent) {
 				var aSelection = oEvent.getParameter("selection");
 				assert.strictEqual(aSelection.length, 1, "selection is just one overlay");
 				assert.strictEqual(aSelection[0], oOverlay, "selection is correct");
@@ -529,14 +544,6 @@ function(
 
 			oOverlay.setSelectable(true);
 			oOverlay.setSelected(true);
-		});
-
-		QUnit.test("when 'setSelectionMode is called", function(assert) {
-			var oSelectionMode = sap.ui.dt.SelectionMode.Single;
-
-			this.oDesignTime.setSelectionMode(oSelectionMode);
-
-			assert.equal(this.oDesignTime.getSelectionMode(), oSelectionMode, "then 'SelectionMode' property is properly set");
 		});
 
 		QUnit.test("when the DesignTime is disabled and then enabled again", function(assert) {
@@ -640,8 +647,7 @@ function(
 			}
 			sandbox.restore();
 		}
-	}, function(){
-
+	}, function () {
 		QUnit.test("when the content of the layout behaves like an association and DesignTime is created", function(assert){
 			var fnDone = assert.async();
 			sandbox.stub(AggregationOverlay.prototype, "isAssociation").returns(true);

@@ -173,6 +173,8 @@ function(
 			assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
 			assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_GROUP_FIELDS", "we can group fields");
 			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), false, "we can not rename multiple fields");
+
+			this.oRta._oDesignTime.getSelectionManager().reset();
 		}
 
 		function fnMouseTwoSelectedGroupElementsWithOneBoundField(assert) {
@@ -192,6 +194,8 @@ function(
 			assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_GROUP_FIELDS" , "group fields is there ");
 			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), false, "we can not rename multiple fields");
 			assert.equal(oContextMenuControl.getButtons()[5].getEnabled(), true, "we can group fields");
+
+			this.oRta._oDesignTime.getSelectionManager().reset();
 		}
 
 		function fnMouseTwoGroupElementsWithOneBoundField(assert) {

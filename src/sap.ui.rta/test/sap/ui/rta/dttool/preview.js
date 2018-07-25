@@ -156,7 +156,7 @@ sap.ui.define([
 				this.oDesignTime = this.oRta._oDesignTime;
 			}
 
-			this.oDesignTime.attachSelectionChange(this.onOverlaySelected, this);
+			this.oDesignTime.getSelectionManager().attachChange(this.onOverlaySelected, this);
 
 			oPostMessageBus.publish({
 				target : window.parent,
