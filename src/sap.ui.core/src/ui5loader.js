@@ -944,6 +944,7 @@
 	 */
 	var queue = new function ModuleDefinitionQueue() {
 		var aQueue = [],
+			iUnnamedEntries = 0,
 			iRun = 0,
 			vTimer;
 
@@ -956,6 +957,9 @@
 				_export: _export,
 				guess: document.currentScript && document.currentScript.getAttribute('data-sap-ui-module')
 			});
+			if ( name == null ) {
+				iUnnamedEntries++;
+			}
 			// trigger queue processing via a timer in case the currently executing script was not created by us
 			if ( !vTimer ) {
 				vTimer = setTimeout(this.process.bind(this, null));
@@ -964,6 +968,7 @@
 
 		this.clear = function() {
 			aQueue = [];
+			iUnnamedEntries = 0;
 			if ( vTimer ) {
 				clearTimeout(vTimer);
 				vTimer = null;
@@ -1003,6 +1008,7 @@
 			while ( aQueue.length > 0 ) {
 				oEntry = aQueue.shift();
 				if ( oEntry.name == null ) {
+					iUnnamedEntries--;
 					if ( sModuleName != null ) {
 						oEntry.name = sModuleName;
 						sModuleName = null;
@@ -1010,7 +1016,7 @@
 						// multiple modules have been queued, but only one module can inherit the name from the require call
 						throw new Error("module id missing in define call: " + oEntry.guess);
 					}
-				} else if ( sModuleName && oEntry.name !== sModuleName ) {
+				} else if ( sModuleName && oEntry.name !== sModuleName && iUnnamedEntries === 0 ) {
 					if ( log.isLoggable() ) {
 						log.debug("module names don't match: requested: " + sModuleName + ", defined: " + oEntry.name);
 					}
