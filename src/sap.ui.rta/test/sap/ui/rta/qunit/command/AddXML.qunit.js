@@ -1,27 +1,22 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 QUnit.config.autostart = false;
 
 sap.ui.require([
 	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/fl/Utils',
-	'sap/m/Button',
 	'sap/ui/fl/changeHandler/AddXML',
-	'sap/ui/rta/command/FlexCommand',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/fl/Utils',
+	'sap/ui/dt/ElementDesignTimeMetadata',
+	'sap/m/Button',
+	'sap/ui/thirdparty/sinon-4'
 ],
 function (
 	CommandFactory,
-	ChangeRegistry,
-	ElementDesignTimeMetadata,
-	Utils,
-	Button,
 	AddXML,
-	FlexCommand
+	Utils,
+	ElementDesignTimeMetadata,
+	Button,
+	sinon
 ) {
 	"use strict";
 	QUnit.start();
@@ -58,11 +53,11 @@ function (
 	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	QUnit.module("Given an AddXML command with a valid entry in the change registry,", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -118,7 +113,25 @@ function (
 			});
 		});
 
-		//Undo is tested in change handler and generic Flex command logic
+		QUnit.test("When addXML is created with a fragment string containing a binding", function(assert) {
+			var oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: "VENDOR"
+				}
+			});
+			var oCommand = oCommandFactory.getCommandFor(this.oButton, "addXML", {
+				fragmentPath: "pathToFragment",
+				fragment: "{@i18n>Foo}",
+				targetAggregation: "targetAggregation",
+				index: 0
+			});
+
+			assert.ok(oCommand, "then command without flex settings is available");
+			assert.strictEqual(oCommand.getTargetAggregation(), "targetAggregation", "and its settings are merged correctly");
+			assert.strictEqual(oCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
+			assert.strictEqual(oCommand.getFragment(), "{@i18n>Foo}", "and its settings are merged correctly");
+			assert.strictEqual(oCommand.getIndex(), 0, "and its settings are merged correctly");
+		});
 
 		QUnit.test("and design time metadata allows change on js only, when getting an AddXML command for the change ...", function(assert) {
 
