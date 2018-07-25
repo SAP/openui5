@@ -136,6 +136,41 @@ sap.ui.define([
 						},
 						errorMessage: "Was not able to press Sort ascending"
 					});
+				},
+
+				iPressIconTabHeader: function (sValue) {
+					return this.waitFor({
+						controlType: "sap.m.IconTabFilter",
+						matchers: new PropertyStrictEquals({name:"key", value:sValue}),
+						actions: new Press(),
+						success: function (oIconTabFilter) {
+							Opa5.assert.ok(oIconTabFilter[0].getProperty("key") === sValue, "IconTabHeader with value " + sValue + "was pressed");
+						},
+						errorMessage: "IconTabHeader was not found"
+					});
+				},
+
+				iSelectAdditionalRuleSet: function (sValue) {
+					return this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({name:"title", value:sValue}),
+						actions: new Press(),
+						success: function (oStandartListItem) {
+							Opa5.assert.ok(oStandartListItem[0].getProperty("title") === sValue, "list item with value " + sValue + "was pressed");
+						},
+						errorMessage: "List item was not found"
+					});
+				},
+				iPressLoadAdditionalRuleSetButton: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({name:"text", value:"Load"}),
+						actions: new Press(),
+						success: function (oButton) {
+							Opa5.assert.ok(oButton[0].getProperty("text") === "Load", "Button 'Load' was pressed ");
+						},
+						errorMessage: "Button was not pressed"
+					});
 				}
 			},
 			assertions: {
