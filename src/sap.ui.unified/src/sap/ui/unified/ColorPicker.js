@@ -469,7 +469,8 @@ sap.ui.define([
 		this.bResponsive = oHelper.isResponsive();
 
 		// Color picker cursor size in px obtained from less parameter. Keep in mind width and height are the same.
-		this._iCPCursorSize = parseInt(Parameters.get("_sap_ui_unified_ColorPicker_CircleSize"), 10);
+		var circleSize = this.bResponsive ? "_sap_ui_unified_ColorPicker_CircleSize" : "_sap_ui_commons_ColorPicker_CircleSize";
+		this._iCPCursorSize = parseInt(Parameters.get(circleSize), 10);
 
 		// Init _processChanges and _bHSLMode according to default control mode
 		this._processChanges = this._processHSVChanges;
