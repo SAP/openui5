@@ -1,6 +1,10 @@
 {
 	"CountriesCollection": [
 		{
+			"text": "Algeria",
+			"key": "DZ"
+		},
+		{
 			"text": "Austria",
 			"key": "AT"
 		},
@@ -45,8 +49,16 @@
 			"key": "DE"
 		},
 		{
+			"key": "GH",
+			"text": "Ghana"
+		},
+		{
 			"text": "Greece",
 			"key": "GR"
+		},
+		{
+		  "key": "HK",
+		  "text": "Hong Kong"
 		},
 		{
 			"text": "Hungary",
