@@ -167,13 +167,16 @@ sap.ui.define([
 						var aNameParts = oJSONElement.name.split("."),
 							sBaseName = aNameParts.pop(),
 							sNodeNamespace = aNameParts.join("."), // Note: Array.pop() on the previous line modifies the array itself
-							oTreeNode = this._createTreeNode(sBaseName, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib),
+							oTreeNode = this._createTreeNode(sBaseName, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated),
 							oExistingNodeNamespace = this._findNodeNamespaceInTreeStructure(sNodeNamespace);
 
 						if (oExistingNodeNamespace) {
 							if (!oExistingNodeNamespace.nodes) {
 								oExistingNodeNamespace.nodes = [];
 							}
+
+							oTreeNode.bIsDeprecated = !!oExistingNodeNamespace.bIsDeprecated;
+
 							oExistingNodeNamespace.nodes.push(oTreeNode);
 						} else if (sNodeNamespace) {
 
@@ -184,7 +187,7 @@ sap.ui.define([
 							});
 
 							if (!oHiddenNamespace) {
-								oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId, oJSONElement.lib);
+								oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated);
 								oNewNodeNamespace.nodes = [];
 								oNewNodeNamespace.nodes.push(oTreeNode);
 
@@ -195,22 +198,23 @@ sap.ui.define([
 							}
 						} else {
 							// Entities for which we can't resolve namespace are shown in the root level
-							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib);
+							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated);
 							aTreeContent.push(oNewNodeNamespace);
 						}
 					} else {
-						oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib);
+						oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated);
 						aTreeContent.push(oNewNodeNamespace);
 					}
 				}
 			},
 
-			_createTreeNode : function (text, name, isSelected, sLib) {
+			_createTreeNode : function (text, name, isSelected, sLib, bIsDeprecated) {
 				var oTreeNode = {};
 				oTreeNode.text = text;
 				oTreeNode.name = name;
 				oTreeNode.ref = "#/api/" + name;
 				oTreeNode.isSelected = isSelected;
+				oTreeNode.bIsDeprecated = bIsDeprecated;
 				oTreeNode.lib = sLib;
 				return oTreeNode;
 			},
@@ -259,17 +263,20 @@ sap.ui.define([
 						isSelected: false,
 						name : "experimental",
 						ref: "#/api/experimental",
-						text: "Experimental APIs"
+						text: "Experimental APIs",
+						bIsDeprecated: false
 					}, {
 						isSelected: false,
 						name : "deprecated",
 						ref: "#/api/deprecated",
-						text: "Deprecated APIs"
+						text: "Deprecated APIs",
+						bIsDeprecated: false
 					}, {
 						isSelected: false,
 						name : "since",
 						ref: "#/api/since",
-						text: "Index by Version"
+						text: "Index by Version",
+						bIsDeprecated: false
 					});
 				}
 
