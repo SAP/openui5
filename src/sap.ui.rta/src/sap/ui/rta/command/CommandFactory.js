@@ -332,7 +332,7 @@ function(
 			vElement = mSettings.element;
 		}
 
-		if (oElementOverlay && vElement.sParentAggregationName) {
+		if (oElementOverlay && vElement.sParentAggregationName && mCommand.adjustForBinding) {
 			var bTemplateBinding = evaluateTemplateBinding(oElementOverlay, vElement, vElement.sParentAggregationName, mFlexSettings);
 		}
 
