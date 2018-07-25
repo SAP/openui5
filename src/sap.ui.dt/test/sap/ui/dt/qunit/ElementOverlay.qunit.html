@@ -12,6 +12,7 @@
 				animation-name: example;
 				animation-duration: 0.1s;
 				width: 0px;
+				z-index: 2;
 			}
 		</style>
 		<script src="../shared-config.js"></script>
@@ -29,7 +30,7 @@
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/ElementOverlay.js]');
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/ElementOverlay.js, sap/ui/dt/Overlay.js]');
 
 			jQuery.sap.includeScript('./ElementOverlay.qunit.js');
 		</script>
