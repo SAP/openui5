@@ -180,6 +180,41 @@ function (
 
 	});
 
+	QUnit.test("_resolveGetChangesForView does not crash and logs an error if dependent selectors are missing", function (assert) {
+		var oAppComponent = new UIComponent();
+
+		this.stub(JsControlTreeModifier, "bySelector").returns({});
+		this.stub(JsControlTreeModifier, "getControlType").returns("aType");
+
+		var oControl = new Control("testComponent---localeId");
+
+		var mPropertyBagStub = {
+			view: oControl,
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent
+		};
+
+		var oLogApplyChangeErrorSpy = sandbox.spy(FlexController.prototype, "_logApplyChangeError");
+
+		this.oChange = new Change(labelChangeContent);
+
+		var oSelector = {};
+		oSelector.id = "id";
+		oSelector.idIsLocal = true;
+
+		var sDependentSelectorId = "dependent-selector-id";
+		this.stub(this.oChange, "getDependentControlIdList").returns([sDependentSelectorId]);
+
+		this.oChange.selector = oSelector;
+		this.oChange.getSelector = function(){return oSelector;};
+
+		this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [this.oChange]);
+		assert.ok(oLogApplyChangeErrorSpy.calledOnce, "an ApplyChangeError was logged");
+		assert.equal(oLogApplyChangeErrorSpy.args[0][0].message, "A dependent selector control of the flexibility change is not available.", "the correct error message is logged");
+		oControl.destroy();
+		oAppComponent.destroy();
+	});
+
 	QUnit.test('_resolveGetChangesForView applies changes with locale id', function (assert) {
 		this.oChange = new Change(labelChangeContent);
 
@@ -222,6 +257,8 @@ function (
 
 		.then(function() {
 			sinon.assert.called(changeHandlerApplyChangeStub);
+			oControl.destroy();
+			oAppComponent.destroy();
 		});
 	});
 

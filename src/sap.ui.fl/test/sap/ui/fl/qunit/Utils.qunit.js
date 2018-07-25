@@ -1435,10 +1435,14 @@ function(
 			//Rejected promise without return
 			this.fnPromise4 = sandbox.stub().returns(fnReject());
 
+			// Failed promise execution
+			this.fnPromise5 = function() {throw new Error("promise can't be executed");};
+
 			this.aPromisesWithoutReject = [this.fnPromise1, this.fnPromise2, this.fnPromise3];
 			this.aPromisesWithReject = [this.fnPromise1, this.fnPromise4];
 			this.aPromisesWithObj = [{}, this.fnPromise1];
 			this.aPromisesResolveAfterReject = [this.fnPromise4, this.fnPromise1];
+			this.aPromisesWithFailedExecution = [this.fnPromise1, this.fnPromise5];
 
 			this.fnExecPromiseQueueSpy = sandbox.spy(Utils, "execPromiseQueueSequentially");
 			sandbox.spyLog = sandbox.spy(Log, "error");
@@ -1503,6 +1507,14 @@ function(
 			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 			sinon.assert.callOrder(this.fnPromise4, this.fnPromise1);
 			assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
+		}.bind(this));
+	});
+
+	QUnit.test("when called with an array containing a resolved promise and a failing promise execution", function(assert) {
+		return Utils.execPromiseQueueSequentially(this.aPromisesWithFailedExecution).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
+			sinon.assert.callOrder(this.fnPromise1);
+			assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once, as the promise execution throwed an error");
 		}.bind(this));
 	});
 

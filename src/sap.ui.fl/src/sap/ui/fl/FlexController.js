@@ -506,6 +506,17 @@ sap.ui.define([
 			this._handlePromiseChainError.bind(this, mPropertyBag.view));
 	};
 
+	FlexController.prototype._checkForDependentSelectorControls = function (oChange, mPropertyBag) {
+		var aDependentControlIdList = oChange.getDependentControlIdList(mPropertyBag.appComponent);
+
+		aDependentControlIdList.forEach(function(sDependentControlId) {
+			var oDependentControl = mPropertyBag.modifier._byId(sDependentControlId, mPropertyBag.view);
+			if (!oDependentControl) {
+				throw new Error("A dependent selector control of the flexibility change is not available.");
+			}
+		});
+	};
+
 	/**
 	 * Looping over all retrieved flexibility changes and applying them onto the targeted control within the view.
 	 *
@@ -542,6 +553,8 @@ sap.ui.define([
 				if (!oControl) {
 					throw new Error("A flexibility change tries to change a nonexistent control.");
 				}
+
+				this._checkForDependentSelectorControls(oChange, mPropertyBag);
 
 				aPromiseStack.push(function() {
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
@@ -890,8 +903,9 @@ sap.ui.define([
 		var oChangeDefinition = oChange.getDefinition();
 		var mControl = {};
 		if (oChange.getContent().boundAggregation && oChangeDefinition.dependentSelector.originalSelector) {
-			mControl.control = mPropertyBag.modifier.bySelector(oChangeDefinition.dependentSelector.originalSelector, mPropertyBag.appComponent, mPropertyBag.view);
-			mControl.controlType = mControl.control.getMetadata().getName();
+			var oModifier = mPropertyBag.modifier;
+			mControl.control = oModifier.bySelector(oChangeDefinition.dependentSelector.originalSelector, mPropertyBag.appComponent, mPropertyBag.view);
+			mControl.controlType = oModifier.getControlType(mControl.control);
 			mControl.bTemplateAffected = true;
 		} else {
 			mControl.control = oControl;

@@ -1141,7 +1141,11 @@ sap.ui.define([
 			}
 			var fnPromise = aPromiseQueue.shift();
 			if (typeof fnPromise === "function") {
-				var vResult = fnPromise();
+				try {
+					var vResult = fnPromise();
+				} catch (e) {
+					vResult = Promise.reject(e);
+				}
 
 				return vResult.then(function() {
 					if (!bAsync && vResult instanceof Promise) {
