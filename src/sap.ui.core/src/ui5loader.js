@@ -547,6 +547,15 @@
 
 	}
 
+	/**
+	 * Returns the reporting mode for synchronous calls
+	 *
+	 * @returns {int} sync call behavior
+	 */
+	function getSyncCallBehavior() {
+		return syncCallBehavior;
+	}
+
 	function guessResourceName(sURL) {
 		var sNamePrefix,
 			sUrlPrefix,
@@ -2105,6 +2114,7 @@
 			return mModules[sResourceName] ? mModules[sResourceName].state : INITIAL;
 		},
 		getResourcePath: getResourcePath,
+		getSyncCallBehavior: getSyncCallBehavior,
 		getUrlPrefixes: getUrlPrefixes,
 		loadJSResourceAsync: loadJSResourceAsync,
 		resolveURL: resolveURL,
