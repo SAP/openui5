@@ -66,61 +66,6 @@ sap.ui.require([
 		}
 	};
 
-	QUnit.module("Given a RuntimeAuthoring instance", {
-		beforeEach: function() {
-			this.oRta = new RuntimeAuthoring();
-		},
-		afterEach: function() {
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when Outline service is requested, designtime is not available and designtime fails later", function(assert) {
-			var oFactoryService = Outline(this.oRta);
-			this.oRta.fireFailed();
-			return oFactoryService.then(
-				function() {
-					assert.ok(false, "promise should never be resolved");
-				},
-				function(oError) {
-					assert.ok(true, "then promise rejected");
-					assert.throws(
-						function() {
-							throw oError;
-						},
-						DtUtil.createError("services.Outline#get", "Designtime failed to load. This is needed to start the Outline service", "sap.ui.rta"),
-						"then the correct error is thrown"
-					);
-				});
-		});
-		QUnit.test("when Outline service is requested, designtime is not available and designtime succeeds later", function(assert) {
-			this.oRta._oDesignTime = {
-				attachEvent : function () {},
-				getRootElements : function () {
-					return [];
-				}
-			};
-			var oFactoryService = Outline(this.oRta);
-			this.oRta.fireStart();
-			return oFactoryService
-				.then(function(oReturn) {
-					delete this.oRta._oDesignTime;
-					assert.ok(true, "then promise resolved");
-					assert.strictEqual(typeof oReturn.exports.get, "function", "then get function is retrieved");
-				}.bind(this));
-
-		});
-		QUnit.test("when Outline service is requested, with designtime loaded", function(assert) {
-			this.oRta._oDesignTime = new DesignTime();
-			var oFactoryService = Outline(this.oRta);
-			return oFactoryService.then(
-				function(oReturn) {
-					assert.ok(true, "then promise resolved");
-					assert.strictEqual(typeof oReturn.exports.get, "function", "then get function is retrieved");
-				});
-		});
-	});
-
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
 		before: function(assert) {
 			var done = assert.async();
