@@ -3,8 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils"
-], function(jQuery, uri, FlexUtils) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI",
+	"sap/ui/fl/Utils",
+	"sap/base/util/merge"
+], function(jQuery,
+	uri,
+	FlexUtils,
+	fnBaseMerge
+) {
 	"use strict";
 
 	/**
@@ -169,7 +176,7 @@ sap.ui.define([
 			sContentType += "; charset=utf-8";
 		}
 
-		mOptions = jQuery.extend(true, this._getDefaultHeader(), {
+		mOptions = fnBaseMerge(this._getDefaultHeader(), {
 			type: sMethod,
 			async: true,
 			contentType: sContentType,
@@ -224,7 +231,7 @@ sap.ui.define([
 
 		var sContentType = mOptions.contentType || this.DEFAULT_CONTENT_TYPE;
 
-		mOptions = jQuery.extend(true, this._getDefaultOptions(sMethod, sContentType, oData), mOptions);
+		mOptions = fnBaseMerge(this._getDefaultOptions(sMethod, sContentType, oData), mOptions);
 
 		return this._sendAjaxRequest(sUri, mOptions);
 	};

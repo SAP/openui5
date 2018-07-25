@@ -78,7 +78,7 @@ sap.ui.define([
 
 		// If entry already exists, extend existing content and set initialized to false
 		if (iIndex > -1) {
-			jQuery.extend(this._aChangeHandlerSettings[iIndex].content,
+			Object.assign(this._aChangeHandlerSettings[iIndex].content,
 				mNewChangeHandlerSettings.content);
 			this._aChangeHandlerSettings[iIndex].scenarioInitialized = false;
 		} else {

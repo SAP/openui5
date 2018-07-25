@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/merge"
 ], function(
 	Change,
 	Variant,
@@ -29,7 +30,8 @@ sap.ui.define([
 	BusyIndicator,
 	MessageBox,
 	JSONModel,
-	jQuery
+	jQuery,
+	fnBaseUtilMerge
 ) {
 	"use strict";
 
@@ -684,7 +686,7 @@ sap.ui.define([
 			};
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
 
-			this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
+			this._mChangesInitial = fnBaseUtilMerge({}, this._mChanges);
 
 			return this.getChangesMapForComponent.bind(this);
 		}
@@ -717,7 +719,7 @@ sap.ui.define([
 	 * @returns {object} Returns the mChanges object with the updated dependencies
 	 */
 	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation) {
-		var mInitialDependencies = jQuery.extend(true, {}, this._mChangesInitial.mDependencies);
+		var mInitialDependencies = fnBaseUtilMerge({}, this._mChangesInitial.mDependencies);
 		var oInitialDependency = mInitialDependencies[oChange.getId()];
 
 		if (oInitialDependency) {

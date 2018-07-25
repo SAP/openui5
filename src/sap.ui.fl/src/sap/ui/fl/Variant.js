@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/registry/Settings",
+	"sap/base/util/merge"
 ], function (
 	jQuery,
 	ManagedObject,
 	Utils,
-	Settings
+	Settings,
+	fnBaseMerge
 ) {
 
 	"use strict";
@@ -38,7 +40,7 @@ sap.ui.define([
 			}
 
 			this._oDefinition = oFile;
-			this._oOriginDefinition = jQuery.extend(true, {}, oFile);
+			this._oOriginDefinition = fnBaseMerge({}, oFile);
 			this._sRequest = '';
 			this._bUserDependent = (oFile.content.layer === "USER");
 			this._vRevertData = null;
