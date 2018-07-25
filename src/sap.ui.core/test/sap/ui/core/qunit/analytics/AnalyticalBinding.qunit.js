@@ -30,8 +30,7 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
-		iGroupMembersQueryType = AnalyticalBinding._requestType.groupMembersQuery,
+	var iGroupMembersQueryType = AnalyticalBinding._requestType.groupMembersQuery,
 		sServiceURL = "http://o4aFakeService:8080/",
 		// Analytical info for dimensions
 		oCostCenterGrouped = {
@@ -285,7 +284,7 @@ sap.ui.require([
 		},
 
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(Log);
+			this.oLogMock = sinon.mock(AnalyticalBinding.Logger);
 			this.oLogMock.expects("warning").atMost(1)
 				.withExactArgs("default count mode is ignored; OData requests will include"
 					+ " $inlinecout options");
@@ -308,9 +307,9 @@ sap.ui.require([
 			oRequestCompletedSpy,
 			oSetupBinding;
 
-		this.oLogMock.expects("warning")
-			.withExactArgs("EventProvider sap.ui.model.odata.ODataModel "
-				+ "path /$metadata should be absolute if no Context is set");
+		// this.oLogMock.expects("warning")
+		// 	.withExactArgs("EventProvider sap.ui.model.odata.ODataModel "
+		// 		+ "path /$metadata should be absolute if no Context is set");
 
 
 		oSetupBinding = setupAnalyticalBinding(1, {});
@@ -927,7 +926,7 @@ sap.ui.require([
 				oFixture.warnings.forEach(function (sText) {
 					that.oLogMock.expects("warning")
 						.withExactArgs("Ignored the 'select' binding parameter, because " + sText,
-							sPath, sClassName);
+							sPath);
 				});
 
 				// metadata does not contain associated properties for measures, so simulate it
@@ -1233,8 +1232,7 @@ sap.ui.require([
 			"empty mHierarchyDetailsByName, ignore group ID");
 
 		this.oLogMock.expects("error")
-			.withExactArgs("Hierarchy cannot be requested for members of a group", "/foo/",
-				sClassName);
+			.withExactArgs("Hierarchy cannot be requested for members of a group", "/foo/");
 
 		oAnalyticalBinding.mHierarchyDetailsByName = {
 			property0 : {
@@ -1683,9 +1681,9 @@ sap.ui.require([
 			setupAnalyticalBinding(2, {}, function (oBinding) {
 				if (oFixture.message) {
 					that.oLogMock.expects("isLoggable")
-						.withExactArgs(Log.Level.INFO, sClassName)
+						.withExactArgs(Log.Level.INFO)
 						.returns(true);
-					that.oLogMock.expects("info").withExactArgs(oFixture.message, "", sClassName);
+					that.oLogMock.expects("info").withExactArgs(oFixture.message, "");
 				}
 
 				// code under test
@@ -1920,7 +1918,7 @@ sap.ui.require([
 						.withExactArgs("Applying sorters to groups is only possible with auto"
 								+ " expand mode 'Sequential'; current mode is: "
 								+ oFixture.sAutoExpandMode,
-							sPath, sClassName);
+							sPath);
 				}
 
 				// code under test
@@ -2395,7 +2393,7 @@ sap.ui.require([
 			setupAnalyticalBinding(2, {}, function (oBinding) {
 				oBinding.bApplySortersToGroups = oFixture.bApplySortersToGroups;
 				that.oLogMock.expects("warning")
-					.withExactArgs(oFixture.sWarning, sPath, sClassName)
+					.withExactArgs(oFixture.sWarning, sPath)
 					.exactly("sWarning" in oFixture ? 1 : 0);
 
 				// code under test
