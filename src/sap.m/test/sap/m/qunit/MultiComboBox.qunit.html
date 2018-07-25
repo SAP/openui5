@@ -3721,7 +3721,7 @@
 
 		// act
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
-		this.clock.tick(500);
+		this.clock.tick(1500);
 
 		// assertions
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
@@ -5420,6 +5420,202 @@
 		oMCB.destroy();
 	});
 
+	QUnit.module("Type-ahead");
+
+	QUnit.test("Desktop: Basic interaction", function (assert) {
+		var oSystem = {
+			desktop : true,
+			phone : false,
+			tablet : false
+		},
+		oMultiComboBox = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			}), new sap.ui.core.Item({
+				key : "AR",
+				text : "Argentina"
+			}), new sap.ui.core.Item({
+				key : "AU",
+				text : "Australia"
+			})]
+		}), oInputDomRef,
+			oFakeEvent = {
+				target: {
+					value: "A"
+				},
+				srcControl: oMultiComboBox
+			};
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oInputDomRef = oMultiComboBox.getDomRef("inner");
+		oMultiComboBox.oninput(oFakeEvent);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oInputDomRef.value, "Algeria", "Correct value autocompleted on input.");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oInputDomRef.value, "A", "Autocompleted text is removed after navigation into options list.");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getList().getItems()[0].getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, false);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oInputDomRef.value, "Algeria", "Correct value autocompleted when navigating with arrow from list item to input field.");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Desktop: Autocomplete + Item selection", function (assert) {
+		var oSystem = {
+			desktop : true,
+			phone : false,
+			tablet : false
+		},
+		oMultiComboBox = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			}), new sap.ui.core.Item({
+				key : "AR",
+				text : "Argentina"
+			}), new sap.ui.core.Item({
+				key : "AU",
+				text : "Australia"
+			})]
+		}), oInputDomRef, aListItems,
+			oList = oMultiComboBox.getList(),
+			oInputEvent = {
+				target: {
+					value: "A"
+				},
+				srcControl: oMultiComboBox
+			};
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		aListItems = oList.getItems();
+		oInputDomRef = oMultiComboBox.getDomRef("inner");
+
+		oMultiComboBox.oninput(oInputEvent);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oInputDomRef.value, "Algeria",
+				"Correct value autocompleted on input.");
+
+		// act - select item from list
+		oList.setSelectedItem(aListItems[0], true, true);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oInputDomRef.value, "A",
+				"Autocompleted value removed after item selection by checkbox press.");
+
+		// act
+		oMultiComboBox.oninput(oInputEvent);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oInputDomRef.value, "Argentina",
+				"Next match autocompleted, if the first one is already selected.");
+
+		// act - tap in item from list
+		oMultiComboBox._bCheckBoxClicked = false;
+		oList.setSelectedItem(aListItems[1], true, true);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oInputDomRef.value, "",
+				"Autocompleted value removed after item selection by pressing an list item.");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Phone: Autocomplete + Item selection", function (assert) {
+		var oSystem = {
+			desktop : false,
+			phone : true,
+			tablet : false
+		};
+		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
+
+		var oPickerTextFieldDomRef,
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items : [ new sap.ui.core.Item({
+					key : "DZ",
+					text : "Algeria"
+				}), new sap.ui.core.Item({
+					key : "AR",
+					text : "Argentina"
+				}), new sap.ui.core.Item({
+					key : "AU",
+					text : "Australia"
+				})]
+			}),
+			oList = oMultiComboBox.getList(), aListItems,
+			oInputEvent = {
+				target: {
+					value: "A"
+				},
+				srcControl: oMultiComboBox.getPickerTextField(),
+				isMarked: function () {
+					return false;
+				}
+			};
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oMultiComboBox.open();
+		this.clock.tick(900);
+
+		aListItems = oList.getItems();
+		oPickerTextFieldDomRef = oMultiComboBox.getPickerTextField().getDomRef("inner");
+
+		oMultiComboBox.oninput(oInputEvent);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oPickerTextFieldDomRef.value, "Algeria",
+				"Correct value autocompleted on input.");
+
+		// act - select item from list
+		oList.setSelectedItem(aListItems[0], true, true);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oPickerTextFieldDomRef.value, "A",
+				"Autocompleted value removed after item selection by pressing a checkbox.");
+
+		// act
+		oMultiComboBox.oninput(oInputEvent);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oPickerTextFieldDomRef.value,
+				"Argentina", "Next match autocompleted, if the first one is already selected.");
+
+
+		// act - tap in item from list
+		oMultiComboBox._bCheckBoxClicked = false;
+		oList.setSelectedItem(aListItems[1], true, true);
+		this.clock.tick(500);
+		// assert
+		assert.strictEqual(oMultiComboBox.getDomRef("inner").value, "",
+				"Autocompleted value removed after item selection by pressing an list item.");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
 </script>
 </head>
 <body id="body" class="sapUiBody">
