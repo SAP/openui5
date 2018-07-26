@@ -262,7 +262,15 @@ sap.ui.define([
 	function _getUrl(bundleUrl, bundleName){
 		var sUrl = bundleUrl;
 		if (bundleName) {
-			sUrl = sap.ui.require.toUrl((bundleName).replace(/\./g, "/")) + ".properties";
+			// Starting slashes or dots are removed to prevent a leading-slash error thrown through the sap.ui.require.toUrl function call.
+			if (/^\/|^\./.test(bundleName)){
+				Log.error('Incorrect resource bundle name "' + bundleName + '"',
+				'Leading slashes or dots in resource bundle names are ignored, since such names are invalid UI5 module names. Please check whether the resource model "' + bundleName + '" is actually needed by your application.',
+				"sap.ui.model.resource.ResourceModel");
+				bundleName = bundleName.replace(/^(?:\/|\.)*/, "");
+			}
+			bundleName = bundleName.replace(/\./g, "/");
+			sUrl = sap.ui.require.toUrl(bundleName) + ".properties";
 		}
 		return sUrl;
 	}
