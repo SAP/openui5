@@ -1428,6 +1428,11 @@ function(
 			return; // override InputBase.onsapescape()
 		}
 
+		if (this.getValueLiveUpdate()) {
+			// When valueLiveUpdate is true call setProperty to return back the last value.
+			this.setProperty("value", this._lastValue, true);
+		}
+
 		if (InputBase.prototype.onsapescape) {
 			InputBase.prototype.onsapescape.apply(this, arguments);
 		}
@@ -1770,7 +1775,7 @@ function(
 			var value = this.getDOMValue();
 
 			if (this.getValueLiveUpdate()) {
-				this.setProperty("value",value, true);
+				this.setProperty("value", value, true);
 				this._onValueUpdated(value);
 			}
 
