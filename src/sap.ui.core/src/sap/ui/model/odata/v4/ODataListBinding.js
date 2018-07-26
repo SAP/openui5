@@ -672,13 +672,11 @@ sap.ui.define([
 
 			switch (oFilter.sOperator) {
 				case FilterOperator.BT :
-					sFilter = sFilterPath + " ge " + sValue + " and "
-						+ sFilterPath + " le "
+					sFilter = sFilterPath + " ge " + sValue + " and " + sFilterPath + " le "
 						+ _Helper.formatLiteral(oFilter.oValue2, sEdmType);
 					break;
 				case FilterOperator.NB :
-					sFilter = "(" + sFilterPath + " lt " + sValue + " or "
-						+ sFilterPath + " gt "
+					sFilter = "(" + sFilterPath + " lt " + sValue + " or " + sFilterPath + " gt "
 						+ _Helper.formatLiteral(oFilter.oValue2, sEdmType) + ")";
 					break;
 				case FilterOperator.EQ :
@@ -687,21 +685,16 @@ sap.ui.define([
 				case FilterOperator.LE :
 				case FilterOperator.LT :
 				case FilterOperator.NE :
-					sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " "
-						+ sValue;
+					sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " " + sValue;
 					break;
 				case FilterOperator.Contains :
 				case FilterOperator.EndsWith :
 				case FilterOperator.StartsWith :
-					sFilter = oFilter.sOperator.toLowerCase() + "(" + sFilterPath + ","
-						+ sValue + ")";
-					break;
 				case FilterOperator.NotStartsWith :
 				case FilterOperator.NotContains :
 				case FilterOperator.NotEndsWith :
 					sFilter = oFilter.sOperator.toLowerCase().replace("not", "not ")
-						+ "(" + sFilterPath + ","
-						+ sValue + ")";
+						+ "(" + sFilterPath + "," + sValue + ")";
 					break;
 				default :
 					throw new Error("Unsupported operator: " + oFilter.sOperator);
