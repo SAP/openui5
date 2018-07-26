@@ -1,18 +1,13 @@
-/*global QUnit*/
+/* global QUnit*/
+QUnit.config.autostart = false;
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-
-jQuery.sap.require("sap.ui.dt.test.LibraryEnablementTest2");
-
-(function() {
+sap.ui.require([
+	"sap/ui/dt/test/LibraryEnablementTest2"
+],
+function(
+	LibraryEnablementTest2
+) {
 	"use strict";
-
-	var LibraryEnablementTest2 = sap.ui.dt.test.LibraryEnablementTest2;
 
 	QUnit.module("Given that a sap.ui.layout Library is tested", {
 		beforeEach : function(assert) {
@@ -33,5 +28,5 @@ jQuery.sap.require("sap.ui.dt.test.LibraryEnablementTest2");
 			done();
 		});
 	});
-
-})();
+	QUnit.start();
+});

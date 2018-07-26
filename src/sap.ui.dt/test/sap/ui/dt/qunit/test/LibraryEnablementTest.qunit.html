@@ -22,15 +22,15 @@
 		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
-			jQuery.sap.require("sap.ui.thirdparty.sinon");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			sap.ui.requireSync("sap/ui/thirdparty/sinon");
+			sap.ui.requireSync("sap/ui/thirdparty/sinon-ie");
+			sap.ui.requireSync("sap/ui/thirdparty/sinon-qunit");
 
-			jQuery.sap.require("sap.m.Button");
+			sap.ui.requireSync("sap/m/Button");
 
-			jQuery.sap.require("sap.ui.dt.test.LibraryEnablementTest");
+			sap.ui.requireSync("sap/ui/dt/test/LibraryEnablementTest");
 			var LibraryEnablementTest = sap.ui.dt.test.LibraryEnablementTest;
 
 			QUnit.module("Given that a sap.m Library is tested", {

@@ -54,8 +54,8 @@ function(ManagedObject, ElementEnablementTest2) {
 		this._aResult = [];
 
 		this.aElementEnablementTest = [];
-		var aLibraryControls = [];
 		this._aControlsCollection = [];
+		var aLoadLibraryPromises = [];
 
 		if (aLibraries.length === 0) {
 			var oVersionInfo = sap.ui.getVersionInfo();
@@ -65,60 +65,61 @@ function(ManagedObject, ElementEnablementTest2) {
 						oLib.name.indexOf("sap.ui.dev") === -1 &&
 						oLib.name !== "sap.ui.core" &&
 						oLib.name !== "sap.ui.fl") {
-					sap.ui.getCore().loadLibrary(oLib.name);
+					aLoadLibraryPromises.push( sap.ui.getCore().loadLibrary(oLib.name, { async:true }) );
 				}
 			});
 		} else {
 			aLibraries.forEach(function(sLib) {
-				sap.ui.getCore().loadLibrary(sLib);
+				aLoadLibraryPromises.push( sap.ui.getCore().loadLibrary(sLib, { async:true }) );
 			});
 		}
 
-		var oLoadedLibs = sap.ui.getCore().getLoadedLibraries();
-		for (var sLibraryName in oLoadedLibs) {
-			if (aLibraries.length > 0 && aLibraries.indexOf(sLibraryName) === -1) {
-				continue;
+		return Promise.all(aLoadLibraryPromises).then(function () {
+			var oLoadedLibs = sap.ui.getCore().getLoadedLibraries();
+			for (var sLibraryName in oLoadedLibs) {
+				if (aLibraries.length > 0 && aLibraries.indexOf(sLibraryName) === -1) {
+					continue;
+				}
+				var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
+				if (oLib && sLibraryName !== "sap.ui.core") {
+					var aLibraryControls = oLib.controls;
+					var aLibraryElements = oLib.elements;
+					var aAllControls = aLibraryControls.concat(aLibraryElements).sort();
+					aAllControls.forEach(this._fillElementArray, this);
+				}
 			}
-			var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
-			if (oLib && sLibraryName !== "sap.ui.core") {
-				var aLibraryControls = oLib.controls;
-				var aLibraryElements = oLib.elements;
-				var aAllControls = aLibraryControls.concat(aLibraryElements).sort();
-				aAllControls.forEach(this._fillElementArray, this);
-			}
-		}
 
-		var aResults = [];
-		var fnIterate = function(mResult) {
-			if (mResult && mResult.actions) {
-				aResults.push(mResult);
-			}
-			var oElementEnablementTest = this.aElementEnablementTest.shift();
-			if (oElementEnablementTest) {
-				return oElementEnablementTest.run().then(function(mResult) {
-					oElementEnablementTest.destroy();
-					return fnIterate(mResult);
+			var aResults = [];
+			var fnIterate = function (mResult) {
+				if (mResult && mResult.actions) {
+					aResults.push(mResult);
+				}
+				var oElementEnablementTest = this.aElementEnablementTest.shift();
+				if (oElementEnablementTest) {
+					return oElementEnablementTest.run().then(function (mResult) {
+						oElementEnablementTest.destroy();
+						return fnIterate(mResult);
+					});
+				} else {
+					return Promise.resolve(aResults);
+				}
+			}.bind(this);
+
+
+			return fnIterate().then(function (aResults) {
+				var mResult = {
+					results: []
+				};
+
+				aResults.forEach(function (mElementTestResult) {
+					mResult.results.push(mElementTestResult);
 				});
-			} else {
-				return Promise.resolve(aResults);
-			}
-		}.bind(this);
 
 
-		return fnIterate().then(function(aResults) {
-			var mResult = {
-					results : []
-			};
-
-			aResults.forEach(function(mElementTestResult) {
-				mResult.results.push(mElementTestResult);
+				return mResult;
 			});
 
-
-			return mResult;
-		});
-
-
+		}.bind(this));
 	};
 
 	return LibraryEnablementTest2;

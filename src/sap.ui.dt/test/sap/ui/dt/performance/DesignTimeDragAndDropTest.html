@@ -147,7 +147,7 @@
 					window.performance.mark("drag.ends");
 					window.performance.measure("DragAndDrop", "drag.starts", "drag.ends");
 					sap.ui.dt.dragDropTime = window.performance.getEntriesByName("DragAndDrop")[0].duration;
-					jQuery.sap.log.info("Drag and Drop took ", sap.ui.dt.dragDropTime + "ms");
+					sap.ui.requireSync("sap/base/Log").info("Drag and Drop took ", sap.ui.dt.dragDropTime + "ms");
 
 					//mark something as done
 					document.getElementById("overlay-container").setAttribute("sap-ui-dt-drag-drop-done","true")

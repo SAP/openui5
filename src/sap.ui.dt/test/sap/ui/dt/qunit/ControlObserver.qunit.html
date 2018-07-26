@@ -17,9 +17,9 @@
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
-			jQuery.sap.require("sap.ui.dt.ControlObserver");
+			sap.ui.requireSync("sap/ui/dt/ControlObserver");
 
 			QUnit.module("Given that a Button is observed", {
 				beforeEach : function() {

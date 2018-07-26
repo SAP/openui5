@@ -23,8 +23,8 @@
 		<script src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
 
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			jQuery.sap.require("sap.ui.dt.test.report.Statistic");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
+			sap.ui.requireSync("sap/ui/dt/test/report/Statistic");
 
 			QUnit.module("Given that a statistic report is created", {
 				beforeEach : function(assert) {

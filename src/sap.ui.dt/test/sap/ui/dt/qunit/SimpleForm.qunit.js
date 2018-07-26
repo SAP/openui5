@@ -1,73 +1,81 @@
-/* global QUnit */
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit*/
+QUnit.config.autostart = false;
 
-if (window.blanket) {
-	window.blanket.options("sap-ui-cover-only", "sap/ui/dt");
-}
-
-jQuery.sap.require("sap.ui.dt.DesignTime");
-jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-jQuery.sap.require("sap.ui.dt.plugin.TabHandling");
-jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
-jQuery.sap.require("sap.ui.dt.plugin.CutPaste");
-jQuery.sap.require("sap.ui.layout.form.ResponsiveLayout");
-jQuery.sap.require("sap.ui.layout.form.ResponsiveLayout");
-jQuery.sap.require("sap.ui.layout.ResponsiveFlowLayoutData");
-jQuery.sap.require("sap.ui.layout.form.GridLayout");
-jQuery.sap.require("sap.ui.layout.form.GridContainerData");
-jQuery.sap.require("sap.ui.layout.form.GridElementData");
-
-jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
-(function(DesignTime, OverlayRegistry, TabHandlingPlugin, MouseSelectionPlugin, CutPastePlugin, ElementMover) {
+sap.ui.require([
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/plugin/TabHandling",
+	"sap/ui/dt/plugin/MouseSelection",
+	"sap/ui/dt/plugin/CutPaste",
+	"sap/ui/layout/form/ResponsiveLayout",
+	"sap/ui/layout/ResponsiveFlowLayoutData",
+	"sap/ui/layout/form/GridLayout",
+	"sap/ui/layout/form/GridContainerData",
+	"sap/ui/layout/form/GridElementData",
+	"sap/ui/dt/plugin/ElementMover",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/thirdparty/sinon-4"
+],
+function(
+	DesignTime,
+	OverlayRegistry,
+	TabHandling,
+	MouseSelection,
+	CutPaste,
+	ResponsiveLayout,
+	ResponsiveFlowLayoutData,
+	GridLayout,
+	GridContainerData,
+	GridElementData,
+	ElementMover,
+	XMLView,
+	sinon
+) {
 	"use strict";
 
 	var aMOVABLE_TYPES = ["sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"];
 
 	var fnParamerizedTest = function(oSimpleFormLayout) {
 
-		var oView;
-		var oCutPaste;
-		var oDesignTime;
-		var oSimpleForm;
-
 		QUnit.module("Given the SimpleForm using " + oSimpleFormLayout, {
 			beforeEach : function(assert) {
 
 				var done = assert.async();
 
-				oView = sap.ui.xmlview("testView", "dt.view.TestSimpleForm");
-				oSimpleForm = sap.ui.getCore().byId("testView--SimpleForm0");
-				oSimpleForm.setLayout(oSimpleFormLayout);
-				oView.placeAt("content");
+				XMLView.create({id: "testView", viewName: "dt.view.TestSimpleForm"})
+					.then(function (oView) {
+						this.oView = oView;
+						var oSimpleForm = sap.ui.getCore().byId("testView--SimpleForm0");
+						oSimpleForm.setLayout(oSimpleFormLayout);
+						this.oView.placeAt("content");
 
-				sap.ui.getCore().applyChanges();
+						sap.ui.getCore().applyChanges();
 
-				var oTabHandlingPlugin = new TabHandlingPlugin();
-				var oSelectionPlugin = new MouseSelectionPlugin();
-				oCutPaste = new CutPastePlugin({
-					movableTypes : aMOVABLE_TYPES
-				});
+						var oTabHandlingPlugin = new TabHandling();
+						var oSelectionPlugin = new MouseSelection();
+						var oCutPaste = new CutPaste({
+							movableTypes: aMOVABLE_TYPES
+						});
 
-				oDesignTime = new sap.ui.dt.DesignTime({
-					plugins : [oTabHandlingPlugin, oSelectionPlugin, oCutPaste],
-					rootElements : [oView]
-				});
+						this.oDesignTime = new DesignTime({
+							plugins: [oTabHandlingPlugin, oSelectionPlugin, oCutPaste],
+							rootElements: [oView]
+						});
 
-				oDesignTime.attachEventOnce("synced", function() {
-					done();
-				});
-
+						this.oDesignTime.attachEventOnce("synced", function () {
+							done();
+						});
+					}.bind(this));
 			},
 
 			afterEach : function() {
-				oView.destroy();
-				oDesignTime.destroy();
-				oCutPaste.destroy();
+				this.oView.destroy();
+				this.oDesignTime.destroy();
 			}
 		});
 
 		QUnit.test("When moving title1 to position of title2 using cut & paste", function(assert) {
-
+			var oCutPaste = this.oDesignTime.getPlugins()[2];
 			var oElementGroup1 = sap.ui.getCore().byId("testView--Group1");
 			var oElementGroup2 = sap.ui.getCore().byId("testView--Group2");
 			var oSourceOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
@@ -84,7 +92,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 		});
 
 		QUnit.test("When moving title2 to position of title1 using cut & paste", function(assert) {
-
+			var oCutPaste = this.oDesignTime.getPlugins()[2];
 			var oElementGroup2 = sap.ui.getCore().byId("testView--Group1");
 			var oElementGroup1 = sap.ui.getCore().byId("testView--Group2");
 			var oSourceOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
@@ -101,7 +109,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 		});
 
 		QUnit.test("When moving within group1 first element to position of second element using cut & paste", function(assert) {
-
+			var oCutPaste = this.oDesignTime.getPlugins()[2];
 			var oElementBeforeInPosition0 = sap.ui.getCore().byId("testView--Input1").getParent();
 			var oElementBeforeInPosition1 = sap.ui.getCore().byId("testView--Input3").getParent();
 			var oSourceOverlay = OverlayRegistry.getOverlay(oElementBeforeInPosition0);
@@ -119,7 +127,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 		});
 
 		QUnit.test("When moving label2 group element into empty first group0 using cut & paste", function(assert) {
-
+			var oCutPaste = this.oDesignTime.getPlugins()[2];
 			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
 			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
 
@@ -140,9 +148,6 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 
 		// TODO!
 		// QUnit.test("When moving title1 to position of title2 using drag & drop", function(assert) {
-
-
-
 		// });
 
 	};
@@ -151,5 +156,5 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 	fnParamerizedTest(sap.ui.layout.form.SimpleFormLayout.GridLayout);
 	fnParamerizedTest(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
 
-}(sap.ui.dt.plugin.ElementMover, sap.ui.dt.OverlayRegistry, sap.ui.dt.plugin.TabHandling,
-		sap.ui.dt.plugin.MouseSelection, sap.ui.dt.plugin.CutPaste));
+	QUnit.start();
+});
