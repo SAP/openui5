@@ -584,7 +584,8 @@
 
 	QUnit.test("scrollEnablement obtains container ref onAfterRendering", function (assert) {
 		var oObjectPage = this.oObjectPage,
-			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+			done = assert.async(),  //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+			vOriginalHeight = jQuery("#qunit-fixture").height();
 
 		// ensure page can be scrolled
 		jQuery("#qunit-fixture").height("200"); // container small enough
@@ -601,6 +602,7 @@
 				assert.strictEqual(oObjectPage._$opWrapper.get(0).scrollTop, 10, "scroller can correctly scroll after we have externally provided the container reference");
 
 				oObjectPage.removeEventDelegate(oDelegate);
+				jQuery("#qunit-fixture").height(vOriginalHeight); // restore the original height
 				done();
 			}
 		};
