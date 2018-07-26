@@ -25,13 +25,14 @@ sap.ui.define([
 	}
 
 	function createWaitForRulesSelectedCountMatchExpectedCount (iExpectedRulesCount, sSuccessMessage, sErrorMessage) {
+		var sLabelValue = "Rules (" + iExpectedRulesCount + " selected)";
 		return {
-			id: sTreeTableId,
-			matchers: new AggregationFilled({ name: "columns" }),
+			controlType: "sap.m.Label",
+			matchers: new PropertyStrictEquals({name:"text", value:sLabelValue}),
 			viewName: sViewName,
 			viewNamespace: sViewNameSpace,
-			success: function (oTable) {
-				Opa5.assert.strictEqual(oTable.getAggregation("columns")[0].getAggregation("label").getProperty("text"), "Rules (" + iExpectedRulesCount + " selected)", sSuccessMessage);
+			success: function (oColumn) {
+				Opa5.assert.strictEqual(oColumn[0].getProperty("text") , sLabelValue, sSuccessMessage);
 			},
 			errorMessage: sErrorMessage
 		};
