@@ -6,56 +6,46 @@ sap.ui.require([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Bar",
 	"sap/m/VBox",
 	"sap/m/Button",
-	"sap/m/Page",
 	"sap/m/Label",
-	"sap/m/Text",
 	"sap/m/TextArea",
 	"sap/m/Panel",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/core/ElementMetadata",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageHeader",
 	"sap/ui/Device",
 	"dt/control/SimpleScrollControl",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon"
 ],
 function(
 	ElementOverlay,
 	Overlay,
 	OverlayRegistry,
-	DOMUtil,
 	ElementUtil,
 	ElementDesignTimeMetadata,
-	AggregationDesignTimeMetadata,
 	DesignTime,
 	Bar,
 	VBox,
 	Button,
-	Page,
 	Label,
-	Text,
 	TextArea,
 	Panel,
 	VerticalLayout,
-	SimpleForm,
-	ElementMetadata,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageHeader,
 	Device,
 	SimpleScrollControl,
+	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -951,6 +941,48 @@ function(
 			assert.ok(this.oScrollControlOverlay.getDomRef(), "overlay has domRef");
 			assert.ok(this.oScrollControlOverlay.getAggregationOverlay("content2").getDomRef(), "aggregation overlay in scroll container has domRef");
 			assert.ok(this.oScrollControlOverlay.getAggregationOverlay("footer").getDomRef(), "aggregation overlay outside scroll container has domRef");
+		});
+	});
+	QUnit.module("Given a control with control domRef defined in dt-metadata", {
+		beforeEach : function(assert) {
+			var AnyControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.AnyControl', {
+				metadata: {
+					designtime: {
+						domRef: ".sapUiDtTestSSCScrollContainer",
+						scrollContainers : null //not needed in this test
+					}
+				},
+				renderer: SimpleScrollControl.getMetadata().getRenderer().render
+			});
+
+			var fnDone = assert.async();
+
+			this.oAnyControl = new AnyControl({
+				id : "control"
+			});
+
+			this.oVBox = new VBox({
+				items: [this.oAnyControl]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVBox]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oAnyControlOverlay = OverlayRegistry.getOverlay(this.oAnyControl);
+				fnDone();
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oVBox.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function () {
+		QUnit.test("when the overlay is rendered, also aggregation overlays are rendered", function(assert) {
+			assert.ok(this.oAnyControlOverlay.getDomRef(), "overlay has domRef");
+			assert.ok(jQuery(this.oAnyControlOverlay.getGeometry().domRef).hasClass("sapUiDtTestSSCScrollContainer"), "domRef from dt-metadata is taken");
 		});
 	});
 

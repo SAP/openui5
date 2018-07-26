@@ -6,9 +6,6 @@
 sap.ui.define([], function() {
 	"use strict";
 	return {
-		domRef: function(oControl) {
-			return oControl.getTitle().getDomRef("inner");
-		},
 		annotations: {},
 		properties: {
 			showExecuteOnSelection: {
@@ -32,6 +29,9 @@ sap.ui.define([], function() {
 			updateVariantInURL: {
 				ignore: false
 			}
+		},
+		variantRenameDomRef: function(oVariantManagement) {
+			return oVariantManagement.getTitle().getDomRef("inner");
 		},
 		customData: {}
 	};

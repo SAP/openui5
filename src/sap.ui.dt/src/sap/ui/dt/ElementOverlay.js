@@ -584,16 +584,11 @@ function (
 	 * @public
 	 */
 	ElementOverlay.prototype.getAssociatedDomRef = function() {
-		var oDomRef = ElementUtil.getDomRef(this.getElement());
+		var oDesignTimeMetadata = this.getDesignTimeMetadata();
+		var vDomRef = oDesignTimeMetadata.getDomRef();
+		var oDomRef = oDesignTimeMetadata.getAssociatedDomRef(this.getElement(), vDomRef);
 		if (!oDomRef) {
-			var oDesignTimeMetadata = this.getDesignTimeMetadata();
-			if (!oDesignTimeMetadata) {
-				return undefined;
-			}
-			var fnGetDomRef = oDesignTimeMetadata.getDomRef();
-			if (typeof fnGetDomRef === "function") {
-				oDomRef = fnGetDomRef(this.getElement());
-			}
+			oDomRef = ElementUtil.getDomRef(this.getElement());
 		}
 
 		if (oDomRef) {

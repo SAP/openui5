@@ -961,7 +961,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container has overflow", function(assert) {
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getDomRef();
+			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
 			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
@@ -991,7 +991,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container has no overflow", function(assert) {
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getDomRef();
+			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
 			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
@@ -1005,7 +1005,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container and parent container having overflow", function(assert) {
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getDomRef();
+			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
 			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
@@ -1030,7 +1030,7 @@ sap.ui.require([
 
 		QUnit.test("when startEdit is called in duplicate mode", function (assert) {
 			var done = assert.async();
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getDomRef();
+			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 			this.oVariantManagementOverlay._triggerDuplicate = true;
 
 			var mPropertyBag = {
