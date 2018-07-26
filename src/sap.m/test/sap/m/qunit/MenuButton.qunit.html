@@ -338,6 +338,23 @@
 			assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after click");
 		});
 
+        QUnit.test("Close with mouse", function(assert) {
+            var oMenuButton = this.sut,
+                oCloseSpy = this.spy(oMenuButton.getMenu(), "close"),
+                sInnerButtonId = oMenuButton._getButtonControl().getId();
+
+            // Act
+            qutils.triggerEvent("mousedown", sInnerButtonId);
+            qutils.triggerEvent("mouseup", sInnerButtonId);
+            qutils.triggerEvent("click", sInnerButtonId);
+            qutils.triggerEvent("mousedown", sInnerButtonId);
+            qutils.triggerEvent("mouseup", sInnerButtonId);
+            qutils.triggerEvent("click", sInnerButtonId);
+
+            //Assert
+            assert.strictEqual(oCloseSpy.called, true, "the Menu is closed on second click");
+        });
+
 
 		QUnit.test("Open with keyboard", function(assert) {
 			var fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");

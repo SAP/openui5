@@ -323,6 +323,11 @@ sap.ui.define([
 				width: "100%"
 			});
 			oBtn.attachPress(this._handleButtonPress, this);
+			oBtn.addEventDelegate({
+				ontap: function () {
+					this._bPopupOpen = this.getMenu() && this.getMenu()._getMenu() && this.getMenu()._getMenu().getPopup().isOpen();
+				}
+			}, this);
 			return oBtn;
 		};
 
@@ -337,6 +342,11 @@ sap.ui.define([
 			});
 			oBtn.attachPress(this._handleActionPress, this);
 			oBtn.attachArrowPress(this._handleButtonPress, this);
+			oBtn.addEventDelegate({
+				ontap: function () {
+					this._bPopupOpen = this.getMenu() && this.getMenu()._getMenu() && this.getMenu()._getMenu().getPopup().isOpen();
+				}
+			}, this);
 			return oBtn;
 		};
 
@@ -382,6 +392,15 @@ sap.ui.define([
 					plus2_left: "+2 0",
 					minus2_left: "-2 0"
 				};
+
+			if (this._bPopupOpen) {
+				this.getMenu().close();
+				return;
+			}
+
+			// always clear the flag, because its value is set in ontap of the inner button,
+			// which is triggered before the press event
+			this._bPopupOpen = false;
 
 			if (!oMenu) {
 				return;
