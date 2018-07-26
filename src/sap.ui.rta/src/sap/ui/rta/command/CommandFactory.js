@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/base/util/merge"
 ],
 function(
 	ManagedObject,
@@ -21,13 +22,12 @@ function(
 	FlexUtils,
 	JsControlTreeModifier,
 	jQuery,
-	ObjectPath
+	ObjectPath,
+	merge
 ) {
 	"use strict";
 
 	function evaluateTemplateBinding(oElementOverlay, vElement, sAggregationName, mFlexSettings){
-		var bTemplateBinding = false;
-
 		var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay, sAggregationName);
 		if (mBoundControl.elementId) {
 			//check for additional binding
@@ -43,17 +43,16 @@ function(
 			var sOriginalId = vElement.id || vElement.getId();
 			var sTemplateId = ElementUtil.extractTemplateId(sOriginalId, mBoundControl);
 			if (sTemplateId) {
-				Object.assign(mFlexSettings, {
+				return {
 					templateSelector : mBoundControl.elementId,
 					originalSelector : sTemplateId,
 					content : {
 						boundAggregation : mBoundControl.aggregation
 					}
-				});
-				bTemplateBinding = true;
+				};
 			}
 		}
-		return bTemplateBinding;
+		return undefined;
 	}
 
 	function getTemplateElementId(vElementOrId) {
@@ -299,6 +298,7 @@ function(
 	function _getCommandFor(vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings, sVariantManagementReference) {
 		sCommand = sCommand[0].toLowerCase() + sCommand.slice(1); // first char of command name is lower case
 		var mCommand = mCommands[sCommand];
+		var mAllFlexSettings = mFlexSettings;
 
 		if (!mCommand){
 			throw new Error("Command '" + sCommand + "' doesn't exist, check typing");
@@ -333,11 +333,14 @@ function(
 		}
 
 		if (oElementOverlay && vElement.sParentAggregationName && mCommand.adjustForBinding) {
-			var bTemplateBinding = evaluateTemplateBinding(oElementOverlay, vElement, vElement.sParentAggregationName, mFlexSettings);
+			var mTemplateSettings = evaluateTemplateBinding(oElementOverlay, vElement, vElement.sParentAggregationName, mFlexSettings);
 		}
 
-		if (bTemplateBinding && mCommand.adjustForBinding) {
-			mCommand.adjustForBinding(mSettings);
+		if (mTemplateSettings) {
+			if (mCommand.adjustForBinding) {
+				mCommand.adjustForBinding(mSettings);
+			}
+			mAllFlexSettings = merge(mTemplateSettings, mAllFlexSettings);
 		}
 		var oCommand = new Command(mSettings);
 
@@ -346,7 +349,7 @@ function(
 			bSuccessfullConfigured = configureActionCommand(vElement, oCommand, oAction);
 		}
 
-		var bPrepareStatus = bSuccessfullConfigured && oCommand.prepare(mFlexSettings, sVariantManagementReference);
+		var bPrepareStatus = bSuccessfullConfigured && oCommand.prepare(mAllFlexSettings, sVariantManagementReference);
 		if (bPrepareStatus) {
 			return oCommand;
 		} else {
