@@ -356,27 +356,27 @@ sap.ui.define([
 		this.startEdit(oElementOverlay);
 	};
 
-	ControlVariant.prototype.startEdit = function(oOverlay) {
-		var oVariantManagementControl = oOverlay.getElement(),
-			vDomRef = oOverlay.getDesignTimeMetadata().getDomRef();
+	ControlVariant.prototype.startEdit = function(oVariantManagementOverlay) {
+		var oVariantManagementControl = oVariantManagementOverlay.getElement(),
+			vDomRef = oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 		var oVariantTitleElement = oVariantManagementControl.getTitle();
 		var sPreviousText = oVariantTitleElement.getText();
 		var fnHandleStartEdit = RenameHandler.startEdit.bind( this, {
-			overlay: oOverlay,
+			overlay: oVariantManagementOverlay,
 			domRef: vDomRef,
 			pluginMethodName: "plugin.ControlVariant.startEdit"
 		});
 
-		if (oOverlay._triggerDuplicate) {
+		if (oVariantManagementOverlay._triggerDuplicate) {
 			var sCustomTextForDuplicate = this._getVariantTitleForCopy(
 				sPreviousText,
-				oOverlay.getVariantManagement(),
+				oVariantManagementOverlay.getVariantManagement(),
 				this._getVariantModel(oVariantManagementControl).getData()
 			);
 
 			oVariantManagementControl.getTitle().setText(sCustomTextForDuplicate);
 
-			oOverlay.attachEventOnce("geometryChanged", function() {
+			oVariantManagementOverlay.attachEventOnce("geometryChanged", function() {
 				fnHandleStartEdit();
 			}, this);
 		} else {
