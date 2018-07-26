@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			iSliderIndex,
 			bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
-		oRM.write("<div onselectstart=\"return false;\"");
+		oRM.write("<div");
 		oRM.writeControlData(oControl);
 		oRM.addClass("sapMTimePickerContainer");
 		oRM.addStyle("width", oControl.getWidth());
