@@ -11,6 +11,7 @@ sap.ui.define([
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {
 			var sPersistentMessage = "Enter customer reference if available",
+				sPersistentMessage2 = "Enter Postal Code if available",
 				sTransientMessage = "Minimum order quantity is 2",
 				sUnboundMessage = "Example for an unbound message";
 
@@ -59,14 +60,19 @@ sap.ui.define([
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
 			When.onTheMainPage.selectSalesOrder(1);
-			Then.onTheMainPage.checkMessageCount(2);
+			Then.onTheMainPage.checkMessageCount(3);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sPersistentMessage);
 			Then.onTheMainPage.checkInputValueState("SOD_Note", "Warning", sPersistentMessage);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
 				sTransientMessage);
+			Then.onTheMainPage.checkInputValueState("BP_PostalCode", "Warning",
+				sPersistentMessage2);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
+				message : sPersistentMessage2,
+				type : MessageType.Warning
+			}, {
 				message : sPersistentMessage,
 				type : MessageType.Warning
 			}, {
@@ -81,10 +87,13 @@ sap.ui.define([
 			When.onTheMainPage.pressBackToMessagesButton();
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
-			Then.onTheMainPage.checkMessageCount(1);
+			Then.onTheMainPage.checkMessageCount(2);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
+				message : sPersistentMessage2,
+				type : MessageType.Warning
+			}, {
 				message : sTransientMessage,
 				type : MessageType.Error
 			}]);
@@ -97,15 +106,18 @@ sap.ui.define([
 
 			When.onTheMainPage.selectSalesOrder(0);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "None", "");
-			Then.onTheMainPage.checkMessageCount(1);
+			Then.onTheMainPage.checkMessageCount(2);
 
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
 				sTransientMessage);
-			Then.onTheMainPage.checkMessageCount(1);
+			Then.onTheMainPage.checkMessageCount(2);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
+				message : sPersistentMessage2,
+				type : MessageType.Warning
+			}, {
 				message : sTransientMessage,
 				type : MessageType.Error
 			}]);

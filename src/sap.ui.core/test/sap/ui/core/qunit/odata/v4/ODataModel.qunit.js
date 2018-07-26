@@ -1683,7 +1683,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("reportBoundMessages: remove old messages with key predicates", function (assert) {
-		var mMessages = {
+		var oHelperMock = this.mock(_Helper),
+			mMessages = {
 				"/FOO('1')" : [{}, {}],
 				"/FOO('1')/bar" : [{}],
 				"/FOO('2')" : [{persistent : true}, {}, {persistent : true}, {}],
@@ -1695,6 +1696,8 @@ sap.ui.require([
 			oModelMock = this.mock(oModel);
 
 		oModel.mMessages = mMessages;
+		oHelperMock.expects("buildPath").withExactArgs("/FOO", "('1')").returns("/FOO('1')");
+		oHelperMock.expects("buildPath").withExactArgs("/FOO", "('2')").returns("/FOO('2')");
 		oModelMock.expects("fireMessageChange")
 			.withExactArgs(sinon.match.object)
 			.callsFake(function (mArguments) {

@@ -263,7 +263,8 @@ sap.ui.require([
 					fnCallback = this.spy(),
 					oError = new Error(""),
 					oGroupLock = new _GroupLock("groupId"),
-					oPromise;
+					oPromise,
+					that = this;
 
 				aCacheData.$count = bCount ? 3 : undefined;
 				aCacheData.$byPredicate = {"('42')" : aCacheData[1]};
@@ -282,7 +283,11 @@ sap.ui.require([
 				this.oRequestorMock.expects("request")
 					.withExactArgs("DELETE", "Equipments('1')?foo=bar",
 						sinon.match.same(oGroupLock), {"If-Match" : sEtag})
-					.returns(iStatus === 200 ? Promise.resolve({}) : Promise.reject(oError));
+					.returns(iStatus === 200 ? Promise.resolve().then(function () {
+						that.oRequestorMock.expects("reportBoundMessages")
+							.withExactArgs(oCache.sResourcePath, [],
+								["EMPLOYEE_2_EQUIPMENTS('42')"]);
+					}) : Promise.reject(oError));
 
 				// code under test
 				oPromise = oCache._delete(oGroupLock, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1",
@@ -374,35 +379,43 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#_delete: nested entity", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')",
-				{$expand : {EMPLOYEE_2_TEAM : true}}),
+		var oCache = new _Cache(this.oRequestor, "Equipments(Category='foo',ID='0815')",
+				{$expand : {EQUIPMENT_2_EMPLOYEE : {EMPLOYEE_2_TEAM : true}}}),
 			sEtag = 'W/"19770724000000.0000000"',
 			oCacheData = {
 				"EMPLOYEE_2_TEAM" : {
+					"@$ui5._" : {
+						"predicate" : "('23')"
+					},
 					"@odata.etag" : sEtag
 				}
 			},
 			fnCallback = this.spy(),
 			oGroupLock = new _GroupLock("groupId"),
-			oUpdateData = {};
-
+			oUpdateData = {},
+			that = this;
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EQUIPMENT_2_EMPLOYEE")
 			.returns(SyncPromise.resolve(oCacheData));
 		this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "TEAMS('23')", sinon.match.same(oGroupLock),
 				{"If-Match" : sEtag})
-			.returns(Promise.resolve({}));
+			.returns(Promise.resolve().then(function () {
+				that.oRequestorMock.expects("reportBoundMessages")
+					.withExactArgs(oCache.sResourcePath, [],
+						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"])
+			}));
 		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
 			.returns(oUpdateData);
 		this.mock(_Helper).expects("updateCache")
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "EQUIPMENT_2_EMPLOYEE",
 				sinon.match.same(oCacheData), sinon.match.same(oUpdateData));
 
 		// code under test
-		return oCache._delete(oGroupLock, "TEAMS('23')", "EMPLOYEE_2_TEAM", fnCallback)
+		return oCache._delete(oGroupLock, "TEAMS('23')", "EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
+				fnCallback)
 			.then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 				sinon.assert.calledOnce(fnCallback);
@@ -3360,7 +3373,7 @@ sap.ui.require([
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 		this.mock(_Helper).expects("getKeyPredicate")
 			.withExactArgs(sinon.match.object, "/Employees", sinon.match.same(mTypeForMetaPath))
-			.returns("(~)");
+			.returns("('4711')");
 
 		oCreatedPromise = oCache.create(oGroupLock, "Employees", "", {}, function () {
 			throw new Error();
@@ -3373,7 +3386,10 @@ sap.ui.require([
 			that.mock(oRequestor).expects("request")
 				.withExactArgs("DELETE", "/~/Employees('4711')", new _GroupLock("$auto"),
 					{"If-Match" : "anyEtag"})
-				.returns(Promise.resolve());
+				.returns(Promise.resolve().then(function () {
+					that.mock(oRequestor).expects("reportBoundMessages")
+						.withExactArgs(oCache.sResourcePath, [], ["('4711')"]);
+				}));
 
 			// code under test
 			return oCache._delete(new _GroupLock("$auto"), "/~/Employees('4711')", "-1", fnCallback)
@@ -3841,7 +3857,10 @@ sap.ui.require([
 			that.oRequestorMock.expects("request")
 				.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLock),
 					{"If-Match" : sEtag})
-				.returns(Promise.resolve({}));
+				.returns(Promise.resolve().then(function () {
+					that.oRequestorMock.expects("reportBoundMessages")
+						.withExactArgs(oCache.sResourcePath, [], [""]);
+				}));
 
 			// code under test
 			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", fnCallback)
