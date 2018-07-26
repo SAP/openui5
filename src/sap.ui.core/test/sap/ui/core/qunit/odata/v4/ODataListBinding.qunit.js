@@ -9,6 +9,7 @@ sap.ui.require([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Model",
@@ -26,9 +27,9 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	"sap/base/Log"
 ], function (jQuery, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
-		FilterType, ListBinding, Model, Sorter, OperationMode, Context, _AggregationCache,
-		_AggregationHelper, _Cache, _GroupLock, _Helper, ODataListBinding, ODataModel,
-		asODataParentBinding, TestUtils, Log) {
+		FilterProcessor, FilterType, ListBinding, Model, Sorter, OperationMode, Context,
+		_AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper, ODataListBinding,
+		ODataModel, asODataParentBinding, TestUtils, Log) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
@@ -5095,6 +5096,92 @@ sap.ui.require([
 
 		// code under test
 		assert.deepEqual(oBinding.getDependentBindings(), [oActiveBinding]);
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bWithStaticFilter) {
+		QUnit.test("getFilterInfo with static filter: " + bWithStaticFilter, function (assert) {
+			var aApplicationFilter = [new Filter("AmountIn%E2%82%AC", FilterOperator.GT, "1000")],
+				oAST = {},
+				oBinding = this.bindList("/Set"),
+				oCombinedFilter = {
+					getAST : function () {}
+				},
+				aControlFilter = [new Filter("AmountIn%E2%82%AC", FilterOperator.GT, "1000")],
+				oExpectedFilterInfo = {
+					left : {},
+					op : "&&",
+					right : {
+						args : ["someFilterExpression"],
+						type : "Static"
+					},
+					type : "Logical"
+				},
+				bIncludeOrigin = {/*true or false*/},
+				oResultAST;
+
+			oBinding.aApplicationFilters = aApplicationFilter;
+			oBinding.aFilters = aControlFilter;
+			if (bWithStaticFilter) {
+				oBinding.mQueryOptions.$filter = "someFilterExpression";
+			}
+			this.mock(FilterProcessor).expects("combineFilters")
+				.withExactArgs(sinon.match.same(aControlFilter),
+					sinon.match.same(aApplicationFilter))
+				.returns(oCombinedFilter);
+			this.mock(oCombinedFilter).expects("getAST")
+				.withExactArgs(sinon.match.same(bIncludeOrigin))
+				.returns(oAST);
+
+			// code under test
+			oResultAST = oBinding.getFilterInfo(bIncludeOrigin);
+
+			if (bWithStaticFilter) {
+				assert.deepEqual(oResultAST, oExpectedFilterInfo);
+			} else {
+				assert.strictEqual(oResultAST, oAST);
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterInfo: no filters", function (assert) {
+		var aApplicationFilter = [],
+			oBinding = this.bindList("/Set"),
+			aControlFilter = [],
+			bIncludeOrigin = {/*true or false*/};
+
+		oBinding.aApplicationFilters = aApplicationFilter;
+		oBinding.aFilters = aControlFilter;
+		this.mock(FilterProcessor).expects("combineFilters")
+			.withExactArgs(sinon.match.same(aControlFilter), sinon.match.same(aApplicationFilter))
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(oBinding.getFilterInfo(bIncludeOrigin), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterInfo: with only static filter", function (assert) {
+		var aApplicationFilter = [],
+			oBinding = this.bindList("/Set"),
+			aControlFilter = [],
+			oExpectedFilterInfo = {
+				args : ["someFilterExpression"],
+				type : "Static"
+			},
+			bIncludeOrigin = {/*true or false*/};
+
+		oBinding.aApplicationFilters = aApplicationFilter;
+		oBinding.aFilters = aControlFilter;
+		oBinding.mQueryOptions.$filter = "someFilterExpression";
+		this.mock(FilterProcessor).expects("combineFilters")
+			.withExactArgs(sinon.match.same(aControlFilter), sinon.match.same(aApplicationFilter))
+			.returns(undefined);
+
+		// code under test
+		assert.deepEqual(oBinding.getFilterInfo(bIncludeOrigin),
+			oExpectedFilterInfo);
 	});
 });
 
