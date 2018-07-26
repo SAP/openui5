@@ -163,7 +163,7 @@ sap.ui.define([
 
 			if (control) {
 				if (bActiveHeaders) {
-					rm.write("<div tabindex='0' role='button' aria-haspopup='true' class='sapMColumnHeader sapMColumnHeaderActive'>");
+					rm.write("<div tabindex='0' role='button' aria-haspopup='dialog' class='sapMColumnHeader sapMColumnHeaderActive'>");
 					control.addStyleClass("sapMColumnHeaderContent");
 				}
 
