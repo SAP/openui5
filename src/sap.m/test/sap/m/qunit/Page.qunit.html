@@ -472,6 +472,28 @@
 					oPage4.destroy();
 				});
 
+				QUnit.test("ScrollToElement Parameters forwarding", function(assert) {
+					var oButton = new sap.m.Button();
+						oPage5 = new sap.m.Page("myPage",{
+							content:[
+								oButton
+							]
+						});
+
+					oPage5.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					var oScrollEnablement = oPage5.getScrollDelegate(),
+						oSpy = sinon.spy(oScrollEnablement, "scrollToElement");
+
+					oPage5.scrollToElement(oButton, 200, [0, -100]);
+
+					assert.ok(oSpy.calledWith(oButton.getDomRef(), 200, [0, -100]), "scrollToElement's params forwarded correctly to scroll delegate.");
+
+					oSpy.restore();
+					oPage5.destroy();
+				});
+
 				QUnit.test("Restoring scrolling state after rendering", function(assert) {
 					assert.expect(1); // event should not be fired after rerendering
 					oPage2.rerender();
