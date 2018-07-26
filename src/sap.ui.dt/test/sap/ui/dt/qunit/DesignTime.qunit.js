@@ -1,30 +1,29 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'jquery.sap.global',
-	'sap/base/Log',
-	'sap/m/Button',
-	'sap/ui/layout/VerticalLayout',
-	'sap/ui/layout/HorizontalLayout',
-	'sap/m/Page',
-	'sap/m/Panel',
-	'sap/ui/base/ManagedObjectMetadata',
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/dt/AggregationOverlay',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/plugin/TabHandling',
-	'sap/ui/dt/plugin/ContextMenu',
-	'sap/ui/dt/plugin/DragDrop',
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/ui/base/ManagedObjectMetadata",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/AggregationOverlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/plugin/TabHandling",
+	"sap/ui/dt/plugin/ContextMenu",
+	"sap/ui/dt/plugin/DragDrop",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/Util",
 	"qunit/MetadataTestUtil",
 	"sap/base/util/includes",
-	'sap/ui/thirdparty/sinon'
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	jQuery,
@@ -48,11 +47,16 @@ function(
 	Util,
 	MetadataTestUtil,
 	includes,
+	DOMUtil,
 	sinon
 ) {
 	"use strict";
 
-	QUnit.start();
+	DOMUtil.insertStyles('\
+		.hidden {\
+			display: none !important;\
+		}\
+	', document.head);
 
 	var sandbox = sinon.sandbox.create();
 
@@ -64,7 +68,7 @@ function(
 			this.oDesignTime.destroy();
 		}
 	}, function() {
-		QUnit.test("when the DesignTime is created for a root control ", function(assert) {
+		QUnit.test("when the DesignTime is created for a root control ", function (assert) {
 			var fnDone = assert.async();
 
 			this.oButton = new Button();
@@ -186,13 +190,11 @@ function(
 		QUnit.test("when '_onAddAggregation' is called and a foreign error occurs during overlay creation", function (assert) {
 			var fnDone = assert.async();
 
-			sandbox.stub(this.oDesignTime, "createOverlay", function () {
-				return Promise.reject("custom error message");
-			});
+			sandbox.stub(this.oDesignTime, "createOverlay").rejects("custom error message");
 
 			var oNewButton = new Button();
 
-			var stubLog = sandbox.stub(Log, "error", function () {
+			var stubLog = sandbox.stub(Log, "error").callsFake(function () {
 				assert.equal(stubLog.callCount, 1, "then an error is raised");
 				assert.ok(stubLog.args[0][0].indexOf("Error in sap.ui.dt.DesignTime#_onAddAggregation") > -1, "the error has the correct text");
 				assert.ok(stubLog.args[0][0].indexOf("custom error message") > -1, "the error contains information about custom error");
@@ -311,7 +313,7 @@ function(
 			var oButton = new Button();
 
 			// Simulate control is being destroyed
-			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime", function () {
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
 				oButton.destroy();
 				return Promise.resolve({});
 			});
@@ -341,7 +343,7 @@ function(
 			var oButton = new Button();
 
 			// Simulate control is being destroyed
-			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime", function () {
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
 				oButton.destroy();
 				return Promise.resolve({});
 			});
@@ -351,7 +353,7 @@ function(
 			this.oDesignTime.attachEventOnce("elementOverlayCreated", fnElementOverlayCreatedSpy);
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
 
-			sandbox.stub(Log, "error", function() {
+			sandbox.stub(Log, "error").callsFake(function() {
 				assert.ok(false, 'then the error must not be raised');
 			});
 
@@ -472,7 +474,7 @@ function(
 		QUnit.test("when the element inside of the DesignTime is removed and then destroyed", function(assert) {
 			var fnDone = assert.async();
 
-			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
+			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function() {
 				assert.notOk(OverlayRegistry.getOverlay(this.oButton1), "overlay for button1 destroyed");
 
 				fnDone();
@@ -500,7 +502,7 @@ function(
 			var fnOriginalCheckIfOverlayShouldBeDestroyed = this.oDesignTime._checkIfOverlayShouldBeDestroyed;
 
 			//stub the important async functionality to get a trigger that it was called
-			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed", function(){
+			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function(){
 				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, arguments);
 
 				var oOverlayAfterwards = OverlayRegistry.getOverlay(oElement);
@@ -518,7 +520,7 @@ function(
 			var fnOriginalCheckIfOverlayShouldBeDestroyed = this.oDesignTime._checkIfOverlayShouldBeDestroyed;
 
 			//stub the important async functionality to get a trigger that it was called
-			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed", function(){
+			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function(){
 				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, arguments);
 				var oOverlayAfterwards = OverlayRegistry.getOverlay(sElementId);
 				assert.ok(oOverlayAfterwards, "overlay for recreated control is not destroyed");
@@ -617,7 +619,7 @@ function(
 			var oButton = new Button("button3");
 			var oInnerLayoutOverlay = OverlayRegistry.getOverlay(this.oInnerLayout);
 
-			this.oDesignTime.attachEventOnce("synced", function(oEvent) {
+			this.oDesignTime.attachEventOnce("synced", function() {
 				oParentOfNewOverlay = OverlayRegistry.getOverlay(oButton).getParentElementOverlay();
 				assert.strictEqual(oParentOfNewOverlay.getId(), oInnerLayoutOverlay.getId(), "then the parent overlay of the new button is the oInnerLayoutOverlay");
 				oButton.destroy();
@@ -630,7 +632,7 @@ function(
 	});
 
 	QUnit.module("Given a layout and a button", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oButton1 = new Button("button");
 
 			this.oLayout1 = new VerticalLayout({
@@ -830,11 +832,11 @@ function(
 		QUnit.test("when the overlay for a root element cannot be created", function(assert) {
 			var fnDone = assert.async();
 			var sErrorMessage = "ErrorMessage";
-			sandbox.stub(DesignTime.prototype, "createOverlay", function(){
+			sandbox.stub(DesignTime.prototype, "createOverlay").callsFake(function(){
 				return Promise.reject({ message: sErrorMessage });
 			});
 
-			var spyLog = sandbox.stub(Util, "createError", function(){
+			var spyLog = sandbox.stub(Util, "createError").callsFake(function(){
 				var sErrorText = Util.printf('sap.ui.dt: root element with id = "{0}" initialization is failed due to: {1}', this.oLayout2.getId(), sErrorMessage);
 				assert.equal(spyLog.callCount, 1, "then an error is created");
 				assert.ok(spyLog.calledWith("DesignTime#createOverlay", sErrorText, "sap.ui.dt"), "then the correct error is created");
@@ -877,7 +879,7 @@ function(
 		});
 
 		QUnit.test("when getting the metadata for sap.m.Page from DesignTime (using control name - backwards compatibility)", function(assert) {
-			var spyLog = sandbox.stub(Log, "error", function(){
+			var spyLog = sandbox.stub(Log, "error").callsFake(function(){
 				assert.equal(spyLog.callCount, 1, "an error is raised telling how the method should be called now");
 			});
 			var oDTMetadata = this.oDesignTime.getDesignTimeMetadataFor("sap.m.Page");
@@ -1038,7 +1040,7 @@ function(
 			}.bind(this));
 
 		},
-		afterEach: function(assert){
+		afterEach: function(){
 			this.oButton1.destroy();
 			this.oButton2.destroy();
 			this.oLayout1.destroy();
@@ -1113,7 +1115,7 @@ function(
 			}.bind(this));
 
 		},
-		afterEach: function(assert){
+		afterEach: function(){
 			this.oPage.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -1191,7 +1193,7 @@ function(
 			var fnDone = assert.async();
 			this.oDesignTime.createOverlay({}).then(
 				// Fulfilled
-				function(oElementOverlay){
+				function(){
 					assert.ok(false, 'this must never be called, no overlay could be created without an element');
 				},
 				// Rejected
@@ -1209,7 +1211,7 @@ function(
 				element: function () {}
 			}).then(
 				// Fulfilled
-				function(oElementOverlay){
+				function(){
 					assert.ok(false, 'this must never be called, no overlay could be created without an element');
 				},
 				// Rejected
@@ -1227,7 +1229,7 @@ function(
 			oButton.destroy();
 			this.oDesignTime.createOverlay(oButton).then(
 				// Fulfilled
-				function(oElementOverlay){
+				function(){
 					assert.ok(false, 'this must never be called, no overlay could be created without destroyed element');
 				},
 				// Rejected
@@ -1253,8 +1255,8 @@ function(
 			var oButton = new Button();
 			var fnPromiseResolve;
 
-			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime", function () {
-				return new Promise(function (fnResolve, fnReject) {
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
+				return new Promise(function (fnResolve) {
 					fnPromiseResolve = fnResolve;
 				});
 			});
@@ -1311,7 +1313,7 @@ function(
 			var oButton = new Button();
 			oLayout.addContent(oButton);
 
-			sandbox.stub(DesignTime.prototype, '_createChildren', function () {
+			sandbox.stub(DesignTime.prototype, '_createChildren').callsFake(function () {
 				oLayout.destroy();
 				return Promise.resolve();
 			});
@@ -1354,7 +1356,7 @@ function(
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
 
 			var fnRegisterOriginal = OverlayRegistry.register;
-			sandbox.stub(OverlayRegistry, 'register', function (oOverlay) {
+			sandbox.stub(OverlayRegistry, 'register').callsFake(function (oOverlay) {
 				if (oOverlay instanceof AggregationOverlay && oOverlay.getElement() === oLayout) {
 					oContentAggregtionOverlay = oOverlay;
 				}
@@ -1362,7 +1364,7 @@ function(
 			});
 
 			var fnCreateOverlayOriginal = this.oDesignTime.createOverlay;
-			sandbox.stub(this.oDesignTime, 'createOverlay', function (mParams) {
+			sandbox.stub(this.oDesignTime, 'createOverlay').callsFake(function (mParams) {
 				if (mParams.element === oButton) {
 					oLayout.destroy();
 				}
@@ -1392,7 +1394,7 @@ function(
 						fnDone();
 					}
 				)
-				.catch(function (oError) {
+				.catch(function () {
 					assert.ok(false, 'catch must never be called');
 				});
 		});
@@ -1400,7 +1402,7 @@ function(
 		QUnit.test("when 'initFailed' is fired with a foreign error by a created Overlay", function (assert) {
 			var fnDone = assert.async();
 
-			sandbox.stub(ElementOverlay.prototype, "asyncInit", function () {
+			sandbox.stub(ElementOverlay.prototype, "asyncInit").callsFake(function () {
 				throw new Error('some unexpected error');
 			});
 
@@ -1423,7 +1425,7 @@ function(
 						fnDone();
 					}
 				)
-				.catch(function (oError) {
+				.catch(function () {
 					assert.ok(false, 'catch must never be called');
 				});
 		});
@@ -1435,7 +1437,7 @@ function(
 			var someError = new Error("some error occurred");
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").returns(Promise.reject(someError));
 
-			sandbox.stub(Log, "error", function() {
+			sandbox.stub(Log, "error").callsFake(function() {
 				assert.ok(false, 'async public API should not raise any errors in console, Promise.reject() is enough');
 			});
 
@@ -1456,7 +1458,7 @@ function(
 						fnDone();
 					}
 				)
-				.catch(function (oError) {
+				.catch(function () {
 					assert.ok(false, 'catch must never be called');
 				});
 		});
@@ -1465,7 +1467,7 @@ function(
 			var fnDone = assert.async();
 			var oButton = new Button();
 
-			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime", function () {
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
 				this.oDesignTime.destroy();
 				return Promise.resolve({});
 			}.bind(this));
@@ -1523,7 +1525,7 @@ function(
 			var oButton = new Button({ text: 'New Button' });
 			var fnMetadataResolve;
 
-			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime", function () {
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
 				return new Promise(function (fnResolve) {
 					fnMetadataResolve = fnResolve;
 				});

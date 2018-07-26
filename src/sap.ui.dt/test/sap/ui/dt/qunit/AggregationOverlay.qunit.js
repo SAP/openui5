@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/AggregationOverlay',
@@ -24,10 +22,8 @@ function(
 ) {
 	"use strict";
 
-	QUnit.start();
-
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation without domRef DT metadata and without children", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -51,7 +47,7 @@ function(
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation with domRef DT metadata", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -191,7 +187,7 @@ function(
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation-like association", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oPage = new Page();
 
 			this.oAggregationLikeOverlay = new AggregationOverlay({
@@ -221,7 +217,7 @@ function(
 		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

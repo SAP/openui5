@@ -125,8 +125,9 @@ sap.ui.define([
 		// Adding payload only if it wasn't added before explicitly.
 		if (Util.isForeignError(oError, sLibraryName)) {
 			var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + '.' + sLocation;
+			var sOriginalMessage = (oError.name || '') + oError.message;
 			oError.name = 'Error in ' + sLocationFull;
-			oError.message = Util.printf('{0}. Original error: {1}', sMessage, oError.message || '¯\\_(ツ)_/¯');
+			oError.message = Util.printf('{0}. Original error: {1}', sMessage, sOriginalMessage || '¯\\_(ツ)_/¯');
 		}
 
 		return oError;

@@ -1,8 +1,6 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	'sap/ui/Device'
 ],
@@ -70,7 +68,7 @@ function(
 		afterEach: function() {
 			this.$Panel.remove();
 		}
-	}, function(){
+	}, function () {
 		QUnit.test("initial position", function (assert) {
 			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), 0);
 		});
@@ -94,6 +92,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

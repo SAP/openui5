@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/ui/dt/SelectionMode",
 	"sap/base/util/includes"
 ],
-function(
+function (
 	ManagedObject,
 	ElementOverlay,
 	AggregationOverlay,

@@ -636,7 +636,7 @@ function(
 					.loadStyles('InPageStyles')
 					.then(function (sData) {
 						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
-						DOMUtil.insertStyles(sStyles);
+						DOMUtil.insertStyles(sStyles, Overlay.getOverlayContainer().get(0));
 					});
 			})
 			.then(function () {

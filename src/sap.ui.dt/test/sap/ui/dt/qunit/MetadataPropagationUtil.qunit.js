@@ -1,22 +1,16 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/MetadataPropagationUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"qunit/MetadataTestUtil",
-	// controls
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
-	// should be last
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-ie",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/thirdparty/sinon"
 ], function(
 	MetadataPropagationUtil,
 	OverlayRegistry,
@@ -352,7 +346,7 @@ sap.ui.require([
 			this.oButton = new Button("test-button7");
 			this.oPage = new Page({
 				content: [this.oButton]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 
@@ -417,7 +411,7 @@ sap.ui.require([
 			});
 			this.oPage = new Page({
 				content: [this.oVerticalLayout, this.oButton3]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 
@@ -560,7 +554,7 @@ sap.ui.require([
 			});
 			this.oPage = new Page({
 				content: [this.oVerticalLayout]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 
@@ -606,5 +600,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

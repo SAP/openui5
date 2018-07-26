@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/AggregationOverlay',
@@ -15,7 +13,6 @@ function(
 	Button
 ) {
 	'use strict';
-	QUnit.start();
 
 	QUnit.module("Basic functionality", {
 		beforeEach : function() {
@@ -81,5 +78,9 @@ function(
 				"then it's not possible to deregister anything but sap.ui.dt.Overlay descendant"
 			);
 		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

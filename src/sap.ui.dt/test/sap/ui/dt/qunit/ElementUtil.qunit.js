@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DesignTime",
@@ -67,8 +65,6 @@ function(
 	sinon
 ) {
 	"use strict";
-
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
