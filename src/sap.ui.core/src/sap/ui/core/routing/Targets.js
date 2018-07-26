@@ -265,7 +265,7 @@ sap.ui.define([
 
 				this._mTargets = {};
 				this._oConfig = oOptions.config;
-				this._oViews = oOptions.views;
+				this._oCache = oOptions.cache || oOptions.views;
 
 				// If no config is given, set the default value to sync
 				if (!this._oConfig) {
@@ -326,7 +326,7 @@ sap.ui.define([
 				}
 
 				this._mTargets = null;
-				this._oViews = null;
+				this._oCache = null;
 				this._oConfig = null;
 				this.bIsDestroyed = true;
 
@@ -352,7 +352,11 @@ sap.ui.define([
 			 * @public
 			 */
 			getViews : function () {
-				return this._oViews;
+				return this._oCache;
+			},
+
+			getCache: function () {
+				return this._oCache;
 			},
 
 			/**
@@ -532,7 +536,7 @@ sap.ui.define([
 				var oTarget,
 					oOptions;
 
-				oOptions = jQuery.extend(true, { name: sName }, this._oConfig, oTargetOptions);
+				oOptions = jQuery.extend(true, { _name: sName }, this._oConfig, oTargetOptions);
 				oTarget = this._constructTarget(oOptions);
 				oTarget.attachDisplay(function (oEvent) {
 					var oParameters = oEvent.getParameters();
@@ -564,7 +568,7 @@ sap.ui.define([
 				oParentTarget = this._mTargets[sParent];
 
 				if (!oParentTarget) {
-					Log.error("The target '" + oTarget._oOptions.name + " has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
+					Log.error("The target '" + oTarget._oOptions._name + " has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
 					return;
 				}
 
@@ -576,7 +580,7 @@ sap.ui.define([
 			 * @private
  			 */
 			_constructTarget : function (oOptions, oParent) {
-				return new Target(oOptions, this._oViews, oParent);
+				return new Target(oOptions, this._oCache, oParent);
 			},
 
 			/**
@@ -633,7 +637,7 @@ sap.ui.define([
 
 						if (oTarget && oTarget._oOptions.title) {
 							// we found the TitleTarget
-							sTitleTargetName = oTarget._oOptions.name;
+							sTitleTargetName = oTarget._oOptions._name;
 							return true;
 						}
 					}.bind(this));
@@ -667,7 +671,7 @@ sap.ui.define([
 				}
 
 				if (oTitleTarget) {
-					oTitleTarget.attachTitleChanged({name:oTitleTarget._oOptions.name}, this._forwardTitleChanged, this);
+					oTitleTarget.attachTitleChanged({name:oTitleTarget._oOptions._name}, this._forwardTitleChanged, this);
 					this._oLastTitleTarget = oTitleTarget;
 				} else if (sTitleTarget) {
 					Log.error("The target with the name \"" + sTitleTarget + "\" where the titleChanged event should be fired does not exist!", this);

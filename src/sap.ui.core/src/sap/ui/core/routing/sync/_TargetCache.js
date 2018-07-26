@@ -15,20 +15,18 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		/**
 		 * @private
 		 */
-		_getViewWithGlobalId : function (oOptions) {
+		_getObjectWithGlobalId : function (oOptions) {
 			function fnCreateView() {
+				oOptions.viewName = oOptions.name;
+				delete oOptions.name;
 				return sap.ui.view(oOptions);
 			}
 
-			if (!oOptions) {
-				Log.error("the oOptions parameter of getView is mandatory", this);
-			}
-
 			var oView,
-				sViewName = oOptions.viewName;
+				sViewName = oOptions.name;
 
-			this._checkViewName(sViewName);
-			oView = this._oViews[sViewName];
+			this._checkName(sViewName, "View");
+			oView = this._oCache.view[sViewName];
 
 			if (oView) {
 				return oView;
@@ -40,14 +38,22 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				oView = fnCreateView();
 			}
 
-			this._oViews[sViewName] = oView;
+			this._oCache.view[sViewName] = oView;
 
 			this.fireCreated({
-				view: oView,
-				viewOptions: oOptions
+				object: oView,
+				type: "View",
+				options: oOptions
 			});
 
 			return oView;
+		},
+
+		_getViewWithGlobalId : function (oOptions) {
+			if (oOptions && !oOptions.name) {
+				oOptions.name = oOptions.viewName;
+			}
+			return this._getObjectWithGlobalId(oOptions);
 		}
 	};
 });

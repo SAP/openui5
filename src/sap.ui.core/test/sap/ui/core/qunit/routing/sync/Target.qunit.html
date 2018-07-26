@@ -107,7 +107,7 @@ sap.ui.require([
 		// Arrange
 		var that = this,
 			oStub = this.stub(this.oViews, "_getView", function (oOptions) {
-				assert.strictEqual(oOptions.viewName, "bar.foo");
+				assert.strictEqual(oOptions.name, "bar.foo");
 				assert.strictEqual(oOptions.type, "XML");
 				assert.strictEqual(oOptions.id, "baz");
 				return that.oView;
@@ -125,7 +125,7 @@ sap.ui.require([
 		var that = this,
 			oSpy = this.spy(this.oViews, "_getView"),
 			oStub = this.stub(this.oViews, "_getViewWithGlobalId", function (oOptions) {
-				assert.strictEqual(oOptions.viewName, "bar.foo");
+				assert.strictEqual(oOptions.name, "bar.foo");
 				assert.strictEqual(oOptions.type, "XML");
 				assert.strictEqual(oOptions.id, "baz");
 				return that.oView;
@@ -137,7 +137,8 @@ sap.ui.require([
 
 		// Assert
 		assert.strictEqual(oStub.callCount, 1, "Did inform the view creation");
-		assert.strictEqual(oSpy.callCount, 0, "Did not use the prefix version");
+		assert.strictEqual(oSpy.callCount, 1, "Did use the non-prefix version");
+		assert.strictEqual(oSpy.getCall(0).args[1], true, "Did use the non-prefix version");
 	});
 
 	QUnit.test("Should clear a target aggregation", function (assert) {
@@ -602,7 +603,7 @@ sap.ui.require([
 		// Assert
 		assert.ok(oTarget.bIsDestroyed, "Did flag the target as destroyed");
 		assert.strictEqual(oTarget._oParent, null, "Did free the parent reference");
-		assert.strictEqual(oTarget._oViews, null, "Did free the views reference");
+		assert.strictEqual(oTarget._oCache, null, "Did free the views reference");
 		assert.notOk(oViews.bIsDestroyed, "Did not destroy the views instance");
 		assert.strictEqual(oTarget._oOptions, null, "Did free the options reference");
 		assert.ok(oTitleProvider.bIsDestroyed, "TitleProvider is destroyed");
@@ -612,7 +613,7 @@ sap.ui.require([
 		oParentTarget.destroy();
 		oViews.destroy();
 	});
-	
+
 	QUnit.start();
 });
 </script>

@@ -200,7 +200,7 @@ sap.ui.require([
 
 	QUnit.test("Should destroy the routers dependencies", function(assert) {
 		// System under test + Arrange
-		var oRouter = fnCreateRouter([ { name : "myRoute", pattern : "foo" } ], {}, {}, {myTarget : {}});
+		var oRouter = fnCreateRouter([ { name : "myRoute", pattern : "foo" } ], {}, null, {myTarget : {}});
 
 		var oTargets = oRouter.getTargets(),
 			oRoute = oRouter.getRoute("myRoute");
@@ -2374,7 +2374,7 @@ sap.ui.require([
 
 		return oRouteMatchedSpy.returnValues[0].then(function() {
 			// Assert
-			assert.strictEqual(this.oRouter._oTargets._oViews, this.oRouter._oViews, "Targets are using the same view repository");
+			assert.strictEqual(this.oRouter._oTargets._oCache, this.oRouter._oViews, "Targets are using the same view repository");
 			assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
 
 			assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
@@ -2455,6 +2455,9 @@ sap.ui.require([
 
 		return oRouteMatchedSpy.returnValues[0].then(function() {
 			// Assert
+			assert.strictEqual(this.oRouter._oTargets._oCache, this.oRouter._oViews, "Targets are using the same view repository");
+			assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
+
 			assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myChild");
 			assert.strictEqual(oPlaceParentSpy.callCount, 1, "Did place myTarget");
 

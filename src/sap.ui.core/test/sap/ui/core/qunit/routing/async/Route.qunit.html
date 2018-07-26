@@ -39,7 +39,7 @@
 
 		QUnit.module("async view loading", ModuleHook.create({
 			beforeEach: function() {
-				var oViews = new Views();
+				var oViews = new Views({async: true});
 				this.oShell = new ShellSubstitute();
 				this.oRouterStub = {
 					fireRouteMatched : function () {},
