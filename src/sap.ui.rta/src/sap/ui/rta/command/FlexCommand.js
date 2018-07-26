@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
+	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	BaseCommand,
@@ -16,6 +17,7 @@ sap.ui.define([
 	FlexControllerFactory,
 	FlUtils,
 	Log,
+	fnBaseMerge,
 	jQuery
 ) {
 	"use strict";
@@ -175,7 +177,7 @@ sap.ui.define([
 	 */
 	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference) {
 		if (mFlexSettings) {
-			jQuery.extend(true, mChangeSpecificData, mFlexSettings);
+			fnBaseMerge(mChangeSpecificData, mFlexSettings);
 		}
 		mChangeSpecificData.jsOnly = this.getJsOnly();
 		var oModel = this.getAppComponent().getModel("$FlexVariants");
@@ -189,13 +191,13 @@ sap.ui.define([
 			"variantReference": sVariantReference
 		};
 		if (sVariantReference) {
-			jQuery.extend(mChangeSpecificData, mVariantObj);
+			Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
 		var oChange = oFlexController.createChange(mChangeSpecificData, this._validateControlForChange(mFlexSettings));
 		if (mFlexSettings && mFlexSettings.originalSelector) {
 			oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
 			oChange.getDefinition().selector = JsControlTreeModifier.getSelector(this.getSelector().id, this.getSelector().appComponent);
-			oChange.setContent(jQuery.extend(oChange.getContent(), mFlexSettings.content));
+			oChange.setContent(Object.assign({}, oChange.getContent(), mFlexSettings.content));
 		}
 		return oChange;
 	};

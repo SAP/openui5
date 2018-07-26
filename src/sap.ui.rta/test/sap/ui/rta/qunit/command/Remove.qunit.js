@@ -1,11 +1,6 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 QUnit.config.autostart = false;
-
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
@@ -14,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/ui/fl/Utils",
 	"sap/m/Link",
-	"sap/ui/fl/registry/ChangeRegistry"
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
 	Remove,
@@ -22,7 +18,8 @@ sap.ui.define([
 	Popup,
 	Utils,
 	Link,
-	ChangeRegistry
+	ChangeRegistry,
+	sinon
 ) {
 		"use strict";
 
@@ -68,11 +65,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getting a remove command for popup ...", function(assert) {
-			var oCommand = CommandFactory.getCommandFor(this.oPopup, "Remove", {
+			return CommandFactory.getCommandFor(this.oPopup, "Remove", {
 				removedElement : this.oPopup
-			}, this.oPopupDesignTimeMetadata);
+			}, this.oPopupDesignTimeMetadata)
 
-			assert.notOk(oCommand, "no remove command for popup exists");
+			.then(function(oCommand) {
+				assert.notOk(oCommand, "no remove command for popup exists");
+			})
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.module("Given a Link and its designtime metadata with undo functionality are created...", {
@@ -111,50 +114,57 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getting a remove command with an invalid removedElement ...", function (assert) {
-			assert.throws(
-				function() {
-					CommandFactory.getCommandFor(this.oLink, "Remove", {
-						removedElement : {}
-					}, this.oLinkDesignTimeMetadata);
-				},
-			 "No valid 'removedElement' found"
-		 );
+			return CommandFactory.getCommandFor(this.oLink, "Remove", {
+				removedElement : {}
+			}, this.oLinkDesignTimeMetadata)
+
+			.then(function() {
+				assert.notOk(true, "Exception is expected but no exception was thrown");
+			}, function(oMessage) {
+				assert.ok(true, "No valid 'removedElement' found");
+			});
 		});
 
 		QUnit.test("when getting a remove command without removedElement parameter ...", function(assert) {
-			var done = assert.async();
+			return CommandFactory.getCommandFor(this.oLink, "Remove", {}, this.oLinkDesignTimeMetadata)
 
-			var oCommand = CommandFactory.getCommandFor(this.oLink, "Remove", undefined,
-				this.oLinkDesignTimeMetadata);
+			.then(function(oRemoveCommand) {
+				var sChangeType = this.oLinkDesignTimeMetadata.getAction("remove", this.oLink).changeType;
+				assert.ok(oRemoveCommand, "remove command for Link exists");
+				assert.equal(oRemoveCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
+				return oRemoveCommand.execute();
+			}.bind(this))
 
-			var sChangeType = this.oLinkDesignTimeMetadata.getAction("remove", this.oLink).changeType;
-
-			assert.ok(oCommand, "remove command for Link exists");
-			assert.equal(oCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
-
-			oCommand.execute().then( function() {
+			.then(function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-				done();
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 
 		QUnit.test("when getting a remove command for a Link...", function(assert) {
-			var done = assert.async();
-
-			var oCommand = CommandFactory.getCommandFor(this.oLink, "Remove", {
+			return CommandFactory.getCommandFor(this.oLink, "Remove", {
 				removedElement : this.oLink
-			}, this.oLinkDesignTimeMetadata);
+			}, this.oLinkDesignTimeMetadata)
 
-			var sChangeType = this.oLinkDesignTimeMetadata.getAction("remove", this.oLink).changeType;
+			.then(function(oRemoveCommand) {
+				var sChangeType = this.oLinkDesignTimeMetadata.getAction("remove", this.oLink).changeType;
 
-			assert.ok(oCommand, "remove command for Link exists");
-			assert.equal(oCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
+				assert.ok(oRemoveCommand, "remove command for Link exists");
+				assert.equal(oRemoveCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
+				return oRemoveCommand.execute();
+			}.bind(this))
 
-			oCommand.execute().then( function() {
+			.then( function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-				done();
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 });

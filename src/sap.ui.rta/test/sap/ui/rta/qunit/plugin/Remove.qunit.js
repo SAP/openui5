@@ -223,9 +223,12 @@ function(
 			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 			assert.ok(true, "... when plugin removeElement is called ...");
 
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(jQuery(".sapUiRtaConfirmationDialogText").text(), "Button", "Confirmation dialog is shown with a correct text");
-			sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
+			// there is no chance to get notificated when the confirmation dialog is opened after switching to async processing (CommandFactory)
+			setTimeout(function() {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(jQuery(".sapUiRtaConfirmationDialogText").text(), "Button", "Confirmation dialog is shown with a correct text");
+				sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
+			}, 0);
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {

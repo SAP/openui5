@@ -25,7 +25,7 @@
 				sap.ui.require([
 					"sap/ui/fl/fieldExt/Access"
 				], function(Access) {
-					sap.ushell = jQuery.extend(sap.ushell, {
+					sap.ushell = Object.assign({}, sap.ushell, {
 						Container : {
 							getLogonSystem : function(){
 								return {

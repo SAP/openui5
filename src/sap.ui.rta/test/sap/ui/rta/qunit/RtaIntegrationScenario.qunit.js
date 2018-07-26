@@ -70,7 +70,6 @@ sap.ui.require([
 	});
 
 	QUnit.test("when removing a group using a command stack API", function(assert) {
-		var done = assert.async();
 		var iFiredCounter = 0;
 		this.oRta.attachUndoRedoStackModified(function() {
 			iFiredCounter++;
@@ -80,11 +79,13 @@ sap.ui.require([
 		assert.strictEqual(this.oRta.canRedo(), false, "initially no redo is possible");
 		assert.notOk(this.oRta.getToolbar().getControl('publish').getEnabled(), "initially no Changes are existing");
 
-		var oCommand = new CommandFactory().getCommandFor(this.oGroup, "Remove", {
+		return new CommandFactory().getCommandFor(this.oGroup, "Remove", {
 			removedElement : this.oGroup
-		}, this.oGroupOverlay.getDesignTimeMetadata());
+		}, this.oGroupOverlay.getDesignTimeMetadata())
 
-		this.oCommandStack.pushAndExecute(oCommand)
+		.then(function(oRemoveCommand) {
+			return this.oCommandStack.pushAndExecute(oRemoveCommand);
+		}.bind(this))
 
 		.then(function() {
 			sap.ui.getCore().applyChanges();
@@ -113,17 +114,19 @@ sap.ui.require([
 			assert.ok(this.oRta.getToolbar().getControl('publish').getEnabled(), "Transport button of RTA is enabled again");
 			// pushAndExecute fires modified twice!
 			assert.strictEqual(iFiredCounter, 4, "undoRedoStackModified event of RTA is fired twice");
-			done();
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 	QUnit.test("when renaming a form title using a property change command", function(assert) {
-		var done = assert.async();
 		sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
 
 		var oInitialTitle = this.oForm.getTitle();
 
-		var oCommand = new CommandFactory({
+		return new CommandFactory({
 			flexSettings: {
 				layer: "VENDOR"
 			}
@@ -131,9 +134,11 @@ sap.ui.require([
 			propertyName : "title",
 			oldValue : oInitialTitle,
 			newValue : "Test Title"
-		});
+		})
 
-		this.oCommandStack.pushAndExecute(oCommand)
+		.then(function(oCommand) {
+			return this.oCommandStack.pushAndExecute(oCommand);
+		}.bind(this))
 
 		.then(function() {
 			assert.strictEqual(this.oForm.getTitle(), "Test Title", "then title is changed...");
@@ -143,8 +148,11 @@ sap.ui.require([
 
 		.then(function() {
 			assert.strictEqual(this.oForm.getTitle(), oInitialTitle, "when the undo is called, then the form's title is restored");
-			done();
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {

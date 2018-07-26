@@ -93,7 +93,7 @@ sap.ui.define([
 				});
 			};
 
-			sap.ushell = jQuery.extend(sap.ushell, {
+			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
 					getService : function(){
 						return {

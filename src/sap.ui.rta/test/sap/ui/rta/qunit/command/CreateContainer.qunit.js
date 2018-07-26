@@ -4,27 +4,23 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/command/CreateContainer",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/core/Popup",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	CommandFactory,
-	CreateContainer,
 	ElementDesignTimeMetadata,
 	Popup,
 	Form,
 	FormContainer,
 	ChangeRegistry,
 	Utils,
-	sinon,
-	jQuery
+	sinon
 ) {
 		"use strict";
 
@@ -71,14 +67,20 @@ function(
 			}
 		}, function(){
 			QUnit.test("when getting a createContainer command for popup ...", function(assert) {
-				var oCreateContainerCommand = CommandFactory.getCommandFor(this.oPopup, "CreateContainer", {
+				return CommandFactory.getCommandFor(this.oPopup, "CreateContainer", {
 					index : 0,
 					newControlId : this.NEW_CONTROL_ID,
 					label : this.NEW_CONTROL_LABEL,
 					parentId : this.oPopup.getId()
-				}, this.oPopupDesignTimeMetadata);
+				}, this.oPopupDesignTimeMetadata)
 
-				assert.notOk(oCreateContainerCommand, "no createContainer command for popup exists");
+				.then(function(oCreateContainerCommand) {
+					assert.notOk(oCreateContainerCommand, "no createContainer command for popup exists");
+				})
+
+				.catch(function (oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 			});
 		});
 
@@ -125,13 +127,20 @@ function(
 					}
 				});
 
-				this.oCreateContainerCommand = CommandFactory.getCommandFor(this.oForm, "createContainer", {
+				return CommandFactory.getCommandFor(this.oForm, "createContainer", {
 					index : 0,
 					newControlId : this.NEW_CONTROL_ID,
 					label : this.NEW_CONTROL_LABEL,
 					parentId : this.oForm.getId()
-				}, this.oCreateContainerDesignTimeMetadata);
+				}, this.oCreateContainerDesignTimeMetadata)
 
+				.then(function(oCreateContainerCommand) {
+					this.oCreateContainerCommand = oCreateContainerCommand;
+				}.bind(this))
+
+				.catch(function (oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 			},
 			afterEach : function(assert) {
 				this.oForm.destroy();

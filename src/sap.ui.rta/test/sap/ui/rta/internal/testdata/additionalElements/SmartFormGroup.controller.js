@@ -1,15 +1,24 @@
-(function(){
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/json/JSONModel"
+], function(
+	Controller,
+	MockServer,
+	ODataModel,
+	JSONModel
+) {
 	"use strict";
 
-	sap.ui.controller("sap.ui.rta.test.additionalElements.SmartFormGroup", {
+	return Controller.extend("sap.ui.rta.test.additionalElements.SmartFormGroup", {
 
 		onInit : function () {
 
-			jQuery.sap.require("sap.ui.core.util.MockServer");
+			var sURL = "/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/?sap-documentation=all",
+				oModel, oView;
 
-			sURL = "/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/?sap-documentation=all";
-
-			var oMockServer = new sap.ui.core.util.MockServer({
+			var oMockServer = new MockServer({
 				rootUri : sURL
 			});
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/additionalElements");
@@ -17,9 +26,8 @@
 			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", this._sResourcePath + "/mockserver");
 
 			oMockServer.start();
-			var sURL, oModel, oView;
 
-			oModel = new sap.ui.model.odata.ODataModel(sURL, {
+			oModel = new ODataModel(sURL, {
 				json : true,
 				loadMetadataAsync : true
 			});
@@ -39,7 +47,7 @@
 				enabled : true
 			};
 
-			var oStateModel = new sap.ui.model.json.JSONModel();
+			var oStateModel = new JSONModel();
 			oStateModel.setData(data);
 			oView.setModel(oStateModel, "state");
 
@@ -61,17 +69,20 @@
 		},
 
 		switchToAdaptionMode : function() {
-
-			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
-			var oRta = new sap.ui.rta.RuntimeAuthoring({
-				rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
-				customFieldUrl : this._sResourcePath + "/testdata/rta/CustomField.html",
-				showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") == "true")
-			});
-			oRta.start();
+			sap.ui.require([
+				"sap/ui/rta/RuntimeAuthoring"
+			], function(RuntimeAuthoring) {
+				var oRta = new RuntimeAuthoring({
+					rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
+					customFieldUrl : this._sResourcePath + "/testdata/rta/CustomField.html",
+					showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") == "true")
+				});
+				oRta.attachEvent('stop', function() {
+					oRta.destroy();
+				});
+				oRta.start();
+			}.bind(this));
 		}
-
-
 	});
 
-})();
+});

@@ -438,7 +438,7 @@ function(
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available together with a CommandStack with changes...", {
 		beforeEach : function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 
 			FakeLrepSessionStorage.deleteChanges();
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
@@ -466,12 +466,17 @@ function(
 
 			// Create commmands
 			var oCommandFactory = new CommandFactory();
-			this.oRemoveCommand1 = oCommandFactory.getCommandFor(oElement1, "Remove", {
+			return oCommandFactory.getCommandFor(oElement1, "Remove", {
 				removedElement : oElement1
-			}, this.oGroupElementDesignTimeMetadata);
+			}, this.oGroupElementDesignTimeMetadata)
 
-			// Create command stack with the commands
-			this.oRemoveCommand1.execute().then(function() {
+			.then(function(oRemoveCommand) {
+				this.oRemoveCommand = oRemoveCommand;
+				// Create command stack with the commands
+				return this.oRemoveCommand.execute();
+			}.bind(this))
+
+			.then(function() {
 
 				//After command has been pushed
 				var fnStackModifiedSpy = sinon.spy(function() {
@@ -488,22 +493,32 @@ function(
 					});
 
 					this.oRta.start()
+
 					.then(function() {
 						this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
 						this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
-					}.bind(this)).then(done);
+					}.bind(this))
+
+					.then(fnDone)
+
+					.catch(function (oError) {
+						assert.ok(false, 'catch must never be called - Error: ' + oError);
+					});
 				}.bind(this));
 
 				this.oCommandStack = new Stack();
 				this.oCommandStack.attachEventOnce("modified", fnStackModifiedSpy);
-				this.oCommandStack.pushExecutedCommand(this.oRemoveCommand1);
+				return this.oCommandStack.pushExecutedCommand(this.oRemoveCommand);
+			}.bind(this))
 
-			}.bind(this));
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		},
 
 		afterEach : function(assert) {
 			sandbox.restore();
-			this.oRemoveCommand1.destroy();
+			this.oRemoveCommand.destroy();
 			this.oCommandStack.destroy();
 			this.oRta.destroy();
 			FakeLrepSessionStorage.deleteChanges();
@@ -653,26 +668,42 @@ function(
 			});
 
 			var oCommandFactory = new CommandFactory();
-			this.oRemoveCommand1 = oCommandFactory.getCommandFor(this.oGroupElement1, "Remove", {
+			return oCommandFactory.getCommandFor(this.oGroupElement1, "Remove", {
 				removedElement : this.oGroupElement1
-			}, this.oGroupElementDesignTimeMetadata);
-			this.oRemoveCommand2 = oCommandFactory.getCommandFor(this.oGroupElement2, "Remove", {
-				removedElement : this.oGroupElement2
-			}, this.oGroupElementDesignTimeMetadata);
+			}, this.oGroupElementDesignTimeMetadata)
 
-			// Create command stack with the commands
-			this.oCommandStack = new Stack();
-			this.oCommandStack.pushExecutedCommand(this.oRemoveCommand1);
-			this.oCommandStack.pushExecutedCommand(this.oRemoveCommand2);
+			.then(function(oRemoveCommand) {
+				this.oRemoveCommand1 = oRemoveCommand;
+				return oCommandFactory.getCommandFor(this.oGroupElement2, "Remove", {
+					removedElement : this.oGroupElement2
+				}, this.oGroupElementDesignTimeMetadata);
+			}.bind(this))
 
-			// Start RTA with command stack
-			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oSmartForm,
-				commandStack : this.oCommandStack,
-				showToolbars : true
+			.then(function(oRemoveCommand) {
+				this.oRemoveCommand2 = oRemoveCommand;
+				// Create command stack with the commands
+				this.oCommandStack = new Stack();
+				return this.oCommandStack.pushExecutedCommand(this.oRemoveCommand1);
+			}.bind(this))
+
+			.then(function() {
+				return this.oCommandStack.pushExecutedCommand(this.oRemoveCommand2);
+			}.bind(this))
+
+			.then(function() {
+				// Start RTA with command stack
+				this.oRta = new RuntimeAuthoring({
+					rootControl : this.oSmartForm,
+					commandStack : this.oCommandStack,
+					showToolbars : true
+				});
+
+				return this.oRta.start();
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
-
-			return this.oRta.start();
 		},
 		afterEach : function(assert) {
 			this.oSmartForm.destroy();

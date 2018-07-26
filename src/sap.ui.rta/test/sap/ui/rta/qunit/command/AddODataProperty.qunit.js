@@ -87,7 +87,7 @@ function(
 	});
 
 	QUnit.test("when getting a AddODataProperty command for the change ...", function(assert) {
-		var oCommand = CommandFactory.getCommandFor(
+		return CommandFactory.getCommandFor(
 			this.oButton,
 			"addODataProperty",
 			{
@@ -99,13 +99,21 @@ function(
 				propertyName: "propertyName"
 			},
 			this.oDesignTimeMetadata
-		);
+		)
 
-		assert.ok(oCommand, "the addODataProperty command exists");
-		return oCommand.execute().then(function() {
+		.then(function(oCommand) {
+			assert.ok(oCommand, "the addODataProperty command exists");
+			return oCommand.execute();
+		})
+
+		.then(function() {
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 });

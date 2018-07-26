@@ -6,23 +6,17 @@ sap.ui.define([
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/Utils',
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/ObjectPath",
-	"sap/base/util/merge"
+	'sap/ui/dt/Util',
+	'sap/base/util/merge'
 ],
 function(
 	ManagedObject,
 	ElementUtil,
 	OverlayUtil,
 	OverlayRegistry,
-	ChangeRegistry,
 	FlexUtils,
-	JsControlTreeModifier,
-	jQuery,
-	ObjectPath,
+	DtUtil,
 	merge
 ) {
 	"use strict";
@@ -37,7 +31,7 @@ function(
 				OverlayUtil.isInAggregationBinding(oParentElementOverlay, oParentElementOverlay.sParentAggregationName) : false;
 
 			if (bAdditionalBinding) {
-				throw new Error("Multiple template bindings are not supported");
+				throw DtUtil.createError("CommandFactory#evaluateTemplateBinding", "Multiple template bindings are not supported", "sap.ui.rta");
 			}
 
 			var sOriginalId = vElement.id || vElement.getId();
@@ -301,61 +295,66 @@ function(
 		var mAllFlexSettings = mFlexSettings;
 
 		if (!mCommand){
-			throw new Error("Command '" + sCommand + "' doesn't exist, check typing");
+			return Promise.reject(DtUtil.createError("CommandFactory#_getCommandFor", "Command '" + sCommand + "' doesn't exist, check typing", "sap.ui.rta"));
 		}
 
-		var sClassName = mCommand.clazz;
-
-		//TODO: global jquery call found
-		jQuery.sap.require(sClassName);
-		var Command = ObjectPath.get(sClassName || "");
-
-		var bIsUiElement = vElement instanceof sap.ui.base.ManagedObject;
-		mSettings = jQuery.extend(mSettings, {
-			element : bIsUiElement ? vElement : undefined,
-			selector : bIsUiElement ? undefined : vElement,
-			name : sCommand
-		});
-
-		var oAction;
-		if (mCommand.configure) {
-			oAction = mCommand.configure(vElement, mSettings, oDesignTimeMetadata);
-		}
-
-		if (bIsUiElement) {
-			var oElementOverlay = OverlayRegistry.getOverlay(vElement);
-		}
-		if (oAction && oAction.changeOnRelevantContainer) {
-			mSettings = jQuery.extend(mSettings, {
-				element : oElementOverlay.getRelevantContainer()
+		return new Promise(function(fnResolve) {
+			var sClassName = mCommand.clazz;
+			sap.ui.require([sClassName.replace(/\./g,"/")], function(Command) {
+				fnResolve(Command);
 			});
-			vElement = mSettings.element;
-		}
+		})
 
-		if (oElementOverlay && vElement.sParentAggregationName && mCommand.adjustForBinding) {
-			var mTemplateSettings = evaluateTemplateBinding(oElementOverlay, vElement, vElement.sParentAggregationName, mFlexSettings);
-		}
+		.then(function(Command) {
+			var oAction, oElementOverlay, bPrepareStatus, oCommand, mTemplateSettings;
+			var bIsUiElement = vElement instanceof ManagedObject;
 
-		if (mTemplateSettings) {
-			if (mCommand.adjustForBinding) {
-				mCommand.adjustForBinding(mSettings);
+			mSettings = Object.assign({}, mSettings, {
+				element : bIsUiElement ? vElement : undefined,
+				selector : bIsUiElement ? undefined : vElement,
+				name : sCommand
+			});
+
+			if (mCommand.configure) {
+				oAction = mCommand.configure(vElement, mSettings, oDesignTimeMetadata);
 			}
-			mAllFlexSettings = merge(mTemplateSettings, mAllFlexSettings);
-		}
-		var oCommand = new Command(mSettings);
 
-		var bSuccessfullConfigured = true; //configuration is optional
-		if (mCommand.configure) {
-			bSuccessfullConfigured = configureActionCommand(vElement, oCommand, oAction);
-		}
+			if (bIsUiElement) {
+				oElementOverlay = OverlayRegistry.getOverlay(vElement);
+			}
 
-		var bPrepareStatus = bSuccessfullConfigured && oCommand.prepare(mAllFlexSettings, sVariantManagementReference);
-		if (bPrepareStatus) {
-			return oCommand;
-		} else {
-			oCommand.destroy();
-			return undefined;
-		}
+			if (oAction && oAction.changeOnRelevantContainer) {
+				mSettings = Object.assign(mSettings, {
+					element : oElementOverlay.getRelevantContainer()
+				});
+				vElement = mSettings.element;
+			}
+
+			if (oElementOverlay && vElement.sParentAggregationName) {
+				mTemplateSettings = evaluateTemplateBinding(oElementOverlay, vElement, vElement.sParentAggregationName, mFlexSettings);
+			}
+
+			if (mTemplateSettings) {
+				if (mCommand.adjustForBinding) {
+					mCommand.adjustForBinding(mSettings);
+				}
+				mAllFlexSettings = merge(mTemplateSettings, mAllFlexSettings);
+			}
+			oCommand = new Command(mSettings);
+
+			var bSuccessfullConfigured = true; //configuration is optional
+			if (mCommand.configure) {
+				bSuccessfullConfigured = configureActionCommand(vElement, oCommand, oAction);
+			}
+
+			bPrepareStatus = bSuccessfullConfigured && oCommand.prepare(mAllFlexSettings, sVariantManagementReference);
+			if (bPrepareStatus) {
+				return oCommand;
+			} else {
+				oCommand.destroy();
+				return undefined;
+			}
+		});
 	}
 
 	/**
@@ -403,10 +402,28 @@ function(
 		this.setProperty("flexSettings", jQuery.extend(this.getFlexSettings(), mFlexSettings));
 	};
 
+	/**
+	 * Instance-specific method for generating command
+	 * @param {sap.ui.Element|string} vElement - could be either an element or a slector for the element for which the command is to be created
+	 * @param {string} sCommand - command type
+	 * @param {object} mSettings - initial settings for the new command
+	 * @param {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata - contains the action used in the command
+	 * @param {string} sVariantManagementReference - variant management reference
+	 * @returns {Promise} A promise which will return the created command
+	 */
 	CommandFactory.prototype.getCommandFor = function(vElement, sCommand, mSettings, oDesignTimeMetadata, sVariantManagementReference) {
 		return _getCommandFor(vElement, sCommand, mSettings, oDesignTimeMetadata, this.getFlexSettings(), sVariantManagementReference);
 	};
 
+	/**
+	 * Static method for generating command
+	 * @param {sap.ui.Element|string} vElement - could be either an element or a slector for the element for which the command is to be created
+	 * @param {string} sCommand - command type
+	 * @param {object} mSettings - initial settings for the new command
+	 * @param {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata - contains the action used in the command
+	 * @param {string} mFlexSettings - flex settings
+	 * @returns {Promise} A promise which will return the created command
+	 */
 	CommandFactory.getCommandFor = function(vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings) {
 		if (!mFlexSettings) {
 			mFlexSettings = {

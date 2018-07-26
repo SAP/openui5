@@ -389,34 +389,48 @@ sap.ui.define([
 				if (mActions.addODataProperty){
 					return Utils.isServiceUpToDate(mParents.parent);
 				}
-			}).then(function() {
+			})
+
+			.then(function() {
 				if (mActions.addODataProperty){
 					this.getDialog()._oCustomFieldButton.setVisible(true);
 					return Utils.isCustomFieldAvailable(mParents.parent);
 				} else {
 					this.getDialog()._oCustomFieldButton.setVisible(false);
 				}
-			}.bind(this)).then(function(oCurrentFieldExtInfo) {
+			}.bind(this))
+
+			.then(function(oCurrentFieldExtInfo) {
 				if (oCurrentFieldExtInfo) {
 					this._oCurrentFieldExtInfo = oCurrentFieldExtInfo;
 					this.getDialog().setCustomFieldEnabled(true);
 					this.getDialog().detachEvent('openCustomField', this._onOpenCustomField, this);
 					this.getDialog().attachEvent('openCustomField', null, this._onOpenCustomField, this);
 				}
-			}.bind(this)).then(
+			}.bind(this))
+
+			.then(
 				_getAllElements.bind(null, aPromises)
-			).then(function(aAllElements){
+			)
+
+			.then(function(aAllElements){
 				this.getDialog().setElements(aAllElements);
 
-				return this.getDialog().open().then(function() {
-					this._createCommands(bOverlayIsSibling, oElementOverlay, mParents, oSiblingElement, mActions.designTimeMetadata, mActions, iIndex);
-				}.bind(this)).catch(function(oError){
+				return this.getDialog().open()
+
+				.then(function() {
+					return this._createCommands(mParents, oSiblingElement, mActions, iIndex);
+				}.bind(this))
+
+				.catch(function(oError){
 					//no error means canceled dialog
 					if (oError instanceof Error){
 						throw oError;
 					}
 				});
-			}.bind(this)).catch(function(oError){
+			}.bind(this))
+
+			.catch(function(oError){
 				if (oError instanceof Error){
 					throw oError;
 				} else {
@@ -458,55 +472,93 @@ sap.ui.define([
 			Utils.openNewWindow(sHrefForFieldExtensionUi);
 		},
 
-		_createCommands : function(bSibling, oOverlay, mParents, oSiblingElement, oDesignTimeMetadata, mActions, iIndex) {
+		_createCommands : function(mParents, oSiblingElement, mActions, iIndex) {
 
 			var aSelectedElements = this.getDialog().getSelectedElements();
 
 			if (aSelectedElements.length > 0) {
 				//at least one element selected
-				var oCompositeCommand = this.getCommandFactory().getCommandFor(mParents.parent, "composite");
-				aSelectedElements.forEach(function(oSelectedElement){
-					var oCmd;
-					switch (oSelectedElement.type) {
-						case "invisible":
-							oCmd = this._createRevealCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement);
-							oCompositeCommand.addCommand(oCmd);
+				return this.getCommandFactory().getCommandFor(mParents.parent, "composite")
 
-							oCmd = this._createMoveCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement, iIndex);
-							if (oCmd) {
-								oCompositeCommand.addCommand(oCmd);
-							} else {
-								Log.warning("No move action configured for " + mParents.parent.getMetadata().getName() + ", aggregation: " + mActions.aggregation , "sap.ui.rta");
-							}
+				.then(function(oCompositeCommand) {
+					var oPromise = Promise.resolve();
+					aSelectedElements.forEach(function(oSelectedElement){
+						switch (oSelectedElement.type) {
+							case "invisible":
+								oPromise = oPromise.then(
+									this._createCommandsForInvisibleElement.bind(this, oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex));
+								break;
+							case "odata":
+								oPromise = oPromise.then(
+									this._createCommandsForODataElement.bind(this, oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex));
+								break;
+							default:
+								Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
+						}
+					}, this);
+					return oPromise.then(function() { return oCompositeCommand; });
+				}.bind(this))
 
-							break;
-						case "odata":
-							var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
-							var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-							var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty", mParents.parent);
-							var mChangeHandlerSettings = mODataPropertyActionDTMetadata.changeHandlerSettings;
-							var mRequiredLibraries;
-							if (mChangeHandlerSettings && mChangeHandlerSettings.content){
-								mRequiredLibraries = mChangeHandlerSettings.content.requiredLibraries;
-							}
-							if (mRequiredLibraries){
-								var oCmdDesc = this._createCommandForAddLibrary(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata);
-								oCompositeCommand.addCommand(oCmdDesc);
-							}
-							oCmd = this._createCommandsForOData(oSelectedElement, mActions, mParents, oSiblingElement, iIndex);
-							oCompositeCommand.addCommand(oCmd);
-							break;
-						default:
-							Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
-					}
-				}, this);
-				this.fireElementModified({
-					"command" : oCompositeCommand
+				.then(function(oCompositeCommand) {
+					this.fireElementModified({
+						"command" : oCompositeCommand
+					});
+				}.bind(this))
+
+				.catch(function(oMessage) {
+					throw new Error(oMessage);
 				});
 			}
+			return Promise.resolve();
 		},
 
-		_createCommandsForOData: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
+		_createCommandsForInvisibleElement : function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
+			return this._createRevealCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement)
+
+			.then(function(oRevealCommandForInvisible) {
+				oCompositeCommand.addCommand(oRevealCommandForInvisible);
+				return this._createMoveCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement, iIndex);
+			}.bind(this))
+
+			.then(function(oMoveCommandForInvisible) {
+				if (oMoveCommandForInvisible) {
+					oCompositeCommand.addCommand(oMoveCommandForInvisible);
+				} else {
+					Log.warning("No move action configured for " + mParents.parent.getMetadata().getName() + ", aggregation: " + mActions.aggregation , "sap.ui.rta");
+				}
+				return oCompositeCommand;
+			});
+		},
+
+		_createCommandsForODataElement : function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
+			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
+			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
+			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty", mParents.parent);
+			var mChangeHandlerSettings = mODataPropertyActionDTMetadata.changeHandlerSettings;
+			var mRequiredLibraries;
+			if (mChangeHandlerSettings && mChangeHandlerSettings.content){
+				mRequiredLibraries = mChangeHandlerSettings.content.requiredLibraries;
+			}
+			return Promise.resolve()
+
+			.then(function() {
+				if (mRequiredLibraries){
+					return this._createCommandForAddLibrary(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata)
+					.then(function(oCommandForAddLibrary) {
+						oCompositeCommand.addCommand(oCommandForAddLibrary);
+					});
+				}
+			}.bind(this))
+
+			.then(this._createCommandForOData.bind(this, oSelectedElement, mActions, mParents, oSiblingElement, iIndex))
+
+			.then(function(oCommandsForOData) {
+				oCompositeCommand.addCommand(oCommandsForOData);
+				return oCompositeCommand;
+			});
+		},
+
+		_createCommandForOData: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
 			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
 			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
 			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty", mParents.parent);
@@ -575,9 +627,8 @@ sap.ui.define([
 					revealedElementId : oRevealedElement.getId(),
 					directParent : mParents.parent
 				}, oDesignTimeMetadata, sVariantManagementReference);
-			} else {
-				return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", { }, oDesignTimeMetadata, sVariantManagementReference);
 			}
+			return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", { }, oDesignTimeMetadata, sVariantManagementReference);
 		},
 
 		_createMoveCommandForInvisible: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
@@ -599,7 +650,6 @@ sap.ui.define([
 
 			iRevealTargetIndex = iIndex !== undefined ? iIndex : _adjustTargetIndex(oSourceParent, oTargetParent, iRevealedSourceIndex, iRevealTargetIndex);
 
-			var oCmd;
 			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()){
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
 				var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
@@ -608,7 +658,7 @@ sap.ui.define([
 				if (oMoveAction) {
 					sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oMoveAction, true);
 				}
-				oCmd = this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
+				return this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 					movedElements : [{
 						element : oRevealedElement,
 						sourceIndex : iRevealedSourceIndex,
@@ -624,7 +674,7 @@ sap.ui.define([
 					}
 				}, SourceParentDesignTimeMetadata, sVariantManagementReference);
 			}
-			return oCmd;
+			return Promise.resolve();
 		},
 
 		/**

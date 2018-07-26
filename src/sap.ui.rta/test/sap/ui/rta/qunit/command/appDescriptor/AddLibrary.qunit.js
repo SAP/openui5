@@ -77,7 +77,8 @@ function(
 		var oMockDescriptorChange = {
 			store : function() {
 				assert.ok(true, "the descriptor change was submitted");
-				oAddLibraryCommand.execute().then(function() {
+				oAddLibraryCommand.execute()
+				.then(function() {
 					assert.ok(sap.uxap, "upon execution, 'sap.uxap' library is loaded");
 					done();
 				});
@@ -106,19 +107,24 @@ function(
 			return Promise.resolve(oMockDescriptorChange);
 		}.bind(this));
 
-		oAddLibraryCommand = CommandFactory.getCommandFor(this.oButton, "addLibrary", {
+		return CommandFactory.getCommandFor(this.oButton, "addLibrary", {
 			reference : this.sReference,
 			parameters : { libraries : this.mLibraries },
 			appComponent : oMockedAppComponent
-		}, {}, {"layer" : this.sLayer});
+		}, {}, {"layer" : this.sLayer})
 
-		assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
-		oAddLibraryCommand.createAndStoreChange();
+		.then(function(oCommand) {
+			oAddLibraryCommand = oCommand;
+			assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
+			oAddLibraryCommand.createAndStoreChange();
+		})
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 	QUnit.test("when calling execute for AddLibrary ...", function(assert) {
-		var done = assert.async();
-
 		this.mLibraries = {
 			"sap.uxap": {
 				"minVersion": "1.44",
@@ -130,16 +136,18 @@ function(
 				}
 		};
 
-		var oAddLibraryCommand = CommandFactory.getCommandFor(this.oButton, "addLibrary", {
+		return CommandFactory.getCommandFor(this.oButton, "addLibrary", {
 			reference : this.sReference,
 			parameters : { libraries : this.mLibraries }
-		}, {}, {"layer" : this.sLayer});
+		}, {}, {"layer" : this.sLayer})
 
-		assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
+		.then(function(oAddLibraryCommand) {
+			assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
+			return oAddLibraryCommand.execute();
+		})
 
-		oAddLibraryCommand.execute().catch(function(e){
+		.catch(function(e){
 			assert.ok(e, "then trying to load a non-existing library causes the error " + e);
-			done();
 		});
 	});
 

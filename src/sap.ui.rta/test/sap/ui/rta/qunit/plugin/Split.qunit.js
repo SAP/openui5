@@ -261,9 +261,15 @@ function (
 		this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
 		this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 
-		this.oSplitPlugin.handleSplit(this.oButton1Overlay);
+		return this.oSplitPlugin.handleSplit(this.oButton1Overlay)
 
-		assert.strictEqual(spy.callCount, 1, "fireElementModified is called once");
+		.then(function() {
+			assert.strictEqual(spy.callCount, 1, "fireElementModified is called once");
+		})
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
 	QUnit.test("when an overlay has a split action designTime metadata", function (assert) {

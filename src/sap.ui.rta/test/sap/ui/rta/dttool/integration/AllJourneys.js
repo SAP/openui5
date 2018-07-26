@@ -1,8 +1,9 @@
 /*global QUnit*/
-jQuery.sap.require("sap.ui.qunit.qunit-css");
-jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
+
 if (window.blanket) {
 	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta/dttool]");
 	window.blanket.options("sap-ui-cover-never", "[sap/ui/rta/dttool/integration]");
