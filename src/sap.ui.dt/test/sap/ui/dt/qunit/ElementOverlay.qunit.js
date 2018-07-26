@@ -23,6 +23,7 @@ sap.ui.require([
 	"sap/ui/Device",
 	"dt/control/SimpleScrollControl",
 	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/Popup',
 	"sap/ui/thirdparty/sinon"
 ],
 function(
@@ -46,6 +47,7 @@ function(
 	Device,
 	SimpleScrollControl,
 	jQuery,
+	Popup,
 	sinon
 ) {
 	"use strict";
@@ -94,6 +96,20 @@ function(
 			assert.ok(this.oElementOverlay.getDomRef(), "overlay is rendered");
 			assert.ok(this.oElementOverlay.isVisible(), "overlay is visible");
 			assert.deepEqual(this.oElementOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
+			assert.equal(this.oElementOverlay.$().css("z-index"), Popup.getLastZIndex(), "the root overlay has the last z-index provided by the Popup");
+		});
+
+		QUnit.test("when the control gets a new width and the Overlay is rerendered", function (assert) {
+			var done = assert.async();
+			var iLastZIndex = Popup.getLastZIndex();
+
+			this.oElementOverlay.attachEventOnce('geometryChanged', function () {
+				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "the overlay has the new width as well");
+				assert.equal(this.oElementOverlay.$().css("z-index"), iLastZIndex, "the root overlay does not get a new z-index from the Popup");
+				done();
+			}, this);
+
+			this.oButton.setWidth("500px");
 		});
 
 		QUnit.test("when overlay is enabled/disabled", function (assert) {
@@ -187,8 +203,9 @@ function(
 
 			var mElementOffset = this.oElementOverlay.getElement().$().offset();
 			var mOverlayOffset = $DomRef.offset();
-			assert.equal(mOverlayOffset.top, mElementOffset.top, 'and the right postion "top" is applied to the overlay');
-			assert.equal(mOverlayOffset.left, mElementOffset.left, 'and the right postion "left" is applied to the overlay');
+			assert.equal(mOverlayOffset.top, mElementOffset.top, 'and the right position "top" is applied to the overlay');
+			assert.equal(mOverlayOffset.left, mElementOffset.left, 'and the right position "left" is applied to the overlay');
+			assert.equal(this.oElementOverlay.$().css("z-index"), $DomRef.css("z-index"), "and the right z-index is applied to the overlay");
 
 			var oDesignTimeMetadata = this.oElementOverlay.getDesignTimeMetadata();
 			assert.ok(oDesignTimeMetadata instanceof ElementDesignTimeMetadata, "and the design time metadata for the control is set");
@@ -198,7 +215,8 @@ function(
 			var done = assert.async();
 
 			this.oElementOverlay.attachEventOnce('geometryChanged', function () {
-				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width());
+				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "the new width is correctly set");
+				assert.strictEqual(this.oButton.$().css("z-index"), this.oElementOverlay.$().css("z-index"), "the new z-index is correctly set");
 				done();
 			}, this);
 

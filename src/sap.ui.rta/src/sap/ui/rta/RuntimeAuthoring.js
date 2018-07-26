@@ -645,6 +645,9 @@ function(
 			.then(
 				function () {
 					this._sStatus = STARTED;
+					if (this.getShowToolbars()) {
+						this.getToolbar().bringToFront();
+					}
 					this.fireStart({
 						editablePluginsCount: this.iEditableOverlaysCount
 					});
