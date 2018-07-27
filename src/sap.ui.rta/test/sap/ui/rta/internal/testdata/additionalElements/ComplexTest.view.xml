@@ -235,7 +235,7 @@
 					</uxap:ObjectPageSection>
 					<uxap:ObjectPageSection id="ObjectPageSectionTable" title="Table">
 						<uxap:ObjectPageSubSection>
-							<Table id="table" items="{path: 'to_EntityType01Nav'}">
+							<Table growing="true" id="table" items="{path: 'to_EntityType01Nav'}">
 								<columns>
 									<Column id="Column0">
 										<Text text="{/#EntityTypeNav/id/@sap:label}" />
@@ -251,7 +251,7 @@
 									</Column>
 								</columns>
 								<items>
-									<ColumnListItem>
+									<ColumnListItem id="CLI">
 										<cells>
 											<Text text="{id}" />
 											<Text text="{EntityTypeNav_Property01}" />
