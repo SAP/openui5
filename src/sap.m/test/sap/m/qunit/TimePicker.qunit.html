@@ -1585,13 +1585,15 @@
 
 		QUnit.test("mouse wheel scrolls the sliders proportionally to the speed", function(assert) {
 			//sut
+			var oDate = new Date();
+			oDate.setHours(3);
 			var tp = new sap.m.TimePicker({
-					displayFormat: "HH:mm",
-					dateValue: new Date(2000, 1, 2, 16, 35, 54)
-				}),
-				oEvent,
-				oSliders,
-				oSliderHours;
+						displayFormat: "HH:mm",
+						dateValue: oDate
+					}),
+					oEvent,
+					oSliders,
+					oSliderHours;
 
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1609,7 +1611,7 @@
 			this.clock.tick(160);
 
 			//assert
-			assert.equal(oSliderHours.getSelectedValue(), "15", "slider's value changed by 1");
+			assert.equal(oSliderHours.getSelectedValue(), "2", "slider's value changed by 1");
 
 			//act again
 			oEvent = this._createMouseWheelEvent(-2);
@@ -1617,7 +1619,7 @@
 			this.clock.tick(160);
 
 			//assert
-			assert.equal(oSliderHours.getSelectedValue(), "17", "slider's value changed by 2 in the other direction");
+			assert.equal(oSliderHours.getSelectedValue(), "4", "slider's value changed by 2 in the other direction");
 
 			//cleanup
 			tp.destroy();
