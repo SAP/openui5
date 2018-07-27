@@ -209,7 +209,7 @@ sap.ui.define([
 					window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
 
 					var oRta = new RuntimeAuthoring({
-						rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
+						rootControl : this.getOwnerComponent(),
 						commandStack: oStack,
 						flexSettings: {
 							developerMode: false

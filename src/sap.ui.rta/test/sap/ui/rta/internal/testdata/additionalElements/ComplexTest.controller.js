@@ -108,7 +108,7 @@ sap.ui.define([
 				"sap/ui/rta/RuntimeAuthoring"
 			], function(RuntimeAuthoring) {
 				var oRta = new RuntimeAuthoring({
-					rootControl: this.getOwnerComponent().getAggregation("rootControl"),
+					rootControl: this.getOwnerComponent(),
 					flexSettings: {
 						developerMode: false
 					}

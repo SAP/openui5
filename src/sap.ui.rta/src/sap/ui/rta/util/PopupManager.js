@@ -185,7 +185,7 @@ function (
 	PopupManager.prototype.setRta = function(oRta) {
 		if (oRta && oRta._oDesignTime) {
 			this.setProperty("rta", oRta);
-			var oRootControl = sap.ui.getCore().byId(oRta.getRootControl());
+			var oRootControl = oRta.getRootControlInstance();
 			this.oRtaRootAppComponent = this._getAppComponentForControl(oRootControl);
 			this._overrideInstanceFunctions();
 			//listener for RTA mode change

@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/Util",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/m/MessageBox",
@@ -41,7 +42,6 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/rta/util/StylesLoader",
-	"sap/ui/rta/util/UrlParser",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/Device",
 	"sap/ui/rta/service/index",
@@ -83,6 +83,7 @@ function(
 	FlexControllerFactory,
 	Utils,
 	DtUtil,
+	ElementUtil,
 	FlexUtils,
 	FlexSettings,
 	MessageBox,
@@ -91,7 +92,6 @@ function(
 	BusyIndicator,
 	DOMUtil,
 	StylesLoader,
-	UrlParser,
 	RtaAppVariantFeature,
 	Device,
 	ServicesIndex,
@@ -132,9 +132,9 @@ function(
 			// ---- control specific ----
 			library : "sap.ui.rta",
 			associations : {
-				/** The root control which the runtime authoring should handle */
+				/** The root control which the runtime authoring should handle. Can only be sap.ui.core.Element or sap.ui.core.UIComponent */
 				"rootControl" : {
-					type : "sap.ui.core.Control"
+					type : "sap.ui.base.ManagedObject"
 				}
 			},
 			properties : {
@@ -489,16 +489,22 @@ function(
 	/**
 	 * Checks the uri parameters for "sap-ui-layer" and returns either the current layer or the layer from the uri parameter, if there is one
 	 *
-	 * @param {String} sLayer the current layer
 	 * @returns {String} the layer after checking the uri parameters
 	 * @private
 	 */
-	RuntimeAuthoring.prototype.getLayer = function (sLayer) {
+	RuntimeAuthoring.prototype.getLayer = function () {
 		return this.getFlexSettings().layer;
 	};
 
+	RuntimeAuthoring.prototype.getRootControlInstance = function() {
+		if (!this._oRootControl) {
+			this._oRootControl = ElementUtil.getElementInstance(this.getRootControl());
+		}
+		return this._oRootControl;
+	};
+
 	RuntimeAuthoring.prototype._getFlexController = function() {
-		var oRootControl = this._oRootControl || sap.ui.getCore().byId(this.getRootControl());
+		var oRootControl = this.getRootControlInstance();
 		return FlexControllerFactory.createForControl(oRootControl);
 	};
 
@@ -514,12 +520,12 @@ function(
 	RuntimeAuthoring.prototype.start = function () {
 		this._sStatus = STARTING;
 		var oDesignTimePromise;
+		var vError;
 
 		// Create DesignTime
 		if (!this._oDesignTime) {
-			this._oRootControl = sap.ui.getCore().byId(this.getRootControl());
-			if (!this._oRootControl) {
-				var vError = new Error("Root control not found");
+			if (!this.getRootControlInstance()) {
+				vError = new Error("Root control not found");
 				FlexUtils.log.error(vError);
 				return Promise.reject(vError);
 			}
@@ -529,7 +535,7 @@ function(
 				this.getValidateAppVersion()
 				&& !FlexUtils.isCorrectAppVersionFormat(this._getFlexController().getAppVersion())
 			) {
-				var vError = this._getTextResources().getText("MSG_INCORRECT_APP_VERSION_ERROR");
+				vError = this._getTextResources().getText("MSG_INCORRECT_APP_VERSION_ERROR");
 				FlexUtils.log.error(vError);
 				return Promise.reject(vError);
 			}
@@ -583,8 +589,6 @@ function(
 						jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
 					}
 
-					this._oRootControl.addStyleClass("sapUiRtaRoot");
-
 					this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 					}, this);
@@ -598,7 +602,6 @@ function(
 						fnReject(oEvent.getParameter("error"));
 					});
 				}.bind(this));
-
 
 				// Register function for checking unsaved before leaving RTA
 				this._oldUnloadHandler = window.onbeforeunload;
@@ -642,6 +645,13 @@ function(
 				// Should be initialized after the Toolbar is rendered since it depends on it
 				this.getPopupManager().setRta(this);
 			}.bind(this))
+			.then(function() {
+				var oRootOverlay = OverlayRegistry.getOverlay(this.getRootControl());
+				this._$RootControl = oRootOverlay.getAssociatedDomRef();
+				if (this._$RootControl) {
+					this._$RootControl.addClass("sapUiRtaRoot");
+				}
+			}.bind(this))
 			.then(
 				function () {
 					this._sStatus = STARTED;
@@ -672,7 +682,7 @@ function(
 	 */
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
 		return FlexSettings.getInstance().then(function(oSettings) {
-			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this._oRootControl, this.getLayer(), this._oSerializer);
+			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
 			return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 		}.bind(this))
 		.catch(function () {
@@ -1023,8 +1033,8 @@ function(
 			this.setPlugins(null);
 		}
 
-		if (this._oRootControl) {
-			this._oRootControl.removeStyleClass("sapUiRtaRoot");
+		if (this._$RootControl) {
+			this._$RootControl.removeClass("sapUiRtaRoot");
 		}
 
 		this.setCommandStack(null);
@@ -1070,7 +1080,7 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
-		return this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent", FlexUtils.getAppComponentForControl(this._oRootControl || sap.ui.getCore().byId(this.getRootControl())))
+		return this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent", FlexUtils.getAppComponentForControl(this.getRootControlInstance()))
 			.then(function() {
 				this._reloadPage();
 			}.bind(this))["catch"](function(oError) {
