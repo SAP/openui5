@@ -223,10 +223,13 @@ sap.ui.define([
 			}
 		}.bind(this))
 
-		.catch(function(oError) {
-			if (oError) {
-				throw DtUtil.propagateError(oError);
-			}
+		.catch(function(vError) {
+			throw DtUtil.propagateError(
+				vError,
+				"Settings#handler",
+				"Error occured during handler execution",
+				"sap.ui.rta.plugin"
+			);
 		});
 	};
 

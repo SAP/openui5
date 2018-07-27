@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils',
+	'sap/ui/dt/Util',
 	'sap/ui/core/StashedControlSupport',
 	'sap/ui/dt/ElementDesignTimeMetadata',
 	"sap/base/Log"
@@ -19,6 +20,7 @@ sap.ui.define([
 	OverlayRegistry,
 	Utils,
 	FlUtils,
+	DtUtils,
 	StashedControlSupport,
 	ElementDesignTimeMetadata,
 	Log
@@ -505,8 +507,13 @@ sap.ui.define([
 					});
 				}.bind(this))
 
-				.catch(function(oMessage) {
-					throw new Error(oMessage);
+				.catch(function(vMessage) {
+					throw DtUtils.propagateError(
+						vMessage,
+						"AdditionalElementsPlugin#_createCommands",
+						"Error occured during _createCommands execution",
+						"sap.ui.rta.plugin"
+					);
 				});
 			}
 			return Promise.resolve();

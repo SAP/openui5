@@ -413,7 +413,6 @@ function (
 						content : "testchange2"
 					},
 					new ElementDesignTimeMetadata({
-						libraryName : "sap.m",
 						data : {
 							actions : {
 								settings : function() {}
