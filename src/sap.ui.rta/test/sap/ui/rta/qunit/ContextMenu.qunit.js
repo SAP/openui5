@@ -236,13 +236,11 @@ function(
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on GroupElement with stable id, but the Group has no stable id");
-			assert.equal(oContextMenuControl.getButtons().length, 3, "3 Menu Buttons are available");
+			assert.equal(oContextMenuControl.getButtons().length, 2, "2 Menu Buttons are available");
 			assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename is available");
 			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "and rename is enabled");
-			assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add field is available");
-			assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "but add field is disabled");
-			assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "remove field is available");
-			assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), false, "we cannot remove the field");
+			assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_REMOVE", "remove field is available");
+			assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "we cannot remove the field");
 		}
 
 		function fnKeyboardCustomSettings(assert) {
@@ -522,15 +520,13 @@ function(
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "then Menu gets opened");
-			assert.equal(oContextMenuControl.getButtons().length, 4, " and 4 Menu Buttons are available");
+			assert.equal(oContextMenuControl.getButtons().length, 3, " and 3 Menu Buttons are available");
 			assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename section is available");
 			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "add section is enabled");
 			assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
-			assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "add section is disabled");
+			assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add section is enabled (reveal is not dependent on parent)");
 			assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "remove section is available");
 			assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), true, "we cannot remove a section");
-			assert.equal(oContextMenuControl.getButtons()[3].data("id") , "CTX_PASTE", "paste section is available");
-			assert.equal(oContextMenuControl.getButtons()[3].getEnabled(), false, "we cannot paste a section, as no cut has been triggered");
 		});
 	});
 

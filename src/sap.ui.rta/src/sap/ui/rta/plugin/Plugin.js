@@ -296,6 +296,10 @@ function(
 		var bChangeOnRelevantContainer = oAction && oAction.changeOnRelevantContainer;
 		if (bChangeOnRelevantContainer) {
 			oElement = oOverlay.getRelevantContainer();
+			var oRelevantOverlay = OverlayRegistry.getOverlay(oElement);
+			if (!this.hasStableId(oRelevantOverlay)){
+				return false;
+			}
 		}
 
 		if (sChangeType && this.hasChangeHandler(sChangeType, oElement)) {
@@ -336,6 +340,17 @@ function(
 
 	BasePlugin.prototype.isAvailable = function () {
 		return Plugin.prototype.isAvailable.apply(this, arguments);
+	};
+
+	BasePlugin.prototype._checkRelevantContainerStableID = function(oAction, oElementOverlay){
+		if (oAction.changeOnRelevantContainer) {
+			var oRelevantContainer = oElementOverlay.getRelevantContainer();
+			var oRelevantOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			if (!this.hasStableId(oRelevantOverlay)){
+				return false;
+			}
+		}
+		return true;
 	};
 
 	return BasePlugin;

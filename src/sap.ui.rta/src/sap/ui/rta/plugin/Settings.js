@@ -6,12 +6,14 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
 	'sap/ui/dt/Util',
-	'sap/base/Log'
+	'sap/base/Log',
+	'sap/ui/dt/OverlayRegistry'
 ], function(
 	Plugin,
 	Utils,
 	DtUtil,
-	BaseLog
+	BaseLog,
+	OverlayRegistry
 ) {
 	"use strict";
 
@@ -59,10 +61,11 @@ sap.ui.define([
 			if (vSettingsAction.handler) {
 				return this.hasStableId(oOverlay);
 			} else {
-				var bHandlerFound = Object.keys(vSettingsAction).some(function(sSettingsAction) {
-					return vSettingsAction[sSettingsAction].handler;
-				});
-				if (bHandlerFound) {
+				var bHandlerAndStableIdFound = Object.keys(vSettingsAction).some(function(sSettingsAction) {
+					var oSettingsAction = vSettingsAction[sSettingsAction];
+					return oSettingsAction.handler && this._checkRelevantContainerStableID(oSettingsAction, oOverlay);
+				}.bind(this));
+				if (bHandlerAndStableIdFound) {
 					return this.hasStableId(oOverlay);
 				}
 			}
@@ -244,7 +247,7 @@ sap.ui.define([
 
 		if (vSettingsActions) {
 			// Only one action: simply return settings entry as usual
-			if (vSettingsActions.handler) {
+			if (vSettingsActions.handler && this._checkRelevantContainerStableID(vSettingsActions, oElementOverlay)) {
 				return this._getMenuItems([oElementOverlay], {
 					pluginId: sPluginId,
 					rank: iRank,
@@ -258,7 +261,7 @@ sap.ui.define([
 				aSettingsActions.forEach(function (sSettingsAction) {
 					var oSettingsAction = vSettingsActions[sSettingsAction];
 					var sActionText = this.getActionText(oElementOverlay, oSettingsAction, oSettingsAction.name);
-					if (oSettingsAction.handler) {
+					if (oSettingsAction.handler && this._checkRelevantContainerStableID(oSettingsAction, oElementOverlay)) {
 						aMenuItems.push({
 							id: sPluginId + iActionCounter,
 							text: sActionText,
@@ -281,7 +284,7 @@ sap.ui.define([
 						});
 						iActionCounter++;
 					} else {
-						BaseLog.warning("Handler not found for settings action '" + sActionText + "'");
+						BaseLog.warning("Handler not found for settings action '" + sActionText + "' or relevant container has no stable id");
 					}
 				}, this);
 				return aMenuItems;
@@ -300,6 +303,17 @@ sap.ui.define([
 			return sDefaultSettingIcon;
 		}
 		return sActionIcon;
+	};
+
+	Settings.prototype._checkRelevantContainerStableID = function(oSettingsAction, oElementOverlay){
+		if (oSettingsAction.changeOnRelevantContainer) {
+			var oRelevantContainer = oElementOverlay.getRelevantContainer();
+			var oRelevantOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			if (!this.hasStableId(oRelevantOverlay)){
+				return false;
+			}
+		}
+		return true;
 	};
 
 	/**
