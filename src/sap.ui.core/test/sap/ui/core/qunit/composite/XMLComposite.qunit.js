@@ -36,21 +36,10 @@ sap.ui.require([
 	jQuery.sap.require("composites.TextToggleButton");
 	jQuery.sap.require("composites.TextToggleButtonNested");
 	jQuery.sap.require("composites.TextToggleButtonForwarded");
-	jQuery.sap.require("composites.LabelButtonTemplate");
-	jQuery.sap.require("composites.LabelButtonsTemplate");
 	jQuery.sap.require("composites.WrapperLayouter");
 	jQuery.sap.require("composites.TranslatableText");
 	jQuery.sap.require("composites.TranslatableTextLib");
 	jQuery.sap.require("composites.TranslatableTextBundle");
-	jQuery.sap.require("composites.Table");
-	jQuery.sap.require("composites.Column");
-	jQuery.sap.require("composites.Cell");
-
-	function registerPlugin(oNode, oVisitor) {
-		return oVisitor.visitAttributes(oNode).then(function () {
-			return XMLComposite.initialTemplating(oNode, oVisitor, this);
-		}.bind(this));
-	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Simple Text XMLComposite Control", {
@@ -587,216 +576,11 @@ sap.ui.require([
 		oXMLComposite.destroy();
 	});
 
-	//*********************************************************************************************
-	QUnit.module("sap.ui.core.XMLComposite: templating", {
-		beforeEach: function () {
-		},
-		afterEach: function () {
-		}
-	});
-	//*********************************************************************************************
-	sap.ui.define([
-		"sap/ui/core/mvc/Controller"
-	], function (Controller) {
-		"use strict";
-		return Controller.extend("composites.TestComponent", {});
-	});
-	sap.ui.define("my/composite/Component", [
-		"sap/ui/core/UIComponent"
-	], function (UIComponent) {
-		return UIComponent.extend("my.composite.Component", {
-			metadata: {
-				rootView: "composites.TestComponent"
-			},
-			createContent: function () {
-				sap.ui.core.util.XMLPreprocessor.plugIn(function (oNode, oVisitor) {
-					return sap.ui.core.XMLComposite.initialTemplating(oNode, oVisitor, "composites.LabelButtonTemplate");
-				}, "composites", "LabelButtonTemplate");
-
-				// For pre-templating we use here metadata model called "models.preprocessor". Via binding to
-				// the property 'labelFirst' we can control if-condition in templating.
-				return sap.ui.xmlview({
-					async: true,
-					viewContent: '<View height="100%" xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="composites"> <m:VBox> <f:LabelButtonTemplate id="IDLabelButtonTemplate" label="{/label}" value="{/value}" labelFirst="{preprocessor>/labelFirst}"/></m:VBox></View>',
-					preprocessors: {
-						xml: {
-							models: {
-								preprocessor: new sap.ui.model.json.JSONModel({
-									labelFirst: false,
-									value: "preprocessor"
-								})
-							}
-						}
-					}
-				});
-			}
-		});
-	});
-	sap.ui.define("my/aggregations/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
-		return UIComponent.extend("my.aggregations.Component", {
-			metadata: {
-				rootView: "composites.TestComponent"
-			},
-			constructor: function(sId, mSettings) {
-				this.oController = mSettings ? mSettings.controller : null;
-				UIComponent.prototype.constructor.apply(this,arguments);
-			},
-			createContent: function () {
-				XMLPreprocessor.plugIn(registerPlugin.bind("composites.Table"), "composites", "Table");
-				XMLPreprocessor.plugIn(registerPlugin.bind("composites.Cell"), "composites", "Cell");
-				var oConfig = {}, oController = this.oController;
-
-				return sap.ui.xmlview({
-					viewContent: jQuery('#view').html(),
-					id: "comp",
-					async: true,
-					controller: oController,
-					preprocessors: { xml: oConfig }
-				});
-			}
-		});
-	});
-	QUnit.test("property", function (assert) {
-		var fnInitialTemplatingSpy = sinon.spy(sap.ui.core.XMLComposite, "initialTemplating");
-		var done = assert.async();
-
-		var oComponentContainer = new sap.ui.core.ComponentContainer({
-			component: new my.composite.Component()
-		}).placeAt("content");
-		
-		setTimeout(function() {
-			sap.ui.getCore().applyChanges();
-			var oView = oComponentContainer.getComponentInstance().getRootControl();
-			assert.ok(oView);
-
-			oView.loaded().then(function() {
-				assert.ok(fnInitialTemplatingSpy.calledOnce);
-
-				var oXMLComposite = oView.byId("IDLabelButtonTemplate");
-
-				var fnFragmentRetemplatingSpy = sinon.spy(oXMLComposite, "fragmentRetemplating");
-
-				// Now we define another model in order to fill properties in the XMLComposite control
-				oView.setModel(new sap.ui.model.json.JSONModel({
-					label: "Click",
-					value: "Me"
-				}));
-
-				assert.equal(fnFragmentRetemplatingSpy.called, false);
-				// act: change the order to 'label' after 'button'
-				oXMLComposite.setLabelFirst(false);
-
-				setTimeout(function() {
-					sap.ui.getCore().applyChanges();
-					assert.ok(fnFragmentRetemplatingSpy.calledOnce);
-
-					assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
-					assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
-
-					assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
-					assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "BUTTON");
-					assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "LABEL" || "SPAN");
-					// act: change the order to 'label' before 'button'
-					oXMLComposite.setLabelFirst(true);
-
-					setTimeout(function() {
-						sap.ui.getCore().applyChanges();
-						assert.equal(oView.$().find("div").find("span.sapMLabel" || "label.sapMLabel")[0].textContent, "Click");
-						assert.equal(oView.$().find("div").find("button.sapMBtn")[0].textContent, "Me");
-
-						assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
-						assert.ok(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "LABEL" || "SPAN");
-						assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "BUTTON");
-
-						oComponentContainer.destroy();
-						done();
-					}, 0);
-				}, 0);
-			}.bind(this));
-		}, 0);
-	});
-
-	sap.ui.define([
-		"sap/ui/core/mvc/Controller"
-	], function (Controller) {
-		"use strict";
-		return Controller.extend("composites.TestComponent2", {});
-	});
-	sap.ui.define("my/composite2/Component", [
-		"sap/ui/core/UIComponent", 'composites/Helper'
-	], function (UIComponent, Helper) {
-		return UIComponent.extend("my.composite2.Component", {
-			Helper: Helper,
-			metadata: {
-				rootView: "composites.TestComponent2"
-			},
-			createContent: function () {
-				sap.ui.core.util.XMLPreprocessor.plugIn(function (oNode, oVisitor) {
-					sap.ui.core.XMLComposite.initialTemplating(oNode, oVisitor, "composites.LabelButtonsTemplate");
-				}, "composites", "LabelButtonsTemplate");
-
-				return sap.ui.xmlview({
-					async: false,
-					viewContent: '<View height="100%" xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="composites"><m:VBox><f:LabelButtonsTemplate id="IDLabelButtonsTemplate" items="{path:&quot;preprocessor>/items&quot;}"/></m:VBox></View>',
-					preprocessors: {
-						xml: {
-							models: {
-								preprocessor: new sap.ui.model.json.JSONModel({
-									items: [
-										{
-											text: "first"
-										}, {
-											text: 'second'
-										}
-									]
-								})
-							}
-						}
-					}
-				});
-			}
-		});
-	});
-
-	//we want to use metadataContexts so we should still dicuss here
-	/*	QUnit.test("aggregation with pretemplating model only", function(assert) {
-			var oComponentContainer = new sap.ui.core.ComponentContainer({
-				component: new my.composite2.Component()
-			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
-			this.clock.tick(500);
-
-			var oView = oComponentContainer.getComponentInstance().getRootControl();
-
-			assert.ok(oView);
-			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children().length, 4);
-			assert.ok(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName === "LABEL" || "SPAN");
-			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "BUTTON");
-			assert.ok(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName === "LABEL" || "SPAN");
-			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "BUTTON");
-
-			// ER: this 'act' should work in the future
-
-			// // act: change the order to 'label' after 'button'
-			// oView.byId("IDLabelButtonsTemplate").setLabelFirst(false);
-			// this.clock.tick(500);
-			//
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children().length, 4);
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName, "BUTTON");
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "LABEL");
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName, "BUTTON");
-			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "LABEL");
-
-			oComponentContainer.destroy();
-		});
-	*/
 	QUnit.module("clone");
 
 	QUnit.test("simple", function (assert) {
 		var done = assert.async();
-		var oCloneModel = new sap.ui.model.json.JSONModel({ template: false });
-		var oXMLComposite = new composites.TextToggleButton("Frag1", {template: '{clone>/template}' });
-		oXMLComposite.setModel(oCloneModel, "clone");
+		var oXMLComposite = new composites.TextToggleButton("Frag1");
 		var sId;
 		var iCount = 0;
 
@@ -806,15 +590,10 @@ sap.ui.require([
 		});
 
 		var fnVBoxCloneSpy = sinon.spy(oXMLComposite.getAggregation("_content"), "clone");
-		var fnRequestRetemplatingSpy = sinon.spy(composites.TextToggleButton.prototype, "requestFragmentRetemplating");
 
 		var oClone = oXMLComposite.clone("MyClone");
 		assert.equal(oClone.getId(), "Frag1-MyClone", "XMLComposite cloned");
 		setTimeout(function() {
-			assert.ok(fnRequestRetemplatingSpy.called, "A check for retemplating is called");
-			assert.equal(fnRequestRetemplatingSpy.callCount, 2, "The check is called for the template and the clone");
-			assert.equal(oClone._iRetemplateCount, 0, "but the retemplating of the clone is not called");
-			assert.equal(oXMLComposite._iRetemplateCount, 1, "whereas the retemplate of the template was called");
 			var oContent = oClone._getCompositeAggregation();
 			//TEMP-CLONE-ISSUE assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
 			//TEMP-CLONE-ISSUE assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
@@ -1093,136 +872,6 @@ sap.ui.require([
 			done();
 		});
 	});
-	//*********************************************************************************************
-	QUnit.test("inner Aggregations", function (assert) {
-		var done = assert.async();
-		var oComponentContainer = new sap.ui.core.ComponentContainer({
-			component: new my.aggregations.Component("aggregations")
-		}).placeAt("content");
-
-		setTimeout(function(){
-			var oView = oComponentContainer.getComponentInstance().getRootControl();
-
-			oView.loaded().then(function() {
-				var oTable = oView.byId("table");
-				assert.ok(oTable, "The table is there");
-				//multiple aggegations
-				var aColumns = oTable.getColumns();
-				assert.equal(aColumns.length,4,"The table has 4 columns");
-
-				var oColumn = oTable.byId("OWN");
-				assert.notOk(oColumn,"The user-defined column can not be be accessed bye the composite");
-				oColumn = oTable.byId("template2");
-				assert.ok(oColumn,"The templated column can be accessed");
-				assert.equal(oColumn.getId(), "comp--table--template2","The corresponding Id is correct");
-
-				//Use the Managed Object model
-				var oTableModel = oTable._getManagedObjectModel();
-				var oColumn2 = oTableModel.getProperty("/#template2");
-				assert.ok(oColumn2,"The templated column can be accessed");
-				assert.equal(oColumn2.getId(), "comp--table--template2","The corresponding Id is correct");
-				assert.equal(oColumn, oColumn,"The column from byId and from the managed object model are equal");
-
-				//single aggregations
-				var oHeader = oTable.getHeader();//should be the templating header
-				assert.equal(oHeader.getText(), "My header fragment", "The table gets the header from templating");
-
-				var oFooter = oTable.getFooter();//should be the on defined footer in the view
-				assert.equal(oFooter.getText(), "My own footer", "The table gets the header from templating");
-
-				//unknown fragments are not processed robustness
-				var oUnknown = oTable.byId("so_unknown");
-				assert.notOk(oUnknown, "As unknown is no aggregation although there is a fragment this gets never processed");
-
-				oComponentContainer.destroy();
-				done();
-			});
-		}, 0);
-	});
-	//*********************************************************************************************
-	QUnit.test("event forwarding", function (assert) {
-		var done = assert.async(), oAction;
-		var ControllerClass = Controller.extend("test", {
-			handler: function(oEvent) {
-				oAction = oEvent.getSource();
-				oAction.setText("controller");
-			}
-		});
-
-		var oController = new ControllerClass();
-		var fnControllerSpy = sinon.spy(oController, "handler");
-		var fnCompositeSpy = sinon.spy(composites.Table.prototype, "handler");
-
-		var oComponentContainer = new sap.ui.core.ComponentContainer({
-			component: new my.aggregations.Component("events", {controller: oController})
-		}).placeAt("content");
-
-		setTimeout(function() {
-			var oView = oComponentContainer.getComponentInstance().getRootControl();
-
-			oView.loaded().then(function() {
-				var oTable = oView.byId("table");
-				assert.ok(oTable, "The table is there");
-				var aActions = oTable.getActions();
-				assert.equal(aActions.length,2,"The table has 2 actions");
-
-				//press the outer action
-				var oOuterAction = oTable.byId("button--outer");
-				oOuterAction.firePress();
-				assert.ok(oAction, "The action from outside fires the event");
-				assert.equal(oAction.getId(), "comp--outer", "It is the correct action");
-				assert.equal(oAction.getText(),"controller","The action from the view controller is called");
-				assert.ok(fnControllerSpy.calledOnce,"The controller handles the event");
-				assert.equal(fnCompositeSpy.callCount, 0, "The composite method is not called");
-
-				var oInnerAction = oTable.byId("button--table--inner");
-				oInnerAction.firePress();
-				oAction = oTable.byId("inner");
-				assert.equal(oAction.getText(),"composite","The action from the control is called");
-				assert.ok(fnCompositeSpy.calledOnce,"The composite handles the event");
-				assert.equal(fnControllerSpy.callCount, 1, "The controller method is not called any more");
-				oComponentContainer.destroy();
-				done();
-			});
-		}, 0);
-	});
-	//************************************************************************************************
-	QUnit.test("nesting composites", function (assert) {
-		var done = assert.async();
-		var oComponentContainer = new sap.ui.core.ComponentContainer({
-			component: new my.aggregations.Component("aggregations")
-		}).placeAt("content");
-
-		setTimeout(function(){
-			var oView = oComponentContainer.getComponentInstance().getRootControl();
-
-			oView.loaded().then(function() {
-				var oTable = oView.byId("table");
-				assert.ok(oTable, "The table is there");
-
-				var oCellTemp1 = oTable.byId("cell-temp1");
-				assert.ok(oCellTemp1,"the first templating cell is there");
-				assert.ok(oCellTemp1 instanceof composites.Cell, "the cell is a composite cell");
-				assert.equal(oCellTemp1.getAsLink(), false, "the cells property 'asLink' is set to false");
-				var oInnerCell = oCellTemp1.getAggregation("_content");
-				assert.ok(oInnerCell, "The cell has an inner content");
-				assert.ok(oInnerCell instanceof sap.m.Text, "that is a text");
-
-				var oCellTemp2 = oTable.byId("cell-temp2");
-				assert.ok(oCellTemp2,"the second templating cell is there");
-				assert.ok(oCellTemp2 instanceof composites.Cell, "the cell is a composite cell");
-				assert.equal(oCellTemp2.getAsLink(), true, "the cells property 'asLink' is set to true");
-				oInnerCell = oCellTemp2.getAggregation("_content");
-				assert.ok(oInnerCell, "The cell has an inner content");
-				assert.ok(oInnerCell instanceof sap.m.Link, "that is a link");
-
-				oComponentContainer.destroy();
-				done();
-			});
-		}, 0);
-	});
-	//*********************************************************************************************
-
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: create from given fragmentContent", {
