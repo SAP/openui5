@@ -26,12 +26,11 @@
 // Register to the OpenAjax Hub if it exists
 sap.ui.define([
 	'sap/ui/VersionInfo',
-	'jquery.sap.global',
-	"sap/base/Log",
-	"sap/base/assert",
-	"sap/base/util/ObjectPath"
+	'sap/base/Log',
+	'sap/base/assert',
+	'sap/base/util/ObjectPath'
 ],
-	function(VersionInfo, jQuery, Log, assert, ObjectPath) {
+	function(VersionInfo, Log, assert, ObjectPath) {
 	"use strict";
 
 	if (window.OpenAjax && window.OpenAjax.hub) {
@@ -66,7 +65,7 @@ sap.ui.define([
 		window.sap.ui = {};
 	}
 
-	sap.ui = jQuery.extend(sap.ui, {
+	sap.ui = Object.assign(sap.ui, {
 		/**
 		 * The version of the SAP UI Library
 		 * @type string
@@ -194,8 +193,7 @@ sap.ui.define([
 					} else {
 						Log.debug("lazy stub for constructor '" + sFullClass + "' called.");
 					}
-					//TODO: global jquery call found
-					jQuery.sap.require(sModuleName);
+					sap.ui.requireSync(sModuleName.replace(/\./g, "/"));
 					var oRealClass = oPackage[sClass];
 					assert(typeof oRealClass === "function", "lazyRequire: oRealClass must be a function after loading");
 					if ( oRealClass._sapUiLazyLoader ) {
@@ -240,8 +238,7 @@ sap.ui.define([
 					} else {
 						Log.debug("lazy stub for method '" + sFullClass + "." + sMethod + "' called.");
 					}
-					//TODO: global jquery call found
-					jQuery.sap.require(sModuleName);
+					sap.ui.requireSync(sModuleName.replace(/\./g, "/"));
 					var oRealClass = oPackage[sClass];
 					assert(typeof oRealClass === "function" || typeof oRealClass === "object", "lazyRequire: oRealClass must be a function or object after loading");
 					assert(typeof oRealClass[sMethod] === "function", "lazyRequire: method must be a function");

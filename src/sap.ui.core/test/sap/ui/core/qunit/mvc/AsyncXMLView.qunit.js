@@ -1,24 +1,24 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/cache/CacheManager",
-	"sap/ui/core/Component",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/XMLView",
-	"./testdata/TestPreprocessor",
-	"./AnyViewAsync.qunit",
-	"sap/base/Log",
-	"jquery.sap.script"
+	'sap/ui/core/cache/CacheManager',
+	'sap/ui/core/Component',
+	'sap/ui/core/mvc/View',
+	'sap/ui/core/mvc/XMLView',
+	'./testdata/TestPreprocessor',
+	'./AnyViewAsync.qunit',
+	'sap/base/Log',
+	'sap/base/util/LoaderExtensions',
+	'jquery.sap.script'
 ], function(
-    jQuery,
 	Cache,
 	Component,
 	View,
 	XMLView,
 	TestPreprocessor,
 	asyncTestsuite,
-	Log
-	/*, jQuery*/
+	Log,
+	LoaderExtensions,
+	jQuery
 ) {
 	"use strict";
 
@@ -343,7 +343,7 @@ sap.ui.define([
 
 			QUnit.module("Cache integration", {
 				beforeEach: function() {
-					this.oSpy = sinon.spy(jQuery.sap, "loadResource");
+					this.oSpy = sinon.spy(LoaderExtensions, "loadResource");
 				},
 				afterEach: function() {
 					this.oSpy.restore();

@@ -904,7 +904,7 @@ sap.ui.define([
 		for (var i = 0; i < aData.length; i++) {
 			var sID = aData[i][this.oTreeProperties["hierarchy-node-for"]];
 			if (mParentKeys[sID]) {
-				jQuery.sap.log.warning("ODataTreeBinding: Duplicate key: " + sID + "!");
+				Log.warning("ODataTreeBinding: Duplicate key: " + sID + "!");
 			}
 			mParentKeys[sID] = this.oModel._getKey(aData[i]);
 

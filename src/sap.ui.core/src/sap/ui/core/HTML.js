@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.core.HTML.
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	"sap/base/Log",
 	'./Control',
 	'./RenderManager',

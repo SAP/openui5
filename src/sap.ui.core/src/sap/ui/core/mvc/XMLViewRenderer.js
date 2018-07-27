@@ -76,7 +76,7 @@ sap.ui.define([
 		// write the HTML into the render manager
 		var $oldContent = oControl._$oldContent = RenderManager.findPreservedContent(oControl.getId());
 		if ( $oldContent.length === 0) {
-			// jQuery.sap.log.debug("rendering " + oControl + " anew");
+			// Log.debug("rendering " + oControl + " anew");
 			var bSubView = oControl.isSubView();
 			if (!bSubView) {
 				rm.write("<div");

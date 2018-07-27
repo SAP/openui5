@@ -482,9 +482,9 @@ function(
 			this.oRealCore.oConfiguration.preload = "off";
 			this.spy(sap.ui, 'require');
 			this.spy(XMLHttpRequest.prototype, 'open');
-			this.spy(jQuery.sap, '_loadJSResourceAsync');
+			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 			return this.oMetadata.loadDesignTime().then(function(oDesignTime) {
-				assert.ok(jQuery.sap._loadJSResourceAsync.neverCalledWith("sap/ui/core/designtime/library-preload.designtime.js"), "library-preload.designtime.js was required");
+				assert.ok(sap.ui.loader._.loadJSResourceAsync.neverCalledWith("sap/ui/core/designtime/library-preload.designtime.js"), "library-preload.designtime.js was required");
 				assert.ok(XMLHttpRequest.prototype.open.calledWith('GET', "../../../../../resources/sap/ui/core/designtime/library.designtime.js", false), "request send to sap/ui/core/designtime/library.designtime");
 				assert.ok(XMLHttpRequest.prototype.open.calledWith('GET', "../../../../../resources/sap/ui/core/designtime/library.designtime.js", false), "request send to sap/ui/core/designtime/CustomData.designtime");
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/library.designtime"]), "library.designtime.js was required");
@@ -498,14 +498,14 @@ function(
 			//async configuration simulation
 			this.oRealCore.oConfiguration.preload = "async";
 			this.spy(sap.ui, 'require');
-			this.spy(jQuery.sap, '_loadJSResourceAsync');
+			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
 			//return the preload for ajax calls
 			this.oStub = this.stub(jQuery, "ajax");
 			this.oStub.withArgs(matcherLibPreload).callsArgWithAsync(1, this.sPreloadJs);
 
 			return this.oMetadata.loadDesignTime().then(function(oDesignTime) {
-				assert.ok(jQuery.sap._loadJSResourceAsync.calledWith("sap/ui/core/designtime/library-preload.designtime.js"), "library.designtime-preload.js was loaded async");
+				assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith("sap/ui/core/designtime/library-preload.designtime.js"), "library.designtime-preload.js was loaded async");
 				assert.ok(jQuery.ajax.neverCalledWith(matcherLibModule), "request not send to sap/ui/core/designtime/library.designtime");
 				assert.ok(jQuery.ajax.neverCalledWith(matcherDTModule), "request not send to sap/ui/core/designtime/CustomData.designtime");
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/library.designtime"]), "library.designtime.js was required");
@@ -518,14 +518,14 @@ function(
 			//sync configuration simulation
 			this.oRealCore.oConfiguration.preload = "sync";
 			this.spy(sap.ui, 'require');
-			this.spy(jQuery.sap, '_loadJSResourceAsync');
+			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
 			//return the preload for ajax calls
 			this.oStub = this.stub(jQuery, "ajax");
 			this.oStub.withArgs(matcherLibPreload).callsArgWithAsync(1, this.sPreloadJs);
 
 			return this.oMetadata.loadDesignTime().then(function(oDesignTime) {
-				assert.ok(jQuery.sap._loadJSResourceAsync.calledWith("sap/ui/core/designtime/library-preload.designtime.js"), "library.designtime-preload.js was loaded async");
+				assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith("sap/ui/core/designtime/library-preload.designtime.js"), "library.designtime-preload.js was loaded async");
 				assert.ok(jQuery.ajax.neverCalledWith(matcherLibModule), "request not send to sap/ui/core/designtime/library.designtime");
 				assert.ok(jQuery.ajax.neverCalledWith(matcherDTModule), "request not send to sap/ui/core/designtime/CustomData.designtime");
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/library.designtime"]), "library.designtime.js was required");

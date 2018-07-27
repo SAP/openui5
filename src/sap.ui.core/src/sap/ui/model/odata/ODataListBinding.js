@@ -13,11 +13,11 @@ sap.ui.define([
 	'sap/ui/model/Sorter',
 	'./ODataUtils',
 	'./CountMode',
-	"sap/base/util/deepEqual",
-	"sap/base/util/merge",
-	"sap/base/Log",
-	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	'sap/base/util/deepEqual',
+	'sap/base/util/merge',
+	'sap/base/Log',
+	'sap/base/assert',
+	'sap/ui/thirdparty/jquery'
 ], function(
 	ChangeReason,
 	Filter,

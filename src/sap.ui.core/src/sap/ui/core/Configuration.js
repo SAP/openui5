@@ -4,7 +4,7 @@
 
 //Provides class sap.ui.core.Configuration
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'../Device',
 	'../Global',
 	'../base/Object',

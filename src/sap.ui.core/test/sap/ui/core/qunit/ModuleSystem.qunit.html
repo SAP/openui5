@@ -1185,9 +1185,9 @@
 			assert.ok(this.isLazyStub(sap.test.lazy, 'MyClass'), "lazy loader defined property 'MyClass' with get and set methods");
 
 			// read access first
-			var oRequireSpy = this.spy(jQuery.sap, 'require');
+			var oRequireSpy = this.spy(sap.ui, 'requireSync');
 			var oResult = new sap.test.lazy.MyClass();
-			sinon.assert.calledWith(oRequireSpy, 'sap.test.lazy.MyClass');
+			sinon.assert.calledWith(oRequireSpy, 'sap/test/lazy/MyClass');
 			assert.ok(sap.ui.require('sap/test/lazy/MyClass'), "read access should load the expected module");
 			assert.ok(oResult instanceof sap.ui.base.ManagedObject && oResult.getMetadata().getName() === 'sap.test.lazy.MyClass', "read access should return the expected module content");
 			assert.ok(!this.isLazyStub(sap.test.lazy, 'MyClass'), "the property must no longer be a lazy stub");

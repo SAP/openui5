@@ -29,8 +29,8 @@ sap.ui.define([
 		 *
 		 * Example usage:
 		 * <pre>
-		 * sap.ui.define(['jquery.sap.global', 'sap/ui/core/cache/CacheManager'],
-		 *    function(jQuery, oCacheManager) {
+		 * sap.ui.define(['sap/ui/core/cache/CacheManager'],
+		 *    function(oCacheManager) {
 		 *       oCacheManager.get("myKey").then(function(value){
 		 *           if (value) {
 		 *               //process it

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/Device',
 	"sap/base/security/encodeXML",
 	"sap/base/util/isPlainObject"
@@ -27,14 +27,14 @@ sap.ui.define([
 		 *
 		 * NOTE: This class is internal and all its functions must not be used by an application
 		 *
-		 * As <code>sap.m.Support</code> is a static class, a <code>jQuery.sap.require("sap.m.Support");</code>
+		 * As <code>sap.m.Support</code> is a static class, a <code>sap.ui.requireSync("sap/m/Support");</code>
 		 * statement must be implicitly executed before the class is used.
 		 *
 		 *
 		 * Enable Support:
 		 * --------------------------------------------------
 		 * //import library
-		 * jQuery.sap.require("sap.m.Support");
+		 * sap.ui.requireSync("sap/m/Support");
 		 *
 		 * //By default after require, support is enabled but implicitly we can call
 		 * sap.m.Support.on();
@@ -243,24 +243,19 @@ sap.ui.define([
 					return dialog;
 				}
 
-				//TODO: global jquery call found
-				$.sap.require("sap.m.Dialog");
-				//TODO: global jquery call found
-				$.sap.require("sap.m.Button");
-				//TODO: global jquery call found
-				$.sap.require("sap.ui.core.HTML");
-				//TODO: global jquery call found
-				$.sap.require("sap.m.MessageToast");
-				//TODO: global jquery call found
-				$.sap.require("sap.ui.core.support.trace.E2eTraceLib");
+				var Dialog = sap.ui.requireSync("sap/m/Dialog");
+				var Button = sap.ui.requireSync("sap/m/Button");
+				sap.ui.requireSync("sap/ui/core/HTML");
+				sap.ui.requireSync("sap/m/MessageToast");
+				sap.ui.requireSync("sap/ui/core/support/trace/E2eTraceLib");
 
-				dialog = new sap.m.Dialog({
+				dialog = new Dialog({
 					title: "Technical Information",
 					horizontalScrolling: true,
 					verticalScrolling: true,
 					stretch: Device.system.phone,
 					buttons: [
-						new sap.m.Button({
+						new Button({
 							text: "Close",
 							press: function () {
 								dialog.close();

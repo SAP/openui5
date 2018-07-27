@@ -27,18 +27,18 @@ sap.ui.define([
 
 	function unloadResources() {
 		// unload libs and components (not an API)
-		jQuery.sap.unloadResources('sap.test.lib2.library-preload', true, true, true);
-		jQuery.sap.unloadResources('sap/test/lib2/library-preload.js', false, true, true);
-		jQuery.sap.unloadResources('sap.test.lib3.library-preload', true, true, true);
-		jQuery.sap.unloadResources('sap/test/lib3/library-preload.js', false, true, true);
-		jQuery.sap.unloadResources('sap.test.lib4.library-preload', true, true, true);
-		jQuery.sap.unloadResources('sap/test/lib4/library-preload.js', false, true, true);
-		jQuery.sap.unloadResources('sap/test/mycomp/Component-preload', true, true, true);
-		jQuery.sap.unloadResources('sap/test/mycomp/Component-preload.js', false, true, true);
-		jQuery.sap.unloadResources('sap/test/mysubcomp/Component-preload', true, true, true);
-		jQuery.sap.unloadResources('sap/test/mysubcomp/Component-preload.js', false, true, true);
-		jQuery.sap.unloadResources('sap/test/manifestcomp/Component-preload', true, true, true);
-		jQuery.sap.unloadResources('sap/test/manifestcomp/Component-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap.test.lib2.library-preload', true, true, true);
+		sap.ui.loader._.unloadResources('sap/test/lib2/library-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap.test.lib3.library-preload', true, true, true);
+		sap.ui.loader._.unloadResources('sap/test/lib3/library-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap.test.lib4.library-preload', true, true, true);
+		sap.ui.loader._.unloadResources('sap/test/lib4/library-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap/test/mycomp/Component-preload', true, true, true);
+		sap.ui.loader._.unloadResources('sap/test/mycomp/Component-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap/test/mysubcomp/Component-preload', true, true, true);
+		sap.ui.loader._.unloadResources('sap/test/mysubcomp/Component-preload.js', false, true, true);
+		sap.ui.loader._.unloadResources('sap/test/manifestcomp/Component-preload', true, true, true);
+		sap.ui.loader._.unloadResources('sap/test/manifestcomp/Component-preload.js', false, true, true);
 		// undo module path registration (official API)
 		sap.ui.loader.config({
 			paths: {
@@ -350,7 +350,7 @@ sap.ui.define([
 	QUnit.module("Synchronization of Preloads", {
 		beforeEach: function(assert) {
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;
-			this.loadScript = sinon.stub(jQuery.sap, "_loadJSResourceAsync");
+			this.loadScript = sinon.stub(sap.ui.loader._, "loadJSResourceAsync");
 			this.requireSpy = sinon.stub(sap.ui, "require").callsArgWith(1);
 		},
 		afterEach: function(assert) {
@@ -384,7 +384,7 @@ sap.ui.define([
 				preloadOnly: true
 			}
 		}).then(function(ComponentClass) {
-			assert.ok( this.loadScript.calledThrice, "_loadJSResourceAsync has been called 3 times");
+			assert.ok( this.loadScript.calledThrice, "loadJSResourceAsync has been called 3 times");
 			assert.ok( this.requireSpy.neverCalledWith( contains('scenario1/lib1/library') ), "lib1 never has been required");
 			assert.ok( this.requireSpy.neverCalledWith( contains('scenario1/lib2/library') ), "lib2 never has been required");
 			assert.ok( this.requireSpy.neverCalledWith( contains('scenario1/comp/Component') ), "component never has been required");

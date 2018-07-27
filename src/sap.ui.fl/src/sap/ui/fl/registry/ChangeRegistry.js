@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/registry/ChangeRegistryItem",
 	"sap/ui/fl/registry/ChangeTypeMetadata",
 	"sap/ui/fl/registry/Settings",

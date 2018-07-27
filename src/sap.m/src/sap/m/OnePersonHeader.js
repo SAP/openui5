@@ -4,7 +4,6 @@
 
 // Provides control sap.m.OnePersonHeader.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'./Toolbar',
 	'./AssociativeOverflowToolbar',
@@ -21,7 +20,6 @@ sap.ui.define([
 	'sap/ui/core/LocaleData'
 ],
 function(
-	jQuery,
 	Control,
 	Toolbar,
 	AssociativeOverflowToolbar,

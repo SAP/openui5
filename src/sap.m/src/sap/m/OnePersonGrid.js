@@ -4,7 +4,6 @@
 
 // Provides control sap.m.OnePersonGrid.
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Control',
 		'sap/ui/core/LocaleData',
 		'sap/ui/core/Locale',
@@ -14,7 +13,7 @@ sap.ui.define([
 		'sap/ui/unified/calendar/DatesRow',
 		'./OnePersonGridRenderer'
 	],
-	function (jQuery, Control, LocaleData, Locale, DateFormat, UniversalDate, unifiedLibrary, DatesRow, OnePersonGridRenderer) {
+	function (Control, LocaleData, Locale, DateFormat, UniversalDate, unifiedLibrary, DatesRow, OnePersonGridRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.unified.CalendarAppointmentVisualization

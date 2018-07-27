@@ -3,14 +3,23 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'../base/ManagedObject',
 	'./Element',
 	'./DeclarativeSupport',
 	'./XMLTemplateProcessor',
-	"sap/base/Log"
+	'sap/base/Log',
+	'sap/base/util/LoaderExtensions'
 ],
-	function(jQuery, ManagedObject, Element, DeclarativeSupport, XMLTemplateProcessor, Log) {
+function(
+	jQuery,
+	ManagedObject,
+	Element,
+	DeclarativeSupport,
+	XMLTemplateProcessor,
+	Log,
+	LoaderExtensions
+) {
 	"use strict";
 
 
@@ -383,8 +392,8 @@ sap.ui.define([
 			if (oFragmentDefinition.createContent) {
 				// Fragment DEFINITON
 				mRegistry[sName] = oFragmentDefinition;
-				//TODO: global jquery call found
-				jQuery.sap.declare({modName: sName, type:"fragment"}, false);
+
+				sap.ui.loader._.declareModule(sName.replace(/\./g, "/") + ".fragment.js");
 				// TODO: return value?
 
 			} else {
@@ -521,8 +530,7 @@ sap.ui.define([
 		init: function(mSettings) {
 			/*** require fragment definition if not yet done... ***/
 			if (!mRegistry[mSettings.fragmentName]) {
-				//TODO: global jquery call found
-				jQuery.sap.require({modName: mSettings.fragmentName, type: "fragment"});
+				sap.ui.requireSync(mSettings.fragmentName.replace(/\./g, "/") + ".fragment");
 			}
 			/*** Step 2: extend() ***/
 			jQuery.extend(this, mRegistry[mSettings.fragmentName]);
@@ -570,10 +578,8 @@ sap.ui.define([
 			var sResourceName;
 
 			if (!sHTML) {
-				//TODO: global jquery call found
-				sResourceName = jQuery.sap.getResourceName(sTemplateName, ".fragment.html");
-				//TODO: global jquery call found
-				sHTML = jQuery.sap.loadResource(sResourceName);
+				sResourceName = sTemplateName.replace(/\./g, "/") + ".fragment.html";
+				sHTML = LoaderExtensions.loadResource(sResourceName);
 				// TODO discuss
 				// a) why caching at all (more precise: why for HTML fragment although we refused to do it for other view/fragment types - risk of a memory leak!)
 				// b) why cached via URL instead of via name? Any special scenario in mind?

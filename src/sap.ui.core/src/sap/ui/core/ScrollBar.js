@@ -214,7 +214,7 @@ sap.ui.define([
 				stepSize = Math.round(40 / (window.outerWidth / jQuery(document).width()));
 			} else {
 				stepSize = Math.round(40 / (document.width / jQuery(document).width()));
-				//jQuery.sap.log.debug( stepSize + " ****************************STEP SIZE*************************************************************");
+				//Log.debug( stepSize + " ****************************STEP SIZE*************************************************************");
 			}
 		}
 
@@ -397,7 +397,7 @@ sap.ui.define([
 	* @private
 	*/
 	ScrollBar.prototype.onscroll = function(oEvent) {
-		//jQuery.sap.log.debug("*****************************onScroll************************ suppress SCROLL:  " + this._bSuppressScroll );
+		//Log.debug("*****************************onScroll************************ suppress SCROLL:  " + this._bSuppressScroll );
 		if (this._bSuppressScroll) {
 			this._bSuppressScroll = false;
 			oEvent.preventDefault();

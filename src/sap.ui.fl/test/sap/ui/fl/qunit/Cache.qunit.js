@@ -6,12 +6,14 @@ sap.ui.require([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon",
+	"sap/base/util/LoaderExtensions"
 ], function(
 	Cache,
 	LrepConnector,
 	Utils,
-	sinon
+	sinon,
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -366,12 +368,12 @@ sap.ui.require([
 	};
 
 	var fnStubBundle = function (bIsLoaded, aBundledChanges) {
-		sandbox.stub(jQuery.sap, "isResourceLoaded").returns(bIsLoaded);
+		sandbox.stub(sap.ui.loader._, "getModuleState").returns(bIsLoaded);
 		if (aBundledChanges) {
-			return sandbox.stub(jQuery.sap, "loadResource").returns(aBundledChanges);
+			return sandbox.stub(LoaderExtensions, "loadResource").returns(aBundledChanges);
 		} else {
 			// if no bundle is specified the default error is thrown
-			return sandbox.spy(jQuery.sap, "loadResource");
+			return sandbox.spy(LoaderExtensions, "loadResource");
 		}
 	};
 

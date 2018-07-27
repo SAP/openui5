@@ -20,14 +20,29 @@ sap.ui.define([
 	 */
 	var LoaderExtensions = {};
 
+	/**
+	 * Calculate a regex for all known subtypes.
+	 */
 	var FRAGMENT = "fragment";
 	var VIEW = "view";
-	var mKnownSubtypes = {
+	var KNOWN_SUBTYPES = {
 		js :  [VIEW, FRAGMENT, "controller", "designtime"],
 		xml:  [VIEW, FRAGMENT],
 		json: [VIEW, FRAGMENT],
 		html: [VIEW, FRAGMENT]
 	};
+	var rTypes;
+
+	(function() {
+		var s = "";
+
+		for (var sType in KNOWN_SUBTYPES) {
+			s = (s ? s + "|" : "") + sType;
+		}
+
+		s = "\\.(" + s + ")$";
+		rTypes = new RegExp(s);
+	}());
 
 	/**
 	 * Returns all known subtypes.
@@ -36,7 +51,7 @@ sap.ui.define([
 	 * @sap-restricted sap.ui.core
 	 */
 	LoaderExtensions.getKnownSubtypes = function() {
-		return mKnownSubtypes;
+		return KNOWN_SUBTYPES;
 	};
 
 	/**
@@ -58,19 +73,6 @@ sap.ui.define([
 			}
 		}
 		return aModuleNames;
-	};
-
-	/**
-	 * Replaces "." with "/", except for jQuery.sap.* module names.
-	 * @param {*} sName the module name to be converted
-	 * @static
-	 * @sap-restricted sap.ui.core
-	 */
-	LoaderExtensions.ui5ToRJS = function(sName) {
-		if ( /^jquery\.sap\./.test(sName) ) {
-			return sName;
-		}
-		return sName.replace(/\./g, "/");
 	};
 
 	/**
@@ -121,21 +123,7 @@ sap.ui.define([
 			sUrl,
 			oError,
 			oDeferred,
-
-			iSyncCallBehavior,
-
-			rTypes;
-
-		(function() {
-			var s = "";
-			var mKnownSubtypes = LoaderExtensions.getKnownSubtypes();
-
-			for (var sType in mKnownSubtypes) {
-				s = (s ? s + "|" : "") + sType;
-			}
-			s = "\\.(" + s + ")$";
-			rTypes = new RegExp(s);
-		}());
+			iSyncCallBehavior;
 
 		if (typeof sResourceName === "string") {
 			mOptions = mOptions || {};

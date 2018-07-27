@@ -37,7 +37,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 			this.oWindow.document.body.appendChild(oDiv);
 			this.oDomNode = oDiv;
 		}
-		this.iLogLevel = 3; /* jQuery.sap.log.LogLevel.INFO */
+		this.iLogLevel = 3; /* Log.LogLevel.INFO */
 		this.sLogEntryClassPrefix = undefined;
 		this.clear();
 		this.setFilter(LogViewer.NO_FILTER);

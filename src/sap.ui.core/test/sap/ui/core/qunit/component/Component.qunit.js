@@ -1118,7 +1118,7 @@ sap.ui.define([
 	QUnit.test("Preload non-lazy component usages", function(assert) {
 
 		var oComponent;
-		var oSpy = sinon.spy(jQuery.sap, "_loadJSResourceAsync");
+		var oSpy = sinon.spy(sap.ui.loader._, "loadJSResourceAsync");
 		var done = (function() {
 			var asyncDone = assert.async();
 			return function cleanup() {

@@ -90,9 +90,8 @@ sap.ui.define([
 	PullToRefresh.prototype._loadBI = function(){
 		// lazy create a Busy indicator to avoid overhead when invisible at start
 		if (this.getVisible() && !this._oBusyIndicator) {
-			//TODO: global jquery call found
-			jQuery.sap.require("sap.m.BusyIndicator");
-			this._oBusyIndicator = new sap.m.BusyIndicator({
+			var BusyIndicator = sap.ui.requireSync("sap/m/BusyIndicator");
+			this._oBusyIndicator = new BusyIndicator({
 				size: "1.7rem",
 				design: "auto"
 			});

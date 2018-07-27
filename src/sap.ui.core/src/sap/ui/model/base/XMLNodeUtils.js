@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/DataType',
 	'sap/ui/base/ManagedObject',
-	"sap/base/util/ObjectPath",
-	"sap/base/Log"
+	'sap/base/util/ObjectPath',
+	'sap/base/Log'
 ], function(jQuery, DataType, ManagedObject, ObjectPath, Log) {
 	"use strict";
 
@@ -50,11 +50,10 @@ sap.ui.define([
 			sClassName = sClassName || sNamespaceURI + "." + sLocalName;
 
 			// ensure that control and library are loaded
-			//TODO: global jquery call found
-			jQuery.sap.require(sClassName); // make sure oClass.getMetadata() exists
-			var oClassObject = ObjectPath.get(sClassName);
-			if (oClassObject) {
-				return oClassObject;
+			var fnClass = sap.ui.requireSync(sClassName.replace(/\./g, "/")); // make sure oClass.getMetadata() exists
+			fnClass = fnClass || ObjectPath.get(sClassName);
+			if (fnClass) {
+				return fnClass;
 			} else {
 				Log.error("Can't find object class '" + sClassName + "' for XML-view", "", "XMLTemplateProcessor.js");
 			}
