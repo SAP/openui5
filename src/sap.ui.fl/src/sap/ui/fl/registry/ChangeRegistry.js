@@ -488,7 +488,7 @@ sap.ui.define([
 				var oChangeHandlerImplementation = oChangeHandlerMetadata.getChangeHandler();
 				if (typeof oChangeHandlerImplementation === "string") {
 					// load the module synchronously
-					oChangeHandlerImplementation = sap.ui.requireSync(oChangeHandlerImplementation);
+					oChangeHandlerImplementation = sap.ui.requireSync(oChangeHandlerImplementation.replace(/\./g,"/"));
 					oChangeHandlerMetadata._changeHandler = oChangeHandlerImplementation;
 				}
 
