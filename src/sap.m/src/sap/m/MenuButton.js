@@ -323,11 +323,6 @@ sap.ui.define([
 				width: "100%"
 			});
 			oBtn.attachPress(this._handleButtonPress, this);
-			oBtn.addEventDelegate({
-				ontap: function () {
-					this._bPopupOpen = this.getMenu() && this.getMenu()._getMenu() && this.getMenu()._getMenu().getPopup().isOpen();
-				}
-			}, this);
 			return oBtn;
 		};
 
@@ -342,11 +337,6 @@ sap.ui.define([
 			});
 			oBtn.attachPress(this._handleActionPress, this);
 			oBtn.attachArrowPress(this._handleButtonPress, this);
-			oBtn.addEventDelegate({
-				ontap: function () {
-					this._bPopupOpen = this.getMenu() && this.getMenu()._getMenu() && this.getMenu()._getMenu().getPopup().isOpen();
-				}
-			}, this);
 			return oBtn;
 		};
 
@@ -397,10 +387,6 @@ sap.ui.define([
 				this.getMenu().close();
 				return;
 			}
-
-			// always clear the flag, because its value is set in ontap of the inner button,
-			// which is triggered before the press event
-			this._bPopupOpen = false;
 
 			if (!oMenu) {
 				return;
@@ -488,6 +474,7 @@ sap.ui.define([
 			var oMenuItem = oEvent.getParameter("item");
 
 			this.fireEvent("_menuItemSelected", { item: oMenuItem }); // needed for controls that listen to interaction events from within the control (e.g. for sap.m.OverflowToolbar)
+			this._bPopupOpen = false;
 
 			if (
 				!this._isSplitButton() ||
@@ -631,6 +618,10 @@ sap.ui.define([
 		MenuButton.prototype.onsapshow = function(oEvent) {
 			this.openMenuByKeyboard();
 			!!oEvent && oEvent.preventDefault();
+		};
+
+		MenuButton.prototype.ontouchstart = function() {
+			this._bPopupOpen = this.getMenu() && this.getMenu()._getMenu() && this.getMenu()._getMenu().getPopup().isOpen();
 		};
 
 		MenuButton.prototype.openMenuByKeyboard = function() {
