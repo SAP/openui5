@@ -151,18 +151,20 @@ sap.ui.define([
 		},
 
 		_generateInvalidUserInput: function () {
-			var oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
-				oNumericZipInput = this.oView.byId("formContainer").getItems()[5].getContent()[7],
-				oEmailInput = this.oView.byId("formContainer").getItems()[6].getContent()[13],
-				iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[13];
+			setTimeout(function () {
+				var oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
+					oNumericZipInput = this.oView.byId("formContainer").getItems()[5].getContent()[7],
+					oEmailInput = this.oView.byId("formContainer").getItems()[6].getContent()[13],
+					iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[13];
 
-			oRequiredNameInput.setValue(undefined);
-			oNumericZipInput.setValue("AAA");
-			oEmailInput.setValue("MariaFontes.com");
-			iWeeklyHours.setValue(400);
+				oRequiredNameInput.setValue(undefined);
+				oNumericZipInput.setValue("AAA");
+				oEmailInput.setValue("MariaFontes.com");
+				iWeeklyHours.setValue(400);
 
-			this.handleRequiredField(oRequiredNameInput);
-			this.checkInputConstraints(iWeeklyHours);
+				this.handleRequiredField(oRequiredNameInput);
+				this.checkInputConstraints(iWeeklyHours);
+			}.bind(this), 0);
 		}
 	});
 
