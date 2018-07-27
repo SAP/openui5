@@ -30,8 +30,7 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
-		iGroupMembersQueryType = AnalyticalBinding._requestType.groupMembersQuery,
+	var iGroupMembersQueryType = AnalyticalBinding._requestType.groupMembersQuery,
 		sServiceURL = "http://o4aFakeService:8080/",
 		// Analytical info for dimensions
 		oCostCenterGrouped = {
@@ -285,7 +284,7 @@ sap.ui.require([
 		},
 
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(Log);
+			this.oLogMock = sinon.mock(AnalyticalBinding.Logger);
 			this.oLogMock.expects("warning").atMost(1)
 				.withExactArgs("default count mode is ignored; OData requests will include"
 					+ " $inlinecout options");
@@ -308,9 +307,9 @@ sap.ui.require([
 			oRequestCompletedSpy,
 			oSetupBinding;
 
-		this.oLogMock.expects("warning")
-			.withExactArgs("EventProvider sap.ui.model.odata.ODataModel "
-				+ "path /$metadata should be absolute if no Context is set");
+		// this.oLogMock.expects("warning")
+		// 	.withExactArgs("EventProvider sap.ui.model.odata.ODataModel "
+		// 		+ "path /$metadata should be absolute if no Context is set");
 
 
 		oSetupBinding = setupAnalyticalBinding(1, {});
@@ -693,6 +692,115 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		expectedFilter : "((CostCenter%20lt%20%271%27%20or%20CostCenter%20gt%20%274%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NB, path : "CostCenter", value1 : "1", value2 : "4"
+		})]
+	}, {
+		expectedFilter : "((CostCenter%20ge%20%271%27%20and%20CostCenter%20le%20%274%27))",
+		filters: [new Filter({
+			operator : FilterOperator.BT, path : "CostCenter", value1 : "1", value2 : "4"
+		})]
+	}, {
+		expectedFilter : "(not%20substringof(%271%27,CostCenter))",
+		filters: [new Filter({
+			operator : FilterOperator.NotContains, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(substringof(%271%27,CostCenter))",
+		filters: [new Filter({
+			operator : FilterOperator.Contains, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(not%20startswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NotStartsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(startswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(not%20endswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.NotEndsWith, path : "CostCenter", value1 : "1"
+		})]
+	}, {
+		expectedFilter : "(endswith(CostCenter,%271%27))",
+		filters: [new Filter({
+			operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"
+		})]
+	}].forEach(function (oFixture) {
+		QUnit.test("filter operators: " + oFixture.filters[0].sOperator, function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+					var sURL = oBinding.getDownloadUrl(),
+						sFilterPart = sURL.slice(sURL.lastIndexOf("=") + 1);
+
+					assert.strictEqual(sFilterPart, oFixture.expectedFilter, sFilterPart);
+
+					done();
+				}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+				[/*aSorters*/],
+				oFixture.filters
+			);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter operators: combine all", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+				var sExpectedFilterPart = "("
+						+ "endswith(CostCenter,%271%27)%20"
+						+ "or%20not%20endswith(CostCenter,%271%27)%20"
+						+ "or%20startswith(CostCenter,%271%27)%20"
+						+ "or%20not%20startswith(CostCenter,%271%27)%20"
+						+ "or%20substringof(%271%27,CostCenter)%20"
+						+ "or%20not%20substringof(%271%27,CostCenter)%20"
+						+ "or%20(CostCenter%20ge%20%271%27%20and%20CostCenter%20le%20%274%27)%20"
+						+ "or%20(CostCenter%20lt%20%271%27%20or%20CostCenter%20gt%20%274%27)"
+						+ ")",
+					sURL = oBinding.getDownloadUrl(),
+					sFilterPart = sURL.slice(sURL.lastIndexOf("=") + 1);
+
+				assert.strictEqual(sFilterPart, sExpectedFilterPart, sFilterPart);
+
+				done();
+			}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+			[/*aSorters*/],
+			[new Filter({
+				operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotEndsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotStartsWith, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.Contains, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.NotContains, path : "CostCenter", value1 : "1"
+			}),
+			new Filter({
+				operator : FilterOperator.BT, path : "CostCenter", value1 : "1", value2 : "4"
+			}),
+			new Filter({
+				operator : FilterOperator.NB, path : "CostCenter", value1 : "1", value2 : "4"
+			})]
+		);
+	});
+
+	//*********************************************************************************************
+	[{
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oActualCostsTotal,
 			oCurrencyGrouped, oPlannedCostsTotal, oCurrencyGrouped],
 		expectedSelect : "CostCenter,CostElement,ActualCosts,Currency,PlannedCosts,Currency"
@@ -927,7 +1035,7 @@ sap.ui.require([
 				oFixture.warnings.forEach(function (sText) {
 					that.oLogMock.expects("warning")
 						.withExactArgs("Ignored the 'select' binding parameter, because " + sText,
-							sPath, sClassName);
+							sPath);
 				});
 
 				// metadata does not contain associated properties for measures, so simulate it
@@ -1233,8 +1341,7 @@ sap.ui.require([
 			"empty mHierarchyDetailsByName, ignore group ID");
 
 		this.oLogMock.expects("error")
-			.withExactArgs("Hierarchy cannot be requested for members of a group", "/foo/",
-				sClassName);
+			.withExactArgs("Hierarchy cannot be requested for members of a group", "/foo/");
 
 		oAnalyticalBinding.mHierarchyDetailsByName = {
 			property0 : {
@@ -1683,9 +1790,9 @@ sap.ui.require([
 			setupAnalyticalBinding(2, {}, function (oBinding) {
 				if (oFixture.message) {
 					that.oLogMock.expects("isLoggable")
-						.withExactArgs(Log.Level.INFO, sClassName)
+						.withExactArgs(Log.Level.INFO)
 						.returns(true);
-					that.oLogMock.expects("info").withExactArgs(oFixture.message, "", sClassName);
+					that.oLogMock.expects("info").withExactArgs(oFixture.message, "");
 				}
 
 				// code under test
@@ -1920,7 +2027,7 @@ sap.ui.require([
 						.withExactArgs("Applying sorters to groups is only possible with auto"
 								+ " expand mode 'Sequential'; current mode is: "
 								+ oFixture.sAutoExpandMode,
-							sPath, sClassName);
+							sPath);
 				}
 
 				// code under test
@@ -2395,7 +2502,7 @@ sap.ui.require([
 			setupAnalyticalBinding(2, {}, function (oBinding) {
 				oBinding.bApplySortersToGroups = oFixture.bApplySortersToGroups;
 				that.oLogMock.expects("warning")
-					.withExactArgs(oFixture.sWarning, sPath, sClassName)
+					.withExactArgs(oFixture.sWarning, sPath)
 					.exactly("sWarning" in oFixture ? 1 : 0);
 
 				// code under test

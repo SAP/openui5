@@ -16,8 +16,10 @@
 			data-sap-ui-compatversion="edge"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.table,sap.m"
-			data-sap-ui-resourceroots='{"sap.ui.core.qunit":
-				"../../../../../../test-resources/sap/ui/core/qunit"}'>
+			data-sap-ui-resourceroots='{
+				"sap.ui.core.qunit": "../../../../../../test-resources/sap/ui/core/qunit",
+				"sap.ui.table.qunit": "../../../../../../test-resources/sap/ui/table/qunit"
+			}'>
 		</script>
 		<link href="../../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen"
 			rel="stylesheet">
@@ -33,9 +35,7 @@
 		</script>
 		<script src="../../../../../../resources/sap/ui/test/BranchTracking.js"></script>
 
-		<script src="AnalyticalBinding.qunit.js"></script>
-		<script src="odata4analytics.qunit.js"></script>
-		<script src="../../../table/qunit/AnalyticalTable.qunit.js"></script>
+		<script src="testsuite4analytics.qunit.js"></script>
 	</head>
 	<body>
 	<div id="qunit"></div>
