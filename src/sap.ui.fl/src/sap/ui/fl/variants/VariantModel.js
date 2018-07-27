@@ -750,16 +750,20 @@ sap.ui.define([
 		return BaseTreeModifier.getSelector(sId, oAppComponent).id;
 	};
 
-	VariantModel.prototype.switchToDefaultVariant = function(sVariantId) {
+	VariantModel.prototype.switchToDefaultForVariantManagement = function (sVariantManagementReference) {
+		BusyIndicator.show(200);
+		this.updateCurrentVariant(sVariantManagementReference, this.oData[sVariantManagementReference].defaultVariant)
+			.then(function () {
+				BusyIndicator.hide();
+			});
+	};
+
+	VariantModel.prototype.switchToDefaultForVariant = function(sVariantId) {
 		Object.keys(this.oData).forEach(function (sVariantManagementReference) {
 			// set default variant only if passed variant id matches the current variant, or
 			// if no variant id passed, set to default variant
 			if (!sVariantId || this.oData[sVariantManagementReference].currentVariant === sVariantId) {
-				BusyIndicator.show(200);
-				this.updateCurrentVariant(sVariantManagementReference, this.oData[sVariantManagementReference].defaultVariant)
-					.then(function () {
-						BusyIndicator.hide();
-					});
+				this.switchToDefaultForVariantManagement.call(this, sVariantManagementReference);
 			}
 		}.bind(this));
 	};
@@ -784,7 +788,7 @@ sap.ui.define([
 			//control property updateVariantInURL set initially
 			if (oVariantManagementControl.getUpdateVariantInURL()) {
 				this.oData[sVariantManagementReference].updateVariantInURL = true;
-				VariantUtil.attachHashHandlers.call(this);
+				VariantUtil.attachHashHandlers.call(this, sVariantManagementReference);
 			}
 		}
 	};
