@@ -266,7 +266,7 @@ sap.ui.define([
 				if (this.byId("PC1").getViewKey() === "nonWorking"){
 					this.handleNonWorkingSpecialDates(oEvent);
 				} else {
-					var oPC = oEvent.oSource,
+					var oPC = oEvent.getSource(),
 						oStartDate = oEvent.getParameter("startDate"),
 						oEndDate = oEvent.getParameter("endDate"),
 						oRow = oEvent.getParameter("row"),

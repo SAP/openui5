@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 		},
 
 		handleCalendarSelect: function(oEvent) {
-			var oCalendar = oEvent.oSource,
+			var oCalendar = oEvent.getSource(),
 				oSelectedDate = oCalendar.getSelectedDates()[0],
 				oStartDate = oSelectedDate.getStartDate();
 			if (this.oLastSelectedJSDate && oStartDate.getTime() === this.oLastSelectedJSDate.getTime()) {
