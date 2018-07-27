@@ -4,7 +4,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<base href="../../../../../../../">
-	<title>SAPUI5 QUnit TestRunner</title>
+	<title>QUnit Testsuite Migration for Test Starter</title>
 	<script id="sap.-ui-bootstrap"
 			src="resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.ui.layout,sap.m,sap.ui.codeeditor"
@@ -12,6 +12,8 @@
 			data-sap-ui-theme="sap_belize"></script>
 	<script src="test-resources/sap/ui/qunit/TestRunner.js"></script>
 	<script>
+	(function() {
+
 
 	function toBoolean(str) {
 		if ( str === "true" ) {
@@ -33,7 +35,6 @@
 			// ignore
 		}
 	}
-	
 	function nonEmpty(obj) {
 		if ( obj == null ) {
 			return;
@@ -42,18 +43,26 @@
 		return Object.keys(obj).length > 0 ? obj : undefined;
 	}
 
+	// private function taken from jquery.sap.global
+	function ui5ToRJS(sName) {
+		if ( /^jquery\.sap\./.test(sName) ) {
+			return sName;
+		}
+		return sName.replace(/\./g, "/");
+	}
+
 	function extractSuiteInfo(sPageURL) {
-		let segments = sPageURL.split("/").slice(2); // cut of leading empty segment and app name 
-		let count = segments.length; 
+		let segments = sPageURL.split("/").slice(2); // cut of leading empty segment and app name
+		let count = segments.length;
 		let baseRef = "";
 		while ( --count > 0 ) {
 			baseRef += "../";
 		}
-		segments[segments.length - 1] = segments[segments.length - 1].replace(/\.html$/, ".js"); 
+		segments[segments.length - 1] = segments[segments.length - 1].replace(/\.html$/, "");
 
 		let suitePageInfo = {
 			url: sPageURL,
-			baseRef, 
+			baseRef,
 			resourceName: segments.join("/")
 		};
 
@@ -73,12 +82,11 @@
 	const rRequire = /sap\.ui\.require\s*\(\s*\[([^]*)\]\s*,\s*function\(\)/;
 	const rQUnitConfig = /QUnit\.config\.([a-zA-Z]+)\s*=\s*([^;]+);/g;
 	const rSinonConfig = /sinon\.config\.([a-zA-Z]+)\s*=\s*([^;]+);/g;
-	
 	function collectTestInfos(aTests) {
 		var testNames = Object.create(null);
 		function uniqueName(testName) {
 			if ( testName.search(/[?#]/) >= 0 ) {
-				testName = testName.slice(0, testName.search(/[?#]/)); // cut off 
+				testName = testName.slice(0, testName.search(/[?#]/)); // cut off
 			}
 			if ( /\.html$/.test(testName) ) {
 				testName = testName.slice(0, -5);
@@ -98,10 +106,10 @@
 		}
 
 		aTests = aTests.sort().map( (url) => ({
-			name: url, 
+			name: url,
 			page: url
 		}) );
-		
+
 		// find and cut off common prefix
 		var prefix = aTests.reduce((prefix, test) => {
 			while ( prefix.length && !test.name.startsWith(prefix) ) {
@@ -131,7 +139,13 @@
 					test.ui5.theme = toString($bootstrap.attr("data-sap-ui-theme"));
 					test.ui5.language = toString($bootstrap.attr("data-sap-ui-language"));
 					test.loader = {};
-					test.loader.paths = toJSON($bootstrap.attr("data-sap-ui-resourceroots"));
+					var mResourceRoots = toJSON($bootstrap.attr("data-sap-ui-resourceroots"));
+					if ( mResourceRoots ) {
+						test.loader.paths = {};
+						for ( sNamePrefix in mResourceRoots ) {
+							test.loader.paths[ui5ToRJS(sNamePrefix)] = mResourceRoots[sNamePrefix];
+						}
+					 }
 					if ( /sap-ui-core\.js$/.test($bootstrap.attr("src")) || /sap\.ui\.getCore\(\)\.attachInit(?:Event)?/.test(data) ) {
 						test.bootCore = true;
 					}
@@ -159,7 +173,6 @@
 							test.sinon.qunitBridge = true;
 						}
 					}
-					
 					var m;
 					if ( m = rRequire.exec(data) ) {
 						let deps = m[1].trim().split(/\s*,\s*/).map( (dep) => {
@@ -172,7 +185,6 @@
 							test.module = deps;
 						}
 					};
-					
 
 					rQUnitConfig.lastIndex = 0;
 					while ( m = rQUnitConfig.exec(data) ) {
@@ -203,7 +215,6 @@
 						test.sinon = test.sinon || {};
 						test.sinon[option] = value;
 					}
-					
 					return test;
 				});
 			})
@@ -229,7 +240,6 @@
 		var wildcard = {
 			"loader/paths/" : true
 		};
-		
 		var special = {
 			"ui5/libs": (function() {
 				const uniqueValues = new Map();
@@ -250,14 +260,14 @@
 				};
 			}())
 		}
-		
+
 		// count values
 		aTests.forEach( (test) => {
-			
+
 			function visit(obj, prefix) {
 				Object.keys(obj).forEach( (key) => {
 					let fullkey = prefix + key;
-					let values = condensed.get(fullkey); 
+					let values = condensed.get(fullkey);
 					let value = obj[key];
 					if ( values == null && wildcard[prefix] === true ) {
 						condensed.set(fullkey, values = new Map());
@@ -277,7 +287,6 @@
 					}
 				});
 			}
-			
 			visit(test, "");
 		});
 
@@ -290,7 +299,7 @@
 		}
 
 		const oConfig = {
-			name: undefined, 
+			name: undefined,
 			defaults: {},
 			tests: aTests.reduce( (map, test) => {
 				map[test.name] = test;
@@ -308,11 +317,11 @@
 		test.qunit = nonEmpty(test.qunit);
 		test.sinon = nonEmpty(test.sinon);
 	}
-	
+
 	function indent(str, by) {
 		return str.split(/\r\n|\r|\n/g).map((line) => (by + line)).join("\n").slice(indent.length);
 	}
-	
+
 	function stringify(obj, indent) {
 		let s = [];
 
@@ -365,11 +374,11 @@
 				return first;
 			}
 		}
-	
+
 		if ( pushValue(obj, undefined, indent, true) ) {
 			throw new TypeError();
 		}
-		
+
 		s.shift();
 		s.shift();
 		return s.join("");
@@ -420,7 +429,6 @@
 		return `sap.ui.define(function() {
 
 	"use strict";
-	
 	return ${stringify(oConfig, "\t")};
 });
 `;
@@ -433,7 +441,7 @@
 		]).then( ([suitePageInfo, suiteConfig]) => {
 			suiteConfig.name = suitePageInfo.title;
 			return {
-				suitePageInfo, 
+				suitePageInfo,
 				suiteConfig
 			};
 		});
@@ -464,7 +472,6 @@
 	}
 
 	function findTestSuites(sEntryPage) {
-		
 		function checkTestPage(sTestPage) {
 
 			return new Promise(function(resolve, reject) {
@@ -474,7 +481,6 @@
 					resolve({name: sTestPage});
 					return;
 				}
-				
 				// check for an existing test page and check for test suite or page
 				jQuery.get(sTestPage).done(function(sData) {
 					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
@@ -482,7 +488,6 @@
 							|| (/data-sap-ui-suite/.test(sData) && !/sap\/ui\/test\/starter\/run-test/.test(sData)) ) {
 
 						// console.log("execute page ", sTestPage);
-						
 						var $frame = jQuery("<iframe>");
 						$frame.css("display", "none");
 						$frame.one("load", function() {
@@ -532,10 +537,10 @@
 		function parallel(aPages) {
 			return Promise.all( aPages.map( (page) => checkTestPage(page) ) );
 		}
-		
+
 		function findTestPages(oIFrame) {
 			return Promise.resolve(oIFrame.contentWindow.suite()).
-				then( (oSuite) => (oSuite && oSuite.getTestPages() || []) ). 
+				then( (oSuite) => (oSuite && oSuite.getTestPages() || []) ).
 				then( (aPages) => sequence(aPages) ).
 				catch( () => [] );
  		}
@@ -554,7 +559,6 @@
 			return aSimpleSuites.sort();
 		});
 	}
-	
 	function createUI() {
 
 		return new Promise(function(resolve, reject) {
@@ -630,7 +634,6 @@
 	}
 
 	function extract() {
-		
 		sap.ui.getCore().byId("page").setBusy(true);
 		testsuiteFiles = {
 			// indexPage: "extracting...",
@@ -638,7 +641,6 @@
 			configJS: "extracting..."
 		};
 		updateCodeEditor();
-		
 		extractTestsuiteConfig( sap.ui.getCore().byId("testPage").getValue() )
 		.then( (files) => {
 			testsuiteFiles = files;
@@ -654,8 +656,8 @@
 		createUI().then( () => {
 
 			let input = sap.ui.getCore().byId("testPage");
-			let sTestPage = sap.ui.qunit.TestRunner.getUrlParameter("testpage"); 
-			
+			let sTestPage = sap.ui.qunit.TestRunner.getUrlParameter("testpage");
+
 			input.setValue(sTestPage || "");
 
 			if (sTestPage && sap.ui.qunit.TestRunner.getAutoStart()) {
@@ -679,6 +681,8 @@
 
 	});
 
+
+	})();
 	</script>
 
 </head>
