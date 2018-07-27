@@ -111,9 +111,8 @@ sap.ui.define([
 			url: "manifest/uri/manifest.json"
 		});
 
-		var sBaseURI = new URI("./").absoluteTo(new URI(document.baseURI).search(""));
-		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri")).toString(), "testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
-		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "component").toString(), "testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri")).toString(), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "component").toString(), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
 		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "manifest").toString(), "manifest/uri/my/uri", "URL should resolve relative to the Manifest");
 
 	});

@@ -157,7 +157,7 @@ sap.ui.define([
 		// model: "ODataModel"
 		sinon.assert.calledWithExactly(this.modelSpy.odata, {
 			serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-			annotationURI: [ '/path/to/odata/annotations/1', 'testdata/v2models/parent/path/to/local/odata/annotations/2' ],
+			annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
 			useBatch: false,
 			refreshAfterChange: false,
 			json: true
@@ -171,7 +171,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 			serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
 			annotationURI: [
-				'testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
+				'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
 				'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo'
 			],
 			headers: { "Cache-Control": "max-age=500" },
@@ -207,7 +207,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 			serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
 			annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
-											"testdata/v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+											"test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
 											"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
 											"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
 										],
@@ -239,10 +239,10 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
 
 		// model: "json-relative"
-		sinon.assert.calledWithExactly(this.modelSpy.json, 'testdata/v2models/parent/path/to/local/data.json?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.json, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/data.json?sap-client=foo&sap-server=bar');
 
 		// model: "json-relative-2"
-		sinon.assert.calledWithExactly(this.modelSpy.json, 'testdata/path/to/other/data.json?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.json, 'test-resources/sap/ui/core/qunit/component/testdata/path/to/other/data.json?sap-client=foo&sap-server=bar');
 
 
 		// sap.ui.model.xml.XMLModel
@@ -252,7 +252,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml?sap-client=foo&sap-server=bar');
 
 		// model: "xml-relative"
-		sinon.assert.calledWithExactly(this.modelSpy.xml, 'testdata/v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.xml, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
 
 
 		// sap.ui.model.resource.ResourceModel
@@ -265,7 +265,7 @@ sap.ui.define([
 
 		// model: "resourceBundle-legacy-uri"
 		sinon.assert.calledWithExactly(this.modelSpy.resource, {
-			bundleUrl: "testdata/v2models/parent/i18n.properties"
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/i18n.properties"
 		});
 
 
@@ -276,7 +276,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar');
 
 		// model: "custom-uri-relative-string"
-		sinon.assert.calledWithExactly(this.modelSpy.custom, 'testdata/v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.custom, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
 
 		// model: "custom-uri-string-with-settings"
 		sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar', {
@@ -361,7 +361,7 @@ sap.ui.define([
 		// model: "ODataModel"
 		sinon.assert.calledWithExactly(this.modelSpy.odata, {
 			serviceUrl: '/path/to/odata/service;o=BLA_123?sap-client=foo&sap-server=bar',
-			annotationURI: [ '/path/to/odata/annotations/1', 'testdata/v2models/parent/path/to/local/odata/annotations/2'],
+			annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2'],
 			useBatch: false,
 			refreshAfterChange: false,
 			json: true
@@ -379,7 +379,7 @@ sap.ui.define([
 			serviceUrl: '/path/to/odata/service/with/trailing/slash;o=BLA_123/?sap-client=foo&sap-server=bar',
 			annotationURI: [
 				'/path/to/odata/service/with/trailing/slash;o=BLA_123/annotations.xml?sap-language=EN&sap-client=foo',
-				'testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo'
+				'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo'
 			],
 			useBatch: true,
 			refreshAfterChange: true,
@@ -390,7 +390,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 			serviceUrl: '/path/to/odata/service/with/multi/origin/annotations;o=BLA_123/?sap-client=foo&sap-server=bar',
 			annotationURI: ["/path/to/other/odata/service;o=BLA_123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
-											"testdata/v2models/parent/path/to/other/odata/service;o=BLA_123/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+											"test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/other/odata/service;o=BLA_123/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
 											"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
 											"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
 											],
@@ -433,7 +433,7 @@ sap.ui.define([
 		// model: "ODataModel"
 		sinon.assert.calledWithExactly(this.modelSpy.odata, {
 			serviceUrl: '/path/to/odata/service;o=STARTUP456?sap-client=foo&sap-server=bar',
-			annotationURI: [ '/path/to/odata/annotations/1', 'testdata/v2models/parent/path/to/local/odata/annotations/2'],
+			annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2'],
 			useBatch: false,
 			refreshAfterChange: false,
 			json: true
@@ -451,7 +451,7 @@ sap.ui.define([
 			serviceUrl: '/path/to/odata/service/with/trailing/slash;o=STARTUP456/?sap-client=foo&sap-server=bar',
 			annotationURI: [
 				'/path/to/odata/service/with/trailing/slash;o=STARTUP456/annotations.xml?sap-language=EN&sap-client=foo',
-				'testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo'
+				'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo'
 			],
 			useBatch: true,
 			refreshAfterChange: true,
@@ -462,7 +462,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 			serviceUrl: '/path/to/odata/service/with/multi/origin/annotations;o=STARTUP456/?sap-client=foo&sap-server=bar',
 			annotationURI: ["/path/to/other/odata/service;o=STARTUP456/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
-											"testdata/v2models/parent/path/to/other/odata/service;o=STARTUP456/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+											"test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/other/odata/service;o=STARTUP456/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
 											"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
 											"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
 											],
@@ -511,7 +511,7 @@ sap.ui.define([
 		// model: "ODataModel"
 		sinon.assert.calledWithExactly(this.modelSpy.odata, {
 			serviceUrl: '/path/to/odata/service',
-			annotationURI: [ '/path/to/odata/annotations/1', 'testdata/v2models/parent/path/to/local/odata/annotations/2'],
+			annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2'],
 			useBatch: false,
 			refreshAfterChange: false,
 			json: true
@@ -533,7 +533,7 @@ sap.ui.define([
 			},
 			annotationURI: [
 				'/path/to/odata/service/with/trailing/slash/annotations.xml?sap-language=EN',
-				'testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN'
+				'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN'
 			],
 			useBatch: true,
 			refreshAfterChange: true
@@ -590,7 +590,7 @@ sap.ui.define([
 			serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
 			annotationURI: [
 				'/path/to/odata/annotations/1',
-				'testdata/v2models/parent/path/to/local/odata/annotations/2'
+				'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2'
 			],
 			useBatch: false,
 			refreshAfterChange: false,
@@ -614,7 +614,7 @@ sap.ui.define([
 			},
 			annotationURI: [
 				'/path/to/odata/service/with/trailing/slash/annotations.xml?sap-language=EN&sap-client=foo&sap-context-token=1476971136',
-				'testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo&sap-context-token=1476971160'
+				'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo&sap-context-token=1476971160'
 			],
 			useBatch: true,
 			refreshAfterChange: true
@@ -654,7 +654,7 @@ sap.ui.define([
 		// model: "ODataModel"
 		sinon.assert.calledWithExactly(this.modelSpy.odata, {
 			serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-			annotationURI: [ '/path/to/odata/annotations/1', 'testdata/v2models/parent/path/to/local/odata/annotations/2' ],
+			annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
 			useBatch: true,
 			skipMetadataAnnotationParsing: true,
 			refreshAfterChange: false,
@@ -669,9 +669,9 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 			serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
 			annotationURI: [
-				'testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
+				'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
 				'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo',
-				'testdata/v2models/extension/path/to/local/extension/annotation?sap-language=EN&sap-client=foo'
+				'test-resources/sap/ui/core/qunit/component/testdata/v2models/extension/path/to/local/extension/annotation?sap-language=EN&sap-client=foo'
 			],
 			headers: { "Cache-Control": "max-age=360" },
 			metadataUrlParams: { "sap-language": "EN" }
@@ -706,7 +706,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 			serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
 			annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
-											"testdata/v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+											"test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
 											"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
 											"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
 											],
@@ -720,10 +720,10 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
 
 		// model: "json-relative"
-		sinon.assert.calledWithExactly(this.modelSpy.json, 'testdata/v2models/extension/path/to/extension/data.json?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.json, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/extension/path/to/extension/data.json?sap-client=foo&sap-server=bar');
 
 		// model: "json-relative-2"
-		sinon.assert.calledWithExactly(this.modelSpy.json, 'testdata/path/to/other/data.json?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.json, 'test-resources/sap/ui/core/qunit/component/testdata/path/to/other/data.json?sap-client=foo&sap-server=bar');
 
 
 		// sap.ui.model.xml.XMLModel
@@ -733,10 +733,10 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml?sap-client=foo&sap-server=bar');
 
 		// model: "xml-relative"
-		sinon.assert.calledWithExactly(this.modelSpy.xml, 'testdata/v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.xml, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
 
 		// model: "xml-extension"
-		sinon.assert.calledWithExactly(this.modelSpy.xml, 'testdata/v2models/extension/path/to/local/data.xml?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.xml, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/extension/path/to/local/data.xml?sap-client=foo&sap-server=bar');
 
 
 		// sap.ui.model.resource.ResourceModel
@@ -749,7 +749,7 @@ sap.ui.define([
 
 		// model: "resourceBundle-legacy-uri"
 		sinon.assert.calledWithExactly(this.modelSpy.resource, {
-			bundleUrl: "testdata/v2models/parent/i18n.properties"
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/i18n.properties"
 		});
 
 
@@ -760,7 +760,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar');
 
 		// model: "custom-uri-relative-string"
-		sinon.assert.calledWithExactly(this.modelSpy.custom, 'testdata/v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
+		sinon.assert.calledWithExactly(this.modelSpy.custom, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
 
 		// model: "custom-uri-string-with-settings"
 		sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar', {
@@ -872,7 +872,7 @@ sap.ui.define([
 
 		// model: "sfapi"
 		sinon.assert.calledWithExactly(this.modelSpy.odata, {
-			serviceUrl: 'testdata/v1/some/odata/service',
+			serviceUrl: 'test-resources/sap/ui/core/qunit/component/testdata/v1/some/odata/service',
 			json: true
 		});
 
@@ -882,7 +882,7 @@ sap.ui.define([
 
 		// model: "i18n"
 		sinon.assert.calledWithExactly(this.modelSpy.resource, {
-			bundleUrl: "testdata/v1/i18n/i18n.properties"
+			bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v1/i18n/i18n.properties"
 		});
 
 		// check if models are set on component (and save them internally)
@@ -934,7 +934,7 @@ sap.ui.define([
 
 		// @evo-todo using declare and define without name together was bad,
 		// using define with a name is better, but still the result is expected synchronously - will fail in future!
-		sap.ui.define("sap/ui/test/v2local/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		sap.ui.predefine("sap/ui/test/v2local/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 			var LocalComponent = UIComponent.extend("sap.ui.test.v2local.Component", {
 				metadata : {
@@ -997,7 +997,7 @@ sap.ui.define([
 		// model: "ODataModel"
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 			serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-			annotationURI: [ 'testdata/v2local/path/to/local/odata/annotations?sap-language=EN&sap-client=foo' ],
+			annotationURI: [ 'test-resources/sap/ui/core/qunit/component/testdata/v2local/path/to/local/odata/annotations?sap-language=EN&sap-client=foo' ],
 			metadataUrlParams: { "sap-context-token": '1234567890', "sap-language": 'EN' },
 			useBatch: false,
 			refreshAfterChange: false
@@ -1075,7 +1075,7 @@ sap.ui.define([
 			// model: "ODataModel"
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
 				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
-				annotationURI: [ '/path/to/odata/annotations/1', 'testdata/v2models/parent/path/to/local/odata/annotations/2' ],
+				annotationURI: [ '/path/to/odata/annotations/1', 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2' ],
 				useBatch: false,
 				refreshAfterChange: false,
 				json: true
@@ -1089,7 +1089,7 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
 				annotationURI: [
-					'testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
+					'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo',
 					'/path/to/odata/annotations/1?sap-language=EN&sap-client=foo'
 				],
 				headers: { "Cache-Control": "max-age=500" },
@@ -1125,7 +1125,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 			serviceUrl: '/path/to/odata/service/with/multi/origin/annotations/?sap-client=foo&sap-server=bar',
 			annotationURI: ["/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
-											"testdata/v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+											"test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/other/odata/service/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
 											"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
 											"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
 											],
@@ -1139,10 +1139,10 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
 
 			// model: "json-relative"
-			sinon.assert.calledWithExactly(this.modelSpy.json, 'testdata/v2models/parent/path/to/local/data.json?sap-client=foo&sap-server=bar');
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/data.json?sap-client=foo&sap-server=bar');
 
 			// model: "json-relative-2"
-			sinon.assert.calledWithExactly(this.modelSpy.json, 'testdata/path/to/other/data.json?sap-client=foo&sap-server=bar');
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'test-resources/sap/ui/core/qunit/component/testdata/path/to/other/data.json?sap-client=foo&sap-server=bar');
 
 
 			// sap.ui.model.xml.XMLModel
@@ -1152,7 +1152,7 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml?sap-client=foo&sap-server=bar');
 
 			// model: "xml-relative"
-			sinon.assert.calledWithExactly(this.modelSpy.xml, 'testdata/v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
+			sinon.assert.calledWithExactly(this.modelSpy.xml, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/data.xml?sap-client=foo&sap-server=bar');
 
 
 			// sap.ui.model.resource.ResourceModel
@@ -1165,7 +1165,7 @@ sap.ui.define([
 
 			// model: "resourceBundle-legacy-uri"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleUrl: "testdata/v2models/parent/i18n.properties"
+				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/i18n.properties"
 			});
 
 
@@ -1176,7 +1176,7 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar');
 
 			// model: "custom-uri-relative-string"
-			sinon.assert.calledWithExactly(this.modelSpy.custom, 'testdata/v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
+			sinon.assert.calledWithExactly(this.modelSpy.custom, 'test-resources/sap/ui/core/qunit/component/testdata/v2models/parent/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
 
 			// model: "custom-uri-string-with-settings"
 			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar', {
@@ -1276,8 +1276,6 @@ sap.ui.define([
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
-
-			sap.ui.loader.config({paths:{"samples/components":"../../samples/components/"}});
 
 			// enable async preloading
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;

@@ -3,11 +3,17 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/mvc/View'
-], function(jQuery, Component, ComponentContainer, Controller, View) {
+	'sap/ui/core/mvc/View',
+	'sap/ui/qunit/QUnitUtils'
+], function(jQuery, Component, ComponentContainer, Controller, View, qutils) {
 
 	"use strict";
-	/*global QUnit, sinon, qutils */
+	/*global QUnit, sinon */
+
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.append(oDIV)
 
 	// Event handler functions
 	var iStandardSub2ControllerCalled = 0;
@@ -292,7 +298,7 @@ sap.ui.define([
 
 		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
 		var that = this;
-		sap.ui.define("sap/my/sync/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+		sap.ui.predefine("sap/my/sync/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
 			var ExtensionProvider = function() {};
 			ExtensionProvider.prototype.getControllerExtensions = that.getControllerExtensions;
 			return ExtensionProvider;
@@ -332,7 +338,7 @@ sap.ui.define([
 
 		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
 		var that = this;
-		sap.ui.define("sap/my/async/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+		sap.ui.predefine("sap/my/async/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
 			var ExtensionProvider = function() {};
 			ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
 				if ( !(sControllerName == "testdata.customizing.sap.Sub2") ){
