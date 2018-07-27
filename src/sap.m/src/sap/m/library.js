@@ -283,6 +283,7 @@ sap.ui.define([
 			"sap.m.WizardStep"
 		],
 		elements: [
+			"sap.m.CalendarAppointment",
 			"sap.m.Column",
 			"sap.m.FlexItemData",
 			"sap.m.FeedListItemAction",
