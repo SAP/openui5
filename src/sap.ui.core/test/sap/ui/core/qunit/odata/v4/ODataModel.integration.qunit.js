@@ -988,7 +988,7 @@ sap.ui.require([
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
 </Table>',
-		{"EMPLOYEES?$select=Name&$filter=(AGE%20gt%2021)%20and%20(TEAM_ID%20eq%2042)&$orderby=AGE,Name%20desc&$skip=0&$top=100" :
+		{"EMPLOYEES?$select=Name&$filter=AGE%20gt%2021%20and%20(TEAM_ID%20eq%2042)&$orderby=AGE,Name%20desc&$skip=0&$top=100" :
 			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
 		{"text" : ["Frederic Fall", "Jonathan Smith"]}
 	);

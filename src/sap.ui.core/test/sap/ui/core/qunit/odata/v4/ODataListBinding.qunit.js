@@ -3409,7 +3409,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	[
 		{op : FilterOperator.BT, result : "SupplierName ge 'SAP' and SupplierName le 'XYZ'"},
-		{op : FilterOperator.NB, result : "(SupplierName lt 'SAP' or SupplierName gt 'XYZ')"},
+		{op : FilterOperator.NB, result : "SupplierName lt 'SAP' or SupplierName gt 'XYZ'"},
 		{op : FilterOperator.EQ, result : "SupplierName eq 'SAP'"},
 		{op : FilterOperator.GE, result : "SupplierName ge 'SAP'"},
 		{op : FilterOperator.GT, result : "SupplierName gt 'SAP'"},
@@ -3451,37 +3451,49 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRelative) {
-		QUnit.test("fetchFilter: dynamic and static filters, "
-				+ (bRelative ? "relative" : "absolute") + " binding", function (assert) {
-			var oBinding = this.bindList(bRelative ? "BP_2_SO" : "/SalesOrderList"),
-				oContext = Context.create(this.oModel, {}, "/BusinessPartnerList"),
-				oHelperMock = this.mock(_Helper),
-				oMetaModelMock = this.mock(oBinding.oModel.oMetaModel),
-				sResolvedPath =
-					bRelative ? "/BusinessPartnerList('42')/BP_2_SO" : "/SalesOrderList";
+		[false, true].forEach(function (bAnd) {
+			QUnit.test("fetchFilter: dynamic '" + (bAnd ? "and" : "or") + "' and static filters, "
+					+ (bRelative ? "relative" : "absolute") + " binding", function (assert) {
+				var oBinding = this.bindList(bRelative ? "BP_2_SO" : "/SalesOrderList"),
+					oContext = Context.create(this.oModel, {}, "/BusinessPartnerList"),
+					oHelperMock = this.mock(_Helper),
+					oMetaModelMock = this.mock(oBinding.oModel.oMetaModel),
+					sResolvedPath =
+						bRelative ? "/BusinessPartnerList('42')/BP_2_SO" : "/SalesOrderList";
 
-			this.mock(oBinding.oModel).expects("resolve").twice()
-				.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
-				.returns(sResolvedPath);
-			oMetaModelMock.expects("getMetaContext").twice()
-				.withExactArgs(sResolvedPath).returns("~");
-			oMetaModelMock.expects("fetchObject")
-				.withExactArgs("SO_2_BP/CompanyName", "~")
-				.returns(SyncPromise.resolve({$Type : "Edm.String"}));
-			oMetaModelMock.expects("fetchObject")
-				.withExactArgs("GrossAmount", "~")
-				.returns(SyncPromise.resolve({$Type : "Edm.Decimal"}));
-			oHelperMock.expects("formatLiteral").withExactArgs("SAP", "Edm.String")
-				.returns("'SAP'");
-			oHelperMock.expects("formatLiteral").withExactArgs(12345, "Edm.Decimal")
-				.returns(12345);
-			oBinding.aApplicationFilters = [new Filter("SO_2_BP/CompanyName", FilterOperator.EQ,
-				"SAP"), new Filter("GrossAmount", FilterOperator.LE, 12345)];
+				this.mock(oBinding.oModel).expects("resolve")
+					.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
+					.returns(sResolvedPath);
+				oMetaModelMock.expects("getMetaContext")
+					.withExactArgs(sResolvedPath).returns("~");
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("SO_2_BP/CompanyName", "~")
+					.returns(SyncPromise.resolve({$Type : "Edm.String"}));
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("GrossAmount", "~")
+					.returns(SyncPromise.resolve({$Type : "Edm.Decimal"}));
+				oHelperMock.expects("formatLiteral").withExactArgs("SAP", "Edm.String")
+					.returns("'SAP'");
+				oHelperMock.expects("formatLiteral").withExactArgs(12345, "Edm.Decimal")
+					.returns(12345);
+				oBinding.aApplicationFilters = [
+					new Filter({
+						filters : [
+							new Filter("SO_2_BP/CompanyName", FilterOperator.EQ, "SAP"),
+							new Filter("GrossAmount", FilterOperator.LE, 12345)
+						],
+						and : bAnd
+					})
+				];
 
-			assert.strictEqual(
-				oBinding.fetchFilter(oContext, "GrossAmount ge 1000").getResult(),
-				"(SO_2_BP/CompanyName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)"
-			);
+				assert.strictEqual(
+					oBinding.fetchFilter(oContext, "GrossAmount ge 1000").getResult(),
+					(bAnd
+						? "SO_2_BP/CompanyName eq 'SAP' and GrossAmount le 12345"
+						: "(SO_2_BP/CompanyName eq 'SAP' or GrossAmount le 12345)"
+					) + " and (GrossAmount ge 1000)"
+				);
+			});
 		});
 	});
 
@@ -3544,7 +3556,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{ filters : [], result : "" },
+		{ filters : [], result : undefined },
 		{ filters : ["path0", "path1"], result : "path0 eq path0Value and path1 eq path1Value" },
 		{ // "grouping": or conjunction for filters with same path
 			filters : [{ p : "path0", v : "foo" }, "path1", { p : "path0", v : "bar" }],
@@ -3556,9 +3568,11 @@ sap.ui.require([
 				aFilters = [],
 				oHelperMock = this.mock(_Helper),
 				oMetaModelMock = this.mock(oBinding.oModel.oMetaModel),
-				mRequestObjectByPath = {},
 				oPropertyMetadata = {$Type : "Edm.Type"};
 
+			// call getMetaContext only if there are filters
+			oMetaModelMock.expects("getMetaContext").exactly(oFixture.filters.length ? 1 : 0)
+				.withExactArgs(oBinding.sPath).returns("~");
 			oFixture.filters.forEach(function (vFilter) {
 				var sPath,
 					sValue;
@@ -3570,14 +3584,9 @@ sap.ui.require([
 				}
 
 				aFilters.push(new Filter(sPath, FilterOperator.EQ, sValue));
-				if (!mRequestObjectByPath[sPath]) { // Edm type request happens only once per path
-					mRequestObjectByPath[sPath] = true;
-					oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath)
-						.returns("~");
-					oMetaModelMock.expects("fetchObject")
-						.withExactArgs(sPath, "~")
-						.returns(Promise.resolve(oPropertyMetadata));
-				}
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs(sPath, "~")
+					.returns(Promise.resolve(oPropertyMetadata));
 				oHelperMock.expects("formatLiteral").withExactArgs(sValue, "Edm.Type")
 					.returns(sValue);
 			});
@@ -3616,8 +3625,7 @@ sap.ui.require([
 			oPropertyMetadata = {$Type : "Edm.String"},
 			oPromise = Promise.resolve(oPropertyMetadata);
 
-		oMetaModelMock.expects("getMetaContext").exactly(8).withExactArgs(oBinding.sPath)
-			.returns("~");
+		oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath).returns("~");
 		oMetaModelMock.expects("fetchObject").withExactArgs("p0.0", "~").returns(oPromise);
 		oMetaModelMock.expects("fetchObject").withExactArgs("p1.0", "~").returns(oPromise);
 		oMetaModelMock.expects("fetchObject").withExactArgs("p1.1", "~").returns(oPromise);
@@ -3635,7 +3643,7 @@ sap.ui.require([
 			assert.strictEqual(sFilterValue,
 				"p0.0 eq 'v0.0'"
 				+ " and (p1.0 eq 'v1.0' or p1.1 eq 'v1.1')"
-				+ " and (p2.0 eq 'v2.0' and p2.1 eq 'v2.1' and p2.2 eq 'v2.2')"
+				+ " and p2.0 eq 'v2.0' and p2.1 eq 'v2.1' and p2.2 eq 'v2.2'"
 				+ " and p3.0 eq 'v3.0'"
 				+ " and (p3.1 lt 'v3.1' or p3.1 gt 'v3.1')"
 			);
@@ -3785,7 +3793,6 @@ sap.ui.require([
 
 				oBinding.aApplicationFilters = [oFixture.filter];
 				oMetaModelMock.expects("getMetaContext")
-					.exactly(aFetchObjectKeys.length)
 					.withExactArgs(oBinding.sPath)
 					.returns("~");
 
@@ -3833,16 +3840,16 @@ sap.ui.require([
 			oPropertyMetadata = {$Type : "Edm.String"},
 			oPromise = Promise.resolve(oPropertyMetadata);
 
-		oMetaModelMock.expects("getMetaContext").twice().withExactArgs(oBinding.sPath)
+		oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath)
 			.returns("~");
 		oMetaModelMock.expects("fetchObject").withExactArgs("p0.0", "~").returns(oPromise);
 		oMetaModelMock.expects("fetchObject").withExactArgs("p1.0", "~").returns(oPromise);
-		oBinding.aApplicationFilters = [new Filter("p0.0", FilterOperator.EQ, "v0.0")];
-		oBinding.aFilters = [new Filter("p1.0", FilterOperator.EQ, "v1.0")];
+		oBinding.aFilters = [new Filter("p0.0", FilterOperator.EQ, "v0.0")];
+		oBinding.aApplicationFilters = [new Filter("p1.0", FilterOperator.EQ, "v1.0")];
 
 		return oBinding.fetchFilter(undefined, "p2.0 eq 'v2.0'").then(function (sFilterValue) {
 			assert.strictEqual(sFilterValue,
-				"(p0.0 eq 'v0.0') and (p1.0 eq 'v1.0') and (p2.0 eq 'v2.0')");
+				"p0.0 eq 'v0.0' and p1.0 eq 'v1.0' and (p2.0 eq 'v2.0')");
 		});
 	});
 
@@ -3872,7 +3879,7 @@ sap.ui.require([
 		result : "p1 eq 'v1'"
 	}, {
 		filters : ["p1=v1", "p1=v2"],
-		result : "(p1 eq 'v1' or p1 eq 'v2')"
+		result : "p1 eq 'v1' or p1 eq 'v2'"
 	}, {
 		filters : ["p1=v1", "p2=v2"],
 		result : "p1 eq 'v1' and p2 eq 'v2'"
@@ -3881,28 +3888,28 @@ sap.ui.require([
 		result : "(p1 eq 'v1' or p1 eq 'v3') and p2 eq 'v2'"
 	}, {
 		filters : [{or : ["p1=v1", "p1=v2"]}],
-		result : "(p1 eq 'v1' or p1 eq 'v2')"
+		result : "p1 eq 'v1' or p1 eq 'v2'"
 	}, {
 		filters : [{and : ["p1=v1", "p1=v2"]}],
-		result : "(p1 eq 'v1' and p1 eq 'v2')"
+		result : "p1 eq 'v1' and p1 eq 'v2'"
 	}, {
 		filters : [{or : ["p1=v1", "p1=v2", "p2=v3"]}],
-		result : "(p1 eq 'v1' or p1 eq 'v2' or p2 eq 'v3')"
+		result : "p1 eq 'v1' or p1 eq 'v2' or p2 eq 'v3'"
 	}, {
 		filters : [{and : ["p1=v1", "p1=v2", "p2=v3"]}],
-		result : "(p1 eq 'v1' and p1 eq 'v2' and p2 eq 'v3')"
+		result : "p1 eq 'v1' and p1 eq 'v2' and p2 eq 'v3'"
 	}, {
 		filters : ["p1=v1", {or: ["p1=v2", "p1=v3"]}],
 		result : "p1 eq 'v1' and (p1 eq 'v2' or p1 eq 'v3')"
 	}, {
 		filters : ["p1=v1", {and : ["p1=v2", "p1=v3"]}],
-		result : "p1 eq 'v1' and (p1 eq 'v2' and p1 eq 'v3')"
+		result : "p1 eq 'v1' and p1 eq 'v2' and p1 eq 'v3'"
 	}, {
 		filters : ["p1=v1", {or : ["p1=v2", "p2=v3"]}],
 		result : "p1 eq 'v1' and (p1 eq 'v2' or p2 eq 'v3')"
 	}, {
 		filters : ["p1=v1", {and : ["p1=v2"]}],
-		result : "p1 eq 'v1' and (p1 eq 'v2')"
+		result : "p1 eq 'v1' and p1 eq 'v2'"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("filter #" + i + ": " + JSON.stringify(oFixture.filters), function (assert) {
 			var oBinding = this.bindList("/Set"),
