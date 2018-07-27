@@ -12,7 +12,7 @@ sap.ui.define([
 		onInit: function () {
 			this.oView = this.getView();
 			this._bDescendingSort = false;
-			this.oProductsTable = this.getView().byId("productsTable");
+			this.oProductsTable = this.oView.byId("productsTable");
 		},
 
 		onSearch: function (oEvent) {
