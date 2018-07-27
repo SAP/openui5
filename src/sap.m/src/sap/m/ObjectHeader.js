@@ -21,7 +21,7 @@ sap.ui.define([
 		Device,
 		Text,
 		ObjectHeaderRenderer,
-		jQueryDOM
+		jQuery
 	) {
 	"use strict";
 
@@ -926,8 +926,8 @@ sap.ui.define([
 				}
 
 				if (this.getIcon()){
-					jQueryDOM(document.getElementById(sId + "-titlediv")).removeClass("sapMOHRTitleIcon");
-					jQueryDOM(document.getElementById(sId + "-titleIcon")).addClass("sapMOHRHideIcon");
+					jQuery(document.getElementById(sId + "-titlediv")).removeClass("sapMOHRTitleIcon");
+					jQuery(document.getElementById(sId + "-titleIcon")).addClass("sapMOHRHideIcon");
 				}
 			} else {
 				if (Device.orientation.landscape) {
@@ -936,8 +936,8 @@ sap.ui.define([
 						this._rerenderTitle(80);
 					}
 					if (this.getIcon()){
-						jQueryDOM(document.getElementById(sId + "-titlediv")).addClass("sapMOHRTitleIcon");
-						jQueryDOM(document.getElementById(sId + "-titleIcon")).removeClass("sapMOHRHideIcon");
+						jQuery(document.getElementById(sId + "-titlediv")).addClass("sapMOHRTitleIcon");
+						jQuery(document.getElementById(sId + "-titleIcon")).removeClass("sapMOHRHideIcon");
 					}
 				}
 			}
@@ -1104,8 +1104,8 @@ sap.ui.define([
 		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (oObjectNumber && oObjectNumber.getNumber()) {
-			var $numberDiv = jQueryDOM(document.getElementById(sId + "-number"));
-			var $titleDiv = jQueryDOM(document.getElementById(sId + "-titlediv"));
+			var $numberDiv = jQuery(document.getElementById(sId + "-number"));
+			var $titleDiv = jQuery(document.getElementById(sId + "-titlediv"));
 
 			if (this._isMediaSize("Phone")) {
 				if ($numberDiv.hasClass("sapMObjectNumberBelowTitle")) {
@@ -1134,9 +1134,9 @@ sap.ui.define([
 	 */
 	ObjectHeader.prototype._adjustIntroDiv = function() {
 		var sId = this.getId();
-		var $titleTxt = jQueryDOM(document.getElementById(sId + "-txt"));
-		var $titleArrow = jQueryDOM(document.getElementById(sId + "-titleArrow"));
-		var $intro = jQueryDOM(document.getElementById(sId + "-intro"));
+		var $titleTxt = jQuery(document.getElementById(sId + "-txt"));
+		var $titleArrow = jQuery(document.getElementById(sId + "-titleArrow"));
+		var $intro = jQuery(document.getElementById(sId + "-intro"));
 
 		if ($intro.parent().hasClass("sapMOHRIntroMargin")) {
 			$intro.parent().removeClass("sapMOHRIntroMargin");

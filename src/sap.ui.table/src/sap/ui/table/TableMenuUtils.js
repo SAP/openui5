@@ -7,9 +7,10 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
-	'sap/ui/core/Popup'
+	'sap/ui/core/Popup',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Device, Menu, MenuItem, Popup) {
+	function(Device, Menu, MenuItem, Popup, jQuery) {
 		"use strict";
 
 		// Table uses z-indices, ensure that popups starts their z-indices at least with 20.

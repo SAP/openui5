@@ -13,7 +13,9 @@ sap.ui.define([
 	'./DateTimeFieldRenderer',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
 	SimpleDateType,
 	ODataType,
@@ -23,7 +25,8 @@ sap.ui.define([
 	DateFormat,
 	DateTimeFieldRenderer,
 	deepEqual,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

@@ -6,10 +6,10 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/m/library',
 	'sap/ui/Device',
-	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, coreLibrary, library, Device, jQueryDOM, Log) {
+	function(Control, coreLibrary, library, Device, Log, jQuery) {
 	"use strict";
 
 
@@ -1283,7 +1283,7 @@ sap.ui.define([
 		var sId = oOH.getId();
 
 		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
-		oRM.flush(jQueryDOM(document.getElementById(sId + "-title-arrow")));
+		oRM.flush(jQuery(document.getElementById(sId + "-title-arrow")));
 	};
 
 	/**
@@ -1430,7 +1430,7 @@ sap.ui.define([
 
 		this._renderResponsiveStatesColumn(oRM, oOH, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
 
-		oRM.flush(jQueryDOM(document.getElementById(sId + "-states"))[0]);
+		oRM.flush(jQuery(document.getElementById(sId + "-states"))[0]);
 	};
 
 	/**** responsive rendering end ****/

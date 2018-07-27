@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/base/security/encodeXML"],
-	function(jQuery, Device, encodeXML) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	"sap/base/security/encodeXML",
+	"sap/base/util/isPlainObject"
+],
+	function(jQuery, Device, encodeXML, isPlainObject) {
 		"use strict";
 
 		/**
@@ -74,7 +79,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/base/security/encodeXM
 			function line(buffer, right, border, label, content) {
 				buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", encodeXML(label), "</label><br>");
 				var ctnt = content;
-				if ($.isFunction(content)) {
+				if (jQuery.isFunction(content)) {
 					ctnt = content(buffer) || "";
 				}
 				buffer.push(encodeXML(ctnt));
@@ -85,12 +90,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/base/security/encodeXM
 			function multiline(buffer, right, border, label, content) {
 				line(buffer, right, border, label, function (buffer) {
 					buffer.push("<table class='sapMSupportTable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody>");
-					$.each(content, function (i, v) {
+					jQuery.each(content, function (i, v) {
 						var val = "";
 						if (v !== undefined && v !== null) {
-							if (typeof (v) == "string" || typeof (v) == "boolean" || ($.isArray(v) && v.length == 1)) {
+							if (typeof (v) == "string" || typeof (v) == "boolean" || (Array.isArray(v) && v.length == 1)) {
 								val = v;
-							} else if (($.isArray(v) || $.isPlainObject(v)) && window.JSON) {
+							} else if ((Array.isArray(v) || isPlainObject(v)) && window.JSON) {
 								val = window.JSON.stringify(v);
 							}
 						}
@@ -149,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/base/security/encodeXM
 
 				line(html, true, true, "Loaded Libraries", function (buffer) {
 					buffer.push("<ul class='sapUiSelectable'>");
-					$.each(oData.loadedlibs, function (i, v) {
+					jQuery.each(oData.loadedlibs, function (i, v) {
 						if (v && (typeof (v) === "string" || typeof (v) === "boolean")) {
 							buffer.push("<li class='sapUiSelectable'>", i + " " + v, "</li>");
 						}
@@ -178,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', "sap/base/security/encodeXM
 				var libsCount = 0, arDivContent = [];
 
 				libsCount = arContent.length;
-				$.each(arContent.sort(), function (i, module) {
+				jQuery.each(arContent.sort(), function (i, module) {
 					arDivContent.push(new sap.m.Label({text: " - " + module}).addStyleClass("sapUiSupportPnlLbl"));
 				});
 

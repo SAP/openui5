@@ -14,7 +14,8 @@ sap.ui.define([
 	'./SliderTooltip',
 	'./SliderUtilities',
 	'./SliderRenderer',
-	'./ResponsiveScale'
+	'./ResponsiveScale',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	Control,
@@ -28,7 +29,8 @@ function(
 	SliderTooltip,
 	SliderUtilities,
 	SliderRenderer,
-	ResponsiveScale
+	ResponsiveScale,
+	jQuery
 ) {
 		"use strict";
 

@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/Device',
-	'./BarRenderer'
+	'./BarRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(BarInPageEnabler, library, Control, ResizeHandler, Device, BarRenderer) {
+	function(BarInPageEnabler, library, Control, ResizeHandler, Device, BarRenderer, jQuery) {
 	"use strict";
 
 

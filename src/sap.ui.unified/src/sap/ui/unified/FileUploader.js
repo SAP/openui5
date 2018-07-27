@@ -14,7 +14,9 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	'sap/base/Log',
 	'sap/base/security/encodeXML',
-	'sap/ui/dom/jquery/Aria' // jQuery Plugin "addAriaDescribedBy"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "addAriaDescribedBy"
+	'sap/ui/dom/jquery/Aria'
 ], function(
 	Control,
 	library,
@@ -25,7 +27,8 @@ sap.ui.define([
 	containsOrEquals,
 	KeyCodes,
 	Log,
-	encodeXML
+	encodeXML,
+	jQuery
 ) {
 	"use strict";
 

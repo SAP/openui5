@@ -43,7 +43,7 @@ sap.ui.define([
 		ResizeHandler,
 		PopoverRenderer,
 		containsOrEquals,
-		jQueryDOM,
+		jQuery,
 		getScrollbarSize,
 		KeyCodes,
 		Log
@@ -457,7 +457,7 @@ sap.ui.define([
 				that._clearCSSStyles();
 
 				//calculate the best placement of the popover if placementType is horizontal,  vertical or auto
-				var iPlacePos = jQuery.inArray(that.getPlacement(), that._placements);
+				var iPlacePos = that._placements.indexOf(that.getPlacement());
 				if (iPlacePos > 3 && !that._bPosCalced) {
 					that._calcPlacement();
 					return;
@@ -478,7 +478,7 @@ sap.ui.define([
 
 				// if the openBy dom reference is already detached from the document, try to get the dom reference with the same id from dom tree again
 				if (!containsOrEquals(document.documentElement, oPosition.of) && oPosition.of.id) {
-					oOf = jQueryDOM(document.getElementById(oPosition.of.id));
+					oOf = jQuery(document.getElementById(oPosition.of.id));
 					if (oOf) {
 						oPosition.of = oOf;
 					} else {
@@ -752,7 +752,7 @@ sap.ui.define([
 			oPopup.attachClosed(this._handleClosed, this);
 			oPopup.setInitialFocusId(sFocusId);
 			// Open popup
-			iPlacePos = jQuery.inArray(this.getPlacement(), this._placements);
+			iPlacePos = this._placements.indexOf(this.getPlacement());
 			if (iPlacePos > -1) {
 				oParentDomRef = this._getOpenByDomRef();
 				if (!oParentDomRef) {
@@ -1267,7 +1267,7 @@ sap.ui.define([
 			this._bPosCalced = true;
 
 			//set position of popover to calculated position
-			var iPlacePos = jQuery.inArray(this._oCalcedPos, this._placements);
+			var iPlacePos = this._placements.indexOf(this._oCalcedPos);
 			this.oPopup.setPosition(this._myPositions[iPlacePos], this._atPositions[iPlacePos], oParentDomRef, this._calcOffset(this._offsets[iPlacePos]), "fit");
 		};
 
@@ -2169,7 +2169,7 @@ sap.ui.define([
 
 			//popup is open
 			oLastPosition = this.oPopup._oLastPosition;
-			iPlacePos = jQuery.inArray(this.getPlacement(), this._placements);
+			iPlacePos = this._placements.indexOf(this.getPlacement());
 
 			if (iPlacePos === -1) {
 				return this;
@@ -2249,7 +2249,7 @@ sap.ui.define([
 			this.setProperty("placement", sPlacement, true);
 			this._bVerticalFlip = false;
 			this._bHorizontalFlip = false;
-			var iPlacePos = jQuery.inArray(sPlacement, this._placements);
+			var iPlacePos = this._placements.indexOf(sPlacement);
 			if (iPlacePos <= 3) {
 				// this variable is internal used for the placement of the popover
 				this._oCalcedPos = sPlacement;

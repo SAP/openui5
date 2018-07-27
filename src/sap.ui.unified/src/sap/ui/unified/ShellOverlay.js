@@ -10,7 +10,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/theming/Parameters',
 	'./ShellOverlayRenderer',
-	'sap/ui/thirdparty/jquery',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dom/jquery/rect', // jQuery Plugin "rect"
 	'sap/ui/dom/jquery/Selectors' // jQuery custom selectors ":sapTabbable"
 ],
@@ -21,7 +21,7 @@ sap.ui.define([
 		library,
 		Parameters,
 		ShellOverlayRenderer,
-		jQueryDOM
+		jQuery
 	) {
 	"use strict";
 
@@ -109,7 +109,7 @@ sap.ui.define([
 
 		if (this._getAnimActive()) {
 			setTimeout(function(){
-				jQueryDOM(document.getElementById("sap-ui-blocklayer-popup")).toggleClass("sapUiUfdShellOvrlyBlyTp", false);
+				jQuery(document.getElementById("sap-ui-blocklayer-popup")).toggleClass("sapUiUfdShellOvrlyBlyTp", false);
 			}, 50);
 		}
 
@@ -133,7 +133,7 @@ sap.ui.define([
 		this._setSearchWidth();
 
 		setTimeout(function(){
-			var $Bl = jQueryDOM(document.getElementById("sap-ui-blocklayer-popup"));
+			var $Bl = jQuery(document.getElementById("sap-ui-blocklayer-popup"));
 			if (Popup.blStack.length == 1 && this._getAnimActive() && $Bl.hasClass("sapUiUfdShellOvrlyBly")) {
 				$Bl.toggleClass("sapUiUfdShellOvrlyBlyTp", true);
 			}

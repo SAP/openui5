@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Title',
 	'sap/m/FormattedText',
-	'./MessagePageRenderer'
+	'./MessagePageRenderer',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
 	coreLibrary,
@@ -24,7 +25,8 @@ sap.ui.define([
 	Button,
 	Title,
 	FormattedText,
-	MessagePageRenderer
+	MessagePageRenderer,
+	jQuery
 ) {
 		"use strict";
 

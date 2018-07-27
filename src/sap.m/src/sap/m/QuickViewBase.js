@@ -6,11 +6,12 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
 ],
-	function(library, Control, jQueryDOM, KeyCodes) {
+	function(library, Control, KeyCodes, jQuery) {
 	"use strict";
 
 	/**
@@ -336,8 +337,8 @@ sap.ui.define([
 			var sToPageId = oEvent.getParameter('toId');
 			var sFromPageId = oEvent.getParameter('fromId');
 
-			var iFromPageIndex = jQueryDOM(document.getElementById(sFromPageId)).index();
-			var iToPageIndex = jQueryDOM(document.getElementById(sToPageId)).index();
+			var iFromPageIndex = jQuery(document.getElementById(sFromPageId)).index();
+			var iToPageIndex = jQuery(document.getElementById(sToPageId)).index();
 
 			if (iToPageIndex == -1 || iToPageIndex > iFromPageIndex) {
 				oToPage.addStyleClass('sapMNavItemOffset');
@@ -368,8 +369,8 @@ sap.ui.define([
 			var sToPageId = oEvent.getParameter('toId');
 			var sFromPageId = oEvent.getParameter('fromId');
 
-			var iFromPageIndex = jQueryDOM(document.getElementById(sFromPageId)).index();
-			var iToPageIndex = jQueryDOM(document.getElementById(sToPageId)).index();
+			var iFromPageIndex = jQuery(document.getElementById(sFromPageId)).index();
+			var iToPageIndex = jQuery(document.getElementById(sToPageId)).index();
 
 			if (iToPageIndex > iFromPageIndex) {
 				oToPage.removeStyleClass('sapMNavItemOffset');

@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/unified/MenuItem',
 	'./TableUtils',
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		AnalyticalColumn,
@@ -31,7 +32,8 @@ sap.ui.define([
 		MenuItem,
 		TableUtils,
 		Log,
-		assert
+		assert,
+		jQuery
 	) {
 	"use strict";
 
@@ -387,7 +389,7 @@ sap.ui.define([
 		for (var i = 0; i < aTableColumns.length; i++) {
 			var oColumn = aTableColumns[i];
 
-			if (jQuery.inArray(oColumn.getId(), this._aGroupedColumns) > -1) {
+			if (this._aGroupedColumns.indexOf(oColumn.getId()) > -1) {
 				continue;
 			}
 			if (!oColumn instanceof AnalyticalColumn) {
@@ -573,7 +575,7 @@ sap.ui.define([
 
 					if (oGroupColumnInfo) {
 						var oColumn = oGroupColumnInfo.column;
-						var iIndex = jQuery.inArray(oColumn.getId(), that._aGroupedColumns);
+						var iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
 						if (iIndex > 0) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex - 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
@@ -591,7 +593,7 @@ sap.ui.define([
 
 					if (oGroupColumnInfo) {
 						var oColumn = oGroupColumnInfo.column;
-						var iIndex = jQuery.inArray(oColumn.getId(), that._aGroupedColumns);
+						var iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
 						if (iIndex < that._aGroupedColumns.length) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex + 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
@@ -886,18 +888,18 @@ sap.ui.define([
 
 					// if one column of a dimension is grouped, the dimension is considered as grouped.
 					// all columns which are not explicitly grouped will be flagged as dependendGrouped in the next step
-					if (oColumn.getGrouped() && jQuery.inArray(sDimensionName, aGroupedDimensions) == -1) {
+					if (oColumn.getGrouped() && aGroupedDimensions.indexOf(sDimensionName) == -1) {
 						aGroupedDimensions.push(sDimensionName);
 					}
 
-					if (jQuery.inArray(sDimensionName, aDimensions) == -1) {
+					if (aDimensions.indexOf(sDimensionName) == -1) {
 						aDimensions.push(sDimensionName);
 					}
 				}
 			}
 
 			aUngroupedDimensions = jQuery.grep(aDimensions, function (s) {
-				return (jQuery.inArray(s, aGroupedDimensions) == -1);
+				return aGroupedDimensions.indexOf(aGroupedDimensions, s) == -1;
 			});
 
 			// for all grouped dimensions

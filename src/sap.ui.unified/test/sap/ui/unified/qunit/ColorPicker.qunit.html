@@ -146,7 +146,6 @@
 
 				QUnit.test("_processChanges method replaced with a valid method", function (oAssert) {
 					// Assert
-					oAssert.notStrictEqual(this.oCP._processChanges, jQuery.noop, "Method is not a reference ot jQuery.noop");
 					oAssert.strictEqual(this.oCP._processChanges, this.oCP._processHSVChanges,
 						"By default method should be a reference to _processHSVChanges");
 

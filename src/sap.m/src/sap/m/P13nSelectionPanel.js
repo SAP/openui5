@@ -22,7 +22,8 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/BindingMode',
-	'sap/ui/core/ResizeHandler'
+	'sap/ui/core/ResizeHandler',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
 	ColumnListItem,
@@ -42,7 +43,8 @@ sap.ui.define([
 	ChangeReason,
 	JSONModel,
 	BindingMode,
-	ResizeHandler
+	ResizeHandler,
+	jQuery
 ) {
 	"use strict";
 

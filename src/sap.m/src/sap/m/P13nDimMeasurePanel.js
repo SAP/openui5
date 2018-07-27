@@ -27,7 +27,8 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Item',
 	'sap/ui/core/InvisibleText',
-	'sap/ui/core/IconPool'
+	'sap/ui/core/IconPool',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
 	P13nPanel,
@@ -52,7 +53,8 @@ sap.ui.define([
 	ResizeHandler,
 	Item,
 	InvisibleText,
-	IconPool
+	IconPool,
+	jQuery
 ) {
 	"use strict";
 

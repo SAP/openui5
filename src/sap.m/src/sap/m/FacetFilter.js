@@ -19,9 +19,13 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/events/jquery/EventSimulation",
-	"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
-	"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
-	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "scrollRightRTL"
+	"sap/ui/dom/jquery/scrollRightRTL",
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL",
+	// jQuery custom selectors ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ],
 	function(
 		NavContainer,
@@ -38,7 +42,8 @@ sap.ui.define([
 		KeyCodes,
 		assert,
 		Log,
-		EventSimulation
+		EventSimulation,
+		jQuery
 	) {
 	"use strict";
 

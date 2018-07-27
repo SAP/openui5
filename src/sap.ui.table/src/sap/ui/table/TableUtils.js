@@ -4,9 +4,30 @@
 
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
-	"sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/library", "sap/ui/model/ChangeReason", "./TableGrouping",
-	"./TableColumnUtils", "./TableMenuUtils", "./TableBindingUtils", "./library", "sap/base/Log"
-], function(Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, TableBindingUtils, library, Log) {
+	"sap/ui/core/Control",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/library",
+	"sap/ui/model/ChangeReason",
+	"./TableGrouping",
+	"./TableColumnUtils",
+	"./TableMenuUtils",
+	"./TableBindingUtils",
+	"./library",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(
+	Control,
+	ResizeHandler,
+	coreLibrary,
+	ChangeReason,
+	TableGrouping,
+	TableColumnUtils,
+	TableMenuUtils,
+	TableBindingUtils,
+	library,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 	// Shortcuts
@@ -945,7 +966,7 @@ sap.ui.define([
 						aIdSuffix.push(sKey);
 					}
 				}
-			} else if (jQuery.isArray(vIdSuffix)) {
+			} else if (Array.isArray(vIdSuffix)) {
 				aIdSuffix = vIdSuffix;
 			}
 

@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
-	'./TileRenderer'
+	'./TileRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, InvisibleText, Control, Device, TileRenderer) {
+	function(library, InvisibleText, Control, Device, TileRenderer, jQuery) {
 	"use strict";
 
 

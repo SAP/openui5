@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/events/F6Navigation",
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/thirdparty/mobify-carousel',
 	'sap/ui/core/IconPool'
 ],
@@ -25,7 +26,8 @@ function(
 	CarouselRenderer,
 	KeyCodes,
 	Log,
-	F6Navigation
+	F6Navigation,
+	jQuery
 	/*, mobifycarousel, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */
 ) {
 	"use strict";

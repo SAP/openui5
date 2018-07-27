@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"./library",
 	"sap/ui/core/delegate/ScrollEnablement",
-	"./FixFlexRenderer"
+	"./FixFlexRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Control,
@@ -17,7 +18,8 @@ sap.ui.define([
 		ResizeHandler,
 		library,
 		ScrollEnablement,
-		FixFlexRenderer
+		FixFlexRenderer,
+		jQuery
 	) {
 		"use strict";
 

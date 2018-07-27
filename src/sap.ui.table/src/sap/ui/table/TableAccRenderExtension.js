@@ -146,7 +146,7 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 			var oValue, sKey;
 			for (sKey in mAttributes) {
 				oValue = mAttributes[sKey];
-				if (jQuery.isArray(oValue)) {
+				if (Array.isArray(oValue)) {
 					oValue = oValue.join(" ");
 				}
 				if (oValue) {

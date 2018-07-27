@@ -5,11 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.unified.
  */
-sap.ui.define([
-	'sap/ui/core/Core',
-	'sap/ui/base/Object',
-	"sap/ui/thirdparty/jquery"
-], function(Core, BaseObject, jQueryDOM) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object'], function(Core, BaseObject) {
 
 	"use strict";
 
@@ -538,10 +534,9 @@ sap.ui.define([
 			}
 
 			this._rerenderTimer = setTimeout(function(){
-				var $content = jQueryDOM(document.getElementById(this._id));
-				var doRender = $content.length > 0;
+				var oContent = document.getElementById(this._id);
 
-				if (doRender) {
+				if (oContent) {
 					if (typeof (this._cntnt) === "string") {
 						var aContent = this._ctrl.getAggregation(this._cntnt, []);
 						for (var i = 0; i < aContent.length; i++) {
@@ -550,10 +545,10 @@ sap.ui.define([
 					} else {
 						this._cntnt(this._rm);
 					}
-					this._rm.flush($content[0]);
+					this._rm.flush(oContent);
 				}
 
-				this._cb(doRender);
+				this._cb(!!oContent);
 			}.bind(this), 0);
 		}
 	});

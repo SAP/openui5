@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	"./CalendarDateIntervalRenderer",
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	CalendarUtils,
 	Calendar,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Device,
 	CalendarDateIntervalRenderer,
 	deepEqual,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

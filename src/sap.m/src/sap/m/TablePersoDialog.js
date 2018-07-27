@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/m/CheckBox',
 	'sap/m/SearchField',
-	'sap/m/ScrollContainer'
+	'sap/m/ScrollContainer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Button,
@@ -35,7 +36,8 @@ sap.ui.define([
 		JSONModel,
 		CheckBox,
 		SearchField,
-		ScrollContainer
+		ScrollContainer,
+		jQuery
 	) {
 	"use strict";
 

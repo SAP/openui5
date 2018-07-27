@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/unified/Menu',
 	'sap/ui/core/Popup',
 	"./RowActionRenderer",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	Control,
@@ -21,7 +22,8 @@ function(
 	Menu,
 	Popup,
 	RowActionRenderer,
-	KeyCodes
+	KeyCodes,
+	jQuery
 ) {
 	"use strict";
 

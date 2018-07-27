@@ -7,9 +7,10 @@ sap.ui.define([
 	'./TablePersoDialog',
 	'sap/ui/base/ManagedObject',
 	"sap/ui/core/syncStyleClass",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(TablePersoDialog, ManagedObject, syncStyleClass, Log) {
+	function(TablePersoDialog, ManagedObject, syncStyleClass, Log, jQuery) {
 	"use strict";
 
 

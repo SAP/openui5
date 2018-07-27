@@ -7,7 +7,8 @@ sap.ui.define([
 	"./Slider",
 	"./SliderTooltip",
 	"./SliderUtilities",
-	"./RangeSliderRenderer"
+	"./RangeSliderRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
     function(
 		InvisibleText,
@@ -15,7 +16,8 @@ sap.ui.define([
 		Slider,
 		SliderTooltip,
 		SliderUtilities,
-		RangeSliderRenderer
+		RangeSliderRenderer,
+		jQuery
 	) {
         "use strict";
 

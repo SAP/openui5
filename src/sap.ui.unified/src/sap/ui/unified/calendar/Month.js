@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	"./MonthRenderer",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	Device,
@@ -30,7 +31,8 @@ sap.ui.define([
 	Locale,
 	MonthRenderer,
 	containsOrEquals,
-	KeyCodes
+	KeyCodes,
+	jQuery
 ) {
 	"use strict";
 
@@ -703,7 +705,7 @@ sap.ui.define([
 			aNonWorkingDays = this.getProperty("nonWorkingDays");
 		}
 
-		if (aNonWorkingDays && !jQuery.isArray(aNonWorkingDays)) {
+		if (aNonWorkingDays && !Array.isArray(aNonWorkingDays)) {
 			aNonWorkingDays = [];
 		}
 

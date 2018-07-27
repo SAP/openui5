@@ -25,8 +25,11 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
 function(
 	InputBase,
@@ -50,7 +53,8 @@ function(
 	KeyCodes,
 	deepEqual,
 	assert,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -1806,7 +1810,7 @@ function(
 		if (aSeparatedText && aSeparatedText.length > 0) {
 			this.getSelectableItems().forEach(function(oItem) {
 
-				if (jQuery.inArray(oItem.getText(), aSeparatedText) > -1) {
+				if (aSeparatedText.indexOf(oItem.getText()) > -1) {
 					this.setSelection({
 						item: oItem,
 						id: oItem.getId(),
@@ -2209,7 +2213,7 @@ function(
 			return this;
 		}
 
-		if (!jQuery.isArray(aItems)) {
+		if (!Array.isArray(aItems)) {
 			Log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
 			return this;
 		}
@@ -2314,7 +2318,7 @@ function(
 	MultiComboBox.prototype.removeSelectedKeys = function(aKeys) {
 		var aItems = [], iIndex;
 
-		if (!aKeys || !aKeys.length || !jQuery.isArray(aKeys)) {
+		if (!aKeys || !aKeys.length || !Array.isArray(aKeys)) {
 			return aItems;
 		}
 

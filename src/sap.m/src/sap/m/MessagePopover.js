@@ -15,7 +15,8 @@ sap.ui.define([
 	"./MessageView",
 	"sap/ui/Device",
 	"./MessagePopoverRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ResponsivePopover,
@@ -29,8 +30,9 @@ function(
 	MessageView,
 	Device,
 	MessagePopoverRenderer,
-	Log
-	) {
+	Log,
+	jQuery
+) {
 		"use strict";
 
 		/**

@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/core/util/File",
 	"sap/ui/Device",
 	"sap/base/Log",
-	"sap/base/util/ObjectPath"
-], function(library, Element, ObjectAttribute, FileUtil, Device, Log, ObjectPath) {
+	"sap/base/util/ObjectPath",
+	"sap/ui/thirdparty/jquery"
+], function(library, Element, ObjectAttribute, FileUtil, Device, Log, ObjectPath, jQuery) {
 	"use strict";
 
 	/**

@@ -13,9 +13,21 @@ sap.ui.define([
 	'./FormElement',
 	'./FormLayout',
 	'./SimpleFormRenderer',
-	"sap/base/Log"
-	], function(Control, ManagedObjectObserver, ResizeHandler, library, Form,
-	            FormContainer, FormElement, FormLayout, SimpleFormRenderer, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(
+	Control,
+	ManagedObjectObserver,
+	ResizeHandler,
+	library,
+	Form,
+	FormContainer,
+	FormElement,
+	FormLayout,
+	SimpleFormRenderer,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign

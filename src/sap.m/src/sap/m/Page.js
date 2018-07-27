@@ -31,7 +31,7 @@ function(
 	Element,
 	TitlePropagationSupport,
 	PageRenderer,
-	jQueryDOM
+	jQuery
 ) {
 		"use strict";
 
@@ -472,7 +472,7 @@ function(
 		};
 
 		Page.prototype._contentHasScroll = function () {
-			var $section = jQueryDOM(document.getElementById(this.getId() + "-cont"));
+			var $section = jQuery(document.getElementById(this.getId() + "-cont"));
 			return $section[0].scrollHeight > $section.innerHeight();
 		};
 

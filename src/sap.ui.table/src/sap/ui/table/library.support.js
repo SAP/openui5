@@ -5,9 +5,14 @@
  * Adds support rules of the sap.ui.table library to the support infrastructure.
  */
 sap.ui.define([
-	"sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./rules/TableHelper.support", "sap/ui/Device", "sap/ui/table/library",
-	"sap/base/Log"
-], function(SupportLib, Ruleset, SupportHelper, Device, TableLib, Log) {
+	"sap/ui/support/library",
+	"sap/ui/support/supportRules/RuleSet",
+	"./rules/TableHelper.support",
+	"sap/ui/Device",
+	"sap/ui/table/library",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(SupportLib, Ruleset, SupportHelper, Device, TableLib, Log, jQuery) {
 	"use strict";
 
 	// shortcuts
