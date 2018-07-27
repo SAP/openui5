@@ -8463,6 +8463,39 @@
 		oSelect.destroy();
 	});
 
+	QUnit.test("Hidden label's aria-live", function (assert) {
+		var $oLabel,
+			oSelect = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				})
+			]
+		});
+
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		$oLabel = oSelect.$("label");
+		assert.strictEqual($oLabel.attr("aria-live"), "polite", "aria-live is correctly set before opening the popover");
+
+		oSelect.open();
+		this.clock.tick(1000);
+		assert.notOk($oLabel.attr("aria-live"), "aria-live is removed while the popover is opened");
+
+		oSelect.close();
+		this.clock.tick(1000);
+		assert.strictEqual($oLabel.attr("aria-live"), "polite", "aria-live is returned when popover closes");
+
+		oSelect.destroy();
+	});
+
 	QUnit.module("value state");
 
 	QUnit.test("it should open the value state message popup on focusin", function (assert) {
