@@ -6,14 +6,12 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
 	'sap/ui/dt/Util',
-	'sap/base/Log',
-	'sap/ui/dt/OverlayRegistry'
+	'sap/base/Log'
 ], function(
 	Plugin,
 	Utils,
 	DtUtil,
-	BaseLog,
-	OverlayRegistry
+	BaseLog
 ) {
 	"use strict";
 
@@ -303,17 +301,6 @@ sap.ui.define([
 			return sDefaultSettingIcon;
 		}
 		return sActionIcon;
-	};
-
-	Settings.prototype._checkRelevantContainerStableID = function(oSettingsAction, oElementOverlay){
-		if (oSettingsAction.changeOnRelevantContainer) {
-			var oRelevantContainer = oElementOverlay.getRelevantContainer();
-			var oRelevantOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-			if (!this.hasStableId(oRelevantOverlay)){
-				return false;
-			}
-		}
-		return true;
 	};
 
 	/**
