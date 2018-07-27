@@ -1,44 +1,26 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+	<head>
+		<title>Test Page for Descriptor related API</title>
+		<script src="../../../shared-config.js"></script>
+		<script>
+			window["sap-ui-config"].libs = "sap.ui.fl";
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+			sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>QUnit - sap.ui.fl.descriptorRelated.api</title>
-<script src="../../../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../../../resources/sap-ui-core.js"
+			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/fl]");
 
-	data-sap-ui-noconflict="true"
-	data-sap-ui-libs="sap.ui.fl">
-
-</script>
-
-
-<link rel="stylesheet"
-	href="../../../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script
-	src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script
-        src="../../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script
-	src="../../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<script src="Api.qunit.js"></script>
-</head>
-<body id="body" class="sapUiBody">
-	<h1 id="qunit-header">QUnit Page for sap.ui.fl.descriptorRelated.api</h1>
-
-	<h2 id="qunit-banner"></h2>
-
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="content"></div>
-</body>
+			jQuery.sap.includeScript("./Api.qunit.js");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h2 id='qunit-banner'></h2>
+		<div id='qunit-testrunner-toolbar'></div>
+		<ol id='qunit-tests'></ol>
+	</body>
 </html>
