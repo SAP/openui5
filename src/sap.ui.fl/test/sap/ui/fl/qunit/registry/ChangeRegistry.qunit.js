@@ -548,7 +548,6 @@ function(
 
 		assert.ok(oRegistryItems);
 		assert.ok(oRegistryItems.ganttChart);
-
 	});
 
 	QUnit.test("can determine if a given control has registered change handlers", function (assert) {
@@ -727,6 +726,29 @@ function(
 		var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyChangeType);
 
 		assert.equal(oChangeHandler, oChangeRegistryItem, "the explicit registered change handler item was retrieved");
+	});
+
+	QUnit.test("loads the explicit registered change handler for the property changes", function (assert) {
+		var sControlType = "aControlType";
+		var sPropertyChangeType = "propertyChange";
+		var sExplicitRegisteredChangeHandlerStub = 'sap.ui.fl.changeHandler.MoveControls';
+		var oSimpleChangeObject = {
+			changeType: sPropertyChangeType,
+			changeHandler: sExplicitRegisteredChangeHandlerStub
+		};
+
+		var oChangeRegistryItem = this.instance._createChangeRegistryItemForSimpleChange(sControlType, oSimpleChangeObject);
+
+		this.instance._registeredItems[sControlType] = {
+			"someOtherChange": {},
+			"propertyChange": oChangeRegistryItem
+		};
+
+		var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyChangeType);
+		var oLoadedChangeHandlerImplementation = oChangeHandler.getChangeTypeMetadata().getChangeHandler();
+
+		assert.equal(oChangeHandler, oChangeRegistryItem, "the explicit registered change handler item was retrieved");
+		assert.equal(oLoadedChangeHandlerImplementation, MoveControlsChangeHandler, "then correct loaded changehandler is returned");
 	});
 
 	QUnit.test("returns the property binding change handler for a control not having any explicit registered change handlers", function (assert) {
