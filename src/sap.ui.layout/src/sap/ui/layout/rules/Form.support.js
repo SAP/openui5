@@ -534,6 +534,7 @@ sap.ui.define(["sap/ui/support/library"],
 									oField.isA("sap.m.RadioButtonGroup") ||
 									(oField.isA("sap.m.Button") && oFormElement.getLabel()) || //allow buttons only without label
 									oField.isA("sap.m.Slider") ||
+									oField.isA("sap.m.Switch") ||
 									(oMetadata.hasProperty("displayOnly") && !oField.getDisplayOnly())) {
 								bEditableField = true;
 								if (!bEditable) {
