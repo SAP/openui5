@@ -1218,9 +1218,9 @@ sap.ui.define([
 	ObjectHeader.prototype._hasMarkers = function() {
 		var aMarkers = this.getMarkers(),
 			bHasOldMarkers = this.getShowMarkers() && (this.getMarkFavorite() || this.getMarkFlagged()),
-			bHasMаrkers = aMarkers && aMarkers.length;
+			bHasMarkers = aMarkers && aMarkers.length;
 
-		return (bHasOldMarkers || bHasMаrkers);
+		return (bHasOldMarkers || bHasMarkers);
 	};
 
 	/**
