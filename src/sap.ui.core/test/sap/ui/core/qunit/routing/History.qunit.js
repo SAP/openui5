@@ -1,40 +1,5 @@
-<!DOCTYPE HTML>
-<html>
-
-<!--
-           Tested classes: sap.ui.core.navigation.History
-         -->
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.core.navigation.History</title>
-
-<script src="../../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-noConflict="true"
-	data-sap-ui-resourceroots='{
-		"sap/ui/core/qunit": "."
-	}'>
-
-</script>
-
-<script>
-	(function () {
-		"use strict";
-		jQuery.sap.require("sap.ui.qunit.qunit-2-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit-2");
-		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		jQuery.sap.require("sap.ui.thirdparty.sinon");
-		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-		QUnit.config.autostart = false;
-	}());
-</script>
-<script>
 /*global QUnit */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History"
 ], function (HashChanger, History) {
@@ -77,20 +42,8 @@ sap.ui.require([
 	// The HashChanger allows to replace the default instance with a custom implementation to intercept the logic -
 	// this is currently done by the unified shell in order to handle cross-application navigation.
 	// Factoring out the unit tests into this module allows to execute the same test suite in the shell context
-	sap.ui.require(["sap/ui/core/qunit/HistoryQunit"], function() {
+	sap.ui.require(["sap/ui/core/qunit/routing/HistoryQunit"], function() {
 		QUnit.start();
 	});
 
 });
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">QUnit Page for
-		sap.ui.core.navigation.History</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-
-</body>
-</html>
