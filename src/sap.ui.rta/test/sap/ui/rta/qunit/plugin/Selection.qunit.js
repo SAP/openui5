@@ -1,9 +1,7 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/Selection",
@@ -23,7 +21,7 @@ sap.ui.require([
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4"
-], function(
+], function (
 	jQuery,
 	Remove,
 	Combine,
@@ -44,7 +42,7 @@ sap.ui.require([
 	UIComponent,
 	KeyCodes,
 	sinon
-){
+) {
 	"use strict";
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
@@ -462,6 +460,4 @@ sap.ui.require([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

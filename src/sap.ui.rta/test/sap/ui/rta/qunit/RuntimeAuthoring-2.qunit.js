@@ -1,12 +1,9 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-sap.ui.require([
-	// Controls
+sap.ui.define([
 	'sap/m/Button',
 	'sap/m/MessageBox',
 	'sap/m/MessageToast',
-	// internal
 	'sap/ui/dt/plugin/ContextMenu',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/fl/registry/Settings',
@@ -21,9 +18,9 @@ sap.ui.require([
 	'sap/ui/rta/plugin/CreateContainer',
 	'sap/ui/rta/plugin/Rename',
 	'sap/ui/base/Event',
-	'sap/ui/rta/qunit/RtaQunitUtils',
+	'qunit/RtaQunitUtils',
 	'sap/ui/thirdparty/sinon-4'
-], function(
+], function (
 	Button,
 	MessageBox,
 	MessageToast,
@@ -743,10 +740,8 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.done(function() {
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

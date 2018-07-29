@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
@@ -625,6 +623,4 @@ sap.ui.require([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

@@ -1,14 +1,11 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-sap.ui.require([
-	// Controls
+sap.ui.define([
 	'sap/m/MessageBox',
 	'sap/ui/comp/smartform/Group',
 	'sap/ui/comp/smartform/GroupElement',
 	'sap/ui/comp/smartform/SmartForm',
 	"sap/ui/core/BusyIndicator",
-	// internal
 	'sap/ui/Device',
 	'sap/ui/dt/plugin/ContextMenu',
 	'sap/ui/dt/DesignTimeMetadata',
@@ -27,10 +24,11 @@ sap.ui.require([
 	'sap/ui/base/Event',
 	'sap/ui/base/EventProvider',
 	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/rta/qunit/RtaQunitUtils',
+	'qunit/RtaQunitUtils',
 	'sap/ui/rta/appVariant/Feature',
 	'sap/base/Log',
 	"sap/base/util/UriParameters",
+	'sap/ui/qunit/QUnitUtils',
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
@@ -61,6 +59,7 @@ function(
 	RtaAppVariantFeature,
 	Log,
 	UriParameters,
+	QUnitUtils,
 	sinon
 ) {
 	"use strict";
@@ -73,7 +72,7 @@ function(
 		oParams.altKey = bAltKey;
 		oParams.metaKey = bMetaKey;
 		oParams.ctrlKey = bCtrlKey;
-		sap.ui.test.qunit.triggerEvent("keydown", oTargetDomRef, oParams);
+		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
 	};
 
 	var sandbox = sinon.sandbox.create();
@@ -1130,10 +1129,8 @@ function(
 		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.done(function() {
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

@@ -1,6 +1,4 @@
-/* global QUnit sinon */
-
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit */
 
 sap.ui.define([
 	'sap/ui/rta/command/CommandFactory',
@@ -10,9 +8,7 @@ sap.ui.define([
 	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/fl/Utils',
 	'sap/m/Button',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	CommandFactory,
@@ -21,14 +17,13 @@ function(
 	ChangeRegistry,
 	ElementDesignTimeMetadata,
 	Utils,
-	Button
+	Button,
+	sinon
 ) {
 	"use strict";
 
 	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
+		getLocalId: function () {},
 		getManifestEntry: function () {
 			return {};
 		},
@@ -53,7 +48,7 @@ function(
 	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	QUnit.module("Given an AddODataProperty change with a valid entry in the change registry,", {
-		beforeEach : function(assert) {
+		beforeEach : function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
 
 			this.fnApplyChangeSpy = sinon.spy();
@@ -116,4 +111,7 @@ function(
 		});
 	});
 
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

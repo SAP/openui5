@@ -1,13 +1,11 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'jquery.sap.global',
+sap.ui.define([
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/rta/toolbar/Fiori',
 	'sap/ui/rta/toolbar/Adaptation',
 	'sap/m/Image',
-	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-4",
 	"sap/base/Log"
 ],
 function(
@@ -20,22 +18,20 @@ function(
 ) {
 	'use strict';
 
-	QUnit.start();
-
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module('Basic functionality', {
 		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oImage = new Image({
-				src: "../../testdata/sap_logo.png"
+				src: "test-resources/sap/ui/rta/testdata/sap_logo.png"
 			});
 
 			this.oImage.attachEventOnce("load", function() {
 				done();
 			}, this);
 
-			this.oImage.placeAt("qunit-fixtures");
+			this.oImage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			sandbox.stub(sap.ui.rta.Utils, "getFiori2Renderer").returns({
@@ -87,9 +83,9 @@ function(
 			assert.equal(oImage.getMetadata().getName(), "sap.m.Image", "then the logo control is set correctly");
 			assert.equal(oImage.getSrc(), "logo", "then the name of the logo is correctly set");
 
-			var oErrorSpy = sandbox.spy(Log, "error");
+			var oErrorStub = sandbox.stub(Log, "error");
 			this.oToolbar._checkLogoSize(jQuery({naturalWidth: 5, naturalHeight: 5}), 6, 6);
-			assert.equal(oErrorSpy.callCount, 1, "then an error was thrown");
+			assert.equal(oErrorStub.callCount, 1, "then an error was thrown");
 
 			this.oToolbar.show();
 			assert.equal(this.sAdd, "sapUiRtaFioriHeaderInvisible", "then the correct StyleClass got added");
@@ -99,5 +95,9 @@ function(
 				assert.equal(this.sRemove, "sapUiRtaFioriHeaderInvisible", "then the correct StyleClass got removed");
 			}.bind(this));
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

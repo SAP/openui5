@@ -1,9 +1,7 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'jquery.sap.global',
+sap.ui.define([
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/rta/toolbar/Base',
 	'sap/ui/core/BusyIndicator',
 	'sap/m/Button'
@@ -15,8 +13,6 @@ function(
 	Button
 ) {
 	'use strict';
-
-	QUnit.start();
 
 	/*********************************************************************************************************
 	 * BASIC FUNCTIONALITY
@@ -230,4 +226,7 @@ function(
 		});
 	});
 
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

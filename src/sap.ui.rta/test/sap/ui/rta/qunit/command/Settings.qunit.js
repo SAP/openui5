@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -21,35 +19,40 @@ function(
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oCommandFactory = new CommandFactory();
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
 
 	QUnit.module("Given a settings change with a valid entry in the change registry,", {
-		beforeEach : function(assert) {
+		before: function () {
+			this.oCommandFactory = new CommandFactory();
+			this.oMockedAppComponent = {
+				getLocalId: function () {},
+				getManifestEntry: function () {
+					return {};
+				},
+				getMetadata: function () {
+					return {
+						getName: function () {
+							return "someName";
+						}
+					};
+				},
+				getManifest: function () {
+					return {
+						"sap.app" : {
+							applicationVersion : {
+								version : "1.2.3"
+							}
+						}
+					};
+				},
+				getModel: function () {}
+			};
+			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+		},
+		after: function () {
+			this.oGetAppComponentForControlStub.restore();
+			this.oCommandFactory.destroy();
+		},
+		beforeEach: function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
@@ -57,14 +60,13 @@ function(
 				}
 			});
 
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(PropertyChange, "completeChangeContent");
 
 			this.oSettingsChange = {
 				selectorControl : {
 					id : "button",
 					controlType : "sap.m.Button",
-					appComponent : oMockedAppComponent
+					appComponent : this.oMockedAppComponent
 				},
 				changeSpecificData : {
 					changeType : "changeSettings",
@@ -72,22 +74,22 @@ function(
 				}
 			};
 		},
-		afterEach : function() {
+		afterEach: function () {
 			sandbox.restore();
 		}
-	});
-
-	QUnit.test("when getting a settings command for the change ...", function(assert) {
-		return oCommandFactory.getCommandFor(this.oSettingsChange.selectorControl, "settings", this.oSettingsChange.changeSpecificData)
-
-		.then(function(oCommand) {
-			assert.ok(oCommand instanceof BaseCommand, "the settings command exists");
-		})
-
-		.catch(function (oError) {
-			assert.ok(false, 'catch must never be called - Error: ' + oError);
+	}, function () {
+		QUnit.test("when getting a settings command for the change ...", function(assert) {
+			return this.oCommandFactory.getCommandFor(this.oSettingsChange.selectorControl, "settings", this.oSettingsChange.changeSpecificData)
+			.then(function(oCommand) {
+				assert.ok(oCommand instanceof BaseCommand, "the settings command exists");
+			})
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

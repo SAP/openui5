@@ -1,17 +1,13 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/rta/ControlTreeModifier',
 	'sap/ui/fl/changeHandler/JsControlTreeModifier',
 	'sap/m/Button',
 	'sap/ui/layout/HorizontalLayout',
 	'sap/ui/core/TooltipBase',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',// TODO remove after 1.62 version
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	RtaControlTreeModifier,
@@ -19,26 +15,25 @@ function(
 	Button,
 	HorizontalLayout,
 	TooltipBase,
-	JSONModel
+	JSONModel,
+	sinon
 ){
 	"use strict";
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a button is instantiated...", {
-
-		beforeEach : function(assert) {
+		beforeEach: function() {
 			this.oModel = new JSONModel({
-				text1 : "text1",
-				text2 : "text2"
+				text1: "text1",
+				text2: "text2"
 			});
 			this.oButton = new Button();
 		},
-		afterEach : function(assert) {
+		afterEach: function() {
 			this.oButton.destroy();
 		}
-	}, function() {
+	}, function () {
 		QUnit.test("when the button's property is changed via RTA ControlTreeModifier...", function(assert) {
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.setProperty(this.oButton, "text", "value");
@@ -221,12 +216,12 @@ function(
 
 	QUnit.module("Given an ObjectPageLayout with a visible Section and an invisible Section are available...", {
 
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oView = sap.ui.xmlview("idMain1", "sap.ui.rta.test.ObjectPage");
-			this.oView.placeAt("test-view");
+			this.oView.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oView.destroy();
 		}
 
@@ -357,7 +352,7 @@ function(
 	});
 
 	QUnit.module("Given that instantiateFragment returns 3 Buttons...", {
-		beforeEach: function(assert) {
+		beforeEach: function () {
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
 			this.oButton3 = new Button("button3");
@@ -377,5 +372,9 @@ function(
 			assert.ok(this.oButton2._bIsBeingDestroyed, "and the second Button got destroyed");
 			assert.ok(this.oButton3._bIsBeingDestroyed, "and the third Button got destroyed");
 		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

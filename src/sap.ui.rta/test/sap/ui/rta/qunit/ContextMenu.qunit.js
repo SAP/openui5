@@ -1,13 +1,11 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/uxap/ObjectPageSection',
 	'sap/uxap/ObjectPageSubSection',
 	'sap/uxap/ObjectPageLayout',
 	'sap/ui/rta/RuntimeAuthoring',
-	'sap/ui/rta/qunit/RtaQunitUtils',
+	'qunit/RtaQunitUtils',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/m/Page',
@@ -582,6 +580,4 @@ function(
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

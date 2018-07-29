@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/fl/changeHandler/AddXML',
 	'sap/ui/fl/registry/ChangeRegistry',
@@ -33,12 +31,9 @@ function (
 	sinon
 ) {
 	"use strict";
-	QUnit.start();
 
 	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
+		getLocalId: function () {},
 		getManifestEntry: function () {
 			return {};
 		},
@@ -236,7 +231,7 @@ function (
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			this.oDesignTime.destroy();
@@ -279,5 +274,9 @@ function (
 				assert.notOk(oCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
 			});
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

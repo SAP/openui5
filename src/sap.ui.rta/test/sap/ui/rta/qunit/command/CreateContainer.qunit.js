@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/core/Popup",
@@ -19,148 +17,149 @@ function(
 	Form,
 	FormContainer,
 	ChangeRegistry,
-	Utils,
+	FlUtils,
 	sinon
 ) {
-		"use strict";
+	"use strict";
 
-		var oMockedAppComponent = {
-			getLocalId: function () {
-				return undefined;
-			},
-			getManifestEntry: function () {
-				return {};
-			},
-			getMetadata: function () {
-				return {
-					getName: function () {
-						return "someName";
+	var oMockedAppComponent = {
+		getLocalId: function () {},
+		getManifestEntry: function () {
+			return {};
+		},
+		getMetadata: function () {
+			return {
+				getName: function () {
+					return "someName";
+				}
+			};
+		},
+		getManifest: function () {
+			return {
+				"sap.app" : {
+					applicationVersion : {
+						version : "1.2.3"
 					}
-				};
-			},
-			getManifest: function () {
-				return {
-					"sap.app" : {
-						applicationVersion : {
-							version : "1.2.3"
-						}
-					}
-				};
-			},
-			getModel: function () {}
-		};
+				}
+			};
+		},
+		getModel: function () {}
+	};
+	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-		sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 
-		QUnit.module("Given a popup with empty designtime metadata is created...", {
-			beforeEach : function(assert) {
-				this.oPopup = new Popup();
+	QUnit.module("Given a popup with empty designtime metadata is created...", {
+		beforeEach: function () {
+			this.oPopup = new Popup();
 
-				this.NEW_CONTROL_ID = "NEW_ID";
-				this.NEW_CONTROL_LABEL = "New Label";
+			this.NEW_CONTROL_ID = "NEW_ID";
+			this.NEW_CONTROL_LABEL = "New Label";
 
-				this.oPopupDesignTimeMetadata = new ElementDesignTimeMetadata();
+			this.oPopupDesignTimeMetadata = new ElementDesignTimeMetadata();
 
-			},
-			afterEach : function(assert) {
-				this.oPopup.destroy();
-			}
-		}, function(){
-			QUnit.test("when getting a createContainer command for popup ...", function(assert) {
-				return CommandFactory.getCommandFor(this.oPopup, "CreateContainer", {
-					index : 0,
-					newControlId : this.NEW_CONTROL_ID,
-					label : this.NEW_CONTROL_LABEL,
-					parentId : this.oPopup.getId()
-				}, this.oPopupDesignTimeMetadata)
+		},
+		afterEach: function () {
+			this.oPopup.destroy();
+		}
+	}, function(){
+		QUnit.test("when getting a createContainer command for popup ...", function(assert) {
+			return CommandFactory.getCommandFor(this.oPopup, "CreateContainer", {
+				index : 0,
+				newControlId : this.NEW_CONTROL_ID,
+				label : this.NEW_CONTROL_LABEL,
+				parentId : this.oPopup.getId()
+			}, this.oPopupDesignTimeMetadata)
 
-				.then(function(oCreateContainerCommand) {
-					assert.notOk(oCreateContainerCommand, "no createContainer command for popup exists");
-				})
+			.then(function(oCreateContainerCommand) {
+				assert.notOk(oCreateContainerCommand, "no createContainer command for popup exists");
+			})
 
-				.catch(function (oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
-				});
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		});
+	});
 
-		QUnit.module("Given a form and it's designtime metadata are created...", {
-			beforeEach : function(assert) {
+	QUnit.module("Given a form and it's designtime metadata are created...", {
+		beforeEach : function(assert) {
+			this.oFormContainer = new FormContainer("container");
+			this.oForm = new Form("form", {
+				formContainers : [this.oFormContainer]
+			});
 
-				this.oFormContainer = new FormContainer("container");
-				this.oForm = new Form("form", {
-					formContainers : [this.oFormContainer]
-				});
+			this.NEW_CONTROL_ID = "NEW_ID";
+			this.NEW_CONTROL_LABEL = "New Label";
 
-				this.NEW_CONTROL_ID = "NEW_ID";
-				this.NEW_CONTROL_LABEL = "New Label";
+			var oChangeRegistry = ChangeRegistry.getInstance();
 
-				var oChangeRegistry = ChangeRegistry.getInstance();
+			this.fnApplyChangeSpy = sinon.spy();
+			this.fnCompleteChangeContentSpy = sinon.spy();
 
-				this.fnApplyChangeSpy = sinon.spy();
-				this.fnCompleteChangeContentSpy = sinon.spy();
-
-				oChangeRegistry.registerControlsForChanges({
-					"sap.ui.layout.form.Form": {
-						"addGroup" : {
-							applyChange: this.fnApplyChangeSpy,
-							completeChangeContent: this.fnCompleteChangeContentSpy
-						}
+			oChangeRegistry.registerControlsForChanges({
+				"sap.ui.layout.form.Form": {
+					"addGroup" : {
+						applyChange: this.fnApplyChangeSpy,
+						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
-				});
+				}
+			});
 
-				this.oCreateContainerDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data : {
-						aggregations : {
-							formContainers : {
-								actions : {
-									createContainer :  {
-										changeType : "addGroup",
-										isEnabled : true,
-										mapToRelevantControlID : function(sNewControlID) {
-											return sNewControlID;
-										}
+			this.oCreateContainerDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data : {
+					aggregations : {
+						formContainers : {
+							actions : {
+								createContainer :  {
+									changeType : "addGroup",
+									isEnabled : true,
+									mapToRelevantControlID : function(sNewControlID) {
+										return sNewControlID;
 									}
 								}
 							}
 						}
 					}
-				});
-
-				return CommandFactory.getCommandFor(this.oForm, "createContainer", {
-					index : 0,
-					newControlId : this.NEW_CONTROL_ID,
-					label : this.NEW_CONTROL_LABEL,
-					parentId : this.oForm.getId()
-				}, this.oCreateContainerDesignTimeMetadata)
-
-				.then(function(oCreateContainerCommand) {
-					this.oCreateContainerCommand = oCreateContainerCommand;
-				}.bind(this))
-
-				.catch(function (oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
-				});
-			},
-			afterEach : function(assert) {
-				this.oForm.destroy();
-				this.oCreateContainerCommand.destroy();
-			}
-		}, function(){
-			QUnit.test("when getting a createContainer command for form", function(assert) {
-				var done = assert.async();
-				var sChangeType = this.oCreateContainerDesignTimeMetadata.getActionDataFromAggregations("createContainer", this.oForm)[0].changeType;
-				assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
-				assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
-
-				this.oCreateContainerCommand.execute().then( function() {
-					assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-					done();
-				}.bind(this));
+				}
 			});
+
+			return CommandFactory.getCommandFor(this.oForm, "createContainer", {
+				index : 0,
+				newControlId : this.NEW_CONTROL_ID,
+				label : this.NEW_CONTROL_LABEL,
+				parentId : this.oForm.getId()
+			}, this.oCreateContainerDesignTimeMetadata)
+
+			.then(function(oCreateContainerCommand) {
+				this.oCreateContainerCommand = oCreateContainerCommand;
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
+		},
+		afterEach: function () {
+			this.oForm.destroy();
+			this.oCreateContainerCommand.destroy();
+		}
+	}, function () {
+		QUnit.test("when getting a createContainer command for form", function(assert) {
+			var done = assert.async();
+			var sChangeType = this.oCreateContainerDesignTimeMetadata.getActionDataFromAggregations("createContainer", this.oForm)[0].changeType;
+			assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
+			assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
+
+			this.oCreateContainerCommand.execute().then( function() {
+				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+				done();
+			}.bind(this));
 		});
-
-		QUnit.start();
-
 	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
+});

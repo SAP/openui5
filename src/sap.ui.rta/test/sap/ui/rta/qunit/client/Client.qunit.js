@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/Client",
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/thirdparty/sinon-4"
@@ -40,6 +38,7 @@ function (
 	QUnit.module("Initialisation", {
 		beforeEach: function () {
 			this.oPostMessageBus = getPostMessageBus(window);
+
 		},
 		afterEach: function () {
 			this.oPostMessageBus.destroy();
@@ -159,11 +158,11 @@ function (
 	QUnit.module("Handshake", {
 		before: function () {
 			QUnit.config.fixture = null;
-			return createIframe('./iframe.html?loadframework').then(function (oIframe) {
+			return createIframe('test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework').then(function (oIframe) {
 				this.oIframeWindow = oIframe.contentWindow;
 			}.bind(this));
 		},
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oPostMessageBus = getPostMessageBus(window);
 			this.oPostMessageBusInIframe = getPostMessageBus(this.oIframeWindow);
 			this.oRTAClient = new RTAClient({
@@ -193,7 +192,7 @@ function (
 						);
 					}.bind(this))
 				)
-				.callsFake(function (mParameters) {
+				.callsFake(function () {
 					assert.ok(true);
 					fnDone();
 				});
@@ -298,15 +297,15 @@ function (
 		before: function () {
 			QUnit.config.fixture = null;
 			return Promise.all([
-				createIframe('./iframe.html?loadframework').then(function (oIframe) {
+				createIframe('test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework').then(function (oIframe) {
 					this.oIframeWindow1 = oIframe.contentWindow;
 				}.bind(this)),
-				createIframe('./iframe.html?loadframework').then(function (oIframe) {
+				createIframe('test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework').then(function (oIframe) {
 					this.oIframeWindow2 = oIframe.contentWindow;
 				}.bind(this))
 			]);
 		},
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oPostMessageBus = getPostMessageBus(window);
 			this.oPostMessageBusInIframe1 = getPostMessageBus(this.oIframeWindow1);
 			this.oPostMessageBusInIframe2 = getPostMessageBus(this.oIframeWindow2);
@@ -428,7 +427,7 @@ function (
 						);
 					}.bind(this))
 				)
-				.callsFake(function (mParameters) {
+				.callsFake(function () {
 					// We assume that we subscribe later than the Client does it AND that UI5 calls listeners
 					// in subscription order. If these conditions are not met, then wrap it into setTimeout(function () {}, 20);
 					this.oPostMessageBus.subscribeOnce(CHANNEL_ID, PostMessageBus.event.DECLINED, function () {
@@ -583,7 +582,7 @@ function (
 				}.bind(this));
 
 			this.oRTAClient.getService('foo').then(function (oService) {
-				oService.attachEvent('customEvent', function (vData) {
+				oService.attachEvent('customEvent', function () {
 					assert.ok(false, 'must never be called');
 				});
 			});
@@ -600,11 +599,11 @@ function (
 	QUnit.module("API - getService()", {
 		before: function () {
 			QUnit.config.fixture = null;
-			return createIframe('./iframe.html?loadframework').then(function (oIframe) {
+			return createIframe('test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework').then(function (oIframe) {
 				this.oIframeWindow = oIframe.contentWindow;
 			}.bind(this));
 		},
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oPostMessageBus = getPostMessageBus(window);
 			this.oPostMessageBusInIframe = getPostMessageBus(this.oIframeWindow);
 			this.oRTAClient = new RTAClient({
@@ -954,7 +953,7 @@ function (
 
 			this.oRTAClient.getService("foo").then(function (oService) {
 				oService.customMethod('a', 'b', 'c').then(
-					function (vResult) {
+					function () {
 						assert.ok(false, "must never be called");
 					},
 					function (vError) {
@@ -1026,11 +1025,11 @@ function (
 	QUnit.module("API - Events", {
 		before: function () {
 			QUnit.config.fixture = null;
-			return createIframe('./iframe.html?loadframework').then(function (oIframe) {
+			return createIframe('test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework').then(function (oIframe) {
 				this.oIframeWindow = oIframe.contentWindow;
 			}.bind(this));
 		},
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oPostMessageBus = getPostMessageBus(window);
 			this.oPostMessageBusInIframe = getPostMessageBus(this.oIframeWindow);
 			this.oRTAClient = new RTAClient({
@@ -1414,9 +1413,7 @@ function (
 		});
 	});
 
-	QUnit.start();
-
-	QUnit.done(function( details ) {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

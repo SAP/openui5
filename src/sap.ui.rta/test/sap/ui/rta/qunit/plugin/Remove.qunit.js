@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
@@ -14,7 +12,7 @@ sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
 	RemovePlugin,
 	Button,
 	VerticalLayout,
@@ -404,10 +402,7 @@ function(
 		});
 	});
 
-
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

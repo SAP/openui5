@@ -1,4 +1,4 @@
-/* global QUnit, sinon*/
+/* global QUnit */
 /*!
  * ${copyright}
  */
@@ -37,7 +37,9 @@ function(
 	FlexControllerFactory,
 	Settings,
 	ControlTreeModifier,
-	jQuery
+	jQuery,
+	library,
+	sinon
 ) {
 
 	"use strict";

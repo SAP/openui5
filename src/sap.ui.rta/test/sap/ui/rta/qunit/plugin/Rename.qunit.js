@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
@@ -19,7 +17,7 @@ sap.ui.require([
 	"sap/m/Label",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
 	VerticalLayout,
 	DesignTime,
 	CommandFactory,
@@ -220,7 +218,7 @@ function(
 			this.oButton = new Button({text : "Button"});
 			this.oLabel = new Label({text : "Label"});
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oLabel, this.oButton],
+				content : [this.oButton, this.oLabel],
 				width: "200px"
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -290,17 +288,16 @@ function(
 		});
 
 		QUnit.test("when the title is not on the currently visible viewport and gets renamed", function(assert) {
-			var $button = this.oButton.$();
-			var $label = this.oLabel.$();
-			$label.css("margin-bottom", document.documentElement.clientHeight);
-			$button.get(0).scrollIntoView();
-			var oScrollSpy = sinon.spy($label.get(0), "scrollIntoView");
+			var $Button = this.oButton.$();
+			var $Label = this.oLabel.$();
+			$Button.css("margin-bottom", document.documentElement.clientHeight);
+			var oScrollSpy = sinon.spy($Label.get(0), "scrollIntoView");
 
 			var fnDone = assert.async();
 			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oLayoutOverlay) {
 					assert.equal(oScrollSpy.callCount, 1, "then the Label got scrolled");
-					$label.get(0).scrollIntoView.restore();
+					$Label.get(0).scrollIntoView.restore();
 					fnDone();
 				}
 			}, this);
@@ -325,7 +322,7 @@ function(
 					setTimeout(function () {
 						assert.ok(true, "Delete test successful");
 						fnDone();
-					}, 50);
+					});
 
 					this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
 				}
@@ -357,6 +354,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

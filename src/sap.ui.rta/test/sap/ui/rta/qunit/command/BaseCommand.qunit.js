@@ -1,6 +1,6 @@
 /*global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Input',
 	'sap/m/Text',
@@ -29,9 +29,9 @@ sap.ui.require([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/ControlTreeModifier',
-	'sap/ui/thirdparty/sinon'
+	'sap/ui/thirdparty/sinon-4'
 ],
-function(
+function (
 	Button,
 	Input,
 	Text,
@@ -1138,7 +1138,7 @@ function(
 			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
 			this.fnRtaStartRecordingStub = sandbox.stub(RtaControlTreeModifier, "startRecordingUndo");
 			this.fnPerformUndoStub = sandbox.stub(RtaControlTreeModifier, "performUndo");
-			this.fnRtaStopRecordingStub = sandbox.stub(RtaControlTreeModifier, "stopRecordingUndo", function() {
+			this.fnRtaStopRecordingStub = sandbox.stub(RtaControlTreeModifier, "stopRecordingUndo").callsFake(function() {
 				return ["undoOperation1", "undoOperation2"];
 			});
 
@@ -1160,7 +1160,7 @@ function(
 			};
 
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			sandbox.restore();
 			this.oFlexCommand.destroy();
 			this.oCompositeCommand.destroy();
@@ -1193,7 +1193,6 @@ function(
 							assert.equal(this.fnRtaStopRecordingStub.callCount, 0, "then recording of rta undo operations not stopped");
 						}.bind(this));
 				}.bind(this))
-
 				.catch(function(oError) {
 					assert.ok(false, 'catch must never be called - Error: ' + oError);
 				});
@@ -1494,4 +1493,7 @@ function(
 		});
 	});
 
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });
