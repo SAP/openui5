@@ -1,19 +1,18 @@
 /*global QUnit*/
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/core/Core",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/sinon-4"
-],function(
+],function (
 	ElementDesignTimeMetadata,
 	Core,
 	ElementUtil,
 	Element,
 	sinon
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -210,5 +209,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

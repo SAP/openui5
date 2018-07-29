@@ -1,7 +1,5 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/dt/DesignTime",
@@ -38,7 +36,7 @@ function(
 			this.oDesignTime = new DesignTime({
 				rootElements: [ this.oLayout ],
 				plugins: [
-				    this.oTabHandling
+					this.oTabHandling
 				]
 			});
 
@@ -62,10 +60,7 @@ function(
 		});
 	});
 
-
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

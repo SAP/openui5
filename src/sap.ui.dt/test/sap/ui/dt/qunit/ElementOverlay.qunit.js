@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
@@ -23,10 +21,11 @@ sap.ui.require([
 	"sap/ui/Device",
 	"dt/control/SimpleScrollControl",
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/core/Popup',
+	"sap/ui/core/Popup",
+	"sap/ui/dt/DOMUtil",
 	"sap/ui/thirdparty/sinon"
 ],
-function(
+function (
 	ElementOverlay,
 	Overlay,
 	OverlayRegistry,
@@ -48,9 +47,27 @@ function(
 	SimpleScrollControl,
 	jQuery,
 	Popup,
+	DOMUtil,
 	sinon
 ) {
 	"use strict";
+
+	DOMUtil.insertStyles('\
+		@keyframes example {\
+			0%		{ width: auto; }\
+			100%	{ width: 0px; }\
+		}\
+		.sapUiDtTestAnimate {\
+			animation-name: example;\
+			animation-duration: 0.1s;\
+			width: 0px;\
+			z-index: 2;\
+		} \
+	', document.head);
+
+	// Styles on "qunit-fixture" influence the scrolling tests if positioned on the screen during test execution.
+	// Please keep this tag without any styling.
+	jQuery('#qunit-fixture').removeAttr('style');
 
 	var sandbox = sinon.sandbox.create();
 
@@ -1173,6 +1190,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

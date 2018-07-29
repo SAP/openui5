@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/MutationObserver',
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/ElementOverlay',
@@ -246,9 +244,7 @@ function(
 		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

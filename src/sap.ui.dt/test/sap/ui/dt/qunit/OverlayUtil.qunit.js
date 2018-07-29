@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
@@ -41,7 +39,6 @@ function(
 	sinon
 ) {
 	'use strict';
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -651,5 +648,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

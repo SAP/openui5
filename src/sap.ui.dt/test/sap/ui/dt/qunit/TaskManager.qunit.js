@@ -1,17 +1,13 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/TaskManager',
 	'sap/ui/dt/Util'
-], function(
+], function (
 	TaskManager,
 	Util
 ) {
 	"use strict";
-
-	QUnit.start();
 
 	QUnit.module("Public API - add()", {
 		beforeEach: function () {
@@ -187,4 +183,7 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

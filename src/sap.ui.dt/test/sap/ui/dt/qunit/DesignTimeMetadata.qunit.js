@@ -1,8 +1,6 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/dt/AggregationDesignTimeMetadata",
@@ -31,8 +29,7 @@ function(
 	QUnit.module("Given that the DesignTimeMetadata is created for a fake control", {
 		beforeEach: function() {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				libraryName : "my.fake.lib",
-				data : {
+				data: {
 					testField : "testValue",
 					domRef : "domRef",
 					actions : {
@@ -233,9 +230,9 @@ function(
 			this.oInput0 = new Input({id : "Input0"});
 
 			this.oSimpleForm = new SimpleForm("form", {
-				id : "SimpleForm",
-				title : "Simple Form",
-				content : [this.oTitle0, this.oLabel0, this.oInput0]
+				id: "SimpleForm",
+				title: "Simple Form",
+				content: [this.oTitle0, this.oLabel0, this.oInput0]
 			});
 
 			this.oSimpleForm.placeAt("qunit-fixture");
@@ -289,6 +286,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });
