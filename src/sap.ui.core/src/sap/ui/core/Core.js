@@ -1912,9 +1912,15 @@ sap.ui.define([
 
 		function requireLibsAsync() {
 			return new Promise(function(resolve, reject) {
-				sap.ui.require(getLibraryModuleNames(), function() {
-					resolve();
-				});
+				sap.ui.require(
+					getLibraryModuleNames(),
+					function () {
+						// Wrapper function is needed to omit parameters for resolve()
+						// which is always one library (first from the list), not an array of libraries.
+						resolve();
+					},
+					reject
+				);
 			});
 		}
 

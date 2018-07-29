@@ -542,7 +542,8 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 		var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario1.lib1', 'testlibs.scenario1.lib2']);
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
-		return vResult.then(function() {
+		return vResult.then(function(vResult) {
+			assert.strictEqual(vResult, undefined, "Promise should have no fulfillment value");
 			assert.isLibLoaded('testlibs.scenario1.lib1');
 			sinon.assert.calledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib1\/library-preload\.js$/));
 			assert.isLibLoaded('testlibs.scenario1.lib2');
