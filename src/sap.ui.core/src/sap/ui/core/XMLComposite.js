@@ -236,6 +236,7 @@ sap.ui.define([
 				Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 				oRm.write("<div");
 				oRm.writeControlData(oControl);
+				oRm.writeAccessibilityState(oControl);
 
 				// compare ViewRenderer.js - we negate since opposite default
 				if (!oControl.getDisplayBlock() && (oControl.getWidth() !== "100%" || oControl.getHeight() !== "100%")) {
@@ -464,6 +465,12 @@ sap.ui.define([
 				return;
 			}
 			if (oNewContent) {
+				//accessibility
+				if (!oNewContent.enhanceAccessibilityState) {
+					oNewContent.enhanceAccessibilityState = function(oElement, mAriaProps) {
+						this.enhanceAccessibilityState(oElement, mAriaProps);
+					}.bind(this);
+				}
 				oNewContent.setModel(this._oManagedObjectModel, "$" + this.alias);
 				oNewContent.bindObject("$" + this.alias + ">/");
 				var oResourceModel = this._getResourceModel();
@@ -578,6 +585,51 @@ sap.ui.define([
 				}));
 			}
 			this._bIsInitialized = true;
+		};
+
+		/**
+		 * This method is a hook for the RenderManager that gets called
+		 * during the rendering of child Controls. It allows to add,
+		 * remove and update existing accessibility attributes (ARIA) of
+		 * those controls.
+		 *
+		 * @param {sap.ui.core.Control} oElement - The Control that gets rendered by the RenderManager
+		 * @param {Object} mAriaProps - The mapping of "aria-" prefixed attributes
+		 * @protected
+		 */
+		XMLComposite.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
+			var oParent = this.getParent();
+
+			if (oParent && oParent.enhanceAccessibilityState) {
+				// use XMLComposite as control, but aria properties of rendered inner controls.
+				return oParent.enhanceAccessibilityState(this, mAriaProps);
+			}
+
+			return mAriaProps;
+		};
+
+		/**
+		 * Return the focus DOM Reference for accessibility
+		 */
+		XMLComposite.prototype.getFocusDomRef = function() {
+			var oContent = this._renderingContent ? this._renderingContent() : this._getCompositeAggregation();
+			return oContent.getFocusDomRef();
+		};
+
+		/**
+		 * Return the focus DOM Reference for accessibility
+		 */
+		XMLComposite.prototype.getFocusInfo = function() {
+			var oContent = this._renderingContent ? this._renderingContent() : this._getCompositeAggregation();
+			return oContent.getFocusInfo();
+		};
+
+		/**
+		 * Return the id the label control should point to, ideally the rendering content
+		 */
+		XMLComposite.prototype.getIdForLabel = function() {
+			var oContent = this._renderingContent ? this._renderingContent() : this._getCompositeAggregation();
+			return oContent.getIdForLabel();
 		};
 
 		return XMLComposite;

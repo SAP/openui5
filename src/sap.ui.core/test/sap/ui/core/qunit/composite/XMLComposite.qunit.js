@@ -923,4 +923,31 @@ sap.ui.require([
 		assert.strictEqual(oSearchField.getButtonText(), "Search", "Default property value should be applied");
 	});
 
+	//************************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: accessibility", {
+		before: function (assert) {
+			this.content = null;
+			return new Promise( function( resolve, reject ) {
+				var oField = new composites.Field("accessible");
+				sap.ui.require(["sap/m/Label", "sap/m/HBox"], function (Label, HBox) {
+					var oLabel = new Label("label", {text: "test", labelFor: oField});
+					var oAdditionalLabel = new Label("additional", {text: "additional"});
+					oField.addAriaLabelledBy(oAdditionalLabel);
+					this.content = new HBox({items: [oLabel,oField, oAdditionalLabel]});
+					this.content.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		},
+		after: function (assert) {
+		}
+	});
+
+	QUnit.test("accessibility", function(assert) {
+		var oField = this.content.getItems()[1];
+		assert.equal(oField.getFocusDomRef().id, "accessible--focus", "FocusDomRef");
+		assert.equal(jQuery("#label").attr("for"), "accessible--focus", "Label points to focusable DomRef");
+		assert.equal(jQuery("#accessible").attr("aria-labelledBy"), "label additional", "The focusable dom ref is also labelled by the additional label");
+	});
 });
