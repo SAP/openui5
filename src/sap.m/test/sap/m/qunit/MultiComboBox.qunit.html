@@ -3721,7 +3721,7 @@
 
 		// act
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
-		this.clock.tick(1500);
+		this.clock.tick(500);
 
 		// assertions
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
@@ -4878,7 +4878,7 @@
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oComboBox = new sap.m.MultiComboBox({
+		var oMultiComboBox = new sap.m.MultiComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
 			placeholder: "Placeholder",
@@ -4888,33 +4888,33 @@
 				new sap.ui.core.Item({key: "Item3", text: "Item3"})
 			]
 		});
-		assert.ok(!!oComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
-		var oInfo = oComboBox.getAccessibilityInfo();
+		assert.ok(!!oMultiComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
+		var oInfo = oMultiComboBox.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		assert.strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
+		assert.strictEqual(oInfo.role, oMultiComboBox.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
 		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
-		oComboBox.setValue("");
-		oComboBox.setEnabled(false);
-		oInfo = oComboBox.getAccessibilityInfo();
+		oMultiComboBox.setValue("");
+		oMultiComboBox.setEnabled(false);
+		oInfo = oMultiComboBox.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
-		oComboBox.setEnabled(true);
-		oComboBox.setEditable(false);
-		oInfo = oComboBox.getAccessibilityInfo();
+		oMultiComboBox.setEnabled(true);
+		oMultiComboBox.setEditable(false);
+		oInfo = oMultiComboBox.getAccessibilityInfo();
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
-		oComboBox.setEditable(true);
-		oComboBox.setSelectedKeys(["Item1", "Item2"]);
-		oInfo = oComboBox.getAccessibilityInfo();
+		oMultiComboBox.setEditable(true);
+		oMultiComboBox.setSelectedKeys(["Item1", "Item2"]);
+		oInfo = oMultiComboBox.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "Placeholder Tooltip Item1 Item2", "Description");
-		oComboBox.destroy();
+		oMultiComboBox.destroy();
 	});
 
 	QUnit.test("Tokens information should be read out", function(assert) {
@@ -5155,7 +5155,7 @@
 		var oItem = new sap.ui.core.Item({
 			key: "li",
 			text: "lorem ipsum"
-		}), oMultiComboBox = new sap.m.ComboBox({
+		}), oMultiComboBox = new sap.m.MultiComboBox({
 				items: [
 					oItem
 				]
@@ -5305,6 +5305,185 @@
 		oMultiComboBox.destroy();
 		oModel.destroy();
 	});
+
+	QUnit.module("highlighting");
+
+	QUnit.test("_boldItemRef should return a bold string", function(assert) {
+		var oFunctionRef = sap.m.MultiComboBox.prototype._boldItemRef;
+
+		assert.strictEqual(oFunctionRef("Test", /^t/i, 1), "<b>T</b>est");
+		assert.strictEqual(oFunctionRef("Test", /^Test/i, 4), "<b>Test</b>");
+		assert.strictEqual(oFunctionRef("Test", /^/i, 0), "Test");
+		assert.strictEqual(oFunctionRef("Test (TE)", /^Test/i, 4), "<b>Test</b>&#x20;&#x28;TE&#x29;");
+
+	});
+
+	QUnit.test("_boldItemRef bold starts with per term", function (assert) {
+		var oFunctionRef = sap.m.MultiComboBox.prototype._boldItemRef,
+			sItemText = "Hong Kong China",
+			sQuery1 = "Kong",
+			sQuery2 = "Hong",
+			sQuery3 = "ong",
+			sQuery4 = "Ch",
+			sQuery5 = "i";
+
+		assert.strictEqual(oFunctionRef(sItemText, /\bKong/gi, sQuery1.length), "Hong&#x20;<b>Kong</b>&#x20;China");
+		assert.strictEqual(oFunctionRef(sItemText, /\bHong/gi, sQuery2.length), "<b>Hong</b>&#x20;Kong&#x20;China");
+		assert.strictEqual(oFunctionRef(sItemText, /\bong/gi, sQuery3.length), "Hong&#x20;Kong&#x20;China");
+		assert.strictEqual(oFunctionRef(sItemText, /\bCh/gi, sQuery4.length), "Hong&#x20;Kong&#x20;<b>Ch</b>ina");
+		assert.strictEqual(oFunctionRef(sItemText, /\bi/gi, sQuery5.length), "Hong&#x20;Kong&#x20;China");
+	});
+
+	QUnit.test("_highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function(assert) {
+
+		// system under test
+		var fnOnAfterOpenSpy = this.spy(sap.m.MultiComboBox.prototype, "onAfterOpen");
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items: [
+				new sap.ui.core.Item({
+					key: "GER",
+					text: "Germany"
+				})
+			]
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.focus();
+
+		// act
+		oMultiComboBox.open();
+		this.clock.tick(1000);
+
+		// assert
+		assert.strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("_highlightList doesn't throw an error when combobox's value contains special characters", function(assert) {
+
+		// system under test
+		var fnOnAfterOpenSpy = this.spy(sap.m.MultiComboBox.prototype, "onAfterOpen");
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			showSecondaryValues: true,
+			items: [
+				new sap.ui.core.Item({
+					key: "GER",
+					text: "Germany"
+				})
+			]
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox._highlightList("(T");
+
+		// act
+		oMultiComboBox.open();
+		this.clock.tick(1000);
+
+		// assert
+		assert.strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.module("setFilter", {
+		beforeEach: function () {
+			this.oMultiComboBox = new sap.m.MultiComboBox({
+				items: [
+					new sap.ui.core.ListItem({
+						text: "Hong Kong",
+						additionalText: "China"
+					}),
+					new sap.ui.core.ListItem({
+						text: "Baragoi",
+						additionalText: "Kenya"
+					}),
+					new sap.ui.core.ListItem({
+						text: "Haskovo",
+						additionalText: "Bulgaria"
+					})
+				]
+			});
+		},
+		afterEach: function () {
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("Setting a filter function should update the internal variable", function (assert) {
+		this.oMultiComboBox.setFilterFunction(function () { return true; });
+
+		assert.ok(this.oMultiComboBox.fnFilter, "Filter should not be falsy value");
+	});
+
+	QUnit.test("Setting an invalid filter should fallback to default text filter", function (assert) {
+		var log = sap.ui.require('sap/base/Log'),
+			fnWarningSpy = this.spy(log, "warning"),
+			fnDefaultFilterSpy = this.stub(sap.m.ComboBoxBase, "DEFAULT_TEXT_FILTER");
+
+		// null is passed for a filter
+		this.oMultiComboBox.setFilterFunction(null);
+		assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is null");
+
+		this.oMultiComboBox.filterItems({ value:  "", items: this.oMultiComboBox.getItems() });
+		assert.ok(sap.m.ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+
+		// undefined is passed for a filter
+		this.oMultiComboBox.setFilterFunction(undefined);
+		assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is undefined");
+
+		this.oMultiComboBox.filterItems({ value:  "", items: this.oMultiComboBox.getItems() });
+		assert.ok(sap.m.ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+
+		// wrong filter type is passed
+		this.oMultiComboBox.setFilterFunction({});
+		assert.ok(fnWarningSpy.called, "Warning should be logged in the console when filter is not a function");
+
+		this.oMultiComboBox.filterItems({ value:  "", items: this.oMultiComboBox.getItems() });
+		assert.ok(sap.m.ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
+	});
+
+	QUnit.test("Setting a valid filter should apply on items", function (assert) {
+		var log = sap.ui.require('sap/base/Log'),
+		fnFilterSpy = this.spy();
+
+		// null is passed for a filter
+		this.oMultiComboBox.setFilterFunction(fnFilterSpy);
+
+		// act
+		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "B", items: this.oMultiComboBox.getItems() });
+
+		assert.ok(fnFilterSpy.called, "Filter should be called");
+		assert.strictEqual(aFilteredItems.length, 0, "Zero items should be filtered");
+	});
+
+	QUnit.test("Setting a valid filter should apply on items and their text", function (assert) {
+		// arrange
+		this.oMultiComboBox.addItem(new sap.ui.core.Item({ text: "Bbbb" }));
+
+		// act
+		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "B", items: this.oMultiComboBox.getItems() });
+
+		// assert
+		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
+		assert.strictEqual(aFilteredItems[0].getText(), "Baragoi", "Text should start with B");
+		assert.strictEqual(aFilteredItems[1].getText(), "Bbbb", "Text text should start with B");
+	});
+
+	QUnit.test("Default filtering should be per term", function (assert) {
+		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "K", items: this.oMultiComboBox.getItems() });
+
+		assert.strictEqual(aFilteredItems.length, 1, "One item should be filtered");
+		assert.strictEqual(aFilteredItems[0].getText(), "Hong Kong", "Hong Kong item is matched by 'K'");
+	});
+
 
 	QUnit.module("Tablet focus handling");
 
