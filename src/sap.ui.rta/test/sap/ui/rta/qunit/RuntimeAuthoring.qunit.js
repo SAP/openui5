@@ -83,13 +83,16 @@ function(
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		beforeEach : function(assert) {
 			FakeLrepSessionStorage.deleteChanges();
+			this.oRootControl = oComp.getAggregation("rootControl");
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl : this.oRootControl
 			});
 
 			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
-			return this.oRta.start();
+			return this.oRta.start().then(function(){
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(this.oRootControl);
+			}.bind(this));
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();
@@ -100,6 +103,7 @@ function(
 		QUnit.test("when RTA gets initialized and command stack is changed,", function(assert) {
 			assert.ok(this.oRta, " then RuntimeAuthoring is created");
 			assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
+			assert.ok(this.oRootControlOverlay.$().css("z-index") < this.oRta.getToolbar().$().css("z-index"), "and the toolbar is in front of the root overlay");
 			assert.notOk(RuntimeAuthoring.needsRestart(), "restart is not needed initially");
 
 			assert.equal(this.oRta.getToolbar().getControl('exit').getVisible(), true, "then the exit Button is visible");

@@ -7,15 +7,13 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	'sap/ui/dt/Util',
-	"sap/base/util/uid",
-	'sap/ui/dt/OverlayRegistry'
+	'sap/base/util/uid'
 ], function(
 	Plugin,
 	FlexUtils,
 	RtaUtils,
 	DtUtil,
-	uid,
-	OverlayRegistry
+	uid
 ) {
 	"use strict";
 

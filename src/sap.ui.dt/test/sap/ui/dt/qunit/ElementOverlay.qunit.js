@@ -118,7 +118,7 @@ function (
 
 		QUnit.test("when the control gets a new width and the Overlay is rerendered", function (assert) {
 			var done = assert.async();
-			var iLastZIndex = Popup.getLastZIndex();
+			var iLastZIndex = this.oElementOverlay.$().css("z-index");
 
 			this.oElementOverlay.attachEventOnce('geometryChanged', function () {
 				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "the overlay has the new width as well");
