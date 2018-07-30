@@ -50,7 +50,7 @@ sap.ui.define([
 			"sap.m.BackgroundDesign",
 			"sap.m.BarDesign",
 			"sap.m.ButtonType",
-			"sap.m.CarouselArrowsAlign",
+			"sap.m.CarouselArrowsPlacement",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
 			"sap.m.DeviationIndicator",
@@ -103,7 +103,7 @@ sap.ui.define([
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.TimePickerMaskMode",
-			"sap.m.TileSizeBehaviour",
+			"sap.m.TileSizeBehavior",
 			"sap.m.ToolbarDesign",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
