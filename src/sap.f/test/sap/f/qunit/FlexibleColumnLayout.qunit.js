@@ -780,7 +780,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		this.clock.restore();
 	});
 
-	QUnit.module("ResizeHandler suspend and resume", {
+	QUnit.module("Layout changes", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL({
 				layout: LT.TwoColumnsBeginExpanded
@@ -792,7 +792,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 		}
 	});
 
-	QUnit.test("Test ResizeHandler is suspended upon column layout change", 6, function (assert) {
+	QUnit.test("Suspending and resuming ResizeHandler upon column layout change", 6, function (assert) {
 		var fnDone = assert.async(),
 			iAnimationDelay = 600,
 			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow"),
@@ -816,6 +816,34 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 
 			fnDone();
 		}.bind(this), iAnimationDelay);
+	});
+
+	QUnit.test("Storing resize information for the reveal effect", function (assert) {
+		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 2, "The default TwoColumnsBeginExpanded layout has 2 columns");
+		assert.strictEqual(this.oFCL._bWasFullScreen, false, "TwoColumnsBeginExpanded isn't a fullscreen layout");
+
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 3, "ThreeColumnsMidExpanded has 3 columns");
+		assert.strictEqual(this.oFCL._bWasFullScreen, false, "ThreeColumnsMidExpanded isn't a fullscreen layout");
+
+		this.oFCL.setLayout(LT.EndColumnFullScreen);
+		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 1, "EndColumnFullScreen has only 1 visible column");
+		assert.strictEqual(this.oFCL._bWasFullScreen, true, "EndColumnFullScreen is a fullscreen layout");
+	});
+
+	QUnit.test("Reveal effect pinning decision", function (assert) {
+		// Simulate last column and switch to a layout with more columns
+		assert.strictEqual(this.oFCL._shouldPinColumn(3, true), true, "Third column should be pinned if any ThreeColumn layout is opened");
+
+		// New layout has more columns, but we are not testing the last column
+		assert.strictEqual(this.oFCL._shouldPinColumn(3, false), false, "First or second columns shouldn't be pinned for ThreeColumn layouts");
+
+		// New layout has less columns than the current one
+		assert.strictEqual(this.oFCL._shouldPinColumn(1, true), false, "No pinning should be done when the new column has fewer columns");
+
+		// Set a fullscreen layout
+		this.oFCL.setLayout(LT.MidColumnFullScreen);
+		assert.strictEqual(this.oFCL._shouldPinColumn(2, true), false, "No pinning should be done when closing a fullscreen layout");
 	});
 
 	QUnit.module("ScreenReader supprot", {
