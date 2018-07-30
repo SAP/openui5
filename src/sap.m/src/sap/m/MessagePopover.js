@@ -45,7 +45,7 @@ function(
 		 * A summarized list of different types of messages.
 		 * <h3>Overview</h3>
 		 * A message popover is used to display a summarized list of different types of messages (errors, warnings, success and information).
-		 * It provides a handy and systemized way to navigate and explore details for every message. It also enables navigation from the error message to the source of the error inside the page.
+		 * It provides a handy and systemized way to navigate and explore details for every message. It also exposes an event {@link sap.m.MessagePopover#activeTitlePress}, which can be used for navigation from a message to the source of the issue.
 		 * <h4>Notes:</h4>
 		 * <ul>
 		 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>.</li>
@@ -66,8 +66,8 @@ function(
 		 * With the message concept, MessagePopover provides a way to centrally manage messages and show them to the user without additional work for the developer.
 		 * The message popover is triggered from a messaging button in the footer toolbar. If an error has occurred at any validation point,
 		 * the total number of messages should be incremented, but the user's work shouldn't be interrupted.
-		 * An automatic navigation between the message item and the source of the error can be created, if the source of the error is an element inside the current page.
-		 * This can be done by setting the <code>activeTitle</code> property to true and providing a handler for the <code>activeTitlePress</code> event. The error source ID is provided by <code>sap.ui.core.MessageManager</code> and can be found under the <code>controlId</code> property of <code>sap.ui.core.Message</code>.
+		 * Navigation between the message item and the source of the error can be created, if needed by the application.
+		 * This can be done by setting the <code>activeTitle</code> property to true and providing a handler for the <code>activeTitlePress</code> event.
 		 * <h3>Responsive Behavior</h3>
 		 * On mobile phones, the message popover is automatically shown in full screen mode.<br>
 		 * On desktop and tablet, the message popover opens in a popover.<br>

@@ -83,6 +83,7 @@ sap.ui.define([
 		},
 
 		isPositionable : function (sControlId) {
+			// Such a hook can be used by the application to determine if a control can be found/reached on the page and navigated to.
 			return sControlId ? true : true;
 		},
 
