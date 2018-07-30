@@ -1724,7 +1724,7 @@ function(
 
 			this.getTokens().some(function(oToken){
 				if (oToken.getId() === sSelectedId) {
-					this._tokenizer.removeToken(oToken);
+					this._tokenizer._onTokenDelete(oToken);
 					return true;
 				}
 			}.bind(this));
