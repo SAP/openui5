@@ -120,7 +120,7 @@
 			oSuiteConfig.sortedTests.forEach(function(oTestConfig) {
 				sLinkHTML += "<li class='pass'><strong>" +
 						(oTestConfig.group ? "<span class='module-name'>" + oTestConfig.group + "<span>: " : "") +
-						"<a class='test-name' href='" + oTestConfig.page + "' target='_blank'>" + oTestConfig.name + "</a></strong></li>";
+						"<a class='test-name' href='" + sap.ui.require.toUrl("") + "/../" + oTestConfig.page + "' target='_blank'>" + oTestConfig.name + "</a></strong></li>";
 			});
 			sLinkHTML += "</ol>"
 				+ "<div id='redirect-hint'><div>"

@@ -18,7 +18,7 @@
 
 	oScriptTag = document.querySelector("[src$='runTest.js']");
 	if (oScriptTag) {
-		mMatch = /^(.*\/)?runTest.js/.exec(oScriptTag.getAttribute("src"));
+		mMatch = /^([^?#]*\/)?runTest.js/.exec(oScriptTag.getAttribute("src"));
 		if (mMatch) {
 			sBaseUrl = mMatch[1] + "../../../../";
 		}
@@ -275,6 +275,12 @@
 			pSinonConfig,
 			pCoverage
 		]);
+
+		if ( oConfig.beforeBootstrap ) {
+			pTestEnv = pTestEnv.then(function() {
+				return requireP(oConfig.beforeBootstrap);
+			});
+		}
 
 		// copy UI5 configuration
 		window["sap-ui-config"] = oConfig.ui5 || {};

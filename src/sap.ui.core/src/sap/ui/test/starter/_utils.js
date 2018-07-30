@@ -75,6 +75,7 @@ sap.ui.define([
 
 	var DEFAULT_CONFIG = {
 		name: null,
+		beforeBootstrap: null,
 		module: "./{name}.qunit",
 		page: "resources/sap/ui/test/starter/Test.qunit.html?testsuite={suite}&test={name}",
 		title: "QUnit tests '{name}' of suite '{suite}'",
@@ -136,13 +137,13 @@ sap.ui.define([
 	function mergeWithDefaults(oSuiteConfig, sTestSuite) {
 
 		function resolvePlaceholders(str, name) {
-			return str.replace(/\{suite\}/g, sTestSuite).replace(/\{name\}/g, name);
+			return str == null ? str : str.replace(/\{suite\}/g, sTestSuite).replace(/\{name\}/g, name);
 		}
 
 		var sModulePrefix = sTestSuite.slice(0, sTestSuite.lastIndexOf('/') + 1);
 
 		function resolvePackage(sModule) {
-			return sModule.replace(/^\.\//, sModulePrefix);
+			return sModule == null ? sModule : sModule.replace(/^\.\//, sModulePrefix);
 		}
 
 		// first merge the static defaults and the defaults of the suite
@@ -162,6 +163,7 @@ sap.ui.define([
 			} else {
 				oTestConfig.module = resolvePackage(resolvePlaceholders(oTestConfig.module, name));
 			}
+			oTestConfig.beforeBootstrap = resolvePackage(resolvePlaceholders(oTestConfig.beforeBootstrap, name));
 			oTestConfig.page = resolvePlaceholders(oTestConfig.page, name);
 			oTestConfig.title = resolvePlaceholders(oTestConfig.title, name);
 			oSuiteConfig.tests[name] = oTestConfig;
@@ -188,7 +190,7 @@ sap.ui.define([
 
 	}
 
-	var VALID_TESTSUITE = /^test-resources\/([a-zA-Z_$\-][a-zA-Z_$0-9\-]*\/)*testsuite(?:\.[a-z]+)?\.qunit$/;
+	var VALID_TESTSUITE = /^test-resources\/([a-zA-Z_$\-][a-zA-Z_$0-9\-]*\/)*testsuite(?:\.[a-z][a-z0-9]*)?\.qunit$/;
 	//var VALID_TEST = /^([a-zA-Z_$\-][a-zA-Z_$0-9\-]*\/)*[a-zA-Z_$\-][a-zA-Z_$0-9\-]*$/;
 
 	/**
