@@ -1443,6 +1443,12 @@
         "type": "FIX",
         "text": " sap.m.RadioButtonGroup: removeAllButtons now works well",
         "references": []
+      },
+      {
+        "id": "853803796ad07cb90eda77f3e463c9c73f7c6db0",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Added filters are displayed now",
+        "references": []
       }
     ]
   }

@@ -987,6 +987,12 @@
         "type": "FIX",
         "text": " sap/ui/dom/ActiveElementFix: empty object document.activeElement",
         "references": []
+      },
+      {
+        "id": "903f86d2050a28d1db86d1c57eed506caaf1be67",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore query parameter for index lookup",
+        "references": []
       }
     ]
   }
