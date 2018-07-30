@@ -713,7 +713,8 @@ sap.ui.require([
 				name : "name",
 				view : "myView",
 				viewType: "JS",
-				pattern : "view1"
+				pattern : "view1",
+				viewPath: "sample.application"
 			}
 		]);
 
@@ -721,7 +722,8 @@ sap.ui.require([
 			text: "Test-Button"
 		});
 
-		var oStub = this.stub(sap.ui, "view", function() {
+		var oStub = this.stub(sap.ui, "view", function(oSetting) {
+			assert.equal(oSetting.viewName, "sample.application.myView", "the final viewName should be prefixed with the viewPath");
 			return oButton;
 		});
 
