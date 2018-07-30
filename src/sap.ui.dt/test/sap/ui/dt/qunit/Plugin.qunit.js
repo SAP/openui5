@@ -6,8 +6,8 @@ sap.ui.define([
 	'sap/ui/dt/Plugin',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
-	'jquery.sap.global',
-	'sap/ui/thirdparty/sinon'
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	DesignTime,

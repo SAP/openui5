@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
 	'sap/base/util/includes',
-	'sap/ui/thirdparty/sinon'
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	MutationObserver,

@@ -1,7 +1,7 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DesignTimeMetadata",

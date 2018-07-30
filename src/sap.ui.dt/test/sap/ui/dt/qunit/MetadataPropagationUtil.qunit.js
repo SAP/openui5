@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	MetadataPropagationUtil,
 	OverlayRegistry,

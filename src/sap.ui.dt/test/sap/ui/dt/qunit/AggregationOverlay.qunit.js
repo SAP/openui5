@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/m/Page',
 	'sap/m/Button',
 	'sap/m/Panel',
-	'jquery.sap.global'
+	'sap/ui/thirdparty/jquery'
 ],
 function(
 	Overlay,
