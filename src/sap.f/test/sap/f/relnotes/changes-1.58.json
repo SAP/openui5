@@ -133,6 +133,12 @@
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Clone now includes actions",
         "references": []
+      },
+      {
+        "id": "55d98ab497bf5d25a8482cb124ce995a7f421864",
+        "type": "INETRNAL",
+        "text": "[FIX] tutorial.fiori2: Updated documentation link",
+        "references": []
       }
     ]
   }

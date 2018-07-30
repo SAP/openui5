@@ -55,6 +55,12 @@
         "type": "FEATURE",
         "text": " ODataTreeBinding: Add expand node to level API",
         "references": []
+      },
+      {
+        "id": "2bbb20c42fc05c44bad3f723f891048a1a86dac0",
+        "type": "FEATURE",
+        "text": " thirdparty: update es6-promise polyfill to version 4.2.4",
+        "references": []
       }
     ]
   }

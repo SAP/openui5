@@ -805,6 +805,60 @@
         "type": "FIX",
         "text": "sap.m.themes.base.SlideTile: Allignmnet issue of play-pause Icon in all themes and TileIndicator issue in HCW and HCB themes.",
         "references": []
+      },
+      {
+        "id": "266def302e0f14b040a4c4f921c15fba07dd5092",
+        "type": "FEATURE",
+        "text": " Form: allow Switch to be used as Form content",
+        "references": []
+      },
+      {
+        "id": "6bf5f365c6a9961cb68210f1ccfcf8229fcf64f0",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Keyboard flashing when item selected fixed",
+        "references": []
+      },
+      {
+        "id": "7ed245615a9fb1f57d5c7773d7b05cf06c300cbc",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Added filters are displayed now",
+        "references": []
+      },
+      {
+        "id": "bf97ffbb2515002d7a91f6e547f446ca8a5615eb",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: the menu is now closing after a second click",
+        "references": []
+      },
+      {
+        "id": "0f5d900f5deea2b94654f7c5599b2b5cd271782c",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Aria-expanded is now correctly updated",
+        "references": []
+      },
+      {
+        "id": "0859c9bca1ba75e8df1d25d9869b75a235387cc0",
+        "type": "FIX",
+        "text": " sap.m.Panel: Accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "3aa5c2472651c2dba3de3dc02735c1e5f847ddb7",
+        "type": "FIX",
+        "text": " sap.m.Select: aria-live in opened popover removed",
+        "references": []
+      },
+      {
+        "id": "2fe1af6130a82a45fae4bb78470583a0b6b1a3e7",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selecting item from SelectList works correctly on IE",
+        "references": []
+      },
+      {
+        "id": "90e3d89ba91fc6c0a652640bd20fdd1c1a6135b8",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : While grouping named model is ignored and always default model is taken without considering the model bind to items aggregation.",
+        "references": []
       }
     ]
   }

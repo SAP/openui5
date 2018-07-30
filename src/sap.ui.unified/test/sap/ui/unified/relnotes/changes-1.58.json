@@ -73,6 +73,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
         "references": []
+      },
+      {
+        "id": "37a1676bc27144768461f4e46357535117fbd557",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Picker button shows both years when needed",
+        "references": []
+      },
+      {
+        "id": "1f25202fad3488d9ba801bb4da599337b95ec80f",
+        "type": "FIX",
+        "text": " ui.unified.FileUploader: Documentation improved",
+        "references": []
       }
     ]
   }

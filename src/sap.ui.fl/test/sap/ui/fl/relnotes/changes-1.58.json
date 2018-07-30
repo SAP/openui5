@@ -73,6 +73,18 @@
         "type": "FIX",
         "text": " sap.ui.fl - invalidate cache on exit rta",
         "references": []
+      },
+      {
+        "id": "37e7d8eb70345bd742f36e17954c583f3d28d601",
+        "type": "FEATURE",
+        "text": " sap.ui.fl Support content security policy",
+        "references": []
+      },
+      {
+        "id": "9fcdce02bc9c2aacb126d021113ab905983da85e",
+        "type": "FIX",
+        "text": " sap.ui.fl - fix explicit registered changeHandler load",
+        "references": []
       }
     ]
   }
