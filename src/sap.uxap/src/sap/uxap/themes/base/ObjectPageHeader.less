@@ -214,8 +214,11 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifier {
 	font-size: 1.375rem;
 	padding-right: 1rem;
 	display: none;
-	vertical-align: baseline;
+	vertical-align: middle;
 	line-height: normal;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
 	.sapUxAPObjectPageHeaderStickied & {
 		display: inline-block;
 	}
