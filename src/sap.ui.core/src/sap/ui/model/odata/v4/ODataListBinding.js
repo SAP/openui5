@@ -550,7 +550,7 @@ sap.ui.define([
 		this.mAggregatedQueryOptions = undefined;
 		this.oAggregation = undefined;
 		this.aApplicationFilters = undefined;
-		this.oCachePromise = undefined;
+		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache;
 		this.oContext = undefined;
 		this.aContexts = undefined;
 		this.aFilters = undefined;

@@ -2353,7 +2353,7 @@ sap.ui.require([
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.oCachePromise, undefined);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.oContext, undefined,
 			"context removed as in ODPropertyBinding#destroy");
 		assert.strictEqual(oBinding.oDiff, undefined);

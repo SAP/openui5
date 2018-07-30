@@ -460,17 +460,6 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.destroy = function () {
-		this.oModel.bindingDestroyed(this);
-		this.mAggregatedQueryOptions = undefined;
-		this.mCacheByContext = undefined;
-		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
-		this.mCacheQueryOptions = undefined;
-		this.aChildCanUseCachePromises = undefined;
-		this.oContext = undefined;
-		this.oOperation = undefined;
-		this.mParameters = undefined;
-		this.mQueryOptions = undefined;
-		this.removeReadGroupLock();
 		if (this.oElementContext) {
 			this.oElementContext.destroy();
 			this.oElementContext = undefined;
@@ -479,6 +468,16 @@ sap.ui.define([
 			this.oReturnValueContext.destroy();
 			this.oReturnValueContext = undefined;
 		}
+		this.oModel.bindingDestroyed(this);
+		this.removeReadGroupLock();
+		this.mCacheByContext = undefined;
+		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
+		this.mCacheQueryOptions = undefined;
+		this.aChildCanUseCachePromises = SyncPromise.resolve();
+		this.oContext = undefined;
+		this.oOperation = undefined;
+		this.mParameters = undefined;
+		this.mQueryOptions = undefined;
 		ContextBinding.prototype.destroy.apply(this);
 	};
 
