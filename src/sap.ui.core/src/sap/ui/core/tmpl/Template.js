@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	"sap/base/Log",
 	"sap/base/assert",
-	'jquery.sap.sjax'
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		jQuery,
@@ -496,32 +496,33 @@ sap.ui.define([
 			if (bLoadTemplate) {
 
 				// load the template from the specified URL
-				var oResponse = jQuery.sap.sjax({
-					url : oTemplate.src,
-					dataType: "text"
-				});
+				jQuery.ajax({
+					url: oTemplate.src,
+					dataType: "text",
+					async: false,
+					success: function(data) {
+						// apply the content as template content
+						// set the id, type and control if defined in the object
+						sId = oTemplate.id;
+						sType = oTemplate.type;
+						sControl = oTemplate.control;
+						sContent = data;
 
-				// apply the content as template content
-				// set the id, type and control if defined in the object
-				if (oResponse.success) {
-					sId = oTemplate.id;
-					sType = oTemplate.type;
-					sControl = oTemplate.control;
-					sContent = oResponse.data;
-
-					//Check for inline template information
-					var rTmplInfo = /^<!--\sUI5:Template\stype=([a-z\/\-]*)\s(?:controller=([A-Za-z.]*)\s)?-->/,
-						aTmplInfo = sContent.match(rTmplInfo);
-					if (aTmplInfo) {
-						sType = aTmplInfo[1];
-						if (aTmplInfo.length == 3) {
-							sController = aTmplInfo[2];
+						//Check for inline template information
+						var rTmplInfo = /^<!--\sUI5:Template\stype=([a-z\/\-]*)\s(?:controller=([A-Za-z.]*)\s)?-->/,
+							aTmplInfo = sContent.match(rTmplInfo);
+						if (aTmplInfo) {
+							sType = aTmplInfo[1];
+							if (aTmplInfo.length == 3) {
+								sController = aTmplInfo[2];
+							}
+							sContent = sContent.substr(aTmplInfo[0].length);
 						}
-						sContent = sContent.substr(aTmplInfo[0].length);
+					},
+					error: function() {
+						throw new Error("The template could not be loaded from " + oTemplate.src + "!");
 					}
-				} else {
-					throw new Error("The template could not be loaded from " + oTemplate.src + "!");
-				}
+				});
 
 			} else {
 
