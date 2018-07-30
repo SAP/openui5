@@ -1197,6 +1197,30 @@ sap.ui.require([
 			});
 		});
 
+
+		QUnit.test("appdescr_ui5_removeModel", function(assert) {
+			return DescriptorInlineChangeFactory.create_ui5_removeModel({
+				"modelId" : "aModelId"
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_removeModel");
+			});
+		});
+
+		QUnit.test("appdescr_ui5_removeModel failure", function (assert) {
+			assert.throws(function(){
+				DescriptorInlineChangeFactory.create_ui5_removeModel({
+					"modelId" : {}
+				});
+			});
+			assert.throws(function(){
+				DescriptorInlineChangeFactory.create_ui5_removeModel({
+					"model" : "a.id"
+				});
+			});
+		});
+
+
 		QUnit.test("appdescr_ui5_addNewModelEnhanceWith", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 				"modelId" : "customer.existingModelId"
