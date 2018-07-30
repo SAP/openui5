@@ -177,7 +177,7 @@ sap.ui.define([
 		createTreeBindingAdapter("/bing/root", null, [], {});
 		assert.equal(oBinding.getPath(), "/bing/root", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		assert.ok(TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding"), "treeBinding class check");
+		assert.ok(oBinding.isA("sap.ui.model.ClientTreeBinding"), "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert) {

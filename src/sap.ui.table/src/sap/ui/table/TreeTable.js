@@ -214,12 +214,12 @@ sap.ui.define([
 		var oBinding = Element.prototype.getBinding.call(this, sName);
 
 		if (oBinding && sName === "rows" && !oBinding.getLength) {
-			if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/ODataTreeBinding")) {
+			if (oBinding.isA("sap.ui.model.odata.ODataTreeBinding")) {
 				// use legacy tree binding adapter
 				TreeBindingCompatibilityAdapter(oBinding, this);
-			} else if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/v2/ODataTreeBinding")) {
+			} else if (oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding")) {
 				oBinding.applyAdapterInterface();
-			} else if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding")) {
+			} else if (oBinding.isA("sap.ui.model.ClientTreeBinding")) {
 				ClientTreeBindingAdapter.apply(oBinding);
 			} else {
 				Log.error("Binding not supported by sap.ui.table.TreeTable");

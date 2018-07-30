@@ -4,6 +4,7 @@
 
 // Provides control sap.ui.table.Column.
 sap.ui.define([
+	"sap/ui/base/Object",
 	'sap/ui/core/Element',
 	'sap/ui/core/library',
 	'sap/ui/core/Popup',
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 function(
+	BaseObject,
 	Element,
 	coreLibrary,
 	Popup,
@@ -367,7 +369,7 @@ function(
 		 * rerendered. This is a popup and we use the instance check because of the
 		 * menu behind the getMenu function is lazy created when first accessed.
 		 */
-		if (oOrigin !== this.getTemplate() && !TableUtils.isInstanceOf(oOrigin, "sap/ui/table/ColumnMenu")) {
+		if (oOrigin !== this.getTemplate() && !BaseObject.isA(oOrigin, "sap.ui.table.ColumnMenu")) {
 			// changes on the template require to call invalidate on the column or table
 			Element.prototype.invalidate.apply(this, arguments);
 		}
@@ -503,7 +505,7 @@ function(
 	 */
 	Column.prototype.setMenu = function(oMenu) {
 		this.setAggregation("menu", oMenu, true);
-		this._bMenuIsColumnMenu = TableUtils.isInstanceOf(oMenu, "sap/ui/table/ColumnMenu");
+		this._bMenuIsColumnMenu = BaseObject.isA(oMenu, "sap.ui.table.ColumnMenu");
 		return this;
 	};
 

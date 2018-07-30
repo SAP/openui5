@@ -54,9 +54,9 @@ sap.ui.define([
 			this._settings = mSettings || {};
 
 			this._type = TableExtension.TABLETYPES.STANDARD;
-			if (TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
+			if (oTable.isA("sap.ui.table.TreeTable")) {
 				this._type = TableExtension.TABLETYPES.TREE;
-			} else if (TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
+			} else if (oTable.isA("sap.ui.table.AnalyticalTable")) {
 				this._type = TableExtension.TABLETYPES.ANALYTICAL;
 			}
 

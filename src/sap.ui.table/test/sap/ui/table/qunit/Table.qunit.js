@@ -3077,7 +3077,7 @@ sap.ui.define([
 		var oBinding = oTable.getBinding("rows");
 		var oBindingInfo = oTable.getBindingInfo("rows");
 		var oGetBindingLength = this.stub(oBinding, "getLength");
-		var oIsInstanceOf = this.stub(TableUtils, "isInstanceOf");
+		var oBindingIsA = this.stub(oBinding, "isA");
 		var oClock = sinon.useFakeTimers();
 
 		function testNoData(bVisible, sTestTitle) {
@@ -3128,19 +3128,18 @@ sap.ui.define([
 		testDataReceivedListener(false, "Data received");
 
 		// Client binding without data: NoData area becomes visible.
-		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
+		oBindingIsA.withArgs("sap.ui.model.ClientListBinding").returns(true);
 		oGetBindingLength.returns(0);
 		testUpdateTotalRowCount(true, "Client binding without data");
 
 		// Client binding with data: NoData area will be hidden.
-		TableUtils.isInstanceOf.restore();
-		oIsInstanceOf.restore();
-		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
+		oBindingIsA.restore();
+		oBindingIsA.withArgs("sap.ui.model.ClientTreeBinding").returns(true);
 		oGetBindingLength.returns(1);
 		testUpdateTotalRowCount(false, "Client binding with data");
 
 		// Binding removed: NoData area becomes visible.
-		oIsInstanceOf.restore();
+		oBindingIsA.restore();
 		oTable.unbindRows();
 		testUpdateTotalRowCount(true, "Binding removed");
 

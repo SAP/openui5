@@ -62,7 +62,7 @@ sap.ui.define([
 		});
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		assert.ok(TableUtils.isInstanceOf(oBinding, "sap/ui/model/odata/v2/ODataTreeBinding"), "treeBinding class check");
+		assert.ok(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), "treeBinding class check");
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert) {

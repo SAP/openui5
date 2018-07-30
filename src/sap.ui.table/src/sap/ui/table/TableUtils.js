@@ -4,6 +4,7 @@
 
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
+	"sap/ui/base/Object",
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	BaseObject,
 	Control,
 	ResizeHandler,
 	coreLibrary,
@@ -379,29 +381,13 @@ sap.ui.define([
 		canUsePendingRequestsCounter: function(oTable) {
 			var oBinding = oTable ? oTable.getBinding("rows") : null;
 
-			if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding")) {
+			if (BaseObject.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding")) {
 				return oBinding.bUseBatchRequests;
-			} else if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/TreeBinding")) {
+			} else if (BaseObject.isA(oBinding, "sap.ui.model.TreeBinding")) {
 				return false;
 			}
 
 			return true;
-		},
-
-		/**
-		 * Checks whether the given object is of the given type (given in AMD module syntax)
-		 * without the need of loading the types module.
-		 * @param {sap.ui.base.ManagedObject} oObject The object to check
-		 * @param {string} sType The type given in AMD module syntax
-		 * @returns {boolean}
-		 * @private
-		 */
-		isInstanceOf : function(oObject, sType) {
-			if (!oObject || !sType) {
-				return false;
-			}
-			var oType = sap.ui.require(sType);
-			return !!(oType && (oObject instanceof oType));
 		},
 
 		/**

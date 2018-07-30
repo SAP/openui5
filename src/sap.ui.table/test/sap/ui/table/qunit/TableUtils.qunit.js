@@ -794,6 +794,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("canUsePendingRequestsCounter", function(assert) {
+		var oBindingIsA = this.stub(oTable.getBinding("rows"), "isA");
+
 		assert.ok(TableUtils.canUsePendingRequestsCounter(), "No parameters passed: Returned true");
 		assert.ok(TableUtils.canUsePendingRequestsCounter(null), "Passed 'null': Returned true");
 
@@ -801,53 +803,23 @@ sap.ui.define([
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Rows not bound: Returned true");
 		oTable.getBinding.restore();
 
-		this.stub(TableUtils, "isInstanceOf").withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(true);
+		oBindingIsA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(true);
 		oTable.getBinding("rows").bUseBatchRequests = true;
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding using batch requests: Returned true");
 
 		oTable.getBinding("rows").bUseBatchRequests = false;
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding not using batch requests: Returned false");
 
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(false);
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(true);
+		oBindingIsA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(false);
+		oBindingIsA.withArgs("sap.ui.model.TreeBinding").returns(true);
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "TreeBinding: Returned false");
 
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(false);
+		oBindingIsA.withArgs("sap.ui.model.TreeBinding").returns(false);
 		oTable.getBinding("rows").bUseBatchRequests = true;
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Other binding: Returned true");
 
-		TableUtils.isInstanceOf.restore();
+		oBindingIsA.restore();
 		delete oTable.getBinding("rows").bUseBatchRequests;
-	});
-
-	QUnit.test("isInstanceOf", function(assert) {
-		var done = assert.async();
-
-		function checkLoaded(oObj) {
-			if (!oObj || !oObj.prototype || !oObj.prototype.destroy) {
-				//Check whether namespace is already available and whether it is not the lazy initialization hook
-				return false;
-			}
-			return true;
-		}
-
-		assert.equal(TableUtils.isInstanceOf(oTable, null), false, "No type");
-		assert.equal(TableUtils.isInstanceOf(null, "sap/ui/table/AnalyticalTable"), false, "No object");
-
-		assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded before check");
-		assert.equal(TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable"), false, "Not of type sap.ui.table.AnalyticalTable");
-		assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
-
-		sap.ui.require([
-			"sap/ui/table/AnalyticalTable"
-		], function(AnalyticalTable) {
-			var oAnalyticalTable = new AnalyticalTable();
-			assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable loaded before check");
-			assert.equal(TableUtils.isInstanceOf(oAnalyticalTable, "sap/ui/table/AnalyticalTable"), true, "Is of type sap.ui.table.AnalyticalTable");
-			assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable loaded after check");
-			oAnalyticalTable.destroy();
-			done();
-		});
 	});
 
 	QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {

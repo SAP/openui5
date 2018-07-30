@@ -935,7 +935,7 @@ sap.ui.define([
 
 	QUnit.test("Menu Creation", function (assert) {
 		var oMenu = this._oColumn._createMenu();
-		assert.ok(TableUtils.isInstanceOf(oMenu, "sap/ui/table/AnalyticalColumnMenu"), "Menu available");
+		assert.ok(oMenu.isA("sap.ui.table.AnalyticalColumnMenu"), "Menu available");
 		assert.equal(oMenu.getId(), this._oColumn.getId() + "-menu", "Menu Id");
 	});
 });
