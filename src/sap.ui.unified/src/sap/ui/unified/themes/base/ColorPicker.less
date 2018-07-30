@@ -4,6 +4,7 @@
 /* =========================================== */
 
 @_sap_ui_unified_ColorPicker_CircleSize: 13px;
+@_sap_ui_commons_ColorPicker_CircleSize: 8px;
 
 .sapUiColorPicker-ColorPickerMatrix {
 	background-color: @sapUiBaseBG;
@@ -27,7 +28,14 @@
 			display: none;
 		}
 		.sapUiColorPicker-swatches {
-		  margin-left: 0.6rem;
+			margin-left: 0.6rem;
+		}
+
+		.sapUiColorPicker-ColorPickerInputFieldsLeft,
+		.sapUiColorPicker-ColorPickerInputFieldsRight {
+			margin-top: 5px;
+			margin-left: 2px;
+			margin-right: 4px;
 		}
 	}
 	&.sapUnifiedColorPicker {
@@ -169,8 +177,8 @@
 .sapUiColorPicker-ColorPickerMatrix:not(.sapUnifiedColorPicker) .sapUiColorPicker-ColorPickerBox > .sapUiColorPicker-ColorPickerCircle {
 	position: absolute;
 	box-sizing: border-box;
-	width: @_sap_ui_unified_ColorPicker_CircleSize;
-	height: @_sap_ui_unified_ColorPicker_CircleSize;
+	width: @_sap_ui_commons_ColorPicker_CircleSize;
+	height: @_sap_ui_commons_ColorPicker_CircleSize;
 	border-width: 1px;
 	border-style: solid;
 	border-color: @sapUiContentContrastFocusColor;

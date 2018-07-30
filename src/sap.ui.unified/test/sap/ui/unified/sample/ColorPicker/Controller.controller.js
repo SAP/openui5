@@ -1,6 +1,6 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller'
-	], function(Controller, ColorPicker) {
+	], function(Controller) {
 	"use strict";
 
 	var ColorPicker = Controller.extend("sap.ui.unified.sample.ColorPicker.Controller", {
