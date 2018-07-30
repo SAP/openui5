@@ -1,10 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/AggregationFilled",
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/actions/EnterText'
-], function (Opa5, AggregationFilled, Press, PropertyStrictEquals, EnterText) {
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function (Opa5, AggregationFilled, Press, PropertyStrictEquals) {
 	"use strict";
 
 	var sTreeTableId = "ruleList",
@@ -154,7 +153,7 @@ sap.ui.define([
 				iSelectAdditionalRuleSet: function (sValue) {
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name:"title", value:sValue}),
+						matchers: new PropertyStrictEquals({ name: "title", value: sValue }),
 						actions: new Press(),
 						success: function (oStandartListItem) {
 							Opa5.assert.ok(oStandartListItem[0].getProperty("title") === sValue, "list item with value " + sValue + "was pressed");
@@ -162,15 +161,28 @@ sap.ui.define([
 						errorMessage: "List item was not found"
 					});
 				},
+
 				iPressLoadAdditionalRuleSetButton: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({name:"text", value:"Load"}),
+						matchers: new PropertyStrictEquals({ name: "text", value: "Load" }),
 						actions: new Press(),
 						success: function (oButton) {
-							Opa5.assert.ok(oButton[0].getProperty("text") === "Load", "Button 'Load' was pressed ");
+							Opa5.assert.ok(oButton[0].getProperty("text") === "Load", "Button 'Load' was pressed");
 						},
 						errorMessage: "Button was not pressed"
+					});
+				},
+
+				iClickRow: function (sName) {
+					return this.waitFor({
+						controlType: "sap.m.Text",
+						matchers: new PropertyStrictEquals({ name: "text", value: sName }),
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Row " + sName + " was pressed.");
+						},
+						errorMessage: "The row was not pressed"
 					});
 				}
 			},
@@ -186,6 +198,29 @@ sap.ui.define([
 							Opa5.assert.ok(true, "TreeTable should have rules");
 						},
 						errorMessage: "No rules in the TreeTable"
+					});
+				},
+
+				iShouldSeeVisibleRuleDetailsPage: function () {
+					return this.waitFor({
+						id: "ruleDetailsPage",
+						success: function (oPage) {
+							Opa5.assert.ok(oPage.getVisible(), "Rule details page should be visible.");
+						},
+						errorMessage: "Rule details page is not visible."
+					});
+				},
+
+				iShouldSeeHiddenRuleDetailsPage: function () {
+					return this.waitFor({
+						autoWait: false,
+						check: function () {
+							return Opa5.getWindow().jQuery("#sap-ui-invisible-ruleDetailsPage").length > 0;
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Rule details page should be hidden.");
+						},
+						errorMessage: "Rule details page is not hidden."
 					});
 				},
 

@@ -376,12 +376,17 @@ sap.ui.define([
 		 * @param {Event} oEvent TreeTable event
 		 */
 		onSelectedRuleSets: function (oEvent) {
-			var bShowRuleProperties = true;
+			var bShowRuleProperties = true,
+				oSelectedRule = this.model.getProperty("/selectedRule"),
+				bAdditionalRulesetsTab = oEvent.getParameter("selectedKey") === "additionalRulesets";
+
+			if (bAdditionalRulesetsTab || !oSelectedRule) {
+				bShowRuleProperties = false;
+			}
 
 			// Ensure we don't make unnecessary requests. The requests will be made only
 			// the first time the user clicks AdditionalRulesets tab.
-			if (!this.bAdditionalRulesetsLoaded && oEvent.getParameter("selectedKey") === "additionalRulesets") {
-				bShowRuleProperties = false;
+			if (!this.bAdditionalRulesetsLoaded && bAdditionalRulesetsTab) {
 				this.rulesViewContainer.setBusyIndicatorDelay(0);
 				this.rulesViewContainer.setBusy(true);
 				CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS, {
@@ -781,24 +786,29 @@ sap.ui.define([
 					aLibNames: { publicRules: aLibNames, internalRules: aLibNames }
 				});
 				this.model.setProperty("/loadingAdditionalRuleSets", true);
+				this.model.setProperty("/showRuleProperties", true);
 			} else {
 				MessageToast.show("Select additional RuleSet to be loaded.");
 			}
 		},
 
-		onCellClick: function (event) {
-			if (event.getParameter("rowBindingContext")) {
-				var selection = event.getParameter("rowBindingContext").getObject(),
-					selectedRule;
+		onCellClick: function (oEvent) {
+			if (oEvent.getParameter("rowBindingContext")) {
+				var oSelection = oEvent.getParameter("rowBindingContext").getObject(),
+					oSelectedRule,
+					sRule = "",
+					bShowRuleProperties = false;
 
-				if (selection.id) {
-					selectedRule = this.getMainModelFromTreeViewModel(selection);
-					var stringifiedJson = this.createRuleString(selectedRule);
-					this.model.setProperty("/selectedRuleStringify", stringifiedJson);
+				if (oSelection.id && oSelection.type !== "lib") {
+					oSelectedRule = this.getMainModelFromTreeViewModel(oSelection);
+					sRule = this.createRuleString(oSelectedRule);
+					bShowRuleProperties = true;
 				}
-				this.model.setProperty("/selectedRule", selectedRule);
-			}
 
+				this.model.setProperty("/selectedRuleStringify", sRule);
+				this.model.setProperty("/selectedRule", oSelectedRule);
+				this.model.setProperty("/showRuleProperties", bShowRuleProperties);
+			}
 		},
 		getMainModelFromTreeViewModel: function (selectedRule) {
 

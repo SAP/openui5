@@ -21,6 +21,19 @@ sap.ui.define([
 		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(EXPECTED_RULES_COUNT);
 	});
 
+	opaTest("Should show/hide Rule details page on library/rule click", function (Given, When, Then) {
+
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
+
+		When.onTheRulesPage.iClickRow("sap.ui.core");
+
+		Then.onTheRulesPage.iShouldSeeHiddenRuleDetailsPage();
+
+		When.onTheRulesPage.iClickRow("EventBus publish");
+
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
+	});
+
 	opaTest("Should deselect all rules in TreeTable", function (Given, When, Then) {
 
 		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-selall", "The parent note button in tree table was pressed", "The parent note button in tree table is not there");
@@ -206,7 +219,15 @@ sap.ui.define([
 
 	opaTest("Should see the same selection after navigation trough tabs ", function (Given, When, Then) {
 
+		// Switch tabs a few times to ensure correct visibility state of the Rule Details Page at all times.
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
 		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets");
+		Then.onTheRulesPage.iShouldSeeHiddenRuleDetailsPage();
+		When.onTheRulesPage.iPressIconTabHeader("availableRules");
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
+		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets");
+		Then.onTheRulesPage.iShouldSeeHiddenRuleDetailsPage();
+
 		When.onTheRulesPage.iPressIconTabHeader("availableRules");
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(44, "Total selection count should be: 44", "Total selection count is not 44");
 	});
@@ -225,6 +246,7 @@ sap.ui.define([
 
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(1, 1);
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(44, "Total selection count should be: 44", "Total selection count is not 44");
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
 	});
 
 	opaTest("Should load additional rule and keep previous selection", function (Given, When, Then) {

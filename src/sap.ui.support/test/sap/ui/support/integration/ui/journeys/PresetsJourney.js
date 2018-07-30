@@ -325,6 +325,6 @@ sap.ui.define([
 			.and.iShouldSeeSelectedPreset(testPreset._forTestTitleIfModified);
 
 		// finalize all tests
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownSupportAssistantFrame();
 	});
 });
