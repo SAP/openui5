@@ -296,7 +296,7 @@ sap.ui.define([
 				if (!sName) {
 					var sMessage = "A name for the " + sType.toLowerCase() + " has to be defined";
 					Log.error(sMessage, this);
-					throw Error(sMessage, this);
+					throw Error(sMessage);
 				}
 
 			}
