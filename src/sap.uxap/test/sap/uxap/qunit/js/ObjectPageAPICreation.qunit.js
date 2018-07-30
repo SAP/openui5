@@ -241,10 +241,10 @@
 			sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle() //subsection is promoted
 		};
 
-		setTimeout(function () {
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			sectionIsSelected(oObjectPage, assert, oExpected);
 			done();
-		}, this.iLoadingDelay);
+		});
 
 		helpers.renderObject(this.oObjectPage);
 	});
@@ -280,7 +280,7 @@
 			oExpected,
 			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
 
-		setTimeout(function () {
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 
 			// initially, the second section is selected (from the module setup)
 			oExpected = {
@@ -300,7 +300,7 @@
 			};
 			sectionIsSelected(oObjectPage, assert, oExpected);
 			done();
-		}, this.iLoadingDelay);
+		});
 
 		helpers.renderObject(this.oObjectPage);
 	});
@@ -317,7 +317,7 @@
 		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
 		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
 
-		setTimeout(function () {
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 
 			// initially, the second section is selected (from the module setup)
 			oExpected = {
@@ -341,7 +341,7 @@
 				assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
 				done();
 			}, 0);
-		}, this.iLoadingDelay);
+		});
 
 		helpers.renderObject(this.oObjectPage);
 	});
