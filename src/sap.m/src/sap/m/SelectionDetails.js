@@ -149,6 +149,9 @@ function(
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
 	SelectionDetails.prototype.init = function() {
+		// Indicates whether the labels are wrapped
+		this._bWrapLabels = false;
+
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this.setAggregation("_button", new Button({
 			id: this.getId() + "-button",
@@ -228,6 +231,35 @@ function(
 			], this._handleNavLazy.bind(this, title, content));
 		}
 
+		return this;
+	};
+
+	/**
+	 * Returns <code>true</code> if the labels of the {@link sap.m.SelectionDetailsItemLine} elements are wrapped, <code>false</code> otherwise.
+	 * @returns {boolean} True if the labels of the {@link sap.m.SelectionDetailsItemLine} elements are wrapped, false otherwise.
+	 * @public
+	 * @function
+	 * @name sap.m.SelectionDetailsFacade#getWrapLabels
+	 */
+	SelectionDetails.prototype.getWrapLabels = function () {
+		return this._bWrapLabels;
+	};
+
+	/**
+	 * Enables line wrapping for the labels of the of the {@link sap.m.SelectionDetailsItemLine} elements.
+	 * @param {boolean} bWrap True to apply wrapping to the labels of the {@link sap.m.SelectionDetailsItemLine} elements.
+	 * @returns {sap.m.SelectionDetails} To ensure method chaining, returns SelectionDetails.
+	 * @public
+	 * @function
+	 * @name sap.m.SelectionDetailsFacade#setWrapLabels
+	 */
+	SelectionDetails.prototype.setWrapLabels = function (bWrap) {
+		var oPopover = this.getAggregation("_popover");
+		this._bWrapLabels = bWrap;
+
+		if (oPopover && oPopover.isOpen()) {
+			oPopover.invalidate();
+		}
 		return this;
 	};
 
@@ -407,7 +439,8 @@ function(
 		"attachActionPress", "detachActionPress",
 		"addAction", "removeAction", "removeAllActions",
 		"addActionGroup", "removeActionGroup", "removeAllActionGroups",
-		"navTo"
+		"navTo",
+		"getWrapLabels", "setWrapLabels"
 	];
 
 	/**
@@ -636,6 +669,12 @@ function(
 					onAfterRendering: this._updatePopoverContentHeight.bind(this)
 				});
 			}
+
+			oPopover.addEventDelegate({
+				onBeforeRendering: function () {
+					this.getWrapLabels() ? oPopover.addStyleClass("sapMSDWrapLabels") : oPopover.removeStyleClass("sapMSDWrapLabels");
+				}.bind(this)
+			});
 
 			this.setAggregation("_popover", oPopover, true);
 		}
