@@ -2507,7 +2507,7 @@
 		{
 		  "id": "sap.m.sample.MessagePopoverMessageHandling",
 		  "name": "Message Popover - Message Handling",
-		  "description": "The message handling concept connects intuitively an error inside the page (such as input validation error) with an error, visualized as an item in a message popover."
+		  "description": "The message handling concept sample shows how you can connect an error inside the page (such as input validation error) with an error, visualized as an item in a message popover."
 		},
 		{
 		  "id": "sap.m.sample.MessageViewInsideDialog",

@@ -97,10 +97,13 @@ sap.ui.define([
 	 * <li> type - The type of message </li>
 	 * <li> title/subtitle - The title and subtitle of the message</li>
 	 * <li> description - The long text description of the message</li>
+	 * <li> activeTitle - Determines whether the title of the item is interactive</li>
 	 * </ul>
 	 * <strong><i>Usage</i></strong>
 	 * <br><br>
 	 * As part of the messaging concept, MessageView provides a way to centrally manage messages and show them to the user without additional work for the developer.
+	 *
+	 * It also exposes an event {@link sap.m.MessageView#activeTitlePress}, which can be used for navigation from a message to the source of the issue.
 	 * <br><br>
 	 * @author SAP SE
 	 * @version ${version}
