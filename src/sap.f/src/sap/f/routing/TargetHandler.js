@@ -140,6 +140,10 @@ sap.ui.define(['sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/ba
 					oParams : oCurrentParams
 				};
 
+				if (!isNavigationContainer(oCurrentContainer)) {
+					continue;
+				}
+
 				for (i = 0; i < aResults.length; i++) {
 					oResult = aResults[i];
 
@@ -232,6 +236,10 @@ sap.ui.define(['sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/ba
 				InstanceManager.closeAllLightBoxes();
 			}
 		};
+
+		function isNavigationContainer(oContainer) {
+			return oContainer && oContainer.isA(["sap.m.NavContainer", "sap.m.SplitContainer", "sap.f.FlexibleColumnLayout"]);
+		}
 
 		return TargetHandler;
 
