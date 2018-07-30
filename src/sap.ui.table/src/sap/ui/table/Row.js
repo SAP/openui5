@@ -365,6 +365,10 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		return Element.prototype.destroy.apply(this, arguments);
 	};
 
+	Row.prototype.invalidate = function() {
+		return this;
+	};
+
 	/**
 	 * Creates a ghost of the row which will be used during drag and drop actions.
 	 *

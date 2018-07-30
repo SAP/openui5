@@ -433,8 +433,8 @@ sap.ui.define([
 			var iNewHeight = iLocationY - $This.find(".sapUiTableCCnt").offset().top - $Ghost.height() - $This.find(".sapUiTableFtr").height();
 
 			// TBD: Move this to the table code
-			this._setRowContentHeight(iNewHeight);
 			this._updateRows(this._calculateRowsToDisplay(iNewHeight), TableUtils.RowsUpdateReason.Resize);
+			this._setRowContentHeight(iNewHeight);
 
 			$Ghost.remove();
 			this.$("rzoverlay").remove();
@@ -546,7 +546,7 @@ sap.ui.define([
 
 			// do scroll if needed
 			var iScrollTriggerAreaWidth = 40,
-				oScrollArea = this.getDomRef("sapUiTableCtrlScr"),
+				oScrollArea = this.getDomRef("sapUiTableColHdrScr"),
 				$ScrollArea = jQuery(oScrollArea),
 				oScrollAreaRect = oScrollArea.getBoundingClientRect(),
 				iScrollAreaWidth = $ScrollArea.outerWidth(),
@@ -685,7 +685,7 @@ sap.ui.define([
 					iStep = (-1) * iStep;
 				}
 				oTable._mTimeouts.horizontalReorderScrollTimerId = setTimeout(ReorderHelper.doScroll.bind(oTable, oTable, bForward), 60);
-				var $Scr = oTable.$("sapUiTableCtrlScr");
+				var $Scr = oTable.$("sapUiTableColHdrScr");
 				var ScrollLeft = oTable._bRtlMode ? "scrollLeftRTL" : "scrollLeft";
 				$Scr[ScrollLeft]($Scr[ScrollLeft]() + iStep);
 			}

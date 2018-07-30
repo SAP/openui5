@@ -742,14 +742,12 @@ function(
 
 		this.$()
 			.parents(".sapUiTableCHT")
-			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]') // all td cells in this column header
-			.filter(":not([colspan]):visible") // only visible without a colspan
-			.first()
-			.find(".sapUiTableColCell")
+			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]:not([colspan]):not(.sapUiTableColInvisible):first .sapUiTableColCell')
 			.toggleClass("sapUiTableColSF", bSorted || bFiltered)
 			.toggleClass("sapUiTableColFiltered", bFiltered)
 			.toggleClass("sapUiTableColSorted", bSorted)
 			.toggleClass("sapUiTableColSortedD", bSorted && this.getSortOrder() === SortOrder.Descending);
+
 		oTable._getAccExtension().updateAriaStateOfColumn(this);
 	};
 

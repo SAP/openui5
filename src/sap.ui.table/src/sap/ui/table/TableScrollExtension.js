@@ -1139,14 +1139,12 @@ sap.ui.define([
 				iScrollPadding += oTableSizes.tableRowHdrScrWidth;
 			}
 
-			if (oTable.getRows().length > 0) {
-				if (oTable._bRtlMode) {
-					oHSb.style.marginRight = iScrollPadding + "px";
-					oHSb.style.marginLeft = "";
-				} else {
-					oHSb.style.marginLeft = iScrollPadding + "px";
-					oHSb.style.marginRight = "";
-				}
+			if (oTable._bRtlMode) {
+				oHSb.style.marginRight = iScrollPadding + "px";
+				oHSb.style.marginLeft = "";
+			} else {
+				oHSb.style.marginLeft = iScrollPadding + "px";
+				oHSb.style.marginRight = "";
 			}
 
 			var oHSbContent = oTable.getDomRef("hsb-content");

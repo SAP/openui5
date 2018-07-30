@@ -758,6 +758,37 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			destroyTables();
+		},
+		testAsync: function (mTestConfig) {
+			return new Promise(function(resolve) {
+				function onRowsUpdated() {
+					if (Device.browser.msie) {
+						/* BCP: 1780405070 */
+						window.setTimeout(function() {
+							mTestConfig.test();
+							resolve();
+						}, 1000);
+					} else {
+						mTestConfig.test();
+						resolve();
+					}
+				}
+
+				var fnOnAfterRendering = function() {
+					oTable.removeEventDelegate(fnOnAfterRendering);
+					oTable.attachEventOnce("_rowsUpdated", onRowsUpdated);
+				};
+
+				if (mTestConfig.onAfterRendering) {
+					oTable.addEventDelegate({
+						onAfterRendering: fnOnAfterRendering
+					});
+				} else {
+					oTable.attachEventOnce("_rowsUpdated", onRowsUpdated);
+				}
+
+				mTestConfig.act();
+			});
 		}
 	});
 
@@ -790,76 +821,79 @@ sap.ui.define([
 	});
 
 	QUnit.test("Collapse / Expand", function(assert) {
+		var done = assert.async();
 		var oBinding = oTable.getBinding("rows");
-		var oClock = sinon.useFakeTimers();
+		var that = this;
 
 		assert.equal(oTable._getTotalRowCount(), 8, "Row count before Grouping");
 
-		oTable.setGroupBy(oTable.getColumns()[0]);
-		oClock.tick(50);
-		assert.equal(oTable._getTotalRowCount(), 10, "Row count after Grouping");
-
-		Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), false);
-		oClock.tick(50);
-		assert.equal(oTable._getTotalRowCount(), 6, "Row count after Collapse");
-		assert.ok(!oBinding.isExpanded(0), "!Expanded");
-
-		Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), true);
-		oClock.tick(50);
-		assert.equal(oTable._getTotalRowCount(), 10, "Row count after Expand");
-		assert.ok(oBinding.isExpanded(0), "Expanded");
-
-		Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
-		oClock.tick(50);
-		assert.equal(oTable._getTotalRowCount(), 6, "Row count after Toggle");
-		assert.ok(!oBinding.isExpanded(0), "!Expanded");
-
-		Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
-		oClock.tick(50);
-		assert.equal(oTable._getTotalRowCount(), 10, "Row count after Toggle");
-		assert.ok(oBinding.isExpanded(0), "Expanded");
-
-		oClock.restore();
+		this.testAsync({
+			act: function() {
+				oTable.setGroupBy(oTable.getColumns()[0]);
+			},
+			test: function() {
+				assert.equal(oTable._getTotalRowCount(), 10, "Row count after Grouping");
+			},
+			onAfterRendering: true
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), false);
+				},
+				test: function() {
+					assert.equal(oTable._getTotalRowCount(), 6, "Row count after Collapse");
+					assert.ok(!oBinding.isExpanded(0), "!Expanded");
+				}
+			});
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), true);
+				},
+				test: function() {
+					assert.equal(oTable._getTotalRowCount(), 10, "Row count after Expand");
+					assert.ok(oBinding.isExpanded(0), "Expanded");
+				}
+			});
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
+				},
+				test: function() {
+					assert.equal(oTable._getTotalRowCount(), 6, "Row count after Toggle");
+					assert.ok(!oBinding.isExpanded(0), "!Expanded");
+				}
+			});
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
+				},
+				test: function() {
+					assert.equal(oTable._getTotalRowCount(), 10, "Row count after Toggle");
+					assert.ok(oBinding.isExpanded(0), "Expanded");
+				}
+			});
+		}).then(done);
 	});
 
 	QUnit.test("Reset Grouping", function(assert) {
 		var done = assert.async();
+		var that = this;
 
 		assert.equal(oTable._getTotalRowCount(), 8, "Row count before grouping");
 
-		function testAsync(mTestConfig) {
-			var fnPromiseResolver;
-			var oPromise = new Promise(function(resolve) {
-				fnPromiseResolver = resolve;
-			});
-
-			oTable.attachEventOnce("_rowsUpdated", function() {
-				if (Device.browser.msie) {
-					/* BCP: 1780405070 */
-					window.setTimeout(function() {
-						mTestConfig.test();
-						fnPromiseResolver();
-					}, 1000);
-				} else {
-					mTestConfig.test();
-					fnPromiseResolver();
-				}
-			});
-
-			mTestConfig.act();
-
-			return oPromise;
-		}
-
-		testAsync({
+		this.testAsync({
 			act: function() {
 				oTable.setGroupBy(oTable.getColumns()[0]);
 			},
 			test: function() {
 				assert.equal(oTable._getTotalRowCount(), 10, "Row count after grouping");
-			}
+			},
+			onAfterRendering: true
 		}).then(function() {
-			return testAsync({
+			return that.testAsync({
 				act: function() {
 					oTable.setEnableGrouping(false);
 				},
