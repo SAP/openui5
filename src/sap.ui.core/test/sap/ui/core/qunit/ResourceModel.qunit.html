@@ -43,13 +43,13 @@
 	<!-- Test functions -->
 	<script>
 
-	sap.ui.require(['sap/base/i18n/ResourceBundle'], function(ResourceBundle) {
+	sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/ui/model/resource/ResourceModel'], function(ResourceBundle, ResourceModel) {
 		sap.ui.localResources("testdata");
 		var oModel;
 
 		QUnit.module("Resource Model: Resources bundle loaded via name", {
 			beforeEach: function() {
-				oModel = new sap.ui.model.resource.ResourceModel({bundleName: "testdata.messages"});
+				oModel = new ResourceModel({bundleName: "testdata.messages"});
 				sap.ui.getCore().setModel(oModel);
 			},
 			afterEach: function() {
@@ -66,7 +66,7 @@
 			oLabel.placeAt("target1");
 
 			assert.ok(oModel, "model must exist after creation");
-			assert.ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+			assert.ok(oModel instanceof ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 			oLabel.destroy();
 		});
 
@@ -95,7 +95,7 @@
 
 		QUnit.module("Resource Model: Resources bundle loaded via name / set Model with alias", {
 			beforeEach: function() {
-				oModel = new sap.ui.model.resource.ResourceModel({bundleName: "testdata.messages"});
+				oModel = new ResourceModel({bundleName: "testdata.messages"});
 				sap.ui.getCore().setModel(oModel, "i18n");
 			},
 			afterEach: function() {
@@ -112,7 +112,7 @@
 			oLabel.placeAt("target1");
 
 			assert.ok(oModel, "model must exist after creation");
-			assert.ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+			assert.ok(oModel instanceof ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 			oLabel.destroy();
 		});
 
@@ -141,7 +141,7 @@
 
 		QUnit.module("Resource Model: Resources bundle loaded via url", {
 			beforeEach: function() {
-				oModel = new sap.ui.model.resource.ResourceModel({bundleUrl: "./testdata/messages.properties"});
+				oModel = new ResourceModel({bundleUrl: "./testdata/messages.properties"});
 				sap.ui.getCore().setModel(oModel, "i18n");
 			},
 			afterEach: function() {
@@ -157,7 +157,7 @@
 			oLabel.placeAt("target1");
 
 			assert.ok(oModel, "model must exist after creation");
-			assert.ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+			assert.ok(oModel instanceof ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 
 			assert.ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
 			assert.ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
@@ -254,7 +254,7 @@
 				this.jQuerySapResources = this.spy(ResourceBundle, "create");
 
 				// Create the model with the existing bundle
-				this.oModel = new sap.ui.model.resource.ResourceModel({
+				this.oModel = new ResourceModel({
 					bundle: this.oBundle,
 					enhanceWith: opts && opts.enhanceWith
 				});
@@ -357,7 +357,7 @@
 					this.oModel = opts.model.apply(this);
 				} else {
 					// Create the model with the existing bundle
-					this.oModel = new sap.ui.model.resource.ResourceModel({
+					this.oModel = new ResourceModel({
 						bundle: this.oBundle
 					});
 				}
@@ -452,7 +452,7 @@
 		QUnit.test("bundle, bundleUrl", function(assert) {
 			this.prepare({
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						// Also provide bundleUrl to allow re-loading the bundle on localizationChange
 						bundleUrl: "./testdata/messages.properties"
@@ -466,7 +466,7 @@
 		QUnit.test("bundle, bundleName", function(assert) {
 			this.prepare({
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						// Also provide bundleName to allow re-loading the bundle on localizationChange
 						bundleName: "testdata.messages"
@@ -480,7 +480,7 @@
 		QUnit.test("bundle, bundleName, bundleUrl", function(assert) {
 			this.prepare({
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						// Also provide bundleName and bundleUrl to allow re-loading the bundle on localizationChange
 						// "bundleUrl" should be ignored as "bundleName" is present
@@ -502,7 +502,7 @@
 					});
 				},
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						// Locale should not be used at all as there is no "bundleName" or "bundleUrl"
 						bundleLocale: "de"
@@ -542,7 +542,7 @@
 					});
 				},
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						// Also provide bundleUrl and bundleLocale to allow re-loading the bundle on localizationChange
 						bundleLocale: "de",
@@ -563,7 +563,7 @@
 					});
 				},
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						// Also provide bundleName and bundleLocale to allow re-loading the bundle on localizationChange
 						bundleLocale: "de",
@@ -584,7 +584,7 @@
 					});
 				},
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						// Also provide bundleUrl, bundleName and bundleLocale to allow re-loading the bundle on localizationChange
 						bundleLocale: "de",
@@ -612,7 +612,7 @@
 					this.jQuerySapResources = this.spy(ResourceBundle, "create");
 
 					// Create the model with the existing bundle
-					this.oModel = new sap.ui.model.resource.ResourceModel({
+					this.oModel = new ResourceModel({
 						bundle: this.oBundle,
 						enhanceWith: opts && opts.enhanceWith,
 						async: true
@@ -740,7 +740,7 @@
 						this.oModel = opts.model.apply(this);
 					} else {
 						// Create the model with the existing bundle
-						this.oModel = new sap.ui.model.resource.ResourceModel({
+						this.oModel = new ResourceModel({
 							bundle: this.oBundle,
 							async: true
 						});
@@ -870,7 +870,7 @@
 		QUnit.test("bundle, bundleUrl", function(assert) {
 			return this.prepare({
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						async: true,
 						// Also provide bundleUrl to allow re-loading the bundle on localizationChange
@@ -885,7 +885,7 @@
 		QUnit.test("bundle, bundleName", function(assert) {
 			return this.prepare({
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						async: true,
 						// Also provide bundleName to allow re-loading the bundle on localizationChange
@@ -900,7 +900,7 @@
 		QUnit.test("bundle, bundleName, bundleUrl", function(assert) {
 			return this.prepare({
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						async: true,
 						// Also provide bundleName and bundleUrl to allow re-loading the bundle on localizationChange
@@ -926,7 +926,7 @@
 			var jQuerySapResources = this.spy(ResourceBundle, "create");
 
 			// Create the model with the existing bundle
-			var oModel = new sap.ui.model.resource.ResourceModel({
+			var oModel = new ResourceModel({
 				bundle: oBundle,
 				async: true,
 				// Locale should not be used at all as there is no "bundleName" or "bundleUrl"
@@ -980,7 +980,7 @@
 					});
 				},
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						async: true,
 						// Also provide bundleUrl and bundleLocale to allow re-loading the bundle on localizationChange
@@ -1003,7 +1003,7 @@
 					});
 				},
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						async: true,
 						// Also provide bundleName and bundleLocale to allow re-loading the bundle on localizationChange
@@ -1026,7 +1026,7 @@
 					});
 				},
 				model: function() {
-					return new sap.ui.model.resource.ResourceModel({
+					return new ResourceModel({
 						bundle: this.oBundle,
 						async: true,
 						// Also provide bundleUrl, bundleName and bundleLocale to allow re-loading the bundle on localizationChange
@@ -1046,7 +1046,7 @@
 				oLabel.placeAt("target1");
 				oLabel2 = new sap.ui.testlib.TestButton("myLabel2", {text: "{async>TEST_TEXT}"});
 				oLabel2.placeAt("target1");
-				oModel = new sap.ui.model.resource.ResourceModel({bundleName: "testdata.messages", async: true});
+				oModel = new ResourceModel({bundleName: "testdata.messages", async: true});
 				sap.ui.getCore().setModel(oModel, "async");
 			},
 			afterEach: function() {
@@ -1064,7 +1064,7 @@
 				var done = assert.async();
 				assert.expect(13);
 				assert.ok(oModel, "model must exist after creation");
-				assert.ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+				assert.ok(oModel instanceof ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 
 				assert.ok(oModel.bAsync, "model is in async mode");
 				assert.equal(oModel.sDefaultBindingMode, sap.ui.model.BindingMode.OneWay, "Default binding mode is OneWay");
@@ -1180,7 +1180,7 @@
 			});
 			oBtn.placeAt("target1");
 
-			var oAsyncModel = new sap.ui.model.resource.ResourceModel({
+			var oAsyncModel = new ResourceModel({
 				bundleName: "testdata.messages",
 				async: true
 			});
@@ -1211,7 +1211,7 @@
 			});
 			oBtn.placeAt("target1");
 
-			var oSyncModel = new sap.ui.model.resource.ResourceModel({
+			var oSyncModel = new ResourceModel({
 				bundleName: "testdata.messages",
 				async: false
 			});
@@ -1224,6 +1224,27 @@
 			oBtn.destroy();
 			oSyncModel.destroy();
 
+		});
+
+		QUnit.module("Resource Model: Exotic scenarios");
+
+		QUnit.test("Invalid resource bundle name", function(assert){
+			var fnToUrlSpy = this.spy(sap.ui.require, "toUrl");
+			new ResourceModel({
+				bundleName: ".testdata.messages",
+			});
+			assert.ok(fnToUrlSpy.calledWith("testdata/messages"), "sap.ui.require.toUrl was called without a leading slash.");
+			new ResourceModel({
+				bundleName: "/testdata/messages",
+			});
+			assert.ok(fnToUrlSpy.calledWith("testdata/messages"), "sap.ui.require.toUrl was called without a leading slash.");
+
+			new ResourceModel({
+				bundleName: "../../testdata/messages",
+			});
+			assert.ok(fnToUrlSpy.calledWith("testdata/messages"), "sap.ui.require.toUrl was called without a leading slash.");
+
+			fnToUrlSpy.restore();
 		});
 	});
 
