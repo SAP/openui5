@@ -58,8 +58,6 @@ sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery
 			// Route is defined without target in the config - use the internally created target to place the view
 			if (this._oTarget) {
 				oTarget = this._oTarget;
-				// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
-				oTarget._oOptions = this._convertToTargetOptions(oConfig);
 
 				// validate if it makes sense to display the target (Route does not have all params required) - no error logging will be done during validation
 				if (oTarget._isValid(oParentPlaceInfo, false)) {
