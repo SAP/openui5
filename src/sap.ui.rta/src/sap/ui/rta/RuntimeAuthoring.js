@@ -471,7 +471,6 @@ function(
 		var oUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
-
 		if (oUriLayer) {
 			mFlexSettings.layer = oUriLayer;
 		}
