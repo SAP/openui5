@@ -11,9 +11,9 @@ sap.ui.define([
 	return Controller.extend("sap.ui.demo.fiori2.controller.Master", {
 		onInit: function () {
 			this.oView = this.getView();
-			this.oProductsTable = this.getView().byId("productsTable");
-			this.oRouter = this.getOwnerComponent().getRouter();
 			this._bDescendingSort = false;
+			this.oProductsTable = this.oView.byId("productsTable");
+			this.oRouter = this.getOwnerComponent().getRouter();
 		},
 
 		onSearch: function (oEvent) {
