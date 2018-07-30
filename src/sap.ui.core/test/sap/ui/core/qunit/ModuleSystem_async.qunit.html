@@ -283,7 +283,8 @@
 		[
 			{
 				caption: "a missing module",
-				module: 'non-existing-module'
+				module: 'non-existing-module',
+				error: /failed to load '.*\/non-existing-module.js' from .*\/non-existing-module.js/
 			},
 			{
 				caption: "an AMD module with a missing dependency",
@@ -375,6 +376,9 @@
 						resolve();
 					}, function(oErr) {
 						assert.ok(true, "the errback should be called on first access");
+						if ( config.error ) {
+							assert.ok(config.error.test(oErr.message), "error should match expected text");
+						}
 						resolve();
 					});
 				}).then(function() {
