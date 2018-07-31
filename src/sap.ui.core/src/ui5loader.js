@@ -1131,7 +1131,8 @@
 			}
 
 			log.error("failed to load Javascript resource: " + oModule.name);
-			oModule.fail(ensureStacktrace(new Error("script load error")));
+			oModule.fail(
+				ensureStacktrace(new Error("failed to load '" + oModule.name +  "' from " + oModule.url + ": script load error")));
 		}
 
 		oScript = document.createElement('SCRIPT');
