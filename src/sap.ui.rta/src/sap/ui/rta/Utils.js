@@ -102,9 +102,9 @@ function(
 					], function(Access) {
 						var oModel = oControl.getModel();
 						if (oModel) {
-							var bServiceOutdated = sap.ui.fl.fieldExt.Access.isServiceOutdated(oModel.sServiceUrl);
+							var bServiceOutdated = Access.isServiceOutdated(oModel.sServiceUrl);
 							if (bServiceOutdated) {
-								sap.ui.fl.fieldExt.Access.setServiceValid(oModel.sServiceUrl);
+								Access.setServiceValid(oModel.sServiceUrl);
 								//needs FLP to trigger UI restart popup
 								sap.ui.getCore().getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption","RequestReload",{});
 								return fnReject();
@@ -138,15 +138,15 @@ function(
 					], function(Access) {
 						var sServiceUrl = oControl.getModel().sServiceUrl;
 						var sEntityType = this.getBoundEntityType(oControl).name;
-						var oJQueryDeferred;
+						var $Deferred;
 						try {
-							oJQueryDeferred = Access.getBusinessContexts(sServiceUrl, sEntityType);
+							$Deferred = Access.getBusinessContexts(sServiceUrl, sEntityType);
 						} catch (oError) {
 							Log.error("exception occured in sap.ui.fl.fieldExt.Access.getBusinessContexts", oError);
 							fnResolve(false);
 						}
 
-						return Promise.resolve(oJQueryDeferred)
+						return Promise.resolve($Deferred)
 						.then(function(oResult) {
 							if (oResult) {
 								if (oResult.BusinessContexts) {
@@ -161,7 +161,7 @@ function(
 						})
 						.catch(function(oError){
 							if (oError) {
-								if (jQuery.isArray(oError.errorMessages)) {
+								if (Array.isArray(oError.errorMessages)) {
 									for (var i = 0; i < oError.errorMessages.length; i++) {
 										Log.error(oError.errorMessages[i].text);
 									}

@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
-	"sap/base/util/merge",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/merge"
 ], function(
 	BaseCommand,
 	RtaControlTreeModifier,
@@ -17,8 +16,7 @@ sap.ui.define([
 	FlexControllerFactory,
 	FlUtils,
 	Log,
-	fnBaseMerge,
-	jQuery
+	merge
 ) {
 	"use strict";
 
@@ -177,7 +175,7 @@ sap.ui.define([
 	 */
 	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference) {
 		if (mFlexSettings) {
-			fnBaseMerge(mChangeSpecificData, mFlexSettings);
+			mChangeSpecificData = merge({}, mChangeSpecificData, mFlexSettings);
 		}
 		mChangeSpecificData.jsOnly = this.getJsOnly();
 		var oModel = this.getAppComponent().getModel("$FlexVariants");

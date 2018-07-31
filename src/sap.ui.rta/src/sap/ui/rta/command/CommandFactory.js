@@ -324,7 +324,7 @@ function(
 			}
 
 			if (oAction && oAction.changeOnRelevantContainer) {
-				mSettings = Object.assign(mSettings, {
+				Object.assign(mSettings, {
 					element : oElementOverlay.getRelevantContainer()
 				});
 				vElement = mSettings.element;
@@ -404,9 +404,9 @@ function(
 
 	/**
 	 * Instance-specific method for generating command
-	 * @param {sap.ui.Element|string} vElement - could be either an element or a slector for the element for which the command is to be created
+	 * @param {sap.ui.core.Element|string} vElement - could be either an element or a slector for the element for which the command is to be created
 	 * @param {string} sCommand - command type
-	 * @param {object} mSettings - initial settings for the new command
+	 * @param {object} mSettings - initial settings for the new command (command specific settings, looks diffrent for each and every command)
 	 * @param {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata - contains the action used in the command
 	 * @param {string} sVariantManagementReference - variant management reference
 	 * @returns {Promise} A promise which will return the created command
@@ -419,9 +419,14 @@ function(
 	 * Static method for generating command
 	 * @param {sap.ui.Element|string} vElement - could be either an element or a slector for the element for which the command is to be created
 	 * @param {string} sCommand - command type
-	 * @param {object} mSettings - initial settings for the new command
+	 * @param {object} mSettings -  initial settings for the new command (command specific settings, looks diffrent for each and every command)
 	 * @param {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata - contains the action used in the command
-	 * @param {string} mFlexSettings - flex settings
+	 * @param {Object} [mFlexSettings] property bag
+	 * @param {String} [mFlexSettings.layer] The Layer in which RTA should be started. Default: "CUSTOMER"
+	 * @param {Boolean} [mFlexSettings.developerMode] Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
+	 * @param {String} [mFlexSettings.baseId] base ID of the app
+	 * @param {String} [mFlexSettings.projectId] project ID
+	 * @param {String} [mFlexSettings.scenario] Key representing the current scenario
 	 * @returns {Promise} A promise which will return the created command
 	 */
 	CommandFactory.getCommandFor = function(vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings) {

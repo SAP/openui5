@@ -143,8 +143,12 @@ function(
 			ControlDragDrop.prototype.onDragEnd.apply(this, arguments);
 		}.bind(this))
 
-		.catch(function(oMessage) {
-			throw DtUtil.propagateError(oMessage);
+		.catch(function(vError) {
+			throw DtUtil.propagateError(
+				vError,
+				"DragDrop#onDragEnd",
+				"Error accured during onDragEnd execution",
+				"sap.ui.rta.plugin");
 		});
 	};
 

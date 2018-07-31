@@ -143,8 +143,13 @@ sap.ui.define([
 			});
 		}.bind(this))
 
-		.catch(function(oError) {
-			throw DtUtil.propagateError(oError);
+		.catch(function(vError) {
+			throw DtUtil.propagateError(
+				vError,
+				"Split#handleSplit",
+				"Error occured during handleSplit execution",
+				"sap.ui.rta.plugin"
+			);
 		});
 	};
 

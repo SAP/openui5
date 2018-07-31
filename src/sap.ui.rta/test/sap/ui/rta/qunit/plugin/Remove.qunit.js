@@ -221,7 +221,6 @@ function(
 
 		QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected", function (assert) {
 			var done = assert.async();
-
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions : {
 					remove : {
