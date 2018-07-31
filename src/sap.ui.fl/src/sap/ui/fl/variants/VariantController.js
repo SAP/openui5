@@ -323,7 +323,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.variantManagementReference - The variant management id
 	 * @param {string} mPropertyBag.currentVariantReference - The id of the currently used variant
 	 * @param {string} mPropertyBag.newVariantReference - The id of the newly selected variant
-	 * @param {sap.ui.core.Component|sap.ui.core.Component[]} mPropertyBag.component - control component or array of potential components
+	 * @param {sap.ui.core.Component|sap.ui.core.Component[]} mPropertyBag.component - Application Component or array of potential components
 	 * @param {object} mPropertyBag.changesMap - The changes inside the current changes map
 	 *
 	 * @typedef {object} sap.ui.fl.variants.SwitchChanges
@@ -337,7 +337,7 @@ sap.ui.define([
 	VariantController.prototype.getChangesForVariantSwitch = function(mPropertyBag) {
 		var aCurrentVariantChanges = this.getVariantChanges(mPropertyBag.variantManagementReference, mPropertyBag.currentVariantReference, true);
 		var aMapChanges = [], aChangeKeysFromMap = [];
-		var oControlComponent = mPropertyBag.component instanceof Component ? mPropertyBag.component : undefined;
+		var oComponent = mPropertyBag.component instanceof Component ? mPropertyBag.component : undefined;
 		Object.keys(mPropertyBag.changesMap).forEach(function(sControlId) {
 			mPropertyBag.changesMap[sControlId].forEach(function(oMapChange) {
 				aMapChanges = aMapChanges.concat(oMapChange);
@@ -351,8 +351,8 @@ sap.ui.define([
 				aFilteredChanges = aFilteredChanges.concat(aMapChanges[iMapIndex]);
 				// if vControlComponent is an array of embeddedComponents
 				// retrieve which embeddedComponent is responsible for the change
-				if (!oControlComponent && Array.isArray(mPropertyBag.component)) {
-					oControlComponent = this._getComponentForChange(aMapChanges[iMapIndex], mPropertyBag.component);
+				if (!oComponent && Array.isArray(mPropertyBag.component)) {
+					oComponent = this._getComponentForChange(aMapChanges[iMapIndex], mPropertyBag.component);
 				}
 			}
 			return aFilteredChanges;
@@ -378,7 +378,7 @@ sap.ui.define([
 		var mSwitches = {
 			aRevert : aRevertChanges.reverse(),
 			aNew : aNewChanges,
-			component: oControlComponent
+			component: oComponent
 		};
 
 		return mSwitches;

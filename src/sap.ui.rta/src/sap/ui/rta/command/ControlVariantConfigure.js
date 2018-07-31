@@ -60,10 +60,9 @@ sap.ui.define([
 	 */
 	ControlVariantConfigure.prototype.execute = function() {
 		var oVariantManagementControl = this.getControl();
-		this.oComponent = flUtils.getSelectorComponentForControl(oVariantManagementControl);
-		this.oAppComponent = flUtils.getAppComponentForControl(this.oComponent);
+		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
-		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oComponent).id;
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 
 		this._aPreparedChanges = [];
 		this.getChanges().forEach(function(mChangeProperties) {

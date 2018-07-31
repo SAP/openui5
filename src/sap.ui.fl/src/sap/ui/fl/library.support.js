@@ -45,23 +45,23 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTim
 
 				var aElements = oScope.getElements(),
 					oElement,
-					oComponent;
+					oAppComponent;
 
 				for (var i = 0; i < aElements.length; i++) {
 					oElement = aElements[i];
-					oComponent = Utils.getSelectorComponentForControl(oElement);
+					oAppComponent = Utils.getAppComponentForControl(oElement);
 
-					if (oComponent) {
+					if (oAppComponent) {
 						break;
 					}
 				}
 
-				if (!oComponent) {
+				if (!oAppComponent) {
 					return;
 				}
 
 				var oDesignTime = new DesignTime({
-					rootElements: [Utils.getAppComponentForControl(oComponent)] // root app component
+					rootElements: [oAppComponent]
 				});
 
 				oDesignTime.attachEventOnce("synced", function () {
@@ -72,7 +72,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTim
 						var sControlId = oElement.getId();
 
 						var sHasConcatenatedId = sControlId.indexOf("--") !== -1;
-						if (!Utils.checkControlId(sControlId, oComponent, true) && !isClonedElementFromListBinding(oElement)) {
+						if (!Utils.checkControlId(sControlId, oAppComponent, true) && !isClonedElementFromListBinding(oElement)) {
 							if (!sHasConcatenatedId) {
 								issueManager.addIssue({
 									severity: Severity.High,

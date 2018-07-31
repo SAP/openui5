@@ -76,7 +76,7 @@ sap.ui.define([
 			this.oGetAppComponentForControlStub.restore();
 		},
 		beforeEach: function () {
-			this.oLink = new Link({
+			this.oLink = new Link("mockLink", {
 				text : "Label"
 			});
 

@@ -1110,11 +1110,15 @@ sap.ui.define([
 				getId : function() {return "RTADemoAppMD";},
 				getManifest : function() {return oManifest;},
 				getModel: function() {},
-				getComponentData: function() {}
+				getComponentData: function() {},
+				getMetadata: function() {
+					return {
+						getName: function() {return "sap.ui.rta.test.Demo.md.Component";}
+					};
+				}
 			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(this.oComponent);
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 

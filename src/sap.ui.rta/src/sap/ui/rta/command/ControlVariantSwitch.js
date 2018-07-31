@@ -38,13 +38,9 @@ sap.ui.define([
 
 	ControlVariantSwitch.prototype.MODEL_NAME = "$FlexVariants";
 
-	ControlVariantSwitch.prototype._getAppComponent = function (bEmbedded) {
+	ControlVariantSwitch.prototype._getAppComponent = function () {
 		var oElement = this.getElement();
-		if (oElement) {
-			return bEmbedded ? flUtils.getSelectorComponentForControl(oElement) : flUtils.getAppComponentForControl(oElement);
-		} else {
-			return this.getSelector().appComponent;
-		}
+		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
 
 
@@ -55,13 +51,12 @@ sap.ui.define([
 	 */
 	ControlVariantSwitch.prototype.execute = function() {
 		var oElement = this.getElement(),
-			oComponent = this._getAppComponent(true),
 			oAppComponent = this._getAppComponent(),
 			sNewVariantReference = this.getTargetVariantReference();
 
 		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
-		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oElement, oComponent).id;
-		return this._updateModelVariant(sNewVariantReference, oComponent);
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oElement, oAppComponent).id;
+		return this._updateModelVariant(sNewVariantReference, oAppComponent);
 	};
 
 	/**
@@ -71,8 +66,8 @@ sap.ui.define([
 	 */
 	ControlVariantSwitch.prototype.undo = function() {
 		var sOldVariantReference = this.getSourceVariantReference();
-		var oComponent = this._getAppComponent(true);
-		return this._updateModelVariant(sOldVariantReference, oComponent);
+		var oAppComponent = this._getAppComponent();
+		return this._updateModelVariant(sOldVariantReference, oAppComponent);
 	};
 
 	/**
@@ -80,9 +75,9 @@ sap.ui.define([
 	 * @private
 	 * @returns {Promise} Returns promise resolve
 	 */
-	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oComponent) {
+	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oAppComponent) {
 		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
-			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference, oComponent));
+			return Promise.resolve(this.oModel.updateCurrentVariant(this.sVariantManagementReference, sVariantReference, oAppComponent));
 		}
 		return Promise.resolve();
 	};

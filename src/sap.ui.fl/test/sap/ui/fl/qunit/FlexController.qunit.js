@@ -530,7 +530,7 @@ function (
 		QUnit.test("addChange shall add a change", function(assert) {
 			var oControl = new Control("Id1");
 
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			var fChangeHandler = sinon.stub();
 			fChangeHandler.applyChange = sinon.stub();
@@ -631,20 +631,12 @@ function (
 					return oModel;
 				}
 			};
-			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
-			sandbox.stub(Utils, "getAppComponentForControl")
-				.callThrough()
-				.withArgs(oComponent).returns(oAppComponent);
-
-			sandbox.stub(Utils, "getSelectorComponentForControl")
-				.callThrough()
-				.withArgs(oComponent).returns(oComponent);
 
 			var oChange = new Change(labelChangeContent);
 
 			oChange.setVariantReference("testVarRef");
 
-			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
+			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oAppComponent);
 			assert.ok(oPrepChange, "then change object returned");
 			assert.ok(oAddChangeStub.calledOnce, "then model's _addChange is called as VariantManagement Change is detected");
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
@@ -655,7 +647,7 @@ function (
 			assert.strictEqual(aDirtyChanges[0].getNamespace(), "b");
 			assert.strictEqual(aDirtyChanges[0].isVariant(), false);
 
-			this.oFlexController.deleteChange(oPrepChange, oComponent);
+			this.oFlexController.deleteChange(oPrepChange, oAppComponent);
 			assert.ok(oRemoveChangeStub.calledOnce, "then model's _removeChange is called as VariantManagement Change is detected and deleted");
 		});
 
@@ -688,9 +680,9 @@ function (
 		});
 
 		QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {
-			var oControl = new Control();
+			var oControl = new Control("mockControl");
 
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			var fChangeHandler = sinon.stub();
 			fChangeHandler.applyChange = sinon.stub();
@@ -716,12 +708,13 @@ function (
 
 			assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.creation, "1.2.3");
 			assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.from, "1.2.3");
+			oControl.destroy();
 		});
 
 		QUnit.test("addChange shall add a change using the local id with respect to the root component as selector", function(assert) {
 			var oControl = new Control("testComponent---Id1");
 
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			var fChangeHandler = sinon.stub();
 			fChangeHandler.applyChange = sinon.stub();
@@ -750,10 +743,12 @@ function (
 			assert.ok(aDirtyChanges[0].getSelector().idIsLocal);
 			assert.strictEqual(aDirtyChanges[0].getNamespace(), 'apps/testScenarioComponent/changes/');
 			assert.strictEqual(aDirtyChanges[0].getComponent(), 'testScenarioComponent');
+			oControl.destroy();
 		});
+		//TODO non local id
 
 		QUnit.test("addChange shall not set transport information", function (assert) {
-			var oControl = new Control();
+			var oControl = new Control("mockControl");
 			this.oFlexController._sComponentName = 'myComponent';
 			var oChangeParameters = { transport: "testtransport", packageName: "testpackage" };
 			var fChangeHandler = sinon.stub();
@@ -768,12 +763,13 @@ function (
 					}
 				}
 			});
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oSetRequestSpy = sandbox.spy(Change.prototype,"setRequest");
 			//Call CUT
 			var oChange = this.oFlexController.addChange(oChangeParameters, oControl);
 			assert.strictEqual(oSetRequestSpy.callCount,0);
 			assert.equal(oChange.getPackage(),"$TMP");
+			oControl.destroy();
 		});
 
 		QUnit.test("discardChanges shall delete the changes from the persistence and save the deletion", function(assert) {
@@ -1043,11 +1039,11 @@ function (
 		});
 
 		QUnit.test("adds context to the change if provided by the context manager", function (assert) {
-
+			var oControl = new Control("mockControl");
 			var sProvidedContext = "ctx001";
 			var aProvidedContext = [sProvidedContext];
 			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns(aProvidedContext);
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			var oDummyChangeHandler = {
 					completeChangeContent: function () {}
@@ -1062,16 +1058,18 @@ function (
 				}
 			});
 
-			this.oFlexController.createChange({}, new Control());
+			this.oFlexController.createChange({}, oControl);
 
 			sinon.assert.called(getChangeHandlerStub);
 			assert.equal(getChangeHandlerStub.callCount,1);
 			var oGetChangesHandlerCall = getChangeHandlerStub.getCall(0);
 			var oChange = oGetChangesHandlerCall.args[0];
 			assert.equal(oChange.getContext() ,sProvidedContext);
+			oControl.destroy();
 		});
 
 		QUnit.test("throws an error if a change is written with more than one design time context active", function (assert) {
+			var oControl = new Control("mockControl");
 			var aProvidedContext = ["aCtxId", "anotherCtxId"];
 			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns(aProvidedContext);
 
@@ -1081,13 +1079,14 @@ function (
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
 
 			assert.throws( function () {
-				this.oFlexController.createChange({}, new Control());
+				this.oFlexController.createChange({}, oControl);
 			});
+			oControl.destroy();
 		});
 
-		QUnit.test("creates a change for controls with a stable id which has not the app components id as a prefix", function (assert) {
-
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+		QUnit.test("creates a change for controls with a stable id which doesn't have the app component's id as a prefix", function (assert) {
+			var oControl = new Control("mockControl");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
 			};
@@ -1100,14 +1099,30 @@ function (
 					}
 				}
 			});
+			sandbox.spy(JsControlTreeModifier, "getSelector");
 
-			var oChange = this.oFlexController.createChange({}, new Control());
-
+			var oChange = this.oFlexController.createChange({}, oControl);
 			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
+			assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
+			oControl.destroy();
+		});
+
+		QUnit.test("creates a change for controls with a stable id which has the app component's id as a prefix", function (assert) {
+			var oControl = new Control("testComponent---mockControl");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			var oDummyChangeHandler = {
+				completeChangeContent: function () {}
+			};
+			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+			sandbox.spy(JsControlTreeModifier, "getSelector");
+
+			var oChange = this.oFlexController.createChange({}, oControl);
+			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, true, "the selector flags the id as local");
+			assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
+			oControl.destroy();
 		});
 
 		QUnit.test("creates a change for a map of a control with id, control type and appComponent", function (assert) {
-
 			var oAppComponent = new UIComponent();
 			var mControl = {id : this.oControl.getId(), appComponent : oAppComponent, controlType : "sap.ui.core.Control"};
 
@@ -1127,10 +1142,10 @@ function (
 			var oChange = this.oFlexController.createChange({}, mControl);
 
 			assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
+			assert.deepEqual(oChange.getDefinition().selector.id, this.oControl.getId(), "the selector flags the id as NOT local.");
 		});
 
 		QUnit.test("throws an error if a map of a control has no appComponent or no id or no controlType", function (assert) {
-
 			var oAppComponent = new UIComponent();
 			var mControl1 = {id : this.oControl.getId(), appComponent : undefined, controlType : "sap.ui.core.Control"};
 			var mControl2 = {id : undefined, appComponent : oAppComponent, controlType : "sap.ui.core.Control"};
@@ -1155,48 +1170,54 @@ function (
 		});
 
 		QUnit.test("creates a change containing valid applicationVersions in developerMode", function (assert) {
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+			var oControl = new Control("mockControl");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
 			};
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
 
-			var oChange = this.oFlexController.createChange({ developerMode : true }, new Control());
+			var oChange = this.oFlexController.createChange({ developerMode : true }, oControl);
 			var oValidAppVersions = oChange.getDefinition().validAppVersions;
 
 			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
 			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
 			assert.equal(oValidAppVersions.to, this.oFlexController.getAppVersion(), "the valid TO app version is correct");
+			oControl.destroy();
 		});
 
 		QUnit.test("creates a change containing valid applicationVersions in developerMode and ADAPTATION_PROJECT scenario", function (assert) {
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+			var oControl = new Control("mockControl");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
 			};
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
 
-			var oChange = this.oFlexController.createChange({ developerMode : true, scenario : sap.ui.fl.Scenario.AdaptationProject }, new Control());
+			var oChange = this.oFlexController.createChange({ developerMode : true, scenario : sap.ui.fl.Scenario.AdaptationProject }, oControl);
 			var oValidAppVersions = oChange.getDefinition().validAppVersions;
 
 			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
 			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
 			assert.equal(oValidAppVersions.to, undefined, "the TO app version is not defined");
+			oControl.destroy();
 		});
 
 		QUnit.test("creates a change containing valid applicationVersions in developerMode and AppVariant scenario", function (assert) {
-			sandbox.stub(Utils, "getSelectorComponentForControl").returns(oComponent);
+			var oControl = new Control("mockControl");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
 			};
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
 
-			var oChange = this.oFlexController.createChange({ developerMode : true, scenario : sap.ui.fl.Scenario.AppVariant }, new Control());
+			var oChange = this.oFlexController.createChange({ developerMode : true, scenario : sap.ui.fl.Scenario.AppVariant }, oControl);
 			var oValidAppVersions = oChange.getDefinition().validAppVersions;
 
 			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
 			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
 			assert.equal(oValidAppVersions.to, undefined, "the TO app version is not defined");
+			oControl.destroy();
 		});
 
 		QUnit.test("when processViewByModifier is called with changes", function (assert) {
@@ -1384,16 +1405,23 @@ function (
 
 	QUnit.module("_applyChangesOnControl", {
 		beforeEach: function () {
-			this.oControl = new Control("someId");
+			this.oSelectorComponent = new UIComponent("mockComponent");
+			this.oSelectorComponent.runAsOwner(function() {
+				this.oControl = new Control("someId");
+			}.bind(this));
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oCheckTargetAndApplyChangeStub = sandbox.stub(this.oFlexController, "checkTargetAndApplyChange").callsFake(function() {
 					return new Utils.FakePromise({success: true});
 				}
 			);
+			this.oAppComponent = {id: "appComponent"};
+			sandbox.stub(Utils, "getAppComponentForControl").callThrough().withArgs(this.oControl).returns(this.oAppComponent);
 			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").returns(true);
 		},
 		afterEach: function () {
 			this.oControl.destroy();
+			this.oSelectorComponent.destroy();
+			delete this.oAppComponent;
 			sandbox.restore();
 		}
 	}, function() {
@@ -1457,7 +1485,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("_applyChangesOnControl processes only those changes that belong to the control", function (assert) {
+		QUnit.test("when _applyChangesOnControl is called with app component and a control belonging to an embedded component", function (assert) {
 			var oChange0 = {
 				getId: function () {
 					return "";
@@ -1494,9 +1522,8 @@ function (
 					"mDependentChangesOnMe": {}
 				};
 			};
-			var oAppComponent = {};
 
-			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl)
+			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, this.oSelectorComponent, this.oControl)
 
 			.then(function() {
 				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 4, "all four changes for the control were processed");
@@ -1504,6 +1531,11 @@ function (
 				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
 				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
 				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(3).args[0], oChange3, "the fourth change was processed fourth");
+				assert.ok(this.oCheckTargetAndApplyChangeStub.alwaysCalledWith(sinon.match.any, this.oControl, {
+					modifier: sinon.match.any,
+					appComponent: this.oAppComponent,
+					view:sinon.match.any
+				}), "then FlexController.checkTargetAndApplyChange was always called with the component responsible for the change selector");
 			}.bind(this));
 
 		});

@@ -63,17 +63,16 @@ sap.ui.define([
 		var oVariantManagementControl = this.getElement(),
 			oVariantManagementControlBinding = oVariantManagementControl.getTitle().getBinding("text");
 
-		this.oComponent = flUtils.getSelectorComponentForControl(oVariantManagementControl);
-		this.oAppComponent = flUtils.getAppComponentForControl(this.oComponent);
+		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
-		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oComponent).id;
+		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 		this.sCurrentVariant = this.oModel.getCurrentVariantReference(this.sVariantManagementReference);
 
 		var sCurrentTitle = this.oModel.getVariantProperty(this.sCurrentVariant, "title");
 		this.setOldText(sCurrentTitle);
 
 		var mPropertyBag = {
-			appComponent : this.oComponent,
+			appComponent : this.oAppComponent,
 			variantReference : this.sCurrentVariant,
 			changeType : "setTitle",
 			title : this.getNewText(),
