@@ -573,7 +573,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 */
 		Select.prototype.onAfterOpen = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
-				oItem = null;
+				oItem = null,
+				$oLabel = this.$("label");
 
 			if (!oDomRef) {
 				return;
@@ -581,6 +582,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			oItem = this.getSelectedItem();
 			oDomRef.setAttribute("aria-expanded", "true");
+
+			// Needs to be removed while popover is opened. Otherwise when going through the items, the currently
+			// selected item would be read out for a second time due to this label's update.
+			$oLabel.attr("aria-live", null);
 
 			// expose a parent/child contextual relationship to assistive technologies
 			// note: the "aria-owns" attribute is set when the list is visible and in view
@@ -629,11 +634,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		Select.prototype.onAfterClose = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
 				CSS_CLASS = this.getRenderer().CSS_CLASS,
-				sPressedCSSClass = CSS_CLASS + "Pressed";
+				sPressedCSSClass = CSS_CLASS + "Pressed",
+				$oLabel = this.$("label");
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
 				oDomRef.removeAttribute("aria-activedescendant");
+
+				// Add it back, because we want to hear updates when going through the items, while the popover is closed
+				$oLabel.attr("aria-live", "polite");
 			}
 
 			// Remove the active state
