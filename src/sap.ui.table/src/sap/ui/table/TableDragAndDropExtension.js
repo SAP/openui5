@@ -67,7 +67,7 @@ sap.ui.define([
 			var oDraggedControl = oDragSession.getDragControl();
 			var oSessionData = {};
 
-			if (TableUtils.isInstanceOf(oDraggedControl, "sap/ui/table/Row")) {
+			if (oDraggedControl.isA("sap.ui.table.Row")) {
 				/*
 				 * Rows which must not be draggable:
 				 * - Empty rows (rows without context)
@@ -108,7 +108,7 @@ sap.ui.define([
 				oSessionData = {};
 			}
 
-			if (TableUtils.isInstanceOf(oDropControl, "sap/ui/table/Row")) {
+			if (oDropControl.isA("sap.ui.table.Row")) {
 				/*
 				 * Rows which must not be droppable:
 				 * - Itself // TODO: Should this be possible, e.g. for copying a row/node next to or into itself?

@@ -99,25 +99,10 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		},
 
 		/**
-		 * Checks whether the given object is of the given type (given in AMD module syntax)
-		 * without the need of loading the types module.
-		 * @param {sap.ui.base.ManagedObject} oObject The object to check
-		 * @param {string} sType The type given in AMD module syntax
-		 * @returns {boolean}
-		 */
-		isInstanceOf : function(oObject, sType) {
-			if (!oObject || !sType) {
-				return false;
-			}
-			var oType = sap.ui.require(sType);
-			return !!(oType && (oObject instanceof oType));
-		},
-
-		/**
 		 * Return all existing control instances of the given type.
 		 * @param {object} oScope The scope as given in the rule check function.
 		 * @param {boolean} bVisisbleOnly Whether all existing controls or only the ones which currently have a DOM reference should be returned.
-		 * @param {string} sType The type given in AMD module syntax
+		 * @param {string} sType The type
 		 * @returns All existing control instances
 		 */
 		find: function(oScope, bVisisbleOnly, sType) {
@@ -125,7 +110,7 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 			var aResult = [];
 			for (var n in mElements) {
 				var oElement = mElements[n];
-				if (TableSupportHelper.isInstanceOf(oElement, sType)) {
+				if (oElement.isA(sType)) {
 					if (bVisisbleOnly && oElement.getDomRef() || !bVisisbleOnly) {
 						aResult.push(oElement);
 					}
