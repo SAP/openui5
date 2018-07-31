@@ -457,7 +457,13 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
-		var bDropdownPickerType = this.getPickerType() === "Dropdown";
+		var bDropdownPickerType = this.getPickerType() === "Dropdown",
+			oPickerDomRef  = this.getPicker().getFocusDomRef(),
+			bPreviousFocusInDropdown = false;
+
+		if (bDropdownPickerType) {
+			bPreviousFocusInDropdown = oPickerDomRef && jQuery.contains(oPickerDomRef, oEvent.relatedTarget);
+		}
 
 		if (this.getEditable()) {
 			this._oTokenizer._useCollapsedMode(false);
@@ -466,6 +472,8 @@ function(
 
 		if (oEvent.target === this.getFocusDomRef()) {
 			this.getEditable() && this.addStyleClass("sapMFocus");
+			// enable type ahead when switching focus from the dropdown to the input field
+			bPreviousFocusInDropdown && this._handleInputValidation(oEvent, false);
 		}
 
 		if (oEvent.target === this.getOpenArea() && bDropdownPickerType && !this.isPlatformTablet()) {
@@ -480,7 +488,6 @@ function(
 		if (!this.isOpen() && this.shouldValueStateMessageBeOpened()) {
 			this.openValueStateMessage();
 		}
-
 	};
 
 	/**
@@ -528,6 +535,7 @@ function(
 		var oListItem = oEvent.getParameter("listItem");
 		var bIsSelected = oEvent.getParameter("selected");
 		var oNewSelectedItem = this._getItemByListItem(oListItem);
+		var oInputControl = this.isPickerDialog() ? this.getPickerTextField() : this;
 
 		if (oListItem.getType() === "Inactive") {
 			// workaround: this is needed because the List fires the "selectionChange" event on inactive items
@@ -560,7 +568,8 @@ function(
 		}
 
 		if (this._bCheckBoxClicked) {
-			this.setValue(this._sOldValue);
+			oInputControl.setValue(this._sOldInput);
+
 			if (this.isOpen() && this.getPicker().oPopup.getOpenState() !== OpenState.CLOSING) {
 				// workaround: this is needed because the List fires the "selectionChange" event during the popover is closing.
 				// So clicking on list item description the focus should be replaced to input field. Otherwise the focus is set to
@@ -605,6 +614,8 @@ function(
 			this._sOldValue = this.getPickerTextField().getValue();
 			this._iOldCursorPos = jQuery(this.getFocusDomRef()).cursorPos();
 		}
+
+		this._bDoTypeAhead = (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
 	};
 
 	/**
@@ -770,7 +781,22 @@ function(
 	};
 
 	MultiComboBox.prototype.createPickerTextField = function () {
-		return new Input();
+		var that = this;
+
+		return new Input({
+			// select a list item, when enter is triggered in picker text field
+			submit: function (oEvent) {
+				var sValue = this.getValue();
+				if (sValue) {
+					that.setValue(sValue);
+					that._selectItemByKey();
+					this.setValue(that._sOldInput);
+				}
+			}
+		}).addEventDelegate({
+			// remove the type ahead when focus is not in the input
+			onfocusout: this._handleInputFocusOut
+		}, this);
 	};
 
 	MultiComboBox.prototype.onBeforeRendering = function() {
@@ -1648,6 +1674,18 @@ function(
 	};
 
 	/**
+	 * Updates the input value after focusout based on last user input
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._handleInputFocusOut = function () {
+		var oInput = this.isPickerDialog() ? this.getPickerTextField() : this,
+		sUpdateValue = this._sOldInput || this._sOldValue || "";
+
+		oInput.updateDomValue(sUpdateValue);
+	};
+
+	/**
 	 * Handler for the press event on the N-more label
 	 *
 	 * @private
@@ -1779,7 +1817,11 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
+		// if the focus switches from the picker to the dropdown
+		// update the input value with the last typed in input from the user
+		this.isOpen() && this._handleInputFocusOut();
 		this.removeStyleClass("sapMFocus");
+
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
 	};
 
@@ -2620,10 +2662,10 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._handleInputValidation = function(oEvent, bCompositionEvent) {
-		var sValue = oEvent.target.value,
-			aItems, bVisibleItemFound,
-			aItemsToCheck, bResetFilter,
-			sUpdateValue, oSelectedButton;
+		var sValue = oEvent.target.value, aItems,
+			bVisibleItemFound, aItemsToCheck, sUpdateValue,
+			oSelectedButton, aItemsUnselected, aSelectedItems,
+			bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length;
 
 		// "compositionstart" and "compositionend" are native events and don't have srcControl
 		var oInput = bCompositionEvent ? jQuery(oEvent.target).control(0) : oEvent.srcControl;
@@ -2632,7 +2674,7 @@ function(
 		bVisibleItemFound = !!aItems.length;
 
 		if (!bVisibleItemFound && sValue !== "") {
-			sUpdateValue = bCompositionEvent ? this._sComposition : (this._sOldValue || "");
+			sUpdateValue = bCompositionEvent ? this._sComposition : (this._sOldInput || this._sOldValue || "");
 			oInput.updateDomValue(sUpdateValue);
 
 			if (this._iOldCursorPos) {
@@ -2642,9 +2684,21 @@ function(
 			this._showWrongValueVisualEffect();
 			return;
 		}
+		// type ahead, if there is an matching unselected item in the list
+		aSelectedItems = this.getSelectedItems();
+		aItemsUnselected = aItems.filter(function (oItem) {
+			return aSelectedItems.indexOf(oItem) === -1;
+		});
+
+		if (this._bDoTypeAhead && aItemsUnselected.length) {
+			oInput.updateDomValue(aItemsUnselected[0].getText());
+
+			if (document.activeElement === oInput.getFocusDomRef()) {
+				oInput.selectText(sValue.length, oInput.getValue().length);
+			}
+		}
 
 		aItemsToCheck = this.getEnabledItems();
-		bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length;
 
 		if (this.isPickerDialog()) {
 			oSelectedButton = this._getFilterSelectedButton();
