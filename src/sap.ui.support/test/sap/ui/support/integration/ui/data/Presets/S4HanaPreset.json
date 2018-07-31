@@ -1,5 +1,6 @@
 {
-    "title": "S/4HANA Consistency Checks for 1811",
+	"id": "S4HANA_MUSTHAVE",
+	"title": "S/4HANA Consistency Checks for 1811",
     "description": "Consistency check rules for S\\4HANA release 1811",
     "dateExported": "2018-07-05T13:32:08.222Z",
     "version": "1.0",

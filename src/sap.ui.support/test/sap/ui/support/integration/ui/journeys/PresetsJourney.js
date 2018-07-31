@@ -1,8 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
-], function(opaTest) {
+	"sap/ui/test/opaQunit",
+	"sap/ui/core/ValueState"
+], function(opaTest, ValueState) {
 	"use strict";
 
 	QUnit.module("Support Assistant Rule Presets");
@@ -74,21 +75,21 @@ sap.ui.define([
 
 		When.onThePresetsPage.iUploadExamplePreset("WrongType.pdf", "application/pdf");
 		Then.onThePresetsPage.iShouldSeeImportData("fileName", "WrongType.pdf")
-			.and.iShouldSeeImportError();
+			.and.iShouldSeeImportFileError();
 
 		When.onThePresetsPage.iReopenImportDialog();
 		Then.onThePresetsPage.iShouldSeeEmptyImportDialog();
 
 		When.onThePresetsPage.iUploadExamplePreset("InvalidJson.json.txt", "application/json");
 		Then.onThePresetsPage.iShouldSeeImportData("fileName", "InvalidJson.json.txt")
-			.and.iShouldSeeImportError();
+			.and.iShouldSeeImportFileError();
 
 		When.onThePresetsPage.iReopenImportDialog();
 		Then.onThePresetsPage.iShouldSeeEmptyImportDialog();
 
 		When.onThePresetsPage.iUploadExamplePreset("InvalidPreset.json");
 		Then.onThePresetsPage.iShouldSeeImportData("fileName", "InvalidPreset.json")
-			.and.iShouldSeeImportError();
+			.and.iShouldSeeImportFileError();
 
 		When.onThePresetsPage.iPressImportCancel();
 
@@ -146,6 +147,21 @@ sap.ui.define([
 
 		Then.onThePresetsPage.iShouldSeeNumberOfPresetsInPopover(3);
 
+	});
+
+	opaTest("Should NOT be able to import preset with existing ID", function(Given, When, Then) {
+
+		When.onThePresetsPage.iOpenImportDialog();
+		Then.onThePresetsPage.iShouldSeeEmptyImportDialog();
+
+		When.onThePresetsPage.iUploadExamplePreset(EXAMPLE_PRESET_S4HANA);
+		var testPreset = loadExamplePreset(EXAMPLE_PRESET_S4HANA);
+		Then.onThePresetsPage.iShouldSeeImportDataForPreset(EXAMPLE_PRESET_S4HANA, testPreset);
+
+		// Since the Import is unsuccessful the Import Dialog shouldn't close. And an error message should appear in the form.
+		Then.onThePresetsPage.iShouldSeeImportDuplicateIdError("A preset with ID 'S4HANA_MUSTHAVE' is already imported.");
+
+		When.onThePresetsPage.iPressImportCancel();
 	});
 
 	opaTest("Should be able to switch to My Selection", function(Given, When, Then) {
@@ -263,16 +279,19 @@ sap.ui.define([
 		When.onThePresetsPage.iPressExport();
 
 		Then.onThePresetsPage.iShouldSeeExportDialog()
-			.and.iShouldSeeExportData("title", "")
-			.and.iShouldSeeExportData("description", "");
+			.and.iShouldSeeExportData("title", "My Selection")
+			.and.iShouldSeeExportData("description", "My Current/Last Selection")
+			.and.iShouldSeeExportData("presetId", "MySelectionPreset");
 
 		When.onThePresetsPage.iEnterExportData("title", "Example title")
-			.and.iEnterExportData("description", "Example description");
+			.and.iEnterExportData("description", "Example description")
+			.and.iEnterExportData("presetId", "MySelectionPreset");
 
 		When.onThePresetsPage.iPressExportFinalize();
 
 		Then.onThePresetsPage.iShouldReceiveOneExportFile()
 			.and.iShouldReceiveCorrectExportFile({
+				"id": "MySelectionPreset",
 				"title": "Example title",
 				"description": "Example description"
 			});
@@ -324,7 +343,54 @@ sap.ui.define([
 		Then.onThePresetsPage.iShouldSeePresetInPopover(testPreset._forTestTitleIfModified)
 			.and.iShouldSeeSelectedPreset(testPreset._forTestTitleIfModified);
 
+	});
+
+	opaTest("Should see validation messages when required inputs are not filled", function(Given, When, Then) {
+
+		When.onThePresetsPage.iPressExport();
+
+		When.onThePresetsPage.iEnterExportData("title", "")
+			.and.iEnterExportData("description", "")
+			.and.iEnterExportData("presetId", "");
+		When.onThePresetsPage.iPressExportFinalize();
+		Then.onThePresetsPage.iShouldSeeExportDialog();
+		Then.onThePresetsPage.iShouldSeeCorrectValueState("presetId", ValueState.Error)
+			.and.iShouldSeeCorrectValueState("title", ValueState.Error)
+			.and.iShouldSeeCorrectValueState("description", ValueState.None);
+
+	});
+
+	opaTest("Should see validation messages when inputs with constraints have invalid values", function(Given, When, Then) {
+
+		When.onThePresetsPage.iEnterExportData("title", "Title")
+			.and.iEnterExportData("description", "Description")
+			.and.iEnterExportData("presetId", "id+with+invalid+characters");
+
+		When.onThePresetsPage.iPressExportFinalize();
+
+		Then.onThePresetsPage.iShouldSeeExportDialog();
+
+		Then.onThePresetsPage.iShouldSeeCorrectValueState("presetId", ValueState.Error)
+			.and.iShouldSeeCorrectValueState("title", ValueState.None)
+			.and.iShouldSeeCorrectValueState("description", ValueState.None);
+
+	});
+
+	opaTest("Should be able to export after inputs are filled with valid values", function(Given, When, Then) {
+
+		When.onThePresetsPage.iEnterExportData("presetId", "valid_id");
+
+		When.onThePresetsPage.iPressExportFinalize();
+
+		Then.onThePresetsPage.iShouldReceiveOneExportFile()
+			.and.iShouldReceiveCorrectExportFile({
+				"id": "valid_id",
+				"title": "Title",
+				"description": "Description"
+			});
+
 		// finalize all tests
 		Then.iTeardownSupportAssistantFrame();
+
 	});
 });

@@ -310,13 +310,24 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeImportError: function() {
+				iShouldSeeImportFileError: function() {
 					return this.waitFor({
 						id: "presetImport--fileError",
 						success: function() {
 							Opa5.assert.ok(true, "I see import file error");
 						},
-						errorMessage: "Was not able to locate presets popover"
+						errorMessage: "Was not able to locate import file error"
+					});
+				},
+
+				iShouldSeeImportDuplicateIdError: function(sText) {
+					return this.waitFor({
+						id: "presetImport--duplicateIdError",
+						matchers: new PropertyStrictEquals({name: "text", value: sText}),
+						success: function() {
+							Opa5.assert.ok(true, "I see import duplicate id error with correct text");
+						},
+						errorMessage: "Was not able to locate import duplicate id error"
 					});
 				},
 
@@ -469,6 +480,16 @@ sap.ui.define([
 							);
 						},
 						errorMessage: "The expected rules are not selected"
+					});
+				},
+
+				iShouldSeeCorrectValueState: function(sId, sValueState) {
+					return this.waitFor({
+						id: "presetExport--" + sId,
+						success: function(oInput) {
+							Opa5.assert.strictEqual(oInput.getValueState(), sValueState, sId + " Input have correct ValueState");
+						},
+						errorMessage: "Was not able to locate input " + sId + " with ValueState " + sValueState
 					});
 				}
 			}

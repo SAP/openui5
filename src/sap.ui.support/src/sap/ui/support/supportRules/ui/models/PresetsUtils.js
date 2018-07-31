@@ -68,12 +68,14 @@ sap.ui.define([
 
 		/**
 		 * Exports the given selections to a file
+		 * @param {string} sId The id of the export
 		 * @param {string} sTitle The title of the export
 		 * @param {string} sDescription Some description of what is exported
 		 * @param {array} aSelections An array of rules IDs which are selected
 		 */
-		exportSelectionsToFile: function (sTitle, sDescription, aSelections) {
+		exportSelectionsToFile: function (sId, sTitle, sDescription, aSelections) {
 			var oRulesToExport = {
+				id: sId,
 				title: sTitle,
 				description: sDescription,
 				dateExported: (new Date()).toISOString(),
@@ -93,6 +95,10 @@ sap.ui.define([
 		 */
 		isValidSelectionImport: function (oImport) {
 			var bIsFileValid = true;
+
+			if (!oImport.hasOwnProperty("id")) {
+				bIsFileValid = false;
+			}
 
 			if (!oImport.hasOwnProperty("title")) {
 				bIsFileValid = false;
