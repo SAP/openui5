@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
+	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/FilterType',
 	'sap/ui/model/Sorter',
 	'sap/ui/model/odata/CountMode',
@@ -28,6 +29,7 @@ sap.ui.define([
 	ChangeReason,
 	Filter,
 	FilterOperator,
+	FilterProcessor,
 	FilterType,
 	Sorter,
 	CountMode,
@@ -968,6 +970,29 @@ sap.ui.define([
 		});
 
 		return this;
+	};
+
+	/**
+	 * Returns the filter information as an abstract syntax tree.
+	 * Consumers must not rely on the origin information to be available, future filter
+	 * implementations will not provide this information.
+	 *
+	 * @param {boolean} [bIncludeOrigin=false] whether to include information about the filter
+	 *   objects from which the tree has been created
+	 * @returns {object} The AST of the filter tree or null if no filters are set
+	 * @private
+	 * @ui5-restricted sap.ui.table, sap.ui.export
+	 */
+	//@override
+	AnalyticalBinding.prototype.getFilterInfo = function(bIncludeOrigin) {
+		var oCombinedFilter = FilterProcessor.combineFilters(this.aControlFilter,
+				this.aApplicationFilter);
+
+		if (oCombinedFilter) {
+			return oCombinedFilter.getAST(bIncludeOrigin);
+		}
+
+		return null;
 	};
 
 	/**

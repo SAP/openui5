@@ -11,6 +11,7 @@ sap.ui.require([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
+	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/Sorter',
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -23,8 +24,8 @@ sap.ui.require([
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
 ], function (jQuery, Log, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
-		ODataModelAdapter, ChangeReason, Filter, FilterOperator, Sorter, ODataModelV1, ODataModelV2,
-		TreeAutoExpandMode, o4aFakeService) {
+		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter,
+		ODataModelV1, ODataModelV2, TreeAutoExpandMode, o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0 */
 	/*eslint no-warning-comments: 0 */
@@ -1951,6 +1952,127 @@ sap.ui.require([
 			oBindingMock.verify();
 			done();
 		}, [], undefined, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterInfo", function (assert) {
+		var aApplicationFilter = [new Filter({
+				operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"})],
+			oAst = {},
+			oCombinedFilter = {
+				getAST : function () {}
+			},
+			aControlFilter = [new Filter({
+				operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "5"})],
+			done = assert.async(),
+			bIncludeOrigin = {/*true or false*/};
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oCombinedFilterMock = sinon.mock(oCombinedFilter),
+				oFilterProcessorMock = sinon.mock(FilterProcessor);
+
+			oBinding.filter(aControlFilter);
+
+			oFilterProcessorMock.expects("combineFilters")
+				.withExactArgs(sinon.match.same(aControlFilter),
+					sinon.match.same(aApplicationFilter))
+				.returns(oCombinedFilter);
+			oCombinedFilterMock.expects("getAST")
+				.withExactArgs(sinon.match.same(bIncludeOrigin))
+				.returns(oAst);
+
+			// code under test
+			assert.strictEqual(oBinding.getFilterInfo(bIncludeOrigin), oAst);
+
+			oFilterProcessorMock.verify();
+			oCombinedFilterMock.verify();
+			done();
+		}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+			[/*aSorters*/],
+			aApplicationFilter
+		);
+	});
+
+	//*********************************************************************************************
+	[{
+		applicationFilter : undefined,
+		controlFilter : undefined,
+		expectedAst : null
+	}, {
+		applicationFilter : [new Filter({
+			operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"})],
+		controlFilter : undefined,
+		expectedAst : {
+			"args": [{
+				"path": "CostCenter",
+				"type": "Reference"
+			}, {
+				"type": "Literal",
+				"value": "1"
+			}],
+			"name": "endswith",
+			"type": "Call"
+		}
+	}, {
+		applicationFilter : undefined,
+		controlFilter : [new Filter({
+			operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "5"})],
+		expectedAst : {
+			"args": [
+				{"path": "CostCenter", "type": "Reference"},
+				{"type": "Literal", "value": "5"}
+			],
+			"name": "startswith",
+			"type": "Call"
+		}
+	}, {
+		applicationFilter : [new Filter({
+			operator : FilterOperator.EndsWith, path : "CostCenter", value1 : "1"})],
+		controlFilter : [new Filter({
+			operator : FilterOperator.StartsWith, path : "CostCenter", value1 : "5"})],
+		expectedAst : {
+			"left": {
+				"args": [
+					{"path": "CostCenter", "type": "Reference"},
+					{"type": "Literal", "value": "5"}
+				],
+				"name": "startswith",
+				"type": "Call"
+			},
+			"op": "&&",
+			"right": {
+				"args": [{
+					"path": "CostCenter",
+					"type": "Reference"
+				}, {
+					"type": "Literal",
+					"value": "1"
+				}],
+				"name": "endswith",
+				"type": "Call"
+			},
+			"type": "Logical"
+		}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("getFilterInfo: combine control and application filters: " + i,
+				function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+
+				if (oFixture.controlFilter) {
+					oBinding.filter(oFixture.controlFilter);
+				}
+
+				// code under test
+				assert.deepEqual(oBinding.getFilterInfo(), oFixture.expectedAst);
+
+				done();
+			}, /*aAnalyticalInfo*/ null, /*sBindingPath*/ null, /*bSkipInitialize*/ false,
+				[/*aSorters*/],
+				oFixture.applicationFilter
+			);
+		});
 	});
 
 	//*********************************************************************************************
