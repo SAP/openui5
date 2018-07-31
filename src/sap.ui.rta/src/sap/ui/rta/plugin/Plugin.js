@@ -255,10 +255,10 @@ function(
 	//Check if related binding template has stable id
 	function _checkAggregationBindingTemplateID(oOverlay, vStableElement){
 		var mAggregationInfo = OverlayUtil.getAggregationInformation(oOverlay, oOverlay.getElement().sParentAggregationName);
-		if (!mAggregationInfo.elementId) {
+		if (!mAggregationInfo.templateId) {
 			return true;
 		} else {
-			return !FlexUtils.checkControlId(mAggregationInfo.elementId, vStableElement.appComponent);
+			return !FlexUtils.checkControlId(mAggregationInfo.templateId, vStableElement.appComponent);
 		}
 	}
 

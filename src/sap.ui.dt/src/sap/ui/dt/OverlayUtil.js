@@ -564,6 +564,7 @@ function(
 	 * @typedef {Object} sap.ui.dt.OverlayUtil.AggregationBindingStack
 	 * @property {string} elementId - id of the bound control.
 	 * @property {string} aggregation - name of the bound aggregation.
+	 * @property {string} templateId - id of the binding template.
 	 * @property {Object[]} stack - array of objects containing element, element type, aggregation name and index of the element in
 	 *                              the aggregation for each traversed aggregation.
 	 * @property {string} stack.element - element id
@@ -599,9 +600,12 @@ function(
 			index: iIndex
 		});
 		if (sAggregationName && oElement.getBinding(sAggregationName)) {
+			var oBinding = oElement.getBindingInfo(sAggregationName);
+			var oTemplate = oBinding && oBinding.template;
 			return {
 				elementId: oElement.getId(),
 				aggregation: sAggregationName,
+				templateId: oTemplate ? oTemplate.getId() : undefined,
 				stack: aStack
 			};
 		}
@@ -609,6 +613,7 @@ function(
 			? {
 					elementId: undefined,
 					aggregation: undefined,
+					templateId: undefined,
 					stack: aStack
 				}
 			: (

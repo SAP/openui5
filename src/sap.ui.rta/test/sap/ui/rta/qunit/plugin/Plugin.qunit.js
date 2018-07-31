@@ -163,7 +163,7 @@ function(
 			//stub list binding
 			var oBindingTemplateControl = new Button("stable");
 			sandbox.stub(OverlayUtil,"getAggregationInformation").returns({
-				elementId : oBindingTemplateControl.getId()
+				templateId : oBindingTemplateControl.getId()
 			});
 			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), true, "then ID of the binding template is considered stable");
 			oBindingTemplateControl.destroy();
@@ -173,7 +173,7 @@ function(
 			//stub list binding
 			var oBindingTemplateControl = new Button();
 			sandbox.stub(OverlayUtil,"getAggregationInformation").returns({
-				elementId : oBindingTemplateControl.getId()
+				templateId : oBindingTemplateControl.getId()
 			});
 			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then ID of the binding template is considered unstable");
 			oBindingTemplateControl.destroy();

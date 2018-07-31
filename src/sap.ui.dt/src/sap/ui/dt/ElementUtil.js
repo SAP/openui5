@@ -407,14 +407,10 @@ function(
 	 * @return {string}                                         Returns the element id of the corresponding element inside of a template
 	 */
 	ElementUtil.extractTemplateId = function(sElementId, mBoundControl) {
-		if (mBoundControl.stack.length > 1) {
-			var oBoundControl = sap.ui.getCore().byId(mBoundControl.elementId);
-			var sTemplateAggregation = mBoundControl.stack[mBoundControl.stack.length - 1].aggregation;
-			var oTemplate = oBoundControl.getBindingInfo(sTemplateAggregation).template;
-
+		if (mBoundControl.templateId) {
 			if (mBoundControl.stack.length > 2) {
 				var oResultControl;
-				var oAggregatedControl = oTemplate;
+				var oAggregatedControl = sap.ui.getCore().byId(mBoundControl.templateId);
 				var sAggregation;
 				var iIndex;
 				for (var i = mBoundControl.stack.length - 2; i > 0; i--) {
@@ -424,11 +420,13 @@ function(
 					oAggregatedControl = oResultControl;
 				}
 				return oAggregatedControl.getId();
+			} else if (mBoundControl.stack.length === 2) {
+				return mBoundControl.templateId;
 			} else {
-				return oTemplate.getId();
+				return mBoundControl.elementId;
 			}
 		} else {
-			return mBoundControl.elementId;
+			return undefined;
 		}
 	};
 
