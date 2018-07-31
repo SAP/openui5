@@ -890,7 +890,9 @@ sap.ui.define([
 		if (bActive) {
 			oDetailsContent = new Link(sId, {
 				text: sText,
-				press: [that.fireActiveTitlePress, that]
+				press: function () {
+					that.fireActiveTitlePress({ item: oMessageItem });
+				}
 			});
 		} else {
 			oDetailsContent = new Text(sId, {
