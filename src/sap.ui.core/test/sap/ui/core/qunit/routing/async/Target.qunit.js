@@ -1,33 +1,5 @@
-<!DOCTYPE HTML>
-<html>
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.core.routing.Target</title>
-
-<script src="../../../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.m"
-	data-sap-ui-bindingSyntax="complex"
-	data-sap-ui-resourceroots='{"test.routing.target":"../fixture"}'>
-</script>
-<script>
-	(function () {
-		"use strict";
-		jQuery.sap.require("sap.ui.qunit.qunit-2-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit-2");
-		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		jQuery.sap.require("sap.ui.thirdparty.sinon");
-		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-		sinon.config.useFakeTimers = false;
-		QUnit.config.autostart = false;
-	}());
-</script>
-<script>
 /*global QUnit, sinon */
-sap.ui.require([
+sap.ui.define([
 	"sap/base/Log",
 	"sap/base/strings/formatMessage",
 	"sap/ui/core/mvc/View",
@@ -146,10 +118,12 @@ sap.ui.require([
 			});
 
 		//Act
-		this.oTarget.display();
+		var oDisplayed = this.oTarget.display();
 
 		// Assert
 		assert.strictEqual(oStub.callCount, 1, "Did inform the view creation");
+
+		return oDisplayed;
 	});
 
 	QUnit.test("Should use the _getView to create a unprefixed id if _bUseRawViewId is set", function (assert) {
@@ -165,12 +139,14 @@ sap.ui.require([
 
 		//Act
 		this.oTarget._bUseRawViewId = true;
-		this.oTarget.display();
+		var oDisplayed = this.oTarget.display();
 
 		// Assert
 		assert.strictEqual(oStub.callCount, 1, "Did inform the view creation");
 		assert.strictEqual(oSpy.callCount, 1, "Did use the non-prefix version");
 		assert.strictEqual(oSpy.getCall(0).args[1], true, "Did use the non-prefix version");
+
+		return oDisplayed;
 	});
 
 	QUnit.test("Should clear a target aggregation", function (assert) {
@@ -873,19 +849,4 @@ sap.ui.require([
 		oParentTarget.destroy();
 		oViews.destroy();
 	});
-
-	QUnit.start();
 });
-
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">QUnit Page for sap.ui.core.routing.Target</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
-
-</body>
-</html>

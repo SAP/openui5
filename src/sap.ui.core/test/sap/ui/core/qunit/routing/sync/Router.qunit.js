@@ -1,33 +1,5 @@
-<!DOCTYPE HTML>
-<html>
-
-<!--
-	  Tested classes: sap.ui.core.routing.Router
-	-->
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.core.routing.Router</title>
-
-<script src="../../../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m"
-	data-sap-ui-resourceroots='{"qunit.routing":".", "qunit.view":"../fixture"}'>
-</script>
-
-<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
-<script src="../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
-<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script src="../../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<script src="../../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script>
-	QUnit.config.autostart = false;
-</script>
-<script>
 /*global QUnit, sinon, hasher */
-sap.ui.require([
+sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/Controller",
@@ -42,8 +14,10 @@ sap.ui.require([
 	"sap/m/NavContainer",
 	"sap/m/Panel",
 	"sap/m/SplitContainer",
-	"qunit/routing/AsyncViewModuleHook"
-], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook) {
+	"sap/ui/thirdparty/signals",
+	"sap/ui/thirdparty/crossroads",
+	"sap/ui/thirdparty/hasher"
+], function (Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer) {
 	"use strict";
 
 	// This variable is used for creating custom component classes to avoid the
@@ -54,37 +28,13 @@ sap.ui.require([
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
 
-	var fnCreateRouter = function() {
-		var args = Array.prototype.slice.call(arguments);
-
-		args.unshift(Router);
-
-		if (args.length < 3) {
-			args[2] = {};
-		}
-		args[2].async = true;
-
-		return new (Function.prototype.bind.apply(Router, args));
-	};
-
-	function createView (aContent, sId) {
-		var sXmlViewContent = aContent.join(''),
-				oViewOptions = {
-					id : sId,
-					viewContent: sXmlViewContent,
-					type: "XML"
-				};
-
-		return sap.ui.view(oViewOptions);
-	}
-
 	QUnit.module("initialization");
 
 	QUnit.test("Should initialize the router instance", function(assert) {
 		//Arrange
 		var parseSpy,
 		//System under Test
-			router = fnCreateRouter();
+			router = new Router({}, {}, null, {});
 
 		parseSpy = this.spy(router, "parse");
 
@@ -108,7 +58,7 @@ sap.ui.require([
 		//Arrange
 		var parseSpy,
 		//System under Test
-			router = fnCreateRouter();
+				router = new Router();
 
 		parseSpy = this.spy(router, "parse");
 
@@ -134,7 +84,7 @@ sap.ui.require([
 
 	QUnit.test("Should not raise any exeception when stop is called before initialize", function(assert) {
 		assert.expect(0);
-		var router = fnCreateRouter();
+		var router = new Router();
 
 		// call stop shouldn't raise any exception
 		router.stop();
@@ -143,8 +93,8 @@ sap.ui.require([
 		router.destroy();
 	});
 
-	QUnit.test("Should parse the hash again when second initialize doesn't suppress hash parsing", function(assert) {
-		var router = fnCreateRouter();
+	QUnit.test("Should parse the hash when initialize doesn't suppress the hash parsing", function(assert) {
+		var router = new Router();
 		var parseSpy = this.spy(router, "parse");
 
 		hasher.setHash("");
@@ -160,8 +110,8 @@ sap.ui.require([
 		router.destroy();
 	});
 
-	QUnit.test("Shouldn't parse the hash again when second initialize does suppress hash parsing", function(assert) {
-		var router = fnCreateRouter();
+	QUnit.test("Should not parse the hash when initialize does suppress the hash parsing", function(assert) {
+		var router = new Router();
 		var parseSpy = this.spy(router, "parse");
 
 		hasher.setHash("");
@@ -171,7 +121,7 @@ sap.ui.require([
 		assert.equal(parseSpy.callCount, 1, "did notify for initial hash");
 		router.stop();
 
-		router.initialize(true /*suppress hash parsing*/);
+		router.initialize(true /* suppress hash parsing */);
 		assert.equal(parseSpy.callCount, 1, "did not notify when initialized with the same hash again");
 
 		router.destroy();
@@ -181,7 +131,7 @@ sap.ui.require([
 		//Arrange
 		var parseSpy,
 		//System under Test
-			router = fnCreateRouter();
+			router = new Router();
 
 		parseSpy = this.spy(router, "parse");
 
@@ -200,7 +150,7 @@ sap.ui.require([
 
 	QUnit.test("Should destroy the routers dependencies", function(assert) {
 		// System under test + Arrange
-		var oRouter = fnCreateRouter([ { name : "myRoute", pattern : "foo" } ], {}, null, {myTarget : {}});
+		var oRouter = new Router([ { name : "myRoute", pattern : "foo" } ], {}, null, {myTarget : {}});
 
 		var oTargets = oRouter.getTargets(),
 			oRoute = oRouter.getRoute("myRoute");
@@ -223,12 +173,12 @@ sap.ui.require([
 
 		// Arrange
 		var oStub = this.stub(Log, "warning", jQuery.noop),
-			oFirstRouter = fnCreateRouter({
+			oFirstRouter = new Router({
 				"matchingRoute" : {
 					pattern: "matches"
 				}
 			}),
-			oRouterToBeDestroyed = fnCreateRouter({
+			oRouterToBeDestroyed = new Router({
 				"matchingRoute" : {
 					pattern: "matches"
 				}
@@ -269,8 +219,8 @@ sap.ui.require([
 					assert.ok(false, "did hit the parent route");
 				}
 			},
-			//System under Test
-			router = fnCreateRouter({
+		//System under Test
+			router = new Router({
 				"parent" : {
 					subroutes : {
 						"child" : {
@@ -280,15 +230,6 @@ sap.ui.require([
 				}
 			});
 
-		this.stub(router._oViews, "_getViewWithGlobalId", function() {
-			return createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
-		});
-
-		var oParentRouteMatchedSpy = this.spy(router.getRoute("parent"), "_routeMatched");
-		var oChildRouteMatchedSpy = this.spy(router.getRoute("child"), "_routeMatched");
-
 		router.attachRoutePatternMatched(matched);
 		hasher.setHash("");
 
@@ -296,23 +237,18 @@ sap.ui.require([
 		router.initialize();
 		hasher.setHash("foo");
 		hasher.setHash("");
+		this.clock.tick(0);
+		router.destroy();
 
-		assert.strictEqual(oParentRouteMatchedSpy.callCount, 1, "Parent _routeMatched is called");
-		assert.ok(oParentRouteMatchedSpy.args[0][1] instanceof Promise, "Parent _routeMatched is called with second parameter Promise");
-		assert.strictEqual(oChildRouteMatchedSpy.callCount, 1, "Child _routeMatched is called");
-		assert.strictEqual(oChildRouteMatchedSpy.args[0][1], true, "Child _routeMatched is called with second parameter true");
+		//Assert
+		assert.strictEqual(callCount, 1,"did notify the child");
 
-		return oChildRouteMatchedSpy.returnValues[0].then(function() {
-			//Assert
-			assert.strictEqual(callCount, 1,"did notify the child");
-			router.destroy();
-		});
 	});
 
 	QUnit.test("subroute handling", function(assert) {
 
 		//Arrange System under Test
-		var router = fnCreateRouter({
+		var router = new Router({
 			name: {
 				view : "myView",
 				viewType: "JS",
@@ -356,7 +292,7 @@ sap.ui.require([
 		assert.strictEqual(route3._oConfig.name, "subsubpage", "Route has correct name");
 		assert.strictEqual(route3._oParent, route2, "Route has correct parent");
 
-		router = fnCreateRouter([
+		router = new Router([
 			{
 				name : "name",
 				view : "myView",
@@ -409,7 +345,7 @@ sap.ui.require([
 		var oNavContainer = new NavContainer();
 
 		//Arrange System under Test
-		var oRouter = fnCreateRouter({
+		var oRouter = new Router({
 			routeWithoutView: {
 				pattern : "view1"
 			}
@@ -432,7 +368,7 @@ sap.ui.require([
 	QUnit.test("Should create a greedy route", function (assert) {
 		// Arrange + System under test
 		var sPattern = "product",
-			oRouter = fnCreateRouter([
+			oRouter = new Router([
 			{
 				name: "first",
 				pattern: sPattern
@@ -450,38 +386,32 @@ sap.ui.require([
 			}
 		]);
 
-		var aRoutes = [oRouter.getRoute("first"), oRouter.getRoute("parent"), oRouter.getRoute("child")],
-			aListenerSpies = [this.spy(), this.spy(), this.spy()],
-			aRouteMatchedSpies = [];
+		var fnFirstSpy = this.spy();
+		var fnChildSpy = this.spy();
+		var fnParentSpy = this.spy();
 
-		aRoutes.forEach(function(oRoute, i) {
-			oRoute.attachPatternMatched(aListenerSpies[i]);
-			aRouteMatchedSpies.push(sinon.spy(oRoute, "_routeMatched"));
-		});
+		oRouter.getRoute("first").attachPatternMatched(fnFirstSpy);
+		oRouter.getRoute("parent").attachPatternMatched(fnParentSpy);
+		oRouter.getRoute("child").attachPatternMatched(fnChildSpy);
 
 		// Act
 		oRouter.parse(sPattern);
+		this.clock.tick(0);
 
-		assert.strictEqual(aRouteMatchedSpies[0].callCount, 1, "first route is matched");
-		assert.strictEqual(aRouteMatchedSpies[1].callCount, 1, "parent route is matched");
-		assert.strictEqual(aRouteMatchedSpies[2].callCount, 0, "child route is not matched");
+		// Assert
+		assert.strictEqual(fnFirstSpy.callCount, 1, "first route gets pattern matched");
+		assert.strictEqual(fnChildSpy.callCount, 0, "child gets not pattern matched");
+		assert.strictEqual(fnParentSpy.callCount, 1, "parent does also get pattern matched because of greedyness");
 
-		return Promise.all([aRouteMatchedSpies[0].returnValues[0], aRouteMatchedSpies[1].returnValues[0]]).then(function() {
-			assert.strictEqual(aListenerSpies[0].callCount, 1, "first route gets pattern matched");
-			assert.strictEqual(aListenerSpies[1].callCount, 1, "parent does also get pattern matched because of greedyness");
-			assert.strictEqual(aListenerSpies[2].callCount, 0, "child gets not pattern matched");
-
-			// Cleanup
-			aRouteMatchedSpies.forEach(sinon.restore);
-
-			oRouter.destroy();
-		});
+		// Cleanup
+		oRouter.destroy();
 	});
+
 
 	QUnit.test("Should create a greedy route", function (assert) {
 		// Arrange + System under test
 		var sPattern = "product",
-			oRouter = fnCreateRouter([
+			oRouter = new Router([
 				{
 					name: "first",
 					pattern: sPattern
@@ -497,32 +427,25 @@ sap.ui.require([
 				}
 			]);
 
-		var aRoutes = [oRouter.getRoute("first"), oRouter.getRoute("second"), oRouter.getRoute("last")],
-			aListenerSpies = [this.spy(), this.spy(), this.spy()],
-			aRouteMatchedSpies = [];
+		var fnFirstSpy = this.spy();
+		var fnSecondSpy = this.spy();
+		var fnLastSpy = this.spy();
 
-		aRoutes.forEach(function(oRoute, i) {
-			oRoute.attachPatternMatched(aListenerSpies[i]);
-			aRouteMatchedSpies.push(sinon.spy(oRoute, "_routeMatched"));
-		});
+		oRouter.getRoute("first").attachPatternMatched(fnFirstSpy);
+		oRouter.getRoute("second").attachPatternMatched(fnSecondSpy);
+		oRouter.getRoute("last").attachPatternMatched(fnLastSpy);
 
 		// Act
 		oRouter.parse(sPattern);
+		this.clock.tick(0);
 
-		assert.strictEqual(aRouteMatchedSpies[0].callCount, 1, "first route is matched");
-		assert.strictEqual(aRouteMatchedSpies[1].callCount, 0, "second route is not matched");
-		assert.strictEqual(aRouteMatchedSpies[2].callCount, 1, "last route is matched");
+		// Assert
+		assert.strictEqual(fnFirstSpy.callCount, 1, "First route gets the hashchange");
+		assert.strictEqual(fnSecondSpy.callCount, 0, "Second one is not greedy");
+		assert.strictEqual(fnLastSpy.callCount, 1, "The Third route is greedy!");
 
-		return Promise.all([aRouteMatchedSpies[0].returnValues[0], aRouteMatchedSpies[2].returnValues[0]]).then(function() {
-			assert.strictEqual(aListenerSpies[0].callCount, 1, "first route gets pattern matched");
-			assert.strictEqual(aListenerSpies[1].callCount, 0, "second doesn't get matched");
-			assert.strictEqual(aListenerSpies[2].callCount, 1, "last gets pattern matched");
-
-			// Cleanup
-			aRouteMatchedSpies.forEach(sinon.restore);
-
-			oRouter.destroy();
-		});
+		// Cleanup
+		oRouter.destroy();
 	});
 
 	QUnit.module("routing", {
@@ -536,56 +459,42 @@ sap.ui.require([
 		//Arrange
 		var spy = this.spy(),
 		//System under Test
-			router = fnCreateRouter([ {
+			router = new Router([ {
 				name : "name",
 				pattern : ""
 			} ]);
 
-		var oRoute = router.getRoute("name"),
-			oSpy = sinon.spy(oRoute, "_routeMatched");
-
 		//Act
 		router.attachRouteMatched(spy);
 		router.initialize();
+		this.clock.tick(0);
 
-		assert.strictEqual(oSpy.callCount, 1, "_routeMatched is called once");
+		//Assert
+		assert.strictEqual(spy.callCount, 1, "Did call the callback function once");
 
-		return oSpy.returnValues[0].then(function() {
-			//Assert
-			assert.strictEqual(spy.callCount, 1, "Did call the callback function once");
-
-			//Cleanup
-			oSpy.restore();
-			router.destroy();
-		});
+		//Cleanup
+		router.destroy();
 	});
 
 	QUnit.test("Should attach to a route using getRoute", function(assert) {
 		//Arrange
 		var spy = this.spy(),
-			//System under Test
-			oRouter = fnCreateRouter([ {
+		//System under Test
+			oRouter = new Router([ {
 				name : "name",
 				pattern : ""
-			} ]),
-			oRoute = oRouter.getRoute("name");
-
-		var oSpy = sinon.spy(oRoute, "_routeMatched");
+			} ]);
 
 		//Act
-		oRoute.attachMatched(spy);
+		oRouter.getRoute("name").attachMatched(spy);
 		oRouter.initialize();
+		this.clock.tick(0);
 
-		assert.strictEqual(oSpy.callCount, 1, "_routeMatched is called once");
+		//Assert
+		assert.strictEqual(spy.callCount, 1, "Did call the callback function once");
 
-		return oSpy.returnValues[0].then(function() {
-			//Assert
-			assert.strictEqual(spy.callCount, 1, "Did call the callback function once");
-
-			//Cleanup
-			oSpy.restore();
-			oRouter.destroy();
-		});
+		//Cleanup
+		oRouter.destroy();
 	});
 
 	QUnit.test("Should go to a route", function(assert) {
@@ -598,19 +507,11 @@ sap.ui.require([
 					aArguments = oEvent.getParameter("arguments");
 				}
 			},
-			//System under Test
-			router = fnCreateRouter([ {
+		//System under Test
+			router = new Router([ {
 				name : "name",
 				pattern : "{foo}/{bar}"
 			} ]);
-
-		this.stub(router._oViews, "_getViewWithGlobalId", function() {
-			return createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
-		});
-
-		var oRouteMatchedSpy = this.spy(router.getRoute("name"), "_routeMatched");
 
 		router.initialize();
 		router.attachRouteMatched(matched);
@@ -621,18 +522,15 @@ sap.ui.require([
 			foo : "foo"
 		});
 		HashChanger.getInstance().setHash(url);
+		this.clock.tick(0);
 
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched is called");
+		//Assert
+		assert.strictEqual(callCount, 1, "Did call the callback function once");
+		assert.strictEqual(aArguments.foo, "foo", "parameter foo is passed");
+		assert.strictEqual(aArguments.bar, "bar", "parameter bar is passed");
 
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			//Assert
-			assert.strictEqual(callCount, 1, "Did call the callback function once");
-			assert.strictEqual(aArguments.foo, "foo", "parameter foo is passed");
-			assert.strictEqual(aArguments.bar, "bar", "parameter bar is passed");
-
-			//Cleanup
-			router.destroy();
-		});
+		//Cleanup
+		router.destroy();
 	});
 
 	QUnit.test("Should go to a route", function(assert) {
@@ -661,7 +559,7 @@ sap.ui.require([
 				}
 			},
 			//System under Test
-			router = fnCreateRouter([ {
+			router = new Router([ {
 				name : "name",
 				pattern : "{foo}",
 				subroutes: [
@@ -672,19 +570,10 @@ sap.ui.require([
 				]
 			} ]);
 
-		this.stub(router._oViews, "_getViewWithGlobalId", function() {
-			return createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
-		});
-
 		router.initialize();
 		router.attachBeforeRouteMatched(beforeMatched);
 		router.attachRouteMatched(matched);
 		router.attachRoutePatternMatched(patternMatched);
-
-		// var oParentRouteMatchedSpy = this.spy(router.getRoute("name"), "_routeMatched");
-		var oChildRouteMatchedSpy = this.spy(router.getRoute("subroute"), "_routeMatched");
 
 		//Act
 		var url = router.getURL("subroute", {
@@ -692,20 +581,17 @@ sap.ui.require([
 			foo : "foo"
 		});
 		HashChanger.getInstance().setHash(url);
+		this.clock.tick(0);
 
-		assert.strictEqual(oChildRouteMatchedSpy.callCount, 1, "Child _routeMatched is called once");
+		//Assert
+		assert.strictEqual(beforeCallCount, 2, "Did call the callback function twice");
+		assert.strictEqual(callCount, 2, "Did call the callback function twice");
+		assert.strictEqual(patternCallCount, 1, "Did call the patternMatched function once");
+		assert.deepEqual(aArguments.foo, "foo", "Did pass foo as parameter it was: " + aArguments.foo);
+		assert.ok(bParentCallFirst, "Parent route was called first");
 
-		return oChildRouteMatchedSpy.returnValues[0].then(function() {
-			//Assert
-			assert.strictEqual(beforeCallCount, 2, "Did call the callback function twice");
-			assert.strictEqual(callCount, 2, "Did call the callback function twice");
-			assert.strictEqual(patternCallCount, 1, "Did call the patternMatched function once");
-			assert.deepEqual(aArguments.foo, "foo", "Did pass foo as parameter it was: " + aArguments.foo);
-			assert.ok(bParentCallFirst, "Parent route was called first");
-
-			//Cleanup
-			router.destroy();
-		});
+		//Cleanup
+		router.destroy();
 	});
 
 	//there was a bug that an empty route would catch all the requests
@@ -717,8 +603,8 @@ sap.ui.require([
 					callCount++;
 				}
 			},
-			//System under Test
-			router = fnCreateRouter([ {
+		//System under Test
+			router = new Router([ {
 				name : "emty",
 				pattern : ""
 			}, {
@@ -729,23 +615,15 @@ sap.ui.require([
 		router.initialize();
 		router.attachRouteMatched(matched);
 
-		var oRoute = router.getRoute("name"),
-			oSpy = sinon.spy(oRoute, "_routeMatched");
-
-
 		//Act
 		HashChanger.getInstance().setHash("foo/");
+		this.clock.tick(0);
 
-		assert.strictEqual(oSpy.callCount, 1, "_routeMatched of name route is called");
+		//Assert
+		assert.strictEqual(callCount, 1, "Did call the callback function once");
 
-		return oSpy.returnValues[0].then(function() {
-			//Assert
-			assert.strictEqual(callCount, 1, "Did call the callback function once");
-
-			//Cleanup
-			oSpy.restore();
-			router.destroy();
-		});
+		//Cleanup
+		router.destroy();
 	});
 
 	QUnit.module("hrefGeneration");
@@ -753,7 +631,7 @@ sap.ui.require([
 	QUnit.test("Should create an URL for a route", function(assert) {
 		//Arrange
 		var //System under Test
-			router = fnCreateRouter([ {
+			router = new Router([ {
 				name : "name",
 				pattern : "{foo}/{bar}"
 			} ]);
@@ -773,54 +651,9 @@ sap.ui.require([
 		router.destroy();
 	});
 
-	QUnit.module("test a hash");
-
-	QUnit.test("test whether a hash can be matched by the router", function(assert) {
-		var oRouter = fnCreateRouter([{
-			name: "fixedPattern",
-			pattern: "foo/bar"
-		}, {
-			name: "withParameter",
-			pattern: "bar/{foo}"
-		}, {
-			name: "emptyPattern",
-			pattern: ""
-		}]);
-
-		var aHashAndResults = [{
-			hash: "foo/bar",
-			match: true
-		}, {
-			hash: "foo/bar1",
-			match: false
-		}, {
-			hash: "foo",
-			match: false
-		}, {
-			hash: "bar/foo",
-			match: true
-		}, {
-			hash: "bar",
-			match: false
-		}, {
-			hash: "bar/a",
-			match: true
-		}, {
-			hash: "bar/a/b",
-			match: false
-		},{
-			hash: "",
-			match: true
-		}];
-
-		aHashAndResults.forEach(function (oHashAndResult) {
-			assert.strictEqual(oRouter.match(oHashAndResult.hash), oHashAndResult.match, oHashAndResult + " can" + (oHashAndResult.match ? "" : "'t") + " be matched by the router");
-		});
-	});
-
 	QUnit.module("navTo", {
 		beforeEach: function () {
-			this.oRouter = fnCreateRouter();
+			this.oRouter = new Router();
 			this.oRouter.oHashChanger = {
 				setHash: jQuery.noop
 			};
@@ -838,55 +671,54 @@ sap.ui.require([
 		assert.strictEqual(oReturnValue, this.oRouter, "able to chain navTo");
 	});
 
-	QUnit.module("View generation", ModuleHook.create());
+	QUnit.module("View generation");
 
 	QUnit.test("View initialization", function(assert) {
 
 		var oShell = new ShellSubstitute();
 
 		//Arrange System under Test
-		var router = fnCreateRouter([
+		var router = new Router([
 			{
 				targetControl: oShell.getId(),
 				targetAggregation: "content",
-				name: "name",
-				view: "Async1",
-				viewPath: "qunit.view",
-				viewType: "XML",
-				pattern: "view1",
-				viewId: "view"
+				name : "name",
+				view : "myView",
+				viewPath: "sample.application",
+				viewType: "JS",
+				pattern : "view1"
 			}
 		]);
 
-		var oSpy = sinon.spy(sap.ui, "view");
-		var oRouteMatchedSpy = sinon.spy(router.getRoute("name"), "_routeMatched");
+		var oButton = new Button({
+			text: "Test-Button"
+		});
+
+		var oStub = this.stub(sap.ui, "view", function(oSetting) {
+			assert.equal(oSetting.viewName, "sample.application.myView", "the final viewName should be prefixed with the viewPath");
+			return oButton;
+		});
 
 		router.initialize();
 
 		//Act
 		HashChanger.getInstance().setHash("view1");
 
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
+		//Assert
+		assert.strictEqual(oShell.getContent()[0].getId(), oButton.getId(), "Button is first content element");
+		assert.strictEqual(oStub.callCount, 1, "Only one view is created");
 
-		return oRouteMatchedSpy.returnValues[0].then(function(oResult) {
-			//Assert
-			assert.strictEqual(oShell.getContent()[0].getId(), oResult.view.getId(), "View is first content element");
-			assert.strictEqual(oSpy.callCount, 1, "Only one view is created");
-
-			//Cleanup
-			oSpy.restore();
-			oRouteMatchedSpy.restore();
-			router.destroy();
-			oShell.destroy();
-		});
-
+		//Cleanup
+		router.destroy();
+		oShell.destroy();
 	});
+
 
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var oShell = new ShellSubstitute();
 
 		//Arrange System under Test
-		var router = fnCreateRouter([
+		var router = new Router([
 			{
 				targetControl: oShell.getId(),
 				targetAggregation: "content",
@@ -897,11 +729,10 @@ sap.ui.require([
 			}
 		]);
 
-		var oRouteMatchedSpy = this.spy(router.getRoute("name"), "_routeMatched");
 
 		var sXmlViewContent = [
-			'<View xmlns="sap.ui.core.mvc">',
-			'</View>'
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc">',
+			'</mvc:View>'
 		].join('');
 
 		var oViewOptions = {
@@ -918,16 +749,12 @@ sap.ui.require([
 		router.setView("myView", oView);
 		router.initialize();
 
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
+		//Assert
+		assert.strictEqual(oShell.getContent()[0].getId(), oView.getId(), "a created view was placed");
 
-		return oRouteMatchedSpy.returnValues[0].then(function(oResult) {
-			//Assert
-			assert.strictEqual(oShell.getContent()[0].getId(), oResult.view.getId(), "a created view was placed");
-
-			//Cleanup
-			router.destroy();
-			oShell.destroy();
-		});
+		//Cleanup
+		router.destroy();
+		oShell.destroy();
 	});
 
 	QUnit.test("Nested View initialization", function(assert) {
@@ -937,7 +764,7 @@ sap.ui.require([
 		var oApp = new App();
 
 		//Arrange System under Test
-		var router = fnCreateRouter([
+		var router = new Router([
 			{
 				targetControl: oApp.getId(),
 				targetAggregation: "pages",
@@ -1000,8 +827,6 @@ sap.ui.require([
 			}
 		});
 
-		var oRouteMatchedSpy = this.spy(router.getRoute("subsubpage"), "_routeMatched");
-
 		router.initialize();
 
 		oApp.placeAt("qunit-fixture");
@@ -1009,18 +834,14 @@ sap.ui.require([
 		//Act
 		HashChanger.getInstance().setHash("foo");
 
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
+		//Assert
+		assert.strictEqual(oApp.getPages()[0].getContent()[0].getId(), oNavContainer.getId(), "oNavContainer is first page element in app");
+		assert.strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oNavContainer2.getId(), "oNavContainer2 is first page element in oNavContainer");
+		assert.strictEqual(oNavContainer2.getPages()[0].getContent()[0].getId(), oNavContainer3.getId(), "oNavContainer3 is first page element in oNavContainer2");
 
-		return  oRouteMatchedSpy.returnValues[0].then(function() {
-			//Assert
-			assert.strictEqual(oApp.getPages()[0].getContent()[0].getId(), oNavContainer.getId(), "oNavContainer is first page element in app");
-			assert.strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oNavContainer2.getId(), "oNavContainer2 is first page element in oNavContainer");
-			assert.strictEqual(oNavContainer2.getPages()[0].getContent()[0].getId(), oNavContainer3.getId(), "oNavContainer3 is first page element in oNavContainer2");
-
-			//Cleanup
-			router.destroy();
-			oApp.destroy();
-		});
+		//Cleanup
+		router.destroy();
+		oApp.destroy();
 	});
 
 	QUnit.test("Nested target parents", function(assert) {
@@ -1030,7 +851,7 @@ sap.ui.require([
 		var oApp = new App();
 
 		//Arrange System under Test
-		var router = fnCreateRouter([
+		var router = new Router([
 			{
 				targetControl: oApp.getId(),
 				targetAggregation: "pages",
@@ -1134,30 +955,23 @@ sap.ui.require([
 			}
 		});
 
-
-		var oDetailRouteMatchedSpy = this.spy(router.getRoute("detail"), "_routeMatched");
-		var oFullScreenRouteMatchedSpy = this.spy(router.getRoute("fullScreenPage"), "_routeMatched");
-
 		router.initialize();
+
+		oApp.placeAt("qunit-fixture");
 
 		//Act
 		HashChanger.getInstance().setHash("detail");
 		HashChanger.getInstance().setHash("fullScreen");
 
-		assert.strictEqual(oDetailRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
-		assert.strictEqual(oFullScreenRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
+		//Assert
+		assert.strictEqual(oApp.getPages().length, 2, "splitContainer and navContainer are added to App");
+		assert.strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oFullScreenContent.getId(), "FullScreenContent is first page element in oNavContainer");
+		assert.strictEqual(oSplitContainer.getMasterPages()[0].getContent()[0].getId(), oMasterContent.getId(), "Master is first master-page element in oSplitContainer");
+		assert.strictEqual(oSplitContainer.getDetailPages()[0].getContent()[0].getId(), oDetailContent.getId(), "Detail is first detail-page element in oSplitContainer");
 
-		return Promise.all([oDetailRouteMatchedSpy.returnValues[0], oFullScreenRouteMatchedSpy.returnValues[0]]).then(function() {
-			//Assert
-			assert.strictEqual(oApp.getPages().length, 2, "splitContainer and navContainer are added to App");
-			assert.strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oFullScreenContent.getId(), "FullScreenContent is first page element in oNavContainer");
-			assert.strictEqual(oSplitContainer.getMasterPages()[0].getContent()[0].getId(), oMasterContent.getId(), "Master is first master-page element in oSplitContainer");
-			assert.strictEqual(oSplitContainer.getDetailPages()[0].getContent()[0].getId(), oDetailContent.getId(), "Detail is first detail-page element in oSplitContainer");
-
-			//Cleanup
-			router.destroy();
-			oApp.destroy();
-		});
+		//Cleanup
+		router.destroy();
+		oApp.destroy();
 	});
 
 	QUnit.test("Fixed id", function(assert) {
@@ -1165,7 +979,7 @@ sap.ui.require([
 		var oShell = new ShellSubstitute();
 
 		//Arrange System under Test
-		var router = fnCreateRouter([
+		var router = new Router([
 			{
 				targetControl: oShell.getId(),
 				targetAggregation: "content",
@@ -1188,8 +1002,6 @@ sap.ui.require([
 			}
 		});
 
-		var oRouteMatchedSpy = this.spy(router.getRoute("name"), "_routeMatched");
-
 		router.initialize();
 
 		oShell.placeAt("qunit-fixture");
@@ -1197,17 +1009,12 @@ sap.ui.require([
 		//Act
 		HashChanger.getInstance().setHash("view1");
 
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
+		//Assert
+		assert.strictEqual(oShell.getContent()[0].getId(), "test-view", "View has correct id");
 
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			//Assert
-			assert.strictEqual(oShell.getContent()[0].getId(), "test-view", "View has correct id");
-
-			//Cleanup
-			router.destroy();
-			oShell.destroy();
-		});
-
+		//Cleanup
+		router.destroy();
+		oShell.destroy();
 	});
 
 	QUnit.module("View events");
@@ -1229,7 +1036,7 @@ sap.ui.require([
 	QUnit.module("views - creation and caching", {
 		beforeEach: function () {
 			// System under test + Arrange
-			this.oRouter = fnCreateRouter();
+			this.oRouter = new Router();
 
 			this.oView = createXmlView();
 		},
@@ -1258,7 +1065,8 @@ sap.ui.require([
 
 
 	QUnit.test("Should set a view to the cache", function (assert) {
-		var oReturnValue,
+		var that = this,
+			oReturnValue,
 			fnStub = this.stub(sap.ui, "view", function () {
 				return this.oView;
 			});
@@ -1274,10 +1082,10 @@ sap.ui.require([
 	});
 
 
-	QUnit.module("events", {
+	QUnit.module("created event", {
 		beforeEach: function () {
 			// System under test + Arrange
-			this.oRouter = fnCreateRouter();
+			this.oRouter = new Router();
 		},
 		afterEach: function () {
 			this.oRouter.destroy();
@@ -1351,8 +1159,7 @@ sap.ui.require([
 				// only shells will be used
 				controlAggregation: "pages",
 				viewName: "foo",
-				controlId: this.oApp.getId(),
-				async: true
+				controlId: this.oApp.getId()
 			};
 
 		},
@@ -1409,8 +1216,7 @@ sap.ui.require([
 		var oParameters,
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
-			}),
-			oRouteMatchedSpy;
+			});
 
 		this.oRouterConfig = {
 			routeName : {
@@ -1425,9 +1231,6 @@ sap.ui.require([
 			}
 		};
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
-
 		this.oRouter.initialize();
 
 		this.oRouter.attachTitleChanged(fnEventSpy);
@@ -1435,12 +1238,9 @@ sap.ui.require([
 		// Act
 		this.oRouter.oHashChanger.setHash(this.sPattern);
 
-		sinon.assert.called(oRouteMatchedSpy);
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
-			assert.strictEqual(oParameters.title, this.sTitle, "Did pass title value to the event parameters");
-		}.bind(this));
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
+		assert.strictEqual(oParameters.title, this.sTitle, "Did pass title value to the event parameters");
 	});
 
 	QUnit.test("Should fire the titleChanged event if the matched route has a title defined", function (assert) {
@@ -1448,7 +1248,7 @@ sap.ui.require([
 		var oParameters,
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
-			}), oRouteMatchedSpy;
+			});
 
 		this.oRouterConfig = {
 			routeName : {
@@ -1467,9 +1267,6 @@ sap.ui.require([
 			}
 		};
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-
-		oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
-
 		this.oRouter.initialize();
 
 		this.oRouter.attachTitleChanged(fnEventSpy);
@@ -1477,12 +1274,9 @@ sap.ui.require([
 		// Act
 		this.oRouter.oHashChanger.setHash(this.sPattern);
 
-		sinon.assert.called(oRouteMatchedSpy);
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
-			assert.strictEqual(oParameters.title, this.sTitle, "Did pass title value to the event parameters");
-		}.bind(this));
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
+		assert.strictEqual(oParameters.title, this.sTitle, "Did pass title value to the event parameters");
 	});
 
 	QUnit.test("Should fire the titleChanged only on the active route", function (assert) {
@@ -1495,9 +1289,7 @@ sap.ui.require([
 			sTitle1 = "title1",
 			sPattern = "pattern",
 			sPattern1 = "pattern1",
-			oTarget,
-			oRouteMatchedSpy,
-			oSequencePromise;
+			oTarget;
 
 		this.oRouterConfig = {
 			route1 : {
@@ -1519,7 +1311,6 @@ sap.ui.require([
 			}
 		};
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-		oRouteMatchedSpy = this.spy(this.oRouter.getRoute("route1"), "_routeMatched");
 		this.oRouter.initialize();
 
 		this.oRouter.attachTitleChanged(fnEventSpy);
@@ -1527,29 +1318,19 @@ sap.ui.require([
 		// Act
 		this.oRouter.oHashChanger.setHash(sPattern);
 
-		sinon.assert.called(oRouteMatchedSpy);
-		oSequencePromise = oRouteMatchedSpy.returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
-			assert.strictEqual(oParameters.title, sTitle, "Did pass title value to the event parameters");
-		}.bind(this));
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 1, "The titleChanged event was fired");
+		assert.strictEqual(oParameters.title, sTitle, "Did pass title value to the event parameters");
 
-		return oSequencePromise.then(function() {
-			oRouteMatchedSpy = this.spy(this.oRouter.getRoute("route2"), "_routeMatched");
-			// Act
-			this.oRouter.oHashChanger.setHash(sPattern1);
-			sinon.assert.called(oRouteMatchedSpy);
+		// Act
+		this.oRouter.oHashChanger.setHash(sPattern1);
+		assert.strictEqual(fnEventSpy.callCount, 2, "The titleChanged event was fired on the matched route");
+		assert.strictEqual(oParameters.title, sTitle1, "Did pass title value to the event parameters");
 
-			return oRouteMatchedSpy.returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 2, "The titleChanged event was fired on the matched route");
-				assert.strictEqual(oParameters.title, sTitle1, "Did pass title value to the event parameters");
 
-				oTarget = this.oRouter.getTarget("target");
-				oTarget.fireTitleChanged({title: "foo"});
-				assert.strictEqual(fnEventSpy.callCount, 2, "The titleChanged event wasn't fired again");
-			}.bind(this));
-		}.bind(this));
+		oTarget = this.oRouter.getTarget("target");
+		oTarget.fireTitleChanged({title: "foo"});
+		assert.strictEqual(fnEventSpy.callCount, 2, "The titleChanged event wasn't fired again");
 	});
 
 	QUnit.module("title history", {
@@ -1564,26 +1345,17 @@ sap.ui.require([
 				return oView;
 			});
 
-			this.getRouteMatchedSpy = function(oRouteMatchedSpies, sRouteName) {
-				oRouteMatchedSpies[sRouteName] = sinon.spy(this.oRouter.getRoute(sRouteName), "_routeMatched");
-				return oRouteMatchedSpies;
-			}.bind(this);
-
 			this.oDefaults = {
 				// only shells will be used
 				controlAggregation: "pages",
 				viewName: "foo",
-				controlId: this.oApp.getId(),
-				async: true
+				controlId: this.oApp.getId()
 			};
 
 		},
 		afterEach: function() {
 			this.fnStub.restore();
 			this.oRouter.destroy();
-			for (var sKey in this.oRouteMatchedSpies) {
-				this.oRouteMatchedSpies[sKey].restore();
-			}
 		}
 	});
 
@@ -1626,69 +1398,57 @@ sap.ui.require([
 		};
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
 
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
 		this.oRouter.attachTitleChanged(fnEventSpy);
 
 		// Act
 		this.oRouter.initialize();
 
-		var that = this;
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
+		assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
+		assert.deepEqual(oParameters.history, [], "history state is currently empty");
 
-		sinon.assert.calledOnce(that.oRouteMatchedSpies["home"]);
-		that.oRouteMatchedSpies["home"].returnValues[0].then(function() {
+		// Act
+		this.oRouter.navTo("product");
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
+		assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+		assert.deepEqual(oParameters.history, [{
+			hash: "",
+			title: sHomeTitle
+		}], "history state is correctly updated");
+
+		// Act
+		this.oRouter.navTo("productDetail");
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
+		assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
+		assert.equal(oParameters.history.length, 2, "history was updated only once");
+		assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+			hash: "product",
+			title: sProductTitle
+		}, "history state is correctly updated");
+
+		// Act
+		window.history.go(-1);
+
+		this.oRouter.attachRouteMatched(function() {
 			// Assert
-			assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
-			assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
-			assert.deepEqual(oParameters.history, [], "history state is currently empty");
-			// Act
-			that.oRouter.navTo("product");
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["product"]);
-			that.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-				assert.deepEqual(oParameters.history, [{
-					hash: "",
-					title: sHomeTitle
-				}], "history state is currently empty");
-				// Act
-				that.oRouter.navTo("productDetail");
-				sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
-				that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
-					// Assert
-					assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
-					assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
-					assert.equal(oParameters.history.length, 2, "history was updated only once");
-					assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-						hash: "product",
-						title: sProductTitle
-					}, "history state is currently empty");
-					// Act
-					window.history.go(-1);
-					that.oRouter.getRoute("product").attachMatched(function() {
-						sinon.assert.calledTwice(that.oRouteMatchedSpies["product"]);
-						that.oRouteMatchedSpies["product"].returnValues[1].then(function() {
-							// Assert
-							assert.strictEqual(fnEventSpy.callCount, 4, "titleChanged event is fired again");
-							assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-							assert.equal(oParameters.history.length, 1, "history was updated only once");
-							assert.deepEqual(oParameters.history, [{
-								hash: "",
-								title: sHomeTitle
-							}], "history state is currently empty");
-							done();
-						});
-					});
-				});
-			});
+			assert.strictEqual(fnEventSpy.callCount, 4, "titleChanged event is fired again");
+			assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+			assert.equal(oParameters.history.length, 1, "history was updated only once");
+			assert.deepEqual(oParameters.history, [{
+				hash: "",
+				title: sHomeTitle
+			}], "history state is correctly updated");
+			done();
 		});
+
 	});
 
 	QUnit.test("avoid title history redundancy", function(assert) {
 		// Arrange
-		var that = this,
-			oParameters,
+		var oParameters,
 			sHomeTitle = "HOME",
 			sProductTitle = "PRODUCT",
 			sProductDetailTitle = "PRODUCT_DETAIL",
@@ -1724,74 +1484,47 @@ sap.ui.require([
 		};
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
 
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
 		this.oRouter.attachTitleChanged(fnEventSpy);
 
-		return Promise.resolve().then(function() {
+		// Act
+		this.oRouter.initialize();
 
-			// Act
-			that.oRouter.initialize();
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
+		assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
+		assert.deepEqual(oParameters.history, [], "history state is currently empty");
 
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["home"]);
-			return that.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
-				assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
-				assert.deepEqual(oParameters.history, [], "history state is currently empty");
-			});
+		// Act
+		this.oRouter.navTo("product");
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
+		assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+		assert.deepEqual(oParameters.history, [{
+			hash: "",
+			title: sHomeTitle
+		}], "history state is correctly updated");
 
-		}).then(function() {
+		// Act
+		this.oRouter.navTo("productDetail");
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
+		assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
+		assert.equal(oParameters.history.length, 2, "history was updated only once");
+		assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+			hash: "product",
+			title: sProductTitle
+		}, "history state is correctly updated");
 
-			// Act
-			that.oRouter.navTo("product");
-
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["product"]);
-			return that.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-				assert.deepEqual(oParameters.history, [{
-					hash: "",
-					title: sHomeTitle
-				}], "history state is correctly updated");
-			});
-
-		}).then(function() {
-
-			// Act
-			that.oRouter.navTo("productDetail");
-
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
-			return that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
-				assert.equal(oParameters.history.length, 2, "history was updated only once");
-				assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-					hash: "product",
-					title: sProductTitle
-				}, "history state is correctly updated");
-			});
-
-		}).then(function() {
-
-			// Act
-			that.oRouter.navTo("home");
-
-			sinon.assert.calledTwice(that.oRouteMatchedSpies["home"]);
-			return that.oRouteMatchedSpies["home"].returnValues[1].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 4, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
-				assert.equal(oParameters.history.length, 2, "history was updated only once");
-				assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-					hash: "productDetail",
-					title: sProductDetailTitle
-				}, "history state is correctly updated");
-			});
-
-		});
+		// Act
+		this.oRouter.navTo("home");
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 4, "titleChanged event is fired again");
+		assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
+		assert.equal(oParameters.history.length, 2, "history was updated only once");
+		assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+			hash: "productDetail",
+			title: sProductDetailTitle
+		}, "history state is correctly updated");
 	});
 
 	QUnit.test("Replace the last history instead of inserting new one when hash is replaced", function(assert) {
@@ -1832,49 +1565,36 @@ sap.ui.require([
 		};
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
 
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
 		this.oRouter.attachTitleChanged(fnEventSpy);
 
 		// Act
 		this.oRouter.initialize();
 
-		var that = this;
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
+		assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
+		assert.deepEqual(oParameters.history, [], "history state is currently empty");
 
-		sinon.assert.calledOnce(that.oRouteMatchedSpies["home"]);
-		return that.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired");
-			assert.strictEqual(oParameters.title, sHomeTitle, "Did pass title value to the event parameters");
-			assert.deepEqual(oParameters.history, [], "history state is currently empty");
+		// Act
+		this.oRouter.navTo("product");
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
+		assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+		assert.deepEqual(oParameters.history, [{
+			hash: "",
+			title: sHomeTitle
+		}], "history state is correctly updated");
 
-			// Act
-			that.oRouter.navTo("product");
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["product"]);
-			return that.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-				// Assert
-				assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired again");
-				assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-				assert.deepEqual(oParameters.history, [{
-					hash: "",
-					title: sHomeTitle
-				}], "history state is correctly updated");
-
-				// Act
-				that.oRouter.navTo("productDetail", null, true);
-				sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
-				return that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
-					// Assert
-					assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
-					assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
-					assert.equal(oParameters.history.length, 1, "history was updated only once");
-					assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-						hash: "",
-						title: sHomeTitle
-					}, "history state is correctly updated");
-				});
-			});
-		});
+		// Act
+		this.oRouter.navTo("productDetail", null, true);
+		// Assert
+		assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
+		assert.strictEqual(oParameters.title, sProductDetailTitle, "Did pass title value to the event parameters");
+		assert.equal(oParameters.history.length, 1, "history was updated only once");
+		assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+			hash: "",
+			title: sHomeTitle
+		}, "history state is correctly updated");
 	});
 
 	QUnit.test("titleChanged event is fired before next navigation shouldn't create new history entry", function(assert) {
@@ -1906,26 +1626,21 @@ sap.ui.require([
 
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
 
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
 		this.oRouter.attachTitleChanged(fnEventSpy);
 
 		// Act
 		this.oRouter.initialize();
 
-		sinon.assert.calledOnce(this.oRouteMatchedSpies["home"]);
-		return this.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			sinon.assert.calledOnce(fnEventSpy, "titleChanged event is fired");
-			assert.equal(oParameters.title, sHomeTitle, "title parameter is set");
-			assert.equal(oParameters.history.length, 0, "No new history entry is created");
-			assert.equal(this.oRouter._aHistory[0].title, sHomeTitle, "title is updated in title history stack");
+		sinon.assert.calledOnce(fnEventSpy, "titleChanged event is fired");
+		assert.equal(oParameters.title, sHomeTitle, "title parameter is set");
+		assert.equal(oParameters.history.length, 0, "No new history entry is created");
+		assert.equal(this.oRouter._aHistory[0].title, sHomeTitle, "title is updated in title history stack");
 
-			oModel.setProperty("/title", sNewTitle);
-			sinon.assert.calledTwice(fnEventSpy, "titleChanged event is fired again");
-			assert.equal(oParameters.title, sNewTitle, "title parameter is set");
-			assert.equal(oParameters.history.length, 0, "No new history entry is created");
-			assert.equal(this.oRouter._aHistory[0].title, sNewTitle, "title is updated in title history stack");
-		}.bind(this));
+		oModel.setProperty("/title", sNewTitle);
+		sinon.assert.calledTwice(fnEventSpy, "titleChanged event is fired again");
+		assert.equal(oParameters.title, sNewTitle, "title parameter is set");
+		assert.equal(oParameters.history.length, 0, "No new history entry is created");
+		assert.equal(this.oRouter._aHistory[0].title, sNewTitle, "title is updated in title history stack");
 	});
 
 	QUnit.test("Back navigation from target w/o title should not remove history entry", function(assert) {
@@ -1966,37 +1681,24 @@ sap.ui.require([
 		};
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
 
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
 		this.oRouter.attachTitleChanged(fnEventSpy);
 
-		var that = this;
-
 		// Act
-		that.oRouter.initialize();
-		sinon.assert.calledOnce(that.oRouteMatchedSpies["home"]);
-		return that.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			that.oRouter.navTo("product");
-			sinon.assert.calledOnce(that.oRouteMatchedSpies["product"]);
-			return that.oRouteMatchedSpies["product"].returnValues[0].then(function() {
-				that.oRouter.navTo("productDetail");
-				sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
-				return that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
-					window.history.go(-1);
+		this.oRouter.initialize();
+		this.oRouter.navTo("product");
+		this.oRouter.navTo("productDetail");
+		window.history.go(-1);
 
-					// Assert
-					that.oRouter.attachRouteMatched(function() {
-						assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
-						assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
-						assert.equal(oParameters.history.length, 1, "history entry was not removed");
-						assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
-							hash: "",
-							title: sHomeTitle
-						}, "history state is correctly updated");
-						done();
-					});
-				});
-			});
+		// Assert
+		this.oRouter.attachRouteMatched(function() {
+			assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
+			assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
+			assert.equal(oParameters.history.length, 1, "history entry was not removed");
+			assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
+				hash: "",
+				title: sHomeTitle
+			}, "history state is correctly updated");
+			done();
 		});
 	});
 
@@ -2017,19 +1719,16 @@ sap.ui.require([
 			}
 		};
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
 
 		// Act
 		this.oRouter.initialize();
-		sinon.assert.calledOnce(this.oRouteMatchedSpies["home"]);
-		return this.oRouteMatchedSpies["home"].returnValues[0].then(function() {
-			// Assert
-			var aHistoryRef = {
-				hash: "",
-				title: "HOME"
-			};
-			assert.deepEqual(this.oRouter.getTitleHistory()[0], aHistoryRef);
-		}.bind(this));
+
+		// Assert
+		var aHistoryRef = {
+			hash: "",
+			title: "HOME"
+		};
+		assert.deepEqual(this.oRouter.getTitleHistory()[0], aHistoryRef);
 
 	});
 
@@ -2068,8 +1767,7 @@ sap.ui.require([
 			controlAggregation: "pages",
 			viewName: "foo",
 			controlId: this.oApp.getId(),
-			homeRoute: "home",
-			async: true
+			homeRoute: "home"
 		};
 
 		this.oOwner = {
@@ -2078,19 +1776,14 @@ sap.ui.require([
 			}
 		};
 
-
 		hasher.setHash(this.oRouterConfig.product.pattern);
 
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
 		this.oRouter._oOwner = this.oOwner;
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
 
 		this.oRouter.attachTitleChanged(fnEventSpy);
 
-		// Act
-		this.oRouter.initialize();
-
-		return this.oRouteMatchedSpies["product"].returnValues[0].then(function() {
+		this.oRouter.attachRouteMatched(function() {
 			// Assert
 			var aHistoryRef = {
 				hash: "",
@@ -2106,6 +1799,9 @@ sap.ui.require([
 			done();
 
 		}.bind(this));
+
+		// Act
+		this.oRouter.initialize();
 	});
 
 	QUnit.test("Home Route declaration with dynamic parts", function(assert) {
@@ -2143,23 +1839,17 @@ sap.ui.require([
 			controlAggregation: "pages",
 			viewName: "foo",
 			controlId: this.oApp.getId(),
-			homeRoute: "home",
-			async: true
+			homeRoute: "home"
 		};
 		this.spy = sinon.spy(Log, "error");
 
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
 
-		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
-
 		this.oRouter.attachTitleChanged(fnEventSpy);
 
 		hasher.setHash(this.oRouterConfig.product.pattern);
 
-		// Act
-		this.oRouter.initialize();
-
-		return this.oRouteMatchedSpies["product"].returnValues[0].then(function() {
+		this.oRouter.attachRouteMatched(function() {
 			// Assert
 			sinon.assert.calledWith(this.spy, "Routes with dynamic parts cannot be resolved as home route.");
 			assert.strictEqual(oParameters.history.length, 0, "Home route shouldn't be added to history.");
@@ -2171,6 +1861,9 @@ sap.ui.require([
 			assert.strictEqual(oParameters.title, sProductTitle, "Did pass product title value to the event parameters");
 			done();
 		}.bind(this));
+
+		// Act
+		this.oRouter.initialize();
 	});
 
 	QUnit.test("App home indicator for later navigations", function(assert) {
@@ -2204,8 +1897,7 @@ sap.ui.require([
 			controlAggregation: "pages",
 			viewName: "foo",
 			controlId: this.oApp.getId(),
-			homeRoute: "home",
-			async: true
+			homeRoute: "home"
 		};
 
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
@@ -2262,8 +1954,7 @@ sap.ui.require([
 			controlAggregation: "pages",
 			viewName: "foo",
 			controlId: this.oApp.getId(),
-			homeRoute: "home",
-			async: true
+			homeRoute: "home"
 		};
 
 		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
@@ -2305,13 +1996,13 @@ sap.ui.require([
 		var oUIComponent = new UIComponent({}),
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
-			oRouter = fnCreateRouter({}, {}, oUIComponent),
+			oRouter = new Router({}, {}, oUIComponent),
 				fnViewStub = this.stub(sap.ui, "view", function () {
 					return oView;
 			});
 
 		// Act
-		oRouter.getView("XML", "foo");
+		var oReturnValue = oRouter.getView("XML", "foo");
 
 		// Assert
 		assert.strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
@@ -2357,6 +2048,7 @@ sap.ui.require([
 			return createXmlView();
 		});
 
+
 		var oTargetConfig = {
 			myTarget : {
 				controlId: this.oShell.getId()
@@ -2365,25 +2057,20 @@ sap.ui.require([
 		this.oRouterConfig.routeName.target = "myTarget";
 
 		// System under test
-		this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
 		var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
-		var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
-
 
 		// Act
 		this.oRouter.parse(this.sPattern);
 
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(this.oRouter._oTargets._oCache, this.oRouter._oViews, "Targets are using the same view repository");
-			assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
+		// Assert
+		assert.strictEqual(this.oRouter._oTargets._oCache, this.oRouter._oViews, "Targets are using the same view repository");
+		assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
 
-			assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
+		assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
+		sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
 
-			assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
-		}.bind(this));
-
+		assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 	});
 
 	QUnit.test("Should display multiple targets referenced by a route", function (assert) {
@@ -2403,25 +2090,22 @@ sap.ui.require([
 		this.oRouterConfig.routeName.target = ["myTarget", "secondTarget"];
 
 		// System under test
-		this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
-		var oPlaceMyTargetSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
-		var oPlaceSecondTargetSpy = this.spy(this.oRouter.getTarget("secondTarget"), "_place");
-		var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
+		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+		var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+		var oPlaceSecondSpy = this.spy(this.oRouter.getTarget("secondTarget"), "_place");
 
 		// Act
 		this.oRouter.parse(this.sPattern);
 
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(oPlaceMyTargetSpy.callCount, 1, "Did place first target");
-			assert.strictEqual(oPlaceSecondTargetSpy.callCount, 1, "Did place second target");
+		// Assert
+		assert.strictEqual(oPlaceSpy.callCount, 1, "Did place the first target");
+		assert.strictEqual(oPlaceSecondSpy.callCount, 1, "Didplace the second target");
 
-			sinon.assert.calledOn(oPlaceMyTargetSpy, this.oRouter.getTarget("myTarget"));
-			sinon.assert.calledOn(oPlaceSecondTargetSpy, this.oRouter.getTarget("secondTarget"));
+		sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
+		sinon.assert.calledOn(oPlaceSecondSpy, this.oRouter.getTarget("secondTarget"));
 
-			assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
-			assert.strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the second shell");
-		}.bind(this));
+		assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
+		assert.strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the second shell");
 	});
 
 	QUnit.test("Should display child targets referenced by a route", function (assert) {
@@ -2442,56 +2126,40 @@ sap.ui.require([
 		this.oRouterConfig.routeName.target = ["myChild"];
 
 		// System under test
-		this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
-		// need to use sinon.spy instead of this.spy because this.spy is restored synchronously but this test
-		// has timeout in it.
-		var oPlaceSpy = this.spy(this.oRouter.getTarget("myChild"), "_place");
-		var oPlaceParentSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
-		var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
+		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+		var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+		var oPlaceChildSpy = this.spy(this.oRouter.getTarget("myChild"), "_place");
 
 		// Act
 		this.oRouter.parse(this.sPattern);
 
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "route is matched");
+		// Assert
+		assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
+		assert.strictEqual(oPlaceChildSpy.callCount, 1, "Did place myChild");
+		sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
+		sinon.assert.calledOn(oPlaceChildSpy, this.oRouter.getTarget("myChild"));
 
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(this.oRouter._oTargets._oCache, this.oRouter._oViews, "Targets are using the same view repository");
-			assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
-
-			assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myChild");
-			assert.strictEqual(oPlaceParentSpy.callCount, 1, "Did place myTarget");
-
-			oPlaceParentSpy.returnValues[0].then(function(oViewInfo) {
-				assert.strictEqual(oViewInfo.name, "myTarget");
-			});
-
-			oPlaceSpy.returnValues[0].then(function(oViewInfo) {
-				assert.strictEqual(oViewInfo.name, "myChild");
-			});
-
-			sinon.assert.calledOn(oPlaceParentSpy, this.oRouter.getTarget("myTarget"));
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myChild"));
-
-			assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
-			assert.strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
-		}.bind(this));
-
+		assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
+		assert.strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
 	});
 
 	QUnit.module("getTargets");
 
 	QUnit.test("Should get the created targets instance", function (assert) {
 		// System under test + arrange
-		var oRouter = fnCreateRouter({}, {}, null, {});
+		var oRouter = new Router({}, {}, null, {});
 
 		assert.strictEqual(oRouter.getTargets(), oRouter._oTargets, "Did return the Targets instance");
 	});
 
 	QUnit.test("Should return undefined if no targets where defined", function (assert) {
+			// TODO check this lines where to move
+			// Assert
+			// assert.strictEqual(this.oRouter._oTargets._oCache, this.oRouter._oViews, "Targets are using the same view repository");
+			// assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
 
 		// System under test + arrange
-		var oRouter = fnCreateRouter();
+		var oRouter = new Router();
 
 		assert.strictEqual(oRouter.getTargets(), undefined, "Did not create a Targets instance");
 	});
@@ -2518,7 +2186,7 @@ sap.ui.require([
 				assert.strictEqual(oParameters.hash, "test","the hash was passed");
 			});
 
-		this.oRouter = fnCreateRouter([
+		this.oRouter = new Router([
 			{
 				name: "bar",
 				pattern: "bar"
@@ -2548,7 +2216,7 @@ sap.ui.require([
 
 	QUnit.test("Should create targets in the bypassed event", function (assert) {
 		// Arrange
-		this.oRouter = fnCreateRouter([], {
+		this.oRouter = new Router([], {
 				viewType: "JS",
 				view : "nonExistingView",
 				bypassed : {
@@ -2563,22 +2231,8 @@ sap.ui.require([
 				}
 			});
 
-		var done = assert.async(),
-			fnBypassed = this.spy(function() {
-				assert.ok(true, "bypass event is fired");
-				done();
-			});
-
-		this.oRouter.attachBypassed(fnBypassed);
-
-		var fnDisplayFooStub = this.stub(this.oRouter.getTarget("foo"), "_display", function() {
-				return Promise.resolve();
-			}),
-			fnDisplayBarStub = this.stub(this.oRouter.getTarget("bar"), "_display", function() {
-				return Promise.resolve().then(function() {
-					assert.strictEqual(fnBypassed.callCount, 0, "bypass event isn't fired yet");
-				});
-			});
+		var fnDisplayFooStub = this.stub(this.oRouter.getTarget("foo"), "display", jQuery.noop),
+			fnDisplayBarStub = this.stub(this.oRouter.getTarget("bar"), "display", jQuery.noop);
 
 		// Act
 		this.oRouter.initialize();
@@ -2600,13 +2254,10 @@ sap.ui.require([
 				}
 			};
 
-		var oRouter = fnCreateRouter([{
+		var oRouter = new Router([{
 			name: "test",
 			pattern: "product({id1})/:id2:"
 		}]);
-
-		var oRoute = oRouter.getRoute("test");
-		var oRouteMatchedSpy = this.spy(oRoute, "_routeMatched");
 
 		oRouter.attachRoutePatternMatched(fnMatched);
 
@@ -2614,36 +2265,39 @@ sap.ui.require([
 		oRouter.initialize();
 		oRouter.parse("product(1)");
 
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched is called");
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			// Assert
-			assert.strictEqual(callCount, 1, "The route pattern matched handler should be called once");
-			oRouter.destroy();
-		});
+		this.clock.tick(0);
+
+		// Assert
+		assert.strictEqual(callCount, 1, "The route pattern matched handler should be called once");
+
+		oRouter.destroy();
 	});
 
 	QUnit.test("Hash 'page12' shouldn't match pattern 'page1/:context:'", function(assert) {
-		var oRouter = fnCreateRouter([{
+		var oRouter = new Router([{
 				name: "page1",
 				pattern: "page1/:context:"
 			}, {
 				name: "page12",
 				pattern: "page12/:context:"
-			}]);
+			}]),
+			sMatchedRouteName,
+			fnMatched = function (oEvent) {
+				sMatchedRouteName = oEvent.getParameter("name");
+			};
 
-		var oRoute = oRouter.getRoute("page12");
-		var oRouteMatchedSpy = this.spy(oRoute, "_routeMatched");
+		oRouter.attachRouteMatched(fnMatched);
 
 		// Act
 		oRouter.initialize();
 		oRouter.parse("page12");
 
-		// Assert
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched is called");
+		this.clock.tick(0);
 
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			oRouter.destroy();
-		});
+		// Assert
+		assert.strictEqual(sMatchedRouteName, "page12", "correct route is matched");
+
+		oRouter.destroy();
 	});
 
 	QUnit.test("Interpolate on pattern with multiple optional params", function(assert) {
@@ -2662,7 +2316,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Correctly parse the hash with skipped optional params", function(assert) {
-		var oRouter = fnCreateRouter([{
+		var oRouter = new Router([{
 			name: "testWithOptionalParams",
 			pattern: "test/:a:/:b:/:c:/:d:"
 		}]);
@@ -2691,7 +2345,7 @@ sap.ui.require([
 		aCalls.forEach(function(oCall, index) {
 			var oParam = oCall.args[0];
 			// remove properties which are set with undefined
-			// to easily compare it with the value in aExpected
+			//  to easily compare it with the value in aExpected
 			Object.keys(oParam).forEach(function(sKey) {
 				if (oParam[sKey] === undefined) {
 					delete oParam[sKey];
@@ -2700,9 +2354,7 @@ sap.ui.require([
 			assert.deepEqual(oParam, aExpected[index], "results parsed correctly");
 		});
 
-		return oRouteMatchedSpy.returnValues[aCalls.length - 1].then(function() {
-			oRouter.destroy();
-		});
+		oRouter.destroy();
 	});
 
 	QUnit.module("nested components", {
@@ -2718,9 +2370,6 @@ sap.ui.require([
 			var ParentComponent = UIComponent.extend("namespace.ParentComponent", {
 				metadata : {
 					routing:  {
-						config: {
-							async: true
-						},
 						routes: [
 							{
 								pattern: "category/{id}",
@@ -2741,9 +2390,6 @@ sap.ui.require([
 			var ChildComponent = UIComponent.extend("namespace.ChildComponent", {
 				metadata : {
 					routing:  {
-						config: {
-							async: true
-						},
 						routes: [
 							{
 								pattern: "product/{id}",
@@ -2779,8 +2425,7 @@ sap.ui.require([
 			oParentRoute = this.oParentComponent.getRouter().getRoute("category"),
 			oChildRoute = this.oChildComponent.getRouter().getRoute("product"),
 			oParentRouteMatchedSpy = sinon.spy(oParentRoute, "_routeMatched"),
-			oChildRouteMatchedSpy = sinon.spy(oChildRoute, "_routeMatched"),
-			namespace = {};
+			oChildRouteMatchedSpy = sinon.spy(oChildRoute, "_routeMatched");
 
 		oParentRoute.attachMatched(oParentRouteMatchedEventSpy);
 		oParentRoute.attachPatternMatched(oParentRoutePatternMatchedEventSpy);
@@ -2794,14 +2439,14 @@ sap.ui.require([
 		assert.strictEqual(oParentRouteMatchedSpy.callCount, 1, "Parent should be matched");
 		assert.strictEqual(oChildRouteMatchedSpy.callCount, 1, "Child is matched");
 
-		return Promise.all([oParentRouteMatchedSpy.returnValues[0], oChildRouteMatchedSpy.returnValues[0]]).then(function() {
-			assert.strictEqual(oParentRouteMatchedEventSpy.callCount, 1, "routeMatched fired for parent route");
-			assert.strictEqual(oParentRoutePatternMatchedEventSpy.callCount, 0, "routePatternMatched not fired for parent route");
-			assert.strictEqual(oParentRouteMatchedEvent.getParameter("nestedRoute"), oChildRoute, "childRoute is passed to event listeners");
-			assert.strictEqual(oChildRouteMatchedEventSpy.callCount, 1, "routeMatched fired for child route");
-			assert.strictEqual(oChildRoutePatternMatchedEventSpy.callCount, 1, "routePatternMatched fired for child route");
-			assert.strictEqual(oChildRouteMatchedEvent.getParameter("nestedRoute"), undefined, "no route is passed to event listeners");
-		});
+		this.clock.tick(0);
+
+		assert.strictEqual(oParentRouteMatchedEventSpy.callCount, 1, "routeMatched fired for parent route");
+		assert.strictEqual(oParentRoutePatternMatchedEventSpy.callCount, 0, "routePatternMatched not fired for parent route");
+		assert.strictEqual(oParentRouteMatchedEvent.getParameter("nestedRoute"), oChildRoute, "childRoute is passed to event listeners");
+		assert.strictEqual(oChildRouteMatchedEventSpy.callCount, 1, "routeMatched fired for child route");
+		assert.strictEqual(oChildRoutePatternMatchedEventSpy.callCount, 1, "routePatternMatched fired for child route");
+		assert.strictEqual(oChildRouteMatchedEvent.getParameter("nestedRoute"), undefined, "no route is passed to event listeners");
 	});
 
 	QUnit.test("nesting for multiple components", function(assert) {
@@ -2810,7 +2455,6 @@ sap.ui.require([
 
 		// Arrange
 		var that = this,
-			namespace = {},
 			iNumberOfComponents = 3,
 			aComponents = [],
 			aComponentInstances = [],
@@ -2826,9 +2470,6 @@ sap.ui.require([
 						var Component = UIComponent.extend("namespace.Component" + i, {
 							metadata : {
 								routing:  {
-									config: {
-										async: true
-									},
 									routes: [
 										{
 											pattern: "route" + i + "/{id}",
@@ -2883,41 +2524,22 @@ sap.ui.require([
 		// remove the first slash as it will be implicitly added
 		hasher.setHash(sHash.substring(1));
 
-		var aPromises = aRouteMatchedSpies.map(function(oRouteMatchSpy) {
-			assert.strictEqual(oRouteMatchSpy.callCount, 1, "_routeMatched is called");
-			return oRouteMatchSpy.returnValues[0];
+		this.clock.tick(0);
+
+		// Assert
+		aRouteMatchedEvents.forEach(function(oEvent, i, a) {
+			if (i === a.length - 1) {
+				assert.strictEqual(oEvent.getParameter("nestedRoute"), undefined, "no nested route is passed to the directly matched " + oEvent.getParameter("name"));
+				assert.strictEqual(aRoutePatternMatchedSpies[i].callCount, 1, "pattern matched has been fired for the directly matched " + oEvent.getParameter("name"));
+			} else {
+				assert.strictEqual(oEvent.getParameter("nestedRoute"), aRoutes[i + 1], aRoutes[i + 1] + " nested route is passed to " + oEvent.getParameter("name"));
+				assert.strictEqual(aRoutePatternMatchedSpies[i].callCount, 0, "pattern matched has not been fired for " + oEvent.getParameter("name"));
+			}
 		});
 
-		return Promise.all(aPromises).then(function() {
-			// Assert
-			aRouteMatchedEvents.forEach(function(oEvent, i, a) {
-				if (i === a.length - 1) {
-					assert.strictEqual(oEvent.getParameter("nestedRoute"), undefined, "no nested route is passed to the directly matched " + oEvent.getParameter("name"));
-					assert.strictEqual(aRoutePatternMatchedSpies[i].callCount, 1, "pattern matched has been fired for the directly matched " + oEvent.getParameter("name"));
-				} else {
-					assert.strictEqual(oEvent.getParameter("nestedRoute"), aRoutes[i + 1], aRoutes[i + 1] + " nested route is passed to " + oEvent.getParameter("name"));
-					assert.strictEqual(aRoutePatternMatchedSpies[i].callCount, 0, "pattern matched has not been fired for " + oEvent.getParameter("name"));
-				}
-			});
-
-			// CleanUp
-			aComponentInstances.forEach(function(oComponent) {
-				oComponent.destroy();
-			});
+		// CleanUp
+		aComponentInstances.forEach(function(oComponent) {
+			oComponent.destroy();
 		});
 	});
-
-	QUnit.start();
 });
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">QUnit Page for sap.ui.core.routing.Router</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
-
-</body>
-</html>

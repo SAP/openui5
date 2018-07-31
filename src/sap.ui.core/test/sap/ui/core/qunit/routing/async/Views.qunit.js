@@ -1,36 +1,10 @@
-<!DOCTYPE HTML>
-<html>
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.core.routing.Views</title>
-
-<script src="../../../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.m"
-	data-sap-ui-resourceroots='{"qunit.routing":".", "qunit.view":"../fixture"}'>
-
-</script>
-
-<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-2-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit-2");
-		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		jQuery.sap.require("sap.ui.thirdparty.sinon");
-		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-		sinon.config.useFakeTimers = false;
-		QUnit.config.autostart = false;
-</script>
-<script>
 /*global QUnit, sinon */
-sap.ui.require([
+sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/routing/Views",
-	"qunit/routing/AsyncViewModuleHook"
+	"./AsyncViewModuleHook"
 ], function (Log, UIComponent, View, Views, ModuleHook) {
 	"use strict";
 
@@ -383,18 +357,4 @@ sap.ui.require([
 			assert.strictEqual(oParameters.viewOptions, oViewOption, "Did pass the option to the event parameters");
 		});
 	});
-
-	QUnit.start();
 });
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">QUnit Page for sap.ui.core.routing.Views</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
-
-</body>
-</html>
