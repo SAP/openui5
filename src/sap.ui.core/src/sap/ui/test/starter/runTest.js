@@ -120,8 +120,6 @@
 			/* Prepare body: Add QUnit DOM if missing, add CSS, ... */
 			insertDIV("qunit");
 			insertDIV("qunit-fixture");
-			document.body.classList.add("sapUiBody");
-			document.body.setAttribute("role", "application");
 		});
 	}
 
