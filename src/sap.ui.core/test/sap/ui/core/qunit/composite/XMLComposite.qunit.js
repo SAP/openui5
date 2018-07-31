@@ -580,7 +580,7 @@ sap.ui.require([
 
 	QUnit.test("simple", function (assert) {
 		var done = assert.async();
-		var oXMLComposite = new composites.TextToggleButton("Frag1");
+		var oXMLComposite = new composites.TextToggleButton("Frag1"), oButton, oText;
 		var sId;
 		var iCount = 0;
 
@@ -602,15 +602,29 @@ sap.ui.require([
 			oClone.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
+			//Id access
+			oButton = oXMLComposite.byId("myButton");
+			oText = oXMLComposite.byId("myText");
+			assert.ok(oButton, "The button is accessed from the original control");
+			assert.ok(oText, "The text is accessed from the original control");
+			assert.ok(oButton.getId().endsWith("myButton"), "the button has the correct suffix");
+			assert.ok(oText.getId().endsWith("myText"), "the text has the correct suffix");
+
+			oButton = oClone.byId("myButton");
+			oText = oClone.byId("myText");
+			assert.ok(oButton, "The button is accessed from the the clone");
+			assert.ok(oText, "The text is accessed from the clone");
+			assert.ok(oButton.getId().endsWith("myButton"), "the button has the correct suffix");
+			assert.ok(oText.getId().endsWith("myText"), "the text has the correct suffix");
+
+			//Eventing
 			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
-			//TEMP-CLONE-ISSUE assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
 			assert.equal(iCount, 1, "Event fired only once");
 			assert.equal(sId, oClone.getId(), "The event is really fired from the clone");
 
 			//To be sure fire from the template
 			oContent = oXMLComposite._getCompositeAggregation();
 			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
-			//TEMP-CLONE-ISSUE assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
 			assert.equal(iCount, 2, "Event fired again");
 			assert.equal(sId, oXMLComposite.getId(), "The event is fired from the template");
 
