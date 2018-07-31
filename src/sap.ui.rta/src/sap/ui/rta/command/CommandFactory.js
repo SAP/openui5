@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/Util',
-	'sap/base/util/merge'
+	'sap/base/util/merge',
+	'sap/ui/rta/command/AppDescriptorCommand'
 ],
 function(
 	ManagedObject,
@@ -17,7 +18,8 @@ function(
 	OverlayRegistry,
 	FlexUtils,
 	DtUtil,
-	merge
+	merge,
+	AppDescriptorCommand
 ) {
 	"use strict";
 
@@ -308,9 +310,14 @@ function(
 			var oAction, oElementOverlay, bPrepareStatus, oCommand, mTemplateSettings;
 			var bIsUiElement = vElement instanceof ManagedObject;
 
+			if (sCommand !== "appDescriptor"){
+				mSettings = Object.assign({}, mSettings, {
+					selector : bIsUiElement ? undefined : vElement
+				});
+			}
+
 			mSettings = Object.assign({}, mSettings, {
 				element : bIsUiElement ? vElement : undefined,
-				selector : bIsUiElement ? undefined : vElement,
 				name : sCommand
 			});
 

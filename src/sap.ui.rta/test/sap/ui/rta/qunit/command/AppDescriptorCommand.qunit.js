@@ -6,6 +6,7 @@ sap.ui.define([
 	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/m/Button',
+	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/sinon-4'
 ],
 function (
@@ -14,6 +15,7 @@ function (
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
+	ManagedObject,
 	sinon
 ) {
 	'use strict';
@@ -81,18 +83,25 @@ function (
 			this.oButton.destroy();
 		}
 	}, function () {
-		QUnit.test("when calling command factory for a generic app descriptor change type ...", function (assert) {
+		QUnit.test("when calling command factory for a generic app descriptor change type ...", function(assert) {
 			var done = assert.async();
+			var fnAssertSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+
+			var oMockDescriptorInlineChange = {
+				"mockName" : "mocked"
+			};
 
 			var oMockDescriptorChange = {
 				store : function() {
 					assert.ok(true, "the descriptor change was submitted");
+					var mPassedSettings = fnAssertSpy.getCall(0).args[0];
+					var bHasSelector = Object.keys(mPassedSettings).some(function(sKey){
+						return sKey === "selector";
+					});
+					assert.notOk(bHasSelector, "the selector is not part of the passed settings");
+					fnAssertSpy.restore();
 					done();
 				}
-			};
-
-			var oMockDescriptorInlineChange = {
-				"mockName" : "mocked"
 			};
 
 			this.createDescriptorInlineChangeStub = sinon.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").callsFake(function (sChangeType, mParameters, mTexts) {
