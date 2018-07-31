@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Popup",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	ElementOverlay,

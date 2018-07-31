@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	jQuery,

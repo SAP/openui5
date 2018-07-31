@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",

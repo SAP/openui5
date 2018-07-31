@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayUtil",
@@ -30,7 +30,7 @@ sap.ui.define([
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 	],
 function(
 	jQuery,

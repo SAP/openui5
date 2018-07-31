@@ -1,7 +1,7 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/ControlDragDrop",
 	"sap/ui/dt/plugin/CutPaste",
@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/SplitContainer",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/events/KeyCodes"
 ],
 function (
 	jQuery,
@@ -32,7 +33,8 @@ function (
 	Page,
 	SplitContainer,
 	QUnitUtils,
-	sinon
+	sinon,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -155,7 +157,7 @@ function (
 		});
 
 		QUnit.test("when the cut is triggered on a button overlay, that doesn't fit to ObjectHeader", function(assert) {
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
 			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is marked as target zone");
 			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
@@ -167,7 +169,7 @@ function (
 		});
 
 		QUnit.test("when the cut is triggered on a non movable overlay (ObjectHeader)", function(assert) {
-			QUnitUtils.triggerKeydown(this.oObjectHeaderOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oObjectHeaderOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
 			assert.ok(!this.oObjectHeaderOverlay.hasStyleClass("sapUiDtOverlayCutted"), "then the object header overlay is not marked with the cut style");
 			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
@@ -176,7 +178,7 @@ function (
 
 		QUnit.test("when the cut is triggered on an in this situation non movable overlay" , function(assert) {
 
-			QUnitUtils.triggerKeydown(this.oNotMovableButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oNotMovableButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
 			assert.ok(!this.oNotMovableButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "then the button overlay is not marked with the cut style");
 			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
@@ -184,16 +186,16 @@ function (
 		});
 
 		QUnit.test("when the cut is triggered on a button overlay,", function(assert) {
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
 			assert.ok(this.oCutPaste.isElementPasteable(this.oLayoutOverlay), "the target overlay of a valid element is pasteable");
 			assert.ok(!this.oCutPaste.isElementPasteable(this.oObjectAttributeOverlay), "the target overlay of an invalid element is not pasteable");
 		});
 
 		QUnit.test("and cut was triggered, when ESCAPE is triggered", function(assert) {
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			QUnitUtils.triggerKeydown(this.oObjectHeaderAggregationOverlay.getDomRef(), jQuery.sap.KeyCodes.ESCAPE, false, false, false);
+			QUnitUtils.triggerKeydown(this.oObjectHeaderAggregationOverlay.getDomRef(), KeyCodes.ESCAPE, false, false, false);
 
 			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
 			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
@@ -202,9 +204,9 @@ function (
 		});
 
 		QUnit.test("and cut was triggered, when another cut is triggered, then", function(assert) {
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
 			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is marked as target zone");
 			assert.ok(this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is marked as target zone");
@@ -275,15 +277,15 @@ function (
 		});
 
 		QUnit.test("when paste is triggered without cut before, then", function(assert) {
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.V, false, false, true);
 
 			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "nothing happened, button is still at second position");
 		});
 
 		QUnit.test("and object attribute was cutted, when paste is triggered on the layout (control with target zone aggregation), then", function(assert) {
-			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			QUnitUtils.triggerKeydown(this.oLayoutOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
+			QUnitUtils.triggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, false, false, true);
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
 			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
@@ -297,9 +299,9 @@ function (
 		});
 
 		QUnit.test("and object attribute was cutted, when paste is triggered on the button (control in a target zone aggregation), then", function(assert) {
-			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.V, false, false, true);
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
 			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header stays at 1. position");
@@ -314,9 +316,9 @@ function (
 		});
 
 		QUnit.test("and button was cutted, when paste is triggered on the object attribute (control in an invalid aggregation), then", function(assert) {
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
+			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.V, false, false, true);
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
 			assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute.getId(), "object attribute stays in header at 1. position");
@@ -422,7 +424,7 @@ function (
 		});
 
 		QUnit.test("when the cut is triggered on the page overlay, that fit into both aggregations", function(assert) {
-			QUnitUtils.triggerKeydown(this.oPage1Overlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+			QUnitUtils.triggerKeydown(this.oPage1Overlay.getDomRef(), KeyCodes.X, false, false, true);
 
 			assert.ok(this.oSplitContainerMasterPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
 			assert.ok(this.oSplitContainerDetailPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
