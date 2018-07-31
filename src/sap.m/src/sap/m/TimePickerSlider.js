@@ -85,6 +85,8 @@ sap.ui.define([
 
 		var SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 200 : 0;
 		var MIN_ITEMS = 50;
+		var LABEL_HEIGHT = 32;
+		var ARROW_HEIGHT = 32;
 
 		/**
 		 * Initializes the control.
@@ -527,11 +529,12 @@ sap.ui.define([
 
 				//the frame is absolutly positioned in the middle of its container
 				//its height is the same as the list items' height
-				//so the top of the middle === container.height/2 - item.height/2
+				//so the top of the middle === container.height/2 - item.height/2 + label.height/2
 				//corrected with the top of the container
+				//the label height is added to the calculation in order to display the same amount of items above and below the selected one
 
 				topPadding = iSliderOffsetTop - iContainerOffsetTop;
-				iFrameTopPosition = (this.$().height() - iItemHeight) / 2 + topPadding;
+				iFrameTopPosition = (this.$().height() - iItemHeight + LABEL_HEIGHT) / 2 + topPadding;
 
 				$Frame.css("top", iFrameTopPosition);
 
@@ -581,11 +584,15 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSlider.prototype._updateMargins = function(bIsExpand) {
-			var iItemHeight,
-				iMargin,
+			var iItemHeight = this._getItemHeightInPx(),
+				$ConstrainedSlider,
+				iVisibleItems,
+				iVisibleItemsTop,
+				iVisibleItemsBottom,
+				iFocusedItemTopPosition,
+				iArrowHeight,
 				iMarginTop,
-				iMarginBottom,
-				$ConstrainedSlider;
+				iMarginBottom;
 
 			if (this.getDomRef()) {
 				iItemHeight = this._getItemHeightInPx();
@@ -598,25 +605,18 @@ sap.ui.define([
 				}
 
 				if (bIsExpand) {
-					iMargin = (this.$().height() - this._getVisibleItems().length * iItemHeight) / 2;
-
-					iMarginTop = iMargin;
-					//subtract the height of all elements above the slider from the top margin
-					jQuery.each($ConstrainedSlider.prevAll().filter(fnFilterDisplayNotNone), function(index, el) {
-						iMarginTop -= jQuery(el).height();
-					});
+					iVisibleItems = this._getVisibleItems().length;
+					iVisibleItemsTop = iItemHeight * Math.floor(iVisibleItems / 2);
+					iVisibleItemsBottom = iItemHeight * Math.ceil(iVisibleItems / 2);
+					// arrow height if the same as label height
+					// there are arrows only in compact mode
+					iArrowHeight = this.$().parents().hasClass('sapUiSizeCompact') ? ARROW_HEIGHT : 0;
+					iFocusedItemTopPosition = (this.$().height() - iItemHeight + LABEL_HEIGHT) / 2;
+					iMarginTop = iFocusedItemTopPosition - iVisibleItemsTop - LABEL_HEIGHT - iArrowHeight;
+					iMarginBottom = this.$().height() - iFocusedItemTopPosition - iVisibleItemsBottom - iArrowHeight;
+					// add a margin only if there are less items than the maximum visible amount
 					iMarginTop = Math.max(iMarginTop, 0);
-
-					iMarginBottom = iMargin;
-					//subtract the height of all elements below the slider from the bottom margin
-					jQuery.each($ConstrainedSlider.nextAll().filter(fnFilterDisplayNotNone), function(index, el) {
-						iMarginBottom -= jQuery(el).height();
-					});
 					iMarginBottom = Math.max(iMarginBottom, 0);
-
-					if (iMarginBottom === 0 && iMarginTop === 0) {
-						return;
-					}
 				} else {
 					iMarginTop = 0;
 					iMarginBottom = 0;
@@ -637,12 +637,6 @@ sap.ui.define([
 			this._updateMargins(bIsExpand);
 			this._updateSelectionFrameLayout();
 		};
-
-		//Returns true if called on a dom element that has css display != none
-		//Can be used to filter dom elements by css display property
-		function fnFilterDisplayNotNone() {
-			return jQuery(this).css("display") !== "none";
-		}
 
 		/**
 		 * Calculates the top offset of the border frame relative to its container.
