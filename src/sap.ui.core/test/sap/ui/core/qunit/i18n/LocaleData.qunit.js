@@ -1,72 +1,50 @@
-<!DOCTYPE HTML>
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/library"
+], function(Locale, LocaleData, coreLibrary) {
+	"use strict";
 
-<!--
-  Tested sap.ui.core.LocaleData
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-language="en">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script>
-	jQuery.sap.require("sap.ui.core.LocaleData");
+	// shortcut for enum from sap.ui.core namespace
+	var CalendarType = coreLibrary.CalendarType;
 
 	var aLocales = [
-					"ar_SA",
-					"de_AT",
-					"de_CH",
-					"de_DE",
-					"da_DK",
-					"en_AU",
-					"en_CA",
-					"en_GB",
-					"en_US",
-					"en_ZA",
-					"es_MX",
-					"es_ES",
-					"fa_IR",
-					"fr_FR",
-					"fr_CA",
-					"fr_BE",
-					"ja_JP",
-					"id_ID",
-					"it_IT",
-					"ru_RU",
-					"pt_BR",
-					"pt_PT",
-					"hi_IN",
-					"he_IL",
-					"tr_TR",
-					"nl_BE",
-					"nl_NL",
-					"pl_PL",
-					"ko_KR",
-					"th_TH",
-					"zh_SG",
-					"zh_TW",
-					"zh_CN",
-					"de_XX",
-					"xx_XX"
+		"ar_SA",
+		"de_AT",
+		"de_CH",
+		"de_DE",
+		"da_DK",
+		"en_AU",
+		"en_CA",
+		"en_GB",
+		"en_US",
+		"en_ZA",
+		"es_MX",
+		"es_ES",
+		"fa_IR",
+		"fr_FR",
+		"fr_CA",
+		"fr_BE",
+		"ja_JP",
+		"id_ID",
+		"it_IT",
+		"ru_RU",
+		"pt_BR",
+		"pt_PT",
+		"hi_IN",
+		"he_IL",
+		"tr_TR",
+		"nl_BE",
+		"nl_NL",
+		"pl_PL",
+		"ko_KR",
+		"th_TH",
+		"zh_SG",
+		"zh_TW",
+		"zh_CN",
+		"de_XX",
+		"xx_XX"
 	];
 
 	var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$ US", "$US", "$", "US$", "US$", "$",
@@ -74,13 +52,15 @@
 
 	QUnit.module("Locales");
 	// Run generic test for all supported locales, run custom tests where it is defined
-	jQuery.each(aLocales, function(i, sLocale) {
+	aLocales.forEach(function(sLocale) {
 		QUnit.test("Locale " + sLocale, function(assert) {
 			var oLocale = new sap.ui.core.Locale(sLocale),
-				oLocaleData = new sap.ui.core.LocaleData(oLocale),
+				oLocaleData = new LocaleData(oLocale),
 				fnCustomTests = window["customTests_" + sLocale];
-			genericTests(oLocaleData, sLocale);
-			if (fnCustomTests) fnCustomTests(oLocaleData);
+			genericTests(assert, oLocaleData, sLocale);
+			if (fnCustomTests) {
+				fnCustomTests(assert, oLocaleData);
+			}
 		});
 	});
 
@@ -88,7 +68,7 @@
 	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods",
 	"getDatePattern", "getTimePattern", "getDateTimePattern", "getNumberSymbol"
 	*/
-	function genericTests(oLocaleData, sLocale) {
+	function genericTests(assert, oLocaleData, sLocale) {
 		var aCalendarTypes = [undefined],
 				sCalendarType,
 				i, j;
@@ -99,8 +79,8 @@
 		assert.equal(typeof oLocaleData.getTerritories(), "object", "getTerritories()");
 
 		if (sLocale !== "xx_XX") {
-			for (sCalendarType in sap.ui.core.CalendarType) {
-				aCalendarTypes.push(sap.ui.core.CalendarType[sCalendarType]);
+			for (sCalendarType in CalendarType) {
+				aCalendarTypes.push(CalendarType[sCalendarType]);
 			}
 		}
 
@@ -149,9 +129,9 @@
 			assert.equal(typeof oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMMMMEEEEdHms\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomDateTimePattern("Q", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"Q\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomDateTimePattern("w", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"w\", \"" + aCalendarTypes[i] + "\")");
-			raises(function(){oLocaleData.getCustomDateTimePattern("My", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"My\", \"" + aCalendarTypes[i] + "\")");
-			raises(function(){oLocaleData.getCustomDateTimePattern("yMLd", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMLd\", \"" + aCalendarTypes[i] + "\")");
-			raises(function(){oLocaleData.getCustomDateTimePattern("yMdp", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMdp\", \"" + aCalendarTypes[i] + "\")");
+			assert.throws(function(){oLocaleData.getCustomDateTimePattern("My", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"My\", \"" + aCalendarTypes[i] + "\")");
+			assert.throws(function(){oLocaleData.getCustomDateTimePattern("yMLd", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMLd\", \"" + aCalendarTypes[i] + "\")");
+			assert.throws(function(){oLocaleData.getCustomDateTimePattern("yMdp", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMdp\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("y", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"y\", \"y\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"y\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "d", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
@@ -198,7 +178,7 @@
 		assert.ok(oLocaleData.getWeekendStart() >= 0 && oLocaleData.getWeekendStart() <7, "getWeekendStart()");
 		assert.equal(typeof oLocaleData.getWeekendEnd(), "number", "getWeekendEnd()");
 		assert.ok(oLocaleData.getWeekendEnd() >= 0 && oLocaleData.getWeekendEnd() <7, "getWeekendEnd()");
-		assert.ok(oLocaleData.getPreferredCalendarType() in sap.ui.core.CalendarType, "getPreferredCalendar()");
+		assert.ok(oLocaleData.getPreferredCalendarType() in CalendarType, "getPreferredCalendar()");
 		assert.equal(typeof oLocaleData.getCalendarWeek("wide", 1), "string", "getCalendarWeek wide");
 		assert.equal(typeof oLocaleData.getCalendarWeek("narrow", 1), "string", "getCalendarWeek narrow");
 		assert.equal(typeof oLocaleData.getPluralCategories(), "object", "getPluralCategories");
@@ -216,7 +196,7 @@
 		}
 	}
 
-	function customTests_ar_SA(oLocaleData) {
+	function customTests_ar_SA(assert, oLocaleData) {
 		assert.equal(oLocaleData.getPluralCategories().length, 6, "six plural forms");
 		assert.equal(oLocaleData.getPluralCategories()[0], "zero", "special plural form for zero");
 		assert.equal(oLocaleData.getPluralCategories()[1], "one", "special plural form for one");
@@ -230,11 +210,11 @@
 		assert.equal(oLocaleData.getPreferredCalendarType(), "Islamic", "islamic calendar preferred")
 	}
 
-	function customTests_de_AT(oLocaleData) {
+	function customTests_de_AT(assert, oLocaleData) {
 		assert.equal(oLocaleData.getMonths("wide")[0], "Jänner", "1st month");
 	}
 
-	function customTests_de_DE(oLocaleData) {
+	function customTests_de_DE(assert, oLocaleData) {
 		assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 		assert.equal(oLocaleData.getLanguages()["de"], "Deutsch", "language");
 		assert.equal(oLocaleData.getScripts()["Latn"], "Lateinisch", "scripts");
@@ -304,7 +284,7 @@
 		assert.equal(oLocaleData.getPreferredCalendarType(), "Gregorian", "gregorian calendar preferred")
 	}
 
-	function customTests_de_XX(oLocaleData) {
+	function customTests_de_XX(assert, oLocaleData) {
 		assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 		assert.equal(oLocaleData.getMonths("wide")[0], "Januar", "1st month");
 		assert.equal(oLocaleData.getMonths("abbreviated")[0], "Jan.", "1st month abbreviated");
@@ -320,7 +300,7 @@
 		assert.equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
 	}
 
-	function customTests_en_GB(oLocaleData) {
+	function customTests_en_GB(assert, oLocaleData) {
 		assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 		assert.equal(oLocaleData.getLanguages()["de"], "German", "language");
 		assert.equal(oLocaleData.getScripts()["Latn"], "Latin", "scripts");
@@ -387,13 +367,13 @@
 		assert.equal(oLocaleData.getEras("abbreviated")[0], "BC", "Abbreviated Era Name");
 	}
 
-	function customTests_en_ZA(oLocaleData) {
+	function customTests_en_ZA(assert, oLocaleData) {
 		assert.equal(oLocaleData.getDatePattern("medium"), "dd MMM y", "date pattern \"medium\"");
 		assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 	}
 
-	function customTests_en_US(oLocaleData) {
+	function customTests_en_US(assert, oLocaleData) {
 		assert.equal(oLocaleData.getDayPeriods("abbreviated")[0], "AM", "day periods \"abbreviated\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("jms"), "h:mm:ss a", "datetime format \"jms\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("Jms"), "h:mm:ss", "datetime format \"Jms\"");
@@ -403,15 +383,15 @@
 		assert.equal(oLocaleData.getCustomIntervalPattern("jm", { Hour: true }), "h:mm – h:mm a", "interval format \"jm\", { Hour: true }");
 	}
 
-	function customTests_he_IL(oLocaleData) {
+	function customTests_he_IL(assert, oLocaleData) {
 		assert.equal(oLocaleData.getOrientation(), "right-to-left", "orientation");
 	}
 
-	function customTests_fa_IR(oLocaleData) {
+	function customTests_fa_IR(assert, oLocaleData) {
 		assert.equal(oLocaleData.getPreferredCalendarType(), "Persian", "persian calendar preferred")
 	}
 
-	function customTests_fr_FR(oLocaleData) {
+	function customTests_fr_FR(assert, oLocaleData) {
 		assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 		assert.equal(oLocaleData.getLanguages()["de"], "allemand", "language");
 		assert.equal(oLocaleData.getScripts()["Latn"], "latin", "scripts");
@@ -437,7 +417,7 @@
 		assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 	}
 
-	function customTests_ja_JP(oLocaleData) {
+	function customTests_ja_JP(assert, oLocaleData) {
 		assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 		assert.equal(oLocaleData.getLanguages()["de"], "ドイツ語", "language");
 		assert.equal(oLocaleData.getScripts()["Latn"], "ラテン文字", "scripts");
@@ -468,11 +448,11 @@
 		assert.ok(oLocaleData.getCalendarWeek("wide", 0).toLowerCase().indexOf("week") === -1, "calendar week should be translated");
 	}
 
-	function customTests_nl_BE(oLocaleData) {
+	function customTests_nl_BE(assert, oLocaleData) {
 		assert.equal(oLocaleData.getDatePattern("medium"), "d MMM y", "date pattern \"medium\"");
 	}
 
-	function customTests_ru_RU(oLocaleData) {
+	function customTests_ru_RU(assert, oLocaleData) {
 		assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 		assert.equal(oLocaleData.getLanguages()["de"], "немецкий", "language");
 		assert.equal(oLocaleData.getScripts()["Latn"], "латиница", "scripts");
@@ -521,19 +501,19 @@
 		assert.equal(oLocaleData.getPluralCategory("101"), "one", "plural category one for 101");
 	}
 
-	function customTests_pt_BR(oLocaleData) {
+	function customTests_pt_BR(assert, oLocaleData) {
 		assert.equal(oLocaleData.getFirstDayOfWeek(), 0, "first day of week");
 		assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
 
-	function customTests_pt_PT(oLocaleData) {
+	function customTests_pt_PT(assert, oLocaleData) {
 		assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
 		assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
 
-	function customTests_th_TH(oLocaleData) {
+	function customTests_th_TH(assert, oLocaleData) {
 		assert.equal(oLocaleData.getPreferredCalendarType(), "Buddhist", "buddhist calendar preferred")
 	}
 
@@ -558,7 +538,7 @@
 	});
 
 	QUnit.test("Currency digits", function(assert) {
-		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
+		var oLocaleData = LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
 		assert.equal(oLocaleData.getCurrencyDigits("USD"), 2, "2 digits fuer USD");
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "2 digits fuer EUR");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "0 digits fuer JPY");
@@ -578,18 +558,18 @@
 	});
 
 	QUnit.test("Calendar type should use the value set in configuration when getting calendar related values", function(assert) {
-		sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Islamic);
 
-		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
+		var oLocaleData = LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
 
-		assert.deepEqual(oLocaleData.getMonths("narrow"), oLocaleData.getMonths("narrow", sap.ui.core.CalendarType.Islamic), "getMonths uses calendar type in configuration");
-		assert.deepEqual(oLocaleData.getDays("narrow"), oLocaleData.getDays("narrow", sap.ui.core.CalendarType.Islamic), "getDays uses calendar type in configuration");
-		assert.deepEqual(oLocaleData.getQuarters("narrow"), oLocaleData.getQuarters("narrow", sap.ui.core.CalendarType.Islamic), "getQuarters uses calendar type in configuration");
-		assert.deepEqual(oLocaleData.getDayPeriods("narrow"), oLocaleData.getDayPeriods("narrow", sap.ui.core.CalendarType.Islamic), "getDayPeriods uses calendar type in configuration");
-		assert.deepEqual(oLocaleData.getDatePattern("short"), oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Islamic), "getDatePattern uses calendar type in configuration");
-		assert.deepEqual(oLocaleData.getTimePattern("short"), oLocaleData.getTimePattern("short", sap.ui.core.CalendarType.Islamic), "getTimePattern uses calendar type in configuration");
-		assert.deepEqual(oLocaleData.getDateTimePattern("short"), oLocaleData.getDateTimePattern("short", sap.ui.core.CalendarType.Islamic), "getDateTimePattern uses calendar type in configuration");
-		assert.deepEqual(oLocaleData.getEras("narrow"), oLocaleData.getEras("narrow", sap.ui.core.CalendarType.Islamic), "getEra uses calendar type in configuration");
+		assert.deepEqual(oLocaleData.getMonths("narrow"), oLocaleData.getMonths("narrow", CalendarType.Islamic), "getMonths uses calendar type in configuration");
+		assert.deepEqual(oLocaleData.getDays("narrow"), oLocaleData.getDays("narrow", CalendarType.Islamic), "getDays uses calendar type in configuration");
+		assert.deepEqual(oLocaleData.getQuarters("narrow"), oLocaleData.getQuarters("narrow", CalendarType.Islamic), "getQuarters uses calendar type in configuration");
+		assert.deepEqual(oLocaleData.getDayPeriods("narrow"), oLocaleData.getDayPeriods("narrow", CalendarType.Islamic), "getDayPeriods uses calendar type in configuration");
+		assert.deepEqual(oLocaleData.getDatePattern("short"), oLocaleData.getDatePattern("short", CalendarType.Islamic), "getDatePattern uses calendar type in configuration");
+		assert.deepEqual(oLocaleData.getTimePattern("short"), oLocaleData.getTimePattern("short", CalendarType.Islamic), "getTimePattern uses calendar type in configuration");
+		assert.deepEqual(oLocaleData.getDateTimePattern("short"), oLocaleData.getDateTimePattern("short", CalendarType.Islamic), "getDateTimePattern uses calendar type in configuration");
+		assert.deepEqual(oLocaleData.getEras("narrow"), oLocaleData.getEras("narrow", CalendarType.Islamic), "getEra uses calendar type in configuration");
 
 		sap.ui.getCore().getConfiguration().setCalendarType(null);
 	});
@@ -598,25 +578,25 @@
 		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
 
 		oFormatSettings.setLegacyDateFormat("3");
-		var oLocaleData = sap.ui.core.LocaleData.getInstance(oFormatSettings.getFormatLocale());
+		var oLocaleData = LocaleData.getInstance(oFormatSettings.getFormatLocale());
 		assert.equal(oLocaleData.getDatePattern("short"), "MM-dd-yyyy", "short pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getDatePattern("medium"), "MM-dd-yyyy", "medium pattern should be the one defined in format settings");
-		assert.equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Islamic), "M/d/y GGGGG", "short pattern for Islamic calendar type should be fetched from locale data");
+		assert.equal(oLocaleData.getDatePattern("short", CalendarType.Islamic), "M/d/y GGGGG", "short pattern for Islamic calendar type should be fetched from locale data");
 
 		oFormatSettings.setLegacyTimeFormat("0");
 		assert.equal(oLocaleData.getTimePattern("short"), "HH:mm", "short pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "medium pattern should be the one defined in format settings");
-		assert.equal(oLocaleData.getTimePattern("short", sap.ui.core.CalendarType.Islamic), "h:mm a", "short pattern for Islamic calendar type should be fetched from locale data");
+		assert.equal(oLocaleData.getTimePattern("short", CalendarType.Islamic), "h:mm a", "short pattern for Islamic calendar type should be fetched from locale data");
 
 		oFormatSettings.setLegacyDateFormat("A");
 		assert.equal(oLocaleData.getDatePattern("short"), "yyyy/MM/dd", "short pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "medium pattern should be the one defined in format settings");
-		assert.equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
+		assert.equal(oLocaleData.getDatePattern("short", CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
 	});
 
 	QUnit.test("Unit Display Name L10N", function(assert) {
-		var oLocale = new sap.ui.core.Locale("de_DE");
-		var oLocaleData = new sap.ui.core.LocaleData(oLocale);
+		var oLocale = new Locale("de_DE");
+		var oLocaleData = new LocaleData(oLocale);
 
 		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "Std.", "display name 'Std.' is correct");
 		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "Gramm", "display name 'Gramm' is correct");
@@ -625,8 +605,8 @@
 		// unknown code
 		assert.equal(oLocaleData.getUnitDisplayName("foobar"), "", "display name 'foobar' is correct");
 
-		oLocale = new sap.ui.core.Locale("es_ES");
-		oLocaleData = new sap.ui.core.LocaleData(oLocale);
+		oLocale = new Locale("es_ES");
+		oLocaleData = new LocaleData(oLocale);
 
 		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "horas", "display name 'horas' is correct");
 		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "g", "display name 'g' is correct");
@@ -635,7 +615,7 @@
 	});
 
 	QUnit.test("CustomLocaleData with getUnitFormats", function(assert) {
-		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US-x-sapufmt"));
+		var oLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
 
 		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
 		oFormatSettings.setCustomUnits({
@@ -779,8 +759,8 @@
 
 	QUnit.test("Deprecated locales support", function(assert) {
 		aDeprecatedLocales.forEach(function(sLocale) {
-			var oLocale = new sap.ui.core.Locale(sLocale),
-				oLocaleData = new sap.ui.core.LocaleData(oLocale);
+			var oLocale = new Locale(sLocale),
+				oLocaleData = new LocaleData(oLocale);
 			//check retrieval of languages to see if the localeData was successfully loaded
 			assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present for locale: " + sLocale);
 		});
@@ -788,7 +768,7 @@
 
 	QUnit.test("Currency Digits", function(assert) {
 
-		var oLocaleData = sap.ui.core.LocaleData.getInstance(
+		var oLocaleData = LocaleData.getInstance(
 			sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
 		);
 
@@ -819,18 +799,4 @@
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 	});
-
-</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: LocaleData / CLDR generation</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});

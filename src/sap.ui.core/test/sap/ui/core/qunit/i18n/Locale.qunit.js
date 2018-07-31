@@ -1,32 +1,8 @@
-<!DOCTYPE HTML>
-
-<!--
-  Tested sap.ui.core.Locale
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-language="en-US">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script>
-	jQuery.sap.require("sap.ui.core.Locale");
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/core/Locale"
+], function(Locale) {
+	"use strict";
 
 	var aLocales = [
 		["en",						"en",		null,	null,	null,			null,			null,		"EN"],
@@ -61,7 +37,7 @@
 
 	function localeTest(sLocale, sLanguage, sScript, sRegion, sVariant, sExtension, sPrivateUse) {
 		QUnit.test("Locale " + sLocale, function(assert) {
-			var oLocale = new sap.ui.core.Locale(sLocale);
+			var oLocale = new Locale(sLocale);
 			assert.equal(oLocale.getLanguage(), sLanguage, "Language");
 			assert.equal(oLocale.getScript(), sScript, "Script");
 			assert.equal(oLocale.getRegion(), sRegion, "Region");
@@ -71,12 +47,12 @@
 		});
 	}
 
-	for (var i = 0; i < aLocales.length; i++) {
-		localeTest.apply(this, aLocales[i]);
-	}
+	aLocales.forEach(function(aLocaleData) {
+		localeTest.apply(this, aLocaleData);
+	});
 
 	QUnit.test("hasPrivateUseSubtag", function(assert) {
-		var oLocale = new sap.ui.core.Locale("de_DE-x-sapufmt");
+		var oLocale = new Locale("de_DE-x-sapufmt");
 		assert.equal(oLocale.getPrivateUse(), "x-sapufmt", "PrivateUse must be set");
 		assert.equal(oLocale.hasPrivateUseSubtag("sapufmt"), true, "PrivateUse subtag must be detected");
 		assert.equal(oLocale.hasPrivateUseSubtag("sap"), false, "parts of PrivateUse subtag must not be detected");
@@ -85,15 +61,9 @@
 	});
 
 	QUnit.test("SAPLogonLanguage", function(assert) {
-		for(var i = 0; i< aLocales.length; i++) {
-			var oLocale = new sap.ui.core.Locale(aLocales[i][0]);
-			assert.equal(oLocale.getSAPLogonLanguage(), aLocales[i][7], "locale should return the correct SAP Logon Language");
-		}
+		aLocales.forEach(function(aLocaleData) {
+			var oLocale = new Locale(aLocaleData[0]);
+			assert.equal(oLocale.getSAPLogonLanguage(), aLocaleData[7], "locale should return the correct SAP Logon Language");
+		});
 	});
-</script>
-
-</head>
-<body>
-<div id="qunit"></div>
-</body>
-</html>
+});
