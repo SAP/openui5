@@ -632,6 +632,71 @@ function(
 		});
 	});
 
+	QUnit.module("Given variant model, variant management reference and flex settings for a rename command", {
+		beforeEach: function (assert) {
+			var sVariantManagementReference = "dummyVariantManagementReference";
+			this.sCurrentVariantReference = "dummyVariantReference";
+			this.oFLexSettings = {
+				layer: "VENDOR",
+				developerMode: false
+			};
+
+			this.fnOriginalGetModel = oMockedAppComponent.getModel;
+			oMockedAppComponent.getModel = function (sModelName) {
+				if (sModelName === "$FlexVariants") {
+					return {
+						getCurrentVariantReference: function (sVariantManagementRef) {
+							if (sVariantManagementRef === sVariantManagementReference) {
+								return this.sCurrentVariantReference;
+							}
+						}.bind(this)
+					};
+				}
+			}.bind(this);
+
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.spy(FlexCommand.prototype, "prepare");
+
+			this.oButton = new Button(oMockedAppComponent.createId("button"));
+
+			this.oCommandFactory = new CommandFactory({
+				flexSettings: this.oFLexSettings
+			});
+
+			return oCommandFactory.getCommandFor(this.oButton, "Rename", {
+				renamedElement: this.oButton
+			}, new ElementDesignTimeMetadata({
+				data: {
+					actions: {
+						rename: {
+							changeType: "rename"
+						}
+					}
+				}
+			}), "dummyVariantManagementReference")
+				.then(function (oCommand) {
+					this.oCommand = oCommand;
+				}.bind(this));
+		},
+		afterEach: function (assert) {
+			sandbox.restore();
+			this.oCommand.destroy();
+			this.oButton.destroy();
+			this.oCommandFactory.destroy();
+			oMockedAppComponent.getModel = this.fnOriginalGetModel;
+			delete this.fnOriginalGetModel;
+			delete this.oFLexSettings;
+			delete this.sCurrentVariantReference;
+		}
+	}, function () {
+		QUnit.test("when prepare() of remove command is called", function (assert) {
+			assert.ok(FlexCommand.prototype.prepare.calledOnce, "then FlexCommand.prepare() called once");
+			assert.strictEqual(this.oCommand.getPreparedChange().getVariantReference(), this.sCurrentVariantReference, "then correct variant reference set to the prepared change");
+			assert.strictEqual(this.oCommand.getPreparedChange().getLayer(), this.oFLexSettings.layer, "then correct layer was set to the prepared change");
+			assert.deepEqual(this.oCommandFactory.getFlexSettings(), this.oFLexSettings, "then correct flex settings were set to the commandfactory");
+		});
+	});
+
 	QUnit.module("Given a command stack with multiple already executed commands", {
 		beforeEach : function(assert) {
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
