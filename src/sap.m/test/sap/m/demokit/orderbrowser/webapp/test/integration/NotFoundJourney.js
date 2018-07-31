@@ -19,7 +19,7 @@ sap.ui.define([
 		Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
 			and.theNotFoundPageShouldSayResourceNotFound();
 
-		//Cleanup
+		// Cleanup
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -27,14 +27,11 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartTheApp({ hash : "/Orders/SomeInvalidObjectId" });
 
-		//Actions
-		When.onTheNotFoundPage.iLookAtTheScreen();
-
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheObjectNotFoundPage().
 			and.theNotFoundPageShouldSayObjectNotFound();
 
-		//Cleanup
+		// Cleanup
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -48,7 +45,7 @@ sap.ui.define([
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults();
 
-		//Cleanup
+		// Cleanup
 		Then.iTeardownMyAppFrame();
 	});
 
