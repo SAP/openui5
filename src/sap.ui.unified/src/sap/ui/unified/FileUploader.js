@@ -1215,7 +1215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				bWrongType = true;
 				sName = this.oFileUpload.value || "";
 				iIdx = sName.lastIndexOf(".");
-				sFileEnding = sName.substring(iIdx + 1);
+				sFileEnding = (iIdx === -1) ? "" : sName.substring(iIdx + 1);
 				for (var l = 0; l < aFileTypes.length; l++) {
 					if (sFileEnding == aFileTypes[l]) {
 						bWrongType = false;
@@ -1444,7 +1444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			if (aFileTypes && aFileTypes.length > 0) {
 				bWrongType = true;
 				iIdx = sName.lastIndexOf(".");
-				sFileEnding = sName.substring(iIdx + 1);
+				sFileEnding = (iIdx === -1) ? "" : sName.substring(iIdx + 1);
 				for (var k = 0; k < aFileTypes.length; k++) {
 					if (sFileEnding.toLowerCase() == aFileTypes[k].toLowerCase()) {
 						bWrongType = false;
