@@ -21,8 +21,8 @@ function(
 ) {
 	"use strict";
 
-	function evaluateTemplateBinding(oElementOverlay, vElement, sAggregationName, mFlexSettings){
-		var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay, sAggregationName);
+	function evaluateTemplateBinding(oElementOverlay, vElement){
+		var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay);
 		if (mBoundControl.elementId) {
 			//check for additional binding
 			var oBoundControlOverlay = OverlayRegistry.getOverlay(mBoundControl.elementId);
@@ -34,8 +34,7 @@ function(
 				throw DtUtil.createError("CommandFactory#evaluateTemplateBinding", "Multiple template bindings are not supported", "sap.ui.rta");
 			}
 
-			var sOriginalId = vElement.id || vElement.getId();
-			var sTemplateId = ElementUtil.extractTemplateId(sOriginalId, mBoundControl);
+			var sTemplateId = ElementUtil.extractTemplateId(mBoundControl);
 			if (sTemplateId) {
 				return {
 					templateSelector : mBoundControl.elementId,
@@ -53,8 +52,8 @@ function(
 		var oElement = (typeof vElementOrId === "string") ? sap.ui.getCore().byId(vElementOrId) : vElementOrId;
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElementOverlay) {
-			var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay, oElementOverlay.sParentAggregationName);
-			return ElementUtil.extractTemplateId(oElement.getId(), mBoundControl);
+			var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay);
+			return ElementUtil.extractTemplateId(mBoundControl);
 		} else {
 			return oElement.getId();
 		}
@@ -331,7 +330,7 @@ function(
 			}
 
 			if (oElementOverlay && vElement.sParentAggregationName) {
-				mTemplateSettings = evaluateTemplateBinding(oElementOverlay, vElement, vElement.sParentAggregationName, mFlexSettings);
+				mTemplateSettings = evaluateTemplateBinding(oElementOverlay, vElement);
 			}
 
 			if (mTemplateSettings) {

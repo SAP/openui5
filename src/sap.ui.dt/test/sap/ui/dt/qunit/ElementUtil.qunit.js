@@ -830,7 +830,8 @@ function(
 					template : this.oItemTemplate
 				}
 			}).setModel(oModel);
-			this.oVBox31 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0];
+			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
+			this.oListItem0 = this.oList.getItems()[0];
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oList]
@@ -838,7 +839,8 @@ function(
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
-				this.oVbox31Overlay = OverlayRegistry.getOverlay(this.oVBox31);
+				this.oVbox1Overlay = OverlayRegistry.getOverlay(this.oVBox1);
+				this.oListItem0Overlay = OverlayRegistry.getOverlay(this.oListItem0);
 				this.oText1Overlay = OverlayRegistry.getOverlay(this.oText1);
 				done();
 			}.bind(this));
@@ -851,11 +853,16 @@ function(
 		}
 	}, function() {
 		QUnit.test("when 'extractTemplateId' is called with the id of the rendered control", function(assert) {
-			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oVbox31Overlay, this.oVBox31.sParentAggregationName);
-			assert.equal(ElementUtil.extractTemplateId(this.oVBox31.getId(), mAggregationInfo), "vbox3", "... then the id of the bound template control is returned");
+			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oVbox1Overlay);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "vbox1", "... then the id of the bound template control is returned");
 
-			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oText1Overlay, this.oText1.sParentAggregationName);
-			assert.equal(ElementUtil.extractTemplateId(this.oText1.getId(), mAggregationInfo), "text", "... then the id of the bound template control is returned");
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oText1Overlay);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "text", "... then the id of the bound template control is returned");
+
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oListItem0Overlay);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo), "item", "... then the id of the bound template control is returned");
+
+			assert.equal(ElementUtil.extractTemplateId({}), undefined, "... then undefined is returned");
 		});
 	});
 

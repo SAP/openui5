@@ -577,19 +577,22 @@ function(
 	 * Returns the element id and the aggregation name of the bound control for an Overlay which is part of an aggregation binding
 	 * The check is done recursively
 	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay Overlay being checked
-	 * @param  {string}  sAggregationName The name of the aggregation being checked
 	 * @return {AggregationBindingStack}  Returns the {@link sap.ui.dt.OverlayUtil.AggregationBindingStack} object
 	 */
-	OverlayUtil.getAggregationInformation = function(oElementOverlay, sAggregationName) {
+	OverlayUtil.getAggregationInformation = function(oElementOverlay) {
 		var aStack = [];
-		return this._evaluateBinding(oElementOverlay, sAggregationName, aStack);
+		return this._evaluateBinding(oElementOverlay, aStack);
 	};
 
-	OverlayUtil._evaluateBinding = function(oElementOverlay, sAggregationName, aStack) {
+	OverlayUtil._evaluateBinding = function(oElementOverlay, aStack) {
 		var oElement = oElementOverlay.getElement();
+		var sAggregationName;
 		var iIndex;
+		var oParent;
 		if (oElementOverlay.getParentAggregationOverlay()) {
 			iIndex = oElementOverlay.getParentAggregationOverlay().getChildren().indexOf(oElementOverlay);
+			sAggregationName = oElementOverlay.getParentAggregationOverlay().getAggregationName();
+			oParent = oElementOverlay.getParentElementOverlay().getElement();
 		} else {
 			iIndex = -1;
 		}
@@ -599,11 +602,11 @@ function(
 			aggregation: sAggregationName,
 			index: iIndex
 		});
-		if (sAggregationName && oElement.getBinding(sAggregationName)) {
-			var oBinding = oElement.getBindingInfo(sAggregationName);
+		if (sAggregationName && oParent.getBinding(sAggregationName)) {
+			var oBinding = oParent.getBindingInfo(sAggregationName);
 			var oTemplate = oBinding && oBinding.template;
 			return {
-				elementId: oElement.getId(),
+				elementId: oParent.getId(),
 				aggregation: sAggregationName,
 				templateId: oTemplate ? oTemplate.getId() : undefined,
 				stack: aStack
@@ -619,7 +622,6 @@ function(
 			: (
 				this._evaluateBinding(
 					oElementOverlay.getParentElementOverlay(),
-					oElementOverlay.getElement().sParentAggregationName,
 					aStack
 				)
 			);

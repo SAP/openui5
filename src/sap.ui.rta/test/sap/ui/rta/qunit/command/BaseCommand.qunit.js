@@ -1457,30 +1457,12 @@ function (
 			});
 
 			// select the second text in the inner vbox of the third list item
-			var oMovedElement = this.oList.getItems()[2].getContent()[0].getItems()[1].getItems()[1];
-			var oRelevantContainer = oMovedElement.getParent();
-			var oSource = {
-				parent : oRelevantContainer,
-				aggregation: "items"
-			};
-			var oTarget = oSource;
-			var oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : "moveControls"
-					}
-				}
-			});
+			var oRenamedElement = this.oList.getItems()[2].getContent()[0].getItems()[1].getItems()[1];
 
-			return oCommandFactory.getCommandFor(oRelevantContainer, "move", {
-				movedElements : [{
-					element : oMovedElement,
-					sourceIndex : 1,
-					targetIndex : 2
-				}],
-				source : oSource,
-				target : oTarget
-			}, oSourceParentDesignTimeMetadata)
+			return oCommandFactory.getCommandFor(oRenamedElement, "rename", {
+					renamedElement : oRenamedElement,
+					newValue : "new"
+			}, new ElementDesignTimeMetadata())
 
 			.then(function() {
 				assert.notOk(true, "then getCommandFor should reject an error promise but has resolved command");

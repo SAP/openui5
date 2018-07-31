@@ -5,10 +5,8 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/dt/DesignTimeMetadata",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
@@ -24,10 +22,8 @@ function(
 	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
-	ElementUtil,
 	DesignTime,
 	VerticalLayout,
-	DesignTimeMetadata,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
@@ -584,91 +580,71 @@ function(
 		});
 
 		QUnit.test("when 'getAggregationInformation' is called", function(assert) {
-			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oBoundOverlay, this.oBoundOverlay.getElement().sParentAggregationName);
+			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oBoundOverlay);
 			assert.equal(mAggregationInfo.elementId, "boundlist", "... then for the bound Item it returns the id of the bound control");
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, "item", "... and the template id is set");
-			assert.equal(mAggregationInfo.stack.length, 2, "... and the traversed stack containing 2 objects");
+			assert.equal(mAggregationInfo.stack.length, 1, "... and the traversed stack containing 2 objects");
 			assert.equal(mAggregationInfo.stack[0].element, "item-boundlist-0", "... with the element id");
 			assert.equal(mAggregationInfo.stack[0].type, "sap.m.CustomListItem", "... with the element type");
 			assert.equal(mAggregationInfo.stack[0].aggregation, "items", "... with the aggregation name");
 			assert.equal(mAggregationInfo.stack[0].index, 0, "... with the index of the element in the aggregation");
-			assert.equal(mAggregationInfo.stack[1].element, "boundlist", "... with the element id");
-			assert.equal(mAggregationInfo.stack[1].type, "sap.m.List", "... with the element type");
-			assert.equal(mAggregationInfo.stack[1].aggregation, "items", "... with the aggregation name");
-			assert.equal(mAggregationInfo.stack[1].index, 0, "... with the index of the element in the aggregation");
 
-			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oAnotherBoundOverlay, this.oAnotherBoundOverlay.getElement().sParentAggregationName);
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oAnotherBoundOverlay);
 			assert.equal(mAggregationInfo.elementId, "boundlist", "... then for the bound Item it returns the id of the bound control");
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, "item", "... and the template id is set");
-			assert.equal(mAggregationInfo.stack.length, 2, "... and the traversed stack containing 2 objects");
+			assert.equal(mAggregationInfo.stack.length, 1, "... and the traversed stack containing 2 objects");
 			assert.equal(mAggregationInfo.stack[0].element, "item-boundlist-1", "... with the element id");
 			assert.equal(mAggregationInfo.stack[0].type, "sap.m.CustomListItem", "... with the element type");
 			assert.equal(mAggregationInfo.stack[0].aggregation, "items", "... with the aggregation name");
 			assert.equal(mAggregationInfo.stack[0].index, 1, "... with the index of the element in the aggregation");
-			assert.equal(mAggregationInfo.stack[1].element, "boundlist", "... with the element id");
-			assert.equal(mAggregationInfo.stack[1].type, "sap.m.List", "... with the element type");
-			assert.equal(mAggregationInfo.stack[1].aggregation, "items", "... with the aggregation name");
-			assert.equal(mAggregationInfo.stack[1].index, 0, "... with the index of the element in the aggregation");
 
-			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oBoundChildOverlay, this.oBoundChildOverlay.getElement().sParentAggregationName);
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oBoundChildOverlay);
 			assert.equal(mAggregationInfo.elementId, "boundlist", "... then for the bound Item content it returns the id of the bound control");
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, "item", "... and the template id is set");
-			assert.equal(mAggregationInfo.stack.length, 3, "... and the traversed stack containing 3 objects");
+			assert.equal(mAggregationInfo.stack.length, 2, "... and the traversed stack containing 3 objects");
 			assert.equal(mAggregationInfo.stack[0].element, "item-btn-boundlist-0", "... with the element id");
 			assert.equal(mAggregationInfo.stack[0].type, "sap.m.Button", "... with the element type");
 			assert.equal(mAggregationInfo.stack[0].aggregation, "content", "... with the aggregation name");
 			assert.equal(mAggregationInfo.stack[0].index, 0, "... with the index of the element in the aggregation");
 			assert.equal(mAggregationInfo.stack[1].element, "item-boundlist-0", "... with the element id");
 			assert.equal(mAggregationInfo.stack[1].type, "sap.m.CustomListItem", "... with the element type");
-			assert.equal(mAggregationInfo.stack[1].aggregation, "content", "... with the aggregation name");
+			assert.equal(mAggregationInfo.stack[1].aggregation, "items", "... with the aggregation name");
 			assert.equal(mAggregationInfo.stack[1].index, 0, "... with the index of the element in the aggregation");
-			assert.equal(mAggregationInfo.stack[2].element, "boundlist", "... with the element id");
-			assert.equal(mAggregationInfo.stack[2].type, "sap.m.List", "... with the element type");
-			assert.equal(mAggregationInfo.stack[2].aggregation, "items", "... with the aggregation name");
-			assert.equal(mAggregationInfo.stack[2].index, 0, "... with the index of the element in the aggregation");
 
-			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oAnotherBoundChildOverlay, this.oAnotherBoundChildOverlay.getElement().sParentAggregationName);
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oAnotherBoundChildOverlay);
 			assert.equal(mAggregationInfo.elementId, "boundlist", "... then for the bound Item content it returns the id of the bound control");
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, "item", "... and the template id is set");
-			assert.equal(mAggregationInfo.stack.length, 3, "... and the traversed stack containing 3 objects");
+			assert.equal(mAggregationInfo.stack.length, 2, "... and the traversed stack containing 3 objects");
 			assert.equal(mAggregationInfo.stack[0].element, "item-btn-boundlist-1", "... with the element id");
 			assert.equal(mAggregationInfo.stack[0].type, "sap.m.Button", "... with the element type");
 			assert.equal(mAggregationInfo.stack[0].aggregation, "content", "... with the aggregation name");
 			assert.equal(mAggregationInfo.stack[0].index, 0, "... with the index of the element in the aggregation");
 			assert.equal(mAggregationInfo.stack[1].element, "item-boundlist-1", "... with the element id");
 			assert.equal(mAggregationInfo.stack[1].type, "sap.m.CustomListItem", "... with the element type");
-			assert.equal(mAggregationInfo.stack[1].aggregation, "content", "... with the aggregation name");
+			assert.equal(mAggregationInfo.stack[1].aggregation, "items", "... with the aggregation name");
 			assert.equal(mAggregationInfo.stack[1].index, 1, "... with the index of the element in the aggregation");
-			assert.equal(mAggregationInfo.stack[2].element, "boundlist", "... with the element id");
-			assert.equal(mAggregationInfo.stack[2].type, "sap.m.List", "... with the element type");
-			assert.equal(mAggregationInfo.stack[2].aggregation, "items", "... with the aggregation name");
-			assert.equal(mAggregationInfo.stack[2].index, 0, "... with the index of the element in the aggregation");
 
-			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oFactoryBoundOverlay, this.oFactoryBoundOverlay.getElement().sParentAggregationName);
+			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oFactoryBoundOverlay);
 			assert.equal(mAggregationInfo.elementId, "factoryboundlist", "... then for the bound Item it returns the id of the bound control");
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, undefined, "... and the template id is not set");
-			assert.equal(mAggregationInfo.stack.length, 2, "... and the traversed stack containing 2 objects");
+			assert.equal(mAggregationInfo.stack.length, 1, "... and the traversed stack containing 2 objects");
 			assert.equal(mAggregationInfo.stack[0].element, "factoryboundlist-0", "... with the element id");
 			assert.equal(mAggregationInfo.stack[0].type, "sap.m.CustomListItem", "... with the element type");
 			assert.equal(mAggregationInfo.stack[0].aggregation, "items", "... with the aggregation name");
 			assert.equal(mAggregationInfo.stack[0].index, 0, "... with the index of the element in the aggregation");
-			assert.equal(mAggregationInfo.stack[1].element, "factoryboundlist", "... with the element id");
-			assert.equal(mAggregationInfo.stack[1].type, "sap.m.List", "... with the element type");
-			assert.equal(mAggregationInfo.stack[1].aggregation, "items", "... with the aggregation name");
-			assert.equal(mAggregationInfo.stack[1].index, 2, "... with the index of the element in the aggregation");
 
-			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oUnboundOverlay, this.oUnboundOverlay.getElement().sParentAggregationName);
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oUnboundOverlay);
 			assert.equal(mAggregationInfo.elementId, undefined, "... then for the unbound Item it returns undefined as id");
 			assert.equal(mAggregationInfo.aggregation, undefined, "... and undefined as bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, undefined, "... and the template id is not set");
 			assert.equal(mAggregationInfo.stack.length, 3, "... and the traversed stack containing 3 objects");
 
-			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oUnboundChildOverlay, this.oUnboundChildOverlay.getElement().sParentAggregationName);
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oUnboundChildOverlay);
 			assert.equal(mAggregationInfo.elementId, undefined, "... then for the unbound Item content it returns undefined as id");
 			assert.equal(mAggregationInfo.aggregation, undefined, "... and undefined as bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, undefined, "... and the template id is not set");
