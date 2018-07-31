@@ -82,8 +82,7 @@ sap.ui.define([
 					vRoute = oConfig.pattern,
 					aSubRoutes,
 					RouteStub,
-					async = oRouter._isAsync(),
-					oMergedConfig;
+					async = oRouter._isAsync();
 
 				RouteStub = async ? asyncRoute : syncRoute;
 				for (var fn in RouteStub) {
@@ -124,8 +123,7 @@ sap.ui.define([
 				if (!oConfig.target) {
 					oConfig._async = async;
 					// create a new target for this route
-					oMergedConfig = jQuery.extend({}, oRouter._oConfig, oConfig);
-					this._oTarget = new Target(this._convertToTargetOptions(oMergedConfig), oRouter._oViews, oParent && oParent._oTarget);
+					this._oTarget = new Target(oConfig, oRouter._oViews, oParent && oParent._oTarget);
 					this._oTarget._bUseRawViewId = true;
 				}
 
