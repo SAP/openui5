@@ -63,4 +63,13 @@ describe("sap.m.SelectDialog", function () {
 		element(by.id("SelectDialog10-ok")).click();
 	});
 
+	it("The toolbar must be sticky by default", function() {
+		element(by.id("Button12")).click();
+		//fake an image to have enough time to render the dialog items and make the actual one
+		expect(takeScreenshot(element(by.id("SelectDialog12-dialog"))));
+		browser.executeScript("sap.ui.getCore().byId('SelectDialog12').getItems()[sap.ui.getCore().byId('SelectDialog12').getItems().length - 1].getDomRef().scrollIntoView();");
+		expect(takeScreenshot(element(by.id("SelectDialog12-dialog")))).toLookAs("sticky-info-toolbar");
+		element(by.id("SelectDialog12-ok")).click();
+	});
+
 });
