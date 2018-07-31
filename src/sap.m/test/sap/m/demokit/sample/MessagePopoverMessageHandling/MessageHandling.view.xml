@@ -117,7 +117,7 @@
 						visible="{=!!${message>/}.length}"
 						press="handleMessagePopoverPress"/>
 				<ToolbarSpacer/>
-				<Button type="Emphasized" text="Save" />
+				<Button type="Emphasized" text="Save" press="_generateInvalidUserInput" />
 				<Button text="Cancel" />
 			</Toolbar>
 		</footer>

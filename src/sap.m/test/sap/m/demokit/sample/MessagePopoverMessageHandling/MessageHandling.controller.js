@@ -2,9 +2,10 @@ sap.ui.define([
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
 	'sap/m/Link',
+	'sap/m/MessageToast',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
-], function(MessagePopover, MessageItem, Link, Controller, JSONModel) {
+], function(MessagePopover, MessageItem, Link, MessageToast, Controller, JSONModel) {
 	"use strict";
 	return Controller.extend("sap.m.sample.MessagePopoverMessageHandling.MessageHandling", {
 		onInit: function () {
@@ -17,15 +18,7 @@ sap.ui.define([
 			this._MessageManager.registerObject(this.oView.byId("formContainer"), true);
 			this.oView.setModel(this._MessageManager.getMessageModel(),"message");
 
-			this._bInitialRendering = true;
-		},
-
-		onAfterRendering: function () {
-			// generate invalidate user input for presentational purposes
-			if (this._bInitialRendering) {
-				this._bInitialRendering = false;
-				this._generateInvalidUserInput();
-			}
+			MessageToast.show('Press "Save" to trigger validation.');
 		},
 
 		handleMessagePopoverPress: function (oEvent) {
@@ -152,20 +145,18 @@ sap.ui.define([
 		},
 
 		_generateInvalidUserInput: function () {
-			setTimeout(function () {
-				var oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
-					oNumericZipInput = this.oView.byId("formContainer").getItems()[5].getContent()[7],
-					oEmailInput = this.oView.byId("formContainer").getItems()[6].getContent()[13],
-					iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[13];
+			var oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
+				oNumericZipInput = this.oView.byId("formContainer").getItems()[5].getContent()[7],
+				oEmailInput = this.oView.byId("formContainer").getItems()[6].getContent()[13],
+				iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[13];
 
-				oRequiredNameInput.setValue(undefined);
-				oNumericZipInput.setValue("AAA");
-				oEmailInput.setValue("MariaFontes.com");
-				iWeeklyHours.setValue(400);
+			oRequiredNameInput.setValue(undefined);
+			oNumericZipInput.setValue("AAA");
+			oEmailInput.setValue("MariaFontes.com");
+			iWeeklyHours.setValue(400);
 
-				this.handleRequiredField(oRequiredNameInput);
-				this.checkInputConstraints(iWeeklyHours);
-			}.bind(this), 0);
+			this.handleRequiredField(oRequiredNameInput);
+			this.checkInputConstraints(iWeeklyHours);
 		}
 	});
 
