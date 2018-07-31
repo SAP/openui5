@@ -1,31 +1,27 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/core/library",
+	"sap/ui/core/message/ControlMessageProcessor",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageManager",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/Model",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/message/MessageModel",
+	"sap/ui/model/type/Integer",
+	"sap/ui/model/type/String",
+	"sap/m/Input",
+	"sap/m/Label"
+], function(coreLibrary, ControlMessageProcessor, Message, MessageManager, FormatException, Model, JSONModel, MessageModel, TypeInteger, TypeString, Input, Label) {
 
-<!-- Initialization -->
-<script src="../../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.m,sap.ui.layout"
-	data-sap-ui-bindingSyntax='complex'
-	data-sap-ui-language='en'
-	data-sap-ui-xx-handleValidation='true'>
-</script>
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.append(oDIV)
 
-<link rel="stylesheet"
-	href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script charset="utf-8"> // IE needs this :-/
+	// shortcuts for enums from the sap.ui.core namespace
+	var MessageType = coreLibrary.MessageType;
+	var ValueState = coreLibrary.ValueState;
 
 	var oModel;
 	var oInput1, oInput2, oInput3, oInput4, oLabel1, oLabel2, oStreet, oZip, oNr;
@@ -33,30 +29,30 @@
 
 	function createControls() {
 		// create some control for testing
-		oInput1 = new sap.m.Input({value:"{path:'/form/firstname'}"});
-		oInput2 = new sap.m.Input({value:"{/form/lastname}"});
-		oInput3 = new sap.m.Input({value:"{path:'/form/firstname'}"});
-		oInput4 = new sap.m.Input({value:"{path:'/form/firstname'}"});
+		oInput1 = new Input({value:"{path:'/form/firstname'}"});
+		oInput2 = new Input({value:"{/form/lastname}"});
+		oInput3 = new Input({value:"{path:'/form/firstname'}"});
+		oInput4 = new Input({value:"{path:'/form/firstname'}"});
 
-		oLabel1 = new sap.m.Label({text: "First name"});
+		oLabel1 = new Label({text: "First name"});
 		oLabel1.setLabelFor(oInput1);
 
-		oLabel2 = new sap.m.Label({text: "Forename"});
+		oLabel2 = new Label({text: "Forename"});
 		oLabel2.setLabelFor(oInput1);
 
-		oString = new sap.ui.model.type.String(null,{maxLength: 5});
-		oInteger = new sap.ui.model.type.Integer();
+		oString = new TypeString(null,{maxLength: 5});
+		oInteger = new TypeInteger();
 		oNrFormat = function(oValue) {
 			if (typeof(oValue) === 'string') {
-				throw new sap.ui.model.FormatException("Error");
+				throw new FormatException("Error");
 			} else {
 				return oValue;
 			}
 		};
 
-		oZip = new sap.m.Input({value:{path:'/form/zip', type: oInteger}});
-		oStreet = new sap.m.Input({value:{path:'/form/street', type: oString}});
-		oNr = new sap.m.Input({value:{path:'/form/nr', formatter: oNrFormat}});
+		oZip = new Input({value:{path:'/form/zip', type: oInteger}});
+		oStreet = new Input({value:{path:'/form/street', type: oString}});
+		oNr = new Input({value:{path:'/form/nr', formatter: oNrFormat}});
 
 		oInput1.placeAt("content");
 		oInput2.placeAt("content");
@@ -83,7 +79,7 @@
 		if (oControl.refreshDataState) {
 			var fnRefresh = oControl.refreshDataState;
 			oControl.refreshDataState = function(sName, oDataState) {
-				sap.m.Input.prototype.refreshDataState.apply(oControl, arguments);
+				Input.prototype.refreshDataState.apply(oControl, arguments);
 				fnTest(sName, oDataState);
 				oControl.refreshDataState = fnRefresh;
 			}
@@ -94,7 +90,7 @@
 		if (oControl.propagateMessages) {
 			var fnPropagate = oControl.propagateMessages;
 			oControl.propagateMessages = function(sProp, aMessages) {
-				sap.m.Input.prototype.propagateMessages.apply(oControl, arguments);
+				Input.prototype.propagateMessages.apply(oControl, arguments);
 				fnTest(sProp, aMessages);
 				oControl.propagateMessages = fnPropagate;
 			}
@@ -102,26 +98,26 @@
 	}
 
 	var createMessage = function(sText, sTarget, sType) {
-		return new sap.ui.core.message.Message({
+		return new Message({
 			target: sTarget || '/form/firstname',
 			message: sText || "test message",
 			processor: oModel,
-			type: sType || sap.ui.core.MessageType.Error
+			type: sType || MessageType.Error
 		});
 	};
 
 	var createControlMessage = function(sText, sTarget, sType) {
-		return new sap.ui.core.message.Message({
+		return new Message({
 			target: sTarget || '/form/firstname',
 			message: sText || "test message",
 			processor: oControlProcessor,
-			type: sType || sap.ui.core.MessageType.Error
+			type: sType || MessageType.Error
 		});
 	};
 
 	var initModel = function(sType) {
 		if (sType === "json") {
-			oModel = new sap.ui.model.json.JSONModel();
+			oModel = new JSONModel();
 			var oData = {
 				form: {
 					firstname: "Fritz",
@@ -140,7 +136,7 @@
 	QUnit.module("MessageManager", {
 		beforeEach : function() {
 			initModel("json");
-			oControlProcessor = new sap.ui.core.message.ControlMessageProcessor();
+			oControlProcessor = new ControlMessageProcessor();
 		},
 
 		afterEach : function() {
@@ -154,7 +150,7 @@
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		assert.ok(oMessageManager, 'MessageManager instance created');
 		var oMessageModel = oMessageManager.getMessageModel();
-		assert.ok(oMessageModel instanceof sap.ui.model.message.MessageModel, 'MessageModel created');
+		assert.ok(oMessageModel instanceof MessageModel, 'MessageModel created');
 		assert.equal(oMessageModel.getObject('/').length, 0, 'No Messages');
 	});
 
@@ -165,7 +161,7 @@
 		var oMessage = createMessage();
 		spyDataState(oInput1, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 1, 'Message propagated to control');
-				assert.ok(oInput1.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+				assert.ok(oInput1.getValueState() === ValueState.Error, 'Input: ValueState set correctly')
 				assert.ok(oInput1.getValueStateText() === 'test message', 'Input: ValueStateText set correctly')
 				done();
 			}
@@ -185,7 +181,7 @@
 		oMessageManager.addMessages(oMessage);
 		spyDataState(oInput1, function(sName, oDataState) {
 				assert.ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				assert.ok(oInput1.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState set correctly')
 				assert.ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			done();
 			}
@@ -204,7 +200,7 @@
 
 		spyDataState(oInput1, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 2, 'Message propagated to control - 2');
-				assert.ok(oInput1.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+				assert.ok(oInput1.getValueState() === ValueState.Error, 'Input: ValueState set correctly')
 				assert.ok(oInput1.getValueStateText() === 'mt2', 'Input: ValueStateText set correctly')
 			}
 		);
@@ -212,7 +208,7 @@
 		spyDataState(oInput2,
 			function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 1, 'Message propagated to control - 1');
-				assert.ok(oInput2.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+				assert.ok(oInput2.getValueState() === ValueState.Error, 'Input: ValueState set correctly')
 				assert.ok(oInput2.getValueStateText() === 'mt1', 'Input: ValueStateText set correctly')
 			}
 		);
@@ -227,12 +223,12 @@
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oInput1, function(sName, oDataState) {
 				assert.ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				assert.ok(oInput1.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState set correctly')
 				assert.ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			});
 			spyDataState(oInput2, function(sName, oDataState) {
 				assert.ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				assert.ok(oInput2.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				assert.ok(oInput2.getValueState() === ValueState.None, 'Input: ValueState set correctly')
 				assert.ok(oInput2.getValueStateText() === '', 'Input: ValueStateText set correctly')
 				done();
 			});
@@ -245,14 +241,14 @@
 		var done = assert.async();
 		spyDataState(oZip, function(sName, oDataState) {
 			assert.ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
-			assert.ok(oZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			assert.ok(oZip.getValueState() === ValueState.Error, 'Input: ValueState set correctly')
 			assert.ok(oZip.getValueStateText() === 'Enter a valid number', 'Input: ValueStateText set correctly')
 		});
 		oZip.setValue('bbb');
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oZip, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
-				assert.ok(oZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				assert.ok(oZip.getValueState() === ValueState.None, 'Input: ValueState set correctly')
 				assert.ok(oZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
 				done();
 			});
@@ -266,14 +262,14 @@
 
 		spyDataState(oStreet, function(sName, oDataState) {
 			assert.ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
-			assert.ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly')
 			assert.ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
 		});
 		oStreet.setValue('am Busche');
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oStreet, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
-				assert.ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly')
 				assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
 				done();
 			});
@@ -286,26 +282,26 @@
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 
 		spyDataState(oStreet, function(sName, oDataState) {
-			assert.ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly')
 			assert.ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly')
 		});
 		oStreet.setValue('am Busche');
 
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oStreet, function(sName, oDataState) {
-				assert.ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly')
 				assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			});
 			oStreet.setValue('Busch');
 			jQuery.sap.delayedCall(0, this, function() {
 				spyDataState(oStreet, function(sName, oDataState) {
-					assert.ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+					assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly')
 					assert.ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
 				});
 				oStreet.setValue('am Busche');
 				jQuery.sap.delayedCall(0, this, function() {
 					spyDataState(oStreet, function(sName, oDataState) {
-						assert.ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+						assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly')
 						assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
 						done();
 					});
@@ -366,7 +362,7 @@
 
 		spyDataState(oInput4, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 2, 'Message propagated to control: 2');
-				assert.ok(oInput1.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly to Error, Information is ignored');
+				assert.ok(oInput1.getValueState() === ValueState.Error, 'Input: ValueState set correctly to Error, Information is ignored');
 
 				oLabel4.destroy();
 				done();
@@ -392,7 +388,7 @@
 
 		spyDataState(oInput4, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 1, 'Message propagated to control: 1');
-				assert.ok(oInput1.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState is still None --> Nothing has changed!');
+				assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState is still None --> Nothing has changed!');
 
 				oLabel4.destroy();
 				done();
@@ -406,7 +402,7 @@
 	QUnit.test("Control Message target", function(assert) {
 		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
-		var oTestInput = new sap.m.Input({value:""});
+		var oTestInput = new Input({value:""});
 		oTestInput.placeAt("content");
 		var sControlId = oTestInput.getId();
 		var oMessage = createControlMessage("TEST", sControlId + "/value");
@@ -425,7 +421,7 @@
 	QUnit.test("Control Message target", function(assert) {
 		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
-		var oTestInput = new sap.m.Input({value:""});
+		var oTestInput = new Input({value:""});
 		oTestInput.placeAt("content");
 		var sControlId = oTestInput.getId();
 		var oMessage = createControlMessage("TEST", "/" + sControlId + "/value");
@@ -447,41 +443,40 @@
 	QUnit.test("MessageManager: Message sorting", function(assert) {
 		assert.expect(3);
 		var done = assert.async();
-		var MessageType = sap.ui.core.MessageType;
 		var aCorrectOrder = [ MessageType.Error, MessageType.Error, MessageType.Warning, MessageType.Success, MessageType.Information ];
 
 
 
-		var oModel = new sap.ui.model.json.JSONModel();
-		var oInput = new sap.m.Input({
+		var oModel = new JSONModel();
+		var oInput = new Input({
 			value: "{/test}"
 		});
 		oInput.setModel(oModel);
 		sap.ui.getCore().getMessageManager().registerObject(oInput);
 
 
-		var aMessages = [ new sap.ui.core.message.Message({
-			type: sap.ui.core.MessageType.Information,
+		var aMessages = [ new Message({
+			type: MessageType.Information,
 			id: "test-info",
 			processor: oModel,
 			target: "/test"
-		}), new sap.ui.core.message.Message({
-			type: sap.ui.core.MessageType.Warning,
+		}), new Message({
+			type: MessageType.Warning,
 			id: "test-warning",
 			processor: oModel,
 			target: "/test"
-		}), new sap.ui.core.message.Message({
-			type: sap.ui.core.MessageType.Error,
+		}), new Message({
+			type: MessageType.Error,
 			id: "test-error1",
 			processor: oModel,
 			target: "/test"
-		}), new sap.ui.core.message.Message({
-			type: sap.ui.core.MessageType.Success,
+		}), new Message({
+			type: MessageType.Success,
 			id: "test-success",
 			processor: oModel,
 			target: "/test"
-		}), new sap.ui.core.message.Message({
-			type: sap.ui.core.MessageType.Error,
+		}), new Message({
+			type: MessageType.Error,
 			id: "test-error2",
 			processor: oModel,
 			target: "/test"
@@ -490,7 +485,7 @@
 
 		// CHeck direct call to private method
 		var aMessageCopy = aMessages.slice(0);
-		sap.ui.core.message.MessageManager.prototype._sortMessages(aMessageCopy);
+		MessageManager.prototype._sortMessages(aMessageCopy);
 		var aNewOrder = aMessageCopy.map(function(oM) { return oM.type; });
 		assert.deepEqual(aNewOrder, aCorrectOrder, "Sorted messages are in the correct order (Highest severity first)");
 
@@ -521,15 +516,15 @@
 		assert.expect(4);
 		var done = assert.async();
 
-		var oModel = new sap.ui.model.json.JSONModel();
-		var oInput = new sap.m.Input("inputField01", {
+		var oModel = new JSONModel();
+		var oInput = new Input("inputField01", {
 			value: "{/test}"
 		});
 		oInput.setModel(oModel);
 		sap.ui.getCore().getMessageManager().registerObject(oInput);
 
-		sap.ui.getCore().getMessageManager().addMessages(new sap.ui.core.message.Message({
-			type: sap.ui.core.MessageType.Information,
+		sap.ui.getCore().getMessageManager().addMessages(new Message({
+			type: MessageType.Information,
 			id: "test-info",
 			processor: oModel,
 			target: "/test"
@@ -544,14 +539,14 @@
 			var oMessage = aMessages[0];
 
 			sap.ui.getCore().getMessageManager().removeMessages(oMessage);
-			oMessage.setMessageProcessor(new sap.ui.core.message.ControlMessageProcessor());
+			oMessage.setMessageProcessor(new ControlMessageProcessor());
 			oMessage.setTarget("inputField01/test");
 			sap.ui.getCore().getMessageManager().addMessages(oMessage);
 
 			setTimeout(function() {
 				aMessages = oInput.getBinding("value").getDataState().getMessages();
 				assert.equal(aMessages.length, 0, "The message was not propagated through the binding");
-				assert.ok(oMessage.getMessageProcessor() instanceof sap.ui.core.message.ControlMessageProcessor, "The message is processed by the ControlMessageProcessor");
+				assert.ok(oMessage.getMessageProcessor() instanceof ControlMessageProcessor, "The message is processed by the ControlMessageProcessor");
 
 				oInput.destroy();
 				sap.ui.getCore().getMessageManager().removeMessages(oMessage);
@@ -560,16 +555,5 @@
 		}, 0);
 
 	});
-</script>
 
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Messaging</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="content"></div>
-</body>
-</html>
+});

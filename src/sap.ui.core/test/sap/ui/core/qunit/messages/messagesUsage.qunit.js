@@ -10,6 +10,11 @@ sap.ui.require([
 	"use strict";
 	var oModel;
 
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.append(oDIV)
+
 	function spyDataState(oControl, fnTest) {
 		if (oControl.refreshDataState) {
 			var fnRefresh = oControl.refreshDataState;
@@ -21,7 +26,6 @@ sap.ui.require([
 		}
 	}
 	//create some components for testing
-	sap.ui.localResources("components");
 	var oCompCont = new ComponentContainer("CompCont", {
 		name: "components",
 		id: "myMessageTest1"
