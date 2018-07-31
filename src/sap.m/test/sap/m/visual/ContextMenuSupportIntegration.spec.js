@@ -51,9 +51,7 @@ describe("sap.m.ContextMenuSupportIntegration", function() {
 				expect(takeScreenshot()).toLookAs(oElement.id + "-contextMenu");
 			} else {
 				// long press on mobile devices
-				browser.actions().mouseDown(oElementRef).perform();
-				browser.sleep(1000);
-				browser.actions().mouseUp(oElementRef).perform();
+				browser.touchActions().longPress(oElementRef).perform();
 
 				expect(takeScreenshot()).toLookAs(oElement.id + "-contextMenu-mobile");
 			}
