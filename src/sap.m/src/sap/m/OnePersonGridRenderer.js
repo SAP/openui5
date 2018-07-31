@@ -240,7 +240,10 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 
 		OnePersonGridRenderer.renderRowHeaders = function (oRm, oControl) {
 			var iStartHour = oControl._getVisibleStartHour(),
-				iEndHour = oControl._getVisibleEndHour();
+				iEndHour = oControl._getVisibleEndHour(),
+				oStartDate = oControl._getUniversalCurrentDate(),
+				oHoursFormat = oControl._getHoursFormat(),
+				oAMPMFormat = oControl._getAMPMFormat();
 
 			oRm.write("<div");
 			oRm.addClass("sapMOnePersonRowHeaders");
@@ -248,6 +251,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 			oRm.write(">");
 
 			for (var i = iStartHour; i <= iEndHour; i++) {
+				oStartDate.setHours(i);
 				oRm.write("<span");
 				oRm.addClass("sapMOnePersonRowHeader");
 				oRm.addClass("sapMOnePersonRowHeader" + i);
@@ -258,7 +262,17 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText', 's
 
 				oRm.writeClasses();
 				oRm.write(">");
-				oRm.write(i);
+				oRm.write(oHoursFormat.format(oStartDate)); // TODO: use second param true when convert all dates to UTC
+
+				if (oControl._hasAMPM()) {
+					oRm.write("<span");
+					oRm.addClass("sapMOnePersonRowHeaderAMPM");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.write(" " + oAMPMFormat.format(oStartDate)); // TODO: use second param true when convert all dates to UTC
+					oRm.write("</span>");
+				}
+
 				oRm.write("</span>"); // END .sapMOnePersonRowHeader
 			}
 
