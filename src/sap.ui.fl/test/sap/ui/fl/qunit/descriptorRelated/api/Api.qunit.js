@@ -1,15 +1,15 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
+	jQuery,
 	DescriptorInlineChangeFactory,
 	DescriptorVariantFactory,
 	DescriptorChangeFactory,
@@ -23,14 +23,14 @@ sap.ui.require([
 		beforeEach : function() {
 			//define sandboxes and stubs explicitly for each modules
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 						"isKeyUser":false,
 						"isAtoAvailable":false,
 						"isAtoEnabled":false,
 						"isProductiveSystem":false
 				})
-			));
+			);
 		},
 		afterEach : function() {
 			this._oSandbox.restore();
@@ -1433,20 +1433,20 @@ sap.ui.require([
 	QUnit.module("DescriptorVariant", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").returns(Promise.resolve({
+			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
 					response: JSON.stringify({
 						"id" : "a.id",
 						"reference": "a.reference"
 					})
-			}));
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			});
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":false,
 					"isAtoAvailable":false,
 					"isAtoEnabled":true,
 					"isProductiveSystem":false
 				})
-			));
+			);
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1621,20 +1621,20 @@ sap.ui.require([
 	QUnit.module("DescriptorVariantFactory", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").returns(Promise.resolve({
+			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
 				response: JSON.stringify({
 					"id" : "a.id",
 					"reference": "a.reference"
 				})
-			}));
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			});
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":false,
 					"isAtoAvailable":false,
 					"isAtoEnabled":true,
 					"isProductiveSystem":false
 				})
-			));
+			);
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1825,19 +1825,19 @@ sap.ui.require([
 	QUnit.module("DescriptorChange", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").returns(Promise.resolve({
+			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
 					response: JSON.stringify({
 						"reference": "a.reference"
 					})
-			}));
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			});
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":false,
 					"isAtoAvailable":false,
 					"isAtoEnabled":true,
 					"isProductiveSystem":false
 				})
-			));
+			);
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -2024,14 +2024,14 @@ sap.ui.require([
 	QUnit.module("DescriptorChangeFactory", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":false,
 					"isAtoAvailable":false,
 					"isAtoEnabled":true,
 					"isProductiveSystem":false
 				})
-			));
+			);
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -2065,21 +2065,21 @@ sap.ui.require([
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
 			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
-			this._fStubSend.returns(Promise.resolve({
+			this._fStubSend.resolves({
 				response: JSON.stringify({
 					"id" : "a.id",
 					"reference": "a.reference",
 					"layer": "CUSTOMER"
 				})
-			}));
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			});
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":false,
 					"isAtoAvailable":false,
 					"isAtoEnabled":false,
 					"isProductiveSystem":false
 				})
-			));
+			);
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -2143,21 +2143,21 @@ sap.ui.require([
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
 			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
-			this._fStubSend.returns(Promise.resolve({
+			this._fStubSend.resolves({
 				response: JSON.stringify({
 					"id" : "a.id",
 					"reference": "a.reference",
 					"layer": "CUSTOMER"
 				})
-			}));
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			});
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":false,
 					"isAtoAvailable":false,
 					"isAtoEnabled":true,
 					"isProductiveSystem":false
 				})
-			));
+			);
 
 		},
 		afterEach: function() {
@@ -2207,20 +2207,20 @@ sap.ui.require([
 	QUnit.module("DescriptorChangeFactory - ATO false", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").returns(Promise.resolve({
+			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
 				response: JSON.stringify({
 					"id" : "a.id",
 					"reference": "a.reference"
 				})
-			}));
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			});
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":false,
 					"isAtoAvailable":false,
 					"isAtoEnabled":false,
 					"isProductiveSystem":false
 				})
-			));
+			);
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -2242,20 +2242,20 @@ sap.ui.require([
 	QUnit.module("DescriptorChangeFactory - ATO true", {
 		beforeEach: function(assert) {
 			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send").returns(Promise.resolve({
+			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
 				response: JSON.stringify({
 					"id" : "a.id",
 					"reference": "a.reference"
 				})
-			}));
-			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			});
+			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 						"isKeyUser":false,
 						"isAtoAvailable":false,
 						"isAtoEnabled":true,
 						"isProductiveSystem":false
 				})
-			));
+			);
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -2286,5 +2286,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

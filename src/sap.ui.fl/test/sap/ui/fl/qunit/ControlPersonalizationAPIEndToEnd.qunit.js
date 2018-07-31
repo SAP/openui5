@@ -1,8 +1,6 @@
-/* global sinon QUnit */
+/* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -11,7 +9,9 @@ sap.ui.require([
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/fl/ControlPersonalizationAPI"
+	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	VariantController,
 	VariantModel,
@@ -21,21 +21,20 @@ sap.ui.require([
 	Manifest,
 	UIComponent,
 	ComponentContainer,
-	ControlPersonalizationAPI
+	ControlPersonalizationAPI,
+	sinon,
+	jQuery
 ) {
 	"use strict";
 
-	QUnit.start();
-
 	var sandbox = sinon.sandbox.create();
-
 	var oView, oApp;
 
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			jQuery.get("./testResources/VariantManagementTestApp.view.xml", null,
+			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
 			function(viewContent) {
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
@@ -62,7 +61,7 @@ sap.ui.require([
 				this.oComp.setModel(new VariantModel({}, this.oFlexController, this.oComp), "$FlexVariants");
 				this.oCompContainer = new ComponentContainer("sap-ui-static", {
 					component: this.oComp
-				}).placeAt("content");
+				}).placeAt("qunit-fixture");
 
 				this.mMoveChangeData1  = {
 					selectorControl : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
@@ -269,4 +268,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
 });

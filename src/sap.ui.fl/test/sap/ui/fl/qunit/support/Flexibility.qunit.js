@@ -1,33 +1,41 @@
 /*global QUnit*/
 
-sap.ui.require([
-		"sap/ui/core/support/Support",
-		"sap/ui/core/support/Plugin",
-		"sap/ui/fl/support/Flexibility",
-		"sap/ui/fl/ChangePersistenceFactory",
-		"jquery.sap.global",
-		"sap/ui/thirdparty/qunit",
-		"sap/ui/qunit/qunit-junit",
-		"sap/ui/qunit/qunit-coverage",
-		"sap/ui/qunit/QUnitUtils",
-		"sap/ui/thirdparty/sinon",
-		"sap/ui/thirdparty/sinon-qunit"
-	],
-	function (support, Plugin, Flexibility, ChangePersistenceFactory) {
-		"use strict";
-		var SupportStub = sap.ui.require("sap/ui/core/support/Support").getStub();
+sap.ui.define([
+	"sap/ui/core/support/Support",
+	"sap/ui/core/support/Plugin",
+	"sap/ui/fl/support/Flexibility",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
+], function (
+	Support,
+	Plugin,
+	Flexibility,
+	ChangePersistenceFactory,
+	jQuery,
+	sinon
+) {
+	"use strict";
+	var sandbox = sinon.sandbox.create();
+	var SupportStub = Support.getStub();
 
-		QUnit.module("init", {
-			beforeEach: function () {
-				this.oFlexibility = new Flexibility(SupportStub);
-			},
-			afterEach: function () {
-			}
-		});
-
+	QUnit.module("init", {
+		before: function() {
+			jQuery("body").append('<div id="sapUiSupportFlexibility-FlexCacheArea" style="display: none"></div>');
+		},
+		beforeEach: function () {
+			this.oFlexibility = new Flexibility(SupportStub);
+		},
+		afterEach: function () {
+			sandbox.restore();
+		},
+		after: function() {
+			jQuery("#sapUiSupportFlexibility-FlexCacheArea").remove();
+		}
+	}, function() {
 		QUnit.test("sets models and starts rendering for the tool part", function (assert) {
-			var renderingSpy = this.spy(this.oFlexibility, "_renderToolPlugin");
-			this.stub(Plugin.prototype.init, "apply");
+			var renderingSpy = sandbox.spy(this.oFlexibility, "_renderToolPlugin");
+			sandbox.stub(Plugin.prototype.init, "apply");
 
 			this.oFlexibility.init({
 				isToolStub: function () {return true;}
@@ -40,40 +48,41 @@ sap.ui.require([
 			assert.ok(oView.getModel("flexChanges"));
 			assert.ok(oView.getModel("flexChangeDetails"));
 		});
+	});
 
-
-		QUnit.module("onRefresh", {
-			beforeEach: function () {
-				this.oFlexibility = new Flexibility(SupportStub);
-			},
-			afterEach: function () {
-			}
-		});
-
+	QUnit.module("onRefresh", {
+		beforeEach: function () {
+			this.oFlexibility = new Flexibility(SupportStub);
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
 		QUnit.test("sends a new request for apps", function (assert) {
 			var done = assert.async();
-			this.stub(SupportStub, "sendEvent", function (sEventName) {
+			sandbox.stub(SupportStub, "sendEvent").callsFake(function (sEventName) {
 				assert.equal(sEventName, "sapUiSupportFlexibilityGetApps", "the GetChangesMaps event was triggered");
 				done();
 			});
 
 			this.oFlexibility.onRefresh();
 		});
+	});
 
-		QUnit.module("onsapUiSupportFlexibilityGetApps", {
-			beforeEach: function () {
-				this.oFlexibility = new Flexibility(SupportStub);
-			},
-			afterEach: function () {
-			}
-		});
-
+	QUnit.module("onsapUiSupportFlexibilityGetApps", {
+		beforeEach: function () {
+			this.oFlexibility = new Flexibility(SupportStub);
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
 		QUnit.test("sends a '" + Flexibility.prototype.sNoDebug + "' flag in case the application side is not debugging the fl-library", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
-			this.stub(oConfig, "getDebug").returns(false);
+			sandbox.stub(oConfig, "getDebug").returns(false);
 
 			var done = assert.async();
-			this.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+			sandbox.stub(SupportStub, "sendEvent").callsFake(function (sEventName, oPayload) {
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "string", "a string was passed as a payload");
 				assert.equal(oPayload, Flexibility.prototype.sNoDebug, "the flag was sent");
@@ -86,10 +95,10 @@ sap.ui.require([
 
 		QUnit.test("sends an empty object to the support window if the flexibility cache is not filled", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
-			this.stub(oConfig, "getDebug").returns(true);
+			sandbox.stub(oConfig, "getDebug").returns(true);
 
 			var done = assert.async();
-			this.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+			sandbox.stub(SupportStub, "sendEvent").callsFake(function (sEventName, oPayload) {
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 0, "with no data in it");
@@ -101,14 +110,14 @@ sap.ui.require([
 
 		QUnit.test("sends the data to the support window for a reference", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
-			this.stub(oConfig, "getDebug").returns(true);
+			sandbox.stub(oConfig, "getDebug").returns(true);
 
 			var done = assert.async();
 			var sReference = "ref1";
 			var sAppVersion = "1.1.1";
 			ChangePersistenceFactory.getChangePersistenceForComponent(sReference, sAppVersion); // create instance
 
-			this.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+			sandbox.stub(SupportStub, "sendEvent").callsFake(function (sEventName, oPayload) {
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 1, "one object was passed");
@@ -124,7 +133,7 @@ sap.ui.require([
 
 		QUnit.test("sends the data to the support window for  multiple references", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
-			this.stub(oConfig, "getDebug").returns(true);
+			sandbox.stub(oConfig, "getDebug").returns(true);
 
 			var done = assert.async();
 			var sReference1 = "ref1";
@@ -135,7 +144,7 @@ sap.ui.require([
 			ChangePersistenceFactory.getChangePersistenceForComponent(sReference1, sAppVersion2); // create instance
 			ChangePersistenceFactory.getChangePersistenceForComponent(sReference2, sAppVersion1); // create instance
 
-			this.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+			sandbox.stub(SupportStub, "sendEvent").callsFake(function (sEventName, oPayload) {
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 3, "three objects were passed");
@@ -156,21 +165,22 @@ sap.ui.require([
 
 			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
 		});
+	});
 
-		QUnit.module("onsapUiSupportFlexibilityGetChangesMaps", {
-			beforeEach: function () {
-				this.oFlexibility = new Flexibility(SupportStub);
-			},
-			afterEach: function () {
-			}
-		});
-
+	QUnit.module("onsapUiSupportFlexibilityGetChangesMaps", {
+		beforeEach: function () {
+			this.oFlexibility = new Flexibility(SupportStub);
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
 		QUnit.test("collects and the data correct and sends the response to the toll plugin", function (assert) {
 			var sAppReference = "ref";
 			var sVersion = "ver";
 			var sAppKey = sAppReference + this.oFlexibility.sDelimiter + sVersion;
 			var oEvent = new sap.ui.base.Event(undefined, undefined, {appKey: sAppKey});
-			var oGetChangesMapStub = this.spy(this.oFlexibility, "_getChangesMapForApp");
+			var oGetChangesMapStub = sandbox.spy(this.oFlexibility, "_getChangesMapForApp");
 
 			this.oFlexibility.onsapUiSupportFlexibilityGetChangesMaps(oEvent);
 
@@ -180,4 +190,9 @@ sap.ui.require([
 			assert.equal(oGetAppsCallParameters[0], sAppReference, "the reference was passed correct");
 			assert.equal(oGetAppsCallParameters[1], sVersion, "the version was passed correct");
 		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

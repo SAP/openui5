@@ -1,8 +1,17 @@
-/*global QUnit, sinon*/
-jQuery.sap.require("sap.ui.fl.DefaultVariant");
-jQuery.sap.require("sap.ui.fl.Change");
+/*global QUnit*/
 
-(function(QUnit, sinon, defaultVariant, Change) {
+sap.ui.define([
+	"sap/ui/fl/DefaultVariant",
+	"sap/ui/fl/Change",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
+], function(
+	defaultVariant,
+	Change,
+	sinon,
+	jQuery
+) {
+
 	"use strict";
 
 	/*eslint-disable no-unused-vars */
@@ -259,4 +268,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 		assert.strictEqual(mChanges.firstChange.getPendingAction(), 'DELETE');
 	});
 
-}(QUnit, sinon, sap.ui.fl.DefaultVariant, sap.ui.fl.Change));
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
+});

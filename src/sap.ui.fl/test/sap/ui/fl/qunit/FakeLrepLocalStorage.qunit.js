@@ -1,13 +1,18 @@
-/*global sinon QUnit */
+/*global QUnit */
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+sap.ui.define([
+	"sap/ui/fl/FakeLrepLocalStorage",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
+], function(
+	FakeLrepLocalStorage,
+	sinon,
+	jQuery
+) {
 
-QUnit.config.autostart = false;
-
-sap.ui.require(["sap/ui/fl/FakeLrepLocalStorage"], function(FakeLrepLocalStorage){
 	"use strict";
-	sinon.config.useFakeTimers = false;
-	QUnit.start();
+
+	//sinon.config.useFakeTimers = false;
 
 	var sandbox = sinon.sandbox.create();
 
@@ -141,5 +146,9 @@ sap.ui.require(["sap/ui/fl/FakeLrepLocalStorage"], function(FakeLrepLocalStorage
 		var oCreateVariantKeySpy = sandbox.stub(FakeLrepLocalStorage, "createVariantKey");
 		FakeLrepLocalStorage.saveChange(oTestData.sVariantId1, oTestData.oVariant1);
 		assert.ok(oCreateVariantKeySpy.calledOnce, "then createVariantKey called once");
+	});
+
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
 	});
 });

@@ -1,25 +1,33 @@
-/*global QUnit testRule*/
+/*global QUnit, testRule*/
 
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/Button"
+	"sap/m/Button",
+	// needed for testRule
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/support/Bootstrap",
+	"sap/ui/support/supportRules/Main",
+	"sap/ui/support/TestHelper"
 ], function (
-	jQuery,
-	Component,
+	UIComponent,
 	ComponentContainer,
 	XMLView,
 	VerticalLayout,
-	Button
+	Button,
+	jQuery,
+	sinon,
+	Bootstrap
 ) {
 	"use strict";
 
 	QUnit.module("sap.ui.fl stableId rule tests", {
-		beforeEach: function () {
-			var CustomComponent = sap.ui.core.UIComponent.extend("sap.ui.dt.test.Component", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent : function() {
 					return new VerticalLayout({
 						id : this.createId("layoutId"),
@@ -41,12 +49,19 @@ sap.ui.define([
 			});
 			this.oComponent = new CustomComponent(); //missing id shouldn't care
 
-			this.oComponentContainer = new sap.ui.core.ComponentContainer("CompCont1", {
+			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			});
 
+
 			this.oComponentContainer.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			// TODO: SHOULD BE REFACTORED
+			Bootstrap.initSupportRules(["silent"]);
+			setTimeout(function() {
+				done();
+			}, 0);
 		},
 		afterEach: function () {
 			this.oComponentContainer.destroy();
@@ -59,5 +74,9 @@ sap.ui.define([
 		libName: "sap.ui.fl",
 		ruleId: "stableId",
 		expectedNumberOfIssues: 5
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

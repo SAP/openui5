@@ -1,10 +1,6 @@
-/*global sinon QUnit */
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/*global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/fl/LrepConnector",
+sap.ui.define([
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Change",
@@ -17,9 +13,10 @@ sap.ui.require([
 	"sap/m/Text",
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/base/ManagedObject"
+	"sap/ui/base/ManagedObject",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	LrepConnector,
 	FakeLrepConnector,
 	Cache,
 	Change,
@@ -32,11 +29,11 @@ sap.ui.require([
 	Text,
 	Component,
 	JsControlTreeModifier,
-	ManagedObject
+	ManagedObject,
+	jQuery,
+	sinon
 ) {
 	"use strict";
-	sinon.config.useFakeTimers = false;
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -65,7 +62,7 @@ sap.ui.require([
 	QUnit.module("Given an instance of FakeLrepConnector", {
 		beforeEach : function(assert) {
 			var done = assert.async();
-			jQuery.getJSON("../testResources/TestFakeVariantLrepResponse.json")
+			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/TestFakeVariantLrepResponse.json")
 				.done(function(oFakeVariantResponse) {
 					this.oResponse = {};
 					this.oResponse.changes = oFakeVariantResponse;
@@ -1127,7 +1124,7 @@ sap.ui.require([
 				appComponent: this.oComponent
 			};
 
-			jQuery.getJSON("../testResources/TestFakeVariantLrepResponse.json")
+			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/TestFakeVariantLrepResponse.json")
 				.done(function(oFakeVariantResponse) {
 					this.oResponse = {};
 					this.oResponse.changes = oFakeVariantResponse;
@@ -1488,4 +1485,7 @@ sap.ui.require([
 		assert.equal(this.oVariantController._mVariantManagement["variantManagementId2"].defaultVariant, "variantManagementId2", "and the parameter 'defaultVariant' is set to the standard variant");
 	});
 
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

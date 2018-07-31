@@ -1,16 +1,27 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
+
 sap.ui.define([
-	"sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/ContextManager"
-], function(LrepConnector, Utils, ContextManager) {
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/context/ContextManager",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
+], function(
+	LrepConnector,
+	Utils,
+	ContextManager,
+	sinon,
+	jQuery
+) {
 	"use strict";
-	sinon.config.useFakeTimers = false;  //required for jQuery.ajax
+
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("LrepConnector", {
 		beforeEach: function() {
 			LrepConnector._bServiceAvailability = undefined;
 			this.oLrepConnector = LrepConnector.createConnector();
-			sandbox.stub(ContextManager, "getActiveContexts", function () {
+			sandbox.stub(ContextManager, "getActiveContexts").callsFake(function () {
 				return [];
 			});
 		},
@@ -354,7 +365,7 @@ sap.ui.define([
 			response: {}
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
 		return this.oLrepConnector.loadSettings().then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -370,7 +381,7 @@ sap.ui.define([
 			code: 404
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
 
 		return this.oLrepConnector.loadSettings().then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -383,7 +394,7 @@ sap.ui.define([
 			code: 403
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
 
 		return this.oLrepConnector.loadSettings().then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -396,7 +407,7 @@ sap.ui.define([
 			code: 404
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
 
 		return this.oLrepConnector.loadChanges({name: 'something'}).catch(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -409,7 +420,7 @@ sap.ui.define([
 			code: 403
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
 
 		return this.oLrepConnector.loadChanges({name: 'something'}).catch(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -498,7 +509,7 @@ sap.ui.define([
 			response: {}
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
 		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -521,7 +532,7 @@ sap.ui.define([
 			response: {}
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
 		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -543,7 +554,7 @@ sap.ui.define([
 			response: {}
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
 		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -565,7 +576,7 @@ sap.ui.define([
 			response: {}
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
 		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
@@ -586,7 +597,7 @@ sap.ui.define([
 			response: {}
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
 		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
@@ -601,7 +612,7 @@ sap.ui.define([
 		var sComponentClassName = "smartFilterBar.Component";
 		var sAppVersion = "${project.appVersion}";
 
-		var oSendStub = this.stub(this.oLrepConnector, "send");
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send");
 
 		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).
 			then(
@@ -616,7 +627,7 @@ sap.ui.define([
 		var sComponentClassName = "${project.appVersion}.Component";
 		var sAppVersion = "1.2.3";
 
-		var oSendStub = this.stub(this.oLrepConnector, "send");
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send");
 
 		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).
 		then(
@@ -637,7 +648,7 @@ sap.ui.define([
 			response: {}
 		};
 
-		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+		var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
 		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion},{url: sExpectedCallUrl}).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
@@ -1221,5 +1232,10 @@ sap.ui.define([
 			assert.equal(error.messages[0].text, "content id must be non-initial");
 			assert.equal(error.messages[0].severity, "Error");
 		});
+	});
+
+
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
 	});
 });

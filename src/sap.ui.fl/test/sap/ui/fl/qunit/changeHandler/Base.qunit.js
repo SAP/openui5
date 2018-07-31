@@ -1,10 +1,13 @@
-/*global QUnit */
+/* global QUnit*/
 
-jQuery.sap.require("sap.ui.fl.changeHandler.Base");
-jQuery.sap.require('sap.ui.core.Control');
-jQuery.sap.require("sap.ui.core.LayoutData");
-
-(function (Base, Control, LayoutData) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/changeHandler/Base"
+],
+function(
+	jQuery,
+	Base
+) {
 	"use strict";
 
 	var oControl;
@@ -23,19 +26,21 @@ jQuery.sap.require("sap.ui.core.LayoutData");
 				oControl.destroy();
 			}
 		}
+	}, function () {
+		QUnit.test('setTextInChange', function (assert) {
+			var oChange = {
+				"selector": {
+					"id": "QUnit.testkey"
+				}
+			};
+			this.oBaseHandler.setTextInChange(oChange, "fieldLabel", "new field label", "XFLD");
+			assert.ok(oChange.texts.fieldLabel);
+			assert.equal(oChange.texts.fieldLabel.value, "new field label");
+			assert.equal(oChange.texts.fieldLabel.type, "XFLD");
+		});
 	});
 
-
-	QUnit.test('setTextInChange', function (assert) {
-		var oChange = {
-			"selector": {
-				"id": "QUnit.testkey"
-			}
-		};
-		this.oBaseHandler.setTextInChange(oChange, "fieldLabel", "new field label", "XFLD");
-		assert.ok(oChange.texts.fieldLabel);
-		assert.equal(oChange.texts.fieldLabel.value, "new field label");
-		assert.equal(oChange.texts.fieldLabel.type, "XFLD");
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
-
-}(sap.ui.fl.changeHandler.Base, sap.ui.core.Control, sap.ui.core.LayoutData));
+});

@@ -1,21 +1,19 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/fl/variants/VariantModel",
+sap.ui.define([
 	"sap/ui/fl/variants/util/VariantUtil",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
-	VariantModel,
 	VariantUtil,
 	Utils,
 	HashChanger,
 	History,
+	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -23,7 +21,7 @@ function(
 	var sandbox = sinon.sandbox.create();
 	var sVariantParameterName = "sap-ui-fl-control-variant-id";
 	QUnit.module("Given an instance of VariantModel", {
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this._oHashRegister = {
 				currentIndex: undefined,
 				hashParams : [],
@@ -31,7 +29,7 @@ function(
 			};
 			this.oComponent = { };
 		},
-		afterEach: function (assert) {
+		afterEach: function () {
 			sandbox.restore();
 		}
 	}, function () {
@@ -536,7 +534,7 @@ function(
 			};
 			this.sDefaultStatus = sDefaultStatus;
 		},
-		afterEach: function (assert) {
+		afterEach: function () {
 			sandbox.restore();
 		}
 	}, function () {
@@ -687,5 +685,7 @@ function(
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

@@ -1,10 +1,10 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/descriptorRelated/internal/Utils"
 ], function(
+	jQuery,
 	Utils
 ) {
 	"use strict";
@@ -159,5 +159,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });
