@@ -395,7 +395,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.addPaddingClass = function(oRm, oControl) {
-		oRm.addClass("sapMInputBaseWidthPadding");
+		oRm.addClass("sapMInputBaseHeightMargin");
 	};
 
 	/**
