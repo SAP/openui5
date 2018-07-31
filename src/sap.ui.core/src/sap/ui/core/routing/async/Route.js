@@ -65,6 +65,8 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 			// Route is defined without target in the config - use the internally created target to place the view
 			if (this._oTarget) {
 				oTarget = this._oTarget;
+				// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
+				oTarget._updateOptions(this._convertToTargetOptions(oConfig));
 
 				oSequencePromise = oTarget._place(oSequencePromise);
 

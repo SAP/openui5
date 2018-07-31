@@ -62,29 +62,8 @@ sap.ui.define([
 					throw new Error(sErrorMessage);
 				}
 
-				// convert the legacy syntax to the new one
-				// if "viewName" is set, it's converted to "type" and "name"
-				// meanwhile, the "viewPath" is also set to "path" and the
-				// "viewId" is also set to "id"
-				if (oOptions.viewName) {
-					// if the target's name is given under the "name" property,
-					// copy it to "_name" before overwritting it with the "viewName"
-					if (oOptions.name) {
-						oOptions._name = oOptions.name;
-					}
-					oOptions.type = "View";
-					oOptions.name = oOptions.viewName;
+				this._updateOptions(oOptions);
 
-					if (oOptions.viewPath) {
-						oOptions.path = oOptions.viewPath;
-					}
-
-					if (oOptions.viewId) {
-						oOptions.id = oOptions.viewId;
-					}
-				}
-
-				this._oOptions = oOptions;
 				this._oCache = oCache;
 				EventProvider.apply(this, arguments);
 
@@ -269,6 +248,32 @@ sap.ui.define([
 				}
 
 				return sName;
+			},
+
+			_updateOptions: function (oOptions) {
+				// convert the legacy syntax to the new one
+				// if "viewName" is set, it's converted to "type" and "name"
+				// meanwhile, the "viewPath" is also set to "path" and the
+				// "viewId" is also set to "id"
+				if (oOptions.viewName) {
+					// if the target's name is given under the "name" property,
+					// copy it to "_name" before overwritting it with the "viewName"
+					if (oOptions.name) {
+						oOptions._name = oOptions.name;
+					}
+					oOptions.type = "View";
+					oOptions.name = oOptions.viewName;
+
+					if (oOptions.viewPath) {
+						oOptions.path = oOptions.viewPath;
+					}
+
+					if (oOptions.viewId) {
+						oOptions.id = oOptions.viewId;
+					}
+				}
+
+				this._oOptions = oOptions;
 			},
 
 			_bindTitleInTitleProvider : function(oView) {
