@@ -189,7 +189,7 @@ sap.ui.define([
 			"variantReference": sVariantReference
 		};
 		if (sVariantReference) {
-			Object.assign({}, mChangeSpecificData, mVariantObj);
+			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
 		var oChange = oFlexController.createChange(mChangeSpecificData, this._validateControlForChange(mFlexSettings));
 		if (mFlexSettings && mFlexSettings.originalSelector) {
