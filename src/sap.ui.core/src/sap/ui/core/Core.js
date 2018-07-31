@@ -81,6 +81,11 @@ sap.ui.define([
 
 	/*global Promise */
 
+	// when the Core module has been executed before, don't execute it again
+	if (sap.ui.getCore && sap.ui.getCore()) {
+		return sap.ui.getCore();
+	}
+
 	// Initialize SAP Passport or FESR
 	initTraces();
 
@@ -202,11 +207,6 @@ sap.ui.define([
 	 */
 	var Core = BaseObject.extend("sap.ui.core.Core", /** @lends sap.ui.core.Core.prototype */ {
 		constructor : function() {
-
-			//make this class only available once
-			if (sap.ui.getCore && sap.ui.getCore()) {
-				return sap.ui.getCore();
-			}
 
 			var that = this,
 				METHOD = "sap.ui.core.Core";
@@ -4018,7 +4018,7 @@ sap.ui.define([
 	 *
 	 * Note that the Core = EventProvider.extend() call above already exposes sap.ui.core.Core.
 	 * This is needed for backward compatibility reason, in case some other code tries to enhance
-	 * the core prototype. Once global names are switched off, such extension scnearios are
+	 * the core prototype. Once global names are switched off, such extension scenarios are
 	 * no longer supported.
 	 */
 	return new Core().getInterface();
