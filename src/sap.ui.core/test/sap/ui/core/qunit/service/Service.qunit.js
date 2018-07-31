@@ -1,46 +1,6 @@
-<!DOCTYPE HTML>
+sap.ui.define([], function() {
 
-<!--
-  Tested class: sap.ui.core.Component, sap.ui.core.UIComponent
--->
-
-<html>
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>QUnit test: Service Injection</title>
-	<script src="../../shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-		src="../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-libs="sap.m"
-		data-sap-ui-language="en"
-		data-sap-ui-noConflict="true">
-	</script>
-
-	<script>
-
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-	sinon.config.useFakeTimers = false;
-
-	QUnit.config.autostart = false;
-
-	jQuery(document).ready(function() {
-		QUnit.start();
-	});
-
-	// ===========================================================================
-
-	// register the module path
-	sap.ui.loader.config({paths: {"samples/components": "../../../../../sap/ui/core/samples/components/"}});
-
-	sap.ui.define("my/Service", ["sap/ui/core/service/Service"], function(Service) {
+	sap.ui.predefine("my/Service", ["sap/ui/core/service/Service"], function(Service) {
 
 		return Service.extend("my.Service", {
 
@@ -64,7 +24,7 @@
 
 	});
 
-	sap.ui.define("my/ServiceFactory", ["sap/ui/core/service/ServiceFactory", "my/Service"], function(ServiceFactory, MyService) {
+	sap.ui.predefine("my/ServiceFactory", ["sap/ui/core/service/ServiceFactory", "my/Service"], function(ServiceFactory, MyService) {
 
 		return ServiceFactory.extend("my.ServiceFactory", {
 
@@ -81,7 +41,7 @@
 
 	QUnit.module("Basic API", {
 
-		beforeEach : function() {
+		beforeEach : function(assert) {
 
 			// log spy
 			var Log = sap.ui.require("sap/base/Log");
@@ -801,12 +761,4 @@
 
 	});
 
-	</script>
-	</head>
-	<body>
-		<div id="qunit"></div>
-		<br>
-		<div id="comparea1"></div>
-		<div id="comparea2"></div>
-	</body>
-</html>
+});
