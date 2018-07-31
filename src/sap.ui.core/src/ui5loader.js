@@ -1260,6 +1260,8 @@
 					return undefined;
 				}
 				// async pending, load sync again
+				log.warning("Sync request triggered for '" + sModuleName + "' while async request was already pending." +
+					" Loading a module twice might cause issues and should be avoided by fully migrating to async APIs.");
 			}
 		}
 
@@ -1616,6 +1618,10 @@
 
 		if ( bForceSyncDefines === false || (bForceSyncDefines == null && bGlobalAsyncMode) ) {
 			queue.push(sResourceName, aDependencies, vFactory, bExport);
+			if ( sResourceName != null ) {
+				var oModule = Module.get(sResourceName);
+				oModule.state = LOADING;
+			}
 			return;
 		}
 

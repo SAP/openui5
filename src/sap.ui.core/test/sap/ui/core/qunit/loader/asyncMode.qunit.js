@@ -29,6 +29,12 @@
 		}
 	});
 
+	function isEmpty(obj) {
+		for (var key in obj ) {
+			return false;
+		}
+		return true;
+	}
 
 
 	// ========================================================================================
@@ -98,6 +104,8 @@
 		});
 	});
 
+
+
 	// ========================================================================================
 	// Special Dependencies require/module/exports
 	// ========================================================================================
@@ -128,9 +136,9 @@
 			'fixture/require-module-exports/module',
 			'fixture/require-module-exports/subpackage/module'
 		], function(module, subpkgMod) {
-			assert.ok(jQuery.isEmptyObject(module.exports), "special dependency exports initially should be an empty object");
+			assert.ok(isEmpty(module.exports), "special dependency exports initially should be an empty object");
 			assert.strictEqual(module.exports, module.module.exports, "initially, module.exports and exports should be the same");
-			assert.ok(jQuery.isEmptyObject(subpkgMod.exports), "special dependency exports initially should be an empty object");
+			assert.ok(isEmpty(subpkgMod.exports), "special dependency exports initially should be an empty object");
 			assert.strictEqual(subpkgMod.exports, subpkgMod.module.exports, "initially, module.exports and exports should be the same");
 			done();
 		});
@@ -145,7 +153,7 @@
 			assert.equal(typeof module.module, 'object', "special dependency module should be an object");
 			assert.equal(module.module.id, 'fixture/require-module-exports/module', "special dependency module should have an 'id' property with the module ID");
 			assert.ok(Object.prototype.hasOwnProperty.call(module.module, 'exports'), "special dependency module should have an 'exports' property");
-			assert.ok(jQuery.isEmptyObject(module.module.exports), "exports initially should be an empty object");
+			assert.ok(isEmpty(module.module.exports), "exports initially should be an empty object");
 			done();
 		});
 	});
@@ -200,6 +208,7 @@
 			done();
 		});
 	});
+
 
 
 	// ========================================================================================
@@ -535,6 +544,113 @@
 
 
 	// ========================================================================================
+	// Embedded Defines
+	// ========================================================================================
+
+	QUnit.module("Embedded Module Definitions");
+
+	QUnit.test("No Outgoing Request", function(assert) {
+		var done = assert.async();
+		var fnAppendChildSpy = sinon.spy(document.head, "appendChild");
+		var UNIQUE = {};
+
+		assert.expect(2);
+
+		// Act:
+		// embedded module definition
+		sap.ui.define("fixture/embedded-module-definitions/module1", [], function() {
+			return UNIQUE;
+		});
+		// request it in the same browser task
+		sap.ui.require(["fixture/embedded-module-definitions/module1"], function(module1) {
+			assert.strictEqual(module1, UNIQUE, "module should have the expected export");
+			assert.ok(
+					fnAppendChildSpy.neverCalledWithMatch(sinon.match(function(oScript) {
+					return oScript && oScript.getAttribute("data-sap-ui-module") === "fixture/embedded-module-definitions/module1.js";
+				})), "no script tag should have been created for the embedded module");
+			fnAppendChildSpy.restore();
+			done();
+		}, done);
+
+	});
+
+
+
+	// ========================================================================================
+	// Mixed Async / Sync Calls
+	// ========================================================================================
+
+	QUnit.module("Mixed Async/Sync Calls");
+
+	QUnit.test("Warning Message", function(assert) {
+		var done = assert.async();
+		var logger = sap.ui.loader._.logger;
+		var fnLogSpy = sinon.spy(logger, "warning");
+
+		// Act:
+		// first require async
+		sap.ui.require(["fixture/async-sync-conflict/simple"], function() {
+			done();
+		});
+		// then sync -> should trigger a second request for the same resource
+		sap.ui.requireSync("fixture/async-sync-conflict/simple");
+
+		// Assert:
+		assert.ok(
+			logger.warning.calledWith(
+				sinon.match(/sync request/i).and(sinon.match(/while async request was already pending/i))
+			),
+			"a warning with the expected text fragments should have been logged");
+
+		logger.warning.restore();
+	});
+
+	// this test only exists to prove that the module is executed twice in case of an async/sync conflict
+	QUnit.test("Double Execution", function(assert) {
+		var done = assert.async();
+
+		// to get a loader-independent notification for the end of the async script loading,
+		// we intercept head.appendChild calls and listen to the load/error events of the script in question
+		var scriptCompleted = new Promise(function(resolve, reject) {
+			var _fnOriginalAppendChild = document.head.appendChild;
+			sinon.stub(document.head, "appendChild", function(oElement) {
+				// when the script tag for the module is appended, register for its load/error events
+				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict/unique-executions.js" ) {
+					oElement.addEventListener("load", resolve);
+					oElement.addEventListener("error", reject);
+				}
+				return _fnOriginalAppendChild.call(this, oElement);
+			});
+			// add a timeout of 20 sec.
+			setTimeout(function() {
+				reject(new Error("script for module was not added within 20 seconds"));
+			}, 20000);
+		});
+
+		window.aModuleExecutions = [];
+
+		// Act:
+		// first require async
+		sap.ui.require(["fixture/async-sync-conflict/unique-executions"], function() {
+			assert.equal(window.aModuleExecutions.length, 1, "callback for async request is called after sync request completed");
+			done();
+		}, done);
+		// then sync -> should trigger a second request for the same resource
+		sap.ui.requireSync("fixture/async-sync-conflict/unique-executions");
+
+		// Assert:
+		return scriptCompleted.then(function() {
+			assert.equal(window.aModuleExecutions.length, 2, "the module should have been executed twice");
+		}).finally(function() {
+			delete window.aModuleExecutions;
+			document.head.appendChild.restore();
+		});
+
+	});
+
+
+
+	// ========================================================================================
 	// Automatic Export to Global
 	// ========================================================================================
 
@@ -543,11 +659,15 @@
 	QUnit.test("basic support", function(assert) {
 		var done = assert.async();
 
-		assert.strictEqual(jQuery.sap.getObject("fixture.amd-with-export-true"), undefined, "before module execution, the namespace should not exist");
+		function getModule1() {
+			return window.fixture && window.fixture["amd-with-export-true"] && window.fixture["amd-with-export-true"].module1;
+		}
+
+		assert.strictEqual(getModule1(), undefined, "before module execution, the namespace should not exist");
 		sap.ui.require(['fixture/amd-with-export-true/module1'], function(module1) {
 			assert.strictEqual(typeof module1.parentNamespace, 'object', "during module execution, the namespace should already exist");
 			assert.strictEqual(module1.parentNamespace.module1, module1, "namespace member should equal the export");
-			assert.strictEqual(jQuery.sap.getObject("fixture.amd-with-export-true.module1"), module1, "after module execution, the global object should equal the export");
+			assert.strictEqual(getModule1(), module1, "after module execution, the global object should equal the export");
 			done();
 		});
 	});
@@ -562,6 +682,9 @@
 
 	QUnit.test("Boot UI5 Core", function(assert) {
 		var done = assert.async();
+		assert.equal(sap.ui.require('sap/ui/core/Core'), null, "Core must not have been loaded");
+
+		// Act
 		sap.ui.require(['sap/ui/core/Core'], function(Core) {
 			// loading succeeded, that's a good news on its own
 			assert.ok(!!Core, "Core has been loaded");

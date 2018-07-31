@@ -52,7 +52,18 @@ sap.ui.define(function() {
 			 */
 			asyncMode: {
 				page: "test-resources/sap/ui/core/qunit/loader/asyncMode.qunit.html",
-				title: "Test Page for Module Loading (ui5loader)"
+				title: "Test Page for Module Loading (ui5loader)",
+				loader: {
+					paths: {
+						'fixture': 'test-resources/sap/ui/core/qunit/loader/fixture/'
+					}
+				},
+				sinon: {
+					version: 1,
+					qunitBridge: false
+				},
+				bootCore: false,
+				autostart: false
 			},
 			config: {
 				page: "test-resources/sap/ui/core/qunit/loader/config.qunit.html",
