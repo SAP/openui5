@@ -55,7 +55,7 @@
 									</layout:HorizontalLayout>
 								</m:contentLeft>
 								<m:contentRight>
-									<m:Button text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
+									<m:Button id="createRuleBtn" text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
 								</m:contentRight>
 							</m:Bar>
 						</m:subHeader>
