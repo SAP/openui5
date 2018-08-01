@@ -1,4 +1,11 @@
 sap.ui.define([
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/plugin/TabHandling",
+	"sap/ui/dt/plugin/ControlDragDrop",
+	"sap/ui/dt/plugin/MouseSelection",
+	"sap/ui/dt/plugin/CutPaste",
+	"sap/ui/dt/plugin/ContextMenu",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/DatePicker",
@@ -6,6 +13,13 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/base/Log"
 ], function(
+	DesignTime,
+	TabHandling,
+	ControlDragDrop,
+	MouseSelection,
+	CutPaste,
+	ContextMenu,
+	OverlayRegistry,
 	Button,
 	Label,
 	DatePicker,
@@ -42,28 +56,20 @@ sap.ui.define([
 				//will result in custom timer in webPageTest
 				window.performance.mark("dt.starts");
 
-				sap.ui.requireSync("sap/ui/dt/DesignTime");
-				sap.ui.requireSync("sap/ui/dt/plugin/TabHandling");
-				sap.ui.requireSync("sap/ui/dt/plugin/ControlDragDrop");
-				sap.ui.requireSync("sap/ui/dt/plugin/MouseSelection");
-				sap.ui.requireSync("sap/ui/dt/plugin/CutPaste");
-				sap.ui.requireSync("sap/ui/dt/plugin/ContextMenu");
-				sap.ui.requireSync("sap/ui/dt/OverlayRegistry");
-
 				var MOVABLE_TYPES = ["sap.ui.layout.VerticalLayout","sap.m.Button","sap.m.Label","sap.m.DatePicker","sap.m.Slider","sap.m.RatingIndicator"];
 
-				var oTabHandlingPlugin = new sap.ui.dt.plugin.TabHandling();
-				var oSelectionPlugin = new sap.ui.dt.plugin.MouseSelection();
-				var oControlDragPlugin = new sap.ui.dt.plugin.ControlDragDrop({
+				var oTabHandlingPlugin = new TabHandling();
+				var oSelectionPlugin = new MouseSelection();
+				var oControlDragPlugin = new ControlDragDrop({
 					draggableTypes : MOVABLE_TYPES
 				});
-				var oCutPastePlugin = new sap.ui.dt.plugin.CutPaste({
+				var oCutPastePlugin = new CutPaste({
 					movableTypes : MOVABLE_TYPES
 				});
-				var oContextMenuPlugin = new sap.ui.dt.plugin.ContextMenu();
+				var oContextMenuPlugin = new ContextMenu();
 				window.performance.mark("dt.plugins.created");
 
-				var oDesignTime = new sap.ui.dt.DesignTime({
+				var oDesignTime = new DesignTime({
 					plugins : [
 						oTabHandlingPlugin,
 						oSelectionPlugin,
@@ -79,7 +85,7 @@ sap.ui.define([
 					sap.ui.dt.creationTime = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
 					Log.info("Create DesignTime and Overlays", sap.ui.dt.creationTime + "ms");
 					//visual change at the end
-					var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay("Control2");
+					var oOverlay = OverlayRegistry.getOverlay("Control2");
 					oOverlay.setSelected(true);
 
 					resolve();
