@@ -144,7 +144,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 		}
 		oValue = fnGetValue(vRef, oFilter.sPath);
 		fnTest = this.getFilterFunction(oFilter);
-		if (!oFilter.fnCompare) {
+		if (!oFilter.fnCompare || oFilter.bCaseSensitive !== undefined) {
 			oValue = this.normalizeFilterValue(oValue, oFilter.bCaseSensitive);
 		}
 		if (oValue !== undefined && fnTest(oValue)) {
@@ -234,9 +234,9 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 			oValue2 = oFilter.oValue2,
 			fnCompare = oFilter.fnCompare || Filter.defaultComparator;
 
-		if (!oFilter.fnCompare) {
-			oValue1 = this.normalizeFilterValue(oValue1, oFilter.bCaseSensitive);
-			oValue2 = this.normalizeFilterValue(oValue2, oFilter.bCaseSensitive);
+		if (!oFilter.fnCompare || oFilter.bCaseSensitive !== undefined) {
+			oValue1 = oValue1 ? this.normalizeFilterValue(oValue1, oFilter.bCaseSensitive) : oValue1;
+			oValue2 = oValue2 ? this.normalizeFilterValue(oValue2, oFilter.bCaseSensitive) : oValue2;
 		}
 
 		var fnContains = function(value) {
