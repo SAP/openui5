@@ -365,12 +365,22 @@ sap.ui.define([
 				group: 'DtTool',
 				coverage: {
 					only: ["sap/ui/rta/dttool/DTToolListItem"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.rta.dttool": "test-resources/sap/ui/rta/dttool/"
+					}
 				}
 			},
 			"dttool/OutlineTree": {
 				group: 'DtTool',
 				coverage: {
 					only: ["sap/ui/rta/dttool/OutlineTree"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.rta.dttool": "test-resources/sap/ui/rta/dttool/"
+					}
 				}
 			}
 		}
