@@ -369,7 +369,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 				}
 
 			}),
-				oSpySapUiResource = this.spy(sap.ui, 'resource'),
+			oSpySapUiResource = this.spy(sap.ui, 'resource'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true),
 			oSpyCall;
 
@@ -526,7 +526,6 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
-		this.spy(jQuery.sap, 'require');
 		this.spy(sap.ui, 'require');
 		this.spy(sap.ui, 'requireSync');
 
@@ -548,9 +547,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib1\/library-preload\.js$/));
 			assert.isLibLoaded('testlibs.scenario1.lib2');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib2\/library-preload\.js$/));
-			sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib1.library');
 			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib1/library');
-			sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib2.library');
 			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib2/library');
 			sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib1/library', 'testlibs/scenario1/lib2/library']);
 

@@ -2193,27 +2193,31 @@ sap.ui.define([
 	};
 
 	(function() {
+
+		var b = Device.browser;
+		var id = b.name;
+
 		// TODO move to a separate module? Only adds 385 bytes (compressed), but...
 		if ( !jQuery.browser ) {
 			// re-introduce the jQuery.browser support if missing (jQuery-1.9ff)
-			jQuery.browser = (function( ua ) {
+			jQuery.browser = (function (ua) {
 
 				var rwebkit = /(webkit)[ \/]([\w.]+)/,
 					ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
 					rmsie = /(msie) ([\w.]+)/,
 					rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/,
 					ua = ua.toLowerCase(),
-					match = rwebkit.exec( ua ) ||
-						ropera.exec( ua ) ||
-						rmsie.exec( ua ) ||
-						ua.indexOf("compatible") < 0 && rmozilla.exec( ua ) ||
+					match = rwebkit.exec(ua) ||
+						ropera.exec(ua) ||
+						rmsie.exec(ua) ||
+						ua.indexOf("compatible") < 0 && rmozilla.exec(ua) ||
 						[],
 					browser = {};
 
-				if ( match[1] ) {
-					browser[ match[1] ] = true;
+				if (match[1]) {
+					browser[match[1]] = true;
 					browser.version = match[2] || "0";
-					if ( browser.webkit ) {
+					if (browser.webkit) {
 						browser.safari = true;
 					}
 				}
@@ -2222,6 +2226,20 @@ sap.ui.define([
 
 			}(window.navigator.userAgent));
 		}
+
+		if (id === b.BROWSER.CHROME) {
+			jQuery.browser.safari = false;
+			jQuery.browser.chrome = true;
+		} else if (id === b.BROWSER.SAFARI) {
+			jQuery.browser.safari = true;
+			jQuery.browser.chrome = false;
+		}
+
+		if (id) {
+			jQuery.browser.fVersion = b.version;
+			jQuery.browser.mobile = b.mobile;
+		}
+
 	}());
 
 	return jQuery;
