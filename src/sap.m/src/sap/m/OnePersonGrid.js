@@ -6,12 +6,15 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/Control',
+		'sap/ui/core/LocaleData',
+		'sap/ui/core/Locale',
+		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/date/UniversalDate',
 		'sap/ui/unified/library',
 		'sap/ui/unified/calendar/DatesRow',
 		'./OnePersonGridRenderer'
 	],
-	function (jQuery, Control, UniversalDate, unifiedLibrary, DatesRow, OnePersonGridRenderer) {
+	function (jQuery, Control, LocaleData, Locale, DateFormat, UniversalDate, unifiedLibrary, DatesRow, OnePersonGridRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.unified.CalendarAppointmentVisualization
@@ -188,14 +191,20 @@ sap.ui.define([
 		};
 
 		OnePersonGrid.prototype._formatTimeAsString = function (oDate) {
-			var iCurrentHour = oDate.getHours(),
-				iCurrentMinutes = oDate.getMinutes();
+			var iCurrentMinutes = oDate.getMinutes(),
+				oHoursFormat = this._getHoursFormat(),
+				oAMPMFormat = this._getAMPMFormat(),
+				sAMPM = "";
 
 			if (iCurrentMinutes < 10) {
 				iCurrentMinutes = "0" + iCurrentMinutes;
 			}
 
-			return iCurrentHour + ":" + iCurrentMinutes;
+			if (this._hasAMPM()) {
+				sAMPM += " " + oAMPMFormat.format(oDate); // TODO: use second param true when convert all dates to UTC
+			}
+
+			return oHoursFormat.format(oDate) + ":" + iCurrentMinutes + sAMPM; // TODO: use second param true when convert all dates to UTC
 		};
 
 		OnePersonGrid.prototype._calculateTopPosition = function (oDate) {
@@ -543,6 +552,56 @@ sap.ui.define([
 
 		OnePersonGrid.prototype._getDayPart = function (oDate) {
 			return new UniversalDate(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
+		};
+
+		OnePersonGrid.prototype._getCoreLocale = function () {
+			if (!this._sLocale) {
+				this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			}
+
+			return this._sLocale;
+		};
+
+		OnePersonGrid.prototype._getCoreLocaleData = function() {
+			if (!this._oLocaleData) {
+				var sLocale = this._getCoreLocale(),
+					oLocale = new Locale(sLocale);
+
+				this._oLocaleData = LocaleData.getInstance(oLocale);
+			}
+
+			return this._oLocaleData;
+		};
+
+		OnePersonGrid.prototype._hasAMPM = function () {
+			var oLocaleData = this._getCoreLocaleData();
+
+			return oLocaleData.getTimePattern("short").search("a") >= 0;
+		};
+
+		OnePersonGrid.prototype._getHoursFormat = function () {
+			var sLocale = this._getCoreLocale();
+
+			if (!this._oHoursFormat || this._oHoursFormat.oLocale.toString() !== sLocale) {
+				var oLocale = new Locale(sLocale),
+					bHasAMPM = this._hasAMPM(),
+					sPattern = bHasAMPM ? "h" : "H";
+
+				this._oHoursFormat = DateFormat.getTimeInstance({pattern: sPattern}, oLocale);
+			}
+
+			return this._oHoursFormat;
+		};
+
+		OnePersonGrid.prototype._getAMPMFormat = function () {
+			var sLocale = this._getCoreLocale(),
+				oLocale = new Locale(sLocale);
+
+			if (!this._oAMPMFormat || this._oAMPMFormat.oLocale.toString() !== sLocale) {
+				this._oAMPMFormat = DateFormat.getTimeInstance({pattern: "a"}, oLocale);
+			}
+
+			return this._oAMPMFormat;
 		};
 
 		// Appointments Node
