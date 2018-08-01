@@ -41,6 +41,16 @@ sap.ui.define(['sap/m/MessageBox','sap/m/Token','sap/ui/core/mvc/Controller'],
 					});
 				  return sap.m.MultiInput.WaitForAsyncValidation;
 			});
+
+			var oMultiInput3 = oView.byId("multiInput3");
+			var fValidator = function(args){
+				window.setTimeout(function(){
+					args.asyncCallback(new Token({text: args.text}));
+				},500);
+				return sap.m.MultiInput.WaitForAsyncValidation;
+			};
+
+			oMultiInput3.addValidator(fValidator);
 		}
 	});
 

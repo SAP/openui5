@@ -18,5 +18,7 @@
 			showValueHelp="false">
 			<core:Item key="{ProductId}" text="{Name}" />
 		</MultiInput>
+		<Label text="MultiInput with pre-selected tokens" labelFor="multiInput1"/>
+		<MultiInput id="multiInput2" width="100%" showValueHelp="false"/>
 	</l:VerticalLayout>
 </mvc:View>
