@@ -95,8 +95,7 @@ function (Helper, Opa5, TestUtils, Properties) {
 			actions : {
 				applySupportAssistant : function () {
 					// we use support assistant only for the test run with mock data
-					sap.ui.test.Opa.getContext().bSupportAssistant =
-						TestUtils.isRealOData() ? false : true;
+					sap.ui.test.Opa.getContext().bSupportAssistant = false;
 					Opa5.extendConfig(getConfig(sap.ui.test.Opa.getContext().bSupportAssistant));
 				},
 				cleanUp : function(sControlId) {
