@@ -173,7 +173,7 @@
 							</customHeader>
 
 							<List id="PropertyPanel"
-							  noDataText="loading..."
+							  noDataText="please select a control"
 							  items="{properties>/propertiesList}">
 							<items>
 								<dt:DTToolListItem

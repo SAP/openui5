@@ -20,11 +20,13 @@ sap.ui.require([
 
 	Opa5.extendConfig({
 		arrangements: new Common(),
-		viewNamespace: "sap.ui.rta.dttool.view."
+		viewNamespace: "sap.ui.rta.dttool.view.",
+		timeout: 25
 	});
 
 	sap.ui.require([
-		"sap/ui/rta/dttool/integration/TheJourney"
+		// "sap/ui/rta/dttool/integration/TheJourney",
+		"sap/ui/rta/dttool/integration/PropertyPanelJourney"
 	], function () {
 		QUnit.start();
 	});

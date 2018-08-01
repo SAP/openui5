@@ -3,22 +3,59 @@ sap.ui.define([
 	'sap/ui/test/actions/Press',
 	'sap/ui/test/actions/EnterText',
 	'sap/ui/test/matchers/Properties',
+	'sap/ui/test/matchers/Ancestor',
 	'sap/ui/test/matchers/AggregationLengthEquals',
 	'sap/ui/test/matchers/AggregationContainsPropertyEqual',
 	'sap/ui/rta/dttool/integration/pages/Common'
-], function(Opa5, Press, EnterText, Properties, AggregationLengthEquals, AggregationContainsPropertyEqual, Common) {
+], function(Opa5, Press, EnterText, Properties, Ancestor,  AggregationLengthEquals, AggregationContainsPropertyEqual, Common) {
 	'use strict';
 
 	Opa5.createPageObjects({
 		onTheAppView : {
 			baseClass : Common,
 			actions : {
+
 				iClickTheAddControlButton : function () {
 					return this.waitFor({
 						id : "addControlButton",
 						viewName : "App",
 						actions : new Press(),
 						errorMessage : "Couldn't find control with id addControlButton"
+					});
+				},
+
+				/*
+				Use this when you want to test to change Properties which have a Switch as Control
+				iIndex is the element in the Dropdown
+				 */
+				iClickTheSwitchForThePassedPropertyNameAndClickThePassedIndex : function(sProperty, iIndex) {
+					return this.waitFor({
+						controlType: "sap.ui.rta.dttool.DTToolListItem",
+						matchers: [
+							new Properties({
+								propertyName: sProperty
+							})
+						],
+						actions: function(oControl) {
+							return new Press().executeOn(oControl.getContent()[0]);
+						},
+						success : function (oControl) {
+							return this.waitFor({
+								actions: function() {
+									return new Press().executeOn(oControl[0].getContent()[0].getItems()[iIndex]);
+								}
+							});
+						},
+						errorMessage: "Was not able to find " + this.controlType + "with Property " + sProperty
+					});
+				},
+
+				iClickOnControlWithId : function (id) {
+					return this.waitFor({
+						id : id,
+						viewName : "App",
+						actions : new Press(),
+						errorMessage : "Couldn't find control with id " + id
 					});
 				},
 				iEnterAModulePathIntoTheInput : function (sModulePath) {
@@ -39,7 +76,7 @@ sap.ui.define([
 				},
 				iExpandTheOutlineByNLevels : function (iLevels, aLengths, aIndexes) {
 					return this.waitFor({
-						id : "Tree",
+						id : "__component0---app--Tree",
 						viewName : "App",
 						matchers : new AggregationLengthEquals({
 							name : "items",
@@ -63,23 +100,108 @@ sap.ui.define([
 				},
 				iSelectTheNthTreeItem : function (iIndex) {
 					return this.waitFor({
-						id : "__item0-__component0---app--Tree-8",
+						id : "__item0-__component0---app--Tree-" + iIndex,
 						actions : new Press(),
-						errorMessage : "Couldn't find control with id __item0-__component0---app--Tree-8"
+						errorMessage : "Couldn't find control with id __item0-__component0---app--Tree-" + iIndex
 					});
 				}
 			},
 			assertions : {
+				thePassedPropertyShouldBeDisplayedInPropertyPanel: function(sProperty) {
+					return this.waitFor({
+						controlType: "sap.ui.rta.dttool.DTToolListItem",
+						matchers: [
+							new Properties({
+								label: sProperty
+							})
+						],
+						success: function (oListItem) {
+							Opa5.assert.ok(true, "Was able to find " + oListItem + " with given Property: " + sProperty);
+						}
+					});
+
+				},
+				thePassedPropertyInPropertyPanelItemHasContent: function(sProperty) {
+					return this.waitFor({
+						controlType: "sap.ui.rta.dttool.DTToolListItem",
+						matchers: [
+							new Properties({
+								label: sProperty
+							})
+						],
+						check: function(oListItem) {
+							var oListItemContent = oListItem[0].getContent()[0];
+							if (oListItemContent) {
+								return true;
+							}
+						},
+						success: function (oListItem) {
+							Opa5.assert.ok(true, "Was able to find " + oListItem + " with Property " + sProperty + " and has content");
+						}
+					});
+
+				},
+				theSampleSelectShouldBeShown : function () {
+					return this.waitFor({
+						id : "__component0---app--sampleSelect",
+						viewName : "App",
+						success : function () {
+							Opa5.assert.ok(true, "SampleSelect is displayed");
+						},
+						errorMessage : "Couldn't find control with id sampleSelect"
+					});
+				},
+				thePropertyPanelToolbarShouldDisplayTheCorrectLabel : function (sControlName) {
+					return this.waitFor({
+						id : "__title6",
+						matchers : function(oTitle){
+							return oTitle.getText().indexOf(sControlName) >= 0;
+						},
+						success : function () {
+							Opa5.assert.ok(true, "Selected control displays the correct title: " + sControlName);
+						},
+						errorMessage : sControlName + " is not part of the property panel title"
+					});
+				},
+				// switchingTheGivenPropertyEffectsTheControl : function (sPanelId, sPropertyName) {
+				// 	return this.waitFor({
+				// 		id : "__item7-__component0---app--PropertyPanel-" + sPanelId,
+				// 		matchers : function(oItem){
+				// 			if (oItem.getPropertyName() === sPropertyName && oItem.getContent()[0].getSelectedKey() === "false") {
+				// 				oItem.getContent()[0].setSelectedKey("true");
+				// 				return true;
+				// 			}
+				// 			return false;
+				// 		},
+				// 		success : function () {
+				// 			Opa5.assert.ok(true, sPropertyName + " has changed from false to true");
+				// 		},
+				// 		errorMessage : sPropertyName + " could not be changed"
+				// 	});
+				// },
+				thePropertyPanelToolbarShouldDisplayTheCorrectProperty : function (sPanelId, sPropertyName) {
+					return this.waitFor({
+						id : "__item7-__component0---app--PropertyPanel-" + sPanelId,
+						matchers : function(oItem){
+							return oItem.getPropertyName() === sPropertyName;
+						},
+						success : function () {
+							Opa5.assert.ok(true, "Selected control has the given property: " + sPropertyName);
+						},
+						errorMessage : sPropertyName + " is not found"
+					});
+				},
+
 				thePaletteShouldHaveTheGivenNumberOfGroups : function (iNumberOfPaletteGroups) {
 					return this.waitFor({
 						id : "palette",
 						viewName : "App",
 						matchers : new AggregationLengthEquals({
-							name : "items",
+								name : "items",
 							length : iNumberOfPaletteGroups
 						}),
 						success : function () {
-							Opa5.assert.ok(true, "The palette has " + iNumberOfPaletteGroups + " groups.");
+							Opa5.assert.ok(true, "Palette has " + iNumberOfPaletteGroups + " groups.");
 						},
 						errorMessage : "Couldn't find control with id palette"
 					});
@@ -105,7 +227,7 @@ sap.ui.define([
 								}
 							});
 
-							Opa5.assert.ok(bControlAdded, "The control was added to the palette.");
+							Opa5.assert.ok(bControlAdded, "Control was added to the palette.");
 						},
 						errorMessage : "Couldn't find control with id palette"
 					});
@@ -115,22 +237,21 @@ sap.ui.define([
 						id : "Tree",
 						viewName : "App",
 						success : function () {
-							Opa5.assert.ok(true, "The hash has changed.");
+							Opa5.assert.ok(true, "Hash has changed.");
 						}
 					});
 				},
 				theCorrectOverlayIsSelected : function (sId) {
 					return this.waitFor({
-						id : "Tree",
-						viewName : "App",
-						matchers : new AggregationLengthEquals({
-							name : "items",
-							length : 12
-						}),
+						id: "__component0---app--theIFrame",
+						matchers : function(){
+							var oElement = jQuery("#__component0---app--theIFrame").contents().find("#" + sId);
+							return oElement.hasClass( "sapUiDtOverlaySelected" );
+						},
 						success : function () {
-							var oOverlay = sap.ui.getCore().byId(sId);
-							Opa5.assert.ok(oOverlay.getSelected(), "The correct overlay is selected.");
-						}
+							Opa5.assert.ok(true, sId + " has Class sapUiDtOverlaySelected (is selected)");
+						},
+						errorMessage : sId + " doesn't has Class sapUiDtOverlaySelected (is not selected)"
 					});
 				}
 			}

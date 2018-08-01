@@ -68,17 +68,17 @@ sap.ui.define([
 
 			var oModel = new JSONModel();
 			var oView = this.getView();
+			oView.byId("Tree").setBusy(true);
+			oView.byId("PropertyPanel").setBusy(true);
+			oView.byId("palette").setBusy(true);
 
 			oView.setModel(oModel, "outline");
-			oView.byId("Tree").setBusy(true);
 
 			var oPropModel = new JSONModel();
 			oView.setModel(oPropModel, "properties");
-			oView.byId("PropertyPanel").setBusy(true);
 
 			var oPaletteModel = new JSONModel();
 			oView.setModel(oPaletteModel, "palette");
-			oView.byId("palette").setBusy(true);
 
 		},
 		/**
@@ -300,14 +300,12 @@ sap.ui.define([
 
 					this._getPaletteModel().setProperty("/", oPaletteData);
 
+					var oPalette = this.getView().byId("palette");
+					oPalette.setBusy(false);
 				}.bind(this));
 			}.bind(this));
 
             // this._getPaletteModel().setProperty("/", oPaletteData);
-
-            var oPalette = this.getView().byId("palette");
-            oPalette.setBusy(false);
-
             this.setDraggable();
 		},
 

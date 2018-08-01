@@ -43,36 +43,44 @@ sap.ui.define([],
 		DTMetadata.loadLibrary = function(sLibraryName) {
 			var that = this,
 				oLibraryPromise = new Promise(function(resolve) {
-					var aPromises = [],
-						aAPIPromises = [],
-						sURL = sap.ui.resource(sLibraryName + ".designtime", 'messagebundle.properties'),
+					var sURL = sap.ui.resource(sLibraryName + ".designtime", 'messagebundle.properties'),
 						oLib = oCore.getLoadedLibraries()[sLibraryName];
 					if (mLibraryData[sLibraryName]) {
 						return new Promise(function(resolve) {
 							resolve(mLibraryData[sLibraryName]);
 						});
 					}
-					mLibraryData[sLibraryName] = {
-						resourceBundle : jQuery.sap.resources({url : sURL}),
-						name: sLibraryName
-					};
-					var sControlName;
-					for (var i0 = 0; i0 < oLib.controls.length; i0++) {
-						sControlName = oLib.controls[i0];
-						if (mLibraryData[sLibraryName][sControlName]) {
-							continue;
+
+					jQuery.sap.resources({url : sURL, async: true})
+
+					.then(function(oResourceBundle) {
+						var aPromises = [];
+						mLibraryData[sLibraryName] = {
+							resourceBundle : oResourceBundle,
+							name: sLibraryName
+						};
+
+						var sControlName;
+
+						for (var i0 = 0; i0 < oLib.controls.length; i0++) {
+							sControlName = oLib.controls[i0];
+							if (mLibraryData[sLibraryName][sControlName]) {
+								continue;
+							}
+							aPromises.push(that.loadElement(sControlName, sLibraryName));
 						}
-						aPromises.push(that.loadElement(sControlName, sLibraryName));
-					}
-					for (var i1 = 0; i1 < oLib.elements.length; i1++) {
-						sControlName = oLib.elements[i1];
-						if (mLibraryData[sLibraryName][sControlName]) {
-							continue;
+						for (var i1 = 0; i1 < oLib.elements.length; i1++) {
+							sControlName = oLib.elements[i1];
+							if (mLibraryData[sLibraryName][sControlName]) {
+								continue;
+							}
+							aPromises.push(that.loadElement(sControlName, sLibraryName));
 						}
-						aPromises.push(that.loadElement(sControlName, sLibraryName));
-					}
-					Promise.all(aPromises).then(function(aData) {
-						Promise.all(aAPIPromises).then(function() {
+						return aPromises;
+					})
+
+					.then(function(aPromises) {
+						return Promise.all(aPromises).then(function(aData) {
 							//enhance and register all control design time data
 							aData.forEach(function (oData) {
 								if (oData) {
