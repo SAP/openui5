@@ -1,13 +1,10 @@
 /*global QUnit*/
 
-// QUnit to be started explicitly
-QUnit.config.autostart = false;
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
 sap.ui.define([
 	'sap/ui/rta/test/controlEnablingCheck'
-],
-function(rtaControlEnablingCheck){
+], function (
+	rtaControlEnablingCheck
+) {
 	"use strict";
 
 	// Test "only" function + straightforward execution
@@ -34,6 +31,7 @@ function(rtaControlEnablingCheck){
 				'</Form>' +
 			'</mvc:View>'
 		,
+		placeAt: "qunit-fixture",
 		action : {
 			name : "remove",
 			controlId : "formelement",
@@ -70,6 +68,7 @@ function(rtaControlEnablingCheck){
 			async : true,
 			preprocessors : null //add yours
 		},
+		placeAt: "qunit-fixture",
 		action : {
 			name : "remove",
 			controlId : "container",
@@ -83,7 +82,8 @@ function(rtaControlEnablingCheck){
 		afterUndo : fnConfirmFormContainerIsVisible,
 		afterRedo : fnConfirmFormContainerIsInvisible
 	});
-	// Start QUnit tests
-	QUnit.start();
 
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

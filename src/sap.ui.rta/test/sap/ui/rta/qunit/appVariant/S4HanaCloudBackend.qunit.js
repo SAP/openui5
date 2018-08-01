@@ -1,25 +1,22 @@
 /* global QUnit  */
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
-	"sap/ui/thirdparty/sinon"
-], function(
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
+], function (
 	S4HanaCloudBackend,
-	sinon) {
-
-	// Initialize
+	jQuery,
+	sinon
+) {
 	"use strict";
 	var sandbox = sinon.sandbox.create();
-	QUnit.start();
 
 	// Test
 	QUnit.module( "Given the S4HanaCloudBackend class", {
-
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 		}
-
 	}, function() {
 
 		QUnit.test("When instantiated,", function(assert) {
@@ -34,7 +31,7 @@ sap.ui.require([
 			var done = assert.async();
 			var oS4HanaCloudBackend = new S4HanaCloudBackend();
 
-			function isReady( sIamAppId ) {
+			function isReady() {
 				assert.fail("then it is an error if FLP customizing is detected");
 				done();
 			}
@@ -52,7 +49,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("When stubing checkFlpCustomizingIsReady(\"VALID_IAM_ID\") to return true immediately,", function(assert) {
-
 			var done = assert.async();
 			var oS4HanaCloudBackend = new S4HanaCloudBackend();
 
@@ -74,7 +70,6 @@ sap.ui.require([
 			);
 
 		});
-
 
 		QUnit.test("When stubing checkFlpCustomizingIsReady(\"VALID_IAM_ID\") to return true in the third call,", function(assert) {
 
@@ -117,7 +112,7 @@ sap.ui.require([
 			checkFlpCustomizingIsReadyStub.onSecondCall().returns( Promise.resolve( false ) );
 			checkFlpCustomizingIsReadyStub.onThirdCall().returns( Promise.resolve( false ) );
 
-			function isReady( sIamAppId ) {
+			function isReady() {
 				throw "isReady must not be called";
 			}
 
@@ -136,7 +131,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("When checking a backend response for an IAM app with valid FLP customizing after catalog publishing succeeded,", function(assert) {
-
 			// Response of ODATA service
 			var responseFlpCustomizingIsThere =
 			{
@@ -159,7 +153,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("When checking a backend response for an IAM app returning errors when publishing is still ongoing,", function(assert) {
-
 			// Response of ODATA service
 			var responseFlpCustomizingNotYetReady =
 			{
@@ -182,7 +175,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("When checking a backend response for an IAM app returning errors after publishing failed,", function(assert) {
-
 			// Response of ODATA service
 			var responseFlpCustomizingFailed =
 			{
@@ -206,7 +198,6 @@ sap.ui.require([
 		});
 
 		QUnit.test("When checking an unexpected backend response format,", function(assert) {
-
 			// Response of ODATA service
 			var unexpectedBackendResponse =
 			{
@@ -229,4 +220,7 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

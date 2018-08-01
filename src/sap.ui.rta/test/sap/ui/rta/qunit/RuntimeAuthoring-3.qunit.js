@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/m/Page",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -599,5 +597,7 @@ function (
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

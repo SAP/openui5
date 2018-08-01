@@ -1,8 +1,8 @@
 /* global QUnit*/
-QUnit.config.autostart = false;
+
 QUnit.dump.maxDepth = 50;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/service/Outline",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/Util",
@@ -16,8 +16,7 @@ sap.ui.require([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/sinon-4"
-],
-	function(
+], function (
 	oOutline,
 	RuntimeAuthoring,
 	DtUtil,
@@ -147,7 +146,7 @@ sap.ui.require([
 	}, function() {
 		QUnit.test("when get() is called and and no parameter is passed for initial control id and depth", function (assert) {
 			var done = assert.async();
-			jQuery.getJSON("./testResources/FakeOutline.json", function(aExpectedOutlineData){
+			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function(aExpectedOutlineData){
 
 				var aRootElements = this.oRta._oDesignTime.getRootElements();
 				this.oOutline.get().then(function(aReceivedResponse) {
@@ -475,7 +474,7 @@ sap.ui.require([
 
 		QUnit.test("when a root element is added to the design time", function (assert) {
 			var done = assert.async();
-			jQuery.getJSON("./testResources/FakeOutline.json", function (aExpectedOutlineData) {
+			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function (aExpectedOutlineData) {
 				var oButton = new Button("button2");
 
 				// control editable property is initially false
@@ -500,5 +499,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

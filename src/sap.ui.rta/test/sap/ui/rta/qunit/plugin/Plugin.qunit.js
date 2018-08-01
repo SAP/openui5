@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/DesignTime',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/plugin/Remove',
@@ -27,7 +25,7 @@ sap.ui.require([
 	'sap/ui/fl/changeHandler/MoveControls',
 	'sap/ui/thirdparty/sinon-4'
 ],
-function(
+function (
 	DesignTime,
 	Plugin,
 	Remove,
@@ -53,7 +51,6 @@ function(
 	sinon
 ) {
 	"use strict";
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -809,5 +806,9 @@ function(
 		QUnit.test("when '_getChangeHandler' is called with a control that has the default change handler registered for 'moveControls'", function(assert) {
 			assert.strictEqual(this.oPlugin._getChangeHandler("moveControls", this.oLayout), MoveControlsChangeHandler, "then the function returns the correct change handler");
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

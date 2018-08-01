@@ -1,34 +1,36 @@
 /* global QUnit  */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/thirdparty/sinon"
-], function(
+	"sap/ui/thirdparty/sinon-4"
+], function (
 	jQuery,
 	AppVariantUtils,
 	FakeLrepConnectorSessionStorage,
 	Settings,
-	sinon) {
+	sinon
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	QUnit.start();
-
-	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 	QUnit.module("Given an AppVariantUtils is instantiated", {
+		before: function () {
+			FakeLrepConnectorSessionStorage.enableFakeConnector();
+		},
+		after: function () {
+			FakeLrepConnectorSessionStorage.disableFakeConnector();
+		},
 		beforeEach: function () {
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
 
-			sap.ushell = jQuery.extend({}, sap.ushell, {
+			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
-					getService : function(sServiceName) {
+					getService : function () {
 						return {
 							getHash : function() {
 								return "testSemanticObject-testAction";
@@ -49,7 +51,6 @@ sap.ui.require([
 			sap.ushell = this.originalUShell;
 		}
 	}, function () {
-
 		QUnit.test("When getManifirstSupport() method is called", function (assert) {
 			return AppVariantUtils.getManifirstSupport("testId").then(function(oResult) {
 				assert.equal(oResult.response, false, "then the running app is a scaffolding app");
@@ -468,5 +469,9 @@ sap.ui.require([
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

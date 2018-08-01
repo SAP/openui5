@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/rta/toolbar/Adaptation',
 	'sap/ui/Device',
 	'sap/ui/thirdparty/sinon-4'
@@ -15,8 +13,6 @@ function(
 	'use strict';
 
 	var sandbox = sinon.sandbox.create();
-
-	QUnit.start();
 
 	QUnit.module('Different Screen Sizes', {
 		beforeEach: function() {
@@ -155,5 +151,9 @@ function(
 			this.oToolbar.setRestoreEnabled(false);
 			assert.notOk(this.oToolbar.getControl("restore").getEnabled(), "the undo button is disabled");
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

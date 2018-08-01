@@ -1,9 +1,6 @@
 /* global QUnit */
 
-// QUnit to be started explicitly
-QUnit.config.autostart = false;
-sap.ui.require([
-	//internal:
+sap.ui.define([
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/rta/command/LREPSerializer',
@@ -12,7 +9,7 @@ sap.ui.require([
 	'sap/ui/fl/FakeLrepSessionStorage',
 	'sap/ui/fl/FakeLrepConnectorSessionStorage',
 	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/rta/qunit/RtaQunitUtils',
+	'qunit/RtaQunitUtils',
 	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
 	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
 	'sap/ui/fl/FlexControllerFactory',
@@ -45,9 +42,6 @@ sap.ui.require([
 	sinon
 ) {
 	"use strict";
-
-	// Start QUnit tests
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 	var COMPONENT_NAME = "someName";
@@ -1159,4 +1153,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

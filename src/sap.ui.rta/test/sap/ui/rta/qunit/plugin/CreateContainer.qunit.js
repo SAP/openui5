@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
@@ -17,7 +15,7 @@ sap.ui.require([
 	"sap/ui/core/Title",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
 	Utils,
 	VerticalLayout,
 	DesignTime,
@@ -527,6 +525,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

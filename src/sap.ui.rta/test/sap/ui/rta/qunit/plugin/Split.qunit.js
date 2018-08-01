@@ -1,9 +1,7 @@
 /*global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'jquery.sap.global',
+sap.ui.define([
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/dt/OverlayRegistry',
@@ -358,6 +356,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });
