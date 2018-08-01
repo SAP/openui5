@@ -20,15 +20,19 @@
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				"sap/m/Shell",
 				"sap/ui/core/ComponentContainer"
-			], function (ComponentContainer) {
+			], function (Shell, ComponentContainer) {
 				// initialize the UI component
-                    new ComponentContainer({
-						height: "100%",
-						name: "sap.ui.demo.masterdetail",
+				new Shell({
+					app : new ComponentContainer({
+						height : "100%",
+						name : "sap.ui.demo.masterdetail",
 						settings: {
 							id: "masterdetail"
-					}
+						}
+					}),
+					appWidthLimited : false
 				}).placeAt("content");
 			});
 		});
