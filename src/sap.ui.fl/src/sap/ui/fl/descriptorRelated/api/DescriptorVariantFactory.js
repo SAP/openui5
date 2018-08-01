@@ -305,7 +305,7 @@ sap.ui.define([
 	 * @param {string} mParameters.id the id for the app variant/CDM app config id
 	 * @param {string} [mParameters.layer='CUSTOMER'] the proposed layer for the app variant/CDM app config (might be overwritten by the backend)
 	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
-	 * @param {boolean} [mParameters.skipIam=true] indicator whether the default IAM item creation and registration is skipped
+	 * @param {boolean} [mParameters.skipIam=false] indicator whether the default IAM item creation and registration is skipped
 
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
