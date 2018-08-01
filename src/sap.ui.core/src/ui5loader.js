@@ -1116,7 +1116,7 @@
 		});
 	}
 
-	function loadScript(oModule, bRetryOnFailure) {
+	function loadScript(oModule, sAlternativeURL) {
 
 		var oScript;
 
@@ -1132,12 +1132,13 @@
 		function onerror(e) {
 			oScript.removeEventListener('load', onload);
 			oScript.removeEventListener('error', onerror);
-			if (bRetryOnFailure) {
+			if (sAlternativeURL) {
 				log.warning("retry loading Javascript resource: " + oModule.name);
 				if (oScript && oScript.parentNode) {
 					oScript.parentNode.removeChild(oScript);
 				}
-				loadScript(oModule, /* bRetryOnFailure= */ false);
+				oModule.url = sAlternativeURL;
+				loadScript(oModule, /* sAlternativeURL= */ null);
 				return;
 			}
 
@@ -1149,7 +1150,7 @@
 		oScript = document.createElement('SCRIPT');
 		oScript.src = oModule.url;
 		oScript.setAttribute("data-sap-ui-module", oModule.name);
-		if ( bRetryOnFailure !== undefined ) {
+		if ( sAlternativeURL !== undefined ) {
 			oScript.addEventListener('load', onload);
 			oScript.addEventListener('error', onerror);
 		}
@@ -1332,11 +1333,12 @@
 
 		} else {
 
-			// @evo-todo support debug mode also in async mode
-			oModule.url = getResourcePath(oSplitName.baseID, oSplitName.subType);
-			// call notification hook
-			ui5Require.load({ completeLoad:noop, async: true }, oModule.url, oSplitName.baseID);
-			loadScript(oModule, /* bRetryOnFailure= */ true);
+			oModule.url = getResourcePath(oSplitName.baseID, aExtensions[0] + oSplitName.subType);
+			// in debug mode, fall back to the non-dbg source, otherwise try the same source again (for SSO re-connect)
+			var sAltUrl = bDebugSources ? getResourcePath(oSplitName.baseID, aExtensions[1] + oSplitName.subType) : oModule.url;
+			// call notification hook only once
+			ui5Require.load({ completeLoad:noop, async: true }, sAltUrl, oSplitName.baseID);
+			loadScript(oModule, /* sAlternativeURL= */ sAltUrl);
 
 			// process dep cache info
 			preloadDependencies(sModuleName);
