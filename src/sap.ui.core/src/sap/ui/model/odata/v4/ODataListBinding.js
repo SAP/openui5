@@ -1166,6 +1166,49 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the filter information as an abstract syntax tree.
+	 * Consumers must not rely on the origin information to be available, future filter
+	 * implementations will not provide this information.
+	 *
+	 * @param {boolean} [bIncludeOrigin=false] whether to include information about the filter
+	 *   objects from which the tree has been created
+	 * @returns {object} The AST of the filter tree including the static filter as string or null if
+	 *   no filters are set
+	 * @private
+	 * @ui5-restricted sap.ui.table, sap.ui.export
+	 */
+	// @override
+	ODataListBinding.prototype.getFilterInfo = function (bIncludeOrigin) {
+		var oCombinedFilter = FilterProcessor.combineFilters(this.aFilters,
+				this.aApplicationFilters),
+			oResultAST = null,
+			oStaticAST;
+
+		if (oCombinedFilter) {
+			oResultAST = oCombinedFilter.getAST(bIncludeOrigin);
+		}
+
+		if (this.mQueryOptions.$filter) {
+			oStaticAST = {
+				args : [this.mQueryOptions.$filter],
+				type : "Static"
+			};
+			if (oResultAST) {
+				oResultAST = {
+					left : oResultAST,
+					op : "&&",
+					right : oStaticAST,
+					type : "Logical"
+				};
+			} else {
+				oResultAST = oStaticAST;
+			}
+		}
+
+		return oResultAST;
+	};
+
+	/**
 	 * Returns the header context which allows binding to <code>$count</code>. If known, the value
 	 * of such a binding is the element count of the collection on the server. Otherwise it is
 	 * <code>undefined</code>. The value is a number and its type is <code>Edm.Int64</code>.
