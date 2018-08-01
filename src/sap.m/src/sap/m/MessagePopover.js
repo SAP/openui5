@@ -68,6 +68,7 @@ function(
 		 * the total number of messages should be incremented, but the user's work shouldn't be interrupted.
 		 * Navigation between the message item and the source of the error can be created, if needed by the application.
 		 * This can be done by setting the <code>activeTitle</code> property to true and providing a handler for the <code>activeTitlePress</code> event.
+		 * In addition, you can achieve the same functionality inside a different container using the sap.m.MessageView control.
 		 * <h3>Responsive Behavior</h3>
 		 * On mobile phones, the message popover is automatically shown in full screen mode.<br>
 		 * On desktop and tablet, the message popover opens in a popover.<br>
