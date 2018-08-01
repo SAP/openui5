@@ -3,11 +3,18 @@ sap.ui.define([
 	'sap/ui/test/actions/Press',
 	'sap/ui/test/actions/EnterText',
 	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/matchers/Ancestor',
 	'sap/ui/test/matchers/AggregationLengthEquals',
 	'sap/ui/test/matchers/AggregationContainsPropertyEqual',
 	'sap/ui/rta/dttool/integration/pages/Common'
-], function(Opa5, Press, EnterText, Properties, Ancestor,  AggregationLengthEquals, AggregationContainsPropertyEqual, Common) {
+], function(
+	Opa5,
+	Press,
+	EnterText,
+	Properties,
+	AggregationLengthEquals,
+	AggregationContainsPropertyEqual,
+	Common
+) {
 	'use strict';
 
 	Opa5.createPageObjects({
@@ -46,7 +53,7 @@ sap.ui.define([
 								}
 							});
 						},
-						errorMessage: "Was not able to find " + this.controlType + "with Property " + sProperty
+						errorMessage: "Was not able to find " + this.controlType + " with Property " + sProperty + " or given Index " + iIndex
 					});
 				},
 
@@ -143,17 +150,17 @@ sap.ui.define([
 				},
 				theSampleSelectShouldBeShown : function () {
 					return this.waitFor({
-						id : "__component0---app--sampleSelect",
+						id : "__component0---app--sampleInput",
 						viewName : "App",
 						success : function () {
-							Opa5.assert.ok(true, "SampleSelect is displayed");
+							Opa5.assert.ok(true, "sampleInput is displayed");
 						},
-						errorMessage : "Couldn't find control with id sampleSelect"
+						errorMessage : "Couldn't find control with id sampleInput"
 					});
 				},
 				thePropertyPanelToolbarShouldDisplayTheCorrectLabel : function (sControlName) {
 					return this.waitFor({
-						id : "__title6",
+						id : "__title5",
 						matchers : function(oTitle){
 							return oTitle.getText().indexOf(sControlName) >= 0;
 						},
@@ -163,35 +170,6 @@ sap.ui.define([
 						errorMessage : sControlName + " is not part of the property panel title"
 					});
 				},
-				// switchingTheGivenPropertyEffectsTheControl : function (sPanelId, sPropertyName) {
-				// 	return this.waitFor({
-				// 		id : "__item7-__component0---app--PropertyPanel-" + sPanelId,
-				// 		matchers : function(oItem){
-				// 			if (oItem.getPropertyName() === sPropertyName && oItem.getContent()[0].getSelectedKey() === "false") {
-				// 				oItem.getContent()[0].setSelectedKey("true");
-				// 				return true;
-				// 			}
-				// 			return false;
-				// 		},
-				// 		success : function () {
-				// 			Opa5.assert.ok(true, sPropertyName + " has changed from false to true");
-				// 		},
-				// 		errorMessage : sPropertyName + " could not be changed"
-				// 	});
-				// },
-				thePropertyPanelToolbarShouldDisplayTheCorrectProperty : function (sPanelId, sPropertyName) {
-					return this.waitFor({
-						id : "__item7-__component0---app--PropertyPanel-" + sPanelId,
-						matchers : function(oItem){
-							return oItem.getPropertyName() === sPropertyName;
-						},
-						success : function () {
-							Opa5.assert.ok(true, "Selected control has the given property: " + sPropertyName);
-						},
-						errorMessage : sPropertyName + " is not found"
-					});
-				},
-
 				thePaletteShouldHaveTheGivenNumberOfGroups : function (iNumberOfPaletteGroups) {
 					return this.waitFor({
 						id : "palette",
@@ -251,7 +229,7 @@ sap.ui.define([
 						success : function () {
 							Opa5.assert.ok(true, sId + " has Class sapUiDtOverlaySelected (is selected)");
 						},
-						errorMessage : sId + " doesn't has Class sapUiDtOverlaySelected (is not selected)"
+						errorMessage : sId + " doesn't have Class sapUiDtOverlaySelected (is not selected)"
 					});
 				}
 			}
