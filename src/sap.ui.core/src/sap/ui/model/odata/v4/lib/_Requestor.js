@@ -781,17 +781,17 @@ sap.ui.define([
 	 *      predicates
 	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
 	 *      application and are reported as persistent
-	 * @param {string[]} [aKeyPredicates]
-	 *    An array of key predicates of the entities for which non-persistent messages have to be
-	 *    removed; if the array is not given, all non-persistent messages whose target starts with
+	 * @param {string[]} [aCachePaths]
+	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
+	 *    be removed; if the array is not given, all non-persistent messages whose target start with
 	 *    the given resource path are removed
 	 *
 	 * @private
 	 */
 	Requestor.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
-			aKeyPredicates) {
+			aCachePaths) {
 		this.oModelInterface.fnReportBoundMessages(sResourcePath, mPathToODataMessages,
-			aKeyPredicates);
+			aCachePaths);
 	};
 
 	/**

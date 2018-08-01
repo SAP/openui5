@@ -1228,14 +1228,14 @@ sap.ui.define([
 	 *      predicates
 	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
 	 *      application and are reported as persistent
-	 * @param {string[]} [aKeyPredicates]
-	 *    An array of key predicates of the entities for which non-persistent messages have to be
-	 *    removed; if the array is not given, all entities are affected
+	 * @param {string[]} [aCachePaths]
+	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
+	 *    be removed; if the array is not given, all entities are affected
 	 *
 	 * @private
 	 */
 	ODataModel.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
-			aKeyPredicates) {
+			aCachePaths) {
 		var sDataBindingPath = "/" + sResourcePath,
 			aNewMessages = [],
 			aOldMessages = [],
@@ -1259,10 +1259,10 @@ sap.ui.define([
 				}));
 			});
 		});
-		Object.keys(this.mMessages || {}).forEach(function (sMessageTarget) {
-			(aKeyPredicates || [""]).forEach(function (sPredicatePath) {
-				var sPath = sDataBindingPath + sPredicatePath;
+		(aCachePaths || [""]).forEach(function (sCachePath) {
+			var sPath = _Helper.buildPath(sDataBindingPath, sCachePath);
 
+			Object.keys(that.mMessages || {}).forEach(function (sMessageTarget) {
 				if (sMessageTarget === sPath
 						|| sMessageTarget.startsWith(sPath + "/")
 						|| sMessageTarget.startsWith(sPath + "(")) {

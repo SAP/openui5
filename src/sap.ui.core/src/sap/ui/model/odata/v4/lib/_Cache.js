@@ -134,6 +134,7 @@ sap.ui.define([
 					? vCacheData[vDeleteProperty]
 					: vCacheData, // deleting at root level
 				mHeaders,
+				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
 				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 
 			if (sTransientGroup === true) {
@@ -158,7 +159,8 @@ sap.ui.define([
 					} // else: map 404 to 200
 				})
 				.then(function () {
-					var sPredicate;
+					var sMessagePath,
+						sPredicate;
 
 					if (Array.isArray(vCacheData)) {
 						if (vCacheData[vDeleteProperty] !== oEntity) {
@@ -177,6 +179,7 @@ sap.ui.define([
 						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
 						that.iLimit -= 1;
 						fnCallback(Number(vDeleteProperty), vCacheData);
+						sMessagePath = _Helper.buildPath(sParentPath, sKeyPredicate);
 					} else {
 						if (vDeleteProperty) {
 							// set to null and notify listeners
@@ -186,7 +189,9 @@ sap.ui.define([
 							oEntity["$ui5.deleted"] = true;
 						}
 						fnCallback();
+						sMessagePath = _Helper.buildPath(sParentPath, vDeleteProperty);
 					}
+					that.oRequestor.reportBoundMessages(that.sResourcePath, [], [sMessagePath]);
 				});
 		});
 	};

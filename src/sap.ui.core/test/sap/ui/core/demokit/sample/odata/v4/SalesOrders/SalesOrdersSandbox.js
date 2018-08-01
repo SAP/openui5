@@ -38,6 +38,9 @@ sap.ui.define([
 			"Messages(2)" : {
 				source : "MessageLongtextAbsolute_2.txt"
 			},
+			"BusinessPartnerList('0100000005')/Messages(1)" : {
+				source : "MessageLongtextEnterPostalCode.txt"
+			},
 			"ProductList('HT-1000')/Name?custom-option=value" : {
 				headers : {
 					"sap-messages" : JSON.stringify([{
