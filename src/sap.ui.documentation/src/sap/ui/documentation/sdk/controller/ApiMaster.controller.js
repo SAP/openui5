@@ -6,11 +6,12 @@
 sap.ui.define([
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
+		"sap/ui/documentation/sdk/model/formatter",
 		"sap/m/library",
 		"sap/base/Log",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator"
-	], function (Device, MasterTreeBaseController, mobileLibrary, Log, Filter, FilterOperator) {
+	], function (Device, MasterTreeBaseController, formatter, mobileLibrary, Log, Filter, FilterOperator) {
 		"use strict";
 
 
@@ -22,6 +23,7 @@ sap.ui.define([
 
 		return MasterTreeBaseController.extend("sap.ui.documentation.sdk.controller.ApiMaster", {
 
+			formatter: formatter,
 			/**
 			 * Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
 			 * @public
@@ -145,7 +147,7 @@ sap.ui.define([
 					return;
 				}
 
-				this.getRouter().navTo("apiId", {id : apiId}, false);
+				this.getRouter().navTo("apiId", {id : formatter.moduleNameToGlobalName(apiId)}, false);
 			},
 
 			/**

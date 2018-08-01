@@ -9,6 +9,7 @@ sap.ui.define([
     "sap/ui/documentation/sdk/controller/util/ControlsInfo",
     "sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
     "sap/ui/documentation/sdk/controller/util/APIInfo",
+    "sap/ui/documentation/sdk/model/formatter",
     "sap/ui/core/library",
     "sap/base/Log"
 ], function(
@@ -17,6 +18,7 @@ sap.ui.define([
 	ControlsInfo,
 	ToggleFullScreenHandler,
 	APIInfo,
+	formatter,
 	CoreLibrary,
 	Log
 ) {
@@ -62,7 +64,12 @@ sap.ui.define([
 				// Cache allowed members
 				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-				this._sTopicid = oEvent.getParameter("arguments").id;
+				var sTopic = oEvent.getParameter("arguments").id;
+				if (sTopic && sTopic.indexOf("module:") === 0) {
+					sTopic = formatter.globalNameToModuleName(sTopic);
+				}
+
+				this._sTopicid = sTopic;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
@@ -256,16 +263,34 @@ sap.ui.define([
 				oControlData.hasSpecialSettings = false;
 				oControlData.hasAnnotations = false;
 
+				var fnIsAllowedMember = function(oElement) {
+					return (this._aAllowedMembers.indexOf(oElement.visibility) >= 0);
+				}.bind(this);
+
+				var fnFormatName = function(oElement) {
+
+					oElement.name && (oElement.name = formatter.apiRefEntityName(oElement.name)); //TODO: this will be moved to the preprocessing step instead
+					oElement.code && (oElement.code = formatter.apiRefEntityName(oElement.code)); //TODO: this will be moved to the preprocessing step instead
+
+					if (oElement.name) {
+						var sPlaceholderId = oElement.name.replace(/[$#/]/g, ".");
+						oElement.placeholderId = sPlaceholderId + "_method";
+						oElement.subPlaceholderId = sPlaceholderId + "__method";
+					}
+
+					return oElement;
+				};
+
 				// Filter and leave only visible elements
 				if (oControlData.properties) {
-					oControlData.properties = this.filterElements(oControlData.properties);
+					oControlData.properties = this.transformElements(oControlData.properties, fnIsAllowedMember, fnFormatName);
 
 					// Are there remaining visible properties?
 					oControlData.hasProperties = !!oControlData.properties.length;
 				}
 
 				if (oControlData.methods) {
-					oControlData.methods = this.filterElements(oControlData.methods);
+					oControlData.methods = this.transformElements(oControlData.methods, fnIsAllowedMember, fnFormatName);
 
 					// Are there remaining visible methods?
 					oControlData.hasOwnMethods = !!oControlData.methods.length;
@@ -274,22 +299,22 @@ sap.ui.define([
 				if (oUi5Metadata) {
 					oControlData.dnd = oUi5Metadata.dnd;
 					if (oUi5Metadata.properties) {
-						oUi5Metadata.properties = this.filterElements(oUi5Metadata.properties);
+						oUi5Metadata.properties = this.transformElements(oUi5Metadata.properties, fnIsAllowedMember);
 						oControlData.hasControlProperties = !!oUi5Metadata.properties.length;
 					}
 
 					if (oUi5Metadata.associations) {
-						oUi5Metadata.associations = this.filterElements(oUi5Metadata.associations);
+						oUi5Metadata.associations = this.transformElements(oUi5Metadata.associations, fnIsAllowedMember);
 						oControlData.hasAssociations = !!oUi5Metadata.associations.length;
 					}
 
 					if (oUi5Metadata.aggregations) {
-						oUi5Metadata.aggregations = this.filterElements(oUi5Metadata.aggregations);
+						oUi5Metadata.aggregations = this.transformElements(oUi5Metadata.aggregations, fnIsAllowedMember);
 						oControlData.hasAggregations = !!oUi5Metadata.aggregations.length;
 					}
 
 					if (oUi5Metadata.specialSettings) {
-						oUi5Metadata.specialSettings = this.filterElements(oUi5Metadata.specialSettings);
+						oUi5Metadata.specialSettings = this.transformElements(oUi5Metadata.specialSettings, fnIsAllowedMember);
 						oControlData.hasSpecialSettings = !!oUi5Metadata.specialSettings.length;
 					}
 
@@ -461,11 +486,13 @@ sap.ui.define([
 			},
 
 			/**
-			 * Remove not allowed elements from list
+			 * Filter and format elements
 			 * @param {array} aElements list of elements
-			 * @returns {array} filtered elements list
+			 * @param {function} fnFilter filtering function
+			 * @param {function} fnFormat formatting function
+			 * @returns {array} transformed elements list
 			 */
-			filterElements: function (aElements) {
+			transformElements: function (aElements, fnFilter, fnFormat) {
 				var i,
 					iLength = aElements.length,
 					aNewElements = [],
@@ -473,9 +500,14 @@ sap.ui.define([
 
 				for (i = 0; i < iLength; i++) {
 					oElement = aElements[i];
-					if (this._aAllowedMembers.indexOf(oElement.visibility) >= 0) {
-						aNewElements.push(oElement);
+
+					if (fnFilter && !fnFilter(oElement)) {
+						continue;
 					}
+					if (fnFormat) {
+						fnFormat(oElement);
+					}
+					aNewElements.push(oElement);
 				}
 				return aNewElements;
 			}

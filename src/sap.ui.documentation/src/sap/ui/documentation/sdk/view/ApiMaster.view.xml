@@ -41,7 +41,7 @@
 							comparator : '.compareTreeNodes'
 						}
 					}">
-				<custom:DemokitTreeItem title="{treeData>text}" deprecated="{treeData>bIsDeprecated}">
+				<custom:DemokitTreeItem title="{path: 'treeData>text', formatter : '.formatter.apiRefEntityName'}" deprecated="{treeData>bIsDeprecated}">
 					<custom:customData>
 						<core:CustomData key="nodeId" value="{treeData>name}" />
 					</custom:customData>
