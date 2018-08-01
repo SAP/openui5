@@ -320,62 +320,41 @@ sap.ui.define([
 		 * @since 1.48
 		 */
 		ComboBox.prototype._highlightList = function(sValue) {
-			var aItems = this.getVisibleItems(),
-				iInitialValueLength = sValue.length,
-				sValue = sValue.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
-				oRegex = new RegExp("^" + sValue, "i");
+			var aItems = this.getVisibleItems();
+			var aListItemsText = [];
+			var aListItemAdditionalText = [];
+			var oItemAdditionalTextRef, oItemTextRef;
 
 			aItems.forEach(function (oItem) {
-				var oItemDomRef = oItem.getDomRef(),
-					oItemAdditionalTextRef, oItemTextRef;
+				var oItemDomRef = oItem.getDomRef();
 
-				// when loadItems is used the items are not rendered but picker is opened
 				if (oItemDomRef === null) {
 					return;
 				}
+
 				oItemAdditionalTextRef = oItemDomRef.children[1];
+
 				oItemTextRef = Array.prototype.filter.call(oItemDomRef.children, function(oChildRef) {
 					return oChildRef.tagName.toLowerCase() !== "b";
 				})[0] || oItemDomRef;
 
-				oItemTextRef.innerHTML = this._boldItemRef(oItem.getText(), oRegex, iInitialValueLength);
-
+				// store a DOM and an additional text to be matched
 				if (oItemAdditionalTextRef && oItem.getAdditionalText) {
-					oItemAdditionalTextRef.innerHTML = this._boldItemRef(oItem.getAdditionalText(), oRegex, iInitialValueLength);
+					aListItemAdditionalText.push({
+						ref: oItemAdditionalTextRef,
+						text: oItem.getAdditionalText()
+					});
 				}
-			}, this);
-		};
 
-		/**
-		 * Handles bolding of innerHTML of items.
-		 *
-		 * @param {string} sItemText The item text
-		 * @param {RegExp} oRegex A regEx to split the item
-		 * @param {string} iInitialValueLength The characters length of the value of the item
-		 *
-		 * @returns {string} The HTML string
-		 * @private
-		 * @since 1.48
-		 */
-		ComboBox.prototype._boldItemRef = function (sItemText, oRegex, iInitialValueLength) {
-			var sResult;
+				// store a DOM and a text to be matched
+				oItemTextRef && aListItemsText.push({
+					ref: oItemTextRef,
+					text: oItem.getText()
+				});
+			});
 
-			var sTextReplacement = "<b>" + encodeXML(sItemText.slice(0, iInitialValueLength)) + "</b>";
-
-			// parts should always be max of two because regex is not defined as global
-			// see above method
-			var aParts = sItemText.split(oRegex);
-
-			if (aParts.length === 1) {
-				// no match found, return value as it is
-				sResult = encodeXML(sItemText);
-			} else {
-				sResult = aParts.map(function (sPart) {
-					return encodeXML(sPart);
-				}).join(sTextReplacement);
-			}
-
-			return sResult;
+			this.highLightList(sValue, aListItemsText);
+			this.highLightList(sValue, aListItemAdditionalText);
 		};
 
 		/**
@@ -454,48 +433,63 @@ sap.ui.define([
 			oPickerTextField && oPickerTextField.setValue(sPickerTextFieldValue);
 		};
 
-		ComboBox.prototype.filterItems = function(mOptions, aItems) {
-			var aProperties = mOptions.properties,
-				sValue = mOptions.value,
-				bEmptyValue = sValue === "",
-				bMatch = false,
-				bTextMatch = false,
-				aMutators = [],
+		/**
+		 * Filters the items of the ComboBox
+		 *
+		 * @param {object} mOptions Settings for filtering
+		 * @private
+		 * @returns {sap.ui.core.item[]} Array of filtered items
+		 */
+		ComboBox.prototype.filterItems = function(mOptions) {
+			var aItems = this.getItems(),
 				aFilteredItems = [],
-				oItem = null;
+				aFilteredItemsByText = [],
+				bFilterAdditionalText = mOptions.properties.indexOf("additionalText") > -1,
+				fnFilter = this.fnFilter || ComboBoxBase.DEFAULT_TEXT_FILTER;
 
 			this._oFirstItemTextMatched = null;
 
-			aProperties.forEach(function(property){
-				aMutators.push("get" + property.charAt(0).toUpperCase() + property.slice(1));
-			});
+			aItems.forEach(function (oItem) {
+				var bMatchedByText = fnFilter.call(this, mOptions.value, oItem, "getText");
+				var bMatchedByAdditionalText = fnFilter.call(this, mOptions.value, oItem, "getAdditionalText");
 
-			aItems = aItems || this.getItems();
-
-			for (var i = 0; i < aItems.length; i++) {
-				oItem = aItems[i];
-
-				// the item match with the value
-				bMatch = bEmptyValue;
-				for (var j = 0; j < aMutators.length; j++) {
-					if ((typeof sValue == "string" && sValue != "" ? oItem[aMutators[j]]().toLowerCase().startsWith(sValue.toLowerCase()) : false)) {
-						bMatch = true;
-						if (aMutators[j] === "getText") {
-							bTextMatch = true;
-						}
-					}
-				}
-
-				if (bMatch) {
+				if (bMatchedByText) {
+					aFilteredItemsByText.push(oItem);
+					aFilteredItems.push(oItem);
+				} else if (bMatchedByAdditionalText && bFilterAdditionalText) {
 					aFilteredItems.push(oItem);
 				}
+			});
 
-				if (!this._oFirstItemTextMatched && bTextMatch) {
+			aItems.forEach(function (oItem) {
+				var bItemMached = aFilteredItems.indexOf(oItem) > -1;
+				var bItemTextMached = aFilteredItemsByText.indexOf(oItem) > -1;
+
+				if (!this._oFirstItemTextMatched && bItemTextMached) {
 					this._oFirstItemTextMatched = oItem;
 				}
 
-				this._setItemVisibility(oItem, bMatch);
-			}
+				this._setItemVisibility(oItem, bItemMached);
+			}, this);
+
+			return aFilteredItems;
+		};
+
+
+		/**
+		 * Filters all items with 'starts with' filter
+		 *
+		 * @param {string} sInputValue Value to start item
+		 * @param {string} sMutator A Method to be called on an item to retrieve its value (could be getText or getAdditionalText)
+		 * @private
+		 * @returns {sap.ui.core.Item[]} Array of filtered items
+		 */
+		ComboBox.prototype._filterStartsWithItems = function (sInputValue, sMutator) {
+			var sLowerCaseValue = sInputValue.toLowerCase();
+			var aItems = this.getItems(),
+				aFilteredItems = aItems.filter(function (oItem) {
+					return oItem[sMutator] && oItem[sMutator]().toLowerCase().startsWith(sLowerCaseValue);
+				});
 
 			return aFilteredItems;
 		};
@@ -638,28 +632,25 @@ sap.ui.define([
 
 				var bItemsVisible = !!aVisibleItems.length;
 				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
-				var bTextMatched = (oFirstVisibleItem && ((typeof sValue == "string" && sValue != "" ? oFirstVisibleItem.getText().toLowerCase().startsWith(sValue.toLowerCase()) : false)));
 				var bSearchBoth = this.getFilterSecondaryValues();
 				var bDesktopPlatform = Device.system.desktop;
+
+				// filtered items intersercted with starts with items by text
+				var aCommonStartsWithItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getText'), aVisibleItems);
 
 				if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
 
 					if (oControl._bDoTypeAhead) {
+						var aCommonAdditionalTextItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getAdditionalText'), aVisibleItems);
 
-						if (bSearchBoth && this._oFirstItemTextMatched) {
-							oControl.updateDomValue(this._oFirstItemTextMatched.getText());
-							this.setSelection(this._oFirstItemTextMatched);
-						} else if (bSearchBoth) {
+						if (bSearchBoth && !aCommonStartsWithItems[0] && aCommonAdditionalTextItems[0]) {
 
-							if (bTextMatched) {
-								oControl.updateDomValue(oFirstVisibleItem.getText());
-							} else {
-								oControl.updateDomValue(oFirstVisibleItem.getAdditionalText());
-							}
-							this.setSelection(oFirstVisibleItem);
-						} else {
-							oControl.updateDomValue(oFirstVisibleItem.getText());
-							this.setSelection(oFirstVisibleItem);
+							oControl.updateDomValue(aCommonAdditionalTextItems[0].getAdditionalText());
+							this.setSelection(aCommonAdditionalTextItems[0]);
+
+						} else if (aCommonStartsWithItems[0]) {
+							oControl.updateDomValue(aCommonStartsWithItems[0].getText());
+							this.setSelection(aCommonStartsWithItems[0]);
 						}
 					}
 
