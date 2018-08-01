@@ -55,6 +55,23 @@ sap.ui.define([
 			return oModel;
 		},
 
+		updateMultipleSelection: function (oEvent) {
+			var oMultiInput = oEvent.getSource(),
+				sTokensPath = oMultiInput.getBinding("tokens").getContext().getPath() + "/" + oMultiInput.getBindingPath("tokens"),
+				aRemovedTokensKeys = oEvent.getParameter("removedTokens").map(function(oToken) {
+					return oToken.getKey();
+				}),
+				aCurrentTokensData = oMultiInput.getTokens().map(function(oToken) {
+					return {"Key" : oToken.getKey(), "Name" : oToken.getText()};
+				});
+
+			aCurrentTokensData = aCurrentTokensData.filter(function(oToken){
+				return aRemovedTokensKeys.indexOf(oToken.Key) === -1;
+			});
+
+			oMultiInput.getModel().setProperty(sTokensPath, aCurrentTokensData);
+		},
+
 		formatAvailableToObjectState : function (bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
