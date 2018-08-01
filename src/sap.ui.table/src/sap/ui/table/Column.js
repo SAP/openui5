@@ -98,7 +98,7 @@ function(
 			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in combination with the property
 			 * <code>width="auto"</code> instead.
 			 */
-			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
+			flexible : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
 
 			/**
 			 * If set to true, the column can be resized either using the resize bar (by mouse) or using

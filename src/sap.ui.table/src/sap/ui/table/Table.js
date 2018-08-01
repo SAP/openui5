@@ -168,7 +168,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.38
 			 */
-			navigationMode : {type : "sap.ui.table.NavigationMode", group : "Behavior", defaultValue : NavigationMode.Scrollbar},
+			navigationMode : {type : "sap.ui.table.NavigationMode", group : "Behavior", defaultValue : NavigationMode.Scrollbar, deprecated: true},
 
 			/**
 			 * The <code>threshold</code> defines how many additional (not yet visible records) shall be pre-fetched to enable smooth
@@ -631,7 +631,8 @@ sap.ui.define([
 					 * Row binding context of the selected cell.
 					 */
 					rowBindingContext : {type : "sap.ui.model.Context"}
-				}
+				},
+				deprecated: true
 			},
 
 			/**
