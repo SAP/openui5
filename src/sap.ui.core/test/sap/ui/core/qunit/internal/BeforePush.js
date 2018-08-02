@@ -28,19 +28,19 @@
 		'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'full',
 		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
 		'qunit/odata/v4/ODataModel.integration.qunit.html?hidepassed&coverage' : 'integration',
-		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html' : 'both',
+		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html' : 'both',
+		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html' : 'both',
+		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrdersRTATest/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html' : 'both',
+		'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?realOData=true' : 'both',
-		'demokit/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit.html' : 'both',
-		'demokit/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit.html' : 'both',
-		'demokit/sample/ViewTemplate/scenario/Opa.qunit.html' : 'both',
-		'demokit/sample/ViewTemplate/types/Opa.qunit.html' : 'both',
+		'demokit/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit.html?supportAssistant=true' : 'both',
+		'demokit/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit.html?supportAssistant=true' : 'both',
+		'demokit/sample/ViewTemplate/scenario/Opa.qunit.html?supportAssistant=true' : 'both',
+		'demokit/sample/ViewTemplate/types/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true' : 'both'
 	};
 
@@ -155,7 +155,7 @@
 		function start(oTest) {
 			oTest.frame = oActiveFrame;
 			select(oTest);
-			oActiveFrame.src = oTest.url;
+			oActiveFrame.src = oTest.url || "about:blank";
 			oTest.element.firstChild.classList.add("running");
 		}
 
@@ -172,10 +172,18 @@
 		}
 
 		function summary(oTest, iTotal, iFailed, iRuntime) {
-			var sText = ": " + iTotal + " tests in " + Math.floor(iRuntime / 1000.0 + 0.5)
-					+ " seconds" + (iFailed ? ", " + iFailed + " failed" : "");
+			var oElement = document.createElement("a"),
+				sText = ": " + iTotal + " tests in " + Math.floor(iRuntime / 1000.0 + 0.5)
+					+ " seconds" + (iFailed ? ", " + iFailed + " failed" : "") + " ";
 
 			oTest.element.appendChild(document.createTextNode(sText));
+
+			if (oTest.url) {
+				oElement.setAttribute("href", oTest.url);
+				oElement.setAttribute("target", "_blank");
+				oElement.appendChild(document.createTextNode("Rerun"));
+				oTest.element.appendChild(oElement);
+			}
 		}
 
 		setStatus();
@@ -183,7 +191,7 @@
 		aTests = aTests.map(function (sUrl) {
 			return createTest(sUrl, "../../" + sUrl);
 		});
-		oFinished = createTest("Finished", "about:blank");
+		oFinished = createTest("Finished");
 		oFinished.element.classList.add("hidden");
 		newActiveFrame();
 		next();
