@@ -3,17 +3,16 @@
  */
 
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/ValueState',
-		'sap/m/MessageBox',
-		'sap/m/MessagePopover',
-		'sap/m/MessagePopoverItem',
-		'sap/m/MessageToast',
-		'jquery.sap.encoder',
-		'jquery.sap.xml'
-	], function(jQuery, Controller, ValueState, MessageBox, MessagePopover, MessagePopoverItem,
-		MessageToast) {
+	"jquery.sap.global",
+	"sap/m/MessageBox",
+	"sap/m/MessagePopover",
+	"sap/m/MessagePopoverItem",
+	"sap/m/MessageToast",
+	"sap/ui/core/ValueState",
+	"sap/ui/core/mvc/Controller",
+	"jquery.sap.xml" // jQuery.sap.serializeXML()
+], function (jQuery, MessageBox, MessagePopover, MessagePopoverItem, MessageToast, ValueState,
+		Controller) {
 	"use strict";
 
 	function showSuccessMessage(sContext) {

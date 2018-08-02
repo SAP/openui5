@@ -2,24 +2,16 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    'sap/ui/base/BindingParser',
-    'sap/ui/base/ManagedObject',
-    'sap/ui/model/json/JSONModel',
-    'sap/ui/model/odata/_AnnotationHelperBasics',
-    'sap/ui/model/odata/v4/_AnnotationHelperExpression',
-    "sap/base/Log",
-    "sap/ui/performance/Measurement"
-], function(
-    jQuery,
-	BindingParser,
-	ManagedObject,
-	JSONModel,
-	Basics,
-	Expression,
-	Log,
-	Measurement
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/_AnnotationHelperBasics",
+	"sap/ui/model/odata/v4/_AnnotationHelperExpression",
+	"sap/ui/performance/Measurement"
+], function (jQuery, Log, BindingParser, ManagedObject, JSONModel, Basics, Expression,
+		Measurement) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";

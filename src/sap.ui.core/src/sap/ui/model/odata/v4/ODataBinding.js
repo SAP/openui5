@@ -3,11 +3,11 @@
  */
 //Provides mixin sap.ui.model.odata.v4.ODataBinding for classes extending sap.ui.model.Binding
 sap.ui.define([
+	"./lib/_Helper",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/OperationMode",
-	"./lib/_Helper",
 	"sap/ui/thirdparty/jquery"
-], function(SyncPromise, OperationMode, _Helper, jQuery) {
+], function (_Helper, SyncPromise, OperationMode, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataBinding";

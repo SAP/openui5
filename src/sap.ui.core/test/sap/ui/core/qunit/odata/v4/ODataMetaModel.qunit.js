@@ -3,6 +3,7 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
@@ -18,17 +19,16 @@ sap.ui.require([
 	"sap/ui/model/odata/type/Raw",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ValueListType",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/URI",
-	"sap/base/Log"
-], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
+	"sap/ui/thirdparty/URI"
+], function (jQuery, Log, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
 		ContextBinding, Filter, MetaModel, PropertyBinding, Sorter, OperationMode, Int64, Raw,
-		AnnotationHelper, Context, _Helper, ODataMetaModel, ODataModel, ValueListType, TestUtils,
-		URI, Log) {
+		AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType, _Helper, TestUtils,
+		URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";

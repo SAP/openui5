@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/Sorter'
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/Sorter"
 ], function (Controller, Sorter) {
 	"use strict";
 

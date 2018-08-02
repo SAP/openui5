@@ -3,17 +3,17 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
-	"sap/base/Log"
-], function (jQuery, SyncPromise, Binding, ChangeReason, Context, _GroupLock, _Helper, ODataModel,
-		asODataParentBinding, Log) {
+	"sap/ui/model/odata/v4/lib/_GroupLock",
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, ODataModel,
+		asODataParentBinding, _GroupLock, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";

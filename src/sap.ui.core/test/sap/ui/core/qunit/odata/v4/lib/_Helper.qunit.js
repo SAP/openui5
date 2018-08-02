@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/model/odata/v4/lib/_Helper",
-    "sap/ui/test/TestUtils",
-    "sap/ui/thirdparty/URI",
-    "sap/base/Log"
-], function(jQuery, SyncPromise, _Helper, TestUtils, URI, Log) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/test/TestUtils",
+	"sap/ui/thirdparty/URI"
+], function (jQuery, Log, SyncPromise, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";

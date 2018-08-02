@@ -3,7 +3,10 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._MetadataConverter
-sap.ui.define(["./_Helper", "sap/ui/performance/Measurement"], function(_Helper, Measurement) {
+sap.ui.define([
+	"./_Helper",
+	"sap/ui/performance/Measurement"
+], function (_Helper, Measurement) {
 	"use strict";
 
 	/**

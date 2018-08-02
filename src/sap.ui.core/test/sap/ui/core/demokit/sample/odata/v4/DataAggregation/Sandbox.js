@@ -15,7 +15,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
-	'sap/ui/thirdparty/sinon'
+	"sap/ui/thirdparty/sinon"
 ], function (jQuery, ODataModel, TestUtils, sinon) {
 	"use strict";
 

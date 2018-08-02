@@ -4,9 +4,9 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Helper
 sap.ui.define([
-	"sap/ui/thirdparty/URI",
-	"sap/base/Log"
-], function (URI, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/URI"
+], function (Log, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,

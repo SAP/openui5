@@ -2,41 +2,25 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/base/Log",
-    "sap/base/util/ObjectPath",
-    "sap/ui/Device",
-    "sap/ui/base/BindingParser",
-    "sap/ui/base/ManagedObject",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/core/CustomizingConfiguration",
-    "sap/ui/core/XMLTemplateProcessor",
-    "sap/ui/core/util/XMLPreprocessor",
-    "sap/ui/model/BindingMode",
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
+	"sap/ui/Device",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/CustomizingConfiguration",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/util/XMLPreprocessor",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
-    "sap/ui/model/Context",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/performance/Measurement",
-    // needed to have jQuery.sap.parseXML
-	"jquery.sap.xml"
-], function(
-    jQuery,
-	Log,
-	ObjectPath,
-	Device,
-	BindingParser,
-	ManagedObject,
-	SyncPromise,
-	CustomizingConfiguration,
-	XMLTemplateProcessor,
-	XMLPreprocessor,
-	BindingMode,
-    ChangeReason,
-	Context,
-	JSONModel,
-	Measurement
-    /*, jQuerySapXml*/
-) {
+	"sap/ui/model/Context",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement",
+	"jquery.sap.xml" // jQuery.sap.parseXML()
+], function (jQuery, Log, ObjectPath, Device, BindingParser, ManagedObject, SyncPromise,
+		CustomizingConfiguration, XMLTemplateProcessor, XMLPreprocessor, BindingMode, ChangeReason,
+		Context, JSONModel, Measurement/*, jQuerySapXml*/) {
 	/*global QUnit, sinon, window */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";

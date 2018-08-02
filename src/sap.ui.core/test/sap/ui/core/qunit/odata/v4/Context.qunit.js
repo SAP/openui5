@@ -3,13 +3,13 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/base/Log"
-], function (jQuery, SyncPromise, BaseContext, Context, _GroupLock, _Helper, Log) {
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (jQuery, Log, SyncPromise, BaseContext, Context, _GroupLock, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

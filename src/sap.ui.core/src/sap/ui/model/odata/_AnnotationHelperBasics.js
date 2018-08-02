@@ -4,11 +4,11 @@
 
 // Provides basic internal functions for sap.ui.model.odata.AnnotationHelper
 sap.ui.define([
-	'sap/ui/base/BindingParser',
 	"sap/base/Log",
+	"sap/ui/base/BindingParser",
 	"sap/ui/performance/Measurement",
 	"sap/ui/thirdparty/jquery"
-], function(BindingParser, Log, Measurement, jQuery) {
+], function (Log, BindingParser, Measurement, jQuery) {
 	'use strict';
 
 	var sAnnotationHelper = "sap.ui.model.odata.AnnotationHelper",

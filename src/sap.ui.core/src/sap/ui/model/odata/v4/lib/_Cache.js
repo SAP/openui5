@@ -4,14 +4,13 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Cache
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
-	"sap/ui/thirdparty/URI",
 	"./_GroupLock",
 	"./_Helper",
 	"./_Requestor",
 	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function (SyncPromise, URI, _GroupLock, _Helper, _Requestor, Log, jQuery) {
+], function (_GroupLock, _Helper, _Requestor, Log, SyncPromise, jQuery) {
 	"use strict";
 
 		// Matches two cases:  segment with predicate or simply predicate:

@@ -2,42 +2,27 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/m/ColumnListItem",
-    "sap/m/CustomListItem",
-    "sap/m/Text",
-    "sap/ui/core/mvc/Controller",
-    "sap/ui/core/mvc/View",
-    "sap/ui/model/ChangeReason",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/model/odata/OperationMode",
-    "sap/ui/model/odata/v4/AnnotationHelper",
-    "sap/ui/model/odata/v4/ODataListBinding",
-    "sap/ui/model/odata/v4/ODataModel",
-    "sap/ui/model/Sorter",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log",
-    // load Table resources upfront to avoid loading times > 1 second for the first test using Table
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/m/ColumnListItem",
+	"sap/m/CustomListItem",
+	"sap/m/Text",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/View",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/v4/AnnotationHelper",
+	"sap/ui/model/odata/v4/ODataListBinding",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/test/TestUtils",
+	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function(
-    jQuery,
-	ColumnListItem,
-	CustomListItem,
-	Text,
-	Controller,
-	View,
-	ChangeReason,
-	Filter,
-	FilterOperator,
-	OperationMode,
-	AnnotationHelper,
-	ODataListBinding,
-	ODataModel,
-	Sorter,
-	TestUtils,
-	Log
-) {
+], function (jQuery, Log, ColumnListItem, CustomListItem, Text, Controller, View, ChangeReason,
+		Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
+		ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";

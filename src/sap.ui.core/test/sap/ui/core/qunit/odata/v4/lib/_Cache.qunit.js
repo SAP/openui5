@@ -2,24 +2,15 @@
  * ${copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/base/SyncPromise",
-    "sap/ui/model/odata/v4/lib/_Cache",
-    "sap/ui/model/odata/v4/lib/_GroupLock",
-    "sap/ui/model/odata/v4/lib/_Helper",
-    "sap/ui/model/odata/v4/lib/_Requestor",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log"
-], function(
-    jQuery,
-	SyncPromise,
-	_Cache,
-	_GroupLock,
-	_Helper,
-	_Requestor,
-	TestUtils,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, SyncPromise, _Cache, _GroupLock, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

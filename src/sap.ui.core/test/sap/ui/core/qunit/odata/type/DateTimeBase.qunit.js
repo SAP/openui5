@@ -2,34 +2,21 @@
  *{copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/core/Control",
-    "sap/ui/core/format/DateFormat",
-    "sap/ui/model/FormatException",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/ParseException",
-    "sap/ui/model/ValidateException",
-    "sap/ui/model/odata/type/DateTime",
-    "sap/ui/model/odata/type/DateTimeBase",
-    "sap/ui/model/odata/type/DateTimeOffset",
-    "sap/ui/model/odata/type/ODataType",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log"
-], function(
-    jQuery,
-	Control,
-	DateFormat,
-	FormatException,
-	JSONModel,
-	ParseException,
-	ValidateException,
-	DateTime,
-	DateTimeBase,
-	DateTimeOffset,
-	ODataType,
-	TestUtils,
-	Log
-) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/core/Control",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/odata/type/DateTimeBase",
+	"sap/ui/model/odata/type/DateTimeOffset",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, Control, DateFormat, FormatException, ParseException, ValidateException,
+		JSONModel, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

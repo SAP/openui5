@@ -5,22 +5,14 @@
 // This module provides internal functions for dynamic expressions in OData V4 annotations. It is a
 // helper module for sap.ui.model.odata.AnnotationHelper.
 sap.ui.define([
-	'./_AnnotationHelperBasics',
-	'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/core/format/DateFormat',
-	'sap/ui/model/odata/ODataUtils',
-	"sap/ui/performance/Measurement",
-	"sap/base/Log"
-], function(
-	Basics,
-	BindingParser,
-	ManagedObject,
-	DateFormat,
-	ODataUtils,
-	Measurement,
-	Log
-) {
+	"./_AnnotationHelperBasics",
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/performance/Measurement"
+], function (Basics, Log, BindingParser, ManagedObject, DateFormat, ODataUtils, Measurement) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
