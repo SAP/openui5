@@ -1,6 +1,8 @@
 /*!
  * ${copyright}
  */
+
+/* global Map */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/base/ManagedObject',
@@ -10,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/Popup',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Overlay',
+	'sap/ui/dt/Util',
 	'sap/ui/fl/Utils',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
@@ -24,6 +27,7 @@ function (
 	Popup,
 	OverlayRegistry,
 	Overlay,
+	dtUtils,
 	flUtils,
 	Component,
 	ComponentContainer,
@@ -75,6 +79,16 @@ function (
 			library : "sap.ui.rta"
 		}
 	});
+
+	/**
+	 * Creates Map for modal states
+	 *
+	 * @private
+	 */
+	PopupManager.prototype.init = function() {
+		// create map for modal states
+		this._oModalState = new Map();
+	};
 
 	/**
 	 * Checks if popups are open on the screen
@@ -174,7 +188,6 @@ function (
 			var oRootControl = sap.ui.getCore().byId(oRta.getRootControl());
 			this.oRtaRootAppComponent = this._getAppComponentForControl(oRootControl);
 			this._overrideInstanceFunctions();
-
 			//listener for RTA mode change
 			var fnModeChange = this._onModeChange.bind(this);
 			oRta.attachModeChanged(fnModeChange);
@@ -186,19 +199,25 @@ function (
 	 * @param  {sap.ui.base.Event} oEvent The Event triggered by the mode change
 	 */
 	PopupManager.prototype._onModeChange = function(oEvent) {
-		var sFocusEvent, sNewMode = oEvent.getParameters().mode;
+		var sNewMode = oEvent.getParameters().mode;
 
-		var fnApplyFocusEvent = function (oPopover) {
-			oPopover.oPopup[sFocusEvent]();
+		var fnApplyFocusAndSetModal = function (sMode, oPopover) {
+			if (sMode === 'navigation'){
+				// add focus handlers
+				oPopover.oPopup[this._getFocusEventName("add")]();
+				//restore original Modal state
+				oPopover.oPopup.setModal(this._oModalState.get(oPopover.oPopup));
+			} else {
+				// remove focus handler
+				oPopover.oPopup[this._getFocusEventName("remove")]();
+				// set Modal
+				oPopover.oPopup.setModal(true);
+			}
 		};
 
-		if (sNewMode === 'navigation') {
-			sFocusEvent = this._getFocusEventName("add");
-			this._applyFocusEventsToOpenPopups(fnApplyFocusEvent);
-		} else {
-			sFocusEvent = this._getFocusEventName("remove");
-			this._removeFocusEventsFromOpenPopups(fnApplyFocusEvent);
-		}
+		sNewMode === 'navigation'
+			? this._applyPatchesToOpenPopups(dtUtils.curry(fnApplyFocusAndSetModal)(sNewMode))
+			: this._removePatchesToOpenPopups(dtUtils.curry(fnApplyFocusAndSetModal)(sNewMode));
 	};
 
 	/**
@@ -206,8 +225,8 @@ function (
 	 * @param {function} fnFocusEvent Function to apply to open popups
 	 * @private
 	 */
-	PopupManager.prototype._applyFocusEventsToOpenPopups = function(fnFocusEvent) {
-		this._applyPopupMethods(fnFocusEvent, true);
+	PopupManager.prototype._applyPatchesToOpenPopups = function(fnEvent) {
+		this._applyPopupMethods(fnEvent, true);
 	};
 
 	/**
@@ -215,8 +234,8 @@ function (
 	 * @param {function} fnFocusEvent Function to apply to open popups
 	 * @private
 	 */
-	PopupManager.prototype._removeFocusEventsFromOpenPopups = function(fnFocusEvent) {
-		this._applyPopupMethods(fnFocusEvent);
+	PopupManager.prototype._removePatchesToOpenPopups = function(fnEvent) {
+		this._applyPopupMethods(fnEvent);
 	};
 
 	/**
@@ -324,9 +343,13 @@ function (
 			return vOriginalReturn;
 		}.bind(this);
 
+		//add original modal state to the map
+		this._oModalState.set(oPopup, oPopup.getModal());
+
 		//only remove focus event when in adaptation mode
 		if (this.getRta().getMode() === 'adaptation') {
 			oPopup[this._getFocusEventName("remove")]();
+			oPopup.setModal(true);
 		}
 	};
 
@@ -360,6 +383,8 @@ function (
 			if ( this._isPopupAdaptable(oPopupElement)
 				&& this.getRta()._oDesignTime ) {
 				this.getRta()._oDesignTime.removeRootElement(oPopupElement);
+				// remove the Modal state from the map
+				this._oModalState.delete(oPopupElement.oPopup);
 				//PopupManager internal method
 				this.fireClose(oPopupElement);
 			}
@@ -466,7 +491,7 @@ function (
 			InstanceManager.removePopoverInstance = this._fnOriginalRemovePopoverInstance;
 		}
 
-		this._applyFocusEventsToOpenPopups(this._removePopupPatch);
+		this._applyPatchesToOpenPopups(this._removePopupPatch);
 	};
 
 	/**
@@ -502,6 +527,7 @@ function (
 	 */
 	PopupManager.prototype.exit = function() {
 		this._restoreInstanceFunctions();
+		delete this._oModalState;
 	};
 
 	return PopupManager;
