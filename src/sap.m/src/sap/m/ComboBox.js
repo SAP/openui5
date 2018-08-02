@@ -49,7 +49,7 @@ sap.ui.define([
 		 * <li> Drop-down arrow - expands\collapses the option list.</li>
 		 * <li> Option list - the list of available options.</li>
 		 * </ul>
-		 * By setting the <code>showSecondaryValues</code> property, the combo box can display an additional value for each option (if there is one). Filtering is done only on the first option.
+		 * By setting the <code>showSecondaryValues</code> property, the combo box can display an additional value for each option (if there is one).
 		 * <h3>Usage</h3>
 		 * <h4>When to use:</h4>
 		 * <ul>
@@ -58,7 +58,7 @@ sap.ui.define([
 		 * <h4>When not to use:</h4>
 		 * <ul>
 		 * <li>You need to select between only two options. Use a {@link sap.m.Switch switch} control instead.</li>
-		 * <li>You need to select between 12 options. Use a {@link sap.m.Select select} control instead.</li>
+		 * <li>You need to select between up to 12 options. Use a {@link sap.m.Select select} control instead.</li>
 		 * <li>You need to select between more than 200 options. Use a {@link sap.m.Input input} control with value help instead.</li>
 		 * </ul>
 		 * <h3>Responsive Behavior</h3>

@@ -5,7 +5,7 @@ sap.ui.define([
 	], function(jQuery, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.ComboBox2Columns.Page", {
+	var PageController = Controller.extend("sap.m.sample.ComboBoxDefaultFiltering.Page", {
 
 		onInit: function () {
 

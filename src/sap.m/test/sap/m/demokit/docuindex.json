@@ -257,7 +257,10 @@
 			"sap.m.sample.ComboBox",
 			"sap.m.sample.ComboBox2Columns",
 			"sap.m.sample.ComboBoxLazyLoading",
-			"sap.m.sample.ComboBoxSearchBoth"
+			"sap.m.sample.ComboBoxSearchBoth",
+			"sap.m.sample.ComboBoxDefaultFiltering",
+			"sap.m.sample.ComboBoxFilteringContains",
+			"sap.m.sample.ComboBoxFilteringStartsWith"
 		  ]
 		},
 		{
@@ -1465,6 +1468,21 @@
 		  "id": "sap.m.sample.ComboBoxSearchBoth",
 		  "name": "Combo box - Search in both columns",
 		  "description": "Combo box dropdown list with search functionality which checks both columns. When you need to display additional information on your options, like e.g. keys of countries or system abbreviations, and want to search in those as well."
+		},
+		{
+		  "id": "sap.m.sample.ComboBoxDefaultFiltering",
+		  "name": "Combo box - Default Filtering",
+		  "description": "The default filtering is 'starts with per term', which filters by the beginning of every word in every column. Autocomplete (type-ahead) works only for the first column, the leading value."
+		},
+		{
+		  "id": "sap.m.sample.ComboBoxFilteringContains",
+		  "name": "Combo box - Custom filtering \"Contains\"",
+		  "description": "You can override the default filtering \"Starts with per term\" with your own filter function using the setFilterFunction method. The \"Contains\" approach searches everywhere in the entries."
+		},
+		{
+		  "id": "sap.m.sample.ComboBoxFilteringStartsWith",
+		  "name": "Combo box - Custom filtering \"Starts with\"",
+		  "description": "You can override the default filtering \"Starts with per term\" with your own filter function using the setFilterFunction method. The \"Starts with\" approach searches only in the beginning of the entries in both columns."
 		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
