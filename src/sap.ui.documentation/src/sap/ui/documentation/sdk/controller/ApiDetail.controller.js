@@ -204,6 +204,7 @@ sap.ui.define([
 			 */
 			_processApiIndexAndLoadApiJson: function (aData) {
 				var oEntityData,
+					oMasterController,
 					bFound = false,
 					iLen,
 					i;
@@ -222,6 +223,12 @@ sap.ui.define([
 				}
 
 				if (bFound) {
+					// If target symbol is deprecated - all deprecated records should be shown in the tree
+					if (this._oEntityData.deprecated) {
+						oMasterController = this.getOwnerComponent().getConfigUtil().getMasterView("apiId").getController();
+						oMasterController.selectDeprecatedSymbol(this._sTopicid);
+					}
+
 					// Load API.json only for selected lib
 					return APIInfo.getLibraryElementsJSONPromise(oEntityData.lib).then(function (aData) {
 						this._aLibsData = aData; // Cache received data

@@ -20,6 +20,11 @@
 				<Button id="collapseAllButton" icon="sap-icon://collapse-group" press="onTreeCollapseAll"/>
 			</Toolbar>
 		</customHeader>
+		<subHeader>
+			<Toolbar>
+				<CheckBox id="includeDeprecated" text="Include deprecated" class="sapUiNoMarginBegin" select="onIncludeDeprecatedItemsChange"/>
+			</Toolbar>
+		</subHeader>
 
 		<content>
 
