@@ -114,6 +114,7 @@
 					assert.strictEqual(this.oSelectDialog.getNoDataText(), "Sorry, no data is available", '"Sorry, no data is available" should be displayed when no data is there');
 					assert.strictEqual(this.oSelectDialog.getGrowingThreshold(), 50, 'The growing threshold should be "50"');
 					assert.strictEqual(this.oSelectDialog.getMultiSelect(), true, 'The multiSelect mode should be "true"');
+					assert.strictEqual(this.oSelectDialog.getShowClearButton(), false, 'There is no clear button');
 				});
 
 				QUnit.test("setBusy", function (assert) {
@@ -859,7 +860,8 @@
 						multiSelect : true,
 						rememberSelections: true,
 						contentWidth: "200px",
-						growing: false
+						growing: false,
+						showClearButton: true
 						});
 
 						this.mockupData = generateData();
@@ -870,7 +872,8 @@
 						multiSelect : true,
 						rememberSelections: true,
 						contentWidth: "200px",
-						growing: false
+						growing: false,
+						showClearButton: true
 						});
 
 						bindItems(this.oSelectDialog1, { oData: {
@@ -890,6 +893,34 @@
 								}
 							]
 						}, path: "/items", template: createTemplateListItem() });
+
+						this.oSelectDialog2 = new sap.m.SelectDialog("clearButtonSelectDialog2", {
+							title: "Select Dialog without Clear button",
+							multiSelect : true,
+							rememberSelections: true,
+							contentWidth: "200px",
+							growing: false
+						});
+
+						bindItems(this.oSelectDialog2, { oData: {
+							items : [
+								{
+									Title : "Title4",
+									Description: "Description4",
+									Selected: false
+								}, {
+									Title : "Title5",
+									Description: "Description5",
+									Selected: false
+								}, {
+									Title : "Title6",
+									Description: "Description6",
+									Selected: false
+								}
+							]
+						}, path: "/items", template: createTemplateListItem() });
+
+
 					},
 					afterEach : function () {
 
@@ -898,6 +929,7 @@
 						this.oSelectDialog.destroy();
 						delete this.mockupData;
 						this.oSelectDialog1.destroy();
+						this.oSelectDialog2.destroy();
 					}
 				});
 
@@ -908,7 +940,7 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), true, 'Clear button should be enabled');
+				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), true, 'Clear button should be enabled');
 			});
 
 			QUnit.test("Initial loading without selected items from previous selection", function(assert) {
@@ -918,7 +950,7 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog1._oClearButton.getEnabled(), false, 'Clear button should be disabled');
+				assert.equal(this.oSelectDialog1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
 			});
 
 			QUnit.test("Removing selection should disable button", function(assert) {
@@ -928,14 +960,14 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), true, 'Clear button should be enabled');
+				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), true, 'Clear button should be enabled');
 
 				//arrange
 				this.oSelectDialog._removeSelection();
 				this.oSelectDialog._updateSelectionIndicator();
 
 				//assert
-				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), false, 'Clear button should be disabled');
+				assert.equal(this.oSelectDialog._getClearButton().getEnabled(), false, 'Clear button should be disabled');
 			});
 
 			QUnit.test("Adding selection should enable button", function(assert) {
@@ -945,7 +977,7 @@
 				this.clock.tick(500);
 
 				//assert
-				assert.equal(this.oSelectDialog1._oClearButton.getEnabled(), false, 'Clear button should be disabled');
+				assert.equal(this.oSelectDialog1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
 
 				//arrange
 				this.oSelectDialog1._oList.getItems()[1].setSelected(true);
@@ -970,6 +1002,51 @@
 				assert.equal(this.oSelectDialog._oClearButton.getEnabled(), false, 'Clear button should be disabled');
 				assert.equal(this.oSelectDialog._oList.getSelectedItems().length, 0, 'There should be no selected items');
 			});
+			QUnit.test("Disable already enabled clear button and then enable it again", function(assert) {
+				this.oSelectDialog.open();
+
+				sap.ui.getCore().applyChanges();
+
+				var oCustomHeader = this.oSelectDialog._oDialog.getCustomHeader();
+				var oClearButton = this.oSelectDialog._getClearButton();
+				this.oSelectDialog.setShowClearButton(false);
+				sap.ui.getCore().applyChanges();
+
+
+				//assert
+				assert.equal(oClearButton.getVisible(), false, 'Clear button is not visible');
+				assert.notOk(oClearButton.getDomRef(), 'Clear button is not in dom');
+
+				this.oSelectDialog.setShowClearButton(true);
+				sap.ui.getCore().applyChanges();
+
+				//assert
+				assert.equal(oClearButton.getVisible(), true, 'Clear button is not visible');
+				assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
+				assert.equal(oClearButton.getProperty("text"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SELECTDIALOG_CLEARBUTTON"), 'Text of clear button is set');
+			});
+
+			QUnit.test("There is no content in the contentRight aggregation of the header", function(assert) {
+				this.oSelectDialog2.open();
+
+				sap.ui.getCore().applyChanges();
+
+				var oCustomHeader = this.oSelectDialog2._oDialog.getCustomHeader();
+				var oClearButton = this.oSelectDialog2._getClearButton();
+				assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
+
+				this.oSelectDialog2.setShowClearButton(false);
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
+
+				this.oSelectDialog2.setShowClearButton(true);
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(oClearButton.getVisible(), true, 'Clear button is visible');
+				assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
+			});
+
 			})();
 		</script>
 	</head>

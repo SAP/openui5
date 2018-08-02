@@ -164,7 +164,18 @@ function(
 			/**
 			 * Determines the content height of the inner dialog. For more information, see the dialog documentation.
 			 */
-			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides a way to clear selection mode in Select Dialog.
+			 * We recommended enabling of the Clear button in the following cases, where a mechanism to clear the value is needed:
+			 * In case of single selection mode(default mode) for Select Dialog and <code>rememberSelections</code> is set to <code>true</code>. Clear button needs to be enabled in order to allow users to clear the selection.
+			 * In case of using <code>sap.m.Input</code> with <code>valueHepOnly</code> set to <code>true</code>, Clear button could be used for clearing selection.
+			 * In case the application stores a value and uses only Select Dialog to edit/maintain it.
+			 * <b>Note:</b>When used with oData, only the loaded selections will be cleared.
+			 * @since 1.58
+			 */
+			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -350,24 +361,12 @@ function(
 			]
 		});
 
-		//store a reference to the clear button for clearing the selection
-		this._oClearButton = new Button(this.getId() + "-clear", {
-			text: this._oRb.getText("SELECTDIALOG_CLEARBUTTON"),
-			press: function() {
-				this._removeSelection();
-				this._updateSelectionIndicator();
-			}.bind(this)
-		});
-
 		//store a reference to the dialog header
 		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
 			contentMiddle: [
 				new Title(this.getId()  + "-dialog-title", {
 					level: "H2"
 				})
-			],
-			contentRight: [
-				this._oClearButton
 			]
 		});
 
@@ -663,6 +662,25 @@ function(
 	};
 
 	/**
+	 * Sets the Clear button visible state
+	 * @public
+	 * @param {boolean} bVisible Value for the Clear button visible state.
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 */
+	SelectDialog.prototype.setShowClearButton = function (bVisible) {
+		this.setProperty("showClearButton", bVisible, true);
+
+		if (bVisible) {
+			var oCustomHeader = this._oDialog.getCustomHeader();
+			oCustomHeader.addContentRight(this._getClearButton());
+		}
+		if (this._oClearButton) {
+			this._oClearButton.setVisible(bVisible);
+		}
+		return this;
+	};
+
+	/**
 	 * Set the internal Dialog's contentHeight property {@link sap.m.Dialog}
 	 * @param {sap.ui.core.CSSSize} sHeight The new content width value for the dialog
 	 * @public
@@ -761,7 +779,7 @@ function(
 		this._oList.setModel(oModel, sModelName);
 		SelectDialog.prototype._setModel.apply(this, aArgs);
 
-		// reset the selection label when setting the model
+		// clear the selection label when setting the model
 		this._updateSelectionIndicator();
 
 		return this;
@@ -972,6 +990,25 @@ function(
 	};
 
 	/**
+	 * Lazy load the clear button
+	 * @private
+	 * @returns {sap.m.Button} the button
+	 */
+	SelectDialog.prototype._getClearButton = function() {
+
+		if (!this._oClearButton) {
+			this._oClearButton = new Button(this.getId() + "-clear", {
+				text: this._oRb.getText("SELECTDIALOG_CLEARBUTTON"),
+				press: function() {
+					this._removeSelection();
+					this._updateSelectionIndicator();
+				}.bind(this)
+			});
+		}
+		return this._oClearButton;
+	};
+
+	/**
 	 * Internal event handler for the cancel button and ESC key
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
@@ -1010,7 +1047,9 @@ function(
 		var iSelectedContexts = this._oList.getSelectedContextPaths(true).length,
 			oInfoBar = this._oList.getInfoToolbar();
 
-		this._oClearButton.setEnabled(iSelectedContexts > 0);
+		if (this.getShowClearButton() && this._oClearButton) {
+			this._oClearButton.setEnabled(iSelectedContexts > 0);
+		}
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts && this.getMultiSelect());
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
