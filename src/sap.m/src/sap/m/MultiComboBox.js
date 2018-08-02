@@ -1993,6 +1993,30 @@ function(
 		}
 	};
 
+	/**
+	 * Handles the tap event on the control.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	MultiComboBox.prototype.ontap = function(oEvent) {
+		ComboBoxBase.prototype.ontap.apply(this, arguments);
+
+		var oOpenArea = this.getOpenArea();
+
+		// in case of a non-editable or disabled combo box, the picker popup cannot be opened
+		if (!this.getEnabled() || !this.getEditable()) {
+			return;
+		}
+
+		// mark the event for components that needs to know if the event was handled
+		oEvent.setMarked();
+
+		// if the picker is a dialog and the control open are is not a token, open the dialog
+		if (this.isPickerDialog() && oOpenArea.contains(oEvent.target)) {
+			this.open();
+		}
+	};
+
 	MultiComboBox.prototype.getOpenArea = function() {
 		if (this.isPickerDialog()) {
 			return this.getDomRef();
