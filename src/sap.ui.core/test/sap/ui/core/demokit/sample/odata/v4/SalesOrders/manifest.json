@@ -11,13 +11,8 @@
 				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
 				"type" : "OData",
 				"settings" : {
-					"annotations": ["localAnnotations"],
 					"odataVersion" : "4.0"
 				}
-			},
-			"localAnnotations": {
-				"uri": "data/localAnnotations.xml",
-				"type": "ODataAnnotation"
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.SalesOrders",
