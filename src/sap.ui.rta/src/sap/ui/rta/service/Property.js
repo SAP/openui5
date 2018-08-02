@@ -383,9 +383,10 @@ sap.ui.define([
 				 *        "label": "dt-metadata label"
 				 *     }
 				 * </pre>
-				 * @method sap.ui.rta.service.Property.get
+				 * @name sap.ui.rta.service.Property.get
 				 * @param {string} sControlId - the id of the control to start with.
 				 * @returns {sap.ui.rta.service.Property.PropertyObject} an object containing relevant property data for the passed control
+				 * @function
 				 * @public
 				 */
 				get: oProperty._getDesignTimeProperties.bind(oProperty)

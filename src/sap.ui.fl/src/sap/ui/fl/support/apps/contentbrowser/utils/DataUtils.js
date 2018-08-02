@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/DataUtils", ["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
+sap.ui.define(["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
 	function(GroupHeaderListItem, jQuery) {
 		"use strict";
 
