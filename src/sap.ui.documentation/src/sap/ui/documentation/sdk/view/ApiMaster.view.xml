@@ -3,6 +3,7 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core"
+		xmlns:custom="sap.ui.documentation.sdk.controls"
 		class="sapContrast sapContrastPlus">
 
 	<Page
@@ -40,12 +41,11 @@
 							comparator : '.compareTreeNodes'
 						}
 					}">
-				<StandardTreeItem
-						title="{treeData>text}">
-					<customData>
+				<custom:DemokitTreeItem title="{treeData>text}" deprecated="{treeData>bIsDeprecated}">
+					<custom:customData>
 						<core:CustomData key="nodeId" value="{treeData>name}" />
-					</customData>
-				</StandardTreeItem>
+					</custom:customData>
+				</custom:DemokitTreeItem>
 			</Tree>
 
 		</content>

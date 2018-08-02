@@ -2010,3 +2010,35 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 /*
  * End of DemokitLightTable CSS
  */
+
+/*
+* Start of DemokitTreeItem CSS
+*/
+
+.sapDemokitTreeItem > .sapMLIBContent {
+	display: block;
+	overflow: hidden;
+	word-break: break-word;
+}
+
+.sapDemokitTreeItemLabel,
+.sapDemokitTreeItemTitle {
+	display: inline-block;
+}
+
+.sapDemokitTreeItemLabel {
+	font-size: 0.75rem;
+	color: #d3d7d9;
+}
+
+.sapUiTheme-sap_belize_hcw .sapDemokitTreeItemLabel {
+	color: #000;
+}
+
+.sapUiTheme-sap_belize_hcb .sapDemokitTreeItemLabel {
+	color: #fff;
+}
+
+/*
+* End of DemokitTreeItem CSS
+*/
