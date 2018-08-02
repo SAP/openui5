@@ -1023,7 +1023,11 @@
 		  "name": "Multi Combo Box",
 		  "category": "User Input",
 		  "since": "1.22",
-		  "samples": ["sap.m.sample.MultiComboBox"]
+		  "samples": [
+			"sap.m.sample.MultiComboBox",
+			"sap.m.sample.MultiComboBoxDefaultFiltering",
+			"sap.m.sample.MultiComboBoxCustomFiltering"
+		  ]
 		},
 		{
 		  "id": "sap.m.P13nDialog",
@@ -2043,6 +2047,16 @@
 		  "id": "sap.m.sample.MultiComboBox",
 		  "name": "MultiComboBox",
 		  "description": "Choose one or more out of multiple options with the MultiComboBox control."
+		},
+		{
+		  "id": "sap.m.sample.MultiComboBoxDefaultFiltering",
+		  "name": "MultiComboBox - Filtering and Suggestions",
+		  "description": "The default filtering is 'starts with per term', which filters by the beginning of every word in every column."
+		},
+		{
+		  "id": "sap.m.sample.MultiComboBoxCustomFiltering",
+		  "name": "MultiComboBox - Custom Filtering and Suggestions",
+		  "description": "The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method."
 		},
 		{
 		  "id": "sap.m.sample.P13nDialog",

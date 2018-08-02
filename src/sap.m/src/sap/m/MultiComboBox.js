@@ -82,6 +82,51 @@ function(
 	 * The MultiComboBox control provides a list box with items and a text field allowing the user to either type a value directly into the control or choose from the list of existing items.
 	 * @extends sap.m.ComboBoxBase
 	 *
+	 * A drop-down list for selecting and filtering values.
+	 * <h3>Overview</h3>
+	 * The MultiComboBox control is commonly used to enable users to select one or more options from a predefined list. The control provides an editable input field to filter the list, and a dropdown arrow of available options.
+	 * The select options in the list have checkboxes that permit multi-selection. Entered values are displayed as {@link sap.m.Token tokens}.
+	 * <h3>Structure</h3>
+	 * The MultiComboBox consists of the following elements:
+	 * <ul>
+	 * <li> Input field - displays the selected option/s as token/s. Users can type to filter the list.
+	 * <li> Drop-down arrow - expands\collapses the option list.</li>
+	 * <li> Option list - the list of available options.</li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * <ul>
+	 * <li>The user needs to select one or more options from a long list of options (maximum of approximately 200).</li>
+	 * </ul>
+	 * <h4>When not to use:</h4>
+	 * <ul>
+	 * <li>The user needs to choose between two options such as ON or OFF and YES or NO. In this case, consider using a {@link sap.m.Switch switch} control instead</li>
+	 * <li>You need to display more that one attribute. In this case, consider using the {@link sap.m.SelectDialog select dialog} or value help dialog instead.</li>
+	 * <li>The user needs to search on multiple attributes. In this case, consider using the {@link sap.m.SelectDialog select dialog} or value help dialog instead.</li>
+	 * <li>Your use case requires all available options to be displayed right away, without any user interaction. In this case, consider using the {@link sap.m.Checkbox checkboxes} instead.</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * If there are many tokens, the control shows only the last selected tokens that fit and for the others a label N-more is provided.
+	 * In case the length of the last selected token is exceeding the width of the control, only a label N-Items is shown. In both cases, pressing on the label will show the tokens in a popup.
+	 * <u>On Phones:</u>
+	 * <ul>
+	 * <li>A new full-screen dialog opens where all items from the option list are shown.</li>
+	 * <li>You can select and deselect items from the option list.</li>
+	 * <li>With the help of a toggle button you can switch between showing all tokens and only selected ones.</li>
+	 * <li>You can filter the option list by entering a value in the input.</li>
+	 * </ul>
+	 * <u>On Tablets:</u>
+	 * <ul>
+	 * <li>The auto-complete suggestions appear below or above the input field.</li>
+	 * <li>You can review the tokens by swiping them to left or right.</li>
+	 * </ul>
+	 * <u>On Desktop:</u>
+	 * <ul>
+	 * <li>The auto-complete suggestions appear below or above the input field.</li>
+	 * <li>You can review the tokens by pressing the right or left arrows on the keyboard.</li>
+	 * <li>You can select single tokens or a range of tokens and you can copy/cut/delete them.</li>
+	 * </ul>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
