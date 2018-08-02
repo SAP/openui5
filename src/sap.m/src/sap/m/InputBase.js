@@ -831,6 +831,16 @@ function(
 		return this.getDomRef("content");
 	};
 
+	/**
+	 * Gets the DOM reference the popup should be docked to.
+	 *
+	 * @return {object} The DOM reference
+	 */
+	InputBase.prototype.getPopupAnchorDomRef = function() {
+		return this.getDomRef();
+	};
+
+
 	InputBase.prototype.iOpenMessagePopupDuration = 0;
 
 	/**

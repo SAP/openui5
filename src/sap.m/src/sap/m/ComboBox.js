@@ -390,7 +390,7 @@ sap.ui.define([
 			oDropdown.setInitialFocus(this);
 
 			oDropdown.open = function() {
-				return this.openBy(that.getDomRef("content"));
+				return this.openBy(that);
 			};
 
 			return oDropdown;
