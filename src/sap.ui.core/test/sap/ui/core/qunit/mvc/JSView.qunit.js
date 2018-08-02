@@ -1,10 +1,12 @@
+/*global QUnit */
 sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/commons/Button',
 	'sap/ui/commons/Panel',
-	'./AnyView.qunit',
+	'./AnyView.qunit'
 ], function(coreLibrary, Controller, Button, Panel, testsuite) {
+	"use strict";
 
 	var ViewType = coreLibrary.mvc.ViewType;
 
@@ -26,8 +28,7 @@ sap.ui.define([
 				return "example.mvc.testLocal";
 			},
 
-			/**
-			 *
+			/*
 			 * @param oController may be null
 			 * @returns {sap.ui.core.Control}
 			 */
@@ -36,8 +37,8 @@ sap.ui.define([
 				var oButton = new Button(this.createId("Button1"),{text:"Hello JS View"});
 				oButton.attachPress(oController.doIt,oController);
 				oPanel.addContent(oButton);
-				var oButton = new Button(this.createId("Button2"),{text:"Hello"});
-				oPanel.addContent(oButton);
+				var oButton2 = new Button(this.createId("Button2"),{text:"Hello"});
+				oPanel.addContent(oButton2);
 				var oButtonX = new Button(this.createId("ButtonX"),{text:"Another Hello"});
 				oButtonX.attachPress(oController.sap.doIt,oController);
 				oPanel.addContent(oButtonX);
@@ -49,7 +50,9 @@ sap.ui.define([
 				oPanel.addContent(oView3);
 				var oView4 = sap.ui.htmlview(this.createId("MyHTMLView"),"example.mvc.test2");
 				oPanel.addContent(oView4);
-				if(this.getViewData()) window.dataCreateView = this.getViewData().test;
+				if (this.getViewData()) {
+					window.dataCreateView = this.getViewData().test;
+				}
 				return [oPanel];
 			}
 		});
@@ -58,22 +61,28 @@ sap.ui.define([
 		sap.ui.controller("example.mvc.testLocal", {
 
 			onInit: function() {
-				assert.ok(true, "onInit is called now");
+				QUnit.config.current.assert.ok(true, "onInit is called now");
 				window.onInitCalled = this;
-				if(this.getView().getViewData()) window.dataOnInit = this.getView().getViewData().test;
+				if (this.getView().getViewData()) {
+					window.dataOnInit = this.getView().getViewData().test;
+				}
 			},
 
 
 			onBeforeRendering: function() {
 				window.onBeforeRenderingCalled = this;
-				if(this.getView().getViewData()) window.dataBeforeRendering = this.getView().getViewData().test;
+				if (this.getView().getViewData()) {
+					window.dataBeforeRendering = this.getView().getViewData().test;
+				}
 			},
 
 
 			onAfterRendering: function() {
-				assert.ok(true, "onAfterRendering is called now");
+				QUnit.config.current.assert.ok(true, "onAfterRendering is called now");
 				window.onAfterRenderingCalled = this;
-				if(this.getView().getViewData()) window.dataAfterRendering = this.getView().getViewData().test;
+				if (this.getView().getViewData()) {
+					window.dataAfterRendering = this.getView().getViewData().test;
+				}
 			},
 
 
@@ -82,16 +91,18 @@ sap.ui.define([
 			},
 
 			doIt: function(oEvent) {
-				assert.ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
+				QUnit.config.current.assert.ok(true, "Event of " + oEvent.getSource().getId() + " executed in controller");
 				var controller = this;
-				assert.ok(controller instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
-				if(this.getView().getViewData()) window.dataEventHandler = this.getView().getViewData().test;
+				QUnit.config.current.assert.ok(controller instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+				if (this.getView().getViewData()) {
+					window.dataEventHandler = this.getView().getViewData().test;
+				}
 			},
 
 			sap: {
 				doIt: function(oEvent) {
-					assert.ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
-					assert.ok(this instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+					QUnit.config.current.assert.ok(true, "Event of " + oEvent.getSource().getId() + " executed in controller");
+					QUnit.config.current.assert.ok(this instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
 				}
 			}
 
@@ -104,7 +115,7 @@ sap.ui.define([
 		return sap.ui.view({viewName:"example.mvc.test",type:ViewType.JS, viewData:{test:"testdata"}});
 	}, true);
 
-	QUnit.test("Check for Controller and View Connection in createContent() before onInit() is called", function () {
+	QUnit.test("Check for Controller and View Connection in createContent() before onInit() is called", function (assert) {
 
 		// View definition
 		sap.ui.jsview("example.mvc.test_connection", {

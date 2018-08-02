@@ -1,11 +1,19 @@
+/*global QUnit */
 sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/JSONView',
 	'sap/ui/core/mvc/JSView',
 	'sap/ui/core/mvc/XMLView',
-	'sap/ui/core/mvc/HTMLView'
-], function(Device, Controller, JSONView, JSView, XMLView, HTMLView) {
+	'sap/ui/core/mvc/HTMLView',
+	'sap/ui/qunit/QUnitUtils'
+], function(Device, Controller, JSONView, JSView, XMLView, HTMLView, qutils) {
+	"use strict";
+
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.append(oDIV);
 
 	/*
 	 * an initial check to be executed before other MVC tests start
@@ -81,8 +89,9 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("SAPUI5 Rendering", oConfig.idsToBeChecked.length, function(assert) {
-			for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
+		QUnit.test("SAPUI5 Rendering", function(assert) {
+			assert.expect(oConfig.idsToBeChecked.length);
+			for (var i = 0; i < oConfig.idsToBeChecked.length; i++) {
 				var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
 				assert.equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered");
 			}
@@ -91,24 +100,24 @@ sap.ui.define([
 		QUnit.test("Aggregation", function(assert) {
 			assert.expect(1);
 			assert.expect(1);
-			$button = jQuery.sap.byId(view.createId("Button2"));
+			var $button = jQuery.sap.byId(view.createId("Button2"));
 			assert.equal($button.length, 1,  "SAPUI5 Button rendered in aggregation");
 		});
 
 		QUnit.test("Child Views exists", function(assert) {
 			assert.expect(3);
-			$JSONView = jQuery.sap.byId(view.createId("MyJSONView"));
+			var $JSONView = jQuery.sap.byId(view.createId("MyJSONView"));
 			assert.equal($JSONView.length, 1, "Child View (JSONView) should be rendered");
-			$JSView = jQuery.sap.byId(view.createId("MyJSView"));
-			assert.equal($JSONView.length, 1, "Child View (JSView) should be rendered");
-			$XMLView = jQuery.sap.byId(view.createId("MyXMLView"));
+			var $JSView = jQuery.sap.byId(view.createId("MyJSView"));
+			assert.equal($JSView.length, 1, "Child View (JSView) should be rendered");
+			var $XMLView = jQuery.sap.byId(view.createId("MyXMLView"));
 			assert.equal($XMLView.length, 1, "Child View (XMLView) should be rendered");
 		});
 
 		QUnit.test("Child Views content rendered", function(assert) {
 			assert.expect(9);
 			var oJSONView = view.byId("MyJSONView");
-			$button = jQuery.sap.byId(oJSONView.createId("Button1"));
+			var $button = jQuery.sap.byId(oJSONView.createId("Button1"));
 			assert.equal($button.length, 1, "Content of Child View (JSONView) should be rendered");
 			var oLabel1 = oJSONView.byId("Label1");
 			assert.ok(oLabel1, "exists");
@@ -122,9 +131,9 @@ sap.ui.define([
 			assert.equal(oLabel.getLabelFor(), oJSView.createId("Button1"), "Association has been adapted");
 
 			var oXMLView = view.byId("MyXMLView");
-			$button2 = jQuery.sap.byId(oXMLView.createId("Button1"));
+			var $button2 = jQuery.sap.byId(oXMLView.createId("Button1"));
 			assert.equal($button2.length, 1, "Content of Child View (XMLView) should be rendered");
-			var oLabel = oXMLView.byId("Label1");
+			oLabel = oXMLView.byId("Label1");
 			assert.ok(!!oLabel, "Label exists");
 			assert.equal(oLabel.getLabelFor(), oXMLView.createId("Button1"), "Association has been adapted");
 		});
@@ -141,14 +150,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("Re-Rendering", function(assert) {
-			assert.expect(5+oConfig.idsToBeChecked.length);
+			assert.expect(5 + oConfig.idsToBeChecked.length);
 			window.onBeforeRenderingCalled = false;
 			window.onAfterRenderingCalled = false;
 			view.invalidate();
 			sap.ui.getCore().applyChanges();
 
 			function doCheck() {
-				for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
+				for (var i = 0; i < oConfig.idsToBeChecked.length; i++) {
 					var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
 					assert.equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered again");
 				}
@@ -212,14 +221,16 @@ sap.ui.define([
 			window.onAfterRenderingCalled = false;
 		});
 
-		QUnit.test("Lifecycle: NO content after destroy()", oConfig.idsToBeChecked.length, function(assert) {
-			for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
+		QUnit.test("Lifecycle: NO content after destroy()", function(assert) {
+			assert.expect(oConfig.idsToBeChecked.length);
+			for (var i = 0; i < oConfig.idsToBeChecked.length; i++) {
 				var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
 				assert.equal($.length, 0, "Content " + oConfig.idsToBeChecked[i] + " should no longer be there");
 			}
 		});
 
-		QUnit.test("Cloning: Event listeners are called on the correct controller instance", 12, function(assert) {
+		QUnit.test("Cloning: Event listeners are called on the correct controller instance", function(assert) {
+			assert.expect(12);
 			var oTmpl, oClone;
 			oTmpl = fnViewFactory();
 			if (!oTmpl.sViewName) {

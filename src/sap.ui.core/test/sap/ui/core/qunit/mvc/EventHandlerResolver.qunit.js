@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit, sinon, testEventHandlerResolver, someGlobalMethodOnWindow */
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
@@ -79,8 +79,8 @@ sap.ui.define([
 		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method should be called");
 
 		oController.fnControllerMethod.reset();
-		var fnFromController = EventHandlerResolver.resolveEventHandler("fnControllerMethod()", oController)[0];
-		fnFromController(oDummyEvent);
+		var fnFromController2 = EventHandlerResolver.resolveEventHandler("fnControllerMethod()", oController)[0];
+		fnFromController2(oDummyEvent);
 		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method without dot should be called");
 
 		sinon.spy(testEventHandlerResolver.subobject, "someGlobalMethod");
@@ -153,7 +153,7 @@ sap.ui.define([
 			});
 			oDummySource.setModel(oModel);
 
-			var oModel = new JSONModel({
+			oModel = new JSONModel({
 				subnode: {
 					someSecondModelProperty: "someSecondModelValue"
 				}
@@ -186,7 +186,7 @@ sap.ui.define([
 			{src: ".fnControllerMethod({'x': 'y'})", expected: {'x': 'y'}, message: "Static object value should be correctly given"},
 			{src: ".fnControllerMethod({x: 'y'})", expected: {'x': 'y'}, message: "Static object value should be correctly given"},
 			{src: ".fnControllerMethod({x: 'y', z: {a: 1}})", expected: {'x': 'y', z: {a: 1}}, message: "Static object value should be correctly given"},
-			{src: ".fnControllerMethod(null)", expected: null, message: "Static null value should be correctly given"},
+			{src: ".fnControllerMethod(null)", expected: null, message: "Static null value should be correctly given"}
 		];
 
 		var fnFromController;
@@ -252,7 +252,7 @@ sap.ui.define([
 		var fnFromController;
 		var mTestSet = { // now the values are arrays
 			".fnControllerMethod('test',${/someModelProperty})": ["test", "someModelValue"],   // two parameters
-			".fnControllerMethod( 'test' ,	${/someModelProperty}	)": ["test", "someModelValue"],   // some whitespace fun
+			".fnControllerMethod( 'test' ,	${/someModelProperty}	)": ["test", "someModelValue"]   // some whitespace fun
 		};
 
 		for (var sTestString in mTestSet) {

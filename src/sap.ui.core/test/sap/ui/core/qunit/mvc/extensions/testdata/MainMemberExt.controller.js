@@ -1,13 +1,13 @@
 sap.ui.define(["sap/ui/core/mvc/Controller", "./ReuseExtension"], function(Controller, ReuseExtension) {
-    "use strict";
+	"use strict";
 
-    return Controller.extend("my.test.Main", {
+	return Controller.extend("my.test.Main", {
 		metadata: {
 			/*defining methods in controller metadata enables new metadata definition*/
-            methods: {
-                "privateMethod1": {"public":false, "final":true},
-                "myFinalMethod": {"public":true, "final":true}
-            }
+			methods: {
+				"privateMethod1": {"public":false, "final":true},
+				"myFinalMethod": {"public":true, "final":true}
+			}
 		},
 		mLifeCycle: {onInit:[], onExit:[], onBeforeRendering:[], onAfterRendering:[]},
 		onInit: function() {
@@ -28,10 +28,10 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "./ReuseExtension"], function(Contr
 		getLifeCycleCalls: function() {
 			return this.mLifeCycle;
 		},
-        myFinalMethod: function() {
-            return "I am final";
-        },
-        privateMethod1: function() {
+		myFinalMethod: function() {
+			return "I am final";
+		},
+		privateMethod1: function() {
 			return "privateMethod1OnBase";
 		},
 		_privateMethod2: function() {
