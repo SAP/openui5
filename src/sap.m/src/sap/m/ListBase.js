@@ -2250,17 +2250,21 @@ function(
 
 		if (this._iStickyValue & 2 /* InfoToolbar */) {
 			// additional padding is applied in HCW and HCB theme, hence infoToolbarContainer height is required
-			var oInfoToolbarContainer = this.getInfoToolbar().$().parent()[0];
-			var oInfoToolbarContainerRect = oInfoToolbarContainer.getBoundingClientRect();
-			iInfoTBarContainerRectBottom = parseInt(oInfoToolbarContainerRect.bottom, 10);
-			iInfoTBarContainerRectHeight = parseInt(oInfoToolbarContainerRect.height, 10);
+			var oInfoToolbarContainer = this.getDomRef().querySelector(".sapMListInfoTBarContainer");
+			if (oInfoToolbarContainer) {
+				var oInfoToolbarContainerRect = oInfoToolbarContainer.getBoundingClientRect();
+				iInfoTBarContainerRectBottom = parseInt(oInfoToolbarContainerRect.bottom, 10);
+				iInfoTBarContainerRectHeight = parseInt(oInfoToolbarContainerRect.height, 10);
+			}
 		}
 
 		if (this._iStickyValue & 1 /* HeaderToolbar */) {
 			var oHeaderToolbarDomRef = this.getDomRef().querySelector(".sapMListHdr");
-			var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
-			iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom, 10);
-			iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
+			if (oHeaderToolbarDomRef) {
+				var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
+				iHeaderToolbarRectBottom = parseInt(oHeaderToolbarRect.bottom, 10);
+				iHeaderToolbarRectHeight = parseInt(oHeaderToolbarRect.height, 10);
+			}
 		}
 
 		var iItemTop = Math.round(oItemDomRef.getBoundingClientRect().top);
