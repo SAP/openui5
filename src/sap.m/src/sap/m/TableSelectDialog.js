@@ -157,8 +157,16 @@ sap.ui.define([
 			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides an easy and fast way to clear selection made in Table Select Dialog.
-			 * In case <code>multiSelect</code> is set to <code>true</code>, the selection can be cleared with one click.
+			 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides a way to clear a selection made in Table Select Dialog.
+			 *
+			 * We recommend enabling of the Clear button in the following cases, where a mechanism to clear the value is needed:
+			 * In case the Table Select Dialog is in single-selection mode (default mode) and <code>rememberSelections</code> is set to <code>true</code>. The Clear button needs to be enabled in order to allow users to clear the selection.
+			 * In case of using <code>sap.m.Input</code> with <code>valueHelpOnly</code> set to <code>true</code>, the Clear button can be used for clearing the selection.
+			 * In case the application stores a value and uses only Table Select Dialog to edit/maintain it.
+			 *
+			 * Optional:
+			 * In case <code>multiSelect</code> is set to <code>true</code>, the selection can be easily cleared with one click.
+			 *
 			 * <b>Note:</b> When used with oData, only the loaded selections will be cleared.
 			 * @since 1.58
 			 */
