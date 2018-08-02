@@ -405,7 +405,7 @@ sap.ui.require([
 			.returns(Promise.resolve().then(function () {
 				that.oRequestorMock.expects("reportBoundMessages")
 					.withExactArgs(oCache.sResourcePath, [],
-						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"])
+						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
 			}));
 		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
 			.returns(oUpdateData);
