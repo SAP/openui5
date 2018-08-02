@@ -1226,8 +1226,8 @@ sap.ui.define([
 	 *      "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
-	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
-	 *      application and are reported as persistent
+	 *   {boolean} transition - Messages marked as transition by the server need to be managed by
+	 *      the application and are reported as persistent
 	 * @param {string[]} [aCachePaths]
 	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
 	 *    be removed; if the array is not given, all entities are affected
@@ -1251,7 +1251,7 @@ sap.ui.define([
 					code : oRawMessage.code,
 					descriptionUrl : oRawMessage.longtextUrl || undefined,
 					message : oRawMessage.message,
-					persistent : oRawMessage.transient,
+					persistent : oRawMessage.transition,
 					processor : that,
 					target : sTarget,
 					technical : false,

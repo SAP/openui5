@@ -30,7 +30,7 @@
 			"message" : "Enter Postal Code if available",
 			"numericSeverity" : 3,
 			"target" : "Address/PostalCode",
-			"transient" : false
+			"transition" : false
 		}]
 	},
 	"SO_2_SCHDL" : [{
@@ -64,6 +64,6 @@
 		"message" : "Enter customer reference if available",
 		"numericSeverity" : 3,
 		"target" : "Note",
-		"transient" : true
+		"transition" : true
 	}]
 }

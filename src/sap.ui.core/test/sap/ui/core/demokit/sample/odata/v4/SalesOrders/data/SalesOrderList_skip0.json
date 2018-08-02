@@ -78,7 +78,7 @@
 			"message" : "Enter customer reference if available",
 			"numericSeverity" : 3,
 			"target" : "Note",
-			"transient" : true
+			"transition" : true
 		}]
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
