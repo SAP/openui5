@@ -62,7 +62,7 @@ sap.ui.define(['sap/m/semantic/Segment', 'sap/ui/base/Metadata', "sap/base/Log"]
 		oSegment.getStartIndex = function () {
 
 			var iStartIndex = 0;
-			var iSectionIndex = jQuery.inArray(this, aSegments);
+			var iSectionIndex = aSegments.indexOf(this);
 			if (iSectionIndex > 0) {
 				var iPreviousSectionIndex = iSectionIndex - 1;
 				while (iPreviousSectionIndex >= 0) {

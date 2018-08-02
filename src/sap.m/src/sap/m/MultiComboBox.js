@@ -25,8 +25,11 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
 function(
 	InputBase,
@@ -50,7 +53,8 @@ function(
 	KeyCodes,
 	deepEqual,
 	assert,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -453,7 +457,15 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
+		var oPicker = this.getPicker();
+		var bPreviousFocusInDropdown = false;
+		var oPickerDomRef  = oPicker.getFocusDomRef();
+		var bPickerClosing = oPicker.oPopup.getOpenState() === OpenState.CLOSING;
 		var bDropdownPickerType = this.getPickerType() === "Dropdown";
+
+		if (bDropdownPickerType) {
+			bPreviousFocusInDropdown = oPickerDomRef && jQuery.contains(oPickerDomRef, oEvent.relatedTarget);
+		}
 
 		if (this.getEditable()) {
 			this._oTokenizer._useCollapsedMode(false);
@@ -462,6 +474,10 @@ function(
 
 		if (oEvent.target === this.getFocusDomRef()) {
 			this.getEditable() && this.addStyleClass("sapMFocus");
+			// enable type ahead when switching focus from the dropdown to the input field
+			// we need to check whether the focus has been triggered by the popover's closing or just a manual focusin
+			// isOpen is still true as the closing has not finished yet.
+			!bPickerClosing && bPreviousFocusInDropdown && this._handleInputValidation(oEvent, false);
 		}
 
 		if (oEvent.target === this.getOpenArea() && bDropdownPickerType && !this.isPlatformTablet()) {
@@ -476,7 +492,6 @@ function(
 		if (!this.isOpen() && this.shouldValueStateMessageBeOpened()) {
 			this.openValueStateMessage();
 		}
-
 	};
 
 	/**
@@ -486,7 +501,9 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._handleItemTap = function(oEvent) {
-		if (oEvent.target.childElementCount === 0 || oEvent.target.childElementCount === 2) {
+		var oTappedControl = jQuery(oEvent.target).control(0);
+
+		if (!oTappedControl.isA("sap.m.CheckBox")) {
 			this._bCheckBoxClicked = false;
 			if (this.isOpen() && !this._isListInSuggestMode()) {
 				this.close();
@@ -524,6 +541,7 @@ function(
 		var oListItem = oEvent.getParameter("listItem");
 		var bIsSelected = oEvent.getParameter("selected");
 		var oNewSelectedItem = this._getItemByListItem(oListItem);
+		var oInputControl = this.isPickerDialog() ? this.getPickerTextField() : this;
 
 		if (oListItem.getType() === "Inactive") {
 			// workaround: this is needed because the List fires the "selectionChange" event on inactive items
@@ -556,7 +574,8 @@ function(
 		}
 
 		if (this._bCheckBoxClicked) {
-			this.setValue(this._sOldValue);
+			oInputControl.setValue(this._sOldInput);
+
 			if (this.isOpen() && this.getPicker().oPopup.getOpenState() !== OpenState.CLOSING) {
 				// workaround: this is needed because the List fires the "selectionChange" event during the popover is closing.
 				// So clicking on list item description the focus should be replaced to input field. Otherwise the focus is set to
@@ -601,6 +620,8 @@ function(
 			this._sOldValue = this.getPickerTextField().getValue();
 			this._iOldCursorPos = jQuery(this.getFocusDomRef()).cursorPos();
 		}
+
+		this._bDoTypeAhead = (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
 	};
 
 	/**
@@ -626,20 +647,26 @@ function(
 		if (!this._bCompositionStart && !this._bCompositionEnd) {
 			this._handleInputValidation(oEvent, false);
 		}
+
+		if (this.isOpen()) {
+			// wait a tick so the setVisible call has replaced the DOM
+			setTimeout(this._highlightList.bind(this, this._sOldInput));
+		}
 	};
 
 	/**
 	 * Filters array of items for given value
 	 *
-	 * @param {Array} aItems The array of items.
-	 * @param {String} sValue A text to be filtered by (starting width).
 	 * @private
 	 */
-	MultiComboBox.prototype.filterItems = function (aItems, sValue) {
-		aItems.forEach(function(oItem) {
-			var bMatch = typeof sValue === "string" && sValue !== "" && oItem.getText().toLowerCase().startsWith(sValue.toLowerCase());
+	MultiComboBox.prototype.filterItems = function (mOptions) {
+		var fnFilter = this.fnFilter ? this.fnFilter : ComboBoxBase.DEFAULT_TEXT_FILTER;
+		var aFilteredItems = [];
 
-			if (sValue === "") {
+		mOptions.items.forEach(function(oItem) {
+			var bMatch = !!fnFilter(mOptions.value, oItem, "getText");
+
+			if (mOptions.value === "") {
 				bMatch = true;
 				if (!this.bOpenedByKeyboardOrButton) {
 					// prevent filtering of the picker if it will be closed
@@ -651,8 +678,11 @@ function(
 
 			if (oListItem) {
 				oListItem.setVisible(bMatch);
+				bMatch && aFilteredItems.push(oItem);
 			}
 		}, this);
+
+		return aFilteredItems;
 	};
 
 	/**
@@ -766,7 +796,22 @@ function(
 	};
 
 	MultiComboBox.prototype.createPickerTextField = function () {
-		return new Input();
+		var that = this;
+
+		return new Input({
+			// select a list item, when enter is triggered in picker text field
+			submit: function (oEvent) {
+				var sValue = this.getValue();
+				if (sValue) {
+					that.setValue(sValue);
+					that._selectItemByKey();
+					this.setValue(that._sOldInput);
+				}
+			}
+		}).addEventDelegate({
+			// remove the type ahead when focus is not in the input
+			onfocusout: this._handleInputFocusOut
+		}, this);
 	};
 
 	MultiComboBox.prototype.onBeforeRendering = function() {
@@ -876,6 +921,9 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterOpen = function() {
+		var oDomRef = this.getFocusDomRef();
+
+		oDomRef && oDomRef.setAttribute("aria-expanded", "true");
 
 		// reset the initial focus back to the input
 		if (!this.isPlatformTablet()) {
@@ -900,7 +948,11 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterClose = function() {
-		var bUseCollapsed = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog();
+		var bUseCollapsed = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog(),
+			oDomRef = this.getFocusDomRef();
+
+		oDomRef && oDomRef.setAttribute("aria-expanded", "false");
+
 		// remove the active state of the MultiComboBox's field
 		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 
@@ -1024,7 +1076,7 @@ function(
 				}
 			}, this);
 		} else {
-			this.filterItems(aItems, sValue);
+			this.filterItems({ value: sValue, items: aItems });
 		}
 	};
 
@@ -1637,6 +1689,18 @@ function(
 	};
 
 	/**
+	 * Updates the input value after focusout based on last user input
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._handleInputFocusOut = function () {
+		var oInput = this.isPickerDialog() ? this.getPickerTextField() : this,
+		sUpdateValue = this._sOldInput || this._sOldValue || "";
+
+		oInput.updateDomValue(sUpdateValue);
+	};
+
+	/**
 	 * Handler for the press event on the N-more label
 	 *
 	 * @private
@@ -1745,6 +1809,28 @@ function(
 	};
 
 	/**
+	 * Collects information for dom refs of list items and passes them on to {@link sap.m.ComboBoxBase#highLightList}
+	 *
+	 * @param {string} sValue Currenly typed value of the input field
+	 * @private
+	 */
+	MultiComboBox.prototype._highlightList = function (sValue) {
+		var aListItemsDOM = [];
+
+		this._oList.getItems().forEach(function(oItem) {
+
+			if (oItem.getDomRef()) {
+				aListItemsDOM.push({
+					ref: oItem.getDomRef().getElementsByClassName("sapMSLITitleOnly")[0],
+					text: oItem.getTitle()
+				});
+			}
+		});
+
+		this.highLightList(sValue, aListItemsDOM);
+	};
+
+	/**
 	 * As the ItemNavigation of the list is created onfocusin we need handle this and set some initial root focus dome ref
 	 *
 	 * @private
@@ -1768,7 +1854,11 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
+		// if the focus switches from the picker to the dropdown
+		// update the input value with the last typed in input from the user
+		this.isOpen() && this._handleInputFocusOut();
 		this.removeStyleClass("sapMFocus");
+
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
 	};
 
@@ -1799,7 +1889,7 @@ function(
 		if (aSeparatedText && aSeparatedText.length > 0) {
 			this.getSelectableItems().forEach(function(oItem) {
 
-				if (jQuery.inArray(oItem.getText(), aSeparatedText) > -1) {
+				if (aSeparatedText.indexOf(oItem.getText()) > -1) {
 					this.setSelection({
 						item: oItem,
 						id: oItem.getId(),
@@ -1903,6 +1993,30 @@ function(
 		}
 	};
 
+	/**
+	 * Handles the tap event on the control.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	MultiComboBox.prototype.ontap = function(oEvent) {
+		ComboBoxBase.prototype.ontap.apply(this, arguments);
+
+		var oOpenArea = this.getOpenArea();
+
+		// in case of a non-editable or disabled combo box, the picker popup cannot be opened
+		if (!this.getEnabled() || !this.getEditable()) {
+			return;
+		}
+
+		// mark the event for components that needs to know if the event was handled
+		oEvent.setMarked();
+
+		// if the picker is a dialog and the control open are is not a token, open the dialog
+		if (this.isPickerDialog() && oOpenArea.contains(oEvent.target)) {
+			this.open();
+		}
+	};
+
 	MultiComboBox.prototype.getOpenArea = function() {
 		if (this.isPickerDialog()) {
 			return this.getDomRef();
@@ -1912,14 +2026,37 @@ function(
 	};
 
 	/**
-	 * Get items which match value of input field
+	 * Gets items that match with starts with per term filter
 	 *
 	 * @param {string} sText The value to be matched
 	 * @param {boolean} bInput Determines which items to search in (true - enabled items, false - selectable items)
 	 * @returns {sap.ui.core.Item[]} The array of matching items
 	 * @private
 	 */
-	MultiComboBox.prototype._getItemsStartingText = function(sText, bInput) {
+	MultiComboBox.prototype._getItemsStartingWithPerTerm = function(sText, bInput) {
+		var aItems = [],
+			selectableItems = bInput ? this.getEnabledItems() : this.getSelectableItems(),
+			fnFilter = this.fnFilter ? this.fnFilter : ComboBoxBase.DEFAULT_TEXT_FILTER;
+
+		selectableItems.forEach(function(oItem) {
+
+			if (fnFilter(sText, oItem, "getText")) {
+				aItems.push(oItem);
+			}
+
+		}, this);
+		return aItems;
+	};
+
+	/**
+	 * Gets items that match with starts with filter
+	 *
+	 * @param {string} sText The value to be matched
+	 * @param {boolean} bInput Determines which items to search in (true - enabled items, false - selectable items)
+	 * @returns {sap.ui.core.item[]} They array of matching items
+	 * @private
+	 */
+	MultiComboBox.prototype._getItemsStartingWith = function(sText, bInput) {
 		var aItems = [],
 			selectableItems = bInput ? this.getEnabledItems() : this.getSelectableItems();
 
@@ -1932,6 +2069,7 @@ function(
 		}, this);
 		return aItems;
 	};
+
 
 	/**
 	 * Get unselected items which match value of input field.
@@ -2092,7 +2230,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getNextTraversalItem = function() {
-		var aItems = this._getItemsStartingText(this.getValue());
+		var aItems = this._getItemsStartingWithPerTerm(this.getValue());
 		var aSelectableItems = this._getUnselectedItems();
 
 		if (aItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
@@ -2112,7 +2250,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getPreviousTraversalItem = function() {
-		var aItems = this._getItemsStartingText(this.getValue());
+		var aItems = this._getItemsStartingWithPerTerm(this.getValue());
 
 		if (aItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
 			return this._getPreviousUnselectedItemOf(this._oTraversalItem);
@@ -2202,7 +2340,7 @@ function(
 			return this;
 		}
 
-		if (!jQuery.isArray(aItems)) {
+		if (!Array.isArray(aItems)) {
 			Log.warning("Warning: setSelectedItems() has to be an array of sap.ui.core.Item instances or of valid sap.ui.core.Item IDs", this);
 			return this;
 		}
@@ -2307,7 +2445,7 @@ function(
 	MultiComboBox.prototype.removeSelectedKeys = function(aKeys) {
 		var aItems = [], iIndex;
 
-		if (!aKeys || !aKeys.length || !jQuery.isArray(aKeys)) {
+		if (!aKeys || !aKeys.length || !Array.isArray(aKeys)) {
 			return aItems;
 		}
 
@@ -2609,31 +2747,26 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._handleInputValidation = function(oEvent, bCompositionEvent) {
-		var sValue = oEvent.target.value,
-			aItems, bVisibleItemFound,
-			aItemsToCheck, bResetFilter,
-			sUpdateValue, oSelectedButton;
+		var sValue = oEvent.target.value, aStartsWithItems,
+			bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length,
+			bVisibleItemFound, aItemsToCheck, oSelectedButton;
 
 		// "compositionstart" and "compositionend" are native events and don't have srcControl
 		var oInput = bCompositionEvent ? jQuery(oEvent.target).control(0) : oEvent.srcControl;
 
-		aItems = this._getItemsStartingText(sValue, true);
-		bVisibleItemFound = !!aItems.length;
+		aStartsWithItems = this._getItemsStartingWith(sValue, true);
+		var aStartsWithPerTermItems = this._getItemsStartingWithPerTerm(sValue, true);
 
-		if (!bVisibleItemFound && sValue !== "") {
-			sUpdateValue = bCompositionEvent ? this._sComposition : (this._sOldValue || "");
-			oInput.updateDomValue(sUpdateValue);
+		bVisibleItemFound = !!aStartsWithItems.length;
 
-			if (this._iOldCursorPos) {
-				jQuery(oInput.getFocusDomRef()).cursorPos(this._iOldCursorPos);
-			}
-
-			this._showWrongValueVisualEffect();
+		if (!bVisibleItemFound && sValue !== "" && !aStartsWithPerTermItems.length) {
+			this._handleFieldValidationState(oInput, bCompositionEvent);
 			return;
 		}
 
+		this._handleTypeAhead(sValue, aStartsWithItems, oInput);
+
 		aItemsToCheck = this.getEnabledItems();
-		bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length;
 
 		if (this.isPickerDialog()) {
 			oSelectedButton = this._getFilterSelectedButton();
@@ -2641,20 +2774,63 @@ function(
 				oSelectedButton.setPressed(false);
 			}
 		}
+
 		if (bResetFilter) {
 			aItemsToCheck = this.getItems();
 		}
 
-		this.filterItems(aItemsToCheck, sValue);
+		this.filterItems({ value: sValue, items: aItemsToCheck });
 
 		// First do manipulations on list items and then let the list render
-		if ((!this.getValue() || !bVisibleItemFound) && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog())  {
+		if ((!this.getValue() || !bVisibleItemFound && !aStartsWithPerTermItems.length) && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog())  {
 			this.close();
 		} else {
 			this.open();
 		}
 
 		this._sOldInput = sValue;
+	};
+
+	/**
+	 * Autocompletes input based on given items and a value
+	 *
+	 * @param {string} sValue Current value of the input field
+	 * @param {sap.ui.core.Item[]} aItems Items to type ahead
+	 * @param {sap.m.InputBase} oInput Input to be typed ahead
+	 * @private
+	 */
+	MultiComboBox.prototype._handleTypeAhead = function (sValue, aItems, oInput) {
+		// type ahead, if there is an matching unselected item in the list
+		var aSelectedItems = this.getSelectedItems();
+		var aItemsUnselected = aItems.filter(function (oItem) {
+			return aSelectedItems.indexOf(oItem) === -1;
+		});
+
+		if (this._bDoTypeAhead && aItemsUnselected.length) {
+			oInput.updateDomValue(aItemsUnselected[0].getText());
+
+			if (document.activeElement === oInput.getFocusDomRef()) {
+				oInput.selectText(sValue.length, oInput.getValue().length);
+			}
+		}
+	};
+
+	/**
+	 * Shows invalid state to an input control
+	 *
+	 * @param {sap.m.InputBase} oInput Input to be validated
+	 * @param {boolean} bCompositionEvent Defines whether the event is composite
+	 * @private
+	 */
+	MultiComboBox.prototype._handleFieldValidationState = function (oInput, bCompositionEvent) {
+		var sUpdateValue = bCompositionEvent ? this._sComposition : (this._sOldInput || this._sOldValue || "");
+		oInput.updateDomValue(sUpdateValue);
+
+		if (this._iOldCursorPos) {
+			jQuery(oInput.getFocusDomRef()).cursorPos(this._iOldCursorPos);
+		}
+
+		this._showWrongValueVisualEffect();
 	};
 
 	MultiComboBox.prototype.init = function() {

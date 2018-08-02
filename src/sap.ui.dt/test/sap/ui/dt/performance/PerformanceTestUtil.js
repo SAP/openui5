@@ -3,13 +3,15 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/DatePicker",
 	"sap/m/Slider",
-	"sap/m/RatingIndicator"
+	"sap/m/RatingIndicator",
+	"sap/base/Log"
 ], function(
 	Button,
 	Label,
 	DatePicker,
 	Slider,
-	RatingIndicator
+	RatingIndicator,
+	Log
 ) {
 	"use strict";
 
@@ -40,13 +42,13 @@ sap.ui.define([
 				//will result in custom timer in webPageTest
 				window.performance.mark("dt.starts");
 
-				jQuery.sap.require("sap.ui.dt.DesignTime");
-				jQuery.sap.require("sap.ui.dt.plugin.TabHandling");
-				jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
-				jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
-				jQuery.sap.require("sap.ui.dt.plugin.CutPaste");
-				jQuery.sap.require("sap.ui.dt.plugin.ContextMenu");
-				jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+				sap.ui.requireSync("sap/ui/dt/DesignTime");
+				sap.ui.requireSync("sap/ui/dt/plugin/TabHandling");
+				sap.ui.requireSync("sap/ui/dt/plugin/ControlDragDrop");
+				sap.ui.requireSync("sap/ui/dt/plugin/MouseSelection");
+				sap.ui.requireSync("sap/ui/dt/plugin/CutPaste");
+				sap.ui.requireSync("sap/ui/dt/plugin/ContextMenu");
+				sap.ui.requireSync("sap/ui/dt/OverlayRegistry");
 
 				var MOVABLE_TYPES = ["sap.ui.layout.VerticalLayout","sap.m.Button","sap.m.Label","sap.m.DatePicker","sap.m.Slider","sap.m.RatingIndicator"];
 
@@ -75,7 +77,7 @@ sap.ui.define([
 					window.performance.mark("dt.synced");
 					window.performance.measure("Create DesignTime and Overlays", "dt.starts", "dt.synced");
 					sap.ui.dt.creationTime = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
-					jQuery.sap.log.info("Create DesignTime and Overlays", sap.ui.dt.creationTime + "ms");
+					Log.info("Create DesignTime and Overlays", sap.ui.dt.creationTime + "ms");
 					//visual change at the end
 					var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay("Control2");
 					oOverlay.setSelected(true);

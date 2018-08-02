@@ -18,8 +18,7 @@ sap.ui.define([
 	"sap/ui/events/ControlEvents",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
-	'jquery.sap.ui'
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
 		ManagedObject,
@@ -36,7 +35,6 @@ sap.ui.define([
 		ControlEvents,
 		F6Navigation,
 		jQuery
-		/* jQuerySapUi */
 	) {
 	"use strict";
 
@@ -68,8 +66,8 @@ sap.ui.define([
 		fnDbgWrap = function(oControl) {
 			return oControl;
 		},
-		fnDbgReport = jQuery.noop,
-		fnDbgAnalyzeDelta = jQuery.noop;
+		fnDbgReport = function() {},
+		fnDbgAnalyzeDelta = function() {};
 
 	if ( oRenderLog.isLoggable() ) {
 

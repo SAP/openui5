@@ -3,7 +3,13 @@
  */
 
 // Provides control sap.m.P13nGroupPanel.
-sap.ui.define(['./library', './P13nConditionPanel', './P13nPanel', './P13nGroupItem'], function(library, P13nConditionPanel, P13nPanel, P13nGroupItem) {
+sap.ui.define([
+	'./library',
+	'./P13nConditionPanel',
+	'./P13nPanel',
+	'./P13nGroupItem',
+	"sap/ui/thirdparty/jquery"
+], function(library, P13nConditionPanel, P13nPanel, P13nGroupItem, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType

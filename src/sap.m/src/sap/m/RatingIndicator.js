@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/theming/Parameters',
 	'./RatingIndicatorRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log) {
+	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery) {
 	"use strict";
 
 

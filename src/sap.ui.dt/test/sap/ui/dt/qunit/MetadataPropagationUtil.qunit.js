@@ -1,22 +1,16 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/MetadataPropagationUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"qunit/MetadataTestUtil",
-	// controls
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
-	// should be last
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-ie",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	MetadataPropagationUtil,
 	OverlayRegistry,
@@ -352,7 +346,7 @@ sap.ui.require([
 			this.oButton = new Button("test-button7");
 			this.oPage = new Page({
 				content: [this.oButton]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 
@@ -399,8 +393,8 @@ sap.ui.require([
 
 			this.oMetadataForToolbar = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Toolbar");
 			this.oMetadataForButton = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForToolbar, MetadataTestUtil.createPropagateMetadataObject("sap.m.Toolbar"));
-			jQuery.extend(this.oMetadataForButton, MetadataTestUtil.createPropagateMetadataObject("sap.m.Button"));
+			Object.assign(this.oMetadataForToolbar, MetadataTestUtil.createPropagateMetadataObject("sap.m.Toolbar"));
+			Object.assign(this.oMetadataForButton, MetadataTestUtil.createPropagateMetadataObject("sap.m.Button"));
 
 			var oPageMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForToolbar);
 			var oVerticalLayoutMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButton);
@@ -417,7 +411,7 @@ sap.ui.require([
 			});
 			this.oPage = new Page({
 				content: [this.oVerticalLayout, this.oButton3]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 
@@ -538,13 +532,13 @@ sap.ui.require([
 			//			button1
 
 			this.oMetadataForButtonInPage = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInPage,
+			Object.assign(this.oMetadataForButtonInPage,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForPage", undefined, "propertyFromPage"));
 			this.oMetadataForButtonInLayout = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInLayout,
+			Object.assign(this.oMetadataForButtonInLayout,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForLayout", undefined, "propertyFromLayout"));
 			this.oMetadataForButtonInToolbar = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
-			jQuery.extend(this.oMetadataForButtonInToolbar,
+			Object.assign(this.oMetadataForButtonInToolbar,
 				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForToolbar", undefined, "propertyFromToolbar"));
 
 			var oPageMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButtonInPage);
@@ -560,7 +554,7 @@ sap.ui.require([
 			});
 			this.oPage = new Page({
 				content: [this.oVerticalLayout]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 
@@ -606,5 +600,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
 });

@@ -7,9 +7,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'./ImageRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, ImageRenderer, KeyCodes) {
+	function(library, Control, ImageRenderer, KeyCodes, jQuery) {
 	"use strict";
 
 

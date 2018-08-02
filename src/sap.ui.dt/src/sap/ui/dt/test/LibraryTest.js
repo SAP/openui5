@@ -2,7 +2,7 @@
  * ${copyright}
  */
 // Provides class sap.ui.dt.test.LibraryTest.
-sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONModel', 'jquery.sap.global'
+sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONModel', 'sap/ui/thirdparty/jquery'
 ], function(ResourceModel, JSONModel, jQuery) {
 	"use strict";
 	var aDesigntimeElements = [],

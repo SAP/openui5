@@ -10,14 +10,7 @@ sap.ui.define([
 	'./XMLTemplateProcessor',
 	"sap/base/Log"
 ],
-	function(
-		jQuery,
-		ManagedObject,
-		Element,
-		DeclarativeSupport,
-		XMLTemplateProcessor,
-		Log
-	) {
+	function(jQuery, ManagedObject, Element, DeclarativeSupport, XMLTemplateProcessor, Log) {
 	"use strict";
 
 

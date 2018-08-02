@@ -84,7 +84,11 @@ sap.ui.define([
 
 					Promise.all(libFetchPromises).then(function () {
 						that._bRulesCreated = true;
-						CommunicationBus.publish(channelNames.UPDATE_SUPPORT_RULES, RuleSerializer.serialize(that._mRuleSets));
+						CommunicationBus.publish(channelNames.UPDATE_SUPPORT_RULES,
+							{
+							sRuleSet: RuleSerializer.serialize(that._mRuleSets),
+							oVersionInfo: RuleSet.versionInfo
+						});
 						resolve();
 
 						if (fnReadyCbk && typeof fnReadyCbk === "function") {
@@ -108,7 +112,10 @@ sap.ui.define([
 
 			Promise.all(aLibFetchPromises).then(function () {
 				that._bRulesCreated = true;
-				CommunicationBus.publish(channelNames.UPDATE_SUPPORT_RULES, RuleSerializer.serialize(that._mRuleSets));
+				CommunicationBus.publish(channelNames.UPDATE_SUPPORT_RULES,
+					{
+						sRuleSet: RuleSerializer.serialize(that._mRuleSets)
+					});
 			});
 		};
 

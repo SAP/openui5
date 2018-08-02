@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
 	'sap/ui/core/LocaleData',
-	"sap/base/strings/hash"
+	"sap/base/strings/hash",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		NumberFormat,
@@ -19,7 +20,8 @@ sap.ui.define([
 		ParseException,
 		ValidateException,
 		LocaleData,
-		hash
+		hash,
+		jQuery
 	) {
 	"use strict";
 

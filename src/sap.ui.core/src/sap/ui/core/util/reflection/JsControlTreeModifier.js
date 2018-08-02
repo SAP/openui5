@@ -8,15 +8,13 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	"jquery.sap.global",
 	"sap/base/util/merge",
-	"sap/ui/core/Fragment", // needed to have sap.ui.xmlfragment
-	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
+	"sap/ui/core/Fragment" // needed to have sap.ui.xmlfragment
 ], function (
 	BaseTreeModifier,
 	ObjectPath,
 	XMLHelper,
 	jQuery,
 	merge
-	/* other jQuery.sap dependencies */
 ) {
 
 	"use strict";

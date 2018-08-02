@@ -9,7 +9,7 @@
 	<!-- Bootstrapping UI5 -->
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.f"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-preload="async"
@@ -21,20 +21,17 @@
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 				"sap/ui/demo/masterdetail/localService/mockserver",
-				"sap/m/Shell",
 				"sap/ui/core/ComponentContainer"
-			], function (server, Shell, ComponentContainer) {
+			], function (server, ComponentContainer) {
 				// set up test service for local testing
 				server.init();
 				// initialize the UI component
-				new Shell({
-					app: new ComponentContainer({
-						height: "100%",
-						name: "sap.ui.demo.masterdetail",
-						settings: {
-							id: "masterdetail"
-						}
-					})
+				new ComponentContainer({
+					height: "100%",
+					name: "sap.ui.demo.masterdetail",
+					settings: {
+						id: "masterdetail"
+					}
 				}).placeAt("content");
 			});
 		});

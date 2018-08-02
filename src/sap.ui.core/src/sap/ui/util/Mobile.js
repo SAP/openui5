@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(['sap/ui/Device', 'sap/base/Log'], function(Device, Log) {
+sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], function(Device, Log, jQuery) {
 	"use strict";
 
 	var Mobile = {};

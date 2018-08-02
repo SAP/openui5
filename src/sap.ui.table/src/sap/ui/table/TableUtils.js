@@ -4,9 +4,32 @@
 
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
-	"sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/library", "sap/ui/model/ChangeReason", "./TableGrouping",
-	"./TableColumnUtils", "./TableMenuUtils", "./TableBindingUtils", "./library", "sap/base/Log"
-], function(Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, TableBindingUtils, library, Log) {
+	"sap/ui/base/Object",
+	"sap/ui/core/Control",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/library",
+	"sap/ui/model/ChangeReason",
+	"./TableGrouping",
+	"./TableColumnUtils",
+	"./TableMenuUtils",
+	"./TableBindingUtils",
+	"./library",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(
+	BaseObject,
+	Control,
+	ResizeHandler,
+	coreLibrary,
+	ChangeReason,
+	TableGrouping,
+	TableColumnUtils,
+	TableMenuUtils,
+	TableBindingUtils,
+	library,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 	// Shortcuts
@@ -358,29 +381,13 @@ sap.ui.define([
 		canUsePendingRequestsCounter: function(oTable) {
 			var oBinding = oTable ? oTable.getBinding("rows") : null;
 
-			if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding")) {
+			if (BaseObject.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding")) {
 				return oBinding.bUseBatchRequests;
-			} else if (TableUtils.isInstanceOf(oBinding, "sap/ui/model/TreeBinding")) {
+			} else if (BaseObject.isA(oBinding, "sap.ui.model.TreeBinding")) {
 				return false;
 			}
 
 			return true;
-		},
-
-		/**
-		 * Checks whether the given object is of the given type (given in AMD module syntax)
-		 * without the need of loading the types module.
-		 * @param {sap.ui.base.ManagedObject} oObject The object to check
-		 * @param {string} sType The type given in AMD module syntax
-		 * @returns {boolean}
-		 * @private
-		 */
-		isInstanceOf : function(oObject, sType) {
-			if (!oObject || !sType) {
-				return false;
-			}
-			var oType = sap.ui.require(sType);
-			return !!(oType && (oObject instanceof oType));
 		},
 
 		/**
@@ -945,7 +952,7 @@ sap.ui.define([
 						aIdSuffix.push(sKey);
 					}
 				}
-			} else if (jQuery.isArray(vIdSuffix)) {
+			} else if (Array.isArray(vIdSuffix)) {
 				aIdSuffix = vIdSuffix;
 			}
 
@@ -1204,6 +1211,179 @@ sap.ui.define([
 					}
 				}
 			}
+		},
+
+		/**
+		 * Invokes a function if a certain time has passed since the last call.
+		 */
+		throttle: function(fn, iWait, mOptions) {
+			mOptions = Object.assign({
+				leading: true,
+				trailing: true
+			}, mOptions);
+			mOptions.maxWait = iWait;
+
+			return TableUtils.debounce(fn, iWait, mOptions);
+		},
+
+		/**
+		 * Invokes a function if it has not been called for a certain time.
+		 */
+		debounce: function(fn, iWait, mOptions) {
+			mOptions = Object.assign({
+				leading: false,
+				asyncLeading: false,
+				trailing: true,
+				maxWait: null
+			}, mOptions);
+
+			var iLastCallTime = 0;
+			var iLastInvocationTime = 0;
+			var iTimerId = null;
+			var bRequestAnimationFrame = iWait == null;
+			var bMaxWait = mOptions.maxWait != null;
+			var vContext;
+			var vArguments;
+			var oCancelablePromise = null;
+
+			iWait = iWait != null ? Math.max(0, iWait) : 0;
+			mOptions.maxWait = bMaxWait ? Math.max(mOptions.maxWait, iWait) : mOptions.maxWait;
+
+			function invoke(iTime, bAsync) {
+				var _vContext = vContext;
+				var _vArguments = vArguments;
+
+				if (vArguments === undefined) {
+					return;
+				}
+
+				resetInvocationParams();
+				iLastInvocationTime = iTime;
+
+				if (bAsync) {
+					var oPromise = Promise.resolve().then(function() {
+						if (oPromise.canceled) {
+							return;
+						}
+						oCancelablePromise = null;
+						fn.apply(_vContext, _vArguments);
+					});
+					oPromise.cancel = function() {
+						oPromise.canceled = true;
+					};
+					oCancelablePromise = oPromise;
+				} else {
+					fn.apply(_vContext, _vArguments);
+				}
+			}
+
+			function resetInvocationParams(_vContext, _vArguments) {
+				vContext = _vContext;
+				vArguments = _vArguments;
+			}
+
+			function startTimer(iWait) {
+				cancelTimer();
+				if (bRequestAnimationFrame) {
+					iTimerId = window.requestAnimationFrame(timerExpired);
+				} else {
+					iTimerId = setTimeout(timerExpired, iWait);
+				}
+			}
+
+			function cancelTimer() {
+				if (bRequestAnimationFrame) {
+					window.cancelAnimationFrame(iTimerId);
+				} else {
+					clearTimeout(iTimerId);
+				}
+				iTimerId = null;
+			}
+
+			function timerExpired() {
+				var iTime = Date.now();
+				var bShouldInvoke = shouldInvoke(iTime);
+
+				iTimerId = null;
+
+				if (bShouldInvoke) {
+					if (mOptions.trailing) {
+						invoke(iTime);
+					} else {
+						resetInvocationParams();
+					}
+				} else {
+					// Function was called while the timer was running, and the maxWait time did not expire.
+					// Timer needs to be reset with the remaining time (considering maxWait).
+					startTimer(calculateRemainingWaitTime(iTime));
+				}
+			}
+
+			function calculateRemainingWaitTime(iTime) {
+				var iTimeSinceLastCall = iTime - iLastCallTime;
+				var iTimeSinceLastInvocation = iTime - iLastInvocationTime;
+				var iRemainingWaitTime = Math.max(0, iWait - iTimeSinceLastCall);
+				var iRemainingMaxWaitTime = Math.max(0, Math.min(iRemainingWaitTime, mOptions.maxWait - iTimeSinceLastInvocation));
+
+				return bMaxWait ? iRemainingMaxWaitTime : iRemainingWaitTime;
+			}
+
+			function shouldInvoke(iTime) {
+				var iTimeSinceLastCall = iTime - iLastCallTime;
+				var iTimeSinceLastInvoke = iTime - iLastInvocationTime;
+
+				return (iLastCallTime === 0 // first call
+						|| iTimeSinceLastCall >= iWait // Wait time expired.
+						|| iTimeSinceLastCall < 0 // Wait time expired (system time gone backwards).
+						|| (bMaxWait && iTimeSinceLastInvoke >= mOptions.maxWait)); // Maximum wait time expired.
+			}
+
+			function cancel() {
+				cancelTimer();
+				iLastInvocationTime = 0;
+				resetInvocationParams();
+				if (oCancelablePromise) {
+					oCancelablePromise.cancel();
+					oCancelablePromise = null;
+				}
+			}
+
+			function pending() {
+				return iTimerId != null;
+			}
+
+			var debounced = function() {
+				var iTime = Date.now();
+				var bShouldInvoke = shouldInvoke(iTime);
+
+				resetInvocationParams(this, arguments);
+				iLastCallTime = iTime;
+
+				if (iTimerId != null) {
+					return;
+				}
+
+				if (bShouldInvoke) {
+					iLastInvocationTime = iTime; // Reset any maxWait timer.
+
+					if (mOptions.leading) {
+						if (mOptions.asyncLeading) {
+							invoke(iTime, true);
+							startTimer(iWait);
+						} else {
+							startTimer(iWait); // Start trailing timer before leading invocation. Function execution might take some time.
+							invoke(iTime);
+						}
+						return; // Timer was already started.
+					}
+				}
+
+				startTimer(iWait); // Start trailing timer.
+			};
+			debounced.cancel = cancel;
+			debounced.pending = pending;
+
+			return debounced;
 		}
 	};
 

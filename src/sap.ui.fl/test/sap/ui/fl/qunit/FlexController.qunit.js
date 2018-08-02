@@ -19,8 +19,11 @@ sap.ui.require([
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
+	"sap/m/List",
 	"sap/m/Text",
 	"sap/m/Label",
+	"sap/m/CustomListItem",
+	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
@@ -42,8 +45,11 @@ function (
 	CustomData,
 	Manifest,
 	UIComponent,
+	List,
 	Text,
 	Label,
+	CustomListItem,
+	JSONModel,
 	Log,
 	sinon
 ) {
@@ -118,6 +124,7 @@ function (
 		this.stub(this.oFlexController, "_getChangeHandler").returns(undefined);
 		this.stub(JsControlTreeModifier, "getControlType").returns(oControlType);
 		this.stub(this.oFlexController, "addChange").returns(oChange);
+		this.stub(this.oFlexController, "_getControlIfTemplateAffected").returns({control: {}, controlType: "dummy", bTemplateAffected: false});
 
 		this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl);
 		assert.ok(oUtilsLogStub.calledOnce, "a warning was logged");
@@ -173,6 +180,41 @@ function (
 
 	});
 
+	QUnit.test("_resolveGetChangesForView does not crash and logs an error if dependent selectors are missing", function (assert) {
+		var oAppComponent = new UIComponent();
+
+		this.stub(JsControlTreeModifier, "bySelector").returns({});
+		this.stub(JsControlTreeModifier, "getControlType").returns("aType");
+
+		var oControl = new Control("testComponent---localeId");
+
+		var mPropertyBagStub = {
+			view: oControl,
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent
+		};
+
+		var oLogApplyChangeErrorSpy = sandbox.spy(FlexController.prototype, "_logApplyChangeError");
+
+		this.oChange = new Change(labelChangeContent);
+
+		var oSelector = {};
+		oSelector.id = "id";
+		oSelector.idIsLocal = true;
+
+		var sDependentSelectorId = "dependent-selector-id";
+		this.stub(this.oChange, "getDependentControlIdList").returns([sDependentSelectorId]);
+
+		this.oChange.selector = oSelector;
+		this.oChange.getSelector = function(){return oSelector;};
+
+		this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [this.oChange]);
+		assert.ok(oLogApplyChangeErrorSpy.calledOnce, "an ApplyChangeError was logged");
+		assert.equal(oLogApplyChangeErrorSpy.args[0][0].message, "A dependent selector control of the flexibility change is not available.", "the correct error message is logged");
+		oControl.destroy();
+		oAppComponent.destroy();
+	});
+
 	QUnit.test('_resolveGetChangesForView applies changes with locale id', function (assert) {
 		this.oChange = new Change(labelChangeContent);
 
@@ -215,6 +257,8 @@ function (
 
 		.then(function() {
 			sinon.assert.called(changeHandlerApplyChangeStub);
+			oControl.destroy();
+			oAppComponent.destroy();
 		});
 	});
 
@@ -241,6 +285,7 @@ function (
 		sandbox.stub(this.oFlexController, "_getChangeRegistry").returns({
 			getChangeHandler: sandbox.stub().returns(oChangeHandler)
 		});
+		sandbox.stub(this.oFlexController, "_getControlIfTemplateAffected").returns(undefined);
 
 		assert.ok(this.oFlexController.isChangeHandlerRevertible(oChange), "then true is returned when change handler has revertChange()");
 
@@ -1157,6 +1202,154 @@ function (
 			assert.notOk(oResolveGetChangesForViewSpy.calledOnce, "then _resolveGetChangesForView is skipped");
 			assert.ok(oHandlePromiseChainError.calledOnce, "then error handling is called");
 		});
+	});
+
+	QUnit.module("sap.ui.fl.FlexController with template affected changes", {
+		beforeEach: function () {
+			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
+
+			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
+			var oModel = new JSONModel({
+				texts : aTexts
+			});
+
+			this.oText = new Text("text", {text : "{text}"});
+			this.oItemTemplate = new CustomListItem("item", {
+				content : this.oText
+			});
+			this.oList = new List("list", {
+				items : {
+					path : "/texts",
+					template : this.oItemTemplate
+				}
+			}).setModel(oModel);
+
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
+			oChangeRegistry.registerControlsForChanges({
+				"sap.m.Text" : {
+					"hideControl" : "default"
+				}
+			});
+
+			var oChangeContent = {
+				fileName : "change4711",
+				selector : {
+					id : this.oList.getId(),
+					local : true
+				},
+				dependentSelector: {
+					originalSelector: {
+						id : this.oText.getId(),
+						local : true
+					}
+				},
+				layer : "CUSTOMER",
+				changeType: "hideControl",
+				content : {
+					boundAggregation : "items",
+					removedElement : this.oText.getId() //original selector
+				}
+			};
+			this.oChange = new Change(oChangeContent);
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oList.destroy();
+			this.oText.destroy();
+			this.oItemTemplate.destroy();
+			ChangePersistenceFactory._instanceCache = {};
+		}
+	});
+
+	QUnit.test("when calling '_getControlIfTemplateAffected' with a change containing the parameter boundAggregation", function (assert) {
+		var mPropertyBag = {
+			modifier : JsControlTreeModifier,
+			appComponent : {},
+			view : {}
+		};
+		var mExpectedControl = {
+			control : this.oText,
+			controlType : this.oText.getMetadata().getName(),
+			bTemplateAffected : true
+		};
+		var mControl = this.oFlexController._getControlIfTemplateAffected(this.oChange, this.oList, "sap.m.List", mPropertyBag);
+
+		assert.deepEqual(mControl, mExpectedControl, "the correct control map is returned");
+	});
+
+	QUnit.test("when calling '_getControlIfTemplateAffected' with a change without containing the parameter boundAggregation", function (assert) {
+		var mPropertyBag = {
+			modifier : JsControlTreeModifier,
+			appComponent : {},
+			view : {}
+		};
+		var mExpectedControl = {
+			control : this.oList,
+			controlType : this.oList.getMetadata().getName(),
+			bTemplateAffected : false
+		};
+
+		this.oChange.getContent().boundAggregation = undefined;
+		var mControl = this.oFlexController._getControlIfTemplateAffected(this.oChange, this.oList, "sap.m.List", mPropertyBag);
+
+		assert.deepEqual(mControl, mExpectedControl, "the correct control map is returned");
+	});
+
+	QUnit.test("when calling '_applyChangesOnControl' with a change type only registered for a control inside the template", function (assert) {
+		var oHideControl = sap.ui.fl.changeHandler.HideControl;
+		var oGetChangeHandlerSpy = sandbox.spy(this.oFlexController, "_getChangeHandler");
+		var oApplyChangeSpy = sandbox.spy(oHideControl, "applyChange");
+		var oModifierUpdateAggregationSpy = sandbox.spy(JsControlTreeModifier, "updateAggregation");
+		var mChanges = {
+			"list": [this.oChange]
+		};
+		var fnGetChangesMap = function () {
+			return {
+				"mChanges": mChanges,
+				"mDependencies": {},
+				"mDependentChangesOnMe": {}
+			};
+		};
+		var oAppComponent = {};
+
+		return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oList)
+		.then(function() {
+			assert.equal(oGetChangeHandlerSpy.callCount, 1, "the function '_getChangeHandler is called once");
+			assert.equal(oGetChangeHandlerSpy.returnValues[0], oHideControl, "and returns the correct change handler");
+			assert.equal(oApplyChangeSpy.args[0][1], this.oText, "applyChange is called with the correct control");
+			assert.ok(oApplyChangeSpy.returnValues[0], "applyChange finished successfully");
+			assert.equal(oModifierUpdateAggregationSpy.callCount, 1, "updateAggregation of the modifier is called once");
+			assert.equal(oModifierUpdateAggregationSpy.args[0][0], this.oList, "updateAggregation is called with the correct control");
+			assert.equal(this.oList.getItems()[0].getContent()[0].getVisible(), false, "the text control in the first item is invisible");
+			assert.equal(this.oList.getItems()[1].getContent()[0].getVisible(), false, "the text control in the second item is invisible");
+			assert.equal(this.oList.getItems()[2].getContent()[0].getVisible(), false, "the text control in the third item is invisible");
+		}.bind(this));
+	});
+
+	QUnit.test("when calling 'revertChangesOnControl' with a change type only registered for a control inside the template", function (assert) {
+		sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns({customDataEntries: ["change4711"]});
+		this.oChange.setRevertData({
+			originalValue: false
+		});
+		var oHideControl = sap.ui.fl.changeHandler.HideControl;
+		var oGetChangeHandlerSpy = sandbox.spy(this.oFlexController, "_getChangeHandler");
+		var oRevertChangeSpy = sandbox.spy(oHideControl, "revertChange");
+		var oModifierUpdateAggregationSpy = sandbox.spy(JsControlTreeModifier, "updateAggregation");
+		var oAppComponent = {};
+
+		return this.oFlexController.revertChangesOnControl([this.oChange], oAppComponent)
+		.then(function() {
+			assert.equal(oGetChangeHandlerSpy.callCount, 1, "the function '_getChangeHandler is called once");
+			assert.equal(oGetChangeHandlerSpy.returnValues[0], oHideControl, "and returns the correct change handler");
+			assert.equal(oRevertChangeSpy.args[0][1], this.oText, "revertChange is called with the correct control");
+			assert.ok(oRevertChangeSpy.returnValues[0], "revertChange finished successfully");
+			assert.equal(oModifierUpdateAggregationSpy.callCount, 1, "updateAggregation of the modifier is called once");
+			assert.equal(oModifierUpdateAggregationSpy.args[0][0], this.oList, "updateAggregation is called with the correct control");
+			assert.equal(this.oList.getItems()[0].getContent()[0].getVisible(), false, "the text control in the first item is invisible");
+			assert.equal(this.oList.getItems()[1].getContent()[0].getVisible(), false, "the text control in the second item is invisible");
+			assert.equal(this.oList.getItems()[2].getContent()[0].getVisible(), false, "the text control in the third item is invisible");
+		}.bind(this));
 	});
 
 	QUnit.module("_applyChangesOnControl", {

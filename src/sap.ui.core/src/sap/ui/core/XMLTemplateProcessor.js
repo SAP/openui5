@@ -888,7 +888,7 @@ function(
 					if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
 
 						var fnCreateViewInstance = function () {
-							return sap.ui.view(mSettings, undefined, oClass._sType);
+							return View._legacyCreate(mSettings, undefined, oClass._sType);
 						};
 
 						// for views having a factory function defined we use the factory function!

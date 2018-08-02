@@ -6,8 +6,9 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/format/NumberFormat',
-	"./CurrencyRenderer"
-], function(Control, NumberFormat, CurrencyRenderer) {
+	"./CurrencyRenderer",
+	"sap/ui/thirdparty/jquery"
+], function(Control, NumberFormat, CurrencyRenderer, jQuery) {
 		"use strict";
 
 		/**

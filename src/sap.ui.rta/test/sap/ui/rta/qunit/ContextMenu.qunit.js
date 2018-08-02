@@ -1,13 +1,11 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/uxap/ObjectPageSection',
 	'sap/uxap/ObjectPageSubSection',
 	'sap/uxap/ObjectPageLayout',
 	'sap/ui/rta/RuntimeAuthoring',
-	'sap/ui/rta/qunit/RtaQunitUtils',
+	'qunit/RtaQunitUtils',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/m/Page',
@@ -173,6 +171,8 @@ function(
 			assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
 			assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_GROUP_FIELDS", "we can group fields");
 			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), false, "we can not rename multiple fields");
+
+			this.oRta._oDesignTime.getSelectionManager().reset();
 		}
 
 		function fnMouseTwoSelectedGroupElementsWithOneBoundField(assert) {
@@ -192,6 +192,8 @@ function(
 			assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_GROUP_FIELDS" , "group fields is there ");
 			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), false, "we can not rename multiple fields");
 			assert.equal(oContextMenuControl.getButtons()[5].getEnabled(), true, "we can group fields");
+
+			this.oRta._oDesignTime.getSelectionManager().reset();
 		}
 
 		function fnMouseTwoGroupElementsWithOneBoundField(assert) {
@@ -232,13 +234,11 @@ function(
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on GroupElement with stable id, but the Group has no stable id");
-			assert.equal(oContextMenuControl.getButtons().length, 3, "3 Menu Buttons are available");
+			assert.equal(oContextMenuControl.getButtons().length, 2, "2 Menu Buttons are available");
 			assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename is available");
 			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "and rename is enabled");
-			assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add field is available");
-			assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "but add field is disabled");
-			assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "remove field is available");
-			assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), false, "we cannot remove the field");
+			assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_REMOVE", "remove field is available");
+			assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "we cannot remove the field");
 		}
 
 		function fnKeyboardCustomSettings(assert) {
@@ -518,15 +518,13 @@ function(
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "then Menu gets opened");
-			assert.equal(oContextMenuControl.getButtons().length, 4, " and 4 Menu Buttons are available");
+			assert.equal(oContextMenuControl.getButtons().length, 3, " and 3 Menu Buttons are available");
 			assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename section is available");
 			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "add section is enabled");
 			assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
-			assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "add section is disabled");
+			assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add section is enabled (reveal is not dependent on parent)");
 			assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "remove section is available");
 			assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), true, "we cannot remove a section");
-			assert.equal(oContextMenuControl.getButtons()[3].data("id") , "CTX_PASTE", "paste section is available");
-			assert.equal(oContextMenuControl.getButtons()[3].getEnabled(), false, "we cannot paste a section, as no cut has been triggered");
 		});
 	});
 
@@ -582,6 +580,4 @@ function(
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/table/TableUtils",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropPosition",
-	"sap/ui/Device"
-], function(TableQUnitUtils, TableUtils, DragDropInfo, DropPosition, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Control"
+], function(TableQUnitUtils, TableUtils, DragDropInfo, DropPosition, Device, Control) {
 	"use strict";
 
 	// mapping of globals
@@ -104,7 +105,7 @@ sap.ui.define([
 			"No drop control: Other session data was not manipulated");
 
 		// Test the session data added by the table in dragenter.
-		oFakeEvent.dragSession.dropControl = "dummy";
+		oFakeEvent.dragSession.dropControl = new Control();
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter.call(oTable, oFakeEvent);
 
 		mSessionData = oFakeEvent.dragSession.getComplexData("sap.ui.table-" + oTable.getId());

@@ -8,7 +8,7 @@ sap.ui.define([
 	'../RenderManager',
 	"sap/ui/thirdparty/jquery"
 ],
-	function(ViewRenderer, RenderManager, jQueryDOM) {
+	function(ViewRenderer, RenderManager, jQuery) {
 	"use strict";
 
 	// shortcut
@@ -134,9 +134,9 @@ sap.ui.define([
 
 					// replace any old DOM (or invisible placeholder) for a child control with a dummy placeholder
 					var sFragmentId = fragment.getId(),
-						$fragment = jQueryDOM(document.getElementById(sFragmentId));
+						$fragment = jQuery(document.getElementById(sFragmentId));
 					if ($fragment.length == 0) {
-						$fragment = jQueryDOM(document.getElementById(PREFIX_INVISIBLE + sFragmentId));
+						$fragment = jQuery(document.getElementById(PREFIX_INVISIBLE + sFragmentId));
 					}
 					$fragment.replaceWith('<div id="' + PREFIX_DUMMY + sFragmentId + '" class="sapUiHidden"/>');
 				}

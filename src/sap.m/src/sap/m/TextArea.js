@@ -10,7 +10,8 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	'./TextAreaRenderer'
+	'./TextAreaRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	InputBase,
@@ -19,7 +20,8 @@ function(
 	library,
 	coreLibrary,
 	Device,
-	TextAreaRenderer
+	TextAreaRenderer,
+	jQuery
 ) {
 	"use strict";
 

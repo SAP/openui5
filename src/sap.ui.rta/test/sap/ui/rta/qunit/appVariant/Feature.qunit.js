@@ -1,38 +1,43 @@
 /* global QUnit  */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/thirdparty/sinon",
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/AppVariantManager",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/Utils",
+	"sap/ui/core/Control",
+	"sap/ui/core/Manifest",
 	"sap/base/util/UriParameters"
-], function(
+], function (
+	jQuery,
 	sinon,
 	RtaAppVariantFeature,
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	AppVariantManager,
 	Settings,
+	FlUtils,
 	Stack,
+	RtaUtils,
+	Control,
+	Manifest,
 	UriParameters
 ) {
 	"use strict";
 
-	QUnit.start();
-
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
-		afterEach : function(assert) {
+		afterEach : function () {
 			sandbox.restore();
 		}
-	}, function() {
-
+	}, function () {
 		QUnit.test("when onGetOverview() is called,", function(assert) {
 			var done = assert.async();
 
@@ -42,7 +47,7 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
 			var aAppVariantOverviewAttributes = [
 				{
@@ -111,15 +116,15 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(false);
+			sandbox.stub(RtaUtils,"getUshellContainer").returns(false);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
 			var fnInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
 
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oStack = new Stack();
 
 			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
@@ -134,15 +139,15 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
+			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
 			var fnInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
 
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oStack = new Stack();
 
 			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), true, "then the 'i' button is visible");
@@ -158,13 +163,13 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
+			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(true);
 
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oStack = new Stack();
 
 			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
@@ -188,14 +193,14 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
+			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
 			var fnInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oStack = new Stack();
 
 			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), true, "then the 'i' button is visible");
@@ -214,10 +219,10 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 			var fnInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
 
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oStack = new Stack();
 
 			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
@@ -231,14 +236,14 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sandbox.stub(sap.ui.rta.Utils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
+			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
 			var fnInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
 
-			var oRootControl = new sap.ui.core.Control();
+			var oRootControl = new Control();
 			var oStack = new Stack();
 
 			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), true, "then the 'i' button is visible");
@@ -247,16 +252,16 @@ sap.ui.require([
 	});
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oServer = sinon.fakeServer.create();
 
 			window.bUShellNavigationTriggered = false;
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
 
-			sap.ushell = jQuery.extend({}, sap.ushell, {
+			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
-					getService : function(sServiceName) {
+					getService : function() {
 						return {
 							toExternal : function() {
 								window.bUShellNavigationTriggered = true;
@@ -278,7 +283,7 @@ sap.ui.require([
 				}
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oServer.restore();
 			sandbox.restore();
 			sap.ushell = this.originalUShell;
@@ -309,9 +314,9 @@ sap.ui.require([
 
 			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").returns(Promise.resolve(oAppVariantData));
 
-			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 
-			var oManifest = new sap.ui.core.Manifest(oDescriptor);
+			var oManifest = new Manifest(oDescriptor);
 			var oComponent = {
 				name: "testComponent",
 				appVersion: "1.2.3",
@@ -320,13 +325,13 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns({
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
 				"sap.app": {
 					id: "TestId"
 				}
 			});
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
 
 			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve());
 
@@ -389,7 +394,7 @@ sap.ui.require([
 
 			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			this.oServer.autoRespond = true;
 
@@ -439,9 +444,9 @@ sap.ui.require([
 
 			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").returns(Promise.resolve(oAppVariantData));
 
-			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 
-			var oManifest = new sap.ui.core.Manifest(oDescriptor);
+			var oManifest = new Manifest(oDescriptor);
 			var oComponent = {
 				name: "testComponent",
 				appVersion: "1.2.3",
@@ -450,9 +455,9 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns(oDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oDescriptor);
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
 
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
 				new Settings({
@@ -513,7 +518,7 @@ sap.ui.require([
 
 			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
 
-			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			this.oServer.autoRespond = true;
 
@@ -535,5 +540,9 @@ sap.ui.require([
 				done();
 			});
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

@@ -29,7 +29,7 @@ sap.ui.define([
 	Title,
 	OverflowToolbarLayoutData,
 	ManagedObjectObserver,
-	jQueryDOM,
+	jQuery,
 	Log
 ) {
 	"use strict";
@@ -475,7 +475,7 @@ sap.ui.define([
 		var sId = this._getVisiblePanelID();
 		if (sId && oContent) {
 			// move panel div into dialog content div.
-			var $Panel = jQueryDOM(document.getElementById(sId));
+			var $Panel = jQuery(document.getElementById(sId));
 			$Panel.appendTo(jQuery(oContent));
 		}
 	};

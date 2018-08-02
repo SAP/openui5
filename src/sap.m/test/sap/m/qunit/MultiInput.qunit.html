@@ -1364,7 +1364,8 @@
 	QUnit.test("_syncTokensWithSelection - deselection", function(assert) {
 		var oListItem = new sap.m.StandardListItem(), aTokens,
 			oToken = new sap.m.Token("token", {text: "text123", key: "key123"}),
-			oSpy = this.spy(this.multiInput._tokenizer, "removeToken");
+			oSpy = this.spy(this.multiInput._tokenizer, "removeToken"),
+			oTokenDestroySpy = this.spy(sap.m.Token.prototype, "destroy");
 
 		this.multiInput.addToken(oToken);
 		oListItem.data("key", "key123");
@@ -1377,6 +1378,7 @@
 
 		// act
 		this.multiInput._syncTokensWithSelection(oListItem, false);
+		assert.ok(oTokenDestroySpy.called, "The token is destroyed on deselection.");
 		aTokens = this.multiInput.getTokens();
 
 		// assert
@@ -1416,7 +1418,7 @@
 		]);
 
 		// act
-		oSelectedItemsPicker = this.multiInput._getSelectedItemsPicker();
+		var oSelectedItemsPicker = this.multiInput._getSelectedItemsPicker();
 		//assert
 		assert.strictEqual(oSelectedItemsPicker.getMetadata().getName(), "sap.m.Popover", "_getSelectedItemsPicker method return a popover.");
 

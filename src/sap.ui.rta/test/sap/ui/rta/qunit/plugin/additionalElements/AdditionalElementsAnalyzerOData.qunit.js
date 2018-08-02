@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/model/json/JSONModel",
@@ -120,6 +118,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.test.ElementEnablementTest.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/dt/test/Test',
@@ -10,7 +9,13 @@ sap.ui.define([
 	'sap/ui/dt/test/Element',
 	"sap/base/util/ObjectPath"
 ],
-function(jQuery, Test, DesignTime, ElementTest, ObjectPath) {
+function(
+	jQuery,
+	Test,
+	DesignTime,
+	ElementTest,
+	ObjectPath
+) {
 	"use strict";
 
 	// Wait until the theme is changed

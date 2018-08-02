@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/EasyAdd",
@@ -290,6 +288,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

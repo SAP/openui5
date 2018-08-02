@@ -1,8 +1,6 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
@@ -14,7 +12,7 @@ sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
 	RemovePlugin,
 	Button,
 	VerticalLayout,
@@ -193,9 +191,34 @@ function(
 			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled returns false");
 		});
 
+		QUnit.test("when an overlay has remove action with changeOnRelevantContainer true, but the control's relevant container doesn't have stable ID", function(assert) {
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions : {
+					remove : {
+						changeType: "hideControl",
+						changeOnRelevantContainer: true
+					}
+				}
+			});
+
+			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+
+			sandbox.stub(this.oRemovePlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === this.oLayoutOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			}.bind(this));
+
+			sandbox.stub(this.oButtonOverlay, "getRelevantContainer").returns(this.oVerticalLayout);
+
+			assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), false, "... then _isEditable returns false");
+		});
+
 		QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected", function (assert) {
 			var done = assert.async();
-
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions : {
 					remove : {
@@ -223,9 +246,12 @@ function(
 			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 			assert.ok(true, "... when plugin removeElement is called ...");
 
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(jQuery(".sapUiRtaConfirmationDialogText").text(), "Button", "Confirmation dialog is shown with a correct text");
-			sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
+			// there is no chance to get notificated when the confirmation dialog is opened after switching to async processing (CommandFactory)
+			setTimeout(function() {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(jQuery(".sapUiRtaConfirmationDialogText").text(), "Button", "Confirmation dialog is shown with a correct text");
+				sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
+			}, 0);
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
@@ -376,10 +402,7 @@ function(
 		});
 	});
 
-
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

@@ -32,7 +32,8 @@ function pressHandler(oEvent) {
 var oTable = new sap.ui.table.Table({
 	title: "Title of the Table",
 	footer: "Footer of the Table",
-	selectionMode: sap.ui.table.SelectionMode.MultiToggle
+	selectionMode: sap.ui.table.SelectionMode.MultiToggle,
+	visibleRowCountMode: "Auto"
 });
 
 oTable.setToolbar(new sap.m.Toolbar({content: [
@@ -194,14 +195,10 @@ oTable.addColumn(oColumn);
 
 
 
-
 // set Model and bind Table
 var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData({modelData: TABLESETTINGS.listTestData});
 oTable.setModel(oModel);
-oTable.bindRows("/modelData");
-oTable.placeAt("content");
-(new sap.m.Button({text: "Just a Button after"})).placeAt("content");
 
 var oFlexModel = new sap.ui.model.json.JSONModel();
 oFlexModel.setData({flex: false});
@@ -215,10 +212,26 @@ TABLESETTINGS.init(oTable, function(oButton) {
 	oTable.getToolbar().addContent(oButton);
 });
 
+var oBindingInfo = oTable.getBindingInfo("rows");
+function rebind() {
+	oTable.bindRows(oBindingInfo || {path: "/modelData"});
+}
+function unbind() {
+	oTable.unbindRows();
+}
+
+var bBindTable = jQuery.sap.getUriParameters().get('sap-ui-xx-table-bind') !== "false";
+if (bBindTable) {
+	rebind();
+}
+
+oTable.placeAt("content");
+new sap.m.Button({text: "Just a Button after"}).placeAt("content");
+
 </script>
 </head>
 <body class="sapUiBody sapUiSizeCozy" role="application">
 <h1 id="header">Test Page for <code>sap.ui.table.Table</code> with <code>sap.m</code> library</h1>
-<div id="content"></div>
+<div id="content" style="height: 100vh;"></div>
 </body>
 </html>

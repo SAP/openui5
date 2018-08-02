@@ -380,7 +380,6 @@ sap.ui.define([
 
 			try {
 				var sText = oEvent.getSource().getCurrentValue();
-
 				this.mEdited[sName] = sText;
 
 				this.getView().getModel().getData().files.some(function (oFile, iIndex) {
@@ -415,6 +414,7 @@ sap.ui.define([
 						}
 					});
 				}
+
 			} catch (ex) {
 				//jQuery.sap.log.error("Invalid effective DT data");
 			}

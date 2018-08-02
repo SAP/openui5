@@ -20,6 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
+	 * @deprecated as of version 1.38
 	 */
 
 	// delegate further initialization of this library to the Core
@@ -164,6 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.ButtonStyle = {
 
@@ -211,6 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 
 
@@ -220,6 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.HorizontalDividerHeight = {
 
@@ -256,6 +260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.HorizontalDividerType = {
 
@@ -280,6 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.LabelDesign = {
 
@@ -304,6 +310,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.MenuBarDesign = {
 
@@ -328,6 +335,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.MessageType = {
 
@@ -358,6 +366,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.PaginatorEvent = {
 
@@ -400,6 +409,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.RatingIndicatorVisualMode = {
 
@@ -430,6 +440,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.RowRepeaterDesign = {
 
@@ -461,6 +472,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.SplitterSize = DataType.createType('sap.ui.commons.SplitterSize', {
 	    isValid : function(vValue) {
@@ -478,6 +490,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.TextViewColor = {
 
@@ -514,6 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.TextViewDesign = {
 
@@ -607,6 +621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.ToolbarDesign = {
 
@@ -646,6 +661,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 
 
@@ -655,6 +671,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.ToolbarSeparatorDesign = {
 
@@ -679,6 +696,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.TreeSelectionMode = {
 
@@ -716,6 +734,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @public
 	 * @since 1.7.2
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.TriStateCheckBoxState = {
 
@@ -739,7 +758,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 	};
 
-
+	/**
+	 * @namespace
+	 * @public
+	 * @deprecated as of version 1.38
+	 */
 	sap.ui.commons.enums = sap.ui.commons.enums || {};
 
 	/**
@@ -748,6 +771,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.enums.AreaDesign = {
 
@@ -778,6 +802,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.enums.BorderDesign = {
 
@@ -802,6 +827,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.enums.Orientation = {
 
@@ -819,7 +845,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 	};
 
-
+	/**
+	 * @namespace
+	 * @public
+	 * @deprecated as of version 1.38
+	 */
 	sap.ui.commons.form = sap.ui.commons.form || {};
 
 	/**
@@ -836,6 +866,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 */
 	sap.ui.commons.form.SimpleFormLayout = sap.ui.layout.form.SimpleFormLayout;
 
+	/**
+	 * @namespace
+	 * @public
+	 * @deprecated as of version 1.38
+	 */
 	sap.ui.commons.layout = sap.ui.commons.layout || {};
 
 	/**
@@ -844,6 +879,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.layout.BackgroundDesign = {
 
@@ -912,6 +948,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.layout.BorderLayoutAreaTypes = {
 
@@ -956,6 +993,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.layout.HAlign = {
 
@@ -1011,6 +1049,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.layout.Padding = {
 
@@ -1070,6 +1109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.layout.Separation = {
 
@@ -1138,6 +1178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated as of version 1.38
 	 */
 	sap.ui.commons.layout.VAlign = {
 

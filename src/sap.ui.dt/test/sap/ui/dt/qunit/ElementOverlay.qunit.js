@@ -1,64 +1,73 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Bar",
 	"sap/m/VBox",
 	"sap/m/Button",
-	"sap/m/Page",
 	"sap/m/Label",
-	"sap/m/Text",
 	"sap/m/TextArea",
 	"sap/m/Panel",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/core/ElementMetadata",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageHeader",
 	"sap/ui/Device",
 	"dt/control/SimpleScrollControl",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Popup",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
 	ElementOverlay,
 	Overlay,
 	OverlayRegistry,
-	DOMUtil,
 	ElementUtil,
 	ElementDesignTimeMetadata,
-	AggregationDesignTimeMetadata,
 	DesignTime,
 	Bar,
 	VBox,
 	Button,
-	Page,
 	Label,
-	Text,
 	TextArea,
 	Panel,
 	VerticalLayout,
-	SimpleForm,
-	ElementMetadata,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageHeader,
 	Device,
 	SimpleScrollControl,
+	jQuery,
+	Popup,
+	DOMUtil,
 	sinon
 ) {
 	"use strict";
+
+	DOMUtil.insertStyles('\
+		@keyframes example {\
+			0%		{ width: auto; }\
+			100%	{ width: 0px; }\
+		}\
+		.sapUiDtTestAnimate {\
+			animation-name: example;\
+			animation-duration: 0.1s;\
+			width: 0px;\
+			z-index: 2;\
+		} \
+	', document.head);
+
+	// Styles on "qunit-fixture" influence the scrolling tests if positioned on the screen during test execution.
+	// Please keep this tag without any styling.
+	jQuery('#qunit-fixture').removeAttr('style');
 
 	var sandbox = sinon.sandbox.create();
 
@@ -104,6 +113,20 @@ function(
 			assert.ok(this.oElementOverlay.getDomRef(), "overlay is rendered");
 			assert.ok(this.oElementOverlay.isVisible(), "overlay is visible");
 			assert.deepEqual(this.oElementOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
+			assert.equal(this.oElementOverlay.$().css("z-index"), Popup.getLastZIndex(), "the root overlay has the last z-index provided by the Popup");
+		});
+
+		QUnit.test("when the control gets a new width and the Overlay is rerendered", function (assert) {
+			var done = assert.async();
+			var iLastZIndex = this.oElementOverlay.$().css("z-index");
+
+			this.oElementOverlay.attachEventOnce('geometryChanged', function () {
+				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "the overlay has the new width as well");
+				assert.equal(this.oElementOverlay.$().css("z-index"), iLastZIndex, "the root overlay does not get a new z-index from the Popup");
+				done();
+			}, this);
+
+			this.oButton.setWidth("500px");
 		});
 
 		QUnit.test("when overlay is enabled/disabled", function (assert) {
@@ -197,8 +220,9 @@ function(
 
 			var mElementOffset = this.oElementOverlay.getElement().$().offset();
 			var mOverlayOffset = $DomRef.offset();
-			assert.equal(mOverlayOffset.top, mElementOffset.top, 'and the right postion "top" is applied to the overlay');
-			assert.equal(mOverlayOffset.left, mElementOffset.left, 'and the right postion "left" is applied to the overlay');
+			assert.equal(mOverlayOffset.top, mElementOffset.top, 'and the right position "top" is applied to the overlay');
+			assert.equal(mOverlayOffset.left, mElementOffset.left, 'and the right position "left" is applied to the overlay');
+			assert.equal(this.oElementOverlay.$().css("z-index"), $DomRef.css("z-index"), "and the right z-index is applied to the overlay");
 
 			var oDesignTimeMetadata = this.oElementOverlay.getDesignTimeMetadata();
 			assert.ok(oDesignTimeMetadata instanceof ElementDesignTimeMetadata, "and the design time metadata for the control is set");
@@ -208,7 +232,8 @@ function(
 			var done = assert.async();
 
 			this.oElementOverlay.attachEventOnce('geometryChanged', function () {
-				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width());
+				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "the new width is correctly set");
+				assert.strictEqual(this.oButton.$().css("z-index"), this.oElementOverlay.$().css("z-index"), "the new z-index is correctly set");
 				done();
 			}, this);
 
@@ -953,6 +978,48 @@ function(
 			assert.ok(this.oScrollControlOverlay.getAggregationOverlay("footer").getDomRef(), "aggregation overlay outside scroll container has domRef");
 		});
 	});
+	QUnit.module("Given a control with control domRef defined in dt-metadata", {
+		beforeEach : function(assert) {
+			var AnyControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.AnyControl', {
+				metadata: {
+					designtime: {
+						domRef: ".sapUiDtTestSSCScrollContainer",
+						scrollContainers : null //not needed in this test
+					}
+				},
+				renderer: SimpleScrollControl.getMetadata().getRenderer().render
+			});
+
+			var fnDone = assert.async();
+
+			this.oAnyControl = new AnyControl({
+				id : "control"
+			});
+
+			this.oVBox = new VBox({
+				items: [this.oAnyControl]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVBox]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oAnyControlOverlay = OverlayRegistry.getOverlay(this.oAnyControl);
+				fnDone();
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oVBox.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function () {
+		QUnit.test("when the overlay is rendered, also aggregation overlays are rendered", function(assert) {
+			assert.ok(this.oAnyControlOverlay.getDomRef(), "overlay has domRef");
+			assert.ok(jQuery(this.oAnyControlOverlay.getGeometry().domRef).hasClass("sapUiDtTestSSCScrollContainer"), "domRef from dt-metadata is taken");
+		});
+	});
 
 	QUnit.module("Scrollbar classes removal", {
 		beforeEach: function(assert) {
@@ -1123,6 +1190,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

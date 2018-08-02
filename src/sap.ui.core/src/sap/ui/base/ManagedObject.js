@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/util/deepEqual",
-	"sap/base/util/uid"
+	"sap/base/util/uid",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	BindingParser,
 	DataType,
@@ -40,7 +41,8 @@ sap.ui.define([
 	Log,
 	assert,
 	deepEqual,
-	uid
+	uid,
+	jQuery
 ) {
 
 	"use strict";

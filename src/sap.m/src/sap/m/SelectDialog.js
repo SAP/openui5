@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
+	'sap/m/Title',
 	'sap/ui/core/theming/Parameters',
 	'./SelectDialogRenderer'
 ],
@@ -32,6 +33,7 @@ function(
 	Label,
 	BusyIndicator,
 	Bar,
+	Title,
 	Parameters,
 	SelectDialogRenderer
 	) {
@@ -348,15 +350,24 @@ function(
 			]
 		});
 
+		//store a reference to the clear button for clearing the selection
+		this._oClearButton = new Button(this.getId() + "-clear", {
+			text: this._oRb.getText("SELECTDIALOG_CLEARBUTTON"),
+			press: function() {
+				this._removeSelection();
+				this._updateSelectionIndicator();
+			}.bind(this)
+		});
+
 		//store a reference to the dialog header
 		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
 			contentMiddle: [
-				new sap.m.Title(this.getId()  + "-dialog-title", {
+				new Title(this.getId()  + "-dialog-title", {
 					level: "H2"
 				})
 			],
 			contentRight: [
-				this._getClearButton()
+				this._oClearButton
 			]
 		});
 
@@ -434,6 +445,7 @@ function(
 		this._oList = null;
 		this._oSearchField = null;
 		this._oSubHeader = null;
+		this._oClearButton = null;
 		this._oBusyIndicator = null;
 		this._sSearchFieldValue = null;
 		this._iListUpdateRequested = 0;
@@ -960,26 +972,6 @@ function(
 	};
 
 	/**
-	 * Lazy load the Clear button
-	 * @private
-	 * @return {sap.m.Button} The button
-	 */
-	SelectDialog.prototype._getClearButton = function () {
-
-		if (!this._oClearButton) {
-			this._oClearButton = new Button(this.getId() + "-clear", {
-				text: this._oRb.getText("SELECTDIALOG_CLEARBUTTON"),
-				press: function() {
-					this._removeSelection();
-					this._updateSelectionIndicator();
-				}.bind(this)
-			});
-		}
-		return this._oClearButton;
-	};
-
-
-	/**
 	 * Internal event handler for the cancel button and ESC key
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
@@ -1018,7 +1010,7 @@ function(
 		var iSelectedContexts = this._oList.getSelectedContextPaths(true).length,
 			oInfoBar = this._oList.getInfoToolbar();
 
-		this._getClearButton().setEnabled(iSelectedContexts > 0);
+		this._oClearButton.setEnabled(iSelectedContexts > 0);
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts && this.getMultiSelect());
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));

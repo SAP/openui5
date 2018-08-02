@@ -8,8 +8,9 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/Month',
 	'sap/ui/unified/library',
-	"./DatesRowRenderer"
-], function(CalendarUtils, CalendarDate, Month, library, DatesRowRenderer) {
+	"./DatesRowRenderer",
+	"sap/ui/thirdparty/jquery"
+], function(CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery) {
 	"use strict";
 
 	/*

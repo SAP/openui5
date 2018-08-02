@@ -7,9 +7,10 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/IconPool',
 	'./library',
-	"sap/base/security/encodeXML"
+	"sap/base/security/encodeXML",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Element, IconPool, library, encodeXML) {
+	function(Element, IconPool, library, encodeXML, jQuery) {
 	"use strict";
 
 

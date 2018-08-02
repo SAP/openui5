@@ -8,9 +8,10 @@ sap.ui.define([
 	'./TreeBinding',
 	'sap/ui/model/SorterProcessor',
 	'sap/ui/model/FilterProcessor',
-	'sap/ui/model/FilterType'
+	'sap/ui/model/FilterType',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(ChangeReason, TreeBinding, SorterProcessor, FilterProcessor, FilterType) {
+	function(ChangeReason, TreeBinding, SorterProcessor, FilterProcessor, FilterType, jQuery) {
 	"use strict";
 
 
@@ -231,7 +232,7 @@ sap.ui.define([
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
 			if (this.oCombinedFilter && !this.bIsFiltering) {
-				if (jQuery.inArray(oNodeContext, this.filterInfo.aFilteredContexts) != -1) {
+				if (this.filterInfo.aFilteredContexts.indexOf(oNodeContext) != -1) {
 					aContexts.push(oNodeContext);
 				}
 			} else {
@@ -345,7 +346,7 @@ sap.ui.define([
 				this.filterInfo.oParentContext = oParentContext;
 			}
 			// push additionally parentcontexts if any children are already included in filtered contexts
-			if (jQuery.inArray(this.filterInfo.oParentContext, aUnfilteredContexts) != -1) {
+			if (aUnfilteredContexts.indexOf(this.filterInfo.oParentContext) != -1) {
 				this.filterInfo.aFilteredContexts.push(oParentContext);
 				// set the parent context which was added to be the new parent context
 				this.filterInfo.oParentContext = oParentContext;

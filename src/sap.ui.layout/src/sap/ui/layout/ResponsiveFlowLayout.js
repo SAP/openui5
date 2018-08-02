@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/Device',
 	'./ResponsiveFlowLayoutRenderer',
-	'sap/ui/thirdparty/jquery',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
 ],
 	function(
@@ -20,7 +20,7 @@ sap.ui.define([
 		ResizeHandler,
 		Device,
 		ResponsiveFlowLayoutRenderer,
-		jQueryDOM
+		jQuery
 	) {
 	"use strict";
 
@@ -193,7 +193,7 @@ sap.ui.define([
 			var currentRow = -1;
 
 			var fnCurrentWrapping = function(j) {
-				var $cont = jQueryDOM(document.getElementById(oRow.cont[j].id));
+				var $cont = jQuery(document.getElementById(oRow.cont[j].id));
 				if ($cont.length > 0) {
 					var offset = $cont[0].offsetLeft;
 					if (lastOffsetLeft >= offset) {
@@ -553,7 +553,7 @@ sap.ui.define([
 						this._getRenderManager().flush(this._oDomRef);
 
 						for (var i = 0; i < this._rows.length; i++) {
-							var oTmpRect = this._getElementRect(jQueryDOM(document.getElementById(sId + "-row" + i)));
+							var oTmpRect = this._getElementRect(jQuery(document.getElementById(sId + "-row" + i)));
 							this._rows[i].oRect = oTmpRect;
 						}
 					}

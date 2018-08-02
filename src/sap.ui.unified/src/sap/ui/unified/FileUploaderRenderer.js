@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.unified.FileUploader
-sap.ui.define(['sap/ui/unified/library'],
-	function(library) {
+sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
+	function(library, jQuery) {
 	"use strict";
 
 

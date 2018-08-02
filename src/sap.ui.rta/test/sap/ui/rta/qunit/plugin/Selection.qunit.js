@@ -1,9 +1,7 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"jquery.sap.global",
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/Selection",
@@ -20,8 +18,10 @@ sap.ui.require([
 	"sap/m/Text",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
+	"sap/ui/core/UIComponent",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4"
-], function(
+], function (
 	jQuery,
 	Remove,
 	Combine,
@@ -39,15 +39,17 @@ sap.ui.require([
 	Text,
 	ChangeRegistry,
 	SimpleChanges,
+	UIComponent,
+	KeyCodes,
 	sinon
-){
+) {
 	"use strict";
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach : function(assert) {
 			this.sandbox = sinon.sandbox.create();
 
-			this.oComponent = new sap.ui.core.UIComponent();
+			this.oComponent = new UIComponent();
 			this.sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
@@ -133,7 +135,7 @@ sap.ui.require([
 
 
 			var done = assert.async();
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				plugins : [
 					this.oSelectionPlugin,
 					new Remove({commandFactory :this.oCommandFactory}),
@@ -183,8 +185,7 @@ sap.ui.require([
 				done();
 			});
 
-			this.oDesignTime.setSelectionMode(sap.ui.dt.SelectionMode.Multi);
-
+			this.oSelectionManager = this.oDesignTime.getSelectionManager();
 			this.oEvent = jQuery.Event('keydown');
 			this.oEvent.shiftKey = false;
 			this.oEvent.altKey = false;
@@ -207,8 +208,8 @@ sap.ui.require([
 		QUnit.test("when trying to select the 2. compatible (removable/combinable) control", function(assert){
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
-			oOverlay1.setSelected(true);
-			oOverlay2.setSelected(true);
+
+			this.oSelectionManager.set([oOverlay1, oOverlay2]);
 
 			assert.ok(oOverlay1.isSelected(), "then innerBtn11 overlay is selected");
 			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
@@ -219,11 +220,20 @@ sap.ui.require([
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("othercontainer3"));
 			oOverlay2.setSelectable(true);
 
-			oOverlay1.setSelected(true);
-			oOverlay2.setSelected(true);
+			this.oSelectionManager.add(oOverlay1);
+			this.oSelectionManager.add(oOverlay2);
 
 			assert.ok(oOverlay1.isSelected(), "then container1 overlay is selected");
 			assert.notOk(oOverlay2.isSelected(), "then othercontainer3 overlay is not selected");
+		});
+
+		QUnit.test("when trying to select a single container which doesn't pass validator of Plugin", function(assert){
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("othercontainer3"));
+			oOverlay.setSelectable(true);
+
+			this.oSelectionManager.add(oOverlay);
+
+			assert.ok(oOverlay.isSelected(), "then othercontainer3 overlay is not selected");
 		});
 
 		QUnit.test("when trying to select 3 overlays and the 2. control is multiselection enabled for a different action", function(assert){
@@ -231,9 +241,9 @@ sap.ui.require([
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerTxt13"));
 			var oOverlay3 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 
-			oOverlay1.setSelected(true);
-			oOverlay2.setSelected(true);
-			oOverlay3.setSelected(true);
+			this.oSelectionManager.add(oOverlay1);
+			this.oSelectionManager.add(oOverlay2);
+			this.oSelectionManager.add(oOverlay3);
 
 			assert.ok(oOverlay1.isSelected(), "then innerBtn12 overlay is selected");
 			assert.notOk(oOverlay2.isSelected(), "then innerTxt13 overlay for the different action is not selected");
@@ -245,8 +255,8 @@ sap.ui.require([
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("btnOutsideContainer"));
 			oOverlay2.setSelectable(true);
 
-			oOverlay1.setSelected(true);
-			oOverlay2.setSelected(true);
+			this.oSelectionManager.add(oOverlay1);
+			this.oSelectionManager.add(oOverlay2);
 
 			assert.ok(oOverlay1.isSelected(), "then innerBtn12 overlay is selected");
 			assert.notOk(oOverlay2.isSelected(), "then btnOutsideContainer overlay from different parent is not selected");
@@ -256,8 +266,8 @@ sap.ui.require([
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1"));
 
-			oOverlay1.setSelected(true);
-			oOverlay2.setSelected(true);
+			this.oSelectionManager.add(oOverlay1);
+			this.oSelectionManager.add(oOverlay2);
 
 			assert.ok(oOverlay1.isSelected(), "then innerVBox1Txt overlay is selected");
 			assert.notOk(oOverlay2.isSelected(), "then innerVBox1 overlay is not selected");
@@ -267,8 +277,8 @@ sap.ui.require([
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2Txt"));
 
-			oOverlay1.setSelected(true);
-			oOverlay2.setSelected(true);
+			this.oSelectionManager.add(oOverlay1);
+			this.oSelectionManager.add(oOverlay2);
 
 			assert.ok(oOverlay1.isSelected(), "then innerVBox1Txt overlay is selected");
 			assert.ok(oOverlay2.isSelected(), "then innerVBox2Txt overlay is selected");
@@ -278,8 +288,8 @@ sap.ui.require([
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2"));
 
-			oOverlay1.setSelected(true);
-			oOverlay2.setSelected(true);
+			this.oSelectionManager.add(oOverlay1);
+			this.oSelectionManager.add(oOverlay2);
 
 			assert.ok(oOverlay1.isSelected(), "then innerVBox1Txt overlay is selected");
 			assert.notOk(oOverlay2.isSelected(), "then innerVBox2 overlay is not selected");
@@ -290,8 +300,8 @@ sap.ui.require([
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2Btn"));
 
-			oOverlay1.setSelected(true);
-			oOverlay2.setSelected(true);
+			this.oSelectionManager.add(oOverlay1);
+			this.oSelectionManager.add(oOverlay2);
 
 			assert.ok(oOverlay1.isSelected(), "then innerVBox1Txt overlay is selected");
 			assert.notOk(oOverlay2.isSelected(), "then innerVBox2Btn overlay is not selected");
@@ -304,7 +314,7 @@ sap.ui.require([
 				isRoot: false
 			});
 			this.oSelectionPlugin.registerElementOverlay(oOverlay);
-			oOverlay.setSelected(true);
+			this.oSelectionManager.add(oOverlay);
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
 			this.oSelectionPlugin.deregisterElementOverlay(oOverlay);
 		});
@@ -319,27 +329,28 @@ sap.ui.require([
 		QUnit.test("Pressing a Keyboard-key other than Arrows and Enter (e.g.TAB) on an Overlay", function (assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.focus();
-			this.oEvent.keyCode = jQuery.sap.KeyCodes.TAB;
+			this.oEvent.keyCode = KeyCodes.TAB;
 			oOverlay.$().trigger(this.oEvent);
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
 		});
 
 		QUnit.test("Pressing CTRL-ENTER on an Overlay", function (assert) {
-			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
-			var oSpy = sinon.spy(this.oDesignTime, "setSelectionMode");
-			oOverlay.focus();
-			this.oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			this.oSelectionManager.add(oOverlay1);
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			oOverlay2.focus();
+			this.oEvent.keyCode = KeyCodes.ENTER;
 			this.oEvent.ctrlKey = true;
-			oOverlay.$().trigger(this.oEvent);
-			assert.ok(oSpy.callCount, 2, "then Selection Mode has changed");
-			assert.ok(oOverlay.isSelected(), "and this overlay is selected");
+			oOverlay2.$().trigger(this.oEvent);
+			assert.ok(oOverlay1.isSelected(), "then Overlay1 is selected");
+			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
 		});
 
 		QUnit.test("Pressing UP-Arrow on an Overlay", function (assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2Btn"));
 			oOverlay.focus();
 			var oParentOverlay = Utils.getFocusableParentOverlay(oOverlay);
-			this.oEvent.keyCode = jQuery.sap.KeyCodes.ARROW_UP;
+			this.oEvent.keyCode = KeyCodes.ARROW_UP;
 			oOverlay.$().trigger(this.oEvent);
 			assert.ok(Utils.getFocusedOverlay() === oParentOverlay, "Parent Overlay is focused");
 		});
@@ -348,7 +359,7 @@ sap.ui.require([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2"));
 			oOverlay.focus();
 			var oFirstChildOverlay = Utils.getFirstFocusableDescendantOverlay(oOverlay);
-			this.oEvent.keyCode = jQuery.sap.KeyCodes.ARROW_DOWN;
+			this.oEvent.keyCode = KeyCodes.ARROW_DOWN;
 			oOverlay.$().trigger(this.oEvent);
 			assert.ok(Utils.getFocusedOverlay() === oFirstChildOverlay, "Child Overlay is focused");
 		});
@@ -357,7 +368,7 @@ sap.ui.require([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			oOverlay.focus();
 			var oPrevSiblingOverlay = Utils.getPreviousFocusableSiblingOverlay(oOverlay);
-			this.oEvent.keyCode = jQuery.sap.KeyCodes.ARROW_LEFT;
+			this.oEvent.keyCode = KeyCodes.ARROW_LEFT;
 			oOverlay.$().trigger(this.oEvent);
 			assert.ok(Utils.getFocusedOverlay() === oPrevSiblingOverlay, "Previous Sibling Overlay is focused");
 		});
@@ -366,7 +377,7 @@ sap.ui.require([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.focus();
 			var oNextSiblingOverlay = Utils.getNextFocusableSiblingOverlay(oOverlay);
-			this.oEvent.keyCode = jQuery.sap.KeyCodes.ARROW_RIGHT;
+			this.oEvent.keyCode = KeyCodes.ARROW_RIGHT;
 			oOverlay.$().trigger(this.oEvent);
 			assert.ok(Utils.getFocusedOverlay() === oNextSiblingOverlay, "Next Sibling Overlay is focused");
 		});
@@ -425,13 +436,6 @@ sap.ui.require([
 			oOverlay.setEditable(false);
 		});
 
-		QUnit.test("When selection Mode changes", function (assert) {
-			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
-			this.oDesignTime.setSelectionMode(sap.ui.dt.SelectionMode.Single);
-			oOverlay.setSelected(true);
-			assert.ok(oOverlay.isSelected(), "then single overlay is selected");
-		});
-
 		QUnit.test("When the method _checkDeveloperMode is called and Developermode is true", function (assert) {
 			var fnDone = assert.async();
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
@@ -456,6 +460,4 @@ sap.ui.require([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

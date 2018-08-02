@@ -19,10 +19,11 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/m/library',
 	"./SemanticPageRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-    SegmentedContainer,
+	SegmentedContainer,
 	SemanticConfiguration,
 	Button,
 	Title,
@@ -38,7 +39,8 @@ function(
 	coreLibrary,
 	library,
 	SemanticPageRenderer,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

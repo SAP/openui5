@@ -7,9 +7,17 @@ sap.ui.define([
 	'./SliderUtilities',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
-	'./SliderTooltipContainerRenderer'
+	'./SliderTooltipContainerRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
-function(Library, SliderUtilities, Control, Popup, SliderTooltipContainerRenderer) {
+function(
+	Library,
+	SliderUtilities,
+	Control,
+	Popup,
+	SliderTooltipContainerRenderer,
+	jQuery
+) {
 		"use strict";
 
 		/**

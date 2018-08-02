@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Locale',
 	"./CalendarRowRenderer",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	Device,
@@ -28,7 +29,8 @@ sap.ui.define([
 	ResizeHandler,
 	Locale,
 	CalendarRowRenderer,
-	containsOrEquals
+	containsOrEquals,
+	jQuery
 ) {
 	"use strict";
 
@@ -843,7 +845,7 @@ sap.ui.define([
 					aNonWorkingDays.push(i);
 				}
 			}
-		}else if (!jQuery.isArray(aNonWorkingDays)) {
+		}else if (!Array.isArray(aNonWorkingDays)) {
 			aNonWorkingDays = [];
 		}
 

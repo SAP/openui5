@@ -196,6 +196,7 @@ sap.ui.define([
 	 * needed because the AppDescriptorChanges are stored with a different ComponentName (without ".Component" at the end)
 	 * -> two different ChangePersistence
 	 * @param {sap.ui.base.ManagedObject} oControl control or app component for which the flex controller should be instantiated
+	 * @returns {Promise} Returns AppDescriptorFlexController for given controls
 	 */
 	LREPSerializer.prototype._getAppDescriptorFlexController = function(oControl) {
 		var oOuterAppComponent = FlexUtils.getAppComponentForControl(oControl, true);
@@ -269,9 +270,6 @@ sap.ui.define([
 	};
 
 	/**
-	 *
-	 * @param {string} sReferenceAppIdForChanges
-	 * @returns {Promise} returns a promise with true or false
 	 * @description Shall be used to persist the unsaved changes (in the current RTA session) for new app variant;
 	 * Once the unsaved changes has been saved for the app variant, the cache (See Cache#update) will not be updated for the current app
 	 * and the dirty changes will be spliced;
@@ -279,6 +277,8 @@ sap.ui.define([
 	 * Therefore if there shall be some UI changes present in command stack, we undo all the changes till the beginning. Before undoing we detach the 'commandExecuted' event
 	 * Since we detached the commandExecuted event, therefore LRepSerializer would not talk with FlexController and ChangePersistence.
 	 * In the last when user presses 'Save and Exit', there will be no change registered for the current app.
+	 * @param {string} sReferenceAppIdForChanges - ApplicationId
+	 * @returns {Promise} returns a promise with true or false
 	 */
 	LREPSerializer.prototype.saveAsCommands = function(sReferenceAppIdForChanges) {
 		if (!sReferenceAppIdForChanges) {

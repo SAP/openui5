@@ -20,7 +20,8 @@ sap.ui.define([
 	"./ValueListType",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	SyncPromise,
 	BindingMode,
@@ -38,7 +39,8 @@ sap.ui.define([
 	ValueListType,
 	Log,
 	assert,
-	ObjectPath
+	ObjectPath,
+	jQuery
 ) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */

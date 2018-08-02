@@ -1,6 +1,6 @@
 sap.ui.define([
-	"test/unit/model/formatter",
-	"test/unit/model/models"
+	"./model/formatter",
+	"./model/models"
 ], function() {
 	"use strict";
 });

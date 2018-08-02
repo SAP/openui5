@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/PDFViewerRenderer",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/base/security/URLWhitelist"
+	"sap/base/security/URLWhitelist",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		library,
@@ -23,7 +24,8 @@ sap.ui.define([
 		PDFViewerRenderer,
 		Log,
 		assert,
-		URLWhitelist
+		URLWhitelist,
+		jQuery
 	) {
 		"use strict";
 

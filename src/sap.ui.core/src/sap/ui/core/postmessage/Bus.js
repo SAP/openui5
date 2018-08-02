@@ -215,7 +215,8 @@ function (
 	 * @private
 	 */
 	PostMessageBus.prototype._getText = function (sKey, aParameters) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParameters);
+		return sap.ui.getCore().getLibraryResourceBundle(true)
+		.then(function(oLibraryResourceBundle) { return oLibraryResourceBundle.getText(sKey, aParameters); });
 	};
 
 	/**
@@ -279,9 +280,10 @@ function (
 					} else {
 						// Show dialog
 						sap.ui.require(["sap/ui/core/postmessage/confirmationDialog"], function (confirmationDialog) {
-							confirmationDialog(
-								this._getText('PostMessage.Message', [mData.data, sOrigin])
-							)
+							this._getText('PostMessage.Message', [mData.data, sOrigin])
+							.then(function(sText) {
+								return confirmationDialog(sText);
+							})
 							.then(
 								function () {
 									this.addAcceptedOrigin(sOrigin);

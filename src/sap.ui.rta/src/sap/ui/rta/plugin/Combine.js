@@ -5,11 +5,13 @@
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
-	'sap/ui/rta/util/BindingsExtractor'
+	'sap/ui/rta/util/BindingsExtractor',
+	'sap/ui/dt/Util'
 ], function(
 	Plugin,
 	Utils,
-	BindingsExtractor
+	BindingsExtractor,
+	DtUtil
 ) {
 	"use strict";
 
@@ -48,7 +50,10 @@ sap.ui.define([
 	Combine.prototype._isEditable = function (oOverlay) {
 		var oCombineAction = this.getAction(oOverlay);
 		if (oCombineAction && oCombineAction.changeType && oCombineAction.changeOnRelevantContainer) {
-			return this.hasChangeHandler(oCombineAction.changeType, oOverlay.getRelevantContainer()) && this.hasStableId(oOverlay);
+			var oRelevantContainer = oOverlay.getRelevantContainer();
+			return this.hasChangeHandler(oCombineAction.changeType, oRelevantContainer) &&
+				this.hasStableId(oOverlay) &&
+				this._checkRelevantContainerStableID(oCombineAction, oOverlay);
 		} else {
 			return false;
 		}
@@ -166,18 +171,25 @@ sap.ui.define([
 		var oCombineAction = this.getAction(oElementOverlay);
 		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oCombineAction);
 
-		var oCombineCommand = this.getCommandFactory().getCommandFor(
+		return this.getCommandFactory().getCommandFor(
 			oCombineElement,
 			"combine",
 			{
-				source: oCombineElement,
-				combineFields: aElements
+				source : oCombineElement,
+				combineFields : aElements
 			},
 			oDesignTimeMetadata,
 			sVariantManagementReference
-		);
-		this.fireElementModified({
-			"command": oCombineCommand
+		)
+
+		.then(function(oCombineCommand) {
+			this.fireElementModified({
+				"command" : oCombineCommand
+			});
+		}.bind(this))
+
+		.catch(function(oMessage) {
+			throw DtUtil.createError("Combine#handleCombine", oMessage, "sap.ui.rta");
 		});
 	};
 

@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
-	'./CheckBoxRenderer'
+	'./CheckBoxRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Label,
@@ -21,7 +22,8 @@ sap.ui.define([
 		IconPool,
 		EnabledPropagator,
 		coreLibrary,
-		CheckBoxRenderer
+		CheckBoxRenderer,
+		jQuery
 	) {
 	"use strict";
 

@@ -11,7 +11,16 @@
  */
 
 // Provides the XML object based model implementation
-sap.ui.define(['sap/ui/model/ClientModel', 'sap/ui/model/Context', './XMLListBinding', './XMLPropertyBinding', './XMLTreeBinding', "sap/ui/util/XMLHelper", "sap/base/Log"],
+sap.ui.define([
+	'sap/ui/model/ClientModel',
+	'sap/ui/model/Context',
+	'./XMLListBinding',
+	'./XMLPropertyBinding',
+	'./XMLTreeBinding',
+	"sap/ui/util/XMLHelper",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
 	function(
 		ClientModel,
 		Context,
@@ -19,7 +28,8 @@ sap.ui.define(['sap/ui/model/ClientModel', 'sap/ui/model/Context', './XMLListBin
 		XMLPropertyBinding,
 		XMLTreeBinding,
 		XMLHelper,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 

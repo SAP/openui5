@@ -79,7 +79,7 @@ function(
 
 		var iTaskId = this._iNextId++;
 
-		this._aList.push(jQuery.extend({}, mTask, {
+		this._aList.push(Object.assign({}, mTask, {
 			id: iTaskId
 		}));
 

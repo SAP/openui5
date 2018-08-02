@@ -62,7 +62,7 @@ sap.ui.define([
 	ResizeHandler,
 	Device,
 	UploadCollectionRenderer,
-	jQueryDOM,
+	jQuery,
 	KeyCodes,
 	Log
 ) {
@@ -1073,7 +1073,7 @@ sap.ui.define([
 		if (this.getInstantUpload()) {
 			if (this.aItems || (this.aItems === this.getItems())) {
 				if (this.editModeItem) {
-					var $oEditBox = jQueryDOM(document.getElementById(this.editModeItem + "-ta_editFileName-inner"));
+					var $oEditBox = jQuery(document.getElementById(this.editModeItem + "-ta_editFileName-inner"));
 					if ($oEditBox) {
 						var sId = this.editModeItem;
 						if (!Device.os.ios) {
@@ -1551,7 +1551,7 @@ sap.ui.define([
 
 		sContainerId = sItemId + "-container";
 		// UploadCollection has to destroy the container as sap.ui.core.HTML is preserved by default which leads to problems at rerendering
-		$container = jQueryDOM(document.getElementById(sContainerId));
+		$container = jQuery(document.getElementById(sContainerId));
 		if ($container) {
 			$container.remove();
 			$container = null;
@@ -1645,7 +1645,7 @@ sap.ui.define([
 		}
 		oRm.write("</div>"); // end of container for Filename, attributes and statuses
 		this._renderButtons(oRm, item, sStatus, sItemId);
-		oRm.flush(jQueryDOM(document.getElementById(containerId))[0], true); // after removal to UploadCollectionItemRenderer delete this line
+		oRm.flush(jQuery(document.getElementById(containerId))[0], true); // after removal to UploadCollectionItemRenderer delete this line
 		this._truncateFileName(item);
 		this._sReziseHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
 		Device.orientation.attachHandler(this._onResize, this);
@@ -1964,9 +1964,11 @@ sap.ui.define([
 			oItemsBinding = this.getBinding("items"),
 			bGroupCreated = false,
 			sGroupKey,
+			sModelName = this.getBindingInfo("items") ? this.getBindingInfo("items").model : undefined,
 			fnGroupHeader = this.getBindingInfo("items") ? this.getBindingInfo("items").groupHeaderFactory : null;
 		var fnGroup = function(oItem) {
-			return oItem.getBindingContext() ? oItemsBinding.getGroup(oItem.getBindingContext()) : null;
+			//Added sModelName to consider named model cases if empty default model is picked without checking model bind to items.
+			return oItem.getBindingContext(sModelName) ? oItemsBinding.getGroup(oItem.getBindingContext(sModelName)) : null;
 		};
 		var fnGroupKey = function(item) {
 			return fnGroup(item) && fnGroup(item).key;
@@ -2107,7 +2109,7 @@ sap.ui.define([
 			return;
 		}
 		this.sDeletedItemId = sItemId;
-		if (jQueryDOM(document.getElementById(this.sId)).hasClass("sapUiSizeCompact")) {
+		if (jQuery(document.getElementById(this.sId)).hasClass("sapUiSizeCompact")) {
 			sCompact = "sapUiSizeCompact";
 		}
 
@@ -2757,7 +2759,7 @@ sap.ui.define([
 					oItem._percentUploaded = iPercentUploaded;
 					// add ARIA attribute for screen reader support
 
-					$busyIndicator = jQueryDOM(document.getElementById(oItem.getId() + "-ia_indicator"));
+					$busyIndicator = jQuery(document.getElementById(oItem.getId() + "-ia_indicator"));
 					if (iPercentUploaded === 100) {
 						$busyIndicator.attr("aria-label", sPercentUploaded);
 					} else {
@@ -2871,7 +2873,7 @@ sap.ui.define([
 		});
 
 		// ensure that the HeaderParameterValues are updated
-		if (jQuery.isArray(oGetHeaderParameterResult)) {
+		if (Array.isArray(oGetHeaderParameterResult)) {
 			for (i = 0; i < oGetHeaderParameterResult.length; i++) {
 				if (event.getParameter("requestHeaders")[i].name === oGetHeaderParameterResult[i].getName()) {
 					event.getParameter("requestHeaders")[i].value = oGetHeaderParameterResult[i].getValue();
@@ -3038,7 +3040,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollection.prototype._setFocusToLineItem = function(itemId) {
-		jQueryDOM(document.getElementById(itemId)).focus();
+		jQuery(document.getElementById(itemId)).focus();
 	};
 
 	/**
@@ -3127,7 +3129,7 @@ sap.ui.define([
 		if (oObj !== undefined) {
 			if (oObj._status === UploadCollection._displayStatus) {
 				//focus at list line (status = "display") and F2 pressed --> status = "Edit"
-				var o$Obj = jQueryDOM(document.getElementById(event.target.id));
+				var o$Obj = jQuery(document.getElementById(event.target.id));
 				var o$EditButton = o$Obj.find("[id$='-editButton']");
 				var oEditButton = sap.ui.getCore().byId(o$EditButton[0].id);
 				if (oEditButton.getEnabled()) {

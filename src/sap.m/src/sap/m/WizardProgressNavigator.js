@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/Device",
 	"sap/m/ActionSheet",
-	"./WizardProgressNavigatorRenderer"
+	"./WizardProgressNavigatorRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	library,
@@ -18,7 +19,8 @@ function(
 	ItemNavigation,
 	Device,
 	ActionSheet,
-	WizardProgressNavigatorRenderer
+	WizardProgressNavigatorRenderer,
+	jQuery
 ) {
 	"use strict";
 

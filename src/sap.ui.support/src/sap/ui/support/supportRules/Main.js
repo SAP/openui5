@@ -7,14 +7,11 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/CoreFacade",
 	"sap/ui/support/supportRules/ExecutionScope",
 	"sap/ui/support/supportRules/ui/external/Highlighter",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
-	"sap/ui/support/supportRules/RuleSerializer",
-	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/History",
 	"sap/ui/support/supportRules/report/DataCollector",
@@ -22,9 +19,10 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/RuleSetLoader"
 ],
-function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
-		  ExecutionScope, Highlighter, CommunicationBus, RuleSerializer,
-		  RuleSet, IssueManager, History, DataCollector, channelNames, constants, RuleSetLoader) {
+function (jQuery, ManagedObject, Analyzer, CoreFacade,
+		  ExecutionScope, Highlighter, CommunicationBus,
+		  IssueManager, History, DataCollector, channelNames,
+		  constants, RuleSetLoader) {
 	"use strict";
 
 	var IFrameController = null;
@@ -318,6 +316,10 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 		CommunicationBus.subscribe(channelNames.ON_INIT_ANALYSIS_CTRL, function () {
 			RuleSetLoader.updateRuleSets(function () {
+				CommunicationBus.publish(channelNames.POST_APPLICATION_INFORMATION, {
+					// Use deprecated function to ensure this would work for older versions.
+					versionInfo: sap.ui.getVersionInfo()
+				});
 				this.fireEvent("ready");
 			}.bind(this));
 		}, this);
@@ -691,6 +693,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			},
 			analysisDuration: this._oAnalyzer.getElapsedTimeString(),
 			analysisDurationTitle: oReportConstants.analysisDurationTitle,
+			abap: History.getFormattedHistory(sap.ui.support.HistoryFormats.Abap),
 			name: constants.SUPPORT_ASSISTANT_NAME
 		};
 	};

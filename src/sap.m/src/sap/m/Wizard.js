@@ -11,7 +11,9 @@ sap.ui.define([
 	"./WizardRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
 ], function(
 	library,
 	Control,
@@ -20,7 +22,8 @@ sap.ui.define([
 	Device,
 	WizardRenderer,
 	containsOrEquals,
-	Log
+	Log,
+	jQuery
 ) {
 		"use strict";
 

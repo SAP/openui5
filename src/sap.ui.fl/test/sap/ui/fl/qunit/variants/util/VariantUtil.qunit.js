@@ -26,7 +26,8 @@ function(
 		beforeEach: function (assert) {
 			this._oHashRegister = {
 				currentIndex: undefined,
-				hashParams : []
+				hashParams : [],
+				variantControlIds : []
 			};
 			this.oComponent = { };
 		},
@@ -50,7 +51,8 @@ function(
 			VariantUtil.initializeHashRegister.call(this);
 			var oHashRegister = {
 				currentIndex: null,
-				hashParams: []
+				hashParams: [],
+				variantControlIds: []
 			};
 			assert.deepEqual(this._oHashRegister, oHashRegister, "then hash register object initialized");
 			assert.ok(VariantUtil._setOrUnsetCustomNavigationForParameter.calledOnce, "then VariantUtil._setOrUnsetCustomNavigationForParameter() called once");
@@ -274,10 +276,11 @@ function(
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex > 0 and 'Unknown' navigation direction", function (assert) {
 			this._oHashRegister = {
 				currentIndex: 5,
-				hashParams: [["Test0"], ["Test1"], ["Test2"]]
+				hashParams: [["Test0"], ["Test1"], ["Test2"]],
+				variantControlIds: [["variantManagement0"], ["variantManagement1"], ["variantManagement2"]]
 			};
 			this.updateHasherEntry = sandbox.stub();
-			this.switchToDefaultVariant = sandbox.stub();
+			this.switchToDefaultForVariant = sandbox.stub();
 			sandbox.stub(History, "getInstance").callsFake(function () {
 				return {
 					getDirection: function () {
@@ -295,7 +298,8 @@ function(
 
 			VariantUtil._navigationHandler.call(this);
 			assert.deepEqual(this._oHashRegister.hashParams, [], "then _oHashRegister.hashParams is reset");
-			assert.strictEqual(this.switchToDefaultVariant.getCall(0).args.length, 0, "then  VariantModel.switchToDefaultVariant() called with no parameters");
+			assert.deepEqual(this._oHashRegister.variantControlIds, [], "then _oHashRegister.variantControlIds is reset");
+			assert.strictEqual(this.switchToDefaultForVariant.getCall(0).args.length, 0, "then  VariantModel.switchToDefaultForVariant() called with no parameters");
 			assert.strictEqual(this._oHashRegister.currentIndex, 0, "then the oHashRegister.currentIndex is reset to 0");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
 				parameters: ["newEntry"]
@@ -308,7 +312,8 @@ function(
 				hashParams: [
 					[],
 					["backwardParameter"]
-				]
+				],
+				variantControlIds: [["variantManagement0"], ["variantManagement1", "variantManagement2"]]
 			};
 			this.updateHasherEntry = sandbox.stub();
 			sandbox.stub(History, "getInstance").callsFake(function () {
@@ -356,7 +361,8 @@ function(
 				hashParams: [
 					[],
 					["forwardParameter"]
-				]
+				],
+				variantControlIds: [["variantManagement0", "variantManagement1"], ["variantManagement2"]]
 			};
 			this.updateHasherEntry = sandbox.stub();
 			sandbox.stub(History, "getInstance").callsFake(function () {
@@ -379,7 +385,8 @@ function(
 		QUnit.test("when calling '_navigationHandler' with 'NewEntry' navigation direction, with no existing parameters for the new index", function (assert) {
 			this._oHashRegister = {
 				currentIndex: 0,
-				hashParams: []
+				hashParams: [],
+				variantControlIds: []
 			};
 			this.updateHasherEntry = sandbox.stub();
 
@@ -411,9 +418,10 @@ function(
 				hashParams: [
 					["existingParameter1"],
 					["existingParameter2", "existingParameter3"]
-				]
+				],
+				variantControlIds: [["variantManagement0"], ["variantManagement1", "variantManagement2"]]
 			};
-			this.switchToDefaultVariant = sandbox.stub();
+			this.switchToDefaultForVariantManagement = sandbox.stub();
 			this.updateHasherEntry = sandbox.stub();
 
 			var oMockParsedURL = {
@@ -436,8 +444,8 @@ function(
 			assert.ok(this.updateHasherEntry.calledWithExactly({
 				parameters: ["newEntry"]
 			}), "then VariantModel.updateHasherEntry() called with variant hash parameters from next index, URL update and no _oHashRegister update");
-			assert.ok(this.switchToDefaultVariant.getCall(0).calledWithExactly("existingParameter2"), "then VariantModel.switchToDefaultVariant() called with existing hash parameters for the incremented index");
-			assert.ok(this.switchToDefaultVariant.getCall(1).calledWithExactly("existingParameter3"), "then VariantModel.switchToDefaultVariant() called with existing hash parameters for the incremented index");
+			assert.ok(this.switchToDefaultForVariantManagement.getCall(0).calledWithExactly("variantManagement1"), "then VariantModel.switchToDefaultForVariant() called with existing hash parameters for the incremented index");
+			assert.ok(this.switchToDefaultForVariantManagement.getCall(1).calledWithExactly("variantManagement2"), "then VariantModel.switchToDefaultForVariant() called with existing hash parameters for the incremented index");
 		});
 
 		QUnit.test("when calling '_navigationHandler' by HashChanger 'hashChanged' event, when hash was replaced", function (assert) {
@@ -449,7 +457,8 @@ function(
 				currentIndex: 999,
 				hashParams: [
 					["existingParameter1"]
-				]
+				],
+				variantControlIds: [["variantManagement0"]]
 			};
 			this._oHashRegister = jQuery.extend(true, {}, oHashRegister);
 
@@ -472,7 +481,8 @@ function(
 			};
 			this._oHashRegister = {
 				currentIndex: null,
-				hashParams: []
+				hashParams: [],
+				variantControlIds: []
 			};
 			this.oComponent = {
 				destroy: function () {

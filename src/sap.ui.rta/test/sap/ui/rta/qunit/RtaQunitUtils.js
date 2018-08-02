@@ -1,4 +1,3 @@
-/* globals QUnit */
 sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/FakeLrepSessionStorage",
@@ -122,14 +121,5 @@ sap.ui.define([
 		return fnDetachEvent;
 	};
 
-	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested = function(){
-		QUnit.done(function(details) {
-			// If coverage is requested, remove the view to not overlap the coverage result
-			if (QUnit.config.coverage == true && details.failed === 0) {
-				jQuery("#test-view").hide();
-			}
-		});
-	};
-
 	return RtaQunitUtils;
-}, /* bExport= */true);
+});

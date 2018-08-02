@@ -339,7 +339,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 			},
 
 			_constructTarget : function (oOptions, oParent) {
-				return new Target(oOptions, this._oViews, oParent, this._oTargetHandler);
+				return new Target(oOptions, this.getViews(), oParent, this._oTargetHandler);
 			},
 
 			/**

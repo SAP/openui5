@@ -1,18 +1,15 @@
 /*!
  * ${copyright}
  */
-
 // Provides the Design Time Metadata for the sap.m.Button control
 sap.ui.define([],
 	function () {
 		"use strict";
 		var DTMetadata = function() {
 		};
-
 		var oCore = sap.ui.getCore(),
 			mLibraryData = {},
 			mLibraryRuntimeData = {};
-
 		/**
 		 * Loads designtime metadata for the given libraries
 		 * The core needs to be loaded before this call
@@ -37,7 +34,6 @@ sap.ui.define([],
 				});
 			return oPromise;
 		};
-
 		/**
 		 * Loads designtime metadata for the given library
 		 * @param {string} sLibraryName the library name
@@ -47,38 +43,44 @@ sap.ui.define([],
 		DTMetadata.loadLibrary = function(sLibraryName) {
 			var that = this,
 				oLibraryPromise = new Promise(function(resolve) {
-					var aPromises = [],
-						aAPIPromises = [],
-						sURL = sap.ui.resource(sLibraryName + ".designtime", 'messagebundle.properties'),
+					var sURL = sap.ui.resource(sLibraryName + ".designtime", 'messagebundle.properties'),
 						oLib = oCore.getLoadedLibraries()[sLibraryName];
 					if (mLibraryData[sLibraryName]) {
 						return new Promise(function(resolve) {
 							resolve(mLibraryData[sLibraryName]);
 						});
 					}
-					mLibraryData[sLibraryName] = {
-						resourceBundle : jQuery.sap.resources({url : sURL}),
-						name: sLibraryName
-					};
 
-					var sControlName;
+					jQuery.sap.resources({url : sURL, async: true})
 
-					for (var i0 = 0; i0 < oLib.controls.length; i0++) {
-						sControlName = oLib.controls[i0];
-						if (mLibraryData[sLibraryName][sControlName]) {
-							continue;
+					.then(function(oResourceBundle) {
+						var aPromises = [];
+						mLibraryData[sLibraryName] = {
+							resourceBundle : oResourceBundle,
+							name: sLibraryName
+						};
+
+						var sControlName;
+
+						for (var i0 = 0; i0 < oLib.controls.length; i0++) {
+							sControlName = oLib.controls[i0];
+							if (mLibraryData[sLibraryName][sControlName]) {
+								continue;
+							}
+							aPromises.push(that.loadElement(sControlName, sLibraryName));
 						}
-						aPromises.push(that.loadElement(sControlName, sLibraryName));
-					}
-					for (var i1 = 0; i1 < oLib.elements.length; i1++) {
-						sControlName = oLib.elements[i1];
-						if (mLibraryData[sLibraryName][sControlName]) {
-							continue;
+						for (var i1 = 0; i1 < oLib.elements.length; i1++) {
+							sControlName = oLib.elements[i1];
+							if (mLibraryData[sLibraryName][sControlName]) {
+								continue;
+							}
+							aPromises.push(that.loadElement(sControlName, sLibraryName));
 						}
-						aPromises.push(that.loadElement(sControlName, sLibraryName));
-					}
-					Promise.all(aPromises).then(function(aData) {
-						Promise.all(aAPIPromises).then(function() {
+						return aPromises;
+					})
+
+					.then(function(aPromises) {
+						return Promise.all(aPromises).then(function(aData) {
 							//enhance and register all control design time data
 							aData.forEach(function (oData) {
 								if (oData) {
@@ -119,13 +121,11 @@ sap.ui.define([],
 				});
 			return oLibraryPromise;
 		};
-
 		DTMetadata.enrichAPIDoc = function (oLibData) {
 			var oAPI = oLibData.apiJSON;
 			if (!oAPI || !oAPI.symbols || oAPI.symbols.length === 0) {
 				return;
 			}
-
 			//create a map for the classes, enums
 			var mControlAPIJson = {},
 				mEnumsAPIJson = {};
@@ -150,7 +150,6 @@ sap.ui.define([],
 				}
 			}
 		};
-
 		DTMetadata.getRuntimeData = function(sLib, sName, oData) {
 			if (mLibraryRuntimeData[sLib] && mLibraryRuntimeData[sLib][sName]) {
 				mLibraryRuntimeData[sLib] = mLibraryRuntimeData[sLib] || {};
@@ -160,7 +159,6 @@ sap.ui.define([],
 				return mLibraryRuntimeData[sLib][sName];
 			}
 		};
-
 		/**
 		 * Loads the elements design time data
 		 */
@@ -186,7 +184,6 @@ sap.ui.define([],
 										oDTData.className = oData.className;
 										oDTData.displayName = oData.displayName;
 									}
-
 									resolve(jQuery.extend(true, oData, oDTData));
 								});
 							}
@@ -198,7 +195,6 @@ sap.ui.define([],
 				});
 			return oPromise;
 		};
-
 		DTMetadata.exportDTRuntimeData = function(oMetadata) {
 			var sClassName = oMetadata.getName(),
 				sName = splitCamelCase(sClassName.substring(sClassName.lastIndexOf(".") + 1));
@@ -213,7 +209,6 @@ sap.ui.define([],
 					plural: sName.substring(sName.length - 1) !== "s" ? sName + "s" : sName
 				},
 				actions: {
-
 				},
 				properties: {},
 				aggregations: {},
@@ -282,46 +277,39 @@ sap.ui.define([],
 			}
 			return oData;
 		};
-
 		function registerDTData(sLibraryName, oData) {
 			createLists(oData);
 			translate(oData, sLibraryName);
 			mLibraryData[sLibraryName][oData.className] = oData;
 		}
-
 		function splitCamelCase(sName) {
 			if (typeof sName === "string") {
 				return sName.replace(/([A-Z])([a-z])/g, ' $1$2').trim();
 			}
 			return "";
 		}
-
 		function createLists(oData) {
-		    if (!oData) {
-		        return;
-            }
-            ["properties", "aggregations", "associations", "events"].forEach(function(sPropertyName){
-                oData[sPropertyName + "List"] = (
-                    oData[sPropertyName]
-                    && Object.keys(oData[sPropertyName]).map(function(sKey) {
-                        return oData[sPropertyName][sKey];
-                    })
-                    ) || [];
-            });
+			if (!oData) {
+				return;
+			}
+			["properties", "aggregations", "associations", "events"].forEach(function(sPropertyName){
+				oData[sPropertyName + "List"] = (
+					oData[sPropertyName]
+					&& Object.keys(oData[sPropertyName]).map(function(sKey) {
+						return oData[sPropertyName][sKey];
+					})
+					) || [];
+			});
 		}
 		DTMetadata.createLists = createLists;
-
 		function translate(oData, sLibrary) {
 			if (!sLibrary) {
 				sLibrary = oData.library;
 			}
-
 			var oBundle = mLibraryData[sLibrary] && mLibraryData[sLibrary].resourceBundle;
-
 			if (!oBundle) {
 				return;
 			}
-
 			for (var n in oData) {
 				if (Array.isArray(oData[n])) {
 					for (var i = 0; i < oData[n].length; i++) {
@@ -342,8 +330,5 @@ sap.ui.define([],
 			}
 		}
 		DTMetadata.translate = translate;
-
-
-
 		return DTMetadata;
 	}, /* bExport= */ true);

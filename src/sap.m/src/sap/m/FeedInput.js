@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/TextArea",
 	"sap/m/Button",
-	"./FeedInputRenderer"
+	"./FeedInputRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, IconPool, TextArea, Button, FeedInputRenderer) {
+	function(library, Control, IconPool, TextArea, Button, FeedInputRenderer, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType

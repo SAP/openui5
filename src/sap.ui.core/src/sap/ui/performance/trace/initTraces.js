@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/performance/trace/FESR"], function(FESR) {
     "use strict";
 
     /**
@@ -20,11 +20,7 @@ sap.ui.define(function() {
 			bActive = aParamMatches[1] && aParamMatches[1] != "false";
 		}
 
-		if (bActive === true) {
-			sap.ui.require(["sap/ui/performance/trace/FESR"], function(FESR) {
-				FESR.setActive(true);
-			});
-		}
+		FESR.setActive(bActive);
 
 		// TODO this should be part of a Configuration
 		// *********** Include E2E-Trace Scripts *************

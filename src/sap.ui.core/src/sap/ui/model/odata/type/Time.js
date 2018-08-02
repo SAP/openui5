@@ -2,10 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
-		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
-		'sap/ui/model/ValidateException', "sap/base/Log"],
-	function(DateFormat, FormatException, ODataType, ParseException, ValidateException, Log) {
+sap.ui.define([
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/model/FormatException',
+	'sap/ui/model/odata/type/ODataType',
+	'sap/ui/model/ParseException',
+	'sap/ui/model/ValidateException',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(
+		DateFormat,
+		FormatException,
+		ODataType,
+		ParseException,
+		ValidateException,
+		Log,
+		jQuery
+	) {
 	"use strict";
 
 	var oDemoTime = {

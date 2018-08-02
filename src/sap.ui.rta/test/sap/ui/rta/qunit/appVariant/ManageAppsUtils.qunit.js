@@ -1,27 +1,29 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AppVariantOverviewUtils,
-	sinon) {
+	AppVariantUtils,
+	jQuery,
+	sinon
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	QUnit.start();
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
 		beforeEach: function () {
 			this.originalUShell = sap.ushell;
 
-			sap.ushell = jQuery.extend({}, sap.ushell, {
+			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
-					getService : function(sServiceName) {
+					getService : function() {
 						return {
-							getLinks: function(oNavigationParams) {
+							getLinks: function() {
 								return Promise.resolve([{
 									result: "success"
 								}]);
@@ -275,7 +277,7 @@ sap.ui.require([
 			};
 
 			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
-			sap.ui.rta.appVariant.AppVariantUtils.setNewAppVariantId("id1");
+			AppVariantUtils.setNewAppVariantId("id1");
 
 			var oResourceBundlePromise = jQuery.sap.resources({
 				url: jQuery.sap.getModulePath("sap.ui.rta.appVariant.manageApps.webapp.i18n", "/i18n.properties"),
@@ -308,11 +310,11 @@ sap.ui.require([
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
 
-			sap.ushell = jQuery.extend({}, sap.ushell, {
+			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
-					getService : function(sServiceName) {
+					getService : function() {
 						return {
-							getLinks: function(oNavigationParams) {
+							getLinks: function() {
 								return Promise.resolve([]);
 							}
 						};
@@ -384,5 +386,9 @@ sap.ui.require([
 				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
 			});
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

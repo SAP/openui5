@@ -105,3 +105,27 @@ iShouldSeeMessageToastAppearance: function () {
                     });
                 }
 ```
+
+## Working with busy controls
+There are OPA5 rules that limit the ways you can use busy controls. Some OPA5 features prevent you
+from locating controls while they are busy. For example, actions require that the control is interactable and
+therefore not busy and `autoWait` ensures that all controls on the page are interactable. You can't test a control in its
+busy state when these features are enabled.
+You can always work with controls that are not busy as OPA5 will either wait for them to
+become interactable (and not busy) or will enforce no limitations.
+
+The following table is a cheatsheet with the values for each OPA5 rule and the outcome for busy
+control testing:
+
+| OPA5.config `autoWait` | `waitFor` actions |  `waitFor` `autoWait`  | verify busy control |
+|:----------------------:|:-----------------:|:----------------------:|:-------------------:|
+| ✓                      | ✓                | any                    | X                   |
+| ✓                      | X                | true / not modified    | X                   |
+| ✓                      | X                | false                  | ✓                   |
+| X                      | ✓                | any                    | X                   |
+| X                      | X                | false / not modified   | ✓                   |
+| X                      | X                | true                   | X                   |
+
+A common scenario is asserting the busy state of a control. Testing whether a control is not busy
+is meaningless when `autoWait` is globally enabled. An example of testing for busyness with enabled
+`autoWait` can be found in the [OPA5 samples](https://openui5nightly.hana.ondemand.com/#/entity/sap.ui.test.Opa5).

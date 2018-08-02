@@ -1,4 +1,4 @@
-/* global QUnit, sinon*/
+/* global QUnit */
 /*!
  * ${copyright}
  */
@@ -37,7 +37,9 @@ function(
 	FlexControllerFactory,
 	Settings,
 	ControlTreeModifier,
-	jQuery
+	jQuery,
+	library,
+	sinon
 ) {
 
 	"use strict";
@@ -196,10 +198,15 @@ function(
 							var oAggregationOverlay = this.oControlOverlay.getAggregationOverlay(aAddODataPropertyActions[0].aggregation);
 							oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
 						}
-						this.oCommand = oCommandFactory.getCommandFor(this.oControl, mOptions.action.name, mParameter, oElementDesignTimeMetadata);
-
-						assert.ok(this.oCommand, "then the registration for action to change type, the registration for change and control type to change handler is available and " + mOptions.action.name + " is a valid action");
-						resolve();
+						oCommandFactory.getCommandFor(this.oControl, mOptions.action.name, mParameter, oElementDesignTimeMetadata)
+						.then(function(oCommand) {
+							this.oCommand = oCommand;
+							assert.ok(oCommand, "then the registration for action to change type, the registration for change and control type to change handler is available and " + mOptions.action.name + " is a valid action");
+							resolve();
+						}.bind(this))
+						.catch(function(oMessage) {
+							throw new Error(oMessage);
+						});
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));

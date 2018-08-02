@@ -16,9 +16,10 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'./CalendarDate',
 	'sap/ui/core/Locale',
-	'sap/ui/core/LocaleData'
+	'sap/ui/core/LocaleData',
+	"sap/ui/thirdparty/jquery"
 ],
-	function(UniversalDate, CalendarDate, Locale, LocaleData) {
+	function(UniversalDate, CalendarDate, Locale, LocaleData, jQuery) {
 		"use strict";
 
 		// Static class

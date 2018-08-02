@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
 	function(
 		library,
@@ -26,7 +28,8 @@ sap.ui.define([
 		TokenizerRenderer,
 		containsOrEquals,
 		KeyCodes,
-		Log
+		Log,
+		jQuery
 	) {
 	"use strict";
 

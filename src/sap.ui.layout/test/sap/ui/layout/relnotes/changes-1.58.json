@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": " sap.ui.layout.Splitter: Pane width is now correct",
         "references": []
+      },
+      {
+        "id": "266def302e0f14b040a4c4f921c15fba07dd5092",
+        "type": "FEATURE",
+        "text": " Form: allow Switch to be used as Form content",
+        "references": []
       }
     ]
   }

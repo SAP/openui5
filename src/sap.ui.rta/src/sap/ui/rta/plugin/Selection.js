@@ -7,14 +7,20 @@ sap.ui.define([
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/OverlayRegistry',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/Util",
+	"sap/ui/Device"
 ],
-function(
+function (
 	Plugin,
 	Utils,
 	FlexUtils,
 	OverlayRegistry,
-	KeyCodes
+	KeyCodes,
+	Overlay,
+	DtUtil,
+	Device
 ) {
 	"use strict";
 
@@ -33,12 +39,8 @@ function(
 	 * @alias sap.ui.rta.plugin.Selection
 	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var Selection = Plugin.extend("sap.ui.rta.plugin.Selection", /** @lends sap.ui.dt.Plugin.prototype */
-	{
+	var Selection = Plugin.extend("sap.ui.rta.plugin.Selection", {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {
 				multiSelectionRequiredPlugins : {
@@ -58,12 +60,17 @@ function(
 		}
 	});
 
+	Selection.prototype.init = function () {
+		this._multiSelectionValidator = this._multiSelectionValidator.bind(this);
+		Plugin.prototype.init.apply(this, arguments);
+	};
+
 	/**
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay to be checked for developer mode
 	 * @returns {boolean} true if it's in developer mode
 	 * @private
 	 */
-	Selection.prototype._checkDeveloperMode = function(oOverlay) {
+	Selection.prototype._checkDeveloperMode = function (oOverlay) {
 		if (oOverlay.getDesignTimeMetadata()) {
 			var bDeveloperMode = this.getCommandFactory().getFlexSettings().developerMode;
 			if (bDeveloperMode && this.hasStableId(oOverlay)) {
@@ -84,7 +91,7 @@ function(
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	Selection.prototype.registerElementOverlay = function(oOverlay) {
+	Selection.prototype.registerElementOverlay = function (oOverlay) {
 		if (!this._checkDeveloperMode(oOverlay)) {
 			oOverlay.attachEditableChange(this._onEditableChange, this);
 			this._adaptSelectable(oOverlay);
@@ -177,17 +184,16 @@ function(
 	Selection.prototype._selectOverlay = function (oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var bMultiSelection = oEvent.metaKey || oEvent.ctrlKey;
-		var oTargetClasses = oEvent.target.className;
 
-		if (oOverlay.getSelectable() && oTargetClasses.indexOf("sapUiDtOverlay") > -1) {
-			if (bMultiSelection) {
-				this.getDesignTime().setSelectionMode(sap.ui.dt.SelectionMode.Multi);
-			}
-
-			oOverlay.setSelected(!oOverlay.getSelected());
-
-			if (bMultiSelection) {
-				this.getDesignTime().setSelectionMode(sap.ui.dt.SelectionMode.Single);
+		if (oOverlay && oOverlay.getSelectable()) {
+			if (oOverlay.isSelected()) {
+				this.getDesignTime().getSelectionManager().remove(oOverlay);
+			} else {
+				if (bMultiSelection) {
+					this.getDesignTime().getSelectionManager().add(oOverlay);
+				} else {
+					this.getDesignTime().getSelectionManager().set(oOverlay);
+				}
 			}
 
 			oEvent.preventDefault();
@@ -203,13 +209,16 @@ function(
 	 */
 	Selection.prototype._onMouseDown = function(oEvent) {
 		// set focus after clicking, needed only for internet explorer
-		if (sap.ui.Device.browser.name == "ie"){
+		if (Device.browser.name == "ie"){
 			// when the EasyAdd Button is clicked, we don't want to focus/stopPropagation.
 			// but when the OverlayScrollContainer is the target, we want it to behave like a click on an overlay
 			var oTarget = OverlayRegistry.getOverlay(oEvent.target.id);
-			var bTargetIsScrollContainer = oEvent.target.className === "sapUiDtOverlayScrollContainer";
+			var bTargetIsScrollContainer = jQuery(oEvent.target).hasClass("sapUiDtOverlayScrollContainer");
 			var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
-			if ((bTargetIsScrollContainer || oTarget instanceof sap.ui.dt.Overlay) && oOverlay instanceof sap.ui.dt.Overlay) {
+			if (
+				oOverlay
+				&& (bTargetIsScrollContainer || oTarget instanceof Overlay)
+			) {
 				if (oOverlay.getSelectable()){
 					oOverlay.focus();
 					oEvent.stopPropagation();
@@ -269,7 +278,7 @@ function(
 	Selection.prototype.setDesignTime = function(oDesignTime) {
 		//detach from listener from old DesignTime instance
 		if (this.getDesignTime()) {
-			this.getDesignTime().detachSelectionChange(this._onDesignTimeSelectionChange, this);
+			this.getDesignTime().getSelectionManager().removeValidator(this._multiSelectionValidator);
 		}
 
 		//set new DesignTime instance in parent class
@@ -277,68 +286,49 @@ function(
 
 		//attach listener back to the new DesignTime instance
 		if (this.getDesignTime()) {
-			this.getDesignTime().attachSelectionChange(this._onDesignTimeSelectionChange, this);
+			this.getDesignTime().getSelectionManager().addValidator(this._multiSelectionValidator);
 		}
 	};
 
-	Selection.prototype._onDesignTimeSelectionChange = function(oEvent) {
-		if (this.getDesignTime().getSelectionMode() === sap.ui.dt.SelectionMode.Single) {
-			return;
-		}
-
-		var oCurrentSelectedOverlay = oEvent.getParameter("selection")[oEvent.getParameter("selection").length - 1];
-		var aSelections = this.getSelectedOverlays();
-		if (aSelections && aSelections.length === 1) {
-			oCurrentSelectedOverlay.setSelected(true);
-			return;
-		}
-		if (!oCurrentSelectedOverlay || this.getDesignTime().getSelectionMode() === sap.ui.dt.SelectionMode.Single) {
-			return;
-		}
-
-		var bMultiSelectisValid = _hasSharedMultiSelectionPlugins(aSelections, this.getMultiSelectionRequiredPlugins())
-			&& _hasSharedRelevantContainer(aSelections)
-			&& (_hasSameParent(aSelections, oCurrentSelectedOverlay)
-				|| _isOfSameType(aSelections, oCurrentSelectedOverlay));
-
-		oCurrentSelectedOverlay.setSelected(bMultiSelectisValid);
+	Selection.prototype._multiSelectionValidator = function (aElementOverlays) {
+		return (
+			aElementOverlays.length === 1
+			|| (
+				_hasSharedMultiSelectionPlugins(aElementOverlays, this.getMultiSelectionRequiredPlugins())
+				&& _hasSharedRelevantContainer(aElementOverlays)
+				&& (
+					_hasSameParent(aElementOverlays)
+					|| _isOfSameType(aElementOverlays)
+				)
+			)
+		);
 	};
 
-	function _hasSharedMultiSelectionPlugins(aSelections, aMultiSelectionRequiredPlugins){
-		var aSharedMultiSelectionPlugins = aMultiSelectionRequiredPlugins;
-		aSelections.forEach(function(oSelectedOverlay) {
-			var aEditableByPlugins = oSelectedOverlay.getEditableByPlugins();
-			aSharedMultiSelectionPlugins = aSharedMultiSelectionPlugins.reduce(function(aSharedPlugins, sPluginName){
-				if (aEditableByPlugins.indexOf(sPluginName) !== -1){
-					aSharedPlugins.push(sPluginName);
-				}
-				return aSharedPlugins;
-			}, []);
+	function _hasSharedMultiSelectionPlugins(aElementOverlays, aMultiSelectionRequiredPlugins) {
+		var aSharedMultiSelectionPlugins = aMultiSelectionRequiredPlugins.slice();
+
+		aElementOverlays.forEach(function (oElementOverlay) {
+			aSharedMultiSelectionPlugins = DtUtil.intersection(aSharedMultiSelectionPlugins, oElementOverlay.getEditableByPlugins());
 		});
+
 		return aSharedMultiSelectionPlugins.length > 0;
 	}
 
-	function _hasSharedRelevantContainer(aSelections){
-		var oCurrentSelectedOverlay = aSelections[aSelections.length - 1];
-		var oPreviousSelectedOverlay = aSelections[aSelections.length - 2];
-
-		var oCurrentRelevantContainer = oCurrentSelectedOverlay.getRelevantContainer();
-		var oPreviousRelevantContainer = oPreviousSelectedOverlay.getRelevantContainer();
-
-		return oCurrentRelevantContainer === oPreviousRelevantContainer;
-	}
-
-	function _hasSameParent(aSelections, oSelectedOverlay){
-		return !aSelections.some(function(oSelection){
-			return oSelection.getParentElementOverlay() !== oSelectedOverlay.getParentElementOverlay();
+	function _hasSharedRelevantContainer(aElementOverlays) {
+		return aElementOverlays.every(function (oElementOverlay) {
+			return oElementOverlay.getRelevantContainer() === aElementOverlays[0].getRelevantContainer();
 		});
 	}
 
-	function _isOfSameType(aSelections, oSelectedOverlay){
-		var sSelectedOverlayElementName = oSelectedOverlay.getElement().getMetadata().getName();
-		return !aSelections.some(function(oSelection){
-			var sCurrentSelectionElementName = oSelection.getElement().getMetadata().getName();
-			return (sCurrentSelectionElementName !== sSelectedOverlayElementName);
+	function _hasSameParent(aElementOverlays) {
+		return aElementOverlays.every(function(oElementOverlay) {
+			return oElementOverlay.getParentElementOverlay() === aElementOverlays[0].getParentElementOverlay();
+		});
+	}
+
+	function _isOfSameType(aElementOverlays) {
+		return aElementOverlays.every(function (oElementOverlay) {
+			return oElementOverlay.getElement().getMetadata().getName() === aElementOverlays[0].getElement().getMetadata().getName();
 		});
 	}
 

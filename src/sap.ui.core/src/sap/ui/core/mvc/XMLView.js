@@ -15,10 +15,9 @@ sap.ui.define([
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/cache/CacheManager',
 	'sap/ui/model/resource/ResourceModel',
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
 	"sap/base/strings/hash",
-		"sap/base/Log"
+	"sap/base/Log"
 ],
 	function(
 		jQuery,
@@ -32,7 +31,6 @@ sap.ui.define([
 		RenderManager,
 		Cache,
 		ResourceModel,
-		jQueryDOM,
 		XMLHelper,
 		hash,
 		Log
@@ -632,13 +630,13 @@ sap.ui.define([
 
 						// if DOM exists, replace the preservation dummy with it
 						if ( oChildDOM ) {
-							jQueryDOM(document.getElementById(RenderPrefixes.Dummy + aChildren[i].getId())).replaceWith(oChildDOM);
+							jQuery(document.getElementById(RenderPrefixes.Dummy + aChildren[i].getId())).replaceWith(oChildDOM);
 						} // otherwise keep the dummy placeholder
 					}
 				}
 				// move preserved DOM into place
 				// jQuery.sap.log.debug("moving preserved dom into place for " + this);
-				jQueryDOM(document.getElementById(RenderPrefixes.Dummy + this.getId())).replaceWith(this._$oldContent);
+				jQuery(document.getElementById(RenderPrefixes.Dummy + this.getId())).replaceWith(this._$oldContent);
 			}
 			this._$oldContent = undefined;
 		};

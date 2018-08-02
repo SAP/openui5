@@ -41,7 +41,7 @@ sap.ui.define([
 	Version,
 	uid,
 	containsOrEquals,
-	jQueryDOM,
+	jQuery,
 	F6Navigation,
 	isMouseEventDelayed
 ) {
@@ -1615,7 +1615,7 @@ sap.ui.define([
 		var $Of;
 
 		if (typeof (oOf) === "string") {
-			$Of = jQueryDOM(document.getElementById(oOf));
+			$Of = jQuery(document.getElementById(oOf));
 		} else if (oOf instanceof jQuery) {
 			$Of = oOf;
 		} else {
@@ -2150,7 +2150,7 @@ sap.ui.define([
 			var oElement;
 			this._aAutoCloseAreas.forEach(function(oAreaRef) {
 				if (oAreaRef.delegate) {
-					oElement = jQueryDOM(document.getElementById(oAreaRef.id)).control(0);
+					oElement = jQuery(document.getElementById(oAreaRef.id)).control(0);
 					if (oElement) {
 						oElement.removeEventDelegate(oAreaRef.delegate);
 					}

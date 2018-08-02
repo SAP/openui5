@@ -9,11 +9,6 @@ sap.ui.define([
 					type: "string",
 					defaultValue: "Default Text",
 					invalidate: true
-				},
-				template: {
-					type: "boolean",
-					defaultValue: true,
-					invalidate: "template"
 				}
 			},
 			events: {

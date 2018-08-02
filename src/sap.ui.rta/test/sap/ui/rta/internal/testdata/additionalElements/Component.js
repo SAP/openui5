@@ -1,11 +1,21 @@
+/*global URI*/
+
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/rta/util/UrlParser"
+	"sap/ui/rta/util/UrlParser",
+	"sap/ui/fl/fieldExt/Access",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/App"
 ], function(
 	UIComponent,
+	ViewType,
 	FakeLrepConnectorLocalStorage,
-	UrlParser
+	UrlParser,
+	Access,
+	JSONModel,
+	App
 ) {
 
 	"use strict";
@@ -18,8 +28,12 @@ sap.ui.define([
 
 
 		init : function() {
+			// app specific setup
+			this._enableExtensibility();
+
+			// default init methods
 			this._bShowAdaptButton = this.getComponentData().showAdaptButton ? this.getComponentData().showAdaptButton : false;
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, arguments);
 		},
 
 		/**
@@ -32,15 +46,15 @@ sap.ui.define([
 			// app specific setup
 			this._createFakeLrep();
 
-			var oApp = new sap.m.App();
+			var oApp = new App();
 
-			var oModel = new sap.ui.model.json.JSONModel({
+			var oModel = new JSONModel({
 				showAdaptButton : this._bShowAdaptButton
 			});
 
 			var oPage = sap.ui.view(this.createId("idMain1"), {
 				viewName : "sap.ui.rta.test.additionalElements.ComplexTest",
-				type : sap.ui.core.mvc.ViewType.XML,
+				type : ViewType.XML,
 				async: true
 			});
 
@@ -58,9 +72,55 @@ sap.ui.define([
 		 */
 		_createFakeLrep: function () {
 			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				FakeLrepConnectorLocalStorage.enableFakeConnector();
+				FakeLrepConnectorLocalStorage.enableFakeConnector({
+					"isAtoEnabled": true,
+					"isAtoAvailable": true
+				});
 			}
-		}
+		},
 
+		/**
+		 * Create stub answers from extensibility service
+		 * @private
+		 */
+		_enableExtensibility: function () {
+			Access.getBusinessContexts = function(sServiceUri, sEntityTypeName, sEntitySetName){
+				return Promise.resolve({
+					BusinessContexts: [sEntityTypeName + " EntityTypeContext", sEntitySetName + " EntitySetContext"],
+					ServiceName: sServiceUri,
+					ServiceVersion: "some dummy ServiceVersion 0.0.1",
+					EntityType : sEntityTypeName
+				});
+			};
+
+			sap.ushell = Object.assign({}, sap.ushell, {
+				Container : {
+					getService : function(){
+						return {
+							hrefForExternal : function(mData){
+								return "./testdata/additionalElements/extensibilityTool.html?" + URI.encodeQuery(JSON.stringify(mData));
+							}
+						};
+					},
+					getLogonSystem : function(){
+						return {
+							getName: function() {
+								return "ABC";
+							},
+							getClient: function() {
+								return "123";
+							}
+						};
+					},
+					setDirtyFlag : function() {
+						return true;
+					}
+				}
+			});
+
+			sap.ui.getCore().getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption","RequestReload", function(){
+				sap.m.MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");
+			});
+		}
 	});
 });

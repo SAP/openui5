@@ -6,8 +6,9 @@
 sap.ui.define([
 	'sap/ui/base/BindingParser',
 	"sap/base/Log",
-	"sap/ui/performance/Measurement"
-], function(BindingParser, Log, Measurement) {
+	"sap/ui/performance/Measurement",
+	"sap/ui/thirdparty/jquery"
+], function(BindingParser, Log, Measurement, jQuery) {
 	'use strict';
 
 	var sAnnotationHelper = "sap.ui.model.odata.AnnotationHelper",

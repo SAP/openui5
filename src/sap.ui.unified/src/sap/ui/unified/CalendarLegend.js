@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.unified.CalendarLegend.
-sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/Device', './CalendarLegendRenderer', "sap/base/Log"],
-	function(Control, library, Device, CalendarLegendRenderer, Log) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/Device',
+	'./CalendarLegendRenderer',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(Control, library, Device, CalendarLegendRenderer, Log, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType

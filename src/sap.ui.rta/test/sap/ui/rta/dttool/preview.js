@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/dt/DragDropUtil",
+	"sap/ui/rta/dttool/DragDropUtil",
 	"sap/ui/core/postmessage/Bus",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/Utils",
@@ -38,6 +38,7 @@ sap.ui.define([
 			if (this.oUiComponentContainer) {
 				this.oUiComponentContainer.destroy();
 			}
+
 			this.refreshIframe(sCompName);
 			oPostMessageBus.publish({
 				target : window.parent,
@@ -91,6 +92,20 @@ sap.ui.define([
 		}).placeAt("content");
 
 
+		this.setupRTA();
+
+		oPostMessageBus.publish({
+			target : window.parent,
+			origin : window.parent.origin,
+			channelId : "dtTool",
+			eventId : "loadLibs",
+			data : {
+				libs : Object.keys(sap.ui.getCore().getLoadedLibraries())
+			}
+		});
+	};
+
+	Preview.setupRTA = function () {
 		this.oRta = new RuntimeAuthoring({
 			rootControl: this.oUiComponent.getRootControl(),
 			flexSettings: {
@@ -109,29 +124,24 @@ sap.ui.define([
 
 		var mPlugins = this.oRta.getDefaultPlugins();
 		this.oRta.setPlugins(mPlugins);
+
 		this.oRta.attachEvent("start", this.onRTAStarted, this);
 		this.oRta.start();
-
-
-		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "loadLibs",
-			data : {
-				libs : Object.keys(sap.ui.getCore().getLoadedLibraries())
-			}
-		});
 	};
 
 	Preview.startRTA = function () {
-		if (this.oRta) {
-			this.oRta.start();
+		if (!this.oRta) {
+			this.setupRTA();
 		}
 	};
+
 	Preview.stopRTA = function () {
 		if (this.oRta) {
-			this.oRta.stop(true);
+			this.oRta.attachEvent('stop', function() {
+				this.oRta.destroy();
+				delete this.oRta;
+			}.bind(this));
+			this.oRta.stop();
 		}
 
 		oPostMessageBus.publish({
@@ -149,14 +159,11 @@ sap.ui.define([
 
 		this.oUiComponent.getRootControl().loaded().then(function() {
 
-
-
-
 			if (!this.oDesignTime || this.oDesignTime.getId() !== this.oRta._oDesignTime.getId()) {
 				this.oDesignTime = this.oRta._oDesignTime;
 			}
 
-			this.oDesignTime.attachSelectionChange(this.onOverlaySelected, this);
+			this.oDesignTime.getSelectionManager().attachChange(this.onOverlaySelected, this);
 
 			oPostMessageBus.publish({
 				target : window.parent,

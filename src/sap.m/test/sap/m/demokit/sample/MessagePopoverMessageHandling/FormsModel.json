@@ -1,0 +1,158 @@
+{
+  "forms": [
+	{
+	  "name": "Julie Armstrong",
+	  "street": {
+		"name": "Mainstreet",
+		"number": 1278
+	  },
+	  "zip": {
+		"code": 12345,
+		"city": "Maintown"
+	  },
+	  "country": "Germany",
+	  "email": "Julie.Armstrong@company.com",
+	  "phone": {
+		"number": "+1 (610) 661-1000",
+		"time": "12:00"
+	  },
+	  "website": "n/a"
+	},
+	{
+	  "name": "Denise Smith",
+	  "street": {
+		"name": "Mainstreet",
+		"number": 1567
+	  },
+	  "zip": {
+		"code": 12345,
+		"city": "Maintown"
+	  },
+	  "country": "Germany",
+	  "email": "Denise.Smith@company.com",
+	  "phone": {
+		"number": "+1 (610) 661-1000",
+		"time": "12:00"
+	  },
+	  "website": "n/a"
+	},
+	{
+	  "name": "Richard Wilson",
+	  "street": {
+		"name": "Mainstreet",
+		"number": 2984
+	  },
+	  "zip": {
+		"code": 12345,
+		"city": "Maintown"
+	  },
+	  "country": "Germany",
+	  "email": "Richard.Wilson@company.com",
+	  "phone": {
+		"number": "+1 (610) 661-1000",
+		"time": "12:00"
+	  },
+	  "website": "n/a"
+	},
+	{
+	  "name": "Gerd Becker",
+	  "street": {
+		"name": "Mainstreet",
+		"number": 3614
+	  },
+	  "zip": {
+		"code": 12345,
+		"city": "Maintown"
+	  },
+	  "country": "Germany",
+	  "email": "Gerd.Becker@company.com",
+	  "phone": {
+		"number": "+1 (610) 661-1000",
+		"time": "12:00"
+	  },
+	  "website": "n/a"
+	},
+	{
+	  "name": "John Miller",
+	  "street": {
+		"name": "Mainstreet",
+		"number": 1618
+	  },
+	  "zip": {
+		"code": "AAA",
+		"city": "Maintown"
+	  },
+	  "country": "Germany",
+	  "email": "John.Miller@company.com",
+	  "phone": {
+		"number": "+1 (610) 661-1000",
+		"time": "12:00"
+	  },
+	  "website": "n/a"
+	},
+	{
+	  "name": "Stefan Bosch",
+	  "street": {
+		"name": "Mainstreet",
+		"number": 4864
+	  },
+	  "zip": {
+		"code": 12345,
+		"city": "Maintown"
+	  },
+	  "country": "Germany",
+	  "email": "Stefan.Bosch@company.com",
+	  "phone": {
+		"number": "+1 (610) 661-1000",
+		"time": "12:00"
+	  },
+	  "website": "n/a"
+	},
+	{
+	  "name": "Maria Fontes",
+	  "street": {
+		"name": "Mainstreet",
+		"number": 4864
+	  },
+	  "zip": {
+		"code": 12345,
+		"city": "Maintown"
+	  },
+	  "country": "Germany",
+	  "email": "",
+	  "phone": {
+		"number": "+1 (610) 661-1000",
+		"time": "12:00"
+	  },
+	  "website": "MariaFontescompany.com"
+	},
+	{
+	  "name": "Antonio Ferrari",
+	  "street": {
+		"name": "Mainstreet",
+		"number": 2598
+	  },
+	  "zip": {
+		"code": 12345,
+		"city": "Maintown"
+	  },
+	  "country": "Germany",
+	  "email": "Antonio.Ferrari@company.com",
+	  "phone": {
+		"number": "+1 (610) 661-1000",
+		"time": "12:00"
+	  },
+	  "website": "n/a"
+	}
+  ],
+  "employment": [
+	{
+		"jobTitle": "Senior UI Developer (UIDEV-SR)",
+		"payGrade": "Salary Grade 18 (GR-14",
+		"unit": "ABC",
+		"class": "Employee",
+		"fte": 1,
+		"weeklyHours": 0
+	}
+  ]
+}

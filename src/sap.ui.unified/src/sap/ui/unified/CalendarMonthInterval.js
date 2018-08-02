@@ -20,7 +20,8 @@ sap.ui.define([
 	"./CalendarMonthIntervalRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Device,
 	Control,
@@ -38,7 +39,8 @@ sap.ui.define([
 	CalendarMonthIntervalRenderer,
 	containsOrEquals,
 	deepEqual,
-	Log
+	Log,
+	jQuery
 ) {
 		"use strict";
 

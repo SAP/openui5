@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/delegate/ItemNavigation',
 	'./IconTabBarDragAndDropUtil',
-	'./IconTabBarSelectListRenderer'
+	'./IconTabBarSelectListRenderer',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		library,
 		Control,
 		ItemNavigation,
 		IconTabBarDragAndDropUtil,
-		IconTabBarSelectListRenderer
+		IconTabBarSelectListRenderer,
+		jQuery
 	) {
 		"use strict";
 

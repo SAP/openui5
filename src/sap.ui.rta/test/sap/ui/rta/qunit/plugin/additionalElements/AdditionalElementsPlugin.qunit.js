@@ -1,8 +1,6 @@
 /*global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
@@ -14,14 +12,12 @@ sap.ui.require([
 	"sap/m/Bar",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/AggregationOverlay",
-	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/fieldExt/Access",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/registry/Settings",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	AdditionalElementsPlugin,
@@ -35,14 +31,12 @@ sap.ui.require([
 	Bar,
 	ElementOverlay,
 	ElementDesignTimeMetadata,
-	AggregationOverlay,
-	AggregationDesignTimeMetadata,
 	DesignTime,
 	OverlayRegistry,
-	FieldExtAccess,
 	ChangeRegistry,
 	SimpleChanges,
 	Settings,
+	Log,
 	sinon
 ){
 	"use strict";
@@ -119,7 +113,7 @@ sap.ui.require([
 
 	var oControl, oInvisible1, oInvisible2, oUnsupportedInvisible, oSibling, oIrrelevantChild,
 		oPseudoPublicParent,
-		//FIXME: remove eslint-disable
+		// FIXME: remove
 		oPseudoPublicParentOverlay, oParentOverlay, oSibilingOverlay, oIrrelevantOverlay, // eslint-disable-line
 		oPlugin, oDialog,
 		fnGetCommandSpy, fnEnhanceInvisibleElementsStub,
@@ -335,8 +329,7 @@ sap.ui.require([
 			givenThePluginWithOKClosingDialog();
 
 		},
-		afterEach: function () {
-			oDesignTime.destroy();
+		afterEach : function() {
 			oPlugin.destroy();
 			oPseudoPublicParent.destroy();
 			sandbox.restore();
@@ -562,14 +555,45 @@ sap.ui.require([
 			});
 		});
 
-		QUnit.test("when the control has unsupported designtime Metadata", function(assert) {
-			this.oOverlay = createUnsupportedOverlayWithAggregationActions();
-			return oPlugin.showAvailableElements(false, [this.oOverlay]).then(function() {
-				assert.ok(false, "then the plugin should complain about it");
-			})["catch"](function(oError) {
-				assert.ok(oError, "then the plugin complains about it");
+		QUnit.test("when the control's dt metadata has a reveal action with changeOnRelevantContainer true but the relevant container does not have stable ID", function(assert) {
+			sandbox.stub(oPlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === oParentOverlay){
+					return false;
+				} else {
+					return true;
+				}
 			});
 
+			return createOverlayWithAggregationActions({
+					"reveal" : {
+						changeType : "unhideControl",
+						changeOnRelevantContainer: true
+					}
+				},
+				ON_CHILD
+			)
+
+			.then(function(oOverlay) {
+				assert.equal(oPlugin._isEditableCheck(oOverlay, false), false, "then _isEditableCheck returns false");
+			});
+		});
+
+		QUnit.test("when the control has addODataProperty and Reveal in different aggregations from DesignTimeMetadata", function(assert) {
+			var fnLogErrorSpy = sandbox.spy(Log, "error");
+			sandbox.stub(oPlugin, "_getRevealActions").returns({
+				aggregation1: {
+					dummy: "value"
+				}
+			});
+			sandbox.stub(oPlugin, "_getAddODataPropertyActions").returns({
+				aggregation2: {
+					dummy: "value"
+				}
+			});
+
+			oPlugin._getActions();
+
+			assert.equal(fnLogErrorSpy.args[0][0].indexOf("action defined for more than 1 aggregation") > -1, true, "then the correct error is thrown");
 		});
 
 		QUnit.test("when the Child-controls have no designtime Metadata", function(assert) {
@@ -1060,46 +1084,8 @@ sap.ui.require([
 				case ON_SIBLING : return oSibilingOverlay;
 				case ON_CHILD : return oParentOverlay;
 				case ON_IRRELEVANT : return oIrrelevantOverlay;
+				default : return undefined;
 			}
-		});
-	}
-
-	function createUnsupportedOverlayWithAggregationActions(){
-		return new ElementOverlay({
-			element : oControl,
-			designTimeMetadata : new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
-					aggregations : {
-						name : {
-							singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME1",
-							plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL1"
-						},
-						aggregation1 : {
-							actions : {
-								"addODataProperty" : {
-									changeType : "addFields"
-								}
-							},
-							childNames : {
-								singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME1",
-								plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL1"
-							}
-						},
-						aggregation2 : {
-							actions: {
-								"reveal" : {
-									changeType : "unhideControl"
-								}
-							},
-							childNames : {
-								singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME2",
-								plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL2"
-							}
-						}
-					}
-				}
-			})
 		});
 	}
 
@@ -1137,6 +1123,4 @@ sap.ui.require([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

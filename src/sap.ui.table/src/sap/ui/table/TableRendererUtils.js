@@ -99,7 +99,7 @@ sap.ui.define(['sap/ui/core/Control'],
 				oConfig.furtherSettings(rm, oTable);
 			}
 
-			if (jQuery.isArray(oConfig.classname) && oConfig.classname.length) {
+			if (Array.isArray(oConfig.classname) && oConfig.classname.length) {
 				for (var i = 0; i < oConfig.classname.length; i++) {
 					TableRendererUtils.addClass(rm, oConfig.classname[i]);
 				}

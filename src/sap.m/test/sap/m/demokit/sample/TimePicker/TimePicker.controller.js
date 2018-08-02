@@ -40,7 +40,7 @@ sap.ui.define(['sap/m/library','sap/ui/core/mvc/Controller','sap/ui/model/json/J
 
 			handleChange: function (oEvent) {
 				var oText = this.byId("T1");
-				var oTP = oEvent.oSource;
+				var oTP = oEvent.getSource();
 				var sValue = oEvent.getParameter("value");
 				var bValid = oEvent.getParameter("valid");
 				this._iEvent++;

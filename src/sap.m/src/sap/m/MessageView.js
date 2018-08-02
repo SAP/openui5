@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/base/ManagedObject",
 	"./MessageViewRenderer",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/base/security/URLWhitelist"
@@ -52,7 +51,6 @@ sap.ui.define([
 	coreLibrary,
 	ManagedObject,
 	MessageViewRenderer,
-	jQueryDOM,
 	KeyCodes,
 	Log,
 	URLWhitelist
@@ -99,10 +97,13 @@ sap.ui.define([
 	 * <li> type - The type of message </li>
 	 * <li> title/subtitle - The title and subtitle of the message</li>
 	 * <li> description - The long text description of the message</li>
+	 * <li> activeTitle - Determines whether the title of the item is interactive</li>
 	 * </ul>
 	 * <strong><i>Usage</i></strong>
 	 * <br><br>
 	 * As part of the messaging concept, MessageView provides a way to centrally manage messages and show them to the user without additional work for the developer.
+	 *
+	 * It also exposes an event {@link sap.m.MessageView#activeTitlePress}, which can be used for navigation from a message to the source of the issue.
 	 * <br><br>
 	 * @author SAP SE
 	 * @version ${version}
@@ -889,7 +890,9 @@ sap.ui.define([
 		if (bActive) {
 			oDetailsContent = new Link(sId, {
 				text: sText,
-				press: [that.fireActiveTitlePress, that]
+				press: function () {
+					that.fireActiveTitlePress({ item: oMessageItem });
+				}
 			});
 		} else {
 			oDetailsContent = new Text(sId, {
@@ -1066,7 +1069,7 @@ sap.ui.define([
 				oValidation
 					.then(function (result) {
 						// Update link in output
-						var $link = jQueryDOM(document.getElementById("sap-ui-" + that.getId() + "-link-under-validation-" + result.id));
+						var $link = jQuery(document.getElementById("sap-ui-" + that.getId() + "-link-under-validation-" + result.id));
 
 						if (result.allowed) {
 							Log.info("Allow link " + href);

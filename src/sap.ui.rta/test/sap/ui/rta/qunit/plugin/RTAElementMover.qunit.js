@@ -1,14 +1,10 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/rta/plugin/RTAElementMover",
+sap.ui.define([
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/ElementOverlay",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/comp/smartform/SmartForm",
@@ -19,12 +15,10 @@ sap.ui.require([
 	"sap/m/Bar",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	RTAElementMover,
 	DragDropPlugin,
 	OverlayRegistry,
 	DesignTime,
 	ElementDesignTimeMetadata,
-	ElementOverlay,
 	CommandFactory,
 	ChangeRegistry,
 	SmartForm,
@@ -584,6 +578,7 @@ sap.ui.require([
 			this.oDesignTime.attachEventOnce("synced", function() {
 
 				this.oMovedButton1Overlay = OverlayRegistry.getOverlay(this.oMovedButton1);
+				this.oBarOverlay = OverlayRegistry.getOverlay(this.oBar);
 				this.oBarRightAggregationOverlay = OverlayRegistry.getOverlay(this.oBar).getAggregationOverlay("contentRight");
 				this.oBarMiddleAggregationOverlay = OverlayRegistry.getOverlay(this.oBar).getAggregationOverlay("contentMiddle");
 				this.oElementMover = this.oDragDropPlugin.getElementMover();
@@ -597,6 +592,7 @@ sap.ui.require([
 			this.oMovedButton1Overlay.destroy();
 			this.oBarRightAggregationOverlay.destroy();
 			this.oBarMiddleAggregationOverlay.destroy();
+			this.oBarOverlay.destroy();
 			this.oDesignTime.destroy();
 			this.oBar.destroy();
 		}
@@ -610,11 +606,21 @@ sap.ui.require([
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			assert.notOk(this.oElementMover.checkTargetZone(this.oBarMiddleAggregationOverlay), "then the middle bar aggregation is not a possible target zone");
 		});
+
+		QUnit.test("when the bar has no stable id...", function(assert) {
+			sandbox.stub(this.oElementMover.oBasePlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === this.oBarOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			}.bind(this));
+
+			assert.equal(this.oElementMover._isMoveAvailableOnRelevantContainer(this.oMovedButton1Overlay), false, "then the move is not available");
+		});
 	});
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

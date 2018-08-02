@@ -1,16 +1,12 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/dt/Util'
 ],
 function(
 	Util
 ) {
 	'use strict';
-
-	QUnit.start();
 
 	QUnit.module('wrapError()', function () {
 		QUnit.test("string as parameter", function (assert) {
@@ -288,5 +284,9 @@ function(
 			assert.deepEqual(Util.pick({ 1: 1, b: 2 }, 1), { 1: 1});
 			assert.deepEqual(Util.pick({ a: 1, b: 2 }), {});
 		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

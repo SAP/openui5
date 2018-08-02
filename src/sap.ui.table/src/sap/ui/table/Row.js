@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Row.
-sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', 'sap/ui/thirdparty/jquery'],
-	function(Element, Context, TableUtils, jQueryDOM) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "sap/ui/thirdparty/jquery"],
+	function(Element, Context, TableUtils, jQuery) {
 	"use strict";
 
 
@@ -151,7 +151,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', 's
 	 */
 	Row.prototype.getDomRefs = function (bJQuery, bCollection) {
 		var byId = function(sId) {
-			return jQueryDOM(document.getElementById(sId));
+			return jQuery(document.getElementById(sId));
 		};
 		var domById = function(sId) {
 			return (sId ? window.document.getElementById(sId) : null);
@@ -363,6 +363,10 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', 's
 		// aggregation. The column will take care to destroy all cell controls when the column is destroyed
 		this.removeAllCells();
 		return Element.prototype.destroy.apply(this, arguments);
+	};
+
+	Row.prototype.invalidate = function() {
+		return this;
 	};
 
 	/**

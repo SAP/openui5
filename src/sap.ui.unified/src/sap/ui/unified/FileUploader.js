@@ -14,7 +14,9 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	'sap/base/Log',
 	'sap/base/security/encodeXML',
-	'sap/ui/dom/jquery/Aria' // jQuery Plugin "addAriaDescribedBy"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "addAriaDescribedBy"
+	'sap/ui/dom/jquery/Aria'
 ], function(
 	Control,
 	library,
@@ -25,7 +27,8 @@ sap.ui.define([
 	containsOrEquals,
 	KeyCodes,
 	Log,
-	encodeXML
+	encodeXML,
+	jQuery
 ) {
 	"use strict";
 
@@ -120,7 +123,12 @@ sap.ui.define([
 			fileType : {type : "string[]", group : "Data", defaultValue : null},
 
 			/**
-			 * Allows multiple files to be chosen and uploaded from the same folder. This property is not supported by Internet Explorer 9.
+			 * Allows multiple files to be chosen and uploaded from the same folder.
+			 * This property is not supported by Internet Explorer 9.
+			 *
+			 * <b>Note:</b> Keep in mind that the various operating systems for mobile devices
+			 * can react differently to the property so that fewer upload functions may be
+			 * available in some cases.
 			 */
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
 

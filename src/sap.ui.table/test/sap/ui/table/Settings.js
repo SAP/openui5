@@ -767,7 +767,7 @@
 		GROUPING: {
 			text: "Grouping",
 			value: function(oTable) {
-				if (sap.ui.table.TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
+				if (oTable.isA("sap.ui.table.TreeTable")) {
 					return oTable.getUseGroupMode();
 				} else {
 					return oTable.getEnableGrouping();
@@ -775,7 +775,7 @@
 			},
 			input: "boolean",
 			action: function(oTable, bValue) {
-				if (sap.ui.table.TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
+				if (oTable.isA("sap.ui.table.TreeTable")) {
 					oTable.setUseGroupMode(bValue);
 				} else {
 					oTable.setEnableGrouping(bValue);

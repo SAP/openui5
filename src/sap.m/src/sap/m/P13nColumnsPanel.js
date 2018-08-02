@@ -23,7 +23,8 @@ sap.ui.define([
 	'./OverflowToolbar',
 	'./OverflowToolbarLayoutData',
 	'./OverflowToolbarButton',
-	'./ToolbarSpacer'
+	'./ToolbarSpacer',
+	"sap/ui/thirdparty/jquery"
 ], function(
 	CoreLibrary,
 	ChangeReason,
@@ -44,7 +45,8 @@ sap.ui.define([
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
 	OverflowToolbarButton,
-	ToolbarSpacer
+	ToolbarSpacer,
+	jQuery
 ) {
 	"use strict";
 

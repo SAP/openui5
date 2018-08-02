@@ -1,19 +1,27 @@
-(function () {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/model/json/JSONModel"
+], function(
+	Controller,
+	MockServer,
+	ODataModel,
+	ResourceModel,
+	JSONModel
+) {
 	"use strict";
 
-	sap.ui.controller("sap.ui.rta.test.additionalElements.ComplexTest", {
-
+	return Controller.extend("sap.ui.rta.test.additionalElements.ComplexTest", {
 		_data: [],
 
 		onInit: function () {
 			var sURL, oModel, oView;
 
-			jQuery.sap.require("sap.ui.core.util.MockServer");
-			jQuery.sap.require("sap.ui.model.resource.ResourceModel");
-
 			sURL = "/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/";
 
-			var oMockServer = new sap.ui.core.util.MockServer({
+			var oMockServer = new MockServer({
 				rootUri: sURL
 			});
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/additionalElements");
@@ -22,7 +30,7 @@
 
 			oMockServer.start();
 
-			oModel = new sap.ui.model.odata.v2.ODataModel(sURL, {
+			oModel = new ODataModel(sURL, {
 				json: true,
 				loadMetadataAsync: true
 			});
@@ -34,7 +42,7 @@
 			oView = this.getView();
 			oView.setModel(oModel);
 
-			var i18nModel = new sap.ui.model.resource.ResourceModel({
+			var i18nModel = new ResourceModel({
 				bundleName: "sap.ui.rta.test.additionalElements.i18n.i18n"
 			});
 			oView.setModel(i18nModel, "i18n");
@@ -46,7 +54,7 @@
 				enabled: true
 			};
 
-			var oStateModel = new sap.ui.model.json.JSONModel();
+			var oStateModel = new JSONModel();
 			oStateModel.setData(data);
 			oView.setModel(oStateModel, "state");
 
@@ -96,24 +104,24 @@
 		},
 
 		switchToAdaptionMode: function () {
-
-			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
-			var oRta = new sap.ui.rta.RuntimeAuthoring({
-				rootControl: this.getOwnerComponent().getAggregation("rootControl"),
-				flexSettings: {
-					developerMode: false
-				}
-			});
-			oRta.attachEvent('stop', function() {
-				oRta.destroy();
-			});
-			oRta.start();
+			sap.ui.require([
+				"sap/ui/rta/RuntimeAuthoring"
+			], function(RuntimeAuthoring) {
+				var oRta = new RuntimeAuthoring({
+					rootControl: this.getOwnerComponent().getAggregation("rootControl"),
+					flexSettings: {
+						developerMode: false
+					}
+				});
+				oRta.attachEvent('stop', function() {
+					oRta.destroy();
+				});
+				oRta.start();
+			}.bind(this));
 		},
 
 		isDataReady: function () {
 			return Promise.all(this._data);
 		}
-
 	});
-
-})();
+});

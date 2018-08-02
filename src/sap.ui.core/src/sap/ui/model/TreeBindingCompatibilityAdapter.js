@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.TreeBindingAdapter
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/thirdparty/jquery"],
+	function(jQuery) {
 		"use strict";
 
 		/**
@@ -90,7 +90,7 @@ sap.ui.define([],
 				},
 				_loadChildContexts: function(oContext) {
 					var oContextInfo = this._getContextInfo(oContext);
-					var iIndex = jQuery.inArray(oContext, this.aContexts);
+					var iIndex = (this.aContexts ? this.aContexts.indexOf(oContext) : -1);
 					var aNodeContexts = this.getNodeContexts(oContext, 0, Number.MAX_VALUE);
 					for (var i = 0, l = aNodeContexts.length; i < l; i++) {
 						this.aContexts.splice(iIndex + i + 1, 0, aNodeContexts[i]);
@@ -228,7 +228,7 @@ sap.ui.define([],
 					that.clearSelection();
 					var _aSelectedContexts = this._aSelectedContexts;
 					jQuery.each(this.aContexts, function(iIndex, oContext) {
-						if (jQuery.inArray(oContext, _aSelectedContexts) >= 0) {
+						if (((_aSelectedContexts ? this.aContexts.indexOf(oContext) : -1)) >= 0) {
 							that.addSelectionInterval(iIndex, iIndex);
 						}
 					});

@@ -27,7 +27,7 @@ sap.ui.define([], function() {
 			// maybe a wrong name was provided then there is no last displayed target
 			if (this._oLastDisplayedTarget) {
 				iViewLevel = this._getViewLevel(this._oLastDisplayedTarget);
-				sName = this._oLastDisplayedTarget._oOptions.name;
+				sName = this._oLastDisplayedTarget._oOptions._name;
 			}
 
 			this._oTargetHandler.navigate({

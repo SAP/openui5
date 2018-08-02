@@ -383,6 +383,11 @@ sap.ui.define([
 					minus2_left: "-2 0"
 				};
 
+			if (this._bPopupOpen) {
+				this.getMenu().close();
+				return;
+			}
+
 			if (!oMenu) {
 				return;
 			}
@@ -469,6 +474,7 @@ sap.ui.define([
 			var oMenuItem = oEvent.getParameter("item");
 
 			this.fireEvent("_menuItemSelected", { item: oMenuItem }); // needed for controls that listen to interaction events from within the control (e.g. for sap.m.OverflowToolbar)
+			this._bPopupOpen = false;
 
 			if (
 				!this._isSplitButton() ||
@@ -612,6 +618,10 @@ sap.ui.define([
 		MenuButton.prototype.onsapshow = function(oEvent) {
 			this.openMenuByKeyboard();
 			!!oEvent && oEvent.preventDefault();
+		};
+
+		MenuButton.prototype.ontouchstart = function() {
+			this._bPopupOpen = this.getMenu() && this.getMenu()._getMenu() && this.getMenu()._getMenu().getPopup().isOpen();
 		};
 
 		MenuButton.prototype.openMenuByKeyboard = function() {

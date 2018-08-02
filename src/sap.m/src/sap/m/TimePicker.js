@@ -19,7 +19,8 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'./TimePickerRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	InputBase,
@@ -37,7 +38,8 @@ function(
 	LocaleData,
 	TimePickerRenderer,
 	KeyCodes,
-	Log
+	Log,
+	jQuery
 ) {
 		"use strict";
 

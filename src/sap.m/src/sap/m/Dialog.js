@@ -22,8 +22,11 @@ sap.ui.define([
 	'./TitlePropagationSupport',
 	'./DialogRenderer',
 	"sap/base/Log",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
-	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control",
+	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
 ],
 function(
 	Bar,
@@ -43,8 +46,9 @@ function(
 	coreLibrary,
 	TitlePropagationSupport,
 	DialogRenderer,
-	Log
-	) {
+	Log,
+	jQuery
+) {
 		"use strict";
 
 		// shortcut for sap.ui.core.OpenState
@@ -1402,6 +1406,14 @@ function(
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
 				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders");
+
+				// When using phone we set _bForceRerenderOnResize property of
+				// the toolbar to true, in order to reset and rerender it on resize.
+				// BCP: 1870031078
+				if (Device.system.phone) {
+					this._oToolbar._bForceRerenderOnResize = true;
+				}
+
 				this._oToolbar._isControlsInfoCached = function () {
 					return false;
 				};

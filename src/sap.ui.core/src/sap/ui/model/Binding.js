@@ -3,8 +3,14 @@
  */
 
 // Provides an abstraction for model bindings
-sap.ui.define(['sap/ui/base/EventProvider', './ChangeReason', './DataState', "sap/base/Log"],
-	function(EventProvider, ChangeReason, DataState, Log) {
+sap.ui.define([
+	'sap/ui/base/EventProvider',
+	'./ChangeReason',
+	'./DataState',
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(EventProvider, ChangeReason, DataState, Log, jQuery) {
 	"use strict";
 
 

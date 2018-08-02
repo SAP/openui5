@@ -2,13 +2,17 @@
 	controllerName="sap.ui.demo.masterdetail.controller.App"
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true"
-	busy="{appView>/busy}"
-	busyIndicatorDelay="{appView>/delay}"
 	xmlns="sap.f"
+	xmlns:m="sap.m"
 	height="100%">
-	<FlexibleColumnLayout
+	<m:App
 		id="app"
-		layout="{appView>/layout}"
-		backgroundDesign="Translucent">
-	</FlexibleColumnLayout>
+		busy="{appView>/busy}"
+		busyIndicatorDelay="{appView>/delay}">
+		<FlexibleColumnLayout
+			id="layout"
+			layout="{appView>/layout}"
+			backgroundDesign="Translucent">
+		</FlexibleColumnLayout>
+	</m:App>
 </mvc:View>

@@ -9,9 +9,18 @@ sap.ui.define([
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
-	"sap/base/Log"
-], function(NumberFormat, FormatException, BaseODataUtils, ODataType, ParseException, ValidateException,
-		Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(
+	NumberFormat,
+	FormatException,
+	BaseODataUtils,
+	ODataType,
+	ParseException,
+	ValidateException,
+	Log,
+	jQuery
+) {
 	"use strict";
 
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;

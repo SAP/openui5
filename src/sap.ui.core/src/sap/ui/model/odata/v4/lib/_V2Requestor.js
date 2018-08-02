@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"./_Helper",
-	"./_Parser"
-], function (DateFormat, ODataUtils, _Helper, _Parser) {
+	"./_Parser",
+	"sap/ui/thirdparty/jquery"
+], function(DateFormat, ODataUtils, _Helper, _Parser, jQuery) {
 	"use strict";
 
 	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds

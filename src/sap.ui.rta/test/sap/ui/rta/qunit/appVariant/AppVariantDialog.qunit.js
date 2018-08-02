@@ -1,31 +1,28 @@
-/* global QUnit  */
+/* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantDialog",
-	"sap/ui/thirdparty/sinon"
-],
-function(
+	"sap/ui/thirdparty/sinon-4"
+], function (
+	jQuery,
 	AppVariantDialog,
-	sinon) {
+	sinon
+) {
 	"use strict";
-
-	QUnit.start();
 
 	var oAppVariantDialog;
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that a AppVariantDialog is instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function () {
 			oAppVariantDialog = new AppVariantDialog();
 		},
-		afterEach : function(assert) {
+		afterEach: function () {
 			oAppVariantDialog.destroy();
 			sandbox.restore();
 		}
-	}, function() {
-
+	}, function () {
 		QUnit.test("When open is called,", function(assert) {
 			oAppVariantDialog.open();
 			assert.ok("then the app variant dialog is opened");
@@ -178,5 +175,9 @@ function(
 
 			oSelectInput.fireValueHelpRequest();
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

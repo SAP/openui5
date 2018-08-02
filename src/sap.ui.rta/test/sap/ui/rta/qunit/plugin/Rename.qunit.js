@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
@@ -19,7 +17,7 @@ sap.ui.require([
 	"sap/m/Label",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
 	VerticalLayout,
 	DesignTime,
 	CommandFactory,
@@ -42,7 +40,6 @@ function(
 
 	QUnit.module("Given a designTime and rename plugin are instantiated", {
 		beforeEach : function(assert) {
-			var that = this;
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -80,11 +77,11 @@ function(
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oFormOverlay = OverlayRegistry.getOverlay(that.oForm);
-				that.oFormContainerOverlay = OverlayRegistry.getOverlay(that.oFormContainer);
-				that.oFormContainerOverlay.setSelectable(true);
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+				this.oFormContainerOverlay.setSelectable(true);
 				done();
-			});
+			}, this);
 
 		},
 		afterEach: function () {
@@ -123,6 +120,31 @@ function(
 
 			assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), true, "then the overlay is editable");
 			assert.strictEqual(this.oRenamePlugin.isAvailable([this.oFormContainerOverlay]), true, "then rename is available for the overlay");
+		});
+
+		QUnit.test("when _isEditable is called, rename has changeOnRelevantContainer true and the Form does not have a stable id", function(assert) {
+			this.oFormContainerOverlay.setDesignTimeMetadata({
+				actions: {
+					rename: {
+						changeType: "renameGroup",
+						changeOnRelevantContainer: true
+					}
+				}
+			});
+			this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
+			this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
+
+			sandbox.stub(this.oRenamePlugin, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === this.oFormOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			}.bind(this));
+
+			sandbox.stub(this.oFormContainerOverlay, "getRelevantContainer").returns(this.oForm);
+
+			assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), false, "then the overlay is not editable");
 		});
 
 		QUnit.test("when isAvailable and isEnabled are called", function(assert) {
@@ -196,7 +218,7 @@ function(
 			this.oButton = new Button({text : "Button"});
 			this.oLabel = new Label({text : "Label"});
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oLabel, this.oButton],
+				content : [this.oButton, this.oLabel],
 				width: "200px"
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -266,17 +288,16 @@ function(
 		});
 
 		QUnit.test("when the title is not on the currently visible viewport and gets renamed", function(assert) {
-			var $button = this.oButton.$();
-			var $label = this.oLabel.$();
-			$label.css("margin-bottom", document.documentElement.clientHeight);
-			$button.get(0).scrollIntoView();
-			var oScrollSpy = sinon.spy($label.get(0), "scrollIntoView");
+			var $Button = this.oButton.$();
+			var $Label = this.oLabel.$();
+			$Button.css("margin-bottom", document.documentElement.clientHeight);
+			var oScrollSpy = sinon.spy($Label.get(0), "scrollIntoView");
 
 			var fnDone = assert.async();
 			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oLayoutOverlay) {
 					assert.equal(oScrollSpy.callCount, 1, "then the Label got scrolled");
-					$label.get(0).scrollIntoView.restore();
+					$Label.get(0).scrollIntoView.restore();
 					fnDone();
 				}
 			}, this);
@@ -301,7 +322,7 @@ function(
 					setTimeout(function () {
 						assert.ok(true, "Delete test successful");
 						fnDone();
-					}, 50);
+					});
 
 					this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
 				}
@@ -333,6 +354,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

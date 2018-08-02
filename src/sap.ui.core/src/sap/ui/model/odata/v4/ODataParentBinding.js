@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"./ODataBinding",
 	"./lib/_Helper",
-	"sap/base/Log"
-], function (SyncPromise, ChangeReason, asODataBinding, _Helper, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(SyncPromise, ChangeReason, asODataBinding, _Helper, Log, jQuery) {
 	"use strict";
 
 	/**

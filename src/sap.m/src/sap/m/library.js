@@ -30,7 +30,7 @@ sap.ui.define([
 	ObjectPath,
 	CoreLibrary,
 	capitalize,
-	jQueryDOM,
+	jQuery,
 	assert,
 	Log,
 	defineLazyProperty,
@@ -50,7 +50,7 @@ sap.ui.define([
 			"sap.m.BackgroundDesign",
 			"sap.m.BarDesign",
 			"sap.m.ButtonType",
-			"sap.m.CarouselArrowsAlign",
+			"sap.m.CarouselArrowsPlacement",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
 			"sap.m.DeviationIndicator",
@@ -103,7 +103,7 @@ sap.ui.define([
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.TimePickerMaskMode",
-			"sap.m.TileSizeBehaviour",
+			"sap.m.TileSizeBehavior",
 			"sap.m.ToolbarDesign",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
@@ -283,6 +283,7 @@ sap.ui.define([
 			"sap.m.WizardStep"
 		],
 		elements: [
+			"sap.m.CalendarAppointment",
 			"sap.m.Column",
 			"sap.m.FlexItemData",
 			"sap.m.FeedListItemAction",
@@ -3691,7 +3692,7 @@ sap.ui.define([
 		if (vElement instanceof Element) {
 			vElement = jQuery(vElement);
 		} else if (typeof vElement === "string") {
-			vElement = jQueryDOM(document.getElementById(vElement));
+			vElement = jQuery(document.getElementById(vElement));
 		} else if (!(vElement instanceof jQuery)) {
 			assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
 			return 0;

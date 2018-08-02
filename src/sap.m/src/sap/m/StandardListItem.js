@@ -173,10 +173,8 @@ sap.ui.define([
 
 	StandardListItem.prototype.getContentAnnouncement = function(oBundle) {
 		var sAnnouncement = "",
-			sInfoState = this.getInfoState(),
-			oIconInfo = IconPool.getIconInfo(this.getIcon()) || {};
+			sInfoState = this.getInfoState();
 
-		sAnnouncement += (oIconInfo.text || oIconInfo.name || "") + " ";
 		sAnnouncement += this.getTitle() + " " + this.getDescription() + " " + this.getInfo() + " ";
 
 		if (sInfoState != "None" && sInfoState != this.getHighlight()) {

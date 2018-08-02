@@ -70,6 +70,20 @@ sap.ui.define([
 			SelectionUtils.getSelectedRules();
 			if (Storage.readPersistenceCookie(Constants.COOKIE_NAME)) {
 				SelectionUtils.persistSelection();
+
+				var aTmpRules = Storage.getRules();
+				SelectionUtils.getRulesSelectionState().forEach(function (oRule) {
+					if (oRule.libName === "temporary"){
+						aTmpRules.forEach(function (oTmpRule) {
+							if (oRule.ruleId === oTmpRule.id) {
+								oTmpRule.selected = oRule.selected;
+							}
+						});
+					}
+				});
+
+				Storage.setRules(aTmpRules);
+
 			}
 		}
 

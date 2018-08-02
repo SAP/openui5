@@ -242,7 +242,7 @@ sap.ui.define([
 				sLabelledBy = oLabel.getId();
 			} else {
 				var aLabels = sLabelledBy.split(" ");
-				if (jQuery.inArray(oLabel.getId(), aLabels) < 0) {
+				if (aLabels.indexOf(oLabel.getId()) < 0) {
 					aLabels.splice(0, 0, oLabel.getId());
 					sLabelledBy = aLabels.join(" ");
 				}

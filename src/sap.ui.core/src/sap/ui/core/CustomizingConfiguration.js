@@ -244,7 +244,7 @@ sap.ui.define([
 						mSettings = oConfig[sViewName];
 					}
 				});
-				return (!jQuery.isEmptyObject(mSettings));
+				return !jQuery.isEmptyObject(mSettings);
 			}
 
 		};

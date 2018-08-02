@@ -34,9 +34,9 @@ sap.ui.define([
 
 				this._oGroupFunctions = {
 					UnitNumber : function(oContext) {
-						var unitNumber = oContext.getProperty("UnitNumber"),
+						var iNumber = oContext.getProperty('UnitNumber'),
 							key, text;
-						if (unitNumber <= 20) {
+						if (iNumber <= 20) {
 							key = "LE20";
 							text = this.getResourceBundle().getText("masterGroup1Header1");
 						} else {
@@ -65,6 +65,7 @@ sap.ui.define([
 					// Restore original busy indicator delay for the list
 					oViewModel.setProperty("/delay", iOriginalBusyDelay);
 				});
+
 				this.getView().addEventDelegate({
 					onBeforeFirstShow: function () {
 						this.getOwnerComponent().oListSelector.setBoundMasterList(oList);
@@ -140,12 +141,11 @@ sap.ui.define([
 					// forward compact/cozy style into Dialog
 					this._oViewSettingsDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 				}
-
-				var sDialogTab = "filter";
+				var sDialogTab = "sort";
 				if (oEvent.getSource() instanceof sap.m.Button) {
 					var sButtonId = oEvent.getSource().sId;
-					if (sButtonId.match("sort")) {
-						sDialogTab = "sort";
+					if (sButtonId.match("filter")) {
+						sDialogTab = "filter";
 					} else if (sButtonId.match("group")) {
 						sDialogTab = "group";
 					}

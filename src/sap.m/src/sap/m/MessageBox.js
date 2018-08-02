@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/core/ElementMetadata',
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
-	'sap/m/library'
+	'sap/m/library',
+	"sap/ui/thirdparty/jquery"
 ],
 		function(
 			Button,
@@ -27,7 +28,8 @@ sap.ui.define([
 			ElementMetadata,
 			coreLibrary,
 			Control,
-			library
+			library,
+			jQuery
 		) {
 			"use strict";
 
@@ -301,7 +303,7 @@ sap.ui.define([
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
 
 					// normalize the vActions array
-					if (typeof mOptions.actions !== "undefined" && !jQuery.isArray(mOptions.actions)) {
+					if (typeof mOptions.actions !== "undefined" && !Array.isArray(mOptions.actions)) {
 						mOptions.actions = [mOptions.actions];
 					}
 					if (!mOptions.actions || mOptions.actions.length === 0) {

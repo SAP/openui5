@@ -6,7 +6,8 @@ sap.ui.define(function () {
 	"use strict";
 
 	/**
-	 * Class handling the Fake Lrep in localStorage
+	 * Class handling the Fake Lrep in different storages
+	 * @param {Storage} oStorage - The storage to be used (e.g. window.sessionStorage)
 	 *
 	 * @class
 	 *

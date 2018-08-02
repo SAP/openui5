@@ -396,6 +396,44 @@
 				assert.ok(oLinkInitSpy.called, "link should be initialized");
 			});
 
+			QUnit.test("Active Item: Details page should contain a link", function (assert) {
+				var oFirstMessageItem = this.oMessageView.getItems()[0];
+				var oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
+				var oDetailsFirstContent;
+
+				oFirstMessageItem.setActiveTitle(true);
+				sap.ui.getCore().applyChanges();
+
+				this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
+				this.clock.tick(300);
+
+				oDetailsFirstContent = this.oMessageView._detailsPage.getContent()[0];
+
+				assert.strictEqual(oDetailsFirstContent.getMetadata().getName(), "sap.m.Link", "First content should be a link");
+				assert.ok(oDetailsFirstContent.hasStyleClass("sapMMsgViewTitleText"), "Link should have 'sapMMsgViewTitleText' css class");
+			});
+
+			QUnit.test("Active Item: Details page link should fire event", function (assert) {
+				var oFirstMessageItem = this.oMessageView.getItems()[0];
+				var oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
+				var oActiveTitlePressStub = this.stub(this.oMessageView, "fireActiveTitlePress");
+				var oDetailsLink;
+
+				oFirstMessageItem.setActiveTitle(true);
+				sap.ui.getCore().applyChanges();
+
+				this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
+				this.clock.tick(300);
+
+				oDetailsLink = this.oMessageView._detailsPage.getContent()[0];
+
+				oDetailsLink.firePress();
+				this.clock.tick(300);
+
+				assert.ok(oActiveTitlePressStub.called, "event should be called");
+				assert.ok(oActiveTitlePressStub.calledWithExactly({ item: oFirstMessageItem }), "event should be called with the message item");
+			});
+
 			QUnit.test("Active Items: Press is propagated from Link to MessageItem", function (assert) {
 				var oFirstItem = this.oMessageView.getItems()[0];
 				var oActiveTitlePressStub = this.stub(this.oMessageView, "fireActiveTitlePress");

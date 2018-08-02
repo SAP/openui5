@@ -38,7 +38,9 @@ sap.ui.define([
 	'sap/m/library',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ], function(
 	Control,
 	ManagedObjectObserver,
@@ -73,7 +75,8 @@ sap.ui.define([
 	PlanningCalendarRenderer,
 	library,
 	deepEqual,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

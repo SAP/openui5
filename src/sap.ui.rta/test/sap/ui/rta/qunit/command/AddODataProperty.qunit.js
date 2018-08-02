@@ -1,6 +1,4 @@
-/* global QUnit sinon */
-
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit */
 
 sap.ui.define([
 	'sap/ui/rta/command/CommandFactory',
@@ -10,9 +8,7 @@ sap.ui.define([
 	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/fl/Utils',
 	'sap/m/Button',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	CommandFactory,
@@ -21,14 +17,13 @@ function(
 	ChangeRegistry,
 	ElementDesignTimeMetadata,
 	Utils,
-	Button
+	Button,
+	sinon
 ) {
 	"use strict";
 
 	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
+		getLocalId: function () {},
 		getManifestEntry: function () {
 			return {};
 		},
@@ -53,7 +48,7 @@ function(
 	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	QUnit.module("Given an AddODataProperty change with a valid entry in the change registry,", {
-		beforeEach : function(assert) {
+		beforeEach : function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
 
 			this.fnApplyChangeSpy = sinon.spy();
@@ -87,7 +82,7 @@ function(
 	});
 
 	QUnit.test("when getting a AddODataProperty command for the change ...", function(assert) {
-		var oCommand = CommandFactory.getCommandFor(
+		return CommandFactory.getCommandFor(
 			this.oButton,
 			"addODataProperty",
 			{
@@ -99,13 +94,24 @@ function(
 				propertyName: "propertyName"
 			},
 			this.oDesignTimeMetadata
-		);
+		)
 
-		assert.ok(oCommand, "the addODataProperty command exists");
-		return oCommand.execute().then(function() {
+		.then(function(oCommand) {
+			assert.ok(oCommand, "the addODataProperty command exists");
+			return oCommand.execute();
+		})
+
+		.then(function() {
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-		}.bind(this));
+		}.bind(this))
+
+		.catch(function (oError) {
+			assert.ok(false, 'catch must never be called - Error: ' + oError);
+		});
 	});
 
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

@@ -121,6 +121,30 @@
         "type": "FIX",
         "text": " sap.ui.fl - invalidate cache on exit rta",
         "references": []
+      },
+      {
+        "id": "80f6fa1bc18e958b909b289b17ed60d7f5549ba9",
+        "type": "FIX",
+        "text": " Fix error in Settings changes containing binding",
+        "references": []
+      },
+      {
+        "id": "7801ff77bb9434a5377d63a65a3c0797125d58cd",
+        "type": "FIX",
+        "text": " Fix error in global flex settings modification",
+        "references": []
+      },
+      {
+        "id": "201f13ce60c33c9337bfa30705ed432225b1c20f",
+        "type": "FIX",
+        "text": " sap.ui.rta - remove useless tests",
+        "references": []
+      },
+      {
+        "id": "fa6bd6b7cd55b302d1902cf3a24b6562c3661384",
+        "type": "FIX",
+        "text": "sap.ui.rta: Disable actions in relevant container without stable id",
+        "references": []
       }
     ]
   }

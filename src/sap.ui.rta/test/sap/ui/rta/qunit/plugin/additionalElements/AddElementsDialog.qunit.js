@@ -1,7 +1,5 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
 sap.ui.require([
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog"
 ], function (
@@ -160,5 +158,7 @@ sap.ui.require([
 		oAddElementsDialog.setElements(aElements);
 	}
 
-	QUnit.start();
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

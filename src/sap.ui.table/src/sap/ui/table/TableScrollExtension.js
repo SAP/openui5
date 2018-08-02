@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./library",
 	"sap/ui/performance/trace/Interaction",
-	"sap/base/Log"
-], function(TableExtension, TableUtils, Device, library, Interaction, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function(TableExtension, TableUtils, Device, library, Interaction, Log, jQuery) {
 	"use strict";
 
 	// Shortcuts
@@ -1138,14 +1139,12 @@ sap.ui.define([
 				iScrollPadding += oTableSizes.tableRowHdrScrWidth;
 			}
 
-			if (oTable.getRows().length > 0) {
-				if (oTable._bRtlMode) {
-					oHSb.style.marginRight = iScrollPadding + "px";
-					oHSb.style.marginLeft = "";
-				} else {
-					oHSb.style.marginLeft = iScrollPadding + "px";
-					oHSb.style.marginRight = "";
-				}
+			if (oTable._bRtlMode) {
+				oHSb.style.marginRight = iScrollPadding + "px";
+				oHSb.style.marginLeft = "";
+			} else {
+				oHSb.style.marginLeft = iScrollPadding + "px";
+				oHSb.style.marginRight = "";
 			}
 
 			var oHSbContent = oTable.getDomRef("hsb-content");

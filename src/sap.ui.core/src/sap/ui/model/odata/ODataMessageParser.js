@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/model/odata/ODataUtils", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message", "sap/base/Log"],
-	function(ODataUtils, coreLibrary, URI, MessageParser, Message, Log) {
+sap.ui.define([
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/core/library",
+	"sap/ui/thirdparty/URI",
+	"sap/ui/core/message/MessageParser",
+	"sap/ui/core/message/Message",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+],
+	function(ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
 	"use strict";
 
 // shortcuts for enums

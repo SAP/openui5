@@ -1232,7 +1232,7 @@ sap.ui.define([
 		testAriaLabelsForFocusedDataCell($Cell, 2, 0, assert, {firstTime: true});
 
 		var bFocusTriggered = false;
-		var iDelay = 100 + oTable._iBindingTimerDelay;
+		var iDelay = 150;
 
 		var oDelegate = {
 			onfocusin: function(oEvent) {
@@ -1251,7 +1251,7 @@ sap.ui.define([
 			if (Device.browser.chrome) {
 				assert.ok(!!$Cell.attr("aria-hidden"), "Cell is temporarily hidden");
 			}
-		}, oTable._iBindingTimerDelay + 10);
+		}, 60);
 
 		setTimeout(function() {
 			oTable.removeEventDelegate(oDelegate);

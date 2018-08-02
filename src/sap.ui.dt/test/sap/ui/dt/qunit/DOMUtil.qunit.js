@@ -1,18 +1,34 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/DOMUtil",
-	'sap/m/Button',
-	'sap/ui/Device'
+	'sap/m/Button'
 ],
 function(
 	DOMUtil,
-	Button,
-	Device
+	Button
 ){
 	"use strict";
+
+	DOMUtil.insertStyles('\
+		#left-part .withAfterElement::after {\
+			content: ":";\
+		}\
+		#left-part .withBeforeElement::before {\
+			content: "Nr.";\
+			color: white;\
+		}\
+		#left-part .withBeforeElementAndAttrContent::before {\
+			content: attr(data-sap-ui-icon-content);\
+		}\
+		.shrink {\
+			transform: scale(0.1, 0.5);\
+			-webkit-transform: scale(0.1, 0.5);\
+			-moz-transform: scale(0.1, 0.5);\
+			-ms-transform: scale(0.1, 0.5);\
+			-o-transform: scale(0.1, 0.5);\
+		}\
+	', document.head);
 
 	/**
 	 * getSize
@@ -401,6 +417,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

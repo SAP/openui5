@@ -128,6 +128,7 @@ sap.ui.define(["sap/m/library"],
 
 	PanelRenderer.startContent = function (oRm, oControl) {
 		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-content");
 		oRm.addClass("sapMPanelContent");
 		oRm.addClass("sapMPanelBG" + oControl.getBackgroundDesign());
 

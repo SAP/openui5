@@ -1,10 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/AggregationFilled",
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/actions/EnterText'
-], function (Opa5, AggregationFilled, Press, PropertyStrictEquals, EnterText) {
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function (Opa5, AggregationFilled, Press, PropertyStrictEquals) {
 	"use strict";
 
 	var sTreeTableId = "ruleList",
@@ -18,20 +17,30 @@ sap.ui.define([
 	function isLibrarySelectedInModel(oTable, iLibIndex) {
 		return oTable.getModel().getData().treeModel[iLibIndex].selected;
 	}
+
 	function isSelectedInView(oTable, iRowIndex) {
 		var oModel = oTable.getBinding().getModel(),
 			oContext = oTable.getBinding().getContexts(iRowIndex, 1)[0];
 		return oModel.getProperty("selected", oContext);
 	}
 
+	function countRulesInLibraryFromModel(oTable, iLibIndex) {
+		return oTable.getModel().getData().treeModel[iLibIndex].nodes.length;
+	}
+
+	function getSpecificRuleTitle(oTable, iLibIndex, iRuleIndex) {
+		return oTable.getModel().getData().treeModel[iLibIndex].nodes[iRuleIndex].title;
+	}
+
 	function createWaitForRulesSelectedCountMatchExpectedCount (iExpectedRulesCount, sSuccessMessage, sErrorMessage) {
+		var sLabelValue = "Rules (" + iExpectedRulesCount + " selected)";
 		return {
-			id: sTreeTableId,
-			matchers: new AggregationFilled({ name: "columns" }),
+			controlType: "sap.m.Label",
+			matchers: new PropertyStrictEquals({name:"text", value:sLabelValue}),
 			viewName: sViewName,
 			viewNamespace: sViewNameSpace,
-			success: function (oTable) {
-				Opa5.assert.strictEqual(oTable.getAggregation("columns")[0].getAggregation("label").getProperty("text"), "Rules (" + iExpectedRulesCount + " selected)", sSuccessMessage);
+			success: function (oColumn) {
+				Opa5.assert.strictEqual(oColumn[0].getProperty("text") , sLabelValue, sSuccessMessage);
 			},
 			errorMessage: sErrorMessage
 		};
@@ -136,6 +145,99 @@ sap.ui.define([
 						},
 						errorMessage: "Was not able to press Sort ascending"
 					});
+				},
+
+				iPressIconTabHeader: function (sValue) {
+					return this.waitFor({
+						controlType: "sap.m.IconTabFilter",
+						matchers: new PropertyStrictEquals({name:"key", value:sValue}),
+						actions: new Press(),
+						success: function (oIconTabFilter) {
+							Opa5.assert.ok(oIconTabFilter[0].getProperty("key") === sValue, "IconTabHeader with value " + sValue + "was pressed");
+						},
+						errorMessage: "IconTabHeader was not found"
+					});
+				},
+
+				iPressButtonWithText: function(sTextValue) {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						matchers: new PropertyStrictEquals({name:"text", value:sTextValue}),
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Create Rule button was pressed");
+						},
+						errorMessage: "Create Rule button was not found"
+					});
+				},
+
+				iSelectAdditionalRuleSet: function (sValue) {
+					return this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({ name: "title", value: sValue }),
+						actions: new Press(),
+						success: function (oStandartListItem) {
+							Opa5.assert.ok(oStandartListItem[0].getProperty("title") === sValue, "list item with value " + sValue + "was pressed");
+						},
+						errorMessage: "List item was not found"
+					});
+				},
+
+				iPressLoadAdditionalRuleSetButton: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({ name: "text", value: "Load" }),
+						actions: new Press(),
+						success: function (oButton) {
+							Opa5.assert.ok(oButton[0].getProperty("text") === "Load", "Button 'Load' was pressed");
+						},
+						errorMessage: "Button was not pressed"
+					});
+				},
+
+				iClickRow: function (sName) {
+					return this.waitFor({
+						controlType: "sap.m.Text",
+						matchers: new PropertyStrictEquals({ name: "text", value: sName }),
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Row " + sName + " was pressed.");
+						},
+						errorMessage: "The row was not pressed"
+					});
+				},
+				iPressDeleteTemporaryRuleIcon: function(sId) {
+					return this.waitFor({
+						id: sId,
+						controlType : "sap.ui.core.Icon",
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Delete Rule button was pressed");
+						},
+						errorMessage: "Delete Rule button was not found"
+					});
+				},
+				iPressEditTemporaryRuleIcon: function(sId) {
+					return this.waitFor({
+						id: sId,
+						controlType : "sap.ui.core.Icon",
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Edit Rule button was pressed");
+						},
+						errorMessage: "Edit Rule button was not found"
+					});
+				},
+				iPressCloneRuleIcon: function(sId) {
+					return this.waitFor({
+						id: sId,
+						controlType : "sap.ui.core.Icon",
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Edit Rule button was pressed");
+						},
+						errorMessage: "Edit Rule button was not found"
+					});
 				}
 			},
 			assertions: {
@@ -150,6 +252,29 @@ sap.ui.define([
 							Opa5.assert.ok(true, "TreeTable should have rules");
 						},
 						errorMessage: "No rules in the TreeTable"
+					});
+				},
+
+				iShouldSeeVisibleRuleDetailsPage: function () {
+					return this.waitFor({
+						id: "ruleDetailsPage",
+						success: function (oPage) {
+							Opa5.assert.ok(oPage.getVisible(), "Rule details page should be visible.");
+						},
+						errorMessage: "Rule details page is not visible."
+					});
+				},
+
+				iShouldSeeHiddenRuleDetailsPage: function () {
+					return this.waitFor({
+						autoWait: false,
+						check: function () {
+							return Opa5.getWindow().jQuery("#sap-ui-invisible-ruleDetailsPage").length > 0;
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Rule details page should be hidden.");
+						},
+						errorMessage: "Rule details page is not hidden."
 					});
 				},
 
@@ -316,6 +441,33 @@ sap.ui.define([
 							Opa5.assert.ok(oMenuTextFieldItem[0].getValue() === sFilterValue, "filter was applied on column rules with keyword" + sFilterValue);
 						},
 						errorMessage: "Was not able to filter by: " + sFilterValue
+					});
+				},
+
+				iShouldSeeNumberOfRulesInLibrary: function (iLibIndex, iNumberOfRulesInsideLib) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var iNumberOfRules = countRulesInLibraryFromModel(oTable, iLibIndex);
+							Opa5.assert.ok(iNumberOfRules === iNumberOfRulesInsideLib, "Number of rules inside the library are " + iNumberOfRulesInsideLib);
+						},
+						errorMessage: "Number of rules are incorrect"
+					});
+				},
+				iShouldSeeARuleWithSpecificTitle: function (iLibIndex, iRuleIndex, sRuleTitle) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							var sTitle = getSpecificRuleTitle(oTable, iLibIndex, iRuleIndex);
+							Opa5.assert.ok(sRuleTitle === sTitle, "A rule with this title " + sTitle + " was found");
+						},
+						errorMessage: "A rule with this title was not found"
 					});
 				}
 			}

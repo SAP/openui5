@@ -3,8 +3,18 @@
  */
 
 // Provides control sap.ui.table.ColumnMenu.
-sap.ui.define(['./library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/unified/MenuTextFieldItem', 'sap/ui/Device', './TableUtils', "sap/base/assert"],
-	function(library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils, assert) {
+sap.ui.define([
+	'./library',
+	'sap/ui/unified/Menu',
+	'sap/ui/unified/MenuItem',
+	'sap/ui/unified/MenuTextFieldItem',
+	'sap/ui/Device',
+	'./TableUtils',
+	"sap/base/assert",
+	"sap/ui/base/Object",
+	"sap/ui/thirdparty/jquery"
+],
+	function(library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils, assert, BaseObject, jQuery) {
 	"use strict";
 
 	/**
@@ -100,11 +110,11 @@ sap.ui.define(['./library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 's
 	ColumnMenu.prototype._updateReferences = function(oParent) {
 		this._oColumn = oParent;
 		if (oParent) {
-			assert(TableUtils.isInstanceOf(oParent, "sap/ui/table/Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
+			assert(oParent.isA("sap.ui.table.Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
 
 			this._oTable = this._oColumn.getParent();
 			if (this._oTable) {
-				assert(TableUtils.isInstanceOf(this._oTable, "sap/ui/table/Table"), "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
+				assert(this._oTable.isA("sap.ui.table.Table"), "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
 			}
 		}
 	};
@@ -348,13 +358,13 @@ sap.ui.define(['./library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 's
 			}
 
 			var oBinding = oTable.getBinding();
-			var bAnalyticalBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding");
+			var bAnalyticalBinding = BaseObject.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding");
 			var aVisibleColumns = oTable._getVisibleColumns();
 
 			for (var i = 0, l = aColumns.length; i < l; i++) {
 				var oColumn = aColumns[i];
 				// skip columns which are set to invisible by analytical metadata
-				if (bAnalyticalBinding && TableUtils.isInstanceOf(oColumn, "sap/ui/table/AnalyticalColumn")) {
+				if (bAnalyticalBinding && oColumn.isA("sap.ui.table.AnalyticalColumn")) {
 
 					var oQueryResult = oBinding.getAnalyticalQueryResult();
 					var oEntityType = oQueryResult.getEntityType();
@@ -406,7 +416,7 @@ sap.ui.define(['./library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 's
 				if (bVisible || TableUtils.getVisibleColumnCount(this._oTable) > 1) {
 					var oTable = oColumn.getParent();
 					var bExecuteDefault = true;
-					if (oTable && TableUtils.isInstanceOf(oTable, "sap/ui/table/Table")) {
+					if (BaseObject.isA(oTable, "sap.ui.table.Table")) {
 						bExecuteDefault = oTable.fireColumnVisibility({
 							column: oColumn,
 							newVisible: bVisible

@@ -27,7 +27,9 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
 	"sap/base/security/encodeXML",
-	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "selectText"
+	"sap/ui/dom/jquery/selectText"
 ],
 function(
 	Bar,
@@ -52,7 +54,8 @@ function(
 	InputRenderer,
 	containsOrEquals,
 	assert,
-	encodeXML
+	encodeXML,
+	jQuery
 ) {
 	"use strict";
 

@@ -23,12 +23,13 @@
 	color: @sapUiBaseText;
 }
 
-.sapMOnePersonRow {
+.sapMOnePersonRow,
+.sapMOnePersonBlockersColumn {
 	border-color: @sapUiListVerticalBorderColor;
 }
 
-.sapMOnePersonColumn {
-	background-color: @sapUiListBackground;
+.sapMOnePersonBlockersRow {
+	background-color: @sapMOnePersonGridHoursBackground;
 }
 
 .sapMOnePersonColumnWeekend,
@@ -36,7 +37,7 @@
 	background-color: darken(@sapUiListBackground, 3);
 }
 
-.sapMOnePersonNowMarker{
+.sapMOnePersonNowMarker {
 	color: @sapUiCalendarColorToday;
 }
 

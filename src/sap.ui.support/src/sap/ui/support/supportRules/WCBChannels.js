@@ -89,6 +89,13 @@ function () {
 		POST_UI_INFORMATION:  "POST_UI_INFORMATION",
 
 		/**
+		 * Posts information about the application under test.
+		 * @type {string}
+		 * @const
+		 */
+		POST_APPLICATION_INFORMATION: "POST_APPLICATION_INFORMATION",
+
+		/**
 		 * Posts available libraries.
 		 * @type {string}
 		 * @const

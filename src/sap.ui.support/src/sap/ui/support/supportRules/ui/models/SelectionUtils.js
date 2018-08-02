@@ -44,6 +44,10 @@ sap.ui.define([
 				oRuleSets = oModel.getData(),
 				aSelectedRules = [];
 
+			if (!oRuleSets) {
+				return;
+			}
+
 			Object.keys(oRuleSets).forEach(function(iRuleSet) {
 				oRuleSets[iRuleSet].nodes.forEach(function(oRule) {
 						if (oRule.selected) {
@@ -141,6 +145,52 @@ sap.ui.define([
 			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
 				this.persistSelection();
 			}
+		},
+
+
+		/**
+		 * Applies selection to the tree model after reinitializing model with additional rulesets.
+		 * @param {Object} tempTreeModelWithAdditionalRuleSets tree model with no selection
+		 * @param {Object} oTreeModelWithSelection tree model with selection before loading additional rulesets
+		 * @returns {Object} oTreeModelWhitAdditionalRuleSets updated selection model
+		 */
+		_syncSelectionAdditionalRuleSetsMainModel: function (tempTreeModelWithAdditionalRuleSets, oTreeModelWithSelection) {
+
+			Object.keys(tempTreeModelWithAdditionalRuleSets).forEach(function(iKey) {
+				Object.keys(oTreeModelWithSelection).forEach(function(iKey) {
+					if (tempTreeModelWithAdditionalRuleSets[iKey].id === oTreeModelWithSelection[iKey].id) {
+						tempTreeModelWithAdditionalRuleSets[iKey] =  oTreeModelWithSelection[iKey];
+					}
+				});
+			});
+
+			return tempTreeModelWithAdditionalRuleSets;
+		},
+
+		/**
+		 * Deselect additional rulesets in model
+		 * @param {Object} oTreeModel tree model with loaded additional ruleset(s)
+		 * @param {Array} aAdditionalRuleSetsNames additional ruleset(s) name
+		 * @returns {Object} oTreeModel updated selection model
+		 */
+		_deselectAdditionalRuleSets: function (oTreeModel, aAdditionalRuleSetsNames) {
+
+			if (!aAdditionalRuleSetsNames) {
+				return;
+			}
+
+			aAdditionalRuleSetsNames.forEach(function (sRuleName) {
+				Object.keys(oTreeModel).forEach(function(iKey) {
+					if (oTreeModel[iKey].name === sRuleName) {
+						oTreeModel[iKey].selected = false;
+						oTreeModel[iKey].nodes.forEach(function(oRule){
+							oRule.selected = false;
+						});
+					}
+				});
+			});
+
+			return oTreeModel;
 		}
 	};
 

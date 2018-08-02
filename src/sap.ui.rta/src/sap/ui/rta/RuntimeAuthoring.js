@@ -53,56 +53,56 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes"
 ],
-	function(
-		jQuery,
-		ManagedObject,
-		FioriToolbar,
-		StandaloneToolbar,
-		PersonalizationToolbar,
-		DesignTime,
-		Overlay,
-		CommandStack,
-		CommandFactory,
-		LREPSerializer,
-		RTARenamePlugin,
-		RTADragDropPlugin,
-		RTAElementMover,
-		CutPastePlugin,
-		RemovePlugin,
-		CreateContainerPlugin,
-		AdditionalElementsPlugin,
-		AdditionalElementsDialog,
-		AdditionalElementsAnalyzer,
-		CombinePlugin,
-		SplitPlugin,
-		SelectionPlugin,
-		SettingsPlugin,
-		ControlVariantPlugin,
-		ContextMenuPlugin,
-		TabHandlingPlugin,
-		FlexControllerFactory,
-		Utils,
-		DtUtil,
-		FlexUtils,
-		FlexSettings,
-		MessageBox,
-		MessageToast,
-		PopupManager,
-		BusyIndicator,
-		DOMUtil,
-		StylesLoader,
-		UrlParser,
-		RtaAppVariantFeature,
-		Device,
-		ServicesIndex,
-		ServiceEventBus,
-		OverlayRegistry,
-		capitalize,
-		UriParameters,
-		Measurement,
-		Log,
-		KeyCodes
-	) {
+function(
+	jQuery,
+	ManagedObject,
+	FioriToolbar,
+	StandaloneToolbar,
+	PersonalizationToolbar,
+	DesignTime,
+	Overlay,
+	CommandStack,
+	CommandFactory,
+	LREPSerializer,
+	RTARenamePlugin,
+	RTADragDropPlugin,
+	RTAElementMover,
+	CutPastePlugin,
+	RemovePlugin,
+	CreateContainerPlugin,
+	AdditionalElementsPlugin,
+	AdditionalElementsDialog,
+	AdditionalElementsAnalyzer,
+	CombinePlugin,
+	SplitPlugin,
+	SelectionPlugin,
+	SettingsPlugin,
+	ControlVariantPlugin,
+	ContextMenuPlugin,
+	TabHandlingPlugin,
+	FlexControllerFactory,
+	Utils,
+	DtUtil,
+	FlexUtils,
+	FlexSettings,
+	MessageBox,
+	MessageToast,
+	PopupManager,
+	BusyIndicator,
+	DOMUtil,
+	StylesLoader,
+	UrlParser,
+	RtaAppVariantFeature,
+	Device,
+	ServicesIndex,
+	ServiceEventBus,
+	OverlayRegistry,
+	capitalize,
+	UriParameters,
+	Measurement,
+	Log,
+	KeyCodes
+) {
 	"use strict";
 
 	var FL_MAX_LAYER_PARAM = "sap-ui-fl-max-layer";
@@ -127,8 +127,7 @@ sap.ui.define([
 	 * @alias sap.ui.rta.RuntimeAuthoring
 	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", /** @lends sap.ui.rta.RuntimeAuthoring.prototype */
-	{
+	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", {
 		metadata : {
 			// ---- control specific ----
 			library : "sap.ui.rta",
@@ -173,7 +172,6 @@ sap.ui.define([
 					type : "any",
 					defaultValue : {}
 				},
-
 
 				/**
 				 * Map with flex-related settings
@@ -230,7 +228,9 @@ sap.ui.define([
 				 */
 				"selectionChange" : {
 					parameters : {
-						selection : { type : "sap.ui.dt.Overlay[]" }
+						selection : {
+							type : "sap.ui.dt.Overlay[]"
+						}
 					}
 				},
 				/**Event fired when the runtime authoring mode is changed */
@@ -471,7 +471,6 @@ sap.ui.define([
 		var oUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
-
 		if (oUriLayer) {
 			mFlexSettings.layer = oUriLayer;
 		}
@@ -494,7 +493,7 @@ sap.ui.define([
 	 * @returns {String} the layer after checking the uri parameters
 	 * @private
 	 */
-	RuntimeAuthoring.prototype.getLayer = function(sLayer) {
+	RuntimeAuthoring.prototype.getLayer = function (sLayer) {
 		return this.getFlexSettings().layer;
 	};
 
@@ -586,7 +585,7 @@ sap.ui.define([
 
 					this._oRootControl.addStyleClass("sapUiRtaRoot");
 
-					this._oDesignTime.attachSelectionChange(function(oEvent) {
+					this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 					}, this);
 
@@ -636,7 +635,7 @@ sap.ui.define([
 					.loadStyles('InPageStyles')
 					.then(function (sData) {
 						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
-						DOMUtil.insertStyles(sStyles);
+						DOMUtil.insertStyles(sStyles, Overlay.getOverlayContainer().get(0));
 					});
 			})
 			.then(function () {
@@ -645,6 +644,9 @@ sap.ui.define([
 			.then(
 				function () {
 					this._sStatus = STARTED;
+					if (this.getShowToolbars()) {
+						this.getToolbar().bringToFront();
+					}
 					this.fireStart({
 						editablePluginsCount: this.iEditableOverlaysCount
 					});

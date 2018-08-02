@@ -50,6 +50,16 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @override to suppress the binding strings to be used as
+	 */
+	AddXML.prototype.bindProperty = function(sName, oBindingInfo){
+		if (sName === "fragment"){
+			return this.setFragment(oBindingInfo.bindingString);
+		}
+		return FlexCommand.prototype.bindProperty.apply(this, arguments);
+	};
+
 	AddXML.prototype._getChangeSpecificData = function() {
 		var mSpecificInfo = {
 			changeType : this.getChangeType(),

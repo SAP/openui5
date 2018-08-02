@@ -5,11 +5,13 @@
 // Provides object sap.ui.dt.MetadataPropagationUtil.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/Util'
+	"sap/ui/dt/Util",
+	"sap/base/util/merge"
 ],
 function(
 	jQuery,
-	Util
+	Util,
+	merge
 ) {
 	"use strict";
 
@@ -32,7 +34,7 @@ function(
 			!mAggregationMetadata["propagationInfos"]) {
 			return false;
 		}
-		return jQuery.extend([], mAggregationMetadata["propagationInfos"]);
+		return Object.assign([], mAggregationMetadata["propagationInfos"]);
 	};
 
 	MetadataPropagationUtil._getCurrentRelevantContainerPropagation = function(mElementDtMetadataForAggregation, oElement) {
@@ -101,7 +103,7 @@ function(
 	 */
 	MetadataPropagationUtil.propagateMetadataToAggregationOverlay = function(mOriginalMetadata, oElement, mParentAggregationMetadata) {
 		var mNewPropagationInfo, mMetadataFunctionPropagation, mRelevantContainerPropagation,
-			mMetadata = jQuery.extend({}, mOriginalMetadata);
+			mMetadata = Object.assign({}, mOriginalMetadata);
 
 		var aPropagatedRelevantContainersFromParent = MetadataPropagationUtil._getParentPropagationInfo(mParentAggregationMetadata);
 
@@ -111,7 +113,7 @@ function(
 		}
 
 		if (aPropagatedRelevantContainersFromParent || !jQuery.isEmptyObject(mRelevantContainerPropagation) || !jQuery.isEmptyObject(mMetadataFunctionPropagation)) {
-			mNewPropagationInfo = jQuery.extend(mRelevantContainerPropagation, mMetadataFunctionPropagation);
+			mNewPropagationInfo = Object.assign({}, mRelevantContainerPropagation, mMetadataFunctionPropagation);
 			return MetadataPropagationUtil._setPropagationInfo(mMetadata, mNewPropagationInfo, aPropagatedRelevantContainersFromParent);
 		} else {
 			return mMetadata;
@@ -166,7 +168,7 @@ function(
 		vReturnMetadata = aRevertedPropagationInfos.reduce(function(vReturnMetadata, oPropagatedInfo){
 			if (oPropagatedInfo.metadataFunction) {
 				var oCurrentMetadata = oPropagatedInfo.metadataFunction(oElement, oPropagatedInfo.relevantContainerElement);
-				return jQuery.extend(true, vReturnMetadata, oCurrentMetadata);
+				return merge(vReturnMetadata, oCurrentMetadata);
 			} else {
 				return vReturnMetadata;
 			}
@@ -191,7 +193,7 @@ function(
 			return mTargetMetadata;
 		}
 
-		var mResultMetadata = jQuery.extend(true, {}, mTargetMetadata);
+		var mResultMetadata = merge({}, mTargetMetadata);
 
 		if (vPropagatedRelevantContainer) {
 			mResultMetadata.relevantContainer = vPropagatedRelevantContainer;
@@ -219,7 +221,7 @@ function(
 					}
 				});
 			}
-			return jQuery.extend(true, mResultMetadata, vPropagatedMetadata);
+			return merge(mResultMetadata, vPropagatedMetadata);
 		}
 		return mResultMetadata;
 	};

@@ -1498,44 +1498,20 @@ sap.ui.define([
 				(/sap-ui-xx-debug(M|-m)odule(L|-l)oading=(true|x|X)/.test(location.search) || oCfgData["xx-debugModuleLoading"]) ? Log.Level.DEBUG : Log.Level.INFO
 			),
 
-			FRAGMENT = "fragment",
-			VIEW = "view",
-			mKnownSubtypes = {
-				js :  [VIEW, FRAGMENT, "controller", "designtime"],
-				xml:  [VIEW, FRAGMENT],
-				json: [VIEW, FRAGMENT],
-				html: [VIEW, FRAGMENT]
-			},
+			mKnownSubtypes = LoaderExtensions.getKnownSubtypes(),
 
-			rTypes,
 			rSubTypes;
 
 		(function() {
-			var s = "",
-				sSub = "";
+			var sSub = "";
 
 			for (var sType in mKnownSubtypes) {
-				s = (s ? s + "|" : "") + sType;
 				sSub = (sSub ? sSub + "|" : "") + "(?:(?:" + mKnownSubtypes[sType].join("\\.|") + "\\.)?" + sType + ")";
 			}
-			s = "\\.(" + s + ")$";
 			sSub = "\\.(?:" + sSub + "|[^./]+)$";
-			oLog.debug("constructed regexp for file types :" + s);
 			oLog.debug("constructed regexp for file sub-types :" + sSub);
-			rTypes = new RegExp(s);
 			rSubTypes = new RegExp(sSub);
 		}());
-
-		/**
-		 * Name conversion function that converts a name in UI5 module name syntax to a name in requireJS module name syntax.
-		 * @private
-		 */
-		function ui5ToRJS(sName) {
-			if ( /^jquery\.sap\./.test(sName) ) {
-				return sName;
-			}
-			return sName.replace(/\./g, "/");
-		}
 
 		/**
 		 * Constructs a URL to load the module with the given name and file type (suffix).
@@ -1559,7 +1535,7 @@ sap.ui.define([
 		 * @deprecated since 1.58 use {@link sap.ui.require_toUrl} instead
 		 */
 		jQuery.sap.getModulePath = function(sModuleName, sSuffix) {
-			return jQuery.sap.getResourcePath(ui5ToRJS(sModuleName), sSuffix);
+			return jQuery.sap.getResourcePath(LoaderExtensions.ui5ToRJS(sModuleName), sSuffix);
 		};
 
 		/**
@@ -1798,7 +1774,7 @@ sap.ui.define([
 		 * @deprecated since 1.58 use <code>sap.ui.require(sModuleName)</code> instead
 		 */
 		jQuery.sap.isDeclared = function isDeclared(sModuleName, bIncludePreloaded) {
-			var state = _ui5loader.getModuleState( ui5ToRJS(sModuleName) + ".js" );
+			var state = _ui5loader.getModuleState( LoaderExtensions.ui5ToRJS(sModuleName) + ".js" );
 			return state && (bIncludePreloaded || state > 0);
 		};
 
@@ -1827,7 +1803,7 @@ sap.ui.define([
 		// take resource roots from configuration
 		var paths = {};
 		for ( var n in oCfgData.resourceroots ) {
-			paths[ui5ToRJS(n)] = oCfgData.resourceroots[n] || ".";
+			paths[LoaderExtensions.ui5ToRJS(n)] = oCfgData.resourceroots[n] || ".";
 		}
 		ui5loader.config({paths: paths});
 
@@ -1870,9 +1846,9 @@ sap.ui.define([
 			// which could be {modName: "sap.ui.core.Dev", type: "view"}
 			if (typeof (sModuleName) === "object") {
 				sNamespaceObj = sModuleName.modName;
-				sModuleName = ui5ToRJS(sModuleName.modName) + (sModuleName.type ? "." + sModuleName.type : "") + ".js";
+				sModuleName = LoaderExtensions.ui5ToRJS(sModuleName.modName) + (sModuleName.type ? "." + sModuleName.type : "") + ".js";
 			} else {
-				sModuleName = ui5ToRJS(sModuleName) + ".js";
+				sModuleName = LoaderExtensions.ui5ToRJS(sModuleName) + ".js";
 			}
 
 			_ui5loader.declareModule(sModuleName);
@@ -1927,9 +1903,9 @@ sap.ui.define([
 			// which could be {modName: "sap.ui.core.Dev", type: "view"}
 			if (typeof (vModuleName) === "object") {
 				jQuery.sap.assert(!vModuleName.type || mKnownSubtypes.js.indexOf(vModuleName.type) >= 0, "type must be empty or one of " + mKnownSubtypes.js.join(", "));
-				vModuleName = ui5ToRJS(vModuleName.modName) + (vModuleName.type ? "." + vModuleName.type : "");
+				vModuleName = LoaderExtensions.ui5ToRJS(vModuleName.modName) + (vModuleName.type ? "." + vModuleName.type : "");
 			} else {
-				vModuleName = ui5ToRJS(vModuleName);
+				vModuleName = LoaderExtensions.ui5ToRJS(vModuleName);
 			}
 
 			sap.ui.requireSync(vModuleName);
@@ -1975,7 +1951,7 @@ sap.ui.define([
 			if ( Version(oData.version || "1.0").compareTo("2.0") < 0 ) {
 				modules = {};
 				for ( var sName in oData.modules ) {
-					modules[ui5ToRJS(sName) + ".js"] = oData.modules[sName];
+					modules[LoaderExtensions.ui5ToRJS(sName) + ".js"] = oData.modules[sName];
 				}
 			}
 			sap.ui.require.preload(modules, oData.name, oData.url);
@@ -2010,7 +1986,7 @@ sap.ui.define([
 		 * @sap-restricted sap.ui.core
 		 */
 		jQuery.sap.getResourceName = function(sModuleName, sSuffix) {
-			return ui5ToRJS(sModuleName) + (sSuffix == null ? ".js" : sSuffix);
+			return LoaderExtensions.ui5ToRJS(sModuleName) + (sSuffix == null ? ".js" : sSuffix);
 		};
 
 		/**
@@ -2055,109 +2031,7 @@ sap.ui.define([
 		 * @experimental API is not yet fully mature and may change in future.
 		 * @since 1.15.1
 		 */
-		jQuery.sap.loadResource = function(sResourceName, mOptions) {
-
-			var sType,
-				oData,
-				sUrl,
-				oError,
-				oDeferred;
-
-			if (typeof sResourceName === "string") {
-				mOptions = mOptions || {};
-			} else {
-				mOptions = sResourceName || {};
-				sResourceName = mOptions.name;
-			}
-			// defaulting
-			mOptions = jQuery.extend({ failOnError: true, async: false }, mOptions);
-
-			sType = mOptions.dataType;
-			if (sType == null && sResourceName) {
-				sType = (sType = rTypes.exec(sResourceName || mOptions.url)) && sType[1];
-			}
-
-			jQuery.sap.assert(/^(xml|html|json|text)$/.test(sType), "type must be one of xml, html, json or text");
-
-			oDeferred = mOptions.async ? new jQuery.Deferred() : null;
-
-			function handleData(d, e) {
-				if (d == null && mOptions.failOnError) {
-					oError = e || new Error("no data returned for " + sResourceName);
-					if (mOptions.async) {
-						oDeferred.reject(oError);
-						oLog.error(oError);
-					}
-					return null;
-				}
-
-				if (mOptions.async) {
-					oDeferred.resolve(d);
-				}
-
-				return d;
-			}
-
-			function convertData(d) {
-				var vConverter = jQuery.ajaxSettings.converters["text " + sType];
-				if (typeof vConverter === "function") {
-					d = vConverter(d);
-				}
-				return handleData(d);
-			}
-
-			oData = _ui5loader.getModuleContent(sResourceName, mOptions.url);
-
-			if (oData != undefined) {
-
-				if (mOptions.async) {
-					//Use timeout to simulate async behavior for this sync case for easier usage
-					setTimeout(function() {
-						convertData(oData);
-					}, 0);
-				} else {
-					oData = convertData(oData);
-				}
-
-			} else {
-
-				if (!mOptions.async && syncCallBehavior) {
-					if (syncCallBehavior >= 1) { // temp. raise a warning only
-						oLog.error("[nosync] loading resource '" + (sResourceName || mOptions.url) + "' with sync XHR");
-					} else {
-						throw new Error("[nosync] loading resource '" + (sResourceName || mOptions.url) + "' with sync XHR");
-					}
-				}
-
-				jQuery.ajax({
-					url: sUrl = mOptions.url || _ui5loader.getResourcePath(sResourceName),
-					async: mOptions.async,
-					dataType: sType,
-					headers: mOptions.headers,
-					success: function(data, textStatus, xhr) {
-						oData = handleData(data);
-					},
-					error: function(xhr, textStatus, error) {
-						oError = new Error("resource " + sResourceName + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors. Reason: " + error);
-						oError.status = textStatus;
-						oError.error = error;
-						oError.statusCode = xhr.status;
-						oData = handleData(null, oError);
-					}
-				});
-
-			}
-
-			if (mOptions.async) {
-				return Promise.resolve(oDeferred);
-			}
-
-			if (oError != null && mOptions.failOnError) {
-				throw oError;
-			}
-
-			return oData;
-		};
+		jQuery.sap.loadResource = LoaderExtensions.loadResource;
 
 		/*
 		 * register a global event handler to detect script execution errors.

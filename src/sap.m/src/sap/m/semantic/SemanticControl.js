@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/m/semantic/SemanticConfiguration",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Element"
-], function(SemanticConfiguration, ManagedObject, Element) {
+	"sap/ui/core/Element",
+	"sap/ui/thirdparty/jquery"
+], function(SemanticConfiguration, ManagedObject, Element, jQuery) {
 	"use strict";
 
 	/**

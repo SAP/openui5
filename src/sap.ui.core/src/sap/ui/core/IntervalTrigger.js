@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['../base/Object', './EventBus', "sap/base/assert"],
-	function(BaseObject, EventBus, assert) {
+sap.ui.define(['../base/Object', './EventBus', "sap/base/assert", "sap/ui/thirdparty/jquery"],
+	function(BaseObject, EventBus, assert, jQuery) {
 	"use strict";
 
 

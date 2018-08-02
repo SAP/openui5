@@ -493,6 +493,24 @@
         "type": "FIX",
         "text": " sap.m.Carousel: pageChange event is now fired correctly",
         "references": []
+      },
+      {
+        "id": "00d60f42042068a9096c98d374ad898a3a53e824",
+        "type": "FEATURE",
+        "text": " routing: add \u0027match\u0027 function to Router and Route to test a URL hash",
+        "references": []
+      },
+      {
+        "id": "2bbb20c42fc05c44bad3f723f891048a1a86dac0",
+        "type": "FEATURE",
+        "text": " thirdparty: update es6-promise polyfill to version 4.2.4",
+        "references": []
+      },
+      {
+        "id": "e606e682edd3d83a25599ba8cb70c5eefb659b09",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore query parameter for index lookup",
+        "references": []
       }
     ]
   }

@@ -3,8 +3,8 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log"],
-	function(Interface, ControlTree, LogViewer, PropertyList, Log) {
+sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log", "sap/ui/thirdparty/jquery"],
+	function(Interface, ControlTree, LogViewer, PropertyList, Log, jQuery) {
 	"use strict";
 
 
@@ -47,7 +47,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 				this.init(bOnInit);
 			}
 			if (!this.bRunsEmbedded || oCore.getConfiguration().getTrace()) {
-				this.initLogger(jQuery.sap.log, bOnInit);
+				this.initLogger(Log, bOnInit);
 			}
 		} catch (oException) {
 			Log.warning("DebugEnv plugin can not be started outside the Testsuite.");
@@ -178,7 +178,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 	DebugEnv.prototype.initLogger = function(oLogger, bOnInit) {
 		this.oLogger = oLogger;
 		if ( !this.bRunsEmbedded ) {
-			// attach test suite log viewer to our jQuery.sap.log
+			// attach test suite log viewer to our Log
 			this.oTraceWindow = top.frames["sap-ui-TraceWindow"];
 			this.oTraceViewer = this.oTraceWindow.oLogViewer = new LogViewer(this.oTraceWindow, 'sap-ui-TraceWindowRoot');
 			this.oTraceViewer.sLogEntryClassPrefix = "lvl"; // enforce use of CSS instead of DOM styles
@@ -263,8 +263,8 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 	 * Will be called to show the TraceWindow
 	 */
 	DebugEnv.prototype.showTraceWindow = function() {
-		if ( !this.oTraceWindow && jQuery && jQuery.sap && jQuery.sap.log ) {
-			this.initLogger(jQuery.sap.log, false);
+		if ( !this.oTraceWindow ) {
+			this.initLogger(Log, false);
 		}
 		var oLogViewer = this.oTraceWindow && this.oTraceWindow.document.getElementById('sap-ui-TraceWindowRoot');
 		if ( oLogViewer ) {

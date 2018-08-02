@@ -9,8 +9,9 @@ sap.ui.define([
 	"./_GroupLock",
 	"./_Helper",
 	"./_Requestor",
-	"sap/base/Log"
-], function (SyncPromise, URI, _GroupLock, _Helper, _Requestor, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function (SyncPromise, URI, _GroupLock, _Helper, _Requestor, Log, jQuery) {
 	"use strict";
 
 		// Matches two cases:  segment with predicate or simply predicate:

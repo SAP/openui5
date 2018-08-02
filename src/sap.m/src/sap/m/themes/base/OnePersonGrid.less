@@ -53,7 +53,7 @@
 .sapMOnePersonRowHeaders {
 	display: flex;
 	flex-direction: column;
-	font-size: 0.875rem;
+	font-size: 0.75rem;
 }
 
 .sapMOnePersonRowHeader {
@@ -65,23 +65,43 @@
 	visibility: hidden;
 }
 
+.sapMOnePersonRowHeaderAMPM,
+.sapMOnePersonNowMarkerAMPM {
+	font-size: 0.625rem;
+}
+
 /* GRID COLUMNS */
-.sapMOnePersonColumns {
+.sapMOnePersonColumns,
+.sapMOnePersonBlockersColumns {
 	flex: 1;
 	display: flex;
 }
 
-.sapMOnePersonColumn {
+.sapMOnePersonBlockersColumns {
+	margin-left: @sapMOnePersonGridRowHeadersWidth;
+	min-height: 1.75rem;
+	position: relative;
+}
+
+.sapMOnePersonColumn,
+.sapMOnePersonBlockersColumn {
 	position: relative;
 	flex: 1;
 }
 
-.sapMOnePersonRow {
+.sapMOnePersonRow,
+.sapMOnePersonBlockersColumn {
 	box-sizing: border-box;
 	border: 0.0625rem solid;
-	border-top: none;
+	border-top-width: 0;
 	height: @sapMOnePersonGridRowHeight;
 	position: relative;
+}
+
+.sapMOnePersonBlockersColumn {
+	border-top-width: 0.0625rem;
+	border-bottom-width: 0.125rem;
+	height: auto;
 }
 
 /* NOW MARKER */
@@ -127,7 +147,8 @@
 }
 
 /* APPOINTMENTS */
-.sapMOnePersonAppointments {
+.sapMOnePersonAppointments,
+.sapMOnePersonBlockers {
 	position: absolute;
 	z-index: 2;
 	top: 0;
@@ -136,7 +157,7 @@
 	bottom: 0;
 }
 
-.sapMOnePersonAppointmentWrap {
+.sapMOnePersonAppointmentWrap.sapUiCalendarRowApps {
 	// TODO: this styles will be removed when Appointments refactoring occured
 	box-sizing: border-box;
 	padding: 0.0625rem;
@@ -145,8 +166,15 @@
 	.sapUiCalendarApp {
 		border-radius: 0.125rem;
 		position: relative;
+		min-width: auto;
 		width: 100%;
 		height: calc(~"100% - 0.0625rem");
+
+		& > .sapUiCalendarAppCont,
+		&:active > .sapUiCalendarAppCont,
+		&.sapUiCalendarAppSel > .sapUiCalendarAppCont {
+			border-left: none;
+		}
 
 		.sapUiCalendarAppTitle {
 			padding-top: 0.2rem;
@@ -154,7 +182,21 @@
 	}
 }
 
-.sapMOnePersonAppointments .sapUiCalendarRowApps {
+.sapMOnePersonBlockersColumns .sapMOnePersonAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp {
+	height: 1.625rem;
+
+	.sapUiCalendarAppTitle {
+		padding-top: 0;
+	}
+}
+
+.sapMOnePersonBlockersColumns .sapUiCalendarAppCont {
+	display: flex;
+	align-items: center;
+	padding: 0 0.25rem;
+}
+
+.sapMOnePersonGrid .sapUiCalendarRowApps {
 	// TODO: this styles will be removed when Appointments refactoring occured
 	position: absolute;
 	min-height: auto;
@@ -178,7 +220,7 @@
 			display: flex;
 			flex-direction: row-reverse;
 			align-items: center;
-			text-align: left;
+			text-align: start;
 
 			.sapUiCalItemText,
 			.sapUiCalDayName {
@@ -189,7 +231,7 @@
 			}
 
 			.sapUiCalDayName {
-				text-align: right;
+				text-align: end;
 				padding-right: 0.5rem;
 			}
 		}

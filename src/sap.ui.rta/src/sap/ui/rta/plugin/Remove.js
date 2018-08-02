@@ -7,15 +7,15 @@ sap.ui.define([
 	'sap/ui/rta/Utils',
 	'sap/ui/rta/command/CompositeCommand',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/Util',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log"
 ], function(
 	Plugin,
 	Utils,
 	CompositeCommand,
 	OverlayRegistry,
-	DtUtil,
-	KeyCodes
+	KeyCodes,
+	Log
 ) {
 	"use strict";
 
@@ -65,20 +65,21 @@ sap.ui.define([
 	 * @returns {boolean} editable or not
 	 * @private
 	 */
-	Remove.prototype._isEditable = function (ElementOverlay) {
+	Remove.prototype._isEditable = function (oElementOverlay) {
 		var bEditable = false;
-		var oElement = ElementOverlay.getElement();
+		var oElement = oElementOverlay.getElement();
 
-		var oRemoveAction = this.getAction(ElementOverlay);
+		var oRemoveAction = this.getAction(oElementOverlay);
 		if (oRemoveAction && oRemoveAction.changeType) {
 			if (oRemoveAction.changeOnRelevantContainer) {
-				oElement = ElementOverlay.getRelevantContainer();
+				oElement = oElementOverlay.getRelevantContainer();
 			}
-			bEditable = this.hasChangeHandler(oRemoveAction.changeType, oElement);
+			bEditable = this.hasChangeHandler(oRemoveAction.changeType, oElement) &&
+						this._checkRelevantContainerStableID(oRemoveAction, oElementOverlay);
 		}
 
 		if (bEditable) {
-			return this.hasStableId(ElementOverlay);
+			return this.hasStableId(oElementOverlay);
 		}
 
 		return bEditable;
@@ -225,27 +226,36 @@ sap.ui.define([
 		var oNextOverlaySelection = Remove._getElementToFocus(aElementOverlays);
 
 		aElementOverlays.forEach(function(oOverlay) {
-			var oCommand;
+			var oPromise;
 			var oRemovedElement = oOverlay.getElement();
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 			var oRemoveAction = this.getAction(oOverlay);
 			var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
 			var sConfirmationText = this._getConfirmationText(oOverlay);
 
-			if (sConfirmationText) {
-				aPromises.push(
-					Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText)
-					.then(function(bConfirmed) {
-						if (bConfirmed) {
-							oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
-							oCompositeCommand.addCommand(oCommand);
-						}
-					}.bind(this))
-				);
-			} else {
-				oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
-				oCompositeCommand.addCommand(oCommand);
-			}
+			oPromise = Promise.resolve()
+
+			.then(function() {
+				if (sConfirmationText) {
+					return Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText);
+				}
+				return true;
+			})
+
+			.then(function(bConfirmed) {
+				if (bConfirmed) {
+					return this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
+				}
+				return undefined;
+			}.bind(this))
+
+			.then(function(oCommand) {
+				if (oCommand) {
+					oCompositeCommand.addCommand(oCommand);
+				}
+			});
+
+			aPromises.push(oPromise);
 
 			// deselect overlay before we remove to avoid unnecessary checks which could happen when multiple elements get removed at once
 			oOverlay.setSelected(false);
@@ -256,7 +266,11 @@ sap.ui.define([
 			Promise.all(aPromises).then(function() {
 				this._fireElementModified(oCompositeCommand);
 				fnSetFocus(oNextOverlaySelection);
-			}.bind(this));
+			}.bind(this))
+
+			.catch(function(oError) {
+				Log.error("Error during remove: ", oError);
+			});
 		} else {
 			this._fireElementModified(oCompositeCommand);
 			fnSetFocus(oNextOverlaySelection);

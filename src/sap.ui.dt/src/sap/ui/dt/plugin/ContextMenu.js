@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/dt/Util',
 	'sap/ui/Device',
 	"sap/base/assert",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/merge"
 ], function(
 	jQuery,
 	Plugin,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Utils,
 	Device,
 	assert,
-	KeyCodes
+	KeyCodes,
+	merge
 ) {
 	"use strict";
 
@@ -366,7 +368,7 @@ sap.ui.define([
 
 	ContextMenu.prototype._startOpeningWithDelay = function(oEvent) {
 		this._bTouched = false;
-		var oCurrentEvent = jQuery.extend({}, oEvent);
+		var oCurrentEvent = merge({}, oEvent);
 		this.clickTimeout = setTimeout(function () {
 			this._startOpening(oCurrentEvent, true);
 		}.bind(this), this.iMenuLeftclickOpeningDelay);

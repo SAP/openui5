@@ -12,7 +12,16 @@ sap.ui.define([
 	 * Constructor for a new VariantManagement.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The VariantManagement control can be used to manage variants, such as filter bar variants or table variants.
+	 *
+	 * @class
+	 * The <code>VariantManagement</code> control can be used to manage variants.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * You can use this control in most controls that are enabled for <i>UI adaptation at runtime</i>.
+	 *
+	 * @see {@link topic:f1430c0337534d469da3a56307ff76af UI Adaptation at Runtime: Enable Your App}
+	 *
 	 * @extends sap.ui.core.Control
 	 * @constructor
 	 * @public

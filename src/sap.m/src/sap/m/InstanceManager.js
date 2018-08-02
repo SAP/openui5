@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.InstanceManager
-sap.ui.define(["sap/base/assert", "sap/base/Log"],
-	function(assert, Log) {
+sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
+	function(assert, Log, jQuery) {
 	"use strict";
 
 /**

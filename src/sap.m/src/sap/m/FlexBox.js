@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
 	'./FlexBoxRenderer',
-	"sap/ui/thirdparty/jquery"
+	'sap/ui/thirdparty/jquery'
 ],
 function(
 	FlexBoxStylingHelper,
@@ -19,7 +19,7 @@ function(
 	Control,
 	RenderManager,
 	FlexBoxRenderer,
-	jQueryDOM
+	jQuery
 ) {
 	"use strict";
 
@@ -291,9 +291,9 @@ function(
 			oWrapper = null;
 
 		if (oItem.getLayoutData()) {
-			oWrapper = jQueryDOM(document.getElementById(oItem.getLayoutData().getId()));
+			oWrapper = jQuery(document.getElementById(oItem.getLayoutData().getId()));
 		} else {
-			oWrapper = jQueryDOM(document.getElementById(RenderManager.createInvisiblePlaceholderId(oItem))).parent();
+			oWrapper = jQuery(document.getElementById(RenderManager.createInvisiblePlaceholderId(oItem))).parent();
 		}
 
 		if (oControlEvent.getParameter("newValue")) {

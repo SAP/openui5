@@ -1,9 +1,6 @@
-/* global QUnit sinon */
-
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit */
 
 sap.ui.define([
-	// internal:
 	'sap/ui/fl/Utils',
 	'sap/ui/core/Manifest',
 	'sap/ui/rta/command/CommandFactory',
@@ -14,13 +11,10 @@ sap.ui.define([
 	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/fl/variants/VariantModel',
 	'sap/ui/fl/FlexControllerFactory',
-	// should be last:
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon-4'
 ],
-function(
-	Utils,
+function (
+	FlUtils,
 	Manifest,
 	CommandFactory,
 	ElementDesignTimeMetadata,
@@ -29,135 +23,154 @@ function(
 	VariantManagement,
 	ControlVariant,
 	VariantModel,
-	FlexControllerFactory
+	FlexControllerFactory,
+	sinon
 ) {
 	'use strict';
 
-	var oData = {
-		"variantMgmtId1": {
-			"defaultVariant": "variantMgmtId1",
-			"variants": [
-				{
-					"author": "SAP",
-					"key": "variantMgmtId1",
-					"layer": "VENDOR",
-					"readOnly": true,
-					"title": "Standard"
-				}
-			]
-		}
-	};
-
-	var oManifestObj = {
-		"sap.app": {
-			id: "MyComponent",
-			"applicationVersion": {
-				"version": "1.2.3"
-			}
-		}
-	};
-	var oManifest = new Manifest(oManifestObj);
-
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getModel: function () {return oModel;},
-		getId: function() {
-			return "RTADemoAppMD";
-		},
-		getManifest: function() {
-			return oManifest;
-		}
-	};
-
-	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-	sinon.stub(Utils, "getComponentClassName").returns("Dummy.Component");
-
-	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
-
-	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
-
-	var oVariant = {
-		"content": {
-			"fileName":"variant0",
-			"content": {
-				"title":"variant A"
-			},
-			"layer":"CUSTOMER",
-			"variantReference":"variant00",
-			"support":{
-				"user":"Me"
-			},
-			reference: "Dummy.Component"
-		},
-		"controlChanges" : [
-			{
-				"fileName":"change44",
-				"layer":"CUSTOMER"
-			},
-			{
-				"fileName":"change45",
-				"layer":"CUSTOMER"
-			}
-		]
-	};
-
-	sinon.stub(oModel, "getVariant").returns(oVariant);
-	sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
-	sinon.stub(oModel.oVariantController, "getVariants").returns([oVariant]);
-	sinon.stub(oModel.oVariantController, "addVariantToVariantManagement").returns(1);
-	sinon.stub(oModel.oVariantController, "removeVariantFromVariantManagement").returns(1);
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a variant management control ...", {
-		beforeEach : function(assert) {
+		before: function () {
+			var oData = {
+				"variantMgmtId1": {
+					"defaultVariant": "variantMgmtId1",
+					"variants": [
+						{
+							"author": "SAP",
+							"key": "variantMgmtId1",
+							"layer": "VENDOR",
+							"readOnly": true,
+							"title": "Standard"
+						}
+					]
+				}
+			};
+
+			var oManifestObj = {
+				"sap.app": {
+					id: "MyComponent",
+					"applicationVersion": {
+						"version": "1.2.3"
+					}
+				}
+			};
+
+			this.oManifest = new Manifest(oManifestObj);
+
+			var oMockedAppComponent = {
+				getLocalId: function () {},
+				getModel: function () {
+					return this.oModel;
+				}.bind(this),
+				getId: function () {
+					return "RTADemoAppMD";
+				},
+				getManifest: function () {
+					return this.oManifest;
+				}.bind(this)
+			};
+
+			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
+
+			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
+
+			this.oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+
+			this.oVariant = {
+				"content": {
+					"fileName":"variant0",
+					"content": {
+						"title":"variant A"
+					},
+					"layer":"CUSTOMER",
+					"variantReference":"variant00",
+					"support":{
+						"user":"Me"
+					},
+					reference: "Dummy.Component"
+				},
+				"controlChanges" : [
+					{
+						"fileName":"change44",
+						"layer":"CUSTOMER"
+					},
+					{
+						"fileName":"change45",
+						"layer":"CUSTOMER"
+					}
+				]
+			};
+
+			this.oGetCurrentLayerStub = sinon.stub(FlUtils, "getCurrentLayer").returns("CUSTOMER");
+			sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
+			sinon.stub(this.oModel.oVariantController, "getVariants").returns([this.oVariant]);
+			sinon.stub(this.oModel.oVariantController, "addVariantToVariantManagement").returns(1);
+			sinon.stub(this.oModel.oVariantController, "removeVariantFromVariantManagement").returns(1);
+
+		},
+		after: function () {
+			this.oManifest.destroy();
+			this.oModel.destroy();
+			this.oGetAppComponentForControlStub.restore();
+			this.oGetComponentClassNameStub.restore();
+			this.oGetCurrentLayerStub.restore();
+		},
+		beforeEach: function () {
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 		},
-		afterEach : function(assert) {
+		afterEach: function () {
 			this.oVariantManagement.destroy();
+			sandbox.restore();
 		}
-	});
+	}, function () {
+		QUnit.test("when calling command factory for duplicate variants and undo", function (assert) {
+			var oOverlay = new ElementOverlay({ element: this.oVariantManagement });
+			var fnCreateDefaultFileNameSpy = sandbox.spy(FlUtils, "createDefaultFileName");
+			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
+			sandbox.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
 
-	QUnit.test("when calling command factory for duplicate variants and undo", function(assert) {
-		var done = assert.async();
+			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
+			var mFlexSettings = {layer: "CUSTOMER"};
+			var oControlVariantDuplicateCommand, oDuplicateVariant, aPreparedChanges;
 
-		var oOverlay = new ElementOverlay({ element: this.oVariantManagement });
-		var fnCreateDefaultFileNameSpy = sinon.spy(Utils, "createDefaultFileName");
-		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
-		sinon.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
-
-		var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
-		var mFlexSettings = {layer: "CUSTOMER"};
-
-		var oControlVariantDuplicateCommand = CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
-			sourceVariantReference : oVariant.content.variantReference,
-			newVariantTitle: "variant A Copy"
-		}, oDesignTimeMetadata, mFlexSettings);
-
-		assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
-		oControlVariantDuplicateCommand.execute().then( function() {
-			var oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
-			var aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
-			assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
-			assert.ok(fnCreateDefaultFileNameSpy.calledWith("Copy"), "then Copy appended to the fileName of the duplicate variant");
-			assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
-			assert.equal(oDuplicateVariant.getVariantReference(), oVariant.content.variantReference, "then variant reference correctly duplicated");
-			assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
-			assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
-			assert.equal(oDuplicateVariant.getControlChanges()[0].support.sourceChangeFileName, oVariant.controlChanges[0].fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
-			assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
-
-			oControlVariantDuplicateCommand.undo().then( function() {
+			return CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
+				sourceVariantReference : this.oVariant.content.variantReference,
+				newVariantTitle: "variant A Copy"
+			}, oDesignTimeMetadata, mFlexSettings)
+			.then(function(oCommand) {
+				oControlVariantDuplicateCommand = oCommand;
+				assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
+				return oControlVariantDuplicateCommand.execute();
+			})
+			.then(function() {
+				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+				assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
+				assert.ok(fnCreateDefaultFileNameSpy.calledWith("Copy"), "then Copy appended to the fileName of the duplicate variant");
+				assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
+				assert.equal(oDuplicateVariant.getVariantReference(), this.oVariant.content.variantReference, "then variant reference correctly duplicated");
+				assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
+				assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
+				assert.equal(oDuplicateVariant.getControlChanges()[0].support.sourceChangeFileName, this.oVariant.controlChanges[0].fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
+				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
+				return oControlVariantDuplicateCommand.undo();
+			}.bind(this))
+			.then( function() {
 				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
 				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
 				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
 				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then all dirty changes removed");
 				assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
-				done();
+			})
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		});
-
 	});
 
-
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

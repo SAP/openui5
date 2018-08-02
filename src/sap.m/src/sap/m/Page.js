@@ -31,7 +31,7 @@ function(
 	Element,
 	TitlePropagationSupport,
 	PageRenderer,
-	jQueryDOM
+	jQuery
 ) {
 		"use strict";
 
@@ -472,7 +472,7 @@ function(
 		};
 
 		Page.prototype._contentHasScroll = function () {
-			var $section = jQueryDOM(document.getElementById(this.getId() + "-cont"));
+			var $section = jQuery(document.getElementById(this.getId() + "-cont"));
 			return $section[0].scrollHeight > $section.innerHeight();
 		};
 
@@ -671,17 +671,18 @@ function(
 		 * Scrolls to an element(DOM or sap.ui.core.Element) within the page if the element is rendered.
 		 * @param {HTMLElement | sap.ui.core.Element} oElement The element to which should be scrolled.
 		 * @param {int} [iTime=0] The duration of animated scrolling. To scroll immediately without animation, give 0 as value or leave it default.
+		 * @param {Array} Specifies the offset left and top for the DOM Element.
 		 * @returns {sap.m.Page} <code>this</code> to facilitate method chaining.
 		 * @since 1.30
 		 * @public
 		 */
-		Page.prototype.scrollToElement = function (oElement, iTime) {
+		Page.prototype.scrollToElement = function (oElement, iTime, aOffset) {
 			if (oElement instanceof Element) {
 				oElement = oElement.getDomRef();
 			}
 
 			if (this._oScroller) {
-				this._oScroller.scrollToElement(oElement, iTime);
+				this._oScroller.scrollToElement(oElement, iTime, aOffset);
 			}
 			return this;
 		};

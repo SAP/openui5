@@ -1,7 +1,7 @@
 /*
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.sjax"], function(MockServer/*, jQuerySapSjax*/) {
+sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/thirdparty/jquery", "jquery.sap.sjax"], function(MockServer/*, jQuerySapSjax*/, jQuery) {
 	"use strict";
 	return {
 
@@ -156,7 +156,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.sjax"], function(MockS
 			var that = this;
 			this._oDraftMetadata.draftNodes = [];
 			this._oDraftMetadata.draftRootKey = mEntitySets[this._oDraftMetadata.draftRootName].keys.filter(function(x) {
-				return jQuery.inArray(x, that._calcSemanticKeys(that._oDraftMetadata.draftRootName, mEntitySets)) < 0;
+				return that._calcSemanticKeys(that._oDraftMetadata.draftRootName, mEntitySets).indexOf(x) < 0;
 			})[0];
 			var oAnnotations = that._oDraftMetadata.annotations;
 			var oEntitySetsAnnotations = oAnnotations.EntityContainer[Object.keys(oAnnotations.EntityContainer)[0]];
@@ -211,7 +211,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.sjax"], function(MockS
 			var aDraftRoot = oMockdata[this._oDraftMetadata.draftRootName];
 			var fnGrep = function(aContains, aContained) {
 				return aContains.filter(function(x) {
-					return jQuery.inArray(x, aContained) < 0;
+					return aContained.indexOf(x) < 0;
 				})[0];
 			};
 			if (aDraftRoot.length === 100) {
@@ -344,7 +344,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "jquery.sap.sjax"], function(MockS
 			var oResponse;
 			var fnGrep = function(aContains, aContained) {
 				return aContains.filter(function(x) {
-					return jQuery.inArray(x, aContained) < 0;
+					return aContained.indexOf(x) < 0;
 				})[0];
 			};
 			// navigate to draft nodes and activate nodes

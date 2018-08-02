@@ -11,9 +11,11 @@ sap.ui.define([
 	"./CheckBox",
 	"./TableRenderer",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
+	"sap/ui/thirdparty/jquery",
+	// jQuery custom selectors ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log) {
+	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, jQuery) {
 	"use strict";
 
 

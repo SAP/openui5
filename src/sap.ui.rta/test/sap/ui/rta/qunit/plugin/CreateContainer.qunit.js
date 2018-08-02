@@ -1,8 +1,6 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
@@ -17,7 +15,7 @@ sap.ui.require([
 	"sap/ui/core/Title",
 	"sap/ui/thirdparty/sinon-4"
 ],
-function(
+function (
 	Utils,
 	VerticalLayout,
 	DesignTime,
@@ -267,6 +265,35 @@ function(
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, false), false, "then the overlay is not editable");
 		});
 
+		QUnit.test("when an overlay has createContainer action with changeOnRelevantContainer true, but its relevant container has no stable id", function(assert) {
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations : {
+					formContainers : {
+						actions : {
+							createContainer : {
+								changeType : "addGroup",
+								changeOnRelevantContainer: true
+							}
+						}
+					}
+				}
+			});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+
+			sandbox.stub(this.oCreateContainer, "hasStableId").callsFake(function(oOverlay){
+				if (oOverlay === this.oFormOverlay){
+					return false;
+				} else {
+					return true;
+				}
+			}.bind(this));
+
+			sandbox.stub(this.oFormContainerOverlay, "getRelevantContainer").returns(this.oForm);
+
+			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormContainerOverlay, true), false, "then the overlay is not editable");
+		});
+
 		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
 			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create: Group", "then the correct message key is returned");
 		});
@@ -498,6 +525,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
-	QUnit.start();
 });

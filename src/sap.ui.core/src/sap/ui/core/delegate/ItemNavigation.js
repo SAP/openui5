@@ -15,9 +15,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapFocusable"
+	"sap/ui/thirdparty/jquery",
+	// jQuery custom selectors ":sapFocusable"
+	"sap/ui/dom/jquery/Selectors"
 ],
-	function(EventProvider, assert, Log, containsOrEquals, KeyCodes) {
+	function(EventProvider, assert, Log, containsOrEquals, KeyCodes, jQuery) {
 	"use strict";
 	/* eslint-disable no-lonely-if */
 

@@ -30,7 +30,7 @@ describe('sap.m.MultiComboBox', function() {
 
 	//MultiComboBox with cropped tokens
 	it("should visualize a MultiComboBox with cropped tokens", function(){
-		var croppedTokensMultiComboBox = element(by.id("MultiComboBox1"));
+		var croppedTokensMultiComboBox = element(by.id("MultiComboBox1-inner"));
 		croppedTokensMultiComboBox.click();
 		expect(takeScreenshot(croppedTokensMultiComboBox)).toLookAs("cropped_tokens");
 	});

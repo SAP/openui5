@@ -21,8 +21,11 @@ sap.ui.define([
 	'sap/m/SelectListRenderer',
 	'./TabStripRenderer',
 	"sap/base/Log",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
-	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control",
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ],
 function(
 	Control,
@@ -42,8 +45,9 @@ function(
 	SelectRenderer,
 	SelectListRenderer,
 	TabStripRenderer,
-	Log
-	) {
+	Log,
+	jQuery
+) {
 		"use strict";
 
 		// shortcut for sap.m.SelectType
@@ -301,10 +305,35 @@ function(
 			this._addItemNavigation();
 
 			if (!Device.system.phone) {
+				// workaround for the problem that the scrollEnablement obtains this reference only after its hook to onAfterRendering of the TabStrip is called
+				this._oScroller._$Container = this.$("tabsContainer");
+
 				this._adjustScrolling();
+
+				if (this.getSelectedItem()) {
+					if (!sap.ui.getCore().isThemeApplied()) {
+						sap.ui.getCore().attachThemeChanged(this._handleInititalScrollToItem, this);
+					} else {
+						this._handleInititalScrollToItem();
+					}
+				}
 
 				this._sResizeListenerId = ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._adjustScrolling, this));
 			}
+		};
+
+		/**
+		 * Scrolls to initially selected item by setting it after the theme is applied
+		 * and on after rendering the Tab Strip.
+		 *
+		 * @private
+		 */
+		TabStrip.prototype._handleInititalScrollToItem = function() {
+			var $oItem = sap.ui.getCore().byId(this.getSelectedItem());
+			if ($oItem.$().length > 0) { // check if the item is already in the DOM
+				this._scrollIntoView($oItem, 500);
+			}
+			sap.ui.getCore().detachThemeChanged(this._handleInititalScrollToItem, this);
 		};
 
 		/**
@@ -572,7 +601,8 @@ function(
 				oTabsContainerDomRef = this.getDomRef("tabsContainer"),
 				iScrollLeft = oTabsContainerDomRef.scrollLeft,
 				iContainerWidth = this.$("tabsContainer").width(),
-				iNewScrollLeft = iScrollLeft;
+				iNewScrollLeft = iScrollLeft,
+				bIE_Edge = Device.browser.internet_explorer || Device.browser.edge;
 
 			// check if item is outside of viewport
 			if (iItemPosLeft < 0 || iItemPosLeft > iContainerWidth - iItemWidth) {
@@ -582,6 +612,12 @@ function(
 						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
 					} else { // left side: make this the first item
 						iNewScrollLeft += iItemPosLeft;
+					}
+				} else if (this._bRtl && bIE_Edge) {
+					if (iItemPosLeft < 0) { // right side: make this the first item
+						iNewScrollLeft -= iItemPosLeft;
+					} else { // left side: make this the last item
+						iNewScrollLeft -= iItemPosLeft + iItemWidth - iContainerWidth;
 					}
 				} else {
 					if (iItemPosLeft < 0) { // left side: make this the first item
@@ -1126,8 +1162,9 @@ function(
 		 * @private
 		 */
 		TabStrip.prototype._updateAriaSelectedAttributes = function(aItems, oSelectedItem) {
-			var sAriaSelected = "false";
+			var sAriaSelected;
 			aItems.forEach(function (oItem) {
+				sAriaSelected = "false";
 				if (oItem.$()) {
 					if (oSelectedItem && oSelectedItem.getId() === oItem.getId()) {
 						sAriaSelected = "true";
@@ -1317,12 +1354,12 @@ function(
 			if (oItem === oList.getSelectedItem()) {
 				oRm.addClass(SelectListRenderer.CSS_CLASS + "ItemBaseSelected");
 			}
+			oRm.writeAttribute("tabindex", 0);
 			oRm.writeClasses();
 			this.writeItemAccessibilityState.apply(this, arguments);
 			oRm.write(">");
 
 			oRm.write('<p class=\"sapMSelectListItemText\">');
-			// oRm.write('<p class=\"sapMSelectListItemText\">');
 			// always show the full text on phone
 			oRm.writeEscaped(oItem.getText().slice(0, (Device.system.phone ? oItem.getText().length : TabStripItem.DISPLAY_TEXT_MAX_LENGTH)));
 			// add three dots "..." at the end if not the whole text is shown

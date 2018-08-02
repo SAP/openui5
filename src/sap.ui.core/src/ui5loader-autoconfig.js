@@ -338,7 +338,7 @@
 			},
 			'sap/ui/thirdparty/jquery-mobile-custom': {
 				amd: true,
-				deps: ['sap/ui/thirdparty/jquery'],
+				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/Device'],
 				exports: 'jQuery.mobile'
 			},
 			'sap/ui/thirdparty/jszip': {

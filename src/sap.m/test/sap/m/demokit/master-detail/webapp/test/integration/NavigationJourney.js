@@ -1,7 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Master",
+	"./pages/Detail",
+	"./pages/Browser",
+	"./pages/App"
 ], function (opaTest) {
 	"use strict";
 
@@ -9,18 +13,16 @@ sap.ui.define([
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp({
-			hash: "/Objects/ObjectID_13"
-		});
+		Given.iStartTheApp();
 
 		// Actions
-		When.onTheMasterPage.iRememberTheSelectedItem().
-			and.iRememberTheIdOfListItemAtPosition(1).
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(1).
 			and.iPressOnTheObjectAtPosition(1);
 
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheRememberedObject().
 			and.iShouldSeeHeaderActionButtons();
+		Then.onTheBrowserPage.iShouldSeeTheHashForTheRememberedObject();
 	});
 
 	opaTest("Should press full screen toggle button: The app shows one column", function (Given, When, Then) {
@@ -43,7 +45,7 @@ sap.ui.define([
 
 	opaTest("Should react on hash change", function (Given, When, Then) {
 		// Actions
-		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(2);
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(1);
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
@@ -51,15 +53,14 @@ sap.ui.define([
 		Then.onTheMasterPage.theRememberedListItemShouldBeSelected();
 	});
 
+
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
-		// Actions
-		When.onTheDetailPage.iLookAtTheScreen();
+
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheObjectLineItemsList().
 			and.theDetailViewShouldContainOnlyFormattedUnitNumbers().
 			and.theLineItemsListShouldHaveTheCorrectNumberOfItems().
-			and.theLineItemsHeaderShouldDisplayTheAmountOfEntries().
-			and.theLineItemsTableShouldContainOnlyFormattedUnitNumbers();
+			and.theLineItemsHeaderShouldDisplayTheAmountOfEntries();
 
 	});
 

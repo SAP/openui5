@@ -6,9 +6,10 @@
  * Initialization Code and shared classes of library sap.ui.dt.
  */
 sap.ui.define([
+	"sap/ui/dt/SelectionMode",
 	'sap/ui/core/library'
-], // library dependency
-function() {
+],
+function () {
 
 	"use strict";
 
@@ -35,29 +36,6 @@ function() {
 		controls: [],
 		elements: []
 	});
-
-	/**
-	 * Selection mode of the tree
-	 *
-	 * @enum {string}
-	 * @private
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.ui.dt.SelectionMode = {
-
-		/**
-		 * Select multiple overlays at a time.
-		 * @public
-		 */
-		Multi : "Multi",
-
-		/**
-		 * Select one overlay at a time.
-		 * @public
-		 */
-		Single : "Single"
-
-	};
 
 	return sap.ui.dt;
 

@@ -1,9 +1,6 @@
-/* global QUnit sinon */
-
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit */
 
 sap.ui.define([
-	// internal:
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/rta/command/CommandFactory',
@@ -12,53 +9,55 @@ sap.ui.define([
 	'sap/ui/dt/ElementOverlay',
 	'sap/m/Button',
 	'sap/m/Panel',
-	// should be last:
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon-4'
 ],
-function(
-	Utils,
+function (
+	FlUtils,
 	ChangeRegistry,
 	CommandFactory,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
 	ElementOverlay,
 	Button,
-	Panel
+	Panel,
+	sinon
 ) {
 	'use strict';
 
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
-
-	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given two controls with designtime metadata for combine ...", {
-		beforeEach : function(assert) {
+		before: function () {
+			var oMockedAppComponent = {
+				getLocalId: function () {},
+				getManifestEntry: function () {
+					return {};
+				},
+				getMetadata: function () {
+					return {
+						getName: function () {
+							return "someName";
+						}
+					};
+				},
+				getManifest: function () {
+					return {
+						"sap.app" : {
+							applicationVersion : {
+								version : "1.2.3"
+							}
+						}
+					};
+				},
+				getModel: function () {}
+			};
+
+			this.oFlUtilsStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+		},
+		after: function () {
+			this.oFlUtilsStub.restore();
+		},
+		beforeEach: function() {
 
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
@@ -82,50 +81,56 @@ function(
 			});
 
 		},
-		afterEach : function(assert) {
+		afterEach: function() {
 			this.oPanel.destroy();
+			sandbox.restore();
 		}
-	});
+	}, function () {
+		QUnit.test("when calling command factory for combine ...", function(assert) {
+			var oOverlay = new ElementOverlay({ element: this.oButton1 });
+			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
+			sandbox.stub(oOverlay, "getRelevantContainer").returns(this.oPanel);
 
-	QUnit.test("when calling command factory for combine ...", function(assert) {
-		var done = assert.async();
+			var oDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data : {
+					actions : {
+						combine : {
+							changeType: "combineStuff",
+							changeOnRelevantContainer : true,
+							isEnabled : true
+						}
+					},
+					getRelevantContainer: function() {
+						return this.oPanel;
+					}.bind(this)
+				}
+			});
 
-		var oOverlay = new ElementOverlay({ element: this.oButton1 });
-		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
-		sinon.stub(oOverlay, "getRelevantContainer", function() {
-			return this.oPanel;
-		}.bind(this));
+			return CommandFactory.getCommandFor(this.oButton1, "combine", {
+				source : this.oButton1,
+				combineFields : [
+					this.oButton1,
+					this.oButton2
+				]
+			}, oDesignTimeMetadata)
 
-		var oDesignTimeMetadata = new ElementDesignTimeMetadata({
-			data : {
-				actions : {
-					combine : {
-						changeType: "combineStuff",
-						changeOnRelevantContainer : true,
-						isEnabled : true
-					}
-				},
-				getRelevantContainer: function(oGroupElement) {
-					return this.oPanel;
-				}.bind(this)
-			}
+			.then(function(oCombineCommand) {
+				assert.ok(oCombineCommand, "combine command exists for element");
+				return oCombineCommand.execute();
+			})
+
+			.then(function() {
+				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+			}.bind(this))
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
 		});
-
-		var oCombineCommand = CommandFactory.getCommandFor(this.oButton1, "combine", {
-			source : this.oButton1,
-			combineFields : [
-				this.oButton1,
-				this.oButton2
-			]
-		}, oDesignTimeMetadata);
-
-		assert.ok(oCombineCommand, "combine command exists for element");
-		oCombineCommand.execute().then( function() {
-			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-			done();
-		}.bind(this));
 	});
 
-
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+	});
 });

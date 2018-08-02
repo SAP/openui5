@@ -20,7 +20,8 @@ sap.ui.define([
 	"./CalendarRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
 	LocaleData,
@@ -39,7 +40,8 @@ sap.ui.define([
 	CalendarRenderer,
 	containsOrEquals,
 	deepEqual,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 

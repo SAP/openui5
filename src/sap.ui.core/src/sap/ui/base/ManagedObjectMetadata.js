@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/base/assert",
 	'sap/base/util/ObjectPath',
 	"sap/base/strings/escapeRegExp",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/isPlainObject"
 ],
 function(
 	jQuery,
@@ -21,7 +22,8 @@ function(
 	assert,
 	ObjectPath,
 	escapeRegExp,
-	merge
+	merge,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -1623,7 +1625,7 @@ function(
 	 * @private
 	 */
 	function loadOwnDesignTime(oMetadata) {
-		if (jQuery.isPlainObject(oMetadata._oDesignTime) || !oMetadata._oDesignTime) {
+		if (isPlainObject(oMetadata._oDesignTime) || !oMetadata._oDesignTime) {
 			return Promise.resolve(oMetadata._oDesignTime || {});
 		}
 

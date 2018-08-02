@@ -5,7 +5,12 @@
 /*global Promise */
 
 // Provides class sap.ui.core.ElementMetadata
-sap.ui.define(['jquery.sap.global', 'sap/base/util/ObjectPath', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/core/Renderer'],
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/base/util/ObjectPath',
+	'sap/ui/base/ManagedObjectMetadata',
+	'sap/ui/core/Renderer'
+],
 	function(jQuery, ObjectPath, ManagedObjectMetadata, Renderer) {
 	"use strict";
 

@@ -14,9 +14,13 @@ sap.ui.define([
 	'./InputBaseRenderer',
 	'sap/base/Log',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
-	"sap/ui/dom/jquery/getSelectedText", // jQuery Plugin "getSelectedText"
-	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos",
+	// jQuery Plugin "getSelectedText"
+	"sap/ui/dom/jquery/getSelectedText",
+	// jQuery Plugin "selectText"
+	"sap/ui/dom/jquery/selectText"
 ],
 function(
 	library,
@@ -29,7 +33,8 @@ function(
 	Device,
 	InputBaseRenderer,
 	log,
-	KeyCodes
+	KeyCodes,
+	jQuery
 ) {
 	"use strict";
 
@@ -825,6 +830,16 @@ function(
 	InputBase.prototype.getDomRefForValueStateMessage = function() {
 		return this.getDomRef("content");
 	};
+
+	/**
+	 * Gets the DOM reference the popup should be docked to.
+	 *
+	 * @return {object} The DOM reference
+	 */
+	InputBase.prototype.getPopupAnchorDomRef = function() {
+		return this.getDomRef();
+	};
+
 
 	InputBase.prototype.iOpenMessagePopupDuration = 0;
 

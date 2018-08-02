@@ -794,6 +794,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("canUsePendingRequestsCounter", function(assert) {
+		var oBindingIsA = this.stub(oTable.getBinding("rows"), "isA");
+
 		assert.ok(TableUtils.canUsePendingRequestsCounter(), "No parameters passed: Returned true");
 		assert.ok(TableUtils.canUsePendingRequestsCounter(null), "Passed 'null': Returned true");
 
@@ -801,53 +803,23 @@ sap.ui.define([
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Rows not bound: Returned true");
 		oTable.getBinding.restore();
 
-		this.stub(TableUtils, "isInstanceOf").withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(true);
+		oBindingIsA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(true);
 		oTable.getBinding("rows").bUseBatchRequests = true;
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding using batch requests: Returned true");
 
 		oTable.getBinding("rows").bUseBatchRequests = false;
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding not using batch requests: Returned false");
 
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(false);
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(true);
+		oBindingIsA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(false);
+		oBindingIsA.withArgs("sap.ui.model.TreeBinding").returns(true);
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "TreeBinding: Returned false");
 
-		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(false);
+		oBindingIsA.withArgs("sap.ui.model.TreeBinding").returns(false);
 		oTable.getBinding("rows").bUseBatchRequests = true;
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Other binding: Returned true");
 
-		TableUtils.isInstanceOf.restore();
+		oBindingIsA.restore();
 		delete oTable.getBinding("rows").bUseBatchRequests;
-	});
-
-	QUnit.test("isInstanceOf", function(assert) {
-		var done = assert.async();
-
-		function checkLoaded(oObj) {
-			if (!oObj || !oObj.prototype || !oObj.prototype.destroy) {
-				//Check whether namespace is already available and whether it is not the lazy initialization hook
-				return false;
-			}
-			return true;
-		}
-
-		assert.equal(TableUtils.isInstanceOf(oTable, null), false, "No type");
-		assert.equal(TableUtils.isInstanceOf(null, "sap/ui/table/AnalyticalTable"), false, "No object");
-
-		assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded before check");
-		assert.equal(TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable"), false, "Not of type sap.ui.table.AnalyticalTable");
-		assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
-
-		sap.ui.require([
-			"sap/ui/table/AnalyticalTable"
-		], function(AnalyticalTable) {
-			var oAnalyticalTable = new AnalyticalTable();
-			assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable loaded before check");
-			assert.equal(TableUtils.isInstanceOf(oAnalyticalTable, "sap/ui/table/AnalyticalTable"), true, "Is of type sap.ui.table.AnalyticalTable");
-			assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable loaded after check");
-			oAnalyticalTable.destroy();
-			done();
-		});
 	});
 
 	QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
@@ -1386,5 +1358,418 @@ sap.ui.define([
 
 		$ParentCell = TableUtils.getParentCell(null, _getFirstInteractiveElement(getCell(0, iNumberOfCols - 1)));
 		assert.strictEqual($ParentCell, null, "No table passed: Null was returned");
+	});
+
+	QUnit.module("Debounce & Throttle", {
+		beforeEach: function() {
+			this.fnTestFunction = sinon.spy();
+		},
+		assert: function(assert, iCallCount, aLastArguments, oContext) {
+			assert.strictEqual(this.fnTestFunction.callCount, iCallCount, "The function should be called " + iCallCount + " times");
+			if (iCallCount > 0 && iCallCount === this.fnTestFunction.callCount) {
+				if (oContext != null) {
+					assert.strictEqual(this.fnTestFunction.lastCall.thisValue, oContext, "Context (this) of the last call");
+				}
+				if (aLastArguments != null) {
+					assert.deepEqual(this.fnTestFunction.lastCall.args, aLastArguments,
+						"Arguments of the last call should be [" + aLastArguments.join(", ") + "]");
+				}
+			}
+		},
+		testTimeout: function(assert, mOptions, bSecondTestRun) {
+			var that = this;
+
+			mOptions = mOptions != null ? mOptions : {};
+
+			var bLeading = mOptions.leading != null ? mOptions.leading : false;
+			var bAsyncLeading = mOptions.asyncLeading != null ? mOptions.asyncLeading : false;
+			var bTrailing = mOptions.trailing != null ? mOptions.trailing : true;
+
+			return new Promise(function(resolve) {
+				var oContext = {iAmThis: true};
+				var iCallCount;
+				var iArgument;
+				var iIntervalCount = 0;
+				var fnDebounced = TableUtils.debounce(that.fnTestFunction, 50, mOptions);
+				var iIntervalId;
+
+				fnDebounced(1);
+				fnDebounced(2);
+				if (bLeading) {
+					if (bAsyncLeading) {
+						that.assert(assert, 0);
+						Promise.resolve().then(function() {
+							// Leading asynchronous invocation.
+							that.assert(assert, 1, [1]);
+							iCallCount = 1;
+						});
+					} else {
+						// Leading synchronous invocation.
+						that.assert(assert, 1, [1]);
+						iCallCount = 1;
+					}
+				} else {
+					that.assert(assert, 0);
+					iCallCount = 0;
+				}
+				iArgument = 3;
+
+				iIntervalId = setInterval(function() {
+					iIntervalCount++;
+					fnDebounced.call(oContext, iArgument);
+					that.assert(assert, iCallCount);
+					iArgument++;
+
+					if (iIntervalCount === 9) {
+						clearInterval(iIntervalId);
+
+						setTimeout(function() {
+							if (bTrailing) {
+								// Trailing invocation.
+								that.assert(assert, iCallCount + 1, [iArgument - 1], oContext);
+							} else {
+								that.assert(assert, iCallCount);
+							}
+							if (bSecondTestRun) {
+								resolve();
+							} else {
+								// Run the test again to see if the debounced function works correctly in subsequent executions as well.
+								that.fnTestFunction.reset();
+								that.testTimeout(assert, mOptions, true)
+									.then(resolve);
+							}
+						}, 60);
+					}
+				}, 10);
+			});
+		},
+		testAnimationFrame: function(assert, mOptions, bSecondTestRun) {
+			var that = this;
+
+			mOptions = mOptions != null ? mOptions : {};
+
+			var bLeading = mOptions.leading != null ? mOptions.leading : false;
+			var bAsyncLeading = mOptions.asyncLeading != null ? mOptions.asyncLeading : false;
+			var bTrailing = mOptions.trailing != null ? mOptions.trailing : true;
+
+			return new Promise(function(resolve) {
+				var oContext = {iAmThis: true};
+				var iCallCount = 0;
+				var fnDebounced = TableUtils.debounce(that.fnTestFunction, null, mOptions);
+
+				fnDebounced("test", "animation", "frame", 1);
+				fnDebounced("test", "animation", "frame", 2);
+				if (bLeading) {
+					if (bAsyncLeading) {
+						that.assert(assert, 0);
+						Promise.resolve().then(function() {
+							// Leading asynchronous invocation.
+							that.assert(assert, 1, ["test", "animation", "frame", 1]);
+							iCallCount = 1;
+						});
+					} else {
+						// Leading synchronous invocation.
+						that.assert(assert, 1, ["test", "animation", "frame", 1]);
+						iCallCount = 1;
+					}
+				} else {
+					that.assert(assert, 0);
+					iCallCount = 0;
+				}
+
+				fnDebounced.call(oContext, "animation frame");
+				that.assert(assert, iCallCount);
+
+				window.requestAnimationFrame(function() {
+					if (bTrailing) {
+						iCallCount++;
+						// Trailing invocation.
+						that.assert(assert, iCallCount, ["animation frame"], oContext);
+					} else {
+						that.assert(assert, iCallCount);
+					}
+
+					if (bSecondTestRun) {
+						setTimeout(function() {
+							that.assert(assert, iCallCount);
+							resolve();
+						}, 100);
+					} else {
+						// Run the test again to see if the debounced function works correctly in subsequent executions as well.
+						that.fnTestFunction.reset();
+						that.testAnimationFrame(assert, mOptions, true)
+							.then(resolve);
+					}
+				});
+			});
+		}
+	});
+
+	QUnit.test("Debounce - Timeout, Default Options", function(assert) {
+		var done = assert.async();
+
+		assert.expect(26);
+		this.testTimeout(assert)
+			.then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {leading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(28);
+		this.testTimeout(assert, {
+			leading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {trailing: false}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(22);
+		this.testTimeout(assert, {
+			trailing: false
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {leading: true, trailing: false}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(24);
+		this.testTimeout(assert, {
+			leading: true,
+			trailing: false
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {asyncLeading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(26);
+		this.testTimeout(assert, {
+			asyncLeading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, {leading: true, asyncLeading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(30);
+		this.testTimeout(assert, {
+			leading: true,
+			asyncLeading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout with maxWait, {leading: true}", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var oContext = {iAmThis: true};
+		var fnDebounced = TableUtils.debounce(that.fnTestFunction, 50, {
+			leading: true,
+			maxWait: 100
+		});
+		var iIntervalId;
+
+		assert.expect(20);
+
+		function test() {
+			return new Promise(function(resolve) {
+				var iArgument = 1;
+				var iIntervalCount = 0;
+
+				fnDebounced(1);
+				// Leading synchronous invocation.
+				that.assert(assert, 1, [iArgument]);
+
+				iIntervalId = setInterval(function() {
+					iIntervalCount++;
+					iArgument++;
+					fnDebounced.call(oContext, iArgument);
+
+					if (iIntervalCount === 13) {
+						clearInterval(iIntervalId);
+
+						setTimeout(function() {
+							// Trailing invocation.
+							that.assert(assert, 3, [iArgument], oContext);
+						}, 60);
+
+						setTimeout(function() {
+							that.assert(assert, 3);
+							resolve();
+						}, 160);
+					}
+				}, 10);
+
+				setTimeout(function() {
+					that.assert(assert, 1);
+				}, 90);
+
+				setTimeout(function() {
+					// maxWait invocation.
+					that.assert(assert, 2, undefined /* hardly predictable */, oContext);
+				}, 110);
+
+				setTimeout(function() {
+					that.assert(assert, 2);
+				}, 120);
+			});
+		}
+
+		test().then(function() {
+			// Run the test again to see if the debounced function works correctly in subsequent executions as well.
+			that.fnTestFunction.reset();
+			return test();
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - Timeout, Cancellation, Pending", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var fnDebounced = TableUtils.debounce(that.fnTestFunction, 20);
+
+		fnDebounced();
+		assert.ok(fnDebounced.pending(), "Debounce should be pending");
+
+		setTimeout(function() {
+			fnDebounced.cancel();
+			assert.ok(!fnDebounced.pending(), "Debounce should not be pending after cancellation");
+		}, 0);
+
+		setTimeout(function() {
+			assert.ok(that.fnTestFunction.notCalled, "The function should not be called if debounce was cancelled");
+			fnDebounced();
+			assert.ok(fnDebounced.pending(), "Debounce should be pending");
+
+			setTimeout(function() {
+				assert.ok(!fnDebounced.pending(), "Debounce function should not be pending after invocation");
+				that.assert(assert, 1);
+				done();
+			}, 30);
+		}, 30);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, Default Options", function(assert) {
+		var done = assert.async();
+
+		assert.expect(11);
+		this.testAnimationFrame(assert)
+			.then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {leading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(13);
+		this.testAnimationFrame(assert, {
+			leading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {trailing: false}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(7);
+		this.testAnimationFrame(assert, {
+			trailing: false
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {leading: true, trailing: false}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(9);
+		this.testAnimationFrame(assert, {
+			leading: true,
+			trailing: false
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {asyncLeading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(11);
+		this.testAnimationFrame(assert, {
+			asyncLeading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, {leading: true, asyncLeading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(15);
+		this.testAnimationFrame(assert, {
+			leading: true,
+			asyncLeading: true
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame with maxWait, {leading: true}", function(assert) {
+		var done = assert.async();
+
+		assert.expect(13);
+		this.testAnimationFrame(assert, {
+			leading: true,
+			maxWait: 5
+		}).then(done);
+	});
+
+	QUnit.test("Debounce - AnimationFrame, Cancellation, Pending", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var fnDebounced = TableUtils.debounce(that.fnTestFunction);
+
+		fnDebounced();
+		assert.ok(fnDebounced.pending(), "Debounce should be pending");
+		fnDebounced.cancel();
+		assert.ok(!fnDebounced.pending(), "Debounce should not be pending after cancellation");
+
+		window.requestAnimationFrame(function() {
+			assert.ok(that.fnTestFunction.notCalled, "The function should not be called if debounce was cancelled");
+			fnDebounced();
+			assert.ok(fnDebounced.pending(), "Debounce should be pending");
+
+			window.requestAnimationFrame(function() {
+				assert.ok(!fnDebounced.pending(), "Debounce should not be pending after invocation");
+				that.assert(assert, 1);
+				done();
+			});
+		});
+	});
+
+	QUnit.test("Throttle", function(assert) {
+		var oDebounceSpy = sinon.spy(TableUtils, "debounce");
+		var fnFunction = function() {};
+
+		// Because throttle is just a special case of debounce, we only check whether debounce is called with the correct parameters.
+
+		TableUtils.throttle(fnFunction);
+		assert.ok(oDebounceSpy.calledWith(fnFunction, undefined, {
+			leading: true,
+			trailing: true,
+			maxWait: undefined
+		}), "Throttle should call debounce with the correct parameters");
+
+		TableUtils.throttle(fnFunction, 50);
+		assert.ok(oDebounceSpy.calledWith(fnFunction, 50, {
+			leading: true,
+			trailing: true,
+			maxWait: 50
+		}), "Throttle should call debounce with the correct parameters");
+
+		TableUtils.throttle(fnFunction, null, {maxWait: 100});
+		assert.ok(oDebounceSpy.calledWith(fnFunction, null, {
+			leading: true,
+			trailing: true,
+			maxWait: null
+		}), "Throttle should call debounce with the correct parameters");
+
+		TableUtils.throttle(fnFunction, 50, {leading: false, trailing: false, asyncLeading: true, maxWait: 100});
+		assert.ok(oDebounceSpy.calledWith(fnFunction, 50, {
+			leading: false,
+			trailing: false,
+			asyncLeading: true,
+			maxWait: 50
+		}), "Throttle should call debounce with the correct parameters");
 	});
 });

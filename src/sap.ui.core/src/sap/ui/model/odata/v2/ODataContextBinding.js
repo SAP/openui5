@@ -6,9 +6,10 @@
 sap.ui.define([
 	'sap/ui/model/Context',
 	'sap/ui/model/ContextBinding',
-	'sap/ui/model/ChangeReason'
+	'sap/ui/model/ChangeReason',
+	"sap/ui/thirdparty/jquery"
 ],
-		function(Context, ContextBinding, ChangeReason) {
+		function(Context, ContextBinding, ChangeReason, jQuery) {
 	"use strict";
 
 

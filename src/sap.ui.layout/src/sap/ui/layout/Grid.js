@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/base/ManagedObjectObserver',
-	"./GridRenderer"
+	"./GridRenderer",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Control,
@@ -17,7 +18,8 @@ sap.ui.define([
 		Device,
 		ResizeHandler,
 		ManagedObjectObserver,
-		GridRenderer
+		GridRenderer,
+		jQuery
 	) {
 	"use strict";
 

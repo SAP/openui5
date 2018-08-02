@@ -37,8 +37,7 @@ sap.ui.define([
 	"sap/base/util/array/uniqueSort",
 	"sap/base/util/uid",
 	'sap/ui/performance/trace/initTraces',
-	'sap/ui/events/jquery/EventSimulation',
-	'jquery.sap.sjax'
+	'sap/ui/events/jquery/EventSimulation'
 ],
 	function(
 		jQuery,
@@ -74,12 +73,17 @@ sap.ui.define([
 		uniqueSort,
 		uid,
 		initTraces
-		/* ,EventSimulation, jQuerySapSjax */
+		/* ,EventSimulation */
 	) {
 
 	"use strict";
 
 	/*global Promise */
+
+	// when the Core module has been executed before, don't execute it again
+	if (sap.ui.getCore && sap.ui.getCore()) {
+		return sap.ui.getCore();
+	}
 
 	// Initialize SAP Passport or FESR
 	initTraces();
@@ -203,13 +207,7 @@ sap.ui.define([
 	var Core = BaseObject.extend("sap.ui.core.Core", /** @lends sap.ui.core.Core.prototype */ {
 		constructor : function() {
 
-			//make this class only available once
-			if (sap.ui.getCore && sap.ui.getCore()) {
-				return sap.ui.getCore();
-			}
-
 			var that = this,
-				log = jQuery.sap.log,
 				METHOD = "sap.ui.core.Core";
 
 			BaseObject.call(this);
@@ -338,7 +336,7 @@ sap.ui.define([
 			 */
 			this.aPrerenderingTasks = [];
 
-			log.info("Creating Core",null,METHOD);
+			Log.info("Creating Core",null,METHOD);
 
 			Measurement.start("coreComplete", "Core.js - complete");
 			Measurement.start("coreBoot", "Core.js - boot");
@@ -386,7 +384,7 @@ sap.ui.define([
 
 			// enable LessSupport if specified in configuration
 			if (this.oConfiguration["xx-lesssupport"] && aModules.indexOf("sap.ui.core.plugin.LessSupport") == -1) {
-				log.info("Including LessSupport into declared modules");
+				Log.info("Including LessSupport into declared modules");
 				aModules.push("sap.ui.core.plugin.LessSupport");
 			}
 
@@ -424,7 +422,7 @@ sap.ui.define([
 				}
 			});
 
-			log.info("Declared modules: " + aModules, METHOD);
+			Log.info("Declared modules: " + aModules, METHOD);
 
 			this._setupThemes();
 
@@ -464,13 +462,13 @@ sap.ui.define([
 
 			// task 1 is to wait for document.ready
 			jQuery(function() {
-				log.trace("document is ready");
+				Log.trace("document is ready");
 				oSyncPoint1.finishTask(iDocumentReadyTask);
 			});
 
 			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
 			var oSyncPoint2 = new SyncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
-				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
+				Log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot(bAsync, function() {
 					oSyncPoint1.finishTask(iCoreBootTask);
 					Measurement.end("coreBoot");
@@ -487,9 +485,9 @@ sap.ui.define([
 
 				var fnCallback = function(oVersionInfo) {
 					if (oVersionInfo) {
-						log.trace("Loaded \"sap-ui-version.json\".");
+						Log.trace("Loaded \"sap-ui-version.json\".");
 					} else {
-						log.error("Could not load \"sap-ui-version.json\".");
+						Log.error("Could not load \"sap-ui-version.json\".");
 					}
 					oSyncPoint2.finishTask(iVersionInfoTask);
 				};
@@ -500,7 +498,7 @@ sap.ui.define([
 					vReturn.then(fnCallback, function(oError) {
 						// this should only happen when there is a script error as "failOnError=false"
 						// prevents throwing a loading error (e.g. HTTP 404)
-						log.error("Unexpected error when loading \"sap-ui-version.json\": " + oError);
+						Log.error("Unexpected error when loading \"sap-ui-version.json\": " + oError);
 						oSyncPoint2.finishTask(iVersionInfoTask);
 					});
 				} else {
@@ -676,8 +674,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Core.prototype._setupThemes = function() {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core";
+		var METHOD = "sap.ui.core.Core";
 
 		var oCfgData = window["sap-ui-config"];
 		// Configuration might have a themeRoot, if so integrate it in themeroots
@@ -709,7 +706,7 @@ sap.ui.define([
 		// set CSS class for the theme name
 		this.sTheme = this.oConfiguration.getTheme();
 		jQuery(document.documentElement).addClass("sapUiTheme-" + this.sTheme);
-		log.info("Declared theme " + this.sTheme,null,METHOD);
+		Log.info("Declared theme " + this.sTheme,null,METHOD);
 	};
 
 	/**
@@ -717,12 +714,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Core.prototype._setupContentDirection = function() {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core",
+		var METHOD = "sap.ui.core.Core",
 			sDir = this.oConfiguration.getRTL() ? "rtl" : "ltr";
 
 		jQuery(document.documentElement).attr("dir", sDir); // webkit does not allow setting document.dir before the body exists
-		log.info("Content direction set to '" + sDir + "'",null,METHOD);
+		Log.info("Content direction set to '" + sDir + "'",null,METHOD);
 	};
 
 	/**
@@ -731,8 +727,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Core.prototype._setupBrowser = function($html) {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core";
+		var METHOD = "sap.ui.core.Core";
 
 		//set the browser for CSS attribute selectors. do not move this to the onload function because sf and ie do not
 		//use the classes
@@ -758,7 +753,7 @@ sap.ui.define([
 
 			id = id + (b.version === -1 ? "" : Math.floor(b.version));
 			$html.attr("data-sap-ui-browser", id);
-			log.debug("Browser-Id: " + id, null, METHOD);
+			Log.debug("Browser-Id: " + id, null, METHOD);
 		}
 	};
 
@@ -1147,28 +1142,27 @@ sap.ui.define([
 			return;
 		}
 
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core.init()";
+		var METHOD = "sap.ui.core.Core.init()";
 
 		// ensure that the core is booted now (e.g. loadAllMode)
 		this.boot();
 
-		log.info("Initializing",null,METHOD);
+		Log.info("Initializing",null,METHOD);
 
 		this.oFocusHandler = new FocusHandler(document.body, this);
 		this.oRenderManager._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
 		this.oResizeHandler = new ResizeHandler(this);
 		this.oThemeCheck = new ThemeCheck(this);
 
-		log.info("Initialized",null,METHOD);
+		Log.info("Initialized",null,METHOD);
 		Measurement.end("coreInit");
 
 		this.bInitialized = true;
 
 		// start the plugins
-		log.info("Starting Plugins",null,METHOD);
+		Log.info("Starting Plugins",null,METHOD);
 		this.startPlugins();
-		log.info("Plugins started",null,METHOD);
+		Log.info("Plugins started",null,METHOD);
 
 		this._createUIAreas();
 
@@ -1203,7 +1197,7 @@ sap.ui.define([
 		// create any pre-configured UIAreas
 		//	if ( oConfig.areas && oConfig.areas.length > 0 ) {
 		if ( oConfig.areas ) {
-			// log.warning("deprecated config option '(data-sap-ui-)areas' used.");
+			// Log.warning("deprecated config option '(data-sap-ui-)areas' used.");
 			for (var i = 0, l = oConfig.areas.length; i < l; i++) {
 				this.createUIArea(oConfig.areas[i]);
 			}
@@ -1241,15 +1235,14 @@ sap.ui.define([
 	};
 
 	Core.prototype._setupRootComponent = function() {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core.init()",
+		var METHOD = "sap.ui.core.Core.init()",
 			oConfig = this.oConfiguration;
 
 		// load the root component
 		var sRootComponent = oConfig.getRootComponent();
 		if (sRootComponent) {
 
-			log.info("Loading Root Component: " + sRootComponent,null,METHOD);
+			Log.info("Loading Root Component: " + sRootComponent,null,METHOD);
 			var oComponent = sap.ui.component({
 				name: sRootComponent
 			});
@@ -1259,7 +1252,7 @@ sap.ui.define([
 			if (sRootNode && oComponent.isA('sap.ui.core.UIComponent')) {
 				var oRootNode = (sRootNode ? window.document.getElementById(sRootNode) : null);
 				if (oRootNode) {
-					log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
+					Log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
 					var ComponentContainer = sap.ui.requireSync('sap/ui/core/ComponentContainer'),
 						oContainer = new ComponentContainer({
 						component: oComponent,
@@ -1275,8 +1268,8 @@ sap.ui.define([
 			var sApplication = oConfig.getApplication();
 			if (sApplication) {
 
-				log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
-				log.info("Loading Application: " + sApplication,null,METHOD);
+				Log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
+				Log.info("Loading Application: " + sApplication,null,METHOD);
 				//TODO: global jquery call found
 				jQuery.sap.require(sApplication);
 				var oClass = ObjectPath.get(sApplication);
@@ -1305,8 +1298,7 @@ sap.ui.define([
 	};
 
 	Core.prototype._executeInitListeners = function() {
-		var log = jQuery.sap.log,
-			METHOD = "sap.ui.core.Core.init()";
+		var METHOD = "sap.ui.core.Core.init()";
 
 		// make sure that we have no concurrent modifications on the init listeners
 		var aCallbacks = this.aInitListeners;
@@ -1318,7 +1310,7 @@ sap.ui.define([
 		// execute registered init event handlers
 		if (aCallbacks && aCallbacks.length > 0) {
 			// execute the callbacks
-			log.info("Fire Loaded Event",null,METHOD);
+			Log.info("Fire Loaded Event",null,METHOD);
 			aCallbacks.forEach(function(fn) {
 				fn();
 			});
@@ -1919,9 +1911,15 @@ sap.ui.define([
 
 		function requireLibsAsync() {
 			return new Promise(function(resolve, reject) {
-				sap.ui.require(getLibraryModuleNames(), function() {
-					resolve();
-				});
+				sap.ui.require(
+					getLibraryModuleNames(),
+					function () {
+						// Wrapper function is needed to omit parameters for resolve()
+						// which is always one library (first from the list), not an array of libraries.
+						resolve();
+					},
+					reject
+				);
 			});
 		}
 
@@ -2095,18 +2093,17 @@ sap.ui.define([
 		}
 
 		var sLibName = oLibInfo.name,
-			log = jQuery.sap.log,
 			METHOD =  "sap.ui.core.Core.initLibrary()";
 
 		if ( bLegacyMode ) {
-			log.error("[Deprecated] library " + sLibName + " uses old fashioned initLibrary() call (rebuild with newest generator)");
+			Log.error("[Deprecated] library " + sLibName + " uses old fashioned initLibrary() call (rebuild with newest generator)");
 		}
 
 		if ( !sLibName || mLoadedLibraries[sLibName] ) {
 			return;
 		}
 
-		log.debug("Analyzing Library " + sLibName, null, METHOD);
+		Log.debug("Analyzing Library " + sLibName, null, METHOD);
 
 		// Set 'loaded' marker
 		mLoadedLibraries[sLibName] = true;
@@ -2157,9 +2154,9 @@ sap.ui.define([
 		// resolve dependencies
 		for (var i = 0; i < oLibInfo.dependencies.length; i++) {
 			var sDepLib = oLibInfo.dependencies[i];
-			log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
+			Log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
 			if ( mLoadedLibraries[sDepLib] !== true ) {
-				log.warning("Dependency from " + sLibName + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
+				Log.warning("Dependency from " + sLibName + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
 				this.loadLibrary(sDepLib);
 			}
 		}
@@ -2324,7 +2321,7 @@ sap.ui.define([
 	 * then falls back to the current {@link sap.ui.core.Configuration#getLanguage session locale}.
 	 * If no argument is given, the library also falls back to a default: "sap.ui.core".
 	 *
-	 * <h3>Configuration via App Descriptor<h3>
+	 * <h3>Configuration via App Descriptor</h3>
 	 * When the App Descriptor for the library is available without further request (manifest.json
 	 * has been preloaded) and when the App Descriptor is at least of version 1.9.0 or higher, then
 	 * this method will evaluate the App Descriptor entry <code>"sap.ui5" / "library" / "i18n"</code>.
@@ -3087,7 +3084,7 @@ sap.ui.define([
 		}
 
 		if ( findById(sId, this.mUIAreas) !== this.mElements[sId] ) {
-			jQuery.sap.log.error("failed to resolve " + sId + " (" + this.mElements[sId] + ")");
+			Log.error("failed to resolve " + sId + " (" + this.mElements[sId] + ")");
 		}
 		*/
 		return sId == null ? undefined : this.mElements[sId];
@@ -4020,7 +4017,7 @@ sap.ui.define([
 	 *
 	 * Note that the Core = EventProvider.extend() call above already exposes sap.ui.core.Core.
 	 * This is needed for backward compatibility reason, in case some other code tries to enhance
-	 * the core prototype. Once global names are switched off, such extension scnearios are
+	 * the core prototype. Once global names are switched off, such extension scenarios are
 	 * no longer supported.
 	 */
 	return new Core().getInterface();

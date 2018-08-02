@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.core.search.OpenSearchProvider.
-sap.ui.define(['sap/ui/core/library', './SearchProvider', "sap/base/Log", "sap/base/security/encodeURL"],
-	function(library, SearchProvider, Log, encodeURL) {
+sap.ui.define([
+	'sap/ui/core/library',
+	'./SearchProvider',
+	"sap/base/Log",
+	"sap/base/security/encodeURL",
+	"sap/ui/thirdparty/jquery"
+],
+	function(library, SearchProvider, Log, encodeURL, jQuery) {
 	"use strict";
 
 

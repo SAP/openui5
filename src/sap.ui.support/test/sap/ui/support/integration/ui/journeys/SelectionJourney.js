@@ -21,6 +21,19 @@ sap.ui.define([
 		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(EXPECTED_RULES_COUNT);
 	});
 
+	opaTest("Should show/hide Rule details page on library/rule click", function (Given, When, Then) {
+
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
+
+		When.onTheRulesPage.iClickRow("sap.ui.core");
+
+		Then.onTheRulesPage.iShouldSeeHiddenRuleDetailsPage();
+
+		When.onTheRulesPage.iClickRow("EventBus publish");
+
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
+	});
+
 	opaTest("Should deselect all rules in TreeTable", function (Given, When, Then) {
 
 		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-selall", "The parent note button in tree table was pressed", "The parent note button in tree table is not there");
@@ -186,6 +199,62 @@ sap.ui.define([
 
 		Then.iTeardownSupportAssistantFrame();
 
+	});
+
+	opaTest("Should see the Tree Table of the Support Assistant with 45 rules selected ", function (Given, When, Then) {
+
+		Given.iStartMyApp();
+
+		Then.onTheMainPage.iShouldSeeRulesButton(EXPECTED_RULES_COUNT);
+
+		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(EXPECTED_RULES_COUNT);
+	});
+
+	opaTest("Should deselect one rule from sap.ui.core library ", function (Given, When, Then) {
+
+		//sap.ui.core - Error logs - rule
+		When.onTheRulesPage.iPressOnTreeTableCheckBox(ERROR_LOGS_RULE_CHECKBOX_ID,  "Rule has been deselected", "Could not deselect Rule");
+		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(44, "Total selection count should be: 44", "Total selection count is not 44");
+	});
+
+	opaTest("Should see the same selection after navigation trough tabs ", function (Given, When, Then) {
+
+		// Switch tabs a few times to ensure correct visibility state of the Rule Details Page at all times.
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
+		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets");
+		Then.onTheRulesPage.iShouldSeeHiddenRuleDetailsPage();
+		When.onTheRulesPage.iPressIconTabHeader("availableRules");
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
+		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets");
+		Then.onTheRulesPage.iShouldSeeHiddenRuleDetailsPage();
+
+		When.onTheRulesPage.iPressIconTabHeader("availableRules");
+		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(44, "Total selection count should be: 44", "Total selection count is not 44");
+	});
+
+	opaTest("Should load additional rule and deselect sap.ui.table rules", function (Given, When, Then) {
+
+		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets");
+		When.onTheRulesPage.iSelectAdditionalRuleSet("sap.ui.table");
+		When.onTheRulesPage.iPressLoadAdditionalRuleSetButton();
+		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(1);
+
+		// Error logs - rule
+		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(3);
+
+		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(1);
+
+		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(1, 1);
+		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(44, "Total selection count should be: 44", "Total selection count is not 44");
+		Then.onTheRulesPage.iShouldSeeVisibleRuleDetailsPage();
+	});
+
+	opaTest("Should load additional rule and keep previous selection", function (Given, When, Then) {
+
+		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(6);
+		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(52);
+		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(6, 0);
+		Then.iTeardownSupportAssistantFrame();
 	});
 
 });

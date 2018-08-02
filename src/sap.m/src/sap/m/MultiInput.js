@@ -23,8 +23,11 @@ sap.ui.define([
 	'./MultiInputRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/jquery/cursorPos", // jQuery Plugin "cursorPos"
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos",
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
 function(
 	Input,
@@ -45,7 +48,8 @@ function(
 	IconPool,
 	MultiInputRenderer,
 	containsOrEquals,
-	KeyCodes
+	KeyCodes,
+	jQuery
 ) {
 		"use strict";
 
@@ -61,14 +65,13 @@ function(
 	*
 	* @class
 	* <h3>Overview</h3>
-	* A multi-input field allows the user to enter multiple values, which are displayed as {@link sap.m.Token tokens}. These can be displayed in single and multi-line mode.
+	* A multi-input field allows the user to enter multiple values, which are displayed as {@link sap.m.Token tokens}.
 	* You can enable auto-complete suggestions or value help to help the user choose the correct entry. You can define
 	* validator functions to define what token values are accepted.
 	* <b>Notes:</b>
 	* <ul>
 	* <li> New valid tokens are created, when the user presses Enter, selects a value from the suggestions drop-down, or when the focus leaves the field.</li>
 	* <li> Provide meaningful labels for all input fields. Do not use the placeholder as a replacement for the label.</li>
-	* <li> As of version 1.58, MultiInput is now supported in Condensed mode, which means that it can be used in tables.</li>
 	* </ul>
 	* <h3>Usage</h3>
 	* <h4>When to use:</h4>
@@ -78,7 +81,6 @@ function(
 	* </ul>
 	* <h4>When not to use:</h4>
 	* <ul>
-	* <li> Do not use multi-line inputs in forms.</li>
 	* <li> When you need to select only one value.</li>
 	* <li> When you want the user to select from a predefined set of options. Use {@link sap.m.MultiComboBox} instead.</li>
 	* </ul>
@@ -1720,7 +1722,7 @@ function(
 
 			this.getTokens().some(function(oToken){
 				if (oToken.getId() === sSelectedId) {
-					this._tokenizer.removeToken(oToken);
+					this._tokenizer._onTokenDelete(oToken);
 					return true;
 				}
 			}.bind(this));

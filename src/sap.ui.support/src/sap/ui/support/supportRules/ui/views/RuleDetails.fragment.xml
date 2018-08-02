@@ -6,7 +6,7 @@
 		xmlns:t="sap.ui.table"
 		xmlns:core="sap.ui.core"
 		xmlns:tools="sap.ui.codeeditor">
-	<m:Page showHeader="false" visible="{/showRuleProperties}">
+	<m:Page id="ruleDetailsPage" showHeader="false" visible="{/showRuleProperties}">
 		<m:Bar>
 			<m:contentLeft >
 				<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}" titleStyle="H6" class="customMarginLeft" />
@@ -27,21 +27,21 @@
 				visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' &amp;&amp; ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}">
 			<f:content>
 				<m:Label text="ID" />
-				<m:Text text="{/selectedRule/id}" />
+				<m:Text id="ruleID" text="{/selectedRule/id}" />
 				<m:Label text="Title" />
-				<m:Text text="{/selectedRule/title}" />
+				<m:Text id="ruleTitle" text="{/selectedRule/title}" />
 				<m:Label text="Async" />
-				<m:Text text="{= ${/selectedRule/async} === true }" />
+				<m:Text id="ruleAsync" text="{= ${/selectedRule/async} === true }" />
 				<m:Label text="Audiences" />
-				<m:Text text="{/selectedRule/audiences}" />
+				<m:Text id="ruleAudience" text="{/selectedRule/audiences}" />
 				<m:Label text="Categories" />
-				<m:Text text="{/selectedRule/categories}" />
+				<m:Text id="ruleCategory" text="{/selectedRule/categories}" />
 				<m:Label text="Min version" />
-				<m:Text text="{/selectedRule/minversion}" />
+				<m:Text id="ruleMinVersion" text="{/selectedRule/minversion}" />
 				<m:Label text="Description" />
-				<m:Text text="{/selectedRule/description}" />
+				<m:Text id="ruleDescription" text="{/selectedRule/description}" />
 				<m:Label text="Resolution" />
-				<m:Text text="{/selectedRule/resolution}" />
+				<m:Text id="ruleResolution" text="{/selectedRule/resolution}" />
 				<m:Label text="Resolution URLs" />
 				<l:VerticalLayout
 						content="{/selectedRule/resolutionurls}">

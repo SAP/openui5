@@ -33,6 +33,8 @@
  * @borrows sap.m.SelectionDetails#addActionGroup as addActionGroup
  * @borrows sap.m.SelectionDetails#removeActionGroup as removeActionGroup
  * @borrows sap.m.SelectionDetails#removeAllActionGroups as removeAllActionGroups
+ * @borrows sap.m.SelectionDetails#setWrapLabels as setWrapLabels
+ * @borrows sap.m.SelectionDetails#getWrapLabels as getWrapLabels
  */
 /**
  * Describes the public facade of the {@link sap.m.SelectionDetailsItem} element.
@@ -56,4 +58,6 @@
  * @borrows sap.m.SelectionDetailsItem#getEnableNav as getEnableNav
  * @borrows sap.m.SelectionDetailsItem#addAction as addAction
  * @borrows sap.m.SelectionDetailsItem#removeAction as removeAction
+ * @borrows sap.m.SelectionDetails#setWrapLabels as setWrapLabels
+ * @borrows sap.m.SelectionDetails#getWrapLabels as getWrapLabels
  */
