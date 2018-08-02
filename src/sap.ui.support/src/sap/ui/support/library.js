@@ -129,15 +129,20 @@ sap.ui.define(["sap/ui/core/library"],
 		 */
 		Consistency: "Consistency",
 		/**
+		 * Fiori Guidelines issue category.
+		 * @public
+		 */
+		FioriGuidelines : "FioriGuidelines",
+		/**
 		 * Functionality issue category.
 		 * @public
 		 */
-		Functionality : "Functionality",
+		Functionality: "Functionality",
 		/**
 		 * Usability issue category.
 		 * @public
 		 */
-		Usability : "Usability",
+		Usability: "Usability",
 		/**
 		 * DataModel issue category.
 		 * @public
