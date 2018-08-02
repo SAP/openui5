@@ -108,12 +108,14 @@ sap.ui.define([
 
 	ColumnMenu.prototype._updateReferences = function(oParent) {
 		this._oColumn = oParent;
-		if (oParent) {
-			assert(TableUtils.isA(oParent, "sap.ui.table.Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
+		if (this._oColumn) {
+			assert(TableUtils.isA(this._oColumn, "sap.ui.table.Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
 
 			this._oTable = this._oColumn.getParent();
-			assert(TableUtils.isA(this._oTable, "sap.ui.table.Table"),
-				"ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
+			if (this._oTable) {
+				assert(TableUtils.isA(this._oTable, "sap.ui.table.Table"),
+					"ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
+			}
 		}
 	};
 
