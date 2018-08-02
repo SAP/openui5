@@ -321,7 +321,9 @@ sap.ui.define([
 	 *
 	 *   // The following call implicitly will use the mapping done by the previous line
 	 *   // It will load a view from ./com/mycompany/myapp/views/Main.view.xml
-	 *   sap.ui.view({ view : "com.mycompany.myapp.views.Main", type : sap.ui.core.mvc.ViewType.XML});
+	 *   View.create({ viewName : "com.mycompany.myapp.views.Main", type : ViewType.XML}).then(function(oView) {
+	 *       // do stuff
+	 *   });
 	 * </pre>
 	 *
 	 * When applications need a more flexible mapping between resource names and their location,

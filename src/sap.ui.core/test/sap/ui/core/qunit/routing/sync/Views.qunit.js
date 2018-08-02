@@ -39,7 +39,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should create a view", function (assert) {
-		var fnStub = this.stub(sap.ui, "view", function () {
+		var fnStub = this.stub(View, "_legacyCreate", function () {
 				return this.oView;
 			}.bind(this));
 
@@ -56,7 +56,7 @@ sap.ui.define([
 
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var oReturnValue,
-			fnStub = this.stub(sap.ui, "view", function () {
+			fnStub = this.stub(View, "_legacyCreate", function () {
 				return this.oView;
 			});
 
@@ -88,7 +88,7 @@ sap.ui.define([
 		// Arrange
 		var fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
-			fnViewStub = this.stub(sap.ui, "view", function () {
+			fnViewStub = this.stub(View, "_legacyCreate", function () {
 				return oView;
 			});
 
@@ -109,7 +109,7 @@ sap.ui.define([
 		var sViewId = "ViewId",
 			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
-			fnViewStub = this.stub(sap.ui, "view", function () {
+			fnViewStub = this.stub(View, "_legacyCreate", function () {
 				return oView;
 			}),
 			oOptions = {
@@ -132,7 +132,7 @@ sap.ui.define([
 		var sViewId = "ViewId",
 			fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
-			fnViewStub = this.stub(sap.ui, "view", function () {
+			fnViewStub = this.stub(View, "_legacyCreate", function () {
 				return oView;
 			});
 
@@ -240,7 +240,7 @@ sap.ui.define([
 	QUnit.test("Should fire the view created event if a view is created", function (assert) {
 		// Arrange
 		var oView = createXmlView(),
-			fnStub = this.stub(sap.ui, "view", function () {
+			fnStub = this.stub(View, "_legacyCreate", function () {
 				return oView;
 			}),
 			oViewOptions = {

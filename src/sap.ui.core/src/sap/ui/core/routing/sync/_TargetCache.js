@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/Log"], function(Log) {
+sap.ui.define(["sap/base/Log", "sap/ui/core/mvc/View"], function(Log, View) {
 	"use strict";
 
 	/**
@@ -19,7 +19,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			function fnCreateView() {
 				oOptions.viewName = oOptions.name;
 				delete oOptions.name;
-				return sap.ui.view(oOptions);
+				return View._legacyCreate(oOptions);
 			}
 
 			var oView,

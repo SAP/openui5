@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', "sap/base/Log", "sap/base/util/ObjectPath"],
-	function(jQuery, Log, ObjectPath) {
+sap.ui.define(['jquery.sap.global', "sap/base/Log", "sap/base/util/ObjectPath", 'sap/ui/core/mvc/View'],
+	function(jQuery, Log, ObjectPath, View) {
 
 	"use strict";
 
@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', "sap/base/Log", "sap/base/util/ObjectPath"],
 						vResult = (Array.isArray(oFragment) ? oFragment : [oFragment]); // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 					} else if (extensionConfig.className === "sap.ui.core.mvc.View") {
-						var oView = sap.ui.view({type: extensionConfig.type, viewName: extensionConfig.viewName, id: sId});
+						var oView = View._legacyCreate({type: extensionConfig.type, viewName: extensionConfig.viewName, id: sId});
 						vResult = [oView]; // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 					} else {

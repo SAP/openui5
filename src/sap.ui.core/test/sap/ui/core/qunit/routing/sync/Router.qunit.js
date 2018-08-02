@@ -694,8 +694,7 @@ sap.ui.define([
 			text: "Test-Button"
 		});
 
-		var oStub = this.stub(sap.ui, "view", function(oSetting) {
-			assert.equal(oSetting.viewName, "sample.application.myView", "the final viewName should be prefixed with the viewPath");
+		var oStub = this.stub(View, "_legacyCreate", function() {
 			return oButton;
 		});
 
@@ -1047,7 +1046,7 @@ sap.ui.define([
 
 	QUnit.test("Should create a view", function (assert) {
 		var that = this,
-			fnStub = this.stub(sap.ui, "view", function (oViewOptions) {
+			fnStub = this.stub(View, "_legacyCreate", function (oViewOptions) {
 				assert.strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
 				assert.strictEqual(oViewOptions.type, "bar", "DId pass the type");
 				assert.strictEqual(oViewOptions.id, "baz", "DId pass the id");
@@ -1067,7 +1066,7 @@ sap.ui.define([
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var that = this,
 			oReturnValue,
-			fnStub = this.stub(sap.ui, "view", function () {
+			fnStub = this.stub(View, "_legacyCreate", function () {
 				return this.oView;
 			});
 
@@ -1121,7 +1120,7 @@ sap.ui.define([
 	QUnit.test("Should fire the view created event if a view is created", function (assert) {
 		// Arrange
 		var oView = createXmlView(),
-			fnStub = this.stub(sap.ui, "view", function () {
+			fnStub = this.stub(View, "_legacyCreate", function () {
 				return oView;
 			}),
 			sViewType = "XML",
@@ -1151,7 +1150,7 @@ sap.ui.define([
 			this.sTitle = "myTitle";
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(sap.ui, "view", function () {
+			this.fnStub = sinon.stub(View, "_legacyCreate", function () {
 				return oView;
 			});
 
@@ -1341,7 +1340,7 @@ sap.ui.define([
 			this.oApp = new App();
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(sap.ui, "view", function () {
+			this.fnStub = sinon.stub(View, "_legacyCreate", function () {
 				return oView;
 			});
 
@@ -1997,7 +1996,7 @@ sap.ui.define([
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			oRouter = new Router({}, {}, oUIComponent),
-				fnViewStub = this.stub(sap.ui, "view", function () {
+				fnViewStub = this.stub(View, "_legacyCreate", function () {
 					return oView;
 			});
 

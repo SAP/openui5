@@ -127,8 +127,9 @@ sap.ui.define([
 		 * <pre>
 		 * <code>
 		 * // Some code you execute before you display the taget named 'detailWelcome':
-		 * var oView = sap.ui.view(({ viewName : "Welcome", type : sap.ui.core.mvc.ViewType.XML});
-		 * oTargets.getViews().setView("WelcomeWithAlias", oView)
+		 * View.create({ viewName : "Welcome", type : sap.ui.core.mvc.ViewType.XML}).then(function(oView) {
+		 *     oTargets.getViews().setView("WelcomeWithAlias", oView);
+		 * });
 		 *
 		 * {
 		 *     targets: {

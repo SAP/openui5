@@ -509,6 +509,8 @@ sap.ui.define([
 			 * @public
 			 */
 			getView : function (sViewName, sViewType, sViewId) {
+				Log.warning("Deprecated API Router#getView called - use Router#getViews instead.", this);
+
 				var oView = this._oViews._getViewWithGlobalId({
 					viewName: sViewName,
 					type: sViewType,
