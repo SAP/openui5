@@ -31,7 +31,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
 		beforeEach: function() {
-			this.mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
+			this.mock = sinon.mock(XMLPreprocessor);
 			this.expectProcess = this.mock.expects("process");
 			this._mPreprocessors = jQuery.extend(true, {}, View._mPreprocessors);
 			View.PreprocessorType = { "Foo": "foo" };
@@ -223,7 +223,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.core.mvc.View#runPreprocessor (async)", {
 		beforeEach: function() {
-			this.mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
+			this.mock = sinon.mock(XMLPreprocessor);
 			this.expectProcess = this.mock.expects("process");
 			this._mPreprocessors = jQuery.extend(true, {}, View._mPreprocessors);
 			View.PreprocessorType = { "Foo": "foo" };
@@ -702,7 +702,7 @@ sap.ui.define([
 			assert: assert.ok.bind(assert)
 		};
 
-		XMLView.registerPreprocessor("controls", "test.sap.ui.core.qunit.mvc.testdata.TestPreprocessor", true, mSettings);
+		XMLView.registerPreprocessor("controls", "test-resources.sap.ui.core.qunit.mvc.testdata.TestPreprocessor", true, mSettings);
 
 		// call via init
 		var oView = sap.ui.xmlview({
@@ -848,7 +848,7 @@ sap.ui.define([
 				"</mvc:View>"
 			].join("");
 
-			sap.ui.define("test/viewFactory/Component", [
+			sap.ui.predefine("test/viewFactory/Component", [
 				"sap/ui/core/Component"
 			], function(Component) {
 				return Component.extend("test.viewFactory.component", {
@@ -863,16 +863,17 @@ sap.ui.define([
 				});
 			});
 
-			var TestViewFactoryComponent = sap.ui.require("test/viewFactory/Component");
-			var oComponent = new TestViewFactoryComponent();
+			sap.ui.require(["test/viewFactory/Component"], function(TestViewFactoryComponent) {
+				var oComponent = new TestViewFactoryComponent();
 
-			oComponent.runAsOwner(function() {
-				View.create({
-					type: ViewType.XML,
-					definition: sDefinition
-				}).then(function(oView) {
-					assert.strictEqual(Component.getOwnerComponentFor(oView), oComponent, "View should be created with component as owner");
-					done();
+				oComponent.runAsOwner(function() {
+					View.create({
+						type: ViewType.XML,
+						definition: sDefinition
+					}).then(function(oView) {
+						assert.strictEqual(Component.getOwnerComponentFor(oView), oComponent, "View should be created with component as owner");
+						done();
+					});
 				});
 			});
 		});

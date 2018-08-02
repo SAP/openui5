@@ -1,12 +1,11 @@
-/*global sinon */
-
+/*global QUnit */
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/mvc/ControllerExtension',
 	'sap/ui/core/mvc/OverrideExecution'
 ], function(Controller, XMLView, ControllerExtension, OverrideExecution) {
-	"use-strict";
+	"use strict";
 
 	var mAllPublicMethods = {
 		"byId":{"public":true, "final":true, "reloadNeeded": false},
@@ -79,9 +78,7 @@ sap.ui.define([
 		"extension.example.ProviderExt2.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt2.getView":{"public":true,"final":true,"reloadNeeded":true},
 		"extension.example.ProviderExt2.myAfter":{"public":true,"final":false,"reloadNeeded":true},
-		"extension.example.ProviderExt2.myBefore":{"public":true,"final":false,"reloadNeeded":true},
-		"extension.example.ProviderExt2.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
-		"extension.example.ProviderExt2.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true}
+		"extension.example.ProviderExt2.myBefore":{"public":true,"final":false,"reloadNeeded":true}
 
 	};
 
@@ -293,7 +290,7 @@ sap.ui.define([
 				},
 				"extension1": {
 					publicMethodToOverride: function() {
-						assert.strictEqual(this.getMetadata().getName(), "example.ProviderExt1", "Context of override function set to ProviderExt1 extension");
+						QUnit.config.current.assert.strictEqual(this.getMetadata().getName(), "example.ProviderExt1", "Context of override function set to ProviderExt1 extension");
 						return "overridden by ProviderExt1";
 					}
 				}
@@ -362,11 +359,11 @@ sap.ui.define([
 				extension: {
 					"example.ProviderExt1": {
 						publicMethodToOverride: function() {
-							assert.strictEqual(this.getMetadata().getName(), "example.ProviderExt2", "Context of override function set to ProviderExt2 extension");
+							QUnit.config.current.assert.strictEqual(this.getMetadata().getName(), "example.ProviderExt2", "Context of override function set to ProviderExt2 extension");
 							return "overridden by ProviderExt2";
 						},
 						finalMethod: function() {
-							assert.ok(false, "Original method flagged final. Never should happen");
+							QUnit.config.current.assert.ok(false, "Original method flagged final. Never should happen");
 						}
 					}
 				},

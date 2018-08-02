@@ -1,7 +1,9 @@
+/*global QUnit */
 sap.ui.define([
 	'sap/ui/core/library',
 	'./AnyView.qunit'
 ], function(coreLibrary, testsuite) {
+	"use strict";
 
 	var ViewType = coreLibrary.mvc.ViewType;
 
@@ -42,10 +44,10 @@ sap.ui.define([
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		var oLabel = oView.byId("MyLabel");
-	 	assert.equal(oLabel.getLabelFor(), oView.byId("message").getId(), "Assocation id is set right");
-	 	var oNavigationBar = oView.byId("MyNavigationBar");
-	 	assert.equal(oNavigationBar.getAssociatedItems().length, 3, "Number of associated controls is right");
-	 	assert.deepEqual(oNavigationBar.getAssociatedItems(), [oView.byId("navitem1").getId(), oView.byId("navitem2").getId(), oView.byId("navitem3").getId()],"Number of associated controls is right", "Assocation IDs are set right");
+		assert.equal(oLabel.getLabelFor(), oView.byId("message").getId(), "Assocation id is set right");
+		var oNavigationBar = oView.byId("MyNavigationBar");
+		assert.equal(oNavigationBar.getAssociatedItems().length, 3, "Number of associated controls is right");
+		assert.deepEqual(oNavigationBar.getAssociatedItems(), [oView.byId("navitem1").getId(), oView.byId("navitem2").getId(), oView.byId("navitem3").getId()],"Number of associated controls is right", "Assocation IDs are set right");
 		oView.destroy();
 	});
 

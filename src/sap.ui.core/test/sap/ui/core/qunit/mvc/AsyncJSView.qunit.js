@@ -1,6 +1,11 @@
-sap.ui.define(["./AnyViewAsync.qunit", "sap/ui/core/mvc/JSView", "sap/base/Log"], function(asyncTestsuite, JSView, Log) {
-
+/*global QUnit */
+sap.ui.define([
+	"./AnyViewAsync.qunit",
+	"sap/ui/core/mvc/JSView",
+	"sap/base/Log"
+], function(asyncTestsuite, JSView, Log) {
 	"use strict";
+
 	// setup test config with generic factory
 	var oConfig = {
 		type : "JS",

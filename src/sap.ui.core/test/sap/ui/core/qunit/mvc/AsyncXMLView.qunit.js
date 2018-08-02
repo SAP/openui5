@@ -1,13 +1,14 @@
+/*global QUnit, sinon */
 sap.ui.define([
-    "jquery.sap.global",
-    "sap/ui/core/cache/CacheManager",
-    "sap/ui/core/Component",
-    "sap/ui/core/mvc/View",
-    "sap/ui/core/mvc/XMLView",
-    "./testdata/TestPreprocessor",
-    "./AnyViewAsync.qunit",
-    "sap/base/Log",
-    "jquery.sap.script"
+	"jquery.sap.global",
+	"sap/ui/core/cache/CacheManager",
+	"sap/ui/core/Component",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/XMLView",
+	"./testdata/TestPreprocessor",
+	"./AnyViewAsync.qunit",
+	"sap/base/Log",
+	"jquery.sap.script"
 ], function(
     jQuery,
 	Cache,
@@ -17,8 +18,9 @@ sap.ui.define([
 	TestPreprocessor,
 	asyncTestsuite,
 	Log
-    /*, jQuery*/
+	/*, jQuery*/
 ) {
+	"use strict";
 
 	// setup test config with generic factory
 	var oConfig = {
@@ -58,8 +60,7 @@ sap.ui.define([
 				'	</m:Button>',
 				'</core:View>'
 			].join(''),
-			sError = "Cannot add direct child without default aggregation defined for control sap.m.Button",
-			view;
+			sError = "Cannot add direct child without default aggregation defined for control sap.m.Button";
 
 		return sap.ui.xmlview("erroneous_view_1", {async:true, viewContent:sXml}).loaded().catch(function(error) {
 			assert.equal(error.message, sError, "Must reject with an error");
@@ -74,20 +75,18 @@ sap.ui.define([
 			'	</m:Button>',
 			'</core:View>'
 			].join(''),
-			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error",
-			view;
+			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error";
 
 		return sap.ui.xmlview("erroneous_view_2", {async:true, viewContent:sXml}).loaded().catch(function(error) {
 			assert.equal(error.message, sError, "Must reject with an error");
 		});
 	});
 
-	QUnit.test("Error in controller", function() {
+	QUnit.test("Error in controller", function(assert) {
 		var sXml = [
 				'<core:View controllerName="example.mvc.test.error" xmlns:core="sap.ui.core">',
 				'</core:View>'
-			].join(''),
-			view;
+			].join('');
 		// define erroneous controller
 		sap.ui.controller("example.mvc.test.error", {
 			onInit: function() {
@@ -170,7 +169,7 @@ sap.ui.define([
 		Cache.reset().then(function() {
 
 			var sLocation = window.location.host + window.location.pathname,
-				sBuildTimeStamp = "12345"
+				sBuildTimeStamp = "12345";
 
 			sinon.stub(sap.ui, "getVersionInfo").returns(Promise.resolve({
 				libraries: [{
@@ -394,7 +393,7 @@ sap.ui.define([
 		QUnit.module("Cache integration - unsupported browser");
 
 		QUnit.test("should not break", function(assert) {
-			var that = this, sKey = "key";
+			var sKey = "key";
 			assert.expect(2);
 			return viewFactory({
 				keys: [sKey]
