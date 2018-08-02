@@ -97,7 +97,7 @@ sap.ui.define([
 				assert.deepEqual(mOperations, oTestConfig.expectedOperations, sMessage + ": Operations were performed correctly");
 				assert.ok(this.oChangeEventSpy.calledOnce, sMessage + ": Change event was fired once");
 			} else {
-				assert.deepEqual(mOperations, [], sMessage + ": No operations were performed");
+				assert.deepEqual(mOperations, [], sMessage + ": No operations performed");
 				assert.ok(this.oChangeEventSpy.notCalled, sMessage + ": Change event was not fired");
 			}
 		}

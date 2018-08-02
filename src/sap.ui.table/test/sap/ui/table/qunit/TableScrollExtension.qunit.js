@@ -1534,12 +1534,12 @@ sap.ui.define([
 					window.setTimeout(function() {
 						if (bScrollPositionShouldNotChange) {
 							assert.strictEqual(oHSb.scrollLeft, iInitialScrollLeft,
-								sTestTitle + ": The horizontal scroll position should not change");
+								sTestTitle + ": The horizontal scroll position did not change");
 						} else {
 							assert.notStrictEqual(oHSb.scrollLeft, iInitialScrollLeft,
-								sTestTitle + ": The horizontal scroll position should have changed");
+								sTestTitle + ": The horizontal scroll position did change");
 							assert.ok(isScrolledIntoView(oDomElementToFocus),
-								sTestTitle + ": The focused cell should be fully visible");
+								sTestTitle + ": The focused cell is fully visible");
 						}
 						resolve();
 					}, 50);

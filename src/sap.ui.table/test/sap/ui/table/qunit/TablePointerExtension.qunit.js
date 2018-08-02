@@ -553,7 +553,7 @@ sap.ui.define([
 		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
-			assert.ok(false, "_doSelect should not be called");
+			assert.ok(false, "_doSelect was not called");
 		};
 
 		var fnHandler = function() {
@@ -579,7 +579,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
-			assert.ok(false, "_doSelect should not be called");
+			assert.ok(false, "_doSelect was not called");
 		};
 
 		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
@@ -612,7 +612,7 @@ sap.ui.define([
 		var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
 		$RowHdr.addClass("sapUiAnalyticalTableSum");
 		qutils.triggerMouseEvent($RowHdr, "click");
-		assert.ok(!bSelected, "No Selection should happen");
+		assert.ok(!bSelected, "Selection was not performed");
 
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
@@ -635,8 +635,8 @@ sap.ui.define([
 		var $FakeButton = TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
 		$FakeButton.addClass("sapUiTableGroupMenuButton");
 		qutils.triggerMouseEvent($FakeButton, "click");
-		assert.ok(!bSelected, "No Selection should happen");
-		assert.ok(bContextMenu, "Context Menu should be opened");
+		assert.ok(!bSelected, "Selection was not performed");
+		assert.ok(bContextMenu, "Context Menu was opened");
 
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
@@ -680,7 +680,7 @@ sap.ui.define([
 		});
 		var $Cell = oRowColCell.cell.$();
 		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
-		assert.equal(iSelectCount, 1, iSelectCount + " Selections should happen");
+		assert.equal(iSelectCount, 1, iSelectCount + " selections performed");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
 		initCellClickHandler(function(oEvent) {
@@ -688,7 +688,7 @@ sap.ui.define([
 			bClickHandlerCalled = true;
 		});
 		qutils.triggerMouseEvent($Cell, "click");
-		assert.equal(iSelectCount, 1, iSelectCount + " Selections should happen");
+		assert.equal(iSelectCount, 1, iSelectCount + " selections performed");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
 		initCellClickHandler(function(oEvent) {
@@ -696,24 +696,24 @@ sap.ui.define([
 		});
 		$Cell = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0");
 		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
-		assert.equal(iSelectCount, 2, iSelectCount + " Selections should happen");
+		assert.equal(iSelectCount, 2, iSelectCount + " selections performed");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
 		bClickHandlerCalled = false;
 		var oEvent = jQuery.Event({type: "click"});
 		oEvent.setMarked();
 		$Cell.trigger(oEvent);
-		assert.equal(iSelectCount, 2, iSelectCount + " Selections should happen");
+		assert.equal(iSelectCount, 2, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
 		var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
 		qutils.triggerMouseEvent($RowHdr, "click"); // Should increase the counter
-		assert.equal(iSelectCount, 3, iSelectCount + " Selections should happen");
+		assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
 		var $ColHdr = jQuery.sap.byId((oTable._getVisibleColumns()[0]).getId());
 		qutils.triggerMouseEvent($ColHdr, "click");
-		assert.equal(iSelectCount, 3, iSelectCount + " Selections should happen");
+		assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
 		// Prevent Click on interactive controls
@@ -726,7 +726,7 @@ sap.ui.define([
 		for (var i = 0; i < aKnownClickableControls.length; i++) {
 			$Cell.toggleClass(aKnownClickableControls[i], true);
 			qutils.triggerMouseEvent($Cell, "click");
-			assert.equal(iSelectCount, 3, iSelectCount + " Selections should not happen");
+			assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
 			assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 			$Cell.toggleClass(aKnownClickableControls[i], false);
 		}
@@ -737,7 +737,7 @@ sap.ui.define([
 		for (var i = 0; i < aKnownClickableControls.length; i++) {
 			$Cell.toggleClass(aKnownClickableControls[i], true);
 			qutils.triggerMouseEvent($Cell, "click");
-			assert.equal(iSelectCount, iStartCount + i + 1, iSelectCount + " Selections should happen");
+			assert.equal(iSelectCount, iStartCount + i + 1, iSelectCount + " selections performed");
 			assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 			$Cell.toggleClass(aKnownClickableControls[i], false);
 		}
@@ -769,8 +769,8 @@ sap.ui.define([
 		qutils.triggerEvent("click", getCell(2, 0), {
 			shiftKey: true
 		});
-		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Range selection with Shift + Click should select the correct rows");
-		assert.strictEqual(window.getSelection().toString(), "", "Range selection with Shift + Click should not select text");
+		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Range selection with Shift + Click selected the correct rows");
+		assert.strictEqual(window.getSelection().toString(), "", "Range selection with Shift + Click did not select text");
 	});
 
 	QUnit.module("Column Reordering", {

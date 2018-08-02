@@ -644,7 +644,7 @@ sap.ui.define([
 			var fnHandler1 = function () {
 				var oBinding = this.oTable.getBinding("rows");
 
-				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be disabled (=0)");
+				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "NumberOfExpandedLevels is 0");
 
 				var oContext = this.oTable.getContextByIndex(0);
 				assert.equal(oContext.getProperty("ActualCosts"), "1588416", "First row data is correct");

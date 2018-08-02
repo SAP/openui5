@@ -625,7 +625,7 @@ sap.ui.define([
 		assert.ok(!ColumnUtils.isColumnMovable(oColumn), "Ensure column is not movable");
 
 		oTable.attachColumnMove(function(oEvent) {
-			assert.ok(false, "No event should be triggered");
+			assert.ok(false, "No event was triggered");
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
@@ -641,7 +641,7 @@ sap.ui.define([
 		assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
 
 		oTable.attachColumnMove(function(oEvent) {
-			assert.ok(false, "No event should be triggered");
+			assert.ok(false, "No event was triggered");
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);

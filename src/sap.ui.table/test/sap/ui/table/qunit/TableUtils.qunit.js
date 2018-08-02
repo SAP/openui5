@@ -337,7 +337,7 @@ sap.ui.define([
 			oTable.setEnableSelectAll(bEnableSelectAll);
 			oTable.setSelectionMode(sSelectionMode);
 			assert.strictEqual(TableUtils.hasSelectAll(oTable), bShouldHaveSelectAll,
-				"The table should " + (bShouldHaveSelectAll ? "" : "not ") + "have a SelectAll checkbox"
+				"The table does " + (bShouldHaveSelectAll ? "" : "not ") + "have a SelectAll checkbox"
 			);
 		}
 
@@ -923,46 +923,46 @@ sap.ui.define([
 		/* Synchronous */
 
 		oBundle = TableUtils.getResourceBundle();
-		assert.ok(jQuery.sap.resources.isBundle(oBundle), "{async: false, reload: false} - Should return a bundle");
-		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Should return the already loaded bundle");
+		assert.ok(jQuery.sap.resources.isBundle(oBundle), "{async: false, reload: false} - Returned a bundle");
+		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Returned the already loaded bundle");
 
 		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageA);
 
 		oPreviousBundle = oBundle;
 		assert.strictEqual(TableUtils.getResourceBundle(), oBundle,
-			"{async: false, reload: false} (language changed) - Should return the already loaded bundle");
+			"{async: false, reload: false} (language changed) - Returned the already loaded bundle");
 		oBundle = TableUtils.getResourceBundle({reload: true});
 		assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle),
-			"{async: false, reload: true} - Should return a new bundle");
+			"{async: false, reload: true} - Returned a new bundle");
 		assert.strictEqual(TableUtils.getResourceBundle({reload: true}), oBundle,
-			"{async: false, reload: true} - Should return the already loaded bundle");
+			"{async: false, reload: true} - Returned the already loaded bundle");
 
 		/* Asynchronous */
 
 		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageB);
 
 		pPromise = TableUtils.getResourceBundle({async: true});
-		assert.ok(pPromise instanceof Promise, "{async: true, reload: false} (language changed) - Should return a Promise");
+		assert.ok(pPromise instanceof Promise, "{async: true, reload: false} (language changed) - Returned a Promise");
 		pPromise.then(function(_oBundle) {
 			oPreviousBundle = oBundle;
 			oBundle = _oBundle;
-			assert.strictEqual(oBundle, oPreviousBundle, "Promise should return the already loaded bundle");
+			assert.strictEqual(oBundle, oPreviousBundle, "Promise returned the already loaded bundle");
 
 			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
-			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Should return a Promise");
+			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Returned a Promise");
 			return pPromise;
 		}).then(function(_oBundle) {
 			oPreviousBundle = oBundle;
 			oBundle = _oBundle;
-			assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle), "Promise should return a new bundle");
+			assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle), "Promise returned a new bundle");
 
 			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
-			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Should return a Promise");
+			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Returned a Promise");
 			return pPromise;
 		}).then(function(_oBundle) {
 			oPreviousBundle = oBundle;
 			oBundle = _oBundle;
-			assert.strictEqual(oBundle, oPreviousBundle, "Promise should return the already loaded bundle");
+			assert.strictEqual(oBundle, oPreviousBundle, "Promise returned the already loaded bundle");
 		}).then(function() {
 			// Restore
 			sap.ui.getCore().getConfiguration().setLanguage(sOriginalLanguage);
@@ -985,30 +985,30 @@ sap.ui.define([
 
 		TableUtils.dynamicCall(oTestObject, function(vObject) {
 			bCallbackCalled = true;
-			assert.strictEqual(this, oTestObject, "Callback should be called with the default context");
-			assert.strictEqual(vObject, oTestObject, "The object should be passed to the callback");
+			assert.strictEqual(this, oTestObject, "Callback was called with the default context");
+			assert.strictEqual(vObject, oTestObject, "The object was passed to the callback");
 		});
-		assert.ok(bCallbackCalled, "Callback should be called, if the object exists");
+		assert.ok(bCallbackCalled, "The object exists, so the callback was called");
 		reset();
 
 		TableUtils.dynamicCall(undefined, function() {
 			bCallbackCalled = true;
 		});
-		assert.ok(!bCallbackCalled, "Callback should not be called, if the object does not exist");
+		assert.ok(!bCallbackCalled, "The object does not exist, so the callback was not called");
 		reset();
 
 		TableUtils.dynamicCall(function() {return oTestObject;}, function(vObject) {
 			bCallbackCalled = true;
-			assert.strictEqual(this, oTestContext, "Callback should be called with the specified context");
-			assert.strictEqual(vObject, oTestObject, "The object should be passed to the callback");
+			assert.strictEqual(this, oTestContext, "Callback was called with the specified context");
+			assert.strictEqual(vObject, oTestObject, "The object was passed to the callback");
 		}, oTestContext);
-		assert.ok(bCallbackCalled, "Callback should be called, if the object getter returns an object");
+		assert.ok(bCallbackCalled, "The object getter returns an object, so the callback was called");
 		reset();
 
 		TableUtils.dynamicCall(function() {return undefined;}, function() {
 			bCallbackCalled = true;
 		});
-		assert.ok(!bCallbackCalled, "Callback should not be called, if the object getter does not return an object");
+		assert.ok(!bCallbackCalled, "The object getter does not return an object, so the callback was not called");
 		reset();
 
 		TableUtils.dynamicCall(oTestObject, {
@@ -1017,18 +1017,18 @@ sap.ui.define([
 			funcB: [],
 			funcC: [""] // does not exist
 		});
-		assert.ok(oTestObject.funcA.calledOnce, "The function \"funcA\" should be called once");
-		assert.ok(oTestObject.funcA.calledWith(1, "2", undefined), "The function \"funcA\" should be called with the specified arguments");
-		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestObject, "The function \"funcA\" should be called with the default context");
-		assert.ok(oTestObject.funcB.calledOnce, "The function \"funcB\" should be called once");
-		assert.ok(oTestObject.funcB.calledWith(), "The function \"funcB\" should be called with the specified arguments");
-		assert.strictEqual(oTestObject.funcB.thisValues[0], oTestObject, "The function \"funcB\" should be called with the default context");
+		assert.ok(oTestObject.funcA.calledOnce, "The function \"funcA\" was called once");
+		assert.ok(oTestObject.funcA.calledWith(1, "2", undefined), "The function \"funcA\" was called with the specified arguments");
+		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestObject, "The function \"funcA\" was called with the default context");
+		assert.ok(oTestObject.funcB.calledOnce, "The function \"funcB\" was called once");
+		assert.ok(oTestObject.funcB.calledWith(), "The function \"funcB\" was called with the specified arguments");
+		assert.strictEqual(oTestObject.funcB.thisValues[0], oTestObject, "The function \"funcB\" was called with the default context");
 		reset();
 
 		TableUtils.dynamicCall(oTestObject, {
 			funcA: undefined
 		}, oTestContext);
-		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestContext, "The function should be called with the specified context");
+		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestContext, "The function was called with the specified context");
 	});
 
 	QUnit.module("Cozy", {
@@ -1391,14 +1391,14 @@ sap.ui.define([
 			this.fnTestFunction = sinon.spy();
 		},
 		assert: function(assert, iCallCount, aLastArguments, oContext) {
-			assert.strictEqual(this.fnTestFunction.callCount, iCallCount, "The function should be called " + iCallCount + " times");
+			assert.strictEqual(this.fnTestFunction.callCount, iCallCount, "The function was called " + iCallCount + " times");
 			if (iCallCount > 0 && iCallCount === this.fnTestFunction.callCount) {
 				if (oContext != null) {
 					assert.strictEqual(this.fnTestFunction.lastCall.thisValue, oContext, "Context (this) of the last call");
 				}
 				if (aLastArguments != null) {
 					assert.deepEqual(this.fnTestFunction.lastCall.args, aLastArguments,
-						"Arguments of the last call should be [" + aLastArguments.join(", ") + "]");
+						"Arguments of the last call are [" + aLastArguments.join(", ") + "]");
 				}
 			}
 		},
@@ -1655,20 +1655,20 @@ sap.ui.define([
 		var fnDebounced = TableUtils.debounce(that.fnTestFunction, 20);
 
 		fnDebounced();
-		assert.ok(fnDebounced.pending(), "Debounce should be pending");
+		assert.ok(fnDebounced.pending(), "Debounce is pending");
 
 		setTimeout(function() {
 			fnDebounced.cancel();
-			assert.ok(!fnDebounced.pending(), "Debounce should not be pending after cancellation");
+			assert.ok(!fnDebounced.pending(), "Debounce is not pending after cancellation");
 		}, 0);
 
 		setTimeout(function() {
-			assert.ok(that.fnTestFunction.notCalled, "The function should not be called if debounce was cancelled");
+			assert.ok(that.fnTestFunction.notCalled, "The function is not called if debounce was cancelled");
 			fnDebounced();
-			assert.ok(fnDebounced.pending(), "Debounce should be pending");
+			assert.ok(fnDebounced.pending(), "Debounce is pending");
 
 			setTimeout(function() {
-				assert.ok(!fnDebounced.pending(), "Debounce function should not be pending after invocation");
+				assert.ok(!fnDebounced.pending(), "Debounce function is not pending after invocation");
 				that.assert(assert, 1);
 				done();
 			}, 30);
@@ -1746,17 +1746,17 @@ sap.ui.define([
 		var fnDebounced = TableUtils.debounce(that.fnTestFunction);
 
 		fnDebounced();
-		assert.ok(fnDebounced.pending(), "Debounce should be pending");
+		assert.ok(fnDebounced.pending(), "Debounce is pending");
 		fnDebounced.cancel();
-		assert.ok(!fnDebounced.pending(), "Debounce should not be pending after cancellation");
+		assert.ok(!fnDebounced.pending(), "Debounce is not pending after cancellation");
 
 		window.requestAnimationFrame(function() {
-			assert.ok(that.fnTestFunction.notCalled, "The function should not be called if debounce was cancelled");
+			assert.ok(that.fnTestFunction.notCalled, "The function is not called if debounce was cancelled");
 			fnDebounced();
-			assert.ok(fnDebounced.pending(), "Debounce should be pending");
+			assert.ok(fnDebounced.pending(), "Debounce is pending");
 
 			window.requestAnimationFrame(function() {
-				assert.ok(!fnDebounced.pending(), "Debounce should not be pending after invocation");
+				assert.ok(!fnDebounced.pending(), "Debounce is not pending after invocation");
 				that.assert(assert, 1);
 				done();
 			});
@@ -1774,21 +1774,21 @@ sap.ui.define([
 			leading: true,
 			trailing: true,
 			maxWait: undefined
-		}), "Throttle should call debounce with the correct parameters");
+		}), "Throttle calls debounce with the correct parameters");
 
 		TableUtils.throttle(fnFunction, 50);
 		assert.ok(oDebounceSpy.calledWith(fnFunction, 50, {
 			leading: true,
 			trailing: true,
 			maxWait: 50
-		}), "Throttle should call debounce with the correct parameters");
+		}), "Throttle calls debounce with the correct parameters");
 
 		TableUtils.throttle(fnFunction, null, {maxWait: 100});
 		assert.ok(oDebounceSpy.calledWith(fnFunction, null, {
 			leading: true,
 			trailing: true,
 			maxWait: null
-		}), "Throttle should call debounce with the correct parameters");
+		}), "Throttle calls debounce with the correct parameters");
 
 		TableUtils.throttle(fnFunction, 50, {leading: false, trailing: false, asyncLeading: true, maxWait: 100});
 		assert.ok(oDebounceSpy.calledWith(fnFunction, 50, {
@@ -1796,6 +1796,6 @@ sap.ui.define([
 			trailing: false,
 			asyncLeading: true,
 			maxWait: 50
-		}), "Throttle should call debounce with the correct parameters");
+		}), "Throttle calls debounce with the correct parameters");
 	});
 });
