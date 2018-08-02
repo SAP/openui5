@@ -37,8 +37,7 @@ sap.ui.define([
 	"sap/base/util/array/uniqueSort",
 	"sap/base/util/uid",
 	'sap/ui/performance/trace/initTraces',
-	'sap/ui/events/jquery/EventSimulation',
-	'jquery.sap.sjax'
+	'sap/ui/events/jquery/EventSimulation'
 ],
 	function(
 		jQuery,
@@ -74,7 +73,7 @@ sap.ui.define([
 		uniqueSort,
 		uid,
 		initTraces
-		/* ,EventSimulation, jQuerySapSjax */
+		/* ,EventSimulation */
 	) {
 
 	"use strict";
