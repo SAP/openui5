@@ -37,8 +37,11 @@
 					}]
 				}">
 			<StandardListItem
-					title="{version}"
+					title="{path: 'version'}"
 					type="Active">
+				<customData>
+					<core:CustomData key="path" value="{path: 'path'}" />
+				</customData>
 			</StandardListItem>
 		</List>
 	</Dialog>
