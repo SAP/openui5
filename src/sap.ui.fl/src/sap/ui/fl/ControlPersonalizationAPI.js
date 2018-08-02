@@ -21,17 +21,51 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 * Provides an API to handle specific functionality of the {@link sap.ui.fl.variants.VariantManagement variant management control}.
+	 *
+	 * @namespace
+	 * @name sap.ui.fl.ControlPersonalizationAPI
+	 * @author SAP SE
+	 * @experimental Since 1.56
+	 * @since 1.56
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted
+	 */
+
+	/**
+	 * Object containing attributes of a change, along with the control on which this change should be applied.
+	 *
+	 * <pre>
+	 * {
+	 *    selectorControl: &lt;sap.ui.core.Control&gt; // the control object to be used as selector for the change,
+	 *    changeSpecificData: { &lt;object&gt; // the map of change-specific data to perform a flex change,
+	 *       changeType: &lt;string&gt; // the change type for which a change handler is registered
+	 *       ... // other change specific data
+	 *    }
+	 * }
+	 * </pre>
+	 *
+	 * @typedef {object} sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange
+	 * @since 1.56
+	 * @private
+	 * @ui5-restricted
+	 * @property {sap.ui.core.Control} selectorControl - The control object to be used as selector for the change
+	 * @property {object} changeSpecificData - The map of change-specific data to perform a flex change
+	 * @property {string} changeSpecificData.changeType - The change type for which a change handler is registered
+	 */
+
 	var VARIANT_TECHNICAL_PARAMETER_NAME = "sap-ui-fl-control-variant-id";
 
 	var ControlPersonalizationAPI = {
 
 		/**
-		 * Returns a map of parameters used in public functions
+		 * Returns a map of parameters used in public functions.
 		 *
 		 * @param {sap.ui.core.Element} oControl - The control for which a variant management control has to be evaluated
-		 * @returns {Object} mParams Returns a map with needed parameters
+		 * @returns {object} Returns a map with needed parameters
 		 * @private
-		 * @restricted sap.ui.fl
 		 */
 		_determineParameters : function(oControl) {
 			var oOuterAppComponent = Utils.getAppComponentForControl(oControl, true);
@@ -65,12 +99,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the local id of the encompassing variant management control
+		 * Returns the local id of the encompassing variant management control.
 		 *
 		 * @param {sap.ui.core.Element} oControl - The control for which a variant management control has to be evaluated
-		 * @returns {Object} mParams Returns a map with needed parameters
+		 * @returns {object} Returns a map with needed parameters
 		 * @private
-		 * @restricted sap.ui.fl
 		 */
 		_getVariantManagement : function(oControl) {
 			var mParams = this._determineParameters(oControl);
@@ -88,9 +121,13 @@ sap.ui.define([
 		},
 
 		/**
+		 *
 		 * Clears URL technical parameter 'sap-ui-fl-control-variant-id' for control variants.
 		 * If a variant management control is given as parameter, only that control specific parameters are cleared.
-		 * @param {sap.ui.core.Element} [oVariantManagementControl] The variant management control for which URL technical parameter has to be cleared
+		 *
+		 * @param {sap.ui.base.ManagedObject} [oVariantManagementControl] The variant management control for which URL technical parameter has to be cleared
+		 *
+		 * @method sap.ui.fl.ControlPersonalizationAPI.clearVariantParameterInURL
 		 * @public
 		 */
 		clearVariantParameterInURL : function (oControl) {
@@ -125,13 +162,18 @@ sap.ui.define([
 		},
 
 		/**
-		 * Activates the passed variant applicable on the passed control/component
-		 * @param {sap.ui.base.ManagedObject|String} vElement The component or control (instance or id) on which the variantModel is set
-		 * @param {String} sVariantReference The variant reference which needs to be activated
+		 *
+		 * Activates the passed variant applicable on the passed control/component.
+		 *
+		 * @param {sap.ui.base.ManagedObject|string} vElement The component or control (instance or id) on which the variantModel is set
+		 * @param {string} sVariantReference The variant reference which needs to be activated
+		 *
 		 * @returns {Promise} Returns Promise that resolves after the variant is updated or rejects when an error occurs
+		 *
+		 * @method sap.ui.fl.ControlPersonalizationAPI.activateVariant
 		 * @public
 		 */
-		activateVariant : function (vElement, sVariantReference) {
+		activateVariant : function(vElement, sVariantReference) {
 			var oElement;
 			return Promise.resolve()
 				.then( function () {
@@ -173,12 +215,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates personalization changes, adds them to the flex persistence (not yet saved) and applies them to the control
-		 * @param {Object[]} aControlChanges - Array of control changes [oControlChange]
-		 * @param {Object} oControlChange.selectorControl - The control object to be used as selector for the change
-		 * @param {Object} oControlChange.changeSpecificData - The map of change-specific data
-		 * @param {string} oControlChange.changeSpecificData.changeType - The change type for which a change handler is registered
-		 * @returns {Promise} - Returns Promise that resolves after the changes have been written to the map of dirty changes and applied to the control
+		 * Creates personalization changes, adds them to the flex persistence (not yet saved) and applies them to the control.
+		 *
+		 * @param {array} aControlChanges - Array of control changes of type {@link sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChange}
+		 *
+		 * @returns {Promise} Returns Promise that resolves after the changes have been written to the map of dirty changes and applied to the control
+		 *
+		 * @method sap.ui.fl.ControlPersonalizationAPI.addPersonalizationChanges
 		 * @public
 		 */
 		addPersonalizationChanges : function(aControlChanges) {
@@ -295,9 +338,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines the availability of an encompassing variant management control
-		 * @param {Object} oControl - The control which should be tested for an encompassing variant management control
-		 * @returns {boolean} - Returns true if a variant management control is encompassing the given control, else false
+		 * Determines the availability of an encompassing variant management control.
+		 *
+		 * @param {sap.ui.base.ManagedObject} oControl - The control which should be tested for an encompassing variant management control
+		 *
+		 * @returns {boolean} Returns true if a variant management control is encompassing the given control, else false
+		 *
+		 * @method sap.ui.fl.ControlPersonalizationAPI.hasVariantManagement
 		 * @public
 		 */
 		hasVariantManagement : function(oControl) {
