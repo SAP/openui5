@@ -1741,7 +1741,6 @@ sap.ui.require([
 		this.oOperation = {bAction : undefined};
 		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
-
 		// code under test
 		oBinding.destroy();
 
