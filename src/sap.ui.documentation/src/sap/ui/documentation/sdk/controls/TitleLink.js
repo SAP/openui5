@@ -19,6 +19,8 @@ sap.ui.define([
 	 * @class
 	 * Adds link functionality and wrapping to the existing title control for display in the demo kit application
 	 * @extends sap.m.Title
+	 * @private
+	 * @ui5-restricted sdk
 	 */
 	var TitleLink = Title.extend("sap.ui.documentation.sdk.controls.TitleLink", {
 		metadata: {
