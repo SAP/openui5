@@ -20,7 +20,7 @@ sap.ui.define([
 
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,
-			sNeoAppJsonPath = "neo-app.json",
+			sNeoAppJsonPath = "/neo-app.json", /* Load neo-app.json always from root URL */
 			ABOUT_TEXT = "About",
 			FEEDBACK_TEXT = "Feedback",
 			CHANGE_VERSION_TEXT = "Change version";
@@ -418,9 +418,11 @@ sap.ui.define([
 
 			onVersionItemPress: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("listItem"),
-					sSelectedVersion = oSelectedItem ? oSelectedItem.getTitle() : null;
+					oCustomData = oSelectedItem.getCustomData()[0];
 
-				sSelectedVersion && this._changeVersionURL(sSelectedVersion);
+				if (oCustomData && oCustomData.getKey() === "path") {
+					window.location.href = oCustomData.getValue(); // Domain relative redirect
+				}
 			},
 
 			getVersionSwitchDialog: function () {
@@ -469,25 +471,6 @@ sap.ui.define([
 				oChangeVersionDialogModel.setData(this._aNeoAppVersions);
 
 				return oChangeVersionDialogModel;
-			},
-
-			_changeVersionURL: function (sVersion) {
-				var sHref = window.location.href,
-					sOrigin = window.location.origin,
-					rPattern = /\d\.\d{2}\.\d{1,2}/, // Matches x.xx.x && x.xx.xx
-					bURLVersionExists = sHref.match(rPattern) !== null,
-					sNewHref;
-
-				// Version should be inserted after the location origin
-				// E.g: https://ui5.sap.com/1.50.5/#/api/sap.f.DynamicPage
-				// If there was already a version in the URL, just replace it with the new one
-				if (bURLVersionExists) {
-					sNewHref = sHref.replace(rPattern, sVersion);
-				} else {
-					sNewHref = sOrigin + "/" + sVersion + sHref.slice(sOrigin.length);
-				}
-
-				window.location.href = sNewHref;
 			},
 
 			/**
@@ -792,6 +775,7 @@ sap.ui.define([
 							oVersionSummary.patchVersion = oVersion.getPatch(); // E.g: Extract 5 from "1.52.5"
 							oVersionSummary.groupTitle = oVersion.getMajor() + "." + oVersion.getMinor(); // E.g: Extract "1.52" from "1.52.5"
 							oVersionSummary.version = oVersion.toString();
+							oVersionSummary.path = oRoute.path;
 
 							return oVersionSummary;
 						});
