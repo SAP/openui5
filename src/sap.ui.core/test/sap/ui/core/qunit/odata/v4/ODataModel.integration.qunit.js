@@ -1289,7 +1289,7 @@ sap.ui.require([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transient" : false,
+							"transition" : false,
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
@@ -1341,7 +1341,7 @@ sap.ui.require([
 					{
 						"code" : "1",
 						"message" : "Text",
-						"transient" : false,
+						"transition" : false,
 						"target" : "Name",
 						"numericSeverity" : 3
 					}]
@@ -6608,7 +6608,7 @@ sap.ui.require([
 						"code" : "23",
 						"message" : "Just A Message",
 						"target" : "Name",
-						"transient" : true,
+						"transition" : true,
 						"numericSeverity" : 1
 					}]
 				});
@@ -6720,7 +6720,7 @@ sap.ui.require([
 					"code" : "23",
 					"message" : "Just A Message",
 					"target" : "Name",
-					"transient" : true,
+					"transition" : true,
 					"numericSeverity" : 1
 				}],
 				"DraftAdministrativeData" : {
@@ -7192,7 +7192,7 @@ sap.ui.require([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transient" : false,
+							"transition" : false,
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
@@ -7250,7 +7250,7 @@ sap.ui.require([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transient" : false,
+							"transition" : false,
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
@@ -7300,7 +7300,7 @@ sap.ui.require([
 					{
 						"code" : "1",
 						"message" : "Text",
-						"transient" : false,
+						"transition" : false,
 						"target" : "Name",
 						"numericSeverity" : 3
 					}]
@@ -7356,7 +7356,7 @@ sap.ui.require([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transient" : false,
+							"transition" : false,
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
@@ -7413,7 +7413,7 @@ sap.ui.require([
 					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
-						"transient" : false,
+						"transition" : false,
 						"target" : "Name",
 						"numericSeverity" : 3
 					}]

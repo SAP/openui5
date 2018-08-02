@@ -37,7 +37,7 @@
 				<Property Name="code" Type="Edm.String" Nullable="false" />
 				<Property Name="message" Type="Edm.String" Nullable="false" />
 				<Property Name="target" Type="Edm.String" Nullable="true" />
-				<Property Name="transient" Type="Edm.Boolean" Nullable="false" />
+				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
 				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
 				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
 			</ComplexType>

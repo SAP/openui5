@@ -1568,14 +1568,14 @@ sap.ui.require([
 					"message" : "foo0",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "Name",
-					"transient" : false
+					"transition" : false
 				}, {
 					"code" : "UF1",
 					"longtextUrl" : "/service/baz",
 					"message" : "foo1",
 					"numericSeverity" : oFixture.numericSeverity,
 					"target" : "",
-					"transient" : true
+					"transition" : true
 				}],
 				oModel = createModel(),
 				oModelMock = this.mock(oModel);
@@ -1594,7 +1594,7 @@ sap.ui.require([
 						assert.strictEqual(oMessage.getDescriptionUrl(), aMessages[j].longtextUrl);
 						assert.strictEqual(oMessage.getMessage(), aMessages[j].message);
 						assert.strictEqual(oMessage.getMessageProcessor(), oModel);
-						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transient);
+						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transition);
 						assert.strictEqual(oMessage.getTarget(), "/Team('42')/foo/bar"
 							+ (aMessages[j].target ? "/" + aMessages[j].target : ""));
 						assert.notOk(oMessage.getTechnical());
