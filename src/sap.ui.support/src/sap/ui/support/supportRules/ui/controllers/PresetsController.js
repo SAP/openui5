@@ -47,11 +47,11 @@ sap.ui.define([
 	 *
 	 * @class Provides methods for switching presets and for import/export of presets
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.support.supportRules.ui.controllers.BaseController
 	 * @author SAP SE
 	 * @version ${version}
-	 * @public
-	 * @alias sap.ui.support.supportRules.ui.models.PresetsController
+	 * @private
+	 * @alias sap.ui.support.supportRules.ui.controllers.PresetsController
 	 */
 	var PresetsController = BaseController.extend("sap.ui.support.supportRules.ui.controllers.PresetsController", {
 		constructor : function(oModel, oView) {

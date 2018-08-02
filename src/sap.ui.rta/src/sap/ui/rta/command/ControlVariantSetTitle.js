@@ -55,7 +55,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @public Template Method to implement execute logic, with ensure precondition Element is available
+	 * Template Method to implement execute logic, with ensure precondition Element is available.
+	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantSetTitle.prototype.execute = function() {
@@ -87,7 +88,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @public Template Method to implement undo logic
+	 * Template Method to implement undo logic.
+	 * @public
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSetTitle.prototype.undo = function() {

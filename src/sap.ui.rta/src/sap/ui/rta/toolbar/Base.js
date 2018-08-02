@@ -21,7 +21,7 @@ function(
 	 *
 	 * @class
 	 * Base class for Toolbar control
-	 * @extends sap.m.Toolbar
+	 * @extends sap.m.HBox
 	 *
 	 * @author SAP SE
 	 * @version ${version}

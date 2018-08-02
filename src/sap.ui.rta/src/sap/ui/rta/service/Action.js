@@ -168,21 +168,23 @@ sap.ui.define([
 				 * ]
 				 * </pre>
 				 *
-				 * @method sap.ui.rta.service.Action.get
+				 * @name sap.ui.rta.service.Action.get
 				 * @param {string|string[]} vControlIds - Control ID or an array of IDs to get actions for
 				 * @returns {sap.ui.rta.service.Action.ActionObject[]} List of available actions
 				 * @public
+				 * @function
 				 */
 				get: get,
 
 				/**
 				 * Returns a list of available actions for the specified control(s).
 				 *
-				 * @method sap.ui.rta.service.Action.execute
+				 * @name sap.ui.rta.service.Action.execute
 				 * @param {string|string[]} vControlIds - Control ID or an array of IDs to get actions for
 				 * @param {string} sActionId - Action ID to be executed on the specified controls
 				 * @returns {any} Result of the operation
 				 * @public
+				 * @function
 				 */
 				execute: execute
 			}
