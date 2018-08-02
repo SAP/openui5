@@ -157,7 +157,7 @@ sap.ui.define([
 						oButton = that._objectsRegister.getToolbarDownloadButtonControl();
 
 					function setup() {
-						if (that.getShowDownloadButton()) {
+						if (that._isDisplayDownloadButton()) {
 							oOverflowToolbar.addContent(oButton);
 						} else {
 							oOverflowToolbar.removeContent(oButton);

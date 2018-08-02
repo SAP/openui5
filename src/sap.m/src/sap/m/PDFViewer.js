@@ -29,6 +29,7 @@ sap.ui.define([
 	) {
 		"use strict";
 
+		var PDFViewerDisplayTypes = library.PDFViewerDisplayTypes;
 
 		/**
 		 * Definition of PDFViewer control
@@ -101,7 +102,29 @@ sap.ui.define([
 						/**
 						* Shows or hides the download button.
 						*/
-						showDownloadButton: {type: "boolean", group: "Misc", defaultValue: true}
+						showDownloadButton: {type: "boolean", group: "Misc", defaultValue: true},
+
+						/**
+						* Defines how the PDF viewer should be displayed.
+						* <ul>
+						* <li>If set to <code>Link</code>, the PDF viewer appears as a toolbar with a download
+						* button that can be used to download the PDF file.<br>
+						* When the {@link open} method is called, the user can either open the PDF file in a
+						* new tab or download it.</li>
+						* <li>If set to <code>Embedded</code>, the PDF viewer appears embedded in the parent
+						* container and displays either the PDF document or the message defined by the
+						* <code>errorPlaceholderMessage</code> property.</li>
+						* <li>If set to <code>Auto</code>, the appearance of the PDF viewer depends on the
+						* device being used:
+						* <ul>
+						* <li>On mobile devices (phones, tablets), the the PDF viewer appears as a toolbar with
+						* a download button.</li>
+						* <li>On desktop devices, the PDF viewer is embedded in its parent container.</li>
+						* </ul>
+						* </li>
+						* </ul>
+						*/
+						displayType: {type: "string", group: "Misc", defaultValue: PDFViewerDisplayTypes.Auto}
 					},
 					aggregations: {
 						/**
@@ -329,7 +352,7 @@ sap.ui.define([
 						return;
 					}
 				}
-				if (bContinue && PDFViewerRenderer._isSupportedMimeType(sCurrentContentType)) {
+				if (bContinue && PDFViewerRenderer._isSupportedMimeType(sCurrentContentType) && PDFViewerRenderer._isPdfPluginEnabled()) {
 					this._fireLoadedEvent();
 				} else {
 					this._fireErrorEvent();
@@ -439,7 +462,7 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._shouldRenderPdfContent = function () {
-			return PDFViewerRenderer._isPdfPluginEnabled() && this._bRenderPdfContent && this.getSource() !== null;
+			return PDFViewerRenderer._isPdfPluginEnabled() && this._bRenderPdfContent && this._isSourceValidToDisplay();
 		};
 
 		/**
@@ -472,6 +495,8 @@ sap.ui.define([
 			if (!this._isSourceValidToDisplay()) {
 				assert(false, "The PDF file cannot be opened with the given source. Given source: " + this.getSource());
 				return;
+			} else if (!PDFViewerRenderer._isPdfPluginEnabled()) {
+				jQuery.sap.log.warning("The PDF plug-in is not available on this device.");
 			}
 
 			if (this._isEmbeddedModeAllowed()) {
@@ -529,7 +554,39 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._isEmbeddedModeAllowed = function () {
-			return Device.system.desktop;
+			return this._isDisplayTypeAuto() ? Device.system.desktop : this._isDisplayTypeEmbedded();
+		};
+
+		/**
+		 * @returns {boolean}
+		 * @private
+		 */
+		PDFViewer.prototype._isDisplayTypeAuto = function () {
+			return this.getDisplayType() === PDFViewerDisplayTypes.Auto;
+		};
+
+		/**
+		 * @returns {boolean}
+		 * @private
+		 */
+		PDFViewer.prototype._isDisplayTypeEmbedded = function () {
+			return this.getDisplayType() === PDFViewerDisplayTypes.Embedded;
+		};
+
+		/**
+		 * @returns {boolean}
+		 * @private
+		 */
+		PDFViewer.prototype._isDisplayTypeLink = function () {
+			return this.getDisplayType() === PDFViewerDisplayTypes.Link;
+		};
+
+		/**
+		 * @returns {boolean}
+		 * @private
+		 */
+		PDFViewer.prototype._isDisplayDownloadButton = function () {
+			return this.getShowDownloadButton() || this._isDisplayTypeLink() || (this._isDisplayTypeAuto() && !this._isEmbeddedModeAllowed());
 		};
 
 		/**

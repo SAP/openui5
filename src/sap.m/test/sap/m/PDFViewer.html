@@ -13,6 +13,21 @@
 	<script>
 		jQuery.sap.require("sap.m.MessageToast");
 
+        var aDisplayTypesCollection = [
+            {
+                key: 'auto',
+                text: 'Auto'
+            },
+            {
+                key: 'embedded',
+                text: 'Embedded'
+            },
+            {
+                key: 'link',
+                text: 'Link'
+            }
+        ];
+
 		var aModesCollection = [
 			{
 				key: 'embedded',
@@ -51,12 +66,14 @@
 		];
 
 		sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({
+            DisplayTypesCollection: aDisplayTypesCollection,
 			ModesCollection: aModesCollection,
 			SourcesCollection: aSourcesCollection,
 			EventReactionsCollection: aEventReactionsCollection
 		}), "settingsData");
 
 		function setupPDFViewer() {
+            oPDFViewer.setDisplayType(oDisplayTypeSelect.getSelectedKey());
 			oPDFViewer.setSource(oSourceSelect.getSelectedKey());
 			oPDFViewer.setTitle(oTitleTextInput.getValue());
 			oPDFViewer.setHeight(oHeightInput.getValue());
@@ -117,6 +134,15 @@
 					}
 				}
 			}),
+            oDisplayTypeSelect = new sap.m.Select({
+                items: {
+                    path: "settingsData>/DisplayTypesCollection",
+                    template: new sap.ui.core.Item({
+                        key: "{settingsData>key}",
+                        text: "{settingsData>text}"
+                    })
+                }
+            }),
 			oModeSelect = new sap.m.Select({
 				items: {
 					path: "settingsData>/ModesCollection",
@@ -190,6 +216,10 @@
 			oSettingsList = new sap.m.List({
 				items: [
 					// input list items
+                    new sap.m.InputListItem({
+                        label: "Display Type",
+                        content: oDisplayTypeSelect
+                    }),
 					new sap.m.InputListItem({
 						label: "Mode",
 						content: oModeSelect
