@@ -30,7 +30,7 @@ sap.ui.define([
 	"use strict";
 
 	function isInstanceOfAnalyticalTable(oControl) {
-		return oControl && oControl.isA("sap.ui.table.AnalyticalTable");
+		return TableUtils.isA(oControl, "sap.ui.table.AnalyticalTable");
 	}
 
 	/**

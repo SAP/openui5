@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.table.RowSettings
 sap.ui.define([
-	"sap/ui/base/Object", 'sap/ui/core/Element', './TableUtils', './library', 'sap/ui/core/library'
-], function(BaseObject, Element, TableUtils, library, coreLibrary) {
+	'sap/ui/core/Element', './TableUtils', './library', 'sap/ui/core/library'
+], function(Element, TableUtils, library, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -123,7 +123,7 @@ sap.ui.define([
 	RowSettings.prototype._getRow = function() {
 		var oRow = this.getParent();
 
-		if (BaseObject.isA(oRow, "sap.ui.table.Row")) {
+		if (TableUtils.isA(oRow, "sap.ui.table.Row")) {
 			return oRow;
 		} else {
 			return null;

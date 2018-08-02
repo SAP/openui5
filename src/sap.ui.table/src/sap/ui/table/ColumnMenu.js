@@ -11,10 +11,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./TableUtils',
 	"sap/base/assert",
-	"sap/ui/base/Object",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils, assert, BaseObject, jQuery) {
+	function(library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils, assert, jQuery) {
 	"use strict";
 
 	/**
@@ -110,12 +109,11 @@ sap.ui.define([
 	ColumnMenu.prototype._updateReferences = function(oParent) {
 		this._oColumn = oParent;
 		if (oParent) {
-			assert(oParent.isA("sap.ui.table.Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
+			assert(TableUtils.isA(oParent, "sap.ui.table.Column"), "ColumnMenu.setParent: parent must be a subclass of sap.ui.table.Column");
 
 			this._oTable = this._oColumn.getParent();
-			if (this._oTable) {
-				assert(this._oTable.isA("sap.ui.table.Table"), "ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
-			}
+			assert(TableUtils.isA(this._oTable, "sap.ui.table.Table"),
+				"ColumnMenu.setParent: parent of parent must be subclass of sap.ui.table.Table");
 		}
 	};
 
@@ -358,7 +356,7 @@ sap.ui.define([
 			}
 
 			var oBinding = oTable.getBinding();
-			var bAnalyticalBinding = BaseObject.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding");
+			var bAnalyticalBinding = TableUtils.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding");
 			var aVisibleColumns = oTable._getVisibleColumns();
 
 			for (var i = 0, l = aColumns.length; i < l; i++) {
@@ -416,7 +414,7 @@ sap.ui.define([
 				if (bVisible || TableUtils.getVisibleColumnCount(this._oTable) > 1) {
 					var oTable = oColumn.getParent();
 					var bExecuteDefault = true;
-					if (BaseObject.isA(oTable, "sap.ui.table.Table")) {
+					if (TableUtils.isA(oTable, "sap.ui.table.Table")) {
 						bExecuteDefault = oTable.fireColumnVisibility({
 							column: oColumn,
 							newVisible: bVisible
