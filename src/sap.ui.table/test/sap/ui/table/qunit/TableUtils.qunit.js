@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
-	"sap/ui/table/RowSettings"
-], function(TableQUnitUtils, qutils, TableUtils, Table, Column, RowAction, TableLibrary, CoreLibrary, Control, RowSettings) {
+	"sap/ui/table/RowSettings",
+	"sap/ui/base/Object"
+], function(TableQUnitUtils, qutils, TableUtils, Table, Column, RowAction, TableLibrary, CoreLibrary, Control, RowSettings, BaseObject) {
 	"use strict";
 
 	// Shortcuts
@@ -794,8 +795,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("canUsePendingRequestsCounter", function(assert) {
-		var oBindingIsA = this.stub(oTable.getBinding("rows"), "isA");
-
 		assert.ok(TableUtils.canUsePendingRequestsCounter(), "No parameters passed: Returned true");
 		assert.ok(TableUtils.canUsePendingRequestsCounter(null), "Passed 'null': Returned true");
 
@@ -803,23 +802,50 @@ sap.ui.define([
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Rows not bound: Returned true");
 		oTable.getBinding.restore();
 
-		oBindingIsA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(true);
-		oTable.getBinding("rows").bUseBatchRequests = true;
+		var oBinding = oTable.getBinding("rows");
+		this.stub(oBinding, "isA");
+
+		oBinding.isA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(true);
+		oBinding.bUseBatchRequests = true;
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding using batch requests: Returned true");
 
-		oTable.getBinding("rows").bUseBatchRequests = false;
+		oBinding.bUseBatchRequests = false;
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding not using batch requests: Returned false");
 
-		oBindingIsA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(false);
-		oBindingIsA.withArgs("sap.ui.model.TreeBinding").returns(true);
+		oBinding.isA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(false);
+		oBinding.isA.withArgs("sap.ui.model.TreeBinding").returns(true);
 		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "TreeBinding: Returned false");
 
-		oBindingIsA.withArgs("sap.ui.model.TreeBinding").returns(false);
-		oTable.getBinding("rows").bUseBatchRequests = true;
+		oBinding.isA.withArgs("sap.ui.model.TreeBinding").returns(false);
+		oBinding.bUseBatchRequests = true;
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Other binding: Returned true");
 
-		oBindingIsA.restore();
-		delete oTable.getBinding("rows").bUseBatchRequests;
+		oBinding.isA.restore();
+		delete oBinding.bUseBatchRequests;
+	});
+
+	QUnit.test("isA", function(assert) {
+		var oBaseObjectIsA = this.spy(BaseObject, "isA");
+		var vBaseObjectReturn;
+
+		// TableUtils#isA is just a wrapper for sap.ui.base.Object#isA. Therefore, we only check whether TableUtils#isA correctly calls the base
+		// method and returns the same value.
+
+		[
+			[oTable, null],
+			[null, "sap.ui.table.Table"],
+			[oTable, "sap.ui.table.Table"],
+			[oTable, "sap.ui.table.AnalyticalTable"],
+			[oTable, ["sap.ui.table.Table", "sap.ui.table.AnalyticalTable"]]
+		].forEach(function(aArguments) {
+			vBaseObjectReturn = BaseObject.isA.apply(BaseObject, aArguments);
+			assert.ok(oBaseObjectIsA.calledWith(aArguments[0], aArguments[1]),
+				"sap.ui.base.Object#isA was called with the same parameters as TableUtils#isA");
+			assert.strictEqual(vBaseObjectReturn, TableUtils.isA.apply(TableUtils, aArguments),
+				"TableUtils#isA returns the same as sap.ui.base.Object#isA");
+		});
+
+		oBaseObjectIsA.restore();
 	});
 
 	QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {

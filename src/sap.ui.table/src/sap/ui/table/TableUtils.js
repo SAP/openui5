@@ -381,13 +381,27 @@ sap.ui.define([
 		canUsePendingRequestsCounter: function(oTable) {
 			var oBinding = oTable ? oTable.getBinding("rows") : null;
 
-			if (BaseObject.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding")) {
+			if (TableUtils.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding")) {
 				return oBinding.bUseBatchRequests;
-			} else if (BaseObject.isA(oBinding, "sap.ui.model.TreeBinding")) {
+			} else if (TableUtils.isA(oBinding, "sap.ui.model.TreeBinding")) {
 				return false;
 			}
 
 			return true;
+		},
+
+		/**
+		 * Checks whether an object is of the given type(s).
+		 * Wrapper for {@link sap.ui.base.Object.isA}
+		 *
+		 * @param {object} oObject Object which will be checked whether it is an instance of the given type
+		 * @param {string|string[]} vTypeName Type or types to check for
+		 * @see sap.ui.base.Object.isA
+		 * @returns {boolean} Whether this object is an instance of the given type or of any of the given types
+		 * @private
+		 */
+		isA: function(oObject, vTypeName) {
+			return BaseObject.isA(oObject, vTypeName);
 		},
 
 		/**
