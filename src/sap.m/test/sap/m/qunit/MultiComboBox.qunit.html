@@ -5072,6 +5072,33 @@
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Tap on input field on mobile", function(assert) {
+		//arrange
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oMultiComboBox = new sap.m.MultiComboBox().placeAt("MultiComboBox-content"),
+			fnOpenSpy = sinon.spy(oMultiComboBox, "open");
+
+		sap.ui.getCore().applyChanges();
+
+		//act
+		var oFakeEvent = {
+			target: oMultiComboBox.getDomRef(),
+			setMarked: function () { },
+			srcControl: oMultiComboBox
+		};
+
+		oMultiComboBox.ontap(oFakeEvent);
+
+		//assert
+		assert.strictEqual(fnOpenSpy.callCount, 1 , "tap on the input field should open the picker dialog");
+
+		//clean up
+		oMultiComboBox.destroy();
+	});
 
 	QUnit.test("_getFilterSelectedButton()", function(assert) {
 		this.stub(sap.ui.Device, "system", {
