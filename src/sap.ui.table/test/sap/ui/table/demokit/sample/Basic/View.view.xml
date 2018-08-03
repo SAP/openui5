@@ -91,13 +91,21 @@
 						<m:Label text="Additional Categories" />
 						<template>
 							<m:MultiInput
+								tokenUpdate="updateMultipleSelection"
+								value="{AdditionalCategory}"
+								tokens="{AdditionalCategoriesSelection}"
 								suggestionItems="{
 									path: '/Categories',
 									sorter: { path: 'Name' }
 								}"
 								showValueHelp="false"
 								>
-								<c:Item key="{ProductId}" text="{Name}" />
+								<m:tokens>
+									<m:Token key="{Key}" text="{Name}"/>
+								</m:tokens>
+								<m:suggestionItems>
+									<c:Item key="{ProductId}" text="{Name}" />
+								</m:suggestionItems>
 							</m:MultiInput>
 						</template>
 					</Column>
