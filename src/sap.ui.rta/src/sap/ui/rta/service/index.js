@@ -10,6 +10,7 @@ sap.ui.define(function () {
 		receiver: 'sap.ui.rta.service.Receiver',
 		controllerExtension: 'sap.ui.rta.service.ControllerExtension',
 		outline: 'sap.ui.rta.service.Outline',
-		action: 'sap.ui.rta.service.Action'
+		action: 'sap.ui.rta.service.Action',
+		property: 'sap.ui.rta.service.Property'
 	});
 });
