@@ -2,14 +2,24 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/UIComponent',
 	'sap/ui/core/UIComponentMetadata',
 	'samples/components/loadfromfile/Component',
 	'samples/components/routing/Component',
 	'samples/components/routing/RouterExtension'
-], function(jQuery, Component, ComponentContainer, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension) {
+], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
+
+	// create necessary DOM fixture
+	function appendDIV(id) {
+		var div = document.createElement("div");
+		div.id = id;
+		document.body.appendChild(div);
+	}
+	appendDIV("comparea1");
+	appendDIV("comparea2");
 
 	//******************************************************
 	//Test preparation for custom component configuration
@@ -43,6 +53,7 @@ sap.ui.define([
 				id: "myButton",
 				async:true,
 				settings: {
+					id: "buttonComponent",
 					text: "Text changed through settings",
 					componentData: {
 						"foo": "bar"
@@ -73,8 +84,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Simple Component Instance", function(assert){
+		sap.ui.getCore().applyChanges();
 		assert.ok(document.getElementById("CompCont1"));
-		var elem = jQuery.sap.byId("__component0---mybutn");
+		var elem = jQuery.sap.byId("buttonComponent---mybutn");
 		assert.equal(elem.text(), "Text changed through settings", "Settings applied");
 	});
 
@@ -402,12 +414,12 @@ sap.ui.define([
 			]);
 
 		},
-		afterEach : function() {}
+		afterEach : function() {
+			delete Component._fnOnInstanceCreated;
+		}
 	});
 
 	QUnit.test("Component.create - manifest with URL", function(assert) {
-
-		sap.ui.core.Component._fnOnInstanceCreated = undefined;
 
 		return Component.create({
 			manifest: "/anylocation/manifest.json"
@@ -420,8 +432,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component.get - manifest with URL", function(assert) {
-
-		sap.ui.core.Component._fnOnInstanceCreated = undefined;
 
 		return Component.create({
 			id: "myTestComp",
@@ -437,8 +447,6 @@ sap.ui.define([
 
 
 	QUnit.test("Component.load - manifest with URL", function(assert) {
-
-		sap.ui.core.Component._fnOnInstanceCreated = undefined;
 
 		return Component.load({
 			manifest: "/anylocation/manifest.json"
@@ -574,12 +582,12 @@ sap.ui.define([
 		var oServer = this.oServer, oManifest = this.oAltManifest1;
 
 		// create an invalid registration for samples.components.config to see that the "url" parameter works
-		sap.ui.loader.config({paths:{"samples/components/config":"../../../../../../test-resources/invalid/"}});
+		sap.ui.loader.config({paths:{"samples/components/config":"test-resources/invalid/"}});
 
 		//start test
 		var fnComponentClass = sap.ui.component.load({
 			manifestUrl : "/anyotherlocation1/manifest.json",
-			url : "../../../../../../test-resources/sap/ui/core/samples/components/config/"
+			url : "test-resources/sap/ui/core/samples/components/config/"
 		});
 
 		assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -605,13 +613,13 @@ sap.ui.define([
 		var oServer = this.oServer, oManifest = this.oAltManifest2;
 
 		// create an invalid registration for samples.components.config to see that the "url" parameter works
-		sap.ui.loader.config({paths:{"samples/components/oneview":"../../../../../../test-resources/invalid/"}});
+		sap.ui.loader.config({paths:{"samples/components/oneview":"test-resources/invalid/"}});
 
 		//start test
 		var done = assert.async();
 		sap.ui.component.load({
 			manifestUrl : "/anyotherlocation2/manifest.json",
-			url : "../../../../../../test-resources/sap/ui/core/samples/components/oneview/",
+			url : "test-resources/sap/ui/core/samples/components/oneview/",
 			async : true
 		}).then(function(fnComponentClass) {
 
@@ -670,7 +678,7 @@ sap.ui.define([
 	QUnit.test("On instance created callback / hook (sync, error)", function(assert) {
 
 		// set the instance created callback hook
-		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
 			throw new Error("Error from _fnOnInstanceCreated");
 		};
 
@@ -683,6 +691,7 @@ sap.ui.define([
 			/Error from _fnOnInstanceCreated/,
 			"Error from hook should not be caught internally"
 		);
+
 	});
 
 	QUnit.test("On instance created callback / hook (async, no promise)", function(assert) {
@@ -690,7 +699,7 @@ sap.ui.define([
 		var oCallbackComponent;
 
 		// set the instance created callback hook
-		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
 			oCallbackComponent = oComponent;
 
 			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
@@ -783,8 +792,6 @@ sap.ui.define([
 
 	QUnit.test("Usage of manifest property in component configuration for URL", function(assert) {
 
-		sap.ui.core.Component._fnOnInstanceCreated = undefined;
-
 		return sap.ui.component({
 			manifest: "/anylocation/manifest.json"
 		}).then(function(oComponent) {
@@ -813,14 +820,12 @@ sap.ui.define([
 
 	QUnit.test("Usage of manifest property in component configuration for URL (sync)", function(assert) {
 
-		sap.ui.core.Component._fnOnInstanceCreated = undefined;
-
 		var oComponent = sap.ui.component({
 			manifest: "/anylocation/manifest.json",
 			async: false
 		});
 
-		assert.ok(oComponent instanceof sap.ui.core.UIComponent, "Component is loaded properly!");
+		assert.ok(oComponent instanceof UIComponent, "Component is loaded properly!");
 		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.button", "The proper component has been loaded!");
 
 	});
@@ -836,7 +841,7 @@ sap.ui.define([
 			async: false
 		});
 
-		assert.ok(oComponent instanceof sap.ui.core.UIComponent, "Component is loaded properly!");
+		assert.ok(oComponent instanceof UIComponent, "Component is loaded properly!");
 		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview", "The proper component has been loaded!");
 
 	});
@@ -1135,6 +1140,7 @@ sap.ui.define([
 
 			oComponent = oPreloadComponent;
 
+			console.log(oSpy.calls);
 			assert.ok(oSpy.calledOnceWithExactly("nonLazyUsage/Component-preload.js", true), "Only the non-lazy component usage should be preloaded!");
 
 			done();
@@ -1236,14 +1242,14 @@ sap.ui.define([
 		var oBaseUri = new URI("/anylocation/manifest.json").absoluteTo(new URI(document.baseURI).search(""));
 
 		var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
-		assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "../../samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+		assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 		assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
-		assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "../../../../../../../anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+		assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "../anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 		var aI18NMFEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-manifest"].settings[0].enhanceWith;
 		assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
-		assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "../../../../../../../anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
-		assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "../../samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+		assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "../anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
+		assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 		oModelConfigSpy.restore();
 

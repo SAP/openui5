@@ -73,7 +73,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
+		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
 			async: true,
@@ -98,7 +98,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
+		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
 			async: true,
@@ -131,9 +131,9 @@ sap.ui.define([
 		var done = assert.async();
 
 		// register URls for those entities that are not listed in the hints below
-		sap.ui.loader.config({paths:{"sap/test/lib3":"./testdata/async/lib3"}});
-		sap.ui.loader.config({paths:{"sap/test/lib4":"./testdata/async/lib4"}});
-		sap.ui.loader.config({paths:{"sap/test/mycomp":"./testdata/async/mycomp"}});
+		sap.ui.loader.config({paths:{"sap/test/lib3":"test-resources/sap/ui/core/qunit/component/testdata/async/lib3"}});
+		sap.ui.loader.config({paths:{"sap/test/lib4":"test-resources/sap/ui/core/qunit/component/testdata/async/lib4"}});
+		sap.ui.loader.config({paths:{"sap/test/mycomp":"test-resources/sap/ui/core/qunit/component/testdata/async/mycomp"}});
 
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
@@ -142,13 +142,13 @@ sap.ui.define([
 				libs: [
 					{
 						name: 'sap.test.lib2',
-						url: '../testdata/components/async/lib2'
+						url: 'test-resources/sap/ui/core/qunit/component/testdata/components/async/lib2'
 					},
 					'sap.test.lib3'
 				],
 				components: [ {
 					name: 'sap.test.mysubcomp',
-					url: '../testdata/components/async/mysubcomp'
+					url: 'test-resources/sap/ui/core/qunit/component/testdata/components/async/mysubcomp'
 				}]
 			}
 		});
@@ -170,9 +170,9 @@ sap.ui.define([
 		var done = assert.async();
 
 		// register URls for those entities that are not listed in the hints below
-		sap.ui.loader.config({paths:{"sap/test/lib3":"./testdata/async/lib3"}});
-		sap.ui.loader.config({paths:{"sap/test/lib4":"./testdata/async/lib4"}});
-		sap.ui.loader.config({paths:{"sap/test/mycomp":"./testdata/async/mycomp"}});
+		sap.ui.loader.config({paths:{"sap/test/lib3":"test-resources/sap/ui/core/qunit/component/testdata/async/lib3"}});
+		sap.ui.loader.config({paths:{"sap/test/lib4":"test-resources/sap/ui/core/qunit/component/testdata/async/lib4"}});
+		sap.ui.loader.config({paths:{"sap/test/mycomp":"test-resources/sap/ui/core/qunit/component/testdata/async/mycomp"}});
 
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
@@ -181,12 +181,12 @@ sap.ui.define([
 				libs: [
 					{
 						name: 'sap.test.lib2',
-						url: './testdata/async/lib2',
+						url: 'test-resources/sap/ui/core/qunit/component/testdata/async/lib2',
 						lazy: false
 					},
 					{
 						name: 'sap.test.lib5',
-						url: './testdata/async/lib5',
+						url: 'test-resources/sap/ui/core/qunit/component/testdata/async/lib5',
 						lazy: true
 					},
 					{
@@ -197,7 +197,7 @@ sap.ui.define([
 						name: 'sap.test.lib7',
 						lazy: true,
 						url: {
-							url: './testdata/async/lib7',
+							url: 'test-resources/sap/ui/core/qunit/component/testdata/async/lib7',
 							'final': true
 						}
 					},
@@ -206,11 +206,11 @@ sap.ui.define([
 				components: [
 					{
 						name: 'sap.test.mysubcomp',
-						url: './testdata/async/mysubcomp'
+						url: 'test-resources/sap/ui/core/qunit/component/testdata/async/mysubcomp'
 					},
 					{
 						name: 'sap.test.my2ndsubcomp',
-						url: './testdata/async/my2ndsubcomp',
+						url: 'test-resources/sap/ui/core/qunit/component/testdata/async/my2ndsubcomp',
 						lazy: true
 					},
 					{
@@ -221,7 +221,7 @@ sap.ui.define([
 						name: 'sap.test.my4thsubcomp',
 						lazy: true,
 						url: {
-							url: './testdata/async/my4thsubcomp',
+							url: 'test-resources/sap/ui/core/qunit/component/testdata/async/my4thsubcomp',
 							'final': true
 						}
 					}
@@ -235,11 +235,11 @@ sap.ui.define([
 			// Only the "final" URLs should use the legacy jQuery.sap API
 			sinon.assert.calledTwice(this.oRegisterModulePathSpy);
 			sinon.assert.calledWithMatch(this.oRegisterModulePathSpy, "sap.test.lib7", {
-				url: "./testdata/async/lib7",
+				url: "test-resources/sap/ui/core/qunit/component/testdata/async/lib7",
 				"final": true
 			});
 			sinon.assert.calledWithMatch(this.oRegisterModulePathSpy, "sap.test.my4thsubcomp", {
-				url: "./testdata/async/my4thsubcomp",
+				url: "test-resources/sap/ui/core/qunit/component/testdata/async/my4thsubcomp",
 				"final": true
 			});
 
@@ -254,8 +254,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Manifest from component instance", function(assert) {
-
-		sap.ui.loader.config({paths:{"samples/components":"../../../../../../test-resources/sap/ui/core/samples/components/"}});
 
 		//setup fake server and data
 		var oManifest = {
@@ -315,7 +313,7 @@ sap.ui.define([
 			}, 1000);
 		});
 
-		sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
+		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
 		sap.ui.component({
 			name: "sap.test.mycomp",
 			async: true,
@@ -333,7 +331,7 @@ sap.ui.define([
 
 	QUnit.test("sap.ui.component: 'asyncHints.preloadOnly' should be ignored", function(assert) {
 
-		sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
+		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
 
 		return sap.ui.component({
 			name: "sap.test.mycomp",
@@ -478,7 +476,7 @@ sap.ui.define([
 			this.oldCfgPreload = oRealCore.oConfiguration.preload;
 
 			// Register test module path
-			sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
+			sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
 
 			// Create spies
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
@@ -510,7 +508,7 @@ sap.ui.define([
 
 		// start test
 		sap.ui.component({
-			manifestUrl : "./testdata/async/manifestcomp/manifest.json",
+			manifestUrl : "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json",
 			async: true
 		}).then(function(oComponent) {
 			assert.ok(oComponent instanceof Component, "Component has been created.");
@@ -611,10 +609,10 @@ sap.ui.define([
 	QUnit.test("load component callback", function(assert) {
 		var done = assert.async();
 
-		jQuery.getJSON("./testdata/async/manifestcomp/manifest.json", function(oLoadedManifest) {
+		jQuery.getJSON("test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json", function(oLoadedManifest) {
 
 			var oConfig = {
-				manifestUrl : "./testdata/async/manifestcomp/manifest.json",
+				manifestUrl : "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json",
 				async: true,
 				asyncHints: {
 					libs: ["sap.ui.core"],
@@ -658,7 +656,7 @@ sap.ui.define([
 	QUnit.module("Misc", {
 		beforeEach: function() {
 			// Register test module path
-			sap.ui.loader.config({paths:{"sap/test":"./testdata/async"}});
+			sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
 		},
 		afterEach: function() {
 			unloadResources();
@@ -673,7 +671,7 @@ sap.ui.define([
 		// start test
 		oOwnerComponent.runAsOwner(function() {
 			sap.ui.component({
-				manifestUrl : "./testdata/async/manifestcomp/manifest.json",
+				manifestUrl : "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json",
 				async: true
 			}).then(function(oComponent) {
 				assert.equal(Component.getOwnerIdFor(oComponent), "ownerId", "Owner Component delegated properly.");

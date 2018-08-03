@@ -197,7 +197,7 @@ sap.ui.define([
 
 	QUnit.module("Usage");
 
-	sap.ui.define("my/usage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+	sap.ui.predefine("my/usage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 		return UIComponent.extend("my.usage.Component", {
 			metadata: {
 				manifest: {

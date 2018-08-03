@@ -4,11 +4,17 @@ sap.ui.define([
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/mvc/View'
-], function(jQuery, Component, ComponentContainer, UIComponent, Controller, View) {
+	'sap/ui/core/mvc/View',
+	'sap/ui/qunit/QUnitUtils'
+], function(jQuery, Component, ComponentContainer, UIComponent, Controller, View, qutils) {
 
 	"use strict";
-	/*global QUnit, sinon, qutils */
+	/*global QUnit, sinon */
+
+	// create content div
+	var oDIV = document.createElement("div");
+	oDIV.id = "content";
+	document.body.append(oDIV)
 
 	// Event handler functions
 	var iStandardSub2ControllerCalled = 0;

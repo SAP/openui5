@@ -13,7 +13,6 @@ sap.ui.define([
 	var ComponentLifecycle = library.ComponentLifecycle;
 
 	// helper functionality to create component container DIVs
-	var oContentElement = document.getElementById("content");
 	function createComponentDIV(sId, mAttributes) {
 		var oDIV = document.createElement("div");
 		if (mAttributes) {
@@ -24,6 +23,8 @@ sap.ui.define([
 		oDIV.setAttribute("id", sId);
 		return oDIV;
 	};
+	var oContentElement = createComponentDIV("content");
+	document.body.appendChild(oContentElement);
 
 	// settings
 	var mSettings = {
