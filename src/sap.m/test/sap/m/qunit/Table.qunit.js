@@ -1047,7 +1047,7 @@
 					};
 				});
 
-				var oInfoToolbarContainer = oInfoToolbar.$().parent()[0];
+				var oInfoToolbarContainer = sut.getDomRef().querySelector(".sapMListInfoTBarContainer");
 				this.stub(oInfoToolbarContainer, "getBoundingClientRect", function() {
 					return {
 						bottom: 80,
@@ -1065,8 +1065,12 @@
 								};
 							}
 						},
-						querySelector: function() {
-							return oHeaderDomRef;
+						querySelector: function(sSelector) {
+							if (sSelector === ".sapMListHdr") {
+								return oHeaderDomRef;
+							} else if (sSelector === ".sapMListInfoTBarContainer") {
+								return oInfoToolbarContainer;
+							}
 						}
 					};
 				});
