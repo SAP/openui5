@@ -11,11 +11,12 @@ sap.ui.define([
 	"./CheckBox",
 	"./TableRenderer",
 	"sap/base/Log",
+	"sap/ui/core/ResizeHandler",
 	"sap/ui/thirdparty/jquery",
 	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, jQuery) {
+	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, ResizeHandler, jQuery) {
 	"use strict";
 
 
@@ -30,6 +31,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.PopinLayout
 	var PopinLayout = library.PopinLayout;
+
+	// shortcut for sap.m.Screensize
+	var ScreenSizes = library.ScreenSizes;
 
 	/**
 	 * Constructor for a new Table.
@@ -97,7 +101,19 @@ sap.ui.define([
 			 * <b>Note:</b> The <code>demandPopin</code> and <code>minScreenWidth</code> properties of the <code>Column</code> control must be configured appropriately.
 			 * @since 1.52
 			 */
-			popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block}
+			popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block},
+
+			/**
+			 * Defines the contextual width for the <code>sap.m.Table</code> control. By defining this property the table adapts the pop-in behavior based on the container in which the table is placed or the configured contextual width.
+			 * By default, <code>sap.m.Table</code> renders in pop-in behavior only depending on the window size or device.
+			 *
+			 * For example, by setting the <code>contextualWidth</code> property to 600px or Tablet, the table can be placed in a container with 600px width, where the pop-in is used.
+			 * You can use specific CSS sizes (for example, 600px or 600), you can also use the <code>sap.m.ScreenSize</code> enumeration (for example, Phone, Tablet, Desktop, Small, Medium, Large, ....).
+			 * If this property is set to <code>Auto</code>, the <code>ResizeHandler</code> will manage the contextual width of the table.
+			 * <b>Note:</b> Only "Inherit", "Auto", and pixel-based CSS sizes (for example, 200, 200px) can be applied to the <code>contextualWidth</code> property. Due to the rendering cost, we recommend to use the valid value mentioned before except for "Auto".
+			 * @since 1.60
+			 */
+			contextualWidth : {type: "string", group: "Behavior", defaultValue: "Inherit"}
 		},
 		aggregations : {
 
@@ -138,8 +154,116 @@ sap.ui.define([
 		ListBase.prototype.init.call(this);
 	};
 
+	Table.prototype.setContextualWidth = function (sWidth) {
+		var sOldWidth = this.getContextualWidth();
+		// check if setting the old value
+		if (sWidth == sOldWidth) {
+			return this;
+		}
+
+		if (typeof sWidth === "number"){
+			this._sContextualWidth = sWidth + "px";
+			this._sContextualWidth = this._sContextualWidth.toLowerCase();
+		} else {
+			// to convert the capital screen width
+			var width = sWidth.toLowerCase(),
+				iWidth = ScreenSizes[width];
+			if (iWidth) {
+				// screen size
+				this._sContextualWidth = iWidth + "px";
+			} else {
+				//auto or inherit
+				this._sContextualWidth = sWidth;
+			}
+		}
+
+		// validate the value
+		var bWidthValidated = this._validateContextualWidth(this._sContextualWidth);
+
+		this._iLastContextualWidth = sOldWidth;
+
+		if (bWidthValidated) {
+			// set property, suppressInvalidate
+			this.setProperty("contextualWidth", sWidth);
+		} else {
+			return this;
+		}
+
+		// if the old value is auto, remove resizeHandler
+		if (this._iLastContextualWidth.toLowerCase() === "auto" ) {
+			this._deregisterResizeHandler();
+		}
+
+		if (this._sContextualWidth.toLowerCase() === "auto") {
+			//if auto, register resizeHandler
+			this._registerResizeHandler();
+		} else {
+			//if px value, apply contextualWidth
+			this._applyContextualWidth(this._sContextualWidth);
+		}
+
+		return this;
+	};
+
+	Table.prototype._validateContextualWidth = function(sWidth) {
+
+		if (!sWidth) {
+			return;
+		}
+		if ( typeof sWidth != "string") {
+			throw new Error('expected string for property "contextualWidth" of ' + this);
+		}
+		if (sWidth.toLowerCase() === "auto" || sWidth.toLowerCase() === "inherit") {
+			return true;
+		}
+		if (!/^\d+(\.\d+)?(px)$/i.test(sWidth)) {
+			throw new Error('invalid CSS size("px", "Auto", "auto", Inherit", "inherit" required) or sap.m.ScreenSize enumeration for property "contextualWidth" of ' + this);
+		}
+
+		return true;
+	};
+
+	Table.prototype._applyContextualWidth = function(iWidth) {
+		iWidth = parseFloat(iWidth) || 0;
+		if (iWidth) {
+			this._applyContextualSettings({
+				contextualWidth : iWidth
+			});
+		}
+
+	};
+
+	Table.prototype._onResize = function(mParams) {
+		this._applyContextualWidth(mParams.size.width);
+	};
+
+	Table.prototype._registerResizeHandler = function () {
+		if (!this._iResizeHandlerId) {
+			var that = this;
+			window.requestAnimationFrame(function() {
+				that._iResizeHandlerId = ResizeHandler.register(that, that._onResize.bind(that));
+			});
+		}
+	};
+
+	/**
+	 * Deregisters resize handler
+	 *
+	 * @private
+	 */
+	Table.prototype._deregisterResizeHandler = function () {
+		if (this._iResizeHandlerId) {
+			ResizeHandler.deregister(this._iResizeHandlerId);
+			this._iResizeHandlerId = null;
+		}
+	};
+
 	Table.prototype.onBeforeRendering = function() {
 		ListBase.prototype.onBeforeRendering.call(this);
+
+		// for initial contextualWidth setting
+		this._applyContextualWidth(this._sContextualWidth);
+
 		this._ensureColumnsMedia();
 		this._notifyColumns("ItemsRemoved");
 	};

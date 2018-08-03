@@ -1,0 +1,457 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+
+<title>Table Contextual Width Page</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.layout">
+</script>
+
+<script>
+
+	jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+	// JSON sample data
+	var data = {
+		teamMembers:[
+			{firstName:"John", lastName:"Doe",birthDate:"1986-05-11",gender:"Male"},
+			{firstName:"Harry", lastName:"Potter",birthDate:"1976-05-19",gender:"Male"},
+			{firstName:"Heinz", lastName:"Piper",birthDate:"1989-08-08",gender:"Male"},
+			{firstName:"Indiana", lastName:"Jones",birthDate:"1991-12-03",gender:"Male"},
+			{firstName:"Darth", lastName:"Vader",birthDate:"1977-02-24",gender:"Male"}
+		]};
+
+	// create JSON model instance
+	var oModel = new sap.ui.model.json.JSONModel();
+
+	// set the data for the model
+	oModel.setData(data);
+
+	// set the model to the core
+	sap.ui.getCore().setModel(oModel);
+
+
+	// define the row template
+	var oItemTemplate = new sap.m.ColumnListItem({
+		tooltip: "Gender icon chosen because no better suitable icon is available... no discrimination of any gender intended",
+		cells : [
+			new sap.ui.core.Icon({
+				decorative: false,
+				src : {
+					path: "gender",
+					formatter: function(sGender) {
+						return (sGender === "Male" ? "sap-icon://wrench" : "sap-icon://show");
+					}
+				}
+			}),
+			new sap.m.Label({
+				text : "{firstName}"
+			}),
+			new sap.m.Label({
+				text: "{lastName}"
+			}),
+			new sap.m.Label({
+				text: "{birthDate}"
+			}),
+			new sap.m.Label({
+				text: "{gender}"
+			})
+		]
+	});
+
+	var oInfoToolbar1 = new sap.m.Toolbar({
+		active : true,
+		content : [
+			new sap.m.Text({
+				text : "move the splitter to see the container based popin behaviour in dynamic width",
+				wrapping : false
+			})
+		]
+	});
+
+	var oInfoToolbar2 = new sap.m.Toolbar({
+		active : true,
+		content : [
+			new sap.m.Text({
+				text : "move the splitter to see the container based popin behaviour in dynamic width",
+				wrapping : false
+			})
+		]
+	});
+
+	var oAutoTable1 = new sap.m.Table({
+		contextualWidth: "auto",
+		infoToolbar: oInfoToolbar1,
+		popinLayout: "GridSmall",
+		headerText : "Team Members",
+		columns : [
+			new sap.m.Column({
+				width : "2rem",
+				hAlign : "Center",
+				mergeFunctionName : "getSrc"
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "First Name"
+				})
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "Last Name"
+				}),
+				demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				minScreenWidth : "Phone",
+				demandPopin : true,
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Birth Date"
+				}),
+				 demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				width : "4rem",
+				demandPopin : true,
+				minScreenWidth : "Tablet",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Gender"
+				}),
+				 demandPopin: true
+			})
+		],
+		updateStarted : function(e) {
+			console.log("updateStarted", e.getParameters(), Date.now());
+		},
+		updateFinished : function(e) {
+			console.log("updateFinished", e.getParameters(), Date.now());
+		}
+	});
+
+	oAutoTable1.bindAggregation("items", {
+		path: "/teamMembers",
+		template: oItemTemplate
+	});
+
+	var oAutoTable2 = new sap.m.Table({
+		infoToolbar: oInfoToolbar2,
+		contextualWidth: "auto",
+		popinLayout: "GridSmall",
+		headerText : "Team Members",
+		columns : [
+			new sap.m.Column({
+				width : "2rem",
+				hAlign : "Center",
+				mergeFunctionName : "getSrc"
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "First Name"
+				})
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "Last Name"
+				}),
+				demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				minScreenWidth : "Phone",
+				demandPopin : true,
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Birth Date"
+				}),
+				 demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				width : "4rem",
+				demandPopin : true,
+				minScreenWidth : "Tablet",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Gender"
+				}),
+				 demandPopin: true
+			})
+		],
+		updateStarted : function(e) {
+			console.log("updateStarted", e.getParameters(), Date.now());
+		},
+		updateFinished : function(e) {
+			console.log("updateFinished", e.getParameters(), Date.now());
+		}
+	});
+
+	oAutoTable2.bindAggregation("items", {
+		path: "/teamMembers",
+		template: oItemTemplate
+	});
+
+	var oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter({
+		height: "100%",
+		rootPaneContainer: new sap.ui.layout.PaneContainer({
+			panes: [new sap.ui.layout.SplitPane({
+				requiredParentWidth: 500,
+				content: new sap.m.NavContainer({
+					pages: new sap.m.Page({
+						content: [oAutoTable1]
+					})
+				})
+			}),
+			new sap.ui.layout.SplitPane({
+				requiredParentWidth: 400,
+				content: new sap.m.NavContainer({
+					pages: new sap.m.Page({
+						content: [oAutoTable2]
+					})
+				})
+			})
+			]
+		})
+	});
+
+
+//-----------------------------------------------------------------------------------
+
+	var oButton1 = new sap.m.Button({
+		text: "fixed Width"
+	});
+
+	var oOverflowtoolbar1 = new sap.m.OverflowToolbar({
+		content: oButton1
+	});
+
+	// static use for splitter
+	// init table
+	var table1 = new sap.m.Table({
+		popinLayout: "GridSmall",
+		headerText : "Team Members",
+		columns : [
+			new sap.m.Column({
+				width : "2rem",
+				hAlign : "Center",
+				mergeFunctionName : "getSrc"
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "First Name"
+				})
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "Last Name"
+				}),
+				demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				minScreenWidth : "Phone",
+				demandPopin : true,
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Birth Date"
+				}),
+				 demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				width : "4rem",
+				demandPopin : true,
+				minScreenWidth : "Tablet",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Gender"
+				}),
+				 demandPopin: true
+			})
+		],
+		updateStarted : function(e) {
+			console.log("updateStarted", e.getParameters(), Date.now());
+		},
+		updateFinished : function(e) {
+			console.log("updateFinished", e.getParameters(), Date.now());
+		}
+	});
+
+
+	table1.bindAggregation("items", {
+		path: "/teamMembers",
+		template: oItemTemplate
+	});
+
+
+	// spliter table
+	// init table
+	var table2 = new sap.m.Table({
+		popinLayout: "GridLarge",
+		headerText : "Team Members",
+		columns : [
+			new sap.m.Column({
+				width : "2rem",
+				hAlign : "Center",
+				mergeFunctionName : "getSrc"
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "First Name"
+				})
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "Last Name"
+				}),
+				demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				minScreenWidth : "Phone",
+				demandPopin : true,
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Birth Date"
+				}),
+				demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				width : "4rem",
+				demandPopin : true,
+				minScreenWidth : "Tablet",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Gender"
+				}),
+				demandPopin: true
+			})
+		],
+		updateStarted : function(e) {
+			console.log("updateStarted", e.getParameters(), Date.now());
+		},
+		updateFinished : function(e) {
+			console.log("updateFinished", e.getParameters(), Date.now());
+		}
+	});
+
+
+	table2.bindAggregation("items", {
+		path: "/teamMembers",
+		template: oItemTemplate
+
+	});
+
+	var oSplitter = new sap.ui.layout.Splitter({
+		height: "100%",
+		contentAreas: [table1, table2],
+		resize: function(e) {
+			table1.setContextualWidth(e.getParameter("newSizes")[0]);
+			table2.setContextualWidth(e.getParameter("newSizes")[1]);
+		}
+	});
+
+	var oButton2 = new sap.m.Button({
+		text: "fixed width"
+	});
+
+	var oOverflowtoolbar2 = new sap.m.OverflowToolbar({
+		content: oButton2
+	});
+
+
+	//-------------------------------------------------------------------------------------------------------------
+
+	//contextualWidth: number
+	//fixed container
+	var oInfoToolbar3 = new sap.m.Toolbar({
+		active : true,
+		content : [
+			new sap.m.Text({
+				text : "container based popin behaviour in static width: 200px",
+				wrapping : false
+			})
+		]
+	});
+
+	var oTable3 = new sap.m.Table({
+		contextualWidth: "200px",
+		infoToolbar: oInfoToolbar3,
+		growing : true,
+		growingThreshold : 5,
+		headerText : "Team Members",
+		columns : [
+			new sap.m.Column({
+				width : "2rem",
+				hAlign : "Center",
+				mergeFunctionName : "getSrc"
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "First Name"
+				})
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "Last Name"
+				}),
+				demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				minScreenWidth : "Phone",
+				demandPopin : true,
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Birth Date"
+				}),
+				demandPopin: true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				width : "4rem",
+				demandPopin : true,
+				minScreenWidth : "Tablet",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Gender"
+				}),
+				demandPopin: true
+			})
+		],
+		updateStarted : function(e) {
+			console.log("updateStarted", e.getParameters(), Date.now());
+		},
+		updateFinished : function(e) {
+			console.log("updateFinished", e.getParameters(), Date.now());
+		}
+
+	});
+
+	oTable3.bindAggregation("items", {
+		path: "/teamMembers",
+		template: oItemTemplate
+	});
+
+	var page = new sap.m.Page({
+		title : "test page for table API: contexualWidth",
+		content: [oResponsiveSplitter, oOverflowtoolbar1, oSplitter, oOverflowtoolbar2, oTable3]
+	});
+
+	var oApp = new sap.m.App({
+		pages : [page]
+	}).placeAt("content");
+
+</script>
+</head>
+<body class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>
