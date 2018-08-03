@@ -16,7 +16,7 @@
 		"webapp/localService/mockserver.js",
 		"webapp/manifest.json",
 		"webapp/model/formatter.js",
-		"webapp/test/integration/navigationJourney.js",
+		"webapp/test/integration/NavigationJourney.js",
 		"webapp/test/integration/opaTests.qunit.html",
 		"webapp/test/integration/pages/App.js",
 		"webapp/test/mockServer.html",
