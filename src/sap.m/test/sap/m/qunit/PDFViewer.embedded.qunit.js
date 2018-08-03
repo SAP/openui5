@@ -1,11 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
+	"jquery.sap.global",
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/PDFViewerRenderer"
-], function (TestUtils, PDFViewer, JSONModel, PDFViewerRenderer) {
+	"sap/m/PDFViewerRenderer",
+	"sap/m/PDFViewerDisplayTypes"
+], function (jQuery, TestUtils, PDFViewer, JSONModel, PDFViewerRenderer, PDFViewerDisplayTypes) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -201,6 +203,59 @@ sap.ui.define("sap.m.qunit.PDFViewerEmbedded", [
 				assert.ok(oDownloadButton.length === 0, 'Download button should be hidden');
 				done();
 			});
+	});
+
+	QUnit.test("DisplayTypes tests", function (assert) {
+		assert.expect(10);
+		var done = assert.async();
+		var sTitle = "My Title";
+
+		var oModel = new JSONModel({
+			source: "./pdfviewer/sample-file.pdf"
+		});
+
+		var fnIsContentDisplayed = function () {
+			return jQuery(".sapMPDFViewerContent").length === 1 || jQuery(".sapMPDFViewerEmbeddedContent").length === 1;
+		};
+
+		var fnCheckControlStructure = function () {
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Auto, "Default value of displayType is Auto");
+			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Auto mode");
+			assert.ok(fnIsContentDisplayed(), "Content is displayed in Auto mode");
+
+			oPdfViewer.setDisplayType(PDFViewerDisplayTypes.Embedded);
+			TestUtils.rerender();
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Embedded, "Set displayType to Embedded mode");
+			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
+
+			oPdfViewer.setDisplayType(PDFViewerDisplayTypes.Link);
+			TestUtils.rerender();
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayTypes.Link, "Set displayType to Link mode");
+			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
+			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
+
+			oPdfViewer.setShowDownloadButton(false);
+			oPdfViewer.rerender();
+			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
+
+			oPdfViewer.setDisplayType(PDFViewerDisplayTypes.Auto);
+			oPdfViewer.rerender();
+			assert.notOk(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is not displayed in Auto mode");
+
+			done();
+		};
+
+		var oOptions = {
+			source: "{/source}",
+			title: sTitle
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+		oPdfViewer.setModel(oModel);
+		TestUtils.renderPdfViewer(oPdfViewer);
+
+		TestUtils.wait(1000)()
+			.then(fnCheckControlStructure);
 	});
 
 });

@@ -88,6 +88,7 @@ sap.ui.define([
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
 			"sap.m.PanelAccessibleRole",
+			"sap.m.PDFViewerDisplayTypes",
 			"sap.m.PlacementType",
 			"sap.m.PopinDisplay",
 			"sap.m.PopinLayout",
@@ -2475,6 +2476,37 @@ sap.ui.define([
 		 * @public
 		 */
 		Region: "Region"
+	};
+
+	/**
+	 * PDF viewer display types.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	sap.m.PDFViewerDisplayTypes = {
+		/**
+		 * The PDF viewer switches between the <code>Link</code> display type and the <code>Embedded</code> display type,
+		 * depending on the device being used.
+		 *
+		 * @public
+		 */
+		Auto: "auto",
+
+		/**
+		 * The PDF viewer appears embedded in the parent container and displays the PDF file.
+		 *
+		 * @public
+		 */
+		Embedded: "embedded",
+
+		/**
+		 * The PDF viewer appears as a toolbar with a download button that can be used to download the PDF file or
+		 * open it in a new tab.
+		 *
+		 * @public
+		 */
+		Link: "link"
 	};
 
 	/**
