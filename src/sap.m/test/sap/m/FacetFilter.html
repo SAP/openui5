@@ -972,6 +972,30 @@
 		var oToolbar = new sap.m.Toolbar({content: [oFFWithModelOfArbitrarySizeLimit]});
 
 		oTestPage.addContent(oToolbar);
+	};
+
+	// BCP: 1880435856
+	function createListOnNavigating() {
+		function fnAddList() {
+			oFacet.setModel(new sap.ui.model.json.JSONModel([{title: "Select and click back"}, {title: "List 2"}]));
+		}
+
+		var oFacet = new sap.m.FacetFilter("listUpdateModel", {
+			type: "Light",
+			showPersonalization: false,
+			showReset: true,
+			reset: "handleFacetFilterReset"
+		});
+
+		var oFacetListTemplate = new sap.m.FacetFilterList({
+			title: "{title}",
+			listClose: fnAddList
+		});
+
+		oFacet.setModel(new sap.ui.model.json.JSONModel([{title: "Select and click back"}]));
+		oFacet.bindAggregation("lists", "/", oFacetListTemplate);
+
+		oTestPage.addContent(oFacet);
 	}
 
 	////////////////////////////
@@ -982,6 +1006,8 @@
 	fnFacetFilterProperties();
 	fnDependentFacets();
 	fnModelSizeLimit();
+	createListOnNavigating();
+
 </script>
 
 </head>

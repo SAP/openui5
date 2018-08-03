@@ -1388,6 +1388,8 @@ sap.ui.define([
 				// Destroy the search field bar
 				oFromPage.destroySubHeader();
 
+				oFacetPage.getContent()[0].getModel().setData({ items: that._getMapFacetLists() });
+
 				jQuery.sap.assert(that._displayedList === null, "Filter items list should have been placed back in the FacetFilter aggregation before page content is destroyed.");
 				oFromPage.destroyContent(); // Destroy the select all checkbox bar
 
@@ -1638,16 +1640,7 @@ sap.ui.define([
 		});
 
 		// Create the facet list from a model binding so that we can implement facet list search using a filter.
-		var aFacetFilterLists = [];
-		for ( var i = 0; i < this.getLists().length; i++) {
-			var oList = this.getLists()[i];
-
-			aFacetFilterLists.push({
-				text: oList.getTitle(),
-				count: oList.getAllCount(),
-				index : i
-			});
-		}
+		var aFacetFilterLists = this._getMapFacetLists();
 
 		var oModel = new sap.ui.model.json.JSONModel({
 			items: aFacetFilterLists
@@ -1671,6 +1664,16 @@ sap.ui.define([
 
 		oFacetList.setModel(oModel);
 		return oFacetList;
+	};
+
+	FacetFilter.prototype._getMapFacetLists = function () {
+		return this.getLists().map(function (oList, iIndex) {
+			return {
+				text: oList.getTitle(),
+				count: oList.getAllCount(),
+				index: iIndex
+			};
+		});
 	};
 
 	/**

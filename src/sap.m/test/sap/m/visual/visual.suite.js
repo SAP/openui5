@@ -14,6 +14,7 @@ module.exports = [
 	"ContextMenuSupportIntegration.spec.js",
 	"DateTimePicker.spec.js",
 	"Dialog.spec.js",
+	"FacetFilter.spec.js",
 	"IconTabBar.spec.js",
 	"Image.spec.js",
 	"Label.spec.js",
