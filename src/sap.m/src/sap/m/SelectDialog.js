@@ -293,6 +293,7 @@ function(
 			growing: that.getGrowing(),
 			growingScrollToLoad: that.getGrowing(),
 			mode: ListMode.SingleSelectMaster,
+			sticky: [library.Sticky.InfoToolbar],
 			infoToolbar: new Toolbar({
 				visible: false,
 				active: false,

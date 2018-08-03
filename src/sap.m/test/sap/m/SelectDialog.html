@@ -745,6 +745,40 @@
 				}
 			});
 
+			/*SelectDialog 12 - test the sticky toolbar*/
+
+			var oSelectDialog12 = new sap.m.SelectDialog("SelectDialog12", {
+				title: "Choose several World Domination companions",
+				noDataText: "Sorry, no world domination companions available",
+				multiSelect: true,
+				contentWidth: "400px",
+				search : fnDoProductSearch,
+				liveChange: fnDoProductSearch
+			});
+
+			// attach cancel listener
+			oSelectDialog12.attachCancel(fnCancelDialog);
+
+			var oButton12 = new sap.m.Button("Button12", {
+				text: "Open SelectDialog to test the sticky toolbar",
+				press: function () {
+					// initiate model
+					var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
+					oSelectDialog12.setModel(oModel);
+
+					// bind aggregation with filters
+					oSelectDialog12.bindAggregation("items", {
+						path: "/Products",
+						filters: fnCreatePrefilter("id", true),
+						template: oProductItemTemplateSelection
+					});
+
+					// open dialog
+					oSelectDialog12.open("id");
+				}
+			});
+
+
 			var oPage = new sap.m.Page("page", {
 				title:"Mobile SelectDialog Control",
 				content:[
@@ -760,7 +794,8 @@
 							oButton8,
 							oButton9,
 							oButton10,
-							oButton11
+							oButton11,
+							oButton12
 						]
 					})
 				],
