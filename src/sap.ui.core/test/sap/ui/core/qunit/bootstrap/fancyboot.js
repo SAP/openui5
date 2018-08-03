@@ -17,11 +17,11 @@
 
 	function loadAndExecSync(url) {
 		var xhr = new XMLHttpRequest();
-		var code = '';;
+		var code = '';
 		xhr.addEventListener('load', function(e) {
 			if ( xhr.status === 200 ) {
 				code = xhr.responseText;
-				code = code +  "\n//# sourceURL=" + url + "?fancyboot"
+				code = code +  "\n//# sourceURL=" + url + "?fancyboot";
 			}
 		});
 		xhr.open('GET', url, false);
