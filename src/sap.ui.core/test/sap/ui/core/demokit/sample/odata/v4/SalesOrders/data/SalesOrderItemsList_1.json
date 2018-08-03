@@ -98,7 +98,7 @@
 				"message" : "Minimum order quantity is 2",
 				"numericSeverity" : 4,
 				"target" : "Quantity",
-				"transient" : false
+				"transition" : false
 			}]
 		},
 		{

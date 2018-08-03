@@ -697,7 +697,7 @@
 			"$Type" : "Edm.String",
 			"$kind" : "Property"
 		},
-		"transient" : {
+		"transition" : {
 			"$Nullable" : false,
 			"$Type" : "Edm.Boolean",
 			"$kind" : "Property"

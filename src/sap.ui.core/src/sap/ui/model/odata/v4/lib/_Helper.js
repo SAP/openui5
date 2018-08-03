@@ -36,21 +36,25 @@ sap.ui.define([
 		 * buildPath("base", undefined, "relative") --> "base/relative"
 		 * buildPath("base", 42, "relative") --> "base/42/relative"
 		 * buildPath("base", 0, "relative") --> "base/0/relative"
+		 * buildPath("base", "('predicate')") --> "base('predicate')"
 		 *
 		 * @returns {string} a composite path built from all arguments
 		 */
 		buildPath : function () {
 			var i,
-				aPath = [],
+				sPath = "",
 				sSegment;
 
 			for (i = 0; i < arguments.length; i++) {
 				sSegment = arguments[i];
 				if (sSegment || sSegment === 0) {
-					aPath.push(sSegment === "/" ? "" : sSegment); //avoid duplicated '/'
+					if (sPath && sPath !== "/" && sSegment[0] !== "(") {
+						sPath += "/";
+					}
+					sPath += sSegment;
 				}
 			}
-			return aPath.join("/");
+			return sPath;
 		},
 
 		/**
