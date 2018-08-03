@@ -988,7 +988,7 @@ sap.ui.require([
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
 </Table>',
-		{"EMPLOYEES?$select=Name&$filter=(AGE%20gt%2021)%20and%20(TEAM_ID%20eq%2042)&$orderby=AGE,Name%20desc&$skip=0&$top=100" :
+		{"EMPLOYEES?$select=Name&$filter=AGE%20gt%2021%20and%20(TEAM_ID%20eq%2042)&$orderby=AGE,Name%20desc&$skip=0&$top=100" :
 			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
 		{"text" : ["Frederic Fall", "Jonathan Smith"]}
 	);
@@ -1289,7 +1289,7 @@ sap.ui.require([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transient" : false,
+							"transition" : false,
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
@@ -1341,7 +1341,7 @@ sap.ui.require([
 					{
 						"code" : "1",
 						"message" : "Text",
-						"transient" : false,
+						"transition" : false,
 						"target" : "Name",
 						"numericSeverity" : 3
 					}]
@@ -3442,6 +3442,7 @@ sap.ui.require([
 
 		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture",
 			{
+				"@odata.context": "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
 				"ID" : "42",
 				"ProductPicture" : {
 					"Picture@odata.mediaReadLink" : "ProductPicture('42')"
@@ -6607,7 +6608,7 @@ sap.ui.require([
 						"code" : "23",
 						"message" : "Just A Message",
 						"target" : "Name",
-						"transient" : true,
+						"transition" : true,
 						"numericSeverity" : 1
 					}]
 				});
@@ -6719,7 +6720,7 @@ sap.ui.require([
 					"code" : "23",
 					"message" : "Just A Message",
 					"target" : "Name",
-					"transient" : true,
+					"transition" : true,
 					"numericSeverity" : 1
 				}],
 				"DraftAdministrativeData" : {
@@ -7191,7 +7192,7 @@ sap.ui.require([
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
-							"transient" : false,
+							"transition" : false,
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
@@ -7227,5 +7228,219 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity with messages from an ODataListBinding
+	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
+				"value" : [
+					{
+						"ID": "1",
+						"Name" : "Jonathan Smith",
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Text",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					},
+					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
+				]
+			})
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
+			.expectMessages([{
+				"code": "1",
+				"message": "Text",
+				"persistent": false,
+				"target": "/EMPLOYEES('1')/Name",
+				"type": "Warning"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"})
+				.expectChange("name", ["Frederic Fall"])
+				.expectMessages([]);
+
+			return Promise.all([
+				// code under test
+				oContext.delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity with messages from an ODataContextBinding
+	QUnit.test("Delete an entity with messages from an ODataContextBinding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
+	parameters : {$select : \'__FAKE__Messages\'}}">\
+	<Text id="text" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", {
+				"ID" : "1",
+				"Name" : "Jonathan Smith",
+				"__FAKE__Messages" : [
+					{
+						"code" : "1",
+						"message" : "Text",
+						"transition" : false,
+						"target" : "Name",
+						"numericSeverity" : 3
+					}]
+			})
+			.expectChange("text", "Jonathan Smith")
+			.expectMessages([{
+				"code": "1",
+				"message": "Text",
+				"persistent": false,
+				"target": "/EMPLOYEES('2')/Name",
+				"type": "Warning"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectRequest({method : "DELETE", url : "EMPLOYEES('2')"})
+				.expectChange("text", null)
+				.expectMessages([]);
+
+			return Promise.all([
+				// code under test
+				oContext.delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity with messages from an relative ODLB w/o cache
+	QUnit.test("Delete an entity with messages from an relative ODLB w/o cache", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Text id="Team_Id" text="{Team_Id}" />\
+	<Table id="table" \
+			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
+					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,__FAKE__Messages)", {
+				"Team_Id" : "TEAM_01",
+				"TEAM_2_EMPLOYEES" : [
+					{
+						"ID": "1",
+						"Name" : "Jonathan Smith",
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Text",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					},
+					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
+				]
+			})
+			.expectChange("Team_Id", "TEAM_01")
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
+			.expectMessages([{
+				"code": "1",
+				"message": "Text",
+				"persistent": false,
+				"target": "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')/Name",
+				"type": "Warning"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"})
+				.expectChange("name", ["Frederic Fall"])
+				.expectMessages([]);
+
+			return Promise.all([
+				// code under test
+				oContext.delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity with messages from a relative ODataContextBinding w/o cache
+	QUnit.test("Delete an entity with messages from a relative ODCB w/o cache", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Equipments(Category=\'foo\',ID=\'0815\')}">\
+	<FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', \
+		parameters : {$select : \'__FAKE__Messages\'}}">\
+		<layoutData><FlexItemData/></layoutData>\
+		<Text id="text" text="{Name}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Equipments(Category='foo',ID='0815')?$select=Category,ID&"
+					+ "$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,__FAKE__Messages)", {
+				"Category" : "foo",
+				"ID" : "0815",
+				"EQUIPMENT_2_EMPLOYEE" : {
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__FAKE__Messages" : [{
+						"code" : "1",
+						"message" : "Text",
+						"transition" : false,
+						"target" : "Name",
+						"numericSeverity" : 3
+					}]
+				}
+			})
+			.expectChange("text", "Jonathan Smith")
+			.expectMessages([{
+				"code": "1",
+				"message": "Text",
+				"persistent": false,
+				"target": "/Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/Name",
+				"type": "Warning"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"})
+				.expectChange("text", null)
+				.expectMessages([]);
+
+			// code under test
+			return oContext.delete().then(function () {
+				// Wait for the delete first, because it immediately clears the field and then the
+				// messages are checked before the response can remove.
+				that.waitForChanges(assert);
+			});
+		});
+	});
 });
-//TODO test delete

@@ -946,13 +946,13 @@ sap.ui.require([
 							Opa5.assert.strictEqual(aItems.length, iExpectedCount,
 								"Check Messages: message count is as expected: " + iExpectedCount);
 							aExpectedMessages.forEach(function (oExpectedMessage, i) {
-								Opa5.assert.strictEqual(aItems[i].getTitle(),
-									oExpectedMessage.message,
-									"Check Messages: [" + i + "] message: "
-										+ oExpectedMessage.message);
-								Opa5.assert.strictEqual(aItems[i].getType(),
-									oExpectedMessage.type,
-									"Check Messages: [" + i + "] type: " + oExpectedMessage.type);
+								var bFound = aItems.some(function(oItem) {
+									return oItem.getTitle() === oExpectedMessage.message &&
+										oItem.getType() === oExpectedMessage.type;
+								});
+								Opa5.assert.ok(bFound, "Check Messages: expected message[" + i
+									+ "]: " + oExpectedMessage.message + " type: "
+									+ oExpectedMessage.type);
 							});
 						}
 					});

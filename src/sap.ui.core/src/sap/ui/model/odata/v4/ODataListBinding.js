@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Sorter",
@@ -21,9 +22,9 @@ sap.ui.define([
 	"./lib/_Helper",
 	"./ODataParentBinding",
 	"sap/ui/thirdparty/jquery"
-], function (Log, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
-		Sorter, OperationMode, Context, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
-		_Helper, asODataParentBinding, jQuery) {
+], function (Log, SyncPromise, Binding, ChangeReason, FilterOperator, FilterProcessor, FilterType,
+	ListBinding, Sorter, OperationMode, Context, _AggregationCache, _AggregationHelper, _Cache,
+	_GroupLock, _Helper, asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -550,7 +551,7 @@ sap.ui.define([
 		this.mAggregatedQueryOptions = undefined;
 		this.oAggregation = undefined;
 		this.aApplicationFilters = undefined;
-		this.oCachePromise = undefined;
+		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache;
 		this.oContext = undefined;
 		this.aContexts = undefined;
 		this.aFilters = undefined;
@@ -635,28 +636,14 @@ sap.ui.define([
 	 *   that the cache promise is already created when the events are fired.
 	 * @param {string} sStaticFilter
 	 *   The static filter value
-	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or "" if
-	 *   the filter arrays are empty and the static filter parameter is not given. It rejects with
-	 *   an error if a filter has an unknown operator or an invalid path.
+	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or
+	 *   undefined if the filter arrays are empty and the static filter parameter is not given. It
+	 *   rejects with an error if a filter has an unknown operator or an invalid path.
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchFilter = function (oContext, sStaticFilter) {
-		var that = this;
-
-		/**
-		 * Concatenates the given $filter values using the given separator; the resulting
-		 * value is enclosed in parentheses if more than one filter value is given.
-		 *
-		 * @param {string[]} aFilterValues The filter values
-		 * @param {string} sSeparator The separator
-		 * @returns {string} The combined filter value
-		 */
-		function combineFilterValues(aFilterValues, sSeparator) {
-			var sFilterValue = aFilterValues.join(sSeparator);
-
-			return aFilterValues.length > 1 ? "(" + sFilterValue + ")" : sFilterValue;
-		}
+		var oCombinedFilter, oMetaModel, oMetaContext;
 
 		/**
 		 * Returns the $filter value for the given single filter using the given Edm type to
@@ -664,18 +651,22 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.Filter} oFilter The filter
 		 * @param {string} sEdmType The Edm type
+		 * @param {boolean} bWithinAnd Whether the embedding filter is an 'and'
 		 * @returns {string} The $filter value
 		 */
-		function getSingleFilterValue(oFilter, sEdmType) {
+		function getSingleFilterValue(oFilter, sEdmType, bWithinAnd) {
 			var sFilter,
 				sValue = _Helper.formatLiteral(oFilter.oValue1, sEdmType),
 				sFilterPath = decodeURIComponent(oFilter.sPath);
 
 			switch (oFilter.sOperator) {
 				case FilterOperator.BT :
-					sFilter = sFilterPath + " ge " + sValue + " and "
-						+ sFilterPath + " le "
+					sFilter = sFilterPath + " ge " + sValue + " and " + sFilterPath + " le "
 						+ _Helper.formatLiteral(oFilter.oValue2, sEdmType);
+					break;
+				case FilterOperator.NB :
+					sFilter = wrap(sFilterPath + " lt " + sValue + " or " + sFilterPath + " gt "
+						+ _Helper.formatLiteral(oFilter.oValue2, sEdmType), bWithinAnd);
 					break;
 				case FilterOperator.EQ :
 				case FilterOperator.GE :
@@ -683,14 +674,16 @@ sap.ui.define([
 				case FilterOperator.LE :
 				case FilterOperator.LT :
 				case FilterOperator.NE :
-					sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " "
-						+ sValue;
+					sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " " + sValue;
 					break;
 				case FilterOperator.Contains :
 				case FilterOperator.EndsWith :
+				case FilterOperator.NotContains :
+				case FilterOperator.NotEndsWith :
+				case FilterOperator.NotStartsWith :
 				case FilterOperator.StartsWith :
-					sFilter = oFilter.sOperator.toLowerCase() + "(" + sFilterPath + ","
-						+ sValue + ")";
+					sFilter = oFilter.sOperator.toLowerCase().replace("not", "not ")
+						+ "(" + sFilterPath + "," + sValue + ")";
 					break;
 				default :
 					throw new Error("Unsupported operator: " + oFilter.sOperator);
@@ -699,114 +692,56 @@ sap.ui.define([
 		}
 
 		/**
-		 * Requests the $filter value for an array of filters; filters with the same path are
-		 * grouped with a logical 'or'.
-		 *
-		 * @param {sap.ui.model.Filter[]} aFilters The non-empty array of filters
-		 * @param {boolean} bAnd Whether the filters are combined with 'and'; combined with
-		 *   'or' if not given
-		 * @param {boolean} bGroup Whether filters for the same path are grouped (combined with
-		 *   'or')
+		 * Fetches the $filter value for the given filter.
+		 * @param {sap.ui.model.Filter} oFilter The filter
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
-		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value
-		 */
-		function fetchArrayFilter(aFilters, bAnd, bGroup, mLambdaVariableToPath) {
-			var aFilterPromises = [],
-				mFiltersByPath = {};
-
-			if (bGroup) {
-				aFilters.forEach(function (oFilter) {
-					if (oFilter.sPath) {
-						mFiltersByPath[oFilter.sPath] = mFiltersByPath[oFilter.sPath] || [];
-						mFiltersByPath[oFilter.sPath].push(oFilter);
-					}
-				});
-			}
-			aFilters.forEach(function (oFilter) {
-				var aFiltersForPath;
-				if (oFilter.aFilters) { // array filter
-					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd, false,
-						mLambdaVariableToPath).then(function (sArrayFilter) {
-							return "(" + sArrayFilter + ")";
-						})
-					);
-				} else if (bGroup) {
-					aFiltersForPath = mFiltersByPath[oFilter.sPath];
-					if (aFiltersForPath) { // filter group for path of oFilter not processed yet
-						delete mFiltersByPath[oFilter.sPath];
-						aFilterPromises.push(
-							fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
-					}
-				} else {
-					aFilterPromises.push(fetchGroupFilter([oFilter], mLambdaVariableToPath));
-				}
-			});
-
-			return SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
-				return aFilterValues.join(bAnd ? " and " : " or ");
-			});
-		}
-
-		/**
-		 * Requests the $filter value for the given group of filters which all have the same
-		 * path and thus refer to the same EDM type; the resulting filter value is
-		 * the $filter values for the single filters in the group combined with a logical 'or'.
-		 *
-		 * @param {sap.ui.model.Filter[]} aGroupFilters The non-empty array of filters
-		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
+		 * @param {boolean} [bWithinAnd] Whether the embedding filter is an 'and'
 		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or
 		 *   rejects with an error if the filter value uses an unknown operator
 		 */
-		function fetchGroupFilter(aGroupFilters, mLambdaVariableToPath) {
-			var oMetaModel = that.oModel.getMetaModel(),
-				oMetaContext = oMetaModel.getMetaContext(
-					that.oModel.resolve(that.sPath, oContext)),
-				oPropertyPromise = oMetaModel.fetchObject(
-					replaceLambdaVariables(aGroupFilters[0].sPath, mLambdaVariableToPath),
-					oMetaContext);
+		function fetchFilter(oFilter, mLambdaVariableToPath, bWithinAnd) {
+			if (oFilter.aFilters) {
+				return SyncPromise.all(oFilter.aFilters.map(function (oSubFilter) {
+					return fetchFilter(oSubFilter, mLambdaVariableToPath, oFilter.bAnd);
+				})).then(function (aFilterStrings) {
+					// wrap it if it's an 'or' filter embedded in an 'and'
+					return wrap(aFilterStrings.join(oFilter.bAnd ? " and " : " or "),
+						bWithinAnd && !oFilter.bAnd);
+				});
+			}
 
-			return oPropertyPromise.then(function (oPropertyMetadata) {
-				var aGroupFilterValues;
+			return oMetaModel.fetchObject(
+				replaceLambdaVariables(oFilter.sPath, mLambdaVariableToPath),
+				oMetaContext
+			).then(function (oPropertyMetadata) {
+				var oCondition, sLambdaVariable, sOperator;
 
 				if (!oPropertyMetadata) {
 					throw new Error("Type cannot be determined, no metadata for path: "
 						+ oMetaContext.getPath());
 				}
 
-				aGroupFilterValues = aGroupFilters.map(function (oGroupFilter) {
-					var oCondition,
-						sLambdaVariable,
-						sOperator = oGroupFilter.sOperator;
-
-					if (sOperator === FilterOperator.All || sOperator === FilterOperator.Any) {
-						oCondition = oGroupFilter.oCondition;
-						sLambdaVariable = oGroupFilter.sVariable;
-						if (sOperator === FilterOperator.Any && !oCondition) {
-							return oGroupFilter.sPath + "/any()";
-						}
-						// array filters are processed in parallel, so clone mLambdaVariableToPath
-						// to allow same lambda variables in different filters
-						mLambdaVariableToPath = jQuery.extend({}, mLambdaVariableToPath);
-						mLambdaVariableToPath[sLambdaVariable]
-							= replaceLambdaVariables(oGroupFilter.sPath, mLambdaVariableToPath);
-
-						return (oCondition.aFilters
-								? fetchArrayFilter(oCondition.aFilters, oCondition.bAnd, false,
-									mLambdaVariableToPath)
-								: fetchGroupFilter([oCondition], mLambdaVariableToPath)
-							).then(function (sFilterValue) {
-								return oGroupFilter.sPath + "/"
-									+ oGroupFilter.sOperator.toLowerCase()
-									+ "(" + sLambdaVariable + ":" + sFilterValue + ")";
-							});
+				sOperator = oFilter.sOperator;
+				if (sOperator === FilterOperator.All || sOperator === FilterOperator.Any) {
+					oCondition = oFilter.oCondition;
+					sLambdaVariable = oFilter.sVariable;
+					if (sOperator === FilterOperator.Any && !oCondition) {
+						return oFilter.sPath + "/any()";
 					}
-					return getSingleFilterValue(oGroupFilter, oPropertyMetadata.$Type);
+					// multifilters are processed in parallel, so clone mLambdaVariableToPath
+					// to allow same lambda variables in different filters
+					mLambdaVariableToPath = Object.create(mLambdaVariableToPath);
+					mLambdaVariableToPath[sLambdaVariable]
+						= replaceLambdaVariables(oFilter.sPath, mLambdaVariableToPath);
 
-				});
-
-				return SyncPromise.all(aGroupFilterValues).then(function (aResolvedFilterValues) {
-					return combineFilterValues(aResolvedFilterValues, " or ");
-				});
+					return fetchFilter(
+						oCondition, mLambdaVariableToPath
+					).then(function (sFilterValue) {
+						return oFilter.sPath + "/" + oFilter.sOperator.toLowerCase()
+							+ "(" + sLambdaVariable + ":" + sFilterValue + ")";
+					});
+				}
+				return getSingleFilterValue(oFilter, oPropertyMetadata.$Type, bWithinAnd);
 			});
 		}
 
@@ -825,23 +760,28 @@ sap.ui.define([
 			return aSegments[0] ? aSegments.join("/") : sPath;
 		}
 
-		return SyncPromise.all([
-			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, /*bGroup*/true, {}),
-			fetchArrayFilter(this.aFilters, /*bAnd*/true, /*bGroup*/true, {})
-		]).then(function (aFilterValues) {
-			var aNonEmptyFilters = [];
+		/**
+		 * Wraps the filter string in round brackets if requested.
+		 *
+		 * @param {string} sFilter The filter string
+		 * @param {boolean} bWrap Whether to wrap
+		 * @returns {string} The resulting filter string
+		 */
+		function wrap(sFilter, bWrap) {
+			return bWrap ? "(" + sFilter + ")" : sFilter;
+		}
 
-			if (aFilterValues[0]) {
-				aNonEmptyFilters.push(aFilterValues[0]);
-			}
-			if (aFilterValues[1]) {
-				aNonEmptyFilters.push(aFilterValues[1]);
-			}
+		oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
+		if (!oCombinedFilter) {
+			return SyncPromise.resolve(sStaticFilter);
+		}
+		oMetaModel = this.oModel.getMetaModel();
+		oMetaContext = oMetaModel.getMetaContext(this.oModel.resolve(this.sPath, oContext));
+		return fetchFilter(oCombinedFilter, {}, sStaticFilter).then(function (sFilterString) {
 			if (sStaticFilter) {
-				aNonEmptyFilters.push(sStaticFilter);
+				sFilterString += " and (" + sStaticFilter + ")";
 			}
-
-			return combineFilterValues(aNonEmptyFilters, ") and (");
+			return sFilterString;
 		});
 	};
 
@@ -1224,6 +1164,49 @@ sap.ui.define([
 	// @override
 	ODataListBinding.prototype.getDistinctValues = function () {
 		throw new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues");
+	};
+
+	/**
+	 * Returns the filter information as an abstract syntax tree.
+	 * Consumers must not rely on the origin information to be available, future filter
+	 * implementations will not provide this information.
+	 *
+	 * @param {boolean} [bIncludeOrigin=false] whether to include information about the filter
+	 *   objects from which the tree has been created
+	 * @returns {object} The AST of the filter tree including the static filter as string or null if
+	 *   no filters are set
+	 * @private
+	 * @ui5-restricted sap.ui.table, sap.ui.export
+	 */
+	// @override
+	ODataListBinding.prototype.getFilterInfo = function (bIncludeOrigin) {
+		var oCombinedFilter = FilterProcessor.combineFilters(this.aFilters,
+				this.aApplicationFilters),
+			oResultAST = null,
+			oStaticAST;
+
+		if (oCombinedFilter) {
+			oResultAST = oCombinedFilter.getAST(bIncludeOrigin);
+		}
+
+		if (this.mQueryOptions.$filter) {
+			oStaticAST = {
+				args : [this.mQueryOptions.$filter],
+				type : "Static"
+			};
+			if (oResultAST) {
+				oResultAST = {
+					left : oResultAST,
+					op : "&&",
+					right : oStaticAST,
+					type : "Logical"
+				};
+			} else {
+				oResultAST = oStaticAST;
+			}
+		}
+
+		return oResultAST;
 	};
 
 	/**

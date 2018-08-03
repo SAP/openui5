@@ -1221,23 +1221,23 @@ sap.ui.define([
 	 *   Maps a resource path with key predicates to an array of messages. The messages have at
 	 *   least following properties:
 	 *   {string} code - The error code
-	 *   {string} longtextUrl - The URL for the message's long text relative the service URL
+	 *   {string} longtextUrl - The absolute URL for the message's long text
 	 *   {string} message - The message text
 	 *   {number} numericSeverity
 	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
 	 *      "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
-	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
-	 *      application and are reported as persistent
-	 * @param {string[]} [aKeyPredicates]
-	 *    An array of key predicates of the entities for which non-persistent messages have to be
-	 *    removed; if the array is not given, all entities are affected
+	 *   {boolean} transition - Messages marked as transition by the server need to be managed by
+	 *      the application and are reported as persistent
+	 * @param {string[]} [aCachePaths]
+	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
+	 *    be removed; if the array is not given, all entities are affected
 	 *
 	 * @private
 	 */
 	ODataModel.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
-			aKeyPredicates) {
+			aCachePaths) {
 		var sDataBindingPath = "/" + sResourcePath,
 			aNewMessages = [],
 			aOldMessages = [],
@@ -1247,18 +1247,13 @@ sap.ui.define([
 			mPathToODataMessages[sKeyPredicateTreePath].forEach(function (oRawMessage) {
 				var sTarget = sDataBindingPath
 						+ sKeyPredicateTreePath
-						+ (oRawMessage.target ? "/" + oRawMessage.target : ""),
-					sDescriptionUrl;
+						+ (oRawMessage.target ? "/" + oRawMessage.target : "");
 
-				if (oRawMessage.longtextUrl) {
-					sDescriptionUrl = _Helper.makeAbsolute(oRawMessage.longtextUrl,
-						that.sServiceUrl);
-				}
 				aNewMessages.push(new Message({
 					code : oRawMessage.code,
-					descriptionUrl : sDescriptionUrl,
+					descriptionUrl : oRawMessage.longtextUrl || undefined,
 					message : oRawMessage.message,
-					persistent : oRawMessage.transient,
+					persistent : oRawMessage.transition,
 					processor : that,
 					target : sTarget,
 					technical : false,
@@ -1266,10 +1261,10 @@ sap.ui.define([
 				}));
 			});
 		});
-		Object.keys(this.mMessages || {}).forEach(function (sMessageTarget) {
-			(aKeyPredicates || [""]).forEach(function (sPredicatePath) {
-				var sPath = sDataBindingPath + sPredicatePath;
+		(aCachePaths || [""]).forEach(function (sCachePath) {
+			var sPath = _Helper.buildPath(sDataBindingPath, sCachePath);
 
+			Object.keys(that.mMessages || {}).forEach(function (sMessageTarget) {
 				if (sMessageTarget === sPath
 						|| sMessageTarget.startsWith(sPath + "/")
 						|| sMessageTarget.startsWith(sPath + "(")) {

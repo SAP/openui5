@@ -33,6 +33,8 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._V2Requestor
 	 * @mixin
+	 *
+	 * @private
 	 */
 	function _V2Requestor() {}
 
@@ -69,6 +71,8 @@ sap.ui.define([
 	 *   The OData V2 value
 	 * @returns {string}
 	 *   The corresponding OData V4 value
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertBinary = function (sV2Value) {
 		return sV2Value.replace(rPlus, "-").replace(rSlash, "_");
@@ -84,6 +88,8 @@ sap.ui.define([
 	 *   The corresponding OData V4 value
 	 * @throws {Error}
 	 *   If the V2 value is not convertible
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertDate = function (sV2Value) {
 		var oDate,
@@ -112,6 +118,8 @@ sap.ui.define([
 	 *   The corresponding OData V4 value
 	 * @throws {Error}
 	 *   If the V2 value is not convertible
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertDateTimeOffset = function (sV2Value, oPropertyMetadata) {
 		var aMatches = rDateTimeOffset.exec(sV2Value),
@@ -154,6 +162,8 @@ sap.ui.define([
 	 *   The OData V2 value
 	 * @returns {any}
 	 *   The corresponding OData V4 value
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertDoubleSingle = function (sV2Value) {
 		switch (sV2Value) {
@@ -174,6 +184,8 @@ sap.ui.define([
 	 *   The meta path corresponding to the resource path
 	 * @returns {string} The filter string ready for a V2 query
 	 * @throws {Error} If the filter path is invalid
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertFilter = function (sFilter, sMetaPath) {
 		var oFilterTree = _Parser.parseFilter(sFilter),
@@ -279,6 +291,8 @@ sap.ui.define([
 	 *   The binding path of the entity described by the key predicate
 	 * @returns {string}
 	 *   The corresponding OData V2 key predicate
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertKeyPredicate = function (sV4KeyPredicate, sPath) {
 		// Note: metadata can be fetched synchronously because ready() ensured that it's loaded
@@ -317,7 +331,10 @@ sap.ui.define([
 	 *
 	 * @param {string} sResourcePath The V4 resource path
 	 * @returns {string} The resource path as required for V2
+	 *
+	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.convertResourcePath = function (sResourcePath) {
 		var iIndex = sResourcePath.indexOf("?"),
 			sQueryString = "",
@@ -351,6 +368,8 @@ sap.ui.define([
 	 *   The corresponding OData V4 value
 	 * @throws {Error}
 	 *   If the V2 value is not convertible
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertTimeOfDay = function (sV2Value) {
 		var oDate,
@@ -376,6 +395,8 @@ sap.ui.define([
 	 *   The converted payload
 	 * @throws {Error}
 	 *   If oObject does not contain inline metadata with type information
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertNonPrimitive = function (oObject) {
 		var sPropertyName,
@@ -439,6 +460,8 @@ sap.ui.define([
 	 *   The converted value
 	 * @throws {Error}
 	 *   If the property type is unknown
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.convertPrimitive = function (vValue, oPropertyMetadata, sTypeName,
 			sPropertyName) {
@@ -485,7 +508,10 @@ sap.ui.define([
 	 *   responses. So this parameter is ignored.
 	 * @throws {Error} If the "DataServiceVersion" header is neither "1.0" nor "2.0" nor not set at
 	 *   all
+	 *
+	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
 			bVersionOptional) {
 		var sDataServiceVersion = fnGetHeader("DataServiceVersion"),
@@ -519,7 +545,10 @@ sap.ui.define([
 	 *   The OData V4 response payload
 	 * @throws {Error}
 	 *   If the OData V2 response payload cannot be converted
+	 *
+	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
 		var oCandidate, bIsArray, aKeys, oPayload, oPropertyMetadata, that = this;
 
@@ -591,7 +620,10 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If a system query option other than $expand and $select is used or if any $expand value is
 	 *   not an object
+	 *
+	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
 			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
 		var aSelects,
@@ -724,7 +756,10 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   When called for an unsupported type
 	 * @see sap.ui.model.odata.ODataUtils#formatValue
+	 *
+	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.formatPropertyAsLiteral = function (vValue, oPropertyMetadata) {
 
 		// Parse using the given formatter and check that the result is valid
@@ -798,8 +833,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If a collection-valued operation parameter is encountered
 	 *
-	 * @private
+	 * @public
 	 */
+	// @override
 	_V2Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
 		mParameters, mQueryOptions, vEntity) {
 		var sName,
@@ -849,6 +885,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sName The qualified type name
 	 * @returns {object} The type
+	 *
+	 * @private
 	 */
 	_V2Requestor.prototype.getTypeForName = function (sName) {
 		var oType;
@@ -871,6 +909,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.isActionBodyOptional = function () {
 		return true;
 	};
@@ -883,6 +922,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.isChangeSetOptional = function () {
 		return false;
 	};
@@ -893,20 +933,29 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with no result when the
 	 * metadata is available
+	 *
+	 * @public
 	 */
+	// @override
 	_V2Requestor.prototype.ready = function () {
 		return this.oModelInterface.fnFetchEntityContainer().then(function () {});
 	};
 
 	/**
 	 * Do not report bound OData messages.
+	 *
+	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.reportBoundMessages = function () {
 	};
 
 	/**
 	 * Do not report unbound OData messages.
+	 *
+	 * @private
 	 */
+	// @override
 	_V2Requestor.prototype.reportUnboundMessages = function () {
 	};
 

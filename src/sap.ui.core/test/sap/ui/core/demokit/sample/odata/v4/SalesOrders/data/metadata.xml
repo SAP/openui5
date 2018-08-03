@@ -34,6 +34,10 @@
 				<NavigationProperty Name="BP_2_CONTACT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Contact)" />
 				<NavigationProperty Name="BP_2_PRODUCT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Product)" />
 				<NavigationProperty Name="BP_2_SO" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder)" />
+				<!-- TODO define property messagesInSalesOrder; TODO add new type for messages -->
+				<Annotation Term="Core.Messages">
+					<Path>messagesInBusinessPartner</Path>
+				</Annotation>
 			</EntityType>
 			<EntityType Name="Contact">
 				<Key>

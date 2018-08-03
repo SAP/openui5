@@ -87,6 +87,7 @@ sap.ui.define([
 	 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
+	 *
 	 * @private
 	 */
 	function Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface) {
@@ -130,6 +131,8 @@ sap.ui.define([
 	 *   The group ID
 	 * @param {boolean} bHasChanges
 	 *   Whether the batch contains change requests; when <code>true</code> the number is increased
+	 *
+	 * @private
 	 */
 	Requestor.prototype.batchRequestSent = function (sGroupId, bHasChanges) {
 		if (bHasChanges) {
@@ -150,6 +153,8 @@ sap.ui.define([
 	 * @param {boolean} bHasChanges
 	 *   Whether the batch contained change requests; when <code>true</code> the number is
 	 *   decreased
+	 *
+	 * @private
 	 */
 	Requestor.prototype.batchResponseReceived = function (sGroupId, bHasChanges) {
 		if (bHasChanges) {
@@ -194,6 +199,8 @@ sap.ui.define([
 	 *		},
 	 *		"sap-client" : "003"
 	 *	}
+	 *
+	 * @public
 	 */
 	Requestor.prototype.buildQueryString = function (sMetaPath, mQueryOptions,
 			bDropSystemQueryOptions, bSortExpandSelect) {
@@ -213,7 +220,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If change requests for the given group ID are running
 	 *
-	 * @private
+	 * @public
 	 */
 	Requestor.prototype.cancelChanges = function (sGroupId) {
 		if (this.mRunningChangeRequests[sGroupId]) {
@@ -290,6 +297,8 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 * @returns {string} The resulting value for the query string
 	 * @throws {Error} If the expand items are not an object
+	 *
+	 * @private
 	 */
 	Requestor.prototype.convertExpand = function (mExpandItems, bSortExpandSelect) {
 		var aKeys,
@@ -328,6 +337,8 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 * @returns {string} The resulting string for the OData query in the form "path" (if no
 	 *   options) or "path($option1=foo;$option2=bar)"
+	 *
+	 * @private
 	 */
 	Requestor.prototype.convertExpandOptions = function (sExpandPath, vExpandOptions,
 			bSortExpandSelect) {
@@ -356,6 +367,8 @@ sap.ui.define([
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 * @returns {object} The converted query options or undefined if there are no query options
+	 *
+	 * @private
 	 */
 	Requestor.prototype.convertQueryOptions = function (sMetaPath, mQueryOptions,
 			bDropSystemQueryOptions, bSortExpandSelect) {
@@ -376,6 +389,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sResourcePath The V4 resource path
 	 * @returns {string} The resource path as required for the server
+	 *
+	 * @private
 	 */
 	Requestor.prototype.convertResourcePath = function (sResourcePath) {
 		return sResourcePath;
@@ -393,6 +408,8 @@ sap.ui.define([
 	 *   Indicates whether the OData service version is optional, which is the case for responses
 	 *   contained in a response for a $batch request
 	 * @throws {Error} If the "OData-Version" header is not "4.0"
+	 *
+	 * @private
 	 */
 	Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
 			bVersionOptional) {
@@ -424,6 +441,8 @@ sap.ui.define([
 	 *   Request"
 	 * @returns {object}
 	 *   The OData V4 response payload
+	 *
+	 * @private
 	 */
 	Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
 		return oResponsePayload;
@@ -443,6 +462,8 @@ sap.ui.define([
 	 *   Whether all system query options are dropped (useful for non-GET requests)
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
+	 *
+	 * @private
 	 */
 	Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
 			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
@@ -478,6 +499,8 @@ sap.ui.define([
 	 *   The meta path, for example "SalesOrderList/SO_2_BP"
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the metadata instance for the given meta path
+	 *
+	 * @private
 	 */
 	Requestor.prototype.fetchMetadata = function (sMetaPath) {
 		return this.oModelInterface.fnFetchMetadata(sMetaPath);
@@ -494,6 +517,8 @@ sap.ui.define([
 	 *   because there are no objects for primitive types like "Edm.Stream".
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the type at the given path or its name.
+	 *
+	 * @private
 	 */
 	Requestor.prototype.fetchTypeForPath = function (sMetaPath, bAsName) {
 		return this.fetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
@@ -511,6 +536,8 @@ sap.ui.define([
 	 *   "5.1.1.6.1 Primitive Literals"
 	 * @throws {Error}
 	 *   If the value is undefined or the type is not supported
+	 *
+	 * @private
 	 */
 	Requestor.prototype.formatPropertyAsLiteral = function (vValue, oProperty) {
 		return _Helper.formatLiteral(vValue, oProperty.$Type);
@@ -545,7 +572,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If a collection-valued operation parameter is encountered
 	 *
-	 * @private
+	 * @public
 	 */
 	Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
 		mParameters) {
@@ -588,6 +615,8 @@ sap.ui.define([
 	 *
 	 * @returns {string}
 	 *   URL of the service document to request the CSRF token from
+	 *
+	 * @private
 	 */
 	Requestor.prototype.getServiceUrl = function () {
 		return this.sServiceUrl;
@@ -597,6 +626,8 @@ sap.ui.define([
 	 * Returns <code>true</code> if there are pending changes.
 	 *
 	 * @returns {boolean} <code>true</code> if there are pending changes
+	 *
+	 * @public
 	 */
 	Requestor.prototype.hasPendingChanges = function () {
 		var sGroupId, bPending;
@@ -640,6 +671,8 @@ sap.ui.define([
 	 * requestor is ready immediately. Subclasses may behave differently.
 	 *
 	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved immediately with no result
+	 *
+	 * @public
 	 */
 	Requestor.prototype.ready = function () {
 		return SyncPromise.resolve();
@@ -656,7 +689,7 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise that will be resolved (with no result) once the CSRF token has been refreshed.
 	 *
-	 * @private
+	 * @public
 	 */
 	Requestor.prototype.refreshSecurityToken = function (sOldSecurityToken) {
 		var that = this;
@@ -700,6 +733,8 @@ sap.ui.define([
 	 *   The ID of the group for the new request
 	 * @throws {Error}
 	 *   If the request could not be found
+	 *
+	 * @private
 	 */
 	Requestor.prototype.relocate = function (sCurrentGroupId, oBody, sNewGroupId) {
 		var aRequests = this.mBatchQueue[sCurrentGroupId],
@@ -753,6 +788,8 @@ sap.ui.define([
 	 *   The body of the request
 	 * @throws {Error}
 	 *   If the request is not in the queue, assuming that it has been submitted already
+	 *
+	 * @private
 	 */
 	Requestor.prototype.removePost = function (sGroupId, oBody) {
 		var bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
@@ -773,25 +810,26 @@ sap.ui.define([
 	 *   The path is relative to the given <code>sResourcePath</code>.
 	 *   The messages have at least the following properties:
 	 *   {string} code - The error code
-	 *   {string} longtextUrl - The URL for the message's long text relative the service URL
+	 *   {string} longtextUrl - The URL for the message's long text relative to the resource path
+	 *      with key predicates
 	 *   {string} message - The message text
 	 *   {number} numericSeverity - The numeric message severity (1 for "success", 2 for "info",
 	 *      3 for "warning" and 4 for "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
-	 *   {boolean} transient - Messages marked as transient by the server need to be managed by the
-	 *      application and are reported as persistent
-	 * @param {string[]} [aKeyPredicates]
-	 *    An array of key predicates of the entities for which non-persistent messages have to be
-	 *    removed; if the array is not given, all non-persistent messages whose target starts with
+	 *   {boolean} transition - Messages marked as transition by the server need to be managed by
+	 *      the application and are reported as persistent
+	 * @param {string[]} [aCachePaths]
+	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
+	 *    be removed; if the array is not given, all non-persistent messages whose target start with
 	 *    the given resource path are removed
 	 *
 	 * @private
 	 */
 	Requestor.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
-			aKeyPredicates) {
+			aCachePaths) {
 		this.oModelInterface.fnReportBoundMessages(sResourcePath, mPathToODataMessages,
-			aKeyPredicates);
+			aCachePaths);
 	};
 
 	/**
@@ -801,6 +839,8 @@ sap.ui.define([
 	 *   The resource path of the request whose response contained the messages
 	 * @param {string} [sMessages]
 	 *   The messages in the serialized form as contained in the sap-messages response header
+	 *
+	 * @private
 	 */
 	Requestor.prototype.reportUnboundMessages = function (sResourcePath, sMessages) {
 		this.oModelInterface.fnReportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
@@ -846,7 +886,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
-	 * @private
+	 * @public
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
 			fnSubmit, fnCancel, sMetaPath) {
@@ -918,6 +958,8 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aRequests The requests
 	 * @returns {Promise} A promise on the responses
+	 *
+	 * @private
 	 */
 	Requestor.prototype.sendBatch = function (aRequests) {
 		var oBatchRequest = _Batch.serializeBatchRequest(aRequests);
@@ -949,6 +991,8 @@ sap.ui.define([
 	 *   A promise that is resolved with an object having the properties body and contentType. The
 	 *   body is already an object if the Content-Type is "application/json". The promise is
 	 *   rejected with an error if the request failed.
+	 *
+	 * @private
 	 */
 	Requestor.prototype.sendRequest = function (sMethod, sResourcePath, mHeaders, sPayload) {
 		var sRequestUrl = this.sServiceUrl + sResourcePath,
@@ -1013,6 +1057,8 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails
+	 *
+	 * @public
 	 */
 	Requestor.prototype.submitBatch = function (sGroupId) {
 		var aChangeSet = [],
