@@ -1,8 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"mycompany/myapp/MyWorklistApp/model/formatter"
-], function (formatter) {
+		"mycompany/myapp/MyWorklistApp/model/formatter"
+	], function (formatter) {
 		"use strict";
 
 		QUnit.module("Number unit");

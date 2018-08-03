@@ -1,7 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Worklist",
+	"./pages/App"
 ], function (opaTest) {
 	"use strict";
 
@@ -39,7 +41,7 @@ sap.ui.define([
 	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
-			delay: 10000
+			delay: 5000
 		});
 
 		// Assertions

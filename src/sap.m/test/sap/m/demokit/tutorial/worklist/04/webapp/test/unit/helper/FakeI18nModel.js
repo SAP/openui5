@@ -1,6 +1,6 @@
 sap.ui.define([
-	"sap/ui/model/Model"
-], function (Model) {
+		"sap/ui/model/Model"
+	], function (Model) {
 		"use strict";
 
 
