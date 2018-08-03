@@ -78,18 +78,30 @@
 							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData)) ) {
 						var $frame = jQuery("<iframe>");
 						var that = this;
-						$frame.css("display", "none");
-						$frame.one("load", function() {
-							that.findTestPages(this, bSequential).then(function(aTestPages) {
-								jQuery(this).remove();
+
+						var onSuiteReady = function(oIFrame) {
+							that.findTestPages(oIFrame, bSequential).then(function(aTestPages) {
+								$frame.remove();
 								resolve(aTestPages);
-							}.bind(this), function(oError) {
+							}, function(oError) {
 								if (window.console && typeof window.console.error === "function") {
 									window.console.error("QUnit: failed to load page '" + sTestPage + "'");
 								}
-								jQuery(this).remove();
+								$frame.remove();
 								resolve([]);
-							}.bind(this));
+							});
+						};
+
+						$frame.css("display", "none");
+						$frame.one("load", function() {
+							if (typeof this.contentWindow.suite === "function") {
+								onSuiteReady(this);
+							} else {
+								// Wait for a CustomEvent in case window.suite isn't defined, yet
+								this.contentWindow.addEventListener("sap-ui-testsuite-ready", function() {
+									onSuiteReady(this);
+								}.bind(this));
+							}
 						});
 						$frame.attr("src", sTestPage);
 						$frame.appendTo(document.body);

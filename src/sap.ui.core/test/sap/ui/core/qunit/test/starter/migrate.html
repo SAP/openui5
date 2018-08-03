@@ -484,25 +484,36 @@
 				// check for an existing test page and check for test suite or page
 				jQuery.get(sTestPage).done(function(sData) {
 					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
-							|| /data-sap-ui-qunit-suite/.test(sData)
 							|| (/data-sap-ui-suite/.test(sData) && !/sap\/ui\/test\/starter\/run-test/.test(sData)) ) {
 
 						// console.log("execute page ", sTestPage);
 						var $frame = jQuery("<iframe>");
-						$frame.css("display", "none");
-						$frame.one("load", function() {
-							findTestPages(this).then(function(aTests) {
-								jQuery(this).remove();
+
+						var onSuiteReady = function onSuiteReady(oIFrame) {
+							findTestPages(oIFrame).then(function(aTests) {
+								$frame.remove();
 								resolve({
 									name: sTestPage,
 									tests: aTests,
 									simple: aTests.every((test) => !test.suite)
 								});
-							}.bind(this), function(oError) {
+							}, function(oError) {
 								console.error("failed to load page '" + sTestPage + "'");
-								jQuery(this).remove();
+								$frame.remove();
 								resolve( { name: sTestPage, error: oError } );
-							}.bind(this));
+							});
+						};
+
+						$frame.css("display", "none");
+						$frame.one("load", function() {
+							if (typeof this.contentWindow.suite === "function") {
+								onSuiteReady(this);
+							} else {
+								// Wait for a CustomEvent in case window.suite isn't defined, yet
+								this.contentWindow.addEventListener("sap-ui-testsuite-ready", function() {
+									onSuiteReady(this);
+								}.bind(this));
+							}
 						});
 						$frame.attr("src", new URI(sTestPage).addSearch("sap-ui-xx-noless","true").toString());
 						$frame.appendTo(document.body);
