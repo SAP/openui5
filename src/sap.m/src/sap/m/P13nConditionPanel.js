@@ -2355,6 +2355,7 @@ sap.ui.define([
 				oConditionGrid.oType.validateValue(oValue1);
 			} catch (err) {
 				sValue1 = "";
+				Log.error("sap.m.P13nConditionPanel", "not able to parse value1 " + sValue1 + " with type " + oConditionGrid.oType.getName());
 			}
 		}
 
@@ -2367,6 +2368,7 @@ sap.ui.define([
 				oConditionGrid.oType.validateValue(oValue2);
 			} catch (err) {
 				sValue2 = "";
+				Log.error("sap.m.P13nConditionPanel", "not able to parse value2 " + sValue2 + " with type " + oConditionGrid.oType.getName());
 			}
 		}
 
