@@ -1,7 +1,7 @@
 /*global QUnit */
 QUnit.config.autostart = false;
 
-sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(ResourceBundle, Log) {
+sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/LoaderExtensions'], function(ResourceBundle, Log, LoaderExtensions) {
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
 		var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
@@ -306,11 +306,11 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	});
 
 	QUnit.test("sync: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
 				return true;
 			}),
 
-			oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function() {
+			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function() {
 				return {
 					"_version": "1.9.0",
 					"sap.ui5": {
@@ -327,10 +327,10 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
 				return true;
 			}),
-			oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function() {
+			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function() {
 				return {
 					"_version": "1.9.0",
 					"sap.ui5": {
@@ -350,11 +350,11 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n set to true in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
 				return true;
 			}),
-			fnOrigLoadResource = jQuery.sap.loadResource,
-			oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function(sURL) {
+			fnOrigLoadResource = LoaderExtensions.loadResource,
+			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function(sURL) {
 				if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
 					return {
 						"_version": "1.9.0",
@@ -386,11 +386,11 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with i18n missing in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
 				return true;
 			}),
 			// no i18n property in manifest
-			oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function() {
+			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function() {
 				return undefined;
 			}),
 			oSpySapUiResource = this.spy(sap.ui, 'resource'),
@@ -408,11 +408,11 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with a given i18n in manifest.json", function(assert) {
-		var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+		var oStubIsResourceLoaded = this.stub(sap.ui.loader._, 'getModuleState', function() {
 				return true;
 			}),
-			fnOrigLoadResource = jQuery.sap.loadResource,
-			oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function(sURL) {
+			fnOrigLoadResource = LoaderExtensions.loadResource,
+			oStubLoadResource = this.stub(LoaderExtensions, 'loadResource', function(sURL) {
 				if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
 					return {
 						"_version": "1.9.0",
@@ -525,7 +525,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 
 		oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 
-		this.spy(jQuery.sap, '_loadJSResourceAsync');
+		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 		this.spy(jQuery.sap, 'require');
 		this.spy(sap.ui, 'require');
 		this.spy(sap.ui, 'requireSync');
@@ -545,9 +545,9 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 		return vResult.then(function(vResult) {
 			assert.strictEqual(vResult, undefined, "Promise should have no fulfillment value");
 			assert.isLibLoaded('testlibs.scenario1.lib1');
-			sinon.assert.calledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib1\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib1\/library-preload\.js$/));
 			assert.isLibLoaded('testlibs.scenario1.lib2');
-			sinon.assert.calledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib2\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib2\/library-preload\.js$/));
 			sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib1.library');
 			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib1/library');
 			sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib2.library');
@@ -556,30 +556,30 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 
 			// lib3 should not be preloaded as its library.js has been (pre)loaded before
 			assert.isLibLoaded('testlibs.scenario1.lib3');
-			sinon.assert.neverCalledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib3\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib3\/library-preload\.js$/));
 			// TODO (sync initLibrary) sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib3.library');
 			// TODO (sync initLibrary) sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib3/library']);
 
 			// lib4 and lib5 should have been preloaded
 			assert.isLibLoaded('testlibs.scenario1.lib4');
-			sinon.assert.calledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib4\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib4\/library-preload\.js$/));
 			// TODO (sync initLibrary) sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib4.library');
 			// TODO (sync initLibrary) sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib4/library']);
 			assert.isLibLoaded('testlibs.scenario1.lib5');
-			sinon.assert.calledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib5\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib5\/library-preload\.js$/));
 			// TODO (sync initLibrary) sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib5.library');
 			// TODO (sync initLibrary) sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib5/library']);
 
 			// lib6 shouldn't have been loaded (only lazy dependency)
 			assert.ok(!jQuery.sap.getObject('testlibs.scenario1.lib6'), "lib6 should not have been loaded");
 			assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario1.lib6'], "Core should not know or report lib6 as 'loaded'");
-			sinon.assert.neverCalledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib6\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib6\/library-preload\.js$/));
 			// TODO (sync initLibrary) sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib6.library');
 			// TODO (sync initLibrary) sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib6/library']);
 
 			// lib7 should have been loaded as individual file
 			assert.isLibLoaded('testlibs.scenario1.lib7');
-			sinon.assert.calledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib7\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib7\/library-preload\.js$/));
 			// TODO (sync initLibrary) sinon.assert.neverCalledWith(jQuery.sap.require, 'testlibs.scenario1.lib7.library');
 			// TODO (sync initLibrary) sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib7/library']);
 
@@ -734,10 +734,10 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 		assert.isLibLoaded('testlibs.scenario6.lib1');
 		sinon.assert.neverCalledWith(sap.ui.requireSync, sinon.match(/scenario6\/lib1\/library-preload$/));
 
-		this.spy(jQuery.sap, '_loadJSResourceAsync');
+		this.spy(sap.ui.loader._, "loadJSResourceAsync");
 		return sap.ui.getCore().loadLibraries([ { name: 'testlibs.scenario6.lib2', json: true } ]).then(function() {
 			assert.isLibLoaded('testlibs.scenario6.lib2');
-			sinon.assert.notCalled(jQuery.sap._loadJSResourceAsync);
+			sinon.assert.notCalled(sap.ui.loader._.loadJSResourceAsync);
 		});
 
 	});
@@ -764,7 +764,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	 */
 	QUnit.test("async (config object)", function(assert) {
 
-		this.stub(jQuery.sap, "_loadJSResourceAsync" , function() {
+		this.stub(sap.ui.loader._, "loadJSResourceAsync" , function() {
 			jQuery.sap.declare('testlibs.scenario9.lib1.library');
 			sap.ui.getCore().initLibrary({
 				name: 'testlibs.scenario9.lib1',
@@ -778,7 +778,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 			url: "./some/fancy/path"
 		});
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
-		assert.ok(jQuery.sap._loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario9\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
+		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario9\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 		assert.equal(jQuery.sap.getResourcePath('testlibs/scenario9/lib1'), "./some/fancy/path", "path should have been registered");
 
 		return loaded;
@@ -790,7 +790,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	 */
 	QUnit.test("async (convenience shortcut)", function(assert) {
 
-		this.stub(jQuery.sap, "_loadJSResourceAsync" , function() {
+		this.stub(sap.ui.loader._, "loadJSResourceAsync" , function() {
 			jQuery.sap.declare('testlibs.scenario10.lib1.library');
 			sap.ui.getCore().initLibrary({
 				name: 'testlibs.scenario10.lib1',
@@ -801,7 +801,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 
 		var loaded = sap.ui.getCore().loadLibrary("testlibs.scenario10.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
-		assert.ok(jQuery.sap._loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario10\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
+		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario10\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
 		return loaded;
 	});
@@ -812,7 +812,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	 */
 	QUnit.test("async (missing preload)", function(assert) {
 
-		this.stub(jQuery.sap, "_loadJSResourceAsync", function() {
+		this.stub(sap.ui.loader._, "loadJSResourceAsync", function() {
 			return Promise.reject(new Error());
 		});
 		this.stub(sap.ui, "require", function(name, callback) {
@@ -828,7 +828,7 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 
 		var loaded = sap.ui.getCore().loadLibrary("testlibs.scenario11.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
-		assert.ok(jQuery.sap._loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario11\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
+		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario11\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
 		return loaded.then(function() {
 			assert.ok(sap.ui.require.calledWith(['testlibs/scenario11/lib1/library']), "should have called jQuery.sap.require for library.js");
@@ -845,13 +845,13 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log'], function(Resour
 	 */
 	QUnit.test("async (missing library)", function(assert) {
 
-		this.stub(jQuery.sap, "_loadJSResourceAsync", function() {
+		this.stub(sap.ui.loader._, "loadJSResourceAsync", function() {
 			return Promise.reject(new Error());
 		});
 
 		var loaded = sap.ui.getCore().loadLibrary("testlibs.scenario12.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
-		assert.ok(jQuery.sap._loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario12\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
+		assert.ok(sap.ui.loader._.loadJSResourceAsync.calledWith(sinon.match(/testlibs\/scenario12\/lib1\/library/)), "should have called _loadJSResourceAsync for library.js");
 
 		return loaded.then(function() {
 			assert.ok(false, "promise for a missing library should not resolve");

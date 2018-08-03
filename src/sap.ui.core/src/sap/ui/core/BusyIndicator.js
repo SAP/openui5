@@ -4,7 +4,7 @@
 
 // A static class to show a busy indicator
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'../base/EventProvider',
 	'./Popup',
 	'./Core',

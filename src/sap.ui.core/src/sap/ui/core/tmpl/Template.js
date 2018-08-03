@@ -4,26 +4,25 @@
 
 // Provides base class sap.ui.core.tmpl.Template for all templates
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/BindingParser',
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
 	'sap/base/util/ObjectPath',
-	"sap/base/Log",
-	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	'sap/base/Log',
+	'sap/base/assert',
+	'sap/ui/thirdparty/jquery'
 ],
-	function(
-		jQuery,
-		ManagedObject,
-		BindingParser,
-		Control,
-		RenderManager,
-		ObjectPath,
-		Log,
-		assert
-	) {
+function(
+	ManagedObject,
+	BindingParser,
+	Control,
+	RenderManager,
+	ObjectPath,
+	Log,
+	assert,
+	jQuery
+) {
 	"use strict";
 
 
@@ -580,12 +579,11 @@ sap.ui.define([
 			}
 
 			// require and instantiate the proper template
-			//TODO: global jquery call found
-			jQuery.sap.require(sClass);
-			var oClass = ObjectPath.get(sClass || "");
+			var fnClass = sap.ui.requireSync(sClass.replace(/\./g, "/"));
+			fnClass = fnClass || ObjectPath.get(sClass || "");
 
 			// create a new instance of the template
-			var oInstance = new oClass({
+			var oInstance = new fnClass({
 				id: sId,
 				content: sContent
 			});

@@ -1513,6 +1513,13 @@ sap.ui.define([
 			rSubTypes = new RegExp(sSub);
 		}());
 
+		function ui5ToRJS(sName) {
+			if ( /^jquery\.sap\./.test(sName) ) {
+				return sName;
+			}
+			return sName.replace(/\./g, "/");
+		}
+
 		/**
 		 * Constructs a URL to load the module with the given name and file type (suffix).
 		 *
@@ -1535,7 +1542,7 @@ sap.ui.define([
 		 * @deprecated since 1.58 use {@link sap.ui.require_toUrl} instead
 		 */
 		jQuery.sap.getModulePath = function(sModuleName, sSuffix) {
-			return jQuery.sap.getResourcePath(LoaderExtensions.ui5ToRJS(sModuleName), sSuffix);
+			return jQuery.sap.getResourcePath(ui5ToRJS(sModuleName), sSuffix);
 		};
 
 		/**
@@ -1774,7 +1781,7 @@ sap.ui.define([
 		 * @deprecated since 1.58 use <code>sap.ui.require(sModuleName)</code> instead
 		 */
 		jQuery.sap.isDeclared = function isDeclared(sModuleName, bIncludePreloaded) {
-			var state = _ui5loader.getModuleState( LoaderExtensions.ui5ToRJS(sModuleName) + ".js" );
+			var state = _ui5loader.getModuleState( ui5ToRJS(sModuleName) + ".js" );
 			return state && (bIncludePreloaded || state > 0);
 		};
 
@@ -1803,7 +1810,7 @@ sap.ui.define([
 		// take resource roots from configuration
 		var paths = {};
 		for ( var n in oCfgData.resourceroots ) {
-			paths[LoaderExtensions.ui5ToRJS(n)] = oCfgData.resourceroots[n] || ".";
+			paths[ui5ToRJS(n)] = oCfgData.resourceroots[n] || ".";
 		}
 		ui5loader.config({paths: paths});
 
@@ -1846,9 +1853,9 @@ sap.ui.define([
 			// which could be {modName: "sap.ui.core.Dev", type: "view"}
 			if (typeof (sModuleName) === "object") {
 				sNamespaceObj = sModuleName.modName;
-				sModuleName = LoaderExtensions.ui5ToRJS(sModuleName.modName) + (sModuleName.type ? "." + sModuleName.type : "") + ".js";
+				sModuleName = ui5ToRJS(sModuleName.modName) + (sModuleName.type ? "." + sModuleName.type : "") + ".js";
 			} else {
-				sModuleName = LoaderExtensions.ui5ToRJS(sModuleName) + ".js";
+				sModuleName = ui5ToRJS(sModuleName) + ".js";
 			}
 
 			_ui5loader.declareModule(sModuleName);
@@ -1903,9 +1910,9 @@ sap.ui.define([
 			// which could be {modName: "sap.ui.core.Dev", type: "view"}
 			if (typeof (vModuleName) === "object") {
 				jQuery.sap.assert(!vModuleName.type || mKnownSubtypes.js.indexOf(vModuleName.type) >= 0, "type must be empty or one of " + mKnownSubtypes.js.join(", "));
-				vModuleName = LoaderExtensions.ui5ToRJS(vModuleName.modName) + (vModuleName.type ? "." + vModuleName.type : "");
+				vModuleName = ui5ToRJS(vModuleName.modName) + (vModuleName.type ? "." + vModuleName.type : "");
 			} else {
-				vModuleName = LoaderExtensions.ui5ToRJS(vModuleName);
+				vModuleName = ui5ToRJS(vModuleName);
 			}
 
 			sap.ui.requireSync(vModuleName);
@@ -1951,7 +1958,7 @@ sap.ui.define([
 			if ( Version(oData.version || "1.0").compareTo("2.0") < 0 ) {
 				modules = {};
 				for ( var sName in oData.modules ) {
-					modules[LoaderExtensions.ui5ToRJS(sName) + ".js"] = oData.modules[sName];
+					modules[ui5ToRJS(sName) + ".js"] = oData.modules[sName];
 				}
 			}
 			sap.ui.require.preload(modules, oData.name, oData.url);
@@ -1986,7 +1993,7 @@ sap.ui.define([
 		 * @sap-restricted sap.ui.core
 		 */
 		jQuery.sap.getResourceName = function(sModuleName, sSuffix) {
-			return LoaderExtensions.ui5ToRJS(sModuleName) + (sSuffix == null ? ".js" : sSuffix);
+			return ui5ToRJS(sModuleName) + (sSuffix == null ? ".js" : sSuffix);
 		};
 
 		/**

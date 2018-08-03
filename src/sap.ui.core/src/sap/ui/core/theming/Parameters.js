@@ -11,9 +11,9 @@
 sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'../Element',
-	"sap/base/util/UriParameters",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	'sap/base/util/UriParameters',
+	'sap/base/Log',
+	'sap/ui/thirdparty/jquery'
 ],
 	function(URI, Element, UriParameters, Log, jQuery) {
 	"use strict";

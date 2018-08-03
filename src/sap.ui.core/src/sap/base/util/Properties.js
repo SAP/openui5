@@ -8,7 +8,7 @@
 
 // Provides access to Java-like properties files
 /*global chrome, v8 */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	"use strict";
 
 	// Javadoc for private inner class "Properties" - this list of comments is intentional!
@@ -289,8 +289,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 		if ( typeof mParams.url === "string" ) {
 			// @evo-todo: dependency on loadResource implementation in compat layer
-			//TODO: global jquery call found
-			vResource = jQuery.sap.loadResource({
+			vResource = LoaderExtensions.loadResource({
 				url: mParams.url,
 				dataType: 'text',
 				headers: mParams.headers,

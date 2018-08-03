@@ -4,7 +4,7 @@
 
 // Provides the implementation for a MessageManager
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/model/message/MessageModel',

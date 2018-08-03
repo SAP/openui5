@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.core.DeclarativeSupport
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/DataType',
 	'sap/ui/base/ManagedObject',
 	'./Control',
@@ -12,10 +12,10 @@ sap.ui.define([
 	'./HTML',
 	'./mvc/View',
 	'./mvc/EventHandlerResolver',
-	"sap/base/Log",
-	"sap/base/util/ObjectPath",
-	"sap/base/assert",
-	"sap/base/strings/camelize"
+	'sap/base/Log',
+	'sap/base/util/ObjectPath',
+	'sap/base/assert',
+	'sap/base/strings/camelize'
 ],
 	function(
 		jQuery,
@@ -185,9 +185,8 @@ sap.ui.define([
 
 		var sType = $element.attr("data-sap-ui-type");
 		if (sType) {
-			//TODO: global jquery call found
-			jQuery.sap.require(sType); // make sure fnClass.getMatadata() is available
-			var fnClass = ObjectPath.get(sType);
+			var fnClass = sap.ui.requireSync(sType.replace(/\./g, "/")); // make sure fnClass.getMatadata() is available
+			fnClass = fnClass || ObjectPath.get(sType);
 			assert(typeof fnClass !== "undefined", "Class not found: " + sType);
 
 

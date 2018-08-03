@@ -4,7 +4,6 @@
 
 // Provides control sap.m.OnePersonCalendar.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/m/OnePersonHeader',
 	'sap/m/OnePersonGrid',
@@ -16,7 +15,6 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat'
 ],
 function(
-	jQuery,
 	Control,
 	OnePersonHeader,
 	OnePersonGrid,

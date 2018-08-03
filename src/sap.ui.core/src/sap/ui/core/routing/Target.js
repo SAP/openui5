@@ -58,7 +58,7 @@ sap.ui.define([
 
 				if (oOptions.type === "Component" && !oOptions._async) {
 					sErrorMessage = "sap.ui.core.routing.Target doesn't support loading component in synchronous mode, please switch routing to async";
-					jQuery.sap.log.error(sErrorMessage);
+					Log.error(sErrorMessage);
 					throw new Error(sErrorMessage);
 				}
 

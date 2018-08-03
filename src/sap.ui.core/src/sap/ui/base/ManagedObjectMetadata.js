@@ -4,15 +4,15 @@
 
 // Provides class sap.ui.base.ManagedObjectMetadata
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'./DataType',
 	'./Metadata',
-	"sap/base/Log",
-	"sap/base/assert",
+	'sap/base/Log',
+	'sap/base/assert',
 	'sap/base/util/ObjectPath',
-	"sap/base/strings/escapeRegExp",
-	"sap/base/util/merge",
-	"sap/base/util/isPlainObject"
+	'sap/base/strings/escapeRegExp',
+	'sap/base/util/merge',
+	'sap/base/util/isPlainObject'
 ],
 function(
 	jQuery,
@@ -1602,8 +1602,7 @@ function(
 			var oPromise;
 			if (sPreload === "async" || sPreload === "sync") {
 				//ignore errors _loadJSResourceAsync is true here, do not break if there is no preload.
-				//TODO: global jquery call found
-				oPromise = jQuery.sap._loadJSResourceAsync(oLibrary.designtime.replace(/\.designtime$/, "-preload.designtime.js"), true);
+				oPromise = sap.ui.loader._.loadJSResourceAsync(oLibrary.designtime.replace(/\.designtime$/, "-preload.designtime.js"), true);
 			} else {
 				oPromise = Promise.resolve();
 			}
@@ -1635,8 +1634,7 @@ function(
 				//oMetadata._oDesignTime points to resource path to another file, for example: "sap/ui/core/designtime/<control>.designtime"
 				sModule = oMetadata._oDesignTime;
 			} else {
-				//TODO: global jquery call found
-				sModule = jQuery.sap.getResourceName(oMetadata.getName(), ".designtime");
+				sModule = oMetadata.getName().replace(/\./g, "/") + ".designtime";
 			}
 			preloadDesigntimeLibrary(oMetadata).then(function(oLib) {
 				sap.ui.require([sModule], function(mDesignTime) {
@@ -1730,7 +1728,7 @@ function(
 			// only the merge is done in sequence by chaining promises
 			this._oDesignTimePromise = loadOwnDesignTime(this).then(function(mOwnDesignTime) {
 				return oWhenParentLoaded.then(function(mParentDesignTime) {
-					// we use jQuery.sap.extend to be able to also overwrite properties with null or undefined
+					// we use "sap/base/util/merge" to be able to also overwrite properties with null or undefined
 					// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
 					return merge(
 						{},

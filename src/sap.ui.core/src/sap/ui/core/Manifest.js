@@ -4,15 +4,16 @@
 
 // Provides base class sap.ui.core.Component for all components
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/Object',
 	'sap/ui/thirdparty/URI',
-	"sap/base/util/Version",
-	"sap/base/Log",
-	"sap/ui/dom/includeStylesheet",
-	"sap/base/i18n/ResourceBundle",
-	"sap/base/util/uid",
-	"sap/base/util/isPlainObject"
+	'sap/base/util/Version',
+	'sap/base/Log',
+	'sap/ui/dom/includeStylesheet',
+	'sap/base/i18n/ResourceBundle',
+	'sap/base/util/uid',
+	'sap/base/util/isPlainObject',
+	'sap/base/util/LoaderExtensions'
 ],
 	function(
 		jQuery,
@@ -23,7 +24,8 @@ sap.ui.define([
 		includeStylesheet,
 		ResourceBundle,
 		uid,
-		isPlainObject
+		isPlainObject,
+		LoaderExtensions
 	) {
 	"use strict";
 
@@ -724,8 +726,7 @@ sap.ui.define([
 		sManifestUrl = oManifestUrl.toString();
 
 		Log.info("Loading manifest via URL: " + sManifestUrl);
-		//TODO: global jquery call found
-		var oManifestJSON = jQuery.sap.loadResource({
+		var oManifestJSON = LoaderExtensions.loadResource({
 			url: sManifestUrl,
 			dataType: "json",
 			async: typeof bAsync !== "undefined" ? bAsync : false,

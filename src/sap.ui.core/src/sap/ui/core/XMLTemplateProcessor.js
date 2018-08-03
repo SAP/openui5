@@ -5,7 +5,7 @@
 /*global HTMLTemplateElement, DocumentFragment, Promise*/
 
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/DataType',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/CustomData',
@@ -14,10 +14,11 @@ sap.ui.define([
 	'./ExtensionPoint',
 	'./StashedControlSupport',
 	'sap/ui/base/SyncPromise',
-	"sap/base/Log",
-	"sap/base/util/ObjectPath",
-	"sap/base/assert",
-	"sap/base/security/encodeXML"
+	'sap/base/Log',
+	'sap/base/util/ObjectPath',
+	'sap/base/assert',
+	'sap/base/security/encodeXML',
+	'sap/base/util/LoaderExtensions'
 ],
 function(
 	jQuery,
@@ -32,7 +33,8 @@ function(
 	Log,
 	ObjectPath,
 	assert,
-	encodeXML
+	encodeXML,
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -141,10 +143,8 @@ function(
 	 * @return {Element} an XML document root element
 	 */
 	XMLTemplateProcessor.loadTemplate = function(sTemplateName, sExtension) {
-		//TODO: global jquery call found
-		var sResourceName = jQuery.sap.getResourceName(sTemplateName, "." + (sExtension || "view") + ".xml");
-		//TODO: global jquery call found
-		return jQuery.sap.loadResource(sResourceName).documentElement;
+		var sResourceName = sTemplateName.replace(/\./g, "/") + ("." + (sExtension || "view") + ".xml");
+		return LoaderExtensions.loadResource(sResourceName).documentElement;
 	};
 
 	/**
@@ -157,10 +157,8 @@ function(
 	 * @private
 	 */
 	XMLTemplateProcessor.loadTemplatePromise = function(sTemplateName, sExtension) {
-		//TODO: global jquery call found
-		var sResourceName = jQuery.sap.getResourceName(sTemplateName, "." + (sExtension || "view") + ".xml");
-		//TODO: global jquery call found
-		return jQuery.sap.loadResource(sResourceName, {async: true}).then(function (oResult) {
+		var sResourceName = sTemplateName.replace(/\./g, "/") + ("." + (sExtension || "view") + ".xml");
+		return LoaderExtensions.loadResource(sResourceName, {async: true}).then(function (oResult) {
 			return oResult.documentElement;
 		}); // result is the document node
 	};
@@ -484,8 +482,7 @@ function(
 				return oClassObject;
 			}
 
-			//TODO: global jquery call found
-			var sResourceName = jQuery.sap.getResourceName(sClassName, "");
+			var sResourceName = sClassName.replace(/\./g, "/");
 			var oClassObject = sap.ui.require(sResourceName);
 			if (!oClassObject) {
 				if (bAsync) {

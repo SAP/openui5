@@ -4,14 +4,15 @@
 
 // Provides control sap.ui.core.mvc.HTMLView.
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'./View',
 	'./HTMLViewRenderer',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/DeclarativeSupport',
 	'sap/ui/core/library',
-	'sap/ui/model/resource/ResourceModel'
+	'sap/ui/model/resource/ResourceModel',
+	'sap/base/util/LoaderExtensions'
 ],
 	function(
 		jQuery,
@@ -21,7 +22,8 @@ sap.ui.define([
 		ManagedObject,
 		DeclarativeSupport,
 		library,
-		ResourceModel
+		ResourceModel,
+		LoaderExtensions
 	) {
 	"use strict";
 
@@ -204,10 +206,8 @@ sap.ui.define([
 	 * @static
 	 */
 	HTMLView._loadTemplate = function(sTemplateName, mOptions) {
-		//TODO: global jquery call found
-		var sResourceName = jQuery.sap.getResourceName(sTemplateName, ".view.html");
-		//TODO: global jquery call found
-		return jQuery.sap.loadResource(sResourceName, mOptions);
+		var sResourceName = sTemplateName.replace(/\./g, "/") + ".view.html";
+		return LoaderExtensions.loadResource(sResourceName, mOptions);
 	};
 
 	/**

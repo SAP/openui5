@@ -17,8 +17,7 @@ sap.ui
 			"use strict";
 
 			if (Device.browser.msie) {
-				//TODO: global jquery call found
-				jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+				sap.ui.requireSync("sap/ui/thirdparty/sinon-ie");
 				// sinon internally checks the transported data to be an instance
 				// of FormData and this fails in case of IE9! - therefore we
 				// add a dummy function to enable instanceof check
@@ -2158,8 +2157,7 @@ sap.ui
 					method: "GET",
 					path: new RegExp("\\$metadata([?#].*)?"),
 					response: function(oXhr) {
-						//TODO: global jquery call found
-						jQuery.sap.require("jquery.sap.xml");
+						sap.ui.requireSync("jquery.sap.xml");
 						Log.debug("MockServer: incoming request for url: " + oXhr.url);
 						var mHeaders = {
 							"Content-Type": "application/xml;charset=utf-8"

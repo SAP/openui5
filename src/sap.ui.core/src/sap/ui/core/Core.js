@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/base/util/array/uniqueSort",
 	"sap/base/util/uid",
+	'sap/base/util/LoaderExtensions',
 	'sap/ui/performance/trace/initTraces',
 	'sap/ui/events/jquery/EventSimulation'
 ],
@@ -72,6 +73,7 @@ sap.ui.define([
 		Version,
 		uniqueSort,
 		uid,
+		LoaderExtensions,
 		initTraces
 		/* ,EventSimulation */
 	) {
@@ -79,6 +81,15 @@ sap.ui.define([
 	"use strict";
 
 	/*global Promise */
+
+	/**
+	 * Executes an 'eval' for its arguments in the global context (without closure variables).
+	 */
+	function globalEval() {
+		/*eslint-disable no-eval */
+		eval(arguments[0]);
+		/*eslint-enable no-eval */
+	}
 
 	// when the Core module has been executed before, don't execute it again
 	if (sap.ui.getCore && sap.ui.getCore()) {
@@ -873,8 +884,12 @@ sap.ui.define([
 			if ( m ) {
 				that.loadLibrary(m[1]);
 			} else {
-				//TODO: global jquery call found
-				jQuery.sap.require( mod );
+				// data-sap-ui-modules might contain legacy jquery.sap.* modules
+				if ( /^jquery\.sap\./.test(mod) ) {
+					sap.ui.requireSync( mod );
+				} else {
+					sap.ui.requireSync( mod.replace(/\./g, "/") );
+				}
 			}
 		});
 
@@ -891,8 +906,12 @@ sap.ui.define([
 			if ( m ) {
 				aLibs.push( m[1] );
 			} else {
-				//TODO: global jquery call found
-				aModules.push( jQuery.sap.getResourceName( sModule, "" ) );
+				// data-sap-ui-modules might contain legacy jquery.sap.* modules
+				if ( /^jquery\.sap\./.test(sModule) ) {
+					aModules.push( sModule );
+				} else {
+					aModules.push( sModule.replace(/\./g, "/") );
+				}
 			}
 		});
 
@@ -1226,7 +1245,7 @@ sap.ui.define([
 					} else {
 						// DO NOT USE jQuery.globalEval as it executes async in FF!
 						//Remove this eval call
-						jQuery.sap.globalEval(vOnInit);
+						globalEval(vOnInit);
 					}
 				}
 			}
@@ -1270,8 +1289,7 @@ sap.ui.define([
 
 				Log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
 				Log.info("Loading Application: " + sApplication,null,METHOD);
-				//TODO: global jquery call found
-				jQuery.sap.require(sApplication);
+				sap.ui.requireSync(sApplication.replace(/\./g, "/"));
 				var oClass = ObjectPath.get(sApplication);
 				assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
 				var oApplication = new oClass();
@@ -1528,7 +1546,7 @@ sap.ui.define([
 			libPackage = lib.replace(/\./g, '/'),
 			http2 = this.oConfiguration.getDepCache();
 
-		if ( fileType === 'none' || jQuery.sap.isResourceLoaded(libPackage + '/library.js') ) {
+		if ( fileType === 'none' || !!sap.ui.loader._.getModuleState(libPackage + '/library.js') ) {
 			return Promise.resolve(true);
 		}
 
@@ -1547,8 +1565,7 @@ sap.ui.define([
 		var p;
 		if ( fileType !== 'json' /* 'js' or 'both', not forced to JSON */ ) {
 			var sPreloadModule = libPackage + (http2 ? '/library-h2-preload.js' : '/library-preload.js');
-			//TODO: global jquery call found
-			p = jQuery.sap._loadJSResourceAsync(sPreloadModule).then(
+			p = sap.ui.loader._.loadJSResourceAsync(sPreloadModule).then(
 					function() {
 						return dependenciesFromManifest(lib);
 					},
@@ -1592,10 +1609,9 @@ sap.ui.define([
 	function getManifest(lib) {
 		var manifestModule = lib.replace(/\./g, '/') + '/manifest.json';
 
-		if ( jQuery.sap.isResourceLoaded(manifestModule) ) {
+		if ( !!sap.ui.loader._.getModuleState(manifestModule) ) {
 
-			//TODO: global jquery call found
-			return jQuery.sap.loadResource(manifestModule, {
+			return LoaderExtensions.loadResource(manifestModule, {
 				dataType: 'json',
 				async: false, // always sync as we are sure to load from preload cache
 				failOnError: false
@@ -1667,9 +1683,10 @@ sap.ui.define([
 
 		var lib = libConfig.name,
 			fileType = libConfig.fileType,
-			libPackage = lib.replace(/\./g, '/');
+			libPackage = lib.replace(/\./g, '/'),
+			libLoaded = !!sap.ui.loader._.getModuleState(libPackage + '/library.js');
 
-		if ( fileType === 'none' || jQuery.sap.isResourceLoaded(libPackage + '/library.js') ) {
+		if ( fileType === 'none' || libLoaded ) {
 			return;
 		}
 
@@ -1852,8 +1869,7 @@ sap.ui.define([
 			}
 
 			// require the library module (which in turn will call initLibrary())
-			//TODO: global jquery call found
-			jQuery.sap.require(sModule);
+			sap.ui.requireSync(sModule.replace(/\./g, "/"));
 
 			// check for legacy code
 			if ( !mLoadedLibraries[sLibrary] ) {
@@ -2168,8 +2184,10 @@ sap.ui.define([
 		// Only needed for backward compatibility: some code 'requires' such types although they never have been modules on their own
 		for (var i = 0; i < oLibInfo.types.length; i++) {
 			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLibInfo.types[i]) ) {
-				//TODO: global jquery call found
-				jQuery.sap.declare(oLibInfo.types[i]);
+				// replacement for jQuery.sap.declare:
+				sap.ui.loader._.declareModule(oLibInfo.types[i].replace(/\./g, "/") + ".js");
+				// ensure parent namespace of the type
+				ObjectPath.set(oLibInfo.types[i], undefined);
 			}
 		}
 

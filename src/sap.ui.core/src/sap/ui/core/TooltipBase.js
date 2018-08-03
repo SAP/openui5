@@ -200,7 +200,7 @@ sap.ui.define([
 		var oEventSource = jQuery(oEvent.target).control(0), // The Element or Control that initiated the event.
 			oCurrentElement = jQuery(oEvent.currentTarget).control(0), // The current Element or Control within the event bubbling phase.
 			oLeftElement = jQuery(oEvent.relatedTarget).control(0); // Indicates the element being exited.
-		//jQuery.sap.log.debug("MOUSE OVER    " +  oEventSource + "  " + jQuery(oEvent.currentTarget).control(0) + "   " + this._currentControl.getId());
+		// Log.debug("MOUSE OVER    " +  oEventSource + "  " + jQuery(oEvent.currentTarget).control(0) + "   " + this._currentControl.getId());
 
 		if (!oEventSource) {
 			return;
@@ -271,7 +271,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TooltipBase.prototype.onmouseout = function(oEvent) {
-		//jQuery.sap.log.debug("MOUSE OUT    " + jQuery(oEvent.target).control(0) + "   "+ jQuery(oEvent.currentTarget).control(0) );
+		// Log.debug("MOUSE OUT    " + jQuery(oEvent.target).control(0) + "   "+ jQuery(oEvent.currentTarget).control(0) );
 		if (TooltipBase.sOpenTimeout) {
 			clearTimeout(TooltipBase.sOpenTimeout);
 			TooltipBase.sOpenTimeout = undefined;
@@ -301,7 +301,7 @@ sap.ui.define([
 
 		oPopup.attachClosed(this.handleClosed, this);
 		oPopup.close();
-		//jQuery.sap.log.debug("CLOSE POPUP  " + this.getId());
+		// Log.debug("CLOSE POPUP  " + this.getId());
 		this.restoreStandardTooltips();
 	};
 
@@ -399,7 +399,7 @@ sap.ui.define([
 		var oPopup = this._getPopup();
 		var eState = oPopup.getOpenState();
 		if (eState === OpenState.OPEN || eState === OpenState.OPENING) {
-			//jQuery.sap.log.debug(oPopup.getOpenState());
+			// Log.debug(oPopup.getOpenState());
 			return;
 		}
 		if (TooltipBase.sOpenTimeout) {
