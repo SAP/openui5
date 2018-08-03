@@ -1569,6 +1569,14 @@ sap.ui.define([
 			this._oConditionsMap[sKey] = oConditionGridData;
 		}
 
+		var sOperation = oConditionGrid.operation.getSelectedKey();
+		// in case of a BT and a Date type try to set the minDate/maxDate for the From/To value datepicker
+		if (sOperation === "BT" && oConditionGrid.value1.setMinDate && oConditionGrid.value2.setMaxDate) {
+			var oValue1 = oConditionGrid.value1.getDateValue();
+			var oValue2 = oConditionGrid.value2.getDateValue();
+			this._updateMinMaxDate(oConditionGrid, oValue1, oValue2);
+		}
+
 		return oConditionGrid;
 	};
 
@@ -2305,6 +2313,18 @@ sap.ui.define([
 		}
 	};
 
+
+	P13nConditionPanel.prototype._updateMinMaxDate = function(oConditionGrid, oValue1, oValue2) {
+		if (oConditionGrid.value1.setMinDate && oConditionGrid.value2.setMaxDate) {
+			if (oConditionGrid.value1 && oConditionGrid.value1.setMaxDate) {
+				oConditionGrid.value1.setMaxDate(oValue2 instanceof Date ? oValue2 : null);
+			}
+			if (oConditionGrid.value2 && oConditionGrid.value2.setMinDate) {
+				oConditionGrid.value2.setMinDate(oValue1 instanceof Date ? oValue1 : null);
+			}
+		}
+	};
+
 	/**
 	 * called when the user makes a change in one of the condition fields. The function will update, remove or add the conditions for this condition.
 	 *
@@ -2338,13 +2358,6 @@ sap.ui.define([
 			}
 		}
 
-		// in case of a BT and a Date type try to set the minDate for the To value datepicker
-		if (sOperation === "BT" && oConditionGrid.value1.setMinDate) {
-			if (oConditionGrid.value2 && oConditionGrid.value2.setMinDate) {
-				oConditionGrid.value2.setMinDate(oValue1 instanceof Date ? oValue1 : null);
-			}
-		}
-
 		// update Value2 field control
 		var sValue2 = this._getValueTextFromField(oConditionGrid.value2);
 		var oValue2 = sValue2;
@@ -2355,6 +2368,11 @@ sap.ui.define([
 			} catch (err) {
 				sValue2 = "";
 			}
+		}
+
+		// in case of a BT and a Date type try to set the minDate/maxDate for the From/To value datepicker
+		if (sOperation === "BT") {
+			this._updateMinMaxDate(oConditionGrid, oValue1, oValue2);
 		}
 
 		var oCurrentKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
