@@ -1,10 +1,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/HeapOfShards/test/integration/pages/Common",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/Press"
-], function(jQuery, Opa5, Common, PropertyStrictEquals, Press) {
+], function(jQuery, Opa5, PropertyStrictEquals, Press) {
 	"use strict";
 
 	var sViewName = "App";
