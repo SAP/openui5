@@ -552,6 +552,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Patches the cache at the given path with the given data.
+	 *
+	 * @param {string} sPath The path
+	 * @param {object} oData The data to patch with
+	 *
+	 * @private
+	 */
+	Cache.prototype.patch = function (sPath, oData) {
+		var that = this;
+
+		this.fetchValue(_GroupLock.$cached, sPath).then(function (oCacheValue) {
+			_Helper.updateCache(that.mChangeListeners, sPath, oCacheValue, oData);
+		});
+	};
+
+	/**
 	 * Registers the listener for the path.
 	 *
 	 * @param {string} sPath The path

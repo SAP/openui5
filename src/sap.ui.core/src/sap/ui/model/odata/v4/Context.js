@@ -469,6 +469,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Patches the context data with the given patch data.
+	 *
+	 * @param {object} oData
+	 *   The data to patch with
+	 * @returns {SyncPromise}
+	 *   A promise that is resolve without a result when the patch is done.
+	 *
+	 * @private
+	 */
+	Context.prototype.patch = function (oData) {
+		return this.withCache(function (oCache, sPath) {
+			oCache.patch(sPath, oData);
+		}, "");
+	};
+
+	/**
 	 * Refreshes the single entity in a {@link sap.ui.model.odata.v4.ODataListBinding} represented
 	 * by this context.
 	 *
