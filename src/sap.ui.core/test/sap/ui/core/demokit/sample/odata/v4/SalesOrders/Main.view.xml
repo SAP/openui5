@@ -382,12 +382,8 @@
 					<Text text="{ItemPosition}"/>
 					<Text text="{ProductID}"/>
 					<Text text="{SOITEM_2_PRODUCT/Name}"/>
-					<!-- This delivers a mapping that has been modified by local annotations -->
 					<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}"
 						enabled="{= %{ItemPosition} !== ''}"/>
-					<!-- This delivers a mapping that has been added in local annotations -->
-					<!--<demo:ValueHelp value="{SOITEM_2_PRODUCT/Category}" qualifier="additional"
-						enabled="{= %{ItemPosition} !== ''}"/>-->
 					<demo:ValueHelp value="{SOITEM_2_PRODUCT/TypeCode}"
 						enabled="{= %{ItemPosition} !== ''}"/>
 					<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
