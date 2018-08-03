@@ -11,6 +11,8 @@ sap.ui.define([
 	 * @class
 	 * Renders properly JSDoc text content inside the Demo Kit
 	 * @extends sap.ui.core.Control
+	 * @private
+	 * @ui5-restricted sdk
 	 */
 	return Control.extend("sap.ui.documentation.sdk.controls.JSDocText", {
 		metadata: {

@@ -5,7 +5,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
     function(Control, Button, SearchField, mobileLibrary) {
     "use strict";
 
-
+		/**
+		 * @private
+		 * @ui5-restricted sdk
+		 */
         var Search = Control.extend("sap.ui.documentation.sdk.controls.Search", {
             metadata : {
                 properties : {

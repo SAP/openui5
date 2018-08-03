@@ -12,6 +12,8 @@ sap.ui.define([
 	 * @class
 	 * Provides the parameters texts in the API Reference with a custom CSS class so that the texts are displayed indented.
 	 * @extends sap.ui.core.Control
+	 * @private
+	 * @ui5-restricted sdk
 	 */
 	var ParamText = Control.extend("sap.ui.documentation.sdk.controls.ParamText", {
 		metadata: {

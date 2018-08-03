@@ -11,6 +11,8 @@ sap.ui.define([
 	 * @class
 	 * Custom BorrowedList control used to display multiple list in a borrowed methods or events
 	 * @extends sap.ui.core.Control
+	 * @private
+	 * @ui5-restricted sdk
 	 */
 	return Control.extend("sap.ui.documentation.sdk.controls.BorrowedList", {
 		metadata: {
