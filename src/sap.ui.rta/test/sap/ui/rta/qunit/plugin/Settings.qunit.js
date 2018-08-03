@@ -309,6 +309,42 @@ function (
 			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton });
 		});
 
+		QUnit.test("when the handle settings function is called and the handler returns a an empty change object,", function(assert) {
+			var oButtonOverlay = new ElementOverlay({
+				element : this.oButton,
+				designTimeMetadata : new ElementDesignTimeMetadata({
+					libraryName : "sap.m",
+					data : {
+						actions : {
+							settings : function() {
+								return {
+									isEnabled : true,
+									handler : function() {
+										return new Promise(function(resolve) {
+											resolve([]);
+										});
+									}
+								};
+							}
+						}
+					}
+				})
+			});
+
+			var oCommandFactory = this.oSettingsPlugin.getCommandFactory(),
+				oGetCommandForSpy = sinon.spy(oCommandFactory, 'getCommandFor'),
+				oFireEventSpy = sinon.spy(this.oSettingsPlugin, 'fireElementModified'),
+				aSelectedOverlays = [oButtonOverlay];
+
+			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton })
+
+			.then(function() {
+				assert.equal(oGetCommandForSpy.callCount, 0, "then commandFactory.getCommandFor function is not called");
+				assert.equal(oFireEventSpy.callCount, 0, "then commandFactory.fireElementModified function is not called");
+				assert.ok(true, "CompositeCommand is not created");
+			});
+		});
+
 		QUnit.test("when the handle settings function is called and no handler is present in Designtime Metadata,", function(assert) {
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,

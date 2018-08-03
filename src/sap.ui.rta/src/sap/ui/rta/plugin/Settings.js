@@ -163,43 +163,16 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Retrieves the available actions from the DesignTime Metadata and creates
-	 * the corresponding commands for them.
-	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target Overlays of the action
-	 * @param {object} mPropertyBag Property bag
-	 * @param {function} [mPropertyBag.fnHandler] Handler function for the case of multiple settings actions
-	 * @return {Promise} Returns promise resolving with the creation of the commands
-	 */
-	Settings.prototype.handler = function(aElementOverlays, mPropertyBag) {
-		mPropertyBag = mPropertyBag || {};
+	Settings.prototype._handleCompositeCommand = function(aElementOverlays, oElement, aChanges) {
 		var oCompositeCommand;
-		var oElement = aElementOverlays[0].getElement();
-		var fnHandler = mPropertyBag.fnHandler;
 
-		if (!fnHandler){
-			fnHandler = aElementOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
-			if (!fnHandler) {
-				throw new Error("Handler not found for settings action");
-			}
-		}
-		mPropertyBag.getUnsavedChanges = this._getUnsavedChanges.bind(this);
-		mPropertyBag.styleClass = Utils.getRtaStyleClassName();
+		return this.getCommandFactory().getCommandFor(oElement, "composite")
 
-		return fnHandler(oElement, mPropertyBag)
+		.then(function(_oCompositeCommand) {
+			oCompositeCommand = _oCompositeCommand;
+		})
 
-		.then(function(aChanges) {
-			if (aChanges.length > 0){
-				return this.getCommandFactory().getCommandFor(oElement, "composite")
-
-				.then(function(_oCompositeCommand) {
-					oCompositeCommand = _oCompositeCommand;
-					return aChanges;
-				});
-			}
-		}.bind(this))
-
-		.then(function(aChanges) {
+		.then(function() {
 			return aChanges.map(function(mChange) {
 				var mChangeSpecificData = mChange.changeSpecificData;
 				// Flex Change
@@ -221,6 +194,37 @@ sap.ui.define([
 				this.fireElementModified({
 					"command" : oCompositeCommand
 				});
+			}
+		}.bind(this));
+	};
+
+	/**
+	 * Retrieves the available actions from the DesignTime Metadata and creates
+	 * the corresponding commands for them.
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target Overlays of the action
+	 * @param {object} mPropertyBag Property bag
+	 * @param {function} [mPropertyBag.fnHandler] Handler function for the case of multiple settings actions
+	 * @return {Promise} Returns promise resolving with the creation of the commands
+	 */
+	Settings.prototype.handler = function(aElementOverlays, mPropertyBag) {
+		mPropertyBag = mPropertyBag || {};
+		var oElement = aElementOverlays[0].getElement();
+		var fnHandler = mPropertyBag.fnHandler;
+
+		if (!fnHandler){
+			fnHandler = aElementOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
+			if (!fnHandler) {
+				throw new Error("Handler not found for settings action");
+			}
+		}
+		mPropertyBag.getUnsavedChanges = this._getUnsavedChanges.bind(this);
+		mPropertyBag.styleClass = Utils.getRtaStyleClassName();
+
+		return fnHandler(oElement, mPropertyBag)
+
+		.then(function(aChanges) {
+			if (aChanges.length > 0){
+				return this._handleCompositeCommand(aElementOverlays, oElement, aChanges);
 			}
 		}.bind(this))
 
