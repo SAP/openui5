@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press"
 ], function (Opa5, Press) {
@@ -18,6 +18,7 @@ sap.ui.require([
 					});
 				}
 			},
+
 			assertions: {
 				iShouldSeeTheHelloDialog: function () {
 					return this.waitFor({
