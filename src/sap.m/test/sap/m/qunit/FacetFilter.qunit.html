@@ -1025,6 +1025,168 @@
 		oFFL.destroy();
 	});
 
+	QUnit.test("FacetFilterList._updateActiveState for initially non-active lists", function(assert) {
+		var done = assert.async();
+
+		var oFF = new sap.m.FacetFilter();
+		var oFFL1 = new sap.m.FacetFilterList({
+			active: false,
+			title: "List1"
+		});
+		oFFL1.addItem(new sap.m.FacetFilterItem());
+		oFF.addList(oFFL1);
+		var oFFL2 = new sap.m.FacetFilterList({
+			active: false,
+			title: "List2"
+		});
+		oFFL2.addItem(new sap.m.FacetFilterItem());
+		oFF.addList(oFFL2);
+		var oFFL3 = new sap.m.FacetFilterList({
+			active: false,
+			title: "List3",
+			items: {
+				path: "/values",
+				template: new sap.m.FacetFilterItem( {
+					text: "{text}",
+					key: "{key}"
+				})
+			}
+		});
+		oFFL3.setModel(new sap.ui.model.json.JSONModel({
+			values: [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}]
+		}));
+		oFF.addList(oFFL3);
+
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oDialog = oFF._getFacetDialog();
+		oDialog.attachEventOnce("afterOpen", function(oEvent) {
+
+			var oFacetListItem = getDialogFacetList(oFF).getItems()[0];
+			var oNavContainer = oDialog.getContent()[0];
+			oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
+
+				// Verify the active state when an item is selected and then deselected
+				var oList = getDialogFilterItemsList(oFF);
+				assert.strictEqual(oList.getActive(), false, "The list should be inactive initially");
+				assert.strictEqual(oList.getSelectedItems().length, 0, "The list should not contain any selections initially");
+				oList.getItems()[0].setSelected(true);
+				oList._updateActiveState();
+				assert.strictEqual(oList.getActive(), true, "List should be active after selecting item");
+				oList.getItems()[0].setSelected(false);
+				oList._updateActiveState();
+				assert.strictEqual(oList.getActive(), false, "List should not remain active after deselecting last item");
+
+				oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
+
+					var oFacetListItem = getDialogFacetList(oFF).getItems()[1];
+
+					oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
+
+						// Verify the active state when the select all checkbox is checked
+						var oList = getDialogFilterItemsList(oFF);
+						assert.strictEqual(oList.getActive(), false, "The list should be inactive initially");
+						assert.strictEqual(oList.getSelectedItems().length, 0, "The list should not contain any selections initially");
+
+						var oFilterItemsPage = getDialogFilterItemsPage(oFF);
+						var oCheckboxBar = oFilterItemsPage.getContent()[0];
+						var oCheckBox = oCheckboxBar.getContentLeft()[0];
+						assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should be deselected initially");
+
+						oCheckBox.fireSelect({"selected": true});
+						oList._updateActiveState();
+						assert.strictEqual(oList.getActive(), true, "List should be active after selecting the select all checkbox");
+
+						oCheckBox.fireSelect({"selected": false});//Checkbox allow deselection
+
+						oList._updateActiveState();
+						assert.strictEqual(oList.getActive(), false, "List should not be active after deselect the select all checkbox");
+
+						oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
+
+							var oFacetListItem = getDialogFacetList(oFF).getItems()[2];
+							oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
+								// Verify active state when the selected item is filtered from the list
+								var oList = getDialogFilterItemsList(oFF);
+								assert.strictEqual(oList.isBound("items"), true, "Items should be bound when test requires filtering");
+								assert.strictEqual(oList.getActive(), false, "The list should be inactive initially");
+								assert.strictEqual(oList.getSelectedItems().length, 0, "The list should not contain any selections initially");
+								oList.getItems()[0].setSelected(true);
+								oList._search("Val2");
+								oList._updateActiveState();
+								assert.strictEqual(oList.getActive(), true, "List should be active after filtering out selected item");
+
+								destroyFF(oFF);
+								done();
+							});
+
+							// Navigate to the third list
+							oFF._navToFilterItemsPage(oFacetListItem);
+						});
+						oFF._navFromFilterItemsPage(oNavContainer);
+					});
+
+					// Navigate to the second list
+					oFF._navToFilterItemsPage(oFacetListItem);
+				});
+				oFF._navFromFilterItemsPage(oNavContainer);
+			});
+
+			// Navigate to the first list
+			oFF._navToFilterItemsPage(oFacetListItem);
+		});
+		oFF.openFilterDialog();
+	});
+
+	QUnit.test("FacetFilterList._updateActiveState for initially active lists", function(assert) {
+		var done = assert.async();
+		//prepare
+		var oFF = new sap.m.FacetFilter(),
+		oFFL1 = new sap.m.FacetFilterList({
+			title: "List1"
+		});
+		oFFL1.addItem(new sap.m.FacetFilterItem());
+		oFF.addList(oFFL1);
+
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oDialog = oFF._getFacetDialog();
+		oDialog.attachEventOnce("afterOpen", function(oEvent) {
+
+			var oFacetListItem = getDialogFacetList(oFF).getItems()[0];
+			var oNavContainer = oDialog.getContent()[0];
+			oNavContainer.attachEventOnce("afterNavigate", function(oEvent) {
+
+				// Verify the active state when an item is selected and then deselected
+				var oList = getDialogFilterItemsList(oFF);
+				//assert
+				assert.strictEqual(oList.getActive(), true, "The list should be active initially");
+				assert.strictEqual(oList.getSelectedItems().length, 0, "The list should not contain any selections initially");
+				//act
+				oList.getItems()[0].setSelected(true);
+				oList._updateActiveState();
+				//assert
+				assert.strictEqual(oList.getActive(), true, "List should be active after selecting item");
+				//act
+				oList.getItems()[0].setSelected(false);
+				oList._updateActiveState();
+				//assert
+				assert.strictEqual(oList.getActive(), true, "List should not remain active after deselecting last item");
+
+				//cleanup
+				destroyFF(oFF);
+				done();
+			});
+
+			// Navigate to the list
+			oFF._navToFilterItemsPage(oFacetListItem);
+		});
+		oFF.openFilterDialog();
+	});
+
+
 	QUnit.test("FacetFilterList._search, _getSearchValue", function(assert) {
 
 		var aValues = [{text : "a"}, {text : "ba"}, {text : "c"}, {text: ''}, {text: ' '}, {text: null}, {}];
