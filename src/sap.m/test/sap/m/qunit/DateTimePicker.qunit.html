@@ -26,7 +26,6 @@
 
 		<!-- Test functions -->
 		<script>
-
 			var bChange = false;
 			var sValue = "";
 			var bValid = false;
@@ -196,6 +195,49 @@
 				oDateTimePicker.destroy();
 			});
 
+			QUnit.test("Swticher is rendered and visible on small screen size", function(assert) {
+				// Arrange
+				var done = assert.async(),
+					oDTP7 = new sap.m.DateTimePicker("DTP7", {}).placeAt("uiArea8");
+				sap.ui.getCore().applyChanges();
+				oDTP7.focus();
+				qutils.triggerEvent("click", "DTP7-icon");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				oDTP7._handleWindowResize({name: "Phone"});
+
+
+				// Asssert
+				oDTP7.getAggregation("_popup").attachEventOnce("afterOpen", function() {
+					assert.ok(jQuery("#DTP7-PC-Switch")[0], "Swicher rendered");
+					assert.ok(jQuery("#DTP7-PC-Switch").is(":visible"), "Swicher is visible");
+					oDTP7.destroy();
+					done();
+				});
+			});
+
+			QUnit.test("Swticher is rendered and hidden on large screen size", function(assert) {
+				// Arrange
+				var done = assert.async(),
+					oDTP8 = new sap.m.DateTimePicker("DTP8", {}).placeAt("uiArea8");
+				sap.ui.getCore().applyChanges();
+				oDTP8.focus();
+				qutils.triggerEvent("click", "DTP8-icon");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				oDTP8._handleWindowResize({name: "Tablet"});
+
+				// Asssert
+				oDTP8.getAggregation("_popup").attachEventOnce("afterOpen", function() {
+					assert.ok(jQuery("#sap-ui-invisible-DTP8-PC-Switch")[0], "Swicher rendered");
+					assert.ok(jQuery("#sap-ui-invisible-DTP8-PC-Switch").is(":hidden"), "Swicher is hidden");
+					oDTP8.destroy();
+					done();
+				});
+			});
+
 			QUnit.module("initialFocusedDate property", {
 				beforeEach: function () {
 					this.oDTp = new sap.m.DateTimePicker();
@@ -325,8 +367,7 @@
 				setTimeout(function(){
 					assert.ok(jQuery("#DTP3-cal")[0], "calendar rendered");
 					assert.ok(jQuery("#DTP3-cal").is(":visible"), "calendar is visible");
-					assert.ok(jQuery("#DTP3-Sliders")[0], "Slider rendered");
-					assert.ok(jQuery("#DTP3-Sliders").is(":visible"), "Slider is visible");
+
 					var oSliders = sap.ui.getCore().byId("DTP3-Sliders");
 					assert.equal(oSliders.getAggregation("_columns").length, 3 , "DTP3: number of rendered sliders");
 
