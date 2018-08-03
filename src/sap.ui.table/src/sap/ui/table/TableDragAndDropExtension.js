@@ -4,11 +4,12 @@
 
 // Provides helper sap.ui.table.TableDragAndDropExtension.
 sap.ui.define([
-	"./TableExtension", "sap/ui/table/TableUtils", "sap/ui/core/dnd/DropPosition"
-], function(TableExtension, TableUtils, DropPosition) {
+	"./TableExtension", "sap/ui/table/TableUtils", "sap/ui/core/library"
+], function(TableExtension, TableUtils, coreLibrary) {
 	"use strict";
 
 	var SESSION_DATA_KEY_NAMESPACE = "sap.ui.table";
+	var DropPosition = coreLibrary.dnd.DropPosition;
 
 	var ExtensionHelper = {
 		/**
