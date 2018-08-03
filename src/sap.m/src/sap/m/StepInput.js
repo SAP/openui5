@@ -933,6 +933,26 @@ function(
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
 				bVerifyValue = true;
 			}
+			if (oEvent.which === KeyCodes.ARROW_UP && (oEvent.ctrlKey || oEvent.metaKey)) { // ctrl + up
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, true).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_DOWN && (oEvent.ctrlKey || oEvent.metaKey)) { // ctrl + down
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, false).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_UP && oEvent.altKey) { // alt + up
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, true).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_DOWN && oEvent.altKey) { // alt + down
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, false).displayValue);
+				bVerifyValue = true;
+			}
 			if (bVerifyValue) {
 				this._verifyValue();
 			}
