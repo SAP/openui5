@@ -30,7 +30,7 @@ sap.ui.define([
 
 				a.href = url;
 
-				return a.href;
+				return a.href.replace(/\/$/, '');
 			};
 		})();
 
