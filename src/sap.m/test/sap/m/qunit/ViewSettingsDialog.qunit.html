@@ -2955,6 +2955,89 @@
 			oVSD.destroy();
 		});
 
+		QUnit.test("ViewSettingsItem from filterItems should pass tooltip to the ListItem", function () {
+			// Arrange
+			var aResult = [],
+				oViewSettingsItem = new sap.m.ViewSettingsFilterItem({
+					text: "oFixedFilter",
+					key: "oFixedFilter",
+					tooltip: "oFixedFilter"
+				}),
+				oViewSettingsDialog = new sap.m.ViewSettingsDialog({
+				filterItems: oViewSettingsItem
+			});
+			oViewSettingsDialog._presetFilterList = oViewSettingsDialog._filterList = {
+				destroy: function () {},
+				destroyItems: function () {},
+				addItem: function (oItem) { aResult.push(oItem) }
+			};
+
+			// Act
+			oViewSettingsDialog._initFilterItems();
+
+			// Assert
+			assert.equal(aResult[0].getTooltip(), oViewSettingsItem.getTooltip(), "Tooltip from ViewSettingsItem is passed to StandardListItem");
+
+			// Cleanup
+			oViewSettingsDialog.destroy();
+		});
+
+		QUnit.test("ViewSettingsItem from presetFilterItems should pass tooltip to the ListItem", function () {
+			// Arrange
+			var aResult = [],
+				oViewSettingsItem = new sap.m.ViewSettingsFilterItem({
+					text: "oFixedFilter",
+					key: "oFixedFilter",
+					tooltip: "oFixedFilter"
+				}),
+				oViewSettingsDialog = new sap.m.ViewSettingsDialog({
+					presetFilterItems: oViewSettingsItem
+				});
+			oViewSettingsDialog._presetFilterList = oViewSettingsDialog._filterList = {
+				getId: function () {},
+				destroy: function () {},
+				destroyItems: function () {},
+				addItem: function (oItem) { aResult.push(oItem) }
+			};
+
+			// Act
+			oViewSettingsDialog._initFilterItems();
+
+			// Assert
+			assert.equal(aResult[0].getTooltip(), oViewSettingsItem.getTooltip(), "Tooltip from ViewSettingsItem is passed to StandardListItem");
+
+			// Cleanup
+			oViewSettingsDialog.destroy();
+		});
+
+		QUnit.test("ViewSettingsItem from groupItems should pass tooltip to the ListItem", function () {
+			// Arrange
+			var aResult = [],
+				oViewSettingsItem = new sap.m.ViewSettingsFilterItem({
+					text: "oFixedFilter",
+					key: "oFixedFilter",
+					tooltip: "oFixedFilter"
+				}),
+				oViewSettingsDialog = new sap.m.ViewSettingsDialog({
+					groupItems: oViewSettingsItem
+				});
+			oViewSettingsDialog._groupList = oViewSettingsDialog._ariaGroupListInvisibleText = {
+				getId: function () {},
+				destroy: function () {},
+				destroyItems: function () {},
+				addItem: function (oItem) { aResult.push(oItem) }
+			};
+
+			// Act
+			oViewSettingsDialog._initGroupItems();
+
+			// Assert
+			assert.equal(aResult[0].getTooltip(), oViewSettingsItem.getTooltip(), "Tooltip from ViewSettingsItem is passed to StandardListItem");
+
+			// Cleanup
+			oViewSettingsDialog.destroy();
+		});
+
 		QUnit.module("Accessibility", {
 			beforeEach : function () {
 				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
