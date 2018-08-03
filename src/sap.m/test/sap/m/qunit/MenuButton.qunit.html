@@ -776,6 +776,26 @@
 			mb.destroy();
 			mb = null;
 		});
+
+		QUnit.test("onThemeChanged does not throw exception if it is called before the textButton is placed in the DOM", function (assert) {
+			// Arrange
+			var oMenuButton = new sap.m.MenuButton({
+				buttonMode: "Split"
+			}),
+			oNeedsWidthStub = this.stub(oMenuButton, "_needsWidth", function () { return true; }),
+			oGetDomRefStub = this.stub(oMenuButton, "getDomRef", function () { return document.createElement("DIV"); });
+
+			// Act
+			oMenuButton.onThemeChanged();
+
+			// Assert
+			assert.ok(true, "There is no exception thrown");
+
+			// Clenaup
+			oNeedsWidthStub.restore();
+			oGetDomRefStub.restore();
+			oMenuButton.destroy();
+		})
 	</script>
 </head>
 <body class="sapUiBody" role="application">

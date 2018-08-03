@@ -244,7 +244,7 @@ sap.ui.define([
 
 		MenuButton.prototype.onThemeChanged = function(oEvent) {
 			//remember the initial width of the text button and hardcode it in the dom
-			if (this._needsWidth() && this.getDomRef() && !this._iInitialTextBtnContentWidth) {
+			if (this._needsWidth() && this.getDomRef() && !this._iInitialTextBtnContentWidth && this._getTextBtnContentDomRef()) {
 				this._getTextBtnContentDomRef().style.width = this._getInitialTextBtnWidth() + 'px';
 			}
 		};
