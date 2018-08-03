@@ -33,6 +33,9 @@
 					<core:CustomData
 						key="remember"
 						value="true" />
+					<core:CustomData
+						key="showClearButton"
+						value="true" />
 				</customData>
 			</Button>
 			<Button
@@ -70,6 +73,16 @@
 						value="false" />
 				</customData>
 			</Button>
+			<Input
+				id="productInput"
+				type="Text"
+				value="Astro Phone 6"
+				placeholder="Enter Product ..."
+				showValueHelp="true"
+				valueHelpOnly="true"
+				valueHelpRequest="handleValueHelp"
+				class="sapUiSmallMarginBottom"
+				width="15rem"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
