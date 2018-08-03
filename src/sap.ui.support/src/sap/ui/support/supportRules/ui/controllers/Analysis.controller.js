@@ -51,8 +51,10 @@ sap.ui.define([
 			this.bAdditionalRulesetsLoaded = false;
 			this.oApplicationinfo = {};
 
+			/* eslint-disable no-new */
 			//attach adapter for custom selection
 			new CustomJSONListSelection(this.treeTable, true, "id");
+			/* eslint-enable no-new */
 
 			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
 				if (!this.bAdditionalViewLoaded) {
