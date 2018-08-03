@@ -68,6 +68,16 @@
 			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
 				.title-hover(fade(@sapUiObjectHeaderBackground, 60%));
 			}
+
+			.sapFDynamicPageTitle.sapFDynamicPageTitleSolid:hover,
+			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle.sapFDynamicPageTitleSolid {
+				.title-hover(@sapUiObjectHeaderBackground);
+			}
+
+			.sapFDynamicPageTitle.sapFDynamicPageTitleTransparent:hover,
+			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle.sapFDynamicPageTitleTransparent {
+				.title-hover(transparent);
+			}
 		}
 	}
 }
