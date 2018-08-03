@@ -1673,7 +1673,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the selection mode. The current selection is lost.
-	 * @param {string} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
+	 * @param {sap.ui.table.SelectionMode} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
 	 * @public
 	 * @returns a reference on the table for chaining
 	 */
