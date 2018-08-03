@@ -145,13 +145,20 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 
 			return new Promise(function(resolve, reject) {
 				try {
-					sap.ui.require([sActConfigPath], function(ProviderConstructor){
-						var oProvider = new ProviderConstructor();
-						resolve({
-							"domain" : sDomain,
-							"provider" : oProvider
-						});
-					});
+					sap.ui.require([sActConfigPath],
+						function(ProviderConstructor){
+							var oProvider = new ProviderConstructor();
+							resolve({
+								"domain" : sDomain,
+								"provider" : oProvider
+							});
+						},
+						function(oError) {
+							Log.error(oError);
+							resolve(); // recover from error, but deliver no information
+							return;
+						}
+					);
 				} catch (oError) {
 					Log.error(oError);
 					resolve(); // recover from error, but deliver no information

@@ -1,18 +1,18 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery",
 	"sap/base/util/LoaderExtensions"
 ], function(
 	Cache,
 	LrepConnector,
 	Utils,
 	sinon,
+	jQuery,
 	LoaderExtensions
 ) {
 	"use strict";
@@ -53,7 +53,7 @@ sap.ui.require([
 			var that = this;
 			var sComponentName = "test";
 
-			sandbox.stub(this.oLrepConnector, 'loadChanges', createLoadChangesResponse);
+			sandbox.stub(this.oLrepConnector, 'loadChanges').callsFake(createLoadChangesResponse);
 
 			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
 				var mSwitches = Cache.getSwitches();
@@ -123,7 +123,7 @@ sap.ui.require([
 			var that = this;
 			var sComponentName = "test";
 
-			sandbox.stub(this.oLrepConnector, 'loadChanges', createLoadChangesErrorResponse);
+			sandbox.stub(this.oLrepConnector, 'loadChanges').callsFake(createLoadChangesErrorResponse);
 
 			return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName}).then(function() {
 				return Cache.getChangesFillingCache(that.oLrepConnector, {name: sComponentName});
@@ -1096,5 +1096,7 @@ sap.ui.require([
 		);
 	});
 
-	QUnit.start();
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
 });

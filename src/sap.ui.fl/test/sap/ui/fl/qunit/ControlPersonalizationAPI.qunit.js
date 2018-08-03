@@ -1,16 +1,14 @@
-/* global sinon QUnit */
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/ControlPersonalizationAPI",
-	"sap/ui/core/Component"
+	"sap/ui/core/Component",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	VariantController,
 	VariantModel,
@@ -18,11 +16,10 @@ sap.ui.require([
 	Utils,
 	Manifest,
 	ControlPersonalizationAPI,
-	Component
+	Component,
+	sinon
 ) {
 	"use strict";
-	sinon.config.useFakeTimers = false;
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -211,5 +208,9 @@ sap.ui.require([
 				function (oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or component", oError.message);
 				}.bind(this));
+	});
+
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
 	});
 });

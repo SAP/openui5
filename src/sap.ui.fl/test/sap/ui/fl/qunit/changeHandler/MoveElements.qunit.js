@@ -1,18 +1,32 @@
-/*global QUnit,sinon*/
+/* global QUnit*/
 
-jQuery.sap.require("sap.ui.fl.changeHandler.MoveElements");
-jQuery.sap.require("sap.m.Button");
-jQuery.sap.require("sap.m.ObjectAttribute");
-jQuery.sap.require("sap.m.ObjectHeader");
-jQuery.sap.require("sap.ui.layout.VerticalLayout");
-jQuery.sap.require("sap.ui.fl.Change");
-jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
-jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
-
-(function(MoveElementsHandler, Change, JsControlTreeModifier, XmlTreeModifier) {
+sap.ui.define([
+	"sap/ui/fl/changeHandler/MoveElements",
+	"sap/ui/fl/Utils",
+	"sap/m/Button",
+	"sap/m/ObjectAttribute",
+	"sap/m/ObjectHeader",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/fl/Change",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
+],
+function(
+	MoveElements,
+	Utils,
+	Button,
+	ObjectAttribute,
+	ObjectHeader,
+	VerticalLayout,
+	Change,
+	JsControlTreeModifier,
+	XmlTreeModifier,
+	jQuery,
+	sinon
+) {
 	"use strict";
-
-	jQuery.sap.registerModulePath("testComponent", "../testComponent");
 
 	var sandbox = sinon.sandbox.create();
 	var oComponent = sap.ui.getCore().createComponent({
@@ -32,20 +46,20 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			// -- -- -- -- ObjectAttribute2
 			// -- -- Button
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			this.myObjectAttributeId = "myObjectAttribute";
 			this.myObjectAttributeId2 = "myObjectAttributeId2";
 			this.myLayoutId = "myLayout";
 
 
-			this.oButton = new sap.m.Button(oComponent.createId("myButton"));
-			this.oObjectAttribute = new sap.m.ObjectAttribute(oComponent.createId(this.myObjectAttributeId));
-			this.oObjectAttribute2 = new sap.m.ObjectAttribute(oComponent.createId(this.myObjectAttributeId2));
-			this.oObjectHeader = new sap.m.ObjectHeader(oComponent.createId("myObjectHeader") ,{
+			this.oButton = new Button(oComponent.createId("myButton"));
+			this.oObjectAttribute = new ObjectAttribute(oComponent.createId(this.myObjectAttributeId));
+			this.oObjectAttribute2 = new ObjectAttribute(oComponent.createId(this.myObjectAttributeId2));
+			this.oObjectHeader = new ObjectHeader(oComponent.createId("myObjectHeader") ,{
 				attributes : [this.oObjectAttribute, this.oObjectAttribute2]
 			});
-			this.oLayout = new sap.ui.layout.VerticalLayout(oComponent.createId(this.myLayoutId) ,{
+			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId) ,{
 				content : [this.oObjectHeader, this.oButton]
 			});
 
@@ -182,7 +196,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			content : this.mSingleMoveChangeContentWithLocalId
 		});
 
-		assert.ok(MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
+		assert.ok(MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
 
 		assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
 		assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is still in the header");
@@ -197,7 +211,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			content : this.mSingleMoveChangeContentWithGlobalId
 		});
 
-		assert.ok(MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
+		assert.ok(MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
 
 		assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
 		assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is still in the header");
@@ -212,7 +226,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			content : this.mMultiMoveChangeContentWithLocalId
 		});
 
-		assert.ok(MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
+		assert.ok(MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
 
 		assert.equal(this.oObjectHeader.getAttributes().length, 0, "both object attributes removed from the header");
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
@@ -227,7 +241,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			content : this.mMultiMoveChangeContentWithGlobalId
 		});
 
-		assert.ok(MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
+		assert.ok(MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
 
 		assert.equal(this.oObjectHeader.getAttributes().length, 0, "both object attributes removed from the header");
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
@@ -245,7 +259,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 		});
 
 		assert.throws(function() {
-			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
+			MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("No source aggregation supplied via selector for move"), "missing source aggregation error captured");
 
 		oChange = new Change({
@@ -263,7 +277,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 		});
 
 		assert.throws(function() {
-			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
+			MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("No target supplied for move"), "missing target error captured");
 
 		oChange = new Change({
@@ -286,7 +300,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 		});
 
 		assert.throws(function() {
-			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
+			MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("Move target parent not found"), "unkown target error captured");
 
 		oChange = new Change({
@@ -308,7 +322,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 		});
 
 		assert.throws(function() {
-			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
+			MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("No target aggregation supplied for move"), "missing target aggregation error captured");
 
 		oChange = new Change({
@@ -324,7 +338,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 		});
 
 		assert.throws(function() {
-			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
+			MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("Change format invalid"), "missing moved elements error captured");
 
 		oChange = new Change({
@@ -346,7 +360,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 		});
 
 		assert.throws(function() {
-			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
+			MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("Missing targetIndex for element with id '" + this.oObjectAttribute.getId()
 				+ "' in movedElements supplied"), "missing target index error captured");
 	});
@@ -357,7 +371,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			content : this.mSingleMoveChangeContentWithLocalId
 		});
 
-		assert.ok(MoveElementsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, appComponent: oComponent, view: this.oXmlView}));
+		assert.ok(MoveElements.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, appComponent: oComponent, view: this.oXmlView}));
 
 		assert.equal(this.oXmlObjectHeader.childNodes.length, 1, "object attribute is removed from the header");
 		assert.equal(this.oXmlObjectHeader.childNodes[0].getAttribute("id"), this.oObjectAttribute2.getId(), "object attribute 2 is still in the header");
@@ -372,7 +386,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			content : this.mSingleMoveChangeContentWithGlobalId
 		});
 
-		assert.ok(MoveElementsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, view: this.oXmlView}));
+		assert.ok(MoveElements.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, view: this.oXmlView}));
 
 		assert.equal(this.oXmlObjectHeader.childNodes.length, 1, "object attribute is removed from the header");
 		assert.equal(this.oXmlObjectHeader.childNodes[0].getAttribute("id"), this.oObjectAttribute2.getId(), "object attribute 2 is still in the header");
@@ -387,7 +401,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			content : this.mMultiMoveChangeContentWithLocalId
 		});
 
-		assert.ok(MoveElementsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, appComponent: oComponent, view:  this.oXmlView}));
+		assert.ok(MoveElements.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, appComponent: oComponent, view:  this.oXmlView}));
 
 		assert.equal(this.oXmlObjectHeader.childNodes.length, 0, "both object attributes removed from the header");
 		assert.equal(this.oXmlLayout.childNodes[0].childNodes[0].getAttribute("id"), this.oObjectHeader.getId(), "object header is still at 1. position");
@@ -402,7 +416,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 			content : this.mMultiMoveChangeContentWithGlobalId
 		});
 
-		assert.ok(MoveElementsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, view:  this.oXmlView}));
+		assert.ok(MoveElements.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, view:  this.oXmlView}));
 
 		assert.equal(this.oXmlObjectHeader.childNodes.length, 0, "both object attributes removed from the header");
 		assert.equal(this.oXmlLayout.childNodes[0].childNodes[0].getAttribute("id"), this.oObjectHeader.getId(), "object header is still at 1. position");
@@ -410,4 +424,8 @@ jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 		assert.equal(this.oXmlLayout.childNodes[0].childNodes[2].getAttribute("id"), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
 		assert.equal(this.oXmlLayout.childNodes[0].childNodes[3].getAttribute("id"), this.oObjectAttribute2.getId(), "object attribute 2 is inserted at the 4. position");
 	});
-}(sap.ui.fl.changeHandler.MoveElements, sap.ui.fl.Change, sap.ui.core.util.reflection.JsControlTreeModifier, sap.ui.core.util.reflection.XmlTreeModifier));
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
+	});
+});

@@ -1,32 +1,26 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
 sap.ui.require([
 	"sap/ui/fl/PreprocessorImpl",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Cache",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	PreprocessorImpl,
 	Component,
 	ComponentContainer,
 	ManagedObject,
-	FlexControllerFactory,
 	Cache,
-	ChangePersistenceFactory,
-	ChangePersistence,
 	Utils,
 	Log,
-	sinon
+	sinon,
+	jQuery
 ) {
 	"use strict";
 
@@ -251,5 +245,7 @@ function(
 		});
 	});
 
-	QUnit.start();
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
 });

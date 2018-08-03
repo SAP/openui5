@@ -1,16 +1,16 @@
 /*global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/changeHandler/AddXML',
-	'sap/ui/fl/Change',
-	'sap/ui/fl/changeHandler/JsControlTreeModifier',
-	'sap/ui/fl/changeHandler/XmlTreeModifier',
-	'sap/m/HBox',
-	'sap/m/Button'
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/changeHandler/AddXML",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/fl/changeHandler/XmlTreeModifier",
+	"sap/m/HBox",
+	"sap/m/Button"
 ], function(
+	jQuery,
 	Utils,
 	AddXML,
 	Change,
@@ -19,8 +19,7 @@ sap.ui.require([
 	HBox,
 	Button
 ) {
-	'use strict';
-	QUnit.start();
+	"use strict";
 
 	var oFragment = Utils.stringToAscii('<Button xmlns="sap.m" id="button" text="Hello World"></Button>');
 	var oFragmentInvalid = Utils.stringToAscii('<ManagedObject xmlns="sap.ui.base" id="managedObject"></ManagedObject>');
@@ -278,7 +277,6 @@ sap.ui.require([
 		beforeEach : function() {
 			this.oChangeHandler = AddXML;
 
-			jQuery.sap.registerModulePath("testComponent", "../testComponent");
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "testComponent",
 				id: "testComponent",
@@ -445,5 +443,9 @@ sap.ui.require([
 
 			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
 		});
+	});
+
+	QUnit.done(function() {
+		jQuery("#qunit-fixture").hide();
 	});
 });

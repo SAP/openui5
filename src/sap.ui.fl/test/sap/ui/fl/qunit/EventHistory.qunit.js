@@ -1,9 +1,16 @@
-/*global QUnit, sinon*/
-jQuery.sap.require("sap.ui.fl.EventHistory");
+/*global QUnit*/
 
-(function(QUnit, sinon, EventHistory) {
+sap.ui.define([
+	"sap/ui/fl/EventHistory",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
+], function(
+	EventHistory,
+	sinon,
+	jQuery
+) {
 	"use strict";
-	//sinon.config.useFakeTimers = false;
+
 	var oSubscribeStub;
 	var oUnsubscribeStub;
 
@@ -120,4 +127,8 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		assert.equal(aItemsAnother.length, 0);
 		assert.equal(oUnsubscribeStub.callCount, 2);
 	});
-}(QUnit, sinon, sap.ui.fl.EventHistory));
+
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
+});

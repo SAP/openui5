@@ -1,4 +1,5 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
+
 sap.ui.require([
 		"sap/ui/fl/Persistence",
 		"sap/ui/fl/Utils",
@@ -6,10 +7,22 @@ sap.ui.require([
 		"sap/ui/fl/DefaultVariant",
 		"sap/ui/fl/LrepConnector",
 		"sap/ui/core/Control",
-		"sap/ui/fl/Cache"
+		"sap/ui/fl/Cache",
+		"sap/ui/thirdparty/sinon-4",
+		"sap/ui/thirdparty/jquery"
 	],
-function( Persistence, utils, Change, defaultVariant, LrepConnector, Control, Cache) {
-	'use strict';
+function(
+	Persistence,
+	utils,
+	Change,
+	defaultVariant,
+	LrepConnector,
+	Control,
+	Cache,
+	sinon,
+	jQuery
+) {
+	"use strict";
 
 	var oGetLayerStub;
 	var oControl;
@@ -94,8 +107,6 @@ function( Persistence, utils, Change, defaultVariant, LrepConnector, Control, Ca
 		},
 		componentClassName: "smartFilterBar.Component"
 	};
-
-	sinon.config.useFakeTimers = false;
 
 	QUnit.module("sap.ui.fl.Persistence", {
 		beforeEach: function() {
@@ -399,4 +410,7 @@ function( Persistence, utils, Change, defaultVariant, LrepConnector, Control, Ca
 		assert.strictEqual(sIsVariantDownport, false);
 	});
 
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
 });

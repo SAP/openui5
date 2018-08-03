@@ -1,12 +1,13 @@
 /*global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	XmlPreprocessorImpl,
@@ -14,9 +15,11 @@ function(
 	ChangePersistence,
 	FlexControllerFactory,
 	Utils,
-	sinon
+	sinon,
+	jQuery
 ) {
 	"use strict";
+
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given sap.ui.fl.XmlPreprocessorImpl", {
@@ -263,4 +266,7 @@ function(
 		assert.deepEqual(oProcessedView, oView, "the original view is returned");
 	});
 
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
 });

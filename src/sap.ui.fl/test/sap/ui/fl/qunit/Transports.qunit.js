@@ -1,14 +1,19 @@
-/*global QUnit, sinon*/
-(function() {
-	'use strict';
+/*global QUnit*/
 
-	jQuery.sap.require("sap.ui.fl.transport.Transports");
-	jQuery.sap.require("sap.ui.fl.LrepConnector");
-	sinon.config.useFakeTimers = false;
+sap.ui.define([
+	"sap/ui/fl/transport/Transports",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
+], function(
+	Transports,
+	sinon,
+	jQuery
+) {
+	"use strict";
 
 	QUnit.module("sap.ui.fl.transport.Transports", {
 		beforeEach: function() {
-			this.oTransports = new sap.ui.fl.transport.Transports();
+			this.oTransports = new Transports();
 			this.oServer = sinon.fakeServer.create();
 		},
 		afterEach: function() {
@@ -87,4 +92,7 @@
 		});
 	});
 
-}());
+	QUnit.done(function () {
+		jQuery('#qunit-fixture').hide();
+	});
+});
