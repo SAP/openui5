@@ -156,7 +156,7 @@
 
 	QUnit[partial]("Configuration", function(assert) {
 		// ensure that the partial debug mode is configured with the expected filter
-		assert.equal(window['sap-ui-debug'], 'sap/m/ListBase,modules/debug-mode/', "partial debug mode should be configured with the expected filter");
+		assert.equal(window['sap-ui-debug'], 'sap/m/ListBase,fixture/debug-mode/', "partial debug mode should be configured with the expected filter");
 	});
 
 	QUnit[partial]("Bootstrap", function(assert) {
@@ -176,7 +176,7 @@
 
 	QUnit[partial]("Application Test Code", function(assert) {
 		var done = assert.async();
-		sap.ui.require(['fixture/debug-mode/minified-module', 'modules/debug-mode/non-minified-module'], function(minifiedModule,nonMinifiedModule) {
+		sap.ui.require(['fixture/debug-mode/minified-module', 'fixture/debug-mode/non-minified-module'], function(minifiedModule,nonMinifiedModule) {
 			assert.deepEqual(minifiedModule, {}, "minified-module should have expected export");
 			assert.deepEqual(nonMinifiedModule, {}, "non-minified-module should have expected export");
 			assert.ok(hasRequest('fixture/debug-mode/minified-module-dbg.js'),

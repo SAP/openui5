@@ -29,7 +29,7 @@ sap.ui.define(function() {
 			},
 			DebugModePartial: {
 				group: "DebugMode",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/DebugMode.qunit.html?sap-ui-debug=sap%2Fm%2FListBase,modules%2Fdebug-mode%2F",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/DebugMode.qunit.html?sap-ui-debug=sap%2Fm%2FListBase,fixture%2Fdebug-mode%2F",
 				title: "Test Page for Debug Mode ({{mode}})",
 				ui5: {
 					libs: "sap.m"
