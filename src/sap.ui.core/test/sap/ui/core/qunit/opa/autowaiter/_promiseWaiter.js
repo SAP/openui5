@@ -1,6 +1,7 @@
+/*global QUnit, sinon */
 sap.ui.define([
 	"jquery.sap.global",
-	"unitTests/utils/loggerInterceptor",
+	"../utils/loggerInterceptor",
 	"sap/ui/test/Opa5"
 ], function ($, loggerInterceptor, Opa5) {
 	"use strict";

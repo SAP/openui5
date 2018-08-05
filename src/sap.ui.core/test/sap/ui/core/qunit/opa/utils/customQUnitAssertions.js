@@ -1,10 +1,11 @@
+/*global QUnit */
 (function () {
 	"use strict";
 
 	function contains (sStringValue, vStringOrRegex) {
 		var bContains = false;
 
-		switch ($.type(vStringOrRegex)) {
+		switch (jQuery.type(vStringOrRegex)) {
 			case "string":
 				bContains = sStringValue.indexOf(vStringOrRegex) !== -1;
 				break;
@@ -12,7 +13,7 @@
 				bContains = vStringOrRegex.test(sStringValue);
 				break;
 			default:
-				throw new Error("Unsupported type '" +  vStringOrRegex + "' needs to be string or Regex")
+				throw new Error("Unsupported type '" +  vStringOrRegex + "' needs to be string or Regex");
 		}
 
 		return bContains;

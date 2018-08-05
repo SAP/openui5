@@ -1,6 +1,7 @@
+/*global QUnit, sinon */
 sap.ui.define([
 	"jquery.sap.global",
-	"unitTests/utils/loggerInterceptor",
+	"../utils/loggerInterceptor",
 	"sap/ui/test/autowaiter/_timeoutWaiter"
 ], function ($, loggerInterceptor,timeoutWaiter) {
 	"use strict";
@@ -39,7 +40,7 @@ sap.ui.define([
 
 		QUnit.test("Should return that there are no pending Timeouts if a timeout has finished", function (assert) {
 			var fnDone = assert.async();
-			var iID = fnSetFunction(function () {
+			fnSetFunction(function () {
 				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
 				fnDone();
 			}, 100);

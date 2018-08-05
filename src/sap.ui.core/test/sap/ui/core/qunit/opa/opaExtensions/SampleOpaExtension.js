@@ -46,7 +46,7 @@ sap.ui.define([
 
           return deferred.promise();
         }
-      }
+      };
     }
   });
 

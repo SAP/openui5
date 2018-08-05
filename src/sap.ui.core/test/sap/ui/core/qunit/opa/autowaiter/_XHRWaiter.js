@@ -1,10 +1,12 @@
+/*global QUnit, sinon */
 sap.ui.define([
-	"unitTests/utils/loggerInterceptor",
+	"../utils/loggerInterceptor",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/Device",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5"
 ], function (loggerInterceptor, MockServer, Device, opaTest, Opa5) {
+	"use strict";
 
 	jQuery.sap.unloadResources("sap/ui/test/autowaiter/_XHRWaiter.js", false, true, true);
 	var aLoggers = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._XHRWaiter");
@@ -17,7 +19,7 @@ sap.ui.define([
 					fnResolve();
 				}
 			});
-		})
+		});
 	}
 
 	function createAndSendXHR (sUrl) {
@@ -257,14 +259,14 @@ sap.ui.define([
 		var oFakeIFrameXHR;
 		var iFrameXHRWaiter;
 
-		oOpa.iStartMyAppInAFrame("../../testdata/miniUI5Site.html");
+		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/testdata/miniUI5Site.html");
 
 		oOpa.waitFor({
 			viewName: "myView",
 			id: "myButton",
 			actions: function () {
 				var oIFrameWindow = Opa5.getWindow();
-				iFrameXHRWaiter = oIFrameWindow.sap.ui.test.autowaiter._XHRWaiter
+				iFrameXHRWaiter = oIFrameWindow.sap.ui.test.autowaiter._XHRWaiter;
 				Opa5.assert.ok(!iFrameXHRWaiter.hasPending(), "There are no open XHRs initially");
 
 				oFakeIFrameXHR = oIFrameWindow.sinon.useFakeXMLHttpRequest();
@@ -363,7 +365,7 @@ sap.ui.define([
 				autoRespondAfter: 30
 			});
 
-			oMockServer.simulate("../../../testdata/annotations/metadata.xml", {
+			oMockServer.simulate("test-resources/sap/ui/core/qunit/testdata/annotations/metadata.xml", {
 				bGenerateMissingMockData : true
 			});
 

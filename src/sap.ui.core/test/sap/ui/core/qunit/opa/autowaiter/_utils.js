@@ -1,9 +1,11 @@
+/*global QUnit, sinon */
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/Device",
 	"sap/ui/test/autowaiter/_utils",
-	"sap/ui/test/opaQunit"
-], function ($, Device, _utils) {
+	"sap/ui/thirdparty/URI",
+	"sap/ui/test/opaQunit" // only used implicitly
+], function ($, Device, _utils, URI) {
 	"use strict";
 
 	QUnit.module("AutoWaiter - utils");

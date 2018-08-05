@@ -1,3 +1,4 @@
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/autowaiter/_autoWaiterLogCollector"
