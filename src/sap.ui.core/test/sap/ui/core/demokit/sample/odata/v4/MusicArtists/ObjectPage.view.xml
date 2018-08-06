@@ -1,0 +1,87 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.MusicArtists.ObjectPage"
+	height="100%"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page id="objectpage" navButtonPress="onBack" showHeader="true" showNavButton="true">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<f:Form editable="true" id="objectPageForm">
+					<f:title>
+						<core:Title text="Artist Details" />
+					</f:title>
+					<f:layout>
+						<f:ResponsiveGridLayout
+							adjustLabelSpan="false"
+							columnsXL="1"
+							columnsL="1"
+							columnsM="1"
+							emptySpanXL="4"
+							emptySpanL="4"
+							emptySpanM="4"
+							emptySpanS="0"
+							labelSpanXL="3"
+							labelSpanL="3"
+							labelSpanM="3"
+							labelSpanS="12"
+							singleContainerFullSize="false" />
+					</f:layout>
+					<f:formContainers>
+						<f:FormContainer>
+							<f:formElements>
+								<f:FormElement label="Name">
+									<f:fields>
+										<Input id="name" editable="{ui-op>/bEditMode}"
+											value="{Name}" />
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Country of Origin">
+									<f:fields>
+										<Input id="country" editable="{ui-op>/bEditMode}"
+											value="{CountryOfOrigin}" />
+										<Input id="country_text" editable="false"
+											value="{CountryOfOrigin_Text}" />
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Region of Origin">
+									<f:fields>
+										<Input id="region" editable="{ui-op>/bEditMode}"
+											value="{RegionOfOrigin}" />
+										<Input id="region_text" editable="false"
+											value="{RegionOfOrigin_Text}" />
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Founding Year">
+									<f:fields>
+										<Input id="founding" editable="{ui-op>/bEditMode}"
+											value="{FoundingYear}" />
+									</f:fields>
+								</f:FormElement>
+								<f:FormElement label="Breakup Year">
+									<f:fields>
+										<Input id="breakup" editable="{ui-op>/bEditMode}"
+											value="{BreakupYear}" />
+									</f:fields>
+								</f:FormElement>
+							</f:formElements>
+						</f:FormContainer>
+					</f:formContainers>
+				</f:Form>
+			</VBox>
+		</content>
+		<footer>
+			<Bar>
+				<contentRight>
+					<Button enabled="{= !${ui-op>/bEditMode}}" id="edit" press="onEditPress"
+						text="Edit" />
+					<Button enabled="{ui-op>/bEditMode}" id="discard" press="onDiscardPress"
+						text="Discard" />
+					<Button enabled="{ui-op>/bEditMode}" id="save" press="onSavePress"
+						text="Save" />
+				</contentRight>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

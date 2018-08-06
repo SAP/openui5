@@ -185,9 +185,9 @@ sap.ui.define([
 		 * POST requests ending on "/$batch" are handled automatically. They are expected to be
 		 * multipart-mime requests where each part is a DELETE, GET, PATCH or POST request.
 		 * The response has a multipart-mime message containing responses to these inner requests.
-		 * If an inner request is not a DELETE, PATCH or POST with any URL,
-		 * a GET and its URL is not found in the fixture, or its message is not JSON, it is
-		 * responded with an error code. The batch itself is always responded with code 200.
+		 * If an inner request is not a DELETE or a PATCH, a POST or a GET and its URL is not found
+		 * in the fixture, or its message is not JSON, it is responded with an error code.
+		 * The batch itself is always responded with code 200.
 		 *
 		 * All other POST requests are responded with code 200, the body is simply echoed.
 		 *
@@ -252,7 +252,7 @@ sap.ui.define([
 							+ "Content-Length: 0\r\n"
 							+ convertToString(getVersionHeader(oRequestHeaders))
 							+ "\r\n\r\n";
-					} else if (aMatches[1] === "POST" || aMatches[1] === "PATCH") {
+					} else if (aMatches[1] === "PATCH") {
 						sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
 							+ convertToString(getVersionHeader(oRequestHeaders))
 							+ "\r\n"
@@ -285,6 +285,11 @@ sap.ui.define([
 							} catch (e) {
 								sResponse = error(sRequestLine, 500, "Invalid JSON");
 							}
+						} else if (aMatches[1] === "POST"){
+							sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
+								+ convertToString(getVersionHeader(oRequestHeaders))
+								+ "\r\n"
+								+ message(sRequestPart);
 						} else {
 							sResponse = notFound(sRequestLine);
 						}
