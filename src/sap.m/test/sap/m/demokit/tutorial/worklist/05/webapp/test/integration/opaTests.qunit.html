@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Integration tests for Worklist</title>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-		<meta charset="UTF-8">
+<head>
+	<title>Integration tests for Worklist</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta charset="UTF-8">
 
-		<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{
-				"mycompany.myapp.MyWorklistApp": "../../"
-			}'
-			data-sap-ui-preload="async">
-		</script>
+	<script id="sap-ui-bootstrap"
+		src="../../../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"mycompany.myapp.MyWorklistApp": "../../"
+		}'
+		data-sap-ui-preload="async">
+	</script>
 
-		<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
-		<script src="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
-		<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-		<script>
-			/* global QUnit */
+	<script>
+		/* global QUnit */
 
-			QUnit.config.autostart = false;
+		QUnit.config.autostart = false;
 
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"mycompany/myapp/MyWorklistApp/test/integration/AllJourneys"
-				], function() {
-					QUnit.start();
-				});
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"mycompany/myapp/MyWorklistApp/test/integration/AllJourneys"
+			], function() {
+				QUnit.start();
 			});
-		</script>
-
-	</head>
-	<body>
-		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
-	</body>
+		});
+	</script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
 </html>
