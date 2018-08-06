@@ -1003,6 +1003,7 @@ function(
 				press: function() {
 					this._removeSelection();
 					this._updateSelectionIndicator();
+					this._oDialog.focus();
 				}.bind(this)
 			});
 		}
