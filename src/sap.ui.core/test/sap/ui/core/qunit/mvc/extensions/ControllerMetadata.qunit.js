@@ -11,7 +11,7 @@ sap.ui.define([
 	// create content div
 	var oDIV = document.createElement("div");
 	oDIV.id = "content";
-	document.body.append(oDIV);
+	document.body.appendChild(oDIV);
 
 	var aPublicControllerMethods = [
 		/*public by every Controller*/
