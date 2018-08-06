@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-	"sap/ui/support/supportRules/ui/models/Documentation"
-], function (BaseController, SelectionUtils, PresetsUtils, Fragment, MessageToast, MessageBox, Documentation) {
+	"sap/ui/support/supportRules/ui/models/Documentation",
+	"sap/ui/core/ValueState"
+], function (BaseController, SelectionUtils, PresetsUtils, Fragment, MessageToast, MessageBox, Documentation, ValueState) {
 	"use strict";
 
 	/**
@@ -200,7 +201,7 @@ sap.ui.define([
 	PresetsController.prototype.onImportFileLoaded = function (oEvent) {
 		var oFileData = this._tryParseImportFile(oEvent.target.result);
 		if (oFileData) {
-			this._clearImportFileError();
+			this._clearImportErrors();
 
 			// parse the date exported value, so it can be displayed
 			if (oFileData.dateExported) {
@@ -208,7 +209,10 @@ sap.ui.define([
 			}
 
 			this.oModel.setProperty("/currentImportData", oFileData);
-			Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "importBtn").setEnabled(true);
+
+			if (!this._isAlreadyImported(oFileData.id)) {
+				Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "importBtn").setEnabled(true);
+			}
 		}
 	};
 
@@ -223,25 +227,27 @@ sap.ui.define([
 	 * Handles the import of the current file
 	 */
 	PresetsController.prototype.onImportFinalizePress = function () {
-		var oImportData = this.oModel.getProperty("/currentImportData");
+		var oImportData = this.oModel.getProperty("/currentImportData"),
+			sMessage = "";
 
 		this._importPreset(oImportData);
 
-		var successMessage = "The Rule Preset \"" + oImportData.title + "\" was successfully imported.";
+		sMessage = "The Rule Preset \"" + oImportData.title + "\" was successfully imported.";
 		if (!PresetsUtils.isPersistingAllowed()) {
-			successMessage += " This import can be stored for your next visit if you check "
+			sMessage += " This import can be stored for your next visit if you check "
 				+ "\"I agree to use local storage persistency\" from Support Assistant settings.";
 		}
-		MessageToast.show(successMessage, {width: "50%"});
 
 		this._oImportDialog.close();
+
+		MessageToast.show(sMessage, { width: "50%" });
 	};
 
 	/**
 	 * Handles the closing of the import dialog. Resets the form
 	 */
 	PresetsController.prototype.onImportDialogClose = function () {
-		this._clearImportFileError();
+		this._clearImportErrors();
 		Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "fileUpload").setValue(null);
 		this.oModel.setProperty("/currentImportData", null);
 		Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "importBtn").setEnabled(false);
@@ -260,6 +266,7 @@ sap.ui.define([
 		}
 
 		this.oModel.setProperty("/currentExportData", {
+			"id": oCurrentPreset.id,
 			"title": oCurrentPreset.title,
 			"descriptionValue": oCurrentPreset.description, // there is an issue on build if we use ${description}
 			"dateExportedForDisplay": new Date(), // the current date is shown as export date
@@ -272,10 +279,118 @@ sap.ui.define([
 				"sap.ui.support.supportRules.ui.views.PresetExport",
 				this
 			);
+			this._oExportDialog.attachAfterClose(function () {
+				this._clearValidationState();
+			}.bind(this));
 			this.oView.addDependent(this._oExportDialog);
+
+			this.initializeExportValidations();
 		}
 
 		this._oExportDialog.open();
+	};
+
+	/**
+	 * Initialized the export dialog's validations.
+	 */
+	PresetsController.prototype.initializeExportValidations = function () {
+		var aInputs = this._getInputsToValidate();
+
+		aInputs.forEach(function (oInput) {
+			Fragment.byId(Constants.EXPORT_FRAGMENT_ID, oInput.id).attachChange(function (oEvent) {
+				this._changeHandler(oEvent, oInput.validateMessage);
+			}.bind(this));
+		}, this);
+	};
+
+	/**
+	 * Handle change of export input
+	 * @param {sap.ui.base.Event} oEvent The change event
+	 * @param {string} sValidateMessage Validation message for when the value exists but is not valid
+	 */
+	PresetsController.prototype._changeHandler = function (oEvent, sValidateMessage) {
+		this._validateInput(oEvent.getSource(), sValidateMessage);
+	};
+
+	/**
+	 * Validate all inputs
+	 * @return {boolean} True if form is valid
+	 */
+	PresetsController.prototype._validateForm = function () {
+		var bResult = true,
+			aInputs = this._getInputsToValidate();
+
+		aInputs.forEach(function (oInputValidationInfo) {
+			var oInput = Fragment.byId(Constants.EXPORT_FRAGMENT_ID, oInputValidationInfo.id);
+			if (!this._validateInput(oInput, oInputValidationInfo.validateMessage)) {
+				bResult = false;
+			}
+		}, this);
+
+		return bResult;
+	};
+
+	/**
+	 * Validate the given export input
+	 * @param {sap.m.Input} oInput The input to validated
+	 * @param {string} sValidateMessage The error message
+	 * @return {boolean} True if the input is valid
+	 */
+	PresetsController.prototype._validateInput = function (oInput, sValidateMessage) {
+		var oBinding = oInput.getBinding("value"),
+			sValueState = ValueState.None,
+			bValid = true;
+
+		try {
+			if (oInput.getRequired() && !oInput.getValue().trim()) {
+				throw {
+					name: "RequiredException",
+					message: oInput.getLabels()[0].getText() + " is required."
+				};
+			}
+
+			if (oBinding && oBinding.getType()) {
+				oBinding.getType().validateValue(oInput.getValue());
+			}
+		} catch (oException) {
+			var sMessage = oException.message;
+			if (oException.name === "ValidateException" && sValidateMessage) {
+				sMessage = sValidateMessage;
+			}
+			oInput.setValueStateText(sMessage);
+			sValueState = ValueState.Error;
+			bValid = false;
+		}
+
+		oInput.setValueState(sValueState);
+
+		return bValid;
+	};
+
+	/**
+	 * Get list of inputs to be validated.
+	 * @return {array} List of inputs to be validated
+	 */
+	PresetsController.prototype._getInputsToValidate = function () {
+		return [
+			{
+				id: "title"
+			},
+			{
+				id: "presetId",
+				validateMessage: "Invalid value. Possible characters are: a-z A-Z 0-9 - . _"
+			}
+		];
+	};
+
+	/**
+	 * Clear all error value states from export form.
+	 */
+	PresetsController.prototype._clearValidationState = function () {
+		var aInputs = this._getInputsToValidate();
+		aInputs.forEach(function (oInput) {
+			Fragment.byId(Constants.EXPORT_FRAGMENT_ID, oInput.id).setValueState(ValueState.None);
+		});
 	};
 
 	/**
@@ -289,10 +404,16 @@ sap.ui.define([
 	 * Finalizes an export - sends the file to the user
 	 */
 	PresetsController.prototype.onExportFinalizePress = function () {
-		var title = Fragment.byId(Constants.EXPORT_FRAGMENT_ID, "title").getValue(),
+		var id = Fragment.byId(Constants.EXPORT_FRAGMENT_ID, "presetId").getValue(),
+			title = Fragment.byId(Constants.EXPORT_FRAGMENT_ID, "title").getValue(),
 			description = Fragment.byId(Constants.EXPORT_FRAGMENT_ID, "description").getValue();
 
+		if (!this._validateForm()) {
+			return;
+		}
+
 		PresetsUtils.exportSelectionsToFile(
+			id,
 			title,
 			description,
 			SelectionUtils.getSelectedRules()
@@ -335,15 +456,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Validates if the import preset is already imported
+	 * @private
+	 * @param {string} sPresetId The id of the preset to be imported
+	 * @return {boolean} True if already imported
+	 */
+	PresetsController.prototype._isAlreadyImported = function (sPresetId) {
+		var aPresets = this.oModel.getProperty("/selectionPresets"),
+			bExists = aPresets.some(function (oPreset) { return oPreset.id === sPresetId; });
+
+		if (bExists) {
+			Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "duplicateIdError")
+				.setText("A preset with ID '" + sPresetId + "' is already imported.")
+				.setVisible(true);
+			Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "presetId").addStyleClass("sapUiSupportToolError");
+			return true;
+		} else {
+			return false;
+		}
+	};
+
+	/**
 	 * Hides the last error for the import file
 	 * @private
 	 */
-	PresetsController.prototype._clearImportFileError = function () {
+	PresetsController.prototype._clearImportErrors = function () {
 		Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "fileError")
 			.setText("")
 			.setVisible(false);
-
 		Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "fileName").removeStyleClass("sapUiSupportToolError");
+
+		Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "duplicateIdError")
+			.setText("")
+			.setVisible(false);
+		Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "presetId").removeStyleClass("sapUiSupportToolError");
 	};
 
 	/**
@@ -384,6 +530,7 @@ sap.ui.define([
 
 		// do not import all data, only import what is expected to stay in the model
 		var oPresetOptions = {
+			"id": oImportData.id,
 			"title": oImportData.title,
 			"description": oImportData.description,
 			"dateExported": oImportData.dateExported,

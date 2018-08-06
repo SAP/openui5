@@ -50,6 +50,16 @@
 				</VBox>
 				<Label text="Title" labelFor="title" class="sapUiTinyMarginBottom" />
 				<Text id="title" text="{title}" class="sapUiTinyMarginBottom" />
+				<Label text="Id" labelFor="presetId" class="sapUiTinyMarginBottom" />
+				<VBox class="sapUiTinyMarginBottom">
+					<Text id="presetId" text="{id}" />
+					<MessageStrip
+						id="duplicateIdError"
+						showIcon="true"
+						type="Error"
+						visible="false"
+						class="sapUiTinyMarginTop" />
+				</VBox>
 				<Label text="Date" labelFor="dateExported" class="sapUiTinyMarginBottom" />
 				<Text
 					id="dateExported"

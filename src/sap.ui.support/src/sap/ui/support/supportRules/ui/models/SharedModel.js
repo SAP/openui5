@@ -91,7 +91,14 @@ sap.ui.define([
 		supportAssistantVersion: "",
 		initialRulesLoading: true,
 		selectionPresets: [
-			{title: "My Selection", description: "My Current/Last Selection", isMySelection: true, selected: true, disableDelete: true}
+			{
+				id: "MySelectionPreset",
+				title: "My Selection",
+				description: "My Current/Last Selection",
+				isMySelection: true,
+				selected: true,
+				disableDelete: true
+			}
 		],
 		selectionPresetsCurrent: null
 	});
