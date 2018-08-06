@@ -1437,7 +1437,7 @@ sap.ui.define([
 				// large data or when zoomed in Chrome. In this case it can not be scrolled to the last row. To overcome this issue we consider the
 				// table to be scrolled to the end, if the scroll position is less than 1 pixel away from the maximum.
 				var nDistanceToMaximumScrollPosition = iScrollRange - nScrollPosition;
-				var bScrolledViaScrollTop = this.getVerticalScrollbar()._scrollTop == null;
+				var bScrolledViaScrollTop = this.getVerticalScrollbar()._scrollTop == null || this._bIsScrolledVerticallyByWheel;
 				var bScrolledToBottom = nDistanceToMaximumScrollPosition < 1;
 
 				if (bScrolledToBottom && bScrolledViaScrollTop) {
