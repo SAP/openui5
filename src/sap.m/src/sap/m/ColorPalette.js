@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/base/DataType',
-	'sap/ui/core/CSSColor',
+	'sap/ui/core/library',
 	'sap/ui/core/delegate/ItemNavigation',
 	'./Button',
 	'./Dialog',
@@ -20,7 +20,7 @@ sap.ui.define([
 	Control,
 	Device,
 	DataType,
-	CSSColor,
+	coreLibrary,
 	ItemNavigation,
 	Button,
 	Dialog,
@@ -31,6 +31,9 @@ sap.ui.define([
 	jQuery
 ) {
 		"use strict";
+
+		// shortcut to CSSColor of the core library
+		var CSSColor = coreLibrary.CSSColor;
 
 		// shortcut to ColorPicker (lazy initialized)
 		var ColorPicker;
