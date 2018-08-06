@@ -742,6 +742,13 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 
 	});
 
+	QUnit.test("type creation", function (assert) {
+		sap.ui.getCore().loadLibrary("testlibs.myGlobalLib");
+		// previously the global export of the DataType module was overwritten during
+		// the type processing in the library init
+		assert.equal(testlibs.myGlobalLib.types.HalfTheTruth.value, 21);
+	});
+
 	// ---------------------------------------------------------------------------
 	// loadLibrary
 	// ---------------------------------------------------------------------------
