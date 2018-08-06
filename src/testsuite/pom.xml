@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>testsuite</artifactId>
-	<version>1.52.17</version>
+	<version>1.52.18-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 
