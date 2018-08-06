@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/demo/orderbrowser/test/integration/pages/Common"
-], function(Opa5, Press, PropertyStrictEquals, Common) {
+	"sap/ui/demo/orderbrowser/test/integration/pages/Common",
+	"sap/ui/Device"
+], function(Opa5, Press, PropertyStrictEquals, Common, Device) {
 	"use strict";
 
 	var sNotFoundPageId = "page",

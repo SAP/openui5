@@ -24,16 +24,15 @@ sap.ui.define([
 		When.onTheNotFoundPage.iPressTheBackButton("NotFound");
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheList().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.iShouldSeeTheList();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the not found master and detail page if an invalid object id has been called", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp({ hash : "/Objects/SomeInvalidObjectId" });
-
-		// Actions
-		When.onTheNotFoundPage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheObjectNotFoundPage().
@@ -45,8 +44,10 @@ sap.ui.define([
 		When.onTheNotFoundPage.iPressTheBackButton("DetailObjectNotFound");
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheList().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.iShouldSeeTheList();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the not found text for no search results", function (Given, When, Then) {
@@ -57,8 +58,10 @@ sap.ui.define([
 		When.onTheMasterPage.iSearchForSomethingWithNoResults();
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults().
-			and.iTeardownMyAppFrame();
+		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults();
+
+		// Cleanup
+		Then.iTeardownMyAppFrame();
 	});
 
 });
