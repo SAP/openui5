@@ -139,7 +139,7 @@ sap.ui.define(["sap/ui/support/library", "sap/base/Log"],
 		 *                         otherwise the next entry is passed for checking.
 		 */
 		checkLogEntries : function(fnFilter, fnCheck) {
-			var aLog = Log.getLog(); //oScope.getLoggedObjects(); /*getLoggedObjects returns only log entries with supportinfo*/
+			var aLog = Log.getLogEntries(); //oScope.getLoggedObjects(); /*getLoggedObjects returns only log entries with supportinfo*/
 			var oLogEntry;
 			for (var i = 0; i < aLog.length; i++) {
 				oLogEntry = aLog[i];
