@@ -17,6 +17,7 @@ sap.ui.define([
 	"./rules/Panel.support",
 	"./rules/Select.support",
 	"./rules/SelectDialog.support",
+	"./rules/Table.support",
 	"./rules/Title.support",
 	"./rules/Tokenizer.support"
 ],
@@ -33,6 +34,7 @@ sap.ui.define([
 		PanelSupport,
 		SelectSupport,
 		SelectDialogSupport,
+		TableSupport,
 		TitleSupport,
 		TokenizerSupport
 	) {
@@ -53,6 +55,7 @@ sap.ui.define([
 			PanelSupport,
 			SelectSupport,
 			SelectDialogSupport,
+			TableSupport,
 			TitleSupport,
 			TokenizerSupport
 		]
