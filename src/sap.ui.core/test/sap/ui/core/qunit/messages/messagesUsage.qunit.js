@@ -13,7 +13,7 @@ sap.ui.require([
 	// create content div
 	var oDIV = document.createElement("div");
 	oDIV.id = "content";
-	document.body.append(oDIV)
+	document.body.appendChild(oDIV);
 
 	function spyDataState(oControl, fnTest) {
 		if (oControl.refreshDataState) {

@@ -13,7 +13,7 @@ sap.ui.define([
 	// create content div
 	var oDIV = document.createElement("div");
 	oDIV.id = "content";
-	document.body.append(oDIV);
+	document.body.appendChild(oDIV);
 
 	/*
 	 * an initial check to be executed before other MVC tests start

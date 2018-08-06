@@ -17,7 +17,7 @@ sap.ui.define([
 	// create content div
 	var oDIV = document.createElement("div");
 	oDIV.id = "content";
-	document.body.append(oDIV)
+	document.body.appendChild(oDIV);
 
 	// shortcuts for enums from the sap.ui.core namespace
 	var MessageType = coreLibrary.MessageType;

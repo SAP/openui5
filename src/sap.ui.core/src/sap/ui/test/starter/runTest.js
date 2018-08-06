@@ -326,9 +326,12 @@
 			throw new TypeError("Invalid test name");
 		}
 
-		initTestModule(oTestConfig);
+		return initTestModule(oTestConfig);
 	}).catch(function(oErr) {
-		document.body.innerHTML = "<span style='color:red;'>" + utils.encode(oErr.message || String(oErr)) + "</span>";
+		console.error(oErr.stack || oErr); // eslint-disable-line no-console
+		utils.whenDOMReady().then(function() {
+			document.body.innerHTML = "<pre style='color:red;'>" + utils.encode(oErr.stack || oErr.message || String(oErr)) + "</pre>";
+		});
 	});
 
 
