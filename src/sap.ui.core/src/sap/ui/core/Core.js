@@ -2186,8 +2186,13 @@ sap.ui.define([
 			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLibInfo.types[i]) ) {
 				// replacement for jQuery.sap.declare:
 				sap.ui.loader._.declareModule(oLibInfo.types[i].replace(/\./g, "/") + ".js");
+
 				// ensure parent namespace of the type
-				ObjectPath.set(oLibInfo.types[i], undefined);
+				var sNamespacePrefix = oLibInfo.types[i].substring(0, oLibInfo.types[i].lastIndexOf("."));
+				if (ObjectPath.get(sNamespacePrefix) === undefined) {
+					// parent type namespace does not exists, so we create its
+					ObjectPath.create(sNamespacePrefix);
+				}
 			}
 		}
 
