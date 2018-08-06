@@ -120,5 +120,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "dd634162cef727fded4e4a0d0436c25a50acc7a2",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Clone now includes actions",
+        "references": []
+      }
+    ]
   }
 }

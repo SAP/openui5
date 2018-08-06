@@ -1437,5 +1437,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "c8bb46458e402a4a5d0eb116c4e7168e5597da61",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore query parameter for index lookup",
+        "references": []
+      },
+      {
+        "id": "3c52d0505b1155a7ab590cbbc424d9a1f47944e4",
+        "type": "FIX",
+        "text": " FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
+        "references": []
+      }
+    ]
   }
 }
