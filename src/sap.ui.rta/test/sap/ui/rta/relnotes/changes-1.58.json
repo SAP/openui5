@@ -145,6 +145,30 @@
         "type": "FIX",
         "text": "sap.ui.rta: Disable actions in relevant container without stable id",
         "references": []
+      },
+      {
+        "id": "7c76c9461fee6186d4d7f9fa05ed68a837aea389",
+        "type": "FIX",
+        "text": " Fix errors in stable id check",
+        "references": []
+      },
+      {
+        "id": "7216b4f4c9a0ecf2000a084b3b47455daa05f111",
+        "type": "FIX",
+        "text": " sap.ui.rta - followup - get rid of sync requests change",
+        "references": []
+      },
+      {
+        "id": "2f01d9d8e5b8d0d7f367a90f6993c3ba95e4bd24",
+        "type": "FIX",
+        "text": " sap.ui.rta - settings bug fixed",
+        "references": []
+      },
+      {
+        "id": "e222963cc39901da285f21bacd1c81c41a684c44",
+        "type": "FIX",
+        "text": " sap.ui.rta: Fixing busyindicator in the ManageAppsController",
+        "references": []
       }
     ]
   }

@@ -511,6 +511,18 @@
         "type": "FIX",
         "text": " AppCacheBuster: ignore query parameter for index lookup",
         "references": []
+      },
+      {
+        "id": "f499a6b468e12707ca8795db231e2c52ea069053",
+        "type": "FEATURE",
+        "text": " XMLComposite: Accessibility and focus",
+        "references": []
+      },
+      {
+        "id": "5e432e282024acb8105fa521635451901702fa06",
+        "type": "FIX",
+        "text": " FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
+        "references": []
       }
     ]
   }

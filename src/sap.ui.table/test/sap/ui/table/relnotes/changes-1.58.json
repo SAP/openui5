@@ -61,6 +61,12 @@
         "type": "FEATURE",
         "text": " thirdparty: update es6-promise polyfill to version 4.2.4",
         "references": []
+      },
+      {
+        "id": "e6fea4d1017fc5b3e6c127cd9d35afd7c7cdad84",
+        "type": "FIX",
+        "text": " table.TableDragAndDropExtension: fix DropPosition dependency",
+        "references": []
       }
     ]
   }

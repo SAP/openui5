@@ -85,6 +85,12 @@
         "type": "FIX",
         "text": " ui.unified.FileUploader: Documentation improved",
         "references": []
+      },
+      {
+        "id": "8fb3786b00353b0ef6ac8170fb68c397bde5e3fc",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: visual tests adapted for running on iOS",
+        "references": []
       }
     ]
   }

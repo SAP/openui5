@@ -139,6 +139,12 @@
         "type": "INETRNAL",
         "text": "[FIX] tutorial.fiori2: Updated documentation link",
         "references": []
+      },
+      {
+        "id": "7be8204af9ea68333758887dedba5e31cd9a27f0",
+        "type": "FEATURE",
+        "text": " f.FlexibleColumnLayout: Reveal effect implemented",
+        "references": []
       }
     ]
   }
