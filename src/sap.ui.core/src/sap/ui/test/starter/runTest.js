@@ -147,7 +147,7 @@
 
 	function initTestModule(oConfig) {
 		var pQUnit, pSinon, pSinonQUnitBridge, pSinonConfig, pCoverage, pTestEnv,
-			sQUnit;
+			sQUnit, aJUnitDoneCallbacks;
 
 		document.title = oConfig.title;
 
@@ -181,9 +181,21 @@
 					throw new TypeError("unsupported qunit version " + oConfig.qunit.version);
 				}
 			}).then(function() {
+				// install a mock version of the qunit-reporter-junit API to collect jUnitDone callbacks
+				aJUnitDoneCallbacks = [];
+				window.jUnitDone = function(cb) {
+					aJUnitDoneCallbacks.push(cb);
+				};
+				return requireP("sap/ui/qunit/qunit-junit");
+			}).then(function() {
+				delete window.jUnitDone;
 				return requireP("sap/ui/thirdparty/qunit-reporter-junit");
 			}).then(function() {
-				return requireP("sap/ui/qunit/qunit-junit");
+				// now register the collected callbacks with the real qunit-reporter-junit API
+				aJUnitDoneCallbacks.forEach(function(cb) {
+					window.jUnitDone(cb);
+				});
+				aJUnitDoneCallbacks = undefined;
 			});
 		}
 
