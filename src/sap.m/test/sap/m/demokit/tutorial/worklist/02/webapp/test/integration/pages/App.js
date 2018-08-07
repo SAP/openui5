@@ -1,26 +1,29 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"mycompany/myapp/MyWorklistApp/test/integration/pages/Common"
+	"./Common"
 ], function(Opa5, PropertyStrictEquals, Common) {
 	"use strict";
 
-	Opa5.createPageObjects({
-		onTheAppPage : {
-			baseClass : Common,
+		Opa5.createPageObjects({
+			onTheAppPage : {
+				baseClass : Common,
 
-			actions : {
+				actions : {
 
 				iWaitUntilTheAppBusyIndicatorIsGone : function () {
 					return this.waitFor({
 						id : "app",
 						viewName : "App",
-						// inline-matcher directly as function
-						matchers : function(oAppControl) {
-							// we set the view busy, so we need to query the parent of the app
-							return oAppControl.getParent() && oAppControl.getParent().getBusy() === false;
+						matchers: new PropertyStrictEquals({
+							name: "busy",
+							value: false
+						}),
+						autoWait: false,
+						success : function () {
+							Opa5.assert.ok(true, "The app is not busy");
 						},
-						errorMessage : "Did not find the App control"
+						errorMessage : "The app is busy"
 					});
 				}
 			},
@@ -35,20 +38,22 @@ sap.ui.define([
 							name : "busy",
 							value : true
 						}),
+						autoWait: false,
 						success : function () {
 							// we set the view busy, so we need to query the parent of the app
-							Opa5.assert.ok(true, "The rootview is busy");
+							Opa5.assert.ok(true, "The app is busy");
 						},
-						errorMessage : "Did not find the App control"
+						errorMessage : "The App is not busy"
 					});
 				},
 
 				iShouldSeeTheMessageBox : function () {
 					return this.waitFor({
-						searchOpenDialogs: true,
-						controlType: "sap.m.Dialog",
+						searchOpenDialogs : true,
+						controlType : "sap.m.Dialog",
+						autoWait: false,
 						matchers : new PropertyStrictEquals({ name: "type", value: "Message"}),
-						success: function () {
+						success : function () {
 							Opa5.assert.ok(true, "The correct MessageBox was shown");
 						}
 					});

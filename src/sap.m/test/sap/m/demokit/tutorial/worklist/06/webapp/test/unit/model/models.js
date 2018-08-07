@@ -1,10 +1,10 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"mycompany/myapp/MyWorklistApp/model/models",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-], function (models) {
+		"mycompany/myapp/MyWorklistApp/model/models",
+		"sap/ui/thirdparty/sinon",
+		"sap/ui/thirdparty/sinon-qunit"
+	], function (models) {
 		"use strict";
 
 		QUnit.module("createDeviceModel", {

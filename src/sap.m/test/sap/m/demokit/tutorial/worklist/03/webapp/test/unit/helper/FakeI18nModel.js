@@ -1,7 +1,8 @@
 sap.ui.define([
-	"sap/ui/model/Model"
-], function (Model) {
+		"sap/ui/model/Model"
+	], function (Model) {
 		"use strict";
+
 
 		return Model.extend("test.unit.helper.FakeI18nModel", {
 

@@ -21,6 +21,7 @@
 		"webapp/test/integration/NotFoundJourney.js",
 		"webapp/test/integration/ObjectJourney.js",
 		"webapp/test/integration/opaTests.qunit.html",
+		"webapp/test/integration/arrangements/Arrangement.js",
 		"webapp/test/integration/pages/App.js",
 		"webapp/test/integration/pages/Browser.js",
 		"webapp/test/integration/pages/Common.js",
