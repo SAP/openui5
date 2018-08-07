@@ -681,6 +681,14 @@ function(
 			return this;
 		};
 
+		Page.prototype.setBusy = function (bBusy) {
+			// If contentOnlyBusy property is set, then the busy indicator should cover only the content area
+			// Otherwise all clicks in the footer, header and subheader might be suppressed
+			var sBusySection = this.getContentOnlyBusy() ? 'cont' : null;
+
+			return Control.prototype.setBusy.call(this, bBusy, sBusySection);
+		};
+
 		Page.prototype.setCustomHeader = function(oHeader) {
 
 			this.setAggregation("customHeader", oHeader);
