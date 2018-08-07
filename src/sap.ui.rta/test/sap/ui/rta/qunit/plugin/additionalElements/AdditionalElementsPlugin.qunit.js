@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
+	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/Utils",
 	"sap/ui/layout/PaneContainer",
@@ -23,6 +24,7 @@ sap.ui.define([
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
 	AddElementsDialog,
+	RTAPlugin,
 	CommandFactory,
 	RTAUtils,
 	PaneContainer,
@@ -114,7 +116,7 @@ sap.ui.define([
 	var oControl, oInvisible1, oInvisible2, oUnsupportedInvisible, oSibling, oIrrelevantChild,
 		oPseudoPublicParent,
 		// FIXME: remove
-		oPseudoPublicParentOverlay, oParentOverlay, oSibilingOverlay, oIrrelevantOverlay, // eslint-disable-line
+		oPseudoPublicParentOverlay, oParentOverlay, oSiblingOverlay, oIrrelevantOverlay, // eslint-disable-line
 		oPlugin, oDialog,
 		fnGetCommandSpy, fnEnhanceInvisibleElementsStub,
 		fnGetUnboundODataPropertiesStub, fnDialogOpen,
@@ -686,6 +688,36 @@ sap.ui.define([
 			});
 
 		});
+
+		QUnit.test("when 'registerElementOverlay' is called and the metamodel is not loaded yet", function(assert) {
+			var fnDone = assert.async();
+			var oSiblingOverlay = {
+				getElement : function(){
+					return oSibling;
+				}
+			};
+
+			sandbox.stub(oSibling, "getModel").returns({
+				getMetaModel : function(){
+					return {
+						loaded : function(){
+							return Promise.resolve();
+						}
+					};
+				}
+			});
+
+			// prevent the RTAPlugin call to be able to check if evaluateEditable was called on this plugin
+			sandbox.stub(RTAPlugin.prototype, "registerElementOverlay");
+
+			// evaluateEditable should be called when the promise is resolved
+			sandbox.stub(oPlugin, "evaluateEditable").callsFake(function(){
+				assert.ok(true, "evaluateEditable() is called after the MetaModel is loaded");
+				fnDone();
+			});
+
+			oPlugin.registerElementOverlay(oSiblingOverlay);
+		});
 	});
 
 	QUnit.module("Given an app that is field extensible enabled...", {
@@ -1072,7 +1104,7 @@ sap.ui.define([
 			oDesignTime.attachEventOnce("synced", function() {
 				oPseudoPublicParentOverlay = OverlayRegistry.getOverlay(oPseudoPublicParent);
 				oParentOverlay = OverlayRegistry.getOverlay(oControl);
-				oSibilingOverlay = OverlayRegistry.getOverlay(oSibling);
+				oSiblingOverlay = OverlayRegistry.getOverlay(oSibling);
 				oIrrelevantOverlay = OverlayRegistry.getOverlay(oIrrelevantChild);
 				resolve();
 			});
@@ -1081,7 +1113,7 @@ sap.ui.define([
 		.then(function() {
 			sap.ui.getCore().applyChanges();
 			switch (sOverlayType) {
-				case ON_SIBLING : return oSibilingOverlay;
+				case ON_SIBLING : return oSiblingOverlay;
 				case ON_CHILD : return oParentOverlay;
 				case ON_IRRELEVANT : return oIrrelevantOverlay;
 				default : return undefined;
@@ -1105,13 +1137,13 @@ sap.ui.define([
 
 			oDesignTime.attachEventOnce("synced", function() {
 				oParentOverlay = OverlayRegistry.getOverlay(oControl);
-				oSibilingOverlay = OverlayRegistry.getOverlay(oSibling);
+				oSiblingOverlay = OverlayRegistry.getOverlay(oSibling);
 				resolve();
 			});
 		})
 
 		.then(function() {
-			return bOnSibling ? oSibilingOverlay : oParentOverlay;
+			return bOnSibling ? oSiblingOverlay : oParentOverlay;
 		});
 	}
 
