@@ -2,15 +2,15 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/deepEqual",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
 	"sap/ui/performance/Measurement"
-], function (jQuery, Log, BindingParser, ManagedObject, JSONModel, Basics, Expression,
+], function (Log, deepEqual, BindingParser, ManagedObject, JSONModel, Basics, Expression,
 		Measurement) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -1106,10 +1106,10 @@ sap.ui.require([
 			aResults = ["binding", "constant"];
 
 		function isActiveCase(o1, o2) {
-			return (jQuery.sap.equal(o1, oP11) && jQuery.sap.equal(o2, oP12))
-				|| (jQuery.sap.equal(o1, oP21) && jQuery.sap.equal(o2, oP22))
-				|| (jQuery.sap.equal(o1, oP31) && jQuery.sap.equal(o2, oP32))
-				|| (jQuery.sap.equal(o1, oP41) && jQuery.sap.equal(o2, oP42));
+			return (deepEqual(o1, oP11) && deepEqual(o2, oP12))
+				|| (deepEqual(o1, oP21) && deepEqual(o2, oP22))
+				|| (deepEqual(o1, oP31) && deepEqual(o2, oP32))
+				|| (deepEqual(o1, oP41) && deepEqual(o2, oP42));
 		}
 
 		aResults.forEach(function (sResult1) {
