@@ -11,6 +11,7 @@ module.exports = [
 	"ComboBox.spec.js",
 	"ContextMenuSupportIntegration.spec.js",
 	"Dialog.spec.js",
+	"FacetFilter.spec.js",
 	"IconTabBar.spec.js",
 	"Image.spec.js",
 	"Label.spec.js",

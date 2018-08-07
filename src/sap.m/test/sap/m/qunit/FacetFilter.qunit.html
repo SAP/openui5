@@ -1491,7 +1491,39 @@
 			oItem.destroy();
 		});
 
+		QUnit.test("_getMapFacetLists returns a new array with the lists", function() {
+			// Arrange
+			var aLists = [{
+				getTitle: function () { return "First List"; },
+				getAllCount: function () { return 1; }
+			}, {
+				getTitle: function () { return "Second List"; },
+				getAllCount: function () { return 2 }
+			}];
+			var aExpectedList = [{
+				text: aLists[0].getTitle(),
+				count: aLists[0].getAllCount(),
+				index: 0
+			}, {
+				text: aLists[1].getTitle(),
+				count: aLists[1].getAllCount(),
+				index: 1
+			}];
+			var oFacetFilter = new sap.m.FacetFilter();
+			var oGetListsStub = this.stub(oFacetFilter, "getLists", function () { return aLists });
+			var aResult = [];
 
+			// Act
+			aResult = oFacetFilter._getMapFacetLists();
+
+			// Assert
+			assert.equal(aResult.length, aLists.length, "new list should have the same length");
+			assert.deepEqual(aResult, aExpectedList, "new list should be correct");
+
+			// Cleanup
+			oGetListsStub.restore();
+			oFacetFilter.destroy();
+		});
 
 		QUnit.module("Public API");
 
