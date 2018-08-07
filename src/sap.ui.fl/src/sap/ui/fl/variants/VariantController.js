@@ -290,36 +290,21 @@ sap.ui.define([
 	 * @public
 	 */
 	VariantController.prototype.loadInitialChanges = function() {
-		var aInitialChanges = [];
+		return Object.keys(this._mVariantManagement)
+			.reduce(function (aInitialChanges, sVariantManagementReference) {
+				var sCurrentOrDefaultVariant = this._mVariantManagement[sVariantManagementReference].currentVariant ? "currentVariant" : "defaultVariant";
+				var oInitialVariant = this.getVariant(sVariantManagementReference, this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant]);
 
-		Object.keys(this._mVariantManagement).forEach(function (sVariantManagementReference) {
-			var aInitialVMChanges = [];
-			var sVariantReference;
-
-			if (this._mVariantManagement[sVariantManagementReference].currentVariant){
-				sVariantReference = this._mVariantManagement[sVariantManagementReference].currentVariant;
-			} else {
-				sVariantReference = this._mVariantManagement[sVariantManagementReference].defaultVariant;
-			}
-
-			//check for visibility of the variant, else use standard variant
-			var sVisible = this.getVariant(sVariantManagementReference, sVariantReference).content.content.visible;
-			if (!sVisible) {
-				if (this._mVariantManagement[sVariantManagementReference].currentVariant) {
-					this._mVariantManagement[sVariantManagementReference].currentVariant = sVariantManagementReference;
-				} else {
-					this._mVariantManagement[sVariantManagementReference].defaultVariant = sVariantManagementReference;
+				// if variant doesn't exist and visible property is unset - fallback to standard variant
+				if (!oInitialVariant || !oInitialVariant.content.content.visible) {
+					this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant] = sVariantManagementReference;
 				}
-				sVariantReference = sVariantManagementReference;
-			}
 
-			aInitialVMChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference);
-
-			// Concatenate the changes for all valid or default variants of all variant management references
-			aInitialChanges = aInitialChanges.concat(aInitialVMChanges);
-		}.bind(this));
-
-		return aInitialChanges;
+				// Concatenate with the previous flex changes
+				return aInitialChanges.concat(
+					this.getVariantChanges(sVariantManagementReference, this._mVariantManagement[sVariantManagementReference][sCurrentOrDefaultVariant])
+				);
+			}.bind(this), []);
 	};
 
 	/**
