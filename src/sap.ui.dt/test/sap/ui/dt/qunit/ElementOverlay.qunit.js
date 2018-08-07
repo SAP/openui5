@@ -687,11 +687,13 @@ function (
 			var done = assert.async();
 
 			this.oSimpleScrollControl = new SimpleScrollControl("scrollControl");
-			this.oSimpleScrollControl.addContent1(new TextArea({
-				height: "500px",
-				width: "400px",
-				value: "foo"
-			}));
+			this.oSimpleScrollControl.addContent1(
+				this.oContent1 = new TextArea({
+					height: "500px",
+					width: "400px",
+					value: "foo"
+				})
+			);
 			this.oSimpleScrollControl.addContent2(new TextArea({
 				height: "500px",
 				width: "400px",
@@ -708,7 +710,13 @@ function (
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oSimpleScrollControlOverlay = OverlayRegistry.getOverlay(this.oSimpleScrollControl);
-				done();
+				this.oContent1Overlay = OverlayRegistry.getOverlay(this.oContent1);
+				// FIXME: when synced event is resolved including scrollbar synchronization
+				if (this.oContent1Overlay.$().css("transform") === "none") {
+					this.oContent1Overlay.attachEventOnce("geometryChanged", done);
+				} else {
+					done();
+				}
 			}, this);
 		},
 		afterEach : function() {
@@ -719,36 +727,32 @@ function (
 	}, function () {
 		QUnit.test("when the control is scrolled", function(assert) {
 			var done = assert.async();
-			var oContent1 = this.oSimpleScrollControl.getContent1()[0];
-			var oContent1Overlay = OverlayRegistry.getOverlay(oContent1);
-			var sInitialOffsetTop = oContent1.$().offset().top;
-			var oInitialControlOffset = oContent1.$().offset();
-			var oInitialOverlayOffset = oContent1Overlay.$().offset();
+			var sInitialOffsetTop = this.oContent1.$().offset().top;
+			var oInitialControlOffset = this.oContent1.$().offset();
+			var oInitialOverlayOffset = this.oContent1Overlay.$().offset();
 
 			if (!Device.browser.msie) {
-				var oApplyStylesSpy = sandbox.spy(oContent1Overlay, "applyStyles");
+				var oApplyStylesSpy = sandbox.spy(this.oContent1Overlay, "applyStyles");
 			}
 
 			this.oSimpleScrollControlOverlay.attachEventOnce('scrollSynced', function() {
 				if (!Device.browser.msie) {
 					assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
 				} else {
-					oContent1Overlay.applyStyles();
+					this.oContent1Overlay.applyStyles();
 				}
-				assert.equal(oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
-				assert.deepEqual(oContent1.$().offset(), oContent1Overlay.$().offset(), "Then the offset is still equal");
+				assert.equal(this.oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
+				assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
 				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
 				done();
-			});
+			}, this);
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
 		});
 		QUnit.test("when the overlay is scrolled", function(assert) {
 			var done = assert.async();
-			var oContent1 = this.oSimpleScrollControl.getContent1()[0];
-			var oContent1Overlay = OverlayRegistry.getOverlay(oContent1);
-			var sInitialOffsetTop = oContent1.$().offset().top;
-			var oInitialControlOffset = oContent1.$().offset();
-			var oInitialOverlayOffset = oContent1Overlay.$().offset();
+			var sInitialOffsetTop = this.oContent1.$().offset().top;
+			var oInitialControlOffset = this.oContent1.$().offset();
+			var oInitialOverlayOffset = this.oContent1Overlay.$().offset();
 
 			if (!Device.browser.msie) {
 				var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
@@ -758,13 +762,13 @@ function (
 				if (!Device.browser.msie) {
 					assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
 				} else {
-					oContent1Overlay.applyStyles();
+					this.oContent1Overlay.applyStyles();
 				}
-				assert.equal(oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
-				assert.deepEqual(oContent1.$().offset(), oContent1Overlay.$().offset(), "Then the offset is still equal");
+				assert.equal(this.oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
+				assert.deepEqual(this.oContent1.$().offset(), this.oContent1Overlay.$().offset(), "Then the offset is still equal");
 				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
 				done();
-			});
+			}.bind(this));
 			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop(100);
 		});
 	});
