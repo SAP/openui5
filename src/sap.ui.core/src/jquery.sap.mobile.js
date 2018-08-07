@@ -175,7 +175,7 @@ sap.ui.define([
 
 			/**
 			 * Whether the running device is a tablet.
-			 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or
+			 * If a desktop browser runs in mobile device simulation mode (with URL parameter
 			 * sap-ui-xx-test-mobile), this property will also be set according to the simulated platform. This
 			 * property will be false when runs in desktop browser.
 			 * @type {boolean}
@@ -186,7 +186,7 @@ sap.ui.define([
 
 			/**
 			 * Whether the running device is a phone.
-			 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or
+			 * If a desktop browser runs in mobile device simulation mode (with URL parameter
 			 * sap-ui-xx-test-mobile), this property will also be set according to the simulated platform. This
 			 * property will be false when runs in desktop browser.
 			 * @type {boolean}
@@ -197,7 +197,7 @@ sap.ui.define([
 
 			/**
 			 * Whether the running device is a desktop browser.
-			 * If a desktop browser runs in mobile device simulation mode (with URL parameter sap-ui-xx-fakeOS or
+			 * If a desktop browser runs in mobile device simulation mode (with URL parameter
 			 * sap-ui-xx-test-mobile), this property will be false.
 			 * @type {boolean}
 			 * @deprecated since 1.17.0 use {@link sap.ui.Device.system.desktop} instead
