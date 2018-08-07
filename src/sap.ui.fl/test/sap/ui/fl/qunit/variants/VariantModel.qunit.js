@@ -171,7 +171,7 @@ function(
 
 	});
 
-	QUnit.test("when calling 'switchToDefaultVariant' for a current variant reference", function(assert) {
+	QUnit.test("when calling 'switchToDefaultForVariant' for a current variant reference", function(assert) {
 		var done = assert.async();
 		this.oData["variantMgmtId1"].currentVariant = "variant0";
 		sandbox.stub(this.oModel, "updateCurrentVariant").callsFake(
@@ -186,17 +186,17 @@ function(
 				}.bind(this));
 			}.bind(this)
 		);
-		this.oModel.switchToDefaultVariant("variant0");
+		this.oModel.switchToDefaultForVariant("variant0");
 	});
 
-	QUnit.test("when calling 'switchToDefaultVariant' for a variant reference which is not the current variant", function(assert) {
-		sandbox.stub(this.oModel, "updateCurrentVariant");
-		this.oModel.switchToDefaultVariant("variant0");
+	QUnit.test("when calling 'switchToDefaultForVariant' for a variant reference which is not the current variant", function(assert) {
+		sandbox.stub(this.oModel, "updateCurrentVariant").returns(Promise.resolve());
+		this.oModel.switchToDefaultForVariant("variant0");
 		assert.strictEqual(this.oModel.updateCurrentVariant.callCount, 0, "then VariantModel.updateCurrentVariant not called");
 	});
 
 
-	QUnit.test("when calling 'switchToDefaultVariant' without a variant reference", function(assert) {
+	QUnit.test("when calling 'switchToDefaultForVariant' without a variant reference", function(assert) {
 		var done = assert.async();
 		this.oData["dummy"] = {
 			defaultVariant: "dummyDefaultVariant"
@@ -218,7 +218,14 @@ function(
 				}.bind(this));
 			}.bind(this)
 		);
-		this.oModel.switchToDefaultVariant();
+		this.oModel.switchToDefaultForVariant();
+	});
+
+	QUnit.test("when calling 'switchToDefaultForVariantManagement' for a variant management reference", function(assert) {
+		sandbox.stub(this.oModel, "updateCurrentVariant").returns(Promise.resolve());
+		this.oModel.switchToDefaultForVariantManagement("variantMgmtId1");
+		assert.ok(this.oModel.updateCurrentVariant.calledOnceWithExactly("variantMgmtId1", this.oData["variantMgmtId1"].defaultVariant),
+			"then VariantModel.updateCurrentVariant called once with the correct parameters");
 	});
 
 	QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
