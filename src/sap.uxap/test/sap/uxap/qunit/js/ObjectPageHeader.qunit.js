@@ -250,6 +250,21 @@
 		oObjectPageWithHeaderOnly.destroy();
 	});
 
+	QUnit.test("setting objectImageAlt using binding specific symbols", function (assert) {
+		var sImageAlt = "alt contains {",
+			oHeaderTitle =  new sap.uxap.ObjectPageHeader();
+
+		// act
+		oHeaderTitle.setObjectImageAlt(sImageAlt);
+
+		// assert
+		assert.equal(oHeaderTitle.getObjectImageAlt(), sImageAlt,
+			"Setting curly brace as an image alt does not throw an error");
+
+		// clean up
+		oHeaderTitle.destroy();
+	});
+
 	QUnit.module("Private API", {
 		beforeEach: function() {
 			var sViewXML = '<core:View xmlns:core="sap.ui.core" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" height="100%">' +
