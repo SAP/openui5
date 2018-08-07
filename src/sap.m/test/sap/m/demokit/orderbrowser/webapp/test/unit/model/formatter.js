@@ -1,10 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/m/Text",
 	"sap/ui/demo/orderbrowser/model/formatter",
-	"test/unit/helper/FakeI18nModel"
-], function (Text, formatter, FakeI18n) {
+	"sap/ui/demo/orderbrowser/test/unit/helper/FakeI18nModel"
+], function (formatter, FakeI18n) {
 		"use strict";
 
 		QUnit.module("formatter - Currency value");

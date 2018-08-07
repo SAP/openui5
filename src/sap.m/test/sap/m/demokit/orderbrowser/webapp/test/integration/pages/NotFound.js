@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/demo/orderbrowser/test/integration/pages/Common"
-], function(Opa5, Press, PropertyStrictEquals, Common) {
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function(Opa5, Press, PropertyStrictEquals) {
 	"use strict";
 
 	var sNotFoundPageId = "page",
@@ -12,7 +11,6 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheNotFoundPage : {
-			baseClass : Common,
 
 			actions : {
 
