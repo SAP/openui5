@@ -1047,6 +1047,14 @@
 				assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
 			});
 
+			QUnit.test("After selection reset the focus should be returned to the dialog", function(assert) {
+				this.oSelectDialog.open();
+				sap.ui.getCore().applyChanges();
+
+				this.oSelectDialog._oClearButton.firePress();
+				assert.equal(document.activeElement.getAttribute("id"), this.oSelectDialog._oDialog.getId(), 'After selection is reset the focus should be returned to the dialog"');
+			});
+
 			})();
 		</script>
 	</head>
