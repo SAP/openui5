@@ -220,6 +220,17 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 					// define search tags
 					oEnt.searchTags = oEnt.name + " " + oEnt.name.replace(/\s/g, "") + " " + oEnt.category;
 
+					// add sample name and descriptions to search tags
+					if (oEnt.samples) {
+						oEnt.samples.forEach(function (sSample) {
+							var oSample = data.samples[sSample];
+							if (oSample) {
+								oEnt.searchTags += " " + oSample.name;
+								oEnt.searchTags += " " + oSample.description;
+							}
+						});
+					}
+
 					// check samples property
 					if (oEnt.samples && !(oEnt.samples instanceof Array)) {
 						oEnt.samples = [];
