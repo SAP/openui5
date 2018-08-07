@@ -1529,7 +1529,7 @@ sap.ui.define([
 						new Label({text: "Name of the person"})
 					], template: oControl, sortProperty: "name", filterProperty: "name"
 				}));
-				oControl = new CheckBox({selected: "checked"});
+				oControl = new CheckBox({selected: true});
 				oTable.addColumn(new Column({
 					label: new Label({text: "Checked (very long label text to show wrapping behavior)"}),
 					template: oControl,
