@@ -8817,7 +8817,7 @@
 			oComboBox.destroy();
 		});
 
-		QUnit.test("it should filter with empty value when input is deleted on mobile device", function(assert) {
+		QUnit.test("it should filter with empty value when input is deleted on mobile device", function (assert) {
 
 			this.stub(sap.ui.Device, "system", {
 				desktop: false,
@@ -8840,29 +8840,39 @@
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			var oFocusDomRef = oComboBox.getFocusDomRef();
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
+			var oPickerTextField = oComboBox.getPickerTextField();
+			oPickerTextField.focus();
+			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+			oPickerTextFieldDomRef.value = "t";
 
-			// act (type something in the text field input)
-			oFocusDomRef.value = "t";
-			sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "t" });
-
-			// wait for the word completion feature
-			this.clock.tick(0);
+			// act
+			sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oPickerTextFieldDomRef, {
+				which: jQuery.sap.KeyCodes.L,
+				srcControl: oPickerTextField
+			});
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
+				srcControl: oPickerTextField
+			});
+			this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 
 			assert.strictEqual(oComboBox.getVisibleItems().length, 1, "One item should be visible");
 			assert.strictEqual(oComboBox.getVisibleItems()[0].getText(), "Test", "Visible item text should be 'Test'");
 
 			// act (clear input value)
-			oFocusDomRef.value = "";
-			sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "" });
+			oPickerTextFieldDomRef.value = "";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
+				srcControl: oPickerTextField
+			});
 
 			// wait for the word completion feature
 			this.clock.tick(0);
 
-			oComboBox.open();
-
 			assert.strictEqual(oComboBox.getVisibleItems().length, 2, "All items should be visible");
 
+			oComboBox.close();
 			oComboBox.destroy();
 		});
 
@@ -10435,13 +10445,13 @@
 			var oComboBox = new sap.m.ComboBox({
 				id: "apa"
 			});
-		
+
 			oLabel.placeAt("content");
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
 			assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "Combobox aria-labelledby attribute is set to label id");
-		
+
 			oLabel.destroy();
 			oComboBox.destroy();
 		});
