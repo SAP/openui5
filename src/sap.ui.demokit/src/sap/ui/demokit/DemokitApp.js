@@ -1212,12 +1212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 				this._bIgnoreIFrameOnLoad = true;
 
-				// set fakeOS for mobile test pages (BUT not for mobile demo apps)
-				var isMobilePage = sPageName && sPageName.match(/\/sap\/me?\//);
-				var isMobileDemoApp = sPageName && sPageName.indexOf("sap/m/demokit") !== -1;
-				var sFakeOS = (isMobilePage && !isMobileDemoApp) ? "?sap-ui-xx-fakeOS=ios" : "";
-
-				oContentWindow.location.replace((sPageName.indexOf("/") == 0 ? "" : this.sBasePathname) + sPageName + sFakeOS);
+				oContentWindow.location.replace((sPageName.indexOf("/") == 0 ? "" : this.sBasePathname) + sPageName);
 			}
 
 			this._oFeedbackClient.updateFeedbackContextText();

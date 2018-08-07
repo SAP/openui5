@@ -97,7 +97,6 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 				"jquery.sap.history": ["history"],
 				"jquery.sap.keycodes": ["KeyCodes"],
 				"jquery.sap.mobile": [
-					"simulateMobileOnDesktop",
 					"initMobile",
 					"setIcons",
 					"setMobileWebAppCapable"
