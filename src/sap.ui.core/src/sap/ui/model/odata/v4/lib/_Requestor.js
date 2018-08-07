@@ -817,8 +817,8 @@ sap.ui.define([
 	 *      3 for "warning" and 4 for "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
-	 *   {boolean} transition - Messages marked as transition by the server need to be managed by
-	 *      the application and are reported as persistent
+	 *   {boolean} transition - Whether the message is reported as <code>persistent=true</code> and
+	 *      therefore needs to be managed by the application
 	 * @param {string[]} [aCachePaths]
 	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
 	 *    be removed; if the array is not given, all non-persistent messages whose target start with
