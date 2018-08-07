@@ -523,6 +523,12 @@
         "type": "FIX",
         "text": " FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
         "references": []
+      },
+      {
+        "id": "c05b084b4f64171d9b053a395a8450f3a21d0b63",
+        "type": "FIX",
+        "text": " Core: Library types don\u0027t reset their module value",
+        "references": []
       }
     ]
   }
