@@ -9,16 +9,17 @@ sap.ui.define([
 
 	QUnit.module("Support Assistant Rule Presets");
 
-	var ERROR_LOGS_RULE_CHECKBOX_ID = "__xmlview0--analysis--ruleList-rowsel3",
-		MY_SELECTION_TITLE = "My Selection",
-		EXAMPLE_PRESET_ACCESSIBILITY = "AccessibilityPreset.json",
+	var MY_SELECTION_TITLE = "My Selection",
+		SYSTEM_ACCESSIBILITY_TITLE = "Accessibility",
+		SYSTEM_ACCESSIBILITY_COUNT = 5,
+		EXAMPLE_PRESET_1 = "testPreset1.json",
 		EXAMPLE_PRESET_S4HANA = "S4HanaPreset.json";
 
 	function loadExamplePreset(fileName) {
 		var preset = jQuery.sap.syncGetJSON("data/Presets/" + fileName).data;
 
 		// prepare title if modified, used for testing
-		preset._forTestTitleIfModified = preset.title + " (*)";
+		preset._forTestTitleIfModified = getModifiedPresetTitle(preset.title);
 
 		// prepare a list of rules ids, very handy later
 		preset._forTestRulesIds = preset.selections.map(function (oRule) {
@@ -28,8 +29,15 @@ sap.ui.define([
 		return preset;
 	}
 
-	opaTest("Should see the Rule Presets variant select", function(Given, When, Then) {
+	function getPresetsCount() {
+		return document.activeElement.contentDocument.getElementById("presetsSelect--select").getElementsByTagName("li").length;
+	}
 
+	function getModifiedPresetTitle(sTitle) {
+		return sTitle + " (*)";
+	}
+
+	opaTest("Should see the Rule Presets variant select", function (Given, When, Then) {
 		Given.iStartMyAppAndDeletePersistedData();
 
 		Then.onThePresetsPage.iShouldSeePresetsVariantSelect();
@@ -101,11 +109,11 @@ sap.ui.define([
 		When.onThePresetsPage.iOpenImportDialog();
 		Then.onThePresetsPage.iShouldSeeEmptyImportDialog();
 
-		When.onThePresetsPage.iUploadExamplePreset(EXAMPLE_PRESET_ACCESSIBILITY);
+		When.onThePresetsPage.iUploadExamplePreset(EXAMPLE_PRESET_1);
 
-		var testPreset = loadExamplePreset(EXAMPLE_PRESET_ACCESSIBILITY);
+		var testPreset = loadExamplePreset(EXAMPLE_PRESET_1);
 
-		Then.onThePresetsPage.iShouldSeeImportDataForPreset(EXAMPLE_PRESET_ACCESSIBILITY, testPreset);
+		Then.onThePresetsPage.iShouldSeeImportDataForPreset(EXAMPLE_PRESET_1, testPreset);
 
 	});
 
@@ -113,7 +121,7 @@ sap.ui.define([
 
 		When.onThePresetsPage.iPressImportFinalize();
 
-		var testPreset = loadExamplePreset(EXAMPLE_PRESET_ACCESSIBILITY);
+		var testPreset = loadExamplePreset(EXAMPLE_PRESET_1);
 
 		Then.onThePresetsPage.iShouldSeePresetTitleInVariantSelect(testPreset.title)
 			.and.iShouldSeeSelectedRules(testPreset._forTestRulesIds);
@@ -126,6 +134,7 @@ sap.ui.define([
 	});
 
 	opaTest("Should be able to import second preset", function(Given, When, Then) {
+		var presetsCountBeforeImport = getPresetsCount();
 
 		When.onThePresetsPage.iOpenImportDialog();
 		Then.onThePresetsPage.iShouldSeeEmptyImportDialog();
@@ -146,7 +155,7 @@ sap.ui.define([
 		Then.onThePresetsPage.iShouldSeePresetInPopover(testPreset.title)
 			.and.iShouldSeeSelectedPreset(testPreset.title);
 
-		Then.onThePresetsPage.iShouldSeeNumberOfPresetsInPopover(3);
+		Then.onThePresetsPage.iShouldSeeNumberOfPresetsInPopover(presetsCountBeforeImport + 1);
 
 	});
 
@@ -183,12 +192,12 @@ sap.ui.define([
 	opaTest("Should be able to switch presets and keep selection", function(Given, When, Then) {
 
 		// change "My Selection" selected rules
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(ERROR_LOGS_RULE_CHECKBOX_ID,  "Rules selection was changed", "Could not change rules selection"); // Error logs - rule
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection"); // Error logs - rule
 
 		When.onThePresetsPage.iOpenPresetsPopover();
 
 		// switch preset and check rules
-		var testPreset1 = loadExamplePreset(EXAMPLE_PRESET_ACCESSIBILITY);
+		var testPreset1 = loadExamplePreset(EXAMPLE_PRESET_1);
 		When.onThePresetsPage.iPressPresetInPopover(testPreset1.title);
 		Then.onThePresetsPage.iShouldSeeSelectedRules(testPreset1._forTestRulesIds);
 
@@ -211,17 +220,19 @@ sap.ui.define([
 
 		When.onThePresetsPage.iOpenPresetsPopover();
 
-		var testPreset = loadExamplePreset(EXAMPLE_PRESET_ACCESSIBILITY);
+		var testPreset = loadExamplePreset(EXAMPLE_PRESET_1);
 
 		When.onThePresetsPage.iPressPresetInPopover(testPreset.title);
 
 		When.onThePresetsPage.iOpenPresetsPopover();
 
+		var presetsCountBeforeDelete = getPresetsCount();
+
 		When.onThePresetsPage.iPressDeletePresetInPopover(testPreset.title);
 
 		When.onThePresetsPage.iOpenPresetsPopover();
 
-		Then.onThePresetsPage.iShouldSeeNumberOfPresetsInPopover(2);
+		Then.onThePresetsPage.iShouldSeeNumberOfPresetsInPopover(presetsCountBeforeDelete - 1);
 
 		Then.onThePresetsPage.iShouldSeeSelectedPreset(MY_SELECTION_TITLE);
 
@@ -257,8 +268,7 @@ sap.ui.define([
 
 		When.onThePresetsPage.iOpenPresetsPopover();
 
-		Then.onThePresetsPage.iShouldSeeNumberOfPresetsInPopover(2)
-			.and.iShouldSeePresetInPopover(MY_SELECTION_TITLE)
+		Then.onThePresetsPage.iShouldSeePresetInPopover(MY_SELECTION_TITLE)
 			.and.iShouldSeePresetInPopover(testPreset.title)
 			.and.iShouldSeeSelectedPreset(testPreset.title)
 			.and.iShouldSeeSelectedRules(testPreset._forTestRulesIds);
@@ -337,7 +347,7 @@ sap.ui.define([
 
 		When.onThePresetsPage.iPressPresetInPopover(testPreset.title);
 
-		When.onTheRulesPage.iPressOnTreeTableCheckBox(ERROR_LOGS_RULE_CHECKBOX_ID,  "Rules selection was changed", "Could not change rules selection"); // Error logs - rule
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection"); // Error logs - rule
 
 		Then.onThePresetsPage.iShouldSeePresetTitleInVariantSelect(testPreset._forTestTitleIfModified);
 
@@ -391,7 +401,6 @@ sap.ui.define([
 				"title": "Title",
 				"description": "Description"
 			});
-
 	});
 
 	opaTest("Should have a generated id if left empty on export", function(Given, When, Then) {
@@ -408,9 +417,78 @@ sap.ui.define([
 			.and.iShouldReceiveCorrectExportFile({
 				"id": sinon.match.truthy
 			});
+	});
+
+	/* Accessibility System Preset related tests */
+	opaTest("Should be able to switch to 'Accessibility' Preset", function (Given, When, Then) {
+
+		When.onThePresetsPage.iOpenPresetsPopover();
+
+		When.onThePresetsPage.iPressPresetInPopover(SYSTEM_ACCESSIBILITY_TITLE);
+
+		Then.onThePresetsPage.iShouldSeePresetTitleInVariantSelect(SYSTEM_ACCESSIBILITY_TITLE);
+
+		When.onThePresetsPage.iOpenPresetsPopover();
+
+		Then.onThePresetsPage.iShouldSeePresetInPopover(SYSTEM_ACCESSIBILITY_TITLE)
+			.and.iShouldSeeSelectedPreset(SYSTEM_ACCESSIBILITY_TITLE);
+
+		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(SYSTEM_ACCESSIBILITY_COUNT);
+	});
+
+	opaTest("Should be able to switch from 'Accessibility' preset and keep selections", function (Given, When, Then) {
+
+		// change "Accessibility" selected rules
+		When.onTheRulesPage.iPressSelectCheckboxOf("Button: Consists of only an icon, needs a tooltip", "Rules selection was changed", "Could not change rules selection");
+
+		When.onThePresetsPage.iOpenPresetsPopover();
+
+		// switch preset and check the rules
+		When.onThePresetsPage.iPressPresetInPopover(MY_SELECTION_TITLE);
+
+		When.onThePresetsPage.iOpenPresetsPopover();
+
+		// switch back to "Accessibility" and check the rules
+		When.onThePresetsPage.iPressPresetInPopover(getModifiedPresetTitle(SYSTEM_ACCESSIBILITY_TITLE)); //indirect check if title is visually modified
+		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(SYSTEM_ACCESSIBILITY_COUNT - 1);
+	});
+
+	opaTest("Should save persisted 'Accessibility' preset and selections", function (Given, When, Then) {
+		When.onThePresetsPage.iOpenPresetsPopover();
+		Then.onThePresetsPage.iShouldSeeSelectedPreset(getModifiedPresetTitle(SYSTEM_ACCESSIBILITY_TITLE));
+
+		// allow local storage
+		When.onTheRulesPage.iPressSettingsButton();
+		When.onTheRulesPage.iPressCheckBoxButton(true);
 
 		// finalize all tests
 		Then.iTeardownSupportAssistantFrame();
+	});
 
+	opaTest("Should load previously persisted 'Accessibility' preset and selections", function (Given, When, Then) {
+		var sModifiedTitle = getModifiedPresetTitle(SYSTEM_ACCESSIBILITY_TITLE);
+
+		Given.iStartMyApp();
+
+		Then.onThePresetsPage.iShouldSeePresetTitleInVariantSelect(sModifiedTitle);
+
+		When.onThePresetsPage.iOpenPresetsPopover();
+
+		Then.onThePresetsPage.iShouldSeePresetInPopover(sModifiedTitle)
+			.and.iShouldSeeSelectedPreset(sModifiedTitle);
+		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(SYSTEM_ACCESSIBILITY_COUNT - 1);
+
+		// disable local storage
+		When.onTheRulesPage.iPressSettingsButton();
+		When.onTheRulesPage.iPressCheckBoxButton(false);
+	});
+
+	opaTest("Should be able to undo changes in System Preset 'Accessibility' and see change in title", function(Given, When, Then) {
+		When.onThePresetsPage.iOpenPresetsPopover();
+		When.onThePresetsPage.iPressUndoButton(getModifiedPresetTitle(SYSTEM_ACCESSIBILITY_TITLE));
+		Then.onThePresetsPage.iShouldSeePresetInPopover(SYSTEM_ACCESSIBILITY_TITLE);
+
+		// finalize all tests
+		Then.iTeardownSupportAssistantFrame();
 	});
 });

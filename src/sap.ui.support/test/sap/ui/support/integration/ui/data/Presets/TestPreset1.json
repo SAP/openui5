@@ -1,7 +1,7 @@
 {
-	"id": "AccessibilityPreset",
-    "title": "Accessibility Checks",
-    "description": "Rules to help you check the accessibility of the application",
+	"id": "testPreset1",
+    "title": "Test Preset",
+    "description": "Test rules",
     "dateExported": "2018-07-05T13:32:08.222Z",
     "version": "1.0",
     "selections": [

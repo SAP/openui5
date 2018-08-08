@@ -236,6 +236,22 @@ sap.ui.define([
 						},
 						errorMessage: "Was not able to locate delete button for preset '" + sTitle + "'"
 					});
+				},
+
+				iPressUndoButton: function(sTitle) {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						searchOpenDialogs: true,
+						timeout: 3,
+						matchers: function(oButton) {
+							return oButton.$().parents("li").find(".sapMText").html() == sTitle;
+						},
+						actions: new Press(),
+						success: function() {
+							Opa5.assert.ok(true, "'Undo' button was pressed");
+						},
+						errorMessage: "Was not able to press 'Undo' button"
+					});
 				}
 			},
 
