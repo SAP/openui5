@@ -795,7 +795,33 @@
 			oNeedsWidthStub.restore();
 			oGetDomRefStub.restore();
 			oMenuButton.destroy();
-		})
+		});
+
+		QUnit.test("onThemeChanged does set width to the content if its width is 0", function (assert) {
+			// Arrange
+			var oMenuButton = new sap.m.MenuButton({
+					buttonMode: "Split"
+				}),
+				oTextBtnContentDiv = document.createElement("DIV"),
+				oNeedsWidthStub = this.stub(oMenuButton, "_needsWidth", function () { return true; }),
+				oGetDomRefStub = this.stub(oMenuButton, "getDomRef", function () { return document.createElement("DIV"); }),
+				oGetTextBtnContentDomRefStub = this.stub(oMenuButton, "_getTextBtnContentDomRef", function () { return oTextBtnContentDiv });
+				oTextBtnContentDiv.style.display = "none";
+				document.body.appendChild(oTextBtnContentDiv);
+
+			// Act
+			oMenuButton.onThemeChanged();
+
+			// Assert
+			assert.equal(oTextBtnContentDiv.style.width, "", "Width of the text button content is not set if width is 0");
+
+			// Clenaup
+			oNeedsWidthStub.restore();
+			oGetDomRefStub.restore();
+			oGetTextBtnContentDomRefStub.restore();
+			oMenuButton.destroy();
+			document.body.removeChild(oTextBtnContentDiv);
+		});
 	</script>
 </head>
 <body class="sapUiBody" role="application">
