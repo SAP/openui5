@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	function getFrameUrl (sHash, sUrlParameters) {
-		var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/toolpageapp/app", ".html");
+		var sUrl = sap.ui.require.toUrl("sap/ui/demo/toolpageapp/index.html");
 		sHash = sHash || "";
 		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
 
@@ -17,16 +17,12 @@ sap.ui.define([
 		return sUrl + sUrlParameters + sHash;
 	}
 
-	return Opa5.extend("sap.ui.demo.toolpageapp.test.integration.pages.Common", {
+	return Opa5.extend("sap.ui.demo.toolpageapp.test.integration.arrangements.Arrangement", {
 
 		iStartTheApp : function (oOptions) {
 			oOptions = oOptions || {};
 			// Start the app with a minimal delay to make tests run fast but still async to discover basic timing issues
 			this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, "serverDelay=50"));
-		},
-
-		iLookAtTheScreen : function () {
-			return this;
 		}
 
 	});

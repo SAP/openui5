@@ -1,15 +1,14 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/toolpageapp/test/integration/pages/Common",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/actions/Press"
-], function (Opa5,Common, BindingPath, Press) {
+], function (Opa5, BindingPath, Press) {
 	"use strict";
 
 	var sViewName1 = "MasterSettings";
 	var sViewName2 = "DetailSettings";
 	Opa5.createPageObjects({
-		baseClass: Common,
+
 		onTheSettingsPage: {
 
 			actions: {
