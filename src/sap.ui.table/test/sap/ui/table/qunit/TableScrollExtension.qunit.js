@@ -1746,12 +1746,17 @@ sap.ui.define([
 			}).then(function(resolve) {
 				return new Promise(function(resolve) {
 					window.setTimeout(function() {
-						var oInnerCellElement = TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCell")[0];
+						var $InnerCellElement = TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCell");
 
 						assert.strictEqual(document.activeElement, oCellContentInColumn,
 							"The content of the cell in row " + iRowIndex + " column " + iColumnIndex + " is focused");
-						assert.strictEqual(oInnerCellElement.scrollLeft, 0, "The cell content is not scrolled horizontally");
-						assert.strictEqual(oInnerCellElement.scrollTop, 0, "The cell content is not scrolled vertically");
+						if (oTreeTable._bRtlMode) {
+							assert.strictEqual($InnerCellElement.scrollLeftRTL(), $InnerCellElement[0].scrollWidth - $InnerCellElement[0].clientWidth,
+								"The cell content is not scrolled horizontally");
+						} else {
+							assert.strictEqual($InnerCellElement[0].scrollLeft, 0, "The cell content is not scrolled horizontally");
+						}
+						assert.strictEqual($InnerCellElement[0].scrollTop, 0, "The cell content is not scrolled vertically");
 
 						resolve();
 					}, iAssertionDelay);
@@ -1787,6 +1792,18 @@ sap.ui.define([
 		test(0, 0).then(function() {
 			return test(0, 1);
 		}).then(function() {
+			sap.ui.getCore().getConfiguration().setRTL(true);
+			sap.ui.getCore().applyChanges();
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					test(0, 0).then(resolve);
+				}, 50);
+			});
+		}).then(function() {
+			return test(0, 1);
+		}).then(function() {
+			sap.ui.getCore().getConfiguration().setRTL(false);
+			sap.ui.getCore().applyChanges();
 			done();
 		});
 	});
