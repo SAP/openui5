@@ -775,13 +775,17 @@ sap.ui.define([
 
 			if ($ParentCell) {
 				Promise.resolve().then(function() {
-					var oInnerCellElement = $ParentCell.find(".sapUiTableCell")[0];
+					var $InnerCellElement = $ParentCell.find(".sapUiTableCell");
 
-					if (oInnerCellElement) {
-						oInnerCellElement.scrollLeft = 0;
-						oInnerCellElement.scrollTop = 0;
+					if ($InnerCellElement.length > 0) {
+						if (this._bRtlMode) {
+							$InnerCellElement.scrollLeftRTL($InnerCellElement[0].scrollWidth - $InnerCellElement[0].clientWidth);
+						} else {
+							$InnerCellElement[0].scrollLeft = 0;
+						}
+						$InnerCellElement[0].scrollTop = 0;
 					}
-				});
+				}.bind(this));
 			}
 		}
 	};
