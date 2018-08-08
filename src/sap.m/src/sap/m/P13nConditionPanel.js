@@ -1717,10 +1717,9 @@ sap.ui.define([
 				};
 				oControl = new Select(params);
 			} else if (sCtrlType == "TimePicker") {
-				//TODO TimerPicker does not support displayFormat
-				//if (oType.oFormatOptions && oType.oFormatOptions.style) {
-				//	params.displayFormat = oType.oFormatOptions.style;
-				//}
+				if (oType.oFormatOptions && oType.oFormatOptions.style) {
+					params.displayFormat = oType.oFormatOptions.style;
+				}
 				oControl = new TimePicker(params);
 			} else if (sCtrlType == "DateTimePicker") {
 				if (oType.oFormatOptions && oType.oFormatOptions.style) {
