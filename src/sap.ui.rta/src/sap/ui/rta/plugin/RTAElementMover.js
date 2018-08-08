@@ -292,7 +292,7 @@ function(
 		var bSourceAndTargetAreSame = this._compareSourceAndTarget(oSource, oTarget);
 
 		if (bSourceAndTargetAreSame) {
-			return undefined;
+			return Promise.resolve();
 		}
 		delete oSource.index;
 		delete oTarget.index;
