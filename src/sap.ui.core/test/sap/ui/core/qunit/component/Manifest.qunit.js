@@ -117,4 +117,37 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Manifest.load ASYNC", function(assert) {
+		var that = this;
+		var done = assert.async();
+		Manifest.load({
+			componentName: "sap.ui.test.manifestload",
+			manifestUrl: "test-resources/sap/ui/core/qunit/component/testdata/manifestload/manifest.json",
+			async: true
+		}).then(function(oManifest) {
+			that.oManifest = oManifest; // Save for cleanup in afterEach
+			assert.strictEqual(that.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded ASYNC");
+			assert.strictEqual(that.oManifest.resolveUri(
+				new URI("test-resources/sap/ui/core/qunit/component/testdata/manifestload"), "manifest").toString(),
+				"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
+				"URL should resolve relative to the Manifest"
+			);
+			done();
+		});
+	});
+
+	QUnit.test("Manifest.load SYNC", function(assert) {
+		this.oManifest = Manifest.load({
+			componentName: "sap.ui.test.manifestload",
+			manifestUrl: "test-resources/sap/ui/core/qunit/component/testdata/manifestload/manifest.json",
+			async: false
+		});
+		assert.strictEqual(this.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded SYNC");
+		assert.strictEqual(this.oManifest.resolveUri(
+			new URI("test-resources/sap/ui/core/qunit/component/testdata/manifestload"), "manifest").toString(),
+			"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
+			"URL should resolve relative to the Manifest"
+		);
+	});
+
 });
