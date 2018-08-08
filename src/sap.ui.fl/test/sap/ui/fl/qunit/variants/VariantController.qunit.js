@@ -1430,6 +1430,28 @@ sap.ui.define([
 		assert.deepEqual(sap.ui.fl.Cache.getEntry("MyComponent", "1.2.3").file.changes.variantSection, this.oVariantController._mVariantManagement, "then Cache.file.changes has the same structure as VariantController variantSection map, passed by reference");
 	});
 
+	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with a non-existent default variant", function(assert){
+		// set default change content for non-existent variant
+		var oSetDefaultChangeContent = {
+			"fileName" : "mockDefaultChange",
+			"changeType" : "setDefault",
+			"content" : {
+				"defaultVariant" : "variantNonExisting"
+			}
+		};
+
+		// mocking set default change to map
+		this.oFakeVariantResponse.changes.variantSection.variantManagementId.variantManagementChanges.setDefault = [oSetDefaultChangeContent];
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse);
+		assert.strictEqual(oSetDefaultChangeContent.content.defaultVariant, this.oVariantController._getChangeFileContent().variantManagementId.defaultVariant, "then the default variant was mocked");
+
+		assert.deepEqual(
+			this.oVariantController.loadInitialChanges(),
+			this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[2].controlChanges,
+			"then the corresponding control changes for standard variant are retrieved"
+		);
+	});
+
 	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with an invisible default variant", function(assert){
 		this.oChangeContent4 = {"fileName":"change4"};
 		this.oChangeContent5 = {"fileName":"change5"};
