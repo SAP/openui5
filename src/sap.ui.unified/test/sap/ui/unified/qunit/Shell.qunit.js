@@ -1,7 +1,6 @@
 /*global QUnit, window */
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"jquery.sap.dom",
 	"sap/ui/core/Control",
@@ -31,7 +30,7 @@ sap.ui.require([
 		search: new TestControl("search"),
 		user: new ShellHeadUserItem("_useritm", {username: "name", image: "sap-icon://person-placeholder"})
 	});
-	oShell.placeAt("uiArea1");
+	oShell.placeAt("content");
 
 	var oShell2 = new Shell("shell2", {
 		icon: "../icon.png",
@@ -267,8 +266,7 @@ sap.ui.require([
 
 	QUnit.test("Clear UI", function(assert) {
 		assert.expect(0);
-		jQuery("#uiArea1").remove();
+		jQuery("#content").remove();
 	});
 
-	QUnit.start();
 });

@@ -1,7 +1,6 @@
 /*global QUnit, window */
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"jquery.sap.dom",
 	"sap/ui/core/Control",
@@ -23,11 +22,13 @@ sap.ui.require([
 		content: [new TestControl("_ctnt")],
 		secondaryContent: [new TestControl("_sec_ctnt")]
 	});
-	oSC.placeAt("uiArea1");
+	oSC.placeAt("content");
 	var oSC2 = new SplitContainer("sc2", {
 		showSecondaryContent: true,
 		secondaryContentSize: "200px"
 	});
+
+	jQuery("#content").css("height", "100px");
 
 	function testMultiAggregation(sName, oCtrl, assert){
 		oCtrl.getMetadata()._enrichChildInfos();
@@ -129,5 +130,4 @@ sap.ui.require([
 		}, 600);
 	});
 
-	QUnit.start();
 });
