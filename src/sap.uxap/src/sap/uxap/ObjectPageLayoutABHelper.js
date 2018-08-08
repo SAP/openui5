@@ -24,7 +24,9 @@ sap.ui.define([
 		constructor: function (oObjectPageLayout) {
 			this._oObjectPageLayout = oObjectPageLayout;
 			this._iScrollDuration = oObjectPageLayout._iScrollToSectionDuration;
+			this._iFocusMoveDelay = this._iScrollDuration - 100;
 			this._oObserver = new ManagedObjectObserver(this._proxyStateChanges.bind(this));
+			this._aMenusWithAttachPressHandler = [];
 		}
 	});
 
@@ -173,14 +175,19 @@ sap.ui.define([
 		}
 	};
 
-	ABHelper.prototype._focusOnSectionWhenUsingKeyboard = function (oEvent) {
-		var oSourceControl = oEvent.srcControl,
-			oSourceData = oSourceControl instanceof Button ? oSourceControl.data() : oSourceControl.getParent().data(),
+
+	/**
+	 * Moves focus on the corresponding subsection when MenuItem is selected
+	 * @param {sap.ui.core.Control} oSourceControl: selected Item
+	 * @private
+	 */
+	ABHelper.prototype._moveFocusOnSection = function (oSourceControl) {
+		var oSourceData = oSourceControl.data(),
 			oSection = sap.ui.getCore().byId(oSourceData.sectionId),
 			oObjectPage = this.getObjectPageLayout();
 
 		if (oSection && !oObjectPage.getUseIconTabBar()) {
-			setTimeout(oSection.$()["focus"].bind(oSection.$()), this._iScrollDuration);
+			setTimeout(oSection.$()["focus"].bind(oSection.$()), this._iFocusMoveDelay);
 		}
 	};
 
@@ -216,12 +223,7 @@ sap.ui.define([
 			bHasSubMenu,
 			iVisibleSubSections,
 			aSubSections = oSectionBase.getAggregation("subSections"),
-			fnButtonKeyboardUseHandler = this._focusOnSectionWhenUsingKeyboard.bind(this),
-			fnPressHandler = jQuery.proxy(oAnchorBar._handleDirectScroll, oAnchorBar),
-			oEventDelegatesForkeyBoardHandler = {
-				onsapenter: fnButtonKeyboardUseHandler,
-				onsapspace: fnButtonKeyboardUseHandler
-			};
+			fnPressHandler = jQuery.proxy(oAnchorBar._handleDirectScroll, oAnchorBar);
 
 		if (oSectionBase.getVisible() && oSectionBase._getInternalVisible()) {
 			oButton = oSectionBase.getCustomAnchorBarButton();
@@ -248,6 +250,20 @@ sap.ui.define([
 						this.getParent().focus();
 					});
 
+					oButtonClone._getButtonControl().attachArrowPress(function () {
+						var oButtonControl = oButtonClone._getButtonControl();
+
+						if (this._aMenusWithAttachPressHandler[oButtonControl.getId()]) {
+							return;
+						}
+
+						oButtonClone.getMenu().attachItemSelected(function (oEvent) {
+							this._moveFocusOnSection(oEvent.getParameter("item"));
+						}, this);
+
+						this._aMenusWithAttachPressHandler[oButtonControl.getId()] = true;
+					}, this);
+
 					oButtonClone.addCustomData(new CustomData({
 						key: "bHasSubMenu",
 						value: true
@@ -255,16 +271,20 @@ sap.ui.define([
 				} else {
 					oButtonClone = this._instantiateAnchorBarButton(false, oSectionBase, sId);
 					oButtonClone.attachPress(fnPressHandler);
+					oButtonClone.attachPress(function (oEvent) {
+						this._moveFocusOnSection(oEvent.getSource());
+					}, this);
 				}
 
-				oButtonClone.addEventDelegate(oEventDelegatesForkeyBoardHandler);
 				//has a ux rule been applied that we need to reflect here?
 				var sTitle = (oSectionBase._getInternalTitle() != "") ? oSectionBase._getInternalTitle() : oSectionBase.getTitle();
 				oButtonClone.setText(sTitle);
 			} else {
 				oButtonClone = oButton.clone(); //keep original button parent control hierarchy
 				oButtonClone.attachPress(fnPressHandler);
-				oButtonClone.addEventDelegate(oEventDelegatesForkeyBoardHandler);
+				oButtonClone.attachPress(function (oEvent) {
+					this._moveFocusOnSection(oEvent.getSource());
+				}, this);
 				this._oObserver.observe(oButton, {
 					properties: true
 				});
