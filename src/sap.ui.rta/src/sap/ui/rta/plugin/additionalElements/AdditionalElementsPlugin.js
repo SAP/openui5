@@ -232,6 +232,27 @@ sap.ui.define([
 			return bIsEnabled;
 		},
 
+		/**
+		 * Register an overlay
+		 * If the MetaModel was not loaded yet when evaluating addODataProperty, the
+		 * plugin returns editable = false. Therefore we must make an extra check after
+		 * the MetaModel is loaded.
+		 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
+		 * @override
+		 */
+		registerElementOverlay : function(oOverlay) {
+			var oModel = oOverlay.getElement().getModel();
+			if (oModel){
+				var oMetaModel = oModel.getMetaModel();
+				if (oMetaModel){
+					oMetaModel.loaded().then(function(){
+						this.evaluateEditable([oOverlay], {onRegistration: true});
+					}.bind(this));
+				}
+			}
+			Plugin.prototype.registerElementOverlay.apply(this, arguments);
+		},
+
 		_getRevealActions: function(bSibling, oOverlay) {
 			var mParents = _getParents(bSibling, oOverlay);
 			var mReveal = this._getTypes(mReveal, mParents, bSibling, oOverlay);
