@@ -61,16 +61,21 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'       }).placeAt("content");\n' +
 				'    });\n',
 
-			// throws error to test error handling
-			sIndexJs_v4 = '    sap.ui.getCore().attachInit(function () {\n' +
-				'    throw new Error("TestErrorMessage");' +
-				'       sap.ui.xmlview({\n' +
-				'          id: "myView3",' +
-				'          async: true,' +
-				'          viewName: "HelloWorld.App"\n' +
-				'       }).placeAt("content");\n' +
-				'    });\n';
+			// throws error in a seaprate task to test error handling
+			sIndexJs_v4 =
+				'    sap.ui.getCore().attachInit(function () {\n' +
+				'       setTimeout(function() {\n' +
+				'          throw new Error("TestErrorMessage");\n' +
+				'       }, 200);\n' +
+				'    });\n',
 
+			// throws error in a micro task to test error handling
+			sIndexJs_v5 =
+				'    sap.ui.getCore().attachInit(function () {\n' +
+				'       Promise.resolve().then(function() {\n' +
+				'          throw new Error("TestErrorMessage");\n' +
+				'       });\n' +
+				'    });\n';
 
 		/**
 		 * Waits for a UI5 object with the given id to be created in the frame window
@@ -286,15 +291,13 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			oFrame.src = sFrameURL;
 		});
 
-		QUnit.test("displays uncauth errors in output window", function(assert) {
+		QUnit.test("displays uncaught errors in output window", function(assert) {
 
 			var done = assert.async(),
 				oFrame = this.iframe,
 				oData = {
 					src: {
-						'HelloWorld/index.js': sIndexJs_v4,
-						'HelloWorld/App.view.xml': sXmlSrc,
-						'HelloWorld/App.controller.js': sControllerSrc
+						'HelloWorld/index.js': sIndexJs_v4
 					},
 					moduleNameToRequire: "HelloWorld/index"
 				};
@@ -317,6 +320,34 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			oFrame.src = sFrameURL;
 		});
 
+		QUnit.test("displays unhandled rejection in output window", function(assert) {
+
+			var done = assert.async(),
+				oFrame = this.iframe,
+				oData = {
+					src: {
+						'HelloWorld/index.js': sIndexJs_v5
+					},
+					moduleNameToRequire: "HelloWorld/index"
+				};
+
+			assert.expect(1);
+
+			oFrame.onload = function() {
+				if (oFrame.contentWindow) {
+					oFrame.contentWindow.postMessage(oData, "*");
+				}
+				function isErrorMessageVisible() {
+					return oFrame.contentWindow.document.body.innerText.toLowerCase().indexOf("error") >= 0;
+				}
+				waitForCondition(isErrorMessageVisible).then(function(bResult) {
+					assert.ok(bResult, "error message is displayed in DOM");
+					done();
+				});
+			};
+
+			oFrame.src = sFrameURL;
+		});
 
 
 	});

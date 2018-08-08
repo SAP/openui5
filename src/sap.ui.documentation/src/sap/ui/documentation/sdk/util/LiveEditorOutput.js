@@ -24,7 +24,7 @@
 			return;
 		}
 
-		addOnErrorHook();
+		addErrorHandlers();
 		preloadModules(oData);
 	});
 
@@ -48,12 +48,22 @@
 	 * Listen for errors and display them in the DOM,
 	 * so that the user does not need to open the console
 	 */
-	function addOnErrorHook () {
+	function addErrorHandlers() {
 
 		window.addEventListener("error", function(error) {
 			error.preventDefault();
 			var oErrorOutput = document.createElement("span");
 			oErrorOutput.innerText = error.message; // use save API
+			oErrorOutput.style.cssText = "position:absolute; top:1rem; left:1rem";
+			if (!document.body) {
+				document.write("<span></span>"); // add content via document.write to ensure document.body is created;
+			}
+			document.body.appendChild(oErrorOutput);
+		});
+		window.addEventListener("unhandledrejection", function(event) {
+			event.preventDefault();
+			var oErrorOutput = document.createElement("span");
+			oErrorOutput.innerText = event.reason && event.reason.message; // use save API
 			oErrorOutput.style.cssText = "position:absolute; top:1rem; left:1rem";
 			if (!document.body) {
 				document.write("<span></span>"); // add content via document.write to ensure document.body is created;
