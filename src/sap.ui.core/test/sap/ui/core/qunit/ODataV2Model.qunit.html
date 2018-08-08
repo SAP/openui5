@@ -6269,6 +6269,40 @@
 			}.bind(this));
 	});
 
+	QUnit.test("Annotation error: no cache", function(assert) {
+		assert.expect(6);
+		var done = assert.async();
+		var oSpy = sinon.spy(jQuery, "ajax");
+		this.oModel = initModel(sURI, {
+			metadataUrlParams:{"sap-context-token": "test-token"},
+			annotationURI: "/error/~201801171629~/someAnnotation.xml"
+		});
+		this.oModel.metadataLoaded()
+			.then(function(oMetadata) {
+				assert.ok(this.oModel.oMetadata.sCacheKey, "caching enabled");
+				this.oModel2 = initModel(sURI, {
+					metadataUrlParams:{"sap-context-token": "test-token"},
+					annotationURI: "/error/~201801171629~/someAnnotation.xml"
+				});
+				this.oModel2.metadataLoaded()
+					.then(function(oMetadata) {
+						assert.ok(this.oModel2.oMetadata.sCacheKey, "caching enabled");
+						oSpy.restore();
+						done();
+					}.bind(this));
+				this.oModel2.annotationsLoaded()
+					.then(function(oAnnotations) {
+						assert.ok(this.oModel2.oAnnotations.sCacheKey, "caching enabled");
+						assert.equal(oSpy.callCount, 2, "Annotation request triggered");
+					}.bind(this));
+			}.bind(this));
+		this.oModel.annotationsLoaded()
+			.then(function(oAnnotations) {
+				assert.ok(this.oModel.oAnnotations.sCacheKey, "caching enabled");
+				assert.equal(oSpy.callCount, 1, "Annotation request triggered");
+		}.bind(this));
+	});
+
 	QUnit.module("sap-cancel-on-close header handling", {
 		beforeEach: function() {
 			this.spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -6413,7 +6447,7 @@
 		var done = assert.async();
 		this.oModel = initModel(sURI, {headers: {"sap-cancel-on-close": true}});
 		this.oModel.setHeaders({"sap-cancel-on-close": false});
-		
+
 		var fnFirstRead = function(oRequest){
 			this.oModel.detachRequestCompleted(fnFirstRead);
 			assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], false, "Set header API overrides constructor parameter.");
@@ -6423,11 +6457,11 @@
 				assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], true, "API parameter is of highest prio.");
 				done();
 			}.bind(this);
-			
+
 			this.oModel.attachRequestCompleted(fnSecondRead);
-			
+
 			this.oModel.read("/Categories", {headers: {"sap-cancel-on-close": true}});
-			
+
 		}.bind(this);
 
 		this.oModel.attachRequestCompleted(fnFirstRead);
