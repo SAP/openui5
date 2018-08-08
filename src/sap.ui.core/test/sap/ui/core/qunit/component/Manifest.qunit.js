@@ -118,4 +118,27 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Manifest.load ASYNC", function(assert) {
+		var that = this;
+		var done = assert.async();
+		Manifest.load({
+			componentName: "sap.ui.test.manifestload",
+			manifestUrl: "testdata/manifestload/manifest.json",
+			async: true
+		}).then(function(oManifest) {
+			that.oManifest = oManifest; // Save for cleanup in afterEach
+			assert.strictEqual(that.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded ASYNC");
+			done();
+		});
+	});
+
+	QUnit.test("Manifest.load SYNC", function(assert) {
+		this.oManifest = Manifest.load({
+			componentName: "sap.ui.test.manifestload",
+			manifestUrl: "testdata/manifestload/manifest.json",
+			async: false
+		});
+		assert.strictEqual(this.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded SYNC");
+	});
+
 });

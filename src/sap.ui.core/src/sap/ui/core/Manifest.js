@@ -703,7 +703,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			return oManifestJSON.then(function(oManifestJSON) {
 				return new Manifest(oManifestJSON, {
 					componentName: sComponentName,
-					process: false
+					process: false,
+					url: sManifestUrl
 				});
 			});
 		}
