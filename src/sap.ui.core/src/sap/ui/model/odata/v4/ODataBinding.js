@@ -566,7 +566,7 @@ sap.ui.define([
 	 */
 	ODataBinding.prototype.removeCachesAndMessages = function () {
 		var oModel = this.oModel,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = oModel.resolve(this.sPath, this.oContext);
 
 		if (sResolvedPath) {
 			oModel.reportBoundMessages(sResolvedPath.slice(1), {});
@@ -579,7 +579,7 @@ sap.ui.define([
 		}
 	};
 
-		/**
+	/**
 	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}. Resets also
 	 * invalid user input.
 	 *
