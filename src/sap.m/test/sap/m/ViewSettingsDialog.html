@@ -265,7 +265,8 @@
 			items: [
 				new sap.m.Label("minLabel", {
 					design: sap.m.LabelDesign.Bold,
-					text: "Minimum price:"
+					text: "Minimum price:",
+					labelFor: "minSlider"
 				}),
 				new sap.m.Slider("minSlider", {
 					value: 0,
@@ -309,7 +310,8 @@
 				}),
 				new sap.m.Label("maxLabel", {
 					design: sap.m.LabelDesign.Bold,
-					text: "Maximum price:"
+					text: "Maximum price:",
+					labelFor: "maxSlider"
 				}),
 				new sap.m.Slider("maxSlider", {
 					value: 100,
