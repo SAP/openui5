@@ -395,7 +395,7 @@ sap.ui.define([
 		var sUrl = "/sap/bc/lrep/flex/data/";
 		mPropertyBag = mPropertyBag || {};
 
-		if (!sComponentName || sComponentName.match(new RegExp(/^\$*\{[a-zA-Z0-9\.]*\}/g))) {
+		if (!sComponentName) {
 			return Promise.reject(new Error("Component name not specified"));
 		}
 
@@ -441,9 +441,6 @@ sap.ui.define([
 		}
 
 		if (oComponent.appVersion && (oComponent.appVersion !== FlexUtils.DEFAULT_APP_VERSION)) {
-			if (oComponent.appVersion.match(new RegExp(/^\$*\{[a-zA-Z0-9\.]*\}/g))) {
-				return Promise.reject(new Error("Component appVersion is invalid"));
-			}
 			sUrl += "&appVersion=" + oComponent.appVersion;
 		}
 
