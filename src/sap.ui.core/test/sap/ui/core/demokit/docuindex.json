@@ -590,7 +590,7 @@
 			{
 				"id": "sap.ui.core.sample.OpaMatchers",
 				"name": "Using Matchers",
-				"description": "Matchers are used to retrieve controls that have to match a condition, eg: Property matching a value"
+				"description": "Matchers are used in OPA tests to retrieve controls that have to match a condition, eg: Property matching a value"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaById",
@@ -660,17 +660,17 @@
 			{
 				"id": "sap.ui.core.sample.matcher.BindingPath",
 				"name": "Binding Path Matcher",
-				"description": "The binding path matcher checks if a control has a binding context with the exact same binding path"
+				"description": "The binding path matcher checks if a control has a binding context with the exact same binding path in OPA tests."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.I18NText",
 				"name": "I18N Text Matcher",
-				"description": "The I18N text matcher checks if a control property has the same value as a text of an I18N file."
+				"description": "The I18N text matcher checks if a control property has the same value as a text of an I18N file in OPA tests."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.LabelFor",
 				"name": "Label For Matcher",
-				"description": "The LabelFor matcher searches for given control associated with labelFor property."
+				"description": "The LabelFor matcher searches for given control associated with labelFor property in OPA tests."
 			},
 			{
 				"id": "sap.ui.core.sample.MessageManager.BasicMessages",
