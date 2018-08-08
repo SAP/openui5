@@ -5650,8 +5650,12 @@
 				target: {
 					value: "A"
 				},
-				srcControl: oMultiComboBox
+				srcControl: oMultiComboBox,
+				setMarked: function () {}
 			};
+
+		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
@@ -5703,8 +5707,12 @@
 				target: {
 					value: "A"
 				},
-				srcControl: oMultiComboBox
+				srcControl: oMultiComboBox,
+				setMarked: function () {}
 			};
+
+		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
@@ -5776,7 +5784,8 @@
 				srcControl: oMultiComboBox.getPickerTextField(),
 				isMarked: function () {
 					return false;
-				}
+				},
+				setMarked: function () {}
 			};
 
 		// arrange
