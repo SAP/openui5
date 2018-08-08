@@ -1149,7 +1149,7 @@ sap.ui.define([
 			"ariagrouptotallabel",
 			"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolspan",
 			"ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
-			"ariafixedcolumn", "ariainvalid", "ariaselection"
+			"ariafixedcolumn", "ariainvalid", "ariaselection", "ariashowcolmenu", "ariahidecolmenu"
 		];
 		var $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 		assert.strictEqual($Elem.length, 1, "Hidden Text Area available");

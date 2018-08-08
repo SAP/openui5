@@ -393,6 +393,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._createColumnVisibilityMenuItem = function(sId, oColumn) {
+		var oTable = this._oTable;
 
 		function getLabelText(oLabel) {
 			return oLabel && oLabel.getText && oLabel.getText();
@@ -410,6 +411,7 @@ sap.ui.define([
 		return new MenuItem(sId, {
 			text: sText,
 			icon: oColumn.getVisible() ? "sap-icon://accept" : null,
+			ariaLabelledBy: [oTable.getId() + (oColumn.getVisible() ? "-ariahidecolmenu" : "-ariashowcolmenu")],
 			select: jQuery.proxy(function(oEvent) {
 				var oMenuItem = oEvent.getSource();
 				var bVisible = !oColumn.getVisible();

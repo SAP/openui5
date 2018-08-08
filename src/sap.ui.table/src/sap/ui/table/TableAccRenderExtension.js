@@ -108,6 +108,10 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 			_writeAccText(oRm, sTableId, "ariacolsorteddes", TableUtils.getResourceText("TBL_COL_DESC_SORTED_DES"));
 			// aria description for invalid table (table with overlay)
 			_writeAccText(oRm, sTableId, "ariainvalid", TableUtils.getResourceText("TBL_TABLE_INVALID"));
+			// aria description for column vsisiblity menu item (Show Column)
+			_writeAccText(oRm, sTableId, "ariashowcolmenu", TableUtils.getResourceText("TBL_COL_VISBILITY_MENUITEM_SHOW"));
+			// aria description for column vsisiblity menu item (Hide Column)
+			_writeAccText(oRm, sTableId, "ariahidecolmenu", TableUtils.getResourceText("TBL_COL_VISBILITY_MENUITEM_HIDE"));
 
 			var oSelectionMode = oTable.getSelectionMode();
 			if (oSelectionMode !== SelectionMode.None) {
