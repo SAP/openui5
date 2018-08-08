@@ -827,13 +827,13 @@ sap.ui.define([
 		if (this._oDialog.isOpen() && ((bSearchValueDifferent && sEventType === "liveChange") || sEventType === "search")) {
 			// set the internal value to the passed value to check if the same value has already been filtered (happens when clear is called, it fires liveChange and change events)
 			this._sSearchFieldValue = sValue;
-
 			// only set when the binding has already been executed
 			// only set when the binding has already been executed
 			if (oBinding) {
 				// we made another request in this control, so we update the counter
 				this._iTableUpdateRequested += 1;
 				if (sEventType === "search") {
+
 					// fire the search so the data can be updated externally
 					this.fireSearch({value: sValue, itemsBinding: oBinding});
 				} else if (sEventType === "liveChange") {
@@ -1020,7 +1020,6 @@ sap.ui.define([
 			// fire cancel event
 			that.fireCancel();
 		};
-
 		// reset selection
 		// before was part of the fnAfterClose callback but apparently actions were executed on
 		// a table that does not exist so moving here as fix
@@ -1096,7 +1095,10 @@ sap.ui.define([
 
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.bIsDestroyed) {
-			this._executeSearch("", "search");
+			var oBindings = this._oTable.getBinding("items");
+			if (oBindings) {
+				oBindings.filter([]);
+			}
 			this._oTable.removeSelections();
 			for (; i < this._aInitiallySelectedItems.length; i++) {
 				this._oTable.setSelectedItem(this._aInitiallySelectedItems[i]);
