@@ -133,9 +133,9 @@ sap.ui.define([
 			sUrl0 = Object.keys(mUrls)[0];
 			if (mUrls[sUrl0]) {
 				// document already processed, no different URLs allowed
-				logAndThrowError("A schema cannot span more than one document: " + sSchema
-					+ " - expected reference URI " + sUrl0
-					+ " but instead saw " + sReferenceUri, sDocumentUri);
+				reportAndThrowError(oMetaModel, "A schema cannot span more than one document: "
+					+ sSchema + " - expected reference URI " + sUrl0 + " but instead saw "
+					+ sReferenceUri, sDocumentUri);
 			}
 			mUrls[sReferenceUri] = false;
 		}
@@ -198,8 +198,8 @@ sap.ui.define([
 		if (mUrls) {
 			aUrls = Object.keys(mUrls);
 			if (aUrls.length > 1) {
-				logAndThrowError("A schema cannot span more than one document: schema is referenced"
-					+ " by following URLs: " + aUrls.join(", "), sSchema);
+				reportAndThrowError(oMetaModel, "A schema cannot span more than one document: "
+					+ "schema is referenced by following URLs: " + aUrls.join(", "), sSchema);
 			}
 
 			sUrl = aUrls[0];
@@ -243,20 +243,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Logs an error with the given message and details and throws it.
-	 *
-	 * @param {string} sMessage
-	 *   Error message
-	 * @param {string} sDetails
-	 *   Error details
-	 * @throws {Error}
-	 */
-	function logAndThrowError(sMessage, sDetails) {
-		Log.error(sMessage, sDetails, sODataMetaModel);
-		throw new Error(sDetails + ": " + sMessage);
-	}
-
-	/**
 	 * Merges the given schema's annotations into the root scope's $Annotations.
 	 *
 	 * @param {object} oSchema
@@ -295,6 +281,24 @@ sap.ui.define([
 			extend(mAnnotations[sTarget], oSchema.$Annotations[sTarget]);
 		}
 		delete oSchema.$Annotations;
+	}
+
+	/**
+	 * Reports an error with the given message and details and throws it.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+	 *   The OData metadata model
+	 * @param {string} sMessage
+	 *   Error message
+	 * @param {string} sDetails
+	 *   Error details
+	 * @throws {Error}
+	 */
+	function reportAndThrowError(oMetaModel, sMessage, sDetails) {
+		var oError = new Error(sDetails + ": " + sMessage);
+
+		oMetaModel.oModel.reportError(sMessage, sODataMetaModel, oError);
+		throw oError;
 	}
 
 	/**
@@ -673,7 +677,7 @@ sap.ui.define([
 			for (sQualifiedName in mAnnotationScope) {
 				if (sQualifiedName[0] !== "$") {
 					if (sQualifiedName in mScope) {
-						logAndThrowError("A schema cannot span more than one document: "
+						reportAndThrowError(that, "A schema cannot span more than one document: "
 							+ sQualifiedName, that.aAnnotationUris[i]);
 					}
 					oElement = mAnnotationScope[sQualifiedName];
@@ -2329,13 +2333,13 @@ sap.ui.define([
 			sReferenceUri = new URI(sReferenceUri).absoluteTo(this.sUrl).toString();
 
 			if ("$IncludeAnnotations" in oReference) {
-				logAndThrowError("Unsupported IncludeAnnotations", sUrl);
+				reportAndThrowError(this, "Unsupported IncludeAnnotations", sUrl);
 			}
 			for (i in oReference.$Include) {
 				sSchema = oReference.$Include[i];
 				if (sSchema in mScope) {
-					logAndThrowError("A schema cannot span more than one document: " + sSchema
-						+ " - is both included and defined",
+					reportAndThrowError(this, "A schema cannot span more than one document: "
+						+ sSchema + " - is both included and defined",
 						sUrl);
 				}
 				addUrlForSchema(this, sSchema, sReferenceUri, sUrl);
