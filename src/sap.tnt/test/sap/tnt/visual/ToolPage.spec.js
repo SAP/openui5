@@ -72,8 +72,9 @@ describe('sap.tnt.ToolPage', function() {
 		}
 	});
 
-	var toolHeader = element(by.id('tHeader'));
 	it('should display tool header', function () {
+		var toolHeader = element(by.id('tHeader'));
+		toolHeader.click();
 		expect(takeScreenshot(toolHeader)).toLookAs('8_tool_header');
 	});
 });
