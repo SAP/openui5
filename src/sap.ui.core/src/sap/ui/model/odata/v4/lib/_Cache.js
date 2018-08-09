@@ -917,12 +917,19 @@ sap.ui.define([
 		function visitInstance(oInstance, sMetaPath, sInstancePath, sContextUrl, bCollection) {
 			var oType = mTypeForMetaPath[sMetaPath],
 				sMessageProperty = oType && oType[sMessagesAnnotation]
-					&& oType[sMessagesAnnotation].$Path;
+					&& oType[sMessagesAnnotation].$Path,
+				aMessages;
 
 			sContextUrl = buildContextUrl(sContextUrl, oInstance["@odata.context"]);
 			that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
 			if (bCollection) {
 				sInstancePath += _Helper.getPrivateAnnotation(oInstance, "predicate");
+			}
+			if (sMessageProperty) {
+				aMessages = _Helper.drillDown(oInstance, sMessageProperty.split("/"));
+				if (aMessages !== undefined) {
+					addMessages(aMessages, sInstancePath, sContextUrl);
+				}
 			}
 
 			Object.keys(oInstance).forEach(function (sProperty) {
@@ -936,9 +943,6 @@ sap.ui.define([
 				}
 				if (sProperty.includes("@")) { // ignore other annotations
 					return;
-				}
-				if (sProperty === sMessageProperty) {
-					addMessages(vPropertyValue, sInstancePath, sContextUrl);
 				}
 				if (Array.isArray(vPropertyValue)) {
 					// compute count
