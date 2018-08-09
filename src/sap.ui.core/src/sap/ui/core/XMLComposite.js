@@ -43,40 +43,6 @@ sap.ui.define([
 		// private functions
 		var sXMLComposite = "sap.ui.core.XMLComposite";
 
-		//repair the event handler registry
-		function repairListener(oControl, oTemplate, oClone) {
-			var sKey, vAggregation, i, aEvents, mRepairedEventRegistry = {}, oNewEvent;
-
-			if (oControl && oControl instanceof ManagedObject) {
-
-				for (var sEvent in oControl.mEventRegistry) {
-					mRepairedEventRegistry[sEvent] = [];
-					aEvents = oControl.mEventRegistry[sEvent];
-					for (i = 0; i < aEvents.length; i++) {
-						oNewEvent = jQuery.extend({}, aEvents[i]);//copy the event
-						if (oNewEvent.oListener == oTemplate) {
-							oNewEvent.oListener = oClone;
-						}
-						mRepairedEventRegistry[sEvent].push(oNewEvent);
-					}
-				}
-				oControl.mEventRegistry = mRepairedEventRegistry;
-
-				//dive in the Aggregations
-				for (sKey in oControl.mAggregations) {
-					vAggregation = oControl.mAggregations[sKey];
-
-					if (!Array.isArray(vAggregation)) {
-						vAggregation = [vAggregation];
-					}
-
-					for (i = 0; i < vAggregation.length; i++) {
-						repairListener(vAggregation[i], oTemplate, oClone);
-					}
-				}
-			}
-		}
-
 		/**
 		 * XMLComposite is the base class for composite controls that use a XML fragment representation
 		 * for their visual parts. From a user perspective such controls appear as any other control, but internally the
@@ -196,7 +162,6 @@ sap.ui.define([
 			metadata: {
 				interfaces: ["sap.ui.core.IDScope"],
 				properties: {
-
 					/**
 					 * The width
 					 */
@@ -225,10 +190,9 @@ sap.ui.define([
 					}
 				}
 			},
-			constructor : function(sId, mSettings) {
+			constructor : function() {
 				this._bIsCreating = true;
-
-				Control.apply(this,arguments);
+				Control.apply(this, arguments);
 				delete this._bIsCreating;
 			},
 			renderer: function (oRm, oControl) {
@@ -265,17 +229,6 @@ sap.ui.define([
 				Log.debug("Stop rendering '" + oControl.sId, sXMLComposite);
 			}
 		}, XMLCompositeMetadata);
-
-		XMLComposite.prototype.clone = function () {
-			var oClone = ManagedObject.prototype.clone.apply(this, arguments);
-			var oContent = oClone._renderingContent ? oClone._renderingContent() : oClone._getCompositeAggregation();
-			repairListener(oContent, this, oClone);
-			//also if the compisite is clone when already having children the propagated models are so far not set
-			//fix that
-			oClone.oPropagatedProperties = this.oPropagatedProperties;
-			oClone._bIsClone = true;
-			return oClone;
-		};
 
 		/**
 		 * Returns an element by its ID in the context of the XMLComposite.
@@ -471,8 +424,8 @@ sap.ui.define([
 						this.enhanceAccessibilityState(oElement, mAriaProps);
 					}.bind(this);
 				}
-				oNewContent.setModel(this._oManagedObjectModel, "$" + this.alias);
-				oNewContent.bindObject("$" + this.alias + ">/");
+				oNewContent.bindObject("$" + this.alias + ">/");//first define the context
+				oNewContent.setModel(this._oManagedObjectModel, "$" + this.alias);//then set the model
 				var oResourceModel = this._getResourceModel();
 				if (oResourceModel) {
 					oNewContent.setModel(oResourceModel, "$" + this.alias + ".i18n");
@@ -554,36 +507,26 @@ sap.ui.define([
 		 */
 		XMLComposite.prototype._initCompositeSupport = function (mSettings) {
 			var oMetadata = this.getMetadata(),
-			sAggregationName = oMetadata.getCompositeAggregationName(),
-			bInitialized = false;
-			if (mSettings && sAggregationName && mSettings[sAggregationName]) {
-				//this branch is taken if the _content of the composite is there at creation time
+			oFragmentContent = oMetadata._fragment,
+			sAggregationName = oMetadata.getCompositeAggregationName();
+
+			this._destroyCompositeAggregation();
+
+			//identify the _fragmentContent the new template wins
+			if (mSettings && sAggregationName && mSettings[sAggregationName]) {//or from the settings
 				var oNode = mSettings[sAggregationName];
-				if (oNode instanceof ManagedObject) {
-					//this happens either if we clone an existing composite and the children are already present
-					//note that we adapted the event handling in the clone method that is enhanced in the composite
-					this._setCompositeAggregation(oNode);
-					bInitialized = true;
-				} else if (oNode.localName === "FragmentDefinition") {
-					//or if a preprocessing like in the mdc:Table has happened
-					this._destroyCompositeAggregation();
-					this._setCompositeAggregation(sap.ui.xmlfragment({
-						sId: this.getId(),
-						fragmentContent: mSettings[sAggregationName],
-						oController: this
-					}));
-					bInitialized = true;
+				if (oNode.localName === "FragmentDefinition") {//should be always the case
+					oFragmentContent = oNode;
+					delete mSettings[sAggregationName];
 				}
-				delete mSettings[sAggregationName];
 			}
-			if (!bInitialized) {
-				this._destroyCompositeAggregation();
-				this._setCompositeAggregation(sap.ui.xmlfragment({
-					sId: this.getId(),
-					fragmentContent: this.getMetadata()._fragment,
-					oController: this
-				}));
-			}
+
+			this._setCompositeAggregation(sap.ui.xmlfragment({
+				sId: this.getId(),
+				fragmentContent: oFragmentContent,
+				oController: this
+			}));
+
 			this._bIsInitialized = true;
 		};
 
@@ -633,4 +576,4 @@ sap.ui.define([
 		};
 
 		return XMLComposite;
-	});
+});
