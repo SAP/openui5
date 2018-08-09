@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/support/supportRules/ui/models/Documentation",
-	"sap/ui/core/ValueState"
-], function (BaseController, SelectionUtils, PresetsUtils, Fragment, MessageToast, MessageBox, Documentation, ValueState) {
+	"sap/ui/core/ValueState",
+	"sap/ui/support/supportRules/util/Utils"
+], function (BaseController, SelectionUtils, PresetsUtils, Fragment, MessageToast, MessageBox, Documentation, ValueState, Utils) {
 	"use strict";
 
 	/**
@@ -167,6 +168,8 @@ sap.ui.define([
 			return;
 		}
 
+		this._clearImportErrors();
+
 		oReader.onloadend = this.onImportFileLoaded.bind(this);
 		oReader.onerror = this.onImportFileError.bind(this);
 
@@ -178,6 +181,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent The event which was fired.
 	 */
 	PresetsController.prototype.onImportFileMismatch = function (oEvent) {
+		this._clearImportErrors();
 		this._reportImportFileError(
 			"Invalid file type \"" + oEvent.getParameter("mimeType") + "\". Please, import a valid \"application/json\" file.",
 			oEvent.getParameter("fileName")
@@ -202,6 +206,11 @@ sap.ui.define([
 		var oFileData = this._tryParseImportFile(oEvent.target.result);
 		if (oFileData) {
 			this._clearImportErrors();
+
+			// ensure all imported presets have an id
+			if (!oFileData.id) {
+				oFileData.id = Utils.generateUuidV4();
+			}
 
 			// parse the date exported value, so it can be displayed
 			if (oFileData.dateExported) {
@@ -266,7 +275,7 @@ sap.ui.define([
 		}
 
 		this.oModel.setProperty("/currentExportData", {
-			"id": oCurrentPreset.id,
+			"id": (oCurrentPreset.isMySelection || oCurrentPreset.isSystemPreset) ? "" : oCurrentPreset.id,
 			"title": oCurrentPreset.title,
 			"descriptionValue": oCurrentPreset.description, // there is an issue on build if we use ${description}
 			"dateExportedForDisplay": new Date(), // the current date is shown as export date
@@ -412,6 +421,10 @@ sap.ui.define([
 			return;
 		}
 
+		if (!id) {
+			id = Utils.generateUuidV4();
+		}
+
 		PresetsUtils.exportSelectionsToFile(
 			id,
 			title,
@@ -428,7 +441,7 @@ sap.ui.define([
 	 * Opens the documentation
 	 */
 	PresetsController.prototype.openHelp = function () {
-		Documentation.openTopic("3fc864acf926406194744375aa464fe7"); //@todo put the correct topic id
+		Documentation.openTopic("3fc864acf926406194744375aa464fe7");
 	};
 
 	/**
@@ -458,7 +471,7 @@ sap.ui.define([
 	/**
 	 * Validates if the import preset is already imported
 	 * @private
-	 * @param {string} sPresetId The id of the preset to be imported
+	 * @param {string} sPresetId The ID of the preset to be imported
 	 * @return {boolean} True if already imported
 	 */
 	PresetsController.prototype._isAlreadyImported = function (sPresetId) {
