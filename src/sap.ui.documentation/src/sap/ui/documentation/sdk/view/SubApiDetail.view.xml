@@ -169,11 +169,14 @@
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
 										<custom:LightTable rows="{path : '/properties'}"
-											 columnCount="2"
-											 columnTitles="Name,Description"
-											 class="sapUiSmallMarginTop sapUiDocumentation2ColumnsEqualTable">
+											 columnCount="3"
+											 columnTitles="Name,Type,Description"
+											 class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
+												<m:Link text="{type}"
+														href="{href}"
+														enabled="{= !!${linkEnabled} }"/>
 												<layout:VerticalLayout>
 													<custom:JSDocText text="{description}"/>
 													<m:MessageStrip
