@@ -1675,6 +1675,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#patch", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
+			oCacheValue = {},
+			oData = {},
+			sPath = "path/to/Entity";
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPath)
+			.returns(SyncPromise.resolve(oCacheValue));
+		this.mock(_Helper).expects("updateCache")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
+				sinon.match.same(oCacheValue), sinon.match.same(oData));
+
+		// code under test
+		oCache.patch(sPath, oData);
+	});
+
+	//*********************************************************************************************
 	[
 		{index : 1, length : 1, result : [{key : "b"}], types : true},
 		{index : 0, length : 2, result : [{key : "a"}, {key : "b"}], types : true},

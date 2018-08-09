@@ -947,4 +947,22 @@ sap.ui.require([
 		assert.strictEqual(oResult.isFulfilled(), true);
 		assert.strictEqual(oResult.getResult(), undefined);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("patch", function (assert) {
+		var oCache = {
+				patch : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')"),
+			oData = {},
+			sPath = "path/to/context";
+
+		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func, "")
+			.callsArgWith(0, oCache, sPath)
+			.returns(Promise.resolve());
+		this.mock(oCache).expects("patch").withExactArgs(sPath, sinon.match.same(oData));
+
+		// code under test
+		return oContext.patch(oData);
+	});
 });

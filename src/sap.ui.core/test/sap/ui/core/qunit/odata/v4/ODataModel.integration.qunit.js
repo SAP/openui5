@@ -6778,6 +6778,51 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Call an action which returns the binding parameter as return value. Expect that
+	// the result is copied back to the binding parameter.
+	QUnit.test("bound operation: copy result into context", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'42\')}">\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="LifecycleStatusDesc" text="{LifecycleStatusDesc}" />\
+	<FlexBox id="action"\
+		binding="{com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)}">\
+		<layoutData><FlexItemData/></layoutData>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		that.expectRequest("SalesOrderList('42')?$select=LifecycleStatusDesc,SalesOrderID", {
+				"SalesOrderID" : "42",
+				"LifecycleStatusDesc" : "New"
+			})
+			.expectChange("id", "42")
+			.expectChange("LifecycleStatusDesc", "New");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOperation = that.oView.byId("action").getObjectBinding();
+
+			that.expectRequest({
+				method : "POST",
+				url : "SalesOrderList('42')/"
+						+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+				payload : {}
+			}, {
+				"SalesOrderID" : "42",
+				"LifecycleStatusDesc" : "Confirmed"
+			})
+			.expectChange("LifecycleStatusDesc", "Confirmed");
+
+			return Promise.all([
+				// code under test
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Delete return value context obtained from bound action execute.
 	QUnit.test("bound operation: delete return value context", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
@@ -6861,10 +6906,12 @@ sap.ui.require([
 
 		return this.createView(assert, "", oModel).then(function () {
 			that.expectRequest({
-				method: "POST",
-				url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
-				payload: {}
-			}, {"ArtistID": "42", "IsActiveEntity": false});
+					method: "POST",
+					url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+					payload: {}
+				}, {"ArtistID": "42", "IsActiveEntity": false})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)",
+					{"ArtistID": "42", "IsActiveEntity": true});
 
 			return Promise.all([
 				// code under test
@@ -7086,6 +7133,8 @@ sap.ui.require([
 				url : "SalesOrderList('43')/com.sap.gateway.default.zui5_epm_sample"
 					+ ".v0002.SalesOrder_Confirm",
 				payload : {}
+			}, {
+				"SalesOrderID" : "43"
 			});
 
 			return Promise.all([
