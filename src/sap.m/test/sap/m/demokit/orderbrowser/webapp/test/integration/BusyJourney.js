@@ -1,7 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/App",
+	"./pages/Master"
 ], function (opaTest) {
 	"use strict";
 
@@ -10,9 +12,6 @@ sap.ui.define([
 	opaTest("Should see a global busy indication while loading the metadata", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppWithDelay("", 10000);
-
-		// Actions
-		When.onTheAppPage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheBusyIndicator();
