@@ -190,7 +190,12 @@ sap.ui.define([
 
 	}
 
-	var VALID_TESTSUITE = /^test-resources\/([a-zA-Z_$\-][a-zA-Z_$0-9\-]*\/)*testsuite(?:\.[a-z][a-z0-9]*)?\.qunit$/;
+	/**
+	 * Pattern to validate testsuite names.
+	 *
+	 * The pattern is so restrictive to limit the locations where code will be loaded from.
+	 */
+	var VALID_TESTSUITE = /^test-resources\/([a-zA-Z_$\-][a-zA-Z_$0-9\-]*\/)*testsuite(?:\.[a-z][a-z0-9]*)*\.qunit$/;
 	//var VALID_TEST = /^([a-zA-Z_$\-][a-zA-Z_$0-9\-]*\/)*[a-zA-Z_$\-][a-zA-Z_$0-9\-]*$/;
 
 	/**
