@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Bar",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DragDropPlugin,
@@ -27,6 +28,7 @@ sap.ui.define([
 	VerticalLayout,
 	Button,
 	Bar,
+	OverlayUtil,
 	sinon
 ) {
 	"use strict";
@@ -506,14 +508,57 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when DT is loaded and moving the movedGroupElement1 to the Group2...", function(assert) {
+		QUnit.test("when DT is loaded and movedGroupElement1 is moved to the Group2...", function(assert) {
 			this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
+			var oSourceInformation = OverlayUtil.getParentInformation(this.oMovedGroupElement1Overlay);
+
 			assert.ok(this.oElementMover.checkTargetZone(this.oGroupAggregationOverlay), "then the group2 is a possible target zone");
+
+			// mock variant management
+			sandbox.stub(this.oElementMover.oBasePlugin, "getVariantManagementReference").returns("mockVariantReference");
+			// simulate move
+			sandbox.stub(this.oMovedGroupElement1Overlay, "getParent").returns(this.oGroupAggregationOverlay);
+			var oTargetInformation = {
+				parent: OverlayRegistry.getOverlay(this.oGroup2),
+				aggregation: "group",
+				index: this.oGroup2.getGroupElements().length
+			};
+
+			var fnGetCommandForStub = sandbox.stub(this.oElementMover.getCommandFactory(), "getCommandFor").returns(Promise.resolve());
+			sandbox.stub(OverlayUtil, "getParentInformation")
+				.callThrough()
+				.withArgs(this.oMovedGroupElement1Overlay)
+				.returns(oTargetInformation);
+
+			return this.oElementMover.buildMoveCommand()
+				.then(function() {
+					assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
+					assert.ok(
+						fnGetCommandForStub.calledWith(this.oMovedGroupElement1Overlay.getRelevantContainer(), "Move", {
+							movedElements: [{
+								element: this.oMovedGroupElement1,
+								sourceIndex: oSourceInformation.index,
+								targetIndex: this.oGroup2.getGroupElements().length
+							}],
+							source: delete oSourceInformation.index && oSourceInformation,
+							target: delete oTargetInformation.index && oTargetInformation
+						}, this.oGroupAggregationOverlay.getDesignTimeMetadata(), "mockVariantReference"),
+						"then CommandFactory.getCommandFor() called with the right parameters"
+					);
+				}.bind(this));
 		});
 
 		QUnit.test("when Group 2 is removed and movedGroupElement1 does not have any valid target zones anymore...", function(assert) {
 			this.oSmartForm1.removeGroup(this.oGroup2);
 			assert.notOk(this.oElementMover.checkMovable(this.oMovedGroupElement1Overlay), "then the movedGroupElement1 is no longer movable");
+		});
+
+		QUnit.test("when DT is loaded and moving a group element to the same Group, to where it originally belonged", function(assert) {
+			this.oElementMover.setMovedOverlay(this.oMovedGroupElement1Overlay);
+			return this.oElementMover.buildMoveCommand()
+				.then(function() {
+					assert.strictEqual(arguments[0], undefined, "then a promise is received resolving to undefined");
+				});
 		});
 	});
 
