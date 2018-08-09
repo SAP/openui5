@@ -739,7 +739,8 @@ sap.ui.define([
 			return oManifestJSON.then(function(oManifestJSON) {
 				return new Manifest(oManifestJSON, {
 					componentName: sComponentName,
-					process: false
+					process: false,
+					url: sManifestUrl
 				});
 			});
 		}
