@@ -51,12 +51,15 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		QUnit.equals = window.equals = window.equal;
 		}
 
-		// Set global timeout for all tests
+		// Set a timeout for all tests, either to a value given via URL
+		// or - when no other value has been configured yet - to a static default
 		var sTimeout = mParams.get("sap-ui-qunittimeout");
-		if (!sTimeout || isNaN(sTimeout)) {
-			sTimeout = "30000"; // 30s: default timeout of an individual QUnit test!
+		if (sTimeout != null || !("testTimeout" in QUnit.config)) {
+			if (!sTimeout || isNaN(sTimeout)) {
+				sTimeout = "30000"; // 30s: default timeout of an individual QUnit test!
+			}
+			QUnit.config.testTimeout = parseInt(sTimeout, 10);
 		}
-		QUnit.config.testTimeout = parseInt(sTimeout, 10);
 
 		if ( bLegacySupport ) {
 		// Do not reorder tests, as most of the tests depend on each other
