@@ -333,7 +333,10 @@
 				//this branch is necessary because, the typeMissmatch Event is fired if either the fileType or mimeType is wrong
 				if (oEvent.getParameter("fileType")) {
 					assert.equal(oEvent.getParameter("fileName"), "FileUploader.qunit.html", "typeMissmatch Event has the correct parameter");
-				}else if(oEvent.getParameter("mimeType")) {
+				} else if(oEvent.getParameter("fileType") === "") {
+					// when file has no extension it should return empty string for the fileType
+					assert.equal(oEvent.getParameter("fileType"), "", "parameter fileType is empty, when file has no extension");
+				} else if(oEvent.getParameter("mimeType")) {
 					assert.equal(oEvent.getParameter("fileName"), "hallo.png", "typeMissmatch Event has the correct parameter");
 				}
 			},
@@ -360,19 +363,29 @@
 		//type mismatch on the *mimeType*
 		oFileUploader.setMimeType(["text/html"]);
 		fakeEvent.target.files[0] = createFakeFile({
-			name:"hallo.png",
-			type:"image/png",
+			name: "hallo.png",
+			type: "image/png",
 			size: 166311
 		});
 		oFileUploader.handlechange(fakeEvent);
 		assert.equal(oTypeMissmatchSpy.callCount, 2, "typeMissmatch (mimeType) Event should be called TWICE now");
 
+		//type mismatch on the empty *fileType*
+		oFileUploader.setMimeType();
+		fakeEvent.target.files[0] = createFakeFile({
+			name: "hallo",
+			type: "unknown",
+			size: 166311
+		});
+		oFileUploader.handlechange(fakeEvent);
+		assert.equal(oTypeMissmatchSpy.callCount, 3, "typeMissmatch (fileType) Event should be called TRICE now");
+
 		//file allowed
 		oFileUploader.setFileType(["html"]);
 		oFileUploader.setMimeType(["text/html"]);
 		fakeEvent.target.files[0] = createFakeFile({
-			name:"FileUploader.qunit.html",
-			type:"text/html",
+			name: "FileUploader.qunit.html",
+			type: "text/html",
 			size: 100301
 		});
 		oFileUploader.handlechange(fakeEvent);
