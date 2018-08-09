@@ -368,7 +368,7 @@
 		},
 		{
 			"control": "sap.m.SegmentedButton",
-			"url": "../SegmentedButton.html",
+			"url": "SegmentedButton.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
