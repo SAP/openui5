@@ -2,8 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"sap/ui/core/ValueState"
-], function(opaTest, ValueState) {
+	"sap/ui/core/ValueState",
+	"sap/ui/thirdparty/sinon"
+], function(opaTest, ValueState, sinon) {
 	"use strict";
 
 	QUnit.module("Support Assistant Rule Presets");
@@ -281,17 +282,17 @@ sap.ui.define([
 		Then.onThePresetsPage.iShouldSeeExportDialog()
 			.and.iShouldSeeExportData("title", "My Selection")
 			.and.iShouldSeeExportData("description", "My Current/Last Selection")
-			.and.iShouldSeeExportData("presetId", "MySelectionPreset");
+			.and.iShouldSeeExportData("presetId", "");
 
 		When.onThePresetsPage.iEnterExportData("title", "Example title")
 			.and.iEnterExportData("description", "Example description")
-			.and.iEnterExportData("presetId", "MySelectionPreset");
+			.and.iEnterExportData("presetId", "");
 
 		When.onThePresetsPage.iPressExportFinalize();
 
 		Then.onThePresetsPage.iShouldReceiveOneExportFile()
 			.and.iShouldReceiveCorrectExportFile({
-				"id": "MySelectionPreset",
+				"id": sinon.match.truthy, // a generate id should appear in the file
 				"title": "Example title",
 				"description": "Example description"
 			});
@@ -312,13 +313,15 @@ sap.ui.define([
 
 		Then.onThePresetsPage.iShouldSeeExportDialog()
 			.and.iShouldSeeExportData("title", testPreset.title)
-			.and.iShouldSeeExportData("description", testPreset.description);
+			.and.iShouldSeeExportData("description", testPreset.description)
+			.and.iShouldSeeExportData("presetId", testPreset.id);
 
 		When.onThePresetsPage.iPressExportFinalize();
 
 		Then.onThePresetsPage.iShouldReceiveOneExportFile();
 
 		Then.onThePresetsPage.and.iShouldReceiveCorrectExportFile({
+			"id": testPreset.id,
 			"title": testPreset.title,
 			"description": testPreset.description,
 			"selections": testPreset.selections
@@ -350,12 +353,12 @@ sap.ui.define([
 		When.onThePresetsPage.iPressExport();
 
 		When.onThePresetsPage.iEnterExportData("title", "")
-			.and.iEnterExportData("description", "")
-			.and.iEnterExportData("presetId", "");
+			.and.iEnterExportData("presetId", "")
+			.and.iEnterExportData("description", "");
 		When.onThePresetsPage.iPressExportFinalize();
 		Then.onThePresetsPage.iShouldSeeExportDialog();
-		Then.onThePresetsPage.iShouldSeeCorrectValueState("presetId", ValueState.Error)
-			.and.iShouldSeeCorrectValueState("title", ValueState.Error)
+		Then.onThePresetsPage.iShouldSeeCorrectValueState("title", ValueState.Error)
+			.and.iShouldSeeCorrectValueState("presetId", ValueState.None)
 			.and.iShouldSeeCorrectValueState("description", ValueState.None);
 
 	});
@@ -387,6 +390,23 @@ sap.ui.define([
 				"id": "valid_id",
 				"title": "Title",
 				"description": "Description"
+			});
+
+	});
+
+	opaTest("Should have a generated id if left empty on export", function(Given, When, Then) {
+
+		When.onThePresetsPage.iOpenPresetsPopover();
+
+		When.onThePresetsPage.iPressExport();
+
+		When.onThePresetsPage.iEnterExportData("presetId", "");
+
+		When.onThePresetsPage.iPressExportFinalize();
+
+		Then.onThePresetsPage.iShouldReceiveOneExportFile()
+			.and.iShouldReceiveCorrectExportFile({
+				"id": sinon.match.truthy
 			});
 
 		// finalize all tests
