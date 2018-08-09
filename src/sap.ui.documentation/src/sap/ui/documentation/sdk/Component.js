@@ -175,8 +175,6 @@ sap.ui.define([
 								oExistingNodeNamespace.nodes = [];
 							}
 
-							oTreeNode.bIsDeprecated = !!oExistingNodeNamespace.bIsDeprecated;
-
 							oExistingNodeNamespace.nodes.push(oTreeNode);
 						} else if (sNodeNamespace) {
 
