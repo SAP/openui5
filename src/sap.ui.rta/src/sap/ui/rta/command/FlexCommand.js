@@ -296,7 +296,7 @@ sap.ui.define([
 				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
 			};
 		} else {
-			return this.getSelector() || this.getElement();
+			return this.getElement() || this.getSelector();
 		}
 	};
 
