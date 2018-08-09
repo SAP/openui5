@@ -1196,6 +1196,24 @@ function(
 			this.oModel.oData["variantMgmtId1"].variants.splice(3, 1);
 		});
 
+		QUnit.test("when calling '_getVariantTitleCount' with a title having 4 occurrences with different cases of characters", function(assert) {
+			this.oModel.oData["variantMgmtId1"].variants.push({
+				title: "Test",
+				visible: true
+			}, {
+				title: "TEST",
+				visible: true
+			}, {
+				title: "tesT",
+				visible: true
+			}, {
+				title: "test",
+				visible: true
+			});
+			assert.strictEqual(this.oModel._getVariantTitleCount("TeSt", "variantMgmtId1"), 4, "then 4 occurrences returned");
+			this.oModel.oData["variantMgmtId1"].variants.splice(3, 4);
+		});
+
 		QUnit.test("when calling 'getVariant' without a variant management reference", function(assert) {
 			sandbox.stub(this.oModel.oVariantController, "getVariant").callsFake(function(){
 				assert.ok(this.oModel.getVariantManagementReference.calledOnce, "then variant management reference calculated");
