@@ -1,7 +1,8 @@
-sap.ui.define(["sap/ui/Device"], function(Device) {
-
+/*global QUnit*/
+sap.ui.define([
+	"sap/ui/Device"
+], function(Device) {
 	"use strict";
-	/*global QUnit*/
 
 	QUnit.module("CSP Compliance");
 
@@ -10,7 +11,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			assert.ok(true, "Skip actual CSP Test for MS Internet Explorer and Edge Browser, as they expect non-standard CSP Headers");
 		});
 	} else {
-		QUnit.test("Check for occured CSP Violations", function (assert) {
+		QUnit.test("Check for occurred CSP violations", function (assert) {
 			var done = assert.async();
 
 			// Make sure that the CSP headers (CSP or CSP-Report-Only) are set by web server
