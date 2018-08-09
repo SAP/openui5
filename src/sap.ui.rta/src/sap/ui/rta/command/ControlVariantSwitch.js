@@ -46,7 +46,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @public Template Method to implement execute logic, with ensure precondition Element is available
+	 * Template Method to implement execute logic, with ensure precondition Element is available.
+	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantSwitch.prototype.execute = function() {
@@ -61,7 +62,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @public Template Method to implement undo logic
+	 * Template Method to implement undo logic.
+	 * @public
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSwitch.prototype.undo = function() {
@@ -71,7 +73,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private Update variant for the underlying model
+	 * Update variant for the underlying model.
+	 * @private
 	 * @returns {Promise} Returns promise resolve
 	 */
 	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oAppComponent) {

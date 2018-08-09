@@ -25,7 +25,7 @@ sap.ui.define([
 		 * is used standalone without the involvement of a Router. Otherwise the async option is inherited from the Router.
 		 * @alias sap.ui.core.routing.Views
 		 */
-		return TargetCache.extend("sap.ui.core.routing.Views", /** @lends sap.ui.core.routing.Views.prototype */ {
+		var Views = TargetCache.extend("sap.ui.core.routing.Views", /** @lends sap.ui.core.routing.Views.prototype */ {
 			metadata: {
 				publicMethods: ["getView", "setView"]
 			},
@@ -136,5 +136,7 @@ sap.ui.define([
 				return this.fireEvent("created", mArguments);
 			}
 		});
+
+		return Views;
 
 	});
