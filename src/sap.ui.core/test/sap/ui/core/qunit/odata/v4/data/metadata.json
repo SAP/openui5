@@ -707,7 +707,7 @@
 		"$kind" : "Schema",
 		"$Annotations" : {
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" : {
-				"@Org.OData.Core.V1.Messages" : {
+				"@com.sap.vocabularies.Common.v1.Messages" : {
 					"$Path" : "__FAKE__Messages"
 				}
 			},

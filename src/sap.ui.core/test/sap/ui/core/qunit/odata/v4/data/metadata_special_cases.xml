@@ -12,7 +12,7 @@
 				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
 				<Property Name="Messages" Type="Collection(special.cases.Message)" />
 				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
-				<Annotation Term="Org.OData.Core.V1.Messages" Path="Messages" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 			</EntityType>
 			<EntityType Name="DraftAdministrativeDataType">
 				<Key>
