@@ -104,9 +104,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the hash to a certain value. When using the set function a browser history  entry is written.
-	 * If you do not want to have an entry in the browser history, please use set replaceHash function.
-	 * @param {string} sHash the hash
+	 * Sets the hash to a certain value. When using this function, a browser history entry is written.
+	 * If you do not want to have an entry in the browser history, please use the {@link #replaceHash} function.
+	 * @param {string} sHash New hash
 	 * @public
 	 */
 	HashChanger.prototype.setHash = function(sHash) {
@@ -115,9 +115,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Replaces the hash to a certain value. When using the replace function no browser history is written.
-	 * If you want to have an entry in the browser history, please use set setHash function.
-	 * @param {string} sHash the hash
+	 * Replaces the hash with a certain value. When using the replace function, no browser history entry is written.
+	 * If you want to have an entry in the browser history, please use the {@link #setHash} function.
+	 * @param {string} sHash New hash
 	 * @public
 	 */
 	HashChanger.prototype.replaceHash = function(sHash) {

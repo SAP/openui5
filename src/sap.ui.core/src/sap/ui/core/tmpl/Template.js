@@ -49,7 +49,7 @@ function(
 	 * @version ${version}
 	 * @alias sap.ui.core.tmpl.Template
 	 * @since 1.15
-	 * @deprecated since 1.56, use XMLView or JSView instead
+	 * @deprecated since 1.56, use an {@link sap.ui.core.mvc.XMLView XMLView} or {@link sap.ui.core.mvc.JSView JSView} instead.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Template = ManagedObject.extend("sap.ui.core.tmpl.Template", /** @lends sap.ui.core.tmpl.Template.prototype */
@@ -442,7 +442,7 @@ function(
 	 * @param {string} oTemplate.control - the fully qualified name of the control to declare</li> (<i>experimental!</i>)
 	 * @return {sap.ui.core.tmpl.Template | sap.ui.core.tmpl.Template[]} the created Template instance
 	 *         or in case of usage without parameters any array of templates is returned
-	 * @deprecated since 1.56, use XMLView or JSView instead
+	 * @deprecated since 1.56, use an {@link sap.ui.core.mvc.XMLView XMLView} or {@link sap.ui.core.mvc.JSView JSView} instead.
 	 * @public
 	 * @static
 	 */

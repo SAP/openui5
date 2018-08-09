@@ -61,7 +61,7 @@ sap.ui.define(['sap/ui/base/DataType', './Type', './FormatException', './ParseEx
 	 * @param {any} oValue the value to be formatted
 	 * @param {string} sInternalType the target type
 	 * @return {any} the formatted output value
-	 *
+	 * @throws {sap.ui.model.FormatException} if a conversion to the target type is not possible
 	 * @public
 	 */
 
@@ -73,7 +73,7 @@ sap.ui.define(['sap/ui/base/DataType', './Type', './FormatException', './ParseEx
 	 * @param {any} oValue the value to be parsed
 	 * @param {string} sInternalType the source type
 	 * @return {any} the parse result
-	 *
+	 * @throws {sap.ui.model.ParseException} if the parsing step (conversion into the expected format) fails
 	 * @public
 	 */
 
@@ -84,7 +84,7 @@ sap.ui.define(['sap/ui/base/DataType', './Type', './FormatException', './ParseEx
 	 * @function
 	 * @name sap.ui.model.SimpleType.prototype.validateValue
 	 * @param {any} oValue the value to be validated
-	 *
+	 * @throws {sap.ui.model.ValidateException} if the validation fails, e.g. when some of the type constraints are not met
 	 * @public
 	 */
 

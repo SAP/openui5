@@ -48,6 +48,11 @@ sap.ui.define([
 	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height,
 	 * and provides lifecycle events.
 	 *
+	 * Views form an ID scope for the elements and controls in their content. They can prefix the IDs of
+	 * elements either automatically (e.g. XMLView) or programmatically (using {@link #createId}).
+	 * With method {@link #byId}, elements or controls can be found with their view-local ID.
+	 * Also see {@link topic:91f28be26f4d1014b6dd926db0e91070 "Support for Unique IDs"} in the documentation.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -523,10 +528,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an element by its ID in the context of the view.
+	 * Returns an element by its ID in the context of this view.
+	 *
+	 * This method expects a view-local ID of an element (the same as e.g. defined in the *.view.xml
+	 * of an XMLView). For a search with a global ID (the value returned by <code>oElement.getId()</code>)
+	 * you should rather use {@link sap.ui.core.Core#byId sap.ui.getCore().byId()}.
 	 *
 	 * @param {string} sId View local ID of the element
-	 * @return {sap.ui.core.Element} element by its ID or <code>undefined</code>
+	 * @return {sap.ui.core.Element} Element by its ID or <code>undefined</code>
 	 * @public
 	 */
 	View.prototype.byId = function(sId) {
@@ -966,7 +975,7 @@ sap.ui.define([
 	 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 	 * @public
 	 * @static
-	 * @deprecated since 1.56: Use sap.ui.core.mvc.View.create instead
+	 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.View.create View.create} instead
 	 * @return {sap.ui.core.mvc.View} the created View instance
 	 */
 	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
@@ -1069,7 +1078,7 @@ sap.ui.define([
 	}
 
 	/**
-	* Creates a Promise representing the state of the view initialization.
+	* Returns a Promise representing the state of the view initialization.
 	*
 	* For views that are loading asynchronously (by setting async=true) this Promise is created by view
 	* initialization. Synchronously loading views get wrapped in an immediately resolving Promise.

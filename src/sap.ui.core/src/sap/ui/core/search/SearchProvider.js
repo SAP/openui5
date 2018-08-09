@@ -16,7 +16,9 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library', "sap/base/Log"],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Abstract base class for all SearchProviders which can be e.g. attached to a SearchField. Do not create instances of this class, but use a concrete sub class instead.
+	 * Abstract base class for all SearchProviders which can be e.g. attached to a SearchField.
+	 *
+	 * Do not create instances of this class, but use a concrete subclass instead.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *
