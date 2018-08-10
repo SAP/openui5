@@ -357,7 +357,9 @@ sap.ui.define([
 		 */
 		onDownload: function () {
 			var sFontName = this.getModel("view").getProperty("/fontName");
-			mobileLibrary.URLHelper.redirect(sap.ui.require.toUrl("sap/ui/core") + "/themes/base/fonts/" + sFontName + ".ttf");
+			var oConfigs = this.getOwnerComponent()._oFontConfigs;
+
+			mobileLibrary.URLHelper.redirect(oConfigs[sFontName].fontURI + "/" + sFontName + ".ttf");
 		},
 
 		/* =========================================================== */
