@@ -1,6 +1,6 @@
-/*global location*/
+/* global location history */
 sap.ui.define([
-		"sap/ui/demo/worklist/controller/BaseController",
+		"./BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/routing/History",
 		"sap/ui/demo/worklist/model/formatter"

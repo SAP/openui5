@@ -1,6 +1,6 @@
 /*global location history */
 sap.ui.define([
-		"sap/ui/demo/worklist/controller/BaseController",
+		"./BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/demo/worklist/model/formatter",
 		"sap/ui/model/Filter",
@@ -96,6 +96,7 @@ sap.ui.define([
 			 * @public
 			 */
 			onNavBack : function() {
+				// eslint-disable-next-line sap-no-history-manipulation
 				history.go(-1);
 			},
 
