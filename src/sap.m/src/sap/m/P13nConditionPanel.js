@@ -549,14 +549,13 @@ sap.ui.define([
 				case "boolean":
 					//TODO in case the model is not an ODataModel we should use the sap.ui.model.type.Boolean
 					oKeyField.typeInstance = new BooleanOdataType();
-					//oKeyField.typeInstance = new sap.ui.model.type.Boolean();
 					break;
 				case "numc":
-					//formatSettings: {isDigitSequence: true, maxLength: 10},
-					if (!!oKeyField.formatSettings.isDigitSequence) {
+					if (!(oKeyField.formatSettings && oKeyField.formatSettings.isDigitSequence)) {
 						Log.error("sap.m.P13nConditionPanel", "NUMC type support requires isDigitSequence==true!");
+						oKeyField.formatSettings = jQuery.extend({}, oKeyField.formatSettings, { isDigitSequence: true });
 					}
-					if (!!oKeyField.formatSettings.maxLength) {
+					if (!(oKeyField.formatSettings && oKeyField.formatSettings.maxLength)) {
 						Log.error("sap.m.P13nConditionPanel", "NUMC type suppport requires maxLength!");
 					}
 					oKeyField.typeInstance = new StringOdataType({}, oKeyField.formatSettings);
@@ -570,7 +569,7 @@ sap.ui.define([
 					oKeyField.typeInstance = new TimeType(jQuery.extend({}, oKeyField.formatSettings, { strictParsing: true }), {});
 					break;
 				case "datetime":
-					oKeyField.typeInstance = new DateTimeOdataType(jQuery.extend({}, oKeyField.formatSettings, { strictParsing: true }), {});
+					oKeyField.typeInstance = new DateTimeOdataType(jQuery.extend({}, oKeyField.formatSettings, { strictParsing: true }), { displayFormat: "Date" });
 					break;
 				case "stringdate":
 					// TODO: Do we really need the COMP library here???
@@ -1463,11 +1462,16 @@ sap.ui.define([
 
 							// In case vValue is of type string, we try to convert it into the type based format.
 							if (typeof vValue === "string" && oConditionGrid.oType.getName() !== "String") {
-								vValue = oConditionGrid.oType.parseValue(vValue, "string");
-								//jQuery.sap.log.error("sap.m.P13nConditionPanel", "Value '" + vValue + "' does not have the expected type '" + oConditionGrid.oType.getName() + "'.");
+								try {
+									vValue = oConditionGrid.oType.parseValue(vValue, "string");
+									oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
+								} catch (err) {
+									Log.error("sap.m.P13nConditionPanel", "Value '" + vValue + "' does not have the expected type format for " + oConditionGrid.oType.getName() + ".parseValue()");
+								}
+							} else {
+								oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
 							}
 
-							oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
 						} else {
 							oControl.setValue(vValue);
 						}
@@ -1686,6 +1690,7 @@ sap.ui.define([
 			if (sCtrlType === "DateTimePicker" && oType.getMetadata().getName() === "sap.ui.model.odata.type.DateTime") {
 				if (!(oType.oConstraints && oType.oConstraints.isDateOnly)) {
 					Log.error("sap.m.P13nConditionPanel", "sap.ui.model.odata.type.DateTime without displayFormat = Date is not supported!");
+					oType.oConstraints = jQuery.extend({}, oType.oConstraints, { isDateOnly : true });
 				}
 				sCtrlType = "DatePicker";
 			}
@@ -2846,23 +2851,7 @@ sap.ui.define([
 	 * @returns {string} the filled template text
 	 */
 	P13nConditionPanel._templateReplace = function(sTemplate, aValues) {
-		var i;
-		var aIndizes = [];
-		var sResult = sTemplate;
-		for (i = 0; i < aValues.length; i++) {
-			aIndizes[i] = sTemplate.indexOf("$" + i);
-		}
-		function sortNumber(a,b) {
-			return a - b;
-		}
-		aIndizes = aIndizes.sort(sortNumber);
-		for (i = aIndizes.length - 1; i >= 0; i--) {
-			var pos = aIndizes[i];
-			var valueIndex = parseInt(sTemplate.slice(pos + 1, pos + 2), 10);
-			sResult = sResult.slice(0, pos) + aValues[valueIndex] + sResult.slice(pos + 2);
-		}
-
-		return sResult;
+		return sTemplate.replace(/\$\d/g, function(sMatch) { return aValues[parseInt(sMatch.substr(1), 10)]; });
 	};
 
 	/**
