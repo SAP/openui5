@@ -344,10 +344,10 @@ sap.ui.define([
 		},
 
 		onAnalyze: function () {
-			var aSelectedRules = SelectionUtils.getSelectedRules(),
+			var currentPreset = this.model.getProperty("/selectionPresetsCurrent"),
 				oExecutionContext = this._getExecutionContext();
 
-			if (!aSelectedRules.length > 0) {
+			if (!currentPreset.selections.length > 0) {
 				MessageToast.show("Select some rules to be analyzed.");
 				return;
 			}
@@ -357,7 +357,7 @@ sap.ui.define([
 			}
 
 			CommunicationBus.publish(channelNames.ON_ANALYZE_REQUEST, {
-				selectedRules: aSelectedRules,
+				rulePreset: currentPreset,
 				executionContext: oExecutionContext
 			});
 		},

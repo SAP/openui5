@@ -311,7 +311,7 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_ANALYZE_REQUEST, function (data) {
-			this.analyze(data.executionContext, data.selectedRules);
+			this.analyze(data.executionContext, data.rulePreset);
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_INIT_ANALYSIS_CTRL, function () {
@@ -362,10 +362,10 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 	 *
 	 * @private
 	 * @param {object} oExecutionScope The scope of the analysis
-	 * @param {object[]|object} [vRuleDescriptors=All rules] The rules against which the analysis will be run
+	 * @param {object[]|object} [vPresetOrRules=All rules] The preset or rules against which the analysis will be run
 	 * @returns {Promise} Notifies the finished state by starting the Analyzer
 	 */
-	Main.prototype.analyze = function (oExecutionScope, vRuleDescriptors) {
+	Main.prototype.analyze = function (oExecutionScope, vPresetOrRules) {
 		var that = this;
 
 		if (this._oAnalyzer && this._oAnalyzer.running()) {
@@ -374,6 +374,16 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 
 		// Set default values
 		oExecutionScope = oExecutionScope || {type: "global"};
+
+		var vRuleDescriptors;
+		if (vPresetOrRules && vPresetOrRules.selections) {
+			this._oSelectedRulePreset = vPresetOrRules; // this is the selected preset
+			vRuleDescriptors = vPresetOrRules.selections;
+		} else {
+			this._oSelectedRulePreset = null; // there is no selected preset
+			vRuleDescriptors = vPresetOrRules;
+		}
+
 		vRuleDescriptors = vRuleDescriptors || RuleSetLoader.getAllRuleDescriptors();
 
 		if (!this._isExecutionScopeValid(oExecutionScope)) {
@@ -677,13 +687,15 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 	Main.prototype._getReportData = function (oReportConstants) {
 		var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
 			mRules = RuleSetLoader.getRuleSets(),
-			mSelectedRules = this._oSelectedRulesIds;
+			mSelectedRules = this._oSelectedRulesIds,
+			oSelectedRulePreset = this._oSelectedRulePreset || null;
 
 		return {
 			issues: mIssues,
 			technical: this._oDataCollector.getTechInfoJSON(),
 			application: this._oDataCollector.getAppInfo(),
 			rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
+			rulePreset: oSelectedRulePreset,
 			scope: {
 				executionScope: this._oExecutionScope,
 				scopeDisplaySettings: {
