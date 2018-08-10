@@ -348,6 +348,53 @@
 				oPage = null;
 			});
 
+			QUnit.test("contentOnlyBusy property", function (assert) {
+				// Setup
+				var oBusyIndicator, oBusyIndicatorInner,
+						clock = sinon.useFakeTimers(),
+						oPage = new sap.m.Page("myPage");
+
+				oPage.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				oPage.setBusy(true);
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
+					return oChild.id.indexOf("busyIndicator") > -1;
+				})[0];
+
+				// Assert
+				assert.ok(oBusyIndicator, "Busy indicator is right inside Page's root.");
+
+				// Setup & Act
+				oPage.setBusy(false);
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				oPage.setContentOnlyBusy(true);
+				oPage.setBusy(true);
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
+					return oChild.id.indexOf("busyIndicator") > -1;
+				})[0];
+
+				oBusyIndicatorInner = [].filter.call(oPage.getDomRef('cont').childNodes, function (oChild) {
+					return oChild.id.indexOf("busyIndicator") > -1;
+				})[0];
+
+				// Assert
+				assert.ok(!oBusyIndicator, "Busy indicator is removed from Page's root.");
+				assert.ok(oBusyIndicatorInner, "Busy indicator is inside Page's content.");
+
+				oPage.destroy();
+				clock.restore();
+			});
+
 			if (sap.ui.Device.browser.chrome) {
 				if (sap.ui.Device.os.ios) {
 
