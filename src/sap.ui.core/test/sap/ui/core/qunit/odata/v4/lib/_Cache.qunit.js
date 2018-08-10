@@ -1151,7 +1151,7 @@ sap.ui.require([
 				that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
 					.returns(Promise.resolve(oFixture.types[sPath]));
 				that.oRequestorMock.expects("fetchMetadata")
-					.withExactArgs(sPath + "/@Org.OData.Core.V1.Messages")
+					.withExactArgs(sPath + "/@com.sap.vocabularies.Common.v1.Messages")
 					.returns(SyncPromise.resolve(
 						oFixture.messageAnnotations && oFixture.messageAnnotations[sPath] || null));
 			});
@@ -1173,7 +1173,7 @@ sap.ui.require([
 
 					if (oMessageAnnotation) {
 						assert.strictEqual(
-							mTypeForMetaPath[sMetaPath]["@Org.OData.Core.V1.Messages"],
+							mTypeForMetaPath[sMetaPath]["@com.sap.vocabularies.Common.v1.Messages"],
 							oMessageAnnotation,
 							"Message property for " + sMetaPath + ": " + oMessageAnnotation.$Path);
 						assert.ok(oFixture.types[sMetaPath]
@@ -1425,13 +1425,15 @@ sap.ui.require([
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrder"}
+					"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messagesInSalesOrder"}
 				},
 				"/SalesOrderList/SO_2_BP" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInBusinessPartner"}
+					"@com.sap.vocabularies.Common.v1.Messages" :
+						{$Path : "messagesInBusinessPartner"}
 				},
 				"/SalesOrderList/SO_2_SCHDL" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrderSchedule"},
+					"@com.sap.vocabularies.Common.v1.Messages" :
+						{$Path : "messagesInSalesOrderSchedule"},
 					$Key : ["ScheduleKey"],
 					ScheduleKey : {
 						$Type : "Edm.String"
@@ -1469,7 +1471,7 @@ sap.ui.require([
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrder"},
+					"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messagesInSalesOrder"},
 					$Key : ["SalesOrderID"],
 					SalesOrderID : {
 						$Type : "Edm.String"
@@ -1503,7 +1505,7 @@ sap.ui.require([
 				"" : [{longtextUrl : "/~/EntitySet('42')/Longtext(1)"}]
 			},
 			oType = {
-				"@Org.OData.Core.V1.Messages" : {$Path : "messages"},
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
 				$Key : ["id"],
 				id : {
 					$Type : "Edm.Int32"
@@ -1564,7 +1566,7 @@ sap.ui.require([
 				"/foo/baz" : [{longtextUrl : "/foo/baz/Longtext(4)"}]
 			},
 			oType = {
-				"@Org.OData.Core.V1.Messages" : {$Path : "messages"},
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
 				$Key : ["id"],
 				id : {
 					$Type : "Edm.Int32"
@@ -1633,7 +1635,7 @@ sap.ui.require([
 				"(1)/foo(2)/bar(3)" : [{longtextUrl : "/foo/bar/Longtext(3)"}]
 			},
 			oType = {
-				"@Org.OData.Core.V1.Messages" : {$Path : "messages"},
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
 				$Key : ["id"],
 				id : {
 					$Type : "Edm.Int32"
