@@ -42,6 +42,9 @@ sap.ui.define([
 					}
 				}
 			},
+			items: {
+				ignore: true
+			},
 			contextMenu: {
 				ignore: true
 			}
