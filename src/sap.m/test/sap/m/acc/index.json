@@ -263,7 +263,7 @@
 		},
 		{
 			"control": "sap.m.ObjectIdentifier",
-			"url": "../ObjectIdentifier.html",
+			"url": "ObjectIdentifier.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
