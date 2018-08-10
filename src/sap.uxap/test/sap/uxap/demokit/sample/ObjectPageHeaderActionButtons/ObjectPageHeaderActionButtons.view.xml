@@ -16,7 +16,7 @@
 					  enableLazyLoading="false"
 					  upperCaseAnchorBar="false">
 		<headerTitle>
-			<ObjectPageDynamicHeaderTitle primaryArea="Left">
+			<ObjectPageDynamicHeaderTitle areaShrinkRatio="1:1.6:1.6">
 				<breadcrumbs>
 					<m:Breadcrumbs>
 						<m:Link text='Page 1'/>
