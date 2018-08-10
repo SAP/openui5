@@ -146,7 +146,6 @@
 			this.sut.removeAggregation('items', this.sut.getItems()[2]);
 			assert.strictEqual(this.sut.getItems().length, 2,
 					"After removing an item there are 2 left");
-
 			var oItem = this.sut.getItems()[0];
 			var oItemButton = oItem.getAggregation("_closeButton");
 			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
@@ -687,6 +686,21 @@
 			//assert
 			assert.strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
 			assert.ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem.CSS_CLASS_SELECTED), "The initial selection is applied correctly");
+		});
+
+		QUnit.test("Initial scrolling to selected item", function (assert) {
+			//arrange
+			this.sut = new sap.m.TabStrip({
+				selectedItem: this.selectedItem,
+				items: this.items
+			});
+			var fnScrollingSpy = sinon.spy(this.sut, "_handleInititalScrollToItem");
+
+			this.sut.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			//assert
+			assert.equal(fnScrollingSpy.callCount, 1, "_handleInititalScrollToItem function is called");
 		});
 
 		QUnit.test("No Overflow Buttons on phone", function (assert) {
