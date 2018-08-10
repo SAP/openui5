@@ -313,13 +313,17 @@ sap.ui.define([
 			_loadRTA: function () {
 				sap.ui.require([
 					"sap/ui/fl/Utils",
-					"sap/ui/fl/FakeLrepConnectorLocalStorage"
+					"sap/ui/fl/FakeLrepConnectorLocalStorage",
+					"sap/ui/core/util/reflection/JsControlTreeModifier"
 				], function (
 					Utils,
-					FakeLrepConnectorLocalStorage
+					FakeLrepConnectorLocalStorage,
+					JsControlTreeModifier
 				) {
-
 					// fake stable IDs
+					JsControlTreeModifier.checkControlId = function () {
+						return true;
+					};
 					Utils.checkControlId = function() {
 						return true;
 					};
