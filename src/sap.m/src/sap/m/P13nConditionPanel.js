@@ -2820,23 +2820,50 @@ sap.ui.define([
 	};
 
 	P13nConditionPanel._oConditionMap = {
-		"EQ": "=%1",
-		"GT": ">%1",
-		"GE": ">=%1",
-		"LT": "<%1",
-		"LE": "<=%1",
-		"Contains": "*%1*",
-		"StartsWith": "%1*",
-		"EndsWith": "*%1",
-		"BT": "%1...%2",
-		"Empty": "<%r>"
+		"EQ": "=$0",
+		"GT": ">$0",
+		"GE": ">=$0",
+		"LT": "<$0",
+		"LE": "<=$0",
+		"Contains": "*$0*",
+		"StartsWith": "$0*",
+		"EndsWith": "*$0",
+		"BT": "$0...$1",
+		"Empty": "<$r>"
 	};
 
-	// Replase %r params in operation by resource bundle text
+	// Replase $r params in operation by resource bundle text
 	(function() {
 		var _oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty] = P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty].replace("%r", _oRb.getText("CONDITIONPANEL_OPTIONEmpty"));
+		P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty] = P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty].replace("$r", _oRb.getText("CONDITIONPANEL_OPTIONEmpty"));
 	})();
+
+	/**
+	 * fills the template string placeholder $0, $1 with the values from the aValues array and returns a formatted text for the specified condition
+	 * @private
+	 * @param {string} sTemplate the template which should be filled
+	 * @param {string[]} aValues value array for the template placeholder
+	 * @returns {string} the filled template text
+	 */
+	P13nConditionPanel._templateReplace = function(sTemplate, aValues) {
+		var i;
+		var aIndizes = [];
+		var sResult = sTemplate;
+		for (i = 0; i < aValues.length; i++) {
+			aIndizes[i] = sTemplate.indexOf("$" + i);
+		}
+		function sortNumber(a,b) {
+			return a - b;
+		}
+		aIndizes = aIndizes.sort(sortNumber);
+		for (i = aIndizes.length - 1; i >= 0; i--) {
+			var pos = aIndizes[i];
+			var valueIndex = parseInt(sTemplate.slice(pos + 1, pos + 2), 10);
+			sResult = sResult.slice(0, pos) + aValues[valueIndex] + sResult.slice(pos + 2);
+		}
+
+		return sResult;
+	};
 
 	/**
 	 * creates and returns a formatted text for the specified condition
@@ -2852,8 +2879,7 @@ sap.ui.define([
 
 		switch (sOperation) {
 			case P13nConditionOperation.Empty:
-				// sConditionText = P13nConditionPanel._oConditionMap[sOperation];
-				sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
+				sConditionText = P13nConditionPanel._templateReplace(P13nConditionPanel._oConditionMap[sOperation], []);
 				break;
 
 			case P13nConditionOperation.EQ:
@@ -2865,15 +2891,14 @@ sap.ui.define([
 			case P13nConditionOperation.StartsWith:
 			case P13nConditionOperation.EndsWith:
 				if (sValue1 !== "" && sValue1 !== undefined) {
-					// sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1);
-					sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
+					sConditionText = P13nConditionPanel._templateReplace(P13nConditionPanel._oConditionMap[sOperation], [sValue1]);
 				}
 				break;
 
 			case P13nConditionOperation.BT:
 				if (sValue1 !== "" && sValue1 !== undefined) {
 					if (sValue2 !== "" && sValue2 !== undefined) {
-						sConditionText = P13nConditionPanel._oConditionMap[sOperation].replace("%1", sValue1).replace("%2", sValue2);
+						sConditionText = P13nConditionPanel._templateReplace(P13nConditionPanel._oConditionMap[sOperation], [sValue1, sValue2]);
 					}
 				}
 				break;
