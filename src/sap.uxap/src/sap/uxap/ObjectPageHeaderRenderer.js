@@ -126,7 +126,8 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	ObjectPageHeaderRenderer._renderObjectPageTitle = function (oRm, oControl, bTitleInContent) {
 		var sOHTitle = oControl.getObjectTitle(),
 			bMarkers = (oControl.getShowMarkers() && (oControl.getMarkFavorite() || oControl.getMarkFlagged())),
-			oBreadCrumbsAggregation = oControl._getBreadcrumbsAggregation();
+			oBreadCrumbsAggregation = oControl._getBreadcrumbsAggregation(),
+			sTooltip = oControl.getTooltip_Text();
 
 		if (!bTitleInContent && oBreadCrumbsAggregation) {
 			oRm.renderControl(oBreadCrumbsAggregation);
@@ -151,6 +152,11 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		oRm.addClass("sapUxAPObjectPageHeaderTitleTextWrappable");
 		oRm.writeClasses();
 		oRm.writeAttributeEscaped("id", oControl.getId() + "-innerTitle");
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+
 		oRm.write(">");
 
 		// if we have markers or arrow we have to cut the last word and bind it to the markers and arrow so that the icons never occur in one line but are accompanied by the last word of the title.

@@ -61,6 +61,10 @@
 		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 1, "Unsaved chages mark is rendered");
 	});
 
+	QUnit.test("Tooltip rendering", function (assert) {
+		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderTitleTextWrappable").attr("title") !== undefined, "Heading has title attribute");
+	});
+
 	QUnit.test("SubTitle rendering", function (assert) {
 		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderIdentifierDescription").length === 1, "SubTitle is rendered");
 	});
