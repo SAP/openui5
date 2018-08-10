@@ -147,6 +147,11 @@ sap.ui.define(function () {
 					only: ["sap/ui/dt/Util"]
 				}
 			},
+			"util/getNextZIndex": {
+				coverage: {
+					only: ["sap/ui/dt/util/getNextZIndex"]
+				}
+			},
 
 			// -------------------------------------------------------------------------------
 			// Plugin tests:
@@ -219,7 +224,7 @@ sap.ui.define(function () {
 			},
 
 			// -------------------------------------------------------------------------------
-			// Integration tests:
+			// Validator tests:
 			// -------------------------------------------------------------------------------
 			"test/Element": {
 				group: "Validator"
