@@ -199,6 +199,15 @@ function (
 			assert.equal(oAggrBindingCheck.callCount, 0, "the aggregation binding check is skipped");
 			assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the function returns the result of _isEditable");
 		});
+
+		QUnit.test("when evaluateEditable is called for an element whose stable element has no overlay", function(assert) {
+			var oAggrBindingCheck = sandbox.spy(OverlayUtil, "isInAggregationBinding");
+			var oButton = new Button("IHaveNoOverlay");
+			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([oButton]);
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
+			assert.equal(oAggrBindingCheck.callCount, 0, "the aggregation binding check is skipped");
+		});
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable not stubbed", {

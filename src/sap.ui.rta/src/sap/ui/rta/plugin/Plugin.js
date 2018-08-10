@@ -138,7 +138,8 @@ function(
 
 	function _isInAggregationBinding(aElements) {
 		return aElements.some(function(oStableElement) {
-			return oStableElement && OverlayUtil.isInAggregationBinding(OverlayRegistry.getOverlay(oStableElement), oStableElement.sParentAggregationName);
+			var oStableElementOverlay = OverlayRegistry.getOverlay(oStableElement);
+			return oStableElementOverlay && OverlayUtil.isInAggregationBinding(oStableElementOverlay, oStableElement.sParentAggregationName);
 		});
 	}
 
