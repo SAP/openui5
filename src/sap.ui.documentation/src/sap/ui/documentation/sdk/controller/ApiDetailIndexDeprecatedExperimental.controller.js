@@ -19,15 +19,15 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				var oModel = new JSONModel();
-				oModel.setSizeLimit(10000);
-				this.setModel(oModel, "deprecatedAPIs");
-				this.setModel(oModel, "experimentalAPIs");
-				this.setModel(oModel, "sinceAPIs");
+				var oRouter = this.getRouter();
 
-				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicDeprecatedMatched, this);
-				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicExperimentalMatched, this);
-				this.getRouter().getRoute("since").attachPatternMatched(this._onTopicSinceMatched, this);
+				this._oModel = new JSONModel();
+				this._oModel .setSizeLimit(10000); /* This will become too small for the since list in time */
+				this.setModel(this._oModel);
+
+				oRouter.getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
+				oRouter.getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
+				oRouter.getRoute("since").attachPatternMatched(this._onTopicMatched, this);
 
 				this._currentMedia = this.getView()._getCurrentMediaContainerRange();
 
@@ -47,45 +47,39 @@ sap.ui.define([
 				this.getView()._detachMediaContainerWidthChange(this._resizeMessageStrip, this);
 			},
 
-			_onTopicDeprecatedMatched: function (oEvent) {
+			_onTopicMatched: function (oEvent) {
+				var fnDataGetterRef = {
+						experimental: APIInfo.getExperimentalPromise,
+						deprecated: APIInfo.getDeprecatedPromise,
+						since: APIInfo.getSincePromise
+					}[oEvent.getParameter("name")];
+
 				if (this._hasMatched) {
 					return;
 				}
-
 				this._hasMatched = true;
 
-				this.getView().byId("deprecatedList").attachUpdateFinished(this._modifyLinks, this);
+				// Cache allowed members for the filtering
+				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-				APIInfo.getDeprecatedPromise().then(function (oData) {
-					this.getModel("deprecatedAPIs").setData(oData);
-					setTimeout(this._prettify.bind(this), 0);
+				fnDataGetterRef().then(function (oData) {
+					this._filterVisibleElements(oData);
+					this._oModel.setData(oData);
+					setTimeout(this._prettify.bind(this), 1000);
 				}.bind(this));
 			},
 
-			_onTopicExperimentalMatched: function (oEvent) {
-				if (this._hasMatched) {
-					return;
-				}
-
-				this._hasMatched = true;
-
-				this.getView().byId("experimentalList").attachUpdateFinished(this._modifyLinks, this);
-
-				APIInfo.getExperimentalPromise().then(function (oData) {
-					this.getModel("experimentalAPIs").setData(oData);
-					setTimeout(this._prettify.bind(this), 0);
-				}.bind(this));
-			},
-
-			_onTopicSinceMatched: function (oEvent) {
-				if (this._hasMatched) {
-					return;
-				}
-
-				this._hasMatched = true;
-
-				APIInfo.getSincePromise().then(function (oData) {
-					this.getModel("sinceAPIs").setData(oData);
+			/**
+			 * Filter all items to be listed depending on their visibility.
+			 * Note: This method modifies the passed oData reference object.
+			 * @param {object} oData the data object to be filtered
+			 * @private
+			 */
+			_filterVisibleElements: function (oData) {
+				Object.keys(oData).forEach(function(sVersion) {
+					oData[sVersion].apis = oData[sVersion].apis.filter(function (oElement) {
+						return this._aAllowedMembers.indexOf(oElement.visibility) >= 0;
+					}.bind(this));
 				}.bind(this));
 			},
 
