@@ -509,7 +509,7 @@
 		},
 		{
 			"control": "sap.m.ViewSettingsDialog",
-			"url": "../ViewSettingsDialog.html",
+			"url": "ViewSettingsDialog.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
