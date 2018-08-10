@@ -3,12 +3,14 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin',
-	'sap/ui/dt/OverlayRegistry',
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/m/Button",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	AdditionalElementsPlugin,
 	OverlayRegistry,
+	Button,
 	jQuery
 ) {
 	"use strict";
@@ -66,9 +68,9 @@ sap.ui.define([
 
 		var fnAddButton = function(oOverlay, oOverlayDom, bSibling, vControlName, iIndex) {
 			var fnCallback = function(oEvent) {
-				var oOverlay = OverlayRegistry.getOverlay(oEvent.getSource().getId().replace("-AddButton", ""));
+				var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id.replace("-AddButton", ""));
 				onAddPressed(bSibling, oOverlay, iIndex);
-				oEvent.cancelBubble();
+				oEvent.stopPropagation();
 			};
 			var sControlName = typeof vControlName === "function" ? vControlName() : vControlName;
 			this._addButton(oOverlay, fnCallback, oOverlayDom, sControlName, bSibling);
@@ -145,12 +147,14 @@ sap.ui.define([
 
 		var sId = oOverlay.getId() + "-AddButton";
 		var oHtmlButtonOuter = jQuery("<div class='sapUiRtaPersAddIconOuter' draggable='true' tabIndex='-1'> </div>");
-		oOverlay._oAddButton = new sap.m.Button(sId, {
+		oOverlay._oAddButton = new Button(sId, {
 			text: oTextResources.getText("CTX_ADD_ELEMENTS", sControlName),
 			icon: "sap-icon://add",
-			press: fnCallback,
 			enabled: bIsEditable
-		}).placeAt(oHtmlButtonOuter.get(0));
+		})
+			.placeAt(oHtmlButtonOuter.get(0))
+			.attachBrowserEvent('click', fnCallback)
+			.attachBrowserEvent('tap', fnCallback);
 		oOverlayDom.append(oHtmlButtonOuter);
 
 		oHtmlButtonOuter[0].addEventListener("mouseover", function(oEvent) {
@@ -174,7 +178,7 @@ sap.ui.define([
 		});
 
 		oHtmlButtonOuter[0].addEventListener("click", function(oEvent) {
-			oEvent.preventDefault();
+			oEvent.stopPropagation();
 		});
 
 		oHtmlButtonOuter[0].addEventListener("contextmenu", function(oEvent) {
