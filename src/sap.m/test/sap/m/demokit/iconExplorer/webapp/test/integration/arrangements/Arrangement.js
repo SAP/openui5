@@ -1,9 +1,9 @@
 sap.ui.define([
-	"jquery.sap.storage",
 	"sap/ui/test/Opa5",
 	"sap/ui/core/IconPool",
-	"sap/ui/demo/iconexplorer/localService/mockserver"
-], function($, Opa5, IconPool, mockserver) {
+	"sap/ui/demo/iconexplorer/localService/mockserver",
+	"sap/ui/util/Storage"
+], function(Opa5, IconPool, mockserver, Storage) {
 	"use strict";
 
 	// store a local copy to the original function
@@ -13,7 +13,7 @@ sap.ui.define([
 
 		iStartMyApp: function (oOptions) {
 			// reset local storage key to have stable testing environment
-			var oStorage = $.sap.storage("local");
+			var oStorage = Storage.getInstance(Storage.Type.local);
 			oStorage.put("ICON_EXPLORER_FAVORITES", undefined);
 
 			oOptions = oOptions || {};

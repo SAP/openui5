@@ -1,9 +1,8 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'./Formatter',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Formatter, Controller, JSONModel) {
+	], function(Formatter, Controller, JSONModel) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.Table.Table", {

@@ -6,8 +6,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/IconPool",
-	"sap/ui/demo/iconexplorer/model/Sorter"
-], function (jQuery, JSONModel, IconPool, Sorter) {
+	"sap/ui/demo/iconexplorer/model/Sorter",
+	"sap/base/Log"
+], function (jQuery, JSONModel, IconPool, Sorter, Log) {
 	"use strict";
 
 	return JSONModel.extend("sap.ui.demo.iconexplorer.model.IconModel", {
@@ -243,7 +244,7 @@ sap.ui.define([
 			this.setProperty("/AllFonts", aAllFonts);
 
 			// trace elapsed time
-			jQuery.sap.log.info("IconModel: Loaded and sorted all icons of " + sFontName + " in " + (new Date().getTime() - this._iStartTime) + " ms");
+			Log.info("IconModel: Loaded and sorted all icons of " + sFontName + " in " + (new Date().getTime() - this._iStartTime) + " ms");
 
 			// set the model data
 			this.setProperty("/" + sFontName, oGroups);
@@ -351,7 +352,7 @@ sap.ui.define([
 						oGroups.groups[i].icons[j].tagString = aIcon.tagString;
 						oTags = aIcon.tags;
 					} else {
-						jQuery.sap.log.info("IconModel: Failed to load tags for " + oGroups.groups[i].icons[j].name);
+						Log.info("IconModel: Failed to load tags for " + oGroups.groups[i].icons[j].name);
 					}
 
 					// Count tag occurrence for every tag in group

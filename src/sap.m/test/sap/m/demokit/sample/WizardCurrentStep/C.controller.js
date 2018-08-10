@@ -3,8 +3,8 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	"sap/m/MessageToast",
-	"sap/m/MessageBox"
-], function(jQuery, Controller, JSONModel, MessageToast, MessageBox) {
+	"sap/base/Log"
+], function(jQuery, Controller, JSONModel, MessageToast, Log) {
 	"use strict";
 
 	var WizardController = Controller.extend("sap.m.sample.WizardCurrentStep.C", {
@@ -24,7 +24,7 @@ sap.ui.define([
 				this.branchingWizard.setCurrentStep(this.byId("wizardViewBranching").byId(event.getParameter("selectedItem").getKey()));
 			} catch (ex) {
 				MessageToast.show(ex);
-				jQuery.sap.log.error(ex);
+				Log.error(ex);
 				this.byId("selectBranchingCurrentStep").setSelectedKey(this.branchingWizard.getCurrentStep());
 				this.byId("wizardViewBranching").byId("BranchingWizard").getSteps()[0].$().firstFocusableDomRef().focus();
 				this.byId("wizardViewBranching").getController().reapplyLastPath();

@@ -3,7 +3,7 @@ sap.ui.define([
 	'sap/ui/demo/cart/model/LocalStorageModel',
 	'jquery.sap.global',
 	'sap/ui/demo/cart/model/models'
-], function (UIComponent, LocalStorageModel, $, models) {
+], function (UIComponent, LocalStorageModel, jQuery, models) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.cart.Component", {
@@ -24,7 +24,7 @@ sap.ui.define([
 			// update browser title
 			this.getRouter().attachTitleChanged(function(oEvent) {
 				var sTitle = oEvent.getParameter("title");
-				$(document).ready(function(){
+				jQuery(document).ready(function(){
 					document.title = sTitle;
 				});
 			});

@@ -1,6 +1,10 @@
 sap.ui.define([
-	"sap/ui/base/Object"
-], function (BaseObject) {
+	"sap/ui/base/Object",
+	"sap/base/Log"
+], function (
+	BaseObject,
+	Log
+) {
 	"use strict";
 
 	return BaseObject.extend("sap.ui.demo.masterdetail.controller.ListSelector", {
@@ -84,7 +88,7 @@ sap.ui.define([
 					});
 				}.bind(this),
 				function () {
-					jQuery.sap.log.warning("Could not select the list item with the path" + sBindingPath + " because the list encountered an error or had no items");
+					Log.warning("Could not select the list item with the path" + sBindingPath + " because the list encountered an error or had no items");
 				}
 			);
 		},

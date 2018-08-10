@@ -14,7 +14,6 @@ sap.ui.define([
 		},
 
 		onPress: function (evt) {
-			jQuery.sap.require("sap.m.MessageBox");
 			MessageBox.alert("Link was clicked!");
 		}
 	});
