@@ -25,7 +25,8 @@ sap.ui.require([
 	});
 
 	sap.ui.require([
-		// "sap/ui/rta/dttool/integration/TheJourney",
+		"sap/ui/rta/dttool/integration/BaseJourney",
+		"sap/ui/rta/dttool/integration/PaletteJourney",
 		"sap/ui/rta/dttool/integration/PropertyPanelJourney"
 	], function () {
 		QUnit.start();

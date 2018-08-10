@@ -105,6 +105,9 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * 	used to restart RTA => toggle RTA
+	 */
 	Preview.setupRTA = function () {
 		this.oRta = new RuntimeAuthoring({
 			rootControl: this.oUiComponent.getRootControl(),
