@@ -10,9 +10,13 @@
 				data-sap-ui-libs="sap.m">
 		</script>
 		<script>
-		var oApp = new sap.m.App("myApp", { initialPage: "page1" }),
+			var oPage1 = new sap.m.Page("page1", {
+						title: "Mobile Slider Control"
+					}),
+					oApp = new sap.m.App("myApp", {initialPage: "page1", pages: [oPage1]}).placeAt("body");
 
-			oSlider0 = new sap.m.Slider({
+
+			var oSlider0 = new sap.m.Slider({
 				value: 30,
 				liveChange: function(oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
@@ -180,14 +184,14 @@
 				scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
 			});
 
-			oPage1 = new sap.m.Page("page1", {
-				title: "Mobile Slider Control",
-				content: [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
-					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13]
-			});
+			// Wait for a tick, so the Page would be rendered and the Sliders could be resized properly on any browser
+			setTimeout(function () {
+				[oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
+					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13].forEach(function (oSlider) {
 
-			oApp.addPage(oPage1);
-			oApp.placeAt("body");
+					oPage1.addContent(oSlider);
+				});
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody"></body>
