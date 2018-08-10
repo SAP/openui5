@@ -4,44 +4,27 @@
 
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
+	"./ValueListType",
+	"./lib/_Helper",
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientListBinding",
-	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Context",
+	"sap/ui/model/ContextBinding",
 	"sap/ui/model/MetaModel",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/type/Raw",
-	"sap/ui/model/PropertyBinding",
-	"sap/ui/thirdparty/URI",
-	"./lib/_Helper",
-	"./ValueListType",
-	"sap/base/Log",
-	"sap/base/assert",
-	"sap/base/util/ObjectPath",
-	"sap/ui/thirdparty/jquery"
-], function(
-	SyncPromise,
-	BindingMode,
-	ChangeReason,
-	ClientListBinding,
-	ContextBinding,
-	BaseContext,
-	MetaModel,
-	OperationMode,
-	Int64,
-	Raw,
-	PropertyBinding,
-	URI,
-	_Helper,
-	ValueListType,
-	Log,
-	assert,
-	ObjectPath,
-	jQuery
-) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI"
+], function (ValueListType, _Helper, assert, Log, ObjectPath, SyncPromise, BindingMode,
+		ChangeReason, ClientListBinding, BaseContext, ContextBinding, MetaModel, PropertyBinding,
+		OperationMode, Int64, Raw, jQuery, URI) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 

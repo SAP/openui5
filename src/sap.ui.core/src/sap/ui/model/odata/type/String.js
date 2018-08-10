@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/ValidateException',
-		'sap/ui/model/type/String', "sap/base/Log"],
-	function(ODataType, ValidateException, StringType, Log) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/type/String"
+], function (Log, ValidateException, ODataType, StringType) {
 	"use strict";
 
 	var rDigitsOnly = /^\d+$/,

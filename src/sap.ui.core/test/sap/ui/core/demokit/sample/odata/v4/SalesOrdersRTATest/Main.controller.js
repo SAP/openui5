@@ -2,11 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/m/Button',
-		'sap/m/Column',
-		'sap/m/Label',
-		'sap/m/Text',
-		"sap/ui/test/TestUtils"
+	"sap/m/Button",
+	"sap/m/Column",
+	"sap/m/Label",
+	"sap/m/Text",
+	"sap/ui/test/TestUtils"
 ], function (Button, Column, Label, Text, TestUtils) {
 	"use strict";
 

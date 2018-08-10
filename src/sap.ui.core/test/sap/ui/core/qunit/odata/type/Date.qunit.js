@@ -2,13 +2,13 @@
  *{copyright}
  */
 sap.ui.require([
-    "jquery.sap.global",
-    "sap/ui/core/format/DateFormat",
-    "sap/ui/model/odata/type/Date",
-    "sap/ui/model/odata/type/ODataType",
-    "sap/ui/test/TestUtils",
-    "sap/base/Log"
-], function(jQuery, DateFormat, DateType, ODataType, TestUtils, Log) {
+	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/type/Date",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, DateFormat, DateType, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";

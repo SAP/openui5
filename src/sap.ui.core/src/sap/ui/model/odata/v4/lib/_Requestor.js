@@ -4,14 +4,14 @@
 
 //Provides class sap.ui.model.odata.v4.lib._Requestor
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
 	"./_Batch",
 	"./_GroupLock",
 	"./_Helper",
 	"./_V2Requestor",
 	"sap/base/util/deepEqual",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function(SyncPromise, _Batch, _GroupLock, _Helper, asV2Requestor, deepEqual, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, deepEqual, SyncPromise, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request

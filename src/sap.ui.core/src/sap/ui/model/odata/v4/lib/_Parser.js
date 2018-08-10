@@ -3,8 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._Parser
-sap.ui.define([
-], function () {
+sap.ui.define([], function () {
 	"use strict";
 
 	var // The delimiters in a system query option, possibly %-encoded (their hex value listed in

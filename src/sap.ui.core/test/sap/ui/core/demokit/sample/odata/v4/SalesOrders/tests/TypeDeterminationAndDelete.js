@@ -4,11 +4,11 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/TestUtils",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Opa5, Press, Interactable, Properties, TestUtils) {
+	"sap/ui/test/matchers/Properties"
+], function (jQuery, Opa5, TestUtils, Press, Interactable, Properties) {
 	"use strict";
 
 	return {

@@ -6,8 +6,7 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-],
-function (Helper, Opa5, TestUtils, Properties) {
+], function (Helper, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*

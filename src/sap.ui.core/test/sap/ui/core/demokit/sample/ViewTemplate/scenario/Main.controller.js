@@ -2,20 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageBox',
-		'sap/ui/core/Component',
-		'sap/ui/core/ListItem',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/mvc/View', // sap.ui.view()
-		'sap/ui/core/mvc/ViewType',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/odata/ODataUtils',
-		'jquery.sap.encoder',
-		'jquery.sap.script',
-		'jquery.sap.xml'
-	], function (jQuery, MessageBox, Component, ListItem, Controller, View, ViewType, JSONModel,
-		ODataUtils /*, jQuerySapEncoder, jQuerySapScript, jQuerySapXML */) {
+	"jquery.sap.global",
+	"sap/m/MessageBox",
+	"sap/ui/core/Component",
+	"sap/ui/core/ListItem",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/mvc/ViewType",
+	"sap/ui/model/json/JSONModel",
+	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"jquery.sap.xml" // jQuery.sap.serializeXML()
+], function (jQuery, MessageBox, Component, ListItem, Controller, View, ViewType, JSONModel) {
 	"use strict";
 
 	function alertError(oError) {

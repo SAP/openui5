@@ -4,18 +4,18 @@
 
 //Provides class sap.ui.model.odata.v4.ODataContextBinding
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"./Context",
+	"./ODataParentBinding",
+	"./lib/_Cache",
+	"./lib/_GroupLock",
+	"./lib/_Helper",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"./Context",
-	"./lib/_Cache",
-	"./lib/_GroupLock",
-	"./lib/_Helper",
-	"./ODataParentBinding"
-], function (jQuery, SyncPromise, Binding, ChangeReason, ContextBinding, Context, _Cache,
-		_GroupLock, _Helper, asODataParentBinding) {
+	"sap/ui/thirdparty/jquery"
+], function (Context, asODataParentBinding, _Cache, _GroupLock, _Helper, SyncPromise, Binding,
+		ChangeReason, ContextBinding, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",

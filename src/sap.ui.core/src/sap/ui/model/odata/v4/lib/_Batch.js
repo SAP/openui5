@@ -3,7 +3,10 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._Batch
-sap.ui.define(["sap/base/strings/escapeRegExp", "jquery.sap.script"], function(escapeRegExp, jQuery) {
+sap.ui.define([
+	"jquery.sap.script",
+	"sap/base/strings/escapeRegExp"
+], function (jQuery, escapeRegExp) {
 	"use strict";
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},

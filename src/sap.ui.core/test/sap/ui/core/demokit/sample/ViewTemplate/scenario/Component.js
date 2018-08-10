@@ -8,16 +8,16 @@
  * @version @version@
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/View', // sap.ui.view()
-		'sap/ui/core/mvc/ViewType',
-		'sap/ui/core/sample/common/Component',
-		'sap/ui/core/util/MockServer',
-		'sap/ui/core/util/XMLPreprocessor',
-		'sap/ui/model/odata/ODataModel',
-		'sap/ui/model/odata/v2/ODataModel',
-		'jquery.sap.script'
-	], function (jQuery, View, ViewType, BaseComponent, MockServer, XMLPreprocessor, ODataModel,
+	"jquery.sap.global",
+	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/mvc/ViewType",
+	"sap/ui/core/sample/common/Component",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/core/util/XMLPreprocessor",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"jquery.sap.script" // jQuery.sap.getUriParameters()
+], function (jQuery, View, ViewType, BaseComponent, MockServer, XMLPreprocessor, ODataModel,
 		ODataModel2/*, jQuerySapScript*/) {
 	"use strict";
 

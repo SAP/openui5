@@ -4,11 +4,11 @@
 
 //Provides class sap.ui.model.odata.v4.Context
 sap.ui.define([
-	"sap/ui/base/SyncPromise",
-	"sap/ui/model/Context",
 	"./lib/_Helper",
-	"sap/base/Log"
-], function(SyncPromise, BaseContext, _Helper, Log) {
+	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/Context"
+], function (_Helper, Log, SyncPromise, BaseContext) {
 	"use strict";
 
 	/*

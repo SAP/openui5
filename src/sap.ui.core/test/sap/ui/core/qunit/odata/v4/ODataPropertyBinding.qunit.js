@@ -3,6 +3,7 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
@@ -10,17 +11,16 @@ sap.ui.require([
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
-	"sap/ui/test/TestUtils",
-	"sap/base/Log"
-], function (jQuery, ManagedObject, SyncPromise, BindingMode, ChangeReason, PropertyBinding,
-		TypeString, Context, _Cache, _GroupLock, _Helper, asODataBinding, ODataModel,
-		ODataPropertyBinding, TestUtils, Log) {
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, PropertyBinding,
+		TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding, _Cache, _GroupLock,
+		_Helper, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

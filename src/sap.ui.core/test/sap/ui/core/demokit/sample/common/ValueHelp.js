@@ -2,19 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/m/Button',
-	'sap/m/Column',
-	'sap/m/ColumnListItem',
-	'sap/m/ComboBox',
-	'sap/m/Input',
-	'sap/m/PlacementType',
-	'sap/m/ResponsivePopover',
-	'sap/m/Table',
-	'sap/m/Text',
+	"sap/m/Button",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/ComboBox",
+	"sap/m/Input",
+	"sap/m/PlacementType",
+	"sap/m/ResponsivePopover",
+	"sap/m/Table",
+	"sap/m/Text",
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/model/odata/v4/ValueListType"
-], function(Button, Column, ColumnListItem, ComboBox, Input, PlacementType, ResponsivePopover,
+], function (Button, Column, ColumnListItem, ComboBox, Input, PlacementType, ResponsivePopover,
 		Table, Text, Control, Item, ValueListType) {
 	"use strict";
 

@@ -3,34 +3,33 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/MessageType",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
-	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
-	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/URI",
-	"sap/base/Log"
-], function (jQuery, MessageType, Message, Binding, BindingMode, BaseContext, Model, TypeString,
-		ODataUtils, OperationMode, Context, _MetadataRequestor, _GroupLock, _Helper, _Parser,
-		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
-		ODataPropertyBinding, SubmitMode, TestUtils, URI, Log) {
+	"sap/ui/model/odata/v4/lib/_GroupLock",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
+	"sap/ui/model/odata/v4/lib/_Parser",
+	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/test/TestUtils"
+], function (jQuery, Log, MessageType, Message, Binding, BindingMode, BaseContext, Model,
+		ODataUtils, OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding,
+		ODataMetaModel, ODataModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper,
+		_MetadataRequestor, _Parser, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

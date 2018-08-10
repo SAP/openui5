@@ -3,7 +3,12 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._V2MetadataConverter
-sap.ui.define(["./_Helper", "./_MetadataConverter", "sap/base/Log", "sap/ui/thirdparty/jquery"], function(_Helper, _MetadataConverter, Log, jQuery) {
+sap.ui.define([
+	"./_Helper",
+	"./_MetadataConverter",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
+], function (_Helper, _MetadataConverter, Log, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
