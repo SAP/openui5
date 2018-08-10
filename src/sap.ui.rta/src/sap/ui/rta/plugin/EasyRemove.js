@@ -58,15 +58,21 @@ sap.ui.define([
 			}.bind(this);
 
 			var oDeleteButton = this._addButton(oOverlay);
-			oDeleteButton.attachBrowserEvent("contextmenu", function(oEvent) {
+			oDeleteButton.attachBrowserEvent("contextmenu", function (oEvent) {
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
 			});
-			oDeleteButton.attachPress(function(oEvent) {
-				var oOverlay = sap.ui.getCore().byId(oEvent.getSource().getId().replace("-DeleteIcon", ""));
+
+			var fnOnClick = function (oEvent) {
+				var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id.replace("-DeleteIcon", ""));
 				onDeletePressed(oOverlay);
-				oEvent.cancelBubble();
-			});
+				oEvent.stopPropagation();
+				oEvent.preventDefault();
+			};
+
+			oDeleteButton
+				.attachBrowserEvent("click", fnOnClick)
+				.attachBrowserEvent("tap", fnOnClick);
 
 		}
 
