@@ -807,6 +807,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the metadata.
+	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which is resolved with the requested metadata as soon as it is available
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.fetchData = function () {
+		return this.fetchEntityContainer().then(function (mScope) {
+			return JSON.parse(JSON.stringify(mScope));
+		});
+	};
+
+	/**
 	 * Requests the single entity container for this metadata model's service by reading the
 	 * $metadata document via the metadata requestor. The resulting $metadata "JSON" object is a map
 	 * of qualified names to their corresponding metadata, with the special key "$EntityContainer"
@@ -1635,6 +1649,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a snapshot of each $metadata or annotation file loaded so far, combined into a
+	 * single "JSON" object according to the streamlined OData V4 Metadata JSON Format.
+	 *
+	 * @returns {object}
+	 *   The OData metadata as a "JSON" object, if it is already available, or
+	 *   <code>undefined</code>.
+	 *
+	 * @function
+	 * @public
+	 * @see #requestData
+	 * @since 1.59.0
+	 */
+	ODataMetaModel.prototype.getData = _Helper.createGetMethod("fetchData");
+
+	/**
 	 * Returns a map of entity tags for each $metadata or annotation file loaded so far.
 	 *
 	 * @returns {object}
@@ -1855,6 +1884,28 @@ sap.ui.define([
 	ODataMetaModel.prototype.refresh = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#refresh");
 	};
+
+	/**
+	 * Requests a snapshot of each $metadata or annotation file loaded so far, combined into a
+	 * single "JSON" object according to the streamlined OData V4 Metadata JSON Format. It is a
+	 * map from all currently known qualified names to their values, with the special key
+	 * "$EntityContainer" mapped to the root entity container's qualified name as a starting point.
+	 * See {@link topic:87aac894a40640f89920d7b2a414499b OData V4 Metadata JSON Format}.
+	 *
+	 * Note that this snapshot may change due to load-on-demand of "cross-service references" (see
+	 * parameter <code>supportReferences</code> of
+	 * {@link sap.ui.model.odata.v4.ODataModel#constructor}).
+	 *
+	 * @returns {Promise}
+	 *   A promise which is resolved with the OData metadata as a "JSON" object as soon as it is
+	 *   available.
+	 *
+	 * @function
+	 * @public
+	 * @see #getData
+	 * @since 1.59.0
+	 */
+	ODataMetaModel.prototype.requestData = _Helper.createRequestMethod("fetchData");
 
 	/**
 	 * Requests the metadata value for the given path relative to the given context. Returns a
