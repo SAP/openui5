@@ -1,21 +1,3 @@
-<!DOCTYPE HTML>
-<html>
-
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.test.OpaQUnit</title>
-
-<script src="../../shared-config.js"></script>
-<script src="../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-logLevel="ERROR">
-</script>
-<script src="../_includeQUnit.js"></script>
-
-<script>
-// This file will be loaded in an iFrame by an OPA test (opaQunit.qunit.html)
-// so that the spied usage reporter can be inspected
-// the idea is to check whether the timeout error messages were properly determined and eventually sent by the reporter
-
 jQuery.sap.require("sap.ui.qunit.qunit-junit");
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 jQuery.sap.require("sap.ui.thirdparty.sinon");
@@ -78,10 +60,3 @@ sap.ui.require([
 	QUnit.start();
 
 });
-</script>
-</head>
-<body>
-	<div id="qunit"></div>
-	<div id="qunit-fixture"></div>
-</body>
-</html>

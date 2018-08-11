@@ -13,7 +13,7 @@ sap.ui.define([
 	});
 
 	opaTest("Should timeout with correct messages in usage reporter", function (oOpa) {
-		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/testdata/opaQUnitTest.html");
+		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/opaQUnitTest.html");
 		oOpa.waitFor({
 			success: function () {
 				// suppress error on QUnit timeout: "Cannot read property 'failedAssertions' of null"

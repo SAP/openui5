@@ -49,9 +49,6 @@ sap.ui.define(function() {
 				}
 			},
 			Controller: {
-				ui5: {
-					noConflict: true
-				},
 				sinon: false
 			},
 			EventHandlerResolver: {
@@ -108,7 +105,6 @@ sap.ui.define(function() {
 				module: "./extensions/Controllerextensions.qunit"
 			},
 			"extensions/ControllerMetadata": {
-				_page: "test-resources/sap/ui/core/qunit/mvc/extensions/ControllerMetadata.qunit.html",
 				title: "QUnit Page for Controller Extensions",
 				loader: {
 					paths: {
@@ -117,15 +113,13 @@ sap.ui.define(function() {
 				}
 			},
 			"viewprocessing/ViewProcessing": {
-				page: "test-resources/sap/ui/core/qunit/mvc/viewprocessing/ViewProcessing.qunit.html",
 				title: "QUnit Page for sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing",
 				ui5: {
 					libs: "sap.m"
 				},
 				loader: {
 					paths: {
-						"sap/ui/core/qunit/mvc/viewprocessing": "",
-						"example/mvc": "testdata/mvc/"
+						"sap/ui/core/qunit/mvc/viewprocessing": "test-resources/sap/ui/core/qunit/mvc/viewprocessing/"
 					}
 				}
 			},
