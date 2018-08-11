@@ -12,11 +12,11 @@ sap.ui.define([
 		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
 	});
 
-	var EMPTY_SITE_URL = "test-resources/sap/ui/core/qunit/testdata/emptySite.html";
-	var EMPTY_SITE_DEFERRED_URL = "test-resources/sap/ui/core/qunit/testdata/emptySiteDeferredUi5Load.html";
-	var UNCAUGHT_ERROR_URL = "test-resources/sap/ui/core/qunit/testdata/uncaughtError.html";
-	var NO_OPA_URL = "test-resources/sap/ui/core/qunit/testdata/noOPA.html";
-	var FAILING_OPA_TEST_URL = "test-resources/sap/ui/core/qunit/testdata/failingOpaTest.html";
+	var EMPTY_SITE_URL = "test-resources/sap/ui/core/qunit/opa/fixture/emptySite.html";
+	var EMPTY_SITE_DEFERRED_URL = "test-resources/sap/ui/core/qunit/opa/fixture/emptySiteDeferredUi5Load.html";
+	var UNCAUGHT_ERROR_URL = "test-resources/sap/ui/core/qunit/opa/fixture/uncaughtError.html";
+	var NO_OPA_URL = "test-resources/sap/ui/core/qunit/opa/fixture/noOPA.html";
+	var FAILING_OPA_TEST_URL = "test-resources/sap/ui/core/qunit/opa/fixture/failingOpaTest.html";
 
 	QUnit.module("IFrame utils");
 
@@ -238,7 +238,7 @@ sap.ui.define([
 			var fnOriginalOnError = window.onerror;
 			window.onerror = function (sErrorMsg, sUrl, iLine, iColumn, oError) {
 				assert.ok(sErrorMsg.match(/Error in launched application iFrame:.* TestUncaughtError/));
-				assert.ok(sErrorMsg.match("uncaughtError.html\nline: 33\ncolumn: [0-9]*"));
+				assert.ok(sErrorMsg.match("uncaughtError.js\nline: \\d+\ncolumn: \\d+"));
 				if (oError) {
 					assert.ok(sErrorMsg.match("\niFrame error:.* TestUncaughtError"), "Should include error object if browser supports it");
 					assert.ok(sErrorMsg.match("onPress"), "Should contain iFrame stack trace");
