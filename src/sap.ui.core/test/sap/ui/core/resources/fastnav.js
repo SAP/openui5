@@ -1,6 +1,10 @@
-(function(){
-
-	jQuery.sap.require("sap.ui.core.Popup");
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Popup",
+	"sap/ui/dom/includeStylesheet",
+	"sap/ui/events/F6Navigation",
+	"require"
+], function(jQuery, Popup, includeStylesheet, F6Navigation, require) {
 
 	var counter = 0;
 
@@ -19,7 +23,7 @@
 			res.attr("title", sTooltip);
 		}
 		if(bGroup){
-			res.attr("data-"+jQuery.sap._FASTNAVIGATIONKEY, "true");
+			res.attr("data-" + F6Navigation.fastNavigationKey, "true");
 		}
 		res.attr("id", uid());
 
@@ -80,7 +84,7 @@
 				aAdditionalContent.push(oClose);
 			}
 
-			oPopup = new sap.ui.core.Popup(container(false, "background:yellow;", "", [
+			oPopup = new Popup(container(false, "background:yellow;", "", [
      			    container(true, null, "", [], true), nl(),
       			 	container(true, null, "", aAdditionalContent, true)
       		]), bModal, true, bAutoClose);
@@ -94,7 +98,7 @@
 
 			if (bModal) {
 				if(bDock){
-					oPopup.open(0, sap.ui.core.Popup.Dock.LeftTop, sap.ui.core.Popup.Dock.LeftBottom, $Button);
+					oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftBottom, $Button);
 				}else{
 					oPopup.open(0);
 				}
@@ -103,7 +107,7 @@
 					oPopup.close(0);
 				}else{
 					if(bDock){
-						oPopup.open(0, sap.ui.core.Popup.Dock.LeftTop, sap.ui.core.Popup.Dock.LeftBottom, $Button);
+						oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftBottom, $Button);
 					}else{
 						oPopup.open(0);
 					}
@@ -114,14 +118,19 @@
 		return $Button;
 	}
 
-
+	includeStylesheet( require.toUrl("./fastnav.css") );
 
 	jQuery(function(){
+
+		// create anchors in DOM
+		if ( jQuery("#scope").length === 0 ) {
+			jQuery('<div id="scope"><div id="content"></div><div id="content2"></div><div id="content3"></div></div>').appendTo(document.body);
+		}
 
 		var oRoot = jQuery("#content");
 		var sStyle = null;
 
-		oRoot.attr("data-"+jQuery.sap._FASTNAVIGATIONKEY, "true");
+		oRoot.attr("data-" + F6Navigation.fastNavigationKey, "true");
 
 		oRoot.append(container(true, null, "Visible", [nl(),
 		    popup(1, false, false, false, "NONE", []),
@@ -188,4 +197,4 @@
 		}, 0);
 	});
 
-})();
+});
