@@ -262,27 +262,19 @@ sap.ui.define([
 		 * Cleans up the state which is created while resize a column via drag&drop and recalculates the new column width.
 		 */
 		_resizeColumn: function(oTable, iColIndex) {
-			var aVisibleColumns = oTable._getVisibleColumns(),
-				oColumn,
-				bResized = false;
+			var aVisibleColumns = oTable._getVisibleColumns();
+			var oColumn;
 
 			if (iColIndex >= 0 && iColIndex < aVisibleColumns.length) {
 				oColumn = aVisibleColumns[iColIndex];
 				if (oColumn._iNewWidth) {
 					TableUtils.Column.resizeColumn(oTable, oTable.indexOfColumn(oColumn), oColumn._iNewWidth);
 					delete oColumn._iNewWidth;
-					bResized = true;
 				}
 			}
 
 			ColumnResizeHelper._cleanupColumResizing(oTable);
-
 			oColumn.focus();
-
-			// rerender if size of the column was changed
-			if (bResized) {
-				oTable.invalidate();
-			}
 		},
 
 		/*
@@ -770,6 +762,8 @@ sap.ui.define([
 					InteractiveResizeHelper.initInteractiveResizing(this, oEvent);
 
 				} else if (oEvent.target === this.getDomRef("rsz")) { // mousedown on column resize bar
+					oEvent.preventDefault();
+					oEvent.stopPropagation();
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 
 				} else if ($Target.hasClass("sapUiTableColResizer")) { // mousedown on mobile column resize button
