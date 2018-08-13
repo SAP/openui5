@@ -121,15 +121,6 @@ sap.ui.define([
 					type: "object",
 					group: "Misc",
 					defaultValue: null
-				},
-
-				/**
-				 * Callback function which is called by 'changeNotifier' in order to update the <code>showResetEnabled</code> value.
-				 * @since 1.58.0
-				 */
-				updateShowResetEnabled: {
-					type: "object",
-					group: "Misc"
 				}
 			},
 			aggregations: {
@@ -553,19 +544,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private
-	 */
-	P13nDialog.prototype._callChangeNotifier = function(oPanel) {
-		if (!this.getShowReset()) {
-			return;
-		}
-		var fnUpdateShowResetEnabled = this.getUpdateShowResetEnabled();
-		if (fnUpdateShowResetEnabled) {
-			this.setShowResetEnabled(fnUpdateShowResetEnabled());
-		}
-	};
-
-	/**
 	 * In case that validation has detected an issue belonging to some panels this issue is duplicated for them.
 	 *
 	 * @param {object} aResult
@@ -748,14 +726,12 @@ sap.ui.define([
 								});
 								oPanel.setValidationExecutor(jQuery.proxy(this._callValidationExecutor, this));
 								oPanel.setValidationListener(jQuery.proxy(this._registerValidationListener, this));
-								oPanel.setChangeNotifier(jQuery.proxy(this._callChangeNotifier, this));
 								break;
 							case "remove":
 								delete this._mVisibleNavigationItems[oPanel.getType()];
 								this._oObserver.unobserve(oPanel);
 								oPanel.setValidationExecutor();
 								oPanel.setValidationListener();
-								oPanel.setChangeNotifier();
 								break;
 							default:
 								Log.error("Mutation '" + oChanges.mutation + "' is not supported jet.");
