@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class A simple ContextMenu.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

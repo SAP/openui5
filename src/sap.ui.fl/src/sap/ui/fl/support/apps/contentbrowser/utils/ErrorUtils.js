@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define("sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",[
+sap.ui.define([
 	"sap/m/MessagePopoverItem",
 	"sap/m/MessagePopover"],
 	function (MessagePopoverItem, MessagePopover) {
