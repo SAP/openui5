@@ -258,8 +258,6 @@ sap.ui.require([
 		}
 
 		sinon.stub(oTable, "_getDefaultRowHeight").returns(iDefaultRowHeight);
-		//oTable.invalidate();
-		//sap.ui.getCore().applyChanges();
 
 		function assertScrollPositions(sAction, iHorizontalScrollPosition, iVerticalScrollPosition) {
 			var oHSb = that.oScrollExtension.getHorizontalScrollbar();
@@ -284,13 +282,18 @@ sap.ui.require([
 			that.oOnAfterRenderingEventHandler.reset();
 		}
 
+		function moveResizer(oColumn) {
+			qutils.triggerEvent("mousemove", oColumn.getId(), {
+				clientX: Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10),
+				clientY: Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 10)
+			});
+		}
+
 		new Promise(function(resolve) {
-			window.setTimeout(function() {
-				assertScrollPositions("Initial", 0, 0);
-				that.oScrollExtension.getHorizontalScrollbar().scrollLeft = 50;
-				that.oScrollExtension.getVerticalScrollbar().scrollTop = 110;
-				resolve();
-			}, iAssertionDelay);
+			assertScrollPositions("Initial", 0, 0);
+			that.oScrollExtension.getHorizontalScrollbar().scrollLeft = 50;
+			that.oScrollExtension.getVerticalScrollbar().scrollTop = 110;
+			resolve();
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
@@ -362,9 +365,84 @@ sap.ui.require([
 				}, iAssertionDelay);
 			});
 		}).then(function() {
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					assertScrollPositions("Binding length increased - Vertical scrolling is possible again", 50, 0);
+					oTable._getDefaultRowHeight.restore();
+
+					// Resize the first scrollable column.
+					var oColumn = oTable.getColumns()[1];
+					oColumn.setWidth("600px");
+					sap.ui.getCore().applyChanges();
+
+					var $Resizer = oTable.$("rsz");
+					var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
+					var iResizeHandlerTop = oColumnRect.top + 1;
+					var iResizeHandlerLeft = oColumnRect.right - 1;
+
+					moveResizer(oColumn);
+					qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
+					qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+					qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+
+					resolve();
+				}, iAssertionDelay);
+			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					assertScrollPositions("First scrollable column resized", 0, 0);
+					// Prepare test of an edge case:
+					// Scroll the rightmost column that is visible if the scroll position is at the beginning, so that it is fully visible.
+					that.oScrollExtension.getHorizontalScrollbar().scrollLeft += 70;
+					resolve();
+				}, iAssertionDelay);
+			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					var oColumn = oTable.getColumns()[3];
+					var $Resizer = oTable.$("rsz");
+					var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
+					var iResizeHandlerTop = oColumnRect.top + 1;
+					var iResizeHandlerLeft = oColumnRect.right - 1;
+
+					moveResizer(oColumn);
+					qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
+					qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+					qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+					resolve();
+				}, iAssertionDelay);
+			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					assertScrollPositions("Resized the rightmost column that is visible if the scroll position is at the beginning", 70, 0);
+					that.oScrollExtension.getHorizontalScrollbar().scrollLeft = oTable.getDomRef("sapUiTableCtrlScr").scrollWidth;
+					resolve();
+				}, iAssertionDelay);
+			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					var oColumn = oTable.getColumns()[4];
+					var $Resizer = oTable.$("rsz");
+					var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
+					var iResizeHandlerTop = oColumnRect.top + 10;
+					var iResizeHandlerLeft = oColumnRect.right - 1;
+
+					moveResizer(oColumn);
+					qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
+					qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+					qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
+					resolve();
+				}, iAssertionDelay);
+			});
+		}).then(function() {
 			window.setTimeout(function() {
-				assertScrollPositions("Binding length increased - Vertical scrolling is possible again", 50, 0);
-				oTable._getDefaultRowHeight.restore();
+				var oHSb = that.oScrollExtension.getHorizontalScrollbar();
+				var iMaxScrollLeft = oHSb.scrollWidth - oHSb.clientWidth;
+				assertScrollPositions("Resized the last column", iMaxScrollLeft, 0);
 				done();
 			}, iAssertionDelay);
 		});
