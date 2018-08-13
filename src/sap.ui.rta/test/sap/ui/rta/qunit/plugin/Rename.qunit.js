@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/dt/Util",
 	"sap/m/Label",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -32,6 +33,7 @@ function (
 	Button,
 	DtUtil,
 	Label,
+	KeyCodes,
 	sinon
 ) {
 	"use strict";
@@ -255,6 +257,7 @@ function (
 		afterEach: function () {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when the Label gets renamed", function(assert) {
@@ -276,12 +279,15 @@ function (
 				if (mParams.overlay === this.oLayoutOverlay) {
 					this.oRenamePlugin._$oEditableControlDomRef.text("123456789012345678901234567890123456789012345678901234567890");
 					this.oRenamePlugin._$editableField.text(this.oRenamePlugin._$oEditableControlDomRef.text());
+					sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
+						if (mParams.overlay === this.oLayoutOverlay) {
+							assert.ok(this.oLabelOverlay.getParent().$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") === -1, "then the ScrollBar Horizontal Style Class was not set");
+							fnDone();
+						}
+					}, this);
 					var $Event = jQuery.Event("keydown");
-					$Event.keyCode = jQuery.sap.KeyCodes.ENTER;
+					$Event.keyCode = KeyCodes.ENTER;
 					this.oRenamePlugin._$editableField.trigger($Event);
-					sap.ui.getCore().applyChanges();
-					assert.ok(this.oLabelOverlay.getParent().$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") === -1, "then the ScrollBar Horizontal Style Class was not set");
-					fnDone();
 				}
 			}, this);
 			this.oRenamePlugin.startEdit(this.oLayoutOverlay);
@@ -308,23 +314,49 @@ function (
 			var fnDone = assert.async();
 			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oLayoutOverlay) {
-					//Register event on Overlay (e.g. simulation event registration in Remove plugin)
-					this.oLayoutOverlay.attachBrowserEvent("keydown", function () {
-						throw new Error('This event should not be called!');
-					});
+					// Register event on Overlay (e.g. simulation event registration in Remove plugin)
+					var oSpy = sandbox.spy();
+					this.oLayoutOverlay.attachBrowserEvent("keydown", oSpy);
 
-					//Fire Keydown keyboard event on created by Rename plugin editable DOM-node.
+					// Fire Keydown keyboard event on created by Rename plugin editable DOM Node.
 					var $Event = jQuery.Event("keydown");
-					$Event.keyCode = jQuery.sap.KeyCodes.DELETE;
+					$Event.keyCode = KeyCodes.DELETE;
 					this.oRenamePlugin._$editableField.trigger($Event);
 
-					//Waiting if any listeners above the field will throw an Error
+					// Wait a bit if any of other listeners are being called
 					setTimeout(function () {
-						assert.ok(true, "Delete test successful");
+						assert.ok(oSpy.notCalled);
 						fnDone();
 					});
 
-					this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
+					this.oRenamePlugin.stopEdit();
+				}
+			}, this);
+			this.oRenamePlugin.startEdit(this.oLayoutOverlay);
+		});
+
+		QUnit.test("when ENTER has been pressed after renaming", function(assert) {
+			var fnDone = assert.async();
+			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+				if (mParams.overlay === this.oLayoutOverlay) {
+					// Register event on Overlay (e.g. simulation event registration in Selection plugin)
+					var oSpy = sandbox.spy();
+					this.oLayoutOverlay.attachBrowserEvent("keydown", oSpy);
+
+					sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
+						if (mParams.overlay === this.oLayoutOverlay) {
+							// Wait a bit if any of other listeners are being called
+							setTimeout(function () {
+								assert.ok(oSpy.notCalled);
+								fnDone();
+							});
+						}
+					}, this);
+
+					// Fire Keydown keyboard event on created by Rename plugin editable DOM Node.
+					var $Event = jQuery.Event("keydown");
+					$Event.keyCode = KeyCodes.ENTER;
+					this.oRenamePlugin._$editableField.trigger($Event);
 				}
 			}, this);
 			this.oRenamePlugin.startEdit(this.oLayoutOverlay);
