@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 
@@ -27,7 +23,7 @@ sap.ui.define([], function() {
 	 *
 	 * The provided path is used to navigate through the nested objects, starting with the root context.
 	 *
-	 * @private
+	 * @public
 	 * @param {string|string[]} vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
 	 * @param {Object} [oRootContext=window] Root context where the path starts
 	 * @returns {Object} The newly created context object, e.g. base.my.test.module
@@ -65,7 +61,7 @@ sap.ui.define([], function() {
 	 *
 	 * The provided object path is used to navigate through the nested objects, starting with the root context.
 	 *
-	 * @private
+	 * @public
 	 * @param {string|string[]} vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
 	 * @param {Object} [oRootContext=window] Root context where the path starts
 	 * @returns {any} Returns the value located in the provided path, or <code>undefined</code> if the path does not exist completely.
@@ -92,7 +88,7 @@ sap.ui.define([], function() {
 	 *
 	 * <b>Note:</b> Ensures that the object path exists.
 	 *
-	 * @private
+	 * @public
 	 * @param {string|string[]} vObjectPath vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
 	 * @param {Object} [oRootContext=window] Root context where the path starts
 	 * @param {any} vValue The value to be set in the root context's object path
@@ -113,9 +109,9 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * @exports sap/base/util/ObjectPath
-	 * @static
-	 * @private
+	 * @namespace
+	 * @alias module:sap/base/util/ObjectPath
+	 * @public
 	 */
 	return ObjectPath;
 });

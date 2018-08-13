@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/ui/Device"], function(Device) {
 	"use strict";
 
@@ -22,9 +18,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * @param {int} iNormalizedScrollLeft The distance from the leftmost position to which the element should be scrolled
 	 * @param {Element} oDomRef The DOM Element to which scrollLeft will be applied
 	 * @return {int} The scroll position that must be set for the DOM element
-	 * @private
+	 * @public
 	 * @author SAP SE
-	 * @exports sap/ui/dom/denormalizeScrollLeftRTL
+	 * @alias module:sap/ui/dom/denormalizeScrollLeftRTL
 	 */
 	var fnDenormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
 

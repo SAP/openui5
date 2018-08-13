@@ -279,6 +279,11 @@ sap.ui.define([
 	}
 
 
+	/**
+	 * @namespace
+	 * @alias module:sap/ui/performance/trace/Interaction
+	 * @private
+	 */
 	var Interaction = {
 
 		/**

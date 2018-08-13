@@ -18,7 +18,8 @@ sap.ui.define([], function() {
 	 * @return {boolean} true when patch is applied correctly or false when nodes are replaced
 	 * @author SAP SE
 	 * @private
-	 * @exports sap/ui/dom/patch
+	 * @alias module:sap/ui/dom/patch
+	 * @ui5-restricted sap.ui.core
 	 */
 	function patch(oOldDom, oNewDom) {
 

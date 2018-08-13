@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/base/assert'], function(assert) {
 	"use strict";
 
@@ -15,9 +11,9 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 	 *
 	 * @function
 	 * @param {any[]} aArray An Array of any type
-	 * @exports sap/base/util/array/uniqueSort
+	 * @alias module:sap/base/util/array/uniqueSort
 	 * @return {any[]} Same array as given (for chaining)
-	 * @private
+	 * @public
 	 */
 	var fnUniqueSort = function(aArray) {
 		assert(aArray instanceof Array, "uniqueSort: input parameter must be an Array");

@@ -1,12 +1,17 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
+
+	/**
+	 * Applies the jQuery function extension:
+	 * @see jQuery#selectText
+	 *
+	 * @namespace
+	 * @alias module:sap/ui/dom/jquery/selectText
+	 * @public
+	 */
 
 	/**
 	 * Sets the text selection in the first element of the collection.
@@ -16,10 +21,11 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * @param {int} iStart Start position of the selection (inclusive)
 	 * @param {int} iEnd End position of the selection (exclusive)
 	 * @return {jQuery} The jQuery collection
-	 * @private
+	 * @public
+	 * @name jQuery#selectText
 	 * @author SAP SE
+	 * @since 0.9.0
 	 * @function
-	 * @exports sap/ui/dom/jquery/selectText
 	 */
 	var fnSelectText = function selectText(iStart, iEnd) {
 		var oDomRef = this.get(0);

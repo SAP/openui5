@@ -6,12 +6,16 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define(["sap/ui/performance/trace/FESR"], function(FESR) {
+
     "use strict";
 
     /**
 	 * Determine wether to activate SAP Passport or FESR
 	 *
 	 * @function
+	 * @alias module:sap/ui/performance/trace/initTraces
+	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
     return function() {
 		var bActive = !!document.querySelector("meta[name=sap-ui-fesr][content=true]"),

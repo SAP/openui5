@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 
@@ -14,8 +10,8 @@ sap.ui.define([], function() {
 	 * @function
 	 * @param {Element} oDomRef The DOM reference
 	 * @return {Window} Window reference
-	 * @private
-	 * @exports sap/ui/dom/getOwnerWindow
+	 * @public
+	 * @alias module:sap/ui/dom/getOwnerWindow
 	 */
 	var fnGetOwnerWindow = function ownerWindow(oDomRef){
 		if (oDomRef.ownerDocument.parentWindow) {

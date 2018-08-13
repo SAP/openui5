@@ -12,7 +12,9 @@ sap.ui.define([], function() {
 	return {
 		/**
 		 * Initializes the hotkeys for TechnicalInfo and Support Dialog
-		 * @sap-restricted sap.ui.core
+		 * @alias module:sap/ui/core/support/Hotkeys
+		 * @ui5-restricted sap.ui.core
+		 * @private
 		 */
 		init: function(getModuleSystemInfo, oCfgData) {
 			// Check whether the left 'alt' key is used

@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 /*global Node */
 
 //@evo-todo check isEqualNode dependency: not yet available...
@@ -23,9 +19,9 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	 * @param {any} b A value of any type
 	 * @param {int} [maxDepth=10] Maximum recursion depth
 	 * @param {boolean} [contains] Whether all existing properties in a are equal as in b
-	 * @exports sap/base/util/deepEqual
+	 * @alias module:sap/base/util/deepEqual
 	 * @return {boolean} Whether a and b are equal
-	 * @private
+	 * @public
 	 */
 	var fnEqual = function(a, b, maxDepth, contains, depth) {
 		// Optional parameter normalization
