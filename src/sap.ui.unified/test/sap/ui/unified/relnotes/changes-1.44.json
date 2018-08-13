@@ -335,5 +335,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.34": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "f6138932b08831e8a0569116bca186c5eb32e821",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": []
+      },
+      {
+        "id": "0805457396f2bce9fc574e8b23cebb2c6da74b7f",
+        "type": "FIX",
+        "text": " ui.unified.FileUploader: Documentation improved",
+        "references": []
+      }
+    ]
   }
 }
