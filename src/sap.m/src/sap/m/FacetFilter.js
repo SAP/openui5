@@ -1614,7 +1614,7 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype._createFacetList = function() {
 
-		var oFacetList =  new sap.m.List({
+		var oFacetList = this._oFacetList = new sap.m.List({
 			mode: ListMode.None,
 			items: {
 				path: "/items",
