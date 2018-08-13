@@ -28,8 +28,14 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 	<![endif]-->
 
+	<style>
+		.width600 {
+			width: 600px;
+		}
+	</style>
+
 	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
 		jQuery.sap.require("sap.ui.model.type.Date");
 		var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm"});
@@ -2965,6 +2971,24 @@
 			oCalendarRowRendererSpy.restore();
 		});
 
+		test("Appointment select is fired", function (assert) {
+			//arrange
+			this._createCalendar();
+			this._oPC.setStartDate(new Date(2015, 0, 1));
+			this._oPC.placeAt("smallUiArea");
+			sap.ui.getCore().applyChanges();
+
+			oSelectedAppointment = undefined;
+			qutils.triggerEvent("tap", "_oPC-R1A1");
+
+			//act
+			equal(oSelectedAppointment.getId(), "_oPC-R1A1", "appointmentSelect event fired and appointment returned");
+			ok(sap.ui.getCore().byId("_oPC-R1A1").getSelected(), "Appointment is selected");
+
+			// clean
+			oSelectedAppointment = undefined;
+		});
+
 		module("ARIA");
 
 		test("Week day and date aria", function() {
@@ -3092,5 +3116,6 @@
 <div id="uiArea2"></div>
 <div id="uiArea3"></div>
 <div id="uiArea4"></div>
+<div id="smallUiArea" class="width600"></div>
 </body>
 </html>
