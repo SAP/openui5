@@ -1,0 +1,13 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "65baa47fc74b201115acc2a235d6fef8295242da",
+        "type": "FIX",
+        "text": " sap.ui.dt: ElementOverlay QUnit test failures on IE11 browser",
+        "references": []
+      }
+    ]
+  }
+}

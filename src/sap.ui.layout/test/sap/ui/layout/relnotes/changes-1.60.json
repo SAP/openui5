@@ -1,0 +1,13 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "7e8495a25b1f7193b05f054301e55c934d63a3b2",
+        "type": "FIX",
+        "text": " sap.ui.layout.HorizontalLayout: visual tests fixed for mobile device",
+        "references": []
+      }
+    ]
+  }
+}

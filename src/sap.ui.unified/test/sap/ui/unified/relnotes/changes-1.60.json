@@ -1,0 +1,19 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "2949e97c3e2541e5a68a820f0c28cd5d65a1f7b3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix visual tests on mobile",
+        "references": []
+      },
+      {
+        "id": "bca2af995e017165955afb082d21c2b60881f3ea",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": []
+      }
+    ]
+  }
+}

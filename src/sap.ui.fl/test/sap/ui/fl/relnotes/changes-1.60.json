@@ -1,0 +1,13 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "0d702f9805ad01d4bcad3517bb9af2bba95a6ba9",
+        "type": "FIX",
+        "text": " Case sensitive view name validation",
+        "references": []
+      }
+    ]
+  }
+}
