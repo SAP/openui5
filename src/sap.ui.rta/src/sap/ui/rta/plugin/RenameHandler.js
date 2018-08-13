@@ -282,8 +282,9 @@ sap.ui.define([
 					this._emitLabelChangeEvent()
 					.then(function() {
 						this.stopEdit(true);
-						oEvent.preventDefault();
 					}.bind(this));
+					oEvent.preventDefault();
+					oEvent.stopPropagation();
 					break;
 				case KeyCodes.ESCAPE:
 					this.stopEdit(true);
