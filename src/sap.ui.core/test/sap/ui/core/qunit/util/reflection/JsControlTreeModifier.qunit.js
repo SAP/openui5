@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/f/DynamicPageTitle',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	"sap/ui/core/StashedControlSupport",
+	"sap/ui/core/UIComponent",
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
@@ -15,7 +16,8 @@ function(
 	Page,
 	DynamicPageTitle,
 	JsControlTreeModifier,
-	StashedControlSupport
+	StashedControlSupport,
+	UIComponent
 ) {
 	"use strict";
 
@@ -118,6 +120,7 @@ function(
 		afterEach: function () {
 			this.oComponent.destroy();
 			this.oControl.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -197,16 +200,38 @@ function(
 		assert.strictEqual(this.oControl.getVisible(), false, "then visible property of control is set to false");
 	});
 
-	QUnit.test("when setStashed is called for stash control", function(assert){
+	QUnit.test("when setStashed is called for stash control and no new control is created", function(assert){
 		var done = assert.async();
 		this.oControl = new Page("pageId");
 		var oStashedControl = StashedControlSupport.createStashedControl("stashedControlId", { sParentId: "pageId" });
 
+		sandbox.stub(JsControlTreeModifier, "setVisible");
 		sandbox.stub(oStashedControl, "setStashed").callsFake(function (bValue) {
 			assert.ok(!bValue, "then setStashed() called on control");
 			done();
 		});
 		JsControlTreeModifier.setStashed(oStashedControl, false);
+		assert.strictEqual(JsControlTreeModifier.setVisible.callCount, 0, "then JsControlTreeModifier setVisible() not called");
+		oStashedControl.destroy();
+	});
+
+	QUnit.test("when setStashed is called for stash control and a new control is created", function(assert){
+		this.oControl = new Page("pageId");
+		var oStashedControl = StashedControlSupport.createStashedControl("stashedControlId", { sParentId: "pageId" });
+
+		sandbox.stub(JsControlTreeModifier, "setVisible");
+
+		sandbox.stub(oStashedControl, "setStashed").callsFake(function (bValue) {
+			oStashedControl.destroy();
+			// new control replaces stashed control
+			new Button("stashedControlId");
+			assert.ok(!bValue, "then setStashed() called on control");
+		});
+
+		var oUnstashedControl = JsControlTreeModifier.setStashed(oStashedControl, false, new UIComponent("mockComponent"));
+		assert.ok(oUnstashedControl instanceof Button, "then the returned control is the unstashed control");
+		assert.ok(JsControlTreeModifier.setVisible.calledWith(oUnstashedControl, true), "then JsControlTreeModifier setVisible() called for the unstashed control");
+		oUnstashedControl.destroy();
 	});
 
 	QUnit.start();

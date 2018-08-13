@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
 	"jquery.sap.global",
+	"sap/ui/core/Component",
 	"sap/base/util/merge",
 	"sap/ui/core/Fragment" // needed to have sap.ui.xmlfragment
 ], function (
@@ -14,6 +15,7 @@ sap.ui.define([
 	ObjectPath,
 	XMLHelper,
 	jQuery,
+	Component,
 	merge
 ) {
 
@@ -48,15 +50,33 @@ sap.ui.define([
 			}
 		},
 
-		setStashed: function (oControl, bStashed) {
+		setStashed: function (oControl, bStashed, oAppComponent) {
 			if (oControl.setStashed) {
-				if (oControl.setVisible) {
-					this.setVisible(oControl, !bStashed);
-				}
-				// check if the control is stashed and bStashed is false
+				var oUnstashedControl;
+
+				// check if the control is stashed and should be unstashed
 				if (oControl.getStashed() === true && bStashed === false) {
 					oControl.setStashed(bStashed);
+
+					// replace stashed control with original control
+					// some change handlers (e.g. StashControl) do not pass the component
+					if (oAppComponent instanceof Component) {
+						oUnstashedControl = this.bySelector(
+							this.getSelector(oControl, oAppComponent),  // returns a selector
+							oAppComponent
+						);
+					}
+
 				}
+
+				// ensure original control's visible property is set
+				// stashed controls do not have a setVisible()
+				if ((oUnstashedControl || oControl)["setVisible"]) {
+					this.setVisible(oUnstashedControl || oControl, !bStashed);
+				}
+
+				// can be undefined if app component is not passed or control is not found
+				return oUnstashedControl;
 			} else {
 				throw new Error("Provided control instance has no setStashed method");
 			}
