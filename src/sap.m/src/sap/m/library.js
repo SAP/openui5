@@ -2483,8 +2483,9 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
+         * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.m.PDFViewerDisplayTypes = {
+	thisLib.PDFViewerDisplayTypes = {
 		/**
 		 * The PDF viewer switches between the <code>Link</code> display type and the <code>Embedded</code> display type,
 		 * depending on the device being used.
