@@ -311,6 +311,9 @@ sap.ui.define([
 					if (oUi5Metadata.aggregations) {
 						oUi5Metadata.aggregations = this.transformElements(oUi5Metadata.aggregations, fnIsAllowedMember);
 						oControlData.hasAggregations = !!oUi5Metadata.aggregations.length;
+						oControlData.hasAggregationAltTypes = oUi5Metadata.aggregations.some(function (oElement) {
+							return !!oElement.altTypes;
+						});
 					}
 
 					if (oUi5Metadata.specialSettings) {

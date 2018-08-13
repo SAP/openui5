@@ -1863,6 +1863,15 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	width: calc(100% - 10px);
 }
 
+/* 5 columns */
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell {
+	flex: 2 0;
+}
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell:nth-child(4),
+.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell:nth-child(3) {
+	flex: 1.5 0;
+}
+
 /* 4 columns */
 .sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-4 .cell {
 	flex: 2 0;
@@ -1950,7 +1959,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 }
 
 .sapUiDocLightTable .cell {
-	padding: 8px;
+	padding: 0.5rem;
 	vertical-align: top;
 	overflow: hidden;
 	text-overflow: ellipsis;
