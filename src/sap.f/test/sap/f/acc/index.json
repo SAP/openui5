@@ -14,6 +14,11 @@
 			"control": "sap.f.FlexibleColumnLayout",
 			"url": "../FlexibleColumnLayout.html",
 			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
+			"control": "sap.f.SemanticPage",
+			"url": "../SemanticPage.html",
+			"appComponent": "CA-UI5-CTR-PIR"
 		}
 	]
 }
