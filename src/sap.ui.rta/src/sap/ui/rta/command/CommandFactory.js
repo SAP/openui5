@@ -310,7 +310,7 @@ function(
 			var oAction, oElementOverlay, bPrepareStatus, oCommand, mTemplateSettings;
 			var bIsUiElement = vElement instanceof ManagedObject;
 
-			if (sCommand !== "appDescriptor"){
+			if (sCommand !== "appDescriptor" && sCommand !== "composite"){
 				mSettings = Object.assign({}, mSettings, {
 					selector : bIsUiElement ? undefined : vElement
 				});
@@ -346,6 +346,7 @@ function(
 				}
 				mAllFlexSettings = merge(mTemplateSettings, mAllFlexSettings);
 			}
+
 			oCommand = new Command(mSettings);
 
 			var bSuccessfullConfigured = true; //configuration is optional
