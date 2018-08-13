@@ -923,7 +923,7 @@ sap.ui.define([
 			return sap.ui.component(fnCreateConfig("./testdata/inheritAsyncError/manifest.json", "sap.ui.test.inheritAsyncError")).then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
 
-				var aLogEntries = Log.getLog();
+				var aLogEntries = Log.getLogEntries();
 				var result = aLogEntries.filter(function(oEntry){
 					return oEntry.message.indexOf(
 						"Failed to load component manifest from \"test-resources/sap/ui/core/qunit/component/testdata/inheritAsyncError/parentFAIL/manifest.json\""

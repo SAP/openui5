@@ -29,8 +29,8 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 
 		QUnit.test(sName + ": getLogEntries", function(assert) {
 			Log.error("error");
-			assert.ok(window.Array.isArray(Log.getLog()), "Log entries array returned");
-			assert.ok(Log.getLog().length >= 1, "at least 1 log entry in array");
+			assert.ok(window.Array.isArray(Log.getLogEntries()), "Log entries array returned");
+			assert.ok(Log.getLogEntries().length >= 1, "at least 1 log entry in array");
 		});
 
 		QUnit.test(sName + ": log error", function(assert) {

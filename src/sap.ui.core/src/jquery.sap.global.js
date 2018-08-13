@@ -913,7 +913,7 @@ sap.ui.define([
 		 * @since 1.1.2
 		 * @function
 		 */
-		getLogEntries: Log.getLog,
+		getLogEntries: Log.getLogEntries,
 
 		/**
 		 * Allows to add a new LogListener that will be notified for new log entries.
@@ -967,7 +967,7 @@ sap.ui.define([
 		 * @function
 		 * @public
 		 */
-		getLog: Log.getLog
+		getLog: Log.getLogEntries
 
 	});
 
