@@ -8,26 +8,26 @@ describe("sap.m.FacetFilter", function() {
 	});
 
 	// verify facet list opens and contains the correct items
-	it("should open listUpdateModel FacetFilter", function() {
+	it("should open listUpdateModelAsync FacetFilter", function() {
 		var oFacetDialog = element(by.control({ controlType: "sap.m.Dialog" }));
-		element(by.id("listUpdateModel")).click();
-		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModel_FacetFilter");
+		element(by.id("listUpdateModelAsync")).click();
+		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_FacetFilter");
 	});
 
-	it("should navigate to listUpdateModel FacetFilter second page", function () {
+	it("should navigate to listUpdateModelAsync FacetFilter second page", function () {
 		var oFacetDialog = element(by.control({ controlType: "sap.m.Dialog" }));
-		element(by.id("listUpdateModel"))
+		element(by.id("listUpdateModelAsync"))
 			.element(by.control({
 				controlType: "sap.m.StandardListItem"
 			})).click();
 
-		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModel_SecondPage");
+		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_SecondPage");
 	});
 
-	it("should update list in listUpdateModel FacetFilter", function () {
+	it("should update list in listUpdateModelAsync FacetFilter", function () {
 		var oFacetDialog = element(by.control({ controlType: "sap.m.Dialog" }));
 
-		element(by.id("listUpdateModel"))
+		element(by.id("listUpdateModelAsync"))
 			.element(by.control({
 				controlType: "sap.m.Bar"
 			}))
@@ -35,6 +35,6 @@ describe("sap.m.FacetFilter", function() {
 				controlType: "sap.m.Button"
 			})).click();
 
-		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModel_updatedFacetPage");
+		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_updatedFacetPage");
 	});
 });
