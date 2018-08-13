@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (Opa5, opaTest, sinon) {
 	"use strict";
 
-	var EMPTY_SITE_URL = "test-resources/sap/ui/core/qunit/testdata/emptySite.html";
+	var EMPTY_SITE_URL = "test-resources/sap/ui/core/qunit/opa/fixture/emptySite.html";
 
 	QUnit.module("Extensions");
 

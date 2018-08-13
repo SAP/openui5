@@ -259,7 +259,7 @@ sap.ui.define([
 		var oFakeIFrameXHR;
 		var iFrameXHRWaiter;
 
-		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/testdata/miniUI5Site.html");
+		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/miniUI5Site.html");
 
 		oOpa.waitFor({
 			viewName: "myView",

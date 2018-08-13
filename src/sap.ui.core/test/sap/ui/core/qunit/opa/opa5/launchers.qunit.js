@@ -10,8 +10,8 @@ sap.ui.define([
 ], function ($, Opa5, URI, _autoWaiter, iFrameLauncher) {
 	"use strict";
 
-	var EMPTY_SITE_URL = "test-resources/sap/ui/core/qunit/testdata/emptySite.html";
-	var BUSY_AFTER_START_URL = "test-resources/sap/ui/core/qunit/testdata/busyAfterStart.html";
+	var EMPTY_SITE_URL = "test-resources/sap/ui/core/qunit/opa/fixture/emptySite.html";
+	var BUSY_AFTER_START_URL = "test-resources/sap/ui/core/qunit/opa/fixture/busyAfterStart.html";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
 		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
