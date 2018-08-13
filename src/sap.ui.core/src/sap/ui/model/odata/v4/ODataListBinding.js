@@ -586,7 +586,7 @@ sap.ui.define([
 		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
 		return bAggregate
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.oAggregation,
-				mQueryOptions, this.oModel.bAutoExpandSelect)
+				mQueryOptions)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
 				this.oModel.bAutoExpandSelect);
 	};

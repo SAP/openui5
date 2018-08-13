@@ -86,13 +86,20 @@ sap.ui.define([], function () {
 		 * information. The value is "groupby((&lt;groupable_1,...,groupable_N),aggregate(
 		 * &lt;aggregatable> with &lt;method> as &lt;alias>,...))" where the "aggregate" part is
 		 * only present if aggregatable properties are given and both "with" and "as" are optional.
-		 * If mQueryOptions.$filter is given the resulting $apply is extended:
+		 * If <code>mQueryOptions.$filter</code> is given, the resulting "$apply" is extended:
 		 * ".../filter(&lt;mQueryOptions.$filter>)".
-		 * If mQueryOptions.$orderby is given the resulting $apply is extended:
+		 * If <code>mQueryOptions.$orderby</code> is given, the resulting "$apply" is extended:
 		 * ".../orderby(&lt;mQueryOptions.$orderby>)".
 		 * If at least one aggregatable property requesting minimum or maximum values is contained,
-		 * the resulting $apply is extended: ".../concat(aggregate(&lt;alias> with min as
+		 * the resulting "$apply" is extended: ".../concat(aggregate(&lt;alias> with min as
 		 * UI5min__&lt;alias>,&lt;alias> with max as UI5max__&lt;alias>,...),identity)".
+		 * In case of a "concat", if <code>mQueryOptions.$skip</code> is given, it is inserted as a
+		 * transformation: ".../concat(aggregate(...),identity/skip(&lt;mQueryOptions.$skip>))".
+		 * Same for <code>mQueryOptions.$top</code>. Unnecessary transformations like "identity/" or
+		 * "skip(0)" are actually avoided (the above example is simplified).
+		 * In case of a "concat", if <code>mQueryOptions.$count</code> is given, it is inserted as
+		 * an additional aggregate "$count as UI5__count"; this way it still works with "skip()" and
+		 * "top()".
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see also
@@ -124,17 +131,33 @@ sap.ui.define([], function () {
 		 *   level is supported
 		 * @param {object} [mQueryOptions={}]
 		 *   A map of key-value pairs representing the query string
+		 * @param {boolean} [mQueryOptions.$count]
+		 *   The value for a "$count" system query option; it is removed from the returned map,
+		 *   but not from <code>mQueryOptions</code> itself, for a follow-up request or in case it
+		 *   is turned into an aggregate "$count as UI5__count"
 		 * @param {string} [mQueryOptions.$filter]
 		 *   The value for a "$filter" system query option; it is removed from the returned map, but
 		 *   not from <code>mQueryOptions</code> itself
 		 * @param {string} [mQueryOptions.$orderby]
 		 *   The value for a "$orderby" system query option; it is removed from the returned map,
 		 *   but not from <code>mQueryOptions</code> itself
+		 * @param {number} [mQueryOptions.$skip]
+		 *   The value for a "$skip" system query option; it is removed from the returned map,
+		 *   but not from <code>mQueryOptions</code> itself, in case it is turned into a "skip()"
+		 *   transformation
+		 * @param {number} [mQueryOptions.$top]
+		 *   The value for a "$top" system query option; it is removed from the returned map,
+		 *   but not from <code>mQueryOptions</code> itself, in case it is turned into a "top()"
+		 *   transformation
 		 * @param {object} [mAlias2MeasureAndMethod]
 		 *   An optional map which is filled in case an aggregatable property requests minimum or
 		 *   maximum values; the alias (for example "UI5min__&lt;alias>") for that value becomes the
 		 *   key; an object with "measure" and "method" becomes the corresponding value. Note that
 		 *   "measure" holds the aggregatable property's alias in case "3.1.1 Keyword as" is used.
+		 * @param {boolean} [bFollowUp]
+		 *   Tells whether this method is called for a follow-up request, not for the first one; in
+		 *   this case, neither the count nor minimum or maximum values are requested again and
+		 *   <code>mAlias2MeasureAndMethod</code> is ignored
 		 * @returns {object}
 		 *   A map of key-value pairs representing the query string, including a value for the
 		 *   "$apply" system query option; it is a modified copy of <code>mQueryOptions</code>
@@ -143,11 +166,12 @@ sap.ui.define([], function () {
 		 *
 		 * @public
 		 */
-		buildApply : function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod) {
+		buildApply : function (oAggregation, mQueryOptions, mAlias2MeasureAndMethod, bFollowUp) {
 			var aAggregate,
 				sApply = "",
 				aGroupBy,
-				aMinMax = [];
+				aMinMax = [],
+				sSkipTop;
 
 			/*
 			 * Returns the corresponding part of the "aggregate" term for an aggregatable property,
@@ -166,11 +190,13 @@ sap.ui.define([], function () {
 				} else if (oDetails.name) {
 					sAggregate += " as " + sAlias;
 				}
-				if (oDetails.min) {
-					processMinOrMax(sAlias, "min");
-				}
-				if (oDetails.max) {
-					processMinOrMax(sAlias, "max");
+				if (!bFollowUp) {
+					if (oDetails.min) {
+						processMinOrMax(sAlias, "min");
+					}
+					if (oDetails.max) {
+						processMinOrMax(sAlias, "max");
+					}
 				}
 				return sAggregate;
 			}
@@ -183,6 +209,30 @@ sap.ui.define([], function () {
 			 */
 			function notGroupLevel(sGroupable) {
 				return oAggregation.groupLevels.indexOf(sGroupable) < 0;
+			}
+
+			/*
+			 * Takes care of the $skip/$top system query options and returns the corresponding
+			 * transformation(s).
+			 *
+			 * @returns {string} The transformation(s) corresponding to $skip/$top or "".
+			 */
+			function skipTop() {
+				var sTransformation = "";
+
+				if (mQueryOptions.$skip) {
+					sTransformation = "skip(" + mQueryOptions.$skip + ")";
+				}
+				delete mQueryOptions.$skip; // delete 0 value even w/o skip(0)
+				if (mQueryOptions.$top < Infinity) {
+					if (sTransformation) {
+						sTransformation += "/";
+					}
+					sTransformation += "top(" + mQueryOptions.$top + ")";
+				}
+				delete mQueryOptions.$top;
+
+				return sTransformation;
 			}
 
 			/*
@@ -227,6 +277,9 @@ sap.ui.define([], function () {
 				sApply = "groupby((" + aGroupBy.join(",") + (sApply ? ")," + sApply + ")" : "))");
 			}
 			mQueryOptions = jQuery.extend({}, mQueryOptions);
+			if (bFollowUp) {
+				delete mQueryOptions.$count;
+			}
 			if (mQueryOptions.$filter) {
 				sApply += "/filter(" + mQueryOptions.$filter + ")";
 				delete mQueryOptions.$filter;
@@ -235,8 +288,16 @@ sap.ui.define([], function () {
 				sApply += "/orderby(" + mQueryOptions.$orderby + ")";
 				delete mQueryOptions.$orderby;
 			}
+			sSkipTop = skipTop();
 			if (aMinMax.length) {
-				sApply += "/concat(aggregate(" + aMinMax.join(",") + "),identity)";
+				if (mQueryOptions.$count) {
+					aMinMax.push("$count as UI5__count");
+					delete mQueryOptions.$count;
+				}
+				sApply += "/concat(aggregate(" + aMinMax.join(",") + "),"
+					+ (sSkipTop || "identity") + ")";
+			} else if (sSkipTop) {
+				sApply += "/" + sSkipTop;
 			}
 			mQueryOptions.$apply = sApply;
 

@@ -4190,8 +4190,7 @@ sap.ui.require([
 		group : {}
 	}].forEach(function (oAggregation, i) {
 		QUnit.test("doCreateCache: AggregationCache: " + i, function (assert) {
-			var bAutoExpandSelect = {/*false, true*/},
-				oBinding = this.bindList("TEAM_2_EMPLOYEES", null, null, null, {
+			var oBinding = this.bindList("TEAM_2_EMPLOYEES", null, null, null, {
 					$$aggregation : oAggregation
 				}),
 				oCache = {},
@@ -4200,15 +4199,12 @@ sap.ui.require([
 				sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
 				mQueryOptions = {};
 
-			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
-
 			this.mock(oBinding).expects("inheritQueryOptions")
 				.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
 				.returns(mMergedQueryOptions);
 			this.mock(_AggregationCache).expects("create")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-					sinon.match.same(oBinding.oAggregation), sinon.match.same(mMergedQueryOptions),
-					sinon.match.same(bAutoExpandSelect))
+					sinon.match.same(oBinding.oAggregation), sinon.match.same(mMergedQueryOptions))
 				.returns(oCache);
 
 			// code under test
