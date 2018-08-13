@@ -33,13 +33,6 @@
 					}
 				});
 
-				QUnit.test("Test formatDescription", function (assert) {
-					var sTextWithLinkAndHash = "Please use {@link sap.chart.Chart#setVizProperties} to set related formatStrings instead.";
-
-					assert.ok(this.controller.formatDescription(sTextWithLinkAndHash).indexOf("<p>") < 0, "Formatted description does not contain <p> tags");
-					assert.ok(this.controller.formatDescription(sTextWithLinkAndHash).indexOf("</p>") < 0, "Formatted description does not contain </p> tags");
-				});
-
 				QUnit.test("Test formatLinks", function (assert) {
 					var sTextWithLink = "Has been renamed, use {@link jQuery.sap.encodeHTML} instead.",
 						sFormattedTextWithLink = "<p>Has been renamed, use <a class=\"jsdoclink\" href=\"#/api/jQuery.sap/methods/encodeHTML\" target=\"_self\">jQuery.sap.encodeHTML</a> instead.</p>",

@@ -1,60 +1,41 @@
 <mvc:View controllerName="sap.ui.documentation.sdk.controller.ApiDetailIndexDeprecatedExperimental"
-          xmlns="sap.uxap"
-          xmlns:m="sap.m"
-          xmlns:mvc="sap.ui.core.mvc"
-          xmlns:layout="sap.ui.layout"
-          xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+		  xmlns="sap.uxap"
+		  xmlns:m="sap.m"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 
-    <m:Page id="deprecatedAPIsPage"
-            showHeader="false"
-            showSubHeader="false"
-            showFooter="false">
-        <m:content>
-            <ObjectPageLayout enableLazyLoading="false"
-                              showAnchorBarPopover="true"
-                              upperCaseAnchorBar="false"
-                              sections="{/}">
-                <headerTitle>
-                    <ObjectPageHeader id="title" objectTitle="Index of Deprecated APIs"/>
-                </headerTitle>
-                <headerContent>
-                    <layout:VerticalLayout id="deprecatedAPIStripContainer">
-                        <m:MessageStrip
-                                text="For general information about Deprecated features, please check the Compatibility Rules."
-                                type="Error"
-                                showIcon="true"/>
-                    </layout:VerticalLayout>
-                </headerContent>
-                <sections>
-                    <ObjectPageSection
-                            titleUppercase="false"
-                            title="{parts : [{ path : 'name'}],
-                                               formatter : '.formatTitle' }">
-                        <subSections>
-                            <ObjectPageSubSection>
-                                <blocks>
-                                    <m:List id="deprecatedList"
-                                            items="{ path : 'apis', templateShareable: 'false'}"
-                                            updateFinished="._modifyLinks"
-                                            showSeparators="Inner">
-                                        <m:items>
-                                            <m:FeedListItem
-                                                    showIcon="false"
-                                                    sender="{parts : [{path : 'control'}, {path : 'entityName'}, {path: 'type'}],
-                                                              formatter : '.formatSenderLink'}"
-                                                    text="{path : 'text', formatter: '.formatDescription'}"
-                                                    app:control="{control}"
-                                                    app:entity="{entityName}"
-                                                    app:type="{type}"
-                                                    app:static="{static}"/>
-                                        </m:items>
-                                    </m:List>
-                                </blocks>
-                            </ObjectPageSubSection>
-                        </subSections>
-                    </ObjectPageSection>
-                </sections>
-            </ObjectPageLayout>
-        </m:content>
-    </m:Page>
+	<ObjectPageLayout upperCaseAnchorBar="false"
+					  sections="{/}">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Index of Deprecated APIs"/>
+		</headerTitle>
+		<headerContent>
+			<m:MessageStrip text="For general information about Deprecated features, please check the Compatibility Rules."
+					type="Error"
+					class="specialListsMessageStrip"
+					showIcon="true"/>
+		</headerContent>
+		<ObjectPageSection
+				titleUppercase="false"
+				title="{parts: [{ path : 'name'}], formatter : '.formatTitle' }">
+			<ObjectPageSubSection>
+				<m:List items="{path: 'apis', templateShareable: 'false'}"
+						updateFinished="._modifyLinks"
+						showSeparators="Inner">
+					<m:items>
+						<m:FeedListItem
+								showIcon="false"
+								sender="{parts : [{path : 'control'}, {path : 'entityName'}, {path: 'type'}],
+										  formatter : '.formatSenderLink'}"
+								text="{path : 'text', formatter: '.formatLinks'}"
+								class="specialListFeedItem"
+								app:control="{control}"
+								app:entity="{entityName}"
+								app:type="{type}"
+								app:static="{static}"/>
+					</m:items>
+				</m:List>
+			</ObjectPageSubSection>
+		</ObjectPageSection>
+	</ObjectPageLayout>
 </mvc:View>
