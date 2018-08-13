@@ -30,30 +30,23 @@ sap.ui.define([
 	UnstashControl.applyChange = function(oChange, oControl, mPropertyBag) {
 		var mContent = oChange.getContent();
 		var oModifier = mPropertyBag.modifier;
+		var bStashed = false;
 
 		oChange.setRevertData({
 			originalValue: mPropertyBag.modifier.getStashed(oControl)
 		});
 
-		oModifier.setStashed(oControl, false);
-
-		if (mPropertyBag.modifier.targets === "jsControlTree") {
-			// replace stashed control with original control
-			oControl = mPropertyBag.modifier.bySelector(
-				mPropertyBag.modifier.getSelector(oControl, mPropertyBag.appComponent),  // returns a selector
-				mPropertyBag.appComponent
-			);
-		}
+		var oUnstashedControl = oModifier.setStashed(oControl, bStashed, mPropertyBag.appComponent) || oControl;
 
 		//old way including move, new way will have separate move change
 		//only applicable for XML modifier
 		if (mContent.parentAggregationName){
 			var sTargetAggregation = mContent.parentAggregationName;
-			var oTargetParent = oModifier.getParent(oControl);
-			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oControl);
-			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oControl, mContent.index, mPropertyBag.view);
+			var oTargetParent = oModifier.getParent(oUnstashedControl);
+			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oUnstashedControl);
+			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oUnstashedControl, mContent.index, mPropertyBag.view);
 		}
-		return oControl;
+		return oUnstashedControl;
 	};
 
 	/**
