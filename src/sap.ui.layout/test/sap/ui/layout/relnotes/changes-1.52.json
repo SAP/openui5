@@ -164,5 +164,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "0fe3a1bd85708623d19358d565d8d0069e51e8b9",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Pane width is now correct",
+        "references": []
+      }
+    ]
   }
 }

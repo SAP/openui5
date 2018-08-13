@@ -156,5 +156,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "a01bb47bd48c73422ea2a3787fc5b4a35f3c8f57",
+        "type": "INETRNAL",
+        "text": "[FIX] tutorial.fiori2: Updated documentation link",
+        "references": []
+      }
+    ]
   }
 }

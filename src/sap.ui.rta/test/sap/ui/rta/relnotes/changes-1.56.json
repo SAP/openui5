@@ -244,5 +244,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "846e928d74199c3f1f2adce812de211d5c8ec32e",
+        "type": "FIX",
+        "text": "sap.ui.rta: Disable actions in relevant container without stable id",
+        "references": []
+      }
+    ]
   }
 }

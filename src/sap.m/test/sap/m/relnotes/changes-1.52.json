@@ -3239,5 +3239,76 @@
         "references": []
       }
     ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "4a7e6276afa208b544cddc3b206946650eeca789",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Keyboard flashing when item selected fixed",
+        "references": []
+      },
+      {
+        "id": "ca4af75b742fa0313b6781b2a0954590227ea322",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: valueFormat in case of invalid entry works now",
+        "references": []
+      },
+      {
+        "id": "b6d29131fe9840e2528a8bd5aaa2363039c7e7ae",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Problem with z-index on Safari is now fixed",
+        "references": []
+      },
+      {
+        "id": "dbe37beed6d67d61edf39c5dbd9132a45422786e",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Added filters are displayed now",
+        "references": []
+      },
+      {
+        "id": "270ff5d132b7be15503b055c9b9d8d6ae24a2a30",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Behavior in ObjectPage fixed",
+        "references": []
+      },
+      {
+        "id": "a3c302cbaf85ef1558b97bf053e5aad23e378431",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Control height is now correct",
+        "references": []
+      },
+      {
+        "id": "b6ff0ca284f2b105243d0bba7fd9a13725291d14",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: removeAllButtons now works well",
+        "references": []
+      },
+      {
+        "id": "8bb9d608a885bb9c1e7531de8d4fe8dbbaa85fe1",
+        "type": "FIX",
+        "text": " sap.m.SearchField: screen reader announce the placeholder text when there is label or tooltip",
+        "references": []
+      },
+      {
+        "id": "8b424faba270338cf809816713c8a42a1035bff9",
+        "type": "FIX",
+        "text": " sap.m.Select: aria-live in opened popover removed",
+        "references": []
+      },
+      {
+        "id": "41de2f9e05198bb20df18a372e2528707ff78c97",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selecting item from SelectList works correctly on IE",
+        "references": []
+      },
+      {
+        "id": "6c8ca3b84ae7f5fce7958e3db7f5a58455ae2ef3",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : While grouping named model is ignored and always default model is taken without considering the model bind to items aggregation.",
+        "references": []
+      }
+    ]
   }
 }

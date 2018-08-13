@@ -1451,5 +1451,76 @@
         "references": []
       }
     ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "121f122b502c8e201b24510dd8808a9ba6d96b1a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "references": []
+      },
+      {
+        "id": "1d1aa73bea187406f0721b4641760606ede6a0ca",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Keyboard flashing when item selected fixed",
+        "references": []
+      },
+      {
+        "id": "771165705d2f230cf7aaf9c0b96c415d3ea97d6f",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: valueFormat in case of invalid entry works now",
+        "references": []
+      },
+      {
+        "id": "5326b5a873e8e26f051a6d888ad29371c5e69093",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: update FacetPage on navigating",
+        "references": []
+      },
+      {
+        "id": "393f1bc77eaa32f57a7b6cab6a53e4de155fe93c",
+        "type": "FIX",
+        "text": " sap.m.Label: Color is now correct inside an active list item in table",
+        "references": []
+      },
+      {
+        "id": "8ef36be711f7826c03a8cc01a112882d509731e6",
+        "type": "FIX",
+        "text": " sap.m.Select: aria-live in opened popover removed",
+        "references": []
+      },
+      {
+        "id": "f7ae11f5516f9dbbbaf7a3530b8951bc8ba50250",
+        "type": "FIX",
+        "text": " sap.m.Slider: Fix examples page under IE",
+        "references": []
+      },
+      {
+        "id": "c55c5b0c1a84f58b0620673e2e46b72aebba8313",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selecting item from SelectList works correctly on IE",
+        "references": []
+      },
+      {
+        "id": "b25548be195b50789eaece78a59378717d51a8ec",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: initially selected item is now scrolled into view",
+        "references": []
+      },
+      {
+        "id": "f78e17f121bb7ba64be486cba1c81f933a1ebe1e",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : While grouping named model is ignored and always default model is taken without considering the model bind to items aggregation.",
+        "references": []
+      },
+      {
+        "id": "90f37700a7e7039f402b2510d112b1ea20a455b5",
+        "type": "FIX",
+        "text": "sap.m - Table Designtime DomRef definition for items aggregation",
+        "references": []
+      }
+    ]
   }
 }

@@ -176,5 +176,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "4fcdefe860f6bd29b7223ff3e8bb26cc59fdf538",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": []
+      },
+      {
+        "id": "b82f3d3961a4a989e0658a9faee467c4cb378e6b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: SelectedSection can now be unset",
+        "references": []
+      }
+    ]
   }
 }

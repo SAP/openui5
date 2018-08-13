@@ -198,5 +198,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "aaca2b7a9a9a50f562b19c7139bea32ce2cc4ee6",
+        "type": "FIX",
+        "text": " Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": []
+      },
+      {
+        "id": "d6274faa97f288378db68f710b123eea3ff2ff82",
+        "type": "FIX",
+        "text": " Table: Scrolling to last row with mouse wheel",
+        "references": []
+      }
+    ]
   }
 }

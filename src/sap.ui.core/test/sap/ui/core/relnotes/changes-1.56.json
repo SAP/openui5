@@ -995,5 +995,40 @@
         "references": []
       }
     ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "13692a87c7db9fc6a522af4fa3f80653cda22138",
+        "type": "FEATURE",
+        "text": " core.CSSSize: Type validator now accepts viewport units",
+        "references": []
+      },
+      {
+        "id": "d27cd96fc64ffff8dfcd690f9a801ad04e380de4",
+        "type": "FIX",
+        "text": " FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
+        "references": []
+      },
+      {
+        "id": "63701ac129711f73459af2dd5c8cb8183208b79e",
+        "type": "FIX",
+        "text": " Manifest: Manifest.load should keep manifest URL in async case",
+        "references": []
+      },
+      {
+        "id": "62f17cb6958d8c0bd36046edce181ca43a0c9f12",
+        "type": "FIX",
+        "text": " Manifest: set component base URL",
+        "references": []
+      },
+      {
+        "id": "fb6c4a2b1edcf2197ad085dc1e74b1264ff84287",
+        "type": "FIX",
+        "text": " v2.ODataAnnotations: don\u0027t cache invalid annotations",
+        "references": []
+      }
+    ]
   }
 }

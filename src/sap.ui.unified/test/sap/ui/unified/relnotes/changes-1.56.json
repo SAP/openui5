@@ -211,8 +211,33 @@
       }
     ]
   },
-  "1.56.5": {
-    "date": "July 2018",
-    "notes": []
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "c5d02e4a063e4938ff8cea5c2b9578b4c1490ec7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
+        "references": []
+      },
+      {
+        "id": "577ee1428ae408674fbec1563665054e7fd60443",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
+        "references": []
+      },
+      {
+        "id": "5f431a797ef570a3f1feba0c641dcd978a188f8b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": []
+      },
+      {
+        "id": "45e0089bd59dd12df29ceb3868350d225823eaba",
+        "type": "FIX",
+        "text": " ui.unified.FileUploader: Documentation improved",
+        "references": []
+      }
+    ]
   }
 }
