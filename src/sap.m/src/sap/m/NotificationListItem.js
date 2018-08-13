@@ -231,16 +231,6 @@ function(
 		return result;
 	};
 
-	/**
-	 * Clones list item.
-	 *
-	 * @public
-	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
-	 */
-	NotificationListItem.prototype.clone = function () {
-		return NotificationListBase.prototype.clone.apply(this, arguments);
-	};
-
 	//================================================================================
 	// Control methods
 	//================================================================================

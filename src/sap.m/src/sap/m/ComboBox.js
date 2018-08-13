@@ -1546,10 +1546,6 @@ sap.ui.define([
 				oList = this.getList();
 
 			if (!this.isBound("items") && oList) {
-				for (var i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
-					oComboBoxClone.addItem(aItems[i].clone());
-				}
-
 				oComboBoxClone.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
 			}
 

@@ -290,23 +290,6 @@ sap.ui.define([
 		designtime: "sap/m/designtime/IconTabBar.designtime"
 	}});
 
-
-	/**
-	 * Clones the IconTabBar.
-	 *
-	 * @public
-	 * @returns {sap.m.IconTabBar} The cloned IconTabBar.
-	 */
-	IconTabBar.prototype.clone = function () {
-		var oClone = Control.prototype.clone.apply(this, arguments);
-
-		// "_header" aggregation is hidden and it is not cloned by default
-		var oIconTabHeader = this._getIconTabHeader();
-		oClone.setAggregation("_header", oIconTabHeader.clone(), true);
-
-		return oClone;
-	};
-
 	/**
 	 * Sets the tab content as expanded.
 	 *

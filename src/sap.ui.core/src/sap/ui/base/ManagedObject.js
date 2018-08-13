@@ -4740,8 +4740,9 @@ sap.ui.define([
 
 		if (bCloneChildren) {
 			// Clone aggregations
-			for (sName in this.mAggregations) {
-				var oAggregation = this.mAggregations[sName];
+			var mAggregationsToClone = fnObjectAssign({}, this.mAggregations, this.mForwardedAggregations);
+			for (sName in mAggregationsToClone) {
+				var oAggregation = mAggregationsToClone[sName];
 				//do not clone aggregation if aggregation is bound and bindings are cloned; aggregation is filled on update
 				if (oMetadata.hasAggregation(sName) && !(this.isBound(sName) && bCloneBindings)) {
 					if (oAggregation instanceof ManagedObject) {

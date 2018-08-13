@@ -1901,18 +1901,8 @@ function(
 
 		Select.prototype.clone = function() {
 			var oSelectClone = Control.prototype.clone.apply(this, arguments),
-				oList = this.getList(),
 				oSelectedItem = this.getSelectedItem(),
 				sSelectedKey = this.getSelectedKey();
-
-			// note: clone the items because the select forward its aggregation items
-			// to an inner list control. In this case, the standard clone functionality
-			// doesn't detect and clone the items that are forwarded to an inner control.
-			if (!this.isBound("items") && oList) {
-				for (var i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
-					oSelectClone.addItem(aItems[i].clone());
-				}
-			}
 
 			if (!this.isBound("selectedKey") && !oSelectClone.isSelectionSynchronized()) {
 
