@@ -1215,6 +1215,33 @@
 		oFFL.destroy();
 	});
 
+	test("FacetFilterList._search with relative binding", function () {
+		// Arrange
+		var oModel = new sap.ui.model.json.JSONModel({values: ["a", "b", "c"]}),
+				oFFL = new sap.m.FacetFilterList({
+					title: "Values",
+					items: {
+						path: "m>/values",
+						template: new sap.m.FacetFilterItem({
+							text: {path: "m>"}
+						})
+					}
+				}),
+				oFF = new sap.m.FacetFilter({lists: [oFFL]});
+
+		sap.ui.getCore().setModel(oModel, "m");
+		oFF.placeAt("content");
+
+		// Act
+		oFFL._search("c");
+
+		// Assert
+		assert.strictEqual(oFFL.getItems().length, 1, "One item should match");
+		assert.equal(oFFL.getItems()[0].getText(), "c", ".. and this should be the third one");
+
+		// Cleanup
+		oFF.destroy();
+	});
 
 	asyncTest("FacetFilterList._updateSelectAllCheckBox", function() {
 
