@@ -55,7 +55,7 @@
 				<NavigationProperty Name="EMPLOYEE_2_TEAM" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM"
 					Nullable="false"/>
 				<Property Name="__FAKE__Messages" Type="Collection(SAP__self.__FAKE__Message)" />
-				<Annotation Term="Org.OData.Core.V1.Messages" Path="__FAKE__Messages" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="__FAKE__Messages" />
 			</EntityType>
 			<EntityType Name="EQUIPMENT">
 				<Key>
