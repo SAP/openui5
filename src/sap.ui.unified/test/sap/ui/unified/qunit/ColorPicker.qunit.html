@@ -847,6 +847,44 @@
 					oAssert.strictEqual(this.oCP.getDisplayMode(), "Large", "The ColorPicker's displayMode is Large");
 				});
 
+				QUnit.module("values conversions", {
+					beforeEach: function() {
+						this.oCP = new sap.ui.unified.ColorPicker();
+					},
+					afterEach: function() {
+						this.oCP.destroy();
+						this.oCP = null;
+					}
+				});
+
+				QUnit.test("_calculateRGBAdvanced hue edge cases", function(assert) {
+					// Act
+					this.oCP._calculateRGBAdvanced(0, 50, 50);
+
+					// Assert
+					assert.strictEqual(this.oCP.RGB.r, 191, 'red value is as expected');
+					assert.strictEqual(this.oCP.RGB.g, 64, 'green value is as expected');
+					assert.strictEqual(this.oCP.RGB.b, 64, 'blue value is as expected');
+
+					// Act
+					this.oCP._calculateRGBAdvanced(360, 50, 50);
+
+					// Assert
+					assert.strictEqual(this.oCP.RGB.r, 191, 'red value is as expected');
+					assert.strictEqual(this.oCP.RGB.g, 64, 'green value is as expected');
+					assert.strictEqual(this.oCP.RGB.b, 64, 'blue value is as expected');
+				});
+
+				QUnit.test("_calculateHSL hue edge cases", function(assert) {
+					// Act
+					this.oCP.Color.h = 360;
+					this.oCP._calculateHSL(191, 64, 64);
+
+					// Assert
+					assert.strictEqual(this.oCP.Color.h, 360, 'hue is ok');
+					assert.strictEqual(this.oCP.Color.s, 50, 'saturation is ok');
+					assert.strictEqual(this.oCP.Color.l, 50, 'light is ok');
+				});
 			})();
 
 		</script>
