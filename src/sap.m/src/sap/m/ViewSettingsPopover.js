@@ -608,7 +608,7 @@ sap.ui.define([
 			}
 
 			if (oSelectAllCheckBox) {
-				oSelectAllCheckBox.setSelected(bAllSelected && iVisibleItems);
+				oSelectAllCheckBox.setSelected(bAllSelected && iVisibleItems > 0);
 			}
 		};
 

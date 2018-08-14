@@ -255,10 +255,10 @@ sap.ui.define([
 	// Public Methods
 
 	CheckBox.prototype.setSelected = function(bSelected) {
-		bSelected = !!bSelected;
-		if (bSelected == this.getSelected()) {
+		if (bSelected === this.getSelected()) {
 			return this;
 		}
+
 		this.$("CbBg").toggleClass("sapMCbMarkChecked", bSelected);
 		var oCheckBox = this.getDomRef("CB");
 		if (oCheckBox) {
