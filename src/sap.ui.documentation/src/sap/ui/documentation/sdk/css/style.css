@@ -2051,3 +2051,21 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 /*
 * End of DemokitTreeItem CSS
 */
+
+/* Special list */
+.specialListsMessageStrip {
+	width: calc(100% - 2rem);
+}
+
+.sapUiMedia-Std-Desktop .specialListsMessageStrip,
+.sapUiMedia-StdExt-LargeDesktop .specialListsMessageStrip {
+	width: calc(100% - 3rem);
+}
+
+.specialListFeedItem p:first-child {
+	display: inline;
+}
+
+.specialListFeedItem p {
+	margin: 0.5rem 0;
+}

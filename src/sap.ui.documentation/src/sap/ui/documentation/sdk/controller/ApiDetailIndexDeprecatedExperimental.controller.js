@@ -29,22 +29,7 @@ sap.ui.define([
 				oRouter.getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
 				oRouter.getRoute("since").attachPatternMatched(this._onTopicMatched, this);
 
-				this._currentMedia = this.getView()._getCurrentMediaContainerRange();
-
 				this._hasMatched = false;
-			},
-
-			onBeforeRendering: function () {
-				this.getView()._detachMediaContainerWidthChange(this._resizeMessageStrip, this);
-			},
-
-			onAfterRendering: function () {
-				this._resizeMessageStrip();
-				this.getView()._attachMediaContainerWidthChange(this._resizeMessageStrip, this);
-			},
-
-			onExit: function () {
-				this.getView()._detachMediaContainerWidthChange(this._resizeMessageStrip, this);
 			},
 
 			_onTopicMatched: function (oEvent) {
@@ -92,14 +77,6 @@ sap.ui.define([
 
 			formatTitle: function (sTitle) {
 				return sTitle ? "As of " + sTitle : "Version N/A";
-			},
-
-			formatDescription: function (sText) {
-				sText = this.formatLinks(sText);
-				sText = sText.replace("<p>", '');
-				sText = sText.replace("</p>", '');
-
-				return sText;
 			},
 
 			formatSenderLink: function (sControlName, sEntityName, sEntityType) {
@@ -168,26 +145,6 @@ sap.ui.define([
 
 					}
 				});
-			},
-
-			_resizeMessageStrip: function (oMedia) {
-				var oView = this.getView();
-
-				oMedia = oMedia || oView._getCurrentMediaContainerRange();
-
-				var sName = oMedia.name,
-					oMessageStripContainer = this.byId("deprecatedAPIStripContainer")
-						|| this.byId("experimentalAPIStripContainer");
-
-				if (!oMessageStripContainer) {
-					return;
-				}
-
-				if (sName === "Desktop" || sName === "LargeDesktop") {
-					oMessageStripContainer.setWidth("calc(100% - 3rem)");
-				} else if (sName === "Tablet" || sName === "Phone") {
-					oMessageStripContainer.setWidth("calc(100% - 2rem)");
-				}
 			},
 
 			/**
