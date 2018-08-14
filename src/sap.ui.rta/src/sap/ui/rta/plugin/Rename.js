@@ -201,23 +201,29 @@ sap.ui.define([
 		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
 		if (this.getOldValue() !== sText) { //check for real change before creating a command
 			this._$oEditableControlDomRef.text(sText);
-			try {
-				var oRenameCommand;
-				var oRenamedElement = this._oEditedOverlay.getElement();
-				var oDesignTimeMetadata = this._oEditedOverlay.getDesignTimeMetadata();
-				var oRenameAction = this.getAction(this._oEditedOverlay);
-				var sVariantManagementReference = this.getVariantManagementReference(this._oEditedOverlay, oRenameAction);
 
-				oRenameCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
-					renamedElement : oRenamedElement,
-					newValue : sText
+			return Promise.resolve(this._oEditedOverlay)
+
+			.then(function (oEditedOverlay) {
+				var oRenamedElement = oEditedOverlay.getElement();
+				var oDesignTimeMetadata = oEditedOverlay.getDesignTimeMetadata();
+				var oRenameAction = this.getAction(oEditedOverlay);
+				var sVariantManagementReference = this.getVariantManagementReference(oEditedOverlay, oRenameAction);
+
+				var oRenameCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
+					renamedElement: oRenamedElement,
+					newValue: sText
 				}, oDesignTimeMetadata, sVariantManagementReference);
+
 				this.fireElementModified({
-					"command" : oRenameCommand
+					"command": oRenameCommand
 				});
-			} catch (oError) {
+				return oRenameCommand;
+			}.bind(this))
+
+			.catch(function (oError) {
 				jQuery.sap.log.error("Error during rename : ", oError);
-			}
+			});
 		}
 	};
 
