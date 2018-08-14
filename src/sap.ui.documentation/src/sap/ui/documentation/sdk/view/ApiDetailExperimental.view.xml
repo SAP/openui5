@@ -13,7 +13,7 @@
             <ObjectPageLayout enableLazyLoading="false"
                               showAnchorBarPopover="true"
                               upperCaseAnchorBar="false"
-                              sections="{experimentalAPIs>/}">
+                              sections="{/}">
                 <headerTitle>
                     <ObjectPageHeader id="title" objectTitle="Index of Experimental APIs"/>
                 </headerTitle>
@@ -28,24 +28,25 @@
                 <sections>
                     <ObjectPageSection
                             titleUppercase="false"
-                            title="{parts : [{path : 'experimentalAPIs>name'}],
+                            title="{parts : [{path : 'name'}],
                                               formatter : '.formatTitle'}">
                         <subSections>
                             <ObjectPageSubSection>
                                 <blocks>
                                     <m:List id="experimentalList"
-											items="{ path: 'experimentalAPIs>apis', templateShareable: 'false'}"
+											items="{ path: 'apis', templateShareable: 'false'}"
+                                            updateFinished="._modifyLinks"
                                             showSeparators="Inner">
                                         <m:items>
                                             <m:FeedListItem
                                                     showIcon="false"
-                                                    sender="{parts : [{path : 'experimentalAPIs>control'}, {path : 'experimentalAPIs>entityName'}, {path: 'experimentalAPIs>type'}],
+                                                    sender="{parts : [{path : 'control'}, {path : 'entityName'}, {path: 'type'}],
                                                              formatter : '.formatSenderLink'}"
-                                                    text="{path : 'experimentalAPIs>text', formatter: '.formatDescription'}"
-                                                    app:control="{experimentalAPIs>control}"
-                                                    app:entity="{experimentalAPIs>entityName}"
-                                                    app:type="{experimentalAPIs>type}"
-                                                    app:static="{experimentalAPIs>static}"/>
+                                                    text="{path : 'text', formatter: '.formatDescription'}"
+                                                    app:control="{control}"
+                                                    app:entity="{entityName}"
+                                                    app:type="{type}"
+                                                    app:static="{static}"/>
                                         </m:items>
                                     </m:List>
                                 </blocks>

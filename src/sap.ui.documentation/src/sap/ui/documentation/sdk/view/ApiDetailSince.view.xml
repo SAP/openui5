@@ -6,7 +6,7 @@
 	<ObjectPageLayout enableLazyLoading="false"
 					  showAnchorBarPopover="true"
 					  upperCaseAnchorBar="false"
-					  sections="{sinceAPIs>/}">
+					  sections="{/}">
 		<headerTitle>
 			<ObjectPageHeader id="title" objectTitle="Index by Version"/>
 		</headerTitle>
@@ -14,24 +14,24 @@
 		<sections>
 			<ObjectPageSection
 					titleUppercase="false"
-					title="As of {sinceAPIs>name}">
+					title="As of {name}">
 				<subSections>
 					<ObjectPageSubSection>
 						<blocks>
 							<m:List updateFinished="._modifyLinks"
-									items="{ path: 'sinceAPIs>apis', templateShareable: 'false'}"
+									items="{ path: 'apis', templateShareable: 'false'}"
 									showSeparators="Inner">
 								<m:items>
 									<m:FeedListItem
 											showIcon="false"
-											sender="{parts : [{path : 'sinceAPIs>control'},
-													{path : 'sinceAPIs>entityName'}, {path: 'sinceAPIs>type'}],
+											sender="{parts : [{path : 'control'},
+													{path : 'entityName'}, {path: 'type'}],
 													formatter : '.formatSenderLink'}"
-											text="{path : 'sinceAPIs>text', formatter: '.formatDescription'}"
-											app:control="{sinceAPIs>control}"
-											app:entity="{sinceAPIs>entityName}"
-											app:type="{sinceAPIs>type}"
-											app:static="{sinceAPIs>static}"/>
+											text="{path : 'text', formatter: '.formatDescription'}"
+											app:control="{control}"
+											app:entity="{entityName}"
+											app:type="{type}"
+											app:static="{static}"/>
 								</m:items>
 							</m:List>
 						</blocks>
