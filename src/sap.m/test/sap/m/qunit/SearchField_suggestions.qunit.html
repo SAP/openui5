@@ -90,6 +90,8 @@
 			var popup = sap.ui.getCore().byId(popupId);
 			assert.ok(!!popup, "popup exists");
 
+			assert.ok(popup.getDomRef().style.minWidth, 'popup min-width is set');
+
 			if (!popup) {
 				return;
 			}
