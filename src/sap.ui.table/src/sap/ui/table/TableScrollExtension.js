@@ -751,14 +751,14 @@ sap.ui.define([
 			}
 
 			if (oRowContainer && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
+				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
 				var oCell = oCellInfo.cell[0];
-				var iScrollLeft = oRowContainer.scrollLeft;
+				var iScrollLeft = oHSb.scrollLeft;
 				var iRowContainerWidth = oRowContainer.clientWidth;
 				var iCellLeft = oCell.offsetLeft;
 				var iCellRight = iCellLeft + oCell.offsetWidth;
 				var iOffsetLeft = iCellLeft - iScrollLeft;
 				var iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
-				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
 
 				if (iOffsetLeft < 0 && iOffsetRight < 0) {
 					oHSb.scrollLeft = iScrollLeft + iOffsetLeft;
