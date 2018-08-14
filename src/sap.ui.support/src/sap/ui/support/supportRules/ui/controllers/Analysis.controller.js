@@ -65,7 +65,9 @@ sap.ui.define([
 
 			if (this.model.getProperty("/persistingSettings")) {
 				var aColumnsIds = Storage.getVisibleColumns() || [];
-				this.setColumnVisibility(aColumnsIds, true);
+				if (aColumnsIds.length) {
+					this.setColumnVisibility(aColumnsIds, true);
+				}
 			}
 
 			this.byId("presetVariant").addEventDelegate({
@@ -292,7 +294,12 @@ sap.ui.define([
 					this.model.setProperty('/treeModel', oTreeViewModelRules);
 					this.initializeTempRules();
 					//Selection should be applied from local storage
-					oTreeViewModelRules = SelectionUtils.updateSelectedRulesFromLocalStorage(oTreeViewModelRules);
+
+					var oUpdatedRules = SelectionUtils.updateSelectedRulesFromLocalStorage(oTreeViewModelRules);
+					// In case of deleted local storage item
+					if (oUpdatedRules) {
+						oTreeViewModelRules = oUpdatedRules;
+					}
 				}
 
 				if (bPersistSettings || bLoadingAdditionalRuleSets) {
@@ -833,12 +840,23 @@ sap.ui.define([
 
 			return mainModelRule;
 		},
+		_generateRuleId: function (sRuleId) {
+			var i = 0,
+				mRules = this.tempRuleSet.getRules();
+
+			while (++i) {
+				if (!mRules[sRuleId + i]) {
+					return sRuleId + i;
+				}
+			}
+		},
 
 		duplicateRule: function (oEvent) {
 			var sPath = oEvent.getSource().getBindingContext("treeModel").getPath(),
 				oSourceObject = this.treeTable.getBinding().getModel().getProperty(sPath),
 				selectedRule = this.getMainModelFromTreeViewModel(oSourceObject),
 				selectedRuleCopy = jQuery.extend(true, {}, selectedRule);
+				selectedRuleCopy.id = this._generateRuleId(selectedRule.id);
 
 			this.model.setProperty("/newRule", selectedRuleCopy);
 			this.model.checkUpdate(true, false);
@@ -881,7 +899,7 @@ sap.ui.define([
 				}
 			}
 			this.oJsonModel.setData(oTreeModel);
-
+			this.tempRuleSet.removeRule(sourceObject);
 			this._updateRuleList();
 
 			//Set selected rules count to UI
