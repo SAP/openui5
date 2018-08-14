@@ -46,6 +46,7 @@
 						intArray : {type: "int[]", group: "Appearance", defaultValue: []},
 						booleanArray : {type: "boolean[]", group: "Appearance", defaultValue: []},
 						objectValue : {type: "object", group: "Misc", defaultValue: null},
+						_hiddenValue: { type: "string", defaultValue: "", visibility: "hidden"}
 					},
 					aggregations : {
 						singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
@@ -55,7 +56,9 @@
 					},
 					associations : {
 						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
-						associatedObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "associatedObj"}
+						associatedObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "associatedObj"},
+						_hiddenObject: { type : "sap.ui.core.TestManagedObject", multiple : false, visibility: "hidden"},
+						_hiddenObjects: { type : "sap.ui.core.TestManagedObject", multiple : true, visibility: "hidden"}
 					},
 					specialSettings: {
 						metadataContexts: {
@@ -382,6 +385,16 @@
 				setAndTest("booleanArray", 23, ERROR);
 				setAndTest("booleanArray", 23.45, ERROR);
 				setAndTest("booleanArray", true, ERROR);
+
+				//hidden properties
+				setAndTest("_hiddenValue", "test", SAME);
+				setAndTest("_hiddenValue", 23, "" + 23);
+				setAndTest("_hiddenValue", 23.45, "" + 23.45);
+				setAndTest("_hiddenValue", true, "" + true);
+				setAndTest("_hiddenValue", oDate, "" + oDate);
+				setAndTest("_hiddenValue", new String("0815"), "0815");
+				setAndTest("_hiddenValue", null, '');
+				setAndTest("_hiddenValue", undefined, '');
 
 				setAndTest("unknown", "testtest", ERROR);
 			});
@@ -1449,7 +1462,7 @@
 				}
 			});
 
-			QUnit.test("Accessor / Mutator functions 0..1 Association", function(assert) {
+			QUnit.test("Accessor / Mutator functions 0..1 public Association", function(assert) {
 				assert.equal(typeof this.obj.getSelectedObject, "function", "there should be a named get function for a public 0..1 association");
 				assert.equal(typeof this.obj.setSelectedObject, "function", "there should be a named set function for a public 0..1 association ");
 				// no 0..n methods
@@ -1462,7 +1475,31 @@
 				assert.equal(typeof this.obj.insertSelectedObject, "undefined", "there must be no named insert function for a public 0..1 association ");
 			});
 
-			QUnit.test("Accessor / Mutator functions 0..n Associations", function(assert) {
+			QUnit.test("Accessor / Mutator functions private Associations", function(assert) {
+				assert.equal(typeof this.obj.get_hiddenObject, "undefined", "there must be no named get function for a private 0..1 association");
+				assert.equal(typeof this.obj.set_hiddenObject, "undefined", "there must be no named set function for a private 0..1 association ");
+				// no 0..n methods
+				assert.equal(typeof this.obj.add_hiddenObject, "undefined", "there must be no named add function for a private 0..1 association ");
+				assert.equal(typeof this.obj.remove_hiddenObject, "undefined", "there must be no named remove function for a private 0..1 association ");
+				assert.equal(typeof this.obj.removeAll_hiddenObject, "undefined", "there must be no named removeAll function for a private 0..1 association");
+				// no aggregation methods
+				assert.equal(typeof this.obj.destroy_hiddenObject, "undefined", "there must be no named destroy function for a private 0..1 association ");
+				assert.equal(typeof this.obj.indexOf_hiddenObject, "undefined", "there must be no named indexOf function for a private 0..1 association ");
+				assert.equal(typeof this.obj.insert_hiddenObject, "undefined", "there must be no named insert function for a private 0..1 association ");
+
+				assert.equal(typeof this.obj.get_hiddenObjects, "undefined", "there must be no named get function for a private 0..1 association");
+				assert.equal(typeof this.obj.set_hiddenObjects, "undefined", "there must be no named set function for a private 0..1 association ");
+				// no 0..n methods
+				assert.equal(typeof this.obj.add_hiddenObjects, "undefined", "there must be no named add function for a private 0..1 association ");
+				assert.equal(typeof this.obj.remove_hiddenObjects, "undefined", "there must be no named remove function for a private 0..1 association ");
+				assert.equal(typeof this.obj.removeAll_hiddenObjects, "undefined", "there must be no named removeAll function for a private 0..1 association");
+				// no aggregation methods
+				assert.equal(typeof this.obj.destroy_hiddenObjects, "undefined", "there must be no named destroy function for a private 0..1 association ")
+				assert.equal(typeof this.obj.indexOf_hiddenObjects, "undefined", "there must be no named indexOf function for a private 0..1 association ");
+				assert.equal(typeof this.obj.insert_hiddenObjects, "undefined", "there must be no named insert function for a private 0..1 association ");
+			});
+
+			QUnit.test("Accessor / Mutator functions public 0..n Associations", function(assert) {
 
 				var Log = sap.ui.require("sap/base/Log");
 				assert.ok(Log, "Log module should be available");
