@@ -12,7 +12,7 @@ sap.ui.define([
 
 	opaTest("Should see the Tree Table of the Support Assistant with 45 rules selected", function (Given, When, Then) {
 
-		Given.iStartMyApp();
+		Given.iStartMyAppAndDeletePersistedData();
 
 		Then.onTheMainPage.iShouldSeeRulesButton(EXPECTED_RULES_COUNT);
 
@@ -22,7 +22,7 @@ sap.ui.define([
 	opaTest("Should deselect one rule in model and view", function (Given, When, Then) {
 
 		//sap.ui.core - Error logs - rule
-		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-rowsel3",  "Rule has been deselected", "Could not deselect Rule");
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs", "Rule has been deselected", "Could not deselect Rule");
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(1);
@@ -70,7 +70,7 @@ sap.ui.define([
 	opaTest("Should deselect one rule in model and view", function (Given, When, Then) {
 
 		//sap.ui.core - Error logs - rule
-		When.onTheRulesPage.iPressOnTreeTableCheckBox("__xmlview0--analysis--ruleList-rowsel3",  "Rule has been deselected", "Could not deselect Rule");
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs", "Rule has been deselected", "Could not deselect Rule");
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(1);
