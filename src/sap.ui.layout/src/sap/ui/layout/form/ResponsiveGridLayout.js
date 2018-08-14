@@ -549,7 +549,7 @@ sap.ui.define([
 		var oGrid = new Grid(sId, {vSpacing: 0, hSpacing: 0, containerQuery: true});
 		oGrid.__myParentLayout = this;
 		oGrid.__myParentContainerId = oContainer.getId();
-		oGrid.addStyleClass("sapUiFormResGridCont");
+		oGrid.addStyleClass("sapUiFormResGridCont").addStyleClass("sapUiRespGridOverflowHidden");
 
 		oGrid.getContent = function(){
 			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
@@ -1216,7 +1216,7 @@ sap.ui.define([
 					vSpacing: 0,
 					containerQuery: true
 					}).setParent(this);
-				this._mainGrid.addStyleClass("sapUiFormResGridMain");
+				this._mainGrid.addStyleClass("sapUiFormResGridMain").addStyleClass("sapUiRespGridOverflowHidden");
 				// change resize handler so that the main grid triggers the resize of it's children
 				this._mainGrid._onParentResizeOrig = this._mainGrid._onParentResize;
 				this._mainGrid._onParentResize = function() {
