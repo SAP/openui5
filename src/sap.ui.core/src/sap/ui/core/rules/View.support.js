@@ -28,7 +28,7 @@ sap.ui.define(["sap/ui/support/library"],
 		minversion: "-",
 		title: "XML View is not configured with namespace 'sap.ui.core.mvc'",
 		description: "For consistency and proper resource loading, the root node of an XML view must be configured with the namespace 'mvc'",
-		resolution: "Define the XML view as '<core:View ...>' and configure the XML namepspace as 'xmlns:mvc=\"sap.ui.core.mvc\"'",
+		resolution: "Define the XML view as '<mvc:View ...>' and configure the XML namepspace as 'xmlns:mvc=\"sap.ui.core.mvc\"'",
 		resolutionurls: [{
 			text: "Documentation: Namespaces in XML Views",
 			href: "https://sapui5.hana.ondemand.com/#docs/guide/2421a2c9fa574b2e937461b5313671f0.html"
