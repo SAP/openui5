@@ -977,10 +977,15 @@
 	// BCP: 1880435856
 	function createListOnNavigating() {
 		function fnAddList() {
-			oFacet.setModel(new sap.ui.model.json.JSONModel([{title: "Select and click back"}, {title: "List 2"}]));
+			setTimeout(function () {
+				oFacet.setModel(new sap.ui.model.json.JSONModel([{title: "Select and click back Async"}, {title: "List 2"}]));
+				// Custom coding from application side. They should refreshFacetList by hand if
+				// async update is happening in the listClose event
+				oFacet.refreshFacetList();
+			}, 500);
 		}
 
-		var oFacet = new sap.m.FacetFilter("listUpdateModel", {
+		var oFacet = new sap.m.FacetFilter("listUpdateModelAsync", {
 			type: "Light",
 			showPersonalization: false,
 			showReset: true,
@@ -1007,6 +1012,7 @@
 	fnDependentFacets();
 	fnModelSizeLimit();
 	createListOnNavigating();
+
 
 </script>
 
