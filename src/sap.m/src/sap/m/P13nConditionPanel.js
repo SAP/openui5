@@ -21,7 +21,7 @@ sap.ui.define([
 	'sap/ui/model/type/Date',
 	'sap/ui/model/type/Time',
 	'sap/ui/model/odata/type/DateTime',
-	'sap/ui/model/odata/type/Double',
+	'sap/ui/model/type/Float',
 	'./Button',
 	'./OverflowToolbar',
 	'./OverflowToolbarLayoutData',
@@ -56,7 +56,7 @@ sap.ui.define([
 	DateType,
 	TimeType,
 	DateTimeOdataType,
-	DoubleOdataType,
+	FloatType,
 	Button,
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
@@ -555,10 +555,14 @@ sap.ui.define([
 						Log.error("sap.m.P13nConditionPanel", "NUMC type support requires isDigitSequence==true!");
 						oKeyField.formatSettings = jQuery.extend({}, oKeyField.formatSettings, { isDigitSequence: true });
 					}
-					if (!(oKeyField.formatSettings && oKeyField.formatSettings.maxLength)) {
+					var oConstraints = oKeyField.formatSettings;
+					if (oKeyField.maxLength) {
+						oConstraints = jQuery.extend({}, oConstraints, { maxLength: oKeyField.maxLength });
+					}
+					if (!oConstraints.maxLength) {
 						Log.error("sap.m.P13nConditionPanel", "NUMC type suppport requires maxLength!");
 					}
-					oKeyField.typeInstance = new StringOdataType({}, oKeyField.formatSettings);
+					oKeyField.typeInstance = new StringOdataType({}, oConstraints);
 					break;
 				case "date":
 					//TODO we should use the none odata date type, otherwise the returned oValue1 is not a date object
@@ -588,7 +592,7 @@ sap.ui.define([
 							oContraints["maxFractionDigits"] = parseInt(oKeyField.scale, 10);
 						}
 					}
-					oKeyField.typeInstance = new DoubleOdataType(oContraints);
+					oKeyField.typeInstance = new FloatType(oContraints);
 					break;
 				default:
 					var oFormatOptions = oKeyField.formatSettings;
@@ -1579,6 +1583,8 @@ sap.ui.define([
 			var oValue1 = oConditionGrid.value1.getDateValue();
 			var oValue2 = oConditionGrid.value2.getDateValue();
 			this._updateMinMaxDate(oConditionGrid, oValue1, oValue2);
+		} else {
+			this._updateMinMaxDate(oConditionGrid, null, null);
 		}
 
 		return oConditionGrid;
@@ -2379,6 +2385,8 @@ sap.ui.define([
 		// in case of a BT and a Date type try to set the minDate/maxDate for the From/To value datepicker
 		if (sOperation === "BT") {
 			this._updateMinMaxDate(oConditionGrid, oValue1, oValue2);
+		} else {
+			this._updateMinMaxDate(oConditionGrid, null, null);
 		}
 
 		var oCurrentKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
