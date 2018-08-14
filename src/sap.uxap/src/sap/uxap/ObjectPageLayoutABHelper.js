@@ -93,8 +93,10 @@ sap.ui.define([
 		var aSections = this.getObjectPageLayout().getSections() || [],
 			oAnchorBar = this._getAnchorBar(),
 			fnPressHandler = jQuery.proxy(oAnchorBar._handleDirectScroll, oAnchorBar),
-			sTitle,
-			oMenuItem;
+			sButtonTitle,
+			sButtonIcon,
+			oMenuItem,
+			oCustomButton;
 
 		//tablet & desktop mechanism
 		if (oAnchorBar && this.getObjectPageLayout().getShowAnchorBar()) {
@@ -154,9 +156,17 @@ sap.ui.define([
 						}
 
 						if (oButtonClone instanceof MenuButton) {
-							sTitle = (oSubSection._getInternalTitle() != "") ? oSubSection._getInternalTitle() : oSubSection.getTitle();
+							oCustomButton = oSubSection.getCustomAnchorBarButton();
 
-							oMenuItem = new MenuItem({"text": sTitle});
+							if (oCustomButton) {
+								sButtonTitle = oCustomButton.getText();
+								sButtonIcon = oCustomButton.getIcon();
+							} else {
+								sButtonTitle = oSubSection._getInternalTitle() || oSubSection.getTitle();
+								sButtonIcon = '';
+							}
+
+							oMenuItem = new MenuItem({"text": sButtonTitle , "icon": sButtonIcon});
 
 							oMenuItem.addCustomData(new CustomData({
 								key: "sectionId",

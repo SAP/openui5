@@ -116,6 +116,18 @@
 		assert.strictEqual(oFirstSectionButton.getEnabled(), false, "property change is propagated");
 	});
 
+	QUnit.test("Custom button for sub-section", function (assert) {
+		//select button programatically
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oCustomButton = this.oObjectPage.getSections()[1].getSubSections()[0].getCustomAnchorBarButton(),
+			oSecondSectionButton = oAnchorBar.getContent()[1],
+			oSubSectionButton = oSecondSectionButton.getMenu().getItems()[0];
+
+		//assert
+		assert.strictEqual(oSubSectionButton.getText(), oCustomButton.getText(), "custom button text is propagated to the menu item");
+		assert.strictEqual(oSubSectionButton.getIcon(), oCustomButton.getIcon(), "custom button icon is propagated to the menu item");
+	});
+
 	QUnit.test("Phone view", function (assert) {
 		//display hierarchical select
 		jQuery("html")
