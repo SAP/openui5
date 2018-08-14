@@ -310,6 +310,6 @@ sap.ui.require([
 		fields: [new Input({value: "new Text", required: true})]
 	});
 
-	var oNewField = new Input("TX", {value: "new Field", valueState: sap.ui.core.ValueState.Warning});
+	var oNewField = new Input("TX", {value: "new Field", valueState: CoreLib.ValueState.Warning});
 
 });

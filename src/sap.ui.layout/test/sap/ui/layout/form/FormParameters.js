@@ -206,7 +206,7 @@ sap.ui.require([
 												oLayout.setLabelSpanXL(parseInt(sValue, 10));
 											}})]
 					}),
-					new sap.ui.layout.form.FormElement({
+					new FormElement({
 						label: "adjustLabelSpan",
 						fields: [new CheckBox("CB-adjustLabelSpan",{
 											selected: sap.ui.getCore().byId("RGL").getAdjustLabelSpan(),
@@ -278,7 +278,7 @@ sap.ui.require([
 												oLayout.setColumnsXL(parseInt(sValue, 10));
 											}})]
 					}),
-					new sap.ui.layout.form.FormElement({
+					new FormElement({
 						label: "singleContainerFullSize",
 						fields: [new CheckBox("CB-singleContainerFullSize",{
 											selected: sap.ui.getCore().byId("RGL").getSingleContainerFullSize(),
@@ -288,7 +288,7 @@ sap.ui.require([
 												oLayout.setSingleContainerFullSize(bSelected);
 											}})]
 					}),
-					new sap.ui.layout.form.FormElement({
+					new FormElement({
 						label: "breakpoint (M, L, XL)",
 						fields: [new Input("I-breakpointM",{
 											value: sap.ui.getCore().byId("RGL").getBreakpointM(),
