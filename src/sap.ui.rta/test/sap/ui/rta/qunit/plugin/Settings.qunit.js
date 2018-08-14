@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/Util",
+	'sap/ui/base/ManagedObject',
 	"sap/base/Log"
 ],
 function (
@@ -36,6 +37,7 @@ function (
 	Stack,
 	Utils,
 	DtUtil,
+	ManagedObject,
 	BaseLog
 ) {
 	"use strict";
@@ -279,7 +281,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -299,7 +300,14 @@ function (
 
 			var aSelectedOverlays = [oButtonOverlay];
 
+			var fnAssertSpy = sandbox.spy(ManagedObject.prototype, "applySettings");
+
 			this.oSettingsPlugin.attachEventOnce("elementModified", function (oEvent) {
+				var mPassedSettings = fnAssertSpy.getCall(1).args[0];
+				var bHasSelector = Object.keys(mPassedSettings).some(function(sKey){
+					return sKey === "selector";
+				});
+				assert.notOk(bHasSelector, "the selector is not part of the passed settings");
 				var oCompositeCommand = oEvent.getParameter("command");
 				assert.ok(oCompositeCommand, "Composite command is created");
 				var oSettingsCommand = oCompositeCommand.getCommands()[0];
@@ -313,7 +321,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -349,7 +356,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -380,7 +386,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -420,7 +425,6 @@ function (
 					content : "testchange1"
 				},
 				new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {}
@@ -491,7 +495,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -556,7 +559,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -598,7 +600,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element: this.oButton,
 				designTimeMetadata: new ElementDesignTimeMetadata({
-					libraryName: "sap.m",
 					data: {
 						actions: {
 							settings: function() {
@@ -658,7 +659,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element: this.oButton,
 				designTimeMetadata: new ElementDesignTimeMetadata({
-					libraryName: "sap.m",
 					data: {
 						actions:
 						{
@@ -737,7 +737,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -785,7 +784,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -832,7 +830,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions : {
 							settings : function() {
@@ -877,7 +874,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element: this.oButton,
 				designTimeMetadata: new ElementDesignTimeMetadata({
-					libraryName: "sap.m",
 					data: {
 						actions: {
 							settings: {
@@ -922,7 +918,6 @@ function (
 			var oButtonOverlay = new ElementOverlay({
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
-					libraryName : "sap.m",
 					data : {
 						actions :
 						{
