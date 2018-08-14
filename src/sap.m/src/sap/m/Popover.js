@@ -1,3 +1,4 @@
+
 /*!
  * ${copyright}
  */
@@ -165,6 +166,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 					/**
 					 * Whether resize option is enabled.
+					 * *Note:* This property is effective only on Desktop
 					 * @experimental since 1.36.4 Do not use directly on Popover while in experimental mode!
 					 * @since 1.36.4
 					 * @private
@@ -327,6 +329,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this._marginLeft = 10;
 			this._marginRight = 10;
 			this._marginBottom = 10;
+
+			// By design Popover's min sizes are:
+			// min-width: 6.25rem;
+			// min-height: 2rem;
+			// This property is used to limit the resizing
+			this._minDimensions = {
+				width: 100,
+				height: 32
+			};
 
 			this._$window = jQuery(window);
 			this._initialWindowDimensions = {};
@@ -985,12 +996,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * @param {jQuery.Event} oEvent The event object
 		 */
 		Popover.prototype.onmousedown = function (oEvent) {
-
-			var minSize = {
-				width: 400,
-				height: 128
-			};
-
 			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
 			if (!oEvent.target.classList.contains("sapMPopoverResizeHandle")) {
 				return;
@@ -1023,8 +1028,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					height = initial.height + (initial.y - e.pageY);
 				}
 
-				that.setContentWidth(Math.max(width, minSize.width) + 'px');
-				that.setContentHeight(Math.max(height, minSize.height) + 'px');
+				that.setContentWidth(Math.max(width, that._minDimensions.width) + 'px');
+				that.setContentHeight(Math.max(height, that._minDimensions.height) + 'px');
 			});
 
 			$d.on("mouseup.sapMPopover", function () {
