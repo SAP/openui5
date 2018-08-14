@@ -96,6 +96,17 @@ sap.ui.define([], function () {
 			if (sOrigName) {
 				return sOrigName.replace("module:", "");
 			}
+		},
+
+		/**
+		 * Formats an ApiRef aggregation altTypes.
+		 *
+		 * @public
+		 * @param {Array} altTypes the array of alternative types
+		 * @returns {string | undefined} the formatted text
+		 */
+		apiRefAggregationAltTypes: function(altTypes) {
+			return altTypes && altTypes.join(", ");
 		}
 	};
 });
