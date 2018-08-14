@@ -188,24 +188,24 @@ sap.ui.require([
 					new SegmentedButton("BackCol", {
 						width: "100%",
 						selectedKey: "Back3",
-						items: [ new SegmentedButtonItem({key: "Back1", text: sap.ui.layout.BackgroundDesign.Transparent}),
-						         new SegmentedButtonItem({key: "Back2", text: sap.ui.layout.BackgroundDesign.Solid}),
-						         new SegmentedButtonItem({key: "Back3", text: sap.ui.layout.BackgroundDesign.Translucent})
+						items: [ new SegmentedButtonItem({key: "Back1", text: LayoutLib.BackgroundDesign.Transparent}),
+						         new SegmentedButtonItem({key: "Back2", text: LayoutLib.BackgroundDesign.Solid}),
+						         new SegmentedButtonItem({key: "Back3", text: LayoutLib.BackgroundDesign.Translucent})
 						        ],
 						selectionChange: function(oEvent) {
 							var oItem = oEvent.getParameter("item");
 							var sDesign;
 							switch (oItem.getKey()) {
 							case "Back1":
-								sDesign = sap.ui.layout.BackgroundDesign.Transparent;
+								sDesign = LayoutLib.BackgroundDesign.Transparent;
 								break;
 
 							case "Back2":
-								sDesign = sap.ui.layout.BackgroundDesign.Solid;
+								sDesign = LayoutLib.BackgroundDesign.Solid;
 								break;
 
 							default:
-								sDesign = sap.ui.layout.BackgroundDesign.Translucent;
+								sDesign = LayoutLib.BackgroundDesign.Translucent;
 								break;
 							}
 							oSimpleForm1.setBackgroundDesign(sDesign);
@@ -218,9 +218,9 @@ sap.ui.require([
 		minWidth : 1024,
 		maxContainerCols: 2,
 		editable: false,
-		backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
+		backgroundDesign: LayoutLib.BackgroundDesign.Transparent,
 		toolbar: new Toolbar("TB1", {
-			content: [new mTitle("SF2-Title", {text: "Non-Editable SimpleForm with transparent background and Toolbars", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
+			content: [new mTitle("SF2-Title", {text: "Non-Editable SimpleForm with transparent background and Toolbars", level: CoreLib.TitleLevel.H4, titleStyle: CoreLib.TitleLevel.H4, tooltip: "Title tooltip"}),
 			          new ToolbarSpacer(),
 			          new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 			          ]
@@ -229,7 +229,7 @@ sap.ui.require([
 		content:[
 			new Toolbar("TB2", {
 				content: [
-					new mTitle("SF2C1-Title", {text: "Title 1", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
+					new mTitle("SF2C1-Title", {text: "Title 1", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
 					new ToolbarSpacer(),
 					new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 					]
@@ -245,7 +245,7 @@ sap.ui.require([
 					new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})}),
 			new OverflowToolbar("TB3", {
 				content: [
-					new mTitle("SF2C2-Title", {text: "Title 2", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
+					new mTitle("SF2C2-Title", {text: "Title 2", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
 					new ToolbarSpacer(),
 					new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 					]

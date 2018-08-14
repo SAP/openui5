@@ -7,12 +7,13 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/base/util/each",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
-	"sap/ui/core/VariantLayoutData",
 	"sap/ui/layout/GridData",
+	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/m/Label",
@@ -22,12 +23,13 @@ sap.ui.require([
 	],
 	function(
 		jQuery,
+		each,
 		Form,
 		ResponsiveGridLayout,
 		FormContainer,
 		FormElement,
-		VariantLayoutData,
 		GridData,
+		VariantLayoutData,
 		Title,
 		Toolbar,
 		Label,
@@ -36,8 +38,6 @@ sap.ui.require([
 		Link
 	) {
 	"use strict";
-
-	QUnit.start();
 
 	var oForm;
 	var oResponsiveGridLayout;
@@ -187,8 +187,8 @@ sap.ui.require([
 		assert.ok(oPanel, "panel created for second container");
 		assert.equal(oTitle.getParent().getId(), "FC2", "FormContainer is still parent of Title");
 		assert.equal(oPanel.getContent().getId(), "FC2--Grid", "Grid is inside Panel");
-		assert.ok(jQuery.sap.domById("T2"), "Title rendered");
-		assert.ok(jQuery.sap.domById("FC2--Exp"), "Expander rendered");
+		assert.ok(window.document.getElementById("T2"), "Title rendered");
+		assert.ok(window.document.getElementById("FC2--Exp"), "Expander rendered");
 		assert.equal(jQuery("#FC2---Panel").attr("title"), "Test", "tooltip set on panel");
 	});
 
@@ -212,9 +212,9 @@ sap.ui.require([
 		oFormContainer2.setToolbar(oToolbar);
 		sap.ui.getCore().applyChanges();
 
-		assert.notOk(jQuery.sap.domById("T2"), "Title not rendered");
-		assert.notOk(jQuery.sap.domById("FC2--Exp"), "Expander not rendered");
-		assert.ok(jQuery.sap.domById("TB1"), "Toolbar rendered");
+		assert.notOk(window.document.getElementById("T2"), "Title not rendered");
+		assert.notOk(window.document.getElementById("FC2--Exp"), "Expander not rendered");
+		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 		assert.ok(jQuery("#FC2---Panel").attr("aria-labelledby"), "TB1", "aria-labelledby set on panel");
 	});
 
@@ -306,8 +306,8 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		aContent = oGrid.getContent();
 
-		assert.notOk(jQuery.sap.domById("F1--Grid"), "Main grid not rendered");
-		assert.ok(jQuery.sap.domById("FC2---Panel"), "container panel rendered");
+		assert.notOk(window.document.getElementById("F1--Grid"), "Main grid not rendered");
+		assert.ok(window.document.getElementById("FC2---Panel"), "container panel rendered");
 
 		oNewFormContainer.destroy();
 		oFormContainer1.destroy();
@@ -1120,7 +1120,7 @@ sap.ui.require([
 	QUnit.test("destroy layout", function(assert) {
 		var iLength = 0;
 		if (!Object.keys) {
-			jQuery.each(oResponsiveGridLayout.mContainers, function(){iLength++;});
+			each(oResponsiveGridLayout.mContainers, function(){iLength++;});
 		} else {
 			iLength = Object.keys(oResponsiveGridLayout.mContainers).length;
 		}
@@ -1132,7 +1132,7 @@ sap.ui.require([
 		iLength = 0;
 
 		if (!Object.keys) {
-			jQuery.each(oResponsiveGridLayout.mContainers, function(){iLength++;});
+			each(oResponsiveGridLayout.mContainers, function(){iLength++;});
 		} else {
 			iLength = Object.keys(oResponsiveGridLayout.mContainers).length;
 		}
@@ -1160,5 +1160,7 @@ sap.ui.require([
 		var oDom = oResponsiveGridLayout.getElementRenderedDomRef(oFormElement1);
 		assert.notOk(oDom, "no Dom for FormElement returned");
 	});
+
+	QUnit.start();
 
 });
