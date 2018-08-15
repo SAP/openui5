@@ -214,7 +214,8 @@ sap.ui.define([
 		Reference: "Reference",
 		Literal: "Literal",
 		Variable: "Variable",
-		Call: "Call"
+		Call: "Call",
+		Custom: "Custom"
 	};
 
 	var Op = {

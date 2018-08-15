@@ -5112,8 +5112,9 @@ sap.ui.require([
 					left : {},
 					op : "&&",
 					right : {
-						args : ["someFilterExpression"],
-						type : "Static"
+						expression : "someFilterExpression",
+						syntax : "OData 4.0",
+						type : "Custom"
 					},
 					type : "Logical"
 				},
@@ -5166,9 +5167,11 @@ sap.ui.require([
 		var aApplicationFilter = [],
 			oBinding = this.bindList("/Set"),
 			aControlFilter = [],
+			sODataVersion = "foo",
 			oExpectedFilterInfo = {
-				args : ["someFilterExpression"],
-				type : "Static"
+				expression : "someFilterExpression",
+				syntax : "OData " + sODataVersion,
+				type : "Custom"
 			},
 			bIncludeOrigin = {/*true or false*/};
 
@@ -5178,6 +5181,8 @@ sap.ui.require([
 		this.mock(FilterProcessor).expects("combineFilters")
 			.withExactArgs(sinon.match.same(aControlFilter), sinon.match.same(aApplicationFilter))
 			.returns(undefined);
+		this.mock(oBinding.oModel).expects("getODataVersion")
+			.returns(sODataVersion);
 
 		// code under test
 		assert.deepEqual(oBinding.getFilterInfo(bIncludeOrigin),
