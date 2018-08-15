@@ -159,7 +159,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 				showHeader: false,
 				afterOpen: onOpen,
 				afterClose: this._fnCloseHandler.bind(this),
-				initialFocus: this._busyIndicator
+				initialFocus: this._busyIndicator.getId() + '-busyIndicator'
 			}).addStyleClass('sapMBusyDialog');
 
 
