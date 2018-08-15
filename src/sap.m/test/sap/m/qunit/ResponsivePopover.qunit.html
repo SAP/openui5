@@ -174,7 +174,6 @@
 
 		});
 
-
 		QUnit.test('Phone mode', function(assert) {
 
 			// Act and Arrange
@@ -282,7 +281,6 @@
 
 		});
 
-
 		QUnit.test("ResponsivepPopover should act according to value of resizing property", function(assert) {
 			// Arrange
 			this.oResponsivePopover = new sap.m.ResponsivePopover();
@@ -360,6 +358,28 @@
 			assert.ok(this.oResponsivePopover.getDomRef().getAttribute('aria-labelledby').indexOf(sInvTextId) !== -1, "should contain the id of the invisible label in the aria-labelledby attribute");
 		});
 
+		QUnit.test("ResponsivePopover should not fall in infinite loop when invalidation comes from child control", function (assert) {
+			var oResponsivePopover = new sap.m.ResponsivePopover("rpo");
+			var oButton = new sap.m.Button();
+
+			oButton.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			// open the RPO
+			oResponsivePopover.openBy(oButton);
+			this.clock.tick(500);
+
+			// remove it from the UI Area
+			var oUIArea = oResponsivePopover.getParent();
+			oUIArea.removeAllContent()
+			sap.ui.getCore().applyChanges();
+
+			// invalidate it
+			oResponsivePopover.addContent(new sap.m.Button())
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(true, "Assertion has done");
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

@@ -723,7 +723,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		"getDomRef", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay", "addEventDelegate"].forEach(function(sName){
 			ResponsivePopover.prototype[sName] = function() {
 				if (this._oControl && this._oControl[sName]) {
-					var res = this._oControl[sName].apply(this._oControl ,arguments);
+
+					// standard invalidate logic bubbles invalidates up the parent chain when the whole control tree is not in a UI area
+					// which in this case - the parent of the popover is the ResponsivePopover which leads to infinite loop
+					// to prevent that, use standard invalidation logic when the origin is the child control
+					if (sName === "invalidate" && arguments[0] === this._oControl) {
+						return Control.prototype.invalidate.apply(this, arguments);
+					}
+
+					var res = this._oControl[sName].apply(this._oControl, arguments);
 					return res === this._oControl ? this : res;
 				}
 			};
