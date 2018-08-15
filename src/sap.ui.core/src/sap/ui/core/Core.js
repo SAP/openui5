@@ -1619,6 +1619,29 @@ sap.ui.define([
 		}
 	}
 
+	/**
+	 * Adds all resources from a preload bundle to the preload cache.
+	 *
+	 * When a resource exists already in the cache, the new content is ignored.
+	 *
+	 * @param {object} oData Preload bundle
+	 * @param {string} [oData.url] URL from which the bundle has been loaded
+	 * @param {string} [oData.name] Unique name of the bundle
+	 * @param {string} [oData.version='1.0'] Format version of the preload bundle
+	 * @param {object} oData.modules Map of resources keyed by their resource name; each resource must be a string or a function
+	 *
+	 * @private
+	 */
+	function registerPreloadedModules(oData, sURL) {
+		var modules = oData.modules;
+		if (Version(oData.version || "1.0").compareTo("2.0") < 0) {
+			modules = {};
+			for (var sName in oData.modules) {
+				modules[LoaderExtensions.ui5ToRJS(sName) + ".js"] = oData.modules[sName];
+			}
+		}
+		sap.ui.require.preload(modules, oData.name, sURL);
+	}
 
 	function dependenciesFromManifest(lib) {
 
@@ -1648,8 +1671,7 @@ sap.ui.define([
 			function(data) {
 				if ( data ) {
 					data.url = sURL;
-					//TODO: global jquery call found
-					jQuery.sap.registerPreloadedModules(data);
+					registerPreloadedModules(data);
 					var dependencies = data.dependencies;
 					if ( Array.isArray(dependencies) ) {
 						// remove .library-preload suffix from dependencies
@@ -1753,8 +1775,7 @@ sap.ui.define([
 			success: function(data) {
 				if ( data ) {
 					data.url = sURL;
-					//TODO: global jquery call found
-					jQuery.sap.registerPreloadedModules(data);
+					registerPreloadedModules(data);
 					dependencies = data.dependencies;
 				}
 			},
