@@ -582,6 +582,10 @@ function(
 
 			oMessageView = new MessageView(this.getId() + "-messageView", {
 				activeTitlePress: function (oEvent) {
+					//close the Popover on mobile before navigating because it is on fullscreen
+					if (sap.ui.Device.system.phone) {
+						that.close();
+					}
 					that.fireActiveTitlePress({ item: oEvent.getParameter("item")});
 				},
 				listSelect: function(oEvent) {
