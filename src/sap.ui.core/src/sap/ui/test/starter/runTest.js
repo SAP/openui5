@@ -183,17 +183,17 @@
 			}).then(function() {
 				// install a mock version of the qunit-reporter-junit API to collect jUnitDone callbacks
 				aJUnitDoneCallbacks = [];
-				window.jUnitDone = function(cb) {
+				QUnit.jUnitDone = function(cb) {
 					aJUnitDoneCallbacks.push(cb);
 				};
 				return requireP("sap/ui/qunit/qunit-junit");
 			}).then(function() {
-				delete window.jUnitDone;
+				delete QUnit.jUnitDone;
 				return requireP("sap/ui/thirdparty/qunit-reporter-junit");
 			}).then(function() {
 				// now register the collected callbacks with the real qunit-reporter-junit API
 				aJUnitDoneCallbacks.forEach(function(cb) {
-					window.jUnitDone(cb);
+					QUnit.jUnitDone(cb);
 				});
 				aJUnitDoneCallbacks = undefined;
 			});
