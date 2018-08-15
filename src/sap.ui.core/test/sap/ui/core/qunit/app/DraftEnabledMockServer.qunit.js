@@ -1,49 +1,21 @@
-<!DOCTYPE HTML>
+sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/core/util/DraftEnabledMockServer"], function (MockServer, DraftEnabledMockServer) {
 
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.ui.core.util.DraftEnabledMockServer Class</title>
 
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.commons">
+	QUnit.module("sap/ui/core/util/DraftEnabledMockServer");
 
-</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<script>
-
-	// require the mock server before testing
-	jQuery.sap.require("sap.ui.core.util.MockServer");
-
-	// require the draft enabled mock server before testing
-	jQuery.sap.require("sap.ui.core.util.DraftEnabledMockServer");
-
-	QUnit.test("mock data generation", function(assert) {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
+	QUnit.test("mock data generation", function (assert) {
+		var oMockServer = new MockServer({
+			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "testdata/draft/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/draft/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder",
-			dataType : "json"
+			url: "/myservice/SalesOrder",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.results.length, 100);
@@ -56,16 +28,16 @@
 		var sItemUri = oActiveSalesOrder.Item.__deferred.uri;
 		//  no “sibling” is related
 		oResponse = jQuery.sap.sjax({
-			url : sSiblingUri,
-			dataType : "json"
+			url: sSiblingUri,
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.ok(jQuery.isEmptyObject(oResponse.data.d));
 
 		// navigate to draft nodes
 		oResponse = jQuery.sap.sjax({
-		url : sItemUri,
-		dataType : "json"
+			url: sItemUri,
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.results.length, 1);
@@ -76,32 +48,32 @@
 
 		// All new drafts - $filter=not IsActiveEntity and not HasActiveEntity
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=IsActiveEntity eq false and HasActiveEntity eq false",
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=IsActiveEntity eq false and HasActiveEntity eq false",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.results.length, 25);
 		sSiblingUri = oResponse.data.d.results[0].SiblingEntity.__deferred.uri;
 		//  no “sibling” is related
 		oResponse = jQuery.sap.sjax({
-			url : sSiblingUri,
-			dataType : "json"
+			url: sSiblingUri,
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.ok(jQuery.isEmptyObject(oResponse.data.d));
 
 		// All active documents - $filter=IsActiveEntity
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=IsActiveEntity eq true",
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=IsActiveEntity eq true",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.results.length, 50);
 
 		// All edit drafts - $filter=not IsActiveEntity and HasActiveEntity
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=IsActiveEntity eq false and HasActiveEntity eq true",
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=IsActiveEntity eq false and HasActiveEntity eq true",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.results.length, 25);
@@ -110,8 +82,8 @@
 		var sId = oResponse.data.d.results[0].ActiveSalesOrderID;
 		var sDraftId = oResponse.data.d.results[0].SalesOrderDraftUUID;
 		oResponse = jQuery.sap.sjax({
-			url : sActiveSiblingUri,
-			dataType : "json"
+			url: sActiveSiblingUri,
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.ok(oResponse.data.d.IsActiveEntity);
@@ -119,16 +91,16 @@
 		assert.notEqual(oResponse.data.d.SalesOrderDraftUUID, sDraftId);
 		// in active documents that have a draft the navigation property SiblingEntity points to the edit draft document
 		var sDraftSiblingUri = oResponse.data.d.SiblingEntity.__deferred.uri;
-			oResponse = jQuery.sap.sjax({
-			url : sDraftSiblingUri,
-			dataType : "json"
+		oResponse = jQuery.sap.sjax({
+			url: sDraftSiblingUri,
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.SalesOrderDraftUUID, sDraftId);
 		// All draft documents (to-do list)
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=IsActiveEntity eq false",
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=IsActiveEntity eq false",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.results.length, 50);
@@ -136,11 +108,11 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("actions on draft", function(assert) {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
+	QUnit.test("actions on draft", function (assert) {
+		var oMockServer = new MockServer({
+			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "testdata/draft/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/draft/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 
@@ -153,9 +125,9 @@
 		};
 
 		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder",
-			type : 'POST',
-			data : JSON.stringify(oNewDraft)
+			url: "/myservice/SalesOrder",
+			type: 'POST',
+			data: JSON.stringify(oNewDraft)
 		});
 		assert.ok(oResponse.success, "A new draft was created");
 
@@ -166,53 +138,53 @@
 		assert.ok(!oNewDraft.HasDraftEntity);
 
 		oResponse = jQuery.sap.sjax({
-			url : oNewDraft.__metadata.uri,
-			type : 'PATCH',
-			data : JSON.stringify({GrossAmount : 100.0})
+			url: oNewDraft.__metadata.uri,
+			type: 'PATCH',
+			data: JSON.stringify({ GrossAmount: 100.0 })
 		});
 		assert.ok(oResponse.success);
 
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrderActivation",
-			type : 'POST',
-			data : JSON.stringify({
+			url: "/myservice/SalesOrderActivation",
+			type: 'POST',
+			data: JSON.stringify({
 				SalesOrderDraftUUID: oNewDraft.SalesOrderDraftUUID,
 				ActiveSalesOrderID: "new draft"
 			})
 		});
 		assert.ok(oResponse.success, "activate a new draft document");
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=ActiveSalesOrderID eq 'new draft'",
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=ActiveSalesOrderID eq 'new draft'",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success, "activate a new draft document");
 		assert.ok(oResponse.data.d.results[0].IsActiveEntity, "activate a new draft document");
 
 		oResponse = jQuery.sap.sjax({
-			url : oResponse.data.d.results[0].__metadata.uri,
-			type : 'DELETE'
+			url: oResponse.data.d.results[0].__metadata.uri,
+			type: 'DELETE'
 		});
 		assert.ok(oResponse.success);
 
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=IsActiveEntity eq false and HasActiveEntity eq true",
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=IsActiveEntity eq false and HasActiveEntity eq true",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 
 		var oEditDraft = oResponse.data.d.results[0];
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrderActivation",
-			type : 'POST',
-			data : JSON.stringify({
+			url: "/myservice/SalesOrderActivation",
+			type: 'POST',
+			data: JSON.stringify({
 				SalesOrderDraftUUID: oEditDraft.SalesOrderDraftUUID,
 				ActiveSalesOrderID: oEditDraft.ActiveSalesOrderID
 			})
 		});
 		assert.ok(oResponse.success, "activate an edit draft document");
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=ActiveSalesOrderID eq " + oEditDraft.ActiveSalesOrderID,
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=ActiveSalesOrderID eq " + oEditDraft.ActiveSalesOrderID,
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.ok(oResponse.data.d.results[0].IsActiveEntity, "activated an edit draft document");
@@ -220,22 +192,22 @@
 		var sSiblingUri = oResponse.data.d.results[0].SiblingEntity.__deferred.uri;
 
 		oResponse = jQuery.sap.sjax({
-			url : sSiblingUri,
-			dataType : "json"
+			url: sSiblingUri,
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.ok(jQuery.isEmptyObject(oResponse.data.d));
 
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=IsActiveEntity eq true and HasActiveEntity eq false",
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=IsActiveEntity eq true and HasActiveEntity eq false",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		var oActiveEntity = oResponse.data.d.results[0];
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrderEdit",
-			type : "POST",
-			data : JSON.stringify({
+			url: "/myservice/SalesOrderEdit",
+			type: "POST",
+			data: JSON.stringify({
 				SalesOrderDraftUUID: oActiveEntity.SalesOrderDraftUUID,
 				ActiveSalesOrderID: oActiveEntity.ActiveSalesOrderID
 			})
@@ -243,23 +215,23 @@
 		assert.ok(oResponse.success, "edit draft created");
 		assert.ok(!oResponse.data.d.IsActiveEntity, "edit draft created");
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder?$filter=ActiveSalesOrderID eq " + oActiveEntity.ActiveSalesOrderID + " and HasDraftEntity eq true",
-			dataType : "json"
+			url: "/myservice/SalesOrder?$filter=ActiveSalesOrderID eq " + oActiveEntity.ActiveSalesOrderID + " and HasDraftEntity eq true",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.ok(oResponse.data.d.results[0]);
 
-		oEditDraft =  oResponse.data.d.results[0];
+		oEditDraft = oResponse.data.d.results[0];
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrderValidation?ActiveSalesOrderID=" + oEditDraft.ActiveSalesOrderID + "&SalesOrderDraftUUID=" + oEditDraft.SalesOrderDraftUUID,
-			type : "GET",
+			url: "/myservice/SalesOrderValidation?ActiveSalesOrderID=" + oEditDraft.ActiveSalesOrderID + "&SalesOrderDraftUUID=" + oEditDraft.SalesOrderDraftUUID,
+			type: "GET",
 		});
 		assert.ok(oResponse.success, "edit draft validation");
 
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrderPreparation",
-			type : "POST",
-			data : JSON.stringify({
+			url: "/myservice/SalesOrderPreparation",
+			type: "POST",
+			data: JSON.stringify({
 				SalesOrderDraftUUID: oEditDraft.SalesOrderDraftUUID,
 				ActiveSalesOrderID: oEditDraft.ActiveSalesOrderID
 			})
@@ -269,43 +241,43 @@
 		oMockServer.destroy();
 	});
 
-	QUnit.test("remainder", function(assert) {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
+	QUnit.test("remainder", function (assert) {
+		var oMockServer = new MockServer({
+			rootUri: "/myservice/"
 		});
-		var sMetadataUrl = "testdata/draft/metadata.xml";
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/draft/metadata.xml";
 		oMockServer.simulate(sMetadataUrl, {
-					sMockdataBaseUrl : "testdata/draft",
-					bGenerateMissingMockData : true
-				});
+			sMockdataBaseUrl: "test-resources/sap/ui/core/qunit/testdata/draft",
+			bGenerateMissingMockData: true
+		});
 		oMockServer.start();
 
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder",
-			dataType : "json"
+			url: "/myservice/SalesOrder",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.results.length, 100);
 
 		var oActiveEntity = oResponse.data.d.results[0];
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrderEdit?ActiveSalesOrderID=%27ActiveSalesOrderID%201%27&SalesOrderDraftUUID=guid%2700000000-0000-0000-0000-000000000000%27",
-			type : "POST"
+			url: "/myservice/SalesOrderEdit?ActiveSalesOrderID=%27ActiveSalesOrderID%201%27&SalesOrderDraftUUID=guid%2700000000-0000-0000-0000-000000000000%27",
+			type: "POST"
 		});
 		assert.ok(oResponse.success, "edit draft created");
 
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder(ActiveSalesOrderID='ActiveSalesOrderID 2',SalesOrderDraftUUID=guid'00000000-0000-0000-0000-000000000000')/DraftAdministrativeData",
-			dataType : "json"
+			url: "/myservice/SalesOrder(ActiveSalesOrderID='ActiveSalesOrderID 2',SalesOrderDraftUUID=guid'00000000-0000-0000-0000-000000000000')/DraftAdministrativeData",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success, "No DraftAdministrativeData for Active Entity");
 		assert.ok(jQuery.isEmptyObject(oResponse.data.d));
 
 		oResponse = jQuery.sap.sjax({
-			url : "/myservice/SalesOrder(ActiveSalesOrderID='ActiveSalesOrderID 2',SalesOrderDraftUUID=guid'00000000-0000-0000-0000-000000000000')?$expand=DraftAdministrativeData",
-			dataType : "json"
+			url: "/myservice/SalesOrder(ActiveSalesOrderID='ActiveSalesOrderID 2',SalesOrderDraftUUID=guid'00000000-0000-0000-0000-000000000000')?$expand=DraftAdministrativeData",
+			dataType: "json"
 		});
 		assert.ok(oResponse.success, "No DraftAdministrativeData for Active Entity");
 		assert.ok(jQuery.isEmptyObject(oResponse.data.d.DraftAdministrativeData));
@@ -316,19 +288,4 @@
 		oMockServer.destroy();
 	});
 
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">
-		<title>QUnit Page for sap.ui.core.util.DraftEnabledMockServer Class</title>
-	</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture">test markup, will be hidden</div>
-	<div id="canvas" style="height: 300px; width: 300px"></div>
-	<div id="target1"></div>
-	<div id="target2"></div>
-	<div id="target3"></div>
-</body>
-</html>
+});
