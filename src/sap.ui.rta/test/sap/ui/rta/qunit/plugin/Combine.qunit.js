@@ -155,8 +155,10 @@ function(
 				}
 			});
 
+			this.oCommandFactory = new CommandFactory();
+
 			this.oCombinePlugin = new CombinePlugin({
-				commandFactory : new CommandFactory()
+				commandFactory : this.oCommandFactory
 			});
 
 			this.oButton1 = new Button("button1");
@@ -376,17 +378,19 @@ function(
 			);
 		});
 
-		QUnit.test("when handleCombine is called with two specified elements", function(assert) {
+		QUnit.test("when handleCombine is called with two elements, being triggered on the second element", function(assert) {
 			var oFireElementModifiedSpy = sandbox.spy(this.oCombinePlugin, "fireElementModified");
+			var oGetCommandForSpy = sandbox.spy(this.oCommandFactory, "getCommandFor");
 
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, DEFAULT_DTM);
 
-			return this.oCombinePlugin.handleCombine([this.oButton1Overlay, this.oButton2Overlay])
+			return this.oCombinePlugin.handleCombine([this.oButton1Overlay, this.oButton2Overlay], this.oButton2)
 
 			.then(function() {
 				assert.ok(oFireElementModifiedSpy.calledOnce, "fireElementModified is called once");
-			})
+				assert.ok(oGetCommandForSpy.calledWith(this.oButton2), "command creation is triggered with correct context element");
+			}.bind(this))
 
 			.catch(function (oError) {
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
@@ -400,7 +404,7 @@ function(
 		});
 
 		QUnit.test("when Controls of different type with same change type are specified", function (assert) {
-			assert.expect(8);
+			assert.expect(9);
 			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton6Overlay, DEFAULT_DTM);
 
@@ -421,8 +425,9 @@ function(
 				assert.equal(aElementOverlays[0].getId(), this.oButton6Overlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 				return bIsAvailable;
 			}.bind(this));
-			sinon.stub(this.oCombinePlugin, "handleCombine").callsFake(function (aElementOverlays) {
+			sinon.stub(this.oCombinePlugin, "handleCombine").callsFake(function (aElementOverlays, oCombineElement) {
 				assert.equal(aElementOverlays[0].getId(), this.oButton6Overlay.getId(), "the 'handler' method is called with the right overlay");
+				assert.equal(oCombineElement.getId(), this.oButton6.getId(), "the 'handler' method is called with the right combine element");
 			}.bind(this));
 
 				var aMenuItems = this.oCombinePlugin.getMenuItems([this.oButton6Overlay]);
