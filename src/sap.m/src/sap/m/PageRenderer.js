@@ -195,8 +195,11 @@ sap.ui.define([],
 			sParentName = (oParent && oParent.getMetadata().getName()) || "";
 			sChildName = oChild.getMetadata().getName();
 
-			if ((sParentName === "sap.m.Popover" || sParentName === "sap.m.Dialog")
-				&& sChildName === "sap.m.NavContainer") {
+			if (((sParentName === "sap.m.Popover" || sParentName === "sap.m.Dialog")
+				&& sChildName === "sap.m.NavContainer")
+				|| ((sParentName === "sap.ui.comp.smartvariants.SmartVariantManagement" || sParentName === "sap.ui.comp.smartvariants.SmartVariantManagementUi2"
+				|| sParentName === "sap.ui.comp.variants.VariantManagement" || sParentName === "sap.ui.fl.variants.VariantManagement" )
+				&& sChildName === "sap.m.ResponsivePopover")){
 				return true;
 			}
 
