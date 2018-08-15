@@ -159,7 +159,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 				showHeader: false,
 				afterOpen: onOpen,
 				afterClose: this._fnCloseHandler.bind(this),
-				initialFocus: this._busyIndicator
+				initialFocus: this._busyIndicator.getId() + '-busyIndicator'
 			}).addStyleClass('sapMBusyDialog');
 
 
