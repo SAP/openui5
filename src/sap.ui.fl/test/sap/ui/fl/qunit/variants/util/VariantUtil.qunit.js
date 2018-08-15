@@ -666,6 +666,45 @@ function(
 			assert.strictEqual(vStatus, this.sDefaultStatus, "then the correct status object was returned");
 		});
 
+		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with old hash having other parameters and new hash containing only variant parameter", function (assert) {
+			assert.expect(1);
+			var oOldHash = {
+				params: {
+					testParamName1: "testParamValue1",
+					testParamName2: "testParamValue2"
+				},
+				appSpecificRoute: "XXoldHashAppRoute"
+			};
+			var oNewHash = {
+				params: { },
+				appSpecificRoute: "XXnewHashAppRoute"
+			};
+			oNewHash.params[sVariantParameterName] = ["testParam1"];
+
+			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
+			assert.strictEqual(vStatus, this.sDefaultStatus, "then the correct status object was returned");
+		});
+
+		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with old hash containing only variant parameter and the new hash containing other parameters", function (assert) {
+			assert.expect(1);
+			var oOldHash = {
+				params: { },
+				appSpecificRoute: "XXoldHashAppRoute"
+			};
+			oOldHash.params[sVariantParameterName] = ["testParam1"];
+
+			var oNewHash = {
+				params: {
+					testParamName1: "testParamValue1",
+					testParamName2: "testParamValue2"
+				},
+				appSpecificRoute: "XXnewHashAppRoute"
+			};
+
+			var vStatus = VariantUtil._navigationFilter.call(this, oNewHash, oOldHash);
+			assert.strictEqual(vStatus, this.sDefaultStatus, "then the correct status object was returned");
+		});
+
 		QUnit.test("when '_navigationFilter' is called from ushell ShellNavigation service, with variant parameters along with other parameters", function (assert) {
 			assert.expect(1);
 			var oOldHash = {
