@@ -13,7 +13,7 @@ sap.ui.define([
 
 	opaTest("Should create new temporary rule", function (Given, When, Then) {
 
-		Given.iStartMyApp();
+		Given.iStartMyAppAndDeletePersistedData();
 
 		Then.onTheMainPage.iShouldSeeRulesButton(45);
 

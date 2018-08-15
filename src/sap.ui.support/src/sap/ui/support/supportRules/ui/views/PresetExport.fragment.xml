@@ -20,13 +20,13 @@
 				<Label text="Title" labelFor="title" class="sapUiTinyMarginBottom" />
 				<Input id="title" required="true" value="{title}" maxLength="80" class="sapUiTinyMarginBottom" valueState="None" valueLiveUpdate="true"/>
 
-				<Label text="Id" labelFor="presetId" class="sapUiTinyMarginBottom" />
+				<Label text="ID" labelFor="presetId" class="sapUiTinyMarginBottom" />
 				<Input
-					required="true"
 					id="presetId"
-					maxLength="36"
+					maxLength="50"
 					valueState="None"
 					class="sapUiTinyMarginBottom"
+					placeholder="Enter a custom ID or a system one will be generated"
 					value="{
 						path: 'id',
 						type: 'sap.ui.model.type.String',
