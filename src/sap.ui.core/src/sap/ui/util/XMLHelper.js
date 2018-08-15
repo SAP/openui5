@@ -5,7 +5,10 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	"use strict";
 
 	/**
+	 * Provides functionality for parsing XML formatted strings and serializing XML documents.
+	 *
 	 * @namespace
+	 * @since 1.58
 	 * @alias module:sap/ui/util/XMLHelper
 	 * @public
 	 */
@@ -20,8 +23,9 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	 *
 	 * @param {string} sXMLText the XML data as string
 	 * @returns {object} the parsed XML document with a parseError property as described in
-	 *                   getParseError. An error occurred if the errorCode property of the parseError is != 0.
+	 *          getParseError. An error occurred if the errorCode property of the parseError is != 0.
 	 * @public
+	 * @static
 	 */
 	Helper.parse = function (sXMLText) {
 		var oXMLDocument;
@@ -58,6 +62,7 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	 * @param {string} oDocument the parsed XML document
 	 * @returns {object} oParseError if errors were found, or an object with an errorCode of 0 only
 	 * @public
+	 * @static
 	 */
 	Helper.getParseError = function(oDocument) {
 		var oParseError = {
@@ -128,6 +133,7 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	 * @param {string} oXMLDocument the XML document object to be serialized as string
 	 * @returns {object} the serialized XML string
 	 * @public
+	 * @static
 	 */
 	Helper.serialize = function(oXMLDocument) {
 		var oSerializer = new XMLSerializer();

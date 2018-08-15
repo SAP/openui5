@@ -8,6 +8,19 @@
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
+	/**
+	 * This module provides the following jQuery selectors:
+	 * <ul>
+	 * <li>:focusable/li>
+	 * <li>:sapFocusable</li>
+	 * <li>:sapTabbable</li>
+	 * </ul>
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/Selectors
+	 * @public
+	 * @since 1.58
+	 */
+
 	// Using "Object.getOwnPropertyDescriptor" to not trigger the "getter" - see jquery.sap.stubs
 	function getValue(oTarget, sProperty) {
 		var descriptor = Object.getOwnPropertyDescriptor(oTarget, sProperty);

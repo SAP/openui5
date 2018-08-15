@@ -6,7 +6,7 @@ sap.ui.define([], function() {
 
 	/**
 	 * Some private variable used for creation of (pseudo-)unique ids.
-	 * @type integer
+	 * @type int
 	 * @private
 	 */
 	var iIdCounter = 0;
@@ -17,6 +17,7 @@ sap.ui.define([], function() {
 	 * No means for detection of overlap with already present or future UIDs.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/util/uid
 	 * @return {string} A pseudo-unique id.
 	 * @public

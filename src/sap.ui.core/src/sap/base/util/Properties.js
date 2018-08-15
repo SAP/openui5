@@ -7,9 +7,8 @@
 sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	"use strict";
 
-	// Javadoc for private inner class "Properties" - this list of comments is intentional!
 	/**
-	 * @interface Represents a collection of string properties (key/value pairs).
+	 * @class Represents a collection of string properties (key/value pairs).
 	 *
 	 * Each key and its corresponding value in the collection is a string, keys are case-sensitive.
 	 *
@@ -19,10 +18,10 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * {@link #setProperty} to store or change a value for a key and {@link #getKeys}
 	 * can be used to retrieve an array of all keys that are currently stored in the collection.
 	 *
-	 * @author SAP SE
-	 * @version ${version}
+	 * @public
+	 * @since 1.58
 	 * @alias module:sap/base/util/Properties
-	 * @private
+	 * @hideconstructor
 	 */
 	var Properties = function() {
 		this.mProperties = {};
@@ -35,7 +34,6 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * Optionally, a default value can be given which will be returned if the collection does not contain
 	 * a value for the key; only non-empty default values are supported.
 	 *
-	 * @function
 	 * @param {string} sKey Key to return the value for
 	 * @param {string} [sDefaultValue=null] Optional, a default value that will be returned
 	 *    if the requested key is not in the collection
@@ -70,7 +68,6 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * If the given value is not a string, the collection won't be modified.
 	 * The key is always cast to a string.
 	 *
-	 * @function
 	 * @param {string} sKey Key of the property
 	 * @param {string} sValue String value for the key
 	 * @public
@@ -88,7 +85,6 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	/**
 	 * Creates and returns a clone of the property collection.
 	 *
-	 * @function
 	 * @returns {module:sap/base/util/Properties} A clone of the property collection
 	 * @public
 	 */

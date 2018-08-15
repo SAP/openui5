@@ -5,12 +5,12 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/getOwnerWindow"], functio
 	"use strict";
 
 	/**
-	 * Applies the jQuery function extension:
-	 * @see jQuery#rect
+	 * This module provides the {@link jQuery#rect} API.
 	 *
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/rect
+	 * @name module:sap/ui/dom/jquery/rect
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -23,6 +23,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/getOwnerWindow"], functio
 	 * @author SAP SE
 	 * @since 0.9.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/rect
 	 */
 	var fnRect = function rect() {
 		var oDomRef = this.get(0);

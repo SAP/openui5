@@ -14,10 +14,11 @@ sap.ui.define([], function() {
 	 * });
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {string} sString The string to generate the hash-code from
 	 * @alias module:sap/base/strings/hash
 	 * @return {int} The generated hash-code
-	 * @public
+	 * @private
 	 */
 	var fnHash = function(sString) {
 		var i = sString.length, iHash = 0;

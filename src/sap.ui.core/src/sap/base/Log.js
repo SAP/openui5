@@ -1,46 +1,44 @@
 /*!
  * ${copyright}
  */
-/**
- * A Logging API for JavaScript.
- *
- * Provides methods to manage a client-side log and to create entries in it. Each of the logging methods
- * {@link module:sap/base/Log/debug}, {@link module:sap/base/Log.info}, {@link module:sap/base/Log.warning},
- * {@link module:sap/base/Log.error} and {@link module:sap/base/Log.fatal} creates and records a log entry,
- * containing a timestamp, a log level, a message with details and a component info.
- * The log level will be one of {@link module:sap/base/Log.Level} and equals the name of the concrete logging method.
- *
- * By using the {@link module:sap/base/Log.setLevel} method, consumers can determine the least important
- * log level which should be recorded. Less important entries will be filtered out. (Note that higher numeric
- * values represent less important levels). The initially set level depends on the mode that UI5 is running in.
- * When the optimized sources are executed, the default level will be {@link module:sap/base/Log.Level.ERROR}.
- * For normal (debug sources), the default level is {@link module:sap/base/Log.Level.DEBUG}.
- *
- * All logging methods allow to specify a <b>component</b>. These components are simple strings and
- * don't have a special meaning to the UI5 framework. However they can be used to semantically group
- * log entries that belong to the same software component (or feature). There are two APIs that help
- * to manage logging for such a component. With {@link module:sap/base/Log.getLogger},
- * one can retrieve a logger that automatically adds the given <code>sComponent</code> as component
- * parameter to each log entry, if no other component is specified. Typically, JavaScript code will
- * retrieve such a logger once during startup and reuse it for the rest of its lifecycle.
- * Second, the {@link sap.base.Log.Logger#setLevel}(iLevel, sComponent) method allows to set the log level
- * for a specific component only. This allows a more fine granular control about the created logging entries.
- * {@link sap.base.log.Logger#getLevel} allows to retrieve the currently effective log level for a given
- * component.
- *
- * {@link module:sap.base.log.getLogEntries} returns an array of the currently collected log entries.
- *
- * Furthermore, a listener can be registered to the log. It will be notified whenever a new entry
- * is added to the log. The listener can be used for displaying log entries in a separate page area,
- * or for sending it to some external target (server).
- *
- * @public
- */
-
 sap.ui.define(["sap/base/util/now"], function(now) {
 	"use strict";
 
 	/**
+	 * A Logging API for JavaScript.
+	 *
+	 * Provides methods to manage a client-side log and to create entries in it. Each of the logging methods
+	 * {@link module:sap/base/Log.debug}, {@link module:sap/base/Log.info}, {@link module:sap/base/Log.warning},
+	 * {@link module:sap/base/Log.error} and {@link module:sap/base/Log.fatal} creates and records a log entry,
+	 * containing a timestamp, a log level, a message with details and a component info.
+	 * The log level will be one of {@link module:sap/base/Log.Level} and equals the name of the concrete logging method.
+	 *
+	 * By using the {@link module:sap/base/Log.setLevel} method, consumers can determine the least important
+	 * log level which should be recorded. Less important entries will be filtered out. (Note that higher numeric
+	 * values represent less important levels). The initially set level depends on the mode that UI5 is running in.
+	 * When the optimized sources are executed, the default level will be {@link module:sap/base/Log.Level.ERROR}.
+	 * For normal (debug sources), the default level is {@link module:sap/base/Log.Level.DEBUG}.
+	 *
+	 * All logging methods allow to specify a <b>component</b>. These components are simple strings and
+	 * don't have a special meaning to the UI5 framework. However they can be used to semantically group
+	 * log entries that belong to the same software component (or feature). There are two APIs that help
+	 * to manage logging for such a component. With {@link module:sap/base/Log.getLogger},
+	 * one can retrieve a logger that automatically adds the given <code>sComponent</code> as component
+	 * parameter to each log entry, if no other component is specified. Typically, JavaScript code will
+	 * retrieve such a logger once during startup and reuse it for the rest of its lifecycle.
+	 * Second, the {@link module:sap/base/Log.Logger#setLevel}(iLevel, sComponent) method allows to set the log level
+	 * for a specific component only. This allows a more fine granular control about the created logging entries.
+	 * {@link module:sap/base/Log.Logger#getLevel} allows to retrieve the currently effective log level for a given
+	 * component.
+	 *
+	 * {@link module:sap/base/Log.getLogEntries} returns an array of the currently collected log entries.
+	 *
+	 * Furthermore, a listener can be registered to the log. It will be notified whenever a new entry
+	 * is added to the log. The listener can be used for displaying log entries in a separate page area,
+	 * or for sending it to some external target (server).
+	 *
+	 * @public
+	 * @since 1.58
 	 * @namespace
 	 * @alias module:sap/base/Log
 	 */
@@ -433,8 +431,8 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * <li>message {string} message text of the entry
 	 * </ul>
 	 * @returns {object[]} an array containing the recorded log entries
-	 * @private
-	 * @ui5-restricted sap.ui.core
+	 * @public
+	 * @static
 	 */
 	Log.getLogEntries = function() {
 		return aLog.slice();

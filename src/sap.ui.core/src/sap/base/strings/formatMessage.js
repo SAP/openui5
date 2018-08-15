@@ -37,12 +37,13 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * that should appear in the result, need to be doubled. In the result, only a single
 	 * single quote will occur.
 	 *
-	 * @example <caption>Pattern Strings</caption>
-	 * formatMessage("Say {0}",     ["Hello"]) -> "Say Hello"    // normal use case
-	 * formatMessage("Say '{0}'",   ["Hello"]) -> "Say {0}"      // escaped placeholder
-	 * formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'"  // doubled single quote
-	 * formatMessage("Say '{0}'''", ["Hello"]) -> "Say {0}'"     // doubled single quote in quoted fragment
-	 *
+	 * Example: Pattern Strings
+	 * <pre>
+	 *  formatMessage("Say {0}",     ["Hello"]) -> "Say Hello"    // normal use case
+	 *  formatMessage("Say '{0}'",   ["Hello"]) -> "Say {0}"      // escaped placeholder
+	 *  formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'"  // doubled single quote
+	 *  formatMessage("Say '{0}'''", ["Hello"]) -> "Say {0}'"     // doubled single quote in quoted fragment
+	 * </pre>
 	 * In contrast to java.util.MessageFormat, format types or format styles are not supported.
 	 * Everything after the argument index and up to the first closing curly brace is ignored.
 	 * Nested placeholders (as supported by java.lang.MessageFormat for the format type choice)
@@ -56,6 +57,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 * value is an array it will be handled like the default described above.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/strings/formatMessage
 	 * @param {string} sPattern A pattern string in the described syntax
 	 * @param {any[]} [aValues=[]] The values to be used instead of the placeholders.

@@ -8,6 +8,7 @@ sap.ui.define(function() {
 	 * Returns values from an object
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/util/values
 	 * @param {object} mObject - Object to be extracted
 	 * @returns {Array.<*>} - array of object values, if object does not contain values, an empty array will be returned

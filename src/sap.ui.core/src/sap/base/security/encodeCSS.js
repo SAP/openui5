@@ -27,6 +27,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	 * Encode the string for inclusion into CSS string literals or identifiers.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @alias module:sap/base/security/encodeCSS
 	 * @param {string} sString The string to be escaped
 	 * @returns {string} The encoded string

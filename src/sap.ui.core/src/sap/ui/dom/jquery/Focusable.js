@@ -5,13 +5,15 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 	"use strict";
 
 	/**
-	 * Applies the focus related jQuery function extensions:
-	 * @see jQuery#firstFocusableDomRef
-	 * @see jQuery#lastFocusableDomRef
-	 *
+	 * This module provides the following API:
+	 * <ul>
+	 * <li>{@link jQuery#firstFocusableDomRef}</li>
+	 * <li>{@link jQuery#lastFocusableDomRef}</li>
+	 * <ul>
 	 * @namespace
-	 * @alias module:sap/ui/dom/jquery/Focusable
+	 * @name module:sap/ui/dom/jquery/Focusable
 	 * @public
+	 * @since 1.58
 	 */
 
 	/**
@@ -80,6 +82,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 	 * @since 0.9.0
 	 * @function
 	 * @name jQuery#firstFocusableDomRef
+	 * @requires module:sap/ui/dom/jquery/Focusable
 	 */
 	jQuery.fn.firstFocusableDomRef = function() {
 		var oContainerDomRef = this.get(0);
@@ -100,6 +103,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 	 * @author SAP SE
 	 * @since 0.9.0
 	 * @function
+	 * @requires module:sap/ui/dom/jquery/Focusable
 	 */
 	jQuery.fn.lastFocusableDomRef = function() {
 		var oContainerDomRef = this.get(0);
