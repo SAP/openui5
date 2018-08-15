@@ -167,8 +167,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} oEvent The fired event
 	 */
 	ObjectAttribute.prototype.ontap = function(oEvent) {
-		//event should only be fired if the click is on the text
-		if (this._isSimulatedLink() && (oEvent.target.id != this.getId())) {
+		//event should only be fired if the click is on the text (acting like a link)
+		if (this._isSimulatedLink() && (oEvent.target.id === this.getId() + "-text")) {
 			this.firePress({
 				domRef : this.getDomRef()
 			});
