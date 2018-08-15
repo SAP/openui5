@@ -50,11 +50,6 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile2.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.mobile3.qunit.html");
-
-			if (sap.ui.Device.browser.chrome || sap.ui.Device.browser.phantomJS) {
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/fakeOS.qunit.html");
-			}
-
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.ui.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/LRUPersistentCache.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ManagedObject.qunit.html");
