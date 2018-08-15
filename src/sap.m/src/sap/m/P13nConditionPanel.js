@@ -759,6 +759,7 @@ sap.ui.define([
 			hSpacing: 0,
 			vSpacing: 0
 		}).toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop"); // && !this.getAlwaysShowAddIcon());
+		this._oConditionsGrid.addStyleClass("sapUiRespGridOverflowHidden");
 
 		this._iFirstConditionIndex = 0;
 		this._iConditionPageSize = 10;
@@ -1254,6 +1255,7 @@ sap.ui.define([
 			vSpacing: 0,
 			containerQuery: this.getContainerQuery()
 		}).data("_key", sKey);
+		oConditionGrid.addStyleClass("sapUiRespGridOverflowHidden");
 
 		/* eslint-disable no-loop-func */
 		for (var iField in this._aConditionsFields) {
