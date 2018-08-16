@@ -1258,7 +1258,8 @@ sap.ui.require([
 	QUnit.test("Absolute ODLB refresh", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
+<Table id="table" items="{path : \'/EMPLOYEES\', \
+		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
@@ -1266,11 +1267,12 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
-				"value" : [
-					{
-						"ID": "1",
-						"Name" : "Jonathan Smith",
+		this.expectRequest(
+			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
+				"value" : [{
+					"ID": "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
@@ -1278,9 +1280,12 @@ sap.ui.require([
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
-					},
-					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
-				]
+					}
+				}, {
+					"ID": "2",
+					"Name" : "Frederic Fall",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
@@ -1292,11 +1297,15 @@ sap.ui.require([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
-					"value" : [
-						{"Name" : "Frederic Fall", "__FAKE__Messages" : []},
-						{"Name" : "Peter Burke", "__FAKE__Messages" : []}
-					]
+			that.expectRequest(
+				"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
+					"value" : [{
+						"Name" : "Frederic Fall",
+						"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+					}, {
+						"Name" : "Peter Burke",
+						"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+					}]
 				})
 				.expectChange("name", ["Frederic Fall", "Peter Burke"])
 				.expectMessages([]);
@@ -1314,22 +1323,23 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
-	parameters : {$select : \'__FAKE__Messages\'}}">\
+	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<Text id="text" text="{Name}" />\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", {
+		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
 				"ID" : "1",
 				"Name" : "Jonathan Smith",
-				"__FAKE__Messages" : [
-					{
+				"__CT__FAKE__Message" : {
+					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
 						"transition" : false,
 						"target" : "Name",
 						"numericSeverity" : 3
 					}]
+				}
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
@@ -1347,7 +1357,8 @@ sap.ui.require([
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')/Name",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
-			that.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", oError)
+			that.expectRequest(
+					"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
 				.expectMessages([{
 					"code": undefined,
@@ -7200,7 +7211,7 @@ sap.ui.require([
 	</ColumnListItem>\
 </Table>\
 <Table id="detailTable" items="{path : \'TEAM_2_EMPLOYEES\', \
-		parameters : {$select : \'__FAKE__Messages\'}}">\
+		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="Name" text="{Name}" />\
@@ -7218,18 +7229,20 @@ sap.ui.require([
 			.expectChange("Name", false);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("TEAMS('Team_01')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
-					+ "&$skip=0&$top=100", {
+			that.expectRequest("TEAMS('Team_01')/TEAM_2_EMPLOYEES"
+					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
 					value : [{
 						"ID" : "1",
 						"Name" : "Peter Burke",
-						"__FAKE__Messages" : [{
-							"code" : "1",
-							"message" : "Text",
-							"transition" : false,
-							"target" : "Name",
-							"numericSeverity" : 3
-						}]
+						"__CT__FAKE__Message" : {
+							"__FAKE__Messages" : [{
+								"code" : "1",
+								"message" : "Text",
+								"transition" : false,
+								"target" : "Name",
+								"numericSeverity" : 3
+							}]
+						}
 					}]
 				})
 				.expectChange("Name", ["Peter Burke"])
@@ -7245,8 +7258,9 @@ sap.ui.require([
 				that.oView.byId("table").getItems()[0].getBindingContext());
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
-					+ "&$skip=0&$top=100", {value : []})
+			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES"
+					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100",
+					{value : []})
 				.expectChange("Name", []);
 				// no change in messages
 
@@ -7254,7 +7268,8 @@ sap.ui.require([
 				that.oView.byId("table").getItems()[1].getBindingContext());
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES?$select=ID,Name,__FAKE__Messages"
+			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES"
+					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
 					+ "&$orderby=Name&$skip=0&$top=100", {value : []})
 				.expectMessages([]); // message is gone
 
@@ -7268,7 +7283,8 @@ sap.ui.require([
 	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
+<Table id="table" items="{path : \'/EMPLOYEES\', \
+		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
@@ -7276,11 +7292,12 @@ sap.ui.require([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=ID,Name,__FAKE__Messages&$skip=0&$top=100", {
-				"value" : [
-					{
-						"ID": "1",
-						"Name" : "Jonathan Smith",
+		this.expectRequest("EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+				+ "&$skip=0&$top=100", {
+				"value" : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
@@ -7288,9 +7305,12 @@ sap.ui.require([
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
-					},
-					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
-				]
+					}
+				}, {
+					"ID" : "2",
+					"Name" : "Frederic Fall",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([{
@@ -7322,22 +7342,23 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
-	parameters : {$select : \'__FAKE__Messages\'}}">\
+	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<Text id="text" text="{Name}" />\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__FAKE__Messages", {
+		this.expectRequest("EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
 				"ID" : "1",
 				"Name" : "Jonathan Smith",
-				"__FAKE__Messages" : [
-					{
+				"__CT__FAKE__Message" : {
+					"__FAKE__Messages" : [{
 						"code" : "1",
 						"message" : "Text",
 						"transition" : false,
 						"target" : "Name",
 						"numericSeverity" : 3
 					}]
+				}
 			})
 			.expectChange("text", "Jonathan Smith")
 			.expectMessages([{
@@ -7370,8 +7391,8 @@ sap.ui.require([
 			sView = '\
 <FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="Team_Id" text="{Team_Id}" />\
-	<Table id="table" \
-			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$select : \'__FAKE__Messages\'}}">\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', \
+			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="name" text="{Name}" />\
@@ -7381,12 +7402,13 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,__FAKE__Messages)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,"
+					+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				"Team_Id" : "TEAM_01",
-				"TEAM_2_EMPLOYEES" : [
-					{
-						"ID": "1",
-						"Name" : "Jonathan Smith",
+				"TEAM_2_EMPLOYEES" : [{
+					"ID": "1",
+					"Name" : "Jonathan Smith",
+					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
 							"code" : "1",
 							"message" : "Text",
@@ -7394,9 +7416,12 @@ sap.ui.require([
 							"target" : "Name",
 							"numericSeverity" : 3
 						}]
-					},
-					{"ID": "2", "Name" : "Frederic Fall", "__FAKE__Messages" : []}
-				]
+					}
+				}, {
+					"ID": "2",
+					"Name" : "Frederic Fall",
+					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
+				}]
 			})
 			.expectChange("Team_Id", "TEAM_01")
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
@@ -7430,7 +7455,7 @@ sap.ui.require([
 			sView = '\
 <FlexBox binding="{/Equipments(Category=\'foo\',ID=\'0815\')}">\
 	<FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', \
-		parameters : {$select : \'__FAKE__Messages\'}}">\
+		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<layoutData><FlexItemData/></layoutData>\
 		<Text id="text" text="{Name}" />\
 	</FlexBox>\
@@ -7438,19 +7463,22 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("Equipments(Category='foo',ID='0815')?$select=Category,ID&"
-					+ "$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,__FAKE__Messages)", {
+					+ "$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,"
+					+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				"Category" : "foo",
 				"ID" : "0815",
 				"EQUIPMENT_2_EMPLOYEE" : {
 					"ID" : "1",
 					"Name" : "Jonathan Smith",
-					"__FAKE__Messages" : [{
-						"code" : "1",
-						"message" : "Text",
-						"transition" : false,
-						"target" : "Name",
-						"numericSeverity" : 3
-					}]
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "1",
+							"message" : "Text",
+							"transition" : false,
+							"target" : "Name",
+							"numericSeverity" : 3
+						}]
+					}
 				}
 			})
 			.expectChange("text", "Jonathan Smith")

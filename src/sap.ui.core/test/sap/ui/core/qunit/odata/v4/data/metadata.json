@@ -245,10 +245,18 @@
 			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
 			"$Nullable" : false
 		},
-		"__FAKE__Messages" : {
-			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__Message",
-			"$isCollection" : true,
-			"$kind" : "Property"
+		"__CT__FAKE__Message" : {
+			"$kind" : "Property",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.__CT__FAKE__Message"
+		}
+	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.__CT__FAKE__Message": {
+		"$kind": "ComplexType",
+		"__FAKE__Messages": {
+			"$Nullable": false,
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__Message",
+			"$isCollection": true,
+			"$kind": "Property"
 		}
 	},
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_City" : {
@@ -708,7 +716,7 @@
 		"$Annotations" : {
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" : {
 				"@com.sap.vocabularies.Common.v1.Messages" : {
-					"$Path" : "__FAKE__Messages"
+					"$Path" : "__CT__FAKE__Message/__FAKE__Messages"
 				}
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/LOCATION/COUNTRY" : {
