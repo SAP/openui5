@@ -8,12 +8,6 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	var fnStorage = function() {
 
 		/**
-		 * Check whether the current environment supports JSON.parse and JSON stringify.
-		 * @public
-		 */
-		var bSupportJSON = !!(JSON && JSON.parse && JSON.stringify);
-
-		/**
 		 * Prefix added to all storage keys (typically IDs) passed by the applications
 		 * when they are calling state storage methods. The goal of such prefix is to
 		 * leave space for saving data (with the same key) and also for scenarios other than
@@ -119,10 +113,9 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			this.put = function(sId, sStateToStore) {
 				//precondition: non-empty sId and available storage feature
 				assert(typeof sId === "string" && sId, "sId must be a non-empty string");
-				assert(typeof sStateToStore === "string" || bSupportJSON, "sStateToStore must be string or JSON must be supported");
 				if (this.isSupported() && sId) {
 					try {
-						oStorage.setItem(sPrefix + sId, bSupportJSON ? JSON.stringify(sStateToStore) : sStateToStore);
+						oStorage.setItem(sPrefix + sId, JSON.stringify(sStateToStore));
 						return true;
 					} catch (e) {
 						return false;
@@ -148,7 +141,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 				if (this.isSupported() && sId ) {
 					try {
 						var sItem = oStorage.getItem(sPrefix + sId);
-						return bSupportJSON ? JSON.parse(sItem) : sItem;
+						return JSON.parse(sItem);
 					} catch (e) {
 						return null;
 					}
