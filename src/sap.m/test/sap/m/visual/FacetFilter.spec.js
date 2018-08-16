@@ -4,7 +4,7 @@ describe("sap.m.FacetFilter", function() {
 	"use strict";
 
 	it("should load test page",function(){
-		expect(takeScreenshot(element(by.id("listUpdateModel")))).toLookAs("initial");
+		expect(takeScreenshot(element(by.id("listUpdateModelAsync")))).toLookAs("initial");
 	});
 
 	// verify facet list opens and contains the correct items
