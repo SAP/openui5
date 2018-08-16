@@ -12,6 +12,8 @@ sap.ui.define([
 	"sap/m/DateTimeInput",
 	"sap/m/Label",
 	"sap/m/Input",
+	"sap/m/List",
+	"sap/m/StandardListItem",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column"
 ], function(
@@ -27,6 +29,8 @@ sap.ui.define([
 		DateTimeInput,
 		Label,
 		Input,
+		List,
+		ListItem,
 		Table,
 		Column
 	) {
@@ -131,7 +135,7 @@ sap.ui.define([
 		var fnTest = function() {
 			assert.ok(true, "metadataloaded");
 			done();
-		}
+		};
 		oModel.attachMetadataLoaded(fnTest, this);
 	});
 
@@ -767,7 +771,7 @@ sap.ui.define([
 		oModel.submitChanges({
 			success : function(oData, oResponse) {
 				assert.ok(true, "request succeeded");
-				assert.ok(bSuccess, "callback handler of internal request should have been called")
+				assert.ok(bSuccess, "callback handler of internal request should have been called");
 				done();
 			},
 			error : function(oError) {
@@ -793,7 +797,7 @@ sap.ui.define([
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck, this);
 			done();
-		}
+		};
 		oModel.attachBatchRequestCompleted(fnCheck, this);
 	});
 
@@ -846,7 +850,7 @@ sap.ui.define([
 					.setFilterProperty(mEntities.categories.properties[i]));
 		}
 		return oTable;
-	}
+	};
 
 	QUnit.test("test oDataModel listbinding with table", function(assert) {
 		var done = assert.async();
@@ -857,7 +861,7 @@ sap.ui.define([
 				collection : "/VH_CategorySet",
 				properties : [ "Category" ]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 
 		oTable.placeAt("target1");
@@ -885,7 +889,7 @@ sap.ui.define([
 			oModel.detachBatchRequestCompleted(fnCheck);
 			done();
 
-		}
+		};
 		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
@@ -898,7 +902,7 @@ sap.ui.define([
 				collection : "/VH_CategorySet",
 				properties : [ "Category" ]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 		sap.ui.getCore().applyChanges();
@@ -929,7 +933,7 @@ sap.ui.define([
 				oModel.detachBatchRequestCompleted(fnCheck);
 				done();
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
@@ -942,7 +946,7 @@ sap.ui.define([
 				collection : "/VH_CategorySet",
 				properties : [ "Category" ]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 
@@ -975,7 +979,7 @@ sap.ui.define([
 				oModel.detachBatchRequestCompleted(fnCheck);
 				done();
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(fnCheck);
 	});
 
@@ -988,14 +992,14 @@ sap.ui.define([
 				collection : "/VH_CategorySet",
 				properties : [ "Category" ]
 			}
-		}
+		};
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
 		oModel.setDeferredBatchGroups([ "myId1", "myId2" ]);
 		oTable.setModel(oModel);
 		oTable.bindRows({
 			path : mEntities.categories.collection,
-			batchGroupId : "myId1",
+			batchGroupId : "myId1"
 		});
 		oModel.read("/ProductSet", {
 			batchGroupId : "myId2",
@@ -1020,7 +1024,7 @@ sap.ui.define([
 				oModel.detachBatchRequestCompleted(fnCheck);
 				done();
 			}
-		}
+		};
 		oModel.attachBatchRequestCompleted(fnCheck);
 		oModel.submitChanges();
 	});
@@ -1265,7 +1269,7 @@ sap.ui.define([
 		var iCount = 0;
 		oModel.setDefaultBindingMode("TwoWay");
 		oModel.setRefreshAfterChange(true);
-		var oInput = new sap.m.Input({value: "{Name}"});
+		var oInput = new Input({value: "{Name}"});
 		oInput.setModel(oModel);
 		oInput.bindElement("/ProductSet('AD-1000')");
 
@@ -1278,7 +1282,7 @@ sap.ui.define([
 				if (iCount == 2) {
 					assert.ok(oInfo.mParameters.requests[0].response.statusCode == 204, "MERGE response ok");
 					assert.ok(oInfo.mParameters.requests[1].response.statusCode == 200, "GET response ok");
-					assert.ok(oInfo.mParameters.requests.length == 2, "MERGE and GET request sent")
+					assert.ok(oInfo.mParameters.requests.length == 2, "MERGE and GET request sent");
 					done();
 				}
 			});
@@ -1383,7 +1387,7 @@ sap.ui.define([
 					eTag: "*"
 				});
 			}
-		})
+		});
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -2037,7 +2041,7 @@ sap.ui.define([
 				jQuery.sap.delayedCall(0,this, function() {
 					assert.ok(oSpy.callCount == 1, "Change request sent");
 					oSpy.restore();
-					done()
+					done();
 				});
 			},
 			error: function() {
@@ -4543,7 +4547,6 @@ sap.ui.define([
 		var iSuccess = 0;
 		var iReqComp = 0;
 		var iReqSent = 0;
-		var sReqId = null;
 		oModel.setUseBatch(false);
 		oModel.read("/ProductSet", {
 			success : function() {
@@ -4570,7 +4573,6 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
 			assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
-			sReqId = oEvent.getParameter('ID');
 			iReqSent++;
 		});
 
@@ -5702,12 +5704,10 @@ sap.ui.define([
 
 	QUnit.test("test abort of deferred batch request", function(assert) {
 		var done = assert.async();
-		var bSuccess = false;
 		var oAbort = {};
 		oModel.setDeferredBatchGroups([ "myId1" ]);
 		oModel.read("/ProductSet('HT-1001')", {
 			success : function() {
-				bSuccess = true;
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
@@ -5716,7 +5716,6 @@ sap.ui.define([
 		});
 		oModel.read("/ProductSet('AD-1000')", {
 			success : function() {
-				bSuccess = true;
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
@@ -5939,9 +5938,9 @@ sap.ui.define([
 		var iReceived = 0;
 		var oInput1, oInput2;
 
-		oInput1 = new sap.m.Input();
+		oInput1 = new Input();
 		oInput1.setModel(oModel);
-		oInput2 = new sap.m.Input();
+		oInput2 = new Input();
 		oInput2.setModel(oModel);
 
 		var fnChange = function(oEvent) {
@@ -5976,11 +5975,11 @@ sap.ui.define([
 		var iReceived = 0;
 		var oInput1, oInput2, oInput3;
 
-		oInput1 = new sap.m.Input();
+		oInput1 = new Input();
 		oInput1.setModel(oModel);
-		oInput2 = new sap.m.Input();
+		oInput2 = new Input();
 		oInput2.setModel(oModel);
-		oInput3 = new sap.m.Input();
+		oInput3 = new Input();
 		oInput3.setModel(oModel);
 
 		var fnChange = function(oEvent) {
@@ -6016,9 +6015,9 @@ sap.ui.define([
 		var iChange = 0;
 		var oInput1, oInput2;
 
-		oInput1 = new sap.m.Input();
+		oInput1 = new Input();
 		oInput1.setModel(oModel);
-		oInput2 = new sap.m.Input();
+		oInput2 = new Input();
 		oInput2.setModel(oModel);
 
 		var fnChange = function(oEvent) {
@@ -6075,10 +6074,10 @@ sap.ui.define([
 		var iCount = 0;
 		var oInput1;
 
-		oInput1 = new sap.m.Input();
+		oInput1 = new Input();
 		oInput1.setModel(oModel);
 
-		new sap.m.Input({
+		new Input({
 			models: oModel,
 			objectBindings: {
 				undefined: {
@@ -6226,7 +6225,7 @@ sap.ui.define([
 
 		var fnTest = function(){
 			oContext = oModel.createEntry("/ProductSet", {properties: {
-				"ProductID":"AD-12345",
+				"ProductID":"AD-12345"
 			}, batchGroupId: "myId"});
 
 			oModel.submitChanges({
@@ -6305,12 +6304,12 @@ sap.ui.define([
 		var done = assert.async();
 		var mUrlParams = {
 			"SalesOrderID": "test"
-		}
+		};
 
 		oModel.callFunction("/SalesOrder_Confirm",{
 			method: "POST",
 			urlParameters: mUrlParams
-		})
+		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
@@ -6325,12 +6324,12 @@ sap.ui.define([
 			"SalesOrderID": "test",
 			"$expand": "ToBusinessPartner",
 			"sap-some": "sapTest"
-		}
+		};
 
 		oModel.callFunction("/SalesOrder_Confirm",{
 			method: "POST",
 			urlParameters: mUrlParams
-		})
+		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
@@ -6347,7 +6346,7 @@ sap.ui.define([
 			urlParameters: {"SalesOrderID": "test"}
 		});
 
-		var oInput = new sap.m.Input();
+		var oInput = new Input();
 		oInput.bindValue("SalesOrderID");
 		oInput.setModel(oModel);
 
@@ -6379,7 +6378,7 @@ sap.ui.define([
 			urlParameters: {"SalesOrderID": "test"}
 		});
 
-		oInput = new sap.m.Input();
+		oInput = new Input();
 		oInput.bindValue("SalesOrderID");
 		oInput.setModel(oModel);
 
@@ -6415,7 +6414,7 @@ sap.ui.define([
 			urlParameters: {"SalesOrderID": "test"}
 		});
 
-		var oInput = new sap.m.Input();
+		var oInput = new Input();
 		oInput.bindValue("SalesOrderID");
 		oInput.setModel(oModel);
 
@@ -6447,7 +6446,7 @@ sap.ui.define([
 			urlParameters: {"SalesOrderID": ""}
 		});
 
-		var oInput = new sap.m.Input();
+		var oInput = new Input();
 		oInput.bindValue("SalesOrderID");
 		oInput.setModel(oModel);
 
@@ -6465,7 +6464,7 @@ sap.ui.define([
 	QUnit.test("test getETag", function(assert){
 		assert.expect(3);
 		var done = assert.async();
-		var oInput = new sap.m.Input();
+		var oInput = new Input();
 		oInput.setModel(oModel);
 		oInput.bindElement("/ProductSet('AD-1000')");
 		var fnHandler = function() {
@@ -7052,13 +7051,11 @@ sap.ui.define([
 
 	QUnit.test("ListBinding gets correct change reason", function(assert) {
 		var done = assert.async();
-		jQuery.sap.require("sap.m.List");
-		jQuery.sap.require("sap.m.StandardListItem");
 
-		var oList = new sap.m.List({
+		var oList = new List({
 			items: {
 				path: "ToProducts",
-				template: new sap.m.StandardListItem()
+				template: new ListItem()
 			},
 			growing: true
 		});
