@@ -542,6 +542,15 @@
 			// Testing StyleClass methods
 			// =========================================================================================================
 
+			QUnit.test("Check returned reference", function (assert) {
+				var sId = "busyDialog1";
+				var oBusyDialog = new sap.m.BusyDialog(sId).addStyleClass("SomeClass");
+
+				assert.equal(oBusyDialog.getId(), sId, "referance is correct");
+
+				oBusyDialog.destroy();
+			});
+
 			QUnit.test("Check style classes of internal Dialog", function (assert) {
 				//Arrange
 				var oDialogAddStyleClassStub = this.stub(this.oBusyDialog._oDialog, "addStyleClass"),
