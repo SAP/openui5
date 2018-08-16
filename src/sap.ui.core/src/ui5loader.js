@@ -11,7 +11,7 @@
  * might break in future releases.
  */
 
-/*global sap:true, console, document, ES6Promise, Promise, XMLHttpRequest */
+/*global sap:true, console, document, Promise, XMLHttpRequest */
 
 (function(__global) {
 	"use strict";
@@ -943,6 +943,17 @@
 		oModule.state = READY;
 
 		return oModule;
+	}
+
+	/**
+	 * Define an already loaded module synchronously.
+	 * Finds or creates a module by its unified resource name and resolves it with the given value.
+	 *
+	 * @param {string} sResourceName Name of the module in URN syntax
+	 * @param {any} vValue Content of the module
+	 */
+	function defineModuleSync(sResourceName, vValue) {
+		Module.get(sResourceName).ready(vValue);
 	}
 
 	/**
@@ -2112,6 +2123,7 @@
 		declareModule: function(sResourceName) {
 			/* void */ declareModule( normalize(sResourceName) );
 		},
+		defineModuleSync: defineModuleSync,
 		dump: dumpInternals,
 		getAllModules: getAllModules,
 		getModuleContent: getModuleContent,
@@ -2160,13 +2172,6 @@
 			}
 		}
 	});
-
-	Module.get('sap/ui/thirdparty/baseuri.js').ready(null); // no module value
-	if ( typeof ES6Promise !== 'undefined' ) {
-		Module.get('sap/ui/thirdparty/es6-promise.js').ready(ES6Promise);
-	}
-	Module.get('sap/ui/thirdparty/es6-object-assign.js').ready(null); // no module value
-	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
 
 	// establish APIs in the sap.ui namespace
 
