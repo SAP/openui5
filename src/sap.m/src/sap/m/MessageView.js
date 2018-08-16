@@ -1233,8 +1233,6 @@ sap.ui.define([
 		this._sCurrentList = sCurrentListName;
 		this._oLists[sCurrentListName].setVisible(true);
 
-		this._listPage.rerender();
-
 		this.fireListSelect({messageTypeFilter: this._getCurrentMessageTypeFilter()});
 	};
 
