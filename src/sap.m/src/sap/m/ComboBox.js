@@ -652,6 +652,8 @@ sap.ui.define([
 							oControl.updateDomValue(aCommonStartsWithItems[0].getText());
 							this.setSelection(aCommonStartsWithItems[0]);
 						}
+					} else {
+						this.setSelection(aCommonStartsWithItems[0]);
 					}
 
 					if (oSelectedItem !== this.getSelectedItem()) {
