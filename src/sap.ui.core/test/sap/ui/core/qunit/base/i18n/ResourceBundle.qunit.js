@@ -106,4 +106,26 @@ sap.ui.define(["sap/base/i18n/ResourceBundle", "sap/base/util/Properties"], func
 
 	});
 
+	QUnit.test("getText ignore key fallback (last fallback)", function(assert) {
+		var done = assert.async();
+
+		createResourceBundleWithCustomBundles(sinon)
+		.then(function(oResourceBundle) {
+
+			var oSpy = sinon.spy(Properties, "create");
+
+			// Correct behavior for a found text
+			assert.equal(oResourceBundle.getText("number", [], true), "46", "Correct behavior for a found text with key fallback activated.");
+			assert.equal(oResourceBundle.getText("number", [], false), "46", "Correct behavior for a found text with key fallback deactivated.");
+
+			// Correct behavior for a not found text
+			assert.equal(oResourceBundle.getText("not_there", [], true), undefined, "Correct behavior for a not found text with key fallback activated.");
+			assert.equal(oResourceBundle.getText("not_there", [], false), "not_there", "Correct behavior for a not found text with key fallback deactivated.");
+
+			oSpy.restore();
+			done();
+		});
+
+	});
+
 });
