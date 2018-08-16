@@ -5,9 +5,11 @@
 sap.ui.define([
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/support/supportRules/Constants",
+	"sap/ui/support/supportRules/ui/models/SelectionUtils",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
-	"sap/ui/core/util/File"
-], function (Storage, constants, SharedModel, File) {
+	"sap/ui/core/util/File",
+	"sap/ui/thirdparty/jquery"
+], function (Storage, constants, SelectionUtils, SharedModel, File, jQuery) {
 	"use strict";
 
 	var PresetsUtils = {
@@ -26,8 +28,34 @@ sap.ui.define([
 				}
 			}
 
+			var aPresets = this.model.getProperty("/selectionPresets"),
+				aSystemPresets = this.model.getProperty("/systemPresets"),
+				iLastSystemPresetPosition = 0;
+
+			// add System Presets to Rule Presets Popover
+			aSystemPresets.forEach(function (oSystemPreset) {
+				var isFound = aPresets.some(function (oPreset) {
+					if (oSystemPreset.id === oPreset.id) {
+						if (!oPreset.isModified) {
+							var bIsSelected = oPreset.selected;
+							oPreset = jQuery.extend({}, oSystemPreset);
+							oPreset.selected = bIsSelected;
+							if (bIsSelected) {
+								SelectionUtils.setSelectedRules(oPreset.selections);
+							}
+						}
+						return true;
+					}
+				});
+
+				if (!isFound) {
+					aPresets.splice(iLastSystemPresetPosition + 1, 0, jQuery.extend({}, oSystemPreset));
+				}
+
+				iLastSystemPresetPosition++;
+			});
+
 			// find the selected preset
-			var aPresets = this.model.getProperty("/selectionPresets");
 			var oSelectedPreset = null;
 			aPresets.some(function (oCurrent) {
 				if (oCurrent.selected) {

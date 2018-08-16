@@ -139,6 +139,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles the return to default selection of system presets
+	 * @param {sap.ui.base.Event} oEvent The event which was fired.
+	 */
+	PresetsController.prototype.onPresetItemReset = function (oEvent) {
+		var sPath = oEvent.getSource().getBindingContext().getPath(),
+			oPreset = this.oModel.getProperty(sPath),
+			aSystemPresets = this.oModel.getProperty("/systemPresets");
+
+		aSystemPresets.some(function (oSystemPreset) {
+			if (oSystemPreset.id === oPreset.id) {
+				oPreset.title = oSystemPreset.title;
+				oPreset.selections = oSystemPreset.selections;
+				oPreset.isModified = false;
+				return true;
+			}
+		});
+
+		this.oModel.refresh();
+
+		if (oPreset.selected) {
+			this._applyPreset(oPreset);
+		}
+	};
+
+	/**
 	 * Opens the import dialog
 	 */
 	PresetsController.prototype.onImportPress = function () {
