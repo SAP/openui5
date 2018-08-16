@@ -395,7 +395,7 @@
 		this.SearchField.attachEvent("liveChange",fnLiveChange );
 
 		// act
-		this.SearchField.$("I").focus().val("abc").trigger("input");;
+		this.SearchField.$("I").focus().val("abc").trigger("input");
 
 		//assert
 		assert.strictEqual(fnLiveChange.callCount, 1, "LiveChange event is fired once");
