@@ -4385,7 +4385,7 @@ sap.ui.require([
 		});
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("requestValueListInfo: property in cross-service reference", function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
 			oModel = new ODataModel({
@@ -4463,7 +4463,7 @@ sap.ui.require([
 		});
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("requestValueListInfo: same qualifier in reference and local", function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
 			oProperty = {
@@ -4518,7 +4518,7 @@ sap.ui.require([
 		});
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("fetchModule: synchronously", function (assert) {
 		var vModule = {};
 
@@ -4531,7 +4531,7 @@ sap.ui.require([
 			vModule);
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("fetchModule, asynchronous", function (assert) {
 		var vModule = {},
 			sModuleName = "sap/ui/model/odata/type/Int64",
@@ -4549,6 +4549,32 @@ sap.ui.require([
 			.then(function (oResult) {
 				assert.strictEqual(oResult, vModule);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchData", function (assert) {
+		var oMetaData = {
+				"some.schema." : {
+					"$kind" : "Schema"
+				}
+			};
+
+		this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			.withExactArgs()
+			.returns(Promise.resolve(oMetaData));
+
+		// code under test
+		return this.oMetaModel.fetchData().then(function (oResult) {
+			assert.deepEqual(oResult, oMetaData);
+
+			delete oResult["some.schema."].$kind;
+			assert.strictEqual(oMetaData["some.schema."].$kind, "Schema", "original is unchanged");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getData, requestData", function (assert) {
+		return checkGetAndRequest(this, assert, "fetchData");
 	});
 
 	//*********************************************************************************************
