@@ -100,6 +100,16 @@
 					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
+			<ObjectPageSection id="section16"
+				title="Section with veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+						loooooooooooooooooooooooooooooooooooooong teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext">
+				<ObjectPageSubSection>
+					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="second section second">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
 
