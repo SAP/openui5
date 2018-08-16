@@ -938,6 +938,17 @@
 	}
 
 	/**
+	 * Define an already loaded module synchronously.
+	 * Finds or creates a module by its unified resource name and resolves it with the given value.
+	 *
+	 * @param {string} sResourceName Name of the module in URN syntax
+	 * @param {any} vValue Content of the module
+	 */
+	function defineModuleSync(sResourceName, vValue) {
+		Module.get(sResourceName).ready(vValue);
+	}
+
+	/**
 	 * Queue of modules for which sap.ui.define has been called but for which the name has not been determined yet
 	 * When loading modules via script tag, only the onload handler knows the relationship between executed sap.ui.define calls and
 	 * module name. It then resolves the pending modules in the queue. Only one entry can get the name of the module
@@ -2092,6 +2103,7 @@
 		declareModule: function(sResourceName) {
 			/* void */ declareModule( normalize(sResourceName) );
 		},
+		defineModuleSync: defineModuleSync,
 		dump: dumpInternals,
 		getAllModules: getAllModules,
 		getModuleContent: getModuleContent,
@@ -2159,11 +2171,6 @@
 			Module.get(name).preload(url + "/" + name, modules[name], group);
 		}
 	};
-
-	if ( typeof ES6Promise !== 'undefined' ) {
-		Module.get('sap/ui/thirdparty/es6-promise.js').ready(ES6Promise);
-	}
-	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
 
 	__global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};

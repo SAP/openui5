@@ -17,7 +17,7 @@
 	 *  - ui5loader-autoconfig.js
 	 */
 
-	/*global console, document, jQuery, sap, window */
+	/*global console, document, ES6Promise, jQuery, sap, window */
 	"use strict";
 
 	var ui5loader = window.sap && window.sap.ui && window.sap.ui.loader,
@@ -411,28 +411,21 @@
 		}
 	});
 
-	// hide sap.ui.define calls from dependency analyzers
-	var _define = sap['ui']['define'];
+	var defineModuleSync = ui5loader._.defineModuleSync;
+	if ( typeof ES6Promise !== 'undefined' ) {
+		defineModuleSync('sap/ui/thirdparty/es6-promise.js', ES6Promise);
+	}
+	defineModuleSync('sap/ui/thirdparty/es6-string-methods.js', null);
 
-	// @evo-todo introduce an internal API for these registrations as the declarations should be synchronous
-	_define('ui5loader', function() {
-		return undefined;
-	});
-
-	_define('ui5loader-autoconfig', function() {
-		return undefined;
-	});
+	defineModuleSync('ui5loader.js', null);
+	defineModuleSync('ui5loader-autoconfig.js', null);
 
 	if (bNojQuery && typeof jQuery === 'function') {
 		// when we're executed in the context of the sap-ui-core-noJQuery file,
 		// we try to detect an existing jQuery / jQuery position plugin and register them as modules
-		_define('sap/ui/thirdparty/jquery', function() {
-			return jQuery;
-		});
-		if (jQuery.prototype.position) {
-			_define('sap/ui/thirdparty/jqueryui/jquery-ui-position', function() {
-				return jQuery;
-			});
+		defineModuleSync('sap/ui/thirdparty/jquery.js', jQuery);
+		if (jQuery.ui && jQuery.ui.position) {
+			defineModuleSync('sap/ui/thirdparty/jqueryui/jquery-ui-position.js', jQuery);
 		}
 	}
 
