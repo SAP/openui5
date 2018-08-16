@@ -770,7 +770,7 @@
 				sap.ui.require(["sap/ui/core/Fragment"], function(Fragment) {
 					var myXml = '<Button xmlns="sap.ui.commons" id="xmlfragbtn2" text="This is an XML Fragment" press="doSomething"></Button>';
 					Fragment.load({
-						content: myXml,
+						definition: myXml,
 						controller: oDummyController
 					}).then(function(oFragment) {
 						oFragment.placeAt("content1");
