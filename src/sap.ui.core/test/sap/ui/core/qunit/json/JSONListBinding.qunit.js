@@ -1,22 +1,20 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" data-sap-ui-language="en_US">
-</script>
-
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script charset="utf-8"> // IE needs this :-/
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/Device",
+	"sap/base/util/deepEqual"
+], function(
+	JSONModel,
+	Filter,
+	FilterOperator,
+	Sorter,
+	Device,
+	deepEqual
+) {
+	"use strict";
 
 	var oModel;
 	var testData;
@@ -24,7 +22,7 @@
 
 	function setup(){
 		// reset bindings
-		bindings = new Array();
+		bindings = [];
 		testData = {
 			teamMembers:[
 				{firstName:"Andreas", lastName:"Klark", gender:"male"},
@@ -45,7 +43,7 @@
 				{firstName:"Frank", lastName:"Wallace", gender: null},
 				{firstName:"Mario", lastName:"Bross", gender:"male"},
 				{firstName:"Luigi", lastName:"Brossers", gender:"male"},
-				{firstName:"Sandra", lastName:"Millers", gender:"female"},
+				{firstName:"Sandra", lastName:"Millers", gender:"female"}
 			],
 			teamMembersNew:[
 				{firstName:"Andreas", lastName:"Klark", gender:"male"},
@@ -61,7 +59,7 @@
 				{form:"NFC", string:"ẛ̣", representation:"\\u1E9B\\u0323"},
 				{form:"NFD", string:"ẛ̣", representation:"\\u017F\\u0323\\u0307"},
 				{form:"NFKC", string:"ṩ", representation:"\\u1E69"},
-				{form:"NFKD", string:"ṩ", representation:"\\u0073\\u0323\\u0307"},
+				{form:"NFKD", string:"ṩ", representation:"\\u0073\\u0323\\u0307"}
 			],
 			dataWithNullValues:[
 				{value: 4},
@@ -82,7 +80,7 @@
 				{firstName:"Andreas", lastName:"Klark", gender:"male"},
 				{firstName:"Peter", lastName:"Miller", gender:"male"},
 				{firstName:"ANDREAS", lastName:"KLARK", gender:"MALE"},
-				{firstName:"PETER", lastName:"MILLER", gender:"MALE"},
+				{firstName:"PETER", lastName:"MILLER", gender:"MALE"}
 			],
 			"root":[
 				{
@@ -119,25 +117,21 @@
 			changeTestProperty: "SAPUI5",
 			changingArray: [1, 2, "hi", "b"]
 		};
-		oModel = new sap.ui.model.json.JSONModel();
+		oModel = new JSONModel();
 		oModel.setData(testData);
 		sap.ui.getCore().setModel(oModel);
 
-	};
+	}
 
 	function createListBinding(sPath, oContext){
 		// create binding
-		bindings = new Array();
+		bindings = [];
 		if (typeof sPath === "object") {
 			bindings[0] = oModel.bindList(sPath.path, sPath.context, sPath.sorters, sPath.filters, sPath.parameters, sPath.events);
 		} else {
 			bindings[0] = oModel.bindList(sPath, oContext);
 		}
-	};
-
-	function callBackOnChange(){
-		assert.ok(true,"ChangeEvent fired");
-	};
+	}
 
 	QUnit.module("Listbinding getContexts", {
 		beforeEach: function() {
@@ -154,7 +148,7 @@
 		assert.equal(listBinding.getLength(), 7, "ListBinding getLength");
 		assert.equal(listBinding.isLengthFinal(), true, "ListBinding isLengthFinal");
 
-		jQuery(listBinding.getContexts()).each(function(i, context){
+		listBinding.getContexts().forEach(function(context, i) {
 			assert.equal(context.getPath(), "/teamMembers/" + i, "ListBinding context");
 		});
 
@@ -190,11 +184,12 @@
 
 	QUnit.test("getCurrentContexts", function(assert) {
 		var listBinding = bindings[0],
-			contexts = listBinding.getContexts(0,5),
-			currentContexts = listBinding.getCurrentContexts();
+			currentContexts;
 
+		listBinding.getContexts(0,5);
+		currentContexts = listBinding.getCurrentContexts();
 		assert.equal(currentContexts.length, 5, "Current contexts should contain 5 items");
-		jQuery(currentContexts).each(function(i, context){
+		currentContexts.forEach(function(context, i) {
 			assert.equal(context.getPath(), "/teamMembers/" + i, "ListBinding context");
 		});
 	});
@@ -207,7 +202,7 @@
 			currentContexts = listBinding.getCurrentContexts();
 
 		assert.equal(currentContexts.length, 5, "Current contexts should contain 5 items");
-		jQuery(currentContexts).each(function(i, context){
+		currentContexts.forEach(function(context, i) {
 			assert.equal(context.getPath(), "/teamMembers/" + i, "ListBinding context");
 		});
 
@@ -216,7 +211,7 @@
 
 		currentContexts = listBinding.getCurrentContexts();
 		assert.equal(currentContexts.length, 5, "Current contexts should contain 5 items");
-		jQuery(currentContexts).each(function(i, context){
+		currentContexts.forEach(function(context, i) {
 			assert.equal(context.getPath(), "/teamMembers/" + i, "ListBinding context");
 		});
 
@@ -227,8 +222,8 @@
 	QUnit.test("extended change detection with grouping", function(assert) {
 		var listBinding = bindings[0];
 		listBinding.sort([
-			new sap.ui.model.Sorter("gender", false, true),
-			new sap.ui.model.Sorter("lastName")
+			new Sorter("gender", false, true),
+			new Sorter("lastName")
 		]);
 		listBinding.enableExtendedChangeDetection(false, "lastName");
 
@@ -244,7 +239,7 @@
 
 		newContexts = listBinding.getContexts();
 		assert.equal(newContexts.length, 7, "Current contexts should contain 7 items");
-		assert.ok(jQuery.sap.equal(contexts, newContexts), "Old and new contexts array is equal");
+		assert.ok(deepEqual(contexts, newContexts), "Old and new contexts array is equal");
 
 		// Although a key is used with extended change detection, the diff must contain
 		// an update, as grouping is enabled on this binding.
@@ -342,13 +337,11 @@
 		assert.equal(listBinding.oList[5].firstName, "Marc", "ListBinding before sort");
 		assert.equal(listBinding.oList[6].firstName, "Frank", "ListBinding before sort");
 
-		var oSorter = new sap.ui.model.Sorter("firstName", false);
+		var oSorter = new Sorter("firstName", false);
 		listBinding.sort(oSorter);
 
-		var sortedContexts = listBinding.getContexts();
-		var sorted = [];
-		jQuery(sortedContexts).each(function(i, oContext){
-			sorted[i] = oContext.getProperty("firstName");
+		var sorted = listBinding.getContexts().map(function(oContext, i) {
+			return oContext.getProperty("firstName");
 		});
 
 		assert.equal(sorted[0], "Andreas", "ListBinding after sort");
@@ -360,12 +353,11 @@
 		assert.equal(sorted[6], "Steave", "ListBinding after sort");
 
 		//descending
-		oSorter = new sap.ui.model.Sorter("firstName", true);
+		oSorter = new Sorter("firstName", true);
 		listBinding.sort(oSorter);
 
-		sortedContexts = listBinding.getContexts();
-		jQuery(sortedContexts).each(function(i, oContext){
-			sorted[i] = oContext.getProperty("firstName");
+		sorted = listBinding.getContexts().map(function(oContext, i) {
+			return oContext.getProperty("firstName");
 		});
 
 		assert.equal(sorted[0], "Steave", "ListBinding after sort");
@@ -388,12 +380,11 @@
 
 	QUnit.test("null values", function(assert) {
 		createListBinding("/dataWithNullValues");
-		var listBinding = bindings[0], sortedContexts, sorted;
-		listBinding.sort(new sap.ui.model.Sorter("value"));
-		sortedContexts = listBinding.getContexts();
-		sorted = [];
-		jQuery(sortedContexts).each(function(i, context){
-			sorted[i] = oModel.getProperty(context.getPath());
+		var listBinding = bindings[0], sorted;
+		listBinding.sort(new Sorter("value"));
+
+		sorted = listBinding.getContexts().map(function(oContext, i) {
+			return oContext.getProperty("");
 		});
 		assert.equal(sorted.length, 5, "ListBinding sorted length");
 		assert.equal(sorted[0].value, 1, "ListBinding sort value");
@@ -402,11 +393,10 @@
 		assert.equal(sorted[3].value, 4, "ListBinding sort value");
 		assert.equal(sorted[4].value, null, "ListBinding sort value");
 
-		listBinding.sort(new sap.ui.model.Sorter("value", true));
-		sortedContexts = listBinding.getContexts();
-		sorted = [];
-		jQuery(sortedContexts).each(function(i, context){
-			sorted[i] = oModel.getProperty(context.getPath());
+		listBinding.sort(new Sorter("value", true));
+
+		sorted = listBinding.getContexts().map(function(oContext, i) {
+			return oContext.getProperty("");
 		});
 		assert.equal(sorted.length, 5, "ListBinding sorted length");
 		assert.equal(sorted[0].value, null, "ListBinding sort value");
@@ -422,24 +412,21 @@
 
 		var listBinding = bindings[0];
 
-		var oSorter = new sap.ui.model.Sorter("word", false);
+		var oSorter = new Sorter("word", false);
 		listBinding.sort(oSorter);
 
-		var sortedContexts = listBinding.getContexts();
-		var sorted = [];
-		jQuery(sortedContexts).each(function(i, context){
-			sorted[i] = oModel.getProperty("word", context);
+		var sorted = listBinding.getContexts().map(function(oContext, i) {
+			return oContext.getProperty("word");
 		});
 
 		assert.equal(sorted[0], "Funzel", "ListBinding after sort");
 		assert.equal(sorted[1], "Fuß", "ListBinding after sort");
 		assert.equal(sorted[2], "Fußball", "ListBinding after sort");
 		// browsers have differnt ideas about lexical sorting
-		if (sap.ui.Device.browser.chrome && sap.ui.Device.browser.version < 24.0) {
+		if (Device.browser.chrome && Device.browser.version < 24.0) {
 			assert.equal(sorted[3], "Fussel", "ListBinding after sort");
 			assert.equal(sorted[4], "Füße", "ListBinding after sort");
-		}
-		else {
+		} else {
 			assert.equal(sorted[3], "Füße", "ListBinding after sort");
 			assert.equal(sorted[4], "Fussel", "ListBinding after sort");
 		}
@@ -453,17 +440,17 @@
 		var listBinding = bindings[0];
 
 		var oSorter = [
-			new sap.ui.model.Sorter("firstName", false),
-			new sap.ui.model.Sorter("lastName", false)
+			new Sorter("firstName", false),
+			new Sorter("lastName", false)
 		];
 		listBinding.sort(oSorter);
 
 		var sortedContexts = listBinding.getContexts();
 		var sortedFirstName = [];
 		var sortedLastName = [];
-		jQuery(sortedContexts).each(function(i, context){
-			sortedFirstName[i] = oModel.getProperty("firstName", context);
-			sortedLastName[i] = oModel.getProperty("lastName", context);
+		sortedContexts.forEach(function(context, i) {
+			sortedFirstName[i] = context.getProperty("firstName");
+			sortedLastName[i] = context.getProperty("lastName");
 		});
 
 		assert.equal(sortedFirstName[0], "Andreas", "ListBinding after multi sort");
@@ -482,18 +469,19 @@
 		assert.equal(sortedLastName[6], "Ander", "ListBinding after multi sort");
 
 		oSorter = [
-			new sap.ui.model.Sorter("firstName", false),
-			new sap.ui.model.Sorter("lastName", true)
+			new Sorter("firstName", false),
+			new Sorter("lastName", true)
 		];
 		listBinding.sort(oSorter);
 
 		sortedContexts = listBinding.getContexts();
 		sortedFirstName = [];
 		sortedLastName = [];
-		jQuery(sortedContexts).each(function(i, context){
-			sortedFirstName[i] = oModel.getProperty("firstName", context);
-			sortedLastName[i] = oModel.getProperty("lastName", context);
+		sortedContexts.forEach(function(context, i) {
+			sortedFirstName[i] = context.getProperty("firstName");
+			sortedLastName[i] = context.getProperty("lastName");
 		});
+
 
 		assert.equal(sortedFirstName[0], "Andreas", "ListBinding after multi sort");
 		assert.equal(sortedLastName[0], "Klark", "ListBinding after multi sort");
@@ -511,17 +499,17 @@
 		assert.equal(sortedLastName[6], "Ander", "ListBinding after multi sort");
 
 		oSorter = [
-			new sap.ui.model.Sorter("firstName", true),
-			new sap.ui.model.Sorter("lastName", false)
+			new Sorter("firstName", true),
+			new Sorter("lastName", false)
 		];
 		listBinding.sort(oSorter);
 
 		sortedContexts = listBinding.getContexts();
 		sortedFirstName = [];
 		sortedLastName = [];
-		jQuery(sortedContexts).each(function(i, context){
-			sortedFirstName[i] = oModel.getProperty("firstName", context);
-			sortedLastName[i] = oModel.getProperty("lastName", context);
+		sortedContexts.forEach(function(context, i) {
+			sortedFirstName[i] = context.getProperty("firstName");
+			sortedLastName[i] = context.getProperty("lastName");
 		});
 
 		assert.equal(sortedFirstName[0], "Steave", "ListBinding after multi sort");
@@ -540,18 +528,18 @@
 		assert.equal(sortedLastName[6], "Klark", "ListBinding after multi sort");
 
 		oSorter = [
-			new sap.ui.model.Sorter("gender", false),
-			new sap.ui.model.Sorter("firstName", true),
-			new sap.ui.model.Sorter("lastName", true)
+			new Sorter("gender", false),
+			new Sorter("firstName", true),
+			new Sorter("lastName", true)
 		];
 		listBinding.sort(oSorter);
 
 		sortedContexts = listBinding.getContexts();
 		sortedFirstName = [];
 		sortedLastName = [];
-		jQuery(sortedContexts).each(function(i, context){
-			sortedFirstName[i] = oModel.getProperty("firstName", context);
-			sortedLastName[i] = oModel.getProperty("lastName", context);
+		sortedContexts.forEach(function(context, i) {
+			sortedFirstName[i] = context.getProperty("firstName");
+			sortedLastName[i] = context.getProperty("lastName");
 		});
 
 		assert.equal(sortedFirstName[0], "Gina", "ListBinding after multi sort");
@@ -575,7 +563,7 @@
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
-		var oSorter = new sap.ui.model.Sorter("firstName", false, false, function(a, b) {
+		var oSorter = new Sorter("firstName", false, false, function(a, b) {
 			a = a.substr(1);
 			b = b.substr(1);
 			if (a < b) {
@@ -588,12 +576,9 @@
 		});
 		listBinding.sort(oSorter);
 
-		var sortedContexts = listBinding.getContexts();
-		var sorted = [];
-		jQuery(sortedContexts).each(function(i, context){
-			sorted[i] = oModel.getProperty("firstName",context);
+		var sorted = listBinding.getContexts().map(function(oContext, i) {
+			return oContext.getProperty("firstName");
 		});
-
 		assert.equal(sorted[0], "Marc", "ListBinding after sort");
 		assert.equal(sorted[1], "Peter", "ListBinding after sort");
 		assert.equal(sorted[2], "Michael", "ListBinding after sort");
@@ -610,7 +595,7 @@
 		var attach = false;
 		listBinding.attachChange(myFnCallback);
 
-		var oSorter = new sap.ui.model.Sorter("firstName", true);
+		var oSorter = new Sorter("firstName", true);
 		listBinding.sort(oSorter, true);
 
 		function myFnCallback(oEvent){
@@ -618,7 +603,7 @@
 			if (sReason === "sort"){
 				attach = true;
 			}
-		};
+		}
 
 		listBinding.detachChange(myFnCallback);
 
@@ -638,24 +623,21 @@
 		var listBinding = bindings[0];
 
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.EQ, null);
+		var oFilter = new Filter("gender", FilterOperator.EQ, null);
 		listBinding.filter([oFilter]);
-		var filteredContexts = listBinding.getContexts();
-		var filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 1, "ListBinding filtered length");
 		assert.equal(filtered[0].gender, null, "ListBinding filter value");
 
 		// NE, contains
-		oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.NE, "Peter");
-		var oFilter2 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.Contains, "a");
+		oFilter = new Filter("firstName", FilterOperator.NE, "Peter");
+		var oFilter2 = new Filter("lastName", FilterOperator.Contains, "a");
 		listBinding.filter([oFilter, oFilter2]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+
+		filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 3, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Andreas", "ListBinding filter value");
@@ -663,25 +645,23 @@
 		assert.equal(filtered[2].firstName, "Frank", "ListBinding filter value");
 
 		// between
-		oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.BT, "A","G");
+		oFilter = new Filter("firstName", FilterOperator.BT, "A","G");
 		listBinding.filter([oFilter]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+
+		filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 2, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Andreas", "ListBinding filter value");
 		assert.equal(filtered[1].firstName, "Frank", "ListBinding filter value");
 
 		// startsWith, endsWith
-		oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.StartsWith, "M");
-		oFilter2 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EndsWith, "n");
+		oFilter = new Filter("firstName", FilterOperator.StartsWith, "M");
+		oFilter2 = new Filter("lastName", FilterOperator.EndsWith, "n");
 		listBinding.filter([oFilter, oFilter2]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+
+		filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 1, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Marc", "ListBinding filter value");
@@ -690,24 +670,22 @@
 
 	QUnit.test("null values", function(assert) {
 		createListBinding("/dataWithNullValues");
-		var listBinding = bindings[0], filteredContexts, filtered;
-		listBinding.sort(new sap.ui.model.Sorter("value"));
+		var listBinding = bindings[0], filtered;
+		listBinding.sort(new Sorter("value"));
 
-		listBinding.filter([new sap.ui.model.Filter("value", "GT", 2)]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		listBinding.filter([new Filter("value", "GT", 2)]);
+
+		filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 2, "ListBinding filtered length");
 		assert.equal(filtered[0].value, 3, "ListBinding filter value");
 		assert.equal(filtered[1].value, 4, "ListBinding filter value");
 
-		listBinding.filter([new sap.ui.model.Filter("value", "LT", 3)]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		listBinding.filter([new Filter("value", "LT", 3)]);
+
+		filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 2, "ListBinding filtered length");
 		assert.equal(filtered[0].value, 1, "ListBinding filter value");
@@ -729,23 +707,20 @@
 		var listBinding = bindings[0];
 
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
+		var oFilter = new Filter("firstName", FilterOperator.EQ, "Peter");
 		listBinding.filter(oFilter);
-		var filteredContexts = listBinding.getContexts();
-		var filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
+
 		assert.equal(filtered.length, 1, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Peter", "ListBinding filter value");
 
 		// between
-		oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.BT, "A","G");
+		oFilter = new Filter("firstName", FilterOperator.BT, "A","G");
 		listBinding.filter(oFilter);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 2, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Andreas", "ListBinding filter value");
@@ -759,26 +734,22 @@
 		var listBinding = bindings[0];
 
 		//check OR
-		var oFilter1 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
-		var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Frank");
+		var oFilter1 = new Filter("firstName", FilterOperator.EQ, "Peter");
+		var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Frank");
 		listBinding.filter([oFilter1, oFilter2]);
-		var filteredContexts = listBinding.getContexts();
-		var filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 2, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Peter", "ListBinding filter value");
 		assert.equal(filtered[1].firstName, "Frank", "ListBinding filter value");
 
 		//check OR & AND
-		var oFilter3 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Wallace");
-		var oFilter4 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Rush");
+		var oFilter3 = new Filter("lastName", FilterOperator.EQ, "Wallace");
+		var oFilter4 = new Filter("lastName", FilterOperator.EQ, "Rush");
 		listBinding.filter([oFilter1, oFilter2, oFilter3, oFilter4]);
-		var filteredContexts = listBinding.getContexts();
-		var filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		filtered = listBinding.getContexts().map(function(context) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 1, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Frank", "ListBinding filter value");
@@ -791,30 +762,28 @@
 		var listBinding = bindings[0];
 
 		//check (gender != female AND (lastName = Green OR (firstName = Peter OR firstName = Frank OR firstName = Gina)))
-		var oFilter1 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
-		var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Frank");
-		var oFilter3 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Gina");
-		var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false);
-		var oFilter4 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Green");
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter4], false);
-		var oFilter5 = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.NE, "female");
-		var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
+		var oFilter1 = new Filter("firstName", FilterOperator.EQ, "Peter");
+		var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Frank");
+		var oFilter3 = new Filter("firstName", FilterOperator.EQ, "Gina");
+		var oMultiFilter1 = new Filter([oFilter1, oFilter2, oFilter3], false);
+		var oFilter4 = new Filter("lastName", FilterOperator.EQ, "Green");
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter4], false);
+		var oFilter5 = new Filter("gender", FilterOperator.NE, "female");
+		var oMultiFilter3 = new Filter([oMultiFilter2, oFilter5], true);
 		listBinding.filter(oMultiFilter3);
-		var filteredContexts = listBinding.getContexts();
-		var filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 3, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Peter", "ListBinding filter value");
 		assert.equal(filtered[1].firstName, "Marc", "ListBinding filter value");
 		assert.equal(filtered[2].firstName, "Frank", "ListBinding filter value");
 
-		var oEmptyMultiFilterWithAND = new sap.ui.model.Filter([], true);
+		var oEmptyMultiFilterWithAND = new Filter([], true);
 		listBinding.filter(oEmptyMultiFilterWithAND);
 		assert.equal(listBinding.getContexts().length, 7, "empty AND multifilter should match all entries");
 
-		var oEmptyMultiFilterWithOR = new sap.ui.model.Filter([], false);
+		var oEmptyMultiFilterWithOR = new Filter([], false);
 		listBinding.filter(oEmptyMultiFilterWithOR);
 		assert.equal(listBinding.getContexts().length, 0, "empty OR multifilter should match no entry");
 	});
@@ -824,15 +793,13 @@
 
 		var listBinding = bindings[0];
 
-		var oFilter = new sap.ui.model.Filter("firstName", function(sValue) {
+		var oFilter = new Filter("firstName", function(sValue) {
 			return (sValue.indexOf("A") !== -1 && sValue.indexOf("G") === 0);
 		});
 
 		listBinding.filter(oFilter);
-		var filteredContexts = listBinding.getContexts();
-		var filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 1, "ListBinding filtered length");
 		assert.equal(filtered[0].firstName, "Gina", "ListBinding filter value");
@@ -845,8 +812,8 @@
 		var attach = false;
 		listBinding.attachChange(myFnCallback);
 
-		var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Wallace");
-		var oFilter2 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Rush");
+		var oFilter = new Filter("lastName", FilterOperator.EQ, "Wallace");
+		var oFilter2 = new Filter("lastName", FilterOperator.EQ, "Rush");
 		listBinding.filter([oFilter, oFilter2]);
 
 		function myFnCallback(oEvent){
@@ -867,13 +834,12 @@
 		var listBinding = bindings[0];
 
 		// not contains
-		var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NotContains, "l");
+		var oFilter = new Filter("lastName", FilterOperator.NotContains, "l");
 		listBinding.filter([oFilter]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
+
 		var iIndex = 0;
 		assert.equal(filtered.length, 6, "ListBinding filtered length");
 		assert.equal(filtered[iIndex++].firstName, "Gina", "ListBinding filter value");
@@ -891,12 +857,10 @@
 		var listBinding = bindings[0];
 
 		// not contains
-		var oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.NotStartsWith, "Mar");
+		var oFilter = new Filter("firstName", FilterOperator.NotStartsWith, "Mar");
 		listBinding.filter([oFilter]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 8, "ListBinding filtered length");
 		var iIndex = 0;
@@ -917,12 +881,10 @@
 		var listBinding = bindings[0];
 
 		// not contains
-		var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NotEndsWith, "er");
+		var oFilter = new Filter("lastName", FilterOperator.NotEndsWith, "er");
 		listBinding.filter([oFilter]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		assert.equal(filtered.length, 8, "ListBinding filtered length");
 		var iIndex = 0;
@@ -944,12 +906,10 @@
 		var listBinding = bindings[0];
 
 		// not contains
-		var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NB, "Bross", "Miller");
+		var oFilter = new Filter("lastName", FilterOperator.NB, "Bross", "Miller");
 		listBinding.filter([oFilter]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		var iIndex = 0;
 		assert.equal(filtered.length, 5, "ListBinding filtered length");
@@ -968,12 +928,10 @@
 		var listBinding = bindings[0];
 
 		// not contains
-		var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.BT, "Bross", "Miller");
+		var oFilter = new Filter("lastName", FilterOperator.BT, "Bross", "Miller");
 		listBinding.filter([oFilter]);
-		filteredContexts = listBinding.getContexts();
-		filtered = [];
-		jQuery(filteredContexts).each(function(i, context){
-			filtered[i] = oModel.getProperty(context.getPath());
+		var filtered = listBinding.getContexts().map(function(context, i) {
+			return context.getProperty("");
 		});
 		var iIndex = 0;
 		assert.equal(filtered.length, 5, "ListBinding filtered length");
@@ -990,24 +948,18 @@
 		QUnit.test("normalization", function(assert) {
 			createListBinding("/filterData");
 
-			var mFilters = {}, listBinding = bindings[0];
+			var listBinding = bindings[0];
+			var mFilters = {
+				"NFC": new Filter("string", FilterOperator.EQ, "\u1E9B\u0323"),
+				"NFD": new Filter("string", FilterOperator.EQ, "\u017F\u0323\u0307"),
+				"NFKC": new Filter("string", FilterOperator.EQ, "\u1E69"),
+				"NFKD": new Filter("string", FilterOperator.EQ, "\u0073\u0323\u0307")
+			};
 
-			mFilters["NFC"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u1E9B\u0323");
-			mFilters["NFD"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u017F\u0323\u0307");
-			mFilters["NFKC"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u1E69");
-			mFilters["NFKD"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u0073\u0323\u0307");
-
-			function fnTest(sProp, sVal) {
-				listBinding.filter(sVal);
-				var filteredContexts = listBinding.getContexts();
-				var filtered = [];
-				jQuery(filteredContexts).each(function(i, context){
-					filtered[i] = oModel.getProperty(context.getPath());
-				});
-				assert.equal(filtered.length, 5, "Filter working for " + sProp);
-			}
-
-			jQuery.each(mFilters, fnTest);
+			Object.keys(mFilters).forEach(function(sProp) {
+				listBinding.filter(mFilters[sProp]);
+				assert.equal(listBinding.getContexts().length, 5, "Filter working for " + sProp);
+			});
 		});
 	}
 
@@ -1019,9 +971,9 @@
 	});
 
 	QUnit.test("Simple Filter with case sensitive", function(assert) {
-		var oFilter = new sap.ui.model.Filter({
+		var oFilter = new Filter({
 			path: "firstName",
-			operator: sap.ui.model.FilterOperator.EQ,
+			operator: FilterOperator.EQ,
 			value1: "Andreas",
 			caseSensitive: true
 		});
@@ -1038,13 +990,13 @@
 		var fnTest = function(oValue1) {
 			var mNames = {
 				"Peter": true,
-				"Andreas": true,
-			}
+				"Andreas": true
+			};
 			return oValue1 in mNames;
 		};
-		var oFilter = new sap.ui.model.Filter({
+		var oFilter = new Filter({
 			path: "firstName",
-			operator: sap.ui.model.FilterOperator.EQ,
+			operator: FilterOperator.EQ,
 			test: fnTest,
 			caseSensitive: true
 		});
@@ -1069,14 +1021,14 @@
 	QUnit.test("constructor - Any/All are rejected", function (assert) {
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				oModel.bindList("/teamMembers", undefined, undefined, [oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
@@ -1090,53 +1042,53 @@
 		// "Any" at last position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.GT, "Wallace");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.GT, "Wallace");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 				listBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// "All" at first position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id2", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Rush");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id2", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Rush");
 				listBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id3", condition:new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Bar");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id3", condition:new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Bar");
 
-				var oMultiFilter = new sap.ui.model.Filter({
+				var oMultiFilter = new Filter({
 					filters: [oFilter, oFilter2],
 					and: false
 				});
 
 				listBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id4", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id4", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				listBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -1146,18 +1098,18 @@
 
 		var listBinding = bindings[0];
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({path: "y", operator: sap.ui.model.FilterOperator.All, variable: "id1", condition: new sap.ui.model.Filter()});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({path: "y", operator: FilterOperator.All, variable: "id1", condition: new Filter()});
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -1166,7 +1118,7 @@
 			function() {
 				listBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -1176,26 +1128,26 @@
 
 		var listBinding = bindings[0];
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({
 			path: "y",
-			operator: sap.ui.model.FilterOperator.All,
+			operator: FilterOperator.All,
 			variable: "id1",
-			condition: new sap.ui.model.Filter([
-				new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.GT, 66),
-				new sap.ui.model.Filter({path: "g", operator: sap.ui.model.FilterOperator.Any, variable: "id2", condition: new sap.ui.model.Filter("f", sap.ui.model.FilterOperator.NE, "hello")})
+			condition: new Filter([
+				new Filter("t", FilterOperator.GT, 66),
+				new Filter({path: "g", operator: FilterOperator.Any, variable: "id2", condition: new Filter("f", FilterOperator.NE, "hello")})
 			], true)
 		});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -1204,7 +1156,7 @@
 			function() {
 				listBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -1228,7 +1180,7 @@
 		assert.equal(listBinding.getLength(), 3, "ListBinding getLength");
 		assert.equal(listBinding.isLengthFinal(), true, "ListBinding isLengthFinal");
 
-		jQuery(listBinding.getContexts()).each(function(i, context){
+		listBinding.getContexts().forEach(function(context, i) {
 			assert.equal(context.getPath(), "/map/" + aKeysInMap[i], "ListBinding context");
 		});
 
@@ -1238,7 +1190,7 @@
 		createListBinding("/root");
 		var binding = bindings[0];
 		var contexts = binding.getContexts();
-		assert.ok(jQuery.isArray(contexts));
+		assert.ok(Array.isArray(contexts));
 		assert.equal(contexts.length, 2);
 		assert.equal(oModel.getProperty("name",contexts[0]), "item1");
 		assert.equal(oModel.getProperty("nodes",contexts[0]).length, 2);
@@ -1256,7 +1208,7 @@
 
 		var binding = bindings[1];
 		var contexts = binding.getContexts();
-		assert.ok(jQuery.isArray(contexts));
+		assert.ok(Array.isArray(contexts));
 		assert.equal(contexts.length, 2);
 		assert.equal(oModel.getProperty("name",contexts[0]), "subitem1");
 		assert.equal(oModel.getProperty("name",contexts[1]), "subitem2");
@@ -1269,11 +1221,11 @@
 		// check if nodes from different listbindings are the same/have the same reference
 		assert.equal(oModel.getProperty("nodes/0/name", bindings[0].getContexts()[0]), "subitem1");
 		assert.equal(oModel.getProperty("name",bindings[1].getContexts()[0]), "subitem1");
-		assert.ok(jQuery.sap.equal(bindings[0].oList[0].nodes[0], bindings[1].oList[0]));
+		assert.ok(deepEqual(bindings[0].oList[0].nodes[0], bindings[1].oList[0]));
 
 		assert.equal(oModel.getProperty("nodes/0/name",bindings[0].getContexts()[1]), "subitem3");
 		assert.equal(oModel.getProperty("name",bindings[2].getContexts()[0]), "subitem3");
-		assert.ok(jQuery.sap.equal(bindings[0].oList[1].nodes[0], bindings[2].oList[0]));
+		assert.ok(deepEqual(bindings[0].oList[1].nodes[0], bindings[2].oList[0]));
 	});
 
 	QUnit.test("getDistinctValues", function(assert) {
@@ -1282,13 +1234,13 @@
 			distinctValues;
 
 		distinctValues = binding.getDistinctValues("firstName");
-		assert.ok(jQuery.isArray(distinctValues), "Result is an array");
+		assert.ok(Array.isArray(distinctValues), "Result is an array");
 		assert.equal(distinctValues.length, 7, "Number of distinct values");
 		assert.equal(distinctValues[0], "Andreas", "Distinct value content");
 		assert.equal(distinctValues[6], "Frank", "Distinct value content");
 
 		distinctValues = binding.getDistinctValues("gender");
-		assert.ok(jQuery.isArray(distinctValues), "Result is an array");
+		assert.ok(Array.isArray(distinctValues), "Result is an array");
 		assert.equal(distinctValues.length, 3, "Number of distinct values");
 		assert.equal(distinctValues[0], "male", "Distinct value content");
 		assert.equal(distinctValues[1], "female", "Distinct value content");
@@ -1301,16 +1253,16 @@
 		for (var i = 0; i < 200; i++) {
 			aManyItems.push(i);
 		}
-		var oModel = new sap.ui.model.json.JSONModel(aManyItems),
+		var oModel = new JSONModel(aManyItems),
 			oListBinding = oModel.bindList("/"),
 			aContexts;
 
-		aContext = oListBinding.getContexts();
-		assert.equal(aContext.length, 100, "Default size limit 100");
+		aContexts = oListBinding.getContexts();
+		assert.equal(aContexts.length, 100, "Default size limit 100");
 
 		oModel.setSizeLimit(150);
-		aContext = oListBinding.getContexts();
-		assert.equal(aContext.length, 150, "Custom size limit 150");
+		aContexts = oListBinding.getContexts();
+		assert.equal(aContexts.length, 150, "Custom size limit 150");
 	});
 
 	QUnit.test("getLength", function(assert) {
@@ -1326,11 +1278,16 @@
 	});
 
 	QUnit.test("set new data with no merge and check update and getContexts test", function(assert) {
-		createListBinding("/teamMembers", "");
+		var newData = {
+			test: [
+				{firstName:"Andreas", lastName:"Klark", gender:"male" }
+			]
+		};
 
+		createListBinding("/teamMembers", "");
 		assert.equal(bindings.length, 1, "amount of ListBindings");
 		var listBinding = bindings[0];
-		listBinding.attachChange(fnFunc);
+
 		function fnFunc(){
 			assert.equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
 			assert.equal(listBinding.getContexts().length, 0, "ListBinding contexts length");
@@ -1338,15 +1295,12 @@
 			assert.equal(listBinding.getModel().getProperty("/test/0/firstName"), "Andreas", "model new property value");
 			listBinding.detachChange(fnFunc);
 		}
+		listBinding.attachChange(fnFunc);
+
 		assert.equal(listBinding.getPath(), "/teamMembers", "ListBinding path");
 		assert.ok(listBinding.getModel() === oModel, "ListBinding model");
-		// does not work...recursion because bining is set on model
+		// does not work...recursion because binding is set on model
 		//assert.equal(listBinding.getModel(), oModel, "ListBinding model");
-		var newData = {
-			test:[
-				{ firstName:"Andreas", lastName:"Klark", gender:"male" }
-			]
-		};
 		listBinding.getModel().setData(newData, false);
 	});
 
@@ -1378,7 +1332,7 @@
 	QUnit.module("Listbinding diff calculation", {
 		beforeEach: function() {
 			setup();
-			this.oModel = new sap.ui.model.json.JSONModel(testData.teamMembers);
+			this.oModel = new JSONModel(testData.teamMembers);
 			this.oListBinding = this.oModel.bindList("/");
 		},
 		afterEach: function() {
@@ -1461,7 +1415,7 @@
 		beforeEach: function() {
 			setup();
 			this.oData = testData.teamMembers.slice(0);
-			this.oModel = new sap.ui.model.json.JSONModel(this.oData);
+			this.oModel = new JSONModel(this.oData);
 			this.oListBinding = this.oModel.bindList("/");
 			this.oListBinding.attachChange(function() {});
 		},
@@ -1495,12 +1449,12 @@
 		this.oData.push({firstName:"Michael", lastName:"Peterson", gender:"male"});
 		this.oModel.refresh();
 		assert.equal(oLB.getContexts().length, 8, "Binding still has length 8 as it is suspended");
-		oLB.sort(new sap.ui.model.Sorter("firstName"));
+		oLB.sort(new Sorter("firstName"));
 		assert.equal(oLB.getContexts().length, 9, "Binding has length 9 after sorting");
 		this.oData.push({firstName:"Michael", lastName:"Bubble", gender:"male"});
 		this.oModel.refresh();
 		assert.equal(oLB.getContexts().length, 9, "Binding still has length 9 as it is suspended");
-		oLB.filter([new sap.ui.model.Filter("firstName", "EQ", "Michael")]);
+		oLB.filter([new Filter("firstName", "EQ", "Michael")]);
 		assert.equal(oLB.getContexts().length, 3, "Binding has length 3 after filtering");
 		oLB.resume();
 		assert.equal(oLB.getContexts().length, 3, "Binding still has length 3 after calling resume");
@@ -1524,15 +1478,4 @@
 		oLB.resume();
 		assert.equal(oLB.getContexts().length, 10, "Binding still has length 10 after calling resume");
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: JSON List Binding</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-</body>
-</html>
+});
