@@ -1,47 +1,19 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"></script>
-
-<script>
-	jQuery.sap.require("sap.ui.core.util.MockServer");
-</script>
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script
-	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<!-- Test functions -->
-<script>
-
-	sinon.config.useFakeTimers = false;
-
-	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
+/*global QUnit, sinon */
+sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"], function(MockServer, ODataModel){
 
 	//Initialize mock servers
-
+	var sMockBaseUrl = "test-resources/sap/ui/core/qunit/model/";
 	//Mock server for use with navigation properties
-	var oNavPropMockServer = new sap.ui.core.util.MockServer({
+	var oNavPropMockServer = new MockServer({
 		rootUri: '/navprop/'
 	});
-	oNavPropMockServer.simulate("model/metadata_odtb.xml", "model/odtb/");
+	oNavPropMockServer.simulate(sMockBaseUrl + "metadata_odtb.xml", sMockBaseUrl + "odtb/");
 
 	//MockServer for use with annotated tree
-	var oAnnotationMockServer = new sap.ui.core.util.MockServer({
+	var oAnnotationMockServer = new MockServer({
 		rootUri: '/metadata/'
 	});
-	oAnnotationMockServer.simulate("model/metadata_odtbmd.xml", "model/odtbmd/");
+	oAnnotationMockServer.simulate(sMockBaseUrl + "metadata_odtbmd.xml", sMockBaseUrl + "odtbmd/");
 
 	/**
 	 * Clean-Up Hierarchy Annotation Mockdata/Metadata
@@ -54,10 +26,10 @@
 	}
 
 	//MockServer for use with annotated tree -> guids instead of strings as IDs
-	var oAnnotationMockServerGUID = new sap.ui.core.util.MockServer({
+	var oAnnotationMockServerGUID = new MockServer({
 		rootUri: '/metadata_guid/'
 	});
-	oAnnotationMockServerGUID.simulate("model/metadata_odtbmd_guid.xml", "model/odtbmd/");
+	oAnnotationMockServerGUID.simulate(sMockBaseUrl + "metadata_odtbmd_guid.xml", sMockBaseUrl + "odtbmd/");
 
 	/**
 	 * Same as above, but for the GUID based mockdata
@@ -78,7 +50,7 @@
 	QUnit.module("ODataTreeBinding with navigation properties", {
 		beforeEach: function() {
 			oNavPropMockServer.start();
-			oModel = new sap.ui.model.odata.v2.ODataModel('/navprop/', {useBatch:false});
+			oModel = new ODataModel('/navprop/', {useBatch:false});
 		},
 		afterEach: function() {
 			oNavPropMockServer.stop();
@@ -501,7 +473,8 @@
 		});
 	});
 
-	QUnit.test("Init binding with deferred group ID", 0, function(assert){
+	QUnit.test("Init binding with deferred group ID", function(assert){
+		assert.expect(0);
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredGroups(["PONY"]);
@@ -526,7 +499,8 @@
 		});
 	});
 
-	QUnit.test("Init binding with deferred group ID in Client mode", 0, function(assert){
+	QUnit.test("Init binding with deferred group ID in Client mode", function(assert){
+		assert.expect(0);
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredGroups(["PONY"]);
@@ -552,7 +526,8 @@
 		});
 	});
 
-	QUnit.test("Refresh binding with deferred group ID", 2, function(assert){
+	QUnit.test("Refresh binding with deferred group ID", function(assert){
+		assert.expect(2);
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
 			oModel.setDeferredGroups(["PONY"]);
@@ -981,7 +956,7 @@
 	QUnit.module("ODataTreeBinding with annotations", {
 		beforeEach: function() {
 			oAnnotationMockServer.start();
-			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:false});
+			oModel = new ODataModel('/metadata/', {useBatch:false});
 		},
 		afterEach: function() {
 			oAnnotationMockServer.stop();
@@ -1236,7 +1211,8 @@
 		});
 	});
 
-	QUnit.test("_loadSubTree: Should abort repetitive identical requests", 2, function(assert) {
+	QUnit.test("_loadSubTree: Should abort repetitive identical requests", function(assert) {
+		assert.expect(2);
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function () {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
@@ -1281,7 +1257,8 @@
 		});
 	});
 
-	QUnit.test("_loadSubTree: Should fire correct events in error scenario", 3, function(assert) {
+	QUnit.test("_loadSubTree: Should fire correct events in error scenario", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function () {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
@@ -1311,7 +1288,8 @@
 		});
 	});
 
-	QUnit.test("_loadSubTree: Should process expansion correctly", 11, function(assert) {
+	QUnit.test("_loadSubTree: Should process expansion correctly", function(assert) {
+		assert.expect(11);
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function () {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
@@ -2626,7 +2604,7 @@
 	QUnit.module("ODataTreeBinding with annotations - Edm Type support", {
 		beforeEach: function() {
 			oAnnotationMockServerGUID.start();
-			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata_guid/', {useBatch:false});
+			oModel = new ODataModel('/metadata_guid/', {useBatch:false});
 		},
 		afterEach: function() {
 			oAnnotationMockServerGUID.stop();
@@ -2755,7 +2733,7 @@
 	QUnit.module("ODataTreeBinding - General Databinding", {
 		beforeEach: function() {
 			oAnnotationMockServer.start();
-			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:false});
+			oModel = new ODataModel('/metadata/', {useBatch:false});
 		},
 		afterEach: function() {
 			oAnnotationMockServer.stop();
@@ -3057,15 +3035,4 @@
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
-
-</script>
-
-</head>
-<body>
-	<h1 id="qunit-header">QUnit tests: ODataTreeBinding</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-</body>
-</html>
+});
