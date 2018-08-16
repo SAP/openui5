@@ -1976,7 +1976,7 @@ sap.ui.define([
 
 				oBinding._expandSubTree = function(oNode, aResults) {
 					assert.deepEqual(oNode, oExpectedNode, "Passed correct node object to _expandSubTree()");
-					assert.deepEqual(aResults, "dummy data array", "Passed correct data array");
+					assert.deepEqual(aResults[0].pony, true, "Passed correct data array");
 				};
 
 				oBinding._fireChange = function(oEvent) {
@@ -1988,12 +1988,52 @@ sap.ui.define([
 					assert.deepEqual(aParams, aExpectedParams, "Generated correct parameters");
 					assert.deepEqual(oNode, oExpectedNode, "Passed correct node object to _loadSubTree()");
 					return Promise.resolve({
-						results: "dummy data array"
+						results: [{ "FinStatementHierarchyLevelVal": 0, pony: true }]
 					});
 				};
 
 
 				oBinding.expandNodeToLevel(0, 2);
+			}
+
+			oBinding.attachChange(fnChangeHandler);
+			oBinding.getContexts(0, 100);
+
+		});
+	});
+
+	QUnit.test("expandNodeToLevel: Expand correct nodes", function(assert) {
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, null, {
+				rootLevel: 2,
+				displayRootNode: false
+			});
+
+			function fnChangeHandler() {
+				oBinding.getContexts(0, 100);
+
+				oBinding._expandSubTree = function(oNode, aResults) {
+					assert.equal(aResults.length,  1, "Only one node should be expanded");
+					assert.equal(aResults[0]["FinStatementHierarchyLevelVal"],  0, "Only node on level 0 should be expanded");
+				};
+
+				oBinding._fireChange = function(oEvent) {
+					assert.deepEqual(oEvent.reason, "expand", "Change event fired with correct reason");
+					done();
+				};
+
+				oBinding._loadSubTree = function(oNode, aParams) {
+					return Promise.resolve({
+						results: [
+							{ "FinStatementHierarchyLevelVal": 0 },
+							{ "FinStatementHierarchyLevelVal": 1 }
+						]
+					});
+				};
+
+
+				oBinding.expandNodeToLevel(0, 1);
 			}
 
 			oBinding.attachChange(fnChangeHandler);
