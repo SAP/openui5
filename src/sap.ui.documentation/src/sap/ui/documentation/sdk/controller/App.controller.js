@@ -72,7 +72,8 @@ sap.ui.define([
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
 					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
-					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
+					"Terms of Use": this.getModel("versionData").getProperty("/isOpenUI5") ?
+					"TermsOfUse.txt" : "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
 					"Trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
 					"Disclaimer": "https://help.sap.com/viewer/disclaimer",
