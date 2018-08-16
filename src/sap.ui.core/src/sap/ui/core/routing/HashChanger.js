@@ -34,7 +34,7 @@ sap.ui.define([
 	 * This will also fire a hashchanged event with the initial hash.
 	 *
 	 * @public
-	 * @return false if it was initialized before, true if it was initialized the first time
+	 * @return {boolean} false if it was initialized before, true if it was initialized the first time
 	 */
 	HashChanger.prototype.init = function() {
 		if (this._initialized) {
@@ -141,6 +141,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	HashChanger.prototype.destroy = function() {
+		delete this._initialized;
 		hasher.changed.remove(this.fireHashChanged, this);
 		EventProvider.prototype.destroy.apply(this, arguments);
 	};
@@ -152,6 +153,7 @@ sap.ui.define([
 		/**
 		 * Gets a global singleton of the HashChanger. The singleton will get created when this function is invoked for the first time.
 		 * @public
+		 * @return {sap.ui.core.routing.HashChanger} The global HashChanger
 		 * @static
 		 */
 		HashChanger.getInstance = function() {
