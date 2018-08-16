@@ -1,22 +1,20 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" data-sap-ui-language="en_US">
-</script>
-
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script charset="utf-8"> // IE needs this :-/
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONTreeBinding",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/Sorter"
+], function(
+	JSONModel,
+	JSONTreeBinding,
+	Filter,
+	FilterOperator,
+	FilterType,
+	Sorter
+) {
+	"use strict";
 
 	var oModel;
 	var testData;
@@ -24,7 +22,7 @@
 
 	function setup(){
 		// reset bindings
-		bindings = new Array();
+		bindings = [];
 		testData = {
 			orgStructure:{
 				 0: {
@@ -123,7 +121,7 @@
 								name: "Rick Lee",
 								gender: "male"
 							}
-						},
+						}
 					},
 					2: {
 						name: "Catherine Platte",
@@ -131,13 +129,12 @@
 					},
 					noTreeNode: null
 				}
-			},
+			}
 		};
-		oModel = new sap.ui.model.json.JSONModel();
+		oModel = new JSONModel();
 		oModel.setData(testData);
 		sap.ui.getCore().setModel(oModel);
-
-	};
+	}
 
 
 	//creates a certain data
@@ -157,7 +154,7 @@
 				var sGroupID = oNode.id + "-" + i;
 				oNode.children.push({
 					id: sGroupID,
-					name: "Node(" + sGroupID +")",
+					name: "Node(" + sGroupID + ")",
 					description: "Hello, I am the description for node #" + sGroupID,
 					children: []
 				});
@@ -171,17 +168,17 @@
 			addChildren(oChild, iAmount);
 		}
 
-		oModel = new sap.ui.model.json.JSONModel();
+		oModel = new JSONModel();
 		oModel.setData(oData);
 		sap.ui.getCore().setModel(oModel);
-	};
+	}
 
 
 	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
 		// create binding
-		bindings = new Array();
+		bindings = [];
 		bindings[0] = oModel.bindTree(sPath, oContext, aFilters || [], mParameters, aSorters);
-	};
+	}
 
 	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
 		setup();
@@ -260,7 +257,7 @@
 			contexts,
 			context;
 
-		assert.ok(treeBinding instanceof sap.ui.model.json.JSONTreeBinding, "treeBinding class check");
+		assert.ok(treeBinding instanceof JSONTreeBinding, "treeBinding class check");
 		contexts = treeBinding.getRootContexts();
 		assert.equal(contexts.length, 1, "TreeBinding rootContexts length");
 
@@ -303,7 +300,7 @@
 		var treeBinding = bindings[0];
 
 		// Filter for node with name containing 'in', three matches expected: Inga Horst, Catherine Platte and Gina Rush
-		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
+		var oFilter1 = new Filter("name", FilterOperator.Contains, "in");
 		treeBinding.filter(oFilter1);
 
 		var filteredContext = treeBinding.getRootContexts();
@@ -325,11 +322,11 @@
 
 		var treeBinding = bindings[0];
 
-		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
-		var oFilter2 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "al");
-		var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2], false);
-		var oFilter3 = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.EQ, "female");
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], true);
+		var oFilter1 = new Filter("name", FilterOperator.Contains, "in");
+		var oFilter2 = new Filter("name", FilterOperator.Contains, "al");
+		var oMultiFilter1 = new Filter([oFilter1, oFilter2], false);
+		var oFilter3 = new Filter("gender", FilterOperator.EQ, "female");
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], true);
 		treeBinding.filter([oMultiFilter2]);
 		var filteredContext = treeBinding.getRootContexts();
 		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
@@ -349,7 +346,7 @@
 		oModel.addBinding(treeBinding);
 
 		// Filter for node with name containing 'alla'
-		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "alla");
+		var oFilter1 = new Filter("name", FilterOperator.Contains, "alla");
 		treeBinding.filter(oFilter1);
 
 		var filteredContext = treeBinding.getRootContexts();
@@ -383,7 +380,8 @@
 					}
 				}
 			}
-		}
+		};
+
 		oModel.setData(newData);
 
 		// check if filter got reapplied:
@@ -402,13 +400,13 @@
 	QUnit.test("TreeBinding - Application & Control filters - initial filters", function(assert) {
 		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
-			[new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1")]
+			[new Filter("tree", FilterOperator.Contains, "#1")]
 		);
 
 		var treeBinding = bindings[0];
 
 		//control filters after initial application filters
-		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "John"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("name", FilterOperator.Contains, "John"), FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
@@ -429,13 +427,13 @@
 	QUnit.test("TreeBinding - Application & Control filters - clear filters", function(assert) {
 		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
-			[new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1")]
+			[new Filter("tree", FilterOperator.Contains, "#1")]
 		);
 
 		var treeBinding = bindings[0];
 
 		//control filters after initial application filters
-		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "John"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("name", FilterOperator.Contains, "John"), FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
@@ -471,13 +469,13 @@
 	QUnit.test("TreeBinding - Application & Control filters - clear filters separately", function(assert) {
 		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
-			[new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1")]
+			[new Filter("tree", FilterOperator.Contains, "#1")]
 		);
 
 		var treeBinding = bindings[0];
 
 		//control filters after initial application filters
-		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "John"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("name", FilterOperator.Contains, "John"), FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
@@ -495,25 +493,25 @@
 		assert.equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "John Doe", "TreeBinding filter value");
 
 		//remove application filter...control filter should still exist
-		treeBinding.filter([], sap.ui.model.FilterType.Application);
+		treeBinding.filter([], FilterType.Application);
 
 		//Peter
-		var filteredContext = treeBinding.getRootContexts();
+		filteredContext = treeBinding.getRootContexts();
 		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
 		assert.equal(oModel.getProperty(filteredContext[0].getPath()).name, "Peter Cliff", "TreeBinding filter value");
 
 		//Inga
-		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
 		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
 		assert.equal(oModel.getProperty(nodeContexts1[0].getPath()).name, "Inga Horst", "TreeBinding filter value");
 
 		//only John Doe filtered
-		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
 		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
 		assert.equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "John Doe", "TreeBinding filter value");
 
 		//remove control filters by calling filter with no arguments
-		treeBinding.filter([], sap.ui.model.FilterType.Control);
+		treeBinding.filter([], FilterType.Control);
 
 		// root level is still 1
 		filteredContext = treeBinding.getRootContexts();
@@ -535,8 +533,8 @@
 		var treeBinding = bindings[0];
 
 		// apply application/control filters
-		treeBinding.filter(new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1"), "Application");
-		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "Jennifer"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("tree", FilterOperator.Contains, "#1"), "Application");
+		treeBinding.filter(new Filter("name", FilterOperator.Contains, "Jennifer"), FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
@@ -552,7 +550,7 @@
 		assert.equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "Jennifer Wallace", "TreeBinding filter value");
 
 		//change control filter
-		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "John"), sap.ui.model.FilterType.Control);
+		treeBinding.filter(new Filter("name", FilterOperator.Contains, "John"), FilterType.Control);
 
 		//Peter
 		filteredContext = treeBinding.getRootContexts();
@@ -613,7 +611,7 @@
 		var treeBinding = bindings[0];
 
 		// Filter for node with name containing 'Gina', only one expected: Gina Rush
-		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "Gina");
+		var oFilter1 = new Filter("name", FilterOperator.Contains, "Gina");
 		treeBinding.filter(oFilter1);
 
 		var filteredContext = treeBinding.getRootContexts();
@@ -746,7 +744,7 @@
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
 		},
-		[new sap.ui.model.Sorter("name")]);
+		[new Sorter("name")]);
 
 		var treeBinding = bindings[0];
 
@@ -762,7 +760,7 @@
 		assert.equal(aChildContexts[2].getProperty("name"), "John Wallace", "Inga child node[2]] after sorting is: John Wallace");
 
 		//call sort afterwards
-		treeBinding.sort(new sap.ui.model.Sorter("name", true));
+		treeBinding.sort(new Sorter("name", true));
 
 		aRootContexts = treeBinding.getRootContexts(0, 3);
 
@@ -785,7 +783,7 @@
 
 		var treeBinding = bindings[0];
 
-		treeBinding.sort(new sap.ui.model.Sorter("name"));
+		treeBinding.sort(new Sorter("name"));
 
 		var aRootContexts = treeBinding.getRootContexts(0, 3);
 
@@ -799,7 +797,7 @@
 		assert.equal(aChildContexts[2].getProperty("name"), "John Wallace", "Inga child node[2]] after sorting is: John Wallace");
 
 		//now change the sorter to descending
-		treeBinding.sort(new sap.ui.model.Sorter("name", true));
+		treeBinding.sort(new Sorter("name", true));
 
 		aRootContexts = treeBinding.getRootContexts(0, 3);
 
@@ -821,7 +819,7 @@
 		assert.equal(aRootContexts[1].getProperty("name"), "Tom Bay", "2nd node after sorting is: Tom Bay");
 		assert.equal(aRootContexts[2].getProperty("name"), "Catherine Platte", "3rd node after sorting is: Catherine Platte");
 
-		var aChildContexts = treeBinding.getNodeContexts(aRootContexts[0]);
+		aChildContexts = treeBinding.getNodeContexts(aRootContexts[0]);
 		assert.equal(aChildContexts[0].getProperty("name"), "John Wallace", "Inga child node[0] after sorting is: John Wallace");
 		assert.equal(aChildContexts[1].getProperty("name"), "Frank Wallace", "Inga child node[1] after sorting is: Frank Wallace");
 		assert.equal(aChildContexts[2].getProperty("name"), "Gina Rush", "Inga child node[2] after sorting is: Gina Rush");
@@ -830,14 +828,13 @@
 	QUnit.test("TreeBinding single filter with array structure", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure2", null, [], {
-			displayRootNode: false,
-			// arrayNames: ["children"]
+			displayRootNode: false
 		});
 
 		var treeBinding = bindings[0];
 
 		// Filter for node with name containing 'in', three matches expected: Inga Horst, Catherine Platte and Gina Rush
-		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
+		var oFilter1 = new Filter("name", FilterOperator.Contains, "in");
 		treeBinding.filter(oFilter1);
 
 		var filteredContext = treeBinding.getRootContexts();
@@ -861,7 +858,7 @@
 		var treeBinding = bindings[0];
 
 		// Filter for node with name containing 'in', three matches expected: Inga Horst, Catherine Platte and Gina Rush
-		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
+		var oFilter1 = new Filter("name", FilterOperator.Contains, "in");
 		treeBinding.filter(oFilter1);
 
 		var filteredContext = treeBinding.getRootContexts();
@@ -901,7 +898,7 @@
 		assert.equal(oBinding.getChildCount(oContext), 200, "getChildCount(oContext) returns the correct number of child nodes (200)");
 
 		//one level deeper should be empty
-		var oContext = aChildContexts[128];
+		oContext = aChildContexts[128];
 		assert.ok(oContext, "level 1 child is available");
 		assert.equal(oBinding.getChildCount(oContext), 0, "getChildCount(oContext) returns the correct number of child nodes (0)");
 	});
@@ -936,14 +933,14 @@
 	QUnit.test("constructor - Any/All are rejected", function (assert) {
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				oModel.bindTree("/teamMembers", undefined, [oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -954,53 +951,53 @@
 		// "Any" at last position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.GT, "Wallace");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.GT, "Wallace");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 				oTreeBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// "All" at first position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id2", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Rush");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id2", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Rush");
 				oTreeBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id3", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Bar");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id3", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Bar");
 
-				var oMultiFilter = new sap.ui.model.Filter({
+				var oMultiFilter = new Filter({
 					filters: [oFilter, oFilter2],
 					and: false
 				});
 
 				oTreeBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id4", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id4", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				oTreeBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -1008,18 +1005,18 @@
 	QUnit.test("Multi Filters (Complex) 1 - Unsupported are not OK", function(assert) {
 		var oTreeBinding = oModel.bindTree("/teamMembers", undefined, []);
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({path: "y", operator: sap.ui.model.FilterOperator.All, variable: "id1", condition: new sap.ui.model.Filter()});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({path: "y", operator: FilterOperator.All, variable: "id1", condition: new Filter()});
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -1028,7 +1025,7 @@
 			function() {
 				oTreeBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -1036,26 +1033,26 @@
 	QUnit.test("Multi Filters (Complex) 2 - Unsupported are not OK", function(assert) {
 		var oTreeBinding = oModel.bindTree("/teamMembers", undefined, []);
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({
 			path: "y",
-			operator: sap.ui.model.FilterOperator.All,
+			operator: FilterOperator.All,
 			variable: "id1",
-			condition: new sap.ui.model.Filter([
-				new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.GT, 66),
-				new sap.ui.model.Filter({path: "g", operator: sap.ui.model.FilterOperator.Any, variable: "id2", condition: new sap.ui.model.Filter("f", sap.ui.model.FilterOperator.NE, "hello")})
+			condition: new Filter([
+				new Filter("t", FilterOperator.GT, 66),
+				new Filter({path: "g", operator: FilterOperator.Any, variable: "id2", condition: new Filter("f", FilterOperator.NE, "hello")})
 			], true)
 		});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -1064,19 +1061,8 @@
 			function() {
 				oTreeBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: JSON Tree Binding</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-</body>
-</html>
+});
