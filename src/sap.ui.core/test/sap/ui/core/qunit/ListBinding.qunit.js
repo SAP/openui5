@@ -1,83 +1,67 @@
-<!DOCTYPE HTML>
+/*global QUnit*/
+sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Control",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Sorter"
+], function(
+	Element,
+	Control,
+	JSONModel,
+	Sorter
+) {
+	"use strict";
 
-<!--
-  Tested sap.ui.model.Binding
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js" >
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script charset="utf-8"> // IE needs this :-/
+	//add divs for control tests
+	var oContent = document.createElement("div");
+	oContent.setAttribute("id", "content");
+	document.body.appendChild(oContent);
 
 	var oModel, oNamedModel;
 	var testData;
-	var bindings;
 	var control;
 
-    sap.ui.core.Element.extend("MyListItem", {
-        // the control API:
-        metadata : {
-            properties : {
-                "text" : "string"
-            }
-        }
-    });
+	var MyListItem = Element.extend("MyListItem", {
+		// the control API:
+		metadata : {
+			properties : {
+				"text" : "string"
+			}
+		}
+	});
 
-    sap.ui.core.Control.extend("MyList", {
+	var MyList = Control.extend("MyList", {
 
-        // the control API:
-        metadata : {
-            aggregations : {
-                "items" : {type: "MyListItem", multiple: true}
-            }
-        },
+		// the control API:
+		metadata : {
+			aggregations : {
+				"items" : {type: "MyListItem", multiple: true}
+			}
+		},
 
-        // the part creating the HTML:
-        renderer : function(oRm, oControl) {
-            oRm.write("<ul");
-            oRm.writeControlData(oControl);
-            oRm.writeClasses();
-            oRm.write(">");
-            jQuery.each(oControl.getItems(), function(iIndex, oItem) {
-                oRm.write("<li");
-                if (oItem.getTooltip_AsString()) {
-                	oRm.writeAttributeEscaped("title", oItem.getTooltip_AsString());
-                }
-                oRm.write(">");
-                oRm.writeEscaped(oItem.getText());
-                oRm.write("</li>");
-            });
-            oRm.write("</ul>");
-        }
+		// the part creating the HTML:
+		renderer : function(oRm, oControl) {
+			oRm.write("<ul");
+			oRm.writeControlData(oControl);
+			oRm.writeClasses();
+			oRm.write(">");
+			oControl.getItems().forEach(function(oItem) {
+				oRm.write("<li");
+				if (oItem.getTooltip_AsString()) {
+					oRm.writeAttributeEscaped("title", oItem.getTooltip_AsString());
+				}
+				oRm.write(">");
+				oRm.writeEscaped(oItem.getText());
+				oRm.write("</li>");
+			});
+			oRm.write("</ul>");
+		}
 
-    });
-
-
+	});
 
 	function setup(){
-		// reset bindings
-		bindings = new Array();
 		testData = {
-	  		teamMembers:[
+			teamMembers:[
 				{firstName:"Andreas", lastName:"Klark", gender:"male"},
 				{firstName:"Peter", lastName:"Miller", gender:"male"},
 				{firstName:"Gina", lastName:"Rush", gender:"female"},
@@ -85,20 +69,19 @@
 				{firstName:"Michael", lastName:"Spring", gender:"male"},
 				{firstName:"Marc", lastName:"Green", gender:"male"},
 				{firstName:"Frank", lastName:"Wallace", gender:"male"}
-	   		]
+			]
 		};
-		oModel = new sap.ui.model.json.JSONModel();
+		oModel = new JSONModel();
 		oModel.setData(testData);
 		sap.ui.getCore().setModel(oModel);
 
-		oNamedModel = new sap.ui.model.json.JSONModel();
+		oNamedModel = new JSONModel();
 		oNamedModel.setData(testData);
 		sap.ui.getCore().setModel(oNamedModel,"NamedModel");
 
 		control = new MyList();
 		control.placeAt("content");
-
-	};
+	}
 
 	QUnit.test("ListBinding with Template (classical)", function(assert) {
 		setup();
@@ -155,7 +138,7 @@
 		control.bindAggregation("items", {
 			path: "/teamMembers",
 			template: new MyListItem({text:"{lastName}"})
-		})
+		});
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
@@ -174,7 +157,7 @@
 				}
 				return li;
 			}
-		})
+		});
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
@@ -183,13 +166,13 @@
 
 	QUnit.test("ListBinding with bindElement", function(assert) {
 		setup();
-		oModel = new sap.ui.model.json.JSONModel();
+		oModel = new JSONModel();
 		oModel.setData({modelData:testData});
 		control.setModel(oModel);
 		control.bindAggregation("items", {
 			path: "teamMembers",
 			template: new MyListItem({text:"{lastName}"})
-		})
+		});
 		control.bindElement("/modelData");
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
@@ -198,13 +181,13 @@
 
 	QUnit.test("Named model: ListBinding with bindElement", function(assert) {
 		setup();
-		oNamedModel = new sap.ui.model.json.JSONModel();
+		oNamedModel = new JSONModel();
 		oNamedModel.setData({modelData:testData});
 		control.setModel(oNamedModel,"NamedModel");
 		control.bindAggregation("items", {
 			path: "NamedModel>teamMembers",
 			template: new MyListItem({text:"{NamedModel>firstName}"})
-		})
+		});
 		control.bindElement("NamedModel>/modelData");
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
@@ -249,25 +232,12 @@
 	QUnit.module("Sorter");
 
 	QUnit.test("getGroupFunction", function(assert) {
-		var oSorter = new sap.ui.model.Sorter("myProperty", false);
+		var oSorter = new Sorter("myProperty", false);
 		assert.equal(oSorter.getGroupFunction(), undefined, "sorter without group configuration should return undefined group function");
-		var oSorter = new sap.ui.model.Sorter("myProperty", false, function() { return this});
+		oSorter = new Sorter("myProperty", false, function() { return this;});
 		assert.equal(typeof oSorter.getGroupFunction(), 'function', "sorter with group configuration should return a group function");
 		assert.strictEqual(oSorter.getGroupFunction().call(window), oSorter, "invocation of the group function should use the sorter as this context");
-		var oSorter = new sap.ui.model.Sorter("myProperty", false, true);
+		oSorter = new Sorter("myProperty", false, true);
 		assert.equal(typeof oSorter.getGroupFunction(), 'function', "sorter with group configuration 'true' should return a group function");
 	});
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding JSON Bindings</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="content"></div>
-</body>
-</html>
+});

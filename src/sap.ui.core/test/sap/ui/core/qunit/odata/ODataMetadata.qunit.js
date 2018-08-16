@@ -1,54 +1,41 @@
-<!DOCTYPE HTML>
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<!-- Test functions -->
-<script>
-	// Enable code coverage
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
+/*global QUnit*/
+sap.ui.define([
+	"sap/ui/model/odata/ODataMetadata",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/core/util/MockServer"
+], function(
+	ODataMetadata,
+	V1ODataModel,
+	V2ODataModel,
+	MockServer
+) {
+	"use strict";
 
 	var sServiceUri = "/MockSrv/";
-	var sServiceUri2 = "/MockSrv2/";
 	var sServiceUri3 = "/DOESNOTEXIST/";
 
-	var sDataRootPath =  "model/";
+	var sDataRootPath =  "test-resources/sap/ui/core/qunit/model/";
 	var oServer;
-	jQuery.sap.require("sap.ui.core.util.MockServer");
+	var oModel;
 
 	function initServer(sUrl, sMetaPath, sDataRoot) {
-		var oMockServer = new sap.ui.core.util.MockServer({
+		var oMockServer = new MockServer({
 			rootUri: sServiceUri
 		});
-		oMockServer.simulate(sMetaPath, sDataRoot);
+		oMockServer.simulate("test-resources/sap/ui/core/qunit/" + sMetaPath, sDataRoot);
 		oMockServer.start();
 		return oMockServer;
 	}
 
 	function initModel(sUri) {
-		return oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+		oModel = new V1ODataModel(sUri, true);
+		return oModel;
 	}
 
 	function initModelV2(sUri, mOptions){
-		return oModel = new sap.ui.model.odata.v2.ODataModel(sUri, mOptions);
+		oModel = new V2ODataModel(sUri, mOptions);
+		return oModel;
 	}
 
 	QUnit.test("init MockServer Flight", function(assert) {
@@ -64,21 +51,20 @@
 
 	QUnit.test("metadata failed handling", function(assert){
 		var done = assert.async();
-		var that = this;
- 		var oModel = initModel(sServiceUri3);
- 		var oModel2 = {};
- 		var handleFailed1 = function(){
+		var oModel = initModel(sServiceUri3);
+		var oModel2 = {};
+		var handleFailed1 = function(){
 			assert.ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
 			oModel2.detachMetadataFailed(handleFailed1);
 			done();
 		};
- 		var handleFailed2 = function(){
+		var handleFailed2 = function(){
 			assert.ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
 			assert.ok(oModel.oMetadata.isFailed(), "Failed on metadata object has been set correctly");
 			oModel2 = initModel(sServiceUri3);
 			oModel2.attachMetadataFailed(handleFailed1);
 			oModel.detachMetadataFailed(handleFailed2);
- 		};
+		};
 		oModel.attachMetadataFailed(handleFailed2);
 	});
 	QUnit.test("get annotation 'sap:label'", function(assert) {
@@ -176,7 +162,7 @@
 			assert.expect(4);
 			var oMetadata = oModel.oMetadata;
 
-			var mEntityType = oMetadata._getEntityTypeByName(this.flightEntity.fullName)
+			var mEntityType = oMetadata._getEntityTypeByName(this.flightEntity.fullName);
 			assert.equal(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
 			assert.equal(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
 
@@ -194,7 +180,7 @@
 			var oNull = oMetadata._getEntityTypeByName("");
 			assert.equal(oNull, null, "Method returns null for empty path");
 
-			var oInvalidMetadata = new sap.ui.model.odata.ODataMetadata("INVALID", {});
+			var oInvalidMetadata = new ODataMetadata("INVALID", {});
 			oNull = oInvalidMetadata._getEntityTypeByName(this.flightEntity.fullName);
 			assert.equal(oNull, null, "Method returns null when metadata is not loaded path");
 			oInvalidMetadata.destroy();
@@ -211,7 +197,7 @@
 			assert.equal(mEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
 			assert.equal(mEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
 
-			var mEntityType = oMetadata._getEntityTypeByName(mEntitySet.entityType)
+			var mEntityType = oMetadata._getEntityTypeByName(mEntitySet.entityType);
 			assert.equal(mEntityType.namespace, this.flightEntity.namespace, "Entity namespace has correct value");
 			assert.equal(mEntityType.name, this.flightEntity.name, "Entity name has correct value");
 
@@ -233,7 +219,7 @@
 			var oNull = oMetadata._getEntityTypeByPath("");
 			assert.equal(oNull, null, "Method returns null for empty path");
 
-			var oInvalidMetadata = new sap.ui.model.odata.ODataMetadata("INVALID", {});
+			var oInvalidMetadata = new ODataMetadata("INVALID", {});
 			oNull = oInvalidMetadata._getEntityTypeByPath(this.flightEntity.path);
 			assert.equal(oNull, null, "Method returns null when metadata is not loaded path");
 			oInvalidMetadata.destroy();
@@ -312,13 +298,13 @@
 
 			done();
 		}
-	}
+	};
 
 
-	var oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
+	oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
 
 	var oModelV1 = initModel(sServiceUri);
-	pModelV1MetadataLoaded = new Promise(function(fnResolve, fnReject) {
+	var pModelV1MetadataLoaded = new Promise(function(fnResolve, fnReject) {
 		oModelV1.attachMetadataLoaded(fnResolve);
 		oModelV1.attachMetadataFailed(fnReject);
 	});
@@ -327,7 +313,7 @@
 
 	var fnWrapMetadataReady = function(fnRealTest, assert) {
 		var done = assert.async();
-		if (oModel instanceof sap.ui.model.odata.v2.ODataModel) {
+		if (oModel instanceof V2ODataModel) {
 			oModel.metadataLoaded().then(function () {
 				fnRealTest.apply(this, [assert, done].concat([].slice.call(arguments)));
 			});
@@ -403,7 +389,7 @@
 
 
 		var mEntityType = oMetadata._getEntityTypeByPath("/FlightCollection(1)");
-		var mObject = oMetadata._getPropertyMetadata(mEntityType, "AirLineID")
+		var mObject = oMetadata._getPropertyMetadata(mEntityType, "AirLineID");
 
 		var mAnnotation = oMetadata._getV4AnnotationObject(mEntityType, mObject, ["com.sap.test.ui5"]);
 		assert.ok(!!mAnnotation, "Annotation object found");
@@ -415,7 +401,7 @@
 		assert.equal(mAnnotation, undefined, "No annotation object for multiple parts");
 
 
-		var mLabelAnnotation = oMetadata._getAnnotationObject(mEntityType, mObject, "sap:label")
+		var mLabelAnnotation = oMetadata._getAnnotationObject(mEntityType, mObject, "sap:label");
 		assert.deepEqual(
 			mLabelAnnotation,
 			{ name: "label", value: "Airline", namespace: "http://www.sap.com/Protocols/SAPData" },
@@ -433,27 +419,13 @@
 
 	var fnTestHeaderRequest = function(bCancelOnClose, bExpectedValue) {
 		return function(assert){
-			var oMetaData = new sap.ui.model.odata.ODataMetadata("testUri",{"async": true, headers: {"sap-cancel-on-close": bCancelOnClose}});
+			var oMetaData = new ODataMetadata("testUri",{"async": true, headers: {"sap-cancel-on-close": bCancelOnClose}});
 			var oRequest = oMetaData._createRequest("testUrl");
 			assert.strictEqual(oRequest.headers["sap-cancel-on-close"], bExpectedValue, "sap-cancel-on-close header was set correctly.");
-		}
-	}
+		};
+	};
 
 	QUnit.test("Default value", fnTestHeaderRequest(undefined, true));
 	QUnit.test("Set to true via parameter", fnTestHeaderRequest(true, true));
 	QUnit.test("Set to false via parameter", fnTestHeaderRequest(false, false));
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: OData property metadata binding</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});

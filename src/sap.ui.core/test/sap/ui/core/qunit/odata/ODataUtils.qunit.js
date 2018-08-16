@@ -1,11 +1,8 @@
-/*!
- * ${copyright}
- */
-sap.ui.require([
+/*global QUnit*/
+sap.ui.define([
 	'sap/ui/model/odata/ODataUtils'
 ], function(ODataUtils) {
-	/*global QUnit
-	*/
+
 	"use strict";
 
 	function time(iMillis) {
@@ -92,7 +89,7 @@ sap.ui.require([
 			{t: "Edm.String", s1: "bar", s2: "bar", gt: "foo"},
 			{t: "Edm.Time", s1: time(iTime1), s2: time(iTime1), gt: time(iTime2)},
 			{t: "Edm.Time", s1: time(iTime1), s2: iTime1, gt: iTime2, d: "Edm.Time+millis"},
-			{t: "Edm.Time", s1: iTime1, s2: time(iTime1), gt: time(iTime2), d: "millis+Edm.Time"},
+			{t: "Edm.Time", s1: iTime1, s2: time(iTime1), gt: time(iTime2), d: "millis+Edm.Time"}
 		].forEach(function (oFixture) {
 			var sDesc = oFixture.d || oFixture.t;
 
