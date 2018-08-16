@@ -1,60 +1,52 @@
-<!DOCTYPE HTML>
+/*global QUnit */
+sap.ui.define([
+	"sap/ui/model/xml/XMLModel",
+	"sap/ui/model/Context",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/commons/Label",
+	"sap/ui/commons/ListBox",
+	"sap/ui/core/ListItem",
+	"sap/ui/thirdparty/jquery"
+], function(XMLModel, Context, VerticalLayout, CommonsLabel, CommonsListBox, ListItem, jQuery) {
+	"use strict";
 
-<!--
-  Tested sap.ui.model.xml.XMLModel
--->
+	var testdata =
+		"<teamMembers>" +
+			"<member firstName=\"Andreas\" lastName=\"Klark\"></member>" +
+			"<member firstName=\"Peter\" lastName=\"Miller\"></member>" +
+			"<member firstName=\"Gina\" lastName=\"Rush\"></member>" +
+			"<member firstName=\"Steave\" lastName=\"Ander\"></member>" +
+			"<member firstName=\"Michael\" lastName=\"Spring\"></member>" +
+			"<member firstName=\"Marc\" lastName=\"Green\"></member>" +
+			"<member firstName=\"Frank\" lastName=\"Wallace\"></member>" +
+		"</teamMembers>";
 
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
-	</script>
+	var testdataChild =
+		"<pets>" +
+			"<pet type=\"ape\" age=\"1\"></pet>" +
+			"<pet type=\"bird\" age=\"2\"></pet>" +
+			"<pet type=\"cat\" age=\"3\"></pet>" +
+			"<pet type=\"fish\" age=\"4\"></pet>" +
+			"<pet type=\"dog\" age=\"5\"></pet>" +
+		"</pets>";
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<!-- Test functions -->
-<script>
-
-	var testdata = "<teamMembers>" +
-						"<member firstName=\"Andreas\" lastName=\"Klark\"></member>" +
-						"<member firstName=\"Peter\" lastName=\"Miller\"></member>" +
-						"<member firstName=\"Gina\" lastName=\"Rush\"></member>" +
-						"<member firstName=\"Steave\" lastName=\"Ander\"></member>" +
-						"<member firstName=\"Michael\" lastName=\"Spring\"></member>" +
-						"<member firstName=\"Marc\" lastName=\"Green\"></member>" +
-						"<member firstName=\"Frank\" lastName=\"Wallace\"></member>" +
-					"</teamMembers>";
-	var testdataChild = "<pets>" +
-	  		            "<pet type=\"ape\" age=\"1\"></pet>" +
-	  		          	"<pet type=\"bird\" age=\"2\"></pet>" +
-	  		        	"<pet type=\"cat\" age=\"3\"></pet>" +
-	  		      		"<pet type=\"fish\" age=\"4\"></pet>" +
-	  		    		"<pet type=\"dog\" age=\"5\"></pet>" +
-	  		    	"</pets>";
-
-	var oModel = new sap.ui.model.xml.XMLModel();
+	var oModel = new XMLModel();
 	oModel.setXML(testdata);
 	sap.ui.getCore().setModel(oModel);
 
-	var oModelChild = new sap.ui.model.xml.XMLModel();
+	var oModelChild = new XMLModel();
 	oModelChild.setXML(testdataChild);
 
-	var oLayout = new sap.ui.layout.VerticalLayout();
+	// add divs for control tests
+	var oContentDIV = document.createElement("div");
+	oContentDIV.id = "target1";
+	document.body.appendChild(oContentDIV);
+	oContentDIV = document.createElement("div");
+	oContentDIV.id = "target2";
+	document.body.appendChild(oContentDIV);
 
-	var oLabel = new sap.ui.commons.Label("myLabel");
+	var oLayout = new VerticalLayout();
+	var oLabel = new CommonsLabel("myLabel");
 	oLabel.setText("testText");
 	oLabel.placeAt("target1");
 
@@ -171,8 +163,8 @@
 		assert.equal(oLabel.getText(), "hamster", "new text value from model");
 	});
 
-	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-	var oItemTemplate = new sap.ui.core.ListItem();
+	var oLB = new CommonsListBox("myLb", {displaySecondaryValues:true, height:"200px"});
+	var oItemTemplate = new ListItem();
 	oLB.placeAt("target2");
 
 	QUnit.test("test model bindAggregation on Listbox", function(assert) {
@@ -187,7 +179,7 @@
 		assert.ok(oBinding, "oBinding should not be null");
 		assert.equal(oBinding.getLength(), 7, "oBinding length");
 
-		jQuery(listItems).each( function(i, item){
+		listItems.forEach(function(item, i) {
 			assert.equal(item.getText(), oModel.getProperty("/member/" + i + "/@firstName"), "firstname check");
 			assert.equal(item.getAdditionalText(), oModel.getProperty("/member/" + i + "/@lastName"), "lastname check");
 		});
@@ -196,7 +188,7 @@
 
 	QUnit.test("test XMLModel XML constructor", function(assert) {
 
-		var testModel = new sap.ui.model.xml.XMLModel(
+		var testModel = new XMLModel(
 
 		);
 		testModel.setXML("<root>" +
@@ -211,7 +203,9 @@
 	});
 
 	QUnit.test("test create binding context", function(assert) {
-		var oContext = oModel.createBindingContext("/root/test/subtest/name");
+		var oContext;
+
+		oContext = oModel.createBindingContext("/root/test/subtest/name");
 		assert.equal(oContext.getPath(), "/root/test/subtest/name", "newContext returnValue");
 
 		oModel.createBindingContext("/root/test/subtest/name", null, function(context){
@@ -220,12 +214,12 @@
 		oModel.createBindingContext("root/test/subtest/name", null, function(context){
 			assert.ok(context == null, "newContext");
 		});
-		var oContext = new sap.ui.model.Context(oModel, "/myContext");
+		oContext = new Context(oModel, "/myContext");
 		// if spath starts with / ... context will be ignored, because path is absolute
 		oModel.createBindingContext("/root/test/subtest/name", oContext, function(context){
 			assert.equal(context.getPath(), "/root/test/subtest/name", "newContext");
 		});
-		var oContext = new sap.ui.model.Context(oModel, "/myContext");
+		oContext = new Context(oModel, "/myContext");
 		oModel.createBindingContext("root/test/subtest/name", oContext, function(context){
 			assert.equal(context.getPath(), "/myContext/root/test/subtest/name", "newContext");
 		});
@@ -250,8 +244,8 @@
 
 	QUnit.test("test XMLModel loadData",function(assert){
 		var done = assert.async();
-		var testModel = new sap.ui.model.xml.XMLModel();
-		testModel.loadData("testdata.xml");
+		var testModel = new XMLModel();
+		testModel.loadData("test-resources/sap/ui/core/qunit/xml/data/testdata.xml");
 		testModel.attachRequestCompleted(function() {
 			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
@@ -262,7 +256,7 @@
 
 	QUnit.test("test XMLModel loadData constructor",function(assert){
 		var done = assert.async();
-		var testModel = new sap.ui.model.xml.XMLModel("testdata.xml");
+		var testModel = new XMLModel("test-resources/sap/ui/core/qunit/xml/data/testdata.xml");
 		testModel.attachRequestCompleted(function() {
 			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
@@ -273,7 +267,7 @@
 
 
 	QUnit.test("test XML setXML error", function(assert) {
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel();
 		var sXML = "<?xml version=\"1.0\"><teamMembers>" +
 		"<member firstName=\"Andreas\" lastName=\"Klark\"></member>" +
 		"<member firstName=\"Peter\" lastName=\"Miller\"></member>" +
@@ -294,18 +288,18 @@
 	});
 
 	QUnit.test("test XML getXML", function(assert) {
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel();
 		var sXML = "<root>" +
 				"<foo>The quick brown fox jumps over the lazy dog.</foo>" +
 				"<bar>ABCDEFG</bar>" +
 				"<baz>52</baz>" +
 			"</root>";
 		oModel.setXML(sXML);
-		assert.equal(jQuery.trim(oModel.getXML()), jQuery.trim(sXML), "get XML test");
+		assert.equal(oModel.getXML().trim(), sXML.trim(), "get XML test");
 	});
 
 	QUnit.test("test XML getData", function(assert) {
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel();
 		var sXML = "<root>" +
 		"<foo>The quick brown fox jumps over the lazy dog.</foo>" +
 		"<bar>ABCDEFG</bar>" +
@@ -316,37 +310,42 @@
 	});
 
 	QUnit.test("test XML compatible syntax", function(assert) {
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel(),
+			value, oContext;
+
 		oModel.setLegacySyntax(true);
 		oModel.setXML(testdata);
-		var value = oModel.getProperty("member/6/@lastName");
+		value = oModel.getProperty("member/6/@lastName");
 		assert.equal(value, "Wallace", "model value");
 		oModel.setProperty("member/4/@lastName", "Jackson");
-		var value = oModel.getProperty("/member/4/@lastName");
+		value = oModel.getProperty("/member/4/@lastName");
 		assert.equal(value, "Jackson", "model value");
-		var oContext = oModel.createBindingContext("member/6");
-		var value = oModel.getProperty("@lastName", oContext);
+		oContext = oModel.createBindingContext("member/6");
+		value = oModel.getProperty("@lastName", oContext);
 		assert.equal(value, "Wallace", "model value");
 	});
 
 	QUnit.test("test XML compatible syntax fail", function(assert) {
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel(),
+			value, oContext;
 		oModel.setLegacySyntax(false);
 		oModel.setXML(testdata);
-		var value = oModel.getProperty("member/6/@lastName");
+		value = oModel.getProperty("member/6/@lastName");
 		assert.equal(value, undefined, "model value");
 		oModel.setProperty("/member/4/@lastName", "Ander");
 		try {
 			oModel.setProperty("member/4/@lastName", "Jackson");
-		} catch (e) {}
-		var value = oModel.getProperty("/member/4/@lastName");
+		} catch (e) {
+			assert.ok(true, "setting a property for a relatve path should fail");
+		}
+		value = oModel.getProperty("/member/4/@lastName");
 		assert.equal(value, "Ander", "model value");
-		var oContext = oModel.createBindingContext("member/6");
+		oContext = oModel.createBindingContext("member/6");
 		assert.equal(oContext, undefined, "model value");
 	});
 
 	QUnit.test("text XML getObject", function(assert) {
-		var oModel = new sap.ui.model.xml.XMLModel();
+		var oModel = new XMLModel();
 		oModel.setXML(testdata);
 		var oNode = oModel.getObject("/member/4/@lastName"); // direkt attribute access
 		assert.ok(oNode);
@@ -358,7 +357,7 @@
 	});
 
 	QUnit.test("test XMLModel destroy", function(assert) {
-		var testModel = new sap.ui.model.xml.XMLModel();
+		var testModel = new XMLModel();
 		testModel.attachRequestCompleted(function() {
 			assert.ok(false, "Request should be aborted!");
 		});
@@ -366,7 +365,7 @@
 			assert.ok(false, "Error handler should not be called when request is aborted via destroy!");
 		});
 		var spy = this.spy(jQuery, "ajax");
-		testModel.loadData("testdata.xml");
+		testModel.loadData("test-resources/sap/ui/core/qunit/xml/data/testdata.xml");
 		testModel.destroy();
 		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
@@ -383,7 +382,7 @@
 		//});
 
 		var spy = this.spy(jQuery, "ajax");
-		var testModel = new sap.ui.model.xml.XMLModel();
+		var testModel = new XMLModel();
 
 		testModel.attachRequestCompleted(function() {
 			assert.ok(false, "Request should be aborted!");
@@ -392,14 +391,14 @@
 			assert.ok(false, "Error handler should not be called when request is aborted via destroy!");
 		});
 
-		testModel.loadData("testdata.xml", null, true);
+		testModel.loadData("test-resources/sap/ui/core/qunit/xml/data/testdata.xml", null, true);
 		testModel.destroy();
 		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort"); // Note: statusText 'abort' is set by the model itself
 
 		// call loaddata again
-		testModel.loadData("testdata.xml", null, true);
+		testModel.loadData("test-resources/sap/ui/core/qunit/xml/data/testdata.xml", null, true);
 
 		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
@@ -407,18 +406,4 @@
 
 	});
 
-
-	</script>
-
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding XML Model</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});
