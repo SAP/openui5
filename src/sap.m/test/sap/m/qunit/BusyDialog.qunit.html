@@ -112,6 +112,12 @@
 				assert.equal(jQuery(this.sId + '-Dialog-title > span').text(), 'Loading ...', 'should have text set properly.');
 			});
 
+			QUnit.test('Initial focus', function (assert) {
+				this.oBusyDialog._oDialog._handleOpened();
+
+				assert.equal(document.activeElement, this.oBusyDialog._busyIndicator.$('busyIndicator')[0], 'Busy indicator is focused');
+			});
+
 			QUnit.test('BusyDialog DOM elements', function (assert) {
 				//check if BusyDialog exists and is open
 				assert.strictEqual(jQuery(this.sId + '-Dialog').length, 1, 'BusyDialog should exist and should be open.');
