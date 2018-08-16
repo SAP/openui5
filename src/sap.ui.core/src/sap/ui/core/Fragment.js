@@ -333,13 +333,13 @@ function(
 	 * all contained controls.
 	 *
 	 * @param {object} mOptions options map
-	 * @param {string} [mOptions.name] must be supplied if no "content" parameter is given. The Fragment name must correspond to an XML Fragment which
+	 * @param {string} [mOptions.name] must be supplied if no "definition" parameter is given. The Fragment name must correspond to an XML Fragment which
 	 *    can be loaded via the module system
-	 *    (fragmentName + suffix ".fragment.[typeextension]") and which defines the Fragment content.
+	 *    (fragmentName + suffix ".fragment.[typeextension]") and which contains the Fragment definition.
 	 *    If "mOptions.controller" is supplied, the (event handler-) methods referenced in the Fragment will be called on this Controller.
 	 *    Note that Fragments may require a Controller to be given and certain methods to be implemented by it.
 	 * @param {string} [mOptions.type=XML] the Fragment type, e.g. "XML", "JS", or "HTML" (see above). Default is "XML"
-	 * @param {string} [mOptions.content] the definition of the Fragment content itself. When this property is given, any given name is ignored.
+	 * @param {string} [mOptions.definition] definition of the Fragment content. When this property is supplied, the "name" parameter must not be used.
 	 *    The type of this property depends on the Fragment type, e.g. it could be a string for XML Fragments.
 	 * @param {string} [mOptions.id] the ID of the Fragment
 	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] the Controller which should be used by the controls in the Fragment.
@@ -356,7 +356,7 @@ function(
 
 		// map new parameter names to classic API
 		mParameters.fragmentName = mParameters.name;
-		mParameters.fragmentContent = mParameters.content;
+		mParameters.fragmentContent = mParameters.definition;
 		mParameters.oController = mParameters.controller;
 
 		return Promise.resolve(fragmentFactory(mParameters));
