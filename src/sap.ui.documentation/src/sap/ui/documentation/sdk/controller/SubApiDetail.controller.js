@@ -177,9 +177,9 @@ sap.ui.define([
 			_navigateRouter: function(sEntityType, sEntityId, bShouldStoreToHistory) {
 				this._oRouter.stop();
 				this._oRouter.navTo("apiId", {
-					id: formatter.moduleNameToGlobalName(this._sTopicId),
+					id: formatter.encodeModuleName(this._sTopicId),
 					entityType: sEntityType,
-					entityId: formatter.moduleNameToGlobalName(sEntityId)
+					entityId: formatter.encodeModuleName(sEntityId)
 				}, !bShouldStoreToHistory);
 				this._oRouter.initialize(true);
 			},
