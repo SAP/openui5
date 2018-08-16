@@ -293,13 +293,14 @@ sap.ui.define([
 	 *     (<i>n</i> is the index) in the found locale-specific string value. Note that the replacement is done
 	 *     whenever <code>aArgs</code> is given, no matter whether the text contains placeholders or not
 	 *     and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
-	 * @returns {string} The value belonging to the key, if found; otherwise the key itself.
+	 * @param {boolean} bIgnoreKeyFallback If set, <code>undefined</code> is returned when the key is not found in any bundle or fallback bundle, instead of the key string.
+	 * @returns {string} The value belonging to the key, if found; Otherwise the key itself or <code>undefined</code> depending on bIgnoreKeyFallback.
 	 *
 	 * @function
 	 * @name sap/base/i18n/ResourceBundle.prototype.getText
 	 * @private
 	 */
-	ResourceBundle.prototype.getText = function(sKey, aArgs){
+	ResourceBundle.prototype.getText = function(sKey, aArgs, bIgnoreKeyFallback){
 
 		// 1. try to retrieve text from properties (including custom properties)
 		var sValue = this._getTextFromProperties(sKey, aArgs);
@@ -314,8 +315,11 @@ sap.ui.define([
 		}
 
 		assert(false, "could not find any translatable text for key '" + sKey + "' in bundle '" + this.oUrlInfo.url + "'");
-
-		return this._formatValue(sKey, sKey, aArgs);
+		if (bIgnoreKeyFallback){
+			return undefined;
+		} else {
+			return this._formatValue(sKey, sKey, aArgs);
+		}
 	};
 
 	/**
