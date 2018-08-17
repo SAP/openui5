@@ -12,7 +12,7 @@ sap.ui.define([
 	var MY_SELECTION_TITLE = "My Selection",
 		SYSTEM_ACCESSIBILITY_TITLE = "Accessibility",
 		SYSTEM_ACCESSIBILITY_COUNT = 5,
-		EXAMPLE_PRESET_1 = "testPreset1.json",
+		EXAMPLE_PRESET_1 = "TestPreset1.json",
 		EXAMPLE_PRESET_S4HANA = "S4HanaPreset.json";
 
 	function loadExamplePreset(fileName) {
