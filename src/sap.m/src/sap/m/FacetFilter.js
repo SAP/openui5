@@ -670,6 +670,7 @@ sap.ui.define([
 			for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
 				if (this.$().find(":sapTabbable")[i].parentNode.className == "sapMFFResetDiv") {
 					jQuery(this.$().find(":sapTabbable")[i]).focus();
+					this._invalidateFlag = false;
 					oEvent.preventDefault();
 					oEvent.setMarked();
 					return;
