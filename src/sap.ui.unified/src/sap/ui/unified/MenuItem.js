@@ -43,6 +43,13 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 			 * Defines the icon of the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''}
+		},
+		associations : {
+
+			/**
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		}
 	}});
 

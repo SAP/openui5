@@ -20,7 +20,7 @@ sap.ui.define(["sap/ui/support/library"],
 	var oTitleRule = {
 		id: "titleLevelProperty",
 		audiences: [Audiences.Internal],
-		categories: [Categories.FioriGuidelines],
+		categories: [Categories.FioriGuidelines, Categories.Accessibility],
 		enabled: true,
 		minversion: "*",
 		title: "Title: It is recommended to set the level property",

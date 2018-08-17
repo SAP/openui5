@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 
@@ -13,13 +9,17 @@ sap.ui.define([], function() {
 	/**
 	 * Transforms a camel case string (camelCase) into a hyphen separated string (kebab-case).
 	 *
+	 * @example
+	 * sap.ui.require(["sap/base/strings/hyphenate"], function(hyphenate){
+	 *      hyphenate("fooBar"); // "foo-bar"
+	 * });
+	 *
 	 * @function
-	 * @exports sap/base/strings/hyphenate
+	 * @alias module:sap/base/strings/hyphenate
 	 * @param {string} sString camel case string
 	 * @returns {string} The transformed string
-	 * @private
+	 * @public
 	 * @SecPassthrough {0|return}
-	 * @example "fooBar" -> "foo-bar"
 	 */
 	var fnHyphenate = function (sString) {
 		return sString.replace( rHyphen, function(sMatch, sChar) {

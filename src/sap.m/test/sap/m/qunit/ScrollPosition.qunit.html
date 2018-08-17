@@ -62,6 +62,12 @@
 			})
 		});
 
+		page1.addEventDelegate({
+			onBeforeRendering: function () {
+				document.activeElement.blur()
+			}
+		});
+
 		var page2 = new sap.m.Page("page2", {
 			title : "Test Page 2",
 			showNavButton: true,

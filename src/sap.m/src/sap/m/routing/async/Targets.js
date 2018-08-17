@@ -15,14 +15,14 @@ sap.ui.define([], function() {
 		/**
 		 * @private
 		 */
-		display: function () {
+		_display: function () {
 			var iViewLevel,
 				sName;
 
 			// don't remember previous displays
 			this._oLastDisplayedTarget = null;
 
-			var oPromise = this._super.display.apply(this, arguments);
+			var oPromise = this._super._display.apply(this, arguments);
 
 			return oPromise.then(function(oViewInfo) {
 				// maybe a wrong name was provided then there is no last displayed target
@@ -33,7 +33,8 @@ sap.ui.define([], function() {
 
 				this._oTargetHandler.navigate({
 					viewLevel: iViewLevel,
-					navigationIdentifier: sName
+					navigationIdentifier: sName,
+					askHistory: true
 				});
 
 				return oViewInfo;

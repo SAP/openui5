@@ -3,6 +3,7 @@ sap.ui.define([
 ], function (Model) {
 	"use strict";
 
+
 	return Model.extend("test.unit.helper.FakeI18nModel", {
 
 		constructor : function (mTexts) {
@@ -17,5 +18,7 @@ sap.ui.define([
 				}.bind(this)
 			};
 		}
+
 	});
+
 });

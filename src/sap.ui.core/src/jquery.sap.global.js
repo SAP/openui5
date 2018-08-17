@@ -913,7 +913,7 @@ sap.ui.define([
 		 * @since 1.1.2
 		 * @function
 		 */
-		getLogEntries: Log.getLog,
+		getLogEntries: Log.getLogEntries,
 
 		/**
 		 * Allows to add a new LogListener that will be notified for new log entries.
@@ -967,7 +967,7 @@ sap.ui.define([
 		 * @function
 		 * @public
 		 */
-		getLog: Log.getLog
+		getLog: Log.getLogEntries
 
 	});
 
@@ -2193,27 +2193,31 @@ sap.ui.define([
 	};
 
 	(function() {
+
+		var b = Device.browser;
+		var id = b.name;
+
 		// TODO move to a separate module? Only adds 385 bytes (compressed), but...
 		if ( !jQuery.browser ) {
 			// re-introduce the jQuery.browser support if missing (jQuery-1.9ff)
-			jQuery.browser = (function( ua ) {
+			jQuery.browser = (function (ua) {
 
 				var rwebkit = /(webkit)[ \/]([\w.]+)/,
 					ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
 					rmsie = /(msie) ([\w.]+)/,
 					rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/,
 					ua = ua.toLowerCase(),
-					match = rwebkit.exec( ua ) ||
-						ropera.exec( ua ) ||
-						rmsie.exec( ua ) ||
-						ua.indexOf("compatible") < 0 && rmozilla.exec( ua ) ||
+					match = rwebkit.exec(ua) ||
+						ropera.exec(ua) ||
+						rmsie.exec(ua) ||
+						ua.indexOf("compatible") < 0 && rmozilla.exec(ua) ||
 						[],
 					browser = {};
 
-				if ( match[1] ) {
-					browser[ match[1] ] = true;
+				if (match[1]) {
+					browser[match[1]] = true;
 					browser.version = match[2] || "0";
-					if ( browser.webkit ) {
+					if (browser.webkit) {
 						browser.safari = true;
 					}
 				}
@@ -2222,79 +2226,21 @@ sap.ui.define([
 
 			}(window.navigator.userAgent));
 		}
-	}());
 
-	//init simulateMobileOnDesktop
-	(function() {
-		/**
-		 * @type {boolean}
-		 * @private
-		 */
-		jQuery.sap.simulateMobileOnDesktop = false;
-
-		var FAKE_OS_PATTERN = /(?:\?|&)sap-ui-xx-fakeOS=([^&]+)/;
-
-		// OS overriding mechanism
-		if ((Device.browser.webkit || Device.browser.msie) && !Device.support.touch) { // on non-touch webkit browsers and IE we are interested in overriding
-
-			var result = document.location.search.match(FAKE_OS_PATTERN);
-			var resultUA = result && result[1] || jQuery("#sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
-
-			if (resultUA) {
-				Log.error("The experimental parameter 'sap-ui-xx-fakeOS' must NOT be used. The results are unreliable. The parameter will be removed in one of the next versions of UI5!");
-				jQuery.sap.simulateMobileOnDesktop = true;
-
-				var ua = { // for "ios"/"android"/"blackberry" we have defined fake user-agents; these will affect all other browser/platform
-					// detection mechanisms
-					ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
-					iphone: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
-					ipad: "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206",
-					android: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
-					android_phone: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
-					android_tablet: "Mozilla/5.0 (Linux; Android 4.1.2; Nexus 7 Build/JZ054K) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
-					blackberry: "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.10+ (KHTML, like Gecko) Version/10.0.9.2372 Mobile Safari/537.10+",
-					winphone: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; NOKIA; Lumia 920)"
-				}[resultUA];
-
-				if (ua &&
-					(Device.browser.webkit && resultUA !== "winphone" || Device.browser.msie && resultUA === "winphone")) { // only for the working combinations
-
-					// code for modifying the real user-agent
-					if (Device.browser.safari) {
-						var __originalNavigator = window.navigator;
-						window.navigator = {};
-						/*eslint-disable no-proto */
-						window.navigator.__proto__ = __originalNavigator;
-						/*eslint-enable no-proto */
-						window.navigator.__defineGetter__('userAgent', function() {
-							return ua;
-						});
-					} else { // Chrome, IE10
-						Object.defineProperty(navigator, "userAgent", {
-							get: function() {
-								return ua;
-							}
-						});
-					}
-
-					if (Device.browser.webkit) {
-
-						// all downstream checks will be fine with the faked user-agent.
-						// But now we also need to adjust the wrong upstream settings in jQuery:
-						jQuery.browser.msie = jQuery.browser.opera = jQuery.browser.mozilla = false;
-						jQuery.browser.webkit = true;
-						jQuery.browser.version = "534.46"; // this is not exactly true for all UAs, but there are
-					                                       // much bigger shortcomings of this approach than a
-					                                       // minor version of the browser, so giving the exact
-					                                       // value is not worth the effort
-					} // else in IE10 with winphone emulation, jQuery.browser has already the correct information
-
-					// update the sap.ui.Device.browser.* information
-					Device._update(jQuery.sap.simulateMobileOnDesktop);
-				}
-			}
+		if (id === b.BROWSER.CHROME) {
+			jQuery.browser.safari = false;
+			jQuery.browser.chrome = true;
+		} else if (id === b.BROWSER.SAFARI) {
+			jQuery.browser.safari = true;
+			jQuery.browser.chrome = false;
 		}
-	})();
+
+		if (id) {
+			jQuery.browser.fVersion = b.version;
+			jQuery.browser.mobile = b.mobile;
+		}
+
+	}());
 
 	return jQuery;
 

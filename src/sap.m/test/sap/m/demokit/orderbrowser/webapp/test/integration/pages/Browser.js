@@ -1,12 +1,10 @@
 sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/demo/orderbrowser/test/integration/pages/Common"
-], function(Opa5, Common) {
+	"sap/ui/test/Opa5"
+], function(Opa5) {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheBrowserPage : {
-			baseClass : Common,
 
 			actions : {
 

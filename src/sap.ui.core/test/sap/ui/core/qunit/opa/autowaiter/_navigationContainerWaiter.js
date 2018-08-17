@@ -79,7 +79,7 @@ sap.ui.define([
 	QUnit.module("NavigationContainerWaiter - iFrame");
 
 	opaTest("Should wait for navigating NavContainers in an IFrame", function (oOpa) {
-		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/testdata/miniUI5Site.html");
+		oOpa.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/miniUI5Site.html");
 
 		oOpa.waitFor({
 			viewName: "myView",

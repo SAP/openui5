@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 
@@ -21,8 +17,9 @@ sap.ui.define([], function() {
 	 * @function
 	 * @param {object|any[]} oObject object or array to enumerate the properties of
 	 * @param {function} fnCallback function to call for each property name
-	 * @exports sap/base/util/each
+	 * @alias module:sap/base/util/each
 	 * @return {object|any[]} the given <code>oObject</code>
+	 * @public
 	 */
 	var fnEach = function(oObject, fnCallback) {
 		var isArray = Array.isArray(oObject),

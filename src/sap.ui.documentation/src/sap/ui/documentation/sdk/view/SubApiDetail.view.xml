@@ -169,11 +169,14 @@
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
 										<custom:LightTable rows="{path : '/properties'}"
-											 columnCount="2"
-											 columnTitles="Name,Description"
-											 class="sapUiSmallMarginTop sapUiDocumentation2ColumnsEqualTable">
+											 columnCount="3"
+											 columnTitles="Name,Type,Description"
+											 class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
+												<m:Link text="{type}"
+														href="{href}"
+														enabled="{= !!${linkEnabled} }"/>
 												<layout:VerticalLayout>
 													<custom:JSDocText text="{description}"/>
 													<m:MessageStrip
@@ -314,8 +317,8 @@
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
 										<custom:LightTable rows="{path : '/ui5-metadata/aggregations'}"
-											columnTitles="Name,Cardinality,Type,Description"
-											columnCount="4"
+											columnTitles="{= ${data>/hasAggregationAltTypes} ? 'Name,Cardinality,Type,Alt types,Description' : 'Name,Cardinality,Type,Description'}"
+											columnCount="{= ${data>/hasAggregationAltTypes} ? 5 : 4}"
 											class="sapUiSmallMarginTop">
 											<custom:Row visible="{= ${visibility} === 'public'}">
 												<custom:ParamText text="{name}" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
@@ -323,6 +326,9 @@
 												<m:Link text="{type}"
 														href="#/api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
+												<template:if test="{data>/hasAggregationAltTypes}">
+													<m:Text text="{path: 'altTypes', formatter:'.formatter.apiRefAggregationAltTypes'}"/>
+												</template:if>
 												<layout:VerticalLayout width="100%">
 													<custom:JSDocText text="{description}"/>
 													<m:MessageStrip

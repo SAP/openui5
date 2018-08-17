@@ -35,8 +35,6 @@ sap.ui.require([
 	) {
 	"use strict";
 
-	QUnit.start();
-
 	var oForm;
 	var oColumnLayout;
 	var oFormContainer1;
@@ -270,17 +268,17 @@ sap.ui.require([
 	});
 
 	QUnit.test("One container - default columns", function(assert) {
-		var oDomRef = jQuery.sap.domById("CL1");
+		var oDomRef = window.document.getElementById("CL1");
 		assert.ok(oDomRef, "Layout rendered");
 
-		oDomRef = jQuery.sap.domById("FC1");
+		oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container rendered");
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.parent().attr("id"), "CL1", "not content DOM element rendered");
 		assert.equal($Container.children().length, 1, "only one DOM node in Container");
 		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
 
-		oDomRef = jQuery.sap.domById("FE1");
+		oDomRef = window.document.getElementById("FE1");
 		assert.ok(oDomRef, "Element rendered");
 		assert.equal(jQuery("#FE1").parent().attr("id"), "FC1-content", "Container content node is parent of Element");
 
@@ -349,7 +347,7 @@ sap.ui.require([
 	QUnit.test("Two containers - default columns", function(assert) {
 		oFormContainer2 = addContainer("FC2");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
@@ -358,7 +356,7 @@ sap.ui.require([
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsXL2"), "XL: Layout has 2 columns");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
@@ -389,9 +387,9 @@ sap.ui.require([
 		oFormContainer1.setVisible(false);
 		oFormContainer2 = addContainer("FC2");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.notOk(oDomRef, "Container1 not rendered");
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		var $Container = jQuery("#FC2");
 		assert.equal($Container.parent().attr("id"), "CL1", "not content DOM element rendered");
@@ -402,18 +400,18 @@ sap.ui.require([
 		addContainer("FC2");
 		addContainer("FC3");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC3");
+		oDomRef = window.document.getElementById("FC3");
 		assert.ok(oDomRef, "Container3 rendered");
 		$Container = jQuery("#FC3");
 		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
@@ -439,23 +437,23 @@ sap.ui.require([
 		addContainer("FC3");
 		addContainer("FC4");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC3");
+		oDomRef = window.document.getElementById("FC3");
 		assert.ok(oDomRef, "Container3 rendered");
 		$Container = jQuery("#FC3");
 		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
 
-		oDomRef = jQuery.sap.domById("FC4");
+		oDomRef = window.document.getElementById("FC4");
 		assert.ok(oDomRef, "Container4 rendered");
 		$Container = jQuery("#FC4");
 		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, false, 1, false, false, 1, false, false);
@@ -488,28 +486,28 @@ sap.ui.require([
 		addContainer("FC4");
 		addContainer("FC5");
 
-		var oDomRef = jQuery.sap.domById("FC1");
+		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC2");
+		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 
-		oDomRef = jQuery.sap.domById("FC3");
+		oDomRef = window.document.getElementById("FC3");
 		assert.ok(oDomRef, "Container3 rendered");
 		$Container = jQuery("#FC3");
 		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
 
-		oDomRef = jQuery.sap.domById("FC4");
+		oDomRef = window.document.getElementById("FC4");
 		assert.ok(oDomRef, "Container4 rendered");
 		$Container = jQuery("#FC4");
 		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, false, 1, false, false, 1, false, false);
 
-		oDomRef = jQuery.sap.domById("FC5");
+		oDomRef = window.document.getElementById("FC5");
 		assert.ok(oDomRef, "Container5 rendered");
 		$Container = jQuery("#FC5");
 		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
@@ -839,5 +837,7 @@ sap.ui.require([
 
 		assert.ok(oException, "exception fired");
 	});
+
+	QUnit.start();
 
 });

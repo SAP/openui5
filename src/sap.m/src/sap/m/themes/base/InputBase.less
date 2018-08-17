@@ -7,12 +7,15 @@
 	height: 2.5rem;
 	background: transparent;
 	position: relative;
-	display: inline-block;
+	display: inline-flex;
 	vertical-align: top;
 	outline: none;
-	overflow: hidden;
 	box-sizing: border-box;
 	line-height: 0;
+}
+
+.sapMInputBaseNoWidth {
+	max-width: 100%;
 }
 
 .sapMInputBaseHeightMargin {
@@ -31,8 +34,8 @@
 	padding: 0 0.75rem;
 	height: 100%;
 	box-sizing: border-box;
-	flex: 1;
-	min-width: 0;
+	flex: auto;
+	min-width: 3rem;
 	text-overflow: ellipsis;
 }
 
@@ -41,8 +44,11 @@
 	box-sizing: border-box;
 	display: inline-flex;
 	flex-direction: row;
-	justify-content: flex-start;
+	justify-content: flex-end;
 	position: relative;
+	overflow: hidden;
+	min-width: -moz-min-content;
+	min-width: min-content;
 }
 
 .sapMInputBaseHasBeginIcons .sapMInputBaseInner {
@@ -116,8 +122,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 }
 
 .sapMInputBaseInner {
-	width: auto;
-	/* fit the parents(sapMInputBase) width */
+	width: 100%;
 }
 
 .sapMInputBaseInner::-webkit-outer-spin-button,
@@ -230,7 +235,8 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		height: 1.625rem;
 	}
 	.sapMInputBaseInner {
-		padding: 0 0.5rem
+		padding: 0 0.5rem;
+		min-width: 2rem;
 	}
 	.sapMInputBaseIcon {
 		width: 2rem;
@@ -242,6 +248,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 	.sapMInputDescriptionWrapper span {
 		line-height: 1.625rem;
+	}
+
+	.sapMInputBaseHasEndIcons .sapMInputBaseInner {
+		padding-right: 0.25rem;
 	}
 }
 
@@ -314,14 +324,6 @@ html[data-sap-ui-browser^="ed"] {
 	.sapMInputBaseInner:-ms-input-placeholder {
 		color: @sapUiFieldBackground;
 	}
-}
-
-// this is a workaround for IE bug with default sizes of input element
-// when an input element is a child of flex container - its default size is not considered
-// the auto size (shrinking to zero width) is taken instead
-// TODO: Check after 1.62 and Edge
-html[data-sap-ui-browser^="ie"] .sapMInputBaseNoWidth {
-	min-width: 13.5rem;
 }
 
 // IE fires onfocusin on disabled inputs

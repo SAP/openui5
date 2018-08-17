@@ -95,9 +95,22 @@
 				QUnit.test("Hover color", function(assert) {
 					$dummy.css("color", "#444444");
 					$dummy.css("background-color", "#CCCCCC");
+					var sHoverColor = $dummy.css("color"),
+						sHoverBackgroundColor = $dummy.css("background-color");
+
 					qutils.triggerEvent("mouseover", oIcon.getId());
+					assert.equal($icon.css("color"), sHoverColor);
+					assert.equal($icon.css("background-color"), sHoverBackgroundColor);
+
+					$dummy.css("color", "#222222");
+					$dummy.css("background-color", "#999999");
+					qutils.triggerEvent("mousedown", oIcon.getId());
 					assert.equal($icon.css("color"), $dummy.css("color"));
 					assert.equal($icon.css("background-color"), $dummy.css("background-color"));
+
+					qutils.triggerEvent("mouseup", oIcon.getId());
+					assert.equal($icon.css("color"), sHoverColor);
+					assert.equal($icon.css("background-color"), sHoverBackgroundColor);
 				});
 			}
 

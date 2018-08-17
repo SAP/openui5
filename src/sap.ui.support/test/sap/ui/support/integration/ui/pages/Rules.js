@@ -57,6 +57,17 @@ sap.ui.define([
 			errorMessage: sErrorMessage
 		};
 	}
+
+	function getRowDomRefsByRuleTitle (oTable, sTitle) {
+		 var aRows = oTable.getRows();
+
+		for (var i = 0; i < aRows.length; i++) {
+			if (aRows[i].getCells()[0].getText() === sTitle) {
+				return aRows[i].getDomRefs();
+			}
+		}
+	}
+
 	Opa5.createPageObjects({
 
 		onTheRulesPage: {
@@ -237,6 +248,20 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Edit Rule button was pressed");
 						},
 						errorMessage: "Edit Rule button was not found"
+					});
+				},
+				iPressSelectCheckboxOf: function(sTitle, sSuccessMessage, sErrorMessage) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({ name: "columns" }),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function(oTable) {
+							var oCheckbox = getRowDomRefsByRuleTitle(oTable, sTitle).rowSelector;
+							oCheckbox.click();
+							Opa5.assert.ok(true, sSuccessMessage);
+						},
+						errorMessage: sErrorMessage
 					});
 				}
 			},

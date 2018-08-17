@@ -1,4 +1,7 @@
-sap.ui.define(["sap/ui/core/util/MockServer"], function (MockServer) {
+sap.ui.define([
+	"sap/ui/core/util/MockServer",
+	"sap/base/Log"
+], function (MockServer, Log) {
 	"use strict";
 	var oMockServer,
 		_sAppModulePath = "cp/opa/test/app/",
@@ -69,7 +72,7 @@ sap.ui.define(["sap/ui/core/util/MockServer"], function (MockServer) {
 			}
 			oMockServer.start();
 
-			jQuery.sap.log.info("Running the app with mock data");
+			Log.info("Running the app with mock data");
 		},
 
 		/**

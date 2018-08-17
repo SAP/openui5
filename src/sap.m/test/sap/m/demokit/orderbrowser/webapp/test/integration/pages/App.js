@@ -1,8 +1,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/orderbrowser/test/integration/pages/Common",
 	"sap/ui/test/matchers/PropertyStrictEquals"
-], function(Opa5, Common, PropertyStrictEquals) {
+], function(Opa5, PropertyStrictEquals) {
 	"use strict";
 
 	var sViewName = "App",
@@ -10,7 +9,6 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheAppPage : {
-			baseClass : Common,
 
 			actions : {
 

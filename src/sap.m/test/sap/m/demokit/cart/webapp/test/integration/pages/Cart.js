@@ -60,7 +60,7 @@ sap.ui.define([
 				iPressOnTheProceedButton : function () {
 					return this.waitFor({
 						id : "proceedButton",
-						actions : new sap.ui.test.actions.Press()
+						actions : new Press()
 					});
 				},
 

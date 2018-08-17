@@ -4,10 +4,10 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TableUtils",
 	"sap/ui/core/dnd/DragDropInfo",
-	"sap/ui/core/dnd/DropPosition",
+	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/Control"
-], function(TableQUnitUtils, TableUtils, DragDropInfo, DropPosition, Device, Control) {
+], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Device, Control) {
 	"use strict";
 
 	// mapping of globals
@@ -19,6 +19,8 @@ sap.ui.define([
 	var getRowAction = window.getRowAction;
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
+
+	var DropPosition = CoreLibrary.dnd.DropPosition;
 
 	function createDragEvent(sDragEventType) {
 		var oJQueryDragEvent = jQuery.Event(sDragEventType);

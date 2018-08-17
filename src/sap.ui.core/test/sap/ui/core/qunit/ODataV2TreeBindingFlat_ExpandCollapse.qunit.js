@@ -243,3 +243,155 @@ QUnit.test("Bug fix: when deepnode is collapsed, its parents' magnitude needs to
 		oBinding.getContexts(0, 10, 10);
 	});
 });
+
+QUnit.test("expandToLevel: Expand one level", function(assert) {
+
+	var done = assert.async();
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 0
+		});
+
+		function handler1(oEvent) {
+			oBinding.detachChange(handler1);
+			oBinding.getContexts(0, 10, 10);
+			oBinding.attachChange(handler2);
+			oBinding.expandToLevel(1);
+		}
+
+		function handler2(oEvent) {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+			// Rebuild tree after expandToLevel
+			oBinding.getContexts(0, 10, 10);
+		}
+
+		function handler3(oEvent) {
+			oBinding.detachChange(handler3);
+			oBinding.getContexts(0, 10, 10);
+			assert.ok(oBinding.findNode(6).key.indexOf("1029") !== -1, "Node 1029 (level 0) is found at correct index");
+			assert.ok(oBinding.findNode(7).key.indexOf("1030") !== -1, "Node 1030 (level 1, child of 1029) is found at correct index");
+			done();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 10, 10);
+	});
+});
+
+QUnit.test("expandToLevel: Expand to same level fires change event", function(assert) {
+	// Apparently can't test the real scenario (expandToLevel(2) => manual collapse => expandToLevel(2) again) due to static test data
+	var done = assert.async();
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 1
+		});
+
+		function handler1(oEvent) {
+			oBinding.detachChange(handler1);
+			oBinding.getContexts(0, 10, 10);
+			oBinding.attachChange(handler2);
+			oBinding.expandToLevel(1);
+		}
+
+		function handler2(oEvent) {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+			// Rebuild tree after expandToLevel
+			oBinding.getContexts(0, 10, 10);
+		}
+
+		function handler3(oEvent) {
+			oBinding.detachChange(handler3);
+			oBinding.getContexts(0, 10, 10);
+			assert.ok(oBinding.findNode(6).key.indexOf("1029") !== -1, "Node 1029 (level 0) is found at correct index");
+			assert.ok(oBinding.findNode(7).key.indexOf("1030") !== -1, "Node 1030 (level 1, child of 1029) is found at correct index");
+			done();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 10, 10);
+	});
+});
+
+QUnit.test("collapseToLevel: Collapse two levels", function(assert) {
+
+	var done = assert.async();
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function handler1(oEvent) {
+			oBinding.detachChange(handler1);
+			oBinding.getContexts(0, 10, 10);
+			oBinding.attachChange(handler2);
+			oBinding.collapseToLevel(0);
+		}
+
+		function handler2(oEvent) {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+			// Rebuild tree after expandToLevel
+			oBinding.getContexts(0, 10, 10);
+		}
+
+		function handler3(oEvent) {
+			oBinding.detachChange(handler3);
+			oBinding.getContexts(0, 10, 10);
+			assert.ok(oBinding.findNode(6).key.indexOf("1387") !== -1, "Node 1387 (level 0) is found at correct index");
+			done();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 10, 10);
+	});
+});
+
+QUnit.test("collapseToLevel: Collapse to same level fires change event", function(assert) {
+	// Apparently can't test the real scenario (collapseToLevel(0) => manual expand => collapseToLevel(0) again) due to static test data
+	var done = assert.async();
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 0
+		}, [
+
+		]);
+
+		function handler1(oEvent) {
+			oBinding.detachChange(handler1);
+			oBinding.getContexts(0, 10, 10);
+			oBinding.attachChange(handler2);
+			oBinding.collapseToLevel(0);
+		}
+
+		function handler2(oEvent) {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+			// Rebuild tree after expandToLevel
+			oBinding.getContexts(0, 10, 10);
+		}
+
+		function handler3(oEvent) {
+			oBinding.detachChange(handler3);
+			oBinding.getContexts(0, 10, 10);
+			assert.ok(oBinding.findNode(6).key.indexOf("1387") !== -1, "Node 1387 (level 0) is found at correct index");
+			done();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 10, 10);
+	});
+});

@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/model/IconModel",
 	"sap/ui/demo/iconexplorer/model/FavoriteModel",
 	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
-	"sap/ui/core/IconPool"
-], function (UIComponent, Device, JSONModel, models, IconModel, FavoriteModel, ErrorHandler, IconPool) {
+	"sap/ui/core/IconPool",
+	"sap/ui/VersionInfo"
+], function (UIComponent, Device, JSONModel, models, IconModel, FavoriteModel, ErrorHandler, IconPool, VersionInfo) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.iconexplorer.Component", {
@@ -28,64 +29,75 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set up a helper model to manage OpenUI5/SAPUI5
-			var oVersionInfo = sap.ui.getVersionInfo();
-			var oVersionModel = new JSONModel({
-				isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
-			});
-			this.setModel(oVersionModel, "version");
-
-			// set up a helper model to manage favorite icons
-			var oFavoriteModel = new FavoriteModel();
-			this.setModel(oFavoriteModel, "fav");
-
-			// set up an icon model that loads icons from the icon font
-			var oIconModel = new IconModel(this._oIconsLoadedPromise);
-			this.setModel(oIconModel);
-
-			// set the device model
-			this.setModel(models.createDeviceModel(), "device");
-
-			var aFontLoaded = [],
-				aFontNames = ["SAP-icons"];
-
-			// register TNT icon font
-			IconPool.registerFont({
-				fontFamily: "SAP-icons-TNT",
-				fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/") + "fonts"
-			});
-			aFontLoaded.push(IconPool.fontLoaded("SAP-icons-TNT"));
-			aFontNames.push("SAP-icons-TNT");
-
-			// load SAPUI5 fonts on demand
-			if (!oVersionModel.getProperty("/isOpenUI5")) {
-				// register BusinessSuiteInAppSymbols icon font
-				IconPool.registerFont({
-					fontFamily: "BusinessSuiteInAppSymbols",
-					fontURI: sap.ui.require.toUrl("sap/ushell/themes/base/") + "fonts"
+			VersionInfo.load(sap.ui.core).then(function (oVersionInfo) {
+				var oVersionModel = new JSONModel({
+					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
 				});
-				aFontLoaded.push(IconPool.fontLoaded("BusinessSuiteInAppSymbols"));
-				aFontNames.push("BusinessSuiteInAppSymbols");
-			}
+				this.setModel(oVersionModel, "version");
 
-			// create wrapper promise so controllers can register to it
-			this.iconsLoaded();
+				// set up a helper model to manage favorite icons
+				var oFavoriteModel = new FavoriteModel();
+				this.setModel(oFavoriteModel, "fav");
 
-			// init icon model when all promises have finished
-			Promise.all(aFontLoaded).then(function () {
-				oIconModel.init(aFontNames);
-				// We resolve the helper promise on component level when the promise in the icon model is resolved.
-				// The app controller is instantiated before the component's init method, so it cannot directly
-				// register to the icon model.
-				oIconModel.iconsLoaded().then(function () {
-					this._fnIconsLoadedResolve();
+				// set up an icon model that loads icons from the icon font
+				var oIconModel = new IconModel(this._oIconsLoadedPromise);
+				this.setModel(oIconModel);
+
+				// set the device model
+				this.setModel(models.createDeviceModel(), "device");
+
+				var aFontsLoaded = [];
+
+				var oFontConfigs = {};
+				oFontConfigs["SAP-icons"] = {
+					fontFamily: "SAP-icons",
+					fontURI: sap.ui.require.toUrl("sap/ui/core/themes/base/fonts/")
+				};
+
+				var oTNTConfig = {
+					fontFamily: "SAP-icons-TNT",
+					fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/")
+				};
+
+				// register TNT icon font
+				IconPool.registerFont(oTNTConfig);
+				aFontsLoaded.push(IconPool.fontLoaded("SAP-icons-TNT"));
+				oFontConfigs["SAP-icons-TNT"] = oTNTConfig;
+
+				// load SAPUI5 fonts on demand
+				if (!oVersionModel.getProperty("/isOpenUI5")) {
+					var oBusinessSuiteConfig = {
+						fontFamily: "BusinessSuiteInAppSymbols",
+						fontURI: sap.ui.require.toUrl("sap/ushell/themes/base/fonts/")
+					};
+
+					// register BusinessSuiteInAppSymbols icon font
+					IconPool.registerFont(oBusinessSuiteConfig);
+					aFontsLoaded.push(IconPool.fontLoaded("BusinessSuiteInAppSymbols"));
+					oFontConfigs["BusinessSuiteInAppSymbols"] = oBusinessSuiteConfig;
+				}
+
+				// create wrapper promise so controllers can register to it
+				this.iconsLoaded();
+
+				// init icon model when all promises have finished
+				Promise.all(aFontsLoaded).then(function () {
+					oIconModel.init(Object.keys(oFontConfigs));
+					// We resolve the helper promise on component level when the promise in the icon model is resolved.
+					// The app controller is instantiated before the component's init method, so it cannot directly
+					// register to the icon model.
+					oIconModel.iconsLoaded().then(function () {
+						this._fnIconsLoadedResolve();
+					}.bind(this));
 				}.bind(this));
+				this._oFontConfigs = oFontConfigs;
+
+				// initialize the error handler with the component
+				this._oErrorHandler = new ErrorHandler(this);
+
+				// create the views based on the url/hash
+				this.getRouter().initialize();
 			}.bind(this));
-
-			// initialize the error handler with the component
-			this._oErrorHandler = new ErrorHandler(this);
-
-			// create the views based on the url/hash
-			this.getRouter().initialize();
 		},
 
 		/**
@@ -136,7 +148,6 @@ sap.ui.define([
 			}
 			return this._sContentDensityClass;
 		}
-
 	});
 
 });

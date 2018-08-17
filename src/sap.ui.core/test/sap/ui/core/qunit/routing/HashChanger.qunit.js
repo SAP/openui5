@@ -39,6 +39,7 @@ sap.ui.define([
 
 		//Act
 		sut.destroy();
+		assert.notOk(sut.hasOwnProperty("_initialized"), "the initialized flag is reset");
 		sut.setHash("foo");
 
 		//Assert

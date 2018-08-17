@@ -439,9 +439,11 @@ sap.ui.define([
 
 		//Close valueStateMessage
 		if (this._oValueStateMessage) {
-			this._oValueStateMessage.getPopup().attachClosed(function() {
+			this._oValueStateMessage.getPopup().attachEventOnce("closed", function() {
 				oRenamedElement.$().css("z-index", 1);
-			});
+				this._oValueStateMessage.destroy();
+				delete this._oValueStateMessage;
+			}, this);
 			this._oValueStateMessage.close();
 		}
 
@@ -493,30 +495,38 @@ sap.ui.define([
 			});
 		} else {
 			Log.info("Control Variant title unchanged");
+			return Promise.resolve();
 		}
 
 
 		if (sErrorText) {
+			// Order of calling:
+			// -> Open message box
+			// 		-> Close message box
+			// 			-> Stop edit on overlay
+			// 				-> Show value state message
+			// 					-> Start edit on overlay
 			var sValueStateText = oResourceBundle.getText(sErrorText);
 			this._prepareOverlayForValueState(oOverlay, sValueStateText);
 
 			//Border
 			oOverlay.addStyleClass("sapUiRtaErrorBg");
 
-			return Utils._showMessageBox("ERROR", "BLANK_DUPLICATE_TITLE_TEXT", sErrorText)
-
-			.then(function () {
-				//valueStateMessage
-				if (!this._oValueStateMessage) {
-					this._oValueStateMessage = new ValueStateMessage(oOverlay);
-					this._oValueStateMessage.getPopup()._deactivateFocusHandle();
-				}
-				this._oValueStateMessage.open();
-
-				this.startEdit(oOverlay);
-			}.bind(this));
+			return Promise.resolve(Utils._showMessageBox("ERROR", "BLANK_DUPLICATE_TITLE_TEXT", sErrorText)
+				.then(function () {
+					var fnErrorHandler = function() {
+						//valueStateMessage
+						this._oValueStateMessage = new ValueStateMessage(oOverlay);
+						this._oValueStateMessage.getPopup().attachEventOnce("opened", function (oEvent) {
+							oEvent.getSource()._deactivateFocusHandle();
+						});
+						this._oValueStateMessage.open();
+						this.startEdit(oOverlay);
+					}.bind(this);
+					return fnErrorHandler;
+				}.bind(this))
+			);
 		}
-		return Promise.resolve();
 	};
 
 	/**

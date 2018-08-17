@@ -236,6 +236,22 @@ sap.ui.define([
 						},
 						errorMessage: "Was not able to locate delete button for preset '" + sTitle + "'"
 					});
+				},
+
+				iPressUndoButton: function(sTitle) {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						searchOpenDialogs: true,
+						timeout: 3,
+						matchers: function(oButton) {
+							return oButton.$().parents("li").find(".sapMText").html() == sTitle;
+						},
+						actions: new Press(),
+						success: function() {
+							Opa5.assert.ok(true, "'Undo' button was pressed");
+						},
+						errorMessage: "Was not able to press 'Undo' button"
+					});
 				}
 			},
 
@@ -368,6 +384,9 @@ sap.ui.define([
 				iShouldReceiveCorrectExportFile: function(oDataToMatch) {
 					return this.waitFor({
 						check: function () {
+							return Opa5.getContext().fileSaveStub.calledOnce;
+						},
+						success: function() {
 							var oStub = Opa5.getContext().fileSaveStub;
 
 							var sMatchFile = sinon.match(function (sValue) {
@@ -378,15 +397,14 @@ sap.ui.define([
 								);
 							});
 
-							return oStub.calledWith(
-										sMatchFile,
-										sinon.match.string, // some file name
-										"json",
-										"text/plain"
-									);
-						},
-						success: function() {
-							Opa5.assert.ok(true, "I receive correct export file");
+							var isFileCorrect = oStub.calledWith(
+								sMatchFile,
+								sinon.match.truthy, // some file name
+								"json",
+								"text/plain"
+							);
+
+							Opa5.assert.ok(isFileCorrect, "I receive correct export file");
 						},
 						errorMessage: "Was not able to receive correct export file"
 					});

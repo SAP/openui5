@@ -1803,7 +1803,8 @@ function(
 			oListItem = new StandardListItem({
 				title : ManagedObject.escapeSettingsValue(aSubFilters[i].getText()),
 				type : ListType.Active,
-				selected : aSubFilters[i].getSelected()
+				selected : aSubFilters[i].getSelected(),
+				tooltip : aSubFilters[i].getTooltip()
 			}).data("item", aSubFilters[i]);
 			this._filterDetailList.addItem(oListItem);
 		}
@@ -1883,7 +1884,8 @@ function(
 					id: oItem.getId() + LIST_ITEM_SUFFIX,
 					title: ManagedObject.escapeSettingsValue(oItem.getText()),
 					type: ListType.Active,
-					selected: oItem.getSelected()
+					selected: oItem.getSelected(),
+					tooltip : oItem.getTooltip()
 				}).data("item", oItem);
 				this._groupList.addItem(oListItem);
 			}, this);
@@ -1986,7 +1988,8 @@ function(
 					id: oItem.getId() + LIST_ITEM_SUFFIX,
 					title: ManagedObject.escapeSettingsValue(oItem.getText()),
 					type: ListType.Active,
-					selected: oItem.getSelected()
+					selected: oItem.getSelected(),
+					tooltip: oItem.getTooltip()
 				}).data("item", oItem);
 				this._presetFilterList.addItem(oListItem);
 			}, this);
@@ -2010,6 +2013,7 @@ function(
 						id: oItem.getId() + LIST_ITEM_SUFFIX,
 						title : ManagedObject.escapeSettingsValue(oItem.getText()),
 						type : ListType.Active,
+						tooltip : oItem.getTooltip(),
 						press : (function(oItem) {
 							return function(oEvent) {
 								// navigate to details page

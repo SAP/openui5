@@ -27,7 +27,7 @@ sap.ui.define([
 		formatter: formatter,
 
 		onInit: function () {
-			var oModel = new sap.ui.model.json.JSONModel(
+			var oModel = new JSONModel(
 				{
 					SelectedPayment: "Credit Card",
 					SelectedDeliveryMethod: "Standard Delivery",
@@ -137,7 +137,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Shows warning message if user changes prior selected payment method
+		 * Shows warning message if user changes previously selected payment method
 		 */
 		setPaymentMethod: function () {
 			this._setDiscardableProperty({
@@ -149,7 +149,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Shows warning message if user changes prior selected delivery address
+		 * Shows warning message if user changes previously selected delivery address
 		 */
 		setDifferentDeliveryAddress: function () {
 			this._setDiscardableProperty({
@@ -174,7 +174,7 @@ sap.ui.define([
 
 		/**
 		 * Called from <code>ordersummary</code>
-		 * shows warning message and cancels order if affirmed
+		 * shows warning message and cancels order if confirmed
 		 */
 		handleWizardCancel: function () {
 			var sText = this.getResourceBundle().getText("checkoutControllerAreYouSureCancel");
@@ -183,7 +183,7 @@ sap.ui.define([
 
 		/**
 		 * Called from <code>ordersummary</code>
-		 * shows warning message and submits order if affirmed
+		 * shows warning message and submits order if confirmed
 		 */
 		handleWizardSubmit: function () {
 			var sText = this.getResourceBundle().getText("checkoutControllerAreYouSureSubmit");
@@ -207,7 +207,7 @@ sap.ui.define([
 
 		/**
 		 * Checks the corresponding step after activation to decide whether the user can proceed or needs
-		 * to correct his input
+		 * to correct the input
 		 */
 		onCheckStepActivation: function(oEvent) {
 			this._clearMessages();
@@ -257,7 +257,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Check if one or more of the inputs are empty
+		 * Checks if one or more of the inputs are empty
 		 * @param {array} aInputIds - Input ids to be checked
 		 * @returns {boolean}
 		 * @private
@@ -278,7 +278,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Hiddes button to next WizardStep if validation conditions are not fulfilled
+		 * Hides button to proceed to next WizardStep if validation conditions are not fulfilled
 		 * @param {string} sStepName - the ID of the step to be checked
 		 * @param {array} aInputIds - Input IDs to be checked
 		 * @private
@@ -319,7 +319,7 @@ sap.ui.define([
 
 		/**
 		 * Called from both <code>setPaymentMethod</code> and <code>setDifferentDeliveryAddress</code> functions.
-		 * Shows warning message if user changes prior selected choice
+		 * Shows warning message if user changes previously selected choice
 		 * @private
 		 * @param {Object} oParams Object containing message text, model path and WizardSteps
 		 */
@@ -345,7 +345,7 @@ sap.ui.define([
 
 		/**
 		 * Called from <code>handleWizardCancel</code> and <code>handleWizardSubmit</code> functions.
-		 * Shows warning message, resets shopping cart and wizard if affirmed and navigates to given route
+		 * Shows warning message, resets shopping cart and wizard if confirmed and navigates to given route
 		 * @private
 		 * @param {string} sMessage message text
 		 * @param {string} sMessageBoxType message box type (e.g. warning)

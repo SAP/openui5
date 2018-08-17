@@ -437,6 +437,20 @@ function(
 	};
 
 	/**
+	 * Sets the busyIndicatorDelay value to the internal list
+	 * @public
+	 * @param {int} iValue Value for the busyIndicatorDelay.
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 */
+	SelectDialog.prototype.setBusyIndicatorDelay = function (iValue) {
+		this._oList.setBusyIndicatorDelay(iValue);
+		this._oDialog.setBusyIndicatorDelay(iValue);
+		this.setProperty("busyIndicatorDelay", iValue, true);
+
+		return this;
+	};
+
+	/**
 	 * Destroys the control
 	 * @private
 	 */
@@ -1003,6 +1017,7 @@ function(
 				press: function() {
 					this._removeSelection();
 					this._updateSelectionIndicator();
+					this._oDialog.focus();
 				}.bind(this)
 			});
 		}

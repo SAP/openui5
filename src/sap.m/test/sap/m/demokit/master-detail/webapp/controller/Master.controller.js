@@ -141,11 +141,11 @@ sap.ui.define([
 					// forward compact/cozy style into Dialog
 					this._oViewSettingsDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 				}
-				var sDialogTab = "sort";
+				var sDialogTab = "filter";
 				if (oEvent.getSource() instanceof sap.m.Button) {
 					var sButtonId = oEvent.getSource().sId;
-					if (sButtonId.match("filter")) {
-						sDialogTab = "filter";
+					if (sButtonId.match("sort")) {
+						sDialogTab = "sort";
 					} else if (sButtonId.match("group")) {
 						sDialogTab = "group";
 					}

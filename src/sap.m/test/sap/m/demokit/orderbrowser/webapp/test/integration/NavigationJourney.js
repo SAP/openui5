@@ -1,7 +1,10 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/App",
+	"./pages/Master",
+	"./pages/Detail"
 ], function (opaTest) {
 	"use strict";
 
@@ -57,19 +60,11 @@ sap.ui.define([
 			and.iPressOnTheObjectAtPosition(1);
 
 		// Assertions
-		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
-	});
-
-	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
-		// Actions
-		When.onTheDetailPage.iLookAtTheScreen();
-
-		// Assertions
-		Then.onTheDetailPage.iShouldSeeTheObjectLineItemsList().
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject().
+			and.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHaveTheCorrectNumberOfItems().
 			and.theLineItemsHeaderShouldDisplayTheAmountOfEntries().
 			and.theLineItemsTableShouldContainOnlyFormattedUnitNumbers();
-
 	});
 
 	opaTest("Navigate to an object not on the client: no item should be selected and the object page should be displayed", function (Given, When, Then) {

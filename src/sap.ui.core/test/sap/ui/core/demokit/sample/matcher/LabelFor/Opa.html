@@ -9,11 +9,14 @@
 	</script>
 	<script>
 
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
-		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		jQuery.sap.require("sap.ui.qunit.QUnitUtils");
+	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
+	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script>
+		/* global QUnit*/
 
 		QUnit.config.autostart = false;
 
@@ -105,7 +108,6 @@
 			QUnit.start();
 
 		});
-
 	</script>
 </head>
 <body>

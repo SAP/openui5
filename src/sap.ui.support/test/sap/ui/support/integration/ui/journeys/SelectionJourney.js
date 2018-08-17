@@ -14,7 +14,7 @@ sap.ui.define([
 
 	opaTest("Should see the Tree Table of the Support Assistant with 45 rules selected ", function (Given, When, Then) {
 
-		Given.iStartMyApp();
+		Given.iStartMyAppAndDeletePersistedData();
 
 		Then.onTheMainPage.iShouldSeeRulesButton(EXPECTED_RULES_COUNT);
 

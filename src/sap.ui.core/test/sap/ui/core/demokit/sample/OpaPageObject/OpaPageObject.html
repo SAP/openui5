@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
 <html>
-
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Opa sample for PageObjects</title>
@@ -10,11 +9,14 @@
 			data-sap-ui-resourceroots='{"myApp.test": "./"}'>
 		</script>
 
+		<script src="../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
+		<script src="../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
 		<script>
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
-			jQuery.sap.require("sap.ui.qunit.qunit-junit");
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			/* global QUnit */
+
 			QUnit.config.autostart = false;
 
 			sap.ui.require([
@@ -70,7 +72,6 @@
 				});
 			});
 		</script>
-
 	</head>
 	<body>
 		<div id="qunit"></div>

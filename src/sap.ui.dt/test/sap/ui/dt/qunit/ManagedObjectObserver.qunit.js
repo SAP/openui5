@@ -33,11 +33,24 @@ sap.ui.define([
 				"myAggregation": {
 					"type": "sap.ui.core.Element"
 				},
+				"myInheritedAggregation": {
+					"type": "sap.ui.core.Element"
+				},
 				"mySingleAggregation": {
 					"type": "sap.ui.core.Element",
 					"multiple": false
 				},
 				"myOverwrittenAggregation": {
+					"type": "sap.ui.core.Element"
+				}
+			}
+		}
+	});
+
+	var SmartTestObject = TestObject.extend("sap.ui.dt.SmartTestObject", {
+		metadata: {
+			aggregations: {
+				"myOriginalAggregation": {
 					"type": "sap.ui.core.Element"
 				}
 			}
@@ -51,6 +64,7 @@ sap.ui.define([
 	TestObject.prototype.insertMyOverwrittenAggregation = function () {
 		//don't call the generic method as we would do something special...
 	};
+
 	TestObject.prototype.removeMyOverwrittenAggregation = function () {
 		//don't call the generic method as we would do something special...
 	};
@@ -75,12 +89,23 @@ sap.ui.define([
 		//don't call the generic method as we would do something special...
 	};
 
+	SmartTestObject.prototype.insertMyOriginalAggregation = function () {
+		//don't call the generic method as we would do something special...
+		this.insertMyInheritedAggregation();
+	};
+
 	QUnit.module("Given that an ManagedObject is observed", {
 		beforeEach: function (assert) {
 			this.oManagedObject = new TestObject();
 			this.oOtherObject = new TestObject();
+			this.oSmartManagedObject = new SmartTestObject();
 			this.oManagedObjectObserver = new ManagedObjectObserver({
 				target: this.oManagedObject,
+				destroyed: fnObserverDestroyedCalled.bind(null, assert),
+				modified: fnObserverModifiedCalled.bind(null, assert)
+			});
+			this.oSmartManagedObjectObserver = new ManagedObjectObserver({
+				target: this.oSmartManagedObject,
 				destroyed: fnObserverDestroyedCalled.bind(null, assert),
 				modified: fnObserverModifiedCalled.bind(null, assert)
 			});
@@ -213,6 +238,11 @@ sap.ui.define([
 			fnWhen.call(this);
 		});
 	}
+
+	QUnit.test("when the ManagedObject has an aggregation which serves as wrapper for a nested aggregation", function (assert) {
+		assert.expect(2);
+		this.oSmartManagedObject.insertMyOriginalAggregation();
+	});
 
 	QUnit.test("when the ManagedObject is destroyed", function (assert) {
 		assert.expect(1);

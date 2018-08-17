@@ -4,8 +4,9 @@ sap.ui.define([
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Fragment, Controller, Filter, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/base/Log'
+	], function(jQuery, MessageToast, Fragment, Controller, Filter, JSONModel, Log) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.SplitApp.C", {
@@ -56,7 +57,7 @@ sap.ui.define([
 		getSplitAppObj : function() {
 			var result = this.byId("SplitAppDemo");
 			if (!result) {
-				jQuery.sap.log.info("SplitApp object can't be found");
+				Log.info("SplitApp object can't be found");
 			}
 			return result;
 		}

@@ -1,11 +1,9 @@
 sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/demo/toolpageapp/test/integration/pages/Common"
-], function (Opa5,Common) {
+	"sap/ui/test/Opa5"
+], function (Opa5) {
 	"use strict";
 	var sViewName = "Home";
 	Opa5.createPageObjects({
-		baseClass: Common,
 		onTheHomePage: {
 
 			assertions: {

@@ -194,7 +194,7 @@ sap.ui.define([
 			if (mOptions && typeof mOptions.url === "string") {
 				this._oManifestBaseUri = new URI(mOptions.url).absoluteTo(new URI(document.baseURI).search("")).search("");
 			} else {
-				this._oManifestBaseUri = this.oBaseUri;
+				this._oManifestBaseUri = this._oBaseUri;
 			}
 
 			// make sure to freeze the raw manifest (avoid manipulations)
@@ -739,7 +739,8 @@ sap.ui.define([
 			return oManifestJSON.then(function(oManifestJSON) {
 				return new Manifest(oManifestJSON, {
 					componentName: sComponentName,
-					process: false
+					process: false,
+					url: sManifestUrl
 				});
 			});
 		}

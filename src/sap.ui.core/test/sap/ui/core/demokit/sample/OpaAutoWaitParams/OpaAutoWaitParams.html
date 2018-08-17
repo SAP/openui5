@@ -7,11 +7,13 @@
 
 	<script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"></script>
 
+	<script src="../../../../../../../resources/sap/ui/qunit/qunit-css.js"></script>
+	<script src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
 	<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
-		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		/* global QUnit */
 
 		QUnit.config.autostart = false;
 

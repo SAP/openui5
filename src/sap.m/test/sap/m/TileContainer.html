@@ -31,8 +31,7 @@
 						info : "28 days left",
 						infoState : "Success",
 						title : "Create Leave Request",
-						removable: false,
-						tooltip: "This tile cannot be removed"
+						removable: false
 					}),
 					new sap.m.StandardTile({
 						icon : "images/action.png",
@@ -67,8 +66,7 @@
 						icon : "images/analytics_grey_64.png",
 						title : "Team Report",
 						type: "Monitor",
-						removable: false,
-						tooltip: "This tile cannot be removed"
+						removable: false
 					}),
 					new sap.m.StandardTile({
 						type : "Create",
@@ -149,7 +147,7 @@
 						icon : "images/analytics_grey_64.png",
 						title : "Team Report",
 						type: "Monitor"
-					}),
+					})
 				],
 				tileDelete: function(evt){
 					var tile = evt.getParameter("tile");

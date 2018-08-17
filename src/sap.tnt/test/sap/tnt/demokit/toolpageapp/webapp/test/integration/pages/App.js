@@ -1,14 +1,12 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/toolpageapp/test/integration/pages/Common",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/BindingPath"
-], function (Opa5,Common, Press, BindingPath) {
+], function (Opa5, Press, BindingPath) {
 	"use strict";
 
 	var sViewName = "App";
 	Opa5.createPageObjects({
-		baseClass: Common,
 		onTheAppPage: {
 
 			actions: {

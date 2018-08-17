@@ -172,6 +172,8 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 	 * @return {Promise} A promise resolving once the expansion process has been completed
 	 */
 	ODataTreeBindingAdapter.prototype.expandNodeToLevel = function (iIndex, iLevel, bSuppressChange) {
+		var that = this;
+
 		if (this.sOperationMode !== "Server") {
 			// To support OperationMode.Client, addition logic to work on already loaded nodes is required
 			return Promise.reject(new Error("expandNodeToLevel() does not support binding operation modes other than OperationMode.Server"));
@@ -204,7 +206,11 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 
 		return this._loadSubTree(oNode, aParams)
 			.then(function (oData) {
-				this._expandSubTree(oNode, oData.results);
+				// only expand nodes below (visually above) the given level
+				var aEntries = oData.results.filter(function(oEntry) {
+					return oEntry[that.oTreeProperties["hierarchy-level-for"]] < iLevel;
+				});
+				this._expandSubTree(oNode, aEntries);
 				if (!bSuppressChange) {
 					this._fireChange({ reason: ChangeReason.Expand });
 				}

@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/MessageToast",
-	"sap/ui/core/postmessage/Bus"
+	"sap/ui/core/postmessage/Bus",
+	"sap/ui/core/util/LibraryInfo",
+	"sap/ui/core/routing/HashChanger"
 ], function (
 	jQuery,
 	BaseController,
@@ -25,13 +27,15 @@ sap.ui.define([
 	Label,
 	Input,
 	MessageToast,
-	PostMessageBus
+	PostMessageBus,
+	LibraryInfo,
+	HashChanger
 ) {
 	"use strict";
 	return BaseController.extend("sap.ui.rta.dttool.controller.App", {
 
 		/**
-		 * fomats a palette image source path
+		 * formats a palette image source path
 		 * @param {string} sValue the source path
 		 * @returns {string} the formatted source path
 		 */
@@ -43,7 +47,6 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			// 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288
 
 			this.oPostMessageBus = PostMessageBus.getInstance();
 
@@ -66,6 +69,8 @@ sap.ui.define([
 				.subscribe("dtTool", "updateOutline", this.onUpdateOutline, this)
 				.subscribe("dtTool", "dtData", this.onDTData, this);
 
+
+
 			var oModel = new JSONModel();
 			var oView = this.getView();
 			oView.byId("Tree").setBusy(true);
@@ -80,9 +85,53 @@ sap.ui.define([
 			var oPaletteModel = new JSONModel();
 			oView.setModel(oPaletteModel, "palette");
 
+
+
+			/**
+			 * TODO Include all loaded Libraries maybe use aLibraries in onLoadLibs function
+			 * TODO maybe add a InputField to manually add Libraries
+			 * TODO maybe check if the suggestion items are empty after going through all the libraries and output a message like "no samples found" => oSampleInput.getSuggestionItems().length === 0
+			 * Define which Libraries should be suggested in oSampleInput
+			 */
+			var oSampleInput = this.byId("sampleInput");
+			oSampleInput.setBusy(true);
+
+			this._oLibraryInfo = new LibraryInfo();
+			var aSampleLibraries = ["sap.m", "sap.ui.comp"];
+
+			/**
+			 * Adds each Sample of the given aSampleLibraries to the Input- SuggestionItem
+			 */
+
+			Promise.all(
+				aSampleLibraries.map(function (entry) {
+					return new Promise(function (fnResolve) {
+						this._oLibraryInfo._getDocuIndex(entry, function (oResult) {
+							if (oResult && oResult.explored) {
+								oResult.explored.samples.forEach(function (oSample) {
+									var oItem = new sap.ui.core.ListItem({
+										key: oSample.id,
+										text: oSample.name,
+										additionalText: oSample.id
+									});
+									oSampleInput.addSuggestionItem(oItem);
+								});
+							}
+							fnResolve();
+						});
+					}.bind(this));
+				}.bind(this))
+			).then(function () {
+				if (oSampleInput.getSuggestionItems().length === 0) {
+					oSampleInput.setPlaceholder("no samples found");
+				}
+				oSampleInput.setBusy(false);
+			});
+
 		},
+
 		/**
-		 * Called, when the iFrame is ready to receive Messages
+		 * Called when the iFrame is ready to receive Messages
 		 */
 		onIFrameReady : function () {
 			if (this.oRTAClient) {
@@ -93,6 +142,7 @@ sap.ui.define([
 				origin: this.getIFrameWindow().location.origin
 			});
 		},
+
 		/**
 		 * called when a palette item is dragged
 		 * @param {object} oPaletteDomRef the dom ref of the dragged palette item
@@ -130,70 +180,23 @@ sap.ui.define([
 		},
 
 		/**
-		 *  Called when selecting an Item in the Switch
-		 *  Load Samples
+		 *  Called when submit is fired on a suggested Item in the Input
+		 *  @param {sap.ui.base.Event} oEvent the event
 		 * */
-		//TODO Create Model with Sample Libaries
-		goToPage : function(oEvent) {
-
-			var oItemSelected = oEvent.getParameters().selectedItem;
-			var sItemSelected = oItemSelected.getText();
-
-
-			var oHashChanger = new sap.ui.core.routing.HashChanger();
+		goToPage: function (oEvent) {
+			var sItemSelected = oEvent.oSource.getSelectedKey();
+			var oHashChanger = new HashChanger();
 			oHashChanger.setHash("sample/" + sItemSelected);
 		},
 
 		/**
 		 * Used to expand the Palette when you click on the Toolbar
 		 * not only on the arrow
+		 * @param {sap.ui.base.Event} oEvent the event
 		 */
 		expandPallete : function(oEvent) {
-
-			var oCustomListItem = oEvent.getSource().getParent().getParent();
-			var oLib = this._getPaletteModel().getObject(oCustomListItem.getBindingContextPath());
-			var sLib = oLib.groupName;
-
-			DTMetadata.loadLibraries([sLib]).then(function(mLibData, oModel) {
-				var oPaletteData = Object.keys(mLibData[sLib]).reduce(function (oFilteredData, sKey) {
-
-					if (mLibData[sLib][sKey].palette && mLibData[sLib][sKey].palette.group && !mLibData[sLib][sKey].palette.ignore) {
-
-						var sGroup = mLibData[sLib][sKey].palette.group.toLowerCase();
-
-						var oControlData = {
-							icon : mLibData[sLib][sKey].palette.icons ? mLibData[sLib][sKey].palette.icons.svg : "",
-							name : mLibData[sLib][sKey].displayName.singular,
-							description : mLibData[sLib][sKey].descriptions ? "" + mLibData[sLib][sKey].descriptions.short.match(/[^\n\r]*/) : "",
-							className : mLibData[sLib][sKey].className,
-							createTemplate : mLibData[sLib][sKey].templates && mLibData[sLib][sKey].templates.create
-						};
-
-						if (!oFilteredData.groups.some(function (oGroup) {
-							if (oGroup.groupName === sGroup) {
-								oGroup.controls.push(oControlData);
-								oGroup.number++;
-								return true;
-							}
-						})) {
-							oFilteredData.groups.push({
-								groupName : sGroup,
-								number : 1,
-								controls : [oControlData]
-							});
-						}
-					}
-					return oFilteredData;
-				}, Object.keys(this._getPaletteModel().getData()).length === 0 ? {groups : []} : this._getPaletteModel().getData());
-
-				this._getPaletteModel().setProperty("/", oPaletteData);
-
-				// var oPalette = this.getView().byId("palette");
-			}.bind(this));
-
 			var isExpanded = oEvent.getSource().getParent().getExpanded();
 			oEvent.getSource().getParent().setExpanded(!isExpanded);
-
 		},
 
 
@@ -201,7 +204,6 @@ sap.ui.define([
 		 * Called when the dragged palette item is dropped
 		 */
 		onDragEnd : function () {
-
 			this.oPostMessageBus.publish({
 				target : this.getIFrameWindow(),
 				origin : this.getIFrameWindow().origin,
@@ -240,31 +242,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Loads DTData of all loaded libraries
+		 * Adds each loaded Library to the Palette
 		 * @param {object} oEvent the event
 		 * @param {string[]} oEvent.data.libs the libraries
 		 */
 		onLoadLibs : function (oEvent) {
 
-            var aLibs = oEvent.data.libs;
-
-            // TODO load all libaries
-            aLibs = ["sap.m"];
-            // aLibs.splice(0, aLibs.length - 2);
-            //
-            // var oLibraryNames = {
-            //     groups : []
-            // };
-            // aLibs.reduce(function (iCounter, sLib) {
-            //     oLibraryNames.groups.push({
-            //         number: iCounter,
-            //         groupName: sLib,
-            //         controls: []
-            //     });
-            //     iCounter++;
-            //     return iCounter;
-            // }, 1);
-
+			var aLibs = oEvent.data.libs;
 
 			aLibs.map(function (sLib) {
 				DTMetadata.loadLibraries([sLib]).then(function(mLibData, oModel) {
@@ -304,9 +288,7 @@ sap.ui.define([
 					oPalette.setBusy(false);
 				}.bind(this));
 			}.bind(this));
-
-            // this._getPaletteModel().setProperty("/", oPaletteData);
-            this.setDraggable();
+			this.setDraggable();
 		},
 
 		/**
@@ -367,7 +349,7 @@ sap.ui.define([
 		/**
 		* Called when RTA has started in the iframe
 		*/
-		onRTAstarted : function  () { // TODO
+		onRTAstarted : function  () {
 			this.oRTAClient.getService("outline").then(function (oOutlineProvider) {
 				oOutlineProvider.get().then(function (oOutline) {
 				var oModel = this._getOutlineModel();
@@ -376,10 +358,8 @@ sap.ui.define([
 				var oTree = this._getTree();
 				var oPropertyPanel = this._getPropertyPanel();
 
-
 				oTree.setBusy(false);
 				oPropertyPanel.setBusy(false);
-
 
 				}.bind(this));
 			}.bind(this));
@@ -391,11 +371,8 @@ sap.ui.define([
 		 * @param {string} oEvent.data.id the id of the overlay
 		 */
 		onSelectOverlayInOutline : function (oEvent) {
-
 			var sId = oEvent.data.id;
-
 			var oTree = this._getTree();
-
 			var sPath = this.findOverlayInOutline(sId, this._getOutlineModel().getData());
 
 			if (!sPath) {
@@ -403,9 +380,6 @@ sap.ui.define([
 			}
 
 			oTree.setSelectedItemByPath(sPath);
-
-
-
 		},
 
 		/**
@@ -474,7 +448,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Updates the palette and propertie panel with the changed design time data
+		 * Updates the palette and property panel with the changed design time data
 		 * @param {object} oEvent the event
 		 * @param {object} oEvent.data.dtData the dt data
 		 */
@@ -714,7 +688,6 @@ sap.ui.define([
 					sCorrectPath = sPath + iIndex;
 					return true;
 				} else if (Array.isArray(oData.elements)) {
-				    // TODO elements was children before -> how to prevent property changes like this
 					sCorrectPath = this.findOverlayInOutline(sId, oData.elements, sPath + iIndex + "/elements/");
 					return sCorrectPath;
 				}

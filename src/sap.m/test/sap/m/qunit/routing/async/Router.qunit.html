@@ -171,7 +171,7 @@
 									assert.strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
 									sinon.assert.calledWithExactly(oNavigateSpy, {
 										askHistory: true,
-										navigationIdentifier: "myRoute",
+										navigationIdentifier: "myTarget",
 										viewLevel: 5
 									});
 									oToSpy.restore();
@@ -550,6 +550,58 @@
 								}
 							});
 
+							QUnit.module("Order of navigation methods and events");
+
+							QUnit.test("TargetHandler's addNavigation, navigate and routeMatched event should be called in the correct order", function(assert) {
+								var oRouter = fnCreateRouter(
+									{
+										"route": {
+											pattern: "anyPattern",
+											target: ["first", "second"]
+										}
+									},
+									{
+										viewType: "JS",
+										controlAggregation:"pages",
+										controlId: "someControlId"
+									},
+									null,
+									{
+										first: {
+											viewName: "first"
+										},
+										second: {
+											viewName: "second",
+											viewLevel: 0
+										}
+									});
+
+								var aCalledOrder = [];
+								var oTargetHandler = oRouter.getTargetHandler();
+
+								sinon.stub(oTargetHandler, "addNavigation", function() {
+									aCalledOrder.push("addNavigation");
+								});
+
+								sinon.stub(oTargetHandler, "navigate", function() {
+									aCalledOrder.push("navigate");
+								});
+
+								oRouter.attachRouteMatched(function() {
+									aCalledOrder.push("routeMatched");
+								});
+
+								var oRoute = oRouter.getRoute("route");
+								var oRouteMatchedSpy = sinon.spy(oRoute, "_routeMatched");
+
+								oRouter.parse("anyPattern");
+
+								assert.equal(oRouteMatchedSpy.callCount, 1, "Route is matched");
+								var oPromise = oRouteMatchedSpy.getCall(0).returnValue;
+								return oPromise.then(function() {
+									assert.deepEqual(aCalledOrder, ["addNavigation", "addNavigation", "navigate", "routeMatched"]);
+								});
+							});
 						});
 			})();
 		</script>

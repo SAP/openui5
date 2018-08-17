@@ -3,17 +3,16 @@
 (function () {
 	'use strict';
 
-	jQuery.sap.require('sap.ui.qunit.qunit-css');
-	jQuery.sap.require('sap.ui.thirdparty.qunit');
-	jQuery.sap.require('sap.ui.qunit.qunit-junit');
-	jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 	jQuery.sap.require('sap.ui.thirdparty.sinon');
 	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
+
 	QUnit.config.autostart = false;
 
-	sap.ui.require(
-		['sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'sap/ui/test/actions/Press'],
-		function (Opa5, opaTest, Press) {
+	sap.ui.require([
+		'sap/ui/test/Opa5',
+		'sap/ui/test/opaQunit',
+		'sap/ui/test/actions/Press'
+	], function (Opa5, opaTest, Press) {
 			/**
 			 * Returns an object to be used by the OPA plugin for the Support Assistant
 			 * @param {string} controlId The control from which the check will start

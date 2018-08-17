@@ -32,7 +32,7 @@ describe('sap.m.MultiComboBox', function() {
 	it("should visualize a MultiComboBox with cropped tokens", function(){
 		var croppedTokensMultiComboBox = element(by.id("MultiComboBox1-inner"));
 		croppedTokensMultiComboBox.click();
-		expect(takeScreenshot(croppedTokensMultiComboBox)).toLookAs("cropped_tokens");
+		expect(takeScreenshot( element(by.id("MultiComboBox1")))).toLookAs("cropped_tokens");
 	});
 
 	//MultiComboBox with selectable disabled list item

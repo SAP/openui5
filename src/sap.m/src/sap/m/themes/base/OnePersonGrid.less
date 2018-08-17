@@ -1,12 +1,12 @@
-@sapMOnePersonGridRowHeadersWidth: 4rem;
-@sapMOnePersonGridRowHeight: 4rem;
-@sapMOnePersonGridCompactRowHeight: 3rem;
+@_sap_m_OnePersonGrid_RowHeadersWidth: 4rem;
+@_sap_m_OnePersonGrid_RowHeight: 4rem;
+@_sap_m_OnePersonGrid_CompactRowHeight: 3rem;
 
 /*****************
 	COLUMN HEADERS
 *****************/
 .sapMOnePersonColumnHeader {
-	padding-left: @sapMOnePersonGridRowHeadersWidth;
+	padding-left: @_sap_m_OnePersonGrid_RowHeadersWidth;
 
 	.sapUiCalItems {
 		display: block;
@@ -78,7 +78,7 @@
 }
 
 .sapMOnePersonBlockersColumns {
-	margin-left: @sapMOnePersonGridRowHeadersWidth;
+	margin-left: @_sap_m_OnePersonGrid_RowHeadersWidth;
 	min-height: 1.75rem;
 	position: relative;
 }
@@ -94,7 +94,7 @@
 	box-sizing: border-box;
 	border: 0.0625rem solid;
 	border-top-width: 0;
-	height: @sapMOnePersonGridRowHeight;
+	height: @_sap_m_OnePersonGrid_RowHeight;
 	position: relative;
 }
 
@@ -126,7 +126,7 @@
 	display: block;
 	padding-right: 0.5rem;
 	text-align: end;
-	width: @sapMOnePersonGridRowHeadersWidth;
+	width: @_sap_m_OnePersonGrid_RowHeadersWidth;
 }
 
 .sapMOnePersonNowMarker::after {
@@ -238,6 +238,6 @@
 	}
 
 	.sapMOnePersonRow {
-		height: @sapMOnePersonGridCompactRowHeight;
+		height: @_sap_m_OnePersonGrid_CompactRowHeight;
 	}
 }

@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/assert'
 ], function(
-	jquery,
+	jQuery,
 	Log,
 	assert
 ) {

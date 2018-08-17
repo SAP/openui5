@@ -2,8 +2,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/ui/demo/iconexplorer/controller/BaseController"
-], function (jQuery, JSONModel, formatter, BaseController ) {
+	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/ui/core/Icon"
+], function (jQuery, JSONModel, formatter, BaseController, Icon) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.iconexplorer.controller.Home", {
@@ -37,7 +38,7 @@ sap.ui.define([
 				onAfterRendering: function () {
 					// create a new icon once
 					if (!this.__clearIcon) {
-						this.__clearIcon = new sap.ui.core.Icon(this.getId() + "-__clearIcon", {
+						this.__clearIcon = new Icon(this.getId() + "-__clearIcon", {
 							src : "sap-icon://sys-cancel",
 							press : function (oEvent) {
 								this.setValue("");

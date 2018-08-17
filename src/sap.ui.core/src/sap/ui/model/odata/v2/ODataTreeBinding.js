@@ -1018,12 +1018,10 @@ sap.ui.define([
 			}
 
 			var fnSuccess = function (oData) {
-
-				var sParentKey = this.oModel.getKey(oData.results[0]);
-
 				// Collecting contexts
 				// beware: oData.results can be an empty array -> so the length has to be checked
-				if (Array.isArray(oData.results) && oData.results.length > 0) {
+				if (oData.results.length > 0) {
+					var sParentKey = this.oModel.getKey(oData.results[0]);
 					this._updateNodeKey(oNode, sParentKey);
 					var mKeys = this._createKeyMap(oData.results);
 					this._importCompleteKeysHierarchy(mKeys);

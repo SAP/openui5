@@ -398,16 +398,6 @@ function(
 				this.setValue(fMax);
 			}
 			this._disableButtons(vValue, fMax, fMin);
-
-			//works around a problem with default-width input, inside a flex box
-			//needs to be removed, when inputbase is fixed
-			if (sap.ui.Device.browser.msie) {
-				if (!this.getWidth() || (this.getWidth().indexOf('rem') === -1 && this.getWidth().indexOf('px') === -1)) {
-					this._getInput().addStyleClass("sapMInputBaseNoWidth");
-				} else {
-					this._getInput().removeStyleClass("sapMInputBaseNoWidth");
-				}
-			}
 		};
 
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
@@ -931,6 +921,26 @@ function(
 			if (oEvent.which === KeyCodes.ARROW_DOWN && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+down
 				oEvent.preventDefault(); //preventing to be subtracted  both the minimum step (1) and the larger step
 				this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_UP && (oEvent.ctrlKey || oEvent.metaKey)) { // ctrl + up
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, true).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_DOWN && (oEvent.ctrlKey || oEvent.metaKey)) { // ctrl + down
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, false).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_UP && oEvent.altKey) { // alt + up
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, true).displayValue);
+				bVerifyValue = true;
+			}
+			if (oEvent.which === KeyCodes.ARROW_DOWN && oEvent.altKey) { // alt + down
+				oEvent.preventDefault();
+				this._applyValue(this._calculateNewValue(1, false).displayValue);
 				bVerifyValue = true;
 			}
 			if (bVerifyValue) {

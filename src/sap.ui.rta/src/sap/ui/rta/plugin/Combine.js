@@ -160,16 +160,19 @@ sap.ui.define([
 
 	/**
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - specified overlays
+	 * @param {sap.ui.core.Element} oCombineElement - element where the combine was triggered
 	 */
-	Combine.prototype.handleCombine = function(aElementOverlays) {
-		var oElementOverlay = aElementOverlays[0];
-		var oCombineElement = oElementOverlay.getElement();
-		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+	Combine.prototype.handleCombine = function(aElementOverlays, oCombineElement) {
+		var oCombineElementOverlay;
 		var aElements = aElementOverlays.map(function (oElementOverlay) {
+			if (oElementOverlay.getElement().getId() === oCombineElement.getId()){
+				oCombineElementOverlay = oElementOverlay;
+			}
 			return oElementOverlay.getElement();
 		});
-		var oCombineAction = this.getAction(oElementOverlay);
-		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oCombineAction);
+		var oDesignTimeMetadata = oCombineElementOverlay.getDesignTimeMetadata();
+		var oCombineAction = this.getAction(oCombineElementOverlay);
+		var sVariantManagementReference = this.getVariantManagementReference(oCombineElementOverlay, oCombineAction);
 
 		return this.getCommandFactory().getCommandFor(
 			oCombineElement,
@@ -220,9 +223,10 @@ sap.ui.define([
 	/**
 	 * Trigger the plugin execution.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @param {sap.ui.core.Element} mPropertyBag.contextElement - The element where combine was triggered
 	 */
-	Combine.prototype.handler = function (aElementOverlays) {
-		this.handleCombine(aElementOverlays);
+	Combine.prototype.handler = function (aElementOverlays, mPropertyBag) {
+		this.handleCombine(aElementOverlays, mPropertyBag.contextElement);
 	};
 
 	return Combine;

@@ -1,24 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Opa tests for Heap of Shards</title>
+	<title>Integration tests for Heap of Shards</title>
 	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 	<meta charset="UTF-8">
 
 	<script id="sap-ui-bootstrap"
-			src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+			src="../../../../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-resourceroots='{
-				"sap.ui.demo.HeapOfShards.test.integration": "./"
-			}'>
+				"sap.ui.demo.HeapOfShards": "../../"
+			}'
+			data-sap-ui-preload="async">
 	</script>
 
+	<script src="../../../../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
+	<script src="../../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
 	<script>
-		jQuery.sap.require("sap.ui.demo.HeapOfShards.test.integration.AllJourneys");
+		/* global QUnit */
+
+		QUnit.config.autostart = false;
+
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/ui/demo/HeapOfShards/test/integration/AllJourneys"
+			], function() {
+				QUnit.start();
+			});
+		});
 	</script>
 
 </head>
 <body>
-<div id="qunit"></div>
-<div id="qunit-fixture"></div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

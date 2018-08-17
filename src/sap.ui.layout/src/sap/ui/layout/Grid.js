@@ -38,6 +38,8 @@ sap.ui.define([
 	 * extra large-, large-, medium- and small-sized screens, such as large desktop, desktop, tablet,
 	 * and mobile. The <code>Grid</code> control's width can be percentage- or pixel-based and the spacing between
 	 * its columns can be set to various predefined values.
+	 * <b>Note:</b> The visibility of the child control does not affect the horizontal space it occupies.
+	 * This means that even if the control is not visible, its horizontal space will still exist, even if it is empty.
 	 *
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/grid-layout/#responsive-grid Grid}
 	 *

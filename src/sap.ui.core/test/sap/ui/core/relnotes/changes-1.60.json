@@ -1,0 +1,25 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "a01458ed3abe8cf92c7b2a6e2d206bba141528f6",
+        "type": "FIX",
+        "text": " Manifest: Manifest.load should keep manifest URL in async case",
+        "references": []
+      },
+      {
+        "id": "ca9f4106a84edc5e5a259e33ac89fa724081cea1",
+        "type": "FIX",
+        "text": " Manifest: set component base URL",
+        "references": []
+      },
+      {
+        "id": "a7a0009e1e5305ea4ad084746dd289a3acd5180b",
+        "type": "FIX",
+        "text": " v2.ODataAnnotations: don\u0027t cache invalid annotations",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "341f097a5fa58597c26c6c3f22b6664c192c66cc",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "references": []
+      }
+    ]
+  }
+}

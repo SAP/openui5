@@ -4,6 +4,12 @@
   "version": "1.0.0",
   "author": "SAP SE",
   "description": "UI5 Demo App - Walkthrough Tutorial",
+  "scripts": {
+    "proxy": "node proxy.js"
+  },
+  "devDependencies": {
+    "cors-anywhere": "^0.4.1"
+  },
   "dependencies": {
     "@openui5/sap.m": "^1",
     "@openui5/sap.ui.core": "^1",

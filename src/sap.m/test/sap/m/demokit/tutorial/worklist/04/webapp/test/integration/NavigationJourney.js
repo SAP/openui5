@@ -1,7 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Worklist",
+	"./pages/Browser",
+	"./pages/Object",
+	"./pages/App"
 ], function (opaTest) {
 	"use strict";
 
@@ -15,7 +19,7 @@ sap.ui.define([
 		Then.onTheWorklistPage.iShouldSeeTheTable();
 	});
 
-	opaTest("Should react on hashchange", function (Given, When, Then) {
+	opaTest("Should react on hash change", function (Given, When, Then) {
 		// Actions
 		When.onTheWorklistPage.iRememberTheItemAtPosition(2);
 		When.onTheBrowser.iChangeTheHashToTheRememberedItem();
@@ -56,19 +60,6 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
-
-		// Cleanup
-		Then.iTeardownMyAppFrame();
-	});
-
-	opaTest("Should see a busy indication while loading the metadata", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartMyApp({
-			delay: 10000
-		});
-
-		// Assertions
-		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp();
 
 		// Cleanup
 		Then.iTeardownMyAppFrame();

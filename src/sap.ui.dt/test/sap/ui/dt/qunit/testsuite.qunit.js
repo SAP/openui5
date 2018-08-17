@@ -147,6 +147,11 @@ sap.ui.define(function () {
 					only: ["sap/ui/dt/Util"]
 				}
 			},
+			"util/getNextZIndex": {
+				coverage: {
+					only: ["sap/ui/dt/util/getNextZIndex"]
+				}
+			},
 
 			// -------------------------------------------------------------------------------
 			// Plugin tests:
@@ -219,7 +224,7 @@ sap.ui.define(function () {
 			},
 
 			// -------------------------------------------------------------------------------
-			// Integration tests:
+			// Validator tests:
 			// -------------------------------------------------------------------------------
 			"test/Element": {
 				group: "Validator"
@@ -237,7 +242,11 @@ sap.ui.define(function () {
 				group: "Validator"
 			},
 			"test/report/Table": {
-				group: "Validator"
+				group: "Validator",
+				qunit: {
+					// use an increased timeout as the sap.m Library has so many controls
+					testTimeout: 120000
+				}
 			},
 			"test/report/Statistic": {
 				group: "Validator"

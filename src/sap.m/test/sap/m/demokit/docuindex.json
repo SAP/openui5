@@ -1377,7 +1377,7 @@
 			"Custom Formatters",
 			"Filtering",
 			"Sorting and Grouping",
-			"Remote OData Service",
+			"(Optional) Remote OData Service",
 			"Mock Server Configuration",
 			"Unit Test with QUnit",
 			"Integration Test with OPA",

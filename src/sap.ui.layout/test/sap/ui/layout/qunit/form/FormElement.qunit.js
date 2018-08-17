@@ -16,8 +16,6 @@ sap.ui.require([
 	) {
 	"use strict";
 
-	QUnit.start();
-
 	var oFormElement;
 
 	function initTest() {
@@ -73,9 +71,9 @@ sap.ui.require([
 		var oLabel = oFormElement.getLabelControl();
 
 		assert.equal(oFormElement.getLabel(), "Test", "Label string is assigned");
-		assert.notOk(oFormElement.getAggregation("label") instanceof sap.m.Label, "Label as text entered must not be an control in aggregation");
+		assert.notOk(oFormElement.getAggregation("label") instanceof Label, "Label as text entered must not be an control in aggregation");
 		assert.ok(oLabel, "Label control created");
-		assert.ok(oLabel instanceof sap.m.Label, "Label control is sap.m.Label");
+		assert.ok(oLabel instanceof Label, "Label control is sap.m.Label");
 		assert.equal(oLabel.getText(), "Test", "Label string is set on control");
 
 	});
@@ -426,5 +424,7 @@ sap.ui.require([
 
 		assert.equal(oFormElement.getRenderedDomRef(), "X", "Value returned from Container");
 	});
+
+	QUnit.start();
 
 });

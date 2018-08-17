@@ -113,8 +113,10 @@ sap.ui.define(["sap/ui/support/library"],
 				oIssueManager.addIssue({
 					severity: Severity.Medium,
 					details: aControllerFunctions.map(function(oController) {
-						return "\nSynchronous call " + oController.invalidContent + " found in " + oController.controllerName + "#" + oController.functionName;
-					}),
+							return "Synchronous call " + oController.invalidContent + " found in " + oController.controllerName + "#" + oController.functionName;
+						}).reduce(function(sFullText, sCurrentText) {
+							return sFullText + "\n" + sCurrentText;
+						}),
 					context: {
 						id: sViewId
 					}

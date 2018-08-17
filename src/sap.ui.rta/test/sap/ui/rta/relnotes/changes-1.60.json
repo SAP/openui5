@@ -1,0 +1,25 @@
+{
+  "1.60.0": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "ae2d300f3f4e1c1fb778316edecec534b36fe447",
+        "type": "FIX",
+        "text": "sap.ui.rta - Change Handler error for instance-specific flexibility",
+        "references": []
+      },
+      {
+        "id": "f80f3635055498cc8c43ec1f67f161f72a6a22d9",
+        "type": "FIX",
+        "text": "sap.ui.rta - Check for aggregation binding only for overlays",
+        "references": []
+      },
+      {
+        "id": "e9d8dba745b53786b9db1b7b7ff9b336e7a6a021",
+        "type": "FIX",
+        "text": "sap.ui.rta - Evaluate AddOData Action after MetaModel is loaded",
+        "references": []
+      }
+    ]
+  }
+}

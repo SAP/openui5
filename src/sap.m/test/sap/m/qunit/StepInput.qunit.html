@@ -976,6 +976,46 @@
 				"The input's value is restored to max value 10 after it was set to 13 and arrow down was pressed");
 		});
 
+		QUnit.test("if the value is out of min/max range, pressing up/down arrow + alt the value will be set to min/max", function (assert) {
+			//act
+			this.stepInput.setValue(-7);
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
+			this.clock.tick(1000);
+
+			//assert
+			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), -4,
+					"The input's value is restored to the min value -4 after it was set to -7 and arrow up + alt was pressed");
+
+			//act
+			this.stepInput.setValue(13);
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+			this.clock.tick(1000);
+
+			//assert
+			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
+					"The input's value is restored to max value 10 after it was set to 13 and arrow down + alt was pressed");
+		});
+
+		QUnit.test("if the value is out of min/max range, pressing up/down arrow + ctrl the value will be set to min/max", function (assert) {
+			//act
+			this.stepInput.setValue(-7);
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true);
+			this.clock.tick(1000);
+
+			//assert
+			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), -4,
+					"The input's value is restored to the min value -4 after it was set to -7 and arrow up + ctrl was pressed");
+
+			//act
+			this.stepInput.setValue(13);
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true);
+			this.clock.tick(1000);
+
+			//assert
+			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
+					"The input's value is restored to max value 10 after it was set to 13 and arrow down + ctrl was pressed");
+		});
+
 		QUnit.test("pageup and pagedown increases/decreases the value with a larger step", function (assert) {
 			var oSpyPageUp = this.spy(this.stepInput, "onsappageup"),
 				oSpyPageDown = this.spy(this.stepInput, "onsappagedown");

@@ -608,36 +608,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("loadChanges returns an error when appVersion is an expression binding with no value", function(assert) {
-		var sComponentClassName = "smartFilterBar.Component";
-		var sAppVersion = "${project.appVersion}";
-
-		var oSendStub = sandbox.stub(this.oLrepConnector, "send");
-
-		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).
-			then(
-				function() {},
-				function(oError) {
-					assert.equal(oSendStub.callCount, 0, "the back-end request was not triggered");
-					assert.strictEqual(oError.message, "Component appVersion is invalid", "then the correct error message was returned");
-				});
-	});
-
-	QUnit.test("loadChanges returns an error when component name is an expression binding with no value", function(assert) {
-		var sComponentClassName = "${project.appVersion}.Component";
-		var sAppVersion = "1.2.3";
-
-		var oSendStub = sandbox.stub(this.oLrepConnector, "send");
-
-		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).
-		then(
-			function() {},
-			function(oError) {
-				assert.equal(oSendStub.callCount, 0, "the back-end request was not triggered");
-				assert.strictEqual(oError.message, "Component name not specified", "then the correct error message was returned");
-			});
-	});
-
 	QUnit.test("loadChanges uses a passed url if provided", function(assert) {
 		var sComponentClassName = "smartFilterBar.Component";
 		var sAppVersion = Utils.DEFAULT_APP_VERSION;

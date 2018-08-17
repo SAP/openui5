@@ -16,7 +16,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 	/*
 	 * Applies the jQuery.Event extensions
 	 *
-	 * @sap-restricted sap.ui.core
+	 * @alias module:sap/ui/events/jquery/EventExtension
+	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	EventExtension.apply = function() {
 
@@ -29,7 +31,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		 * Returns an array of names (as strings) identifying {@link sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
 		 *
 		 * @returns {String[]} Array of names identifying {@link sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
-		 * @private
+		 * @public
 		 */
 		jQuery.Event.prototype.getPseudoTypes = function() {
 			var aPseudoTypes = [];
@@ -61,7 +63,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		 *
 		 * @param {string} sType The name of the pseudo type this event should be checked for.
 		 * @returns {boolean} <code>true</code> if this instance of jQuery.Event is of the given sType, <code>false</code> otherwise.
-		 * @private
+		 * @public
 		 */
 		jQuery.Event.prototype.isPseudoType = function(sType) {
 			var aPseudoTypes = this.getPseudoTypes();
@@ -77,7 +79,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		 * Returns OffsetX of Event. In jQuery there is a bug. In IE the value is in offsetX, in FF in layerX
 		 *
 		 * @returns {int} offsetX
-		 * @private
+		 * @public
 		 */
 		jQuery.Event.prototype.getOffsetX = function() {
 
@@ -100,7 +102,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		 * Returns OffsetY of Event. In jQuery there is a bug. in IE the value is in offsetY, in FF in layerY.
 		 *
 		 * @returns {int} offsetY
-		 * @private
+		 * @public
 		 */
 		jQuery.Event.prototype.getOffsetY = function() {
 
@@ -123,7 +125,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		 * PRIVATE EXTENSION: allows to immediately stop the propagation of events in
 		 * the event handler execution - means that "before" delegates can stop the
 		 * propagation of the event to other delegates or the element and so on.
-		 * @private
+		 * @public
 		 * @returns {function} wrapped stopImmediatePropagation function
 		 * @param {function} fnStopImmediatePropagation original stopImmediatePropagation function
 		 */

@@ -36,6 +36,14 @@
 							type="Transparent"
 							press="onPresetItemDelete"
 							visible="{= ${disableDelete} ? false : true}" />
+						<Button
+							id = "undoButton"
+							class="sapUiTinyMarginEnd"
+							tooltip="Return to default selection"
+							icon="sap-icon://synchronize"
+							type="Transparent"
+							press="onPresetItemReset"
+							visible="{= ${isSystemPreset} &amp;&amp; ${isModified} ? true : false}" />
 					</HBox>
 				</CustomListItem>
 			</List>

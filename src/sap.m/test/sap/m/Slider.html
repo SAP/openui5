@@ -77,9 +77,13 @@
 			}
 		</style>
 		<script>
-		var oApp = new sap.m.App("myApp", { initialPage: "page1" }),
+			var oPage1 = new sap.m.Page("page1", {
+						title: "Mobile Slider Control"
+					}),
+					oApp = new sap.m.App("myApp", {initialPage: "page1", pages: [oPage1]}).placeAt("body");
 
-			oSlider0 = new sap.m.Slider({
+
+			var oSlider0 = new sap.m.Slider({
 				value: 30,
 				liveChange: function(oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
@@ -326,7 +330,7 @@
 
 						// display the value
 						oRm.write(oControl.aDays[fValue % 7] + " " + fValue + " May");
-						oRm.write("</div>")
+						oRm.write("</div>");
 
 						if (oControl.getShowButtons()) {
 							oRm.write("<div");
@@ -356,7 +360,7 @@
 
 			oCustomTooltip.prototype.getLabel = function (fValue) {
 				return this.aDays[fValue % 7] + " " + fValue + " May";
-			}
+			};
 
 			oCustomTooltip.prototype.ontap = function (oEvent) {
 			var bButtonPressed = $(oEvent.target).hasClass("sapCustomTooltipButton"),
@@ -415,16 +419,16 @@
 					change : function(oControlEvent) {
 						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 					}
-				}).addStyleClass("slider-margin")
+				}).addStyleClass("slider-margin");
 
-			oPage1 = new sap.m.Page("page1", {
-				title: "Mobile Slider Control",
-				content: [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
-					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13, oSlider14, oSlider15, oSlider16]
+			// Wait for a tick, so the Page would be rendered and the Sliders could be resized properly on any browser
+			setTimeout(function () {
+				[oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
+					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13, oSlider14, oSlider15, oSlider16].forEach(function (oSlider) {
+
+					oPage1.addContent(oSlider);
+				});
 			});
-
-			oApp.addPage(oPage1);
-			oApp.placeAt("body");
 		</script>
 	</head>
 	<body id="body" class="sapUiBody"></body>

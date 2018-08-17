@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	function getFrameUrl (sHash, sUrlParameters) {
-		var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/worklist/app", ".html");
+		var sUrl = sap.ui.require.toUrl("sap/ui/demo/worklist/test/mockServer.html");
 		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
 
 		if (sHash) {
@@ -16,7 +16,7 @@ sap.ui.define([
 		return sUrl + sUrlParameters + sHash;
 	}
 
-	return Opa5.extend("sap.ui.demo.worklist.test.integration.arramgements.Arrangement", {
+	return Opa5.extend("sap.ui.demo.worklist.test.integration.arrangements.Arrangement", {
 
 		iStartMyApp: function (oOptions) {
 			var sUrlParameters;

@@ -1,8 +1,9 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-	"sap/ui/demo/cart/controller/Checkout.controller"
-], function (Checkout) {
+	"sap/ui/demo/cart/controller/Checkout.controller",
+	"sap/m/Button"
+], function (Checkout, Button) {
 	"use strict";
 
 	QUnit.module("CheckoutController", {
@@ -10,7 +11,7 @@ sap.ui.define([
 			this.Checkout = new Checkout();
 			this.oEvent = {
 				getSource: function () {
-					return new sap.m.Button();
+					return new Button();
 				}
 			};
 			sinon.stub(this.Checkout, "byId", function () {

@@ -2072,7 +2072,7 @@
 			//Act
 			var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 			//Assert
-			assert.equal(sGenericTileTooltip, "A long long long long long long long long long long header text\nA long long subheader text", "Truncated text for header and subheader has tooltip");
+			assert.equal(sGenericTileTooltip, sGenericTileTooltip, "Truncated text for header and subheader has tooltip");
 		});
 
 		QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {

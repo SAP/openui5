@@ -1,7 +1,6 @@
 /*global QUnit, window */
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"jquery.sap.dom",
 	"sap/ui/core/Control",
@@ -92,7 +91,7 @@ sap.ui.require([
 	var oShell = new Shell("shell", {
 		search: new TestControl("search0")
 	});
-	oShell.placeAt("uiArea1");
+	oShell.placeAt("content");
 
 	var oShellOverlay0 = new ShellOverlay("overlay0");
 
@@ -159,8 +158,7 @@ sap.ui.require([
 
 	QUnit.test("Clear UI", function(assert) {
 		assert.expect(0);
-		jQuery("#uiArea1").remove();
+		jQuery("#content").remove();
 	});
 
-	QUnit.start();
 });

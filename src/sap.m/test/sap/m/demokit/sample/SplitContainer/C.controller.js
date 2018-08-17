@@ -2,8 +2,9 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller'
-	], function(jQuery, MessageToast, Fragment, Controller) {
+		'sap/ui/core/mvc/Controller',
+		'sap/base/Log'
+	], function(jQuery, MessageToast, Fragment, Controller, Log) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.SplitContainer.C", {
@@ -59,7 +60,7 @@ sap.ui.define([
 		getSplitContObj : function() {
 			var result = this.byId("SplitContDemo");
 			if (!result) {
-				jQuery.sap.log.error("SplitApp object can't be found");
+				Log.error("SplitApp object can't be found");
 			}
 			return result;
 		}

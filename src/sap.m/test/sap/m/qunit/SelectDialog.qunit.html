@@ -137,6 +137,16 @@
 					assert.strictEqual(this.oSelectDialog.$("busyIndicator").length, 0, "To have busy indicator deactivated inside the real dialog");
 				});
 
+				QUnit.test("busyIndicatorDelay propagation to internal List and Dialog controls", function (assert) {
+					var iDelay = 50;
+					this.oSelectDialog.setBusyIndicatorDelay(iDelay);
+
+					sap.ui.getCore().applyChanges();
+					strictEqual(this.oSelectDialog._oList.getBusyIndicatorDelay(), iDelay, 'The List delay value should be ' + iDelay);
+					strictEqual(this.oSelectDialog._oDialog.getBusyIndicatorDelay(), iDelay, 'The Dialog delay value should be ' + iDelay);
+					strictEqual(this.oSelectDialog.getBusyIndicatorDelay(), iDelay, 'The SelectDialog delay value should be ' + iDelay);
+				});
+
 				QUnit.module("Growing Behavior", {
 					beforeEach: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog", {
@@ -1045,6 +1055,14 @@
 
 				assert.equal(oClearButton.getVisible(), true, 'Clear button is visible');
 				assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
+			});
+
+			QUnit.test("After selection reset the focus should be returned to the dialog", function(assert) {
+				this.oSelectDialog.open();
+				sap.ui.getCore().applyChanges();
+
+				this.oSelectDialog._oClearButton.firePress();
+				assert.equal(document.activeElement.getAttribute("id"), this.oSelectDialog._oDialog.getId(), 'After selection is reset the focus should be returned to the dialog"');
 			});
 
 			})();

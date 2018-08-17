@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/TableUtils",
-	"sap/ui/core/MessageType",
+	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters"
-], function(TableQUnitUtils, RowSettings, TableUtils, MessageType, ThemeParameters) {
+], function(TableQUnitUtils, RowSettings, TableUtils, CoreLibrary, ThemeParameters) {
 	"use strict";
 
 	// mapping of global function calls
@@ -14,6 +14,8 @@ sap.ui.define([
 	var destroyTables = window.destroyTables;
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
+
+	var MessageType = CoreLibrary.MessageType;
 
 	/**
 	 * Sets up the row settings template in the table.

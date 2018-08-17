@@ -535,10 +535,16 @@ sap.ui.define([
 		if (value != this.getValue()) {
 			this.setValue(value);
 			this.fireLiveChange({newValue: value});
-
 			if (this.getEnableSuggestions()) {
-				this.fireSuggest({suggestValue: value});
-				updateSuggestions(this);
+				if (this._iSuggestDelay) {
+					clearTimeout(this._iSuggestDelay);
+				}
+
+				this._iSuggestDelay = setTimeout(function(){
+					this.fireSuggest({suggestValue: value});
+					updateSuggestions(this);
+					this._iSuggestDelay = null;
+				}.bind(this), 400);
 			}
 		}
 	};
