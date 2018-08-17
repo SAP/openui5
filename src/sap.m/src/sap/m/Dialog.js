@@ -735,6 +735,8 @@ function(
 				return;
 			}
 
+			this._oCloseTrigger = null;
+
 			if (typeof oEscapeHandler === 'function') {
 				// create a Promise to allow app developers to hook to the 'escape' event
 				// and prevent the closing of the dialog by executing the escape handler function they defined
