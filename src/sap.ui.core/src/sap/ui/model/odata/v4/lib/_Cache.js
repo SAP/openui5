@@ -725,8 +725,12 @@ sap.ui.define([
 			aUnitOrCurrencyPath,
 			that = this;
 
-		return this.fetchValue(oGroupLock.getUnlockedCopy(), sEntityPath).then(function (oEntity) {
-			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
+		return SyncPromise.all([
+			this.fetchValue(oGroupLock.getUnlockedCopy(), sEntityPath),
+			this.fetchTypes()
+		]).then(function (aResults) {
+			var oEntity = aResults[0],
+				sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
 				vOldValue,
 				oPatchPromise,
@@ -752,6 +756,11 @@ sap.ui.define([
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return oPatchPromise.then(function (oPatchResult) {
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					// visit response to report the messages
+					that.visitResponse(oPatchResult, aResults[1], false,
+						_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sEntityPath)),
+						sEntityPath
+					);
 					// update the cache with the PATCH response
 					_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oPatchResult);
 					return oPatchResult;
@@ -830,11 +839,15 @@ sap.ui.define([
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
 	 * @param {boolean} [bWrapped] Whether the result is wrapped into an object as property "value"
-	 * @param {string} [sRootMetaPath=this.sMetaPath] The meta path for the cache root entity
+	 * @param {string} [sRootMetaPath=this.sMetaPath] The meta path for <code>oRoot</code>
+	 * @param {string} [sRootPath=""] Path to <code>oRoot</code>, relative to the cache; used to
+	 *   compute the target property of messages; for operations with return context the
+	 *   <code>sRootMetaPath</code> cannot be derived automatically via <code>sRootPath</code>
 	 *
 	 * @private
 	 */
-	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, bWrapped, sRootMetaPath) {
+	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, bWrapped, sRootMetaPath,
+			sRootPath) {
 		var bHasMessages = false,
 			aKeyPredicates,
 			mPathToODataMessages = {},
@@ -969,7 +982,10 @@ sap.ui.define([
 			visitArray(oRoot.value, sRootMetaPath || this.sMetaPath, "",
 				buildContextUrl(sRequestUrl, oRoot["@odata.context"]));
 		} else if (oRoot && typeof oRoot === "object") {
-			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, "", sRequestUrl);
+			if (sRootPath && sRootPath[0] !== "(") {
+				sRootPath = "/" + sRootPath;
+			}
+			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages) {
 			this.oRequestor.reportBoundMessages(this.sResourcePath, mPathToODataMessages,

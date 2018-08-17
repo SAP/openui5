@@ -549,6 +549,60 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateCache: collection valued properties (messages)", function (assert) {
+		var aNoMessages = [],
+			aMessages = [{
+				"code" : "42",
+				"longtextUrl" : "any/URL",
+				"message" : "message 1",
+				"transition" : false,
+				"target" : "Foo",
+				"numericSeverity" : 3
+			}, {
+				"code" : "17",
+				"longtextUrl" : "any/URL/2",
+				"message" : "message 2",
+				"transition" : true,
+				"target" : "Bar",
+				"numericSeverity" : 4
+			}],
+			sMessages,
+			oCacheData = {
+				BusinessPartnerID : "42",
+				"__CT__FAKE__Message" : {
+					"__FAKE__Messages" : aNoMessages
+				}
+			};
+
+		aNoMessages.$count = aNoMessages.length;
+		aMessages.$count = aMessages.length;
+		sMessages = JSON.stringify(aMessages);
+
+		// code under test
+		_Helper.updateCache(null, "SO_2_BP", oCacheData, {
+			"__CT__FAKE__Message" : {
+				"__FAKE__Messages" : aMessages
+			}
+		});
+
+		assert.strictEqual(JSON.stringify(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"]),
+			sMessages);
+		assert.strictEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"].$count, 2);
+
+		// code under test
+		_Helper.updateCache({}, "SO_2_BP", oCacheData, {
+			"__CT__FAKE__Message" : {
+				"__FAKE__Messages" : aNoMessages
+			}
+		});
+
+		assert.deepEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"], []);
+		assert.strictEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"].$count, 0);
+
+		//TODO change handling for collection valued properties (not supported yet)
+	});
+
+	//*********************************************************************************************
 	QUnit.test("updateCache: remove structured attribute", function (assert) {
 		var mChangeListeners = {
 				"SO_2_BP/Address/City" : [{onChange : function () {}}],
