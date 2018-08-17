@@ -41,6 +41,18 @@ sap.ui.require(['sap/base/i18n/ResourceBundle', 'sap/base/Log', 'sap/base/util/L
 
 	QUnit.module("Basic");
 
+	QUnit.test("facade", function(assert) {
+		this.spy(Log, 'error');
+
+		assert.notStrictEqual(sap.ui.getCore(), oRealCore, "Facade should be different from the implementation");
+		assert.notOk(sap.ui.getCore() instanceof oRealCore.constructor, "Facade should not be an instance of sap.ui.core.Core");
+		assert.strictEqual(sap.ui.getCore(), sap.ui.getCore(), "consecutive calls to sap.ui.getCore() should return the exact same facade");
+
+		Log.error.reset();
+		assert.strictEqual(new oRealCore.constructor(), sap.ui.getCore(), "consecutive calls to the constructor should return the facade");
+		sinon.assert.calledWith(Log.error, sinon.match(/Only.*must create an instance of .*Core/).and(sinon.match(/use .*sap.ui.getCore\(\)/)));
+	});
+
 	QUnit.test("loadLibrary", function(assert) {
 		assert.equal(typeof sap.ui.getCore().loadLibrary, "function", "Core has method loadLibrary");
 		assert.ok(sap.ui.loader._.getModuleState("sap/ui/testlib/library.js") === 0, "testlib lib has not been loaded yet");
