@@ -24,16 +24,11 @@
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://detail-view",
-			"favIcon": "",
-			"phone": "",
-			"phone@2": "",
-			"tablet": "",
-			"tablet@2": ""
-		},
-		"deviceTypes": {
-			"desktop": true,
-			"tablet": true,
-			"phone": true
+			"favIcon": "img/favicon.ico",
+			"phone": "img/57_iPhone_Desktop_Launch.png",
+			"phone@2": "img/114_iPhone_Retina_Web_Clip.png",
+			"tablet": "img/72_iPad_Desktop_Launch.png",
+			"tablet@2": "img/144_iPad_Retina_Web_Clip.png"
 		}
 	},
 	"sap.ui5": {
@@ -46,12 +41,9 @@
 		"dependencies": {
 			"minUI5Version": "1.36.0",
 			"libs": {
-				"sap.ui.core": {
-				},
-				"sap.m": {
-				},
-				"sap.ui.layout": {
-				}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"contentDensities": {
