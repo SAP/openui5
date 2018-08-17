@@ -17,7 +17,12 @@
 		for (var i = 0; i <= 20; i++) {
 			aPages.push(new sap.m.Page("page" + i, {
 				title: "Page " + i,
-				content: [new sap.m.Button({text: "Press me"})]
+				content: [new sap.m.Button("button" + i, {
+					text: "Press me",
+					press: function () {
+						oFCL.setBusy(true);
+					}
+				})]
 			}));
 		}
 
