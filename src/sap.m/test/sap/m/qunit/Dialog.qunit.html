@@ -120,7 +120,7 @@
 				initialPage: "myFirstPage"
 			});
 
-			app.addPage(page).placeAt("content");
+			app.addPage(page).placeAt("qunit-fixture");
 
 			QUnit.module("Initial Check");
 
@@ -646,7 +646,7 @@
 			});
 
 			QUnit.test("set escapeHandler property", function (assert) {
-				assert.expect(2);
+				assert.expect(3);
 
 				var done = assert.async();
 				// arrange
@@ -658,8 +658,9 @@
 
 				oDialog = new sap.m.Dialog('escapeDialog', {
 					escapeHandler: fnEscapeHandlerFunctionSpy,
-					afterClose: function () {
+					afterClose: function (oEvent) {
 						assert.strictEqual(oDialog.isOpen(), false, 'Dialog should be closed.');
+						assert.notOk(oEvent.getParameter("origin"), 'Origin should not be set.');
 
 						oDialog.destroy();
 						oDialog = null;
@@ -673,6 +674,8 @@
 				oDialog.open();
 				this.clock.tick(250);
 				sap.ui.getCore().applyChanges();
+
+				oDialog._oCloseTrigger = 'some button';
 
 				qutils.triggerKeydown(oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 				this.clock.tick(250);
@@ -1124,7 +1127,7 @@
 						$containerContent;
 
 				// Act
-				oContainer.placeAt("content");
+				oContainer.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				oContainer.addStyleClass("sapUiNoContentPadding");
 				$containerContent = oContainer.$().find(sContentSelector);
