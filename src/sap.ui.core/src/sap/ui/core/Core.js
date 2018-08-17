@@ -214,12 +214,20 @@ sap.ui.define([
 	 * @version ${version}
 	 * @alias sap.ui.core.Core
 	 * @public
+	 * @hideconstructor
 	 */
 	var Core = BaseObject.extend("sap.ui.core.Core", /** @lends sap.ui.core.Core.prototype */ {
 		constructor : function() {
 
 			var that = this,
 				METHOD = "sap.ui.core.Core";
+
+			// when a Core instance has been created before, don't create another one
+			if (sap.ui.getCore && sap.ui.getCore()) {
+				Log.error("Only the framework must create an instance of sap/ui/core/Core." +
+						  " To get access to its functionality, use sap.ui.getCore().");
+				return sap.ui.getCore();
+			}
 
 			BaseObject.call(this);
 
@@ -831,7 +839,6 @@ sap.ui.define([
 			var bAnimation = this.oConfiguration.getAnimation();
 			$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
 			jQuery.fx.off = !bAnimation;
-
 			var sAnimationMode = this.oConfiguration.getAnimationMode();
 			$html.attr("data-sap-ui-animation-mode", sAnimationMode);
 		}
@@ -1012,8 +1019,8 @@ sap.ui.define([
 
 		sHref = this._getThemePath(sLibName, sThemeName) + sLibFileName + sQuery;
 		if ( sHref != oLink.href ) {
-			// jQuery.sap.includeStyleSheet has a special FOUC handling
-			// which enables once the attribute data-sap-ui-foucmarker is
+			// sap/ui/dom/includeStylesheet has a special FOUC handling
+			// which is activated once the attribute data-sap-ui-foucmarker is
 			// present on the link to be replaced (usage of the Promise
 			// API is not sufficient as it will change the sync behavior)
 			if (bSuppressFOUC) {
@@ -3314,7 +3321,7 @@ sap.ui.define([
 
 	/**
 	 * Notifies the listeners that an event on a control occurs
-	 * @param {map} mParameters { browserEvent: jQuery.EventObject }
+	 * @param {map} mParameters { browserEvent: jQuery.Event }
 	 * @private
 	 */
 	Core.prototype.fireControlEvent = function(mParameters) {
