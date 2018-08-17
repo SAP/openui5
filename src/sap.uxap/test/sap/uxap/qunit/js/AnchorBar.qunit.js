@@ -145,7 +145,14 @@
 		var $arrowDownIcons;
 
 		$arrowDownIcons = this.oObjectPage.$().find(".sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon");
-		assert.ok($arrowDownIcons.length === 1, "Anchorbar has 1 button with arrow-down icon");
+		assert.ok($arrowDownIcons.length === 2, "Anchorbar has 2 buttons with arrow-down icon");
+	});
+
+	QUnit.test("Menu Button with long text should be able to have width, bigger than 12rem", function (assert) {
+		var $menuButton = $("#UxAP-69_anchorBar--ObjectPageLayout-anchBar-UxAP-69_anchorBar--section16-anchor");
+
+		assert.ok(parseInt($menuButton.css("width"), 10) > (12 * parseInt($("body").css("font-size"), 10)),
+			"Max width style of MenuButton is overriden so that it is bigger than 12rem");
 	});
 
 	QUnit.test("Arrow left nad arrow right buttons should have correct tooltips", function (assert) {
