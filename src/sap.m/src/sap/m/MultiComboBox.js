@@ -80,7 +80,6 @@ function(
 	 *
 	 * @class
 	 * The MultiComboBox control provides a list box with items and a text field allowing the user to either type a value directly into the control or choose from the list of existing items.
-	 * @extends sap.m.ComboBoxBase
 	 *
 	 * A drop-down list for selecting and filtering values.
 	 * <h3>Overview</h3>
@@ -131,6 +130,7 @@ function(
 	 * @version ${version}
 	 *
 	 * @constructor
+	 * @extends sap.m.ComboBoxBase
 	 * @public
 	 * @since 1.22.0
 	 * @alias sap.m.MultiComboBox
