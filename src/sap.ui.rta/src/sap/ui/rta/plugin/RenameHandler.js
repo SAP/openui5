@@ -69,37 +69,42 @@ sap.ui.define([
 				vEditableControlDomRef.get(0).scrollIntoView();
 			}
 
-			var _$ControlForWrapperDomRef = jQuery(ElementUtil.getDomRef(oElement)); /* Main Control */
 			this._$oEditableControlDomRef = jQuery(vEditableControlDomRef); /* Text Control */
-			var _$oEditableControlParentDomRef = this._$oEditableControlDomRef.parent(); /* Text Control parent*/
-
 			var iWidthDifference = 0;
 
-			var iControlForWrapperWidth = parseInt(_$ControlForWrapperDomRef.outerWidth(), 10);
-
-			if (!isNaN(iControlForWrapperWidth)) {
-				var iEditableControlWidth = parseInt(this._$oEditableControlDomRef.outerWidth(), 10);
-				var iEditableControlParentWidth = parseInt(_$oEditableControlParentDomRef.outerWidth(), 10);
-
-				iWidthDifference = iControlForWrapperWidth - iEditableControlWidth;
-
-				if (iWidthDifference < 0 && iEditableControlParentWidth) {
-					if (_$oEditableControlParentDomRef.get(0).id !== _$ControlForWrapperDomRef.get(0).id
-						&& _$oEditableControlParentDomRef.children(":visible").length === 1
-						&& _$oEditableControlParentDomRef.children(":visible").get(0).id === this._$oEditableControlDomRef.get(0).id
-						&& iControlForWrapperWidth > iEditableControlParentWidth) {
-						iWidthDifference = iControlForWrapperWidth - iEditableControlParentWidth;
-					} else {
-						iWidthDifference = 0;
-					}
-				}
-			}
-
-			var oOverlayForWrapper = sap.ui.dt.OverlayRegistry.getOverlay(
+			// case where the editable control has it's own overlay
+			var oOverlayForWrapper = OverlayRegistry.getOverlay(
 				vEditableControlDomRef instanceof jQuery
 					? vEditableControlDomRef.get(0).id
 					: vEditableControlDomRef.id
-			) || mPropertyBag.overlay;
+			);
+
+			// if the editable control overlay could not be found, then the passed overlay should be considered
+			// for this purpose the width of the editable control should be adjusted
+			if (!oOverlayForWrapper) {
+				oOverlayForWrapper = this._oEditedOverlay;
+				var _$ControlForWrapperDomRef = jQuery(ElementUtil.getDomRef(oElement)); /* Main Control */
+				var _$oEditableControlParentDomRef = this._$oEditableControlDomRef.parent(); /* Text Control parent */
+				var iControlForWrapperWidth = parseInt(_$ControlForWrapperDomRef.outerWidth(), 10); /* Main Control Width */
+
+				if (!isNaN(iControlForWrapperWidth)) {
+					var iEditableControlWidth = parseInt(this._$oEditableControlDomRef.outerWidth(), 10);
+					var iEditableControlParentWidth = parseInt(_$oEditableControlParentDomRef.outerWidth(), 10);
+
+					iWidthDifference = iControlForWrapperWidth - iEditableControlWidth;
+
+					if (iWidthDifference < 0 && iEditableControlParentWidth) {
+						if (_$oEditableControlParentDomRef.get(0).id !== _$ControlForWrapperDomRef.get(0).id
+							&& _$oEditableControlParentDomRef.children(":visible").length === 1
+							&& _$oEditableControlParentDomRef.children(":visible").get(0).id === this._$oEditableControlDomRef.get(0).id
+							&& iControlForWrapperWidth > iEditableControlParentWidth) {
+							iWidthDifference = iControlForWrapperWidth - iEditableControlParentWidth;
+						} else {
+							iWidthDifference = 0;
+						}
+					}
+				}
+			}
 
 			var _$oWrapper = jQuery("<div class='sapUiRtaEditableField'></div>")
 				.css({
@@ -233,9 +238,11 @@ sap.ui.define([
 
 		/**
 		 * @param {boolean} bRestoreFocus - true if the focus should be restored on overlay after rename
+		 * @param {string} sPluginMethodName - method name of the plugin
 		 * @private
 		 */
 		_stopEdit : function (bRestoreFocus, sPluginMethodName) {
+			var oOverlay;
 			this._bPreventMenu = false;
 
 			// exchange the dummy text at the label with the genuine empty text (see start_edit function)
@@ -250,7 +257,7 @@ sap.ui.define([
 			this._$oEditableControlDomRef.css("visibility", "visible");
 
 			if (bRestoreFocus) {
-				var oOverlay = this._oEditedOverlay;
+				oOverlay = this._oEditedOverlay;
 
 				oOverlay.setSelected(true);
 				oOverlay.focus();
