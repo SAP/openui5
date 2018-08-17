@@ -96,15 +96,7 @@ sap.ui.define([
 		isValidSelectionImport: function (oImport) {
 			var bIsFileValid = true;
 
-			if (!oImport.hasOwnProperty("id")) {
-				bIsFileValid = false;
-			}
-
 			if (!oImport.hasOwnProperty("title")) {
-				bIsFileValid = false;
-			}
-
-			if (!oImport.hasOwnProperty("description")) {
 				bIsFileValid = false;
 			}
 
