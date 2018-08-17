@@ -31,6 +31,8 @@ sap.ui.define([
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
+	// From sap.ui.Device.media.RANGESETS.SAP_STANDARD - "Phone": For screens smaller than 600 pixels.
+	var STANDART_PHONE_RANGESET = "Phone";
 
 	/**
 	 * Constructor for a new <code>DateTimePicker</code>.
@@ -151,7 +153,7 @@ sap.ui.define([
 			oRm.write(">");
 
 			var oSwitcher = oPopup.getAggregation("_switcher");
-			if (oSwitcher && oSwitcher.getVisible()) {
+			if (oSwitcher) {
 				oRm.write("<div");
 				oRm.addClass("sapMTimePickerSwitch");
 				oRm.writeClasses();
@@ -187,27 +189,27 @@ sap.ui.define([
 
 			var oSwitcher = this.getAggregation("_switcher");
 
+			if (!oSwitcher) {
+				var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				var sDateText = oResourceBundle.getText("DATETIMEPICKER_DATE");
+				var sTimeText = oResourceBundle.getText("DATETIMEPICKER_TIME");
+
+
+				oSwitcher = new sap.m.SegmentedButton(this.getId() + "-Switch", {
+					selectedKey: "Cal",
+					items: [ new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Cal", {key: "Cal", text: sDateText}),
+								new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
+					]
+				});
+				oSwitcher.attachSelect(this._handleSelect, this);
+
+				this.setAggregation("_switcher", oSwitcher, true);
+			}
+
 			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
-				if (!oSwitcher) {
-					var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-					var sDateText = oResourceBundle.getText("DATETIMEPICKER_DATE");
-					var sTimeText = oResourceBundle.getText("DATETIMEPICKER_TIME");
-
-
-					oSwitcher = new sap.m.SegmentedButton(this.getId() + "-Switch", {
-						selectedKey: "Cal",
-						items: [ new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Cal", {key: "Cal", text: sDateText}),
-								 new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
-						]
-					});
-					oSwitcher.attachSelect(this._handleSelect, this);
-
-					this.setAggregation("_switcher", oSwitcher, true);
-				} else {
-					oSwitcher.setVisible(true);
-					oSwitcher.setSelectedKey("Cal");
-				}
-			} else if (oSwitcher) {
+				oSwitcher.setVisible(true);
+				oSwitcher.setSelectedKey("Cal");
+			} else {
 				oSwitcher.setVisible(false);
 			}
 
@@ -220,13 +222,11 @@ sap.ui.define([
 				var sKey = oSwitcher.getSelectedKey();
 				this._switchVisibility(sKey);
 			}
-
 		},
 
 		_handleSelect: function(oEvent) {
 
 			this._switchVisibility(oEvent.getParameter("key"));
-
 		},
 
 		_switchVisibility: function(sKey) {
@@ -264,7 +264,6 @@ sap.ui.define([
 		getSpecialDates: function() {
 
 			return this._oDateTimePicker.getSpecialDates();
-
 		}
 
 	});
@@ -287,7 +286,7 @@ sap.ui.define([
 		}
 
 		this._oPopupContent = undefined; // is destroyed via popup aggregation - just remove reference
-
+		Device.media.detachHandler(this._handleWindowResize, this);
 	};
 
 	DateTimePicker.prototype.setDisplayFormat = function(sDisplayFormat) {
@@ -629,22 +628,42 @@ sap.ui.define([
 	function _handleCancelPress(oEvent){
 
 		this.onsaphide(oEvent);
-
 		this._oCalendar.removeAllSelectedDates();
 		this._oCalendar.addSelectedDate(new DateRange().setStartDate(this._getInitialFocusedDateValue()));
 	}
+
+	/**
+	 * @private
+	 */
+	DateTimePicker.prototype._handleWindowResize = function(mParams) {
+		var oSwitcher = this.getAggregation("_popup").getContent()[0].getAggregation("_switcher"),
+			oCalendar = this.getAggregation("_popup").getContent()[0].getCalendar(),
+			oSliders = this.getAggregation("_popup").getContent()[0].getTimeSliders();
+
+		if (mParams.name === STANDART_PHONE_RANGESET) {
+			oSwitcher.setVisible(true);
+			// Getting "sap.m.internal.DateTimePickerPopup" instance in order to call "_switchVisibility(sKey)" method
+			this.getAggregation("_popup").getContent()[0]._switchVisibility(oSwitcher.getSelectedKey());
+		} else {
+			oSwitcher.setVisible(false);
+			oSliders.$().css("display", "");
+			oCalendar.$().css("display", "");
+		}
+	};
 
 	function _handleAfterOpen(oEvent){
 		this.$("inner").attr("aria-expanded", true);
 		this._oCalendar.focus();
 		this._oSliders._onOrientationChanged();
 
+		Device.media.attachHandler(this._handleWindowResize, this);
 	}
 
 	function _handleAfterClose(){
 		this.$("inner").attr("aria-expanded", false);
-
 		this._restoreInputSelection(this._$input.get(0));
+
+		Device.media.detachHandler(this._handleWindowResize, this);
 	}
 
 	function _getTimePattern(){
