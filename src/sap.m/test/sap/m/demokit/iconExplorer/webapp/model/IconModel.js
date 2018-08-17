@@ -163,7 +163,7 @@ sap.ui.define([
 		 */
 		getUnicode: function (sName) {
 			var sFontName = (this._sFontName === "SAP-icons" ? undefined : this._sFontName),
-				oInfo = IconPool.getIconInfo(this._sFontName + "/" + sName, sFontName);
+				oInfo = IconPool.getIconInfo(sName, sFontName);
 
 			return (oInfo ? oInfo.content : "?");
 		},
