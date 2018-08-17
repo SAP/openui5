@@ -181,10 +181,16 @@ sap.ui.define([
 
 			var oCurrentParent = oTarget.getParent();
 			var vOriginalReturn = this._fnOriginalSetParent.apply(oTarget, arguments);
-			if (bFireModified && !oTarget.__bSapUiDtSupressParentChangeEvent) {
+			if (bFireModified) {
 				oTarget._bInSetParent = false;
-				// "dependents" is used to store some removed elements (e.g. from Combine)
-				if (oCurrentParent !== oParent || sAggregationName === "dependents") {
+				if (
+					!oTarget.__bSapUiDtSupressParentChangeEvent
+					&& (
+						oCurrentParent !== oParent
+						// "dependents" is used to store some removed elements (e.g. from Combine)
+						|| sAggregationName === "dependents"
+					)
+				) {
 					this.fireModified({
 						type: "setParent",
 						value: oParent,
