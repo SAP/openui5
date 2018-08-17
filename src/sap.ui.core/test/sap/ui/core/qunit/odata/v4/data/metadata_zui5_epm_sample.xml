@@ -2,6 +2,7 @@
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_XJG',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="Z__UI" />
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Z__COMMON" />
 		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Z__COM" />
 	</edmx:Reference>
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
@@ -9,6 +10,9 @@
 	</edmx:Reference>
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core" />
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="com.sap.gateway.default.zui5_epm_sample.v0002" Alias="SAP__self">
@@ -81,7 +85,7 @@
 				<Property Name="WeightMeasure" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
 				<Property Name="WeightUnit" Type="Edm.String" Nullable="false" MaxLength="3" />
 				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5" />
-				<Property Name="Price" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable" />
+				<Property Name="Price" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="variable" />
 				<Property Name="Width" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
 				<Property Name="Depth" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
 				<Property Name="Height" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
@@ -111,6 +115,7 @@
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="SOItemCount" Type="Edm.Int16" />
+				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" />
 				<NavigationProperty Name="SO_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" />
 				<NavigationProperty Name="SO_2_SCHDL" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSchedule)" ContainsTarget="true">
 					<OnDelete Action="Cascade" />
@@ -127,13 +132,14 @@
 				<Property Name="Note" Type="Edm.String" Nullable="false" MaxLength="255" />
 				<Property Name="NoteLanguage" Type="Edm.String" Nullable="false" MaxLength="2" />
 				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5" />
-				<Property Name="GrossAmount" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable" />
-				<Property Name="NetAmount" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable" />
-				<Property Name="TaxAmount" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable" />
+				<Property Name="GrossAmount" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="variable" />
+				<Property Name="NetAmount" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="variable" />
+				<Property Name="TaxAmount" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="variable" />
 				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset" Precision="7" />
 				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" MaxLength="3" />
 				<Property Name="ProductID" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" />
 				<NavigationProperty Name="SOITEM_2_PRODUCT" Type="com.sap.gateway.default.zui5_epm_sample.v0002.Product" />
 				<NavigationProperty Name="SOITEM_2_SCHDL" Type="com.sap.gateway.default.zui5_epm_sample.v0002.ItemSchedule" Nullable="false" ContainsTarget="true" />
 				<NavigationProperty Name="SOITEM_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
@@ -161,7 +167,17 @@
 				<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
 				<Property Name="Latitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
 			</ComplexType>
-			<Action Name="RegenerateEPMData" />
+			<ComplexType Name="Message">
+				<Property Name="code" Type="Edm.String" Nullable="false" />
+				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
+				<Property Name="message" Type="Edm.String" Nullable="false" />
+				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
+				<Property Name="target" Type="Edm.String" Nullable="true" />
+				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
+			</ComplexType>
+			<Action Name="RegenerateEPMData">
+				<ReturnType Type="Collection(Edm.String)" Nullable="false" />
+			</Action>
 			<Action Name="SalesOrder_Cancel" IsBound="true">
 				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
@@ -554,8 +570,9 @@
 						</Record>
 					</Collection>
 				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 			</Annotations>
-			<Annotations Target="SAP__self.SalesOrderLineItem">
+			<Annotations Target="SAP__self.SOLineItem">
 				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
 					<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
 						<PropertyValue Property="TypeName" String="Sales Order Ite" />
@@ -674,6 +691,7 @@
 						</Record>
 					</Collection>
 				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner">
 				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
@@ -964,7 +982,7 @@
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerID">
-				<Annotation Term="SAP__common.Label" String="Character Field Length = 10" />
+				<Annotation Term="SAP__common.Label" String="Character Field with Length 10" />
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
 				<Annotation Term="SAP__common.Label" String="Bus. Part. Role" />
@@ -1039,6 +1057,9 @@
 				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Latiude" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude" />
 			</Annotations>
+			<Annotations Target="SAP__self.Container/BusinessPartnerList">
+				<Annotation Term="SAP__core.OptimisticConcurrency" PropertyPath="ChangedAt" />
+			</Annotations>
 			<Annotations Target="SAP__self.Contact/Address/City">
 				<Annotation Term="SAP__common.Label" String="City" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: City" />
@@ -1073,8 +1094,17 @@
 				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Latiude" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude" />
 			</Annotations>
+			<Annotations Target="SAP__self.Container/ProductList">
+				<Annotation Term="SAP__core.OptimisticConcurrency" PropertyPath="ChangedAt" />
+			</Annotations>
+			<Annotations Target="SAP__self.SalesOrder/Messages/numericSeverity">
+				<Annotation Term="SAP__common.Label" String="Byte" />
+			</Annotations>
+			<Annotations Target="SAP__self.Container/SalesOrderList">
+				<Annotation Term="SAP__core.OptimisticConcurrency" PropertyPath="ChangedAt" />
+			</Annotations>
 			<Annotations Target="SAP__self.SOLineItem/SalesOrderID">
-				<Annotation Term="SAP__common.Label" String="Character Field Length = 10" />
+				<Annotation Term="SAP__common.Label" String="Character Field with Length 10" />
 			</Annotations>
 			<Annotations Target="SAP__self.SOLineItem/ItemPosition">
 				<Annotation Term="SAP__common.Label" String="Item Position" />
@@ -1129,6 +1159,9 @@
 				<Annotation Term="SAP__common.Label" String="Product ID" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product ID" />
 			</Annotations>
+			<Annotations Target="SAP__self.SOLineItem/Messages/numericSeverity">
+				<Annotation Term="SAP__common.Label" String="Byte" />
+			</Annotations>
 			<Annotations Target="SAP__self.Address/City">
 				<Annotation Term="SAP__common.Label" String="City" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: City" />
@@ -1172,6 +1205,9 @@
 				<Annotation Term="SAP__common.Label" String="Latitude" />
 				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Latiude" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude" />
+			</Annotations>
+			<Annotations Target="SAP__self.Message/numericSeverity">
+				<Annotation Term="SAP__common.Label" String="Byte" />
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
 				<Annotation Term="SAP__common.ValueListReferences">
