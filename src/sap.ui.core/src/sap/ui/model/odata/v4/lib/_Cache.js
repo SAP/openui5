@@ -71,7 +71,7 @@ sap.ui.define([
 			vCount = parseInt(vCount, 10);
 		}
 		// Note: this relies on $count being present as an own property of aCollection
-		_Helper.updateCache(mChangeListeners, sPath, aCollection, {$count : vCount});
+		_Helper.updateExisting(mChangeListeners, sPath, aCollection, {$count : vCount});
 	}
 
 	//*********************************************************************************************
@@ -184,7 +184,7 @@ sap.ui.define([
 					} else {
 						if (vDeleteProperty) {
 							// set to null and notify listeners
-							_Helper.updateCache(that.mChangeListeners, sParentPath, vCacheData,
+							_Helper.updateExisting(that.mChangeListeners, sParentPath, vCacheData,
 								Cache.makeUpdateData([vDeleteProperty], null));
 						} else { // deleting at root level
 							oEntity["$ui5.deleted"] = true;
@@ -316,7 +316,7 @@ sap.ui.define([
 				that.visitResponse(oResult, aResult[1], false,
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)), sPath + "/-1");
 				// update the cache with the POST response
-				_Helper.updateCacheAfterPost(that.mChangeListeners,
+				_Helper.updateSelected(that.mChangeListeners,
 					_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
 					_Helper.getSelectForPath(that.mQueryOptions, sPath));
 			}, function (oError) {
@@ -369,19 +369,22 @@ sap.ui.define([
 	 * Drills down into the given object according to <code>sPath</code>. Logs an error if the path
 	 * leads into void. Paths may contain key predicates like "TEAM_2_EMPLOYEES('42')/Name". The
 	 * initial segment in a collection cache may even start with a key predicate, for example a path
-	 * could be "('42')/Name".
+	 * could be "('42')/Name". For properties that do not exist in transient entities, the default
+	 * value or <code>null</code> is delivered.
 	 *
 	 * @param {object} oData
 	 *   The result from a read or cache lookup
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
-	 * @returns {any}
-	 *   The result matching to <code>sPath</code>
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise that is resolved with the result matching to <code>sPath</code>
 	 *
 	 * @private
 	 */
 	Cache.prototype.drillDown = function (oData, sPath) {
-		var that = this;
+		var oDataPromise = SyncPromise.resolve(oData),
+			bTransient = false,
+			that = this;
 
 		function invalidSegment(sSegment) {
 			Log.error("Failed to drill-down into " + sPath + ", invalid segment: " + sSegment,
@@ -393,7 +396,6 @@ sap.ui.define([
 		// segment if there is no implicit value.
 		function missingValue(oValue, sSegment, iPathLength) {
 			var sPropertyPath = "",
-				sPropertyType,
 				sReadLink,
 				sServiceUrl;
 
@@ -401,52 +403,75 @@ sap.ui.define([
 				sPropertyPath += "/";
 			}
 			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
-			sPropertyType = that.oRequestor
-				.fetchTypeForPath(that.sMetaPath + _Helper.getMetaPath(sPropertyPath), true)
-				.getResult();
-			if (sPropertyType === "Edm.Stream") {
-				sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
-				sServiceUrl = that.oRequestor.getServiceUrl();
-				return sReadLink || sServiceUrl + that.sResourcePath + sPropertyPath;
-			}
-			return invalidSegment(sSegment);
+			return that.oRequestor
+				.fetchMetadata(that.sMetaPath + _Helper.getMetaPath(sPropertyPath))
+				.then(function (oProperty) {
+					if (!oProperty) {
+						return invalidSegment(sSegment);
+					}
+					if (oProperty.$Type === "Edm.Stream") {
+						sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
+						sServiceUrl = that.oRequestor.getServiceUrl();
+						return sReadLink || sServiceUrl + that.sResourcePath + sPropertyPath;
+					}
+					if (!bTransient) {
+						return invalidSegment(sSegment);
+					}
+					if (oProperty.$kind === "NavigationProperty") {
+						return null;
+					}
+					if (!oProperty.$Type.startsWith("Edm.")) {
+						return {};
+					}
+					if ("$DefaultValue" in oProperty) {
+						return oProperty.$Type === "Edm.String"
+							? oProperty.$DefaultValue
+							: _Helper.parseLiteral(oProperty.$DefaultValue, oProperty.$Type,
+								sPropertyPath);
+					}
+					return null;
+				});
 		}
 
 		if (!sPath) {
-			return oData;
+			return oDataPromise;
 		}
-		return sPath.split("/").reduce(function (vValue, sSegment, i) {
-			var aMatches, oParentValue;
+		return sPath.split("/").reduce(function (oPromise, sSegment, i) {
+			return oPromise.then(function (vValue) {
+				var aMatches, oParentValue;
 
-			if (sSegment === "$count") {
-				return Array.isArray(vValue) ? vValue.$count : invalidSegment(sSegment);
-			}
-			if (vValue === undefined || vValue === null) {
-				// already beyond the valid data: an unresolved navigation property or a property of
-				// a complex type which is null
-				return undefined;
-			}
-			if (typeof vValue !== "object" || sSegment === "@$ui5._") {
-				// Note: protect private namespace against read access just like any missing object
-				return invalidSegment(sSegment);
-			}
-			oParentValue = vValue;
-			aMatches = rSegmentWithPredicate.exec(sSegment);
-			if (aMatches) {
-				if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')
-					vValue = vValue[aMatches[1]]; // there is a navigation property, follow it
+				if (sSegment === "$count") {
+					return Array.isArray(vValue) ? vValue.$count : invalidSegment(sSegment);
 				}
-				if (vValue) { // ensure that we do not fail on a missing navigation property
-					vValue = vValue.$byPredicate[aMatches[2]]; // search the key predicate
+				if (vValue === undefined || vValue === null) {
+					// already beyond the valid data: an unresolved navigation property or a
+					// property of a complex type which is null
+					return undefined;
 				}
-			} else {
-				vValue = vValue[sSegment];
-			}
-			// missing advertisement is not an error
-			return vValue === undefined && sSegment[0] !== "#"
-				? missingValue(oParentValue, sSegment, i + 1)
-				: vValue;
-		}, oData);
+				if (typeof vValue !== "object" || sSegment === "@$ui5._") {
+					// Note: protect private namespace against read access just like any missing
+					// object
+					return invalidSegment(sSegment);
+				}
+				oParentValue = vValue;
+				bTransient = bTransient || _Helper.getPrivateAnnotation(vValue, "transient");
+				aMatches = rSegmentWithPredicate.exec(sSegment);
+				if (aMatches) {
+					if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')
+						vValue = vValue[aMatches[1]]; // there is a navigation property, follow it
+					}
+					if (vValue) { // ensure that we do not fail on a missing navigation property
+						vValue = vValue.$byPredicate[aMatches[2]]; // search the key predicate
+					}
+				} else {
+					vValue = vValue[sSegment];
+				}
+				// missing advertisement is not an error
+				return vValue === undefined && sSegment[0] !== "#"
+					? missingValue(oParentValue, sSegment, i + 1)
+					: vValue;
+			});
+		}, oDataPromise);
 	};
 
 	/**
@@ -562,7 +587,7 @@ sap.ui.define([
 		var that = this;
 
 		this.fetchValue(_GroupLock.$cached, sPath).then(function (oCacheValue) {
-			_Helper.updateCache(that.mChangeListeners, sPath, oCacheValue, oData);
+			_Helper.updateExisting(that.mChangeListeners, sPath, oCacheValue, oData);
 		});
 	};
 
@@ -735,7 +760,7 @@ sap.ui.define([
 				oPatchPromise,
 				sParkedGroup,
 				sTransientGroup,
-				vUnitOrCurrencyValue,
+				sUnitOrCurrencyValue,
 				oUpdateData = Cache.makeUpdateData(aPropertyPath, vValue);
 
 			/*
@@ -745,7 +770,7 @@ sap.ui.define([
 			function onCancel() {
 				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
-				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity,
+				_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity,
 					Cache.makeUpdateData(aPropertyPath, vOldValue));
 			}
 
@@ -761,7 +786,8 @@ sap.ui.define([
 						sEntityPath
 					);
 					// update the cache with the PATCH response
-					_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oPatchResult);
+					_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity,
+						oPatchResult);
 					return oPatchResult;
 				}, function (oError) {
 					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
@@ -796,23 +822,24 @@ sap.ui.define([
 			// remember the old value
 			vOldValue = _Helper.drillDown(oEntity, aPropertyPath);
 			// write the changed value into the cache
-			_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
 			if (sUnitOrCurrencyPath) {
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
-				vUnitOrCurrencyValue = _Helper.drillDown(oEntity, aUnitOrCurrencyPath);
-				if (vUnitOrCurrencyValue === undefined) {
-					Log.debug("Missing value for unit of measure "
-							+ _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath)
-							+ " when updating "
-							+ sFullPath,
+				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
+				sUnitOrCurrencyValue
+					= that.fetchValue(_GroupLock.$cached, sUnitOrCurrencyPath).getResult();
+				if (sUnitOrCurrencyValue === undefined) {
+					Log.debug("Missing value for unit of measure " + sUnitOrCurrencyPath
+							+ " when updating " + sFullPath,
 						that.toString(), "sap.ui.model.odata.v4.lib._Cache");
 				} else {
-					jQuery.extend(true, oUpdateData,
-						Cache.makeUpdateData(aUnitOrCurrencyPath, vUnitOrCurrencyValue));
+					jQuery.extend(true,
+						sTransientGroup ? oEntity : oUpdateData,
+						Cache.makeUpdateData(aUnitOrCurrencyPath, sUnitOrCurrencyValue));
 				}
 			}
 			if (sTransientGroup) {
-				// When updating a transient entity, _Helper.updateCache has already updated the
+				// When updating a transient entity, _Helper.updateSelected has already updated the
 				// POST request, because the request body is a reference into the cache.
 				if (sParkedGroup) {
 					_Helper.setPrivateAnnotation(oEntity, "transient", sTransientGroup);
@@ -1064,7 +1091,8 @@ sap.ui.define([
 		}
 		return this.oSyncPromiseAll.then(function () {
 			that.checkActive();
-			// register afterwards to avoid that updateCache fires updates before the first response
+			// register afterwards to avoid that updateExisting fires updates before the first
+			// response
 			that.registerChange(sPath, oListener);
 			return that.drillDown(that.aElements, sPath);
 		});
@@ -1403,7 +1431,7 @@ sap.ui.define([
 			this.fetchTypes()
 		]).then(function (aResult) {
 			var oElement = aResult[0];
-			// _Helper.updateCache cannot be used because navigation properties cannot be handled
+			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
 			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
 			that.visitResponse(oElement, aResult[1]);
 		});
@@ -1480,8 +1508,8 @@ sap.ui.define([
 						fnOnRemove(iIndex);
 					} else {
 						oResult = oResult.value[0];
-						// _Helper.updateCache cannot be used because navigation properties cannot
-						// be handled
+						// _Helper.updateExisting cannot be used because navigation properties
+						// cannot be handled
 						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
 						that.visitResponse(oResult, mTypeForMetaPath);
 					}
@@ -1841,7 +1869,7 @@ sap.ui.define([
 
 	/**
 	 * Makes an object that has the given value exactly at the given property path allowing to use
-	 * the result in _Helper.updateCache().
+	 * the result in _Helper.updateExisting().
 	 *
 	 * Examples:
 	 * <ul>

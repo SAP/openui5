@@ -4758,7 +4758,7 @@ sap.ui.require([
 		});
 		//TODO: within #refreshSingle
 		// Eliminate checkUpdate and call refreshInternal with bCheckUpdate=true
-		// Find a way to use _Helper.updateCache in _Cache.refreshSingle to do the
+		// Find a way to use _Helper.updateExisting in _Cache.refreshSingle to do the
 		// notification for the changeListeners, currently it would fail because the lookup
 		// for the changeListener fails because of different paths (index versus key predicate)
 	});

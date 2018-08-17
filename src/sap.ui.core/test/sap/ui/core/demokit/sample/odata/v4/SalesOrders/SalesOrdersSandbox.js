@@ -147,6 +147,9 @@ sap.ui.define([
 			"SalesOrderList('')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_new.json"
 			},
+			"POST SalesOrderList('')/SO_2_SOITEM?custom-option=value" : {
+				source : "SalesOrderItemsList_created.json"
+			},
 			"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.CURRENCY_CODE%27/$metadata" : {
 				source : "VH_CurrencyCode.xml"
 			},
@@ -185,6 +188,9 @@ sap.ui.define([
 			},
 			"SalesOrderList?custom-option=value&$count=true&$filter=GrossAmount%20gt%201000%20and%20(SO_2_BP/CompanyName%20ge%20'M')&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$orderby=SalesOrderID%20desc&$skip=0&$top=5" : {
 				source : "SalesOrderList_sorted_by_SalesOrderID_desc.json"
+			},
+			"POST SalesOrderList?custom-option=value" : {
+				source : "SalesOrderList_created.json"
 			}
 		}, "sap/ui/core/sample/odata/v4/SalesOrders/data",
 		"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");

@@ -137,7 +137,7 @@
 				<Property Name="TaxAmount" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="variable" />
 				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset" Precision="7" />
 				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
-				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" MaxLength="3" />
+				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" DefaultValue="EA" MaxLength="3" />
 				<Property Name="ProductID" Type="Edm.String" Nullable="false" MaxLength="10" />
 				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" />
 				<NavigationProperty Name="SOITEM_2_PRODUCT" Type="com.sap.gateway.default.zui5_epm_sample.v0002.Product" />
@@ -164,7 +164,7 @@
 				<Property Name="GeoLocation" Type="com.sap.gateway.default.zui5_epm_sample.v0002.GeoLocation" Nullable="false" />
 			</ComplexType>
 			<ComplexType Name="GeoLocation">
-				<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
+				<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" DefaultValue="0.0"/>
 				<Property Name="Latitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
 			</ComplexType>
 			<ComplexType Name="Message">

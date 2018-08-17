@@ -1943,8 +1943,7 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oTable = that.oView.byId("table");
 
-			that.expectChange("note", "foo", 1)
-				.expectChange("note", "baz", 0);
+			that.expectChange("note", ["baz", "foo"]);
 
 			oTable.getBinding("items").create({Note : "bar"});
 			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
@@ -1966,6 +1965,161 @@ sap.ui.require([
 					"SalesOrderID" : "42"
 				})
 				.expectChange("note", "from server", 0);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a business partner w/o key properties, enter an address (complex property),
+	// then submit the batch
+	QUnit.test("Create with default value in a complex property", function (assert) {
+		var sView = '\
+<Table id="table" items="{/BusinessPartnerList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="city" text="{Address/City}" />\
+		<Text id="longitude" text="{Address/GeoLocation/Longitude}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			that = this;
+
+		this.expectRequest("BusinessPartnerList?$select=Address/City,Address/GeoLocation/Longitude,"
+					+ "BusinessPartnerID&$skip=0&$top=100", {
+				"value" : [{
+					"Address" : {
+						"City" : "Walldorf",
+						"GeoLocation" : null
+					},
+					"BusinessPartnerID" : "42"
+				}]
+			})
+			.expectChange("city", ["Walldorf"])
+			.expectChange("longitude", [null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("city", ["", "Walldorf"])
+				.expectChange("longitude", ["0.000000000000", null]);
+
+			oTable = that.oView.byId("table");
+			oTable.getBinding("items").create();
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("city", "Heidelberg", 0)
+				.expectChange("longitude", "8.700000000000", 0);
+
+			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("Heidelberg");
+			oTable.getItems()[0].getCells()[1].getBinding("text").setValue("8.7");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList",
+					payload : {
+						"Address" : {
+							"City" : "Heidelberg",
+							"GeoLocation" : {"Longitude" : "8.7"}
+						}
+					}
+				}, {
+					"Address" : {
+						"City" : "Heidelberg",
+						"GeoLocation" : {"Longitude" : "8.69"}
+					},
+					"BusinessPartnerID" : "43"
+				})
+				// Note: This additional request will be eliminated by CPOUI5UISERVICESV3-1436
+				.expectRequest("BusinessPartnerList('43')?$select=Address/City,"
+						+ "Address/GeoLocation/Longitude,BusinessPartnerID", {
+					"Address" : {
+						"City" : "Heidelberg",
+						"GeoLocation" : {"Longitude" : "8.69"}
+					},
+					"BusinessPartnerID" : "43"
+				})
+				.expectChange("longitude", "8.690000000000", 0);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a sales order line item, enter a quantity, then submit the batch. Expect the
+	// quantity unit to be sent, too.
+	QUnit.test("Create with default value in a currency/unit", function (assert) {
+		var sView = '\
+<Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="quantity" text="{Quantity}" />\
+		<Text id="unit" text="{QuantityUnit}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,Quantity,"
+			+ "QuantityUnit,SalesOrderID&$skip=0&$top=100", {
+				"value" : [{
+					"SalesOrderID" : "42",
+					"ItemPosition" : "0010",
+					"Quantity" : "1.000",
+					"QuantityUnit" : "DZ"
+				}]
+			})
+			.expectChange("quantity", ["1.000"])
+			.expectChange("unit", ["DZ"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("quantity", [null, "1.000"])
+				.expectChange("unit", ["EA", "DZ"]);
+
+			oTable = that.oView.byId("table");
+			oTable.getBinding("items").create();
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("quantity", "2.000", 0);
+
+			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("2.000");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('42')/SO_2_SOITEM",
+					payload : {
+						"Quantity" : "2.000",
+						"QuantityUnit" : "EA"
+					}
+				}, {
+					"SalesOrderID" : "42",
+					"ItemPosition" : "0020",
+					"Quantity" : "2.000",
+					"QuantityUnit" : "EA"
+				})
+				// Note: This additional request will be eliminated by CPOUI5UISERVICESV3-1436
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',"
+						+ "ItemPosition='0020')?$select=ItemPosition,Quantity,QuantityUnit,"
+						+ "SalesOrderID", {
+					"SalesOrderID" : "42",
+					"ItemPosition" : "0020",
+					"Quantity" : "2.000",
+					"QuantityUnit" : "EA"
+				});
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
