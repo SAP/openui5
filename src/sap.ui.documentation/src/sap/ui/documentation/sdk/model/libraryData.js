@@ -106,12 +106,10 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 				return;
 			}
 
-			// push a row for the headline
-			oData.demoAppsByCategory.push([{
-				categoryId : sKey
-			}]);
-			// push n rows for the demo apps itself (start a new row every 4 cells)
-			var iCurrentLength = oData.demoAppsByCategory.push([]);
+			var aRows = [];
+
+			// collect n rows for the demo apps itself (start a new row every 4 cells)
+			var iCurrentLength = aRows.push([]);
 			var iCellCounter = 0;
 			for (var i = 0; i < oDemoAppsByCategory[sKey].length; i++) {
 				iCellCounter++;
@@ -119,11 +117,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 					iCellCounter++;
 				}
 				if (iCellCounter > 4) {
-					iCurrentLength = oData.demoAppsByCategory.push([]);
+					iCurrentLength = aRows.push([]);
 					iCellCounter = 0;
 				}
-				oData.demoAppsByCategory[iCurrentLength - 1].push(oDemoAppsByCategory[sKey][i]);
+				aRows[iCurrentLength - 1].push(oDemoAppsByCategory[sKey][i]);
 			}
+
+			// push the category including its rows
+			oData.demoAppsByCategory.push({
+				categoryId: sKey,
+				rows: aRows
+			});
+
 		});
 
 		return oData;
