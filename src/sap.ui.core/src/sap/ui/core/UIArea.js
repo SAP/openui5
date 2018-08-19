@@ -61,7 +61,12 @@ sap.ui.define([
 	 * @todo Add more log output where helpful
 	 */
 	var oRenderLog = Log.getLogger("sap.ui.Rendering",
-			((window["sap-ui-config"] && window["sap-ui-config"]["xx-debugRendering"]) || /sap-ui-xx-debug(R|-r)endering=(true|x|X)/.test(document.location.search)) ? Log.Level.DEBUG : Math.min(Log.Level.INFO, Log.getLevel())
+			(
+				// Note that the sap-ui-config option still is expected in camel case.
+				// Lower case is only accepted here because of the config normalization which will be removed in future
+				(window["sap-ui-config"] && (window["sap-ui-config"]["xx-debugRendering"] || window["sap-ui-config"]["xx-debugrendering"]) )
+				|| /sap-ui-xx-debug(R|-r)endering=(true|x|X)/.test(document.location.search)
+			) ? Log.Level.DEBUG : Math.min(Log.Level.INFO, Log.getLevel())
 		),
 		fnDbgWrap = function(oControl) {
 			return oControl;
