@@ -1993,6 +1993,19 @@
 			sap.ui.getCore().applyChanges();
 		});
 
+		QUnit.test("Focus info is cleared upon sapfocusleave", function (assert) {
+			// arrange
+			var oResetChildControlFocusInfoSpy = this.spy(this.oOTB, "_resetChildControlFocusInfo");
+
+			// act - trigger focus leave handler
+			this.oOTB.sFocusedChildControlId = this.oButtonUnderTest.getId();
+			this.oOTB.onsapfocusleave();
+
+			// assert
+			assert.ok(oResetChildControlFocusInfoSpy.calledOnce, "Method _resetChildControlFocusInfo called upon onsapfocusleave.");
+			assert.strictEqual(this.oOTB.sFocusedChildControlId, "", "Focus info cleared.");
+		});
+
 		QUnit.module("Control destroy");
 
 		QUnit.test("Popover is not re-created on layoutDataChange after Toolbar is destroyed", function (assert) {
