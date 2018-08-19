@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.unified.sample.ColorPicker.Controller"
+	controllerName="sap.ui.unified.sample.ColorPickerLarge.Controller"
 	height="100%"
 	xmlns="sap.ui.unified"
 	xmlns:m="sap.m"
@@ -8,7 +8,7 @@
 	<m:Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
 		<m:content>
 			<m:VBox class="sapUiSmallMargin">
-				<ColorPicker id="cp" mode="HSL"/>
+				<ColorPicker id="cp" mode="HSL" displayMode="Large"/>
 				<m:Button text="Open ColorPicker in a ResponsivePopover" press="openPopover"/>
 			</m:VBox>
 		</m:content>

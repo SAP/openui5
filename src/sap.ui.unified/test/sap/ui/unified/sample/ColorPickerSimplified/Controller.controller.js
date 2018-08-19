@@ -9,7 +9,8 @@ sap.ui.define([
 				title: "Color Picker",
 				content:[
 					new sap.ui.unified.ColorPicker({
-						mode: sap.ui.unified.ColorPickerMode.HSL
+						mode: sap.ui.unified.ColorPickerMode.HSL,
+						displayMode: sap.ui.unified.ColorPickerDisplayMode.Simplified
 					})
 				]
 			});

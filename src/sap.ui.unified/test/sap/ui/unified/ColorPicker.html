@@ -3,82 +3,116 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>ColorPicker - sap.ui.unified</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-libs="sap.m, sap.ui.unified, sap.ui.layout"
 			src="../../../../resources/sap-ui-core.js">
 	</script>
-    <script>
+	<script>
 
-        sap.ui.getCore().attachInit(function () {
+		sap.ui.getCore().attachInit(function () {
 
-            var oCP;
+			var oCP,
+				oCPicker = new sap.ui.unified.ColorPicker({
+					mode: sap.ui.unified.ColorPickerMode.HSL
+				}),
+				oRP = new sap.m.ResponsivePopover({
+					title: "Color Picker",
+					content:[
+						oCPicker
+					]
+				}),
+				oSelect = new sap.m.Select('select_mode', {
+					items: [
+						new sap.ui.core.Item("default_mode", {
+							text: 'Default',
+							key: sap.ui.unified.ColorPickerDisplayMode.Default
+						}),
+						new sap.ui.core.Item("large_mode", {
+							text: 'Large',
+							key: sap.ui.unified.ColorPickerDisplayMode.Large
+						}),
+						new sap.ui.core.Item("simplified_mode", {
+							text: 'Simplified',
+							key: sap.ui.unified.ColorPickerDisplayMode.Simplified
+						})
+					],
+					change: function(oEvent) {
+						var sColorPickerDisplay = oEvent.getParameter('selectedItem').getKey();
+						oCP.setDisplayMode(sColorPickerDisplay);
+						oCPicker.setDisplayMode(sColorPickerDisplay);
+					}
+				}),
+				oButton = new sap.m.Button("toggle_mode", {
+					text: "Toggle Compact Mode",
+					press: function(){
+						jQuery("body").toggleClass("sapUiSizeCompact");
+					}
+				});
 
-            var oSelect = new sap.m.Select('select_mode', {
-                items: [
-                    new sap.ui.core.Item("default_mode", {
-                        text: 'Default',
-                        key: sap.ui.unified.ColorPickerDisplayMode.Default
-                    }),
-                    new sap.ui.core.Item("large_mode", {
-                        text: 'Large',
-                        key: sap.ui.unified.ColorPickerDisplayMode.Large
-                    }),
-                    new sap.ui.core.Item("simplified_mode", {
-                        text: 'Simplified',
-                        key: sap.ui.unified.ColorPickerDisplayMode.Simplified
-                    })
-                ],
-                change: function(oEvent) {
-                    var sColorPickerDisplay = oEvent.getParameter('selectedItem').getKey();
-                    oCP.setDisplayMode(sColorPickerDisplay);
-                }
-            });
+			if (sap.ui.Device.system.phone) {
+				oRP.setBeginButton(
+					new sap.m.Button({
+						text: "Submit",
+						press: function () {
+							oRP.close();
+						}
+					})
+				);
+				oRP.setEndButton(
+					new sap.m.Button({
+						text: "Cancel",
+						press: function () {
+							oRP.close();
+					}
+				}));
+			} else {
+				oRP.setShowHeader(false);
+			}
 
-            var oButton = new sap.m.Button("toggle_mode", {
-                text: "Toggle Compact Mode",
-                press: function(){
-                    jQuery("body").toggleClass("sapUiSizeCompact");
-                }
-            });
+			app: new sap.m.App({
+				pages: [
+					new sap.m.Page("ColorPickerArea", {
+						showHeader:false,
+						content: [
+							new sap.ui.layout.VerticalLayout({
+								width: "100%",
+								content: [
+									new sap.ui.layout.VerticalLayout({
+										width: "100%",
+										content: [
+											oCP = new sap.ui.unified.ColorPicker("cp", {
+												colorString: "white",
+												mode: sap.ui.unified.ColorPickerMode.HSL
+											})
+										]
+									}),
+									oSelect,
+									oButton,
+									new sap.m.ToggleButton("hsv_hsl_btn", {
+										text: "Toggle HSV/HSL",
+										press: function () {
+											oCP.setMode(sap.ui.unified.ColorPickerMode[this.getPressed() ? 'HSL':'HSV']);
+										}
+									}),
+									new sap.m.Button("btnPopoverBottom", {
+										text : "Open responsive popover",
+										press : function() {
+											oRP.openBy(this);
+										}
+									})
+								]
+							})
+						]
+					}).addStyleClass("sapUiResponsiveContentPadding")
+				]
+			}).placeAt("content");
 
-            app: new sap.m.App({
-                pages: [
-                    new sap.m.Page("ColorPickerArea", {
-                        showHeader:false,
-                        content: [
-                            new sap.ui.layout.VerticalLayout({
-                                width: "100%",
-                                content: [
-                                    new sap.ui.layout.VerticalLayout({
-                                        width: "100%",
-                                        content: [
-                                            oCP = new sap.ui.unified.ColorPicker("cp", {
-                                                colorString: "white",
-                                                mode: sap.ui.unified.ColorPickerMode.HSL
-                                            }),
-                                            new sap.m.Label({text: oCP.getMode()})
-                                        ]
-                                    }),
-                                    oSelect,
-                                    oButton,
-                                    new sap.m.ToggleButton("hsv_hsl_btn", {
-                                        text: "Toggle HSV/HSL",
-                                        press: function () {
-                                            oCP.setMode(sap.ui.unified.ColorPickerMode[this.getPressed() ? 'HSL':'HSV']);
-                                        }
-                                    })
-                                ]
-                            })
-                        ]
-                    }).addStyleClass("sapUiResponsiveContentPadding")
-                ]
-            }).placeAt("content");
+		});
 
-        });
-
-    </script>
+	</script>
 
 </head>
 
