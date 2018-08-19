@@ -313,7 +313,9 @@
 			if (oConfig.autostart) {
 				// first load the tests, then ensure DOM then start tests
 				return requireP( oConfig.module ). // Note: accepts single module or array
-					then(function() {
+					then(function(aTestModules) {
+						return Promise.all(aTestModules);
+					}).then(function() {
 						return ensureDOM();
 					}).then(function() {
 						QUnit.start();
@@ -321,7 +323,10 @@
 			} else {
 				// first ensure the DOM then load tests as tests will start QUnit already
 				return ensureDOM().then(function() {
-					return requireP( oConfig.module ); // Note: accepts single module or array
+					return requireP( oConfig.module ). // Note: accepts single module or array
+						then(function(aTestModules) {
+							return Promise.all(aTestModules);
+						});
 				});
 			}
 		});
