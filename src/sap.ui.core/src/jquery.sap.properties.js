@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/Properties'],
 	 * @throws {Error} When the file has syntax issues (e.g. incomplete unicode escapes);
 	 *    in async mode, the error is not thrown but the returned Promise will be rejected
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
-	 * @deprecated since 1.58. Use <code>sap/base/util/Properties.create</code> instead
+	 * @deprecated since 1.58 use {@link module:sap/base/util/Properties.create} instead
 	 * @public
 	 */
 	jQuery.sap.properties = Properties.create;
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/Properties'],
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public
-	 * @deprecated since 1.58. Use <code>sap/base/util/Properties</code> instead
+	 * @deprecated since 1.58 use {@link module:sap/base/util/Properties} instead
 	 */
 
 	/**
