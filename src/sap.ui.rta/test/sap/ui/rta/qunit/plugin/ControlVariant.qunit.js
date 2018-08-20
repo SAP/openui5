@@ -581,7 +581,7 @@ sap.ui.define([
 					actions : {}
 				}
 			};
-
+			sap.ui.getCore().applyChanges();
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata : oVariantManagementDesignTimeMetadata,
 				rootElements : [this.oVariantManagementControl]
@@ -599,7 +599,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			sap.ui.getCore().applyChanges();
+
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -1020,6 +1020,48 @@ sap.ui.define([
 
 			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
 			assert.equal($editableWrapper.css("width"), iOverlayInnerWidth + "px", "then correct width set for the editable field wrapper");
+		});
+
+		QUnit.test("when startEdit is called and renamed control's editable dom has its own overlay", function(assert) {
+			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
+
+			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef);/* Text control */
+			var $control = jQuery(this.oVariantManagementControl.getDomRef());/* Main control */
+			var sInnerControlOverlayWidth = "10px";
+			$control.css({
+				"width": "100px",
+				"max-width": "100px",
+				"position": "fixed"
+			});
+
+			return new Promise(function (fnResolve) {
+				new ElementOverlay({
+					element: this.oVariantManagementControl.getTitle(),
+					init: function (oEvent) {
+						var oTitleOverlay = oEvent.getSource();
+						oTitleOverlay.render();
+						oTitleOverlay.$().appendTo(this.oVariantManagementOverlay.$());
+						fnResolve(oTitleOverlay);
+					}.bind(this)
+				});
+			}.bind(this))
+				.then(function (oTitleOverlay) {
+					oTitleOverlay.$().css({
+						"width": sInnerControlOverlayWidth,
+						"min-width": sInnerControlOverlayWidth,
+						"position": "fixed"
+					});
+
+					sandbox.stub(OverlayRegistry, "getOverlay")
+						.callThrough()
+						.withArgs($editableControl.get(0).id)
+						.returns(oTitleOverlay);
+
+					this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
+
+					var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
+					assert.equal($editableWrapper.css("width"), sInnerControlOverlayWidth, "then correct width is set for the editable field wrapper, outer control width not considered");
+				}.bind(this));
 		});
 
 		QUnit.test("when startEdit is called in duplicate mode", function (assert) {
