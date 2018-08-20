@@ -111,6 +111,7 @@ sap.ui.define([
 			return "";
 		}
 
+		// TBL_ROW_STATE_INFORMATION, TBL_ROW_STATE_ERROR, TBL_ROW_STATE_WARNING, TBL_ROW_STATE_SUCCESS
 		return TableUtils.getResourceText("TBL_ROW_STATE_" + sHighlight.toUpperCase());
 	};
 
