@@ -192,7 +192,7 @@ sap.ui.define([
 	opaTest("Should be able to switch presets and keep selection", function(Given, When, Then) {
 
 		// change "My Selection" selected rules
-		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection"); // Error logs - rule
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection");
 
 		When.onThePresetsPage.iOpenPresetsPopover();
 
@@ -347,7 +347,7 @@ sap.ui.define([
 
 		When.onThePresetsPage.iPressPresetInPopover(testPreset.title);
 
-		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection"); // Error logs - rule
+		When.onTheRulesPage.iPressSelectCheckboxOf("Error logs",  "Rules selection was changed", "Could not change rules selection");
 
 		Then.onThePresetsPage.iShouldSeePresetTitleInVariantSelect(testPreset._forTestTitleIfModified);
 
