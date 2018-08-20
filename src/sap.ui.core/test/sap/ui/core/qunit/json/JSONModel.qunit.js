@@ -1,77 +1,74 @@
-<!DOCTYPE HTML>
+/*global QUnit, sinon */
+sap.ui.define([
+	"./data/JSONModelFakeService",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Context",
+	"sap/m/Label",
+	"sap/m/List",
+	"sap/m/StandardListItem",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/thirdparty/jquery"
+], function(
+	fakeService,
+	JSONModel,
+	Context,
+	Label,
+	List,
+	ListItem,
+	VerticalLayout,
+	jQuery
+) {
+	"use strict";
 
-<!--
-  Tested sap.ui.model.json.JSONModel
--->
-
-<html>
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
-	</script>
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script src="JSONModelFakeService.js"></script>
-
-<!-- Test functions -->
-<script>
+	// add divs for control tests
+	var oTarget1 = document.createElement("div");
+	oTarget1.id = "target1";
+	document.body.appendChild(oTarget1);
+	var oTarget2 = document.createElement("div");
+	oTarget2.id = "target2";
+	document.body.appendChild(oTarget2);
 
 	var testdata = {
-  		teamMembers:[
-   		            {firstName:"Andreas", lastName:"Klark"},
-   		            {firstName:"Peter", lastName:"Miller"},
-   		            {firstName:"Gina", lastName:"Rush"},
-   		            {firstName:"Steave", lastName:"Ander"},
-   		            {firstName:"Michael", lastName:"Spring"},
-   		            {firstName:"Marc", lastName:"Green"},
-   		            {firstName:"Frank", lastName:"Wallace"}],
-   		additionalData:{
-   			level1:{
-   				text:"level1",
-   				level2: {
-   					text:"level2"
-   				}
-   			}
-   		},
-   		rootproperty: "test1"
+		teamMembers:[
+			{firstName:"Andreas", lastName:"Klark"},
+			{firstName:"Peter", lastName:"Miller"},
+			{firstName:"Gina", lastName:"Rush"},
+			{firstName:"Steave", lastName:"Ander"},
+			{firstName:"Michael", lastName:"Spring"},
+			{firstName:"Marc", lastName:"Green"},
+			{firstName:"Frank", lastName:"Wallace"}
+		],
+		additionalData:{
+			level1:{
+				text:"level1",
+				level2: {
+					text:"level2"
+				}
+			}
+		},
+		rootproperty: "test1"
 	};
 
 	var testdataChild = {
-	  		pets:[
-	   		            {type:"ape", age:"1"},
-	   		            {type:"bird", age:"2"},
-	   		            {type:"cat", age:"3"},
-	   		            {type:"fish", age:"4"},
-	   		            {type:"dog", age:"5"}]
-		};
+		pets:[
+			{type:"ape", age:"1"},
+			{type:"bird", age:"2"},
+			{type:"cat", age:"3"},
+			{type:"fish", age:"4"},
+			{type:"dog", age:"5"}
+		]
+	};
 
-	var oModel = new sap.ui.model.json.JSONModel();
+	var oModel = new JSONModel();
 	oModel.setData(testdata);
 	sap.ui.getCore().setModel(oModel);
 
-	var oModelChild = new sap.ui.model.json.JSONModel();
+	var oModelChild = new JSONModel();
 	oModelChild.setData(testdataChild);
 
-	var oLayout = new sap.ui.layout.VerticalLayout();
+	var oLayout = new VerticalLayout();
 
-	var oLabel = new sap.ui.commons.Label("myLabel");
+	var oLabel = new Label("myLabel");
 	oLabel.setText("testText");
 	oLabel.placeAt("target1");
 
@@ -82,7 +79,7 @@
 			arr1 = ["a", "b", "c"],
 			arr2 = ["d", "e"],
 			arrMerged = ["d", "e", "c"];
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		oModel.setData(obj1);
 		oModel.setData(obj2);
 		assert.deepEqual(oModel.getData(), obj2, "setData object without merge");
@@ -107,7 +104,7 @@
 			arr: [
 				{ name: "value1" },
 				{ name: "value2" },
-				{ name: "value3" },
+				{ name: "value3" }
 			],
 			string: "abc123",
 			number: 123,
@@ -115,7 +112,7 @@
 			func: function() {},
 			date: new Date()
 		};
-		var oModel = new sap.ui.model.json.JSONModel(oData, true),
+		var oModel = new JSONModel(oData, true),
 			oString = oModel.bindProperty("/string"),
 			oNumber = oModel.bindProperty("/number"),
 			oBool = oModel.bindProperty("/bool"),
@@ -135,17 +132,17 @@
 			iChangeCount = 0;
 
 
-		oString.attachChange(function(){bString = true; iChangeCount++});
-		oNumber.attachChange(function(){bNumber = true; iChangeCount++});
-		oBool.attachChange(function(){bBool = true; iChangeCount++});
-		oDate.attachChange(function(){bDate = true; iChangeCount++});
-		oObj.attachChange(function(){bObj = true; iChangeCount++});
-		oObjName.attachChange(function(){bObjName = true; iChangeCount++});
-		oArr.attachChange(function(){bArr = true; iChangeCount++});
-		oArrName.attachChange(function(){bArrName = true; iChangeCount++});
+		oString.attachChange(function(){bString = true; iChangeCount++;});
+		oNumber.attachChange(function(){bNumber = true; iChangeCount++;});
+		oBool.attachChange(function(){bBool = true; iChangeCount++;});
+		oDate.attachChange(function(){bDate = true; iChangeCount++;});
+		oObj.attachChange(function(){bObj = true; iChangeCount++;});
+		oObjName.attachChange(function(){bObjName = true; iChangeCount++;});
+		oArr.attachChange(function(){bArr = true; iChangeCount++;});
+		oArrName.attachChange(function(){bArrName = true; iChangeCount++;});
 
 		assert.equal(typeof oData.obj, "object", "JSON object");
-		assert.equal(jQuery.isArray(oData.arr), true, "JSON array");
+		assert.equal(Array.isArray(oData.arr), true, "JSON array");
 		assert.equal(typeof oData.string, "string", "JSON string");
 		assert.equal(typeof oData.number, "number", "JSON number");
 		assert.equal(typeof oData.bool, "boolean", "JSON boolean");
@@ -212,12 +209,12 @@
 		var value = oModel.getProperty("/teamMembers/4/lastName");
 		assert.equal(value, "Jackson", "model value");
 		oModel.setProperty("/rootproperty", "test2");
-		var value = oModel.getProperty("/rootproperty");
+		value = oModel.getProperty("/rootproperty");
 		assert.equal(value, "test2", "model value");
 	});
 
 	QUnit.test("test model setProperty on root", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel({a:1}),
+		var oModel = new JSONModel({a:1}),
 			oTest = {b:2};
 		oModel.setProperty("/", oTest);
 		assert.equal(oModel.getData(), oTest, "model data changed");
@@ -229,7 +226,7 @@
 		var value = oModel.getProperty("/teamMembers/4/lastName");
 		assert.equal(value, "Smith", "model value");
 		oModel.setProperty("/rootproperty", "test3", oContext);
-		var value = oModel.getProperty("/rootproperty");
+		value = oModel.getProperty("/rootproperty");
 		assert.equal(value, "test3", "model value");
 	});
 
@@ -328,28 +325,29 @@
 		assert.equal(oLabel.getText(), "hamster", "new text value from model");
 	});
 
-	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-	var oItemTemplate = new sap.ui.core.ListItem();
-	oLB.placeAt("target2");
-
 	QUnit.test("test model bindAggregation on Listbox", function(assert) {
 
-		oItemTemplate.bindProperty("text", "firstName").bindProperty("additionalText", "lastName");
+		var oLB = new List("myLb");
+		var oItemTemplate = new ListItem();
+		oLB.placeAt("target2");
+
+		oItemTemplate.bindProperty("title", "firstName").bindProperty("description", "lastName");
 		oLB.bindAggregation("items", "/teamMembers", oItemTemplate);
 
 		var listItems = oLB.getItems();
 		assert.equal(listItems.length, 7, "length of items");
 
-		jQuery(listItems).each( function(i, item){
-			assert.equal(item.getText(), testdata.teamMembers[i].firstName, "firstName");
-			assert.equal(item.getAdditionalText(), testdata.teamMembers[i].lastName, "lastName");
+		listItems.forEach( function(item, i) {
+			assert.equal(item.getTitle(), testdata.teamMembers[i].firstName, "firstName");
+			assert.equal(item.getDescription(), testdata.teamMembers[i].lastName, "lastName");
 		});
 
+		oLB.destroy();
 	});
 
 	QUnit.test("test JSONModel JSON constructor", function(assert) {
 
-		var testModel = new sap.ui.model.json.JSONModel({
+		var testModel = new JSONModel({
 			"foo": "The quick brown fox jumps over the lazy dog.",
 			"bar": "ABCDEFG",
 			"baz": [52, 97]
@@ -371,12 +369,12 @@
 		oModel.createBindingContext("root/test/subtest/name", null, function(context){
 			assert.ok(context == null, "newContext");
 		});
-		oContext = new sap.ui.model.Context(oModel, "/myContext");
+		oContext = new Context(oModel, "/myContext");
 		// if spath starts with / ... context will be ignored, because path is absolute
 		oModel.createBindingContext("/root/test/subtest/name", oContext, function(context){
 			assert.equal(context.getPath(), "/root/test/subtest/name", "newContext");
 		});
-		oContext = new sap.ui.model.Context(oModel, "/myContext");
+		oContext = new Context(oModel, "/myContext");
 		oModel.createBindingContext("root/test/subtest/name", oContext, function(context){
 			assert.equal(context.getPath(), "/myContext/root/test/subtest/name", "newContext");
 		});
@@ -400,15 +398,15 @@
 	});
 
 	QUnit.test("test JSONModel loadData: sync",function(assert) {
-		var testModel = new sap.ui.model.json.JSONModel();
-		testModel.loadData("testdata.json", null, false);
+		var testModel = new JSONModel();
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json", null, false);
 		assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 		assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
 		assert.equal(testModel.getProperty("/baz")[1], 97);
 	});
 
 	QUnit.test("test JSONModel loadData: sync - error",function(assert) {
-		var testModel = new sap.ui.model.json.JSONModel();
+		var testModel = new JSONModel();
 		testModel.attachRequestCompleted(function(e) {
 			var mParams = e.getParameters();
 
@@ -435,7 +433,7 @@
 
 	QUnit.test("test JSONModel loadData: async - error",function(assert) {
 		var done = assert.async();
-		var testModel = new sap.ui.model.json.JSONModel();
+		var testModel = new JSONModel();
 		testModel.attachRequestCompleted(function(e) {
 			var mParams = e.getParameters();
 
@@ -463,8 +461,8 @@
 
 	QUnit.test("test JSONModel loadData",function(assert){
 		var done = assert.async();
-		var testModel = new sap.ui.model.json.JSONModel();
-		testModel.loadData("testdata.json");
+		var testModel = new JSONModel();
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json");
 		testModel.attachRequestCompleted(function() {
 			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
@@ -475,10 +473,10 @@
 
 	QUnit.test("test JSONModel loadData: multiple requests - merge",function(assert){
 		var done = assert.async();
-		var testModel = new sap.ui.model.json.JSONModel();
+		var testModel = new JSONModel();
 		var loadCount = 0;
-		testModel.loadData("testdata.json");
-		testModel.loadData("testdata2.json",null,true,null,true);
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json");
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata2.json",null,true,null,true);
 		testModel.attachRequestCompleted(function() {
 			loadCount++;
 			if (loadCount == 1) {
@@ -498,10 +496,10 @@
 
 	QUnit.test("test JSONModel loadData: multiple requests",function(assert){
 		var done = assert.async();
-		var testModel = new sap.ui.model.json.JSONModel();
+		var testModel = new JSONModel();
 		var loadCount = 0;
-		testModel.loadData("testdata.json");
-		testModel.loadData("testdata2.json");
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json");
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata2.json");
 		testModel.attachRequestCompleted(function() {
 			loadCount++;
 			if (loadCount == 1) {
@@ -521,7 +519,7 @@
 
 	QUnit.test("test JSONModel loadData: multiple requests with merge: 1. request slow",function(assert){
 		var done = assert.async();
-		var testModel = new sap.ui.model.json.JSONModel();
+		var testModel = new JSONModel();
 		var loadCount = 0;
 		testModel.loadData("/fake/testdata3.json");
 		testModel.loadData("/fake/testdata4.json");
@@ -543,7 +541,7 @@
 
 	QUnit.test("test JSONModel loadData: multiple requests with merge: 1. request slow: 1 throws exception",function(assert){
 		var done = assert.async();
-		var testModel = new sap.ui.model.json.JSONModel();
+		var testModel = new JSONModel();
 		var loadCount = 0;
 		testModel.loadData("/fake");
 		testModel.loadData("/fake/testdata4.json");
@@ -566,7 +564,7 @@
 
 	QUnit.test("test JSONModel loadData constructor",function(assert){
 		var done = assert.async();
-		var testModel = new sap.ui.model.json.JSONModel("testdata.json");
+		var testModel = new JSONModel("test-resources/sap/ui/core/qunit/json/data/testdata.json");
 		testModel.attachRequestCompleted(function() {
 			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
@@ -576,7 +574,7 @@
 	});
 
 	QUnit.test("test JSONListBinding context calculation", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel(),
+		var oModel = new JSONModel(),
 			oArrayData = [1, 2, 3],
 			aContexts;
 		oModel.setData(oArrayData);
@@ -624,14 +622,14 @@
 	});
 
 	QUnit.test("test JSON setJSON", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		var sJSON = '{"name":"John"}';
 		oModel.setJSON(sJSON,false);
 		assert.equal(oModel.getProperty("/name"), "John" , "parse test");
 	});
 
 	QUnit.test("test JSON setJSON error", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		var sJSON = '{"name":John}';
 		var error = false;
 		oModel.attachParseError(sJSON, function(oEvent){
@@ -644,74 +642,71 @@
 	});
 
 	QUnit.test("test JSON getJSON", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		var sJSON = '{"name":"John"}';
 		oModel.setJSON(sJSON,false);
 		assert.equal(oModel.getJSON(), sJSON, "get JSON test");
 	});
 
 	QUnit.test("test JSON getData", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 		var sJSON = '{"name":"John"}';
 		oModel.setJSON(sJSON,false);
 		assert.equal(oModel.getData().name, "John", "get Data test");
 	});
 
 	QUnit.test("test JSON compatible syntax", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel(testdata);
+		var oModel = new JSONModel(testdata);
 		oModel.setLegacySyntax(true);
 		var value = oModel.getProperty("teamMembers/6/lastName");
 		assert.equal(value, "Wallace", "model value");
 		oModel.setProperty("teamMembers/4/lastName", "Jackson");
-		var value = oModel.getProperty("/teamMembers/4/lastName");
+		value = oModel.getProperty("/teamMembers/4/lastName");
 		assert.equal(value, "Jackson", "model value");
 		var oContext = oModel.createBindingContext("teamMembers/6");
-		var value = oModel.getProperty("lastName", oContext);
+		value = oModel.getProperty("lastName", oContext);
 		assert.equal(value, "Wallace", "model value");
 	});
 
 	QUnit.test("test JSON compatible syntax fail", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel(testdata);
+		var oModel = new JSONModel(testdata);
 		oModel.setLegacySyntax(false);
 		var value = oModel.getProperty("teamMembers/6/lastName");
 		assert.equal(value, undefined, "model value");
 		oModel.setProperty("/teamMembers/4/lastName", "Ander");
 		try {
 			oModel.setProperty("teamMembers/4/lastName", "Jackson");
-		} catch (e) {}
-		var value = oModel.getProperty("/teamMembers/4/lastName");
+		} catch (e) {
+			assert.ok(false, "should not happen!");
+		}
+		value = oModel.getProperty("/teamMembers/4/lastName");
 		assert.equal(value, "Ander", "model value");
 		var oContext = oModel.createBindingContext("teamMembers/6");
 		assert.equal(oContext, undefined, "model value");
 	});
 
 	QUnit.test("test JSONModel destroy", function(assert) {
-		var testModel = new sap.ui.model.json.JSONModel();
+		var testModel = new JSONModel();
 		testModel.attachRequestCompleted(function() {
 			assert.ok(false, "Request should be aborted!");
 		});
 		testModel.attachRequestFailed(function() {
 			assert.ok(false, "Error handler should not be called when request is aborted via destroy!");
 		});
-		var spy = this.spy(jQuery, "ajax");
+		var spy = sinon.spy(jQuery, "ajax");
 		testModel.loadData("testdata.json");
 		testModel.destroy();
 		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
-
+		spy.restore();
 	});
 
 
 	QUnit.test("test JSONModel loadData after destroy", function(assert) {
-		//var server = this.sandbox.useFakeServer();
-		//server.respondWith("data.json", function(xhr, id) {
-			//assert.ok(false, "Request should not be sent after calling destroy!");
-			//xhr.respond(200, { "Content-Type": "application/json" }, '{ "test": "data" }');
-		//});
 
-		var spy = this.spy(jQuery, "ajax");
-		var testModel = new sap.ui.model.json.JSONModel();
+		var spy = sinon.spy(jQuery, "ajax");
+		var testModel = new JSONModel();
 
 		testModel.attachRequestCompleted(function() {
 			assert.ok(false, "Request should be aborted!");
@@ -732,6 +727,7 @@
 		assert.ok(testModel.bDestroyed, "Model should be destroyed");
 		assert.equal(spy.callCount, 1, "number of requests should be still 1");
 		assert.equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		spy.restore();
 	});
 
 	QUnit.test("bind Element", function(assert) {
@@ -739,7 +735,7 @@
 		oModel.createBindingContext("/additionalData", null, function(context){
 			oContext = context;
 		});
-		var oLabel = new sap.ui.commons.Label("myLabel2");
+		var oLabel = new Label("myLabel2");
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
 		oLabel.setBindingContext(oContext);
@@ -759,7 +755,7 @@
 		oModel.createBindingContext("/additionalData", null, function(context){
 			oContext = context;
 		});
-		var oLabel = new sap.ui.commons.Label("myLabel2");
+		var oLabel = new Label("myLabel2");
 		oLabel.setText("testText");
 		oLabel.placeAt("target1");
 		oLabel.bindElement("level1");
@@ -773,17 +769,5 @@
 		assert.equal(oLabel.getText(), "", "text value from model");
 		oLabel.destroy();
 	});
-	</script>
 
-</head>
-<body>
-<h1 id="qunit-header">QUnit tests: Data binding JSON Model</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<br>
-<div id="target1"></div>
-<div id="target2"></div>
-</body>
-</html>
+});
