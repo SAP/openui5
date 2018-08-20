@@ -33,6 +33,12 @@ sap.ui.define([
 			// check value helps within sales order line items
 			When.onTheMainPage.selectFirstSalesOrder();
 			When.onTheMainPage.pressValueHelpOnProductCategory();
+			Then.onTheValueHelpPopover.checkTitle("Value Help: Category (Modified Mapping)");
+			When.onTheValueHelpPopover.close();
+			When.onTheMainPage.setValueHelpQualifier("additional");
+			When.onTheMainPage.pressValueHelpOnProductCategory();
+			Then.onTheValueHelpPopover.checkTitle("Value Help: Category (Additional Mapping)");
+			When.onTheValueHelpPopover.close();
 			When.onTheMainPage.pressValueHelpOnProductTypeCode();
 
 			When.onTheMainPage.pressCreateSalesOrdersButton();

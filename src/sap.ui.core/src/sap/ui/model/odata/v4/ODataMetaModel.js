@@ -85,6 +85,7 @@ sap.ui.define([
 			}
 		},
 		UNBOUND = {},
+		sValueList = "@com.sap.vocabularies.Common.v1.ValueList",
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
 		mValueListModelByUrl = {},
 		sValueListReferences = "@com.sap.vocabularies.Common.v1.ValueListReferences",
@@ -223,6 +224,20 @@ sap.ui.define([
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
+	}
+
+	/**
+	 * Checks that the term is a ValueList or a ValueListMapping and determines the qualifier.
+	 *
+	 * @param {string} sTerm
+	 *   The term
+	 * @returns {string}
+	 *   The qualifier or undefined, if the term is not as expected
+	 */
+	function getValueListQualifier(sTerm) {
+		var sQualifier = getQualifier(sTerm, sValueListMapping);
+
+		return sQualifier !== undefined ? sQualifier : getQualifier(sTerm, sValueList);
 	}
 
 	/**
@@ -1558,16 +1573,24 @@ sap.ui.define([
 			});
 
 			if (!aTargets.length) {
-				throw new Error("No annotation '" + sValueListMapping.slice(1) + "' in " +
+				throw new Error("No annotation '" + sValueList.slice(1) + "' in " +
 					oValueListModel.sServiceUrl);
 			}
 
 			mAnnotationByTerm = mAnnotationMapByTarget[aTargets[0]];
 			Object.keys(mAnnotationByTerm).forEach(function (sTerm) {
-				var sQualifier = getQualifier(sTerm, sValueListMapping);
+				var sQualifier = getValueListQualifier(sTerm);
 
 				if (sQualifier !== undefined) {
 					mValueListMappingByQualifier[sQualifier] = mAnnotationByTerm[sTerm];
+					["CollectionRoot", "SearchSupported"].forEach(function (sProperty) {
+						if (sProperty in mAnnotationByTerm[sTerm]) {
+							throw new Error("Property '" + sProperty
+								+ "' is not allowed in annotation '" + sTerm.slice(1)
+								+ "' for target '" + aTargets[0] + "' in "
+								+ oValueListModel.sServiceUrl);
+						}
+					});
 				} else if (!bValueListOnValueList) {
 					throw new Error("Unexpected annotation '" + sTerm.slice(1) +
 						"' for target '" + aTargets[0] + "' with namespace of data service in "
@@ -1610,6 +1633,11 @@ sap.ui.define([
 				if (getQualifier(sTerm, sValueListReferences) !== undefined
 						|| getQualifier(sTerm, sValueListMapping) !== undefined) {
 					return ValueListType.Standard;
+				}
+				if (getQualifier(sTerm, sValueList) !== undefined) {
+					return mAnnotationByTerm[sTerm].SearchSupported === false
+						? ValueListType.Fixed
+						: ValueListType.Standard;
 				}
 			}
 			return ValueListType.None;
@@ -2127,7 +2155,7 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {Promise}
 	 *   A promise which is resolved with a map of qualifier to value list mapping objects
-	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListMappingType</code>;
+	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListType</code>;
 	 *   the map entry with key "" represents the mapping without qualifier. Each entry has an
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
 	 *   to read value list data via this mapping.
@@ -2142,14 +2170,18 @@ sap.ui.define([
 	 *
 	 *   An inconsistency can result from one of the following reasons:
 	 *   <ul>
-	 *    <li> There is a reference, but the referenced service does not contain mappings for the
-	 *     property.
-	 *    <li> The referenced service contains annotation targets in the namespace of the data
-	 *     service that are not mappings for the property.
-	 *    <li> Two different referenced services contain a mapping using the same qualifier.
-	 *    <li> A service is referenced twice.
-	 *    <li> No mappings have been found.
-	 *    <li> There are multiple mappings for a fixed value list.
+	 *     <li> There is a reference, but the referenced service does not contain mappings for the
+	 *       property.
+	 *     <li> The referenced service contains annotation targets in the namespace of the data
+	 *       service that are not mappings for the property.
+	 *     <li> Two different referenced services contain a mapping using the same qualifier.
+	 *     <li> A service is referenced twice.
+	 *     <li> There are multiple mappings for a fixed value list.
+	 *     <li> A <code>com.sap.vocabularies.Common.v1.ValueList</code> annotation in a referenced
+	 *       service has the property <code>CollectionRoot</code> or <code>SearchSupported</code>.
+	 *     <li> A <code>com.sap.vocabularies.Common.v1.ValueList</code> annotation in the service
+	 *       itself has the property <code>SearchSupported</code> and additionally the annotation
+	 *       <code>com.sap.vocabularies.Common.v1.ValueListWithFixedValues</code> is defined.
 	 *   </ul>
 	 *
 	 * @public
@@ -2185,34 +2217,37 @@ sap.ui.define([
 			 * @throws {Error} If there is already a mapping for the given qualifier
 			 */
 			function addMapping(mValueListMapping, sQualifier, sMappingUrl, oModel) {
+				if (bFixedValues !== undefined && "SearchSupported" in mValueListMapping) {
+					throw new Error("Must not set 'SearchSupported' in annotation "
+						+ "'com.sap.vocabularies.Common.v1.ValueList' and annotation "
+						+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'");
+				}
+				if ("CollectionRoot" in mValueListMapping) {
+					oModel = that.getOrCreateValueListModel(mValueListMapping.CollectionRoot);
+					if (oValueListInfo[sQualifier]
+							&& oValueListInfo[sQualifier].$model === oModel) {
+						// same model -> allow overriding the qualifier
+						mMappingUrlByQualifier[sQualifier] = undefined;
+					}
+				}
 				if (mMappingUrlByQualifier[sQualifier]) {
-					throw new Error("Annotations '" + sValueListMapping.slice(1)
+					throw new Error("Annotations '" + sValueList.slice(1)
 						+ "' with identical qualifier '" + sQualifier
 						+ "' for property " + sPropertyPath + " in "
 						+ mMappingUrlByQualifier[sQualifier] + " and " + sMappingUrl);
 				}
-				if (bFixedValues && oValueListInfo[""]) {
-					throw new Error("Annotation '" + sValueListWithFixedValues.slice(1)
-						+ "' but multiple '" + sValueListMapping.slice(1)
-						+ "' for property " + sPropertyPath);
-				}
 				mMappingUrlByQualifier[sQualifier] = sMappingUrl;
-				oValueListInfo[bFixedValues ? "" : sQualifier] = jQuery.extend(true, {
+				mValueListMapping = jQuery.extend(true, {
 					$model : oModel
 				}, mValueListMapping);
+				delete mValueListMapping.CollectionRoot;
+				delete mValueListMapping.SearchSupported;
+				oValueListInfo[sQualifier] = mValueListMapping;
 			}
 
 			if (!oProperty) {
 				throw new Error("No metadata for " + sPropertyPath);
 			}
-
-			Object.keys(mAnnotationByTerm).filter(function (sTerm) {
-				return getQualifier(sTerm, sValueListMapping) !== undefined;
-			}).forEach(function (sTerm) {
-				addMapping(mAnnotationByTerm[sTerm], getQualifier(sTerm, sValueListMapping),
-					that.sUrl, that.oModel);
-			});
-
 
 			// filter all reference annotations, for each create a promise to evaluate the mapping
 			// and wait for all of them to finish
@@ -2236,11 +2271,31 @@ sap.ui.define([
 					});
 				}));
 			})).then(function () {
+				var aQualifiers;
+
+				// add all mappings in the data service (or local annotation files)
+				Object.keys(mAnnotationByTerm).filter(function (sTerm) {
+					return getValueListQualifier(sTerm) !== undefined;
+				}).forEach(function (sTerm) {
+					addMapping(mAnnotationByTerm[sTerm], getValueListQualifier(sTerm), that.sUrl,
+						that.oModel);
+				});
+				aQualifiers = Object.keys(oValueListInfo);
+
 				// Each reference must have contributed at least one qualifier. So if oValueListInfo
 				// is empty, there cannot have been a reference.
-				if (!Object.keys(oValueListInfo).length) {
+				if (!aQualifiers.length) {
 					throw new Error("No annotation '" + sValueListReferences.slice(1) + "' for " +
 						sPropertyPath);
+				}
+				if (bFixedValues) {
+					// With fixed values, only one mapping may exist. Return it for qualifier "".
+					if (aQualifiers.length > 1) {
+						throw new Error("Annotation '" + sValueListWithFixedValues.slice(1)
+							+ "' but multiple '" + sValueList.slice(1)
+							+ "' for property " + sPropertyPath);
+					}
+					return {"" : oValueListInfo[aQualifiers[0]]};
 				}
 
 				return oValueListInfo;
