@@ -766,6 +766,9 @@ sap.ui.define([
 		// create an information object which contains always required infos
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
+		// Will be set to true in updateTableSizes, if the table is in a flex container (parent has "display: flex").
+		this._bIsFlexItem = false;
+
 		this._attachExtensions();
 
 		this._bLazyRowCreationEnabled = jQuery.sap.getUriParameters().get('sap-ui-xx-table-lazyrowcreation') !== "false"; // default true
@@ -1059,23 +1062,21 @@ sap.ui.define([
 			var oCCnt = oDomRef.querySelector(".sapUiTableCCnt");
 
 			if (oCCnt) {
-				var iUsedHeight = oDomRef.scrollHeight - oCCnt.clientHeight;
+				var iUsedHeight = 0;
 
-				// take into account controls above the table in the container
-				var iTableTop = 0;
-				if (oDomRef.parentNode.firstChild !== oDomRef) {
-					var iParentPadding = parseFloat(window.getComputedStyle(oDomRef.parentNode).paddingTop);
-					if (isNaN(iParentPadding)) {
-						iParentPadding = 0;
+				if (this._bIsFlexItem) {
+					var aChildNodes = oDomRef.childNodes;
+					for (var i = 0; i < aChildNodes.length; i++) {
+						iUsedHeight += aChildNodes[i].offsetHeight;
 					}
-					iTableTop = oDomRef.offsetTop - iParentPadding;
+					iUsedHeight -= oCCnt.clientHeight;
+				} else {
+					iUsedHeight = oDomRef.scrollHeight - oCCnt.clientHeight;
 				}
 
 				// For simplicity always add the default height of the horizontal scrollbar to the used height, even if it will not be visible.
 				var oScrollExtension = this._getScrollExtension();
-				var oHSb = oScrollExtension.getHorizontalScrollbar();
-
-				if (!oHSb || !oScrollExtension.isHorizontalScrollbarVisible()) {
+				if (!oScrollExtension.isHorizontalScrollbarVisible()) {
 					var mDefaultScrollbarHeight = {};
 					mDefaultScrollbarHeight[Device.browser.BROWSER.CHROME] = 16;
 					mDefaultScrollbarHeight[Device.browser.BROWSER.FIREFOX] = 16;
@@ -1090,7 +1091,8 @@ sap.ui.define([
 					this._iLastAvailableSpace = 0;
 				}
 
-				var iNewAvailableSpace = Math.floor(jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop);
+				var oReferenceElement = this._bIsFlexItem ? oDomRef : oDomRef.parentNode;
+				var iNewAvailableSpace = Math.floor(jQuery(oReferenceElement).height() - iUsedHeight);
 				var iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - this._iLastAvailableSpace);
 
 				if (iAvailableSpaceDifference >= 5) {
@@ -1294,10 +1296,11 @@ sap.ui.define([
 	 */
 	Table.prototype.onAfterRendering = function(oEvent) {
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+		var sVisibleRowCountMode = this.getVisibleRowCountMode();
+		var $this = this.$();
 
 		this._bInvalid = false;
 		this._bOnAfterRendering = true;
-		var $this = this.$();
 
 		this._attachEvents();
 
@@ -1329,7 +1332,7 @@ sap.ui.define([
 		// manually removed so that the actions are later correctly positioned.
 		this.getDomRef().classList.remove("sapUiTableRActFlexible");
 
-		if (this._bFirstRendering && this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
+		if (this._bFirstRendering && sVisibleRowCountMode === VisibleRowCountMode.Auto) {
 			this._bFirstRendering = false;
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
 			// to be executed before timeouts may be executed.
@@ -1340,11 +1343,15 @@ sap.ui.define([
 			if (bRenderedRows) {
 				if (TableUtils.isVariableRowHeightEnabled(this)) {
 					mOptions.rowContentHeight = "reset";
-				} else if (this.getRows().length === 0 && this.getVisibleRowCountMode() !== VisibleRowCountMode.Interactive) {
+				} else if (this.getRows().length === 0 && sVisibleRowCountMode !== VisibleRowCountMode.Interactive) {
 					mOptions.rowContentHeight = "recalculate";
 				}
 			}
-			this._updateTableSizes(TableUtils.RowsUpdateReason.Render, mOptions);
+			if (!bRenderedRows && sVisibleRowCountMode === VisibleRowCountMode.Auto && this._bIsFlexItem) {
+				Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, mOptions));
+			} else {
+				this._updateTableSizes(TableUtils.RowsUpdateReason.Render, mOptions);
+			}
 		}
 
 		if (!bRenderedRows) {
@@ -1378,6 +1385,14 @@ sap.ui.define([
 		var oDomRef = this.getDomRef();
 		var that = this;
 
+		function registerResizeHandler() {
+			TableUtils.registerResizeHandler(that, "", that._onTableResize.bind(that), !that._bIsFlexItem);
+		}
+
+		function deregisterResizeHandler() {
+			TableUtils.deregisterResizeHandler(that, "");
+		}
+
 		if (this._bInvalid || !oDomRef) {
 			return;
 		}
@@ -1388,8 +1403,9 @@ sap.ui.define([
 			rowContentHeight: undefined // "restore", "reset"
 		}, mOptions);
 
+		this._bIsFlexItem = window.getComputedStyle(oDomRef.parentNode).display === "flex";
+
 		if (oDomRef.offsetWidth === 0) { // do not update sizes of an invisible table
-			TableUtils.deregisterResizeHandler(this, "");
 			registerResizeHandler();
 			return;
 		}
@@ -1418,7 +1434,9 @@ sap.ui.define([
 			}
 		}
 
-		TableUtils.deregisterResizeHandler(this, "");
+		if (!this._bIsFlexItem) {
+			deregisterResizeHandler();
+		}
 
 		// the only place to fix the minimum column width
 		function setMinColWidths(oTable) {
@@ -1511,16 +1529,6 @@ sap.ui.define([
 		}
 
 		var oTableSizes = this._collectTableSizes();
-
-		if (oTableSizes.tableCntHeight == 0 && oTableSizes.tableCntWidth == 0) {
-			// the table has no size at all. This may be due to one of the parents has display:none. In order to
-			// recognize when the parent size changes, the resize handler must be registered synchronously, otherwise
-			// the browser may finish painting before the resize handler is registered
-			TableUtils.registerResizeHandler(this, "", this._onTableResize.bind(this), true);
-
-			return;
-		}
-
 		var oScrollExtension = this._getScrollExtension();
 		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
 		oScrollExtension.updateVerticalScrollbarPosition();
@@ -1548,11 +1556,7 @@ sap.ui.define([
 
 		$this.find(".sapUiTableNoOpacity").addBack().removeClass("sapUiTableNoOpacity");
 
-		function registerResizeHandler() {
-			TableUtils.registerResizeHandler(that, "", that._onTableResize.bind(that), true);
-		}
-
-		if ($this.closest(".sapUiLoSplitter").length) {
+		if (this._bIsFlexItem || $this.closest(".sapUiLoSplitter").length) {
 			// a special workaround for the splitter control due to concurrence issues
 			registerResizeHandler();
 		} else {
