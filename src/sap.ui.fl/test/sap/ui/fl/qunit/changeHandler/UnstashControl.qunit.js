@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/core/StashedControlSupport"
+	"sap/ui/core/StashedControlSupport",
+	"sap/ui/core/UIComponent"
 ], function(
 	jQuery,
 	UnstashControlChangeHandler,
@@ -17,9 +18,12 @@ sap.ui.define([
 	ObjectPageSection,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	StashedControlSupport
+	StashedControlSupport,
+	UIComponent
 ) {
 	"use strict";
+
+	var oMockUIComponent = new UIComponent("mockComponent");
 
 	QUnit.module("sap.ui.fl.changeHandler.UnstashControl", {
 		beforeEach: function() {
@@ -90,10 +94,6 @@ sap.ui.define([
 			this.oObjectPageLayout.destroy();
 		}
 	}, function() {
-		QUnit.test('applyChange is called with a stashed ObjectPageSection on a js control tree', function(assert) {
-			var oControl = this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier});
-			assert.ok(oControl instanceof ObjectPageSection, "then the initialized control during unstashing is returned");
-		});
 
 		QUnit.test('applyChange is called with a stashed ObjectPageSection on an xml control tree', function(assert) {
 			var oControl = this.oChangeHandler.applyChange(this.oChange, this.oXmlObjectPageSection3, {modifier: XmlTreeModifier, view: this.oXmlView});
@@ -102,7 +102,8 @@ sap.ui.define([
 
 		QUnit.test('applyChange is called with a stashed ObjectPageSection on a js control tree', function(assert) {
 			assert.equal(this.oObjectPageSection3.getStashed(), true, "getStashed() before unstashing is true");
-			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier});
+			var oControl = this.oChangeHandler.applyChange(this.oChange, this.oObjectPageSection3, {modifier: JsControlTreeModifier, appComponent: oMockUIComponent});
+			assert.ok(oControl instanceof ObjectPageSection, "then the initialized control during unstashing is returned");
 			assert.equal(this.oObjectPageSection3.getVisible(), true, "unstashed ObjectPageSection is visible");
 			assert.equal(this.oObjectPageSection3.getStashed(), undefined, "getStashed() after unstashing is undefined");
 			assert.deepEqual(this.oObjectPageLayout.getAggregation("sections")[0], this.oObjectPageSection3, "unstashed ObjectPageSection is at the first position");
