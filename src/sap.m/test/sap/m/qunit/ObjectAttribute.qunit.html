@@ -295,9 +295,12 @@
 
 	QUnit.test("TestTap", function(assert) {
 		assert.expect(3);
-		qutils.triggerEvent("tap", oa1.$().children()[0]); //should fire event
-		qutils.triggerEvent("tap", oa2.$().children()[0]); //should fire event
-		qutils.triggerEvent("tap", oa3.$().children()[0]); //should fire event
+		qutils.triggerEvent("tap", oa1.$().children()[2]); //click on the link part of the OA should fire event
+		qutils.triggerEvent("tap", oa2.$().children()[0]); //we dont't have title on this one, so 0 is the link part and should fire event
+		qutils.triggerEvent("tap", oa3.$().children()[0]); //we dont't have title on this one, so 0 is the link part and should fire event
+
+		qutils.triggerEvent("tap", oa1.$().children()[0]); //click on the title part of the OA should not fire event
+		qutils.triggerEvent("tap", oa1.$().children()[1]); //click on the "dots" part of the OA should not fire event
 		qutils.triggerEvent("tap", oa4.getId()); //should not fire event
 		qutils.triggerEvent("tap", oa5.getId()); //should not fire event
 		qutils.triggerEvent("tap", oa6.getId()); //should not fire event
