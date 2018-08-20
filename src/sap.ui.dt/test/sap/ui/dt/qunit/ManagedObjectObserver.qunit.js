@@ -114,8 +114,10 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oManagedObjectObserver.destroy();
+			this.oSmartManagedObjectObserver.destroy();
 			this.oManagedObject.destroy();
 			this.oOtherObject.destroy();
+			this.oSmartManagedObject.destroy();
 		}
 	});
 
