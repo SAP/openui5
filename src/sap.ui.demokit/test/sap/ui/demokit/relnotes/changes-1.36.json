@@ -1,41 +1,36 @@
 {
-	"1.36.0": {
-		"date": "January 2016",
-		"notes": [
-			{
-				"id": "0c0b78037846b38f7392eee3fab7d9a56a1b5db8",
-				"type": "FIX",
-				"text": "Demokit / Demo Apps: remove unneeded scrollbar",
-				"references": []
-			},
-			{
-				"id": "f1ff002794698e0aaa6abeacbe35791cc4cee793",
-				"type": "FIX",
-				"text": "Demokit Feedback client fonts in IE",
-				"references": []
-			},
-			{
-				"id": "f3e3113be4442905c645ee048ba130036926a05d",
-				"type": "FIX",
-				"text": "Demokit feedback context",
-				"references": []
-			}
-		]
-	},
-	"1.36.9": {
-		"date": "May 2016",
-		"notes": [
-			{
-				"id": "4fdc7774e733fec753821d6d45820a628d7ff2b8",
-				"type": "FIX",
-				"text": "Explored app: Samples tab <code> tag visualization corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670249493"
-					}
-				]
-			}
-		]
-	}
+  "1.36.0": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "0c0b78037846b38f7392eee3fab7d9a56a1b5db8",
+        "type": "FIX",
+        "text": "Demokit / Demo Apps: remove unneeded scrollbar",
+        "references": []
+      },
+      {
+        "id": "f1ff002794698e0aaa6abeacbe35791cc4cee793",
+        "type": "FIX",
+        "text": "Demokit Feedback client fonts in IE",
+        "references": []
+      },
+      {
+        "id": "f3e3113be4442905c645ee048ba130036926a05d",
+        "type": "FIX",
+        "text": "Demokit feedback context",
+        "references": []
+      }
+    ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "4fdc7774e733fec753821d6d45820a628d7ff2b8",
+        "type": "FIX",
+        "text": "Explored app: Samples tab \u003ccode\u003e tag visualization corrected",
+        "references": []
+      }
+    ]
+  }
 }

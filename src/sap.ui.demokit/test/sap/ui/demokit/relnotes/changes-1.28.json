@@ -1,94 +1,100 @@
 {
-	"1.28.0": {
-		"date": "January 2015",
-		"notes": [
-			{
-				"id": "5b0d7e147f9c48078235c547af121b65cfa51fd4",
-				"type": "FEATURE",
-				"text": "Explored App enhanced with theme-switch",
-				"references": []
-			},
-			{
-				"id": "f0240eecfee4a607c954942c1a2af9bf5b8ea5e9",
-				"type": "FEATURE",
-				"text": "Extended predefined CSS margin classes - Added responsive CSS margin classes - Added tiny CSS margin sizes - Added 'no margin' classes",
-				"references": []
-			},
-			{
-				"id": "30231d4398033d24e662742d665f05333fb31d8e",
-				"type": "FIX",
-				"text": "Fixed copyright headers in LESS/CSS resources",
-				"references": []
-			},
-			{
-				"id": "52f8a1a97952d0014620c3643a33eff911dec32a",
-				"type": "FIX",
-				"text": "sap.m.UploadCollection: CSS Fixes, API: Added Layout Support",
-				"references": []
-			},
-			{
-				"id": "8c56460c389b651c3e02afe6db8e3e895730629e",
-				"type": "FIX",
-				"text": "sap.m.UploadCollection: Explored App fixed, Image/doc paths corrected",
-				"references": []
-			},
-			{
-				"id": "03d2a30ce36cbb772ddf8773c8d4fb1862a59f79",
-				"type": "FEATURE",
-				"text": "Right-To-Left mode added to Explored Settings",
-				"references": []
-			},
-			{
-				"id": "c672e7272d1183ff85d7adb4a9cb0c74b8829228",
-				"type": "FEATURE",
-				"text": "sap.ui.core.routing.Route: Greedy routes match with greed",
-				"references": []
-			},
-			{
-				"id": "2a4d2273c90fdcbe9b78ef7179dc5c902a31d761",
-				"type": "FEATURE",
-				"text": "Added self-contained examples",
-				"references": []
-			},
-			{
-				"id": "44a131d989adc2b7340eeaa6743aceb4bd0ccc06",
-				"type": "FEATURE",
-				"text": "sap.m.MessagePage: Implemented new control to display an empty page",
-				"references": []
-			},
-			{
-				"id": "4729da8038ab82dc33a984b7b38816bee8d495d1",
-				"type": "FEATURE",
-				"text": "sap.ui.core.Icon: Icon font updated to version 3.1 with 15 new icons",
-				"references": []
-			}
-		]
-	},
-	"1.28.2": {
-		"date": "March 2015",
-		"notes": [
-			{
-				"id": "2367381d329171a2d78d35b04684309cf6036493",
-				"type": "FIX",
-				"text": "Icon Explorer: Favorites list gets a footer in edit mode",
-				"references": []
-			}
-		]
-	},
-	"1.28.6": {
-		"date": "May 2015",
-		"notes": [
-			{
-				"id": "9f895fb08971121030ed1f1524a006b37419735b",
-				"type": "FIX",
-				"text": "Existence of namespace ensured during Core.initLibrary()",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570295165"
-					}
-				]
-			}
-		]
-	}
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "5b0d7e147f9c48078235c547af121b65cfa51fd4",
+        "type": "FEATURE",
+        "text": "Explored App enhanced with theme-switch",
+        "references": []
+      },
+      {
+        "id": "f0240eecfee4a607c954942c1a2af9bf5b8ea5e9",
+        "type": "FEATURE",
+        "text": "Extended predefined CSS margin classes - Added responsive CSS margin classes - Added tiny CSS margin sizes - Added \u0027no margin\u0027 classes",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "type": "FIX",
+        "text": "Fixed copyright headers in LESS/CSS resources",
+        "references": []
+      },
+      {
+        "id": "52f8a1a97952d0014620c3643a33eff911dec32a",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: CSS Fixes, API: Added Layout Support",
+        "references": []
+      },
+      {
+        "id": "8c56460c389b651c3e02afe6db8e3e895730629e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Explored App fixed, Image/doc paths corrected",
+        "references": []
+      },
+      {
+        "id": "03d2a30ce36cbb772ddf8773c8d4fb1862a59f79",
+        "type": "FEATURE",
+        "text": "Right-To-Left mode added to Explored Settings",
+        "references": []
+      },
+      {
+        "id": "c672e7272d1183ff85d7adb4a9cb0c74b8829228",
+        "type": "FEATURE",
+        "text": "sap.ui.core.routing.Route: Greedy routes match with greed",
+        "references": []
+      },
+      {
+        "id": "2a4d2273c90fdcbe9b78ef7179dc5c902a31d761",
+        "type": "FEATURE",
+        "text": "Added self-contained examples",
+        "references": []
+      },
+      {
+        "id": "44a131d989adc2b7340eeaa6743aceb4bd0ccc06",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePage: Implemented new control to display an empty page",
+        "references": []
+      },
+      {
+        "id": "4729da8038ab82dc33a984b7b38816bee8d495d1",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon: Icon font updated to version 3.1 with 15 new icons",
+        "references": []
+      }
+    ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "2367381d329171a2d78d35b04684309cf6036493",
+        "type": "FIX",
+        "text": "Icon Explorer: Favorites list gets a footer in edit mode",
+        "references": []
+      }
+    ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      }
+    ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "ef64c1a4a6bece9d407d67ec7ddfa78ad7163071",
+        "type": "FIX",
+        "text": "demokit/Explored app: Resetting search field issue solved",
+        "references": []
+      }
+    ]
+  }
 }

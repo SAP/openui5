@@ -1,43 +1,88 @@
 {
-	"1.32.0": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "a77f33b991a3ab21e9f2949f527fccc182ddf97e",
-				"type": "FIX",
-				"text": "Demokit/Expl.App: Code section downloads fixed\"",
-				"references": []
-			},
-			{
-				"id": "9a735cc95ef9c7eefe805013c1a4d2189a01b48b",
-				"type": "FEATURE",
-				"text": "Demokit.Explored App: Code Section Improvements",
-				"references": []
-			},
-			{
-				"id": "8bbd202d129907cfd247789e72c516cd2463ac9c",
-				"type": "FEATURE",
-				"text": "Demokit tree expand collapse buttons changed position",
-				"references": []
-			},
-			{
-				"id": "b3f6064f3aa032ad88742c55abdfd3631e098ae4",
-				"type": "FEATURE",
-				"text": "Introduce demokit ExploredApp example code highlighting",
-				"references": []
-			},
-			{
-				"id": "b8f80617fd884a34fc17b7dc89f3257c6c88f793",
-				"type": "FEATURE",
-				"text": "sap.ui.core.Icon/IconPool: Icon font is updated to version 3.2 with 11 new icons",
-				"references": []
-			},
-			{
-				"id": "b9b47c1eb764d3fed52bfed63ed0577b11dfb81d",
-				"type": "FIX",
-				"text": "Demokit tree filter placeholder value change",
-				"references": []
-			}
-		]
-	}
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "a77f33b991a3ab21e9f2949f527fccc182ddf97e",
+        "type": "FIX",
+        "text": "Demokit/Expl.App: Code section downloads fixed\"",
+        "references": []
+      },
+      {
+        "id": "9a735cc95ef9c7eefe805013c1a4d2189a01b48b",
+        "type": "FEATURE",
+        "text": "Demokit.Explored App: Code Section Improvements",
+        "references": []
+      },
+      {
+        "id": "8bbd202d129907cfd247789e72c516cd2463ac9c",
+        "type": "FEATURE",
+        "text": "Demokit tree expand collapse buttons changed position",
+        "references": []
+      },
+      {
+        "id": "b3f6064f3aa032ad88742c55abdfd3631e098ae4",
+        "type": "FEATURE",
+        "text": "Introduce demokit ExploredApp example code highlighting",
+        "references": []
+      },
+      {
+        "id": "b8f80617fd884a34fc17b7dc89f3257c6c88f793",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon/IconPool: Icon font is updated to version 3.2 with 11 new icons",
+        "references": []
+      },
+      {
+        "id": "b9b47c1eb764d3fed52bfed63ed0577b11dfb81d",
+        "type": "FIX",
+        "text": "Demokit tree filter placeholder value change",
+        "references": []
+      }
+    ]
+  },
+  "1.32.1": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "20e6842f94bd0c386e6b66e3c9cebdeb2eae14a1",
+        "type": "FIX",
+        "text": "Api Reference Tree clipping issue",
+        "references": []
+      },
+      {
+        "id": "9c7eaeca9a72d0add1cfa5184b846ff0f3ab8b23",
+        "type": "FIX",
+        "text": "Demokit About dialog is all visible now in small resolutions",
+        "references": []
+      },
+      {
+        "id": "be81ecd4c73f405ec5aa05e4ed35b4f2afc3eeb9",
+        "type": "FIX",
+        "text": "Navigating back does not update the demokit tree",
+        "references": []
+      }
+    ]
+  },
+  "1.32.3": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "361b08f7707fa14e17fe231a614df10cb26fed60",
+        "type": "FIX",
+        "text": "Explored App IconTabBar should ignore hover event",
+        "references": []
+      }
+    ]
+  },
+  "1.32.4": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "5ac3ea92419610f2c63188837c1707bdfc7a466a",
+        "type": "FIX",
+        "text": "Demokit missing tree due to node without ref",
+        "references": []
+      }
+    ]
+  }
 }

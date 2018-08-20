@@ -213,5 +213,221 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "c4bd78eea0fd5e0533763261b9a2f0c07e1c16b1",
+        "type": "FIX",
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
+      },
+      {
+        "id": "66747e3d072575e17281822d7dbc3302470e2eef",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - infinite rerendering",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "7aaa73077051525d5c46a06dd70c3b1e06acdfa7",
+        "type": "FIX",
+        "text": " AnalyticalTable: Consider groups on initial numberOfExpandedLevels",
+        "references": []
+      },
+      {
+        "id": "0982ad552e823ff4ef5eebc2bc77a4f866e25edd",
+        "type": "FIX",
+        "text": " Table: Select text of input fields in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "33cac69194d687049a9231ca177b3dc93f736ea6",
+        "type": "FIX",
+        "text": " sap.ui.table.*: ACC Announcement of Selection on RowHeaders",
+        "references": []
+      },
+      {
+        "id": "3387c6c6ee93feac76f90772f102ff4e6493a5d4",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Screenreader Support Adaptations",
+        "references": []
+      },
+      {
+        "id": "89527109c4cdabd5626e20a929e9cc55d7baf7a9",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: rendering issue with invisible fixed columns",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "b555ae28ca65c1e0763d50a21caf0ff359cd6bc2",
+        "type": "FIX",
+        "text": " Table: Management of the column template clone stack",
+        "references": []
+      },
+      {
+        "id": "708d06103a2255d14b952f03fe317e37620956d5",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse with OData v1 models",
+        "references": []
+      },
+      {
+        "id": "bd26605d69c9527b47f779c1430f279c34f51033",
+        "type": "FIX",
+        "text": " sap.ui.table.*: ACC - Selection mode announcement",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "5ede7ee7d73a77a611aaa57964d97062c2c7827a",
+        "type": "FIX",
+        "text": " Table: Column parameter of the ColumnSelect event",
+        "references": []
+      },
+      {
+        "id": "f3d62e97a634537237624340cc7f7f25cef50a5a",
+        "type": "FIX",
+        "text": " Table: Tooltip of SelectAll cell when manually selecting all rows",
+        "references": []
+      }
+    ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "7a2cdc11d363590a41dcab1341d8742e650655a0",
+        "type": "FIX",
+        "text": " Table: Correctly initialize the keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "8fa3bdfcd9a47f75502ed7231d13121bb402032d",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "b023aa2e3372eda27f54132bce2c9951d50304ea",
+        "type": "FIX",
+        "text": " Table: Correctly process focus events related to the edit mode",
+        "references": []
+      },
+      {
+        "id": "dc8126df3223ad2cc715d9461ba9da7a7cf6f09a",
+        "type": "FIX",
+        "text": " Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": []
+      },
+      {
+        "id": "749841eee33caab55ec52a2c1c8eeb8ede200975",
+        "type": "FIX",
+        "text": " Table: No more infinite re-renderings if zoomed in Chrome",
+        "references": []
+      },
+      {
+        "id": "5096ea8495a37d04c40947804a65cea6036d61d5",
+        "type": "FIX",
+        "text": " Table: Text will be properly deselected in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "79ebbc4c60c6dd633c4ffc756db02d169d1748cf",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      }
+    ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "c6b44467f7dd4e74df0c5708398b8b5a353515e9",
+        "type": "FIX",
+        "text": " Table: Avoid flickering of the busy indicator on initial data load",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "4c01d7427e85e497d017c7165f91bc9d8bfdff97",
+        "type": "FIX",
+        "text": " Table: Correct height adjustment when used inside a splitter",
+        "references": []
+      },
+      {
+        "id": "fc4e18e4ef9a77e979988f5792d3f8e6bc4e2f89",
+        "type": "FIX",
+        "text": " Table: Improved busy handling in case of parallel requests",
+        "references": []
+      }
+    ]
+  },
+  "1.48.13": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "08367c978b783a7a2888fba407492008ab5ab08b",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Table renders even if column was destroyed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.14": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "98d78efb4ad291c0708acceb9c535961c69b89a9",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": []
+      }
+    ]
+  },
+  "1.48.17": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "9ec03838f92f126b83c3cc6c68dda3ca6ea6637c",
+        "type": "FIX",
+        "text": " Table: Horizontal scrolling with the touchpad",
+        "references": []
+      }
+    ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "f0e209f44375e1c6fc3bc93456fb3cbee2aeb455",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      }
+    ]
   }
 }

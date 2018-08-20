@@ -93,5 +93,22 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "1636cc363d88fa762cf1641f4c7a97710b684a4a",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": []
+      },
+      {
+        "id": "5b949cddb0f47691289555d76bc2cca0a982b3fd",
+        "type": "FIX",
+        "text": " unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": []
+      }
+    ]
   }
 }

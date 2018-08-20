@@ -63,5 +63,39 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "8071b95ab0e92b5c7f750e24d2fc4ba14f22be62",
+        "type": "FIX",
+        "text": "sap.ui.layout - SimpleForm rename undo issue",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "7cb22654c9499326d0c658dcacda164df8fd22d6",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Uncaught error fixed",
+        "references": []
+      },
+      {
+        "id": "4771d720eed310cccc22f47c0ea073d2ae673337",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: incorrect arrangement of items fixed",
+        "references": []
+      },
+      {
+        "id": "4de27bbfee59fac33691764943a3da7a55d497c0",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Pane width is now correct",
+        "references": []
+      }
+    ]
   }
 }
