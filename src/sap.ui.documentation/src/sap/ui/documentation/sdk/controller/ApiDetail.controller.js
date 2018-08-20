@@ -71,7 +71,7 @@ sap.ui.define([
 
 				this._sTopicid = sTopic;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
-				this._sEntityId = oEvent.getParameter("arguments").entityId;
+				this._sEntityId = formatter.decodeModuleName(oEvent.getParameter("arguments").entityId);
 
 				// API Reference lifecycle
 				oComponent.loadVersionInfo()
