@@ -712,7 +712,6 @@ function validateChangeType(sType, vValue, oContext) {
 
 }
 function hasText(sKey, oBundle) {
-	//checks if the bundle has the text, otherwise it checks that the retrieved text is not the key (key is returned if not present)
-	return oBundle.hasText(sKey) || oBundle.getText(sKey, []) !== sKey;
+	return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== undefined;
 }
 })();
