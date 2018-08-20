@@ -2617,7 +2617,10 @@ sap.ui.define([
 
 					// preload the component
 					return preload(sComponentName, true).then(function() {
-						// after preload is finished, the resource models from the manifest are loaded
+						// after preload is finished, load the i18n resource
+						return oManifest._processI18n(true);
+					}).then(function() {
+						// after i18n resource is finished, the resource models from the manifest are loaded
 
 						if (!mOptions.createModels) {
 							return null;
